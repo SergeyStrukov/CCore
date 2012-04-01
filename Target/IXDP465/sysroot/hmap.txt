@@ -1,0 +1,143 @@
+/* hmap.txt */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: Target/IXDP465
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2009 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------
+
+__std_init.h               CCore.a : __std_init() __std_main() __std_exit()
+
+sys/types.h unused
+unistd.h    empty
+
+assert.h    +              CCore.a : __std_assert_failed()
+ctype.h     +
+errno.h     +
+iso646.h    +
+limits.h    + gcc-style
+locale.h    +
+setjmp.h    +
+stdarg.h    + gcc-style
+stdbool.h   +
+stddef.h    + gcc-style
+stdint.h    + gcc-style
+
+complex.h   -
+fenv.h      -
+float.h     -
+inttypes.h  -
+signal.h    -
+tgmath.h    -
+wchar.h     -
+wctype.h    -
+
+math.h      .
+stdio.h     .              CCore.a : *
+stdlib.h    .              CCore.a : malloc() calloc() realloc() free() malloc_int() free_int() atexit() __cxa_atexit()
+string.h    .
+time.h      .              CCore.a : time() clock()
+
+--- math.h -------------------------------------------------------- 
+
+not implemented
+
+ all
+
+not defined
+
+ NAN
+ isgreater
+ isgreaterequal
+ isless
+ islessequal
+ islessgreater
+ isunordered
+
+--- stdio.h -------------------------------------------------------
+
+not implemented
+
+ float format
+ wide char format
+
+--- stdlib.h ------------------------------------------------------
+
+implemented
+
+ malloc family
+ abort
+ atexit
+ __cxa_atexit
+
+trap
+
+ strtof
+ strtod
+ strtold
+ exit
+ _Exit
+
+--- string.h ------------------------------------------------------
+
+implemented
+
+ strcat
+ strdup
+ strxfrm
+
+slow implemented 
+
+ strcpy
+ memchr
+ memmove
+
+fast implemented 
+
+ __std_memcpy
+ __std_strend
+ __std_memset
+
+ strlen
+ strcmp
+ strcoll
+ strncmp
+ memcpy
+ memcmp
+ memset
+ 
+not implemented
+
+ strchr 
+ strrchr
+ strstr
+ strspn
+ strcspn
+ strpbrk
+ strtok
+ 
+ strncpy
+ strncat
+
+--- time.h --------------------------------------------------------
+
+implemented
+
+ time
+ clock
+
+trap
+
+ strftime
+
+-------------------------------------------------------------------
