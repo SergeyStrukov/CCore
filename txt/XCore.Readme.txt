@@ -1,0 +1,32 @@
+/* XCore.Readme.txt  */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+  XCore is a multi-task core for embedded systems. It is combined with CCore library. The core is designed for
+single CPU systems. 
+
+  XCore:
+
+   1) provides a rich set of synchonization objects and an easy way to construct additional ones, 
+   2) implements priority inheritance for mutexes, 
+   3) task scheduler switchs with high frequency (10 kHz for IXDP465 platform),
+      that gives fine-grained task execution, ensure the system is high responsive,
+   4) scheduler supports task priority relaxation, that protects low priority tasks 
+      from complete execution hold-on, 
+   5) full support for C++11,
+   6) no limitation for compiler optimization level, 
+   7) clean BSP requirements.
+  
+  This version is developed using GNU-C++ 4.7.x compiler on pc-cygwin platform.
+
+  The library is distributed under the Boost Software License (see License.txt).
+
