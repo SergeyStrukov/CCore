@@ -1,0 +1,53 @@
+# Makefile.tools
+#----------------------------------------------------------------------------------------
+#
+#  Project: CCore 1.02
+#
+#  Tag: Target/Vanilla-H
+#
+#  License: Boost Software License - Version 1.0 - August 17th, 2003 
+#
+#            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+#
+#  Copyright (c) 2011 Sergey Strukov. All rights reserved.
+#
+#----------------------------------------------------------------------------------------
+
+CCOPT_EXTRA ?= 
+
+LDOPT_EXTRA ?=
+
+# tools
+
+CC_ = /opt/gcc-4.7.0/bin/g++-4.7.0
+
+CC = @echo CC $< ; $(CC_)
+
+LD = @echo LD $@ ; $(CC_)
+
+AS_ = as
+
+AS = @echo AS $< ; $(AS_)
+
+AR_ = ar
+
+AR = @echo AR $@ ; $(AR_)
+
+RM_ = rm -f
+
+RM = @echo RM ; $(RM_)
+
+# options
+
+NOWARN = -Wno-non-virtual-dtor -Wno-switch -Wno-type-limits -Wno-enum-compare -Wno-missing-field-initializers \
+         -Wno-delete-non-virtual-dtor
+
+CCINC = -I$(CCORE_ROOT) -I$(CCORE_ROOT)/HCore -I$(CCORE_ROOT)/Target/$(CCORE_TARGET)
+
+CCOPT = -c -std=c++11 -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
+
+ASOPT =
+
+CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
+
+LDOPT = $(CCORELIB) -lws2_32 -Wl,-s $(LDOPT_EXTRA)

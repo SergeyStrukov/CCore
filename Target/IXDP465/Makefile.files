@@ -1,0 +1,2897 @@
+OBJ_LIST = \
+obj/AES.o \
+obj/Abort.o \
+obj/AbortMsgFunc.o \
+obj/AntiSem.o \
+obj/Array.o \
+obj/ArrayAlgo.o \
+obj/ArrayBase.o \
+obj/AsyncFile.o \
+obj/AsyncFileToMem.o \
+obj/Atomic.o \
+obj/AtomicRefArray.o \
+obj/AutoText.o \
+obj/BlockCipher.o \
+obj/Boot.o \
+obj/Bridge.o \
+obj/CBase.o \
+obj/CDef.o \
+obj/CPrintf.o \
+obj/CScanf.o \
+obj/CStdFile.o \
+obj/CSysCon.o \
+obj/CSysFile.o \
+obj/CancelPacketList.o \
+obj/CharProp.o \
+obj/CheckPlatformBase.o \
+obj/CheckedData.o \
+obj/CmdInput.o \
+obj/Cmp.o \
+obj/Collector.o \
+obj/Counters.o \
+obj/Crc.o \
+obj/DDLChar.o \
+obj/DDLEngine.o \
+obj/DDLEval.o \
+obj/DDLMap.o \
+obj/DDLMsgReport.o \
+obj/DDLParser.o \
+obj/DDLParserElement.o \
+obj/DDLParserTable.o \
+obj/DDLProcess.o \
+obj/DDLSemantic.o \
+obj/DDLStep.o \
+obj/DDLToken.o \
+obj/DDLTools.o \
+obj/DDLTypeDesc.o \
+obj/DDLTypes.o \
+obj/DDLValue.o \
+obj/DefaultTimeout.o \
+obj/DefaultValue.o \
+obj/DevInt.o \
+obj/DevIntHandle.o \
+obj/DevPCIHost.o \
+obj/DevPlanInit.o \
+obj/DevRW.o \
+obj/DevSerial.o \
+obj/DevSignal.o \
+obj/DevTick.o \
+obj/DevTimer.o \
+obj/DynArray.o \
+obj/EchoDevice.o \
+obj/ElementPool.o \
+obj/Elf.o \
+obj/EthDevice.o \
+obj/Event.o \
+obj/Exception.o \
+obj/ExceptionType.o \
+obj/FPGA.o \
+obj/FastMul.o \
+obj/FastMutex.o \
+obj/Fifo.o \
+obj/Flash.o \
+obj/FuncTask.o \
+obj/Function.o \
+obj/FunctorType.o \
+obj/Gadget.o \
+obj/GenFile.o \
+obj/HFSBase.o \
+obj/HFSClientDevice.o \
+obj/HFSFileSystemDevice.o \
+obj/Handle.o \
+obj/HashFunction.o \
+obj/HeapEngine.o \
+obj/HeapSort.o \
+obj/IXP465.o \
+obj/IXP465.CP15.o \
+obj/Init.o \
+obj/IntPrint.o \
+obj/Integer.o \
+obj/IntegerFastAlgo.o \
+obj/IntegerSlowAlgo.o \
+obj/Job.o \
+obj/Len.o \
+obj/LineInput.o \
+obj/List.o \
+obj/Lock.o \
+obj/Log.o \
+obj/MSec.o \
+obj/MemAllocGuard.o \
+obj/MemBase.o \
+obj/MemBase_general.o \
+obj/MemSpaceHeap.o \
+obj/MersenneTwister.o \
+obj/Meta.o \
+obj/Move.o \
+obj/MultiEvent.o \
+obj/MultiSem.o \
+obj/Mutex.o \
+obj/NanoIPDevice.o \
+obj/NanoPacket.o \
+obj/NegBool.o \
+obj/NetBase.o \
+obj/NoCopy.o \
+obj/NoMutex.o \
+obj/Nothing.o \
+obj/ObjHost.o \
+obj/OwnPtr.o \
+obj/PCIBus.o \
+obj/PCIBusRW.o \
+obj/PTPBase.o \
+obj/PTPBoot.o \
+obj/PTPBootBase.o \
+obj/PTPClientDevice.o \
+obj/PTPConBase.o \
+obj/PTPConDevice.o \
+obj/PTPEchoTest.o \
+obj/PTPExtra.o \
+obj/PTPServerDevice.o \
+obj/PTPSupport.o \
+obj/PTPSupportBase.o \
+obj/Packet.o \
+obj/PacketEndpointDevice.o \
+obj/PacketPool.o \
+obj/PacketPool_PacketCount.o \
+obj/PacketPool_PacketMaxDataLen.o \
+obj/PacketSet.o \
+obj/ParaQuickSort.o \
+obj/Path.o \
+obj/Place.o \
+obj/PlanInit.o \
+obj/PlanInit_CCore.o \
+obj/PlatformBase.o \
+obj/PosSub.o \
+obj/Print.o \
+obj/PrintAbort.o \
+obj/PrintAsyncFile.o \
+obj/PrintBase.o \
+obj/PrintBits.o \
+obj/PrintCon.o \
+obj/PrintError.o \
+obj/PrintPTPCon.o \
+obj/PrintProxy.o \
+obj/PrintSet.o \
+obj/PrintTime.o \
+obj/PrintTitle.o \
+obj/Printf.o \
+obj/PtrLen.o \
+obj/Quick.o \
+obj/QuickSort.o \
+obj/RBTreeBase.o \
+obj/RBTreeLink.o \
+obj/RBTreeUpLink.o \
+obj/RadixHeap.o \
+obj/Random.o \
+obj/ReadCon.o \
+obj/RedirectPTPCon.o \
+obj/RefArray.o \
+obj/RefPtr.o \
+obj/Replace.o \
+obj/ResSem.o \
+obj/Rot.o \
+obj/SHA.o \
+obj/SaveLoad.o \
+obj/ScanBit.o \
+obj/Sem.o \
+obj/ShortSort.o \
+obj/SimpleArray.o \
+obj/SingleHost.o \
+obj/Sort.o \
+obj/Space.o \
+obj/SpecialMemBase.o \
+obj/StartStop.o \
+obj/Starter.o \
+obj/StdioReadCon.o \
+obj/StrParse.o \
+obj/StrPrint.o \
+obj/String.o \
+obj/Swap.o \
+obj/SysAbort.o \
+obj/SysAsyncFile.o \
+obj/SysAsyncFileSystem.o \
+obj/SysAtomic.o \
+obj/SysCon.o \
+obj/SysCon_general.o \
+obj/SysError.o \
+obj/SysLog.o \
+obj/SysMemSpace.o \
+obj/SysPlanInit.o \
+obj/SysProp.o \
+obj/SysTime.o \
+obj/SysTlsSlot.o \
+obj/Task.o \
+obj/TaskContext.o \
+obj/TaskCore.o \
+obj/TaskInternal.o \
+obj/TaskList.o \
+obj/TaskMonitor.o \
+obj/TaskPriority.o \
+obj/TempArray.o \
+obj/TextLabel.o \
+obj/TextTools.o \
+obj/Tick.o \
+obj/Ticker.o \
+obj/TimeScope.o \
+obj/Timer.o \
+obj/TlsBuf.o \
+obj/TlsSlot.o \
+obj/ToMemBase.o \
+obj/Trace.o \
+obj/Tree.o \
+obj/TreeLink.o \
+obj/TreeUpLink.o \
+obj/Tuple.o \
+obj/UDPoint.o \
+obj/UIntFunc.o \
+obj/UIntMax.o \
+obj/UIntSat.o \
+obj/UIntSplit.o \
+obj/UtilFunc.o \
+obj/VIA_Rhine_III.o \
+obj/XPoint.o \
+obj/__std_init.o \
+obj/assert.o \
+obj/atexit.o \
+obj/stdio.o \
+obj/stdlib.o \
+obj/time.o \
+
+
+ASM_LIST = \
+obj/AES.s \
+obj/Abort.s \
+obj/AbortMsgFunc.s \
+obj/AntiSem.s \
+obj/Array.s \
+obj/ArrayAlgo.s \
+obj/ArrayBase.s \
+obj/AsyncFile.s \
+obj/AsyncFileToMem.s \
+obj/Atomic.s \
+obj/AtomicRefArray.s \
+obj/AutoText.s \
+obj/BlockCipher.s \
+obj/Boot.s \
+obj/Bridge.s \
+obj/CBase.s \
+obj/CDef.s \
+obj/CPrintf.s \
+obj/CScanf.s \
+obj/CStdFile.s \
+obj/CSysCon.s \
+obj/CSysFile.s \
+obj/CancelPacketList.s \
+obj/CharProp.s \
+obj/CheckPlatformBase.s \
+obj/CheckedData.s \
+obj/CmdInput.s \
+obj/Cmp.s \
+obj/Collector.s \
+obj/Counters.s \
+obj/Crc.s \
+obj/DDLChar.s \
+obj/DDLEngine.s \
+obj/DDLEval.s \
+obj/DDLMap.s \
+obj/DDLMsgReport.s \
+obj/DDLParser.s \
+obj/DDLParserElement.s \
+obj/DDLParserTable.s \
+obj/DDLProcess.s \
+obj/DDLSemantic.s \
+obj/DDLStep.s \
+obj/DDLToken.s \
+obj/DDLTools.s \
+obj/DDLTypeDesc.s \
+obj/DDLTypes.s \
+obj/DDLValue.s \
+obj/DefaultTimeout.s \
+obj/DefaultValue.s \
+obj/DevInt.s \
+obj/DevIntHandle.s \
+obj/DevPCIHost.s \
+obj/DevPlanInit.s \
+obj/DevRW.s \
+obj/DevSerial.s \
+obj/DevSignal.s \
+obj/DevTick.s \
+obj/DevTimer.s \
+obj/DynArray.s \
+obj/EchoDevice.s \
+obj/ElementPool.s \
+obj/Elf.s \
+obj/EthDevice.s \
+obj/Event.s \
+obj/Exception.s \
+obj/ExceptionType.s \
+obj/FPGA.s \
+obj/FastMul.s \
+obj/FastMutex.s \
+obj/Fifo.s \
+obj/Flash.s \
+obj/FuncTask.s \
+obj/Function.s \
+obj/FunctorType.s \
+obj/Gadget.s \
+obj/GenFile.s \
+obj/HFSBase.s \
+obj/HFSClientDevice.s \
+obj/HFSFileSystemDevice.s \
+obj/Handle.s \
+obj/HashFunction.s \
+obj/HeapEngine.s \
+obj/HeapSort.s \
+obj/IXP465.s \
+obj/IXP465.CP15.s \
+obj/Init.s \
+obj/IntPrint.s \
+obj/Integer.s \
+obj/IntegerFastAlgo.s \
+obj/IntegerSlowAlgo.s \
+obj/Job.s \
+obj/Len.s \
+obj/LineInput.s \
+obj/List.s \
+obj/Lock.s \
+obj/Log.s \
+obj/MSec.s \
+obj/MemAllocGuard.s \
+obj/MemBase.s \
+obj/MemBase_general.s \
+obj/MemSpaceHeap.s \
+obj/MersenneTwister.s \
+obj/Meta.s \
+obj/Move.s \
+obj/MultiEvent.s \
+obj/MultiSem.s \
+obj/Mutex.s \
+obj/NanoIPDevice.s \
+obj/NanoPacket.s \
+obj/NegBool.s \
+obj/NetBase.s \
+obj/NoCopy.s \
+obj/NoMutex.s \
+obj/Nothing.s \
+obj/ObjHost.s \
+obj/OwnPtr.s \
+obj/PCIBus.s \
+obj/PCIBusRW.s \
+obj/PTPBase.s \
+obj/PTPBoot.s \
+obj/PTPBootBase.s \
+obj/PTPClientDevice.s \
+obj/PTPConBase.s \
+obj/PTPConDevice.s \
+obj/PTPEchoTest.s \
+obj/PTPExtra.s \
+obj/PTPServerDevice.s \
+obj/PTPSupport.s \
+obj/PTPSupportBase.s \
+obj/Packet.s \
+obj/PacketEndpointDevice.s \
+obj/PacketPool.s \
+obj/PacketPool_PacketCount.s \
+obj/PacketPool_PacketMaxDataLen.s \
+obj/PacketSet.s \
+obj/ParaQuickSort.s \
+obj/Path.s \
+obj/Place.s \
+obj/PlanInit.s \
+obj/PlanInit_CCore.s \
+obj/PlatformBase.s \
+obj/PosSub.s \
+obj/Print.s \
+obj/PrintAbort.s \
+obj/PrintAsyncFile.s \
+obj/PrintBase.s \
+obj/PrintBits.s \
+obj/PrintCon.s \
+obj/PrintError.s \
+obj/PrintPTPCon.s \
+obj/PrintProxy.s \
+obj/PrintSet.s \
+obj/PrintTime.s \
+obj/PrintTitle.s \
+obj/Printf.s \
+obj/PtrLen.s \
+obj/Quick.s \
+obj/QuickSort.s \
+obj/RBTreeBase.s \
+obj/RBTreeLink.s \
+obj/RBTreeUpLink.s \
+obj/RadixHeap.s \
+obj/Random.s \
+obj/ReadCon.s \
+obj/RedirectPTPCon.s \
+obj/RefArray.s \
+obj/RefPtr.s \
+obj/Replace.s \
+obj/ResSem.s \
+obj/Rot.s \
+obj/SHA.s \
+obj/SaveLoad.s \
+obj/ScanBit.s \
+obj/Sem.s \
+obj/ShortSort.s \
+obj/SimpleArray.s \
+obj/SingleHost.s \
+obj/Sort.s \
+obj/Space.s \
+obj/SpecialMemBase.s \
+obj/StartStop.s \
+obj/Starter.s \
+obj/StdioReadCon.s \
+obj/StrParse.s \
+obj/StrPrint.s \
+obj/String.s \
+obj/Swap.s \
+obj/SysAbort.s \
+obj/SysAsyncFile.s \
+obj/SysAsyncFileSystem.s \
+obj/SysAtomic.s \
+obj/SysCon.s \
+obj/SysCon_general.s \
+obj/SysError.s \
+obj/SysLog.s \
+obj/SysMemSpace.s \
+obj/SysPlanInit.s \
+obj/SysProp.s \
+obj/SysTime.s \
+obj/SysTlsSlot.s \
+obj/Task.s \
+obj/TaskContext.s \
+obj/TaskCore.s \
+obj/TaskInternal.s \
+obj/TaskList.s \
+obj/TaskMonitor.s \
+obj/TaskPriority.s \
+obj/TempArray.s \
+obj/TextLabel.s \
+obj/TextTools.s \
+obj/Tick.s \
+obj/Ticker.s \
+obj/TimeScope.s \
+obj/Timer.s \
+obj/TlsBuf.s \
+obj/TlsSlot.s \
+obj/ToMemBase.s \
+obj/Trace.s \
+obj/Tree.s \
+obj/TreeLink.s \
+obj/TreeUpLink.s \
+obj/Tuple.s \
+obj/UDPoint.s \
+obj/UIntFunc.s \
+obj/UIntMax.s \
+obj/UIntSat.s \
+obj/UIntSplit.s \
+obj/UtilFunc.s \
+obj/VIA_Rhine_III.s \
+obj/XPoint.s \
+obj/__std_init.s \
+obj/assert.s \
+obj/atexit.s \
+obj/stdio.s \
+obj/stdlib.s \
+obj/time.s \
+
+
+DEP_LIST = \
+obj/AES.dep \
+obj/Abort.dep \
+obj/AbortMsgFunc.dep \
+obj/AntiSem.dep \
+obj/Array.dep \
+obj/ArrayAlgo.dep \
+obj/ArrayBase.dep \
+obj/AsyncFile.dep \
+obj/AsyncFileToMem.dep \
+obj/Atomic.dep \
+obj/AtomicRefArray.dep \
+obj/AutoText.dep \
+obj/BlockCipher.dep \
+obj/Boot.dep \
+obj/Bridge.dep \
+obj/CBase.dep \
+obj/CDef.dep \
+obj/CPrintf.dep \
+obj/CScanf.dep \
+obj/CStdFile.dep \
+obj/CSysCon.dep \
+obj/CSysFile.dep \
+obj/CancelPacketList.dep \
+obj/CharProp.dep \
+obj/CheckPlatformBase.dep \
+obj/CheckedData.dep \
+obj/CmdInput.dep \
+obj/Cmp.dep \
+obj/Collector.dep \
+obj/Counters.dep \
+obj/Crc.dep \
+obj/DDLChar.dep \
+obj/DDLEngine.dep \
+obj/DDLEval.dep \
+obj/DDLMap.dep \
+obj/DDLMsgReport.dep \
+obj/DDLParser.dep \
+obj/DDLParserElement.dep \
+obj/DDLParserTable.dep \
+obj/DDLProcess.dep \
+obj/DDLSemantic.dep \
+obj/DDLStep.dep \
+obj/DDLToken.dep \
+obj/DDLTools.dep \
+obj/DDLTypeDesc.dep \
+obj/DDLTypes.dep \
+obj/DDLValue.dep \
+obj/DefaultTimeout.dep \
+obj/DefaultValue.dep \
+obj/DevInt.dep \
+obj/DevIntHandle.dep \
+obj/DevPCIHost.dep \
+obj/DevPlanInit.dep \
+obj/DevRW.dep \
+obj/DevSerial.dep \
+obj/DevSignal.dep \
+obj/DevTick.dep \
+obj/DevTimer.dep \
+obj/DynArray.dep \
+obj/EchoDevice.dep \
+obj/ElementPool.dep \
+obj/Elf.dep \
+obj/EthDevice.dep \
+obj/Event.dep \
+obj/Exception.dep \
+obj/ExceptionType.dep \
+obj/FPGA.dep \
+obj/FastMul.dep \
+obj/FastMutex.dep \
+obj/Fifo.dep \
+obj/Flash.dep \
+obj/FuncTask.dep \
+obj/Function.dep \
+obj/FunctorType.dep \
+obj/Gadget.dep \
+obj/GenFile.dep \
+obj/HFSBase.dep \
+obj/HFSClientDevice.dep \
+obj/HFSFileSystemDevice.dep \
+obj/Handle.dep \
+obj/HashFunction.dep \
+obj/HeapEngine.dep \
+obj/HeapSort.dep \
+obj/IXP465.dep \
+obj/IXP465.CP15.dep \
+obj/Init.dep \
+obj/IntPrint.dep \
+obj/Integer.dep \
+obj/IntegerFastAlgo.dep \
+obj/IntegerSlowAlgo.dep \
+obj/Job.dep \
+obj/Len.dep \
+obj/LineInput.dep \
+obj/List.dep \
+obj/Lock.dep \
+obj/Log.dep \
+obj/MSec.dep \
+obj/MemAllocGuard.dep \
+obj/MemBase.dep \
+obj/MemBase_general.dep \
+obj/MemSpaceHeap.dep \
+obj/MersenneTwister.dep \
+obj/Meta.dep \
+obj/Move.dep \
+obj/MultiEvent.dep \
+obj/MultiSem.dep \
+obj/Mutex.dep \
+obj/NanoIPDevice.dep \
+obj/NanoPacket.dep \
+obj/NegBool.dep \
+obj/NetBase.dep \
+obj/NoCopy.dep \
+obj/NoMutex.dep \
+obj/Nothing.dep \
+obj/ObjHost.dep \
+obj/OwnPtr.dep \
+obj/PCIBus.dep \
+obj/PCIBusRW.dep \
+obj/PTPBase.dep \
+obj/PTPBoot.dep \
+obj/PTPBootBase.dep \
+obj/PTPClientDevice.dep \
+obj/PTPConBase.dep \
+obj/PTPConDevice.dep \
+obj/PTPEchoTest.dep \
+obj/PTPExtra.dep \
+obj/PTPServerDevice.dep \
+obj/PTPSupport.dep \
+obj/PTPSupportBase.dep \
+obj/Packet.dep \
+obj/PacketEndpointDevice.dep \
+obj/PacketPool.dep \
+obj/PacketPool_PacketCount.dep \
+obj/PacketPool_PacketMaxDataLen.dep \
+obj/PacketSet.dep \
+obj/ParaQuickSort.dep \
+obj/Path.dep \
+obj/Place.dep \
+obj/PlanInit.dep \
+obj/PlanInit_CCore.dep \
+obj/PlatformBase.dep \
+obj/PosSub.dep \
+obj/Print.dep \
+obj/PrintAbort.dep \
+obj/PrintAsyncFile.dep \
+obj/PrintBase.dep \
+obj/PrintBits.dep \
+obj/PrintCon.dep \
+obj/PrintError.dep \
+obj/PrintPTPCon.dep \
+obj/PrintProxy.dep \
+obj/PrintSet.dep \
+obj/PrintTime.dep \
+obj/PrintTitle.dep \
+obj/Printf.dep \
+obj/PtrLen.dep \
+obj/Quick.dep \
+obj/QuickSort.dep \
+obj/RBTreeBase.dep \
+obj/RBTreeLink.dep \
+obj/RBTreeUpLink.dep \
+obj/RadixHeap.dep \
+obj/Random.dep \
+obj/ReadCon.dep \
+obj/RedirectPTPCon.dep \
+obj/RefArray.dep \
+obj/RefPtr.dep \
+obj/Replace.dep \
+obj/ResSem.dep \
+obj/Rot.dep \
+obj/SHA.dep \
+obj/SaveLoad.dep \
+obj/ScanBit.dep \
+obj/Sem.dep \
+obj/ShortSort.dep \
+obj/SimpleArray.dep \
+obj/SingleHost.dep \
+obj/Sort.dep \
+obj/Space.dep \
+obj/SpecialMemBase.dep \
+obj/StartStop.dep \
+obj/Starter.dep \
+obj/StdioReadCon.dep \
+obj/StrParse.dep \
+obj/StrPrint.dep \
+obj/String.dep \
+obj/Swap.dep \
+obj/SysAbort.dep \
+obj/SysAsyncFile.dep \
+obj/SysAsyncFileSystem.dep \
+obj/SysAtomic.dep \
+obj/SysCon.dep \
+obj/SysCon_general.dep \
+obj/SysError.dep \
+obj/SysLog.dep \
+obj/SysMemSpace.dep \
+obj/SysPlanInit.dep \
+obj/SysProp.dep \
+obj/SysTime.dep \
+obj/SysTlsSlot.dep \
+obj/Task.dep \
+obj/TaskContext.dep \
+obj/TaskCore.dep \
+obj/TaskInternal.dep \
+obj/TaskList.dep \
+obj/TaskMonitor.dep \
+obj/TaskPriority.dep \
+obj/TempArray.dep \
+obj/TextLabel.dep \
+obj/TextTools.dep \
+obj/Tick.dep \
+obj/Ticker.dep \
+obj/TimeScope.dep \
+obj/Timer.dep \
+obj/TlsBuf.dep \
+obj/TlsSlot.dep \
+obj/ToMemBase.dep \
+obj/Trace.dep \
+obj/Tree.dep \
+obj/TreeLink.dep \
+obj/TreeUpLink.dep \
+obj/Tuple.dep \
+obj/UDPoint.dep \
+obj/UIntFunc.dep \
+obj/UIntMax.dep \
+obj/UIntSat.dep \
+obj/UIntSplit.dep \
+obj/UtilFunc.dep \
+obj/VIA_Rhine_III.dep \
+obj/XPoint.dep \
+obj/__std_init.dep \
+obj/assert.dep \
+obj/atexit.dep \
+obj/stdio.dep \
+obj/stdlib.dep \
+obj/time.dep \
+
+
+ASM_OBJ_LIST = \
+obj/Boot.s.o \
+obj/BootFlash.s.o \
+obj/DevInt.s.o \
+obj/DevRW.s.o \
+obj/IXP465.s.o \
+obj/IXP465.CP15.s.o \
+obj/IntegerFastAlgo.s.o \
+obj/Quick.s.o \
+obj/SysAtomic.s.o \
+
+
+include $(RULES_FILE)
+
+
+obj/AES.o : ../../CCore/src/crypton/AES.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Abort.o : ../../XCore/CCore/src/Abort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AbortMsgFunc.o : ../../CCore/src/AbortMsgFunc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AntiSem.o : ../../XCore/CCore/src/task/AntiSem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Array.o : ../../CCore/src/Array.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ArrayAlgo.o : ../../CCore/src/array/ArrayAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ArrayBase.o : ../../CCore/src/array/ArrayBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AsyncFile.o : ../../CCore/src/AsyncFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AsyncFileToMem.o : ../../CCore/src/AsyncFileToMem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Atomic.o : ../../CCore/src/task/Atomic.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AtomicRefArray.o : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AutoText.o : ../../XCore/CCore/src/task/AutoText.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/BlockCipher.o : ../../CCore/src/crypton/BlockCipher.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Boot.o : ../../Target/IXDP465/CCore/src/Boot.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Bridge.o : ../../CCore/src/net/Bridge.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CBase.o : ../../Target/IXDP465/CCore/src/libc/CBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CDef.o : ../../XCore/CCore/src/libc/CDef.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CPrintf.o : ../../XCore/CCore/src/libc/CPrintf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CScanf.o : ../../XCore/CCore/src/libc/CScanf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CStdFile.o : ../../XCore/CCore/src/libc/CStdFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CSysCon.o : ../../XCore/CCore/src/libc/CSysCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CSysFile.o : ../../XCore/CCore/src/libc/CSysFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CancelPacketList.o : ../../CCore/src/CancelPacketList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CharProp.o : ../../CCore/src/CharProp.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CheckPlatformBase.o : ../../CCore/src/base/CheckPlatformBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CheckedData.o : ../../CCore/src/net/CheckedData.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CmdInput.o : ../../CCore/src/CmdInput.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Cmp.o : ../../CCore/src/Cmp.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Collector.o : ../../CCore/src/array/Collector.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Counters.o : ../../CCore/src/Counters.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Crc.o : ../../CCore/src/Crc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLChar.o : ../../CCore/src/ddl/DDLChar.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLEngine.o : ../../CCore/src/ddl/DDLEngine.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLEval.o : ../../CCore/src/ddl/DDLEval.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLMap.o : ../../CCore/src/ddl/DDLMap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLMsgReport.o : ../../CCore/src/ddl/DDLMsgReport.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLParser.o : ../../CCore/src/ddl/DDLParser.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLParserElement.o : ../../CCore/src/ddl/DDLParserElement.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLParserTable.o : ../../CCore/src/ddl/DDLParserTable.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLProcess.o : ../../CCore/src/ddl/DDLProcess.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLSemantic.o : ../../CCore/src/ddl/DDLSemantic.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLStep.o : ../../CCore/src/ddl/DDLStep.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLToken.o : ../../CCore/src/ddl/DDLToken.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLTools.o : ../../CCore/src/ddl/DDLTools.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLTypeDesc.o : ../../CCore/src/ddl/DDLTypeDesc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLTypes.o : ../../CCore/src/ddl/DDLTypes.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLValue.o : ../../CCore/src/ddl/DDLValue.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DefaultTimeout.o : ../../CCore/src/gadget/DefaultTimeout.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevInt.o : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevIntHandle.o : ../../Target/IXDP465/CCore/src/dev/DevIntHandle.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevPCIHost.o : ../../Target/IXDP465/CCore/src/dev/DevPCIHost.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevPlanInit.o : ../../Target/IXDP465/CCore/src/dev/DevPlanInit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevRW.o : ../../Target/IXDP465/CCore/src/dev/DevRW.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevSerial.o : ../../Target/IXDP465/CCore/src/dev/DevSerial.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevSignal.o : ../../Target/IXDP465/CCore/src/dev/DevSignal.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevTick.o : ../../Target/IXDP465/CCore/src/dev/DevTick.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevTimer.o : ../../Target/IXDP465/CCore/src/dev/DevTimer.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/EchoDevice.o : ../../CCore/src/net/EchoDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ElementPool.o : ../../CCore/src/ElementPool.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Elf.o : ../../CCore/src/Elf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/EthDevice.o : ../../CCore/src/net/EthDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Event.o : ../../XCore/CCore/src/task/Event.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Exception.o : ../../CCore/src/Exception.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ExceptionType.o : ../../CCore/src/gadget/ExceptionType.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FPGA.o : ../../Target/IXDP465/CCore/src/FPGA.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FastMul.o : ../../CCore/src/math/FastMul.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FastMutex.o : ../../XCore/CCore/src/task/FastMutex.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Fifo.o : ../../CCore/src/Fifo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Flash.o : ../../Target/IXDP465/CCore/src/Flash.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FuncTask.o : ../../CCore/src/task/FuncTask.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Function.o : ../../CCore/src/gadget/Function.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FunctorType.o : ../../CCore/src/FunctorType.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Gadget.o : ../../CCore/src/Gadget.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/GenFile.o : ../../CCore/src/GenFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/HFSBase.o : ../../CCore/src/net/HFSBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/HFSClientDevice.o : ../../CCore/src/net/HFSClientDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/HFSFileSystemDevice.o : ../../CCore/src/net/HFSFileSystemDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Handle.o : ../../CCore/src/gadget/Handle.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/HashFunction.o : ../../CCore/src/crypton/HashFunction.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/HeapEngine.o : ../../CCore/src/HeapEngine.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/HeapSort.o : ../../CCore/src/sort/HeapSort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IXP465.o : ../../Target/IXDP465/CCore/src/dev/IXP465.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IXP465.CP15.o : ../../Target/IXDP465/CCore/src/dev/IXP465.CP15.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Init.o : ../../CCore/src/gadget/Init.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntPrint.o : ../../CCore/src/printf/IntPrint.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Integer.o : ../../CCore/src/math/Integer.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntegerFastAlgo.o : ../../Target/IXDP465/CCore/src/math/IntegerFastAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntegerSlowAlgo.o : ../../CCore/src/math/IntegerSlowAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Job.o : ../../CCore/src/Job.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Len.o : ../../CCore/src/gadget/Len.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LineInput.o : ../../CCore/src/LineInput.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/List.o : ../../CCore/src/List.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Lock.o : ../../CCore/src/gadget/Lock.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Log.o : ../../CCore/src/Log.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MSec.o : ../../CCore/src/gadget/MSec.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MemAllocGuard.o : ../../CCore/src/MemAllocGuard.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MemBase.o : ../../XCore/CCore/src/MemBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MemBase_general.o : ../../CCore/src/MemBase_general.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MemSpaceHeap.o : ../../CCore/src/MemSpaceHeap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MersenneTwister.o : ../../CCore/src/MersenneTwister.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Meta.o : ../../CCore/src/gadget/Meta.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Move.o : ../../CCore/src/Move.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MultiEvent.o : ../../XCore/CCore/src/task/MultiEvent.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MultiSem.o : ../../XCore/CCore/src/task/MultiSem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Mutex.o : ../../XCore/CCore/src/task/Mutex.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NanoIPDevice.o : ../../CCore/src/net/NanoIPDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NanoPacket.o : ../../CCore/src/NanoPacket.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NegBool.o : ../../CCore/src/gadget/NegBool.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NetBase.o : ../../CCore/src/net/NetBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NoCopy.o : ../../CCore/src/gadget/NoCopy.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NoMutex.o : ../../CCore/src/task/NoMutex.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Nothing.o : ../../CCore/src/gadget/Nothing.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ObjHost.o : ../../CCore/src/ObjHost.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/OwnPtr.o : ../../CCore/src/OwnPtr.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PCIBus.o : ../../XCore/CCore/src/pci/PCIBus.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PCIBusRW.o : ../../Target/IXDP465/CCore/src/pci/PCIBusRW.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPBase.o : ../../CCore/src/net/PTPBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPBoot.o : ../../CCore/src/net/PTPBoot.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPBootBase.o : ../../CCore/src/net/PTPBootBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPClientDevice.o : ../../CCore/src/net/PTPClientDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPConBase.o : ../../CCore/src/net/PTPConBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPConDevice.o : ../../CCore/src/net/PTPConDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPEchoTest.o : ../../CCore/src/net/PTPEchoTest.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPExtra.o : ../../CCore/src/net/PTPExtra.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPServerDevice.o : ../../CCore/src/net/PTPServerDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPSupport.o : ../../CCore/src/net/PTPSupport.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPSupportBase.o : ../../CCore/src/net/PTPSupportBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Packet.o : ../../CCore/src/Packet.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PacketEndpointDevice.o : ../../CCore/src/net/PacketEndpointDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PacketPool.o : ../../CCore/src/PacketPool.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PacketPool_PacketCount.o : ../../CCore/src/PacketPool_PacketCount.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PacketPool_PacketMaxDataLen.o : ../../CCore/src/PacketPool_PacketMaxDataLen.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PacketSet.o : ../../CCore/src/PacketSet.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ParaQuickSort.o : ../../CCore/src/sort/ParaQuickSort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Path.o : ../../CCore/src/Path.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Place.o : ../../CCore/src/gadget/Place.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PlanInit.o : ../../CCore/src/PlanInit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PlanInit_CCore.o : ../../Target/IXDP465/CCore/src/PlanInit_CCore.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PlatformBase.o : ../../Target/IXDP465/CCore/src/base/PlatformBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PosSub.o : ../../CCore/src/gadget/PosSub.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Print.o : ../../XCore/CCore/src/Print.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintAbort.o : ../../CCore/src/PrintAbort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintAsyncFile.o : ../../CCore/src/print/PrintAsyncFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintBase.o : ../../CCore/src/printf/PrintBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintBits.o : ../../CCore/src/PrintBits.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintCon.o : ../../XCore/CCore/src/print/PrintCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintError.o : ../../CCore/src/PrintError.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintPTPCon.o : ../../CCore/src/print/PrintPTPCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintProxy.o : ../../CCore/src/printf/PrintProxy.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintSet.o : ../../CCore/src/PrintSet.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintTime.o : ../../CCore/src/PrintTime.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintTitle.o : ../../CCore/src/PrintTitle.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Printf.o : ../../CCore/src/Printf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PtrLen.o : ../../CCore/src/gadget/PtrLen.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Quick.o : ../../Target/IXDP465/CCore/src/base/Quick.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/QuickSort.o : ../../CCore/src/sort/QuickSort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RBTreeBase.o : ../../CCore/src/tree/RBTreeBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RBTreeLink.o : ../../CCore/src/tree/RBTreeLink.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RBTreeUpLink.o : ../../CCore/src/tree/RBTreeUpLink.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RadixHeap.o : ../../CCore/src/RadixHeap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Random.o : ../../CCore/src/Random.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ReadCon.o : ../../XCore/CCore/src/ReadCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RedirectPTPCon.o : ../../XCore/CCore/src/RedirectPTPCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RefArray.o : ../../CCore/src/array/RefArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RefPtr.o : ../../CCore/src/RefPtr.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Replace.o : ../../CCore/src/gadget/Replace.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ResSem.o : ../../XCore/CCore/src/task/ResSem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Rot.o : ../../CCore/src/crypton/Rot.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SHA.o : ../../CCore/src/crypton/SHA.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SaveLoad.o : ../../CCore/src/SaveLoad.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ScanBit.o : ../../CCore/src/ScanBit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Sem.o : ../../XCore/CCore/src/task/Sem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShortSort.o : ../../CCore/src/sort/ShortSort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SimpleArray.o : ../../CCore/src/array/SimpleArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SingleHost.o : ../../CCore/src/SingleHost.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Sort.o : ../../CCore/src/Sort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Space.o : ../../CCore/src/gadget/Space.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SpecialMemBase.o : ../../XCore/CCore/src/SpecialMemBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StartStop.o : ../../CCore/src/StartStop.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Starter.o : ../../CCore/src/Starter.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StdioReadCon.o : ../../XCore/CCore/src/StdioReadCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StrParse.o : ../../CCore/src/StrParse.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StrPrint.o : ../../CCore/src/printf/StrPrint.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/String.o : ../../CCore/src/String.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Swap.o : ../../CCore/src/Swap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysAbort.o : ../../Target/IXDP465/CCore/src/sys/SysAbort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysAsyncFile.o : ../../CCore/src/sys/SysAsyncFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysAsyncFileSystem.o : ../../CCore/src/sys/SysAsyncFileSystem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysAtomic.o : ../../Target/IXDP465/CCore/src/sys/SysAtomic.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysCon.o : ../../Target/IXDP465/CCore/src/sys/SysCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysCon_general.o : ../../XCore/CCore/src/sys/SysCon_general.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysError.o : ../../XCore/CCore/src/sys/SysError.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysLog.o : ../../XCore/CCore/src/sys/SysLog.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysMemSpace.o : ../../Target/IXDP465/CCore/src/sys/SysMemSpace.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysPlanInit.o : ../../Target/IXDP465/CCore/src/sys/SysPlanInit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysProp.o : ../../XCore/CCore/src/sys/SysProp.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysTime.o : ../../Target/IXDP465/CCore/src/sys/SysTime.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysTlsSlot.o : ../../XCore/CCore/src/sys/SysTlsSlot.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Task.o : ../../XCore/CCore/src/Task.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskContext.o : ../../Target/IXDP465/CCore/src/task/TaskContext.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskCore.o : ../../XCore/CCore/src/task/TaskCore.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskInternal.o : ../../XCore/CCore/src/task/TaskInternal.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskList.o : ../../XCore/CCore/src/task/TaskList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskMonitor.o : ../../XCore/CCore/src/task/TaskMonitor.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskPriority.o : ../../XCore/CCore/src/task/TaskPriority.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TempArray.o : ../../CCore/src/array/TempArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TextLabel.o : ../../CCore/src/TextLabel.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TextTools.o : ../../CCore/src/TextTools.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Tick.o : ../../XCore/CCore/src/task/Tick.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Ticker.o : ../../XCore/CCore/src/task/Ticker.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TimeScope.o : ../../CCore/src/TimeScope.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Timer.o : ../../CCore/src/Timer.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TlsBuf.o : ../../XCore/CCore/src/task/TlsBuf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TlsSlot.o : ../../CCore/src/TlsSlot.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ToMemBase.o : ../../CCore/src/ToMemBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Trace.o : ../../Target/IXDP465/CCore/src/Trace.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Tree.o : ../../CCore/src/Tree.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TreeLink.o : ../../CCore/src/tree/TreeLink.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TreeUpLink.o : ../../CCore/src/tree/TreeUpLink.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Tuple.o : ../../CCore/src/Tuple.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/UDPoint.o : ../../CCore/src/net/UDPoint.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/UIntFunc.o : ../../CCore/src/gadget/UIntFunc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/UIntMax.o : ../../CCore/src/gadget/UIntMax.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/UIntSat.o : ../../CCore/src/gadget/UIntSat.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/UIntSplit.o : ../../CCore/src/UIntSplit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/UtilFunc.o : ../../CCore/src/gadget/UtilFunc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/VIA_Rhine_III.o : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/XPoint.o : ../../CCore/src/net/XPoint.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/__std_init.o : ../../Target/IXDP465/CCore/src/libc/__std_init.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/assert.o : ../../XCore/CCore/src/libc/assert.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/atexit.o : ../../Target/IXDP465/CCore/src/libc/atexit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/stdio.o : ../../XCore/CCore/src/libc/stdio.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/stdlib.o : ../../XCore/CCore/src/libc/stdlib.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/time.o : ../../XCore/CCore/src/libc/time.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/AES.s : ../../CCore/src/crypton/AES.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Abort.s : ../../XCore/CCore/src/Abort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/AbortMsgFunc.s : ../../CCore/src/AbortMsgFunc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/AntiSem.s : ../../XCore/CCore/src/task/AntiSem.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Array.s : ../../CCore/src/Array.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ArrayAlgo.s : ../../CCore/src/array/ArrayAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ArrayBase.s : ../../CCore/src/array/ArrayBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/AsyncFile.s : ../../CCore/src/AsyncFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/AsyncFileToMem.s : ../../CCore/src/AsyncFileToMem.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Atomic.s : ../../CCore/src/task/Atomic.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/AtomicRefArray.s : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/AutoText.s : ../../XCore/CCore/src/task/AutoText.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/BlockCipher.s : ../../CCore/src/crypton/BlockCipher.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Boot.s : ../../Target/IXDP465/CCore/src/Boot.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Bridge.s : ../../CCore/src/net/Bridge.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CBase.s : ../../Target/IXDP465/CCore/src/libc/CBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CDef.s : ../../XCore/CCore/src/libc/CDef.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CPrintf.s : ../../XCore/CCore/src/libc/CPrintf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CScanf.s : ../../XCore/CCore/src/libc/CScanf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CStdFile.s : ../../XCore/CCore/src/libc/CStdFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CSysCon.s : ../../XCore/CCore/src/libc/CSysCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CSysFile.s : ../../XCore/CCore/src/libc/CSysFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CancelPacketList.s : ../../CCore/src/CancelPacketList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CharProp.s : ../../CCore/src/CharProp.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CheckPlatformBase.s : ../../CCore/src/base/CheckPlatformBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CheckedData.s : ../../CCore/src/net/CheckedData.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CmdInput.s : ../../CCore/src/CmdInput.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Cmp.s : ../../CCore/src/Cmp.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Collector.s : ../../CCore/src/array/Collector.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Counters.s : ../../CCore/src/Counters.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Crc.s : ../../CCore/src/Crc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLChar.s : ../../CCore/src/ddl/DDLChar.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLEngine.s : ../../CCore/src/ddl/DDLEngine.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLEval.s : ../../CCore/src/ddl/DDLEval.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLMap.s : ../../CCore/src/ddl/DDLMap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLMsgReport.s : ../../CCore/src/ddl/DDLMsgReport.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLParser.s : ../../CCore/src/ddl/DDLParser.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLParserElement.s : ../../CCore/src/ddl/DDLParserElement.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLParserTable.s : ../../CCore/src/ddl/DDLParserTable.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLProcess.s : ../../CCore/src/ddl/DDLProcess.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLSemantic.s : ../../CCore/src/ddl/DDLSemantic.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLStep.s : ../../CCore/src/ddl/DDLStep.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLToken.s : ../../CCore/src/ddl/DDLToken.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLTools.s : ../../CCore/src/ddl/DDLTools.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLTypeDesc.s : ../../CCore/src/ddl/DDLTypeDesc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLTypes.s : ../../CCore/src/ddl/DDLTypes.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDLValue.s : ../../CCore/src/ddl/DDLValue.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DefaultTimeout.s : ../../CCore/src/gadget/DefaultTimeout.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevInt.s : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevIntHandle.s : ../../Target/IXDP465/CCore/src/dev/DevIntHandle.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevPCIHost.s : ../../Target/IXDP465/CCore/src/dev/DevPCIHost.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevPlanInit.s : ../../Target/IXDP465/CCore/src/dev/DevPlanInit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevRW.s : ../../Target/IXDP465/CCore/src/dev/DevRW.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevSerial.s : ../../Target/IXDP465/CCore/src/dev/DevSerial.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevSignal.s : ../../Target/IXDP465/CCore/src/dev/DevSignal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevTick.s : ../../Target/IXDP465/CCore/src/dev/DevTick.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevTimer.s : ../../Target/IXDP465/CCore/src/dev/DevTimer.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/EchoDevice.s : ../../CCore/src/net/EchoDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ElementPool.s : ../../CCore/src/ElementPool.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Elf.s : ../../CCore/src/Elf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/EthDevice.s : ../../CCore/src/net/EthDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Event.s : ../../XCore/CCore/src/task/Event.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Exception.s : ../../CCore/src/Exception.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ExceptionType.s : ../../CCore/src/gadget/ExceptionType.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/FPGA.s : ../../Target/IXDP465/CCore/src/FPGA.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/FastMul.s : ../../CCore/src/math/FastMul.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/FastMutex.s : ../../XCore/CCore/src/task/FastMutex.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Fifo.s : ../../CCore/src/Fifo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Flash.s : ../../Target/IXDP465/CCore/src/Flash.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/FuncTask.s : ../../CCore/src/task/FuncTask.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Function.s : ../../CCore/src/gadget/Function.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/FunctorType.s : ../../CCore/src/FunctorType.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Gadget.s : ../../CCore/src/Gadget.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/GenFile.s : ../../CCore/src/GenFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/HFSBase.s : ../../CCore/src/net/HFSBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/HFSClientDevice.s : ../../CCore/src/net/HFSClientDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/HFSFileSystemDevice.s : ../../CCore/src/net/HFSFileSystemDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Handle.s : ../../CCore/src/gadget/Handle.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/HashFunction.s : ../../CCore/src/crypton/HashFunction.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/HeapEngine.s : ../../CCore/src/HeapEngine.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/HeapSort.s : ../../CCore/src/sort/HeapSort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/IXP465.s : ../../Target/IXDP465/CCore/src/dev/IXP465.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/IXP465.CP15.s : ../../Target/IXDP465/CCore/src/dev/IXP465.CP15.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Init.s : ../../CCore/src/gadget/Init.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/IntPrint.s : ../../CCore/src/printf/IntPrint.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Integer.s : ../../CCore/src/math/Integer.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/IntegerFastAlgo.s : ../../Target/IXDP465/CCore/src/math/IntegerFastAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/IntegerSlowAlgo.s : ../../CCore/src/math/IntegerSlowAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Job.s : ../../CCore/src/Job.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Len.s : ../../CCore/src/gadget/Len.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LineInput.s : ../../CCore/src/LineInput.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/List.s : ../../CCore/src/List.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Lock.s : ../../CCore/src/gadget/Lock.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Log.s : ../../CCore/src/Log.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MSec.s : ../../CCore/src/gadget/MSec.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MemAllocGuard.s : ../../CCore/src/MemAllocGuard.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MemBase.s : ../../XCore/CCore/src/MemBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MemBase_general.s : ../../CCore/src/MemBase_general.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MemSpaceHeap.s : ../../CCore/src/MemSpaceHeap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MersenneTwister.s : ../../CCore/src/MersenneTwister.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Meta.s : ../../CCore/src/gadget/Meta.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Move.s : ../../CCore/src/Move.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MultiEvent.s : ../../XCore/CCore/src/task/MultiEvent.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MultiSem.s : ../../XCore/CCore/src/task/MultiSem.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Mutex.s : ../../XCore/CCore/src/task/Mutex.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NanoIPDevice.s : ../../CCore/src/net/NanoIPDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NanoPacket.s : ../../CCore/src/NanoPacket.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NegBool.s : ../../CCore/src/gadget/NegBool.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NetBase.s : ../../CCore/src/net/NetBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NoCopy.s : ../../CCore/src/gadget/NoCopy.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NoMutex.s : ../../CCore/src/task/NoMutex.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Nothing.s : ../../CCore/src/gadget/Nothing.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ObjHost.s : ../../CCore/src/ObjHost.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/OwnPtr.s : ../../CCore/src/OwnPtr.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PCIBus.s : ../../XCore/CCore/src/pci/PCIBus.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PCIBusRW.s : ../../Target/IXDP465/CCore/src/pci/PCIBusRW.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPBase.s : ../../CCore/src/net/PTPBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPBoot.s : ../../CCore/src/net/PTPBoot.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPBootBase.s : ../../CCore/src/net/PTPBootBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPClientDevice.s : ../../CCore/src/net/PTPClientDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPConBase.s : ../../CCore/src/net/PTPConBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPConDevice.s : ../../CCore/src/net/PTPConDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPEchoTest.s : ../../CCore/src/net/PTPEchoTest.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPExtra.s : ../../CCore/src/net/PTPExtra.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPServerDevice.s : ../../CCore/src/net/PTPServerDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPSupport.s : ../../CCore/src/net/PTPSupport.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPSupportBase.s : ../../CCore/src/net/PTPSupportBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Packet.s : ../../CCore/src/Packet.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PacketEndpointDevice.s : ../../CCore/src/net/PacketEndpointDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PacketPool.s : ../../CCore/src/PacketPool.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PacketPool_PacketCount.s : ../../CCore/src/PacketPool_PacketCount.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PacketPool_PacketMaxDataLen.s : ../../CCore/src/PacketPool_PacketMaxDataLen.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PacketSet.s : ../../CCore/src/PacketSet.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ParaQuickSort.s : ../../CCore/src/sort/ParaQuickSort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Path.s : ../../CCore/src/Path.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Place.s : ../../CCore/src/gadget/Place.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PlanInit.s : ../../CCore/src/PlanInit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PlanInit_CCore.s : ../../Target/IXDP465/CCore/src/PlanInit_CCore.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PlatformBase.s : ../../Target/IXDP465/CCore/src/base/PlatformBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PosSub.s : ../../CCore/src/gadget/PosSub.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Print.s : ../../XCore/CCore/src/Print.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintAbort.s : ../../CCore/src/PrintAbort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintAsyncFile.s : ../../CCore/src/print/PrintAsyncFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintBase.s : ../../CCore/src/printf/PrintBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintBits.s : ../../CCore/src/PrintBits.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintCon.s : ../../XCore/CCore/src/print/PrintCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintError.s : ../../CCore/src/PrintError.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintPTPCon.s : ../../CCore/src/print/PrintPTPCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintProxy.s : ../../CCore/src/printf/PrintProxy.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintSet.s : ../../CCore/src/PrintSet.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintTime.s : ../../CCore/src/PrintTime.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PrintTitle.s : ../../CCore/src/PrintTitle.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Printf.s : ../../CCore/src/Printf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PtrLen.s : ../../CCore/src/gadget/PtrLen.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Quick.s : ../../Target/IXDP465/CCore/src/base/Quick.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/QuickSort.s : ../../CCore/src/sort/QuickSort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RBTreeBase.s : ../../CCore/src/tree/RBTreeBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RBTreeLink.s : ../../CCore/src/tree/RBTreeLink.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RBTreeUpLink.s : ../../CCore/src/tree/RBTreeUpLink.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RadixHeap.s : ../../CCore/src/RadixHeap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Random.s : ../../CCore/src/Random.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ReadCon.s : ../../XCore/CCore/src/ReadCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RedirectPTPCon.s : ../../XCore/CCore/src/RedirectPTPCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RefArray.s : ../../CCore/src/array/RefArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RefPtr.s : ../../CCore/src/RefPtr.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Replace.s : ../../CCore/src/gadget/Replace.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ResSem.s : ../../XCore/CCore/src/task/ResSem.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Rot.s : ../../CCore/src/crypton/Rot.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SHA.s : ../../CCore/src/crypton/SHA.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SaveLoad.s : ../../CCore/src/SaveLoad.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ScanBit.s : ../../CCore/src/ScanBit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Sem.s : ../../XCore/CCore/src/task/Sem.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShortSort.s : ../../CCore/src/sort/ShortSort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SimpleArray.s : ../../CCore/src/array/SimpleArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SingleHost.s : ../../CCore/src/SingleHost.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Sort.s : ../../CCore/src/Sort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Space.s : ../../CCore/src/gadget/Space.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SpecialMemBase.s : ../../XCore/CCore/src/SpecialMemBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/StartStop.s : ../../CCore/src/StartStop.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Starter.s : ../../CCore/src/Starter.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/StdioReadCon.s : ../../XCore/CCore/src/StdioReadCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/StrParse.s : ../../CCore/src/StrParse.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/StrPrint.s : ../../CCore/src/printf/StrPrint.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/String.s : ../../CCore/src/String.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Swap.s : ../../CCore/src/Swap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysAbort.s : ../../Target/IXDP465/CCore/src/sys/SysAbort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysAsyncFile.s : ../../CCore/src/sys/SysAsyncFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysAsyncFileSystem.s : ../../CCore/src/sys/SysAsyncFileSystem.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysAtomic.s : ../../Target/IXDP465/CCore/src/sys/SysAtomic.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysCon.s : ../../Target/IXDP465/CCore/src/sys/SysCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysCon_general.s : ../../XCore/CCore/src/sys/SysCon_general.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysError.s : ../../XCore/CCore/src/sys/SysError.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysLog.s : ../../XCore/CCore/src/sys/SysLog.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysMemSpace.s : ../../Target/IXDP465/CCore/src/sys/SysMemSpace.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysPlanInit.s : ../../Target/IXDP465/CCore/src/sys/SysPlanInit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysProp.s : ../../XCore/CCore/src/sys/SysProp.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysTime.s : ../../Target/IXDP465/CCore/src/sys/SysTime.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysTlsSlot.s : ../../XCore/CCore/src/sys/SysTlsSlot.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Task.s : ../../XCore/CCore/src/Task.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TaskContext.s : ../../Target/IXDP465/CCore/src/task/TaskContext.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TaskCore.s : ../../XCore/CCore/src/task/TaskCore.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TaskInternal.s : ../../XCore/CCore/src/task/TaskInternal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TaskList.s : ../../XCore/CCore/src/task/TaskList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TaskMonitor.s : ../../XCore/CCore/src/task/TaskMonitor.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TaskPriority.s : ../../XCore/CCore/src/task/TaskPriority.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TempArray.s : ../../CCore/src/array/TempArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TextLabel.s : ../../CCore/src/TextLabel.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TextTools.s : ../../CCore/src/TextTools.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Tick.s : ../../XCore/CCore/src/task/Tick.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Ticker.s : ../../XCore/CCore/src/task/Ticker.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TimeScope.s : ../../CCore/src/TimeScope.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Timer.s : ../../CCore/src/Timer.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TlsBuf.s : ../../XCore/CCore/src/task/TlsBuf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TlsSlot.s : ../../CCore/src/TlsSlot.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ToMemBase.s : ../../CCore/src/ToMemBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Trace.s : ../../Target/IXDP465/CCore/src/Trace.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Tree.s : ../../CCore/src/Tree.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TreeLink.s : ../../CCore/src/tree/TreeLink.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TreeUpLink.s : ../../CCore/src/tree/TreeUpLink.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Tuple.s : ../../CCore/src/Tuple.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/UDPoint.s : ../../CCore/src/net/UDPoint.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/UIntFunc.s : ../../CCore/src/gadget/UIntFunc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/UIntMax.s : ../../CCore/src/gadget/UIntMax.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/UIntSat.s : ../../CCore/src/gadget/UIntSat.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/UIntSplit.s : ../../CCore/src/UIntSplit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/UtilFunc.s : ../../CCore/src/gadget/UtilFunc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/VIA_Rhine_III.s : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/XPoint.s : ../../CCore/src/net/XPoint.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/__std_init.s : ../../Target/IXDP465/CCore/src/libc/__std_init.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/assert.s : ../../XCore/CCore/src/libc/assert.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/atexit.s : ../../Target/IXDP465/CCore/src/libc/atexit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/stdio.s : ../../XCore/CCore/src/libc/stdio.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/stdlib.s : ../../XCore/CCore/src/libc/stdlib.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/time.s : ../../XCore/CCore/src/libc/time.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/AES.dep : ../../CCore/src/crypton/AES.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AES.o $< -MF $@
+
+obj/Abort.dep : ../../XCore/CCore/src/Abort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Abort.o $< -MF $@
+
+obj/AbortMsgFunc.dep : ../../CCore/src/AbortMsgFunc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AbortMsgFunc.o $< -MF $@
+
+obj/AntiSem.dep : ../../XCore/CCore/src/task/AntiSem.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AntiSem.o $< -MF $@
+
+obj/Array.dep : ../../CCore/src/Array.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Array.o $< -MF $@
+
+obj/ArrayAlgo.dep : ../../CCore/src/array/ArrayAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ArrayAlgo.o $< -MF $@
+
+obj/ArrayBase.dep : ../../CCore/src/array/ArrayBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ArrayBase.o $< -MF $@
+
+obj/AsyncFile.dep : ../../CCore/src/AsyncFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AsyncFile.o $< -MF $@
+
+obj/AsyncFileToMem.dep : ../../CCore/src/AsyncFileToMem.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AsyncFileToMem.o $< -MF $@
+
+obj/Atomic.dep : ../../CCore/src/task/Atomic.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Atomic.o $< -MF $@
+
+obj/AtomicRefArray.dep : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AtomicRefArray.o $< -MF $@
+
+obj/AutoText.dep : ../../XCore/CCore/src/task/AutoText.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AutoText.o $< -MF $@
+
+obj/BlockCipher.dep : ../../CCore/src/crypton/BlockCipher.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BlockCipher.o $< -MF $@
+
+obj/Boot.dep : ../../Target/IXDP465/CCore/src/Boot.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Boot.o $< -MF $@
+
+obj/Bridge.dep : ../../CCore/src/net/Bridge.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Bridge.o $< -MF $@
+
+obj/CBase.dep : ../../Target/IXDP465/CCore/src/libc/CBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CBase.o $< -MF $@
+
+obj/CDef.dep : ../../XCore/CCore/src/libc/CDef.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CDef.o $< -MF $@
+
+obj/CPrintf.dep : ../../XCore/CCore/src/libc/CPrintf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CPrintf.o $< -MF $@
+
+obj/CScanf.dep : ../../XCore/CCore/src/libc/CScanf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CScanf.o $< -MF $@
+
+obj/CStdFile.dep : ../../XCore/CCore/src/libc/CStdFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CStdFile.o $< -MF $@
+
+obj/CSysCon.dep : ../../XCore/CCore/src/libc/CSysCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CSysCon.o $< -MF $@
+
+obj/CSysFile.dep : ../../XCore/CCore/src/libc/CSysFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CSysFile.o $< -MF $@
+
+obj/CancelPacketList.dep : ../../CCore/src/CancelPacketList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CancelPacketList.o $< -MF $@
+
+obj/CharProp.dep : ../../CCore/src/CharProp.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CharProp.o $< -MF $@
+
+obj/CheckPlatformBase.dep : ../../CCore/src/base/CheckPlatformBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CheckPlatformBase.o $< -MF $@
+
+obj/CheckedData.dep : ../../CCore/src/net/CheckedData.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CheckedData.o $< -MF $@
+
+obj/CmdInput.dep : ../../CCore/src/CmdInput.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CmdInput.o $< -MF $@
+
+obj/Cmp.dep : ../../CCore/src/Cmp.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Cmp.o $< -MF $@
+
+obj/Collector.dep : ../../CCore/src/array/Collector.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Collector.o $< -MF $@
+
+obj/Counters.dep : ../../CCore/src/Counters.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Counters.o $< -MF $@
+
+obj/Crc.dep : ../../CCore/src/Crc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Crc.o $< -MF $@
+
+obj/DDLChar.dep : ../../CCore/src/ddl/DDLChar.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLChar.o $< -MF $@
+
+obj/DDLEngine.dep : ../../CCore/src/ddl/DDLEngine.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLEngine.o $< -MF $@
+
+obj/DDLEval.dep : ../../CCore/src/ddl/DDLEval.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLEval.o $< -MF $@
+
+obj/DDLMap.dep : ../../CCore/src/ddl/DDLMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLMap.o $< -MF $@
+
+obj/DDLMsgReport.dep : ../../CCore/src/ddl/DDLMsgReport.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLMsgReport.o $< -MF $@
+
+obj/DDLParser.dep : ../../CCore/src/ddl/DDLParser.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLParser.o $< -MF $@
+
+obj/DDLParserElement.dep : ../../CCore/src/ddl/DDLParserElement.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLParserElement.o $< -MF $@
+
+obj/DDLParserTable.dep : ../../CCore/src/ddl/DDLParserTable.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLParserTable.o $< -MF $@
+
+obj/DDLProcess.dep : ../../CCore/src/ddl/DDLProcess.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLProcess.o $< -MF $@
+
+obj/DDLSemantic.dep : ../../CCore/src/ddl/DDLSemantic.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLSemantic.o $< -MF $@
+
+obj/DDLStep.dep : ../../CCore/src/ddl/DDLStep.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLStep.o $< -MF $@
+
+obj/DDLToken.dep : ../../CCore/src/ddl/DDLToken.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLToken.o $< -MF $@
+
+obj/DDLTools.dep : ../../CCore/src/ddl/DDLTools.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLTools.o $< -MF $@
+
+obj/DDLTypeDesc.dep : ../../CCore/src/ddl/DDLTypeDesc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLTypeDesc.o $< -MF $@
+
+obj/DDLTypes.dep : ../../CCore/src/ddl/DDLTypes.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLTypes.o $< -MF $@
+
+obj/DDLValue.dep : ../../CCore/src/ddl/DDLValue.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLValue.o $< -MF $@
+
+obj/DefaultTimeout.dep : ../../CCore/src/gadget/DefaultTimeout.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DefaultTimeout.o $< -MF $@
+
+obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DefaultValue.o $< -MF $@
+
+obj/DevInt.dep : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevInt.o $< -MF $@
+
+obj/DevIntHandle.dep : ../../Target/IXDP465/CCore/src/dev/DevIntHandle.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevIntHandle.o $< -MF $@
+
+obj/DevPCIHost.dep : ../../Target/IXDP465/CCore/src/dev/DevPCIHost.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevPCIHost.o $< -MF $@
+
+obj/DevPlanInit.dep : ../../Target/IXDP465/CCore/src/dev/DevPlanInit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevPlanInit.o $< -MF $@
+
+obj/DevRW.dep : ../../Target/IXDP465/CCore/src/dev/DevRW.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevRW.o $< -MF $@
+
+obj/DevSerial.dep : ../../Target/IXDP465/CCore/src/dev/DevSerial.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevSerial.o $< -MF $@
+
+obj/DevSignal.dep : ../../Target/IXDP465/CCore/src/dev/DevSignal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevSignal.o $< -MF $@
+
+obj/DevTick.dep : ../../Target/IXDP465/CCore/src/dev/DevTick.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTick.o $< -MF $@
+
+obj/DevTimer.dep : ../../Target/IXDP465/CCore/src/dev/DevTimer.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTimer.o $< -MF $@
+
+obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@
+
+obj/EchoDevice.dep : ../../CCore/src/net/EchoDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EchoDevice.o $< -MF $@
+
+obj/ElementPool.dep : ../../CCore/src/ElementPool.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ElementPool.o $< -MF $@
+
+obj/Elf.dep : ../../CCore/src/Elf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Elf.o $< -MF $@
+
+obj/EthDevice.dep : ../../CCore/src/net/EthDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EthDevice.o $< -MF $@
+
+obj/Event.dep : ../../XCore/CCore/src/task/Event.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Event.o $< -MF $@
+
+obj/Exception.dep : ../../CCore/src/Exception.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Exception.o $< -MF $@
+
+obj/ExceptionType.dep : ../../CCore/src/gadget/ExceptionType.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ExceptionType.o $< -MF $@
+
+obj/FPGA.dep : ../../Target/IXDP465/CCore/src/FPGA.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FPGA.o $< -MF $@
+
+obj/FastMul.dep : ../../CCore/src/math/FastMul.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FastMul.o $< -MF $@
+
+obj/FastMutex.dep : ../../XCore/CCore/src/task/FastMutex.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FastMutex.o $< -MF $@
+
+obj/Fifo.dep : ../../CCore/src/Fifo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Fifo.o $< -MF $@
+
+obj/Flash.dep : ../../Target/IXDP465/CCore/src/Flash.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Flash.o $< -MF $@
+
+obj/FuncTask.dep : ../../CCore/src/task/FuncTask.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FuncTask.o $< -MF $@
+
+obj/Function.dep : ../../CCore/src/gadget/Function.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Function.o $< -MF $@
+
+obj/FunctorType.dep : ../../CCore/src/FunctorType.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FunctorType.o $< -MF $@
+
+obj/Gadget.dep : ../../CCore/src/Gadget.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Gadget.o $< -MF $@
+
+obj/GenFile.dep : ../../CCore/src/GenFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/GenFile.o $< -MF $@
+
+obj/HFSBase.dep : ../../CCore/src/net/HFSBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HFSBase.o $< -MF $@
+
+obj/HFSClientDevice.dep : ../../CCore/src/net/HFSClientDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HFSClientDevice.o $< -MF $@
+
+obj/HFSFileSystemDevice.dep : ../../CCore/src/net/HFSFileSystemDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HFSFileSystemDevice.o $< -MF $@
+
+obj/Handle.dep : ../../CCore/src/gadget/Handle.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Handle.o $< -MF $@
+
+obj/HashFunction.dep : ../../CCore/src/crypton/HashFunction.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HashFunction.o $< -MF $@
+
+obj/HeapEngine.dep : ../../CCore/src/HeapEngine.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HeapEngine.o $< -MF $@
+
+obj/HeapSort.dep : ../../CCore/src/sort/HeapSort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HeapSort.o $< -MF $@
+
+obj/IXP465.dep : ../../Target/IXDP465/CCore/src/dev/IXP465.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IXP465.o $< -MF $@
+
+obj/IXP465.CP15.dep : ../../Target/IXDP465/CCore/src/dev/IXP465.CP15.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IXP465.CP15.o $< -MF $@
+
+obj/Init.dep : ../../CCore/src/gadget/Init.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Init.o $< -MF $@
+
+obj/IntPrint.dep : ../../CCore/src/printf/IntPrint.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntPrint.o $< -MF $@
+
+obj/Integer.dep : ../../CCore/src/math/Integer.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Integer.o $< -MF $@
+
+obj/IntegerFastAlgo.dep : ../../Target/IXDP465/CCore/src/math/IntegerFastAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntegerFastAlgo.o $< -MF $@
+
+obj/IntegerSlowAlgo.dep : ../../CCore/src/math/IntegerSlowAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntegerSlowAlgo.o $< -MF $@
+
+obj/Job.dep : ../../CCore/src/Job.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Job.o $< -MF $@
+
+obj/Len.dep : ../../CCore/src/gadget/Len.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Len.o $< -MF $@
+
+obj/LineInput.dep : ../../CCore/src/LineInput.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LineInput.o $< -MF $@
+
+obj/List.dep : ../../CCore/src/List.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/List.o $< -MF $@
+
+obj/Lock.dep : ../../CCore/src/gadget/Lock.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Lock.o $< -MF $@
+
+obj/Log.dep : ../../CCore/src/Log.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Log.o $< -MF $@
+
+obj/MSec.dep : ../../CCore/src/gadget/MSec.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MSec.o $< -MF $@
+
+obj/MemAllocGuard.dep : ../../CCore/src/MemAllocGuard.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MemAllocGuard.o $< -MF $@
+
+obj/MemBase.dep : ../../XCore/CCore/src/MemBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MemBase.o $< -MF $@
+
+obj/MemBase_general.dep : ../../CCore/src/MemBase_general.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MemBase_general.o $< -MF $@
+
+obj/MemSpaceHeap.dep : ../../CCore/src/MemSpaceHeap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MemSpaceHeap.o $< -MF $@
+
+obj/MersenneTwister.dep : ../../CCore/src/MersenneTwister.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MersenneTwister.o $< -MF $@
+
+obj/Meta.dep : ../../CCore/src/gadget/Meta.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Meta.o $< -MF $@
+
+obj/Move.dep : ../../CCore/src/Move.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Move.o $< -MF $@
+
+obj/MultiEvent.dep : ../../XCore/CCore/src/task/MultiEvent.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MultiEvent.o $< -MF $@
+
+obj/MultiSem.dep : ../../XCore/CCore/src/task/MultiSem.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MultiSem.o $< -MF $@
+
+obj/Mutex.dep : ../../XCore/CCore/src/task/Mutex.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Mutex.o $< -MF $@
+
+obj/NanoIPDevice.dep : ../../CCore/src/net/NanoIPDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NanoIPDevice.o $< -MF $@
+
+obj/NanoPacket.dep : ../../CCore/src/NanoPacket.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NanoPacket.o $< -MF $@
+
+obj/NegBool.dep : ../../CCore/src/gadget/NegBool.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NegBool.o $< -MF $@
+
+obj/NetBase.dep : ../../CCore/src/net/NetBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NetBase.o $< -MF $@
+
+obj/NoCopy.dep : ../../CCore/src/gadget/NoCopy.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NoCopy.o $< -MF $@
+
+obj/NoMutex.dep : ../../CCore/src/task/NoMutex.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NoMutex.o $< -MF $@
+
+obj/Nothing.dep : ../../CCore/src/gadget/Nothing.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Nothing.o $< -MF $@
+
+obj/ObjHost.dep : ../../CCore/src/ObjHost.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ObjHost.o $< -MF $@
+
+obj/OwnPtr.dep : ../../CCore/src/OwnPtr.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/OwnPtr.o $< -MF $@
+
+obj/PCIBus.dep : ../../XCore/CCore/src/pci/PCIBus.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PCIBus.o $< -MF $@
+
+obj/PCIBusRW.dep : ../../Target/IXDP465/CCore/src/pci/PCIBusRW.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PCIBusRW.o $< -MF $@
+
+obj/PTPBase.dep : ../../CCore/src/net/PTPBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPBase.o $< -MF $@
+
+obj/PTPBoot.dep : ../../CCore/src/net/PTPBoot.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPBoot.o $< -MF $@
+
+obj/PTPBootBase.dep : ../../CCore/src/net/PTPBootBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPBootBase.o $< -MF $@
+
+obj/PTPClientDevice.dep : ../../CCore/src/net/PTPClientDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPClientDevice.o $< -MF $@
+
+obj/PTPConBase.dep : ../../CCore/src/net/PTPConBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPConBase.o $< -MF $@
+
+obj/PTPConDevice.dep : ../../CCore/src/net/PTPConDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPConDevice.o $< -MF $@
+
+obj/PTPEchoTest.dep : ../../CCore/src/net/PTPEchoTest.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPEchoTest.o $< -MF $@
+
+obj/PTPExtra.dep : ../../CCore/src/net/PTPExtra.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPExtra.o $< -MF $@
+
+obj/PTPServerDevice.dep : ../../CCore/src/net/PTPServerDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPServerDevice.o $< -MF $@
+
+obj/PTPSupport.dep : ../../CCore/src/net/PTPSupport.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPSupport.o $< -MF $@
+
+obj/PTPSupportBase.dep : ../../CCore/src/net/PTPSupportBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPSupportBase.o $< -MF $@
+
+obj/Packet.dep : ../../CCore/src/Packet.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Packet.o $< -MF $@
+
+obj/PacketEndpointDevice.dep : ../../CCore/src/net/PacketEndpointDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PacketEndpointDevice.o $< -MF $@
+
+obj/PacketPool.dep : ../../CCore/src/PacketPool.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PacketPool.o $< -MF $@
+
+obj/PacketPool_PacketCount.dep : ../../CCore/src/PacketPool_PacketCount.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PacketPool_PacketCount.o $< -MF $@
+
+obj/PacketPool_PacketMaxDataLen.dep : ../../CCore/src/PacketPool_PacketMaxDataLen.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PacketPool_PacketMaxDataLen.o $< -MF $@
+
+obj/PacketSet.dep : ../../CCore/src/PacketSet.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PacketSet.o $< -MF $@
+
+obj/ParaQuickSort.dep : ../../CCore/src/sort/ParaQuickSort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ParaQuickSort.o $< -MF $@
+
+obj/Path.dep : ../../CCore/src/Path.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Path.o $< -MF $@
+
+obj/Place.dep : ../../CCore/src/gadget/Place.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Place.o $< -MF $@
+
+obj/PlanInit.dep : ../../CCore/src/PlanInit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlanInit.o $< -MF $@
+
+obj/PlanInit_CCore.dep : ../../Target/IXDP465/CCore/src/PlanInit_CCore.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlanInit_CCore.o $< -MF $@
+
+obj/PlatformBase.dep : ../../Target/IXDP465/CCore/src/base/PlatformBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlatformBase.o $< -MF $@
+
+obj/PosSub.dep : ../../CCore/src/gadget/PosSub.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PosSub.o $< -MF $@
+
+obj/Print.dep : ../../XCore/CCore/src/Print.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Print.o $< -MF $@
+
+obj/PrintAbort.dep : ../../CCore/src/PrintAbort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintAbort.o $< -MF $@
+
+obj/PrintAsyncFile.dep : ../../CCore/src/print/PrintAsyncFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintAsyncFile.o $< -MF $@
+
+obj/PrintBase.dep : ../../CCore/src/printf/PrintBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintBase.o $< -MF $@
+
+obj/PrintBits.dep : ../../CCore/src/PrintBits.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintBits.o $< -MF $@
+
+obj/PrintCon.dep : ../../XCore/CCore/src/print/PrintCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintCon.o $< -MF $@
+
+obj/PrintError.dep : ../../CCore/src/PrintError.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintError.o $< -MF $@
+
+obj/PrintPTPCon.dep : ../../CCore/src/print/PrintPTPCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintPTPCon.o $< -MF $@
+
+obj/PrintProxy.dep : ../../CCore/src/printf/PrintProxy.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintProxy.o $< -MF $@
+
+obj/PrintSet.dep : ../../CCore/src/PrintSet.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintSet.o $< -MF $@
+
+obj/PrintTime.dep : ../../CCore/src/PrintTime.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintTime.o $< -MF $@
+
+obj/PrintTitle.dep : ../../CCore/src/PrintTitle.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintTitle.o $< -MF $@
+
+obj/Printf.dep : ../../CCore/src/Printf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Printf.o $< -MF $@
+
+obj/PtrLen.dep : ../../CCore/src/gadget/PtrLen.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PtrLen.o $< -MF $@
+
+obj/Quick.dep : ../../Target/IXDP465/CCore/src/base/Quick.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Quick.o $< -MF $@
+
+obj/QuickSort.dep : ../../CCore/src/sort/QuickSort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/QuickSort.o $< -MF $@
+
+obj/RBTreeBase.dep : ../../CCore/src/tree/RBTreeBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RBTreeBase.o $< -MF $@
+
+obj/RBTreeLink.dep : ../../CCore/src/tree/RBTreeLink.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RBTreeLink.o $< -MF $@
+
+obj/RBTreeUpLink.dep : ../../CCore/src/tree/RBTreeUpLink.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RBTreeUpLink.o $< -MF $@
+
+obj/RadixHeap.dep : ../../CCore/src/RadixHeap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RadixHeap.o $< -MF $@
+
+obj/Random.dep : ../../CCore/src/Random.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Random.o $< -MF $@
+
+obj/ReadCon.dep : ../../XCore/CCore/src/ReadCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ReadCon.o $< -MF $@
+
+obj/RedirectPTPCon.dep : ../../XCore/CCore/src/RedirectPTPCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RedirectPTPCon.o $< -MF $@
+
+obj/RefArray.dep : ../../CCore/src/array/RefArray.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RefArray.o $< -MF $@
+
+obj/RefPtr.dep : ../../CCore/src/RefPtr.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RefPtr.o $< -MF $@
+
+obj/Replace.dep : ../../CCore/src/gadget/Replace.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Replace.o $< -MF $@
+
+obj/ResSem.dep : ../../XCore/CCore/src/task/ResSem.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ResSem.o $< -MF $@
+
+obj/Rot.dep : ../../CCore/src/crypton/Rot.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Rot.o $< -MF $@
+
+obj/SHA.dep : ../../CCore/src/crypton/SHA.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SHA.o $< -MF $@
+
+obj/SaveLoad.dep : ../../CCore/src/SaveLoad.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SaveLoad.o $< -MF $@
+
+obj/ScanBit.dep : ../../CCore/src/ScanBit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ScanBit.o $< -MF $@
+
+obj/Sem.dep : ../../XCore/CCore/src/task/Sem.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sem.o $< -MF $@
+
+obj/ShortSort.dep : ../../CCore/src/sort/ShortSort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShortSort.o $< -MF $@
+
+obj/SimpleArray.dep : ../../CCore/src/array/SimpleArray.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SimpleArray.o $< -MF $@
+
+obj/SingleHost.dep : ../../CCore/src/SingleHost.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleHost.o $< -MF $@
+
+obj/Sort.dep : ../../CCore/src/Sort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sort.o $< -MF $@
+
+obj/Space.dep : ../../CCore/src/gadget/Space.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Space.o $< -MF $@
+
+obj/SpecialMemBase.dep : ../../XCore/CCore/src/SpecialMemBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SpecialMemBase.o $< -MF $@
+
+obj/StartStop.dep : ../../CCore/src/StartStop.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StartStop.o $< -MF $@
+
+obj/Starter.dep : ../../CCore/src/Starter.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Starter.o $< -MF $@
+
+obj/StdioReadCon.dep : ../../XCore/CCore/src/StdioReadCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StdioReadCon.o $< -MF $@
+
+obj/StrParse.dep : ../../CCore/src/StrParse.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StrParse.o $< -MF $@
+
+obj/StrPrint.dep : ../../CCore/src/printf/StrPrint.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StrPrint.o $< -MF $@
+
+obj/String.dep : ../../CCore/src/String.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/String.o $< -MF $@
+
+obj/Swap.dep : ../../CCore/src/Swap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Swap.o $< -MF $@
+
+obj/SysAbort.dep : ../../Target/IXDP465/CCore/src/sys/SysAbort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysAbort.o $< -MF $@
+
+obj/SysAsyncFile.dep : ../../CCore/src/sys/SysAsyncFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysAsyncFile.o $< -MF $@
+
+obj/SysAsyncFileSystem.dep : ../../CCore/src/sys/SysAsyncFileSystem.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysAsyncFileSystem.o $< -MF $@
+
+obj/SysAtomic.dep : ../../Target/IXDP465/CCore/src/sys/SysAtomic.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysAtomic.o $< -MF $@
+
+obj/SysCon.dep : ../../Target/IXDP465/CCore/src/sys/SysCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysCon.o $< -MF $@
+
+obj/SysCon_general.dep : ../../XCore/CCore/src/sys/SysCon_general.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysCon_general.o $< -MF $@
+
+obj/SysError.dep : ../../XCore/CCore/src/sys/SysError.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysError.o $< -MF $@
+
+obj/SysLog.dep : ../../XCore/CCore/src/sys/SysLog.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysLog.o $< -MF $@
+
+obj/SysMemSpace.dep : ../../Target/IXDP465/CCore/src/sys/SysMemSpace.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysMemSpace.o $< -MF $@
+
+obj/SysPlanInit.dep : ../../Target/IXDP465/CCore/src/sys/SysPlanInit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysPlanInit.o $< -MF $@
+
+obj/SysProp.dep : ../../XCore/CCore/src/sys/SysProp.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysProp.o $< -MF $@
+
+obj/SysTime.dep : ../../Target/IXDP465/CCore/src/sys/SysTime.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysTime.o $< -MF $@
+
+obj/SysTlsSlot.dep : ../../XCore/CCore/src/sys/SysTlsSlot.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysTlsSlot.o $< -MF $@
+
+obj/Task.dep : ../../XCore/CCore/src/Task.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Task.o $< -MF $@
+
+obj/TaskContext.dep : ../../Target/IXDP465/CCore/src/task/TaskContext.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskContext.o $< -MF $@
+
+obj/TaskCore.dep : ../../XCore/CCore/src/task/TaskCore.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskCore.o $< -MF $@
+
+obj/TaskInternal.dep : ../../XCore/CCore/src/task/TaskInternal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskInternal.o $< -MF $@
+
+obj/TaskList.dep : ../../XCore/CCore/src/task/TaskList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskList.o $< -MF $@
+
+obj/TaskMonitor.dep : ../../XCore/CCore/src/task/TaskMonitor.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskMonitor.o $< -MF $@
+
+obj/TaskPriority.dep : ../../XCore/CCore/src/task/TaskPriority.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskPriority.o $< -MF $@
+
+obj/TempArray.dep : ../../CCore/src/array/TempArray.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TempArray.o $< -MF $@
+
+obj/TextLabel.dep : ../../CCore/src/TextLabel.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TextLabel.o $< -MF $@
+
+obj/TextTools.dep : ../../CCore/src/TextTools.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TextTools.o $< -MF $@
+
+obj/Tick.dep : ../../XCore/CCore/src/task/Tick.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tick.o $< -MF $@
+
+obj/Ticker.dep : ../../XCore/CCore/src/task/Ticker.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Ticker.o $< -MF $@
+
+obj/TimeScope.dep : ../../CCore/src/TimeScope.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TimeScope.o $< -MF $@
+
+obj/Timer.dep : ../../CCore/src/Timer.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Timer.o $< -MF $@
+
+obj/TlsBuf.dep : ../../XCore/CCore/src/task/TlsBuf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TlsBuf.o $< -MF $@
+
+obj/TlsSlot.dep : ../../CCore/src/TlsSlot.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TlsSlot.o $< -MF $@
+
+obj/ToMemBase.dep : ../../CCore/src/ToMemBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ToMemBase.o $< -MF $@
+
+obj/Trace.dep : ../../Target/IXDP465/CCore/src/Trace.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Trace.o $< -MF $@
+
+obj/Tree.dep : ../../CCore/src/Tree.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tree.o $< -MF $@
+
+obj/TreeLink.dep : ../../CCore/src/tree/TreeLink.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TreeLink.o $< -MF $@
+
+obj/TreeUpLink.dep : ../../CCore/src/tree/TreeUpLink.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TreeUpLink.o $< -MF $@
+
+obj/Tuple.dep : ../../CCore/src/Tuple.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tuple.o $< -MF $@
+
+obj/UDPoint.dep : ../../CCore/src/net/UDPoint.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UDPoint.o $< -MF $@
+
+obj/UIntFunc.dep : ../../CCore/src/gadget/UIntFunc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UIntFunc.o $< -MF $@
+
+obj/UIntMax.dep : ../../CCore/src/gadget/UIntMax.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UIntMax.o $< -MF $@
+
+obj/UIntSat.dep : ../../CCore/src/gadget/UIntSat.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UIntSat.o $< -MF $@
+
+obj/UIntSplit.dep : ../../CCore/src/UIntSplit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UIntSplit.o $< -MF $@
+
+obj/UtilFunc.dep : ../../CCore/src/gadget/UtilFunc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UtilFunc.o $< -MF $@
+
+obj/VIA_Rhine_III.dep : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VIA_Rhine_III.o $< -MF $@
+
+obj/XPoint.dep : ../../CCore/src/net/XPoint.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/XPoint.o $< -MF $@
+
+obj/__std_init.dep : ../../Target/IXDP465/CCore/src/libc/__std_init.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/__std_init.o $< -MF $@
+
+obj/assert.dep : ../../XCore/CCore/src/libc/assert.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/assert.o $< -MF $@
+
+obj/atexit.dep : ../../Target/IXDP465/CCore/src/libc/atexit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/atexit.o $< -MF $@
+
+obj/stdio.dep : ../../XCore/CCore/src/libc/stdio.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/stdio.o $< -MF $@
+
+obj/stdlib.dep : ../../XCore/CCore/src/libc/stdlib.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/stdlib.o $< -MF $@
+
+obj/time.dep : ../../XCore/CCore/src/libc/time.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/time.o $< -MF $@
+
+
+
+obj/Boot.s.o : ../../Target/IXDP465/CCore/src/Boot.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/BootFlash.s.o : ../../Target/IXDP465/CCore/src/BootFlash.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/DevInt.s.o : ../../Target/IXDP465/CCore/src/dev/DevInt.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/DevRW.s.o : ../../Target/IXDP465/CCore/src/dev/DevRW.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/IXP465.s.o : ../../Target/IXDP465/CCore/src/dev/IXP465.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/IXP465.CP15.s.o : ../../Target/IXDP465/CCore/src/dev/IXP465.CP15.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/IntegerFastAlgo.s.o : ../../Target/IXDP465/CCore/src/math/IntegerFastAlgo.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/Quick.s.o : ../../Target/IXDP465/CCore/src/base/Quick.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/SysAtomic.s.o : ../../Target/IXDP465/CCore/src/sys/SysAtomic.s
+	$(AS) $(ASOPT) $< -o $@
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+

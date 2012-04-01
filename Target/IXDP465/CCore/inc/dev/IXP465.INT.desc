@@ -1,0 +1,131 @@
+/* IXP465.INT.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: Target/IXDP465
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg Status : 32 
+ {
+  NPE_A   : .
+  NPE_B   : .
+  NPE_C   : .
+  QMLO    : .
+  
+  QMHI    : .
+  T0      : .
+  GPIO0   : .
+  GPIO1   : .
+  
+  PCI     : .
+  PCI_DMA1 : .
+  PCI_DMA2 : .
+  T1      : .
+  
+  USBDev  : .
+  UART1   : .
+  TS      : .
+  UART0   : .
+  
+  WD      : .
+  APB_PMU  : .
+  CPU_PMU  : .
+  GPIO2   : .
+  
+  GPIO3   : .
+  GPIO4   : .
+  GPIO5   : .
+  GPIO6   : .
+  
+  GPIO7   : .
+  GPIO8   : .
+  GPIO9   : .
+  GPIO10  : .
+  
+  GPIO11  : .
+  GPIO12  : .
+  SWI0    : .
+  SWI1    : .
+ }
+
+reg IRQHiPriority : 32 {}
+
+reg FIQHiPriority : 32 {}
+
+reg Status2 : 32 
+ {
+  USBHost : .
+  I2C     : .
+  SSP     : .
+  TSYNC   : .
+  
+  EAU     : .
+  SHA     : .
+  
+  SWCP    : 26
+  
+  QMERR   : 28
+  MCU     : .
+  EXP     : .
+ }
+ 
+reg Priority : 32
+ {
+  Pri_NPE_A : .+3
+  Pri_NPE_B : .+3
+  Pri_NPE_C : .+3
+  Pri_QMLO  : .+3
+  
+  Pri_QMHI  : .+3
+  Pri_T0    : .+3
+  Pri_GPIO0 : .+3
+  Pri_GPIO1 : .+3
+ }
+ 
+reg HiPriorityEnable : 32
+ {
+  USBHost : .
+  I2C     : .
+  SSP     : .
+  TSYNC   : .
+  
+  EAU     : .
+  SHA     : .
+  
+  SWCP    : 26
+  
+  QMERR   : 28
+  MCU     : .
+  EXP     : .
+ }
+
+bar INTBar : address
+ {
+  Status         = . RO
+  Enable         = .    as Status
+  Select         = .    as Status // 0: IRQ, 1: FIQ 
+  IRQStatus      = . RO as Status // Status & Enable & ~Select
+  FIQStatus      = . RO as Status // Status & Enable & Select
+  
+  Priority       = .    // set pri for int 0-7 , 3 bits
+  
+  IRQHiPriority  = . RO // (int_num+1)*4
+  FIQHiPriority  = . RO // (int_num+1)*4
+  
+  Status2        = . RO
+  Enable2        = .    as Status2
+  Select2        = .    as Status2 // 0: IRQ, 1: FIQ 
+  IRQStatus2     = . RO as Status2 // Status2 & Enable2 & ~Select2
+  FIQStatus2     = . RO as Status2 // Status2 & Enable2 & Select2
+  
+  HiPriorityEnable = .  // set hi priority for int 32-63
+ }
+ 

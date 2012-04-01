@@ -1,0 +1,44 @@
+/* IXP465.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: Target/IXDP465
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg CPUStatus : 32
+ {
+  // control
+ 
+  Mode : .+5
+   {
+    User  = 10000b
+    Svr   = 10011b
+    
+    FIQ   = 10001b
+    IRQ   = 10010b
+    
+    Abort = 10111b
+    Undef = 11011b
+    Sys   = 11111b
+   }
+   
+  T    : .
+  F    : .
+  I    : .
+  
+  // flags
+  
+  Q    : 27
+  V    : .
+  C    : .
+  Z    : .
+  N    : .
+ }

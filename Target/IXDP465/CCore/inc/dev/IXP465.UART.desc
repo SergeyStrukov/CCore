@@ -1,0 +1,186 @@
+/* IXP465.UART.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: Target/IXDP465
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg Rx : 32
+ {
+  Byte : .+8
+ }
+
+reg Tx : 32
+ {
+  Byte : .+8
+ }
+
+reg IntEnable : 32
+ {
+  Rx          : .
+  Tx          : .
+  RxError     : .
+  ModemStatus : .
+  
+  RxTO        : .
+  *           : .
+  Unit        : .
+ }
+ 
+reg DivLo : 32
+ {
+  Div : .+8
+ }
+ 
+reg DivHi : 32
+ {
+  Div : .+8
+ }
+ 
+reg IntStatus : 32
+ {
+  NoInt      : .
+  
+  Src        : .+3
+   {
+    ModemStatus = 000b // read ModemStatus to clear
+    Tx          = 001b // write Tx or read IntStatus
+    Rx          = 010b // read Rx
+    RxError     = 011b // read LineStatus
+    TO          = 100b // read Rx
+   }
+   
+  *          : .+2
+
+  FIFOStatus : .+2
+   {
+    NoFIFO = 00b
+    FIFO   = 11b
+   }
+ }
+ 
+reg FIFOControl : 32
+ {
+  Enable       : .
+  ResetRxFIFO  : .
+  ResetTxFIFO  : .
+  
+  *            : .+3
+  
+  RxLevel      : .+2
+   {
+    Level1  = 00b
+    Level8  = 01b
+    Level16 = 10b
+    Level32 = 11b
+   }
+ }
+ 
+reg LineControl : 32
+ {
+  Bits         : .+2
+   {
+    Bit5 = 00b
+    Bit6 = 01b
+    Bit7 = 10b
+    Bit8 = 11b
+   }
+  
+  StopBits     : .+1
+   {
+    Bit1 = 0
+    Bit2 = 1
+   }                                 
+                                    
+  ParityBits   : .+1
+   {
+    Bit0 = 0
+    Bit1 = 1
+   }                                 
+                                    
+  ParityType   : .+1
+   {
+    Odd  = 0
+    Even = 1
+   }
+                                    
+  StickyParity : .
+  Break        : .
+  DivAccess    : .
+ }
+ 
+reg ModemControl : 32
+ {
+  DTR  : . // LOOP: -> DSR
+  RTS  : . // LOOP: -> CTS
+  OUT1 : . // LOOP: -> RI
+  
+  OUT2 : . // LOOP: -> DCD
+           // !LOOP: UART interrupt enable
+  
+  LOOP : .
+ }
+ 
+reg LineStatus : 32
+ {
+  RxReady     : . // Rx is available
+
+  RxOverflow  : . // clear on read
+  RxParity    : . // clear on read
+  RxFrame     : . // clear on read
+  RxBreak     : . // clear on read
+  
+  TxReady     : . // Tx is available
+  TxEmpty     : . // Tx is empty
+  FIFOError   : . // at least one char in FIFO has error condition
+ }
+ 
+reg ModemStatus : 32
+ {
+  // delta since last read
+ 
+  DeltaCTS  : .
+  DeltaDSR  : .
+  DeltaRI   : .
+  DeltaDCD  : .
+  
+  CTS       : .
+  DSR       : .
+  RI        : .
+  DCD       : .
+ }
+ 
+reg Scratch : 32
+ {
+  Byte : .+8
+ } 
+ 
+bar UARTBar : address
+ {
+  Rx           = 0 RO
+  Tx           = 0 WO
+  
+  IntEnable    = 4
+ 
+  DivLo        = 0
+  DivHi        = 4
+  
+  IntStatus    = 8 RO
+  FIFOControl  = 8 WO
+  
+  LineControl  = 12
+  ModemControl = .
+  LineStatus   = . RO
+  ModemStatus  = . RO
+  Scratch      = . 
+ }
+
+

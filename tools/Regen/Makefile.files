@@ -1,0 +1,101 @@
+OBJ_LIST = \
+obj/Generate.o \
+obj/HashMap.o \
+obj/Parser.o \
+obj/Token.o \
+obj/main.o \
+obj/test.o \
+
+
+ASM_LIST = \
+obj/Generate.s \
+obj/HashMap.s \
+obj/Parser.s \
+obj/Token.s \
+obj/main.s \
+obj/test.s \
+
+
+DEP_LIST = \
+obj/Generate.dep \
+obj/HashMap.dep \
+obj/Parser.dep \
+obj/Token.dep \
+obj/main.dep \
+obj/test.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+obj/Generate.o : ./Generate.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/HashMap.o : ./HashMap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Parser.o : ./Parser.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Token.o : ./Token.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/main.o : ./main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/test.o : ./test.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/Generate.s : ./Generate.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/HashMap.s : ./HashMap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Parser.s : ./Parser.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Token.s : ./Token.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/main.s : ./main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/test.s : ./test.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/Generate.dep : ./Generate.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Generate.o $< -MF $@
+
+obj/HashMap.dep : ./HashMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HashMap.o $< -MF $@
+
+obj/Parser.dep : ./Parser.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Parser.o $< -MF $@
+
+obj/Token.dep : ./Token.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Token.o $< -MF $@
+
+obj/main.dep : ./main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+obj/test.dep : ./test.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+

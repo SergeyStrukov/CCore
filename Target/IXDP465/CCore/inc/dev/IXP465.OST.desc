@@ -1,0 +1,128 @@
+/* IXP465.OST.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: Target/IXDP465
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg Status : 32
+ {
+  T0        : .
+  T1        : .
+  TS        : .
+  WD        : .
+  WarmReset : .
+ }
+ 
+ // TS
+
+reg TS : 32 {}
+
+reg TSCmp : 32 {}
+
+reg TSCfg : 32
+ {
+  MHz50 : .
+  Pause : .
+ }
+
+reg TSPrescale : 32 
+ {
+  Div : .+16
+ }
+
+ // T0
+ 
+reg T0 : 32 {} 
+
+reg T0Reload : 32 
+ {
+  Enable   : .
+  OneShort : .
+  Reload   : .+30
+ }
+ 
+reg T0Cfg : 32
+ {
+  Reload  : .+2
+  MHz50   : .
+  Pause   : .
+ }
+ 
+reg T0Prescale : 32
+ {
+  Div : .+16
+ }
+ 
+ // T1
+ 
+reg T1 : 32 {} 
+ 
+reg T1Reload : 32 
+ {
+  Enable   : .
+  OneShort : .
+  Reload   : .+30
+ }
+ 
+reg T1Cfg : 32
+ {
+  Reload  : .+2
+  MHz50   : .
+  Pause   : .
+ }
+ 
+reg T1Prescale : 32
+ {
+  Div : .+16
+ }
+ 
+ // WD
+ 
+reg WD : 32 {}
+
+reg WDKey : 32
+ {
+  Key : .+16
+   {
+    Open = 482Eh
+    Close = 0
+   }
+ }
+ 
+reg WDControl : 32
+ {
+  Reset  : .
+  Int    : .
+  Enable : .
+ }
+
+ // bar
+
+bar OSTBar : address
+ {
+  TS         = .
+  T0         = . RO
+  T0Reload   = .
+  T1         = . RO
+  T1Reload   = .
+  WD         = .
+  WDControl  = .
+  WDKey      = .
+  Status     = .
+  TSCmp      = .
+  TSCfg      = .
+  TSPrescale = .
+  T0Cfg      = .
+  T0Prescale = .
+  T1Cfg      = .
+  T1Prescale = .
+ }

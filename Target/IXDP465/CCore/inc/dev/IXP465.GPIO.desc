@@ -1,0 +1,205 @@
+/* IXP465.GPIO.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: Target/IXDP465
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg Out : 32 
+ {
+  Pin0  : .
+  Pin1  : .
+  Pin2  : .
+  Pin3  : .
+
+  Pin4  : .
+  Pin5  : .
+  Pin6  : .
+  Pin7  : .
+
+  Pin8  : .
+  Pin9  : .
+  Pin10 : .
+  Pin11 : .
+
+  Pin12 : .
+  Pin13 : .
+  Pin14 : .
+  Pin15 : .
+ }
+
+reg Int : 32 
+ {
+  Pin0  : .
+  Pin1  : .
+  Pin2  : .
+  Pin3  : .
+
+  Pin4  : .
+  Pin5  : .
+  Pin6  : .
+  Pin7  : .
+
+  Pin8  : .
+  Pin9  : .
+  Pin10 : .
+  Pin11 : .
+
+  Pin12 : .
+ }
+
+reg IntType1 : 32 
+ {
+  Pin0 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin1 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin2 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin3 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin4 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin5 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin6 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin7 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  
+  InToNPE0 : .
+  InToNPE1 : .
+  InToNPE2 : .
+  InToNPE3 : .
+  InToNPE4 : .
+  InToNPE5 : .
+  InToNPE6 : .
+  InToNPE7 : .
+ }
+ 
+reg IntType2 : 32
+ {
+  Pin8  : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin9  : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin10 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin11 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+  Pin12 : .+3
+   {
+    Hi         = 000b
+    Lo         = 001b
+    Rising     = 010b
+    Falling    = 011b
+    Transition = 100b
+   }
+ }
+ 
+reg ClkType : 32
+ {
+  CLK0DC : .+4
+  CLK0TC : .+4
+  MUX14  : .
+  
+  *      : .+7
+  
+  CLK1DC : .+4
+  CLK1TC : .+4
+  MUX15  : .
+ }
+
+bar GPIOBar : address
+ {
+  Out         = .
+  OutDisable  = .    as Out
+  In          = . RO as Out
+  
+  Int         = .
+  IntType1    = .
+  IntType2    = .
+  
+  ClkType     = .
+ }
+ 

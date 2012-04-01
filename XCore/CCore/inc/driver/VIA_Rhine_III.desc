@@ -1,0 +1,559 @@
+/* VIA_Rhine_III.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: XCore
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+ // PCI cfg space
+
+reg PCIMode2 : 8
+ {
+  T10     : 1
+  MRDPL   : 3
+  DISABT  : 6
+  PCEROPT : 7
+ }
+ 
+reg PCIMode3 : 8
+ {
+  MIION   : 2
+  MIIDMY  : .
+  DLTSEL  : .
+  BACKOPT : .
+  TRACEN  : .
+  XONOPT  : .
+ }
+
+bar PCIRegBar : address
+ {
+  PCIMode2 = 52h
+  PCIMode3 = 53h
+ }
+
+ // MII
+ 
+reg MIIBMCR : 16
+ {
+  FDX    : 8
+  REAUTO : .
+  ISO    : .
+  PD     : .
+  AUTO   : .
+  SPEED  : .
+  LBK    : .
+  RESET  : .
+ }
+
+reg MIIBMSR : 16
+ {
+  LNK    : 2
+  AUTOCM : 5
+ }
+
+reg MIIANAR : 16
+ {
+  T10    : 5
+  T10FD  : .
+  TX     : .
+  TXFD   : .
+  T4     : .
+  PAUSE  : .
+  ASMDIR : .
+ }
+ 
+reg MIIPhyID1 : 16 {}
+ 
+reg MIIPhyID2 : 16 {}
+ 
+reg MIIANLPAR : 16
+ {
+  T10    : 5
+  T10FD  : .
+  TX     : .
+  TXFD   : .
+  T4     : .
+  PAUSE  : .
+  ASMDIR : .
+ }
+ 
+reg MIIModCfg : 16
+ {
+  Bit0 : 0
+ }
+ 
+bar MIIRegBar : index
+ {
+  MIIBMCR   = .
+  MIIBMSR   = .
+  MIIPhyID1 = .
+  MIIPhyID2 = .
+  MIIANAR   = .
+  MIIANLPAR = .
+  MIIModCfg = 10h
+ }
+ 
+ // MAC
+ 
+reg MAC : 8 {}
+
+reg MAR : 32 {}
+
+reg RCR : 8
+ {
+  SEP  : .
+  AR   : .
+  AM   : .
+  AB   : .
+  PROM : .
+  RRFT : .+3
+   {
+    Thresh32              = 0
+    Thresh64              = 1
+    Thresh128             = 2
+    Thresh256             = 3
+    Thresh512             = 4
+    Thresh768             = 5
+    Thresh1024            = 6
+    ThreshStoreAndForward = 7
+   }
+ }
+ 
+reg TCR : 8
+ {
+  PQEN   : .
+  LB     : .+2
+   {
+    NONE     = 0
+    INTERNAL = 1
+    PHY      = 2
+   }
+  OFSET  : .
+  RTGOPT : .
+  RTFT   : .+3
+   {
+    Thresh128             = 0
+    Thresh256             = 1
+    Thresh512             = 2
+    Thresh1024            = 3
+    ThreshStoreAndForward = 4
+   }
+ } 
+ 
+reg CR : 16
+ {
+  INIT   : .
+  START  : .
+  STOP   : .
+  
+  RXON   : .
+  TXON   : .
+  
+  TDMD   : .
+  RDMD   : .
+  *      : .
+  
+  EREN   : .
+  ETEN   : .
+  FDX    : .
+  DPOLL  : .
+  
+  REAUTO : .
+  TDMD1  : .
+  RDMD1  : .
+  RESET  : .
+ }
+ 
+reg BCR : 16
+ {
+  DMAL    : .+3
+   {
+    DMAL8   = 0
+    DMAL16  = 1
+    DMAL32  = 2
+    DMAL64  = 3
+    DMAL128 = 4
+    DMAL256 = 5
+    DMALSF  = 6
+   }
+  CRFT    : .+3
+  LED100  : .
+  MED2    : .
+  POT     : .+3
+  CTFT    : .+3
+  TXQNOBK : .
+  VIDFR   : .
+ } 
+ 
+reg EECSR : 8
+ {
+  D0     : .
+  DI     : .
+  SK     : .
+  CS     : .
+  
+  DPM    : .
+  AUTOLD : .
+  EMBP   : .
+  EEPR   : .
+ }
+ 
+reg CFG : 32
+ {
+  LED0S0  : 0
+  EELOAD  : 7
+  
+  MRLDIS  : 13
+  QPKTDIS : 15
+  
+  BPS0    : 16
+  BPS1    : .
+  BPS2    : .
+  BTSEL   : .
+  
+  DTSEL   : .
+  DLYEN   : .
+  BROPT   : .
+  MEDEN   : .
+  
+  BAKOPT  : .
+  MBA     : .
+  CAP     : .
+  CRADOM  : .
+  
+  MAGIC   : .
+  *       : .
+  DIAL    : .
+  GPIOEN  : .
+ }
+ 
+reg MiscCR : 16
+ {
+  T0EN      : .
+  T0SUSPEND : .
+  HDXFEN    : .
+  FDXRFEN   : .
+  
+  FDXTFEN   : .
+  T0US      : .
+  *         : .
+  *         : .
+  
+  T1EN      : .
+  PHYINTEN  : .
+  *         : .
+  *         : .
+  
+  *         : .
+  VAUXJMP   : .
+  FORSRST   : .
+ }
+ 
+reg StickHW : 8
+ {
+  DS0_SHADOW : .
+  DS1_SHADOW : .
+ }
+ 
+reg FLOWCR0 : 8 {}
+ 
+reg FLOWCR1 : 8
+ {
+  HDXFCEN  : .
+  FDXRFCEN : .
+  FDXTFCEN : .
+  XONEN    : .
+  
+  XLTH0    : .
+  XLTH1    : .
+  XHITH0   : .
+  XHITH1   : .
+ }
+ 
+reg WOLCFG : 8
+ {
+  SAB     : 4
+  SAM     : .
+  SFDX    : .
+  PME_OVR : .
+ }
+ 
+reg WOLCR : 8 
+ {
+  ARP       : .
+  MAGPKTPSW : .
+  MSWOLEN2  : .
+  PATMATCH  : .
+  
+  UNICAST   : .
+  MAGPKT    : .
+  LINKON    : .
+  LINKOFF   : .
+ }
+ 
+reg TEST : 8 
+ {
+  SNORMAL   : .
+  SMACTEST  : .
+  SMCSNOOP  : .
+  SGENWATCH : .
+ }
+
+reg PWRCSR : 16 {}
+
+reg ISR : 16
+ {
+  PRX   : .
+  PTX   : .
+  RXE   : .
+  TXE   : .
+  
+  TU    : .
+  RU    : .
+  BE    : .
+  CNT   : .
+  
+  ER    : .
+  UDF   : .
+  OVF   : .
+  PKTRA : .
+  
+  NORBF : .
+  ABT   : .
+  SRC   : .
+  GEN   : .
+ }
+ 
+reg MISR : 8
+ {
+  TM0    : .
+  TM1    : .
+  PHY    : .
+  *      : .
+  
+  SSRC   : .
+  UDPSET : .
+  UDPCLR : .
+  PWE    : .
+ }
+ 
+reg MIMR : 8
+ {
+  TM0    : .
+  TM1    : .
+ } 
+ 
+reg CurRD  : 32 {}
+
+reg CurTD : 32 {}
+
+reg PauseTimer : 16 {}
+reg SoftT0     : 16 {}
+reg SoftT1     : 16 {}
+
+reg MIISR : 8
+ {
+  SPEED10 : .
+  NOLINK  : .
+  FDX     : .
+ }
+ 
+reg MIICR : 8
+ {
+  MDC   : .
+  MDI   : .
+  MDO   : .
+  MOUT  : .
+  
+  MDPM  : .
+  WCMD  : .
+  RCMD  : .
+  MAUTO : .
+ }
+ 
+reg MIIAD : 8
+ {
+  MAD0   : .
+  
+  MDONE  : 5
+  MSRCEN : 6
+  MIDLE  : 7
+ }
+ 
+reg MIIDATA : 16 {}
+ 
+bar DevRegBar : address
+ {
+  MAC[6]  = .
+  
+  RCR     = .
+  TCR     = .
+  CR      = .
+  
+  ISR     = 0Ch
+  IMR     = .   as ISR
+  
+  MAR[2]  = .
+  
+  CurRD     = .
+  CurTD[8]  = .
+  
+  MIISR   = 6Dh
+  BCR     = .
+  MIICR   = .
+  MIIAD   = .
+  MIIDATA = .
+  EECSR   = .
+  
+  CFG     = 78h
+  MiscCR  = 80h
+  StickHW = 83h
+  MISR    = 84h
+  MIMR    = 86h
+  
+  FLOWCR0 = 98h
+  FLOWCR1 = 99h
+  
+  WOLCFG  = hidden
+  
+  WOLCFG_SET = 0A3h as WOLCFG
+  WOLCFG_CLR = 0A7h as WOLCFG
+  
+  PauseTimer = 9Ah
+  SoftT0     = 9Ch
+  SoftT1     = 9Eh
+
+  WOLCR = hidden
+  
+  WOLCR_SET  = 0A0h as WOLCR
+  WOLCR_CLR  = 0A4h as WOLCR
+  
+  TEST = hidden
+  
+  TEST_SET   = 0A2h as TEST
+  TEST_CLR   = 0A6h as TEST
+  
+  PWRCSR =  hidden
+  
+  PWRCSR_SET = 0A8h as PWRCSR
+  PWRCSR_CLR = 0ACh as PWRCSR
+ }
+
+ // RxDesc
+ 
+reg RxDescStatus : 32
+ {
+  ERROR : .
+  CRC   : .
+  FAE   : .
+  FOV   : .
+  
+  LONG  : .
+  RUNT  : .
+  SERR  : .
+  BUFF  : .
+  
+  EOP   : .
+  SOP   : .
+  CHAIN : .
+  PHY   : .
+  
+  BAR   : .
+  MAR   : .
+  *     : .
+  OK    : .
+  
+  Len    : .+11
+  ExtLen : .+4
+  
+  Own   : 31
+ }
+ 
+reg RxDescControl : 32
+ {
+  Len    : .+11
+  ExtLen : .+4
+  CHAIN  : .
+ }
+ 
+reg RxDescBuf  : 32 {}
+reg RxDescNext : 32 {}
+
+reg RxDescRes1 : 32 {}
+reg RxDescRes2 : 32 {}
+reg RxDescRes3 : 32 {}
+reg RxDescRes4 : 32 {}
+
+bar RxDescBar : address
+ {
+  RxDescStatus  = .
+  RxDescControl = .
+  
+  RxDescBuf     = .
+  RxDescNext    = .
+  
+  RxDescRes1    = .
+  RxDescRes2    = .
+  RxDescRes3    = .
+  RxDescRes4    = .
+ }
+ 
+ // TxDesc
+ 
+reg TxDescStatus : 32
+ {
+  ABT   : 8
+  OWC   : .
+  CRS   : .
+  UDF   : .
+  
+  BUFF  : .
+  SERR  : .
+  JUB   : .
+  ERROR : .
+  
+  Own   : 31
+ }
+ 
+reg TxDescControl : 32
+ {
+  Len    : .+11
+  ExtLen : .+4
+  CHAIN  : .
+  
+  SOP    : 21
+  EOP    : .
+  IC     : .
+ }
+ 
+reg TxDescBuf  : 32 {}
+reg TxDescNext : 32 {}
+
+reg TxDescRes1 : 32 {}
+reg TxDescRes2 : 32 {}
+reg TxDescRes3 : 32 {}
+reg TxDescRes4 : 32 {}
+
+bar TxDescBar : address
+ {
+  TxDescStatus  = .
+  TxDescControl = .
+  
+  TxDescBuf     = .
+  TxDescNext    = .
+  
+  TxDescRes1    = .
+  TxDescRes2    = .
+  TxDescRes3    = .
+  TxDescRes4    = .
+ }
+ 
+  

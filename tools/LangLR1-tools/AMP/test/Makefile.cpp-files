@@ -1,0 +1,3 @@
+./Generator.gen.cpp
+./Parser.gen.cpp
+../../../../tools/LangLR1-tools/test/LangTestMain.cpp

@@ -1,0 +1,56 @@
+# Makefile.tools
+#----------------------------------------------------------------------------------------
+#
+#  Project: CCore 1.02
+#
+#  Tag: Target/IXDP465
+#
+#  License: Boost Software License - Version 1.0 - August 17th, 2003 
+#
+#            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+#
+#  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+#
+#----------------------------------------------------------------------------------------
+
+CCOPT_EXTRA ?= 
+
+LDOPT_EXTRA ?=
+
+# tools
+
+CC_ = /opt/crosstool/armeb/bin/arm-gcc-4.7.0
+
+CC = @echo CC $< ; $(CC_)
+
+LD = @echo LD $@ ; $(CC_)
+
+AS_ = /opt/crosstool/armeb/bin/arm-as
+
+AS = @echo AS $< ; $(AS_)
+
+AR_ = /opt/crosstool/armeb/bin/arm-ar
+
+AR = @echo AR $@ ; $(AR_)
+
+RM_ = rm -f
+
+RM = @echo RM ; $(RM_)
+
+# options
+
+NOWARN = -Wno-non-virtual-dtor -Wno-switch -Wno-type-limits -Wno-enum-compare -Wno-missing-field-initializers \
+         -Wno-delete-non-virtual-dtor
+
+CCINC = -I$(CCORE_ROOT) -I$(CCORE_ROOT)/XCore -I$(CCORE_ROOT)/Target/$(CCORE_TARGET)
+
+CCOPT = -c -std=c++11 -O3 -mbig-endian -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
+
+ASOPT = -mcpu=xscale -EB
+
+CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
+
+LDOPT = $(CCORELIB) -lsupc++ -lstdc++ -Wl,-s $(LDOPT_EXTRA)
+
+
+

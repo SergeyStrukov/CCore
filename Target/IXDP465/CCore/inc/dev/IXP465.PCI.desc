@@ -1,0 +1,216 @@
+/* IXP465.PCI.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: Target/IXDP465
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2009 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg Address : 32 {}
+
+reg CBE : 32
+ {
+  CMD : .+4
+  BE  : .+4
+ }
+ 
+reg WData : 32 {}
+
+reg RData : 32 {}
+
+reg CfgAddressCBE : 32
+ {
+  Address : .+8
+  *       : .+8
+  CMD     : .+4
+   {
+    Read  = 0
+    Write = 1
+   }
+  BE      : .+4
+ }
+ 
+reg CfgWData : 32 {}
+
+reg CfgRData : 32 {}
+
+reg ControlStatus : 32
+ {
+  Host         : . // RO
+  Arbiter      : . // RO
+  
+  AHBswap      : .
+  PCIswap      : .
+  
+  AHBbigendian : .
+  DoorbellTest : .
+  
+  SystemError  : 8
+  
+  InitComplete : 15
+  Reset        : 16
+ }
+ 
+reg IntStatus : 32
+ {
+  SystemError : . // RW1C
+  FatalError  : . // RW1C
+  ParityError : . // RW1C
+  AHBError    : . // RW1C
+  
+  DMAWrite    : . // RO
+  DMARead     : . // RO
+  AHBDoorbell : . // RO
+  PCIDoorbell : . // RO
+ }
+ 
+reg IntEnable : 32
+ {
+  SystemError : .
+  FatalError  : .
+  ParityError : .
+  AHBError    : .
+  
+  DMAWrite    : .
+  DMARead     : .
+  AHBDoorbell : .
+  PCIDoorbell : .
+ }
+ 
+reg DMAControl : 32
+ {
+  WriteIntEnable : 0
+  
+  WriteComplete0 : 4  // RW1C
+  WriteError0    : .  // RO
+  WriteComplete1 : .  // RW1C
+  WriteError1    : .  // RO
+  
+  ReadIntEnable  : 8
+  
+  ReadComplete0  : 12 // RW1C
+  ReadError0     : .  // RO
+  ReadComplete1  : .  // RW1C
+  ReadError1     : .  // RO
+ } 
+ 
+reg AHBMemBase : 32
+ {
+  Base3 : .+8 // host bar3 mem, pci PPxxxxxx -> host BBxxxxxx
+  Base2 : .+8 // host bar2 mem, pci PPxxxxxx -> host BBxxxxxx
+  Base1 : .+8 // host bar1 mem, pci PPxxxxxx -> host BBxxxxxx
+  Base0 : .+8 // host bar0 mem, pci PPxxxxxx -> host BBxxxxxx
+ }
+ 
+reg AHBIOBase : 32
+ {
+  Base : .+24 // host bar5 io, pci PPPPPPxx -> host BBBBBBxx
+ }
+ 
+reg PCIMemBase : 32
+ {
+  Base3 : .+8 // host 4Bxxxxxx -> pci BBxxxxxx
+  Base2 : .+8 // host 4Axxxxxx -> pci BBxxxxxx
+  Base1 : .+8 // host 49xxxxxx -> pci BBxxxxxx
+  Base0 : .+8 // host 48xxxxxx -> pci BBxxxxxx
+ }
+ 
+reg AHBDoorbell : 32 {} // RW1C, if( ControlStatus.DoorbellTest ) RW
+ 
+reg PCIDoorbell : 32 {} // RW1S, if( ControlStatus.DoorbellTest ) RW
+
+reg DMAWriteAHBAddress0 : 32 {} // aligned(4)
+
+reg DMAWritePCIAddress0 : 32 {} // aligned(4)
+
+reg DMAWriteLen0 : 32 
+ {
+  WordLen : .+16
+  
+  DS : 28
+  EN : 31
+ }
+ 
+reg DMAWriteAHBAddress1 : 32 {} // aligned(4)
+
+reg DMAWritePCIAddress1 : 32 {} // aligned(4)
+
+reg DMAWriteLen1 : 32 
+ {
+  WordLen : .+16
+  
+  DS : 28
+  EN : 31
+ }
+ 
+reg DMAReadAHBAddress0 : 32 {} // aligned(4)
+
+reg DMAReadPCIAddress0 : 32 {} // aligned(4)
+
+reg DMAReadLen0 : 32
+ {
+  WordLen : .+16
+  
+  DS : 28
+  EN : 31
+ }
+ 
+reg DMAReadAHBAddress1 : 32 {} // aligned(4)
+
+reg DMAReadPCIAddress1 : 32 {} // aligned(4)
+
+reg DMAReadLen1 : 32
+ {
+  WordLen : .+16
+  
+  DS : 28
+  EN : 31
+ }
+ 
+bar PCIBar : address
+ {
+  Address             = .
+  CBE                 = .
+  WData               = .
+  RData               = . RO
+  
+  CfgAddressCBE       = . 
+  CfgWData            = .
+  CfgRData            = . RO
+  
+  ControlStatus       = .
+  IntStatus           = .
+  IntEnable           = .
+  DMAControl          = .
+  
+  AHBMemBase          = . 
+  AHBIOBase           = .
+  PCIMemBase          = . 
+  
+  AHBDoorbell         = .
+  PCIDoorbell         = .
+  
+  DMAWriteAHBAddress0 = . 
+  DMAWritePCIAddress0 = . 
+  DMAWriteLen0        = . 
+  
+  DMAWriteAHBAddress1 = .
+  DMAWritePCIAddress1 = .
+  DMAWriteLen1        = .
+  
+  DMAReadAHBAddress0  = .
+  DMAReadPCIAddress0  = .
+  DMAReadLen0         = .
+  
+  DMAReadAHBAddress1  = .
+  DMAReadPCIAddress1  = .
+  DMAReadLen1         = . 
+ }
+ 

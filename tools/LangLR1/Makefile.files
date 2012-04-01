@@ -1,0 +1,293 @@
+OBJ_LIST = \
+obj/Estimator.o \
+obj/IsolatedTest.o \
+obj/LR1Estimate.o \
+obj/Lang.o \
+obj/LangBuilder.o \
+obj/LangChar.o \
+obj/LangParser.o \
+obj/LangToken.o \
+obj/MatrixRec.o \
+obj/MatrixTable.o \
+obj/NonEmptyEstimate.o \
+obj/NonEmptyTest.o \
+obj/PickRule.o \
+obj/Punct.o \
+obj/Run.o \
+obj/Sequence.o \
+obj/Set.o \
+obj/SlashQuote.o \
+obj/SparseMatrix.o \
+obj/State.o \
+obj/Tool.o \
+obj/main.o \
+
+
+ASM_LIST = \
+obj/Estimator.s \
+obj/IsolatedTest.s \
+obj/LR1Estimate.s \
+obj/Lang.s \
+obj/LangBuilder.s \
+obj/LangChar.s \
+obj/LangParser.s \
+obj/LangToken.s \
+obj/MatrixRec.s \
+obj/MatrixTable.s \
+obj/NonEmptyEstimate.s \
+obj/NonEmptyTest.s \
+obj/PickRule.s \
+obj/Punct.s \
+obj/Run.s \
+obj/Sequence.s \
+obj/Set.s \
+obj/SlashQuote.s \
+obj/SparseMatrix.s \
+obj/State.s \
+obj/Tool.s \
+obj/main.s \
+
+
+DEP_LIST = \
+obj/Estimator.dep \
+obj/IsolatedTest.dep \
+obj/LR1Estimate.dep \
+obj/Lang.dep \
+obj/LangBuilder.dep \
+obj/LangChar.dep \
+obj/LangParser.dep \
+obj/LangToken.dep \
+obj/MatrixRec.dep \
+obj/MatrixTable.dep \
+obj/NonEmptyEstimate.dep \
+obj/NonEmptyTest.dep \
+obj/PickRule.dep \
+obj/Punct.dep \
+obj/Run.dep \
+obj/Sequence.dep \
+obj/Set.dep \
+obj/SlashQuote.dep \
+obj/SparseMatrix.dep \
+obj/State.dep \
+obj/Tool.dep \
+obj/main.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+obj/Estimator.o : ./Estimator.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IsolatedTest.o : ./IsolatedTest.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LR1Estimate.o : ./LR1Estimate.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Lang.o : ./Lang.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LangBuilder.o : ./LangBuilder.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LangChar.o : ./LangChar.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LangParser.o : ./LangParser.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LangToken.o : ./LangToken.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MatrixRec.o : ./MatrixRec.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MatrixTable.o : ./MatrixTable.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NonEmptyEstimate.o : ./NonEmptyEstimate.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NonEmptyTest.o : ./NonEmptyTest.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PickRule.o : ./PickRule.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Punct.o : ./Punct.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Run.o : ./Run.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Sequence.o : ./Sequence.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Set.o : ./Set.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SlashQuote.o : ./SlashQuote.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SparseMatrix.o : ./SparseMatrix.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/State.o : ./State.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Tool.o : ./Tool.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/main.o : ./main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/Estimator.s : ./Estimator.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/IsolatedTest.s : ./IsolatedTest.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LR1Estimate.s : ./LR1Estimate.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Lang.s : ./Lang.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LangBuilder.s : ./LangBuilder.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LangChar.s : ./LangChar.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LangParser.s : ./LangParser.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LangToken.s : ./LangToken.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MatrixRec.s : ./MatrixRec.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/MatrixTable.s : ./MatrixTable.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NonEmptyEstimate.s : ./NonEmptyEstimate.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NonEmptyTest.s : ./NonEmptyTest.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PickRule.s : ./PickRule.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Punct.s : ./Punct.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Run.s : ./Run.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Sequence.s : ./Sequence.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Set.s : ./Set.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SlashQuote.s : ./SlashQuote.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SparseMatrix.s : ./SparseMatrix.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/State.s : ./State.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Tool.s : ./Tool.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/main.s : ./main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/Estimator.dep : ./Estimator.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Estimator.o $< -MF $@
+
+obj/IsolatedTest.dep : ./IsolatedTest.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IsolatedTest.o $< -MF $@
+
+obj/LR1Estimate.dep : ./LR1Estimate.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LR1Estimate.o $< -MF $@
+
+obj/Lang.dep : ./Lang.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Lang.o $< -MF $@
+
+obj/LangBuilder.dep : ./LangBuilder.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangBuilder.o $< -MF $@
+
+obj/LangChar.dep : ./LangChar.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangChar.o $< -MF $@
+
+obj/LangParser.dep : ./LangParser.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangParser.o $< -MF $@
+
+obj/LangToken.dep : ./LangToken.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangToken.o $< -MF $@
+
+obj/MatrixRec.dep : ./MatrixRec.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MatrixRec.o $< -MF $@
+
+obj/MatrixTable.dep : ./MatrixTable.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MatrixTable.o $< -MF $@
+
+obj/NonEmptyEstimate.dep : ./NonEmptyEstimate.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NonEmptyEstimate.o $< -MF $@
+
+obj/NonEmptyTest.dep : ./NonEmptyTest.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NonEmptyTest.o $< -MF $@
+
+obj/PickRule.dep : ./PickRule.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PickRule.o $< -MF $@
+
+obj/Punct.dep : ./Punct.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Punct.o $< -MF $@
+
+obj/Run.dep : ./Run.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Run.o $< -MF $@
+
+obj/Sequence.dep : ./Sequence.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sequence.o $< -MF $@
+
+obj/Set.dep : ./Set.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Set.o $< -MF $@
+
+obj/SlashQuote.dep : ./SlashQuote.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SlashQuote.o $< -MF $@
+
+obj/SparseMatrix.dep : ./SparseMatrix.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SparseMatrix.o $< -MF $@
+
+obj/State.dep : ./State.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/State.o $< -MF $@
+
+obj/Tool.dep : ./Tool.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tool.o $< -MF $@
+
+obj/main.dep : ./main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+

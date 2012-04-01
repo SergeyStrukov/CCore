@@ -1,0 +1,73 @@
+reg ISR : 8 // interrupt status register
+ {
+  A : 0
+  B : 1
+  C : 2
+  D : .
+ }
+
+ /*------------------------------
+
+     XXX
+ 
+ ----*/
+
+reg CTRL : 32
+ {
+  RUN   : 0
+  STOP  : 1
+  COUNT : 2-5
+
+  * : .+10
+
+  MODE  : 16-18
+   {
+    SLOW = 0
+    FAST = 1
+    ACK  = 7
+   }
+ }
+
+reg STAT : 16
+ {
+  RUN   : 0
+  STOP  : 1
+  COUNT : .+4
+
+  MODE  : .+3
+   {
+    SLOW = 0
+    FAST = 1
+    ACK  = 100b
+   }
+ }                  
+
+reg SCRAP : 16 {}
+
+reg PTR : 32 {}
+
+reg TEMP : 32 {}
+ 
+bar Test : address // |index
+ {
+  ISR  =  10    RO 
+
+  ICR  =  100h  WO as ISR
+
+  IMR  =  .        as ISR
+
+  CTRL[10] =  .      
+
+  STAT =  .     RO
+
+  SCRAP = .
+  
+  BSCRAP[10] = . as SCRAP
+  
+  BIMP[10] = . as ISR
+  
+  PTR[10] = . 
+  
+  TEMP = hidden
+ }
+

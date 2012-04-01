@@ -1,0 +1,244 @@
+/* IXP465.CP15.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: Target/IXDP465
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg ID : 32
+ {
+  Revision     : .+4
+   {
+    IXP45x_46x = 0
+   }
+  
+  Number       : .+6
+   {
+    IXP45x_46x = 100000b
+   }
+  
+  CoreRevision : .+3
+   {
+    CoreRev0 = 0
+   }
+  
+  CoreGen      : .+3
+   {
+    Intel_XScale = 10b
+   }
+  
+  Arch         : .+8
+   {
+    Intel_StrongARM_5TE = 5h
+   }
+  
+  Impl         : .+8
+   {
+    Intel = 69h
+   }
+ }
+ 
+reg CacheType : 32
+ {
+  ILine : 0-1
+   {
+    L8word = 10b
+   }
+   
+  IAss  : 3-5
+   {
+    A32way = 101b
+   }
+   
+  ISize : 6-8
+   {
+    S32k = 110b
+   }
+  
+  DLine : 12-13
+   {
+    L8word = 10b
+   }
+   
+  DAss  : 15-17
+   {
+    A32way = 101b
+   }
+   
+  DSize : 18-20
+   {
+    S32k = 110b
+   }
+  
+  Harvard : 24
+  
+  Class : 25-28
+   {
+    L_WB_RR = 0101b
+   }
+ }
+  
+reg Control : 32
+ {
+  M : .  // MMU enable
+  A : .  // Alignment fault enable
+  C : .  // Data cache enable
+  
+  Ones : .+4
+   {
+    Fill = 1111b
+   }
+   
+  B : .  // Big-endian
+  S : .  // System protection
+  R : .  // ROM protection
+  
+  Z : 11 // BTB enable
+  I : .  // Instruction cache enable
+  V : .  // Vectors high
+ }
+ 
+reg AuxControl : 32
+ {
+  K : .           // Write Buffer Coalescing Disable
+  P : .           //
+  
+  MD : 4-5
+   {
+    WB_RA  = 00b  // Write back, Read allocate
+    WB_RWA = 01b  // Write back, Read-Write allocate
+    WT_RA  = 10b  // Write through, Read allocate
+   }
+ }
+ 
+reg TTBase : 32  // aligned on 2^14
+ {
+ }
+ 
+reg DomainAC : 32
+ {
+  D0  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D1  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D2  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D3  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+  
+  D4  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D5  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D6  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D7  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D8  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D9  : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D10 : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D11 : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D12 : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D13 : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D14 : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+   
+  D15 : .+2
+   {
+    NoAccess   = 00b
+    DescAccess = 01b
+    FullAccess = 11b
+   }
+ }
+ 
+reg PID : 32  // aligned on 2^25
+ {
+ }
+  

@@ -1,0 +1,4 @@
+../../Target/WIN32/CCore/src/base/Quick.s
+../../Target/WIN32/CCore/src/math/IntegerFastAlgo.s
+../../Target/WIN32/CCore/src/sys/SysAtomic.s
+../../Target/WIN32/CCore/src/sys/SysTime.s

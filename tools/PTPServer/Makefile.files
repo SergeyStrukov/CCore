@@ -1,0 +1,113 @@
+OBJ_LIST = \
+obj/ErrorIds.o \
+obj/HFSProc.o \
+obj/PTPConProc.o \
+obj/ProcBase.o \
+obj/ServerProc.o \
+obj/SupportProc.o \
+obj/main.o \
+
+
+ASM_LIST = \
+obj/ErrorIds.s \
+obj/HFSProc.s \
+obj/PTPConProc.s \
+obj/ProcBase.s \
+obj/ServerProc.s \
+obj/SupportProc.s \
+obj/main.s \
+
+
+DEP_LIST = \
+obj/ErrorIds.dep \
+obj/HFSProc.dep \
+obj/PTPConProc.dep \
+obj/ProcBase.dep \
+obj/ServerProc.dep \
+obj/SupportProc.dep \
+obj/main.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+obj/ErrorIds.o : ./ErrorIds.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/HFSProc.o : ./HFSProc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PTPConProc.o : ./PTPConProc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ProcBase.o : ./ProcBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ServerProc.o : ./ServerProc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SupportProc.o : ./SupportProc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/main.o : ./main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/ErrorIds.s : ./ErrorIds.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/HFSProc.s : ./HFSProc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PTPConProc.s : ./PTPConProc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ProcBase.s : ./ProcBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ServerProc.s : ./ServerProc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SupportProc.s : ./SupportProc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/main.s : ./main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/ErrorIds.dep : ./ErrorIds.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ErrorIds.o $< -MF $@
+
+obj/HFSProc.dep : ./HFSProc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HFSProc.o $< -MF $@
+
+obj/PTPConProc.dep : ./PTPConProc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPConProc.o $< -MF $@
+
+obj/ProcBase.dep : ./ProcBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ProcBase.o $< -MF $@
+
+obj/ServerProc.dep : ./ServerProc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ServerProc.o $< -MF $@
+
+obj/SupportProc.dep : ./SupportProc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SupportProc.o $< -MF $@
+
+obj/main.dep : ./main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+

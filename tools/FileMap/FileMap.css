@@ -1,0 +1,148 @@
+/* FileMap.css */
+/*----------------------------------------------------------------------------------------
+//
+//  Project: FileMap 1.00
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2011 Sergey Strukov. All rights reserved.
+//
+//--------------------------------------------------------------------------------------*/
+
+body
+{
+ font-family: monospace;
+ 
+ background: wheat;
+}
+
+section.aspect,
+section.save_load,
+section.new_delete,
+section.hide_show,
+section.stat
+{
+ padding-top: 0.5em;
+ padding-bottom: 0.5em;
+ border-bottom-style: ridge;
+ border-bottom-color: white;
+}
+
+span#stat_red
+{
+ padding: 0.2em;
+ border-style: ridge;
+ border-color: white;
+ color: black;
+ font-size: 1.5em;
+ font-weight: bold;
+ background: red;
+}
+
+span#stat_yellow
+{
+ padding: 0.2em;
+ border-style: ridge;
+ border-color: white;
+ color: black;
+ font-size: 1.5em;
+ font-weight: bold;
+ background: yellow;
+}
+
+span#stat_green
+{
+ padding: 0.2em;
+ border-style: ridge;
+ border-color: white;
+ color: black;
+ font-size: 1.5em;
+ font-weight: bold;
+ background: green;
+}
+
+input.aspect_button_mod
+{
+ background: red;
+}
+
+section.content
+{
+ background: lightgray;
+}
+
+h3.dir_name
+{
+ margin-top: 0.5em;
+ padding-left: 1em;
+
+ color: blue; 
+ background: wheat;
+ 
+ border-style: ridge;
+ border-color: lightgray;
+}
+
+button.dir_button,
+button.dir_button_all,
+button.dir_button_none
+{
+ padding-left: 0.5em;
+ padding-right: 0.5em;
+}
+
+button.dir_button,
+button.dir_button_none
+{
+ margin-right: 1em;
+}
+
+ul.dir_list
+{
+ list-style: none;
+}
+
+li.file_name
+{
+ padding-left: 1em;
+ 
+ color: yellow;
+ background: navy;
+}
+
+li.file_total
+{
+ padding-left: 1em;
+ 
+ color: yellow;
+ background: navy;
+
+ border: solid;
+ border-width: thin;
+ border-color: red;
+}
+
+input.R_color:checked
+{
+ background: red;
+}
+
+input.Y_color:checked
+{
+ background: yellow;
+}
+
+input.G_color
+{
+ margin-right: 1em;
+}
+
+input.G_color:checked
+{
+ margin-right: 1em;
+ background: green;
+}
+
+

@@ -1,0 +1,145 @@
+/* PCIBus.desc */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  Tag: XCore
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg ID : 32
+ {
+  VendorID : .+16
+  DeviceID : .+16
+ }
+ 
+reg StatusCommand : 32
+ {
+  // control : RW
+ 
+  IOEnable          : .
+  MemEnable         : .
+  BusMasterEnable   : .
+  SpecEnable        : .
+  
+  InvWriteEnable    : .
+  VGASnoopEnable    : .
+  ParityErrorEnable : .
+  SteppingEnable    : .
+  
+  SysErrorEnable    : .
+  BacktoBackEnable  : .
+  
+  // caps : RO
+  
+  CapsList          : 20
+  Cap66MHz          : 21
+  CapBacktoBack     : 23
+  
+  DevSel: 25-26
+   {
+    Fast   = 00b
+    Medium = 01b
+    Slow   = 10b
+   }
+  
+  // status : RW1C
+  
+  MasterParityError : 24
+  SigTargetAbort    : 27
+  TargetAbort       : .
+  MasterAbort       : .
+  SysError          : .
+  ParityError       : .
+ }
+ 
+reg ClassRevision : 32
+ {
+  RevisionID : .+8
+  IfClass    : .+8
+  SubClass   : .+8
+  BaseClass  : .+8
+ }
+ 
+reg Prop : 32
+ {
+  CacheLineSize : .+8
+  Latency       : .+8
+  Type          : .+7
+   {
+    Type0  = 0
+    Bridge = 1
+    Card   = 2
+   }
+  MultiFunc     : .
+  
+  BISTCode      : .+4
+  *             : .+2
+  BISTStart     : .
+  BISTCap       : .
+ }
+ 
+reg Bar : 32 {}
+
+reg SubID : 32
+ {
+  SubVendorID : .+16
+  SubID       : .+16
+ }
+ 
+reg Caps : 32
+ {
+  Offset : .+8
+ }
+ 
+reg Prop2 : 32
+ {
+  IntLine    : .+8
+  IntPin     : .+8
+  MinGnt     : .+8
+  MaxLatency : .+8
+ }
+ 
+bar CfgBar : address
+ {
+  // predefined header
+ 
+  ID            = .
+  StatusCommand = . 
+  ClassRevision = .
+  Prop          = .
+  
+  // type 0 header
+  
+  Bar[6]        = .
+  
+  SubID         = .
+  
+  Caps          = 34h
+  
+  Prop2         = 3Ch
+ }
+ 
+reg Cap : 32
+ {
+  ID : .+8
+   {
+    MSI = 5
+   }
+   
+  Next : .+8
+  
+  MsiEn       : .
+  MsiMultiCap : .+3
+  MsiMultiEn  : .+3
+  MsiA64      : .  
+ } 
+
+ 
+

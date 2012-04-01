@@ -1,0 +1,65 @@
+OBJ_LIST = \
+obj/Generator.gen.o \
+obj/LangTestMain.o \
+obj/Parser.gen.o \
+
+
+ASM_LIST = \
+obj/Generator.gen.s \
+obj/LangTestMain.s \
+obj/Parser.gen.s \
+
+
+DEP_LIST = \
+obj/Generator.gen.dep \
+obj/LangTestMain.dep \
+obj/Parser.gen.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+obj/Generator.gen.o : ./Generator.gen.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LangTestMain.o : ../../../../tools/LangLR1-tools/test/LangTestMain.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Parser.gen.o : ./Parser.gen.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/Generator.gen.s : ./Generator.gen.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LangTestMain.s : ../../../../tools/LangLR1-tools/test/LangTestMain.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Parser.gen.s : ./Parser.gen.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/Generator.gen.dep : ./Generator.gen.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Generator.gen.o $< -MF $@
+
+obj/LangTestMain.dep : ../../../../tools/LangLR1-tools/test/LangTestMain.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangTestMain.o $< -MF $@
+
+obj/Parser.gen.dep : ./Parser.gen.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Parser.gen.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+

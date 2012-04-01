@@ -1,0 +1,9 @@
+../../Target/IXDP465/CCore/src/base/Quick.s
+../../Target/IXDP465/CCore/src/Boot.s
+../../Target/IXDP465/CCore/src/BootFlash.s
+../../Target/IXDP465/CCore/src/dev/DevInt.s
+../../Target/IXDP465/CCore/src/dev/DevRW.s
+../../Target/IXDP465/CCore/src/dev/IXP465.CP15.s
+../../Target/IXDP465/CCore/src/dev/IXP465.s
+../../Target/IXDP465/CCore/src/math/IntegerFastAlgo.s
+../../Target/IXDP465/CCore/src/sys/SysAtomic.s

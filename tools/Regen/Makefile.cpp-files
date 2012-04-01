@@ -1,0 +1,6 @@
+./Generate.cpp
+./HashMap.cpp
+./main.cpp
+./Parser.cpp
+./test.cpp
+./Token.cpp
