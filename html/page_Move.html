@@ -1,0 +1,273 @@
+<!--
+/* page_Move.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Move</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Move idiom (related with <a href="page_Swap.html">Swap idiom</a>)</h2>
+
+<p class="Files">Files <b>CCore/inc/Move.h</b> <b>CCore/src/Move.cpp</b></p>
+
+<p>
+First of all, <b>CCore</b> <b>Move</b> is not a C++11 move. Don't mess it up.
+<b>Move</b> is designed to solve the following task: assume you have an object and you want to
+move it to another memory location. Once you have an appropriate block of memory, you need to
+create the copy of the object there and destroy the original object as the one operation. 
+Unlike the copy operation, <b>Move</b> can be implemented as an efficient operation for a wide range of 
+types. This is because we don't need to create an additional state, we just have to replace the existing 
+one into another memory location. So before the operation we have the object and the raw memory, 
+after we have the raw memory and the moved object.
+</p>
+
+<p>
+There is a technical difficulty with the <b>Move</b> implementation: C++ requires a some constructor call
+for the object creation and the destuctor call for the object life-time termination 
+(with some minor exceptions). To make the moving derivable we have to use the <b>Move constructor</b> as
+the implementation point for it.
+</p>
+
+<pre>
+</pre>
+
+<h2>How to use</h2>
+
+<pre>
+template &lt;class T&gt;
+T * CopyMove(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for efficiently copyable classes
+
+template &lt;class T&gt;
+T * SwapMove(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for classes with <b>objSwap()</b>
+                                                                 // and efficient default
+
+template &lt;class T&gt;
+T * CtorMove(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for classes with <b>Move constructor</b>
+
+template &lt;class T&gt;
+T * Move(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // general
+</pre>
+
+<p>
+Normally you should use the function <b>Move()</b> for <b>Move</b> operation.
+If the destined type is a class type with the method <b>objMove()</b>, it is called to do the job.
+Otherwise, if the destined type is a class type with the method <b>objSwap()</b>, the 
+<b>SwapMove()</b> is used. In this case <span class="Alert">class must have the default efficient constructor</span>.
+Finally, <b>CopyMove()</b> is called for remaining cases. It is assumed, that such types are
+<span class="Alert">efficiently copyable</span>.
+</p>
+
+<p>
+You can also specialize the <b>struct MoveAdapters</b>.
+</p>
+
+<pre>
+namespace N {
+
+class C
+ {
+  ....
+ };
+
+}
+
+namespace CCore {
+
+template&lt;&gt;
+struct MoveAdapters&lt;false,false,N::C&gt;
+ {
+  static N::C * Move(N::C *obj,Place&lt;void&gt; place) { .... }
+ };
+
+}
+</pre>
+
+<p>
+The most convenient way to make a class movable is to define the method <b>objSwap()</b> and make it
+both swapable and moveable. But for the sake of efficiency, you may define the method <b>objMove()</b>.
+In this case the best way is to define the same time the <b>Move constructor</b> and derived <b>objMove()</b>
+from it.
+Consider the following example:
+</p>
+
+<pre>
+struct S
+ {
+  A a; // class A has <b>Move constructor</b>
+  B b; // type B is efficiently copyabel
+  C c; // class C has <b>Move constructor</b>
+
+  // swap/move objects
+   
+  void objSwap(S &obj)
+   {
+    Swap(a,obj.a);
+    Swap(b,obj.b);
+    Swap(c,obj.c);
+   }
+   
+  explicit S(ToMoveCtor&lt;S&gt; obj) // the <b>Move constructor</b> signature
+
+   : a(ObjToMove(obj->a)),      // member move with its <b>Move constructor</b>
+     b(obj->b),                 // member move by copying
+     c(ObjToMove(obj->c))       // member move with its <b>Move constructor</b>
+   {
+   }
+
+  S * objMove(Place&lt;void&gt; place)
+   {
+    return CtorMove(this,place);
+   }
+ };
+</pre>
+
+<p>
+The reason to define the <b>Move constructor</b> is to support the further derivation of it.
+The <b>Move constructor</b> is called in the following context: <span class="Hint">an object is being moving,
+the original object will be destoyed by the call of destructor right after <b>Move constructor</b>
+is finished</span>.
+Here is the template for the moving of <b>Resource Host Types</b>.
+</p>
+
+<pre>
+class H : NoCopy
+ {
+  private:
+
+   ResourceHandle h; // <b>Small Data Type</b>
+
+  public: 
+
+   H() { SetNull(h); }
+
+   H(A a,B b,C c) { h=New(a,b,c); }
+
+   ~H() { <span class="Alert">if( NotNull(h) )</span> Delete(h); } // may help compiler to eliminate the following
+                                        //
+                                        // SetNull(h);
+                                        // if( NotNull(h) ) Delete(h);
+                                        // end-of-object-life-time; 
+                                        //
+                                        // sequence of actions
+   // move objects
+
+   explicit H(ToMoveCtor&lt;H&gt; obj)
+    {
+     h=obj->h;
+
+     <span class="Alert">SetNull(obj->h);</span>
+    }
+
+   H * objMove(Place&lt;void&gt; place)
+    {
+     return CtorMove(this,place);
+    }
+ };
+</pre>
+
+<p>The class <b>ToMoveCtor&lt;T&gt;</b> is a simple wrapper over the pointer to the type T:</p>
+
+<pre>
+/* struct ToMoveCtor&lt;T&gt; */ 
+
+template &lt;class T&gt;
+struct ToMoveCtor
+ {
+  T *obj;
+ 
+  explicit ToMoveCtor(T &obj_) { obj=&amp;obj_; }
+  
+  T * operator -> () const { return obj; }
+  
+  template &lt;class S&gt;
+  ToMoveCtor&lt;S&gt; cast() const { return ToMoveCtor&lt;S&gt;(*obj); }
+ };
+</pre>
+
+<p>It is soleyly introduced to designate <b>Move constructors</b>. The method <b>cast()</b> can be used to "touch" 
+a base class subobject in the <b>Move constructor</b> body.
+</p>
+
+<h2>C++11 move constructor and Move constructor</h2>
+
+<p>
+<b>CCore</b> is not using C++11 move constructors for <b>Moving</b>.
+C++11 move constructors were introduced to solve some language problems.
+The first problem is the returning value from a function. Consider this:
+</p>
+
+<pre>
+class C
+ {
+  public:
+
+   C(C &&src);
+
+   ~C();
+ };
+
+C func()
+ {
+  C obj;
+
+  return obj; // move object here instead of copy
+ }
+</pre>
+
+<p>
+But this solution is a wrongdoing. The proper approach would be the change of the return semantic:
+operator return should construct the object using any desired constructor instead of copying it.
+</p>
+
+<pre>
+class Class
+ {
+  public:
+
+   Class(A a,B b,C c);
+
+   ~Class();
+ };
+
+Class func()
+ {
+  A a;
+  B b;
+  C c;
+
+  return(a,b,c); // calls Class(a,b,c) to create the return object
+ }
+</pre>
+
+<p>
+The problem with the move constructor is it is a <b>destructive implicit operation</b> and as such is a error-prone.
+So in <b>CCore</b> C++11 move is prohibited. Instead we are using the <b>Move constructor</b>,
+which is explicit and is called only under specified condition: <span class="Hint">the destructor 
+of the argument is called right after constructor is called, 
+i.e. there is no other methods of the argument are called between them</span>.
+</p>
+
+</body>
+
+</html>
+

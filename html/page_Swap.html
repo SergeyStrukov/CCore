@@ -1,0 +1,178 @@
+<!--
+/* page_Swap.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Swap</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Swap idiom</h2>
+
+<p class="Files">Files <b>CCore/inc/Swap.h</b> <b>CCore/src/Swap.cpp</b></p>
+
+<p>
+<b>Swap</b> is not just a set of functions and classes, but a fundamental idiom.
+Objects of a <b>Small Data Types</b> can be copied efficiently. In fact, it is a generalized definition
+of the such kind of types. <b>Efficiency</b> can be defined in another terms as a <span class="Hint">O(1)-nothow property</span>.
+But for many types (actually, for the most nof them) 
+copying is either not logically possible, or is not efficient, because requires duplication 
+of a large state, and that is time and space expensive and may fail. So instead of copying we should use 
+moving or swaping whenever possible. For example, to return a result from a function: 
+</p>
+
+<pre>
+void func(T &ret)
+ {
+  T result;
+
+  ....
+
+  // result is built, took some resources
+
+  Swap(result,ret); // result -> ret, ret -> result
+
+  // null state result is destoyed
+ }
+
+void other_func()
+ {
+  ....
+
+  T obj; // null state, no resource taken
+
+  func(obj);
+
+  ....
+ }
+</pre>
+
+<p>
+<b>Swap</b> is <b>derivable</b>: if the state is a vector of states and each of them is swapable, then
+the state is swapable.
+</p>
+
+<pre>
+struct S
+ {
+  A a;
+  B b;
+  C c;
+
+  // swap objects
+
+  void objSwap(S &obj) // efficient combination of efficient parts
+   {
+    Swap(a,obj.a);
+    Swap(b,obj.b);
+    Swap(c,obj.c);
+   }
+ };
+</pre>
+
+<p>
+But what the most important, <b>Resource Host Types</b> are swapable.
+</p>
+
+<pre>
+class H : NoCopy
+ {
+  private:
+
+   ResourceHandle h; // <b>Small Data Type</b>
+
+  public: 
+
+   H() { SetNull(h); }
+
+   H(A a,B b,C c) { h=New(a,b,c); }
+
+   ~H() { Delete(h); }
+
+   // swap objects
+
+   void objSwap(S &obj) // efficient
+    {
+     Swap(h,obj.h);
+    }
+ };
+</pre>
+
+<p>
+That is the main cause why <b>Swap</b> is applicable to the wide range of types.
+</p>
+
+<h2>How to use</h2>
+
+<pre>
+template &lt;class T&gt;
+void CopySwap(T &a,T &b) noexcept(EnableNoExcept);
+
+template &lt;class T&gt;
+void Swap(T &a,T &b) noexcept(EnableNoExcept);
+</pre>
+
+<p>
+Well, you already known how to use <b>Swap</b> (see code above). Here is some implementaion details.
+The function <b>Swap()</b> uses the method <b>objSwap()</b> of the destined type to perform the operation.
+So to make a class swapable just define this method in the class.
+If a type is not a class type or the class has no this method, <b>Swap()</b> uses 
+<b>CopySwap()</b> to do the job. In such case the type must be copyable. This is how <b>Swap()</b>
+is working on all basic types.
+</p>
+
+<p>
+If for some reason you cannot or wantnot add the method to the class definition, you may
+specialize the <b>struct SwapAdapters</b> for your type:
+</p>
+
+<pre>
+namespace N {
+
+class C
+ {
+  ....
+ };
+
+}
+
+namespace CCore {
+
+template&lt;&gt;
+struct SwapAdapters&lt;false,N::C&gt;
+ {
+  static void Swap(N::C &a,N::C &b) { .... }
+ };
+
+}
+</pre>
+
+<p>
+But there is a problem with this way: usually to implement <b>Swap</b> you need access to the private
+members of the class, so it might be impossible to implement <b>Swap</b> without 
+an intervening in the class definition. 
+</p>
+
+</body>
+
+</html>
+

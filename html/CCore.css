@@ -1,0 +1,87 @@
+/* CCore.css */
+/*----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//--------------------------------------------------------------------------------------*/
+
+body
+{
+ font-family: "Times New Roman" ;
+ 
+ background: Bisque ;
+}
+
+h1
+{
+ font-size: 40pt ;
+ text-align: center ;
+ color: blue ;
+ background: Silver ;
+}
+
+h2
+{
+ font-size: 24pt ;
+ text-align: left ;
+ color: green ;
+ background: Silver ;
+}
+
+ol.Content
+{
+ font-size: 16pt ;
+}
+
+ul
+{
+ color: black ;
+ font-size: 14pt ;
+}
+
+p
+{
+ color: black ;
+ font-size: 14pt ;
+}
+
+p.Red
+{
+ text-indent: 32pt ;
+}
+
+p.Files
+{
+ font-family: monospace ;
+ background: aqua ;
+}
+
+span.Cmd
+{
+ font-family: monospace ;
+ background: white ;
+}
+
+span.Alert
+{
+ color: red ;
+}
+
+span.Hint
+{
+ color: blue ;
+}
+
+pre
+{
+ font-family: monospace, Anonymouse Pro ;
+ font-size: 16pt;
+ background: white ;
+}
+

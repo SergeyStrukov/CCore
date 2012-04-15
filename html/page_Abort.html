@@ -1,0 +1,70 @@
+<!--
+/* page_Abort.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Abort</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Abort</h2>
+
+<p class="Files">Files <b>CCore/inc/Abort.h</b> <b>CCore/src/AbortMsgFunc.cpp</b>  <b>HCore/src/Abort.cpp</b> <b>XCore/src/Abort.cpp</b></p>
+
+<p>
+There are two functons to abort an execution with a diagnostic message:
+</p>
+
+<pre>
+void Abort(StrLen str);
+ 
+void Abort(const char *zstr);
+</pre>
+
+<p>
+One of them accept a message text as a StrLen argument, another one as a zero-terminated character string.
+An exact method of the sending diagnostic message is target-dependent and implemented differently
+for HCore and XCore targets.
+</p>
+
+<p>
+There is also the global constant function pointer, which can be used to alter the <b>Abort()</b> behavior.
+</p>
+
+<pre>
+/* types */ 
+
+typedef void (*AbortMsgFuncType)(StrLen str);
+
+/* global const AbortMsgFunc */ 
+
+extern const AbortMsgFuncType AbortMsgFunc;
+</pre>
+
+<p>
+You may link an object file in your project with this constant defined to introduce a hook in <b>Abort()</b>.
+</p>
+
+</body>
+
+</html>
+

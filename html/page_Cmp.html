@@ -1,0 +1,282 @@
+<!--
+/* page_Cmp.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Cmp</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>3-way Cmp</h2>
+
+<p class="Files">Files <b>CCore/inc/Cmp.h</b> <b>CCore/src/Cmp.cpp</b></p>
+
+<p>
+Ordering is the one of the most important concept in the software world. 
+<b>CCore</b> supports and utilizes the <b>3-way comparision</b>.
+If you do compare two elements of the linear ordered set, then there are 3 possible outcomes:
+less, equal and greater. Pitiful (and shameful), but there is no a natural support of the 3-way comparision
+in the language. So the following helper entities are used for it.
+</p>
+
+<pre>
+enum CmpResult
+ {
+  CmpLess    = -1,
+  CmpEqual   =  0,
+  CmpGreater =  1
+ };
+ 
+inline CmpResult operator - (CmpResult cmp) { return CmpResult(-int(cmp)); }
+ 
+const char * GetTextDesc(CmpResult cmp);
+</pre>
+
+<p>
+<b>enum CmpResult</b> is used to represent an outcome of the 3-way comparision.
+</p>
+
+<pre>
+template &lt;class T&gt;
+CmpResult LessCmp(const T &amp;a,const T &amp;b)
+ {
+  return (a&lt;b)?CmpLess:( (b&lt;a)?CmpGreater:CmpEqual );
+ }
+</pre>
+
+<p>
+The function <b>LessCmp()</b> can be used for the 3-way comparison of objects 
+of types with defined <b>operator &lt;</b>. It covers all basic integer types.
+</p>
+
+<pre>
+template &lt;class T&gt;
+CmpResult Cmp(const T &amp;a,const T &amp;b);
+</pre>
+
+<p>
+To compare objects use the function <b>Cmp()</b>. If the destined type is a class type with
+the defined method <b>objCmp()</b>, then <b>Cmp()</b> calls this method, otherwise it calls <b>LessCmp()</b>.
+</p>
+
+<p>
+Use the function <b>AlphaCmp()</b> to perform the alphabetical comparision:
+</p>
+
+<pre>
+struct S
+ {
+  A a;
+  B b;
+  C c;
+
+  // cmp objects
+
+  CmpResult objCmp(const S &obj) const
+   {
+    return AlphaCmp(a,obj.a,b,obj.b,c,obj.c);
+   }
+ };
+</pre>
+
+<p>
+The function <b>AlphaCmp()</b> expects any number of pairs of arguments:
+</p>
+
+<pre>
+CmpResult AlphaCmp(const T1 &a1,const T1 &b1,const T2 &a2,const T2 &b2,...,const Tn &an,const Tn &bn);
+</pre>
+
+<p>
+As usual, you may specialize the <b>struct CmpAdapters</b> to implement the 3-way comparision of a type:
+</p>
+
+<pre>
+namespace N {
+
+class C
+ {
+  ....
+ };
+
+}
+
+namespace CCore {
+
+template&lt;&gt;
+struct CmpAdapters&lt;false,N::C&gt;
+ {
+  static CmpResult Cmp(const N::C &a,const N::C &b) { .... }
+ };
+
+}
+</pre>
+
+<p>
+Use the function <b>RangeCmp()</b> or <b>RangeLess()</b> to perform the alphabetical comparision of the ranges of an objects:
+</p>
+
+<pre>
+template &lt;class T&gt;
+CmpResult RangeCmp(const T *a,const T *b,ulen count);
+
+template &lt;class T&gt;
+CmpResult RangeCmp(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b);
+
+template &lt;class T&gt;
+bool RangeLess(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b);
+</pre>
+
+<p>
+Use the functions <b>StrCmp()</b> or <b>StrLess()</b> to compare strings:
+</p>
+
+<pre>
+CmpResult StrCmp(StrLen a,StrLen b);
+ 
+bool StrLess(StrLen a,StrLen b);
+</pre>
+
+<p>
+There are two helper classes <b>LessComparable</b> and <b>CmpComparable</b>:
+</p>
+
+<pre>
+/* struct LessComparable&lt;T&gt; */ 
+
+template &lt;class T%gt;
+struct LessComparable
+ {
+  friend bool operator &gt; (const T &a,const T &b) { return b&lt;a; }
+  
+  friend bool operator &lt;= (const T &a,const T &b) { return !(b&lt;a); }
+  
+  friend bool operator &gt;= (const T &a,const T &b) { return !(a&lt;b); }
+  
+  friend bool operator == (const T &a,const T &b) { return !( a&lt;b || b&lt;a ); }
+  
+  friend bool operator != (const T &a,const T &b) { return ( a&lt;b || b&lt;a ); }
+ };
+  
+/* struct CmpComparable&lt;T&gt; */ 
+
+template &lt;class T&gt;
+struct CmpComparable
+ {
+  friend bool operator &lt; (const T &a,const T &b) { return a.objCmp(b)&lt;0; }
+  
+  friend bool operator &gt; (const T &a,const T &b) { return a.objCmp(b)&gt;0; }
+  
+  friend bool operator &lt;= (const T &a,const T &b) { return a.objCmp(b)&lt;=0; }
+  
+  friend bool operator &gt;= (const T &a,const T &b) { return a.objCmp(b)&gt;=0; }
+  
+  friend bool operator == (const T &a,const T &b) { return a.objCmp(b)==0; }
+  
+  friend bool operator != (const T &a,const T &b) { return a.objCmp(b)!=0; }
+ };
+</pre>
+
+<p>
+They can be used to simplify an implementaion of the comparable classes:
+</p>
+
+<pre>
+class C : public CmpComparable&lt;C&gt; // provides all comparision operators for class C
+ {
+  public:
+
+   // cmp objects
+
+   CmpResult objCmp(const C &obj) const { .... }
+ };
+</pre>
+
+<pre>
+class C : public LessComparable&lt;C&gt; // provides all comparision operators for class C
+ {
+  public:
+
+   bool operator < (const C &obj) const { .... }
+ }; 
+
+// Cmp() uses LessCmp() for this class
+</pre>
+
+<pre>
+class C : public LessComparable&lt;C&gt; // provides all comparision operators for class C
+ {
+  public:
+
+   bool operator < (const C &obj) const { .... }
+
+   bool operator == (const C &obj) const { .... } // for efficiency
+
+   bool operator != (const C &obj) const { .... } // for efficiency
+ };
+</pre>
+
+<h2>Why 3-Way is better than 2-Way?</h2>
+
+<p>
+The answer is simple: it is more efficient and more usable in applications. 
+3-Way comparison has near the same cost for the simple types as 2-Way. In fact, the comparison command on the modern CPUs
+gives the complete answers how two integral values are ordered. So in practise only the absence of the language support for 3-Way
+or the lack of optimization capabilities of compilers makes 3-Way comparison of basic types is less efficient.
+</p>
+
+<p>
+But once we compare combined types (usually using alphabetical order) we start winning:
+</p>
+
+<pre>
+bool Less(T1 a1,T1 b1,T2 a2,T2 b2)
+ {
+  if( a1&lt;b1 )
+    {
+     return true;
+    }
+  else
+    {
+     if( b1&lt;a1 ) return false; // excessive double comparison of the same values
+
+     return a2&lt;b2;
+    } 
+ }
+
+CmpResult Cmp(T1 a1,T1 b1,T2 a2,T2 b2) // more efficient, simple and clear code
+ {
+  if( CmpResult ret=Cmp(a1,b1) ) return ret;
+
+  return Cmp(s2,b2);
+ }
+</pre>
+
+<p>
+All usual comparision operations are simply derived from <b>Cmp()</b>. And, finally, many algorithms like <b>Sort()</b>
+have advantage using 3-Way than 2-Way both in efficiency and simplicity.
+</p>
+
+</body>
+
+</html>
+
