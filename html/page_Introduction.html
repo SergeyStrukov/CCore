@@ -1,0 +1,100 @@
+<!--
+/* page_Introduction.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Introduction</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h1>Introduction</h1>
+
+<h2>Overview</h2>
+
+<p>
+<b>CCore</b> is a platform primary for developing real-time applications. It is distributed under the
+<a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License</a>.
+You can use <b>CCore</b> to build host applications also, but without any real-time properties. 
+We use the term "host application" to designate an application, running on the host machine, 
+currently under Windows OS.
+"stand-alone application" means an application, running on a stand-alone device. 
+<b>CCore</b> is a multi-target platform, you can (and, in fact, must!) develop your own target (host or stand-alone)
+for your specific target device. The installation of <b>CCore</b> provides the following targets:</p>
+<ul>
+<li><b>WIN32</b> &mdash; default host target,</li>
+<li><b>IXDP465</b> &mdash; stand-alone target for Intel IXDP465 developmnent board,</li>
+<li><b>Vanilla-H</b> &mdash; host target template,</li>
+<li><b>Vanilla-X</b> &mdash; stand-alone target template.</li>
+</ul>
+<p>
+<b>Target</b> includes compiler and tools, makefile rules and part of source code, specific for the target. 
+In most cases you are encouraged to develope components of you application using <b>WIN32</b> target and 
+then port it to a stand-alone target when it's ready. <b>CCore</b> is developed in target-independent 
+and platform-independent manner (despite it's a platform itself!). So it's recommended to follow this
+practice. Developing components on a host target usually is simpler and more productive.
+</p>
+<p>
+<b>CCore</b> is implemented using C++11. It enables the full advantage of this renewed language for
+embedded and real-time software development. You can also use it to build usual host applications.
+<b>CCore</b> is based on comprehensive, type-rich library, well, <b>CCore</b>. That's the core part
+of the platform. The next part is <b>HCore</b> for host targets and <b>XCore</b> for stand-alone targets.
+On host targets we rely on an operating system to perform some tasks (like primary memory management, 
+task synchronization etc.). So a host target provides a tiny layer between <b>HCore</b> and OS system calls.
+But on a stand-alone target we implements these fundamental functions ourself. <b>XCore</b> is an 
+implementaion of this part for single-core CPUs. A target provides an implementaion of very low-level 
+CPU specific functions <b>XCore</b> is based on. For example, the following 3 functions are required for interrupt lock support:
+</p>
+
+<pre>
+/* functions */ 
+
+bool <span class="Alert">IsIntContext()</span> noexcept;
+
+/* classes */ 
+
+class IntLock;
+
+/* class IntLock */ 
+
+class IntLock : NoCopy
+ {
+   bool enable;
+
+  public:
+
+   IntLock() { enable=Internal::Disable(); }
+ 
+   ~IntLock() { if( enable ) Internal::Enable(); }
+   
+   struct Internal
+    {
+     static bool <span class="Alert">Disable()</span> noexcept;
+     
+     static void <span class="Alert">Enable()</span> noexcept;
+    };
+ };
+</pre>
+
+</body>
+
+</html>
+
