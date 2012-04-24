@@ -1,0 +1,70 @@
+<!--
+/* page_Nothing.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Nothing</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Nothing, Null, Empty, Default</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/Nothing.h</b> <b>CCore/src/gadget/Nothing.cpp</b></p>
+
+<p><b>Nothing</b>, <b>Null</b>, <b>Empty</b>, <b>Default</b> &mdash; are words of the type <b>NothingType</b>.</p>
+
+<pre>
+/* words */ 
+
+enum NothingType 
+ { 
+  Nothing = 0,
+  Null    = 0,
+  Empty   = 0,
+  Default = 0
+ };
+</pre>
+
+<p>They can be used to define an implicit constructor of a class.</p>
+
+<pre>
+class C
+ {
+  public:
+
+   C(NothingType) { .... }
+ };
+</pre>
+
+<p>Objects of such classes can be constructed using one of these words:</p>
+
+<pre>
+C func()
+ {
+  return Empty; // explicit intention
+ }
+</pre>
+
+</body>
+
+</html>
+

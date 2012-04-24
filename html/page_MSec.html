@@ -1,0 +1,78 @@
+<!--
+/* page_MSec.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> MSec</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>MSec</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/MSec.h</b> <b>CCore/src/gadget/MSec.cpp</b></p>
+
+<p><b>MSec</b> holds time in milisecond units. Usually it is used to represent timeouts or short time intervals.
+To create a <b>MSec</b> you can use the following user-defined literals:
+</p>
+
+<pre>
+100_msec // 100 miliseconds
+10_sec   // 10 seconds
+5_min    // 5 minutes
+1_hour   // 1 hour
+</pre>
+
+<p>
+You can also add <b>MSecs</b> or multiply by unsigned: 
+</p>
+
+<pre>
+10*1_hour+25_min
+</pre>
+
+<p>There are few helper methods of the class:</p>
+
+<pre>
+struct MSec
+ {
+  unsigned time;                                                    // hold the time in miliseconds
+  
+  // constructors
+  
+  constexpr MSec(NothingType) : time(0) {}                          // null value
+  
+  explicit constexpr MSec(unsigned time_) : time(time_) {}          // given value
+  
+  // methods
+  
+  constexpr unsigned operator + () const { return time; }           // extract time
+  
+  constexpr bool operator ! () const { return !time; }              // time is null
+  
+  MSec cap(MSec lim) { Replace_min(time,lim.time); return *this; }  // cap self to limit
+ };
+</pre>
+
+</body>
+
+</html>
+
