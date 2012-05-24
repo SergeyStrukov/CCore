@@ -32,3 +32,9 @@ include $(CCORE_ROOT)/Target/Makefile.app
 run: $(TARGET)
 	IXDP465Boot.exe r 192.168.1.10 $(TARGET) && cd root && PTPServer.exe c
 	
+sim: $(TARGET)
+	ARMGo.exe $(TARGET)
+	
+simlog: $(TARGET)
+	ARMGo.exe $(TARGET) ARMLog.txt
+	

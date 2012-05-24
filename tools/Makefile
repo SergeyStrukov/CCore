@@ -9,17 +9,20 @@
 #
 #----------------------------------------------------------------------------------------
 
+OPT = -j 8
+
 all:
-	make -C EchoServer
-	make -C MakeList
-	make -C PTPEchoTest
-	make -C Regen
-	make -C PTPServer
-	make -C exectest
-	make -C FileMap
-	make -C LangLR1
-	make -C EllipticPi
-	make -C ParserGen
+	make $(OPT) -C EchoServer
+	make $(OPT) -C MakeList
+	make $(OPT) -C PTPEchoTest
+	make $(OPT) -C Regen
+	make $(OPT) -C PTPServer
+	make $(OPT) -C exectest
+	make $(OPT) -C FileMap
+	make $(OPT) -C LangLR1
+	make $(OPT) -C EllipticPi
+	make $(OPT) -C ParserGen
+	make $(OPT) -C ArmGo
 
 clean:
 	make -C EchoServer   clean
@@ -32,6 +35,7 @@ clean:
 	make -C LangLR1      clean
 	make -C EllipticPi   clean
 	make -C ParserGen    clean
+	make -C ArmGo        clean
 
 list:
 	make -C EchoServer   list
@@ -44,4 +48,5 @@ list:
 	make -C LangLR1      list
 	make -C EllipticPi   list
 	make -C ParserGen    list
+	make -C ArmGo        list
 

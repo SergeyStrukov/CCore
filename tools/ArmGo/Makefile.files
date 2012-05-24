@@ -1,0 +1,101 @@
+OBJ_LIST = \
+obj/ARMBase.o \
+obj/ARMCmd.o \
+obj/ARMCore.o \
+obj/ARMState.o \
+obj/Target.o \
+obj/main.o \
+
+
+ASM_LIST = \
+obj/ARMBase.s \
+obj/ARMCmd.s \
+obj/ARMCore.s \
+obj/ARMState.s \
+obj/Target.s \
+obj/main.s \
+
+
+DEP_LIST = \
+obj/ARMBase.dep \
+obj/ARMCmd.dep \
+obj/ARMCore.dep \
+obj/ARMState.dep \
+obj/Target.dep \
+obj/main.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+obj/ARMBase.o : ./src/ARMBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ARMCmd.o : ./src/ARMCmd.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ARMCore.o : ./src/ARMCore.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ARMState.o : ./src/ARMState.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Target.o : ./src/Target.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/main.o : ./main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/ARMBase.s : ./src/ARMBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ARMCmd.s : ./src/ARMCmd.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ARMCore.s : ./src/ARMCore.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ARMState.s : ./src/ARMState.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Target.s : ./src/Target.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/main.s : ./main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/ARMBase.dep : ./src/ARMBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ARMBase.o $< -MF $@
+
+obj/ARMCmd.dep : ./src/ARMCmd.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ARMCmd.o $< -MF $@
+
+obj/ARMCore.dep : ./src/ARMCore.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ARMCore.o $< -MF $@
+
+obj/ARMState.dep : ./src/ARMState.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ARMState.o $< -MF $@
+
+obj/Target.dep : ./src/Target.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Target.o $< -MF $@
+
+obj/main.dep : ./main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+

@@ -3,4 +3,5 @@
 *.a
 *.exe
 PTPServerLog.txt
+ARMLog.txt
 eclipse/*
