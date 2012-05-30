@@ -35,15 +35,15 @@ There are two functons to abort an execution with a diagnostic message:
 </p>
 
 <pre>
-void Abort(StrLen str);
+void <span class="Att">Abort</span>(StrLen str);
  
-void Abort(const char *zstr);
+void <span class="Att">Abort</span>(const char *zstr);
 </pre>
 
 <p>
 One of them accept a message text as a StrLen argument, another one as a zero-terminated character string.
 An exact method of the sending diagnostic message is target-dependent and implemented differently
-for HCore and XCore targets.
+for <b>HCore</b> and <b>XCore</b> targets.
 </p>
 
 <p>
@@ -57,11 +57,14 @@ typedef void (*AbortMsgFuncType)(StrLen str);
 
 /* global const AbortMsgFunc */ 
 
-extern const AbortMsgFuncType AbortMsgFunc;
+extern const AbortMsgFuncType <span class="Att">AbortMsgFunc</span>;
 </pre>
 
 <p>
 You may link an object file in your project with this constant defined to introduce a hook in <b>Abort()</b>.
+Be reasonable with the hook actions: on <b>XCore</b> targets it may be called in any context, so you cannot
+do any heavy job inside. The same on <b>HCore</b> targets use it just to show a message 
+(using MessageBox for example).
 </p>
 
 </body>

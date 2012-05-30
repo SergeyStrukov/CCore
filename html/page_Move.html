@@ -55,17 +55,17 @@ the implementation point for it.
 
 <pre>
 template &lt;class T&gt;
-T * CopyMove(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for efficiently copyable classes
+T * <span class="Att">CopyMove</span>(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for efficiently copyable classes
 
 template &lt;class T&gt;
-T * SwapMove(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for classes with <b>objSwap()</b>
+T * <span class="Att">SwapMove</span>(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for classes with <b>objSwap()</b>
                                                                  // and efficient default
 
 template &lt;class T&gt;
-T * CtorMove(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for classes with <b>Move constructor</b>
+T * <span class="Att">CtorMove</span>(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for classes with <b>Move constructor</b>
 
 template &lt;class T&gt;
-T * Move(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // general
+T * <span class="Att">Move</span>(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // general
 </pre>
 
 <p>
@@ -114,19 +114,19 @@ Consider the following example:
 struct S
  {
   A a; // class A has <b>Move constructor</b>
-  B b; // type B is efficiently copyabel
+  B b; // type B is efficiently copyable
   C c; // class C has <b>Move constructor</b>
 
   // swap/move objects
    
-  void objSwap(S &obj)
+  void <span class="Att">objSwap</span>(S &obj)
    {
     Swap(a,obj.a);
     Swap(b,obj.b);
     Swap(c,obj.c);
    }
    
-  explicit S(ToMoveCtor&lt;S&gt; obj) // the <b>Move constructor</b> signature
+  explicit <span class="Att">S(ToMoveCtor&lt;S&gt; obj)</span> // the <b>Move constructor</b> signature
 
    : a(ObjToMove(obj->a)),      // member move with its <b>Move constructor</b>
      b(obj->b),                 // member move by copying
@@ -134,7 +134,7 @@ struct S
    {
    }
 
-  S * objMove(Place&lt;void&gt; place)
+  S * <span class="Att">objMove</span>(Place&lt;void&gt; place)
    {
     return CtorMove(this,place);
    }

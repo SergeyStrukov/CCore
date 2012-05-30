@@ -1,0 +1,81 @@
+<!--
+/* page_Lock.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> LockObject</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>LockObject</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/Lock.h</b> <b>CCore/src/gadget/Lock.cpp</b></p>
+
+<p><b>LockObject</b> is a simple class implementing scope lock pattern:</p>
+
+<pre>
+template &lt;class T&gt;
+class LockObject : NoCopy
+ {
+   T &amp;obj;
+   
+  public:
+  
+   explicit LockObject(T &amp;obj_) : obj(obj_) { obj_.lock(); }
+   
+   ~LockObject() { obj.unlock(); }
+ };
+</pre>
+
+<p>
+If you have an object of type C with methods <b>lock()</b> and <b>unlock()</b>, you can use <b>LockObject</b> 
+to "lock" this object for the scope duration:
+</p>
+
+<pre>
+class C
+ {
+  public:
+
+   void lock();
+
+   void unlock();
+ };
+
+....
+
+C obj;
+
+....
+
+{
+ LockObject&lt;C&gt; lock(obj); // obj.lock() is called
+                          // obj.unlock() will be called whenever scope is quit
+
+ ...
+}
+</pre>
+
+</body>
+
+</html>
+

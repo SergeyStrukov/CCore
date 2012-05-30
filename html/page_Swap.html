@@ -67,7 +67,7 @@ void other_func()
 </pre>
 
 <p>
-<b>Swap</b> is <b>derivable</b>: if the state is a vector of states and each of them is swapable, then
+<b>Swap</b> is <b>derivable</b>: if the state is a tuple of states and each of them is swapable, then
 the state is swapable.
 </p>
 
@@ -80,7 +80,7 @@ struct S
 
   // swap objects
 
-  void objSwap(S &obj) // efficient combination of efficient parts
+  void <span class="Att">objSwap</span>(S &obj) // efficient combination of efficient parts
    {
     Swap(a,obj.a);
     Swap(b,obj.b);
@@ -110,7 +110,7 @@ class H : NoCopy
 
    // swap objects
 
-   void objSwap(S &obj) // efficient
+   void <span class="Att">objSwap</span>(S &obj) // efficient
     {
      Swap(h,obj.h);
     }
@@ -125,10 +125,10 @@ That is the main cause why <b>Swap</b> is applicable to the wide range of types.
 
 <pre>
 template &lt;class T&gt;
-void CopySwap(T &a,T &b) noexcept(EnableNoExcept);
+void <span class="Att">CopySwap</span>(T &a,T &b) noexcept(EnableNoExcept);
 
 template &lt;class T&gt;
-void Swap(T &a,T &b) noexcept(EnableNoExcept);
+void <span class="Att">Swap</span>(T &a,T &b) noexcept(EnableNoExcept);
 </pre>
 
 <p>

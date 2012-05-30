@@ -57,20 +57,26 @@ struct MSec
   unsigned time;                                                    // hold the time in miliseconds
   
   // constructors
+
+  // no default constructor -- this is deliberate
   
-  constexpr MSec(NothingType) : time(0) {}                          // null value
+  constexpr <span class="Att">MSec(NothingType)</span> : time(0) {}                          // null value
   
-  explicit constexpr MSec(unsigned time_) : time(time_) {}          // given value
+  explicit constexpr <span class="Att">MSec(unsigned time_)</span> : time(time_) {}          // given value
   
   // methods
   
-  constexpr unsigned operator + () const { return time; }           // extract time
+  constexpr unsigned <span class="Att">operator +</span> () const { return time; }           // extract time
   
-  constexpr bool operator ! () const { return !time; }              // time is null
+  constexpr bool <span class="Att">operator !</span> () const { return !time; }              // time is null
   
-  MSec cap(MSec lim) { Replace_min(time,lim.time); return *this; }  // cap self to limit
+  MSec <span class="Att">cap(MSec lim)</span> { Replace_min(time,lim.time); return *this; }  // cap self to limit
  };
 </pre>
+
+<p>
+<b>MSec</b> methods and functions are <b>constexpr</b>, so you can use it to create constants.
+</p>
 
 </body>
 

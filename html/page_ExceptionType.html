@@ -1,0 +1,111 @@
+<!--
+/* page_ExceptionType.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> ExceptionType</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>ExceptionType</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/ExceptionType.h</b> <b>CCore/src/gadget/ExceptionType.cpp</b></p>
+
+<p>
+<b>ExceptionType</b> is an enum with two named values. It is used to handle an exceptional
+situation in <b>CCore</b>.
+</p>
+
+<pre>
+enum <span class="Att">ExceptionType</span>
+ {
+  <span class="Att">NoException</span>, // don't throw exception, just report a error
+  <span class="Att">Exception</span>    // throw exception
+ };
+</pre>
+
+<p>
+<b>CatchType</b> is an empty base class for exception classes. 
+</p>
+
+<pre>
+struct CatchType 
+ {
+  CatchType() {}
+ };
+</pre>
+
+<h2>Handling exceptional situations</h2>
+
+<p>
+<b>CCore</b> uses the following pattern to handle exceptional situations.
+To throw an exception:
+</p>
+
+<pre>
+
+Printf(<span class="Att">Exception</span>,"message text",...);
+
+</pre>
+
+<p>
+This statement will pick up an installed error report handler, print the specified error message and then 
+throw an exception of type <b>CatchType</b>.
+</p>
+
+<p>
+To report a error wihout throwing an exception (i.e. inside a destructor):
+</p>
+
+<pre>
+
+Printf(<span class="Att">NoException</span>,"message text",...);
+
+</pre>
+
+<p>
+To catch exceptions use the following pattern:
+</p>
+
+<pre>
+try
+ {
+  ReportException report; // or some derived from ReportException class
+
+  {
+   // do some job here
+  }
+
+  report.guard(); // throw an exception if there was Printf(NoException,...); above
+ }
+catch(CatchType)
+ {
+  // 
+ }
+</pre>
+
+<p>See <a href="page_Exception.html">Exception</a> for more details.</p>
+
+</body>
+
+</html>
+

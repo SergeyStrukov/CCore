@@ -1,0 +1,101 @@
+<!--
+/* page_NegBool.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> NegBool</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>NegBool</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/NegBool.h</b> <b>CCore/src/gadget/NegBool.cpp</b></p>
+
+<p>
+<b>NegBool</b> is a simple proxy class intended to return a logically negative value. 
+</p>
+
+<pre>
+class NegBool
+ {
+   bool nok;
+
+  public:
+
+   NegBool(bool nok_=false) : nok(nok_) {}
+ 
+   bool operator ! () const { return nok; }
+ };
+</pre>
+
+<p>
+Assume you have a function, returning a logically negative value:
+</p>
+
+<pre>
+bool func()
+ {
+  bool nok;
+
+  ....
+
+  return nok;
+ }
+</pre>
+
+<p>
+When you check the result of the function you will have code like this:
+</p>
+
+<pre>
+if( func() ) // not clear way to express the error outcome
+  {
+   // handle failure
+  }
+</pre>
+
+<p>
+You can use <b>NegBool</b> class to warp the return value:
+</p>
+
+<pre>
+NegBool func()
+ {
+  bool nok;
+
+  ....
+
+  return nok;
+ }
+</pre>
+
+<pre>
+if( !func() )
+  {
+   // handle failure
+  }
+</pre>
+
+</body>
+
+</html>
+

@@ -1,0 +1,71 @@
+<!--
+/* page_DefaultValue.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> DefaultValue</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>DefaultValue</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/DefaultValue.h</b> <b>CCore/src/gadget/DefaultValue.cpp</b></p>
+
+<p>
+<b>DefaultValue()</b> can be used to create an object with default initialization (i.e. using default constructor):
+</p>
+
+<pre>
+
+C obj=<span class="Att">DefaultValue()</span>;
+
+</pre>
+
+<p>Or:</p>
+
+<pre>
+
+void func(C arg=<span class="Att">DefaultValue()</span>);
+
+</pre>
+
+<p>
+The type C above must be copyable.
+</p>
+
+<p>
+<b>DefaultInitObject</b> can be used to create an object with default initialization without copying:
+</p>
+
+<pre>
+<span class="Att">DefaultInitObject</span>&lt;C&gt; init; // init.obj of type C is default initialized
+</pre>
+
+<p>
+Both of <b>DefaultValue()</b> and <b>DefaultInitObject</b> are mostly to make code more verbose
+and sometimes more clear written.
+</p>
+
+</body>
+
+</html>
+

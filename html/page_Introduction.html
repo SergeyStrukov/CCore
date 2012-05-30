@@ -31,14 +31,15 @@
 <h2>Overview</h2>
 
 <p>
-<b>CCore</b> is a platform primary for developing real-time applications. It is distributed under the
+<b>CCore</b> is a platform primary for development of real-time applications. It is distributed under the
 <a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License</a>.
 You can use <b>CCore</b> to build host applications also, but without any real-time properties. 
 We use the term "host application" to designate an application, running on the host machine, 
-currently under Windows OS.
-"stand-alone application" means an application, running on a stand-alone device. 
-<b>CCore</b> is a multi-target platform, you can (and, in fact, must!) develop your own target (host or stand-alone)
-for your specific target device. The installation of <b>CCore</b> provides the following targets:</p>
+currently under OS Windows.
+"Stand-alone application" means an application, running on a stand-alone device. 
+<b>CCore</b> is a multi-target platform, you can (and, in fact, must!) develop your own target 
+(host or stand-alone) for your specific target device. The installation of <b>CCore</b> provides 
+the following targets:</p>
 <ul>
 <li><b>WIN32</b> &mdash; default host target,</li>
 <li><b>IXDP465</b> &mdash; stand-alone target for Intel IXDP465 developmnent board,</li>
@@ -47,8 +48,8 @@ for your specific target device. The installation of <b>CCore</b> provides the f
 </ul>
 <p>
 <b>Target</b> includes compiler and tools, makefile rules and part of source code, specific for the target. 
-In most cases you are encouraged to develope components of you application using <b>WIN32</b> target and 
-then port it to a stand-alone target when it's ready. <b>CCore</b> is developed in target-independent 
+In most cases you are encouraged to develop components of you application using <b>WIN32</b> target and 
+then port it to a stand-alone target when it's ready. <b>CCore</b> is designed in target-independent 
 and platform-independent manner (despite it's a platform itself!). So it's recommended to follow this
 practice. Developing components on a host target usually is simpler and more productive.
 </p>
@@ -61,7 +62,8 @@ On host targets we rely on an operating system to perform some tasks (like prima
 task synchronization etc.). So a host target provides a tiny layer between <b>HCore</b> and OS system calls.
 But on a stand-alone target we implements these fundamental functions ourself. <b>XCore</b> is an 
 implementaion of this part for single-core CPUs. A target provides an implementaion of very low-level 
-CPU specific functions <b>XCore</b> is based on. For example, the following 3 functions are required for interrupt lock support:
+CPU specific functions <b>XCore</b> is based on. For example, the following 3 functions are required for 
+interrupt lock support:
 </p>
 
 <pre>
@@ -92,6 +94,376 @@ class IntLock : NoCopy
      static void <span class="Alert">Enable()</span> noexcept;
     };
  };
+</pre>
+
+<h2>CCore</h2>
+
+<p>
+
+<b>CCore</b> is a language support library. It's created to provide an improved language support 
+for C++ and to replace the error-prone and obsolete "old bad" C RTL and STL. <b>CCore</b> is focused on
+"everyday programmer's needs", it tries to be a small, but powerful.
+
+</p>
+<p>
+
+In particular, it contains:
+
+</p>
+
+<ol>
+<li>PtrLen and Range for convenient and efficient loops,</li>
+<li>Printf with class print supoport, easily customized output devices and options,</li>
+<li>Efficient smart callback support,</li>
+<li>Mersenne Twister random number generator,</li>
+<li>Radix-tree based heap with real-time properties,</li>
+<li>Swap-based intro-sort,</li>
+<li>Cmp/Move/Swap infrastructure,</li>
+<li>Error-handling infrastructure to support multi-error handling,</li>
+<li>Any kind of lists,</li>
+<li>Radix and Red-Black trees,</li>
+<li>Properly implemented dynamic arrays,</li>
+<li>Packet, an async processing infrastructure, an essential foundation for a system layer and server tasks,</li>
+<li>Integer library,</li>
+<li>Crypton library,</li> 
+<li>Fast log,</li>
+<li>New network infrastructure, based on PTP protocol,</li>
+<li>DDL(data-definition language) implementation,</li>
+<li>and many other helpful things.</li>
+</ol>
+
+<h2>XCore</h2>
+
+<p>
+
+<b>XCore</b> is a multi-task core for embedded systems. It is combined with <b>CCore</b> library. 
+The core is designed for single CPU systems. 
+
+</p>
+<p>
+
+<b>XCore</b>:
+
+</p>
+
+<ol>
+<li>provides a rich set of synchonization objects and a simple way to construct additional ones,</li> 
+<li>implements priority inheritance and deadlock detection for mutexes,</li> 
+<li>task scheduler switchs with high frequency (10 kHz for IXDP465 platform),
+      that gives fine-grained task execution, ensure the system is high responsive,</li>
+<li>scheduler supports task priority relaxation, that protects low priority tasks 
+      from complete execution hold-on,</li> 
+<li>full support for C++11,</li>
+<li>no limitation for compiler optimization level,</li> 
+<li>clear target requirements.</li>
+</ol>
+
+<h2>PTP</h2>
+
+<p>
+<b>PTP</b> &mdash; packet transaction protocol. It superseeds TCP as a main network protocol for client-server
+applications. PTP is a packet-based, parallel and transactional protocol. It is simple and convenient
+for development of a "remote call" type interactions. Parallel nature of PTP makes obsolete such tricks
+as multi-thread FTP download. PTP is working atop on a packet point-to-point or point-to-multipoint
+service like UDP (or even raw Ethernet). PTP has ability to adapt for smaller MTU lengths, 
+that is important to combine with another network protocols, which can reduce MTU (for example, 
+to implement incapsualation or encryption). 
+</p>
+
+<p>
+There are several typical problems when network interaction is developed based on TCP:
+</p>
+
+<ul>
+<li>you have to parse continuous byte stream on packets,</li>
+<li>you cannot performs parallel transactions, so if TCP is stalled on a packet loss, 
+then everything is stalled,</li>
+<li>you have to match calls with responses yourself, using sequence numbers for example.</li>
+
+</ul>
+
+<p><b>PTP</b> resolves all these issues.</p>
+
+<p>
+<b>PTPServer</b> &mdash; a PTP server on a host machine, it provides access to the host file system
+via <b>HFS</b> over <b>PTP</b> protocols.
+</p>
+
+<h2>DDL</h2>
+
+<p>
+<b>DDL</b> &mdash; data definition language. It is designed to represent an abstract 
+linked data in textual form.
+Here is a short example of a parser state machine representation:
+</p>
+
+<pre>
+struct State
+ {
+  StateIndex state;
+
+  struct Transition { NTIndex ntt; State *state; } [] transitions;
+
+  struct Final { TIndex t; Rule *rule; } [] finals;
+ };
+
+State[22] StateTable=
+ {
+  { 0 ,
+   {
+    { 1 , StateTable+1 },
+    { 5 , StateTable+2 },
+    { 6 , StateTable+3 },
+    { 7 , StateTable+4 },
+    { 8 , StateTable+16 }
+   },
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  },
+
+....
+
+</pre>
+
+<p>
+<b>DDL</b> can be used for manual introduced data, like configuration information.
+Or it can be used to store program-generated data to exchange with different data-processing programs.
+</p>
+
+<h2>LR1 parser generator</h2>
+
+<p>
+<b>LangLR1</b> is a tool for generation LR1 parsing state machines. It takes a language description and produces
+a .ddl file with a state machine description. You can use this description further to generate code 
+in any suitable for your purpose form. Another tool &mdash; <b>ParserGen</b> produces C++ code from .ddl 
+output in a some particular form.
+</p>
+<p>
+Here is an example, <b>AMP</b> language: 
+</p>
+
+<pre>
+/* AMP.lang */
+
+A :
+ {
+  M     : A1
+  A + M : A2
+ }
+ 
+M
+ {
+  P     : M1
+  P * M : M2
+ }
+ 
+P
+ {
+  x     : P1
+  ( A ) : P2 
+ } 
+</pre>
+
+<p>
+<b>DDL</b> implementation in <b>CCore</b> is built using these tools.
+</p>
+
+<h2>Regen</h2>
+
+<p>
+<b>Regen</b> is a tool for generation helper classes and constants from register description.
+It is used to simplify and beautify low-level register device programming.
+</p>
+
+<p>
+An example of register description (IXP465 timers control):
+</p>
+
+<pre>
+reg Status : 32
+ {
+  T0        : .
+  T1        : .
+  TS        : .
+  WD        : .
+  WarmReset : .
+ }
+ 
+ // TS
+
+reg TS : 32 {}
+
+reg TSCmp : 32 {}
+
+reg TSCfg : 32
+ {
+  MHz50 : .
+  Pause : .
+ }
+
+reg TSPrescale : 32 
+ {
+  Div : .+16
+ }
+
+ // T0
+ 
+reg T0 : 32 {} 
+
+reg T0Reload : 32 
+ {
+  Enable   : .
+  OneShort : .
+  Reload   : .+30
+ }
+ 
+reg T0Cfg : 32
+ {
+  Reload  : .+2
+  MHz50   : .
+  Pause   : .
+ }
+ 
+reg T0Prescale : 32
+ {
+  Div : .+16
+ }
+ 
+ // T1
+ 
+reg T1 : 32 {} 
+ 
+reg T1Reload : 32 
+ {
+  Enable   : .
+  OneShort : .
+  Reload   : .+30
+ }
+ 
+reg T1Cfg : 32
+ {
+  Reload  : .+2
+  MHz50   : .
+  Pause   : .
+ }
+ 
+reg T1Prescale : 32
+ {
+  Div : .+16
+ }
+ 
+ // WD
+ 
+reg WD : 32 {}
+
+reg WDKey : 32
+ {
+  Key : .+16
+   {
+    Open = 482Eh
+    Close = 0
+   }
+ }
+ 
+reg WDControl : 32
+ {
+  Reset  : .
+  Int    : .
+  Enable : .
+ }
+
+ // bar
+
+bar OSTBar : address
+ {
+  TS         = .
+  T0         = . RO
+  T0Reload   = .
+  T1         = . RO
+  T1Reload   = .
+  WD         = .
+  WDControl  = .
+  WDKey      = .
+  Status     = .
+  TSCmp      = .
+  TSCfg      = .
+  TSPrescale = .
+  T0Cfg      = .
+  T0Prescale = .
+  T1Cfg      = .
+  T1Prescale = .
+ }
+</pre>
+
+<p>
+And output:
+</p>
+
+<pre>
+/* IXP465.OST.gen.h */ 
+
+/* struct Type_Status */ 
+
+enum Bits_Status : uint32
+ {
+  Status_T0        = 0x00000001,
+  Status_T1        = 0x00000002,
+  Status_TS        = 0x00000004,
+  Status_WD        = 0x00000008,
+  Status_WarmReset = 0x00000010
+ };
+ 
+inline Bits_Status operator | (Bits_Status a,Bits_Status b)
+ { return Bits_Status(uint32(a)|uint32(b)); }
+ 
+struct Type_Status
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_Status(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_Status & setTo(Bar &bar) { bar.set_Status(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_Status & setTo(Bar &bar,uint32 ind) { bar.set_Status(*this,ind); return *this; }
+ 
+
+  template <class T>
+  Type_Status & set(T to) { to(*this); return *this; }
+ 
+
+  Type_Status & setbit(Bits_Status bits) { value|=Type(bits); return *this; }
+ 
+  Type_Status & setbitIf(bool cond,Bits_Status bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_Status & clearbit(Bits_Status bits) { value&=~Type(bits); return *this; }
+ 
+  Type_Status & clearbitIf(bool cond,Bits_Status bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_Status bits) const { return value&bits; }
+ 
+  bool testbit(Bits_Status bits) const { return (value&bits)==Type(bits); }
+ 
+
+  template <class P>
+  void print(P &out) const;
+
+  ....
+ };
+
+....
 </pre>
 
 </body>

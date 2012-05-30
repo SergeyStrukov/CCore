@@ -1,0 +1,194 @@
+<!--
+/* page_Len.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Len</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Len</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/Len.h</b> <b>CCore/src/gadget/Len.cpp</b></p>
+
+<p>
+<b>Len.h</b> contains a number of length related types, constants and functions. <b>CCore</b>
+uses the type <b>ulen</b> to represent a length. This is a substitute for the standard <b>size_t</b> type.
+<b>ulen</b> is defined in the target <b>PlatformBase.h</b> header.
+We introduced this type for serveral reasons: 1) it has a better name, more simpler to type,
+2) target cannot adjust compiler definition for <b>size_t</b>, for example, compiler can define <b>size_t</b>
+as unsigned long, but if it has the same number of bits as an unsigned, then there is no point in
+such definition, so target can define <b>ulen</b> as unsigned.
+</p>
+
+<h3>Constants</h3> 
+
+<p>
+<b>TextBufLen</b> is a length used for small text buffers.
+<b>MaxULen</b> is a maximum value for the <b>ulen</b> type.
+</p>
+
+<pre>
+
+const ulen <span class="Att">TextBufLen</span> = 256 ;
+
+const ulen <span class="Att">MaxULen</span> = ulen(-1) ;
+
+</pre>
+
+<p>
+To assigne a length value you can use user-defined literals with suffixes <b>KByte</b> and <b>MByte</b>:
+</p>
+
+<pre>
+
+ulen len1 = 10_KByte ;
+ulen len2 = 33_MByte ;
+
+</pre>
+
+<h3>Calculate lengths and guards</h3>
+
+<p>
+There are several functions used to calcualte lengths with overflow control:
+</p>
+
+<pre>
+
+ulen <span class="Att">LenAdd</span>(ulen len,ulen extra_len); // return len+extra_len
+
+ulen <span class="Att">LenOf</span>(ulen count,ulen size_of,ulen extra=0); // return count*size_of+extra
+
+</pre>
+
+<p>
+In case of overflow they will call the following guard functions, these functions throw exceptions:
+</p>
+
+<pre>
+
+void <span class="Att">GuardLenAddOverflow</span>(ulen len,ulen extra_len);
+
+void <span class="Att">GuardLenOfOverflow</span>(ulen count,ulen size_of,ulen extra);
+
+</pre>
+
+<p>
+Once more guard function is a <b>GuardLen()</b>. It ensure the condition <b>len<=maxlen</b>.
+</p>
+
+<pre>
+
+void <span class="Att">GuardLen</span>(ulen len,ulen maxlen);
+
+void <span class="Att">GuardLenFailed</span>(ulen len,ulen maxlen);
+
+</pre>
+
+<h3>Alignment</h3>
+
+<p>
+The next functions are alignment functions. The length <b>len</b> is called aligned 
+(on some alignment value <b>A</b>), if it is divisible by <b>A</b>.
+</p>
+
+<pre>
+
+constexpr bool <span class="Att">NotAligned</span>(ulen len,ulen A=MaxAlign);
+ 
+constexpr ulen <span class="Att">Align</span>(ulen len,ulen A=MaxAlign);
+ 
+constexpr ulen <span class="Att">AlignDown</span>(ulen len,ulen A=MaxAlign);
+ 
+bool <span class="Att">TryAlign</span>(ulen &len,ulen A=MaxAlign);
+
+</pre>
+
+<p>
+<b>NotAligned()</b> checks if the argument is not aligned.
+</p>
+
+<p>
+<b>Align()</b> aligns the argument up. No overflow check is performed.
+</p>
+
+<p>
+<b>AlignDown()</b> aligns the argument down.
+</p>
+
+<p>
+<b>TryAlign()</b> tries to align the argument up. If an overflow happens, it will return <b>false</b>.
+Otherwise it will return <b>true</b> and update the first arguement with an aligned result.
+</p>
+
+<p>
+The second argument of all these functions is an alignment requirement, it must not be equal 0, and 
+defaulted to the <b>MaxAlign</b> value, defined in the target <b>PlatformBase.h</b> header
+</p>
+
+<h3>Utilities</h3>
+
+<p>
+The last two functions is <b>DimOf()</b> and <b>Dist()</b>:
+</p>
+
+<pre>
+
+template <class T,ulen Len>
+ulen <span class="Att">DimOf</span>(T (&)[Len]) { return Len; }
+ 
+template <class T>
+ulen <span class="Att">Dist</span>(const T *from,const T *to) { return ulen(to-from); }
+
+</pre>
+
+<p>
+<b>DimOf()</b> returns the length of the array:
+</p>
+
+<pre>
+
+C some_array[ArrayLen];
+
+ulen len=DimOf(some_array); // set len to ArrayLen
+
+</pre>
+
+<p>
+<b>Dist()</b> returns the distance between two objects from the same array, pointed by pointers:
+</p>
+
+<pre>
+
+C some_array[....];
+
+C *ptr1=some_array+index1;
+C *ptr2=some_array+index2; // index2 >= index1
+
+ulen dist=Dist(ptr1,ptr2); // set dist to index2-index1
+
+</pre>
+
+</body>
+
+</html>
+

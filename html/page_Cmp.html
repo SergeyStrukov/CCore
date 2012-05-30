@@ -38,29 +38,21 @@ less, equal and greater. Pitiful (and shameful), but there is no a natural suppo
 in the language. So the following helper entities are used for it.
 </p>
 
-<pre>
-enum CmpResult
- {
-  CmpLess    = -1,
-  CmpEqual   =  0,
-  CmpGreater =  1
- };
- 
-inline CmpResult operator - (CmpResult cmp) { return CmpResult(-int(cmp)); }
- 
-const char * GetTextDesc(CmpResult cmp);
-</pre>
-
 <p>
 <b>enum CmpResult</b> is used to represent an outcome of the 3-way comparision.
 </p>
 
 <pre>
-template &lt;class T&gt;
-CmpResult LessCmp(const T &amp;a,const T &amp;b)
+enum <span class="Att">CmpResult</span>
  {
-  return (a&lt;b)?CmpLess:( (b&lt;a)?CmpGreater:CmpEqual );
- }
+  <span class="Att">CmpLess</span>    = -1,
+  <span class="Att">CmpEqual</span>   =  0,
+  <span class="Att">CmpGreater</span> =  1
+ };
+ 
+inline CmpResult operator - (CmpResult cmp) { return CmpResult(-int(cmp)); }
+ 
+const char * GetTextDesc(CmpResult cmp);
 </pre>
 
 <p>
@@ -70,13 +62,21 @@ of types with defined <b>operator &lt;</b>. It covers all basic integer types.
 
 <pre>
 template &lt;class T&gt;
-CmpResult Cmp(const T &amp;a,const T &amp;b);
+CmpResult <span class="Att">LessCmp</span>(const T &amp;a,const T &amp;b)
+ {
+  return (a&lt;b)?CmpLess:( (b&lt;a)?CmpGreater:CmpEqual );
+ }
 </pre>
 
 <p>
 To compare objects use the function <b>Cmp()</b>. If the destined type is a class type with
 the defined method <b>objCmp()</b>, then <b>Cmp()</b> calls this method, otherwise it calls <b>LessCmp()</b>.
 </p>
+
+<pre>
+template &lt;class T&gt;
+CmpResult <span class="Att">Cmp</span>(const T &amp;a,const T &amp;b);
+</pre>
 
 <p>
 Use the function <b>AlphaCmp()</b> to perform the alphabetical comparision:
@@ -91,9 +91,9 @@ struct S
 
   // cmp objects
 
-  CmpResult objCmp(const S &obj) const
+  CmpResult <span class="Att">objCmp</span>(const S &obj) const
    {
-    return AlphaCmp(a,obj.a,b,obj.b,c,obj.c);
+    return <span class="Att">AlphaCmp</span>(a,obj.a,b,obj.b,c,obj.c);
    }
  };
 </pre>
@@ -103,7 +103,7 @@ The function <b>AlphaCmp()</b> expects any number of pairs of arguments:
 </p>
 
 <pre>
-CmpResult AlphaCmp(const T1 &a1,const T1 &b1,const T2 &a2,const T2 &b2,...,const Tn &an,const Tn &bn);
+CmpResult <span class="Att">AlphaCmp</span>(const T1 &a1,const T1 &b1,const T2 &a2,const T2 &b2,...,const Tn &an,const Tn &bn);
 </pre>
 
 <p>
@@ -137,13 +137,13 @@ Use the function <b>RangeCmp()</b> or <b>RangeLess()</b> to perform the alphabet
 
 <pre>
 template &lt;class T&gt;
-CmpResult RangeCmp(const T *a,const T *b,ulen count);
+CmpResult <span class="Att">RangeCmp</span>(const T *a,const T *b,ulen count);
 
 template &lt;class T&gt;
-CmpResult RangeCmp(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b);
+CmpResult <span class="Att">RangeCmp</span>(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b);
 
 template &lt;class T&gt;
-bool RangeLess(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b);
+bool <span class="Att">RangeLess</span>(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b);
 </pre>
 
 <p>
@@ -151,9 +151,9 @@ Use the functions <b>StrCmp()</b> or <b>StrLess()</b> to compare strings:
 </p>
 
 <pre>
-CmpResult StrCmp(StrLen a,StrLen b);
+CmpResult <span class="Att">StrCmp</span>(StrLen a,StrLen b);
  
-bool StrLess(StrLen a,StrLen b);
+bool <span class="Att">StrLess</span>(StrLen a,StrLen b);
 </pre>
 
 <p>
@@ -163,7 +163,7 @@ There are two helper classes <b>LessComparable</b> and <b>CmpComparable</b>:
 <pre>
 /* struct LessComparable&lt;T&gt; */ 
 
-template &lt;class T%gt;
+template &lt;class T&gt;
 struct LessComparable
  {
   friend bool operator &gt; (const T &a,const T &b) { return b&lt;a; }

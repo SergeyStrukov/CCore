@@ -1,0 +1,90 @@
+<!--
+/* page_Replace.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Replace</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Replace</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/Replace.h</b> <b>CCore/src/gadget/Replace.cpp</b></p>
+
+<p>
+<b>Replace...()</b> is a family of functions, they replace the first argument with a new value and return
+the old value.
+</p>
+
+<p>
+The basic of them is a simple <b>Replace()</b>.
+</p>
+
+<pre>
+
+template &lt;class T,class S&gt;
+T Replace(T &t,S a); // t &lt;- T(a)
+
+</pre>
+
+<p>
+
+There is also a set of variations:
+
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+T Replace_null(T &t); // t &lt;- T()
+
+template &lt;class T&gt;
+T Replace_min(T &t,T a); // t &lt;- Min(t,a)
+ 
+template &lt;class T&gt;
+T Replace_max(T &t,T a); // t &lt;- Max(t,a)
+ 
+template &lt;class T,class S&gt;
+T Replace_add(T &t,S a); // t &lt;- t+a
+ 
+template &lt;class T,class S&gt;
+T Replace_sub(T &t,S a); // t &lt;- t-a
+
+</pre>
+
+<p>
+
+The final one is a generic, you can use it with lambdas:
+
+</p>
+
+<pre>
+
+template <class Func,class T>
+T Replace_gen(Func func,T &t); // t &lt;- func(t)
+
+</pre>
+
+</body>
+
+</html>
+

@@ -34,12 +34,27 @@ h2
  background: Silver ;
 }
 
+h3
+{
+ font-size: 18pt ;
+ text-align: left ;
+ color: green ;
+ border-bottom-style:solid ;
+ border-width: 1pt ;
+}
+
 ol.Content
 {
  font-size: 16pt ;
 }
 
 ul
+{
+ color: black ;
+ font-size: 14pt ;
+}
+
+ol
 {
  color: black ;
  font-size: 14pt ;
@@ -74,6 +89,11 @@ span.Alert
 }
 
 span.Hint
+{
+ color: blue ;
+}
+
+span.Att
 {
  color: blue ;
 }
