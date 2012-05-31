@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_Place.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Place</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,152 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Place</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/gadget/Place.h</b> <b>CCore/src/gadget/Place.cpp</b></p>
 
+<p>
+This file contains collection of tools to work with raw memory.
+</p>
+
+<h3>Byte</h3>
+
+<p>
+<b>byte</b> is a memory atom.
+</p>
+
+<pre>
+
+typedef unsigned char <span class="Att">byte</span>;
+
+</pre>
+
+<h3>Pointer move</h3>
+
+<p>
+<b>CastPtr()</b> converts a raw pointer to a byte pointer.
+</p>
+
+<pre>
+
+inline byte * <span class="Att">CastPtr</span>(void *ptr) { return static_cast&lt;byte *&gt;(ptr); }
+ 
+inline const byte * <span class="Att">CastPtr</span>(const void *ptr) { return static_cast&lt;const byte *&gt;(ptr); }
+
+</pre> 
+
+<p>
+<b>PtrAdd()</b> and <b>PtrSub()</b> moves a raw pointer up and down on the given number of bytes.
+</p>
+
+<pre>
+ 
+inline void * <span class="Att">PtrAdd</span>(void *ptr,ulen delta) { return CastPtr(ptr)+delta; }
+ 
+inline const void * <span class="Att">PtrAdd</span>(const void *ptr,ulen delta) { return CastPtr(ptr)+delta; }
+ 
+inline void * <span class="Att">PtrSub</span>(void *ptr,ulen delta) { return CastPtr(ptr)-delta; }
+ 
+inline const void * <span class="Att">PtrSub</span>(const void *ptr,ulen delta) { return CastPtr(ptr)-delta; }
+
+</pre>
+
+<h3>Place</h3>
+
+<p>
+<b>Place</b> is a simple wrapper around a raw pointer.
+</p>
+
+<pre>
+template &lt;class Void&gt;
+class Place
+ {
+   Void *ptr;
+  
+  public:
+  
+   explicit Place(Void *ptr_) : ptr(ptr_) {}
+ 
+   template &lt;class T&gt;
+   Place&lt;Void&gt; operator + (T delta) const { return Place&lt;Void&gt;(PtrAdd(ptr,delta)); }
+  
+   template &lt;class T&gt;
+   Place&lt;Void&gt; operator - (T delta) const { return Place&lt;Void&gt;(PtrSub(ptr,delta)); }
+  
+   template &lt;class T&gt;
+   Place&lt;Void&gt; operator += (T delta) { return Replace(*this,*this+delta); }
+  
+   template &lt;class T&gt;
+   Place&lt;Void&gt; operator -= (T delta) { return Replace(*this,*this-delta); }
+  
+   template &lt;class T&gt;
+   operator T * () const { return static_cast&lt;T *&gt;(ptr); }
+ };
+</pre>
+
+<p>
+You can move <b>Place</b> on the given number of bytes and auto-cast to the desired type.
+</p>
+
+<pre>
+
+Place&lt;void&gt; place=....;
+
+place+=delta1;
+place-=delta2;
+
+C *ptr=place;
+C1 *ptr1=place+delta3;
+
+</pre>
+
+<p>
+Be warned, operators <b>+=</b> and <b>-=</b> return the previous value, not the new one.
+Using this operators you can dispense a raw memory block to store multiple objects:
+</p>
+
+<pre>
+
+Place&lt;void&gt; place=....;
+
+C1 *ptr1=(place+=size1);
+C2 *ptr2=(place+=size2);
+
+....
+
+</pre>
+
+<p>
+<b>PlaceAt()</b> is a creator function for <b>Place</b>: 
+</p>
+
+<pre>
+
+inline Place&lt;void&gt; <span class="Att">PlaceAt</span>(void *ptr) { return Place&lt;void&gt;(ptr); }
+ 
+inline Place&lt;const void&gt; <span class="Att">PlaceAt</span>(const void *ptr) { return Place&lt;const void&gt;(ptr); }
+
+</pre>
+
+<p>
+Finaly, a placement new and delete is defined for the type <b>Place</b>:
+</p>
+
+<pre>
+
+inline void * operator new(std::size_t,CCore::Place&lt;void&gt; place) { return place; }
+ 
+inline void operator delete(void *,CCore::Place&lt;void&gt;) {}
+
+</pre>
+
+<pre>
+
+void *mem=....;
+
+C *obj=new(PlaceAt(mem)) C(....);
+
+</pre>
 
 </body>
 

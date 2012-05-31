@@ -42,7 +42,7 @@ The basic of them is a simple <b>Replace()</b>.
 <pre>
 
 template &lt;class T,class S&gt;
-T Replace(T &t,S a); // t &lt;- T(a)
+T <span class="Att">Replace</span>(T &t,S a); // t &lt;- T(a)
 
 </pre>
 
@@ -55,19 +55,19 @@ There is also a set of variations:
 <pre>
 
 template &lt;class T&gt;
-T Replace_null(T &t); // t &lt;- T()
+T <span class="Att">Replace_null</span>(T &t); // t &lt;- T()
 
 template &lt;class T&gt;
-T Replace_min(T &t,T a); // t &lt;- Min(t,a)
+T <span class="Att">Replace_min</span>(T &t,T a); // t &lt;- Min(t,a)
  
 template &lt;class T&gt;
-T Replace_max(T &t,T a); // t &lt;- Max(t,a)
+T <span class="Att">Replace_max</span>(T &t,T a); // t &lt;- Max(t,a)
  
 template &lt;class T,class S&gt;
-T Replace_add(T &t,S a); // t &lt;- t+a
+T <span class="Att">Replace_add</span>(T &t,S a); // t &lt;- t+a
  
 template &lt;class T,class S&gt;
-T Replace_sub(T &t,S a); // t &lt;- t-a
+T <span class="Att">Replace_sub</span>(T &t,S a); // t &lt;- t-a
 
 </pre>
 
@@ -80,7 +80,7 @@ The final one is a generic, you can use it with lambdas:
 <pre>
 
 template <class Func,class T>
-T Replace_gen(Func func,T &t); // t &lt;- func(t)
+T <span class="Att">Replace_gen</span>(Func func,T &t); // t &lt;- func(t)
 
 </pre>
 

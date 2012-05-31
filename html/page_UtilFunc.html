@@ -1,0 +1,107 @@
+<!--
+/* page_UtilFunc.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> UtilFunc</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>UtilFunc</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/UtilFunc.h</b> <b>CCore/src/gadget/UtilFunc.cpp</b></p>
+
+<p>
+Here is a collection of some popular functions.
+</p>
+
+<p>
+<b>Min()/Max()</b> &mdash; these functions are intended to be used with simple types 
+and in constant expressions.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+constexpr T <span class="Att">Min</span>(T a,T b) { return (a&lt;b)?a:b; }
+ 
+template &lt;class T&gt;
+constexpr T <span class="Att">Max</span>(T a,T b) { return (a&lt;b)?b:a; }
+
+</pre>
+
+<p>
+<b>Diff()</b> performs differentiation, i.e. subtracts a value from the previous one and records
+the new value.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+T <span class="Att">Diff</span>(T &amp;t,T a) { T ret(a-t); t=a; return ret; }
+
+</pre>
+
+<p>
+Consider the example:
+</p>
+
+<pre>
+
+int var=x0;
+
+int d1=Diff(var,x1); // d1 &lt;- x1-x0 , var &lt;- x1
+int d2=Diff(var,x2); // d2 &lt;- x2-x1 , var &lt;- x2
+int d3=Diff(var,x3); // d3 &lt;- x3-x2 , var &lt;- x3
+
+</pre>
+
+<p>
+<b>Bit...()</b> &mdash; four bit manipulation functions: 
+</p>
+
+<pre>
+
+template &lt;class UInt,class S&gt;
+void <span class="Att">BitSet</span>(UInt &t,S bits); // set bits
+
+template &lt;class UInt,class S&gt;
+void <span class="Att">BitClear</span>(UInt &t,S bits); // clear bits
+ 
+template &lt;class UInt,class S&gt;
+UInt <span class="Att">BitTest</span>(UInt t,S bits); // check if at least one bits is set
+
+template &lt;class UInt,class S&gt;
+bool <span class="Att">BitTestAll</span>(UInt t,S bits); // check if all bits are set
+
+</pre>
+
+<p>
+These functions make bit manipulation expressions more simple and verbose 
+and resolve problem with type conversion. The second argument is explicitly 
+casted to the type of the first one.
+</p>
+
+</body>
+
+</html>
+

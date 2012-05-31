@@ -1,0 +1,133 @@
+<!--
+/* page_UIntSat.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> UIntSat</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>UIntSat</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/UIntSat.h</b> <b>CCore/src/gadget/UIntSat.cpp</b></p>
+
+<p>
+It is a collection of tools to control an unsigned integer overflow.
+</p>
+
+<p>
+<b>UIntSat</b> can be used to perform operations with the overflow control:
+</p>
+
+<pre>
+template &lt;class UInt&gt;
+struct UIntSat
+ {
+  UInt value;
+  bool overflow;
+  
+  // constructors
+  
+  constexpr UIntSat(); // null value
+  
+  constexpr UIntSat(UIntSat&lt;UInt&gt; a,UIntSat&lt;UInt&gt; b); // add two values
+
+  template &lt;class T&gt;
+  constexpr UIntSat(T value_); // convert from unsigned integer
+  
+  // methods
+  
+  bool operator ! () const { return overflow; }
+  
+  friend constexpr UIntSat&lt;UInt&gt; operator + (UIntSat&lt;UInt&gt; a,UIntSat&lt;UInt&gt; b);
+  
+  UIntSat&lt;UInt&gt; operator += (UIntSat&lt;UInt&gt; b);
+  
+  bool operator &lt; (UInt lim) const;
+  
+  bool operator &lt;= (UInt lim) const;
+ };
+</pre>
+
+<p>
+Flag <b>overflow</b> is set if the accumulated value is not representable of the given type.
+You can sum, sum to self and compare with limit <b>UIntSat</b>s.
+You can also use it in constant expressions. The most typical usage is a buffer length calculations:
+</p>
+
+<pre>
+
+UIntSat&lt;ulen&gt; len=len1;
+
+len+=len2;
+len+=len3;
+
+if( len<=max_len )
+  {
+   // ok
+  }
+else
+  {
+   // not fit
+  }
+
+</pre>
+
+<p>
+<b>ULenSat</b> is the typedef with <b>ulen</b> parameter:
+</p>
+
+<pre>
+
+typedef UIntSat&lt;ulen&gt; <span class="Att">ULenSat</span>;
+
+</pre>
+
+<p>
+<b>UIntConstAdd</b> and <b>UIntConstSub</b> are meta-functions to perform safe operations in compile-time.
+</p>
+
+<pre>
+
+template &lt;class UInt,UInt A,UInt B&gt; using UIntConstAdd;
+template &lt;class UInt,UInt A,UInt B&gt; using UIntConstSub;
+
+</pre>
+
+<p>
+Both of them defines an internal constant <b>Ret</b> with value <b>A+B</b> (or <b>A-B</b>) if it does fit 
+the value range, or empty.
+</p>
+
+<pre>
+
+const ulen L1 = .... ;
+const ulen L2 = .... ;
+
+const ulen S = UIntConstAdd&lt;ulen,L1,L2&gt;::Ret ; // safe sum of two constants, not compileable in case of overflow
+
+</pre>
+
+</body>
+
+</html>
+
