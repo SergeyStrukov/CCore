@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_UIntFunc.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> UIntFunc</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,172 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>UIntFunc</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/gadget/UIntFunc.h</b> <b>CCore/src/gadget/UIntFunc.cpp</b></p>
 
+<h3>UIntFunc</h3>
+
+<p>
+<b>UIntFunc</b> is an <b>Algorithm Package</b>, parametrized by an unsigned integral type. 
+</p>
+
+<pre>
+template &lt;class UInt&gt;
+struct UIntFunc
+ {
+  // consts
+  
+  static const UInt <span class="Att">MaxUnsigned</span> ;
+  
+  static const UInt <span class="Att">MSBit</span> ;
+  
+  static const UInt <span class="Att">MaxPositive</span> ;
+  
+  static const UInt <span class="Att">MinNegative</span> ;
+
+</pre>
+
+<p>
+<b>MaxUnsigned</b> is a maximum value, represented by the type. All bits set.
+</p>
+
+<p>
+<b>MSBit</b> is a value with the only most significant bit set.
+</p>
+
+<p>
+<b>MaxPositive</b> is a maximum positive value, if we interpret an unsigned as a signed in 2'd 
+complemetary representation. This constant has all bits set, except the most significant.
+</p>
+
+<p>
+<b>MinNegative</b> is a minimum negative value, if we interpret an unsigned as a signed in 2'd 
+complemetary representation. Only most significant bit set. It is the same value, as <b>MSBit</b>.
+</p>
+
+<pre>
+  
+  // sign
+  
+  static UInt <span class="Att">Neg</span>(UInt value);
+  
+  static bool <span class="Att">IsNegative</span>(UInt value);
+    
+  static bool <span class="Att">NotNegative</span>(UInt value);
+  
+  static bool <span class="Att">IsPositive</span>(UInt value);
+  
+  static bool <span class="Att">NotPositive</span>(UInt value);
+
+</pre>
+
+<p>
+<b>Neg()</b> negates the argument.
+</p>
+
+<p>
+<b>IsNegative(), NotNegative(), IsPositive(), NotPositive()</b> interpret the argument
+as a signed in 2'd complemetary representation and return its signed properties.
+</p>
+
+<pre>
+  
+  // additive
+  
+  struct <span class="Att">Add</span>
+   {
+    UInt result;
+    bool carry;
+    
+    Add(UInt a,UInt b);
+   };
+   
+  struct <span class="Att">Sub</span>
+   {
+    UInt result;
+    bool borrow;
+    
+    Sub(UInt a,UInt b);
+   };
+   
+  struct <span class="Att">Inc</span>
+   {
+    UInt result;
+    bool carry;
+    
+    explicit Inc(UInt a);
+   };
+   
+  struct <span class="Att">Dec</span>
+   {
+    UInt result;
+    bool borrow;
+    
+    explicit Dec(UInt a);
+   };
+
+ };
+
+</pre>
+
+<p>
+<b>Add</b> is a <b>Class-Function</b> performing the addition of arguments with carry.
+</p>
+
+<p>
+<b>Sub</b> is a <b>Class-Function</b> performing the subtraction of arguments with borrow.
+</p>
+
+<p>
+<b>Inc</b> is a <b>Class-Function</b> performing the increment of the argument with carry.
+</p>
+
+<p>
+<b>Dec</b> is a <b>Class-Function</b> performing the decrement of the argument with borrow.
+</p>
+
+<h3>UInt...()</h3>
+
+<p>
+<b>UInt...()</b> are four functions performing additive operations.
+</p>
+
+<pre>
+
+template &lt;class UInt&gt;
+bool <span class="Att">UIntAdd</span>(UInt &amp;a,UInt b);
+
+template &lt;class UInt&gt;
+bool <span class="Att">UIntSub</span>(UInt &amp;a,UInt b);
+
+template &lt;class UInt&gt; 
+bool <span class="Att">UIntInc</span>(UInt &amp;a);
+
+template &lt;class UInt&gt; 
+bool <span class="Att">UIntDec</span>(UInt &amp;a);
+
+</pre>
+
+<p>
+<b>UIntAdd()</b> adds the second argument to the first one.
+</p>
+
+<p>
+<b>UIntSub()</b> subtracts the second argument from the first one.
+</p>
+
+<p>
+<b>UIntInc()</b> increments the argument.
+</p>
+
+<p>
+<b>UIntDec()</b> decrements the argument.
+</p>
+
+<p>
+Each function returns the carry/borrow condition. 
+</p>
 
 </body>
 

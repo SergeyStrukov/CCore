@@ -1,0 +1,149 @@
+<!--
+/* page_Init.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Init</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Init</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/Init.h</b> <b>CCore/src/gadget/Init.cpp</b></p>
+
+<p>
+<b>InitExitObject</b> is a class for the manual object initialization/termination. It is a POD type, 
+containing inside the storage room for an object and the object pointer.
+</p>
+
+<pre>
+template &lt;class T&gt;
+struct InitExitObject
+ {
+  // private data
+
+  InitStorage&lt;sizeof (T)&gt; storage;
+  T *obj;
+  
+</pre>
+
+<p>
+You should not touch data members directly.
+</p>
+
+<p>
+Method <b>init()</b> creates the object, <b>exit()</b> destroys it. Using these methods you can manually
+control life-time of the object and recreate it if neccessary. To use <b>InitExitObject</b> the prior
+value initialization is required. You can do it using default initialization or using method <b>clean()</b>.
+</p>
+
+<pre>
+
+  // public
+  
+  void clean() { obj=0; }
+  
+  template &lt;class ... SS&gt;
+  void init(SS && ... ss); 
+  
+  void exit();
+
+</pre>
+
+<p>
+For example, you can create a global variable:
+</p>
+
+<pre>
+
+InitExitObject&lt;C&gt; theObject{};
+
+</pre>
+
+<p>
+and then initialize it using method <b>init()</b>.
+</p>
+
+<p>
+<b>InitExitObject</b> implements the <b>Object-Pointer interface</b> to check the state of the object
+and access it.
+</p>
+
+<pre>
+   
+  T * operator + () const { return obj; }
+  
+  bool operator ! () const { return !obj; }
+  
+  T * getPtr_unsafe() const { return obj; }
+  
+  T * getPtr() const 
+   { 
+    if( !obj ) NoObjectAbort();
+    
+    return obj; 
+   }
+  
+  T & operator * () const { return *getPtr(); }
+  
+  T * operator -> () const { return getPtr(); }
+
+ };
+</pre>
+
+<p>
+<b>InitStorage</b> is a simple struct providing an aligned storage to create objects inside:
+</p>
+
+<pre>
+template &lt;ulen Len&gt;
+struct InitStorage
+ {
+  typename std::aligned_storage&lt;Len&gt;::type storage;
+  
+  void * getMem() { return &storage; }
+  
+  Place&lt;void&gt; getPlace() { return PlaceAt(getMem()); }
+ };
+</pre>
+
+<p>
+<b>getMem()</b> returns a raw memory pointer to the storage, <b>getPlace()</b> returns a 
+<b>Place</b> of the storage.
+</p>
+
+<p>
+<b>NoObjectAbort()</b> is an abort function. It is used to abort execution in case of access to
+an absent object. You can use it in the similar situations. It calls <b>Abort()</b> with a diagnostic
+message.
+</p>
+
+<pre>
+
+void <span class="Att">NoObjectAbort</span>();
+
+</pre>
+
+</body>
+
+</html>
+
