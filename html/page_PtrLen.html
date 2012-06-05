@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_PtrLen.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> PtrLen</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,360 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>PtrLen</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/gadget/PtrLen.h</b> <b>CCore/src/gadget/PtrLen.cpp</b></p>
 
+<h3>Range idiom and loops</h3>
+
+<p>
+This file contains main tools to work with ranges of objects. <b>Range</b> is a continuous part of
+an array. There is the object in the range with the lower address, it is a base address of the range. 
+If this address is <b>p</b>, then the range consists of objects with addresses <b>{ p, p+1, ..., p+n-1 }</b>, 
+where <b>n</b> is the number of elements of the range. A range can be empty. In this case it has the base address,
+which may not refer to an existing object, but the number of elements is 0.
+</p>
+
+<p>
+Sometimes <b>range</b> is considered more generally using idiom of iterator, but we focus on the 
+basic type of ranges, because of its practical importance. Basic ranges are the most efficient
+and convenient way of representation of a set similar data, so it must be used whenever possible.
+The main advantages of basic ranges are: best loops throught them, best sequential and random object access.
+</p>
+
+<p>
+The best loop in the programming is the loop <b>n-times</b>. This is because such loops can be unrolled,
+pipelined and optimized for small loop count. So compilers try to reorganize every loop into this kind 
+of loop if possible.
+</p>
+
+<h3>GuardIndex()</h3>
+
+<p>
+<b>GuardIndex()</b> is a generic guard function, it ensures that <b>index&lt;len</b>.
+<b>GuardIndexOutOfRange()</b> throws an exception.
+</p>
+
+<pre>
+
+void <span class="Att">GuardIndex</span>(ulen index,ulen len);
+
+void <span class="Att">GuardIndexOutOfRange</span>(ulen index,ulen len);
+
+</pre>
+
+<h3>Range...()</h3>
+
+<p>
+<b>Range...()</b> is four basic functions to work with ranges.
+</p>
+
+<pre>
+
+template &lt;class T,class S&gt;
+void <span class="Att">RangeCopy</span>(T *restrict dst,const S *restrict src,ulen count);
+
+template &lt;class T&gt;
+void <span class="Att">RangeSet</span>(T *dst,T src,ulen count);
+
+template &lt;class T&gt;
+void <span class="Att">RangeSet_null</span>(T *dst,ulen count);
+
+template &lt;class T,class S&gt;
+ulen <span class="Att">RangeMatch</span>(const T *dst,const S *src,ulen count);
+
+</pre>
+
+<p>
+<b>RangeCopy()</b> does copy one range to <span class="Alert">disjoint</span> another
+range with the possible implicit type conversion. Here we use the non-standard extension to C++ &mdash;
+keyword <b>restrict</b>. It tells compiler, that <b>dst</b> and <b>src</b> ranges has no common elements, 
+and enables loop optimization, based on this assumption. <b>restrict</b>, in fact, is a macro in the
+target <b>PlatformBase.h</b> header.
+</p>
+
+<p>
+<b>RangeSet()</b> sets elements of the given range to the given value. The <b>src</b> argument 
+is not a reference. It performs assignments <b>*dst=src;</b>.
+</p>
+
+<p>
+<b>RangeSet_null()</b> sets elements of the given range to the null value <b>T()</b>.
+It performs assignments <b>*dst=T();</b>.
+</p>
+
+<p>
+The interface and implementation of these functions are selected to be a more appropriate when the
+type <b>T</b> is a <b>Small Data Type</b>. They do they job in the assending order, but you
+should not assume any specific order of execution.
+</p>
+
+<p>
+<b>RangeMatch()</b> compares elements of two ranges. It returns the number of the first equals pairs.
+In other words, if the <b>RangeMatch()</b> returned <b>len</b>, then <b>dst[0]==src[0], ..., 
+dst[len-1]==src[len-1]</b>, but <b>len==count</b> or <b>dst[len]!=src[len]</b>. To compare elements
+the <b>operator !=</b> is used.
+</p>
+
+<h3>PtrLen</h3>
+
+<p>
+<b>PtrLen</b> is a range representation type. It contains the range base pointer and the range length.
+</p>
+
+<pre>
+template &lt;class T&gt;
+struct <span class="Att">PtrLen</span>
+ {
+  T *ptr;
+  ulen len;
+</pre>
+
+<p>
+<b>PtrLen</b> is widely used in <b>CCore</b> to pass ranges as arguments and to do native operations 
+with ranges. This type has a bunch of methods to do so.
+</p>
+
+<h3>StrLen</h3>
+
+<p>
+<b>StrLen</b> is a derived class from <b>PtrLen&lt;const char&gt;</b>.
+</p>
+
+<pre>
+struct <span class="Att">StrLen</span> : PtrLen&lt;const char&gt;
+ {
+  // constructors
+  
+  StrLen() {}
+ 
+  StrLen(const char *zstr); // zstr!=0 is a pointer to a zero-terminated string
+
+  StrLen(PtrLen&lt;const char&gt; str) : PtrLen&lt;const char&gt;(str) {}
+ 
+  StrLen(PtrLen&lt;char&gt; str) : PtrLen&lt;const char&gt;(str.ptr,str.len) {}
+  
+  StrLen(const char *str,ulen len) : PtrLen&lt;const char&gt;(str,len) {}
+
+ };
+</pre>
+
+<p>
+<b>StrLen</b> is widely used in <b>CCore</b> to pass string arguments and to work with strings.
+It is not assumed, that string is zero-terminated. Instead, we specify string length.
+</p>
+
+<p>
+<b>StrLen</b> has a several implicit constructors, so it can be silenly converted from
+different string-like types.
+</p>
+
+<p>
+Implicit encoding string length with zero termination was a language design mistake. 
+To perform string operations you have to know its length. So each time you will have to calcualte it.
+It might lead to quadratic time algorithms instead of linear time if you are not steady enough.
+In <b>CCore</b> we avoid it converting zero-terminated strings into <b>StrLen</b>. So we calculate
+zero-terminated string length only one time.
+</p>
+
+<h3>Range() and Range_const()</h3>
+
+<p>
+<b>Range() and Range_const()</b> is a family of functions for range creation.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+PtrLen&lt;T&gt; <span class="Att">Range</span>(PtrLen&lt;T&gt; a);
+ 
+template &lt;class T,ulen Len&gt;
+PtrLen&lt;T&gt; <span class="Att">Range</span>(T (&buf)[Len]);
+ 
+template &lt;class T&gt;
+PtrLen&lt;T&gt; <span class="Att">Range</span>(T *ptr,ulen len);
+ 
+template &lt;class T&gt;
+PtrLen&lt;T&gt; <span class="Att">Range</span>(T *ptr,T *lim);
+
+</pre>
+
+<p>
+And the correspondent const-variants.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+PtrLen&lt;const T&gt; <span class="Att">Range_const</span>(PtrLen&lt;T&gt; a);
+ 
+template &lt;class T,ulen Len&gt;
+PtrLen&lt;const T&gt; <span class="Att">Range_const</span>(T (&buf)[Len]);
+ 
+template &lt;class T&gt;
+PtrLen&lt;const T&gt; <span class="Att">Range_const</span>(T *ptr,ulen len);
+ 
+template &lt;class T&gt;
+PtrLen&lt;const T&gt; <span class="Att">Range_const</span>(T *ptr,T *lim);
+
+</pre>
+
+<p>
+You can create a range from the <b>PtrLen</b>, from the array, from the base pointer and length and from
+the base ptr and limit. Limit is a past-the-end element. It may not exist as an object.
+The advantage of using the function <b>Range()</b> is an implicit type inference. Consider:
+</p>
+
+<pre>
+
+int buf[10];
+
+auto r=Range(buf);
+
+PtrLen&lt;int&gt; r1(buf,10);
+
+</pre>
+
+<p>
+Finally, there exists two generic functions <b>Range()</b> and <b>Range_const()</b>:
+</p>
+
+<pre>
+
+template &lt;class S&gt;
+auto <span class="Att">Range</span>(S &&src);
+ 
+template &lt;class S&gt;
+auto <span class="Att">Range_const</span>(const S &src);
+
+</pre>
+
+<p>
+They are applicable to objects of types with the range access interface:
+</p>
+
+<pre>
+class C
+ {
+  public:
+
+   // range access
+   
+   T * getPtr(); // called from Range()
+   
+   const T * getPtr() const; // called from Range() with constant argument
+
+   const T * getPtr_const() const; // called from Range_const()
+   
+   ulen getLen() const;
+ };
+</pre>
+
+<h3>Range and range-based for</h3>
+
+<p>
+<b>CCore</b> defines in its namespace global functions <b>begin()</b> and <b>end()</b>.
+They are applicable to objects of types with the range access interface and to <b>PtrLen</b> type.
+So you can use <b>range-based for</b>:
+</p>
+
+<pre>
+
+PtrLen&lt;T&gt; r=....;
+
+for(auto obj : r ) { .... }
+
+</pre>
+
+<p>
+This loop is essentially the same as:
+</p>
+
+<pre>
+
+PtrLen&lt;T&gt; r=....;
+
+for(; +r ;++r) { .... } // *r instead of obj
+
+</pre>
+
+<p>
+Or:
+</p>
+
+<pre>
+
+DynArray&lt;T&gt; data;
+
+for(auto obj : data ) { .... }
+
+</pre>
+
+<p>
+Instead of:
+</p>
+
+<pre>
+
+DynArray&lt;T&gt; data;
+
+for(auto r=Range(data); +r ;++r) { .... } // *r instead of obj
+
+</pre>
+
+<p>
+Sometimes you need to do something more complicated than merely run through a range. In such cases use
+the range loops instead of <b>range-based for</b>:
+</p>
+
+<pre>
+
+DynArray&lt;T&gt; data;
+
+auto r=Range(data);
+
+if( +r )
+  {
+   .... // handle the first element
+
+   for(++r; +r ;++r)
+     {
+      .... // do with the rest
+     }
+  }
+else
+  {
+   .... // empty case
+  }
+
+</pre>
+
+<h3>Mutate...()</h3>
+
+<p>
+<b>Mutate...()</b> is a three function family to cast a pointer or a range to the byte pointer 
+or the byte range.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+T * MutatePtr(void *ptr);
+
+template &lt;class T&gt;
+T * MutatePtr(const void *ptr);
+
+template &lt;class T,class S&gt;
+PtrLen&lt;T&gt; Mutate(PtrLen&lt;S&gt; a);
+
+</pre>
+
+<p>
+The destined type <b>T</b> must be (<b>const</b>) <b>char</b> or <b>unsigned char</b>.
+<b>Mutate()</b> creates a <b>PtrLen</b> over all bytes, occupied by elements of the source range.
+Standard allows aliasing of object with these types. <b>Mutate...()</b> should be used 
+with caution in special cases for the sake of performance or to do some low-level processing.
+</p>
 
 </body>
 

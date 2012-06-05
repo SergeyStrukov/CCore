@@ -16,11 +16,11 @@ OPT = -j 8
 all:
 	make $(OPT) -C Target/Win32
 	make $(OPT) -C Target/Win32/test
-	make $(OPT) -C tools
+	make        -C tools
 	make $(OPT) -C Target/IXDP465
 	make $(OPT) -C Target/IXDP465/test
 	make $(OPT) -C Target/IXDP465/test2
-	make $(OPT) -C Target/IXDP465/tools
+	make        -C Target/IXDP465/tools
 	make $(OPT) -C Target/Vanilla-H
 	make $(OPT) -C Target/Vanilla-H/test
 	make $(OPT) -C Target/Vanilla-X

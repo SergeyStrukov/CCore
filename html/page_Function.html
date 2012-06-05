@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_Function.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Function</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,86 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Function</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/gadget/Function.h</b> <b>CCore/src/gadget/Function.cpp</b></p>
 
+<p>
+<b>Function</b> a lightweight callback.
+</p>
+
+<pre>
+template &lt;class R,class ... AA&gt;
+class <span class="Att">Function</span>&lt;R (AA...)&gt;
+ {
+  public: 
+   
+   // constructors
+
+   Function(); // null function
+
+   Function(NothingType); // null function
+
+   Function(R (*func)(AA...)); // callback to static function
+
+   Function(R (*func)(Handle ctx,AA...),Handle ctx); // callback to static function with handle
+
+   template &lt;class T&gt;
+   Function(T *obj_,R (T::*method_)(AA...)); // callback to object with method 
+
+   // methods
+
+   bool operator + () const; // not null
+ 
+   bool operator ! () const; // is null
+
+   template &lt;class ... TT&gt;
+   R operator () (TT && ... tt); // do call
+ };
+</pre>
+
+<p>
+You can bind <b>Function</b> to static function, static function with handle or object with method.
+Make sure the handle or object is alive when you do call the function &mdash; there is no life-time
+control in <b>Function</b>. Object type must be derived from the <b>Funchor</b> base class.
+</p>
+
+<pre>
+struct <span class="Att">Funchor</span>
+ {
+  template &lt;class T,class R,class ... AA&gt;
+  static Function&lt;R (AA...)&gt; FunctionOf(T *obj,R (T::*method)(AA...)); 
+ };
+</pre>
+
+<p>
+The static method <b>FunctionOf</b> of this class can be used to create a <b>Function</b> object.
+</p>
+
+<p>
+There is a noncopyable base type <b>Funchor_nocopy</b>:
+</p>
+
+<pre>
+
+typedef NoCopyBase&lt;Funchor&gt; <span class="Att">Funchor_nocopy</span>;
+
+</pre>
+
+<p>
+The following pattern to work with <b>Functions</b> is used in <b>CCore</b>:
+</p>
+
+<pre>
+class C : public Funchor
+ {
+  public:
+
+   void method();
+
+   Function&lt;void (void)&gt; function_method() { return FunctionOf(this,&C::method); }
+ };
+</pre>
 
 </body>
 

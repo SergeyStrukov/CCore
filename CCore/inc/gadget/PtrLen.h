@@ -240,14 +240,6 @@ struct StrLen : PtrLen<const char>
   StrLen(PtrLen<char> str) : PtrLen<const char>(str.ptr,str.len) {}
   
   StrLen(const char *str,ulen len) : PtrLen<const char>(str,len) {}
-  
-  // no-throw flags
-  
-  enum NoThrowFlagType
-   {
-    Default_no_throw = true,
-    Copy_no_throw = true
-   };
  };
  
 /* Range...() */  
