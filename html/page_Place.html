@@ -126,7 +126,7 @@ C1 *ptr1=place+delta3;
 </pre>
 
 <p>
-Be warned, operators <b>+=</b> and <b>-=</b> return the previous value, not the new one.
+<span class="Alert">Be warned</span>, operators <b>+=</b> and <b>-=</b> return the previous value, not the new one.
 Using this operators you can dispense a raw memory block to store multiple objects:
 </p>
 
@@ -142,7 +142,7 @@ C2 *ptr2=(place+=size2);
 </pre>
 
 <p>
-<b>PlaceAt()</b> is a creator function for <b>Place</b>: 
+<b>PlaceAt()</b> is a <b>Creator function</b> for <b>Place</b>: 
 </p>
 
 <pre>
@@ -154,7 +154,7 @@ inline Place&lt;const void&gt; <span class="Att">PlaceAt</span>(const void *ptr)
 </pre>
 
 <p>
-Finaly, a placement new and delete is defined for the type <b>Place</b>:
+Finaly, a placement new and delete is defined for the type <b>Place&lt;void&gt;</b>:
 </p>
 
 <pre>
@@ -169,7 +169,7 @@ inline void operator delete(void *,CCore::Place&lt;void&gt;) {}
 
 void *mem=....;
 
-C *obj=new(PlaceAt(mem)) C(....);
+C *obj=new(PlaceAt(mem)) C(....); // more verbose than the standard placement new
 
 </pre>
 

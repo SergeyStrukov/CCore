@@ -1,0 +1,126 @@
+<!--
+/* page_Taxonomy.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Taxonomy of classes</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Taxonomy of classes</h2>
+
+<p>
+This page provides a list of common terms and the taxonomy of classes. <b>Class</b> in C++ is a very
+generic and powerfull entity, so we classify them by its purpose and nature.
+</p>
+
+<h3>Terms</h3>
+
+<p>
+<b>Efficient</b> means <b>O(1)-nothrow</b>. I.e. it is a sequence of operations, which has a definite
+reasonably small execution time limit and has no error outcome.
+</p>
+
+<p>
+<b>Small Data Type</b> is a type like basic types with a small state and data semantic. These types
+can be defined as types with the <b>efficient</b> copy constructor and assign operator.
+</p>
+
+<p>
+<b>Derivability</b> is an ability of some entity to be used as a building block of the whole. See, for example,
+<a href="page_Swap.html"><b>Swap</b></a>.
+</p>
+
+
+<h3><i>Class</i>ification</h3>
+
+<p>
+<b>Word</b> is a enumerator, purposed to verbose some generic action. In C++ there is no named constructors.
+Sometimes you have to used unused arguments of <b>Word</b> type to clearly distinguish between different
+overloaded constructors. See, for example, <a href="page_Nothing.html"><b>Nothing</b></a>. 
+</p>
+
+<p>
+<b>Guards</b>
+</p>
+
+<p>
+<b>Scope Lock Type</b>
+</p>
+
+<p>
+<b>Data Type</b>
+</p>
+
+<p>
+<b>Resource Host Type</b>
+</p>
+
+<p>
+<b>Cursor</b>
+</p>
+
+<p>
+<b>Container Type</b>
+</p>
+
+<p>
+<b>Pointer Type</b>
+</p>
+
+<p>
+<b>Range Access Interface</b>
+</p>
+
+<p>
+<b>Object Pointer Interface</b>
+</p>
+
+<p>
+<b>Device Type</b>
+</p>
+
+<p>
+<b>Algorithm Package Type</b>
+</p>
+
+<p>
+<b>Helper Type</b> 
+</p>
+
+<p>
+<b>Property Type</b> is a kind of classes, providing some property and meant to be used as a base to
+inherit this property by a derived class. For example, see <a href="page_NoCopy.html"><b>NoCopy</b></a>.
+</p>
+
+<p>
+<b>Meta-class</b>
+</p>
+
+<p>
+<b>Meta-function</b>
+</p>
+
+</body>
+
+</html>
+

@@ -41,15 +41,15 @@ which may not refer to an existing object, but the number of elements is 0.
 </p>
 
 <p>
-Sometimes <b>range</b> is considered more generally using idiom of iterator, but we focus on the 
+Sometimes <b>Range</b> is considered more generally using idiom of iterator, but we focus on the 
 basic type of ranges, because of its practical importance. Basic ranges are the most efficient
-and convenient way of representation of a set similar data, so it must be used whenever possible.
+and convenient way of representation of a set of similar data, so it must be used whenever possible.
 The main advantages of basic ranges are: best loops throught them, best sequential and random object access.
 </p>
 
 <p>
 The best loop in the programming is the loop <b>n-times</b>. This is because such loops can be unrolled,
-pipelined and optimized for small loop count. So compilers try to reorganize every loop into this kind 
+pipelined and optimized for small loop count. So compilers usually try to reorganize every loop into this kind 
 of loop if possible.
 </p>
 
@@ -92,10 +92,11 @@ ulen <span class="Att">RangeMatch</span>(const T *dst,const S *src,ulen count);
 
 <p>
 <b>RangeCopy()</b> does copy one range to <span class="Alert">disjoint</span> another
-range with the possible implicit type conversion. Here we use the non-standard extension to C++ &mdash;
+range with the possible implicit type conversion. It performs assignments <b>*dst=*src;</b>. 
+Here we use the non-standard extension to C++ &mdash;
 keyword <b>restrict</b>. It tells compiler, that <b>dst</b> and <b>src</b> ranges has no common elements, 
 and enables loop optimization, based on this assumption. <b>restrict</b>, in fact, is a macro in the
-target <b>PlatformBase.h</b> header.
+target <b>PlatformBase.h</b> header, so target can define this word according compiler abilities.
 </p>
 
 <p>
@@ -140,6 +141,294 @@ struct <span class="Att">PtrLen</span>
 with ranges. This type has a bunch of methods to do so.
 </p>
 
+<p>
+You can use constructors to create a <b>PtrLen</b>, but more often you should use the function <b>Range()</b>.
+</p>
+
+<pre>
+
+  // constructors
+  
+  PtrLen() : ptr(0),len(0) {}
+  
+  PtrLen(NothingType) : ptr(0),len(0) {}
+  
+  PtrLen(T *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
+
+</pre>
+
+<p>
+Cursor methods can be used to iterated through range elements. When you use <b>PtrLen</b> as the cursor,
+it advances in ascending order. I.e. after <b>(ptr,len)</b> the <b>(ptr+1,len-1)</b> follows.
+</p>
+
+<pre>
+
+  // cursor
+  
+  ulen operator + () const { return len; } // get length
+                                           // range is not empty
+  
+  bool operator ! () const { return !len;  } // range is empty
+  
+  T & operator * () const { return *ptr; } // first element
+  
+  T * operator -> () const { return ptr; } // pointer to the first element
+  
+  void operator ++ () { ptr++; len--; } // advance 
+  
+  void operator -- () { ptr--; len++; } // back
+  
+  PtrLen&lt;T&gt; operator += (ulen delta); // advance on delta
+   
+  PtrLen&lt;T&gt; takeup(ulen delta); // advance up to delta elements
+  
+  T & take(); // take first element and advance
+
+</pre>
+
+<p>
+Here is a typical usage:
+</p>
+
+<pre>
+
+for(auto r=Range(....); +r ;++r) r->method();
+
+</pre>
+
+<pre>
+
+for(auto r=Range(....); +r ;++r) func(*r);
+
+</pre>
+
+<pre>
+
+for(auto r=Range(....); +r ;) func(r.take());
+
+</pre>
+
+<pre>
+
+for(auto r=Range(....); r.fit(10) ;)
+  {
+   auto prefix=(r+=10); // first 10 element subrange
+
+   ....
+  }
+
+</pre>
+
+<pre>
+
+for(auto r=Range(....);;)
+  {
+   auto prefix=r.takeup(10); // first <=10 element subrange
+
+   if( !prefix ) break; // r was empty
+
+   ....
+  }
+
+</pre>
+
+<p>
+<b>operator +=</b> advances on the given number of elements and returns the range of these elements.
+You must be sure the number does not exceed the range length.
+</p>
+
+<p>
+<b>takeup()</b> is similar, but it checks the range length and advances <b>up</b> to the given number of elements.
+</p>
+
+<p>
+Loop
+</p>
+
+<pre>
+
+for(auto r=Range(....); +r ;++r) { .... /* (*r) */ }
+
+</pre>
+
+<p>
+,in fact, is the same as
+</p>
+
+<pre>
+{
+ T *ptr=....;
+ ulen len=....;
+
+ for(; len ;ptr++,len--) { .... /* (*ptr) */ }
+}
+</pre>
+
+<p>
+So it is <b>count-down n-times</b> loop. There is another popular way of a range interation:
+</p>
+
+<pre>
+
+T *ptr=....;
+T *lim=....;
+
+for(; ptr&lt;lim ;ptr++) { .... /* (*ptr) */ }
+
+</pre>
+
+<p>
+Compilers, however, often turn this loop into the previous one. It leads to:
+</p>
+
+<pre>
+
+T *ptr=....;
+T *lim=....;
+
+ulen len=lim-ptr; // there is a hidden division operation here
+
+for(; len ;ptr++,len--) { .... /* (*ptr) */ }
+
+</pre>
+
+<p>
+Many embedded CPU has no hardware division. So it leads to an expensive hidden operation, that may kill
+performance for short tight loops.
+</p>
+
+<p>
+Reverse iteration can be done with <b>getFin()</b> method:
+</p>
+
+<pre>
+
+  // reverse cursor
+  
+  struct Fin : PtrLen&lt;T&gt; // derived from PtrLen
+   {
+    ulen max_len;
+    
+    Fin(T *ptr,ulen len);
+    
+    bool next(); 
+   };
+  
+  Fin getFin() const { return Fin(ptr,len); }
+
+</pre>
+
+<pre>
+
+auto r=Range(....); // (ptr,len)
+
+for(auto fin=r.getFin(); fin.next() ;) func(fin); // iterate (ptr+len-1,1), 
+                                                  // (ptr+len-2,2), ..., (ptr,len)
+
+</pre>
+
+<p>
+Methods <b>fit()</b> can be used to check the length of the range.
+</p>
+
+<pre>
+
+  // fit
+   
+  bool fit(ulen length) const { return length<=len; }
+  
+  bool fit(ulen off,ulen length) const { return off<=len && length<=(len-off) ; }
+
+</pre>
+
+<p>
+The first checks is there at least the <b>length</b> elements.
+The second can be used to check if the subrange with the given <b>off(set)</b> from the begining and
+<b>length</b> can be selected.
+</p>
+
+<p>
+You can select a desired part of the range using parts methods:
+</p>
+
+<pre>
+
+  // parts
+  
+  PtrLen&lt;T&gt; prefix(ulen length) const; // prefix of the given length
+  
+  PtrLen&lt;T&gt; prefix(PtrLen&lt;T&gt; suffix) const; // prefix, complementary to the given suffix
+  
+  PtrLen&lt;T&gt; suffix(ulen length) const; // suffix of the given length
+  
+  PtrLen&lt;T&gt; part(ulen off,ulen length) const; // inner part with the given off(set) and length
+  
+  PtrLen&lt;T&gt; part(ulen off) const; // suffix with the given off(set)
+  
+  PtrLen&lt;T&gt; inner(ulen off,ulen endoff) const; // inner part with the given off(set) and offset from the end (endoff)
+
+</pre>
+
+<p>
+You can pick an element of the range based on its index:
+</p>
+
+<pre>
+   
+  // index access
+  
+  T & operator [] (ulen index) const;
+   
+  T & at(ulen index) const; // with the index guard
+  
+  T & back(ulen index) const; // reverse order, index 1 means the last element
+   
+</pre>
+
+<p>
+The following set of methods perform basic range operations:
+</p>
+
+<pre>
+
+  // methods
+  
+  template &lt;class S&gt;
+  void copyTo(S dst[/* len */]) const;
+  
+  template &lt;class S&gt;
+  void copyFrom(const S src[/* len */]) const;
+   
+  void copy(const T src[/* len */]) const;
+   
+  void set(T src) const;
+  
+  void set_null() const;
+   
+  template &lt;class S&gt;
+  ulen match(const S src[/* len */]) const;
+   
+  template &lt;class S&gt;
+  bool equal(const S src[/* len */]) const;
+  
+  template &lt;class S&gt;
+  bool equal(PtrLen&lt;S&gt; src) const; 
+
+</pre>
+
+<p>
+The last method is required to support <b>range-based for</b> with <b>PtrLen</b>:
+</p>
+
+<pre>
+
+  // begin()/end() support
+  
+  bool operator != (PtrLen&lt;T&gt; end) const { return len!=end.len; }
+
+</pre>
+
 <h3>StrLen</h3>
 
 <p>
@@ -152,12 +441,16 @@ struct <span class="Att">StrLen</span> : PtrLen&lt;const char&gt;
   // constructors
   
   StrLen() {}
+
+  // implicit conversions
  
   StrLen(const char *zstr); // zstr!=0 is a pointer to a zero-terminated string
 
   StrLen(PtrLen&lt;const char&gt; str) : PtrLen&lt;const char&gt;(str) {}
  
   StrLen(PtrLen&lt;char&gt; str) : PtrLen&lt;const char&gt;(str.ptr,str.len) {}
+
+  // given string
   
   StrLen(const char *str,ulen len) : PtrLen&lt;const char&gt;(str,len) {}
 
@@ -178,6 +471,8 @@ different string-like types.
 Implicit encoding string length with zero termination was a language design mistake. 
 To perform string operations you have to know its length. So each time you will have to calcualte it.
 It might lead to quadratic time algorithms instead of linear time if you are not steady enough.
+But the most goodless thing is you cannot select substring from a zero-terminated string:
+it is not a zero-terminated. So you have to allocate memory and do copy!
 In <b>CCore</b> we avoid it converting zero-terminated strings into <b>StrLen</b>. So we calculate
 zero-terminated string length only one time.
 </p>
@@ -226,7 +521,7 @@ PtrLen&lt;const T&gt; <span class="Att">Range_const</span>(T *ptr,T *lim);
 
 <p>
 You can create a range from the <b>PtrLen</b>, from the array, from the base pointer and length and from
-the base ptr and limit. Limit is a past-the-end element. It may not exist as an object.
+the base ptr and limit. Limit is a pointer to the past-the-end element. It may not refer to an actual object.
 The advantage of using the function <b>Range()</b> is an implicit type inference. Consider:
 </p>
 
@@ -255,7 +550,7 @@ auto <span class="Att">Range_const</span>(const S &src);
 </pre>
 
 <p>
-They are applicable to objects of types with the range access interface:
+They are applicable to objects of types with the <b>Range Access interface</b>:
 </p>
 
 <pre>

@@ -34,7 +34,7 @@
 <b>Len.h</b> contains a number of length related types, constants and functions. <b>CCore</b>
 uses the type <b>ulen</b> to represent a length. This is a substitute for the standard <b>size_t</b> type.
 <b>ulen</b> is defined in the target <b>PlatformBase.h</b> header.
-We introduced this type for serveral reasons: 1) it has a better name, more simpler to type,
+This type is introduced by serveral reasons: 1) it has a better name, more simpler to type,
 2) target cannot adjust compiler definition for <b>size_t</b>, for example, compiler can define <b>size_t</b>
 as unsigned long, but if it has the same number of bits as an unsigned, then there is no point in
 such definition, so target can define <b>ulen</b> as unsigned.
@@ -43,7 +43,7 @@ such definition, so target can define <b>ulen</b> as unsigned.
 <h3>Constants</h3> 
 
 <p>
-<b>TextBufLen</b> is a length used for small text buffers.
+<b>TextBufLen</b> is a length, used for small text buffers.
 <b>MaxULen</b> is a maximum value for the <b>ulen</b> type.
 </p>
 
@@ -138,12 +138,12 @@ bool <span class="Att">TryAlign</span>(ulen &len,ulen A=MaxAlign);
 
 <p>
 <b>TryAlign()</b> tries to align the argument up. If an overflow happens, it will return <b>false</b>.
-Otherwise it will return <b>true</b> and update the first arguement with an aligned result.
+Otherwise it will return <b>true</b> and update the first arguement with the aligned result.
 </p>
 
 <p>
 The second argument of all these functions is an alignment requirement, it must not be equal 0, and 
-defaulted to the <b>MaxAlign</b> value, defined in the target <b>PlatformBase.h</b> header
+defaulted to the <b>MaxAlign</b> value, defined in the target <b>PlatformBase.h</b> header.
 </p>
 
 <h3>Utilities</h3>
@@ -154,10 +154,10 @@ The last two functions is <b>DimOf()</b> and <b>Dist()</b>:
 
 <pre>
 
-template <class T,ulen Len>
+template &lt;class T,ulen Len&gt;
 ulen <span class="Att">DimOf</span>(T (&)[Len]) { return Len; }
  
-template <class T>
+template &lt;class T&gt;
 ulen <span class="Att">Dist</span>(const T *from,const T *to) { return ulen(to-from); }
 
 </pre>

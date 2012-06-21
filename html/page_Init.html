@@ -32,12 +32,12 @@
 
 <p>
 <b>InitExitObject</b> is a class for the manual object initialization/termination. It is a POD type, 
-containing inside the storage room for an object and the object pointer.
+containing inside the storage room for the object and the object pointer.
 </p>
 
 <pre>
 template &lt;class T&gt;
-struct InitExitObject
+struct <span class="Att">InitExitObject</span>
  {
   // private data
 
@@ -116,7 +116,7 @@ and access it.
 
 <pre>
 template &lt;ulen Len&gt;
-struct InitStorage
+struct <span class="Att">InitStorage</span>
  {
   typename std::aligned_storage&lt;Len&gt;::type storage;
   

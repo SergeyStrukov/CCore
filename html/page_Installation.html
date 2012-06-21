@@ -40,45 +40,46 @@ The following ingredients are required:</p>
 <li><a href="http://www.cygwin.com">Cygwin</a>,</li>
 <li>compiler set,</li>
 <li><a href="http://www.eclipse.org">Eclipse (optional)</a>,</li>
-<li>CCore package (or repository).</li>
+<li><b>CCore</b> package (or repository).</li>
 </ul>
 
 <p>
 
-Install <b>cygwin</b> first. Include <b>make</b> and <b>bash</b> in your installation.<br />
-If you are not familiar with this platform spent some time to learn it.
+Install <b>Cygwin</b> first. Include <b>make</b> and <b>bash</b> in your installation.<br />
+If you are not familiar with this platform spend some time to learn it.
 
 </p>
 <p>
 
-Unpack the compiler set (provided as the archive <b>opt.7z</b>) in the <b>cygwin root</b>.<br />
+Unpack the compiler set (provided as the archive <b>opt.7z</b>) in the <b>Cygwin root</b>.<br />
 You will need <a href="http://www.7-zip.org/">7-Zip</a> archive manager.
 You will get the <b>opt</b> directory with several <b>gcc</b> compilers.<br />
-You can also build compilers from the sources yourself. See <a href="#build-gcc">below</a> for instructions.
+You can also build compilers yourself. See <a href="#build-gcc">below</a> for instructions.
 
 </p>
 <p>
 
-Copy 4 dlls from the directory <b>/opt/gcc-4.7.0/bin</b> (or from another newer host compiler directory) to
-the <b>/bin</b> directory (all pathes here are <b>cygwin</b> pathes, dlls are <b>cyggcc_s-1.dll,
+Copy 4 <b>dlls</b> from the directory <b>/opt/gcc-4.7.0/bin</b> (or from another newer host compiler directory) to
+the <b>/bin</b> directory (all pathes here are <b>Cygwin</b> pathes, <b>dlls</b> are <b>cyggcc_s-1.dll,
 cygssp-0.dll, cygstdc++-6.dll, cygquadmath-0.dll</b>).<br />
 It is neccessary to make host programs runable.
 
 </p>
 <p>
 
-Create the directory <b>bin</b> in your <b>cygwin home</b> directory. <b>CCore</b> uses some tools and utilities,
-they are built in and invoked from this directory. Make sure this directory is included in the <b>cygwin path</b>.
+Create the directory <b>bin</b> in your <b>Cygwin home</b> directory. <b>CCore</b> uses some tools and utilities,
+they are built in and invoked from this directory. Make sure this directory is included into the <b>Cygwin path</b>.
+You can also include this directory into the <b>Windows path</b>.
 
 </p>
 <p>
 
-Unpack CCore package (or checkout the source tree from a repository) somewere under you <b>cygwin home</b> directory. <span class="Hint">Avoid file and directory names with space characters.</span>
+Unpack <b>CCore</b> package (or checkout the source tree from a repository) somewere under you <b>Cygwin home</b> directory. <span class="Hint">Avoid file and directory names with space characters.</span>
 
 </p>
 <p>
 
-Open <b>bash</b> console (or another console you would prefer, just configure it to use <b>cygwin bash</b> as a command processor).<br /><br />
+Open <b>bash</b> console (or another console you would prefer, just configure it to use <b>Cygwin bash</b> as a command processor).<br /><br />
 Go to the <b>CCore root</b> directory. The following commands are used to prepare, clean and build the whole installation:</p>
 
 <ul>
@@ -97,21 +98,38 @@ Two of them: <b>MakeList.exe</b> and <b>Regen.exe</b>, are the essential part of
 </p>
 
 <p>
-You can use <b>Eclipse</b> as an IDE to work with <b>CCore</b> and CCore-based projects. <b>CCore</b> package includes
+<b>Cygwin</b> terminal has a limitation in its console functions. It cannot be used to run some tools 
+and tests. You can use the following <a href="http://sourceforge.net/projects/console">console program</a> instead to avoid troubles.
+</p>
+
+<p>
+You can use <b>Eclipse</b> as an <b>IDE</b> to work with <b>CCore</b> and <b>CCore</b>-based projects. <b>CCore</b> package includes
 the archive <b>eclipse.7z</b> with the <b>Eclipse Indigo</b> workbench. You will need <a href="http://www.ms-studio.com/FontSales/anonymouspro.html">Anonymouse Pro</a> 
-font for text editor. Before using this workbench you have to adjust some settings.<br />
+font for text editor. Before using this workbench you have to adjust some settings.
+</p>
+
+<p>
 Open menu <b>Window/Preferences...</b> . Then open the <b>C++/Build/Environment</b> tab. 
-Correct the variable <b>CCORE_ROOT</b> to point to the <b>CCore root</b> directory.<br /> 
+Correct the variable <b>CCORE_ROOT</b> to point to the <b>CCore root</b> directory.
+</p>
+
+<p>
 Then open the <b>General/Workspace/Linked Resources</b> tab and correct the path variable <b>Root</b> again
-to the <b>CCore root</b> directory.<br />
+to the <b>CCore root</b> directory.
+</p>
+
+<p>
 There is a runable project in the workbench: <b>WIN32-test</b>. You have to adjust pathes in the project launch configuration also.
 Right-click on the project, pick the Properties dialog and and select <b>Run/Debug Settings</b> tab. Open the launch configuration for edit.
-Correct pathes in the <b>Main</b> and <b>Arguments</b> tabs.<br />
+Correct pathes in the <b>Main</b> and <b>Arguments</b> tabs.
+</p>
+
+<p>
 You likely would have to refresh linked resources, select each project and press F5.
 Finally, customize <b>Eclipse</b> as you like.
 </p>
 
-<h2><a id="build-gcc">Building compilers from the sources</a></h2>
+<h2><a id="build-gcc">Building compilers</a></h2>
 
 <p>... to be written</p>
 

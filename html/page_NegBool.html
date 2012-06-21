@@ -31,11 +31,11 @@
 <p class="Files">Files <b>CCore/inc/gadget/NegBool.h</b> <b>CCore/src/gadget/NegBool.cpp</b></p>
 
 <p>
-<b>NegBool</b> is a simple proxy class intended to return a logically negative value. 
+<b>NegBool</b> is a simple proxy class, designed to return a logically negative value. 
 </p>
 
 <pre>
-class NegBool
+class <span class="Att">NegBool</span>
  {
    bool nok;
 
@@ -48,7 +48,7 @@ class NegBool
 </pre>
 
 <p>
-Assume you have a function, returning a logically negative value:
+Assume you have a function with a logically negative return value:
 </p>
 
 <pre>
@@ -67,10 +67,12 @@ When you check the result of the function you will have code like this:
 </p>
 
 <pre>
-if( func() ) // not clear way to express the error outcome
+
+if( func() ) // not clear way to express a error case
   {
    // handle failure
   }
+
 </pre>
 
 <p>
@@ -88,11 +90,17 @@ NegBool func()
  }
 </pre>
 
+<p>
+Then you have the following code, logically the same as above:
+</p>
+
 <pre>
-if( !func() )
+
+if( !func() ) // using operator ! to express a error case
   {
    // handle failure
   }
+
 </pre>
 
 </body>

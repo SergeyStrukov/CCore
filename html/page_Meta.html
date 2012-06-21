@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_Meta.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Meta</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,141 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Meta</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/Meta.h</b> <b>CCore/src/Meta.cpp</b></p>
 
+<p>
+This is a collection of meta-tools. Meta-programming is a programming in compile-time.
+Sometimes you need to derive a constant, type or function based on argument type properties.
+<b>Meta</b> is to support the meta-programming. It is enclosed in the <b>CCore::Meta</b> namespace.
+</p>
+
+<p>
+Meta-programming produces its results as <b>Meta-classes</b>, i.e. a classes with public static members, like constants,
+inner types or static functions. Consider <b>Meta-class</b> as a compound return value, consists of 
+several values. If such class has some main return value, it is named as <b>Ret</b> or <b>RetType</b>.
+</p>
+
+<p>
+<b>Meta-function</b> is a class template or template typedef, been instantinated, gives some <b>Meta-class</b>. 
+</p>
+
+<h3>Empty</h3>
+
+<p>
+<b>Empty</b> is an empty struct. It is used to return a no-value. Usually it is generated if a meta-function
+cannot produce a resonable result. 
+</p>
+
+<pre>
+
+struct <span class="Att">Empty</span>
+ {
+ };
+
+</pre>
+
+<h3>DefType</h3>
+
+<p>
+<b>Meta-function</b> <b>DefType</b> returns its argument as a type:
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+struct <span class="Att">DefType</span>
+ {
+  typedef T Ret;
+ };
+
+//
+// typename DefType&lt;T&gt;::Ret == T
+//
+
+</pre>
+
+<h3>DefConst</h3>
+
+<p>
+<b>Meta-function</b> <b>DefConst</b> returns its second argument as a constant, first argument defines the 
+constant type:
+</p>
+
+<pre>
+
+template &lt;class SUInt,SUInt Val&gt; 
+struct <span class="Att">DefConst</span>
+ {
+  enum RetType : SUInt { Ret = Val };
+ };
+
+//
+// DefConst<T,Val>::Ret == Val
+//
+
+</pre>
+
+<h3>Booleans</h3>
+
+<p>
+<b>True</b>, <b>False</b>, <b>If</b> and <b>IfNot</b> produce a boolean result:
+</p>
+
+<pre>
+
+/* struct True */
+
+struct <span class="Att">True</span> 
+ {
+  enum RetType { Ret = true };
+ };
+
+/* struct False */
+
+struct <span class="Att">False</span> 
+ {
+  enum RetType { Ret = false };
+ };
+
+/* struct If&lt;bool Cond&gt; */ 
+
+template &lt;&gt; 
+struct <span class="Att">If</span>&lt;true&gt; : True {}; 
+ 
+template &lt;&gt; 
+struct <span class="Att">If</span>&lt;false&gt; : False {};
+
+/* struct IfNot&lt;bool Cond&gt; */ 
+
+template &lt;&gt; 
+struct <span class="Att">IfNot</span>&lt;true&gt; : False {}; 
+ 
+template &lt;&gt; 
+struct <span class="Att">IfNot</span>&lt;false&gt; : True {};
+
+</pre>
+
+<h3>Select</h3>
+
+<p>
+<b>Select</b> is one of the key <b>Meta-function</b>, it produces one of the given type based on the given
+condition:
+</p>
+
+<pre>
+
+template &lt;bool Cond,class T1,class T2&gt;
+using Select = typename ImpSelect&lt;Cond,T1,T2&gt;::Ret ;
+
+//
+// Select&lt;true,T1,T2&gt; == T1
+//
+// Select&lt;false,T1,T2&gt; == T2
+//
+
+</pre>
 
 </body>
 

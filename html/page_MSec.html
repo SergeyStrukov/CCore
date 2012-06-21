@@ -30,7 +30,7 @@
 
 <p class="Files">Files <b>CCore/inc/gadget/MSec.h</b> <b>CCore/src/gadget/MSec.cpp</b></p>
 
-<p><b>MSec</b> holds time in milisecond units. Usually it is used to represent timeouts or short time intervals.
+<p><b>MSec</b> represents time in millisecond units. Usually it is used to represent timeouts or short time intervals.
 To create a <b>MSec</b> you can use the following user-defined literals:
 </p>
 
@@ -54,7 +54,7 @@ You can also add <b>MSecs</b> or multiply by unsigned:
 <pre>
 struct MSec
  {
-  unsigned time;                                                    // hold the time in miliseconds
+  unsigned time;                                                    // in milliseconds
   
   // constructors
 
@@ -67,6 +67,7 @@ struct MSec
   // methods
   
   constexpr unsigned <span class="Att">operator +</span> () const { return time; }           // extract time
+                                                                    // time is not null
   
   constexpr bool <span class="Att">operator !</span> () const { return !time; }              // time is null
   
@@ -75,7 +76,7 @@ struct MSec
 </pre>
 
 <p>
-<b>MSec</b> methods and functions are <b>constexpr</b>, so you can use it to create constants.
+<b>MSec</b> methods and functions are <b>constexpr</b> (except <b>cap</b>), so you can use it to create constants.
 </p>
 
 </body>

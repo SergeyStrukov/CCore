@@ -34,7 +34,7 @@
 
 <pre>
 template &lt;class T&gt;
-class LockObject : NoCopy
+class <span class="Att">LockObject</span> : NoCopy
  {
    T &amp;obj;
    
@@ -48,7 +48,7 @@ class LockObject : NoCopy
 
 <p>
 If you have an object of type C with methods <b>lock()</b> and <b>unlock()</b>, you can use <b>LockObject</b> 
-to "lock" this object for the scope duration:
+to "lock" this object for a scope duration:
 </p>
 
 <pre>
@@ -69,7 +69,7 @@ C obj;
 
 {
  LockObject&lt;C&gt; lock(obj); // obj.lock() is called
-                          // obj.unlock() will be called whenever scope is quit
+                          // obj.unlock() will be called whenever and however scope is exited
 
  ...
 }

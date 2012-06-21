@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/gadget/PosSub.h</b> <b>CCore/src/gadget/PosSub.cpp</b></p>
 
 <p>
-<b>PosSub()</b> is a function performing positive subtraction: 
+<b>PosSub()</b> is a function performing the positive subtraction: 
 </p>
 
 <p>
@@ -47,7 +47,7 @@ PosSubResult&lt;UInt&gt; <span class="Att">PosSub</span>(UInt value,TT ... tt);
 
 <p>
 <b>PosSub()</b> accepts any number of arguments, value type is determined from the first one, it must be
-an unsigned integral type, other arguments must be converted to this type. Extra arguments are subtracted 
+an unsigned integral type, other arguments must be convertible to this type. Extra arguments are subtracted 
 one by one from the first one.
 </p>
 
@@ -57,7 +57,7 @@ The resulting type encoded both result and underflow flag, it can be implicitly 
 
 <pre>
 template &lt;class UInt&gt;
-struct PosSubResult
+struct <span class="Att">PosSubResult</span>
  {
   UInt value;
   bool ok;
@@ -66,6 +66,31 @@ struct PosSubResult
 
   ....
  };
+</pre>
+
+<p>
+Some examples:
+</p>
+
+<pre>
+
+ulen len=PosSub(total_len,prefix1,prefix2);
+
+</pre>
+
+<pre>
+
+auto len=PosSub(total_len,prefix1,prefix2);
+
+if( len.ok )
+  {
+   // do job
+  }
+else
+  {
+   // handle failure
+  }
+
 </pre>
 
 </body>

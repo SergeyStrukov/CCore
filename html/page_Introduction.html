@@ -28,13 +28,24 @@
 
 <h1>Introduction</h1>
 
+<h2>Disclaimer</h2>
+
+<p>
+<b>CCore</b> is released without known bugs or defects. This code is made "as best as possible" and has 
+a top quality both in design and in implementation. This is a reliable piece of software. 
+So if you experience a troubles, the <b>CCore</b> code is the last place for bugs. This does not mean,
+naturally, that I do guarantee the code is completely bug-free and absolute perfect. That is not
+achievable in mean time. And, of course, everybody are welcome to contribute in its perfection: report a 
+real problem or suggest a design improvement.
+</p>
+
 <h2>Overview</h2>
 
 <p>
-<b>CCore</b> is a platform primary for development of real-time applications. It is distributed under the
+<b>CCore</b> is a platform mainly for development of real-time applications. It is distributed under the
 <a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License</a>.
 You can use <b>CCore</b> to build host applications also, but without any real-time properties. 
-We use the term "host application" to designate an application, running on the host machine, 
+We use the term "host application" to designate an application, running on a host machine, 
 currently under OS Windows.
 "Stand-alone application" means an application, running on a stand-alone device. 
 <b>CCore</b> is a multi-target platform, you can (and, in fact, must!) develop your own target 
@@ -42,16 +53,16 @@ currently under OS Windows.
 the following targets:</p>
 <ul>
 <li><b>WIN32</b> &mdash; default host target,</li>
-<li><b>IXDP465</b> &mdash; stand-alone target for Intel IXDP465 developmnent board,</li>
+<li><b>IXDP465</b> &mdash; stand-alone target for Intel IXDP465 development board,</li>
 <li><b>Vanilla-H</b> &mdash; host target template,</li>
 <li><b>Vanilla-X</b> &mdash; stand-alone target template.</li>
 </ul>
 <p>
 <b>Target</b> includes compiler and tools, makefile rules and part of source code, specific for the target. 
-In most cases you are encouraged to develop components of you application using <b>WIN32</b> target and 
+In most cases you are encouraged to develop components of your application using <b>WIN32</b> target and 
 then port it to a stand-alone target when it's ready. <b>CCore</b> is designed in target-independent 
 and platform-independent manner (despite it's a platform itself!). So it's recommended to follow this
-practice. Developing components on a host target usually is simpler and more productive.
+practice. Developing components on a host target is usually simpler and more productive.
 </p>
 <p>
 <b>CCore</b> is implemented using C++11. It enables the full advantage of this renewed language for
@@ -96,6 +107,13 @@ class IntLock : NoCopy
  };
 </pre>
 
+<p>
+<b>CCore</b> is designed as a <span class="Alert">compliant</span> C++11 libary. There are a few places where we are using non-standard 
+language extensions. In fact, we need only two of them: <b>restrict</b> and initialization priority
+attribute for static objects, supported in gcc family of compilers. As result, there is no restriction
+on compiler optimization level, unlike other OS cores. Another advantage is a platform-independence of code. 
+</p>
+
 <h2>CCore</h2>
 
 <p>
@@ -113,7 +131,7 @@ In particular, it contains:
 
 <ol>
 <li>PtrLen and Range for convenient and efficient loops,</li>
-<li>Printf with class print supoport, easily customized output devices and options,</li>
+<li>Printf with class print support, easily customized output devices and options,</li>
 <li>Efficient smart callback support,</li>
 <li>Mersenne Twister random number generator,</li>
 <li>Radix-tree based heap with real-time properties,</li>
@@ -129,7 +147,7 @@ In particular, it contains:
 <li>Fast log,</li>
 <li>New network infrastructure, based on PTP protocol,</li>
 <li>DDL(data-definition language) implementation,</li>
-<li>and many other helpful things.</li>
+<li>and many other helpful tools.</li>
 </ol>
 
 <h2>XCore</h2>
@@ -137,7 +155,7 @@ In particular, it contains:
 <p>
 
 <b>XCore</b> is a multi-task core for embedded systems. It is combined with <b>CCore</b> library. 
-The core is designed for single CPU systems. 
+The core is designed for single-core CPU systems. 
 
 </p>
 <p>
@@ -149,8 +167,8 @@ The core is designed for single CPU systems.
 <ol>
 <li>provides a rich set of synchonization objects and a simple way to construct additional ones,</li> 
 <li>implements priority inheritance and deadlock detection for mutexes,</li> 
-<li>task scheduler switchs with high frequency (10 kHz for IXDP465 platform),
-      that gives fine-grained task execution, ensure the system is high responsive,</li>
+<li>task scheduler switchs on high frequency (10 kHz for IXDP465 platform),
+      that provides fine-grained task execution, ensure the system is highly responsive,</li>
 <li>scheduler supports task priority relaxation, that protects low priority tasks 
       from complete execution hold-on,</li> 
 <li>full support for C++11,</li>
@@ -163,8 +181,8 @@ The core is designed for single CPU systems.
 <p>
 <b>PTP</b> &mdash; packet transaction protocol. It superseeds TCP as a main network protocol for client-server
 applications. PTP is a packet-based, parallel and transactional protocol. It is simple and convenient
-for development of a "remote call" type interactions. Parallel nature of PTP makes obsolete such tricks
-as multi-thread FTP download. PTP is working atop on a packet point-to-point or point-to-multipoint
+for development of "remote call" type interactions. Parallel nature of PTP makes obsolete such tricks
+as multi-thread FTP download. PTP is working atop a packet point-to-point or point-to-multipoint
 service like UDP (or even raw Ethernet). PTP has ability to adapt for smaller MTU lengths, 
 that is important to combine with another network protocols, which can reduce MTU (for example, 
 to implement incapsualation or encryption). 
@@ -192,8 +210,8 @@ via <b>HFS</b> over <b>PTP</b> protocols.
 <h2>DDL</h2>
 
 <p>
-<b>DDL</b> &mdash; data definition language. It is designed to represent an abstract 
-linked data in textual form.
+<b>DDL</b> &mdash; data definition language. It is designed to represent abstract 
+linked data in textual form. <b>DDL</b> has a C-style syntax.
 Here is a short example of a parser state machine representation:
 </p>
 
@@ -235,9 +253,9 @@ Or it can be used to store program-generated data to exchange with different dat
 <h2>LR1 parser generator</h2>
 
 <p>
-<b>LangLR1</b> is a tool for generation LR1 parsing state machines. It takes a language description and produces
-a .ddl file with a state machine description. You can use this description further to generate code 
-in any suitable for your purpose form. Another tool &mdash; <b>ParserGen</b> produces C++ code from .ddl 
+<b>LangLR1</b> is a tool for generation LR1 parser state machines. It takes a language description and produces
+a <b>.ddl</b> file with a state machine description. You can use this description further to generate code 
+in any suitable for your purpose form. Another tool &mdash; <b>ParserGen</b> produces C++ code from a <b>.ddl</b> 
 output in a some particular form.
 </p>
 <p>
@@ -267,13 +285,309 @@ P
 </pre>
 
 <p>
+Output is:
+</p>
+
+<pre>
+/* State.ddl */ 
+
+type RIndex = uint ;
+type TIndex = uint ;
+type NIndex = uint ;
+type NTIndex = uint ;
+type StateIndex = uint ;
+
+RIndex RIndexLim = 7 ;
+TIndex TIndexLim = 6 ;
+NIndex NIndexLim = 3 ;
+NTIndex NTIndexLim = 9 ; // T , N
+StateIndex StateIndexLim = 22 ;
+
+struct State
+ {
+  StateIndex state;
+
+  struct Transition { NTIndex ntt; State *state; } [] transitions;
+
+  struct Final { TIndex t; Rule *rule; } [] finals;
+ };
+
+struct Rule
+ {
+  RIndex rule;
+  text name;
+  NIndex result;
+  NTIndex[] str;
+ };
+
+struct NonTerminal
+ {
+  NIndex nt;
+  text name;
+  Rule * [] rules;
+ };
+
+State[22] StateTable=
+ {
+  { 0 ,
+   {
+    { 1 , StateTable+1 },
+    { 5 , StateTable+2 },
+    { 6 , StateTable+3 },
+    { 7 , StateTable+4 },
+    { 8 , StateTable+16 }
+   },
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  },
+  { 1 ,
+   {
+    { 1 , StateTable+5 },
+    { 5 , StateTable+6 },
+    { 6 , StateTable+7 },
+    { 7 , StateTable+8 },
+    { 8 , StateTable+19 }
+   },
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  },
+  { 2 ,
+   {
+   },
+   {
+    { 0 , RuleTable+5 },
+    { 3 , RuleTable+5 },
+    { 4 , RuleTable+5 }
+   }
+  },
+  { 3 ,
+   {
+    { 4 , StateTable+9 }
+   },
+   {
+    { 0 , RuleTable+0 },
+    { 4 , RuleTable+0 }
+   }
+  },
+  { 4 ,
+   {
+   },
+   {
+    { 0 , RuleTable+1 },
+    { 4 , RuleTable+1 }
+   }
+  },
+  { 5 ,
+   {
+    { 1 , StateTable+5 },
+    { 5 , StateTable+6 },
+    { 6 , StateTable+10 },
+    { 7 , StateTable+8 },
+    { 8 , StateTable+19 }
+   },
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  },
+  { 6 ,
+   {
+   },
+   {
+    { 2 , RuleTable+5 },
+    { 3 , RuleTable+5 },
+    { 4 , RuleTable+5 }
+   }
+  },
+  { 7 ,
+   {
+    { 2 , StateTable+11 },
+    { 4 , StateTable+12 }
+   },
+   {
+    { 2 , RuleTable+0 },
+    { 4 , RuleTable+0 }
+   }
+  },
+  { 8 ,
+   {
+   },
+   {
+    { 2 , RuleTable+1 },
+    { 4 , RuleTable+1 }
+   }
+  },
+  { 9 ,
+   {
+    { 1 , StateTable+1 },
+    { 5 , StateTable+2 },
+    { 7 , StateTable+14 },
+    { 8 , StateTable+16 }
+   },
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  },
+  { 10 ,
+   {
+    { 2 , StateTable+17 },
+    { 4 , StateTable+12 }
+   },
+   {
+    { 2 , RuleTable+0 },
+    { 4 , RuleTable+0 }
+   }
+  },
+  { 11 ,
+   {
+   },
+   {
+    { 0 , RuleTable+6 },
+    { 3 , RuleTable+6 },
+    { 4 , RuleTable+6 }
+   }
+  },
+  { 12 ,
+   {
+    { 1 , StateTable+5 },
+    { 5 , StateTable+6 },
+    { 7 , StateTable+18 },
+    { 8 , StateTable+19 }
+   },
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  },
+  { 13 ,
+   {
+    { 1 , StateTable+5 },
+    { 5 , StateTable+6 },
+    { 7 , StateTable+20 },
+    { 8 , StateTable+19 }
+   },
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  },
+  { 14 ,
+   {
+   },
+   {
+    { 0 , RuleTable+2 },
+    { 4 , RuleTable+2 }
+   }
+  },
+  { 15 ,
+   {
+   },
+   {
+    { 0 , RuleTable+4 },
+    { 4 , RuleTable+4 }
+   }
+  },
+  { 16 ,
+   {
+    { 3 , StateTable+21 }
+   },
+   {
+    { 0 , RuleTable+3 },
+    { 3 , RuleTable+0 },
+    { 4 , RuleTable+3 }
+   }
+  },
+  { 17 ,
+   {
+   },
+   {
+    { 2 , RuleTable+6 },
+    { 3 , RuleTable+6 },
+    { 4 , RuleTable+6 }
+   }
+  },
+  { 18 ,
+   {
+   },
+   {
+    { 2 , RuleTable+2 },
+    { 4 , RuleTable+2 }
+   }
+  },
+  { 19 ,
+   {
+    { 3 , StateTable+13 }
+   },
+   {
+    { 2 , RuleTable+3 },
+    { 3 , RuleTable+0 },
+    { 4 , RuleTable+3 }
+   }
+  },
+  { 20 ,
+   {
+   },
+   {
+    { 2 , RuleTable+4 },
+    { 4 , RuleTable+4 }
+   }
+  },
+  { 21 ,
+   {
+    { 1 , StateTable+1 },
+    { 5 , StateTable+2 },
+    { 7 , StateTable+15 },
+    { 8 , StateTable+16 }
+   },
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  }
+ };
+
+text[6] TNames=
+ {
+  "(End)",
+  "T(\"(\")",
+  "T(\")\")",
+  "T(\"*\")",
+  "T(\"+\")",
+  "T(\"x\")"
+ };
+
+Rule[7] RuleTable=
+ {
+  /* shift, special */ { 0 , "&lt;-" },
+  { 1 , "A1" , 0 , { 7 } },
+  { 2 , "A2" , 0 , { 6, 4, 7 } },
+  { 3 , "M1" , 1 , { 8 } },
+  { 4 , "M2" , 1 , { 8, 3, 7 } },
+  { 5 , "P1" , 2 , { 5 } },
+  { 6 , "P2" , 2 , { 1, 6, 2 } }
+ };
+
+NonTerminal[3] NonTerminalTable=
+ {
+  { 0 , "A" , { RuleTable+1, RuleTable+2 } },
+  { 1 , "M" , { RuleTable+3, RuleTable+4 } },
+  { 2 , "P" , { RuleTable+5, RuleTable+6 } }
+ };
+</pre>
+
+<p>
 <b>DDL</b> implementation in <b>CCore</b> is built using these tools.
 </p>
 
 <h2>Regen</h2>
 
 <p>
-<b>Regen</b> is a tool for generation helper classes and constants from register description.
+<b>Regen</b> is a tool for generation helper classes and constants from a register description.
 It is used to simplify and beautify low-level register device programming.
 </p>
 
@@ -432,33 +746,33 @@ struct Type_Status
  
   void operator = (Type value_) { value=value_; }
  
-  template <class Bar>
-  Type_Status & setTo(Bar &bar) { bar.set_Status(*this); return *this; }
+  template &lt;class Bar&gt;
+  Type_Status &amp; setTo(Bar &amp;bar) { bar.set_Status(*this); return *this; }
  
 
-  template <class Bar>
-  Type_Status & setTo(Bar &bar,uint32 ind) { bar.set_Status(*this,ind); return *this; }
+  template &lt;class Bar&gt;
+  Type_Status &amp; setTo(Bar &amp;bar,uint32 ind) { bar.set_Status(*this,ind); return *this; }
  
 
-  template <class T>
-  Type_Status & set(T to) { to(*this); return *this; }
+  template &lt;class T&gt;
+  Type_Status &amp; set(T to) { to(*this); return *this; }
  
 
-  Type_Status & setbit(Bits_Status bits) { value|=Type(bits); return *this; }
+  Type_Status &amp; setbit(Bits_Status bits) { value|=Type(bits); return *this; }
  
-  Type_Status & setbitIf(bool cond,Bits_Status bits) { if( cond ) value|=Type(bits); return *this; }
+  Type_Status &amp; setbitIf(bool cond,Bits_Status bits) { if( cond ) value|=Type(bits); return *this; }
  
-  Type_Status & clearbit(Bits_Status bits) { value&=~Type(bits); return *this; }
+  Type_Status &amp; clearbit(Bits_Status bits) { value&amp;=~Type(bits); return *this; }
  
-  Type_Status & clearbitIf(bool cond,Bits_Status bits) { if( cond ) value&=~Type(bits); return *this; }
+  Type_Status &amp; clearbitIf(bool cond,Bits_Status bits) { if( cond ) value&amp;=~Type(bits); return *this; }
  
-  Type maskbit(Bits_Status bits) const { return value&bits; }
+  Type maskbit(Bits_Status bits) const { return value&amp;bits; }
  
-  bool testbit(Bits_Status bits) const { return (value&bits)==Type(bits); }
+  bool testbit(Bits_Status bits) const { return (value&amp;bits)==Type(bits); }
  
 
-  template <class P>
-  void print(P &out) const;
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
 
   ....
  };

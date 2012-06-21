@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/gadget/Replace.h</b> <b>CCore/src/gadget/Replace.cpp</b></p>
 
 <p>
-<b>Replace...()</b> is a family of functions, they replace the first argument with a new value and return
+<b>Replace...()</b> is a family of functions, they set the first argument to a new value and return
 the old value.
 </p>
 
@@ -42,7 +42,7 @@ The basic of them is a simple <b>Replace()</b>.
 <pre>
 
 template &lt;class T,class S&gt;
-T <span class="Att">Replace</span>(T &t,S a); // t &lt;- T(a)
+T <span class="Att">Replace</span>(T &amp;t,S a); // return &lt;- t &lt;- T(a)
 
 </pre>
 
@@ -55,32 +55,32 @@ There is also a set of variations:
 <pre>
 
 template &lt;class T&gt;
-T <span class="Att">Replace_null</span>(T &t); // t &lt;- T()
+T <span class="Att">Replace_null</span>(T &amp;t); // return &lt;- t &lt;- T()
 
 template &lt;class T&gt;
-T <span class="Att">Replace_min</span>(T &t,T a); // t &lt;- Min(t,a)
+T <span class="Att">Replace_min</span>(T &amp;t,T a); // return &lt;- t &lt;- Min(t,a)
  
 template &lt;class T&gt;
-T <span class="Att">Replace_max</span>(T &t,T a); // t &lt;- Max(t,a)
+T <span class="Att">Replace_max</span>(T &amp;t,T a); // return &lt;- t &lt;- Max(t,a)
  
 template &lt;class T,class S&gt;
-T <span class="Att">Replace_add</span>(T &t,S a); // t &lt;- t+a
+T <span class="Att">Replace_add</span>(T &amp;t,S a); // return &lt;- t &lt;- t+a
  
 template &lt;class T,class S&gt;
-T <span class="Att">Replace_sub</span>(T &t,S a); // t &lt;- t-a
+T <span class="Att">Replace_sub</span>(T &amp;t,S a); // return &lt;- t &lt;- t-a
 
 </pre>
 
 <p>
 
-The final one is a generic, you can use it with lambdas:
+The final one is generic, you can use it with lambdas:
 
 </p>
 
 <pre>
 
-template <class Func,class T>
-T <span class="Att">Replace_gen</span>(Func func,T &t); // t &lt;- func(t)
+template &lt;class Func,class T&gt;
+T <span class="Att">Replace_gen</span>(Func func,T &amp;t); // return &lt;- t &lt;- func(t)
 
 </pre>
 
