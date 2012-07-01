@@ -19,17 +19,17 @@ LDOPT_EXTRA ?=
 
 # tools
 
-CC_ = /opt/crosstool/armeb/bin/arm-gcc-4.7.0
+CC_ = /opt/gcc-4.7.1-cross/armeb/bin/arm-gcc-4.7.1
 
 CC = @echo CC $< ; $(CC_)
 
 LD = @echo LD $@ ; $(CC_)
 
-AS_ = /opt/crosstool/armeb/bin/arm-as
+AS_ = /opt/gcc-4.7.1-cross/armeb/bin/arm-as
 
 AS = @echo AS $< ; $(AS_)
 
-AR_ = /opt/crosstool/armeb/bin/arm-ar
+AR_ = /opt/gcc-4.7.1-cross/armeb/bin/arm-ar
 
 AR = @echo AR $@ ; $(AR_)
 

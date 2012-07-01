@@ -19,7 +19,7 @@ LDOPT_EXTRA ?=
 
 # tools
 
-CC_ = /opt/gcc-4.7.0/bin/g++-4.7.0
+CC_ = /opt/gcc-4.7.1/bin/g++-4.7.1
 
 CC = @echo CC $< ; $(CC_)
 

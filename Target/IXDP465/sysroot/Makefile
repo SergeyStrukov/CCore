@@ -19,7 +19,7 @@ XCORE_TARGET = IXDP465
 
 # CC tool
 
-CC = /opt/crosstool/armeb/bin/arm-gcc-4.7.0
+CC = /opt/gcc-4.7.1-cross/armeb/bin/arm-gcc-4.7.1
 
 NOWARN = -Wno-non-virtual-dtor -Wno-switch
 
@@ -31,13 +31,13 @@ CCOPT_C = -c -O3 -mbig-endian -Wall -Wextra $(CCINC) -D__STDBUILD
 
 # AS tool
 
-AS = /opt/crosstool/armeb/bin/arm-as
+AS = /opt/gcc-4.7.1-cross/armeb/bin/arm-as
 
 ASOPT = -mcpu=xscale -EB
 
 # AR tool
 
-AR = /opt/crosstool/armeb/bin/arm-ar
+AR = /opt/gcc-4.7.1-cross/armeb/bin/arm-ar
 
 # RM tool
 
@@ -65,8 +65,8 @@ clean:
 	$(RM) $(OBJ_LIST) lib/libc.a lib/crt0.o
 
 install: all
-	cp -r -v ./lib /opt/crosstool/armeb/sysroot
-	cp -r -v ./usr /opt/crosstool/armeb/sysroot
+	cp -r -v ./lib /opt/gcc-4.7.1-cross/armeb/sysroot
+	cp -r -v ./usr /opt/gcc-4.7.1-cross/armeb/sysroot
 
 lib/libc.a : $(OBJ_LIST)
 	$(RM) $@
