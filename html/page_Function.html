@@ -31,7 +31,8 @@
 <p class="Files">Files <b>CCore/inc/gadget/Function.h</b> <b>CCore/src/gadget/Function.cpp</b></p>
 
 <p>
-<b>Function</b> a lightweight callback.
+<b>Function</b> a universal and lightweight <b>callback</b>. The last is essential in the real-time and system programming.
+<b>Callback</b> means a generalized function pointer. You can call a function or a class method indirectly using <b>callback</b>.
 </p>
 
 <pre>
@@ -46,12 +47,12 @@ class <span class="Att">Function</span>&lt;R (AA...)&gt;
 
    Function(NothingType); // null function
 
-   Function(R (*func)(AA...)); // callback to static function
+   Function(R (*func)(AA...)); // callback to the static function
 
-   Function(R (*func)(Handle ctx,AA...),Handle ctx); // callback to static function with handle
+   Function(R (*func)(Handle ctx,AA...),Handle ctx); // callback to the static function with the handle
 
    template &lt;class T&gt;
-   Function(T *obj_,R (T::*method_)(AA...)); // callback to object with method 
+   Function(T *obj,R (T::*method)(AA...)); // callback to the method with the object
 
    // methods
 
@@ -65,7 +66,7 @@ class <span class="Att">Function</span>&lt;R (AA...)&gt;
 </pre>
 
 <p>
-You can bind <b>Function</b> to a static function, a static function with handle or an object with a method.
+You can bind <b>Function</b> to a static function, a static function with a handle or an object with a method.
 Make sure the handle or the object is alive when you do call the function &mdash; there is no life-time
 control in <b>Function</b>. The object type must be derived from the <b>Funchor</b> base class.
 </p>
@@ -93,7 +94,7 @@ typedef NoCopyBase&lt;Funchor&gt; <span class="Att">Funchor_nocopy</span>;
 </pre>
 
 <p>
-The following pattern to work with <b>Functions</b> is used in <b>CCore</b>:
+The following pattern is used in <b>CCore</b> to work with <b>Functions</b>:
 </p>
 
 <pre>
@@ -106,6 +107,10 @@ class C : public Funchor
    Function&lt;void (void)&gt; function_method() { return FunctionOf(this,&C::method); }
  };
 </pre>
+
+<p>
+You may bind virtual methods in <b>Functions</b>, the virtualization is working in such case.
+</p>
 
 </body>
 

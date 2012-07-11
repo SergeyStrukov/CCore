@@ -31,13 +31,13 @@
 <p class="Files">Files <b>CCore/inc/gadget/Place.h</b> <b>CCore/src/gadget/Place.cpp</b></p>
 
 <p>
-This file contains collection of tools to work with raw memory.
+This file contains a collection of tools to work with raw memory pointers.
 </p>
 
 <h3>Byte</h3>
 
 <p>
-<b>byte</b> is a memory atom.
+<b>byte</b> is a memory atom. It always is an <b>unsigned char</b> according the C++ standard.
 </p>
 
 <pre>
@@ -126,7 +126,7 @@ C1 *ptr1=place+delta3;
 </pre>
 
 <p>
-<span class="Alert">Be warned</span>, operators <b>+=</b> and <b>-=</b> return the previous value, not the new one.
+<span class="Alert">Be warned</span>, unlike for integral types, operators <b>+=</b> and <b>-=</b> return the previous value, not the new one.
 Using this operators you can dispense a raw memory block to store multiple objects:
 </p>
 
@@ -134,8 +134,8 @@ Using this operators you can dispense a raw memory block to store multiple objec
 
 Place&lt;void&gt; place=....;
 
-C1 *ptr1=(place+=size1);
-C2 *ptr2=(place+=size2);
+C1 *ptr1=(place+=size1); // placed at the begin of the block 
+C2 *ptr2=(place+=size2); // follows
 
 ....
 

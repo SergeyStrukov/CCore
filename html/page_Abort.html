@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/Abort.h</b> <b>CCore/src/AbortMsgFunc.cpp</b>  <b>HCore/src/Abort.cpp</b> <b>XCore/src/Abort.cpp</b></p>
 
 <p>
-There are two functons to abort the execution with a diagnostic message:
+There are two functons to abort an execution with a diagnostic message:
 </p>
 
 <pre>
@@ -41,7 +41,7 @@ void <span class="Att">Abort</span>(const char *zstr);
 </pre>
 
 <p>
-One of them accept a message text as a StrLen argument, another one as a zero-terminated character string.
+First of them accepts a message text as a <b>StrLen</b> argument, second &mdash; as a zero-terminated character string.
 An exact method of the sending diagnostic message is target-dependent and implemented differently
 for <b>HCore</b> and <b>XCore</b> targets.
 </p>
@@ -63,8 +63,8 @@ extern const AbortMsgFuncType <span class="Att">AbortMsgFunc</span>;
 <p>
 You may link an object file in your project with this constant defined to introduce a hook in <b>Abort()</b>.
 Be reasonable with the hook actions: on <b>XCore</b> targets it may be called in any context, so you cannot
-do any heavy job inside. The same on <b>HCore</b> targets use it just to show a message 
-(using MessageBox for example).
+do any "heavy" job inside. The same on <b>HCore</b> targets: use it just to show a message 
+(using <b>MessageBox</b> for example).
 </p>
 
 </body>

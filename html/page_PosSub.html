@@ -34,9 +34,15 @@
 <b>PosSub()</b> is a function performing the positive subtraction: 
 </p>
 
-<p>
-PosSub(a,b) = a-b if( a>=b ) and 0 otherwise.
-</p>
+<pre>
+
+// Pseudocode
+
+if( a>=b ) PosSub(a,b) == a-b ; 
+
+if( a&lt;b ) PosSub(a,b) == 0 ; 
+
+</pre>
 
 <pre>
 
@@ -52,7 +58,7 @@ one by one from the first one.
 </p>
 
 <p>
-The resulting type encoded both result and underflow flag, it can be implicitly converted to result.
+The resulting type encoded both the result and the no-underflow flag, it can be implicitly converted to the result.
 </p>
 
 <pre>

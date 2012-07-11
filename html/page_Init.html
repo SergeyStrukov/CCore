@@ -111,7 +111,7 @@ and access it.
 </pre>
 
 <p>
-<b>InitStorage</b> is a simple struct providing an aligned storage to create objects inside:
+<b>InitStorage</b> is a simple structure, providing an aligned storage to create objects inside:
 </p>
 
 <pre>
@@ -127,13 +127,13 @@ struct <span class="Att">InitStorage</span>
 </pre>
 
 <p>
-<b>getMem()</b> returns a raw memory pointer to the storage, <b>getPlace()</b> returns a 
+Method <b>getMem()</b> returns the raw memory pointer to the storage, <b>getPlace()</b> returns the 
 <b>Place</b> of the storage.
 </p>
 
 <p>
 <b>NoObjectAbort()</b> is an abort function. It is used to abort execution in case of access to
-an absent object. You can use it in the similar situations. It calls <b>Abort()</b> with a diagnostic
+an absent object. You can use it in similar situations. It calls <b>Abort()</b> with a diagnostic
 message.
 </p>
 

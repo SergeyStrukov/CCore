@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/gadget/UIntSat.h</b> <b>CCore/src/gadget/UIntSat.cpp</b></p>
 
 <p>
-It is a collection of tools to control an unsigned integer overflow.
+This file contains a collection of tools to control an unsigned integer overflow.
 </p>
 
 <p>
@@ -70,8 +70,10 @@ struct UIntSat
 
 <p>
 Flag <b>overflow</b> is set if the accumulated value is not representable of the given type.
+You can consider such value as "greater than maximum UInt value". Further additive operations with such value produces
+only the same kind of value.
 You can sum, sum to self and compare with limit <b>UIntSat</b>s.
-You can also use it in constant expressions. The most typical usage is a buffer length calculations:
+You can also use it in constant expressions. The most common usage is a buffer length calculation:
 </p>
 
 <pre>
@@ -87,7 +89,7 @@ if( len<=max_len )
   }
 else
   {
-   // not fit
+   // not fit or even overflowed
   }
 
 </pre>
@@ -103,7 +105,7 @@ typedef UIntSat&lt;ulen&gt; <span class="Att">ULenSat</span>;
 </pre>
 
 <p>
-<b>UIntConstAdd</b> and <b>UIntConstSub</b> are meta-functions to perform safe operations in compile-time.
+<b>UIntConstAdd</b> and <b>UIntConstSub</b> are <b>Meta-function</b>s performing safe operations in compile-time.
 </p>
 
 <pre>
@@ -114,7 +116,7 @@ template &lt;class UInt,UInt A,UInt B&gt; using UIntConstSub;
 </pre>
 
 <p>
-Both of them defines an internal constant <b>Ret</b> with value <b>A+B</b> (or <b>A-B</b>) if it does fit 
+Both of them defines the internal constant <b>Ret</b> with value <b>A+B</b> (or <b>A-B</b>) if it does fit 
 the value range, or empty.
 </p>
 

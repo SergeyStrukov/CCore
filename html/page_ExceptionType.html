@@ -68,7 +68,7 @@ Printf(<span class="Att">Exception</span>,"message text",...);
 </pre>
 
 <p>
-This statement will pick up an installed error report handler, print the specified error message and then 
+This statement will pick up the installed error report handler, print the specified error message and then 
 throw an exception of type <b>CatchType</b>.
 </p>
 
@@ -88,19 +88,19 @@ To catch exceptions use the following pattern:
 
 <pre>
 try
- {
-  ReportException report; // or some derived from ReportException class
-
   {
-   // do some job here
-  }
+   ReportException report; // or some derived from ReportException class
 
-  report.guard(); // throw an exception if there was Printf(NoException,...); above
- }
+   {
+    // do some job here
+   }
+
+   report.guard(); // throw an exception if there was Printf(NoException,...); above
+  }
 catch(CatchType)
- {
-  // 
- }
+  {
+   // 
+  }
 </pre>
 
 <p>See <a href="page_Exception.html">Exception</a> for more details.</p>

@@ -34,17 +34,21 @@
 <b>Len.h</b> contains a number of length related types, constants and functions. <b>CCore</b>
 uses the type <b>ulen</b> to represent a length. This is a substitute for the standard <b>size_t</b> type.
 <b>ulen</b> is defined in the target <b>PlatformBase.h</b> header.
-This type is introduced by serveral reasons: 1) it has a better name, more simpler to type,
-2) target cannot adjust compiler definition for <b>size_t</b>, for example, compiler can define <b>size_t</b>
-as unsigned long, but if it has the same number of bits as an unsigned, then there is no point in
-such definition, so target can define <b>ulen</b> as unsigned.
+This type is introduced by serveral reasons: 
+<ol>
+<li>it has a better name, more simpler to type,</li>
+<li>target can assign a more suitable type to <b>ulen</b>, than <b>size_t</b>, for example, 
+compiler can define <b>size_t</b> as <b>unsigned long</b>, but if it has the same bit-size as an <b>unsigned</b>, 
+then there is no point in such definition, so target can define <b>ulen</b> as <b>unsigned</b>.
+</li>
+</ol>
 </p>
 
 <h3>Constants</h3> 
 
 <p>
 <b>TextBufLen</b> is a length, used for small text buffers.
-<b>MaxULen</b> is a maximum value for the <b>ulen</b> type.
+<b>MaxULen</b> is the maximum value of the <b>ulen</b> type.
 </p>
 
 <pre>
@@ -69,7 +73,7 @@ ulen len2 = 33_MByte ;
 <h3>Calculate lengths and guards</h3>
 
 <p>
-There are several functions used to calcualte lengths with overflow control:
+There are several functions, used to calcualte lengths with overflow control:
 </p>
 
 <pre>
@@ -94,7 +98,7 @@ void <span class="Att">GuardLenOfOverflow</span>(ulen count,ulen size_of,ulen ex
 
 <p>
 Once more guard function is the <b>GuardLen()</b>. It ensures the condition <b>len<=maxlen</b>.
-<b>GuardLenFailed()</b> throws an exception.
+The function <b>GuardLenFailed()</b> throws an exception.
 </p>
 
 <pre>
@@ -137,8 +141,8 @@ bool <span class="Att">TryAlign</span>(ulen &len,ulen A=MaxAlign);
 </p>
 
 <p>
-<b>TryAlign()</b> tries to align the argument up. If an overflow happens, it will return <b>false</b>.
-Otherwise it will return <b>true</b> and update the first arguement with the aligned result.
+<b>TryAlign()</b> tries to align the argument up. If an overflow happens, the return value is <b>false</b>.
+Otherwise the return value is <b>true</b> and the first argument is updated with the aligned result.
 </p>
 
 <p>
@@ -149,7 +153,7 @@ defaulted to the <b>MaxAlign</b> value, defined in the target <b>PlatformBase.h<
 <h3>Utilities</h3>
 
 <p>
-The last two functions is <b>DimOf()</b> and <b>Dist()</b>:
+The last two functions are <b>DimOf()</b> and <b>Dist()</b>:
 </p>
 
 <pre>
