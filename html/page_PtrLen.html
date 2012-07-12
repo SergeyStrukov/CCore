@@ -37,14 +37,16 @@ This file contains main tools to work with ranges of objects. <b>Range</b> is a 
 an array. There is the object in the range with the lower address, it is a base address of the range. 
 If this address is <b>p</b>, then the range consists of objects with addresses <b>{ p, p+1, ..., p+n-1 }</b>, 
 where <b>n</b> is the number of elements of the range. A range can be empty. In this case it has the base address,
-which may not refer to an existing object, but the number of elements is 0.
+which may not refer to an existing object, but the number of elements is 0. 
+A range of length 1 also can be formed from a single object.
+Finally, empty range may have the base address equals null. 
 </p>
 
 <p>
 Sometimes <b>Range</b> is considered more generally using idiom of iterator, but we focus on the 
 basic type of ranges, because of its practical importance. Basic ranges are the most efficient
 and convenient way of representation of a set of similar data, so it must be used whenever possible.
-The main advantages of basic ranges are: best loops throught them, best sequential and random object access.
+The main advantages of basic ranges are: best loops, best sequential and random object access.
 </p>
 
 <p>
@@ -480,7 +482,7 @@ zero-terminated string length only one time.
 <h3>Range() and Range_const()</h3>
 
 <p>
-<b>Range() and Range_const()</b> is a family of functions for range creation.
+<b>Range() and Range_const()</b> is a family of <b>Creator functions</b> for range creation.
 </p>
 
 <pre>
@@ -550,7 +552,7 @@ auto <span class="Att">Range_const</span>(const S &src);
 </pre>
 
 <p>
-They are applicable to objects of types with the <b>Range Access interface</b>:
+They are applicable to objects of types with the <b>Range Access Interface</b>:
 </p>
 
 <pre>
@@ -574,7 +576,7 @@ class C
 
 <p>
 <b>CCore</b> defines in its namespace global functions <b>begin()</b> and <b>end()</b>.
-They are applicable to objects of types with the range access interface and to <b>PtrLen</b> type.
+They are applicable to objects of types with the <b>Range Access Interface</b> and to <b>PtrLen</b> type.
 So you can use <b>range-based for</b>:
 </p>
 
@@ -652,7 +654,7 @@ else
 <h3>Mutate...()</h3>
 
 <p>
-<b>Mutate...()</b> is a three function family to cast a pointer or a range to the byte pointer 
+<b>Mutate...()</b> is a three functions family to cast a pointer or a range to the byte pointer 
 or the byte range.
 </p>
 
@@ -672,7 +674,7 @@ PtrLen&lt;T&gt; Mutate(PtrLen&lt;S&gt; a);
 <p>
 The destined type <b>T</b> must be (<b>const</b>) <b>char</b> or <b>unsigned char</b>.
 <b>Mutate()</b> creates a <b>PtrLen</b> over all bytes, occupied by elements of the source range.
-Standard allows aliasing of object with these types. <b>Mutate...()</b> should be used 
+C++ standard allows aliasing of objects with these types. <b>Mutate...()</b> should be used 
 with caution in special cases for the sake of performance or to do some low-level processing.
 </p>
 

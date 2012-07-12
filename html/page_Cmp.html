@@ -57,7 +57,7 @@ const char * GetTextDesc(CmpResult cmp);
 
 <p>
 The function <b>LessCmp()</b> can be used for the 3-way comparison of objects 
-of types with defined <b>operator &lt;</b>. It covers all basic integer types.
+of types with defined <b>operator &lt;</b>. It covers all basic integral types.
 </p>
 
 <pre>
@@ -157,14 +157,14 @@ bool <span class="Att">StrLess</span>(StrLen a,StrLen b);
 </pre>
 
 <p>
-There are two helper classes <b>LessComparable</b> and <b>CmpComparable</b>:
+There are two <b>Property Type</b> classes <b>LessComparable</b> and <b>CmpComparable</b>:
 </p>
 
 <pre>
 /* struct LessComparable&lt;T&gt; */ 
 
 template &lt;class T&gt;
-struct LessComparable
+struct <span class="Att">LessComparable</span>
  {
   friend bool operator &gt; (const T &a,const T &b) { return b&lt;a; }
   
@@ -180,7 +180,7 @@ struct LessComparable
 /* struct CmpComparable&lt;T&gt; */ 
 
 template &lt;class T&gt;
-struct CmpComparable
+struct <span class="Att">CmpComparable</span>
  {
   friend bool operator &lt; (const T &a,const T &b) { return a.objCmp(b)&lt;0; }
   
@@ -197,7 +197,7 @@ struct CmpComparable
 </pre>
 
 <p>
-They can be used to simplify an implementaion of the comparable classes:
+They can be used to simplify the implementaion of the comparable classes:
 </p>
 
 <pre>
@@ -245,7 +245,7 @@ or the lack of optimization capabilities of compilers makes 3-Way comparison of 
 </p>
 
 <p>
-But once we compare combined types (usually using alphabetical order) we start winning:
+But once we compare combined types (usually using alphabetical ordering) we start winning:
 </p>
 
 <pre>
@@ -267,7 +267,7 @@ CmpResult Cmp(T1 a1,T1 b1,T2 a2,T2 b2) // more efficient, simple and clear code
  {
   if( CmpResult ret=Cmp(a1,b1) ) return ret;
 
-  return Cmp(s2,b2);
+  return Cmp(a2,b2);
  }
 </pre>
 

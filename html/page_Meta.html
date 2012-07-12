@@ -28,29 +28,38 @@
 
 <h2>Meta</h2>
 
-<p class="Files">Files <b>CCore/inc/Meta.h</b> <b>CCore/src/Meta.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/gadget/Meta.h</b> <b>CCore/src/gadget/Meta.cpp</b></p>
 
 <p>
-This is a collection of meta-tools. Meta-programming is a programming in compile-time.
+This file contains a collection of meta-tools. Meta-programming is a programming in compile-time.
 Sometimes you need to derive a constant, type or function based on argument type properties.
-<b>Meta</b> is to support the meta-programming. It is enclosed in the <b>CCore::Meta</b> namespace.
+<b>Meta</b> supports solutions such kind of tasks. It is enclosed in the <b>CCore::Meta</b> namespace.
 </p>
 
 <p>
 Meta-programming produces its results as <b>Meta-classes</b>, i.e. a classes with public static members, like constants,
-inner types or static functions. Consider <b>Meta-class</b> as a compound return value, consists of 
-several values. If such class has some main return value, it is named as <b>Ret</b> or <b>RetType</b>.
+inner types or static functions. Consider <b>Meta-class</b> as a compound return value, comprised by 
+several values. If such class has some main return value, it is usually named as <b>Ret</b> or <b>RetType</b>.
 </p>
 
 <p>
-<b>Meta-function</b> is a class template or template typedef, been instantinated, gives some <b>Meta-class</b>. 
+<b>Meta-function</b> is a class template or template typedef, which, been instantinated, gives some <b>Meta-class</b>. 
+Instantination of <b>Meta-function</b> is a "compile-time call" of it.
+</p>
+
+<p>
+In some cases <b>Meta-function</b> is a template typdef, which produces a single resulting type.
+</p>
+
+<p>
+Inheritance is used to include a result in a <b>Meta-function</b>.
 </p>
 
 <h3>Empty</h3>
 
 <p>
 <b>Empty</b> is an empty struct. It is used to return a no-value. Usually it is generated if a meta-function
-cannot produce a resonable result. 
+cannot produce a resonable result, i.e. in case of out of domain of definition call. 
 </p>
 
 <pre>
@@ -97,7 +106,7 @@ struct <span class="Att">DefConst</span>
  };
 
 //
-// DefConst<T,Val>::Ret == Val
+// DefConst&lt;T,Val&gt;::Ret == Val
 //
 
 </pre>
