@@ -32,8 +32,8 @@
 
 <p>
 This file contains a collection of meta-tools. Meta-programming is a programming in compile-time.
-Sometimes you need to derive a constant, type or function based on argument type properties.
-<b>Meta</b> supports solutions such kind of tasks. It is enclosed in the <b>CCore::Meta</b> namespace.
+Sometimes you need to derive a constant, type or function based on the argument type properties.
+<b>Meta</b> supports solutions of such kind of tasks. It is enclosed in the <b>CCore::Meta</b> namespace.
 </p>
 
 <p>
@@ -59,7 +59,7 @@ Inheritance is used to include a result in a <b>Meta-function</b>.
 
 <p>
 <b>Empty</b> is an empty struct. It is used to return a no-value. Usually it is generated if a meta-function
-cannot produce a resonable result, i.e. in case of out of domain of definition call. 
+cannot produce a resonable result, i.e. in the case of the out of domain of definition call. 
 </p>
 
 <pre>
@@ -154,7 +154,7 @@ struct <span class="Att">IfNot</span>&lt;false&gt; : True {};
 <h3>Select</h3>
 
 <p>
-<b>Select</b> is one of the key <b>Meta-function</b>, it produces one of the given type based on the given
+<b>Select</b> is the one of the most important <b>Meta-functions</b>, it produces one of the given type based on the given
 condition:
 </p>
 
@@ -168,6 +168,363 @@ using Select = typename ImpSelect&lt;Cond,T1,T2&gt;::Ret ;
 //
 // Select&lt;false,T1,T2&gt; == T2
 //
+
+</pre>
+
+<p>
+<b>Select</b> is widely used in recursive meta-programming. It is implemented using template typedef, that eliminate 
+the neccessity of keyword <b>template</b>.
+</p>
+
+<h3>BuildIf</h3>
+
+<p>
+<b>BuildIf</b> is another conditional tool: it performs instantination if the condition is true.
+</p>
+
+<pre>
+
+template &lt;bool Cond,template &lt;class&gt; class F,class T&gt; struct BuildIf;
+
+template &lt;template &lt;class&gt; class F,class T&gt;
+struct BuildIf&lt;true,F,T&gt; : F&lt;T&gt; {};
+
+template &lt;template &lt;class&gt; class F,class T&gt;
+struct BuildIf&lt;false,F,T&gt; {};
+
+//
+// BuildIf&lt;true,F,T&gt; inherits F&lt;T&gt;
+//
+// BuildIf&lt;false,F,T&gt; is empty
+//
+
+</pre>
+
+<h3>Has</h3>
+
+<p>
+<b>Has</b> is used to determine a property of the type.
+</p>
+
+<pre>
+
+template &lt;class T,class ProbeSet&gt;
+struct Has
+ {
+  enum RetType { Ret = ProbeSet::template Probe&lt;T&gt;(0) };
+ };
+
+</pre>
+
+<p>
+Here is an example. Assume you want to know if the given type has a non-static method named <b>setInt</b> of signature <b>int(int)</b>.
+You can evaluate it using the following <b>ProbeSet</b>:
+</p>
+
+<pre>
+
+struct ProbeSet_setInt
+ {
+  template &lt;class T,int (T::*M)(int)&gt; struct Host;
+ 
+  template &lt;class T&gt;
+  static constexpr bool Probe(...) { return false; }
+  
+  template &lt;class T&gt;
+  static constexpr bool Probe(Host&lt;T,&T::setInt&gt; *) { return true; }
+ };
+
+</pre>
+
+<p>
+Then apply <b>Has</b> to get the result:
+</p>
+
+<pre>
+
+//
+// Has&lt;T,ProbeSet_setInt&gt;::Ret
+//
+
+</pre>
+
+<h3>EnableIf</h3>
+
+<p>
+<b>EnableIf</b> allows poor simulation of <b>concepts</b> &mdash; the feature still missing in C++, 
+it can be used to enable or disable a function instantination.
+</p>
+
+<pre>
+
+template &lt;bool Cond,class RetType=int&gt;
+using EnableIf = typename Select&lt;Cond, DefType&lt;RetType&gt; , Empty &gt;::Ret ;
+
+</pre>
+
+<p>
+Usually it is used to specify a function return value:
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+EnableIf&lt; SomeCond&lt;T&gt;::Ret , T  &gt; SomeFunction(T arg);
+
+</pre>
+
+<p>
+It is also a template typedef, so you get the result without extra typing.
+</p>
+
+<h3>TypeListLen</h3>
+
+<p>
+<b>TypeListLen</b> is a length of the type list:
+</p>
+
+<pre>
+
+//
+// TypeListLen&lt;&gt;::Ret == 0
+//
+//
+// TypeListLen&lt;T1&gt;::Ret == 1
+//
+//
+// TypeListLen&lt;T1,T2&gt;::Ret == 2
+//
+// and so on
+//
+
+</pre>
+
+<h3>RangeObjType</h3>
+
+<p>
+<b>RangeObjType</b> is another template typedef, it gives the object type of range or poiner kind of types:
+</p>
+
+<pre>
+
+struct SomeRange
+ {
+  T & operator * ();
+ };
+
+//
+// RangeObjType&lt;SomeRange&gt; == T
+//
+
+</pre>
+
+<h3>IsSInt</h3>
+
+<p>
+<b>IsSInt</b> is true on signed integral types. By default, such types are <b>signed char</b>, <b>short</b>,
+<b>int</b>, <b>long</b>, <b>long long</b> and <b>char</b> if it is signed. But target may extend this list
+using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>PlatformBase.h</b> header file.
+</p>
+
+<pre>
+
+//
+// IsSInt&lt;T&gt;::Ret == true if T is a signed integral type
+//
+
+</pre>
+
+<h3>IsUInt</h3>
+
+<p>
+<b>IsUInt</b> is true on unsigned integral types. By default, such types are <b>unsigned char</b>, <b>unsigned short</b>,
+<b>unsigned</b>, <b>unsigned long</b>, <b>unsigned long long</b> and <b>char</b> if it is unsigned. But target may extend this list
+using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>PlatformBase.h</b> header file.
+</p>
+
+<pre>
+
+//
+// IsUInt&lt;T&gt;::Ret == true if T is an unsigned integral type
+//
+
+</pre>
+
+<h3>IsSUInt</h3>
+
+<p>
+<b>IsSUInt</b> is true if one of <b>IsSInt</b> or <b>IsUInt</b> is true, i.g. if the argument is an integral type.
+<b>bool</b> is not cosidered as integral.
+</p>
+
+<pre>
+
+//
+// IsSUInt&lt;T&gt;::Ret == true if T is an integral type
+//
+
+</pre>
+
+<h3>SIntToUInt</h3>
+
+<p>
+<b>SIntToUInt</b> returns an unsigned pair of the given signed integral type. It is empty if the type is not a signed integral.
+</p>
+
+<pre>
+
+//
+// SIntToUInt&lt;T&gt; is empty if IsSInt&lt;T&gt;::Ret == false
+//
+// typename SIntToUInt&lt;T&gt;::SType == "signed T"
+//
+// typename SIntToUInt&lt;T&gt;::UType == "unsigned T"
+//
+
+</pre>
+
+<h3>PromoteUInt</h3>
+
+<p>
+<b>PromoteUInt</b> returns a promote type for the given unsigned integral type. Promote type is a <b>unsigend int</b>,
+<b>unsigend long</b> or <b>unsigend long long</b> "greater or equal" than the original type.
+</p>
+
+<pre>
+
+//
+// PromoteUInt&lt;T&gt; is empty if IsUInt&lt;T&gt;::Ret == false
+//
+// typename PromoteUInt&lt;T&gt;::Type == "promote type of T"
+//
+
+</pre>
+
+<h3>PromoteSInt</h3>
+
+<p>
+<b>PromoteSInt</b> returns promote types for the given signed integral type. Signed promote type is a <b>int</b>,
+<b>long</b> or <b>long long</b> "greater or equal" than the original type. Unsigned promote type is a <b>unsigend int</b>,
+<b>unsigend long</b> or <b>unsigend long long</b> "greater or equal" than the original type.
+</p>
+
+<pre>
+
+//
+// PromoteSInt&lt;T&gt; is empty if IsSInt&lt;T&gt;::Ret == false
+//
+// typename PromoteSInt&lt;T&gt;::SType == "signed promote type of T"
+//
+// typename PromoteSInt&lt;T&gt;::UType == "unsigned promote type of T"
+//
+
+</pre>
+
+<h3>UIntBits</h3>
+
+<p>
+<b>UIntBits</b> returns the number of bits in the given unsigned integral type.
+</p>
+
+<pre>
+
+//
+// UIntBits&lt;T&gt;::Ret == "bit size of T"
+//
+
+</pre>
+
+<h3>HexWidth</h3>
+
+<p>
+<b>HexWidth</b> returns the number fo hex digits required for the type value representation.
+</p>
+
+<pre>
+
+//
+// HexWidth&lt;T&gt;::Ret == "hex size of T"
+//
+
+</pre>
+
+<h3>Target support for Meta</h3>
+
+<p>
+Target must provide the followig entities in its <b>PlatformBase.h</b> header file.
+</p>
+
+<pre>
+
+namespace CCore {
+
+namespace Bits {
+
+const unsigned unsigned_char      = "bit size of type char" ;
+const unsigned unsigned_short     = "bit size of type short" ;
+const unsigned unsigned_int       = "bit size of type int" ;
+const unsigned unsigned_long      = "bit size of type long" ;
+const unsigned unsigned_long_long = "bit size of type long long" ;
+
+} // namespace Bits
+
+} // namespace CCore
+
+</pre>
+
+<p>
+The following struct is used to extend the list of types, recognized as integral types:
+</p>
+
+<pre>
+
+namespace CCore {
+
+namespace ExtraInt {
+
+template &lt;class T&gt;
+struct Prop 
+ {
+  enum 
+   {
+    IsSigned   = false,
+    IsUnsigned = false
+   };
+ };
+
+template &lt;&gt;
+struct Prop&lt;"extra sint type"&gt;
+ {
+  enum 
+   {
+    IsSigned   = true,
+    IsUnsigned = false,
+   };
+  
+  typedef "signed type" SType;
+  typedef "unsigned type" UType;
+   
+  typedef "signed promote type" PromoteSType;
+  typedef "unsigned promote type" PromoteUType;
+ };
+
+template &lt;&gt; 
+struct Prop&lt;"extra uint type"&gt;
+ {
+  enum 
+   {
+    IsSigned   = false,
+    IsUnsigned = true,
+      
+    Bits = "bit size"
+   };
+  
+  typedef "promote type" PromoteUType;
+ };
+
+} // namespace ExtraInt
+
+} // namespace CCore
 
 </pre>
 
