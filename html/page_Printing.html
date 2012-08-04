@@ -1,0 +1,268 @@
+<!--
+/* page_Printing.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Printing</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Printing</h2>
+
+<p class="Files">Files <b>CCore/inc/Printf.h</b> <b>CCore/src/Printf.cpp</b></p>
+
+<p>
+<b>CCore</b> provides a printing infrastructure. Printing is a transformation of an object into a sequence of characters.
+There are three actors in a printing process: an object, an output device and printing options. The output device consumes 
+characters, printing options determines how the object is exactly transformed. For example, integer can be represented 
+in decimal form or in hexadecimal, with or without sign, with extra zero digits and so on. The type of object is responsible
+for the printing implementation. There are default implementaions for integral and string-like types.
+</p>
+
+<h3>Printing functions</h3>
+
+<p>
+Printing is performed with the following printing functions:
+</p>
+
+<pre>
+
+template &lt;class P,class ... TT&gt;
+void Printf(P &&out,const char *format,const TT & ... tt);
+
+template &lt;class P,class ... TT&gt;
+void Putobj(P &&out,const TT & ... tt);
+
+template &lt;class P,class ... TT&gt;
+void Putch(P &&out,TT ... tt);
+
+</pre>
+
+<p>
+<b>Printf()</b> uses the format string to embed given objects into string with specifyed format options and puts the result into
+the given output device.
+</p>
+
+<p>
+<b>Putobj()</b> formats given objects with default formating outs them.
+</p>
+
+<p>
+<b>Putch()</b> casts given objects into chars and outs them.
+</p>
+
+<p>
+A format string is an ordinary zero-terminated string with embedded format specifiers. A format specifier has a form <b>"#&lt;options&gt;;"</b>.
+Where <b>&lt;options&gt;</b> is the option string. It is converted into the correspondent object print options. To print character <b>'#'</b> use
+<b>"##"</b> as a format specifier.
+</p>
+
+<h3>How to make a type printable</h3>
+
+<p>
+There are three ways to make a type printable.
+</p>
+
+<p>
+The most direct way: define in a class definition a method template <b>print()</b> like this:
+</p>
+
+<pre>
+class C
+ {
+  public:
+
+   template &lt;class P&gt;
+   void print(P &out) const
+    {
+     ....
+    }
+ };
+</pre>
+
+<p>
+If you need printing options do like this:
+</p>
+
+<pre>
+class C
+ {
+  public:
+
+   struct PrintOptType
+    {
+     ....
+
+     PrintOptType(); // default options
+
+     PrintOptType(const char *ptr,const char *lim); // options from a format string fragment [ptr,lim)
+    };
+
+   template &lt;class P&gt;
+   void print(P &out,const PrintOptType &opt) const
+    {
+     ....
+    }
+ };
+</pre>
+
+<p>
+The second way is to specify a printing proxy type:
+</p>
+
+<pre>
+class C
+ {
+  public:
+
+   typedef ... PrintProxyType;
+ };
+</pre>
+
+<p>
+In this case the type <b>C</b> must be castable to <b>C::PrintProxyType</b>.
+</p>
+
+<p>
+The last resort: define a function <b>GetTextDesc()</b>:
+</p>
+
+<pre>
+enum E
+ {
+  E1,
+  E2,
+  E3
+ };
+
+const char * GetTextDesc(E e);
+</pre>
+
+<p>
+This way is intended mostly for printing enumerations. <b>GetTextDesc()</b> is used as proxy: it must return something printable.
+</p>
+
+<p>
+You can determine the printing option type using <b>PrintOptAdapter&lt;T&gt;</b>. If the type <b>T</b> has a printing option type
+(even through proxing), then <b>PrintOptAdapter&lt;T&gt;::PrintOptType</b> is this type.
+</p>
+
+<p>
+Sometimes you need to specify printing options through the object, not through the format string. In such case use the
+function <b>BindOpt()</b>:
+</p>
+
+<pre>
+
+T obj;
+Opt opt;
+
+Printf(out,"object options: #;",BindOpt(opt,obj));
+
+</pre>
+
+<h3>Output devices</h3>
+
+<p>
+The type of the output device object must be ether output device class or define a printing adapter type:
+</p>
+
+<pre>
+class POut
+ {
+  public:
+
+   typedef ... PrintOutType;
+ };
+</pre>
+
+<p>
+Or
+</p>
+
+<pre>
+class POut;
+
+template &lt;&gt;
+struct PrintOutAdapter&lt;POut&gt;
+ {
+  typedef .... PrintOutType;
+ };
+</pre>
+
+<p>
+Output device class must provide the following methods:
+</p>
+
+<pre>
+class PDev
+ {
+  public:
+
+   typedef PDev & PrintOutType;
+   
+   PrintOutType printRef() { return *this; }
+   
+   void put(char ch); // print one character
+   
+   void put(char ch,ulen len); // print len same characters
+   
+   void put(const char *str,ulen len); // print character range
+
+   void flush(); // flusf the object -- usually flush intermediate buffers or attached system file object
+ };
+</pre>
+
+<p>
+The following output types are provided:
+</p>
+
+<pre>
+
+enum NoPrintType { NoPrint }; // to print nowhere
+
+</pre>
+
+<p>
+<b>NoPrint</b> is a <b>word</b> to print nowhere:
+</p>
+
+<pre>
+
+Printf(NoPrint,"this string goes nowhere");
+
+</pre>
+
+<p>The next type is <b>PrintBase</b>. It is designed to be a base class for actual output types.
+
+<h3>Integer printing</h3>
+
+<h3>String printing</h3>
+
+<h3>Title printing</h3>
+
+<h3>Tuple printing</h3>
+
+</body>
+
+</html>
+
