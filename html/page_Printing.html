@@ -58,12 +58,13 @@ void Putch(P &&out,TT ... tt);
 </pre>
 
 <p>
-<b>Printf()</b> uses the format string to embed given objects into string with specifyed format options and puts the result into
-the given output device.
+<b>Printf()</b> uses the format string to embed given objects into string with specified printing options and puts the result into
+the given output device. This function is similar to classic C <b>printf()</b>, but has the following advantages: type-safe and type-driven,
+easily customizable output devices, extendable to print any desired type.
 </p>
 
 <p>
-<b>Putobj()</b> formats given objects with default formating outs them.
+<b>Putobj()</b> outs given objects with default printing options.
 </p>
 
 <p>
@@ -83,7 +84,7 @@ There are three ways to make a type printable.
 </p>
 
 <p>
-The most direct way: define in a class definition a method template <b>print()</b> like this:
+The most direct way: define in the class definition a method template <b>print()</b> like this:
 </p>
 
 <pre>
@@ -114,7 +115,11 @@ class C
 
      PrintOptType(); // default options
 
-     PrintOptType(const char *ptr,const char *lim); // options from a format string fragment [ptr,lim)
+     PrintOptType(const char *ptr,const char *lim); 
+
+      // options from a format string fragment [ptr,lim)
+      // if the format string has a format specifier #XXX;, 
+      // then [ptr,lim) points to the string XXX
     };
 
    template &lt;class P&gt;
@@ -143,7 +148,7 @@ In this case the type <b>C</b> must be castable to <b>C::PrintProxyType</b>.
 </p>
 
 <p>
-The last resort: define a function <b>GetTextDesc()</b>:
+And the last resort: define a function <b>GetTextDesc()</b>:
 </p>
 
 <pre>
@@ -158,16 +163,39 @@ const char * GetTextDesc(E e);
 </pre>
 
 <p>
-This way is intended mostly for printing enumerations. <b>GetTextDesc()</b> is used as proxy: it must return something printable.
+This way is intended mostly to print enumerations. <b>GetTextDesc()</b> is used as a proxy: it must return something printable.
+There is the set of such functions for <b>bool</b> and integral types:
+</p>
+
+<pre>
+
+inline const char * GetTextDesc(bool value) { return value?"true":"false"; }
+ 
+inline int GetTextDesc(int value) { return value; }
+ 
+inline unsigned GetTextDesc(unsigned value) { return value; }
+ 
+inline long GetTextDesc(long value) { return value; }
+ 
+inline unsigned long GetTextDesc(unsigned long value) { return value; }
+ 
+inline long long GetTextDesc(long long value) { return value; }
+ 
+inline unsigned long long GetTextDesc(unsigned long long value) { return value; }
+
+</pre>
+
+<p>
+It allows to print a type, castable to one of these types.
 </p>
 
 <p>
 You can determine the printing option type using <b>PrintOptAdapter&lt;T&gt;</b>. If the type <b>T</b> has a printing option type
-(even through proxing), then <b>PrintOptAdapter&lt;T&gt;::PrintOptType</b> is this type.
+(even through proxing), then <b>PrintOptAdapter&lt;T&gt;::PrintOptType</b> is that type.
 </p>
 
 <p>
-Sometimes you need to specify printing options through the object, not through the format string. In such case use the
+Sometimes you need to specify printing options using the object, not using the format string. In such case use the
 function <b>BindOpt()</b>:
 </p>
 
@@ -196,7 +224,7 @@ class POut
 </pre>
 
 <p>
-Or
+Or using specialization:
 </p>
 
 <pre>
@@ -226,9 +254,9 @@ class PDev
    
    void put(char ch,ulen len); // print len same characters
    
-   void put(const char *str,ulen len); // print character range
+   void put(const char *str,ulen len); // print the character range
 
-   void flush(); // flusf the object -- usually flush intermediate buffers or attached system file object
+   void flush(); // flush the object
  };
 </pre>
 
@@ -254,13 +282,360 @@ Printf(NoPrint,"this string goes nowhere");
 
 <p>The next type is <b>PrintBase</b>. It is designed to be a base class for actual output types.
 
-<h3>Integer printing</h3>
+<pre>
+class PrintBase : NoCopy
+ {
+   ....
+
+  private:
+  
+   virtual PtrLen&lt;char&gt; do_provide(ulen hint_len)=0;
+   
+   virtual void do_flush(char *ptr,ulen len)=0; 
+   
+  protected:
+  
+   void clearOverflowFlag();
+   
+  public:
+  
+   // constructors
+   
+   PrintBase();
+   
+   ~PrintBase();
+   
+   // methods
+   
+   bool getOverflowFlag() const;
+   
+   PrintBase & guardOverflow();
+ };
+</pre>
+
+<p>
+When you derive a class from <b>PrintBase</b> you have to implement two virtual functions:
+</p>
+
+<pre>
+class PDev : public PrintBase
+ {
+  private:
+
+   virtual PtrLen&lt;char&gt; do_provide(ulen hint_len) // hint_len is a suggested minimum buffer length
+    {
+     ....
+    }
+   
+   virtual void do_flush(char *ptr,ulen len) // character range to be propogated to the final destination
+    {
+     ....
+    }
+
+  public:
+
+   PDev() { .... }
+
+   ~PDev() { flush(); .... }
+ };
+</pre>
+
+<p>
+<b>do_provide()</b> is called to setup the printing buffer. This method may either return a buffer for printing, or return
+an empty buffer or throw an exception. If an empty buffer is returned, <b>PrintBase</b> will skip some output characters and
+set the internal overflow flag. Derived class may clear this flag using <b>clearOverflowFlag()</b> method. You can check this 
+flag using <b>getOverflowFlag()</b> method or call the guard method <b>guardOverflow()</b> to throw an exception if 
+the overflow has happened. When <b>PrintBase</b> got a buffer it will fill it with output characters and flush sometimes 
+during printing operations. So the method <b>do_flush()</b> is called to propogate the output characters. This method is a 
+paired method for <b>do_provide()</b>: i.e. it is called sometimes after if the <b>do_provide()</b> was called successfully.
+You have to call <b>flush()</b> in the destructor to commit pending characters. For better understanding how to derive 
+from <b>PrintBase</b> see the <b>PrintBuf</b> implementation.
+</p>
+
+<p>
+The next class is <b>PrintBuf</b>. This class prints to a memory buffer.
+</p>
+
+<pre>
+class PrintBuf : public PrintBase
+ {
+   ....
+
+  public:
+  
+   explicit PrintBuf(PtrLen&lt;char&gt; buf=Nothing) { initbuf(buf); }
+   
+   ~PrintBuf();
+   
+   void init(PtrLen&lt;char&gt; buf);
+   
+   PrintBuf & guardOverflow() { PrintBase::guardOverflow(); return *this; }
+   
+   StrLen close();
+   
+   const char * closeZStr() { return close().ptr; }
+ };
+</pre>
+
+<p>
+Methods <b>close()</b> and <b>closeZStr()</b> both complete printing, append zero character and return the resulting string.
+</p>
+<p>
+Method <b>init()</b> closes the previous buffer and attach the new one. It also clears the overflow flag.
+</p>
+
+<p>
+The last class is <b>PrintCount&lt;P&gt;</b>. This class counts printing characters and passes them to the next printing device.
+If you need only counting, you can use <b>PrintCount&lt;void&gt;</b>
+</p>
+
+<pre>
+template &lt;class P&gt;
+class PrintCount : NoCopy
+ {
+   ....
+
+  public:
+  
+   explicit PrintCount(P &out_) : out(out_),count(0) {}
+   
+   ulen getCount() const { return count; }
+ };
+</pre>
+
+<h3>Tuple printing</h3>
+
+<p>
+<b>Tuple</b>s are treated especially by print functions: they are printed as if they members was used in the argument list.
+For example:
+</p>
+
+<pre>
+
+int a;
+int b;
+
+Printf(out,"a = #; b = #;\n",MakeTuple(a,b));
+
+</pre>
+
+<p>
+has the same effect as: 
+</p>
+
+<pre>
+
+int a;
+int b;
+
+Printf(out,"a = #; b = #;\n",a,b);
+
+</pre>
+
+<p>This rule is applyed recursively.</p>
 
 <h3>String printing</h3>
 
+<p>
+The following types: <b>char *</b>, <b>const char *</b>, <b>char[N]</b>, <b>const char [N]</b>, <b>StrLen</b>, 
+are string-like types and printed as strings of characters using proxy class <b>StrPrint</b>. This class has a printing options,
+represented by the struct <b>StrPrintOpt</b>:
+</p>
+
+<pre>
+
+enum StrAlign
+ {
+  StrAlignLeft,
+  StrAlignRight,
+  StrAlignCenter,
+  
+  StrAlignDefault = StrAlignRight
+ };
+ 
+struct StrPrintOpt
+ {
+  ulen width;
+  StrAlign align;
+  bool quoted;
+  
+  void setDefault()
+   {
+    width=0;
+    align=StrAlignDefault;
+    quoted=false;
+   }
+  
+  StrPrintOpt() { setDefault(); }
+  
+  StrPrintOpt(const char *ptr,const char *lim);
+  
+  //
+  // [width=0][.q|.Q][l|L|r|R|c|C=R]
+  //
+ };
+
+</pre>
+
+<p>
+<b>width</b> is the minimum output length, if the string has a less characters, then it is extended to fit <b>width</b>.
+<b>align</b> determines how the string is placed inside the extension.
+<b>quoted</b> encloses string in quotes.
+</p>
+
+<p>
+Text representation of the options may include width, qouted flag (.q or .Q) and alignment flag. For example, <b>"#20L;"</b> means
+<b>width = 20 ; align = StrAlignLeft ; quoted = false ;</b>, <b>"#20.qC;"</b> means <b>width = 20 ; align = StrAlignCenter ; quoted = true ;</b>.
+</p>
+
+<p>
+To print the same character several times use the helper class <b>RepeatChar</b>:
+</p>
+
+<pre>
+class RepeatChar
+ {
+   ulen count;
+   char ch;
+   
+  public: 
+  
+   RepeatChar(ulen count_,char ch_) : count(count_),ch(ch_) {}
+  
+   template &lt;class P&gt;
+   void print(P &out) const
+    {
+     out.put(ch,count);
+    }
+ };
+</pre>
+
 <h3>Title printing</h3>
 
-<h3>Tuple printing</h3>
+<p>
+Title looks like this:
+</p>
+
+<pre>
+--- Title ----------------------------------------------------------------------
+</pre>
+
+<p>
+The helper class <b>Title</b> can be used to print a title:
+</p>
+
+<pre>
+class Title
+ {
+   StrLen str;
+   
+  public:
+  
+   explicit Title(StrLen str_) : str(str_) {}
+ 
+   typedef TitlePrintOpt PrintOptType;
+   
+   template &lt;class P&gt;
+   void print(P &out,PrintOptType opt) const;
+ };
+</pre>
+
+<p>
+And here is the <b>Title</b> printing options:
+</p>
+
+<pre>
+struct TitlePrintOpt
+ {
+  static const ulen Default_width  = 80  ;
+  static const ulen Default_off    =  3  ;
+  static const char Default_border = '-' ;
+    
+  ulen width;
+  ulen off;
+  char border;
+     
+  void setDefault()
+   {
+    width=Default_width;
+    off=Default_off;
+    border=Default_border;
+   }
+     
+  TitlePrintOpt() { setDefault(); }
+     
+  TitlePrintOpt(const char *ptr,const char *lim);
+     
+  //
+  // [width=80][.off=3][border=-]
+  //
+ };
+</pre>
+
+<p>
+<b>width</b> is the total title length, <b>off</b> is the text offset, <b>border</b> is the border character.
+</p>
+
+<p>
+Text divider looks like this:
+</p>
+
+<pre>
+--------------------------------------------------------------------------------
+</pre>
+
+<p>
+It is printed by the helper class <b>TextDivider</b>:
+</p>
+
+<pre>
+class TextDivider
+ {
+  public:
+  
+   TextDivider() {}
+   
+   typedef TextDividerPrintOpt PrintOptType;
+   
+   template &lt;class P&gt;
+   void print(P &out,PrintOptType opt) const;
+ };
+</pre>
+
+<p>
+The following printing options can be used:
+</p>
+
+<pre>
+struct TextDividerPrintOpt
+ {
+  static const ulen Default_width  = TitlePrintOpt::Default_width  ;
+  static const char Default_border = TitlePrintOpt::Default_border ;
+    
+  ulen width;
+  char border;
+     
+  void setDefault()
+   {
+    width=Default_width;
+    border=Default_border;
+   }
+     
+  TextDividerPrintOpt() { setDefault(); }
+     
+  TextDividerPrintOpt(const char *ptr,const char *lim);
+     
+  //
+  // [width=80][border=-]
+  //
+ };
+</pre>
+
+<p>
+<b>width</b> is the total divider length, <b>border</b> is the border character.
+</p>
+
+<h3>Integer printing</h3>
 
 </body>
 
