@@ -32,7 +32,7 @@
 
 <p>
 <b>CCore</b> provides a printing infrastructure. Printing is a transformation of an object into a sequence of characters.
-There are three actors in a printing process: an object, an output device and printing options. The output device consumes 
+There are three actors in a printing process: the object, the output device and printing options. The output device consumes 
 characters, printing options determines how the object is exactly transformed. For example, integer can be represented 
 in decimal form or in hexadecimal, with or without sign, with extra zero digits and so on. The type of object is responsible
 for the printing implementation. There are default implementaions for integral and string-like types.
@@ -59,7 +59,7 @@ void Putch(P &&out,TT ... tt);
 
 <p>
 <b>Printf()</b> uses the format string to embed given objects into string with specified printing options and puts the result into
-the given output device. This function is similar to classic C <b>printf()</b>, but has the following advantages: type-safe and type-driven,
+the given output device. This function is similar to the classic C <b>printf()</b>, but has the following advantages: type-safe and type-driven,
 easily customizable output devices, extendable to print any desired type.
 </p>
 
@@ -68,13 +68,17 @@ easily customizable output devices, extendable to print any desired type.
 </p>
 
 <p>
-<b>Putch()</b> casts given objects into chars and outs them.
+<b>Putch()</b> casts given objects to <b>char</b>s and outs them.
 </p>
 
 <p>
-A format string is an ordinary zero-terminated string with embedded format specifiers. A format specifier has a form <b>"#&lt;options&gt;;"</b>.
-Where <b>&lt;options&gt;</b> is the option string. It is converted into the correspondent object print options. To print character <b>'#'</b> use
+Format string is an ordinary zero-terminated string with embedded format specifiers. Format specifier has a form <b>"#&lt;options&gt;;"</b>,
+where <b>&lt;options&gt;</b> is the option string. It is converted to the correspondent object print options. To print character <b>'#'</b> use
 <b>"##"</b> as a format specifier.
+</p>
+
+<p>
+Format string is given as a zero-terminated character string, not as <b>StrLen</b>, due to the <b>printf()</b> tradition.
 </p>
 
 <h3>How to make a type printable</h3>
@@ -84,7 +88,7 @@ There are three ways to make a type printable.
 </p>
 
 <p>
-The most direct way: define in the class definition a method template <b>print()</b> like this:
+The most direct way: define in the class definition the method template <b>print()</b> like this:
 </p>
 
 <pre>
@@ -117,7 +121,7 @@ class C
 
      PrintOptType(const char *ptr,const char *lim); 
 
-      // options from a format string fragment [ptr,lim)
+      // [ptr,lim) -- options from the format string
       // if the format string has a format specifier #XXX;, 
       // then [ptr,lim) points to the string XXX
     };
@@ -195,7 +199,7 @@ You can determine the printing option type using <b>PrintOptAdapter&lt;T&gt;</b>
 </p>
 
 <p>
-Sometimes you need to specify printing options using the object, not using the format string. In such case use the
+Sometimes you need to specify printing options using the object, not the format string. In such case use the
 function <b>BindOpt()</b>:
 </p>
 
@@ -252,7 +256,7 @@ class PDev
    
    void put(char ch); // print one character
    
-   void put(char ch,ulen len); // print len same characters
+   void put(char ch,ulen len); // print the same character len times
    
    void put(const char *str,ulen len); // print the character range
 
@@ -353,7 +357,7 @@ from <b>PrintBase</b> see the <b>PrintBuf</b> implementation.
 </p>
 
 <p>
-The next class is <b>PrintBuf</b>. This class prints to a memory buffer.
+The next class is <b>PrintBuf</b>. This class prints to the memory buffer.
 </p>
 
 <pre>
@@ -363,7 +367,7 @@ class PrintBuf : public PrintBase
 
   public:
   
-   explicit PrintBuf(PtrLen&lt;char&gt; buf=Nothing) { initbuf(buf); }
+   explicit PrintBuf(PtrLen&lt;char&gt; buf=Nothing);
    
    ~PrintBuf();
    
@@ -478,8 +482,14 @@ struct StrPrintOpt
 </pre>
 
 <p>
-<b>width</b> is the minimum output length, if the string has a less characters, then it is extended to fit <b>width</b>.
+<b>width</b> is the minimum output length, if the string has less characters, then it is extended to fit it.
+</p>
+<p>
 <b>align</b> determines how the string is placed inside the extension.
+Left alignment means extension by space characters after string, right &mdash; before,
+center &mdash; both before and after by equal number.  
+</p>
+<p>
 <b>quoted</b> encloses string in quotes.
 </p>
 
@@ -636,6 +646,166 @@ struct TextDividerPrintOpt
 </p>
 
 <h3>Integer printing</h3>
+
+<p>
+Integral types are printed using proxy classes <b>SIntPrint&lt;SInt&gt;</b> and <b>UIntPrint&lt;UInt&gt;</b>:
+</p>
+
+<pre>
+
+/* class SIntPrint&lt;SInt&gt; */ 
+
+template &lt;class SInt&gt;
+class SIntPrint
+ {
+   SInt value;
+ 
+  public:
+  
+   explicit SIntPrint(SInt value_) : value(value_) {}
+   
+   typedef IntPrintOpt PrintOptType;
+   
+   template &lt;class P&gt;
+   void print(P &out,PrintOptType opt) const;
+ };
+ 
+/* class UIntPrint&lt;UInt&gt; */  
+
+template &lt;class UInt&gt;
+class UIntPrint
+ {
+   UInt value;
+ 
+  public:
+  
+   explicit UIntPrint(UInt value_) : value(value_) {}
+   
+   typedef IntPrintOpt PrintOptType;
+   
+   template &lt;class P&gt;
+   void print(P &out,PrintOptType opt) const;
+ };
+
+</pre>
+
+<p>
+<b>IntPrintOpt</b> represents the printing options:
+</p>
+
+<pre>
+
+enum IntShowSign
+ {
+  IntShowMinus,
+  IntShowPlus,
+  
+  IntShowSignDefault = IntShowMinus
+ };
+
+enum IntAlign
+ {
+  IntAlignLeft,
+  IntAlignRight,
+  IntAlignInternal,
+  
+  IntAlignDefault = IntAlignRight
+ };
+ 
+enum IntShowBase
+ {
+  IntShowNoBase,
+  IntShowBaseSuffix,
+  IntShowBasePrefix,
+  
+  IntShowBaseDefault = IntShowNoBase
+ };
+ 
+struct IntPrintOpt
+ {
+  ulen width;
+  unsigned base; // 2..16, 0 for c
+  IntAlign align;
+  IntShowSign show_sign;
+  IntShowBase show_base;
+  
+  void setDefault()
+   {
+    width=0;
+    base=10;
+    align=IntAlignDefault;
+    show_sign=IntShowSignDefault;
+    show_base=IntShowBaseDefault;
+   }
+  
+  IntPrintOpt() { setDefault(); }
+  
+  IntPrintOpt(const char *ptr,const char *lim);
+  
+  //
+  // [+][width=0][.base|.b|.h|.x|.c=.10][l|L|r|R|i|I=R]
+  //
+ };
+ 
+</pre>
+
+<p>
+There are five printing options: 
+</p>
+
+<p>
+<b>width</b> is the minimum output length. If the representation is shorter than this value, then it is extended to fit it. 
+</p>
+
+<p>
+<b>align</b> is determined how extension is performed. Internal alignment inserts zero digits in the number representation. 
+</p>
+
+<p>
+<b>base</b> is the representation base, it can vary form 2 to 16. It may have the special value 0. In this case the 
+printing number is casted to <b>char</b> and this character goes out.
+</p>
+
+<p>
+<b>show_sign</b> shows sign plus for positive numbers.
+</p>
+
+<p>
+<b>show_base</b> shows representation base as suffix or prefix. Prefix is <b>0x</b> for base 16. 
+Suffixes are <b>h</b> for base 16 and <b>b</b> for base 2.
+</p>
+
+<p>
+Here is some examples:
+</p>
+
+<pre>
+
+Printf(Con,"--- #10l; ---\n",12345);
+Printf(Con,"--- #10i; ---\n",12345);
+Printf(Con,"--- #10r; ---\n",12345);
+Printf(Con,"--- #+10.5l; ---\n",12345);
+Printf(Con,"--- #+10.hi; ---\n",12345);
+Printf(Con,"--- #10.hi; ---\n",-12345);
+
+</pre>
+
+<p>
+prints
+</p>
+
+<pre>
+
+--- 12345      ---
+--- 0000012345 ---
+---      12345 ---
+--- +343340    ---
+--- +00003039h ---
+--- -00003039h ---
+
+</pre>
+
+<h3>Dumps</h3>
 
 </body>
 
