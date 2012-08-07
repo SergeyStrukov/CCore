@@ -74,6 +74,12 @@ bool Testit<46>::Main()
   
   Printf(Con,"\n#;\n\n",TextDivider());
   
+  uint8 buf[50];
+  
+  for(ulen i=0; i<DimOf(buf) ;i++) buf[i]=uint8(i);
+  
+  Printf(Con,"#4.8;\n",PrintDump(Range(buf)));
+  
   return true;
  }
  
