@@ -1,0 +1,145 @@
+<!--
+/* page_Tuple.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Tuple</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Tuple</h2>
+
+<p class="Files">Files <b>CCore/inc/Tuple.h</b> <b>CCore/src/Tuple.cpp</b></p>
+
+<p>
+Classes <b>Tuple</b> and <b>ForwardTuple</b> have a spartan design in <b>CCore</b>, because they were introduced to solve some particular problem.
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+struct Tuple
+ {
+  ....
+  
+  Tuple() {}
+  
+  Tuple(const TT &amp; ...);
+  
+  template &lt;class FuncInit&gt;
+  void call(FuncInit func_init);
+ };
+
+template &lt;class ... TT&gt;
+struct ForwardTuple
+ {
+  ....
+  
+  ForwardTuple() {}
+  
+  ForwardTuple(TT &amp;&amp; ...);
+  
+  template &lt;class FuncInit&gt;
+  void call(FuncInit func_init);
+ };
+
+</pre>
+
+<p>
+The problem is to capture an argument list and use it further in a functor call. The difference between <b>Tuple</b> and 
+<b>ForwardTuple</b> is the first makes copies of the arguments, but the second holds rvalue references. <b>Tuple</b> is
+used when you need to store the arguments. If you have to capture them only temporary then <b>ForwardTuple</b> may be used.
+</p>
+
+<p>
+Both classes use <a href="page_FunctorType.html">functor init pattern</a>.
+</p>
+
+<p>
+<b>Tuple</b> is used in the log implementation:
+</p>
+
+<pre>
+
+template &lt;class Cat,class Stamp,class T,class ... TT&gt;
+class LogMsg&lt;Cat,Stamp,T,TT...&gt; : public LogMsgBase&lt;Cat,Stamp&gt;
+ {
+   const char *format;
+   Tuple&lt;T,TT...&gt; data;
+   
+  private: 
+   
+   virtual void printBody(PrintBase &amp;out) const
+    {
+     Printf(out,format,data);
+    }
+   
+  public: 
+  
+   LogMsg(Cat cat,const char *format_,const T &amp;t,const TT &amp; ... tt)
+    : LogMsgBase&lt;Cat,Stamp&gt;(cat),format(format_),data(t,tt...) {}
+ };
+
+</pre>
+
+<p>
+<b>ForwardTuple</b> is used in the array algorithms implementation:
+</p>
+
+<pre>
+
+template &lt;class T,class ... SS&gt;
+struct Creator_fill
+ {
+  enum NoThrowFlagType { NoThrow = false };
+  
+  ForwardTuple&lt;SS...&gt; ss;
+  
+  explicit Creator_fill(SS &amp;&amp; ... ss_) : ss( std::forward<SS>(ss_)... ) {}
+  
+  T * operator () (Place&lt;void&gt; place)
+   {
+    T *ret;
+      
+    ss.call( [&amp;ret,place] (SS &amp;&amp; ... ss) { ret=new(place) T( std::forward&lt;SS&gt;(ss)... ); } );
+      
+    return ret;
+   }
+ };
+ 
+</pre>
+
+<p>
+<b>MakeTuple()</b> is a <b>Creator function</b> for <b>Tuple</b>:
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+Tuple&lt;TT...&gt; MakeTuple(const TT &amp; ... tt);
+
+</pre>
+
+</body>
+
+</html>
+

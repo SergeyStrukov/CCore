@@ -47,13 +47,13 @@ Printing is performed with the following printing functions:
 <pre>
 
 template &lt;class P,class ... TT&gt;
-void Printf(P &&out,const char *format,const TT & ... tt);
+void Printf(P &amp;&amp;out,const char *format,const TT &amp; ... tt);
 
 template &lt;class P,class ... TT&gt;
-void Putobj(P &&out,const TT & ... tt);
+void Putobj(P &amp;&amp;out,const TT &amp; ... tt);
 
 template &lt;class P,class ... TT&gt;
-void Putch(P &&out,TT ... tt);
+void Putch(P &amp;&amp;out,TT ... tt);
 
 </pre>
 
@@ -97,7 +97,7 @@ class C
   public:
 
    template &lt;class P&gt;
-   void print(P &out) const
+   void print(P &amp;out) const
     {
      ....
     }
@@ -127,7 +127,7 @@ class C
     };
 
    template &lt;class P&gt;
-   void print(P &out,const PrintOptType &opt) const
+   void print(P &amp;out,const PrintOptType &amp;opt) const
     {
      ....
     }
@@ -250,7 +250,7 @@ class PDev
  {
   public:
 
-   typedef PDev & PrintOutType;
+   typedef PDev &amp; PrintOutType;
    
    PrintOutType printRef() { return *this; }
    
@@ -313,7 +313,7 @@ class PrintBase : NoCopy
    
    bool getOverflowFlag() const;
    
-   PrintBase & guardOverflow();
+   PrintBase &amp; guardOverflow();
  };
 </pre>
 
@@ -373,7 +373,7 @@ class PrintBuf : public PrintBase
    
    void init(PtrLen&lt;char&gt; buf);
    
-   PrintBuf & guardOverflow() { PrintBase::guardOverflow(); return *this; }
+   PrintBuf &amp; guardOverflow() { PrintBase::guardOverflow(); return *this; }
    
    StrLen close();
    
@@ -401,7 +401,7 @@ class PrintCount : NoCopy
 
   public:
   
-   explicit PrintCount(P &out_) : out(out_),count(0) {}
+   explicit PrintCount(P &amp;out_) : out(out_),count(0) {}
    
    ulen getCount() const { return count; }
  };
@@ -513,7 +513,7 @@ class RepeatChar
    RepeatChar(ulen count_,char ch_) : count(count_),ch(ch_) {}
   
    template &lt;class P&gt;
-   void print(P &out) const
+   void print(P &amp;out) const
     {
      out.put(ch,count);
     }
@@ -546,7 +546,7 @@ class Title
    typedef TitlePrintOpt PrintOptType;
    
    template &lt;class P&gt;
-   void print(P &out,PrintOptType opt) const;
+   void print(P &amp;out,PrintOptType opt) const;
  };
 </pre>
 
@@ -608,7 +608,7 @@ class TextDivider
    typedef TextDividerPrintOpt PrintOptType;
    
    template &lt;class P&gt;
-   void print(P &out,PrintOptType opt) const;
+   void print(P &amp;out,PrintOptType opt) const;
  };
 </pre>
 
@@ -667,7 +667,7 @@ class SIntPrint
    typedef IntPrintOpt PrintOptType;
    
    template &lt;class P&gt;
-   void print(P &out,PrintOptType opt) const;
+   void print(P &amp;out,PrintOptType opt) const;
  };
  
 /* class UIntPrint&lt;UInt&gt; */  
@@ -684,7 +684,7 @@ class UIntPrint
    typedef IntPrintOpt PrintOptType;
    
    template &lt;class P&gt;
-   void print(P &out,PrintOptType opt) const;
+   void print(P &amp;out,PrintOptType opt) const;
  };
 
 </pre>
@@ -806,6 +806,73 @@ prints
 </pre>
 
 <h3>Dumps</h3>
+
+<p>
+<b>PrintDumpType</b> is designed to print hexadecimal dumps of integers. Dumps look like this:
+</p>
+
+<pre>
+
+00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F
+20 21 22 23 24 25 26 27 28 29 2A 2B 2C 2D 2E 2F
+30 31
+
+</pre>
+
+<p>
+To create the object of <b>PrintDumpType</b> use the overloaded <b>Creator function</b> <b>PrintDump()</b>:
+</p>
+
+<pre>
+
+template &lt;class UInt&gt;
+PrintDumpType&lt;UInt&gt; PrintDump(const UInt *ptr,ulen len);
+ 
+template &lt;class UInt&gt;
+PrintDumpType&lt;UInt&gt; PrintDump(PtrLen&lt;UInt&gt; data);
+ 
+template &lt;class UInt&gt;
+PrintDumpType&lt;UInt&gt; PrintDump(PtrLen&lt;const UInt&gt; data);
+
+</pre>
+
+<p>
+And here is the options:
+</p>
+
+<pre>
+struct PrintDumpOptType
+ {
+  static const ulen Default_line_len = 16 ;
+ 
+  ulen width;
+  ulen line_len;
+    
+  void setDefault()
+   {
+    width=0;
+    line_len=Default_line_len;
+   }
+   
+  PrintDumpOptType() { setDefault(); }
+    
+  PrintDumpOptType(const char *ptr,const char *lim);
+  
+  //
+  // [width=0][.line_len=16]
+  //
+ };
+</pre>
+
+<p>
+<b>width</b> is the output width of each integer. If it is 0, then the hexadecimal width of the integer type is used 
+(2 for <b>uint8</b>, 4 for <b>uint16</b> and so on).
+</p>
+
+<p>
+<b>line_len</b> determines the number of integers on the one line.
+</p>
 
 </body>
 
