@@ -71,8 +71,27 @@ used when you need to store the arguments. If you have to capture them only temp
 </p>
 
 <p>
-Both classes use <a href="page_FunctorType.html">functor init pattern</a>.
+Both classes use <a href="page_FunctorType.html">Functor Init Pattern</a>.
 </p>
+
+<p>
+The method <b>call()</b> builds and calls a functor with the argument list, captured by the tuple.
+</p>
+
+<pre>
+
+void func(int a,double b);
+
+....
+
+int a;
+double b;
+
+auto tuple = MakeTuple(a,b) ;
+
+tuple.call(func); // calls func(a,b);
+
+</pre>
 
 <p>
 <b>Tuple</b> is used in the log implementation:

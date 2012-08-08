@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_OwnPtr.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> OwnPtr</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,141 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>OwnPtr</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/OwnPtr.h</b> <b>CCore/src/OwnPtr.cpp</b></p>
 
+<p>
+<b>OwnPtr</b> is a smart pointer with the exclusive ownership semantic.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+struct OwnAlgo
+ {
+  static void Destroy(T *ptr) { delete ptr; }
+ };
+
+
+template &lt;class T,class Algo=OwnAlgo&lt;T&gt; &gt;
+class OwnPtr : NoCopy
+ {
+   T *ptr;
+   
+  public:
+  
+   // constructors
+   
+   OwnPtr() : ptr(0) {}
+   
+   explicit OwnPtr(T *ptr_) : ptr(ptr_) {}
+   
+   ~OwnPtr() { if( ptr ) Algo::Destroy(ptr); }
+   
+   // object ptr
+   
+   T * operator + () const { return ptr; }
+   
+   bool operator ! () const { return !ptr; }
+  
+   T * getPtr() const { return ptr; }
+   
+   T & operator * () const { return *ptr; }
+   
+   T * operator -&gt; () const { return ptr; }
+   
+   // reset
+   
+   void set(T *new_ptr) { if( T *old_ptr=Replace(ptr,new_ptr) ) Algo::Destroy(old_ptr); }
+    
+   T * detach(T *new_ptr=0) { return Replace(ptr,new_ptr); }
+ 
+   // swap/move objects
+   
+   void objSwap(OwnPtr&lt;T,Algo&gt; &obj) { Swap(ptr,obj.ptr); }
+    
+   explicit OwnPtr(ToMoveCtor&lt;OwnPtr&lt;T,Algo&gt; &gt; obj);
+   
+   OwnPtr&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place); 
+ };
+
+</pre>
+
+<p>
+<b>OwnPtr</b> has only one data member &mdash; pointer to the object of type <b>T</b>. This poiner might be null.
+<b>OwnPtr</b> is not copyrable and its destructor destoys the pointing object using the provided algorithm 
+<b>Algo::Destroy()</b>. The pointer comes from the constructor argument. 
+Using <b>OwnPtr</b> make sure the argument is "destroyable". By default, <b>Algo::Destroy(ptr)</b> is just <b>delete ptr;</b>, so
+the object must be create by the <b>new expression</b>.
+</p>
+
+<p>
+<b>OwnPtr</b> implements <b>Object Pointer Interface</b>. It also swapable and moveable.
+</p>
+
+<p>
+Two additional "unsafe" methods <b>set()</b> and <b>detach()</b> can be used to manipulate the internal pointer.
+</p>
+
+<p>
+<b>set()</b> setup a new pointer and destroy the previous one. 
+</p>
+
+<p>
+<b>detach()</b> setup a new pointer and return the previous one. 
+</p>
+
+<p>
+Using the template parameter <b>Algo</b> you may customize the destruction process.
+</p>
+
+<p>
+The typical usage of the <b>OwnPtr</b> is to create an object with the scope life-time duration.
+</p>
+
+<pre>
+
+class C { .... };
+
+....
+
+{
+ OwnPtr&lt;C&gt; ptr( new C() );
+
+ ....
+
+ ptr->method();
+
+ ....
+}
+
+</pre>
+
+<p>
+The object will be destroyed when the scope is finished by any way. This method is useful instead of creation a local 
+variable of type <b>C</b> if the <b>sizeof (C)</b> is too large. You can also return an <b>OwnPtr</b> 
+from a function (this is impossible with a local variable):
+</p>
+
+<pre>
+
+void func(OwnPtr&lt;C&gt; &ret)
+ {
+  OwnPtr&lt;C&gt; ptr( new C() );
+
+  Swap(ptr,ret);
+ }
+
+....
+
+OwnPtr&lt;C&gt; result;
+
+func(result);
+
+....
+
+</pre>
 
 </body>
 

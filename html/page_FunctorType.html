@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_FunctorType.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> FunctorType</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,109 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>FunctorType and Functor Init Pattern</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/FunctorType.h</b> <b>CCore/src/FunctorType.cpp</b></p>
 
+<p>
+<b>Functor Init Pattern</b> is widely used in <b>CCore</b>. In modern C++ functors are commonly used. 
+In <b>CCore</b> we do it in the following manner:
+</p>
+
+<pre>
+
+template &lt;class FuncInit&gt;
+void Call(FuncInit func_init)
+ {
+  FunctorTypeOf&lt;FuncInit&gt; func(func_init);
+
+  func(); // call the functor
+ }
+
+</pre>
+
+<p>
+I.g. the argument is not used directely as a functor. Instead we create the functor 
+object inside a function from the provided argument and then call it. <b>FunctorTypeOf&lt;FuncInit&gt;</b> is a template typedef,
+defined in the header <b>FunctorType.h</b>. It defines the exact type of the functor object. The rule is simple: if the type
+<b>FuncInit</b> defines the inner type <b>FunctorType</b>, then this type is a functor type. Otherwise <b>FuncInit</b> itself 
+is a functor type.
+</p>
+
+<pre>
+
+FunctorTypeOf&lt;FuncInit&gt; == typename FuncInit::FunctorType
+
+OR
+
+FunctorTypeOf&lt;FuncInit&gt; == FuncInit
+
+</pre>
+ 
+<p> 
+So if the <b>FuncInit</b> is a "usual functor", then <b>Call</b> just call the copy of it. But the more
+complicated scenario is possible:
+</p>
+
+<pre>
+
+struct FuncInit // lightweight initializer
+ {
+  ....
+
+  class FunctorType : NoCopy // heavy functor
+   {
+    public:
+
+     FunctorType(FuncInit func_init);
+
+     ~FunctorType();
+   };
+ };
+
+....
+
+FuncInit func_init;
+
+Call(func_init);
+
+</pre>
+
+<p>
+In this example the "heavy" functor is created inside <b>Call()</b> from a lightweight initializer. The functor might be 
+non-copyrable and has a non-trivial destructor (it might allocate and dispose resources temporary).
+</p>
+
+<p>
+The helper class <b>FunctorRefType</b> is designed to pass a functor reference:
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+struct FunctorRefType
+ {
+  T *obj;
+  
+  explicit FunctorRefType(T &amp;obj_) : obj(&amp;obj_) {}
+  
+  typedef T &amp; FunctorType;
+  
+  operator FunctorType() const { return *obj; }
+ };
+
+</pre>
+
+<p>
+Use the <b>Creator function</b> <b>FunctorRef()</b> to create an object of type <b>FunctorRefType</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+FunctorRefType&lt;T&gt; FunctorRef(T &amp;obj) { return FunctorRefType&lt;T&gt;(obj); }
+
+</pre>
 
 </body>
 
