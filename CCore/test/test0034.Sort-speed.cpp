@@ -341,7 +341,23 @@ bool Testit<34>::Main()
   Printf(Con,"#;\n\n",Title("ParaQuickSort"));
  
   {
+   Printf(Con,"extra task count = #;\n",Job::Init::DefaultTaskCount());
+
    Job::Init job_init;
+   
+   Engine<ParaQuickSort> engine;
+  
+   engine.run(100);
+   engine.run(1000);
+   engine.run(10000);
+   engine.run(100000);
+   engine.run(1000000);
+  } 
+  
+  Printf(Con,"\n#;\n\n",Title("ParaQuickSort -- 2 tasks"));
+ 
+  {
+   Job::Init job_init(1);
    
    Engine<ParaQuickSort> engine;
   
