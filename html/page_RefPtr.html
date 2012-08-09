@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_RefPtr.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> RefPtr</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,104 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>RefPtr</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/RefPtr.h</b> <b>CCore/src/RefPtr.cpp</b></p>
 
+<p>
+<b>RefPtr</b> is an intrusive smart-pointer with reference counting. 
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+struct RefAlgo
+ {
+  static void IncRef(T *ptr) { ptr->incRef(); }
+  
+  static bool DecRef(T *ptr) { return ptr->decRef(); }
+  
+  static void Destroy(T *ptr) { ptr->destroy(); }
+ };
+ 
+template &lt;class T,class Algo=RefAlgo&lt;T&gt; &gt; 
+class RefPtr
+ {
+   T *ptr;
+   
+  public: 
+  
+   // constructors
+   
+   explicit RefPtr(T *ptr_) : ptr(ptr_) {} // ptr_!=0
+   
+   ~RefPtr();
+    
+   // copying 
+    
+   RefPtr(const RefPtr&lt;T,Algo&gt; &amp;obj);
+    
+   RefPtr&lt;T,Algo&gt; & operator = (const RefPtr&lt;T,Algo&gt; &amp;obj);
+    
+   // object ptr
+    
+   T * getPtr() const { return ptr; }
+   
+   T &amp; operator * () const { return *ptr; }
+   
+   T * operator -> () const { return ptr; }
+   
+   // reset
+   
+   void set(T *new_ptr); // new_ptr!=0
+   
+   // update
+   
+   template &lt;class Func&gt;
+   void update(Func func) { ptr=func(ptr); }
+ 
+   // swap/move objects
+   
+   void objSwap(RefPtr&lt;T,Algo&gt; &obj) { Swap(ptr,obj.ptr); }
+    
+   explicit RefPtr(ToMoveCtor&lt;RefPtr&lt;T,Algo&gt; &gt; obj);
+   
+   RefPtr&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
+ };
+</pre>
+
+<p>
+<b>RefPtr</b> has only one data member &mdash; non-null pointer to the object of type <b>T</b>. The pointer comes 
+from the constructor argument. <b>RefPtr</b> is copyrable, multiple <b>RefPtr</b> might point to the same object.
+To determine the moment the object should be destroyed the reference counting is used. It assumes, that type <b>T</b> has 
+embedded reference counter of some nature and a family of methods to manipulate one. Template parameter <b>Algo</b> allows
+customize these methods. By default, to increment reference counter the method <b>incRef()</b> is called, to decrement
+&mdash; <b>decRef()</b> and to destroy the object &mdash; the method <b>destroy()</b>. <b>decRef()</b> returns true if
+the reference counter became zero, i.e. it's time to destroy the object. To create <b>RefPtr</b> non-null pointer 
+with reference counter 1 must be provided.
+</p>
+
+<p>
+<b>RefPtr</b> implements reduced <b>Object Pointer Interface</b>, because it always points to an object. 
+It also swapable and moveable.
+</p>
+
+<p>
+Two additional "unsafe" methods <b>set()</b> and <b>update()</b> can be used to manipulate the internal pointer.
+</p>
+
+<p>
+<b>set()</b> setup a new pointer and "decrement" the previous one. It is the same as the destructor plus the following constructor call.
+</p>
+
+<p>
+<b>update()</b> updates the pointer by the given functor. The correctness of this operation must be ensured by the functor.
+</p>
+
+<p>
+<b>RefPtr</b> is not intended to be used "as is". Normally it should be a part of the outer class. This class is used
+in the implementatoion of the <b>RefArray</b>.
+</p>
 
 </body>
 

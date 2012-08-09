@@ -293,7 +293,7 @@
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/Exception.h" 0
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/Fifo.h" 0
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/FunctorType.h" 2
-"D:/active/home/C++/CCore-Root-1-02/CCore/inc/Gadget.h" 0
+"D:/active/home/C++/CCore-Root-1-02/CCore/inc/Gadget.h" 2
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/GenFile.h" 0
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/HeapEngine.h" 0
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/Job.h" 0
@@ -322,7 +322,7 @@
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/Printf.h" 2
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/RadixHeap.h" 0
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/Random.h" 0
-"D:/active/home/C++/CCore-Root-1-02/CCore/inc/RefPtr.h" 0
+"D:/active/home/C++/CCore-Root-1-02/CCore/inc/RefPtr.h" 2
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/SaveLoad.h" 0
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/ScanBit.h" 0
 "D:/active/home/C++/CCore-Root-1-02/CCore/inc/SingleHost.h" 0
@@ -1132,7 +1132,7 @@
 "D:/active/home/C++/CCore-Root-1-02/html/page_Printing.html" 2
 "D:/active/home/C++/CCore-Root-1-02/html/page_PtrLen.html" 2
 "D:/active/home/C++/CCore-Root-1-02/html/page_RealTime.html" 0
-"D:/active/home/C++/CCore-Root-1-02/html/page_RefPtr.html" 0
+"D:/active/home/C++/CCore-Root-1-02/html/page_RefPtr.html" 2
 "D:/active/home/C++/CCore-Root-1-02/html/page_Replace.html" 2
 "D:/active/home/C++/CCore-Root-1-02/html/page_Space.html" 2
 "D:/active/home/C++/CCore-Root-1-02/html/page_Swap.html" 2

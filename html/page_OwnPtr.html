@@ -66,7 +66,7 @@ class OwnPtr : NoCopy
   
    T * getPtr() const { return ptr; }
    
-   T & operator * () const { return *ptr; }
+   T &amp; operator * () const { return *ptr; }
    
    T * operator -&gt; () const { return ptr; }
    
@@ -78,7 +78,7 @@ class OwnPtr : NoCopy
  
    // swap/move objects
    
-   void objSwap(OwnPtr&lt;T,Algo&gt; &obj) { Swap(ptr,obj.ptr); }
+   void objSwap(OwnPtr&lt;T,Algo&gt; &amp;obj) { Swap(ptr,obj.ptr); }
     
    explicit OwnPtr(ToMoveCtor&lt;OwnPtr&lt;T,Algo&gt; &gt; obj);
    
@@ -92,7 +92,7 @@ class OwnPtr : NoCopy
 <b>OwnPtr</b> is not copyrable and its destructor destoys the pointing object using the provided algorithm 
 <b>Algo::Destroy()</b>. The pointer comes from the constructor argument. 
 Using <b>OwnPtr</b> make sure the argument is "destroyable". By default, <b>Algo::Destroy(ptr)</b> is just <b>delete ptr;</b>, so
-the object must be create by the <b>new expression</b>.
+the object must be created by the <b>new expression</b>.
 </p>
 
 <p>
@@ -104,7 +104,7 @@ Two additional "unsafe" methods <b>set()</b> and <b>detach()</b> can be used to 
 </p>
 
 <p>
-<b>set()</b> setup a new pointer and destroy the previous one. 
+<b>set()</b> setup a new pointer and destroy the previous one. It is the same as the destructor plus the following constructor call.
 </p>
 
 <p>
