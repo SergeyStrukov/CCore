@@ -40,6 +40,7 @@
 ../../CCore/src/ddl/DDLValue.cpp
 ../../CCore/src/ElementPool.cpp
 ../../CCore/src/Elf.cpp
+../../CCore/src/EventRecorder.cpp
 ../../CCore/src/Exception.cpp
 ../../CCore/src/Fifo.cpp
 ../../CCore/src/FunctorType.cpp

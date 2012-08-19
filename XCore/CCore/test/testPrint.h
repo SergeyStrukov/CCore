@@ -28,6 +28,8 @@ using namespace CCore;
 
 class PrintFile;
 
+class StreamFile;
+
 /* class PrintFile */
 
 class PrintFile : public PrintAsyncFile
@@ -41,6 +43,45 @@ class PrintFile : public PrintAsyncFile
    ~PrintFile();
    
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+ };
+
+/* class StreamFile */
+
+class StreamFile : NoCopy , public PutDevBase<StreamFile>
+ {
+  public: 
+   
+   // constructors
+  
+   StreamFile();
+   
+   explicit StreamFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   
+   ~StreamFile();
+   
+   // methods
+   
+   bool isOpened() const;
+   
+   void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   
+   void disableExceptions(); 
+   
+   void soft_close(FileMultiError &errout);
+   
+   void close();
+   
+   void preserveFile();
+   
+   // put
+   
+   void do_put(uint8 value);
+   
+   void do_put(const uint8 *ptr,ulen len);
+   
+   PtrLen<uint8> do_putRange(ulen len);
+   
+   void flush();
  };
 
 } // namespace App

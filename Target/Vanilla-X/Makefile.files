@@ -57,6 +57,7 @@ obj/ElementPool.o \
 obj/Elf.o \
 obj/EthDevice.o \
 obj/Event.o \
+obj/EventRecorder.o \
 obj/Exception.o \
 obj/ExceptionType.o \
 obj/FastMul.o \
@@ -283,6 +284,7 @@ obj/ElementPool.s \
 obj/Elf.s \
 obj/EthDevice.s \
 obj/Event.s \
+obj/EventRecorder.s \
 obj/Exception.s \
 obj/ExceptionType.s \
 obj/FastMul.s \
@@ -509,6 +511,7 @@ obj/ElementPool.dep \
 obj/Elf.dep \
 obj/EthDevice.dep \
 obj/Event.dep \
+obj/EventRecorder.dep \
 obj/Exception.dep \
 obj/ExceptionType.dep \
 obj/FastMul.dep \
@@ -854,6 +857,9 @@ obj/EthDevice.o : ../../CCore/src/net/EthDevice.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Event.o : ../../XCore/CCore/src/task/Event.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/EventRecorder.o : ../../CCore/src/EventRecorder.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Exception.o : ../../CCore/src/Exception.cpp
@@ -1527,6 +1533,9 @@ obj/EthDevice.s : ../../CCore/src/net/EthDevice.cpp
 obj/Event.s : ../../XCore/CCore/src/task/Event.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/EventRecorder.s : ../../CCore/src/EventRecorder.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Exception.s : ../../CCore/src/Exception.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2197,6 +2206,9 @@ obj/EthDevice.dep : ../../CCore/src/net/EthDevice.cpp
 
 obj/Event.dep : ../../XCore/CCore/src/task/Event.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Event.o $< -MF $@
+
+obj/EventRecorder.dep : ../../CCore/src/EventRecorder.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EventRecorder.o $< -MF $@
 
 obj/Exception.dep : ../../CCore/src/Exception.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Exception.o $< -MF $@

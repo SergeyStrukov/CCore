@@ -41,5 +41,39 @@ void PrintFile::open(StrLen file_name,FileOpenFlags oflags)
   PrintAsyncFile::open(Range(name),oflags);
  }
 
+/* class StreamFile */
+
+ // constructors
+
+StreamFile::StreamFile() {}
+   
+StreamFile::StreamFile(StrLen,FileOpenFlags) {}
+   
+StreamFile::~StreamFile() {}
+   
+ // methods
+   
+bool StreamFile::isOpened() const { return false; }
+   
+void StreamFile::open(StrLen,FileOpenFlags) {}
+   
+void StreamFile::disableExceptions() {} 
+   
+void StreamFile::soft_close(FileMultiError &) {}
+   
+void StreamFile::close() {}
+   
+void StreamFile::preserveFile() {}
+   
+ // put
+   
+void StreamFile::do_put(uint8) {}
+   
+void StreamFile::do_put(const uint8 *,ulen) {}
+   
+PtrLen<uint8> StreamFile::do_putRange(ulen) { return Nothing; }
+   
+void StreamFile::flush() {}
+   
 } // namespace App
 

@@ -69,6 +69,7 @@ OBJ_LIST = \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
+../test-obj/test0103.EventRecorder.o \
 ../test-obj/test0200.Blank.o \
 ../test-obj/test0300.TaskList.o \
 ../test-obj/test1001.PageHeap.o \
@@ -181,6 +182,7 @@ ASM_LIST = \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
+../test-obj/test0103.EventRecorder.s \
 ../test-obj/test0200.Blank.s \
 ../test-obj/test0300.TaskList.s \
 ../test-obj/test1001.PageHeap.s \
@@ -293,6 +295,7 @@ DEP_LIST = \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
+../test-obj/test0103.EventRecorder.dep \
 ../test-obj/test0200.Blank.dep \
 ../test-obj/test0300.TaskList.dep \
 ../test-obj/test1001.PageHeap.dep \
@@ -548,6 +551,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0102.PrintFile.o : ../../../CCore/test/test0102.PrintFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0103.EventRecorder.o : ../../../CCore/test/test0103.EventRecorder.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0200.Blank.o : ../../../CCore/test/test0200.Blank.cpp
@@ -879,6 +885,9 @@ include $(RULES_FILE)
 ../test-obj/test0102.PrintFile.s : ../../../CCore/test/test0102.PrintFile.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0103.EventRecorder.s : ../../../CCore/test/test0103.EventRecorder.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0200.Blank.s : ../../../CCore/test/test0200.Blank.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1207,6 +1216,9 @@ include $(RULES_FILE)
 
 ../test-obj/test0102.PrintFile.dep : ../../../CCore/test/test0102.PrintFile.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0102.PrintFile.o $< -MF $@
+
+../test-obj/test0103.EventRecorder.dep : ../../../CCore/test/test0103.EventRecorder.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0103.EventRecorder.o $< -MF $@
 
 ../test-obj/test0200.Blank.dep : ../../../CCore/test/test0200.Blank.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0200.Blank.o $< -MF $@
