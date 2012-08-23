@@ -33,16 +33,16 @@
 <p>
 <b>CCore</b> is released without known bugs or defects. This code is made "as best as possible" and has 
 a top quality both in design and in implementation. This is a reliable piece of software. 
-So if you experience a troubles, the <b>CCore</b> code is the last place for bugs. This does not mean,
-naturally, that I do guarantee the code is completely bug-free and absolute perfect. That is not
-achievable in mean time. And, of course, everybody are welcome to contribute in its perfection: report a 
+So if you experience troubles, <b>CCore</b> code is the last place to look for bugs. This does not mean,
+naturally, that I do guarantee the code is completely bug-free and absolutely perfect. That is not
+achievable in the mean time. And, of course, everybody are welcome to contribute in its perfection: report a 
 real problem or suggest a design improvement.
 </p>
 
 <h2>Overview</h2>
 
 <p>
-<b>CCore</b> is a platform mainly for development of real-time applications. It is distributed under the
+<b>CCore</b> is a platform mainly for the development of real-time applications. It is distributed under the
 <a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License</a>.
 You can use <b>CCore</b> to build host applications also, but without any real-time properties. 
 We use the term "host application" to designate an application, running on a host machine, 
@@ -58,7 +58,7 @@ the following targets:</p>
 <li><b>Vanilla-X</b> &mdash; stand-alone target template.</li>
 </ul>
 <p>
-<b>Target</b> includes compiler and tools, makefile rules and part of source code, specific for the target. 
+<b>Target</b> includes compiler and tools, makefile rules and parts of source code, specific for the target. 
 In most cases you are encouraged to develop components of your application using <b>WIN32</b> target and 
 then port it to a stand-alone target when it's ready. <b>CCore</b> is designed in target-independent 
 and platform-independent manner (despite it's a platform itself!). So it's recommended to follow this
@@ -66,8 +66,10 @@ practice. Developing components on a host target is usually simpler and more pro
 </p>
 <p>
 <b>CCore</b> is implemented using C++11. It enables the full advantage of this renewed language for
-embedded and real-time software development. You can also use it to build usual host applications.
-<b>CCore</b> is based on comprehensive, type-rich library, well, <b>CCore</b>. That's the core part
+embedded and real-time software development. You can also use it to build usual host applications. <b>CCore</b> 
+is well-suited to develop a wide range of applications like servers, mathematical calculations or file-processing utilities.
+The number of them are supplied as supplementary tools.
+<b>CCore</b> is based on the comprehensive, type-rich library, well, <b>CCore</b>. That's the core part
 of the platform. The next part is <b>HCore</b> for host targets and <b>XCore</b> for stand-alone targets.
 On host targets we rely on an operating system to perform some tasks (like primary memory management, 
 task synchronization etc.). So a host target provides a tiny layer between <b>HCore</b> and OS system calls.
@@ -110,8 +112,8 @@ class IntLock : NoCopy
 <p>
 <b>CCore</b> is designed as a <span class="Alert">compliant</span> C++11 libary. There are a few places where we are using non-standard 
 language extensions. In fact, we need only two of them: <b>restrict</b> and initialization priority
-attribute for static objects, supported in gcc family of compilers. As result, there is no restriction
-on compiler optimization level, unlike other OS cores. Another advantage is a platform-independence of code. 
+attribute for static objects, supported in <b>gcc</b> family of compilers. As the result, there is no restriction
+on the compiler optimization level, unlike other OS cores. Another advantage is the platform-independence of the code. 
 </p>
 
 <h2>CCore</h2>
@@ -119,8 +121,8 @@ on compiler optimization level, unlike other OS cores. Another advantage is a pl
 <p>
 
 <b>CCore</b> is a language support library. It's created to provide an improved language support 
-for C++ and to replace the error-prone and obsolete "old bad" C RTL and STL. <b>CCore</b> is focused on
-"everyday programmer's needs", it tries to be a small, but powerful.
+for C++ and to replace the error-prone and obsolete "old bad" C RTL and STL. <b>CCore</b> is focused on the
+"everyday programmer's needs", it tries to be small, but powerful.
 
 </p>
 <p>
@@ -130,23 +132,23 @@ In particular, it contains:
 </p>
 
 <ol>
-<li>PtrLen and Range for convenient and efficient loops,</li>
-<li>Printf with class print support, easily customized output devices and options,</li>
-<li>Efficient smart callback support,</li>
+<li><b>PtrLen</b> and <b>Range</b> for convenient and efficient ranges and loops,</li>
+<li><b>Printf</b> with class print support, easily customized output devices and options,</li>
+<li><b>Function</b> for efficient callback support,</li>
 <li>Mersenne Twister random number generator,</li>
-<li>Radix-tree based heap with real-time properties,</li>
+<li>Radix-tree based <b>heap</b> with real-time properties,</li>
 <li>Swap-based intro-sort,</li>
-<li>Cmp/Move/Swap infrastructure,</li>
+<li><b>Cmp/Move/Swap</b> support,</li>
 <li>Error-handling infrastructure to support multi-error handling,</li>
-<li>Any kind of lists,</li>
-<li>Radix and Red-Black trees,</li>
-<li>Properly implemented dynamic arrays,</li>
-<li>Packet, an async processing infrastructure, an essential foundation for a system layer and server tasks,</li>
-<li>Integer library,</li>
-<li>Crypton library,</li> 
-<li>Fast log,</li>
-<li>New network infrastructure, based on PTP protocol,</li>
-<li>DDL(data-definition language) implementation,</li>
+<li>Any kind of <b>lists</b>,</li>
+<li>Radix and Red-Black <b>trees</b>,</li>
+<li>Properly implemented dynamic <b>arrays</b> (bye-bye STL),</li>
+<li><b>Packet</b>, an async processing infrastructure, a key foundation for a system layer and server tasks,</li>
+<li><b>Integer</b> library, you may even calculate 1000000 digits of &pi;,</li>
+<li><b>Crypton</b> library,</li> 
+<li>Fast log and event recorder,</li>
+<li>New network infrastructure, based on <b>PTP</b> protocol,</li>
+<li><b>DDL(data-definition language)</b> implementation,</li>
 <li>and many other helpful tools.</li>
 </ol>
 
@@ -176,12 +178,219 @@ The core is designed for single-core CPU systems.
 <li>clear target requirements.</li>
 </ol>
 
+<h2>Task synchronization</h2>
+
+<p>
+One of the innovation in <b>CCore</b> is the set of task synchronization objects. <b>Mutex</b>, <b>Event</b> 
+and <b>Sem</b>(aphore) are common.
+But we widely use also: <b>AntiSem</b>, <b>ResSem</b>, <b>MultiSem</b>, <b>MultiEvent</b>.
+</p>
+
+<p>
+<b>AntiSem</b> is useful for the resource control:
+</p>
+
+<pre>
+
+class AntiSem : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit AntiSem(ulen level=0);
+   
+   explicit AntiSem(TextLabel name,ulen level=0);
+   
+   ~AntiSem();
+   
+   // add/sub
+   
+   void add(ulen dcount);
+   
+   void sub(ulen dcount);
+   
+   // inc/dec
+   
+   void inc() { add(1); }
+   
+   void dec() { sub(1); }
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+   
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+    
+   // functions
+   
+   Function&lt;void (void)&gt; function_inc();
+   
+   Function&lt;void (void)&gt; function_dec();
+ };
+
+</pre>
+
+<p>
+<b>AntiSem</b> waits until "all taken is released". I.g. until the internal counter falls below a given level (usually 0).
+</p>
+
+<p>
+<b>ResSem</b> is used to control a resource allocation. It is combined <b>Sem</b> and <b>AntiSem</b>.
+</p>
+
+<pre>
+
+class ResSem : public Funchor_nocopy
+ {
+  public:
+   
+   // constructors
+  
+   explicit ResSem(ulen max_count);
+   
+   ResSem(TextLabel name,ulen max_count);
+   
+   ~ResSem();
+   
+   // give
+   
+   void give();
+   
+   // take
+  
+   bool try_take();
+  
+   void take();
+  
+   bool take(MSec timeout);
+  
+   bool take(TimeScope time_scope);
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+  
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+   
+   // functions
+   
+   Function&lt;void (void)&gt; function_give();
+ };
+
+</pre>
+
+<p>
+<b>ResSem</b> has the internal counter between 0 and the given <b>max_count</b> (initial value). You can <b>take</b> and <b>give</b> it back. 
+<b>take</b> may wait if the counter is zero. Finally, <b>wait</b> waits until the counter reaches <b>max_count</b>.
+</p>
+
+<p>
+<b>MultiSem</b> and <b>MultiEvent</b> are "multi-channel" versions of the <b>Sem</b> and <b>Event</b>. They can wait for one 
+of the several events. They also provide the "fairness" in the event reporting.
+</p>
+
+<pre>
+
+template &lt;ulen Len&gt;
+class MultiEvent : public Funchor_nocopy
+ {
+  public:
+
+   // constructors
+  
+   MultiEvent();
+   
+   explicit MultiEvent(TextLabel name);
+   
+   ~MultiEvent();
+
+   // trigger
+  
+   bool trigger(ulen index); // [1,Len]
+   
+   // wait
+   
+   ulen try_wait(); // [0,Len]
+   
+   ulen wait(); // [1,Len]
+   
+   ulen wait(MSec timeout); // [0,Len]
+   
+   ulen wait(TimeScope time_scope); // [0,Len]
+   
+   // functions
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_trigger();
+ };
+ 
+template &lt;ulen Len&gt; 
+class MultiSem : public Funchor_nocopy
+ {
+  public:
+  
+   // constructors
+
+   MultiSem();
+   
+   explicit MultiSem(TextLabel name);
+   
+   ~MultiSem();
+
+   // give
+  
+   void give(ulen index); // [1,Len]
+   
+   // take
+   
+   ulen try_take(); // [0,Len]
+   
+   ulen take(); // [1,Len]
+   
+   ulen take(MSec timeout); // [0,Len]
+   
+   ulen take(TimeScope time_scope); // [0,Len]
+   
+   // functions
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_give();
+ };
+ 
+</pre>
+
+<p>
+All synchronization classes "publish" "giving" functions callbacks.
+</p>
+
+<h2>Packet</h2>
+
+<p>
+<b>Packet</b> is a micro-task. It has the associated small stack to store call paremeters and return values. 
+A larger data buffer also may be attached.
+<b>Packet</b>s allow design of a processing systems as a collection of packet-processing devices. <b>Packet</b>s are initiated 
+by some initiator and passed to the processing device. It may pass a packet further until it's completed or cancelled by 
+the initiator. Initiator assigns a completion function for a packet. So when packet is completed it goes to this function, where
+result can be extracted and packet is disposed. Also completion signaling is performed there.
+</p>
+
 <h2>PTP</h2>
 
 <p>
 <b>PTP</b> &mdash; packet transaction protocol. It superseeds TCP as a main network protocol for client-server
 applications. PTP is a packet-based, parallel and transactional protocol. It is simple and convenient
-for development of "remote call" type interactions. Parallel nature of PTP makes obsolete such tricks
+for the development of "remote call" type interactions. Parallel nature of PTP makes obsolete such tricks
 as multi-thread FTP download. PTP is working atop a packet point-to-point or point-to-multipoint
 service like UDP (or even raw Ethernet). PTP has ability to adapt for smaller MTU lengths, 
 that is important to combine with another network protocols, which can reduce MTU (for example, 
@@ -194,9 +403,9 @@ There are several typical problems when network interaction is developed based o
 
 <ul>
 <li>you have to parse continuous byte stream on packets,</li>
-<li>you cannot performs parallel transactions, so if TCP is stalled on a packet loss, 
+<li>you cannot perform parallel transactions, so if TCP is stalled on a packet loss, 
 then everything is stalled,</li>
-<li>you have to match calls with responses yourself, using sequence numbers for example.</li>
+<li>you have to match calls with responses yourself, using sequence numbers, for example.</li>
 
 </ul>
 
@@ -210,9 +419,9 @@ via <b>HFS</b> over <b>PTP</b> protocols.
 <h2>DDL</h2>
 
 <p>
-<b>DDL</b> &mdash; data definition language. It is designed to represent abstract 
-linked data in textual form. <b>DDL</b> has a C-style syntax.
-Here is a short example of a parser state machine representation:
+<b>DDL</b> &mdash; data definition language. It is designed to represent an abstract 
+linked data in a textual form. <b>DDL</b> has a C-style syntax.
+Here is a short example of a parser state machine representation, expressed in <b>DDL</b>:
 </p>
 
 <pre>
@@ -246,8 +455,8 @@ State[22] StateTable=
 </pre>
 
 <p>
-<b>DDL</b> can be used for manual introduced data, like configuration information.
-Or it can be used to store program-generated data to exchange with different data-processing programs.
+<b>DDL</b> can be used for a manual introduced data, like configuration information.
+Or it can be used to store a program-generated data to exchange with different data-processing programs.
 </p>
 
 <h2>LR1 parser generator</h2>
