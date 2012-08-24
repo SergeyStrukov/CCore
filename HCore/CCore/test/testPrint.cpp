@@ -131,10 +131,10 @@ void StreamFile::flush()
   
   ulen len=buf.getLen()-out.len;
   
-  if( !len ) return;
-  
   out=Nothing;
   has_data=false;
+  
+  if( !len ) return;
   
   if( FileError error=file.write(buf.getPtr(),len) )
     {

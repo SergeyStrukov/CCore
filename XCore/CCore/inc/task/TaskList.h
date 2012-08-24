@@ -40,6 +40,8 @@ class TaskBase : public TaskMonitor::Link
    
    TaskList *owned_list;
    
+   uint16 task_number;
+   
   private: 
    
    friend class TaskList;
@@ -62,6 +64,8 @@ class TaskBase : public TaskMonitor::Link
    void relieve();
    
   protected: 
+   
+   uint16 getTaskNumber() const { return task_number; }
    
    void delList(); // IntLocked
    

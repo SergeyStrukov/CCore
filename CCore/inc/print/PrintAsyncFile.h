@@ -45,7 +45,7 @@ class PrintAsyncFile : public PrintBase
    
    // constructors
   
-   PrintAsyncFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   explicit PrintAsyncFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
    
    explicit PrintAsyncFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
    

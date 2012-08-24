@@ -21,6 +21,7 @@
 #include <CCore/inc/String.h>
 #include <CCore/inc/Timer.h>
 #include <CCore/inc/AsyncFileToMem.h>
+#include <CCore/inc/task/TaskEvent.h>
 
 namespace App {
 
@@ -119,17 +120,27 @@ bool Testit<3010>::Main()
   
   HostEngine host_engine(Net::UDPoint(192,168,1,1,Net::PTPServerUDPort));
   
-  SecTimer timer;
+  TaskEventRecorder recorder(15_MByte);
+
+  {
+   TaskEventHostType::StartStop start_stop(TaskEventHost,&recorder);
   
-  test1();
+   SecTimer timer;
   
-  Printf(Con,"time1 = #; sec\n",timer.get());
+   test1();
   
-  timer.reset();
+   Printf(Con,"time1 = #; sec\n",timer.get());
   
-  test2();
+   timer.reset();
   
-  Printf(Con,"time2 = #; sec\n",timer.get());
+   test2();
+  
+   Printf(Con,"time2 = #; sec\n",timer.get());
+  } 
+  
+  StreamFile dev("host:test3010.bin");
+  
+  dev(recorder);
   
   return true;
  }

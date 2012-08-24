@@ -70,6 +70,8 @@ typedef signed long long    sint64 ;
 
 const ulen DefaultPacketCount = 50000 ;
 
+const unsigned DefaultEventElementCount = 10000 ;
+
 /* namespace Bits */ 
 
 namespace Bits {

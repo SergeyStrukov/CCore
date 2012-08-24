@@ -18,6 +18,7 @@
 #include <CCore/inc/task/Atomic.h>
 #include <CCore/inc/task/Sem.h>
 #include <CCore/inc/task/AntiSem.h>
+#include <CCore/inc/task/TaskEvent.h>
 
 #include <CCore/inc/Abort.h>
 #include <CCore/inc/CompletePacket.h>
@@ -448,6 +449,8 @@ void Task::Internal::Exit(Task *task)
  
 void Task::Internal::Tick_int()
  {
+  TaskEventHost.tick();
+  
   TickJob::Internal::RunJobs_int();
   
   bool relax_on=Object->relax.do_tick();
@@ -588,6 +591,8 @@ void Task::Internal::SwitchTask_task(Task *task)
   Task *cur=Current;
  
   if( task==cur ) return;
+  
+  TaskEventHost.add<TaskSwitchEvent>(task->getTaskNumber());
  
   Log("task switch from #; to #;",cur->getName(),task->getName());
   
@@ -664,6 +669,8 @@ void Task::Internal::SwitchTask_int(Task *task)
   Task *cur=Current;
  
   if( task==cur ) return;
+  
+  TaskEventHost.add<TaskSwitchEvent>(task->getTaskNumber());
  
   Log("interrupt switch from #; to #;",cur->getName(),task->getName());
  

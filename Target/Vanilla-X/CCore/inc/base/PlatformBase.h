@@ -74,6 +74,8 @@ const ulen DefaultStackLen    = 64*1024 ; // 64 KByte
 
 const ulen DefaultPacketCount = 5000 ;
 
+const unsigned DefaultEventElementCount = 1000 ;
+
 /* namespace Bits */ 
 
 namespace Bits {

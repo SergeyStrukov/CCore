@@ -23,6 +23,7 @@
 #include <CCore/inc/FunctorType.h>
 #include <CCore/inc/Tree.h>
 #include <CCore/inc/SaveLoad.h>
+#include <CCore/inc/TextLabel.h>
 
 namespace CCore {
 
@@ -35,6 +36,8 @@ typedef uint16 EventIdType;
 /* classes */
 
 struct EventPrefix;
+
+template <class T> class EventEnumValue;
 
 class EventMetaInfo;
 
@@ -55,6 +58,88 @@ struct EventPrefix // each event type must be layout-compatible with EventPrefix
   EventTimeType time;
   EventIdType id;
  };
+
+/* class EventEnumValue<T> */
+
+#if 0
+
+struct Value
+ {
+  typedef uint16 ValueType;
+  
+  static const ValueType Base = 10 ;
+  static const ValueType Lim = 100 ;
+ };
+
+#endif
+
+template <class T>
+class EventEnumValue
+ {
+   typedef typename T::ValueType ValueType;
+  
+   ValueType value;
+   
+  private:
+   
+   static Sys::Atomic Next;
+   static Sys::Atomic Total;
+   
+   static InitStorage<(T::Lim-T::Base)*sizeof (TextLabel)> Storage;
+   
+   static ValueType Reserve(TextLabel name);
+   
+  public: 
+   
+   explicit EventEnumValue(TextLabel name) : value(Reserve(name)) {}
+   
+   operator ValueType() const { return value; }
+   
+   template <class Desc>
+   static void Append(Desc &desc);
+ };
+
+template <class T>
+Sys::Atomic EventEnumValue<T>::Next{T::Base};
+
+template <class T>
+Sys::Atomic EventEnumValue<T>::Total{0};
+
+template <class T>
+InitStorage<(T::Lim-T::Base)*sizeof (TextLabel)> EventEnumValue<T>::Storage;
+
+template <class T>
+auto EventEnumValue<T>::Reserve(TextLabel name) -> ValueType 
+ {
+  ValueType ret=Next++;
+  
+  if( ret<T::Lim ) 
+    {
+     new(Storage.getPlace()+(ret-T::Base)*sizeof (TextLabel)) TextLabel(name);
+     
+     Total++;
+    
+     return ret;
+    }
+  
+  Next--;
+  
+  return T::Lim;
+ }
+
+template <class T>
+template <class Desc>
+void EventEnumValue<T>::Append(Desc &desc)
+ {
+  ValueType count=Total;
+  
+  for(ValueType val=0; val<count ;val++)
+    {
+     TextLabel *name=Storage.getPlace()+val*sizeof (TextLabel);
+     
+     desc.addValueName(val+T::Base,StringCat(*name));
+    }
+ }
 
 /* class EventMetaInfo */
 
@@ -125,9 +210,12 @@ class EventMetaInfo : NoCopy
    
    class EnumDesc : NoCopy
     {
+      typedef void (*AppendFunc)(EnumDesc &desc);
+     
       EventIdType id;
       String name;
       Kind kind;
+      AppendFunc append_func;
       
       typedef TreeLink<ValueDesc,uint32>::RadixAlgo<&ValueDesc::link> Algo;
       
@@ -143,12 +231,12 @@ class EventMetaInfo : NoCopy
        {
         if( ptr )
           {
+           SaveValues(Algo::Link(ptr).lo,dev);
+          
            dev.template use<BeOrder>(Algo::Link(ptr).key);
            
            Save(ptr->name,dev);
           
-           SaveValues(Algo::Link(ptr).lo,dev);
-           
            SaveValues(Algo::Link(ptr).hi,dev);
           }
        }
@@ -170,7 +258,7 @@ class EventMetaInfo : NoCopy
       
       // constructors
       
-      EnumDesc(EventIdType id_,const String &name_,Kind kind_) : id(id_),name(name_),kind(kind_),count(0) {}
+      EnumDesc(EventIdType id_,const String &name_,Kind kind_) : id(id_),name(name_),kind(kind_),append_func(0),count(0) {}
       
       ~EnumDesc() { Destroy(root.root); }
       
@@ -185,6 +273,19 @@ class EventMetaInfo : NoCopy
       String * findValueName(uint32 value) const;
       
       EnumDesc & addValueName(uint32 value,const String &name);
+      EnumDesc & addValueName(uint32 value,const char *name) { return addValueName(value,String(name)); }
+      
+      EnumDesc & setAppendFunc(AppendFunc append_func_) { append_func=append_func_; return *this; }
+      
+      void append()
+       {  
+        if( append_func )
+          {
+           append_func(*this);
+           
+           append_func=0;
+          }
+       }
       
       // save/load object
 
@@ -207,6 +308,7 @@ class EventMetaInfo : NoCopy
         Swap(id,obj.id);
         Swap(name,obj.name);
         Swap(kind,obj.kind);
+        Swap(append_func,obj.append_func);
         Swap(root,obj.root);
         Swap(count,obj.count);
        }
@@ -215,6 +317,7 @@ class EventMetaInfo : NoCopy
        : id(obj->id),
          name(ObjToMove(obj->name)),
          kind(obj->kind),
+         append_func(obj->append_func),
          root(Replace_null(obj->root)),
          count(obj->count)
        {
@@ -516,6 +619,7 @@ class EventMetaInfo : NoCopy
       PtrLen<const FieldDesc> getFieldList() const { return Range(field_list); }
       
       StructDesc & addField(Kind kind,EventIdType id,const String &name,OffsetFunc offset) { field_list.append_fill(kind,id,name,offset); return *this; }
+      StructDesc & addField(Kind kind,EventIdType id,const char *name,OffsetFunc offset) { field_list.append_fill(kind,id,String(name),offset); return *this; }
       
       StructDesc & addField_uint8(const String &name,OffsetFunc offset) { return addField(Kind_uint8,0,name,offset); }
       StructDesc & addField_uint16(const String &name,OffsetFunc offset) { return addField(Kind_uint16,0,name,offset); }
@@ -526,6 +630,16 @@ class EventMetaInfo : NoCopy
       StructDesc & addField_enum_uint32(EventIdType id,const String &name,OffsetFunc offset) { return addField(Kind_enum_uint32,id,name,offset); }
       
       StructDesc & addField_struct(EventIdType id,const String &name,OffsetFunc offset) { return addField(Kind_struct,id,name,offset); }
+      
+      StructDesc & addField_uint8(const char *name,OffsetFunc offset) { return addField(Kind_uint8,0,name,offset); }
+      StructDesc & addField_uint16(const char *name,OffsetFunc offset) { return addField(Kind_uint16,0,name,offset); }
+      StructDesc & addField_uint32(const char *name,OffsetFunc offset) { return addField(Kind_uint32,0,name,offset); }
+
+      StructDesc & addField_enum_uint8(EventIdType id,const char *name,OffsetFunc offset) { return addField(Kind_enum_uint8,id,name,offset); }
+      StructDesc & addField_enum_uint16(EventIdType id,const char *name,OffsetFunc offset) { return addField(Kind_enum_uint16,id,name,offset); }
+      StructDesc & addField_enum_uint32(EventIdType id,const char *name,OffsetFunc offset) { return addField(Kind_enum_uint32,id,name,offset); }
+      
+      StructDesc & addField_struct(EventIdType id,const char *name,OffsetFunc offset) { return addField(Kind_struct,id,name,offset); }
       
       // save/load object
 
@@ -699,14 +813,22 @@ class EventMetaInfo : NoCopy
    // add type
    
    EnumDesc & addEnum(Kind kind,const String &name);
+   EnumDesc & addEnum(Kind kind,const char *name) { return addEnum(kind,String(name)); }
    
    EnumDesc & addEnum_uint8(const String &name) { return addEnum(Kind_enum_uint8,name); }
    EnumDesc & addEnum_uint16(const String &name) { return addEnum(Kind_enum_uint16,name); }
    EnumDesc & addEnum_uint32(const String &name) { return addEnum(Kind_enum_uint32,name); }
    
+   EnumDesc & addEnum_uint8(const char *name) { return addEnum(Kind_enum_uint8,String(name)); }
+   EnumDesc & addEnum_uint16(const char *name) { return addEnum(Kind_enum_uint16,String(name)); }
+   EnumDesc & addEnum_uint32(const char *name) { return addEnum(Kind_enum_uint32,String(name)); }
+   
    StructDesc & addStruct(const String &name);
+   StructDesc & addStruct(const char *name) { return addStruct(String(name)); }
    
    EventDesc & addEvent(ulen alloc_len);
+   
+   void appendEnums();
    
    // meta info
    
@@ -1006,6 +1128,8 @@ class EventRecorderHost : NoCopy
      while( count ) Task::Yield();
      
      temp->template add<EventControl>(EventControl::Type_Stop);
+     
+     temp->appendEnums();
     }
    
   public:

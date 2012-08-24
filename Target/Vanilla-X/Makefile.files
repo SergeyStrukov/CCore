@@ -191,6 +191,7 @@ obj/SysTlsSlot.o \
 obj/Task.o \
 obj/TaskContext.o \
 obj/TaskCore.o \
+obj/TaskEvent.o \
 obj/TaskInternal.o \
 obj/TaskList.o \
 obj/TaskMonitor.o \
@@ -418,6 +419,7 @@ obj/SysTlsSlot.s \
 obj/Task.s \
 obj/TaskContext.s \
 obj/TaskCore.s \
+obj/TaskEvent.s \
 obj/TaskInternal.s \
 obj/TaskList.s \
 obj/TaskMonitor.s \
@@ -645,6 +647,7 @@ obj/SysTlsSlot.dep \
 obj/Task.dep \
 obj/TaskContext.dep \
 obj/TaskCore.dep \
+obj/TaskEvent.dep \
 obj/TaskInternal.dep \
 obj/TaskList.dep \
 obj/TaskMonitor.dep \
@@ -1259,6 +1262,9 @@ obj/TaskContext.o : ../../Target/Vanilla-X/CCore/src/task/TaskContext.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TaskCore.o : ../../XCore/CCore/src/task/TaskCore.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskEvent.o : ../../XCore/CCore/src/task/TaskEvent.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TaskInternal.o : ../../XCore/CCore/src/task/TaskInternal.cpp
@@ -1935,6 +1941,9 @@ obj/TaskContext.s : ../../Target/Vanilla-X/CCore/src/task/TaskContext.cpp
 obj/TaskCore.s : ../../XCore/CCore/src/task/TaskCore.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/TaskEvent.s : ../../XCore/CCore/src/task/TaskEvent.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/TaskInternal.s : ../../XCore/CCore/src/task/TaskInternal.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2608,6 +2617,9 @@ obj/TaskContext.dep : ../../Target/Vanilla-X/CCore/src/task/TaskContext.cpp
 
 obj/TaskCore.dep : ../../XCore/CCore/src/task/TaskCore.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskCore.o $< -MF $@
+
+obj/TaskEvent.dep : ../../XCore/CCore/src/task/TaskEvent.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskEvent.o $< -MF $@
 
 obj/TaskInternal.dep : ../../XCore/CCore/src/task/TaskInternal.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskInternal.o $< -MF $@

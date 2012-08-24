@@ -197,6 +197,7 @@
 ../../XCore/CCore/src/task/ResSem.cpp
 ../../XCore/CCore/src/task/Sem.cpp
 ../../XCore/CCore/src/task/TaskCore.cpp
+../../XCore/CCore/src/task/TaskEvent.cpp
 ../../XCore/CCore/src/task/TaskInternal.cpp
 ../../XCore/CCore/src/task/TaskList.cpp
 ../../XCore/CCore/src/task/TaskMonitor.cpp

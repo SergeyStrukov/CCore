@@ -127,6 +127,11 @@ auto EventMetaInfo::addEvent(ulen alloc_len) -> EventDesc &
   return *event_list.append_fill(id,alloc_len);
  }
 
+void EventMetaInfo::appendEnums()
+ {
+  for(auto &desc : enum_list ) desc.append();
+ }
+
 auto EventMetaInfo::getEnum(EventIdType id) const -> const EnumDesc &
  {
   if( id>=enum_list.getLen() )
@@ -180,17 +185,17 @@ void EventIdNode::Register(EventMetaInfo &info,ulen align)
 
 void EventControl::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
-  auto id_Type=info.addEnum_uint8(String("EventControlType"))
-                   .addValueName(Type_Start,String("Start"))
-                   .addValueName(Type_Tick,String("Tick"))
-                   .addValueName(Type_Stop,String("Stop"))
-                   .addValueName(Type_End,String("End"))
+  auto id_Type=info.addEnum_uint8("EventControlType")
+                   .addValueName(Type_Start,"Start")
+                   .addValueName(Type_Tick,"Tick")
+                   .addValueName(Type_Stop,"Stop")
+                   .addValueName(Type_End,"End")
                    .getId();
   
-  auto id=info.addStruct(String("EventControl"))
-              .addField_uint32(String("time"),Offset_time)
-              .addField_uint16(String("id"),Offset_id)
-              .addField_enum_uint8(id_Type,String("type"),Offset_type)
+  auto id=info.addStruct("EventControl")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
               .getId();
   
   desc.setStructId(info,id);

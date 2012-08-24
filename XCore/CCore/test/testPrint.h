@@ -49,6 +49,18 @@ class PrintFile : public PrintAsyncFile
 
 class StreamFile : NoCopy , public PutDevBase<StreamFile>
  {
+   AsyncFile file;
+
+   Packet<uint8> packet;
+   FilePosType file_pos;
+   
+   PtrLen<uint8> out;
+   ulen buf_len;
+ 
+  private:
+ 
+   void provide();
+   
   public: 
    
    // constructors
@@ -61,21 +73,36 @@ class StreamFile : NoCopy , public PutDevBase<StreamFile>
    
    // methods
    
-   bool isOpened() const;
+   bool isOpened() const { return file.isOpened(); }
    
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
-   
-   void disableExceptions(); 
    
    void soft_close(FileMultiError &errout);
    
    void close();
    
-   void preserveFile();
+   void preserveFile() { file.preserveFile(); }
+   
+   void setLargeWriteLen(ulen large_write_len) { file.setLargeWriteLen(large_write_len); }
+   
+   void wait() { file.wait(); }
+   
+   void wait_final() { file.wait_final(); }
+   
+   void wait(MSec timeout) { file.wait(timeout); }
+   
+   void cancel_and_wait() { file.cancel_and_wait(); }
    
    // put
    
-   void do_put(uint8 value);
+   void do_put(uint8 value)
+    {
+     if( !out ) provide();
+   
+     *out=value;
+   
+     ++out;
+    }
    
    void do_put(const uint8 *ptr,ulen len);
    

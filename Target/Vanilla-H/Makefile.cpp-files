@@ -186,6 +186,7 @@
 ../../HCore/CCore/src/task/Sem.cpp
 ../../HCore/CCore/src/task/SlowSem.cpp
 ../../HCore/CCore/src/task/TaskCore.cpp
+../../HCore/CCore/src/task/TaskEvent.cpp
 ../../HCore/CCore/src/Task.cpp
 ../../Target/Vanilla-H/CCore/src/base/PlatformBase.cpp
 ../../Target/Vanilla-H/CCore/src/base/Quick.cpp

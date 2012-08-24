@@ -89,7 +89,7 @@ class AsyncFile : public Funchor_nocopy
    
    // constructors
   
-   AsyncFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   explicit AsyncFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
    
    explicit AsyncFile(StrLen file_name,FileOpenFlags oflags,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
    

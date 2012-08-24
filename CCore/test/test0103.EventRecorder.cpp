@@ -28,7 +28,7 @@ struct EventRecorderAlgo
  {
   static const ulen RecordAlign = 4 ;
   
-  static const uint64 TimeFreq = 1000000000ull ;
+  static const uint64 TimeFreq = 1000000000 ;
   
   static EventTimeType GetTime() { return (EventTimeType)ClockTimer::Get(); }
  };
@@ -46,20 +46,20 @@ struct EventBody
   
   static EventIdType Register(EventMetaInfo &info)
    {
-    auto id=info.addEnum_uint8(String("TaskId"))
-                .addValueName(1,String("Task1"))
-                .addValueName(2,String("Task2"))
-                .addValueName(3,String("Task3"))
-                .addValueName(4,String("Task4"))
-                .addValueName(5,String("Task5"))
-                .addValueName(6,String("Task6"))
-                .addValueName(7,String("Task7"))
-                .addValueName(8,String("Task8"))
+    auto id=info.addEnum_uint8("TaskId")
+                .addValueName(1,"Task1")
+                .addValueName(2,"Task2")
+                .addValueName(3,"Task3")
+                .addValueName(4,"Task4")
+                .addValueName(5,"Task5")
+                .addValueName(6,"Task6")
+                .addValueName(7,"Task7")
+                .addValueName(8,"Task8")
                 .getId();
     
-    return info.addStruct(String("EventBody"))
-               .addField_enum_uint8(id,String("task"),Offset_task)
-               .addField_uint32(String("number"),Offset_number)
+    return info.addStruct("EventBody")
+               .addField_enum_uint8(id,"task",Offset_task)
+               .addField_uint32("number",Offset_number)
                .getId();
    }
  };
@@ -91,10 +91,10 @@ struct Event
    {
     auto id_body=EventBody::Register(info);
     
-    auto id=info.addStruct(String("Event"))
-                .addField_uint32(String("time"),Offset_time)
-                .addField_uint16(String("id"),Offset_id)
-                .addField_struct(id_body,String("body"),Offset_body)
+    auto id=info.addStruct("Event")
+                .addField_uint32("time",Offset_time)
+                .addField_uint16("id",Offset_id)
+                .addField_struct(id_body,"body",Offset_body)
                 .getId();
     
     desc.setStructId(info,id);

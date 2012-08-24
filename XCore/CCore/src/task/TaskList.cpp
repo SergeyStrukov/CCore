@@ -15,6 +15,8 @@
  
 #include <CCore/inc/task/TaskList.h>
 
+#include <CCore/inc/task/TaskEvent.h>
+
 #include <CCore/inc/PrintAbort.h>
  
 #include <CCore/inc/sys/SysLog.h>
@@ -123,13 +125,15 @@ void TaskBase::guardList()
      
   if( owned_list ) Abort("Fatal error : guard task owns list");
  }
- 
+
 TaskBase::TaskBase(TextLabel name,TaskPriority priority)
  : TaskMonitor::Link(name,priority),
    actual_priority(priority)
  {
   list=0;
   owned_list=0;
+  
+  task_number=EventEnumValue<TaskSwitchEvent::TaskNumber>(name);
  }
  
 /* struct TaskList::FindResult */

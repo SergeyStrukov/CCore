@@ -16,6 +16,7 @@
 #include <CCore/test/testPrint.h>
 
 #include <CCore/inc/String.h>
+#include <CCore/inc/Exception.h>
 
 namespace App {
 
@@ -45,35 +46,91 @@ void PrintFile::open(StrLen file_name,FileOpenFlags oflags)
 
  // constructors
 
-StreamFile::StreamFile() {}
+StreamFile::StreamFile()
+ {
+ }
    
-StreamFile::StreamFile(StrLen,FileOpenFlags) {}
+StreamFile::StreamFile(StrLen file_name,FileOpenFlags oflags) 
+ {
+  open(file_name,oflags);
+ }
    
-StreamFile::~StreamFile() {}
+StreamFile::~StreamFile() 
+ {
+  flush();
+ }
    
  // methods
    
-bool StreamFile::isOpened() const { return false; }
+void StreamFile::open(StrLen file_name,FileOpenFlags oflags) 
+ {
+  FilePosType file_len=file.open(file_name,oflags);  
+
+  file_pos=(oflags&Open_PosEnd)?file_len:0;
+ }
    
-void StreamFile::open(StrLen,FileOpenFlags) {}
+void StreamFile::soft_close(FileMultiError &errout) 
+ {
+  flush();
+  
+  file.soft_close(errout);
+ }
    
-void StreamFile::disableExceptions() {} 
-   
-void StreamFile::soft_close(FileMultiError &) {}
-   
-void StreamFile::close() {}
-   
-void StreamFile::preserveFile() {}
+void StreamFile::close() 
+ {
+  flush();
+  
+  file.close();
+ }
    
  // put
    
-void StreamFile::do_put(uint8) {}
+void StreamFile::provide()
+ {
+  flush();
+  
+  auto result=file.getWritePacket();
+  
+  packet=result.packet;
+ 
+  out=result.buf;
+  buf_len=out.len;
+ }
+
+void StreamFile::do_put(const uint8 *ptr,ulen len)
+ {
+  auto src=Range(ptr,len); 
+ 
+  while( +src )
+    {
+     if( !out ) provide();
+    
+     ulen delta=Min(src.len,out.len);
+    
+     (out+=delta).copy( (src+=delta).ptr );
+    }
+ }
    
-void StreamFile::do_put(const uint8 *,ulen) {}
+PtrLen<uint8> StreamFile::do_putRange(ulen) 
+ { 
+  Printf(Exception,"StreamFile::do_putRange(...) : not supported");
+  
+  return Nothing;
+ }
    
-PtrLen<uint8> StreamFile::do_putRange(ulen) { return Nothing; }
-   
-void StreamFile::flush() {}
+void StreamFile::flush() 
+ {
+  if( +packet )
+    {
+     ulen len=buf_len-out.len;
+     
+     out=Nothing;
+    
+     file.write(file_pos,len,Replace_null(packet));
+  
+     file_pos+=len;
+    }
+ }
    
 } // namespace App
 

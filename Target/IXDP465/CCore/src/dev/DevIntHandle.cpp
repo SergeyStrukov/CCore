@@ -20,6 +20,7 @@
 #include <CCore/inc/dev/IXP465.INT.h>
 
 #include <CCore/inc/task/TaskMonitor.h>
+#include <CCore/inc/task/TaskEvent.h>
 
 #include <__std_init.h>
 
@@ -163,11 +164,15 @@ extern "C" {
 
 void IRQ_main()
  {
+  TaskEventHost.add<TaskSwitchEvent>(TaskSwitchEvent::EnterInt);
+  
   TaskMonitor::Internal::BeginInt();
  
   Object->dispatch();
   
   TaskMonitor::Internal::EndInt();
+  
+  TaskEventHost.add<TaskSwitchEvent>(TaskSwitchEvent::LeaveInt);
  }
  
 } // extern "C"
