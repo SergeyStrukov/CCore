@@ -51,7 +51,7 @@ If you are not familiar with this platform spend some time to learn it.
 </p>
 <p>
 
-Unpack the compiler set (provided as the archive <b>opt.7z</b>) in the <b>Cygwin root</b>.<br />
+Unpack the compiler set (provided as the archive <b>opt.7z</b> located in the <u>git@github.com:SergeyStrukov/CCoreOpt.git</u>) in the <b>Cygwin root</b>.<br />
 You will need <a href="http://www.7-zip.org/">7-Zip</a> archive manager.
 You will get the <b>opt</b> directory with several <b>gcc</b> compilers.<br />
 You can also build compilers yourself. See <a href="#build-gcc">below</a> for instructions.
@@ -131,9 +131,127 @@ Finally, customize <b>Eclipse</b> as you like.
 
 <h2><a id="build-gcc">Building compilers</a></h2>
 
-<p>... to be written</p>
+<p>
+Building compilers is a multi-step process. So be patient and accurate.
+</p>
 
 <p>
+Before all, you have to download, build and install some libraries and tools:
+</p>
+
+<ul>
+<li>m4-1.4.16</li>
+<li>gmp-5.0.1</li>
+<li>mpfr-3.0.0</li>
+<li>mpc-0.8.2</li>
+<li>ppl-0.11.2</li>
+</ul>
+
+<p>
+You may try a newer versions.
+</p>
+
+<p>
+Bulding these packages are similar. You have to download source code, unpack it. Then create an empty build folder.
+I am using directory <b>Download</b> to store the source and subdirectory <b>Build</b> for build directories. I.g.
+for tool XXX the source is located in <b>Download/XXX</b> and the build directory is <b>Download/Build/XXX</b>.
+Copy the file <b>MakeCfg</b> there. Then from the cygwin console issue the commands:
+</p>
+
+<ul>
+<li>make -f MakeCfg</li>
+<li>make [-j 8]</li>
+<li>make install</li>
+</ul>
+
+<p>
+You can find <b>MakeCfg</b> files for each tool in the repository <u>git@github.com:SergeyStrukov/CCoreOpt.git</u> alone with
+the <b>opt.7z</b> archive. You should check and adapt the configuration options in these files.
+</p>
+
+<p>
+The next step is the building the host compiler <b>gcc-4.7.1</b>. The same way. Once you've installed it you have the host compiler 
+for <b>CCore</b>.
+If you don't need a cross-compiler for stand-alone targets you are finished.
+</p>
+
+<p>
+The last step is the building the cross-compiler for the target <b>IXDP465</b>. The cross-compiler is specific for the target.
+</p>
+
+<p>
+First, <b>binutils-2.20</b> must be built. To do this you have to create the <b>sysroot</b> directory: 
+<b>/opt/gcc-4.7.1-cross/armeb/sysroot</b> (cygwin path). For building you have to copy there include files. 
+Build <b>sysroot</b> directory is located at <b>&lt;CCore&gt;/Target/IXDP465/sysroot</b>. Include files are in the directory
+<b>usr/include</b>. Before doing standard steps you have to replace two source files in the source folders. The files are <b>elf.sc</b> 
+and <b>armelf.sh</b>, they are located in the <b>&lt;SRC&gt;/ld/scripttempl/elf.sc</b> and <b>&lt;SRC&gt;/ld/emulparams/armelf.sh</b>. Replacement files 
+are stored with the <b>MakeCfg</b> file. These files affect the target linker <b>ld</b>. We need a special default linker script for it.
+</p>
+
+<p>
+Once you have <b>binutils</b> built and installed, you may start building the cross-compiler itself. I am using a 
+separate source directory for this (<b>arm-gcc-4.7.1</b>), because we have to make some modifications in the source files.
+</p>
+
+<p>
+File <b>&lt;SRC&gt;/libgcc/config/libbid/bid_conf.h</b>. Ensure this:
+</p>
+
+<pre>
+#define DECIMAL_GLOBAL_EXCEPTION_FLAGS_ACCESS_FUNCTIONS <span class ="alert">0</span>
+</pre>
+
+<p>
+File <b>&lt;SRC&gt;/libgcc/config/arm/crti.S</b>. Rename labels <b>_init</b> to <b>__std_init_global</b> and <b>_fini</b> to 
+<b>__std_exit_global</b> (each occurrence).
+</p>
+
+<p>
+File <b>&lt;SRC&gt;/libgcc/unwind-sjlj.c</b>. Change the correspondent lines to this:
+</p>
+
+<pre>
+/* Single threaded fallback chain.  */
+static struct SjLj_Function_Context *fc_static <span class ="alert">__attribute__((section(".context_data"))) =0</span> ;
+</pre>
+
+<p>
+File <b>&lt;SRC&gt;/libstdc++-v3/libsupc++/eh_globals.cc</b>.
+</p>
+
+<pre>
+// Single-threaded fallback buffer.
+static __cxa_eh_globals eh_globals <span class ="alert">__attribute__((section(".context_data"))) = {} </span>;
+</pre>
+
+<p>
+Replace files <b>&lt;SRC&gt;/libstdc++-v3/libsupc++/eh_alloc.cc</b>,
+<b>&lt;SRC&gt;/libstdc++-v3/libsupc++/pure.cc</b>, <b>&lt;SRC&gt;/libstdc++-v3/config/io/basic_file_stdio.cc</b>.
+</p>
+
+<p>
+Then fix configuration scripts. Find in <b>&lt;SRC&gt;/configure</b> the line <b>skipdirs=</b> and replace it with 
+<b>skipdirs="target-libiberty"</b>. Then correct <b>&lt;SRC&gt;/libstdc++-v3/configure</b>. This is a tricky part, you have to find
+a good location and place there the line <b>gcc_no_link=no</b>. In my version (gcc-4.7.1) it is at line number 10457 after the line
+<b>need_version=unknown</b>. You also have to comment out the line at "No support for this host/target combination" (line number 64104).
+
+</p>
+
+<p>
+Now run configuration using <b>make -f MakeCfg</b>. After completion fix the generated Makefile, find and 
+correct the following variables (append option -mbig-endian):
+</p>
+
+<pre>
+CFLAGS_FOR_TARGET = -g -O2 -mbig-endian
+CXXFLAGS_FOR_TARGET = -g -O2 -mbig-endian
+
+GOCFLAGS_FOR_TARGET = -O2 -g -mbig-endian
+</pre>
+
+<p>
+Make, install. After you have the cross-compiler, build library <b>libc.a</b> and <b>crt0.o</b>. 
+Go to the build <b>sysroot</b> directory and run makefile there. Then copy built files to the destination <b>sysroot</b>.
 </p>
 
 </body>

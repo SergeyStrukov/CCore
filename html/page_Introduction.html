@@ -143,7 +143,7 @@ In particular, it contains:
 <li>Any kind of <b>lists</b>,</li>
 <li>Radix and Red-Black <b>trees</b>,</li>
 <li>Properly implemented dynamic <b>arrays</b> (bye-bye STL),</li>
-<li><b>Packet</b>, an async processing infrastructure, a key foundation for a system layer and server tasks,</li>
+<li><b>Packet</b>, an async processing infrastructure, a key foundation for a system layer and server applications,</li>
 <li><b>Integer</b> library, you may even calculate 1000000 digits of &pi;,</li>
 <li><b>Crypton</b> library,</li> 
 <li>Fast log and event recorder,</li>
@@ -292,12 +292,12 @@ class ResSem : public Funchor_nocopy
 
 <p>
 <b>ResSem</b> has the internal counter between 0 and the given <b>max_count</b> (initial value). You can <b>take</b> and <b>give</b> it back. 
-<b>take</b> may wait if the counter is zero. Finally, <b>wait</b> waits until the counter reaches <b>max_count</b>.
+<b>take</b> might wait if the counter is zero. Finally, <b>wait</b> waits until the counter reaches <b>max_count</b>.
 </p>
 
 <p>
 <b>MultiSem</b> and <b>MultiEvent</b> are "multi-channel" versions of the <b>Sem</b> and <b>Event</b>. They can wait for one 
-of the several events. They also provide the "fairness" in the event reporting.
+of the several events. They also ensure the "fairness" in the event reporting.
 </p>
 
 <pre>
@@ -379,10 +379,40 @@ All synchronization classes "publish" "giving" functions callbacks.
 <p>
 <b>Packet</b> is a micro-task. It has the associated small stack to store call paremeters and return values. 
 A larger data buffer also may be attached.
-<b>Packet</b>s allow design of a processing systems as a collection of packet-processing devices. <b>Packet</b>s are initiated 
+<b>Packet</b>s allow design of a request processing systems as a collection of packet-processing devices. <b>Packet</b>s are initiated 
 by some initiator and passed to the processing device. It may pass a packet further until it's completed or cancelled by 
 the initiator. Initiator assigns a completion function for a packet. So when packet is completed it goes to this function, where
-result can be extracted and packet is disposed. Also completion signaling is performed there.
+result can be extracted and packet is disposed. Also a completion signaling is performed there.
+</p>
+
+<h2>Lists, trees, arrays</h2>
+
+<p>
+<b>CCore</b> includes implementations of lists, trees, and arrays. 
+</p>
+
+<p>
+<b>CCore</b> lists and trees are intrusive. Instrusive linked containers have the following advantages:
+</p>
+
+<ul>
+<li>they are more suitable for applications,</li>
+<li>they efficient, no memory allocation and error conditions for container operations,</li>
+<li>you may include one object in the several containers,</li>
+<li>you may build a non-intruisive container based on intruisive.</li>
+</ul>
+
+<p>
+<b>CCore</b> implements wide range of lists, both single linked and double linked, linear and cicular.
+</p>
+
+<p>
+<b>CCore</b> implements radix and red-black trees. 
+</p>
+
+<p>
+<b>CCore</b> provides implementation for dynamic arrays. Unlike STL vector, <b>CCore</b> arrays may contains object of any types,
+there is no requirement for copyrability. 
 </p>
 
 <h2>PTP</h2>
