@@ -33,8 +33,6 @@ struct TaskEventAlgo;
 
 class TaskEventHostType;
 
-struct NoTaskEventHostType;
-
 struct TaskSwitchEvent;
 
 /* struct TaskEventAlgo */
@@ -53,6 +51,8 @@ struct TaskEventAlgo
 typedef EventRecorder<TaskEventAlgo> TaskEventRecorder;
 
 /* class TaskEventHostType */
+
+#ifdef CCORE_TASK_EVENT_ENABLE
 
 class TaskEventHostType : public EventRecorderHost<TaskEventRecorder>
  {
@@ -113,61 +113,56 @@ class TaskEventHostType : public EventRecorderHost<TaskEventRecorder>
 #endif
  };
 
-/* struct NoTaskEventHostType */
+#else
 
-struct NoTaskEventHostType
+class TaskEventHostType
  {
-  class StartStop : NoCopy
-   {
-    public: 
-     
-     template <class T>
-     StartStop(T &,TaskEventRecorder *) 
-      {
-      } 
-   };
+  public:
   
-  template <class T,class ... SS>
-  void add(SS && ...)
-   {
-    // do nothing 
-   }
-  
-  template <class T,class ... SS>
-  void addSync(SS && ...)
-   {
-    // do nothing 
-   }
-
-  template <class T,class ... SS>
-  void addProto(SS && ...)
-   {
-    // do nothing 
-   }
-
-  template <class T,class ... SS>
-  void addDev(SS && ...)
-   {
-    // do nothing 
-   }
-
-  void tick()
-   {
-    // do nothing
-   }
+   class StartStop : NoCopy
+    {
+     public: 
+      
+      StartStop(TaskEventHostType &,TaskEventRecorder *) 
+       {
+       } 
+    };
+   
+   template <class T,class ... SS>
+   void add(SS && ...)
+    {
+     // do nothing 
+    }
+   
+   template <class T,class ... SS>
+   void addSync(SS && ...)
+    {
+     // do nothing 
+    }
+ 
+   template <class T,class ... SS>
+   void addProto(SS && ...)
+    {
+     // do nothing 
+    }
+ 
+   template <class T,class ... SS>
+   void addDev(SS && ...)
+    {
+     // do nothing 
+    }
+ 
+   void tick()
+    {
+     // do nothing
+    }
  };
+
+#endif
 
 /* global TaskEventHost */
 
-#ifdef CCORE_TASK_EVENT_ENABLE
-
 extern TaskEventHostType TaskEventHost;
-
-#else
-
-extern NoTaskEventHostType TaskEventHost;
-
-#endif
 
 /* struct TaskSwitchEvent */
 

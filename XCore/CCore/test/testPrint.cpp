@@ -64,7 +64,9 @@ StreamFile::~StreamFile()
    
 void StreamFile::open(StrLen file_name,FileOpenFlags oflags) 
  {
-  FilePosType file_len=file.open(file_name,oflags);  
+  String name=StringCat("host:",file_name);
+  
+  FilePosType file_len=file.open(Range(name),oflags);  
 
   file_pos=(oflags&Open_PosEnd)?file_len:0;
  }

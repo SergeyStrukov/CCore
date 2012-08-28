@@ -132,11 +132,53 @@ void ClientProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &de
   desc.setStructId(info,id);
  }
 
+/* struct ClientProtoEvent_slot */
+
+void ClientProtoEvent_slot::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Ev=info.addEnum_uint8("PTPClient")
+    
+                 .addValueName(ClientEvent_Trans,"Trans")
+                 .addValueName(ClientEvent_TransDone,"Trans done")
+                 
+                 .addValueName(ClientEvent_BadInfoLen,"Bad info len")
+                 .addValueName(ClientEvent_Timeout,"Timeout")
+                 .addValueName(ClientEvent_Cancel,"Cancel")
+                 .addValueName(ClientEvent_Abort,"Abort")
+                 
+                 .addValueName(ClientEvent_CALL,"-> CALL")
+                 .addValueName(ClientEvent_RECALL,"-> RECALL")
+                 .addValueName(ClientEvent_ACK,"-> ACK")
+                 .addValueName(ClientEvent_SENDRET,"-> SENDRET")
+                 
+                 .addValueName(ClientEvent_RET,"<- RET")
+                 .addValueName(ClientEvent_NOINFO,"<- NOINFO")
+                 .addValueName(ClientEvent_RERET,"<- RERET")
+                 .addValueName(ClientEvent_CANCEL,"<- CANCEL")
+                 
+                 .addValueName(ClientEvent_NoSlot,"No slot")
+                 .addValueName(ClientEvent_NoPacket,"No packet")
+                 
+                 .addValueName(ClientEvent_BadInbound,"Bad inbound")
+                 .addValueName(ClientEvent_BadOutbound,"Bad outbound")
+                      
+                 .getId();
+  
+  auto id=info.addStruct("PTPClientEvent_slot")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint8(id_Ev,"event",Offset_ev)
+              .addField_uint32("slot",Offset_slot)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class ClientEngine::Slot */ 
 
 void ClientEngine::Slot::send_CALL(PacketList &complete_list)
  {
-  engine->stat.count(ClientEvent_CALL);
+  engine->stat.count(client_slot,ClientEvent_CALL);
   
   PtrLen<const uint8> info=getInfo();
   
@@ -148,7 +190,7 @@ void ClientEngine::Slot::send_CALL(PacketList &complete_list)
  
 void ClientEngine::Slot::send_RECALL(PacketList &complete_list)
  {
-  engine->stat.count(ClientEvent_RECALL);
+  engine->stat.count(client_slot,ClientEvent_RECALL);
   
   PtrLen<const uint8> info=getInfo();
   
@@ -160,7 +202,7 @@ void ClientEngine::Slot::send_RECALL(PacketList &complete_list)
  
 void ClientEngine::Slot::send_SENDRET(PacketList &complete_list)
  {
-  engine->stat.count(ClientEvent_SENDRET);
+  engine->stat.count(client_slot,ClientEvent_SENDRET);
   
   PacketPrefix4 sendret(PacketType_SENDRET,trans_id,client_slot,server_slot);
   
@@ -169,7 +211,7 @@ void ClientEngine::Slot::send_SENDRET(PacketList &complete_list)
  
 void ClientEngine::Slot::send_ACK(PacketList &complete_list)
  {
-  engine->stat.count(ClientEvent_ACK);
+  engine->stat.count(client_slot,ClientEvent_ACK);
   
   PacketPrefix4 ack(PacketType_ACK,trans_id,client_slot,server_slot);
   
@@ -208,6 +250,8 @@ bool ClientEngine::Slot::start(PacketList &complete_list,Packet<uint8,TransExt> 
  
 void ClientEngine::Slot::inbound_RET(PacketList &complete_list,Packet<uint8> server_packet,PtrLen<const uint8> server_info)
  {
+  engine->stat.count(client_slot,ClientEvent_RET);
+ 
   send_ACK(complete_list);
   
   engine->completeInfo(complete_list,Replace_null(packet),server_packet,server_info);
@@ -215,20 +259,26 @@ void ClientEngine::Slot::inbound_RET(PacketList &complete_list,Packet<uint8> ser
    
 void ClientEngine::Slot::inbound_CANCEL(PacketList &complete_list)
  {
+  engine->stat.count(client_slot,ClientEvent_CANCEL);
+ 
   send_ACK(complete_list);
   
-  engine->stat.count(ClientEvent_Cancel);
+  engine->stat.count(client_slot,ClientEvent_Cancel);
   
   engine->completeError(complete_list,Replace_null(packet),Trans_Cancelled);
  }
    
 void ClientEngine::Slot::inbound_NOINFO(PacketList &)
  {
+  engine->stat.count(client_slot,ClientEvent_NOINFO);
+  
   no_info=true;
  }
    
 void ClientEngine::Slot::inbound_RERET(PacketList &complete_list)
  {
+  engine->stat.count(client_slot,ClientEvent_RERET);
+  
   send_SENDRET(complete_list);
  }
      
@@ -248,7 +298,7 @@ bool ClientEngine::Slot::tick(PacketList &complete_list)
        }
      else
        {
-        engine->stat.count(ClientEvent_Timeout);
+        engine->stat.count(client_slot,ClientEvent_Timeout);
         
         engine->completeError(complete_list,Replace_null(packet),Trans_Timeout);
        
@@ -272,7 +322,7 @@ bool ClientEngine::Slot::tick(PacketList &complete_list)
  
 void ClientEngine::Slot::abort(PacketList &complete_list)
  {
-  engine->stat.count(ClientEvent_Abort);
+  engine->stat.count(client_slot,ClientEvent_Abort);
  
   engine->completeError(complete_list,Replace_null(packet),Trans_Aborted);
  }
@@ -355,6 +405,8 @@ void ClientEngine::inbound_RET(PacketList &complete_list,const TransId &trans_id
     }
   else
     {
+     stat.count(ClientEvent_RET);
+   
      send_ACK(complete_list,trans_id,client_slot,server_slot);
     }  
  }
@@ -369,6 +421,8 @@ void ClientEngine::inbound_CANCEL(PacketList &complete_list,const TransId &trans
     }
   else
     {
+     stat.count(ClientEvent_CANCEL);
+     
      send_ACK(complete_list,trans_id,client_slot,server_slot);
     }  
  }
@@ -381,6 +435,8 @@ void ClientEngine::inbound_NOINFO(PacketList &complete_list,const TransId &trans
     }
   else
     {
+     stat.count(ClientEvent_NOINFO);
+     
      send_ACK(complete_list,trans_id,client_slot,server_slot);
     }  
  }
@@ -393,6 +449,8 @@ void ClientEngine::inbound_RERET(PacketList &complete_list,const TransId &trans_
     }
   else
     {
+     stat.count(ClientEvent_RERET);
+     
      send_ACK(complete_list,trans_id,client_slot,server_slot);
     }  
  }
@@ -463,7 +521,7 @@ void ClientEngine::abort(PacketHeader *packet_)
         
         deactivate(slot);
        
-        stat.count(ClientEvent_Abort);
+        stat.count(slot->client_slot,ClientEvent_Abort);
         
         packet.getExt()->setError(Trans_Aborted);
        }
@@ -540,8 +598,6 @@ void ClientEngine::inbound_locked(PacketList &complete_list,Packet<uint8> server
       
        if( !dev.finish() ) return bad_inbound();
        
-       stat.count(ClientEvent_RET);
-      
        inbound_RET(complete_list,prefix.trans_id,prefix.client_slot,prefix.server_slot,server_packet,server_info);
       }
      break;
@@ -550,8 +606,6 @@ void ClientEngine::inbound_locked(PacketList &complete_list,Packet<uint8> server
       {
        if( !dev.finish() ) return bad_inbound();
        
-       stat.count(ClientEvent_CANCEL);
-      
        inbound_CANCEL(complete_list,prefix.trans_id,prefix.client_slot,prefix.server_slot); 
       }
      break;
@@ -560,8 +614,6 @@ void ClientEngine::inbound_locked(PacketList &complete_list,Packet<uint8> server
       {
        if( !dev.finish() ) return bad_inbound();
        
-       stat.count(ClientEvent_NOINFO);
-       
        inbound_NOINFO(complete_list,prefix.trans_id,prefix.client_slot,prefix.server_slot); 
       }
      break;
@@ -569,8 +621,6 @@ void ClientEngine::inbound_locked(PacketList &complete_list,Packet<uint8> server
      case PacketType_RERET  : 
       {
        if( !dev.finish() ) return bad_inbound();
-       
-       stat.count(ClientEvent_RERET);
        
        inbound_RERET(complete_list,prefix.trans_id,prefix.client_slot,prefix.server_slot); 
       }

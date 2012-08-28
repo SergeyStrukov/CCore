@@ -107,6 +107,52 @@ void ServerProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &de
   desc.setStructId(info,id);
  }
 
+/* struct ServerProtoEvent_slot */
+
+void ServerProtoEvent_slot::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Ev=info.addEnum_uint8("PTPServer")
+    
+                 .addValueName(ServerEvent_Trans,"Trans")
+                 .addValueName(ServerEvent_TransDone,"Trans done")
+                 
+                 .addValueName(ServerEvent_Timeout,"Timeout")
+                 .addValueName(ServerEvent_Cancel,"Cancel")
+                 .addValueName(ServerEvent_ClientCancel,"Client cancel")
+                 .addValueName(ServerEvent_Abort,"Abort")
+                 
+                 .addValueName(ServerEvent_CALL,"<- CALL")
+                 .addValueName(ServerEvent_RECALL,"<- RECALL")
+                 .addValueName(ServerEvent_SENDRET,"<- SENDRET")
+                 .addValueName(ServerEvent_ACK,"<- ACK")
+                 
+                 .addValueName(ServerEvent_RET,"-> RET")
+                 .addValueName(ServerEvent_CANCEL,"-> CANCEL")
+                 .addValueName(ServerEvent_NOINFO,"-> NOINFO")
+                 .addValueName(ServerEvent_RERET,"-> RERET")
+                 
+                 .addValueName(ServerEvent_BadTransId,"Bad TransId")
+                 
+                 .addValueName(ServerEvent_NoSlot,"No slot")
+                 .addValueName(ServerEvent_NoSlotCancel,"No slot cancel")
+                 .addValueName(ServerEvent_NoFreeSlot,"No free slot")
+                 .addValueName(ServerEvent_NoPacket,"No packet")
+                 
+                 .addValueName(ServerEvent_BadInbound,"Bad inbound")
+                 .addValueName(ServerEvent_BadOutbound,"Bad outbound")
+                      
+                 .getId();
+  
+  auto id=info.addStruct("PTPServerEvent_slot")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint8(id_Ev,"event",Offset_ev)
+              .addField_uint32("slot",Offset_slot)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class ServerEngine::Slot */ 
 
 void ServerEngine::ProcExt::Complete(PacketHeader *packet_)
@@ -120,7 +166,7 @@ void ServerEngine::ProcExt::Complete(PacketHeader *packet_)
  
 void ServerEngine::Slot::send_RET(PacketList &complete_list)
  {
-  engine->stat.count(ServerEvent_RET);
+  engine->stat.count(server_slot,ServerEvent_RET);
      
   PacketPrefix4 prefix(PacketType_RET,trans_id,client_slot,server_slot);
   Packet_RET4 ret(server_info.len);
@@ -130,7 +176,7 @@ void ServerEngine::Slot::send_RET(PacketList &complete_list)
      
 void ServerEngine::Slot::send_CANCEL(PacketList &complete_list)
  {
-  engine->stat.count(ServerEvent_CANCEL);
+  engine->stat.count(server_slot,ServerEvent_CANCEL);
  
   PacketPrefix4 prefix(PacketType_CANCEL,trans_id,client_slot,server_slot);
      
@@ -139,7 +185,7 @@ void ServerEngine::Slot::send_CANCEL(PacketList &complete_list)
      
 void ServerEngine::Slot::send_RERET(PacketList &complete_list)
  {
-  engine->stat.count(ServerEvent_RERET);
+  engine->stat.count(server_slot,ServerEvent_RERET);
  
   PacketPrefix4 prefix(PacketType_RERET,trans_id,client_slot,server_slot);
      
@@ -148,7 +194,7 @@ void ServerEngine::Slot::send_RERET(PacketList &complete_list)
      
 void ServerEngine::Slot::send_NOINFO(PacketList &complete_list)
  {
-  engine->stat.count(ServerEvent_NOINFO);
+  engine->stat.count(server_slot,ServerEvent_NOINFO);
  
   PacketPrefix4 prefix(PacketType_NOINFO,trans_id,client_slot,server_slot);
      
@@ -157,7 +203,7 @@ void ServerEngine::Slot::send_NOINFO(PacketList &complete_list)
  
 void ServerEngine::Slot::start(PacketList &complete_list,XPoint point_,const TransId &trans_id_,SlotId client_slot_,Packet<uint8> packet,PtrLen<const uint8> client_info,RecallNumber recall_number_)
  {
-  engine->stat.count(ServerEvent_Trans);
+  engine->stat.count(server_slot,ServerEvent_Trans);
   
   point=point_;
   trans_id=trans_id_;
@@ -215,11 +261,15 @@ void ServerEngine::Slot::send_cancel(PacketList &complete_list)
  
 void ServerEngine::Slot::inbound_CALL(PacketList &complete_list,XPoint point,const TransId &trans_id,SlotId client_slot,Packet<uint8> packet,PtrLen<const uint8> client_info)
  {
+  engine->stat.count(server_slot,ServerEvent_CALL);
+  
   start(complete_list,point,trans_id,client_slot,packet,client_info);
  }
      
 void ServerEngine::Slot::inbound_RECALL(PacketList &complete_list,SlotId client_slot_,RecallNumber recall_number_)
  {
+  engine->stat.count(server_slot,ServerEvent_RECALL);
+  
   if( client_slot_!=client_slot ) return;
   
   recall_number=recall_number_;
@@ -236,20 +286,29 @@ void ServerEngine::Slot::inbound_RECALL(PacketList &complete_list,SlotId client_
      
 void ServerEngine::Slot::inbound_RECALL_first(PacketList &complete_list,XPoint point,const TransId &trans_id,SlotId client_slot,Packet<uint8> packet,PtrLen<const uint8> client_info,RecallNumber recall_number)
  {
+  engine->stat.count(server_slot,ServerEvent_RECALL);
+  
   start(complete_list,point,trans_id,client_slot,packet,client_info,recall_number);
  }
      
-void ServerEngine::Slot::inbound_ACK(PacketSet<uint8>::Cancel &cancel,PacketList &)
+void ServerEngine::Slot::inbound_ACK(PacketSet<uint8>::Cancel &cancel,PacketList &complete_list)
  {
-  server_info=Nothing;
-  
-  pbuf.detach();
-  
-  cancel.build(plist);
+  engine->stat.count(server_slot,ServerEvent_ACK);
+     
+  switch( state )
+    {
+     case State_pending   : engine->stat.count(server_slot,ServerEvent_ClientCancel); break;
+     case State_ready     : engine->stat.count(server_slot,ServerEvent_TransDone);    break;
+     case State_cancelled : engine->stat.count(server_slot,ServerEvent_Cancel);       break;
+    }
+
+  finish(cancel,complete_list);   
  }
  
 void ServerEngine::Slot::inbound_SENDRET(PacketList &complete_list)
  {
+  engine->stat.count(server_slot,ServerEvent_SENDRET);
+  
   switch( state )
     {
      case State_ready     : send_RET(complete_list);    break;
@@ -276,9 +335,9 @@ bool ServerEngine::Slot::tick(PacketSet<uint8>::Cancel &cancel,PacketList &compl
           }
         else
           {
-           engine->stat.count(ServerEvent_Timeout);
+           engine->stat.count(server_slot,ServerEvent_Timeout);
           
-           inbound_ACK(cancel,complete_list);
+           finish(cancel,complete_list);
        
            return false;
           }  
@@ -292,6 +351,15 @@ bool ServerEngine::Slot::tick(PacketSet<uint8>::Cancel &cancel,PacketList &compl
     }
     
   return true;  
+ }
+ 
+void ServerEngine::Slot::finish(PacketSet<uint8>::Cancel &cancel,PacketList &)
+ {
+  server_info=Nothing;
+  
+  pbuf.detach();
+  
+  cancel.build(plist);
  }
  
 /* class ServerEngine */ 
@@ -348,6 +416,7 @@ void ServerEngine::inbound_CALL(PacketList &complete_list,XPoint point,const Tra
   
   if( prepare.found ) 
     {
+     stat.count(ServerEvent_CALL);
      stat.count(ServerEvent_BadTransId);
      
      complete_list.put(packet);
@@ -362,6 +431,7 @@ void ServerEngine::inbound_CALL(PacketList &complete_list,XPoint point,const Tra
     }
   else
     {
+     stat.count(ServerEvent_CALL);
      stat.count(ServerEvent_NoFreeSlot);
      
      complete_list.put(packet);
@@ -388,6 +458,7 @@ void ServerEngine::inbound_RECALL(PacketList &complete_list,XPoint point,const T
     }
   else
     {
+     stat.count(ServerEvent_RECALL);
      stat.count(ServerEvent_NoFreeSlot);
      
      complete_list.put(packet);
@@ -398,19 +469,14 @@ void ServerEngine::inbound_ACK(PacketSet<uint8>::Cancel &cancel,PacketList &comp
  {
   if( Slot *slot=find(point,server_slot,trans_id) )
     {
-     switch( slot->state )
-       {
-        case Slot::State_pending   : stat.count(ServerEvent_ClientCancel); break;
-        case Slot::State_ready     : stat.count(ServerEvent_TransDone);    break;
-        case Slot::State_cancelled : stat.count(ServerEvent_Cancel);       break;
-       }
- 
      slot->inbound_ACK(cancel,complete_list);
     
      deactivate(slot);
     }
   else
     {
+     stat.count(ServerEvent_ACK);
+    
      stat.count(ServerEvent_NoSlot);
     }
     
@@ -425,6 +491,8 @@ void ServerEngine::inbound_SENDRET(PacketList &complete_list,XPoint point,const 
     }
   else
     {
+     stat.count(ServerEvent_SENDRET);
+    
      send_CANCEL(complete_list,point,trans_id,client_slot,server_slot);
     }  
     
@@ -492,8 +560,6 @@ void ServerEngine::inbound_locked(PacketSet<uint8>::Cancel &cancel,PacketList &c
        
        if( !dev.finish() ) return bad_inbound(complete_list,packet);
        
-       stat.count(ServerEvent_CALL);
-       
        inbound_CALL(complete_list,point,prefix.trans_id,prefix.client_slot,packet,client_info);
       }
      break;
@@ -510,8 +576,6 @@ void ServerEngine::inbound_locked(PacketSet<uint8>::Cancel &cancel,PacketList &c
        
        if( !dev.finish() ) bad_inbound(complete_list,packet);
        
-       stat.count(ServerEvent_RECALL);
-       
        inbound_RECALL(complete_list,point,prefix.trans_id,prefix.client_slot,suffix.recall_number,packet,client_info);
       }
      break;
@@ -524,8 +588,6 @@ void ServerEngine::inbound_locked(PacketSet<uint8>::Cancel &cancel,PacketList &c
        
        if( !dev.finish() ) return bad_inbound(complete_list,packet);
        
-       stat.count(ServerEvent_ACK);
-       
        inbound_ACK(cancel,complete_list,point,prefix.trans_id,prefix.client_slot,suffix.server_slot,packet);
       }
      break;
@@ -537,8 +599,6 @@ void ServerEngine::inbound_locked(PacketSet<uint8>::Cancel &cancel,PacketList &c
        dev(suffix);
        
        if( !dev.finish() ) return bad_inbound(complete_list,packet);
-       
-       stat.count(ServerEvent_SENDRET);
        
        inbound_SENDRET(complete_list,point,prefix.trans_id,prefix.client_slot,suffix.server_slot,packet);
       }
@@ -575,9 +635,9 @@ void ServerEngine::cancelAll_locked(PacketSet<uint8>::Cancel &cancel,PacketList 
   
   while( Slot *slot=active_list.top )
     {
-     stat.count(ServerEvent_Abort);
+     stat.count(slot->server_slot,ServerEvent_Abort);
     
-     slot->inbound_ACK(cancel,complete_list);
+     slot->finish(cancel,complete_list);
     
      deactivate(slot);
     }

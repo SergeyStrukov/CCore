@@ -19,15 +19,7 @@ namespace CCore {
 
 /* global TaskEventHost */
 
-#ifdef CCORE_TASK_EVENT_ENABLE
-
 TaskEventHostType TaskEventHost;
-
-#else
-
-NoTaskEventHostType TaskEventHost;
-
-#endif
 
 /* class TickTask */
 

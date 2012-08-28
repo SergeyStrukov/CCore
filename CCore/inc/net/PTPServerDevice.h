@@ -39,6 +39,8 @@ namespace PTP {
 
 struct ServerProtoEvent;
 
+struct ServerProtoEvent_slot;
+
 class ServerStatInfo;
 
 struct TransIndex;
@@ -112,6 +114,36 @@ struct ServerProtoEvent
   static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
  };
 
+/* struct ServerProtoEvent_slot */
+
+struct ServerProtoEvent_slot
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+  uint32 slot;
+  
+  void init(EventTimeType time_,EventIdType id_,SlotId slot_,ServerEvent ev_)
+   {
+    time=time_; 
+    id=id_;
+    
+    slot=slot_;
+    ev=ev_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<ServerProtoEvent_slot *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<ServerProtoEvent_slot *>(ptr)->id); }
+  
+  static void * Offset_ev(void *ptr) { return &(static_cast<ServerProtoEvent_slot *>(ptr)->ev); }
+  
+  static void * Offset_slot(void *ptr) { return &(static_cast<ServerProtoEvent_slot *>(ptr)->slot); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
 /* class ServerStatInfo */
 
 class ServerStatInfo : public Counters<ServerEvent,ServerEventLim>
@@ -125,11 +157,11 @@ class ServerStatInfo : public Counters<ServerEvent,ServerEventLim>
      Counters<ServerEvent,ServerEventLim>::count(ev);
     }
   
-   void count(ServerEvent ev,ulen cnt)
+   void count(SlotId slot,ServerEvent ev)
     {
-     TaskEventHost.addProto<ServerProtoEvent>(ev);
+     TaskEventHost.addProto<ServerProtoEvent_slot>(slot,ev);
   
-     Counters<ServerEvent,ServerEventLim>::count(ev,cnt);
+     Counters<ServerEvent,ServerEventLim>::count(ev);
     }
  };
 
@@ -288,6 +320,8 @@ class ServerEngine : public Funchor_nocopy , PacketMultipointDevice::InboundProc
      void inbound_SENDRET(PacketList &complete_list);
      
      bool tick(PacketSet<uint8>::Cancel &cancel,PacketList &complete_list);
+     
+     void finish(PacketSet<uint8>::Cancel &cancel,PacketList &complete_list);
      
      // no-throw flags
      

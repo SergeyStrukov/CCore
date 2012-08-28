@@ -138,7 +138,7 @@ bool Testit<3010>::Main()
    Printf(Con,"time2 = #; sec\n",timer.get());
   } 
   
-  StreamFile dev("host:test3010.bin");
+  StreamFile dev("test3010.bin");
   
   dev(recorder);
   

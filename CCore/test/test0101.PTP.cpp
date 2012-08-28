@@ -112,14 +112,20 @@ template<>
 bool Testit<101>::Main() 
  { 
   Engine engine;
+  TaskEventRecorder recorder(100_MByte);
   
   {
+   TaskEventHostType::StartStop event_start_stop(TaskEventHost,&recorder);
    Engine::StartStop start_stop(engine);
   
    Task::Sleep(10_sec);
   }
   
   engine.showStat(); 
+  
+  StreamFile dev("test101.bin");
+  
+  dev(recorder);
   
   return true;
  }

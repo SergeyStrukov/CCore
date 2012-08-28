@@ -55,6 +55,8 @@ void GuardOutboundTooShort(const char *name);
 
 struct ClientProtoEvent;
 
+struct ClientProtoEvent_slot;
+
 class ClientStatInfo;
 
 struct TransExt;
@@ -148,6 +150,36 @@ struct ClientProtoEvent
   static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
  };
 
+/* struct ClientProtoEvent_slot */
+
+struct ClientProtoEvent_slot
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+  uint32 slot;
+  
+  void init(EventTimeType time_,EventIdType id_,SlotId slot_,ClientEvent ev_)
+   {
+    time=time_; 
+    id=id_;
+    
+    slot=slot_;
+    ev=ev_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<ClientProtoEvent_slot *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<ClientProtoEvent_slot *>(ptr)->id); }
+  
+  static void * Offset_ev(void *ptr) { return &(static_cast<ClientProtoEvent_slot *>(ptr)->ev); }
+  
+  static void * Offset_slot(void *ptr) { return &(static_cast<ClientProtoEvent_slot *>(ptr)->slot); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
 /* class ClientStatInfo */
 
 class ClientStatInfo : public Counters<ClientEvent,ClientEventLim>
@@ -161,11 +193,11 @@ class ClientStatInfo : public Counters<ClientEvent,ClientEventLim>
      Counters<ClientEvent,ClientEventLim>::count(ev);
     }
  
-   void count(ClientEvent ev,ulen cnt)
+   void count(SlotId slot,ClientEvent ev)
     {
-     TaskEventHost.addProto<ClientProtoEvent>(ev);
+     TaskEventHost.addProto<ClientProtoEvent_slot>(slot,ev);
   
-     Counters<ClientEvent,ClientEventLim>::count(ev,cnt);
+     Counters<ClientEvent,ClientEventLim>::count(ev);
     }
  };
 
