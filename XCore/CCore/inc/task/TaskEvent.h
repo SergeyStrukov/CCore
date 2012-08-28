@@ -21,11 +21,17 @@
  
 #define CCORE_TASK_EVENT_ENABLE
 
+#define CCORE_TASK_EVENT_ENABLE_SYNC
+#define CCORE_TASK_EVENT_ENABLE_PROTO
+#define CCORE_TASK_EVENT_ENABLE_DEV
+
 namespace CCore {
 
 /* classes */
 
 struct TaskEventAlgo;
+
+class TaskEventHostType;
 
 struct NoTaskEventHostType;
 
@@ -46,7 +52,66 @@ struct TaskEventAlgo
 
 typedef EventRecorder<TaskEventAlgo> TaskEventRecorder;
 
-typedef EventRecorderHost<TaskEventRecorder> TaskEventHostType;
+/* class TaskEventHostType */
+
+class TaskEventHostType : public EventRecorderHost<TaskEventRecorder>
+ {
+  public:
+ 
+#ifdef CCORE_TASK_EVENT_ENABLE_SYNC
+ 
+   template <class T,class ... SS>
+   void addSync(SS && ... ss)
+    {
+     add<T>( std::forward<SS>(ss)... );
+    }
+ 
+#else
+ 
+   template <class T,class ... SS>
+   void addSync(SS && ...)
+    {
+     // do nothing 
+    }
+ 
+#endif 
+ 
+#ifdef CCORE_TASK_EVENT_ENABLE_PROTO
+   
+   template <class T,class ... SS>
+   void addProto(SS && ... ss)
+    {
+     add<T>( std::forward<SS>(ss)... );
+    }
+ 
+#else
+ 
+   template <class T,class ... SS>
+   void addProto(SS && ...)
+    {
+     // do nothing 
+    }
+ 
+#endif
+ 
+#ifdef CCORE_TASK_EVENT_ENABLE_DEV
+   
+   template <class T,class ... SS>
+   void addDev(SS && ... ss)
+    {
+     add<T>( std::forward<SS>(ss)... );
+    }
+ 
+#else
+ 
+   template <class T,class ... SS>
+   void addDev(SS && ...)
+    {
+     // do nothing 
+    }
+ 
+#endif
+ };
 
 /* struct NoTaskEventHostType */
 
@@ -68,6 +133,24 @@ struct NoTaskEventHostType
     // do nothing 
    }
   
+  template <class T,class ... SS>
+  void addSync(SS && ...)
+   {
+    // do nothing 
+   }
+
+  template <class T,class ... SS>
+  void addProto(SS && ...)
+   {
+    // do nothing 
+   }
+
+  template <class T,class ... SS>
+  void addDev(SS && ...)
+   {
+    // do nothing 
+   }
+
   void tick()
    {
     // do nothing
@@ -92,6 +175,7 @@ struct TaskSwitchEvent
  {
   EventTimeType time;
   EventIdType id;
+  
   uint16 type;
   
   enum Type : uint16

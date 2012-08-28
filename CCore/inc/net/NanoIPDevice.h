@@ -21,6 +21,7 @@
 #include <CCore/inc/CancelPacketList.h>
 #include <CCore/inc/Tree.h>
 #include <CCore/inc/List.h>
+#include <CCore/inc/task/TaskEvent.h>
 
 #include <CCore/inc/net/EthDevice.h>
 #include <CCore/inc/net/UDPoint.h>
@@ -41,6 +42,10 @@ typedef Function<void (Packet<uint8> packet,PtrLen<const uint8> data,UDPoint udp
 /* classes */ 
 
 //enum IPEvent;
+
+struct NetEvent;
+
+class IPStatInfo;
 
 struct IPTxExt;
 
@@ -86,7 +91,7 @@ enum IPEvent
   
   IPTx_BadPacketLen,
   IPTx_TimeoutDrop,
-  IPTx_ARP_Mising,
+  IPTx_ARP_Missing,
   IPTx_ARP_Drop,
   IPTx_Drop,
   
@@ -98,8 +103,53 @@ enum IPEvent
  };
  
 const char * GetTextDesc(IPEvent ev); 
- 
-typedef Counters<IPEvent,IPEventLim> IPStatInfo;
+
+/* struct NetEvent */
+
+struct NetEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ip_event;
+  
+  void init(EventTimeType time_,EventIdType id_,IPEvent ip_event_)
+   {
+    time=time_; 
+    id=id_;
+    
+    ip_event=ip_event_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<NetEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<NetEvent *>(ptr)->id); }
+  
+  static void * Offset_ip_event(void *ptr) { return &(static_cast<NetEvent *>(ptr)->ip_event); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+/* class IPStatInfo */
+
+class IPStatInfo : public Counters<IPEvent,IPEventLim> 
+ {
+  public:
+
+   void count(IPEvent ip_event)
+    {
+     TaskEventHost.addProto<NetEvent>(ip_event);
+    
+     Counters<IPEvent,IPEventLim>::count(ip_event);
+    }
+   
+   void count(IPEvent ip_event,ulen cnt)
+    {
+     TaskEventHost.addProto<NetEvent>(ip_event);
+    
+     Counters<IPEvent,IPEventLim>::count(ip_event,cnt);
+    }
+ };
 
 /* struct IPTxExt */ 
 

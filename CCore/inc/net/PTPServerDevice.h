@@ -27,6 +27,7 @@
 #include <CCore/inc/Array.h>
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/PacketSet.h>
+#include <CCore/inc/task/TaskEvent.h>
 
 namespace CCore {
 namespace Net {
@@ -35,6 +36,10 @@ namespace PTP {
 /* classes */ 
 
 //enum ServerEvent;
+
+struct ServerProtoEvent;
+
+class ServerStatInfo;
 
 struct TransIndex;
 
@@ -46,7 +51,7 @@ class ServerDevice;
 
 /* enum ServerEvent */ 
 
-enum ServerEvent
+enum ServerEvent : uint8
  {
   ServerEvent_Trans,
   ServerEvent_TransDone,
@@ -79,9 +84,54 @@ enum ServerEvent
   ServerEventLim
  };
  
-const char * GetTextDesc(ServerEvent ev); 
+const char * GetTextDesc(ServerEvent ev);
 
-typedef Counters<ServerEvent,ServerEventLim> ServerStatInfo;
+/* struct ServerProtoEvent */
+
+struct ServerProtoEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+  
+  void init(EventTimeType time_,EventIdType id_,ServerEvent ev_)
+   {
+    time=time_; 
+    id=id_;
+    
+    ev=ev_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<ServerProtoEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<ServerProtoEvent *>(ptr)->id); }
+  
+  static void * Offset_ev(void *ptr) { return &(static_cast<ServerProtoEvent *>(ptr)->ev); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+/* class ServerStatInfo */
+
+class ServerStatInfo : public Counters<ServerEvent,ServerEventLim>
+ {
+  public:
+ 
+   void count(ServerEvent ev)
+    {
+     TaskEventHost.addProto<ServerProtoEvent>(ev);
+  
+     Counters<ServerEvent,ServerEventLim>::count(ev);
+    }
+  
+   void count(ServerEvent ev,ulen cnt)
+    {
+     TaskEventHost.addProto<ServerProtoEvent>(ev);
+  
+     Counters<ServerEvent,ServerEventLim>::count(ev,cnt);
+    }
+ };
 
 /* struct TransIndex */
 

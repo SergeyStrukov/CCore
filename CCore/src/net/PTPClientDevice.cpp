@@ -91,6 +91,47 @@ const char * GetTextDesc(ClientEvent ev)
   return Table[ev];
  }
  
+/* struct ClientProtoEvent */
+
+void ClientProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Ev=info.addEnum_uint8("PTPClient")
+    
+                 .addValueName(ClientEvent_Trans,"Trans")
+                 .addValueName(ClientEvent_TransDone,"Trans done")
+                 
+                 .addValueName(ClientEvent_BadInfoLen,"Bad info len")
+                 .addValueName(ClientEvent_Timeout,"Timeout")
+                 .addValueName(ClientEvent_Cancel,"Cancel")
+                 .addValueName(ClientEvent_Abort,"Abort")
+                 
+                 .addValueName(ClientEvent_CALL,"-> CALL")
+                 .addValueName(ClientEvent_RECALL,"-> RECALL")
+                 .addValueName(ClientEvent_ACK,"-> ACK")
+                 .addValueName(ClientEvent_SENDRET,"-> SENDRET")
+                 
+                 .addValueName(ClientEvent_RET,"<- RET")
+                 .addValueName(ClientEvent_NOINFO,"<- NOINFO")
+                 .addValueName(ClientEvent_RERET,"<- RERET")
+                 .addValueName(ClientEvent_CANCEL,"<- CANCEL")
+                 
+                 .addValueName(ClientEvent_NoSlot,"No slot")
+                 .addValueName(ClientEvent_NoPacket,"No packet")
+                 
+                 .addValueName(ClientEvent_BadInbound,"Bad inbound")
+                 .addValueName(ClientEvent_BadOutbound,"Bad outbound")
+                      
+                 .getId();
+  
+  auto id=info.addStruct("PTPClientEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint8(id_Ev,"event",Offset_ev)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class ClientEngine::Slot */ 
 
 void ClientEngine::Slot::send_CALL(PacketList &complete_list)

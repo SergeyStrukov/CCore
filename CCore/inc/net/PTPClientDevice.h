@@ -26,6 +26,7 @@
 #include <CCore/inc/Array.h>
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/PacketSet.h>
+#include <CCore/inc/task/TaskEvent.h>
 
 namespace CCore {
 namespace Net {
@@ -51,6 +52,10 @@ void GuardOutboundTooShort(const char *name);
 //enum TransResult;
 
 //enum ClientEvent;
+
+struct ClientProtoEvent;
+
+class ClientStatInfo;
 
 struct TransExt;
 
@@ -86,7 +91,7 @@ const char * GetTextDesc(TransResult result);
  
 /* enum ClientEvent */ 
 
-enum ClientEvent
+enum ClientEvent : uint8
  {
   ClientEvent_Trans,
   ClientEvent_TransDone,
@@ -117,8 +122,53 @@ enum ClientEvent
  
 const char * GetTextDesc(ClientEvent ev); 
 
-typedef Counters<ClientEvent,ClientEventLim> ClientStatInfo;
+/* struct ClientProtoEvent */
+
+struct ClientProtoEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+  
+  void init(EventTimeType time_,EventIdType id_,ClientEvent ev_)
+   {
+    time=time_; 
+    id=id_;
+    
+    ev=ev_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<ClientProtoEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<ClientProtoEvent *>(ptr)->id); }
+  
+  static void * Offset_ev(void *ptr) { return &(static_cast<ClientProtoEvent *>(ptr)->ev); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+/* class ClientStatInfo */
+
+class ClientStatInfo : public Counters<ClientEvent,ClientEventLim>
+ {
+  public:
  
+   void count(ClientEvent ev)
+    {
+     TaskEventHost.addProto<ClientProtoEvent>(ev);
+  
+     Counters<ClientEvent,ClientEventLim>::count(ev);
+    }
+ 
+   void count(ClientEvent ev,ulen cnt)
+    {
+     TaskEventHost.addProto<ClientProtoEvent>(ev);
+  
+     Counters<ClientEvent,ClientEventLim>::count(ev,cnt);
+    }
+ };
+
 /* struct TransExt */ 
 
 struct TransExt

@@ -51,6 +51,41 @@ const char * GetTextDesc(IPEvent ev)
   return Table[ev];
  }
  
+/* struct NetEvent */
+
+void NetEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_IPEvent=info.addEnum_uint8("IPEvent")
+    
+                      .addValueName(IPTx_ARP,"IP Tx ARP")
+                      .addValueName(IPTx_IP,"IP Tx IP")
+                      .addValueName(IPTx_UDP,"IP Tx UDP")
+                      
+                      .addValueName(IPRx_ARP,"IP Rx ARP")
+                      .addValueName(IPRx_IP,"IP Rx IP")
+                      .addValueName(IPRx_UDP,"IP Rx UDP")
+                      
+                      .addValueName(IPTx_BadPacketLen,"IP Tx bad packet len")
+                      .addValueName(IPTx_TimeoutDrop,"IP Tx timeout drop")
+                      .addValueName(IPTx_ARP_Missing,"IP Tx ARP missing")
+                      .addValueName(IPTx_ARP_Drop,"IP Tx ARP drop")
+                      .addValueName(IPTx_Drop,"IP Tx drop")
+                      
+                      .addValueName(IPRx_BadPacket,"IP Rx bad packet")
+                      .addValueName(IPRx_Drop,"IP Rx drop")
+                      .addValueName(IPRx_UDP_NoPort,"IP Rx UDP no port")
+                      
+                      .getId();
+  
+  auto id=info.addStruct("NetEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint8(id_IPEvent,"ip_event",Offset_ip_event)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class ARPTable */ 
 
 ARPTable::TickResult ARPTable::TimeGuard::tick(bool noalert)
@@ -1142,7 +1177,7 @@ void NanoIPDevice::prepare_ip(PacketHeader *packet_)
   
      eth_packet.pushCompleteFunction(DropPacketExt<uint8,EthTxExt>);
     
-     stat.count(IPTx_ARP_Mising);
+     stat.count(IPTx_ARP_Missing);
      
      switch( arp_pending.add(dst,eth_packet) ) 
        {
