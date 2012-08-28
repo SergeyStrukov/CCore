@@ -27,6 +27,10 @@
 
 namespace CCore {
 
+/* consts */
+
+const ulen MaxEventLen = 256 ;
+
 /* types */
 
 typedef uint32 EventTimeType;
@@ -1001,6 +1005,8 @@ class EventRecorder : public EventMetaInfo
    explicit EventRecorder(ulen buf_len_)
     : EventMetaInfo(Algo::TimeFreq)
     {
+     Replace_max(buf_len_,MaxEventLen);
+     
      buf=MemAlloc(buf_len_);
      buf_len=buf_len_;
      
@@ -1015,13 +1021,15 @@ class EventRecorder : public EventMetaInfo
    template <class T,class ... SS>
    void add(SS && ... ss)
     {
-     static_assert(std::is_pod<T>::value, "CCore::EventRecorder<Algo>::add(...) : T must be POD" );
+     static_assert( std::is_pod<T>::value ,"CCore::EventRecorder<Algo>::add(...) : T must be POD");
      
-     ulen len=Align(sizeof (T),RecordAlign);
+     const ulen len=Align(sizeof (T),RecordAlign);
+     
+     static_assert( len<=MaxEventLen ,"CCore::EventRecorder<Algo>::add(...) : T is too large");
      
      ulen off=(pos+=len);
      
-     if( len>buf_len-off )
+     if( off>buf_len-len )
        {
         pos-=len;
        }
