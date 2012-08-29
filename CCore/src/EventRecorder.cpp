@@ -164,7 +164,7 @@ auto EventMetaInfo::getEvent(EventIdType id) const -> const EventDesc &
 
 /* struct EventIdNode */
 
-static EventIdNode * List = 0 ;
+EventIdNode * EventIdNode::List = 0 ;
 
 EventIdNode::EventIdNode(RegisterFunc func_,ulen size_of_)
  {
@@ -176,9 +176,58 @@ EventIdNode::EventIdNode(RegisterFunc func_,ulen size_of_)
   func=func_; 
  }
 
+void EventIdNode::reg(EventMetaInfo &info,ulen align) 
+ {
+  auto &desc=info.addEvent(Align(size_of,align));
+ 
+  id=desc.getId();
+  
+  func(info,desc);
+ }
+
 void EventIdNode::Register(EventMetaInfo &info,ulen align)
  {
   for(EventIdNode *ptr=List; ptr ;ptr=ptr->next) ptr->reg(info,align); 
+ }
+
+/* class EventTypeIdNode */
+
+EventTypeIdNode * EventTypeIdNode::List = 0 ;
+
+EventTypeIdNode::EventTypeIdNode(RegisterFunc func_)
+ {
+  next=List;
+  List=this;
+  
+  func=func_;
+  id=0;
+  state=None;
+ }
+   
+EventIdType EventTypeIdNode::getId(EventMetaInfo &info)
+ {
+  if( state==InProgress )
+    {
+     Printf(Exception,"CCore::EventTypeIdNode::getId(...) : type registration cyclic dependency");
+    }
+  
+  if( state==None )
+    {
+     state=InProgress;
+    
+     id=func(info);
+     
+     state=Done;
+    }
+  
+  return id;
+ }
+
+void EventTypeIdNode::Register(EventMetaInfo &info)
+ {
+  for(EventTypeIdNode *ptr=List; ptr ;ptr=ptr->next) ptr->state=None;
+  
+  for(EventTypeIdNode *ptr=List; ptr ;ptr=ptr->next) ptr->getId(info);
  }
 
 /* struct EventControl */

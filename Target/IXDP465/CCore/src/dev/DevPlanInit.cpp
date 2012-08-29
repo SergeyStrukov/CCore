@@ -53,7 +53,7 @@ static void BuildTT()
    
   ClearTT(base);
   
-  FillTTRegion(base,0x000,0x040,Section_AP_UNO|Section_Cache|Section_Buff); // RAM
+  FillTTRegion(base,0x000,0x080,Section_AP_UNO|Section_Cache|Section_Buff); // RAM
    
   FillTTRegion(base,0x001,0x001,Section_AP_UNO); // RAM  No cache
    

@@ -20,7 +20,7 @@
         @ .code+.data+.bss   3M
         
         .weak   __std_mem_size
-        .set    __std_mem_size , 0x3B00000         @  align 16 , 59M
+        .set    __std_mem_size , 0x7B00000         @  align 16 , 59M+64M
         .global __std_mem_size
         
 @------------------------------------------------------------------------------
@@ -34,7 +34,7 @@
         .global __std_int_stack_size
         
         .weak   __std_heap_size
-        .set    __std_heap_size , 0x3700000        @  align 16 , 55M
+        .set    __std_heap_size , 0x7700000        @  align 16 , 55M+64M
         .global __std_heap_size
         
         .weak   __std_int_heap_size

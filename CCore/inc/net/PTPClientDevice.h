@@ -53,6 +53,8 @@ void GuardOutboundTooShort(const char *name);
 
 //enum ClientEvent;
 
+struct ClientEventRegType;
+
 struct ClientProtoEvent;
 
 struct ClientProtoEvent_slot;
@@ -123,6 +125,13 @@ enum ClientEvent : uint8
  };
  
 const char * GetTextDesc(ClientEvent ev); 
+
+/* struct ClientEventRegType */
+
+struct ClientEventRegType
+ {
+  static EventIdType Register(EventMetaInfo &info);  
+ };
 
 /* struct ClientProtoEvent */
 

@@ -62,46 +62,51 @@ const char * GetTextDesc(ServerEvent ev)
   return Table[ev];
  }
  
+/* struct ServerEventRegType */
+
+EventIdType ServerEventRegType::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint8("PTPServer")
+    
+             .addValueName(ServerEvent_Trans,"Trans")
+             .addValueName(ServerEvent_TransDone,"Trans done")
+                 
+             .addValueName(ServerEvent_Timeout,"Timeout")
+             .addValueName(ServerEvent_Cancel,"Cancel")
+             .addValueName(ServerEvent_ClientCancel,"Client cancel")
+             .addValueName(ServerEvent_Abort,"Abort")
+                 
+             .addValueName(ServerEvent_CALL,"<- CALL")
+             .addValueName(ServerEvent_RECALL,"<- RECALL")
+             .addValueName(ServerEvent_SENDRET,"<- SENDRET")
+             .addValueName(ServerEvent_ACK,"<- ACK")
+                 
+             .addValueName(ServerEvent_RET,"-> RET")
+             .addValueName(ServerEvent_CANCEL,"-> CANCEL")
+             .addValueName(ServerEvent_NOINFO,"-> NOINFO")
+             .addValueName(ServerEvent_RERET,"-> RERET")
+                 
+             .addValueName(ServerEvent_BadTransId,"Bad TransId")
+                 
+             .addValueName(ServerEvent_NoSlot,"No slot")
+             .addValueName(ServerEvent_NoSlotCancel,"No slot cancel")
+             .addValueName(ServerEvent_NoFreeSlot,"No free slot")
+             .addValueName(ServerEvent_NoPacket,"No packet")
+                 
+             .addValueName(ServerEvent_BadInbound,"Bad inbound")
+             .addValueName(ServerEvent_BadOutbound,"Bad outbound")
+                      
+             .getId();
+ }
+
 /* struct ServerProtoEvent */
 
 void ServerProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
-  auto id_Ev=info.addEnum_uint8("PTPServer")
-    
-                 .addValueName(ServerEvent_Trans,"Trans")
-                 .addValueName(ServerEvent_TransDone,"Trans done")
-                 
-                 .addValueName(ServerEvent_Timeout,"Timeout")
-                 .addValueName(ServerEvent_Cancel,"Cancel")
-                 .addValueName(ServerEvent_ClientCancel,"Client cancel")
-                 .addValueName(ServerEvent_Abort,"Abort")
-                 
-                 .addValueName(ServerEvent_CALL,"<- CALL")
-                 .addValueName(ServerEvent_RECALL,"<- RECALL")
-                 .addValueName(ServerEvent_SENDRET,"<- SENDRET")
-                 .addValueName(ServerEvent_ACK,"<- ACK")
-                 
-                 .addValueName(ServerEvent_RET,"-> RET")
-                 .addValueName(ServerEvent_CANCEL,"-> CANCEL")
-                 .addValueName(ServerEvent_NOINFO,"-> NOINFO")
-                 .addValueName(ServerEvent_RERET,"-> RERET")
-                 
-                 .addValueName(ServerEvent_BadTransId,"Bad TransId")
-                 
-                 .addValueName(ServerEvent_NoSlot,"No slot")
-                 .addValueName(ServerEvent_NoSlotCancel,"No slot cancel")
-                 .addValueName(ServerEvent_NoFreeSlot,"No free slot")
-                 .addValueName(ServerEvent_NoPacket,"No packet")
-                 
-                 .addValueName(ServerEvent_BadInbound,"Bad inbound")
-                 .addValueName(ServerEvent_BadOutbound,"Bad outbound")
-                      
-                 .getId();
-  
   auto id=info.addStruct("PTPServerEvent")
               .addField_uint32("time",Offset_time)
               .addField_uint16("id",Offset_id)
-              .addField_enum_uint8(id_Ev,"event",Offset_ev)
+              .addField_enum_uint8(EventTypeId<ServerEventRegType>::GetId(),"event",Offset_ev)
               .getId();
   
   desc.setStructId(info,id);
@@ -111,42 +116,10 @@ void ServerProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &de
 
 void ServerProtoEvent_slot::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
-  auto id_Ev=info.addEnum_uint8("PTPServer")
-    
-                 .addValueName(ServerEvent_Trans,"Trans")
-                 .addValueName(ServerEvent_TransDone,"Trans done")
-                 
-                 .addValueName(ServerEvent_Timeout,"Timeout")
-                 .addValueName(ServerEvent_Cancel,"Cancel")
-                 .addValueName(ServerEvent_ClientCancel,"Client cancel")
-                 .addValueName(ServerEvent_Abort,"Abort")
-                 
-                 .addValueName(ServerEvent_CALL,"<- CALL")
-                 .addValueName(ServerEvent_RECALL,"<- RECALL")
-                 .addValueName(ServerEvent_SENDRET,"<- SENDRET")
-                 .addValueName(ServerEvent_ACK,"<- ACK")
-                 
-                 .addValueName(ServerEvent_RET,"-> RET")
-                 .addValueName(ServerEvent_CANCEL,"-> CANCEL")
-                 .addValueName(ServerEvent_NOINFO,"-> NOINFO")
-                 .addValueName(ServerEvent_RERET,"-> RERET")
-                 
-                 .addValueName(ServerEvent_BadTransId,"Bad TransId")
-                 
-                 .addValueName(ServerEvent_NoSlot,"No slot")
-                 .addValueName(ServerEvent_NoSlotCancel,"No slot cancel")
-                 .addValueName(ServerEvent_NoFreeSlot,"No free slot")
-                 .addValueName(ServerEvent_NoPacket,"No packet")
-                 
-                 .addValueName(ServerEvent_BadInbound,"Bad inbound")
-                 .addValueName(ServerEvent_BadOutbound,"Bad outbound")
-                      
-                 .getId();
-  
   auto id=info.addStruct("PTPServerEvent_slot")
               .addField_uint32("time",Offset_time)
               .addField_uint16("id",Offset_id)
-              .addField_enum_uint8(id_Ev,"event",Offset_ev)
+              .addField_enum_uint8(EventTypeId<ServerEventRegType>::GetId(),"event",Offset_ev)
               .addField_uint32("slot",Offset_slot)
               .getId();
   

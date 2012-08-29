@@ -37,6 +37,8 @@ namespace PTP {
 
 //enum ServerEvent;
 
+struct ServerEventRegType;
+
 struct ServerProtoEvent;
 
 struct ServerProtoEvent_slot;
@@ -87,6 +89,13 @@ enum ServerEvent : uint8
  };
  
 const char * GetTextDesc(ServerEvent ev);
+
+/* struct ServerEventRegType */
+
+struct ServerEventRegType
+ {
+  static EventIdType Register(EventMetaInfo &info);  
+ };
 
 /* struct ServerProtoEvent */
 

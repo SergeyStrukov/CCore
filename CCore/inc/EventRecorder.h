@@ -49,6 +49,10 @@ class EventIdNode;
 
 template <class T> class EventId;
 
+class EventTypeIdNode;
+
+template <class T> class EventTypeId;
+
 struct EventControl;
 
 template <class Algo> class EventRecorder;
@@ -907,16 +911,11 @@ class EventIdNode
    ulen size_of;
    RegisterFunc func;
    
+   static EventIdNode * List;
+   
   private:
    
-   void reg(EventMetaInfo &info,ulen align) 
-    {
-     auto &desc=info.addEvent(Align(size_of,align));
-    
-     id=desc.getId();
-     
-     func(info,desc);
-    }
+   void reg(EventMetaInfo &info,ulen align); 
    
   public: 
   
@@ -941,6 +940,58 @@ class EventId
 
 template <class T> 
 EventIdNode EventId<T>::Node(T::Register,sizeof (T));
+
+/* class EventTypeIdNode */
+
+class EventTypeIdNode
+ {
+  public:
+  
+   typedef EventIdType (*RegisterFunc)(EventMetaInfo &info);
+   
+  private:
+   
+   enum State
+    {
+     None,
+     InProgress,
+     Done
+    };
+   
+   EventTypeIdNode *next;
+   RegisterFunc func;
+   EventIdType id;
+   State state;
+   
+   static EventTypeIdNode * List;
+   
+  public: 
+   
+   explicit EventTypeIdNode(RegisterFunc func);
+   
+   EventIdType getId() const { return id; }
+   
+   EventIdType getId(EventMetaInfo &info);
+   
+   static void Register(EventMetaInfo &info);
+ };
+
+/* class EventTypeId<T> */
+
+template <class T>
+class EventTypeId
+ {
+   static EventTypeIdNode Node;
+   
+  public:
+  
+   static EventIdType GetId() { return Node.getId(); }
+   
+   static EventIdType GetId(EventMetaInfo &info) { return Node.getId(info); }
+ };
+
+template <class T>
+EventTypeIdNode EventTypeId<T>::Node(T::Register);
 
 /* struct EventControl */
 
@@ -1157,6 +1208,8 @@ class EventRecorderHost : NoCopy
       StartStop(EventRecorderHost &host_,Recorder *obj) 
        : host(host_) 
        {
+        EventTypeIdNode::Register(*obj);
+       
         EventIdNode::Register(*obj,Recorder::RecordAlign);
        
         host_.start(obj); 
