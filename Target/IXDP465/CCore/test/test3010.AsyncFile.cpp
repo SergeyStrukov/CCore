@@ -120,7 +120,7 @@ bool Testit<3010>::Main()
   
   HostEngine host_engine(Net::UDPoint(192,168,1,1,Net::PTPServerUDPort));
   
-  TaskEventRecorder recorder(15_MByte);
+  TaskEventRecorder recorder(60_MByte);
 
   {
    TaskEventHostType::StartStop start_stop(TaskEventHost,&recorder);

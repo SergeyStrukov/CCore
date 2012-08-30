@@ -483,7 +483,7 @@ class Target : NoCopy
    
    ~Target();
    
-   ulen getMemLen() const { return 64_MByte; }
+   ulen getMemLen() const { return 128_MByte; }
    
    void reset(); 
    

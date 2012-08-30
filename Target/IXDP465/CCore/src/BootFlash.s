@@ -37,7 +37,7 @@ __std_bootflash_beg:
         mov     r1, #0x1000
         bl      TestSDRAM
         
-        mov     r1, #0x4000000
+        mov     r1, #0x8000000
         mov     r0, #0x1000
         sub     r0, r1, r0
         bl      TestSDRAM
@@ -172,7 +172,7 @@ ConfigSDRAM:
         
 .MCU_SDBR_val:    .word   0x00000000
 .MCU_SBR0_val:    .word   0x80000002
-.MCU_SBR1_val:    .word   0x80000002
+.MCU_SBR1_val:    .word   0x80000004
         
 @--- Init SDRAM ---------------------------------------------------------------
         

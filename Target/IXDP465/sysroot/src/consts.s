@@ -17,10 +17,10 @@
         .set    __std_image_base , 0x200000        @  align 16 , >= 2M
         .global __std_image_base
         
-        @ .code+.data+.bss   3M
+        @ .code+.data+.bss   4M
         
         .weak   __std_mem_size
-        .set    __std_mem_size , 0x7B00000         @  align 16 , 59M+64M
+        .set    __std_mem_size , 0x7A00000         @  align 16 , 58M+64M
         .global __std_mem_size
         
 @------------------------------------------------------------------------------
@@ -34,7 +34,7 @@
         .global __std_int_stack_size
         
         .weak   __std_heap_size
-        .set    __std_heap_size , 0x7700000        @  align 16 , 55M+64M
+        .set    __std_heap_size , 0x7600000        @  align 16 , 54M+64M
         .global __std_heap_size
         
         .weak   __std_int_heap_size

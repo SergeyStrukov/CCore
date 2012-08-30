@@ -133,6 +133,8 @@ int Main()
   bool notus=InitFPGA();
   
   if( notus ) Printf(Con,"Started from RedBoot\n");
+
+  Printf(Con,"#; #;\n",__DATE__,__TIME__);
  
   Boot boot(!notus);
   
