@@ -18,6 +18,7 @@
 
 #include <CCore/inc/task/AutoText.h>
 #include <CCore/inc/task/TaskMonitor.h>
+#include <CCore/inc/task/TaskEvent.h>
 
 #include <CCore/inc/TimeScope.h>
 
@@ -40,7 +41,7 @@ class TaskBase : public TaskMonitor::Link
    
    TaskList *owned_list;
    
-   uint16 task_number;
+   EventEnumValue<TaskNumber> task_number;
    
   private: 
    
@@ -65,8 +66,6 @@ class TaskBase : public TaskMonitor::Link
    
   protected: 
    
-   uint16 getTaskNumber() const { return task_number; }
-   
    void delList(); // IntLocked
    
    void guardList();
@@ -80,6 +79,10 @@ class TaskBase : public TaskMonitor::Link
    TaskBase(TextLabel name,TaskPriority priority);
    
    ~TaskBase() {}
+   
+   uint16 getTaskNumber() const { return task_number; }
+   
+   void event() { TaskEventHost.add<TaskSwitchEvent>(task_number); }
  };
 
 /* class TaskList */  

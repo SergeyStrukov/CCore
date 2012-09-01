@@ -17,6 +17,7 @@
 #define CCore_inc_task_TaskEvent_h
 
 #include <CCore/inc/EventRecorder.h>
+#include <CCore/inc/Task.h>
 #include <CCore/inc/sys/SysTime.h>
  
 #define CCORE_TASK_EVENT_ENABLE

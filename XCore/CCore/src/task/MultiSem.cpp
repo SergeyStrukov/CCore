@@ -23,9 +23,69 @@
 
 namespace CCore {
 
+/* struct MultiSemNumber */
+
+EventIdType MultiSemNumber::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint16("MultiSemNumber")
+             .setAppendFunc(EventEnumValue<MultiSemNumber>::Append)
+             .getId();
+ }
+
+/* struct MultiSemEvent */
+
+void MultiSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("MultiSemEventType")
+                   .addValueName(Give,"Give")
+                   .getId();
+  
+  auto id=info.addStruct("MultiSemEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<MultiSemNumber>::GetId(),"msem",Offset_msem)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .addField_uint8("index",Offset_index)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
+/* struct MultiSemEvent_task */
+
+void MultiSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("MultiSemEventTaskType")
+                   .addValueName(ToTask,"ToTask")
+                   .addValueName(Block,"Block")
+                   .addValueName(Take,"Take")
+                   .getId();
+  
+  auto id=info.addStruct("MultiSemEventTask")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<TaskNumber>::GetId(),"task",Offset_task)
+              .addField_enum_uint16(EventTypeId<MultiSemNumber>::GetId(),"msem",Offset_msem)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .addField_uint8("index",Offset_index)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class MultiSemBase */ 
 
 AutoTextNameType MultiSemBase::ObjName="MultiSem";
+ 
+void MultiSemBase::event(TaskBase *task,MultiSemEvent_task::Type type,ulen index)
+ {
+  TaskEventHost.addSync<MultiSemEvent_task>(task->getTaskNumber(),msem_number,type,index);
+ }
+
+void MultiSemBase::event(MultiSemEvent::Type type,ulen index)
+ {
+  TaskEventHost.addSync<MultiSemEvent>(msem_number,type,index);
+ }
  
 template <class ... TT> 
 void MultiSemBase::Log(const char *format,const TT & ... tt)
@@ -53,12 +113,16 @@ void MultiSemBase::give_locked(T cur,F Release,ulen index)
     {
      base=nextIndex(base);
      
+     event(task,MultiSemEvent_task::ToTask,index);
+     
      Log("#;:#; is given by #; to #;",name,index,GetTaskName(cur),task->getName());
      
      Release(task,Release_Custom+index);
     }
   else
     {
+     event(MultiSemEvent::Give,index);
+     
      Log("#;:#; is given by #;",name,index,GetTaskName(cur));
      
      putIndex(index);
@@ -79,6 +143,8 @@ ulen MultiSemBase::try_take_locked()
         
         index++;
         
+        event(Task::GetCurrent(),MultiSemEvent_task::Take,index);
+        
         Log("#;:#; is taken by #;",name,index,GetTaskName(CurTaskContext));
         
         return index;
@@ -91,6 +157,8 @@ ulen MultiSemBase::try_take_locked()
 ulen MultiSemBase::take_locked(MSec timeout)
  {
   if( ulen index=try_take_locked() ) return index;
+  
+  event(Task::GetCurrent(),MultiSemEvent_task::Block);
      
   Log("#; is blocked on #; timed = #;",GetTaskName(CurTaskContext),name,timeout);
        
@@ -100,13 +168,15 @@ ulen MultiSemBase::take_locked(MSec timeout)
  }
 
 MultiSemBase::MultiSemBase(PtrLen<ulen> counts)
- : name(GetAutoText<ObjName>())
+ : name(GetAutoText<ObjName>()),
+   msem_number(name)
  {
   init(counts);
  }
    
 MultiSemBase::MultiSemBase(TextLabel name_,PtrLen<ulen> counts)
- : name(name_)
+ : name(name_),
+   msem_number(name)
  {
   init(counts);
  }
@@ -151,6 +221,8 @@ ulen MultiSemBase::take()
   Dev::IntLock lock;
   
   if( ulen index=try_take_locked() ) return index;
+  
+  event(Task::GetCurrent(),MultiSemEvent_task::Block);
   
   Log("#; is blocked on #;",GetTaskName(CurTaskContext),name);
        

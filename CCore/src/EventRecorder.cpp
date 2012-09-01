@@ -15,9 +15,17 @@
  
 #include <CCore/inc/EventRecorder.h>
 
+#include <CCore/inc/Task.h>
 #include <CCore/inc/Exception.h>
  
 namespace CCore {
+
+/* functions */
+
+void WaitAtomicZero(Atomic &count)
+ {
+  while( count ) Task::Yield(); 
+ }
 
 /* class EventMetaInfo */
 

@@ -20,15 +20,112 @@
  
 namespace CCore {
 
-/* classes */ 
+/* classes */
+
+struct SemNumber;
+
+struct SemEvent;
+
+struct SemEvent_task;
 
 class Sem;
+
+/* struct SemNumber */
+
+struct SemNumber
+ {
+  typedef uint16 ValueType;
+  
+  static const ValueType Base = 0 ;
+  static const ValueType Lim = Base+DefaultEventElementCount ;
+  
+  static EventIdType Register(EventMetaInfo &info);  
+ };
+
+/* struct SemEvent */
+
+struct SemEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 sem;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    ToTaskList,
+    Inc,
+    Add
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 sem_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    sem=sem_;
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<SemEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<SemEvent *>(ptr)->id); }
+  
+  static void * Offset_sem(void *ptr) { return &(static_cast<SemEvent *>(ptr)->sem); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<SemEvent *>(ptr)->type); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+/* struct SemEvent_task */
+
+struct SemEvent_task
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 task;
+  uint16 sem;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    ToTask, 
+    Dec,    
+    Block  
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 task_,uint16 sem_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    task=task_;
+    sem=sem_;
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<SemEvent_task *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<SemEvent_task *>(ptr)->id); }
+  
+  static void * Offset_task(void *ptr) { return &(static_cast<SemEvent_task *>(ptr)->task); }
+  
+  static void * Offset_sem(void *ptr) { return &(static_cast<SemEvent_task *>(ptr)->sem); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<SemEvent_task *>(ptr)->type); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
 
 /* class Sem */ 
 
 class Sem : public Funchor_nocopy
  {
    TextLabel name;
+   EventEnumValue<SemNumber> sem_number;
    ulen count;
    TaskList list;
   
@@ -36,6 +133,10 @@ class Sem : public Funchor_nocopy
   
    static AutoTextNameType ObjName;
     
+   void event(TaskBase *task,SemEvent_task::Type type);
+   
+   void event(SemEvent::Type type);
+   
    template <class ... TT> 
    static void Log(const char *format,const TT & ... tt);
    

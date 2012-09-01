@@ -592,7 +592,7 @@ void Task::Internal::SwitchTask_task(Task *task)
  
   if( task==cur ) return;
   
-  TaskEventHost.add<TaskSwitchEvent>(task->getTaskNumber());
+  task->event();
  
   Log("task switch from #; to #;",cur->getName(),task->getName());
   
@@ -670,8 +670,8 @@ void Task::Internal::SwitchTask_int(Task *task)
  
   if( task==cur ) return;
   
-  TaskEventHost.add<TaskSwitchEvent>(task->getTaskNumber());
- 
+  task->event();
+  
   Log("interrupt switch from #; to #;",cur->getName(),task->getName());
  
   Current=task;

@@ -21,20 +21,25 @@ namespace CCore {
 
 TaskEventHostType TaskEventHost;
 
+/* struct TaskNumber */
+
+EventIdType TaskNumber::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint16("TaskNumber")
+             .addValueName(EnterInt,"EnterInt")
+             .addValueName(LeaveInt,"LeaveInt")
+             .setAppendFunc(EventEnumValue<TaskNumber>::Append)
+             .getId();
+ }
+
 /* struct TaskSwitchEvent */
 
 void TaskSwitchEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
-  auto id_Type=info.addEnum_uint16("TaskSwitchType")
-                   .addValueName(EnterInt,"EnterInt")
-                   .addValueName(LeaveInt,"LeaveInt")
-                   .setAppendFunc(EventEnumValue<TaskNumber>::Append)
-                   .getId();
-  
   auto id=info.addStruct("TaskSwitch")
               .addField_uint32("time",Offset_time)
               .addField_uint16("id",Offset_id)
-              .addField_enum_uint16(id_Type,"type",Offset_type)
+              .addField_enum_uint16(EventTypeId<TaskNumber>::GetId(),"task",Offset_task)
               .getId();
   
   desc.setStructId(info,id);

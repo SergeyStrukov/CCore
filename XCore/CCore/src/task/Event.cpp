@@ -21,9 +21,67 @@
 
 namespace CCore {
 
+/* struct EventNumber */
+
+EventIdType EventNumber::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint16("EventNumber")
+             .setAppendFunc(EventEnumValue<EventNumber>::Append)
+             .getId();
+ }
+
+/* struct EventEvent */
+
+void EventEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("EventEventType")
+                   .addValueName(Trigger,"Trigger")
+                   .getId();
+  
+  auto id=info.addStruct("EventEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<EventNumber>::GetId(),"event",Offset_event)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
+/* struct EventEvent_task */
+
+void EventEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("EventEventTaskType")
+                   .addValueName(ToTask,"ToTask")
+                   .addValueName(Consume,"Consume")
+                   .addValueName(Block,"Block")
+                   .getId();
+  
+  auto id=info.addStruct("EventEventTask")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<TaskNumber>::GetId(),"task",Offset_task)
+              .addField_enum_uint16(EventTypeId<EventNumber>::GetId(),"event",Offset_event)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class Event */ 
 
 AutoTextNameType Event::ObjName="Event";
+
+void Event::event(TaskBase *task,EventEvent_task::Type type)
+ {
+  TaskEventHost.addSync<EventEvent_task>(task->getTaskNumber(),event_number,type);
+ }
+
+void Event::event(EventEvent::Type type)
+ {
+  TaskEventHost.addSync<EventEvent>(event_number,type);
+ }
 
 template <class ... TT> 
 void Event::Log(const char *format,const TT & ... tt)
@@ -45,6 +103,8 @@ bool Event::trigger_locked(T cur,F Release)
      
      if( task )
        {
+        event(task,EventEvent_task::ToTask);
+        
         Log("#; is triggered by #; to #;",name,GetTaskName(cur),task->getName());
         
         Release(task,Release_Ok);
@@ -52,6 +112,8 @@ bool Event::trigger_locked(T cur,F Release)
      else
        {
         flag=true;
+        
+        event(EventEvent::Trigger);
         
         Log("#; is triggered by #;",name,GetTaskName(cur));
        }
@@ -68,12 +130,16 @@ bool Event::wait_locked(MSec timeout)
     {
      flag=false;
      
+     event(Task::GetCurrent(),EventEvent_task::Consume);
+     
      Log("#; is consumed by #;",name,GetTaskName(CurTaskContext));
        
      return true;
     }
   else
     {
+     event(Task::GetCurrent(),EventEvent_task::Block);
+     
      Log("#; is blocked on #; timed = #;",GetTaskName(CurTaskContext),name,timeout);
        
      return Task::Internal::BlockTask_task(list,timeout)==Release_Ok;
@@ -81,13 +147,15 @@ bool Event::wait_locked(MSec timeout)
  }
 
 Event::Event(bool flag)
- : name(GetAutoText<ObjName>())
+ : name(GetAutoText<ObjName>()),
+   event_number(name) 
  {
   init(flag);
  }
    
 Event::Event(TextLabel name_,bool flag)
- : name(name_)
+ : name(name_),
+   event_number(name)
  {
   init(flag);
  }
@@ -124,6 +192,8 @@ bool Event::try_wait()
     {
      flag=false;
      
+     event(Task::GetCurrent(),EventEvent_task::Consume);
+     
      Log("#; is consumed by #;",name,GetTaskName(CurTaskContext));
        
      return true;
@@ -142,10 +212,14 @@ void Event::wait()
     {
      flag=false;
      
+     event(Task::GetCurrent(),EventEvent_task::Consume);
+     
      Log("#; is consumed by #;",name,GetTaskName(CurTaskContext));
     }
   else
     {
+     event(Task::GetCurrent(),EventEvent_task::Block);
+    
      Log("#; is blocked on #;",GetTaskName(CurTaskContext),name);
        
      Task::Internal::BlockTask_task(list);

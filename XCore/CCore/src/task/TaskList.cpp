@@ -128,12 +128,11 @@ void TaskBase::guardList()
 
 TaskBase::TaskBase(TextLabel name,TaskPriority priority)
  : TaskMonitor::Link(name,priority),
-   actual_priority(priority)
+   actual_priority(priority),
+   task_number(name)
  {
   list=0;
   owned_list=0;
-  
-  task_number=EventEnumValue<TaskSwitchEvent::TaskNumber>(name);
  }
  
 /* struct TaskList::FindResult */

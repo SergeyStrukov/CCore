@@ -33,6 +33,8 @@ struct TaskEventAlgo;
 
 class TaskEventHostType;
 
+struct TaskNumber;
+
 struct TaskSwitchEvent;
 
 /* struct TaskEventAlgo */
@@ -164,16 +166,13 @@ class TaskEventHostType
 
 extern TaskEventHostType TaskEventHost;
 
-/* struct TaskSwitchEvent */
+/* struct TaskNumber */
 
-struct TaskSwitchEvent
+struct TaskNumber
  {
-  EventTimeType time;
-  EventIdType id;
+  typedef uint16 ValueType;
   
-  uint16 type;
-  
-  enum Type : uint16
+  enum Value : uint16
    {
     EnterInt,
     LeaveInt,
@@ -181,27 +180,34 @@ struct TaskSwitchEvent
     TaskBase
    };
   
-  struct TaskNumber
-   {
-    typedef uint16 ValueType;
-    
-    static const ValueType Base = TaskBase ;
-    static const ValueType Lim = Base+DefaultEventElementCount ;
-   };
+  static const ValueType Base = TaskBase ;
+  static const ValueType Lim = Base+DefaultEventElementCount ;
   
-  void init(EventTimeType time_,EventIdType id_,uint16 type_)
+  static EventIdType Register(EventMetaInfo &info);  
+ };
+
+/* struct TaskSwitchEvent */
+
+struct TaskSwitchEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 task;
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 task_)
    {
     time=time_;
     id=id_;
     
-    type=type_;
+    task=task_;
    }
   
   static void * Offset_time(void *ptr) { return &(static_cast<TaskSwitchEvent *>(ptr)->time); }
   
   static void * Offset_id(void *ptr) { return &(static_cast<TaskSwitchEvent *>(ptr)->id); }
   
-  static void * Offset_type(void *ptr) { return &(static_cast<TaskSwitchEvent *>(ptr)->type); }
+  static void * Offset_task(void *ptr) { return &(static_cast<TaskSwitchEvent *>(ptr)->task); }
   
   static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
  };

@@ -23,9 +23,69 @@
 
 namespace CCore {
 
+/* struct SemNumber */
+
+EventIdType SemNumber::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint16("SemNumber")
+             .setAppendFunc(EventEnumValue<SemNumber>::Append)
+             .getId();
+ }
+
+/* struct SemEvent */
+
+void SemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("SemEventType")
+                   .addValueName(ToTaskList,"ToTaskList")
+                   .addValueName(Inc,"Inc")
+                   .addValueName(Add,"Add")
+                   .getId();
+  
+  auto id=info.addStruct("SemEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<SemNumber>::GetId(),"sem",Offset_sem)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
+/* struct SemEvent_task */
+
+void SemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("SemEventTaskType")
+                   .addValueName(ToTask,"ToTask")
+                   .addValueName(Dec,"Dec")
+                   .addValueName(Block,"Block")
+                   .getId();
+  
+  auto id=info.addStruct("SemEventTask")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<TaskNumber>::GetId(),"task",Offset_task)
+              .addField_enum_uint16(EventTypeId<SemNumber>::GetId(),"sem",Offset_sem)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class Sem */ 
 
 AutoTextNameType Sem::ObjName="Sem";
+
+void Sem::event(TaskBase *task,SemEvent_task::Type type)
+ {
+  TaskEventHost.addSync<SemEvent_task>(task->getTaskNumber(),sem_number,type);
+ }
+
+void Sem::event(SemEvent::Type type)
+ {
+  TaskEventHost.addSync<SemEvent>(sem_number,type);
+ }
 
 template <class ... TT> 
 void Sem::Log(const char *format,const TT & ... tt)
@@ -53,6 +113,8 @@ void Sem::give_locked(T cur,F Release)
  {
   if( count )
     {
+     event(SemEvent::Inc);
+    
      Log("#; is given by #;",name,GetTaskName(cur));
      
      inc();
@@ -63,6 +125,8 @@ void Sem::give_locked(T cur,F Release)
      
      if( task )
        {
+        event(task,SemEvent_task::ToTask);
+        
         Log("#; is given by #; to #;",name,GetTaskName(cur),task->getName());
      
         Release(task,Release_Ok);
@@ -70,6 +134,8 @@ void Sem::give_locked(T cur,F Release)
      else
        {
         count=1;
+        
+        event(SemEvent::Inc);
         
         Log("#; is given by #;",name,GetTaskName(cur));
        }
@@ -81,6 +147,8 @@ void Sem::give_many_locked(T cur,F Release,ulen dcount)
  {
   if( count )
     {
+     event(SemEvent::Add);
+    
      Log("#; is given by #; #; times",name,GetTaskName(cur),dcount);
      
      add(dcount);
@@ -93,6 +161,8 @@ void Sem::give_many_locked(T cur,F Release,ulen dcount)
        
         count=dcount;
            
+        event(SemEvent::ToTaskList);
+       
         Log("#; is given by #; #; times",name,GetTaskName(cur),dcount);
      
         Release(temp,Release_Ok,name);
@@ -101,6 +171,8 @@ void Sem::give_many_locked(T cur,F Release,ulen dcount)
        {
         count=dcount;
         
+        event(SemEvent::Add);
+       
         Log("#; is given by #; #; times",name,GetTaskName(cur),dcount);
        }
     }  
@@ -112,12 +184,16 @@ bool Sem::take_locked(MSec timeout)
     {
      count--;
      
+     event(Task::GetCurrent(),SemEvent_task::Dec);
+     
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
        
      return true;
     }
   else
     {
+     event(Task::GetCurrent(),SemEvent_task::Block);
+     
      Log("#; is blocked on #; timed = #;",GetTaskName(CurTaskContext),name,timeout);
        
      return Task::Internal::BlockTask_task(list,timeout)==Release_Ok;
@@ -125,13 +201,15 @@ bool Sem::take_locked(MSec timeout)
  }
 
 Sem::Sem(ulen count)
- : name(GetAutoText<ObjName>())
+ : name(GetAutoText<ObjName>()),
+   sem_number(name)
  {
   init(count);
  }
  
 Sem::Sem(TextLabel name_,ulen count)
- : name(name_)
+ : name(name_),
+   sem_number(name)
  {
   init(count);
  }
@@ -188,6 +266,8 @@ bool Sem::try_take()
     {
      count--;
      
+     event(Task::GetCurrent(),SemEvent_task::Dec);
+     
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
        
      return true;
@@ -206,10 +286,14 @@ void Sem::take()
     {
      count--;
      
+     event(Task::GetCurrent(),SemEvent_task::Dec);
+     
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
     }
   else
     {
+     event(Task::GetCurrent(),SemEvent_task::Block);
+     
      Log("#; is blocked on #;",GetTaskName(CurTaskContext),name);
        
      Task::Internal::BlockTask_task(list);

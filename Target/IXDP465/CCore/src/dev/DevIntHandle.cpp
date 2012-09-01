@@ -164,7 +164,7 @@ extern "C" {
 
 void IRQ_main()
  {
-  TaskEventHost.add<TaskSwitchEvent>(TaskSwitchEvent::EnterInt);
+  TaskEventHost.add<TaskSwitchEvent>(TaskNumber::EnterInt);
   
   TaskMonitor::Internal::BeginInt();
  
@@ -172,7 +172,7 @@ void IRQ_main()
   
   TaskMonitor::Internal::EndInt();
   
-  TaskEventHost.add<TaskSwitchEvent>(TaskSwitchEvent::LeaveInt);
+  TaskEventHost.add<TaskSwitchEvent>(TaskNumber::LeaveInt);
  }
  
 } // extern "C"

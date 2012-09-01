@@ -16,7 +16,7 @@
 #ifndef CCore_inc_EventRecorder_h
 #define CCore_inc_EventRecorder_h
 
-#include <CCore/inc/Task.h>
+#include <CCore/inc/task/Atomic.h>
 #include <CCore/inc/Timer.h>
 #include <CCore/inc/Array.h>
 #include <CCore/inc/String.h>
@@ -36,6 +36,10 @@ const ulen MaxEventLen = 256 ;
 typedef uint32 EventTimeType;
 
 typedef uint16 EventIdType;
+
+/* functions */
+
+void WaitAtomicZero(Atomic &count);
 
 /* classes */
 
@@ -1184,7 +1188,7 @@ class EventRecorderHost : NoCopy
      
      Recorder *temp=Replace_null(obj);
      
-     while( count ) Task::Yield();
+     WaitAtomicZero(count);
      
      temp->template add<EventControl>(EventControl::Type_Stop);
      

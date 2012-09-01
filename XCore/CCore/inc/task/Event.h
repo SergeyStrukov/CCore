@@ -20,21 +20,120 @@
 
 namespace CCore {
 
-/* classes */ 
+/* classes */
+
+struct EventNumber;
+
+struct EventEvent;
+
+struct EventEvent_task;
 
 class Event;
+
+/* struct EventNumber */
+
+struct EventNumber
+ {
+  typedef uint16 ValueType;
+  
+  static const ValueType Base = 0 ;
+  static const ValueType Lim = Base+DefaultEventElementCount ;
+  
+  static EventIdType Register(EventMetaInfo &info);  
+ };
+
+/* struct EventEvent */
+
+struct EventEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 event;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    Trigger
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 event_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    event=event_;
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<EventEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<EventEvent *>(ptr)->id); }
+  
+  static void * Offset_event(void *ptr) { return &(static_cast<EventEvent *>(ptr)->event); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<EventEvent *>(ptr)->type); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+/* struct EventEvent_task */
+
+struct EventEvent_task
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 task;
+  uint16 event;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    ToTask,
+    Consume,
+    Block
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 task_,uint16 event_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    task=task_;
+    event=event_;
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<EventEvent_task *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<EventEvent_task *>(ptr)->id); }
+  
+  static void * Offset_event(void *ptr) { return &(static_cast<EventEvent_task *>(ptr)->event); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<EventEvent_task *>(ptr)->type); }
+  
+  static void * Offset_task(void *ptr) { return &(static_cast<EventEvent_task *>(ptr)->task); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
 
 /* class Event */ 
 
 class Event : public Funchor_nocopy
  {
    TextLabel name;
+   EventEnumValue<EventNumber> event_number;
    bool flag;
    TaskList list;
    
   private:
   
    static AutoTextNameType ObjName;
+   
+   void event(TaskBase *task,EventEvent_task::Type type);
+   
+   void event(EventEvent::Type type);
     
    template <class ... TT> 
    static void Log(const char *format,const TT & ... tt);

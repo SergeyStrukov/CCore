@@ -97,13 +97,13 @@ bool Testit<59>::Main()
  {
   Test test;
   
-  test.test<Crypton::AES128>(1000);
-  test.test<Crypton::AES192>(1000);
-  test.test<Crypton::AES256>(1000);
+  test.test<Crypton::AES128>(10000);
+  test.test<Crypton::AES192>(10000);
+  test.test<Crypton::AES256>(10000);
   
-  test.test<Crypton::AESInverse128>(1000);
-  test.test<Crypton::AESInverse192>(1000);
-  test.test<Crypton::AESInverse256>(1000);
+  test.test<Crypton::AESInverse128>(10000);
+  test.test<Crypton::AESInverse192>(10000);
+  test.test<Crypton::AESInverse256>(10000);
   
   return true;
  }
