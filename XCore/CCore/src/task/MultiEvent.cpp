@@ -23,10 +23,70 @@
 
 namespace CCore {
 
+/* struct MultiEventNumber */
+
+EventIdType MultiEventNumber::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint16("MultiEventNumber")
+             .setAppendFunc(EventEnumValue<MultiEventNumber>::Append)
+             .getId();
+ }
+
+/* struct MultiEventEvent */
+
+void MultiEventEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("MultiEventEventType")
+                   .addValueName(Trigger,"Trigger")
+                   .getId();
+  
+  auto id=info.addStruct("MultiEventEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<MultiEventNumber>::GetId(),"mevent",Offset_mevent)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .addField_uint8("index",Offset_index)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
+/* struct MultiEventEvent_task */
+
+void MultiEventEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("MultiEventEventTaskType")
+                   .addValueName(ToTask,"ToTask")
+                   .addValueName(Block,"Block")
+                   .addValueName(Consume,"Consume")
+                   .getId();
+  
+  auto id=info.addStruct("MultiEventEventTask")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<TaskNumber>::GetId(),"task",Offset_task)
+              .addField_enum_uint16(EventTypeId<MultiEventNumber>::GetId(),"mevent",Offset_mevent)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .addField_uint8("index",Offset_index)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class MultiEventBase */ 
 
 AutoTextNameType MultiEventBase::ObjName="MultiEvent";
  
+void MultiEventBase::event(TaskBase *task,MultiEventEvent_task::Type type,ulen index)
+ {
+  TaskEventHost.addSync<MultiEventEvent_task>(task->getTaskNumber(),mevent_number,type,index);
+ }
+
+void MultiEventBase::event(MultiEventEvent::Type type,ulen index)
+ {
+  TaskEventHost.addSync<MultiEventEvent>(mevent_number,type,index);
+ }
+
 template <class ... TT> 
 void MultiEventBase::Log(const char *format,const TT & ... tt)
  {
@@ -48,6 +108,8 @@ bool MultiEventBase::trigger_locked(T cur,F Release,ulen index)
     {
      base=nextIndex(base);
      
+     event(task,MultiEventEvent_task::ToTask,index);
+     
      Log("#;:#; is triggered by #; to #;",name,index,GetTaskName(cur),task->getName());
      
      Release(task,Release_Custom+index);
@@ -59,6 +121,8 @@ bool MultiEventBase::trigger_locked(T cur,F Release,ulen index)
      if( flags[index-1] ) return false;
     
      flags[index-1]=true;
+     
+     event(MultiEventEvent::Trigger,index);
      
      Log("#;:#; is triggered by #;",name,index,GetTaskName(cur));
      
@@ -80,6 +144,8 @@ ulen MultiEventBase::try_wait_locked()
         
         index++;
         
+        event(Task::GetCurrent(),MultiEventEvent_task::Consume,index);
+        
         Log("#;:#; is consumed by #;",name,index,GetTaskName(CurTaskContext));
         
         return index;
@@ -93,6 +159,8 @@ ulen MultiEventBase::wait_locked(MSec timeout)
  {
   if( ulen index=try_wait_locked() ) return index;
   
+  event(Task::GetCurrent(),MultiEventEvent_task::Block);
+  
   Log("#; is blocked on #; timed = #;",GetTaskName(CurTaskContext),name,timeout);
        
   if( ReleaseCode code=Task::Internal::BlockTask_task(list,timeout) ) return code-Release_Custom;
@@ -101,13 +169,15 @@ ulen MultiEventBase::wait_locked(MSec timeout)
  }
 
 MultiEventBase::MultiEventBase(PtrLen<bool> flags)
- : name(GetAutoText<ObjName>())
+ : name(GetAutoText<ObjName>()),
+   mevent_number(name)
  {
   init(flags);
  }
    
 MultiEventBase::MultiEventBase(TextLabel name_,PtrLen<bool> flags)
- : name(name_)
+ : name(name_),
+   mevent_number(name)
  {
   init(flags);
  }
@@ -152,6 +222,8 @@ ulen MultiEventBase::wait()
   Dev::IntLock lock;
   
   if( ulen index=try_wait_locked() ) return index;
+  
+  event(Task::GetCurrent(),MultiEventEvent_task::Block);
      
   Log("#; is blocked on #;",GetTaskName(CurTaskContext),name);
        

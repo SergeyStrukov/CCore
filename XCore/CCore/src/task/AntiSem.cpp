@@ -23,9 +23,68 @@
 
 namespace CCore {
 
+/* struct AntiSemNumber */
+
+EventIdType AntiSemNumber::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint16("AntiSemNumber")
+             .setAppendFunc(EventEnumValue<AntiSemNumber>::Append)
+             .getId();
+ }
+
+/* struct AntiSemEvent */
+
+void AntiSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("AntiSemEventType")
+                   .addValueName(Add,"Add")
+                   .addValueName(Sub,"Sub")
+                   .addValueName(Release,"Release")
+                   .getId();
+  
+  auto id=info.addStruct("AntiSemEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<AntiSemNumber>::GetId(),"asem",Offset_asem)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
+/* struct AntiSemEvent_task */
+
+void AntiSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("AntiSemEventTaskType")
+                   .addValueName(Wait,"Wait")
+                   .addValueName(Pass,"Pass")
+                   .getId();
+  
+  auto id=info.addStruct("AntiSemEventTask")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<TaskNumber>::GetId(),"task",Offset_task)
+              .addField_enum_uint16(EventTypeId<AntiSemNumber>::GetId(),"asem",Offset_asem)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class AntiSem */ 
 
 AutoTextNameType AntiSem::ObjName="AntiSem";
+
+void AntiSem::event(TaskBase *task,AntiSemEvent_task::Type type)
+ {
+  TaskEventHost.addSync<AntiSemEvent_task>(task->getTaskNumber(),asem_number,type);
+ }
+
+void AntiSem::event(AntiSemEvent::Type type)
+ {
+  TaskEventHost.addSync<AntiSemEvent>(asem_number,type);
+ }
 
 template <class ... TT> 
 void AntiSem::Log(const char *format,const TT & ... tt)
@@ -52,6 +111,8 @@ void AntiSem::sub_count(ulen dcount)
 template <class T>
 void AntiSem::add_locked(T cur,ulen dcount)
  {
+  event(AntiSemEvent::Add);
+  
   Log("#; (#;) += #; by #;",name,count,dcount,GetTaskName(cur));
   
   add_count(dcount);
@@ -66,7 +127,13 @@ void AntiSem::sub_locked(T cur,F Release,ulen dcount)
     
   if( count<=level )
     {
+     event(AntiSemEvent::Release);
+     
      Release(list,Release_Ok,name);
+    }
+  else
+    {
+     event(AntiSemEvent::Sub);
     }
  }
 
@@ -74,12 +141,16 @@ bool AntiSem::wait_locked(MSec timeout)
  {
   if( count<=level )
     {
+     event(Task::GetCurrent(),AntiSemEvent_task::Pass);
+    
      Log("#; don't block #;",name,GetTaskName(CurTaskContext));
      
      return true;
     }
   else
     {
+     event(Task::GetCurrent(),AntiSemEvent_task::Wait);
+     
      Log("#; block #; timed = #;",name,GetTaskName(CurTaskContext),timeout);
      
      return Task::Internal::BlockTask_task(list,timeout)==Release_Ok;
@@ -87,13 +158,15 @@ bool AntiSem::wait_locked(MSec timeout)
  }
 
 AntiSem::AntiSem(ulen level)
- : name(GetAutoText<ObjName>())
+ : name(GetAutoText<ObjName>()),
+   asem_number(name) 
  {
   init(level);
  }
    
 AntiSem::AntiSem(TextLabel name_,ulen level)
- : name(name_)
+ : name(name_),
+   asem_number(name)
  {
   init(level);
  }
@@ -148,6 +221,8 @@ bool AntiSem::try_wait()
   
   if( count<=level )
     {
+     event(Task::GetCurrent(),AntiSemEvent_task::Pass);
+     
      Log("#; don't block #;",name,GetTaskName(CurTaskContext));
      
      return true;
@@ -164,10 +239,14 @@ void AntiSem::wait()
   
   if( count<=level )
     {
+     event(Task::GetCurrent(),AntiSemEvent_task::Pass);
+    
      Log("#; don't block #;",name,GetTaskName(CurTaskContext));
     }
   else
     {
+     event(Task::GetCurrent(),AntiSemEvent_task::Wait);
+    
      Log("#; block #;",name,GetTaskName(CurTaskContext));
      
      Task::Internal::BlockTask_task(list);

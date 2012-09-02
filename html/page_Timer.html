@@ -1,0 +1,152 @@
+<!--
+/* page_Timer.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Timer</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Timer</h2>
+
+<p class="Files">Files <b>CCore/inc/Timer.h</b> <b>CCore/src/Timer.cpp</b></p>
+
+<p>
+There are two generic timer classes and six instantinations.
+</p>
+
+<p>
+The class <b>Timer</b> can be used to get a time. We need a class because we have to store the start time.
+</p>
+
+<pre>
+template &lt;class T,T Time()&gt;
+class Timer
+ {
+   T start;
+   
+  public:
+  
+   Timer() { reset(); }
+   
+   void reset() { start=Time(); }
+   
+   typedef T ValueType;
+   
+   T get() const { return Time()-start; }
+   
+   bool less(T lim) const { return get()&lt;lim; }
+   
+   bool exceed(T lim) const { return get()&gt;=lim; }
+   
+   void shift(T delta) { start+=delta; }
+   
+   static T Get() { return Time(); }
+ };
+</pre>
+
+<p>
+This class is parameterized by a time value type and a time function. Constructor and the method <b>reset()</b>
+record the start time. Once you have done it, you can get a current time relative the start time by the method <b>get()</b>.
+Methods <b>less()</b> and <b>exceed()</b> compare the current time with the given limit. The method <b>shift()</b>
+adjusts the start time. Static members <b>ValueType</b> and <b>Get()</b> present the class parameters.
+</p>
+
+<p>
+The following example demonstrate the timed loop:
+</p>
+
+<pre>
+
+for(SecTimer timer; timer.less(10) ;) { .... } // repeat some job withing 10 seconds
+
+</pre>
+
+<p>
+The next class <b>DiffTimer</b> returns the differentiated time, i.g. a time between calls.
+</p>
+
+<pre>
+template &lt;class T,T Time()&gt;
+class DiffTimer
+ {
+   T prev;
+   
+  public:
+  
+   DiffTimer() { reset(); }
+   
+   void reset() { prev=Time(); }
+   
+   typedef T ValueType;
+   
+   T get() { return Diff(prev,Time()); }
+ };
+</pre>
+
+<p>
+Here is an example:
+</p>
+
+<pre>
+
+SecDiffTimer timer; // point1
+
+....
+
+auto t1=timer.get(); // point2 , t1 is a time between point1 and point2
+
+....
+
+auto t2=timer.get(); // point3 , t2 is a time between point2 and point3
+
+</pre>
+
+<p>
+There are six timer class instantinations for different time resolutions &mdash; millisecond, second, and clock:
+</p>
+
+<pre>
+
+typedef Timer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; MSecTimer; 
+
+typedef Timer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; SecTimer; 
+
+typedef Timer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; ClockTimer; 
+ 
+typedef DiffTimer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; MSecDiffTimer; 
+
+typedef DiffTimer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; SecDiffTimer; 
+
+typedef DiffTimer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; ClockDiffTimer; 
+
+</pre>
+
+<p>
+These instantinations are based on target provided functions. Clock time is a fastest avaliable time
+resolution on the target, comparable with the CPU clock speed.
+</p>
+
+</body>
+
+</html>
+

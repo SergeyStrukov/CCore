@@ -22,13 +22,109 @@ namespace CCore {
 
 /* classes */ 
 
+struct AntiSemNumber;
+
+struct AntiSemEvent;
+
+struct AntiSemEvent_task;
+
 class AntiSem;
+
+/* struct AntiSemNumber */
+
+struct AntiSemNumber
+ {
+  typedef uint16 ValueType;
+  
+  static const ValueType Base = 0 ;
+  static const ValueType Lim = Base+DefaultEventElementCount ;
+  
+  static EventIdType Register(EventMetaInfo &info);  
+ };
+
+/* struct AntiSemEvent */
+
+struct AntiSemEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 asem;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    Add,
+    Sub,
+    Release
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 asem_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    asem=asem_;
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<AntiSemEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<AntiSemEvent *>(ptr)->id); }
+  
+  static void * Offset_asem(void *ptr) { return &(static_cast<AntiSemEvent *>(ptr)->asem); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<AntiSemEvent *>(ptr)->type); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+/* struct AntiSemEvent_task */
+
+struct AntiSemEvent_task
+ {
+  EventTimeType time;
+  EventIdType id;
+
+  uint16 task;
+  uint16 asem;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    Wait,
+    Pass
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 task_,uint16 asem_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    task=task_;
+    asem=asem_;
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<AntiSemEvent_task *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<AntiSemEvent_task *>(ptr)->id); }
+  
+  static void * Offset_task(void *ptr) { return &(static_cast<AntiSemEvent_task *>(ptr)->task); }
+  
+  static void * Offset_asem(void *ptr) { return &(static_cast<AntiSemEvent_task *>(ptr)->asem); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<AntiSemEvent_task *>(ptr)->type); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
 
 /* class AntiSem */ 
 
 class AntiSem : public Funchor_nocopy
  {
    TextLabel name;
+   EventEnumValue<AntiSemNumber> asem_number;
    ulen count;
    ulen level;
    TaskList list;
@@ -36,6 +132,10 @@ class AntiSem : public Funchor_nocopy
   private:
   
    static AutoTextNameType ObjName;
+   
+   void event(TaskBase *task,AntiSemEvent_task::Type type);
+   
+   void event(AntiSemEvent::Type type);
  
    template <class ... TT> 
    static void Log(const char *format,const TT & ... tt);

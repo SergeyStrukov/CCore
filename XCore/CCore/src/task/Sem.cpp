@@ -38,8 +38,8 @@ void SemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("SemEventType")
                    .addValueName(ToTaskList,"ToTaskList")
-                   .addValueName(Inc,"Inc")
-                   .addValueName(Add,"Add")
+                   .addValueName(Give,"Give")
+                   .addValueName(GiveMany,"GiveMany")
                    .getId();
   
   auto id=info.addStruct("SemEvent")
@@ -58,7 +58,7 @@ void SemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("SemEventTaskType")
                    .addValueName(ToTask,"ToTask")
-                   .addValueName(Dec,"Dec")
+                   .addValueName(Take,"Take")
                    .addValueName(Block,"Block")
                    .getId();
   
@@ -113,7 +113,7 @@ void Sem::give_locked(T cur,F Release)
  {
   if( count )
     {
-     event(SemEvent::Inc);
+     event(SemEvent::Give);
     
      Log("#; is given by #;",name,GetTaskName(cur));
      
@@ -135,7 +135,7 @@ void Sem::give_locked(T cur,F Release)
        {
         count=1;
         
-        event(SemEvent::Inc);
+        event(SemEvent::Give);
         
         Log("#; is given by #;",name,GetTaskName(cur));
        }
@@ -147,7 +147,7 @@ void Sem::give_many_locked(T cur,F Release,ulen dcount)
  {
   if( count )
     {
-     event(SemEvent::Add);
+     event(SemEvent::GiveMany);
     
      Log("#; is given by #; #; times",name,GetTaskName(cur),dcount);
      
@@ -171,7 +171,7 @@ void Sem::give_many_locked(T cur,F Release,ulen dcount)
        {
         count=dcount;
         
-        event(SemEvent::Add);
+        event(SemEvent::GiveMany);
        
         Log("#; is given by #; #; times",name,GetTaskName(cur),dcount);
        }
@@ -184,7 +184,7 @@ bool Sem::take_locked(MSec timeout)
     {
      count--;
      
-     event(Task::GetCurrent(),SemEvent_task::Dec);
+     event(Task::GetCurrent(),SemEvent_task::Take);
      
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
        
@@ -266,7 +266,7 @@ bool Sem::try_take()
     {
      count--;
      
-     event(Task::GetCurrent(),SemEvent_task::Dec);
+     event(Task::GetCurrent(),SemEvent_task::Take);
      
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
        
@@ -286,7 +286,7 @@ void Sem::take()
     {
      count--;
      
-     event(Task::GetCurrent(),SemEvent_task::Dec);
+     event(Task::GetCurrent(),SemEvent_task::Take);
      
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
     }

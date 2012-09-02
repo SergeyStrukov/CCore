@@ -55,8 +55,8 @@ struct SemEvent
   enum Type : uint8
    {
     ToTaskList,
-    Inc,
-    Add
+    Give,
+    GiveMany
    };
   
   void init(EventTimeType time_,EventIdType id_,uint16 sem_,Type type_)
@@ -93,7 +93,7 @@ struct SemEvent_task
   enum Type : uint8
    {
     ToTask, 
-    Dec,    
+    Take,    
     Block  
    };
   

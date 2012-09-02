@@ -20,15 +20,112 @@
 
 namespace CCore {
 
-/* classes */ 
+/* classes */
+
+struct ResSemNumber;
+
+struct ResSemEvent;
+
+struct ResSemEvent_task;
 
 class ResSem;
+
+/* struct ResSemNumber */
+
+struct ResSemNumber
+ {
+  typedef uint16 ValueType;
+  
+  static const ValueType Base = 0 ;
+  static const ValueType Lim = Base+DefaultEventElementCount ;
+  
+  static EventIdType Register(EventMetaInfo &info);  
+ };
+
+/* struct ResSemEvent */
+
+struct ResSemEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 rsem;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    Give
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 rsem_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    rsem=rsem_;
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<ResSemEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<ResSemEvent *>(ptr)->id); }
+  
+  static void * Offset_rsem(void *ptr) { return &(static_cast<ResSemEvent *>(ptr)->rsem); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<ResSemEvent *>(ptr)->type); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+/* struct ResSemEvent_task */
+
+struct ResSemEvent_task
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 task;
+  uint16 rsem;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    ToTask,
+    Wait,
+    Pass,
+    Block,
+    Take
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,uint16 task_,uint16 rsem_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    task=task_;
+    rsem=rsem_;
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<ResSemEvent_task *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<ResSemEvent_task *>(ptr)->id); }
+  
+  static void * Offset_task(void *ptr) { return &(static_cast<ResSemEvent_task *>(ptr)->task); }
+  
+  static void * Offset_rsem(void *ptr) { return &(static_cast<ResSemEvent_task *>(ptr)->rsem); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<ResSemEvent_task *>(ptr)->type); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
 
 /* class ResSem */ 
 
 class ResSem : public Funchor_nocopy
  {
    TextLabel name;
+   EventEnumValue<ResSemNumber> rsem_number;
    ulen count;
    ulen max_count;
    TaskList take_list;
@@ -37,7 +134,11 @@ class ResSem : public Funchor_nocopy
   private:
   
    static AutoTextNameType ObjName;
+   
+   void event(TaskBase *task,ResSemEvent_task::Type type);
     
+   void event(ResSemEvent::Type type);
+   
    template <class ... TT> 
    static void Log(const char *format,const TT & ... tt);
    

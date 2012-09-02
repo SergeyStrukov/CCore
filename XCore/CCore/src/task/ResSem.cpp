@@ -23,10 +23,70 @@
 
 namespace CCore {
 
+/* struct ResSemNumber */
+
+EventIdType ResSemNumber::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint16("ResSemNumber")
+             .setAppendFunc(EventEnumValue<ResSemNumber>::Append)
+             .getId();
+ }
+
+/* struct ResSemEvent */
+
+void ResSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("ResSemEventType")
+                   .addValueName(Give,"Give")
+                   .getId();
+  
+  auto id=info.addStruct("ResSemEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<ResSemNumber>::GetId(),"rsem",Offset_rsem)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
+/* struct ResSemEvent_task */
+
+void ResSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id_Type=info.addEnum_uint8("ResSemEventTaskType")
+                   .addValueName(ToTask,"ToTask")
+                   .addValueName(Wait,"Wait")
+                   .addValueName(Pass,"Pass")
+                   .addValueName(Block,"Block")
+                   .addValueName(Take,"Take")
+                   .getId();
+  
+  auto id=info.addStruct("ResSemEventTask")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint16(EventTypeId<TaskNumber>::GetId(),"task",Offset_task)
+              .addField_enum_uint16(EventTypeId<ResSemNumber>::GetId(),"rsem",Offset_rsem)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class ResSem */ 
 
 AutoTextNameType ResSem::ObjName="ResSem";
  
+void ResSem::event(TaskBase *task,ResSemEvent_task::Type type)
+ {
+  TaskEventHost.addSync<ResSemEvent_task>(task->getTaskNumber(),rsem_number,type);
+ }
+ 
+void ResSem::event(ResSemEvent::Type type)
+ {
+  TaskEventHost.addSync<ResSemEvent>(rsem_number,type);
+ }
+
 template <class ... TT> 
 void ResSem::Log(const char *format,const TT & ... tt)
  {
@@ -50,12 +110,16 @@ void ResSem::give_locked(T cur,F Release,FL ReleaseList)
     {
      count--;
      
+     event(ResSemEvent::Give);
+     
      Log("#; is given by #;",name,GetTaskName(cur));
     }
   else
     {
      if( TaskBase *task=take_list.get() )  
        {
+        event(task,ResSemEvent_task::ToTask);
+       
         Log("#; is given by #; to #;",name,GetTaskName(cur),task->getName());
        
         Release(task,Release_Ok);
@@ -65,6 +129,8 @@ void ResSem::give_locked(T cur,F Release,FL ReleaseList)
      else
        {
         count--;
+        
+        event(ResSemEvent::Give);
         
         Log("#; is given by #;",name,GetTaskName(cur));
        }
@@ -82,12 +148,16 @@ bool ResSem::take_locked(MSec timeout)
     {
      count++;
      
+     event(Task::GetCurrent(),ResSemEvent_task::Take);
+     
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
     
      return true;
     }
   else
     {
+     event(Task::GetCurrent(),ResSemEvent_task::Block);
+     
      Log("#; is blocked on #; timed = #;",GetTaskName(CurTaskContext),name,timeout);
     
      return Task::Internal::BlockTask_task(take_list,timeout)==Release_Ok;
@@ -98,12 +168,16 @@ bool ResSem::wait_locked(MSec timeout)
  {
   if( count==0 )
     {
+     event(Task::GetCurrent(),ResSemEvent_task::Pass);
+     
      Log("#; don't block #;",name,GetTaskName(CurTaskContext));
      
      return true;
     }
   else
     {
+     event(Task::GetCurrent(),ResSemEvent_task::Wait);
+     
      Log("#; block #; timed = #;",name,GetTaskName(CurTaskContext),timeout);
      
      return Task::Internal::BlockTask_task(wait_list,timeout)==Release_Ok;
@@ -111,13 +185,15 @@ bool ResSem::wait_locked(MSec timeout)
  }
 
 ResSem::ResSem(ulen max_count)
- : name(GetAutoText<ObjName>())
+ : name(GetAutoText<ObjName>()),
+   rsem_number(name)
  {
   init(max_count);
  }
    
 ResSem::ResSem(TextLabel name_,ulen max_count)
- : name(name_)
+ : name(name_),
+   rsem_number(name)
  {
   init(max_count);
  }
@@ -154,6 +230,8 @@ bool ResSem::try_take()
     {
      count++;
      
+     event(Task::GetCurrent(),ResSemEvent_task::Take);
+     
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
     
      return true;
@@ -172,10 +250,14 @@ void ResSem::take()
     {
      count++;
      
+     event(Task::GetCurrent(),ResSemEvent_task::Take);
+     
      Log("#; is taken by #;",name,GetTaskName(CurTaskContext));
     }
   else
     {
+     event(Task::GetCurrent(),ResSemEvent_task::Block);
+     
      Log("#; is blocked on #;",GetTaskName(CurTaskContext),name);
     
      Task::Internal::BlockTask_task(take_list);
@@ -206,6 +288,8 @@ bool ResSem::try_wait()
   
   if( count==0 )
     {
+     event(Task::GetCurrent(),ResSemEvent_task::Pass);
+    
      Log("#; don't block #;",name,GetTaskName(CurTaskContext));
      
      return true;
@@ -222,10 +306,14 @@ void ResSem::wait()
   
   if( count==0 )
     {
+     event(Task::GetCurrent(),ResSemEvent_task::Pass);
+    
      Log("#; don't block #;",name,GetTaskName(CurTaskContext));
     }
   else
     {
+     event(Task::GetCurrent(),ResSemEvent_task::Wait);
+    
      Log("#; block #;",name,GetTaskName(CurTaskContext));
      
      Task::Internal::BlockTask_task(wait_list);
