@@ -1,0 +1,140 @@
+<!--
+/* page_TimeScope.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> TimeScope</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>TimeScope</h2>
+
+<p class="Files">Files <b>CCore/inc/TimeScope.h</b> <b>CCore/src/TimeScope.cpp</b></p>
+
+<p>
+There are timed functions, i.e. functions with a specified execution time limit. For example, a semaphore has a method 
+<b>take()</b> with timeout. In some cases you have to call serveral such functions. Then the problem arises, how to specify 
+timeouts to them if we want to fit in some common time limit. The class <b>TimeScope</b> is designed to solve this problem.
+It is a simple class, which represents some time interval:
+</p>
+
+<pre>
+class TimeScope
+ {
+   MSecTimer timer;
+   
+   MSec timeout;
+ 
+  public:
+  
+   explicit TimeScope(MSec timeout_=Null) : timeout(timeout_) {}
+   
+   void start(MSec timeout_);
+    
+   bool nextScope(); 
+   
+   MSec get() const;
+ };
+</pre>
+
+<p>
+<b>TimeScope</b> contains inside a millisecond timer and a millisecond timeout. It is started at the moment of construction,
+or at the moment when the method <b>start()</b> is called. You can retrieve the remaining time using the method <b>get()</b>.
+If the given timeout is expired, then the <b>get()</b> returns 0.
+</p>
+
+<p>
+Assume, you have to make an aggregated timed operation. Using <b>TimeScope</b> you can do it simply like this: 
+</p>
+
+<pre>
+
+void func(TimeScope time_scope)
+ {
+  op1(time_scope);
+  op2(time_scope);
+  op3(time_scope);
+ }
+
+void func(MSec timeout)
+ {
+  TimeScope time_scope(timeout);
+
+  op1(time_scope);
+  op2(time_scope);
+  op3(time_scope);
+ }
+
+</pre>
+
+<p>
+You may suggest the following approach:
+</p>
+
+<pre>
+
+void func(MSec timeout)
+ {
+  TimeScope time_scope(timeout);
+
+  op1(time_scope.get());
+  op2(time_scope.get());
+  op3(time_scope.get());
+ }
+
+</pre>
+
+<p>
+But this way does not ensure the expected behavior, because from the point you call the method <b>get()</b> to the point,
+where this value is consumed inside the <b>opx()</b> a task switch may happens and it increases the amount of time by 
+an unpredictable value. That is way in <b>CCore</b> we provide timed functions with simple timeouts and with 
+<b>TimeScope</b> timeouts, especially for all synchonization objects. In <b>HCore</b> the implementaion is not precise 
+(but <b>HCore</b> does not pretend to be a true real-time), but <b>XCore</b> has an exact implementaion.
+</p>
+
+<p>
+The remaining method is <b>nextScope()</b>. It does the following: if the timeout is expired, then <b>nextScope()</b> shifts
+the time period to the following of the same time and returns true, otherwise it simply returns false.
+</p>
+
+<pre>
+
+   bool nextScope() 
+    { 
+     auto t=timer.get();
+    
+     if( t >= +timeout )
+       {
+        timer.shift(+timeout); 
+        
+        return true;
+       } 
+       
+     return false;  
+    }
+
+</pre>
+
+</body>
+
+</html>
+
