@@ -30,6 +30,121 @@
 
 <p class="Files">Files <b>CCore/inc/TextLabel.h</b> <b>CCore/src/TextLabel.cpp</b></p>
 
+<p>
+<b>TextLabel</b> is a lightweight text representing class. It does not hold any resources and has no a lifetime limit 
+(destructor is trivial). We need such class, because it can be used in such context, where memory allocation is impossible 
+(for example, the memory heap is not initialized yet).
+</p>
+
+<pre>
+
+typedef StrLen (*TextLabelFunc)(Handle ctx,PtrLen&lt;char&gt; buf);
+
+class TextLabel
+ {
+   ....
+   
+  public: 
+   
+   // constructors
+  
+   TextLabel();
+   
+   TextLabel(const char *persistent_string);
+   
+   TextLabel(TextLabelFunc func,Handle ctx);
+   
+   template &lt;class Enum&gt;
+   TextLabel(Enum e);
+   
+   // methods
+   
+   StrLen getStr(PtrLen&lt;char&gt; buf) const;
+   
+   // print object
+   
+   typedef StrPrintOpt PrintOptType;
+   
+   template &lt;class P&gt; 
+   void print(P &amp;out,PrintOptType opt) const;
+ };
+
+</pre>
+
+<p>
+If you have a <b>TextLabel</b> object, you can build its string using the method <b>getStr()</b>, you should supply 
+a temporary buffer, where the string will possibly be constructed. You can also print the string, 
+the string print attributes are supported. The method <b>print()</b> is using a temporary buffer of the length 
+<a href="page_Len.html"><b>TextBufLen</b></a>.
+We assume the string, represented by a <b>TextLabel</b> object, has a reasonably small length.
+</p>
+
+<p>
+There are four ways to build a <b>TextLabel</b> object. 
+</p>
+
+<p>
+You can construct the empty string object using the default constructor. 
+</p>
+
+<p>
+You can build a <b>TextLabel</b> from a persistent C zero-terminated string (i.g. from a string literal).
+</p>
+
+<p>
+The third way is to build a <b>TextLabel</b> from an enum. The enum value range must fit in the <b>int</b> value range.
+The function <b>GetTextDesc()</b> must be defined for this enum.
+</p>
+
+<pre>
+
+enum E
+ {
+  E1,
+  E2,
+  E3
+ };
+
+const char * GetTextDesc(E e);
+
+....
+
+TextLabel label(E1);
+
+</pre>
+
+<p>
+Finally, the more general way is to build a <b>TextLabel</b> from the <b>TextLabelFunc</b> and the <b>Handle</b>.
+Just remember, the handle must be persistent, it cannot have a limited lifetime.
+</p>
+
+<p>
+The next class is <b>NumTextLabel</b>. It is designed to generate such labels as Sem1, Sem2, ... .
+Use it as following:
+</p>
+
+<pre>
+
+class Name
+ {
+   static Mutex NextMutex;
+
+   static unsigned Next;
+
+  public:
+
+   static const char * GetText() { return "ObjName"; }
+
+   static unsigned GetNumber() { Mutex::Lock lock(NextMutex); return GetTextLabelNumber(Next); }
+ };
+
+Mutex Name::NextMutex;
+
+unsigned Name::Next=0;
+
+NumTextLabel&lt;Name&gt; label;
+
+</pre>
 
 </body>
 
