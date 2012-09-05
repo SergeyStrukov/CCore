@@ -43,6 +43,15 @@ h3
  border-width: 1pt ;
 }
 
+h4
+{
+ font-size: 16pt ;
+ text-align: left ;
+ color: blue ;
+ border-bottom-style:dashed ;
+ border-width: 1pt ;
+}
+
 ol.Content
 {
  font-size: 16pt ;

@@ -1,0 +1,65 @@
+<!--
+/* page_MemAllocGuard.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> MemAllocGuard</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>MemAllocGuard</h2>
+
+<p class="Files">Files <b>CCore/inc/MemAllocGuard.h</b> <b>CCore/src/MemAllocGuard.cpp</b></p>
+
+<p>
+<b>MemAllocGuard</b> is a <b>Scope Lock Type</b> for the memory allocation.
+</p>
+
+<pre>
+class <span class="att">MemAllocGuard</span> : NoCopy
+ {
+   void *mem;
+ 
+  public:
+  
+   explicit MemAllocGuard(ulen len); // allocate len bytes
+   
+   MemAllocGuard(ulen count,ulen size_of,ulen extra=0); // allocate count*size_of+extra bytes, 
+                                                        // overflow check is performed
+   
+   ~MemAllocGuard();
+   
+   operator void * () const { return mem; }      // memory block
+   
+   void * disarm() { return Replace_null(mem); } // take the ownership on the block
+ };
+</pre>
+
+<p>
+You can use this class to allocate and keep alive a memory block for the duration of a scope.
+<b>MemAllocGuard</b> destructor releases the block unless the method <b>disarm()</b> is called.
+</p>
+
+</body>
+
+</html>
+

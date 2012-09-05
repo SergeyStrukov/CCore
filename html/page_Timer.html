@@ -40,7 +40,7 @@ The class <b>Timer</b> can be used to get a time. We need a class because we hav
 
 <pre>
 template &lt;class T,T Time()&gt;
-class Timer
+class <span class="att">Timer</span>
  {
    T start;
    
@@ -87,7 +87,7 @@ The next class <b>DiffTimer</b> returns the differentiated time, i.g. a time bet
 
 <pre>
 template &lt;class T,T Time()&gt;
-class DiffTimer
+class <span class="att">DiffTimer</span>
  {
    T prev;
    
@@ -127,17 +127,17 @@ There are six timer class instantinations for different time resolutions &mdash;
 
 <pre>
 
-typedef Timer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; MSecTimer; 
+typedef Timer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; <span class="att">MSecTimer</span>; 
 
-typedef Timer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; SecTimer; 
+typedef Timer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; <span class="att">SecTimer</span>; 
 
-typedef Timer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; ClockTimer; 
+typedef Timer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; <span class="att">ClockTimer</span>; 
  
-typedef DiffTimer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; MSecDiffTimer; 
+typedef DiffTimer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; <span class="att">MSecDiffTimer</span>; 
 
-typedef DiffTimer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; SecDiffTimer; 
+typedef DiffTimer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; <span class="att">SecDiffTimer</span>; 
 
-typedef DiffTimer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; ClockDiffTimer; 
+typedef DiffTimer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; <span class="att">ClockDiffTimer</span>; 
 
 </pre>
 

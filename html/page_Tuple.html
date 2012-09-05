@@ -37,7 +37,7 @@ Classes <b>Tuple</b> and <b>ForwardTuple</b> have a spartan design in <b>CCore</
 <pre>
 
 template &lt;class ... TT&gt;
-struct Tuple
+struct <span class="att">Tuple</span>
  {
   ....
   
@@ -50,7 +50,7 @@ struct Tuple
  };
 
 template &lt;class ... TT&gt;
-struct ForwardTuple
+struct <span class="att">ForwardTuple</span>
  {
   ....
   
@@ -154,7 +154,7 @@ struct Creator_fill
 <pre>
 
 template &lt;class ... TT&gt;
-Tuple&lt;TT...&gt; MakeTuple(const TT &amp; ... tt);
+Tuple&lt;TT...&gt; <span class="att">MakeTuple</span>(const TT &amp; ... tt);
 
 </pre>
 

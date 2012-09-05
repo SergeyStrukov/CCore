@@ -29,78 +29,130 @@
 <h2>Taxonomy of classes</h2>
 
 <p>
-This page provides a list of common terms and the taxonomy of classes. <b>Class</b> in C++ is a very
+This page provides the list of common terms and the taxonomy of classes. <b>Class</b> in C++ is a very
 generic and powerfull entity, so we classify them by its purpose and nature.
 </p>
 
 <h3>Terms</h3>
 
 <p>
-<b>Efficient</b> means <b>O(1)-nothrow</b>. I.e. it is a sequence of operations, which has a definite
-reasonably small execution time limit and has no error outcome.
+<b>Efficient</b> means <b>O(1)-nothrow</b>. I.g. it is a sequence of operations, which has a definite,
+reasonably small execution time limit and always successful.
 </p>
 
-<p>
-<b>Small Data Type</b> is a type like basic types with a small state and data semantic. These types
-can be defined as types with the <b>efficient</b> copy constructor and assign operator.
-</p>
 
 <p>
-<b>Derivability</b> is an ability of some entity to be used as a building block of the whole. See, for example,
+<b>Derivability</b> is an ability of some entity to be used as the building block of the whole. See, for example,
 <a href="page_Swap.html"><b>Swap</b></a>.
 </p>
 
 
 <h3><i>Class</i>ification</h3>
 
+<h4>Word</h4>
+
 <p>
 <b>Word</b> is a enumerator, purposed to verbose some generic action. In C++ there is no named constructors.
-Sometimes you have to used unused arguments of <b>Word</b> type to clearly distinguish between different
+But it is possible to add an unused argument of a <b>Word</b> type to clearly distinguish between different
 overloaded constructors. See, for example, <a href="page_Nothing.html"><b>Nothing</b></a>. 
 </p>
 
-<p>
-<b>Guard function</b>
-</p>
+<h4>Guard function</h4>
 
 <p>
-<b>Abort function</b>
+<b>Guard function</b> ensure some condition. If the required condition is not true, an exception is thrown.
+See, for example, <a href="page_PtrLen.html">GuardIndex()</a>. Usually, we define guard function by the following pattern:
 </p>
 
-<p>
-<b>Creator function</b>
-</p>
+<pre>
+
+void GuardXXXCCC(&lt;arg_list&gt;); // exception throwing function
+
+void GuardXXX(&lt;arg_list&gt;) // guard function 
+ {
+  if( &lt;not condition&gt; ) GuardXXXCCC(&lt;arg_list&gt;);
+ }
+
+</pre>
 
 <p>
-<b>Guards</b>
+Class methods can also be guard methods.
 </p>
 
-<p>
-<b>Scope Lock Type</b>
-</p>
+<h4>Abort function</h4>
 
 <p>
-<b>Small Data Type</b>
+<b>Abort function</b> aborts execution with some diagnostic message. For example, 
+<a href="page_Init.html">NoObjectAbort()</a> is called when the object has not been initialized.
 </p>
+
+<h4>Creator function</h4>
+
+<p>
+<b>Creator function</b> creates some object. Normally we create an object using its class constructor. But if we are using
+class templates, we have to provide a template argument list. Using <b>Creator function</b> allows infer this list from the
+function argument types. See, for example, <a href="page_Tuple.html">MakeTuple()</a>:
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+Tuple&lt;TT...&gt; MakeTuple(const TT &amp; ... tt);
+
+</pre>
+
+<h4>Partial class</h4>
+
+<p>
+<b>Partial class</b> is a class not intended for a direct usage, but designed to be a builing block for a derived class.
+Like a sophisticated machines, built from a machine parts, in C++ the complex classes can be constructed from a smaller
+and simpler classes. Sometimes such parts are not usable alone. Hence we call them <b>Partial</b>. 
+See, for example, <a href="page_ToMemBase.html">ToMemBase</a>. Such classes often have names ending in "Base".
+</p>
+
+<h4>TBC...</h4>
+
+<h4>Small Data Type</h4>
+
+<p>
+<b>Small Data Type</b> is a type like basic types with a small state and data semantic. These types
+can be defined as types with the <b>efficient</b> copy constructor and assign operator.
+</p>
+
+<h4>Data Type</h4>
 
 <p>
 <b>Data Type</b>
 </p>
 
+<h4>Resource Host Type</h4>
+
 <p>
 <b>Resource Host Type</b>
 </p>
 
+<h4>Scope Lock Type</h4>
+
 <p>
-<b>Cursor</b>
+<b>Scope Lock Type</b>
 </p>
+
+<h4>Container Type</h4>
 
 <p>
 <b>Container Type</b>
 </p>
 
+<h4>Pointer Type</h4>
+
 <p>
 <b>Pointer Type</b>
+</p>
+
+<h4>Cursor</h4>
+
+<p>
+<b>Cursor</b>
 </p>
 
 <p>

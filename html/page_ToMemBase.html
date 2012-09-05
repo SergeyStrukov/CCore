@@ -1,0 +1,73 @@
+<!--
+/* page_ToMemBase.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> ToMemBase</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>ToMemBase</h2>
+
+<p class="Files">Files <b>CCore/inc/ToMemBase.h</b> <b>CCore/src/ToMemBase.cpp</b></p>
+
+<p>
+<b>ToMemBase</b> is a <b>Partial class</b>, designed to be a base class for "... to memory" classes.
+</p>
+
+<pre>
+class <span class="att">ToMemBase</span> : NoCopy
+ {
+   uint8 *ptr;
+   ulen len;
+   
+  protected: 
+  
+   uint8 * alloc(ulen len); // one-time call
+   
+  public:
+  
+   ToMemBase();
+   
+   ~ToMemBase();
+   
+   const uint8 * getPtr() const { return ptr; }
+ 
+   ulen getLen() const { return len; }
+   
+   // swap/move objects
+
+   ....
+   
+ };
+</pre>
+
+<p>
+It has the protected method <b>alloc()</b>, it must be called <span class="alert">no more than once</span> in a derived class.
+Default constructor initialize the class in the null state. Destructor releases the allocated memory.
+The class is swapable and movable.
+</p>
+
+</body>
+
+</html>
+
