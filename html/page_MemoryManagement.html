@@ -1,0 +1,111 @@
+<!--
+/* page_MemoryManagement.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Memory Management</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Memory Management</h2>
+
+<h3>Basic of the memory management in <b>CCore</b></h3>
+
+<p class="Files">Files <b>CCore/inc/MemBase.h</b> <b>CCore/src/MemBase_general.cpp</b> <b>HCore/CCore/src/MemBase.cpp</b> <b>XCore/CCore/src/MemBase.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/RadixHeap.h</b> <b>CCore/src/RadixHeap.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/HeapEngine.h</b> <b>CCore/src/HeapEngine.cpp</b></p>
+
+<p>
+<b>CCore</b> uses its own memory management subsystem. We don't rely on the standard <b>malloc/free</b> or <b>new/delete</b>, 
+provided by the C++ compiler support libraries. In fact, in <b>XCore</b> targets it is recommended to build these libraries 
+based on <b>CCore</b> memory allocation functions. This is because we need much more from the heap, namely:
+</p>
+
+<ul>
+<li>additional memory functions, like <b>MemExtend()</b> or <b>MemShrink()</b>,</li>
+<li>accounting functions to watch the memory usage,</li>
+<li>some protection from invalid arguments,</li>
+<li>speed!, more speed!,</li>
+<li>for <b>XCore</b> we need several heaps for the interrupt context and for special memory regions.</li>
+</ul>
+
+<p>
+The heart of the <b>CCore</b> heaps is the class <b>RadixHeap</b>. This class implements a radix-tree based heap atop on
+a primary memory management facility. The heap is maintained in the one or several large blocks of memory, obtained dynamically
+from the OS, or fixed in the memory. <b>RadixHeap</b> is the real-time heap. Its operations has a time excecution limit, assuming
+there is no primary memory management functions calls. In practise, the cost of allocation and deallocation memory functions
+is a 100s CPU clocks. This heap is also best-fit and provides a protection from wrong memory block address argument.
+If you try to free a memory at an arbitary address, then very likely the abort will be called.
+</p>
+
+<p>
+Here is a basic memory functions list:
+</p>
+
+<pre>
+
+/* words */ 
+
+enum <span class="att">JustTryType</span> { <span class="att">JustTry</span> };
+ 
+/* functions */ 
+
+void <span class="att">GuardNoMem</span>(ulen len);
+
+/* Mem...() */  
+ 
+void * <span class="att">TryMemAlloc</span>(ulen len) noexcept;
+
+void * <span class="att">MemAlloc</span>(ulen len);
+
+ulen <span class="att">MemLen</span>(const void *mem);       // mem may == 0
+
+bool <span class="att">MemExtend</span>(void *mem,ulen len); // mem may == 0
+
+bool <span class="att">MemShrink</span>(void *mem,ulen len); // mem may == 0
+ 
+void <span class="att">MemFree</span>(void *mem);            // mem may == 0
+
+void <span class="att">MemLim</span>(ulen limit);
+
+</pre>
+
+<h3>MemBase</h3>
+
+<h3>MemSpaceHeap</h3>
+
+<p class="Files">Files <b>CCore/inc/MemSpaceHeap.h</b> <b>CCore/src/MemSpaceHeap.cpp</b></p>
+
+<h3><b>HCore</b> MemPageHeap</h3>
+
+<p class="Files">Files <b>HCore/CCore/inc/MemPageHeap.h</b> <b>HCore/CCore/src/MemPageHeap.cpp</b></p>
+
+<h3><b>XCore</b> SpecialMemBase</h3>
+
+<p class="Files">Files <b>XCore/CCore/inc/SpecialMemBase.h</b> <b>XCore/CCore/src/SpecialMemBase.cpp</b></p>
+
+</body>
+
+</html>
+

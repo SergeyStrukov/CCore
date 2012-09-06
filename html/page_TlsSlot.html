@@ -1,0 +1,92 @@
+<!--
+/* page_TlsSlot.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> TlsSlot</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>TlsSlot</h2>
+
+<p class="Files">Files <b>CCore/inc/TlsSlot.h</b> <b>CCore/src/TlsSlot.cpp</b></p>
+
+<p>
+<b>TlsSlot</b> is designed to provide a thread local variables. It is integrated with <a href="page_PlanInit.html">
+<b>PlanInit</b></a> subsystem.
+</p>
+
+<pre>
+class <span class="att">TlsSlot</span>
+ {
+   .... 
+
+  public:
+  
+   explicit TlsSlot(const char *tag);
+   
+   ~TlsSlot();
+  
+   void set(void *value);
+  
+   void * get();
+ };
+</pre>
+
+<p>
+Don't use objects of this class directly! Here is a pattern:
+</p>
+
+<pre>
+
+struct MySlot : TlsSlot
+ {
+  MySlot() : TlsSlot("MySlot") {}
+ };
+ 
+MySlot MySlotObject CCORE_INITPRI_1 ;
+
+PlanInitNode * GetPlanInitNode_MySlot() { return &amp;MySlotObject; }
+
+void SomeFunc()
+ {
+  void *tls=MySlotObject->get();
+ }
+
+</pre>
+
+<p>
+<b>TlsSlot</b> value is a thread-specific, i.g. depends on the calling thread. Each thread has own private copy of this value.
+The initial value is 0. If <b>TlsSlot</b> constructor is unable allocate a TLS slot, it aborts execution.
+</p>
+
+<p>
+You should avoid using <b>TlsSlot</b>, leave it to the <b>CCore</b> internals. 
+There is a better way to define a thread-specific variables: when you start a thread using the <a href="page_Task.html"><b>Task</b></a> 
+object and functions, you always can find the current task by the <b>Task::GetCurrent()</b> function. So just add a required thread
+context to the <b>Task</b> object.
+</p>
+
+</body>
+
+</html>
+
