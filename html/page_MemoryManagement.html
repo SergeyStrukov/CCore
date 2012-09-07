@@ -51,16 +51,25 @@ based on <b>CCore</b> memory allocation functions. This is because we need much 
 </ul>
 
 <p>
-The heart of the <b>CCore</b> heaps is the class <b>RadixHeap</b>. This class implements a radix-tree based heap atop on
+The heart of <b>CCore</b> heaps is the class <b>RadixHeap</b>. This class implements a radix-tree based heap atop on
 a primary memory management facility. The heap is maintained in the one or several large blocks of memory, obtained dynamically
 from the OS, or fixed in the memory. <b>RadixHeap</b> is the real-time heap. Its operations has a time excecution limit, assuming
 there is no primary memory management functions calls. In practise, the cost of allocation and deallocation memory functions
-is a 100s CPU clocks. This heap is also best-fit and provides a protection from wrong memory block address argument.
-If you try to free a memory at an arbitary address, then very likely the abort will be called.
+is a 100s CPU clocks. This heap is also best-fit and provides a protection from wrong memory block address arguments.
+If you try to free a memory at an arbitary address, then it's very likely the abort will be called.
 </p>
 
 <p>
-Here is a basic memory functions list:
+<b>CCore</b> heap is a global object, maintained by the <a href="page_PlanInit.html"><b>PlanInit</b></a> and derived from 
+the <b>HeapEngine</b> class, which implements the top-level logic over the <b>RadixHeap</b> functionality.
+Been a general purpose global object, <b>CCore</b> heap is a Mutex-protected. In <b>HCore</b> primary large blocks of memory
+are obtained from the OS. In <b>XCore</b> it is a single fixed block of memory, provided by the Target.
+</p>
+
+<h3>MemBase</h3>
+
+<p>
+Here is the basic memory function list from <b>MemBase.h</b>:
 </p>
 
 <pre>
@@ -91,7 +100,59 @@ void <span class="att">MemLim</span>(ulen limit);
 
 </pre>
 
-<h3>MemBase</h3>
+<p>
+<b>MemAlloc()</b> allocates a memory block of required length and returns its address. The block is always <b>MaxAlign</b>ed,
+the actual length can be a slightly greater than the required and always non-null. If the operation is failed, then an exception 
+is thrown. The exception class is derived from the <b>std::bad_alloc</b> as required by the C++ standard, but it is also derived
+from the <b>CatchType</b>, according <b>CCore</b> rules.
+</p>
+
+<p>
+<b>TryMemAlloc()</b> is similar, but in case of failure it just returns null.
+</p>
+
+<p>
+<b>MemLim()</b> setup the global allocation limit. If the argument is null, then there is no limit. If it is not null,
+heap will keep the total allocated memory length below this limit (approximately). This feature is useful for testing purpose, 
+it helps reproduce the situation of the memory shortage.
+</p>
+
+<p>
+In the remaining four functions the argument <b>mem</b> must be either an address of the allocated memory block or null.
+Otherwise the memory heap protection abort is called (with high probability, the detection is not 100%).
+</p>
+
+<p>
+<b>MemFree()</b> releases the allocated memory block.
+</p>
+
+<p>
+<b>MemExtend()</b> tries to extend the allocated memory block. If successful, it returns true and the new length 
+of the block is at least <b>len</b>. If the <b>mem</b> is null, the function does nothing and returns false.
+<b>MemExtend()</b> is always successful, if <b>len</b> is not greater than the length of the memory block, 
+in this case it does nothing. If additional space is required, then <b>MemExtend()</b> is looking for the space
+above the block. If enough such space is free, it resizes both memory blocks. Otherwise it fails.
+</p>
+
+<p>
+<b>MemShrink()</b> shrinks the allocated memory block. If successful, it returns true and the new length 
+of the block is at least <b>len</b>. If the <b>mem</b> is null, the function does nothing and returns false.
+<b>MemShrink()</b> fails only if the <b>len</b> is greater than the length of the memory block.
+</p>
+
+<p>
+<b>MemLen()</b> returns the actual length of the allocated memory block or 0 for the null <b>mem</b>.
+</p>
+
+<p>
+<b>GuardNoMem()</b> throw an exception, it is used when no memory error happens. 
+</p>
+
+<p>
+<b>JustTry</b> is a <b>word</b>. It is used to distinguish between throwing and non-throwing variants of some operation.
+</p>
+
+<h3>MemBase utilities</h3>
 
 <h3>MemSpaceHeap</h3>
 
