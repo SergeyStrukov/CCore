@@ -1,0 +1,87 @@
+<!--
+/* page_PrintTitle.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> PrintTitle</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>PrintTitle</h2>
+
+<p class="Files">Files <b>CCore/inc/PrintTitle.h</b> <b>CCore/src/PrintTitle.cpp</b></p>
+
+<p>
+<b>PrintTitle()</b> is a <b>Creator function</b> to build an object of <b>PrintTitleType</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+PrintTitleType&lt;T&gt; <span class="att">PrintTitle</span>(const T &amp;obj) { return PrintTitleType&lt;T&gt;(obj); }
+
+</pre>
+
+<p>
+<b>PrintTitleType</b> is a <b>Helper Type</b>, it prints a title.
+</p>
+
+<pre>
+template &lt;class T&gt;
+class <span class="att">PrintTitleType</span>
+ {
+   const T &amp;obj;
+   
+  public: 
+  
+   explicit PrintTitleType(const T &amp;obj_) : obj(obj_) {}
+   
+   typedef TitlePrintOpt PrintOptType;
+   
+   template &lt;class P&gt;
+   void print(P &amp;out,PrintOptType opt) const;
+ };
+</pre>
+
+<p>
+Title is printed the same way as the class <a href="page_Printing.html#Title"><b>Title</b></a>, and has 
+the same printing options.
+</p>
+
+<pre>
+--- Object ---------------------------------------------------------------------
+</pre>
+
+<p>
+But you may use any object for it, not just only string! 
+</p>
+
+<pre>
+
+Printf(Con,"#;\n",PrintTitle(12345));
+
+</pre>
+
+</body>
+
+</html>
+

@@ -1,0 +1,85 @@
+<!--
+/* page_PrintSet.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> PrintSet</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>PrintSet</h2>
+
+<p class="Files">Files <b>CCore/inc/PrintSet.h</b> <b>CCore/src/PrintSet.cpp</b></p>
+
+<p>
+<b>PrintSet()</b> is a <b>Creator function</b> to build an object of <b>PrintSetType</b>.
+</p>
+
+<pre>
+
+template &lt;class R&gt;
+PrintSetType&lt;R&gt; <span class="att">PrintSet</span>(const R &amp;range) { return PrintSetType&lt;R&gt;(range); }
+
+</pre>
+
+<p>
+<b>PrintSetType</b> is a <b>Helper Type</b>, it prints some list of objects in "{ ... }" form. The type <b>R</b> 
+must be a <b>Cursor</b> to iterate through the list of objects.
+</p>
+
+<pre>
+template &lt;class R,class T=Meta::RangeObjType&lt;R&gt; &gt;
+class <span class="att">PrintSetType</span> : public PrintOptAdapter&lt;T&gt;
+ {
+   R range;
+   
+  public: 
+ 
+   explicit PrintSetType(const R &amp;range_) : range(range_) {}
+  
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
+   
+   template &lt;class P,class Opt&gt;
+   void print(P &amp;out,const Opt &amp;opt) const;
+ };
+</pre>
+
+<p>
+The object type <b>T</b> is derived by default from the <b>R</b>. Options may be provided to control how to print 
+each element. Example:
+</p>
+
+<pre>
+
+int data[]={-1,2,-3,4,-5,6,-7,8,-9,10};
+   
+Printf(Con,"#;\n",PrintSet(Range(data)));
+
+Printf(Con,"#+3;\n",PrintSet(Range(data)));
+
+</pre>
+
+</body>
+
+</html>
+

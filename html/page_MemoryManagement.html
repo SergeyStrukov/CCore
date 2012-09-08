@@ -152,7 +152,163 @@ of the block is at least <b>len</b>. If the <b>mem</b> is null, the function doe
 <b>JustTry</b> is a <b>word</b>. It is used to distinguish between throwing and non-throwing variants of some operation.
 </p>
 
+<p>
+<b>MemStatData</b> is a simple <b>Small Data Type</b>, used to represent a memory allocation statistics. It has two
+field: <b>block_count</b> &mdash; the number of allocated blocks, and <b>len_count</b> &mdash; the total length of blocks.
+It has number of methods with obvious meaning. The method <b>setMax()</b> replaces the current object with the given argument,
+if the argument has a greater <b>len_count</b>. It is used to accumulate a "peak" stat value.
+</p>
+
+<pre>
+struct <span class="att">MemStatData</span>
+ {
+  ulen block_count;
+  ulen len_count;
+  
+  MemStatData();
+  
+  // count
+  
+  void add(ulen len) { block_count++; len_count+=len; }
+  
+  void del(ulen len) { block_count--; len_count-=len; }
+  
+  void extend(ulen delta) { len_count+=delta; }
+  
+  void shrink(ulen delta) { len_count-=delta; }
+  
+  // set
+  
+  void set(const MemStatData &amp;obj) { *this=obj; }
+  
+  void setMax(const MemStatData &amp;obj);
+  
+  // compare
+  
+  bool operator == (const MemStatData &amp;obj) const; 
+  
+  bool operator != (const MemStatData &amp;obj) const; 
+  
+  // print object
+   
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+To get a heap statistic information there are two <b>Class-function</b>s:
+</p>
+
+<pre>
+
+/* struct MemStat */  
+
+struct <span class="att">MemStat</span> : MemStatData
+ {
+  MemStat();
+ };
+ 
+/* struct MemPeak */ 
+
+struct <span class="att">MemPeak</span> : MemStatData
+ {
+  MemPeak();
+ };
+ 
+</pre>
+
+<p>
+<b>MemStat</b> returns the current heap usage, while <b>MemPeak</b> &mdash; the peak usage.
+</p>
+
 <h3>MemBase utilities</h3>
+
+<p>
+<b>MemScope</b> is a <b>Scope Lock Type</b>, which controls memory release during some scope of execution.
+In constructor it records the current heap statistic, in destructor it retrieves it again and compares. If they doesn't
+match, a error message is printed using <b>Printf(NoException,...)</b>.
+</p>
+
+<pre>
+class <span class="att">MemScope</span> : NoCopy
+ {
+   MemStat on_init;
+   
+  public: 
+  
+   MemScope() {}
+   
+   ~MemScope();
+ };
+</pre>
+
+<p>
+This class is useful for the checking of memory leaks.
+</p>
+
+<p>
+Another helpful <b>Property Type</b> class is the <b>MemBase</b>:
+</p>
+
+<pre>
+struct <span class="att">MemBase</span>
+ {
+  // placement new/delete
+  
+  void * operator new(std::size_t,Place&lt;void&gt; place) { return place; }
+   
+  void operator delete(void *,Place&lt;void&gt;) {}
+  
+  // new/delete
+   
+  void * operator new(std::size_t len) { return MemAlloc(len); }
+  
+  void * operator new(std::size_t len,JustTryType) noexcept { return TryMemAlloc(len); }
+  
+  void operator delete(void *mem) { MemFree(mem); }
+  
+  // extra space
+  
+  template &lt;class T&gt;
+  static Place&lt;void&gt; ExtraSpace(T *obj) { return PlaceAt(obj)+Align(sizeof (T)); }
+  
+  void * operator new(std::size_t len,ulen extra,ulen size_of=1) { return MemAlloc(LenOf(extra,size_of,Align(len))); }
+  
+  void operator delete(void *mem,ulen,ulen) { MemFree(mem); }
+ };
+</pre>
+
+<p>
+This class redefines the <b>new/delete</b> operators to use the <b>CCore</b> heap. Specify this class as the base class to make sure
+the derived class objects will be placed in the <b>CCore</b> heap been created by the <b>new</b> operator. 
+</p>
+
+<p>
+You may also take some additional space after the object, using the overloaded <b>new</b> operator.
+<b>extra</b> is the number of parts of <b>size_of</b> length. To retrieve this space use the function <b>ExtraSpace</b>:
+</p>
+
+<pre>
+template &lt;class T&gt;
+struct Header : MemBase_nocopy
+ {
+  ulen object_count;
+
+  explicit Header(ulen object_count_) : object_count(object_count_) {}
+
+  Place&lt;void&gt; getSpace() { return ExtraSpace(this); }
+
+  static Header * Create(ulen object_count)
+   {
+    return new(object_count,sizeof (T)) Header(object_count);
+   }
+ };
+</pre>
+
+<p>
+<b>MemBase_nocopy</b> is a non-copyable variant of <b>MemBase</b>.
+</p>
 
 <h3>MemSpaceHeap</h3>
 
