@@ -318,9 +318,162 @@ struct Header : MemBase_nocopy
 
 <p class="Files">Files <b>CCore/inc/MemSpaceHeap.h</b> <b>CCore/src/MemSpaceHeap.cpp</b></p>
 
+<p>
+<b>SpaceHeap</b> is a heap class for a stand-alone usage. It provides a heap functionality, the memory blocks comes from
+a single fixed memory buffer. The memory buffer is allocated from the main heap. 
+</p>
+
+<pre>
+class <span class="att">SpaceHeap</span> : NoCopy
+ {
+   ....
+   
+  public: 
+  
+   explicit SpaceHeap(ulen mem_len);
+   
+   ~SpaceHeap();
+   
+   bool isEmpty() const { return heap.isEmpty(); }
+   
+   void * alloc(ulen len);
+  
+   ulen getLen(const void *mem);    // mem!=0
+  
+   void free(void *mem);            // mem!=0
+  
+   bool extend(void *mem,ulen len); // mem!=0
+  
+   bool shrink(void *mem,ulen len); // mem!=0
+ };
+</pre>
+
+<p>
+Constructor argument is the length of the memory buffer.
+</p>
+
+<p>
+<b>alloc()</b> returns null on failure.
+</p>
+
+<p>
+The argument <b>mem</b> must not be null.
+</p>
+
+<p>
+Destructor calls abort on memory leak.
+</p>
+
+<p>
+There is no the <b>Mutex</b> protection for the methods of the <b>SpaceHeap</b>.
+</p>
+
+<p>
+<b>MemSpace</b> class is a primary memory provider class for the <b>RadixHeap</b>. It is used to build the <b>SpaceHeap</b>.
+</p>
+
+<pre>
+class <span class="att">MemSpace</span> : NoCopy
+ {
+   ulen max_store_len;
+   
+   RadixHeapBlock *cache;
+   
+  public:
+  
+   explicit MemSpace(Space space); // aligned
+   
+   void cleanup(bool clean);
+   
+   ulen getMaxStoreLen() const { return max_store_len; }
+   
+   RadixHeapBlock * alloc(ulen blen);
+   
+   void free(RadixHeapBlock *block);
+   
+   bool extend(RadixHeapBlock *block,ulen blen);
+   
+   ulen shrink(RadixHeapBlock *block,ulen blen);
+ };
+</pre>
+
 <h3><b>HCore</b> MemPageHeap</h3>
 
 <p class="Files">Files <b>HCore/CCore/inc/MemPageHeap.h</b> <b>HCore/CCore/src/MemPageHeap.cpp</b></p>
+
+<p>
+<b>PageHeap</b> is another <b>HCore</b> heap class for a stand-alone usage. It provides a heap functionality, 
+the memory blocks comes from a set of large memory buffers. These buffers are allocated using memory page functions,
+provided by OS. 
+</p>
+
+<pre>
+class <span class="att">PageHeap</span> : NoCopy
+ {
+   ....
+   
+  public: 
+  
+   PageHeap();
+   
+   explicit PageHeap(ulen min_page_alloc_len);
+   
+   ~PageHeap();
+   
+   bool isEmpty() const { return heap.isEmpty(); }
+   
+   void * alloc(ulen len);
+  
+   ulen getLen(const void *mem);    // mem!=0
+  
+   void free(void *mem);            // mem!=0
+  
+   bool extend(void *mem,ulen len); // mem!=0
+  
+   bool shrink(void *mem,ulen len); // mem!=0
+ };
+</pre>
+
+<p>
+The interface of the <b>PageHeap</b> is identical to the <b>SpaceHeap</b> interface.
+</p>
+
+<p>
+<b>PageHeap</b> has two constructors. The <b>min_page_alloc_len</b> argument is a minimum large buffer length.
+Default constructor uses some default value for it.
+</p>
+
+<p>
+The amount of memory, provided by the <b>PageHeap</b>, is limited only by the address space and available
+physical memory.
+</p>
+
+<p>
+<b>MemPage</b> class is a primary memory provider class for the <b>RadixHeap</b>. It is used to build the <b>PageHeap</b>.
+</p>
+
+<pre>
+class <span class="att">MemPage</span> : NoCopy
+ {
+  public:
+  
+   MemPage();
+   
+   explicit MemPage(ulen min_alloc_len);
+   
+   void cleanup(bool clean);
+   
+   ulen getMaxStoreLen() const { return max_store_len; }
+   
+   RadixHeapBlock * alloc(ulen blen);
+   
+   void free(RadixHeapBlock *block);
+   
+   bool extend(RadixHeapBlock *block,ulen blen);
+   
+   ulen shrink(RadixHeapBlock *block,ulen blen);
+ };
+</pre>
 
 <h3><b>XCore</b> SpecialMemBase</h3>
 
