@@ -66,6 +66,10 @@ Been a general purpose global object, <b>CCore</b> heap is a Mutex-protected. In
 are obtained from the OS. In <b>XCore</b> it is a single fixed block of memory, provided by the Target.
 </p>
 
+<p>
+During uninitialization, <b>CCore</b> heap calls abort if not all allocated memory blocks were released.
+</p>
+
 <h3>MemBase</h3>
 
 <p>

@@ -30,6 +30,24 @@
 
 <p class="Files">Files <b>CCore/inc/PrintAbort.h</b> <b>CCore/src/PrintAbort.cpp</b></p>
 
+<p>
+<b>PrintAbort()</b> is a simple helper function. It formats a message in a temporary buffer and then calls <b>Abort()</b>.
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+void <span class="att">PrintAbort</span>(const char *format,const TT &amp; ... tt)
+ {
+  char buf[TextBufLen];
+  PrintBuf out(Range(buf));
+  
+  Printf(out,format,tt...);
+  
+  Abort(out.close());
+ }
+
+</pre>
 
 </body>
 

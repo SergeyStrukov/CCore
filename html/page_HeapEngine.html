@@ -30,6 +30,140 @@
 
 <p class="Files">Files <b>CCore/inc/HeapEngine.h</b> <b>CCore/src/HeapEngine.cpp</b></p>
 
+<p>
+<b>HeapEngine</b> is a fully-featured heap class. It is a <b>Resource Provider Type</b>. It implements the heap
+functionality using another heap class. <b>HeapEngine</b> adds tree important things: mutex protection, statistic accounting and
+usage limitation.
+</p>
+
+<pre>
+template &lt;class Heap&gt;
+class <span class="att">HeapEngine</span> : NoCopy
+ {
+   Mutex mutex;
+   
+   Heap heap;
+   MemStatData stat;
+   MemStatData peak;
+   ulen limit;
+  
+  public:
+  
+   template &lt;class ... SS&gt;
+   explicit HeapEngine(TextLabel name,SS &amp;&amp; ... ss);
+   
+   ~HeapEngine();
+   
+   void * alloc(ulen len);
+  
+   ulen getLen(const void *mem);    // mem may == 0
+  
+   void free(void *mem);            // mem may == 0
+  
+   bool extend(void *mem,ulen len); // mem may == 0
+  
+   bool shrink(void *mem,ulen len); // mem may == 0
+  
+   void setLim(ulen limit);
+  
+   void getStat(MemStatData &amp;ret);
+  
+   void getPeak(MemStatData &amp;ret);
+ };
+</pre>
+
+<p>
+The <b>name</b> in constuctor is used to name the <b>mutex</b>. Other arguments are used to initialize the <b>heap</b>.
+</p>
+
+<p>
+The semantic of methods are the same as of global heap functions <b>Mem...()</b>.
+
+</p>
+
+<p>
+<b>setLim()</b> sets the limit on memory allocation. Value null means no limit. If the limit is set, then <b>HeapEngine</b>
+will keep the total allocated memory below this limit.
+</p>
+
+<p>
+<b>getStat()</b> returns the current memory allocation statistics.
+</p>
+
+<p>
+<b>getPeak</b> returns the peak memory allocation statistics.
+</p>
+
+<p>
+<b>alloc()</b> tries to allocate the memory block. On success it returns its address, on failure &mdash; null.
+Even if the <b>len</b> is null, the address of the allocated memory block is not null and its actual length too.
+The actual length of the allocated memory block may be a slightly greater than the <b>len</b>.
+Memory is aligned, but this is ensured by the underlying class <b>Heap</b>.
+</p>
+
+<p>
+In the remaining four methods the argument <b>mem</b> may be null, in this case methods does nothing. 
+Otherwise it must be the address of a previously allocated memory block.
+</p>
+
+<p>
+<b>getLen()</b> returns the actual length of the allocated memory block. If the <b>mem</b> is null, it returns null.
+</p>
+
+<p>
+<b>free()</b> releases the allocated memory block. 
+</p>
+
+<p>
+<b>extend()</b> extends the memory block, if it is possible. The <b>len</b> is the required length of new block.
+The return value means the success of the operation.
+If the <b>mem</b> is null, it returns false. <b>extend()</b> is always successful (but does nothing) if the <b>len</b>
+is not greater than the actual length of the memory block.
+</p>
+
+<p>
+<b>shrink()</b> shrinks the memory block. The <b>len</b> is the required length of new block.
+The return value means the success of the operation.
+If the <b>mem</b> is null, it returns false. <b>shrink()</b> fails only if the <b>len</b> is greater than the actual 
+length of the memory block.
+</p>
+
+<h3>Heap</h3>
+
+<p>
+The underlying class <b>Heap</b> must provide the following functionality:
+</p>
+
+<pre>
+class Heap
+ {
+  public:
+
+   Heap();
+
+   Heap(....);
+
+   ~Heap();
+
+   Space alloc(ulen len);               // ret.len!=0 on success (==memlen)
+  
+   ulen getLen(const void *mem);        // mem!=0, return memlen
+   
+   ulen free(void *mem);                // mem!=0, return memlen
+   
+   DeltaLen extend(void *mem,ulen len); // mem!=0
+
+   DeltaLen shrink(void *mem,ulen len); // mem!=0
+ };
+</pre>
+
+<p>
+It may have several constructors with different arguments as neccessary.
+</p>
+
+<p>
+It is highly recommended that the destructor check the memory leaks and abort execution if there is unreleased memory.
+</p>
 
 </body>
 

@@ -30,6 +30,90 @@
 
 <p class="Files">Files <b>CCore/inc/PrintBits.h</b> <b>CCore/src/PrintBits.cpp</b></p>
 
+<p>
+<b>PrintBits()</b> is a <b>Creator function</b>, it is used to bind together printing devide and some unsigned integral value
+to build the <b>Helper Type</b> <b>PrintBitsType</b> object.
+</p>
+
+<pre>
+
+template &lt;class UInt,class P&gt;
+PrintBitsType&lt;P,UInt&gt; <span class="att">PrintBits</span>(P &amp;out,UInt value) { return PrintBitsType&lt;P,UInt&gt;(out,value); }
+
+</pre>
+
+<p>
+<b>PrintBitsType</b> prints bits of the given value in a textual form.
+</p>
+
+<pre>
+template &lt;class P,class UInt&gt;
+class <span class="att">PrintBitsType</span>
+ {
+   P &amp;out;
+   UInt value;
+   bool empty;
+   
+  public: 
+  
+   PrintBitsType(P &amp;out,UInt value);
+   
+   PrintBitsType&lt;P,UInt&gt; &amp; operator () (UInt flag,StrLen name);
+    
+   void complete();
+ };
+</pre>
+
+<p>
+Here is the usage pattern (from <b>GenFile.h</b>):
+</p>
+
+<pre>
+PrintBits&lt;uint32&gt;(out,oflags)
+                 (Open_Read      ,"Read")
+                 (Open_Write     ,"Write")
+                 (Open_Pos       ,"Pos")
+                 (Open_Create    ,"Create")
+                 (Open_Erase     ,"Erase")
+                 (Open_New       ,"New")
+                 (Open_AutoDelete,"AutoDelete")
+                 (Open_PosEnd    ,"PosEnd")
+                 .complete();
+</pre>
+
+<p>
+And more:
+</p>
+
+<pre>
+
+class FileOpenFlagsTextDesc
+ {
+   FileOpenFlags oflags;
+   
+  public:
+  
+   explicit FileOpenFlagsTextDesc(FileOpenFlags oflags_) : oflags(oflags_) {}
+   
+   template &lt;class P&gt;
+   void print(P &amp;out) const
+    {
+     PrintBits&lt;uint32&gt;(out,oflags)
+                      (Open_Read      ,"Read")
+                      (Open_Write     ,"Write")
+                      (Open_Pos       ,"Pos")
+                      (Open_Create    ,"Create")
+                      (Open_Erase     ,"Erase")
+                      (Open_New       ,"New")
+                      (Open_AutoDelete,"AutoDelete")
+                      (Open_PosEnd    ,"PosEnd")
+                      .complete();
+    }
+ };
+ 
+inline FileOpenFlagsTextDesc GetTextDesc(FileOpenFlags oflags) { return FileOpenFlagsTextDesc(oflags); }
+ 
+</pre>
 
 </body>
 

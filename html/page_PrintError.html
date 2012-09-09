@@ -30,6 +30,38 @@
 
 <p class="Files">Files <b>CCore/inc/PrintError.h</b> <b>CCore/src/PrintError.cpp</b></p>
 
+<p>
+<b>PrintError</b> is a <b>Helper Type</b>, it prints the text description of the system error value.
+</p>
+
+<pre>
+class <span class="att">PrintError</span>
+ {
+   Sys::ErrorType error;
+   
+  public: 
+  
+   explicit PrintError(Sys::ErrorType error_) : error(error_) {}
+   
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+For example, in <b>HCore</b>: 
+</p>
+
+<pre>
+
+Sys::Sem sys_sem;
+
+if( auto error=sys_sem.init() )
+  {
+   Printf(Con,"initialization error = #;\n",PrintError(error));
+  }
+
+</pre>
 
 </body>
 
