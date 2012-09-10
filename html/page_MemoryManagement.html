@@ -479,6 +479,75 @@ class <span class="att">MemPage</span> : NoCopy
 
 <p class="Files">Files <b>XCore/CCore/inc/SpecialMemBase.h</b> <b>XCore/CCore/src/SpecialMemBase.cpp</b></p>
 
+<p>
+<b>XCore</b> privides additional memory functions. There are 2 additional memory heaps, one to be used in the interrupt context,
+another to distribute share memory. The main heap is protected by the mutex, so it cannot be used in the interrupt context.
+The interrupt heap is protected by the <b>IntLock</b>. It used in the C++ exception implementation, so exceptions can be used 
+without limitaion. Shared memory is a special class of memory, which is not cached by the CPU. This memory is used to exchange 
+data with devices.
+</p>
+
+<pre>
+
+/* init/exit functions */ 
+
+void Init_SpecialMem();
+
+void Exit_SpecialMem();
+
+</pre>
+
+<p>
+<b>Init_SpecialMem()</b> and <b>Exit_SpecialMem()</b> are initialization functions, they are called 
+<span class="alert">by the board initialization code and must not be used anywhere else</span>.
+</p>
+
+<pre>
+
+/* Mem..._int() functions */  
+
+void * TryMemAlloc_int(ulen len) noexcept;
+
+void MemFree_int(void *mem);
+
+/* Mem..._shared() functions */ 
+
+void * TryMemAlloc_shared(ulen len) noexcept;
+
+void MemFree_shared(void *mem);
+
+</pre>
+
+<p>
+<b>TryMemAlloc_int()</b> and <b>MemFree_int()</b> are the heap functions of the interrupt heap.
+</p>
+
+<p>
+<b>TryMemAlloc_shared()</b> and <b>MemFree_shared()</b> are the heap functions of the shared heap.
+</p>
+
+<pre>
+
+/* struct MemStat_int */  
+
+struct MemStat_int : MemStatData
+ {
+  MemStat_int();
+ };
+ 
+/* struct MemPeak_int */ 
+
+struct MemPeak_int : MemStatData
+ {
+  MemPeak_int();
+ };
+
+</pre>
+
+<p>
+<b>MemStat_int</b> and <b>MemPeak_int</b> are the statistic heap <b>Class-function</b>s of the interrupt heap.
+</p>
+
 </body>
 
 </html>
