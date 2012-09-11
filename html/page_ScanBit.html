@@ -1,0 +1,156 @@
+<!--
+/* page_ScanBit.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> ScanBit</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>ScanBit</h2>
+
+<p class="Files">Files <b>CCore/inc/ScanBit.h</b> <b>CCore/src/ScanBit.cpp</b></p>
+
+<p>
+<b>ScanBit</b> is a "bit-array" class, designed for the quick bit scanning. It stores a bit array in the
+internal buffer, packed in some unsigned integral units. Logically, it is the array of bits. The length 
+is determined by the second template argument. The first argument is an <b>Algorithm Package</b>, it provides
+a set of functions for efficient implementation of the <b>ScanBit</b>. 
+</p>
+
+<pre>
+template &lt;class Algo,ulen Len&gt;
+class <span class="att">ScanBit</span>
+ {
+   typedef typename Algo::Unit Unit;  
+
+   Unit bits[Len];
+   
+  public:
+   
+   static const ulen IndexLim = Len*Algo::UnitBits ;
+   
+   ScanBit();
+   
+   void set(ulen ind);
+  
+   void clear(ulen ind);
+   
+   Unit test(ulen ind) const;
+  
+   ulen findMin(ulen ind) const; // min>=ind , if( not found ) return IndexLim; 
+   
+   ulen findMax(ulen ind) const; // max<=ind , if( not found ) return IndexLim;
+ };
+</pre>
+
+<p>
+The default constructor clears all bit.
+</p>
+
+<p>
+The inner constant <b>IndexLim</b> is the array length. The argument <b>ind</b> in all methods must be less than <b>IndexLim</b>.
+</p>
+
+<p>
+<b>set()</b> sets the bit with the given index.
+</p>
+
+<p>
+<b>clear()</b> clears the bit with the given index.
+</p>
+
+<p>
+<b>test()</b> tests the bit with the given index. The return value is non-zero iff the bit is set.
+</p>
+
+<p>
+<b>findMin()</b> scans bits starting form the given index <b>up</b>. The index of the first found set bit is returns.
+If there is no such ones, <b>IndexLim</b> is returned. The efficiency of this method depends on the efficiency of the method
+<b>Algo::ScanUp()</b>.
+</p>
+
+<p>
+<b>findMax()</b> scans bits starting form the given index <b>down</b>. The index of the first found set bit is returns.
+If there is no such ones, <b>IndexLim</b> is returned. The efficiency of this method depends on the efficiency of the method
+<b>Algo::ScanDown()</b>.
+</p>
+
+<h3>ScanMSBitAlgo and ScanLSBitAlgo</h3>
+
+<p>
+Two ready <b>Algorithm Package</b>s for the <b>ScanBit</b> are provided: <b>ScanMSBitAlgo</b> and <b>ScanLSBitAlgo</b>.
+They are built based on the "quick" functions, provided by the Target. They use different order of numbering bits in the unit.
+They <b>ScanUp/Down()</b> methods use the opposite <b>Quick::ScanMSBit/LSBit()</b> functions calls, as shown below.
+</p>
+
+<pre>
+struct <span class="att">ScanMSBitAlgo</span>
+ {
+  typedef Quick::ScanUInt Unit;
+  
+  static const ulen UnitBits;
+  
+  static const Unit Unit_msb;
+  
+  static const Unit Unit_all;
+  
+  static Unit Bit(ulen number);
+  
+  static Unit MaskUp(ulen number);
+  
+  static ulen ScanUp(Unit bit); // uses Quick::ScanMSBit()
+  
+  static Unit MaskDown(ulen number);
+  
+  static ulen ScanDown(Unit bit); // uses Quick::ScanLSBit()
+ };
+
+</pre>
+
+<pre>
+struct <span class="att">ScanLSBitAlgo</span>
+ {
+  typedef Quick::ScanUInt Unit;
+  
+  static const ulen UnitBits;
+  
+  static const Unit Unit_1;
+  
+  static const Unit Unit_all;
+  
+  static Unit Bit(ulen number);
+  
+  static Unit MaskUp(ulen number);
+  
+  static ulen ScanUp(Unit bit); // uses Quick::ScanLSBit()
+  
+  static Unit MaskDown(ulen number);
+  
+  static ulen ScanDown(Unit bit); // uses Quick::ScanMSBit()
+ };
+</pre>
+
+</body>
+
+</html>
+

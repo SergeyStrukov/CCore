@@ -1,0 +1,108 @@
+<!--
+/* page_UIntSplit.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> UIntSplit</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>UIntSplit</h2>
+
+<p class="Files">Files <b>CCore/inc/UIntSplit.h</b> <b>CCore/src/UIntSplit.cpp</b></p>
+
+<p>
+<b>UIntSplit</b> is a <b>Helper Type</b>, it can split a bigger unsigned integral type value into an array of smaller ones or
+inverse.
+</p>
+
+<pre>
+template &lt;class UIntBig,class UIntSmall&gt;
+class <span class="att">UIntSplit</span>
+ {
+   UIntSmall buf[Len]; // big-endian order
+  
+  public:
+   
+   // access
+  
+   UIntSmall operator [] (unsigned index) const { return buf[index]; }
+ 
+   UIntSmall & operator [] (unsigned index) { return buf[index]; }
+   
+   // get
+  
+   UIntBig get() const;
+   
+   // set
+   
+   void set(UIntBig value);
+ };
+</pre>
+
+<p>
+There is no default constructor, so the initial value of this class is indeterminant.
+</p>
+
+<p>
+You can get or set the value as <b>UIntBig</b> type value, using the methods <b>get()</b> or <b>set()</b>.
+But you can get or set <b>UIntSmall</b> parts of the value in big-endian order using the overloaded <b>operator []</b>.
+An example:
+</p>
+
+<pre>
+
+struct Pair
+ {
+  uint16 a;
+  uint16 b;
+
+  Pair() {}
+
+  Pair(uint16 a_,uint16 b_) : a(a_),b(b_) {}
+ };
+
+uint32 Combine(Pair p)
+ {
+  UIntSplit&lt;uint32,uint16&gt; split;
+
+  split[0]=p.a;
+  split[1]=p.b;
+
+  return split.get();
+ }
+
+Pair Split(uint32 c)
+ {
+  UIntSplit&lt;uint32,uint16&gt; split;
+
+  split.set(c);
+
+  return Pair(split[0],split[1]);
+ }
+
+</pre>
+
+</body>
+
+</html>
+
