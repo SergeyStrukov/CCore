@@ -190,6 +190,7 @@
 ../../HCore/CCore/src/Task.cpp
 ../../Target/WIN32/CCore/src/base/PlatformBase.cpp
 ../../Target/WIN32/CCore/src/base/Quick.cpp
+../../Target/WIN32/CCore/src/crypton/IntelAES.cpp
 ../../Target/WIN32/CCore/src/math/IntegerFastAlgo.cpp
 ../../Target/WIN32/CCore/src/PlanInit_CCore.cpp
 ../../Target/WIN32/CCore/src/sys/SysAbort.cpp

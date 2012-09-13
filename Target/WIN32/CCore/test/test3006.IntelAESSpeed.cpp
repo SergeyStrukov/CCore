@@ -1,28 +1,28 @@
-/* test0059.AES-speed.cpp */ 
+/* test3006.IntelAESSpeed.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
 //
-//  Tag: General 
+//  Tag: Target/WIN32 
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2011 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
 #include <CCore/test/test.h>
 
-#include <CCore/inc/crypton/AES.h>
+#include <CCore/inc/crypton/IntelAES.h>
 #include <CCore/inc/Random.h>
 #include <CCore/inc/Array.h>
 #include <CCore/inc/Timer.h>
 
 namespace App {
 
-namespace Private_0059 {
+namespace Private_3006 {
 
 /* class Test */
 
@@ -83,27 +83,27 @@ class Test : NoCopy
     }
  };
 
-} // namespace Private_0059
+} // namespace Private_3006
  
-using namespace Private_0059; 
+using namespace Private_3006; 
  
-/* Testit<59> */ 
+/* Testit<3006> */ 
 
 template<>
-const char *const Testit<59>::Name="Test59 AES speed";
+const char *const Testit<3006>::Name="Test3006 IntelAESSpeed";
 
 template<>
-bool Testit<59>::Main() 
+bool Testit<3006>::Main() 
  {
   Test test;
   
-  test.test<Crypton::AES128>(10000);
-  test.test<Crypton::AES192>(10000);
-  test.test<Crypton::AES256>(10000);
+  test.test<Crypton::IntelAES128>(100000);
+  test.test<Crypton::IntelAES192>(100000);
+  test.test<Crypton::IntelAES256>(100000);
   
-  test.test<Crypton::AESInverse128>(10000);
-  test.test<Crypton::AESInverse192>(10000);
-  test.test<Crypton::AESInverse256>(10000);
+  test.test<Crypton::IntelAESInverse128>(100000);
+  test.test<Crypton::IntelAESInverse192>(100000);
+  test.test<Crypton::IntelAESInverse256>(100000);
   
   return true;
  }

@@ -73,6 +73,7 @@ obj/IntPrint.o \
 obj/Integer.o \
 obj/IntegerFastAlgo.o \
 obj/IntegerSlowAlgo.o \
+obj/IntelAES.o \
 obj/Job.o \
 obj/Len.o \
 obj/LineInput.o \
@@ -287,6 +288,7 @@ obj/IntPrint.s \
 obj/Integer.s \
 obj/IntegerFastAlgo.s \
 obj/IntegerSlowAlgo.s \
+obj/IntelAES.s \
 obj/Job.s \
 obj/Len.s \
 obj/LineInput.s \
@@ -501,6 +503,7 @@ obj/IntPrint.dep \
 obj/Integer.dep \
 obj/IntegerFastAlgo.dep \
 obj/IntegerSlowAlgo.dep \
+obj/IntelAES.dep \
 obj/Job.dep \
 obj/Len.dep \
 obj/LineInput.dep \
@@ -642,6 +645,7 @@ obj/XPoint.dep \
 
 ASM_OBJ_LIST = \
 obj/IntegerFastAlgo.s.o \
+obj/IntelAES.s.o \
 obj/Quick.s.o \
 obj/SysAtomic.s.o \
 obj/SysTime.s.o \
@@ -870,6 +874,9 @@ obj/IntegerFastAlgo.o : ../../Target/WIN32/CCore/src/math/IntegerFastAlgo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntegerSlowAlgo.o : ../../CCore/src/math/IntegerSlowAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntelAES.o : ../../Target/WIN32/CCore/src/crypton/IntelAES.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Job.o : ../../CCore/src/Job.cpp
@@ -1507,6 +1514,9 @@ obj/IntegerFastAlgo.s : ../../Target/WIN32/CCore/src/math/IntegerFastAlgo.cpp
 obj/IntegerSlowAlgo.s : ../../CCore/src/math/IntegerSlowAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/IntelAES.s : ../../Target/WIN32/CCore/src/crypton/IntelAES.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Job.s : ../../CCore/src/Job.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2142,6 +2152,9 @@ obj/IntegerFastAlgo.dep : ../../Target/WIN32/CCore/src/math/IntegerFastAlgo.cpp
 obj/IntegerSlowAlgo.dep : ../../CCore/src/math/IntegerSlowAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntegerSlowAlgo.o $< -MF $@
 
+obj/IntelAES.dep : ../../Target/WIN32/CCore/src/crypton/IntelAES.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntelAES.o $< -MF $@
+
 obj/Job.dep : ../../CCore/src/Job.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Job.o $< -MF $@
 
@@ -2556,6 +2569,9 @@ obj/XPoint.dep : ../../CCore/src/net/XPoint.cpp
 
 
 obj/IntegerFastAlgo.s.o : ../../Target/WIN32/CCore/src/math/IntegerFastAlgo.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/IntelAES.s.o : ../../Target/WIN32/CCore/src/crypton/IntelAES.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/Quick.s.o : ../../Target/WIN32/CCore/src/base/Quick.s

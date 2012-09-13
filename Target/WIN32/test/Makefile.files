@@ -99,6 +99,8 @@ OBJ_LIST = \
 ../test-obj/test3002.IntegerFastAlgo.o \
 ../test-obj/test3003.IntegerSpeed.o \
 ../test-obj/test3004.MulSpeed.o \
+../test-obj/test3005.IntelAES.o \
+../test-obj/test3006.IntelAESSpeed.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -212,6 +214,8 @@ ASM_LIST = \
 ../test-obj/test3002.IntegerFastAlgo.s \
 ../test-obj/test3003.IntegerSpeed.s \
 ../test-obj/test3004.MulSpeed.s \
+../test-obj/test3005.IntelAES.s \
+../test-obj/test3006.IntelAESSpeed.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -325,6 +329,8 @@ DEP_LIST = \
 ../test-obj/test3002.IntegerFastAlgo.dep \
 ../test-obj/test3003.IntegerSpeed.dep \
 ../test-obj/test3004.MulSpeed.dep \
+../test-obj/test3005.IntelAES.dep \
+../test-obj/test3006.IntelAESSpeed.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -641,6 +647,12 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3004.MulSpeed.o : ../../../Target/WIN32/CCore/test/test3004.MulSpeed.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3005.IntelAES.o : ../../../Target/WIN32/CCore/test/test3005.IntelAES.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3006.IntelAESSpeed.o : ../../../Target/WIN32/CCore/test/test3006.IntelAESSpeed.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -975,6 +987,12 @@ include $(RULES_FILE)
 ../test-obj/test3004.MulSpeed.s : ../../../Target/WIN32/CCore/test/test3004.MulSpeed.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3005.IntelAES.s : ../../../Target/WIN32/CCore/test/test3005.IntelAES.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test3006.IntelAESSpeed.s : ../../../Target/WIN32/CCore/test/test3006.IntelAESSpeed.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1306,6 +1324,12 @@ include $(RULES_FILE)
 
 ../test-obj/test3004.MulSpeed.dep : ../../../Target/WIN32/CCore/test/test3004.MulSpeed.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3004.MulSpeed.o $< -MF $@
+
+../test-obj/test3005.IntelAES.dep : ../../../Target/WIN32/CCore/test/test3005.IntelAES.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3005.IntelAES.o $< -MF $@
+
+../test-obj/test3006.IntelAESSpeed.dep : ../../../Target/WIN32/CCore/test/test3006.IntelAESSpeed.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3006.IntelAESSpeed.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

@@ -108,3 +108,5 @@
 ../../../Target/WIN32/CCore/test/test3002.IntegerFastAlgo.cpp
 ../../../Target/WIN32/CCore/test/test3003.IntegerSpeed.cpp
 ../../../Target/WIN32/CCore/test/test3004.MulSpeed.cpp
+../../../Target/WIN32/CCore/test/test3005.IntelAES.cpp
+../../../Target/WIN32/CCore/test/test3006.IntelAESSpeed.cpp
