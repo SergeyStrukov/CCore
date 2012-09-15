@@ -1,0 +1,312 @@
+<!--
+/* page_Exceptions.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Exceptions</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Exceptions</h2>
+
+<p class="Files">Files <b>CCore/inc/Exception.h</b> <b>CCore/src/Exception.cpp</b></p>
+
+<p>
+<b>CCore</b> uses a specially designed pattern to throw exceptions.
+</p>
+
+<pre>
+
+#include &lt;CCore/inc/Exception.h&gt;
+
+....
+
+void func()
+ {
+  ....
+
+  Printf(Exception,"message format",....);
+ }
+
+class C
+ {
+  public:
+
+   ~C()
+   {
+    Printf(NoException,"message format",....);
+   }
+ };
+
+</pre>
+
+<p>
+To throw an exception, just print a message to one of two targets: <b>Exception</b> or <b>NoException</b>.
+If you print to the <b>Exception</b>, the print statement will throw an exception of the type <b>CatchType</b>.
+Printing to the <b>NoException</b> does not throw an exception. But it prints a message and setup a error flag in the
+exception report object if there is one.
+</p>
+
+<p>
+In <b>CCore</b> we keep these statements in <b>.cpp</b> files. The pattern for the exception message is the following:
+</p>
+
+<pre>
+
+void GuardIndexOutOfRange(ulen index,ulen len)
+ {
+  Printf(Exception,"CCore::GuardIndex(index=#;,len=#;) : out of range",index,len);
+ }
+
+</pre>
+
+<h3>class PrintException</h3>
+
+<p>
+The class <b>PrintException</b> serves as a print adapter for the enum <b>ExceptionType</b> (the type of constants
+<b>Exception</b> or <b>NoException</b>).
+</p>
+
+<pre>
+
+class <span class="att">PrintException</span> : public PrintBase
+ {
+   ExceptionType ex;
+   ReportException *report;
+   
+   char buf[TextBufLen];
+   bool do_throw;
+ 
+  private:
+  
+   virtual PtrLen&lt;char&gt; do_provide(ulen hint_len);
+   
+   virtual void do_flush(char *ptr,ulen len);
+   
+  protected: 
+   
+   PrintException();
+   
+  public:
+  
+   explicit PrintException(ExceptionType ex); 
+   
+   ~PrintException();
+ };
+ 
+template &lt;&gt;
+struct <span class="att">PrintOutAdapter&lt;ExceptionType&gt;</span>
+ {
+  typedef PrintException PrintOutType;
+ };
+
+</pre>
+
+<p>
+You don't need this class for a direct usage. It does its job inside a <b>Printf()</b> statement: finds a <b>ReportException</b>
+object, prints the message to it, setup a error flag and finally in destructor throws an exception, if required.
+</p>
+
+<h3>class ReportException</h3>
+
+<p>
+Each thread might have an associated <b>ReportException</b> object. The purpose of this object is to serve as the printing
+target for exception messages. It also has an internal flag, which signals if there were exception messages.
+</p>
+
+<pre>
+class <span class="att">ReportException</span> : NoCopy
+ {
+   bool nok;
+
+   ....
+
+  protected:
+  
+   static void Print(StrLen str);
+  
+   virtual void print(StrLen str);
+  
+   virtual void start(ExceptionType ex);
+  
+   virtual void add(const char *ptr,ulen len);
+   
+   virtual void end();
+  
+  public:
+  
+   ReportException();
+   
+   ~ReportException();
+   
+   bool operator + () const { return !nok; }
+   
+   bool operator ! () const { return nok; }
+   
+   void clear() { nok=false; }
+  
+   void guard() { if( nok ) throw CatchType(); }
+ };
+</pre>
+
+<p>
+By default, the <b>ReportException</b> prints text to the default console. But you may alter this by deriving a class
+from the <b>ReportException</b> and overriding the virtual methods <b>print()</b>, <b>start()</b>, <b>add()</b>, 
+and <b>end()</b>. To redirect the text output, you need to override only the method <b>print()</b>, but you may alter
+the formating or processing of the elements of the message by overriding other methods. <b>Print()</b> prints to
+the console. Be caution in implementation of these methods: <span class="alert">they must not throw exceptions, 
+it will lead to abort</span>.
+</p>
+
+<p>
+<b>SilentReportException</b> is a such derived class, it prints nowhere.
+</p>
+
+<p>
+<b>ReportException</b> objects must be created as local variables to setup a report exception target for the current thread
+for the scope duration. Usually, you should couple such object with a <b>try/catch</b> block. Here is an example:
+</p>
+
+<pre>
+
+try
+  {
+   ReportException report; // or some derived from ReportException class
+
+   {
+
+    // do some job here
+
+   } // you need the inner scope to complete all destructors before report.guard();
+
+   report.guard(); // throw an exception if there was Printf(NoException,...); above
+  }
+catch(CatchType)
+  {
+   // handle errors here
+  }
+
+</pre>
+
+<p>
+Or the following way:
+</p>
+
+<pre>
+
+ReportException report; // or some derived from ReportException class
+
+try
+  {
+   {
+
+    // do some job here
+
+   } // you need the inner scope to complete all destructors before report.guard();
+
+   report.guard(); // throw an exception if there was Printf(NoException,...); above
+  }
+catch(CatchType)
+  {
+   // handle errors here
+  }
+
+</pre>
+
+<p>
+If you have multiple <b>ReportException</b> objects, then the last is the current.
+</p>
+
+<pre>
+
+ReportException report1;
+
+ // report1 is the current
+
+{
+ ReportException report2;
+
+  // report2 is the current here
+
+}
+
+ // report1 is the current again
+
+</pre>
+
+<h3>Custom exceptions</h3>
+
+<p>
+Sometimes you may want to throw not the object of the empty <b>CatchType</b>, but something more. To do this use
+the <b>PrintCustomException</b> class. 
+</p>
+
+<pre>
+
+class SomeException : public CatchType
+ {
+  ....
+
+  public:
+
+   SomeException(A a,B b,C c);
+ };
+
+....
+
+{
+ A a;
+ B b;
+ C c;
+
+ PrintCustomException&lt;SomeException&gt; out(a,b,c);
+
+ Printf(out,"message format",...);
+}
+
+</pre>
+
+<p>
+For example, that is the way we throw the "no-memory" exception:
+</p>
+
+<pre>
+
+class NoMemCatchType : public CatchType , public std::bad_alloc {};
+
+void GuardNoMem(ulen len)
+ {
+  PrintCustomException&lt;NoMemCatchType&gt; out;
+  
+  Printf(out,"CCore::GuardNoMem(len=#;) : no memory",len);
+ }
+
+</pre>
+
+<p>
+We have to do it so to satisfy the C++ standard requirements.
+</p>
+
+</body>
+
+</html>
+

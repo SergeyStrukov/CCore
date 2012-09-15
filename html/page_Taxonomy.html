@@ -110,32 +110,61 @@ and simpler classes. Sometimes such parts are not usable alone. Hence we call th
 See, for example, <a href="page_ToMemBase.html">ToMemBase</a>. Such classes often have names ending in "Base".
 </p>
 
-<h4>TBC...</h4>
-
 <h4>Small Data Type</h4>
 
 <p>
 <b>Small Data Type</b> is a type like basic types with a small state and data semantic. These types
-can be defined as types with the <b>efficient</b> copy constructor and assign operator.
+have <b>efficient</b> copy constructor and assign operator.
 </p>
+
+<pre>
+
+struct Point
+ {
+  int x;
+  int y;
+ };
+
+</pre>
 
 <h4>Data Type</h4>
 
 <p>
-<b>Data Type</b>
+<b>Data Type</b> is a type with data semantic, but with an arbitary large state. The simplest example is the type <b>String</b>.
+The purpose of such types is to store some discrete piece of information. The information is stored in some owned buffer.
+They may have the copy constructor and the assign operator. These operators can be implemented as <b>efficient</b> 
+operations using reference counting.
+In <b>CCore</b> we don't make a class copyable if there is no way to make it <b>efficient</b>. In such situation the class
+is not copyable, but usually swapable/moveable.
 </p>
 
 <h4>Resource Host Type</h4>
 
 <p>
-<b>Resource Host Type</b>
+<b>Resource Host Type</b> is a wrapper over some resource handle, like a file descriptor, a socket descriptor, any other OS
+object descriptor, object pointer, memory block pointer etc. In destructor the handle is released. The purpose of such types
+is to ensure the resource will be eventually released. It also provides some methods to use the resource.
+<b>Resource Host Type</b>s are not copyable, but swapable/moveable.
 </p>
 
 <h4>Scope Lock Type</h4>
 
 <p>
-<b>Scope Lock Type</b>
+<b>Scope Lock Type</b> objects are used to "lock" something for the duration of a scope. For example, <b>Mutex::Lock</b>
+object is used to lock a mutex:
 </p>
+
+<pre>
+
+Mutex mutex;
+
+{
+ Mutex::Lock lock(mutex);
+
+ ....
+}
+
+</pre>
 
 <h4>Container Type</h4>
 
@@ -162,6 +191,8 @@ R r=....;
 for(; +r ;++r) { do_with(*r); }
 
 </pre>
+
+<h4>TBC...</h4>
 
 <p>
 <b>Range Access Interface</b>

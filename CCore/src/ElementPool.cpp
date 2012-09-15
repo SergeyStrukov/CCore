@@ -52,7 +52,7 @@ MemPool::MemPool(ulen block_len_,ulen mem_cap_)
   
   if( block_len<=Delta )
     {
-     Printf(Exception,"CCore::MemPool::MemPool(block_len=#;) : too short",block_len_);
+     Printf(Exception,"CCore::MemPool::MemPool(block_len=#;,...) : too short",block_len_);
     }
  }
  
