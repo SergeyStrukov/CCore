@@ -1,0 +1,165 @@
+<!--
+/* page_StartStop.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> StartStop</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>StartStop</h2>
+
+<p class="Files">Files <b>CCore/inc/StartStop.h</b> <b>CCore/src/StartStop.cpp</b></p>
+
+<p>
+<b>StartStopObject</b> class is designed to start and stop active objects. An <b>active object</b> is the object with one or several
+associated working thread.
+</p>
+
+<pre>
+template &lt;class T&gt;
+class <span class="att">StartStopObject</span> : NoCopy
+ {
+   T &amp;obj;
+   Sem stop_sem;
+   
+  public:
+  
+   template &lt;class ... TT&gt;
+   StartStopObject(T &obj_,TT ... tt);
+   
+   ~StartStopObject(); 
+ };
+</pre>
+
+<p>
+The working thread is started by the constructor, and destructor ensures it is finished.
+An additional arguments can be used to control thread properties (see <a href="page_Task.html">Task constructor arguments</a>).
+</p>
+<p>
+The class <b>T</b> must provide the following methods:
+</p>
+
+<pre>
+class ActiveClass
+ {
+  public:
+
+   void prepareRun();
+
+   void objRun();
+
+   void completeRun();
+
+   void signalStop();
+
+   void completeStop();
+ };
+</pre>
+
+<p>
+<b>prepareRun()</b> is called before starting a thread. It may throw an exception, if the object cannot be started.
+</p>
+
+<p>
+<b>objRun()</b> is the working method, it is called in the working thread.
+</p>
+
+<p>
+<b>completeRun()</b> is called after successfull start of the thread. It must not throw exceptions.
+</p>
+
+<p>
+<b>signalStop()</b> is called to signal to the working thread to stop execution.
+</p>
+
+<p>
+<b>completeStop()</b> is called after the thread is stopped.
+</p>
+
+<p>
+These methods are called in the shown order (except objRun()).
+</p>
+
+<p>
+Here is an example: 
+</p>
+
+<pre>
+
+class Device : NoCopy
+ { 
+   Atomic stop_flag;
+   
+   Mutex mutex;
+   
+   bool running;
+
+  // 
+
+   void set(bool running_)
+    {
+     Mutex::Lock lock(mutex);
+    
+     running=running_;
+    }
+
+  // object run
+
+  public:
+
+   void prepareRun() { stop_flag=0; }
+   
+   void objRun()
+    {
+     set(true);
+ 
+     while( !stop_flag )
+       {
+        // doing something
+       }
+    }
+   
+   void completeRun() { set(true); } // we set running flag either way
+   
+   void signalStop() { stop_flag=1; }
+   
+   void completeStop() { set(false); }
+ };
+
+....
+
+Device device;
+
+ {
+  StartStopObject start_stop(device);
+
+  // do something, device is working here too
+
+ } // device is stopped on the scope exit 
+
+</pre>
+
+</body>
+
+</html>
+

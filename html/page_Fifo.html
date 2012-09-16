@@ -1,0 +1,200 @@
+<!--
+/* page_Fifo.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Fifo</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Fifo</h2>
+
+<p class="Files">Files <b>CCore/inc/Fifo.h</b> <b>CCore/src/Fifo.cpp</b></p>
+
+<p>
+The <b>Partial class</b> <b>Fifo</b> implements a buffer fifo upon a provided buffer.
+</p>
+
+<pre>
+template &lt;class T&gt;
+class <span class="att">Fifo</span> : NoCopy
+ {
+   T *const buf;
+   const ulen len;
+   
+   ulen put_ind;
+   ulen get_ind;
+   ulen count;
+   
+  public:
+  
+   Fifo(T *buf,ulen len);
+    
+   ulen getCount() const { return count; }
+   
+   bool isEmpty() const { return count==0; }
+   
+   bool isFull() const { return count==len; }
+   
+   void reset();
+   
+   // put
+   
+   template &lt;class Func&gt;
+   bool put_gen(Func func);
+    
+   bool put(const T &obj);
+   
+   bool put_swap(T &obj);
+   
+   // get
+   
+   template &lt;class Func&gt;
+   bool get_gen(Func func);
+    
+   bool get(T &obj);
+    
+   bool get_swap(T &obj);
+ };
+</pre>
+
+<p>
+Constructor builds a fifo in the initial empty state, the provided buffer will be used in subsequent operations.
+</p>
+
+<p>
+<b>getCount()</b> returns the number of elements in the fifo.
+</p>
+
+<p>
+<b>isEmpty()</b> returns true, if the fifo is empty.
+</p>
+
+<p>
+<b>isFull()</b> returns true, if the fifo is full.
+</p>
+
+<p>
+<b>reset()</b> resets fifo in the initial state.
+</p>
+
+<p>
+Keep in mind, that the buffer is not just a memory space. It is the <b>object</b> array. Some of these objects
+are the logical part of the fifo, but others are unused. It is nothing, if the type T is <b>int</b> or any <b>Small Data Type</b>,
+but it would lead to a resource leak, if T is the <b>String</b>, for example.
+To deal with this problem, choose carefully the exact method of putting/getting objects into the fifo. 
+</p>
+
+<p>
+Putting/getting methods returns true, if the operation was successful, otherwise they return false and does not change
+the state of the fifo.
+</p>
+
+<p>
+<b>put()</b> puts the object to the fifo, using copying.
+</p>
+
+<p>
+<b>put_swap()</b> puts the object to the fifo, using swapping. I.e. it swaps the given object with the target buffer element.
+</p>
+
+<p>
+<b>put_gen()</b> is a generic way to put an object into the fifo, its agrument is a functor, which is called to do the job.
+<b>func</b> is call as <b>func(dst)</b>, where <b>dst</b> is a target buffer element. It is assumed, this call will
+change this element to store the reqiured value.
+</p>
+
+<p>
+<b>get()</b> gets the object from the fifo, using copying. The copy of the object remains in the buffer.
+</p>
+
+<p>
+<b>get_swap()</b> gets the object from the fifo, using swapping. This method is preffered, if you want to clean
+the object in the buffer, or if the type <b>T</b> is not copyable.
+</p>
+
+<p>
+<b>get_gen()</b> is a generic method of extraction the object from the fifo, is is called the given functor <b>func</b>
+to do the job.
+</p>
+
+<p>
+The class <b>FifoBuf</b> is an upgraded class <b>Fifo</b> with the embedded buffer:
+</p>
+
+<pre>
+template &lt;class T,ulen Len&gt;
+class <span class="att">FifoBuf</span> : public Fifo&lt;T&gt;
+ {
+   T buf[Len];
+   
+  public:
+  
+   FifoBuf() : Fifo&lt;T&gt;(buf,Len) {}
+  
+   ~FifoBuf() {}
+ };
+</pre>
+
+<p>
+Here is an example of the <b>String</b> fifo class:
+</p>
+
+<pre>
+
+class StringFifo
+ {
+   FifoBuf&lt;String,100&gt; fifo;
+
+  public:
+
+   StringFifo() {}
+
+   ~StringFifo() {}
+
+   void put(const String &obj)
+    {
+     if( !fifo.put(obj) )
+       {
+        // throw exception, for example
+       }
+    }
+
+   String get()
+    {
+     String ret;
+
+     if( !fifo.get_swap(ret) )
+       {
+        // throw exception, for example
+       }
+
+     return ret;
+    }
+ };
+
+</pre>
+
+</body>
+
+</html>
+
