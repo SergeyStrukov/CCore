@@ -130,7 +130,8 @@ struct Point
 <h4>Data Type</h4>
 
 <p>
-<b>Data Type</b> is a type with data semantic, but with an arbitary large state. The simplest example is the type <b>String</b>.
+<b>Data Type</b> is a type with data semantic, but with an arbitary large state. The simplest example is the class 
+<a href="page_String.html">String</a>.
 The purpose of such types is to store some discrete piece of information. The information is stored in some owned buffer.
 They may have the copy constructor and the assign operator. These operators can be implemented as <b>efficient</b> 
 operations using reference counting.
@@ -169,19 +170,55 @@ Mutex mutex;
 <h4>Container Type</h4>
 
 <p>
-<b>Container Type</b>
+<b>Container Type</b> is a class, purposed to store another objects. Container not only provides a storage, but also
+controls the life-time of contained objects.
+</p>
+
+<h4>Resource Provider Type</h4>
+
+<p>
+<b>Resource Provider Type</b> is a class, purposed to distribute some resource. For example, the memory. Usually, all
+taken resources must be given back before the provider object is destroyed.
 </p>
 
 <h4>Pointer Type</h4>
 
 <p>
-<b>Pointer Type</b>
+<b>Pointer Type</b> "points" to another object. It gives access to the object functionality.
 </p>
 
 <h4>Cursor</h4>
 
 <p>
-<b>Cursor</b>
+<b>Cursor</b> can iterate through a set of objects. In <b>CCore</b> the following interface
+is used for cursors:
+</p>
+
+<pre>
+class Cursor
+ {
+  public:
+
+   boolable operator + () const; // cursor points to an object
+
+   bool operator ! () const; // cursor is stopped, == !+(*this)
+
+   void operator ++ (); // move to the next object, precondition( +(*this) )
+
+   // read-write variant
+
+   T & operator * () const; // the current object, precondition( +(*this) )
+
+   T * operator -> () const; // the current object, precondition( +(*this) )
+
+   // read-only variant 
+
+   T operator * () const; // the current object, precondition( +(*this) )
+ };
+</pre>
+
+<p>
+Here is a typical cursor loop:
 </p>
 
 <pre>
@@ -192,19 +229,76 @@ for(; +r ;++r) { do_with(*r); }
 
 </pre>
 
+<h4>Range Access Interface</h4>
+
+<p>
+<b>Range Access Interface</b> is the interface, used to present a range of objects:
+</p>
+
+<pre>
+class SomeClass
+ {
+  public:
+
+   T * getPtr();
+   
+   const T * getPtr() const;
+   
+   const T * getPtr_const() const;
+   
+   ulen getLen() const;
+ };
+</pre>
+
+<p>
+Usually, this interface is implemented by <b>Container Type</b>s or some <b>Proxy Type</b>s.
+</p>
+
+<h4>Object Pointer Interface</h4>
+
+<p>
+<b>Object Pointer Interface</b> is implemented by <b>Pointer Type</b>s to give access to the pointee object:
+</p>
+
+<pre>
+class SomeClass
+ {
+  public:
+
+   boolable operator + () const; // points to an object
+   
+   bool operator ! () const; // no object, == !+(*this)
+  
+   T * getPtr() const; // the current object, precondition( +(*this) )
+   
+   T & operator * () const; // the current object, precondition( +(*this) )
+   
+   T * operator -> () const; // the current object, precondition( +(*this) )
+ };
+</pre>
+
+<p>
+This interface can be reduced to
+</p>
+
+<pre>
+class SomeClass
+ {
+  public:
+
+   T * getPtr() const; // the current object, precondition( +(*this) )
+   
+   T & operator * () const; // the current object, precondition( +(*this) )
+   
+   T * operator -> () const; // the current object, precondition( +(*this) )
+ };
+</pre>
+
+<p>
+if the class cannot be in the null state.
+</p>
+
 <h4>TBC...</h4>
-
-<p>
-<b>Range Access Interface</b>
-</p>
-
-<p>
-<b>Object Pointer Interface</b>
-</p>
-
-<p>
-<b>Resource Provider Type</b>
-</p>
 
 <p>
 <b>Device Type</b>
