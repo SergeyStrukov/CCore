@@ -30,6 +30,95 @@
 
 <p class="Files">Files <b>CCore/inc/RadixHeap.h</b> <b>CCore/src/RadixHeap.cpp</b></p>
 
+<p>
+The class <b>RadixHeap</b> is a heart of <b>CCore</b> heaps. It is a complicated class, built from several
+parts. The primary part is the template argument <b>Mem</b>, which is responsible for the primary memory allocation.
+This class is used to allocated a large memory blocks, then <b>RadixHeap</b> splits them into smaller parts 
+(aka blocks) and manages these parts. Each such block starts from the header of the type <b>RadixHeapBlock</b>. 
+The part can be used or free. The space after the header in a free block is used to create a special control
+object, these objects are used to manage the free blocks set by the <b>RadixHeapStore</b>. 
+In used blocks this space is the allocated memory. <span class="alert">There is no two free consecutive blocks</span>. 
+If such blocks appear in the <b>free()</b> operation, they are immediately merged into the single free block.
+When block is allocated, it is stamped by the "magic number". This stamp is used to detect incorrect block pointers.
+It makes the heap protected from incorrect operations (not 100%).
+</p>
+
+<img src="RadixHeap.png" />
+
+<p>
+<b>RadixHeapStore</b> manages free heap blocks. The efficiency of this class is a key to the efficiency of the heap
+operations. This class uses the set of lists to store small blocks and the radix tree to store large blocks.
+That is how we provides constant operation time limits.
+</p>
+
+<pre>
+template &lt;class Mem&gt;
+class <span class="att">RadixHeap</span> : NoCopy
+ {
+   Mem large_mem;
+   RadixHeapStore store;
+   ulen count;
+
+  public:
+  
+   template &lt;class ... SS&gt;
+   explicit RadixHeap(SS && ... ss);
+   
+   ~RadixHeap();
+ 
+   bool isEmpty() const { return count==0; }
+  
+   Space alloc(ulen len);               // ret.len!=0 on success (==memlen)
+  
+   ulen getLen(const void *mem);        // mem!=0, return memlen
+   
+   ulen free(void *mem);                // mem!=0, return memlen
+   
+   DeltaLen extend(void *mem,ulen len); // mem!=0
+
+   DeltaLen shrink(void *mem,ulen len); // mem!=0
+ };
+</pre>
+
+<p>
+<b>Constructor</b> forwards its arguments to the <b>Mem</b> object (<b>large_mem</b>);
+</p>
+
+<p>
+<b>isEmpty()</b> returns true, if there is no allocated memory blocks from the heap.
+</p>
+
+<p>
+<b>alloc()</b> tries to allocate a memory. On failure it returns a null <b>Space</b> object. Otherwise
+the resulting <b>Space</b> object contains non-zero memory pointer and non-zero memory length, which is greater 
+or equal the argument <b>len</b>.
+</p>
+
+<p>
+Other methods require a valid non-null pointer <b>mem</b>.
+</p>
+
+<p>
+<b>getLen()</b> returns the length of the memory block.
+</p>
+
+<p>
+<b>free()</b> releases the memory block, this method returns the length of the memory block.
+</p>
+
+<p>
+<b>extend()</b> extends the memory block up to the given <b>len</b>, if possible. If the <b>len</b> is
+not greater than the length of the memory block, the operation is successful, but change nothing.
+The resulting <b>DeltaLen</b> object has the field <b>ok</b>, which indicates success of the operation,
+and the field <b>delta</b>, equals the difference between the length of the new block and the old one.
+</p>
+
+<p>
+<b>shrink()</b> shrinks the memory block down to the given <b>len</b>. This operation is successful only if
+the <b>len</b> is not greater than the length of the memory block. The resulting <b>DeltaLen</b> object 
+has the field <b>ok</b>, which indicates success of the operation,
+and the field <b>delta</b>, equals the difference between the length of the old block and the new one.
+</p>
 
 </body>
 

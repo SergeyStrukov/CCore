@@ -61,7 +61,7 @@ overloaded constructors. See, for example, <a href="page_Nothing.html"><b>Nothin
 
 <p>
 <b>Guard function</b> ensures some condition. If the required condition is not true, an exception is thrown.
-See, for example, <a href="page_PtrLen.html">GuardIndex()</a>. Usually, we define a guard function by the following pattern:
+See, for example, <a href="page_PtrLen.html"><b>GuardIndex()</b></a>. Usually, we define a guard function by the following pattern:
 </p>
 
 <pre>
@@ -83,7 +83,7 @@ Class methods can also be guard methods.
 
 <p>
 <b>Abort function</b> aborts execution with some diagnostic message. For example, 
-<a href="page_Init.html">NoObjectAbort()</a> is called when the object has not been initialized.
+<a href="page_Init.html"><b>NoObjectAbort()</b></a> is called when the object has not been initialized.
 </p>
 
 <h4>Creator function</h4>
@@ -91,7 +91,7 @@ Class methods can also be guard methods.
 <p>
 <b>Creator function</b> creates some object. Normally we create an object using its class constructor. But if we are using
 class templates, we have to provide a template argument list. Using <b>Creator function</b> allows infer this list from the
-function argument types. See, for example, <a href="page_Tuple.html">MakeTuple()</a>:
+function argument types. See, for example, <a href="page_Tuple.html"><b>MakeTuple()</b></a>:
 </p>
 
 <pre>
@@ -107,7 +107,7 @@ Tuple&lt;TT...&gt; MakeTuple(const TT &amp; ... tt);
 <b>Partial class</b> is a class not intended for a direct usage, but designed to be a builing block for a derived class.
 Like a sophisticated machines, built from a machine parts, in C++ the complex classes can be constructed from a smaller
 and simpler classes. Sometimes such parts are not usable alone. Hence we call them <b>Partial</b>. 
-See, for example, <a href="page_ToMemBase.html">ToMemBase</a>. Such classes often have names ending in "Base".
+See, for example, <a href="page_ToMemBase.html"><b>ToMemBase</b></a>. Such classes often have names ending in "Base".
 </p>
 
 <h4>Small Data Type</h4>
@@ -131,7 +131,7 @@ struct Point
 
 <p>
 <b>Data Type</b> is a type with data semantic, but with an arbitary large state. The simplest example is the class 
-<a href="page_String.html">String</a>.
+<a href="page_String.html"><b>String</b></a>.
 The purpose of such types is to store some discrete piece of information. The information is stored in some owned buffer.
 They may have the copy constructor and the assign operator. These operators can be implemented as <b>efficient</b> 
 operations using reference counting.
@@ -166,6 +166,11 @@ Mutex mutex;
 }
 
 </pre>
+
+<p>
+<b>Scope Lock Type</b> performs some "entry" operation in its constructor and then when scope is exited by any way 
+some "leave" operation in its destructor. 
+</p>
 
 <h4>Container Type</h4>
 
@@ -298,24 +303,36 @@ class SomeClass
 if the class cannot be in the null state.
 </p>
 
-<h4>TBC...</h4>
+<h4>Property Type</h4>
+
+<p>
+<b>Property Type</b> is a kind of classes, providing some properties and meant to be used as the base to
+inherit these properties by a derived class. For example, see <a href="page_NoCopy.html"><b>NoCopy</b></a> or
+<a href="page_MemoryManagement.html#MemBase"><b>MemBase</b></a>.
+</p>
+
+<h4>Helper Type</h4>
+
+<p>
+<b>Helper Type</b> is a type, designed to do some job, usually objects of such types are temporary, or local objects.
+See, for example, <a href="page_PrintSet.html"><b>PrintSetType</b></a>. <b>Helper Type</b>s are used instead of
+functions, in such cases, where, for instance, the object is required, like in the example above.
+</p>
+
+<h4>Proxy Type</h4>
+
+<p>
+<b>Proxy Type</b> is close to the <b>Helper Type</b>. Objects of such types are used to do some job on behalf
+of another type object.
+</p>
+
+<h4>Device Type</h4>
 
 <p>
 <b>Device Type</b>
 </p>
 
-<p>
-<b>Helper Type</b> 
-</p>
-
-<p>
-<b>Proxy type</b>
-</p>
-
-<p>
-<b>Property Type</b> is a kind of classes, providing some property and meant to be used as a base to
-inherit this property by a derived class. For example, see <a href="page_NoCopy.html"><b>NoCopy</b></a>.
-</p>
+<h4>TBC...</h4>
 
 <p>
 <b>Algorithm Package</b>
