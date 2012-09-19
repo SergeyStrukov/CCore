@@ -120,6 +120,79 @@ has the field <b>ok</b>, which indicates success of the operation,
 and the field <b>delta</b>, equals the difference between the length of the old block and the new one.
 </p>
 
+<h4>Primary memory provider</h4>
+
+<p>
+A primary memory provider is a class with the following "prototype":
+</p>
+
+<pre>
+class Mem
+ {
+   const ulen max_store_len; // aligned
+
+  public:
+
+   Mem(....);
+
+   void cleanup(bool clean);
+
+   ulen getMaxStoreLen() const { return max_store_len; }
+
+   RadixHeapBlock * alloc(ulen blen);            // blen aligned 
+                                                 // ( blen<=max_store_len ) => ( ret->len<=max_store_len )
+
+   void free(RadixHeapBlock *block);             // block!=0
+
+   bool extend(RadixHeapBlock *block,ulen blen); // block!=0, blen aligned, blen>block->len
+
+   ulen shrink(RadixHeapBlock *block,ulen blen); // block!=0, blen aligned, blen<=block->len , return delta
+ };
+</pre>
+
+<p>
+<b>Mem</b> constructor(s) is custom.
+</p>
+
+<p>
+Instead of destructor, <b>Mem</b> has the method <b>cleanup()</b>. The argument <b>clean</b> is true, if all memory
+blocks have been released, if not the method must fail. If the method is failed, it is recommended to call the 
+<b>Abort()</b>. This is because some memory is still in use, but we are going to destroy the heap. 
+Continuing execution under such circumstances likely leads to memory destruction.
+</p>
+
+<p>
+<b>max_store_len</b> is a maximum block length, which is allowed to be splitted and stored. If the block length
+is greater, then such blocks are allocated and released as whole. This value must be large enough, for example,
+in <b>PageMem</b> it is set to <b>16*1024*Sys::MemPageLen</b>, by default.
+</p>
+
+<p>
+The method <b>alloc()</b> is called to allocate a large memory block. The argument <b>blen</b> is 
+the total block length, it is an aligned value. The method must allocate a block of memory at least required length,
+create the <b>RadixHeapBlock</b> object at the beginning of this block, and return the pointer to this object.
+If a memory cannot be allocated, the null pointer is returned. If the <b>blen</b> is not greater, than the
+<b>max_store_len</b>, then the allocated block length also must not exceed this value. <b>RadixHeapBlock</b> must 
+be initialized by the method <b>init(total_block_length)</b>.
+</p>
+
+<p>
+The method <b>free()</b> is called to release a memory block, once it is not in use. The <b>block</b> 
+is always non-null. If you allocate a memory by the <b>RadixHeap</b> and then release it, then the large blocks
+will be freed as well. So, to prevent the last block from fluffing, <b>Mem</b> must implement a caching
+to avoid unnecessary extra expensive allocation/deallocation.
+</p>
+
+<p>
+<b>extend()</b> extends the large block. The <b>block</b> is always non-null and the <b>blen</b> is aligned and 
+greater than the block length. The method returns <b>true</b> on success. It must reinitalize the <b>block</b>.
+</p>
+
+<p>
+<b>shrink()</b> shrinks the large block. The <b>block</b> is always non-null and the <b>blen</b> is aligned and 
+not greater than the block length. The method returns delta length. It must reinitalize the <b>block</b>.
+</p>
+
 </body>
 
 </html>

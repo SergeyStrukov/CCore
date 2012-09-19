@@ -89,7 +89,7 @@ class <span class="att">OwnPtr</span> : NoCopy
 
 <p>
 <b>OwnPtr</b> has only one data member &mdash; pointer to the object of type <b>T</b>. This poiner might be null.
-<b>OwnPtr</b> is not copyrable and its destructor destoys the pointing object using the provided algorithm 
+<b>OwnPtr</b> is not copyable and its destructor destroys the pointee object using the provided algorithm 
 <b>Algo::Destroy()</b>. The pointer comes from the constructor argument. 
 Using <b>OwnPtr</b> make sure the argument is "destroyable". By default, <b>Algo::Destroy(ptr)</b> is just <b>delete ptr;</b>, so
 the object must be created by the <b>new expression</b>.
