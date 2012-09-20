@@ -329,7 +329,11 @@ of another type object.
 <h4>Device Type</h4>
 
 <p>
-<b>Device Type</b>
+It is not easy to explain the term <b>Device Type</b>. The simplest example is a printing device. It is a class,
+putting characters into some output storage (for example, a file). Or serialization/deserialization devices.
+Another example &mdash; packet processing devices, like <b>PTP</b> protocol device classes. You can image
+some mechanical device, doing some job. If you can think about some class like about such device, it is likely 
+a <b>Device Type</b>.
 </p>
 
 <h4>Algorithm Package</h4>
@@ -344,20 +348,44 @@ See, for example, <a href="page_OwnPtr.html"><b>OwnAlgo</b></a>.
 <h4>Class-function</h4>
 
 <p>
-<b>Class-function</b>
+<b>Class-function</b> is a class, used as a function. Its constructor is a function body. The constructed
+object is a return value. Such classes are usefull if you have to return a large or non-copyable object.
+See, for example, <a href="page_MemoryManagement.html#MemStat"><b>MemStat</b></a>.
 </p>
 
 <h4>Meta-class</h4>
 
 <p>
-<b>Meta-class</b>
+<b>Meta-class</b> is a class, used to present the result of a meta-calculation. It contains only static members, like
+constants, types or static functions.
 </p>
 
 <h4>Meta-function</h4>
 
 <p>
-<b>Meta-function</b>
+<b>Meta-function</b> is a class template, instantination of meta-function produces a meta-class. Usually,
+<b>Meta-function</b> are defined using partial or complete specialization. See, for example, 
+<a href="page_Meta.html#DefType"><b>DefType</b></a> or <a href="page_Meta.html#DefConst"><b>DefConst</b></a>.
+Here is the <b>Meta::ImpSelect</b>:
 </p>
+
+<pre>
+
+template &lt;bool Cond,class T1,class T2&gt; struct ImpSelect;
+
+template &lt;class T1,class T2&gt;
+struct ImpSelect&lt;true,T1,T2&gt;
+ {
+  typedef T1 Ret;
+ };
+ 
+template &lt;class T1,class T2&gt; 
+struct ImpSelect&lt;false,T1,T2&gt;
+ {
+  typedef T2 Ret;
+ };
+
+</pre>
 
 </body>
 
