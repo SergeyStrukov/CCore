@@ -41,6 +41,104 @@ Tools are located in the directory <b>tools</b>.
 
 <p>
 Source code parts consist of three directories : <b>inc</b>, <b>src</b>, and <b>test</b>.
+So to include a <b>CCore</b> header write
+</p>
+
+<pre>
+
+#include &lt;CCore/inc/...&gt;
+
+</pre>
+
+<p>
+Each <b>CCore</b> .h file has a correspondent .cpp file, even if it defines nothing.
+</p>
+
+<h3>Names</h3>
+
+<p>
+All global entities have capitalized names. I.g. class names, global objects etc. Local object names, non-static members
+and method names start from lowercase letters.
+</p>
+
+<p>
+Here is an example of a class definition:
+</p>
+
+<pre>
+
+class SomeClass
+ {
+   int item_count;
+
+  public:
+
+   int getItemCount() const { return item_count; }
+
+   void setItemCount(int item_count_) { item_count=item_count_; }
+ };
+
+</pre>
+
+<p>
+The private part goes first, the public is last.
+</p>
+
+<p>
+Suffixes are used to name variants:
+</p>
+
+<pre>
+
+struct MemBase;
+
+struct MemBase_nocopy;
+
+</pre>
+
+<p>
+Sections are used to group members:
+</p>
+
+<pre>
+class Sem : public Funchor_nocopy
+ {
+   .... 
+
+  public:
+   
+   // constructors
+  
+   explicit Sem(ulen count=0);
+   
+   explicit Sem(TextLabel name,ulen count=0);
+   
+   ~Sem();
+   
+   // give
+   
+   void give();
+   
+   void give_many(ulen dcount);
+   
+   // take
+   
+   bool try_take();
+   
+   void take();
+   
+   bool take(MSec timeout);
+   
+   bool take(TimeScope time_scope); 
+    
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
+ };
+</pre>
+
+<p>
+The popular words: count, len, obj, try, zstr, d&lt;something&gt; to designate a delta value.
 </p>
 
 </body>

@@ -30,6 +30,306 @@
 
 <p class="Files">Files <b>CCore/inc/List.h</b> <b>CCore/src/List.cpp</b></p>
 
+<h3>Kind of lists</h3>
+
+<p>
+There are several kinds of lists in C++. List can be a container (non-intrusive lists). 
+List can also be a set of elements, where each element contains links to neighbor elements. 
+List can be single linked or double linked, linear or circular. The linear list controller can 
+contains pointer to the top of the list or two pointers to the first and the last elements.
+</p>
+
+<p>
+<b>CCore</b> provides implementation of algorithms of intrusive lists. Intrusive lists are mandatory for
+many tasks, including system core tasks, because they don't require a memory allocation, they extremely efficient and
+can be used in such contextes where a memory allocation is impossible or not desirable. 
+And non-intrusive lists can be built atop on these algorithms.
+</p>
+
+<h3>CCore list algorithms</h3>
+
+<p>
+Lists are built using links:
+</p>
+
+<pre>
+
+/* struct SLink&lt;T&gt; */ 
+
+template &lt;class T&gt; 
+struct <span class="att">SLink</span>
+ {
+  T *next;
+  
+  template &lt;SLink&lt;T&gt; T::* LinkMember&gt;
+  struct LinearAlgo;
+
+  template &lt;SLink&lt;T&gt; T::* LinkMember&gt;
+  struct CircularAlgo;
+ };
+ 
+/* struct DLink&lt;T&gt; */ 
+ 
+template &lt;class T&gt; 
+struct <span class="att">DLink</span>
+ {
+  T *next;
+  T *prev;
+  
+  template &lt;DLink&lt;T&gt; T::* LinkMember&gt;
+  struct LinearAlgo;
+
+  template &lt;DLink&lt;T&gt; T::* LinkMember&gt;
+  struct CircularAlgo;
+ };
+
+</pre>
+
+<p>
+It's a very simple classes, <b>SLink</b> contains the <b>next</b> pointer for a single linked lists,
+<b>DLink</b> contains two pointers: <b>next</b> and <b>prev</b>, for a double linked lists.
+</p>
+
+<p>
+To make a list you define a list node as following:
+</p>
+
+<pre>
+
+struct Node
+ {
+  SLink&lt;Node&gt; link;
+
+  ....
+ };
+
+</pre>
+
+<p>
+Then you can use list algorithms:
+</p>
+
+<pre>
+
+typedef SLink&lt;Node&gt;::LinearAlgo<&Node::link> Algo;
+
+</pre>
+
+<p>
+One node can include several links of different types. It allows include such node in several lists
+simultaneously.
+</p>
+
+<h4>SLink LinearAlgo</h4>
+
+<img src="SList1.png" />
+
+<p>
+Linear list has a top element and terminates with a null pointer.
+</p>
+
+<pre>
+template &lt;SLink&lt;T&gt; T::* LinkMember&gt;
+struct <span class="att">LinearAlgo</span>
+ {
+  static SLink&lt;T&gt; &amp; Link(T *obj) { return obj->*LinkMember; }
+    
+  // obj -> null
+ 
+  static void Init(T *obj); // obj!=0 unlinked
+     
+  // place -> obj -> next -> ... -> null
+ 
+  static void InsNext(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
+     
+  static T * DelNext(T *place); // place!=0 linked, return obj
+</pre>
+
+<p>
+<b>Init()</b> makes the single element list.
+</p>
+
+<p>
+<b>InsNext()</b> inserts the given object after the given place in the list.
+</p>
+
+<p>
+<b>DelNext()</b> deletes an element after the given place in the list. The pointer to this element is returned.
+</p>
+
+<p>
+There are three inner types: <b>Cur</b>, <b>Top</b> and <b>FirstLast</b>.
+</p>
+
+<pre>
+   
+  // ptr -> next -> ... -> null
+    
+  struct <span class="att">Cur</span>
+   {
+    T *ptr;
+      
+    // constructors
+      
+    explicit Cur(T *ptr_) : ptr(ptr_) {}
+      
+    // object ptr
+      
+    T * operator + () const { return ptr; }
+      
+    bool operator ! () const { return !ptr; }
+      
+    T & operator * () const { return *ptr; }
+  
+    T * operator -> () const { return ptr; }
+      
+    // cursor
+      
+    void operator ++ () { ptr=Link(ptr).next; }
+   };
+</pre>
+
+<p>
+<b>Cur</b> is a list <b>Cursor</b>.
+</p>
+
+<pre>
+
+  // top -> next -> ... -> null
+    
+  struct <span class="att">Top</span>
+   {
+    T *top;
+      
+    // constructors
+      
+    Top() { init(); }
+      
+    // methods
+      
+    void init() { top=0; }
+      
+    T * operator + () const { return top; }
+      
+    bool operator ! () const { return !top; }
+     
+    Cur start() const { return Cur(top); }
+      
+    // insert object
+      
+    void ins(T *obj); // obj!=0 unlinked
+      
+    void ins_after(T *pos,T *obj); // pos!=0, obj!=0 unlinked
+       
+    void ins_after(Cur cur,T *obj); // +cur, obj!=0 unlinked
+      
+    // delete object
+       
+    T * del();
+   };
+</pre>
+
+<p>
+<b>Top</b> is a list controller. It contains the pointer to the top of the list.
+</p>
+
+<p>
+<b>init()</b> initialize the list as the empty list.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to determine if the list is empty.
+</p>
+
+<p>
+<b>start()</b> returns a cursor on the list.
+</p>
+
+<p>
+<b>ins()</b> inserts the given object to the list, as the top element.
+</p>
+
+<p>
+<b>ins_after()</b> inserts the given object to the list after the given position.
+</p>
+
+<p>
+<b>del()</b> deletes the top element from the list, the pointer to the element is returned.
+</p>
+
+<img src="SList2.png" />
+
+<pre>
+  // first -> next -> ... -> last -> null
+    
+  struct <span class="att">FirstLast</span>
+   {
+    T *first;
+    T *last;
+      
+    // constructors
+      
+    FirstLast() { init(); }
+      
+    // methods
+      
+    void init();
+       
+    T * operator + () const { return first; }
+      
+    bool operator ! () const { return !first; }
+      
+    Cur start() const { return Cur(first); }
+      
+    // insert object
+      
+    void ins_first(T *obj); // obj!=0 unlinked
+       
+    void ins_last(T *obj); // obj!=0 unlinked
+       
+    void ins_after(T *pos,T *obj); // pos!=0, obj!=0 unlinked
+       
+    void ins_after(Cur cur,T *obj); // +cur, obj!=0 unlinked
+       
+    // delete object
+      
+    T * del_first();
+   };
+ };
+</pre>
+
+<p>
+<b>FirstLast</b> is another list controller. It contains two pointers: one to the first element of the list,
+and the second to the last.
+</p>
+
+<p>
+<b>init()</b> initialize the list as the empty list.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to determine if the list is empty.
+</p>
+
+<p>
+<b>start()</b> returns a cursor on the list.
+</p>
+
+<p>
+<b>ins_first()</b> inserts the given object to the list, as the first element.
+</p>
+
+<p>
+<b>ins_last()</b> inserts the given object to the list, as the last element.
+</p>
+
+<p>
+<b>ins_after()</b> inserts the given object to the list after the given position.
+</p>
+
+<p>
+<b>del_first()</b> deletes the first element from the list, the pointer to the element is returned.
+</p>
 
 </body>
 
