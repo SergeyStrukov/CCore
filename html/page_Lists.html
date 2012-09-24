@@ -146,6 +146,10 @@ struct <span class="att">LinearAlgo</span>
 </pre>
 
 <p>
+<b>Link()</b> returns the reference to the link from the element pointer.
+</p>
+
+<p>
 <b>Init()</b> makes the single element list.
 </p>
 
@@ -190,7 +194,7 @@ There are three inner types: <b>Cur</b>, <b>Top</b> and <b>FirstLast</b>.
 </pre>
 
 <p>
-<b>Cur</b> is a list <b>Cursor</b>.
+<b>Cur</b> is a list <b>Cursor</b>. Its constructor takes the pointer to the top element of the list.
 </p>
 
 <pre>
@@ -230,7 +234,7 @@ There are three inner types: <b>Cur</b>, <b>Top</b> and <b>FirstLast</b>.
 </pre>
 
 <p>
-<b>Top</b> is a list controller. It contains the pointer to the top of the list.
+<b>Top</b> is a list controller. It contains the pointer to the top element of the list.
 </p>
 
 <p>
@@ -300,7 +304,7 @@ There are three inner types: <b>Cur</b>, <b>Top</b> and <b>FirstLast</b>.
 
 <p>
 <b>FirstLast</b> is another list controller. It contains two pointers: one to the first element of the list,
-and the second to the last.
+and the second to the last. We call the top element first in this case.
 </p>
 
 <p>
@@ -329,6 +333,162 @@ and the second to the last.
 
 <p>
 <b>del_first()</b> deletes the first element from the list, the pointer to the element is returned.
+</p>
+
+<h4>SLink CircularAlgo</h4>
+
+<img src="SList3.png" />
+
+<p>
+Circular list has a top element, the bottom element points to the top. We call the last element bottom
+in this case.
+</p>
+
+<pre>
+template &lt;SLink&lt;T&gt; T::* LinkMember&gt;
+struct <span class="att">CircularAlgo</span>
+ {
+  static SLink&lt;T&gt; &amp; Link(T *obj) { return obj->*LinkMember; }
+    
+  // obj -> obj
+ 
+  static void Init(T *obj); // obj!=0 unlinked
+     
+  // place -> obj -> next -> ... -> place
+     
+  static void InsNext(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
+     
+  static T * DelNext(T *place); // place!=0 linked
+</pre>
+
+<p>
+<b>Link()</b> returns the reference to the link from the element pointer.
+</p>
+
+<p>
+<b>Init()</b> makes the single element list.
+</p>
+
+<p>
+<b>InsNext()</b> inserts the given object after the given place in the list.
+</p>
+
+<p>
+<b>DelNext()</b> deletes an element after the given place in the list. The pointer to this element is returned.
+</p>
+
+<p>
+These methods are logically the same as for linear lists, except they operate on circular ones.
+</p>
+
+<p>
+There are two inner types: <b>Cur</b> and <b>Top</b>.
+</p>
+
+<pre>
+  // ptr -> next -> ... -> bottom
+    
+  struct Cur
+   {
+    T *ptr;
+    T *bottom;
+      
+    // constructors
+      
+    explicit Cur(T *bottom);
+      
+    // object ptr
+      
+    T * operator + () const { return ptr; }
+      
+    bool operator ! () const { return !ptr; }
+      
+    T & operator * () const { return *ptr; }
+  
+    T * operator -> () const { return ptr; }
+      
+    // cursor
+      
+    void operator ++ ();
+   };
+</pre>     
+
+<p>
+<b>Cur</b> is a list <b>Cursor</b>. Its constructor takes the pointer to the bottom element of the list.
+</p>
+
+<pre>
+  // bottom -> top -> next -> ... -> bottom
+    
+  struct Top
+   {
+    T *bottom;
+      
+    // constructors
+      
+    Top() { init(); }
+      
+    // methods
+      
+    void init() { bottom=0; }
+      
+    T * operator + () const { return bottom; }
+      
+    bool operator ! () const { return !bottom; }
+      
+    Cur start() const { return Cur(bottom); }
+      
+    // insert object
+      
+    void ins(T *obj); // obj!=0 unlinked
+       
+    void ins_after(T *pos,T *obj); // pos!=0, obj!=0 unlinked
+       
+    void ins_after(Cur &cur,T *obj); // +cur, obj!=0 unlinked
+      
+    // delete object
+       
+    T * del();
+      
+    // rotate
+       
+    T * rotate() // return top element moved to bottom
+   };
+ };
+</pre>
+
+<p>
+<b>Top</b> is a list controller. It contains the pointer to the bottom element of the list.
+</p>
+
+<p>
+<b>init()</b> initialize the list as the empty list.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to determine if the list is empty.
+</p>
+
+<p>
+<b>start()</b> returns a cursor on the list.
+</p>
+
+<p>
+<b>ins()</b> inserts the given object to the list, as the top element.
+</p>
+
+<p>
+<b>ins_after()</b> inserts the given object to the list after the given position. If the place is given
+by the cursor, then the cursor is also updated, so you can continue use it.
+</p>
+
+<p>
+<b>del()</b> deletes the top element from the list, the pointer to the element is returned.
+</p>
+
+<p>
+The last method <b>rotate()</b> is specific for circular lists. It rotates the list. The top element moves to bottom.
+Pointer to this element is returned.
 </p>
 
 </body>

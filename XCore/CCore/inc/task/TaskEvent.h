@@ -19,7 +19,7 @@
 #include <CCore/inc/EventRecorder.h>
 #include <CCore/inc/sys/SysTime.h>
  
-#define CCORE_TASK_EVENT_ENABLE
+//#define CCORE_TASK_EVENT_ENABLE
 
 #define CCORE_TASK_EVENT_ENABLE_SYNC
 #define CCORE_TASK_EVENT_ENABLE_PROTO
