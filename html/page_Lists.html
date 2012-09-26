@@ -43,8 +43,16 @@ contains pointer to the top of the list or two pointers to the first and the las
 <b>CCore</b> provides implementation of algorithms of intrusive lists. Intrusive lists are mandatory for
 many tasks, including system core tasks, because they don't require a memory allocation, they extremely efficient and
 can be used in such contextes where a memory allocation is impossible or not desirable. 
-And non-intrusive lists can be built atop on these algorithms.
 </p>
+
+<img src="List2.png" />
+
+<p>
+Non-intrusive lists can be built atop on these algorithms.
+Container lists:
+</p>
+
+<img src="List1.png" />
 
 <h3>CCore list algorithms</h3>
 
@@ -851,10 +859,325 @@ and the second to the last. We call the top element first in this case.
 <b>del_and_move()</b> deletes the element from the list at the current cursor position and
 moves the cursor. The pointer to the deleted element is returned. If the cursor is forward, it moves to the 
 next element. If the cursor is backward, it moves to the previous element. I.g. each cursor type
-moves to the next position in respect the cursor movement direction.
+moves to the next position in respect to the cursor movement direction.
 </p>
 
 <h4>DLink CircularAlgo</h4>
+
+<img src="DList2.png" />
+
+<p>
+Circular list has a top element, the last element is linked to the top. Double link allows to move forward and backward.
+</p>
+
+<pre>
+template &lt;DLink&lt;T&gt; T::* LinkMember&gt;
+struct CircularAlgo
+ {
+  static DLink&lt;T&gt; &amp; Link(T *obj) { return obj->*LinkMember; }
+    
+  // Connect()
+    
+  static void Connect(T *a,T *b);
+     
+  static void Connect(T *a,T *b,T *c);
+     
+  // obj &lt;- obj -&gt; obj 
+     
+  static void Init(T *obj); // obj!=0 unlinked
+     
+  // place -&gt; obj -&gt; next -&gt; ... -&gt; place 
+     
+  static void InsNext(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
+     
+  // place &lt;- ... &lt;- prev &lt;- obj &lt;- place 
+     
+  static void InsPrev(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
+     
+  // ... &lt;- prev &lt;- obj -&gt; next -&gt; ...
+     
+  static void Del(T *obj); // obj!=0 linked
+     
+  // place -&gt; obj -&gt; next -&gt; ... -&gt; place
+    
+  static T * DelNext(T *place); // place!=0 linked
+     
+  // place &lt;- ... &lt;- prev &lt;- obj &lt;- place
+    
+  static T * DelPrev(T *place); // place!=0 linked
+     
+  // top -&gt; next -&gt; ... -&gt; last -&gt; top
+    
+  static T * /* top */ InsTopFirst(T *top,T *obj); // obj!=0 unlinked
+     
+  // top -&gt; next -&gt; ... -&gt; last -&gt; top
+    
+  static T * /* top */ InsTopLast(T *top,T *obj); // obj!=0 unlinked
+     
+  // top -&gt; ... -&gt; obj -&gt; ... -&gt; last -&gt; top
+    
+  static T * /* top */ DelTop(T *top,T *obj); // obj!=0 linked
+</pre>
+
+<p>
+<b>Connect...()</b> is a family of functions, they connect its argument in row.
+</p>
+
+<p>
+<b>Init()</b> makes the single element list.
+</p>
+
+<p>
+<b>InsNext()</b> inserts the given object after the given place in the list.
+</p>
+
+<p>
+<b>InsPrev()</b> inserts the given object before the given place in the list.
+</p>
+
+<p>
+<b>Del()</b> deletes the given element from the list.
+</p>
+
+<p>
+<b>DelNext()</b> deletes an element after the given place in the list. The pointer to this element is returned.
+</p>
+
+<p>
+<b>DelPrev()</b> deletes an element before the given place in the list. The pointer to this element is returned.
+</p>
+
+<p>
+<b>InsTopFirst()</b> inserts the given object as the first element of the list. The new top element is returned.
+</p>
+
+<p>
+<b>InsTopLast()</b> inserts the given object as the last element of the list. The new top element is returned.
+</p>
+
+<p>
+<b>DelTop()</b> deletes the given element from the list. The new top element is returned. The element
+may be any element from the list. The name of this function may be misleading, it does not delete the top element.
+</p>
+
+<p>
+There are three inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b>.
+</p>
+     
+<pre>
+  // ptr -&gt; next -&gt; ... -&gt; last
+    
+  struct Cur
+   {
+    T *ptr;
+    T *last;
+      
+    // constructors
+      
+    explicit Cur(T *ptr);
+      
+    // object ptr
+      
+    T * operator + () const { return ptr; }
+      
+    bool operator ! () const { return !ptr; }
+      
+    T &amp; operator * () const { return *ptr; }
+  
+    T * operator -> () const { return ptr; }
+      
+    // cursor
+      
+    void operator ++ ();
+      
+    // insert object
+       
+    void ins_after(T *obj); // +, obj!=0 unlinked
+   };
+</pre>     
+
+<p>
+<b>Cur</b> is a list forward <b>Cursor</b>. Its constructor takes the pointer to the first element of the list.
+</p>
+
+<p>
+There is the additional method <b>ins_after()</b>. This method inserts the given object into the list 
+after the current (non-null) position.
+</p>
+
+<pre>
+  // first &lt;- ... &lt;- prev &lt;- ptr
+    
+  struct RevCur
+   {
+    T *ptr;
+    T *first;
+      
+    // constructors
+      
+    explicit RevCur(T *first);
+      
+    // object ptr
+      
+    T * operator + () const { return ptr; }
+      
+    bool operator ! () const { return !ptr; }
+      
+    T &amp; operator * () const { return *ptr; }
+  
+    T * operator -> () const { return ptr; }
+      
+    // cursor
+      
+    void operator ++ ();
+       
+    // insert object
+      
+    void ins_after(T *obj); // +, obj!=0 unlinked
+   };
+</pre>     
+
+<p>
+<b>RevCur</b> is a list backward <b>Cursor</b>. Its constructor takes the pointer to the first element of the list.
+</p>
+
+<p>
+There is the additional method <b>ins_after()</b>. This method inserts the given object into the list 
+after (before with respect to the cursor direction) the current (non-null) position.
+</p>
+
+<pre>
+  // top -&gt; ... -&gt; obj -&gt; ... -&gt; last -&gt; top
+    
+  struct Top
+   {
+    T *top;
+      
+    // constructors
+      
+    Top() { init(); }
+      
+    // methods
+      
+    void init() { top=0; }
+      
+    T * operator + () const { return top; }
+      
+    bool operator ! () const { return !top; }
+      
+    Cur start() const { return Cur(top); }
+      
+    RevCur start_rev() const { return RevCur(top); }
+      
+    // insert object
+      
+    void ins_first(T *obj); // obj!=0 unlinked
+       
+    void ins_last(T *obj); // obj!=0 unlinked
+       
+    void ins_before(T *pos,T *obj); // pos!=0, obj!=0 unlinked
+       
+    void ins_after(T *pos,T *obj); // pos!=0, obj!=0 unlinked
+       
+    void ins_before(Cur cur,T *obj); // +cur, obj!=0 unlinked
+      
+    void ins_after(Cur &cur,T *obj); // +cur, obj!=0 unlinked
+      
+    void ins_before(RevCur &cur,T *obj); // +cur, obj!=0 unlinked
+       
+    void ins_after(RevCur cur,T *obj); // +cur, obj!=0 unlinked
+      
+    // delete object
+      
+    void del(T *obj); // obj!=0 from the list
+       
+    T * del_first();
+       
+    T * del_last();
+       
+    T * del_and_move(Cur &cur); // +cur
+       
+    T * del_and_move(RevCur &cur); // +cur
+       
+    // rotate
+      
+    T * rotate_forward(); // return top element moved to bottom
+       
+    T * rotate_backward(); // return bottom element moved to top
+   };
+ };
+</pre>
+
+<p>
+<b>Top</b> is a list controller. It contains the pointer to the top element of the list.
+</p>
+
+<p>
+<b>init()</b> initialize the list as the empty list.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to determine if the list is empty.
+</p>
+
+<p>
+<b>start()</b> returns a cursor on the list.
+</p>
+
+<p>
+<b>start_rev()</b> returns a backward cursor on the list.
+</p>
+
+<p>
+<b>ins_first()</b> inserts the given object to the list, as the first element.
+</p>
+
+<p>
+<b>ins_last()</b> inserts the given object to the list, as the last element.
+</p>
+
+<p>
+<b>ins_before()</b> inserts the given object to the list before the given position.
+<b>ins_before(RevCur &cur,T *obj)</b> modifies the cursor to keep one valid.
+</p>
+
+<p>
+<b>ins_after()</b> inserts the given object to the list after the given position.
+<b>ins_after(Cur &cur,T *obj)</b> modifies the cursor to keep one valid.
+</p>
+
+<p>
+<b>del()</b> deletes the given element from the list.
+</p>
+
+<p>
+<b>del_first()</b> deletes the first element from the list, the pointer to the element is returned.
+</p>
+
+<p>
+<b>del_last()</b> deletes the last element from the list, the pointer to the element is returned.
+</p>
+
+<p>
+<b>del_and_move()</b> deletes the element from the list at the current cursor position and
+moves the cursor. The pointer to the deleted element is returned. If the cursor is forward, it moves to the 
+next element. If the cursor is backward, it moves to the previous element. I.g. each cursor type
+moves to the next position in respect to the cursor movement direction.
+</p>
+
+<p>
+The last two methods <b>rotate...()</b> are specific for circular lists. They rotate the list. 
+</p>
+
+<p>
+<b>rotate_forward()</b> rotates the list forward. The top element moves to bottom.
+Pointer to this element is returned.
+</p>
+
+<p>
+<b>rotate_backward()</b> rotates the list backward. The bottom element moves to top.
+Pointer to this element is returned.
+</p>
 
 </body>
 
