@@ -29,6 +29,7 @@
 #include <CCore/inc/task/Sem.h>
 
 #include <CCore/inc/task/FuncTask.h>
+#include <CCore/inc/task/TaskEvent.h>
 
 namespace CCore {
 

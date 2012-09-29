@@ -1,0 +1,335 @@
+<!--
+/* page_Sort.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Sort</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Sort</h2>
+
+<p class="Files">Files <b>CCore/inc/Sort.h</b> <b>CCore/src/Sort.cpp</b></p>
+
+<p class="Files">Subfolders <b>CCore/inc/sort</b> <b>CCore/src/sort</b></p>
+
+<h3>Sorting</h3>
+
+<p>
+For the theory and algorithms descriptions go to the <a href="http://www-cs-faculty.stanford.edu/~uno/"><b>Knuth</b></a>.
+But programming is not a theory. Mostly it's about a theory implementation. And a good theory can be ruined
+by a stupid realization. That is way we use in <b>CCore</b> our own sort algorithms implementations.
+</p>
+
+<p>
+Sorting is a permutating a given range of objects to arrange them in the assending order relative the given
+linear order relation. A permutation can be done by a series of transpositions of elements. So <b>CCore</b> 
+implements sorting on the swap-based basis. I.e. a sorting process includes the performing of two operations:
+comparision of elements and swapping them. That is different than other implementation, 
+where objects are copied, not swapped. As was mentione before, swap is <b>efficient</b>, but copying 
+is expensive, not safe and not always possible. The second feature of our sorts is they takes a less 
+comparision operations. This is important, because in real applications this operation can be quit expensive.
+</p>
+
+<p>
+We use the term <b>ran</b> for a random access iterator. Usually it is just an ordinary pointer.
+<b>Ran</b>s are used to access sort range elements.
+</p>
+
+<p>
+There are four sort <b>Algorithm Package</b>s: <b>ShortSort</b>, <b>HeapSort</b>, <b>QuickSort</b>
+and <b>ParaQuickSort</b>.
+</p>
+
+<h4>Sort contexts</h4>
+
+<p>
+All sort algorithms are performed in a sort context. There are two common sort contexts: 
+<b>SortCtx</b> for the range sorting and <b>SortIndexCtx</b> for the index sorting. 
+An object of a sort context type is required to perform a sort.
+</p>
+
+<pre>
+template &lt;class Ran&gt;
+struct <span class="att">SortCtx</span>
+ {
+  static void swap(Ran a,Ran b) { Swap(*a,*b); }
+   
+  static bool less(Ran a,Ran b) { return *a &lt; *b ; }
+ };
+</pre>
+
+<p>
+<b>SortCtx</b> is a common sort context. It defines two methods: <b>swap()</b> to swap objects and
+<b>less()</b> to compare objects, pointed by two <b>ran</b>s.
+</p>
+
+<pre>
+template &lt;class T&gt;
+struct <span class="att">SortIndexCtx</span>
+ {
+  T *base;
+  
+  SortIndexCtx(T *base_) : base(base_) {}
+  
+  template &lt;class Ind&gt;
+  static void swap(Ind *a,Ind *b) { Swap(*a,*b); }
+  
+  template &lt;class Ind&gt;
+  bool less(const Ind *a,const Ind *b) const { return base[*a] &lt; base[*b] ; }
+ };
+</pre>
+
+<p>
+<b>SortIndexCtx</b> is a sort context for index sorting. It contains a pointer to the sort array.
+In index sort we don't modify the given object array, we create an array of indexes and sort it instead.
+To perform the comparison we need the pointer to the sort array. The <b>ran</b> here is the <b>Ind *</b>.
+</p>
+
+<p>
+Sort <b>Algorithm Package</b>s are using the following pattern:
+</p>
+
+<pre>
+template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+struct <span class="att">XXXSort</span>
+ {
+  template &lt;class Len&gt;
+  static void Sort(Ran ptr,Len len,Ctx ctx);
+  
+  template &lt;class Len&gt;
+  static void Sort(Ran ptr,Len len) { Sort(ptr,len,Ctx()); }
+ };
+</pre>
+
+<p>
+<b>Ran</b> is a <b>ran</b> type and <b>Ctx</b> is a sort context type, defaulted to the <b>SortCtx&lt;Ran&gt;</b>.
+<b>ptr</b> is the pointer to the begin of the sort range, len is the range length. <b>ctx</b> is the sort context.
+</p>
+
+<h4>ShortSort</h4>
+
+<p>
+<b>ShortSort</b> is the <b>Algorithm Package</b> to sort short ranges. 
+</p>
+
+<pre>
+template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+struct <span class="att">ShortSort</span>
+ {
+  // general
+ 
+  static void Sort2(Ran a,Ran b,Ctx ctx);
+  
+  static void Sort3(Ran a,Ran b,Ran c,Ctx ctx);
+  
+  static void Sort4(Ran a,Ran b,Ran c,Ran d,Ctx ctx);
+  
+  static void Sort5(Ran a,Ran b,Ran c,Ran d,Ran e,Ctx ctx);
+  
+  // array
+ 
+  static void Sort2(Ran a,Ctx ctx) { Sort2(a,a+1,ctx); }
+  
+  static void Sort3(Ran a,Ctx ctx) { Sort3(a,a+1,a+2,ctx); }
+  
+  static void Sort4(Ran a,Ctx ctx) { Sort4(a,a+1,a+2,a+3,ctx); }
+  
+  static void Sort5(Ran a,Ctx ctx) { Sort5(a,a+1,a+2,a+3,a+4,ctx); }
+  
+  // default
+  
+  static void Sort2(Ran a) { Sort2(a,Ctx()); }
+  
+  static void Sort3(Ran a) { Sort3(a,Ctx()); }
+  
+  static void Sort4(Ran a) { Sort4(a,Ctx()); }
+  
+  static void Sort5(Ran a) { Sort5(a,Ctx()); }
+  
+  // combined
+
+  template &lt;class Len&gt;
+  static bool Sort(Ran a,Len len,Ctx ctx);
+   
+  template &lt;class Len&gt;
+  static bool Sort(Ran a,Len len);
+ };
+</pre>
+
+<p>
+Currently <b>ShortSort</b> provides algorithms to sort 2, 3, 4 and 5 elements sets.
+</p>
+
+<p>
+General <b>SortX()</b> sorts the given set of objects, pointed by <b>ran</b>s in the given sort context.
+</p>
+
+<p>
+(Default) array <b>SortX()</b> sorts the given range of the length <b>X</b> in the given (default) sort context.
+</p>
+
+<p>
+Finally, the algorithm <b>Sort()</b> is a combination off all above. It sorts the given short array in
+the given or default sort context. <b>Sort()</b> returns <b>false</b> if the length is too large, and <b>true</b>
+if the length is allowed.
+</p>
+
+<h4>HeapSort</h4>
+
+<p>
+<b>HeapSort</b> implements the heap sort algorithm. This algorithm has a guaranteed <b>O(N*log(N))</b>
+complexity, but it is not the fastest in a common case and it is CPU cache unfriendly.
+So the heap sort usually is used as the last resort to speed up the quick sort algorithm, 
+which is faster in a common case, but has a bigger run time in special cases.
+</p>
+
+<pre>
+template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+struct <span class="att">HeapSort</span>
+ {
+  template &lt;class Len&gt;
+  static void Sort(Ran ptr,Len len,Ctx ctx);
+  
+  template &lt;class Len&gt;
+  static void Sort(Ran ptr,Len len) { Sort(ptr,len,Ctx()); }
+ };
+</pre>
+
+<h4>QuickSort</h4>
+
+<p>
+<b>QuickSort</b> implements the quick sort algorithm. This is the main sort algorithm, because
+it has the best speed in a common case. It is also CPU cache friendly, that is important when sorting large arrays.
+To ensure <b>O(N*log(N))</b> complexity, the implementation switchs to the heap sort, if the quick sort goes badly.
+</p>
+
+<pre>
+template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+struct <span class="att">QuickSort</span>
+ {
+  template &lt;class Len&gt;
+  static void Sort(Ran a,Len len,Ctx ctx);
+  
+  template &lt;class Len&gt;
+  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+ };
+</pre>
+
+<h4>ParaQuickSort</h4>
+
+<p>
+<b>ParaQuickSort</b> is a parallel version of the <b>QuickSort</b>. It requires multiple core CPU
+to be faster. <b>ParaQuickSort</b> uses a <a href="page_Job.html"><b>working thread pool</b></a>. 
+To get a speed benefit you have to start it.
+</p>
+
+<pre>
+Job::Init job_init;
+
+ParaQuickSort<....>::Sort(....);
+</pre>
+
+<pre>
+template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+struct <span class="att">ParaQuickSort</span>
+ {
+  template &lt;class Len&gt;
+  static void Sort(Ran a,Len len,Ctx ctx);
+  
+  template &lt;class Len&gt;
+  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+ };
+</pre>
+
+<h4>Sort functions</h4>
+
+<p>
+Finally, here is the list of common sort functions:
+</p>
+
+<pre>
+
+template &lt;class Ran,class Len&gt;
+void <span class="att">Sort</span>(Ran ptr,Len len);
+
+template &lt;class T&gt;
+void <span class="att">Sort</span>(PtrLen&lt;T&gt; range);
+
+template &lt;class Ran,class Len,class Func&gt;
+void <span class="att">IncrSort</span>(Ran ptr,Len len,Func less);
+
+template &lt;class Ran,class Len,class Func&gt;
+void <span class="att">DecrSort</span>(Ran ptr,Len len,Func less);
+
+template &lt;class T,class Func&gt;
+void <span class="att">IncrSort</span>(PtrLen&lt;T&gt; range,Func less);
+
+template &lt;class T,class Func&gt;
+void <span class="att">DecrSort</span>(PtrLen&lt;T&gt; range,Func less);
+
+</pre>
+
+<p>
+<b>IncrSort</b> sorts in increasing order relative the functor <b>less</b>.
+</p>
+
+<p>
+<b>DecrSort</b> sorts in decreasing order relative the functor <b>less</b>.
+</p>
+
+<p>
+There are two special sort contexts to sort with the given <b>less</b> functor:
+</p>
+
+<pre>
+
+/* struct IncrSortCtx&lt;Ran,Func&gt; */
+
+template &lt;class Ran,class Func&gt;
+struct <span class="att">IncrSortCtx</span> : SortCtx&lt;Ran&gt;
+ {
+  Func func;
+  
+  IncrSortCtx(const Func &amp;func_) : func(func_) {}
+  
+  bool less(Ran a,Ran b) { return func(*a,*b); }
+ };
+
+/* struct DecrSortCtx&lt;Ran,Func&gt; */
+
+template &lt;class Ran,class Func&gt;
+struct <span class="att">DecrSortCtx</span> : SortCtx&lt;Ran&gt;
+ {
+  Func func;
+  
+  DecrSortCtx(const Func &amp;func_) : func(func_) {}
+  
+  bool less(Ran a,Ran b) { return func(*b,*a); }
+ };
+
+</pre>
+
+</body>
+
+</html>
+

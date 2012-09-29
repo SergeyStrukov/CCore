@@ -69,6 +69,7 @@
 ../../../CCore/test/test0101.PTP.cpp
 ../../../CCore/test/test0102.PrintFile.cpp
 ../../../CCore/test/test0103.EventRecorder.cpp
+../../../CCore/test/test0104.ParaSort.cpp
 ../../../CCore/test/test0200.Blank.cpp
 ../../../CCore/test/test0300.TaskList.cpp
 ../../../CCore/test/testArray.cpp

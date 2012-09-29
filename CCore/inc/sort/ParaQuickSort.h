@@ -35,6 +35,7 @@ struct ParaQuickSort
   static const ulen MinLen      = 1000 ;
   static const ulen JobQueueLen =  100 ;
   static const ulen SplitLim    = 1000 ;
+  static const ulen SpawnLim    =  500 ;
  
   template <class Len> class SortEngine;
  
@@ -102,6 +103,13 @@ template <class Ran,class Ctx>
 template <class Len>
 void ParaQuickSort<Ran,Ctx>::SortEngine<Len>::spawn(Ran a,Len len)
  {
+  if( len<SpawnLim )
+   {
+    QuickSort<Ran,Ctx>::Sort(a,len,ctx);
+    
+    return;
+   }
+  
   if( put(Unit(a,len)) )
     {
      active++;
