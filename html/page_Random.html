@@ -1,0 +1,68 @@
+<!--
+/* page_Random.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Random</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Random</h2>
+
+<p class="Files">Files <b>CCore/inc/Random.h</b> <b>CCore/src/Random.cpp</b></p>
+
+<pre>
+class <span class="att">Random</span> : NoCopy
+ {
+  public:
+  
+   Random();
+   
+   uint8  next8();
+   
+   uint16 next16();
+   
+   uint32 next32();
+   
+   uint64 next64(); 
+    
+   template &lt;class UInt&gt;
+   UInt next_uint();
+   
+   uint32 select(uint32 lim) { return lim?uint32( next64()%lim ):next32(); }
+   
+   uint32 select(uint32 a,uint32 b) { return a+select(b-a+1); }
+   
+   template &lt;class UInt&gt;
+   void fill(PtrLen&lt;UInt&gt; r); 
+   
+   template &lt;class UInt&gt;
+   void fill(UInt *ptr,ulen len); 
+ };
+</pre>
+
+<h4>Mersenne Twister</h4>
+
+</body>
+
+</html>
+

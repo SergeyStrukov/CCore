@@ -101,6 +101,10 @@ Then destructor waits until all activated threads complete the call.
 </p>
 
 <p>
+Sharing the job among several threads is the responsibility of the function <b>job</b>.
+</p>
+
+<p>
 Only one <b>JobType</b> job can be boosted at the same time. If another <b>Job</b> object is created, while
 there is an active one, then the second will not take additional working threads.
 </p>
@@ -134,6 +138,7 @@ class <span class="att">Starter</span> : public Funchor_nocopy
 <p>
 This class is a generic implementation of the working thread pool. The type <b>T</b> must be a lightweight functor type.
 It must have <b>efficient</b> default constructor, copy constructor and assign operator.
+<b>Job</b> uses the type <b>JobType</b> as <b>T</b>.
 </p>
 
 <p>
@@ -159,6 +164,22 @@ class <span class="att">Starter&lt;T&gt;::Run</span> : NoCopy
  };
 </pre>
 
+<p>
+<b>Run</b> is bound to the given <b>Starter</b>.
+</p>
+
+<p>
+<b>getTaskCount()</b> returns the number of commited to the <b>starter</b> threads.
+</p>
+
+<p>
+<b>run()</b> commits additional <b>cnt</b> threads. It returns <b>getTaskCount()</b>.
+</b>
+
+<p>
+Only single <b>Run</b> per <b>Starter</b> is allowed.
+</p>
+
 <pre>
 template &lt;class T&gt;   
 class <span class="att">Starter&lt;T&gt;::Start</span> : NoCopy
@@ -176,6 +197,16 @@ class <span class="att">Starter&lt;T&gt;::Start</span> : NoCopy
    bool operator ! () const;
  };
 </pre>
+
+<p>
+<b>Start</b> tries to get the <b>Starter</b> service. If <b>starter</b> is not null and in the idle state, then
+constructor commits <b>obj</b> for execution. Available working threads from the pool will call <b>obj()</b>.
+There may be zero such threads. Destructor waits until all activated threads complete the call.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to check if the job was successfully started.
+</p>
 
 </body>
 
