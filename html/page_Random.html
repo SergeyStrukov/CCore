@@ -30,6 +30,26 @@
 
 <p class="Files">Files <b>CCore/inc/Random.h</b> <b>CCore/src/Random.cpp</b></p>
 
+<p>
+Random numbers have many use in applications. <b>CCore</b> provides a quality random number generator
+implementation, based on the <a href="http://en.wikipedia.org/wiki/Mersenne_twister">Mersenne Twister algorithm</a>.
+</p>
+
+<p>
+There are several reasons why we use our own RNG. First, we need quality. Second, we need some properties
+from RNG: it must be lightweight and generate unique and non-periodical random number sequence.
+Finally, RNG must be an object, not a global function. Because it requires some state to work, using a global function
+introduces a global variable, the access to this variable must be synchronized in the multithreaded applications.
+That is implies an excessive bottleneck and a performance penalty.
+That is why we abstain from the using the standard C function <b>rand()</b>. 
+</p>
+
+<p>
+The class <b>Random</b> is a random number generator. It contains inside the MT19937 Mersenne Twister state machine.
+To make the random sequence unique and non-periodical, the state is altered by the clock timer at the beginning and
+periodically during the random number generation process.
+</p>
+
 <pre>
 class <span class="att">Random</span> : NoCopy
  {
@@ -60,7 +80,137 @@ class <span class="att">Random</span> : NoCopy
  };
 </pre>
 
+<p>
+There is not destructor, only default constructor. Multiple <b>Random</b> objects generates different 
+random numbers.
+</p>
+
+<p>
+<b>next8()</b>, <b>next16()</b>, <b>next32()</b> and <b>next64()</b> return a random number of the
+given unsigned integral size defined type. 
+</p>
+
+<p>
+<b>next_uint&lt;UInt&gt;()</b> returns a random unsigned integer, the type is specified as a template
+argument.
+</p>
+
+<p>
+<b>fill()</b> fills the given range of unsigned integers by random values.
+</p>
+
+<p>
+<b>select(uint32 lim)</b> generates a random number in the range <b>[0,lim)</b>, almost uniformly distributed.
+If the <b>lim</b> is zero, then the value range is all <b>uint32</b> values. The non-uniformness is negligible
+for cusual applications.
+</p>
+
+<p>
+<b>select(uint32 a,uint32 b)</b> generates a random number in the range <b>[a,b]</b>, almost uniformly distributed.
+<b>a</b> must be less or equal than <b>b</b>.
+</p>
+
 <h4>Mersenne Twister</h4>
+
+<p>
+The Mersenne Twister is a generic algorithm, the MT19937 &mdash; it's particular version.
+Implementation of the Mersenne Twister is enclose in the namespace <b>MersenneTwister</b>.
+</p>
+
+<pre>
+struct <span class="att">MT19937</span>
+ {
+  // unit
+ 
+  typedef uint32 UnitType;
+  
+  static const ulen W = 32 ;
+  
+  // state
+  
+  static const ulen N = 624 ;
+  static const ulen M = 397 ;
+  static const ulen R =  31 ;
+  
+  static const UnitType A = 0x9908B0DF ;
+  
+  // output
+  
+  static const ulen S1 = 11 ;
+  static const ulen S2 =  7 ;
+  static const ulen S3 = 15 ;
+  static const ulen S4 = 18 ;
+  
+  static const UnitType B = 0x9D2C5680 ;
+  static const UnitType C = 0xEFC60000 ;
+  
+  // initialization
+  
+  static const ulen ReMessCount =  100 ;
+  static const ulen MessCount   = 1000 ;
+  
+  static const UnitType HotBits[N];
+ };
+</pre>
+
+<p>
+The structure <b>MT19937</b> contains the MT19937 version parameters. It includes initial random state bits
+from <a href="http://www.fourmilab.ch/hotbits/">HotBits</a>.
+</p>
+
+<pre>
+template &lt;class P&gt;
+class <span class="att">Gen</span> : NoCopy
+ {
+  public:
+  
+   typedef typename P::UnitType UnitType; 
+   
+  private: 
+  
+   ulen remess_count;
+   ulen ind;
+   UnitType state[P::N];
+   
+  protected: 
+  
+   PtrLen&lt;UnitType&gt; getState() { return Range(state); }
+   
+   void hotbits();
+   
+   void messup();
+   
+   void pure_init();
+   
+   UnitType pure_next();
+   
+  public:
+  
+   UnitType next();
+ };
+</pre>
+
+<p>
+The class <b>Gen</b> is the generator itself. It is a <b>Partial Class</b>, parametrized by a parameter structure.
+</p>
+
+<p>
+The only public method is the <b>next()</b>: it returns a next random number of the <b>UnitType</b>.
+But before using this class, its internal state must be initialized.
+</p>
+
+<p>
+First, the buffer <b>state</b> must be initialized. You can do it in a derived class, <b>getState()</b> 
+gives access to this buffer. The method <b>hotbits()</b> fills this buffer with some predefined random
+bits.
+</p>
+
+<p>
+Second, use <b>messup()</b> method to "mess-up" the state and add to it some clock input. It makes the state
+unprobably repeatable. You may also use the method <b>pure_init()</b> to skip this mess and start
+the generator as the pure Mersenne Twister generator. In such case to continue use the method <b>pure_next()</b>
+for the random number generation. These "pure" methods are included for the testing purpose mostly.
+</p>
 
 </body>
 
