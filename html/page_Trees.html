@@ -34,5 +34,752 @@
 
 </body>
 
+<h3>Trees brief</h3>
+
+<p>
+Binary trees is an important class of data structures. Tree consists of the set of elements, each element
+has a unique key. Keys are comparable and form a linear ordered set. Tree has a root element and
+two subtrees: Lo and Hi. Elements in the Lo subtree have a lower keys than the root element. The same way,
+elements in the Hi subtree have a higher keys than the root element.
+</p>
+
+<img src="BinTree.png" />
+
+<p>
+Operations complexities are <b>O(tree height)</b>.
+To be efficient, tree must have a limited height. To achive this there are different methods.
+We use two most important of them: <b>Radix Tree</b> and <b>Red-Black Tree</b>. The first
+is applicable to the key types with the limited value range, like integral types.
+</p>
+
+<img src="RadixTree.png" />
+
+<p>
+The height of the <b>Radix Tree</b> is limited by the <b>log(value range volume)</b>.
+</p>
+
+<p>
+<b>Red-Black Tree</b> has a colored arrows. Each arrow is either red or black. Some properties must be statisfied:
+there is no two consecutive red arrows, all tree leaves have the same black height. The height of the
+<b>Red-Black Tree</b> is limited by the <b>2*log(number of elements)</b>.
+So for these trees operations has a practically constant time limit.
+</p>
+
+<p>
+Trees are useful for building maps.
+</p>
+
+<h3>Trees links</h3>
+
+<p>
+<b>CCore</b> provides a variety of intrusive trees, the same way as a <a href="page_Lists.html">lists</a>.
+They are available through the header <b>CCore/inc/Tree.h</b>.
+</p>
+
+<p>
+<b>CCore</b> has four kind of tree links, each with a tree algorithms sets. To build a tree element you must
+include one of this links in the class:
+</p>
+
+<pre>
+struct Node
+ {
+  TreeLink&lt;Node,int&gt; link;
+
+  ....
+ };
+</pre>
+
+<p>
+Then use one of <b>Algorithms Package</b>s to operate on trees:
+</p>
+
+<pre>
+typedef TreeLink&lt;Node,int&gt;::RadixAlgo<&amp;Node::link> Algo;
+</pre>
+
+<h4>TreeLink</h4>
+
+<p>
+The <b>TreeLink</b> is a simplest tree link. It has three members: pointers to the Lo and Hi subtrees and
+the key. The key is unique across all tree.
+</p>
+
+<pre>
+template &lt;class T,class K&gt;
+struct <span class="att">TreeLink</span> 
+ {
+  T *lo;
+  T *hi;
+  K key; // unique
+  
+  typedef TreeLink&lt;T,K&gt; Node;
+  
+  template &lt;TreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct BinAlgo;
+   
+  template &lt;TreeLink&lt;T,K&gt; T::* LinkMember&gt; struct RadixAlgo;
+ };
+</pre>
+
+<p>
+There are two <b>Algorithm Package</b>s: <b>BinAlgo</b> with basic binary tree operations
+and <b>RadixTree</b>, which extends <b>BinAlgo</b> with radix tree operations. The first package has the 
+additional template parameter: <b>KRef</b>. If <b>K</b> is a lightweight type, then use the default <b>KRef</b>
+equals <b>K</b>. But for more compicated types, you may use <b>const K &</b> instead or even a
+completely different type. This type is used to pass key arguments. <b>RadixTree</b> requires the <b>K</b> to be
+an unsigned integral type.  
+</p>
+
+<pre>
+struct <span class="att">BinAlgo</span>
+ {
+   // node!=0
+   // root_ptr!=0
+ 
+  static Node &amp; Link(T *node) { return node->*LinkMember; }
+  
+</pre>
+
+<p>
+<b>Link()</b> extracts links from the object.
+</p>
+
+<pre>
+  // Find
+  
+  static T * Find(T *root,KRef key); // == key
+  
+  static T * FindMin(T *root);
+  
+  static T * FindMin(T *root,KRef key); // min >= key
+  
+  static T * FindMax(T *root);
+
+  static T * FindMax(T *root,KRef key); // max <= key
+
+</pre>  
+
+<p>
+<b>Find...()</b> is a family of searching functions. The first argument <b></b> is a tree root pointer. It may also
+be a subtree root. The second argument (if any) is a key value. The keys must be <a href="page_Cmp.html">
+3-Way comparable</a> using the function <b>Cmp(KRef,K)</b>.  Each function returns a pointer to the found element, 
+or null if the required element does not exist.
+</p>
+
+<p>
+<b>Find()</b> is searaching for the element with the given <b>key</b>.
+</p>
+
+<p>
+<b>FindMin()</b> is searaching for the element with the minimum key in the tree.
+</p>
+
+<p>
+<b>FindMin(,key)</b> is searaching for the element with the minimum key in the tree, greater or equal the 
+given <b>key</b>.
+</p>
+
+<p>
+<b>FindMax()</b> is searaching for the element with the maximum key in the tree.
+</p>
+
+<p>
+<b>FindMax(,key)</b> is searaching for the element with the maximum key in the tree, less or equal the 
+given <b>key</b>.
+</p>
+
+<pre>
+  // Locate
+  
+  static T ** Locate(T **root_ptr,KRef key);
+
+  static T ** LocateMin(T **root_ptr);
+
+  static T ** LocateMin(T **root_ptr,KRef key); // min >= key
+   
+  static T ** LocateMax(T **root_ptr);
+
+  static T ** LocateMax(T **root_ptr,KRef key); // max <= key
+   
+</pre>
+
+<p>
+<b>Locate...()</b> is another family of searching functions. It does the same as the correspondent <b>Find...()</b>
+function, but gets another input. It takes not the root pointer, but a non-null pointer to the root pointer variable.
+The return value is another double pointer: it is the original <b>root_ptr</b> or the pointer to the element
+pointer in the parent element. It is null, if the element is not found.
+</p>
+
+<p>
+These functions are required by the <b>Del...()</b> implementations, you probably wouldn't use them.
+</p>
+
+<pre>
+  // Del 
+   
+  static T * DelRoot(T **root_ptr); // (*root_ptr)!=0
+   
+  static T * Del(T **root_ptr,KRef key);
+   
+  static T * DelMin(T **root_ptr);
+   
+  static T * DelMin(T **root_ptr,KRef key);
+   
+  static T * DelMax(T **root_ptr);
+   
+  static T * DelMax(T **root_ptr,KRef key);
+   
+  static void Del(T **root_ptr,T *node);
+
+</pre>   
+
+<p>
+<b>Del...()</b> deletes the element from the tree and returns the pointer to this element (or null, if the
+element is not found). The first argument is a (non-null) root double pointer, this variable will be updated as the root
+is changed during the operation.
+</p>
+
+<p>
+<b>DelRoot()</b> deletes the root element. The element must exist.
+</p>
+
+<p>
+<b>Del(root_ptr,node)</b> deletes the given element form the tree. <b>node</b> must not be null.
+</p>
+
+<p>
+The remaining <b>Del...()</b> functions searche the element like the <b>Find...()</b> do and delete it.
+</p>
+
+<pre>
+  // struct NodePtr
+  
+  struct <span class="att">NodePtr</span>
+   {
+    T **node_ptr;
+    
+    NodePtr(T **node_ptr_) : node_ptr(node_ptr_) {}
+    
+    T ** operator + () const { return node_ptr; }
+    
+    bool operator ! () const { return !node_ptr; }
+    
+    T * node() const { return *node_ptr; }
+   };
+
+</pre>   
+
+<p>
+<b>NodePtr</b> wraps a double pointer to an element. It is used by <b>Root</b> methods to
+return <b>locate...()</b> results.
+</p>
+
+<pre>
+  // struct Root
+  
+  struct <span class="att">Root</span>
+   {
+    T *root;
+    
+    // constructors
+    
+    Root() { init(); }
+    
+    // methods
+    
+    void init() { root=0; }
+    
+    T * operator + () const { return root; }
+    
+    bool operator ! () const { return !root; }
+    
+    // find
+    
+    T * find(KRef key) const { return Find(root,key); }
+    
+    T * findMin() const { return FindMin(root); }
+    
+    T * findMin(KRef key) const { return FindMin(root,key); }
+    
+    T * findMax() const { return FindMax(root); }
+    
+    T * findMax(KRef key) const { return FindMax(root,key); }
+    
+    // locate
+    
+    NodePtr locate(KRef key) { return Locate(&amp;root,key); }
+    
+    NodePtr locateMin() { return LocateMin(&amp;root); }
+    
+    NodePtr locateMin(KRef key) { return LocateMin(&amp;root,key); }
+    
+    NodePtr locateMax() { return LocateMax(&amp;root); }
+    
+    NodePtr locateMax(KRef key) { return LocateMax(&amp;root,key); }
+    
+    // del
+    
+    T * del(KRef key) { return Del(&amp;root,key); }
+    
+    T * delMin() { return DelMin(&amp;root); }
+    
+    T * delMin(KRef key) { return DelMin(&amp;root,key); }
+    
+    T * delMax() { return DelMax(&amp;root); }
+    
+    T * delMax(KRef key) { return DelMax(&amp;root,key); }
+    
+    void del(T *node) { Del(&amp;root,node); }
+   };
+ };
+</pre>
+
+<p>
+<b>Root</b> incapsulates a root pointer and tree operations. The methods are direct calls of the
+correspondent functions.
+</p>
+
+<pre>
+struct <span class="att">RadixAlgo</span> : BinAlgo
+ {
+  // Med()
+  
+  static K Med(K kmin,K kmax) // kmin&lt;kmax
+   {
+    return K( kmin+(kmax-kmin-1)/2 );
+   }
+   
+  // class PrepareIns
+ 
+  class PrepareIns : NoCopy
+   {
+     ....
+
+    public: 
+   
+     T *found;
+    
+     PrepareIns(T **root_ptr,K key);
+     
+     PrepareIns(typename BinAlgo&lt;LinkMember,K&gt;::Root &amp;root,K key);
+     
+     PrepareIns(T **root_ptr,K key,K kmin,K kmax);
+     
+     PrepareIns(typename BinAlgo&lt;LinkMember,K&gt;::Root &amp;root,K key,K kmin,K kmax);
+     
+     void complete(T *node) { (this->*complete_func)(node); }
+   };
+   
+  // struct Check 
+
+  struct Check
+   {
+    K minval;
+    K maxval;
+    
+    Check(T *root,K kmin,K kmax);
+
+    ....
+   };
+ };
+</pre>
+
+<p>
+<b>RadixAlgo</b> extends <b>BinAlgo</b> with <b>Radix Tree</b> functionality. The <b>K</b>
+must be an unsigned integral type. Each <b>Radix Tree</b> has a value range. It may be the full value range
+of the given type <b>K</b>, or some shorter range. Anyway, you have to use the same range for all operations
+with a particular tree.
+</p>
+
+<p>
+<b>Med()</b> is used to split a value range. If the tree value range is <b>[kmin,kmax}</b>, and 
+<b>Med(kmin,kmax) -> kmed</b>, then the Lo subtree has a value range <b>[kmin,kmed]</b> and the Hi  
+subtree &mdash; <b>[kmed+1,kmax]</b>.
+</p>
+
+<p>
+<b>PrepareIns</b> is a tool to insert an element into the tree. Its constructor prepares the operation.
+Its arguments are: the root double pointer (or the reference to a <b>Root</b> object), the key, and, optionally,
+the value range. If the value range is ommited, then the full range is assumed. There are two cases. First,
+there exist an element with the given key already. In such case, the pointer to this element is returned
+in the member <b>found</b>. Otherwise, <b>found</b> is null and you may do insert using the method <b>complete()</b>.
+You must provide an element to be inserted. The key will be placed into the link of this element.
+If you do not complete the operation, the tree remains in the original logical state, but probably
+with some tree structure modifications.
+</p>
+
+<p>
+<b>Check</b> performs the tree structure check. This type is for testing purpose mostly. Constructor
+takes the root pointer and the value range. If the tree is broken, an exception is thrown. Otherwise,
+<b>minval</b> and <b>maxval</b> members will be assigned with the minimum and maximum value of keys in the tree
+(or both 0 if the tree is empty).
+</p>
+
+<h4>TreeUpLink</h4>
+
+<pre>
+template &lt;class T,class K&gt;
+struct <span class="att">TreeUpLink</span>
+ {
+  T *lo; // == this for same-key nodes
+  T *hi;
+  T *up;
+  K key; // non-unique
+  
+  typedef TreeUpLink&lt;T,K&gt; Node;
+  
+  template &lt;TreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct BinAlgo;
+   
+  template &lt;TreeUpLink&lt;T,K&gt; T::* LinkMember&gt; struct RadixAlgo;
+ };
+</pre>
+
+<pre>
+struct <span class="att">BinAlgo</span>
+ {
+   // node!=0
+   // root_ptr!=0
+ 
+  static Node & Link(T *node) { return node->*LinkMember; }
+  
+  // Find
+  
+  static T * Find(T *root,KRef key); // == key
+  
+  static T * FindMin(T *root);
+  
+  static T * FindMin(T *root,KRef key); // min >= key
+  
+  static T * FindMax(T *root);
+
+  static T * FindMax(T *root,KRef key); // max <= key
+  
+  // Del
+  
+  static T * DelRoot(T *root); // root!=0
+  
+  static void Del(T **root_ptr,T *node);
+ 
+  static T * Del(T **root_ptr,KRef key);
+ 
+  static T * DelMin(T **root_ptr);
+ 
+  static T * DelMin(T **root_ptr,KRef key);
+   
+  static T * DelMax(T **root_ptr);
+   
+  static T * DelMax(T **root_ptr,KRef key);
+   
+  // struct Root
+  
+  struct Root
+   {
+    T *root;
+    
+    // constructors
+    
+    Root() { init(); }
+    
+    // methods
+    
+    void init() { root=0; }
+    
+    T * operator + () const { return root; }
+    
+    bool operator ! () const { return !root; }
+    
+    // find
+    
+    T * find(KRef key) const { return Find(root,key); }
+    
+    T * findMin() const { return FindMin(root); }
+    
+    T * findMin(KRef key) const { return FindMin(root,key); }
+    
+    T * findMax() const { return FindMax(root); }
+    
+    T * findMax(KRef key) const { return FindMax(root,key); }
+    
+    // del
+    
+    T * del(KRef key) { return Del(&root,key); }
+    
+    T * delMin() { return DelMin(&root); }
+    
+    T * delMin(KRef key) { return DelMin(&root,key); }
+    
+    T * delMax() { return DelMax(&root); }
+    
+    T * delMax(KRef key) { return DelMax(&root,key); }
+    
+    void del(T *node) { Del(&root,node); }
+   };
+ };
+</pre>
+
+<pre>
+struct RadixAlgo : BinAlgo
+ {
+  // Med()
+
+  static K Med(K kmin,K kmax) // kmin&lt;kmax
+   {
+    return kmin+(kmax-kmin-1)/2;
+   }
+  
+  // Ins
+
+  static void Ins(BaseRoot &root,T *node,K kmin,K kmax);
+  
+  static void Ins(T **root_ptr,T *node,K kmin,K kmax);
+
+  static void Ins(BaseRoot &root,T *node);
+  
+  static void Ins(T **root_ptr,T *node);
+  
+  // struct Root
+  
+  struct Root : BinAlgo::Root
+   {
+    void ins(T *node,K kmin,K kmax);
+    
+    void ins(T *node,K key,K kmin,K kmax);
+    
+    void ins(T *node);
+    
+    void ins(T *node,K key);
+   };
+  
+  // struct Check
+  
+  struct Check
+   {
+    K minval;
+    K maxval;
+    
+    Check(T *root,K kmin,K kmax);
+
+    ....
+   };  
+ };
+</pre>
+
+<h4>RBTreeLink</h4>
+
+<p>
+<b>RBTreeLink</b> is a <b>Red-Black Tree</b> link. It has the additional member: <b>RBFlag</b> flag. 
+This flag determines the arrows colores:
+</p>
+
+<pre>
+enum <span class="att">RBFlag</span>
+ {
+  RBFlag_BlackBlack,
+  RBFlag_HiRed,
+  RBFlag_LoRed,
+  RBFlag_RedRed
+ };
+
+template &lt;class T,class K&gt;
+struct <span class="att">RBTreeLink</span>
+ {
+  T *lo;
+  T *hi;
+  K key; // unique
+  RBFlag flag;
+  
+  typedef RBTreeLink&lt;T,K&gt; Node;
+  
+  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct BaseAlgo;
+  
+  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct Algo;
+  
+  template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct AltAlgo;
+ };
+</pre>
+
+<p>
+There are tree <b>Algorithms Package</b>s for this link: <b>BaseAlgo</b>, <b>Algo</b> and <b>AltAlgo</b>.
+<b>AltAlgo</b> is an alternative implementation of the same operations, as <b>Algo</b>.
+</p>
+
+<pre>
+struct <span class="att">BaseAlgo</span>
+ {
+   // node!=0
+  
+  static Node &amp; Link(T *node) { return node->*LinkMember; }
+  
+  // Find
+  
+  static T * Find(T *root,KRef key); // == key
+  
+  static T * FindMin(T *root);
+  
+  static T * FindMin(T *root,KRef key); // min >= key
+  
+  static T * FindMax(T *root);
+
+  static T * FindMax(T *root,KRef key); // max <= key
+  
+  // struct Check
+  
+  struct Check
+   {
+    K minval;
+    K maxval;
+    int height;
+    bool black_black;
+    
+    explicit Check(T *root);
+
+    ....
+   };
+ };
+</pre>
+
+<p>
+This package contains find operations and the <b>Check</b>. Find operations are exactly the same as find operations 
+of the <b>TreeLink</b>. <b>Check</b> has the same meaning too. It just has different agruments: there are no
+range variables. And it returns additional information: <b>height</b> is a black height of the tree, 
+<b>black_black</b> is true, if two root arrows of the tree are black.
+</p>
+
+<pre>
+struct <span class="att">Algo</span> : BaseAlgo
+ {
+   // node!=0
+   // root_ptr!=0
+
+  // Del
+  
+  static T * DelMin(T **root_ptr);
+  
+  static T * DelMax(T **root_ptr);
+  
+  static T * Del(T **root_ptr,KRef key);
+  
+  static void Del(T **root_ptr,T *node);
+
+</pre>
+
+<p>
+<b>Algo</b> extends <b>BaseAlgo</b> with delete operations, insert operation and <b>Root</b>. 
+</p>
+
+<p>
+There are four delete functions with the same semantic as <b>TreeLink</b> delete functions.
+</p>
+
+<pre>
+  // struct Root
+  
+  struct Root
+   {
+    T *root;
+    
+    // constructors
+    
+    Root() { init(); }
+    
+    // methods
+    
+    void init() { root=0; }
+    
+    T * operator + () const { return root; }
+    
+    bool operator ! () const { return !root; }
+    
+    // find
+    
+    T * find(KRef key) const { return Find(root,key); }
+    
+    T * findMin() const { return FindMin(root); }
+    
+    T * findMin(KRef key) const { return FindMin(root,key); }
+    
+    T * findMax() const { return FindMax(root); }
+    
+    T * findMax(KRef key) const { return FindMax(root,key); }
+    
+    // del
+    
+    T * delMin() { return DelMin(&amp;root); } 
+    
+    T * delMax() { return DelMax(&amp;root); } 
+    
+    T * del(KRef key) { return Del(&amp;root,key); }
+    
+    void del(T *node) { Del(&amp;root,node); }
+   };
+
+</pre>  
+
+<p>
+<b>Root</b> incapsulates a root pointer and tree operations. The methods are direct calls of the
+correspondent functions.
+</p>
+
+<pre>
+  // class PrepareIns
+
+  class PrepareIns : NoCopy
+   {
+     ....
+
+    public:
+     
+     T *found;
+     
+     PrepareIns(T **root_ptr,KRef key);
+     
+     PrepareIns(Root &amp;root,KRef key);
+     
+     void complete(T *node);
+   };
+ };
+</pre>
+
+<p>
+<b>PrepareIns</b> is a tool to insert an element into the tree. Its constructor prepares the operation.
+Its arguments are: the root double pointer (or the reference to a <b>Root</b> object) and the key.
+There are two cases. First,
+there exist an element with the given key already. In such case, the pointer to this element is returned
+in the member <b>found</b>. Otherwise, <b>found</b> is null and you may do insert using the method <b>complete()</b>.
+You must provide an element to be inserted. The key will be placed into the link of this element.
+If you do not complete the operation, the tree remains in the original logical state, but probably
+with some tree structure modifications.
+</p>
+
+<h4>RBTreeUpLink</h4>
+
+<p>
+<b>RBTreeLink</b> is another <b>Red-Black Tree</b> link. It contains the additional <b>up</b> pointer, this pointer
+points to the parent tree element. For the root element it is null.
+</p>
+
+<pre>
+template &lt;class T,class K&gt;
+struct <span class="att">RBTreeUpLink</span>
+ {
+  T *up;
+  T *lo;
+  T *hi;
+  K key; // unique
+  RBFlag flag;
+  
+  typedef RBTreeUpLink&lt;T,K&gt; Node;
+  
+  template &lt;RBTreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct BaseAlgo;
+  
+  template &lt;RBTreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct Algo;
+ };
+</pre>
+
+<p>
+There are two <b>Algorithms Package</b>s for this link: <b>BaseAlgo</b> and <b>Algo</b>.
+They content are the same as for the <b>RBTreeLink</b> packages.
+</p>
+
 </html>
 
