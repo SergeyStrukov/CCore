@@ -248,7 +248,7 @@ is changed during the operation.
 </p>
 
 <p>
-The remaining <b>Del...()</b> functions searche the element like the <b>Find...()</b> do and delete it.
+The remaining <b>Del...()</b> functions search the element like the <b>Find...()</b> do and delete it.
 </p>
 
 <pre>
@@ -417,6 +417,12 @@ takes the root pointer and the value range. If the tree is broken, an exception 
 
 <h4>TreeUpLink</h4>
 
+<p>
+The <b>TreeUpLink</b> is another tree link. It has the additional member <b>up</b>. It points to the parent
+element. For the root node it is null. The keys are not unique. In fact, this kind of tree is a combination 
+of tree and list. There are two kind of links: normal tree links, and same-key links, where <b>lo==this</b>.
+</p>
+
 <pre>
 template &lt;class T,class K&gt;
 struct <span class="att">TreeUpLink</span>
@@ -433,6 +439,10 @@ struct <span class="att">TreeUpLink</span>
   template &lt;TreeUpLink&lt;T,K&gt; T::* LinkMember&gt; struct RadixAlgo;
  };
 </pre>
+
+<p>
+<b>BinAlgo</b> is essentially the same as for the <b>TreeLink</b>. 
+</p>
 
 <pre>
 struct <span class="att">BinAlgo</span>
@@ -454,6 +464,13 @@ struct <span class="att">BinAlgo</span>
 
   static T * FindMax(T *root,KRef key); // max <= key
   
+</pre>
+
+<p>
+The family of <b>Find...()</b> functions are the same.
+</p>
+
+<pre>
   // Del
   
   static T * DelRoot(T *root); // root!=0
@@ -469,7 +486,14 @@ struct <span class="att">BinAlgo</span>
   static T * DelMax(T **root_ptr);
    
   static T * DelMax(T **root_ptr,KRef key);
-   
+
+</pre> 
+
+<p>
+Again, the family of <b>Del...()</b> functions are the same.
+</p>
+
+<pre>
   // struct Root
   
   struct Root
@@ -517,6 +541,10 @@ struct <span class="att">BinAlgo</span>
  };
 </pre>
 
+<p>
+The <b>Root</b> is the same too, except, there is no <b>locate()</b> family of methods.
+</p>
+
 <pre>
 struct RadixAlgo : BinAlgo
  {
@@ -529,11 +557,11 @@ struct RadixAlgo : BinAlgo
   
   // Ins
 
-  static void Ins(BaseRoot &root,T *node,K kmin,K kmax);
+  static void Ins(BinAlgo::Root &root,T *node,K kmin,K kmax);
   
   static void Ins(T **root_ptr,T *node,K kmin,K kmax);
 
-  static void Ins(BaseRoot &root,T *node);
+  static void Ins(BinAlgo::Root &root,T *node);
   
   static void Ins(T **root_ptr,T *node);
   
@@ -563,6 +591,34 @@ struct RadixAlgo : BinAlgo
    };  
  };
 </pre>
+
+<p>
+<b>RadixAlgo</b> extends the <b>BaseAlgo</b>.
+</p>
+
+<p>
+<b>Med()</b> is the same.
+</p>
+
+<p>
+<b>Check</b> is the same.
+</p>
+
+<p>
+The main difference is insertion algorithms. They are simpler and implemented by the functions. That is because
+keys are not unique and you may always insert an element into the tree. There are four of them.
+The first argument is the double root pointer or the <b>BaseAlgo::Root</b> reference. The second argument
+is the element to be inserted. The element must have the key inside initialized. Two last arguments, if any,
+specifies the tree value range.
+</p>
+
+<p>
+The <b>RadixAlgo</b> <b>Root</b> extends the <b>BaseAlgo</b> <b>Root</b> with the insertion methods.
+Two of them are direct calls of the correspondent <b>Ins()</b> functions. Another two have the additional
+argument <b>key</b>. This key is placed into the element link before insertion.
+</p>
+
+<p>
 
 <h4>RBTreeLink</h4>
 
