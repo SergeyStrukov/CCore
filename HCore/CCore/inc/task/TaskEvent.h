@@ -42,9 +42,41 @@ struct TaskEventAlgo
  {
   static const ulen RecordAlign = 4 ;
   
-  static const uint64 TimeFreq = 1000000000 ; // meaningless value
-  
-  static EventTimeType GetTime() { return (EventTimeType)Sys::GetClockTime(); }
+  static const uint64 TimeFreq = 0 ; // meaningless value
+
+  class AllocPos : FastMutexBase
+   {
+     ulen off;
+     
+    public:
+    
+     AllocPos() : off(0) {}
+     
+     ~AllocPos() {}
+     
+     operator ulen() const { return off; }
+     
+     EventRecordPos alloc(ulen len)
+      {
+       Lock lock(*this);
+       
+       EventRecordPos ret;
+       
+       ret.pos=off;
+       ret.time=(EventTimeType)Sys::GetClockTime();
+       
+       off+=len;
+       
+       return ret;
+      }
+     
+     void back(ulen len)
+      {
+       Lock lock(*this);
+       
+       off-=len;
+      }
+   };
  };
 
 /* types */

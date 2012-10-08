@@ -17,6 +17,7 @@
 #include <CCore/test/testRun.h>
 
 #include <CCore/inc/EventRecorder.h>
+#include <CCore/inc/Task.h>
 
 namespace App {
 
@@ -28,9 +29,41 @@ struct EventRecorderAlgo
  {
   static const ulen RecordAlign = 4 ;
   
-  static const uint64 TimeFreq = 1000000000 ;
+  static const uint64 TimeFreq = 0 ;
   
-  static EventTimeType GetTime() { return (EventTimeType)ClockTimer::Get(); }
+  class AllocPos : FastMutexBase
+   {
+     ulen off;
+     
+    public:
+    
+     AllocPos() : off(0) {}
+     
+     ~AllocPos() {}
+     
+     operator ulen() const { return off; }
+     
+     EventRecordPos alloc(ulen len)
+      {
+       Lock lock(*this);
+       
+       EventRecordPos ret;
+       
+       ret.pos=off;
+       ret.time=(EventTimeType)Sys::GetClockTime();
+       
+       off+=len;
+       
+       return ret;
+      }
+     
+     void back(ulen len)
+      {
+       Lock lock(*this);
+       
+       off-=len;
+      }
+   };
  };
 
 /* struct EventBody */

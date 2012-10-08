@@ -18,6 +18,7 @@
 
 #include <CCore/inc/EventRecorder.h>
 #include <CCore/inc/sys/SysTime.h>
+#include <CCore/inc/dev/DevInt.h>
  
 //#define CCORE_TASK_EVENT_ENABLE
 
@@ -45,7 +46,39 @@ struct TaskEventAlgo
   
   static const uint64 TimeFreq = Sys::ClocksPerSec ;
   
-  static EventTimeType GetTime() { return (EventTimeType)Sys::GetClockTime(); }
+  class AllocPos : NoCopy
+   {
+     ulen off;
+     
+    public:
+    
+     AllocPos() : off(0) {}
+     
+     ~AllocPos() {}
+     
+     operator ulen() const { return off; }
+     
+     EventRecordPos alloc(ulen len)
+      {
+       Dev::IntLock lock;
+       
+       EventRecordPos ret;
+       
+       ret.pos=off;
+       ret.time=(EventTimeType)Sys::GetClockTime();
+       
+       off+=len;
+       
+       return ret;
+      }
+     
+     void back(ulen len)
+      {
+       Dev::IntLock lock;
+       
+       off-=len;
+      }
+   };
  };
 
 /* types */

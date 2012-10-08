@@ -43,6 +43,8 @@ void WaitAtomicZero(Atomic &count);
 
 /* classes */
 
+struct EventRecordPos;
+
 struct EventPrefix;
 
 template <class T> class EventEnumValue;
@@ -62,6 +64,14 @@ struct EventControl;
 template <class Algo> class EventRecorder;
 
 template <class Recorder,unsigned GuardCount=1000000> class EventRecorderHost;
+
+/* struct EventRecordPos */
+
+struct EventRecordPos
+ {
+  ulen pos;
+  EventTimeType time;
+ };
 
 /* struct EventPrefix */
 
@@ -1040,7 +1050,22 @@ struct EventRecorderAlgo
   
   static const uint64 TimeFreq = ??? ;
   
-  static EventTimeType GetTime() { ??? }
+  class AllocPos : NoCopy
+   {
+     ulen off;
+     
+    public:
+    
+     AllocPos() : off(0) {}
+     
+     ~AllocPos() {}
+     
+     operator ulen() const { return off; }
+     
+     EventRecordPos alloc(ulen len);
+     
+     void back(ulen len);
+   };
  };
 
 #endif
@@ -1051,7 +1076,7 @@ class EventRecorder : public EventMetaInfo
    void *buf;
    ulen buf_len;
    
-   Atomic pos;
+   typename Algo::AllocPos pos;
    
   public: 
    
@@ -1064,8 +1089,6 @@ class EventRecorder : public EventMetaInfo
      
      buf=MemAlloc(buf_len_);
      buf_len=buf_len_;
-     
-     pos=0;
     }
    
    ~EventRecorder()
@@ -1082,15 +1105,15 @@ class EventRecorder : public EventMetaInfo
      
      static_assert( len<=MaxEventLen ,"CCore::EventRecorder<Algo>::add(...) : T is too large");
      
-     ulen off=(pos+=len);
+     EventRecordPos recpos=pos.alloc(len);
      
-     if( off>buf_len-len )
+     if( recpos.pos>buf_len-len )
        {
-        pos-=len;
+        pos.back(len);
        }
      else
        {
-        static_cast<T *>(PtrAdd(buf,off))->init( Algo::GetTime() , EventId<T>::GetId() , std::forward<SS>(ss)... );
+        static_cast<T *>(PtrAdd(buf,recpos.pos))->init( recpos.time , EventId<T>::GetId() , std::forward<SS>(ss)... );
        }
     }
    
