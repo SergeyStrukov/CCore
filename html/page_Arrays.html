@@ -32,6 +32,156 @@
 
 <p class="Files">Subfolders <b>CCore/inc/array</b> <b>CCore/src/array</b></p>
 
+<h3>Arrays</h3>
+
+<p>
+<b>Array</b> is a container, where multiple items comprise a continuous range.  
+The simplest such "container" is the embedded type "array of" <b>T[Len]</b>.
+Unfortunately, this type lacks many abilities, required in applications, so we need a variaty
+of <b>Array</b>s. We don't use STL <b>vector</b>, because it also has many deficiencies, for example, it cannot contain
+not copyable elements.
+</p>
+
+<p>
+Constant <b>CCore</b> <b>Array</b>s give constant access to its elements.
+</p>
+
+<p>
+Allocation errors and index check errors throw exceptions.
+</p>
+
+<p>
+All <b>CCore</b> <b>Array</b>s available through the header <b>CCore/inc/Array.h</b>.
+</p>
+
+<h4>TempArray</h4>
+
+<p>
+<b>TempArray</b> is the simplest of <b>Array</b>s. It is applicable only to POD types.
+This container combines stack storage and dynamic storage to speed up the array construction/destruction 
+for a short lengths. Use this <b>Array</b> if you need a temporary buffer with expected short length in
+the most cases.
+</p>
+
+<pre>
+template &lt;class T,ulen StackLen&gt;
+class <span class="att">TempArray</span> : NoCopy
+ {
+  private:
+  
+   T *ptr;
+   ulen len;
+   
+   T buf[StackLen];
+   
+  public:
+   
+   // constructors
+   
+   TempArray();
+   
+   explicit TempArray(ulen len);
+   
+   ~TempArray();
+   
+   // methods
+   
+   void provide(ulen len);
+   
+   // range access
+   
+   T * getPtr() { return ptr; }
+   
+   const T * getPtr() const { return ptr; }
+   
+   const T * getPtr_const() const { return ptr; }
+   
+   ulen getLen() const { return len; }
+   
+   // index access
+   
+   T &amp; operator [] (ulen index);
+   
+   const T &amp; operator [] (ulen index) const;
+   
+   T &amp; at(ulen index);
+   
+   const T &amp; at(ulen index) const;
+ };
+</pre>
+
+<p>
+If the array length is not greater than <b>StackLen</b>, then <b>TempArray</b> uses the internal buffer.
+Otherwise, the space for elements is dynamically allocated.
+</p>
+
+<p>
+Most of the <b>TempArray</b> methods have clear meaning.
+</p>
+
+<p>
+<b>at()</b> is a checked index access.
+</p>
+
+<p>
+<b>provide()</b> ensures the array have at least the given length, reallocating it if required.
+</p>
+
+<h4>SimpleArray</h4>
+
+<pre>
+template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
+class <span class="att">SimpleArray</span> : NoCopy
+ {
+   T *ptr;
+   ulen len;
+   
+  public:
+  
+   // constructors
+   
+   explicit SimpleArray(ulen len=0);
+   
+   ~SimpleArray();
+   
+   // range access
+   
+   T * getPtr() { return ptr; }
+   
+   const T * getPtr() const { return ptr; }
+   
+   const T * getPtr_const() const { return ptr; }
+   
+   ulen getLen() const { return len; }
+   
+   // index access
+   
+   T &amp; operator [] (ulen index); 
+   
+   const T &amp; operator [] (ulen index) const; 
+   
+   T &amp; at(ulen index); 
+    
+   const T &amp; at(ulen index) const; 
+   
+   // swap/move objects
+   
+   void objSwap(SimpleArray&lt;T,Algo&gt; &amp;obj);
+   
+   explicit SimpleArray(ToMoveCtor&lt;SimpleArray&lt;T,Algo&gt; &gt; obj);
+   
+   SimpleArray&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
+ };
+</pre>
+
+<h4>DynArray</h4>
+
+<h4>RefArray and AtomicRefArray</h4>
+
+<h4>Collector</h4>
+
+<h3>Array algorithms</h3>
+
 </body>
 
 </html>

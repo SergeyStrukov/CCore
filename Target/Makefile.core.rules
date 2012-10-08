@@ -23,8 +23,8 @@ asm: $(ASM_LIST)
 
 clean:
 	$(RM) $(TARGET) $(OBJ_PATH)/*
-	touch -m --date="1980-1-1" $(GEN_LIST) empty
-	$(RM) empty
+	touch -m --date="1980-1-1" $(GEN_LIST) temp
+	$(RM) temp
 
 $(TARGET) : $(OBJ_LIST) $(ASM_OBJ_LIST)
 	$(RM) $(TARGET)
