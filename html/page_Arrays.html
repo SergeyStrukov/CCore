@@ -32,6 +32,64 @@
 
 <p class="Files">Subfolders <b>CCore/inc/array</b> <b>CCore/src/array</b></p>
 
+<h3>Helpers</h3>
+
+<p>
+There are several type, which are used to specify the constructor behavior. 
+</p>
+
+<pre>
+
+/* words */ 
+
+enum DoBuildType { <span class="att">DoBuild</span> };
+ 
+enum DoReserveType { <span class="att">DoReserve</span> };
+
+</pre>
+
+<p>
+<b>DoBuild</b> and <b>DoReserve</b> are <b>word</b>s. They designate the build and the reserve type of construction
+respectively.
+</p>
+
+<pre>
+
+template &lt;int Sw&gt;
+class DoSomething
+ {
+   ulen len;
+   ulen maxlen;
+   
+  public: 
+  
+   explicit DoSomething(ulen len);
+  
+   DoSomething(ulen len,ulen maxlen);
+   
+   ulen getLen() const { return len; }
+   
+   ulen getMaxLen() const { return maxlen; }
+ };
+ 
+typedef DoSomething&lt;1&gt; DoRaw;
+
+typedef DoSomething&lt;2&gt; DoFill; 
+
+typedef DoSomething&lt;3&gt; DoCopy; 
+
+typedef DoSomething&lt;4&gt; DoCast; 
+
+typedef DoSomething&lt;5&gt; DoSwap; 
+
+typedef DoSomething&lt;6&gt; DoCreate; 
+
+</pre>
+
+<p>
+<b>DoRaw</b>, <b>DoFill</b>, <b>DoCopy</b>, <b>DoCast</b>, <b>DoSwap</b>, <b>DoCreate</b>
+</p>
+
 <h3>Arrays</h3>
 
 <p>
@@ -43,11 +101,22 @@ not copyable elements.
 </p>
 
 <p>
+<b>CCore</b> <b>Array</b>s have <b>Range Access Interface</b>. They also provide the index access to elements
+through overloaded <b>operator []</b> and checked index access with the method <b>at()</b>.
+</p>
+
+<p>
 Constant <b>CCore</b> <b>Array</b>s give constant access to its elements.
 </p>
 
 <p>
 Allocation errors and index check errors throw exceptions.
+</p>
+
+<p>
+<b>Array</b>s can be used with the most types, there is no hard restrictions on the type properties.
+The only strong requirement: the type destructor must be no-throw. Some operation, however,
+requires additional type properties. For example, to use the <b>cloneTo()</b> methods the type must be copyable.
 </p>
 
 <p>
@@ -116,18 +185,20 @@ Otherwise, the space for elements is dynamically allocated.
 </p>
 
 <p>
-Most of the <b>TempArray</b> methods have clear meaning.
-</p>
-
-<p>
-<b>at()</b> is a checked index access.
-</p>
-
-<p>
 <b>provide()</b> ensures the array have at least the given length, reallocating it if required.
 </p>
 
 <h4>SimpleArray</h4>
+
+<p>
+<b>SimpleArray</b> is another "simple array". It is applicable to (almost) any types.
+</p>
+
+<p>
+The second template argument of <b>SimpleArray</b> is an <b>Algorithm Package</b> of array algorithms.
+<b>SimpleArray</b> uses only two of them: <b>Create_default()</b> and <b>Destroy()</b>.
+See below about array algorithms.
+</p>
 
 <pre>
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
@@ -174,7 +245,242 @@ class <span class="att">SimpleArray</span> : NoCopy
  };
 </pre>
 
+<p>
+<b>SimpleArray</b> allocates space dynamically.
+</p>
+
+<p>
+Unlike <b>TempArray</b>, <b>SimpleArray</b> is swapable and moveable.
+</p>
+
 <h4>DynArray</h4>
+
+<p>
+<b>DynArray</b> is the "main" of <b>Array</b>s. It stores elements in a memory space with some
+reserved memory behind. It allows extend the range of elements, if there is an extra memory. 
+If not and the type <b>T</b> supports moving, then the array extension can be performed
+with either the memory block extension (using <b>MemExtend()</b>) or total reallocation with moving content.
+You can also release the extra memory. All details of the array functionality can be customized using the 
+second template argument, which is an <b>Algorithm Package</b> of array algorithms. You cannot
+change the heap functions though.
+</p>
+
+<p>
+Alone with the standard methods, <b>DynArray</b> has a bunch of methods to initialize and control the array content.
+</p>
+
+<pre>
+template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
+class <span class="att">DynArray</span> : NoCopy
+ {
+   ....
+ 
+  public:
+  
+   // constructors
+   
+   DynArray();
+   
+   template &lt;class S&gt;
+   explicit DynArray(std::initializer_list&lt;S&gt; il); 
+   
+   explicit DynArray(ulen len); 
+   
+   DynArray(ulen len,ulen maxlen); 
+    
+   DynArray(DoReserveType,ulen maxlen); 
+    
+   explicit DynArray(DoRaw dotype); 
+   
+   template &lt;class ... SS&gt;
+   explicit DynArray(DoFill dotype,SS &amp;&amp; ... ss); 
+    
+   DynArray(DoCopy dotype,const T src[]); 
+   
+   template &lt;class S&gt;
+   DynArray(DoCast dotype,const S src[]); 
+   
+   DynArray(DoSwap dotype,T objs[]); 
+   
+   template &lt;class Creator&gt;
+   DynArray(DoCreate dotype,Creator creator); 
+    
+   template &lt;class Builder&gt;
+   DynArray(DoBuildType,Builder builder); 
+    
+   ~DynArray();
+
+</pre>
+
+<p>
+Default constructor and destructor are no-throw. Non-default constructors reserve some space and build
+some elements.
+</p>
+   
+<pre>
+   // range access
+   
+   T * getPtr();
+   
+   const T * getPtr() const;
+   
+   const T * getPtr_const() const;
+   
+   ulen getLen() const;
+   
+   ulen getMaxLen() const;
+   
+   ulen getExtraLen() const;
+   
+   // index access
+   
+   T &amp; operator [] (ulen index);
+   
+   const T &amp; operator [] (ulen index) const;
+   
+   T &amp; at(ulen index);
+   
+   const T &amp; at(ulen index) const;
+
+</pre>
+
+<p>
+Range access and index access methods are standard. Two additional methods reports memory allocation. 
+</p>
+
+<p>
+<b>getMaxLen()</b> return the reserved array length (in objects).
+</p>
+
+<p>
+<b>getExtraLen()</b> is the extra space available (in objects)
+</p>
+
+<pre>
+   // methods
+   
+   void cloneTo(DynArray&lt;T,Algo&gt; &amp;ret) const;
+    
+   void reserve(ulen extra_len);
+   
+   void erase();
+    
+</pre>
+
+<p>
+<b>cloneTo()</b> clones the array. The reserved length is also preserved. The type <b>T</b> must be copyable. 
+</p>
+
+<p>
+<b>reserve()</b> reserves the space for <b>extra_len</b> objects.
+</p>
+
+<p>
+<b>erase()</b> erases the array, it gets to the null state, with no obects and no memory allocated.
+</p>
+
+<pre>
+   // shrink 
+   
+   ulen shrink(ulen delta_len);
+    
+   bool shrink_one();
+    
+   ulen shrink_all();
+    
+   void shrink_extra();
+    
+</pre>   
+
+<p>
+<b>shrink()</b> destroys the last up to <b>delta_len</b> elements of the array. It returns the 
+number of elements destroyed.
+</p>
+
+<p>
+<b>shrink_one()</b> destroys the last element (if any). It returns true, if the element is destroyed, and
+false if the array is empty.
+</p>
+
+<p>
+<b>shrink_all()</b> destroys all array elements. It returns the number of elements destroyed.
+</p>
+
+<p>
+These three methods doesn't change the reserved array length.
+</p>
+
+<p>
+<b>shrink_extra()</b> shrinks the memory block, returning the extra memory to the heap. After this method
+the reserved array length becomes equal to the array length.
+</p>
+
+<pre>
+   // extend
+   
+   PtrLen&lt;T&gt; extend_raw(ulen delta_len);
+   
+   PtrLen&lt;T&gt; extend_default(ulen delta_len);
+   
+   template &lt;class ... SS&gt;
+   PtrLen&lt;T&gt; extend_fill(ulen delta_len,SS &amp;&amp; ... ss);
+    
+   PtrLen&lt;T&gt; extend_copy(ulen delta_len,const T src[]);
+   
+   template &lt;class S&gt;
+   PtrLen&lt;T&gt; extend_cast(ulen delta_len,const S src[]);
+   
+   PtrLen&lt;T&gt; extend_swap(ulen delta_len,T objs[]);
+   
+   template &lt;class Creator&gt;
+   PtrLen&lt;T&gt; extend(ulen delta_len,Creator creator);
+   
+   template &lt;class Builder&gt;
+   PtrLen&lt;T&gt; extend(Builder builder);
+   
+</pre>   
+
+<p>
+<b>extend...()</b> is a family of methods, which extends the array with number elements. They differs in
+the element construction ways. All of them, except the last, has the first argument <b>delta_len</b>, 
+which is the number of new elements. The return value is the range of these new elements.
+<b>extend...()</b> are transactional, i.g. if the method if failed, then the array is remaining 
+in the original state, the exception is thrown.
+</p>
+
+<pre>
+   // append
+   
+   T * append_raw();
+   
+   T * append_default();
+    
+   template &lt;class ... SS&gt;
+   T * append_fill(SS &amp;&amp; ... ss); 
+   
+   T * append_copy(const T &amp;src);
+   
+   T * append_swap(T &amp;obj);
+   
+   template &lt;class Creator&gt;
+   T * append(Creator creator);
+   
+</pre>   
+
+<pre>
+   // swap/move objects
+   
+   void objSwap(DynArray&lt;T,Algo&gt; &amp;obj);
+   
+   explicit DynArray(ToMoveCtor&lt;DynArray&lt;T,Algo&gt; &gt; obj);
+    
+   DynArray&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
+ };
+</pre>
+
+<p>
+<b>DynArray</b> is swapable and moveable.
+</p>
 
 <h4>RefArray and AtomicRefArray</h4>
 
