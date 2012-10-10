@@ -63,9 +63,9 @@ class DoSomething
    
   public: 
   
-   explicit DoSomething(ulen len);
+   explicit DoSomething(ulen len); // maxlen == len 
   
-   DoSomething(ulen len,ulen maxlen);
+   DoSomething(ulen len,ulen maxlen); // maxlen >= len
    
    ulen getLen() const { return len; }
    
@@ -87,7 +87,10 @@ typedef DoSomething&lt;6&gt; DoCreate;
 </pre>
 
 <p>
-<b>DoRaw</b>, <b>DoFill</b>, <b>DoCopy</b>, <b>DoCast</b>, <b>DoSwap</b>, <b>DoCreate</b>
+<b>DoRaw</b>, <b>DoFill</b>, <b>DoCopy</b>, <b>DoCast</b>, <b>DoSwap</b>, <b>DoCreate</b> are not <b>word</b>s, but 
+<b>Small Data Type</b>s. They designate the correspondent type of construction and carry two parameters:
+the array length and the reserved length. When an array is being creating, the reserved length determines
+the memory space to be allocated, and the length is the number of elements to be created.
 </p>
 
 <h3>Arrays</h3>
@@ -314,9 +317,62 @@ class <span class="att">DynArray</span> : NoCopy
 
 <p>
 Default constructor and destructor are no-throw. Non-default constructors reserve some space and build
-some elements.
+some elements. The <b>DoRaw</b>, ..., <b>DoCreate</b> arguments carry the length and the reserved
+length of the array to be used.
+</p>
+
+<p>
+<b>DynArray(std::initializer_list&lt;S&gt; il)</b> uses an initialization list to "cast" 
+the new elements from the given.
 </p>
    
+<p>
+<b>DynArray(ulen len)</b> creates the array of the <b>len</b> elements using the default constructor.
+</p>
+   
+<p>
+<b>DynArray(ulen len,ulen maxlen)</b> also performs the default initialization of the <b>len</b> elements, 
+but reserves a space for <b>maxlen</b> elements.
+</p>
+   
+<p>
+<b>DynArray(DoReserveType,ulen maxlen)</b> just reserves a space.
+</p>
+   
+<p>
+<b>DynArray(DoRaw dotype)</b> performes the "raw" initialization. If the <b>T</b> is a POD type, elements
+are not initialized. If not, the default initialization if performed.
+</p>
+   
+<p>
+<b>DynArray(DoFill dotype,SS &amp;&amp; ... ss)</b> creates the new elements using some constructor, 
+the specified arguments are forwarded to this constructor.
+</p>
+   
+<p>
+<b>DynArray(DoCopy dotype,const T src[])</b> creates the new elements using the copy constructor, <b>src</b> 
+is a range of length <b>dotype.getLen()</b>, its members are copied memberwise.
+</p>
+   
+<p>
+<b>DynArray(DoCast dotype,const S src[])</b> creates the new elements using the "cast" constructor, <b>src</b> is a range of length
+<b>dotype.getLen()</b>, its members are casted memberwise.
+</p>
+   
+<p>
+<b>DynArray(DoSwap dotype,T objs[])</b> creates the new elements using the "swap move" approach. 
+I.e. the new elements are created using the default constructor and swapped with the members of the range <b>objs</b>.
+</p>
+   
+<p>
+<b>DynArray(DoCreate dotype,Creator creator)</b> uses the given <b>Creator</b> object to create the 
+new elements.
+</p>
+
+<p>
+<b>DynArray(DoBuildType,Builder builder)</b> uses the given <b>Builder</b> object to create the new elements.
+</p>
+
 <pre>
    // range access
    
@@ -448,6 +504,41 @@ which is the number of new elements. The return value is the range of these new 
 in the original state, the exception is thrown.
 </p>
 
+<p>
+<b>extend_raw()</b> for POD types leaves the new elements uninitialized. For other types it works
+like <b>extend_default()</b>.
+</p>
+
+<p>
+<b>extend_default()</b> creates the new elements using the default constructor.
+</p>
+
+<p>
+<b>extend_fill()</b> creates the new elements using some constructor, the specified arguments are forwarded
+to this constructor.  
+</p>
+
+<p>
+<b>extend_copy()</b> creates the new elements using the copy constructor, <b>src</b> is a range of length
+<b>delta_len</b>, its members are copied memberwise.
+</p>
+
+<p>
+<b>extend_cast()</b> creates the new elements using the "cast" constructor, <b>src</b> is a range of length
+<b>delta_len</b>, its members are casted memberwise.
+</p>
+
+<p>
+<b>extend_swap()</b> creates the new elements using the "swap move" approach. I.e. the new elements are 
+created using the default constructor and swapped with the members of the range <b>objs</b>.
+</p>
+
+<p>
+Two final <b>extend()</b> are generic. The first of them uses the given <b>Creator</b> object to create the 
+new elements, and the second uses the <b>Builder</b>. See below explanations about <b>Creator</b>s and
+<b>Builder</b>s.
+</p>
+
 <pre>
    // append
    
@@ -467,6 +558,12 @@ in the original state, the exception is thrown.
    
 </pre>   
 
+<p>
+<b>append...()</b> is a family of methods to append one element to the array. They are similar to the
+correspondent <b>extend...()</b> methods and do exactly the same with <b>delta_len</b> equals 1.   
+The return value is the pointer to the created element.
+</p>
+
 <pre>
    // swap/move objects
    
@@ -484,7 +581,258 @@ in the original state, the exception is thrown.
 
 <h4>RefArray and AtomicRefArray</h4>
 
+<p>
+<b>RefArray</b> and <b>AtomicRefArray</b> are copyable arrays with an efficient copy constructors.
+It's assumed, the type <b>T</b> is copyable.
+Multiple copies of arrays may share the same state. The state has a reference counter, which is used to
+end its life-time. The only difference between <b>RefArray</b> and <b>AtomicRefArray</b> is the former
+uses the atomic reference counting to be viable in a multithreaded environment.
+</p>
+
+<p>
+<b>RefArray</b> has a simulated value semantic. It means that you may consider the different copy of the array
+as independent variables, despite they may share the state. That is because <b>RefArray</b> provides
+only the constant access to the elements. So far you don't violate this constantness (using the const-cast, for example),
+you may safely assume the each copy is different. To modify the array you have to call
+the method <b>modify()</b>. This method "unshares" the array, if necessary, and gives the non-constant access to the
+elements.
+</p>
+
+<pre>
+template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
+class <span class="att">RefArray</span>
+ {
+   ....
+
+  public:
+  
+   // constructors
+   
+   RefArray() {}
+   
+   template &lt;class S&gt;
+   explicit RefArray(std::initializer_list&lt;S&gt; il);
+   
+   explicit RefArray(ulen len); 
+   
+   RefArray(ulen len,ulen maxlen); 
+    
+   RefArray(DoReserveType,ulen maxlen); 
+    
+   explicit RefArray(DoRaw dotype); 
+   
+   template &lt;class ... SS&gt;
+   explicit RefArray(DoFill dotype,SS &amp;&amp; ... ss); 
+    
+   RefArray(DoCopy dotype,const T src[]); 
+ 
+   template &lt;class S&gt;
+   RefArray(DoCast dotype,const S src[]); 
+   
+   RefArray(DoSwap dotype,T objs[]); 
+   
+   template &lt;class Creator&gt;
+   RefArray(DoCreate dotype,Creator creator); 
+    
+   template &lt;class Builder&gt;
+   RefArray(DoBuildType,Builder builder); 
+    
+   ~RefArray();
+   
+   // range access
+   
+   const T * getPtr() const;
+   
+   const T * getPtr_const() const;
+   
+   ulen getLen() const;
+   
+   ulen getMaxLen() const;
+   
+   ulen getExtraLen() const;
+   
+   // index access
+   
+   const T & operator [] (ulen index) const;
+   
+   const T & at(ulen index) const;
+   
+   // methods
+   
+   PtrLen&lt;T&gt; modify();
+   
+   void cloneTo(RefArray&lt;T,Algo&gt; &amp;ret) const;
+    
+   void reserve(ulen extra_len);
+   
+   void erase();
+    
+   // shrink
+   
+   ulen shrink(ulen delta_len);
+    
+   bool shrink_one();
+    
+   ulen shrink_all();
+    
+   void shrink_extra();
+    
+   // extend
+   
+   PtrLen&lt;T&gt; extend_raw(ulen delta_len);
+   
+   PtrLen&lt;T&gt; extend_default(ulen delta_len);
+   
+   template &lt;class ... SS&gt;
+   PtrLen&lt;T&gt; extend_fill(ulen delta_len,SS &amp;&amp; ... ss);
+    
+   PtrLen&lt;T&gt; extend_copy(ulen delta_len,const T src[]);
+   
+   template &lt;class S&gt;
+   PtrLen&lt;T&gt; extend_cast(ulen delta_len,const S src[]);
+   
+   PtrLen&lt;T&gt; extend_swap(ulen delta_len,T objs[]);
+   
+   template &lt;class Creator&gt;
+   PtrLen&lt;T&gt; extend(ulen delta_len,Creator creator);
+   
+   template &lt;class Builder&gt;
+   PtrLen&lt;T&gt; extend(Builder builder);
+   
+   // append
+   
+   T * append_raw();
+    
+   T * append_default();
+    
+   template &lt;class ... SS&gt;
+   T * append_fill(SS &amp;&amp; ... ss); 
+   
+   T * append_copy(const T &amp;src);
+   
+   T * append_swap(T &amp;obj);
+   
+   template &lt;class Creator&gt;
+   T * append(Creator creator);
+   
+   // swap/move objects
+   
+   void objSwap(RefArray&lt;T,Algo&gt; &amp;obj);
+   
+   explicit RefArray(ToMoveCtor&lt;RefArray&lt;T,Algo&gt; &gt; obj);
+   
+   RefArray&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
+ };
+</pre>
+
+<p>
+The <b>RefArray</b> methods are mostly the same as <b>DynArray</b> methods. The differences are:
+index and range access methods gives only the constant access, and the new class-specific method <b>modify()</b>
+exists.
+</p>
+
 <h4>Collector</h4>
+
+<p>
+<b>Collector</b> is not an array!
+</p>
+
+<pre>
+template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
+class <span class="att">Collector</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+   
+   static const ulen DefaultBlockLen = 1024 ;
+   static const ulen MinBlockLen = 10 ;
+   
+   explicit Collector(ulen block_len=DefaultBlockLen);
+   
+   ~Collector();
+   
+   // methods
+   
+   ulen getLen() const; 
+   
+   void erase();
+   
+   template &lt;class Container&gt;
+   void extractTo(Container &amp;ret)
+    {
+     Container temp(DoBuild,Extractor(this));
+     
+     Swap(temp,ret);
+    }
+   
+   template &lt;class Container&gt;
+   void copyTo(Container &amp;ret) const
+    {
+     Container temp(DoBuild,Copyrator(this));
+     
+     Swap(temp,ret);
+    }
+   
+   PtrLen&lt;T&gt; flat();
+   
+   // shrink 
+   
+   ulen shrink(ulen delta_len);
+    
+   bool shrink_one();
+    
+   ulen shrink_all();
+    
+   // extend
+   
+   PtrLen&lt;T&gt; extend_raw(ulen delta_len);
+   
+   PtrLen&lt;T&gt; extend_default(ulen delta_len);
+   
+   template &lt;class ... SS&gt;
+   PtrLen&lt;T&gt; extend_fill(ulen delta_len,SS &amp;&amp; ... ss);
+    
+   PtrLen&lt;T&gt; extend_copy(ulen delta_len,const T src[]);
+   
+   template &lt;class S&gt;
+   PtrLen&lt;T&gt; extend_cast(ulen delta_len,const S src[]);
+   
+   PtrLen&lt;T&gt; extend_swap(ulen delta_len,T objs[]);
+   
+   template &lt;class Creator&gt;
+   PtrLen&lt;T&gt; extend(ulen delta_len,Creator creator);
+   
+   template &lt;class Builder&gt;
+   PtrLen&lt;T&gt; extend(Builder builder);
+   
+   // append
+   
+   T * append_raw();
+   
+   T * append_default();
+    
+   template &lt;class ... SS&gt;
+   T * append_fill(SS &amp;&amp; ... ss); 
+   
+   T * append_copy(const T &amp;src);
+   
+   T * append_swap(T &amp;obj);
+   
+   template &lt;class Creator&gt;
+   T * append(Creator creator);
+   
+   // swap/move object
+   
+   void objSwap(Collector&lt;T,Algo&gt; &amp;obj);
+   
+   explicit Collector(ToMoveCtor&lt;Collector&lt;T,Algo&gt; &gt; obj);
+    
+   Collector&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
+ };
+</pre>
 
 <h3>Array algorithms</h3>
 
