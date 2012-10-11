@@ -141,7 +141,7 @@ void ClientProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &de
 
 void ClientProtoEvent_slot::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
-  auto id=info.addStruct("PTPClientEvent_slot")
+  auto id=info.addStruct("PTPClientEventSlot")
               .addField_uint32("time",Offset_time)
               .addField_uint16("id",Offset_id)
               .addField_enum_uint8(EventTypeId<ClientEventRegType>::GetId(),"event",Offset_ev)

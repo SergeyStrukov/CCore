@@ -734,7 +734,10 @@ exists.
 <h4>Collector</h4>
 
 <p>
-<b>Collector</b> is not an array!
+<b>Collector</b> is not an array! The purpose of this container is to be an efficient collector of elements.
+This container stores a sequense of elements in a list of arrays. So appending and extending 
+operations are the most efficient. At desired moment you can copy or move this sequence into true array.
+Or you can "flat" the <b>Collector</b> itself.
 </p>
 
 <pre>
@@ -753,7 +756,15 @@ class <span class="att">Collector</span> : NoCopy
    explicit Collector(ulen block_len=DefaultBlockLen);
    
    ~Collector();
-   
+
+</pre>   
+
+<p>
+The argument of the <b>Collector</b> constructor is the number of elements in the single element block.
+The default value is 1024.
+</p>
+
+<pre>
    // methods
    
    ulen getLen() const; 
@@ -778,6 +789,37 @@ class <span class="att">Collector</span> : NoCopy
    
    PtrLen&lt;T&gt; flat();
    
+</pre>
+
+<p>
+<b>Collector</b> does not provide a direct access to its content.
+</p>
+
+<p>
+<b>getLen()</b> is the number of the collected elements.
+</p>
+
+<p>
+<b>erase()</b> cleanup the container and put it into the null state.
+</p>
+
+<p>
+<b>extractTo()</b> moves the content to another (array) container. The target container must have the <b>Build</b>
+constructor. <b>Collector</b> becomes empty after this operation.
+</p>
+
+<p>
+<b>copyTo()</b> copys the content to another (array) container. The target container must have the <b>Build</b>
+constructor.
+</p>
+
+<p>
+<b>flat()</b> rebuilds the internal data storage, making it continuous. It returns the range of elements.
+This range remains valid after extend or append operations (but may become invalid after any other
+modifying operation).
+</p>
+
+<pre>
    // shrink 
    
    ulen shrink(ulen delta_len);
@@ -823,7 +865,14 @@ class <span class="att">Collector</span> : NoCopy
    
    template &lt;class Creator&gt;
    T * append(Creator creator);
-   
+
+</pre>   
+
+<p>
+<b>shrink...()</b>, <b>extend...()</b> and <b>append...()</b> methods are the same as for <b>DynArray</b>.
+</p>
+
+<pre>
    // swap/move object
    
    void objSwap(Collector&lt;T,Algo&gt; &amp;obj);
@@ -834,7 +883,123 @@ class <span class="att">Collector</span> : NoCopy
  };
 </pre>
 
+<p>
+<b>Collector</b> is swapable and movable.
+</p>
+
 <h3>Array algorithms</h3>
+
+<p>
+<b>CCore</b> <b>Array</b> implementation is based on the <b>Array Algorithm Package</b>s.
+The default package is the <b>ArrayAlgo</b>.
+</p>
+
+<pre>
+
+template &lt;class T,class Flags=NoThrowFlags&lt;T&gt; &gt; struct ArrayAlgo;
+
+</pre>
+
+<p>
+The exact implementation depends on the kind of <b>T</b>.
+</p>
+
+<p>
+If the type <b>T</b> defines an inner type <b>ArrayAlgoType</b>, then this type will be used
+as the package.
+</p>
+
+<p>
+Otherwise there are two variants: one for the POD types, another for the other (class) types.
+</p>
+
+<h4>ArrayAlgo_class</h4>
+
+<p>
+<b>ArrayAlgo_class</b> is the generic (class) variant.
+</p>
+
+<pre>
+template &lt;class T,class Flags&gt;
+struct ArrayAlgo_class
+ {
+  //
+  //  assume ~T() , Move(T *,Place&lt;void&gt;) , Swap(T &amp;,T &amp;) no-throw
+  //
+ 
+  //
+  //  Create...() : clean on throw
+  //
+  
+  enum PropFlagType
+   {
+    Default_no_throw = Flags::Default_no_throw,
+    Copy_no_throw = Flags::Copy_no_throw,
+    
+    MoveTo_exist = true
+   };
+ 
+  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len);
+  
+  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len);
+   
+  template &lt;class ... SS&gt;
+  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss);
+  
+  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]);
+  
+  template &lt;class S&gt;
+  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]);
+  
+  static PtrLen&lt;T&gt; Create_swap(Place&lt;void&gt; place,ulen len,T objs[]);
+   
+  //
+  //  Single
+  // 
+  
+  static T * Create_swap(Place&lt;void&gt; place,T &amp;obj) noexcept(EnableNoExcept);
+   
+  //
+  //  ProvideLen() : double extension
+  // 
+  
+  static ulen ProvideLen(ulen len,ulen maxlen,ulen extra_len);
+   
+  // 
+  //  MoveTo() : no-throw
+  //
+
+  static PtrLen&lt;T&gt; MoveTo(T *ptr,ulen len,Place&lt;void&gt; place) noexcept(EnableNoExcept);
+
+  //
+  // 
+  //
+
+  template &lt;class Creator&gt;
+  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator);
+  
+  //
+  //  single Destroy() : no-throw
+  // 
+  
+  static void Destroy(T *ptr) noexcept(EnableNoExcept);
+  
+  // 
+  //  Destroy() : no-throw
+  //
+  
+  static void Destroy(T *ptr,ulen len) noexcept(EnableNoExcept);
+ };
+</pre>
+
+<h4>ArrayAlgo_pod</h4>
+
+<p>
+<b>ArrayAlgo_pod</b> is the POD variant.
+</p>
+
+<pre>
+</pre>
 
 </body>
 

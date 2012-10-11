@@ -116,7 +116,7 @@ void ServerProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &de
 
 void ServerProtoEvent_slot::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
-  auto id=info.addStruct("PTPServerEvent_slot")
+  auto id=info.addStruct("PTPServerEventSlot")
               .addField_uint32("time",Offset_time)
               .addField_uint16("id",Offset_id)
               .addField_enum_uint8(EventTypeId<ServerEventRegType>::GetId(),"event",Offset_ev)
