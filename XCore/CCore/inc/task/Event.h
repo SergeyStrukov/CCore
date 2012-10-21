@@ -38,6 +38,7 @@ struct EventNumber
   
   static const ValueType Base = 0 ;
   static const ValueType Lim = Base+DefaultEventElementCount ;
+  static const EventMarker Marker = EventMarker_None ;
   
   static EventIdType Register(EventMetaInfo &info);  
  };

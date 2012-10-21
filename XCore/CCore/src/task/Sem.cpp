@@ -37,9 +37,9 @@ EventIdType SemNumber::Register(EventMetaInfo &info)
 void SemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("SemEventType")
-                   .addValueName(ToTaskList,"ToTaskList")
-                   .addValueName(Give,"Give")
-                   .addValueName(GiveMany,"GiveMany")
+                   .addValueName(ToTaskList,"ToTaskList",EventMarker_UpUpPush)
+                   .addValueName(Give,"Give",EventMarker_Up)
+                   .addValueName(GiveMany,"GiveMany",EventMarker_UpUp)
                    .getId();
   
   auto id=info.addStruct("SemEvent")
@@ -57,9 +57,9 @@ void SemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
 void SemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("SemEventTaskType")
-                   .addValueName(ToTask,"ToTask")
-                   .addValueName(Take,"Take")
-                   .addValueName(Block,"Block")
+                   .addValueName(ToTask,"ToTask",EventMarker_UpPush)
+                   .addValueName(Take,"Take",EventMarker_Down)
+                   .addValueName(Block,"Block",EventMarker_DownBlock)
                    .getId();
   
   auto id=info.addStruct("SemEventTask")
@@ -69,6 +69,8 @@ void SemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
               .addField_enum_uint16(EventTypeId<SemNumber>::GetId(),"sem",Offset_sem)
               .addField_enum_uint8(id_Type,"type",Offset_type)
               .getId();
+  
+  desc.classId<SemEvent>();
   
   desc.setStructId(info,id);
  }

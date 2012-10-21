@@ -37,7 +37,7 @@ EventIdType MultiEventNumber::Register(EventMetaInfo &info)
 void MultiEventEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("MultiEventEventType")
-                   .addValueName(Trigger,"Trigger")
+                   .addValueName(Trigger,"Trigger",EventMarker_Up)
                    .getId();
   
   auto id=info.addStruct("MultiEventEvent")
@@ -56,9 +56,9 @@ void MultiEventEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &des
 void MultiEventEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("MultiEventEventTaskType")
-                   .addValueName(ToTask,"ToTask")
-                   .addValueName(Block,"Block")
-                   .addValueName(Consume,"Consume")
+                   .addValueName(ToTask,"ToTask",EventMarker_UpPush)
+                   .addValueName(Block,"Block",EventMarker_DownBlock)
+                   .addValueName(Consume,"Consume",EventMarker_Down)
                    .getId();
   
   auto id=info.addStruct("MultiEventEventTask")
@@ -69,6 +69,8 @@ void MultiEventEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc
               .addField_enum_uint8(id_Type,"type",Offset_type)
               .addField_uint8("index",Offset_index)
               .getId();
+  
+  desc.classId<MultiEventEvent>();
   
   desc.setStructId(info,id);
  }

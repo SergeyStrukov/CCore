@@ -26,8 +26,8 @@ TaskEventHostType TaskEventHost;
 EventIdType TaskNumber::Register(EventMetaInfo &info)
  {
   return info.addEnum_uint16("TaskNumber")
-             .addValueName(EnterInt,"EnterInt")
-             .addValueName(LeaveInt,"LeaveInt")
+             .addValueName(EnterInt,"EnterInt",EventMarker_Up)
+             .addValueName(LeaveInt,"LeaveInt",EventMarker_Down)
              .setAppendFunc(EventEnumValue<TaskNumber>::Append)
              .getId();
  }

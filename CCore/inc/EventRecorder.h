@@ -43,6 +43,8 @@ void WaitAtomicZero(Atomic &count);
 
 /* classes */
 
+//enum EventMarker;
+
 struct EventRecordPos;
 
 struct EventPrefix;
@@ -64,6 +66,39 @@ struct EventControl;
 template <class Algo> class EventRecorder;
 
 template <class Recorder,unsigned GuardCount=1000000> class EventRecorderHost;
+
+/* enum EventMarker */
+
+enum EventMarker
+ {
+  EventMarker_None,
+  
+  EventMarker_Up,
+  EventMarker_Down,
+  
+  EventMarker_UpBlock,
+  EventMarker_DownBlock,
+  
+  EventMarker_UpUp,
+  EventMarker_UpPush,
+  EventMarker_UpUpPush,
+  
+  EventMarker_Push,
+  
+  EventMarker_Inc,
+  EventMarker_Dec,
+  
+  EventMarker_Wait,
+  EventMarker_Pass,
+  
+  EventMarker_Tick,
+  
+  EventMarker_Stop,
+  
+  EventMarker_Error
+ };
+
+const char * GetTextDesc(EventMarker marker);
 
 /* struct EventRecordPos */
 
@@ -159,7 +194,7 @@ void EventEnumValue<T>::Append(Desc &desc)
     {
      TextLabel *name=Storage.getPlace()+val*sizeof (TextLabel);
      
-     desc.addValueName(val+T::Base,StringCat(*name));
+     desc.addValueName(val+T::Base,StringCat(*name),T::Marker);
     }
  }
 
@@ -216,17 +251,33 @@ class EventMetaInfo : NoCopy
     {
      TreeLink<ValueDesc,uint32> link;
      String name;
+     EventMarker marker;
      
      // constructors
      
-     explicit ValueDesc(const String &name_) : name(name_) {}
+     ValueDesc(const String &name_,EventMarker marker_) : name(name_),marker(marker_) {}
+     
+     // save/load object
+
+     template <class Dev>
+     void save(Dev &dev) const
+      {
+       dev.template use<BeOrder>(link.key);
+       
+       Save(name,dev);
+       
+       dev.template use<BeOrder>((uint8)marker);
+      }
      
      // print object
      
      template <class P>
      void print(P &out) const
       {
-       Printf(out,"  #; = #;\n",name,link.key); 
+       if( marker!=EventMarker_None )
+         Printf(out,"  #; = #; [#;]\n",name,link.key,marker); 
+       else
+         Printf(out,"  #; = #;\n",name,link.key); 
       }
     };
    
@@ -255,9 +306,7 @@ class EventMetaInfo : NoCopy
           {
            SaveValues(Algo::Link(ptr).lo,dev);
           
-           dev.template use<BeOrder>(Algo::Link(ptr).key);
-           
-           Save(ptr->name,dev);
+           dev.template use<BeOrder>(*ptr);
           
            SaveValues(Algo::Link(ptr).hi,dev);
           }
@@ -294,8 +343,8 @@ class EventMetaInfo : NoCopy
       
       String * findValueName(uint32 value) const;
       
-      EnumDesc & addValueName(uint32 value,const String &name);
-      EnumDesc & addValueName(uint32 value,const char *name) { return addValueName(value,String(name)); }
+      EnumDesc & addValueName(uint32 value,const String &name,EventMarker marker=EventMarker_None);
+      EnumDesc & addValueName(uint32 value,const char *name,EventMarker marker=EventMarker_None) { return addValueName(value,String(name),marker); }
       
       EnumDesc & setAppendFunc(AppendFunc append_func_) { append_func=append_func_; return *this; }
       
@@ -743,14 +792,17 @@ class EventMetaInfo : NoCopy
     {
       EventIdType id;
       ulen alloc_len;
+      EventIdType class_id;
       EventIdType struct_id;
       uint32 save_len;
+      EventIdType (*class_id_func)();
       
      public: 
       
       // constructors
       
-      EventDesc(EventIdType id_,ulen alloc_len_) : id(id_),alloc_len(alloc_len_),struct_id(0),save_len(0) {}
+      EventDesc(EventIdType id_,ulen alloc_len_,EventIdType class_id_) 
+       : id(id_),alloc_len(alloc_len_),class_id(class_id_),struct_id(0),save_len(0),class_id_func(0) {}
       
       ~EventDesc() {}
       
@@ -760,6 +812,8 @@ class EventMetaInfo : NoCopy
       
       ulen getAllocLen() const { return alloc_len; }
       
+      EventIdType getClassId() const { return class_id; }
+      
       EventIdType getStructId() const { return struct_id; }
       
       void setStructId(const EventMetaInfo &info,EventIdType struct_id_) 
@@ -768,12 +822,17 @@ class EventMetaInfo : NoCopy
         struct_id=struct_id_; 
        }
       
+      template <class T>
+      void classId() { class_id_func=&EventId<T>::GetId; }
+      
+      void setClassId() { if( class_id_func ) class_id=class_id_func(); }
+      
       // save/load object
 
       template <class Dev>
       void save(Dev &dev) const
        {
-        dev.template use<BeOrder>(struct_id,save_len);
+        dev.template use<BeOrder>(struct_id,class_id,save_len);
        }
       
       template <class Dev>
@@ -788,15 +847,19 @@ class EventMetaInfo : NoCopy
        {
         Swap(id,obj.id);
         Swap(alloc_len,obj.alloc_len);
+        Swap(class_id,obj.class_id);
         Swap(struct_id,obj.struct_id);
         Swap(save_len,obj.save_len);
+        Swap(class_id_func,obj.class_id_func);
        }
       
       explicit EventDesc(ToMoveCtor<EventDesc> obj)
        : id(obj->id),
          alloc_len(obj->alloc_len),
+         class_id(obj->class_id),
          struct_id(obj->struct_id),
-         save_len(obj->save_len)
+         save_len(obj->save_len),
+         class_id_func(obj->class_id_func)
        {
        }
       
@@ -849,6 +912,8 @@ class EventMetaInfo : NoCopy
    StructDesc & addStruct(const char *name) { return addStruct(String(name)); }
    
    EventDesc & addEvent(ulen alloc_len);
+   
+   void setClassId();
    
    void appendEnums();
    
@@ -929,7 +994,7 @@ class EventIdNode
    
   private:
    
-   void reg(EventMetaInfo &info,ulen align); 
+   void reg(EventMetaInfo &info,ulen align);
    
   public: 
   

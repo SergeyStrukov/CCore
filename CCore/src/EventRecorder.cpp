@@ -27,6 +27,42 @@ void WaitAtomicZero(Atomic &count)
   while( count ) Task::Yield(); 
  }
 
+/* enum EventMarker */
+
+const char * GetTextDesc(EventMarker marker)
+ {
+  static const char *const Table[]=
+   {
+    "None",      // EventMarker_None
+     
+    "Up",        // EventMarker_Up,
+    "Down",      // EventMarker_Down
+     
+    "UpBlock",   // EventMarker_UpBlock
+    "DownBlock", //  EventMarker_DownBlock
+     
+    "UpUp",      // EventMarker_UpUp
+    "UpPush",    // EventMarker_UpPush
+    "UpUpPush",  //  EventMarker_UpUpPush
+     
+    "Push",      // EventMarker_Push
+     
+    "Inc",       // EventMarker_Inc
+    "Dec",       // EventMarker_Dec
+     
+    "Wait",      // EventMarker_Wait
+    "Pass",      // EventMarker_Pass
+     
+    "Tick",      // EventMarker_Tick
+     
+    "Stop",      // EventMarker_Stop
+     
+    "Error"      // EventMarker_Error
+   };
+  
+  return Table[marker]; 
+ }
+
 /* class EventMetaInfo */
 
 const char * GetTextDesc(EventMetaInfo::Kind kind)
@@ -54,7 +90,7 @@ String * EventMetaInfo::EnumDesc::findValueName(uint32 value) const
   return 0; 
  }
 
-auto EventMetaInfo::EnumDesc::addValueName(uint32 value,const String &name) -> EnumDesc &
+auto EventMetaInfo::EnumDesc::addValueName(uint32 value,const String &name,EventMarker marker) -> EnumDesc &
  {
   uint32 max_value=MaxValue(kind);
   
@@ -71,7 +107,7 @@ auto EventMetaInfo::EnumDesc::addValueName(uint32 value,const String &name) -> E
     }
   else
     {
-     prepare.complete(new ValueDesc(name));
+     prepare.complete(new ValueDesc(name,marker));
      
      count++;
     }
@@ -132,7 +168,12 @@ auto EventMetaInfo::addEvent(ulen alloc_len) -> EventDesc &
  {
   EventIdType id=IndexToId(event_list.getLen());
   
-  return *event_list.append_fill(id,alloc_len);
+  return *event_list.append_fill(id,alloc_len,id);
+ }
+
+void EventMetaInfo::setClassId()
+ {
+  for(auto &desc : event_list ) desc.setClassId(); 
  }
 
 void EventMetaInfo::appendEnums()
@@ -195,7 +236,9 @@ void EventIdNode::reg(EventMetaInfo &info,ulen align)
 
 void EventIdNode::Register(EventMetaInfo &info,ulen align)
  {
-  for(EventIdNode *ptr=List; ptr ;ptr=ptr->next) ptr->reg(info,align); 
+  for(EventIdNode *ptr=List; ptr ;ptr=ptr->next) ptr->reg(info,align);
+  
+  info.setClassId();
  }
 
 /* class EventTypeIdNode */
@@ -243,9 +286,9 @@ void EventTypeIdNode::Register(EventMetaInfo &info)
 void EventControl::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("EventControlType")
-                   .addValueName(Type_Start,"Start")
-                   .addValueName(Type_Tick,"Tick")
-                   .addValueName(Type_Stop,"Stop")
+                   .addValueName(Type_Start,"Start",EventMarker_Push)
+                   .addValueName(Type_Tick,"Tick",EventMarker_Tick)
+                   .addValueName(Type_Stop,"Stop",EventMarker_Stop)
                    .addValueName(Type_End,"End")
                    .getId();
   

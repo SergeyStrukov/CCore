@@ -37,9 +37,9 @@ EventIdType AntiSemNumber::Register(EventMetaInfo &info)
 void AntiSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("AntiSemEventType")
-                   .addValueName(Add,"Add")
-                   .addValueName(Sub,"Sub")
-                   .addValueName(Release,"Release")
+                   .addValueName(Add,"Add",EventMarker_Down)
+                   .addValueName(Sub,"Sub",EventMarker_Up)
+                   .addValueName(Release,"Release",EventMarker_UpPush)
                    .getId();
   
   auto id=info.addStruct("AntiSemEvent")
@@ -57,8 +57,8 @@ void AntiSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
 void AntiSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("AntiSemEventTaskType")
-                   .addValueName(Wait,"Wait")
-                   .addValueName(Pass,"Pass")
+                   .addValueName(Wait,"Wait",EventMarker_Wait)
+                   .addValueName(Pass,"Pass",EventMarker_Pass)
                    .getId();
   
   auto id=info.addStruct("AntiSemEventTask")
@@ -68,6 +68,8 @@ void AntiSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &d
               .addField_enum_uint16(EventTypeId<AntiSemNumber>::GetId(),"asem",Offset_asem)
               .addField_enum_uint8(id_Type,"type",Offset_type)
               .getId();
+  
+  desc.classId<AntiSemEvent>();
   
   desc.setStructId(info,id);
  }

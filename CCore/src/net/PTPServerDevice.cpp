@@ -68,33 +68,33 @@ EventIdType ServerEventRegType::Register(EventMetaInfo &info)
  {
   return info.addEnum_uint8("PTPServer")
     
-             .addValueName(ServerEvent_Trans,"Trans")
-             .addValueName(ServerEvent_TransDone,"Trans done")
+             .addValueName(ServerEvent_Trans,"Trans",EventMarker_Push)
+             .addValueName(ServerEvent_TransDone,"Trans done",EventMarker_Stop)
                  
-             .addValueName(ServerEvent_Timeout,"Timeout")
-             .addValueName(ServerEvent_Cancel,"Cancel")
-             .addValueName(ServerEvent_ClientCancel,"Client cancel")
-             .addValueName(ServerEvent_Abort,"Abort")
+             .addValueName(ServerEvent_Timeout,"Timeout",EventMarker_Pass)
+             .addValueName(ServerEvent_Cancel,"Cancel",EventMarker_Pass)
+             .addValueName(ServerEvent_ClientCancel,"Client cancel",EventMarker_Pass)
+             .addValueName(ServerEvent_Abort,"Abort",EventMarker_Pass)
                  
-             .addValueName(ServerEvent_CALL,"<- CALL")
-             .addValueName(ServerEvent_RECALL,"<- RECALL")
-             .addValueName(ServerEvent_SENDRET,"<- SENDRET")
-             .addValueName(ServerEvent_ACK,"<- ACK")
+             .addValueName(ServerEvent_CALL,"<- CALL",EventMarker_Down)
+             .addValueName(ServerEvent_RECALL,"<- RECALL",EventMarker_Down)
+             .addValueName(ServerEvent_SENDRET,"<- SENDRET",EventMarker_Down)
+             .addValueName(ServerEvent_ACK,"<- ACK",EventMarker_Down)
                  
-             .addValueName(ServerEvent_RET,"-> RET")
-             .addValueName(ServerEvent_CANCEL,"-> CANCEL")
-             .addValueName(ServerEvent_NOINFO,"-> NOINFO")
-             .addValueName(ServerEvent_RERET,"-> RERET")
+             .addValueName(ServerEvent_RET,"-> RET",EventMarker_Up)
+             .addValueName(ServerEvent_CANCEL,"-> CANCEL",EventMarker_Up)
+             .addValueName(ServerEvent_NOINFO,"-> NOINFO",EventMarker_Up)
+             .addValueName(ServerEvent_RERET,"-> RERET",EventMarker_Up)
                  
-             .addValueName(ServerEvent_BadTransId,"Bad TransId")
+             .addValueName(ServerEvent_BadTransId,"Bad TransId",EventMarker_Error)
                  
-             .addValueName(ServerEvent_NoSlot,"No slot")
-             .addValueName(ServerEvent_NoSlotCancel,"No slot cancel")
-             .addValueName(ServerEvent_NoFreeSlot,"No free slot")
-             .addValueName(ServerEvent_NoPacket,"No packet")
+             .addValueName(ServerEvent_NoSlot,"No slot",EventMarker_Error)
+             .addValueName(ServerEvent_NoSlotCancel,"No slot cancel",EventMarker_Error)
+             .addValueName(ServerEvent_NoFreeSlot,"No free slot",EventMarker_DownBlock)
+             .addValueName(ServerEvent_NoPacket,"No packet",EventMarker_Error)
                  
-             .addValueName(ServerEvent_BadInbound,"Bad inbound")
-             .addValueName(ServerEvent_BadOutbound,"Bad outbound")
+             .addValueName(ServerEvent_BadInbound,"Bad inbound",EventMarker_Error)
+             .addValueName(ServerEvent_BadOutbound,"Bad outbound",EventMarker_Error)
                       
              .getId();
  }
@@ -122,6 +122,8 @@ void ServerProtoEvent_slot::Register(EventMetaInfo &info,EventMetaInfo::EventDes
               .addField_enum_uint8(EventTypeId<ServerEventRegType>::GetId(),"event",Offset_ev)
               .addField_uint32("slot",Offset_slot)
               .getId();
+  
+  desc.classId<ServerProtoEvent>();
   
   desc.setStructId(info,id);
  }

@@ -115,6 +115,7 @@ bool Testit<101>::Main()
   TaskEventRecorder recorder(100_MByte);
   
   {
+   TickTask tick_task; 
    TaskEventHostType::StartStop event_start_stop(TaskEventHost,&recorder);
    Engine::StartStop start_stop(engine);
   

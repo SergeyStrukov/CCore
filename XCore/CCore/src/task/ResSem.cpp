@@ -37,7 +37,7 @@ EventIdType ResSemNumber::Register(EventMetaInfo &info)
 void ResSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("ResSemEventType")
-                   .addValueName(Give,"Give")
+                   .addValueName(Give,"Give",EventMarker_Up)
                    .getId();
   
   auto id=info.addStruct("ResSemEvent")
@@ -55,11 +55,11 @@ void ResSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
 void ResSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("ResSemEventTaskType")
-                   .addValueName(ToTask,"ToTask")
-                   .addValueName(Wait,"Wait")
-                   .addValueName(Pass,"Pass")
-                   .addValueName(Block,"Block")
-                   .addValueName(Take,"Take")
+                   .addValueName(ToTask,"ToTask",EventMarker_UpPush)
+                   .addValueName(Wait,"Wait",EventMarker_Wait)
+                   .addValueName(Pass,"Pass",EventMarker_Pass)
+                   .addValueName(Block,"Block",EventMarker_DownBlock)
+                   .addValueName(Take,"Take",EventMarker_Down)
                    .getId();
   
   auto id=info.addStruct("ResSemEventTask")
@@ -69,6 +69,8 @@ void ResSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &de
               .addField_enum_uint16(EventTypeId<ResSemNumber>::GetId(),"rsem",Offset_rsem)
               .addField_enum_uint8(id_Type,"type",Offset_type)
               .getId();
+  
+  desc.classId<ResSemEvent>();
   
   desc.setStructId(info,id);
  }

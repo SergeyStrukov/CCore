@@ -66,6 +66,8 @@ void EventEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &des
               .addField_enum_uint8(id_Type,"type",Offset_type)
               .getId();
   
+  desc.classId<EventEvent>();
+  
   desc.setStructId(info,id);
  }
 

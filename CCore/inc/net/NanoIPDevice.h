@@ -145,7 +145,7 @@ class IPStatInfo : public Counters<IPEvent,IPEventLim>
    
    void count(IPEvent ip_event,ulen cnt)
     {
-     TaskEventHost.addProto<NetEvent>(ip_event);
+     if( cnt ) TaskEventHost.addProto<NetEvent>(ip_event);
     
      Counters<IPEvent,IPEventLim>::count(ip_event,cnt);
     }

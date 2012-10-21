@@ -103,6 +103,8 @@ struct SortStartEvent
                 .addField_uint32("len",Offset_len)
                 .getId();
     
+    desc.classId<SortEvent>();
+    
     desc.setStructId(info,id);
    }
  };
@@ -130,6 +132,8 @@ struct SortStopEvent
                 .addField_uint32("time",Offset_time)
                 .addField_uint16("id",Offset_id)
                 .getId();
+    
+    desc.classId<SortEvent>();
     
     desc.setStructId(info,id);
    }

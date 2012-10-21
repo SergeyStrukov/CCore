@@ -57,23 +57,23 @@ void NetEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_IPEvent=info.addEnum_uint8("IPEvent")
     
-                      .addValueName(IPTx_ARP,"IP Tx ARP")
-                      .addValueName(IPTx_IP,"IP Tx IP")
-                      .addValueName(IPTx_UDP,"IP Tx UDP")
+                      .addValueName(IPTx_ARP,"IP Tx ARP",EventMarker_Up)
+                      .addValueName(IPTx_IP,"IP Tx IP",EventMarker_Up)
+                      .addValueName(IPTx_UDP,"IP Tx UDP",EventMarker_Up)
                       
-                      .addValueName(IPRx_ARP,"IP Rx ARP")
-                      .addValueName(IPRx_IP,"IP Rx IP")
-                      .addValueName(IPRx_UDP,"IP Rx UDP")
+                      .addValueName(IPRx_ARP,"IP Rx ARP",EventMarker_Down)
+                      .addValueName(IPRx_IP,"IP Rx IP",EventMarker_Down)
+                      .addValueName(IPRx_UDP,"IP Rx UDP",EventMarker_Down)
                       
-                      .addValueName(IPTx_BadPacketLen,"IP Tx bad packet len")
-                      .addValueName(IPTx_TimeoutDrop,"IP Tx timeout drop")
-                      .addValueName(IPTx_ARP_Missing,"IP Tx ARP missing")
-                      .addValueName(IPTx_ARP_Drop,"IP Tx ARP drop")
-                      .addValueName(IPTx_Drop,"IP Tx drop")
+                      .addValueName(IPTx_BadPacketLen,"IP Tx bad packet len",EventMarker_UpBlock)
+                      .addValueName(IPTx_TimeoutDrop,"IP Tx timeout drop",EventMarker_UpBlock)
+                      .addValueName(IPTx_ARP_Missing,"IP Tx ARP missing",EventMarker_UpBlock)
+                      .addValueName(IPTx_ARP_Drop,"IP Tx ARP drop",EventMarker_UpBlock)
+                      .addValueName(IPTx_Drop,"IP Tx drop",EventMarker_UpBlock)
                       
-                      .addValueName(IPRx_BadPacket,"IP Rx bad packet")
-                      .addValueName(IPRx_Drop,"IP Rx drop")
-                      .addValueName(IPRx_UDP_NoPort,"IP Rx UDP no port")
+                      .addValueName(IPRx_BadPacket,"IP Rx bad packet",EventMarker_DownBlock)
+                      .addValueName(IPRx_Drop,"IP Rx drop",EventMarker_DownBlock)
+                      .addValueName(IPRx_UDP_NoPort,"IP Rx UDP no port",EventMarker_DownBlock)
                       
                       .getId();
   

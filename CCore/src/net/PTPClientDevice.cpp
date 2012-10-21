@@ -97,29 +97,29 @@ EventIdType ClientEventRegType::Register(EventMetaInfo &info)
  {
   return info.addEnum_uint8("PTPClient")
     
-             .addValueName(ClientEvent_Trans,"Trans")
-             .addValueName(ClientEvent_TransDone,"Trans done")
+             .addValueName(ClientEvent_Trans,"Trans",EventMarker_UpPush)
+             .addValueName(ClientEvent_TransDone,"Trans done",EventMarker_Stop)
                  
-             .addValueName(ClientEvent_BadInfoLen,"Bad info len")
-             .addValueName(ClientEvent_Timeout,"Timeout")
-             .addValueName(ClientEvent_Cancel,"Cancel")
-             .addValueName(ClientEvent_Abort,"Abort")
+             .addValueName(ClientEvent_BadInfoLen,"Bad info len",EventMarker_Error)
+             .addValueName(ClientEvent_Timeout,"Timeout",EventMarker_Pass)
+             .addValueName(ClientEvent_Cancel,"Cancel",EventMarker_Pass)
+             .addValueName(ClientEvent_Abort,"Abort",EventMarker_Pass)
                  
-             .addValueName(ClientEvent_CALL,"-> CALL")
-             .addValueName(ClientEvent_RECALL,"-> RECALL")
-             .addValueName(ClientEvent_ACK,"-> ACK")
-             .addValueName(ClientEvent_SENDRET,"-> SENDRET")
+             .addValueName(ClientEvent_CALL,"-> CALL",EventMarker_Up)
+             .addValueName(ClientEvent_RECALL,"-> RECALL",EventMarker_Up)
+             .addValueName(ClientEvent_ACK,"-> ACK",EventMarker_Up)
+             .addValueName(ClientEvent_SENDRET,"-> SENDRET",EventMarker_Up)
                  
-             .addValueName(ClientEvent_RET,"<- RET")
-             .addValueName(ClientEvent_NOINFO,"<- NOINFO")
-             .addValueName(ClientEvent_RERET,"<- RERET")
-             .addValueName(ClientEvent_CANCEL,"<- CANCEL")
+             .addValueName(ClientEvent_RET,"<- RET",EventMarker_Down)
+             .addValueName(ClientEvent_NOINFO,"<- NOINFO",EventMarker_Down)
+             .addValueName(ClientEvent_RERET,"<- RERET",EventMarker_Down)
+             .addValueName(ClientEvent_CANCEL,"<- CANCEL",EventMarker_Down)
                  
-             .addValueName(ClientEvent_NoSlot,"No slot")
-             .addValueName(ClientEvent_NoPacket,"No packet")
+             .addValueName(ClientEvent_NoSlot,"No slot",EventMarker_DownBlock)
+             .addValueName(ClientEvent_NoPacket,"No packet",EventMarker_Error)
                  
-             .addValueName(ClientEvent_BadInbound,"Bad inbound")
-             .addValueName(ClientEvent_BadOutbound,"Bad outbound")
+             .addValueName(ClientEvent_BadInbound,"Bad inbound",EventMarker_Error)
+             .addValueName(ClientEvent_BadOutbound,"Bad outbound",EventMarker_Error)
                       
              .getId();
  }
@@ -147,6 +147,8 @@ void ClientProtoEvent_slot::Register(EventMetaInfo &info,EventMetaInfo::EventDes
               .addField_enum_uint8(EventTypeId<ClientEventRegType>::GetId(),"event",Offset_ev)
               .addField_uint32("slot",Offset_slot)
               .getId();
+  
+  desc.classId<ClientProtoEvent>();
   
   desc.setStructId(info,id);
  }

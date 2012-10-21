@@ -372,6 +372,40 @@ class DeviceEngine : public Funchor_nocopy
    
    void disable_promiscuous();
  };
+
+/* struct PacketEvent */
+
+struct PacketEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  enum Type
+   {
+    RxBegin,
+    RxEnd,
+    TxBegin,
+    TxEnd
+   };
+  
+  uint8 type;
+  
+  void init(EventTimeType time_,EventIdType id_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<PacketEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<PacketEvent *>(ptr)->id); }
+  
+  static void * Offset_type(void *ptr) { return &(static_cast<PacketEvent *>(ptr)->type); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
  
 /* class DeviceImp */ 
 

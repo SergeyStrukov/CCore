@@ -37,7 +37,7 @@ EventIdType MultiSemNumber::Register(EventMetaInfo &info)
 void MultiSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("MultiSemEventType")
-                   .addValueName(Give,"Give")
+                   .addValueName(Give,"Give",EventMarker_Up)
                    .getId();
   
   auto id=info.addStruct("MultiSemEvent")
@@ -56,9 +56,9 @@ void MultiSemEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
 void MultiSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("MultiSemEventTaskType")
-                   .addValueName(ToTask,"ToTask")
-                   .addValueName(Block,"Block")
-                   .addValueName(Take,"Take")
+                   .addValueName(ToTask,"ToTask",EventMarker_UpPush)
+                   .addValueName(Block,"Block",EventMarker_DownBlock)
+                   .addValueName(Take,"Take",EventMarker_Down)
                    .getId();
   
   auto id=info.addStruct("MultiSemEventTask")
@@ -69,6 +69,8 @@ void MultiSemEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &
               .addField_enum_uint8(id_Type,"type",Offset_type)
               .addField_uint8("index",Offset_index)
               .getId();
+  
+  desc.classId<MultiSemEvent>();
   
   desc.setStructId(info,id);
  }

@@ -1123,6 +1123,26 @@ void DeviceEngine::disable_promiscuous()
   dc.disable_promiscuous();
  }
  
+/* struct PacketEvent */
+
+void PacketEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto enum_id=info.addEnum_uint8("VIA_Rhine_III_PreparePacket")
+                   .addValueName(RxBegin,"Rx begin",EventMarker_Up)
+                   .addValueName(RxEnd,"Rx end",EventMarker_Down)
+                   .addValueName(TxBegin,"Tx begin",EventMarker_Up)
+                   .addValueName(TxEnd,"Tx end",EventMarker_Down)
+                   .getId();
+  
+  auto id=info.addStruct("VIA_Rhine_III_Event")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint8(enum_id,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
 /* class DeviceImp */  
 
 void DeviceImp::inbound_packet(uint8 *buf,InboundStatus status)
@@ -1162,6 +1182,8 @@ void DeviceImp::inbound_packet(uint8 *buf,InboundStatus status)
     
   // prepare and send  
     
+  TaskEventHost.addDev<PacketEvent>(PacketEvent::RxBegin);
+  
   EthHeader header;
   
   BufGetDev dev(buf);
@@ -1176,6 +1198,8 @@ void DeviceImp::inbound_packet(uint8 *buf,InboundStatus status)
   
   packet2.stamp();
 
+  TaskEventHost.addDev<PacketEvent>(PacketEvent::RxEnd);
+  
   proc->inbound(packet2);
   
   stat.count(EthRx_Done);
@@ -1209,6 +1233,8 @@ ulen DeviceImp::get_outbound_packet(uint8 *buf,ulen buf_len)
        }
      else
        {
+        TaskEventHost.addDev<PacketEvent>(PacketEvent::TxBegin);
+        
         EthTxExt *ext=packet.getExt();
        
         EthHeader header(getAddress(),ext->dst,ext->type);
@@ -1219,6 +1245,8 @@ ulen DeviceImp::get_outbound_packet(uint8 *buf,ulen buf_len)
         
         packet.getRange().copyTo(buf);
        
+        TaskEventHost.addDev<PacketEvent>(PacketEvent::TxEnd);
+        
         packet.complete();
        
         return len;

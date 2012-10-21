@@ -35,11 +35,11 @@ EventIdType MutexNumber::Register(EventMetaInfo &info)
 void MutexEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("MutexEventType")
-                   .addValueName(Lock,"Lock")
-                   .addValueName(Unlock,"Unlock")
-                   .addValueName(IncLock,"IncLock")
-                   .addValueName(DecLock,"DecLock")
-                   .addValueName(Block,"Block")
+                   .addValueName(Lock,"Lock",EventMarker_Up)
+                   .addValueName(Unlock,"Unlock",EventMarker_Down)
+                   .addValueName(IncLock,"IncLock",EventMarker_Inc)
+                   .addValueName(DecLock,"DecLock",EventMarker_Dec)
+                   .addValueName(Block,"Block",EventMarker_UpBlock)
                    .getId();
   
   auto id=info.addStruct("MutexEvent")
