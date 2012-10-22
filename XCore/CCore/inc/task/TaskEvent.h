@@ -20,7 +20,7 @@
 #include <CCore/inc/sys/SysTime.h>
 #include <CCore/inc/dev/DevInt.h>
  
-#define CCORE_TASK_EVENT_ENABLE
+//#define CCORE_TASK_EVENT_ENABLE
 
 #define CCORE_TASK_EVENT_ENABLE_SYNC
 #define CCORE_TASK_EVENT_ENABLE_PROTO

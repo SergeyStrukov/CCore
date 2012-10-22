@@ -49,7 +49,7 @@ enum DoReserveType { <span class="att">DoReserve</span> };
 </pre>
 
 <p>
-<b>DoBuild</b> and <b>DoReserve</b> are <b>word</b>s. They designate the build and the reserve type of construction
+<b>DoBuild</b> and <b>DoReserve</b> are <b>word</b>s. They designate the build and the reserve variant of constructor
 respectively.
 </p>
 
@@ -88,7 +88,7 @@ typedef DoSomething&lt;6&gt; DoCreate;
 
 <p>
 <b>DoRaw</b>, <b>DoFill</b>, <b>DoCopy</b>, <b>DoCast</b>, <b>DoSwap</b>, <b>DoCreate</b> are not <b>word</b>s, but 
-<b>Small Data Type</b>s. They designate the correspondent type of construction and carry two parameters:
+<b>Small Data Type</b>s. They designate the correspondent version of constructor and carry two parameters:
 the array length and the reserved length. When an array is being creating, the reserved length determines
 the memory space to be allocated, and the length is the number of elements to be created.
 </p>
@@ -916,7 +916,10 @@ Otherwise there are two variants: one for the POD types, another for the other (
 <h4>ArrayAlgo_class</h4>
 
 <p>
-<b>ArrayAlgo_class</b> is the generic (class) variant.
+<b>ArrayAlgo_class</b> is the generic (class) variant. It is assumed, that the following operations: <b>~T()</b>,
+<b>Move(T *,Place&lt;void&gt;)</b> and <b>Swap(T &amp;,T &amp;)</b>, are <b>no-throw</b>.
+The template argument <b>Flags</b> provides two flags: <b>Default_no_throw</b> and <b>Copy_no_throw</b>.
+The flag is true, if the correspondent constructor (default or copy) is <b>no-throw</b> or does not exist.
 </p>
 
 <pre>
@@ -954,6 +957,13 @@ struct ArrayAlgo_class
   static PtrLen&lt;T&gt; Create_swap(Place&lt;void&gt; place,ulen len,T objs[]);
    
   //
+  // using Creator
+  //
+
+  template &lt;class Creator&gt;
+  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator);
+  
+  //
   //  Single
   // 
   
@@ -972,13 +982,6 @@ struct ArrayAlgo_class
   static PtrLen&lt;T&gt; MoveTo(T *ptr,ulen len,Place&lt;void&gt; place) noexcept(EnableNoExcept);
 
   //
-  // 
-  //
-
-  template &lt;class Creator&gt;
-  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator);
-  
-  //
   //  single Destroy() : no-throw
   // 
   
@@ -989,7 +992,214 @@ struct ArrayAlgo_class
   //
   
   static void Destroy(T *ptr,ulen len) noexcept(EnableNoExcept);
+
+  //
+  // Guards
+  //
+
+  class BuildGuard;
+  class CreateGuard;
+  class CreateGuard_nothrow;
+  template &lt;bool no_throw&gt; class CreateGuardNoThrow;
  };
+</pre>
+
+<p>
+The package has the following members.
+</p>
+
+<p>
+Flags <b>Default_no_throw</b> and <b>Copy_no_throw</b> are copied from the <b>Flags</b>.
+</p>
+
+<p>
+Flag <b>MoveTo_exist</b> is always true.
+</p>
+
+<p>
+<b>Create_...()</b> creates a range of objects of the type <b>T</b> at the given place. To create an object,
+the correspondent constructor is called. Objects are created in the ascending order. If the some constructor
+throw an exception, then the previously constructed objects are destroyed and the exception is propagated.
+The range of the created objects is returned. The first two arguments are: the place to construct 
+and the number of elements to construct. The place must be propely aligned and the memory space
+must be large enough to contain the required number of objects.
+</p>
+
+<p>
+<b>Create_raw()</b> and <b>Create_default()</b> use the default constructor.
+</p>
+
+<p>
+<b>Create_fill()</b> uses a constructor with the given set of arguments for each object.
+</p>
+
+<p>
+<b>Create_copy()</b> uses the copy constructor. The arguments are selected from the provided range of objects.
+</p>
+
+<p>
+<b>Create_cast()</b> uses the "cast" constructor. The arguments are selected from the provided range of objects.
+</p>
+
+<p>
+<b>Create_swap()</b> uses the default constructor and the swap operation to create objects. The arguments for 
+the swap are selected from the provided range of objects.
+</p>
+
+<p>
+<b>Create()</b> uses the given creator for the object creation. See below about creators.
+</p>
+
+<p>
+The single <b>Create_swap()</b> function "creates-swap" the single object.
+</p>
+
+<p>
+<b>ProvideLen()</b> is used to reallocate an array. It is called if there is insufficient memory
+to extend the array. The <b>len</b> is the array length, the <b>extra_len</b> is the number of extra
+objects to be constructed, the <b>maxlen</b> is the allocated length. The length returned
+is sufficient to extend the array and at least double of the <b>maxlen</b>.
+</p>
+
+<p>
+<b>MoveTo()</b> moves the given range to the new place. The old place becomes a raw memory. 
+The range of the new objects is returned.
+</p>
+
+<p>
+Single <b>Destroy()</b> destroys the object (but don't free the memory).
+</p>
+
+<p>
+Range <b>Destroy()</b> destroys the given range of objects.
+</p>
+
+<p>
+There are four inner "guard" classes. They are used to created a range of objects. Guards are
+responsible for the object destruction in case of failure. 
+</p>
+
+<pre>
+class BuildGuard : NoCopy
+ {
+   Place&lt;void&gt; place;
+   T *ptr;
+   ulen len;
+     
+  public:
+     
+   explicit BuildGuard(Place&lt;void&gt; place_) : place(place_),ptr(place_),len(0) {}
+     
+   ~BuildGuard() { if( len ) Destroy(ptr,len); }
+     
+   Place&lt;void&gt; at() const { return place; }
+     
+   void operator ++ () { place+=sizeof (T); len++; }
+     
+   PtrLen&lt;T&gt; disarm() { return Range(ptr,Replace_null(len)); }
+ };
+</pre>
+
+<p>
+<b>BuildGuard</b> is used to create a range of objects. The constructor argument is the place
+for the range. It must be properly aligned and the memory space must be large enough to store
+the range.
+</p>
+
+<p>
+<b>at()</b> is the current place for the object creation.
+</p>
+
+<p>
+<b>operator ++ ()</b> must be called after the sucessfull creation of an object at the current position, 
+it moves to the next object position.
+</p>
+
+<p>
+<b>disarm()</b> is called after the desired number of objects are created. It "disarms" the gurad and
+returns the created range.
+</p>
+
+<p>
+The <b>BuildGuard</b> destructor destroys the created objects. It must be disarmed to prevent the destruction.
+</p>
+
+<pre>
+class CreateGuard : public BuildGuard
+ {
+  public:
+     
+   CreateGuard(Place&lt;void&gt; place,ulen /*final_len*/) : BuildGuard(place) {}
+     
+   ~CreateGuard() {}
+ };
+</pre>
+
+<p>
+<b>CreateGuard</b> is used for creation a range of objects with the given length. 
+Constructor's arguments are: the place of the range and the final number of objects.
+The remaining methods are the same as for <b>BuildGuard</b>. Using <b>CreateGuard</b>
+you must create the exact number of objects.
+</p>
+
+<pre>
+class CreateGuard_nothrow : NoCopy
+ {
+   Place&lt;void&gt; place;
+   T *ptr;
+   ulen final_len;
+     
+  public:
+     
+   CreateGuard_nothrow(Place&lt;void&gt; place_,ulen final_len_) : place(place_),ptr(place_),final_len(final_len_) {}
+     
+   Place&lt;void&gt; at() const { return place; }
+     
+   void operator ++ () { place+=sizeof (T); }
+     
+   PtrLen&lt;T&gt; disarm() { return Range(ptr,final_len); }
+ };
+</pre>
+
+<p>
+<b>CreateGuard_nothrow</b> is a "no-throw" variant of the <b>CreateGuard</b>. It is used for creation
+a range of objects with the given length, if we are sure there will be no exceptions during the objects 
+construction.  
+</p>
+
+<pre>
+template &lt;bool no_throw&gt;
+class CreateGuardNoThrow : NoCopy
+ {
+  public:
+     
+   CreateGuardNoThrow(Place&lt;void&gt; place,ulen final_len);
+    
+   ~CreateGuardNoThrow();
+ };
+</pre>
+
+<p>
+<b>CreateGuardNoThrow</b> is the one of the <b>CreateGuard</b> and <b>CreateGuard_nothrow</b>, depending
+on the <b>no_throw</b> template argument.
+</p>
+
+<p>
+Below is the implementation of the generic <b>Create</b>, it uses <b>CreateGuardNoThrow</b>.
+</p>
+
+<pre>
+template &lt;class Creator&gt;
+static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator)
+ {
+  CreateGuardNoThrow&lt;Creator::NoThrow&gt; guard(place,len);
+    
+  FunctorTypeOf&lt;Creator&gt; func(creator);
+    
+  for(; len ;len--,++guard) func(guard.at());
+    
+  return guard.disarm();
+ }
 </pre>
 
 <h4>ArrayAlgo_pod</h4>
@@ -1000,6 +1210,17 @@ struct ArrayAlgo_class
 
 <pre>
 </pre>
+
+<h4>ArrayAlgo_mini</h4>
+
+<p>
+<b>ArrayAlgo_mini</b> is the mini variant without object moving.
+</p>
+
+<pre>
+</pre>
+
+<h4>Creators and Builders</h4>
 
 </body>
 
