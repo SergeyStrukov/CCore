@@ -917,7 +917,7 @@ Otherwise there are two variants: one for the POD types, another for the other (
 
 <p>
 <b>ArrayAlgo_class</b> is the generic (class) variant. It is assumed, that the following operations: <b>~T()</b>,
-<b>Move(T *,Place&lt;void&gt;)</b> and <b>Swap(T &amp;,T &amp;)</b>, are <b>no-throw</b>.
+<b>Move(T *,Place&lt;void&gt;)</b> and <b>Swap(T &amp;,T &amp;)</b>; are <b>no-throw</b>.
 The template argument <b>Flags</b> provides two flags: <b>Default_no_throw</b> and <b>Copy_no_throw</b>.
 The flag is true, if the correspondent constructor (default or copy) is <b>no-throw</b> or does not exist.
 </p>
@@ -1209,18 +1209,175 @@ static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator)
 </p>
 
 <pre>
+template &lt;class T&gt;
+struct ArrayAlgo_pod
+ {
+  //
+  //  Create...() : clean on throw
+  //
+  
+  enum PropFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true,
+    
+    MoveTo_exist = true
+   };
+ 
+  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len);
+  
+  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len);
+   
+  template &lt;class ... SS&gt;
+  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss);
+  
+  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]);
+  
+  template &lt;class S&gt;
+  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]);
+  
+  static PtrLen&lt;T&gt; Create_swap(Place&lt;void&gt; place,ulen len,T objs[]);
+   
+  //
+  // using Creator
+  //
+
+  template &lt;class Creator&gt;
+  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator);
+  
+  //
+  //  Single
+  // 
+  
+  static T * Create_swap(Place&lt;void&gt; place,T &amp;obj) noexcept(EnableNoExcept);
+   
+  //
+  //  ProvideLen() : double extension
+  // 
+  
+  static ulen ProvideLen(ulen len,ulen maxlen,ulen extra_len);
+   
+  // 
+  //  MoveTo() : no-throw
+  //
+
+  static PtrLen&lt;T&gt; MoveTo(T *ptr,ulen len,Place&lt;void&gt; place) noexcept(EnableNoExcept);
+
+  //
+  //  single Destroy() : empty
+  // 
+  
+  static void Destroy(T *ptr) {}
+  
+  // 
+  //  Destroy() : empty
+  //
+  
+  static void Destroy(T *ptr,ulen len) {}
+
+  //
+  // Guards
+  //
+
+  class BuildGuard;
+  class CreateGuard;
+  class CreateGuard_nothrow;
+  template &lt;bool no_throw&gt; class CreateGuardNoThrow;
+ };
 </pre>
+
+<p>
+Flags <b>Default_no_throw</b>, <b>Copy_no_throw</b> and <b>MoveTo_exist</b> are all true.
+</p>
+
+<p>
+<b>Destroy()</b> functions are empty.
+</p>
+
+<p>
+<b>Create_raw()</b> is not using default initialization. It leaves the memory uninitialized.
+</p>
 
 <h4>ArrayAlgo_mini</h4>
 
 <p>
 <b>ArrayAlgo_mini</b> is the mini variant without object moving.
+It is assumed, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and move are not used.
 </p>
 
 <pre>
+template &lt;class T,class Flags&gt;
+struct ArrayAlgo_mini
+ {
+  //
+  //  assume ~T() no-throw
+  //
+ 
+  //
+  //  Create...() : clean on throw
+  //
+  
+  enum PropFlagType
+   {
+    Default_no_throw = Flags::Default_no_throw,
+    Copy_no_throw = Flags::Copy_no_throw,
+    
+    MoveTo_exist = false
+   };
+ 
+  static PtrLen&lt;T&gt; Create_raw(Place&lt;void&gt; place,ulen len);
+  
+  static PtrLen&lt;T&gt; Create_default(Place&lt;void&gt; place,ulen len);
+   
+  template &lt;class ... SS&gt;
+  static PtrLen&lt;T&gt; Create_fill(Place&lt;void&gt; place,ulen len,SS &amp;&amp; ... ss);
+  
+  static PtrLen&lt;T&gt; Create_copy(Place&lt;void&gt; place,ulen len,const T src[]);
+  
+  template &lt;class S&gt;
+  static PtrLen&lt;T&gt; Create_cast(Place&lt;void&gt; place,ulen len,const S src[]);
+  
+  //
+  // using Creator
+  //
+
+  template &lt;class Creator&gt;
+  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator);
+  
+  //
+  //  single Destroy() : no-throw
+  // 
+  
+  static void Destroy(T *ptr) noexcept(EnableNoExcept);
+  
+  // 
+  //  Destroy() : no-throw
+  //
+  
+  static void Destroy(T *ptr,ulen len) noexcept(EnableNoExcept);
+
+  //
+  // Guards
+  //
+
+  class BuildGuard;
+  class CreateGuard;
+  class CreateGuard_nothrow;
+  template &lt;bool no_throw&gt; class CreateGuardNoThrow;
+ };
 </pre>
 
+<p>
+The flag <b>MoveTo_exist</b> is false.
+</p>
+
+<p>
+The following functions: <b>Create_swap()</b>, <b>ProvideLen()</b>, <b>MoveTo()</b>; are ommited.
+</p>
+
 <h4>Creators and Builders</h4>
+
+<h4>NoThrowFlags</h4>
 
 </body>
 
