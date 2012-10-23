@@ -924,7 +924,7 @@ The flag is true, if the correspondent constructor (default or copy) is <b>no-th
 
 <pre>
 template &lt;class T,class Flags&gt;
-struct ArrayAlgo_class
+struct <span class="att">ArrayAlgo_class</span>
  {
   //
   //  assume ~T() , Move(T *,Place&lt;void&gt;) , Swap(T &amp;,T &amp;) no-throw
@@ -1080,7 +1080,7 @@ responsible for the object destruction in case of failure.
 </p>
 
 <pre>
-class BuildGuard : NoCopy
+class <span class="att">BuildGuard</span> : NoCopy
  {
    Place&lt;void&gt; place;
    T *ptr;
@@ -1125,7 +1125,7 @@ The <b>BuildGuard</b> destructor destroys the created objects. It must be disarm
 </p>
 
 <pre>
-class CreateGuard : public BuildGuard
+class <span class="att">CreateGuard</span> : public BuildGuard
  {
   public:
      
@@ -1143,7 +1143,7 @@ you must create the exact number of objects.
 </p>
 
 <pre>
-class CreateGuard_nothrow : NoCopy
+class <span class="att">CreateGuard_nothrow</span> : NoCopy
  {
    Place&lt;void&gt; place;
    T *ptr;
@@ -1169,7 +1169,7 @@ construction.
 
 <pre>
 template &lt;bool no_throw&gt;
-class CreateGuardNoThrow : NoCopy
+class <span class="att">CreateGuardNoThrow</span> : NoCopy
  {
   public:
      
@@ -1190,7 +1190,7 @@ Below is the implementation of the generic <b>Create</b>, it uses <b>CreateGuard
 
 <pre>
 template &lt;class Creator&gt;
-static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator)
+static PtrLen&lt;T&gt; <span class="att">Create</span>(Place&lt;void&gt; place,ulen len,Creator creator)
  {
   CreateGuardNoThrow&lt;Creator::NoThrow&gt; guard(place,len);
     
@@ -1210,7 +1210,7 @@ static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator)
 
 <pre>
 template &lt;class T&gt;
-struct ArrayAlgo_pod
+struct <span class="att">ArrayAlgo_pod</span>
  {
   //
   //  Create...() : clean on throw
@@ -1307,7 +1307,7 @@ It is assumed, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and move
 
 <pre>
 template &lt;class T,class Flags&gt;
-struct ArrayAlgo_mini
+struct <span class="att">ArrayAlgo_mini</span>
  {
   //
   //  assume ~T() no-throw
@@ -1373,11 +1373,280 @@ The flag <b>MoveTo_exist</b> is false.
 
 <p>
 The following functions: <b>Create_swap()</b>, <b>ProvideLen()</b>, <b>MoveTo()</b>; are ommited.
+Array, constructed with this algorithm package cannot extend itself beyond the original allocation length.
 </p>
 
 <h4>Creators and Builders</h4>
 
+<p>
+<b>Creator</b> is a functor, creating objects. It looks like this:
+</p>
+
+<pre>
+class Creator // copy efficient
+ {
+   ....
+
+  public:
+
+   enum NoThrowFlagType { NoThrow = .... };
+  
+   Creator(....);
+  
+   T * operator () (Place&lt;void&gt; place) noexcept(NoThrow);
+ };
+</pre>
+
+<p>
+Or like this:
+</p>
+
+<pre>
+class Creator // copy efficient functor initializer
+ {
+   ....
+
+  public:
+
+   enum NoThrowFlagType { NoThrow = .... };
+
+   Creator(....);
+
+   class FunctorType : NoCopy // heavy functor
+    {
+      ....
+
+     public:
+
+      explicit FunctorType(Creator init);
+
+      ~FunctorType();
+
+      T * operator () (Place&lt;void&gt; place) noexcept(NoThrow);
+    };
+ };
+</pre>
+
+<p>
+You may use a <b>Creator</b> in a generic array "Creator" constructors and methods.
+</p>
+
+<p>
+<b>Builder</b> is a functor, creating a range of objects. It looks like:
+</p>
+
+<pre>
+class Builder // copy efficient
+ {
+  public:
+
+   Builder(....);
+
+   ulen getLen() const;
+   
+   PtrLen&lt;T&gt; operator () (Place&lt;void&gt; place) const; // may create up to getLen() objects
+ };
+</pre>
+
+<p>
+Or like this:
+</p>
+
+<pre>
+class Builder // copy efficient functor initializer
+ {
+  public:
+
+   Builder(....);
+
+   ulen getLen() const;
+
+   class FunctorType : NoCopy // heavy functor
+    {
+      ....
+
+     public:
+
+      explicit FunctorType(Builder init);
+
+      ~FunctorType();
+
+     PtrLen&lt;T&gt; operator () (Place&lt;void&gt; place) const; // may create up to getLen() objects
+    };
+ };
+</pre>
+
+<p>
+<b>Builder</b> reports the maximum object number it will create through the method <b>getLen()</b>. 
+<b>operator ()</b> gets the place for the range of <b>getLen()</b> elements, it either creates
+the range of objects up to this length and returns it, or leaves the memory raw and throw an exception.
+</p>
+
+<p>
+You may use a <b>Builder</b> in a generic array "Builder" constructors and methods.
+</p>
+
+<h4>Standard creators</h4>
+
+<p>
+There is a list of standard creators.
+</p>
+
+<pre>
+/* struct Creator_default&lt;T,bool no_throw&gt; */ 
+ 
+template &lt;class T,bool no_throw&gt; 
+struct <span class="att">Creator_default</span>
+ {
+  enum NoThrowFlagType { NoThrow = no_throw };
+  
+  Creator_default() {}
+  
+  T * operator () (Place&lt;void&gt; place) noexcept( EnableNoExcept && no_throw )
+   {
+    return new(place) T();
+   }
+ };
+ 
+/* struct Creator_fill&lt;T,SS&gt; */ 
+
+template &lt;class T,class ... SS&gt; 
+struct <span class="att">Creator_fill</span>
+ {
+  enum NoThrowFlagType { NoThrow = false };
+  
+  ForwardTuple&lt;SS...&gt; ss;
+  
+  explicit Creator_fill(SS &amp;&amp; ... ss_) : ss( std::forward&lt;SS&gt;(ss_)... ) {}
+  
+  T * operator () (Place&lt;void&gt; place)
+   {
+    T *ret;
+      
+    ss.call( [&amp;ret,place] (SS &amp;&amp; ... ss) { ret=new(place) T( std::forward&lt;SS&gt;(ss)... ); } );
+      
+    return ret;
+   }
+ };
+ 
+/* struct Creator_copy&lt;T,bool no_throw&gt; */ 
+
+template &lt;class T,bool no_throw&gt; 
+struct <span class="att">Creator_copy</span>
+ {
+  enum NoThrowFlagType { NoThrow = no_throw };
+  
+  const T *src;
+  
+  explicit Creator_copy(const T *src_) : src(src_) {}
+  
+  T * operator () (Place&lt;void&gt; place) noexcept( EnableNoExcept && no_throw )
+   {
+    return new(place) T(*(src++));
+   }
+ };
+ 
+/* struct Creator_cast&lt;T,S&gt; */ 
+ 
+template &lt;class T,class S&gt; 
+struct <span class="att">Creator_cast</span>
+ {
+  enum NoThrowFlagType { NoThrow = false };
+  
+  const S *src;
+  
+  explicit Creator_cast(const S *src_) : src(src_) {}
+  
+  T * operator () (Place&lt;void&gt; place)
+   {
+    return new(place) T(*(src++));
+   }
+ };
+ 
+/* struct Creator_swap&lt;T,Algo&gt; */ 
+
+template &lt;class T,class Algo&gt;
+struct <span class="att">Creator_swap</span>
+ {
+  enum NoThrowFlagType { NoThrow = true };
+  
+  T *objs;
+  
+  explicit Creator_swap(T *objs_) : objs(objs_) {}
+  
+  T * operator () (Place&lt;void&gt; place) noexcept(EnableNoExcept)
+   {
+    return Algo::Create_swap(place,*(objs++));
+   }
+ };
+</pre>
+
 <h4>NoThrowFlags</h4>
+
+<p>
+The <b>NoThrowFlags</b> structure is a <b>Property Bag</b> with two flags: <b>Default_no_throw</b> and 
+<b>Copy_no_throw</b>. The flag is true if the correspondent object constructor does not exist or <b>no-throw</b>.
+These flags are used to optimize the algorithm implementations. The structure is a default "flags provider"
+for the <b>ArrayAlgo</b> class.
+</p>
+
+<p>
+The <b>NoThrowFlags</b> extracts the value of a flag from the inner declaration of the class if such declaration
+exists:
+</p>
+
+<pre>
+
+class SomeClass
+ {
+  public:
+
+   enum NoThrowFlagType
+    {
+     Default_no_throw = ....,
+     Copy_no_throw = ....
+    };
+ };
+
+NoThrowFlags&lt;SomeClass&gt;::Default_no_throw == SomeClass::Default_no_throw
+
+NoThrowFlags&lt;SomeClass&gt;::Copy_no_throw == SomeClass::Copy_no_throw
+
+</pre>
+
+<p>
+If such declaration does not exist, it falls to <b>Meta::HasNoThrowDefault</b> and <b>Meta::HasNoThrowCopy</b>
+meta-functions. These meta-functions are defined in the <b>PlatformBase.h</b> target header.
+They may be defined like this:
+</p>
+
+<pre>
+/* struct HasNoThrowDefault&lt;T&gt; */
+
+template &lt;class T&gt;
+struct HasNoThrowDefault
+ {
+  enum RetType { Ret = !std::is_default_constructible&lt;T&gt;::value || 
+                        std::is_nothrow_default_constructible&lt;T&gt;::value 
+               };
+ };
+
+/* struct HasNoThrowCopy&lt;T&gt; */
+
+template &lt;class T&gt;
+struct HasNoThrowCopy
+ {
+  enum RetType { Ret = !std::is_copy_constructible&lt;T&gt;::value ||
+                        std::is_nothrow_copy_constructible&lt;T&gt;::value 
+               };
+ };
+</pre>
+
+<p>
+The <b>NoThrowFlags</b> is implemented in such a way, that it will emit a warning, if one of these flags is false.
+This behavior is not desirable and it is highly recommended to design common classes either without
+the default or copy constructor, or with <b>efficient</b> ones. 
+</p>
 
 </body>
 
