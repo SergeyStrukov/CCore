@@ -1,0 +1,167 @@
+<!--
+/* page_PrintDevice.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> PrintDevice</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Printing devices</h2>
+
+<p class="Files">Files <b>CCore/inc/Print.h</b> <b>CCore/src/Print.cpp</b></p>
+
+<p class="Files">Subfolders <b>CCore/inc/print</b> <b>CCore/src/print</b></p>
+
+<p>
+There are several standard "printing device" classes, implemented in the <b>CCore</b>.
+The lists are differ in <b>XCore</b> and <b>HCore</b>.
+</p>
+
+<h4>PrintCon (HCore)</h4>
+
+<p>
+<b>PrintCon</b> is the first and the most important class in the list. It is used to print to the console.
+This class is based on the target function <b>ConWrite</b>, defined in the header <b>sys/SysCon.h</b>.
+This function is assumed to call some native OS function to print the text string.
+</p>
+
+<pre>
+
+void <span class="att">Sys::ConWrite</span>(StrLen str) noexcept;
+
+</pre>
+
+<p>
+The word <b>Con</b> is used to print to the console.
+</p>
+
+<pre>
+/* words */ 
+
+enum ConType { <span class="att">Con</span> };
+ 
+template &lt;&gt; 
+struct PrintOutAdapter&lt;ConType&gt;
+ {
+  typedef PrintCon PrintOutType;
+ };
+
+</pre>
+
+<p>
+The class <b>PrintCon</b> uses a small stack buffer to accumulate the printing text:
+</p>
+
+<pre>
+class <span class="att">PrintCon</span> : public PrintBase
+ {
+   char buf[TextBufLen];
+ 
+  private:
+  
+   virtual PtrLen&lt;char&gt; do_provide(ulen hint_len);
+   
+   virtual void do_flush(char *ptr,ulen len); 
+   
+  public:
+  
+   explicit PrintCon(ConType) {}
+   
+   ~PrintCon() { flush(); }
+   
+   static void Print(const char *ptr,ulen len) { Print(Range(ptr,len)); }
+   
+   static void Print(StrLen str); // ignore errors
+ };
+</pre>
+
+<p>
+The static methods <b>Print()</b> can be used for the direct printing to the console.
+</p>
+
+<h4>PrintCon (XCore)</h4>
+
+<p>
+The <b>XCore</b> varaint of the <b>PrintCon</b> is close to the <b>HCore</b>.
+</p>
+
+<pre>
+class <span class="att">PrintCon</span> : public PrintBase
+ {
+   MSec timeout;
+   NanoPacket&lt;char&gt; packet;
+ 
+  private:
+  
+   virtual PtrLen&lt;char&gt; do_provide(ulen hint_len);
+   
+   virtual void do_flush(char *ptr,ulen len); 
+   
+  public:
+  
+   explicit PrintCon(ConType,MSec timeout_=DefaultTimeout) : timeout(timeout_) {}
+   
+   ~PrintCon() { flush(); }
+   
+   static void Print(const char *ptr,ulen len); // ignore errors
+   
+   static void Print(StrLen str) { Print(str.ptr,str.len); } 
+ };
+</pre>
+
+<p>
+The small difference is the constructor takes the additional argument <b>timeout</b>, defaulted to the  
+<b>DefaultTimeout</b>. Th main diffrerence, however, not the interface, but the implementation.
+<b>XCore</b> <b>PrintCon</b> uses <b>NanoPacket</b>s. Methods <b>Print()</b> create a temporary <b>PrintCon</b>
+object to print the text. Printing is not permitted in the interrupt context.
+</p>
+
+<p>
+<b>XCore</b> supports the console printing by the following functions, defined in
+the <b>sys/SysCon.h</b> header.
+</p>
+
+<pre>
+
+NanoPacket&lt;char&gt; <span class="att">Sys::AllocConPacket</span>(MSec timeout);
+
+void <span class="att">Sys::ConWrite</span>(NanoPacket&lt;char&gt; packet);
+
+</pre>
+
+<p>
+The full implementation of these functions is the target resposibility. It is doing through a derived class from
+the <b>Sys::ConBase</b> class. Usually a target device has a serial port and console packets are delivered
+to the host computer through the port driver.
+</p>
+
+<h4>PrintFile (HCore only)</h4>
+
+<h4>PrintAsyncFile</h4>
+
+<h4>PrintPTPCon</h4>
+
+</body>
+
+</html>
+

@@ -1,0 +1,528 @@
+<!--
+/* page_Files.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Files</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Files</h2>
+
+<p class="Files">Files <b>CCore/inc/GenFile.h</b> <b>CCore/src/GenFile.cpp</b></p>
+
+<p>
+<b>CCore</b> uses an abstract concept of working with a file system. It includes a set of common constants
+and abstract operations to work with any file system, local or remote. The term <b>file</b> means a true file, i.g.
+a persistent sequence of octets, stored on some file device and identified by its name, which may include
+a device specifier, a path specifier and finally a file name. All constant standardize a name, a type, a meaning
+and a value.
+</p>
+
+<h3>File constants</h3>
+
+<pre>
+
+/* types */ 
+
+typedef uint64 <span class="att">FilePosType</span>;
+
+/* consts */ 
+
+const ulen <span class="att">MaxPathLen</span> = 512 ;
+
+</pre>
+
+<p>
+<b>FilePosType</b> represents a file position and a length, it is 64-bit wide.
+</p>
+
+<p>
+<b>MaxPathLen</b> is a path length limit.
+</p>
+
+<pre>
+
+enum <span class="att">FileOpenFlags</span> : uint32
+ {
+  Open_Read       = 0x01, // "Read"
+  Open_Write      = 0x02, // "Write"
+  Open_Pos        = 0x04, // "Pos"
+  
+  Open_Create     = 0x10, // "Create"
+  Open_Erase      = 0x20, // "Erase"
+  Open_New        = 0x40, // "New"
+  Open_AutoDelete = 0x80, // "AutoDelete"
+  
+  Open_PosEnd     = 0x100, // "PosEnd"
+  
+  Open_ToRead     = Open_Read,
+  Open_ToWrite    = Open_Write|Open_Create|Open_Erase,
+  Open_ToAppend   = Open_Write|Open_Create|Open_PosEnd
+ };
+ 
+inline FileOpenFlags operator | (FileOpenFlags a,FileOpenFlags b) 
+ { 
+  return FileOpenFlags( uint32(a)|uint32(b) ); 
+ }
+ 
+class FileOpenFlagsTextDesc
+ {
+   FileOpenFlags oflags;
+   
+  public:
+  
+   explicit FileOpenFlagsTextDesc(FileOpenFlags oflags_) : oflags(oflags_) {}
+   
+   template &lt;class P&gt;
+   void print(P &out) const;
+ };
+ 
+inline FileOpenFlagsTextDesc GetTextDesc(FileOpenFlags oflags) { return FileOpenFlagsTextDesc(oflags); }
+
+</pre>
+
+<p>
+<b>FileOpenFlags</b> is a set of flags used to control a file open operation. You may use the overloaded
+<b>operator |</b> to combine a set of flags into a single value.
+</p>
+
+<p>
+<b>Open_Read</b> &mdash; read operations must be available on opened file.
+</p>
+
+<p>
+<b>Open_Write</b> &mdash; write operations must be available on opened file.
+</p>
+
+<p>
+<b>Open_Pos</b> &mdash; position operations must be available on opened file, this includes
+a file length operation. This flag is used if a file is opened with the sequential access set of operations.
+</p>
+
+<p>
+<b>Open_Create</b> &mdash; create a new file, if there is no a file with the given name. If this flag
+is not set and the file does not exist, the open operation is failed.
+</p>
+
+<p>
+<b>Open_Erase</b> &mdash; erase the file, if one exists.
+</p>
+
+<p>
+<b>Open_New</b> &mdash; the file must be a new file. If the file with the given name exists, the operation
+is failed. If this flags is set, then <b>Open_Create</b> and <b>Open_Erase</b> flags are ingnored.
+</p>
+
+<p>
+<b>Open_AutoDelete</b> &mdash; delete the file during the close operation. The effect of this flag can be
+cancelled after the file is opened.
+</p>
+
+<p>
+<b>Open_PosEnd</b> &mdash; the file position is set to the end of the file. This flag is used if 
+a file is opened with the sequential access set of operations. It does not required the <b>Open_Pos</b> flag
+to be set.
+</p>
+
+<p>
+<b>Open_ToRead</b> is a combination <b>Open_Read</b>.
+</p>
+
+<p>
+<b>Open_ToWrite</b> is a combination <b>Open_Write|Open_Create|Open_Erase</b>.
+</p>
+
+<p>
+<b>Open_ToAppend</b> is a combination <b>Open_Write|Open_Create|Open_PosEnd</b>.
+</p>
+
+<p>
+<b>GetTextDesc(FileOpenFlags)</b> creates a temporary object to print a text description of the given flags.
+The output looks like "Read|Write|Create".
+</p>
+
+<pre>
+
+enum <span class="att">FileError</span> : uint32
+ {
+  FileError_Ok               =  0, // "Success"
+
+  FileError_NoDevice         =  1, // "No device"
+  FileError_NoPath           =  2, // "No path"
+  FileError_NoFile           =  3, // "No file"
+  FileError_NoAccess         =  4, // "No access"
+  FileError_FileExist        =  5, // "File exist"
+  
+  FileError_NoMethod         =  6, // "No method"
+  
+  FileError_OpenFault        =  7, // "Open fault"
+  FileError_CloseFault       =  8, // "Close fault"
+  FileError_ReadFault        =  9, // "Read fault"
+  FileError_WriteFault       = 10, // "Write fault"
+  FileError_PosFault         = 11, // "Pos fault"
+  
+  FileError_OpFault          = 12, // "Operation fault"
+  FileError_TransFault       = 13, // "Transaction fault"
+  FileError_Cancelled        = 14, // "Operation cancelled"
+  
+  FileError_SysOverload      = 15, // "System overload"
+  FileError_TooLongPath      = 16, // "Too long path"
+  FileError_DiskFull         = 17, // "Disk full"
+  FileError_WriteProtect     = 18, // "Write protect"
+  FileError_DirIsNotEmpty    = 19, // "Dir is not empty"
+  
+  FileError_BadId            = 20, // "Bad file id"
+  FileError_LenOverflow      = 21, // "Length overflow"
+  FileError_ReadLenMismatch  = 22, // "Read length mismatch"
+  FileError_WriteLenMismatch = 23, // "Write length mismatch"
+  FileError_BadName          = 24, // "Bad name"
+  FileError_BadPosition      = 25, // "Bad file position"
+  FileError_BadLen           = 26, // "Bad length"
+  
+  FileError_Some             = 27 // last , "Some error"
+ };
+  
+const char * GetTextDesc(FileError fe);
+
+</pre>
+
+<p>
+<b>FileError</b> represent a list of typical errors happens during file operations.
+</p>
+
+<pre>
+
+enum <span class="att">FileType</span> : uint32
+ {
+  FileType_none = 0, // "none"
+  FileType_file = 1, // "file"
+  FileType_dir  = 2  // "dir"
+ };
+ 
+const char * GetTextDesc(FileType ft); 
+
+</pre>
+
+<p>
+<b>FileType</b> is used to designate the file type: is it a file, a directory or there is no such object.
+</p>
+
+<pre>
+
+class <span class="att">FileMultiError</span> : NoCopy
+ {
+   static const ulen Len = 10 ;
+
+   FileError list[Len];
+   ulen len;
+   ulen extra;
+ 
+  public:
+  
+   FileMultiError() : len(0),extra(0) {}
+   
+   // methods
+   
+   ulen operator + () const { return len; }
+   
+   bool operator ! () const { return !len; }
+   
+   void add(FileError fe); 
+   
+   FileError getFirst() const { return len?list[0]:FileError_Ok; }
+   
+   void copyTo(FileMultiError &amp;out) const;
+   
+   // print object
+   
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+There are situations when several errors can be fired during the one operation, for example, during file closing.
+<b>FileMultiError</b> can store mutiple error codes. It accumulates up to 10 error codes and counts any extra.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to test if there are accumulated errors.
+</p>
+
+<p>
+<b>add()</b> adds a error code to the object.
+</p>
+
+<p>
+<b>getFirst()</b> returns the first error code or <b>FileError_Ok</b> if there is no one.
+</p>
+
+<p>
+<b>copyTo()</b> copies the state to another object.
+</p>
+
+<p>
+<b>print()</b> prints the content of the object.
+</p>
+
+<h3>File operations</h3>
+
+<p>
+There are two file operations sets: the classical, where there is an internal file position and the alternative,
+where read or write position is provided explicitly. File names are encoded as a byte range. No
+zero-termination is assumed. The length is given explicitly.
+</p>
+
+<h4>Basic types and constants</h4>
+
+<p>
+There are few basic types and constants.
+</p>
+
+<pre>
+
+/* types */ 
+
+typedef uint64 FilePosType;
+
+typedef uint8 byte;
+
+/* consts */ 
+
+const ulen MaxPathLen = 512 ;
+ 
+</pre>
+
+<h4>Classical set</h4>
+
+<p>
+Here is the classical set of operations as an abstract set of functions. The error reporting is ommited.
+</p>
+
+<pre>
+
+void open(const byte *file_name,ulen len,FileOpenFlags open_flags); // file_name is not zero-terminated
+
+void close(bool preserve_file=false);  // if( preserve_file ) ignore(Open_AutoDelete);
+
+ulen read(byte *buf,ulen len);         // requires Open_Read
+
+ulen write(const byte *data,ulen len); // requires Open_Write
+
+FilePosType getLen();                  // requires Open_Pos
+
+FilePosType getPos();                  // requires Open_Pos
+
+void setPos(FilePosType pos);          // requires Open_Pos
+                                       // if( pos>file_len ) unknown();
+
+</pre>
+
+<p>
+To start working with a file it must be opened. The <b>open</b> operation arguments are: the file name 
+(with the file name length), and the open flags. The opened file has the internal file position.
+This position is set to 0, unless the flag <b>Open_PosEnd</b> is specified. If this flag is set, then
+the position is set to the file length.
+</p>
+
+<p>
+The <b>close</b> operation has the argument: <b>preserve_file</b>. This argument is used with the 
+<b>Open_AutoDelete</b> flag. If this flag is set then the file is deleted during the close operation.
+But if the <b>preserve_file</b> is true, it is preserved.
+</p>
+
+<p>
+<b>getLen</b> returns the current length of the file. The length can be changed by the write operation.
+</p>
+
+<p>
+<b>getPos</b> returns the current file position.
+</p>
+
+<p>
+<b>setPos</b> sets the current file poistion. Setting the file position beyond the end-of-file has an
+undefined behavior.
+</p>
+
+<p>
+<b>read</b> transfers bytes from the file at the current file position to the user buffer and updates the file position.
+The return value can be less than the given length, if the end-of-file is encountered.
+</p>
+
+<p>
+<b>write</b> transfers bytes from the user buffer to the file at the current file position and updates the file position.
+Write may extend the file. The return value should be equal to the given length, unless there is a good
+reason to implement another behavior. 
+</p>
+
+<h4>Alternative set</h4>
+
+<p>
+And the alternative set is:
+</p>
+
+<pre>
+
+FilePosType /* file_len */ 
+ open(const byte *file_name,ulen len,FileOpenFlags open_flags); // Open_Pos Open_PosEnd are ignored
+
+void close(bool preserve_file=false);                           // if( preserve_file ) ignore(Open_AutoDelete);
+
+void read(FilePosType off,byte *buf,ulen len);                  // requires Open_Read , off+len<=file_len
+
+FilePosType /* file_len */ 
+ write(FilePosType off,const byte *data,ulen len);              // requires Open_Write , if( off>file_len ) [file_len,off) is unspecified filled
+
+</pre>
+
+<p>
+The <b>open</b> operation ignores flags <b>Open_Pos</b> and <b>Open_PosEnd</b>. It returns the file length.
+There is no the internal file position in this case.
+</p>
+
+<p>
+<b>read</b> uses the explicitly given file position. The read range must be in the file range.
+</p>
+
+<p>
+<b>write</b> also uses the explicitly given file position. But the write range may be outside the file range.
+In this case the file is extended. The return length is the new file length. If there is a hole after the
+end-of-file and before the write position, the hole is filled by undefined values.
+</p>
+
+<h3>File system operations</h3>
+
+<pre>
+
+FileType getFileType(const byte *path,ulen len); 
+
+void createFile(const byte *file_name,ulen len);
+
+void deleteFile(const byte *file_name,ulen len);
+
+void createDir(const byte *dir_name,ulen len);
+
+void deleteDir(const byte *dir_name,ulen len,bool recursive); // if( !recursive ) dir must be empty
+
+void rename(const byte *old_path,ulen old_len,const byte *new_path,ulen new_len,bool allow_overwrite);
+
+void remove(const byte *path,ulen len); // if path is dir it must be empty
+
+</pre>
+
+<p>
+<b>getFileType</b> returns the file type.
+</p>
+
+<p>
+<b>createFile</b> creates the new empty file.
+</p>
+
+<p>
+<b>deleteFile</b> deletes the existing file.
+</p>
+
+<p>
+<b>createDir</b> creates the new empty directory.
+</p>
+
+<p>
+<b>deleteDir</b> deletes the existing directory. If <b>recursive</b> is false, the directory must be empty.
+Otherwise it is deleted with the all content recursively.
+</p>
+
+<p>
+<b>rename</b> renames or moves the file of directory. The <b>allow_overwrite</b> flag allows
+overwriting the existing file.
+</p>
+
+<p>
+<b>remove</b> deletes ether the existing file or the existing empty directory.
+</p>
+
+<p>
+To enumerate a directory a some "directory cursor" is required.
+</p>
+
+<pre>
+
+byte file_name[MaxPathLen];
+ulen len;
+FileType type;
+FileError error;
+
+</pre>
+
+<p>
+The visible state of the cursor has the following members:
+</p>
+
+<p>
+<b>file_name</b> &mdash; the name of the current file or directory.
+</p>
+
+<p>
+<b>len</b> &mdash; the length of the file name.
+</p>
+
+<p>
+<b>type</b> &mdash; the type of the current file or directory.
+</p>
+
+<p>
+<b>error</b> &mdash; error code if any.
+</p>
+
+<pre>
+
+void init(const byte *dir_name,ulen len); // set to before-the-first position
+
+bool next();
+
+void exit();
+
+</pre>
+
+<p>
+There are three cursor operations.
+</p>
+
+<p>
+<b>init</b> initializes the cursor to enumerate the givent directory. The cursor is at before-the-first
+element position. If this operation fails, other operations should not be used.
+</p>
+
+<p>
+<b>next</b> moves to the next element, if such element exists. The return value is true, if the cursor is moved,
+otherwise, if the cursor is already at the last element, the false is returned.
+</p>
+
+<p>
+<b>exit</b> is used to destroy the cursor.
+</p>
+
+</body>
+
+</html>
+
