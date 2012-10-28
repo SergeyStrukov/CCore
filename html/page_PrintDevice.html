@@ -132,7 +132,7 @@ class <span class="att">PrintCon</span> : public PrintBase
 <p>
 The small difference is the constructor takes the additional argument <b>timeout</b>, defaulted to the  
 <b>DefaultTimeout</b>. Th main diffrerence, however, not the interface, but the implementation.
-<b>XCore</b> <b>PrintCon</b> uses <b>NanoPacket</b>s. Methods <b>Print()</b> create a temporary <b>PrintCon</b>
+<b>XCore</b> <b>PrintCon</b> uses <a href="page_NanoPackets.html"><b>NanoPacket</b></a>s. Methods <b>Print()</b> create a temporary <b>PrintCon</b>
 object to print the text. Printing is not permitted in the interrupt context.
 </p>
 
@@ -156,6 +156,42 @@ to the host computer through the port driver.
 </p>
 
 <h4>PrintFile (HCore only)</h4>
+
+<p>
+<b>PrintFile</b> class is designed to print to the file. On <b>HCore</b> targets this class is based on the 
+OS file input-output functions.
+</p>
+
+<pre>
+class <span class="att">PrintFile</span> : public PrintBase
+ {
+   ....
+   
+  public:
+   
+   // constructors
+  
+   PrintFile();
+   
+   explicit PrintFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   
+   ~PrintFile();
+   
+   // methods
+   
+   bool isOpened() const;
+   
+   void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   
+   void disableExceptions(); 
+   
+   void soft_close(FileMultiError &errout);
+   
+   void close();
+   
+   void preserveFile();
+ };
+</pre>
 
 <h4>PrintAsyncFile</h4>
 

@@ -1,0 +1,275 @@
+<!--
+/* page_NanoPackets.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> NanoPackets</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>NanoPackets</h2>
+
+<p class="Files">Files <b>CCore/inc/NanoPacket.h</b> <b>CCore/src/NanoPacket.cpp</b></p>
+
+<p>
+<b>NanoPacket</b> is a simple packet technology. It has three components: <b>NanoPacket</b>, <b>NanoPacketList</b> 
+and <b>NanoPacketPool</b>.
+</p>
+
+<p>
+<b>NanoPacket</b> consists of a header, followed by a body. The body is a range of some POD values.
+The initial part of the body carries data.
+</p>
+
+<h4>NanoPacket</h4>
+
+<p>
+The <b>NanoPacket</b> class is a wrapper over a pointer to the header. This class is copyable, so
+you must use it with the same caution as a raw pointer. The pointer may be null.
+</p>
+
+<pre>
+template &lt;class POD&gt;
+class <span class="att">NanoPacket</span>
+ {
+   typedef Function&lt;void (NanoPacket&lt;POD&gt; packet)&gt; NanoPacketFunction;
+
+  private:
+  
+   Header *ptr;
+   
+  public: 
+   
+   // constructors
+  
+   static constexpr ulen AllocLen(ulen max_data_len);
+  
+   NanoPacket() : ptr(0) {}
+ 
+   NanoPacket(NothingType) : ptr(0) {}
+   
+   NanoPacket(Place&lt;void&gt; place,ulen max_data_len,NanoPacketFunction free_function);
+   
+   // methods
+   
+   bool operator + () const { return ptr!=0; }
+   
+   bool operator ! () const { return ptr==0; }
+ 
+   void free(); 
+   
+   // data
+    
+   POD * getData() const;
+   
+   ulen getDataLen() const;
+   
+   ulen getMaxDataLen() const;
+   
+   PtrLen&lt;POD&gt; getRange() const;
+   
+   PtrLen&lt;POD&gt; getMaxRange() const;
+   
+   PtrLen&lt;POD&gt; setDataLen(ulen len);
+ };
+</pre>
+
+<p>
+<b>AllocLen()</b> calculates the required memory size to store a <b>NanoPacket</b> with the given capacity.
+There is no overflow check in this function, so the argument must not be "huge".
+</p>
+
+<p>
+The default constructor and the Nothing-constructor create a null packet.
+</p>
+
+<p>
+The third constructor creates a non-null packet. You must provide as arguments the <b>place</b>, where packet
+will be constructed, the capacity <b>max_data_len</b> and the <b>free_function</b>. The place must be aligned and
+the memory size must be at least <b>AllocLen(max_data_len)</b>. The <b>free_function</b> is used to free the packet.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> checks if the packet is a null packet.
+</p>
+
+<p>
+All remaining methods cannot be used with a null packet.
+</p>
+
+<p>
+<b>free()</b> frees the packet and sets the packet to the null state.
+</p>
+
+<p>
+<b>getData()</b> returns the pointer to the data area.
+</p>
+
+<p>
+<b>getDataLen()</b> returns the current data length. Initial data length is zero.
+</p>
+
+<p>
+<b>getMaxDataLen()</b> returns the capacity of the packet.
+</p>
+
+<p>
+<b>getData()</b> returns the data range.
+</p>
+
+<p>
+<b>getMaxData()</b> returns the reserved range.
+</p>
+
+<p>
+<b>setDataLen()</b> sets the data length. The <b>len</b> must not exceed <b>getMaxDataLen()</b>.
+The new data range is returned.
+</p>
+
+<h4>NanoPacketList</h4>
+
+<p>
+<b>NanoPacket</b> can be put into a <b>NanoPacketList</b>. A particular packet can be inserted into an only
+one list. 
+</p>
+
+<pre>
+template &lt;class POD&gt;
+class <span class="att">NanoPacketList</span> : NoCopy
+ {
+   ....
+    
+  public:
+  
+   NanoPacketList();
+   
+   ~NanoPacketList(); 
+   
+   bool operator + () const;
+   
+   bool operator ! () const;
+   
+   void put(NanoPacket&lt;POD&gt; packet);
+   
+   void put_first(NanoPacket&lt;POD&gt; packet);
+   
+   NanoPacket&lt;POD&gt; get();
+   
+   void freeAll();
+    
+   void cleanAll();
+   
+   // swap/move object
+    
+   void objSwap(NanoPacketList&lt;POD&gt; &amp;obj);
+   
+   explicit NanoPacketList(ToMoveCtor&lt;NanoPacketList&lt;POD&gt; &gt; obj);
+   
+   NanoPacketList&lt;POD&gt; * objMove(Place&lt;void&gt; place);
+ };
+</pre>
+
+<p>
+Constructor creates an empty list.
+</p>
+
+<p>
+Destructor calls abort, if the list is not empty.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to check if the list is empty.
+</p>
+
+<p>
+<b>put()</b> puts the packet into the list tail.
+</p>
+
+<p>
+<b>put_first()</b> puts the packet into the list head.
+</p>
+
+<p>
+<b>get()</b> gets the first packet from the list. If the list is empty, null packet is returned.
+</p>
+
+<p>
+<b>freeAll()</b> frees all packets from the list. List becomes empty.
+</p>
+
+<p>
+<b>cleanAll()</b> makes the list empty, but does not free packets. Use this method with caution.
+</p>
+
+<p>
+<b>NanoPacketList</b> is swapable and moveable.
+</p>
+
+<h4>NanoPacketPool</h4>
+
+<p>
+<b>NanoPacketPool</b> is a pool of <b>NanoPacket</b>s.
+</p>
+
+<pre>
+template &lt;class POD&gt;
+class <span class="att">NanoPacketPool</span> : NoCopy
+ {
+   ....
+
+  private:
+  
+   virtual void post_free() {}
+  
+  public:
+  
+   NanoPacketPool(void *mem,ulen max_data_len,ulen count); // aligned mem, 
+                                                           // NanoPacket&lt;POD&gt;::AllocLen(max_data_len)*count length 
+   
+   ~NanoPacketPool();
+   
+   NanoPacket&lt;POD&gt; try_get();
+ };
+</pre>
+
+<p>
+<b>NanoPacketPool</b> constructor creates a packet pool in the provided memory region. <b>max_data_len</b> is
+the capacity of each packet. <b>count</b> is the number of packets. Memory must be aligned and of size at least
+<b>NanoPacket&lt;POD&gt;::AllocLen(max_data_len)*count</b>. The pool uses the memory, but is not responsible
+for the life-time control of it. You may use a static memory region, or allocate it dynamically. In the last case,
+you must do it prior the pool construction and release it after the pool destruction.
+</p>
+
+<p>
+Destructor destoys the pool. All packets must be freed, otherwise abort is called. 
+</p>
+
+<p>
+<b>try_get()</b> returns a packet from the pool or the null packet. When packet is freed, the virtual method 
+<b>post_free()</b> is called. You can overload this method in a derived class to implement a top level
+logic of packet control.
+</p>
+
+</body>
+
+</html>
+
