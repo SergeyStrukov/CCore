@@ -30,6 +30,149 @@
 
 <p class="Files">Files <b>CCore/inc/Path.h</b> <b>CCore/src/Path.cpp</b></p>
 
+<p>
+There is a set of classes to work with file paths. The path may have the following components:
+</p>
+
+<ul>
+ <li>device, ended with ':'</li>
+ <li>directory, separated with '/' or '\'</li>
+ <li>file name</li>
+ <li>file extension, started with '.'</li>
+</ul>
+
+<p>
+A path may have multiple device components, directory components, a file name may have 
+multiple file extension components: 
+</p>
+
+<pre>
+host:d:\exchange\device.1\device.log.txt
+</pre>
+
+<h4>PathBase</h4>
+
+<h4>SplitDev</h4>
+
+<pre>
+struct <span class="att">SplitDev</span> : PathBase
+ {
+  StrLen dev; // first  dev:
+  StrLen dev_path;
+  bool no_dev;
+  
+  explicit SplitDev(StrLen dev_path);
+  
+  bool operator ! () const { return no_dev; }
+ };
+</pre>
+
+<p>
+This <b>Class-function</b> splits the given path into the first device component and the rest. The <b>no_dev</b>
+is true, if there is no device component. In this case the <b>dev</b> is null and the <b>dev_path</b> is the given path.
+Colon goes to the <b>dev</b>.
+</p>
+
+<pre>
+host:   d:\exchange\device.1\device.log.txt
+</pre>
+
+<h4>SplitPath</h4>
+
+<pre>
+struct <span class="att">SplitPath</span> : PathBase
+ {
+  StrLen dev; // all  dev1:dev2:...:
+  StrLen path;
+  bool no_dev;
+  
+  explicit SplitPath(StrLen dev_path);
+  
+  bool operator ! () const { return no_dev; }
+ };
+</pre>
+
+<p>
+This <b>Class-function</b> splits the given path into the all device components and the rest. The <b>no_dev</b>
+is true, if there is no device component. In this case the <b>dev</b> is null and the <b>path</b> is the given path.
+Colon goes to the <b>dev</b>.
+</p>
+
+<pre>
+host:d:   \exchange\device.1\device.log.txt
+</pre>
+
+<h4>SplitDir</h4>
+
+<pre>
+struct <span class="att">SplitDir</span> : PathBase
+ {
+  StrLen dir; // first  dir/
+  StrLen path;
+  bool no_path;
+  
+  explicit SplitDir(StrLen path);
+  
+  bool operator ! () const { return no_path; }
+ };
+</pre>
+
+<p>
+This <b>Class-function</b> splits the given path (assumed without device component) into the first directory
+component and the rest. The <b>no_path</b> is true, if there is no directory component. In this case <b>dir</b>
+is null and the <b>path</b> is the given path. Slash goes to the <b>dir</b>.
+</p>
+
+<pre>
+\   exchange\device.1\device.log.txt
+</pre>
+
+<pre>
+exchange\   device.1\device.log.txt
+</pre>
+
+<h4>SplitName</h4>
+
+<pre>
+struct <span class="att">SplitName</span> : PathBase
+ {
+  StrLen path; // all  dir1/dir2/.../
+  StrLen name;
+  bool no_path;
+  
+  explicit SplitName(StrLen path);
+  
+  bool operator ! () const { return no_path; }
+  
+  NameType getNameType() const { return GetNameType(name); }
+ };
+</pre>
+
+<p>
+This <b>Class-function</b> splits the given path (assumed without device component) into the all directory
+components and the rest. The <b>no_path</b> is true, if there is no directory component. In this case <b>dir</b>
+is null and the <b>path</b> is the given path. Slash goes to the <b>dir</b>.
+</p>
+
+<pre>
+\exchange\device.1\   device.log.txt
+</pre>
+
+<p>
+<b>getNameType()</b> returns the type of the file name component.
+</p>
+
+<h4>SplitFullExt</h4>
+
+<h4>SplitExt</h4>
+
+<h4>SplitDevName</h4>
+
+<h4>SplitDirName</h4>
+
+<h4>SplitPathName</h4>
+
+<h4>Path</h4>
 
 </body>
 

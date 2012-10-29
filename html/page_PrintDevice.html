@@ -185,13 +185,162 @@ class <span class="att">PrintFile</span> : public PrintBase
    
    void disableExceptions(); 
    
-   void soft_close(FileMultiError &errout);
+   void soft_close(FileMultiError &amp;errout);
    
    void close();
    
    void preserveFile();
  };
 </pre>
+
+<p>
+<b>PrintFile</b> object can be opened or closed. To print to the particular file, a <b>PrintFile</b>
+object must be opened and a file name and <a href="page_Files.html">open flags</a> must be provided.
+It can be done using the constructor or the method <b>open()</b>. Default constructor creates
+an object in the closed state. Non-default opens a file. In case of error an exception is thrown.
+</p>
+
+<p>
+Destructor flushs and closes opened object. Errors are reported.
+</p>
+
+<p>
+<b>isOpened()</b> returns true, if the file is opened, and false otherwise.
+</p>
+
+<p>
+<b>open()</b> opens a closed object with the given file and open flags. 
+In case of error an exception is thrown.
+</p>
+
+<p>
+<b>close()</b> closes an opened object. In case of error and if there is a pending output error
+an exception is thrown.
+</p>
+
+<p>
+<b>soft_close()</b> does not throw, it returns a group of errors using the 
+<a href="page_Files.html"><b>FileMultiError</b></a> object.
+</p>
+
+<p>
+<b>disableExceptions()</b> disables exceptions during print operations.
+</p>
+
+<p>
+<b>preserveFile()</b> preserves a file, opened with the <b>AutoDelete</b> open flag.
+</p>
+
+<p>
+<b>PrintFile</b> class is constructed from two classes: <b>SafeBuf</b> and <b>RawFileToPrint</b>.
+</p>
+
+<pre>
+class <span class="att">SafeBuf</span> : NoCopy
+ {
+   static const ulen SafeLen = 32 ;
+   
+   char *ptr;
+   ulen len;
+   
+   char safebuf[SafeLen];
+ 
+  public:
+  
+   explicit SafeBuf(ulen len);
+   
+   ~SafeBuf();
+
+   char * getPtr() const { return ptr; }
+ 
+   ulen getLen() const { return len; }
+ };
+</pre>
+
+<p>
+The <b>SafeBuf</b> class is used to allocate a file buffer. <b>PrintFile</b> uses the file buffer
+of size 64 KBytes. But if the required memory is not avaliable, <b>SafeBuf</b> uses an internal
+small safeguard buffer of size 32 bytes. 
+</p>
+
+<pre>
+class <span class="att">RawFileToPrint</span> : NoCopy
+ {
+   Sys::File file;
+   bool opened;
+   bool preserve_file;
+   
+  public:
+   
+   // constructors
+  
+   RawFileToPrint() : opened(false) {}
+   
+    // No destructor ! 
+   
+   // methods
+   
+   bool isOpened() const { return opened; }
+   
+   FileError open(StrLen file_name,FileOpenFlags oflags);
+   
+   void close(FileMultiError &amp;errout);
+   
+   void preserveFile() { preserve_file=true; }
+   
+   FileError write(const uint8 *buf,ulen len);
+ }; 
+</pre>
+
+<p>
+The <b>RawFileToPrint</b> class is built on the target <b>Sys::File</b> class. It performes open/close
+operations and the raw file output.
+</p>
+
+<p>
+The target <b>Sys::File</b> class implements the classical set of file operations.
+</p>
+
+<pre>
+struct <span class="att">Sys::File</span>
+ {
+  ....
+
+  // public
+  
+  struct IOResult
+   {
+    ulen len;
+    FileError error;
+   };
+ 
+  struct PosResult
+   {
+    FilePosType pos;
+    FileError error;
+   };
+  
+  FileError open(StrLen file_name,FileOpenFlags oflags);
+ 
+  void close(FileMultiError &errout,bool preserve_file=false); 
+  
+  void close(); 
+   
+  IOResult write(const uint8 *buf,ulen len);
+  
+  IOResult read(uint8 *buf,ulen len);
+  
+  PosResult getLen();
+  
+  PosResult getPos();
+  
+  FileError setPos(FilePosType pos);
+ };
+</pre>
+
+<p>
+The methods of this class call directly OS file system interface functions.
+</p>
 
 <h4>PrintAsyncFile</h4>
 
