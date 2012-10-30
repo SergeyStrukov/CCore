@@ -280,7 +280,7 @@ void Path::addPath(StrLen path)
  {
   if( !path ) return;
   
-  if( *path=='/' )
+  if( IsSlash(*path) )
     {
      rootDir();
      

@@ -52,6 +52,149 @@ host:d:\exchange\device.1\device.log.txt
 
 <h4>PathBase</h4>
 
+<p>
+This structure is a collection of tools for the path scanning.
+</p>
+
+<pre>
+struct <span class="att">PathBase</span>
+ {
+  static bool IsSlash(char ch) { return ch=='/' || ch=='\\' ; }
+  
+  static bool IsDot(char ch) { return ch=='.'; }
+  
+  static bool IsColon(char ch) { return ch==':'; }
+  
+  static bool IsDot(StrLen name) { return name.len==1 && name[0]=='.' ; }
+  
+  static bool IsDotDot(StrLen name) { return name.len==2 && name[0]=='.' && name[1]=='.' ; }
+  
+  static bool IsTilde(StrLen name) { return name.len==1 && name[0]=='~' ; }
+  
+  enum NameType
+   {
+    Name,
+    EmptyName,
+    DotName,
+    DotDotName
+   };
+  
+  static NameType GetNameType(StrLen name);
+  
+  struct ToPrefix
+   {
+    StrLen prefix;
+    StrLen suffix;
+    bool no;
+  
+    void set(StrLen str,StrLen cur);
+  
+    void set(StrLen str);
+   };
+  
+  struct ToPrefixDel
+   {
+    StrLen prefix;
+    StrLen suffix;
+    bool no;
+  
+    void set(StrLen str,StrLen cur);
+  
+    void set(StrLen str);
+   };
+  
+  struct ToSuffix
+   {
+    StrLen prefix;
+    StrLen suffix;
+    bool no;
+  
+    void set(StrLen str,StrLen cur);
+  
+    void set(StrLen str);
+   };
+  
+  template &lt;bool Is(char ch),class To&gt; 
+  struct ForwardScan : To
+   {
+    explicit ForwardScan(StrLen str);
+   };
+  
+  template &lt;bool Is(char ch),class To&gt; 
+  struct BackwardScan : To
+   {
+    explicit BackwardScan(StrLen str);
+   };
+ };
+</pre>
+
+<p>
+<b>IsSlash()</b> tests if the given character is slash.
+</p>
+
+<p>
+<b>IsDot()</b> tests if the given character is dot.
+</p>
+
+<p>
+<b>IsColon()</b> tests if the given character is colon.
+</p>
+
+<p>
+<b>IsDot()</b> tests if the given name is the single dot name.
+</p>
+
+<p>
+<b>IsDotDot()</b> tests if the given name is the double dot name.
+</p>
+
+<p>
+<b>IsTilde()</b> tests if the given name is the single tilde name.
+</p>
+
+<p>
+<b>GetNameType()</b> checks the type of the given name. There are four possible answers:
+</p>
+
+<ul>
+ <li>Name &mdash; a regular file name</li>
+ <li>EmptyName &mdash; the empty name</li>
+ <li>DotName &mdash; the single dot name</li>
+ <li>DotDotName &mdash; the double dot name</li>
+</ul>
+
+<p>
+The following set of classes is used to split the given string into components.
+</p>
+
+<p>
+<b>ForwardScan</b> scans forward the given string for the character, satisfying the given condition.
+If such character is found, it calls the method <b>set(StrLen str,StrLen cur)</b> of the base class.
+Otherwise the method <b>set(StrLen str)</b> is called.
+</p>
+
+<p>
+<b>BackwardScan</b> is similar to the <b>ForwardScan</b>, but scans backward.
+</p>
+
+<p>
+The remaining classes are used to split the string at the found position.
+</p>
+
+<p>
+<b>ToPrefix</b> splits after the found position, i.g. the found character goes to the prefix. 
+In case a required character is not found, the prefix is empty.
+</p>
+
+<p>
+<b>ToPrefixDel</b> is similar to the <b>ToPrefix</b>, but it removes the found character from the prefix.
+</p>
+
+<p>
+<b>ToSuffix</b> splits before the found position, i.g. the found character goes to the suffix.
+In case a required character is not found, the suffix is empty.
+</p>
+
 <h4>SplitDev</h4>
 
 <pre>
@@ -119,7 +262,7 @@ struct <span class="att">SplitDir</span> : PathBase
 
 <p>
 This <b>Class-function</b> splits the given path (assumed without device component) into the first directory
-component and the rest. The <b>no_path</b> is true, if there is no directory component. In this case <b>dir</b>
+component and the rest. The <b>no_path</b> is true, if there is no directory component. In this case the <b>dir</b>
 is null and the <b>path</b> is the given path. Slash goes to the <b>dir</b>.
 </p>
 
@@ -154,25 +297,241 @@ components and the rest. The <b>no_path</b> is true, if there is no directory co
 is null and the <b>path</b> is the given path. Slash goes to the <b>dir</b>.
 </p>
 
-<pre>
-\exchange\device.1\   device.log.txt
-</pre>
-
 <p>
 <b>getNameType()</b> returns the type of the file name component.
 </p>
 
+<pre>
+\exchange\device.1\   device.log.txt
+</pre>
+
 <h4>SplitFullExt</h4>
+
+<pre>
+struct <span class="att">SplitFullExt</span> : PathBase
+ {
+  StrLen name;
+  StrLen ext;  // all  .ext1.ext2...
+  bool no_ext;
+  
+  explicit SplitFullExt(StrLen name);
+  
+  bool operator ! () const { return no_ext; }
+ };
+</pre>
+
+<p>
+This <b>Class-function</b> splits the given file name into the all extensions and the name.
+The <b>no_ext</b> is true, if there is no extension. In this case the <b>ext</b> is null and
+the <b>name</b> is the given name. Dot goes to the <b>ext</b>.
+</p>
+
+<pre>
+device   .log.txt
+</pre>
 
 <h4>SplitExt</h4>
 
+<pre>
+struct <span class="att">SplitExt</span> : PathBase
+ {
+  StrLen name;
+  StrLen ext;  // last  .ext
+  bool no_ext;
+  
+  explicit SplitExt(StrLen name);
+  
+  bool operator ! () const { return no_ext; }
+ };
+</pre>
+
+<p>
+This <b>Class-function</b> splits the given file name into the last extension and the rest.
+The <b>no_ext</b> is true, if there is no extension. In this case the <b>ext</b> is null and
+the <b>name</b> is the given name. Dot goes to the <b>ext</b>.
+</p>
+
+<pre>
+device.log   .txt
+</pre>
+
 <h4>SplitDevName</h4>
+
+<pre>
+struct <span class="att">SplitDevName</span> : PathBase
+ {                   
+  StrLen dev_name; // first  dev_name: , : removed
+  StrLen dev_path; 
+  bool no_dev;
+    
+  explicit SplitDevName(StrLen dev_path);
+  
+  bool operator ! () const { return no_dev; }
+ };
+</pre>
+
+<p>
+<b>SplitDevName</b> is similar to the <b>SplitDev</b>, except it removes colon from the <b>dev_name</b>.
+</p>
+
+<pre>
+host   d:\exchange\device.1\device.log.txt
+</pre>
 
 <h4>SplitDirName</h4>
 
+<pre>
+struct <span class="att">SplitDirName</span> : PathBase
+ {
+  StrLen dir_name; // first  dir_name/ , / removed
+  StrLen path;
+  bool no_path;
+  
+  explicit SplitDirName(StrLen path);
+  
+  bool operator ! () const { return no_path; }
+  
+  NameType getNameType() const { return GetNameType(dir_name); }
+ };
+</pre>
+
+<p>
+<b>SplitDirName</b> is similar to the <b>SplitDir</b>, except it removes slash from the <b>dir_name</b>.
+</p>
+
+<p>
+<b>getNameType()</b> returns the type of the directory name component.
+</p>
+
+<pre>
+   exchange\device.1\device.log.txt
+</pre>
+
+<pre>
+exchange   device.1\device.log.txt
+</pre>
+
 <h4>SplitPathName</h4>
 
+<pre>
+struct <span class="att">SplitPathName</span> : PathBase
+ {             
+  StrLen path; // all  dir1/dir2/.../ , / removed
+  StrLen name;
+  bool no_path;
+  
+  explicit SplitPathName(StrLen path);
+  
+  bool operator ! () const { return no_path; }
+  
+  NameType getNameType() const { return GetNameType(name); }
+ };
+</pre>
+
+<p>
+<b>SplitPathName</b> is similar to the <b>SplitName</b>, except it removes slash from the <b>path</b>.
+</p>
+
+<pre>
+\exchange\device.1   device.log.txt
+</pre>
+
 <h4>Path</h4>
+
+<p>
+The class <b>Path</b> is designed to manipulate with a path. The path inside <b>Path</b> is stored
+in an internal buffer. It has a non-mutable prefix. This prefix is determined by the constructor.
+The string after prefix is a normalized path. I.g. it may be empty or "." or
+"dir1/dir2/.../dir_or_file", where <b>dir</b>s are normal names, dir_of_file may be ".".
+</p>
+
+<pre> 
+class <span class="att">Path</span> : NoCopyBase&lt;PathBase&gt;
+ {
+   char buf[MaxPathLen];
+   ulen buf_len;
+
+   ....
+
+  public:
+   
+   enum BeginType
+    {
+     BeginEmpty,
+     BeginRoot
+    };
+  
+   explicit Path(BeginType=BeginRoot);
+   
+   explicit Path(StrLen dev_name);
+   
+   typedef StrLen PrintProxyType;
+   
+   operator StrLen() const { return StrLen(buf,buf_len); }
+   
+   bool isRoot() const;
+   
+   bool isRootDir() const;
+   
+   void root();
+   
+   void rootDir();
+   
+   void add(StrLen name);
+   
+   void back();
+   
+   void addPath(StrLen path);
+ };
+</pre>
+
+<p>
+<b>Path(Path::BeginEmpty)</b> constructor creates a path object with the empty path prefix.
+</p>
+
+<p>
+<b>Path(Path::BeginRoot)</b> constructor creates a path object with the path prefix equals <b>"/"</b>.
+</p>
+
+<p>
+<b>Path(StrLen dev_name)</b> constructor creates a path object, which has the path prefix <b>dev_name+":/"</b>;
+</p>
+
+<p>
+<b>Path</b> is castable to the <b>StrLen</b> type and printable using this type as the <b>PrintProxyType</b>.
+</p>
+
+<p>
+<b>root()</b> sets the <b>Path</b> value to its path prefix.
+</p>
+
+<p>
+<b>rootDir()</b> sets the <b>Path</b> value to its path prefix + ".".
+</p>
+
+<p>
+<b>isRoot()</b> checks if the object is at the <b>root()</b> state.
+</p>
+
+<p>
+<b>isRootDir()</b> checks if the object is at the <b>rootDir()</b> state.
+</p>
+
+<p>
+<b>add()</b> adds a top path component. It properly handles single dot and double dot names.
+An exception is thrown in case of error.
+</p>
+
+<p>
+<b>back()</b> removes the top path component. The path must not be in the <b>root()</b> or 
+the <b>rootDir()</b> state &mdash; an exception will be thrown.
+</p>
+
+<p>
+<b>addPath()</b> adds multiple path components. If the argument is started with slash, then
+<b>path</b> is assumed absolute, otherwise &mdash; relative to the current value. The empty
+argument does nothing.
+</p>
 
 </body>
 

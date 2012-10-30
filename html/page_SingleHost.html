@@ -1,0 +1,179 @@
+<!--
+/* page_SingleHost.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> SingleHost</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>SingleHost</h2>
+
+<p class="Files">Files <b>CCore/inc/SingleHost.h</b> <b>CCore/src/SingleHost.cpp</b></p>
+
+<p>
+</p>
+
+<h4>SingleHost</h4>
+
+<p>
+<b>SingleHost</b> is working as a global variable, it points to some object, required
+as a global resource. <b>SingleHost</b> object must be a global object. It might have
+an attached object of the type <b>T</b>. To attache and detach this object classes
+<b>SingleMaster</b> and <b>SingleMaster_delete</b> are used. To access this object the class
+<b>SingleHook</b> is used.
+</p>
+
+<pre>
+template &lt;class T&gt;
+class <span class="att">SingleHost</span> : NoCopy
+ {
+   ....
+   
+  public: 
+   
+   explicit SingleHost(TextLabel name);
+   
+   ~SingleHost();
+ };
+</pre>
+
+<p>
+The <b>name</b> is used to name an internal <b>AntiSem</b>. This <b>AntiSem</b> is used 
+for the object life-time control.
+</p>
+
+<h4>SingleHook</h4>
+
+<p>
+<b>SingleHook</b> is used to "hook" an object from a <b>SingleHost</b>. Been hooked, the object is counted 
+as used. The object life-time is extended until it gets out of use.
+</p>
+
+<pre>
+template &lt;class T&gt;
+class <span class="att">SingleHook</span> : NoCopy
+ {
+   ....
+   
+  public:
+
+   //
+   // assign/move/swap are not provided to prevent cyclyc dependencies
+   //
+   
+   // constructors
+   
+   explicit SingleHook(SingleHost&lt;T&gt; &amp;host);
+   
+   ~SingleHook();
+   
+   // object ptr
+   
+   T * operator + () const;
+   
+   bool operator ! () const;
+  
+   T * getPtr() const;
+   
+   T &amp; operator * () const;
+   
+   T * operator -> () const;
+   
+   // copy objects
+   
+   SingleHook(const SingleHook &amp;hook);
+ };
+</pre>
+
+<p>
+Constructor does hook, destructor frees the object. If the host does not have an attached object,
+the hook points to null.
+</p>
+
+<p>
+The object is accessed through the <b>Object Pointer Interface</b>.
+</p>
+
+<p>
+Copy constructor can be used to duplicate the hook. The resulting hook points to the same object.
+</p>
+
+<h4>SingleMaster</h4>
+
+<p>
+<b>SingleMaster</b> controls a <b>SingleHost</b> object. In constructor it attaches the object
+to the host. In destructor it performes detachement. Destructor is waiting until the object
+gets out of use. The object must be constructed before the constructor call and be destructed after 
+the <b>SingleMaster</b> destructor is finished.
+</p>
+
+<pre>
+template &lt;class T&gt;
+class <span class="att">SingleMaster</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   SingleMaster(SingleHost&lt;T&gt; &amp;host,TextLabel name,T &amp;obj);
+   
+   ~SingleMaster(); 
+   
+   void guard();
+ };
+</pre>
+
+<p>
+Constructor tries to attach the given object to the host. The <b>name</b> is used to name the internal
+<b>AntiSem</b>. If the host has already an attached object, the constructor and then destructor does nothing.
+You may use the method <b>guard()</b> to throw an exception, if this happens.
+</p>
+
+<h4>SingleMaster_delete</h4>
+
+<p>
+<b>SingleMaster_delete</b> is working similar to <b>SingleMaster</b>. The difference is:
+the object is provided using a pointer, not a reference. And the destructor deletes the object.
+So the object must be created using the <b>operator new</b>.
+</p>
+
+<pre>
+template &lt;class T&gt;
+class <span class="att">SingleMaster_delete</span> : NoCopy 
+ {
+   ....
+
+  public:
+   
+   SingleMaster_delete(SingleHost&lt;T&gt; &amp;host,TextLabel name,T *obj);
+   
+   ~SingleMaster_delete();
+   
+   void guard();
+ };
+</pre>
+
+</body>
+
+</html>
+

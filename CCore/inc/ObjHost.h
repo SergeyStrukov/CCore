@@ -388,7 +388,7 @@ struct ObjInfo_obj_if
  
 /* class ObjHook */ 
  
-class ObjHook
+class ObjHook : NoCopy
  {
    ObjBase *obj;
    
@@ -443,6 +443,7 @@ class ObjHook
    // copy objects
    
    ObjHook(const ObjHook &hook)
+    : NoCopy() // warning supression
     {
      obj=hook.obj;
      

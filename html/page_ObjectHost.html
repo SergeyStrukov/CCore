@@ -1,0 +1,174 @@
+<!--
+/* page_ObjectHost.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> ObjectHost</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>ObjectHost</h2>
+
+<p class="Files">Files <b>CCore/inc/ObjHost.h</b> <b>CCore/src/ObjHost.cpp</b></p>
+
+<h4>ObjBase</h4>
+
+<p>
+<b>ObjBase</b> is a base class of objects to be hosted. 
+</p>
+
+<pre>
+class <span class="att">ObjBase</span> : public MemBase_nocopy
+ {
+   ....
+
+  public:
+  
+   ObjBase();
+   
+   virtual ~ObjBase();
+   
+   void wait_released();
+   
+   bool wait_released(MSec timeout);
+   
+   bool wait_released(TimeScope time_scope);
+ };
+</pre>
+
+<h4>ObjHost</h4>
+
+<p>
+<b>ObjHost</b> is a hosting class. There is a default global object of this type.
+</p>
+
+<pre>
+class <span class="att">ObjHost</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   explicit ObjHost(TextLabel name);
+   
+   ~ObjHost();
+   
+   void add(ObjBase &amp;obj,StrLen name);
+   
+   void del(ObjBase &amp;obj);
+   
+   static ObjHost &amp; Default();
+   
+   template &lt;class Info&gt; class List;
+ };
+</pre>
+
+<h4>ObjHook</h4>
+
+<pre>
+class <span class="att">ObjHook</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   //
+   // assign/move/swap are not provided to prevent cyclyc dependencies
+   //
+   
+   // constructors
+  
+   ObjHook(ObjHost &amp;host,StrLen name);
+   
+   explicit ObjHook(StrLen name);
+    
+   ObjHook(JustTryType,ObjHost &amp;host,StrLen name);
+   
+   ObjHook(JustTryType,StrLen name);
+    
+   ~ObjHook();
+   
+   // cast
+   
+   bool operator + () const;
+   
+   bool operator ! () const;
+    
+   template &lt;class T&gt;
+   T * cast() const;
+   
+   template &lt;class T&gt;
+   T * cast_guarded() const; 
+   
+   template &lt;class T&gt;
+   operator T * () const;
+   
+   // copy objects
+   
+   ObjHook(const ObjHook &amp;hook);
+ };
+</pre>
+
+<h4>ObjMaster</h4>
+
+<pre>
+class <span class="att">ObjMaster</span> : NoCopy
+ {
+   .... 
+   
+  public: 
+  
+   ObjMaster(ObjHost &amp;host,ObjBase &amp;obj,StrLen name); 
+   
+   ObjMaster(ObjBase &amp;obj,StrLen name); 
+   
+   ~ObjMaster(); 
+ };
+</pre>
+
+<h4>ObjMaster_delete</h4>
+
+<pre>
+class <span class="att">ObjMaster_delete</span> : NoCopy
+ {
+   ....
+   
+  public: 
+  
+   ObjMaster_delete(ObjHost &amp;host,ObjBase *obj,StrLen name); 
+   
+   ObjMaster_delete(ObjBase *obj,StrLen name); 
+   
+   ~ObjMaster_delete(); 
+ };
+</pre>
+
+<h4></h4>
+
+<h4></h4>
+
+<h4></h4>
+
+</body>
+
+</html>
+

@@ -171,6 +171,7 @@ class SingleHook : NoCopy
    // copy objects
    
    SingleHook(const SingleHook &hook)
+    : NoCopy() // warning supression
     {
      obj=hook.obj;
      asem=hook.asem;
