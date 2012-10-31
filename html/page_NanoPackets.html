@@ -262,13 +262,18 @@ you must do it prior the pool construction and release it after the pool destruc
 </p>
 
 <p>
-Destructor destoys the pool. All packets must be freed, otherwise abort is called. 
+Destructor destroys the pool. All packets must be freed, otherwise abort is called. 
 </p>
 
 <p>
 <b>try_get()</b> returns a packet from the pool or the null packet. When packet is freed, the virtual method 
 <b>post_free()</b> is called. You can overload this method in a derived class to implement a top level
 logic of packet control.
+</p>
+
+<p>
+<b>NanoPacketPool</b> uses <b>FastMutex</b> to protect operations. So it can be used safely by multiple threads
+and even in the interrupt context on <b>XCore</b> targets. <b>post_free()</b> is called after the lock is released.
 </p>
 
 </body>

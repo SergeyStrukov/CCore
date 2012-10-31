@@ -131,7 +131,7 @@ class <span class="att">PrintCon</span> : public PrintBase
 
 <p>
 The small difference is the constructor takes the additional argument <b>timeout</b>, defaulted to the  
-<b>DefaultTimeout</b>. Th main diffrerence, however, not the interface, but the implementation.
+<b>DefaultTimeout</b>. The main diffrerence, however, not the interface, but the implementation.
 <b>XCore</b> <b>PrintCon</b> uses <a href="page_NanoPackets.html"><b>NanoPacket</b></a>s. Methods <b>Print()</b> create a temporary <b>PrintCon</b>
 object to print the text. Printing is not permitted in the interrupt context.
 </p>
@@ -195,7 +195,7 @@ class <span class="att">PrintFile</span> : public PrintBase
 
 <p>
 <b>PrintFile</b> object can be opened or closed. To print to the particular file, a <b>PrintFile</b>
-object must be opened and a file name and <a href="page_Files.html">open flags</a> must be provided.
+object must be opened and the file name and <a href="page_Files.html">open flags</a> must be provided.
 It can be done using the constructor or the method <b>open()</b>. Default constructor creates
 an object in the closed state. Non-default opens a file. In case of error an exception is thrown.
 </p>

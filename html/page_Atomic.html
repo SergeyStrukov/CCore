@@ -1,0 +1,238 @@
+<!--
+/* page_Atomic.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Atomic</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Atomic</h2>
+
+<p class="Files">Files <b>CCore/inc/task/Atomic.h</b> <b>CCore/src/task/Atomic.cpp</b></p>
+
+<p>
+Atomic is an unsigned integral variable with a set of "atomic" operations. Such variable can be used safely
+by multiple threads without using mutexes. Moreover, efficient mutex implementaion is based on atomics.
+Atomic operations (except reading a value) implies a "memory fence". This feature is irrelevant on single core
+systems, but for muti-core CPU it is essential to ensure the memory visibility coherence.
+</p>
+
+<pre>
+class <span class="att">Atomic</span> : NoCopy
+ {
+   Sys::Atomic atomic;
+   
+  public: 
+  
+   typedef Sys::Atomic::Type Type;
+   
+   Atomic();
+   
+   typedef Type PrintProxyType;
+  
+   operator Type() const;
+  
+   // return previous value, memory fence is used
+
+   Type operator  = (Type value);
+  
+   Type operator += (Type value);
+  
+   Type operator -= (Type value);
+  
+   Type operator ++ (int);
+  
+   Type operator -- (int);
+  
+   Type trySet(Type old_value,Type new_value);
+ };
+</pre>
+
+<p>
+<b>Atomic::Type</b> is the undelying integral type. Usually it is a machine word type. This type is a
+<b>PrintProxyType</b>. 
+</p>
+
+<p>
+Default constructor sets the value to zero.
+</p>
+
+<p>
+Implicit cast operator reads the value atomically with respect to other operations, but does not imply 
+a memory fence.
+</p>
+
+<p>
+All modifying operations imply a memory fence and return the value of the object <b>before</b> the operation.
+"Memory fence" means that if a thread red the modifyed value of the atomic, it sees all variable 
+modification, made before the atomic operation has been performed by the thread, who has done atomic operation. 
+On single core CPU this is always true, because threads are not executed simultaneously and only a compiler 
+optimization may be an issue. But on multi-core CPU it is possible, that concurent excution of CPU read-write
+commands changes the order of visible variable modification. So a special CPU commands must be used
+to prevent this.
+</p>
+
+<pre>
+
+volatile int a=0;
+volatile int b=0;
+
+// thread 1
+
+b=1;
+a=1;
+
+// thread 2
+
+while( a==0 );
+
+int c=b; // c might be zero
+
+</pre>
+
+<p>
+<b>operator =</b> assignes a new value.
+</p>
+
+<p>
+<b>operator +=</b> increases the current value by the argument.
+</p>
+
+<p>
+<b>operator &minus;=</b> decreases the current value by the argument.
+</p>
+
+<p>
+<b>postfix operator ++</b> increments the current value.
+</p>
+
+<p>
+<b>postfix operator &minus;&minus;</b> decrements the current value.
+</p>
+
+<p>
+<b>trySet()</b> is a more complex operation. It compares the current value with the <b>old_value</b>.
+If they equal, then it assignes the <b>new_value</b>. Otherwise does nothing. You may learn what case
+has happend by comparing the return value with the <b>old_value</b>.
+</p>
+
+<h4>Sys::Atomic</h4>
+
+<p>
+Atomic implementation is based on the target atomic class <b>Sys::Atomic</b>.
+</p>
+
+<pre>
+struct <span class="att">Sys::Atomic</span> // POD type
+ {
+  // public
+  
+  typedef ??? Type; // unsigned integral type, most likely unsigned
+
+  // private data
+  
+  ....
+  
+  // public
+  
+  typedef Type PrintProxyType;
+  
+  void set_null();
+  
+  operator Type() const;
+  
+  // return previous value, memory fence is used
+  
+  Type operator  = (Type value);
+  
+  Type operator += (Type value);
+  
+  Type operator -= (Type value);
+  
+  Type operator ++ (int);
+  
+  Type operator -- (int);
+  
+  Type trySet(Type old_value,Type new_value);
+ };
+</pre>
+
+<p>
+A typical implementation would be:
+</p>
+
+<pre>
+struct <span class="att">Sys::Atomic</span>
+ {
+  // public
+  
+  typedef ??? Type; // unsigned integral type, most likely unsigned
+
+  // private data
+  
+  volatile Type atomic; // volatile for the explicit Get()
+  
+  // private
+  
+  static Type Get(const volatile Type *atomic) { return *atomic; }
+ 
+  static Type Set(volatile Type *atomic,Type value) noexcept;
+
+  static Type Add(volatile Type *atomic,Type value) noexcept;
+
+  static Type Sub(volatile Type *atomic,Type value) { return Add(atomic,-value); }
+ 
+  static Type Inc(volatile Type *atomic) { return Add(atomic,1); }
+ 
+  static Type Dec(volatile Type *atomic) { return Sub(atomic,1); }
+ 
+  static Type TrySet(volatile Type *atomic,Type old_value,Type new_value) noexcept;
+  
+  // public
+  
+  typedef Type PrintProxyType;
+  
+  void set_null() { atomic=0; }
+  
+  operator Type() const { return Get(&atomic); }
+  
+  // return previous value, memory fence is used
+  
+  Type operator  = (Type value) { return Set(&atomic,value); }
+  
+  Type operator += (Type value) { return Add(&atomic,value); }
+  
+  Type operator -= (Type value) { return Sub(&atomic,value); }
+  
+  Type operator ++ (int) { return Inc(&atomic); }
+  
+  Type operator -- (int) { return Dec(&atomic); }
+  
+  Type trySet(Type old_value,Type new_value) { return TrySet(&atomic,old_value,new_value); }
+ };
+</pre>
+
+</body>
+
+</html>
+

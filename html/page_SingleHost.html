@@ -58,8 +58,7 @@ class <span class="att">SingleHost</span> : NoCopy
 </pre>
 
 <p>
-The <b>name</b> is used to name an internal <b>AntiSem</b>. This <b>AntiSem</b> is used 
-for the object life-time control.
+The <b>name</b> is used to name an internal mutex. 
 </p>
 
 <h4>SingleHook</h4>
@@ -107,7 +106,7 @@ class <span class="att">SingleHook</span> : NoCopy
 
 <p>
 Constructor does hook, destructor frees the object. If the host does not have an attached object,
-the hook points to null.
+the hook is null.
 </p>
 
 <p>
@@ -122,7 +121,7 @@ Copy constructor can be used to duplicate the hook. The resulting hook points to
 
 <p>
 <b>SingleMaster</b> controls a <b>SingleHost</b> object. In constructor it attaches the object
-to the host. In destructor it performes detachement. Destructor is waiting until the object
+to the host. In destructor it detaches object. Destructor is waiting until the object
 gets out of use. The object must be constructed before the constructor call and be destructed after 
 the <b>SingleMaster</b> destructor is finished.
 </p>
@@ -145,14 +144,15 @@ class <span class="att">SingleMaster</span> : NoCopy
 
 <p>
 Constructor tries to attach the given object to the host. The <b>name</b> is used to name the internal
-<b>AntiSem</b>. If the host has already an attached object, the constructor and then destructor does nothing.
+<b>AntiSem</b>. This <b>AntiSem</b> is used to control the life-time of the object. 
+If the host has already an attached object, the constructor and then destructor does nothing.
 You may use the method <b>guard()</b> to throw an exception, if this happens.
 </p>
 
 <h4>SingleMaster_delete</h4>
 
 <p>
-<b>SingleMaster_delete</b> is working similar to <b>SingleMaster</b>. The difference is:
+<b>SingleMaster_delete</b> is working similar to the <b>SingleMaster</b>. The difference is:
 the object is provided using a pointer, not a reference. And the destructor deletes the object.
 So the object must be created using the <b>operator new</b>.
 </p>

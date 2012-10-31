@@ -30,10 +30,14 @@
 
 <p class="Files">Files <b>CCore/inc/ObjHost.h</b> <b>CCore/src/ObjHost.cpp</b></p>
 
+<p>
+<b>ObjectHost</b> can host a set of objects. Each object is identified by its name.
+</p>
+
 <h4>ObjBase</h4>
 
 <p>
-<b>ObjBase</b> is a base class of objects to be hosted. 
+<b>ObjBase</b> is a base class of an object to be hosted. 
 </p>
 
 <pre>
@@ -54,6 +58,18 @@ class <span class="att">ObjBase</span> : public MemBase_nocopy
    bool wait_released(TimeScope time_scope);
  };
 </pre>
+
+<p>
+This class is polymorphic. It has a virtual destructor, so you can destroy an object of derived type
+using a pointer to the base class. It is derived from <b>MemBase_nocopy</b>, so it is noncopyable
+and inherits memory allocation operators, based on <b>CCore</b> heap.
+</p>
+
+<p>
+<b>wait_release()</b> methods wait until the object gets out of use. You should used these
+methods after you detach the object from the host, in case if you manage an object not using
+one of the <b>ObjMaster</b> class.
+</p>
 
 <h4>ObjHost</h4>
 
@@ -82,7 +98,30 @@ class <span class="att">ObjHost</span> : NoCopy
  };
 </pre>
 
+<p>
+Constructor uses the <b>name</b> to name an internal mutex.
+</p>
+
+<p>
+<b>add()</b> attaches the given object with the given name. When it is done, the object can be "hooked"
+using <b>ObjHook</b> class.
+</p>
+
+<p>
+<b>del()</b> detaches the object. After it is finished, the object is no more visible, but may 
+still be in use. Use the <b>wait_release()</b> method of the object to block execution
+while the object is used and cannot be safely destroyed.
+</p>
+
+<p>
+<b>Default()</b> returns a reference to the default host object.
+</p>
+
 <h4>ObjHook</h4>
+
+<p>
+<b>ObjHook</b> "hooks" an object, attached to the host. 
+</p>
 
 <pre>
 class <span class="att">ObjHook</span> : NoCopy
@@ -120,7 +159,7 @@ class <span class="att">ObjHook</span> : NoCopy
    T * cast_guarded() const; 
    
    template &lt;class T&gt;
-   operator T * () const;
+   operator T * () const { return cast_guarded&lt;T&gt;(); }
    
    // copy objects
    
@@ -128,7 +167,37 @@ class <span class="att">ObjHook</span> : NoCopy
  };
 </pre>
 
+<p>
+Constructor hooks an object with the given name at the given host, or default host.
+Try-variants do not throw exceptions if the object is not found, they create a null hook. 
+</p>
+
+<p>
+Destructor releases the object.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to check, if the hook is null.
+</p>
+
+<p>
+<b>cast()</b> performes <b>dynamic_cast</b> to the given type.
+</p>
+
+<p>
+<b>cast_guarder()</b> is a guarded variant of the <b>cast()</b>, if the result if null, an 
+exception is thrown.
+</p>
+
+<p>
+Copy constructor creates a copy of the hook, it points to the same object.
+</p>
+
 <h4>ObjMaster</h4>
+
+<p>
+<b>ObjMaster</b> can be used to attach and detach an object to a host.
+</p>
 
 <pre>
 class <span class="att">ObjMaster</span> : NoCopy
@@ -145,7 +214,23 @@ class <span class="att">ObjMaster</span> : NoCopy
  };
 </pre>
 
+<p>
+Constructor does attach. If the host is not specified, the default host is used.
+The object is attached with the given name. An exception is thrown in case of error.
+</p>
+
+<p>
+Destructor does detach and waits until the object gets out of use. After the destructor is funished
+it is safe to destroy the object.
+</p>
+
 <h4>ObjMaster_delete</h4>
+
+<p>
+This class is similar to the <b>ObjMaster</b>. The difference is: the object is given by a pointer, 
+not by a reference, and destructor deletes the object. So the object must be constructed using the 
+<b>operator new</b>. 
+</p>
 
 <pre>
 class <span class="att">ObjMaster_delete</span> : NoCopy
@@ -162,11 +247,170 @@ class <span class="att">ObjMaster_delete</span> : NoCopy
  };
 </pre>
 
-<h4></h4>
+<h4>ObjHost::List</h4>
 
-<h4></h4>
+<p>
+This class can be used to build a list of records with information about objects, attached to a host.
+</p>
 
-<h4></h4>
+<pre>
+template &lt;class Info&gt;
+class <span class="att">ObjHost::List</span> : NoCopy
+ {
+   ....
+    
+  public:
+  
+   List();
+   
+   ~List(); 
+   
+   void build(ObjHost &amp;host=Default());
+   
+   const Info * getPtr() const;
+   
+   ulen getLen() const;
+ };
+</pre>
+
+<p>
+Constructor creates an empty object.
+</p>
+
+<p>
+<b>build()</b> appends the list with <b>Info</b> records about objects, attached to the given host.
+If a record contains a pointer to the object, the object is hooked and released later by the 
+destructor of the list. Objects may be selected based on they properties to be included in the list.
+</p>
+
+<p>
+The range access is provided to the record range.
+</p>
+
+<p>
+There are four type of <b>Info</b> records.
+</p>
+
+<h4>ObjInfo</h4>
+
+<p>
+This info record conatins only the name of object.
+</p>
+
+<pre>
+struct <span class="att">ObjInfo</span>
+ {
+  ....
+
+  // data
+  
+  StrLen name;
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+<b>print()</b> prints the name.
+</p>
+
+<h4>ObjInfo_obj</h4>
+
+<p>
+This info record conatins the name of object and the pointer to the object.
+</p>
+
+<pre>
+struct <span class="att">ObjInfo_obj</span>
+ {
+  ....
+
+  // data
+  
+  StrLen name;
+  ObjBase *obj;
+  
+  // methods
+  
+  ObjBase * getObj() const { return obj; }
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+<b>print()</b> prints the name.
+</p>
+
+<h4>ObjInfo_if</h4>
+
+<p>
+This info record contains the name of the object and selects only objects, implementing the given
+interface (i.g. castable to the given type).
+</p>
+
+<pre>
+template &lt;class T&gt;
+struct <span class="att">ObjInfo_if</span>
+ {
+  ....
+
+  // data
+ 
+  StrLen name;
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+<b>print()</b> prints the name.
+</p>
+
+<h4>ObjInfo_obj_if</h4>
+
+<p>
+This info record conatins the name of object and the pointer to the object and selects only objects, 
+implementing the given interface (i.g. castable to the given type).
+</p>
+
+<pre>
+template &lt;class T&gt;
+struct <span class="att">ObjInfo_obj_if</span>
+ {
+  ....
+
+  // data
+ 
+  StrLen name;
+  Extra extra;
+  
+  // methods
+  
+  ObjBase * getObj() const { return extra.obj; }
+  
+  T * getPtr() const { return extra.ptr; }
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+<b>print()</b> prints the name.
+</p>
 
 </body>
 

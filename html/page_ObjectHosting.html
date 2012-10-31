@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_ObjectHosting.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> ObjectHosting</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,21 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Object Hosting</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p>
+Object hosting is a process of registering an object into some register (object host).
+Once the object is attached to the host, it becomes visible as a global entity.
+Any client (thread of execution) may find and hook the object and use its functionality.
+After the object is detached from the host it still may be in use, so the life-time control
+must be used to wait until the object is free and can be safely disposed. The <b>AntiSem</b>
+reference counting is used for this purpose. 
+</p>
 
+<p>
+Two object hosts are provides in <b>CCore</b>. <b>ObjHost</b> can host multiple polymorphic
+objects, identified by the names. <b>SingleHost</b> can host a single object of the given type.
+</p>
 
 </body>
 
