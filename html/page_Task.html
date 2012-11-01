@@ -32,6 +32,191 @@
 
 <p class="Files">Subfolders <b>CCore/inc/task</b> <b>CCore/src/task</b></p>
 
+<p>
+Tasks and synchonization objects are the heart of any real-time system platform.
+The word "task" is used by tradition instead of thread. A typical embedded application may be regarded
+as a multi-threaded process, running in a single memory space. It has direct access to all hardware features. 
+The functionality of the application is implemented in a series of tasks. The board starts after reboot,
+performes a core initializations and runs the main task. At start you need a working RAM, CPU, timers,
+interrupt controller, serial port and may be some extra stuff.
+Main task performes additional working hardware initialization, prepares and runs tasks.
+</p>
+
+<p>
+In <b>XCore</b> the entry point to the main task is the usual function <b>main()</b>. Global objects
+are constructed before the <b>main()</b> and destructed after. During this phase interrupts are disabled and
+running extra tasks is not permitted. When <b>main()</b> is finished, the main task is blocked until all extra 
+tasks are completed and then global objects are destroyed.
+</p>
+
+<p>
+The header <b>Task.h</b> includes all task related stuff. <b>XCore</b> variants of the same classes have
+extra features than <b>HCore</b>.
+</p>
+
+<p>
+To run a task the class <b>Task</b> is used.
+</p>
+
+<h4>HCore Task</h4>
+
+<p>
+The class <b>Task</b> is polymorphic, with a virtual destructor and derived from the <b>MemBase_nocopy</b>.
+A task object must not be destroyed until the associated thread of execution is running.
+</p>
+
+<p>
+There are two virtual methods of this class to be overloaded in a derived class: <b>entry()</b> and 
+<b>exit()</b>. The first implements a task functionality. The second is called to complete the task
+execution. You may assume the task is logically finished when this method is called. 
+</p>
+
+<pre>
+class <span class="att">Task</span> : public MemBase_nocopy
+ {
+   ....
+   
+  private:
+  
+   virtual void entry();
+   
+   virtual void exit();
+  
+  public:
+  
+   Task();
+   
+   virtual ~Task();
+   
+   bool run_or_exit();
+   
+   // task control
+   
+   static void Yield() { Sys::YieldTask(); }
+   
+   static void Sleep(MSec time) { Sys::SleepTask(time); }
+   
+   static Task * GetCurrent();
+ };
+</pre>
+
+<p>
+<b>run_or_exit()</b> performes "run of exit" operation. I.g. it tryes to start a task. If
+the task is started, the true is returned. Otherwise, the method <b>exit()</b> is called and false is returned.
+You cannot run the same task twice. So <b>exit()</b> is called either way: as the part of <b>run_or_exit()</b> call
+or after the task is finished. This method can be used to destroy a dynamically allocated task object, 
+to signal about task completion.
+</p>
+
+<p>
+<b>Yield()</b> rolls the CPU to another running task, if any.
+</p>
+
+<p>
+<b>Sleep()</b> sleeps the current task for the given period of time in milliseconds.
+</p>
+
+<p>
+<b>GetCurrent()</b> returns the current running task object. If the current thread was not spawned 
+from the <b>Task</b> class, the return value is null.
+</p>
+
+<h3>XCore Task</h3>
+
+<p>
+<b>XCore</b> <b>Task</b> class is similar to <b>HCore</b>, but has some extra features.
+</p>
+
+<pre>
+class <span class="att">Task</span> : public MemBase_nocopy
+ {
+   ....
+
+  private: 
+   
+   virtual void entry();
+   
+   virtual void exit();
+   
+  public:
+  
+   explicit Task(TaskPriority priority=DefaultTaskPriority,
+                 ulen stack_len=DefaultStackLen);
+   
+   explicit Task(TextLabel name,
+                 TaskPriority priority=DefaultTaskPriority,
+                 ulen stack_len=DefaultStackLen);
+    
+   virtual ~Task();
+   
+   TextLabel getName() const;
+      
+   TaskPriority getPriority() const;
+
+   bool run_or_exit();
+   
+   // task control
+   
+   static void Yield();
+   
+   static void Sleep(MSec time);
+  
+   static void RelaxPriority(unsigned period_tick,TaskPriority priority=IdleTaskPriority);
+  
+   static Task * GetCurrent() { return Current; }
+ };
+</pre>
+
+<p>
+<b>XCore</b> <b>Task</b> constructors have additional task parameters. Task can be explicitly named. If the name is
+not provided, some auto-generated name is used. This name is used in system logging and event recording.
+The <b>TaskPriority</b> is assigned to the task. Task priority determines the task running sequence:
+a task with higher priority preempts an execution of tasks with lower priority. The task priority cannot be changed,
+but can be temporary raised automatically by synchonization objects. Finally, the task <b>stack_len</b> 
+can be specified.
+</p>
+
+<pre>
+
+enum <span class="att">TaskPriority</span> : unsigned
+ {
+  ExitTaskPriority     = 0,                   // highest
+  CompleteTaskPriority = 1,
+  
+  DefaultTaskPriority  = 10000,               // default
+  MainTaskPriority     = DefaultTaskPriority,       
+  
+  IdleTaskPriority     = unsigned(-1)         // lowest
+ };
+ 
+inline bool Preempt(TaskPriority a,TaskPriority b) { return a&lt;b; }
+
+PrintTaskPriority GetTextDesc(TaskPriority priority);
+
+</pre>
+
+<p>
+Task priority counts down: the less value means the higher priority. There are three special tasks in the system:
+<b>ExitTask</b>, <b>CompleteTask</b> and <b>IdleTask</b>.
+</p>
+
+<p>
+<b>IdleTask</b> runs while other tasks are blocked. It has the lowest priority.
+</p>
+
+<p>
+<b>ExitTask</b> is used to call the method <b>exit()</b>. This task can safely destroy another task object.
+<b>ExitTask</b> has the highest priority.
+</p>
+
+<p>
+<b>CompleteTask</b> is used for the packet completion. It has the next highest priority after the <b>ExitTask</b>.
+</p>
+
+<p>
+It is not recommeded to run a task with one of the special task priority.
+</p>
+
 </body>
 
 </html>
