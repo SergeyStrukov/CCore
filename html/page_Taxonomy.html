@@ -132,7 +132,7 @@ struct Point
 <p>
 <b>Data Type</b> is a type with data semantic, but with an arbitary large state. The simplest example is the class 
 <a href="page_String.html"><b>String</b></a>.
-The purpose of such types is to store some discrete piece of information. The information is stored in some owned buffer.
+The purpose of such types is to store some piece of data. The data is stored in some owned buffer.
 They may have the copy constructor and the assign operator. These operators can be implemented as <b>efficient</b> 
 operations using reference counting.
 In <b>CCore</b> we don't make a class copyable if there is no way to make it <b>efficient</b>. In such situation the class

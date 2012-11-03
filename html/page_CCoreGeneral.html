@@ -28,8 +28,10 @@
 
 <h2>CCore General</h2>
 
+<h3>Source code organization</h3>
+
 <p>
-Most of <b>CCore</b> is enclosed in the namespace <b>CCore</b>.
+Most of <b>CCore</b> declarations are enclosed in the namespace <b>CCore</b>.
 </p>
 
 <p>
@@ -54,10 +56,14 @@ So to include a <b>CCore</b> header write
 Each <b>CCore</b> .h file has a correspondent .cpp file, even if it defines nothing.
 </p>
 
-<h3>Names</h3>
+<p>
+Each target is either <b>HCore</b> or <b>XCore</b> target, so it includes only one part: <b>HCore</b> or <b>XCore</b>.
+</p>
+
+<h3>Names and decorations</h3>
 
 <p>
-All global entities have capitalized names. I.g. class names, global objects etc. Local object names, non-static members
+All global entities have capitalized names. I.e. class names, global objects etc. Local object names, non-static members
 and method names start from lowercase letters.
 </p>
 
@@ -82,6 +88,8 @@ class SomeClass
 
 <p>
 The private part goes first, the public is last.
+Members are decorated as "item_count". Methods as "getItemCount()". Getters as "getItemCount()" and
+setters as "setItemCount()". The argument, used to initialize a member "item_count" named as "item_count_".
 </p>
 
 <p>
@@ -138,8 +146,32 @@ class Sem : public Funchor_nocopy
 </pre>
 
 <p>
-The popular words: count, len, obj, try, zstr, d&lt;something&gt; to designate a delta value.
+The popular words are: "count", "len", "obj", "try...", "zstr", "d..." to designate a delta value.
 </p>
+
+<h3>operator + and a "null" state</h3>
+
+<p>
+There are many types, which have a special state &mdash; "null" state.
+Usually for such types the default constructor initialize them in this state.
+<b>CCore</b> often defines the <b>Nothing</b>-constructor to do the same.
+And two operators: <b>operator +</b> and <b>operator !</b> can be used to check, if the object is "null".
+</p>
+
+<pre>
+class SomeClass
+ {
+  public:
+
+   SomeClass(); // set the object into the null state
+
+   SomeClass(NothinType); // set the object into the null state too
+
+   boolable operator + () const; // return true, if the object is not "null"
+
+   bool operator ! () const; // return true, if the object is "null"
+ };
+</pre>
 
 </body>
 

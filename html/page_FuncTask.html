@@ -1,0 +1,118 @@
+<!--
+/* page_FuncTask.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> FuncTask</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>FuncTask</h2>
+
+<p class="Files">Files <b>CCore/inc/task/FuncTask.h</b> <b>CCore/src/task/FuncTask.cpp</b></p>
+
+<p>
+<b>RunFuncTask</b> runs a task, which calls the given functor.
+</p>
+
+<pre>
+
+template &lt;class FuncInit,class ... TT&gt;
+void <span class="att">RunFuncTask</span>(const FuncInit &amp;func_init,TT ... tt);
+
+template &lt;class FuncInit,class ... TT&gt;
+void <span class="att">RunFuncTask</span>(const FuncInit &amp;func_init,Function&lt;void (void)&gt; exit_function,TT ... tt);
+
+</pre>
+
+<p>
+The first argument is a <a href="page_FunctorType.html"><b>Functor Init</b></a> object. The functor
+itself is created by the spawned task and then it is called.
+</p>
+
+<p>
+The second argument may be an exit function. It is called as a part of the task exit processing.
+This function is always called, even if the task run failed. 
+</p>
+
+<p>
+If the task run is failed, then an exception is thrown.
+</p>
+
+<p>
+Remaing arguments are used to create a <b>Task</b> object.
+</p>
+
+<p>
+To run a task the following class, derived from the class <b>Task</b>, is used.
+</p>
+
+<pre>
+template &lt;class FuncInit&gt;
+class <span class="att">FuncTask</span> : public Task
+ {
+   FuncInit func_init;
+   Function&lt;void (void)&gt; exit_function;
+   
+  private: 
+  
+   virtual void entry()
+    {
+     FunctorTypeOf&lt;FuncInit&gt; func(func_init);
+    
+     func();
+    }
+   
+   virtual void exit()
+    {
+     auto func=exit_function;
+     
+     delete this;
+     
+     func();
+    }
+   
+  public: 
+  
+   template &lt;class ... TT&gt;
+   explicit FuncTask(const FuncInit &amp;func_init_,TT ... tt)
+    : Task(tt...),
+      func_init(func_init_) 
+    {
+    }
+   
+   template &lt;class ... TT&gt;
+   FuncTask(const FuncInit &amp;func_init_,Function&lt;void (void)&gt; exit_function_,TT ... tt) 
+    : Task(tt...),
+      func_init(func_init_),
+      exit_function(exit_function_) 
+    {
+    }
+   
+   virtual ~FuncTask() {}
+ };
+</pre>
+
+</body>
+
+</html>
+
