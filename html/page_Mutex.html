@@ -1,0 +1,185 @@
+<!--
+/* page_Mutex.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Mutex</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Mutex</h2>
+
+<p class="Files">Files <b>CCore/inc/task/Mutex.h</b> <b>CCore/src/task/Mutex.cpp</b></p>
+
+<p>
+<b>Mutex</b> is a mutex, i.g. a class, used to serialize a group of code blocks, executing in a mutiple threads.
+</p>
+
+<pre>
+class <span class="att">Mutex</span> : NoCopy
+ {
+   ....
+   
+  public: 
+  
+   Mutex();
+   
+   explicit Mutex(TextLabel name);
+   
+   ~Mutex();
+   
+   void lock();
+  
+   void unlock();
+  
+   typedef LockObject&lt;Mutex&gt; Lock;
+ };
+</pre>
+
+<p>
+<b>lock()</b> establishes an exclusive ownership on the mutex from the calling thread. A thread can lock the mutex
+multiple times, any extra locks just increases the internal lock counter.
+</p>
+
+<p>
+If the mutex is locked and a different thread is trying to lock it, then this thread will be 
+blocked, until the mutex is released.
+</p>
+
+<p>
+<b>unlock()</b> is a "memory fence" operation, i.g. all variable changes, made before unlock, will be visible
+to other threads, locking the mutex.
+</p>
+
+<p>
+<b>unlock()</b> is used to release a lock. If the mutex was locked several times, it must be unlocked
+the same number of times to be completely released.
+</p>
+
+<p>
+<span class="alert">It is highly recommended to lock a mutex using the inner class <b>Lock</b></span>:
+</p>
+
+<pre>
+
+Mutex mutex;
+
+ {
+  Mutex::Lock lock(mutex);
+
+  ....
+ }
+
+</pre>
+
+<p>
+A manual calls of the <b>lock()/unlock()</b> must be excluded.
+</p>
+
+<p>
+<b>Mutex</b> operations are efficient, unless they don't cause a task block/release.
+</p>
+
+<h4>HCore Mutex</h4>
+
+<pre>
+
+inline unsigned <span class="att">MutexSpinCount</span>() { return Sys::GetSpinCount(); }
+
+class <span class="att">Mutex</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   explicit Mutex(unsigned spin_count=MutexSpinCount());
+   
+   explicit Mutex(TextLabel name,unsigned spin_count=MutexSpinCount());
+   
+   ~Mutex();
+   
+   void lock();
+  
+   void unlock();
+  
+   unsigned getSemCount();
+   
+   typedef LockObject&lt;Mutex&gt; Lock;
+ };
+</pre>
+
+<p>
+<b>HCore</b> <b>Mutex</b> constructor uses the additional argument: <b>spin_count</b>. It is defaulted
+to the some target-dependent value. Spinning is used on multi-core systems. If the mutex is locked, then
+it is usefull not to lock the thread immediately, but to "spin" some times, waiting for the mutex release.
+</p>
+
+<p>
+<b>getSemCount()</b> method can be used for a performance investigations. It is the number of times, when
+the mutex called the internal system semaphore.
+</p>
+
+<h4>XCore mutex</h4>
+
+<pre>
+class <span class="att">Mutex</span> : NoCopy
+ {
+   ....
+   
+  public: 
+  
+   Mutex();
+   
+   explicit Mutex(TextLabel name);
+   
+   ~Mutex();
+   
+   TextLabel getName() const;
+
+   void lock();
+  
+   void unlock();
+  
+   typedef LockObject&lt;Mutex&gt; Lock;
+ };
+</pre>
+
+<p>
+<b>XCore</b> <b>Mutex</b> implementation has two important properties.
+</p>
+
+<p>
+First, it has a mutex deadlock detection. If such situation has happened, then the <b>Abort()</b> with the 
+proper diagnostic message is called.
+</p>
+
+<p>
+Second, the priority inheritance is used to boost task priorities. Normally, each task runs on the given priority.
+But in some situations the task priority is temporary boosted. Consider the following case. Task A has locked a mutex.
+Task B with higher priority is trying to lock the same mutex. But because it is locked, task B becomes blocked, until
+task A release the mutex. In this case the priority of task A is boosted to the priority of task B.
+</p>
+
+</body>
+
+</html>
+

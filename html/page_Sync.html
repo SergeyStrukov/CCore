@@ -1,0 +1,63 @@
+<!--
+/* page_Sync.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Synchronization objects</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Synchronization objects</h2>
+
+<p>
+Multi-threaded applications are impossible without a thread execution coordination. This is implemented
+using synchronization objects. Synchronization class has a set of methods, some of them may block execution
+of the calling thread, until some condition is met.
+</p>
+
+<p>
+Most of synchronization object in <b>CCore</b> can be named in constructor, using a 
+<a href="page_TextLabel.html"><b>TextLabel</b></a>. If the name is not given explicitly, then some 
+auto-generated name is used. In <b>HCore</b> the provided name is ignored, but in <b>XCore</b>
+it is used by the system log and event recorder. You can get the name of the synchonization object
+in <b>XCore</b> by the method <b>getName()</b>.
+</p>
+
+<p>
+Blocking methods usually have four variants: try-variant which don't block, 
+variant without time-out, with <a href="page_MSec.html"><b>MSec</b></a> 
+time-out and with <a href="page_TimeScope.html"><b>TimeScope</b></a> time-out.
+The variant without timeout always successull (but may block indefinitely). Other variants returns the 
+<b>bool</b> return value, which indicates if the method was successfull.
+</p>
+
+<p>
+Releasing methods in <b>XCore</b> usually have three variants: common variant can be called only in a task context,
+"_int" variant can be called only in the interrupt context and "_any" variant can be called in any context.
+Also these methods have associated methods, which returns a <a href="page_Function.html"><b>Function</b></a>
+object, bound to the call of the correspondent method.
+</p>
+
+</body>
+
+</html>
+

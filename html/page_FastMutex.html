@@ -1,0 +1,157 @@
+<!--
+/* page_FastMutex.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> FastMutex</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>FastMutex</h2>
+
+<p class="Files">Files <b>CCore/inc/task/FastMutex.h</b> <b>CCore/src/task/FastMutex.cpp</b></p>
+
+<p>
+<b>FastMutexBase</b> is a class, providing simplified mutex locking abilities.
+</p>
+
+<pre>
+struct <span class="att">FastMutexBase</span> : NoCopy
+ {
+  ....
+  
+  class Lock : NoCopy
+   {
+     ....
+     
+    public: 
+    
+     explicit Lock(FastMutexBase &obj);
+     
+     ~Lock();
+   };
+ };
+</pre>
+
+<p>
+You can use this class as a base class to implement an execution serialization in derived class methods.
+</p>
+
+<pre>
+class SomeClass : FastMutexBase
+ {
+  public:
+
+   void method()
+    {
+     Lock lock(*this);
+
+     ....
+    }
+ };
+</pre>
+
+<p>
+The inner class <b>Lock</b> is the only way to lock the <b>FastMutexBase</b>.
+Locks must not be recursive. 
+And the code inside a locked region must be fast, in particular, it cannot make any blocking calls.
+Use this class to serialize simple operations, like list manipulations.
+</p>
+
+<h4>HCore FastMutexBase</h4>
+
+<p>
+<b>HCore</b> <b>FastMutexBase</b> is implemented using the class <b>FastMutex</b>.
+</p>
+
+<pre>
+class <span class="att">FastMutex</span> : NoCopy
+ {
+   ....
+   
+  public: 
+  
+   explicit FastMutex(unsigned spin_count=MutexSpinCount());
+   
+   ~FastMutex();
+   
+   void lock();
+  
+   void unlock();
+  
+   typedef LockObject&lt;FastMutex&gt; Lock;
+ };
+</pre>
+
+<p>
+This class is a simplified version of the class <b>Mutex</b>.
+</p>
+
+<pre>
+struct <span class="att">FastMutexBase</span> : NoCopy
+ {
+  FastMutex mutex;
+  
+  class Lock : NoCopy
+   {
+     FastMutex &mutex;
+     
+    public: 
+    
+     explicit Lock(FastMutexBase &obj) : mutex(obj.mutex) { mutex.lock(); }
+     
+     ~Lock() { mutex.unlock(); }
+   };
+ };
+</pre>
+
+<h4>XCore FastMutexBase</h4>
+
+<p>
+There is no class <b>FastMutex</b> in <b>XCore</b> and the class <b>FastMutexBase</b> is stateless.
+It is just the <b>IntLock</b>.
+</p>
+
+<pre>
+struct <span class="att">FastMutexBase</span> : NoCopy
+ {
+  class Lock : NoCopy
+   {
+     Dev::IntLock lock;
+     
+    public: 
+    
+     explicit Lock(FastMutexBase &) {}
+     
+     ~Lock() {}
+   };
+ };
+</pre>
+
+<p>
+The code inside a locked region runs without interruption, so there is no priority inversion problem here.
+</p>
+
+</body>
+
+</html>
+

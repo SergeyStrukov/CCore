@@ -30,6 +30,34 @@
 
 <p class="Files">Files <b>CCore/inc/task/NoMutex.h</b> <b>CCore/src/task/NoMutex.cpp</b></p>
 
+<p>
+<b>NoMutex</b> is a class with the <b>Mutex</b> interface, but with empty methods.
+It is required sometimes to create a class, which can be used either in a single-threaded context or
+in a multi-threaded. This class can be implemented as a template, parametrized by a mutex type to avoid using 
+a real mutex if it is not required.
+</p>
+
+<pre>
+class <span class="att">NoMutex</span> : NoCopy
+ {
+  public:
+  
+   NoMutex() {}
+   
+   explicit NoMutex(TextLabel) {}
+   
+   ~NoMutex() {}
+   
+   void lock() {}
+  
+   void unlock() {}
+   
+   struct Lock : NoCopy
+    {
+     explicit Lock(NoMutex &) {}
+    };
+ };
+</pre>
 
 </body>
 
