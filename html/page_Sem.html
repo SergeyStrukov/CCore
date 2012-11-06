@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_Sem.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Sem</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,243 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Sem</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/task/Sem.h</b> <b>CCore/src/task/Sem.cpp</b></p>
 
+<p>
+<b>Sem</b> is a semaphore, it is a second of the most important synchronization classes.
+</p>
+
+<p>
+<b>Sem</b> has an internal semaphore counter. <b>give...()</b> methods increase this counter.
+<b>Abort()</b> is called in case of overflow.
+<b>take...()</b> decrements the counter if it is not zero. But if the counter is zero, the method
+blocks the calling thread until the counter becomes non-zero. Then it decrements the counter.
+</p>
+
+<p>
+Consider a basket with apples. Somebody may put an apple to the basket, and somebody may take it, but
+nobody can take an apple from an empty basket, so he has to wait until the basket becomes non-empty. 
+That is how a semapore is working, it counts apples in the basket.
+</p>
+
+<pre>
+class <span class="att">Sem</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit Sem(ulen count=0);
+   
+   explicit Sem(TextLabel name,ulen count=0);
+   
+   ~Sem();
+   
+   // give
+   
+   void give();
+   
+   void give_many(ulen dcount);
+   
+   // take
+   
+   bool try_take();
+   
+   void take();
+   
+   bool take(MSec timeout);
+   
+   bool take(TimeScope time_scope); 
+    
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
+ };
+</pre>
+
+<p>
+The constructor argument <b>count</b> is the initial semaphore counter value. It is zero, by default.
+</p>
+
+<p>
+<b>give()</b> increments the counter. If there are waiting threads on semaphore, the counter is zero and 
+remains zero after operation, but one thread is released.
+</p>
+
+<p>
+<b>give_many()</b> increases the semaphore counter by a give value. It may release several threads,
+waiting the semaphore.
+</p>
+
+<p>
+<b>try_take()</b> tries to decrement the semaphore counter. This method never blocks. The return value
+is true, if the method was successfull. 
+</p>
+
+<p>
+<b>take()</b> decrements the semapore counter. It may block the calling thread indefinitely, until
+the operation becomes possible.
+</p>
+
+<p>
+<b>take(MSec)</b> and <b>take(TimeScope)</b> are the timed variants of the <b>take()</b>. These methods
+wait up to the specified timeout is expired, then operation failed. The return value
+is true, if the method was successfull.
+</p>
+
+<p>
+Here is an example of a typical <b>Sem</b> usage:
+</p>
+
+<pre>
+template &lt;class T&gt;
+class Queue
+ {
+   QueueContainer&lt;T&gt; queue;
+   Mutex mutex;
+   Sem sem;
+
+  public:
+
+   Queue() {}
+
+   ~Queue() {}
+
+   void put(T obj)
+    {
+     {
+      Mutex::Lock lock(mutex);
+
+      queue.put(obj);
+     }
+
+     // the order is important : put resource, then give semaphore
+
+     // don't give a semaphore under a mutex lock !
+
+     sem.give();
+    }
+
+   T get()
+    {
+     sem.take();
+
+     // the order is important : take semaphore, then take resource
+
+     {
+      Mutex::Lock lock(mutex);
+
+      // it is guaranteed now, the queue is not empty
+
+      queue.get();
+     }
+    }
+ };
+</pre>
+
+<h4>HCore Sem</h4>
+
+<p>
+<b>HCore</b> <b>Sem</b> has a common interface.
+</p>
+
+<pre>
+class <span class="att">Sem</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit Sem(ulen count=0);
+   
+   explicit Sem(TextLabel name,ulen count=0);
+   
+   ~Sem();
+   
+   // give
+   
+   void give();
+   
+   void give_many(ulen dcount);
+   
+   // take
+   
+   bool try_take();
+   
+   void take();
+   
+   bool take(MSec timeout);
+   
+   bool take(TimeScope time_scope); 
+    
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
+ };
+</pre>
+
+<h4>XCore Sem</h4>
+
+<p>
+<b>XCore</b> <b>Sem</b> is essentially the same, but has <b>give...()</b> methods variants.
+</p>
+
+<pre>
+class <span class="att">Sem</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit Sem(ulen count=0);
+   
+   explicit Sem(TextLabel name,ulen count=0);
+   
+   ~Sem();
+   
+   TextLabel getName() const { return name; }
+   
+   // give
+   
+   void give();
+   
+   void give_int();
+   
+   void give_any();
+   
+   void give_many(ulen dcount);
+   
+   void give_many_int(ulen dcount);
+   
+   void give_many_any(ulen dcount);
+   
+   // take
+   
+   bool try_take();
+   
+   void take();
+   
+   bool take(MSec timeout);
+   
+   bool take(TimeScope time_scope);
+   
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
+   
+   Function&lt;void (void)&gt; function_give_int() { return FunctionOf(this,&amp;Sem::give_int); }
+   
+   Function&lt;void (void)&gt; function_give_any() { return FunctionOf(this,&amp;Sem::give_any); }
+ };
+</pre>
 
 </body>
 

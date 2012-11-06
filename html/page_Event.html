@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_Event.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Event</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,179 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Event</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/task/Event.h</b> <b>CCore/src/task/Event.cpp</b></p>
 
+<p>
+<b>Event</b> is similar to <b>Sem</b>. But instead of counter it has a boolean flag as an internal logical state.
+The method <b>trigger()</b> sets this flag. And the method <b>wait()</b> clears it if it is set.
+But if the flag is cleared, the method is waiting until it can be performed.
+</p>
+
+<p>
+The event "basket" can store only one apple.
+</p>
+
+<pre>
+class <span class="att">Event</span> : public Funchor_nocopy
+ {
+   ....
+   
+  public:
+   
+   // constructors
+  
+   explicit Event(bool flag=false);
+   
+   explicit Event(TextLabel name,bool flag=false);
+   
+   ~Event();
+   
+   // trigger
+  
+   bool trigger();
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+   
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+   
+   // functions
+   
+   void trigger_void() { trigger(); }
+   
+   Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;Event::trigger_void); }
+ };
+</pre>
+
+<p>
+The constructor argument <b>flag</b> is the initial event state. It is false by default.
+</p>
+
+<p>
+<b>trigger()</b> sets the flag. If the flag is already set, the return value is false, otherwise it is true.
+</p>
+
+<p>
+<b>try_wait()</b> tries to consume the event. This method never blocks. If the event is not triggered, 
+the return value is false.
+</p>
+
+<p>
+<b>wait()</b> waits until the event can be consumed and consume it.
+</p>
+
+<p>
+<b>wait(MSec)</b> and <b>wait(TimeScope)</b> are timed variants of the <b>wait()</b>.
+These methods wait up to the specified timeout is expired, then operation failed. The return value
+is true, if the method was successfull.
+</p>
+
+<h4>HCore Event</h4>
+
+<p>
+<b>HCore</b> <b>Event</b> has a common interface.
+</p>
+
+<pre>
+class <span class="att">Event</span> : public Funchor_nocopy
+ {
+   ....
+   
+  public:
+   
+   // constructors
+  
+   explicit Event(bool flag=false);
+   
+   explicit Event(TextLabel name,bool flag=false);
+   
+   ~Event();
+   
+   // trigger
+  
+   bool trigger();
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+   
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+   
+   // functions
+   
+   void trigger_void() { trigger(); }
+   
+   Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;Event::trigger_void); }
+ };
+</pre>
+
+<h4>XCore Event</h4>
+
+<p>
+<b>XCore</b> <b>Event</b> is essentially the same, but has <b>trigger()</b> method variants.
+</p>
+
+<pre>
+class <span class="att">Event</span> : public Funchor_nocopy
+ {
+   ....
+   
+  public: 
+   
+   // constructors
+  
+   explicit Event(bool flag=false);
+   
+   explicit Event(TextLabel name,bool flag=false);
+   
+   ~Event();
+   
+   TextLabel getName() const { return name; }
+   
+   // trigger
+   
+   bool trigger();
+   
+   bool trigger_int();
+   
+   bool trigger_any();
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+   
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+   
+   // functions
+   
+   void trigger_void() { trigger(); }
+   
+   void trigger_int_void() { trigger_int(); }
+   
+   void trigger_any_void() { trigger_any(); }
+   
+   Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;Event::trigger_void); }
+   
+   Function&lt;void (void)&gt; function_trigger_int() { return FunctionOf(this,&amp;Event::trigger_int_void); }
+   
+   Function&lt;void (void)&gt; function_trigger_any() { return FunctionOf(this,&amp;Event::trigger_any_void); }
+ };
+</pre>
 
 </body>
 

@@ -96,8 +96,28 @@ A manual calls of the <b>lock()/unlock()</b> must be excluded.
 </p>
 
 <p>
-<b>Mutex</b> operations are efficient, unless they don't cause a task block/release.
+<b>Mutex</b> operations are efficient, if they don't cause a task block/release.
 </p>
+
+<p>
+The most common <b>Mutex</b> usage is to make a class thread-safe:
+</p>
+
+<pre>
+class SomeClass
+ {
+   Mutex mutex;
+
+  public:
+
+   void method()
+    {
+     Mutex::Lock lock(mutex);
+
+     ....
+    }
+ };
+</pre>
 
 <h4>HCore Mutex</h4>
 
