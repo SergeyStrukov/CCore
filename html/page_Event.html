@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/task/Event.h</b> <b>CCore/src/task/Event.cpp</b></p>
 
 <p>
-<b>Event</b> is similar to <b>Sem</b>. But instead of counter it has a boolean flag as an internal logical state.
+<b>Event</b> is similar to the <b>Sem</b>. But instead of counter it has a boolean flag as an internal logical state.
 The method <b>trigger()</b> sets this flag. And the method <b>wait()</b> clears it if it is set.
 But if the flag is cleared, the method is waiting until it can be performed.
 </p>
@@ -97,7 +97,7 @@ the return value is false.
 <p>
 <b>wait(MSec)</b> and <b>wait(TimeScope)</b> are timed variants of the <b>wait()</b>.
 These methods wait up to the specified timeout is expired, then operation failed. The return value
-is true, if the method was successfull.
+is true, if the method was successful.
 </p>
 
 <h4>HCore Event</h4>

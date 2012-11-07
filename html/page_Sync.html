@@ -38,7 +38,7 @@ of the calling thread, until some condition is met.
 Most of synchronization object in <b>CCore</b> can be named in constructor, using a 
 <a href="page_TextLabel.html"><b>TextLabel</b></a>. If the name is not given explicitly, then some 
 auto-generated name is used. In <b>HCore</b> the provided name is ignored, but in <b>XCore</b>
-it is used by the system log and event recorder. You can get the name of the synchonization object
+it is used by the system log and event recorder. You can get the name of the synchronization object
 in <b>XCore</b> by the method <b>getName()</b>.
 </p>
 
@@ -47,7 +47,7 @@ Blocking methods usually have four variants: try-variant which don't block,
 variant without time-out, with <a href="page_MSec.html"><b>MSec</b></a> 
 time-out and with <a href="page_TimeScope.html"><b>TimeScope</b></a> time-out.
 The variant without timeout always successull (but may block indefinitely). Other variants returns the 
-<b>bool</b> return value, which indicates if the method was successfull.
+<b>bool</b> return value, which indicates if the method was successful.
 </p>
 
 <p>

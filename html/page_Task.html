@@ -33,7 +33,7 @@
 <p class="Files">Subfolders <b>CCore/inc/task</b> <b>CCore/src/task</b></p>
 
 <p>
-Tasks and synchonization objects are the heart of any real-time system platform.
+Tasks and synchronization objects are the heart of any real-time system platform.
 The word "task" is used by tradition instead of thread. A typical embedded application may be regarded
 as a multi-threaded process, running in a single memory space. It has direct access to all hardware features. 
 The functionality of the application is implemented in a series of tasks. The board starts after reboot,
@@ -172,7 +172,7 @@ class <span class="att">Task</span> : public MemBase_nocopy
 not provided, some auto-generated name is used. This name is used in system logging and event recording.
 The <b>TaskPriority</b> is assigned to the task. Task priority determines the task running sequence:
 a task with higher priority preempts an execution of tasks with lower priority. The task priority cannot be changed,
-but can be temporary raised automatically by synchonization objects. Finally, the task <b>stack_len</b> 
+but can be temporary raised automatically by synchronization objects. Finally, the task <b>stack_len</b> 
 can be specified.
 </p>
 

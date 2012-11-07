@@ -109,7 +109,7 @@ void func(MSec timeout)
 But this way does not ensure the expected behavior, because from the point you call the method <b>get()</b> to the point,
 where this value is consumed inside the <b>opx()</b> a task switch may happens and it increases the amount of time by 
 an unpredictable value. That is way in <b>CCore</b> we provide timed functions with simple timeouts and with 
-<b>TimeScope</b> timeouts, especially for all synchonization objects. In <b>HCore</b> the implementaion is not precise 
+<b>TimeScope</b> timeouts, especially for all synchronization objects. In <b>HCore</b> the implementaion is not precise 
 (but <b>HCore</b> does not pretend to be a true real-time), but <b>XCore</b> has an exact implementaion.
 </p>
 

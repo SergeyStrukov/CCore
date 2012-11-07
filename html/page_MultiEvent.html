@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_MultiEvent.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> MultiEvent</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,190 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>MultiEvent</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/task/MultiEvent.h</b> <b>CCore/src/task/MultiEvent.cpp</b></p>
 
+<p>
+<b>MultiEvent</b> is similar to the <b>MultiSem</b>, but combines events, not semaphores.
+</p>
+
+<pre>
+template &lt;ulen Len&gt;
+class <span class="att">MultiEvent</span> : public Funchor_nocopy 
+ {
+   ....
+
+  public:
+
+   // constructors
+  
+   MultiEvent();
+   
+   explicit MultiEvent(TextLabel name);
+   
+   ~MultiEvent();
+
+   // trigger
+  
+   bool trigger(ulen index); // [1,Len]
+   
+   // wait
+   
+   ulen try_wait(); // [0,Len]
+   
+   ulen wait(); // [1,Len]
+   
+   ulen wait(MSec timeout); // [0,Len]
+   
+   ulen wait(TimeScope time_scope); // [0,Len]
+   
+   // trigger&lt;Index&gt;
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void trigger_index() { trigger(Index); }
+   
+   // functions
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;MultiEventBase::trigger_index&lt;Index&gt;); }
+ };
+</pre>
+
+<p>
+<b>trigger()</b> sets the event flag with the specified 1-base <b>index</b>, it must be in the range
+<b>[1,Len]</b>. If the flag is already set, the return value is false, otherwise it is true.
+</p>
+
+<p>
+<b>try_wait()</b> tries to consume an event flag. This method never blocks. The return value
+is the flag 1-based index, if the method was successful. Otherwise it is zero.
+</p>
+
+<p>
+<b>wait()</b> consumes one of the event flags. It may block the calling thread indefinitely, until
+the operation becomes possible.
+</p>
+
+<p>
+<b>wait(MSec)</b> and <b>wait(TimeScope)</b> are the timed variants of the <b>wait()</b>. These methods
+wait up to the specified timeout is expired, then operation failed. The return value
+is zero in this case.
+</p>
+
+<h4>HCore MultiEvent</h4>
+
+<p>
+<b>HCore</b> <b>MultiEvent</b> has a common interface.
+</p>
+
+<pre>
+template &lt;ulen Len&gt;
+class <span class="att">MultiEvent</span> : public Funchor_nocopy 
+ {
+   ....
+
+  public:
+
+   // constructors
+  
+   MultiEvent();
+   
+   explicit MultiEvent(TextLabel name);
+   
+   ~MultiEvent();
+
+   // trigger
+  
+   bool trigger(ulen index); // [1,Len]
+   
+   // wait
+   
+   ulen try_wait(); // [0,Len]
+   
+   ulen wait(); // [1,Len]
+   
+   ulen wait(MSec timeout); // [0,Len]
+   
+   ulen wait(TimeScope time_scope); // [0,Len]
+   
+   // trigger&lt;Index&gt;
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void trigger_index() { trigger(Index); }
+   
+   // functions
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;MultiEventBase::trigger_index&lt;Index&gt;); }
+ };
+</pre>
+
+<h4>XCore MultiEvent</h4>
+
+<p>
+<b>XCore</b> <b>MultiEvent</b> is essentially the same, but has <b>trigger()</b> method variants.
+</p>
+
+<pre>
+template &lt;ulen Len&gt;
+class <span class="att">MultiEvent</span> : public Funchor_nocopy 
+ {
+   ....
+
+  public:
+
+   // constructors
+  
+   MultiEvent();
+   
+   explicit MultiEvent(TextLabel name);
+   
+   ~MultiEvent();
+
+   TextLabel getName() const { return name; }
+   
+   // trigger
+  
+   bool trigger(ulen index); // [1,Len]
+   
+   bool trigger_int(ulen index); // [1,Len]
+   
+   bool trigger_any(ulen index); // [1,Len]
+   
+   // wait
+   
+   ulen try_wait(); // [0,Len]
+   
+   ulen wait(); // [1,Len]
+   
+   ulen wait(MSec timeout); // [0,Len]
+   
+   ulen wait(TimeScope time_scope); // [0,Len]
+   
+   // trigger&lt;Index&gt;
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void trigger_index() { trigger(Index); }
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void trigger_index_int() { trigger_int(Index); }
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void trigger_index_any() { trigger_any(Index); }
+   
+   // functions
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;MultiEventBase::trigger_index&lt;Index&gt;); }
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_trigger_int() { return FunctionOf(this,&amp;MultiEventBase::trigger_index_int&lt;Index&gt;); }
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_trigger_any() { return FunctionOf(this,&amp;MultiEventBase::trigger_index_any&lt;Index&gt;); }
+ };
+</pre>
 
 </body>
 

@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_MultiSem.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> MultiSem</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,200 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>MultiSem</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/task/MultiSem.h</b> <b>CCore/src/task/MultiSem.cpp</b></p>
 
+<p>
+<b>MultiSem</b> is a small set of semaphores. Each can be given. But the take operation takes
+from any of them, if some of them is available. The take operation uses round-robin priority
+algorithm to equalize semaphores.  
+</p>
+
+<p>
+Consider an example with apples. In multi-semaphore case, there are several baskets for different
+sort of apples. Somebody can put an apple to the one of the proper basket. And somebody
+can take an apple from a non-empty basket. To do this, he is looking for a non-empty basket in the 
+cyclic order, starting from some basket. Next time the starting basket is changed to the following.
+If all baskets are empty, he waits.
+</p>
+
+<pre>
+template &lt;ulen Len&gt;
+class <span class="att">MultiSem</span> : public Funchor_nocopy
+ {
+   ....
+      
+  public:
+
+   // constructors
+  
+   MultiSem();
+   
+   explicit MultiSem(TextLabel name);
+   
+   ~MultiSem();
+
+   // give
+  
+   void give(ulen index); // [1,Len]
+   
+   // take
+   
+   ulen try_take(); // [0,Len]
+   
+   ulen take(); // [1,Len]
+   
+   ulen take(MSec timeout); // [0,Len]
+   
+   ulen take(TimeScope time_scope); // [0,Len]
+   
+   // give&lt;Index&gt;
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void give_index() { give(Index); }
+   
+   // functions
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;MultiSemBase::give_index&lt;Index&gt;); }
+ };
+</pre>
+
+<p>
+<b>give()</b> increments the specified semaphore counter. <b>index</b> is the counter 1-based index,
+it must be in the range <b>[1,Len]</b>.
+</p>
+
+<p>
+<b>try_take()</b> tries to decrement one of the semaphore counters. This method never blocks. The return value
+is the counter 1-based index, if the method was successful. Otherwise it is zero.
+</p>
+
+<p>
+<b>take()</b> decrements one of the semaphore counters. It may block the calling thread indefinitely, until
+the operation becomes possible.
+</p>
+
+<p>
+<b>take(MSec)</b> and <b>take(TimeScope)</b> are the timed variants of the <b>take()</b>. These methods
+wait up to the specified timeout is expired, then operation failed. The return value
+is zero in this case.
+</p>
+
+<h4>HCore MultiSem</h4>
+
+<p>
+<b>HCore</b> <b>MultiSem</b> has a common interface.
+</p>
+
+<pre>
+template &lt;ulen Len&gt;
+class <span class="att">MultiSem</span> : public Funchor_nocopy
+ {
+   ....
+      
+  public:
+
+   // constructors
+  
+   MultiSem();
+   
+   explicit MultiSem(TextLabel name);
+   
+   ~MultiSem();
+
+   // give
+  
+   void give(ulen index); // [1,Len]
+   
+   // take
+   
+   ulen try_take(); // [0,Len]
+   
+   ulen take(); // [1,Len]
+   
+   ulen take(MSec timeout); // [0,Len]
+   
+   ulen take(TimeScope time_scope); // [0,Len]
+   
+   // give&lt;Index&gt;
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void give_index() { give(Index); }
+   
+   // functions
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;MultiSemBase::give_index&lt;Index&gt;); }
+ };
+</pre>
+
+<h4>XCore MultiSem</h4>
+
+<p>
+<b>XCore</b> <b>MultiSem</b> is essentially the same, but has <b>give()</b> methods variants.
+</p>
+
+<pre>
+template &lt;ulen Len&gt;
+class <span class="att">MultiSem</span> : public Funchor_nocopy
+ {
+   ....
+      
+  public:
+
+   // constructors
+  
+   MultiSem();
+   
+   explicit MultiSem(TextLabel name);
+   
+   ~MultiSem();
+
+   TextLabel getName() const { return name; }
+   
+   // give
+  
+   void give(ulen index); // [1,Len]
+   
+   void give_int(ulen index); // [1,Len]
+   
+   void give_any(ulen index); // [1,Len]
+   
+   // take
+   
+   ulen try_take(); // [0,Len]
+   
+   ulen take(); // [1,Len]
+   
+   ulen take(MSec timeout); // [0,Len]
+   
+   ulen take(TimeScope time_scope); // [0,Len]
+   
+   // give&lt;Index&gt;
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void give_index() { give(Index); }
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void give_index_int() { give_int(Index); }
+   
+   template &lt;ulen Index&gt; // [1,Len]
+   void give_index_any() { give_any(Index); }
+   
+   // functions
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;MultiSemBase::give_index&lt;Index&gt;); }
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_give_int() { return FunctionOf(this,&amp;MultiSemBase::give_index_int&lt;Index&gt;); }
+   
+   template &lt;ulen Index&gt;
+   Function&lt;void (void)&gt; function_give_any() { return FunctionOf(this,&amp;MultiSemBase::give_index_any&lt;Index&gt;); }
+ };
+</pre>
 
 </body>
 

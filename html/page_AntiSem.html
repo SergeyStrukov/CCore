@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_AntiSem.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> AntiSem</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,234 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>AntiSem</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/AntiSem.h</b> <b>CCore/src/AntiSem.cpp</b></p>
 
+<p>
+<b>AntiSem</b> is a "gateway" synchronization class. I.g. it might allow or block a thread execution, if some condition
+is met. The difference with a "consuming" synchronization class is the blocking calls does not change the state.
+</p>
+
+<p>
+<b>AntiSem</b> has an internal counter. You may increase or decrease this counter. If the counter is below  
+the given level, <b>AntiSem</b> is opened, otherwise it is closed. When it is closed, the method
+<b>wait()</b> blocks the calling thread while the <b>AntiSem</b> is closed.
+</p>
+
+<pre>
+class <span class="att">AntiSem</span> : public Funchor_nocopy
+ {
+   ....
+   
+  public:
+   
+   // constructors
+  
+   explicit AntiSem(ulen level=0);
+   
+   explicit AntiSem(TextLabel name,ulen level=0);
+   
+   ~AntiSem();
+   
+   // add/sub
+   
+   void add(ulen dcount);
+   
+   void sub(ulen dcount);
+   
+   // inc/dec
+   
+   void inc() { add(1); }
+   
+   void dec() { sub(1); }
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+   
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+    
+   // functions
+   
+   Function&lt;void (void)&gt; function_inc() { return FunctionOf(this,&amp;AntiSem::inc); }
+   
+   Function&lt;void (void)&gt; function_dec() { return FunctionOf(this,&amp;AntiSem::dec); }
+ };
+</pre>
+
+<p>
+The constructor argument <b>level</b> is a sensitive level of the <b>AntiSem</b>. The object is opened if
+the counter <= level. It has zero value by default.
+</p>
+
+<p>
+<b>add()</b> increases the counter by the given value. If the overflow happens, the <b>Abort()</b> is called.
+</p>
+
+<p>
+<b>sub()</b> decreases the counter by the given value. If the underflow happens, the <b>Abort()</b> is called.
+If the counter value becomes <= level, all blocked on the <b>AntiSem</b> threads are released.
+</p>
+
+<p>
+<b>inc()</b> is the counter increment, this method is equivalent <b>add(1)</b>. 
+</p>
+
+<p>
+<b>dec()</b> is the counter decrement, this method is equivalent <b>dec(1)</b>. It is also a releasing method.
+</p>
+
+<p>
+<b>try_wait()</b> checks, if the object is opened. This method never blocks.
+</p>
+
+<p>
+<b>wait()</b> blocks the calling thread indefinitely until the object becomes opened.
+</p>
+
+<p>
+<b>wait(MSec)</b> and <b>wait(TimeScope)</b> are timed variants of the <b>wait()</b>. 
+These methods wait up to the specified timeout is expired, then operation failed. The return value
+is true, if the method was successful.
+</p>
+
+<p>
+The most common usage of the <b>AntiSem</b> is the implementaion of the atomic reference counter with waiting.
+</p>
+
+<h4>HCore AntiSem</h4>
+
+<p>
+<b>HCore</b> <b>AntiSem</b> has a common interface.
+</p>
+
+<pre>
+class <span class="att">AntiSem</span> : public Funchor_nocopy
+ {
+   ....
+   
+  public:
+   
+   // constructors
+  
+   explicit AntiSem(ulen level=0);
+   
+   explicit AntiSem(TextLabel name,ulen level=0);
+   
+   ~AntiSem();
+   
+   // add/sub
+   
+   void add(ulen dcount);
+   
+   void sub(ulen dcount);
+   
+   // inc/dec
+   
+   void inc() { add(1); }
+   
+   void dec() { sub(1); }
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+   
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+    
+   // functions
+   
+   Function&lt;void (void)&gt; function_inc() { return FunctionOf(this,&amp;AntiSem::inc); }
+   
+   Function&lt;void (void)&gt; function_dec() { return FunctionOf(this,&amp;AntiSem::dec); }
+ };
+</pre>
+
+<h4>XCore AntiSem</h4>
+
+<p>
+<b>XCore</b> <b>AntiSem</b> is essentially the same, but has <b>add()</b>, <b>sub()</b>, <b>inc()</b>, 
+<b>dec()</b> methods variants.
+</p>
+
+<pre>
+class <span class="att">AntiSem</span> : public Funchor_nocopy
+ {
+   ....
+   
+  public:
+   
+   // constructors
+  
+   explicit AntiSem(ulen level=0);
+   
+   explicit AntiSem(TextLabel name,ulen level=0);
+   
+   ~AntiSem();
+   
+   TextLabel getName() const { return name; }
+   
+   // add/sub
+   
+   void add(ulen dcount);
+   
+   void sub(ulen dcount);
+   
+   void add_int(ulen dcount);
+   
+   void sub_int(ulen dcount);
+   
+   void add_any(ulen dcount);
+   
+   void sub_any(ulen dcount);
+   
+   // inc/dec
+   
+   void inc() { add(1); }
+   
+   void dec() { sub(1); }
+   
+   void inc_int() { add_int(1); }
+   
+   void dec_int() { sub_int(1); }
+   
+   void inc_any() { add_any(1); }
+   
+   void dec_any() { sub_any(1); }
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+   
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+   
+   // functions
+   
+   Function&lt;void (void)&gt; function_inc() { return FunctionOf(this,&amp;AntiSem::inc); }
+   
+   Function&lt;void (void)&gt; function_dec() { return FunctionOf(this,&amp;AntiSem::dec); }
+   
+   Function&lt;void (void)&gt; function_inc_int() { return FunctionOf(this,&amp;AntiSem::inc_int); }
+   
+   Function&lt;void (void)&gt; function_dec_int() { return FunctionOf(this,&amp;AntiSem::dec_int); }
+   
+   Function&lt;void (void)&gt; function_inc_any() { return FunctionOf(this,&amp;AntiSem::inc_any); }
+   
+   Function&lt;void (void)&gt; function_dec_any() { return FunctionOf(this,&amp;AntiSem::dec_any); }
+ };
+</pre>
 
 </body>
 
