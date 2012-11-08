@@ -1,0 +1,107 @@
+<!--
+/* page_SlowSem.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> SlowSem</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>SlowSem</h2>
+
+<p class="Files">Files <b>CCore/inc/task/SlowSem.h</b> <b>CCore/src/task/SlowSem.cpp</b></p>
+
+<p>
+<b>SlowSem</b> is a semaphore. It is not necessary "slow". This variant is a lightweight wrapper over the OS
+semaphore. This semaphore is used as a building block in implementations of other synchronization objects.
+</p>
+
+<pre>
+class <span class="att">SlowSem</span> : public Funchor_nocopy
+ {
+   Sys::Sem sem;
+   
+  private:
+  
+   void init(ulen count);
+   
+  public: 
+   
+   // constructors
+  
+   explicit SlowSem(ulen count=0);
+   
+   explicit SlowSem(TextLabel name,ulen count=0);
+   
+   ~SlowSem();
+   
+   // give
+   
+   void give();
+   
+   void give_many(ulen dcount);
+   
+   // take
+   
+   bool try_take();
+   
+   void take();
+   
+   bool take(MSec timeout);
+   
+   bool take(TimeScope time_scope); 
+    
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;SlowSem::give); }
+ };
+</pre>
+
+<p>
+The implementation of the <b>SlowSem</b> is based on the target-provided <b>Sys::Sem</b>:
+</p>
+
+<pre>
+struct <span class="att">Sys::Sem</span>
+ {
+  // public
+  
+  Sys::ErrorType init(ulen count=0);
+  
+  void exit();
+  
+  void give();
+  
+  void give_many(ulen count);
+  
+  bool try_take();
+  
+  void take();
+  
+  bool take(MSec timeout);
+ };
+</pre>
+
+</body>
+
+</html>
+

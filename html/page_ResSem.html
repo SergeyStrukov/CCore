@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_ResSem.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> ResSem</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,223 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>ResSem</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/task/ResSem.h</b> <b>CCore/src/task/ResSem.cpp</b></p>
 
+<p>
+<b>ResSem</b> is used to control a resource usage. This class is a hybrid of the <b>AntiSem</b> and
+<b>Sem</b>. It has an internal counter, which remains in the range <b>[0,max_count]</b>, where
+<b>max_count</b> is a <b>ResSem</b> counter limit. Initially the counter equals <b>max_count</b>.
+Like a usual semaphore, <b>ResSem</b> has <b>take()</b> and <b>give()</b> operations, but it has
+the additional "gateway" operation <b>wait()</b>, which blocks the calling thread until
+the counter gets back to its maximum value.
+</p>
+
+<p>
+Return back to the basket with apples. Initialy basket contains a number of apples.
+When somebody takes an apple, it must give it back after time. I.g. an apple is not consumed,
+but is borrowed. Basket host is waitng until all apples are returned. 
+</p>
+
+<pre>
+class <span class="att">ResSem</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit ResSem(ulen max_count);
+   
+   ResSem(TextLabel name,ulen max_count);
+   
+   ~ResSem();
+   
+   // give
+   
+   void give();
+   
+   // take
+  
+   bool try_take();
+  
+   void take();
+  
+   bool take(MSec timeout);
+  
+   bool take(TimeScope time_scope);
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+  
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+   
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;ResSem::give); }
+ };
+</pre>
+
+<p>
+The constructor argument <b>max_count</b> is the maximum <b>ResSem</b> counter. It cannot be zero.
+Initially the counter is at that maximum.
+</p>
+
+<p>
+<b>give()</b> increments the counter. If the counter is at maximum, the <b>Abort()</b> is called.
+This method might release threads, blocked by the method <b>wait()</b>. 
+It also might release a thread, blocked by the method <b>take()</b>. These two situations
+cannot happens simultaneousely.
+</p>
+
+<p>
+<b>try_take()</b> tries to decrement the counter. This method never blocks. The return value
+is true, if the method was successful. 
+</p>
+
+<p>
+<b>take()</b> decrements the counter. It may block the calling thread indefinitely, until
+the operation becomes possible.
+</p>
+
+<p>
+<b>take(MSec)</b> and <b>take(TimeScope)</b> are the timed variants of the <b>take()</b>. These methods
+wait up to the specified timeout is expired, then operation failed. The return value
+is true, if the method was successful.
+</p>
+
+<p>
+<b>try_wait()</b> checks, if the the counter is at maximum. This method never blocks.
+</p>
+
+<p>
+<b>wait()</b> blocks the calling thread indefinitely until the the counter gets at maximum.
+</p>
+
+<p>
+<b>wait(MSec)</b> and <b>wait(TimeScope)</b> are timed variants of the <b>wait()</b>. 
+These methods wait up to the specified timeout is expired, then operation failed. The return value
+is true, if the method was successful.
+</p>
+
+<h4>HCore ResSem</h4>
+
+<p>
+<b>HCore</b> <b>ResSem</b> has a common interface.
+</p>
+
+<pre>
+class <span class="att">ResSem</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit ResSem(ulen max_count);
+   
+   ResSem(TextLabel name,ulen max_count);
+   
+   ~ResSem();
+   
+   // give
+   
+   void give();
+   
+   // take
+  
+   bool try_take();
+  
+   void take();
+  
+   bool take(MSec timeout);
+  
+   bool take(TimeScope time_scope);
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+  
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+   
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;ResSem::give); }
+ };
+</pre>
+
+<h4>XCore ResSem</h4>
+
+<p>
+<b>XCore</b> <b>ResSem</b> is essentially the same, but has <b>give()</b> method variants.
+</p>
+
+<pre>
+class <span class="att">ResSem</span> : public Funchor_nocopy
+ {
+   ....
+
+  public: 
+   
+   // constructors
+  
+   explicit ResSem(ulen max_count);
+   
+   ResSem(TextLabel name,ulen max_count);
+   
+   ~ResSem();
+   
+   TextLabel getName() const { return name; }
+   
+   // give
+   
+   void give();
+   
+   void give_int();
+   
+   void give_any();
+   
+   // take
+  
+   bool try_take();
+  
+   void take();
+  
+   bool take(MSec timeout);
+  
+   bool take(TimeScope time_scope);
+   
+   // wait
+   
+   bool try_wait();
+   
+   void wait();
+  
+   bool wait(MSec timeout);
+   
+   bool wait(TimeScope time_scope);
+   
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;ResSem::give); }
+   
+   Function&lt;void (void)&gt; function_give_int() { return FunctionOf(this,&amp;ResSem::give_int); }
+   
+   Function&lt;void (void)&gt; function_give_any() { return FunctionOf(this,&amp;ResSem::give_any); }
+ };
+</pre>
 
 </body>
 

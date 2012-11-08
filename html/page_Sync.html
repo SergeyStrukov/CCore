@@ -29,8 +29,8 @@
 <h2>Synchronization objects</h2>
 
 <p>
-Multi-threaded applications are impossible without a thread execution coordination. This is implemented
-using synchronization objects. Synchronization class has a set of methods, some of them may block execution
+Multi-threaded applications are impossible without a thread execution coordination. This is achieved
+with help of synchronization objects. Synchronization class has a set of methods, some of them may block execution
 of the calling thread, until some condition is met.
 </p>
 
@@ -44,8 +44,8 @@ in <b>XCore</b> by the method <b>getName()</b>.
 
 <p>
 Blocking methods usually have four variants: try-variant which don't block, 
-variant without time-out, with <a href="page_MSec.html"><b>MSec</b></a> 
-time-out and with <a href="page_TimeScope.html"><b>TimeScope</b></a> time-out.
+main variant without timeout, and timed variants with <a href="page_MSec.html"><b>MSec</b></a> 
+timeout and with <a href="page_TimeScope.html"><b>TimeScope</b></a> timeout.
 The variant without timeout always successull (but may block indefinitely). Other variants returns the 
 <b>bool</b> return value, which indicates if the method was successful.
 </p>
@@ -53,8 +53,28 @@ The variant without timeout always successull (but may block indefinitely). Othe
 <p>
 Releasing methods in <b>XCore</b> usually have three variants: common variant can be called only in a task context,
 "_int" variant can be called only in the interrupt context and "_any" variant can be called in any context.
-Also these methods have associated methods, which returns a <a href="page_Function.html"><b>Function</b></a>
-object, bound to the call of the correspondent method.
+</p>
+
+<p>
+Releasing methods often have associated methods, which return a <a href="page_Function.html"><b>Function</b></a>
+object, bound with the call of the correspondent releasing method.
+</p>
+
+<pre>
+   // give
+   
+   void give();
+
+   // functions
+   
+   Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
+</pre>
+
+<p>
+If several threads are blocked on a synchronization object, then they are organized in a priority queue.
+When one thread should be released, the most prioritized thread is picked up. The thread priority 
+counts first, the order of putting into the queue counts last. If the priority of the released task is 
+higher, than the priority of the running task, task switch happens immediately.
 </p>
 
 </body>

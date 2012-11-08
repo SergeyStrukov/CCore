@@ -101,11 +101,11 @@ class <span class="att">Task</span> : public MemBase_nocopy
 </pre>
 
 <p>
-<b>run_or_exit()</b> performes "run of exit" operation. I.g. it tryes to start a task. If
-the task is started, the true is returned. Otherwise, the method <b>exit()</b> is called and false is returned.
+<b>run_or_exit()</b> performes "run of exit" operation. I.g. it tries to start a task. If
+the task is started, true is returned. Otherwise, the method <b>exit()</b> is called and false is returned.
 You cannot run the same task twice. So <b>exit()</b> is called either way: as the part of <b>run_or_exit()</b> call
 or after the task is finished. This method can be used to destroy a dynamically allocated task object, 
-to signal about task completion.
+to signal about task completion or to do another completion quick job.
 </p>
 
 <p>
@@ -173,7 +173,7 @@ not provided, some auto-generated name is used. This name is used in system logg
 The <b>TaskPriority</b> is assigned to the task. Task priority determines the task running sequence:
 a task with higher priority preempts an execution of tasks with lower priority. The task priority cannot be changed,
 but can be temporary raised automatically by synchronization objects. Finally, the task <b>stack_len</b> 
-can be specified.
+can be specified. The minimum and the default task stack length are defined by the target. 
 </p>
 
 <pre>
@@ -197,24 +197,46 @@ PrintTaskPriority GetTextDesc(TaskPriority priority);
 
 <p>
 Task priority counts down: the less value means the higher priority. There are three special tasks in the system:
-<b>ExitTask</b>, <b>CompleteTask</b> and <b>IdleTask</b>.
+<b>Exit Task</b>, <b>Complete Task</b> and <b>Idle Task</b>.
 </p>
 
 <p>
-<b>IdleTask</b> runs while other tasks are blocked. It has the lowest priority.
+<b>Idle Task</b> runs while other tasks are blocked. It has the lowest priority.
 </p>
 
 <p>
-<b>ExitTask</b> is used to call the method <b>exit()</b>. This task can safely destroy another task object.
-<b>ExitTask</b> has the highest priority.
+<b>Exit Task</b> is used to call the method <b>exit()</b>. This task can safely destroy another task object.
+<b>Exit Task</b> has the highest priority.
 </p>
 
 <p>
-<b>CompleteTask</b> is used for the packet completion. It has the next highest priority after the <b>ExitTask</b>.
+<b>Complete Task</b> can be used for the packet completion. 
+It has the next highest priority after the <b>Exit Task</b>.
+Normally packets are completed by processing tasks, but in some cases it should be completed
+in the interrupt context. This is not possible, so the special task is provided for 
+such packet completion. 
 </p>
 
 <p>
 It is not recommeded to run a task with one of the special task priority.
+</p>
+
+<p>
+<b>XCore</b> performes tick task switch. The internal system tick is driven by a timer interrupt.
+This tick runs on a high frequency (like 10kHz). Tick switchs ready-to-run tasks and performes
+timed jobs, like timeout processing. Without the task priority relaxation only a task with the highest
+priority gains CPU time. If there are several such tasks they are switched in a round-robin order.
+</p>
+
+<p>
+The static method <b>Task::RelaxPriority()</b> enables the task priority relaxation.
+It means that during some ticks task priorities are ignored.
+The <b>period_tick</b> determines the period of the relaxed ticks. The value 0 means the
+task priority relaxation is disabled. The value 1 means that all ticks are relaxed.
+The value 2 means that each second tick is relaxed, and so on.
+The argument <b>priority</b> determines the cut of priority for the task relaxation.
+If the task has this priority or less, it does not participate in the relaxation.
+For example, the <b>Idle Task</b> never gains CPU because of the task priority relaxation.
 </p>
 
 </body>
