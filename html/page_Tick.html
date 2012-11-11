@@ -1,0 +1,143 @@
+<!--
+/* page_Tick.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> TickCount and TickJob</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>TickCount and TickJob</h2>
+
+<p class="Files">Files <b>CCore/inc/task/Tick.h</b> <b>CCore/src/task/Tick.cpp</b></p>
+
+<h4>TickJob</h4>
+
+<p>
+<b>TickJob</b> can be used to do some processing during the system tick.
+</p>
+
+<pre>
+class <span class="att">TickJob</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   explicit TickJob(Function&lt;void (void)&gt; action_int);
+   
+   ~TickJob();
+   
+   // IntLocked
+  
+   bool isActive() const { return active; }
+   
+   void start();
+   
+   void stop();
+ };
+</pre>
+
+<p>
+<b>TickJob</b> constructor is given an action function. This function will be called during the system tick 
+if the <b>TickJob</b> object is activated. The function is called in the interrupt context 
+and as such must be a "quick function".
+</p>
+
+<p>
+<b>TickJob</b> destructor calls <b>Abort()</b>, if the object is no deactivated.
+</p>
+
+<p>
+All other <b>TickJob</b> methods <span class="alert">must be called under <b>IntLock</b> protection</span>.
+</p>
+
+<p>
+<b>isActive()</b> returns true, if the object is activated.
+</p>
+
+<p>
+<b>start()</b> activates the object. It does nothing, if the object is already active.
+</p>
+
+<p>
+<b>stop()</b> deactivates the object. It does nothing, if the object is not active.
+</p>
+
+<h4>TickCount</h4>
+
+<p>
+The class <b>TickCount</b> is required to count ticks to implement timeouts and periodic time events.
+It is built using a generic class, parametrized by a tick frequency.
+</p>
+
+<pre>
+template &lt;unsigned TPS&gt;
+class <span class="att">TickCount_gen</span>
+ {
+   unsigned t;
+   unsigned r;
+   
+   // represents fraction (t*TPS+r)/1000
+   
+  public:
+  
+   TickCount_gen() { set(0); }
+   
+   void set(unsigned timeout_msec);
+   
+   bool tick();
+    
+   bool tick(unsigned period_msec);
+ };
+
+typedef TickCount_gen&lt;TicksPerSec&gt; <span class="att">TickCount</span>;
+
+</pre>
+
+<p>
+Internally <b>TickCount</b> stores the remaing time until an event. It decrements it each tick and generates a signal.
+The initial time in milliseconds can be set by the method <b>set()</b>. Countdown is performed by the method <b>tick()</b>.
+The method without parameter is used, if the only one event is required. If the periodic tick is required,
+then <b>tick()</b> with the required period in milliseconds must be used. The generated period is statistically 
+precise, unless it is less than the tick period (more precisely, the enequality <b>period_msec > 1000/TPS</b> 
+must hold true, this is satisfied, if <b>TPS >1000</b> ).
+</p>
+
+<p>
+The constant <b>TicksPerSec</b> is a system tick frequency and provided by the platform:
+</p>
+
+<pre>
+
+const unsigned <span class="att">TicksPerSec</span> = .... ;
+
+</pre>
+
+<p>
+in the file <b>dev/DevTick.h</b>.
+</p>
+
+</body>
+
+</html>
+

@@ -40,6 +40,10 @@ The functionality of the application is implemented in a series of tasks. The bo
 performes a core initializations and runs the main task. At start you need a working RAM, CPU, timers,
 interrupt controller, serial port and may be some extra stuff.
 Main task performes additional working hardware initialization, prepares and runs tasks.
+There is special "interrupt context", this execution context is used to handle hardware interrupts.
+All actions in this context are limited: they must be "quick", in particular, it is forbidden to
+use any "blocking" calls. <b>XCore</b> does not support nested interrupts, so the interrupt context is
+muti-task safe.
 </p>
 
 <p>

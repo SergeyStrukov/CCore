@@ -1,0 +1,49 @@
+<!--
+/* page_Packet.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Packet</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Packet</h2>
+
+<p class="Files">Files <b>CCore/inc/Packet.h</b> <b>CCore/src/Packet.cpp</b></p>
+ 
+<p>
+Packets is an infra-structure for efficient flexible parallel mass request processing.
+In this infra-structure processing nodes, also called devices, are exchanging packets. Packet is
+a task request. It contains a small stack for request parameters and return value and typically has an
+attached data buffer to transfer a bulk of data. Packet might be cancelled by the originator.
+Each packet device has a packet entry gate, through which packets are coming for processing.
+During processing packet can be stored, transferred to another packet device or completed.
+Eventually packet must be completed and during completion returned to the packet pool, from which
+it was borrowed. Packet cancellation is a mean, the packet originator can use to ask a current
+packet device to cancel a packet processing. It is assumed, that packet should be quickly disengaged from the 
+processing and completed.
+</p>
+
+</body>
+
+</html>
+

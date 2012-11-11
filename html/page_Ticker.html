@@ -1,0 +1,123 @@
+<!--
+/* page_Ticker.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Ticker and TimedTrigger</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Ticker and TimedTrigger</h2>
+
+<p class="Files">Files <b>CCore/inc/task/Ticker.h</b> <b>CCore/src/task/Ticker.cpp</b></p>
+
+<h4>Ticker</h4>
+
+<p>
+The class <b>Ticker</b> is built upon the class <a href="page_Tick.html"><b>TickJob</b></a> and should be
+used to schedule a timed job.
+</p>
+
+<pre>
+class <span class="att">Ticker</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+  
+   explicit Ticker(Function&lt;void (void)&gt; action_int);
+  
+   Ticker(Function&lt;void (void)&gt; action_int,MSec delay,MSec period=Nothing);
+   
+   ~Ticker();
+   
+   void start(MSec delay,MSec period=Nothing);
+   
+   void stop();
+ };
+</pre>
+
+<p>
+Constructor takes an action function as the argument. The function will be called in the interrupt context 
+and as such must be a "quick function". The second constructor also starts the object with the given
+parameters.
+</p>
+
+<p>
+Destructor stops the ticker, if it was not stopped.
+</p>
+
+<p>
+<b>start()</b> starts or restarts the object with the given parameters. The first argument is a delay
+before the first action. The second, if it is not zero, specifies the period, actions will be performed 
+with the given periodicity.
+</p>
+
+<p>
+<b>stop()</b> stops ticker.
+</p>
+
+<h4>TimedTrigger</h4>
+
+<p>
+<b>TimedTrigger</b> allows delay and combine actions to reduce action call frequency.
+</p>
+
+<pre>
+class <span class="att">TimedTrigger</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+  
+   TimedTrigger(Function&lt;void (void)&gt; action_int,MSec delay);
+   
+   ~TimedTrigger();
+   
+   void trigger();
+   
+   void stop();
+ };
+</pre>
+
+<p>
+Constructor arguments are: an action function, which is called in the interrupt context and the maximum delay time. 
+</p>
+
+<p>
+Destructor stops the object.
+</p>
+
+<p>
+<b>trigger()</b> "triggers" the action. It will be performed within <b>delay</b> time limit.
+But if the action was already triggered, the function does nothing. So  multiple triggers during a short time period
+are combined into the single action.
+</p>
+
+<p>
+<b>stop()</b> stops the object.
+</p>
+
+</body>
+
+</html>
+

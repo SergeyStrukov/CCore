@@ -30,6 +30,161 @@
 
 <p class="Files">Files <b>CCore/inc/task/TaskMonitor.h</b> <b>CCore/src/task/TaskMonitor.cpp</b></p>
 
+<h4>TaskMonitor</h4>
+
+<p>
+<b>TaskMonitor</b> can be used to monitor task switches. It is a <b>Partial class</b>, you have to build a
+derived class to use it.
+</p>
+
+<pre>
+class <span class="att">TaskMonitor</span> : NoCopy
+ {
+  public:
+  
+   class Record
+    {
+     private:
+     
+      friend class TaskMonitor;
+      
+      // IntLocked
+     
+      virtual void transit(Record *from,Record *to)=0; 
+   
+      void begin() { transit(0,this); }
+   
+      void end() { transit(this,0); }
+      
+     public:
+  
+      Record();
+   
+      ~Record();
+    };
+   
+   class StartStop : NoCopy
+    {
+      ....
+   
+     public: 
+  
+      explicit StartStop(TaskMonitor &amp;obj);
+      
+      void stop();
+   
+      ~StartStop();
+    };
+  
+  private:
+   
+   ....
+  
+   virtual void prepare()=0;
+   
+   virtual void complete()=0;
+
+   // IntLocked
+  
+   virtual Record * alloc(TextLabel name,TaskPriority priority)=0;
+   
+   virtual Record * getInt()=0;
+
+  protected:
+  
+   void guardStopped() const;
+  
+  public:
+  
+   TaskMonitor();
+   
+   ~TaskMonitor();
+ };
+</pre>
+
+<p>
+<b>prepare()</b> is called before a monitoring is started as a part of the start process.
+</p>
+
+<p>
+<b>complete()</b> is called after a monitoring is stopped as a part of the stop process.
+</p>
+
+<p>
+<b>guardStopped()</b> is a guard method, it throw an exception, if a monitoring is in progress.
+</p>
+
+<p>
+The inner class <b>StartStop</b> is used to start/stop a monitoring. Its constructor starts
+a monitoring with the given <b>TaskMonitor</b> object. The destructor or the method <b>stop()</b> stops it.
+</p>
+
+<p>
+When a monitoring is started, record objects are used to trace a task context switches. The type of these
+objects is derived from the <b>TaskMonitor::Record</b> class. Each task and the interrupt context
+uses an associated such record. The record is allocated dynamically by the methods <b>alloc()</b> and 
+<b>getInt()</b>. Record is allocated once per task. Allocation methods are called under <b>IntLock</b> protection,
+so their implementations in a derived class must be "quick", in particular, they cannot use memory
+allocation routines. Records should be taken from some preallocated record pool. One record can be used
+with multiple tasks. <b>alloc()</b> method arguments are: the task name and the task priority.
+</p>
+
+<p>
+<b>TaskMonitor::Record</b> has tree methods used to track a task switchs: <b>transit()</b>, <b>begin()</b>, 
+<b>end()</b>. These methods are called under <b>IntLock</b> protection. The first method first argument
+is always the same as the object. This methods is called when a context switch happens. Other methods are called
+once when a monitoring is started and stopped.
+</p>
+
+<h4>TaskMonitor_CPU</h4>
+
+<p>
+<b>TaskMonitor_CPU</b> is a fully-functional derived class from the <b>TaskMonitor</b>.
+It counts CPU time usage.
+</p>
+
+<pre>
+class <span class="att">TaskMonitor_CPU</span> : public TaskMonitor
+ {
+   ....
+
+  public:
+   
+   static const ulen DefaultBufLen = 100 ;
+  
+   explicit TaskMonitor_CPU(ulen buf_len=DefaultBufLen);
+   
+   ~TaskMonitor_CPU();
+   
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+The usage of this class is very simple: run it, stop it and then print it. The <b>buf_len</b> is a task record
+buffer length. Normally, 100 should be enough.
+</p>
+
+<p>
+An example:
+</p>
+
+<pre>
+
+TaskMonitor_CPU monitor;
+  
+TaskMonitor::StartStop start_stop(monitor);
+  
+{
+ .... // run several tasks here
+}
+  
+start_stop.stop();
+  
+Printf(Con,"#;\n",monitor);
+
+</pre>
 
 </body>
 
