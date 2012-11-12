@@ -43,6 +43,371 @@ packet device to cancel a packet processing. It is assumed, that packet should b
 processing and completed.
 </p>
 
+<p>
+The number of software entities are required to deal with packets.
+</p>
+
+<h4>Types, constants and functions</h4>
+
+<pre>
+/* types */ 
+
+typedef SecTimer::ValueType TimeStamp;
+
+typedef Function&lt;void (PacketHeader *)&gt; PacketFunction;
+
+/* consts */ 
+
+const ulen MaxPacketExtLen = Align(256) ;
+
+const ulen MaxPacketCompleteFunctions = 8 ;
+
+const ulen DefaultPacketMaxDataLen = 1600 ;
+
+enum PacketCancelState
+ {
+  Packet_NoCancelFunction,
+  Packet_HasCancelFunction,
+  Packet_Cancelled
+ };
+ 
+enum LenStatus
+ {
+  Len_ok,
+  Len_too_short,
+  Len_too_long
+ };
+    
+/* functions */ 
+
+void GuardLenSubTooShort(const char *name,ulen len,ulen delta);
+
+inline ulen LenSub(const char *name,ulen len,ulen delta) // always > 0 
+ {
+  if( len<=delta ) GuardLenSubTooShort(name,len,delta);
+  
+  return len-delta;
+ }
+</pre>
+
+<h4>PacketBuf</h4>
+
+<p>
+<b>PacketBuf</b> is used to handle a packet data buffer. This class keeps a pointer to the data buffer
+alone with its length and the data length, stored in the buffer. From the <b>PacketBuf</b>
+perspective data is a raw data, i.g. a sequence of bytes.
+</p>
+
+<pre>
+class <span class="att">PacketBuf</span> : NoCopy
+ {
+   void *data;
+   ulen max_data_len;
+   ulen data_len;
+
+   ....
+   
+  public:
+   
+   // constructors
+  
+   PacketBuf();
+   
+   explicit PacketBuf(ulen max_data_len);
+   
+   ~PacketBuf();
+   
+   // methods
+   
+   bool provide(ulen max_data_len);
+   
+   void detach();
+   
+   void moveTo(PacketBuf &pbuf);
+   
+   // data methods
+   
+   bool noSpace() const { return !max_data_len; }
+   
+   ulen getMaxRawLen() const { return max_data_len; }
+   
+   ulen getRawLen() const { return data_len; }
+   
+   void setRawLen(ulen data_len_) { guardLen(data_len_); data_len=data_len_; }
+   
+   Place&lt;void&gt; getRaw() { return PlaceAt(data); }
+ };
+</pre>
+
+<p>
+Default constructor creates an empty data buffer.
+</p>
+
+<p>
+Another constructor creates a data buffer with the given capacity. The <b>data_len</b> is zero.
+Exception is thrown in case of error.
+</p>
+
+<p>
+Destructor releases the buffer.
+</p>
+
+<p>
+<b>provide()</b> ensures the data buffer has the given capacity. It also clears <b>data_len</b>.
+If the buffer of a greater capacity was already allocated, the extra memory is returned to the heap.
+The return value is true, if the operation is successful.
+</p>
+
+<p>
+<b>detach()</b> releases the buffer. The object becomes empty.
+</p>
+
+<p>
+<b>moveTo()</b> moves the buffer to another <b>PacketBuf</b> object. The original object becomes empty.
+The previous destination buffer is released. If the source and the destination are the same, the operation
+does nothing.
+</p>
+
+<p>
+<b>noSpace()</b> is true, if the buffer is empty.
+</p>
+
+<p>
+<b>getMaxRawLen()</b> returns the buffer capacity in bytes.
+</p>
+
+<p>
+<b>getRawLen()</b> returns the actual data length in the buffer.
+</p>
+
+<p>
+<b>setRawLen()</b> sets the actual data length, the value must not exceed the buffer capacity,
+otherwise an exception is thrown.
+</p>
+
+<p>
+<b>getRaw()</b> returns the "place" of the beginning of the data buffer. You may
+use this value to put data to the buffer.
+</p>
+
+<h4>PacketHeader</h4>
+
+<p>
+Packet itself consists of the packet header, which is an object of the class <b>PacketHeader</b>
+and the packet extension behind the header. All of this is placed in a memory block of
+some predefined length. Packet extension is organized as a stack of any type objects.
+<b>PacketHeader</b> contains another stack of completion functions.
+</p>
+
+<pre>
+class <span class="att">PacketHeader</span> : NoCopy
+ {
+   PacketBuf pbuf;
+   
+   TimeStamp time_stamp;
+   
+   Atomic cancel_state; // PacketCancelState
+   PacketFunction cancel_function;
+   void *cancel_arg;
+  
+   PacketFunction stack[MaxPacketCompleteFunctions];
+   ulen stack_len;
+   
+   ulen ext_len;
+  
+   DLink&lt;PacketHeader&gt; link;
+   bool in_list;
+  
+  public:
+   
+   // constructors
+   
+   static constexpr ulen Delta() { return Align(sizeof (PacketHeader)); }
+   
+   static constexpr ulen AllocLen() { return Delta()+MaxPacketExtLen; }
+  
+   explicit PacketHeader(PacketFunction complete_function) noexcept(EnableNoExcept);
+   
+   void recycle(PacketFunction complete_function);
+   
+   ~PacketHeader() {}
+   
+</pre>
+
+<p>
+<b>PacketHeader</b> has a number of inner data fields. It also has an extension.
+</p>
+
+<p>
+Normally you don't need the <b>PacketHeader</b> constructor, because you get a ready-to-use
+packet from a packet pool. This constructor creates a clean packet with the given completion function.
+</p>
+
+<p>
+The destructor is not trivial: it calls a destructor of the inner <b>PacketBuf</b>.
+And again, you don't use it directely, because once you finished with a packet, you call its complete
+method and packet returns to the packet pool, where it was originaly taken.
+</p>
+
+<pre>
+
+   // complete
+   
+   void pushCompleteFunction(PacketFunction complete_function); 
+   
+   PacketFunction popCompleteFunction(); 
+  
+   void complete() { popCompleteFunction()(this); }
+   
+</pre>
+
+<p>
+</p>
+
+<pre>
+
+   // cancel
+   
+   PacketCancelState setCancelFunction(PacketFunction cancel_function,void *cancel_arg=0);
+   
+   PacketCancelState clearCancelFunction();
+   
+   PacketCancelState getCancelFunction(PacketFunction &amp;ret);
+   
+   void * getCancelArg() const { return cancel_arg; }
+
+</pre>
+
+<p>
+<b>PacketHeader</b> has the inner time-stamp field. The second timer is used for the time-stamping.
+</p>
+
+<pre>
+   
+   // stamp
+  
+   TimeStamp getStamp() const { return time_stamp; }
+  
+   bool isOld(TimeStamp now,TimeStamp how_old) const { return now-time_stamp>how_old; }
+  
+   void stamp() { time_stamp=SecTimer::Get(); }
+   
+</pre>
+
+<p>
+<b>getStamp()</b> return the packet time-stamp.
+</p>
+
+<p>
+<b>isOld()</b> is used to check if the packet is old enough. The first argument is the current time
+and the second is a desired time.
+</p>
+
+<p>
+<b>stamp()</b> sets the current time as a time-stamp.
+</p>
+
+<p>
+The next set of methods are to "extend" the packet.
+</p>
+
+<pre>
+
+   // ext
+   
+   template &lt;class T,class ... SS&gt;
+   T * pushExt(SS &amp;&amp; ... ss);
+   
+   template &lt;class T&gt;
+   T * getExt();
+    
+   template &lt;class T,class ... TT&gt;  // T, T1, T2, ... , Ttop
+   T * getDeepExt();
+    
+   template &lt;class T&gt;
+   void popExt();
+    
+</pre>
+
+<p>
+<b>pushExt()</b> pushs the object of the type <b>T</b> to the extension stack. The object
+is constructed using the given set of arguments. Pointer to the constructed object is returned.
+If there is no enough room for the object the <b>Abort()</b> is called.
+</p>
+
+<p>
+<b>getExt()</b> returns a pointer to the top of the extension stack. You must known exactly, the
+object exists and has the given type.
+</p>
+
+<p>
+<b>getDeepExt()</b> is used, if you have to look deeper into the extension stack. If the stack
+contains a sequence of objects of types <b>T, T1, ... Ttop</b>, you may use this methods
+to get a pointer to the deep object of the type <b>T</b>.
+</p>
+
+<p>
+<b>popExt()</b> pops and destroys the top object from the extension stack. You must known exactly, the
+object exists and has the given type.
+</p>
+
+<p>
+<b>PacketHeader</b> has the inner <b>PacketBuf</b> field and a set of methods
+to manipulate with it. This buffer can be used to store a bulk of data with a packet.
+</p>
+
+<pre>
+
+   // data attach/detach 
+   
+   bool provide(ulen max_data_len=DefaultPacketMaxDataLen);
+   
+   void detach();
+   
+   void attach(PacketBuf &amp;pbuf);
+   
+   void detach(PacketBuf &amp;pbuf);
+   
+   void detach(PacketHeader *dst);
+
+</pre>
+
+<p>
+These methods are direct calls of the correspondent <b>PacketBuf</b> methods.
+Last three methods use the <b>moveTo()</b> <b>PacketBuf</b> method to move the data buffer.
+The only difference they are not allowed if the packet belongs to a packet list.
+In this case <b>Abort()</b> is called. The last method moves the packet buffer to another packet.
+This packet also must not belong to a packet list.
+</p>
+
+<pre>
+   
+   // raw data
+   
+   bool noSpace() const { return pbuf.noSpace(); }
+    
+   ulen getMaxRawLen() const { return pbuf.getMaxRawLen(); }
+   
+   ulen getRawLen() const { return pbuf.getRawLen(); }
+   
+   void setRawLen(ulen data_len) { pbuf.setRawLen(data_len); }
+   
+   Place&lt;void&gt; getRaw() { return pbuf.getRaw(); }
+ };
+</pre>
+
+<p>
+Raw data methods are direct calls of the correspondent <b>PacketBuf</b> methods.
+</p>
+
+<h4>PacketFormat</h4>
+
+<h4>Packet</h4>
+
+<h4>PacketList</h4>
+
+<h4>PacketCanceller</h4>
+
 </body>
 
 </html>

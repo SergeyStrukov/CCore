@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_PacketPool.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> PacketPool</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,173 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>PacketPool</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/PacketPool.h</b> <b>CCore/src/PacketPool.cpp</b></p>
 
+<p>
+<b>PacketPool</b> implements a pool of packets. There is a default global packet pool
+in the <b>CCore</b>. Two global constants <b>PacketPool_PacketCount</b> and
+<b>PacketPool_PacketMaxDataLen</b> determine properties of this pool. You may
+override these constants by defining them in you project. Default values are provided by the target
+as <b>DefaultPacketCount</b> and <b>DefaultPacketMaxDataLen</b>.
+</p>
+
+<p>
+The following global pool functions are to work with raw packets.
+</p>
+
+<pre>
+
+PacketHeader * <span class="att">TryAllocPacket_raw</span>();
+
+PacketHeader * <span class="att">AllocPacket_raw</span>(); // may return 0
+
+PacketHeader * <span class="att">AllocPacket_raw</span>(MSec timeout);
+
+PacketHeader * <span class="att">AllocPacket_raw</span>(TimeScope time_scope);
+
+PacketHeader * <span class="att">TryAllocPacket_raw_short</span>();
+
+PacketHeader * <span class="att">AllocPacket_raw_short</span>(); // never return 0
+
+PacketHeader * <span class="att">AllocPacket_raw_short</span>(MSec timeout);
+
+PacketHeader * <span class="att">AllocPacket_raw_short</span>(TimeScope time_scope);
+
+void <span class="att">DetachPacketBufs</span>();
+
+</pre>
+
+<p>
+<b>TryAllocPacket_raw()</b> is a non-blocking allocation function. If the operation has failed,
+the return pointer is null. The packet is a "long" packet, i.g. has an attached data buffer.
+The length of the buffer is <b>PacketPool_PacketMaxDataLen</b>.
+</p>
+
+<p>
+<b>AllocPacket_raw()</b> is blocking allocation function. It blocks while packet pool is empty. 
+Once a packet becomes available it tries to attach a data buffer and return this packet. 
+If this failed, the return pointer is null. So, despite the function is blocking, it still 
+might return null pointer.
+</p>
+
+<p>
+<b>AllocPacket_raw(MSec)</b> and <b>AllocPacket_raw(TimeScope)</b> are
+timed variants of the <b>AllocPacket_raw()</b>. In case of timeout the null pointer is returned.
+</p>
+
+<p>
+There are "short" variants of four functions, mentioned above. They allocate a "short" packet,
+i.g. this packet does not necessary has an attached data buffer (but may has).
+<b>AllocPacket_raw_short()</b> never return null, because of this.
+</p>
+
+<p>
+<b>DetachPacketBufs()</b> detaches data buffers from all packets in the pool.
+</p>
+
+<p>
+There is no "free" function, because you return a packet back to the pool, when you complete it.
+Initially pool has a <b>PacketPool_PacketCount</b> packets without attached data buffers.
+</p>
+
+<p>
+And there are functions to work with specialized packets. They are direct calls of the
+correspondent raw functions.
+</p>
+
+<pre>
+
+template &lt;class POD&gt;
+Packet&lt;POD&gt; <span class="att">TryAllocPacket</span>() { return TryAllocPacket_raw(); }
+ 
+template &lt;class POD&gt;
+Packet&lt;POD&gt; <span class="att">AllocPacket</span>() { return AllocPacket_raw(); } // may return 0
+ 
+template &lt;class POD&gt;
+Packet&lt;POD&gt; <span class="att">AllocPacket</span>(MSec timeout) { return AllocPacket_raw(timeout); }
+ 
+template &lt;class POD&gt;
+Packet&lt;POD&gt; <span class="att">AllocPacket</span>(TimeScope time_scope) { return AllocPacket_raw(time_scope); }
+                                                                       
+template &lt;class POD&gt;
+Packet&lt;POD&gt; <span class="att">TryAllocPacket_short</span>() { return TryAllocPacket_raw_short(); }
+ 
+template &lt;class POD&gt;
+Packet&lt;POD&gt; <span class="att">AllocPacket_short</span>() { return AllocPacket_raw_short(); } // never return 0
+ 
+template &lt;class POD&gt;
+Packet&lt;POD&gt; <span class="att">AllocPacket_short</span>(MSec timeout) { return AllocPacket_raw_short(timeout); }
+ 
+template &lt;class POD&gt;
+Packet&lt;POD&gt; <span class="att">AllocPacket_short</span>(TimeScope time_scope) { return AllocPacket_raw_short(time_scope); }
+
+</pre>
+
+<h4>PacketPool</h4>
+
+<p>
+Here is the <b>PacketPoll</b> class itself. You may use its methods only in a task context.
+So you cannot complete a packet in the interrupt context.
+</p>
+
+<p>
+The allocation method semantic is the same as of global functions above.
+</p>
+
+<p>
+The <b>name</b> is used to name internal synchronization objects.
+</p>
+
+<p>
+Internally all packets are stores in a list. Packets with attached data buffer goes first.
+</p>
+
+<p>
+Destructor calls <b>Abort()</b>, if not all packets are released at the moment.
+</p>
+
+<pre>
+class <span class="att">PacketPool</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit PacketPool(ulen count,ulen max_data_len=DefaultPacketMaxDataLen);
+   
+   PacketPool(TextLabel name,ulen count,ulen max_data_len=DefaultPacketMaxDataLen);
+   
+   ~PacketPool();
+   
+   // get
+   
+   PacketHeader * try_get();
+   
+   PacketHeader * get(); // may return 0
+   
+   PacketHeader * get(MSec timeout);
+   
+   PacketHeader * get(TimeScope time_scope);
+   
+   // get_short
+   
+   PacketHeader * try_get_short();
+   
+   PacketHeader * get_short(); // never return 0
+   
+   PacketHeader * get_short(MSec timeout);
+   
+   PacketHeader * get_short(TimeScope time_scope);
+   
+   // detachBufs
+   
+   void detachBufs();
+ };
+</pre>
 
 </body>
 
