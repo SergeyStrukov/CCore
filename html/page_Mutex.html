@@ -119,6 +119,22 @@ class SomeClass
  };
 </pre>
 
+<p>
+Building a large-scale application, comprised of a multiple components, it is easy to create a sadden
+deadlock using mutexing in a non-systematic way. So to avoid it I recommend to follow these simple rules:
+</p>
+
+<p>
+Lock-free context is a part of code which does not hold any mutex. Most of application code must run
+in a lock-free context. If you locked a mutex, don't use any other synchonization methods, both
+blocking and releasing. Make a locked sections of code "quick". Avoid nested mutex lockes.
+Sometimes you have to nest mutexes, for example, you may call a memory allocation function, which holds
+a heap mutex. But in this case there is no risk to create a deadlock. "Leaf" mutexes, i.g. mutexes whose
+locked code regions does not make another locks, are deadlock safe. So keep mutexes "leaf", restrict
+particular mutex usage by defined code regions, for example, methods of a single class. If you still
+have to nest mutex usage, decide an order of locks: one mutex always must be locked before another.
+</p>
+
 <h4>HCore Mutex</h4>
 
 <pre>

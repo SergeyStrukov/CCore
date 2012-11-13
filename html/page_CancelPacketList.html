@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_CancelPacketList.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> CancelPacketList</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,221 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>CancelPacketList</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/CancelPacketList.h</b> <b>CCore/src/CancelPacketList.cpp</b></p>
 
+<p>
+<b>CancelPacketList</b> class implements the packet cancellation for packets, stored in some <b>PacketList</b>.
+It is also a "reference design" for the packet cancellation in a packet processing class.
+</p>
+
+<pre>
+class <span class="att">CancelPacketList</span> : public Funchor_nocopy
+ {
+  public:
+  
+   enum Event
+    {
+     Event_cancel,
+     Event_cancel_on_put,
+     
+     EventLim
+    };
+    
+   friend const char * GetTextDesc(Event ev); 
+    
+   typedef Counters&lt;Event,EventLim&gt; StatInfo;
+ 
+  private:
+ 
+   Mutex mutex;
+   
+   StatInfo stat;
+   
+  private:
+  
+   void cancel(PacketHeader *packet);
+   
+   PacketFunction function_cancel() { return FunctionOf(this,&amp;CancelPacketList::cancel); }
+ 
+  public:
+   
+   // constructors
+  
+   CancelPacketList();
+   
+   explicit CancelPacketList(TextLabel name);
+   
+   ~CancelPacketList();
+   
+   // methods
+   
+   void getStat(StatInfo &amp;ret);
+   
+   bool try_put(PacketList &amp;list,PacketHeader *packet);
+   
+   template &lt;class P&gt;
+   bool try_put(PacketList &amp;list,P packet) { return try_put(list,GetPacketHeader(packet)); }
+   
+   void put(PacketList &amp;list,PacketHeader *packet);
+   
+   template &lt;class P&gt;
+   void put(PacketList &amp;list,P packet) { put(list,GetPacketHeader(packet)); }
+   
+   PacketHeader * get(PacketList &amp;list);
+   
+   void get(PacketList &amp;list,PacketList &amp;dst);
+   
+   void complete(PacketList &amp;list);
+ };
+</pre>
+
+<p>
+The constructor argument <b>name</b> is used to name the internal mutex.
+</p>
+
+<p>
+The class counts some events and the event statistic is available through the method <b>getStat()</b>.
+</p>
+
+<pre>
+void CancelPacketList::getStat(StatInfo &ret)
+ {
+  Mutex::Lock lock(mutex); // mutex protected region
+  
+  ret=stat;
+ }
+</pre>
+
+<p>
+The class can serve multiple packet lists. To put a packet to the list there are two main methods (and two variants):
+<b>try_put()</b> and <b>put()</b>.
+</p>
+
+<p>
+<b>put()</b> is a simple upgrade over <b>try_put()</b>:
+</p>
+
+<pre>
+void CancelPacketList::put(PacketList &list,PacketHeader *packet)
+ {
+  if( !try_put(list,packet) ) packet->complete(); // if the packet is cancelled, complete it
+ }
+</pre>
+
+<p>
+<b>try_put()</b> puts the packet into the packet list and assigns the cancel function to it. So the packet can be
+removed from the list upon a cancel request. But if the packet comes in the cancelled state (or the cancellation happens
+during the <b>try_put()</b> processing), the packet is not placed into the list and must be completed
+(or handled by another way). <b>put()</b> simply complete the packet in this case.
+</p>
+
+<pre>
+bool CancelPacketList::try_put(PacketList &list,PacketHeader *packet)
+ {
+  Mutex::Lock lock(mutex); // mutex protected region
+
+  if( packet->setCancelFunction(function_cancel())==Packet_NoCancelFunction )
+    {
+     packet->pushExt&lt;PacketList *&gt;(&list);
+      
+     list.put(packet);
+       
+     return true;
+    }
+    
+  stat.count(Event_cancel_on_put);
+  
+  return false;
+ }
+</pre>
+
+<p>
+<b>try_put()</b> is working under the mutex protection. It starts with the setting the cancel function to the packet.
+If packet is clean, then <b>try_put()</b> extends it with the packet list pointer and put the packet into the list.
+Now packet has the assigned cancel function and it remembers from which packet list it must be removed.
+</p>
+
+<p>
+The cancel function also is working under the mutex protection.
+</p>
+
+<pre>
+void CancelPacketList::cancel(PacketHeader *packet)
+ {
+  {
+   Mutex::Lock lock(mutex); // mutex protected region
+  
+   if( PacketList *list=*packet->getExt&lt;PacketList *&gt;() ) list->del(packet);
+   
+   stat.count(Event_cancel);
+  } 
+  
+  packet->popExt&lt;PacketList *&gt;();
+  
+  packet->complete();
+ }
+</pre>
+
+<p>
+It extracts the packet list pointer and if it is not null, removes the packet from the packet list.
+Then in the lock-free context the packet extension is popped and the packet is completed.
+The packet list pointer might be null, because it is nullified by the method <b>get()</b>.
+</p>
+
+<p>
+To extract a packet from the list the method <b>get()</b> is used.
+</p>
+
+<pre>
+PacketHeader * CancelPacketList::get(PacketList &list)
+ {
+  for(;;)
+    {
+     Mutex::Lock lock(mutex); // mutex protected region
+ 
+     PacketHeader *packet=list.get();
+  
+     if( !packet ) return 0;
+  
+     if( packet->clearCancelFunction()!=Packet_Cancelled ) 
+       {
+        packet->popExt&lt;PacketList *&gt;();
+       
+        return packet;
+       }
+     else
+       {
+        *packet->getExt&lt;PacketList *&gt;()=0;
+       }
+    } 
+ }
+</pre>
+
+<p>
+To get a packet, the mutex is locked, then the first packet is extracted from the list. If the list is empty,
+the method is finished and the null pointer is returned. Otherwise the cancel function is cleared.
+If the packet was not cancelled, the packet extension is popped and the packet is returned.
+Otherwise the packet extension pointer is nullified and the packet is dropped. That is because the packet
+originator has already taken the cancel function and going to call it or may be called. In the last case the cancel
+function execution will be delayed on the mutex lock and continues as soon as we release the mutex.
+The packet is extracted from the list, so we have to nullify the packet list pointer to prevent the second attempt to
+remove the packet from the list. And the packet will be completed by the cancel function.
+</p>
+
+<p>
+The last two methods are helpers.
+</p>
+
+<p>
+<b>get(PacketList &list,PacketList &dst)</b> moves all not cancelled packets from the list to another list for 
+a further processing.
+</p>
+
+<p>
+<b>complete()</b> complets all packets from the list. The list becomes empty.
+</p>
 
 </body>
 

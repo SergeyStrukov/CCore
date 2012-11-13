@@ -44,41 +44,76 @@ processing and completed.
 </p>
 
 <p>
+<span class="alert">Packet functions, complete or cancel, must be called in a lock-free context</span>.
+</p>
+
+<p>
 The number of software entities are required to deal with packets.
 </p>
 
 <h4>Types, constants and functions</h4>
 
 <pre>
-/* types */ 
 
-typedef SecTimer::ValueType TimeStamp;
+typedef SecTimer::ValueType <span class="att">TimeStamp</span>;
 
-typedef Function&lt;void (PacketHeader *)&gt; PacketFunction;
+typedef Function&lt;void (PacketHeader *)&gt; <span class="att">PacketFunction</span>;
 
-/* consts */ 
+</pre>
 
-const ulen MaxPacketExtLen = Align(256) ;
+<p>
+<b>TimeStamp</b> is a type of time-stamp value.
+</p>
 
-const ulen MaxPacketCompleteFunctions = 8 ;
+<p>
+<b>PacketFunction</b> is a packet function type.
+</p>
 
-const ulen DefaultPacketMaxDataLen = 1600 ;
+<pre>
 
-enum PacketCancelState
+const ulen <span class="att">MaxPacketExtLen</span> = Align(256) ;
+
+const ulen <span class="att">MaxPacketCompleteFunctions</span> = 8 ;
+
+const ulen <span class="att">DefaultPacketMaxDataLen</span> = 1600 ;
+
+enum <span class="att">PacketCancelState</span>
  {
   Packet_NoCancelFunction,
   Packet_HasCancelFunction,
   Packet_Cancelled
  };
  
-enum LenStatus
+enum <span class="att">LenStatus</span>
  {
   Len_ok,
   Len_too_short,
   Len_too_long
  };
-    
-/* functions */ 
+
+</pre>    
+
+<p>
+<b>MaxPacketExtLen</b> is a space for the packet extension stack.
+</p>
+
+<p>
+<b>MaxPacketCompleteFunctions</b> is a packet complete function stack depth.
+</p>
+
+<p>
+<b>DefaultPacketMaxDataLen</b> is a default packet data buffer length.
+</p>
+
+<p>
+<b>PacketCancelState</b> is a packet cancel state constants.
+</p>
+
+<p>
+<b>LenStatus</b> is a length status.
+</p>
+
+<pre>
 
 void GuardLenSubTooShort(const char *name,ulen len,ulen delta);
 
@@ -88,7 +123,36 @@ inline ulen LenSub(const char *name,ulen len,ulen delta) // always > 0
   
   return len-delta;
  }
+
+inline PacketHeader * GetPacketHeader(PacketHeader *packet) { return packet; }
+ 
+template &lt;class POD,class ... TT&gt;
+PacketHeader * GetPacketHeader(Packet&lt;POD,TT...&gt; packet) { return packet.getPtr(); }
+ 
+template &lt;class POD,class T&gt;
+void DropPacketExt(PacketHeader *packet_)
+ {
+  Packet&lt;POD,T&gt; packet=packet_;
+  
+  packet.popExt().complete();
+ }
+
 </pre>
+
+<p>
+<b>LenSub()</b> performs the length subtraction. It is expected, the result is positive.
+Otherwise, an exception is thrown. <b>GuardLenSubTooShort()</b> throw an exception. <b>name</b> 
+is a function name in the exception message.
+</p>
+
+<p>
+<b>GetPacketHeader()</b> casts a "packet" to the pointer to the <b>PacketHeader</b>.
+</p>
+
+<p>
+<b>DropPacketExt()</b> is a simple packet completion function. Use it when you need only
+to pop some packet extension.
+</p>
 
 <h4>PacketBuf</h4>
 
@@ -222,8 +286,6 @@ class <span class="att">PacketHeader</span> : NoCopy
    
    // constructors
    
-   static constexpr ulen Delta() { return Align(sizeof (PacketHeader)); }
-   
    static constexpr ulen AllocLen() { return Delta()+MaxPacketExtLen; }
   
    explicit PacketHeader(PacketFunction complete_function) noexcept(EnableNoExcept);
@@ -245,8 +307,17 @@ packet from a packet pool. This constructor creates a clean packet with the give
 
 <p>
 The destructor is not trivial: it calls a destructor of the inner <b>PacketBuf</b>.
-And again, you don't use it directely, because once you finished with a packet, you call its complete
+And again, you don't use it directly, because once you finished with a packet, you call its complete
 method and packet returns to the packet pool, where it was originaly taken.
+</p>
+
+<p>
+<b>recycle()</b> is used to prepare the packet for reuse. The packet must have empty extension,
+complete stack and no cancel function.
+</p>
+
+<p>
+<b>AllocLen()</b> is a packet memory block length.
 </p>
 
 <pre>
@@ -262,6 +333,26 @@ method and packet returns to the packet pool, where it was originaly taken.
 </pre>
 
 <p>
+Packet has the inner complete function stack. Onec the packet processing is finished, the method 
+<b>complete()</b> must be called to complete the packet. A packet originator assignes a complete function,
+when preparing packet for processing. When packet is taken from a packet pool, it has the one complete
+function, which returns the packet to the pool.
+</p>
+
+<p>
+<b>pushCompleteFunction()</b> pushs a packet function to the complete function stack.
+</p>
+
+<p>
+<b>popCompleteFunction()</b> pops a packet function from the complete function stack.
+</p>
+
+<p>
+<b>complete()</b> pops a packet function from the complete function stack and applies it to the packet.
+</p>
+
+<p>
+In case of stack overflow or underflow the <b>Abort()</b> is called.
 </p>
 
 <pre>
@@ -279,7 +370,43 @@ method and packet returns to the packet pool, where it was originaly taken.
 </pre>
 
 <p>
-<b>PacketHeader</b> has the inner time-stamp field. The second timer is used for the time-stamping.
+Packet has a cancel state. The state has one of three values: <b>Packet_NoCancelFunction</b>, 
+<b>Packet_HasCancelFunction</b>, <b>Packet_Cancelled</b>.
+</p>
+
+<p>
+<b>setCancelFunction()</b> assigns a cancel function with optionally argument. The packet
+must not have a cancel function assigned. If the packet is already cancelled, the function does nothing,
+otherwise it assigns a cancel function and changes the packet state to the <b>Packet_HasCancelFunction</b>.
+The previous state is returned.
+</p>
+
+<p>
+<b>clearCancelFunction()</b> clears a cancel function. The packet must be in 
+<b>Packet_HasCancelFunction</b> or <b>Packet_Cancelled</b> state.
+If the packet is already cancelled, the function does nothing, otherwise it clears
+a cancel function and changes the packet state to the <b>Packet_NoCancelFunction</b>.
+The previous state is returned.
+</p>
+
+<p>
+These two functions are called by packet processors. Once packet is received for processing,
+a packet processor may assign a cancel function to it, if the packet processing is not
+immediate. Before packet is disengaged, a cancel function must be cleared. To learn how
+to properly use this feature, see <a href="page_CancelPacketList.html"><b>CancelPacketList</b></a>
+implementation.
+</p>
+
+<p>
+<b>getCancelFunction()</b> cancels a packet. The state is change to <b>Packet_Cancelled</b>.
+The previous state is returned and a cancel function is returned if has been set.
+This function is called by the packet orignator to cancel the packet processing.
+If the packet has an assigned cancel function, then it must be called to request the packet
+processing cancellation. The cancel function, if exists, completes the packet.
+</p>
+
+<p>
+<b>getCancelArg()</b> returns a cancel argument.
 </p>
 
 <pre>
@@ -295,6 +422,10 @@ method and packet returns to the packet pool, where it was originaly taken.
 </pre>
 
 <p>
+<b>PacketHeader</b> has the inner time-stamp field. The second timer is used for the time-stamping.
+</p>
+
+<p>
 <b>getStamp()</b> return the packet time-stamp.
 </p>
 
@@ -305,10 +436,6 @@ and the second is a desired time.
 
 <p>
 <b>stamp()</b> sets the current time as a time-stamp.
-</p>
-
-<p>
-The next set of methods are to "extend" the packet.
 </p>
 
 <pre>
@@ -328,6 +455,10 @@ The next set of methods are to "extend" the packet.
    void popExt();
     
 </pre>
+
+<p>
+The next set of methods are to "extend" the packet.
+</p>
 
 <p>
 <b>pushExt()</b> pushs the object of the type <b>T</b> to the extension stack. The object
@@ -351,11 +482,6 @@ to get a pointer to the deep object of the type <b>T</b>.
 object exists and has the given type.
 </p>
 
-<p>
-<b>PacketHeader</b> has the inner <b>PacketBuf</b> field and a set of methods
-to manipulate with it. This buffer can be used to store a bulk of data with a packet.
-</p>
-
 <pre>
 
    // data attach/detach 
@@ -371,6 +497,11 @@ to manipulate with it. This buffer can be used to store a bulk of data with a pa
    void detach(PacketHeader *dst);
 
 </pre>
+
+<p>
+<b>PacketHeader</b> has the inner <b>PacketBuf</b> field and a set of methods
+to manipulate with it. This buffer can be used to store a bulk of data with a packet.
+</p>
 
 <p>
 These methods are direct calls of the correspondent <b>PacketBuf</b> methods.
@@ -400,13 +531,501 @@ This packet also must not belong to a packet list.
 Raw data methods are direct calls of the correspondent <b>PacketBuf</b> methods.
 </p>
 
-<h4>PacketFormat</h4>
+<h4>PacketList</h4>
+
+<p>
+<b>PacketHeader</b> contains a list link and can be inserted into a <b>PacketList</b>.
+It is not possible to have a <b>PacketHeader</b> in two lists. If a packet belongs to a list,
+it cannot be completed also.
+</p>
+
+<pre>
+class <span class="att">PacketList</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   PacketList();
+  
+   ~PacketList();
+   
+   ulen getCount() const { return count; }
+   
+   ulen getTotalLen() const { return total_len; }
+   
+   // put
+   
+   void put(PacketHeader *packet);
+   
+   void put_first(PacketHeader *packet);
+   
+   template &lt;class P&gt;
+   void put(P packet) { put(GetPacketHeader(packet)); }
+  
+   template &lt;class P&gt;
+   void put_first(P packet) { put_first(GetPacketHeader(packet)); }
+   
+   // get
+   
+   PacketHeader * get();
+   
+   PacketHeader * get_last();
+   
+   // del
+   
+   void del(PacketHeader *packet);
+    
+   template &lt;class P&gt;
+   void del(P packet) { del(GetPacketHeader(packet)); }
+   
+   // methods
+   
+   void complete();
+  
+   void moveOld(TimeStamp how_old,PacketList &amp;dest);
+   
+   // swap/move object
+   
+   void objSwap(PacketList &amp;obj);
+   
+   explicit PacketList(ToMoveCtor&lt;PacketList&gt; obj);
+   
+   PacketList * objMove(Place&lt;void&gt; place);
+ };
+</pre>
+
+<p>
+<b>PacketList</b> must be empty before destructor is called, otherwise the <b>Abort()</b> is called.
+</p>
+
+<p>
+<b>getCount()</b> is the number of packets in the list.
+</p>
+
+<p>
+<b>getTotalLen()</b> is the total buffer space of packets in the list.
+</p>
+
+<p>
+<b>put()</b> puts the packet into the list. Packet must not be in a list, otherwise 
+the <b>Abort()</b> is called.
+</p>
+
+<p>
+<b>put_first()</b> puts the packet into the list as the first element. Packet must not be in a list, 
+otherwise the <b>Abort()</b> is called.
+</p>
+
+<p>
+<b>get()</b> gets the first packet from the list. If the list is empty, null pointer is returned.
+</p>
+
+<p>
+<b>get_last()</b> gets the last packet from the list. If the list is empty, null pointer is returned.
+</p>
+
+<p>
+<b>del()</b> deletes the packet form the list. Packet must belong to this list.
+</p>
+
+<p>
+<b>complete()</b> completes all packets from the list. List becomes empty.
+</p>
+
+<p>
+<b>moveOld()</b> moves all packets, older than <b>how_old</b> to the destination list.
+</p>
+
+<p>
+<b>PacketList</b> is swapable and moveable.
+</p>
 
 <h4>Packet</h4>
 
-<h4>PacketList</h4>
+<p>
+<b>Packet</b> is a <b>PacketHeader</b> pointer wrapper. It behaves like a raw pointer, so use it 
+with caution.
+</p>
+
+<pre>
+template &lt;class POD,class ... TT&gt; // T1, T2, ... , Ttop
+class Packet
+ {
+   PacketHeader *packet;
+   
+  public:
+   
+   // constructors
+  
+   Packet() : packet(0) {}
+   
+   Packet(NothingType) : packet(0) {}
+   
+   Packet(PacketHeader *packet_) : packet(packet_) {}
+
+</pre>
+<pre>
+   
+   // props
+   
+   PacketHeader * operator + () const { return packet; }
+   
+   bool operator ! () const { return packet==0; }
+   
+   PacketHeader * getPtr() const { return packet; }
+
+</pre>
+<pre>
+   
+   // complete
+   
+   void pushCompleteFunction(PacketFunction complete_function) { packet-&gt;pushCompleteFunction(complete_function); }
+   
+   PacketFunction popCompleteFunction() { return packet-&gt;popCompleteFunction(); }
+  
+   void complete() { Replace_null(packet)-&gt;complete(); }
+
+</pre>
+<pre>
+   
+   // cancel
+   
+   PacketCancelState setCancelFunction(PacketFunction cancel_function,void *cancel_arg=0) { return packet-&gt;setCancelFunction(cancel_function,cancel_arg); }
+   
+   PacketCancelState clearCancelFunction() { return packet-&gt;clearCancelFunction(); }
+   
+   void * getCancelArg() { return packet-&gt;getCancelArg(); }
+   
+</pre>
+<pre>
+
+   // stamp
+  
+   TimeStamp getStamp() { return packet-&gt;getStamp(); }
+  
+   bool isOld(TimeStamp now,TimeStamp how_old) { return packet-&gt;isOld(now,how_old); }
+  
+   void stamp() { packet-&gt;stamp(); }
+   
+</pre>
+<pre>
+
+   // ext
+   
+   template &lt;class T,class ... SS&gt;
+   Packet&lt;POD,TT...,T&gt; pushExt(SS &amp;&amp; ... ss) 
+    { 
+     PacketHeader *ret=Replace_null(packet);
+     
+     ret-&gt;pushExt&lt;T&gt;( std::forward&lt;SS&gt;(ss)... );
+     
+     return ret; 
+    }
+    
+   typename PacketExtType&lt;POD,TT...&gt;::TopType * getExt()
+    {
+     return packet-&gt;getExt&lt;typename PacketExtType&lt;POD,TT...&gt;::TopType&gt;();
+    }
+    
+   typename PacketExtType&lt;POD,TT...&gt;::PopType popExt() 
+    {
+     PacketHeader *ret=Replace_null(packet);
+     
+     ret-&gt;popExt&lt;typename PacketExtType&lt;POD,TT...&gt;::TopType&gt;();
+     
+     return ret; 
+    }
+ 
+   template&lt;ulen Index&gt;
+   typename PacketDeepExt&lt;Index,TT...&gt;::GetType * getDeepExt()
+    {
+     return PacketDeepExt&lt;Index,TT...&gt;::Get(packet);
+    }
+    
+   template&lt;ulen Index&gt;
+   typename PacketForgetExt&lt;Index,POD,TT...&gt;::RetType forgetExt()
+    {
+     return Replace_null(packet);
+    }
+ 
+</pre>
+<pre>
+
+   // data attach/detach 
+   
+   bool provide(ulen max_data_len) { return packet-&gt;provide(max_data_len*sizeof (POD)); }
+   
+   bool provide() { return packet-&gt;provide(); }
+ 
+   void detach() { packet-&gt;detach(); }
+   
+   void attach(PacketBuf &pbuf) { packet-&gt;attach(pbuf); }
+   
+   void detach(PacketBuf &pbuf) { packet-&gt;detach(pbuf); }
+   
+   void detach(PacketHeader *dst) { packet-&gt;detach(dst); }
+   
+   template &lt;class ... SS&gt;
+   void detach(Packet&lt;POD,SS...&gt; dst) { packet-&gt;detach(dst.getPtr()); }
+   
+</pre>
+<pre>
+
+   // data 
+   
+   bool noSpace() { return packet-&gt;noSpace(); }
+    
+   ulen getMaxDataLen() { return packet-&gt;getMaxRawLen()/sizeof (POD); }
+   
+   ulen getDataLen() { return packet-&gt;getRawLen()/sizeof (POD); }
+   
+   POD * getData() { return packet-&gt;getRaw(); }
+    
+   PtrLen&lt;POD&gt; getMaxRange() { return Range(getData(),getMaxDataLen()); }
+   
+   PtrLen&lt;POD&gt; getRange() { return Range(getData(),getDataLen()); }
+  
+   bool checkDataLen(ULenSat data_len)
+    {
+     return data_len&lt;=getMaxDataLen();
+    }
+   
+   PtrLen&lt;POD&gt; setDataLen(ULenSat data_len) // assume checkDataLen(data_len)
+    { 
+     ulen raw_len=data_len.value*sizeof (POD); 
+     
+     packet-&gt;setRawLen(raw_len);
+     
+     return Range(getData(),data_len.value);
+    }
+    
+</pre>
+<pre>
+
+   // format
+   
+   PacketFormat::SubResult getMaxDataLen(PacketFormat format) 
+    { 
+     return format.sub(getMaxDataLen()); 
+    }
+   
+   PacketFormat::SubResult getDataLen(PacketFormat format) 
+    { 
+     return format.sub(getDataLen()); 
+    }
+   
+   PacketFormat::CutResult&lt;POD&gt; getMaxRange(PacketFormat format) 
+    { 
+     return format.cutMax(getMaxRange()); 
+    }
+   
+   bool checkRange(PacketFormat format) 
+    { 
+     return format.check(getDataLen()); 
+    }
+   
+   PtrLen&lt;POD&gt; getRange(PacketFormat format) // assume checkRange(format)
+    { 
+     return format.cut(getRange()); 
+    }
+   
+   PtrLen&lt;POD&gt; getPrefix(PacketFormat format) // assume checkRange(format)
+    { 
+     return format.cutPrefix(getRange()); 
+    }
+   
+   PtrLen&lt;POD&gt; getSuffix(PacketFormat format) // assume checkRange(format)
+    { 
+     return format.cutSuffix(getRange()); 
+    }
+   
+   bool checkDataLen(PacketFormat format,ULenSat data_len)
+    {
+     return format.checkLen(data_len,getMaxDataLen());
+    }
+   
+   PtrLen&lt;POD&gt; setDataLen(PacketFormat format,ULenSat data_len) // assume checkDataLen(format,data_len)
+    { 
+     setDataLen(format.add(data_len.value)); 
+     
+     return Range(getData()+format.prefix,data_len.value);
+    }
+ };
+</pre>
 
 <h4>PacketCanceller</h4>
+
+<p>
+<b>PacketCanceller</b> is a helper class. It simplifies the process of packet cancellation. 
+</p>
+
+<pre>
+class <span class="att">PacketCanceller</span> : NoCopy
+ {
+   PacketHeader *packet;
+   PacketFunction cancel_function;
+   
+  public: 
+   
+   template &lt;class P&gt;
+   explicit PacketCanceller(P packet_) : packet(GetPacketHeader(packet_)) {}
+   
+   bool getCancelFunction() { return packet->getCancelFunction(cancel_function)==Packet_HasCancelFunction; }
+   
+   void cancel() { cancel_function(packet); }
+ };
+</pre>
+
+<p>
+Constructor records a packet pointer. 
+</p>
+
+<p>
+<b>getCancelFunction()</b> cancels the recorded packet. The method returns true, if a cancel function
+has been retrieved.
+</p>
+
+<p>
+<b>cancel()</b> calls the cancel function. Use must call it, if the <b>getCancelFunction()</b> returned true.
+</p>
+
+<p>
+The process has two phases, because the first call can be done in any context, but a cancel function
+must be called in a lock-free context.
+</p>
+
+<h4>PacketFormat</h4>
+
+<pre>
+struct <span class="att">PacketFormat</span>
+ {
+  ulen prefix;
+  ulen max_data;
+  ulen suffix;
+  
+   // prefix + suffix + max_data &lt;= MaxULen
+  
+  PacketFormat()
+   {
+    prefix=0;
+    max_data=0;
+    suffix=0;
+   }
+  
+  PacketFormat(NothingType)
+   {
+    prefix=0;
+    max_data=0;
+    suffix=0;
+   }
+  
+  ulen getMaxTotalLen() const { return prefix+max_data+suffix; }
+   
+  PacketFormat addPrefix(ulen prefix_len) const; 
+  
+  PacketFormat addSuffix(ulen suffix_len) const;
+  
+  PacketFormat addPrefixSuffix(ulen prefix_len,ulen suffix_len) const; 
+  
+  ulen add(ulen len) const // return total_len; 
+   { 
+    ulen delta=prefix+suffix;
+    
+    return len+delta; 
+   }
+   
+  struct SubResult
+   {
+    ulen len;
+    LenStatus status;
+    
+    SubResult(ulen len_,LenStatus status_) : len(len_),status(status_) {}
+     
+    bool isTooShort() const { return status==Len_too_short; }
+    
+    bool notFitFormat() const { return status!=Len_ok; }
+   };
+  
+  SubResult sub(ulen total_len) const // return len;
+   {
+    ulen delta=prefix+suffix;
+    
+    if( total_len&gt;=delta ) 
+      {
+       ulen len=total_len-delta;
+       
+       if( len&lt;=max_data ) return SubResult(len,Len_ok);
+       
+       return SubResult(max_data,Len_too_long);
+      }
+    
+    return SubResult(0,Len_too_short);
+   }
+   
+  bool checkLen(ULenSat len,ulen max_total_len) const
+   {
+    ulen delta=prefix+suffix;
+    
+    return len&lt;=max_data && len.value+delta&lt;=max_total_len ;
+   }
+  
+  bool check(ulen total_len) const
+   {
+    ulen delta=prefix+suffix;
+    
+    return total_len&gt;=delta && total_len&lt;=delta+max_data ;
+   }
+   
+  template &lt;class T&gt;
+  PtrLen&lt;T&gt; cut(PtrLen&lt;T&gt; range) const // assume check(range.len)
+   {
+    return range.inner(prefix,suffix);
+   }
+   
+  template &lt;class T&gt;
+  PtrLen&lt;T&gt; cutPrefix(PtrLen&lt;T&gt; range) const // assume check(range.len)
+   {
+    return range.prefix(prefix);
+   }
+   
+  template &lt;class T&gt;
+  PtrLen&lt;T&gt; cutSuffix(PtrLen&lt;T&gt; range) const // assume check(range.len)
+   {
+    return range.suffix(suffix);
+   }
+   
+  template &lt;class T&gt; 
+  struct CutResult
+   {
+    PtrLen&lt;T&gt; range;
+    LenStatus status;
+    
+    CutResult(PtrLen&lt;T&gt; range_,LenStatus status_) : range(range_),status(status_) {}
+    
+    LenStatus operator ! () const { return status==Len_too_short; } 
+   }; 
+   
+  template &lt;class T&gt;
+  CutResult&lt;T&gt; cutMax(PtrLen&lt;T&gt; range) const
+   {
+    ulen delta=prefix+suffix;
+   
+    if( range.len&gt;=delta ) 
+      {
+       ulen len=range.len-delta;
+       
+       if( len&lt;=max_data ) return CutResult&lt;T&gt;(range.part(prefix,len),Len_ok);
+      
+       return CutResult&lt;T&gt;(range.part(prefix,max_data),Len_too_long);
+      }
+    
+    return CutResult&lt;T&gt;(Nothing,Len_too_short);
+   }
+ };
+</pre>
 
 </body>
 
