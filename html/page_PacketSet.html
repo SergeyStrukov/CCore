@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_PacketSet.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> PacketSet</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,98 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>PacketSet</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/PacketSet.h</b> <b>CCore/src/PacketSet.cpp</b></p>
 
+<p>
+<b>PacketSet</b> is a key class of the packet infra-structure. This class is a logical small pool of packets
+with a packet processing control and packet cancellation features. This class is used by packet originators.
+</p>
+
+<pre>
+template &lt;class POD&gt;
+class <span class="att">PacketSet</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+  
+   typedef PacketSetExt::ExtTop ExtTop;
+
+   // constructors
+  
+   explicit PacketSet(ulen max_packets=DefaultMaxPackets);
+   
+   explicit PacketSet(TextLabel name,ulen max_packets=DefaultMaxPackets);
+   
+   ~PacketSet();
+   
+   // own list
+   
+   Packet&lt;POD&gt; try_get(); 
+   
+   Packet&lt;POD&gt; get(); // may return 0
+   
+   Packet&lt;POD&gt; get(TimeScope time_scope); 
+   
+   Packet&lt;POD&gt; get(MSec timeout); 
+   
+   Packet&lt;POD&gt; try_get_short(); 
+   
+   Packet&lt;POD&gt; get_short(); // never return 0 
+   
+   Packet&lt;POD&gt; get_short(TimeScope time_scope); 
+   
+   Packet&lt;POD&gt; get_short(MSec timeout); 
+   
+   void cancel_and_wait();
+   
+   bool wait(TimeScope time_scope);
+   
+   bool wait(MSec timeout);
+   
+   // external list
+   
+   Packet&lt;POD&gt; try_get(ExtTop &amp;ext_list); 
+   
+   Packet&lt;POD&gt; get(ExtTop &amp;ext_list); // may return 0
+   
+   Packet&lt;POD&gt; get(ExtTop &amp;ext_list,TimeScope time_scope); 
+   
+   Packet&lt;POD&gt; get(ExtTop &amp;ext_list,MSec timeout); 
+   
+   Packet&lt;POD&gt; try_get_short(ExtTop &amp;ext_list); 
+   
+   Packet&lt;POD&gt; get_short(ExtTop &amp;ext_list); // never return 0 
+   
+   Packet&lt;POD&gt; get_short(ExtTop &amp;ext_list,TimeScope time_scope); 
+   
+   Packet&lt;POD&gt; get_short(ExtTop &amp;ext_list,MSec timeout); 
+   
+   void cancel(ExtTop &amp;ext_list);
+   
+   class Cancel : NoCopy
+    {
+      PacketSet&lt;POD&gt; &amp;pset;
+      ExtTop cancel_list;
+      
+     public:
+     
+      explicit Cancel(PacketSet&lt;POD&gt; &amp;pset_) : pset(pset_) {}
+      
+      void build(ExtTop &amp;ext_list) { pset.buildCancel(ext_list,cancel_list); }
+      
+      void cancel() { DoCancel(cancel_list); }
+    };
+    
+   // external packets 
+   
+   Packet&lt;POD&gt; enlist(Packet&lt;POD&gt; packet);
+  
+   Packet&lt;POD&gt; enlist(ExtTop &amp;ext_list,Packet&lt;POD&gt; packet);
+ };
+</pre>
 
 </body>
 

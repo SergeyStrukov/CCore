@@ -105,7 +105,7 @@ The class counts some events and the event statistic is available through the me
 </p>
 
 <pre>
-void CancelPacketList::getStat(StatInfo &ret)
+void <span class="att">CancelPacketList::getStat</span>(StatInfo &ret)
  {
   Mutex::Lock lock(mutex); // mutex protected region
   
@@ -123,7 +123,7 @@ The class can serve multiple packet lists. To put a packet to the list there are
 </p>
 
 <pre>
-void CancelPacketList::put(PacketList &list,PacketHeader *packet)
+void <span class="att">CancelPacketList::put</span>(PacketList &list,PacketHeader *packet)
  {
   if( !try_put(list,packet) ) packet->complete(); // if the packet is cancelled, complete it
  }
@@ -137,7 +137,7 @@ during the <b>try_put()</b> processing), the packet is not placed into the list 
 </p>
 
 <pre>
-bool CancelPacketList::try_put(PacketList &list,PacketHeader *packet)
+bool <span class="att">CancelPacketList::try_put</span>(PacketList &list,PacketHeader *packet)
  {
   Mutex::Lock lock(mutex); // mutex protected region
 
@@ -167,7 +167,7 @@ The cancel function also is working under the mutex protection.
 </p>
 
 <pre>
-void CancelPacketList::cancel(PacketHeader *packet)
+void <span class="att">CancelPacketList::cancel</span>(PacketHeader *packet)
  {
   {
    Mutex::Lock lock(mutex); // mutex protected region
@@ -194,7 +194,7 @@ To extract a packet from the list the method <b>get()</b> is used.
 </p>
 
 <pre>
-PacketHeader * CancelPacketList::get(PacketList &list)
+PacketHeader * <span class="att">CancelPacketList::get</span>(PacketList &list)
  {
   for(;;)
     {

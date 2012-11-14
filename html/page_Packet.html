@@ -667,6 +667,17 @@ class Packet
    Packet(PacketHeader *packet_) : packet(packet_) {}
 
 </pre>
+
+<p>
+<b>Packet</b> template parameters are: the assumed type of data in the data buffer, it is a POD type.
+Usually, it is <b>char</b> or <b>uint8</b>. Other parameters are types of top extension objects.
+</p>
+
+<p>
+<b>Packet</b> can be implicitly constructed from a raw pointer. Make sure, the pointer either null,
+or points to a packet with required properties.
+</p>
+
 <pre>
    
    // props
@@ -678,6 +689,12 @@ class Packet
    PacketHeader * getPtr() const { return packet; }
 
 </pre>
+
+<p>
+Usual "is null", "not null" and object access operations. You may use <b>GetPacketHeader()</b> function
+to convert a <b>Packet</b> to the <b>PacketHeader</b> pointer.
+</p>
+
 <pre>
    
    // complete
@@ -686,9 +703,20 @@ class Packet
    
    PacketFunction popCompleteFunction() { return packet-&gt;popCompleteFunction(); }
   
-   void complete() { Replace_null(packet)-&gt;complete(); }
+   void complete() { <span class="att">Replace_null(packet)</span>-&gt;complete(); }
 
 </pre>
+
+<p>
+Complete function methods.
+</p>
+
+<p>
+The method complete not only complets the packet, but also nullify it.
+After this method call the object becomes null. Remember, once you called the method complete, the packet
+is no longer available for you. That is why we nullify the pointer in this class.
+</p>
+
 <pre>
    
    // cancel
@@ -700,6 +728,11 @@ class Packet
    void * getCancelArg() { return packet-&gt;getCancelArg(); }
    
 </pre>
+
+<p>
+These methods are the packet cancellation methods.
+</p>
+
 <pre>
 
    // stamp
@@ -711,6 +744,11 @@ class Packet
    void stamp() { packet-&gt;stamp(); }
    
 </pre>
+
+<p>
+These methods are the packet time-stamp methods.
+</p>
+
 <pre>
 
    // ext
@@ -718,21 +756,21 @@ class Packet
    template &lt;class T,class ... SS&gt;
    Packet&lt;POD,TT...,T&gt; pushExt(SS &amp;&amp; ... ss) 
     { 
-     PacketHeader *ret=Replace_null(packet);
+     PacketHeader *ret=<span class="att">Replace_null(packet)</span>;
      
      ret-&gt;pushExt&lt;T&gt;( std::forward&lt;SS&gt;(ss)... );
      
      return ret; 
     }
     
-   typename PacketExtType&lt;POD,TT...&gt;::TopType * getExt()
+   Ttop * getExt()
     {
      return packet-&gt;getExt&lt;typename PacketExtType&lt;POD,TT...&gt;::TopType&gt;();
     }
     
-   typename PacketExtType&lt;POD,TT...&gt;::PopType popExt() 
+   Packet&lt;POD,...&gt; popExt() 
     {
-     PacketHeader *ret=Replace_null(packet);
+     PacketHeader *ret=<span class="att">Replace_null(packet)</span>;
      
      ret-&gt;popExt&lt;typename PacketExtType&lt;POD,TT...&gt;::TopType&gt;();
      
@@ -740,18 +778,49 @@ class Packet
     }
  
    template&lt;ulen Index&gt;
-   typename PacketDeepExt&lt;Index,TT...&gt;::GetType * getDeepExt()
+   TIndex * getDeepExt() // 1 -&gt; T1, 2 -&gt; T2, ...
     {
      return PacketDeepExt&lt;Index,TT...&gt;::Get(packet);
     }
     
    template&lt;ulen Index&gt;
-   typename PacketForgetExt&lt;Index,POD,TT...&gt;::RetType forgetExt()
+   Packet&lt;POD,TIndex+1,...&gt; forgetExt() // 1 -&gt; T2,... , 2 -&gt; T3,... , ...
     {
-     return Replace_null(packet);
+     return <span class="att">Replace_null(packet)</span>;
     }
  
 </pre>
+
+<p>
+Packet extension methods.
+</p>
+
+<p>
+<b>pushExt()</b> pushs the object to the packet extension stack. The type of the packet
+changes, so this method nullifies the current <b>Packet</b> and returns the new <b>Packet</b> 
+of the proper type.
+</p>
+
+<p>
+<b>getExt()</b> returns a pointer to the top extension object. The type is derived from the <b>Packet</b> type.
+</p>
+
+<p>
+<b>popExt()</b> pops an object from the packet extension stack. The type of the packet
+changes, so this method nullifies the current <b>Packet</b> and returns the new <b>Packet</b> 
+of the proper type.
+</p>
+
+<p>
+<b>getDeepExt()</b> gets a deep object from the packet extension. 
+The type is derived from the <b>Packet</b> type.
+</p>
+
+<p>
+<b>forgetExt()</b> "forgets" some packet extension object types. This method nullifies the current <b>Packet</b> and returns the new <b>Packet</b> 
+of the proper type.
+</p>
+
 <pre>
 
    // data attach/detach 
@@ -772,6 +841,11 @@ class Packet
    void detach(Packet&lt;POD,SS...&gt; dst) { packet-&gt;detach(dst.getPtr()); }
    
 </pre>
+
+<p>
+Packet data buffer methods. The method <b>provide()</b> takes the data length in POD units, not in bytes.
+</p>
+
 <pre>
 
    // data 
@@ -803,6 +877,21 @@ class Packet
     }
     
 </pre>
+
+<p>
+Packet data methods. All length here are in POD units.
+</p>
+
+<p>
+<b>checkDataLen()</b> checks the <b>data_len</b> of the <a href="page_UIntSat.html"><b>ULenSat</b></a> 
+type to fit into the data buffer capacity.
+</p>
+
+<p>
+<b>setDataLen()</b> sets the data length and returns the data range. It is assumed,
+the <b>data_len</b> fits into the data buffer capacity.
+</p>
+
 <pre>
 
    // format
@@ -856,6 +945,50 @@ class Packet
  };
 </pre>
 
+<p>
+The set of data methods with <b>PacketFormat</b>. See below more explanations about packet formats.
+</p>
+
+<p>
+<b>getMaxDataLen()</b> returns the maximum working data length with the given packet format.
+</p>
+
+<p>
+<b>getDataLen()</b> returns the working data length with the given packet format.
+</p>
+
+<p>
+<b>getMaxRange()</b> return the maximum working data range with the given packet format.
+</p>
+
+<p>
+<b>checkRange()</b> returns true, if the data length fits in the given packet format.
+</p>
+
+<p>
+<b>getRange()</b> returns the working data range with the given packet format.
+</p>
+
+<p>
+<b>getPrefix()</b> returns the data prefix with the given packet format.
+</p>
+
+<p>
+<b>getSuffix()</b> returns the data suffix with the given packet format.
+</p>
+
+<p>
+<b>checkDataLen()</b> checks if the given working data length can be set.
+</p>
+
+<p>
+<b>setDataLen()</b> sets the working data length and returns the working data range.
+</p>
+
+<p>
+<b></b>
+</p>
+
 <h4>PacketCanceller</h4>
 
 <p>
@@ -899,6 +1032,19 @@ must be called in a lock-free context.
 
 <h4>PacketFormat</h4>
 
+<p>
+Packet format consists of three values: prefix length, suffix length and maximum working data length.
+It is often required to reserve some prefix and suffix in the data range for a further processing.
+Fox example, when you prepare UDP packet, the prefix for UDP header, IP header and Ethernet header
+is reserved. This part is filled by the next-layer packet devices. You put data into the working 
+subrange after this prefix.
+</p>
+
+<p>
+<b>PacketFormat</b> represents the packet format and has a number of methods to manipulate
+with lengths and data ranges.
+</p>
+
 <pre>
 struct <span class="att">PacketFormat</span>
  {
@@ -929,13 +1075,32 @@ struct <span class="att">PacketFormat</span>
   PacketFormat addSuffix(ulen suffix_len) const;
   
   PacketFormat addPrefixSuffix(ulen prefix_len,ulen suffix_len) const; 
+
+</pre>
+
+<p>
+<b>getMaxTotalLen()</b> is the maximum total data length. It is the sum of the prefix length, the suffix 
+length and the maximum working data length.
+</p>
+
+<p>
+<b>addPrefix()</b> creates the new <b>PacketFormat</b> with increased prefix, <b>max_data</b> is decreased.
+Exception is thrown if there is no space.
+</p>
+
+<p>
+<b>addSuffix()</b> creates the new <b>PacketFormat</b> with increased suffix, <b>max_data</b> is decreased.
+Exception is thrown if there is no space.
+</p>
+
+<p>
+<b>addPrefixSuffix()</b> creates the new <b>PacketFormat</b> with increased prefix and suffix, 
+<b>max_data</b> is decreased. Exception is thrown if there is no space.
+</p>
+
+<pre>
   
-  ulen add(ulen len) const // return total_len; 
-   { 
-    ulen delta=prefix+suffix;
-    
-    return len+delta; 
-   }
+  ulen add(ulen len) const; // return total_len; 
    
   struct SubResult
    {
@@ -949,53 +1114,41 @@ struct <span class="att">PacketFormat</span>
     bool notFitFormat() const { return status!=Len_ok; }
    };
   
-  SubResult sub(ulen total_len) const // return len;
-   {
-    ulen delta=prefix+suffix;
-    
-    if( total_len&gt;=delta ) 
-      {
-       ulen len=total_len-delta;
-       
-       if( len&lt;=max_data ) return SubResult(len,Len_ok);
-       
-       return SubResult(max_data,Len_too_long);
-      }
-    
-    return SubResult(0,Len_too_short);
-   }
+  SubResult sub(ulen total_len) const; // return len;
    
-  bool checkLen(ULenSat len,ulen max_total_len) const
-   {
-    ulen delta=prefix+suffix;
-    
-    return len&lt;=max_data && len.value+delta&lt;=max_total_len ;
-   }
+  bool checkLen(ULenSat len,ulen max_total_len) const;
+
+</pre>
+
+<p>
+<b>add()</b> calculates the total data range length from the working range length. No checks are performed.
+</p>
+
+<p>
+<b>sub()</b> performs the inverse operation: it calculates the working range length from the total data range length.
+But it is checked operation, so it returns a data structure with two fields: <b>len</b> and <b>status</b>.
+If the <b>total_len</b> is too short, the <b>status</b> is <b>Len_too_short</b> and the <b>len</b> is zero.
+If the <b>total_len</b> is too large, the <b>status</b> is <b>Len_too_long</b> and the <b>len</b> is
+<b>max_data</b>. Otherwise <b>status</b> is <b>Len_ok</b> and the <b>len</b> is the working range length.
+</p>
+
+<p>
+<b>checkLen()</b> checks if the len can be used as the working data length and the total data length
+is limited by the given limit.
+</p>
+
+<pre>
   
-  bool check(ulen total_len) const
-   {
-    ulen delta=prefix+suffix;
-    
-    return total_len&gt;=delta && total_len&lt;=delta+max_data ;
-   }
+  bool check(ulen total_len) const;
    
   template &lt;class T&gt;
-  PtrLen&lt;T&gt; cut(PtrLen&lt;T&gt; range) const // assume check(range.len)
-   {
-    return range.inner(prefix,suffix);
-   }
+  PtrLen&lt;T&gt; cut(PtrLen&lt;T&gt; range) const; // assume check(range.len)
    
   template &lt;class T&gt;
-  PtrLen&lt;T&gt; cutPrefix(PtrLen&lt;T&gt; range) const // assume check(range.len)
-   {
-    return range.prefix(prefix);
-   }
+  PtrLen&lt;T&gt; cutPrefix(PtrLen&lt;T&gt; range) const; // assume check(range.len)
    
   template &lt;class T&gt;
-  PtrLen&lt;T&gt; cutSuffix(PtrLen&lt;T&gt; range) const // assume check(range.len)
-   {
-    return range.suffix(suffix);
-   }
+  PtrLen&lt;T&gt; cutSuffix(PtrLen&lt;T&gt; range) const; // assume check(range.len)
    
   template &lt;class T&gt; 
   struct CutResult
@@ -1009,23 +1162,34 @@ struct <span class="att">PacketFormat</span>
    }; 
    
   template &lt;class T&gt;
-  CutResult&lt;T&gt; cutMax(PtrLen&lt;T&gt; range) const
-   {
-    ulen delta=prefix+suffix;
-   
-    if( range.len&gt;=delta ) 
-      {
-       ulen len=range.len-delta;
-       
-       if( len&lt;=max_data ) return CutResult&lt;T&gt;(range.part(prefix,len),Len_ok);
-      
-       return CutResult&lt;T&gt;(range.part(prefix,max_data),Len_too_long);
-      }
-    
-    return CutResult&lt;T&gt;(Nothing,Len_too_short);
-   }
+  CutResult&lt;T&gt; cutMax(PtrLen&lt;T&gt; range) const;
  };
 </pre>
+
+<p>
+<b>check()</b> checks if the given length can be a total data length.
+</p>
+
+<p>
+<b>cut()</b> cuts the working range from the total data range.
+</p>
+
+<p>
+<b>cutPrefix()</b> cuts the prefix from the total data range.
+</p>
+
+<p>
+<b>cutSuffix()</b> cuts the suffix from the total data range.
+</p>
+
+<p>
+<b>cutMax()</b> cuts the working range from the total data range. This method doesn't assume the total
+range has the proper length. It returns the structure with two fields: <b>range</b> with
+the resulting range and <b>status</b> with the length status. If the input range is too short, the status
+is <b>Len_too_short</b> and the <b>range</b> is empty. If the input range has a good length, the status is
+<b>Len_ok</b> and the <b>range</b> is the working range. Finally, if the input range is too long,
+the status is <b>Len_too_long</b> and the <b>range</b> has <b>max_data</b> length.
+</p>
 
 </body>
 
