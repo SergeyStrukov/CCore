@@ -1,0 +1,52 @@
+<!--
+/* page_CompletePacket.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> CompletePacket</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>CompletePacket</h2>
+
+<p class="Files">Files <b>CCore/inc/CompletePacket.h</b> <b>CCore/src/CompletePacket.cpp</b></p>
+
+<p>
+The function <b>CompletePacket_int</b> is <b>XCore</b> only. This function is required to complete a packet
+in the interrupt context. You cannot call <b>complete()</b> directly there, so a special high priority task 
+&mdash; <b>Complete Task</b> , is running in the system to do this job. The function simply puts the packet into
+its input queue and gives the semaphore.
+</p>
+
+<pre>
+
+void <span class="att">CompletePacket_int</span>(PacketHeader *packet);
+
+template &lt;class P&gt;
+void <span class="att">CompletePacket_int</span>(P packet) { CompletePacket_int(GetPacketHeader(packet)); }
+
+</pre>
+
+</body>
+
+</html>
+
