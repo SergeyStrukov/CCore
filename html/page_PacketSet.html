@@ -53,6 +53,24 @@ class <span class="att">PacketSet</span> : public Funchor_nocopy
    
    ~PacketSet();
    
+</pre>
+
+<p>
+The constructor argument <b>name</b> is used to name internal synchronization objects.
+</p>
+
+<p>
+The argument <b>max_packet</b> is the packet limit. You cannot have more than <b>max_packet</b>
+active packets from this packet set ("external" packets are not counted).
+</p>
+
+<p>
+<b>PacketSet</b> destructor performes the <b>cancel_and_wait()</b> operation. It also
+waits until all "external" packets are completed.
+</p>
+
+<pre>
+
    // own list
    
    Packet&lt;POD&gt; try_get(); 
@@ -70,12 +88,39 @@ class <span class="att">PacketSet</span> : public Funchor_nocopy
    Packet&lt;POD&gt; get_short(TimeScope time_scope); 
    
    Packet&lt;POD&gt; get_short(MSec timeout); 
+
+</pre>
+
+<p>
+Packet get methods. They have the same semantic, as the correspondent packet pool methods. Packets are taken
+from the default packet pool. The packet set limits the number of active packets by the <b>max_packet</b>.
+All taken packets are remembered in the internal packet list, so it is possible cancel them
+or wait for completion.
+</p>
+
+<pre>
    
    void cancel_and_wait();
    
    bool wait(TimeScope time_scope);
    
    bool wait(MSec timeout);
+
+</pre>
+
+<p>
+<b>cancel_and_wait()</b> cancels all active packets and then waits indefinitely until they
+are completed ("external" packets are not included). 
+</p>
+
+<p>
+<b>wait()</b> waits until all active packets are completed ("external" packets are not included) 
+or up to timeout expired. 
+The return value is true, if the first case happens. If timeout expired, then <b>wait()</b>
+performes the <b>cancel_and_wait()</b> operation.
+</p>
+
+<pre>
    
    // external list
    
@@ -95,6 +140,16 @@ class <span class="att">PacketSet</span> : public Funchor_nocopy
    
    Packet&lt;POD&gt; get_short(ExtTop &amp;ext_list,MSec timeout); 
    
+</pre>
+
+<p>
+Packet get method with an external packet list. You may use an additional external packet list, represented
+by an object of type <b>PacketSet::ExtTop</b>, when getting a packet from the packet set.
+You may use this list further to cancel all packets from this list.
+</p>
+
+<pre>
+
    void cancel(ExtTop &amp;ext_list);
    
    class Cancel : NoCopy
@@ -110,7 +165,22 @@ class <span class="att">PacketSet</span> : public Funchor_nocopy
       
       void cancel() { DoCancel(cancel_list); }
     };
-    
+
+</pre>    
+
+<p>
+<b>cancel(ExtTop &amp;ext_list)</b> cancels all packets from the given external list.
+</p>
+
+<p>
+Using the inner class <b>Cancel</b>, you can cancel packets from the given external list or several
+such lists in two phase.
+The method <b>build()</b> cancels packets from the given external list and collects them into the
+working list. Then the method <b>cancel()</b> calls cancel functions of the collected packets.
+</p>
+
+<pre>
+
    // external packets 
    
    Packet&lt;POD&gt; enlist(Packet&lt;POD&gt; packet);
@@ -118,6 +188,13 @@ class <span class="att">PacketSet</span> : public Funchor_nocopy
    Packet&lt;POD&gt; enlist(ExtTop &amp;ext_list,Packet&lt;POD&gt; packet);
  };
 </pre>
+
+<p>
+"External" packets may be included in cancellation operations of the packet set.
+The method <b>enlist()</b> is to do this. You may specify an external packet list also.
+"External" packets are not included in waiting operations. Only the <b>PacketSet</b>
+destructor waits for their completion.
+</p>
 
 </body>
 

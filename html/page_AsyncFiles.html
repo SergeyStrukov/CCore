@@ -36,6 +36,96 @@
 
 <p class="Files">Files <b>CCore/inc/sys/SysAsyncFileSystem.h</b> <b>CCore/src/sys/SysAsyncFileSystem.cpp</b></p>
 
+<p>
+Async file and file system devices are a packet processing devices, that implements file and file system
+operations in asynchronous manner. To be used, the device must be registred in the default 
+<a href="page_ObjectHost.html">Object Host</a>. The name of the object must be used as a device name
+in file names on that device. I.e. if some object is registered under the name "host", 
+the file name "host:/file.txt" refers to the file "/file.txt" on that device.
+</p>
+
+<h4>SysAsyncFileDevice</h4>
+
+<p>
+<b>SysAsyncFileDevice</b> is an abstract interface of an async file device. An async file device class
+must implement this interface.
+</p>
+
+<pre>
+struct <span class="att">AsyncFileDevice</span>
+ {
+  virtual AsyncFileState * createState(const ObjHook &hook) noexcept(EnableNoExcept) =0;
+ };
+</pre>
+
+<p>
+To work with a file, a file state object must be created. The class of this object must
+implement the <b>AsyncFileState</b> interface. A state is created by the <b>createState()</b>
+method. A pointer to the <b>AsyncFileState</b> is returned. If the operation is failed, null pointer
+is returned. The argument <b>hook</b> should be a hook, which was used to pick the device object (or
+a hook to an "upper" object). It is used for the life-time control of the device object itself to prevent
+its destruction while one of states is alive.
+</p>
+
+<pre>
+class <span class="att">AsyncFileState</span> : public MemBase_nocopy
+ {
+   ObjHook hook;
+   
+  protected:  
+   
+   PacketFormat write_format;
+   ulen max_read_len;
+   
+  public: 
+  
+   explicit AsyncFileState(const ObjHook &amp;hook_) : hook(hook_) {}
+   
+   virtual ~AsyncFileState() {}
+   
+   PacketFormat getWriteFormat() const { return write_format; }
+   
+   ulen getMaxReadLen() const { return max_read_len; }
+   
+   virtual void open(Packet&lt;uint8,AsyncFile::OpenExt&gt; packet,StrLen file_name,FileOpenFlags oflags)=0;
+   
+   virtual void close(Packet&lt;uint8,AsyncFile::CloseExt&gt; packet,bool preserve_file)=0;
+   
+   virtual void write(Packet&lt;uint8,AsyncFile::WriteExt&gt; packet,FilePosType off)=0;
+   
+   virtual void read(Packet&lt;uint8,AsyncFile::ReadExt&gt; packet)=0;
+   
+   virtual void read(Packet&lt;uint8,AsyncFile::ReadBufExt&gt; packet)=0;
+ };
+</pre>
+
+<p>
+<b>AsyncFileState</b> contains inside a copy of the hook, provided to the <b>createState()</b> method.
+</p>
+
+<p>
+Destructor is virtual, so it is safe to destroy an object using a base class pointer.
+</p>
+
+<p>
+Two data fields: <b>write_format</b> and <b>max_read_len</b> must be filled by a derived class.
+These fields can be red by the methods <b>getWriteFormat()</b> and <b>getMaxReadLen()</b>.
+File operations are performed with the following abstract methods. Each operation requires a packet
+to be prepared and provided. A method starts an operation, using this packet. Once the operation is complete,
+the packet is completed and the result of the operation can be retrieved. The packet can be cancelled 
+to cancel the operation. A packet must not be short, its data buffer <b>may</b> 
+be used to implement the operation (and may not).
+</p>
+
+<p>
+<b>open()</b> opens a file. Once this is done, read and write operations can be performed with this file.
+Packet data are not required (but packet buffer may be used). File name and open flags are provided as
+the method agruments. An implementaion might use the packet buffer to store and transfer this information 
+further, for example over a network.
+</p>
+
+<h4>SysAsyncFileSystemDevice</h4>
+
 </body>
 
 </html>

@@ -344,6 +344,100 @@ The methods of this class call directly OS file system interface functions.
 
 <h4>PrintAsyncFile</h4>
 
+<p>
+<b>PrintAsyncFile</b> is built using the <a href="page_AsyncFiles.html"><b>AsyncFile</b></a> class.
+Output stream is bufferred using packet data buffers. Once a packet is filled, it is submitted
+to the <b>AsyncFile</b> object, the packet may be sent to the target device asynchonously.
+</p>
+
+<pre>
+class <span class="att">PrintAsyncFile</span> : public PrintBase
+ {
+   AsyncFile file;
+
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit PrintAsyncFile(MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   
+   explicit PrintAsyncFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   
+   ~PrintAsyncFile();
+   
+   // methods
+   
+   bool isOpened() const { return file.isOpened(); }
+   
+   void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   
+   void exec2(StrLen dir,StrLen program,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   
+   void exec2(AsyncFileSystem &fs,StrLen dev_dir,StrLen dev_program);
+   
+   void soft_close(FileMultiError &errout);
+   
+   void close();
+   
+   void preserveFile() { file.preserveFile(); }
+   
+   void setLargeWriteLen(ulen large_write_len) { file.setLargeWriteLen(large_write_len); }
+   
+   void wait() { file.wait(); }
+   
+   void wait_final() { file.wait_final(); }
+   
+   void wait(MSec timeout) { file.wait(timeout); }
+   
+   void cancel_and_wait() { file.cancel_and_wait(); }
+ };
+</pre>
+
+<p>
+A file must be opened before a printing. You can do it using the constructor or the method <b>open()</b>.
+Constructors arguments <b>timeout</b> and <b>max_packets</b> are sent to the inner <b>AsyncFile</b> object.
+<b>file_name</b> and <b>open_flags</b> specifies the file to be opened and the open flags.
+</p>
+
+<p>
+Destructors completes operations, closes the file and reports errors if any.
+</p>
+
+<p>
+<b>isOpened()</b> returns true, if the file is opened.
+</p>
+
+<p>
+<b>open()</b> opens the given file.
+</p>
+
+<p>
+<b>exec2()</b> methods are used to execute a program. Some <b>AsyncFileSystem</b> object is involved.
+Once you "open" a file with this method, you may print the program command-line. To run a program,
+you have to call the method <b>preserveFile()</b> and close the file. The first variant creates 
+a temporary <b>AsyncFileSystem</b> object with the device name found in arguments (both device names
+in <b>dir</b> and <b>program</b> must be the same). Additional arguments are applyed to this object.
+</p>
+
+<p>
+<b>soft_close()</b> flushs output and closes the file. Errors are reported to the given <b>FileMultiError</b>
+object.
+</p>
+
+<p>
+<b>close()</b> flushs output and closes the file. An exception is thrown in case of errors.
+</p>
+
+<p>
+<b>preserveFile()</b> preserves the file, opened with the <b>Open_AutoDelete</b> open flag.
+</p>
+
+<p>
+Other methods are direct calls of the correspondent <b>AsyncFile</b> methods.
+</p>
+
 <h4>PrintPTPCon</h4>
 
 </body>
