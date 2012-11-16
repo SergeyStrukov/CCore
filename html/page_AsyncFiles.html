@@ -28,10 +28,6 @@
 
 <h2>Async Files</h2>
 
-<p class="Files">Files <b>CCore/inc/AsyncFile.h</b> <b>CCore/src/AsyncFile.cpp</b></p>
-
-<p class="Files">Files <b>CCore/inc/AsyncFileToMem.h</b> <b>CCore/src/AsyncFileToMem.cpp</b></p>
-
 <p class="Files">Files <b>CCore/inc/sys/SysAsyncFile.h</b> <b>CCore/src/sys/SysAsyncFile.cpp</b></p>
 
 <p class="Files">Files <b>CCore/inc/sys/SysAsyncFileSystem.h</b> <b>CCore/src/sys/SysAsyncFileSystem.cpp</b></p>
@@ -155,12 +151,13 @@ struct <span class="att">Sys::AsyncFile::OpenExt</span>
 </pre>
 
 <p>
-The open operation should use provided methods to fill the result of the operation. First two fields are not used 
-to return a value, but should be cleared in case of error.
+The open operation should use provided methods to fill the result of the operation. First two 
+fields are not used to return a value, but should be cleared in case of error.
 </p>
 
 <p>
 <b>close()</b> closes the opened file. <b>preserve_file</b> cancels the <b>Open_AutoDelete</b> flag.
+This operation must be performed after all read/write operations on this state are completed.
 Once close is done, the state can be deleted. State deletion, while file is not closed, is not recommended
 (but not completely avoidable). Packet data are not required (but packet buffer may be used).
 The packet extension <b>Sys::AsyncFile::CloseExt</b> is used to return the operation result:
@@ -185,7 +182,412 @@ struct <span class="att">Sys::AsyncFile::CloseExt</span>
  };
 </pre>
 
+<p>
+<b>write()</b> writes data to the file at the given file position. Packet data are processed according
+the <b>write_format</b>.
+The packet extension <b>Sys::AsyncFile::WriteExt</b> is used to return the operation result:
+<b>file_len</b> is the file length after this operation. Multiple write operation may overlap, but
+the <b>file_len</b> result must be reported as if these operations execution is serialized.
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFile::WriteExt</span>
+ {
+  FilePosType file_len;      // output
+    
+  FileError error;           // output
+    
+  // methods
+    
+  void setFileLen(FilePosType file_len_)
+   {
+    file_len=file_len_;
+    error=FileError_Ok;
+   }
+    
+  void setError(FileError error_)
+   {
+    file_len=0;
+    error=error_;
+   }
+ };
+</pre>
+
+<p>
+There are two <b>read()</b> methods.
+</p>
+
+<p>
+The first <b>read()</b> passes the read buffer pointer as the argument. The file position and the read buffer
+are input parameters and preserved on output, so you can use them in a complete function.
+Buffer must be red all, otherwise error must be reported. Packet data are not required 
+(but packet buffer may be used). The read length must not exceed the <b>max_read_len</b>.
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFile::ReadExt</span>
+ {
+  FilePosType off;           // input, preserved
+  PtrLen&lt;uint8&gt; buf;         // input, preserved, read all
+   
+  FileError error;           // output
+    
+  // methods
+    
+  ReadExt(FilePosType off_,PtrLen&lt;uint8&gt; buf_) : off(off_),buf(buf_) {}
+    
+  void copyData(const uint8 *data)
+   {
+    buf.copy(data);
+    error=FileError_Ok;
+   }
+    
+  void setError(FileError error_)
+   {
+    error=error_;
+   }
+ };
+</pre>
+
+<p>
+The second <b>read()</b> passes only read length. The file position and the read length
+are input parameters and preserved on output, so you can use them in a complete function.
+Data must be red all, otherwise error must be reported. Packet buffer is used to deliver
+data, the pointer <b>data</b> points somewhere inside to the data range. Packet buffer may be
+reattached to store the required volume of data. The read length must not exceed the <b>max_read_len</b>.
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFile::ReadBufExt</span>
+ {
+  FilePosType off;           // input, preserved
+  ulen len;                  // input, preserved, read all
+    
+  const uint8 *data;         // output
+    
+  FileError error;           // output
+    
+  // methods
+    
+  ReadBufExt(FilePosType off_,ulen len_) : off(off_),len(len_) {}
+    
+  PtrLen&lt;const uint8&gt; getData() const { return Range(data,len); }
+    
+  void setData(const uint8 *data_)
+   {
+    data=data_;
+    error=FileError_Ok;
+   }
+    
+  void setError(FileError error_)
+   {
+    data=0;
+    error=error_;
+   }
+ };
+</pre>
+
+<p>
+The class <b>Sys::AsyncFile</b> is to deal with a single file on some async file device.
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFile</span>
+ {
+  // public
+  
+  struct OpenExt;
+   
+  struct CloseExt;
+   
+  struct WriteExt;
+   
+  struct ReadExt;
+  
+  struct ReadBufExt;
+   
+  // private data
+  
+  Sys::AsyncFileState *file_state;
+  FileOpenFlags oflags;
+  
+  // public
+  
+  void open(Sys::AsyncFileState *file_state_,FileOpenFlags oflags_) 
+   { 
+    file_state=file_state_;
+    oflags=oflags_;
+   }
+  
+  void open(Packet&lt;uint8,OpenExt&gt; packet,StrLen file_name,FileOpenFlags oflags);
+  
+   //
+   // open is successfully finished, no pending operations, last operation
+   //
+ 
+  void close(Packet&lt;uint8,CloseExt&gt; packet,bool preserve_file=false);
+  
+   //
+   // after close or open with error
+   //
+  
+  void closeState();
+  
+   //
+   // open is successfully finished
+   //
+  
+  void write(Packet&lt;uint8,WriteExt&gt; packet,FilePosType off);
+  
+  void read(Packet&lt;uint8,ReadExt&gt; packet);
+  
+  void read(Packet&lt;uint8,ReadBufExt&gt; packet);
+ };
+</pre>
+
+<p>
+<b>Sys::AsyncFile</b> operates on some <b>Sys::AsyncFileState</b>. Most of operations
+are a call propagation to the <b>Sys::AsyncFileState</b> methods.
+</p>
+
+<p>
+<b>closeState()</b> deletes the state. It must be called after <b>close()</b> 
+or failed <b>open()</b> to cleanup the object.
+</p>
+
+<p>
+There are two <b>open()</b> operation. First is a simple initialization with the given state and open flags.
+</p>
+
+<p>
+The second <b>open()</b> splits the file name, searches for the async file device and opens the file
+on this device. It also fills <b>OpenExt</b> fields, <b>write_format</b> and <b>max_read_len</b> 
+to return these values with the packet. If the file name is "host:c:/file.txt", the the device with
+the name "host" is used and the file with the name "c:/file.txt" will be opened on this device.
+</p>
+
 <h4>Sys::AsyncFileSystemDevice</h4>
+
+<p>
+<b>Sys::AsyncFileSystemDevice</b> is an abstract interface of an async file system device.
+See <a href="page_Files.html#FSO">Files</a> for the generic file system operation list.
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFileSystemDevice</span>
+ {
+  virtual void getFileType(Packet&lt;uint8,AsyncFileSystem::FileTypeExt&gt; packet,StrLen path)=0;
+  
+  virtual void getFileList(ObjHook &hook,Packet&lt;uint8,AsyncFileSystem::FileExt&gt; packet,StrLen dir_name)=0;
+  
+  virtual void createFile(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen file_name)=0;
+  
+  virtual void deleteFile(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen file_name)=0;
+  
+  virtual void createDir(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen dir_name)=0;
+  
+  virtual void deleteDir(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen dir_name,bool recursive)=0;
+  
+  virtual void rename(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen old_path,StrLen new_path,bool allow_overwrite)=0;
+  
+  virtual void remove(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen path)=0;
+  
+  virtual void exec(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen dir,StrLen program,StrLen arg)=0;
+  
+  virtual void exec2(ObjHook &hook,Packet&lt;uint8,AsyncFileSystem::FileExt&gt; packet,StrLen dir,StrLen program)=0;
+ };
+</pre>
+
+<p>
+The number of file system operations can be performed asynchronously using packets on this device.
+The packet buffer is not used for operation parameters, but may be used by an implementation, 
+so packets must not be short.
+</p>
+
+<p>
+<b>getFileType()</b> returns the file type of the file, specified by the <b>path</b>.
+The packet extension <b>Sys::AsyncFileSystem::FileTypeExt</b> is used to return the operation result:
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFileSystem::FileTypeExt</span>
+ {
+  FileType file_type;         // output
+    
+  FileError error;            // output
+    
+  // methods
+    
+  void setFileType(FileType file_type_)
+   {
+    file_type=file_type_;
+    error=FileError_Ok;
+   }
+    
+  void setError(FileError error_)
+   {
+    file_type=FileType_none;
+    error=error_;
+   }
+ };
+</pre>
+
+<p>
+<b>createFile()</b> creates the empty file with the given <b>file_name</b>.
+The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the operation result:
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFileSystem::ErrorExt</span>
+ {
+  FileError error;            // output
+    
+  // methods
+    
+  void noError()
+   {
+    error=FileError_Ok;
+   }
+    
+  void setError(FileError error_)
+   {
+    error=error_;
+   }
+ };
+</pre>
+
+<p>
+<b>deleteFile()</b> deletes the file with the given <b>file_name</b>.
+The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the operation result.
+</p>
+
+<p>
+<b>createDir()</b> creates the empty directory with the given <b>dir_name</b>.
+The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the operation result.
+</p>
+
+<p>
+<b>deleteDir()</b> deletes the directory with the given <b>dir_name</b>. If the <b>recursive</b> flag
+is false, the directory must be empty. Otherwise it is deleted with the all content recursively. 
+The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the operation result.
+</p>
+
+<p>
+<b>rename()</b> renames or moves the file of directory. The <b>allow_overwrite</b> 
+flag allows overwriting the existing file.
+The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the operation result.
+</p>
+
+<p>
+<b>remove()</b> deletes ether the existing file or the existing empty directory.
+The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the operation result.
+</p>
+
+<p>
+<b>exec()</b> execute a program on the target device with the given working directory <b>dir</b>,
+the program path <b>program</b> and the program arguments <b>arg</b>.
+The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the operation result.
+</p>
+
+<p>
+Remaining methods are special: they create a temporary "files" to perform the operation.
+Files are represented by the <b>Sys::AsyncFileState</b> interface. The return object is already opened,
+so you can perform file operations on it.
+The packet extension <b>Sys::AsyncFileSystem::FileExt</b> is used to return a result.
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFileSystem::FileExt</span>
+ {
+  AsyncFileState *file_state; // output
+    
+  FilePosType file_len;       // output
+    
+  FileError error;            // output
+    
+  // methods
+    
+  void setFileLen(FilePosType file_len_)
+   {
+    file_len=file_len_;
+    error=FileError_Ok;
+   }
+    
+  void setError(FileError error_)
+   {
+    file_state=0;
+    file_len=0;
+    error=error_;
+   }
+ };
+</pre>
+
+<p>
+<b>getFileList()</b> creates a read-only file with the content of the given directory.
+The file has number of lines, each line starts with a file or directory name, then space , then 'f' 
+for a file and 'd' for a directory. End of line symbol is '\n'.
+</p>
+
+<p>
+<b>exec2()</b> creates an empty temporary write-only file. This file should be filled with
+the program arguments. To start a program, the file must be closed with the <b>preserve_file</b> flag is set.
+</p>
+
+<p>
+The class <b>Sys::AsyncFileSystem</b> is to work with some async file system device.
+</p>
+
+<pre>
+struct <span class="att">Sys::AsyncFileSystem</span>
+ {
+  // public
+  
+  struct FileTypeExt;
+ 
+  struct ErrorExt;
+ 
+  struct FileExt;
+ 
+  // private data
+
+  ....
+  
+  // public
+  
+  FileError init(StrLen dev_name);
+  
+  void exit();
+  
+  void getFileType(Packet&lt;uint8,FileTypeExt&gt; packet,StrLen path);
+  
+  void getFileList(Packet&lt;uint8,FileExt&gt; packet,StrLen dir_name);
+  
+  void createFile(Packet&lt;uint8,ErrorExt&gt; packet,StrLen file_name);
+  
+  void deleteFile(Packet&lt;uint8,ErrorExt&gt; packet,StrLen file_name);
+  
+  void createDir(Packet&lt;uint8,ErrorExt&gt; packet,StrLen dir_name);
+  
+  void deleteDir(Packet&lt;uint8,ErrorExt&gt; packet,StrLen dir_name,bool recursive);
+  
+  void rename(Packet&lt;uint8,ErrorExt&gt; packet,StrLen old_path,StrLen new_path,bool allow_overwrite);
+  
+  void remove(Packet&lt;uint8,ErrorExt&gt; packet,StrLen path);
+  
+  void exec(Packet&lt;uint8,ErrorExt&gt; packet,StrLen dir,StrLen program,StrLen arg);
+  
+  void exec2(Packet&lt;uint8,FileExt&gt; packet,StrLen dir,StrLen program);
+ };
+</pre>
+
+<p>
+<b>init()</b> connects the object with the device by its name.
+</p>
+
+<p>
+<b>exit()</b> cleans the object, it must be called after all operations are completed on the 
+connected object.
+</p>
 
 </body>
 
