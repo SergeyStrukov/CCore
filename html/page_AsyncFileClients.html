@@ -32,7 +32,285 @@
 
 <p class="Files">Files <b>CCore/inc/AsyncFileToMem.h</b> <b>CCore/src/AsyncFileToMem.cpp</b></p>
 
+<p>
+There are several "client" classes to work with files and performes file system operations on async file and
+file system devices.
+</p>
 
+<h4>AsyncFile</h4>
+
+<p>
+<b>AsyncFile</b> can perform read/write operation on a file using an async file device. 
+An <b>AsyncFile</b> object has several parameters affecting operations. 
+</p>
+
+<p>
+<b>timeout</b> is used by <b>open()</b>, <b>getWritePacket()</b> methods.
+</p>
+
+<p>
+<b>final_timeout</b> is used to complete all pending operation. By default it equals <b>3*timeout</b>.
+This timeout is used by <b>soft_close()</b> and <b>close()</b> operations.
+</p>
+
+<p>
+<b>max_packets</b> is the maximum number of executing in parallel operations.
+</p>
+
+<pre>
+class <span class="att">AsyncFile</span> : public Funchor_nocopy
+ {
+   ....
+
+  public: 
+   
+   // constructors
+  
+   explicit AsyncFile(MSec timeout=DefaultTimeout,
+                      ulen max_packets=DefaultMaxPackets);
+   
+   explicit AsyncFile(StrLen file_name,
+                      FileOpenFlags oflags,
+                      MSec timeout=DefaultTimeout,
+                      ulen max_packets=DefaultMaxPackets);
+   
+   ~AsyncFile();
+   
+   bool isOpened() const { return is_opened; }
+   
+   void setFinalTimeout(MSec t) { final_timeout=t; }
+   
+   // open/close
+   
+   FilePosType open(StrLen file_name,FileOpenFlags oflags); // return file_len
+   
+   void soft_close(FileMultiError &amp;errout);
+   
+   void close();
+   
+   void preserveFile() { preserve_file=true; }
+   
+   void setLargeWriteLen(ulen large_write_len);
+   
+   void wait() { pset.wait(timeout); }
+   
+   void wait_final() { pset.wait(final_timeout); }
+   
+   void wait(MSec timeout) { pset.wait(timeout); }
+   
+   void cancel_and_wait() { pset.cancel_and_wait(); }
+   
+   // write
+   
+   struct WritePacket
+    {
+     Packet&lt;uint8&gt; packet;
+     PtrLen&lt;uint8&gt; buf;
+     
+     WritePacket(Packet&lt;uint8&gt; packet_,PtrLen&lt;uint8&gt; buf_) : packet(packet_),buf(buf_) {}
+    };
+   
+   WritePacket getWritePacket(); // non-null, not empty
+   
+   void write(FilePosType off,ulen len,Packet&lt;uint8&gt; packet) noexcept(EnableNoExcept);
+   
+   // read
+   
+   void read_all(FilePosType off,uint8 *buf,ulen len);
+   
+   ulen getMaxReadLen() const { return max_read_len; }
+   
+   void read(FilePosType off,ulen len,PacketFunction complete_function); 
+   
+    //
+    // len<=getMaxReadLen()
+    //
+    // void complete_function(PacketHeader *packet_)
+    //  {
+    //   Packet&lt;uint8,Sys::AsyncFile::ReadBufExt&gt; packet=packet_;
+    //   
+    //   Sys::AsyncFile::ReadBufExt *ext=packet.getExt();
+    //   
+    //   ...   
+    //   
+    //   packet.popExt().complete();
+    //  }
+    //
+ };
+</pre>
+
+<p>
+The first constructor creates a closed object with the given parameters.
+</p>
+
+<h4>AsyncFileSystem</h4>
+
+<p>
+This class is built upon the <b>Sys::AsyncFileSystem</b> and can perform file system
+operations on an async file system device.
+</p>
+
+<pre>
+class <span class="att">AsyncFileSystem</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit AsyncFileSystem(StrLen dev_name,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   
+   ~AsyncFileSystem();
+   
+   // operations
+   
+   FileType getFileType(StrLen path);
+  
+   FilePosType getFileList(StrLen dir_name,AsyncFile &amp;file); // return file length
+  
+   void createFile(StrLen file_name);
+  
+   void deleteFile(StrLen file_name);
+  
+   void createDir(StrLen dir_name);
+  
+   void deleteDir(StrLen dir_name,bool recursive);
+  
+   void rename(StrLen old_path,StrLen new_path,bool allow_overwrite);
+  
+   void remove(StrLen path);
+  
+   void exec(StrLen dir,StrLen program,StrLen arg);
+  
+   void exec2(StrLen dir,StrLen program,AsyncFile &amp;file);
+   
+   // static
+   
+   static FileType GetFileType(StrLen path,MSec timeout=DefaultTimeout);
+  
+   static void CreateFile(StrLen file_name,MSec timeout=DefaultTimeout);
+  
+   static void DeleteFile(StrLen file_name,MSec timeout=DefaultTimeout);
+  
+   static void CreateDir(StrLen dir_name,MSec timeout=DefaultTimeout);
+  
+   static void DeleteDir(StrLen dir_name,bool recursive,MSec timeout=DefaultTimeout);
+  
+   static void Rename(StrLen old_path,StrLen new_path,bool allow_overwrite,MSec timeout=DefaultTimeout);
+  
+   static void Remove(StrLen path,MSec timeout=DefaultTimeout);
+  
+   static void Exec(StrLen dir,StrLen program,StrLen arg,MSec timeout=DefaultTimeout);
+ };
+</pre>
+
+<p>
+Constructor takes the following arguments: <b>dev_name</b> is the device name, <b>timeout</b> is a total
+timeout for all class methods. The last constructor argument is not required to change from its default value.
+</p>
+
+<p>
+Non-static class methods performes the standard list of file system operations.
+An exception is thrown in case of error.
+<b>getFileList()</b> and <b>exec2()</b> uses an external <b>AsyncFile</b> object to open a file.
+</p>
+
+<p>
+Static methods do the following: they split the file name (or path), create a temporary <b>AsyncFileSystem</b> 
+object and use it to perform the operation. If several file names are involved then its devices must be the same.
+</p>
+
+<h4>AsyncFileToMem</h4>
+
+<p>
+This class loads the given file from an async file device to the memory.
+</p>
+
+<pre>
+class <span class="att">AsyncFileToMem</span> : public ToMemBase
+ {
+  public:
+
+   explicit AsyncFileToMem(StrLen file_name,
+                           ulen max_len=MaxULen,
+                           MSec timeout=DefaultTimeout,
+                           ulen max_packets=DefaultMaxPackets);
+
+   ~AsyncFileToMem();
+   
+   // swap/move objects
+   
+   void objSwap(AsyncFileToMem &amp;obj);
+   
+   explicit AsyncFileToMem(ToMoveCtor&lt;AsyncFileToMem&gt; obj);
+   
+   AsyncFileToMem * objMove(Place&lt;void&gt; place);
+ };
+</pre>
+
+<p>
+Constructor takes four arguments. It throw an exception in case of error. The constructor execution may take a time.
+The first argument <b>file_name</b> is the file name. The name is started with the device object name.
+The second argument <b>max_len</b> limits the image length, if the file is greater than this limit, an
+exception is thrown. Other arguments are propagated to the class <b>AsyncFile</b>, which is used to do the job.
+</p>
+
+<p>
+<b>AsyncFileToMem</b> is swapable and moveable.
+</p>
+
+<h4>AsyncFileListToMem</h4>
+
+<p>
+This class loads the directory content of the given directory on an async file device to the memory.
+Then it can iterate through the list.
+</p>
+
+<pre>
+class <span class="att">AsyncFileListToMem</span> : public ToMemBase
+ {
+   ....
+
+  public:
+
+   explicit AsyncFileListToMem(StrLen path,
+                               ulen max_len=MaxULen,
+                               MSec timeout=DefaultTimeout,
+                               ulen max_packets=DefaultMaxPackets);
+
+   AsyncFileListToMem(AsyncFileSystem &amp;fs,
+                      StrLen dev_path,
+                      ulen max_len=MaxULen,
+                      MSec timeout=DefaultTimeout,
+                      ulen max_packets=DefaultMaxPackets);
+   
+   ~AsyncFileListToMem();
+   
+   bool next();
+   
+   StrLen getFileName() const;
+   
+   FileType getFileType() const;
+ };
+</pre>
+
+<p>
+Constructor arguments are similar to the <b>AsyncFileToMem</b> class. The second constructor uses 
+existing <b>AsyncFileSystem</b> object.
+</p>
+
+<p>
+<b>next()</b> moves to the next file in the list. Initially the current file is "before the first".
+</p>
+
+<p>
+<b>getFileName()</b> returns the name of the current file.
+</p>
+
+<p>
+<b>getFileType()</b> is the type of the current file.
+</p>
 
 </body>
 
