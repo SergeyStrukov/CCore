@@ -1,0 +1,135 @@
+<!--
+/* page_AsyncFileDevice.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> AsyncFileDevice</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>AsyncFileDevice</h2>
+
+<p class="Files">Files <b>CCore/inc/AsyncFileDevice.h</b> <b>CCore/src/AsyncFileDevice.cpp</b></p>
+
+<p>
+<b>AsyncFileDevice</b> is an async file device (<a href="page_AsyncFiles.html">AsyncFile</a>).
+It performs operations on the local file system.
+</p>
+
+<pre>
+class <span class="att">AsyncFileDevice</span> : public ObjBase , public Sys::AsyncFileDevice
+ {
+   ....
+
+  public:
+   
+   static const ulen DefaultMaxSlots = .... ;
+   
+   explicit AsyncFileDevice(ulen max_slots=DefaultMaxSlots);
+   
+   virtual ~AsyncFileDevice();
+   
+   // Sys::AsyncFileDevice
+  
+   virtual Sys::AsyncFileState * createState(const ObjHook &hook) noexcept(EnableNoExcept) ;
+ };
+</pre>
+
+<p>
+This class is implemented upon the target classes <b>Sys::AltAsyncFile</b> and 
+<b>Sys::AsyncFileWait</b>, declared in the header <b>CCore/inc/sys/SysFile.h</b>.
+</p>
+
+<pre>
+struct <span class="att">Sys::AltAsyncFile</span>
+ {
+  ....
+
+  // public
+  
+  struct AsyncState;
+  
+  typedef AsyncState * Async;
+  
+  struct Result
+   {
+    FilePosType file_len;
+    FileError error;
+   };
+  
+  struct RWResult
+   {
+    bool pending;
+    FileError error;
+   };
+ 
+  Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
+  
+  void close(FileMultiError &errout,bool preserve_file=false) noexcept; 
+  
+  void close() noexcept; 
+  
+  FileError testRead(FilePosType off,ulen len) noexcept;
+  
+  Result setWrite(FilePosType off,ulen len) noexcept;
+  
+  RWResult startRead(Async async,FilePosType off,uint8 *buf,ulen len) noexcept;
+  
+  FileError completeRead(Async async,ulen len) noexcept;
+  
+  RWResult startWrite(Async async,FilePosType off,const uint8 *buf,ulen len) noexcept;
+  
+  FileError completeWrite(Async async,ulen len) noexcept;
+ };
+</pre>
+
+<pre>
+struct <span class="att">Sys::AsyncFileWait</span>
+ {
+  ....
+
+  // public
+  
+  static const ulen MaxAsyncs = .... ;
+  
+  FileError init(ulen async_count) noexcept;
+  
+  void exit() noexcept;
+  
+  AltAsyncFile::Async getAsync(ulen index) noexcept;
+  
+  bool addWait(ulen index) noexcept;
+  
+  bool delWait(ulen index) noexcept;
+  
+  WaitResult wait(MSec timeout) noexcept;
+  
+  WaitResult wait(TimeScope time_scope) noexcept;
+  
+  void interrupt() noexcept; // async , semaphore
+ };
+</pre>
+
+</body>
+
+</html>
+

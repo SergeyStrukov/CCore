@@ -1,0 +1,214 @@
+<!--
+/* page_FileSystem.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> FileSystem</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>FileSystem</h2>
+
+<p class="Files">Files <b>CCore/inc/FileSystem.h</b> <b>CCore/src/FileSystem.cpp</b></p>
+
+<p>
+The class <b>FileSystem</b> implements the 
+<a href="page_Files.html#FSO">standard list of file system operations</a> on the local file system.
+</p>
+
+<pre>
+class <span class="att">FileSystem</span> : NoCopy
+ {
+   Sys::FileSystem fs;
+ 
+  public:
+  
+   FileSystem();
+   
+   ~FileSystem();
+   
+   FileType getFileType(StrLen path);
+  
+   void createFile(StrLen file_name);
+  
+   void deleteFile(StrLen file_name);
+  
+   void createDir(StrLen dir_name);
+  
+   void deleteDir(StrLen dir_name,bool recursive);
+  
+   void rename(StrLen old_path,StrLen new_path,bool allow_overwrite);
+  
+   void remove(StrLen path);
+  
+   void exec(StrLen dir,StrLen program,StrLen arg);
+   
+   StrLen pathOf(StrLen path,char buf[MaxPathLen+1]);
+   
+   class DirCursor;
+ };
+</pre>
+
+<p>
+Methods throw exceptions in case of errors. 
+</p>
+
+<p>
+There are extra operations, provided by this class.
+</p>
+
+<p>
+<b>exec()</b> runs a program. <b>dir</b> is the working directory, <b>program</b> is the file of the program,
+<b>arg</b> is the command line.
+</p>
+
+<p>
+<b>pathOf()</b> converts path to the full path using the provided buffer and returns the result.
+</p>
+
+<p>
+The class <b>DirCursor</b> can list a directory content.
+</p>
+
+<pre>
+class <span class="att">FileSystem::DirCursor</span> : NoCopy
+ {
+   Sys::FileSystem::DirCursor cur;
+   bool ok;
+   
+  public: 
+  
+   DirCursor(FileSystem &amp;fs,StrLen dir_name);
+   
+   ~DirCursor();
+   
+   bool next();
+   
+   StrLen getFileName() const;
+   
+   FileType getFileType() const; 
+ };
+</pre>
+
+<p>
+<b>DirCursor</b> constructor creates a directory enumerator. The first argument
+is the refernce to the <b>FileSystem</b> object, the second is the directory name.
+</p>
+
+<p>
+<b>next()</b> moves to the next file. Initially current file is the "before-the-first" file.
+</p>
+
+<p>
+<b>getFileName()</b> is the name of the current file (path is not included).
+</p>
+
+<p>
+<b>getFileType()</b> is the type of the current file.
+</p>
+
+<p>
+An example:
+</p>
+
+<pre>
+
+FileSystem fs;
+DirCursor cur(fs,"C:/");
+
+while( cur.next() )
+  {
+   Printf(Con,"#; #;\n",cur.getFileName(),cur.getFileType());
+  }
+
+</pre>
+
+<p>
+These classes are built upon the target classes <b>Sys::FileSystem</b> and 
+<b>Sys::FileSystem::DirCursor</b>, declared in the header <b>CCore/inc/sys/SysFileSystem.h</b>.
+</p>
+
+<pre>
+struct <span class="att">Sys::FileSystem</span>
+ {
+  // public
+  
+  struct TypeResult
+   {
+    FileType type;
+    FileError error;
+   };
+  
+  struct PathOfResult
+   {
+    StrLen path;
+    FileError error;
+   };
+   
+  struct DirCursor 
+   {
+    ....
+
+    // public
+   
+    char file_name[MaxPathLen]; // file name only
+    ulen len;
+    FileType type;
+    FileError error;
+    
+    void init(FileSystem *fs,StrLen dir_name) noexcept;
+  
+    void exit() noexcept;
+    
+    bool next() noexcept;
+   };
+ 
+  // public
+  
+  FileError init() noexcept;
+  
+  FileError exit() noexcept;
+  
+  TypeResult getFileType(StrLen path) noexcept;
+  
+  FileError createFile(StrLen file_name) noexcept;
+  
+  FileError deleteFile(StrLen file_name) noexcept;
+  
+  FileError createDir(StrLen dir_name) noexcept;
+  
+  FileError deleteDir(StrLen dir_name,bool recursive) noexcept;
+  
+  FileError rename(StrLen old_path,StrLen new_path,bool allow_overwrite) noexcept;
+  
+  FileError remove(StrLen path) noexcept;
+  
+  FileError exec(StrLen dir,StrLen program,StrLen arg) noexcept;
+  
+  PathOfResult pathOf(StrLen path,char buf[MaxPathLen+1]) noexcept;
+ };
+</pre>
+
+</body>
+
+</html>
+

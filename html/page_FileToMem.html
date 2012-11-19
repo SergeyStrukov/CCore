@@ -1,0 +1,123 @@
+<!--
+/* page_FileToMem.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> FileToMem</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>FileToMem</h2>
+
+<p class="Files">Files <b>CCore/inc/FileToMem.h</b> <b>CCore/src/FileToMem.cpp</b></p>
+
+<h4>FileToMem</h4>
+
+<p>
+The <b>FileToMem</b> class loads the file to the memory. It is derived from the 
+<a href="page_ToMemBase.html"><b>ToMemBase</b></a> class.
+</p>
+
+<pre>
+class <span class="att">FileToMem</span> : public ToMemBase
+ {
+  public:
+
+   explicit FileToMem(StrLen file_name,ulen max_len=MaxULen);
+
+   ~FileToMem();
+   
+   // swap/move objects
+   
+   void objSwap(FileToMem &obj);
+   
+   explicit FileToMem(ToMoveCtor&lt;FileToMem&gt; obj);
+   
+   FileToMem * objMove(Place&lt;void&gt; place);
+ };
+</pre>
+
+<p>
+The first argument of the constructor is the <b>file_name</b>. The second <b>max_len</b> is a length limit.
+</p>
+
+<p>
+This class is swapable and moveable.
+</p>
+
+<h4>RawFileToRead</h4>
+
+<p>
+The <b>RawFileToRead</b> class is used to read data from a file. It is a simple wrapped over 
+the <b>Sys::File</b>.
+This class is used in the <b>FileToMem</b> constructor. 
+See also <a href="page_PrintDevice.html#PrintFile">PrintFile</a>
+about file writing and printing and about <b>Sys::File</b>. 
+</p>
+
+<pre>
+class <span class="att">RawFileToRead</span> : NoCopy
+ {
+   Sys::File file;
+ 
+  public:
+  
+   explicit RawFileToRead(StrLen file_name,FileOpenFlags oflags=Open_Read);
+    
+   ~RawFileToRead();
+    
+   FilePosType getLen();
+    
+   ulen read(uint8 *buf,ulen len); 
+   
+   void read_all(uint8 *buf,ulen len); 
+ };
+</pre>
+
+<p>
+Constructor opens the file with the given anme and open flags. An exception is thrown in case of error. 
+</p>
+
+<p>
+Destructor closes the file. Errors are reported.
+</p>
+
+<p>
+Methods throw exceptions in case of errors.
+</p>
+
+<p>
+<b>getLen()</b> returns the file length. The open flag <b>Open_Pos</b> is required.
+</p>
+
+<p>
+<b>read()</b> reads the file from the current position. The number of bytes red is returned.
+</p>
+
+<p>
+<b>read_all()</b> reads the file from the current position. The whole buffer must be red for success. 
+</p>
+
+</body>
+
+</html>
+

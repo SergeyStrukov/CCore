@@ -50,7 +50,6 @@ An <b>AsyncFile</b> object has several parameters affecting operations.
 
 <p>
 <b>final_timeout</b> is used to complete all pending operation. By default it equals <b>3*timeout</b>.
-This timeout is used by <b>soft_close()</b> and <b>close()</b> operations.
 </p>
 
 <p>
@@ -121,27 +120,100 @@ class <span class="att">AsyncFile</span> : public Funchor_nocopy
    ulen getMaxReadLen() const { return max_read_len; }
    
    void read(FilePosType off,ulen len,PacketFunction complete_function); 
-   
-    //
-    // len<=getMaxReadLen()
-    //
-    // void complete_function(PacketHeader *packet_)
-    //  {
-    //   Packet&lt;uint8,Sys::AsyncFile::ReadBufExt&gt; packet=packet_;
-    //   
-    //   Sys::AsyncFile::ReadBufExt *ext=packet.getExt();
-    //   
-    //   ...   
-    //   
-    //   packet.popExt().complete();
-    //  }
-    //
  };
 </pre>
 
 <p>
-The first constructor creates a closed object with the given parameters.
+The first constructor creates a closed object with the given parameters. The second constructor
+opens the file.
 </p>
+
+<p>
+<b>isOpened()</b> returns true, if the file is opened. 
+</p>
+
+<p>
+<b>setFinalTimeout()</b> sets the <b>final_timeout</b> to the given value.
+</p>
+
+<p>
+<b>open()</b> opens the file, if it was not opened. An exception is thrown in case of error.
+<b>timeout</b> is used for this operation. The return value is the file length.
+</p>
+
+<p>
+<b>soft_close()</b> closes the file. Errors are reported using the <b>FileMultiError</b> object.
+</p>
+
+
+<p>
+<b>close()</b> closes the file. An exception is thrown in case of error.
+Both <b>soft_close()</b> and <b>close()</b> methods takes a time to complete, because they
+waits for completion of pending operations first.
+</p>
+
+<p>
+<b>preserveFile()</b> cancels the <b>Open_AutoDelete</b> flag.
+</p>
+
+<p>
+<b>wait()</b> waits for pending operations completion, then it cancels remaining operations
+and waits for completion.
+</p>
+
+<p>
+<b>cancel_and_wait()</b> cancels all pending operations and waits for completion.
+</p>
+
+<p>
+<b>setLargeWriteLen()</b> sets the <b>large_write_len</b> parameters. This value is used
+to allocate a larger data buffer for writing if the target device accepts packets with a 
+large data length. The value is set once the file is opened according the target device
+write format.
+</p>
+
+<p>
+<b>getWritePacket()</b> allocates a packet for the write operation. It returns a data structure
+with two fields: <b>packet</b> is the packet and <b>buf</b> is a data range to be filled with data.
+This methods uses <b>timeout</b> to wait until a packet becomes available. An exception
+is thrown in case of error.
+</p>
+
+<p>
+<b>write()</b> starts a write operation. The <b>packet</b> must be allocated by the <b>getWritePacket()</b>
+method. The <b>len</b> is the length of data. <b>off</b> is the file offset where data will be written.
+</p>
+
+<p>
+<b>read_all()</b> reads the file. This method starts a number of read operations to read
+the required data.
+</p>
+
+<p>
+<b>getMaxReadLen()</b> returns the maximum read length for the single operation.
+</p>
+
+<p>
+<b>read()</b> starts a single read operation. <b>len</b> must not exceed the <b>getMaxReadLen()</b>.
+The data can be retrieved in the <b>complete_function</b>:
+</p>
+
+<pre>
+void complete_function(PacketHeader *packet_)
+ {
+  Packet&lt;uint8,Sys::AsyncFile::ReadBufExt&gt; packet=packet_;
+   
+  Sys::AsyncFile::ReadBufExt *ext=packet.getExt();
+   
+  // FileError      ext->error -- error code
+  // const uint8 *  ext->data -- data
+  // ulen           ext->len -- data length
+
+  ....   
+   
+  packet.popExt().complete();
+ }
+</pre>
 
 <h4>AsyncFileSystem</h4>
 
@@ -207,7 +279,7 @@ class <span class="att">AsyncFileSystem</span> : public Funchor_nocopy
 
 <p>
 Constructor takes the following arguments: <b>dev_name</b> is the device name, <b>timeout</b> is a total
-timeout for all class methods. The last constructor argument is not required to change from its default value.
+timeout for all class methods. The last constructor argument should have its default value.
 </p>
 
 <p>
@@ -225,6 +297,7 @@ object and use it to perform the operation. If several file names are involved t
 
 <p>
 This class loads the given file from an async file device to the memory.
+It is derived from <a href="page_ToMemBase.html"><b>ToMemBase</b></a> class.
 </p>
 
 <pre>

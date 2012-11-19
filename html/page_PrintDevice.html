@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> PrintDevice</title>
+ <title>CCore -> Printing devices</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -155,7 +155,7 @@ the <b>Sys::ConBase</b> class. Usually a target device has a serial port and con
 to the host computer through the port driver.
 </p>
 
-<h4>PrintFile (HCore only)</h4>
+<a name="PrintFile"><h4>PrintFile (HCore only)</h4></a>
 
 <p>
 <b>PrintFile</b> class is designed to print to the file. On <b>HCore</b> targets this class is based on the 
@@ -293,7 +293,8 @@ class <span class="att">RawFileToPrint</span> : NoCopy
 </pre>
 
 <p>
-The <b>RawFileToPrint</b> class is built on the target <b>Sys::File</b> class. It performes open/close
+The <b>RawFileToPrint</b> class is built on the target class <b>Sys::File</b>,
+declared in the header <b>CCore/inc/sys/SysFile.h</b>. It performes open/close
 operations and the raw file output.
 </p>
 
@@ -397,7 +398,7 @@ class <span class="att">PrintAsyncFile</span> : public PrintBase
 
 <p>
 A file must be opened before a printing. You can do it using the constructor or the method <b>open()</b>.
-Constructors arguments <b>timeout</b> and <b>max_packets</b> are sent to the inner <b>AsyncFile</b> object.
+Constructors arguments <b>timeout</b> and <b>max_packets</b> are propagated to the inner <b>AsyncFile</b> object.
 <b>file_name</b> and <b>open_flags</b> specifies the file to be opened and the open flags.
 </p>
 
@@ -435,10 +436,83 @@ object.
 </p>
 
 <p>
-Other methods are direct calls of the correspondent <b>AsyncFile</b> methods.
+Other methods are direct calls of the correspondent <b>AsyncFile</b> methods. Usually they are
+not required.
 </p>
 
 <h4>PrintPTPCon</h4>
+
+<p>
+This class uses <a href="page_PTPCon.html"><b>PTP Con</b></a> protocol to print over a net.
+</p>
+
+<pre>
+class <span class="att">PrintPTPCon</span> : public PrintBase
+ {
+   ....
+
+  public:
+  
+   explicit PrintPTPCon(StrLen con_dev_name,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets); 
+   
+   ~PrintPTPCon();
+   
+   void enableExceptions() { enable_exceptions=true; }
+   
+   void flush_and_wait();
+ };
+</pre>
+
+<p>
+Constructor connects to the PTP Con device.
+</p>
+
+<p>
+<b>enableExceptions()</b> enables exception generation during printing.
+</p>
+
+<p>
+<b>flush_and_wait()</b> flushs stream and waits until PTP operations are finished (up to timeout). 
+</p>
+
+<p>
+Before printing to the <b>PTP Con</b> device, console must be opened.
+You can do it using the class <b>PTPConOpenClose</b>.
+</p>
+
+<pre>
+class <span class="att">PTPConOpenClose</span> : NoCopy
+ {
+   ....
+
+  public: 
+   
+   // constructors
+  
+   PTPConOpenClose(StrLen con_dev_name,StrLen name,const Net::PTPCon::Cfg &cfg=DefaultValue());
+   
+   ~PTPConOpenClose();
+   
+   // read
+   
+   typedef Net::PTPCon::ClientDevice::InputProc InputProc;
+  
+   void start_read(InputProc *proc) { con->start_read(proc); }
+   
+   void stop_read() { con->stop_read(); }
+   
+   // write
+   
+   PacketFormat getWriteFormat() const { return format; }
+   
+   void write(Packet&lt;uint8&gt; packet) { con->write(packet); }
+ };
+</pre>
+
+<p>
+Constructor opens a console with the given name and configuration properies.
+Destructor closes it.
+</p>
 
 </body>
 
