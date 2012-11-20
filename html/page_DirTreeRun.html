@@ -30,6 +30,90 @@
 
 <p class="Files">Files <b>CCore/inc/DirTreeRun.h</b> <b>CCore/src/DirTreeRun.cpp</b></p>
 
+<p>
+The class <b>DirTreeRun</b> can recursively iterate a directory content. 
+</p>
+
+<pre>
+class <span class="att">DirTreeRun</span> : NoCopy
+ {
+   ....
+    
+  public:
+  
+   explicit DirTreeRun(StrLen root);
+   
+   ~DirTreeRun();
+   
+   StrLen pathOfRoot(char buf[MaxPathLen+1]);
+   
+   template &lt;class Proc&gt;
+   void apply(Proc &proc);
+ };
+</pre>
+
+<p>
+Constructor prepares the object, the argument is a root directory 
+(the content of this directory to be iterated).
+</p>
+
+<p>
+<b>pathOfRoot()</b> creates a full path of the root directory in the provided buffer and returns it.
+</p>
+
+<p>
+<b>apply()</b> is the main working method. It takes a reference to a processing object. 
+Methods of the object are called per each directory entry.
+</p>
+
+<p>
+The class <b>Proc</b> must implement the following interface:
+</p>
+
+<pre>
+class <span class="att">Proc</span>
+ {
+  public:
+
+   typedef ??? DataType;
+
+   DataType * dir(StrLen root);
+
+   DataType * dir(StrLen path,StrLen name,DataType *parent_data);
+
+   void file(StrLen path,StrLen name,DataType *parent_data);
+
+   void enddir(StrLen path,StrLen name,DataType *data);
+ };
+</pre>
+
+<p>
+During directory iteration an object of the type <b>DataType</b> is created per each directory.
+</p>
+
+<p>
+The first method <b>dir()</b> is called for the root directory. The <b>root</b> is the root directory path.
+The method creates a data object for this directory and returns the pointer to it.
+</p>
+
+<p>
+The second method <b>dir()</b> is called per each subdirectory. 
+The <b>path</b> is the path of the parent directory and the <b>name</b> is the directory name.
+The <b>parent_data</b> is the pointer to the parent directory data object.
+The method creates a data object for this directory and returns the pointer to it.
+</p>
+
+<p>
+The method <b>file()</b> is called per each file.
+The <b>path</b> is the path of the parent directory and the <b>name</b> is the file name.
+The <b>parent_data</b> is the pointer to the parent directory data object.
+</p>
+
+<p>
+The method <b>enddir()</b> is called once the directory content is iterated.
+The <b>path</b> is the path of the parent directory and the <b>name</b> is the directory name.
+The <b>data</b> is the pointer to the directory data object.
+</p>
 
 </body>
 

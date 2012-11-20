@@ -1,0 +1,104 @@
+<!--
+/* page_TextTools.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Text tools</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Text tools</h2>
+
+<p class="Files">Files <b>CCore/inc/TextTools.h</b> <b>CCore/src/TextTools.cpp</b></p>
+
+<p>
+This header contains a several simple tools to work with text and characters.
+</p>
+
+<h4></h4>
+
+<pre>
+
+inline bool <span class="att">CharIsEOL</span>(char ch) { return ch=='\r' || ch=='\n' ; }
+
+inline bool <span class="att">CharIsBin</span>(char ch);
+ 
+inline bool <span class="att">CharIsDec</span>(char ch);
+
+inline bool <span class="att">CharIsHex</span>(char ch);
+
+inline int <span class="att">CharBinValue</span>(char ch);
+
+</pre>
+
+<h4>TextPos</h4>
+
+<pre>
+struct <span class="att">TextPos</span>
+ {
+  ulen line;
+  ulen col;
+
+  TextPos() : line(1),col(1) {}
+  
+  void nextPos() { col++; }
+ 
+  void nextLine() { col=1; line++; }
+  
+  void update(ulen len) { col+=len; }
+  
+  void update(StrLen text); // must not break "\r\n"
+ 
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<h4>CharPropTable</h4>
+
+<pre>
+template &lt;class CharClass,CharClass DefaultClass&gt;
+class <span class="att">CharPropTable</span> : NoCopy
+ {
+   CharClass table[256];
+   
+  protected:
+  
+   void set(char ch,CharClass cc);
+
+   void setSet(const char *zstr,CharClass cc);
+   
+   template &lt;class Func&gt;
+   void setIf(Func cond,CharClass cc);
+
+  public:
+
+   CharPropTable();
+
+   CharClass operator [] (char ch) const;
+ };
+</pre>
+
+</body>
+
+</html>
+

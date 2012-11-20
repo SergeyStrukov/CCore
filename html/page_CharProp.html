@@ -1,0 +1,256 @@
+<!--
+/* page_CharProp.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Basic character properties</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Basic character properties</h2>
+
+<p class="Files">Files <b>CCore/inc/CharProp.h</b> <b>CCore/src/CharProp.cpp</b></p>
+
+<p>
+This header contains a number of tools to deal with character properties. They are all
+efficient, can be used in any context and non-mutable, i.g. do not depend on any global settings,
+like locale. 
+</p>
+
+<h4>CharCode</h4>
+
+<p>
+<b>CCore</b> assumes the character type is 8-bit and uses ASCII encoding (at least for the first 128 code
+positions). The class <b>ASCIICode</b> represents an ASCII code.
+</p>
+
+<pre>
+class <span class="att">ASCIICode</span>
+ {
+  public:
+  
+   typedef uint8 CodeType;
+   
+   static char InverseMap(CodeType code);
+   
+  private:
+ 
+   CodeType code; 
+   
+  public:
+  
+   // constructors
+  
+   ASCIICode();
+   
+   template &lt;class Char&gt;
+   explicit ASCIICode(Char ch);
+   
+   // properties
+   
+   bool isSpecial() const;
+ 
+   bool isVisible() const;
+   
+   bool isPrintable() const;
+ 
+   bool isSpace() const;
+  
+   int decValue() const;
+   
+   int hexValue() const;
+
+   char getChar() const;
+   
+   // print object
+   
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
+ };
+
+/* type CharCode */
+
+typedef ASCIICode <span class="att">CharCode</span>;
+
+</pre>
+
+<p>
+<b>ASCIICode</b> default constructor creates a zero ASCII code.
+</p>
+
+<p>
+<b>ASCIICode</b> constructor maps a character (one of type <b>char</b>, <b>signed char</b>, 
+<b>unsigned char</b>) into its ASCII code.
+</p>
+
+<p>
+<b>isSpecial()</b> &mdash; special, i.g. not intended to represent a symbol.
+</p>
+
+<p>
+<b>isVisible()</b> &mdash; visible, i.g. printable and not space.
+</p>
+
+<p>
+<b>isPrintable()</b> &mdash; printable, i.g. not a special.
+</p>
+
+<p>
+<b>isSpace()</b>&mdash; space and some special characters.
+</p>
+
+<p>
+<b>decValue()</b> &mdash; decimal value of the character, or -1 if not a decimal digit.
+</p>
+
+<p>
+<b>hexValue()</b> &mdash; hexadecimal value of the character, or -1 if not a hexadecimal digit.
+</p>
+
+<p>
+<b>getChar()</b> maps the code back to the character type.
+</p>
+
+<p>
+<b>ASCIICode</b> is printable. Special characters are printed using C-slash representation, like "\n".
+</p>
+
+<p>
+<b>CharCode</b> is a typedef of <b>ASCIICode</b>, its an abstraction of an exact type of encoding.
+</p>
+
+<h4>PrintCString</h4>
+
+<p>
+<b>PrintCString</b> is a helper class to print a string. Each special symbol is printed using its 
+C representation, like "\n".
+</p>
+
+<pre>
+class <span class="att">PrintCString</span>
+ {
+   StrLen str;
+
+  public:
+
+   explicit PrintCString(StrLen str_) : str(str_) {}
+ 
+   typedef StrPrintOpt PrintOptType;
+   
+   template &lt;class P&gt;
+   void print(P &amp;out,PrintOptType opt) const;
+ };
+</pre>
+
+<h4>Character properties</h4>
+
+<p>
+The following functions return character properties. The type <b>Char</b> is one of traditional
+character types: <b>char</b>, <b>signed char</b>, <b>unsigned char</b>.
+</p>
+
+<pre>
+
+template &lt;class Char&gt;
+bool <span class="att">CharIsSpecial</span>(Char ch) { return CharCode(ch).isSpecial(); }
+ 
+template &lt;class Char&gt;
+bool <span class="att">CharIsVisible</span>(Char ch) { return CharCode(ch).isVisible(); }
+ 
+template &lt;class Char&gt;
+bool <span class="att">CharIsPrintable</span>(Char ch) { return CharCode(ch).isPrintable(); } 
+ 
+template &lt;class Char&gt;
+bool <span class="att">CharIsSpace</span>(Char ch) { return CharCode(ch).isSpace(); }
+  
+template &lt;class Char&gt;
+int <span class="att">CharDecValue</span>(Char ch) { return CharCode(ch).decValue(); }
+ 
+template &lt;class Char&gt;
+int <span class="att">CharHexValue</span>(Char ch) { return CharCode(ch).hexValue(); }
+
+</pre>
+
+<p>
+<b>CharIsSpecial()</b> &mdash; special, i.g. not intended to represent a symbol.
+</p>
+
+<p>
+<b>CharIsVisible()</b> &mdash; visible, i.g. printable and not space.
+</p>
+
+<p>
+<b>CharIsPrintable()</b> &mdash; printable, i.g. not a special.
+</p>
+
+<p>
+<b>CharIsSpace()</b> &mdash; space and some special characters. The full list is " \t\f\v\r\n".
+This list can be obtained by the <b>GetSpaceChars()</b> function.
+</p>
+
+<p>
+<b>CharDecValue()</b> &mdash; decimal value of the character, or -1 if not a decimal digit.
+</p>
+
+<p>
+<b>CharHexValue()</b> &mdash; hexadecimal value of the character, or -1 if not a hexadecimal digit.
+</p>
+
+<h4>Character sets</h4>
+
+<p>
+The following functions return zero-terminated strings, these strings contain some
+important character sets.
+</p>
+
+<pre>
+
+inline const char * <span class="att">GetSpaceChars</span>() { return " \t\f\v\r\n"; }
+
+inline const char * <span class="att">GetDigitChars</span>() { return "0123456789"; }
+
+inline const char * <span class="att">GetHexDigitChars</span>() { return "0123456789abcdefABCDEF"; }
+
+inline const char * <span class="att">GetCLetterChars</span>() { return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"; }
+
+</pre>
+
+<p>
+<b>GetSpaceChars()</b> &mdash; "traditional" C-space characters.
+</p>
+
+<p>
+<b>GetDigitChars()</b> &mdash; decimal digits.
+</p>
+
+<p>
+<b>GetHexDigitChars()</b> &mdash; hexadecimal digits.
+</p>
+
+<p>
+<b>GetCLetterChars()</b> &mdash; C-letters, including underscore.
+</p>
+
+</body>
+
+</html>
+
