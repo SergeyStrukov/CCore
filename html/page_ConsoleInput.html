@@ -1,0 +1,104 @@
+<!--
+/* page_ConsoleInput.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Console input</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Console input</h2>
+
+<p class="Files">Files <b>CCore/inc/ReadCon.h</b> <b>CCore/src/ReadCon.cpp</b></p>
+
+<p>
+<b>ReadCon</b> is a class that can read a console input. Any class with the following interface
+can be used as a console reader. There is a default console reader, defined in the header <b>CCore/inc/ReadCon.h</b>. 
+Console reader performes the "non-buffered read without echo".
+</p>
+
+<pre>
+class <span class="att">ReadCon</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   ReadCon();
+   
+   ~ReadCon();
+   
+   // get
+   
+   char get();
+   
+   bool get(MSec timeout,char &ret);
+   
+   bool get(TimeScope time_scope,char &ret);
+   
+   // put
+   
+   void put(char ch);
+   
+   void put(const char *str,ulen len);
+   
+   void put(StrLen str);
+ };
+</pre>
+
+<p>
+<b>get()</b> returns the next character from the console. This function can block indefinitely.
+</p>
+
+<p>
+<b>get(MSec,char &)</b> returns the next character from the console, but waits up to time-out.
+The return value is true, if the character was received.
+</p>
+
+<p>
+<b>get(TimeScope,char &)</b> the same as previous, time-out is given as the <b>TimeScope</b>.
+</p>
+
+<p>
+<b>put(char)</b> puts the single character to the console.
+</p>
+
+<p>
+<b>put(const char *,ulen)</b> puts the string of character to the console.
+</p>
+
+<p>
+<b>put(StrLen)</b> puts the string of character to the console.
+</p>
+
+<p>
+All methods <b>put()</b> flushes output.
+</p>
+
+<h4>HCore console reader</h4>
+
+<h4>XCore console reader</h4>
+
+</body>
+
+</html>
+

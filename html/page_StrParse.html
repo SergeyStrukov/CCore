@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_StrParse.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Simple string parsing</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,219 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Simple string parsing</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/StrParse.h</b> <b>CCore/src/StrParse.cpp</b></p>
 
+<h4>DecValue</h4>
+
+<p>
+<b>DecValue</b> is a <b>Class-function</b>, it calculates a decimal value of a character.
+</p>
+
+<pre>
+struct <span class="att">DecValue</span>
+ {
+  bool nok;
+  unsigned value;
+  
+  explicit DecValue(char ch);
+      
+  bool operator ! () const { return nok; }
+     
+  unsigned operator * () const { return value; }
+ };
+</pre>
+
+<p>
+<b>nok</b> is true, if the character is not a decimal digit.
+</p>
+
+<p>
+<b>value</b> is the decimal value of the character or 0.
+</p>
+
+<p>
+<b>operator !</b> is true, if the character is not a decimal digit.
+</p>
+
+<p>
+<b>operator *</b> is the decimal value of the character or 0.
+</p>
+
+<h4>StrParse</h4>
+
+<p>
+<b>StrParse</b> is a string-based "character stream" class. Its interface matchs parser functions
+requirements, so it can be used with them. 
+</p>
+
+<pre>
+class <span class="att">StrParse</span>
+ {
+   ....
+
+  public: 
+  
+   StrParse(const char *ptr,const char *lim);
+   
+   explicit StrParse(StrLen str);
+   
+   bool operator ! () const { return nok; }
+   
+   struct Peek
+    {
+     bool nok;
+     char ch;
+    
+     explicit Peek(StrParse &dev);
+      
+     bool operator ! () const { return nok; }
+     
+     char operator * () const { return ch; }
+    };
+    
+   void operator ++ () { ptr++; }
+   
+   void fail() { nok=true; }
+   
+   NegBool finish() { if( ptr&lt;lim ) nok=true; return nok; }
+ };
+</pre>
+
+<p>
+The first constructor creates a stream from the pair <b>ptr</b>, <b>lim</b>.
+</p>
+
+<p>
+The second constructor creates a stream from a <b>StrLen</b>.
+</p>
+
+<p>
+<b>operator !</b> return true, if the stream is failed.
+</p>
+
+<p>
+<b>Peek</b> is used to see the current stream character, if any. Failed stream is empty. 
+</p>
+
+<p>
+<b>operator ++</b> moves to the next character.
+</p>
+
+<p>
+<b>fail()</b> fails the stream.
+</p>
+
+<p>
+<b>finish()</b> fails the stream, if it is not empty, and returns the fail flag as a <b>NegBool</b>.
+</p>
+
+<h4>Parse functions</h4>
+
+<p>
+Parser functions work with some "character stream device".
+</p>
+
+<pre>
+class <span class="att">Dev</span>
+ {
+   ....
+
+  public:
+
+   struct Peek
+    {
+     ....
+    
+     explicit Peek(Dev &dev);
+      
+     bool operator ! () const { return nok; }
+     
+     char operator * () const { return ch; }
+    };
+    
+   void operator ++ ();
+   
+   void fail();
+ };
+</pre>
+
+<p>
+<b>Peek</b> is used to see the current stream character, if any. Failed stream is empty.
+<b>operator !</b> is true, if the stream is empty. Otherwise, <b>operator *</b> is the current character.
+</p>
+
+<p>
+<b>operator ++</b> moves to the next character.
+</p>
+
+<p>
+<b>fail()</b> fails the stream.
+</p>
+
+<pre>
+
+template &lt;class Dev&gt;
+void <span class="att">ParseChar</span>(Dev &amp;dev,char ch);
+
+template &lt;class Dev&gt;
+bool <span class="att">ParseChar_try</span>(Dev &amp;dev,char ch);
+
+template &lt;class Dev&gt;
+void <span class="att">ParseChar_empty</span>(Dev &amp;dev,char &amp;ret,char defval);
+
+</pre>
+
+<p>
+<b>ParseChar()</b> extracts the given character from the stream, or fails it.
+</p>
+
+<p>
+<b>ParseChar_try()</b> tries to extract the given character from the stream.
+</p>
+
+<p>
+<b>ParseChar_empty</b> extracts the next character from the stream and put it to the <b>ret</b>, if
+available. Otherwise, the <b>defval</b> is put.
+</p>
+
+<pre>
+
+template &lt;class Dev,class UInt,class UInt1,class UInt2&gt;
+void <span class="att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret,UInt1 minval,UInt2 maxval);
+
+template &lt;class Dev,class UInt,class UInt1&gt;
+void <span class="att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret,UInt1 maxval);
+
+template &lt;class Dev,class UInt&gt;
+void <span class="att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret);
+
+</pre>
+
+<p>
+<b>ParseUInt()</b> extracts a decimal unsigned number from the stream, converts it to the <b>UInt</b> type
+and puts it to the <b>ret</b>. Stream is failed in case of error. The number must be in the given value range,
+which is a subset of the <b>UInt</b> value range.
+</p>
+
+<pre>
+
+template &lt;class Dev,class UInt,class UInt1,class UInt2,class UInt3&gt;
+void <span class="att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval,UInt2 minval,UInt3 maxval);
+
+template &lt;class Dev,class UInt,class UInt1,class UInt2&gt;
+void <span class="att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval,UInt2 maxval);
+                                                                  
+template &lt;class Dev,class UInt,class UInt1&gt;
+void <span class="att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval);
+
+</pre>
+
+<p>
+<b>ParseUInt_empty()</b> works similar to the <b>ParseUInt()</b>.The difference is if the stream 
+does not begin with a digit, it returns the <b>defval</b>.
+</p>
 
 </body>
 

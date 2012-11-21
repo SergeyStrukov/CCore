@@ -50,7 +50,32 @@ inline int <span class="att">CharBinValue</span>(char ch);
 
 </pre>
 
+<p>
+<b>CharIsEOL()</b> &mdash; end-of-line character, one of '\n' or '\r'.
+</p>
+
+<p>
+<b>CharIsBin()</b> &mdash; char is a binary digit.
+</p>
+
+<p>
+<b>CharIsDec()</b> &mdash; char is a decimal digit.
+</p>
+
+<p>
+<b>CharIsHex()</b> &mdash; char is a hexadecimal digit.
+</p>
+
+<p>
+<b>CharBinValue()</b> &mdash; binary value of the character, or -1 if is not a binary digit.
+</p>
+
 <h4>TextPos</h4>
+
+<p>
+This class represents a text position. It also counts a new text position after some
+text fragment. It is designed to calculate text positions during a text file processing.
+</p>
 
 <pre>
 struct <span class="att">TextPos</span>
@@ -73,7 +98,36 @@ struct <span class="att">TextPos</span>
  };
 </pre>
 
+<p>
+Default constructor sets the initial text position: <b>line</b> is 1 and <b>col</b> is 1. 
+</p>
+
+<p>
+<b>nextPos()</b> moves to the next position in the same line.
+</p>
+
+<p>
+<b>nextLine()</b> moves to the begin of the next line.
+</p>
+
+<p>
+<b>update()</b> moves on <b>len</b> positions at the same line.
+</p>
+
+<p>
+<b>update()</b> moves by the text fragment. The fragment must not break a sequence "\r\n".
+</p>
+
+<p>
+The class is printable in the form "(line=&lt;line&gt;,col=&lt;col&gt;)".
+</p>
+
 <h4>CharPropTable</h4>
+
+<p>
+<b>CharPropTable</b> is a <b>Partial class</b>. It is a look-up table, which sets a value (character class)
+to each character. A derived class must initialize the table using protected methods.
+</p>
 
 <pre>
 template &lt;class CharClass,CharClass DefaultClass&gt;
@@ -97,6 +151,32 @@ class <span class="att">CharPropTable</span> : NoCopy
    CharClass operator [] (char ch) const;
  };
 </pre>
+
+<p>
+<b>CharClass</b> is a value type, enum type is expected. <b>DefaultClass</b> is a default value,
+assigned to each character. Constructor initializes the table assigning the <b>DefaultClass</b>
+to each character.
+</p>
+
+<p>
+<b>operator []</b> returns a value, assigned to the particular character.
+</p>
+
+<p>
+A derived class can use the set of protected members to initialize the table.
+</p>
+
+<p>
+<b>set()</b> sets the given value to the given character.
+</p>
+
+<p>
+<b>setSet()</b> sets the given value to the set of characters from the given zero-terminated string.
+</p>
+
+<p>
+<b>setIf()</b> sets the given value to characters, satisfying the condition, given as a functor-predicate.
+</p>
 
 </body>
 
