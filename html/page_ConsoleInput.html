@@ -96,7 +96,189 @@ All methods <b>put()</b> flushes output.
 
 <h4>HCore console reader</h4>
 
+<p>
+<b>HCore</b> <b>ReadCon</b> is built upon the <b>Sys::ConRead</b> class, declared in the
+header <b>sys/SysCon.h</b>.
+</p>
+
+<pre>
+struct <span class="att">Sys::ConRead</span>
+ {
+  ....
+
+  // public
+  
+  struct IOResult
+   {
+    ulen len;
+    ErrorType error;
+   };
+  
+  ErrorType init() noexcept;
+  
+  ErrorType exit() noexcept;
+  
+  IOResult read(char *buf,ulen len) noexcept;
+  
+  IOResult read(char *buf,ulen len,MSec timeout) noexcept;
+ };
+</pre>
+
 <h4>XCore console reader</h4>
+
+<p>
+<b>XCore</b> <b>ReadCon</b> constructor has the argument: <b>timeout</b>. It is used in methods
+<b>put()</b> for nano-packet allocation. Normally, you should use the default value.
+</p>
+
+<pre>
+class <span class="att">ReadCon</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   ReadCon(MSec timeout=DefaultTimeout);
+   
+</pre>
+
+<p>
+This class is implemented using the <b>Sys::OwnConInput</b> class, declared in the header 
+<b>sys/SysCon.h</b>.
+</p>
+
+<pre>
+
+/* consts */ 
+
+enum ConInputResult
+ {
+  Con_Drop = 0,
+  Con_Echo,
+  Con_NoEcho,
+  Con_EOL
+ };
+ 
+/* types */  
+
+typedef Function&lt;ConInputResult (char)&gt; ConInputFunction;
+
+/* class OwnConInput */
+
+class <span class="att">OwnConInput</span> : NoCopy
+ {
+   ....
+   
+  public:
+   
+   OwnConInput(TextLabel name,ConInputFunction input_any);
+   
+   ~OwnConInput();
+ };
+
+</pre>
+
+<h4>(XCore) StdioReadCon</h4>
+
+<p>
+<b>XCore</b> provides an implementation of some C standard libray functions, including <b>stdio</b>
+functions. By default, the <b>stdin</b> stream is not connected to any input.
+To connect this stream to the console input, the class <b>StdioReadCon</b> is used.
+</p>
+
+<pre>
+class <span class="att">StdioReadCon</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   StdioReadCon();
+   
+   ~StdioReadCon();
+   
+   class Register;
+   
+   class Access;
+ };
+</pre>
+
+<p>
+Constructor makes connection, destructor disconnects.
+</p>
+
+<h4>(XCore) RedirectPTPCon</h4>
+
+<p>
+Usually <b>XCore</b> console is backed by a serial port. But it is possible to redirect
+console input/output to another device. The class <b>RedirectPTPCon</b> redirects the console
+to a <a href="page_PTPCon.html"><b>PTPCon</b></a> device.
+</p>
+
+<pre>
+class <span class="att">RedirectPTPCon</span> : NoCopy
+ {
+   ....
+    
+  public:  
+  
+   RedirectPTPCon(StrLen con_device_name,StrLen name,const Net::PTPCon::Cfg &cfg=DefaultValue());
+   
+   ~RedirectPTPCon();
+ };
+</pre>
+
+<p>
+Constructor opens PTP console with the given name and configuration parameters using the given <b>PTPCon</b>
+device. Then it redirects console to the PTP console.
+</p>
+
+<p>
+Destructor stops redirection and closes the PTP console.
+</p>
+
+<h4>ReadPTPCon</h4>
+
+<p>
+The class <b>ReadPTPCon</b> is a <b>PTP Con</b> device reader. It is declared in the header
+<b>print/PrintPTPCon.h</b>.
+</p>
+
+<pre>
+class <span class="att">ReadPTPCon</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+   
+   explicit ReadPTPCon(PTPConOpenClose &con_openclose,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   
+   ~ReadPTPCon();
+   
+   // get
+  
+   char get();
+   
+   bool get(MSec timeout,char &ret);
+   
+   bool get(TimeScope time_scope,char &ret);
+   
+   // put, ignore errors
+   
+   void put(char ch);
+   
+   void put(const char *str,ulen len);
+   
+   void put(StrLen str);
+ };
+</pre>
+
+<p>
+Constructor binds the object to the <b>PTPConOpenClose</b> object to perform 
+operations on the opened PTP console.
+</p>
 
 </body>
 

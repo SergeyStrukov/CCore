@@ -1,0 +1,75 @@
+<!--
+/* page_LineInput.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> LineInput</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>LineInput</h2>
+
+<p class="Files">Files <b>CCore/inc/LineInput.h</b> <b>CCore/src/LineInput.cpp</b></p>
+
+<p>
+<b>LineInput</b> is a simple console input class. It reads command lines from a console
+and implements a simple line edition.
+</p>
+
+<pre>
+template &lt;class ReadCon,ulen MaxLen=80&gt;
+class <span class="att">LineInput</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   template &lt;class ... SS&gt;
+   explicit LineInput(SS && ... ss);
+   
+   ~LineInput() {}
+   
+   PtrLen&lt;const char&gt; get();
+   
+   bool get(TimeScope time_scope,PtrLen&lt;const char&gt; &amp;ret);
+ };
+</pre>
+
+<p>
+<b>ReadCon</b> is a console reader class. <b>LineInput</b> constructor forwards arguments
+to the inner <b>ReadCon</b> object.
+</p>
+
+<p>
+<b>get()</b> inputs a command line. The line is entered by pressing the key <b>Enter</b>.
+<b>Backslash</b> key can be used to edit the input.
+</p>
+
+<p>
+The second method <b>get()</b> is a timed variant. 
+Both methods return a range of characters from the internal buffer.
+</p>
+
+</body>
+
+</html>
+

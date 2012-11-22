@@ -41,7 +41,7 @@ The lists are differ in <b>XCore</b> and <b>HCore</b>.
 
 <p>
 <b>PrintCon</b> is the first and the most important class in the list. It is used to print to the console.
-This class is based on the target function <b>ConWrite</b>, defined in the header <b>sys/SysCon.h</b>.
+This class is based on the target function <b>ConWrite</b>, declared in the header <b>sys/SysCon.h</b>.
 This function is assumed to call some native OS function to print the text string.
 </p>
 
@@ -137,7 +137,7 @@ object to print the text. Printing is not permitted in the interrupt context.
 </p>
 
 <p>
-<b>XCore</b> supports the console printing by the following functions, defined in
+<b>XCore</b> supports the console printing by the following functions, declared in
 the <b>sys/SysCon.h</b> header.
 </p>
 
@@ -294,7 +294,7 @@ class <span class="att">RawFileToPrint</span> : NoCopy
 
 <p>
 The <b>RawFileToPrint</b> class is built on the target class <b>Sys::File</b>,
-declared in the header <b>CCore/inc/sys/SysFile.h</b>. It performes open/close
+declared in the header <b>sys/SysFile.h</b>. It performes open/close
 operations and the raw file output.
 </p>
 
@@ -321,21 +321,21 @@ struct <span class="att">Sys::File</span>
     FileError error;
    };
   
-  FileError open(StrLen file_name,FileOpenFlags oflags);
+  FileError open(StrLen file_name,FileOpenFlags oflags) noexcept;
  
-  void close(FileMultiError &errout,bool preserve_file=false); 
+  void close(FileMultiError &errout,bool preserve_file=false) noexcept; 
   
-  void close(); 
+  void close() noexcept; 
    
-  IOResult write(const uint8 *buf,ulen len);
+  IOResult write(const uint8 *buf,ulen len) noexcept;
   
-  IOResult read(uint8 *buf,ulen len);
+  IOResult read(uint8 *buf,ulen len) noexcept;
   
-  PosResult getLen();
+  PosResult getLen() noexcept;
   
-  PosResult getPos();
+  PosResult getPos() noexcept;
   
-  FileError setPos(FilePosType pos);
+  FileError setPos(FilePosType pos) noexcept;
  };
 </pre>
 

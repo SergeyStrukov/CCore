@@ -1,0 +1,205 @@
+<!--
+/* page_CmdInput.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> CmdInput</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>CmdInput</h2>
+
+<p class="Files">Files <b>CCore/inc/CmdInput.h</b> <b>CCore/src/CmdInput.cpp</b></p>
+
+<h4>CmdInput</h4>
+
+<p>
+<b>CmdInput</b> is a simple character input processing class. It recognizes a given set of commands. 
+It works with some target class. The target builds the command set and provides methods to execute them.
+</p>
+
+<pre>
+class <span class="att">CmdInput</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   struct Target 
+    {
+     virtual void buildCmdList(CmdInput &amp;input)=0;
+     
+     template &lt;class T&gt;
+     void addCommand(CmdInput &amp;input,StrLen cmd,void (T::*method)(StrLen arg)); 
+    };
+   
+   typedef void (Target::*TargetMethod)(StrLen arg);
+  
+   // constructors
+  
+   explicit CmdInput(Target &amp;target);
+   
+   ~CmdInput();
+   
+   // methods
+   
+   void start();
+  
+   bool put(char ch);
+   
+   void put(StrLen str);
+   
+   bool back();
+   
+   struct CompleteResult
+    {
+     ulen count;
+     StrLen str;
+
+     ....
+    };
+   
+   CompleteResult complete() const;
+   
+   struct FinishResult
+    {
+     ....
+
+     // methods
+     
+     bool operator + () const;
+     
+     bool operator ! () const;
+     
+     void operator () (StrLen arg);
+     
+     template &lt;class Report&gt;
+     void operator () (StrLen arg,Report &amp;report); 
+    };
+   
+   FinishResult finish();
+ };
+</pre>
+
+<p>
+<b>CmdInput</b> constructor takes a reference to the target. It calls the target virtual 
+method <b>buildCmdList()</b> to prepare the command set. Target must use the method <b>addCommand()</b>
+to add a command to the set. An example:
+</p>
+
+<pre>
+class <span class="att">Target</span> : public NoCopyBase&lt;CmdInput::Target&gt;
+ {
+  private:
+  
+   void empty(StrLen);
+   void help(StrLen arg);
+   void stat(StrLen arg);
+   void exit(StrLen arg);
+   
+   virtual void buildCmdList(CmdInput &input)
+    {
+     addCommand(input,"",&Target::empty);
+     addCommand(input,"help",&Target::help);
+     addCommand(input,"stat",&Target::stat);
+     addCommand(input,"exit",&Target::exit);
+    }
+ };
+</pre>
+
+<p>
+The strings <b>cmd</b> must be persistent (at least for the life-time of the <b>CmdInput</b> object),
+usually they are string literals.
+You should define an empty command to react on the empty command line.
+</p>
+
+<p>
+The following methods are to process a character input:
+</p>
+
+<p>
+<b>start()</b> starts an input command. 
+</p>
+
+<p>
+<b>put(char)</b> adds a character. The return value is true, if the input is valid, i.g. can be 
+completed to a command.
+</p>
+
+<p>
+<b>put(StrLen)</b> adds a string of characters.
+</p>
+
+<p>
+<b>back()</b> backs one character. The return value is false, if the input is empty and 
+cannot be backed.
+</p>
+
+<p>
+Two last methods are to complete the input.
+</p>
+
+<p>
+<b>complete()</b> checks if the input is valid. The return value is a structure with two fileds:
+<b>count</b> is the number of commands, which can be received by completing the input, <b>str</b>
+is the completing string, if the <b>count</b> equals 1. This method can be used to implement 
+the auto-completion.
+</p>
+
+<p>
+<b>finish()</b> checks if the input is a command. The return value is non-null in this case and can be used
+to call the corresponent target method to execute the command. There are two variants of the call.
+The first <b>operator () (StrLen arg)</b> is to call the method with the argument.
+The second <b>operator () (StrLen arg,Report &report)</b> does the call inside a try-catch block,
+report is an <a href="page_Exceptions.html"><b>ReportException</b></a> class.
+</p>
+
+<h4>CmdInputCon</h4>
+
+<p>
+<b>CmdInputCon</b> is a complex class, it combines the <b>CmdInput</b> and some console reader class.
+</p>
+
+<pre>
+template &lt;class ReadCon,ulen MaxArgLen=80&gt;
+class <span class="att">CmdInputCon</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   template &lt;class ... SS&gt;
+   CmdInputCon(CmdInput::Target &amp;target,StrLen prompt_str,SS &amp;&amp; ... ss); 
+   
+   ~CmdInputCon();
+   
+   void setBadChar(char bad_char);
+
+   template &lt;class ... SS&gt;
+   void command(SS &amp;&amp; ... ss);
+ };
+</pre>
+
+</body>
+
+</html>
+
