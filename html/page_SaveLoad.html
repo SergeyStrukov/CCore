@@ -1,0 +1,125 @@
+<!--
+/* page_SaveLoad.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> SaveLoad</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>SaveLoad</h2>
+
+<p class="Files">Files <b>CCore/inc/SaveLoad.h</b> <b>CCore/src/SaveLoad.cpp</b></p>
+
+<h3>Serialization basics</h3>
+
+<p>
+Serialization is a process of converting an object state into a byte sequence and inversely.
+We use the word "save" for the first operation and "load" for the inverse. The header <b>SaveLoad.h</b>
+provides a basic binary serialization framework.
+</p>
+
+<p>
+To participate in a save/load process a class must implement a save/load methods.
+The simple example, how to serialize a simple data structure:
+</p>
+
+<pre>
+struct Data
+ {
+  T1 t1;
+  T2 t2;
+  T3 t3;
+
+  // save/load object
+
+  enum { SaveLoadLen = SaveLenCounter&lt;T1,T2,T3&gt;::SaveLoadLen };
+  
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const
+   {
+    dev.template use&lt;BeOrder&gt;(t1,t2,t3);
+   }
+  
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev)
+   {
+    dev.template use&lt;BeOrder&gt;(t1,t2,t3);
+   }
+ };
+</pre>
+
+<p>
+Order specifier (<b>BeOrder</b> or <b>LeOrder</b>) affects only first level of basic type serialization.
+Four basic types <b>uint8</b>, <b>uint16</b>, <b>uint32</b>, and <b>uint64</b> are serializable,
+either in the big-endian or in the little-endian format.
+</p>
+
+<p>
+Type might not define the constant <b>SaveLoadLen</b>. But if it is defined, the type must serialize itself
+in exact number of bytes. This constnt is used to optimize a serializaion process.
+</p>
+
+<p>
+A serializaion device does its job with the <b>operator ()</b>, which accepts any number of arguments.
+If an <b>Order</b> must be specified, then the method <b>use&lt;Order&gt;</b> must be used instead.
+</p>
+
+<p>
+To calculate a save length of the set of objects the function <b>SaveLen()</b> can be used:
+</p>
+
+<pre>
+template &lt;class ... TT&gt;
+ULenSat SaveLen(const TT &amp; ... tt);
+</pre>
+
+<p>
+Or the meta-function <b>SaveLenConter</b> for a fixed-length types.
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+struct SaveLenCounter
+ {
+  enum FlagType { Has_SaveLoadLen = true };
+ 
+  enum LenType : ulen { SaveLoadLen = .... };
+ };
+
+template &lt;class ... TT&gt;
+struct SaveLenCounter
+ {
+  enum FlagType { Has_SaveLoadLen = false };
+ };
+
+</pre>
+
+<h3>Ingredients</h3>
+
+
+
+</body>
+
+</html>
+

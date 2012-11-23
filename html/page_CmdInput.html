@@ -118,10 +118,10 @@ class <span class="att">Target</span> : public NoCopyBase&lt;CmdInput::Target&gt
    
    virtual void buildCmdList(CmdInput &input)
     {
-     addCommand(input,"",&Target::empty);
-     addCommand(input,"help",&Target::help);
-     addCommand(input,"stat",&Target::stat);
-     addCommand(input,"exit",&Target::exit);
+     addCommand(input,"",&amp;Target::empty);
+     addCommand(input,"help",&amp;Target::help);
+     addCommand(input,"stat",&amp;Target::stat);
+     addCommand(input,"exit",&amp;Target::exit);
     }
  };
 </pre>
@@ -197,6 +197,98 @@ class <span class="att">CmdInputCon</span> : NoCopy
    template &lt;class ... SS&gt;
    void command(SS &amp;&amp; ... ss);
  };
+</pre>
+
+<p>
+The first argument of the constructor is a target, the second is a prompt string. 
+This string must be persistent for the life-time of the object. Other arguments a forwarded
+to the inner console reader object.
+</p>
+
+<p>
+"Bad character" is printed during command input, if the entered string is not correct. For example,
+if the command set is "start", "exit" and the string "s" is entered, then typing any character, other 
+than 't' is echoed using the bad character. By default, the bad character is '?'. The method
+<b>setBadChar()</b> resets it to the given character.
+</p>
+
+<p>
+The main method is the <b>command()</b>. It enters and executes a single command from the console.
+An additional <b>ReportException</b> argument might be provided to execute a command
+in a <b>try-catch</b> block.
+</p>
+
+<p>
+A complete example of using this class.
+</p>
+
+<pre>
+
+class Target : public NoCopyBase&lt;CmdInput::Target&gt;
+ {
+   bool run_flag;
+ 
+  private:
+  
+   void empty(StrLen) {}
+  
+   void help(StrLen arg) { Printf(Con,"help #.q;\n",arg); }
+   
+   void exit(StrLen arg) { Printf(Con,"exit #.q;\n",arg); run_flag=false; }
+   
+   virtual void buildCmdList(CmdInput &amp;input)
+    {
+     addCommand(input,"",&amp;Target::empty);
+     addCommand(input,"help",&amp;Target::help);
+     addCommand(input,"exit",&amp;Target::exit);
+    }
+ 
+  public:
+  
+   Target() : run_flag(true) {}
+   
+   ~Target() {}
+   
+   bool operator + () const { return run_flag; }
+   
+   bool operator ! () const { return !run_flag; }
+ };
+
+class Test : NoCopy
+ {
+   Target target;
+   
+   CmdInputCon&lt;ReadCon&gt; input;
+   
+  public: 
+  
+   Test()
+    : input(target,"test> ")
+    {
+    }
+    
+   ~Test()
+    {
+    } 
+    
+   void run()
+    {
+     while( +target )
+       {
+        input.command();
+       }
+    }  
+ };
+
+int main()
+ {
+  Test test;
+  
+  test.run();
+
+  return 0;
+ }
+
 </pre>
 
 </body>
