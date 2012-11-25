@@ -1,0 +1,104 @@
+<!--
+/* page_DDL.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> DDL</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>DDL</h2>
+
+<p class="Files">Files <b>CCore/inc/ddl/DDLEngine.h</b> <b>CCore/src/ddl/DDLEngine.cpp</b></p>
+
+<p>
+<b>DDL</b> is a <b>Data Definition Language</b>. This language is to record a general-kind data
+in a textual form similar to the C language. But there are important differences between how DDL interprets
+data and expresions and C. <b>DDL</b> is a "bye-bye <b>XML</b>" language.
+</p>
+
+<h2>Informal introduction</h2>
+
+<p>
+Documents <b>txt/DDL-1*.odt</b> contains number of precise definitions, related to <b>DDL</b> in
+a waterless form. An here is an informal introduction to the language.
+</p>
+
+<p>
+<b>DDL</b> is to define named values. Each value has a type. Types can be basic and derived.
+The most important derived types are structures.
+</p>
+
+<p>
+Basic types are: integral, text and ip. Intergral types are:
+</p>
+
+<pre>
+
+uint8    sint8
+uint16   sint16
+uint32   sint32
+uint64   sint64
+
+(sint,uint) = (sint32,uint32) or (sint64,uint64)
+
+int = sint
+
+ulen = uint32 or uint64 >= uint
+
+</pre>
+
+<p>
+Text type represents an 8-bit character strings. ASCII encoding must be used at least for the first 128 code positions.
+Ip type represents an IPv4 addresses.
+</p>
+
+<p>
+Derived types are: pointers, arrays and structures:
+</p>
+
+<pre>
+
+int a = 10 ;
+
+int * pa = &a ;
+
+text [a] B = { "b1" , "b2" } ;
+
+text [] C = { "c1" , "c2" } ;
+
+struct S
+ {
+  text name = "unnamed" ;
+  int id = 0 ;
+ };
+
+S record = { "" , 10 } ;
+
+</pre>
+
+<h2>DDL implementation</h2>
+
+</body>
+
+</html>
+
