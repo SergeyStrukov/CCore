@@ -31,25 +31,25 @@
 <p class="Files">Files <b>CCore/inc/ddl/DDLEngine.h</b> <b>CCore/src/ddl/DDLEngine.cpp</b></p>
 
 <p>
-<b>DDL</b> is a <b>Data Definition Language</b>. This language is to record a general-kind data
+<b>DDL</b> is the <b>Data Definition Language</b>. This language is to record a general-kind data
 in a textual form similar to the C language. But there are important differences between how DDL interprets
 data and expresions and C. <b>DDL</b> is a "bye-bye <b>XML</b>" language.
 </p>
 
-<h2>Informal introduction</h2>
+<h2>Brief introduction</h2>
 
 <p>
-Documents <b>txt/DDL-1*.odt</b> contains number of precise definitions, related to <b>DDL</b> in
-a waterless form. An here is an informal introduction to the language.
+Documents <b>txt/DDL-1*.*</b> contains number of precise definitions, related to <b>DDL</b> in
+a waterless form. An here is a brief introduction to the language.
 </p>
 
 <p>
-<b>DDL</b> is to define named values. Each value has a type. Types can be basic and derived.
+<b>DDL</b> is to define named constants. Each constant has a type. Types can be basic and derived.
 The most important derived types are structures.
 </p>
 
 <p>
-Basic types are: integral, text and ip. Intergral types are:
+Basic types are integral, <b>text</b> and <b>ip</b>. Intergral types are:
 </p>
 
 <pre>
@@ -68,12 +68,11 @@ ulen = uint32 or uint64 >= uint
 </pre>
 
 <p>
-Text type represents an 8-bit character strings. ASCII encoding must be used at least for the first 128 code positions.
-Ip type represents an IPv4 addresses.
+<b>text</b> type represents a character string. <b>ip</b> type represents an IPv4 address.
 </p>
 
 <p>
-Derived types are: pointers, arrays and structures:
+Derived types are pointers, arrays and structures:
 </p>
 
 <pre>
@@ -95,6 +94,444 @@ struct S
 S record = { "" , 10 } ;
 
 </pre>
+
+<p>
+If the array length is not given explicitly, then it is infered from the initializer.
+Structure members might have default initializers.
+</p>
+
+<p>
+Type aliases and scopes are supported:
+</p>
+
+<pre>
+
+scope Data {
+
+type List = int[] ;
+
+} // scope Data
+
+Data#List list = {1,2,3} ;
+
+</pre>
+
+<p>
+Dots can be used to designate the current scope or parent scopes:
+</p>
+
+<pre>
+
+scope S1 {
+
+int i1 = 1 ;
+
+ scope S2 {
+
+ int i2 = 2 ;
+
+  scope S3 {
+
+  int i3 = 3 ;
+
+   int i = .#i3 + ..#i2 + ...#i1 ; // absolute names
+
+   int j = i3 + i2 + i1 ;          // relative names
+
+   int k = i1 + S2#i2 + S2#S3#i3 ; // more relative names
+
+  }
+
+ }
+
+} 
+
+</pre>
+
+<p>
+The language is commutative, i.g. the order of declarations is not important:
+</p>
+
+<pre>
+
+int a = c + 1 ;
+
+int b = a + 1 ;
+
+int c = 100 ;
+
+</pre>
+
+<p>
+Structures define scopes and may declare types and constants:
+</p>
+
+<pre>
+
+struct S 
+ {
+  type Val = int ;
+
+  const ulen Len = 100 ;
+
+  type List = Val[Len] ;
+ };
+
+scope S
+ {
+  List list = {1,2,3} ;
+ }
+
+</pre>
+
+<p>
+<b>DDL</b> supports file inclusion:
+</p>
+
+<pre>
+
+scope Inc { include &lt;some_file.ddl&gt; }
+
+</pre>
+
+<p>
+But the content of an included file must be a proper <b>DDL</b> text, except names may not be defined
+inside the included file. Binding a file name with a particular file (real or virtual) 
+is implementation-defined. 
+</p>
+
+<h2>DDL elements</h2>
+
+<p>
+<b>DDL</b> elements are: scopes, types, type aliases, constants, literals and expressions.
+<b>DDL</b> text is a sequence of definitions. A definition defines a scope, a struct, 
+a type alias or a constant. Literals and expressions are used to define a constant's value.
+</p>
+
+<h3>Comments</h3>
+
+<p>
+<b>DDL</b> accepts long and short comments:
+</p>
+
+<pre>
+
+/* This is a long comment */
+
+// short
+
+</pre>
+
+<h3>Scopes</h3>
+
+<p>
+Scope is a "definition directory". Scopes can be nested and splitted. Each named language element
+belongs to the some scope. The full element name is <b># Scope1name # Scope2Name # ... # ElementName</b>.
+</p>
+
+<pre>
+
+scope A { // open scope #A
+
+....
+
+} // close scope #A
+
+scope B { // open scope #B
+
+scope C { // open scope #B#C
+
+....
+
+} // close scope #B#C
+
+....
+
+} // close scope #B
+
+scope A { // open again scope #A 
+
+....
+
+} // close scope #A
+
+</pre>
+
+<p>
+When a name is used to refer to a language element, it might be relative or absolute.
+A relative name starts from a name, an absolute name starts from the <b>#</b> or one or more dots. 
+One dot means the current scope, 2 dots means the parent scope and so on.
+A relative name is looked in all scopes down from the current.
+</p>
+
+<pre>
+
+scope S1 {
+
+int i = 1 ;
+
+scope S2 {
+
+int i = 2 ;
+
+scope S3 {
+
+int i = 3 ;
+
+int j = -3 ;
+
+scope S4 {
+
+int i = 4 ;
+
+int i1 = i ; // 4
+
+int i2 = j ; // -3
+
+int i3 = S1#i ; // 1
+
+int i4 = #S1#i ; // 1
+
+int i5 = .#i ; // 4
+
+int i6 = ..#i ; // 3
+
+int i7 = ...#i ; // 2
+
+}
+
+}
+
+}
+
+}
+
+</pre>
+
+<h3>Types and type aliases</h3>
+
+<p>
+There are basic types and derived types. Basic types are designated by the following keywords:
+</p>
+
+<pre>
+
+sint8  uint8
+sint16 uint16
+sint32 uint32
+sint64 uint64
+
+int sint uint ulen
+
+text ip
+
+</pre>
+
+<p>
+Derived types are pointers, arrays and structures.
+</p>
+
+<p>
+Pointer type is designated by the type and the following asterisk:
+</p>
+
+<pre>
+
+Type * 
+
+</pre>
+
+<p>
+Array type is designated by the type and the following pair of square brackets
+with the optional expression inside:
+</p>
+
+<pre>
+
+Type []
+Type [Expression]
+
+</pre>
+
+<p>
+The expression defines the array length. The resulting type of this expression is <b>ulen</b>.
+</p>
+
+<p>
+Non-pointer and non-array type can be a basic type name, a type alias name, a structure name
+or a structure definition.
+</p>
+
+<pre>
+
+// basic type name
+
+int a = 0;
+ulen b = 0 ;
+
+// type alias name
+
+type Int = int ;
+
+Int c = 0 ;
+
+// struct name
+
+struct S {};
+
+S s = {} ;
+
+// struct definition
+
+struct S1 {} s1 = {} ;
+
+</pre>
+
+<p>
+Type alias definition looks like:
+</p>
+
+<pre>
+
+type <i>name</i> = Type ;
+
+</pre>
+
+<h3>Structures</h3>
+
+<p>
+Structure definition looks like:
+</p>
+
+<pre>
+
+struct <i>name</i>
+ {
+  Type<sub>1</sub> <i>field_name<sub>1</sub></i> [ = Expression<sub>1</sub> ] ;
+
+  ....
+
+  Type<sub>n</sub> <i>field_name<sub>n</sub></i> [ = Expression<sub>n</sub> ] ;
+ };
+
+</pre>
+
+<p>
+Each structure has a name and a list of fields. Each field has a name, a type and an optional
+default value, determined by an expression. It also defines a scope. This scope can be extended.
+A structure definition can also defines a scope type aliases, structures and constants:
+</p>
+
+<pre>
+
+struct S
+ {
+  struct T {};
+
+  const ulen Len = 10 ;
+
+  type List = T[Len] ;
+
+  const List list = {} ;
+ };
+
+</pre>
+
+<h3>Constants</h3>
+
+<p>
+Constant definition looks like:
+</p>
+
+<pre>
+
+Type <i>name</i> = Expression ; 
+
+</pre>
+
+<p>
+This definition defines the constant with the given name in the current scope with the given type
+and value, determined by the expression.
+</p>
+
+<p>
+Constant can be defined inside a structure definiton with the keyword <b>const</b>:
+</p>
+
+<pre>
+
+struct S
+ {
+  const Type <i>name</i> = Expression ; 
+ };
+
+</pre>
+
+<p>
+Without <b>const</b> it would be a member definition.
+</p>
+
+<h3>Literals</h3>
+
+<p>Universal null literal:</p>
+
+<pre>
+null
+</pre>
+
+<p>Decimal literals:</p>
+
+<pre>
+1234567890
+</pre>
+
+<p>Hexadecimal literals:</p>
+
+<pre>
+1234567890h
+0abcdefH
+0ABCDEFh
+</pre>
+
+<p>Binary literals:</p>
+
+<pre>
+1001B
+1010b
+</pre>
+
+<p>Simple string literals:</p>
+
+<pre>
+'simple text'
+</pre>
+
+<p>Advanced string literals:</p>
+
+<pre>
+"advanced text\n"
+"\b\t\n\v\f\r"
+</pre>
+
+<p>IP literals:</p>
+
+<pre>
+192.168.1.10
+</pre>
+
+<h3>Expressions</h3>
+
+<p>
+Expressions are used to assign a value to a constant (including implicitly defined constants, like
+array lengths or default structure member values). Expression can be scalar or compound.
+Scalar expressions can be used to assign a value of a basic type, compound &mdash; for structures
+and arrays. A special class of scalar expressions defines a pointer values.
+</p>
+
+<p>
+The most important thing about expressions: they are calculated in the context of the resulting type.
+Resulting type of expression is the type of constant this expression is used to assign a value to.
+</p>
 
 <h2>DDL implementation</h2>
 
