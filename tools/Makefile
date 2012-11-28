@@ -23,6 +23,7 @@ all:
 	make $(OPT) -C EllipticPi
 	make $(OPT) -C ParserGen
 	make $(OPT) -C ArmGo
+	make $(OPT) -C DDLShow
 
 clean:
 	make -C EchoServer   clean
@@ -36,6 +37,7 @@ clean:
 	make -C EllipticPi   clean
 	make -C ParserGen    clean
 	make -C ArmGo        clean
+	make -C DDLShow      clean
 
 list:
 	make -C EchoServer   list
@@ -49,4 +51,5 @@ list:
 	make -C EllipticPi   list
 	make -C ParserGen    list
 	make -C ArmGo        list
+	make -C DDLShow      list
 

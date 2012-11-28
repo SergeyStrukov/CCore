@@ -710,7 +710,7 @@ To process a DDL text there are two main classes: <b>TextEngine</b> and <b>FileE
 </p>
 
 <pre>
-class TextEngine : NoCopy
+class <span class="att">TextEngine</span> : NoCopy
  {
    ....
 
@@ -732,7 +732,7 @@ This class does not support a file inclusion.
 
 <pre>
 template &lt;class FileName,class FileText&gt;
-class FileEngine : NoCopy
+class <span class="att">FileEngine</span> : NoCopy
  {
    ....
 
@@ -768,6 +768,20 @@ On <b>HCore</b> you can use <b>FileToMem</b> as the <b>FileText</b> template par
 <p>
 The class <b>FileName</b> is a default implementaion of the <b>FileName</b> template parameter.
 </p>
+
+<h3>EngineResult and DDLMap</h3>
+
+<pre>
+struct <span class="att">EngineResult</span>
+ {
+  Eval *eval;
+  BodyNode *body;
+  
+  bool operator ! () const { return !eval; }
+
+  ....
+ };
+</pre>
 
 </body>
 

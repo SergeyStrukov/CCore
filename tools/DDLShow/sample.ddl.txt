@@ -1,0 +1,80 @@
+/* sample.ddl */
+
+/* result */
+
+list =  {
+   {
+    (sint32) -1
+    (uint32) 4294967294
+    (text) neg
+   }
+   {
+    (sint32) 3
+    (uint32) 4
+    (text) pos
+   }
+   {
+    (sint32) 1
+    (uint32) 2
+    (text) default
+   }
+   {
+    (sint32) 0
+    (uint32) 0
+    (text) 
+   }
+ }
+
+array_i =  {
+  (sint32) 1
+  (sint32) 2
+  (sint32) 3
+  (sint32) 4
+  (sint32) 5
+ }
+
+array_len_i =  {
+  (sint32) 1
+  (sint32) 2
+  (sint32) 3
+  (sint32) 4
+  (sint32) 5
+  (sint32) 6
+  (sint32) 7
+  (sint32) 8
+  (sint32) 9
+  (sint32) 0
+ }
+
+at_ptr_t = (text) text
+
+ptr_t = (pointer)
+
+a = (ip) 192.168.1.10
+
+t = (text) text
+
+u = (uint32) 11
+
+s = (sint32) 10
+
+i = (sint32) 9
+
+u64 = (uint64) 8
+
+s64 = (sint64) 7
+
+u32 = (uint32) 6
+
+s32 = (sint32) 5
+
+u16 = (uint16) 4
+
+s16 = (sint16) 3
+
+u8 = (uint8) 2
+
+s8 = (sint8) 1
+
+
+
