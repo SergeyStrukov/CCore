@@ -705,8 +705,8 @@ int b = (*ps).b ;
 <h2>DDL implementation</h2>
 
 <p>
-The directory <b>ddl</b> contains a DDL implementaion. It is contained in the namespace <b>DDL</b>.
-To process a DDL text there are two main classes: <b>TextEngine</b> and <b>FileEngine</b>.
+The directory <b>ddl</b> contains a <b>DDL</b> implementaion. It is contained in the namespace <b>DDL</b>.
+To process a <b>DDL</b> text there are two main classes: <b>TextEngine</b> and <b>FileEngine</b>.
 </p>
 
 <pre>
@@ -757,7 +757,7 @@ class <span class="att">FileEngine</span> : NoCopy
 <b>FileEngine</b> can process a complex input from a real or a virtual file system.
 Two template parameters controls the file name processing and the file name to the file content mapping.
 The first constructor argument is a error report stream. Other are different engine limits.
-The method <b>process()</b> does the job. The argument is a file name with a DDL text. Additional
+The method <b>process()</b> does the job. The argument is a file name with a <b>DDL</b> text. Additional
 files may be opened during include operations.
 </p>
 
@@ -789,8 +789,8 @@ struct <span class="att">EngineResult</span>
 
 <p>
 You can print <b>Eval</b> object to see the result of processing. This object contains a 
-complete processing outcome. You may use the class <b>Map</b> to create a result representation
-in a single memory block.
+complete processing outcome. But for something more usefull, you may use the class <b>Map</b> 
+to create a result representation in a single memory block.
 </p>
 
 <pre>
@@ -815,7 +815,7 @@ class <span class="att">Map</span> : NoCopy
 <p>
 When you create a <b>Map</b> object, it is ready to map data into memory. The method <b>getLen()</b>
 returns the required memory block length. Once you allocate it, the <b>operator ()</b> can be used
-to performed the data mapping. There is a simple helper class <b>MapBase</b> to do these operations.
+to perform the data mapping. There is a simple helper class <b>MapBase</b> to do these operations.
 </p>
 
 <pre>
@@ -844,7 +844,7 @@ Once the mapping is done, you can retrieve the pointer to the particular constan
 the method <b>findConst()</b>. This method takes the constant name and the <b>TypeDesc</b> reference.
 There is a set of types, derived from the <b>TypeDesc</b> type, which are used to define
 a constant type in a way, compatible with the <b>DDL</b> type system. 
-Some fields of these types are mutable, they are assigned values by the <b>findConst()</b>.
+Some fields of these types are mutable, their values are assigned by the <b>findConst()</b>.
 Null pointer is returned in case of error.
 </p>
 
@@ -1035,6 +1035,68 @@ struct <span class="att">DataPtr</span>
   ProxyRange range(ulen len) const { return ProxyRange(ptr,len); }
  };
 </pre>
+
+<p>
+The object of this type serves as an "universal" constant pointer. It should be initialized by the value, returned 
+by the <b>findConst()</b> method. Then if the type of the constant is simple, you can retrieve the value using 
+<b>operator *</b>.
+</p>
+
+<pre>
+
+DDL::TypeDesc_basic type(DDL::TypeTag_int);
+
+DDL::Map map(....);
+
+DDL::DataPtr ptr=map.findConst("name",type);
+
+if( !ptr )
+  {
+   // no such constant
+
+   ....
+  }
+else
+  {
+   DDL::imp_int value=*ptr;
+  }
+
+</pre>
+
+<p>
+The following types must be used:
+</p>
+
+<pre>
+
+imp_sint8   for  sint8
+imp_uint8   for  uint8
+imp_sint16  for  sint16
+imp_uint16  for  uint16
+imp_sint32  for  sint32 
+imp_uint32  for  uint32
+imp_sint64  for  sint64
+imp_uint64  for  uint64
+
+imp_sint    for  sint
+imp_uint    for  uint
+
+imp_ulen    for  ulen
+imp_int     for  int
+
+StrLen      for  text
+imp_uint32  for  ip
+
+</pre>
+
+<p>
+For a pointer type use the <b>DataPtr</b> type.
+</p>
+
+<p>
+For an array type with implicit length use the <b>PtrLen&lt;T&gt;</b> type. You cannot do it, if the 
+<b>T</b> is a structure type.
+</p>
 
 </body>
 
