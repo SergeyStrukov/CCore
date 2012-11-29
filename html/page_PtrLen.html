@@ -472,7 +472,7 @@ different string-like types.
 <p>
 Implicit encoding string length with zero termination was a language design mistake. 
 To perform string operations you have to know its length. So each time you will have to calcualte it.
-It might lead to quadratic time algorithms instead of linear time if you are not steady enough.
+It may lead to quadratic time algorithms instead of linear time if you are not steady enough.
 But the most goodless thing is you cannot select substring from a zero-terminated string:
 it is not a zero-terminated. So you have to allocate memory and do copy!
 In <b>CCore</b> we avoid it converting zero-terminated strings into <b>StrLen</b>. So we calculate

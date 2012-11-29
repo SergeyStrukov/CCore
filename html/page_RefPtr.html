@@ -94,7 +94,7 @@ class <span class="att">RefPtr</span>
 
 <p>
 <b>RefPtr</b> has only one data member &mdash; non-null pointer to the object of type <b>T</b>. The pointer comes 
-from the constructor argument. <b>RefPtr</b> is copyrable, multiple <b>RefPtr</b> might point to the same object.
+from the constructor argument. <b>RefPtr</b> is copyrable, multiple <b>RefPtr</b> may point to the same object.
 To determine the moment the object should be destroyed the reference counting is used. It assumes, that type <b>T</b> has 
 embedded reference counter of some nature and a family of methods to manipulate one. Template parameter <b>Algo</b> allows
 customize these methods. By default, to increment reference counter the method <b>incRef()</b> is called, to decrement

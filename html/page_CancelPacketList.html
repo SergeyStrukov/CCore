@@ -186,7 +186,7 @@ void <span class="att">CancelPacketList::cancel</span>(PacketHeader *packet)
 <p>
 It extracts the packet list pointer and if it is not null, removes the packet from the packet list.
 Then in the lock-free context the packet extension is popped and the packet is completed.
-The packet list pointer might be null, because it is nullified by the method <b>get()</b>.
+The packet list pointer may be null, because it is nullified by the method <b>get()</b>.
 </p>
 
 <p>

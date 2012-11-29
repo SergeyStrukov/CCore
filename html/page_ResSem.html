@@ -97,8 +97,8 @@ Initially the counter is at that maximum.
 
 <p>
 <b>give()</b> increments the counter. If the counter is at maximum, the <b>Abort()</b> is called.
-This method might release threads, blocked by the method <b>wait()</b>. 
-It also might release a thread, blocked by the method <b>take()</b>. These two situations
+This method may release threads, blocked by the method <b>wait()</b>. 
+It also may release a thread, blocked by the method <b>take()</b>. These two situations
 cannot happens simultaneousely.
 </p>
 

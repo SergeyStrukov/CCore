@@ -74,7 +74,7 @@ The length of the buffer is <b>PacketPool_PacketMaxDataLen</b>.
 <b>AllocPacket_raw()</b> is blocking allocation function. It blocks while packet pool is empty. 
 Once a packet becomes available it tries to attach a data buffer and return this packet. 
 If this failed, the return pointer is null. So, despite the function is blocking, it still 
-might return null pointer.
+may return null pointer.
 </p>
 
 <p>
