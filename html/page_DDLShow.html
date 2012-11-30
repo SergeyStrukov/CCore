@@ -1,0 +1,185 @@
+<!--
+/* page_DDLShow.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> DDLShow</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>DDLShow</h2>
+
+<p>
+<b>DDLShow</b> is a simple utility, it takes a DDL file and prints the result of processing of it.
+</p>
+
+<pre>
+DDLShow.exe file<sub>1</sub> ... file<sub>n</sub>
+</pre>
+
+<p>
+This command process eseach of given files and prints a processing result to the correspondent
+<b>.txt</b> file:
+</p>
+
+<pre>
+file<sub>1</sub>.txt ... file<sub>n</sub>.txt
+</pre>
+
+<p>
+You may use this utility to learn <b>DDL</b>.
+</p>
+
+<p>
+Here is a sample:
+</p>
+
+<pre>
+/* sample.ddl */
+
+sint8 s8 = 1 ;
+uint8 u8 = 2 ;
+
+sint16 s16 = 3 ;
+uint16 u16 = 4 ;
+
+sint32 s32 = 5 ;
+uint32 u32 = 6 ;
+
+sint64 s64 = 7 ;
+uint64 u64 = 8 ;
+
+int i = 9 ;
+sint s = 10 ;
+uint u = 11 ;
+
+text t = "text" ;
+ip a = 192.168.1.10 ;
+
+text *ptr_t=&t ;
+
+text at_ptr_t = *ptr_t ;
+
+int[10] array_len_i = {1,2,3,4,5,6,7,8,9} ;
+
+int[] array_i = {1,2,3,4,5} ;
+
+struct Struct
+{
+ int fi = 1 ;
+ uint fu = 2 ;
+ text ft = "default" ;
+};
+
+type List = Struct[] ;
+
+List list={ {-1,-2,"neg"},{3,4,"pos"},{},null };
+</pre>
+
+<p>
+and the output <b>sample.ddl.txt</b> is:
+</p>
+
+<pre>
+/* sample.ddl */
+
+/* result */
+
+list =  {
+   {
+    (sint32) -1
+    (uint32) 4294967294
+    (text) neg
+   }
+   {
+    (sint32) 3
+    (uint32) 4
+    (text) pos
+   }
+   {
+    (sint32) 1
+    (uint32) 2
+    (text) default
+   }
+   {
+    (sint32) 0
+    (uint32) 0
+    (text) 
+   }
+ }
+
+array_i =  {
+  (sint32) 1
+  (sint32) 2
+  (sint32) 3
+  (sint32) 4
+  (sint32) 5
+ }
+
+array_len_i =  {
+  (sint32) 1
+  (sint32) 2
+  (sint32) 3
+  (sint32) 4
+  (sint32) 5
+  (sint32) 6
+  (sint32) 7
+  (sint32) 8
+  (sint32) 9
+  (sint32) 0
+ }
+
+at_ptr_t = (text) text
+
+ptr_t = (pointer)
+
+a = (ip) 192.168.1.10
+
+t = (text) text
+
+u = (uint32) 11
+
+s = (sint32) 10
+
+i = (sint32) 9
+
+u64 = (uint64) 8
+
+s64 = (sint64) 7
+
+u32 = (uint32) 6
+
+s32 = (sint32) 5
+
+u16 = (uint16) 4
+
+s16 = (sint16) 3
+
+u8 = (uint8) 2
+
+s8 = (sint8) 1
+</pre>
+
+</body>
+
+</html>
+

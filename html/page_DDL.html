@@ -1087,6 +1087,18 @@ imp_int     for  int
 StrLen      for  text
 imp_uint32  for  ip
 
+ArrayPtr    for  T[]  where
+
+struct <span class="att">ArrayPtr</span>
+ {
+  void *ptr;
+  ulen len;
+
+  ArrayPtr() : ptr(0),len(0) {}
+  
+  ArrayPtr(void *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
+ };
+
 </pre>
 
 <p>
@@ -1096,6 +1108,28 @@ For a pointer type use the <b>DataPtr</b> type.
 <p>
 For an array type with implicit length use the <b>PtrLen&lt;T&gt;</b> type. You cannot do it, if the 
 <b>T</b> is a structure type.
+</p>
+
+<p>
+Two methods <b>elem()</b> and <b>select()</b> support working with a structure type.
+</p>
+
+<p>
+<b>select()</b> returns the pointer to the structure field, <b>ind</b> is a field index.  
+</p>
+
+<p>
+<b>elem()</b> can be used to move a pointer to a strucrture, if the element is a member of an array.
+<b>ind</b> is an element index after the current element.
+</p>
+
+<p>
+For arrays with an explicit length, <b>DataPtr</b> points to the first element. 
+</p>
+
+<p>
+See <b>tools/ParserGen/DataMap.h</b> and <b>tools/ParserGen/DataMap.cpp</b> for an example
+of data mapping.
 </p>
 
 </body>
