@@ -1,0 +1,127 @@
+<!--
+/* page_PacketEndpoint.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.02
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Packet endpoint</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Packet endpoint</h2>
+
+<p class="Files">Files <b>CCore/inc/net/PacketEndpointDevice.h</b> <b>CCore/src/net/PacketEndpointDevice.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/net/XPoint.h</b> <b>CCore/src/net/XPoint.cpp</b></p>
+
+<p>
+Packet endpoints are a base of the <b>CCore</b> networking.
+There are two abstract packet endpoint interface: <b>PacketEndpointDevice</b> and <b>PacketMultipointDevice</b>.
+All network code is enclosed in the <b>Net</b> namespace.
+</p>
+
+<h4>PacketEndpointDevice</h4>
+
+<pre>
+struct <span class="att">PacketEndpointDevice</span>
+ {
+  virtual PacketFormat getOutboundFormat()=0;
+   
+  virtual void outbound(Packet&lt;uint8&gt; packet)=0;
+   
+  virtual ulen getMaxInboundLen()=0;
+   
+  struct InboundProc
+   {
+    virtual void inbound(Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; data)=0;
+     
+    virtual void tick()=0;
+   };
+   
+  virtual void attach(InboundProc *proc)=0;
+   
+  virtual void detach()=0;
+ };
+</pre>
+
+<h4>PacketMultipointDevice</h4>
+
+<pre>
+struct <span class="att">PacketMultipointDevice</span>
+ {
+  virtual StrLen toText(XPoint point,PtrLen&lt;char&gt; buf)=0;
+   
+  virtual PacketFormat getOutboundFormat()=0;
+   
+  virtual void outbound(XPoint point,Packet&lt;uint8&gt; packet)=0;
+   
+  virtual ulen getMaxInboundLen()=0;
+   
+  struct InboundProc
+   {
+    virtual void inbound(XPoint point,Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; data)=0;
+     
+    virtual void tick()=0;
+   };
+   
+  virtual void attach(InboundProc *proc)=0;
+   
+  virtual void detach()=0;
+ };
+</pre>
+
+<h4>Utilities</h4>
+
+<pre>
+const unsigned InboundTicksPerSec = 10 ;
+</pre>
+
+<pre>
+class PointDesc : NoCopy
+ {
+   char buf[TextBufLen];
+   StrLen str;
+   
+  public:
+  
+   PointDesc(PacketMultipointDevice *mp,XPoint point)
+    {
+     str=mp->toText(point,Range(buf));
+    }
+    
+   StrLen getStr() const { return str; } 
+   
+   // print object
+    
+   typedef StrPrintOpt PrintOptType; 
+    
+   template &lt;class P&gt; 
+   void print(P &amp;out,PrintOptType opt) const
+    {
+     Putobj(out,BindOpt(opt,str));
+    }
+ };
+</pre>
+
+</body>
+
+</html>
+

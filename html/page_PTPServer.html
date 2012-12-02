@@ -28,7 +28,53 @@
 
 <h2>PTPServer</h2>
 
+<p>
+<b>PTPServer</b> is a PTP server, it implements HFS and PTPCon protocols over UDP (on default PTP server port 52000). 
+Clients may connect to the server and use it to open a console and access the file system.
+Server makes visible the part of the file tree started from the working directoty. You can also
+run applications on the server side from this subtree.
+</p>
 
+<pre>
+PTPServer.exe [c]
+</pre>
+
+<p>
+The only argument is a symbol 'c'. If it is given, server will stop execution once a console is closed
+by a client.
+</p>
+
+<p>
+While server is running, you can enter the following commands:
+</p>
+
+<pre>
+help
+stat
+clear
+exit
+</pre>
+
+<p>
+<b>help</b> prints a brief help.
+</p>
+
+<p>
+<b>stat</b> prints a statistic.
+</p>
+
+<p>
+<b>clear</b> clears statistic counters.
+</p>
+
+<p>
+<b>exit</b> exits the server.
+</p>
+
+<p>
+To work with the server, you may use <a href="page_PTPHFS.html">HFS</a>, <a href="page_PTPCon.html">PTPCon</a>, 
+<a href="page_PTPSupport.html">PTPSupport</a> <a href="page_PTP.html">PTP</a> services.
+</p>
 
 </body>
 
