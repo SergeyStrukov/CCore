@@ -40,6 +40,11 @@ All network code is enclosed in the <b>Net</b> namespace.
 
 <h4>PacketEndpointDevice</h4>
 
+<p>
+<b>PacketEndpointDevice</b> is a "client-side" interface. It is a logical packet communication endpoint. 
+It is used in point-to-point communication scenarios.
+</p>
+
 <pre>
 struct <span class="att">PacketEndpointDevice</span>
  {
@@ -62,7 +67,65 @@ struct <span class="att">PacketEndpointDevice</span>
  };
 </pre>
 
+<p>
+<b>getOutboundFormat()</b> returns an outbound packets format.
+</p>
+
+<p>
+<b>outbound()</b> starts the packet outbound. When the packet processing is complete, 
+the packet is completed. There is no error signaling, because the communication is not assumed reliable.
+The fact the packet is processed does not mean the data are received or will be received by the target.
+</p>
+
+<p>
+<b>getMaxInboundLen()</b> is a maximum inbound data length.
+</p>
+
+<p>
+Data income is an asynchronous process. So to receive it some inbound processor must be attached
+to the endpoint.
+</p>
+          
+<p>
+<b>attach()</b> attaches the given processor to the endpoint. Only one processor can be attached
+at the one moment of time. Processor must be detached before endpoint is destroyed.
+Processor methods are called in a unknown task context.
+</p>
+
+<p>
+<b>detach()</b> detaches inbound processor form the endpoint.
+</p>
+
+<p>
+<b>inbound()</b> is called to handle inbound packet. The first argument is a packet, the second
+is an inbound data, it is a part of the 
+packet data buffer.
+</p>
+
+<p>
+<b>tick()</b> is a "network tick". It happens 10 times per seconds. It is used for a protocol timeout
+processing.
+</p>
+
 <h4>PacketMultipointDevice</h4>
+
+<p>
+<b>PacketMultipointDevice</b> is a "server-side" interface. It is a logical packet communication endpoint. 
+It is used in point-to-many points communication scenarios. The type <b>XPoint</b> is used to identify a 
+particular target.
+</p>
+
+<pre>
+
+typedef uint64 <span class="att">XPoint</span>;
+
+</pre>
+
+<p>
+<b>PacketMultipointDevice</b> is similar to the <b>PacketEndpointDevice</b>. The difference is
+the address argument in <b>inbound()</b> and <b>outbound()</b> methods. This argument is the address
+the packet should be sent to or is received from.
+</p>
 
 <pre>
 struct <span class="att">PacketMultipointDevice</span>
@@ -71,13 +134,13 @@ struct <span class="att">PacketMultipointDevice</span>
    
   virtual PacketFormat getOutboundFormat()=0;
    
-  virtual void outbound(XPoint point,Packet&lt;uint8&gt; packet)=0;
+  virtual void outbound(<span class="att">XPoint point</span>,Packet&lt;uint8&gt; packet)=0;
    
   virtual ulen getMaxInboundLen()=0;
    
   struct InboundProc
    {
-    virtual void inbound(XPoint point,Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; data)=0;
+    virtual void inbound(<span class="att">XPoint point</span>,Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; data)=0;
      
     virtual void tick()=0;
    };
@@ -88,14 +151,30 @@ struct <span class="att">PacketMultipointDevice</span>
  };
 </pre>
 
+<p>
+<b>toText()</b> creates a text representation of the target address. A buffer for operation must be
+given. The resulting text is returned.
+</p>
+
+<p>
+Multipoint device can store a native address in the type <b>XPoint</b>, if it is short enough.
+It also can perform an address mapping from the native address to the type <b>XPoint</b>.
+</p>
+
 <h4>Utilities</h4>
 
 <pre>
-const unsigned InboundTicksPerSec = 10 ;
+
+const unsigned <span class="att">InboundTicksPerSec</span> = 10 ;
+
 </pre>
 
+<p>
+This constant is a net tick frequency.
+</p>
+
 <pre>
-class PointDesc : NoCopy
+class <span class="att">PointDesc</span> : NoCopy
  {
    char buf[TextBufLen];
    StrLen str;
@@ -120,6 +199,10 @@ class PointDesc : NoCopy
     }
  };
 </pre>
+
+<p>
+This class helps to convert an <b>XPoint</b> to the text string.
+</p>
 
 </body>
 

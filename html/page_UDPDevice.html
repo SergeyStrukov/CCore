@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_UDPDevice.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> UDPDevice</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,245 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>UDPDevice</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/net/UDPDevice.h</b> <b>CCore/src/net/UDPDevice.cpp</b></p>
 
+<p>
+<b>HCore</b> has two UDP endpoint device classes. They are built on OS socket functions.
+These devices implement packet communication using UDP protocol.
+</p>
+
+<h4>UDPEndpointDevice</h4>
+
+<p>
+Class <b>UDPEndpointDevice</b> implements the <b>PacketEndpointDevice</b> interface.
+</p>
+
+<pre>
+class <span class="att">UDPEndpointDevice</span> : public ObjBase , public PacketEndpointDevice
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   static const ulen DefaultMaxPackets = 500 ;
+  
+   UDPEndpointDevice(UDPort udport,UDPoint dst,ulen max_packets=DefaultMaxPackets);
+   
+   virtual ~UDPEndpointDevice();
+   
+   // methods
+   
+   UDPort getPort() const;
+   
+   UDPoint getDst() const;
+   
+   enum Event
+    {
+     Event_read,
+     Event_sent,
+     Event_tick,
+    
+     Event_extra_timeout,
+    
+     Event_nosent,
+     Event_nopacket,
+     Event_noread,
+     Event_nodst,
+    
+     EventLim
+    };
+   
+   friend const char * GetTextDesc(Event ev); 
+  
+   typedef Counters&lt;Event,EventLim&gt; StatInfo;
+
+   void getStat(StatInfo &amp;ret);
+   
+   // PacketEndpointDevice
+   
+   virtual PacketFormat getOutboundFormat();
+   
+   virtual void outbound(Packet&lt;uint8&gt; packet);
+   
+   virtual ulen getMaxInboundLen();
+   
+   virtual void attach(InboundProc *proc);
+   
+   virtual void detach();
+   
+   // start/stop
+   
+   class StartStop : NoCopy 
+    {
+     public:
+
+      template &lt;class ... TT&gt;
+      StartStop(UDPEndpointDevice &amp;obj,TT ... tt);
+      
+      ~StartStop();
+    };
+ };
+</pre>
+
+<p>
+The first constructor argument is the local UDP port, the second is the UDP address (IP address+UDP port) of the 
+communication target. <b>max_packets</b> limits the packet usage for the inbound processing.
+</p>
+
+<p>
+<b>getPort()</b> returns the local port.
+</p>
+
+<p>
+<b>getDst()</b> return the destination UDP address.
+</p>
+
+<p>
+<b>getStat()</b> returns the device statistic.
+</p>
+
+<p>
+Other methods are the <b>PacketEndpointDevice</b> interface implementaion.
+</p>
+
+<p>
+The inner class <b>StartStop</b> should be used to activate the object of this class.
+You cannot attach an inbound processor (or detach it) to the object while it is running.
+So attach first, then start. Additional constructor arguments are not used.
+</p>
+
+<h4>UDPMultipointDevice</h4>
+
+<p>
+Class <b>UDPMultipointDevice</b> implements the <b>PacketMultipointDevice</b> interface.
+</p>
+
+<pre>
+class <span class="att">UDPMultipointDevice</span> : public ObjBase , public PacketMultipointDevice
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   static const ulen DefaultMaxPackets = 500 ;
+  
+   explicit UDPMultipointDevice(UDPort udport,ulen max_packets=DefaultMaxPackets);
+   
+   virtual ~UDPMultipointDevice();
+   
+   // methods
+   
+   UDPort getPort() const;
+   
+   enum Event
+    {
+     Event_read,
+     Event_sent,
+     Event_tick,
+    
+     Event_extra_timeout,
+    
+     Event_nosent,
+     Event_nopacket,
+     Event_noread,
+     
+     EventLim
+    };
+   
+   friend const char * GetTextDesc(Event ev); 
+  
+   typedef Counters&lt;Event,EventLim&gt; StatInfo;
+
+   void getStat(StatInfo &amp;ret);
+   
+   // PacketMultipointDevice
+   
+   virtual StrLen toText(XPoint point,PtrLen&lt;char&gt; buf);
+   
+   virtual PacketFormat getOutboundFormat();
+   
+   virtual void outbound(XPoint point,Packet&lt;uint8&gt; packet);
+   
+   virtual ulen getMaxInboundLen();
+   
+   virtual void attach(InboundProc *proc);
+   
+   virtual void detach();
+   
+   // start/stop
+   
+   class StartStop : NoCopy
+    {
+     public:
+
+      template &lt;class ... TT&gt;
+      StartStop(UDPMultipointDevice &amp;obj,TT ... tt);
+      
+      ~StartStop();
+    };
+ };
+</pre>
+
+<p>
+The first constructor argument is the local UDP port.
+<b>max_packets</b> limits the packet usage for the inbound processing.
+</p>
+
+<p>
+<b>getPort()</b> returns the local port.
+</p>
+
+<p>
+<b>getStat()</b> returns the device statistic.
+</p>
+
+<p>
+Other methods are the <b>PacketEndpointDevice</b> interface implementaion.
+</p>
+
+<p>
+The inner class <b>StartStop</b> should be used to activate the object of this class.
+You cannot attach an inbound processor (or detach it) to the object while it is running.
+So attach first, then start. Additional constructor arguments are not used.
+</p>
+
+<h4>Sys::Socket</h4>
+
+<p>
+Both classes are implemented using <b>Sys::UDPSocket</b> class, declared in the target header <b>sys/SysNet.h</b>.
+</p>
+
+<pre>
+struct <span class="att">Sys::UDPSocket</span>
+ {
+  // public
+  
+  struct InResult
+   {
+    Net::UDPoint src;
+    ulen len;
+    ErrorType error;
+   };
+  
+  ErrorType open(Net::UDPort udport) noexcept;
+  
+  ErrorType close() noexcept;
+  
+  ErrorType outbound(Net::UDPoint dst,PtrLen&lt;const uint8&gt; data) noexcept;
+  
+  WaitResult wait_in(MSec timeout) noexcept;
+  
+  WaitResult wait_in(TimeScope time_scope) noexcept;
+  
+  InResult inbound(PtrLen&lt;uint8&gt; buf) noexcept;
+ };
+</pre>
 
 </body>
 
