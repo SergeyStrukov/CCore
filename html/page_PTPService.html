@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_PTPSevice.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> PTP service</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,129 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>PTP service</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/net/PTPExtra.h</b> <b>CCore/src/net/PTPExtra.cpp</b></p>
 
+<p>
+<b>PTP</b> server may provide a variety of functions. Usually they are grouped in services.
+There is a standard way to encode a <b>PTP</b> service interaction.
+</p>
+
+<p>
+The standard list of common types: 
+</p>
+
+<pre>
+
+typedef uint32 ServiceIdType;
+   
+typedef uint32 FunctionIdType;
+   
+typedef uint32 LenType;
+   
+typedef uint32 BoolType;
+   
+typedef uint32 FlagType;
+   
+typedef uint32 ErrorIdType;
+
+</pre>
+
+<p>
+<b>ServiceIdType</b> identifies a service.
+</p>
+
+<p>
+<b>FunctionIdType</b> specifies a function of a service.
+</p>
+
+<p>
+<b>LenType</b> encodes the array data length.
+</p>
+
+<p>
+<b>BoolType</b> encodes a boolean value.
+</p>
+
+<p>
+<b>FlagType</b> encodes a set of flags.
+</p>
+
+<p>
+<b>ErrorIdType</b> encodes a error code, null value means no error.
+</p>
+
+<p>
+The list of basic error codes:
+</p>
+
+<pre>
+
+const ErrorIdType NoError    = 0 ;
+const ErrorIdType BadInput   = 1 ;
+const ErrorIdType NoFunction = 2 ;
+const ErrorIdType Exhausted  = 3 ;
+const ErrorIdType Unknown    = 4 ;
+
+</pre>
+
+<p>
+<b>NoError</b> &mdash; no error.
+</p>
+
+<p>
+<b>BadInput</b> &mdash; the input data are invalid.
+</p>
+
+<p>
+<b>NoFunction</b> &mdash; the function or service id is invalid.
+</p>
+
+<p>
+<b>Exhausted</b> &mdash; server has not enough resourses to serve the request.
+</p>
+
+<p>
+<b>Unknown</b> &mdash; any error.
+</p>
+
+<p>
+Two common derived types:
+</p>
+
+<pre>
+
+struct ServiceFunction
+ {
+  ServiceIdType service_id;
+  FunctionIdType function_id;
+ };
+ 
+struct Result // if( error==NoError ) output follows
+ {
+  ServiceFunction serv_func;
+  ErrorIdType error_id;
+ }; 
+
+</pre>
+
+<p>
+Client info starts from the <b>ServiceFunction</b> header, followed by the function arguments.
+</p>
+
+<p>
+Server info starts from the <b>Result</b>. <b>serv_func</b> field is a copy from the client info. 
+If the error code is null, the result follows after.
+</p>
+
+<p>
+If a client info has no proper header (i.g. it is too short), the server cancels transaction.
+</p>
+
+<p>
+The file <b>txt/PTPService.txt.cpp</b> contains all these definitions.
+</p>
 
 </body>
 

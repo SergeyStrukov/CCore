@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_PTPSupport.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> PTP support</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,337 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>PTP support</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/net/SupportBase.h</b> <b>CCore/src/net/SupportBase.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/net/Support.h</b> <b>CCore/src/net/Support.cpp</b></p>
+
+<p>
+<b>PTP</b> support is a PTP service with 6 functions. The service id is 1.
+Function ids are 1-6.
+</p>
+
+<pre>
+
+const ServiceIdType ServiceId = 1 ;
+   
+const FunctionIdType FunctionId_Len       = 1 ;
+const FunctionIdType FunctionId_Seed      = 2 ;
+const FunctionIdType FunctionId_Session   = 3 ;
+const FunctionIdType FunctionId_Echo      = 4 ;
+const FunctionIdType FunctionId_ErrorDesc = 5 ;
+const FunctionIdType FunctionId_Exist     = 6 ;
+
+</pre>
+
+<p>
+Function <b>Len</b> has the following input/output:
+</p>
+
+<pre>
+
+struct LenInput
+ {
+  LenType to_server_info_len;
+  LenType to_client_info_len;
+ };
+ 
+struct LenOutput
+ {
+  LenType to_server_info_len;
+  LenType to_client_info_len;
+ }; 
+
+</pre>
+
+<p>
+This function is used to cap an input/output packet lengths. Client sends its limits to the
+server. The limits should not exceed <b>MaxInfoLen</b> (1440). Server downs these limits to its own
+limits and sends back to the client. These values can be used further to calculate different
+data limits in other PTP service/functions.
+</p>
+
+<p>
+Function <b>Seed</b> has the following input/output:
+</p>
+
+<pre>
+
+struct SeedInput
+ {
+ };
+    
+struct SeedOutput
+ {
+  uint64 seed1;
+  uint64 seed2;
+ };
+
+</pre>
+
+<p>
+The return value is a random 128-bit value. It can be used for random seeding.
+</p>
+
+<p>
+Function <b>Session</b> has the empty input/output:
+</p>
+
+<pre>
+
+struct SessionInput
+ {
+ };
+
+struct SessionOutput
+ {
+ };
+
+</pre>
+
+<p>
+This function is used to inform the server, that this particular client starts a new session and all
+remaining state information from the past should be discarded if any. It is recommended, that
+<b>PTP</b> client-server interaction starts with <b>Len</b> and <b>Session</b> functions.
+</p>
+
+<p>
+Function <b>Echo</b> has the following input/output:
+</p>
+
+<pre>
+
+struct EchoInput
+ {
+  uint32 delay_msec;
+  uint8 len;
+  uint8 data[len];
+ };
+    
+struct EchoOutput
+ {
+  uint8 len;
+  uint8 data[len];
+ };
+
+</pre>
+
+<p>
+This function echos the input data after the given delay in msec. The maximum delay value
+is 1000*60*60 (1 hour).
+</p>
+
+<p>
+Function <b>ErrorDesc</b> has the following input/output:
+</p>
+
+<pre>
+
+struct ErrorDescInput
+ {
+  ServiceIdType service_id;
+  FunctionIdType function_id;
+  ErrorIdType error;
+ };
+    
+struct ErrorDescOutput
+ {
+  uint8 len;
+  uint8 str[len];
+ }; 
+
+</pre>
+
+<p>
+This function returns a text desciption of the particular error code. The input contains
+a service/function ids and the error code. The output is a text (byte) string, up to 255 byte length.
+</p>
+
+<p>
+Function <b>Exist</b> has the following input/output:
+</p>
+
+<pre>
+
+struct ExistInput
+ {
+  ServiceIdType service_id;
+  FunctionIdType function_id;
+ };
+    
+struct ExistOutput
+ {
+  ServiceIdType service_id;
+  FunctionIdType function_id;
+  ErrorIdType error;
+ };
+
+</pre>
+
+<p>
+This function can be used to check if the given service/function id combination is implemented 
+by the server. Output contains the copy of the input and the error code. The error code
+is <b>NoError</b> or <b>NoFunction</b>.
+</p>
+
+<p>
+The file <b>txt/PTPSupport.txt.cpp</b> contains this service definitions.
+</p>
+
+<h3>Support functions with ClientDevice</h3>
+
+<p>
+Support functions can be performed using the <b>ClientDevice</b> class.
+There are several helper classes for this.
+</p>
+
+<p>
+Each class constructor take the pointer to the <b>ClientDevice</b> object and
+the reference to the <b>PacketSet&lt;uint8&gt;</b> object. 
+The packet set is used to take a transaction packet.
+</p>
+
+<p>
+The method <b>perform()</b> or <b>perform_guarded()</b> performes the transaction.
+It is a blocking call.
+The first argument is a timeout, both <b>MSec</b> and <b>TimeScope</b> argument types are allowed.
+<b>perform()</b> returns a boolean value to indicate a success, 
+<b>perform_guarded()</b> throws an exception in case of error.
+If the operation successfully finished, the result can be obtained by the correspondent <b>get</b> methods.
+</p>
+
+<h4>Support_Exist</h4>
+
+<pre>
+class <span class="att">Support_Exist</span> : NoCopy 
+ {
+   ....
+
+  public:
+  
+   Support_Exist(ClientDevice *client,PacketSet&lt;uint8&gt; &amp;pset);
+   
+   template &lt;class TimeoutType&gt;
+   bool perform(TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id); 
+    
+   enum ResultType
+    {
+     NotExist,
+     Exist,
+     Unknown
+    };
+    
+   friend const char * GetTextDesc(ResultType result); 
+    
+   ResultType getResult();
+ };
+</pre>
+
+<p>
+<b>perform()</b> takes the <b>ServiceId</b> and <b>FunctionId</b> as arguments.
+</p>
+
+<p>
+<b>getResult()</b> returns the result as an enum value. If the operation is failed, 
+the <b>Unknown</b> is returned. 
+</p>
+
+<h4>Support_ErrorDesc</h4>
+
+<pre>
+class <span class="att">Support_ErrorDesc</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   Support_ErrorDesc(ClientDevice *client,PacketSet&lt;uint8&gt; &amp;pset);
+   
+   template &lt;class TimeoutType&gt;
+   bool perform(TimeoutType timeout,ServiceIdType service_id,FunctionIdType function_id,ErrorIdType error_id); 
+    
+   StrLen getDesc() const;
+ };
+</pre>
+
+<p>
+<b>perform()</b> takes the <b>ServiceId</b>, <b>FunctionId</b> and <b>ErrorIdType</b> as arguments.
+</p>
+
+<p>
+<b>getDesc()</b> returns the <b>StrLen</b> error description from the internal buffer.
+If the operation is failed, <b>"Unknown error"</b> is returned.
+</p>
+
+<h4>Support_Seed</h4>
+
+<pre>
+class <span class="att">Support_Seed</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   Support_Seed(ClientDevice *client,PacketSet&lt;uint8&gt; &amp;pset);
+   
+   template &lt;class TimeoutType&gt;
+   bool perform(TimeoutType timeout); 
+    
+   template &lt;class TimeoutType&gt;
+   void perform_guarded(TimeoutType timeout); 
+    
+   uint64 getSeed1() const;
+    
+   uint64 getSeed2() const;
+ };
+</pre>
+
+<p>
+<b>getSeed1()</b> and <b>getSeed2()</b> is the seed. Zero is returned in case of error.
+</p>
+
+<h4>Support_Echo</h4>
+
+<pre>
+class <span class="att">Support_Echo</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   Support_Echo(ClientDevice *client,PacketSet&lt;uint8&gt; &amp;pset);
+   
+   template &lt;class TimeoutType,class Fill&gt;
+   bool perform(TimeoutType timeout,uint32 delay_msec,Fill &amp;fill); 
+    
+   template &lt;class TimeoutType,class Fill&gt;
+   void perform_guarded(TimeoutType timeout,uint32 delay_msec,Fill &amp;fill); 
+    
+   PtrLen&lt;const uint8&gt; getEcho() const;
+ };
+</pre>
+
+<p>
+<b>perform()</b> takes the <b>delay</b> and the reference to the <b>Fill</b> class as arguments.
+This class is responsible for the echo data creation. It must implement the following interface:
+</p>
+
+<pre>
+class Fill
+ {
+  public:
+
+   ulen getLen();
+
+   void fill(PtrLen&lt;uint8&gt; buf);
+ };
+</pre>
+
+<p>
+<b>getEcho()</b> returns the echoed data from the internal buffer. The empty range is 
+returned in case of error.
+</p>
 
 </body>
 

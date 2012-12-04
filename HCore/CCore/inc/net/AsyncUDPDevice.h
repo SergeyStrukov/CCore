@@ -993,6 +993,7 @@ class AsyncUDPMultipointDevice : public ObjBase , public PacketMultipointDevice 
    typedef StartStopObject<AsyncUDPDevice<AsyncUDPMultipointDeviceBase> > StartStopDev;
 
   public: 
+   
    // constructors
   
    static const ulen DefaultMaxPackets = 500 ;
