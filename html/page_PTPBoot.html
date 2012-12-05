@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_PTPBoot.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> PTP Boot</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,250 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>PTP Boot</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/net/PTPBootBase.h</b> <b>CCore/src/net/PTPBootBase.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/net/PTPBoot.h</b> <b>CCore/src/net/PTPBoot.cpp</b></p>
+
+<p>
+<b>PTP Boot</b> is a PTP service with 3 functions. The service id is 4.
+Function ids are 1-3. This protocol is used for remote boot. Abstract boot is a process during which
+a group of boot sections are allocated and filled. Then the boot command is issued to start
+an execution from the given entry point. The most common example is an application boot, sections are
+placed in the target memory and filled with application data and code.
+</p>
+
+<pre>
+
+const ServiceIdType ServiceId = 4 ;
+   
+const FunctionIdType FunctionId_Alloc = 1 ;
+const FunctionIdType FunctionId_Write = 2 ;
+const FunctionIdType FunctionId_Boot  = 3 ;
+
+</pre>
+
+<p>
+Protocol types and constants:
+</p>
+
+<pre>
+
+typedef uint64 AddressType;
+
+typedef uint32 IndexType;
+
+const unsigned DeltaWriteLen   =   24 ;
+const unsigned MaxWriteDataLen = 1416 ; // MaxInfoLen-DeltaWriteLen
+
+</pre>
+
+<p>
+Function <b>Alloc</b> has the following input/output:
+</p>
+
+<pre>
+
+struct AllocInput
+ {
+  AddressType address;
+  AddressType len;
+ };
+    
+struct AllocOutput
+ {
+  IndexType index;
+ }; 
+
+</pre>
+
+<p>
+This function allocates a boot section at the given address with the given length.
+Return vaue is the section index. Section is a continuous byte range. 
+</p>
+
+<p>
+Function <b>Write</b> has the following input/output:
+</p>
+
+<pre>
+
+struct WriteInput
+ {
+  IndexType index;
+  AddressType off;
+  LenType len : len<=MaxWriteDataLen ;
+  uint8 data[len];
+ };
+    
+struct WriteOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function is used to fill a section. <b>index</b> is a previousely allocated section index.
+<b>off</b> is a data offset inside a section. Then data follows.
+</p>
+
+<p>
+Function <b>Boot</b> has the following input/output:
+</p>
+
+<pre>
+
+struct BootInput
+ {
+  AddressType entry_point;
+  FlagType flags;
+ };
+    
+struct BootOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function completes a boot process. It specifies the entry point and boot flags.
+The meaning of the flags is implementation-defined.
+</p>
+
+<p>
+The file <b>txt/PTPBoot.txt.cpp</b> contains this service definition.
+</p>
+
+<h3>PTP Boot classes</h3>
+
+<p>
+There are two <b>PTP Boot</b> classes: <b>BootClient</b> and <b>BootInfo</b>. They are located
+in the namespace <b>PTPBoot</b> (i.g. the full name is <b>::CCore::Net::PTPBoot</b>).
+<b>BootClient</b> is a client part (host part), and <b>BootInfo</b> is a server part (target part).
+A target serves as a server in this case.
+</p>
+
+<h4>BootClient</h4>
+
+<p>
+</p>
+
+<pre>
+class <span class="att">BootClient</span> : public Funchor_nocopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit BootClient(StrLen ptp_dev_name,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);
+   
+   ~BootClient();
+   
+   // methods
+   
+   IndexType alloc(AddressType address,AddressType len);
+   
+   void write(IndexType index,AddressType off,PtrLen&lt;const uint8&gt; data);
+   
+   void boot(AddressType entry_point,FlagType flags);
+ };
+</pre>
+
+<p>
+The first constructor argument is a <b>PTP</b> <b>ClientDevice</b> object name. 
+Other is an operations timeout and a packet cap. All methods throw an exception in case of error.
+</p>
+
+<p>
+<b>alloc()</b> allocates a section. The section index is returned.
+</p>
+
+<p>
+<b>write()</b> fills a section with data. The data length is not limited for this method, it spawns
+as many write operations as necessary to do the job. 
+</p>
+
+<p>
+<b>boot()</b> completes the boot.
+</p>
+
+<h4>BootInfo</h4>
+
+<p>
+<b>BootInfo</b> is a <b>Partial class</b>, you must derive a class from it to use it.
+</p>
+
+<pre>
+class <span class="att">BootInfo</span> : NoCopy
+ {
+   ....
+
+  protected:
+  
+   class Sect : NoCopy
+    {
+      ....
+
+     public: 
+      
+      AddressType getAddress() const;
+      
+      AddressType getLen() const;
+      
+      PtrLen&lt;const uint8&gt; getData() const;
+    };
+    
+   DynArray&lt;Sect&gt; table;
+   
+   AddressType entry_point;
+   FlagType flags;
+   
+  private:
+   
+   virtual void signal_complete()=0;
+   
+   virtual void wait_complete()=0;
+  
+  public:
+  
+   BootInfo();
+   
+   ~BootInfo();
+   
+   void get(StrLen ptp_server_name,MSec timeout=DefaultTimeout);
+ };
+</pre>
+
+<p>
+Once a <b>BootInfo</b> object is created, you can start a remote boot process by the method <b>get()</b>.
+The first argument is a <b>PTP</b> <b>ServerDevice</b> object name.
+During boot process all data are accumulated in the protected members.
+</p>
+
+<p>
+<b>table</b> is a section table, each section record has an address, a section length and data.
+</p>
+
+<p>
+<b>entry_point</b> is the entry point.
+</p>
+
+<p>
+<b>flags</b> is the boot flags.
+</p>
+
+<p>
+<b>wait_complete()</b> is called inside the method <b>get()</b> to wait for the process completion.
+A derived class must block the execution in this method until the <b>signal_complete()</b> is called.
+</p>
+
+<p>
+<b>signal_complete()</b> is called asynchronously during the boot process. It should be used to stop
+waiting.
+</p>
 
 </body>
 

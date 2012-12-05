@@ -30,6 +30,118 @@
 
 <p class="Files">Files <b>CCore/inc/net/NetBase.h</b> <b>CCore/src/net/NetBase.cpp</b></p>
 
+<p>
+The header <b>net/NetBase.h</b> contains a lot of definitions, related with Ethernet and IP protocols.
+The most usable are below.
+</p>
+
+<p>
+<b>UDPort</b> s a UDP port type, in is a 16-bit unsigned intergal type.
+</p>
+
+<pre>
+
+typedef uint16 <span class="att">UDPort</span>;
+
+</pre>
+
+<p>
+<b>MACAddress</b> represents a MAC address (48 bit).
+</p>
+
+<pre>
+struct <span class="att">MACAddress</span>
+ {
+  uint8 address[6];
+  
+  // constructors
+  
+  MACAddress() : address() {}
+  
+  MACAddress(uint8 b0,uint8 b1,uint8 b2,uint8 b3,uint8 b4,uint8 b5);
+  
+  explicit MACAddress(XPoint point);
+  
+  // methods
+   
+  static MACAddress Broadcast() { return MACAddress(0xFF,0xFF,0xFF,0xFF,0xFF,0xFF); }
+  
+  XPoint get() const; 
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 6 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+<b>IPAddress</b> represents a IPv4 address (32 bit).
+</p>
+
+<pre>
+struct <span class="att">IPAddress</span>
+ {
+  uint32 address;
+  
+  // constructors
+  
+  IPAddress() : address() {}
+   
+  explicit IPAddress(uint32 address_) { address=address_; }
+  
+  IPAddress(uint8 b0,uint8 b1,uint8 b2,uint8 b3);
+  
+  // methods
+   
+  uint32 get() const { return address; } 
+  
+  friend bool operator == (IPAddress a,IPAddress b);
+
+  friend bool operator != (IPAddress a,IPAddress b);
+  
+  IPAddress getNet(IPAddress net_mask) const { return IPAddress(address&net_mask.address); }
+  
+  bool sameNet(IPAddress obj,IPAddress net_mask) const { return getNet(net_mask)==obj.getNet(net_mask); }
+  
+  // save/load object
+   
+  enum { SaveLoadLen = 4 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+The function <b>ParseIPAddress()</b> can be used to parse an IP address from a
+<a href="page_StrParse.html">character stream</a>.
+</p>
+
+<pre>
+
+template &lt;class Dev&gt;
+void <span class="att">ParseIPAddress</span>(Dev &dev,IPAddress &ret);
+
+</pre>
 
 </body>
 

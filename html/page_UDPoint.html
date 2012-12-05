@@ -30,6 +30,66 @@
 
 <p class="Files">Files <b>CCore/inc/net/UDPoint.h</b> <b>CCore/src/net/UDPoint.cpp</b></p>
 
+<p>
+<b>UDPoint</b> is a UDP address, i.g. IP address + UDP port.
+</p>
+
+<pre>
+struct <span class="att">UDPoint</span>
+ {
+  IPAddress address;
+  UDPort port;
+  
+  // constructors
+  
+  UDPoint() : address(),port() {}
+  
+  UDPoint(IPAddress address_,UDPort port_) : address(address_),port(port_) {}
+  
+  UDPoint(uint8 a1,uint8 a2,uint8 a3,uint8 a4,UDPort port_) : address(a1,a2,a3,a4),port(port_) {}
+  
+  explicit UDPoint(XPoint a);
+  
+  // methods
+  
+  friend bool operator == (UDPoint a,UDPoint b);
+  
+  friend bool operator != (UDPoint a,UDPoint b);
+  
+  XPoint get() const;
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+There are several UDP port constants, defined in the header <b>net/UDPoint.h</b>.
+</p>
+
+<pre>
+
+const UDPort <span class="att">EchoUDPort</span>      =     7 ;
+
+const UDPort <span class="att">PTPServerUDPort</span> = 52000 ;
+
+const UDPort <span class="att">PTPClientUDPort</span> = 52001 ;
+
+</pre>
+
+<p>
+<b>EchoUDPort</b> &mdash; UDP echo port.
+</p>
+
+<p>
+<b>PTPServerUDPort</b> &mdash; PTP over UDP server port.
+</p>
+
+<p>
+<b>PTPClientUDPort</b> &mdash; PTP over UDP client port.
+</p>
 
 </body>
 

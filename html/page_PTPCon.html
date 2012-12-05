@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_PTPCon.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> PTP Console</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,308 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>PTP Console</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/net/PTPConBase.h</b> <b>CCore/src/net/PTPConBase.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/net/PTPConDevice.h</b> <b>CCore/src/net/PTPConDevice.cpp</b></p>
+
+<p>
+<b>PTP Console</b> is a <b>PTP</b> console service with 4 functions. The service id is 3.
+Function ids are 1-4. Server may support single or multiple consoles. Each console has an id.
+</p>
+
+<pre>
+
+const ServiceIdType ServiceId = 3 ;
+   
+const FunctionIdType FunctionId_Open  = 1 ;
+const FunctionIdType FunctionId_Read  = 2 ;
+const FunctionIdType FunctionId_Write = 3 ;
+const FunctionIdType FunctionId_Close = 4 ;
+
+</pre>
+
+<p>
+Protocol types and constants:
+</p>
+
+<pre>
+
+struct Name
+ {
+  LenType len : len<=MaxNameLen ;
+  uint8 name[len];
+ };
+    
+struct ConId
+ {
+  uint32 slot;
+  uint64 number;
+  uint64 clock;
+ }; 
+    
+const unsigned MaxNameLen      =  128 ;
+const unsigned DeltaReadLen    =   20 ;
+const unsigned MaxReadDataLen  = 1420 ; // MaxInfoLen-DeltaReadLen
+const unsigned DeltaWriteLen   =   36 ;
+const unsigned MaxWriteDataLen = 1404 ; // MaxInfoLen-DeltaWriteLen
+
+</pre>
+
+<p>
+Function <b>Open</b> has the following input/output:
+</p>
+
+<pre>
+
+struct OpenInput
+ {
+  uint32 write_timeout_msec;
+  uint32 read_timeout_msec;
+  uint32 trigger_mask[8];
+     
+  void setbit(uint8 ch) { trigger_mask[ch>>5]|=(uint32(1)<<(ch&31)); }
+     
+  Name name;
+ };
+    
+struct OpenOutput
+ {
+  ConId con_id;
+ }; 
+
+</pre>
+
+<p>
+This function opens a console with the given name and parameters. The console id is returned.
+</p>
+
+<p>
+<b>write_timeout_msec</b> is a time in msec. The write character frame print may be delayed on this
+timeout to catch a previously sent frames.
+</p>
+
+<p>
+<b>read_timeout_msec</b> is a time in msec. The read operation completion may be delayed on this
+timeout if there is no trigger character in the input stream.
+</p>
+
+<p>
+<b>trigger_mask</b> is a 256-bit character mask. The masked character is a trigger chracter. I.g.
+an appearance of these characters in the input stream causes a read operation completion.
+</p>
+
+<p>
+Function <b>Read</b> has the following input/output:
+</p>
+
+<pre>
+
+struct ReadInput
+ {
+  ConId con_id;
+  uint32 number;
+  LenType len;
+ };
+   
+struct ReadOutput
+ {
+  uint32 number;
+  LenType len : len<=MaxReadDataLen ;
+  uint8 data[len];
+ };
+
+</pre>
+
+<p>
+This function reads the input character stream. The <b>number</b> is any number and 
+sent back by the operation. <b>len</b> is a maximum read length. The operation completion is delayed
+until a trigger character appears in the input stream or the read timeout is expired.
+</p>
+
+<p>
+Function <b>Write</b> has the following input/output:
+</p>
+
+<pre>
+
+struct WriteInput
+ {
+  ConId con_id;
+  uint32 number;
+  LenType len : len<=MaxWriteDataLen ;
+  uint8 data[len];
+ };
+    
+struct WriteOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function writes a character frame to the given console. The <b>number</b> must be incremented
+with each write. It starts from 0.
+</p>
+
+<p>
+Function <b>Close</b> has the following input/output:
+</p>
+
+<pre>
+
+struct CloseInput
+ {
+  ConId con_id;
+ };
+    
+struct CloseOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function closes the given console.
+</p>
+
+<p>
+The file <b>txt/PTPCon.txt.cpp</b> contains this service definition.
+</p>
+
+<h3>ClientDevice</h3>
+
+<p>
+</p>
+
+<pre>
+class <span class="att">ClientDevice</span> : public ObjBase
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit ClientDevice(StrLen ptp_dev_name);
+   
+   virtual ~ClientDevice();
+   
+   // write
+   
+   bool getWriteErrorFlag() const;
+   
+   PacketFormat getWriteFormat() const;
+   
+   void write(Packet&lt;uint8&gt; packet);
+   
+   // read
+   
+   struct InputProc
+    {
+     virtual void input(PacketBuf &amp;pbuf,PtrLen&lt;const uint8&gt; str)=0;
+     
+     virtual void stop()=0;
+    };
+   
+   void start_read(InputProc *proc);
+   
+   void stop_read();
+   
+   // open/close
+   
+   class OpenClose : NoCopy
+    {
+      ....
+
+     public: 
+     
+      OpenClose(ClientDevice &amp;obj,StrLen name,const Cfg &amp;cfg=DefaultValue());
+      
+      ~OpenClose(); 
+    };
+ };
+</pre>
+
+<pre>
+struct <span class="att">Cfg</span>
+ {
+  uint32 write_timeout_msec;
+  uint32 read_timeout_msec;
+  TriggerMask trigger_mask;
+  MSec timeout;
+  
+  // defaults
+  
+  void setDefaultTimeouts()
+   {
+    write_timeout_msec=1000; //  1 sec
+    read_timeout_msec=10000; // 10 sec
+   }
+  
+  // constructors
+  
+  explicit Cfg(MSec timeout_=DefaultTimeout)
+   : trigger_mask(TriggerDefault),
+     timeout(timeout_)
+   {
+    setDefaultTimeouts();
+   }
+  
+  explicit Cfg(const char *trigger,MSec timeout_=DefaultTimeout)
+   : trigger_mask(trigger),
+     timeout(timeout_)
+   {
+    setDefaultTimeouts();
+   }
+  
+  Cfg(Trigger trigger,MSec timeout_=DefaultTimeout)
+   : trigger_mask(trigger),
+     timeout(timeout_)
+   {
+    setDefaultTimeouts();
+   }
+ };
+</pre>
+
+<pre>
+
+enum <span class="att">Trigger</span>
+ {
+  TriggerNone,
+  TriggerDefault, // \r \n \t \b
+  TriggerAll
+ };
+
+struct <span class="att">TriggerMask</span>
+ {
+  uint32 mask[8];
+  
+  // constructors
+  
+  TriggerMask() : mask() {}
+  
+  explicit TriggerMask(const char *zstr) : mask() { set(zstr); }
+  
+  explicit TriggerMask(Trigger t);
+  
+  // methods
+  
+  void setNone();
+  
+  void setDefault();
+  
+  void setAll();
+  
+  void set(uint8 ch);
+  
+  void set(const char *zstr);
+  
+  uint32 test(uint8 ch) const;
+ };
+
+</pre>
 
 </body>
 
