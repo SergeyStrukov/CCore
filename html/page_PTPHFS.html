@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_PTPHFS.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.02
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> HFS</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,540 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>HFS</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p>
+"Server must do the best, client must assume the worst."
+</p>
 
+<p class="Files">Files <b>CCore/inc/net/HFSBase.h</b> <b>CCore/src/net/HFSBase.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/net/HFSClientDevice.h</b> <b>CCore/src/net/HFSClientDevice.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/net/HFSFileSystemDevice.h</b> <b>CCore/src/net/HFSFileSystemDevice.cpp</b></p>
+
+<p>
+<b>HFS</b> is a host file system <b>PTP</b> service. Its service id is 2. The service has 14
+functions with ids 1-14. These functions perform file input-output operations and file system
+operations according <a href="page_Files.html">General file operations</a>. To identify an opened file
+the <b>FileId</b> is used.
+</p>
+
+<pre>
+
+const ServiceIdType ServiceId = 2 ;
+   
+const FunctionIdType FunctionId_Open        =  1 ;
+const FunctionIdType FunctionId_Read        =  2 ;
+const FunctionIdType FunctionId_Write       =  3 ;
+const FunctionIdType FunctionId_Close       =  4 ;
+
+const FunctionIdType FunctionId_GetFileType =  5 ;
+const FunctionIdType FunctionId_GetFileList =  6 ;
+const FunctionIdType FunctionId_CreateFile  =  7 ;
+const FunctionIdType FunctionId_DeleteFile  =  8 ;
+const FunctionIdType FunctionId_CreateDir   =  9 ;
+const FunctionIdType FunctionId_DeleteDir   = 10 ;
+const FunctionIdType FunctionId_Rename      = 11 ;
+const FunctionIdType FunctionId_Remove      = 12 ;
+const FunctionIdType FunctionId_Exec        = 13 ;
+const FunctionIdType FunctionId_Exec2       = 14 ;
+
+</pre>
+
+<p>
+Service data types and constants are:
+</p>
+
+<pre>
+
+typedef uint64 FileLenType; // == GenFile def
+
+const unsigned MaxPathLen      =  512 ; // == GenFile def
+
+const FlagType OpenFlag_Read       = 0x01 ; // == GenFile def
+const FlagType OpenFlag_Write      = 0x02 ; // == GenFile def
+const FlagType OpenFlag_Create     = 0x10 ; // == GenFile def
+const FlagType OpenFlag_Erase      = 0x20 ; // == GenFile def
+const FlagType OpenFlag_New        = 0x40 ; // == GenFile def
+const FlagType OpenFlag_AutoDelete = 0x80 ; // == GenFile def
+   
+const FlagType FileType_none = 0 ; // == GenFile def
+const FlagType FileType_file = 1 ; // == GenFile def
+const FlagType FileType_dir  = 2 ; // == GenFile def
+   
+struct Path
+ {
+  LenType len : len<=MaxPathLen ;
+  uint8 path[len];
+ };
+    
+struct FileId
+ {
+  uint32 slot;
+  uint64 number;
+  uint64 clock;
+ }; 
+ 
+const unsigned DeltaReadLen    =   24 ;
+const unsigned MaxReadDataLen  = 1416 ; // MaxInfoLen-DeltaReadLen
+const unsigned DeltaWriteLen   =   40 ;
+const unsigned MaxWriteDataLen = 1400 ; // MaxInfoLen-DeltaWriteLen
+
+const ErrorIdType ErrorBase = 100 ; // GenFile error code + ErrorBase
+
+</pre>
+
+<p>
+Mostly they have the same values and meaning as <a href="page_Files.html">General file data and constants</a>.
+</p>
+
+<p>
+Function <b>Open</b> has the following input/output:
+</p>
+
+<pre>
+
+struct OpenInput
+ {
+  FlagType open_flags;
+  Path path;
+ };
+    
+struct OpenOutput
+ {
+  FileId file_id;
+  FileLenType file_len;
+ }; 
+
+</pre>
+
+<p>
+This function opens the given file with the given set of open flags. The file id is returned
+with the file length.
+</p>
+
+<p>
+Function <b>Read</b> has the following input/output:
+</p>
+
+<pre>
+
+struct ReadInput
+ {
+  FileId file_id;
+  FileLenType off;
+  LenType len;
+ };
+   
+struct ReadOutput
+ {
+  FileLenType off;
+  LenType len : len<=MaxReadDataLen ;
+  uint8 data[len];
+ };
+
+</pre>
+
+<p>
+This function reads data from the specified position. Server may ether truncate or completely fail 
+the operation if the required range continues past the end of file. The output data length may also
+be less than input length, if the input length is too high (exceeds the packet length based limit).
+</p>
+
+
+<p>
+Function <b>Write</b> has the following input/output:
+</p>
+
+<pre>
+
+struct WriteInput
+ {
+  FileId file_id;
+  FileLenType off;
+  LenType len : len<=MaxWriteDataLen ;
+  uint8 data[len];
+ };
+    
+struct WriteOutput
+ {
+  FileLenType file_len;
+ }; 
+
+</pre>
+
+<p>
+This function writes data at the specified offset. The new file length is returned.
+</p>
+
+<p>
+Function <b>Close</b> has the following input/output:
+</p>
+
+<pre>
+
+struct CloseInput
+ {
+  BoolType preserve_file;
+  FileId file_id;
+ };
+    
+struct CloseOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function closes the opened file. The flag <b>preserve_file</b> cancels the open flag 
+<b>OpenFlag_AutoDelete</b>.
+</p>
+
+<p>
+Function <b>GetFileType</b> has the following input/output:
+</p>
+
+<pre>
+
+struct GetFileTypeInput
+ {
+  Path path;
+ };
+    
+struct GetFileTypeOutput
+ {
+  FlagType type;
+ }; 
+
+</pre>
+
+<p>
+This function returns the file type.
+</p>
+
+<p>
+Function <b>GetFileList</b> has the following input/output:
+</p>
+
+<pre>
+
+struct GetFileListInput
+ {
+  Path path;
+ };
+    
+struct GetFileListOutput
+ {
+  FileId file_id;
+  FileLenType file_len;
+ }; 
+
+</pre>
+
+<p>
+This function opens a virtual temporary file with the file list of the given directory.
+The file id and the file length is returned. Then usual file operations can be used.
+File is opened for reading. The file has number of lines, each line starts with a file or directory name, 
+then space, then 'f' for a file or 'd' for a directory. End of line symbol is '\n'. 
+</p>
+
+<p>
+Function <b>CreateFile</b> has the following input/output:
+</p>
+
+<pre>
+
+struct CreateFileInput
+ {
+  Path path;
+ };
+    
+struct CreateFileOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function creates the empty file with the given name.
+</p>
+
+<p>
+Function <b>DeleteFile</b> has the following input/output:
+</p>
+
+<pre>
+
+struct DeleteFileInput
+ {
+  Path path;
+ };
+    
+struct DeleteFileOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function deletes the given file.
+</p>
+
+<p>
+Function <b>CreateDir</b> has the following input/output:
+</p>
+
+<pre>
+
+struct CreateDirInput
+ {
+  Path path;
+ };
+    
+struct CreateDirOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function creates the directory.
+</p>
+
+<p>
+Function <b>DeleteDir</b> has the following input/output:
+</p>
+
+<pre>
+
+struct DeleteDirInput
+ {
+  BoolType recursive;
+  Path path;
+ };
+    
+struct DeleteDirOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function deletes the directory (recursive or not).
+</p>
+
+<p>
+Function <b>Rename</b> has the following input/output:
+</p>
+
+<pre>
+
+struct RenameInput
+ {
+  BoolType allow_overwrite;
+  Path old_path;
+  Path new_path;
+ };
+    
+struct RenameOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function renames files or directories.
+</p>
+
+<p>
+Function <b>Remove</b> has the following input/output:
+</p>
+
+<pre>
+
+struct RemoveInput
+ {
+  Path path;
+ };
+    
+struct RemoveOutput
+ {
+ }; 
+
+</pre>
+
+<p>
+This function removes the file or directory.
+</p>
+
+<p>
+Function <b>Exec</b> has the following input/output:
+</p>
+
+<pre>
+
+struct ExecInput
+ {
+  Path dir;
+  Path program;
+  Path arg;
+ };
+
+struct ExecOutput
+ {
+ };
+
+</pre>
+
+<p>
+This function executes a program at the specified working directory with the given arguments.
+</p>
+
+<p>
+Function <b>Exec2</b> has the following input/output:
+</p>
+
+<pre>
+
+struct Exec2Input
+ {
+  Path dir;
+  Path program;
+ };
+
+struct Exec2Output
+ {
+  FileId file_id;
+ };
+
+</pre>
+
+<p>
+This function is to execute a program at the specified working directory with the given arguments.
+To setup arguments a temporary virtual empty file is created. The file id is returned.
+Then usual file operations can be used.
+File is opened for reading and writing.
+When the file is closed if the <b>preserve_file</b> flag is set, then the program is started.
+</p>
+
+<p>
+The file <b>txt/HFS.txt.cpp</b> contains this service definition.
+</p>
+
+<h3>ClientDevice</h3>
+
+<pre>
+class <span class="att">ClientDevice</span> : public ObjBase
+ {
+   ....
+
+  public: 
+  
+   explicit ClientDevice(StrLen ptp_dev_name);
+   
+   virtual ~ClientDevice();
+   
+   PTP::ClientDevice * getPTPDevice() const { return ptp; }
+   
+   // open
+   
+   PacketFormat getOpenFormat() const { return open_format; }
+   
+   void open(Packet&lt;uint8,OpenExt&gt; packet,FlagType open_flags);
+   
+   void open(Packet&lt;uint8,OpenExt&gt; packet,StrLen file_name,FlagType open_flags);
+   
+   // read
+   
+   ulen getMaxReadLen() const { return max_read_len; } // always &gt; 0 , &lt;= MaxReadLen
+   
+   void read(Packet&lt;uint8,ReadExt&gt; packet,const FileId &amp;file_id,FileLenType off,ulen len);
+   
+   // write
+   
+   PacketFormat getWriteFormat() const { return write_format; } // always max_data &lt;= MaxWriteLen
+   
+   void write(Packet&lt;uint8,WriteExt&gt; packet,const FileId &amp;file_id,FileLenType off);
+   
+   // close
+   
+   void close(Packet&lt;uint8,CloseExt&gt; packet,const FileId &amp;file_id,bool preserve_file=false);
+   
+   // getFileType
+   
+   void getFileType(Packet&lt;uint8,GetFileTypeExt&gt; packet,StrLen path);
+   
+   // getFileList
+   
+   void getFileList(Packet&lt;uint8,GetFileListExt&gt; packet,StrLen dir_name);
+   
+   // createFile
+   
+   void createFile(Packet&lt;uint8,CreateFileExt&gt; packet,StrLen file_name);
+   
+   // deleteFile
+   
+   void deleteFile(Packet&lt;uint8,DeleteFileExt&gt; packet,StrLen file_name);
+   
+   // createDir
+   
+   void createDir(Packet&lt;uint8,CreateDirExt&gt; packet,StrLen dir_name);
+   
+   // deleteDir
+   
+   void deleteDir(Packet&lt;uint8,DeleteDirExt&gt; packet,StrLen dir_name,bool recursive);
+   
+   // rename
+   
+   void rename(Packet&lt;uint8,RenameExt&gt; packet,StrLen old_path,StrLen new_path,bool allow_overwrite);
+   
+   // remove
+   
+   void remove(Packet&lt;uint8,RemoveExt&gt; packet,StrLen path);
+   
+   // exec
+   
+   void exec(Packet&lt;uint8,ExecExt&gt; packet,StrLen dir,StrLen program,StrLen arg);
+   
+   // exec2
+   
+   void exec2(Packet&lt;uint8,Exec2Ext&gt; packet,StrLen dir,StrLen program);
+ };
+</pre>
+
+<h3>FileSystemDevice</h3>
+
+<p>
+This class is located in the namespace <b>HFS</b> (<b>::CCore::Net::HFS</b>). 
+It implements <a href="page_AsyncFiles.html">async file and file system interfaces</a> over a <b>PTP</b> <b>HFS</b> service.
+</p>
+
+<pre>
+class <span class="att">FileSystemDevice</span> : public ObjBase , public Sys::AsyncFileDevice , 
+                                          public Sys::AsyncFileSystemDevice
+ {
+   ....
+
+  public:
+  
+   explicit FileSystemDevice(StrLen hfs_dev_name);
+   
+   virtual ~FileSystemDevice();
+   
+   // Sys::AsyncFileDevice
+   
+   ....
+
+   // Sys::AsyncFileSystemDevice
+   
+   ....
+ };
+</pre>
+
+<p>
+Constructor takes an <b>HFS</b> client device object name as the argument.
+</p>
 
 </body>
 

@@ -28,7 +28,78 @@
 
 <h2>MakeList</h2>
 
+<p>
+<b>MakeList</b> prepares a part of makefile from a file lists. This utility is used in the <b>CCore</b> 
+build system.
+</p>
 
+<pre>
+MakeList.exe &lt;obj-path&gt; &lt;cpp-list-file-name&gt; &lt;s-list-file-name&gt;
+</pre>
+
+<p>
+The first command line parameter is the obj path.
+</p>
+
+<p>
+The second is the name of file with <b>.cpp</b> file list.
+</p>
+
+<p>
+The third is the name of file with <b>.s</b> file list.
+</p>
+
+<p>
+The utility creates the output file <b>Makefile.files</b>. It looks like:
+</p>
+
+<pre>
+OBJ_LIST = \
+obj/main.o \
+
+
+ASM_LIST = \
+obj/main.s \
+
+
+DEP_LIST = \
+obj/main.dep \
+
+
+ASM_OBJ_LIST = \
+obj/opt.s.o \
+
+
+include $(RULES_FILE)
+
+
+obj/main.o : ./main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/main.s : ./main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/main.dep : ./main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+
+
+obj/opt.s.o : ./opt.s
+	$(AS) $(ASOPT) $< -o $@
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+
+</pre>
 
 </body>
 

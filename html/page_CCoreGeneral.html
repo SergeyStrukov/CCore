@@ -61,6 +61,74 @@ Each <b>CCore</b> .h file has a correspondent .cpp file, even if it defines noth
 Each target is either <b>HCore</b> or <b>XCore</b> target, so it includes only one part: <b>HCore</b> or <b>XCore</b>.
 </p>
 
+<p>
+<b>HCore</b> targets are host targets, <b>XCore</b> targets are device targets.
+</p>
+
+<h3><b>CCore</b>-based projects</h3>
+
+<p>
+To create a <b>CCore</b>-based project select a directory for it. Then place in this directory 
+(or in subdirectories) a source code. Two source files must not have the same name, even if they 
+are in different sudirectories.
+Create the <b>Makefile</b>. Select and create a subdirectory for 
+object files (and other intermediate files), usually <b>obj</b>. Then issue the command <b>make</b>
+from the <b>cygwin</b> console. If you change the source file set issue the command <b>make list</b>.
+</p>
+
+<p>
+Here is an example of <b>Makefile</b>.
+</p>
+
+<pre>
+
+CCORE_ROOT = ../..
+
+CCORE_TARGET = WIN32
+
+OBJ_PATH = obj
+
+TARGET = Application.exe
+
+include $(CCORE_ROOT)/Target/Makefile.app
+
+run: $(TARGET)
+	$(TARGET)
+
+</pre>
+
+<p>
+You have to define the following variables.
+</p>
+
+<p>
+<b>CCORE_ROOT</b> is the path to the <b>CCore</b> directory.
+</p>
+
+<p>
+<b>CCORE_TARGET</b> is the target name.
+</p>
+
+<p>
+<b>OBJ_PATH</b> is the path to the object file directory.
+</p>
+
+<p>
+<b>TARGET</b> is the application file name.
+</p>
+
+<p>
+The following "magic line" must follows: 
+</p>
+
+<pre>
+include $(CCORE_ROOT)/Target/Makefile.app
+</pre>
+
+<p>
+For your convenience you may include optional make targets like <b>run</b> above.
+</p>
+
 <h3>Names and decorations</h3>
 
 <p>
@@ -89,8 +157,9 @@ class SomeClass
 
 <p>
 The private part goes first, the public is last.
-Members are decorated as "item_count". Methods as "getItemCount()". Getters as "getItemCount()" and
-setters as "setItemCount()". The argument, used to initialize a member "item_count" named as "item_count_".
+Members are decorated like <b>"item_count"</b>. Methods like <b>"getItemCount()"</b>. 
+Getters like <b>"getItemCount()"</b> and setters like <b>"setItemCount()"</b>. 
+The argument, used to initialize a member <b>"item_count"</b> named as <b>"item_count_"</b>.
 </p>
 
 <p>
@@ -147,16 +216,37 @@ class Sem : public Funchor_nocopy
 </pre>
 
 <p>
-The popular words are: "count", "len", "obj", "try...", "zstr", "d..." to designate a delta value.
+The popular words are: <b>"count"</b>, <b>"len"</b>, <b>"obj"</b>, 
+<b>"try..."</b>, <b>"zstr"</b>, <b>"d..."</b> to designate a delta value.
 </p>
 
-<h3>operator + and a "null" state</h3>
+<p>
+A loop <b>for</b> example:
+</p>
+
+<pre>
+
+for(ulen i=0,count=....; i&lt;count ;i++) { .... }
+
+</pre>
 
 <p>
-There are many types, which have a special state &mdash; "null" state.
-Usually for such types the default constructor initialize them in this state.
+Another example:
+</p>
+
+<pre>
+
+for(ulen i=count; i-- ;) { .... }
+
+</pre>
+
+<h3>operator + and the "null" state</h3>
+
+<p>
+There are many types, which have a special state &mdash; <b>"null"</b> state.
+Usually for such types the default constructor initialize creates the <b>"null"</b> object.
 <b>CCore</b> often defines the <b>Nothing</b>-constructor to do the same.
-And two operators: <b>operator +</b> and <b>operator !</b> can be used to check, if the object is "null".
+And two operators: <b>operator +</b> and <b>operator !</b> can be used to check, if the object is <b>"null"</b>.
 </p>
 
 <pre>

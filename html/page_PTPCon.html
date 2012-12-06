@@ -115,7 +115,7 @@ timeout if there is no trigger character in the input stream.
 
 <p>
 <b>trigger_mask</b> is a 256-bit character mask. The masked character is a trigger chracter. I.g.
-an appearance of these characters in the input stream causes a read operation completion.
+the appearance of these characters in the input stream causes a read operation completion.
 </p>
 
 <p>
@@ -199,6 +199,8 @@ The file <b>txt/PTPCon.txt.cpp</b> contains this service definition.
 <h3>ClientDevice</h3>
 
 <p>
+There is a client class <b>ClientDevice</b> to work with <b>PTP</b> console. The class is located
+in the namespace <b>PTPCon</b> (i.g. the full namespace is <b>::CCore::Net::PTPCon</b>).
 </p>
 
 <pre>
@@ -250,6 +252,44 @@ class <span class="att">ClientDevice</span> : public ObjBase
  };
 </pre>
 
+<p>
+The constructor argument is a <b>PTP</b> client device object name.
+</p>
+
+<p>
+To perform <b>Open</b> and <b>Close</b> operations the inner class <b>OpenClose</b> is provided.
+Its constructor does <b>Open</b> and destructor <b>Close</b>. <b>name</b> is the console name
+and <b>cfg</b> is the configuration parameters (see below). 
+</p>
+
+<p>
+To read the method <b>start_read()</b> is called. The argument is a pointer to the abstract interface.
+The method <b>input()</b> is called when input data arrives. The first argument refers the packet buffer,
+the second is the input string, it is stored in the buffer. The method <b>stop()</b> is called to signal
+about console input is shutdown by any reason.
+</p>
+
+<p>
+<b>getWriteErrorFlag()</b> returns true, if there were some write errors. 
+</p>
+
+<p>
+<b>getWriteFormat()</b> returns the packet format for the writing.
+</p>
+
+<p>
+<b>write()</b> writes the string from the given packet.
+</p>
+
+<p>
+<b>stop_read()</b> stops reading. After this method returned, the input processor may be dismissed.
+</p>
+
+<p>
+The structure <b>Cfg</b> stores configuration properties for a <b>PTP</b> console. The field
+<b>timeout</b> is the timeout for <b>Open</b> and <b>Close</b> operations.
+</p>
+
 <pre>
 struct <span class="att">Cfg</span>
  {
@@ -291,6 +331,10 @@ struct <span class="att">Cfg</span>
  };
 </pre>
 
+<p>
+The structure <b>TriggerMask</b> is the character trigger mask. 
+</p>
+
 <pre>
 
 enum <span class="att">Trigger</span>
@@ -306,9 +350,9 @@ struct <span class="att">TriggerMask</span>
   
   // constructors
   
-  TriggerMask() : mask() {}
+  TriggerMask();
   
-  explicit TriggerMask(const char *zstr) : mask() { set(zstr); }
+  explicit TriggerMask(const char *zstr);
   
   explicit TriggerMask(Trigger t);
   
