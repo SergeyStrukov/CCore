@@ -397,13 +397,151 @@ The file <b>txt/PTP.txt.cpp</b> contains a precise protocol description in pseud
 <h3>PTPClientDevice</h3>
 
 <p>
-<b>PTPClientDevice</b> is an implementaion of PTP client protocol as a device class. 
+<b>PTPClientDevice</b> is an implementaion of <b>PTP</b> client protocol as a device class. 
+It is located in the <b>PTP</b> namespace (<b>::CCore::Net::PTP</b>).
+</p>
+
+<pre>
+class <span class="att">ClientDevice</span> : public ObjBase
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   explicit ClientDevice(StrLen ep_dev_name,ulen max_slots=100);
+   
+   virtual ~ClientDevice();
+   
+   // methods
+   
+   PacketEndpointDevice * getEPDevice() const;
+   
+   void start(Packet&lt;uint8,TransExt&gt; packet);
+   
+   typedef ClientStatInfo StatInfo;
+   
+   void getStat(ClientStatInfo &ret);
+   
+   ulen getMaxOutboundInfoLen(); // always > 0 , <= MaxInfoLen
+   
+   ulen getMaxInboundInfoLen(); // always > 0 , <= MaxInfoLen
+   
+   // generic transactions
+   
+   template &lt;class Ext&gt;
+   void start(Packet&lt;uint8,Ext&gt; packet,const typename Ext::InputType &amp;input);
+   
+   template &lt;class Ext&gt;
+   void start_format(Packet&lt;uint8,Ext&gt; packet,const typename Ext::InputType &amp;input);
+   
+   struct FormatResult
+    {
+     PacketFormat format;
+     bool too_short;
+     
+     FormatResult(NothingType) : too_short(true) {}
+     
+     FormatResult(PacketFormat format_) : format(format_),too_short(false) {}
+     
+     bool operator ! () const { return too_short; }
+     
+     bool noRoom() const { return format.max_data==0; }
+    };
+   
+   template &lt;class Ext&gt;
+   static PacketFormat GetFormat(); 
+   
+   template &lt;class Ext&gt;
+   static FormatResult GetFormat(ulen max_outbound_info_len); 
+   
+   template &lt;class Ext&gt;
+   FormatResult getFormat();
+   
+   template &lt;class Ext&gt;
+   PacketFormat getFormat_guarded(const char *name); 
+   
+   // support service
+   
+   void support(Packet&lt;uint8,PTPSupport::LenExt&gt; packet);
+   
+   void support(Packet&lt;uint8,PTPSupport::SeedExt&gt; packet);
+   
+   void support(Packet&lt;uint8,PTPSupport::SessionExt&gt; packet);
+   
+   FormatResult getEchoFormat();
+   
+   void support(Packet&lt;uint8,PTPSupport::EchoExt&gt; packet,uint32 delay_msec);
+   
+   void support(Packet&lt;uint8,PTPSupport::ErrorDescExt&gt; packet,ServiceIdType service_id,FunctionIdType function_id,ErrorIdType error_id);
+   
+   void support(Packet&lt;uint8,PTPSupport::ExistExt&gt; packet,ServiceIdType service_id,FunctionIdType function_id);
+   
+   // initial interaction
+   
+   bool support(PacketSet&lt;uint8&gt; &amp;pset,MSec timeout=DefaultTimeout);
+   
+   void support_guarded(MSec timeout=DefaultTimeout);
+ };
+</pre>
+
+<p>
+The first constructor argument is the <b>PacketEndpointDevice</b> object name.
+The second is the number of active transaction slots.
 </p>
 
 <h3>PTPServerDevice</h3>
 
 <p>
-<b>PTPServerDevice</b> is an implementaion of PTP server protocol as a device class. 
+<b>PTPServerDevice</b> is an implementaion of <b>PTP</b> server protocol as a device class. 
+It is located in the <b>PTP</b> namespace (<b>::CCore::Net::PTP</b>).
+</p>
+
+<pre>
+class <span class="att">ServerDevice</span> : public ObjBase
+ {
+   ....
+
+  public: 
+   
+   // constructors
+  
+   explicit ServerDevice(StrLen mp_dev_name,ulen max_slots=100);
+   
+   virtual ~ServerDevice();
+   
+   // methods
+   
+   PacketMultipointDevice * getMPDevice() const;
+   
+   ulen getMaxOutboundInfoLen() const;
+   
+   ulen getMaxInboundInfoLen() const;
+   
+   typedef ServerStatInfo StatInfo;
+   
+   void getStat(ServerStatInfo &amp;ret);
+   
+   void send_info(TransIndex idx,Packet&lt;uint8&gt; proc_packet,PtrLen&lt;const uint8&gt; server_info);
+   
+   void send_cancel(TransIndex idx);
+   
+   void attach(ServerProc *proc);
+   
+   void detach();
+   
+   void waitActiveComplete();
+   
+   bool waitActiveComplete(MSec timeout);
+   
+   bool waitActiveComplete(TimeScope time_scope);
+ };
+</pre>
+
+<p>
+The first constructor argument is the <b>PacketMultipointDevice</b> object name.
+The second is the number of available transaction slots.
 </p>
 
 </body>

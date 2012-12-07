@@ -449,6 +449,12 @@ The file <b>txt/HFS.txt.cpp</b> contains this service definition.
 
 <h3>ClientDevice</h3>
 
+<p>
+This class is located in the namespace <b>HFS</b> (<b>::CCore::Net::HFS</b>). 
+It is a <b>HFS</b> client class. You probably should not use its methods directlty.
+The best way is to create a <b>FileSystemDevice</b> object an register it. 
+</p>
+
 <pre>
 class <span class="att">ClientDevice</span> : public ObjBase
  {
@@ -460,11 +466,11 @@ class <span class="att">ClientDevice</span> : public ObjBase
    
    virtual ~ClientDevice();
    
-   PTP::ClientDevice * getPTPDevice() const { return ptp; }
+   PTP::ClientDevice * getPTPDevice() const;
    
    // open
    
-   PacketFormat getOpenFormat() const { return open_format; }
+   PacketFormat getOpenFormat() const;
    
    void open(Packet&lt;uint8,OpenExt&gt; packet,FlagType open_flags);
    
@@ -472,13 +478,13 @@ class <span class="att">ClientDevice</span> : public ObjBase
    
    // read
    
-   ulen getMaxReadLen() const { return max_read_len; } // always &gt; 0 , &lt;= MaxReadLen
+   ulen getMaxReadLen() const; // always &gt; 0 , &lt;= MaxReadLen
    
    void read(Packet&lt;uint8,ReadExt&gt; packet,const FileId &amp;file_id,FileLenType off,ulen len);
    
    // write
    
-   PacketFormat getWriteFormat() const { return write_format; } // always max_data &lt;= MaxWriteLen
+   PacketFormat getWriteFormat() const; // always max_data &lt;= MaxWriteLen
    
    void write(Packet&lt;uint8,WriteExt&gt; packet,const FileId &amp;file_id,FileLenType off);
    
@@ -527,6 +533,10 @@ class <span class="att">ClientDevice</span> : public ObjBase
    void exec2(Packet&lt;uint8,Exec2Ext&gt; packet,StrLen dir,StrLen program);
  };
 </pre>
+
+<p>
+Constructor takes an <b>PTP</b> client device object name as the argument.
+</p>
 
 <h3>FileSystemDevice</h3>
 

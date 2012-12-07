@@ -39,7 +39,7 @@ provides a basic binary serialization framework.
 </p>
 
 <p>
-To participate in a save/load process a class must implement a save/load methods.
+To participate in te save/load process a class must implement a save/load methods.
 The simple example, how to serialize a simple data structure:
 </p>
 
@@ -69,14 +69,29 @@ struct Data
 </pre>
 
 <p>
-Order specifier (<b>BeOrder</b> or <b>LeOrder</b>) affects only first level of basic type serialization.
 Four basic types <b>uint8</b>, <b>uint16</b>, <b>uint32</b>, and <b>uint64</b> are serializable,
 either in the big-endian or in the little-endian format.
+An order specifier (<b>BeOrder</b> or <b>LeOrder</b>) affects only the basic type argument's
+serialization (t1,t2,t3). If none of them has a basic type, you may use the <b>operator ()</b>:
 </p>
+
+<pre>
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const
+   {
+    dev(t1,t2,t3);
+   }
+  
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev)
+   {
+    dev(t1,t2,t3);
+   }
+</pre>
 
 <p>
 Type may not define the constant <b>SaveLoadLen</b>. But if it is defined, the type must serialize itself
-in exact number of bytes. This constnt is used to optimize a serializaion process.
+in exact number of bytes. This constant is used to optimize a serializaion process.
 </p>
 
 <p>
@@ -90,17 +105,17 @@ To calculate a save length of the set of objects the function <b>SaveLen()</b> c
 
 <pre>
 template &lt;class ... TT&gt;
-ULenSat SaveLen(const TT &amp; ... tt);
+ULenSat <span class="att">SaveLen</span>(const TT &amp; ... tt);
 </pre>
 
 <p>
-Or the meta-function <b>SaveLenConter</b> for a fixed-length types.
+Or the meta-function <b>SaveLenCounter</b> for a fixed-length types.
 </p>
 
 <pre>
 
 template &lt;class ... TT&gt;
-struct SaveLenCounter
+struct <span class="att">SaveLenCounter</span>
  {
   enum FlagType { Has_SaveLoadLen = true };
  
@@ -108,16 +123,143 @@ struct SaveLenCounter
  };
 
 template &lt;class ... TT&gt;
-struct SaveLenCounter
+struct <span class="att">SaveLenCounter</span>
  {
   enum FlagType { Has_SaveLoadLen = false };
  };
 
 </pre>
 
-<h3>Ingredients</h3>
+<h3>Utilities</h3>
 
+<p>
+<b>ProxyLoad()</b> loads the object using a proxy class. The proxy class type is the first template
+argument class. Proxy type must be loadable and must have the method <b>get()</b> to extract
+a value of the type <b>T</b> from it.
+</p>
 
+<pre>
+
+template &lt;class Proxy,class T,class Dev&gt;
+void <span class="att">ProxyLoad</span>(T &amp;obj,Dev &amp;dev);
+
+</pre>
+
+<p>
+The following funtion family is a range serialization helpers. You may load or save the given range
+of objects using them. Range can be given as an abstract range cursor class or as the pointer/length 
+couple.
+</p>
+
+<pre>
+
+template &lt;class R,class Dev&gt;
+void <span class="att">SaveRange</span>(R r,Dev &amp;dev);
+
+template &lt;class T,class Dev&gt;
+void <span class="att">SaveRange</span>(const T *ptr,ulen len,Dev &amp;dev);
+  
+template &lt;class R,class Dev&gt;
+void <span class="att">LoadRange</span>(R r,Dev &amp;dev);
+
+template &lt;class T,class Dev&gt;
+void <span class="att">LoadRange</span>(T *ptr,ulen len,Dev &amp;dev);
+  
+template &lt;class Custom,class R,class Dev&gt;
+void <span class="att">SaveRange_use</span>(R r,Dev &amp;dev);
+
+template &lt;class Custom,class T,class Dev&gt;
+void <span class="att">SaveRange_use</span>(const T *ptr,ulen len,Dev &amp;dev);
+  
+template &lt;class Custom,class R,class Dev&gt;
+void <span class="att">LoadRange_use</span>(R r,Dev &amp;dev);
+
+template &lt;class Custom,class T,class Dev&gt;
+void <span class="att">LoadRange_use</span>(T *ptr,ulen len,Dev &amp;dev);
+
+</pre>
+
+<p>
+The following simple structure family is in particular is a proxy class family for
+the unsigned types serialization.
+</p>
+
+<pre>
+
+struct <span class="att">SaveLoadBe16</span>;
+
+struct <span class="att">SaveLoadBe32</span>;
+
+struct <span class="att">SaveLoadBe64</span>;
+
+struct <span class="att">SaveLoadLe16</span>;
+
+struct <span class="att">SaveLoadLe32</span>;
+
+struct <span class="att">SaveLoadLe64</span>;
+
+/* struct SaveLoadBe16 */ 
+
+struct <span class="att">SaveLoadBe16</span>
+ {
+  uint8 buf[2];
+  
+  // constructors
+  
+  SaveLoadBe16() : buf() {}
+  
+  SaveLoadBe16(uint8 b0,uint8 b1) 
+   {
+    buf[0]=b0;
+    buf[1]=b1;
+   }
+  
+  explicit SaveLoadBe16(uint16 value)
+   {
+    buf[0]=uint8(value&gt;&gt;8);
+    buf[1]=uint8(value   );
+   }
+  
+  // methods
+  
+  uint16 get() const 
+   { 
+    uint16 b0=buf[0];
+    uint16 b1=buf[1];
+   
+    return uint16( (b0&lt;&lt;8)|b1 ); 
+   }
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 2 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const
+   {
+    dev.put(buf,2);
+   }
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev)
+   {
+    dev.get(buf,2);
+   }
+ };
+
+</pre>
+
+<h3>Serialization devices</h3>
+
+<h4>PutDevBase/GetDevBase</h4>
+
+<h4>BufPutDev</h4>
+
+<h4>CountPutDev</h4>
+
+<h4>BufGetDev</h4>
+
+<h4>RangeGetDev</h4>
 
 </body>
 
