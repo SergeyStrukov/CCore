@@ -251,15 +251,457 @@ struct <span class="att">SaveLoadBe16</span>
 
 <h3>Serialization devices</h3>
 
+<p>
+A serialization output device must provide the following methods:
+</p>
+
+<pre>
+class <span class="att">Dev</span>
+ {
+  public:
+
+   // put
+  
+   void put(uint8 value);
+   
+   void put(const uint8 *ptr,ulen len);
+   
+   void put(PtrLen&lt;const uint8&gt; data);
+   
+   PtrLen&lt;uint8&gt; putRange(ulen len);
+   
+   // save
+   
+   template &lt;class Custom,class ... TT&gt;
+   void use(const TT &amp; ... tt);
+    
+   template &lt;class ... TT&gt;
+   void operator () (const TT &amp; ... tt);
+ };
+</pre>
+
+<p>
+<b>putRange()</b> method may return the empty range. The return range is reserved and must be filled
+by an object being serialized.
+</p>
+
+<p>
+The default implementation of the save methods is below:
+</p>
+
+<pre>
+   // save
+   
+   template &lt;class Custom&gt;
+   void use() {}
+   
+   template &lt;class Custom,class T,class ... TT&gt;
+   void use(const T &amp;t,const TT &amp; ... tt)
+    {
+     SaveAdapter&lt;T,Custom&gt;::Save(t,*this);
+     
+     use&lt;Custom&gt;(tt...);
+    }
+    
+   template &lt;class ... TT&gt;
+   void operator () (const TT &amp; ... tt)
+    {
+     use&lt;NeOrder&gt;(tt...);
+    }
+</pre>
+
+<p>
+A serialization input device must provide the following methods:
+</p>
+
+<pre>
+class <span class="att">Dev</span>
+ {
+  public:
+
+   // get
+
+   uint8 get();
+   
+   void get(uint8 *ptr,ulen len);
+   
+   void get(PtrLen&lt;uint8&gt; buf);
+   
+   PtrLen&lt;const uint8&gt; getRange(ulen len);
+   
+   // load
+   
+   template &lt;class Custom,class ... TT&gt;
+   void use(TT &amp; ... tt);
+    
+   template &lt;class ... TT&gt;
+   void operator () (TT &amp; ... tt);
+ };
+</pre>
+
+<p>
+If the next byte is not avaliable, the method <b>get()</b> should return zero, <b>get(&lt;range&gt;)</b>
+may leave the range partially filled. <b>getRange()</b> may return the empty range.
+<b>RangeGetDev</b> provides additional load methods (see below).
+</p>
+
+<p>
+The default implementation of the load methods is below:
+</p>
+
+<pre>
+   // load
+   
+   template &lt;class Custom&gt;
+   void use() {}
+   
+   template &lt;class Custom,class T,class ... TT&gt;
+   void use(T &amp;t,TT &amp; ... tt)
+    {
+     LoadAdapter&lt;T,Custom&gt;::Load(t,*this);
+    
+     use&lt;Custom&gt;(tt...);
+    }
+    
+   template &lt;class ... TT&gt;
+   void operator () (TT &amp; ... tt)
+    {
+     use&lt;NeOrder&gt;(tt...);
+    }
+</pre>
+
 <h4>PutDevBase/GetDevBase</h4>
+
+<p>
+These two classes are to simpify a serialization device's implementation. They implement the
+standard save/load operations sets.
+</p>
+
+<pre>
+template &lt;class Dev&gt;
+class <span class="att">PutDevBase</span>
+ {
+   ....
+
+  public:
+   
+   // put
+  
+   void put(uint8 value);
+   
+   void put(const uint8 *ptr,ulen len);
+   
+   void put(PtrLen&lt;const uint8&gt; data);
+   
+   PtrLen&lt;uint8&gt; putRange(ulen len);
+   
+   // save
+   
+   template &lt;class Custom,class ... TT&gt;
+   void use(const TT &amp; ... tt);
+    
+   template &lt;class ... TT&gt;
+   void operator () (const TT &amp; ... tt);
+ };
+</pre>
+
+<pre>
+template &lt;class Dev&gt;
+class <span class="att">GetDevBase</span>
+ {
+   ....
+
+  public:
+   
+   // get
+
+   uint8 get();
+   
+   void get(uint8 *ptr,ulen len);
+   
+   void get(PtrLen&lt;uint8&gt; buf);
+   
+   PtrLen&lt;const uint8&gt; getRange(ulen len);
+   
+   // load
+   
+   template &lt;class Custom,class ... TT&gt;
+   void use(TT &amp; ... tt);
+    
+   template &lt;class ... TT&gt;
+   void operator () (TT &amp; ... tt);
+ }; 
+</pre>
+
+<p>
+To use these classes you must derive a class like this:
+</p>
+
+<pre>
+class Dev : public PutDevBase&lt;Dev&gt;
+ {
+   ....
+
+  public:
+
+   void do_put(uint8 value);
+   
+   void do_put(const uint8 *ptr,ulen len);
+   
+   PtrLen&lt;uint8&gt; do_putRange(ulen len);
+ };
+</pre>
+
+<pre>
+class Dev : public GetDevBase&lt;Dev&gt;
+ {
+   ....
+
+  public:
+
+   uint8 do_get();
+   
+   void do_get(uint8 *ptr,ulen len);
+   
+   PtrLen&lt;const uint8&gt; do_getRange(ulen len);
+ };
+</pre>
 
 <h4>BufPutDev</h4>
 
+<p>
+<b>BufPutDev</b> is a serialization output device. It is lightweight, in fact, it is a wrapper over an 
+output buffer pointer. It does not check output overflow, so make sure the output buffer has enough room
+before serialization.
+</p>
+
+<pre>
+class <span class="att">BufPutDev</span>
+ {
+   uint8 *buf;
+ 
+  public:
+  
+   explicit BufPutDev(uint8 *buf_) : buf(buf_) {}
+   
+   uint8 * getRest() const { return buf; }
+
+   // put
+  
+   void put(uint8 value);
+   
+   void put(const uint8 *ptr,ulen len);
+   
+   void put(PtrLen&lt;const uint8&gt; data);
+   
+   PtrLen&lt;uint8&gt; putRange(ulen len);
+   
+   // save
+   
+   template &lt;class Custom,class ... TT&gt;
+   void use(const TT &amp; ... tt);
+    
+   template &lt;class ... TT&gt;
+   void operator () (const TT &amp; ... tt);
+ };
+</pre>
+
+<p>
+Constructor takes the pointer to the output buffer. Serialization bytes will be stored in this buffer.
+You can make a copy of an object of this class.
+</p>
+
+<p>
+<b>getRest()</b> returns the current output position.
+</p>
+
+<p>
+Remaining methods are the standard serialization output device methods. Put methods just put bytes
+and adjust the position.
+</p>
+
 <h4>CountPutDev</h4>
+
+<p>
+This device is used to count the number of output bytes with overflow control. Data itself goes nowhere.
+To represent the byte number the type <a href="page_UIntSat.html"><b>ULenSat</b></a> is used.
+</p>
+
+<pre>
+class <span class="att">CountPutDev</span>
+ {
+   ULenSat count;
+   
+  public: 
+  
+   CountPutDev() {}
+   
+   // methods
+   
+   <span class="att">operator ULenSat() const { return count; }</span>
+   
+   // put
+  
+   void put(uint8 value);
+   
+   void put(const uint8 *ptr,ulen len);
+   
+   void put(PtrLen&lt;const uint8&gt; data);
+   
+   PtrLen&lt;uint8&gt; putRange(ulen len);
+   
+   // save
+   
+   template &lt;class Custom,class ... TT&gt;
+   void use(const TT &amp; ... tt);
+    
+   template &lt;class ... TT&gt;
+   void operator () (const TT &amp; ... tt);
+ };
+</pre>
 
 <h4>BufGetDev</h4>
 
+<p>
+<b>BufGetDev</b> is a serialization input device. It is lightweight, in fact, it is a wrapper over an 
+input buffer pointer. It does not check input underflow. So it should be used mostly with fixed serialization 
+length types.
+</p>
+
+<pre>
+class <span class="att">BufGetDev</span>
+ {
+   const uint8 *buf;
+ 
+  public:
+  
+   explicit BufGetDev(const uint8 *buf_) : buf(buf_) {}
+   
+   const uint8 * getRest() const { return buf; }
+
+   // get
+
+   uint8 get();
+   
+   void get(uint8 *ptr,ulen len);
+   
+   void get(PtrLen&lt;uint8&gt; buf);
+   
+   PtrLen&lt;const uint8&gt; getRange(ulen len);
+   
+   // load
+   
+   template &lt;class Custom,class ... TT&gt;
+   void use(TT &amp; ... tt);
+    
+   template &lt;class ... TT&gt;
+   void operator () (TT &amp; ... tt);
+ };
+</pre>
+
+<p>
+Constructor takes the pointer to the input buffer. Serialization bytes will be taken from this buffer.
+You can make a copy of an object of this class.
+</p>
+
+<p>
+<b>getRest()</b> returns the current input position.
+</p>
+
+<p>
+Remaining methods are the standard serialization input device methods. Get methods just get bytes
+and adjust the position.
+</p>
+
 <h4>RangeGetDev</h4>
+
+<p>
+<b>RangeGetDev</b> is a serialization input device. It takes bytes from the given byte range. There is a
+error flag. This flag is set in case of underflow or manually by the object being serialized.
+</p>
+
+<pre>
+class <span class="att">RangeGetDev</span>
+ {
+   PtrLen&lt;const uint8&gt; range;
+   bool nok;
+   
+  public: 
+  
+   explicit RangeGetDev(PtrLen&lt;const uint8&gt; range_) : range(range_),nok(false) {}
+   
+   bool operator ! () const { return nok; }
+   
+   PtrLen&lt;const uint8&gt; getRest() const { return range; }
+   
+   // get
+   
+   uint8 get(); 
+   
+   void get(uint8 *ptr,ulen len); 
+    
+   void get(PtrLen&lt;uint8&gt; buf);
+   
+   PtrLen&lt;const uint8&gt; getRange(ulen len);
+    
+   // load
+   
+   template &lt;class Custom,class ... TT&gt;
+   void use(TT &amp; ... tt)
+    
+   template &lt;class ... TT&gt;
+   void operator () (TT &amp; ... tt);
+
+   // extra
+   
+   PtrLen&lt;const uint8&gt; getFinalRange();
+    
+   PtrLen&lt;const uint8&gt; getFinalRange(ulen len);
+    
+   void fail() { nok=true; }
+   
+   NegBool finish();
+ };
+</pre>
+
+<p>
+Constructor argument is a input byte range.
+</p>
+
+<p>
+<b>operator !</b> returns the error flag.
+</p>
+
+<p>
+<b>getRest()</b> returns the current input range.
+</b>
+
+<p>
+The next methods are the the standard serialization input device methods. They set the error flag
+in case of underflow. Load methods are optimized if a sequence of fixed serialization length objects are loaded.
+</p>
+
+<p>
+The final group of methods is extra load methods.
+</p>
+
+<p>
+<b>getFinalRange()</b> pops the current input range.
+</p>
+
+<p>
+<b>getFinalRange(ulen len)</b> pops the current input range, if it has the given length.
+Otherwise it sets the error flag.
+</p>
+
+<p>
+<b>fail()</b> sets the error flag.
+</p>
+
+<p>
+<b>finish()</b> sets the error flag if the current input range is not empty. The error flags in form of <b>NegBool</b>
+is returned.
+</p>
 
 </body>
 
