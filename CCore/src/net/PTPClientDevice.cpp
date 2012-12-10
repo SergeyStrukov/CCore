@@ -849,7 +849,7 @@ void ClientDevice::complete_Len(PacketHeader *packet_)
   
   PTPSupport::LenExt *ext=packet.getExt();
   
-  if( ext->isOk() )
+  if( ext->isOk() && ext->max_outbound_info_len && ext->max_inbound_info_len )
     {
      engine.setLengths(ext->max_outbound_info_len,ext->max_inbound_info_len);
      

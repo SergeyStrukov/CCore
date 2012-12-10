@@ -488,7 +488,54 @@ class <span class="att">ClientDevice</span> : public ObjBase
 
 <p>
 The first constructor argument is the <b>PacketEndpointDevice</b> object name.
-The second is the number of active transaction slots.
+The second is the number of active transaction slots. When all slots are active, an extra transaction
+is put into a wait queue. It is activated as soon as a slot becomes available.
+</p>
+
+<p>
+<b>getEPDevice()</b> returns the <b>PacketEndpointDevice</b> this object is attached to.
+</p>
+
+<p>
+<b>getMaxOutboundInfoLen()</b> and <b>getMaxInboundInfoLen()</b> are info length limits, these values
+are calculated based on the <b>PacketEndpointDevice</b> properties, they are always positive.
+</p>
+
+<p>
+<b>getStat()</b> returns the protocol statistic counters.
+</p>
+
+<p>
+<b>start(Packet&lt;uint8,TransExt&gt; packet)</b> starts a transaction. This is the most general way
+to execute a transaction. You must prepare a packet, fill it with client info and call this method.
+<b>TransExt</b> constructor argument is a flag, set this flag to <b>MovePacketBuf</b> if you require the packet 
+buffer movement with server info. When transaction is finished, the packet is completed. In the completion function
+you will see the server info, it is the field <b>server_info</b> of the <b>TransExt</b>. You must use
+the <b>operator !</b> to check if the transaction is failed. If you required the packet buffer movement,
+the packet will have the packet buffer with the server info attached. Otherwise, the <b>server_info</b>
+is disappeared after the completion function is returned.
+</p>
+
+<pre>
+struct <span class="att">TransExt</span>
+ {
+  TransResult result;              // output
+  PtrLen&lt;const uint8&gt; server_info; // output
+  
+  // constructors
+  
+  explicit TransExt(MoveFlagType move_flag);
+  
+  // methods
+  
+  bool operator ! () const { return result!=Trans_Ok; }
+
+  ....
+ };
+</pre>
+
+<p>
+<b></b>
 </p>
 
 <h3>PTPServerDevice</h3>
@@ -542,6 +589,53 @@ class <span class="att">ServerDevice</span> : public ObjBase
 <p>
 The first constructor argument is the <b>PacketMultipointDevice</b> object name.
 The second is the number of available transaction slots.
+</p>
+
+<p>
+<b>getMPDevice()</b> returns the <b>PacketMultipointDevice</b> this object is attached to.
+</p>
+
+<p>
+<b>getMaxOutboundInfoLen()</b> and <b>getMaxInboundInfoLen()</b> are info length limits, these values
+are calculated based on the <b>PacketMultipointDevice</b> properties, they are always positive.
+</p>
+
+<p>
+<b>getStat()</b> returns the protocol statistic counters.
+</p>
+
+<p>
+To implement a server functionality some server processor must be attached.
+</p>
+
+<p>
+<b>attach()</b> attaches the server processor.
+</p>
+
+<p>
+<b>detach()</b> detaches the server processor and waits while it is in use.
+</p>
+
+<pre> 
+struct <span class="att">ServerProc</span>
+ {
+  virtual void inbound(XPoint point,TransIndex idx,Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; client_info)=0;
+  
+  virtual void tick()=0;
+ };
+</pre>
+
+<p>
+Server processor interface has two methods. <b>inbound()</b> is called to process a transaction.
+The first argument is a client address, the second is a some transaction index, then packet follows and
+client info range from this packet. <b>tick()</b> is a network tick. When processor finished with
+transaction, it must call either <b>send_info()</b> or <b>send_cancel()</b> methods.
+Each of them starts with transaction index. <b>send_info()</b> takes aslo a packet and a server info 
+data range from this packet. The original client packet may be reused, otherwise it must be completed.
+</p>
+
+<p>
+<b>waitActiveComplete...()</b> methods can be used to wait until all processing slots are free (no in-progress transactions).
 </p>
 
 </body>
