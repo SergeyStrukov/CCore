@@ -29,9 +29,9 @@
 <h2>ParserGen</h2>
 
 <p>
-This program takes an output from <a href="page_LangLR1.html"><b>LangLR1.exe</b></a> 
+This program takes an output from the <a href="page_LangLR1.html"><b>LangLR1.exe</b></a> 
 and generates several <b>.h</b> and <b>.cpp</b> files. The output code can be used to 
-build a C++ lanugage parser.
+build a C++ language parser.
 </p>
 
 <pre>
@@ -492,10 +492,206 @@ static const RuleTableType RuleTable[22][6]=
 </pre>
 
 <p>
-These files are pieces of parser declaration.
+These files are pieces of parser declaration. The parser itself can be built like this (many words):
 </p>
 
 <pre>
+/* classes */
+
+//enum AtomClass;
+
+struct Atom;
+
+class ElementContext;
+
+struct ElementBase;
+
+struct AnyElement;
+
+struct ElementAtom;
+
+#include "Prefix.elements1.gen.h"
+
+struct Action;
+
+class Parser;
+
+#include "Prefix.atom.gen.h"
+
+/* struct Atom */
+
+struct Atom
+ {
+  AtomClass ac;
+  
+  Atom() : ac(Atom_Nothing) {}
+
+  ....
+ };
+
+/* class ElementContext */
+
+class ElementContext // lightweight, copyable
+ {
+  // TODO
+ };
+
+/* struct ElementBase */
+
+struct ElementBase : NoCopy
+ {
+  ElementBase *prev;
+  ulen state;
+  
+  ElementBase() : prev(0),state(0) {}
+ };
+
+/* struct AnyElement */
+
+struct AnyElement
+ {
+  ElementBase *elem;
+  
+  explicit AnyElement(ElementBase *elem_) : elem(elem_) {}
+  
+  template &lt;class T&gt;
+  operator T * () const { return static_cast&lt;T *&gt;(elem); }
+ };
+
+/* struct ElementAtom */
+
+struct ElementAtom : ElementBase
+ {
+  // TODO
+
+  ElementAtom(ElementContext ctx,const Atom &atom);
+ };
+
+#include "Prefix.elements2.gen.h"
+
+/* struct Action */
+
+struct Action
+ {
+  enum Rule
+   {
+    Abort,
+    Shift,
+
+#include "Prefix.actions.gen.h"    
+   };
+  
+  Rule rule;
+  ulen new_state;
+  
+  explicit Action(ulen state,AtomClass ac=Atom_Nothing);
+ };
+
+/* class Parser */
+
+class Parser : NoCopy
+ {
+   ElementContext ctx;
+   ElementBase *stack;
+   
+  private:
+   
+   void push(ElementBase *elem,ulen state);
+   
+   AnyElement pop();
+   
+   void shift(const Atom &amp;atom,ulen state);
+   
+  private:
+
+#include "Prefix.elem.gen.h"
+
+  private:
+
+#include "Prefix.do.gen.h"
+   
+   void doRule(Action::Rule rule);
+   
+  public:
+   
+   Parser(....);
+   
+   ~Parser();
+   
+   enum Result
+    {
+     ResultShift,
+     ResultRule,
+     ResultAbort
+    };
+   
+   Result next(const Atom &amp;atom);
+   
+   Result complete();
+ };
+
+</pre>
+
+<pre>
+/* struct Action */
+
+#include "Prefix.rule_table.gen.cpp"
+#include "Prefix.atom_state_table.gen.cpp"
+
+Action::Action(ulen state,AtomClass ac)
+ {
+  rule=Rule( RuleTable[state][ac] );
+  
+  if( rule==Shift )
+    {
+     new_state=AtomStateTable[state][ac];
+    }
+  else
+    {
+     new_state=0;
+    }
+ }
+
+#include "Prefix.next_state.gen.cpp"
+
+/* class Parser */
+
+void Parser::push(ElementBase *elem,ulen state)
+ {
+  elem->prev=stack;
+  stack=elem;
+  
+  elem->state=state;
+ }
+
+AnyElement Parser::pop()
+ {
+  ElementBase *elem=stack;
+  
+  stack=elem->prev;
+  
+  return AnyElement(elem);
+ }
+
+void Parser::shift(const Atom &amp;atom,ulen state)
+ {
+  push(ctx.create&lt;ElementAtom&gt;(ctx,atom),state);
+ }
+
+#include "Prefix.elem.gen.cpp"
+
+#include "Prefix.do.gen.cpp"
+
+void Parser::doRule(Action::Rule rule)
+ {
+  switch( rule )
+    {
+#include "Prefix.do_rule.gen.cpp"
+    }
+ }
+
+#include "Prefix.elements3.gen.cpp"
+
 </pre>
 
 </body>

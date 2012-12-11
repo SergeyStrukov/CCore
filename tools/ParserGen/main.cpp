@@ -610,7 +610,7 @@ int main(int argc,const char *argv[])
       
       // atom_cpp
       
-      String test_atom_cpp=Stringf("#;.atom.gen-cpp",base_name);
+      String test_atom_cpp=Stringf("#;.atom.gen.cpp",base_name);
       
       engine.atom_cpp(Range(test_atom_cpp));
       
@@ -628,7 +628,7 @@ int main(int argc,const char *argv[])
       
       // elements3
       
-      String elements3_name=Stringf("#;.elements3.gen-cpp",base_name);
+      String elements3_name=Stringf("#;.elements3.gen.cpp",base_name);
       
       engine.elements3(Range(elements3_name));
       
@@ -646,7 +646,7 @@ int main(int argc,const char *argv[])
       
       // do_cpp
       
-      String do_cpp_name=Stringf("#;.do.gen-cpp",base_name);
+      String do_cpp_name=Stringf("#;.do.gen.cpp",base_name);
       
       engine.do_cpp(Range(do_cpp_name));
       
@@ -658,31 +658,31 @@ int main(int argc,const char *argv[])
       
       // elem_cpp
       
-      String elem_cpp_name=Stringf("#;.elem.gen-cpp",base_name);
+      String elem_cpp_name=Stringf("#;.elem.gen.cpp",base_name);
       
       engine.elem_cpp(Range(elem_cpp_name));
       
       // elem_cpp
       
-      String do_rule_name=Stringf("#;.do_rule.gen-cpp",base_name);
+      String do_rule_name=Stringf("#;.do_rule.gen.cpp",base_name);
       
       engine.do_rule(Range(do_rule_name));
       
       // rule_table
       
-      String rule_table_name=Stringf("#;.rule_table.gen-cpp",base_name);
+      String rule_table_name=Stringf("#;.rule_table.gen.cpp",base_name);
       
       engine.rule_table(Range(rule_table_name));
       
       // atom_state_table
       
-      String atom_state_table_name=Stringf("#;.atom_state_table.gen-cpp",base_name);
+      String atom_state_table_name=Stringf("#;.atom_state_table.gen.cpp",base_name);
       
       engine.atom_state_table(Range(atom_state_table_name));
       
       // next_state
       
-      String next_state_name=Stringf("#;.next_state.gen-cpp",base_name);
+      String next_state_name=Stringf("#;.next_state.gen.cpp",base_name);
       
       engine.next_state(Range(next_state_name));
      } 

@@ -21,6 +21,8 @@ TARGET = $(HOME)/bin/ParserGen.exe
 
 include $(CCORE_ROOT)/Target/Makefile.app
 
+run: $(TARGET) 
+	$(TARGET) ../LangLR1-tools/AMP/State.ddl ../LangLR1-tools/AMP/gen/Prefix
 
 
 
