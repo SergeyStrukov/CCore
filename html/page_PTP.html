@@ -535,7 +535,126 @@ struct <span class="att">TransExt</span>
 </pre>
 
 <p>
-<b></b>
+Another way to perform a transaction is to define a special structure <b>Ext</b> like this:
+</p>
+
+<pre>
+struct <span class="att">Ext</span> : ExtBase&lt;ServiceId,FunctionId&gt;
+ {
+  typedef .... InputType;
+  typedef .... OutputType;
+  
+  void done(const OutputType &output)
+   {
+    ....
+   }
+ };
+</pre>
+
+<p>
+<b>ServiceId</b> is the service id and <b>FunctionId</b> is the function id.
+Serialized <b>InputType</b> is used as the function argument and <b>OutputType</b> is used
+to deserialize the function result. 
+</p>
+
+<p>
+Then two methods can be used to start a transaction. 
+</p>
+
+<p>
+<b>start(Packet&lt;uint8,Ext&gt; packet,const typename Ext::InputType &amp;input)</b> starts a transaction,
+it uses the given input object to prepare a function argument in the packet buffer.
+When the transaction is successfully finished, the method <b>done()</b> is called. It can transport
+data from the output object to the <b>Ext</b> structure. Errors are reported in <b>result</b> and 
+<b>error_id</b> fields from the base class. The method <b>reset()</b> resets them.
+</p>
+
+<pre>
+template &lt;ServiceIdType ServiceId_,FunctionIdType FunctionId_,MoveFlagType MoveFlag=MoveNothing&gt;
+struct <span class="att">ExtBase</span>
+ {
+  // consts
+  
+  static const ServiceIdType  ServiceId  = ServiceId_ ;
+  static const FunctionIdType FunctionId = FunctionId_ ;
+  
+  // data
+  
+  TransResult result;
+  ErrorIdType error_id;
+  
+  // constructors
+
+  ExtBase(); // if( MoveFlag!=MovePacketBufByRequest ) 
+  
+  explicit ExtBase(MoveFlagType move_flag); // if( MoveFlag==MovePacketBufByRequest )
+
+  // methods
+  
+  bool isOk() const { return !result && !error_id ; }
+  
+  void reset();
+
+  ....
+ };
+</pre>
+
+<p>
+Another method <b>start_format()</b> can be used, if you need to place additional data after the input
+object. You have to preplace data to the packet buffer. To do this you need a packet format.
+You can get it using the following methods:
+</p>
+
+<p>
+<b>getFormat&lt;Ext&gt;()</b> returns the <b>FormatResult</b> result.
+</p>
+
+<p>
+<b>getFormat_guarded&lt;Ext&gt;()</b> is a guarded version, it throws an exception, if the 
+outbound info length is too short.
+</p>
+
+<p>
+<b>GetFormat&lt;Ext&gt;(ulen max_outbound_info_len)</b> works the same way as 
+the <b>getFormat&lt;Ext&gt;()</b>, but it is a static method and it uses the given 
+<b>max_outbound_info_len</b>.
+</p>
+
+<p>
+<b>GetFormat&lt;Ext&gt;()</b> uses the "infinite" <b>max_outbound_info_len</b>.
+</p>
+
+<p>
+The <b>Ext::InputType</b> must define the static constant <b>Ext::InputType::MaxLen</b> to cap
+the extra data length.
+</p>
+
+<p>
+If you select <b>MoveNothing</b> flag, then packet data buffer will be lost after the completion 
+function is finished. But if you set it to the <b>MovePacketBuf</b>, then during the completion
+processing the packet buffer with resulting data is moved to the transaction packet.
+And if you select <b>MovePacketBufByRequest</b>, then you have to specify a required behavior
+giving the argument to the <b>ExtBase</b> constructor.
+</p>
+
+<p>
+The family of methods are built using this approach to perform support service functions.
+</p>
+
+<p>
+There arw two methods for the initial interaction with the server.
+Both methods performes three functons: <b>Session</b>, <b>Seed</b> and <b>Len</b>.
+Seeds are used for transaction id generation, input/output info lengths are corrected according
+<b>Len</b> function.
+</p>
+
+<p>
+<b>support()</b> returns true, if the interaction was successful. You have to supply some
+packet set for this function.
+</p>
+
+<p>
+<b>support_guarded()</b> throws an exception in case of failure.
 </p>
 
 <h3>PTPServerDevice</h3>

@@ -95,44 +95,9 @@ const char * GetTextDesc(AtomClass ac)
 
 </pre>
 
-<p><b>Prefix.actions.gen.h</b></p>
-
-<pre>
-/* Action::Rule */ 
-
-    Do_A1,
-    Do_A2,
-    Do_M1,
-    Do_M2,
-    Do_P1,
-    Do_P2
-</pre>
-
-<p><b>Prefix.do.gen.h</b></p>
-
-<pre>
-/* do_...() */ 
-
-   void do_A1();
-   void do_A2();
-   void do_M1();
-   void do_M2();
-   void do_P1();
-   void do_P2();
-</pre>
-
-<p><b>Prefix.elem.gen.h</b></p>
-
-<pre>
-/* elem_...() */ 
-
-   Element_A * elem_A1(Element_M *);
-   Element_A * elem_A2(Element_A *,ElementAtom *,Element_M *);
-   Element_M * elem_M1(Element_P *);
-   Element_M * elem_M2(Element_P *,ElementAtom *,Element_M *);
-   Element_P * elem_P1(ElementAtom *);
-   Element_P * elem_P2(ElementAtom *,Element_A *,ElementAtom *);
-</pre>
+<p>
+Implements <b>GetTextDesc(AtomClass ac)</b>.
+</p>
 
 <p><b>Prefix.elements1.gen.h</b></p>
 
@@ -143,6 +108,10 @@ struct Element_A;
 struct Element_M;
 struct Element_P;
 </pre>
+
+<p>
+Forward declaration of types, associated with non-terminals. Called "elements".
+</p>
 
 <p><b>Prefix.elements2.gen.h</b></p>
 
@@ -182,6 +151,100 @@ struct Element_P : ElementBase
 
 </pre>
 
+<p>
+Declaration of elements. Each element has a default constructor and a set of "production" methods,
+correspondent rules. An element context is given as the first argument.
+</p>
+
+<p><b>Prefix.actions.gen.h</b></p>
+
+<pre>
+/* Action::Rule */ 
+
+    Do_A1,
+    Do_A2,
+    Do_M1,
+    Do_M2,
+    Do_P1,
+    Do_P2
+</pre>
+
+<p>
+Rule enumerators declaration.
+</p>
+
+<p><b>Prefix.elem.gen.h</b></p>
+
+<pre>
+/* elem_...() */ 
+
+   Element_A * elem_A1(Element_M *);
+   Element_A * elem_A2(Element_A *,ElementAtom *,Element_M *);
+   Element_M * elem_M1(Element_P *);
+   Element_M * elem_M2(Element_P *,ElementAtom *,Element_M *);
+   Element_P * elem_P1(ElementAtom *);
+   Element_P * elem_P2(ElementAtom *,Element_A *,ElementAtom *);
+</pre>
+
+<p>
+Element creation methods declaration.
+</p>
+
+<p><b>Prefix.do.gen.h</b></p>
+
+<pre>
+/* do_...() */ 
+
+   void do_A1();
+   void do_A2();
+   void do_M1();
+   void do_M2();
+   void do_P1();
+   void do_P2();
+</pre>
+
+<p>
+Rule methods declaration.
+</p>
+
+<p><b>Prefix.rule_table.gen.cpp</b></p>
+
+<pre>
+/* RuleTable */ 
+
+static const RuleTableType RuleTable[22][6]=
+ {
+  {0,1,0,0,0,1},
+  {0,1,0,0,0,1},
+  {6,0,0,6,6,0},
+  {1,0,0,0,1,0},
+  {2,0,0,0,2,0},
+  {0,1,0,0,0,1},
+  {0,0,6,6,6,0},
+  {0,0,1,0,1,0},
+  {0,0,2,0,2,0},
+  {0,1,0,0,0,1},
+  {0,0,1,0,1,0},
+  {7,0,0,7,7,0},
+  {0,1,0,0,0,1},
+  {0,1,0,0,0,1},
+  {3,0,0,0,3,0},
+  {5,0,0,0,5,0},
+  {4,0,0,1,4,0},
+  {0,0,7,7,7,0},
+  {0,0,3,0,3,0},
+  {0,0,4,1,4,0},
+  {0,0,5,0,5,0},
+  {0,1,0,0,0,1}
+ };
+
+</pre>
+
+<p>
+Table of rules, applyed, when the given atom comes at the given top state.
+You must define a value type (define smaller type to reduce the memory consumption).
+</p>
+
 <p><b>Prefix.atom_state_table.gen.cpp</b></p>
 
 <pre>
@@ -214,6 +277,76 @@ static const StateTableType AtomStateTable[22][6]=
  };
 
 </pre>
+
+<p>
+State transition table for atoms.
+You must define a value type (define smaller type to reduce the memory consumption).
+</p>
+
+<p><b>Prefix.elem.gen.cpp</b></p>
+
+<pre>
+/* elem_...() */ 
+
+Element_A * Parser::elem_A1(Element_M *arg1)
+ {
+  Element_A *elem=ctx.create&lt;Element_A&gt;();
+
+  elem-&gt;A1(ctx,arg1);
+
+  return elem;
+ }
+
+Element_A * Parser::elem_A2(Element_A *arg1,ElementAtom *arg2,Element_M *arg3)
+ {
+  Element_A *elem=ctx.create&lt;Element_A&gt;();
+
+  elem-&gt;A2(ctx,arg1,arg2,arg3);
+
+  return elem;
+ }
+
+Element_M * Parser::elem_M1(Element_P *arg1)
+ {
+  Element_M *elem=ctx.create&lt;Element_M&gt;();
+
+  elem-&gt;M1(ctx,arg1);
+
+  return elem;
+ }
+
+Element_M * Parser::elem_M2(Element_P *arg1,ElementAtom *arg2,Element_M *arg3)
+ {
+  Element_M *elem=ctx.create&lt;Element_M&gt;();
+
+  elem-&gt;M2(ctx,arg1,arg2,arg3);
+
+  return elem;
+ }
+
+Element_P * Parser::elem_P1(ElementAtom *arg1)
+ {
+  Element_P *elem=ctx.create&lt;Element_P&gt;();
+
+  elem-&gt;P1(ctx,arg1);
+
+  return elem;
+ }
+
+Element_P * Parser::elem_P2(ElementAtom *arg1,Element_A *arg2,ElementAtom *arg3)
+ {
+  Element_P *elem=ctx.create&lt;Element_P&gt;();
+
+  elem-&gt;P2(ctx,arg1,arg2,arg3);
+
+  return elem;
+ }
+
+</pre>
+
+<p>
+Implementations of element creation methods.
+</p>
 
 <p><b>Prefix.do.gen.cpp</b></p>
 
@@ -294,6 +427,10 @@ void Parser::do_P2()
 
 </pre>
 
+<p>
+Implementations of rule methods.
+</p>
+
 <p><b>Prefix.do_rule.gen.cpp</b></p>
 
 <pre>
@@ -307,107 +444,9 @@ void Parser::do_P2()
      case Action::Do_P2 : do_P2(); break;
 </pre>
 
-<p><b>Prefix.elem.gen.cpp</b></p>
-
-<pre>
-/* elem_...() */ 
-
-Element_A * Parser::elem_A1(Element_M *arg1)
- {
-  Element_A *elem=ctx.create&lt;Element_A&gt;();
-
-  elem-&gt;A1(ctx,arg1);
-
-  return elem;
- }
-
-Element_A * Parser::elem_A2(Element_A *arg1,ElementAtom *arg2,Element_M *arg3)
- {
-  Element_A *elem=ctx.create&lt;Element_A&gt;();
-
-  elem-&gt;A2(ctx,arg1,arg2,arg3);
-
-  return elem;
- }
-
-Element_M * Parser::elem_M1(Element_P *arg1)
- {
-  Element_M *elem=ctx.create&lt;Element_M&gt;();
-
-  elem-&gt;M1(ctx,arg1);
-
-  return elem;
- }
-
-Element_M * Parser::elem_M2(Element_P *arg1,ElementAtom *arg2,Element_M *arg3)
- {
-  Element_M *elem=ctx.create&lt;Element_M&gt;();
-
-  elem-&gt;M2(ctx,arg1,arg2,arg3);
-
-  return elem;
- }
-
-Element_P * Parser::elem_P1(ElementAtom *arg1)
- {
-  Element_P *elem=ctx.create&lt;Element_P&gt;();
-
-  elem-&gt;P1(ctx,arg1);
-
-  return elem;
- }
-
-Element_P * Parser::elem_P2(ElementAtom *arg1,Element_A *arg2,ElementAtom *arg3)
- {
-  Element_P *elem=ctx.create&lt;Element_P&gt;();
-
-  elem-&gt;P2(ctx,arg1,arg2,arg3);
-
-  return elem;
- }
-
-</pre>
-
-<p><b>Prefix.elements3.gen.cpp</b></p>
-
-<pre>
-/* struct Element_A */ 
-
-void Element_A::A1(ElementContext,Element_M *)
- {
-  // TODO
- }
-
-void Element_A::A2(ElementContext,Element_A *,ElementAtom *,Element_M *)
- {
-  // TODO
- }
-
-/* struct Element_M */ 
-
-void Element_M::M1(ElementContext,Element_P *)
- {
-  // TODO
- }
-
-void Element_M::M2(ElementContext,Element_P *,ElementAtom *,Element_M *)
- {
-  // TODO
- }
-
-/* struct Element_P */ 
-
-void Element_P::P1(ElementContext,ElementAtom *)
- {
-  // TODO
- }
-
-void Element_P::P2(ElementContext,ElementAtom *,Element_A *,ElementAtom *)
- {
-  // TODO
- }
-
-</pre>
+<p>
+Implementation of <b>doRule()</b> method.
+</p>
 
 <p><b>Prefix.next_state.gen.cpp</b></p>
 
@@ -458,38 +497,54 @@ ulen Element_P::NextState(ulen state)
 
 </pre>
 
-<p><b>Prefix.rule_table.gen.cpp</b></p>
+<p>
+Implementations of <b>NextState()</b> methods.
+</p>
+
+<p><b>Prefix.elements3.gen.cpp</b></p>
 
 <pre>
-/* RuleTable */ 
+/* struct Element_A */ 
 
-static const RuleTableType RuleTable[22][6]=
+void Element_A::A1(ElementContext,Element_M *)
  {
-  {0,1,0,0,0,1},
-  {0,1,0,0,0,1},
-  {6,0,0,6,6,0},
-  {1,0,0,0,1,0},
-  {2,0,0,0,2,0},
-  {0,1,0,0,0,1},
-  {0,0,6,6,6,0},
-  {0,0,1,0,1,0},
-  {0,0,2,0,2,0},
-  {0,1,0,0,0,1},
-  {0,0,1,0,1,0},
-  {7,0,0,7,7,0},
-  {0,1,0,0,0,1},
-  {0,1,0,0,0,1},
-  {3,0,0,0,3,0},
-  {5,0,0,0,5,0},
-  {4,0,0,1,4,0},
-  {0,0,7,7,7,0},
-  {0,0,3,0,3,0},
-  {0,0,4,1,4,0},
-  {0,0,5,0,5,0},
-  {0,1,0,0,0,1}
- };
+  // TODO
+ }
+
+void Element_A::A2(ElementContext,Element_A *,ElementAtom *,Element_M *)
+ {
+  // TODO
+ }
+
+/* struct Element_M */ 
+
+void Element_M::M1(ElementContext,Element_P *)
+ {
+  // TODO
+ }
+
+void Element_M::M2(ElementContext,Element_P *,ElementAtom *,Element_M *)
+ {
+  // TODO
+ }
+
+/* struct Element_P */ 
+
+void Element_P::P1(ElementContext,ElementAtom *)
+ {
+  // TODO
+ }
+
+void Element_P::P2(ElementContext,ElementAtom *,Element_A *,ElementAtom *)
+ {
+  // TODO
+ }
 
 </pre>
+
+<p>
+Blank for element production methods.
+</p>
 
 <p>
 These files are pieces of parser declaration. The parser itself can be built like this (many words):
@@ -510,35 +565,56 @@ struct AnyElement;
 
 struct ElementAtom;
 
-#include "Prefix.elements1.gen.h"
+#include <span class="att">"Prefix.elements1.gen.h"</span>
 
 struct Action;
 
 class Parser;
 
-#include "Prefix.atom.gen.h"
+#include <span class="att">"Prefix.atom.gen.h"</span>
 
-/* struct Atom */
+/* struct Atom */ 
 
-struct Atom
+//
+// lightweight, copyable
+//
+// represent atom, has the atom class and some value, associated with atom
+//
+
+struct <span class="att">Atom</span>
  {
   AtomClass ac;
   
   Atom() : ac(Atom_Nothing) {}
 
-  ....
+  // TODO
  };
 
 /* class ElementContext */
 
-class ElementContext // lightweight, copyable
+//
+// lightweight, copyable
+//
+// element parsing context, in particular, creates elements
+//
+
+class <span class="att">ElementContext </span>
  {
-  // TODO
+   // TODO
+
+  public:
+
+   template &lt;class T,class ... SS&gt;
+   T * create(SS &amp;&amp; ... ss);
  };
 
 /* struct ElementBase */
 
-struct ElementBase : NoCopy
+//
+// Base class for elements, parse stack is a list.
+//
+
+struct <span class="att">ElementBase</span> : NoCopy
  {
   ElementBase *prev;
   ulen state;
@@ -548,7 +624,7 @@ struct ElementBase : NoCopy
 
 /* struct AnyElement */
 
-struct AnyElement
+struct <span class="att">AnyElement</span>
  {
   ElementBase *elem;
   
@@ -560,14 +636,14 @@ struct AnyElement
 
 /* struct ElementAtom */
 
-struct ElementAtom : ElementBase
+struct <span class="att">ElementAtom</span> : ElementBase
  {
   // TODO
 
-  ElementAtom(ElementContext ctx,const Atom &atom);
+  ElementAtom(ElementContext ctx,const Atom &amp;atom);
  };
 
-#include "Prefix.elements2.gen.h"
+#include <span class="att">"Prefix.elements2.gen.h"</span>
 
 /* struct Action */
 
@@ -578,7 +654,7 @@ struct Action
     Abort,
     Shift,
 
-#include "Prefix.actions.gen.h"    
+#include <span class="att">"Prefix.actions.gen.h"</span>    
    };
   
   Rule rule;
@@ -604,11 +680,11 @@ class Parser : NoCopy
    
   private:
 
-#include "Prefix.elem.gen.h"
+<span class="att">#include "Prefix.elem.gen.h"</span>
 
   private:
 
-#include "Prefix.do.gen.h"
+<span class="att">#include "Prefix.do.gen.h"</span>
    
    void doRule(Action::Rule rule);
    
@@ -628,15 +704,54 @@ class Parser : NoCopy
    Result next(const Atom &amp;atom);
    
    Result complete();
+
+   Result next_loop(const Atom &amp;atom)
+    {
+     for(;;)
+       {
+        Result result=next(atom);
+
+        if( result!=ResultRule ) return result;
+       }
+    }
+
+   Result complete_loop()
+    {
+     for(;;)
+       {
+        Result result=complete();
+
+        if( result!=ResultRule ) return result;
+       }
+    }
+
+   template &lt;class Dev&gt;
+   Result process(Dev &dev)
+    {
+     for(;;)
+       {
+        Atom atom;
+
+        if( dev.get(atom) )
+          {
+           if( next_loop(atom)==ResultAbort ) return ResultAbort;
+          }
+       }
+
+     return complete_loop();
+    }
  };
 
 </pre>
 
 <pre>
+
+<span class="att">#include "Prefix.next_state.gen.cpp"</span>
+
 /* struct Action */
 
-#include "Prefix.rule_table.gen.cpp"
-#include "Prefix.atom_state_table.gen.cpp"
+<span class="att">#include "Prefix.rule_table.gen.cpp"</span>
+<span class="att">#include "Prefix.atom_state_table.gen.cpp"</span>
 
 Action::Action(ulen state,AtomClass ac)
  {
@@ -652,7 +767,7 @@ Action::Action(ulen state,AtomClass ac)
     }
  }
 
-#include "Prefix.next_state.gen.cpp"
+<span class="att">#include "Prefix.next_state.gen.cpp"</span>
 
 /* class Parser */
 
@@ -678,19 +793,73 @@ void Parser::shift(const Atom &amp;atom,ulen state)
   push(ctx.create&lt;ElementAtom&gt;(ctx,atom),state);
  }
 
-#include "Prefix.elem.gen.cpp"
+<span class="att">#include "Prefix.elem.gen.cpp"</span>
 
-#include "Prefix.do.gen.cpp"
+<span class="att">#include "Prefix.do.gen.cpp"</span>
 
 void Parser::doRule(Action::Rule rule)
  {
   switch( rule )
     {
-#include "Prefix.do_rule.gen.cpp"
+<span class="att">#include "Prefix.do_rule.gen.cpp"</span>
     }
  }
 
-#include "Prefix.elements3.gen.cpp"
+Parser::Parser(....)
+ {
+  ....
+
+  stack=ctx.create&lt;ElementBase&gt;();
+
+  ....
+ }
+
+Parser::~Parser() 
+ {
+  ....
+ }
+
+auto Parser::next(const Atom &atom) -&gt; Result
+ {
+  Action action(stack->state,atom.ac);
+  
+  switch( action.rule )
+    {
+     case Action::Abort :
+      {
+       ....
+      }
+     return ResultAbort;
+     
+     case Action::Shift : shift(atom,action.new_state); return ResultShift;
+     
+     default: doRule(action.rule);
+    }
+  
+  return ResultRule;
+ }
+
+auto Parser::complete() -&gt; Result
+ {
+  Action action(stack->state);
+  
+  switch( action.rule )
+    {
+     case Action::Abort :
+      {
+       ....
+      }
+     return ResultAbort;
+     
+     case Action::Shift : return ResultShift;
+     
+     default: doRule(action.rule);
+    }
+  
+  return ResultRule;
+ }
+
+<span class="att">#include "Prefix.elements3.gen.cpp"</span>
 
 </pre>
 

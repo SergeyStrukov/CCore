@@ -28,7 +28,129 @@
 
 <h2>Regen</h2>
 
+<p>
+<b>Regen.exe</b> is a code generator. It takes a register set description and generates a
+C++ code to work with register values.
+</p>
 
+<pre>
+Regen.exe &lt;input file&gt; &lt;output file&gt;
+</pre>
+
+<p>
+Here is a sample description:
+</p>
+
+<pre>
+reg ISR : 8 // interrupt status register
+ {
+  A : 0
+  B : 1
+  C : 2
+  D : .
+ }
+
+ /*------------------------------
+
+     XXX
+ 
+ ----*/
+
+reg CTRL : 32
+ {
+  RUN   : 0
+  STOP  : 1
+  COUNT : 2-5
+
+  * : .+10
+
+  MODE  : 16-18
+   {
+    SLOW = 0
+    FAST = 1
+    ACK  = 7
+   }
+ }
+
+reg STAT : 16
+ {
+  RUN   : 0
+  STOP  : 1
+  COUNT : .+4
+
+  MODE  : .+3
+   {
+    SLOW = 0
+    FAST = 1
+    ACK  = 100b
+   }
+ }                  
+
+reg SCRAP : 16 {}
+
+reg PTR : 32 {}
+
+reg TEMP : 32 {}
+ 
+bar Test : address // |index
+ {
+  ISR  =  10    RO 
+
+  ICR  =  100h  WO as ISR
+
+  IMR  =  .        as ISR
+
+  CTRL[10] =  .      
+
+  STAT =  .     RO
+
+  SCRAP = .
+  
+  BSCRAP[10] = . as SCRAP
+  
+  BIMP[10] = . as ISR
+  
+  PTR[10] = . 
+  
+  TEMP = hidden
+ }
+
+</pre>
+
+<p>
+It defines a set of registers and the register bar. Register is defined as:
+</p>
+
+<pre>
+reg CTRL : 32
+ {
+  RUN   : 0
+  STOP  : 1
+  COUNT : 2-5
+
+  * : .+10
+
+  MODE  : 16-18
+   {
+    SLOW = 0
+    FAST = 1
+    ACK  = 7
+   }
+ }
+</pre>
+
+<p>
+The keyword <b>reg</b> is followed by a register name and a register bit length. Bit length
+can be 8, 16 or 32. Then bits description follows enclosed in a figure brackets.
+Single bit is assigned a bit number (from LSB to MSB). A bit field can be given either as 
+<b>first-last</b> bits or as <b>first bit + bit length</b>. Asterisk can be used to
+insert unused bits. Dot denotes the current bit. Bit field may have an associated named value list.
+Value can be given in decimal, hexadecimal (with suffix h) or binary (with suffix b) form.
+</p>
+
+<p>
+Register bar is a set of registers as a unit.
+</p>
 
 </body>
 
