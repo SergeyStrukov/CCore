@@ -50,12 +50,6 @@ reg ISR : 8 // interrupt status register
   D : .
  }
 
- /*------------------------------
-
-     XXX
- 
- ----*/
-
 reg CTRL : 32
  {
   RUN   : 0
@@ -72,49 +66,20 @@ reg CTRL : 32
    }
  }
 
-reg STAT : 16
- {
-  RUN   : 0
-  STOP  : 1
-  COUNT : .+4
-
-  MODE  : .+3
-   {
-    SLOW = 0
-    FAST = 1
-    ACK  = 100b
-   }
- }                  
-
-reg SCRAP : 16 {}
-
-reg PTR : 32 {}
-
-reg TEMP : 32 {}
+reg TEMP : 16 {}
  
-bar Test : address // |index
+bar Test : address
  {
-  ISR  =  10    RO 
+  ISR  =  10    RO
 
-  ICR  =  100h  WO as ISR
+  IMR  =  .     WO as ISR
 
-  IMR  =  .        as ISR
+  CTRL =  .      
 
-  CTRL[10] =  .      
+  EXT[10] = . as CTRL
 
-  STAT =  .     RO
-
-  SCRAP = .
-  
-  BSCRAP[10] = . as SCRAP
-  
-  BIMP[10] = . as ISR
-  
-  PTR[10] = . 
-  
   TEMP = hidden
  }
-
 </pre>
 
 <p>
@@ -142,14 +107,339 @@ reg CTRL : 32
 <p>
 The keyword <b>reg</b> is followed by a register name and a register bit length. Bit length
 can be 8, 16 or 32. Then bits description follows enclosed in a figure brackets.
-Single bit is assigned a bit number (from LSB to MSB). A bit field can be given either as 
-<b>first-last</b> bits or as <b>first bit + bit length</b>. Asterisk can be used to
-insert unused bits. Dot denotes the current bit. Bit field may have an associated named value list.
+Single bit is assigned a bit number (from LSB to MSB). 
+Bit number may be given as dot.
+Dot denotes the current bit. 
+A bit field can be given either as <b>first-last</b> bits or as <b>.+bit length</b>. 
+Asterisk can be used to insert unused bits. 
+Bit field may have an associated named value list.
 Value can be given in decimal, hexadecimal (with suffix h) or binary (with suffix b) form.
+If the bits description is empty, the register is assumed untyped.
 </p>
 
 <p>
-Register bar is a set of registers as a unit.
+Register bar is a set of registers as a unit. Hardware units are controlled using a register bars.
+A method of reading and writing registers may vary. It can be a memory-mapped registers, or the
+register access may involve some function calls and, in fact, can be quite expensive.
+<b>Regen</b> generates a helper class to abstract from an exact register access process.
+</p>
+
+<p>
+Register bar has a register refer mode: address or index. 
+Dot denotes the current address or index.
+Bar description is a list of registers or register blocks with its properties. 
+The first property is the address (or index).
+It can be given explicitly or imlpicitly. 
+If the address mode is used, then the next address is defined using the register byte length. 
+The next attribute is the access mode. It can be <b>RO</b>, <b>WO</b>, <b>RW</b> or <b>hidden</b>,
+<b>RW</b> by default. 
+Finally, a register type can given using the directive <b>as</b>. Multiple registers can share the same
+register structure.
+</p>
+
+<p>
+<b>Regen</b> generates the header file.
+</p>
+
+<pre>
+/* Test.gen.h */ 
+
+....
+
+/* struct Type_CTRL */ 
+
+enum Bits_CTRL : uint32
+ {
+  CTRL_RUN  = 0x00000001,
+  CTRL_STOP = 0x00000002
+ };
+ 
+inline Bits_CTRL operator | (Bits_CTRL a,Bits_CTRL b)
+ { return Bits_CTRL(uint32(a)|uint32(b)); }
+ 
+enum Field_CTRL_MODE : uint32
+ {
+  CTRL_MODE_SLOW = 0x00,
+  CTRL_MODE_FAST = 0x01,
+  CTRL_MODE_ACK  = 0x07
+ };
+
+struct PrintField_CTRL_MODE
+ {
+  Field_CTRL_MODE field;
+
+  explicit PrintField_CTRL_MODE(Field_CTRL_MODE field_) : field(field_) {}
+ 
+  template &lt;class P&gt;
+  void print(P &amp;out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"SLOW"); break;
+       case 0x01 : Putobj(out,"FAST"); break;
+       case 0x07 : Putobj(out,"ACK"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_CTRL_MODE GetTextDesc(Field_CTRL_MODE field)
+ {
+  return PrintField_CTRL_MODE(field);
+ }
+</pre>
+
+<p>
+For register <b>CTRL</b> the following entities are generated: 
+<b>enum Bits_CTRL</b> &mdash; register bits,
+<b>enum Field_CTRL_MODE</b> &mdash; values for the field <b>MODE</b>. 
+Finally, the type <b>Type_CTRL</b> to represent and manipulate with the register value.
+</p>
+ 
+<pre>
+struct Type_CTRL
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_CTRL(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+
+</pre>
+
+<p>
+The type is a wrapper over an unsigned integral type.
+</p>
+
+<pre>
+
+  template &lt;class Bar&gt;
+  Type_CTRL &amp; setTo(Bar &amp;bar) { bar.set_CTRL(*this); return *this; }
+ 
+
+  template &lt;class Bar&gt;
+  Type_CTRL &amp; setTo(Bar &amp;bar,uint32 ind) { bar.set_CTRL(*this,ind); return *this; }
+ 
+
+  template &lt;class T&gt;
+  Type_CTRL &amp; set(T to) { to(*this); return *this; }
+ 
+</pre>
+
+<p>
+The group of set methods can be used to set the value to the register bar or to some "setter".
+</p>
+
+<pre>
+
+  Type_CTRL &amp; setbit(Bits_CTRL bits) { value|=Type(bits); return *this; }
+ 
+  Type_CTRL &amp; setbitIf(bool cond,Bits_CTRL bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_CTRL &amp; clearbit(Bits_CTRL bits) { value&=~Type(bits); return *this; }
+ 
+  Type_CTRL &amp; clearbitIf(bool cond,Bits_CTRL bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_CTRL bits) const { return value&amp;bits; }
+ 
+  bool testbit(Bits_CTRL bits) const { return (value&amp;bits)==Type(bits); }
+ 
+</pre>
+
+<p>
+The group of bit-manipulation methods can be used to change bits or bit testing.
+</p>
+
+<pre>
+
+  Type get_COUNT() const;
+ 
+  Type_CTRL &amp; set_COUNT(Type field);
+ 
+
+  Field_CTRL_MODE get_MODE() const;
+ 
+  Type_CTRL &amp; set_MODE(Field_CTRL_MODE field);
+ 
+</pre>
+
+<p>
+Another methods to get or set register bit fields. Bit and field change methods are self-modifying 
+and return a reference to the object, so they can be chained.
+</p>
+
+<pre>
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+</pre>
+
+<p>
+Finally, the print method is provided to print the value in a verbose manner.
+</p>
+ 
+<pre>
+/* type Type_TEMP */ 
+
+typedef uint16 Type_TEMP;
+
+</pre>
+
+<p>
+Untyped register generates only a typedef. 
+</p>
+
+<p>
+Register bar generates a register bar class.
+</p>
+
+<pre>
+/* struct Test&lt;RW&gt; */ 
+
+template &lt;class RW&gt;
+struct Test
+ {
+  RW rw;
+
+  template &lt;class ... TT&gt;
+  Test(TT &amp;&amp; ... tt) : rw(tt...) {}
+
+</pre>  
+
+<p>
+The inner object <b>rw</b> is a mean to read or write a register. It must implement the following methods:
+</p>
+
+<pre>
+class RW
+ {
+   ....
+
+  public:
+
+   typedef .... AddressType; 
+
+   template &lt;class UInt&gt;
+   UInt get(AddressType address);
+   
+   template &lt;class UInt&gt;
+   void set(AddressType address,UInt value);
+ };
+</pre>
+
+<p>
+Methods <b>get()</b> and <b>set()</b> are used with <b>uint8</b>, <b>uint16</b>, <b>uint32</b> 
+template parameters.
+</p>
+
+<pre>
+  template &lt;class T&gt;
+  struct Setter
+   {
+    RW &amp;rw;
+    uint32 address;
+
+    Setter(RW &amp;rw_,uint32 address_) : rw(rw_),address(address_) {}
+
+    void operator () (T value) { rw.set(address,value.value); }
+   };
+</pre>
+
+<p>
+Setter classes are used to set a register value. They bind the read-writer and the register address.
+</p>
+
+<pre>
+  //--- CTRL
+
+  Type_CTRL get_CTRL();
+ 
+  void set_CTRL(Type_CTRL value);
+ 
+  Setter&lt;Type_CTRL&gt; to_CTRL();
+ 
+  static Type_CTRL null_CTRL();
+ 
+  static Type_CTRL ones_CTRL();
+
+</pre> 
+
+<p>
+<b>get_CTRL()</b> reads a register value.
+</p>
+
+<p>
+<b>set_CTRL()</b> writes a register value.
+</p>
+
+<p>
+<b>to_CTRL()</b> binds the read-writer and the register address and returns the register setter.
+</p>
+
+<p>
+Static methods <b>null_CTRL()</b> and <b>ones_CTRL()</b> create a register value
+with all bits equals null or one.
+</p>
+
+<pre>
+  //--- EXT
+
+  Type_CTRL get_EXT(uint32 ind);
+ 
+  void set_EXT(uint32 ind,Type_CTRL value);
+ 
+  Setter&lt;Type_CTRL&gt; to_EXT(uint32 ind);
+ 
+</pre>
+
+<p>
+Block register methods have additional argument &mdash; register index.
+</p>
+
+<pre>
+  //--- ISR
+
+  Type_ISR get_ISR();
+ 
+  static Type_ISR null_ISR();
+ 
+  static Type_ISR ones_ISR();
+ 
+</pre>
+
+<p>
+Read-only registers have no set methods.
+</p>
+
+<pre>
+  //--- IMR
+
+  void set_IMR(Type_ISR value);
+ 
+  Setter&lt;Type_ISR&gt; to_IMR();
+ 
+</pre>
+
+<p>
+Write-only registers have no get methogs.
+</p>
+
+<pre>
+  //--- TEMP
+
+ };
+ 
+</pre>
+
+<p>
+Hidden registers have no methods.
 </p>
 
 </body>
