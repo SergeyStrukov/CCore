@@ -66,6 +66,8 @@ OBJ_LIST = \
 ../test-obj/test0064.ElementPool.o \
 ../test-obj/test0065.AtomicRefArray.o \
 ../test-obj/test0066.AtomicRefArray2.o \
+../test-obj/test0067.BinarySearch.o \
+../test-obj/test0068.EuclidRotate.o \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
@@ -169,6 +171,8 @@ ASM_LIST = \
 ../test-obj/test0064.ElementPool.s \
 ../test-obj/test0065.AtomicRefArray.s \
 ../test-obj/test0066.AtomicRefArray2.s \
+../test-obj/test0067.BinarySearch.s \
+../test-obj/test0068.EuclidRotate.s \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
@@ -272,6 +276,8 @@ DEP_LIST = \
 ../test-obj/test0064.ElementPool.dep \
 ../test-obj/test0065.AtomicRefArray.dep \
 ../test-obj/test0066.AtomicRefArray2.dep \
+../test-obj/test0067.BinarySearch.dep \
+../test-obj/test0068.EuclidRotate.dep \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
@@ -512,6 +518,12 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0066.AtomicRefArray2.o : ../../../CCore/test/test0066.AtomicRefArray2.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0067.BinarySearch.o : ../../../CCore/test/test0067.BinarySearch.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0068.EuclidRotate.o : ../../../CCore/test/test0068.EuclidRotate.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -816,6 +828,12 @@ include $(RULES_FILE)
 ../test-obj/test0066.AtomicRefArray2.s : ../../../CCore/test/test0066.AtomicRefArray2.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0067.BinarySearch.s : ../../../CCore/test/test0067.BinarySearch.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test0068.EuclidRotate.s : ../../../CCore/test/test0068.EuclidRotate.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1117,6 +1135,12 @@ include $(RULES_FILE)
 
 ../test-obj/test0066.AtomicRefArray2.dep : ../../../CCore/test/test0066.AtomicRefArray2.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0066.AtomicRefArray2.o $< -MF $@
+
+../test-obj/test0067.BinarySearch.dep : ../../../CCore/test/test0067.BinarySearch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0067.BinarySearch.o $< -MF $@
+
+../test-obj/test0068.EuclidRotate.dep : ../../../CCore/test/test0068.EuclidRotate.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0068.EuclidRotate.o $< -MF $@
 
 ../test-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

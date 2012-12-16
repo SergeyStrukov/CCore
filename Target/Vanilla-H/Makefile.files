@@ -3,6 +3,7 @@ obj/AES.o \
 obj/Abort.o \
 obj/AbortMsgFunc.o \
 obj/AntiSem.o \
+obj/ApplyToRange.o \
 obj/Array.o \
 obj/ArrayAlgo.o \
 obj/ArrayBase.o \
@@ -12,6 +13,8 @@ obj/AsyncFileToMem.o \
 obj/AsyncUDPDevice.o \
 obj/Atomic.o \
 obj/AtomicRefArray.o \
+obj/BaseRangeAlgo.o \
+obj/BinarySearch.o \
 obj/BlockCipher.o \
 obj/Bridge.o \
 obj/CancelPacketList.o \
@@ -47,6 +50,7 @@ obj/EchoDevice.o \
 obj/ElementPool.o \
 obj/Elf.o \
 obj/EthDevice.o \
+obj/EuclidRotate.o \
 obj/Event.o \
 obj/EventRecorder.o \
 obj/Exception.o \
@@ -214,6 +218,7 @@ obj/AES.s \
 obj/Abort.s \
 obj/AbortMsgFunc.s \
 obj/AntiSem.s \
+obj/ApplyToRange.s \
 obj/Array.s \
 obj/ArrayAlgo.s \
 obj/ArrayBase.s \
@@ -223,6 +228,8 @@ obj/AsyncFileToMem.s \
 obj/AsyncUDPDevice.s \
 obj/Atomic.s \
 obj/AtomicRefArray.s \
+obj/BaseRangeAlgo.s \
+obj/BinarySearch.s \
 obj/BlockCipher.s \
 obj/Bridge.s \
 obj/CancelPacketList.s \
@@ -258,6 +265,7 @@ obj/EchoDevice.s \
 obj/ElementPool.s \
 obj/Elf.s \
 obj/EthDevice.s \
+obj/EuclidRotate.s \
 obj/Event.s \
 obj/EventRecorder.s \
 obj/Exception.s \
@@ -425,6 +433,7 @@ obj/AES.dep \
 obj/Abort.dep \
 obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
+obj/ApplyToRange.dep \
 obj/Array.dep \
 obj/ArrayAlgo.dep \
 obj/ArrayBase.dep \
@@ -434,6 +443,8 @@ obj/AsyncFileToMem.dep \
 obj/AsyncUDPDevice.dep \
 obj/Atomic.dep \
 obj/AtomicRefArray.dep \
+obj/BaseRangeAlgo.dep \
+obj/BinarySearch.dep \
 obj/BlockCipher.dep \
 obj/Bridge.dep \
 obj/CancelPacketList.dep \
@@ -469,6 +480,7 @@ obj/EchoDevice.dep \
 obj/ElementPool.dep \
 obj/Elf.dep \
 obj/EthDevice.dep \
+obj/EuclidRotate.dep \
 obj/Event.dep \
 obj/EventRecorder.dep \
 obj/Exception.dep \
@@ -649,6 +661,9 @@ obj/AbortMsgFunc.o : ../../CCore/src/AbortMsgFunc.cpp
 obj/AntiSem.o : ../../HCore/CCore/src/task/AntiSem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/ApplyToRange.o : ../../CCore/src/algon/ApplyToRange.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Array.o : ../../CCore/src/Array.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -674,6 +689,12 @@ obj/Atomic.o : ../../CCore/src/task/Atomic.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AtomicRefArray.o : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/BaseRangeAlgo.o : ../../CCore/src/algon/BaseRangeAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/BinarySearch.o : ../../CCore/src/algon/BinarySearch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/BlockCipher.o : ../../CCore/src/crypton/BlockCipher.cpp
@@ -779,6 +800,9 @@ obj/Elf.o : ../../CCore/src/Elf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/EthDevice.o : ../../CCore/src/net/EthDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/EuclidRotate.o : ../../CCore/src/algon/EuclidRotate.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Event.o : ../../HCore/CCore/src/task/Event.cpp
@@ -1275,6 +1299,9 @@ obj/AbortMsgFunc.s : ../../CCore/src/AbortMsgFunc.cpp
 obj/AntiSem.s : ../../HCore/CCore/src/task/AntiSem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ApplyToRange.s : ../../CCore/src/algon/ApplyToRange.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Array.s : ../../CCore/src/Array.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1300,6 +1327,12 @@ obj/Atomic.s : ../../CCore/src/task/Atomic.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/AtomicRefArray.s : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/BaseRangeAlgo.s : ../../CCore/src/algon/BaseRangeAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/BinarySearch.s : ../../CCore/src/algon/BinarySearch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/BlockCipher.s : ../../CCore/src/crypton/BlockCipher.cpp
@@ -1405,6 +1438,9 @@ obj/Elf.s : ../../CCore/src/Elf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/EthDevice.s : ../../CCore/src/net/EthDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/EuclidRotate.s : ../../CCore/src/algon/EuclidRotate.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Event.s : ../../HCore/CCore/src/task/Event.cpp
@@ -1901,6 +1937,9 @@ obj/AbortMsgFunc.dep : ../../CCore/src/AbortMsgFunc.cpp
 obj/AntiSem.dep : ../../HCore/CCore/src/task/AntiSem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AntiSem.o $< -MF $@
 
+obj/ApplyToRange.dep : ../../CCore/src/algon/ApplyToRange.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ApplyToRange.o $< -MF $@
+
 obj/Array.dep : ../../CCore/src/Array.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Array.o $< -MF $@
 
@@ -1927,6 +1966,12 @@ obj/Atomic.dep : ../../CCore/src/task/Atomic.cpp
 
 obj/AtomicRefArray.dep : ../../CCore/src/array/AtomicRefArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AtomicRefArray.o $< -MF $@
+
+obj/BaseRangeAlgo.dep : ../../CCore/src/algon/BaseRangeAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BaseRangeAlgo.o $< -MF $@
+
+obj/BinarySearch.dep : ../../CCore/src/algon/BinarySearch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BinarySearch.o $< -MF $@
 
 obj/BlockCipher.dep : ../../CCore/src/crypton/BlockCipher.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BlockCipher.o $< -MF $@
@@ -2032,6 +2077,9 @@ obj/Elf.dep : ../../CCore/src/Elf.cpp
 
 obj/EthDevice.dep : ../../CCore/src/net/EthDevice.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EthDevice.o $< -MF $@
+
+obj/EuclidRotate.dep : ../../CCore/src/algon/EuclidRotate.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EuclidRotate.o $< -MF $@
 
 obj/Event.dep : ../../HCore/CCore/src/task/Event.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Event.o $< -MF $@

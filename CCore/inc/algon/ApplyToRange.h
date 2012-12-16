@@ -1,9 +1,9 @@
-/* XXX.cpp */ 
+/* ApplyToRange.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
 //
-//  Tag: General HCore XCore Target/
+//  Tag: General
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -12,12 +12,28 @@
 //  Copyright (c) 2012 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
+
+#ifndef CCore_inc_algon_ApplyToRange_h
+#define CCore_inc_algon_ApplyToRange_h
  
-#include <CCore/inc/XXX.h>
- 
+#include <CCore/inc/FunctorType.h>
+
 namespace CCore {
+namespace Algon {
 
+/* ApplyToRange() */
 
+template <class R,class FuncInit>
+void ApplyToRange(R r,FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+  
+  for(; +r ;++r) func(*r);
+ }
+
+} // namespace Algon
 } // namespace CCore
+ 
+#endif
  
 

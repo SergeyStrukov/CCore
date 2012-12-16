@@ -98,6 +98,8 @@ int main2()
   //Testit<64>().run();
   //Testit<65>().run();
   //Testit<66>().run();
+  //Testit<67>().run();
+  //Testit<68>().run();
   
   //Testit<100>().run();
   //Testit<101>().run();

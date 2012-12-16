@@ -1,9 +1,9 @@
-/* XXX.cpp */ 
+/* EuclidRotate.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
 //
-//  Tag: General HCore XCore Target/
+//  Tag: General
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -13,11 +13,13 @@
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/XXX.h>
+#include <CCore/inc/algon/EuclidRotate.h>
  
 namespace CCore {
+namespace Algon {
 
 
+} // namespace Algon
 } // namespace CCore
  
 
