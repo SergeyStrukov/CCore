@@ -85,6 +85,10 @@ bool Testit<30>::Main()
   
   show(c);
   
+  c.apply_modify( [] (int &obj) { obj+=100; } );
+  
+  show(c);
+  
   try
     {
      RefArray<X,ArrayAlgo<X,X::Flags> > a;

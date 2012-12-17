@@ -20,6 +20,8 @@
 
 #include <CCore/inc/RefPtr.h>
 
+#include <CCore/inc/algon/ApplyToRange.h>
+
 namespace CCore {
 
 /* classes */ 
@@ -442,6 +444,14 @@ class RefArray : RefArrayBase<T,Algo>
     {
      return Base::Append(provide(),creator);
     }
+   
+   // apply
+   
+   template <class FuncInit>
+   void apply_modify(FuncInit func_init) { Algon::ApplyToRange(modify(),func_init); }
+   
+   template <class FuncInit>
+   void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
    
    // swap/move objects
    

@@ -88,8 +88,8 @@ typedef DoSomething&lt;6&gt; DoCreate;
 
 <p>
 <b>DoRaw</b>, <b>DoFill</b>, <b>DoCopy</b>, <b>DoCast</b>, <b>DoSwap</b>, <b>DoCreate</b> are not <b>word</b>s, but 
-<b>Small Data Type</b>s. They designate the correspondent version of constructor and carry two parameters:
-the array length and the reserved length. When an array is being creating, the reserved length determines
+<b>Small Data Type</b>s. They designate the correspondent variant of constructor and carry two parameters:
+the array length and the reserved length. When an array is being created, the reserved length determines
 the memory space to be allocated, and the length is the number of elements to be created.
 </p>
 
@@ -98,14 +98,14 @@ the memory space to be allocated, and the length is the number of elements to be
 <p>
 <b>Array</b> is a container, where multiple items comprise a continuous range.  
 The simplest such "container" is the embedded type "array of" <b>T[Len]</b>.
-Unfortunately, this type lacks many abilities, required in applications, so we need a variaty
+Unfortunately, this type lacks many abilities, required in applications, so we need a variety
 of <b>Array</b>s. We don't use STL <b>vector</b>, because it also has many deficiencies, for example, it cannot contain
 not copyable elements.
 </p>
 
 <p>
 <b>CCore</b> <b>Array</b>s have <b>Range Access Interface</b>. They also provide the index access to elements
-through overloaded <b>operator []</b> and checked index access with the method <b>at()</b>.
+through the overloaded <b>operator []</b> and the checked index access with the method <b>at()</b>.
 </p>
 
 <p>
@@ -118,8 +118,8 @@ Allocation errors and index check errors throw exceptions.
 
 <p>
 <b>Array</b>s can be used with the most types, there is no hard restrictions on the type properties.
-The only strong requirement: the type destructor must be no-throw. Some operation, however,
-requires additional type properties. For example, to use the <b>cloneTo()</b> methods the type must be copyable.
+The only strong requirement: the type destructor must be no-throw. Some operations, however,
+require additional type properties. For example, to use <b>cloneTo()</b> methods the type must be copyable.
 </p>
 
 <p>
@@ -179,6 +179,14 @@ class <span class="att">TempArray</span> : NoCopy
    T &amp; at(ulen index);
    
    const T &amp; at(ulen index) const;
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
  };
 </pre>
 
@@ -188,7 +196,11 @@ Otherwise, the space for elements is dynamically allocated.
 </p>
 
 <p>
-<b>provide()</b> ensures the array have at least the given length, reallocating it if required.
+<b>provide()</b> ensures the array has at least the given length, reallocating it if required.
+</p>
+
+<p>
+<b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
 </p>
 
 <h4>SimpleArray</h4>
@@ -238,6 +250,14 @@ class <span class="att">SimpleArray</span> : NoCopy
     
    const T &amp; at(ulen index) const; 
    
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
    // swap/move objects
    
    void objSwap(SimpleArray&lt;T,Algo&gt; &amp;obj);
@@ -253,6 +273,10 @@ class <span class="att">SimpleArray</span> : NoCopy
 </p>
 
 <p>
+<b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+</p>
+
+<p>
 Unlike <b>TempArray</b>, <b>SimpleArray</b> is swapable and moveable.
 </p>
 
@@ -262,14 +286,14 @@ Unlike <b>TempArray</b>, <b>SimpleArray</b> is swapable and moveable.
 <b>DynArray</b> is the "main" of <b>Array</b>s. It stores elements in a memory space with some
 reserved memory behind. It allows extend the range of elements, if there is an extra memory. 
 If not and the type <b>T</b> supports moving, then the array extension can be performed
-with either the memory block extension (using <b>MemExtend()</b>) or total reallocation with moving content.
+with either the memory block extension (using <b>MemExtend()</b>) or the total reallocation with moving content.
 You can also release the extra memory. All details of the array functionality can be customized using the 
 second template argument, which is an <b>Algorithm Package</b> of array algorithms. You cannot
-change the heap functions though.
+change heap functions though.
 </p>
 
 <p>
-Alone with the standard methods, <b>DynArray</b> has a bunch of methods to initialize and control the array content.
+Alone with standard methods, <b>DynArray</b> has a bunch of methods to initialize and control the array content.
 </p>
 
 <pre>
@@ -565,6 +589,21 @@ The return value is the pointer to the created element.
 </p>
 
 <pre>
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+</pre>
+
+<p>
+<b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+</p>
+
+<pre>
    // swap/move objects
    
    void objSwap(DynArray&lt;T,Algo&gt; &amp;obj);
@@ -582,7 +621,7 @@ The return value is the pointer to the created element.
 <h4>RefArray and AtomicRefArray</h4>
 
 <p>
-<b>RefArray</b> and <b>AtomicRefArray</b> are copyable arrays with an efficient copy constructors.
+<b>RefArray</b> and <b>AtomicRefArray</b> are copyable arrays with efficient copy constructors.
 It's assumed, the type <b>T</b> is copyable.
 Multiple copies of arrays may share the same state. The state has a reference counter, which is used to
 end its life-time. The only difference between <b>RefArray</b> and <b>AtomicRefArray</b> is the former
@@ -590,11 +629,11 @@ uses the atomic reference counting to be viable in a multithreaded environment.
 </p>
 
 <p>
-<b>RefArray</b> has a simulated value semantic. It means that you may consider the different copy of the array
+<b>RefArray</b> has a simulated value semantic. It means that you may consider different copies of an array
 as independent variables, despite they may share the state. That is because <b>RefArray</b> provides
-only the constant access to the elements. So far you don't violate this constantness (using the const-cast, for example),
-you may safely assume the each copy is different. To modify the array you have to call
-the method <b>modify()</b>. This method "unshares" the array, if necessary, and gives the non-constant access to the
+only a constant access to elements. So far you don't violate this constantness (using the const-cast, for example),
+you may safely assume the each copy is different. To modify an array you have to call
+the method <b>modify()</b>. This method "unshares" the array, if necessary, and gives a non-constant access to
 elements.
 </p>
 
@@ -715,6 +754,14 @@ class <span class="att">RefArray</span>
    template &lt;class Creator&gt;
    T * append(Creator creator);
    
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply_modify(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
    // swap/move objects
    
    void objSwap(RefArray&lt;T,Algo&gt; &amp;obj);
@@ -729,6 +776,16 @@ class <span class="att">RefArray</span>
 The <b>RefArray</b> methods are mostly the same as <b>DynArray</b> methods. The differences are:
 index and range access methods gives only the constant access, and the new class-specific method <b>modify()</b>
 exists.
+</p>
+
+<p>
+<b>apply_modify()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+Before application the arrays is unshared.
+</p>
+
+<p>
+<b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+This is a constant method.
 </p>
 
 <h4>Collector</h4>

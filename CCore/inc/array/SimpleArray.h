@@ -20,6 +20,8 @@
  
 #include <CCore/inc/MemAllocGuard.h>
 
+#include <CCore/inc/algon/ApplyToRange.h>
+
 namespace CCore {
 
 /* classes */ 
@@ -77,6 +79,14 @@ class SimpleArray : NoCopy
      
      return ptr[index]; 
     }
+   
+   // apply
+   
+   template <class FuncInit>
+   void apply(FuncInit func_init) { Algon::ApplyToRange(Range(*this),func_init); }
+   
+   template <class FuncInit>
+   void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
    
    // swap/move objects
    

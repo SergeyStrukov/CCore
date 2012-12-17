@@ -85,6 +85,10 @@ bool Testit<29>::Main()
   
   show(c);
   
+  c.apply( [] (int &obj) { obj+=100; } );
+  
+  show(c);
+  
   try
     {
      DynArray<X,ArrayAlgo<X,X::Flags> > a;
