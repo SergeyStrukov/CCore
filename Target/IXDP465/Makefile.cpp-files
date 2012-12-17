@@ -2,6 +2,7 @@
 ../../CCore/src/algon/ApplyToRange.cpp
 ../../CCore/src/algon/BaseRangeAlgo.cpp
 ../../CCore/src/algon/BinarySearch.cpp
+../../CCore/src/algon/CommonIntAlgo.cpp
 ../../CCore/src/algon/EuclidRotate.cpp
 ../../CCore/src/array/ArrayAlgo.cpp
 ../../CCore/src/array/ArrayBase.cpp
@@ -19,6 +20,7 @@
 ../../CCore/src/CharProp.cpp
 ../../CCore/src/CmdInput.cpp
 ../../CCore/src/Cmp.cpp
+../../CCore/src/ContainerList.cpp
 ../../CCore/src/Counters.cpp
 ../../CCore/src/Crc.cpp
 ../../CCore/src/crypton/AES.cpp
@@ -109,6 +111,7 @@
 ../../CCore/src/net/PTPSupportBase.cpp
 ../../CCore/src/net/UDPoint.cpp
 ../../CCore/src/net/XPoint.cpp
+../../CCore/src/NodeAllocator.cpp
 ../../CCore/src/ObjHost.cpp
 ../../CCore/src/OwnPtr.cpp
 ../../CCore/src/Packet.cpp
@@ -164,6 +167,7 @@
 ../../CCore/src/tree/TreeLink.cpp
 ../../CCore/src/tree/TreeUpLink.cpp
 ../../CCore/src/Tree.cpp
+../../CCore/src/TreeMap.cpp
 ../../CCore/src/Tuple.cpp
 ../../CCore/src/UIntSplit.cpp
 ../../XCore/CCore/src/Abort.cpp

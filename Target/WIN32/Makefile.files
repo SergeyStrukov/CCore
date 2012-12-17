@@ -24,6 +24,8 @@ obj/CheckedData.o \
 obj/CmdInput.o \
 obj/Cmp.o \
 obj/Collector.o \
+obj/CommonIntAlgo.o \
+obj/ContainerList.o \
 obj/Counters.o \
 obj/Crc.o \
 obj/DDLChar.o \
@@ -103,6 +105,7 @@ obj/NegBool.o \
 obj/NetBase.o \
 obj/NoCopy.o \
 obj/NoMutex.o \
+obj/NodeAllocator.o \
 obj/Nothing.o \
 obj/ObjHost.o \
 obj/OwnPtr.o \
@@ -205,6 +208,7 @@ obj/TlsSlot.o \
 obj/ToMemBase.o \
 obj/Tree.o \
 obj/TreeLink.o \
+obj/TreeMap.o \
 obj/TreeUpLink.o \
 obj/Tuple.o \
 obj/UDPDevice.o \
@@ -243,6 +247,8 @@ obj/CheckedData.s \
 obj/CmdInput.s \
 obj/Cmp.s \
 obj/Collector.s \
+obj/CommonIntAlgo.s \
+obj/ContainerList.s \
 obj/Counters.s \
 obj/Crc.s \
 obj/DDLChar.s \
@@ -322,6 +328,7 @@ obj/NegBool.s \
 obj/NetBase.s \
 obj/NoCopy.s \
 obj/NoMutex.s \
+obj/NodeAllocator.s \
 obj/Nothing.s \
 obj/ObjHost.s \
 obj/OwnPtr.s \
@@ -424,6 +431,7 @@ obj/TlsSlot.s \
 obj/ToMemBase.s \
 obj/Tree.s \
 obj/TreeLink.s \
+obj/TreeMap.s \
 obj/TreeUpLink.s \
 obj/Tuple.s \
 obj/UDPDevice.s \
@@ -462,6 +470,8 @@ obj/CheckedData.dep \
 obj/CmdInput.dep \
 obj/Cmp.dep \
 obj/Collector.dep \
+obj/CommonIntAlgo.dep \
+obj/ContainerList.dep \
 obj/Counters.dep \
 obj/Crc.dep \
 obj/DDLChar.dep \
@@ -541,6 +551,7 @@ obj/NegBool.dep \
 obj/NetBase.dep \
 obj/NoCopy.dep \
 obj/NoMutex.dep \
+obj/NodeAllocator.dep \
 obj/Nothing.dep \
 obj/ObjHost.dep \
 obj/OwnPtr.dep \
@@ -643,6 +654,7 @@ obj/TlsSlot.dep \
 obj/ToMemBase.dep \
 obj/Tree.dep \
 obj/TreeLink.dep \
+obj/TreeMap.dep \
 obj/TreeUpLink.dep \
 obj/Tuple.dep \
 obj/UDPDevice.dep \
@@ -739,6 +751,12 @@ obj/Cmp.o : ../../CCore/src/Cmp.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Collector.o : ../../CCore/src/array/Collector.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CommonIntAlgo.o : ../../CCore/src/algon/CommonIntAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ContainerList.o : ../../CCore/src/ContainerList.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Counters.o : ../../CCore/src/Counters.cpp
@@ -976,6 +994,9 @@ obj/NoCopy.o : ../../CCore/src/gadget/NoCopy.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/NoMutex.o : ../../CCore/src/task/NoMutex.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NodeAllocator.o : ../../CCore/src/NodeAllocator.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Nothing.o : ../../CCore/src/gadget/Nothing.cpp
@@ -1284,6 +1305,9 @@ obj/Tree.o : ../../CCore/src/Tree.cpp
 obj/TreeLink.o : ../../CCore/src/tree/TreeLink.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/TreeMap.o : ../../CCore/src/TreeMap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/TreeUpLink.o : ../../CCore/src/tree/TreeUpLink.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1389,6 +1413,12 @@ obj/Cmp.s : ../../CCore/src/Cmp.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Collector.s : ../../CCore/src/array/Collector.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CommonIntAlgo.s : ../../CCore/src/algon/CommonIntAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ContainerList.s : ../../CCore/src/ContainerList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Counters.s : ../../CCore/src/Counters.cpp
@@ -1626,6 +1656,9 @@ obj/NoCopy.s : ../../CCore/src/gadget/NoCopy.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/NoMutex.s : ../../CCore/src/task/NoMutex.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NodeAllocator.s : ../../CCore/src/NodeAllocator.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Nothing.s : ../../CCore/src/gadget/Nothing.cpp
@@ -1934,6 +1967,9 @@ obj/Tree.s : ../../CCore/src/Tree.cpp
 obj/TreeLink.s : ../../CCore/src/tree/TreeLink.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/TreeMap.s : ../../CCore/src/TreeMap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/TreeUpLink.s : ../../CCore/src/tree/TreeUpLink.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2040,6 +2076,12 @@ obj/Cmp.dep : ../../CCore/src/Cmp.cpp
 
 obj/Collector.dep : ../../CCore/src/array/Collector.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Collector.o $< -MF $@
+
+obj/CommonIntAlgo.dep : ../../CCore/src/algon/CommonIntAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CommonIntAlgo.o $< -MF $@
+
+obj/ContainerList.dep : ../../CCore/src/ContainerList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ContainerList.o $< -MF $@
 
 obj/Counters.dep : ../../CCore/src/Counters.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Counters.o $< -MF $@
@@ -2277,6 +2319,9 @@ obj/NoCopy.dep : ../../CCore/src/gadget/NoCopy.cpp
 
 obj/NoMutex.dep : ../../CCore/src/task/NoMutex.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NoMutex.o $< -MF $@
+
+obj/NodeAllocator.dep : ../../CCore/src/NodeAllocator.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NodeAllocator.o $< -MF $@
 
 obj/Nothing.dep : ../../CCore/src/gadget/Nothing.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Nothing.o $< -MF $@
@@ -2583,6 +2628,9 @@ obj/Tree.dep : ../../CCore/src/Tree.cpp
 
 obj/TreeLink.dep : ../../CCore/src/tree/TreeLink.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TreeLink.o $< -MF $@
+
+obj/TreeMap.dep : ../../CCore/src/TreeMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TreeMap.o $< -MF $@
 
 obj/TreeUpLink.dep : ../../CCore/src/tree/TreeUpLink.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TreeUpLink.o $< -MF $@

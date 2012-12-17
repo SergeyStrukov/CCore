@@ -68,6 +68,9 @@ OBJ_LIST = \
 ../test-obj/test0066.AtomicRefArray2.o \
 ../test-obj/test0067.BinarySearch.o \
 ../test-obj/test0068.EuclidRotate.o \
+../test-obj/test0069.RBTreeMap.o \
+../test-obj/test0070.LinearSList.o \
+../test-obj/test0071.GCD.o \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
@@ -173,6 +176,9 @@ ASM_LIST = \
 ../test-obj/test0066.AtomicRefArray2.s \
 ../test-obj/test0067.BinarySearch.s \
 ../test-obj/test0068.EuclidRotate.s \
+../test-obj/test0069.RBTreeMap.s \
+../test-obj/test0070.LinearSList.s \
+../test-obj/test0071.GCD.s \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
@@ -278,6 +284,9 @@ DEP_LIST = \
 ../test-obj/test0066.AtomicRefArray2.dep \
 ../test-obj/test0067.BinarySearch.dep \
 ../test-obj/test0068.EuclidRotate.dep \
+../test-obj/test0069.RBTreeMap.dep \
+../test-obj/test0070.LinearSList.dep \
+../test-obj/test0071.GCD.dep \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
@@ -524,6 +533,15 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0068.EuclidRotate.o : ../../../CCore/test/test0068.EuclidRotate.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0069.RBTreeMap.o : ../../../CCore/test/test0069.RBTreeMap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0070.LinearSList.o : ../../../CCore/test/test0070.LinearSList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0071.GCD.o : ../../../CCore/test/test0071.GCD.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -834,6 +852,15 @@ include $(RULES_FILE)
 ../test-obj/test0068.EuclidRotate.s : ../../../CCore/test/test0068.EuclidRotate.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0069.RBTreeMap.s : ../../../CCore/test/test0069.RBTreeMap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test0070.LinearSList.s : ../../../CCore/test/test0070.LinearSList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test0071.GCD.s : ../../../CCore/test/test0071.GCD.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1141,6 +1168,15 @@ include $(RULES_FILE)
 
 ../test-obj/test0068.EuclidRotate.dep : ../../../CCore/test/test0068.EuclidRotate.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0068.EuclidRotate.o $< -MF $@
+
+../test-obj/test0069.RBTreeMap.dep : ../../../CCore/test/test0069.RBTreeMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0069.RBTreeMap.o $< -MF $@
+
+../test-obj/test0070.LinearSList.dep : ../../../CCore/test/test0070.LinearSList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0070.LinearSList.o $< -MF $@
+
+../test-obj/test0071.GCD.dep : ../../../CCore/test/test0071.GCD.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0071.GCD.o $< -MF $@
 
 ../test-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@
