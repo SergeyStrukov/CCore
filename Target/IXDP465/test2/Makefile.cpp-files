@@ -69,7 +69,7 @@
 ../../../CCore/test/test0067.BinarySearch.cpp
 ../../../CCore/test/test0068.EuclidRotate.cpp
 ../../../CCore/test/test0069.RBTreeMap.cpp
-../../../CCore/test/test0070.LinearSList.cpp
+../../../CCore/test/test0070.ContainerList.cpp
 ../../../CCore/test/test0071.GCD.cpp
 ../../../CCore/test/test0100.Bridge.cpp
 ../../../CCore/test/test0101.PTP.cpp

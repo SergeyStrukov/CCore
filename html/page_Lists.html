@@ -625,6 +625,8 @@ There are four inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b> and <b>FirstLa
     // cursor
       
     void operator ++ () { ptr=Link(ptr).next; }
+      
+    void operator -- () { ptr=Link(ptr).prev; }
    };
 </pre>
 
@@ -657,6 +659,8 @@ In fact, it may be any element or null pointer.
     // cursor
       
     void operator ++ () { ptr=Link(ptr).prev; }
+      
+    void operator -- () { ptr=Link(ptr).next; }
    };
 </pre>
 
@@ -872,7 +876,7 @@ Circular list has a top element, the last element is linked to the top. Double l
 
 <pre>
 template &lt;DLink&lt;T&gt; T::* LinkMember&gt;
-struct CircularAlgo
+struct <span class="att">CircularAlgo</span>
  {
   static DLink&lt;T&gt; &amp; Link(T *obj) { return obj->*LinkMember; }
     
@@ -990,6 +994,8 @@ There are three inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b>.
       
     void operator ++ ();
       
+    void operator -- ();
+
     // insert object
        
     void ins_after(T *obj); // +, obj!=0 unlinked
@@ -1030,6 +1036,8 @@ after the current (non-null) position.
     // cursor
       
     void operator ++ ();
+      
+    void operator -- ();
        
     // insert object
       

@@ -70,7 +70,7 @@ OBJ_LIST = \
 ../test2-obj/test0067.BinarySearch.o \
 ../test2-obj/test0068.EuclidRotate.o \
 ../test2-obj/test0069.RBTreeMap.o \
-../test2-obj/test0070.LinearSList.o \
+../test2-obj/test0070.ContainerList.o \
 ../test2-obj/test0071.GCD.o \
 ../test2-obj/test0100.Bridge.o \
 ../test2-obj/test0101.PTP.o \
@@ -184,7 +184,7 @@ ASM_LIST = \
 ../test2-obj/test0067.BinarySearch.s \
 ../test2-obj/test0068.EuclidRotate.s \
 ../test2-obj/test0069.RBTreeMap.s \
-../test2-obj/test0070.LinearSList.s \
+../test2-obj/test0070.ContainerList.s \
 ../test2-obj/test0071.GCD.s \
 ../test2-obj/test0100.Bridge.s \
 ../test2-obj/test0101.PTP.s \
@@ -298,7 +298,7 @@ DEP_LIST = \
 ../test2-obj/test0067.BinarySearch.dep \
 ../test2-obj/test0068.EuclidRotate.dep \
 ../test2-obj/test0069.RBTreeMap.dep \
-../test2-obj/test0070.LinearSList.dep \
+../test2-obj/test0070.ContainerList.dep \
 ../test2-obj/test0071.GCD.dep \
 ../test2-obj/test0100.Bridge.dep \
 ../test2-obj/test0101.PTP.dep \
@@ -559,7 +559,7 @@ include $(RULES_FILE)
 ../test2-obj/test0069.RBTreeMap.o : ../../../CCore/test/test0069.RBTreeMap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-../test2-obj/test0070.LinearSList.o : ../../../CCore/test/test0070.LinearSList.cpp
+../test2-obj/test0070.ContainerList.o : ../../../CCore/test/test0070.ContainerList.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0071.GCD.o : ../../../CCore/test/test0071.GCD.cpp
@@ -894,7 +894,7 @@ include $(RULES_FILE)
 ../test2-obj/test0069.RBTreeMap.s : ../../../CCore/test/test0069.RBTreeMap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-../test2-obj/test0070.LinearSList.s : ../../../CCore/test/test0070.LinearSList.cpp
+../test2-obj/test0070.ContainerList.s : ../../../CCore/test/test0070.ContainerList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 ../test2-obj/test0071.GCD.s : ../../../CCore/test/test0071.GCD.cpp
@@ -1229,8 +1229,8 @@ include $(RULES_FILE)
 ../test2-obj/test0069.RBTreeMap.dep : ../../../CCore/test/test0069.RBTreeMap.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0069.RBTreeMap.o $< -MF $@
 
-../test2-obj/test0070.LinearSList.dep : ../../../CCore/test/test0070.LinearSList.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0070.LinearSList.o $< -MF $@
+../test2-obj/test0070.ContainerList.dep : ../../../CCore/test/test0070.ContainerList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0070.ContainerList.o $< -MF $@
 
 ../test2-obj/test0071.GCD.dep : ../../../CCore/test/test0071.GCD.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0071.GCD.o $< -MF $@
