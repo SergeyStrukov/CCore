@@ -56,6 +56,11 @@ class RBTreeMap : NoCopy
      
      return 0;
     }
+   
+   static const K & GetKey(Node *node)
+    {
+     return Algo::Link(node).key;
+    }
 
    template <class Func>
    static void ApplyIncr(Node *node,Func &func);
@@ -94,7 +99,7 @@ class RBTreeMap : NoCopy
    
    struct NodePtr
     {
-     void *node;
+     Node *node;
 
      NodePtr() : node(0) {}
      
@@ -102,15 +107,17 @@ class RBTreeMap : NoCopy
      
      // object ptr
      
-     void * operator + () const { return node; }
+     Node * operator + () const { return node; }
      
      bool operator ! () const { return !node; }
-    
-     T * getPtr() const { return &static_cast<Node *>(node)->obj; }
      
-     T & operator * () const { return *getPtr(); }
+     T * getPtr() const { return &node->obj; }
      
-     T * operator -> () const { return getPtr(); }
+     T & operator * () const { return node->obj; }
+     
+     T * operator -> () const { return &node->obj; }
+     
+     const K & getKey() const { return GetKey(node); }
     };
    
    NodePtr find_ptr(KRef key) const;
@@ -177,7 +184,7 @@ void RBTreeMap<K,T,KRef,Allocator>::ApplyIncr(Node *node,Func &func)
     {
      ApplyIncr(Algo::Link(node).lo,func);
      
-     func(Algo::Link(node).key,node->obj);
+     func(GetKey(node),node->obj);
      
      ApplyIncr(Algo::Link(node).hi,func);
     }
@@ -191,7 +198,7 @@ void RBTreeMap<K,T,KRef,Allocator>::ApplyDecr(Node *node,Func &func)
     {
      ApplyDecr(Algo::Link(node).hi,func);
      
-     func(Algo::Link(node).key,node->obj);
+     func(GetKey(node),node->obj);
      
      ApplyDecr(Algo::Link(node).lo,func);
     }
@@ -293,7 +300,16 @@ bool RBTreeMap<K,T,KRef,Allocator>::delMax()
 template <class K,class T,class KRef,template <class Node> class Allocator>
 bool RBTreeMap<K,T,KRef,Allocator>::del(NodePtr node_ptr)
  {
-  return allocator.free(static_cast<Node *>(node_ptr.node));
+  if( Node *node=node_ptr.node )
+    {
+     root.del(node);
+  
+     allocator.free(node);
+     
+     return true;
+    }
+  
+  return false;
  }
 
 template <class K,class T,class KRef,template <class Node> class Allocator>
