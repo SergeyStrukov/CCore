@@ -551,6 +551,8 @@ struct DLink
       // cursor
       
       void operator ++ () { ptr=Link(ptr).next; }
+      
+      void operator -- () { ptr=Link(ptr).prev; }
      };
      
     // null <- ... <- prev <- ptr
@@ -576,6 +578,8 @@ struct DLink
       // cursor
       
       void operator ++ () { ptr=Link(ptr).prev; }
+      
+      void operator -- () { ptr=Link(ptr).next; }
      };
      
     // null <- top -> next -> ... -> null
@@ -1040,6 +1044,13 @@ struct DLink
           ptr=0;
        }
       
+      void operator -- ()
+       {
+        ptr=Link(ptr).prev;
+        
+        if( ptr==last ) ptr=0;
+       }
+      
       // insert object
        
       void ins_after(T *obj) // +, obj!=0 unlinked
@@ -1088,6 +1099,13 @@ struct DLink
           ptr=Link(ptr).prev;
         else
           ptr=0;
+       }
+      
+      void operator -- ()
+       {
+        ptr=Link(ptr).next;
+        
+        if( ptr==first ) ptr=0;
        }
        
       // insert object
