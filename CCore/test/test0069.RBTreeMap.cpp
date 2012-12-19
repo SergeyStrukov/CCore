@@ -16,6 +16,7 @@
 #include <CCore/test/test.h>
 
 #include <CCore/inc/TreeMap.h>
+#include <CCore/inc/Timer.h>
 
 namespace App {
 
@@ -36,9 +37,10 @@ void test1()
   Putch(Con,'\n');
  }
 
-void test2()
+template <class T>
+void testMap()
  {
-  RBTreeMap<int,int,int,NodePoolAllocator> map;
+  T map;
   
   for(int i=1; i<10 ;i++) map.find_or_add(i,i);
   
@@ -80,6 +82,48 @@ void test2()
   Putch(Con,'\n');
  }
 
+void test2()
+ {
+  testMap<RBTreeMap<int,int,int,NodePoolAllocator> >();
+ }
+
+void test3()
+ {
+  testMap<RadixTreeMap<unsigned,int> >();
+ }
+
+template <class T>
+void testSpeed(StrLen name,ulen count)
+ {
+  T map;
+  
+  SecTimer timer;
+  
+  for(ulen i=0; i<count ;i++) map.find_or_add(i,i);
+  
+  Printf(Con,"#; : count = #; time = #; sec\n",name,count,timer.get());
+ }
+
+void test4(ulen count)
+ {
+  testSpeed<RBTreeMap<ulen,ulen,ulen,NodePoolAllocator> >("RBTree-pool",count);
+ }
+
+void test5(ulen count)
+ {
+  testSpeed<RadixTreeMap<ulen,ulen,NodePoolAllocator> >("RadixTree-pool",count);
+ }
+
+void test6(ulen count)
+ {
+  testSpeed<RBTreeMap<ulen,ulen> >("RBTree",count);
+ }
+
+void test7(ulen count)
+ {
+  testSpeed<RadixTreeMap<ulen,ulen> >("RadixTree",count);
+ }
+
 } // namespace Private_0069
  
 using namespace Private_0069; 
@@ -94,6 +138,11 @@ bool Testit<69>::Main()
  {
   //test1();
   //test2();
+  //test3();
+  //test4(20000000);
+  //test5(20000000);
+  //test6(20000000);
+  //test7(20000000);
   
   return true;
  }

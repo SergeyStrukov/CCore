@@ -14,9 +14,17 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/TreeMap.h>
+
+#include <CCore/inc/Exception.h>
  
 namespace CCore {
 
+/* function */
+
+void GuardKeyOutOfRange()
+ {
+  Printf(Exception,"CCore::KeyRange<K>::guard(...) : key is out of range");
+ }
 
 } // namespace CCore
  
