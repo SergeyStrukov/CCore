@@ -170,6 +170,33 @@ class RBTreeMap : NoCopy
    
    template <class FuncInit>
    void applyDecr(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(RBTreeMap<K,T,KRef,Allocator> &obj)
+    {
+     Swap(allocator,obj.allocator);
+     Swap(root,obj.root);
+    }
+   
+   explicit RBTreeMap(ToMoveCtor<RBTreeMap<K,T,KRef,Allocator> > obj)
+    : allocator(ObjToMove(obj->allocator)),
+      root(Replace_null(obj->root))
+    {
+    }
+   
+   RBTreeMap<K,T,KRef,Allocator> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = Allocator<Node>::Default_no_throw,
+     Copy_no_throw = true
+    };
  };
 
 template <class K,class T,class KRef,template <class Node> class Allocator>
@@ -515,6 +542,35 @@ class RadixTreeMap : NoCopy
    
    template <class FuncInit>
    void applyDecr(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(RadixTreeMap<K,T,Allocator> &obj)
+    {
+     Swap(key_range,obj.key_range);
+     Swap(allocator,obj.allocator);
+     Swap(root,obj.root);
+    }
+   
+   explicit RadixTreeMap(ToMoveCtor<RadixTreeMap<K,T,Allocator> > obj)
+    : key_range(obj->key_range),
+      allocator(ObjToMove(obj->allocator)),
+      root(Replace_null(obj->root))
+    {
+    }
+   
+   RadixTreeMap<K,T,Allocator> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = Allocator<Node>::Default_no_throw,
+     Copy_no_throw = true
+    };
  };
 
 template <class K,class T,template <class Node> class Allocator> 

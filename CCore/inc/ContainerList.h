@@ -163,6 +163,33 @@ class LinearSList : NoCopy
    
    template <class FuncInit>
    void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
+   
+   // swap/move objects
+   
+   void objSwap(LinearSList<T,Allocator> &obj)
+    {
+     Swap(allocator,obj.allocator);
+     Swap(list,obj.list);
+    }
+   
+   explicit LinearSList(ToMoveCtor<LinearSList<T,Allocator> > obj)
+    : allocator(ObjToMove(obj->allocator)),
+      list(Replace_null(obj->list))
+    {
+    }
+   
+   LinearSList<T,Allocator> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = Allocator<Node>::Default_no_throw,
+     Copy_no_throw = true
+    };
  };
 
 template <class T,template <class Node> class Allocator> 
@@ -352,6 +379,33 @@ class LinearSList2 : NoCopy
    
    template <class FuncInit>
    void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
+   
+   // swap/move objects
+   
+   void objSwap(LinearSList2<T,Allocator> &obj)
+    {
+     Swap(allocator,obj.allocator);
+     Swap(list,obj.list);
+    }
+   
+   explicit LinearSList2(ToMoveCtor<LinearSList2<T,Allocator> > obj)
+    : allocator(ObjToMove(obj->allocator)),
+      list(Replace_null(obj->list))
+    {
+    }
+   
+   LinearSList2<T,Allocator> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = Allocator<Node>::Default_no_throw,
+     Copy_no_throw = true
+    };
  };  
    
 template <class T,template <class Node> class Allocator> 
@@ -556,6 +610,33 @@ class CircularSList : NoCopy
    
    template <class FuncInit>
    void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
+   
+   // swap/move objects
+   
+   void objSwap(CircularSList<T,Allocator> &obj)
+    {
+     Swap(allocator,obj.allocator);
+     Swap(list,obj.list);
+    }
+   
+   explicit CircularSList(ToMoveCtor<CircularSList<T,Allocator> > obj)
+    : allocator(ObjToMove(obj->allocator)),
+      list(Replace_null(obj->list))
+    {
+    }
+   
+   CircularSList<T,Allocator> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = Allocator<Node>::Default_no_throw,
+     Copy_no_throw = true
+    };
  };
 
 template <class T,template <class Node> class Allocator> 
@@ -751,6 +832,33 @@ class LinearDList : NoCopy
    
    template <class FuncInit>
    void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
+   
+   // swap/move objects
+   
+   void objSwap(LinearDList<T,Allocator> &obj)
+    {
+     Swap(allocator,obj.allocator);
+     Swap(list,obj.list);
+    }
+   
+   explicit LinearDList(ToMoveCtor<LinearDList<T,Allocator> > obj)
+    : allocator(ObjToMove(obj->allocator)),
+      list(Replace_null(obj->list))
+    {
+    }
+   
+   LinearDList<T,Allocator> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = Allocator<Node>::Default_no_throw,
+     Copy_no_throw = true
+    };
  };
 
 template <class T,template <class Node> class Allocator> 
@@ -1051,6 +1159,33 @@ class LinearDList2 : NoCopy
    
    template <class FuncInit>
    void applyReverse(FuncInit func_init) { Algon::ApplyToRange(getStartReverse(),func_init); }
+   
+   // swap/move objects
+   
+   void objSwap(LinearDList2<T,Allocator> &obj)
+    {
+     Swap(allocator,obj.allocator);
+     Swap(list,obj.list);
+    }
+   
+   explicit LinearDList2(ToMoveCtor<LinearDList2<T,Allocator> > obj)
+    : allocator(ObjToMove(obj->allocator)),
+      list(Replace_null(obj->list))
+    {
+    }
+   
+   LinearDList2<T,Allocator> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = Allocator<Node>::Default_no_throw,
+     Copy_no_throw = true
+    };
  };
 
 template <class T,template <class Node> class Allocator> 
@@ -1405,6 +1540,33 @@ class CircularDList : NoCopy
    
    template <class FuncInit>
    void applyReverse(FuncInit func_init) { Algon::ApplyToRange(getStartReverse(),func_init); }
+   
+   // swap/move objects
+   
+   void objSwap(CircularDList<T,Allocator> &obj)
+    {
+     Swap(allocator,obj.allocator);
+     Swap(list,obj.list);
+    }
+   
+   explicit CircularDList(ToMoveCtor<CircularDList<T,Allocator> > obj)
+    : allocator(ObjToMove(obj->allocator)),
+      list(Replace_null(obj->list))
+    {
+    }
+   
+   CircularDList<T,Allocator> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = Allocator<Node>::Default_no_throw,
+     Copy_no_throw = true
+    };
  };
 
 template <class T,template <class Node> class Allocator> 

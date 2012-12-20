@@ -17,6 +17,9 @@
 #define CCore_inc_NodeAllocator_h
 
 #include <CCore/inc/MemBase.h>
+#include <CCore/inc/Move.h>
+
+#include <CCore/inc/algon/GCDConst.h>
  
 namespace CCore {
 
@@ -72,6 +75,31 @@ class NodeAllocator : NoCopy
      
      return false;
     }
+
+   // swap/move objects
+   
+   void objSwap(NodeAllocator<Node> &obj)
+    {
+     Swap(count,obj.count);
+    }
+   
+   explicit NodeAllocator(ToMoveCtor<NodeAllocator<Node> > obj)
+    : count(obj->count)
+    {
+    } 
+    
+   NodeAllocator<Node> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = true,
+     Copy_no_throw = true
+    };
  };
 
 /* class MemBlockPool */
@@ -107,6 +135,15 @@ class MemBlockPool : NoCopy
   
    static const ulen DefaultCount = 100 ;
   
+   template <ulen Len,ulen AlignOf>
+   struct LenCheck
+    {
+     static const ulen A = Algon::LCMConst<ulen,AlignOf,alignof (FreeNode)>::Result() ;
+     static const ulen Lim = A*((MaxULen-Delta)/A) ;
+     
+     enum RetType { Ret = ( Len <= Lim && sizeof (FreeNode) <= Lim ) };
+    };
+   
    MemBlockPool(ulen len,ulen align_of,ulen alloc_count=DefaultCount);
    
    ~MemBlockPool();
@@ -152,6 +189,39 @@ class MemBlockPool : NoCopy
       
       void * disarm() { return Replace_null(mem); }
     };
+   
+   // swap/move objects
+   
+   void objSwap(MemBlockPool &obj)
+    {
+     Swap(len,obj.len);
+     Swap(alloc_count,obj.alloc_count);
+     Swap(alloc_len,obj.alloc_len);
+     
+     Swap(free_list,obj.free_list);
+     Swap(mem_list,obj.mem_list);
+     
+     Swap(cur,obj.cur);
+     Swap(count,obj.count);
+    }
+   
+   explicit MemBlockPool(ToMoveCtor<MemBlockPool> obj)
+    : len(obj->len),
+      alloc_count(obj->alloc_count),
+      alloc_len(obj->alloc_len),
+      
+      free_list(obj->free_list),
+      mem_list(Replace_null(obj->mem_list)),
+      
+      cur(obj->cur),
+      count(obj->count)
+    {
+    } 
+    
+   MemBlockPool * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
  };
 
 /* class NodePoolAllocator<Node> */
@@ -208,6 +278,33 @@ class NodePoolAllocator : NoCopy
      
      return false;
     }
+   
+   // swap/move objects
+   
+   void objSwap(NodePoolAllocator<Node> &obj)
+    {
+     Swap(pool,obj.pool);
+     Swap(count,obj.count);
+    }
+   
+   explicit NodePoolAllocator(ToMoveCtor<NodePoolAllocator<Node> > obj)
+    : pool(ObjToMove(obj->pool)),
+      count(Replace_null(obj->count))
+    {
+    } 
+    
+   NodePoolAllocator<Node> * objMove(Place<void> place)
+    {
+     return CtorMove(this,place); 
+    }
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = MemBlockPool::LenCheck<sizeof (Node),alignof (Node)>::Ret,
+     Copy_no_throw = true
+    };
  };
 
 } // namespace CCore

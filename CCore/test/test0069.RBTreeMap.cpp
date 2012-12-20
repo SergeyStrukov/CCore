@@ -124,6 +124,58 @@ void test7(ulen count)
   testSpeed<RadixTreeMap<ulen,ulen> >("RadixTree",count);
  }
 
+template <class T>
+void testSwap()
+ {
+  T map;
+  
+  for(int i=1; i<10 ;i++) map.find_or_add(i,i);
+  
+  T map1;
+  
+  Swap(map,map1);
+  
+  int s=0;
+  
+  map1.applyIncr( [&s] (int,int i) { s+=i; } );
+  
+  Printf(Con,"#;\n",s);
+ }
+
+template <class T>
+void testMove()
+ {
+  InitExitObject<T> init_obj;
+  InitStorage<sizeof (T)> mem;
+  
+  init_obj.clean();
+  init_obj.init();
+  
+  for(int i=1; i<10 ;i++) init_obj->find_or_add(i,i);
+
+  T *map=Move(init_obj.getPtr(),mem.getPlace());
+    
+  int s=0;
+    
+  map->applyIncr( [&s] (int,int i) { s+=i; } );
+    
+  Printf(Con,"#;\n",s);
+  
+  map->~T();
+ }
+
+void test8()
+ {
+  testSwap<RBTreeMap<ulen,ulen,ulen,NodePoolAllocator> >();
+  testMove<RBTreeMap<ulen,ulen,ulen,NodePoolAllocator> >();
+ }
+
+void test9()
+ {
+  testSwap<RadixTreeMap<ulen,ulen,NodePoolAllocator> >();
+  testMove<RadixTreeMap<ulen,ulen,NodePoolAllocator> >();
+ }
+
 } // namespace Private_0069
  
 using namespace Private_0069; 
@@ -143,6 +195,8 @@ bool Testit<69>::Main()
   //test5(20000000);
   //test6(20000000);
   //test7(20000000);
+  //test8();
+  //test9();
   
   return true;
  }

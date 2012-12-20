@@ -383,6 +383,102 @@ void test6()
   Printf(Con,"#;\n",list.getCount());
  }
 
+template <class T,template <class Node> class Allocator>
+void Ins(LinearSList<T,Allocator> &list,const T &obj)
+ {
+  list.ins(obj);
+ }
+
+template <class T,template <class Node> class Allocator>
+void Ins(LinearSList2<T,Allocator> &list,const T &obj)
+ {
+  list.insFirst(obj);
+ }
+
+template <class T,template <class Node> class Allocator>
+void Ins(CircularSList<T,Allocator> &list,const T &obj)
+ {
+  list.ins(obj);
+ }
+
+template <class T,template <class Node> class Allocator>
+void Ins(LinearDList<T,Allocator> &list,const T &obj)
+ {
+  list.ins(obj);
+ }
+
+template <class T,template <class Node> class Allocator>
+void Ins(LinearDList2<T,Allocator> &list,const T &obj)
+ {
+  list.insFirst(obj);
+ }
+
+template <class T,template <class Node> class Allocator>
+void Ins(CircularDList<T,Allocator> &list,const T &obj)
+ {
+  list.insFirst(obj);
+ }
+
+template <class T>
+void testSwap()
+ {
+  T list;
+  
+  for(int i=1; i<10 ;i++) Ins(list,i);
+  
+  T list1;
+  
+  Swap(list,list1);
+  
+  int s=0;
+  
+  list1.apply( [&s] (int i) { s+=i; } );
+  
+  Printf(Con,"#;\n",s);
+ }
+
+void test7()
+ {
+  testSwap<LinearSList<int,NodePoolAllocator> >();
+  testSwap<LinearSList2<int,NodePoolAllocator> >();
+  testSwap<CircularSList<int,NodePoolAllocator> >();
+  testSwap<LinearDList<int,NodePoolAllocator> >();
+  testSwap<LinearDList2<int,NodePoolAllocator> >();
+  testSwap<CircularDList<int,NodePoolAllocator> >();
+ }
+
+template <class T>
+void testMove()
+ {
+  InitExitObject<T> init_obj;
+  InitStorage<sizeof (T)> mem;
+  
+  init_obj.clean();
+  init_obj.init();
+  
+  for(int i=1; i<10 ;i++) Ins(*init_obj,i);
+
+  T *map=Move(init_obj.getPtr(),mem.getPlace());
+    
+  int s=0;
+    
+  map->apply( [&s] (int i) { s+=i; } );
+    
+  Printf(Con,"#;\n",s);
+  
+  map->~T();
+ }
+
+void test8()
+ {
+  testMove<LinearSList<int,NodePoolAllocator> >();
+  testMove<LinearSList2<int,NodePoolAllocator> >();
+  testMove<CircularSList<int,NodePoolAllocator> >();
+  testMove<LinearDList<int,NodePoolAllocator> >();
+  testMove<LinearDList2<int,NodePoolAllocator> >();
+  testMove<CircularDList<int,NodePoolAllocator> >();
+ }
+
 } // namespace Private_0070
  
 using namespace Private_0070; 
@@ -400,7 +496,9 @@ bool Testit<70>::Main()
   //test3();
   //test4();
   //test5();
-  test6();
+  //test6();
+  //test7();
+  //test8();
   
   return true;
  }
