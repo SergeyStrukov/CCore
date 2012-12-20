@@ -80,6 +80,7 @@ obj/Flash.o \
 obj/FuncTask.o \
 obj/Function.o \
 obj/FunctorType.o \
+obj/GCDConst.o \
 obj/Gadget.o \
 obj/GenFile.o \
 obj/HFSBase.o \
@@ -329,6 +330,7 @@ obj/Flash.s \
 obj/FuncTask.s \
 obj/Function.s \
 obj/FunctorType.s \
+obj/GCDConst.s \
 obj/Gadget.s \
 obj/GenFile.s \
 obj/HFSBase.s \
@@ -578,6 +580,7 @@ obj/Flash.dep \
 obj/FuncTask.dep \
 obj/Function.dep \
 obj/FunctorType.dep \
+obj/GCDConst.dep \
 obj/Gadget.dep \
 obj/GenFile.dep \
 obj/HFSBase.dep \
@@ -1001,6 +1004,9 @@ obj/Function.o : ../../CCore/src/gadget/Function.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FunctorType.o : ../../CCore/src/FunctorType.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/GCDConst.o : ../../CCore/src/algon/GCDConst.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Gadget.o : ../../CCore/src/Gadget.cpp
@@ -1743,6 +1749,9 @@ obj/Function.s : ../../CCore/src/gadget/Function.cpp
 obj/FunctorType.s : ../../CCore/src/FunctorType.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/GCDConst.s : ../../CCore/src/algon/GCDConst.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Gadget.s : ../../CCore/src/Gadget.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2482,6 +2491,9 @@ obj/Function.dep : ../../CCore/src/gadget/Function.cpp
 
 obj/FunctorType.dep : ../../CCore/src/FunctorType.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FunctorType.o $< -MF $@
+
+obj/GCDConst.dep : ../../CCore/src/algon/GCDConst.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/GCDConst.o $< -MF $@
 
 obj/Gadget.dep : ../../CCore/src/Gadget.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Gadget.o $< -MF $@

@@ -4,6 +4,7 @@
 ../../CCore/src/algon/BinarySearch.cpp
 ../../CCore/src/algon/CommonIntAlgo.cpp
 ../../CCore/src/algon/EuclidRotate.cpp
+../../CCore/src/algon/GCDConst.cpp
 ../../CCore/src/array/ArrayAlgo.cpp
 ../../CCore/src/array/ArrayBase.cpp
 ../../CCore/src/array/AtomicRefArray.cpp

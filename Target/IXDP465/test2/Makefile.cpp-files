@@ -71,6 +71,7 @@
 ../../../CCore/test/test0069.RBTreeMap.cpp
 ../../../CCore/test/test0070.ContainerList.cpp
 ../../../CCore/test/test0071.GCD.cpp
+../../../CCore/test/test0072.GCDConst.cpp
 ../../../CCore/test/test0100.Bridge.cpp
 ../../../CCore/test/test0101.PTP.cpp
 ../../../CCore/test/test0102.PrintFile.cpp

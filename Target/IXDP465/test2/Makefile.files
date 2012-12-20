@@ -72,6 +72,7 @@ OBJ_LIST = \
 ../test2-obj/test0069.RBTreeMap.o \
 ../test2-obj/test0070.ContainerList.o \
 ../test2-obj/test0071.GCD.o \
+../test2-obj/test0072.GCDConst.o \
 ../test2-obj/test0100.Bridge.o \
 ../test2-obj/test0101.PTP.o \
 ../test2-obj/test0102.PrintFile.o \
@@ -186,6 +187,7 @@ ASM_LIST = \
 ../test2-obj/test0069.RBTreeMap.s \
 ../test2-obj/test0070.ContainerList.s \
 ../test2-obj/test0071.GCD.s \
+../test2-obj/test0072.GCDConst.s \
 ../test2-obj/test0100.Bridge.s \
 ../test2-obj/test0101.PTP.s \
 ../test2-obj/test0102.PrintFile.s \
@@ -300,6 +302,7 @@ DEP_LIST = \
 ../test2-obj/test0069.RBTreeMap.dep \
 ../test2-obj/test0070.ContainerList.dep \
 ../test2-obj/test0071.GCD.dep \
+../test2-obj/test0072.GCDConst.dep \
 ../test2-obj/test0100.Bridge.dep \
 ../test2-obj/test0101.PTP.dep \
 ../test2-obj/test0102.PrintFile.dep \
@@ -563,6 +566,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0071.GCD.o : ../../../CCore/test/test0071.GCD.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test2-obj/test0072.GCDConst.o : ../../../CCore/test/test0072.GCDConst.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -900,6 +906,9 @@ include $(RULES_FILE)
 ../test2-obj/test0071.GCD.s : ../../../CCore/test/test0071.GCD.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test2-obj/test0072.GCDConst.s : ../../../CCore/test/test0072.GCDConst.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test2-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1234,6 +1243,9 @@ include $(RULES_FILE)
 
 ../test2-obj/test0071.GCD.dep : ../../../CCore/test/test0071.GCD.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0071.GCD.o $< -MF $@
+
+../test2-obj/test0072.GCDConst.dep : ../../../CCore/test/test0072.GCDConst.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0072.GCDConst.o $< -MF $@
 
 ../test2-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@
