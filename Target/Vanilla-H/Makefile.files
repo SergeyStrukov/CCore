@@ -25,6 +25,8 @@ obj/CmdInput.o \
 obj/Cmp.o \
 obj/Collector.o \
 obj/CommonIntAlgo.o \
+obj/CompactList.o \
+obj/CompactNodeAllocator.o \
 obj/ContainerList.o \
 obj/Counters.o \
 obj/Crc.o \
@@ -245,6 +247,8 @@ obj/CmdInput.s \
 obj/Cmp.s \
 obj/Collector.s \
 obj/CommonIntAlgo.s \
+obj/CompactList.s \
+obj/CompactNodeAllocator.s \
 obj/ContainerList.s \
 obj/Counters.s \
 obj/Crc.s \
@@ -465,6 +469,8 @@ obj/CmdInput.dep \
 obj/Cmp.dep \
 obj/Collector.dep \
 obj/CommonIntAlgo.dep \
+obj/CompactList.dep \
+obj/CompactNodeAllocator.dep \
 obj/ContainerList.dep \
 obj/Counters.dep \
 obj/Crc.dep \
@@ -740,6 +746,12 @@ obj/Collector.o : ../../CCore/src/array/Collector.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CommonIntAlgo.o : ../../CCore/src/algon/CommonIntAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CompactList.o : ../../CCore/src/CompactList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CompactNodeAllocator.o : ../../CCore/src/CompactNodeAllocator.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ContainerList.o : ../../CCore/src/ContainerList.cpp
@@ -1395,6 +1407,12 @@ obj/Collector.s : ../../CCore/src/array/Collector.cpp
 obj/CommonIntAlgo.s : ../../CCore/src/algon/CommonIntAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/CompactList.s : ../../CCore/src/CompactList.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/CompactNodeAllocator.s : ../../CCore/src/CompactNodeAllocator.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ContainerList.s : ../../CCore/src/ContainerList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2047,6 +2065,12 @@ obj/Collector.dep : ../../CCore/src/array/Collector.cpp
 
 obj/CommonIntAlgo.dep : ../../CCore/src/algon/CommonIntAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CommonIntAlgo.o $< -MF $@
+
+obj/CompactList.dep : ../../CCore/src/CompactList.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CompactList.o $< -MF $@
+
+obj/CompactNodeAllocator.dep : ../../CCore/src/CompactNodeAllocator.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CompactNodeAllocator.o $< -MF $@
 
 obj/ContainerList.dep : ../../CCore/src/ContainerList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ContainerList.o $< -MF $@

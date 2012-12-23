@@ -109,7 +109,7 @@ int main()
   //Testit<68>().run();
   
   //Testit<69>().run();
-  //Testit<70>().run();
+  Testit<70>().run();
   //Testit<71>().run();
   //Testit<72>().run();
   

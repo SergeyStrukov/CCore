@@ -21,6 +21,8 @@
 ../../CCore/src/CharProp.cpp
 ../../CCore/src/CmdInput.cpp
 ../../CCore/src/Cmp.cpp
+../../CCore/src/CompactList.cpp
+../../CCore/src/CompactNodeAllocator.cpp
 ../../CCore/src/ContainerList.cpp
 ../../CCore/src/Counters.cpp
 ../../CCore/src/Crc.cpp
