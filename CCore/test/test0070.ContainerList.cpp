@@ -16,6 +16,7 @@
 #include <CCore/test/test.h>
 
 #include <CCore/inc/ContainerList.h>
+#include <CCore/inc/CompactList.h>
 
 namespace App {
 
@@ -420,6 +421,12 @@ void Ins(CircularDList<T,Allocator> &list,const T &obj)
  }
 
 template <class T>
+void Ins(CompactList<T> &list,const T &obj)
+ {
+  list.ins(obj);
+ }
+
+template <class T>
 void testSwap()
  {
   T list;
@@ -445,6 +452,7 @@ void test7()
   testSwap<LinearDList<int,NodePoolAllocator> >();
   testSwap<LinearDList2<int,NodePoolAllocator> >();
   testSwap<CircularDList<int,NodePoolAllocator> >();
+  testSwap<CompactList<int> >();
  }
 
 template <class T>
@@ -477,6 +485,55 @@ void test8()
   testMove<LinearDList<int,NodePoolAllocator> >();
   testMove<LinearDList2<int,NodePoolAllocator> >();
   testMove<CircularDList<int,NodePoolAllocator> >();
+  testMove<CompactList<int> >();
+ }
+
+void test9()
+ {
+  CompactList<int> list;
+  
+  Printf(Con,"no top is #;\n",!list.getTop());
+  
+  for(int i=1; i<10 ;i++) list.ins(i);
+  
+  Printf(Con,"top #;\n",*list.getTop());
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  list.apply( [] (int &obj) { obj+=100; } );
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  if( list.del() ) for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  for(auto cur=list.getStart(); +cur ;++cur)
+    if( *cur==104 )
+      {
+       list.insBefore(cur,1000);
+       list.insAfter(cur,2000);
+       
+       list.delAndMove(cur);
+       
+       --cur;
+       
+       list.insAfter(cur,3000);
+       
+       break;
+      }
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  Printf(Con,"#;\n",list.erase());
+  
+  Printf(Con,"#;\n",list.getCount());
  }
 
 } // namespace Private_0070
@@ -499,6 +556,7 @@ bool Testit<70>::Main()
   //test6();
   //test7();
   //test8();
+  //test9();
   
   return true;
  }
