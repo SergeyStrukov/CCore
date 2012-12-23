@@ -525,6 +525,8 @@ struct <span class="att">LinearAlgo</span>
   static void Connect_nulla(T *a,T *b,T *c);
   
   static void Connect_nullc(T *a,T *b,T *c);
+
+  static void Connect_nullac(T *a,T *b,T *c);
      
   // null &lt;- obj -&gt; null
   
@@ -557,6 +559,10 @@ struct <span class="att">LinearAlgo</span>
   // null &lt;- top -&gt; ... -&gt; obj -&gt; ... -&gt; null
      
   static T * /* top */ DelTop(T *top,T *obj); // obj!=0 linked
+
+  // null &lt;- ... &lt;- place -&gt; ... -&gt; null
+    
+  static void ReplaceNode(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
 </pre>
 
 <p>
@@ -595,6 +601,11 @@ struct <span class="att">LinearAlgo</span>
 <p>
 <b>DelTop()</b> deletes the given element from the list. The new top element is returned. The element
 may be any element from the list. The name of this function may be misleading, it does not delete the top element.
+</p>
+
+<p>
+<b>ReplaceNode()</b> replaces the given list node with another unlinked node. The new node becomes 
+the member of the list, the old one becomes unlinked.
 </p>
 
 <p>
@@ -697,10 +708,14 @@ In fact, it may be any element or null pointer.
     void ins_before(T *pos,T *obj); // pos!=0, obj!=0 unlinked
        
     void ins_after(T *pos,T *obj); // pos!=0, obj!=0 unlinked
+
+    void replace(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
        
     void ins_before(Cur cur,T *obj); // +cur, obj!=0 unlinked
        
     void ins_after(Cur cur,T *obj); // +cur, obj!=0 unlinked
+
+    void replace(Cur &cur,T *obj); // +cur, obj!=0 unlinked
       
     // delete object
        
@@ -738,6 +753,16 @@ In fact, it may be any element or null pointer.
 
 <p>
 <b>ins_after()</b> inserts the given object to the list after the given position.
+</p>
+
+<p>
+<b>replace()</b> replaces the given list node with another unlinked node. The new node becomes 
+the member of the list, the old one becomes unlinked.
+</p>
+
+<p>
+<b>replace(&lt;cursor&gt;)</b> replaces the list node at the current cursor position with another unlinked node. 
+The new node becomes the member of the list, the old one becomes unlinked. Cursor is updated properly.
 </p>
 
 <p>
@@ -786,6 +811,8 @@ moves the cursor to the next element. The pointer to the deleted element is retu
     void ins_before(T *pos,T *obj); // pos!=0, obj!=0 unlinked
        
     void ins_after(T *pos,T *obj); // pos!=0, obj!=0 unlinked
+
+    void replace(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
        
     void ins_before(Cur cur,T *obj); // +cur, obj!=0 unlinked
        
@@ -794,6 +821,10 @@ moves the cursor to the next element. The pointer to the deleted element is retu
     void ins_after(Cur cur,T *obj); // +cur, obj!=0 unlinked
        
     void ins_after(RevCur cur,T *obj); // +cur, obj!=0 unlinked
+
+    void replace(Cur &cur,T *obj); // +cur, obj!=0 unlinked
+
+    void replace(RevCur &cur,T *obj); // +cur, obj!=0 unlinked
        
     // delete object
       
@@ -845,6 +876,16 @@ and the second to the last. We call the top element first in this case.
 
 <p>
 <b>ins_after()</b> inserts the given object to the list after the given position.
+</p>
+
+<p>
+<b>replace()</b> replaces the given list node with another unlinked node. The new node becomes 
+the member of the list, the old one becomes unlinked.
+</p>
+
+<p>
+<b>replace(&lt;cursor&gt;)</b> replaces the list node at the current cursor position with another unlinked node. 
+The new node becomes the member of the list, the old one becomes unlinked. Cursor is updated properly.
 </p>
 
 <p>
@@ -921,6 +962,10 @@ struct <span class="att">CircularAlgo</span>
   // top -&gt; ... -&gt; obj -&gt; ... -&gt; last -&gt; top
     
   static T * /* top */ DelTop(T *top,T *obj); // obj!=0 linked
+
+  // top &lt;- ... &lt;- place -&gt; ... -&gt; top
+    
+  static void ReplaceNode(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
 </pre>
 
 <p>
@@ -962,6 +1007,11 @@ struct <span class="att">CircularAlgo</span>
 <p>
 <b>DelTop()</b> deletes the given element from the list. The new top element is returned. The element
 may be any element from the list. The name of this function may be misleading, it does not delete the top element.
+</p>
+
+<p>
+<b>ReplaceNode()</b> replaces the given list node with another unlinked node. The new node becomes 
+the member of the list, the old one becomes unlinked.
 </p>
 
 <p>
@@ -1087,6 +1137,8 @@ after (before with respect to the cursor direction) the current (non-null) posit
        
     void ins_after(T *pos,T *obj); // pos!=0, obj!=0 unlinked
        
+    void replace(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
+
     void ins_before(Cur cur,T *obj); // +cur, obj!=0 unlinked
       
     void ins_after(Cur &cur,T *obj); // +cur, obj!=0 unlinked
@@ -1094,6 +1146,10 @@ after (before with respect to the cursor direction) the current (non-null) posit
     void ins_before(RevCur &cur,T *obj); // +cur, obj!=0 unlinked
        
     void ins_after(RevCur cur,T *obj); // +cur, obj!=0 unlinked
+
+    void replace(Cur &cur,T *obj); // +cur, obj!=0 unlinked
+
+    void replace(RevCur &cur,T *obj); // +cur, obj!=0 unlinked
       
     // delete object
       
@@ -1152,6 +1208,16 @@ after (before with respect to the cursor direction) the current (non-null) posit
 <p>
 <b>ins_after()</b> inserts the given object to the list after the given position.
 <b>ins_after(Cur &cur,T *obj)</b> modifies the cursor to keep one valid.
+</p>
+
+<p>
+<b>replace()</b> replaces the given list node with another unlinked node. The new node becomes 
+the member of the list, the old one becomes unlinked.
+</p>
+
+<p>
+<b>replace(&lt;cursor&gt;)</b> replaces the list node at the current cursor position with another unlinked node. 
+The new node becomes the member of the list, the old one becomes unlinked. Cursor is updated properly.
 </p>
 
 <p>
