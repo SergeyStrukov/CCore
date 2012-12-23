@@ -448,7 +448,13 @@ struct DLink
       Connect(a,b);
       Connect_nullb(b,c);
      }
-     
+    
+    static void Connect_nullac(T *a,T *b,T *c)
+     {
+      Connect_nulla(a,b);
+      Connect_nullb(b,c);
+     }
+    
     // null <- obj -> null
   
     static void Init(T *obj) // obj!=0 unlinked
@@ -528,6 +534,13 @@ struct DLink
       return top;
      }
      
+    // null <- ... <- place -> ... -> null
+    
+    static void ReplaceNode(T *place,T *obj) // place!=0 linked, obj!=0 unlinked
+     {
+      Connect_nullac(Link(place).prev,obj,Link(place).next);
+     }
+    
     // ptr -> next -> ... -> null
     
     struct Cur
@@ -629,6 +642,13 @@ struct DLink
         InsNext(pos,obj);
        }
        
+      void replace(T *place,T *obj) // place!=0 linked, obj!=0 unlinked
+       {
+        ReplaceNode(place,obj);
+        
+        if( top==place ) top=obj;
+       }
+      
       void ins_before(Cur cur,T *obj) // +cur, obj!=0 unlinked
        {
         ins_before(cur.ptr,obj);
@@ -637,6 +657,13 @@ struct DLink
       void ins_after(Cur cur,T *obj) // +cur, obj!=0 unlinked
        {
         ins_after(cur.ptr,obj);
+       }
+      
+      void replace(Cur &cur,T *obj) // +cur, obj!=0 unlinked
+       {
+        replace(cur.ptr,obj);
+        
+        cur.ptr=obj;
        }
       
       // delete object
@@ -767,6 +794,14 @@ struct DLink
           }
        }
        
+      void replace(T *place,T *obj) // place!=0 linked, obj!=0 unlinked
+       {
+        ReplaceNode(place,obj);
+        
+        if( first==place ) first=obj;
+        if( last==place ) last=obj;
+       }
+      
       void ins_before(Cur cur,T *obj) // +cur, obj!=0 unlinked
        {
         ins_before(cur.ptr,obj);
@@ -787,6 +822,20 @@ struct DLink
         ins_after(cur.ptr,obj);
        }
        
+      void replace(Cur &cur,T *obj) // +cur, obj!=0 unlinked
+       {
+        replace(cur.ptr,obj);
+        
+        cur.ptr=obj;
+       }
+      
+      void replace(RevCur &cur,T *obj) // +cur, obj!=0 unlinked
+       {
+        replace(cur.ptr,obj);
+        
+        cur.ptr=obj;
+       }
+      
       // delete object
       
       void del(T *obj) // obj!=0 from the list
@@ -1006,6 +1055,18 @@ struct DLink
       return top;
      }
      
+    // top <- ... <- place -> ... -> top
+    
+    static void ReplaceNode(T *place,T *obj) // place!=0 linked, obj!=0 unlinked
+     {
+      T *prev=Link(place).prev;
+      
+      if( prev!=place )
+        Connect(prev,obj,Link(place).next);
+      else
+        Init(obj);
+     }
+    
     // ptr -> next -> ... -> last
     
     struct Cur
@@ -1169,6 +1230,13 @@ struct DLink
         InsNext(pos,obj);
        }
        
+      void replace(T *place,T *obj) // place!=0 linked, obj!=0 unlinked
+       {
+        ReplaceNode(place,obj);
+        
+        if( top==place ) top=obj;
+       }
+      
       void ins_before(Cur cur,T *obj) // +cur, obj!=0 unlinked
        {
         ins_before(cur.ptr,obj);
@@ -1199,6 +1267,24 @@ struct DLink
       void ins_after(RevCur cur,T *obj) // +cur, obj!=0 unlinked
        {
         cur.ins_after(obj);
+       }
+      
+      void replace(Cur &cur,T *obj) // +cur, obj!=0 unlinked
+       {
+        replace(cur.ptr,obj);
+        
+        if( cur.last==cur.ptr ) cur.last=obj;
+         
+        cur.ptr=obj;
+       }
+      
+      void replace(RevCur &cur,T *obj) // +cur, obj!=0 unlinked
+       {
+        replace(cur.ptr,obj);
+        
+        if( cur.first==cur.ptr ) cur.first=obj;
+         
+        cur.ptr=obj;
        }
       
       // delete object
