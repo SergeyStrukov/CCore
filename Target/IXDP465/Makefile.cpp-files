@@ -22,6 +22,7 @@
 ../../CCore/src/CmdInput.cpp
 ../../CCore/src/Cmp.cpp
 ../../CCore/src/CompactList.cpp
+../../CCore/src/CompactMap.cpp
 ../../CCore/src/CompactNodeAllocator.cpp
 ../../CCore/src/ContainerList.cpp
 ../../CCore/src/Counters.cpp

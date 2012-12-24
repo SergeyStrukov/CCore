@@ -33,6 +33,7 @@ obj/Cmp.o \
 obj/Collector.o \
 obj/CommonIntAlgo.o \
 obj/CompactList.o \
+obj/CompactMap.o \
 obj/CompactNodeAllocator.o \
 obj/ContainerList.o \
 obj/Counters.o \
@@ -285,6 +286,7 @@ obj/Cmp.s \
 obj/Collector.s \
 obj/CommonIntAlgo.s \
 obj/CompactList.s \
+obj/CompactMap.s \
 obj/CompactNodeAllocator.s \
 obj/ContainerList.s \
 obj/Counters.s \
@@ -537,6 +539,7 @@ obj/Cmp.dep \
 obj/Collector.dep \
 obj/CommonIntAlgo.dep \
 obj/CompactList.dep \
+obj/CompactMap.dep \
 obj/CompactNodeAllocator.dep \
 obj/ContainerList.dep \
 obj/Counters.dep \
@@ -869,6 +872,9 @@ obj/CommonIntAlgo.o : ../../CCore/src/algon/CommonIntAlgo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CompactList.o : ../../CCore/src/CompactList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CompactMap.o : ../../CCore/src/CompactMap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CompactNodeAllocator.o : ../../CCore/src/CompactNodeAllocator.cpp
@@ -1620,6 +1626,9 @@ obj/CommonIntAlgo.s : ../../CCore/src/algon/CommonIntAlgo.cpp
 obj/CompactList.s : ../../CCore/src/CompactList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/CompactMap.s : ../../CCore/src/CompactMap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/CompactNodeAllocator.s : ../../CCore/src/CompactNodeAllocator.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2368,6 +2377,9 @@ obj/CommonIntAlgo.dep : ../../CCore/src/algon/CommonIntAlgo.cpp
 
 obj/CompactList.dep : ../../CCore/src/CompactList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CompactList.o $< -MF $@
+
+obj/CompactMap.dep : ../../CCore/src/CompactMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CompactMap.o $< -MF $@
 
 obj/CompactNodeAllocator.dep : ../../CCore/src/CompactNodeAllocator.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CompactNodeAllocator.o $< -MF $@

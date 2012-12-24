@@ -427,11 +427,23 @@ void Ins(CompactList<T> &list,const T &obj)
  }
 
 template <class T>
+void Ins(CompactList2<T> &list,const T &obj)
+ {
+  list.insFirst(obj);
+ }
+
+template <class T>
+void Ins(CompactCircularList<T> &list,const T &obj)
+ {
+  list.insFirst(obj);
+ }
+
+template <class T>
 void testSwap()
  {
   T list;
   
-  for(int i=1; i<10 ;i++) Ins(list,i);
+  for(int i=1; i<1000 ;i++) Ins(list,i);
   
   T list1;
   
@@ -453,6 +465,8 @@ void test7()
   testSwap<LinearDList2<int,NodePoolAllocator> >();
   testSwap<CircularDList<int,NodePoolAllocator> >();
   testSwap<CompactList<int> >();
+  testSwap<CompactList2<int> >();
+  testSwap<CompactCircularList<int> >();
  }
 
 template <class T>
@@ -464,7 +478,7 @@ void testMove()
   init_obj.clean();
   init_obj.init();
   
-  for(int i=1; i<10 ;i++) Ins(*init_obj,i);
+  for(int i=1; i<1000 ;i++) Ins(*init_obj,i);
 
   T *map=Move(init_obj.getPtr(),mem.getPlace());
     
@@ -486,6 +500,8 @@ void test8()
   testMove<LinearDList2<int,NodePoolAllocator> >();
   testMove<CircularDList<int,NodePoolAllocator> >();
   testMove<CompactList<int> >();
+  testMove<CompactList2<int> >();
+  testMove<CompactCircularList<int> >();
  }
 
 void test9()
@@ -536,6 +552,188 @@ void test9()
   Printf(Con,"#;\n",list.getCount());
  }
 
+void test10()
+ {
+  CompactList2<int> list;
+  
+  Printf(Con,"no first is #;\n",!list.getFirst());
+  Printf(Con,"no last is #;\n",!list.getLast());
+  
+  for(int i=1; i<5 ;i++) list.insFirst(i);
+  for(int i=5; i<10 ;i++) list.insLast(i);
+  
+  Printf(Con,"first #;\n",*list.getFirst());
+  Printf(Con,"last #;\n",*list.getLast());
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  list.apply( [] (int &obj) { obj+=100; } );
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  if( list.delFirst() ) for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  if( list.delLast() ) for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  for(auto cur=list.getStart(); +cur ;++cur)
+    if( *cur==105 )
+      {
+       list.insBefore(cur,1000);
+       list.insAfter(cur,2000);
+       
+       list.delAndMove(cur);
+       
+       --cur;
+       
+       list.insAfter(cur,3000);
+       
+       break;
+      }
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  for(auto cur=list.getStartReverse(); +cur ;++cur)
+    if( *cur==101 )
+      {
+       list.insBefore(cur,1000);
+       list.insAfter(cur,2000);
+       
+       list.delAndMove(cur);
+       
+       --cur;
+       
+       list.insAfter(cur,3000);
+       
+       break;
+      }
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  for(int obj : list.reverse() ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  int k=1;
+  
+  list.applyReverse( [&k] (int &obj) { obj-=k++; } );
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  Printf(Con,"#;\n",list.erase());
+  
+  Printf(Con,"#;\n",list.getCount());
+ }
+
+void test11()
+ {
+  CompactCircularList<int> list;
+  
+  Printf(Con,"no top is #;\n",!list.getTop());
+  
+  for(int i=1; i<5 ;i++) list.insFirst(i);
+  for(int i=5; i<10 ;i++) list.insLast(i);
+  
+  Printf(Con,"top #;\n",*list.getTop());
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  Printf(Con,"forward #;\n",*list.rotateForward());
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  Printf(Con,"backward #;\n",*list.rotateBackward());
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  list.apply( [] (int &obj) { obj+=100; } );
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  if( list.delFirst() ) for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  if( list.delLast() ) for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  for(auto cur=list.getStart(); +cur ;++cur)
+    if( *cur==105 )
+      {
+       list.insBefore(cur,1000);
+       list.insAfter(cur,2000);
+       
+       list.delAndMove(cur);
+       
+       --cur;
+       
+       list.insAfter(cur,3000);
+       
+       break;
+      }
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  for(auto cur=list.getStartReverse(); +cur ;++cur)
+    if( *cur==101 )
+      {
+       list.insBefore(cur,1000);
+       list.insAfter(cur,2000);
+       
+       list.delAndMove(cur);
+       
+       --cur;
+       
+       list.insAfter(cur,3000);
+       
+       break;
+      }
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  for(int obj : list.reverse() ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  int k=1;
+  
+  list.applyReverse( [&k] (int &obj) { obj-=k++; } );
+  
+  for(int obj : list ) Printf(Con,"#;\n",obj);
+  
+  Putch(Con,'\n');
+  
+  Printf(Con,"#;\n",list.erase());
+  
+  Printf(Con,"#;\n",list.getCount());
+ }
+
 } // namespace Private_0070
  
 using namespace Private_0070; 
@@ -557,6 +755,8 @@ bool Testit<70>::Main()
   //test7();
   //test8();
   //test9();
+  //test10();
+  //test11();
   
   return true;
  }

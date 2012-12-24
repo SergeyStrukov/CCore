@@ -84,7 +84,7 @@ class NodeAllocator : NoCopy
     }
    
    explicit NodeAllocator(ToMoveCtor<NodeAllocator<Node> > obj)
-    : count(obj->count)
+    : count(Replace_null(obj->count))
     {
     } 
     
