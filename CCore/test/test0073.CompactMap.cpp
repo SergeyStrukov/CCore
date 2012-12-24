@@ -132,6 +132,34 @@ void test3()
   testMove<CompactRBTreeMap<ulen,ulen> >();
  }
 
+template <class T>
+void testSpeed(StrLen name,ulen count)
+ {
+  T map;
+
+  {
+   SecTimer timer;
+  
+   for(ulen i=0; i<count ;i++) map.find_or_add(i,i);
+  
+   Printf(Con,"#; : count = #; time = #; sec\n",name,count,timer.get());
+  }
+  {
+   SecTimer timer;
+  
+   for(ulen i=0; i<count ;i++) map.del(i);
+  
+   Printf(Con,"time = #; sec\n\n",timer.get());
+  }
+ }
+
+void test4(ulen count)
+ {
+  testSpeed<RBTreeMap<ulen,ulen> >("RBTree",count);
+  testSpeed<RBTreeMap<ulen,ulen,ulen,NodePoolAllocator> >("RBTree-pool",count);
+  testSpeed<CompactRBTreeMap<ulen,ulen> >("CompactRBTree",count);
+ }
+
 } // namespace Private_0073
  
 using namespace Private_0073; 
@@ -147,6 +175,7 @@ bool Testit<73>::Main()
   //test1();
   //test2();
   //test3();
+  //test4(20000000);
   
   return true;
  }

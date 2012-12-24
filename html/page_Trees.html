@@ -810,7 +810,7 @@ with some tree structure modifications.
 <h4>RBTreeUpLink</h4>
 
 <p>
-<b>RBTreeLink</b> is another <b>Red-Black Tree</b> link. It contains the additional <b>up</b> pointer, this pointer
+<b>RBTreeUpLink</b> is another <b>Red-Black Tree</b> link. It contains the additional <b>up</b> pointer, this pointer
 points to the parent tree element. For the root element it is null.
 </p>
 
@@ -834,7 +834,20 @@ struct <span class="att">RBTreeUpLink</span>
 
 <p>
 There are two <b>Algorithms Package</b>s for this link: <b>BaseAlgo</b> and <b>Algo</b>.
-They content are the same as for the <b>RBTreeLink</b> packages.
+They content are the same as for the <b>RBTreeLink</b> packages. The only difference, the struct <b>Root</b>
+has the additional method <b>replace()</b>.
+</p>
+
+<pre>
+    // replace
+    
+    void replace(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
+   };
+</pre>
+
+<p>
+<b>replace()</b> replaces the given tree node with another unlinked node. The new node becomes 
+the member of the tree, the old one becomes unlinked. Keys are swapped.
 </p>
 
 </html>

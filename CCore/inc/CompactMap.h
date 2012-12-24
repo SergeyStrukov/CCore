@@ -47,8 +47,6 @@ class CompactRBTreeMap : NoCopy
  
   private:
    
-   static void ReplaceNode(typename Algo::Root &root,Node *place,Node *obj);
-   
    bool delNode(Node *node);
    
    static T * GetObject(Node *node)
@@ -193,49 +191,6 @@ class CompactRBTreeMap : NoCopy
  };
 
 template <class K,class T,class KRef> 
-void CompactRBTreeMap<K,T,KRef>::ReplaceNode(typename Algo::Root &root,Node *place,Node *obj)
- {
-  RBTreeUpLink<Node,K> &link=Algo::Link(obj);
-  RBTreeUpLink<Node,K> &link_place=Algo::Link(place);
-
-  {
-   Node *up=link_place.up;
-   
-   link.up=up;
-   
-   if( up )
-     {
-      if( Algo::Link(up).lo==place ) Algo::Link(up).lo=obj;
-      if( Algo::Link(up).hi==place ) Algo::Link(up).hi=obj;
-     }
-   else
-     {
-      root.root=obj;
-     }
-  }
-  
-  {
-   Node *lo=link_place.lo;
-   
-   link.lo=lo;
-   
-   if( lo ) Algo::Link(lo).up=obj;
-  }
-  
-  {
-   Node *hi=link_place.hi;
-   
-   link.hi=hi;
-   
-   if( hi ) Algo::Link(hi).up=obj;
-  }
-  
-  link.flag=link_place.flag;
-  
-  Swap(link.key,link_place.key);
- }
-
-template <class K,class T,class KRef> 
 bool CompactRBTreeMap<K,T,KRef>::delNode(Node *node)
  {
   if( node )
@@ -244,7 +199,7 @@ bool CompactRBTreeMap<K,T,KRef>::delNode(Node *node)
      
      if( node!=todel )
        {
-        ReplaceNode(root,todel,node);
+        root.replace(todel,node);
         
         Swap(todel->obj,node->obj);
        }

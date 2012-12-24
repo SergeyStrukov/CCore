@@ -2930,6 +2930,50 @@ struct RBTreeUpLink<T,K>::Algo : BaseAlgo<LinkMember,KRef>
     T * del(KRef key) { return Del(&root,key); }
     
     void del(T *node) { Del(&root,node); }
+    
+    // replace
+    
+    void replace(T *place,T *obj) // place!=0 linked, obj!=0 unlinked
+     {
+      Node &link=Link(obj);
+      Node &link_place=Link(place);
+
+      {
+       T *up=link_place.up;
+       
+       link.up=up;
+       
+       if( up )
+         {
+          if( Link(up).lo==place ) Link(up).lo=obj;
+          if( Link(up).hi==place ) Link(up).hi=obj;
+         }
+       else
+         {
+          root=obj;
+         }
+      }
+      
+      {
+       T *lo=link_place.lo;
+       
+       link.lo=lo;
+       
+       if( lo ) Link(lo).up=obj;
+      }
+      
+      {
+       T *hi=link_place.hi;
+       
+       link.hi=hi;
+       
+       if( hi ) Link(hi).up=obj;
+      }
+      
+      link.flag=link_place.flag;
+      
+      Swap(link.key,link_place.key);
+     }
    };
   
   // class PrepareIns
