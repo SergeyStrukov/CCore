@@ -149,7 +149,7 @@ class CompactNodeAllocator : NoCopy
    
    explicit CompactNodeAllocator(ToMoveCtor<CompactNodeAllocator<Node> > obj)
     : block_len(obj->block_len),
-      list(obj->list),
+      list(Replace_null(obj->list)),
       count(Replace_null(obj->count))
     {
     }
