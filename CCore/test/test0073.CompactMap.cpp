@@ -84,6 +84,7 @@ void testMap()
 void test2()
  {
   testMap<CompactRBTreeMap<ulen,ulen> >();
+  testMap<CompactRadixTreeMap<ulen,ulen> >();
  }
 
 template <class T>
@@ -130,6 +131,8 @@ void test3()
  {
   testSwap<CompactRBTreeMap<ulen,ulen> >();
   testMove<CompactRBTreeMap<ulen,ulen> >();
+  testSwap<CompactRadixTreeMap<ulen,ulen> >();
+  testMove<CompactRadixTreeMap<ulen,ulen> >();
  }
 
 template <class T>
@@ -158,6 +161,7 @@ void test4(ulen count)
   testSpeed<RBTreeMap<ulen,ulen> >("RBTree",count);
   testSpeed<RBTreeMap<ulen,ulen,ulen,NodePoolAllocator> >("RBTree-pool",count);
   testSpeed<CompactRBTreeMap<ulen,ulen> >("CompactRBTree",count);
+  testSpeed<CompactRadixTreeMap<ulen,ulen> >("CompactRadixTree",count);
  }
 
 } // namespace Private_0073
@@ -172,10 +176,10 @@ const char *const Testit<73>::Name="Test73 CompactMap";
 template<>
 bool Testit<73>::Main() 
  {
-  //test1();
-  //test2();
-  //test3();
-  //test4(20000000);
+  test1();
+  test2();
+  test3();
+  test4(20000000);
   
   return true;
  }
