@@ -168,6 +168,7 @@
 ../../CCore/src/tree/RBTreeBase.cpp
 ../../CCore/src/tree/RBTreeLink.cpp
 ../../CCore/src/tree/RBTreeUpLink.cpp
+../../CCore/src/tree/TreeBase.cpp
 ../../CCore/src/tree/TreeLink.cpp
 ../../CCore/src/tree/TreeUpLink.cpp
 ../../CCore/src/Tree.cpp

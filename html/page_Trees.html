@@ -351,7 +351,7 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
    
   // class PrepareIns
  
-  class PrepareIns : NoCopy
+  class <span class="att">PrepareIns</span> : NoCopy
    {
      ....
 
@@ -372,7 +372,7 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
    
   // struct Check 
 
-  struct Check
+  struct <span class="att">Check</span>
    {
     K minval;
     K maxval;
@@ -496,7 +496,7 @@ Again, the family of <b>Del...()</b> functions are the same.
 <pre>
   // struct Root
   
-  struct Root
+  struct <span class="att">Root</span>
    {
     T *root;
     
@@ -537,16 +537,26 @@ Again, the family of <b>Del...()</b> functions are the same.
     T * delMax(KRef key) { return DelMax(&root,key); }
     
     void del(T *node) { Del(&root,node); }
+    
+    // replace
+    
+    void replace(T *place,T *obj); // place!=0 linked, obj!=0 unlinked   
    };
  };
 </pre>
 
 <p>
-The <b>Root</b> is the same too, except, there is no <b>locate()</b> family of methods.
+The <b>Root</b> is the same too, except, there is no <b>locate()</b> family of methods. There is also
+the additional method <b>replace()</b>.
+</p>
+
+<p>
+<b>replace()</b> replaces the given tree node with another unlinked node. The new node becomes 
+the member of the tree, the old one becomes unlinked. Keys are swapped.
 </p>
 
 <pre>
-struct RadixAlgo : BinAlgo
+struct <span class="att">RadixAlgo</span> : BinAlgo
  {
   // Med()
 
@@ -567,7 +577,7 @@ struct RadixAlgo : BinAlgo
   
   // struct Root
   
-  struct Root : BinAlgo::Root
+  struct <span class="att">Root</span> : BinAlgo::Root
    {
     void ins(T *node,K kmin,K kmax);
     
@@ -580,7 +590,7 @@ struct RadixAlgo : BinAlgo
   
   // struct Check
   
-  struct Check
+  struct <span class="att">Check</span>
    {
     K minval;
     K maxval;
@@ -680,7 +690,7 @@ struct <span class="att">BaseAlgo</span>
   
   // struct Check
   
-  struct Check
+  struct <span class="att">Check</span>
    {
     K minval;
     K maxval;
@@ -730,7 +740,7 @@ There are four delete functions with the same semantic as <b>TreeLink</b> delete
 <pre>
   // struct Root
   
-  struct Root
+  struct <span class="att">Root</span>
    {
     T *root;
     
@@ -779,7 +789,7 @@ correspondent functions.
 <pre>
   // class PrepareIns
 
-  class PrepareIns : NoCopy
+  class <span class="att">PrepareIns</span> : NoCopy
    {
      ....
 

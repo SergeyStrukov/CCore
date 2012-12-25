@@ -211,6 +211,7 @@ obj/Timer.o \
 obj/TlsSlot.o \
 obj/ToMemBase.o \
 obj/Tree.o \
+obj/TreeBase.o \
 obj/TreeLink.o \
 obj/TreeMap.o \
 obj/TreeUpLink.o \
@@ -438,6 +439,7 @@ obj/Timer.s \
 obj/TlsSlot.s \
 obj/ToMemBase.s \
 obj/Tree.s \
+obj/TreeBase.s \
 obj/TreeLink.s \
 obj/TreeMap.s \
 obj/TreeUpLink.s \
@@ -665,6 +667,7 @@ obj/Timer.dep \
 obj/TlsSlot.dep \
 obj/ToMemBase.dep \
 obj/Tree.dep \
+obj/TreeBase.dep \
 obj/TreeLink.dep \
 obj/TreeMap.dep \
 obj/TreeUpLink.dep \
@@ -1324,6 +1327,9 @@ obj/ToMemBase.o : ../../CCore/src/ToMemBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Tree.o : ../../CCore/src/Tree.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TreeBase.o : ../../CCore/src/tree/TreeBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TreeLink.o : ../../CCore/src/tree/TreeLink.cpp
@@ -2000,6 +2006,9 @@ obj/ToMemBase.s : ../../CCore/src/ToMemBase.cpp
 obj/Tree.s : ../../CCore/src/Tree.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/TreeBase.s : ../../CCore/src/tree/TreeBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/TreeLink.s : ../../CCore/src/tree/TreeLink.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2673,6 +2682,9 @@ obj/ToMemBase.dep : ../../CCore/src/ToMemBase.cpp
 
 obj/Tree.dep : ../../CCore/src/Tree.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tree.o $< -MF $@
+
+obj/TreeBase.dep : ../../CCore/src/tree/TreeBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TreeBase.o $< -MF $@
 
 obj/TreeLink.dep : ../../CCore/src/tree/TreeLink.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TreeLink.o $< -MF $@
