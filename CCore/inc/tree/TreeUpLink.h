@@ -16,7 +16,7 @@
 #ifndef CCore_inc_tree_TreeUpLink_h
 #define CCore_inc_tree_TreeUpLink_h
 
-#include <CCore/inc/Cmp.h>
+#include <CCore/inc/tree/TreeBase.h>
  
 namespace CCore {
 
@@ -372,6 +372,55 @@ struct TreeUpLink<T,K>::BinAlgo
     T * delMax(KRef key) { return DelMax(&root,key); }
     
     void del(T *node) { Del(&root,node); }
+    
+    // replace
+    
+    void replace(T *place,T *obj) // place!=0 linked, obj!=0 unlinked
+     {
+      Node &link=Link(obj);
+      Node &link_place=Link(place);
+
+      {
+       T *up=link_place.up;
+       
+       link.up=up;
+       
+       if( up )
+         {
+          if( Link(up).lo==place ) Link(up).lo=obj;
+          if( Link(up).hi==place ) Link(up).hi=obj;
+         }
+       else
+         {
+          root=obj;
+         }
+      }
+      
+      {
+       T *lo=link_place.lo;
+       
+       if( lo==place )
+         {
+          link.lo=obj;
+         }
+       else
+         {
+          link.lo=lo;
+         
+          if( lo ) Link(lo).up=obj;
+         }
+      }
+      
+      {
+       T *hi=link_place.hi;
+       
+       link.hi=hi;
+       
+       if( hi ) Link(hi).up=obj;
+      }
+      
+      Swap(link.key,link_place.key);
+     }
    };
  };
  
@@ -510,6 +559,240 @@ struct TreeUpLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
    {
     Ins(root_ptr,node,0,UIntMax());
    }
+  
+  // class PrepareIns
+ 
+  class PrepareIns : NoCopy
+   {
+     T **root_ptr;
+     T *lo;
+     T *hi;
+     T *up;
+     K key;
+  
+     T *complete_node;
+     K kmin;
+     K kmax;
+     void (PrepareIns::*complete_func)(T *node);
+
+    private:
+     
+     void set(T **root_ptr_,T *lo_,T *hi_,T *up_,K key_)
+      {
+       found=0;
+     
+       root_ptr=root_ptr_;
+       lo=lo_;
+       hi=hi_;
+       up=up_;
+       key=key_;
+      }
+
+     void set_hi(T *node,K kmin_,K kmax_)
+      {
+       complete_node=node;
+       kmin=kmin_;
+       kmax=kmax_;
+       complete_func=&PrepareIns::complete_hi;
+      }
+     
+     void set_lo(T *node,K kmin_,K kmax_)
+      {
+       complete_node=node;
+       kmin=kmin_;
+       kmax=kmax_;
+       complete_func=&PrepareIns::complete_lo;
+      }
+
+     void set_none()
+      {
+       complete_func=&PrepareIns::complete_none;
+      }
+     
+     void prepare(T **root_ptr,K key,K kmin,K kmax)
+      {
+       T *up=0;
+      
+       while( T *root=*root_ptr )
+         {
+          Node &link=Link(root);
+         
+          switch( Cmp(key,link.key) )
+            {
+             case CmpLess :
+              {
+               K kmed=Med(kmin,kmax);
+              
+               if( key<=kmed )
+                 {
+                  up=root;
+                  root_ptr=&link.lo;
+                  kmax=kmed;
+                 }
+               else
+                 {
+                  set(root_ptr,link.lo,link.hi,up,key);
+                  set_hi(root,kmed+1,kmax);
+                  
+                  return;
+                 }
+              }
+             break;
+            
+             case CmpGreater :
+              {
+               K kmed=Med(kmin,kmax);
+              
+               if( kmed<key )
+                 {
+                  up=root;
+                  root_ptr=&link.hi;
+                  kmin=kmed+1;
+                 }
+               else 
+                 {
+                  set(root_ptr,link.lo,link.hi,up,key);
+                  set_lo(root,kmin,kmed);
+                 
+                  return;
+                 }
+              }
+             break;
+            
+             default:
+              {
+               found=root;
+               
+               return;
+              }
+            }
+         }
+        
+       set(root_ptr,0,0,up,key); 
+       set_none();
+      }
+     
+     static void CompleteIns(T *up,T **root_ptr,K kmin,K kmax,T *node)
+      {
+       K key=Link(node).key;
+       
+       while( T *root=*root_ptr )
+         {
+          Node &link=Link(root);
+         
+          switch( Cmp(key,link.key) )
+            {
+             case CmpLess :
+              {
+               K kmed=Med(kmin,kmax);
+              
+               if( key<=kmed )
+                 {
+                  up=root;
+                  root_ptr=&link.lo;
+                  kmax=kmed;
+                 }
+               else
+                 {
+                  Link(node,link.lo,link.hi,up);
+                 
+                  *root_ptr=node;
+                 
+                  up=node;
+                  root_ptr=&Link(node).hi;
+                  node=root;
+                  key=Link(node).key;
+                  kmin=kmed+1;
+                 }
+              }
+             break;
+            
+             case CmpGreater :
+              {
+               K kmed=Med(kmin,kmax);
+              
+               if( kmed<key )
+                 {
+                  up=root;
+                  root_ptr=&link.hi;
+                  kmin=kmed+1;
+                 }
+               else 
+                 {
+                  Link(node,link.lo,link.hi,up);
+                 
+                  *root_ptr=node;
+                 
+                  up=node;
+                  root_ptr=&Link(node).lo;
+                  node=root;
+                  key=Link(node).key;
+                  kmax=kmed;
+                 }
+              }
+             break;
+            
+             default:
+              {
+               RadixTreeBrokenAbort();
+              }
+            }
+         }
+       
+       Link(node,0,0,up);
+       
+       *root_ptr=node;
+      }
+     
+     void complete_none(T *node)
+      {
+       Link(node,lo,hi,up);
+       
+       Link(node).key=key;
+      
+       *root_ptr=node;
+      }
+     
+     void complete_hi(T *node)
+      {
+       complete_none(node);
+      
+       CompleteIns(node,&Link(node).hi,kmin,kmax,complete_node);
+      }
+     
+     void complete_lo(T *node)
+      {
+       complete_none(node);
+      
+       CompleteIns(node,&Link(node).lo,kmin,kmax,complete_node);
+      }
+     
+    public: 
+  
+     T *found;
+   
+     PrepareIns(T **root_ptr,K key)
+      {
+       prepare(root_ptr,key,0,UIntMax());
+      }
+    
+     PrepareIns(BaseRoot &root,K key)
+      {
+       prepare(&root.root,key,0,UIntMax());
+      }
+    
+     PrepareIns(T **root_ptr,K key,K kmin,K kmax)
+      {
+       prepare(root_ptr,key,kmin,kmax);
+      }
+    
+     PrepareIns(BaseRoot &root,K key,K kmin,K kmax)
+      {
+       prepare(&root.root,key,kmin,kmax);
+      }
+    
+     void complete(T *node) { (this->*complete_func)(node); }
+   };
   
   // struct Root
   

@@ -16,13 +16,11 @@
 #ifndef CCore_inc_tree_TreeLink_h
 #define CCore_inc_tree_TreeLink_h
 
-#include <CCore/inc/Cmp.h>
+#include <CCore/inc/tree/TreeBase.h>
  
 namespace CCore {
 
 /* functions */ 
-
-void RadixTreeBrokenAbort();
 
 void GuardRadixTreeCheckFailed(const char *text);
 

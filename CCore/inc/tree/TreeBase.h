@@ -1,7 +1,7 @@
-/* TreeLink.cpp */ 
+/* TreeBase.h */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.02
+//  Project: CCore 1.03
 //
 //  Tag: General
 //
@@ -9,23 +9,23 @@
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
- 
-#include <CCore/inc/tree/TreeLink.h>
 
-#include <CCore/inc/Exception.h>
+#ifndef CCore_inc_tree_TreeBase_h
+#define CCore_inc_tree_TreeBase_h
+ 
+#include <CCore/inc/Cmp.h>
  
 namespace CCore {
 
 /* functions */ 
 
-void GuardRadixTreeCheckFailed(const char *text)
- {
-  Printf(Exception,"CCore::GuardRadixTreeCheck(...) : ( #; ) is false",text);
- }
- 
+void RadixTreeBrokenAbort();
+
 } // namespace CCore
+ 
+#endif
  
 
