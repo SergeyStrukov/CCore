@@ -609,6 +609,11 @@ struct TreeUpLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
        complete_func=&PrepareIns::complete_none;
       }
      
+     void set_none_same()
+      {
+       complete_func=&PrepareIns::complete_none_same;
+      }
+     
      void prepare(T **root_ptr,K key,K kmin,K kmax)
       {
        T *up=0;
@@ -668,8 +673,16 @@ struct TreeUpLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
             }
          }
         
-       set(root_ptr,0,0,up,key); 
-       set_none();
+       set(root_ptr,0,0,up,key);
+       
+       if( kmin<kmax )
+         {
+          set_none();
+         }
+       else
+         {
+          set_none_same();
+         }
       }
      
      static void CompleteIns(T *up,T **root_ptr,K kmin,K kmax,T *node)
@@ -739,7 +752,10 @@ struct TreeUpLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
             }
          }
        
-       Link(node,0,0,up);
+       if( kmin<kmax )  
+         Link(node,0,0,up);
+       else
+         Link(node,0,up);
        
        *root_ptr=node;
       }
@@ -747,6 +763,15 @@ struct TreeUpLink<T,K>::RadixAlgo : BinAlgo<LinkMember,K>
      void complete_none(T *node)
       {
        Link(node,lo,hi,up);
+       
+       Link(node).key=key;
+      
+       *root_ptr=node;
+      }
+     
+     void complete_none_same(T *node)
+      {
+       Link(node,0,up);
        
        Link(node).key=key;
       

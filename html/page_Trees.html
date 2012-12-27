@@ -419,8 +419,10 @@ takes the root pointer and the value range. If the tree is broken, an exception 
 
 <p>
 The <b>TreeUpLink</b> is another tree link. It has the additional member <b>up</b>. It points to the parent
-element. For the root node it is null. The keys are not unique. In fact, this kind of tree is a combination 
+element. For the root node it is null. <span class="alert">The keys are not unique.</span> 
+In fact, this kind of tree is a combination 
 of tree and list. There are two kind of links: normal tree links, and same-key links, where <b>lo==this</b>.
+And the Lo and Hi subtrees may have nodes with the same key as the root element.
 </p>
 
 <pre>
@@ -575,6 +577,27 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
   
   static void Ins(T **root_ptr,T *node);
   
+  // class PrepareIns
+ 
+  class <span class="att">PrepareIns</span> : NoCopy
+   {
+     ....
+
+    public: 
+  
+     T *found;
+   
+     PrepareIns(T **root_ptr,K key);
+    
+     PrepareIns(BinAlgo::Root &root,K key);
+    
+     PrepareIns(T **root_ptr,K key,K kmin,K kmax);
+    
+     PrepareIns(BinAlgo::Root &root,K key,K kmin,K kmax);
+    
+     void complete(T *node);
+   };
+
   // struct Root
   
   struct <span class="att">Root</span> : BinAlgo::Root
@@ -611,12 +634,19 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
 </p>
 
 <p>
+<b>PrepareIns</b> is the same.
+</p>
+
+<p>
 <b>Check</b> is the same.
 </p>
 
 <p>
-The main difference is insertion algorithms. They are simpler and implemented by the functions. That is because
-keys are not unique and you may always insert an element into the tree. There are four of them.
+The main difference is insertion algorithms. You may choose between <b>PrepareIns</b> as for <b>TreeLink</b>.
+In this case you will have the same property tree with unique keys. 
+Or you may choose the <b>Ins()</b> family of insertion functions.
+In this case keys are not unique and you may always insert an element into the tree. 
+There are four of them.
 The first argument is the double root pointer or the <b>BaseAlgo::Root</b> reference. The second argument
 is the element to be inserted. The element must have the key inside initialized. Two last arguments, if any,
 specifies the tree value range.

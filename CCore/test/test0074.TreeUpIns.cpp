@@ -1,15 +1,15 @@
-/* test0015.Tree.cpp */ 
+/* test0074.TreeUpIns.cpp */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.02
+//  Project: CCore 1.03
 //
-//  Tag: General
+//  Tag: General 
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
@@ -22,16 +22,16 @@
 
 namespace App {
 
-namespace Private_0015 {
+namespace Private_0074 {
 
 /* class Engine */
 
 struct Node : MemBase_nocopy
  {
-  TreeLink<Node,unsigned> link;
+  TreeUpLink<Node,unsigned> link;
  };
  
-typedef TreeLink<Node,unsigned>::RadixAlgo<&Node::link> Algo;
+typedef TreeUpLink<Node,unsigned>::RadixAlgo<&Node::link> Algo;
 
 const unsigned MaxKey = 1023 ;
   
@@ -171,70 +171,6 @@ class Engine : public MemBase_nocopy
      }
     }
     
-   void test_locate()
-    {
-     unsigned key=getKey();
-     
-     {
-      auto loc=root.locate(key);
-      
-      if( flags[key] )
-        {
-         if( !loc ) fail(30);
-         
-         if( Algo::Link(loc.node()).key!=key ) fail(31);
-        }
-      else
-        {
-         if( +loc ) fail(32);
-        }
-     }
-     
-     {
-      auto loc=root.locateMin(key);
-      
-      if( +loc )
-        {
-         unsigned k=Algo::Link(loc.node()).key;
-         
-         if( k<key ) fail(33);
-         
-         for(; (k--)>key ;) if( flags[k] ) fail(34);
-        }
-      else
-        {
-         unsigned k=MaxKey+1;
-         
-         for(; (k--)>key ;) if( flags[k] ) fail(35);
-        }  
-     }
-     
-     {
-      auto loc=root.locateMax(key);
-      
-      if( +loc )
-        {
-         unsigned k=Algo::Link(loc.node()).key;
-         
-         if( k>key ) fail(36);
-         
-         for(k++; k<=key ;k++) if( flags[k] ) fail(37);
-        }
-      else
-        {
-         unsigned k=0;
-        
-         for(; k<=key ;k++) if( flags[k] ) fail(38);
-        }
-     }
-     
-     {
-      if( +root.locateMin()!=+root.locateMin(0) ) fail(39);
-      
-      if( +root.locateMax()!=+root.locateMax(MaxKey) ) fail(40);
-     }
-    }
-    
    void test()
     {
      unsigned s=0;
@@ -246,7 +182,6 @@ class Engine : public MemBase_nocopy
      for(ulen cnt=1000; cnt ;cnt--)
        {
         test_find();
-        test_locate();
        }
     }
     
@@ -285,18 +220,18 @@ class Engine : public MemBase_nocopy
      while( count>100 ) del();
     }
  };
+
+} // namespace Private_0074
  
-} // namespace Private_0015
+using namespace Private_0074; 
  
-using namespace Private_0015;
- 
-/* Testit<15> */ 
+/* Testit<74> */ 
 
 template<>
-const char *const Testit<15>::Name="Test15 Tree";
+const char *const Testit<74>::Name="Test74 TreeUpIns";
 
 template<>
-bool Testit<15>::Main() 
+bool Testit<74>::Main() 
  {
   OwnPtr<Engine> engine(new Engine);
   

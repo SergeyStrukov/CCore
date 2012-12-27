@@ -73,6 +73,7 @@
 ../../../CCore/test/test0071.GCD.cpp
 ../../../CCore/test/test0072.GCDConst.cpp
 ../../../CCore/test/test0073.CompactMap.cpp
+../../../CCore/test/test0074.TreeUpIns.cpp
 ../../../CCore/test/test0100.Bridge.cpp
 ../../../CCore/test/test0101.PTP.cpp
 ../../../CCore/test/test0102.PrintFile.cpp
