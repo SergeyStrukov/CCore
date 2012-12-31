@@ -1171,7 +1171,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_PrintTime.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_PrintTitle.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Printing.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_PtrLen.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_PtrLen.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_RadixHeap.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Random.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_RealTime.html" 0

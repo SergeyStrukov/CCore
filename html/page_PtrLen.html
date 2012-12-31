@@ -35,10 +35,11 @@
 <p>
 This file contains main tools to work with ranges of objects. <b>Range</b> is a continuous part of
 an array. There is the object in the range with the lower address, it is a base address of the range. 
+"Address" means a pointer of the correspondent type.
 If this address is <b>p</b>, then the range consists of objects with addresses <b>{ p, p+1, ..., p+n-1 }</b>, 
 where <b>n</b> is the number of elements of the range. A range can be empty. In this case it has the base address,
 which may not refer to an existing object, but the number of elements is 0. 
-A range of length 1 also can be formed from a single object.
+A range of length 1 can also be formed from a single object.
 Finally, empty range may have the base address equals null. 
 </p>
 
@@ -52,7 +53,7 @@ The main advantages of basic ranges are: best loops, best sequential and random 
 <p>
 The best loop in the programming is the loop <b>n-times</b>. This is because such loops can be unrolled,
 pipelined and optimized for small loop count. So compilers usually try to reorganize every loop into this kind 
-of loop if possible.
+of loop, if possible.
 </p>
 
 <h3>GuardIndex()</h3>
@@ -112,8 +113,8 @@ It performs assignments <b>*dst=T();</b>.
 </p>
 
 <p>
-The interface and implementation of these functions are selected to be a more appropriate when the
-type <b>T</b> is a <b>Small Data Type</b>. They do they job in the assending order, but you
+The interface and implementation of these functions are selected to be more appropriate, when the
+type <b>T</b> is a <b>Small Data Type</b>. They do they job in the ascending order, but you
 should not assume any specific order of execution.
 </p>
 
@@ -160,8 +161,8 @@ You can use constructors to create a <b>PtrLen</b>, but more often you should us
 </pre>
 
 <p>
-Cursor methods can be used to iterated through range elements. When you use <b>PtrLen</b> as the cursor,
-it advances in ascending order. I.e. after <b>(ptr,len)</b> the <b>(ptr+1,len-1)</b> follows.
+Cursor methods can be used to iterated through range elements. When you use <b>PtrLen</b> as a cursor,
+it advances in the ascending order. I.g. after <b>(ptr,len)</b> the <b>(ptr+1,len-1)</b> follows.
 </p>
 
 <pre>
@@ -268,7 +269,7 @@ for(auto r=Range(....); +r ;++r) { .... /* (*r) */ }
 </pre>
 
 <p>
-So it is <b>count-down n-times</b> loop. There is another popular way of a range interation:
+So it is <b>count-down n-times</b> loop. There is another popular way of a range iteration:
 </p>
 
 <pre>
@@ -301,7 +302,7 @@ performance for short tight loops.
 </p>
 
 <p>
-Reverse iteration can be done with <b>getFin()</b> method:
+Reverse iteration can be done with the method <b>getFin()</b>:
 </p>
 
 <pre>
@@ -346,7 +347,7 @@ Methods <b>fit()</b> can be used to check the length of the range.
 
 <p>
 The first checks is there at least the <b>length</b> elements.
-The second can be used to check if the subrange with the given <b>off(set)</b> from the begining and
+The second can be used to check if the subrange with the given <b>off(set)</b> from the begin and
 <b>length</b> can be selected.
 </p>
 
@@ -420,7 +421,7 @@ The following set of methods perform basic range operations:
 </pre>
 
 <p>
-The last method is required to support <b>range-based for</b> with <b>PtrLen</b>:
+The last method is required to support <b>range-based for</b> with the <b>PtrLen</b>:
 </p>
 
 <pre>
@@ -434,7 +435,7 @@ The last method is required to support <b>range-based for</b> with <b>PtrLen</b>
 <h3>StrLen</h3>
 
 <p>
-<b>StrLen</b> is a derived class from <b>PtrLen&lt;const char&gt;</b>.
+<b>StrLen</b> is a derived class from the <b>PtrLen&lt;const char&gt;</b>.
 </p>
 
 <pre>
@@ -455,25 +456,24 @@ struct <span class="Att">StrLen</span> : PtrLen&lt;const char&gt;
   // given string
   
   StrLen(const char *str,ulen len) : PtrLen&lt;const char&gt;(str,len) {}
-
  };
 </pre>
 
 <p>
 <b>StrLen</b> is widely used in <b>CCore</b> to pass string arguments and to work with strings.
-It is not assumed, that string is zero-terminated. Instead, we specify string length.
+It is not assumed, that the string is zero-terminated. Instead, we specify the string length.
 </p>
 
 <p>
-<b>StrLen</b> has a several implicit constructors, so it can be silenly converted from
+<b>StrLen</b> has a several implicit constructors, so it can be silently converted from
 different string-like types.
 </p>
 
 <p>
-Implicit encoding string length with zero termination was a language design mistake. 
-To perform string operations you have to know its length. So each time you will have to calcualte it.
+The implicit encoding string length with zero termination was a language design mistake. 
+To perform string operations you have to know its length. So each time you will have to calculate it.
 It may lead to quadratic time algorithms instead of linear time if you are not steady enough.
-But the most goodless thing is you cannot select substring from a zero-terminated string:
+But the most goodless thing is you cannot select a substring from a zero-terminated string:
 it is not a zero-terminated. So you have to allocate memory and do copy!
 In <b>CCore</b> we avoid it converting zero-terminated strings into <b>StrLen</b>. So we calculate
 zero-terminated string length only one time.
@@ -482,7 +482,7 @@ zero-terminated string length only one time.
 <h3>Range() and Range_const()</h3>
 
 <p>
-<b>Range() and Range_const()</b> is a family of <b>Creator functions</b> for range creation.
+<b>Range() and Range_const()</b> is a family of <b>Creator function</b>s for the range creation.
 </p>
 
 <pre>
@@ -522,8 +522,8 @@ PtrLen&lt;const T&gt; <span class="Att">Range_const</span>(T *ptr,T *lim);
 </pre>
 
 <p>
-You can create a range from the <b>PtrLen</b>, from the array, from the base pointer and length and from
-the base ptr and limit. Limit is a pointer to the past-the-end element. It may not refer to an actual object.
+You can create a range from a <b>PtrLen</b>, from an array, from a base pointer and length and from
+a base pointer and a limit pointer. Limit is a pointer to the past-the-end element. It may not refer to an actual object.
 The advantage of using the function <b>Range()</b> is an implicit type inference. Consider:
 </p>
 
