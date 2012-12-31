@@ -34,13 +34,15 @@
 This file contains a collection of tools to control an unsigned integer overflow.
 </p>
 
+<h3>UIntSat</h3>
+
 <p>
 <b>UIntSat</b> can be used to perform operations with the overflow control:
 </p>
 
 <pre>
 template &lt;class UInt&gt;
-struct UIntSat
+struct <span class="Att">UIntSat</span>
  {
   UInt value;
   bool overflow;
@@ -69,10 +71,10 @@ struct UIntSat
 </pre>
 
 <p>
-Flag <b>overflow</b> is set if the accumulated value is not representable of the given type.
+Flag <b>overflow</b> is set if the accumulated value is not representable by the given type.
 You can consider such value as "greater than maximum UInt value". Further additive operations with such value produces
 only the same kind of value.
-You can sum, sum to self and compare with limit <b>UIntSat</b>s.
+You can sum, sum to self and compare with a limit <b>UIntSat</b>s.
 You can also use it in constant expressions. The most common usage is a buffer length calculation:
 </p>
 
@@ -104,14 +106,16 @@ typedef UIntSat&lt;ulen&gt; <span class="Att">ULenSat</span>;
 
 </pre>
 
+<h3>UIntConstAdd and UIntConstSub</h3>
+
 <p>
-<b>UIntConstAdd</b> and <b>UIntConstSub</b> are <b>Meta-function</b>s performing safe operations in compile-time.
+<b>UIntConstAdd</b> and <b>UIntConstSub</b> are <b>Meta-function</b>s, performing safe operations in the compile-time.
 </p>
 
 <pre>
 
-template &lt;class UInt,UInt A,UInt B&gt; using UIntConstAdd;
-template &lt;class UInt,UInt A,UInt B&gt; using UIntConstSub;
+template &lt;class UInt,UInt A,UInt B&gt; using <span class="Att">UIntConstAdd</span>;
+template &lt;class UInt,UInt A,UInt B&gt; using <span class="Att">UIntConstSub</span>;
 
 </pre>
 
@@ -125,7 +129,7 @@ the value range, or empty.
 const ulen L1 = .... ;
 const ulen L2 = .... ;
 
-const ulen S = UIntConstAdd&lt;ulen,L1,L2&gt;::Ret ; // safe sum of two constants, not compileable in case of overflow
+const ulen S = UIntConstAdd&lt;ulen,L1,L2&gt;::Ret ; // safe sum of two constants, not compilable in case of overflow
 
 </pre>
 

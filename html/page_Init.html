@@ -30,6 +30,8 @@
 
 <p class="Files">Files <b>CCore/inc/gadget/Init.h</b> <b>CCore/src/gadget/Init.cpp</b></p>
 
+<h4>InitExitObject</h4>
+
 <p>
 <b>InitExitObject</b> is a class for the manual object initialization/termination. It is a POD type, 
 containing inside the storage room for the object and the object pointer.
@@ -52,8 +54,8 @@ You should not touch data members directly.
 
 <p>
 Method <b>init()</b> creates the object, <b>exit()</b> destroys it. Using these methods you can manually
-control life-time of the object and recreate it if neccessary. To use <b>InitExitObject</b> the prior
-value initialization is required. You can do it using default initialization or using method <b>clean()</b>.
+control the life-time of the object and recreate it if necessary. To use <b>InitExitObject</b> the prior
+value initialization is required. You can do it using the default initialization or using the method <b>clean()</b>.
 </p>
 
 <pre>
@@ -80,12 +82,12 @@ InitExitObject&lt;C&gt; theObject{};
 </pre>
 
 <p>
-and then initialize it using method <b>init()</b>.
+and then initialize it using the method <b>init()</b>.
 </p>
 
 <p>
-<b>InitExitObject</b> implements the <b>Object-Pointer interface</b> to check the state of the object
-and access it.
+<b>InitExitObject</b> implements the <b>Object-Pointer Interface</b> to check the state of the object
+and access it:
 </p>
 
 <pre>
@@ -106,9 +108,10 @@ and access it.
   T & operator * () const { return *getPtr(); }
   
   T * operator -> () const { return getPtr(); }
-
  };
 </pre>
+
+<h4>InitStorage</h4>
 
 <p>
 <b>InitStorage</b> is a simple structure, providing an aligned storage to create objects inside:
@@ -127,13 +130,18 @@ struct <span class="Att">InitStorage</span>
 </pre>
 
 <p>
-Method <b>getMem()</b> returns the raw memory pointer to the storage, <b>getPlace()</b> returns the 
-<b>Place</b> of the storage.
-</p>
+<b>getMem()</b> returns the raw memory pointer to the storage.
+</p> 
 
 <p>
-<b>NoObjectAbort()</b> is an <b>Abort function</b>. It is used to abort execution in case of access to
-an absent object. You can use it in similar situations. It calls <b>Abort()</b> with a diagnostic
+<b>getPlace()</b> returns the <b>Place</b> of the storage.
+</p>
+
+<h4>NoObjectAbort()</h4>
+
+<p>
+<b>NoObjectAbort()</b> is an <b>Abort function</b>. It is used to abort the execution in case of access to
+an absent object. You can use it in similar situations. It calls <b>Abort()</b> with a proper diagnostic
 message.
 </p>
 

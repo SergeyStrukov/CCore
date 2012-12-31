@@ -31,15 +31,15 @@
 <p class="Files">Files <b>CCore/inc/gadget/Len.h</b> <b>CCore/src/gadget/Len.cpp</b></p>
 
 <p>
-<b>Len.h</b> contains a number of length related types, constants and functions. <b>CCore</b>
-uses the type <b>ulen</b> to represent a length. This is a substitute for the standard <b>size_t</b> type.
-<b>ulen</b> is defined in the target <b>PlatformBase.h</b> header.
-This type is introduced by serveral reasons: 
+<b>Len.h</b> contains number of length related types, constants and functions. <b>CCore</b>
+uses the type <b>ulen</b> to represent a length. This is a substitute for the standard type <b>size_t</b>.
+<b>ulen</b> is defined in the target header <b>PlatformBase.h</b>.
+This type is introduced by several reasons: 
 <ol>
 <li>it has a better name, more simpler to type,</li>
 <li>target can assign a more suitable type to <b>ulen</b>, than <b>size_t</b>, for example, 
-compiler can define <b>size_t</b> as <b>unsigned long</b>, but if it has the same bit-size as an <b>unsigned</b>, 
-then there is no point in such definition, so target can define <b>ulen</b> as <b>unsigned</b>.
+compiler can define <b>size_t</b> as <b>unsigned long</b>, but if it has the same bit-size as the <b>unsigned</b>, 
+then there is no point in such definition, so the target can define <b>ulen</b> as <b>unsigned</b>.
 </li>
 </ol>
 </p>
@@ -48,7 +48,7 @@ then there is no point in such definition, so target can define <b>ulen</b> as <
 
 <p>
 <b>TextBufLen</b> is a length, used for small text buffers.
-<b>MaxULen</b> is the maximum value of the <b>ulen</b> type.
+<b>MaxULen</b> is the maximum value of the type <b>ulen</b>.
 </p>
 
 <pre>
@@ -60,7 +60,7 @@ const ulen <span class="Att">MaxULen</span> = ulen(-1) ;
 </pre>
 
 <p>
-To assigne a length value you can use user-defined literals with suffixes <b>KByte</b> and <b>MByte</b>:
+To assign a length value you can use user-defined literals with suffixes <b>KByte</b> and <b>MByte</b>:
 </p>
 
 <pre>
@@ -73,7 +73,7 @@ ulen len2 = 33_MByte ;
 <h3>Calculate lengths and guards</h3>
 
 <p>
-There are several functions, used to calcualte lengths with overflow control:
+There are several functions, used to calculate lengths with the overflow control:
 </p>
 
 <pre>
@@ -85,7 +85,7 @@ ulen <span class="Att">LenOf</span>(ulen count,ulen size_of,ulen extra=0); // re
 </pre>
 
 <p>
-In case of overflow they will call the following guard functions, these functions throw exceptions:
+In case of overflow they call following guard functions, these functions throw exceptions:
 </p>
 
 <pre>
@@ -97,7 +97,7 @@ void <span class="Att">GuardLenOfOverflow</span>(ulen count,ulen size_of,ulen ex
 </pre>
 
 <p>
-Once more guard function is the <b>GuardLen()</b>. It ensures the condition <b>len<=maxlen</b>.
+<b>GuardLen()</b> is another guard function. It ensures the condition <b>len<=maxlen</b>.
 The function <b>GuardLenFailed()</b> throws an exception.
 </p>
 
@@ -112,7 +112,7 @@ void <span class="Att">GuardLenFailed</span>(ulen len,ulen maxlen);
 <h3>Alignment</h3>
 
 <p>
-The next functions are alignment functions. The length <b>len</b> is called aligned 
+Next functions are alignment functions. The length <b>len</b> is called aligned 
 (on some alignment value <b>A</b>), if it is divisible by <b>A</b>.
 </p>
 
@@ -141,13 +141,13 @@ bool <span class="Att">TryAlign</span>(ulen &len,ulen A=MaxAlign);
 </p>
 
 <p>
-<b>TryAlign()</b> tries to align the argument up. If an overflow happens, the return value is <b>false</b>.
-Otherwise the return value is <b>true</b> and the first argument is updated with the aligned result.
+<b>TryAlign()</b> tries to align the argument up. If the overflow happens, the return value is <b>false</b>.
+Otherwise, the return value is <b>true</b> and the first argument is updated with the aligned result.
 </p>
 
 <p>
 The second argument of all these functions is an alignment requirement, it must not be equal 0, and 
-defaulted to the <b>MaxAlign</b> value, defined in the target <b>PlatformBase.h</b> header.
+defaulted to the <b>MaxAlign</b> value, defined in the target header <b>PlatformBase.h</b>.
 </p>
 
 <h3>Utilities</h3>

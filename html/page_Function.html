@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/gadget/Function.h</b> <b>CCore/src/gadget/Function.cpp</b></p>
 
 <p>
-<b>Function</b> a universal and lightweight <b>callback</b>. The last is essential in the real-time and system programming.
+<b>Function</b> a universal, lightweight <b>callback</b>. The last property is essential in the real-time and system programming.
 <b>Callback</b> means a generalized function pointer. You can call a function or a class method indirectly using <b>callback</b>.
 </p>
 
@@ -39,6 +39,8 @@
 template &lt;class R,class ... AA&gt;
 class <span class="Att">Function</span>&lt;R (AA...)&gt;
  {
+   ....
+
   public: 
    
    // constructors
@@ -66,9 +68,9 @@ class <span class="Att">Function</span>&lt;R (AA...)&gt;
 </pre>
 
 <p>
-You can bind <b>Function</b> to a static function, a static function with a handle or an object with a method.
-Make sure the handle or the object is alive when you do call the function &mdash; there is no life-time
-control in <b>Function</b>. The object type must be derived from the <b>Funchor</b> base class.
+You can bind a <b>Function</b> to a static function, a static function with a handle or an object with a method.
+Make sure the handle or the object is alive when you do call the function &mdash; there is no a life-time
+control in the <b>Function</b>. The object type must be derived from the <b>Funchor</b> base class.
 </p>
 
 <pre>
@@ -84,7 +86,7 @@ The static method <b>FunctionOf</b> of this class can be used to create a <b>Fun
 </p>
 
 <p>
-There is a noncopyable base type <b>Funchor_nocopy</b>:
+There is a non-copyable base type <b>Funchor_nocopy</b>:
 </p>
 
 <pre>
@@ -94,7 +96,7 @@ typedef NoCopyBase&lt;Funchor&gt; <span class="Att">Funchor_nocopy</span>;
 </pre>
 
 <p>
-The following pattern is used in <b>CCore</b> to work with <b>Functions</b>:
+The following pattern is used in <b>CCore</b> to work with <b>Function</b>s:
 </p>
 
 <pre>
@@ -109,7 +111,7 @@ class C : public Funchor
 </pre>
 
 <p>
-You may bind virtual methods in <b>Functions</b>, the virtualization is working in such case.
+You may bind virtual methods in <b>Function</b>s, the virtualization is working in such case.
 </p>
 
 </body>

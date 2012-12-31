@@ -42,6 +42,20 @@ void func(unsigned long long arg=UIntMax());
 
 </pre>
 
+<p>
+Class methods are <b>constexpr</b>.
+</p>
+
+<pre>
+struct <span class="Att">UIntMax</span>
+ {
+  constexpr UIntMax() {}
+   
+  template &lt;class UInt&gt;
+  constexpr operator UInt() const; 
+ };
+</pre>
+
 </body>
 
 </html>

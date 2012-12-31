@@ -30,7 +30,7 @@
 
 <p class="Files">Files <b>CCore/inc/gadget/Lock.h</b> <b>CCore/src/gadget/Lock.cpp</b></p>
 
-<p><b>LockObject</b> is a simple class implementing scope lock pattern:</p>
+<p><b>LockObject</b> is a simple class, implementing the scope lock pattern:</p>
 
 <pre>
 template &lt;class T&gt;
@@ -47,7 +47,7 @@ class <span class="Att">LockObject</span> : NoCopy
 </pre>
 
 <p>
-If you have an object of type C with methods <b>lock()</b> and <b>unlock()</b>, you can use <b>LockObject</b> 
+If you have an object of the type <b>C</b> with methods <b>lock()</b> and <b>unlock()</b>, you can use <b>LockObject</b> 
 to "lock" this object for a scope duration:
 </p>
 

@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/gadget/ExceptionType.h</b> <b>CCore/src/gadget/ExceptionType.cpp</b></p>
 
 <p>
-<b>ExceptionType</b> is an enum with two named values. It is used to handle an exceptional
+<b>ExceptionType</b> is an <b>enum</b> with two named values. It is used to handle an exceptional
 situation in <b>CCore</b>.
 </p>
 
@@ -63,22 +63,22 @@ To throw an exception:
 
 <pre>
 
-Printf(<span class="Att">Exception</span>,"message text",...);
+Printf(<span class="Att">Exception</span>,"message text",....);
 
 </pre>
 
 <p>
-This statement will pick up the installed error report handler, print the specified error message and then 
-throw an exception of type <b>CatchType</b>.
+This statement picks up an installed error report handler, prints the specified error message and then 
+throws an exception of type <b>CatchType</b>.
 </p>
 
 <p>
-To report a error wihout throwing an exception (i.e. inside a destructor):
+To report a error without throwing an exception (i.e. inside a destructor):
 </p>
 
 <pre>
 
-Printf(<span class="Att">NoException</span>,"message text",...);
+Printf(<span class="Att">NoException</span>,"message text",....);
 
 </pre>
 
@@ -95,11 +95,11 @@ try
     // do some job here
    }
 
-   report.guard(); // throw an exception if there was Printf(NoException,...); above
+   report.guard(); // throw an exception if there was Printf(NoException,....); above
   }
 catch(CatchType)
   {
-   // 
+   // handle exception
   }
 </pre>
 

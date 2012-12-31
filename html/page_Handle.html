@@ -32,11 +32,11 @@
 
 <p>
 <b>Handle</b> is a universal object handle. It is a union of four common handle types:
-<b>int</b>, <b>unsigned</b>, <b>void *</b> and function pointer.
+<b>int</b>, <b>unsigned</b>, <b>void *</b> and the function pointer.
 </p>
 
 <pre>
-union Handle
+union <span class="Att">Handle</span>
  {
   typedef void (*FuncPtr)();
  
