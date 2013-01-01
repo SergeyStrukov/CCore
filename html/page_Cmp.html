@@ -32,14 +32,14 @@
 
 <p>
 Ordering is the one of the most important concept in the software world. 
-<b>CCore</b> supports and utilizes the <b>3-way comparision</b>.
+<b>CCore</b> supports and utilizes the <b>3-way comparison</b>.
 If you do compare two elements of the linear ordered set, then there are 3 possible outcomes:
-less, equal and greater. Pitiful (and shameful), but there is no a natural support of the 3-way comparision
+less, equal and greater. Pitiful (and shameful), but there is no a natural support for the 3-way comparison
 in the language. So the following helper entities are used for it.
 </p>
 
 <p>
-<b>enum CmpResult</b> is used to represent an outcome of the 3-way comparision.
+<b>enum CmpResult</b> is used to represent an outcome of the 3-way comparison.
 </p>
 
 <pre>
@@ -74,12 +74,14 @@ the defined method <b>objCmp()</b>, then <b>Cmp()</b> calls this method, otherwi
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 CmpResult <span class="Att">Cmp</span>(const T &amp;a,const T &amp;b);
+
 </pre>
 
 <p>
-Use the function <b>AlphaCmp()</b> to perform the alphabetical comparision:
+Use the function <b>AlphaCmp()</b> to perform the alphabetical comparison:
 </p>
 
 <pre>
@@ -103,11 +105,13 @@ The function <b>AlphaCmp()</b> expects any number of pairs of arguments:
 </p>
 
 <pre>
+
 CmpResult <span class="Att">AlphaCmp</span>(const T1 &a1,const T1 &b1,const T2 &a2,const T2 &b2,...,const Tn &an,const Tn &bn);
+
 </pre>
 
 <p>
-As usual, you may specialize the <b>struct CmpAdapters</b> to implement the 3-way comparision of a type:
+As usual, you may specialize the <b>struct CmpAdapters</b> to implement the 3-way comparison of a type:
 </p>
 
 <pre>
@@ -132,7 +136,7 @@ struct CmpAdapters&lt;false,N::C&gt;
 </pre>
 
 <p>
-Use the function <b>RangeCmp()</b> or <b>RangeLess()</b> to perform the alphabetical comparision of the ranges of an objects:
+Use the function <b>RangeCmp()</b> or <b>RangeLess()</b> to perform the alphabetical comparison of the ranges of an objects:
 </p>
 
 <pre>
@@ -197,11 +201,11 @@ struct <span class="Att">CmpComparable</span>
 </pre>
 
 <p>
-They can be used to simplify the implementaion of the comparable classes:
+They can be used to simplify the implementation of the comparable classes:
 </p>
 
 <pre>
-class C : public CmpComparable&lt;C&gt; // provides all comparision operators for class C
+class C : public CmpComparable&lt;C&gt; // provides all comparison operators for class C
  {
   public:
 
@@ -212,7 +216,7 @@ class C : public CmpComparable&lt;C&gt; // provides all comparision operators fo
 </pre>
 
 <pre>
-class C : public LessComparable&lt;C&gt; // provides all comparision operators for class C
+class C : public LessComparable&lt;C&gt; // provides all comparison operators for class C
  {
   public:
 
@@ -223,7 +227,7 @@ class C : public LessComparable&lt;C&gt; // provides all comparision operators f
 </pre>
 
 <pre>
-class C : public LessComparable&lt;C&gt; // provides all comparision operators for class C
+class C : public LessComparable&lt;C&gt; // provides all comparison operators for class C
  {
   public:
 
@@ -240,7 +244,7 @@ class C : public LessComparable&lt;C&gt; // provides all comparision operators f
 <p>
 The answer is simple: it is more efficient and more usable in applications. 
 3-Way comparison has near the same cost for the simple types as 2-Way. In fact, the comparison command on the modern CPUs
-gives the complete answers how two integral values are ordered. So in practise only the absence of the language support for 3-Way
+gives the complete answers how two integral values are ordered. So in practice only the absence of the language support for 3-Way
 or the lack of optimization capabilities of compilers makes 3-Way comparison of basic types is less efficient.
 </p>
 
@@ -272,7 +276,7 @@ CmpResult Cmp(T1 a1,T1 b1,T2 a2,T2 b2) // more efficient, simple and clear code
 </pre>
 
 <p>
-All usual comparision operations are simply derived from <b>Cmp()</b>. And, finally, many algorithms like <b>Sort()</b>
+All usual comparison operations are simply derived from <b>Cmp()</b>. And, finally, many algorithms
 have advantage using 3-Way than 2-Way both in efficiency and simplicity.
 </p>
 

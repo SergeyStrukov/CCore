@@ -1092,7 +1092,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_CancelPacketList.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_CharProp.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_CmdInput.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_Cmp.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Cmp.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_CompletePacket.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_ConsoleInput.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Counters.html" 0
@@ -1115,7 +1115,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_ForcedTimeout.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_FuncTask.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Function.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_FunctorType.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_FunctorType.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Gadgets.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Handle.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_HeapEngine.html" 0
@@ -1132,9 +1132,9 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_MakeList.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_MemAllocGuard.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_MemoryManagement.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_Meta.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Meta.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Metaphysics.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_Move.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Move.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_MultiEvent.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_MultiSem.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Mutex.html" 0
@@ -1189,7 +1189,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_StartStop.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_StrParse.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_String.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_Swap.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Swap.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Sync.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Task.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_TaskMonitor.html" 0

@@ -34,11 +34,11 @@
 <b>Swap</b> is not just a set of functions and classes, but a fundamental idiom. 
 Swapping means exchanging values as the one operation.
 Objects of a <b>Small Data Types</b> can be copied efficiently. In fact, it is a generalized definition
-of the such kind of types. <b>Efficiency</b> can be defined in another terms as a <span class="Hint">O(1)-nothow property</span>.
-But for many types (actually, for the most of them) 
+of the such kind of types. <b>Efficiency</b> can be defined in another terms as a <span class="Hint">O(1)-nothrow property</span>.
+But for many types (actually, for most of them) 
 copying is either not logically possible, or is not efficient, because requires duplication 
-of a large state, and that is time and space expensive and may fail. So instead of copying we should use 
-moving or swaping whenever possible.  
+a large state, and that is time and space expensive and may fail. So instead of copying we should use 
+moving or swapping whenever possible.  
 For example, to return a result from a function: 
 </p>
 
@@ -53,7 +53,7 @@ void func(T &ret)
 
   Swap(result,ret); // result -> ret, ret -> result
 
-  // null state result is destoyed
+  // null state result is destroyed
  }
 
 void other_func()
@@ -69,8 +69,8 @@ void other_func()
 </pre>
 
 <p>
-<b>Swap</b> is <b>derivable</b>: if the state is the composition of states and each of them is swapable, then
-the whole state is swapable.
+<b>Swap</b> is <b>derivable</b>: if the state is a composition of states and each of them is swappable, then
+the whole state is swappable.
 </p>
 
 <pre>
@@ -92,7 +92,7 @@ struct S
 </pre>
 
 <p>
-But what the most important, <b>Resource Host Types</b> are swapable.
+But what the most important, <b>Resource Host Type</b>s are swappable.
 </p>
 
 <pre>
@@ -134,9 +134,9 @@ void <span class="Att">Swap</span>(T &a,T &b) noexcept(EnableNoExcept);
 </pre>
 
 <p>
-Well, you already known how to use <b>Swap</b> (see code above). Here is some implementaion details.
+Well, you already known how to use <b>Swap</b> (see code above). Here is some implementation details.
 The function <b>Swap()</b> uses the method <b>objSwap()</b> of the destined type to perform the operation.
-So to make a class swapable just define this method in the class.
+So to make a class swappable just define this method in the class.
 If a type is not a class type or the class has no this method, <b>Swap()</b> uses 
 <b>CopySwap()</b> to do the job. In such case the type must be copyable. This is how <b>Swap()</b>
 is working on all basic types.

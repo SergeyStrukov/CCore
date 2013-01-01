@@ -43,7 +43,7 @@ after we have the raw memory and the moved object.
 
 <p>
 There is a technical difficulty with the <b>Move</b> implementation: C++ requires a some constructor call
-for the object creation and the destuctor call for the object life-time termination 
+for the object creation and the destructor call for the object life-time termination 
 (with some minor exceptions). To make the moving derivable we have to use the <b>Move constructor</b> as
 the implementation point for it.
 </p>
@@ -104,7 +104,7 @@ struct MoveAdapters&lt;false,false,N::C&gt;
 
 <p>
 The most convenient way to make a class movable is to define the method <b>objSwap()</b> and make it
-both swapable and moveable. But for the sake of efficiency, you may define the method <b>objMove()</b>.
+both swappable and movable. But for the sake of efficiency, you may define the method <b>objMove()</b>.
 In this case the best way is to define the same time the <b>Move constructor</b> and derived <b>objMove()</b>
 from it.
 Consider the following example:
@@ -144,9 +144,9 @@ struct S
 <p>
 The reason to define the <b>Move constructor</b> is to support the further derivation of it.
 The <b>Move constructor</b> is called in the following context: <span class="Hint">an object is being moving,
-the original object will be destoyed by the call of destructor right after <b>Move constructor</b>
+the original object will be destroyed by the call of destructor right after <b>Move constructor</b>
 is finished</span>.
-Here is the template for the moving of <b>Resource Host Types</b>.
+Here is the template for the moving of <b>Resource Host Type</b>s.
 </p>
 
 <pre>
@@ -191,7 +191,7 @@ class H : NoCopy
 /* struct ToMoveCtor&lt;T&gt; */ 
 
 template &lt;class T&gt;
-struct ToMoveCtor
+struct <span class="Att">ToMoveCtor</span>
  {
   T *obj;
  
@@ -204,7 +204,7 @@ struct ToMoveCtor
  };
 </pre>
 
-<p>It is soleyly introduced to designate <b>Move constructors</b>. The method <b>cast()</b> can be used to "touch" 
+<p>It is solely introduced to designate <b>Move constructors</b>. The method <b>cast()</b> can be used to "touch" 
 a base class subobject in the <b>Move constructor</b> body.
 </p>
 
@@ -235,7 +235,7 @@ C func()
 </pre>
 
 <p>
-But this solution is a wrongdoing. The proper approach would be the change of the return semantic:
+But this solution is a wrongdoing. The proper approach would be the changing of the return semantic:
 operator return should construct the object using any desired constructor instead of copying it.
 </p>
 
@@ -260,11 +260,11 @@ Class func()
 </pre>
 
 <p>
-The problem with the move constructor is it is a <b>destructive implicit operation</b> and as such is a error-prone.
+The problem with the move constructor is it is a <b>destructive implicit operation</b> and as such is error-prone.
 So in <b>CCore</b> C++11 move is prohibited. Instead we are using the <b>Move constructor</b>,
 which is explicit and is called only under specified condition: <span class="Hint">the destructor 
 of the argument is called right after constructor is called, 
-i.e. there is no other methods of the argument are called between them</span>.
+i.g. there is no other methods of the argument are called between them</span>.
 </p>
 
 </body>

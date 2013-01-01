@@ -48,7 +48,7 @@ void Call(FuncInit func_init)
 </pre>
 
 <p>
-I.g. the argument is not used directely as a functor. Instead we create the functor 
+I.g. the argument is not used directly as a functor. Instead we create the functor 
 object inside a function from the provided argument and then call it. <b>FunctorTypeOf&lt;FuncInit&gt;</b> is a template typedef,
 defined in the header <b>FunctorType.h</b>. It defines the exact type of the functor object. The rule is simple: if the type
 <b>FuncInit</b> defines the inner type <b>FunctorType</b>, then this type is a functor type. Otherwise <b>FuncInit</b> itself 
@@ -96,7 +96,7 @@ Call(func_init);
 
 <p>
 In this example the "heavy" functor is created inside <b>Call()</b> from a lightweight initializer. The functor may be 
-non-copyrable and may have a non-trivial destructor (it may allocate and dispose resources temporary).
+non-copyable and may have a non-trivial destructor (it may allocate and dispose resources temporary).
 </p>
 
 <p>

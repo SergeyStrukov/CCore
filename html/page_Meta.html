@@ -32,23 +32,23 @@
 
 <p>
 This file contains a collection of meta-tools. Meta-programming is a programming in compile-time.
-Sometimes you need to derive a constant, type or function based on the argument type properties.
-<b>Meta</b> supports solutions of such kind of tasks. It is enclosed in the <b>CCore::Meta</b> namespace.
+Sometimes you need to derive a constant, type or function, based on the argument type properties.
+<b>Meta</b> supports solutions of such kind of tasks. It is enclosed in the namespace <b>Meta</b> (<b>::CCore::Meta</b>).
 </p>
 
 <p>
-Meta-programming produces its results as <b>Meta-classes</b>, i.e. a classes with public static members, like constants,
+Meta-programming produces its results as <b>Meta-classes</b>, i.g. a classes with public static members, like constants,
 inner types or static functions. Consider <b>Meta-class</b> as a compound return value, comprised by 
 several values. If such class has some main return value, it is usually named as <b>Ret</b> or <b>RetType</b>.
 </p>
 
 <p>
-<b>Meta-function</b> is a class template or template typedef, which, been instantinated, gives some <b>Meta-class</b>. 
-Instantination of <b>Meta-function</b> is a "compile-time call" of it.
+<b>Meta-function</b> is a class template or a template typedef, which, been instantiated, gives some <b>Meta-class</b>. 
+Instantiation of <b>Meta-function</b> is a "compile-time call" of it.
 </p>
 
 <p>
-In some cases <b>Meta-function</b> is a template typdef, which produces a single resulting type.
+In some cases <b>Meta-function</b> is a template typedef, which produces a single resulting type.
 </p>
 
 <p>
@@ -58,8 +58,8 @@ Inheritance is used to include a result in a <b>Meta-function</b>.
 <h3>Empty</h3>
 
 <p>
-<b>Empty</b> is an empty struct. It is used to return a no-value. Usually it is generated if a meta-function
-cannot produce a resonable result, i.e. in the case of the out of domain of definition call. 
+<b>Empty</b> is an empty structure. It is used to return a no-value. Usually it is generated if a meta-function
+cannot produce a reasonable result, i.e. in the case of the out of domain of definition call. 
 </p>
 
 <pre>
@@ -154,7 +154,7 @@ struct <span class="Att">IfNot</span>&lt;false&gt; : True {};
 <h3>Select</h3>
 
 <p>
-<b>Select</b> is the one of the most important <b>Meta-functions</b>, it produces one of the given type based on the given
+<b>Select</b> is the one of the most important <b>Meta-function</b>s, it produces one of the given type based on the given
 condition:
 </p>
 
@@ -172,14 +172,14 @@ using Select = typename ImpSelect&lt;Cond,T1,T2&gt;::Ret ;
 </pre>
 
 <p>
-<b>Select</b> is widely used in recursive meta-programming. It is implemented using template typedef, that eliminate 
-the neccessity of keyword <b>template</b>.
+<b>Select</b> is widely used in the recursive meta-programming. It is implemented using template typedef, that eliminate 
+the necessity of the keyword <b>typename</b>.
 </p>
 
 <h3>BuildIf</h3>
 
 <p>
-<b>BuildIf</b> is another conditional tool: it performs instantination if the condition is true.
+<b>BuildIf</b> is another conditional tool: it performs instantiation, if the condition is true.
 </p>
 
 <pre>
@@ -217,8 +217,8 @@ struct Has
 </pre>
 
 <p>
-Here is an example. Assume you want to know if the given type has a non-static method named <b>setInt</b> of signature <b>int(int)</b>.
-You can evaluate it using the following <b>ProbeSet</b>:
+Here is an example. Assume you want to know, if the given type has a non-static method, named <b>setInt</b> of signature <b>int(int)</b>.
+You can evaluate it, using the following <b>ProbeSet</b>:
 </p>
 
 <pre>
@@ -248,11 +248,15 @@ Then apply <b>Has</b> to get the result:
 
 </pre>
 
+<p>
+This solution is temporary, until <B>concepts</B> will be implemented in the C++.
+</p>
+
 <h3>EnableIf</h3>
 
 <p>
 <b>EnableIf</b> allows poor simulation of <b>concepts</b> &mdash; the feature still missing in C++, 
-it can be used to enable or disable a function instantination.
+it can be used to enable or disable a function instantiation.
 </p>
 
 <pre>
@@ -302,7 +306,7 @@ It is also a template typedef, so you get the result without extra typing.
 <h3>RangeObjType</h3>
 
 <p>
-<b>RangeObjType</b> is another template typedef, it gives the object type of range or poiner kind of types:
+<b>RangeObjType</b> is another template typedef, it gives the object type of range or pointer kind of types:
 </p>
 
 <pre>
@@ -323,7 +327,7 @@ struct SomeRange
 <p>
 <b>IsSInt</b> is true on signed integral types. By default, such types are <b>signed char</b>, <b>short</b>,
 <b>int</b>, <b>long</b>, <b>long long</b> and <b>char</b> if it is signed. But target may extend this list
-using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>PlatformBase.h</b> header file.
+using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the header file <b>PlatformBase.h</b>.
 </p>
 
 <pre>
@@ -339,7 +343,7 @@ using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>P
 <p>
 <b>IsUInt</b> is true on unsigned integral types. By default, such types are <b>unsigned char</b>, <b>unsigned short</b>,
 <b>unsigned</b>, <b>unsigned long</b>, <b>unsigned long long</b> and <b>char</b> if it is unsigned. But target may extend this list
-using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>PlatformBase.h</b> header file.
+using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the header file <b>PlatformBase.h</b>.
 </p>
 
 <pre>
@@ -354,7 +358,7 @@ using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>P
 
 <p>
 <b>IsSUInt</b> is true if one of <b>IsSInt</b> or <b>IsUInt</b> is true, i.g. if the argument is an integral type.
-<b>bool</b> is not cosidered as integral.
+<b>bool</b> is not considered as integral.
 </p>
 
 <pre>
@@ -403,7 +407,7 @@ using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>P
 <h3>PromoteSInt</h3>
 
 <p>
-<b>PromoteSInt</b> returns promote types for the given signed integral type. Signed promote type is a <b>int</b>,
+<b>PromoteSInt</b> returns a promote type for the given signed integral type. Signed promote type is a <b>int</b>,
 <b>long</b> or <b>long long</b> "greater or equal" than the original type. Unsigned promote type is a <b>unsigend int</b>,
 <b>unsigend long</b> or <b>unsigend long long</b> "greater or equal" than the original type.
 </p>
@@ -437,7 +441,8 @@ using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>P
 <h3>HexWidth</h3>
 
 <p>
-<b>HexWidth</b> returns the number fo hex digits required for the type value representation.
+<b>HexWidth</b> returns the number of hex digits, required for the type value representation.
+The type must be unsigned integral.
 </p>
 
 <pre>
@@ -451,7 +456,7 @@ using specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the <b>P
 <h3>Target support for Meta</h3>
 
 <p>
-Target must provide the followig entities in its <b>PlatformBase.h</b> header file.
+Target must provide the following entities in the its header file <b>PlatformBase.h</b>.
 </p>
 
 <pre>
@@ -473,7 +478,7 @@ const unsigned unsigned_long_long = "bit size of type long long" ;
 </pre>
 
 <p>
-The following struct is used to extend the list of types, recognized as integral types:
+The following structure is used to extend the list of types, recognized as integral types:
 </p>
 
 <pre>

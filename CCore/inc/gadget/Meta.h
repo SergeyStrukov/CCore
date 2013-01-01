@@ -181,11 +181,8 @@ using EnableIf = typename Select<Cond, DefType<RetType> , Empty >::Ret ;
 
 /* struct TypeListLen<TT> */ 
  
-template <> 
-struct TypeListLen<> : DefConst<unsigned,0> {};
- 
-template <class T,class ... TT> 
-struct TypeListLen<T,TT...> : DefConst<unsigned,( 1+TypeListLen<TT...>::Ret )> {};
+template <class ... TT> 
+struct TypeListLen : DefConst<unsigned,( sizeof...(TT) )> {};
  
 /* struct ImpRangeObjType<R> */
  
