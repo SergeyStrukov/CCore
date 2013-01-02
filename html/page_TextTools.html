@@ -38,15 +38,15 @@ This header contains a several simple tools to work with text and characters.
 
 <pre>
 
-inline bool <span class="att">CharIsEOL</span>(char ch) { return ch=='\r' || ch=='\n' ; }
+inline bool <span class="Att">CharIsEOL</span>(char ch) { return ch=='\r' || ch=='\n' ; }
 
-inline bool <span class="att">CharIsBin</span>(char ch);
+inline bool <span class="Att">CharIsBin</span>(char ch);
  
-inline bool <span class="att">CharIsDec</span>(char ch);
+inline bool <span class="Att">CharIsDec</span>(char ch);
 
-inline bool <span class="att">CharIsHex</span>(char ch);
+inline bool <span class="Att">CharIsHex</span>(char ch);
 
-inline int <span class="att">CharBinValue</span>(char ch);
+inline int <span class="Att">CharBinValue</span>(char ch);
 
 </pre>
 
@@ -78,7 +78,7 @@ text fragment. It is designed to calculate text positions during a text file pro
 </p>
 
 <pre>
-struct <span class="att">TextPos</span>
+struct <span class="Att">TextPos</span>
  {
   ulen line;
   ulen col;
@@ -131,7 +131,7 @@ to each character. A derived class must initialize the table using protected met
 
 <pre>
 template &lt;class CharClass,CharClass DefaultClass&gt;
-class <span class="att">CharPropTable</span> : NoCopy
+class <span class="Att">CharPropTable</span> : NoCopy
  {
    CharClass table[256];
    

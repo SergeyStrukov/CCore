@@ -35,7 +35,7 @@
 </p>
 
 <pre>
-class <span class="att">Mutex</span> : NoCopy
+class <span class="Att">Mutex</span> : NoCopy
  {
    ....
    
@@ -76,7 +76,7 @@ the same number of times to be completely released.
 </p>
 
 <p>
-<span class="alert">It is highly recommended to lock a mutex using the inner class <b>Lock</b></span>:
+<span class="Alert">It is highly recommended to lock a mutex using the inner class <b>Lock</b></span>:
 </p>
 
 <pre>
@@ -139,9 +139,9 @@ have to nest mutex usage, decide an order of locks: one mutex always must be loc
 
 <pre>
 
-inline unsigned <span class="att">MutexSpinCount</span>() { return Sys::GetSpinCount(); }
+inline unsigned <span class="Att">MutexSpinCount</span>() { return Sys::GetSpinCount(); }
 
-class <span class="att">Mutex</span> : NoCopy
+class <span class="Att">Mutex</span> : NoCopy
  {
    ....
 
@@ -177,7 +177,7 @@ the mutex called the internal system semaphore.
 <h4>XCore mutex</h4>
 
 <pre>
-class <span class="att">Mutex</span> : NoCopy
+class <span class="Att">Mutex</span> : NoCopy
  {
    ....
    

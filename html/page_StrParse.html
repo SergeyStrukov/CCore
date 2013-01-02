@@ -37,7 +37,7 @@
 </p>
 
 <pre>
-struct <span class="att">DecValue</span>
+struct <span class="Att">DecValue</span>
  {
   bool nok;
   unsigned value;
@@ -74,7 +74,7 @@ requirements, so it can be used with them.
 </p>
 
 <pre>
-class <span class="att">StrParse</span>
+class <span class="Att">StrParse</span>
  {
    ....
 
@@ -141,7 +141,7 @@ Parser functions work with some "character stream device".
 </p>
 
 <pre>
-class <span class="att">Dev</span>
+class <span class="Att">Dev</span>
  {
    ....
 
@@ -180,13 +180,13 @@ class <span class="att">Dev</span>
 <pre>
 
 template &lt;class Dev&gt;
-void <span class="att">ParseChar</span>(Dev &amp;dev,char ch);
+void <span class="Att">ParseChar</span>(Dev &amp;dev,char ch);
 
 template &lt;class Dev&gt;
-bool <span class="att">ParseChar_try</span>(Dev &amp;dev,char ch);
+bool <span class="Att">ParseChar_try</span>(Dev &amp;dev,char ch);
 
 template &lt;class Dev&gt;
-void <span class="att">ParseChar_empty</span>(Dev &amp;dev,char &amp;ret,char defval);
+void <span class="Att">ParseChar_empty</span>(Dev &amp;dev,char &amp;ret,char defval);
 
 </pre>
 
@@ -206,13 +206,13 @@ available. Otherwise, the <b>defval</b> is put.
 <pre>
 
 template &lt;class Dev,class UInt,class UInt1,class UInt2&gt;
-void <span class="att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret,UInt1 minval,UInt2 maxval);
+void <span class="Att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret,UInt1 minval,UInt2 maxval);
 
 template &lt;class Dev,class UInt,class UInt1&gt;
-void <span class="att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret,UInt1 maxval);
+void <span class="Att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret,UInt1 maxval);
 
 template &lt;class Dev,class UInt&gt;
-void <span class="att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret);
+void <span class="Att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret);
 
 </pre>
 
@@ -225,13 +225,13 @@ which is a subset of the <b>UInt</b> value range.
 <pre>
 
 template &lt;class Dev,class UInt,class UInt1,class UInt2,class UInt3&gt;
-void <span class="att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval,UInt2 minval,UInt3 maxval);
+void <span class="Att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval,UInt2 minval,UInt3 maxval);
 
 template &lt;class Dev,class UInt,class UInt1,class UInt2&gt;
-void <span class="att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval,UInt2 maxval);
+void <span class="Att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval,UInt2 maxval);
                                                                   
 template &lt;class Dev,class UInt,class UInt1&gt;
-void <span class="att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval);
+void <span class="Att">ParseUInt_empty</span>(Dev &amp;dev,UInt &amp;ret,UInt1 defval);
 
 </pre>
 

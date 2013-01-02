@@ -37,7 +37,7 @@
 </p>
 
 <pre>
-class <span class="att">TickJob</span> : NoCopy
+class <span class="Att">TickJob</span> : NoCopy
  {
    ....
 
@@ -68,7 +68,7 @@ and as such must be a "quick function".
 </p>
 
 <p>
-All other <b>TickJob</b> methods <span class="alert">must be called under <b>IntLock</b> protection</span>.
+All other <b>TickJob</b> methods <span class="Alert">must be called under <b>IntLock</b> protection</span>.
 </p>
 
 <p>
@@ -92,7 +92,7 @@ It is built using a generic class, parametrized by a tick frequency.
 
 <pre>
 template &lt;unsigned TPS&gt;
-class <span class="att">TickCount_gen</span>
+class <span class="Att">TickCount_gen</span>
  {
    unsigned t;
    unsigned r;
@@ -110,7 +110,7 @@ class <span class="att">TickCount_gen</span>
    bool tick(unsigned period_msec);
  };
 
-typedef TickCount_gen&lt;TicksPerSec&gt; <span class="att">TickCount</span>;
+typedef TickCount_gen&lt;TicksPerSec&gt; <span class="Att">TickCount</span>;
 
 </pre>
 
@@ -129,7 +129,7 @@ The constant <b>TicksPerSec</b> is a system tick frequency and provided by the t
 
 <pre>
 
-const unsigned <span class="att">TicksPerSec</span> = .... ;
+const unsigned <span class="Att">TicksPerSec</span> = .... ;
 
 </pre>
 

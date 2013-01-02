@@ -31,13 +31,13 @@
 <p class="Files">Files <b>CCore/inc/PrintTitle.h</b> <b>CCore/src/PrintTitle.cpp</b></p>
 
 <p>
-<b>PrintTitle()</b> is a <b>Creator function</b> to build an object of <b>PrintTitleType</b>.
+<b>PrintTitle()</b> is a <b>Creator function</b> to build an object of the <b>PrintTitleType</b>.
 </p>
 
 <pre>
 
 template &lt;class T&gt;
-PrintTitleType&lt;T&gt; <span class="att">PrintTitle</span>(const T &amp;obj) { return PrintTitleType&lt;T&gt;(obj); }
+PrintTitleType&lt;T&gt; <span class="Att">PrintTitle</span>(const T &amp;obj) { return PrintTitleType&lt;T&gt;(obj); }
 
 </pre>
 
@@ -47,7 +47,7 @@ PrintTitleType&lt;T&gt; <span class="att">PrintTitle</span>(const T &amp;obj) { 
 
 <pre>
 template &lt;class T&gt;
-class <span class="att">PrintTitleType</span>
+class <span class="Att">PrintTitleType</span>
  {
    const T &amp;obj;
    

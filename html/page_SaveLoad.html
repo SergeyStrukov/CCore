@@ -105,7 +105,7 @@ To calculate a save length of the set of objects the function <b>SaveLen()</b> c
 
 <pre>
 template &lt;class ... TT&gt;
-ULenSat <span class="att">SaveLen</span>(const TT &amp; ... tt);
+ULenSat <span class="Att">SaveLen</span>(const TT &amp; ... tt);
 </pre>
 
 <p>
@@ -115,7 +115,7 @@ Or the meta-function <b>SaveLenCounter</b> for a fixed-length types.
 <pre>
 
 template &lt;class ... TT&gt;
-struct <span class="att">SaveLenCounter</span>
+struct <span class="Att">SaveLenCounter</span>
  {
   enum FlagType { Has_SaveLoadLen = true };
  
@@ -123,7 +123,7 @@ struct <span class="att">SaveLenCounter</span>
  };
 
 template &lt;class ... TT&gt;
-struct <span class="att">SaveLenCounter</span>
+struct <span class="Att">SaveLenCounter</span>
  {
   enum FlagType { Has_SaveLoadLen = false };
  };
@@ -141,7 +141,7 @@ a value of the type <b>T</b> from it.
 <pre>
 
 template &lt;class Proxy,class T,class Dev&gt;
-void <span class="att">ProxyLoad</span>(T &amp;obj,Dev &amp;dev);
+void <span class="Att">ProxyLoad</span>(T &amp;obj,Dev &amp;dev);
 
 </pre>
 
@@ -154,28 +154,28 @@ couple.
 <pre>
 
 template &lt;class R,class Dev&gt;
-void <span class="att">SaveRange</span>(R r,Dev &amp;dev);
+void <span class="Att">SaveRange</span>(R r,Dev &amp;dev);
 
 template &lt;class T,class Dev&gt;
-void <span class="att">SaveRange</span>(const T *ptr,ulen len,Dev &amp;dev);
+void <span class="Att">SaveRange</span>(const T *ptr,ulen len,Dev &amp;dev);
   
 template &lt;class R,class Dev&gt;
-void <span class="att">LoadRange</span>(R r,Dev &amp;dev);
+void <span class="Att">LoadRange</span>(R r,Dev &amp;dev);
 
 template &lt;class T,class Dev&gt;
-void <span class="att">LoadRange</span>(T *ptr,ulen len,Dev &amp;dev);
+void <span class="Att">LoadRange</span>(T *ptr,ulen len,Dev &amp;dev);
   
 template &lt;class Custom,class R,class Dev&gt;
-void <span class="att">SaveRange_use</span>(R r,Dev &amp;dev);
+void <span class="Att">SaveRange_use</span>(R r,Dev &amp;dev);
 
 template &lt;class Custom,class T,class Dev&gt;
-void <span class="att">SaveRange_use</span>(const T *ptr,ulen len,Dev &amp;dev);
+void <span class="Att">SaveRange_use</span>(const T *ptr,ulen len,Dev &amp;dev);
   
 template &lt;class Custom,class R,class Dev&gt;
-void <span class="att">LoadRange_use</span>(R r,Dev &amp;dev);
+void <span class="Att">LoadRange_use</span>(R r,Dev &amp;dev);
 
 template &lt;class Custom,class T,class Dev&gt;
-void <span class="att">LoadRange_use</span>(T *ptr,ulen len,Dev &amp;dev);
+void <span class="Att">LoadRange_use</span>(T *ptr,ulen len,Dev &amp;dev);
 
 </pre>
 
@@ -186,21 +186,21 @@ the unsigned types serialization.
 
 <pre>
 
-struct <span class="att">SaveLoadBe16</span>;
+struct <span class="Att">SaveLoadBe16</span>;
 
-struct <span class="att">SaveLoadBe32</span>;
+struct <span class="Att">SaveLoadBe32</span>;
 
-struct <span class="att">SaveLoadBe64</span>;
+struct <span class="Att">SaveLoadBe64</span>;
 
-struct <span class="att">SaveLoadLe16</span>;
+struct <span class="Att">SaveLoadLe16</span>;
 
-struct <span class="att">SaveLoadLe32</span>;
+struct <span class="Att">SaveLoadLe32</span>;
 
-struct <span class="att">SaveLoadLe64</span>;
+struct <span class="Att">SaveLoadLe64</span>;
 
 /* struct SaveLoadBe16 */ 
 
-struct <span class="att">SaveLoadBe16</span>
+struct <span class="Att">SaveLoadBe16</span>
  {
   uint8 buf[2];
   
@@ -256,7 +256,7 @@ A serialization output device must provide the following methods:
 </p>
 
 <pre>
-class <span class="att">Dev</span>
+class <span class="Att">Dev</span>
  {
   public:
 
@@ -315,7 +315,7 @@ A serialization input device must provide the following methods:
 </p>
 
 <pre>
-class <span class="att">Dev</span>
+class <span class="Att">Dev</span>
  {
   public:
 
@@ -379,7 +379,7 @@ standard save/load operations sets.
 
 <pre>
 template &lt;class Dev&gt;
-class <span class="att">PutDevBase</span>
+class <span class="Att">PutDevBase</span>
  {
    ....
 
@@ -407,7 +407,7 @@ class <span class="att">PutDevBase</span>
 
 <pre>
 template &lt;class Dev&gt;
-class <span class="att">GetDevBase</span>
+class <span class="Att">GetDevBase</span>
  {
    ....
 
@@ -476,7 +476,7 @@ before serialization.
 </p>
 
 <pre>
-class <span class="att">BufPutDev</span>
+class <span class="Att">BufPutDev</span>
  {
    uint8 *buf;
  
@@ -528,7 +528,7 @@ To represent the byte number the type <a href="page_UIntSat.html"><b>ULenSat</b>
 </p>
 
 <pre>
-class <span class="att">CountPutDev</span>
+class <span class="Att">CountPutDev</span>
  {
    ULenSat count;
    
@@ -538,7 +538,7 @@ class <span class="att">CountPutDev</span>
    
    // methods
    
-   <span class="att">operator ULenSat() const { return count; }</span>
+   <span class="Att">operator ULenSat() const { return count; }</span>
    
    // put
   
@@ -569,7 +569,7 @@ length types.
 </p>
 
 <pre>
-class <span class="att">BufGetDev</span>
+class <span class="Att">BufGetDev</span>
  {
    const uint8 *buf;
  
@@ -621,7 +621,7 @@ error flag. This flag is set in case of underflow or manually by the object bein
 </p>
 
 <pre>
-class <span class="att">RangeGetDev</span>
+class <span class="Att">RangeGetDev</span>
  {
    PtrLen&lt;const uint8&gt; range;
    bool nok;

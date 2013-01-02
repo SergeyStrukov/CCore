@@ -35,7 +35,7 @@
 </p>
 
 <pre>
-class <span class="att">MemAllocGuard</span> : NoCopy
+class <span class="Att">MemAllocGuard</span> : NoCopy
  {
    void *mem;
  
@@ -56,7 +56,7 @@ class <span class="att">MemAllocGuard</span> : NoCopy
 
 <p>
 You can use this class to allocate and keep alive a memory block for the duration of a scope.
-<b>MemAllocGuard</b> destructor releases the block unless the method <b>disarm()</b> is called.
+<b>MemAllocGuard</b> destructor releases the block, unless the method <b>disarm()</b> is called.
 </p>
 
 </body>

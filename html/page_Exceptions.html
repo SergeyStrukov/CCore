@@ -88,7 +88,7 @@ The class <b>PrintException</b> serves as a print adapter for the enum <b>Except
 
 <pre>
 
-class <span class="att">PrintException</span> : public PrintBase
+class <span class="Att">PrintException</span> : public PrintBase
  {
    ExceptionType ex;
    ReportException *report;
@@ -114,7 +114,7 @@ class <span class="att">PrintException</span> : public PrintBase
  };
  
 template &lt;&gt;
-struct <span class="att">PrintOutAdapter&lt;ExceptionType&gt;</span>
+struct <span class="Att">PrintOutAdapter&lt;ExceptionType&gt;</span>
  {
   typedef PrintException PrintOutType;
  };
@@ -134,7 +134,7 @@ target for exception messages. It also has an internal flag, which signals if th
 </p>
 
 <pre>
-class <span class="att">ReportException</span> : NoCopy
+class <span class="Att">ReportException</span> : NoCopy
  {
    bool nok;
 
@@ -173,7 +173,7 @@ By default, the <b>ReportException</b> prints text to the default console. But y
 from the <b>ReportException</b> and overriding the virtual methods <b>print()</b>, <b>start()</b>, <b>add()</b>, 
 and <b>end()</b>. To redirect the text output, you need to override only the method <b>print()</b>, but you may alter
 the formating or processing of the elements of the message by overriding other methods. <b>Print()</b> prints to
-the console. Be caution in implementation of these methods: <span class="alert">they must not throw exceptions, 
+the console. Be caution in implementation of these methods: <span class="Alert">they must not throw exceptions, 
 it will lead to abort</span>.
 </p>
 

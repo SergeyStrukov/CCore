@@ -198,7 +198,7 @@ File <b>&lt;SRC&gt;/libgcc/config/libbid/bid_conf.h</b>. Ensure this:
 </p>
 
 <pre>
-#define DECIMAL_GLOBAL_EXCEPTION_FLAGS_ACCESS_FUNCTIONS <span class ="alert">0</span>
+#define DECIMAL_GLOBAL_EXCEPTION_FLAGS_ACCESS_FUNCTIONS <span class ="Alert">0</span>
 </pre>
 
 <p>
@@ -212,7 +212,7 @@ File <b>&lt;SRC&gt;/libgcc/unwind-sjlj.c</b>. Change the correspondent lines to 
 
 <pre>
 /* Single threaded fallback chain.  */
-static struct SjLj_Function_Context *fc_static <span class ="alert">__attribute__((section(".context_data"))) =0</span> ;
+static struct SjLj_Function_Context *fc_static <span class ="Alert">__attribute__((section(".context_data"))) =0</span> ;
 </pre>
 
 <p>
@@ -221,7 +221,7 @@ File <b>&lt;SRC&gt;/libstdc++-v3/libsupc++/eh_globals.cc</b>.
 
 <pre>
 // Single-threaded fallback buffer.
-static __cxa_eh_globals eh_globals <span class ="alert">__attribute__((section(".context_data"))) = {} </span>;
+static __cxa_eh_globals eh_globals <span class ="Alert">__attribute__((section(".context_data"))) = {} </span>;
 </pre>
 
 <p>

@@ -39,10 +39,10 @@ its input queue and gives the semaphore.
 
 <pre>
 
-void <span class="att">CompletePacket_int</span>(PacketHeader *packet);
+void <span class="Att">CompletePacket_int</span>(PacketHeader *packet);
 
 template &lt;class P&gt;
-void <span class="att">CompletePacket_int</span>(P packet) { CompletePacket_int(GetPacketHeader(packet)); }
+void <span class="Att">CompletePacket_int</span>(P packet) { CompletePacket_int(GetPacketHeader(packet)); }
 
 </pre>
 

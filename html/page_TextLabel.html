@@ -31,16 +31,16 @@
 <p class="Files">Files <b>CCore/inc/TextLabel.h</b> <b>CCore/src/TextLabel.cpp</b></p>
 
 <p>
-<b>TextLabel</b> is a lightweight text representing class. It does not hold any resources and has no a lifetime limit 
+<b>TextLabel</b> is a lightweight text representing class. It does not hold any resources and has no a life-time limit 
 (destructor is trivial). We need such class, because it can be used in such context, where memory allocation is impossible 
 (for example, the memory heap is not initialized yet).
 </p>
 
 <pre>
 
-typedef StrLen (*<span class="att">TextLabelFunc</span>)(Handle ctx,PtrLen&lt;char&gt; buf);
+typedef StrLen (*<span class="Att">TextLabelFunc</span>)(Handle ctx,PtrLen&lt;char&gt; buf);
 
-class <span class="att">TextLabel</span>
+class <span class="Att">TextLabel</span>
  {
    ....
    
@@ -72,11 +72,11 @@ class <span class="att">TextLabel</span>
 </pre>
 
 <p>
-If you have a <b>TextLabel</b> object, you can build its string using the method <b>getStr()</b>, you should supply 
+If you have a <b>TextLabel</b> object, you can build its string, using the method <b>getStr()</b>, you should supply 
 a temporary buffer, where the string will possibly be constructed. You can also print the string, 
-the string print attributes are supported. The method <b>print()</b> is using a temporary buffer of the length 
+string print attributes are supported. The method <b>print()</b> is using a temporary buffer of the length 
 <a href="page_Len.html"><b>TextBufLen</b></a>.
-We assume the string, represented by a <b>TextLabel</b> object, has a reasonably small length.
+We assume that the string, represented by a <b>TextLabel</b> object, has a reasonably small length.
 </p>
 
 <p>
@@ -84,16 +84,16 @@ There are four ways to build a <b>TextLabel</b> object.
 </p>
 
 <p>
-You can construct the empty string object using the default constructor. 
+You can construct an empty string object using the default constructor. 
 </p>
 
 <p>
-You can build a <b>TextLabel</b> from a persistent C zero-terminated string (i.g. from a string literal).
+You can build a <b>TextLabel</b> from a persistent C zero-terminated string (i.e. from a string literal).
 </p>
 
 <p>
-The third way is to build a <b>TextLabel</b> from an enum. The enum value range must fit in the <b>int</b> value range.
-The function <b>GetTextDesc()</b> must be defined for this enum.
+The third way is to build a <b>TextLabel</b> from an <b>enum</b>. The <b>enum</b> value range must fit 
+in the <b>int</b> value range. The function <b>GetTextDesc()</b> must be defined for this <b>enum</b>.
 </p>
 
 <pre>
@@ -115,11 +115,11 @@ TextLabel label(E1);
 
 <p>
 Finally, the more general way is to build a <b>TextLabel</b> from the <b>TextLabelFunc</b> and the <b>Handle</b>.
-Just remember, the handle must be persistent, it cannot have a limited lifetime.
+Just remember, the handle must be persistent, it cannot have a limited life-time.
 </p>
 
 <p>
-The next class is <b>NumTextLabel</b>. It is designed to generate such labels as Sem1, Sem2, ... .
+The next class is <b>NumTextLabel</b>. It is designed to generate such labels as "Sem1", "Sem2", ... .
 Use it as following:
 </p>
 
@@ -142,7 +142,7 @@ Mutex Name::NextMutex;
 
 unsigned Name::Next=0;
 
-<span class="att">NumTextLabel</span>&lt;Name&gt; label;
+<span class="Att">NumTextLabel</span>&lt;Name&gt; label;
 
 </pre>
 

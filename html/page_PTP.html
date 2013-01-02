@@ -402,7 +402,7 @@ It is located in the <b>PTP</b> namespace (<b>::CCore::Net::PTP</b>).
 </p>
 
 <pre>
-class <span class="att">ClientDevice</span> : public ObjBase
+class <span class="Att">ClientDevice</span> : public ObjBase
  {
    ....
 
@@ -517,7 +517,7 @@ is disappeared after the completion function is returned.
 </p>
 
 <pre>
-struct <span class="att">TransExt</span>
+struct <span class="Att">TransExt</span>
  {
   TransResult result;              // output
   PtrLen&lt;const uint8&gt; server_info; // output
@@ -539,7 +539,7 @@ Another way to perform a transaction is to define a special structure <b>Ext</b>
 </p></a>
 
 <pre>
-struct <span class="att">Ext</span> : ExtBase&lt;ServiceId,FunctionId&gt;
+struct <span class="Att">Ext</span> : ExtBase&lt;ServiceId,FunctionId&gt;
  {
   typedef .... InputType;
   typedef .... OutputType;
@@ -571,7 +571,7 @@ data from the output object to the <b>Ext</b> structure. Errors are reported in 
 
 <pre>
 template &lt;ServiceIdType ServiceId_,FunctionIdType FunctionId_,MoveFlagType MoveFlag=MoveNothing&gt;
-struct <span class="att">ExtBase</span>
+struct <span class="Att">ExtBase</span>
  {
   // consts
   
@@ -665,7 +665,7 @@ It is located in the <b>PTP</b> namespace (<b>::CCore::Net::PTP</b>).
 </p>
 
 <pre>
-class <span class="att">ServerDevice</span> : public ObjBase
+class <span class="Att">ServerDevice</span> : public ObjBase
  {
    ....
 
@@ -736,7 +736,7 @@ To implement a server functionality some server processor must be attached.
 </p>
 
 <pre> 
-struct <span class="att">ServerProc</span>
+struct <span class="Att">ServerProc</span>
  {
   virtual void inbound(XPoint point,TransIndex idx,Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; client_info)=0;
   

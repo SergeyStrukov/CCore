@@ -30,6 +30,8 @@
 
 <p class="Files">Files <b>CCore/inc/Fifo.h</b> <b>CCore/src/Fifo.cpp</b></p>
 
+<h4>Fifo</h4>
+
 <p>
 The <b>Partial class</b> <b>Fifo</b> implements a buffer fifo upon a provided buffer.
 </p>
@@ -38,7 +40,7 @@ The <b>Partial class</b> <b>Fifo</b> implements a buffer fifo upon a provided bu
 
 <pre>
 template &lt;class T&gt;
-class <span class="att">Fifo</span> : NoCopy
+class <span class="Att">Fifo</span> : NoCopy
  {
    T *const buf;
    const ulen len;
@@ -88,11 +90,11 @@ Constructor builds a fifo in the initial empty state, the provided buffer will b
 </p>
 
 <p>
-<b>isEmpty()</b> returns true, if the fifo is empty.
+<b>isEmpty()</b> returns <b>true</b>, iff the fifo is empty.
 </p>
 
 <p>
-<b>isFull()</b> returns true, if the fifo is full.
+<b>isFull()</b> returns <b>true</b>, iff the fifo is full.
 </p>
 
 <p>
@@ -101,28 +103,28 @@ Constructor builds a fifo in the initial empty state, the provided buffer will b
 
 <p>
 Keep in mind, that the buffer is not just a memory space. It is the <b>object</b> array. Some of these objects
-are the logical part of the fifo, but others are unused. It is nothing, if the type T is <b>int</b> or any <b>Small Data Type</b>,
-but it would lead to a resource leak, if T is the <b>String</b>, for example.
-To deal with this problem, choose carefully the exact method of putting/getting objects into the fifo. 
+are the logical part of the fifo, but others are unused. It is nothing, if the type <b>T</b> is <b>int</b> or any <b>Small Data Type</b>,
+but it would lead to a resource leak, if <b>T</b> is the <b>String</b>, for example.
+To deal with this problem, choose carefully an exact method of putting/getting objects into the fifo. 
 </p>
 
 <p>
-Putting/getting methods returns true, if the operation was successful, otherwise they return false and does not change
+Putting/getting methods returns <b>true</b>, if the operation was successful, otherwise they return <b>false</b> and does not change
 the state of the fifo.
 </p>
 
 <p>
-<b>put()</b> puts the object to the fifo, using copying.
+<b>put()</b> puts the object into the fifo, using copying.
 </p>
 
 <p>
-<b>put_swap()</b> puts the object to the fifo, using swapping. I.e. it swaps the given object with the target buffer element.
+<b>put_swap()</b> puts the object into the fifo, using swapping. I.g. it swaps the given object with the target buffer element.
 </p>
 
 <p>
-<b>put_gen()</b> is a generic way to put an object into the fifo, its agrument is a functor, which is called to do the job.
-<b>func</b> is call as <b>func(dst)</b>, where <b>dst</b> is a target buffer element. It is assumed, this call will
-change this element to store the reqiured value.
+<b>put_gen()</b> is a generic way to put an object into the fifo, its argument is a functor, which is called to do the job.
+<b>func</b> is called as <b>func(dst)</b>, where <b>dst</b> is a target buffer element. It is assumed, this call will
+change this element to store a required value.
 </p>
 
 <p>
@@ -130,14 +132,16 @@ change this element to store the reqiured value.
 </p>
 
 <p>
-<b>get_swap()</b> gets the object from the fifo, using swapping. This method is preffered, if you want to clean
+<b>get_swap()</b> gets the object from the fifo, using swapping. This method is preferred, if you want to clean
 the object in the buffer, or if the type <b>T</b> is not copyable.
 </p>
 
 <p>
-<b>get_gen()</b> is a generic method of extraction the object from the fifo, is is called the given functor <b>func</b>
-to do the job.
+<b>get_gen()</b> is a generic method of extraction an object from the fifo, it calls the given functor <b>func</b>
+to do the job, the same way as the <b>put_gen()</b> does.
 </p>
+
+<h4>FifoBuf</h4>
 
 <p>
 The class <b>FifoBuf</b> is an upgraded class <b>Fifo</b> with the embedded buffer:
@@ -145,7 +149,7 @@ The class <b>FifoBuf</b> is an upgraded class <b>Fifo</b> with the embedded buff
 
 <pre>
 template &lt;class T,ulen Len&gt;
-class <span class="att">FifoBuf</span> : public Fifo&lt;T&gt;
+class <span class="Att">FifoBuf</span> : public Fifo&lt;T&gt;
  {
    T buf[Len];
    

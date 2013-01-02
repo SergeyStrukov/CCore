@@ -37,7 +37,7 @@ The <b>String</b> is not null-terminated.
 </p>
 
 <pre>
-class <span class="att">String</span>
+class <span class="Att">String</span>
  {
    AtomicRefArray&lt;char&gt; data; 
    
@@ -101,7 +101,7 @@ some internal memory storage, once you finished, you can build a string using th
 </p>
 
 <pre>
-class <span class="att">PrintString</span> : public PrintBase
+class <span class="Att">PrintString</span> : public PrintBase
  {
    ....
 
@@ -142,10 +142,10 @@ extending the printed sequence.
 <pre>
 
 template &lt;class ... TT&gt;
-String <span class="att">Stringf</span>(const char *format,const TT &amp; ... tt);
+String <span class="Att">Stringf</span>(const char *format,const TT &amp; ... tt);
  
 template &lt;class ... TT&gt;
-String <span class="att">StringCat</span>(const TT &amp; ... tt);
+String <span class="Att">StringCat</span>(const TT &amp; ... tt);
 
 </pre>
 
@@ -163,7 +163,7 @@ such objects, use the function <b>StringSum()</b>.
 
 <pre>
 template &lt;class ... TT&gt;
-String <span class="att">StringSum</span>(const TT &amp; ... tt);
+String <span class="Att">StringSum</span>(const TT &amp; ... tt);
 </pre>
 
 </body>

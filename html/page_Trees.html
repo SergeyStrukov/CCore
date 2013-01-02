@@ -107,7 +107,7 @@ the key. The key is unique across all tree.
 
 <pre>
 template &lt;class T,class K&gt;
-struct <span class="att">TreeLink</span> 
+struct <span class="Att">TreeLink</span> 
  {
   T *lo;
   T *hi;
@@ -131,7 +131,7 @@ an unsigned integral type.
 </p>
 
 <pre>
-struct <span class="att">BinAlgo</span>
+struct <span class="Att">BinAlgo</span>
  {
    // node!=0
    // root_ptr!=0
@@ -254,7 +254,7 @@ The remaining <b>Del...()</b> functions search the element like the <b>Find...()
 <pre>
   // struct NodePtr
   
-  struct <span class="att">NodePtr</span>
+  struct <span class="Att">NodePtr</span>
    {
     T **node_ptr;
     
@@ -277,7 +277,7 @@ return <b>locate...()</b> results.
 <pre>
   // struct Root
   
-  struct <span class="att">Root</span>
+  struct <span class="Att">Root</span>
    {
     T *root;
     
@@ -340,7 +340,7 @@ correspondent functions.
 </p>
 
 <pre>
-struct <span class="att">RadixAlgo</span> : BinAlgo
+struct <span class="Att">RadixAlgo</span> : BinAlgo
  {
   // Med()
   
@@ -351,7 +351,7 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
    
   // class PrepareIns
  
-  class <span class="att">PrepareIns</span> : NoCopy
+  class <span class="Att">PrepareIns</span> : NoCopy
    {
      ....
 
@@ -372,7 +372,7 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
    
   // struct Check 
 
-  struct <span class="att">Check</span>
+  struct <span class="Att">Check</span>
    {
     K minval;
     K maxval;
@@ -419,7 +419,7 @@ takes the root pointer and the value range. If the tree is broken, an exception 
 
 <p>
 The <b>TreeUpLink</b> is another tree link. It has the additional member <b>up</b>. It points to the parent
-element. For the root node it is null. <span class="alert">The keys are not unique.</span> 
+element. For the root node it is null. <span class="Alert">The keys are not unique.</span> 
 In fact, this kind of tree is a combination 
 of tree and list. There are two kind of links: normal tree links, and same-key links, where <b>lo==this</b>.
 And the Lo and Hi subtrees may have nodes with the same key as the root element.
@@ -427,7 +427,7 @@ And the Lo and Hi subtrees may have nodes with the same key as the root element.
 
 <pre>
 template &lt;class T,class K&gt;
-struct <span class="att">TreeUpLink</span>
+struct <span class="Att">TreeUpLink</span>
  {
   T *lo; // == this for same-key nodes
   T *hi;
@@ -447,7 +447,7 @@ struct <span class="att">TreeUpLink</span>
 </p>
 
 <pre>
-struct <span class="att">BinAlgo</span>
+struct <span class="Att">BinAlgo</span>
  {
    // node!=0
    // root_ptr!=0
@@ -498,7 +498,7 @@ Again, the family of <b>Del...()</b> functions are the same.
 <pre>
   // struct Root
   
-  struct <span class="att">Root</span>
+  struct <span class="Att">Root</span>
    {
     T *root;
     
@@ -558,7 +558,7 @@ the member of the tree, the old one becomes unlinked. Keys are swapped.
 </p>
 
 <pre>
-struct <span class="att">RadixAlgo</span> : BinAlgo
+struct <span class="Att">RadixAlgo</span> : BinAlgo
  {
   // Med()
 
@@ -579,7 +579,7 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
   
   // class PrepareIns
  
-  class <span class="att">PrepareIns</span> : NoCopy
+  class <span class="Att">PrepareIns</span> : NoCopy
    {
      ....
 
@@ -600,7 +600,7 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
 
   // struct Root
   
-  struct <span class="att">Root</span> : BinAlgo::Root
+  struct <span class="Att">Root</span> : BinAlgo::Root
    {
     void ins(T *node,K kmin,K kmax);
     
@@ -613,7 +613,7 @@ struct <span class="att">RadixAlgo</span> : BinAlgo
   
   // struct Check
   
-  struct <span class="att">Check</span>
+  struct <span class="Att">Check</span>
    {
     K minval;
     K maxval;
@@ -668,7 +668,7 @@ This flag determines the arrows colores:
 </p>
 
 <pre>
-enum <span class="att">RBFlag</span>
+enum <span class="Att">RBFlag</span>
  {
   RBFlag_BlackBlack,
   RBFlag_HiRed,
@@ -677,7 +677,7 @@ enum <span class="att">RBFlag</span>
  };
 
 template &lt;class T,class K&gt;
-struct <span class="att">RBTreeLink</span>
+struct <span class="Att">RBTreeLink</span>
  {
   T *lo;
   T *hi;
@@ -700,7 +700,7 @@ There are tree <b>Algorithms Package</b>s for this link: <b>BaseAlgo</b>, <b>Alg
 </p>
 
 <pre>
-struct <span class="att">BaseAlgo</span>
+struct <span class="Att">BaseAlgo</span>
  {
    // node!=0
   
@@ -720,7 +720,7 @@ struct <span class="att">BaseAlgo</span>
   
   // struct Check
   
-  struct <span class="att">Check</span>
+  struct <span class="Att">Check</span>
    {
     K minval;
     K maxval;
@@ -742,7 +742,7 @@ range variables. And it returns additional information: <b>height</b> is a black
 </p>
 
 <pre>
-struct <span class="att">Algo</span> : BaseAlgo
+struct <span class="Att">Algo</span> : BaseAlgo
  {
    // node!=0
    // root_ptr!=0
@@ -770,7 +770,7 @@ There are four delete functions with the same semantic as <b>TreeLink</b> delete
 <pre>
   // struct Root
   
-  struct <span class="att">Root</span>
+  struct <span class="Att">Root</span>
    {
     T *root;
     
@@ -819,7 +819,7 @@ correspondent functions.
 <pre>
   // class PrepareIns
 
-  class <span class="att">PrepareIns</span> : NoCopy
+  class <span class="Att">PrepareIns</span> : NoCopy
    {
      ....
 
@@ -856,7 +856,7 @@ points to the parent tree element. For the root element it is null.
 
 <pre>
 template &lt;class T,class K&gt;
-struct <span class="att">RBTreeUpLink</span>
+struct <span class="Att">RBTreeUpLink</span>
  {
   T *up;
   T *lo;

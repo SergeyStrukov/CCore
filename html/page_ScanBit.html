@@ -39,7 +39,7 @@ a set of functions for efficient implementation of the <b>ScanBit</b>.
 
 <pre>
 template &lt;class Algo,ulen Len&gt;
-class <span class="att">ScanBit</span>
+class <span class="Att">ScanBit</span>
  {
    typedef typename Algo::Unit Unit;  
 
@@ -68,7 +68,7 @@ The default constructor clears all bit.
 </p>
 
 <p>
-The inner constant <b>IndexLim</b> is the array length. The argument <b>ind</b> in all methods must be less than <b>IndexLim</b>.
+The inner constant <b>IndexLim</b> is the array bit length. The argument <b>ind</b> in all methods must be less than <b>IndexLim</b>.
 </p>
 
 <p>
@@ -84,27 +84,27 @@ The inner constant <b>IndexLim</b> is the array length. The argument <b>ind</b> 
 </p>
 
 <p>
-<b>findMin()</b> scans bits starting form the given index <b>up</b>. The index of the first found set bit is returns.
-If there is no such ones, <b>IndexLim</b> is returned. The efficiency of this method depends on the efficiency of the method
+<b>findMin()</b> scans bits starting form the given index <b>up</b>. The index of the first found set bit is returned.
+If there is no such one, <b>IndexLim</b> is returned. The efficiency of this method depends on the efficiency of the method
 <b>Algo::ScanUp()</b>.
 </p>
 
 <p>
-<b>findMax()</b> scans bits starting form the given index <b>down</b>. The index of the first found set bit is returns.
-If there is no such ones, <b>IndexLim</b> is returned. The efficiency of this method depends on the efficiency of the method
+<b>findMax()</b> scans bits starting form the given index <b>down</b>. The index of the first found set bit is returned.
+If there is no such one, <b>IndexLim</b> is returned. The efficiency of this method depends on the efficiency of the method
 <b>Algo::ScanDown()</b>.
 </p>
 
 <h3>ScanMSBitAlgo and ScanLSBitAlgo</h3>
 
 <p>
-Two ready <b>Algorithm Package</b>s for the <b>ScanBit</b> are provided: <b>ScanMSBitAlgo</b> and <b>ScanLSBitAlgo</b>.
-They are built based on the "quick" functions, provided by the Target. They use different order of numbering bits in the unit.
-They <b>ScanUp/Down()</b> methods use the opposite <b>Quick::ScanMSBit/LSBit()</b> functions calls, as shown below.
+Two prepared <b>Algorithm Package</b>s for the <b>ScanBit</b> are provided: <b>ScanMSBitAlgo</b> and <b>ScanLSBitAlgo</b>.
+They are built, based on "quick" functions, provided by the target. They use different order of numbering bits in the unit.
+They <b>ScanUp/Down()</b> methods use the opposite <b>Quick::ScanMSBit/LSBit()</b> function calls, as shown below.
 </p>
 
 <pre>
-struct <span class="att">ScanMSBitAlgo</span>
+struct <span class="Att">ScanMSBitAlgo</span>
  {
   typedef Quick::ScanUInt Unit;
   
@@ -128,7 +128,7 @@ struct <span class="att">ScanMSBitAlgo</span>
 </pre>
 
 <pre>
-struct <span class="att">ScanLSBitAlgo</span>
+struct <span class="Att">ScanLSBitAlgo</span>
  {
   typedef Quick::ScanUInt Unit;
   

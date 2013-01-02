@@ -31,16 +31,16 @@
 <p class="Files">Files <b>CCore/inc/Crc.h</b> <b>CCore/src/Crc.cpp</b></p>
 
 <p>
-There are three Crc classes: <b>Crc16</b>, <b>Crc24</b>, <b>Crc32</b> to caculate Crc value of a byte sequence.
+There are three Crc classes: <b>Crc16</b>, <b>Crc24</b>, <b>Crc32</b> to calculate a Crc value of a byte sequence.
 Technically, Crc is a polynomial division reminder. It is used to control sudden errors in a byte stream.
 There are 3 popular and standard such Crc, widely used in IT. We call them Crc16, Crc24 and Crc32 by the number of output
-bits. In practical applications they are used with some adjustments, i.e. the byte sequence is prepended with some start
+bits. In practical applications they are used with some adjustments, i.e. the byte sequence is extended with some start
 sequence in order to calculate its Crc.
 </p>
 
 <p>
-<b>CCore</b> uses the generic implementation of Crc based on lookup tables. So <b>Crc16</b>, <b>Crc24</b>, <b>Crc32</b> are
-instantinations of the generic <b>CrcAccumulator</b> class, parametrized by the <b>Algorithm Package</b>s
+<b>CCore</b> uses a generic implementation of Crc based on lookup tables. So <b>Crc16</b>, <b>Crc24</b>, <b>Crc32</b> are
+instantiations of the generic <b>CrcAccumulator</b> class, parametrized by the <b>Algorithm Package</b>s
 <b>AlgoCrc16, AlgoCrc24, AlgoCrc32</b>:
 </p>
 
@@ -48,7 +48,7 @@ instantinations of the generic <b>CrcAccumulator</b> class, parametrized by the 
 
 /* struct AlgoCrc16 */ 
 
-struct <span class="att">AlgoCrc16</span>
+struct <span class="Att">AlgoCrc16</span>
  {
   typedef uint16 ResultType;
   
@@ -63,7 +63,7 @@ struct <span class="att">AlgoCrc16</span>
  
 /* struct AlgoCrc24 */ 
 
-struct <span class="att">AlgoCrc24</span>
+struct <span class="Att">AlgoCrc24</span>
  {
   typedef uint32 ResultType;
   
@@ -78,7 +78,7 @@ struct <span class="att">AlgoCrc24</span>
  
 /* struct AlgoCrc32 */ 
 
-struct <span class="att">AlgoCrc32</span>
+struct <span class="Att">AlgoCrc32</span>
  {
   typedef uint32 ResultType;
   
@@ -99,7 +99,7 @@ struct <span class="att">AlgoCrc32</span>
 
 <pre>
 template &lt;class Algo&gt;
-class CrcAccumulator
+class <span class="Att">CrcAccumulator</span>
  {
   public:
   
@@ -125,18 +125,18 @@ class CrcAccumulator
 
 /* types */  
 
-typedef CrcAccumulator&lt;AlgoCrc16&gt; Crc16;
+typedef CrcAccumulator&lt;AlgoCrc16&gt; <span class="Att">Crc16</span>;
  
-typedef CrcAccumulator&lt;AlgoCrc24&gt; Crc24;
+typedef CrcAccumulator&lt;AlgoCrc24&gt; <span class="Att">Crc24</span>;
 
-typedef CrcAccumulator&lt;AlgoCrc32&gt; Crc32;
+typedef CrcAccumulator&lt;AlgoCrc32&gt; <span class="Att">Crc32</span>;
 
 </pre>
 
 <p>
 You can built the result by "feeding" the object of this class by pieces of data. You can put bytes one-by-one or
 add by ranges. The type <b>R</b> in the method <b>addRange()</b> must be a <b>Cursor</b> over a piece of data.
-By default, <b>CrcAccumulator</b> starts from the value 1.
+By default, <b>CrcAccumulator</b> starts from the value 1. An example:
 </p>
 
 <pre>

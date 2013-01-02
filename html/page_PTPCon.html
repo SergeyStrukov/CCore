@@ -204,7 +204,7 @@ in the namespace <b>PTPCon</b> (i.g. the full namespace is <b>::CCore::Net::PTPC
 </p>
 
 <pre>
-class <span class="att">ClientDevice</span> : public ObjBase
+class <span class="Att">ClientDevice</span> : public ObjBase
  {
    ....
 
@@ -291,7 +291,7 @@ The structure <b>Cfg</b> stores configuration properties for a <b>PTP</b> consol
 </p>
 
 <pre>
-struct <span class="att">Cfg</span>
+struct <span class="Att">Cfg</span>
  {
   uint32 write_timeout_msec;
   uint32 read_timeout_msec;
@@ -337,14 +337,14 @@ The structure <b>TriggerMask</b> is the character trigger mask.
 
 <pre>
 
-enum <span class="att">Trigger</span>
+enum <span class="Att">Trigger</span>
  {
   TriggerNone,
   TriggerDefault, // \r \n \t \b
   TriggerAll
  };
 
-struct <span class="att">TriggerMask</span>
+struct <span class="Att">TriggerMask</span>
  {
   uint32 mask[8];
   

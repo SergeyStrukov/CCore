@@ -37,10 +37,10 @@
 <pre>
 
 template &lt;class FuncInit,class ... TT&gt;
-void <span class="att">RunFuncTask</span>(const FuncInit &amp;func_init,TT ... tt);
+void <span class="Att">RunFuncTask</span>(const FuncInit &amp;func_init,TT ... tt);
 
 template &lt;class FuncInit,class ... TT&gt;
-void <span class="att">RunFuncTask</span>(const FuncInit &amp;func_init,Function&lt;void (void)&gt; exit_function,TT ... tt);
+void <span class="Att">RunFuncTask</span>(const FuncInit &amp;func_init,Function&lt;void (void)&gt; exit_function,TT ... tt);
 
 </pre>
 
@@ -68,7 +68,7 @@ To run a task the following class, derived from the class <b>Task</b>, is used.
 
 <pre>
 template &lt;class FuncInit&gt;
-class <span class="att">FuncTask</span> : public Task
+class <span class="Att">FuncTask</span> : public Task
  {
    FuncInit func_init;
    Function&lt;void (void)&gt; exit_function;

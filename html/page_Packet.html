@@ -44,7 +44,7 @@ processing and completed.
 </p>
 
 <p>
-<span class="alert">Packet functions, complete or cancel, must be called in a lock-free context</span>.
+<span class="Alert">Packet functions, complete or cancel, must be called in a lock-free context</span>.
 </p>
 
 <p>
@@ -55,9 +55,9 @@ The number of software entities are required to deal with packets.
 
 <pre>
 
-typedef SecTimer::ValueType <span class="att">TimeStamp</span>;
+typedef SecTimer::ValueType <span class="Att">TimeStamp</span>;
 
-typedef Function&lt;void (PacketHeader *)&gt; <span class="att">PacketFunction</span>;
+typedef Function&lt;void (PacketHeader *)&gt; <span class="Att">PacketFunction</span>;
 
 </pre>
 
@@ -71,20 +71,20 @@ typedef Function&lt;void (PacketHeader *)&gt; <span class="att">PacketFunction</
 
 <pre>
 
-const ulen <span class="att">MaxPacketExtLen</span> = Align(256) ;
+const ulen <span class="Att">MaxPacketExtLen</span> = Align(256) ;
 
-const ulen <span class="att">MaxPacketCompleteFunctions</span> = 8 ;
+const ulen <span class="Att">MaxPacketCompleteFunctions</span> = 8 ;
 
-const ulen <span class="att">DefaultPacketMaxDataLen</span> = 1600 ;
+const ulen <span class="Att">DefaultPacketMaxDataLen</span> = 1600 ;
 
-enum <span class="att">PacketCancelState</span>
+enum <span class="Att">PacketCancelState</span>
  {
   Packet_NoCancelFunction,
   Packet_HasCancelFunction,
   Packet_Cancelled
  };
  
-enum <span class="att">LenStatus</span>
+enum <span class="Att">LenStatus</span>
  {
   Len_ok,
   Len_too_short,
@@ -163,7 +163,7 @@ perspective data is a raw data, i.g. a sequence of bytes.
 </p>
 
 <pre>
-class <span class="att">PacketBuf</span> : NoCopy
+class <span class="Att">PacketBuf</span> : NoCopy
  {
    void *data;
    ulen max_data_len;
@@ -264,7 +264,7 @@ some predefined length. Packet extension is organized as a stack of any type obj
 </p>
 
 <pre>
-class <span class="att">PacketHeader</span> : NoCopy
+class <span class="Att">PacketHeader</span> : NoCopy
  {
    PacketBuf pbuf;
    
@@ -540,7 +540,7 @@ it cannot be completed also.
 </p>
 
 <pre>
-class <span class="att">PacketList</span> : NoCopy
+class <span class="Att">PacketList</span> : NoCopy
  {
    ....
 
@@ -703,7 +703,7 @@ to convert a <b>Packet</b> to the <b>PacketHeader</b> pointer.
    
    PacketFunction popCompleteFunction() { return packet-&gt;popCompleteFunction(); }
   
-   void complete() { <span class="att">Replace_null(packet)</span>-&gt;complete(); }
+   void complete() { <span class="Att">Replace_null(packet)</span>-&gt;complete(); }
 
 </pre>
 
@@ -756,7 +756,7 @@ These methods are the packet time-stamp methods.
    template &lt;class T,class ... SS&gt;
    Packet&lt;POD,TT...,T&gt; pushExt(SS &amp;&amp; ... ss) 
     { 
-     PacketHeader *ret=<span class="att">Replace_null(packet)</span>;
+     PacketHeader *ret=<span class="Att">Replace_null(packet)</span>;
      
      ret-&gt;pushExt&lt;T&gt;( std::forward&lt;SS&gt;(ss)... );
      
@@ -770,7 +770,7 @@ These methods are the packet time-stamp methods.
     
    Packet&lt;POD,...&gt; popExt() 
     {
-     PacketHeader *ret=<span class="att">Replace_null(packet)</span>;
+     PacketHeader *ret=<span class="Att">Replace_null(packet)</span>;
      
      ret-&gt;popExt&lt;typename PacketExtType&lt;POD,TT...&gt;::TopType&gt;();
      
@@ -786,7 +786,7 @@ These methods are the packet time-stamp methods.
    template&lt;ulen Index&gt;
    Packet&lt;POD,TIndex+1,...&gt; forgetExt() // 1 -&gt; T2,... , 2 -&gt; T3,... , ...
     {
-     return <span class="att">Replace_null(packet)</span>;
+     return <span class="Att">Replace_null(packet)</span>;
     }
  
 </pre>
@@ -996,7 +996,7 @@ The set of data methods with <b>PacketFormat</b>. See below more explanations ab
 </p>
 
 <pre>
-class <span class="att">PacketCanceller</span> : NoCopy
+class <span class="Att">PacketCanceller</span> : NoCopy
  {
    PacketHeader *packet;
    PacketFunction cancel_function;
@@ -1046,7 +1046,7 @@ with lengths and data ranges.
 </p>
 
 <pre>
-struct <span class="att">PacketFormat</span>
+struct <span class="Att">PacketFormat</span>
  {
   ulen prefix;
   ulen max_data;

@@ -31,16 +31,18 @@
 <p class="Files">Files <b>CCore/inc/Timer.h</b> <b>CCore/src/Timer.cpp</b></p>
 
 <p>
-There are two generic timer classes and six instantinations.
+There are two generic timer classes and six instantiations.
 </p>
 
+<h4>Timer</h4>
+
 <p>
-The class <b>Timer</b> can be used to get a time. We need a class because we have to store the start time.
+The class <b>Timer</b> can be used to get a time. We need a class, because we have to store the start time.
 </p>
 
 <pre>
 template &lt;class T,T Time()&gt;
-class <span class="att">Timer</span>
+class <span class="Att">Timer</span>
  {
    T start;
    
@@ -65,8 +67,8 @@ class <span class="att">Timer</span>
 </pre>
 
 <p>
-This class is parameterized by a time value type and a time function. Constructor and the method <b>reset()</b>
-record the start time. Once you have done it, you can get a current time relative the start time by the method <b>get()</b>.
+This class is parameterized by the time value type and the time function. Constructor and the method <b>reset()</b>
+record the start time. Once you have done it, you can get a current time relative to the start time by the method <b>get()</b>.
 Methods <b>less()</b> and <b>exceed()</b> compare the current time with the given limit. The method <b>shift()</b>
 adjusts the start time. Static members <b>ValueType</b> and <b>Get()</b> present the class parameters.
 </p>
@@ -81,13 +83,15 @@ for(SecTimer timer; timer.less(10) ;) { .... } // repeat some job withing 10 sec
 
 </pre>
 
+<h4>DiffTimer</h4>
+
 <p>
-The next class <b>DiffTimer</b> returns the differentiated time, i.g. a time between calls.
+The next class <b>DiffTimer</b> returns the differentiated time, i.g. the time between calls.
 </p>
 
 <pre>
 template &lt;class T,T Time()&gt;
-class <span class="att">DiffTimer</span>
+class <span class="Att">DiffTimer</span>
  {
    T prev;
    
@@ -113,36 +117,38 @@ SecDiffTimer timer; // point1
 
 ....
 
-auto t1=timer.get(); // point2 , t1 is a time between point1 and point2
+auto t1=timer.get(); // point2 , t1 is the time between point1 and point2
 
 ....
 
-auto t2=timer.get(); // point3 , t2 is a time between point2 and point3
+auto t2=timer.get(); // point3 , t2 is the time between point2 and point3
 
 </pre>
 
+<h4>Timer classes</h4>
+
 <p>
-There are six timer class instantinations for different time resolutions &mdash; millisecond, second, and clock:
+There are six timer class instantiations for different time resolutions &mdash; millisecond, second, and clock:
 </p>
 
 <pre>
 
-typedef Timer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; <span class="att">MSecTimer</span>; 
+typedef Timer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; <span class="Att">MSecTimer</span>; 
 
-typedef Timer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; <span class="att">SecTimer</span>; 
+typedef Timer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; <span class="Att">SecTimer</span>; 
 
-typedef Timer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; <span class="att">ClockTimer</span>; 
+typedef Timer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; <span class="Att">ClockTimer</span>; 
  
-typedef DiffTimer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; <span class="att">MSecDiffTimer</span>; 
+typedef DiffTimer&lt;Sys::MSecTimeType,Sys::GetMSecTime&gt; <span class="Att">MSecDiffTimer</span>; 
 
-typedef DiffTimer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; <span class="att">SecDiffTimer</span>; 
+typedef DiffTimer&lt;Sys::SecTimeType,Sys::GetSecTime&gt; <span class="Att">SecDiffTimer</span>; 
 
-typedef DiffTimer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; <span class="att">ClockDiffTimer</span>; 
+typedef DiffTimer&lt;Sys::ClockTimeType,Sys::GetClockTime&gt; <span class="Att">ClockDiffTimer</span>; 
 
 </pre>
 
 <p>
-These instantinations are based on target provided functions. Clock time is a fastest avaliable time
+These instantiations are based on target provided functions. Clock time is a fastest available time
 resolution on the target, comparable with the CPU clock speed.
 </p>
 

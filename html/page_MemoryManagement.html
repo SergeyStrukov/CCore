@@ -80,27 +80,27 @@ Here is the basic memory function list from <b>MemBase.h</b>:
 
 /* words */ 
 
-enum <span class="att">JustTryType</span> { <span class="att">JustTry</span> };
+enum <span class="Att">JustTryType</span> { <span class="Att">JustTry</span> };
  
 /* functions */ 
 
-void <span class="att">GuardNoMem</span>(ulen len);
+void <span class="Att">GuardNoMem</span>(ulen len);
 
 /* Mem...() */  
  
-void * <span class="att">TryMemAlloc</span>(ulen len) noexcept;
+void * <span class="Att">TryMemAlloc</span>(ulen len) noexcept;
 
-void * <span class="att">MemAlloc</span>(ulen len);
+void * <span class="Att">MemAlloc</span>(ulen len);
 
-ulen <span class="att">MemLen</span>(const void *mem);       // mem may == 0
+ulen <span class="Att">MemLen</span>(const void *mem);       // mem may == 0
 
-bool <span class="att">MemExtend</span>(void *mem,ulen len); // mem may == 0
+bool <span class="Att">MemExtend</span>(void *mem,ulen len); // mem may == 0
 
-bool <span class="att">MemShrink</span>(void *mem,ulen len); // mem may == 0
+bool <span class="Att">MemShrink</span>(void *mem,ulen len); // mem may == 0
  
-void <span class="att">MemFree</span>(void *mem);            // mem may == 0
+void <span class="Att">MemFree</span>(void *mem);            // mem may == 0
 
-void <span class="att">MemLim</span>(ulen limit);
+void <span class="Att">MemLim</span>(ulen limit);
 
 </pre>
 
@@ -164,7 +164,7 @@ if the argument has a greater <b>len_count</b>. It is used to accumulate a "peak
 </p>
 
 <pre>
-struct <span class="att">MemStatData</span>
+struct <span class="Att">MemStatData</span>
  {
   ulen block_count;
   ulen len_count;
@@ -208,14 +208,14 @@ To get a heap statistic information there are two <b>Class-function</b>s:
 
 <a name="MemStat">/* struct MemStat */</a> 
 
-struct <span class="att">MemStat</span> : MemStatData
+struct <span class="Att">MemStat</span> : MemStatData
  {
   MemStat();
  };
  
 /* struct MemPeak */ 
 
-struct <span class="att">MemPeak</span> : MemStatData
+struct <span class="Att">MemPeak</span> : MemStatData
  {
   MemPeak();
  };
@@ -235,7 +235,7 @@ match, a error message is printed using <b>Printf(NoException,...)</b>.
 </p>
 
 <pre>
-class <span class="att">MemScope</span> : NoCopy
+class <span class="Att">MemScope</span> : NoCopy
  {
    MemStat on_init;
    
@@ -256,7 +256,7 @@ Another helpful <b>Property Type</b> class is the <b>MemBase</b>:
 </p>
 
 <pre>
-struct <a name="MemBase"><span class="att">MemBase</span></a>
+struct <a name="MemBase"><span class="Att">MemBase</span></a>
  {
   // placement new/delete
   
@@ -324,7 +324,7 @@ a single fixed memory buffer. The memory buffer is allocated from the main heap.
 </p>
 
 <pre>
-class <span class="att">SpaceHeap</span> : NoCopy
+class <span class="Att">SpaceHeap</span> : NoCopy
  {
    ....
    
@@ -373,7 +373,7 @@ There is no the <b>Mutex</b> protection for the methods of the <b>SpaceHeap</b>.
 </p>
 
 <pre>
-class <span class="att">MemSpace</span> : NoCopy
+class <span class="Att">MemSpace</span> : NoCopy
  {
    ulen max_store_len;
    
@@ -408,7 +408,7 @@ provided by OS.
 </p>
 
 <pre>
-class <span class="att">PageHeap</span> : NoCopy
+class <span class="Att">PageHeap</span> : NoCopy
  {
    ....
    
@@ -453,7 +453,7 @@ physical memory.
 </p>
 
 <pre>
-class <span class="att">MemPage</span> : NoCopy
+class <span class="Att">MemPage</span> : NoCopy
  {
   public:
   
@@ -499,7 +499,7 @@ void Exit_SpecialMem();
 
 <p>
 <b>Init_SpecialMem()</b> and <b>Exit_SpecialMem()</b> are initialization functions, they are called 
-<span class="alert">by the board initialization code and must not be used anywhere else</span>.
+<span class="Alert">by the board initialization code and must not be used anywhere else</span>.
 </p>
 
 <pre>

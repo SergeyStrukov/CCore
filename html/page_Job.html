@@ -39,7 +39,7 @@ using the class <b>Job::Init</b>.
 </p>
 
 <pre>
-class <span class="att">Job::Init</span> : NoCopy
+class <span class="Att">Job::Init</span> : NoCopy
  {
   public:
   
@@ -64,9 +64,9 @@ To use the pool service use the class <b>Job</b>.
 
 <pre>
 
-typedef Function&lt;void (void)&gt; <span class="att">JobType</span>;
+typedef Function&lt;void (void)&gt; <span class="Att">JobType</span>;
 
-class <span class="att">Job</span> : SingleHook&lt;JobStarterType&gt; , CustomJob
+class <span class="Att">Job</span> : SingleHook&lt;JobStarterType&gt; , CustomJob
  {
   public:
   
@@ -117,7 +117,7 @@ The <b>Job</b> is implemented using the class <b>Starter</b>.
 
 <pre>
 template &lt;class T&gt;
-class <span class="att">Starter</span> : public Funchor_nocopy
+class <span class="Att">Starter</span> : public Funchor_nocopy
  {
    ....
       
@@ -148,7 +148,7 @@ There are two control classes for the <b>Starter</b>: <b>Run</b> to commit worki
 
 <pre>
 template &lt;class T&gt;   
-class <span class="att">Starter&lt;T&gt;::Run</span> : NoCopy
+class <span class="Att">Starter&lt;T&gt;::Run</span> : NoCopy
  {
    ....
       
@@ -182,7 +182,7 @@ Only single <b>Run</b> per <b>Starter</b> is allowed.
 
 <pre>
 template &lt;class T&gt;   
-class <span class="att">Starter&lt;T&gt;::Start</span> : NoCopy
+class <span class="Att">Starter&lt;T&gt;::Start</span> : NoCopy
  {
    .... 
       

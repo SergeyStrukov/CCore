@@ -31,16 +31,16 @@
 <p class="Files">Files <b>CCore/inc/TimeScope.h</b> <b>CCore/src/TimeScope.cpp</b></p>
 
 <p>
-There are timed functions, i.e. functions with a specified execution time limit. For example, a semaphore has a method 
-<b>take()</b> with timeout. In some cases you have to call serveral such functions. Then the problem arises, how to specify 
-timeouts to them if we want to fit in some common time limit. The class <b>TimeScope</b> is designed to solve this problem.
+There are timed functions, i.g. functions with a specified execution time limit. For example, a semaphore has the method 
+<b>take()</b> with timeout. In some cases you have to call several such functions. Then the problem arises, how to specify 
+timeouts to them, if we want to fit in some common time limit. The class <b>TimeScope</b> is designed to solve this problem.
 It is a simple class, which represents some time interval:
 </p>
 
 <img src="TimeScope.png" />
 
 <pre>
-class <span class="att">TimeScope</span>
+class <span class="Att">TimeScope</span>
  {
    MSecTimer timer;
    
@@ -60,7 +60,7 @@ class <span class="att">TimeScope</span>
 
 <p>
 <b>TimeScope</b> contains inside a millisecond timer and a millisecond timeout. It is started at the moment of construction,
-or at the moment when the method <b>start()</b> is called. You can retrieve the remaining time using the method <b>get()</b>.
+or at the moment when the method <b>start()</b> is called. You can retrieve the remaining time, using the method <b>get()</b>.
 If the given timeout is expired, then the <b>get()</b> returns 0.
 </p>
 
@@ -108,14 +108,14 @@ void func(MSec timeout)
 <p>
 But this way does not ensure the expected behavior, because from the point you call the method <b>get()</b> to the point,
 where this value is consumed inside the <b>opx()</b> a task switch may happens and it increases the amount of time by 
-an unpredictable value. That is way in <b>CCore</b> we provide timed functions with simple timeouts and with 
-<b>TimeScope</b> timeouts, especially for all synchronization objects. In <b>HCore</b> the implementaion is not precise 
-(but <b>HCore</b> does not pretend to be a true real-time), but <b>XCore</b> has an exact implementaion.
+an unpredictable value. That is why in <b>CCore</b> we provide timed functions with simple timeouts and with 
+<b>TimeScope</b> timeouts, especially for all synchronization objects. In <b>HCore</b> the implementation is not precise 
+(but <b>HCore</b> does not pretend to be a true real-time), but <b>XCore</b> has an exact implementation.
 </p>
 
 <p>
 The remaining method is <b>nextScope()</b>. It does the following: if the timeout is expired, then <b>nextScope()</b> shifts
-the time period to the following of the same time and returns true, otherwise it simply returns false.
+the time period to the following scope and returns <b>true</b>, otherwise it simply returns <b>false</b>.
 </p>
 
 <pre>

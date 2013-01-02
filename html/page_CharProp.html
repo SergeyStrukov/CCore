@@ -44,7 +44,7 @@ positions). The class <b>ASCIICode</b> represents an ASCII code.
 </p>
 
 <pre>
-class <span class="att">ASCIICode</span>
+class <span class="Att">ASCIICode</span>
  {
   public:
   
@@ -89,7 +89,7 @@ class <span class="att">ASCIICode</span>
 
 /* type CharCode */
 
-typedef ASCIICode <span class="att">CharCode</span>;
+typedef ASCIICode <span class="Att">CharCode</span>;
 
 </pre>
 
@@ -146,7 +146,7 @@ C representation, like "\n".
 </p>
 
 <pre>
-class <span class="att">PrintCString</span>
+class <span class="Att">PrintCString</span>
  {
    StrLen str;
 
@@ -171,22 +171,22 @@ character types: <b>char</b>, <b>signed char</b>, <b>unsigned char</b>.
 <pre>
 
 template &lt;class Char&gt;
-bool <span class="att">CharIsSpecial</span>(Char ch) { return CharCode(ch).isSpecial(); }
+bool <span class="Att">CharIsSpecial</span>(Char ch) { return CharCode(ch).isSpecial(); }
  
 template &lt;class Char&gt;
-bool <span class="att">CharIsVisible</span>(Char ch) { return CharCode(ch).isVisible(); }
+bool <span class="Att">CharIsVisible</span>(Char ch) { return CharCode(ch).isVisible(); }
  
 template &lt;class Char&gt;
-bool <span class="att">CharIsPrintable</span>(Char ch) { return CharCode(ch).isPrintable(); } 
+bool <span class="Att">CharIsPrintable</span>(Char ch) { return CharCode(ch).isPrintable(); } 
  
 template &lt;class Char&gt;
-bool <span class="att">CharIsSpace</span>(Char ch) { return CharCode(ch).isSpace(); }
+bool <span class="Att">CharIsSpace</span>(Char ch) { return CharCode(ch).isSpace(); }
   
 template &lt;class Char&gt;
-int <span class="att">CharDecValue</span>(Char ch) { return CharCode(ch).decValue(); }
+int <span class="Att">CharDecValue</span>(Char ch) { return CharCode(ch).decValue(); }
  
 template &lt;class Char&gt;
-int <span class="att">CharHexValue</span>(Char ch) { return CharCode(ch).hexValue(); }
+int <span class="Att">CharHexValue</span>(Char ch) { return CharCode(ch).hexValue(); }
 
 </pre>
 
@@ -224,13 +224,13 @@ important character sets.
 
 <pre>
 
-inline const char * <span class="att">GetSpaceChars</span>() { return " \t\f\v\r\n"; }
+inline const char * <span class="Att">GetSpaceChars</span>() { return " \t\f\v\r\n"; }
 
-inline const char * <span class="att">GetDigitChars</span>() { return "0123456789"; }
+inline const char * <span class="Att">GetDigitChars</span>() { return "0123456789"; }
 
-inline const char * <span class="att">GetHexDigitChars</span>() { return "0123456789abcdefABCDEF"; }
+inline const char * <span class="Att">GetHexDigitChars</span>() { return "0123456789abcdefABCDEF"; }
 
-inline const char * <span class="att">GetCLetterChars</span>() { return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"; }
+inline const char * <span class="Att">GetCLetterChars</span>() { return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"; }
 
 </pre>
 

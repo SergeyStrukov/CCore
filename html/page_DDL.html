@@ -710,7 +710,7 @@ To process a <b>DDL</b> text there are two main classes: <b>TextEngine</b> and <
 </p>
 
 <pre>
-class <span class="att">TextEngine</span> : NoCopy
+class <span class="Att">TextEngine</span> : NoCopy
  {
    ....
 
@@ -732,7 +732,7 @@ This class does not support a file inclusion.
 
 <pre>
 template &lt;class FileName,class FileText&gt;
-class <span class="att">FileEngine</span> : NoCopy
+class <span class="Att">FileEngine</span> : NoCopy
  {
    ....
 
@@ -772,7 +772,7 @@ The class <b>FileName</b> is a default implementaion of the <b>FileName</b> temp
 <h3>EngineResult and Map</h3>
 
 <pre>
-struct <span class="att">EngineResult</span>
+struct <span class="Att">EngineResult</span>
  {
   Eval *eval;
   BodyNode *body;
@@ -794,7 +794,7 @@ to create a result representation in a single memory block.
 </p>
 
 <pre>
-class <span class="att">Map</span> : NoCopy
+class <span class="Att">Map</span> : NoCopy
  {
    ....
 
@@ -819,7 +819,7 @@ to perform the data mapping. There is a simple helper class <b>MapBase</b> to do
 </p>
 
 <pre>
-class <span class="att">MapBase</span> : NoCopy
+class <span class="Att">MapBase</span> : NoCopy
  {
    void *mem;
   
@@ -851,7 +851,7 @@ Null pointer is returned in case of error.
 <pre>
 /* consts */
 
-enum <span class="att">TypeTag</span>
+enum <span class="Att">TypeTag</span>
  {
   TypeTag_sint8,
   TypeTag_uint8,
@@ -886,14 +886,14 @@ enum <span class="att">TypeTag</span>
 
 /* struct TypeDesc_basic */
 
-struct <span class="att">TypeDesc_basic</span> : TypeDesc
+struct <span class="Att">TypeDesc_basic</span> : TypeDesc
  {
   explicit TypeDesc_basic(TypeTag tag_) { tag=tag_; }
  };
 
 /* struct TypeDesc_ptr */
 
-struct <span class="att">TypeDesc_ptr</span> : TypeDesc
+struct <span class="Att">TypeDesc_ptr</span> : TypeDesc
  {
   const TypeDesc &amp;type;
   
@@ -902,7 +902,7 @@ struct <span class="att">TypeDesc_ptr</span> : TypeDesc
 
 /* struct TypeDesc_array */
 
-struct <span class="att">TypeDesc_array</span> : TypeDesc
+struct <span class="Att">TypeDesc_array</span> : TypeDesc
  {
   const TypeDesc &amp;type;
   
@@ -911,7 +911,7 @@ struct <span class="att">TypeDesc_array</span> : TypeDesc
 
 /* struct TypeDesc_array_len */
 
-struct <span class="att">TypeDesc_array_len</span> : TypeDesc
+struct <span class="Att">TypeDesc_array_len</span> : TypeDesc
  {
   const TypeDesc &amp;type;
   ulen len;
@@ -921,7 +921,7 @@ struct <span class="att">TypeDesc_array_len</span> : TypeDesc
 
 /* struct TypeDesc_array_getlen */
 
-struct <span class="att">TypeDesc_array_getlen</span> : TypeDesc
+struct <span class="Att">TypeDesc_array_getlen</span> : TypeDesc
  {
   const TypeDesc &amp;type;
   mutable ulen len;
@@ -932,7 +932,7 @@ struct <span class="att">TypeDesc_array_getlen</span> : TypeDesc
 /* struct TypeDesc_struct&lt;ulen FieldCount&gt; */
 
 template &lt;ulen FieldCount&gt;
-struct <span class="att">TypeDesc_struct</span> : TypeDesc_struct_base
+struct <span class="Att">TypeDesc_struct</span> : TypeDesc_struct_base
  {
   Field buf[FieldCount];
   
@@ -991,7 +991,7 @@ The actual data access is performed by the class <b>DataPtr</b>.
 </p>
 
 <pre>
-struct <span class="att">DataPtr</span>
+struct <span class="Att">DataPtr</span>
  {
   void *ptr;
   
@@ -1089,7 +1089,7 @@ imp_uint32  for  ip
 
 ArrayPtr    for  T[]  where
 
-struct <span class="att">ArrayPtr</span>
+struct <span class="Att">ArrayPtr</span>
  {
   void *ptr;
   ulen len;

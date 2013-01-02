@@ -46,7 +46,7 @@ It is used in point-to-point communication scenarios.
 </p>
 
 <pre>
-struct <span class="att">PacketEndpointDevice</span>
+struct <span class="Att">PacketEndpointDevice</span>
  {
   virtual PacketFormat getOutboundFormat()=0;
    
@@ -117,7 +117,7 @@ particular target.
 
 <pre>
 
-typedef uint64 <span class="att">XPoint</span>;
+typedef uint64 <span class="Att">XPoint</span>;
 
 </pre>
 
@@ -128,19 +128,19 @@ the packet should be sent to or is received from.
 </p>
 
 <pre>
-struct <span class="att">PacketMultipointDevice</span>
+struct <span class="Att">PacketMultipointDevice</span>
  {
   virtual StrLen toText(XPoint point,PtrLen&lt;char&gt; buf)=0;
    
   virtual PacketFormat getOutboundFormat()=0;
    
-  virtual void outbound(<span class="att">XPoint point</span>,Packet&lt;uint8&gt; packet)=0;
+  virtual void outbound(<span class="Att">XPoint point</span>,Packet&lt;uint8&gt; packet)=0;
    
   virtual ulen getMaxInboundLen()=0;
    
   struct InboundProc
    {
-    virtual void inbound(<span class="att">XPoint point</span>,Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; data)=0;
+    virtual void inbound(<span class="Att">XPoint point</span>,Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; data)=0;
      
     virtual void tick()=0;
    };
@@ -165,7 +165,7 @@ It also can perform an address mapping from the native address to the type <b>XP
 
 <pre>
 
-const unsigned <span class="att">InboundTicksPerSec</span> = 10 ;
+const unsigned <span class="Att">InboundTicksPerSec</span> = 10 ;
 
 </pre>
 
@@ -174,7 +174,7 @@ This constant is a net tick frequency.
 </p>
 
 <pre>
-class <span class="att">PointDesc</span> : NoCopy
+class <span class="Att">PointDesc</span> : NoCopy
  {
    char buf[TextBufLen];
    StrLen str;

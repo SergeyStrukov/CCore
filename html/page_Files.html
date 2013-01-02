@@ -44,11 +44,11 @@ and a value.
 
 /* types */ 
 
-typedef uint64 <span class="att">FilePosType</span>;
+typedef uint64 <span class="Att">FilePosType</span>;
 
 /* consts */ 
 
-const ulen <span class="att">MaxPathLen</span> = 512 ;
+const ulen <span class="Att">MaxPathLen</span> = 512 ;
 
 </pre>
 
@@ -62,7 +62,7 @@ const ulen <span class="att">MaxPathLen</span> = 512 ;
 
 <pre>
 
-enum <span class="att">FileOpenFlags</span> : uint32
+enum <span class="Att">FileOpenFlags</span> : uint32
  {
   Open_Read       = 0x01, // "Read"
   Open_Write      = 0x02, // "Write"
@@ -163,7 +163,7 @@ The output looks like "Read|Write|Create".
 
 <pre>
 
-enum <span class="att">FileError</span> : uint32
+enum <span class="Att">FileError</span> : uint32
  {
   FileError_Ok               =  0, // "Success"
 
@@ -212,7 +212,7 @@ const char * GetTextDesc(FileError fe);
 
 <pre>
 
-enum <span class="att">FileType</span> : uint32
+enum <span class="Att">FileType</span> : uint32
  {
   FileType_none = 0, // "none"
   FileType_file = 1, // "file"
@@ -229,7 +229,7 @@ const char * GetTextDesc(FileType ft);
 
 <pre>
 
-class <span class="att">FileMultiError</span> : NoCopy
+class <span class="Att">FileMultiError</span> : NoCopy
  {
    static const ulen Len = 10 ;
 

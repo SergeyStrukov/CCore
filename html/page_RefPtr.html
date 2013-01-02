@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/RefPtr.h</b> <b>CCore/src/RefPtr.cpp</b></p>
 
 <p>
-<b>RefPtr</b> is an intrusive smart-pointer with reference counting. 
+<b>RefPtr</b> is an intrusive smart-pointer with the reference counting. 
 </p>
 
 <pre>
@@ -47,7 +47,7 @@ struct RefAlgo
  };
  
 template &lt;class T,class Algo=RefAlgo&lt;T&gt; &gt; 
-class <span class="att">RefPtr</span>
+class <span class="Att">RefPtr</span>
  {
    T *ptr;
    
@@ -93,19 +93,19 @@ class <span class="att">RefPtr</span>
 </pre>
 
 <p>
-<b>RefPtr</b> has only one data member &mdash; non-null pointer to the object of type <b>T</b>. The pointer comes 
-from the constructor argument. <b>RefPtr</b> is copyrable, multiple <b>RefPtr</b> may point to the same object.
-To determine the moment the object should be destroyed the reference counting is used. It assumes, that type <b>T</b> has 
-embedded reference counter of some nature and a family of methods to manipulate one. Template parameter <b>Algo</b> allows
-customize these methods. By default, to increment reference counter the method <b>incRef()</b> is called, to decrement
-&mdash; <b>decRef()</b> and to destroy the object &mdash; the method <b>destroy()</b>. <b>decRef()</b> returns true if
-the reference counter became zero, i.e. it's time to destroy the object. To create <b>RefPtr</b> non-null pointer 
+<b>RefPtr</b> has only one data member &mdash; non-null pointer to the object of the type <b>T</b>. The pointer comes 
+from the constructor argument. <b>RefPtr</b> is copyable, multiple <b>RefPtr</b>s may point to the same object.
+To determine the moment the object should be destroyed the reference counting is used. It assumes, that the type <b>T</b> has 
+an embedded reference counter of some nature and a family of methods to manipulate the one. The template parameter <b>Algo</b> allows
+customization of these methods. By default, to increment the reference counter the method <b>incRef()</b> is called, to decrement
+&mdash; <b>decRef()</b> and to destroy the object &mdash; the method <b>destroy()</b>. <b>decRef()</b> returns <b>true</b>, if
+the reference counter became zero, i.g. it's time to destroy the object. To create <b>RefPtr</b> a non-null pointer 
 with reference counter 1 must be provided.
 </p>
 
 <p>
-<b>RefPtr</b> implements reduced <b>Object Pointer Interface</b>, because it always points to an object. 
-It also swapable and moveable.
+<b>RefPtr</b> implements the reduced <b>Object Pointer Interface</b>, because it always points to an object. 
+It also swappable and movable.
 </p>
 
 <p>
@@ -122,7 +122,7 @@ Two additional "unsafe" methods <b>set()</b> and <b>update()</b> can be used to 
 
 <p>
 <b>RefPtr</b> is not intended to be used "as is". Normally it should be a part of the outer class. This class is used
-in the implementatoion of the <b>RefArray</b>.
+in the implementation of the <b>RefArray</b>.
 </p>
 
 </body>

@@ -31,12 +31,12 @@
 <p class="Files">Files <b>CCore/inc/TlsSlot.h</b> <b>CCore/src/TlsSlot.cpp</b></p>
 
 <p>
-<b>TlsSlot</b> is designed to provide a thread local variables. It is integrated with <a href="page_PlanInit.html">
+<b>TlsSlot</b> is designed to provide a thread local variables. It is integrated with the <a href="page_PlanInit.html">
 <b>PlanInit</b></a> subsystem.
 </p>
 
 <pre>
-class <span class="att">TlsSlot</span>
+class <span class="Att">TlsSlot</span>
  {
    .... 
 
@@ -53,7 +53,7 @@ class <span class="att">TlsSlot</span>
 </pre>
 
 <p>
-Don't use objects of this class directly! Here is a pattern:
+Don't use objects of this class directly! Here is the pattern:
 </p>
 
 <pre>
@@ -76,12 +76,12 @@ void SomeFunc()
 
 <p>
 <b>TlsSlot</b> value is a thread-specific, i.g. depends on the calling thread. Each thread has own private copy of this value.
-The initial value is 0. If <b>TlsSlot</b> constructor is unable allocate a TLS slot, it aborts execution.
+The initial value is 0. If the <b>TlsSlot</b> constructor is unable to allocate a TLS slot, it aborts execution.
 </p>
 
 <p>
 You should avoid using <b>TlsSlot</b>, leave it to the <b>CCore</b> internals. 
-There is a better way to define a thread-specific variables: when you start a thread using the <a href="page_Task.html"><b>Task</b></a> 
+There is a better way to define a thread-specific variable: when you start a thread, using the <a href="page_Task.html"><b>Task</b></a> 
 object and functions, you always can find the current task by the <b>Task::GetCurrent()</b> function. So just add a required thread
 context to the <b>Task</b> object.
 </p>

@@ -31,13 +31,13 @@
 <p class="Files">Files <b>CCore/inc/Tuple.h</b> <b>CCore/src/Tuple.cpp</b></p>
 
 <p>
-Classes <b>Tuple</b> and <b>ForwardTuple</b> have a spartan design in <b>CCore</b>, because they were introduced to solve some particular problem.
+Classes <b>Tuple</b> and <b>ForwardTuple</b> have a spartan design in <b>CCore</b>, because they were introduced to solve some particular problems.
 </p>
 
 <pre>
 
 template &lt;class ... TT&gt;
-struct <span class="att">Tuple</span>
+struct <span class="Att">Tuple</span>
  {
   ....
   
@@ -50,7 +50,7 @@ struct <span class="att">Tuple</span>
  };
 
 template &lt;class ... TT&gt;
-struct <span class="att">ForwardTuple</span>
+struct <span class="Att">ForwardTuple</span>
  {
   ....
   
@@ -65,7 +65,7 @@ struct <span class="att">ForwardTuple</span>
 </pre>
 
 <p>
-The problem is to capture an argument list and use it further in a functor call. The difference between <b>Tuple</b> and 
+The main problem is to capture an argument list and use it further in a functor call. The difference between <b>Tuple</b> and 
 <b>ForwardTuple</b> is the first makes copies of the arguments, but the second holds rvalue references. <b>Tuple</b> is
 used when you need to store the arguments. If you have to capture them only temporary then <b>ForwardTuple</b> may be used.
 </p>
@@ -154,7 +154,7 @@ struct Creator_fill
 <pre>
 
 template &lt;class ... TT&gt;
-Tuple&lt;TT...&gt; <span class="att">MakeTuple</span>(const TT &amp; ... tt);
+Tuple&lt;TT...&gt; <span class="Att">MakeTuple</span>(const TT &amp; ... tt);
 
 </pre>
 

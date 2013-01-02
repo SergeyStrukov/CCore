@@ -49,7 +49,7 @@ must implement this interface.
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFileDevice</span>
+struct <span class="Att">Sys::AsyncFileDevice</span>
  {
   virtual Sys::AsyncFileState * createState(const ObjHook &hook) noexcept(EnableNoExcept) =0;
  };
@@ -65,7 +65,7 @@ its destruction while one of states is alive.
 </p>
 
 <pre>
-class <span class="att">Sys::AsyncFileState</span> : public MemBase_nocopy
+class <span class="Att">Sys::AsyncFileState</span> : public MemBase_nocopy
  {
    ObjHook hook;
    
@@ -123,7 +123,7 @@ the operation result:
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFile::OpenExt</span>
+struct <span class="Att">Sys::AsyncFile::OpenExt</span>
  {
   PacketFormat write_format; // output
   ulen max_read_len;         // output
@@ -164,7 +164,7 @@ The packet extension <b>Sys::AsyncFile::CloseExt</b> is used to return the opera
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFile::CloseExt</span>
+struct <span class="Att">Sys::AsyncFile::CloseExt</span>
  {
   FileError error;           // output
     
@@ -191,7 +191,7 @@ the <b>file_len</b> result must be reported as if these operations execution is 
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFile::WriteExt</span>
+struct <span class="Att">Sys::AsyncFile::WriteExt</span>
  {
   FilePosType file_len;      // output
     
@@ -225,7 +225,7 @@ Buffer must be red all, otherwise error must be reported. Packet data are not re
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFile::ReadExt</span>
+struct <span class="Att">Sys::AsyncFile::ReadExt</span>
  {
   FilePosType off;           // input, preserved
   PtrLen&lt;uint8&gt; buf;         // input, preserved, read all
@@ -258,7 +258,7 @@ reattached to store the required volume of data. The read length must not exceed
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFile::ReadBufExt</span>
+struct <span class="Att">Sys::AsyncFile::ReadBufExt</span>
  {
   FilePosType off;           // input, preserved
   ulen len;                  // input, preserved, read all
@@ -292,7 +292,7 @@ The class <b>Sys::AsyncFile</b> is to deal with a single file on some async file
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFile</span>
+struct <span class="Att">Sys::AsyncFile</span>
  {
   // public
   
@@ -374,7 +374,7 @@ See <a href="page_Files.html#FSO">Files</a> for the generic file system operatio
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFileSystemDevice</span>
+struct <span class="Att">Sys::AsyncFileSystemDevice</span>
  {
   virtual void getFileType(Packet&lt;uint8,AsyncFileSystem::FileTypeExt&gt; packet,StrLen path)=0;
   
@@ -410,7 +410,7 @@ The packet extension <b>Sys::AsyncFileSystem::FileTypeExt</b> is used to return 
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFileSystem::FileTypeExt</span>
+struct <span class="Att">Sys::AsyncFileSystem::FileTypeExt</span>
  {
   FileType file_type;         // output
     
@@ -438,7 +438,7 @@ The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFileSystem::ErrorExt</span>
+struct <span class="Att">Sys::AsyncFileSystem::ErrorExt</span>
  {
   FileError error;            // output
     
@@ -497,7 +497,7 @@ The packet extension <b>Sys::AsyncFileSystem::FileExt</b> is used to return a re
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFileSystem::FileExt</span>
+struct <span class="Att">Sys::AsyncFileSystem::FileExt</span>
  {
   AsyncFileState *file_state; // output
     
@@ -538,7 +538,7 @@ The class <b>Sys::AsyncFileSystem</b> is to work with some async file system dev
 </p>
 
 <pre>
-struct <span class="att">Sys::AsyncFileSystem</span>
+struct <span class="Att">Sys::AsyncFileSystem</span>
  {
   // public
   

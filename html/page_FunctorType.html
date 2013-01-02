@@ -57,11 +57,11 @@ is a functor type.
 
 <pre>
 
-<span class="att">FunctorTypeOf</span>&lt;FuncInit&gt; == typename FuncInit::FunctorType
+<span class="Att">FunctorTypeOf</span>&lt;FuncInit&gt; == typename FuncInit::FunctorType
 
 OR
 
-<span class="att">FunctorTypeOf</span>&lt;FuncInit&gt; == FuncInit
+<span class="Att">FunctorTypeOf</span>&lt;FuncInit&gt; == FuncInit
 
 </pre>
  
@@ -105,7 +105,7 @@ The helper class <b>FunctorRefType</b> is designed to pass a functor reference:
 
 <pre>
 template &lt;class T&gt;
-struct <span class="att">FunctorRefType</span>
+struct <span class="Att">FunctorRefType</span>
  {
   T *obj;
   
@@ -124,7 +124,7 @@ Use the <b>Creator function</b> <b>FunctorRef()</b> to create an object of type 
 <pre>
 
 template &lt;class T&gt;
-FunctorRefType&lt;T&gt; <span class="att">FunctorRef</span>(T &amp;obj) { return FunctorRefType&lt;T&gt;(obj); }
+FunctorRefType&lt;T&gt; <span class="Att">FunctorRef</span>(T &amp;obj) { return FunctorRefType&lt;T&gt;(obj); }
 
 </pre>
 

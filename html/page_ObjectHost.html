@@ -41,7 +41,7 @@
 </p>
 
 <pre>
-class <span class="att">ObjBase</span> : public MemBase_nocopy
+class <span class="Att">ObjBase</span> : public MemBase_nocopy
  {
    ....
 
@@ -78,7 +78,7 @@ one of the <b>ObjMaster</b> class.
 </p>
 
 <pre>
-class <span class="att">ObjHost</span> : NoCopy
+class <span class="Att">ObjHost</span> : NoCopy
  {
    ....
 
@@ -124,7 +124,7 @@ while the object is used and cannot be safely destroyed.
 </p>
 
 <pre>
-class <span class="att">ObjHook</span> : NoCopy
+class <span class="Att">ObjHook</span> : NoCopy
  {
    ....
 
@@ -200,7 +200,7 @@ Copy constructor creates a copy of the hook, it points to the same object.
 </p>
 
 <pre>
-class <span class="att">ObjMaster</span> : NoCopy
+class <span class="Att">ObjMaster</span> : NoCopy
  {
    .... 
    
@@ -233,7 +233,7 @@ not by a reference, and destructor deletes the object. So the object must be con
 </p>
 
 <pre>
-class <span class="att">ObjMaster_delete</span> : NoCopy
+class <span class="Att">ObjMaster_delete</span> : NoCopy
  {
    ....
    
@@ -255,7 +255,7 @@ This class can be used to build a list of records with information about objects
 
 <pre>
 template &lt;class Info&gt;
-class <span class="att">ObjHost::List</span> : NoCopy
+class <span class="Att">ObjHost::List</span> : NoCopy
  {
    ....
     
@@ -298,7 +298,7 @@ This info record conatins only the name of object.
 </p>
 
 <pre>
-struct <span class="att">ObjInfo</span>
+struct <span class="Att">ObjInfo</span>
  {
   ....
 
@@ -324,7 +324,7 @@ This info record conatins the name of object and the pointer to the object.
 </p>
 
 <pre>
-struct <span class="att">ObjInfo_obj</span>
+struct <span class="Att">ObjInfo_obj</span>
  {
   ....
 
@@ -357,7 +357,7 @@ interface (i.g. castable to the given type).
 
 <pre>
 template &lt;class T&gt;
-struct <span class="att">ObjInfo_if</span>
+struct <span class="Att">ObjInfo_if</span>
  {
   ....
 
@@ -386,7 +386,7 @@ implementing the given interface (i.g. castable to the given type).
 
 <pre>
 template &lt;class T&gt;
-struct <span class="att">ObjInfo_obj_if</span>
+struct <span class="Att">ObjInfo_obj_if</span>
  {
   ....
 

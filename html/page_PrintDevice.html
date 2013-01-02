@@ -47,7 +47,7 @@ This function is assumed to call some native OS function to print the text strin
 
 <pre>
 
-void <span class="att">Sys::ConWrite</span>(StrLen str) noexcept;
+void <span class="Att">Sys::ConWrite</span>(StrLen str) noexcept;
 
 </pre>
 
@@ -58,7 +58,7 @@ The word <b>Con</b> is used to print to the console.
 <pre>
 /* words */ 
 
-enum ConType { <span class="att">Con</span> };
+enum ConType { <span class="Att">Con</span> };
  
 template &lt;&gt; 
 struct PrintOutAdapter&lt;ConType&gt;
@@ -73,7 +73,7 @@ The class <b>PrintCon</b> uses a small stack buffer to accumulate the printing t
 </p>
 
 <pre>
-class <span class="att">PrintCon</span> : public PrintBase
+class <span class="Att">PrintCon</span> : public PrintBase
  {
    char buf[TextBufLen];
  
@@ -106,7 +106,7 @@ The <b>XCore</b> varaint of the <b>PrintCon</b> is close to the <b>HCore</b>.
 </p>
 
 <pre>
-class <span class="att">PrintCon</span> : public PrintBase
+class <span class="Att">PrintCon</span> : public PrintBase
  {
    MSec timeout;
    NanoPacket&lt;char&gt; packet;
@@ -143,9 +143,9 @@ the <b>sys/SysCon.h</b> header.
 
 <pre>
 
-NanoPacket&lt;char&gt; <span class="att">Sys::AllocConPacket</span>(MSec timeout);
+NanoPacket&lt;char&gt; <span class="Att">Sys::AllocConPacket</span>(MSec timeout);
 
-void <span class="att">Sys::ConWrite</span>(NanoPacket&lt;char&gt; packet);
+void <span class="Att">Sys::ConWrite</span>(NanoPacket&lt;char&gt; packet);
 
 </pre>
 
@@ -163,7 +163,7 @@ OS file input-output functions.
 </p>
 
 <pre>
-class <span class="att">PrintFile</span> : public PrintBase
+class <span class="Att">PrintFile</span> : public PrintBase
  {
    ....
    
@@ -236,7 +236,7 @@ an exception is thrown.
 </p>
 
 <pre>
-class <span class="att">SafeBuf</span> : NoCopy
+class <span class="Att">SafeBuf</span> : NoCopy
  {
    static const ulen SafeLen = 32 ;
    
@@ -264,7 +264,7 @@ small safeguard buffer of size 32 bytes.
 </p>
 
 <pre>
-class <span class="att">RawFileToPrint</span> : NoCopy
+class <span class="Att">RawFileToPrint</span> : NoCopy
  {
    Sys::File file;
    bool opened;
@@ -303,7 +303,7 @@ The target <b>Sys::File</b> class implements the classical set of file operation
 </p>
 
 <pre>
-struct <span class="att">Sys::File</span>
+struct <span class="Att">Sys::File</span>
  {
   ....
 
@@ -352,7 +352,7 @@ to the <b>AsyncFile</b> object, the packet may be sent to the target device asyn
 </p>
 
 <pre>
-class <span class="att">PrintAsyncFile</span> : public PrintBase
+class <span class="Att">PrintAsyncFile</span> : public PrintBase
  {
    AsyncFile file;
 
@@ -447,7 +447,7 @@ This class uses <a href="page_PTPCon.html"><b>PTP Con</b></a> protocol to print 
 </p>
 
 <pre>
-class <span class="att">PrintPTPCon</span> : public PrintBase
+class <span class="Att">PrintPTPCon</span> : public PrintBase
  {
    ....
 
@@ -481,7 +481,7 @@ You can do it using the class <b>PTPConOpenClose</b>.
 </p>
 
 <pre>
-class <span class="att">PTPConOpenClose</span> : NoCopy
+class <span class="Att">PTPConOpenClose</span> : NoCopy
  {
    ....
 

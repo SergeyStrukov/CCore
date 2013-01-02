@@ -44,7 +44,7 @@ struct OwnAlgo
 
 
 template &lt;class T,class Algo=OwnAlgo&lt;T&gt; &gt;
-class <span class="att">OwnPtr</span> : NoCopy
+class <span class="Att">OwnPtr</span> : NoCopy
  {
    T *ptr;
    
@@ -88,15 +88,15 @@ class <span class="att">OwnPtr</span> : NoCopy
 </pre>
 
 <p>
-<b>OwnPtr</b> has only one data member &mdash; pointer to the object of type <b>T</b>. This pointer may be null.
-<b>OwnPtr</b> is not copyable and its destructor destroys the pointee object using the provided algorithm 
+<b>OwnPtr</b> has only one data member &mdash; pointer to the object of the type <b>T</b>. This pointer may be null.
+<b>OwnPtr</b> is not copyable and its destructor destroys the pointed object using the provided algorithm 
 <b>Algo::Destroy()</b>. The pointer comes from the constructor argument. 
 Using <b>OwnPtr</b> make sure the argument is "destroyable". By default, <b>Algo::Destroy(ptr)</b> is just <b>delete ptr;</b>, so
 the object must be created by the <b>new expression</b>.
 </p>
 
 <p>
-<b>OwnPtr</b> implements <b>Object Pointer Interface</b>. It also swapable and moveable.
+<b>OwnPtr</b> implements <b>Object Pointer Interface</b>. It also swappable and movable.
 </p>
 
 <p>
@@ -138,8 +138,8 @@ class C { .... };
 </pre>
 
 <p>
-The object will be destroyed when the scope is finished by any way. This method is useful instead of creation a local 
-variable of type <b>C</b> if the <b>sizeof (C)</b> is too large. You can also return an <b>OwnPtr</b> 
+The object will be destroyed when the scope is exited by any way. This method is useful instead of creation a local 
+variable of the type <b>C</b>, if the <b>sizeof (C)</b> is too large. You can also return an <b>OwnPtr</b> 
 from a function (this is impossible with a local variable):
 </p>
 

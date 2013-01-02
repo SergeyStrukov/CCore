@@ -47,13 +47,13 @@ Printing is performed with the following printing functions:
 <pre>
 
 template &lt;class P,class ... TT&gt;
-void <span class="att">Printf</span>(P &amp;&amp;out,const char *format,const TT &amp; ... tt);
+void <span class="Att">Printf</span>(P &amp;&amp;out,const char *format,const TT &amp; ... tt);
 
 template &lt;class P,class ... TT&gt;
-void <span class="att">Putobj</span>(P &amp;&amp;out,const TT &amp; ... tt);
+void <span class="Att">Putobj</span>(P &amp;&amp;out,const TT &amp; ... tt);
 
 template &lt;class P,class ... TT&gt;
-void <span class="att">Putch</span>(P &amp;&amp;out,TT ... tt);
+void <span class="Att">Putch</span>(P &amp;&amp;out,TT ... tt);
 
 </pre>
 
@@ -173,19 +173,19 @@ There is the set of such functions for <b>bool</b> and integral types:
 
 <pre>
 
-inline const char * <span class="att">GetTextDesc</span>(bool value) { return value?"true":"false"; }
+inline const char * <span class="Att">GetTextDesc</span>(bool value) { return value?"true":"false"; }
  
-inline int <span class="att">GetTextDesc</span>(int value) { return value; }
+inline int <span class="Att">GetTextDesc</span>(int value) { return value; }
  
-inline unsigned <span class="att">GetTextDesc</span>(unsigned value) { return value; }
+inline unsigned <span class="Att">GetTextDesc</span>(unsigned value) { return value; }
  
-inline long <span class="att">GetTextDesc</span>(long value) { return value; }
+inline long <span class="Att">GetTextDesc</span>(long value) { return value; }
  
-inline unsigned long <span class="att">GetTextDesc</span>(unsigned long value) { return value; }
+inline unsigned long <span class="Att">GetTextDesc</span>(unsigned long value) { return value; }
  
-inline long long <span class="att">GetTextDesc</span>(long long value) { return value; }
+inline long long <span class="Att">GetTextDesc</span>(long long value) { return value; }
  
-inline unsigned long long <span class="att">GetTextDesc</span>(unsigned long long value) { return value; }
+inline unsigned long long <span class="Att">GetTextDesc</span>(unsigned long long value) { return value; }
 
 </pre>
 
@@ -235,7 +235,7 @@ Or using specialization:
 class POut;
 
 template &lt;&gt;
-struct <span class="att">PrintOutAdapter</span>&lt;POut&gt;
+struct <span class="Att">PrintOutAdapter</span>&lt;POut&gt;
  {
   typedef .... PrintOutType;
  };
@@ -270,7 +270,7 @@ The following output types are provided:
 
 <pre>
 
-enum <span class="att">NoPrintType</span> { <span class="att">NoPrint</span> }; // to print nowhere
+enum <span class="Att">NoPrintType</span> { <span class="Att">NoPrint</span> }; // to print nowhere
 
 </pre>
 
@@ -287,7 +287,7 @@ Printf(NoPrint,"this string goes nowhere");
 <p>The next type is <b>PrintBase</b>. It is designed to be a base class for actual output types.
 
 <pre>
-class <span class="att">PrintBase</span> : NoCopy
+class <span class="Att">PrintBase</span> : NoCopy
  {
    ....
 
@@ -361,7 +361,7 @@ The next class is <b>PrintBuf</b>. This class prints to the memory buffer.
 </p>
 
 <pre>
-class <span class="att">PrintBuf</span> : public PrintBase
+class <span class="Att">PrintBuf</span> : public PrintBase
  {
    ....
 
@@ -395,7 +395,7 @@ If you need only counting, you can use <b>PrintCount&lt;void&gt;</b>
 
 <pre>
 template &lt;class P&gt;
-class <span class="att">PrintCount</span> : NoCopy
+class <span class="Att">PrintCount</span> : NoCopy
  {
    ....
 
@@ -448,7 +448,7 @@ represented by the struct <b>StrPrintOpt</b>:
 
 <pre>
 
-enum <span class="att">StrAlign</span>
+enum <span class="Att">StrAlign</span>
  {
   StrAlignLeft,
   StrAlignRight,
@@ -457,7 +457,7 @@ enum <span class="att">StrAlign</span>
   StrAlignDefault = StrAlignRight
  };
  
-struct <span class="att">StrPrintOpt</span>
+struct <span class="Att">StrPrintOpt</span>
  {
   ulen width;
   StrAlign align;
@@ -503,7 +503,7 @@ To print the same character several times use the helper class <b>RepeatChar</b>
 </p>
 
 <pre>
-class <span class="att">RepeatChar</span>
+class <span class="Att">RepeatChar</span>
  {
    ulen count;
    char ch;
@@ -536,7 +536,7 @@ The helper class <b>Title</b> can be used to print a title:
 </p>
 
 <pre>
-class <span class="att">Title</span>
+class <span class="Att">Title</span>
  {
    StrLen str;
    
@@ -556,7 +556,7 @@ And here is the <b>Title</b> printing options:
 </p>
 
 <pre>
-struct <span class="att">TitlePrintOpt</span>
+struct <span class="Att">TitlePrintOpt</span>
  {
   static const ulen Default_width  = 80  ;
   static const ulen Default_off    =  3  ;
@@ -600,7 +600,7 @@ It is printed by the helper class <b>TextDivider</b>:
 </p>
 
 <pre>
-class <span class="att">TextDivider</span>
+class <span class="Att">TextDivider</span>
  {
   public:
   
@@ -618,7 +618,7 @@ The following printing options can be used:
 </p>
 
 <pre>
-struct <span class="att">TextDividerPrintOpt</span>
+struct <span class="Att">TextDividerPrintOpt</span>
  {
   static const ulen Default_width  = TitlePrintOpt::Default_width  ;
   static const char Default_border = TitlePrintOpt::Default_border ;
@@ -657,7 +657,7 @@ Integral types are printed using proxy classes <b>SIntPrint&lt;SInt&gt;</b> and 
 /* class SIntPrint&lt;SInt&gt; */ 
 
 template &lt;class SInt&gt;
-class <span class="att">SIntPrint</span>
+class <span class="Att">SIntPrint</span>
  {
    SInt value;
  
@@ -674,7 +674,7 @@ class <span class="att">SIntPrint</span>
 /* class UIntPrint&lt;UInt&gt; */  
 
 template &lt;class UInt&gt;
-class <span class="att">UIntPrint</span>
+class <span class="Att">UIntPrint</span>
  {
    UInt value;
  
@@ -696,7 +696,7 @@ class <span class="att">UIntPrint</span>
 
 <pre>
 
-enum <span class="att">IntShowSign</span>
+enum <span class="Att">IntShowSign</span>
  {
   IntShowMinus,
   IntShowPlus,
@@ -704,7 +704,7 @@ enum <span class="att">IntShowSign</span>
   IntShowSignDefault = IntShowMinus
  };
 
-enum <span class="att">IntAlign</span>
+enum <span class="Att">IntAlign</span>
  {
   IntAlignLeft,
   IntAlignRight,
@@ -713,7 +713,7 @@ enum <span class="att">IntAlign</span>
   IntAlignDefault = IntAlignRight
  };
  
-enum <span class="att">IntShowBase</span>
+enum <span class="Att">IntShowBase</span>
  {
   IntShowNoBase,
   IntShowBaseSuffix,
@@ -722,7 +722,7 @@ enum <span class="att">IntShowBase</span>
   IntShowBaseDefault = IntShowNoBase
  };
  
-struct <span class="att">IntPrintOpt</span>
+struct <span class="Att">IntPrintOpt</span>
  {
   ulen width;
   unsigned base; // 2..16, 0 for c
@@ -828,13 +828,13 @@ To create the object of <b>PrintDumpType</b> use the overloaded <b>Creator funct
 <pre>
 
 template &lt;class UInt&gt;
-PrintDumpType&lt;UInt&gt; <span class="att">PrintDump</span>(const UInt *ptr,ulen len);
+PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(const UInt *ptr,ulen len);
  
 template &lt;class UInt&gt;
-PrintDumpType&lt;UInt&gt; <span class="att">PrintDump</span>(PtrLen&lt;UInt&gt; data);
+PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(PtrLen&lt;UInt&gt; data);
  
 template &lt;class UInt&gt;
-PrintDumpType&lt;UInt&gt; <span class="att">PrintDump</span>(PtrLen&lt;const UInt&gt; data);
+PrintDumpType&lt;UInt&gt; <span class="Att">PrintDump</span>(PtrLen&lt;const UInt&gt; data);
 
 </pre>
 
@@ -843,7 +843,7 @@ And here is the options:
 </p>
 
 <pre>
-struct <span class="att">PrintDumpOptType</span>
+struct <span class="Att">PrintDumpOptType</span>
  {
   static const ulen Default_line_len = 16 ;
  

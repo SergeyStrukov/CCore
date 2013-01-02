@@ -31,13 +31,13 @@
 <p class="Files">Files <b>CCore/inc/PrintSet.h</b> <b>CCore/src/PrintSet.cpp</b></p>
 
 <p>
-<b>PrintSet()</b> is a <b>Creator function</b> to build an object of <b>PrintSetType</b>.
+<b>PrintSet()</b> is a <b>Creator function</b> to build an object of the <b>PrintSetType</b>.
 </p>
 
 <pre>
 
 template &lt;class R&gt;
-PrintSetType&lt;R&gt; <span class="att">PrintSet</span>(const R &amp;range) { return PrintSetType&lt;R&gt;(range); }
+PrintSetType&lt;R&gt; <span class="Att">PrintSet</span>(const R &amp;range) { return PrintSetType&lt;R&gt;(range); }
 
 </pre>
 
@@ -48,7 +48,7 @@ must be a <b>Cursor</b> to iterate through the list of objects.
 
 <pre>
 template &lt;class R,class T=Meta::RangeObjType&lt;R&gt; &gt;
-class <span class="att">PrintSetType</span> : public PrintOptAdapter&lt;T&gt;
+class <span class="Att">PrintSetType</span> : public PrintOptAdapter&lt;T&gt;
  {
    R range;
    
@@ -66,7 +66,7 @@ class <span class="att">PrintSetType</span> : public PrintOptAdapter&lt;T&gt;
 
 <p>
 The object type <b>T</b> is derived by default from the <b>R</b>. Options may be provided to control how to print 
-each element. Example:
+each element. An example:
 </p>
 
 <pre>

@@ -44,23 +44,23 @@ The following global pool functions are to work with raw packets.
 
 <pre>
 
-PacketHeader * <span class="att">TryAllocPacket_raw</span>();
+PacketHeader * <span class="Att">TryAllocPacket_raw</span>();
 
-PacketHeader * <span class="att">AllocPacket_raw</span>(); // may return 0
+PacketHeader * <span class="Att">AllocPacket_raw</span>(); // may return 0
 
-PacketHeader * <span class="att">AllocPacket_raw</span>(MSec timeout);
+PacketHeader * <span class="Att">AllocPacket_raw</span>(MSec timeout);
 
-PacketHeader * <span class="att">AllocPacket_raw</span>(TimeScope time_scope);
+PacketHeader * <span class="Att">AllocPacket_raw</span>(TimeScope time_scope);
 
-PacketHeader * <span class="att">TryAllocPacket_raw_short</span>();
+PacketHeader * <span class="Att">TryAllocPacket_raw_short</span>();
 
-PacketHeader * <span class="att">AllocPacket_raw_short</span>(); // never return 0
+PacketHeader * <span class="Att">AllocPacket_raw_short</span>(); // never return 0
 
-PacketHeader * <span class="att">AllocPacket_raw_short</span>(MSec timeout);
+PacketHeader * <span class="Att">AllocPacket_raw_short</span>(MSec timeout);
 
-PacketHeader * <span class="att">AllocPacket_raw_short</span>(TimeScope time_scope);
+PacketHeader * <span class="Att">AllocPacket_raw_short</span>(TimeScope time_scope);
 
-void <span class="att">DetachPacketBufs</span>();
+void <span class="Att">DetachPacketBufs</span>();
 
 </pre>
 
@@ -105,28 +105,28 @@ correspondent raw functions.
 <pre>
 
 template &lt;class POD&gt;
-Packet&lt;POD&gt; <span class="att">TryAllocPacket</span>() { return TryAllocPacket_raw(); }
+Packet&lt;POD&gt; <span class="Att">TryAllocPacket</span>() { return TryAllocPacket_raw(); }
  
 template &lt;class POD&gt;
-Packet&lt;POD&gt; <span class="att">AllocPacket</span>() { return AllocPacket_raw(); } // may return 0
+Packet&lt;POD&gt; <span class="Att">AllocPacket</span>() { return AllocPacket_raw(); } // may return 0
  
 template &lt;class POD&gt;
-Packet&lt;POD&gt; <span class="att">AllocPacket</span>(MSec timeout) { return AllocPacket_raw(timeout); }
+Packet&lt;POD&gt; <span class="Att">AllocPacket</span>(MSec timeout) { return AllocPacket_raw(timeout); }
  
 template &lt;class POD&gt;
-Packet&lt;POD&gt; <span class="att">AllocPacket</span>(TimeScope time_scope) { return AllocPacket_raw(time_scope); }
+Packet&lt;POD&gt; <span class="Att">AllocPacket</span>(TimeScope time_scope) { return AllocPacket_raw(time_scope); }
                                                                        
 template &lt;class POD&gt;
-Packet&lt;POD&gt; <span class="att">TryAllocPacket_short</span>() { return TryAllocPacket_raw_short(); }
+Packet&lt;POD&gt; <span class="Att">TryAllocPacket_short</span>() { return TryAllocPacket_raw_short(); }
  
 template &lt;class POD&gt;
-Packet&lt;POD&gt; <span class="att">AllocPacket_short</span>() { return AllocPacket_raw_short(); } // never return 0
+Packet&lt;POD&gt; <span class="Att">AllocPacket_short</span>() { return AllocPacket_raw_short(); } // never return 0
  
 template &lt;class POD&gt;
-Packet&lt;POD&gt; <span class="att">AllocPacket_short</span>(MSec timeout) { return AllocPacket_raw_short(timeout); }
+Packet&lt;POD&gt; <span class="Att">AllocPacket_short</span>(MSec timeout) { return AllocPacket_raw_short(timeout); }
  
 template &lt;class POD&gt;
-Packet&lt;POD&gt; <span class="att">AllocPacket_short</span>(TimeScope time_scope) { return AllocPacket_raw_short(time_scope); }
+Packet&lt;POD&gt; <span class="Att">AllocPacket_short</span>(TimeScope time_scope) { return AllocPacket_raw_short(time_scope); }
 
 </pre>
 
@@ -154,7 +154,7 @@ Destructor calls <b>Abort()</b>, if not all packets are released at the moment.
 </p>
 
 <pre>
-class <span class="att">PacketPool</span> : public Funchor_nocopy
+class <span class="Att">PacketPool</span> : public Funchor_nocopy
  {
    ....
 

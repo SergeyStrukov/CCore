@@ -31,13 +31,13 @@
 <p class="Files">Files <b>CCore/inc/StartStop.h</b> <b>CCore/src/StartStop.cpp</b></p>
 
 <p>
-<b>StartStopObject</b> class is designed to start and stop active objects. An <b>active object</b> is the object with one or several
+The class <b>StartStopObject</b> is designed to start and stop active objects. An <b>active object</b> is the object with one or several
 associated working thread.
 </p>
 
 <pre>
 template &lt;class T&gt;
-class <span class="att">StartStopObject</span> : NoCopy
+class <span class="Att">StartStopObject</span> : NoCopy
  {
    T &amp;obj;
    Sem stop_sem;
@@ -89,7 +89,7 @@ class ActiveClass
 </p>
 
 <p>
-<b>signalStop()</b> is called to signal to the working thread to stop execution.
+<b>signalStop()</b> is called to signal to the object to stop execution.
 </p>
 
 <p>
@@ -97,7 +97,7 @@ class ActiveClass
 </p>
 
 <p>
-These methods are called in the shown order (except objRun()).
+These methods are called in the shown order (except <b>objRun()</b>).
 </p>
 
 <p>

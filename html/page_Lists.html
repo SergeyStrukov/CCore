@@ -65,7 +65,7 @@ Lists are built using links:
 /* struct SLink&lt;T&gt; */ 
 
 template &lt;class T&gt; 
-struct <span class="att">SLink</span>
+struct <span class="Att">SLink</span>
  {
   T *next;
   
@@ -79,7 +79,7 @@ struct <span class="att">SLink</span>
 /* struct DLink&lt;T&gt; */ 
  
 template &lt;class T&gt; 
-struct <span class="att">DLink</span>
+struct <span class="Att">DLink</span>
  {
   T *next;
   T *prev;
@@ -138,7 +138,7 @@ Linear list has a top element and terminates with a null pointer.
 
 <pre>
 template &lt;SLink&lt;T&gt; T::* LinkMember&gt;
-struct <span class="att">LinearAlgo</span>
+struct <span class="Att">LinearAlgo</span>
  {
   static SLink&lt;T&gt; &amp; Link(T *obj) { return obj->*LinkMember; }
     
@@ -176,7 +176,7 @@ There are three inner types: <b>Cur</b>, <b>Top</b> and <b>FirstLast</b>.
 <pre>
   // ptr -> next -> ... -> null
     
-  struct <span class="att">Cur</span>
+  struct <span class="Att">Cur</span>
    {
     T *ptr;
       
@@ -208,7 +208,7 @@ In fact, it may be any element or null pointer.
 <pre>
   // top -> next -> ... -> null
     
-  struct <span class="att">Top</span>
+  struct <span class="Att">Top</span>
    {
     T *top;
       
@@ -273,7 +273,7 @@ In fact, it may be any element or null pointer.
 <pre>
   // first -> next -> ... -> last -> null
     
-  struct <span class="att">FirstLast</span>
+  struct <span class="Att">FirstLast</span>
    {
     T *first;
     T *last;
@@ -353,7 +353,7 @@ in this case.
 
 <pre>
 template &lt;SLink&lt;T&gt; T::* LinkMember&gt;
-struct <span class="att">CircularAlgo</span>
+struct <span class="Att">CircularAlgo</span>
  {
   static SLink&lt;T&gt; &amp; Link(T *obj) { return obj->*LinkMember; }
     
@@ -395,7 +395,7 @@ There are two inner types: <b>Cur</b> and <b>Top</b>.
 <pre>
   // ptr -> next -> ... -> bottom
     
-  struct <span class="att">Cur</span>
+  struct <span class="Att">Cur</span>
    {
     T *ptr;
     T *bottom;
@@ -427,7 +427,7 @@ There are two inner types: <b>Cur</b> and <b>Top</b>.
 <pre>
   // bottom -> top -> next -> ... -> bottom
     
-  struct <span class="att">Top</span>
+  struct <span class="Att">Top</span>
    {
     T *bottom;
       
@@ -508,7 +508,7 @@ Linear list has a top element and terminates with null pointers. Double link all
 
 <pre>
 template &lt;DLink&lt;T&gt; T::* LinkMember&gt;
-struct <span class="att">LinearAlgo</span>
+struct <span class="Att">LinearAlgo</span>
  {
   static DLink&lt;T&gt; &amp; Link(T *obj) { return obj->*LinkMember; }
     
@@ -615,7 +615,7 @@ There are four inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b> and <b>FirstLa
 <pre>
   // ptr -> next -> ... -> null
     
-  struct <span class="att">Cur</span>
+  struct <span class="Att">Cur</span>
    {
     T *ptr;
       
@@ -649,7 +649,7 @@ In fact, it may be any element or null pointer.
 <pre>
   // null &lt;- ... &lt;- prev &lt;- ptr
     
-  struct <span class="att">RevCur</span>
+  struct <span class="Att">RevCur</span>
    {
     T *ptr;
       
@@ -683,7 +683,7 @@ In fact, it may be any element or null pointer.
 <pre>
   // null &lt;- top -&gt; next -&gt; ... -&gt; null
     
-  struct <span class="att">Top</span>
+  struct <span class="Att">Top</span>
    {
     T *top;
       
@@ -781,7 +781,7 @@ moves the cursor to the next element. The pointer to the deleted element is retu
 <pre>
   // null &lt;- first -&gt; next -&gt; ... -&gt; last -&gt; null
     
-  struct <span class="att">FirstLast</span>
+  struct <span class="Att">FirstLast</span>
    {
     T *first;
     T *last;
@@ -917,7 +917,7 @@ Circular list has a top element, the last element is linked to the top. Double l
 
 <pre>
 template &lt;DLink&lt;T&gt; T::* LinkMember&gt;
-struct <span class="att">CircularAlgo</span>
+struct <span class="Att">CircularAlgo</span>
  {
   static DLink&lt;T&gt; &amp; Link(T *obj) { return obj->*LinkMember; }
     

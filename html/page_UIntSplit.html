@@ -37,7 +37,7 @@ inverse.
 
 <pre>
 template &lt;class UIntBig,class UIntSmall&gt;
-class <span class="att">UIntSplit</span>
+class <span class="Att">UIntSplit</span>
  {
    UIntSmall buf[Len]; // big-endian order
   
@@ -60,12 +60,12 @@ class <span class="att">UIntSplit</span>
 </pre>
 
 <p>
-There is no default constructor, so the initial value of this class is indeterminant.
+There is no default constructor, so the initial value of this class is indeterminate.
 </p>
 
 <p>
 You can get or set the value as <b>UIntBig</b> type value, using the methods <b>get()</b> or <b>set()</b>.
-But you can get or set <b>UIntSmall</b> parts of the value in big-endian order using the overloaded <b>operator []</b>.
+But you can get or set <b>UIntSmall</b> parts of the value in the big-endian order using the overloaded <b>operator []</b>.
 An example:
 </p>
 

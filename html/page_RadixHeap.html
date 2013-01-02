@@ -37,7 +37,7 @@ This class is used to allocated a large memory blocks, then <b>RadixHeap</b> spl
 (aka blocks) and manages these parts. Each such block starts from the header of the type <b>RadixHeapBlock</b>. 
 The part can be used or free. The space after the header in a free block is used to create a special control
 object, these objects are used to manage the free blocks set by the <b>RadixHeapStore</b>. 
-In used blocks this space is the allocated memory. <span class="alert">There is no two free consecutive blocks</span>. 
+In used blocks this space is the allocated memory. <span class="Alert">There is no two free consecutive blocks</span>. 
 If such blocks appear in the <b>free()</b> operation, they are immediately merged into the single free block.
 When block is allocated, it is stamped by the "magic number". This stamp is used to detect incorrect block pointers.
 It makes the heap protected from incorrect operations (not 100%).
@@ -53,7 +53,7 @@ That is how we provides constant operation time limits.
 
 <pre>
 template &lt;class Mem&gt;
-class <span class="att">RadixHeap</span> : NoCopy
+class <span class="Att">RadixHeap</span> : NoCopy
  {
    Mem large_mem;
    RadixHeapStore store;

@@ -42,9 +42,9 @@ There are several type, which are used to specify the constructor behavior.
 
 /* words */ 
 
-enum DoBuildType { <span class="att">DoBuild</span> };
+enum DoBuildType { <span class="Att">DoBuild</span> };
  
-enum DoReserveType { <span class="att">DoReserve</span> };
+enum DoReserveType { <span class="Att">DoReserve</span> };
 
 </pre>
 
@@ -137,7 +137,7 @@ the most cases.
 
 <pre>
 template &lt;class T,ulen StackLen&gt;
-class <span class="att">TempArray</span> : NoCopy
+class <span class="Att">TempArray</span> : NoCopy
  {
   private:
   
@@ -217,7 +217,7 @@ See below about array algorithms.
 
 <pre>
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
-class <span class="att">SimpleArray</span> : NoCopy
+class <span class="Att">SimpleArray</span> : NoCopy
  {
    T *ptr;
    ulen len;
@@ -298,7 +298,7 @@ Alone with standard methods, <b>DynArray</b> has a bunch of methods to initializ
 
 <pre>
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
-class <span class="att">DynArray</span> : NoCopy
+class <span class="Att">DynArray</span> : NoCopy
  {
    ....
  
@@ -639,7 +639,7 @@ elements.
 
 <pre>
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
-class <span class="att">RefArray</span>
+class <span class="Att">RefArray</span>
  {
    ....
 
@@ -799,7 +799,7 @@ Or you can "flat" the <b>Collector</b> itself.
 
 <pre>
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
-class <span class="att">Collector</span> : NoCopy
+class <span class="Att">Collector</span> : NoCopy
  {
    ....
 
@@ -981,7 +981,7 @@ The flag is true, if the correspondent constructor (default or copy) is <b>no-th
 
 <pre>
 template &lt;class T,class Flags&gt;
-struct <span class="att">ArrayAlgo_class</span>
+struct <span class="Att">ArrayAlgo_class</span>
  {
   //
   //  assume ~T() , Move(T *,Place&lt;void&gt;) , Swap(T &amp;,T &amp;) no-throw
@@ -1137,7 +1137,7 @@ responsible for the object destruction in case of failure.
 </p>
 
 <pre>
-class <span class="att">BuildGuard</span> : NoCopy
+class <span class="Att">BuildGuard</span> : NoCopy
  {
    Place&lt;void&gt; place;
    T *ptr;
@@ -1182,7 +1182,7 @@ The <b>BuildGuard</b> destructor destroys the created objects. It must be disarm
 </p>
 
 <pre>
-class <span class="att">CreateGuard</span> : public BuildGuard
+class <span class="Att">CreateGuard</span> : public BuildGuard
  {
   public:
      
@@ -1200,7 +1200,7 @@ you must create the exact number of objects.
 </p>
 
 <pre>
-class <span class="att">CreateGuard_nothrow</span> : NoCopy
+class <span class="Att">CreateGuard_nothrow</span> : NoCopy
  {
    Place&lt;void&gt; place;
    T *ptr;
@@ -1226,7 +1226,7 @@ construction.
 
 <pre>
 template &lt;bool no_throw&gt;
-class <span class="att">CreateGuardNoThrow</span> : NoCopy
+class <span class="Att">CreateGuardNoThrow</span> : NoCopy
  {
   public:
      
@@ -1247,7 +1247,7 @@ Below is the implementation of the generic <b>Create</b>, it uses <b>CreateGuard
 
 <pre>
 template &lt;class Creator&gt;
-static PtrLen&lt;T&gt; <span class="att">Create</span>(Place&lt;void&gt; place,ulen len,Creator creator)
+static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,ulen len,Creator creator)
  {
   CreateGuardNoThrow&lt;Creator::NoThrow&gt; guard(place,len);
     
@@ -1267,7 +1267,7 @@ static PtrLen&lt;T&gt; <span class="att">Create</span>(Place&lt;void&gt; place,u
 
 <pre>
 template &lt;class T&gt;
-struct <span class="att">ArrayAlgo_pod</span>
+struct <span class="Att">ArrayAlgo_pod</span>
  {
   //
   //  Create...() : clean on throw
@@ -1364,7 +1364,7 @@ It is assumed, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and move
 
 <pre>
 template &lt;class T,class Flags&gt;
-struct <span class="att">ArrayAlgo_mini</span>
+struct <span class="Att">ArrayAlgo_mini</span>
  {
   //
   //  assume ~T() no-throw
@@ -1553,7 +1553,7 @@ There is a list of standard creators.
 /* struct Creator_default&lt;T,bool no_throw&gt; */ 
  
 template &lt;class T,bool no_throw&gt; 
-struct <span class="att">Creator_default</span>
+struct <span class="Att">Creator_default</span>
  {
   enum NoThrowFlagType { NoThrow = no_throw };
   
@@ -1568,7 +1568,7 @@ struct <span class="att">Creator_default</span>
 /* struct Creator_fill&lt;T,SS&gt; */ 
 
 template &lt;class T,class ... SS&gt; 
-struct <span class="att">Creator_fill</span>
+struct <span class="Att">Creator_fill</span>
  {
   enum NoThrowFlagType { NoThrow = false };
   
@@ -1589,7 +1589,7 @@ struct <span class="att">Creator_fill</span>
 /* struct Creator_copy&lt;T,bool no_throw&gt; */ 
 
 template &lt;class T,bool no_throw&gt; 
-struct <span class="att">Creator_copy</span>
+struct <span class="Att">Creator_copy</span>
  {
   enum NoThrowFlagType { NoThrow = no_throw };
   
@@ -1606,7 +1606,7 @@ struct <span class="att">Creator_copy</span>
 /* struct Creator_cast&lt;T,S&gt; */ 
  
 template &lt;class T,class S&gt; 
-struct <span class="att">Creator_cast</span>
+struct <span class="Att">Creator_cast</span>
  {
   enum NoThrowFlagType { NoThrow = false };
   
@@ -1623,7 +1623,7 @@ struct <span class="att">Creator_cast</span>
 /* struct Creator_swap&lt;T,Algo&gt; */ 
 
 template &lt;class T,class Algo&gt;
-struct <span class="att">Creator_swap</span>
+struct <span class="Att">Creator_swap</span>
  {
   enum NoThrowFlagType { NoThrow = true };
   

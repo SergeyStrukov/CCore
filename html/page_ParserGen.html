@@ -565,13 +565,13 @@ struct AnyElement;
 
 struct ElementAtom;
 
-#include <span class="att">"Prefix.elements1.gen.h"</span>
+#include <span class="Att">"Prefix.elements1.gen.h"</span>
 
 struct Action;
 
 class Parser;
 
-#include <span class="att">"Prefix.atom.gen.h"</span>
+#include <span class="Att">"Prefix.atom.gen.h"</span>
 
 /* struct Atom */ 
 
@@ -581,7 +581,7 @@ class Parser;
 // represent atom, has the atom class and some value, associated with atom
 //
 
-struct <span class="att">Atom</span>
+struct <span class="Att">Atom</span>
  {
   AtomClass ac;
   
@@ -598,7 +598,7 @@ struct <span class="att">Atom</span>
 // element parsing context, in particular, creates elements
 //
 
-class <span class="att">ElementContext </span>
+class <span class="Att">ElementContext </span>
  {
    // TODO
 
@@ -614,7 +614,7 @@ class <span class="att">ElementContext </span>
 // Base class for elements, parse stack is a list.
 //
 
-struct <span class="att">ElementBase</span> : NoCopy
+struct <span class="Att">ElementBase</span> : NoCopy
  {
   ElementBase *prev;
   ulen state;
@@ -624,7 +624,7 @@ struct <span class="att">ElementBase</span> : NoCopy
 
 /* struct AnyElement */
 
-struct <span class="att">AnyElement</span>
+struct <span class="Att">AnyElement</span>
  {
   ElementBase *elem;
   
@@ -636,14 +636,14 @@ struct <span class="att">AnyElement</span>
 
 /* struct ElementAtom */
 
-struct <span class="att">ElementAtom</span> : ElementBase
+struct <span class="Att">ElementAtom</span> : ElementBase
  {
   // TODO
 
   ElementAtom(ElementContext ctx,const Atom &amp;atom);
  };
 
-#include <span class="att">"Prefix.elements2.gen.h"</span>
+#include <span class="Att">"Prefix.elements2.gen.h"</span>
 
 /* struct Action */
 
@@ -654,7 +654,7 @@ struct Action
     Abort,
     Shift,
 
-#include <span class="att">"Prefix.actions.gen.h"</span>    
+#include <span class="Att">"Prefix.actions.gen.h"</span>    
    };
   
   Rule rule;
@@ -680,11 +680,11 @@ class Parser : NoCopy
    
   private:
 
-<span class="att">#include "Prefix.elem.gen.h"</span>
+<span class="Att">#include "Prefix.elem.gen.h"</span>
 
   private:
 
-<span class="att">#include "Prefix.do.gen.h"</span>
+<span class="Att">#include "Prefix.do.gen.h"</span>
    
    void doRule(Action::Rule rule);
    
@@ -746,12 +746,12 @@ class Parser : NoCopy
 
 <pre>
 
-<span class="att">#include "Prefix.next_state.gen.cpp"</span>
+<span class="Att">#include "Prefix.next_state.gen.cpp"</span>
 
 /* struct Action */
 
-<span class="att">#include "Prefix.rule_table.gen.cpp"</span>
-<span class="att">#include "Prefix.atom_state_table.gen.cpp"</span>
+<span class="Att">#include "Prefix.rule_table.gen.cpp"</span>
+<span class="Att">#include "Prefix.atom_state_table.gen.cpp"</span>
 
 Action::Action(ulen state,AtomClass ac)
  {
@@ -767,7 +767,7 @@ Action::Action(ulen state,AtomClass ac)
     }
  }
 
-<span class="att">#include "Prefix.next_state.gen.cpp"</span>
+<span class="Att">#include "Prefix.next_state.gen.cpp"</span>
 
 /* class Parser */
 
@@ -793,15 +793,15 @@ void Parser::shift(const Atom &amp;atom,ulen state)
   push(ctx.create&lt;ElementAtom&gt;(ctx,atom),state);
  }
 
-<span class="att">#include "Prefix.elem.gen.cpp"</span>
+<span class="Att">#include "Prefix.elem.gen.cpp"</span>
 
-<span class="att">#include "Prefix.do.gen.cpp"</span>
+<span class="Att">#include "Prefix.do.gen.cpp"</span>
 
 void Parser::doRule(Action::Rule rule)
  {
   switch( rule )
     {
-<span class="att">#include "Prefix.do_rule.gen.cpp"</span>
+<span class="Att">#include "Prefix.do_rule.gen.cpp"</span>
     }
  }
 
@@ -859,7 +859,7 @@ auto Parser::complete() -&gt; Result
   return ResultRule;
  }
 
-<span class="att">#include "Prefix.elements3.gen.cpp"</span>
+<span class="Att">#include "Prefix.elements3.gen.cpp"</span>
 
 </pre>
 

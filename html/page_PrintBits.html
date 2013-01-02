@@ -31,14 +31,14 @@
 <p class="Files">Files <b>CCore/inc/PrintBits.h</b> <b>CCore/src/PrintBits.cpp</b></p>
 
 <p>
-<b>PrintBits()</b> is a <b>Creator function</b>, it is used to bind together printing devide and some unsigned integral value
+<b>PrintBits()</b> is a <b>Creator function</b>, it is used to bind together a printing device and some unsigned integral value
 to build the <b>Helper Type</b> <b>PrintBitsType</b> object.
 </p>
 
 <pre>
 
 template &lt;class UInt,class P&gt;
-PrintBitsType&lt;P,UInt&gt; <span class="att">PrintBits</span>(P &amp;out,UInt value) { return PrintBitsType&lt;P,UInt&gt;(out,value); }
+PrintBitsType&lt;P,UInt&gt; <span class="Att">PrintBits</span>(P &amp;out,UInt value) { return PrintBitsType&lt;P,UInt&gt;(out,value); }
 
 </pre>
 
@@ -48,7 +48,7 @@ PrintBitsType&lt;P,UInt&gt; <span class="att">PrintBits</span>(P &amp;out,UInt v
 
 <pre>
 template &lt;class P,class UInt&gt;
-class <span class="att">PrintBitsType</span>
+class <span class="Att">PrintBitsType</span>
  {
    P &amp;out;
    UInt value;

@@ -70,7 +70,7 @@ An object of a sort context type is required to perform a sort.
 
 <pre>
 template &lt;class Ran&gt;
-struct <span class="att">SortCtx</span>
+struct <span class="Att">SortCtx</span>
  {
   static void swap(Ran a,Ran b) { Swap(*a,*b); }
    
@@ -85,7 +85,7 @@ struct <span class="att">SortCtx</span>
 
 <pre>
 template &lt;class T&gt;
-struct <span class="att">SortIndexCtx</span>
+struct <span class="Att">SortIndexCtx</span>
  {
   T *base;
   
@@ -111,7 +111,7 @@ Sort <b>Algorithm Package</b>s are using the following pattern:
 
 <pre>
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
-struct <span class="att">XXXSort</span>
+struct <span class="Att">XXXSort</span>
  {
   template &lt;class Len&gt;
   static void Sort(Ran ptr,Len len,Ctx ctx);
@@ -134,7 +134,7 @@ struct <span class="att">XXXSort</span>
 
 <pre>
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
-struct <span class="att">ShortSort</span>
+struct <span class="Att">ShortSort</span>
  {
   // general
  
@@ -205,7 +205,7 @@ which is faster in a common case, but has a bigger run time in special cases.
 
 <pre>
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
-struct <span class="att">HeapSort</span>
+struct <span class="Att">HeapSort</span>
  {
   template &lt;class Len&gt;
   static void Sort(Ran ptr,Len len,Ctx ctx);
@@ -225,7 +225,7 @@ To ensure <b>O(N*log(N))</b> complexity, the implementation switchs to the heap 
 
 <pre>
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
-struct <span class="att">QuickSort</span>
+struct <span class="Att">QuickSort</span>
  {
   template &lt;class Len&gt;
   static void Sort(Ran a,Len len,Ctx ctx);
@@ -251,7 +251,7 @@ ParaQuickSort<....>::Sort(....);
 
 <pre>
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
-struct <span class="att">ParaQuickSort</span>
+struct <span class="Att">ParaQuickSort</span>
  {
   template &lt;class Len&gt;
   static void Sort(Ran a,Len len,Ctx ctx);
@@ -270,22 +270,22 @@ Finally, here is the list of common sort functions:
 <pre>
 
 template &lt;class Ran,class Len&gt;
-void <span class="att">Sort</span>(Ran ptr,Len len);
+void <span class="Att">Sort</span>(Ran ptr,Len len);
 
 template &lt;class T&gt;
-void <span class="att">Sort</span>(PtrLen&lt;T&gt; range);
+void <span class="Att">Sort</span>(PtrLen&lt;T&gt; range);
 
 template &lt;class Ran,class Len,class Func&gt;
-void <span class="att">IncrSort</span>(Ran ptr,Len len,Func less);
+void <span class="Att">IncrSort</span>(Ran ptr,Len len,Func less);
 
 template &lt;class Ran,class Len,class Func&gt;
-void <span class="att">DecrSort</span>(Ran ptr,Len len,Func less);
+void <span class="Att">DecrSort</span>(Ran ptr,Len len,Func less);
 
 template &lt;class T,class Func&gt;
-void <span class="att">IncrSort</span>(PtrLen&lt;T&gt; range,Func less);
+void <span class="Att">IncrSort</span>(PtrLen&lt;T&gt; range,Func less);
 
 template &lt;class T,class Func&gt;
-void <span class="att">DecrSort</span>(PtrLen&lt;T&gt; range,Func less);
+void <span class="Att">DecrSort</span>(PtrLen&lt;T&gt; range,Func less);
 
 </pre>
 
@@ -306,7 +306,7 @@ There are two special sort contexts to sort with the given <b>less</b> functor:
 /* struct IncrSortCtx&lt;Ran,Func&gt; */
 
 template &lt;class Ran,class Func&gt;
-struct <span class="att">IncrSortCtx</span> : SortCtx&lt;Ran&gt;
+struct <span class="Att">IncrSortCtx</span> : SortCtx&lt;Ran&gt;
  {
   Func func;
   
@@ -318,7 +318,7 @@ struct <span class="att">IncrSortCtx</span> : SortCtx&lt;Ran&gt;
 /* struct DecrSortCtx&lt;Ran,Func&gt; */
 
 template &lt;class Ran,class Func&gt;
-struct <span class="att">DecrSortCtx</span> : SortCtx&lt;Ran&gt;
+struct <span class="Att">DecrSortCtx</span> : SortCtx&lt;Ran&gt;
  {
   Func func;
   

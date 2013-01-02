@@ -57,7 +57,7 @@ This structure is a collection of tools for the path scanning.
 </p>
 
 <pre>
-struct <span class="att">PathBase</span>
+struct <span class="Att">PathBase</span>
  {
   static bool IsSlash(char ch) { return ch=='/' || ch=='\\' ; }
   
@@ -198,7 +198,7 @@ In case a required character is not found, the suffix is empty.
 <h4>SplitDev</h4>
 
 <pre>
-struct <span class="att">SplitDev</span> : PathBase
+struct <span class="Att">SplitDev</span> : PathBase
  {
   StrLen dev; // first  dev:
   StrLen dev_path;
@@ -223,7 +223,7 @@ host:   d:\exchange\device.1\device.log.txt
 <h4>SplitPath</h4>
 
 <pre>
-struct <span class="att">SplitPath</span> : PathBase
+struct <span class="Att">SplitPath</span> : PathBase
  {
   StrLen dev; // all  dev1:dev2:...:
   StrLen path;
@@ -248,7 +248,7 @@ host:d:   \exchange\device.1\device.log.txt
 <h4>SplitDir</h4>
 
 <pre>
-struct <span class="att">SplitDir</span> : PathBase
+struct <span class="Att">SplitDir</span> : PathBase
  {
   StrLen dir; // first  dir/
   StrLen path;
@@ -277,7 +277,7 @@ exchange\   device.1\device.log.txt
 <h4>SplitName</h4>
 
 <pre>
-struct <span class="att">SplitName</span> : PathBase
+struct <span class="Att">SplitName</span> : PathBase
  {
   StrLen path; // all  dir1/dir2/.../
   StrLen name;
@@ -308,7 +308,7 @@ is null and the <b>path</b> is the given path. Slash goes to the <b>dir</b>.
 <h4>SplitFullExt</h4>
 
 <pre>
-struct <span class="att">SplitFullExt</span> : PathBase
+struct <span class="Att">SplitFullExt</span> : PathBase
  {
   StrLen name;
   StrLen ext;  // all  .ext1.ext2...
@@ -333,7 +333,7 @@ device   .log.txt
 <h4>SplitExt</h4>
 
 <pre>
-struct <span class="att">SplitExt</span> : PathBase
+struct <span class="Att">SplitExt</span> : PathBase
  {
   StrLen name;
   StrLen ext;  // last  .ext
@@ -358,7 +358,7 @@ device.log   .txt
 <h4>SplitDevName</h4>
 
 <pre>
-struct <span class="att">SplitDevName</span> : PathBase
+struct <span class="Att">SplitDevName</span> : PathBase
  {                   
   StrLen dev_name; // first  dev_name: , : removed
   StrLen dev_path; 
@@ -381,7 +381,7 @@ host   d:\exchange\device.1\device.log.txt
 <h4>SplitDirName</h4>
 
 <pre>
-struct <span class="att">SplitDirName</span> : PathBase
+struct <span class="Att">SplitDirName</span> : PathBase
  {
   StrLen dir_name; // first  dir_name/ , / removed
   StrLen path;
@@ -414,7 +414,7 @@ exchange   device.1\device.log.txt
 <h4>SplitPathName</h4>
 
 <pre>
-struct <span class="att">SplitPathName</span> : PathBase
+struct <span class="Att">SplitPathName</span> : PathBase
  {             
   StrLen path; // all  dir1/dir2/.../ , / removed
   StrLen name;
@@ -446,7 +446,7 @@ The string after prefix is a normalized path. I.g. it may be empty or "." or
 </p>
 
 <pre> 
-class <span class="att">Path</span> : NoCopyBase&lt;PathBase&gt;
+class <span class="Att">Path</span> : NoCopyBase&lt;PathBase&gt;
  {
    char buf[MaxPathLen];
    ulen buf_len;
