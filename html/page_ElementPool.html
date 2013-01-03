@@ -32,7 +32,7 @@
 
 <p>
 Element pool is a domain, where objects of different types can be created and stored. There is a restriction:
-the object type must have a trivial destructor. All objects in a pool dies together when the element poll is destroyed. 
+the object type must have a trivial destructor. All objects in a pool dies together when the element pool is destroyed. 
 </p>
 
 <p>
@@ -45,6 +45,8 @@ memory blocks release.
 <p>
 <b>CCore</b> provides two classes for the object pooling: <b>MemPool</b> and <b>ElementPool</b> .
 </p>
+
+<h4>ElementPool</h4>
 
 <pre>
 class <span class="Att">ElementPool</span> : NoCopy
@@ -105,12 +107,12 @@ class <span class="Att">ElementPool</span> : NoCopy
 </p>
 
 <p>
-Method <b>create&lt;T&gt;()</b> creates an object of the type <b>T</b> in the pool and returns a pointer
+The method <b>create&lt;T&gt;()</b> creates an object of the type <b>T</b> in the pool and returns a pointer
 to it. On failure an exception is thrown. Arguments are forwarded to the <b>T</b> constructor.
 </p>
 
 <p>
-Method <b>dup()</b> duplicates the given string in the pool and returns the duplicate.
+The method <b>dup()</b> duplicates the given string in the pool and returns the duplicate.
 </p>
 
 <p>
@@ -124,7 +126,33 @@ and returns the range of created objects.
 
 <p>
 Other variations of the <b>createArray()</b> have the same semantic as the different 
-<a href="page_Arrays.html">Array constructors</a>.
+<a href="page_Arrays.html#DynArray">Array constructors</a>.
+</p>
+
+<p>
+<b>createArray_raw()</b> creates an uninitialized array, if the type <b>T</b> is a POD type. You must give values
+to array elements after.
+</p>
+
+<p>
+<b>createArray_fill()</b> creates an array, where each element is constructed using the same constructor with provided 
+arguments.
+</p>
+
+<p>
+<b>createArray_copy()</b> creates an array by per element copying the given object range.
+</p>
+
+<p>
+<b>createArray_cast()</b> creates an array by per element casting the given object range to the type <b>T</b>.
+</p>
+
+<p>
+<b>createArray_swap()</b> uses swap-create, i.g. creates an object with the default constructor and then do swap.
+</p>
+
+<p>
+<b>createArray(ulen len,Creator creator)</b> uses the given object <b>Creator</b> to create array elements.
 </p>
 
 <p>
@@ -132,8 +160,10 @@ Other variations of the <b>createArray()</b> have the same semantic as the diffe
 </p>
 
 <p>
-<b>ElementPool</b> is swapable/movable.
+<b>ElementPool</b> is swappable/movable.
 </p>
+
+<h4>MemPool</h4>
 
 <pre>
 class <span class="Att">MemPool</span> : NoCopy
@@ -164,7 +194,7 @@ class <span class="Att">MemPool</span> : NoCopy
 
 <p>
 You probably don't need to use this class directly. <b>MemPool</b> is a pool of memory blocks.
-You may create a new memory block by the method <b>alloc()</b>. <b>len</b> is required block length.
+You may create a new memory block by the method <b>alloc()</b>. <b>len</b> is the required block length.
 On success, <b>alloc()</b> returns the <b>Place&lt;void&gt;</b> at the begin of the block.
 Blocks are always aligned. On failure an exception is thrown.
 </p>
@@ -179,7 +209,7 @@ Blocks are always aligned. On failure an exception is thrown.
 </p>
 
 <p>
-<b>MemPool</b> is swapable/movable.
+<b>MemPool</b> is swappable/movable.
 </p>
 
 </body>

@@ -1155,11 +1155,11 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_DefaultTimeout.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_DefaultValue.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_DirTreeRun.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_ElementPool.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_ElementPool.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_EllipticPi.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Event.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_ExceptionType.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_Exceptions.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Exceptions.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_FastMutex.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Fifo.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_FileSystem.html" 0
@@ -1214,7 +1214,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_ParserGen.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Paths.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Place.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_PlanInit.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_PlanInit.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_PosSub.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_PrintAbort.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_PrintBits.html" 2
@@ -1223,7 +1223,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_PrintSet.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_PrintTime.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_PrintTitle.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_Printing.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Printing.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_PtrLen.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_RadixHeap.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Random.html" 0
@@ -1241,7 +1241,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_Space.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_StartStop.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_StrParse.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_String.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_String.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Swap.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Sync.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Task.html" 0

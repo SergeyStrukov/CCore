@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/PlanInit.h</b> <b>CCore/src/PlanInit.cpp</b></p>
 
 <p>
-In C++ constructors of global objects are called in undefined order, except objects in the same translation units
+In C++ constructors of global objects are called in undefined order, except objects in the same translation unit
 initialized in the order of definition. <b>CCore</b> requires, however, the more precise control on this matter.
 <b>PlanInit</b> is a feature, designed for this. It provides the following:
 </p>
@@ -40,13 +40,13 @@ initialized in the order of definition. <b>CCore</b> requires, however, the more
 <li>objects, initialized by the <b>PlanInit</b> are initialized before all other global objects,</li>
 <li>you may specify initialization dependencies, i.g. you may specify, that some object must be initialized before another,</li>
 <li>if there is a dependency cycle, execution is aborted,</li>
-<li>deinitialization happens according C++ general rule in the reverse order, than initialization.</li>
+<li>deinitialization happens according the C++ general rule: in the reverse order, than initialization.</li>
 </ul>
 
 <p>
 Here is the usage pattern. Assume, you have the header <b>XXX.h</b> and the source <b>XXX.cpp</b> and you want to create 
 the global object of the type <b>GlobalXXXType</b> using <b>PlanInit</b>. You declare the following global function
-int the <b>XXX.h</b>:
+in the <b>XXX.h</b>:
 </p>
 
 <pre>
@@ -72,16 +72,16 @@ PlanInitNode * GetPlanInitNode_XXX() { return &amp;GlobalXXXObject; }
 <p>
 You may provide as many requirements as you need. <b>PlanInit</b> make sure the <b>XXX</b> initialization happens after <b>YYY</b>.
 Functions <b>GetPlanInitNode_XXX()</b> are required to specify dependencies. In <b>CCore</b> we don't expose global objects, they are
-hided in the source files and provide functionality using global functions.
+hidden in source files and provide functionality using global functions.
 </p>
 
 <p>
 The function <b>GetPlanInitNode_CCore()</b> marks the entire <b>CCore</b> initialization. If you are using the <b>PlanInit</b> in your project,
-make sure you add this node in the requirement lists.
+make sure to add this node in requirement lists.
 </p>
 
 <p>
-The type <b>GlobalXXXType</b> must provide the node tag:
+The type <b>GlobalXXXType</b> must provide a node tag:
 </p>
 
 <pre>
@@ -104,7 +104,7 @@ The node <b>GlobalXXXObject</b> is an <b>Object Pointer</b>:
 <pre>
 
 template &lt;class T,class ... RR&gt;
-class PlanInitObject
+class <span class="Att">PlanInitObject</span>
  {
   public:
 
@@ -127,7 +127,7 @@ class PlanInitObject
 <b>CCore</b> uses initialization priority attribute, implemented in the <b>gcc</b> family of C++ compilers.
 There are 3 levels of priority, reserved for <b>CCore</b> needs: <b>CCORE_INITPRI_0</b>, <b>CCORE_INITPRI_1</b>, 
 <b>CCORE_INITPRI_2</b>.
-The first is used for the most urgent objects. The second is reserved for the <b>PlanInit</b> nodes. Finally, <b>PlanInit</b> 
+The first is used for most urgent objects. The second is reserved for <b>PlanInit</b> nodes. Finally, <b>PlanInit</b> 
 object initialization happens on the third level.
 </p>
 

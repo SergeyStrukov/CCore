@@ -32,7 +32,7 @@
 
 <p>
 The class <b>String</b> implements immutable, atomically reference counted string. The implementation
-of the class is a very simple, because it uses <a href="page_Arrays.html"><b>AtomicRefArray</b></a>.
+of the class is a very simple, because it uses <a href="page_Arrays.html#RefArray"><b>AtomicRefArray</b></a>.
 The <b>String</b> is not null-terminated.
 </p>
 
@@ -82,7 +82,7 @@ class <span class="Att">String</span>
 </p>
 
 <p>
-<b>String</b> is copyable, swappable and moveable. These operations are <b>efficient</b>.
+<b>String</b> is copyable, swappable and movable. These operations are <b>efficient</b>.
 </p>
 
 <p>
@@ -120,7 +120,7 @@ class <span class="Att">PrintString</span> : public PrintBase
 </pre>
 
 <p>
-In a constuctor call you may specify the maximum string length and the frame length (printed characters are
+In a constructor call you may specify the maximum string length and the frame length (printed characters are
 stored in a list of frames of the given length).
 </p>
 
@@ -136,7 +136,7 @@ extending the printed sequence.
 <h4>Stringf() and StringCat()</h4>
 
 <p>
-<b>Stringf()</b> and <b>StringCat()</b> are convenient functions to create a string using printing:
+<b>Stringf()</b> and <b>StringCat()</b> are convenient functions to create a string, using printing:
 </p>
 
 <pre>
@@ -157,13 +157,26 @@ returns the result as a <b>String</b>. <b>StringCat()</b> concatenates printed o
 <h4>Concatenation of string-like objects</h4>
 
 <p>
-You can add an object to the string, if the objects is castable to the <b>StrLen</b>. To sum more than two 
-such objects, use the function <b>StringSum()</b>.
+You can add an object to the string, if the object is castable to <b>const char *</b>, <b>StrLen</b> or 
+the <b>Range_const()</b> is applied and gives the <b>PtrLen&lt;const char&gt;</b>. 
 </p>
 
 <pre>
+
+template &lt;class T&gt;
+String <span class="Att">operator +</span> (const String &amp;a,const T &amp;t) { return StringSum(a,t); }
+
+</pre>
+
+<p>
+To sum more than two such objects, use the function <b>StringSum()</b>.
+</p>
+
+<pre>
+
 template &lt;class ... TT&gt;
 String <span class="Att">StringSum</span>(const TT &amp; ... tt);
+
 </pre>
 
 </body>

@@ -79,11 +79,11 @@ void GuardIndexOutOfRange(ulen index,ulen len)
 
 </pre>
 
-<h3>class PrintException</h3>
+<h3>PrintException</h3>
 
 <p>
-The class <b>PrintException</b> serves as a print adapter for the enum <b>ExceptionType</b> (the type of constants
-<b>Exception</b> or <b>NoException</b>).
+The class <b>PrintException</b> serves as a print adapter for the <b>enum</b> <b>ExceptionType</b> (the type of constants
+<b>Exception</b> and <b>NoException</b>).
 </p>
 
 <pre>
@@ -126,7 +126,7 @@ You don't need this class for a direct usage. It does its job inside a <b>Printf
 object, prints the message to it, setup a error flag and finally in destructor throws an exception, if required.
 </p>
 
-<h3>class ReportException</h3>
+<h3>ReportException</h3>
 
 <p>
 Each thread may have an associated <b>ReportException</b> object. The purpose of this object is to serve as the printing
@@ -169,10 +169,10 @@ class <span class="Att">ReportException</span> : NoCopy
 </pre>
 
 <p>
-By default, the <b>ReportException</b> prints text to the default console. But you may alter this by deriving a class
-from the <b>ReportException</b> and overriding the virtual methods <b>print()</b>, <b>start()</b>, <b>add()</b>, 
+By default, <b>ReportException</b> prints text to the default console. But you may alter this by deriving a class
+from the <b>ReportException</b> and overriding virtual methods <b>print()</b>, <b>start()</b>, <b>add()</b>, 
 and <b>end()</b>. To redirect the text output, you need to override only the method <b>print()</b>, but you may alter
-the formating or processing of the elements of the message by overriding other methods. <b>Print()</b> prints to
+the formating or processing the elements of the message by overriding other methods. <b>Print()</b> prints to
 the console. Be caution in implementation of these methods: <span class="Alert">they must not throw exceptions, 
 it will lead to abort</span>.
 </p>

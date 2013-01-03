@@ -30,12 +30,14 @@
 
 <p class="Files">Files <b>CCore/inc/Printf.h</b> <b>CCore/src/Printf.cpp</b></p>
 
+<p class="Files">Subfolders <b>CCore/inc/printf</b> <b>CCore/src/printf</b></p>
+
 <p>
 <b>CCore</b> provides a printing infrastructure. Printing is a transformation of an object into a sequence of characters.
 There are three actors in a printing process: the object, the output device and printing options. The output device consumes 
 characters, printing options determines how the object is exactly transformed. For example, integer can be represented 
-in decimal form or in hexadecimal, with or without sign, with extra zero digits and so on. The type of object is responsible
-for the printing implementation. There are default implementaions for integral and string-like types.
+in the decimal form or in the hexadecimal, with or without sign, with extra zero digits and so on. The type of an object 
+is responsible for the printing implementation. There are default implementations for integral and string-like types.
 </p>
 
 <h3>Printing functions</h3>
@@ -58,7 +60,7 @@ void <span class="Att">Putch</span>(P &amp;&amp;out,TT ... tt);
 </pre>
 
 <p>
-<b>Printf()</b> uses the format string to embed given objects into string with specified printing options and puts the result into
+<b>Printf()</b> uses the format string to embed given objects into the string with specified printing options and puts the result into
 the given output device. This function is similar to the classic C <b>printf()</b>, but has the following advantages: type-safe and type-driven,
 easily customizable output devices, extendable to print any desired type.
 </p>
@@ -148,7 +150,7 @@ class C
 </pre>
 
 <p>
-In this case the type <b>C</b> must be castable to <b>C::PrintProxyType</b>.
+In this case the type <b>C</b> must be castable to the <b>C::PrintProxyType</b>.
 </p>
 
 <p>
@@ -195,7 +197,7 @@ It allows to print a type, castable to one of these types.
 
 <p>
 You can determine the printing option type using <b>PrintOptAdapter&lt;T&gt;</b>. If the type <b>T</b> has a printing option type
-(even through proxing), then <b>PrintOptAdapter&lt;T&gt;::PrintOptType</b> is that type.
+(even through proxy), then <b>PrintOptAdapter&lt;T&gt;::PrintOptType</b> is that type.
 </p>
 
 <p>
@@ -318,7 +320,7 @@ class <span class="Att">PrintBase</span> : NoCopy
 </pre>
 
 <p>
-When you derive a class from <b>PrintBase</b> you have to implement two virtual functions:
+When you derive a class from <b>PrintBase</b>, you have to implement two virtual functions:
 </p>
 
 <pre>
@@ -331,7 +333,7 @@ class PDev : public PrintBase
      ....
     }
    
-   virtual void do_flush(char *ptr,ulen len) // character range to be propogated to the final destination
+   virtual void do_flush(char *ptr,ulen len) // character range to be propagated to the final destination
     {
      ....
     }
@@ -350,8 +352,8 @@ an empty buffer or throw an exception. If an empty buffer is returned, <b>PrintB
 set the internal overflow flag. Derived class may clear this flag using <b>clearOverflowFlag()</b> method. You can check this 
 flag using <b>getOverflowFlag()</b> method or call the guard method <b>guardOverflow()</b> to throw an exception if 
 the overflow has happened. When <b>PrintBase</b> got a buffer it will fill it with output characters and flush sometimes 
-during printing operations. So the method <b>do_flush()</b> is called to propogate the output characters. This method is a 
-paired method for <b>do_provide()</b>: i.e. it is called sometimes after if the <b>do_provide()</b> was called successfully.
+during printing operations. So the method <b>do_flush()</b> is called to propagate the output characters. This method is a 
+paired method for <b>do_provide()</b>: i.g. it is called sometimes after if the <b>do_provide()</b> was called successfully.
 You have to call <b>flush()</b> in the destructor to commit pending characters. For better understanding how to derive 
 from <b>PrintBase</b> see the <b>PrintBuf</b> implementation.
 </p>
@@ -436,7 +438,7 @@ Printf(out,"a = #; b = #;\n",a,b);
 
 </pre>
 
-<p>This rule is applyed recursively.</p>
+<p>This rule is applied recursively.</p>
 
 <h3>String printing</h3>
 
@@ -486,15 +488,15 @@ struct <span class="Att">StrPrintOpt</span>
 </p>
 <p>
 <b>align</b> determines how the string is placed inside the extension.
-Left alignment means extension by space characters after string, right &mdash; before,
+Left alignment means extension by space characters after the string, right &mdash; before,
 center &mdash; both before and after by equal number.  
 </p>
 <p>
-<b>quoted</b> encloses string in quotes.
+<b>quoted</b> encloses the string in quotes.
 </p>
 
 <p>
-Text representation of the options may include width, qouted flag (.q or .Q) and alignment flag. For example, <b>"#20L;"</b> means
+Text representation of options may include width, qouted flag (.q or .Q) and alignment flag. For example, <b>"#20L;"</b> means
 <b>width = 20 ; align = StrAlignLeft ; quoted = false ;</b>, <b>"#20.qC;"</b> means <b>width = 20 ; align = StrAlignCenter ; quoted = true ;</b>.
 </p>
 
@@ -764,7 +766,11 @@ There are five printing options:
 
 <p>
 <b>base</b> is the representation base, it can vary form 2 to 16. It may have the special value 0. In this case the 
-printing number is casted to <b>char</b> and this character goes out.
+printing number is casted to <b>char</b> and this character goes out. The base is given as a number after dot, or
+as a letter after dot. Letter <b>b</b> means <b>base</b> = 2 and <b>show_base</b> = <b>IntShowBaseSuffix</b>, 
+letter <b>h</b> means <b>base</b> = 16 and <b>show_base</b> = <b>IntShowBaseSuffix</b>,
+letter <b>x</b> means <b>base</b> = 16 and <b>show_base</b> = <b>IntShowBasePrefix</b>.
+Letter <b>c</b> means <b>base</b> = 0.
 </p>
 
 <p>
@@ -867,7 +873,7 @@ struct <span class="Att">PrintDumpOptType</span>
 </pre>
 
 <p>
-<b>width</b> is the output width of each integer. If it is 0, then the hexadecimal width of the integer type is used 
+<b>width</b> is the output width of each integer. If it is 0, then the hexadecimal width of the integral type is used 
 (2 for <b>uint8</b>, 4 for <b>uint16</b> and so on).
 </p>
 
