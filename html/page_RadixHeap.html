@@ -33,7 +33,7 @@
 <p>
 The class <b>RadixHeap</b> is a heart of <b>CCore</b> heaps. It is a complicated class, built from several
 parts. The primary part is the template argument <b>Mem</b>, which is responsible for the primary memory allocation.
-This class is used to allocated a large memory blocks, then <b>RadixHeap</b> splits them into smaller parts 
+This class is used to allocated large memory blocks, then <b>RadixHeap</b> splits them into smaller parts 
 (aka blocks) and manages these parts. Each such block starts from the header of the type <b>RadixHeapBlock</b>. 
 The part can be used or free. The space after the header in a free block is used to create a special control
 object, these objects are used to manage the free blocks set by the <b>RadixHeapStore</b>. 
@@ -47,7 +47,7 @@ It makes the heap protected from incorrect operations (not 100%).
 
 <p>
 <b>RadixHeapStore</b> manages free heap blocks. The efficiency of this class is a key to the efficiency of the heap
-operations. This class uses the set of lists to store small blocks and the radix tree to store large blocks.
+operations. This class uses the set of lists to store small blocks and the radix tree to store larger blocks.
 That is how we provides constant operation time limits.
 </p>
 
@@ -81,7 +81,7 @@ class <span class="Att">RadixHeap</span> : NoCopy
 </pre>
 
 <p>
-<b>Constructor</b> forwards its arguments to the <b>Mem</b> object (<b>large_mem</b>);
+Constructor forwards its arguments to the <b>Mem</b> object (<b>large_mem</b>).
 </p>
 
 <p>
@@ -91,7 +91,7 @@ class <span class="Att">RadixHeap</span> : NoCopy
 <p>
 <b>alloc()</b> tries to allocate a memory. On failure it returns a null <b>Space</b> object. Otherwise
 the resulting <b>Space</b> object contains non-zero memory pointer and non-zero memory length, which is greater 
-or equal the argument <b>len</b>.
+or equal than the argument <b>len</b>.
 </p>
 
 <p>
@@ -120,7 +120,7 @@ has the field <b>ok</b>, which indicates success of the operation,
 and the field <b>delta</b>, equals the difference between the length of the old block and the new one.
 </p>
 
-<h4>Primary memory provider</h4>
+<a name="Primary"><h4>Primary memory provider</h4></a>
 
 <p>
 A primary memory provider is a class with the following "prototype":
@@ -158,11 +158,11 @@ class Mem
 Instead of destructor, <b>Mem</b> has the method <b>cleanup()</b>. The argument <b>clean</b> is true, if all memory
 blocks have been released, if not the method must fail. If the method is failed, it is recommended to call the 
 <b>Abort()</b>. This is because some memory is still in use, but we are going to destroy the heap. 
-Continuing execution under such circumstances likely leads to memory destruction.
+Continuing execution under such circumstances likely leads to the memory destruction.
 </p>
 
 <p>
-<b>max_store_len</b> is a maximum block length, which is allowed to be splitted and stored. If the block length
+<b>max_store_len</b> is a maximum block length, which is allowed to be split and stored. If the block length
 is greater, then such blocks are allocated and released as whole. This value must be large enough, for example,
 in <b>PageMem</b> it is set to <b>16*1024*Sys::MemPageLen</b>, by default.
 </p>
@@ -170,7 +170,7 @@ in <b>PageMem</b> it is set to <b>16*1024*Sys::MemPageLen</b>, by default.
 <p>
 The method <b>alloc()</b> is called to allocate a large memory block. The argument <b>blen</b> is 
 the total block length, it is an aligned value. The method must allocate a block of memory at least required length,
-create the <b>RadixHeapBlock</b> object at the beginning of this block, and return the pointer to this object.
+create the <b>RadixHeapBlock</b> object at the begin of this block, and return the pointer to this object.
 If a memory cannot be allocated, the null pointer is returned. If the <b>blen</b> is not greater, than the
 <b>max_store_len</b>, then the allocated block length also must not exceed this value. <b>RadixHeapBlock</b> must 
 be initialized by the method <b>init(total_block_length)</b>.
@@ -185,12 +185,12 @@ to avoid unnecessary extra expensive allocation/deallocation.
 
 <p>
 <b>extend()</b> extends the large block. The <b>block</b> is always non-null and the <b>blen</b> is aligned and 
-greater than the block length. The method returns <b>true</b> on success. It must reinitalize the <b>block</b>.
+greater than the block length. The method returns <b>true</b> on success. It must reinitialize the <b>block</b>.
 </p>
 
 <p>
 <b>shrink()</b> shrinks the large block. The <b>block</b> is always non-null and the <b>blen</b> is aligned and 
-not greater than the block length. The method returns delta length. It must reinitalize the <b>block</b>.
+not greater than the block length. The method returns delta length. It must reinitialize the <b>block</b>.
 </p>
 
 </body>

@@ -40,7 +40,7 @@ initialized in the order of definition. <b>CCore</b> requires, however, the more
 <li>objects, initialized by the <b>PlanInit</b> are initialized before all other global objects,</li>
 <li>you may specify initialization dependencies, i.g. you may specify, that some object must be initialized before another,</li>
 <li>if there is a dependency cycle, execution is aborted,</li>
-<li>deinitialization happens according the C++ general rule: in the reverse order, than initialization.</li>
+<li>uninitialization happens according the C++ general rule: in the reverse order, than initialization.</li>
 </ul>
 
 <p>

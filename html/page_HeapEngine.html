@@ -32,7 +32,7 @@
 
 <p>
 <b>HeapEngine</b> is a fully-featured heap class. It is a <b>Resource Provider Type</b>. It implements the heap
-functionality using another heap class. <b>HeapEngine</b> adds tree important things: mutex protection, statistic accounting and
+functionality using another heap class. <b>HeapEngine</b> adds three important things: <b>mutex</b> protection, statistic accounting and
 usage limitation.
 </p>
 
@@ -73,7 +73,7 @@ class <span class="Att">HeapEngine</span> : NoCopy
 </pre>
 
 <p>
-The <b>name</b> in constuctor is used to name the <b>mutex</b>. Other arguments are used to initialize the <b>heap</b>.
+The <b>name</b> in constructor is used to name the <b>mutex</b>. Other arguments are used to initialize the <b>heap</b>.
 </p>
 
 <p>
@@ -82,7 +82,7 @@ The semantic of methods are the same as of global heap functions <b>Mem...()</b>
 </p>
 
 <p>
-<b>setLim()</b> sets the limit on memory allocation. Value null means no limit. If the limit is set, then <b>HeapEngine</b>
+<b>setLim()</b> sets the limit on memory allocation. Value zero means no limit. If the limit is set, then the <b>HeapEngine</b>
 will keep the total allocated memory below this limit.
 </p>
 
@@ -91,7 +91,7 @@ will keep the total allocated memory below this limit.
 </p>
 
 <p>
-<b>getPeak</b> returns the peak memory allocation statistics.
+<b>getPeak()</b> returns the peak memory allocation statistics.
 </p>
 
 <p>
@@ -102,8 +102,8 @@ Memory is aligned, but this is ensured by the underlying class <b>Heap</b>.
 </p>
 
 <p>
-In the remaining four methods the argument <b>mem</b> may be null, in this case methods does nothing. 
-Otherwise it must be the address of a previously allocated memory block.
+In the remaining four methods the argument <b>mem</b> may be null, in this case methods do nothing. 
+Otherwise it must be an address of a previously allocated memory block.
 </p>
 
 <p>
@@ -115,16 +115,16 @@ Otherwise it must be the address of a previously allocated memory block.
 </p>
 
 <p>
-<b>extend()</b> extends the memory block, if it is possible. The <b>len</b> is the required length of new block.
+<b>extend()</b> extends the memory block, if it is possible. The <b>len</b> is the required length of the new block.
 The return value means the success of the operation.
-If the <b>mem</b> is null, it returns false. <b>extend()</b> is always successful (but does nothing) if the <b>len</b>
+If the <b>mem</b> is null, it returns <b>false</b>. <b>extend()</b> is always successful (but does nothing) if the <b>len</b>
 is not greater than the actual length of the memory block.
 </p>
 
 <p>
-<b>shrink()</b> shrinks the memory block. The <b>len</b> is the required length of new block.
+<b>shrink()</b> shrinks the memory block. The <b>len</b> is the required length of the new block.
 The return value means the success of the operation.
-If the <b>mem</b> is null, it returns false. <b>shrink()</b> fails only if the <b>len</b> is greater than the actual 
+If the <b>mem</b> is null, it returns <b>false</b>. <b>shrink()</b> fails only if the <b>len</b> is greater than the actual 
 length of the memory block.
 </p>
 
@@ -158,11 +158,11 @@ class Heap
 </pre>
 
 <p>
-It may have several constructors with different arguments as neccessary.
+It may have several constructors with different arguments as necessary.
 </p>
 
 <p>
-It is highly recommended that the destructor check the memory leaks and abort execution if there is unreleased memory.
+It is highly recommended that the destructor checks memory leaks and abort execution if there is unreleased memory.
 </p>
 
 </body>
