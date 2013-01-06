@@ -32,22 +32,20 @@
 
 <p class="Files">Subfolders <b>CCore/inc/sort</b> <b>CCore/src/sort</b></p>
 
-<h3>Sorting</h3>
-
 <p>
-For the theory and algorithms descriptions go to the <a href="http://www-cs-faculty.stanford.edu/~uno/"><b>Knuth</b></a>.
+For the theory and algorithm descriptions go to the <a href="http://www-cs-faculty.stanford.edu/~uno/"><b>Knuth</b></a>.
 But programming is not a theory. Mostly it's about a theory implementation. And a good theory can be ruined
-by a stupid realization. That is way we use in <b>CCore</b> our own sort algorithms implementations.
+by a stupid realization. That is why we use in <b>CCore</b> our own sort algorithms implementations.
 </p>
 
 <p>
-Sorting is a permutating a given range of objects to arrange them in the assending order relative the given
-linear order relation. A permutation can be done by a series of transpositions of elements. So <b>CCore</b> 
-implements sorting on the swap-based basis. I.e. a sorting process includes the performing of two operations:
-comparision of elements and swapping them. That is different than other implementation, 
-where objects are copied, not swapped. As was mentione before, swap is <b>efficient</b>, but copying 
+Sorting is a permutating a given range of objects to arrange them in the ascending order relative the given
+linear order relation. Any permutation can be done by a series of transpositions of elements. So <b>CCore</b> 
+implements sorting on the swap-based basis. I.g. a sorting process includes the performing two operations:
+comparison of elements and swapping them. That is a difference from other implementations, 
+where objects are copied, not swapped. As was mentioned before, swap is <b>efficient</b>, but copying 
 is expensive, not safe and not always possible. The second feature of our sorts is they takes a less 
-comparision operations. This is important, because in real applications this operation can be quit expensive.
+comparison operations. This is important, because in real applications this operation can be quit expensive.
 </p>
 
 <p>
@@ -100,13 +98,13 @@ struct <span class="Att">SortIndexCtx</span>
 </pre>
 
 <p>
-<b>SortIndexCtx</b> is a sort context for index sorting. It contains a pointer to the sort array.
-In index sort we don't modify the given object array, we create an array of indexes and sort it instead.
-To perform the comparison we need the pointer to the sort array. The <b>ran</b> here is the <b>Ind *</b>.
+<b>SortIndexCtx</b> is a sort context for index sorting. It contains a pointer to the object range.
+In index sort we don't modify the given object range, we create an array of indexes and sort it instead.
+To perform the comparison we need the base pointer of the range. The <b>ran</b> here is the <b>Ind *</b>.
 </p>
 
 <p>
-Sort <b>Algorithm Package</b>s are using the following pattern:
+Sort <b>Algorithm Package</b>s use the following pattern:
 </p>
 
 <pre>
@@ -123,7 +121,7 @@ struct <span class="Att">XXXSort</span>
 
 <p>
 <b>Ran</b> is a <b>ran</b> type and <b>Ctx</b> is a sort context type, defaulted to the <b>SortCtx&lt;Ran&gt;</b>.
-<b>ptr</b> is the pointer to the begin of the sort range, len is the range length. <b>ctx</b> is the sort context.
+<b>ptr</b> is the pointer to the begin of the object range, <b>len</b> is the range length. <b>ctx</b> is the sort context.
 </p>
 
 <h4>ShortSort</h4>
@@ -220,7 +218,7 @@ struct <span class="Att">HeapSort</span>
 <p>
 <b>QuickSort</b> implements the quick sort algorithm. This is the main sort algorithm, because
 it has the best speed in a common case. It is also CPU cache friendly, that is important when sorting large arrays.
-To ensure <b>O(N*log(N))</b> complexity, the implementation switchs to the heap sort, if the quick sort goes badly.
+To ensure <b>O(N*log(N))</b> complexity, the implementation switches to the heap sort, if the quick sort goes badly.
 </p>
 
 <pre>

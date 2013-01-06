@@ -38,7 +38,7 @@
 <p>
 <b>SingleHost</b> is working as a global variable, it points to some object, required
 as a global resource. <b>SingleHost</b> object must be a global object. It may have
-an attached object of the type <b>T</b>. To attache and detach this object classes
+an attached object of the type <b>T</b>. To attach and detach this object classes
 <b>SingleMaster</b> and <b>SingleMaster_delete</b> are used. To access this object the class
 <b>SingleHook</b> is used.
 </p>
@@ -58,7 +58,7 @@ class <span class="Att">SingleHost</span> : NoCopy
 </pre>
 
 <p>
-The <b>name</b> is used to name an internal mutex. 
+The <b>name</b> is used to name the internal mutex. 
 </p>
 
 <h4>SingleHook</h4>
@@ -77,7 +77,7 @@ class <span class="Att">SingleHook</span> : NoCopy
   public:
 
    //
-   // assign/move/swap are not provided to prevent cyclyc dependencies
+   // assign/move/swap are not provided to prevent cyclic dependencies
    //
    
    // constructors
@@ -105,7 +105,7 @@ class <span class="Att">SingleHook</span> : NoCopy
 </pre>
 
 <p>
-Constructor does hook, destructor frees the object. If the host does not have an attached object,
+Constructor does hook, destructor releases the object. If the host does not have an attached object,
 the hook is null.
 </p>
 
@@ -121,7 +121,7 @@ Copy constructor can be used to duplicate the hook. The resulting hook points to
 
 <p>
 <b>SingleMaster</b> controls a <b>SingleHost</b> object. In constructor it attaches the object
-to the host. In destructor it detaches object. Destructor is waiting until the object
+to the host. In destructor it detaches the object. Destructor is waiting until the object
 gets out of use. The object must be constructed before the constructor call and be destructed after 
 the <b>SingleMaster</b> destructor is finished.
 </p>

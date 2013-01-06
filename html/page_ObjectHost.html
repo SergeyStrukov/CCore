@@ -61,12 +61,12 @@ class <span class="Att">ObjBase</span> : public MemBase_nocopy
 
 <p>
 This class is polymorphic. It has a virtual destructor, so you can destroy an object of derived type
-using a pointer to the base class. It is derived from <b>MemBase_nocopy</b>, so it is noncopyable
+using a pointer to the base class. It is derived from <b>MemBase_nocopy</b>, so it is non-copyable
 and inherits memory allocation operators, based on <b>CCore</b> heap.
 </p>
 
 <p>
-<b>wait_release()</b> methods wait until the object gets out of use. You should used these
+<b>wait_release()</b> methods wait until the object gets out of use. You should use these
 methods after you detach the object from the host, in case if you manage an object not using
 one of the <b>ObjMaster</b> class.
 </p>
@@ -99,12 +99,12 @@ class <span class="Att">ObjHost</span> : NoCopy
 </pre>
 
 <p>
-Constructor uses the <b>name</b> to name an internal mutex.
+Constructor uses the <b>name</b> to name the internal mutex.
 </p>
 
 <p>
 <b>add()</b> attaches the given object with the given name. When it is done, the object can be "hooked"
-using <b>ObjHook</b> class.
+using the class <b>ObjHook</b>.
 </p>
 
 <p>
@@ -131,7 +131,7 @@ class <span class="Att">ObjHook</span> : NoCopy
   public:
    
    //
-   // assign/move/swap are not provided to prevent cyclyc dependencies
+   // assign/move/swap are not provided to prevent cyclic dependencies
    //
    
    // constructors
@@ -181,7 +181,7 @@ Destructor releases the object.
 </p>
 
 <p>
-<b>cast()</b> performes <b>dynamic_cast</b> to the given type.
+<b>cast()</b> performs <b>dynamic_cast</b> to the given type.
 </p>
 
 <p>
@@ -220,7 +220,7 @@ The object is attached with the given name. An exception is thrown in case of er
 </p>
 
 <p>
-Destructor does detach and waits until the object gets out of use. After the destructor is funished
+Destructor does detach and waits until the object gets out of use. After the destructor is finished,
 it is safe to destroy the object.
 </p>
 
@@ -279,7 +279,7 @@ Constructor creates an empty object.
 
 <p>
 <b>build()</b> appends the list with <b>Info</b> records about objects, attached to the given host.
-If a record contains a pointer to the object, the object is hooked and released later by the 
+If the record contains a pointer to the object, the object is hooked and released later by the 
 destructor of the list. Objects may be selected based on they properties to be included in the list.
 </p>
 
@@ -294,7 +294,7 @@ There are four type of <b>Info</b> records.
 <h4>ObjInfo</h4>
 
 <p>
-This info record conatins only the name of object.
+This info record contains only the name of object.
 </p>
 
 <pre>
@@ -320,7 +320,7 @@ struct <span class="Att">ObjInfo</span>
 <h4>ObjInfo_obj</h4>
 
 <p>
-This info record conatins the name of object and the pointer to the object.
+This info record contains the name of object and the pointer to the object.
 </p>
 
 <pre>
@@ -380,7 +380,7 @@ struct <span class="Att">ObjInfo_if</span>
 <h4>ObjInfo_obj_if</h4>
 
 <p>
-This info record conatins the name of object and the pointer to the object and selects only objects, 
+This info record contains the name of object and the pointer to the object and selects only objects, 
 implementing the given interface (i.g. castable to the given type).
 </p>
 

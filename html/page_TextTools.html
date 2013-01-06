@@ -31,10 +31,10 @@
 <p class="Files">Files <b>CCore/inc/TextTools.h</b> <b>CCore/src/TextTools.cpp</b></p>
 
 <p>
-This header contains a several simple tools to work with text and characters.
+This header contains several simple tools to work with text and characters.
 </p>
 
-<h4></h4>
+<h4>Character property functions</h4>
 
 <pre>
 
@@ -75,6 +75,7 @@ inline int <span class="Att">CharBinValue</span>(char ch);
 <p>
 This class represents a text position. It also counts a new text position after some
 text fragment. It is designed to calculate text positions during a text file processing.
+This class counts all cases "\r", "\n", "\r\n" as a line delimiters.
 </p>
 
 <pre>
@@ -153,7 +154,7 @@ class <span class="Att">CharPropTable</span> : NoCopy
 </pre>
 
 <p>
-<b>CharClass</b> is a value type, enum type is expected. <b>DefaultClass</b> is a default value,
+<b>CharClass</b> is a value type, <b>enum</b> type is expected. <b>DefaultClass</b> is a default value,
 assigned to each character. Constructor initializes the table assigning the <b>DefaultClass</b>
 to each character.
 </p>
@@ -175,7 +176,7 @@ A derived class can use the set of protected members to initialize the table.
 </p>
 
 <p>
-<b>setIf()</b> sets the given value to characters, satisfying the condition, given as a functor-predicate.
+<b>setIf()</b> sets the given value to characters, satisfied the condition, given as a functor-predicate.
 </p>
 
 </body>

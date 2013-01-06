@@ -53,6 +53,8 @@ periodically during the random number generation process.
 <pre>
 class <span class="Att">Random</span> : NoCopy
  {
+   ....
+
   public:
   
    Random();
@@ -102,7 +104,7 @@ argument.
 <p>
 <b>select(uint32 lim)</b> generates a random number in the range <b>[0,lim)</b>, almost uniformly distributed.
 If the <b>lim</b> is zero, then the value range is all <b>uint32</b> values. The non-uniformness is negligible
-for cusual applications.
+for casual applications.
 </p>
 
 <p>
@@ -113,7 +115,7 @@ for cusual applications.
 <h4>Mersenne Twister</h4>
 
 <p>
-The Mersenne Twister is a generic algorithm, the MT19937 &mdash; it's particular version.
+Mersenne Twister is a generic algorithm, MT19937 &mdash; it's particular version.
 Implementation of the Mersenne Twister is enclose in the namespace <b>MersenneTwister</b>.
 </p>
 

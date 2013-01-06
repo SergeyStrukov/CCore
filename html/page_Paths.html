@@ -442,10 +442,10 @@ struct <span class="Att">SplitPathName</span> : PathBase
 The class <b>Path</b> is designed to manipulate with a path. The path inside <b>Path</b> is stored
 in an internal buffer. It has a non-mutable prefix. This prefix is determined by the constructor.
 The string after prefix is a normalized path. I.g. it may be empty or "." or
-"dir1/dir2/.../dir_or_file", where <b>dir</b>s are normal names, dir_of_file may be ".".
+"dir1/dir2/.../dir_or_file", where <b>dir</b>s are normal names, <b>dir_of_file</b> may be ".".
 </p>
 
-<pre> 
+<pre>
 class <span class="Att">Path</span> : NoCopyBase&lt;PathBase&gt;
  {
    char buf[MaxPathLen];

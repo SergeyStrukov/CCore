@@ -138,7 +138,7 @@ class SingleHook : NoCopy
   public:
 
    //
-   // assign/move/swap are not provided to prevent cyclyc dependencies
+   // assign/move/swap are not provided to prevent cyclic dependencies
    //
    
    // constructors

@@ -30,6 +30,11 @@
 
 <p class="Files">Files <b>CCore/inc/StrParse.h</b> <b>CCore/src/StrParse.cpp</b></p>
 
+<p>
+This is a collection of tools for a simple string parsing. It is used, for example, in the parsing of
+format strings. 
+</p>
+
 <h4>DecValue</h4>
 
 <p>
@@ -69,7 +74,7 @@ struct <span class="Att">DecValue</span>
 <h4>StrParse</h4>
 
 <p>
-<b>StrParse</b> is a string-based "character stream" class. Its interface matchs parser functions
+<b>StrParse</b> is a string-based "character stream" class. Its interface matches parser functions
 requirements, so it can be used with them. 
 </p>
 
@@ -137,7 +142,7 @@ The second constructor creates a stream from a <b>StrLen</b>.
 <h4>Parse functions</h4>
 
 <p>
-Parser functions work with some "character stream device".
+Parse functions work with some "character stream device":
 </p>
 
 <pre>
@@ -195,11 +200,12 @@ void <span class="Att">ParseChar_empty</span>(Dev &amp;dev,char &amp;ret,char de
 </p>
 
 <p>
-<b>ParseChar_try()</b> tries to extract the given character from the stream.
+<b>ParseChar_try()</b> tries to extract the given character from the stream, return value is the success of 
+the operation.
 </p>
 
 <p>
-<b>ParseChar_empty</b> extracts the next character from the stream and put it to the <b>ret</b>, if
+<b>ParseChar_empty()</b> extracts the next character from the stream and puts it to the <b>ret</b>, if
 available. Otherwise, the <b>defval</b> is put.
 </p>
 
@@ -219,7 +225,8 @@ void <span class="Att">ParseUInt</span>(Dev &amp;dev,UInt &amp;ret);
 <p>
 <b>ParseUInt()</b> extracts a decimal unsigned number from the stream, converts it to the <b>UInt</b> type
 and puts it to the <b>ret</b>. Stream is failed in case of error. The number must be in the given value range,
-which is a subset of the <b>UInt</b> value range.
+which is a subset of the <b>UInt</b> value range. Types <b>UInt1</b> and <b>UInt2</b> are not necessary
+unsigned integral types, but values <b>minval</b> and <b>maxval</b> are implicitly converted to the type <b>UInt</b>.
 </p>
 
 <pre>

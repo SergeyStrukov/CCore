@@ -33,10 +33,10 @@
 <p class="Files">Files <b>CCore/inc/sys/SysAsyncFileSystem.h</b> <b>CCore/src/sys/SysAsyncFileSystem.cpp</b></p>
 
 <p>
-Async file and file system devices are a packet processing devices, that performes file and file system
-operations in asynchronous manner. To be used, the device must be registred in the default 
+Async file and file system devices are a packet processing devices, that performs file and file system
+operations in asynchronous manner. To be used, the device must be registered in the default 
 <a href="page_ObjectHost.html">Object Host</a>. The name of the object must be used as a device name
-in file names on that device. I.e. if some object is registered under the name "host", 
+in file names on that device. For example, if some object is registered under the name "host", 
 the file name "host:/file.txt" refers to the file "/file.txt" on that device or "host:c:/file.txt" refers
 to "c:/file.txt".
 </p>
@@ -97,7 +97,7 @@ class <span class="Att">Sys::AsyncFileState</span> : public MemBase_nocopy
 </pre>
 
 <p>
-<b>Sys::AsyncFileState</b> contains inside a copy of the hook, provided to the <b>createState()</b> method.
+<b>Sys::AsyncFileState</b> contains inside a copy of the hook, provided to the method <b>createState()</b>.
 </p>
 
 <p>
@@ -117,8 +117,8 @@ be used to perform the operation (and may not).
 <p>
 <b>open()</b> opens a file. Once this is done, read and write operations can be performed with this file.
 Packet data are not required (but packet buffer may be used). File name and open flags are provided as
-the method arguments. An implementaion may use the packet buffer to store and transfer this information 
-further, for example over a network. The packet extension <b>Sys::AsyncFile::OpenExt</b> is used to return
+the method arguments. An implementation may use the packet buffer to store and transfer this information 
+further, for example, over a network. The packet extension <b>Sys::AsyncFile::OpenExt</b> is used to return
 the operation result:
 </p>
 
@@ -152,7 +152,8 @@ struct <span class="Att">Sys::AsyncFile::OpenExt</span>
 
 <p>
 The open operation should use provided methods to fill the result of the operation. First two 
-fields are not used to return a value, but should be cleared in case of error.
+fields are not used to return a value, but should be cleared in case of error. These fields are filled
+by the method <b>Sys::AsyncFile::open()</b> before the <b>Sys::AsyncFileState::open()</b> is called.
 </p>
 
 <p>
@@ -250,10 +251,10 @@ struct <span class="Att">Sys::AsyncFile::ReadExt</span>
 </pre>
 
 <p>
-The second <b>read()</b> passes only read length. The file position and the read length
+The second <b>read()</b> passes only the read length. The file position and the read length
 are input parameters and preserved on output, so you can use them in a complete function.
 Data must be red all, otherwise error must be reported. Packet buffer is used to deliver
-data, the pointer <b>data</b> points somewhere inside to the data range. Packet buffer may be
+data, the pointer <b>data</b> points somewhere inside the packet buffer. Packet buffer may be
 reattached to store the required volume of data. The read length must not exceed the <b>max_read_len</b>.
 </p>
 
@@ -286,6 +287,8 @@ struct <span class="Att">Sys::AsyncFile::ReadBufExt</span>
    }
  };
 </pre>
+
+<h4>Sys::AsyncFile</h4>
 
 <p>
 The class <b>Sys::AsyncFile</b> is to deal with a single file on some async file device.
@@ -376,25 +379,25 @@ See <a href="page_Files.html#FSO">Files</a> for the generic file system operatio
 <pre>
 struct <span class="Att">Sys::AsyncFileSystemDevice</span>
  {
-  virtual void getFileType(Packet&lt;uint8,AsyncFileSystem::FileTypeExt&gt; packet,StrLen path)=0;
+  virtual void getFileType(Packet&lt;uint8,Sys::AsyncFileSystem::FileTypeExt&gt; packet,StrLen path)=0;
   
-  virtual void getFileList(ObjHook &hook,Packet&lt;uint8,AsyncFileSystem::FileExt&gt; packet,StrLen dir_name)=0;
+  virtual void getFileList(ObjHook &hook,Packet&lt;uint8,Sys::AsyncFileSystem::FileExt&gt; packet,StrLen dir_name)=0;
   
-  virtual void createFile(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen file_name)=0;
+  virtual void createFile(Packet&lt;uint8,Sys::AsyncFileSystem::ErrorExt&gt; packet,StrLen file_name)=0;
   
-  virtual void deleteFile(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen file_name)=0;
+  virtual void deleteFile(Packet&lt;uint8,Sys::AsyncFileSystem::ErrorExt&gt; packet,StrLen file_name)=0;
   
-  virtual void createDir(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen dir_name)=0;
+  virtual void createDir(Packet&lt;uint8,Sys::AsyncFileSystem::ErrorExt&gt; packet,StrLen dir_name)=0;
   
-  virtual void deleteDir(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen dir_name,bool recursive)=0;
+  virtual void deleteDir(Packet&lt;uint8,Sys::AsyncFileSystem::ErrorExt&gt; packet,StrLen dir_name,bool recursive)=0;
   
-  virtual void rename(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen old_path,StrLen new_path,bool allow_overwrite)=0;
+  virtual void rename(Packet&lt;uint8,Sys::AsyncFileSystem::ErrorExt&gt; packet,StrLen old_path,StrLen new_path,bool allow_overwrite)=0;
   
-  virtual void remove(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen path)=0;
+  virtual void remove(Packet&lt;uint8,Sys::AsyncFileSystem::ErrorExt&gt; packet,StrLen path)=0;
   
-  virtual void exec(Packet&lt;uint8,AsyncFileSystem::ErrorExt&gt; packet,StrLen dir,StrLen program,StrLen arg)=0;
+  virtual void exec(Packet&lt;uint8,Sys::AsyncFileSystem::ErrorExt&gt; packet,StrLen dir,StrLen program,StrLen arg)=0;
   
-  virtual void exec2(ObjHook &hook,Packet&lt;uint8,AsyncFileSystem::FileExt&gt; packet,StrLen dir,StrLen program)=0;
+  virtual void exec2(ObjHook &hook,Packet&lt;uint8,Sys::AsyncFileSystem::FileExt&gt; packet,StrLen dir,StrLen program)=0;
  };
 </pre>
 
@@ -468,7 +471,7 @@ The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the
 
 <p>
 <b>deleteDir()</b> deletes the directory with the given <b>dir_name</b>. If the <b>recursive</b> flag
-is false, the directory must be empty. Otherwise it is deleted with the all content recursively. 
+is <b>false</b>, the directory must be empty. Otherwise it is deleted with the all content recursively. 
 The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the operation result.
 </p>
 
@@ -490,7 +493,7 @@ The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the
 </p>
 
 <p>
-Remaining methods are special: they create a temporary "files" to perform the operation.
+Remaining methods are special: they create temporary "files" to perform the operation.
 Files are represented by the <b>Sys::AsyncFileState</b> interface. The return object is already opened,
 so you can perform file operations on it.
 The packet extension <b>Sys::AsyncFileSystem::FileExt</b> is used to return a result.
@@ -499,11 +502,11 @@ The packet extension <b>Sys::AsyncFileSystem::FileExt</b> is used to return a re
 <pre>
 struct <span class="Att">Sys::AsyncFileSystem::FileExt</span>
  {
-  AsyncFileState *file_state; // output
+  Sys::AsyncFileState *file_state; // output
     
-  FilePosType file_len;       // output
+  FilePosType file_len;            // output
     
-  FileError error;            // output
+  FileError error;                 // output
     
   // methods
     
@@ -524,14 +527,16 @@ struct <span class="Att">Sys::AsyncFileSystem::FileExt</span>
 
 <p>
 <b>getFileList()</b> creates a read-only file with the content of the given directory.
-The file has number of lines, each line starts with a file or directory name, then space ,then 'f' 
+The file has number of lines, each line starts with a file or directory name, then space, then 'f' 
 for a file or 'd' for a directory. End of line symbol is '\n'.
 </p>
 
 <p>
 <b>exec2()</b> creates an empty temporary write-only file. This file should be filled with
-the program arguments. To start a program, the file must be closed with the <b>preserve_file</b> flag is set.
+program arguments. To start a program, the file must be closed with the <b>preserve_file</b> equals <b>true</b>.
 </p>
+
+<h4>Sys::AsyncFileSystem</h4>
 
 <p>
 The class <b>Sys::AsyncFileSystem</b> is to work with some async file system device.
@@ -587,6 +592,10 @@ struct <span class="Att">Sys::AsyncFileSystem</span>
 <p>
 <b>exit()</b> cleans the object, it must be called after all operations are completed on the 
 connected object.
+</p>
+
+<p>
+Other methods are direct calls of <b>Sys::AsyncFileSystemDevice</b> methods.
 </p>
 
 </body>

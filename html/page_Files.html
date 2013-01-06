@@ -35,7 +35,7 @@
 and abstract operations to work with any file system, local or remote. The term <b>file</b> means a true file, i.g.
 a persistent sequence of octets, stored on some file device and identified by its name, which may include
 a device specifier, a path specifier and finally a file name. All constant standardize a name, a type, a meaning
-and a value.
+and a value. You may find these definitions in the <b>txt/GenFile.txt.cpp</b> also.
 </p>
 
 <h3>File constants</h3>
@@ -116,7 +116,7 @@ inline FileOpenFlagsTextDesc GetTextDesc(FileOpenFlags oflags) { return FileOpen
 
 <p>
 <b>Open_Pos</b> &mdash; position operations must be available on opened file, this includes
-a file length operation. This flag is used if a file is opened with the sequential access set of operations.
+a file length operation. This flag is used, if a file is opened with the sequential access set of operations.
 </p>
 
 <p>
@@ -130,7 +130,7 @@ is not set and the file does not exist, the open operation is failed.
 
 <p>
 <b>Open_New</b> &mdash; the file must be a new file. If the file with the given name exists, the operation
-is failed. If this flags is set, then <b>Open_Create</b> and <b>Open_Erase</b> flags are ingnored.
+is failed. If this flags is set, then <b>Open_Create</b> and <b>Open_Erase</b> flags are ignored.
 </p>
 
 <p>
@@ -263,7 +263,7 @@ class <span class="Att">FileMultiError</span> : NoCopy
 
 <p>
 There are situations when several errors can be fired during the one operation, for example, during file closing.
-<b>FileMultiError</b> can store mutiple error codes. It accumulates up to 10 error codes and counts any extra.
+<b>FileMultiError</b> can store multiple error codes. It accumulates up to 10 error codes and counts any extra.
 </p>
 
 <p>
@@ -304,20 +304,20 @@ There are few basic types and constants.
 
 /* types */ 
 
-typedef uint64 FilePosType;
+typedef uint64 <span class="Att">FilePosType</span>;
 
-typedef uint8 byte;
+typedef uint8 <span class="Att">byte</span>;
 
 /* consts */ 
 
-const ulen MaxPathLen = 512 ;
+const ulen <span class="Att">MaxPathLen</span> = 512 ;
  
 </pre>
 
 <h4>Classical set</h4>
 
 <p>
-Here is the classical set of operations as an abstract set of functions. The error reporting is ommited.
+Here is the classical set of operations as an abstract set of functions. The error reporting is omitted.
 </p>
 
 <pre>
@@ -348,12 +348,12 @@ the position is set to the file length.
 
 <p>
 The <b>close</b> operation has the argument: <b>preserve_file</b>. This argument is used with the 
-<b>Open_AutoDelete</b> flag. If this flag is set then the file is deleted during the close operation.
+open flag <b>Open_AutoDelete</b>. If this flag is set then the file is deleted during the close operation.
 But if the <b>preserve_file</b> is true, it is preserved.
 </p>
 
 <p>
-<b>getLen</b> returns the current length of the file. The length can be changed by the write operation.
+<b>getLen</b> returns the current length of the file. The length can be changed by the <b>write</b> operation.
 </p>
 
 <p>
@@ -361,7 +361,7 @@ But if the <b>preserve_file</b> is true, it is preserved.
 </p>
 
 <p>
-<b>setPos</b> sets the current file poistion. Setting the file position beyond the end-of-file has an
+<b>setPos</b> sets the current file position. Setting the file position beyond the end-of-file has an
 undefined behavior.
 </p>
 
@@ -448,7 +448,7 @@ void remove(const byte *path,ulen len); // if path is dir it must be empty
 </p>
 
 <p>
-<b>deleteDir</b> deletes the existing directory. If <b>recursive</b> is false, the directory must be empty.
+<b>deleteDir</b> deletes the existing directory. If the <b>recursive</b> is false, the directory must be empty.
 Otherwise it is deleted with the all content recursively.
 </p>
 
@@ -491,7 +491,7 @@ The visible state of the cursor has the following members:
 </p>
 
 <p>
-<b>error</b> &mdash; error code if any.
+<b>error</b> &mdash; error code, if any.
 </p>
 
 <pre>
@@ -509,13 +509,13 @@ There are three cursor operations.
 </p>
 
 <p>
-<b>init</b> initializes the cursor to enumerate the givent directory. The cursor is at before-the-first
+<b>init</b> initializes the cursor to enumerate the given directory. The cursor is at before-the-first
 element position. If this operation fails, other operations should not be used.
 </p>
 
 <p>
-<b>next</b> moves to the next element, if such element exists. The return value is true, if the cursor is moved,
-otherwise, if the cursor is already at the last element, the false is returned.
+<b>next</b> moves to the next element, if such element exists. The return value is <b>true</b>, if the cursor is moved,
+otherwise, if the cursor is already at the last element, the <b>false</b> is returned.
 </p>
 
 <p>
