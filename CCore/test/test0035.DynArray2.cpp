@@ -24,6 +24,8 @@ namespace Private_0035 {
 
 struct SqList
  {
+  enum NoThrowFlagType { NoThrow = true };
+  
   int i;
  
   explicit SqList(int i_) : i(i_) {}

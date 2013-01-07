@@ -1135,7 +1135,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_Abort.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_AntiSem.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_ArmGo.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_Arrays.html" 1
+"D:/active/home/C++/CCore-Root-1-03/html/page_Arrays.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_AsyncFileClients.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_AsyncFileDevice.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_AsyncFiles.html" 2

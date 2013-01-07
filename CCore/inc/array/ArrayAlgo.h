@@ -185,13 +185,13 @@ struct Creator_cast
 template <class T,class Algo> 
 struct Creator_swap
  {
-  enum NoThrowFlagType { NoThrow = true };
+  enum NoThrowFlagType { NoThrow = Algo::Default_no_throw };
   
   T *objs;
   
   explicit Creator_swap(T *objs_) : objs(objs_) {}
   
-  T * operator () (Place<void> place) noexcept(EnableNoExcept)
+  T * operator () (Place<void> place) noexcept( EnableNoExcept && Algo::Default_no_throw )
    {
     return Algo::Create_swap(place,*(objs++));
    }
@@ -266,7 +266,7 @@ struct ArrayAlgoBase
    };
   
   template <class Creator>
-  static PtrLen<T> Create(Place<void> place,ulen len,Creator creator)
+  static PtrLen<T> Create(Place<void> place,ulen len,Creator creator) noexcept( EnableNoExcept && Creator::NoThrow )
    {
     CreateGuardNoThrow<Creator::NoThrow> guard(place,len);
     
@@ -356,7 +356,7 @@ struct ArrayAlgoBase_nodtor
    };
   
   template <class Creator>
-  static PtrLen<T> Create(Place<void> place,ulen len,Creator creator)
+  static PtrLen<T> Create(Place<void> place,ulen len,Creator creator) noexcept( EnableNoExcept && Creator::NoThrow )
    {
     PtrLen<T> ret(place,len);
     
@@ -511,7 +511,7 @@ struct ArrayAlgo_pod : ArrayAlgoBase_nodtor<T>
   //  Single : no-throw
   // 
   
-  static T * Create_swap(Place<void> place,T &obj)
+  static T * Create_swap(Place<void> place,T &obj) noexcept(EnableNoExcept)
    {
     T *ret=new(place) T(obj);
     
@@ -602,7 +602,7 @@ struct ArrayAlgo_class : ArrayAlgoBase_class<T>
   //  Single
   // 
   
-  static T * Create_swap(Place<void> place,T &obj) noexcept(EnableNoExcept)
+  static T * Create_swap(Place<void> place,T &obj) noexcept( EnableNoExcept && Default_no_throw )
    {
     T *ret=new(place) T();
     

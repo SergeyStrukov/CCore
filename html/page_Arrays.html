@@ -90,7 +90,8 @@ typedef DoSomething&lt;6&gt; DoCreate;
 <b>DoRaw</b>, <b>DoFill</b>, <b>DoCopy</b>, <b>DoCast</b>, <b>DoSwap</b>, <b>DoCreate</b> are not <b>word</b>s, but 
 <b>Small Data Type</b>s. They designate the correspondent variant of constructor and carry two parameters:
 the array length and the reserved length. When an array is being created, the reserved length determines
-the memory space to be allocated, and the length is the number of elements to be created.
+the memory space to be allocated, and the length is the number of elements to be created. An exception is thrown,
+if the <b>len</b> is greater than <b>maxlen</b>.
 </p>
 
 <h3>Arrays</h3>
@@ -99,12 +100,13 @@ the memory space to be allocated, and the length is the number of elements to be
 <b>Array</b> is a container, where multiple items comprise a continuous range.  
 The simplest such "container" is the embedded type "array of" <b>T[Len]</b>.
 Unfortunately, this type lacks many abilities, required in applications, so we need a variety
-of <b>Array</b>s. We don't use STL <b>vector</b>, because it also has many deficiencies, for example, it cannot contain
-not copyable elements.
+of <b>Array</b>s. We don't use STL <b>vector</b>, because it also has many deficiencies.
+<b>CCore</b> <b>Array</b>s use the <b>CCore</b> heap with its extra functionality.
+They also customizable using an <b>Algorithm Package</b> of array algorithms.
 </p>
 
 <p>
-<b>CCore</b> <b>Array</b>s have <b>Range Access Interface</b>. They also provide the index access to elements
+<b>CCore</b> <b>Array</b>s implement <b>Range Access Interface</b>. They also provide the index access to elements
 through the overloaded <b>operator []</b> and the checked index access with the method <b>at()</b>.
 </p>
 
@@ -113,12 +115,16 @@ Constant <b>CCore</b> <b>Array</b>s give constant access to its elements.
 </p>
 
 <p>
-Allocation errors and index check errors throw exceptions.
+Allocation errors and index check errors throw exceptions. Default constructors are no-throw.
 </p>
 
 <p>
-<b>Array</b>s can be used with the most types, there is no hard restrictions on the type properties.
-The only strong requirement: the type destructor must be no-throw. Some operations, however,
+The method <b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+</p>
+
+<p>
+<b>Array</b>s can be used with most types, there is no hard restrictions on type properties.
+The only strong requirement is: the type destructor must be no-throw. Some operations, however,
 require additional type properties. For example, to use <b>cloneTo()</b> methods the type must be copyable.
 </p>
 
@@ -200,7 +206,7 @@ Otherwise, the space for elements is dynamically allocated.
 </p>
 
 <p>
-<b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+Other methods are standard array methods.
 </p>
 
 <h4>SimpleArray</h4>
@@ -212,7 +218,7 @@ Otherwise, the space for elements is dynamically allocated.
 <p>
 The second template argument of <b>SimpleArray</b> is an <b>Algorithm Package</b> of array algorithms.
 <b>SimpleArray</b> uses only two of them: <b>Create_default()</b> and <b>Destroy()</b>.
-See below about array algorithms.
+See <a href="#ArrayAlgo">below</a> about array algorithms.
 </p>
 
 <pre>
@@ -273,11 +279,7 @@ class <span class="Att">SimpleArray</span> : NoCopy
 </p>
 
 <p>
-<b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
-</p>
-
-<p>
-Unlike <b>TempArray</b>, <b>SimpleArray</b> is swapable and moveable.
+Unlike <b>TempArray</b>, <b>SimpleArray</b> is swappable and movable.
 </p>
 
 <a name="DynArray"><h4>DynArray</h4></a>
@@ -285,7 +287,7 @@ Unlike <b>TempArray</b>, <b>SimpleArray</b> is swapable and moveable.
 <p>
 <b>DynArray</b> is the "main" of <b>Array</b>s. It stores elements in a memory space with some
 reserved memory behind. It allows extend the range of elements, if there is an extra memory. 
-If not and the type <b>T</b> supports moving, then the array extension can be performed
+If not and the type <b>T</b> supports <a href="page_Move.html">moving</a>, then the array extension can be performed
 with either the memory block extension (using <b>MemExtend()</b>) or the total reallocation with moving content.
 You can also release the extra memory. All details of the array functionality can be customized using the 
 second template argument, which is an <b>Algorithm Package</b> of array algorithms. You cannot
@@ -340,14 +342,18 @@ class <span class="Att">DynArray</span> : NoCopy
 </pre>
 
 <p>
-Default constructor and destructor are no-throw. Non-default constructors reserve some space and build
+Non-default constructors reserve some space and build
 some elements. The <b>DoRaw</b>, ..., <b>DoCreate</b> arguments carry the length and the reserved
 length of the array to be used.
 </p>
 
 <p>
-<b>DynArray(std::initializer_list&lt;S&gt; il)</b> uses an initialization list to "cast" 
-the new elements from the given.
+Non-default constructors work the same way as the correspondent <b>extend...()</b> methods.
+</p>
+
+<p>
+<b>DynArray(std::initializer_list&lt;S&gt; il)</b> uses the initialization list to "cast" 
+new elements from the given.
 </p>
    
 <p>
@@ -356,7 +362,8 @@ the new elements from the given.
    
 <p>
 <b>DynArray(ulen len,ulen maxlen)</b> also performs the default initialization of the <b>len</b> elements, 
-but reserves a space for <b>maxlen</b> elements.
+but reserves a space for the <b>maxlen</b> elements. An exception is thrown,
+if the <b>len</b> is greater than <b>maxlen</b>.
 </p>
    
 <p>
@@ -365,36 +372,35 @@ but reserves a space for <b>maxlen</b> elements.
    
 <p>
 <b>DynArray(DoRaw dotype)</b> performes the "raw" initialization. If the <b>T</b> is a POD type, elements
-are not initialized. If not, the default initialization if performed.
+are not initialized. If not, the default initialization is performed.
 </p>
    
 <p>
-<b>DynArray(DoFill dotype,SS &amp;&amp; ... ss)</b> creates the new elements using some constructor, 
+<b>DynArray(DoFill dotype,SS &amp;&amp; ... ss)</b> creates new elements using some constructor, 
 the specified arguments are forwarded to this constructor.
 </p>
    
 <p>
-<b>DynArray(DoCopy dotype,const T src[])</b> creates the new elements using the copy constructor, <b>src</b> 
+<b>DynArray(DoCopy dotype,const T src[])</b> creates new elements using the copy constructor, <b>src</b> 
 is a range of length <b>dotype.getLen()</b>, its members are copied memberwise.
 </p>
    
 <p>
-<b>DynArray(DoCast dotype,const S src[])</b> creates the new elements using the "cast" constructor, <b>src</b> is a range of length
+<b>DynArray(DoCast dotype,const S src[])</b> creates new elements using the "cast" constructor, <b>src</b> is a range of length
 <b>dotype.getLen()</b>, its members are casted memberwise.
 </p>
    
 <p>
-<b>DynArray(DoSwap dotype,T objs[])</b> creates the new elements using the "swap move" approach. 
-I.e. the new elements are created using the default constructor and swapped with the members of the range <b>objs</b>.
+<b>DynArray(DoSwap dotype,T objs[])</b> creates new elements using the "swap move" approach. 
+I.g. new elements are created using the default constructor and swapped with members of the range <b>objs</b>.
 </p>
    
 <p>
-<b>DynArray(DoCreate dotype,Creator creator)</b> uses the given <b>Creator</b> object to create the 
-new elements.
+<b>DynArray(DoCreate dotype,Creator creator)</b> uses the given <b>Creator</b> object to create new elements.
 </p>
 
 <p>
-<b>DynArray(DoBuildType,Builder builder)</b> uses the given <b>Builder</b> object to create the new elements.
+<b>DynArray(DoBuildType,Builder builder)</b> uses the given <b>Builder</b> object to create new elements.
 </p>
 
 <pre>
@@ -425,11 +431,11 @@ new elements.
 </pre>
 
 <p>
-Range access and index access methods are standard. Two additional methods reports memory allocation. 
+Range access and index access methods are standard. Two additional methods report memory allocation. 
 </p>
 
 <p>
-<b>getMaxLen()</b> return the reserved array length (in objects).
+<b>getMaxLen()</b> returns the reserved array length (in objects).
 </p>
 
 <p>
@@ -456,7 +462,7 @@ Range access and index access methods are standard. Two additional methods repor
 </p>
 
 <p>
-<b>erase()</b> erases the array, it gets to the null state, with no obects and no memory allocated.
+<b>erase()</b> erases the array, it gets to the null state, with no objects and no memory allocated.
 </p>
 
 <pre>
@@ -478,8 +484,8 @@ number of elements destroyed.
 </p>
 
 <p>
-<b>shrink_one()</b> destroys the last element (if any). It returns true, if the element is destroyed, and
-false if the array is empty.
+<b>shrink_one()</b> destroys the last element (if any). It returns <b>true</b>, if the element is destroyed, and
+<b>false</b> if the array is empty.
 </p>
 
 <p>
@@ -522,44 +528,44 @@ the reserved array length becomes equal to the array length.
 
 <p>
 <b>extend...()</b> is a family of methods, which extends the array with number elements. They differs in
-the element construction ways. All of them, except the last, has the first argument <b>delta_len</b>, 
+element construction ways. All of them, except the last, has the first argument <b>delta_len</b>, 
 which is the number of new elements. The return value is the range of these new elements.
-<b>extend...()</b> are transactional, i.g. if the method if failed, then the array is remaining 
-in the original state, the exception is thrown.
+<b>extend...()</b> are transactional, i.g. if the method if failed, then the array remains
+in the original state, an exception is thrown.
 </p>
 
 <p>
-<b>extend_raw()</b> for POD types leaves the new elements uninitialized. For other types it works
+<b>extend_raw()</b> for POD types leaves new elements uninitialized. For other types it works
 like <b>extend_default()</b>.
 </p>
 
 <p>
-<b>extend_default()</b> creates the new elements using the default constructor.
+<b>extend_default()</b> creates new elements using the default constructor.
 </p>
 
 <p>
-<b>extend_fill()</b> creates the new elements using some constructor, the specified arguments are forwarded
+<b>extend_fill()</b> creates new elements using some constructor, the specified arguments are forwarded
 to this constructor.  
 </p>
 
 <p>
-<b>extend_copy()</b> creates the new elements using the copy constructor, <b>src</b> is a range of length
+<b>extend_copy()</b> creates new elements using the copy constructor, <b>src</b> is a range of length
 <b>delta_len</b>, its members are copied memberwise.
 </p>
 
 <p>
-<b>extend_cast()</b> creates the new elements using the "cast" constructor, <b>src</b> is a range of length
+<b>extend_cast()</b> creates new elements using the "cast" constructor, <b>src</b> is a range of length
 <b>delta_len</b>, its members are casted memberwise.
 </p>
 
 <p>
-<b>extend_swap()</b> creates the new elements using the "swap move" approach. I.e. the new elements are 
-created using the default constructor and swapped with the members of the range <b>objs</b>.
+<b>extend_swap()</b> creates new elements using the "swap move" approach. I.e. new elements are 
+created using the default constructor and swapped with members of the range <b>objs</b>.
 </p>
 
 <p>
-Two final <b>extend()</b> are generic. The first of them uses the given <b>Creator</b> object to create the 
-new elements, and the second uses the <b>Builder</b>. See below explanations about <b>Creator</b>s and
+Two final <b>extend()</b> are generic. The first of them uses the given <b>Creator</b> object to create 
+new elements, and the second uses the <b>Builder</b>. See <a href="#Creator">below</a> explanations about <b>Creator</b>s and
 <b>Builder</b>s.
 </p>
 
@@ -585,7 +591,7 @@ new elements, and the second uses the <b>Builder</b>. See below explanations abo
 <p>
 <b>append...()</b> is a family of methods to append one element to the array. They are similar to the
 correspondent <b>extend...()</b> methods and do exactly the same with <b>delta_len</b> equals 1.   
-The return value is the pointer to the created element.
+The return value is a pointer to the created element.
 </p>
 
 <pre>
@@ -615,7 +621,7 @@ The return value is the pointer to the created element.
 </pre>
 
 <p>
-<b>DynArray</b> is swapable and moveable.
+<b>DynArray</b> is swappable and movable.
 </p>
 
 <a name="RefArray"><h4>RefArray and AtomicRefArray</h4></a>
@@ -625,14 +631,14 @@ The return value is the pointer to the created element.
 It's assumed, the type <b>T</b> is copyable.
 Multiple copies of arrays may share the same state. The state has a reference counter, which is used to
 end its life-time. The only difference between <b>RefArray</b> and <b>AtomicRefArray</b> is the former
-uses the atomic reference counting to be viable in a multithreaded environment.
+uses the atomic reference counting to be viable in a multi-threaded environment.
 </p>
 
 <p>
-<b>RefArray</b> has a simulated value semantic. It means that you may consider different copies of an array
+<b>RefArray</b> has a simulated value semantic. It means, that you may consider different copies of an array
 as independent variables, despite they may share the state. That is because <b>RefArray</b> provides
 only a constant access to elements. So far you don't violate this constantness (using the const-cast, for example),
-you may safely assume the each copy is different. To modify an array you have to call
+you may safely assume that each copy is different. To modify an array you have to call
 the method <b>modify()</b>. This method "unshares" the array, if necessary, and gives a non-constant access to
 elements.
 </p>
@@ -647,7 +653,7 @@ class <span class="Att">RefArray</span>
   
    // constructors
    
-   RefArray() {}
+   RefArray();
    
    template &lt;class S&gt;
    explicit RefArray(std::initializer_list&lt;S&gt; il);
@@ -780,7 +786,7 @@ exists.
 
 <p>
 <b>apply_modify()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
-Before application the arrays is unshared.
+The array is unshared first.
 </p>
 
 <p>
@@ -792,7 +798,7 @@ This is a constant method.
 
 <p>
 <b>Collector</b> is not an array! The purpose of this container is to be an efficient collector of elements.
-This container stores a sequense of elements in a list of arrays. So appending and extending 
+This container stores a sequence of elements in a list of arrays. So appending and extending 
 operations are the most efficient. At desired moment you can copy or move this sequence into true array.
 Or you can "flat" the <b>Collector</b> itself.
 </p>
@@ -866,7 +872,7 @@ constructor. <b>Collector</b> becomes empty after this operation.
 </p>
 
 <p>
-<b>copyTo()</b> copys the content to another (array) container. The target container must have the <b>Build</b>
+<b>copyTo()</b> copies the content to another (array) container. The target container must have the <b>Build</b>
 constructor.
 </p>
 
@@ -941,10 +947,10 @@ modifying operation).
 </pre>
 
 <p>
-<b>Collector</b> is swapable and movable.
+<b>Collector</b> is swappable and movable.
 </p>
 
-<h3>Array algorithms</h3>
+<a name="ArrayAlgo"><h3>Array algorithms</h3></a>
 
 <p>
 <b>CCore</b> <b>Array</b> implementation is based on the <b>Array Algorithm Package</b>s.
@@ -962,7 +968,7 @@ The exact implementation depends on the kind of <b>T</b>.
 </p>
 
 <p>
-If the type <b>T</b> defines an inner type <b>ArrayAlgoType</b>, then this type will be used
+If the type <b>T</b> defines the inner type <b>ArrayAlgoType</b>, then this type will be used
 as the package.
 </p>
 
@@ -974,9 +980,10 @@ Otherwise there are two variants: one for the POD types, another for the other (
 
 <p>
 <b>ArrayAlgo_class</b> is the generic (class) variant. It is assumed, that the following operations: <b>~T()</b>,
-<b>Move(T *,Place&lt;void&gt;)</b> and <b>Swap(T &amp;,T &amp;)</b>; are <b>no-throw</b>.
+<b>Move(T *,Place&lt;void&gt;)</b> and <b>Swap(T &amp;,T &amp;)</b> are <b>no-throw</b>.
 The template argument <b>Flags</b> provides two flags: <b>Default_no_throw</b> and <b>Copy_no_throw</b>.
-The flag is true, if the correspondent constructor (default or copy) is <b>no-throw</b> or does not exist.
+The flag is <b>true</b>, if the correspondent constructor (default or copy) is <b>no-throw</b> or does not exist.
+It's an obligation of the class. 
 </p>
 
 <pre>
@@ -1024,7 +1031,7 @@ struct <span class="Att">ArrayAlgo_class</span>
   //  Single
   // 
   
-  static T * Create_swap(Place&lt;void&gt; place,T &amp;obj) noexcept(EnableNoExcept);
+  static T * Create_swap(Place&lt;void&gt; place,T &amp;obj) noexcept( EnableNoExcept && Default_no_throw );
    
   //
   //  ProvideLen() : double extension
@@ -1070,15 +1077,15 @@ Flags <b>Default_no_throw</b> and <b>Copy_no_throw</b> are copied from the <b>Fl
 </p>
 
 <p>
-Flag <b>MoveTo_exist</b> is always true.
+Flag <b>MoveTo_exist</b> is always <b>true</b>.
 </p>
 
 <p>
 <b>Create_...()</b> creates a range of objects of the type <b>T</b> at the given place. To create an object,
-the correspondent constructor is called. Objects are created in the ascending order. If the some constructor
+the correspondent constructor is called. Objects are created in the ascending order. If some constructor
 throw an exception, then the previously constructed objects are destroyed and the exception is propagated.
 The range of the created objects is returned. The first two arguments are: the place to construct 
-and the number of elements to construct. The place must be propely aligned and the memory space
+and the number of elements to construct. The place must be properly aligned and the memory space
 must be large enough to contain the required number of objects.
 </p>
 
@@ -1091,36 +1098,37 @@ must be large enough to contain the required number of objects.
 </p>
 
 <p>
-<b>Create_copy()</b> uses the copy constructor. The arguments are selected from the provided range of objects.
+<b>Create_copy()</b> uses the copy constructor. The arguments are memberwise selected from the provided range of objects.
 </p>
 
 <p>
-<b>Create_cast()</b> uses the "cast" constructor. The arguments are selected from the provided range of objects.
+<b>Create_cast()</b> uses the "cast" constructor. The arguments are memberwise selected from the provided range of objects.
 </p>
 
 <p>
 <b>Create_swap()</b> uses the default constructor and the swap operation to create objects. The arguments for 
-the swap are selected from the provided range of objects.
+the swap are memberwise selected from the provided range of objects.
 </p>
 
 <p>
-<b>Create()</b> uses the given creator for the object creation. See below about creators.
+<b>Create()</b> uses the given creator for the object creation. See <a href="#Creator">below</a> about creators.
 </p>
 
 <p>
-The single <b>Create_swap()</b> function "creates-swap" the single object.
+The single <b>Create_swap()</b> function "creates-swap" a single object.
 </p>
 
 <p>
-<b>ProvideLen()</b> is used to reallocate an array. It is called if there is insufficient memory
+<b>ProvideLen()</b> is used to reallocate an array. It is called if there is no sufficient memory
 to extend the array. The <b>len</b> is the array length, the <b>extra_len</b> is the number of extra
 objects to be constructed, the <b>maxlen</b> is the allocated length. The length returned
-is sufficient to extend the array and at least double of the <b>maxlen</b>.
+is sufficient to extend the array and at least double of the <b>maxlen</b>. An exception is thrown in case of
+overflow.
 </p>
 
 <p>
-<b>MoveTo()</b> moves the given range to the new place. The old place becomes a raw memory. 
-The range of the new objects is returned.
+<b>MoveTo()</b> moves the given range to a new place. The old place becomes a raw memory. 
+The range of new objects is returned.
 </p>
 
 <p>
@@ -1168,12 +1176,12 @@ the range.
 </p>
 
 <p>
-<b>operator ++ ()</b> must be called after the sucessfull creation of an object at the current position, 
+<b>operator ++ ()</b> must be called after the successful creation of an object at the current position, 
 it moves to the next object position.
 </p>
 
 <p>
-<b>disarm()</b> is called after the desired number of objects are created. It "disarms" the gurad and
+<b>disarm()</b> is called after the desired number of objects are created. It "disarms" the guard and
 returns the created range.
 </p>
 
@@ -1242,12 +1250,12 @@ on the <b>no_throw</b> template argument.
 </p>
 
 <p>
-Below is the implementation of the generic <b>Create</b>, it uses <b>CreateGuardNoThrow</b>.
+Below is the implementation of the generic <b>Create</b>, it uses the <b>CreateGuardNoThrow</b>.
 </p>
 
 <pre>
 template &lt;class Creator&gt;
-static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,ulen len,Creator creator)
+static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( EnableNoExcept && Creator::NoThrow )
  {
   CreateGuardNoThrow&lt;Creator::NoThrow&gt; guard(place,len);
     
@@ -1300,7 +1308,7 @@ struct <span class="Att">ArrayAlgo_pod</span>
   //
 
   template &lt;class Creator&gt;
-  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator);
+  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( EnableNoExcept && Creator::NoThrow );
   
   //
   //  Single
@@ -1344,7 +1352,7 @@ struct <span class="Att">ArrayAlgo_pod</span>
 </pre>
 
 <p>
-Flags <b>Default_no_throw</b>, <b>Copy_no_throw</b> and <b>MoveTo_exist</b> are all true.
+Flags <b>Default_no_throw</b>, <b>Copy_no_throw</b> and <b>MoveTo_exist</b> are all <b>true</b>.
 </p>
 
 <p>
@@ -1359,7 +1367,7 @@ Flags <b>Default_no_throw</b>, <b>Copy_no_throw</b> and <b>MoveTo_exist</b> are 
 
 <p>
 <b>ArrayAlgo_mini</b> is the mini variant without object moving.
-It is assumed, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and move are not used.
+It is assumed only, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and move are not used.
 </p>
 
 <pre>
@@ -1399,7 +1407,7 @@ struct <span class="Att">ArrayAlgo_mini</span>
   //
 
   template &lt;class Creator&gt;
-  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator);
+  static PtrLen&lt;T&gt; Create(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( EnableNoExcept && Creator::NoThrow );
   
   //
   //  single Destroy() : no-throw
@@ -1425,15 +1433,15 @@ struct <span class="Att">ArrayAlgo_mini</span>
 </pre>
 
 <p>
-The flag <b>MoveTo_exist</b> is false.
+The flag <b>MoveTo_exist</b> is <b>false</b>.
 </p>
 
 <p>
-The following functions: <b>Create_swap()</b>, <b>ProvideLen()</b>, <b>MoveTo()</b>; are ommited.
-Array, constructed with this algorithm package cannot extend itself beyond the original allocation length.
+The following functions: <b>Create_swap()</b>, <b>ProvideLen()</b>, <b>MoveTo()</b> are omitted.
+Array, constructed with this algorithm package, cannot be extended beyond the initial allocation length.
 </p>
 
-<h4>Creators and Builders</h4>
+<a name="Creator"><h4>Creators and Builders</h4></a>
 
 <p>
 <b>Creator</b> is a functor, creating objects. It looks like this:
@@ -1528,7 +1536,7 @@ class Builder // copy efficient functor initializer
 
       ~FunctorType();
 
-     PtrLen&lt;T&gt; operator () (Place&lt;void&gt; place) const; // may create up to getLen() objects
+      PtrLen&lt;T&gt; operator () (Place&lt;void&gt; place) const; // may create up to getLen() objects
     };
  };
 </pre>
@@ -1536,7 +1544,7 @@ class Builder // copy efficient functor initializer
 <p>
 <b>Builder</b> reports the maximum object number it will create through the method <b>getLen()</b>. 
 <b>operator ()</b> gets the place for the range of <b>getLen()</b> elements, it either creates
-the range of objects up to this length and returns it, or leaves the memory raw and throw an exception.
+the range of objects up to this length and returns it, or leaves the memory raw and throws an exception.
 </p>
 
 <p>
@@ -1625,13 +1633,13 @@ struct <span class="Att">Creator_cast</span>
 template &lt;class T,class Algo&gt;
 struct <span class="Att">Creator_swap</span>
  {
-  enum NoThrowFlagType { NoThrow = true };
+  enum NoThrowFlagType { NoThrow = Algo::Default_no_throw };
   
   T *objs;
   
   explicit Creator_swap(T *objs_) : objs(objs_) {}
   
-  T * operator () (Place&lt;void&gt; place) noexcept(EnableNoExcept)
+  T * operator () (Place&lt;void&gt; place) noexcept( EnableNoExcept && Algo::Default_no_throw )
    {
     return Algo::Create_swap(place,*(objs++));
    }
@@ -1642,13 +1650,13 @@ struct <span class="Att">Creator_swap</span>
 
 <p>
 The <b>NoThrowFlags</b> structure is a <b>Property Bag</b> with two flags: <b>Default_no_throw</b> and 
-<b>Copy_no_throw</b>. The flag is true if the correspondent object constructor does not exist or <b>no-throw</b>.
-These flags are used to optimize the algorithm implementations. The structure is a default "flags provider"
+<b>Copy_no_throw</b>. The flag is <b>true</b>, if the correspondent object constructor does not exist or <b>no-throw</b>.
+These flags are used to optimize algorithm implementations. The structure is a default "flags provider"
 for the <b>ArrayAlgo</b> class.
 </p>
 
 <p>
-The <b>NoThrowFlags</b> extracts the value of a flag from the inner declaration of the class if such declaration
+The <b>NoThrowFlags</b> extracts the value of a flag from the inner declaration in the class if such declaration
 exists:
 </p>
 
@@ -1673,7 +1681,7 @@ NoThrowFlags&lt;SomeClass&gt;::Copy_no_throw == SomeClass::Copy_no_throw
 
 <p>
 If such declaration does not exist, it falls to <b>Meta::HasNoThrowDefault</b> and <b>Meta::HasNoThrowCopy</b>
-meta-functions. These meta-functions are defined in the <b>PlatformBase.h</b> target header.
+meta-functions. These meta-functions are defined in the target <b>PlatformBase.h</b>.
 They may be defined like this:
 </p>
 
@@ -1700,7 +1708,7 @@ struct HasNoThrowCopy
 </pre>
 
 <p>
-The <b>NoThrowFlags</b> is implemented in such a way, that it will emit a warning, if one of these flags is false.
+The <b>NoThrowFlags</b> is implemented in such a way, that it will emit a warning, if one of these flags is <b>false</b>.
 This behavior is not desirable and it is highly recommended to design common classes either without
 the default or copy constructor, or with <b>efficient</b> ones. 
 </p>
