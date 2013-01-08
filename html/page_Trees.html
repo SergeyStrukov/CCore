@@ -34,11 +34,11 @@
 
 </body>
 
-<h3>Trees brief</h3>
+<h3>Tree's brief</h3>
 
 <p>
 Binary trees is an important class of data structures. Tree consists of the set of elements, each element
-has a unique key. Keys are comparable and form a linear ordered set. Tree has a root element and
+has a unique key. Keys are comparable and form a linear ordered set. Non-empty tree has a root element and
 two subtrees: Lo and Hi. Elements in the Lo subtree have a lower keys than the root element. The same way,
 elements in the Hi subtree have a higher keys than the root element.
 </p>
@@ -47,7 +47,7 @@ elements in the Hi subtree have a higher keys than the root element.
 
 <p>
 Operations complexities are <b>O(tree height)</b>.
-To be efficient, tree must have a limited height. To achive this there are different methods.
+To be efficient, tree must have a limited height. To achieve this there are different methods.
 We use two most important of them: <b>Radix Tree</b> and <b>Red-Black Tree</b>. The first
 is applicable to the key types with the limited value range, like integral types.
 </p>
@@ -59,7 +59,7 @@ The height of the <b>Radix Tree</b> is limited by the <b>log(value range volume)
 </p>
 
 <p>
-<b>Red-Black Tree</b> has a colored arrows. Each arrow is either red or black. Some properties must be statisfied:
+<b>Red-Black Tree</b> has a colored arrows. Each arrow is either red or black. Some properties must be satisfied:
 there is no two consecutive red arrows, all tree leaves have the same black height. The height of the
 <b>Red-Black Tree</b> is limited by the <b>2*log(number of elements)</b>.
 So for these trees operations has a practically constant time limit.
@@ -77,25 +77,27 @@ They are available through the header <b>CCore/inc/Tree.h</b>.
 </p>
 
 <p>
-<b>CCore</b> has four kind of tree links, each with a tree algorithms sets. To build a tree element you must
+<b>CCore</b> has four kind of tree links, each with a tree algorithms sets. To define a tree node you must
 include one of this links in the class:
 </p>
 
 <pre>
 struct Node
  {
-  TreeLink&lt;Node,int&gt; link;
+  TreeLink&lt;Node,unsigned&gt; link;
 
   ....
  };
 </pre>
 
 <p>
-Then use one of <b>Algorithms Package</b>s to operate on trees:
+Then use one of <b>Algorithm Package</b>s to operate on trees:
 </p>
 
 <pre>
-typedef TreeLink&lt;Node,int&gt;::RadixAlgo<&amp;Node::link> Algo;
+
+typedef TreeLink&lt;Node,unsigned&gt;::RadixAlgo<&amp;Node::link> Algo;
+
 </pre>
 
 <h4>TreeLink</h4>
@@ -124,8 +126,8 @@ struct <span class="Att">TreeLink</span>
 <p>
 There are two <b>Algorithm Package</b>s: <b>BinAlgo</b> with basic binary tree operations
 and <b>RadixTree</b>, which extends <b>BinAlgo</b> with radix tree operations. The first package has the 
-additional template parameter: <b>KRef</b>. If <b>K</b> is a lightweight type, then use the default <b>KRef</b>
-equals <b>K</b>. But for more compicated types, you may use <b>const K &</b> instead or even a
+additional template parameter: <b>KRef</b>. If the <b>K</b> is a lightweight type, then use the default <b>KRef</b>
+equals <b>K</b>. But for more complicated types, you may use <b>const K &</b> instead or even a
 completely different type. This type is used to pass key arguments. <b>RadixTree</b> requires the <b>K</b> to be
 an unsigned integral type.  
 </p>
@@ -141,7 +143,7 @@ struct <span class="Att">BinAlgo</span>
 </pre>
 
 <p>
-<b>Link()</b> extracts links from the object.
+<b>Link()</b> extracts link from the object.
 </p>
 
 <pre>
@@ -161,30 +163,30 @@ struct <span class="Att">BinAlgo</span>
 
 <p>
 <b>Find...()</b> is a family of searching functions. The first argument <b></b> is a tree root pointer. It may also
-be a subtree root. The second argument (if any) is a key value. The keys must be <a href="page_Cmp.html">
+be a subtree root. The second argument (if any) is a key value. Keys must be <a href="page_Cmp.html">
 3-Way comparable</a> using the function <b>Cmp(KRef,K)</b>.  Each function returns a pointer to the found element, 
 or null if the required element does not exist.
 </p>
 
 <p>
-<b>Find()</b> is searaching for the element with the given <b>key</b>.
+<b>Find()</b> is searching for the element with the given <b>key</b>.
 </p>
 
 <p>
-<b>FindMin()</b> is searaching for the element with the minimum key in the tree.
+<b>FindMin()</b> is searching for the element with the minimum key in the tree.
 </p>
 
 <p>
-<b>FindMin(,key)</b> is searaching for the element with the minimum key in the tree, greater or equal the 
+<b>FindMin(,key)</b> is searching for the element with the minimum key in the tree, greater or equal the 
 given <b>key</b>.
 </p>
 
 <p>
-<b>FindMax()</b> is searaching for the element with the maximum key in the tree.
+<b>FindMax()</b> is searching for the element with the maximum key in the tree.
 </p>
 
 <p>
-<b>FindMax(,key)</b> is searaching for the element with the maximum key in the tree, less or equal the 
+<b>FindMax(,key)</b> is searching for the element with the maximum key in the tree, less or equal the 
 given <b>key</b>.
 </p>
 
@@ -211,7 +213,7 @@ pointer in the parent element. It is null, if the element is not found.
 </p>
 
 <p>
-These functions are required by the <b>Del...()</b> implementations, you probably wouldn't use them.
+These functions are required by the <b>Del...()</b> implementation, you probably wouldn't use them.
 </p>
 
 <pre>
@@ -229,7 +231,7 @@ These functions are required by the <b>Del...()</b> implementations, you probabl
    
   static T * DelMax(T **root_ptr,KRef key);
    
-  static void Del(T **root_ptr,T *node);
+  static void Del(T **root_ptr,T *node); // node!=0
 
 </pre>   
 
@@ -335,7 +337,7 @@ return <b>locate...()</b> results.
 </pre>
 
 <p>
-<b>Root</b> incapsulates a root pointer and tree operations. The methods are direct calls of the
+<b>Root</b> encapsulates a root pointer and tree operations. The methods are direct calls of the
 correspondent functions.
 </p>
 
@@ -392,7 +394,7 @@ with a particular tree.
 </p>
 
 <p>
-<b>Med()</b> is used to split a value range. If the tree value range is <b>[kmin,kmax}</b>, and 
+<b>Med()</b> is used to split a value range. If the tree value range is <b>[kmin,kmax]</b>, and 
 <b>Med(kmin,kmax) -> kmed</b>, then the Lo subtree has a value range <b>[kmin,kmed]</b> and the Hi  
 subtree &mdash; <b>[kmed+1,kmax]</b>.
 </p>
@@ -400,7 +402,7 @@ subtree &mdash; <b>[kmed+1,kmax]</b>.
 <p>
 <b>PrepareIns</b> is a tool to insert an element into the tree. Its constructor prepares the operation.
 Its arguments are: the root double pointer (or the reference to a <b>Root</b> object), the key, and, optionally,
-the value range. If the value range is ommited, then the full range is assumed. There are two cases. First,
+the value range. If the value range is omitted, then the full range is assumed. There are two cases. First,
 there exist an element with the given key already. In such case, the pointer to this element is returned
 in the member <b>found</b>. Otherwise, <b>found</b> is null and you may do insert using the method <b>complete()</b>.
 You must provide an element to be inserted. The key will be placed into the link of this element.
@@ -419,7 +421,7 @@ takes the root pointer and the value range. If the tree is broken, an exception 
 
 <p>
 The <b>TreeUpLink</b> is another tree link. It has the additional member <b>up</b>. It points to the parent
-element. For the root node it is null. <span class="Alert">The keys are not unique.</span> 
+element. For the root node it is null. <span class="Alert">Keys are not unique.</span> 
 In fact, this kind of tree is a combination 
 of tree and list. There are two kind of links: normal tree links, and same-key links, where <b>lo==this</b>.
 And the Lo and Hi subtrees may have nodes with the same key as the root element.
@@ -554,7 +556,7 @@ the additional method <b>replace()</b>.
 
 <p>
 <b>replace()</b> replaces the given tree node with another unlinked node. The new node becomes 
-the member of the tree, the old one becomes unlinked. Keys are swapped.
+a member of the tree, the old one becomes unlinked. Keys are swapped.
 </p>
 
 <pre>
@@ -664,7 +666,7 @@ argument <b>key</b>. This key is placed into the element link before insertion.
 
 <p>
 <b>RBTreeLink</b> is a <b>Red-Black Tree</b> link. It has the additional member: <b>RBFlag</b> flag. 
-This flag determines the arrows colores:
+This flag determines arrows colors:
 </p>
 
 <pre>
@@ -695,7 +697,7 @@ struct <span class="Att">RBTreeLink</span>
 </pre>
 
 <p>
-There are tree <b>Algorithms Package</b>s for this link: <b>BaseAlgo</b>, <b>Algo</b> and <b>AltAlgo</b>.
+There are tree <b>Algorithm Package</b>s for this link: <b>BaseAlgo</b>, <b>Algo</b> and <b>AltAlgo</b>.
 <b>AltAlgo</b> is an alternative implementation of the same operations, as <b>Algo</b>.
 </p>
 
@@ -736,9 +738,9 @@ struct <span class="Att">BaseAlgo</span>
 
 <p>
 This package contains find operations and the <b>Check</b>. Find operations are exactly the same as find operations 
-of the <b>TreeLink</b>. <b>Check</b> has the same meaning too. It just has different agruments: there are no
+of the <b>TreeLink</b>. <b>Check</b> has the same meaning too. It just has different arguments: there are no
 range variables. And it returns additional information: <b>height</b> is a black height of the tree, 
-<b>black_black</b> is true, if two root arrows of the tree are black.
+<b>black_black</b> is <b>true</b>, if two root arrows of the tree are black.
 </p>
 
 <pre>
@@ -812,7 +814,7 @@ There are four delete functions with the same semantic as <b>TreeLink</b> delete
 </pre>  
 
 <p>
-<b>Root</b> incapsulates a root pointer and tree operations. The methods are direct calls of the
+<b>Root</b> encapsulates a root pointer and tree operations. The methods are direct calls of the
 correspondent functions.
 </p>
 
@@ -873,7 +875,7 @@ struct <span class="Att">RBTreeUpLink</span>
 </pre>
 
 <p>
-There are two <b>Algorithms Package</b>s for this link: <b>BaseAlgo</b> and <b>Algo</b>.
+There are two <b>Algorithm Package</b>s for this link: <b>BaseAlgo</b> and <b>Algo</b>.
 They content are the same as for the <b>RBTreeLink</b> packages. The only difference, the struct <b>Root</b>
 has the additional method <b>replace()</b>.
 </p>
@@ -887,7 +889,7 @@ has the additional method <b>replace()</b>.
 
 <p>
 <b>replace()</b> replaces the given tree node with another unlinked node. The new node becomes 
-the member of the tree, the old one becomes unlinked. Keys are swapped.
+a member of the tree, the old one becomes unlinked. Keys are swapped.
 </p>
 
 </html>

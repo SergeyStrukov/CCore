@@ -30,26 +30,26 @@
 
 <p class="Files">Files <b>CCore/inc/List.h</b> <b>CCore/src/List.cpp</b></p>
 
-<h3>Kind of lists</h3>
+<h3>Kinds of lists</h3>
 
 <p>
-There are several kinds of lists in C++. List can be a container (non-intrusive lists). 
+There are several kinds of lists in C++. List can be a container (non-intrusive list). 
 List can also be a set of elements, where each element contains links to neighbor elements. 
-List can be single linked or double linked, linear or circular. The linear list controller can 
-contains pointer to the top of the list or two pointers to the first and the last elements.
+List can be single linked or double linked, linear or circular. Linear list controller can 
+contain a pointer to the top of the list or two pointers to the first and the last elements.
 </p>
 
 <p>
 <b>CCore</b> provides implementation of algorithms of intrusive lists. Intrusive lists are mandatory for
 many tasks, including system core tasks, because they don't require a memory allocation, they extremely efficient and
-can be used in such contextes where a memory allocation is impossible or not desirable. 
+can be used in such contexts where memory allocation is impossible or not desirable. 
 </p>
 
 <img src="List2.png" />
 
 <p>
 Non-intrusive lists can be built atop on these algorithms.
-Container lists:
+Container lists looks like:
 </p>
 
 <img src="List1.png" />
@@ -125,7 +125,7 @@ typedef SLink&lt;Node&gt;::LinearAlgo<&Node::link> Algo;
 
 <p>
 One node can include several links of different types. It allows include such node in several lists
-simultaneously.
+simultaneously. We use the term "element" for the linked list node, and "object" for unlinked list node.
 </p>
 
 <h4>SLink LinearAlgo</h4>
@@ -133,7 +133,7 @@ simultaneously.
 <img src="SList1.png" />
 
 <p>
-Linear list has a top element and terminates with a null pointer.
+Linear list has a top element and terminated with a null pointer.
 </p>
 
 <pre>
@@ -154,19 +154,20 @@ struct <span class="Att">LinearAlgo</span>
 </pre>
 
 <p>
-<b>Link()</b> returns the reference to the link from the element pointer.
+<b>Link()</b> returns the reference to the link from the node pointer.
 </p>
 
 <p>
-<b>Init()</b> makes the single element list.
+<b>Init()</b> makes the single element list from the given object.
 </p>
 
 <p>
-<b>InsNext()</b> inserts the given object after the given place in the list.
+<b>InsNext()</b> inserts the given object after the given element in the list.
 </p>
 
 <p>
-<b>DelNext()</b> deletes an element after the given place in the list. The pointer to this element is returned.
+<b>DelNext()</b> deletes the element after the given place in the list. The pointer to the object is returned 
+(it can be null).
 </p>
 
 <p>
@@ -265,7 +266,7 @@ In fact, it may be any element or null pointer.
 </p>
 
 <p>
-<b>del()</b> deletes the top element from the list, the pointer to the element is returned.
+<b>del()</b> deletes the top element from the list, the pointer to the object is returned (it can be null).
 </p>
 
 <img src="SList2.png" />
@@ -339,7 +340,7 @@ and the second to the last. We call the top element first in this case.
 </p>
 
 <p>
-<b>del_first()</b> deletes the first element from the list, the pointer to the element is returned.
+<b>del_first()</b> deletes the first element from the list, the pointer to the object is returned (it can be null).
 </p>
 
 <h4>SLink CircularAlgo</h4>
@@ -369,19 +370,20 @@ struct <span class="Att">CircularAlgo</span>
 </pre>
 
 <p>
-<b>Link()</b> returns the reference to the link from the element pointer.
+<b>Link()</b> returns the reference to the link from the node pointer.
 </p>
 
 <p>
-<b>Init()</b> makes the single element list.
+<b>Init()</b> makes the single element list from the given object.
 </p>
 
 <p>
-<b>InsNext()</b> inserts the given object after the given place in the list.
+<b>InsNext()</b> inserts the given object after the given element in the list.
 </p>
 
 <p>
-<b>DelNext()</b> deletes an element after the given place in the list. The pointer to this element is returned.
+<b>DelNext()</b> deletes the element after the given place in the list. The pointer to the object is returned
+(it will be null, if the list has only one element).
 </p>
 
 <p>
@@ -490,7 +492,7 @@ by the cursor, then the cursor is also updated, so you can continue use it.
 </p>
 
 <p>
-<b>del()</b> deletes the top element from the list, the pointer to the element is returned.
+<b>del()</b> deletes the top element from the list, the pointer to the object is returned (it can be null).
 </p>
 
 <p>
@@ -503,7 +505,7 @@ Pointer to this element is returned.
 <img src="DList1.png" />
 
 <p>
-Linear list has a top element and terminates with null pointers. Double link allows to move forward and backward.
+Linear list has a top element and terminated with null pointers. Double link allows to move forward and backward.
 </p>
 
 <pre>
@@ -516,17 +518,17 @@ struct <span class="Att">LinearAlgo</span>
     
   static void Connect(T *a,T *b);
   
-  static void Connect_null(T *a,T *b);
+  static void Connect_null(T *a,T *b); // a,b may == 0
   
-  static void Connect_nulla(T *a,T *b);
+  static void Connect_nulla(T *a,T *b); // a may == 0
   
-  static void Connect_nullb(T *a,T *b);
+  static void Connect_nullb(T *a,T *b); // b may == 0
      
-  static void Connect_nulla(T *a,T *b,T *c);
+  static void Connect_nulla(T *a,T *b,T *c); // a may == 0
   
-  static void Connect_nullc(T *a,T *b,T *c);
+  static void Connect_nullc(T *a,T *b,T *c); // c may == 0
 
-  static void Connect_nullac(T *a,T *b,T *c);
+  static void Connect_nullac(T *a,T *b,T *c); // a,c may == 0
      
   // null &lt;- obj -&gt; null
   
@@ -566,20 +568,20 @@ struct <span class="Att">LinearAlgo</span>
 </pre>
 
 <p>
-<b>Connect...()</b> is a family of functions, they connect its argument in row. The functions with the suffix 
-<b>null...</b> accepts for correspondent arguments null value.
+<b>Connect...()</b> is a family of functions, they connect its arguments in a row. Functions with the suffix 
+<b>null...</b> accept null value for correspondent arguments.
 </p>
 
 <p>
-<b>Init()</b> makes the single element list.
+<b>Init()</b> makes the single element list from the given object.
 </p>
 
 <p>
-<b>InsNext()</b> inserts the given object after the given place in the list.
+<b>InsNext()</b> inserts the given object after the given element in the list.
 </p>
 
 <p>
-<b>InsPrev()</b> inserts the given object before the given place in the list.
+<b>InsPrev()</b> inserts the given object before the given element in the list.
 </p>
 
 <p>
@@ -587,11 +589,13 @@ struct <span class="Att">LinearAlgo</span>
 </p>
 
 <p>
-<b>DelNext()</b> deletes an element after the given place in the list. The pointer to this element is returned.
+<b>DelNext()</b> deletes the element after the given place in the list. The pointer to the object is returned 
+(it can be null).
 </p>
 
 <p>
-<b>DelPrev()</b> deletes an element before the given place in the list. The pointer to this element is returned.
+<b>DelPrev()</b> deletes the element before the given place in the list. The pointer to the object is returned
+(it can be null).
 </p>
 
 <p>
@@ -604,8 +608,8 @@ may be any element from the list. The name of this function may be misleading, i
 </p>
 
 <p>
-<b>ReplaceNode()</b> replaces the given list node with another unlinked node. The new node becomes 
-the member of the list, the old one becomes unlinked.
+<b>ReplaceNode()</b> replaces the given list element with the given object. The object becomes 
+a member of the list, the element becomes unlinked.
 </p>
 
 <p>
@@ -756,13 +760,14 @@ In fact, it may be any element or null pointer.
 </p>
 
 <p>
-<b>replace()</b> replaces the given list node with another unlinked node. The new node becomes 
-the member of the list, the old one becomes unlinked.
+<b>replace()</b> replaces the given list element with the given object. The object becomes 
+a member of the list, the element becomes unlinked.
 </p>
 
 <p>
-<b>replace(&lt;cursor&gt;)</b> replaces the list node at the current cursor position with another unlinked node. 
-The new node becomes the member of the list, the old one becomes unlinked. Cursor is updated properly.
+<b>replace(&lt;cursor&gt;)</b> replaces the list element at the current cursor position with the given object. 
+The object becomes a member of the list, the element becomes unlinked. Cursor is updated properly 
+(it will point to the object).
 </p>
 
 <p>
@@ -770,12 +775,12 @@ The new node becomes the member of the list, the old one becomes unlinked. Curso
 </p>
 
 <p>
-<b>del()</b> deletes the top element from the list, the pointer to the element is returned.
+<b>del()</b> deletes the top element from the list, the pointer to the object is returned (it can be null).
 </p>
 
 <p>
 <b>del_and_move()</b> deletes the element from the list at the current cursor position and
-moves the cursor to the next element. The pointer to the deleted element is returned.
+moves the cursor to the next element. The pointer to the object is returned.
 </p>
 
 <pre>
@@ -879,13 +884,14 @@ and the second to the last. We call the top element first in this case.
 </p>
 
 <p>
-<b>replace()</b> replaces the given list node with another unlinked node. The new node becomes 
-the member of the list, the old one becomes unlinked.
+<b>replace()</b> replaces the given list element with the given object. The object becomes 
+a member of the list, the element becomes unlinked.
 </p>
 
 <p>
-<b>replace(&lt;cursor&gt;)</b> replaces the list node at the current cursor position with another unlinked node. 
-The new node becomes the member of the list, the old one becomes unlinked. Cursor is updated properly.
+<b>replace(&lt;cursor&gt;)</b> replaces the list element at the current cursor position with the given object. 
+The object becomes a member of the list, the element becomes unlinked. Cursor is updated properly
+(it will point to the object).
 </p>
 
 <p>
@@ -893,16 +899,16 @@ The new node becomes the member of the list, the old one becomes unlinked. Curso
 </p>
 
 <p>
-<b>del_first()</b> deletes the first element from the list, the pointer to the element is returned.
+<b>del_first()</b> deletes the first element from the list, the pointer to the object is returned.
 </p>
 
 <p>
-<b>del_last()</b> deletes the last element from the list, the pointer to the element is returned.
+<b>del_last()</b> deletes the last element from the list, the pointer to the object is returned.
 </p>
 
 <p>
 <b>del_and_move()</b> deletes the element from the list at the current cursor position and
-moves the cursor. The pointer to the deleted element is returned. If the cursor is forward, it moves to the 
+moves the cursor. The pointer to the object is returned. If the cursor is forward, it moves to the 
 next element. If the cursor is backward, it moves to the previous element. I.g. each cursor type
 moves to the next position in respect to the cursor movement direction.
 </p>
@@ -969,19 +975,19 @@ struct <span class="Att">CircularAlgo</span>
 </pre>
 
 <p>
-<b>Connect...()</b> is a family of functions, they connect its argument in row.
+<b>Connect...()</b> is a family of functions, they connect its arguments in a row.
 </p>
 
 <p>
-<b>Init()</b> makes the single element list.
+<b>Init()</b> makes the single element list from the given object.
 </p>
 
 <p>
-<b>InsNext()</b> inserts the given object after the given place in the list.
+<b>InsNext()</b> inserts the given object after the given element in the list.
 </p>
 
 <p>
-<b>InsPrev()</b> inserts the given object before the given place in the list.
+<b>InsPrev()</b> inserts the given object before the given element in the list.
 </p>
 
 <p>
@@ -989,11 +995,13 @@ struct <span class="Att">CircularAlgo</span>
 </p>
 
 <p>
-<b>DelNext()</b> deletes an element after the given place in the list. The pointer to this element is returned.
+<b>DelNext()</b> deletes the element after the given place in the list. The pointer to the object is returned 
+(it will be null, if the list has only one element).
 </p>
 
 <p>
-<b>DelPrev()</b> deletes an element before the given place in the list. The pointer to this element is returned.
+<b>DelPrev()</b> deletes the element before the given place in the list. The pointer to the object is returned
+(it will be null, if the list has only one element).
 </p>
 
 <p>
@@ -1010,8 +1018,8 @@ may be any element from the list. The name of this function may be misleading, i
 </p>
 
 <p>
-<b>ReplaceNode()</b> replaces the given list node with another unlinked node. The new node becomes 
-the member of the list, the old one becomes unlinked.
+<b>ReplaceNode()</b> replaces the given list element with the given object. The object becomes 
+a member of the list, the element becomes unlinked.
 </p>
 
 <p>
@@ -1021,7 +1029,7 @@ There are three inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b>.
 <pre>
   // ptr -&gt; next -&gt; ... -&gt; last
     
-  struct Cur
+  struct <span class="Att">Cur</span>
    {
     T *ptr;
     T *last;
@@ -1064,7 +1072,7 @@ after the current (non-null) position.
 <pre>
   // first &lt;- ... &lt;- prev &lt;- ptr
     
-  struct RevCur
+  struct <span class="Att">RevCur</span>
    {
     T *ptr;
     T *first;
@@ -1107,7 +1115,7 @@ after (before with respect to the cursor direction) the current (non-null) posit
 <pre>
   // top -&gt; ... -&gt; obj -&gt; ... -&gt; last -&gt; top
     
-  struct Top
+  struct <span class="Att">Top</span>
    {
     T *top;
       
@@ -1185,7 +1193,7 @@ after (before with respect to the cursor direction) the current (non-null) posit
 </p>
 
 <p>
-<b>start()</b> returns a cursor on the list.
+<b>start()</b> returns a forward cursor on the list.
 </p>
 
 <p>
@@ -1211,13 +1219,14 @@ after (before with respect to the cursor direction) the current (non-null) posit
 </p>
 
 <p>
-<b>replace()</b> replaces the given list node with another unlinked node. The new node becomes 
-the member of the list, the old one becomes unlinked.
+<b>replace()</b> replaces the given list element with the given object. The object becomes 
+a member of the list, the element becomes unlinked.
 </p>
 
 <p>
-<b>replace(&lt;cursor&gt;)</b> replaces the list node at the current cursor position with another unlinked node. 
-The new node becomes the member of the list, the old one becomes unlinked. Cursor is updated properly.
+<b>replace(&lt;cursor&gt;)</b> replaces the list element at the current cursor position with the given object. 
+The object becomes a member of the list, the element becomes unlinked. Cursor is updated properly
+(it will point to the object).
 </p>
 
 <p>
@@ -1225,16 +1234,16 @@ The new node becomes the member of the list, the old one becomes unlinked. Curso
 </p>
 
 <p>
-<b>del_first()</b> deletes the first element from the list, the pointer to the element is returned.
+<b>del_first()</b> deletes the first element from the list, the pointer to the object is returned.
 </p>
 
 <p>
-<b>del_last()</b> deletes the last element from the list, the pointer to the element is returned.
+<b>del_last()</b> deletes the last element from the list, the pointer to the object is returned.
 </p>
 
 <p>
 <b>del_and_move()</b> deletes the element from the list at the current cursor position and
-moves the cursor. The pointer to the deleted element is returned. If the cursor is forward, it moves to the 
+moves the cursor. The pointer to the object is returned. If the cursor is forward, it moves to the 
 next element. If the cursor is backward, it moves to the previous element. I.g. each cursor type
 moves to the next position in respect to the cursor movement direction.
 </p>

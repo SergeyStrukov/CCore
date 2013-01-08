@@ -9,7 +9,7 @@
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2012 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
