@@ -52,6 +52,7 @@ bool Testit<29>::Main()
   Printf(Con,"#;\n",PrintSet(a.extend_copy(5,buf)));
  
   show(a);
+  showReverse(a);
   
   DynArray<int> b(DoCopy(6,50),a.getPtr_const());
   
@@ -84,10 +85,28 @@ bool Testit<29>::Main()
   DynArray<int> c{'0','1','2'};
   
   show(c);
+
+  {
+   c.apply( [] (int &obj) { obj+=100; } );
   
-  c.apply( [] (int &obj) { obj+=100; } );
+   show(c);
+  } 
   
-  show(c);
+  {
+   int k=0;
+  
+   c.apply( [&k] (int &obj) { obj+=k++; } );
+   
+   show(c);
+  } 
+  
+  {
+   int k=0;
+  
+   c.applyReverse( [&k] (int &obj) { obj+=k++; } );
+   
+   show(c);
+  } 
   
   try
     {

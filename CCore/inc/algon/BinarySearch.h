@@ -30,43 +30,49 @@ template <class R,class Algo=BaseRangeAlgo<R> > struct BinarySearchAlgo;
 template <class R,class Algo>
 struct BinarySearchAlgo : Algo
  {
+  typedef typename Algo::LenType LenType;
+ 
   using Algo::GetLen;
-  using Algo::Half;
-  using Algo::SplitBefore;
-  using Algo::SplitAfter;
+  using Algo::Split;
  
   template <class Pred>
   static R Find(R &r,Pred pred) // pred(R) is 0,0,0,...,0,1,1,...
    {
     R temp=r;
     
-    if( !temp ) return r;
+    LenType off=0;
+    LenType len=GetLen(temp);
     
-    // 0,0,... temp 1,1,...
+    if( !len ) return temp;
     
-    while( GetLen(temp)>1 )
+    // 0,0,... [off,len) 1,1,...
+    
+    while( len>1 )
       {
-       R prefix=Half(temp);
+       LenType pref=len/2;
       
-       if( pred(*temp) )
-         { 
-          temp=prefix;
+       if( pred(temp[off+pref]) )
+         {
+          len=pref;
          }
        else
          {
-          if( GetLen(temp)==1 ) return SplitAfter(r,temp);
-           
-          ++temp;
+          pref++;
+          
+          off+=pref;
+          len-=pref;
+          
+          if( !len ) return Split(r,off);
          } 
       }
     
-    if( pred(*temp) )
+    if( pred(temp[off]) )
       {
-       return SplitBefore(r,temp);
+       return Split(r,off);
       }
     else
       {
-       return SplitAfter(r,temp);
+       return Split(r,off+1);
       }
    }
   

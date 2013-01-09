@@ -155,6 +155,7 @@ obj/PrintTime.o \
 obj/PrintTitle.o \
 obj/Printf.o \
 obj/PtrLen.o \
+obj/PtrLenReverse.o \
 obj/Quick.o \
 obj/QuickSort.o \
 obj/RBTreeBase.o \
@@ -396,6 +397,7 @@ obj/PrintTime.s \
 obj/PrintTitle.s \
 obj/Printf.s \
 obj/PtrLen.s \
+obj/PtrLenReverse.s \
 obj/Quick.s \
 obj/QuickSort.s \
 obj/RBTreeBase.s \
@@ -637,6 +639,7 @@ obj/PrintTime.dep \
 obj/PrintTitle.dep \
 obj/Printf.dep \
 obj/PtrLen.dep \
+obj/PtrLenReverse.dep \
 obj/Quick.dep \
 obj/QuickSort.dep \
 obj/RBTreeBase.dep \
@@ -1193,6 +1196,9 @@ obj/Printf.o : ../../CCore/src/Printf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PtrLen.o : ../../CCore/src/gadget/PtrLen.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PtrLenReverse.o : ../../CCore/src/gadget/PtrLenReverse.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Quick.o : ../../Target/Vanilla-X/CCore/src/base/Quick.cpp
@@ -1911,6 +1917,9 @@ obj/Printf.s : ../../CCore/src/Printf.cpp
 obj/PtrLen.s : ../../CCore/src/gadget/PtrLen.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PtrLenReverse.s : ../../CCore/src/gadget/PtrLenReverse.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Quick.s : ../../Target/Vanilla-X/CCore/src/base/Quick.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2626,6 +2635,9 @@ obj/Printf.dep : ../../CCore/src/Printf.cpp
 
 obj/PtrLen.dep : ../../CCore/src/gadget/PtrLen.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PtrLen.o $< -MF $@
+
+obj/PtrLenReverse.dep : ../../CCore/src/gadget/PtrLenReverse.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PtrLenReverse.o $< -MF $@
 
 obj/Quick.dep : ../../Target/Vanilla-X/CCore/src/base/Quick.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Quick.o $< -MF $@

@@ -85,9 +85,27 @@ bool Testit<30>::Main()
   
   show(c);
   
-  c.apply_modify( [] (int &obj) { obj+=100; } );
+  {
+   c.apply_modify( [] (int &obj) { obj+=100; } );
   
-  show(c);
+   show(c);
+  } 
+  
+  {
+   int k=0;
+   
+   c.apply_modify( [&k] (int &obj) { obj+=k++; } );
+  
+   show(c);
+  } 
+  
+  {
+   int k=0;
+   
+   c.applyReverse_modify( [&k] (int &obj) { obj+=k++; } );
+  
+   show(c);
+  } 
   
   try
     {

@@ -72,6 +72,12 @@ void show(const T &a)
   Printf(Con,"#; maxlen = #;\n",PrintSet(Range(a)),a.getMaxLen());
  }
  
+template <class T>
+void showReverse(const T &a)
+ {
+  Printf(Con,"#; maxlen = #;\n",PrintSet(RangeReverse(a)),a.getMaxLen());
+ }
+ 
 } // namespace Private_testArray
 
 using namespace Private_testArray; 

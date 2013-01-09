@@ -306,6 +306,8 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
      return PtrLen<T>(Base::GetPtr(ptr.getPtr()),getLen());
     }
    
+   PtrLenReverse<T> modifyReverse() { return RangeReverse(modify()); }
+     
    void cloneTo(AtomicRefArray<T,Algo> &ret) const
     {
      AtomicRefArray<T,Algo> temp(DoCopy(getLen(),getMaxLen()),getPtr());
@@ -462,6 +464,12 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
    
    template <class FuncInit>
    void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse_modify(FuncInit func_init) { Algon::ApplyToRange(modifyReverse(),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
    
    // swap/move objects
    

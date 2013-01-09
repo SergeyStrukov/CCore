@@ -303,6 +303,8 @@ class RefArray : RefArrayBase<T,Algo>
      return PtrLen<T>(Base::GetPtr(ptr.getPtr()),getLen());
     }
    
+   PtrLenReverse<T> modifyReverse() { return RangeReverse(modify()); }
+     
    void cloneTo(RefArray<T,Algo> &ret) const
     {
      RefArray<T,Algo> temp(DoCopy(getLen(),getMaxLen()),getPtr());
@@ -452,6 +454,12 @@ class RefArray : RefArrayBase<T,Algo>
    
    template <class FuncInit>
    void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse_modify(FuncInit func_init) { Algon::ApplyToRange(modifyReverse(),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
    
    // swap/move objects
    

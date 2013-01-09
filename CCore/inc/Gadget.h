@@ -32,6 +32,7 @@
 #include <CCore/inc/gadget/Place.h>
 #include <CCore/inc/gadget/PosSub.h>
 #include <CCore/inc/gadget/PtrLen.h>
+#include <CCore/inc/gadget/PtrLenReverse.h>
 #include <CCore/inc/gadget/Replace.h>
 #include <CCore/inc/gadget/Space.h>
 #include <CCore/inc/gadget/UIntFunc.h>

@@ -23,15 +23,17 @@ namespace Algon {
 
 /* classes */
 
-template <class UInt> struct CommonIntAlgo;
+template <class UInt> struct BitIntAlgo;
 
-/* struct CommonIntAlgo<UInt> */
+template <class UInt,class Algo=BitIntAlgo<UInt> > struct CommonIntAlgo;
+
+/* struct BitIntAlgo<UInt> */
 
 template <class UInt> 
-struct CommonIntAlgo
+struct BitIntAlgo
  {
-  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::Algon::CommonIntAlgo<UInt> : UInt must be an unsigned integral type");
-
+  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::Algon::BitIntAlgo<UInt> : UInt must be an unsigned integral type");
+  
   static bool IsEven(UInt a) { return !(a&UInt(1)); }
   
   static unsigned BitScan(UInt a) // a!=0
@@ -53,6 +55,17 @@ struct CommonIntAlgo
     
     return a;
    }
+ };
+
+/* struct CommonIntAlgo<UInt,Algo> */
+
+template <class UInt,class Algo> 
+struct CommonIntAlgo : Algo
+ {
+  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::Algon::CommonIntAlgo<UInt> : UInt must be an unsigned integral type");
+
+  using Algo::BitScan;
+  using Algo::OddPart;
   
   static void Order(UInt &a,UInt &b)
    {
@@ -75,7 +88,7 @@ struct CommonIntAlgo
        
        if( !(b-=a) ) return a<<s;
        
-       b=OddPart(b);
+       b=OddPart(b>>1);
       }
    }
   
