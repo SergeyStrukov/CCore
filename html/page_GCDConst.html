@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_GCDConst.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> GCDConst</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,35 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>GCDConst</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/algon/GCDConst.h</b> <b>CCore/src/algon/GCDConst.cpp</b></p>
 
+<p>
+Here is two algorithms to calculate GCD (great common divisor) and LCM (least common multiple) in the compile-time. Arguments are template parameters
+of some unsigned integral type. <b>Result()</b> is a <b>constexpr</b> function, which return the GCD or LCM
+of arguments respectivly.
+</p>
+
+<pre>
+
+template &lt;class UInt,UInt A,UInt B&gt;
+struct <span class="Att">Algon::GCDConst</span>
+ {
+  static constexpr UInt Result(); // return GCD(A,B)
+ };
+ 
+</pre>
+
+<pre>
+
+template &lt;class UInt,UInt A,UInt B&gt;
+struct <span class="Att">Algon::LCMConst</span>
+ {
+  static constexpr UInt Result(); // return LCM(A,B)
+ };
+
+</pre>
 
 </body>
 

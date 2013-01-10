@@ -120,6 +120,13 @@ Allocation errors and index check errors throw exceptions. Default constructors 
 
 <p>
 The method <b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+If the array is constant, then element references are constant too.
+</p>
+
+<p>
+The method <b>applyReverse()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements
+in the reverse order.
+If the array is constant, then element references are constant too.
 </p>
 
 <p>
@@ -193,6 +200,12 @@ class <span class="Att">TempArray</span> : NoCopy
    
    template &lt;class FuncInit&gt;
    void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
  };
 </pre>
 
@@ -264,6 +277,12 @@ class <span class="Att">SimpleArray</span> : NoCopy
    template &lt;class FuncInit&gt;
    void apply(FuncInit func_init) const;
    
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+
    // swap/move objects
    
    void objSwap(SimpleArray&lt;T,Algo&gt; &amp;obj);
@@ -603,10 +622,16 @@ The return value is a pointer to the created element.
    template &lt;class FuncInit&gt;
    void apply(FuncInit func_init) const;
    
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+
 </pre>
 
 <p>
-<b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+<b>apply...()</b> methods are standard.
 </p>
 
 <pre>
@@ -639,8 +664,9 @@ uses the atomic reference counting to be viable in a multi-threaded environment.
 as independent variables, despite they may share the state. That is because <b>RefArray</b> provides
 only a constant access to elements. So far you don't violate this constantness (using the const-cast, for example),
 you may safely assume that each copy is different. To modify an array you have to call
-the method <b>modify()</b>. This method "unshares" the array, if necessary, and gives a non-constant access to
-elements.
+the method <b>modify()</b> (or <b>modifyReverse()</b>). 
+This method "unshares" the array, if necessary, and gives a non-constant access to elements.
+<b>modifyReverse()</b> is doing the same thing as <b>modify()</b>, but gives a "reversed" range of elements.
 </p>
 
 <pre>
@@ -706,6 +732,8 @@ class <span class="Att">RefArray</span>
    
    PtrLen&lt;T&gt; modify();
    
+   PtrLenReverse&lt;T&gt; modifyReverse() { return RangeReverse(modify()); }
+
    void cloneTo(RefArray&lt;T,Algo&gt; &amp;ret) const;
     
    void reserve(ulen extra_len);
@@ -768,6 +796,12 @@ class <span class="Att">RefArray</span>
    template &lt;class FuncInit&gt;
    void apply(FuncInit func_init) const;
    
+   template &lt;class FuncInit&gt;
+   void applyReverse_modify(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+
    // swap/move objects
    
    void objSwap(RefArray&lt;T,Algo&gt; &amp;obj);
@@ -780,8 +814,8 @@ class <span class="Att">RefArray</span>
 
 <p>
 The <b>RefArray</b> methods are mostly the same as <b>DynArray</b> methods. The differences are:
-index and range access methods gives only the constant access, and the new class-specific method <b>modify()</b>
-exists.
+index and range access methods gives only the constant access, and new class-specific methods <b>modify()</b>
+and <b>modifyReverse()</b> exist.
 </p>
 
 <p>
@@ -790,7 +824,19 @@ The array is unshared first.
 </p>
 
 <p>
+<b>applyReverse_modify()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements
+in the reverse order.
+The array is unshared first.
+</p>
+
+<p>
 <b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
+This is a constant method.
+</p>
+
+<p>
+<b>applyReverse()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements
+in the reverse order.
 This is a constant method.
 </p>
 

@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_ApplyToRange.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> ApplyToRange</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,22 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>ApplyToRange</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/algon/ApplyToRange.h</b> <b>CCore/src/algon/ApplyToRange.cpp</b></p>
 
+<p>
+<b>ApplyToRange()</b> applies a functor to a set of elements.
+This algorithm uses the <a href="page_FunctorType.html">Functor Init Pattern</a>.
+The first argument is a <b>Cursor</b>, the second is a functor initializer.
+</p>
+
+<pre>
+
+template &lt;class R,class FuncInit&gt;
+void <span class="Att">Algon::ApplyToRange</span>(R r,FuncInit func_init);
+
+</pre>
 
 </body>
 

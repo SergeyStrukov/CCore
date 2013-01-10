@@ -74,6 +74,7 @@ OBJ_LIST = \
 ../test-obj/test0072.GCDConst.o \
 ../test-obj/test0073.CompactMap.o \
 ../test-obj/test0074.TreeUpIns.o \
+../test-obj/test0075.PtrLenReverse.o \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
@@ -192,6 +193,7 @@ ASM_LIST = \
 ../test-obj/test0072.GCDConst.s \
 ../test-obj/test0073.CompactMap.s \
 ../test-obj/test0074.TreeUpIns.s \
+../test-obj/test0075.PtrLenReverse.s \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
@@ -310,6 +312,7 @@ DEP_LIST = \
 ../test-obj/test0072.GCDConst.dep \
 ../test-obj/test0073.CompactMap.dep \
 ../test-obj/test0074.TreeUpIns.dep \
+../test-obj/test0075.PtrLenReverse.dep \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
@@ -581,6 +584,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0074.TreeUpIns.o : ../../../CCore/test/test0074.TreeUpIns.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0075.PtrLenReverse.o : ../../../CCore/test/test0075.PtrLenReverse.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -930,6 +936,9 @@ include $(RULES_FILE)
 ../test-obj/test0074.TreeUpIns.s : ../../../CCore/test/test0074.TreeUpIns.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0075.PtrLenReverse.s : ../../../CCore/test/test0075.PtrLenReverse.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1276,6 +1285,9 @@ include $(RULES_FILE)
 
 ../test-obj/test0074.TreeUpIns.dep : ../../../CCore/test/test0074.TreeUpIns.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0074.TreeUpIns.o $< -MF $@
+
+../test-obj/test0075.PtrLenReverse.dep : ../../../CCore/test/test0075.PtrLenReverse.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0075.PtrLenReverse.o $< -MF $@
 
 ../test-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@
