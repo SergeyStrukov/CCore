@@ -39,7 +39,12 @@ The first argument is a <b>Cursor</b>, the second is a functor initializer.
 <pre>
 
 template &lt;class R,class FuncInit&gt;
-void <span class="Att">Algon::ApplyToRange</span>(R r,FuncInit func_init);
+void <span class="Att">Algon::ApplyToRange</span>(R r,FuncInit func_init)
+ {
+  FunctorTypeOf&lt;FuncInit&gt; func(func_init);
+  
+  for(; +r ;++r) func(*r);
+ }
 
 </pre>
 

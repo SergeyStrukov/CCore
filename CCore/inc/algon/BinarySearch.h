@@ -109,7 +109,7 @@ struct BinarySearchAlgo : Algo
    }
  };
 
-/* BinarySearch() */
+/* BinarySearch...() */
 
 template <class R,class Pred>
 R BinarySearch_if(R &r,Pred pred) { return BinarySearchAlgo<R>::Find(r,pred); }

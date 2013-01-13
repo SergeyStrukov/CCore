@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_BinarySearch.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> BinarySearch</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,92 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>BinarySearch</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/algon/BinarySearch.h</b> <b>CCore/src/algon/BinarySearch.cpp</b></p>
 
+<p>
+<b>BinarySearchAlgo</b> is an <b>Algorithm Package</b>. It is parametrized by a generalized range type
+and contains binary search algorithms. The second template parameter is defaulted to <b>BaseRangeAlgo</b>.
+</p>
+
+<pre>
+
+template &lt;class R,class Algo=BaseRangeAlgo&lt;R&gt; &gt;
+struct <span class="Att">BinarySearchAlgo</span> : Algo
+ {
+  template &lt;class Pred&gt;
+  static R Find(R &amp;r,Pred pred); // pred(R) is 0,0,0,...,0,1,1,...
+  
+  template &lt;class S&gt;
+  static R Find_less(R &amp;r,const S &amp;med); // R is decreasing
+  
+  template &lt;class S&gt;
+  static R Find_less_or_equal(R &amp;r,const S &amp;med); // R is decreasing
+  
+  template &lt;class S&gt;
+  static R Find_greater(R &amp;r,const S &amp;med); // R is increasing
+  
+  template &lt;class S&gt;
+  static R Find_greater_or_equal(R &amp;r,const S &amp;med); // R is increasing
+ };
+
+</pre>
+
+<p>
+<b>Find()</b> is a general binary search algorithm. It's input is a range and a predicate. The range must be
+increasing relative the predicate, i.g. if some element makes the predicate <b>true</b>, then the further elements
+do the same. The algorithm splits the range on two parts: prefix consists of elements with predicate value 
+<b>false</b>, and suffix makes predicate <b>true</b>. The prefix is returned and the suffix is set back to the <b>r</b>.
+The first element of suffix, if any, is the first element of the range satisfying the predicate.
+</p>
+
+<p>
+<b>Find_less()</b> is a special variant for the predicate "less than <b>med</b>". 
+The range is assumed decreasing.
+</p>
+
+<p>
+<b>Find_less_or_equal()</b> is a special variant for the predicate "less or equal than <b>med</b>". 
+The range is assumed decreasing.
+</p>
+
+<p>
+<b>Find_greater()</b> is a special variant for the predicate "greater than <b>med</b>".
+The range is assumed increasing.
+</p>
+
+<p>
+<b>Find_greater_or_equal()</b> is a special variant for the predicate "greater or equal than <b>med</b>".
+The range is assumed increasing.
+</p>
+
+<p>
+There is a family of functions for the binary search.
+</p>
+
+<pre>
+
+template &lt;class R,class Pred&gt;
+R <span class="Att">BinarySearch_if</span>(R &amp;r,Pred pred) { return BinarySearchAlgo&lt;R&gt;::Find(r,pred); }
+
+template &lt;class R,class S&gt;
+R <span class="Att">BinarySearch_less</span>(R &amp;r,const S &amp;med) { return BinarySearchAlgo&lt;R&gt;::Find_less(r,med); }
+
+template &lt;class R,class S&gt;
+R <span class="Att">BinarySearch_less_or_equal</span>(R &amp;r,const S &amp;med) { return BinarySearchAlgo&lt;R&gt;::Find_less_or_equal(r,med); }
+
+template &lt;class R,class S&gt;
+R <span class="Att">BinarySearch_greater</span>(R &amp;r,const S &amp;med) { return BinarySearchAlgo&lt;R&gt;::Find_greater(r,med); }
+
+template &lt;class R,class S&gt;
+R <span class="Att">BinarySearch_greater_or_equal</span>(R &amp;r,const S &amp;med) { return BinarySearchAlgo&lt;R&gt;::Find_greater_or_equal(r,med); }
+
+</pre>
+
+<p>
+They call the correspondent search algorithms from the <b>BinarySearchAlgo</b>.
+</p>
 
 </body>
 

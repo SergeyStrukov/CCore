@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_EuclidRotate.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> EuclidRotate</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,62 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>EuclidRotate</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/algon/EuclidRotate.h</b> <b>CCore/src/algon/EuclidRotate.cpp</b></p>
 
+<p>
+<b>EuclidRotateAlgo</b> is an <b>Algorithm Package</b>. It is parametrized by a generalized range type
+and contains range rotation algorithms. The second template parameter is defaulted to <b>BaseRangeAlgo</b>.
+</p>
+
+<pre>
+
+template &lt;class R,class Algo=BaseRangeAlgo&lt;R&gt; &gt;
+struct <span class="Att">EuclidRotateAlgo</span> : Algo
+ {
+  static void Rotate(R r,LenType prefix,LenType suffix); // prefix+suffix == GetLen(r)
+  
+  static void Rotate_prefix(R r,LenType prefix); // prefix <= GetLen(r)
+  
+  static void Rotate_suffix(R r,LenType suffix); // suffix <= GetLen(r)
+ };
+
+</pre>
+
+<p>
+<b>Rotate()</b> rotates the range. Rotation is a permutation of range elements, it can be considered as
+swapping two subranges: prefix and suffix. <b>prefix</b> is the prefix length, <b>suffix</b> is the suffix length.
+Permutation is performed by the swapping elements.
+</p>
+
+<p>
+<b>Rotate_prefix()</b> rotates the range, <b>prefix</b> is the prefix length. It is a rotation left by <b>prefix</b>
+elements.
+</p>
+
+<p>
+<b>Rotate_suffix()</b> rotates the range, <b>suffix</b> is the suffix length. It is a rotation right by <b>suffix</b>
+elements.
+</p>
+
+<p>
+There is a family of functions for the range rotation.
+</p>
+
+<pre>
+
+template &lt;class R,class Len&gt;
+void <span class="Att">EuclidRotate_prefix</span>(R r,Len prefix) { EuclidRotateAlgo&lt;R&gt;::Rotate_prefix(r,prefix); }
+
+template &lt;class R,class Len&gt;
+void <span class="Att">EuclidRotate_suffix</span>(R r,Len suffix) { EuclidRotateAlgo&lt;R&gt;::Rotate_suffix(r,suffix); }
+
+</pre>
+
+<p>
+They call the correspondent rotate algorithms from the <b>EuclidRotateAlgo</b>.
+</p>
 
 </body>
 

@@ -72,6 +72,8 @@ class CompactNodeAllocator : NoCopy
    
   public: 
    
+   // constructors
+   
    static const ulen DefaultCount = 100 ;
   
    explicit CompactNodeAllocator(ulen block_len_=DefaultCount)
@@ -85,11 +87,15 @@ class CompactNodeAllocator : NoCopy
      if( count ) NodePoolAbort();
     }
    
+   // props 
+   
    ulen operator + () const { return count; }
    
    bool operator ! () const { return !count; }
    
    ulen getCount() const { return count; }
+   
+   // methods
    
    template <class ... SS>
    Node * alloc(SS && ... ss)

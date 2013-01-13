@@ -82,8 +82,13 @@ class CompactList : NoCopy
  
    // content
    
-   T * getTop() const { return GetObject(list.top); }
+   T * getTop() { return GetObject(list.top); }
    
+   const T * getTop() const { return GetObject(list.top); }
+   
+   const T * getTop_const() const { return GetObject(list.top); }
+   
+   template <class S>
    struct Cur
     {
      typename Algo::Cur cur;
@@ -98,11 +103,11 @@ class CompactList : NoCopy
      
      bool operator ! () const { return !cur; }
      
-     T * getPtr() const { return &cur->obj; }
+     S * getPtr() const { return &cur->obj; }
      
-     T & operator * () const { return cur->obj; }
+     S & operator * () const { return cur->obj; }
  
-     T * operator -> () const { return &cur->obj; }
+     S * operator -> () const { return &cur->obj; }
      
      // cursor
      
@@ -111,8 +116,13 @@ class CompactList : NoCopy
      void operator -- () { --cur; }
     };
    
-   Cur getStart() const { return list.start(); }
+   Cur<T> getStart() { return list.start(); }
    
+   Cur<const T> getStart() const { return list.start(); }
+   
+   Cur<const T> getStart_const() const { return list.start(); }
+   
+   template <class S>
    struct CountCur
     {
      typename Algo::Cur cur;
@@ -128,37 +138,42 @@ class CompactList : NoCopy
      
      bool operator ! () const { return !count; }
      
-     T * getPtr() const { return &cur->obj; }
+     S * getPtr() const { return &cur->obj; }
      
-     T & operator * () const { return cur->obj; }
+     S & operator * () const { return cur->obj; }
  
-     T * operator -> () const { return &cur->obj; }
+     S * operator -> () const { return &cur->obj; }
      
      // cursor
      
      void operator ++ () { ++cur; count--; }
      
-     bool operator != (CountCur obj) const { return count!=obj.count; }
+     bool operator != (CountCur<S> obj) const { return count!=obj.count; }
     };
    
-   CountCur begin() const { return CountCur(list.start(),getCount()); }
+   CountCur<T> begin() { return CountCur<T>(list.start(),getCount()); }
    
-   CountCur end() const { return CountCur(); }
+   CountCur<T> end() { return CountCur<T>(); }
+   
+   CountCur<const T> begin() const { return CountCur<const T>(list.start(),getCount()); }
+   
+   CountCur<const T> end() const { return CountCur<const T>(); }
    
    // ins/del
 
    template <class ... SS>
    T * ins(SS && ... ss);
    
-   template <class ... SS>
-   T * insBefore(Cur pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insBefore(Cur<S> pos,SS && ... ss); // +pos   
    
-   template <class ... SS>
-   T * insAfter(Cur pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insAfter(Cur<S> pos,SS && ... ss); // +pos   
    
    bool del();
    
-   void delAndMove(Cur &pos); // +pos
+   template <class S>
+   void delAndMove(Cur<S> &pos); // +pos
    
    ulen erase();
    
@@ -166,6 +181,12 @@ class CompactList : NoCopy
    
    template <class FuncInit>
    void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
+   
+   template <class FuncInit>
+   void apply(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   
+   template <class FuncInit>
+   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
    
    // swap/move objects
    
@@ -239,8 +260,8 @@ T * CompactList<T>::ins(SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactList<T>::insBefore(Cur pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactList<T>::insBefore(Cur<S> pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -250,8 +271,8 @@ T * CompactList<T>::insBefore(Cur pos,SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactList<T>::insAfter(Cur pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactList<T>::insAfter(Cur<S> pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -274,7 +295,8 @@ bool CompactList<T>::del()
  }
 
 template <class T> 
-void CompactList<T>::delAndMove(Cur &pos)
+template <class S>
+void CompactList<T>::delAndMove(Cur<S> &pos)
  {
   Node *node=list.del_and_move(pos.cur);
   
@@ -343,10 +365,19 @@ class CompactList2 : NoCopy
  
    // content
    
-   T * getFirst() const { return GetObject(list.first); }
+   T * getFirst() { return GetObject(list.first); }
    
-   T * getLast() const { return GetObject(list.last); }
+   const T * getFirst() const { return GetObject(list.first); }
    
+   const T * getFirst_const() const { return GetObject(list.first); }
+   
+   T * getLast() { return GetObject(list.last); }
+   
+   const T * getLast() const { return GetObject(list.last); }
+   
+   const T * getLast_const() const { return GetObject(list.last); }
+   
+   template <class S>
    struct Cur
     {
      typename Algo::Cur cur;
@@ -361,11 +392,11 @@ class CompactList2 : NoCopy
      
      bool operator ! () const { return !cur; }
      
-     T * getPtr() const { return &cur->obj; }
+     S * getPtr() const { return &cur->obj; }
      
-     T & operator * () const { return cur->obj; }
+     S & operator * () const { return cur->obj; }
  
-     T * operator -> () const { return &cur->obj; }
+     S * operator -> () const { return &cur->obj; }
      
      // cursor
      
@@ -374,8 +405,13 @@ class CompactList2 : NoCopy
      void operator -- () { --cur; }
     };
    
-   Cur getStart() const { return list.start(); }
+   Cur<T> getStart() { return list.start(); }
    
+   Cur<const T> getStart() const { return list.start(); }
+   
+   Cur<const T> getStart_const() const { return list.start(); }
+   
+   template <class S>
    struct RevCur
     {
      typename Algo::RevCur cur;
@@ -390,11 +426,11 @@ class CompactList2 : NoCopy
      
      bool operator ! () const { return !cur; }
      
-     T * getPtr() const { return &cur->obj; }
+     S * getPtr() const { return &cur->obj; }
      
-     T & operator * () const { return cur->obj; }
+     S & operator * () const { return cur->obj; }
  
-     T * operator -> () const { return &cur->obj; }
+     S * operator -> () const { return &cur->obj; }
      
      // cursor
      
@@ -403,8 +439,13 @@ class CompactList2 : NoCopy
      void operator -- () { --cur; }
     };
    
-   RevCur getStartReverse() { return list.start_rev(); }
+   RevCur<T> getStartReverse() { return list.start_rev(); }
    
+   RevCur<const T> getStartReverse() const { return list.start_rev(); }
+   
+   RevCur<const T> getStartReverse_const() const { return list.start_rev(); }
+
+   template <class S>
    struct CountCur
     {
      typename Algo::Cur cur;
@@ -420,23 +461,28 @@ class CompactList2 : NoCopy
      
      bool operator ! () const { return !count; }
      
-     T * getPtr() const { return &cur->obj; }
+     S * getPtr() const { return &cur->obj; }
      
-     T & operator * () const { return cur->obj; }
+     S & operator * () const { return cur->obj; }
  
-     T * operator -> () const { return &cur->obj; }
+     S * operator -> () const { return &cur->obj; }
      
      // cursor
      
      void operator ++ () { ++cur; count--; }
      
-     bool operator != (CountCur obj) const { return count!=obj.count; }
+     bool operator != (CountCur<S> obj) const { return count!=obj.count; }
     };
    
-   CountCur begin() const { return CountCur(list.start(),getCount()); }
+   CountCur<T> begin() { return CountCur<T>(list.start(),getCount()); }
    
-   CountCur end() const { return CountCur(); }
+   CountCur<T> end() { return CountCur<T>(); }
    
+   CountCur<const T> begin() const { return CountCur<const T>(list.start(),getCount()); }
+   
+   CountCur<const T> end() const { return CountCur<const T>(); }
+   
+   template <class S>
    struct RevCountCur
     {
      typename Algo::RevCur cur;
@@ -452,35 +498,44 @@ class CompactList2 : NoCopy
      
      bool operator ! () const { return !count; }
      
-     T * getPtr() const { return &cur->obj; }
+     S * getPtr() const { return &cur->obj; }
      
-     T & operator * () const { return cur->obj; }
+     S & operator * () const { return cur->obj; }
  
-     T * operator -> () const { return &cur->obj; }
+     S * operator -> () const { return &cur->obj; }
      
      // cursor
      
      void operator ++ () { ++cur; count--; }
      
-     bool operator != (RevCountCur obj) const { return count!=obj.count; }
+     bool operator != (RevCountCur<S> obj) const { return count!=obj.count; }
     };
    
-   RevCountCur rbegin() const { return RevCountCur(list.start_rev(),getCount()); }
+   RevCountCur<T> rbegin() { return RevCountCur<T>(list.start_rev(),getCount()); }
    
-   RevCountCur rend() const { return RevCountCur(); }
+   RevCountCur<T> rend() { return RevCountCur<T>(); }
    
+   RevCountCur<const T> rbegin() const { return RevCountCur<const T>(list.start_rev(),getCount()); }
+   
+   RevCountCur<const T> rend() const { return RevCountCur<const T>(); }
+   
+   template <class S>
    struct ReverseAdapter
     {
-     RevCountCur cur;
+     RevCountCur<S> cur;
      
-     ReverseAdapter(RevCountCur cur_) : cur(cur_) {}
+     ReverseAdapter(RevCountCur<S> cur_) : cur(cur_) {}
      
-     RevCountCur begin() const { return cur; }
+     RevCountCur<S> begin() const { return cur; }
      
-     RevCountCur end() const { return RevCountCur(); }
+     RevCountCur<S> end() const { return RevCountCur<S>(); }
     };
    
-   ReverseAdapter reverse() const { return rbegin(); }
+   ReverseAdapter<T> reverse() { return rbegin(); }
+   
+   ReverseAdapter<const T> reverse() const { return rbegin(); }
+   
+   ReverseAdapter<const T> reverse_const() const { return rbegin(); }
    
    // ins/del
 
@@ -490,25 +545,27 @@ class CompactList2 : NoCopy
    template <class ... SS>
    T * insLast(SS && ... ss);
    
-   template <class ... SS>
-   T * insBefore(Cur pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insBefore(Cur<S> pos,SS && ... ss); // +pos   
    
-   template <class ... SS>
-   T * insBefore(RevCur pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insBefore(RevCur<S> pos,SS && ... ss); // +pos   
    
-   template <class ... SS>
-   T * insAfter(Cur pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insAfter(Cur<S> pos,SS && ... ss); // +pos   
    
-   template <class ... SS>
-   T * insAfter(RevCur pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insAfter(RevCur<S> pos,SS && ... ss); // +pos   
    
    bool delFirst();
    
    bool delLast();
    
-   void delAndMove(Cur &pos); // +pos
+   template <class S>
+   void delAndMove(Cur<S> &pos); // +pos
    
-   void delAndMove(RevCur &pos); // +pos
+   template <class S>
+   void delAndMove(RevCur<S> &pos); // +pos
    
    ulen erase();
    
@@ -518,7 +575,19 @@ class CompactList2 : NoCopy
    void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
    
    template <class FuncInit>
+   void apply(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   
+   template <class FuncInit>
+   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   
+   template <class FuncInit>
    void applyReverse(FuncInit func_init) { Algon::ApplyToRange(getStartReverse(),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(getStartReverse(),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse_const(FuncInit func_init) const { Algon::ApplyToRange(getStartReverse(),func_init); }
    
    // swap/move objects
    
@@ -620,8 +689,8 @@ T * CompactList2<T>::insLast(SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactList2<T>::insBefore(Cur pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactList2<T>::insBefore(Cur<S> pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -631,8 +700,8 @@ T * CompactList2<T>::insBefore(Cur pos,SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactList2<T>::insBefore(RevCur pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactList2<T>::insBefore(RevCur<S> pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -642,8 +711,8 @@ T * CompactList2<T>::insBefore(RevCur pos,SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactList2<T>::insAfter(Cur pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactList2<T>::insAfter(Cur<S> pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -653,8 +722,8 @@ T * CompactList2<T>::insAfter(Cur pos,SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactList2<T>::insAfter(RevCur pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactList2<T>::insAfter(RevCur<S> pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -690,7 +759,8 @@ bool CompactList2<T>::delLast()
  }
 
 template <class T> 
-void CompactList2<T>::delAndMove(Cur &pos)
+template <class S>
+void CompactList2<T>::delAndMove(Cur<S> &pos)
  {
   Node *node=list.del_and_move(pos.cur);
   
@@ -698,7 +768,8 @@ void CompactList2<T>::delAndMove(Cur &pos)
  }
 
 template <class T> 
-void CompactList2<T>::delAndMove(RevCur &pos)
+template <class S>
+void CompactList2<T>::delAndMove(RevCur<S> &pos)
  {
   Node *node=list.del_and_move(pos.cur);
   
@@ -767,8 +838,13 @@ class CompactCircularList : NoCopy
  
    // content
    
-   T * getTop() const { return GetObject(list.top); }
+   T * getTop() { return GetObject(list.top); }
    
+   const T * getTop() const { return GetObject(list.top); }
+   
+   const T * getTop_const() const { return GetObject(list.top); }
+
+   template <class S>
    struct Cur
     {
      typename Algo::Cur cur;
@@ -783,11 +859,11 @@ class CompactCircularList : NoCopy
      
      bool operator ! () const { return !cur; }
      
-     T * getPtr() const { return &cur->obj; }
+     S * getPtr() const { return &cur->obj; }
      
-     T & operator * () const { return cur->obj; }
+     S & operator * () const { return cur->obj; }
  
-     T * operator -> () const { return &cur->obj; }
+     S * operator -> () const { return &cur->obj; }
      
      // cursor
      
@@ -796,8 +872,13 @@ class CompactCircularList : NoCopy
      void operator -- () { --cur; }
     };
    
-   Cur getStart() const { return list.start(); }
+   Cur<T> getStart() { return list.start(); }
    
+   Cur<const T> getStart() const { return list.start(); }
+   
+   Cur<const T> getStart_const() const { return list.start(); }
+   
+   template <class S>
    struct RevCur
     {
      typename Algo::RevCur cur;
@@ -812,11 +893,11 @@ class CompactCircularList : NoCopy
      
      bool operator ! () const { return !cur; }
      
-     T * getPtr() const { return &cur->obj; }
+     S * getPtr() const { return &cur->obj; }
      
-     T & operator * () const { return cur->obj; }
+     S & operator * () const { return cur->obj; }
  
-     T * operator -> () const { return &cur->obj; }
+     S * operator -> () const { return &cur->obj; }
      
      // cursor
      
@@ -825,8 +906,13 @@ class CompactCircularList : NoCopy
      void operator -- () { --cur; }
     };
    
-   RevCur getStartReverse() { return list.start_rev(); }
+   RevCur<T> getStartReverse() { return list.start_rev(); }
    
+   RevCur<const T> getStartReverse() const { return list.start_rev(); }
+   
+   RevCur<const T> getStartReverse_const() const { return list.start_rev(); }
+   
+   template <class S>
    struct CountCur
     {
      Node *node;
@@ -842,23 +928,28 @@ class CompactCircularList : NoCopy
      
      bool operator ! () const { return !count; }
      
-     T * getPtr() const { return &node->obj; }
+     S * getPtr() const { return &node->obj; }
      
-     T & operator * () const { return node->obj; }
+     S & operator * () const { return node->obj; }
  
-     T * operator -> () const { return &node->obj; }
+     S * operator -> () const { return &node->obj; }
      
      // cursor
      
      void operator ++ () { node=Algo::Link(node).next; count--; }
      
-     bool operator != (CountCur obj) const { return count!=obj.count; }
+     bool operator != (CountCur<S> obj) const { return count!=obj.count; }
     };
    
-   CountCur begin() const { return CountCur(list.top,getCount()); }
+   CountCur<T> begin() { return CountCur<T>(list.top,getCount()); }
    
-   CountCur end() const { return CountCur(); }
+   CountCur<T> end() { return CountCur<T>(); }
    
+   CountCur<const T> begin() const { return CountCur<const T>(list.top,getCount()); }
+   
+   CountCur<const T> end() const { return CountCur<const T>(); }
+   
+   template <class S>
    struct RevCountCur
     {
      Node *node;
@@ -881,35 +972,44 @@ class CompactCircularList : NoCopy
      
      bool operator ! () const { return !count; }
      
-     T * getPtr() const { return &node->obj; }
+     S * getPtr() const { return &node->obj; }
      
-     T & operator * () const { return node->obj; }
+     S & operator * () const { return node->obj; }
  
-     T * operator -> () const { return &node->obj; }
+     S * operator -> () const { return &node->obj; }
      
      // cursor
      
      void operator ++ () { node=Algo::Link(node).prev; count--; }
      
-     bool operator != (RevCountCur obj) const { return count!=obj.count; }
+     bool operator != (RevCountCur<S> obj) const { return count!=obj.count; }
     };
    
-   RevCountCur rbegin() const { return RevCountCur(list.top,getCount()); }
+   RevCountCur<T> rbegin() { return RevCountCur<T>(list.top,getCount()); }
    
-   RevCountCur rend() const { return RevCountCur(); }
+   RevCountCur<T> rend() { return RevCountCur<T>(); }
    
+   RevCountCur<const T> rbegin() const { return RevCountCur<const T>(list.top,getCount()); }
+   
+   RevCountCur<const T> rend() const { return RevCountCur<const T>(); }
+   
+   template <class S>
    struct ReverseAdapter
     {
-     RevCountCur cur;
+     RevCountCur<S> cur;
      
-     ReverseAdapter(RevCountCur cur_) : cur(cur_) {}
+     ReverseAdapter(RevCountCur<S> cur_) : cur(cur_) {}
      
-     RevCountCur begin() const { return cur; }
+     RevCountCur<S> begin() const { return cur; }
      
-     RevCountCur end() const { return RevCountCur(); }
+     RevCountCur<S> end() const { return RevCountCur<S>(); }
     };
    
-   ReverseAdapter reverse() const { return rbegin(); }
+   ReverseAdapter<T> reverse() { return rbegin(); }
+   
+   ReverseAdapter<const T> reverse() const { return rbegin(); }
+   
+   ReverseAdapter<const T> reverse_const() const { return rbegin(); }
    
    // ins/del
 
@@ -919,25 +1019,27 @@ class CompactCircularList : NoCopy
    template <class ... SS>
    T * insLast(SS && ... ss);
    
-   template <class ... SS>
-   T * insBefore(Cur pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insBefore(Cur<S> pos,SS && ... ss); // +pos   
    
-   template <class ... SS>
-   T * insBefore(RevCur &pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insBefore(RevCur<S> &pos,SS && ... ss); // +pos   
    
-   template <class ... SS>
-   T * insAfter(Cur &pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insAfter(Cur<S> &pos,SS && ... ss); // +pos   
    
-   template <class ... SS>
-   T * insAfter(RevCur pos,SS && ... ss); // +pos   
+   template <class S,class ... SS>
+   T * insAfter(RevCur<S> pos,SS && ... ss); // +pos   
    
    bool delFirst();
    
    bool delLast();
    
-   void delAndMove(Cur &pos); // +pos
+   template <class S>
+   void delAndMove(Cur<S> &pos); // +pos
    
-   void delAndMove(RevCur &pos); // +pos
+   template <class S>
+   void delAndMove(RevCur<S> &pos); // +pos
    
    ulen erase();
    
@@ -951,7 +1053,19 @@ class CompactCircularList : NoCopy
    void apply(FuncInit func_init) { Algon::ApplyToRange(getStart(),func_init); }
    
    template <class FuncInit>
+   void apply(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   
+   template <class FuncInit>
+   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(getStart(),func_init); }
+   
+   template <class FuncInit>
    void applyReverse(FuncInit func_init) { Algon::ApplyToRange(getStartReverse(),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(getStartReverse(),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse_const(FuncInit func_init) const { Algon::ApplyToRange(getStartReverse(),func_init); }
    
    // swap/move objects
    
@@ -1055,8 +1169,8 @@ T * CompactCircularList<T>::insLast(SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactCircularList<T>::insBefore(Cur pos,SS && ... ss)   
+template <class S,class ... SS>
+T * CompactCircularList<T>::insBefore(Cur<S> pos,SS && ... ss)   
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -1066,8 +1180,8 @@ T * CompactCircularList<T>::insBefore(Cur pos,SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactCircularList<T>::insBefore(RevCur &pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactCircularList<T>::insBefore(RevCur<S> &pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -1077,8 +1191,8 @@ T * CompactCircularList<T>::insBefore(RevCur &pos,SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactCircularList<T>::insAfter(Cur &pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactCircularList<T>::insAfter(Cur<S> &pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -1088,8 +1202,8 @@ T * CompactCircularList<T>::insAfter(Cur &pos,SS && ... ss)
  }
 
 template <class T> 
-template <class ... SS>
-T * CompactCircularList<T>::insAfter(RevCur pos,SS && ... ss)
+template <class S,class ... SS>
+T * CompactCircularList<T>::insAfter(RevCur<S> pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   
@@ -1125,7 +1239,8 @@ bool CompactCircularList<T>::delLast()
  }
 
 template <class T> 
-void CompactCircularList<T>::delAndMove(Cur &pos)
+template <class S>
+void CompactCircularList<T>::delAndMove(Cur<S> &pos)
  {
   Node *node=list.del_and_move(pos.cur);
   
@@ -1133,7 +1248,8 @@ void CompactCircularList<T>::delAndMove(Cur &pos)
  }
 
 template <class T> 
-void CompactCircularList<T>::delAndMove(RevCur &pos)
+template <class S>
+void CompactCircularList<T>::delAndMove(RevCur<S> &pos)
  {
   Node *node=list.del_and_move(pos.cur);
   

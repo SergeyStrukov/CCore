@@ -647,7 +647,7 @@ void test11()
   for(int i=1; i<5 ;i++) list.insFirst(i);
   for(int i=5; i<10 ;i++) list.insLast(i);
   
-  Printf(Con,"top #;\n",*list.getTop());
+  Printf(Con,"top #;\n",*list.getTop_const());
   
   for(int obj : list ) Printf(Con,"#;\n",obj);
   
@@ -698,7 +698,7 @@ void test11()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStartReverse(); +cur ;++cur)
+  for(auto cur=list.getStartReverse_const(); +cur ;++cur)
     if( *cur==101 )
       {
        list.insBefore(cur,1000);
@@ -717,7 +717,7 @@ void test11()
   
   Putch(Con,'\n');
   
-  for(int obj : list.reverse() ) Printf(Con,"#;\n",obj);
+  for(int obj : list.reverse_const() ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   

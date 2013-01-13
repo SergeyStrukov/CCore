@@ -121,12 +121,14 @@ Allocation errors and index check errors throw exceptions. Default constructors 
 <p>
 The method <b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
 If the array is constant, then element references are constant too.
+The variant <b>apply_const()</b> also enforces constantness.
 </p>
 
 <p>
 The method <b>applyReverse()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements
 in the reverse order.
 If the array is constant, then element references are constant too.
+The variant <b>applyReverse_const()</b> also enforces constantness.
 </p>
 
 <p>
@@ -202,10 +204,16 @@ class <span class="Att">TempArray</span> : NoCopy
    void apply(FuncInit func_init) const;
    
    template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
    void applyReverse(FuncInit func_init);
    
    template &lt;class FuncInit&gt;
    void applyReverse(FuncInit func_init) const;
+
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
  };
 </pre>
 
@@ -278,10 +286,16 @@ class <span class="Att">SimpleArray</span> : NoCopy
    void apply(FuncInit func_init) const;
    
    template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
    void applyReverse(FuncInit func_init);
    
    template &lt;class FuncInit&gt;
    void applyReverse(FuncInit func_init) const;
+
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
 
    // swap/move objects
    
@@ -390,7 +404,7 @@ if the <b>len</b> is greater than <b>maxlen</b>.
 </p>
    
 <p>
-<b>DynArray(DoRaw dotype)</b> performes the "raw" initialization. If the <b>T</b> is a POD type, elements
+<b>DynArray(DoRaw dotype)</b> performs the "raw" initialization. If the <b>T</b> is a POD type, elements
 are not initialized. If not, the default initialization is performed.
 </p>
    
@@ -623,10 +637,16 @@ The return value is a pointer to the created element.
    void apply(FuncInit func_init) const;
    
    template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
    void applyReverse(FuncInit func_init);
    
    template &lt;class FuncInit&gt;
    void applyReverse(FuncInit func_init) const;
+
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
 
 </pre>
 

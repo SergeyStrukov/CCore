@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_BaseRangeAlgo.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> BaseRangeAlgo</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,87 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>BaseRangeAlgo</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/algon/BaseRangeAlgo.h</b> <b>CCore/src/algon/BaseRangeAlgo.cpp</b></p>
 
+<p>
+<b>BaseRangeAlgo</b> is an <b>Algorithm Package</b>. It is parametrized by a generalized range type
+and contains some simple range algorithms.
+</p>
+
+<pre>
+
+template &lt;class R&gt;
+struct <span class="Att">BaseRangeAlgo</span>
+ {
+  typedef ??? LenType;
+  
+  static LenType GetLen(R r);
+  
+  static R GetPrefix(R r,LenType len); // len <= GetLen(r)
+   
+  static R GetSuffix(R r,LenType len); // len <= GetLen(r)
+  
+  static R Split(R &amp;r,LenType prefix); // prefix <= GetLen(r)
+  
+  static void RangeSwap(R a,R b); // GetLen(a) == GetLen(b)
+ };
+
+</pre>
+
+<p>
+<b>LenType</b> is a range length type. It must be an unsigned integral type.
+</p>
+
+<p>
+<b>GetLen()</b> returns the range length.
+</p>
+
+<p>
+<b>GetPrefix()</b> returns a new range, which is a prefix of the given with the given length.
+<b>len</b> must not exceed the input range length.
+</p>
+
+<p>
+<b>GetSuffix()</b> returns a new range, which is a suffix of the given with the given length.
+<b>len</b> must not exceed the input range length.
+</p>
+
+<p>
+<b>Split()</b> splits the given range on prefix and suffix, prefix has a given length and returned,
+suffix is set back in the argument <b>r</b>.
+<b>prefix</b> must not exceed the input range length.
+</p>
+
+<p>
+<b>RangeSwap()</b> performs memberwise ranges element swap. Range lengths must be the same.
+</p>
+
+<p>
+The following specialization for the standard <b>PtrLen</b> range is provided:
+</p>
+
+<pre>
+template &lt;class T&gt;
+struct <span class="Att">BaseRangeAlgo&lt;PtrLen&lt;T&gt; &gt;</span>
+ {
+  typedef ulen LenType;
+  
+  static LenType GetLen(PtrLen&lt;T&gt; r) { return r.len; }
+  
+  static PtrLen&lt;T&gt; GetPrefix(PtrLen&lt;T&gt; r,LenType len) { return r.prefix(len); }
+   
+  static PtrLen&lt;T&gt; GetSuffix(PtrLen&lt;T&gt; r,LenType len) { return r.suffix(len); }
+  
+  static PtrLen&lt;T&gt; Split(PtrLen&lt;T&gt; &amp;r,LenType prefix) { return r+=prefix; }
+  
+  static void RangeSwap(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b)
+   {
+    for(T *p=b.ptr; +a ;++a,++p) Swap(*a,*p); 
+   }
+ };
+</pre>
 
 </body>
 

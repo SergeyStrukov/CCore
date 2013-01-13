@@ -89,10 +89,16 @@ class SimpleArray : NoCopy
    void apply(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
    
    template <class FuncInit>
+   void apply_const(FuncInit func_init) const { Algon::ApplyToRange(Range(*this),func_init); }
+   
+   template <class FuncInit>
    void applyReverse(FuncInit func_init) { Algon::ApplyToRange(RangeReverse(*this),func_init); }
    
    template <class FuncInit>
    void applyReverse(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
+   
+   template <class FuncInit>
+   void applyReverse_const(FuncInit func_init) const { Algon::ApplyToRange(RangeReverse(*this),func_init); }
    
    // swap/move objects
    
