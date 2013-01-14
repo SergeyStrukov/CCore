@@ -32,13 +32,14 @@
 
 <p>
 <b>BinarySearchAlgo</b> is an <b>Algorithm Package</b>. It is parametrized by a generalized range type
-and contains binary search algorithms. The second template parameter is defaulted to <b>BaseRangeAlgo</b>.
+and contains binary search algorithms. The second template parameter is defaulted 
+to the <b>BaseRangeAlgo&lt;R&gt;</b>.
 </p>
 
 <pre>
 
 template &lt;class R,class Algo=BaseRangeAlgo&lt;R&gt; &gt;
-struct <span class="Att">BinarySearchAlgo</span> : Algo
+struct <span class="Att">Algon::BinarySearchAlgo</span> : Algo
  {
   template &lt;class Pred&gt;
   static R Find(R &amp;r,Pred pred); // pred(R) is 0,0,0,...,0,1,1,...
@@ -61,8 +62,8 @@ struct <span class="Att">BinarySearchAlgo</span> : Algo
 <p>
 <b>Find()</b> is a general binary search algorithm. It's input is a range and a predicate. The range must be
 increasing relative the predicate, i.g. if some element makes the predicate <b>true</b>, then the further elements
-do the same. The algorithm splits the range on two parts: prefix consists of elements with predicate value 
-<b>false</b>, and suffix makes predicate <b>true</b>. The prefix is returned and the suffix is set back to the <b>r</b>.
+do the same. The algorithm splits the range on two parts: prefix consists of elements with the predicate value 
+<b>false</b>, and suffix makes the predicate <b>true</b>. The prefix is returned and the suffix is set back to the <b>r</b>.
 The first element of suffix, if any, is the first element of the range satisfying the predicate.
 </p>
 
@@ -93,19 +94,19 @@ There is a family of functions for the binary search.
 <pre>
 
 template &lt;class R,class Pred&gt;
-R <span class="Att">BinarySearch_if</span>(R &amp;r,Pred pred) { return BinarySearchAlgo&lt;R&gt;::Find(r,pred); }
+R <span class="Att">Algon::BinarySearch_if</span>(R &amp;r,Pred pred) { return Algon::BinarySearchAlgo&lt;R&gt;::Find(r,pred); }
 
 template &lt;class R,class S&gt;
-R <span class="Att">BinarySearch_less</span>(R &amp;r,const S &amp;med) { return BinarySearchAlgo&lt;R&gt;::Find_less(r,med); }
+R <span class="Att">Algon::BinarySearch_less</span>(R &amp;r,const S &amp;med) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_less(r,med); }
 
 template &lt;class R,class S&gt;
-R <span class="Att">BinarySearch_less_or_equal</span>(R &amp;r,const S &amp;med) { return BinarySearchAlgo&lt;R&gt;::Find_less_or_equal(r,med); }
+R <span class="Att">Algon::BinarySearch_less_or_equal</span>(R &amp;r,const S &amp;med) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_less_or_equal(r,med); }
 
 template &lt;class R,class S&gt;
-R <span class="Att">BinarySearch_greater</span>(R &amp;r,const S &amp;med) { return BinarySearchAlgo&lt;R&gt;::Find_greater(r,med); }
+R <span class="Att">Algon::BinarySearch_greater</span>(R &amp;r,const S &amp;med) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_greater(r,med); }
 
 template &lt;class R,class S&gt;
-R <span class="Att">BinarySearch_greater_or_equal</span>(R &amp;r,const S &amp;med) { return BinarySearchAlgo&lt;R&gt;::Find_greater_or_equal(r,med); }
+R <span class="Att">Algon::BinarySearch_greater_or_equal</span>(R &amp;r,const S &amp;med) { return Algon::BinarySearchAlgo&lt;R&gt;::Find_greater_or_equal(r,med); }
 
 </pre>
 

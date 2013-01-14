@@ -98,12 +98,16 @@ There are two functions to calculate GCD and LCM for unsigned integral arguments
 <pre>
 
 template &lt;class UInt&gt;
-UInt <span class="Att">Algon::GCD</span>(UInt a,UInt b);
+UInt <span class="Att">Algon::GCD</span>(UInt a,UInt b) { return Algon::CommonIntAlgo&lt;UInt&gt;::GCD(a,b); }
 
 template &lt;class UInt&gt;
-UInt <span class="Att">Algon::LCM</span>(UInt a,UInt b); // no overflow check
+UInt <span class="Att">Algon::LCM</span>(UInt a,UInt b) { return Algon::CommonIntAlgo&lt;UInt&gt;::LCM(a,b); }
 
 </pre>
+
+<p>
+They call the correspondent algorithms from the <b>CommonIntAlgo</b>.
+</p>
 
 </body>
 

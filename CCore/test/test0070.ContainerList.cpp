@@ -26,7 +26,7 @@ void test1()
  {
   LinearSList<int,NodePoolAllocator> list;
   
-  Printf(Con,"no top is #;\n",!list.getTop());
+  Printf(Con,"no top is #;\n",!list.getTop_const());
   
   for(int i=1; i<10 ;i++) list.ins(i);
   
@@ -46,7 +46,7 @@ void test1()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==104 )
       {
        list.insAfter(cur,1000);
@@ -67,8 +67,8 @@ void test2()
  {
   LinearSList2<int,NodePoolAllocator> list;
   
-  Printf(Con,"no first is #;\n",!list.getFirst());
-  Printf(Con,"no last is #;\n",!list.getLast());
+  Printf(Con,"no first is #;\n",!list.getFirst_const());
+  Printf(Con,"no last is #;\n",!list.getLast_const());
   
   for(int i=1; i<5 ;i++) list.insFirst(i);
   for(int i=5; i<10 ;i++) list.insLast(i);
@@ -90,7 +90,7 @@ void test2()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==105 )
       {
        list.insAfter(cur,1000);
@@ -111,7 +111,7 @@ void test3()
  {
   CircularSList<int,NodePoolAllocator> list;
   
-  Printf(Con,"no bottom is #;\n",!list.getBottom());
+  Printf(Con,"no bottom is #;\n",!list.getBottom_const());
   
   for(int i=1; i<10 ;i++) list.ins(i);
   
@@ -131,7 +131,7 @@ void test3()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==104 )
       {
        list.insAfter(cur,1000);
@@ -158,7 +158,7 @@ void test4()
  {
   LinearDList<int,NodePoolAllocator> list;
   
-  Printf(Con,"no top is #;\n",!list.getTop());
+  Printf(Con,"no top is #;\n",!list.getTop_const());
   
   for(int i=1; i<10 ;i++) list.ins(i);
   
@@ -178,7 +178,7 @@ void test4()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==104 )
       {
        list.insBefore(cur,1000);
@@ -206,8 +206,8 @@ void test5()
  {
   LinearDList2<int,NodePoolAllocator> list;
   
-  Printf(Con,"no first is #;\n",!list.getFirst());
-  Printf(Con,"no last is #;\n",!list.getLast());
+  Printf(Con,"no first is #;\n",!list.getFirst_const());
+  Printf(Con,"no last is #;\n",!list.getLast_const());
   
   for(int i=1; i<5 ;i++) list.insFirst(i);
   for(int i=5; i<10 ;i++) list.insLast(i);
@@ -233,7 +233,7 @@ void test5()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==105 )
       {
        list.insBefore(cur,1000);
@@ -252,7 +252,7 @@ void test5()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStartReverse(); +cur ;++cur)
+  for(auto cur=list.getStartReverse_const(); +cur ;++cur)
     if( *cur==101 )
       {
        list.insBefore(cur,1000);
@@ -271,7 +271,7 @@ void test5()
   
   Putch(Con,'\n');
   
-  for(int obj : list.reverse() ) Printf(Con,"#;\n",obj);
+  for(int obj : list.reverse_const() ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   
@@ -292,7 +292,7 @@ void test6()
  {
   CircularDList<int,NodePoolAllocator> list;
   
-  Printf(Con,"no top is #;\n",!list.getTop());
+  Printf(Con,"no top is #;\n",!list.getTop_const());
   
   for(int i=1; i<5 ;i++) list.insFirst(i);
   for(int i=5; i<10 ;i++) list.insLast(i);
@@ -329,7 +329,7 @@ void test6()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==105 )
       {
        list.insBefore(cur,1000);
@@ -348,7 +348,7 @@ void test6()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStartReverse(); +cur ;++cur)
+  for(auto cur=list.getStartReverse_const(); +cur ;++cur)
     if( *cur==101 )
       {
        list.insBefore(cur,1000);
@@ -367,7 +367,7 @@ void test6()
   
   Putch(Con,'\n');
   
-  for(int obj : list.reverse() ) Printf(Con,"#;\n",obj);
+  for(int obj : list.reverse_const() ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   
@@ -508,7 +508,7 @@ void test9()
  {
   CompactList<int> list;
   
-  Printf(Con,"no top is #;\n",!list.getTop());
+  Printf(Con,"no top is #;\n",!list.getTop_const());
   
   for(int i=1; i<10 ;i++) list.ins(i);
   
@@ -528,7 +528,7 @@ void test9()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==104 )
       {
        list.insBefore(cur,1000);
@@ -556,8 +556,8 @@ void test10()
  {
   CompactList2<int> list;
   
-  Printf(Con,"no first is #;\n",!list.getFirst());
-  Printf(Con,"no last is #;\n",!list.getLast());
+  Printf(Con,"no first is #;\n",!list.getFirst_const());
+  Printf(Con,"no last is #;\n",!list.getLast_const());
   
   for(int i=1; i<5 ;i++) list.insFirst(i);
   for(int i=5; i<10 ;i++) list.insLast(i);
@@ -583,7 +583,7 @@ void test10()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==105 )
       {
        list.insBefore(cur,1000);
@@ -602,7 +602,7 @@ void test10()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStartReverse(); +cur ;++cur)
+  for(auto cur=list.getStartReverse_const(); +cur ;++cur)
     if( *cur==101 )
       {
        list.insBefore(cur,1000);
@@ -621,7 +621,7 @@ void test10()
   
   Putch(Con,'\n');
   
-  for(int obj : list.reverse() ) Printf(Con,"#;\n",obj);
+  for(int obj : list.reverse_const() ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   
@@ -642,7 +642,7 @@ void test11()
  {
   CompactCircularList<int> list;
   
-  Printf(Con,"no top is #;\n",!list.getTop());
+  Printf(Con,"no top is #;\n",!list.getTop_const());
   
   for(int i=1; i<5 ;i++) list.insFirst(i);
   for(int i=5; i<10 ;i++) list.insLast(i);
@@ -679,7 +679,7 @@ void test11()
   
   Putch(Con,'\n');
   
-  for(auto cur=list.getStart(); +cur ;++cur)
+  for(auto cur=list.getStart_const(); +cur ;++cur)
     if( *cur==105 )
       {
        list.insBefore(cur,1000);
@@ -746,17 +746,17 @@ const char *const Testit<70>::Name="Test70 LinearSList";
 template<>
 bool Testit<70>::Main() 
  {
-  //test1();
-  //test2();
-  //test3();
-  //test4();
-  //test5();
-  //test6();
-  //test7();
-  //test8();
-  //test9();
-  //test10();
-  //test11();
+  test1();
+  test2();
+  test3();
+  test4();
+  test5();
+  test6();
+  test7();
+  test8();
+  test9();
+  test10();
+  test11();
   
   return true;
  }

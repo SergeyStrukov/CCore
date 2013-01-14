@@ -28,11 +28,11 @@ void test1()
   
   for(int i=1; i<10 ;i++) map.find_or_add(i,i);
   
-  map.applyIncr( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
+  map.applyIncr_const( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
   
   Putch(Con,'\n');
   
-  map.applyDecr( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
+  map.applyDecr_const( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
   
   Putch(Con,'\n');
  }
@@ -54,7 +54,7 @@ void testMap()
   
   for(int i=1; i<10 ;i++)
     {
-     Printf(Con,"#;\n",*map.find(i));
+     Printf(Con,"#;\n",*map.find_const(i));
     }
   
   for(int i=1; i<10 ;i++) 
@@ -75,7 +75,7 @@ void testMap()
   Putch(Con,'\n');
   
   map.del(map.findMin_ptr(5));
-  map.del(map.findMax_ptr(5));
+  map.del(map.findMax_ptr_const(5));
   
   map.applyIncr( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
   
@@ -188,15 +188,15 @@ const char *const Testit<69>::Name="Test69 RBTreeMap";
 template<>
 bool Testit<69>::Main() 
  {
-  //test1();
-  //test2();
-  //test3();
-  //test4(20000000);
-  //test5(20000000);
-  //test6(20000000);
-  //test7(20000000);
-  //test8();
-  //test9();
+  test1();
+  test2();
+  test3();
+  test4(20000000);
+  test5(20000000);
+  test6(20000000);
+  test7(20000000);
+  test8();
+  test9();
   
   return true;
  }

@@ -34,7 +34,7 @@
 
 <p>
 <b>CCore</b> provides a default working thread pool. You can use it on a multi-core CPU to speed-up
-some time-consuming calculations. To get a benefit from extra threads, you have to comit them to the pool,
+some time-consuming calculations. To get a benefit from extra threads, you have to commit them to the pool,
 using the class <b>Job::Init</b>.
 </p>
 
@@ -59,7 +59,7 @@ object is allowed, an attempt to create another one will throw an exception.
 </p>
 
 <p>
-To use the pool service use the class <b>Job</b>.
+To get the pool service use the class <b>Job</b>.
 </p>
 
 <pre>
@@ -101,7 +101,7 @@ Then destructor waits until all activated threads complete the call.
 </p>
 
 <p>
-Sharing the job among several threads is the responsibility of the function <b>job</b>.
+Sharing the job among several threads is a responsibility of the function <b>job</b>.
 </p>
 
 <p>
@@ -138,7 +138,7 @@ class <span class="Att">Starter</span> : public Funchor_nocopy
 <p>
 This class is a generic implementation of the working thread pool. The type <b>T</b> must be a lightweight functor type.
 It must have <b>efficient</b> default constructor, copy constructor and assign operator.
-<b>Job</b> uses the type <b>JobType</b> as <b>T</b>.
+<b>Job</b> uses the type <b>JobType</b> as the <b>T</b>.
 </p>
 
 <p>
@@ -169,7 +169,7 @@ class <span class="Att">Starter&lt;T&gt;::Run</span> : NoCopy
 </p>
 
 <p>
-<b>getTaskCount()</b> returns the number of commited to the <b>starter</b> threads.
+<b>getTaskCount()</b> returns the number of committed to the <b>starter</b> threads.
 </p>
 
 <p>
@@ -199,13 +199,13 @@ class <span class="Att">Starter&lt;T&gt;::Start</span> : NoCopy
 </pre>
 
 <p>
-<b>Start</b> tries to get the <b>Starter</b> service. If <b>starter</b> is not null and in the idle state, then
-constructor commits <b>obj</b> for execution. Available working threads from the pool will call <b>obj()</b>.
+<b>Start</b> tries to get the <b>Starter</b> service. If the <b>starter</b> is not null and in the idle state, then
+the constructor commits <b>obj</b> for execution. Available working threads from the pool will call <b>obj()</b>.
 There may be zero such threads. Destructor waits until all activated threads complete the call.
 </p>
 
 <p>
-<b>operator +</b> and <b>operator !</b> can be used to check if the job was successfully started.
+<b>operator +</b> and <b>operator !</b> can be used to check, if the job was successfully started.
 </p>
 
 </body>

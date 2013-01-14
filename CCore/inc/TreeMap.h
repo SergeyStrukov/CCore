@@ -76,6 +76,12 @@ class RBTreeMap : NoCopy
    template <class Func>
    static void ApplyDecr(Node *node,Func &func);
    
+   template <class Func>
+   static void ApplyIncr_const(Node *node,Func &func);
+   
+   template <class Func>
+   static void ApplyDecr_const(Node *node,Func &func);
+   
   public: 
    
    // constructors
@@ -95,16 +101,40 @@ class RBTreeMap : NoCopy
    
    // find
    
-   T * find(KRef key) const;
+   T * find(KRef key) { return GetObject(root.find(key)); }
    
-   T * findMin() const;
+   T * findMin() { return GetObject(root.findMin()); }
    
-   T * findMin(KRef key) const;
+   T * findMin(KRef key) { return GetObject(root.findMin(key)); }
    
-   T * findMax() const;
+   T * findMax() { return GetObject(root.findMax()); }
    
-   T * findMax(KRef key) const;
+   T * findMax(KRef key) { return GetObject(root.findMax(key)); }
+
+
+   const T * find(KRef key) const { return GetObject(root.find(key)); }
    
+   const T * findMin() const { return GetObject(root.findMin()); }
+   
+   const T * findMin(KRef key) const { return GetObject(root.findMin(key)); }
+   
+   const T * findMax() const { return GetObject(root.findMax()); }
+   
+   const T * findMax(KRef key) const { return GetObject(root.findMax(key)); }
+
+
+   const T * find_const(KRef key) const { return GetObject(root.find(key)); }
+   
+   const T * findMin_const() const { return GetObject(root.findMin()); }
+   
+   const T * findMin_const(KRef key) const { return GetObject(root.findMin(key)); }
+   
+   const T * findMax_const() const { return GetObject(root.findMax()); }
+   
+   const T * findMax_const(KRef key) const { return GetObject(root.findMax(key)); }
+   
+   
+   template <class S>
    struct NodePtr
     {
      Node *node;
@@ -119,24 +149,47 @@ class RBTreeMap : NoCopy
      
      bool operator ! () const { return !node; }
      
-     T * getPtr() const { return &node->obj; }
+     S * getPtr() const { return &node->obj; }
      
-     T & operator * () const { return node->obj; }
+     S & operator * () const { return node->obj; }
      
-     T * operator -> () const { return &node->obj; }
+     S * operator -> () const { return &node->obj; }
      
      const K & getKey() const { return GetKey(node); }
     };
    
-   NodePtr find_ptr(KRef key) const;
    
-   NodePtr findMin_ptr() const;
+   NodePtr<T> find_ptr(KRef key) { return root.find(key); }
    
-   NodePtr findMin_ptr(KRef key) const;
+   NodePtr<T> findMin_ptr() { return root.findMin(); }
    
-   NodePtr findMax_ptr() const;
+   NodePtr<T> findMin_ptr(KRef key) { return root.findMin(key); }
    
-   NodePtr findMax_ptr(KRef key) const;
+   NodePtr<T> findMax_ptr() { return root.findMax(); }
+   
+   NodePtr<T> findMax_ptr(KRef key) { return root.findMax(key); }
+   
+   
+   NodePtr<const T> find_ptr(KRef key) const { return root.find(key); }
+   
+   NodePtr<const T> findMin_ptr() const { return root.findMin(); }
+   
+   NodePtr<const T> findMin_ptr(KRef key) const { return root.findMin(key); }
+   
+   NodePtr<const T> findMax_ptr() const { return root.findMax(); }
+   
+   NodePtr<const T> findMax_ptr(KRef key) const { return root.findMax(key); }
+   
+   
+   NodePtr<const T> find_ptr_const(KRef key) const { return root.find(key); }
+   
+   NodePtr<const T> findMin_ptr_const() const { return root.findMin(); }
+   
+   NodePtr<const T> findMin_ptr_const(KRef key) const { return root.findMin(key); }
+   
+   NodePtr<const T> findMax_ptr_const() const { return root.findMax(); }
+   
+   NodePtr<const T> findMax_ptr_const(KRef key) const { return root.findMax(key); }
    
    // add/del
    
@@ -159,17 +212,30 @@ class RBTreeMap : NoCopy
    
    bool delMax();
    
-   bool del(NodePtr node_ptr);
+   template <class S>
+   bool del(NodePtr<S> node_ptr);
    
    ulen erase();
    
    // apply
    
    template <class FuncInit>
+   void applyIncr(FuncInit func_init);
+   
+   template <class FuncInit>
+   void applyDecr(FuncInit func_init);
+   
+   template <class FuncInit>
    void applyIncr(FuncInit func_init) const;
    
    template <class FuncInit>
    void applyDecr(FuncInit func_init) const;
+   
+   template <class FuncInit>
+   void applyIncr_const(FuncInit func_init) const { applyIncr(func_init); }
+   
+   template <class FuncInit>
+   void applyDecr_const(FuncInit func_init) const { applyDecr(func_init); }
    
    // swap/move objects
    
@@ -240,63 +306,31 @@ void RBTreeMap<K,T,KRef,Allocator>::ApplyDecr(Node *node,Func &func)
  }
 
 template <class K,class T,class KRef,template <class Node> class Allocator>
-T * RBTreeMap<K,T,KRef,Allocator>::find(KRef key) const
+template <class Func>
+void RBTreeMap<K,T,KRef,Allocator>::ApplyIncr_const(Node *node,Func &func)
  {
-  return GetObject(root.find(key));
+  if( node )
+    {
+     ApplyIncr(Algo::Link(node).lo,func);
+     
+     func(GetKey(node),(const T &)node->obj);
+     
+     ApplyIncr(Algo::Link(node).hi,func);
+    }
  }
 
 template <class K,class T,class KRef,template <class Node> class Allocator>
-T * RBTreeMap<K,T,KRef,Allocator>::findMin() const
+template <class Func>
+void RBTreeMap<K,T,KRef,Allocator>::ApplyDecr_const(Node *node,Func &func)
  {
-  return GetObject(root.findMin());
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-T * RBTreeMap<K,T,KRef,Allocator>::findMin(KRef key) const
- {
-  return GetObject(root.findMin(key));
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-T * RBTreeMap<K,T,KRef,Allocator>::findMax() const
- {
-  return GetObject(root.findMax());
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-T * RBTreeMap<K,T,KRef,Allocator>::findMax(KRef key) const
- {
-  return GetObject(root.findMax(key));
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-auto RBTreeMap<K,T,KRef,Allocator>::find_ptr(KRef key) const -> NodePtr
- {
-  return root.find(key); 
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-auto RBTreeMap<K,T,KRef,Allocator>::findMin_ptr() const -> NodePtr
- {
-  return root.findMin(); 
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-auto RBTreeMap<K,T,KRef,Allocator>::findMin_ptr(KRef key) const -> NodePtr
- {
-  return root.findMin(key); 
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-auto RBTreeMap<K,T,KRef,Allocator>::findMax_ptr() const -> NodePtr
- {
-  return root.findMax(); 
- }
-
-template <class K,class T,class KRef,template <class Node> class Allocator>
-auto RBTreeMap<K,T,KRef,Allocator>::findMax_ptr(KRef key) const -> NodePtr
- {
-  return root.findMax(key); 
+  if( node )
+    {
+     ApplyDecr(Algo::Link(node).hi,func);
+     
+     func(GetKey(node),(const T &)node->obj);
+     
+     ApplyDecr(Algo::Link(node).lo,func);
+    }
  }
 
 template <class K,class T,class KRef,template <class Node> class Allocator>
@@ -333,7 +367,8 @@ bool RBTreeMap<K,T,KRef,Allocator>::delMax()
  }
 
 template <class K,class T,class KRef,template <class Node> class Allocator>
-bool RBTreeMap<K,T,KRef,Allocator>::del(NodePtr node_ptr)
+template <class S>
+bool RBTreeMap<K,T,KRef,Allocator>::del(NodePtr<S> node_ptr)
  {
   if( Node *node=node_ptr.node )
     {
@@ -363,7 +398,7 @@ ulen RBTreeMap<K,T,KRef,Allocator>::erase()
 
 template <class K,class T,class KRef,template <class Node> class Allocator>
 template <class FuncInit>
-void RBTreeMap<K,T,KRef,Allocator>::applyIncr(FuncInit func_init) const
+void RBTreeMap<K,T,KRef,Allocator>::applyIncr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
   
@@ -374,13 +409,35 @@ void RBTreeMap<K,T,KRef,Allocator>::applyIncr(FuncInit func_init) const
 
 template <class K,class T,class KRef,template <class Node> class Allocator>
 template <class FuncInit>
-void RBTreeMap<K,T,KRef,Allocator>::applyDecr(FuncInit func_init) const
+void RBTreeMap<K,T,KRef,Allocator>::applyDecr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
   
   Node *node=root.root;
   
   ApplyDecr(node,func);
+ }
+
+template <class K,class T,class KRef,template <class Node> class Allocator>
+template <class FuncInit>
+void RBTreeMap<K,T,KRef,Allocator>::applyIncr(FuncInit func_init) const
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+  
+  Node *node=root.root;
+  
+  ApplyIncr_const(node,func);
+ }
+
+template <class K,class T,class KRef,template <class Node> class Allocator>
+template <class FuncInit>
+void RBTreeMap<K,T,KRef,Allocator>::applyDecr(FuncInit func_init) const
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+  
+  Node *node=root.root;
+  
+  ApplyDecr_const(node,func);
  }
 
 /* struct KeyRange<K> */
@@ -392,6 +449,8 @@ struct KeyRange
   K kmax;
   
   KeyRange() : kmin(0),kmax(K(-1)) {}
+  
+  explicit KeyRange(K kmax_) : kmin(0),kmax(kmax_) {}
   
   KeyRange(K kmin_,K kmax_) : kmin(kmin_),kmax(kmax_) {}
   
@@ -445,6 +504,12 @@ class RadixTreeMap : NoCopy
    template <class Func>
    static void ApplyDecr(Node *node,Func &func);
  
+   template <class Func>
+   static void ApplyIncr_const(Node *node,Func &func);
+ 
+   template <class Func>
+   static void ApplyDecr_const(Node *node,Func &func);
+ 
   public:
  
    // constructors
@@ -467,16 +532,40 @@ class RadixTreeMap : NoCopy
    
    // find
    
-   T * find(K key) const;
+   T * find(K key) { return GetObject(root.find(key)); }
    
-   T * findMin() const;
+   T * findMin() { return GetObject(root.findMin()); }
    
-   T * findMin(K key) const;
+   T * findMin(K key) { return GetObject(root.findMin(key)); }
    
-   T * findMax() const;
+   T * findMax() { return GetObject(root.findMax()); }
    
-   T * findMax(K key) const;
+   T * findMax(K key) { return GetObject(root.findMax(key)); }
    
+   
+   const T * find(K key) const { return GetObject(root.find(key)); }
+   
+   const T * findMin() const { return GetObject(root.findMin()); }
+   
+   const T * findMin(K key) const { return GetObject(root.findMin(key)); }
+   
+   const T * findMax() const { return GetObject(root.findMax()); }
+   
+   const T * findMax(K key) const { return GetObject(root.findMax(key)); }
+   
+   
+   const T * find_const(K key) const { return GetObject(root.find(key)); }
+   
+   const T * findMin_const() const { return GetObject(root.findMin()); }
+   
+   const T * findMin_const(K key) const { return GetObject(root.findMin(key)); }
+   
+   const T * findMax_const() const { return GetObject(root.findMax()); }
+   
+   const T * findMax_const(K key) const { return GetObject(root.findMax(key)); }
+   
+   
+   template <class S>
    struct NodePtr
     {
      Node *node;
@@ -491,24 +580,47 @@ class RadixTreeMap : NoCopy
      
      bool operator ! () const { return !node; }
      
-     T * getPtr() const { return &node->obj; }
+     S * getPtr() const { return &node->obj; }
      
-     T & operator * () const { return node->obj; }
+     S & operator * () const { return node->obj; }
      
-     T * operator -> () const { return &node->obj; }
+     S * operator -> () const { return &node->obj; }
      
      K getKey() const { return GetKey(node); }
     };
    
-   NodePtr find_ptr(K key) const;
    
-   NodePtr findMin_ptr() const;
+   NodePtr<T> find_ptr(K key) { return root.find(key); }
    
-   NodePtr findMin_ptr(K key) const;
+   NodePtr<T> findMin_ptr() { return root.findMin(); }
    
-   NodePtr findMax_ptr() const;
+   NodePtr<T> findMin_ptr(K key) { return root.findMin(key); }
    
-   NodePtr findMax_ptr(K key) const;
+   NodePtr<T> findMax_ptr() { return root.findMax(); }
+   
+   NodePtr<T> findMax_ptr(K key) { return root.findMax(key); }
+   
+   
+   NodePtr<const T> find_ptr(K key) const { return root.find(key); }
+   
+   NodePtr<const T> findMin_ptr() const { return root.findMin(); }
+   
+   NodePtr<const T> findMin_ptr(K key) const { return root.findMin(key); }
+   
+   NodePtr<const T> findMax_ptr() const { return root.findMax(); }
+   
+   NodePtr<const T> findMax_ptr(K key) const { return root.findMax(key); }
+   
+   
+   NodePtr<const T> find_ptr_const(K key) const { return root.find(key); }
+   
+   NodePtr<const T> findMin_ptr_const() const { return root.findMin(); }
+   
+   NodePtr<const T> findMin_ptr_const(K key) const { return root.findMin(key); }
+   
+   NodePtr<const T> findMax_ptr_const() const { return root.findMax(); }
+   
+   NodePtr<const T> findMax_ptr_const(K key) const { return root.findMax(key); }
    
    // add/del
    
@@ -531,17 +643,30 @@ class RadixTreeMap : NoCopy
    
    bool delMax();
    
-   bool del(NodePtr node_ptr);
+   template <class S>
+   bool del(NodePtr<S> node_ptr);
    
    ulen erase();
    
    // apply
    
    template <class FuncInit>
+   void applyIncr(FuncInit func_init);
+   
+   template <class FuncInit>
+   void applyDecr(FuncInit func_init);
+   
+   template <class FuncInit>
    void applyIncr(FuncInit func_init) const;
    
    template <class FuncInit>
    void applyDecr(FuncInit func_init) const;
+   
+   template <class FuncInit>
+   void applyIncr_const(FuncInit func_init) const { applyIncr(func_init); }
+   
+   template <class FuncInit>
+   void applyDecr_const(FuncInit func_init) const { applyDecr(func_init); }
    
    // swap/move objects
    
@@ -614,63 +739,31 @@ void RadixTreeMap<K,T,Allocator>::ApplyDecr(Node *node,Func &func)
  }
 
 template <class K,class T,template <class Node> class Allocator> 
-T * RadixTreeMap<K,T,Allocator>::find(K key) const
+template <class Func>
+void RadixTreeMap<K,T,Allocator>::ApplyIncr_const(Node *node,Func &func)
  {
-  return GetObject(root.find(key));
+  if( node )
+    {
+     ApplyIncr(Algo::Link(node).lo,func);
+     
+     func(GetKey(node),(const T &)node->obj);
+     
+     ApplyIncr(Algo::Link(node).hi,func);
+    }
  }
 
 template <class K,class T,template <class Node> class Allocator> 
-T * RadixTreeMap<K,T,Allocator>::findMin() const
+template <class Func>
+void RadixTreeMap<K,T,Allocator>::ApplyDecr_const(Node *node,Func &func)
  {
-  return GetObject(root.findMin());
- }
-
-template <class K,class T,template <class Node> class Allocator> 
-T * RadixTreeMap<K,T,Allocator>::findMin(K key) const
- {
-  return GetObject(root.findMin(key));
- }
-
-template <class K,class T,template <class Node> class Allocator> 
-T * RadixTreeMap<K,T,Allocator>::findMax() const
- {
-  return GetObject(root.findMax());
- }
-
-template <class K,class T,template <class Node> class Allocator> 
-T * RadixTreeMap<K,T,Allocator>::findMax(K key) const
- {
-  return GetObject(root.findMax(key));
- }
-
-template <class K,class T,template <class Node> class Allocator> 
-auto RadixTreeMap<K,T,Allocator>::find_ptr(K key) const -> NodePtr
- {
-  return root.find(key); 
- }
-
-template <class K,class T,template <class Node> class Allocator> 
-auto RadixTreeMap<K,T,Allocator>::findMin_ptr() const -> NodePtr
- {
-  return root.findMin(); 
- }
-
-template <class K,class T,template <class Node> class Allocator> 
-auto RadixTreeMap<K,T,Allocator>::findMin_ptr(K key) const -> NodePtr
- {
-  return root.findMin(key); 
- }
-
-template <class K,class T,template <class Node> class Allocator> 
-auto RadixTreeMap<K,T,Allocator>::findMax_ptr() const -> NodePtr
- {
-  return root.findMax(); 
- }
-
-template <class K,class T,template <class Node> class Allocator> 
-auto RadixTreeMap<K,T,Allocator>::findMax_ptr(K key) const -> NodePtr 
- {
-  return root.findMax(key); 
+  if( node )
+    {
+     ApplyDecr(Algo::Link(node).hi,func);
+     
+     func(GetKey(node),(const T &)node->obj);
+     
+     ApplyDecr(Algo::Link(node).lo,func);
+    }
  }
 
 template <class K,class T,template <class Node> class Allocator> 
@@ -709,7 +802,8 @@ bool RadixTreeMap<K,T,Allocator>::delMax()
  }
 
 template <class K,class T,template <class Node> class Allocator> 
-bool RadixTreeMap<K,T,Allocator>::del(NodePtr node_ptr)
+template <class S>
+bool RadixTreeMap<K,T,Allocator>::del(NodePtr<S> node_ptr)
  {
   if( Node *node=node_ptr.node )
     {
@@ -739,7 +833,7 @@ ulen RadixTreeMap<K,T,Allocator>::erase()
 
 template <class K,class T,template <class Node> class Allocator> 
 template <class FuncInit>
-void RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init) const
+void RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
   
@@ -750,13 +844,35 @@ void RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init) const
 
 template <class K,class T,template <class Node> class Allocator> 
 template <class FuncInit>
-void RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init) const
+void RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init)
  {
   FunctorTypeOf<FuncInit> func(func_init);
   
   Node *node=root.root;
   
   ApplyDecr(node,func);
+ }
+
+template <class K,class T,template <class Node> class Allocator> 
+template <class FuncInit>
+void RadixTreeMap<K,T,Allocator>::applyIncr(FuncInit func_init) const
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+  
+  Node *node=root.root;
+  
+  ApplyIncr_const(node,func);
+ }
+
+template <class K,class T,template <class Node> class Allocator> 
+template <class FuncInit>
+void RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init) const
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+  
+  Node *node=root.root;
+  
+  ApplyDecr_const(node,func);
  }
 
 } // namespace CCore

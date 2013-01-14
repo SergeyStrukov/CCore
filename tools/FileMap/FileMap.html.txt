@@ -1396,8 +1396,8 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_AsyncFiles.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_AsyncUDPDevice.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Atomic.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_BaseRangeAlgo.html" 1
-"D:/active/home/C++/CCore-Root-1-03/html/page_BinarySearch.html" 1
+"D:/active/home/C++/CCore-Root-1-03/html/page_BaseRangeAlgo.html" 2
+"D:/active/home/C++/CCore-Root-1-03/html/page_BinarySearch.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_CCoreGeneral.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_CancelPacketList.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_CharProp.html" 2
@@ -1419,7 +1419,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_DirTreeRun.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_ElementPool.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_EllipticPi.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_EuclidRotate.html" 1
+"D:/active/home/C++/CCore-Root-1-03/html/page_EuclidRotate.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Event.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_ExceptionType.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Exceptions.html" 2
@@ -1439,7 +1439,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_Init.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Installation.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Introduction.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_Job.html" 1
+"D:/active/home/C++/CCore-Root-1-03/html/page_Job.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_LangLR1.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Len.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_LineInput.html" 0

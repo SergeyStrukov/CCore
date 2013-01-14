@@ -44,13 +44,19 @@ class NodeAllocator : NoCopy
    
   public: 
    
+   // constructors
+   
    NodeAllocator() : count(0) {}
+   
+   // props
    
    ulen operator + () const { return count; }
    
    bool operator ! () const { return !count; }
    
    ulen getCount() const { return count; }
+
+   // methods
    
    template <class ... SS>
    Node * alloc(SS && ... ss)
@@ -133,6 +139,8 @@ class MemBlockPool : NoCopy
   
   public: 
   
+   // constructors
+   
    static const ulen DefaultCount = 100 ;
   
    template <ulen Len,ulen AlignOf>
@@ -147,6 +155,8 @@ class MemBlockPool : NoCopy
    MemBlockPool(ulen len,ulen align_of,ulen alloc_count=DefaultCount);
    
    ~MemBlockPool();
+   
+   // methods
    
    void * alloc()
     {
@@ -235,6 +245,8 @@ class NodePoolAllocator : NoCopy
    
   public: 
    
+   // constructors
+   
    explicit NodePoolAllocator(ulen pool_count=MemBlockPool::DefaultCount)
     : pool(sizeof (Node),alignof (Node),pool_count),
       count(0) 
@@ -243,11 +255,15 @@ class NodePoolAllocator : NoCopy
    
    ~NodePoolAllocator() { if( count ) NodePoolAbort(); }
    
+   // props
+   
    ulen operator + () const { return count; }
    
    bool operator ! () const { return !count; }
    
    ulen getCount() const { return count; }
+   
+   // methods
    
    template <class ... SS>
    Node * alloc(SS && ... ss)

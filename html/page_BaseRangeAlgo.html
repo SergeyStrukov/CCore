@@ -38,7 +38,7 @@ and contains some simple range algorithms.
 <pre>
 
 template &lt;class R&gt;
-struct <span class="Att">BaseRangeAlgo</span>
+struct <span class="Att">Algon::BaseRangeAlgo</span>
  {
   typedef ??? LenType;
   
@@ -89,7 +89,7 @@ The following specialization for the standard <b>PtrLen</b> range is provided:
 
 <pre>
 template &lt;class T&gt;
-struct <span class="Att">BaseRangeAlgo&lt;PtrLen&lt;T&gt; &gt;</span>
+struct <span class="Att">Algon::BaseRangeAlgo&lt;PtrLen&lt;T&gt; &gt;</span>
  {
   typedef ulen LenType;
   

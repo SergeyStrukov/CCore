@@ -32,13 +32,13 @@
 
 <p>
 <b>EuclidRotateAlgo</b> is an <b>Algorithm Package</b>. It is parametrized by a generalized range type
-and contains range rotation algorithms. The second template parameter is defaulted to <b>BaseRangeAlgo</b>.
+and contains range rotation algorithms. The second template parameter is defaulted to <b>BaseRangeAlgo&lt;R&gt;</b>.
 </p>
 
 <pre>
 
 template &lt;class R,class Algo=BaseRangeAlgo&lt;R&gt; &gt;
-struct <span class="Att">EuclidRotateAlgo</span> : Algo
+struct <span class="Att">Algon::EuclidRotateAlgo</span> : Algo
  {
   static void Rotate(R r,LenType prefix,LenType suffix); // prefix+suffix == GetLen(r)
   
@@ -51,7 +51,7 @@ struct <span class="Att">EuclidRotateAlgo</span> : Algo
 
 <p>
 <b>Rotate()</b> rotates the range. Rotation is a permutation of range elements, it can be considered as
-swapping two subranges: prefix and suffix. <b>prefix</b> is the prefix length, <b>suffix</b> is the suffix length.
+the swapping two subranges: prefix and suffix. <b>prefix</b> is the prefix length, <b>suffix</b> is the suffix length.
 Permutation is performed by the swapping elements.
 </p>
 
@@ -72,10 +72,10 @@ There is a family of functions for the range rotation.
 <pre>
 
 template &lt;class R,class Len&gt;
-void <span class="Att">EuclidRotate_prefix</span>(R r,Len prefix) { EuclidRotateAlgo&lt;R&gt;::Rotate_prefix(r,prefix); }
+void <span class="Att">Algon::EuclidRotate_prefix</span>(R r,Len prefix) { Algon::EuclidRotateAlgo&lt;R&gt;::Rotate_prefix(r,prefix); }
 
 template &lt;class R,class Len&gt;
-void <span class="Att">EuclidRotate_suffix</span>(R r,Len suffix) { EuclidRotateAlgo&lt;R&gt;::Rotate_suffix(r,suffix); }
+void <span class="Att">Algon::EuclidRotate_suffix</span>(R r,Len suffix) { Algon::EuclidRotateAlgo&lt;R&gt;::Rotate_suffix(r,suffix); }
 
 </pre>
 

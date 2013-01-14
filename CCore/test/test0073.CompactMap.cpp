@@ -27,11 +27,11 @@ void test1()
   
   for(int i=1; i<10 ;i++) map.find_or_add(i,i);
   
-  map.applyIncr( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
+  map.applyIncr_const( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
   
   Putch(Con,'\n');
   
-  map.applyDecr( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
+  map.applyDecr_const( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
   
   Putch(Con,'\n');
  }
