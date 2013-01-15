@@ -273,7 +273,7 @@ void RBTreeMap<K,T,KRef,Allocator>::destroy(Node *node)
      destroy(Algo::Link(node).lo);
      destroy(Algo::Link(node).hi);
      
-     allocator.free(node);
+     allocator.free_nonnull(node);
     }
  }
 
@@ -374,7 +374,7 @@ bool RBTreeMap<K,T,KRef,Allocator>::del(NodePtr<S> node_ptr)
     {
      root.del(node);
   
-     allocator.free(node);
+     allocator.free_nonnull(node);
      
      return true;
     }
@@ -706,7 +706,7 @@ void RadixTreeMap<K,T,Allocator>::destroy(Node *node)
      destroy(Algo::Link(node).lo);
      destroy(Algo::Link(node).hi);
      
-     allocator.free(node);
+     allocator.free_nonnull(node);
     }
  }
 
@@ -809,7 +809,7 @@ bool RadixTreeMap<K,T,Allocator>::del(NodePtr<S> node_ptr)
     {
      root.del(node);
   
-     allocator.free(node);
+     allocator.free_nonnull(node);
      
      return true;
     }

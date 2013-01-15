@@ -35,6 +35,17 @@ This file contains a collection of some popular functions.
 </p>
 
 <p>
+<b>ToConst()</b> makes a constant reference from a reference. Sometimes useful.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+const T &amp; <span class="Att">ToConst</span>(T &amp;obj) { return obj; }
+
+</pre>
+
+<p>
 <b>Min()/Max()</b> &mdash; these functions are intended to be used with simple types 
 and can be used in constant expressions. They are implemented in straightforward way.
 </p>

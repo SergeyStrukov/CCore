@@ -68,13 +68,18 @@ class NodeAllocator : NoCopy
      return ret;
     }
   
+   void free_nonnull(Node *node)
+    {
+     count--;
+     
+     delete node;    
+    }
+   
    bool free(Node *node)
     {
      if( node )
        {
-        count--;
-        
-        delete node;    
+        free_nonnull(node);
        
         return true;
        }
@@ -279,15 +284,20 @@ class NodePoolAllocator : NoCopy
      return ret;
     }
   
+   void free_nonnull(Node *node)
+    {
+     count--;
+    
+     node->~Node(); // assume no-throw
+     
+     pool.free(node);
+    }
+   
    bool free(Node *node)
     {
      if( node )
        {
-        count--;
-       
-        node->~Node(); // assume no-throw
-        
-        pool.free(node);
+        free_nonnull(node);
        
         return true;
        }

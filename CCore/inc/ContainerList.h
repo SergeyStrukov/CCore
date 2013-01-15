@@ -219,7 +219,7 @@ void LinearSList<T,Allocator>::destroy(Node *node)
     {
      Node *next=Algo::Link(node).next;
      
-     allocator.free(node);
+     allocator.free_nonnull(node);
      
      node=next;
     }
@@ -459,7 +459,7 @@ void LinearSList2<T,Allocator>::destroy(Node *node)
     {
      Node *next=Algo::Link(node).next;
      
-     allocator.free(node);
+     allocator.free_nonnull(node);
      
      node=next;
     }
@@ -714,7 +714,7 @@ void CircularSList<T,Allocator>::destroy(Node *node)
     {
      Node *next=Algo::Link(node).next;
      
-     allocator.free(node);
+     allocator.free_nonnull(node);
      
      node=next;
     }
@@ -953,7 +953,7 @@ void LinearDList<T,Allocator>::destroy(Node *node)
     {
      Node *next=Algo::Link(node).next;
      
-     allocator.free(node);
+     allocator.free_nonnull(node);
      
      node=next;
     }
@@ -1002,7 +1002,7 @@ template <class T,template <class Node> class Allocator>
 template <class S>
 void LinearDList<T,Allocator>::delAndMove(Cur<S> &pos)
  {
-  allocator.free(list.del_and_move(pos.cur));
+  allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
 template <class T,template <class Node> class Allocator> 
@@ -1328,7 +1328,7 @@ void LinearDList2<T,Allocator>::destroy(Node *node)
     {
      Node *next=Algo::Link(node).next;
      
-     allocator.free(node);
+     allocator.free_nonnull(node);
      
      node=next;
     }
@@ -1416,14 +1416,14 @@ template <class T,template <class Node> class Allocator>
 template <class S>
 void LinearDList2<T,Allocator>::delAndMove(Cur<S> &pos)
  {
-  allocator.free(list.del_and_move(pos.cur));
+  allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
 template <class T,template <class Node> class Allocator> 
 template <class S>
 void LinearDList2<T,Allocator>::delAndMove(RevCur<S> &pos)
  {
-  allocator.free(list.del_and_move(pos.cur));
+  allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
 template <class T,template <class Node> class Allocator> 
@@ -1758,7 +1758,7 @@ void CircularDList<T,Allocator>::destroy(Node *node)
     {
      Node *next=Algo::Link(node).next;
      
-     allocator.free(node);
+     allocator.free_nonnull(node);
      
      node=next;
     }
@@ -1846,14 +1846,14 @@ template <class T,template <class Node> class Allocator>
 template <class S>
 void CircularDList<T,Allocator>::delAndMove(Cur<S> &pos)
  {
-  allocator.free(list.del_and_move(pos.cur));
+  allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
 template <class T,template <class Node> class Allocator> 
 template <class S>
 void CircularDList<T,Allocator>::delAndMove(RevCur<S> &pos)
  {
-  allocator.free(list.del_and_move(pos.cur));
+  allocator.free_nonnull(list.del_and_move(pos.cur));
  }
 
 template <class T,template <class Node> class Allocator> 

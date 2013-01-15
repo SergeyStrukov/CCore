@@ -20,7 +20,10 @@
 
 namespace CCore {
 
-/* functions */ 
+/* functions */
+
+template <class T>
+const T & ToConst(T &obj) { return obj; }
 
 template <class T>
 constexpr T Min(T a,T b) { return (a<b)?a:b; }

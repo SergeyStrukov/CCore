@@ -32,7 +32,7 @@ void test1()
   
   Printf(Con,"top #;\n",*list.getTop());
   
-  for(int obj : list ) Printf(Con,"#;\n",obj);
+  for(int obj : ToConst(list) ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   
@@ -76,7 +76,7 @@ void test2()
   Printf(Con,"first #;\n",*list.getFirst());
   Printf(Con,"last #;\n",*list.getLast());
   
-  for(int obj : list ) Printf(Con,"#;\n",obj);
+  for(int obj : ToConst(list) ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   
@@ -117,7 +117,7 @@ void test3()
   
   Printf(Con,"bottom #;\n",*list.getBottom());
   
-  for(int obj : list ) Printf(Con,"#;\n",obj);
+  for(int obj : ToConst(list) ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   
@@ -164,7 +164,7 @@ void test4()
   
   Printf(Con,"top #;\n",*list.getTop());
   
-  for(int obj : list ) Printf(Con,"#;\n",obj);
+  for(int obj : ToConst(list) ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   
@@ -215,7 +215,7 @@ void test5()
   Printf(Con,"first #;\n",*list.getFirst());
   Printf(Con,"last #;\n",*list.getLast());
   
-  for(int obj : list ) Printf(Con,"#;\n",obj);
+  for(int obj : ToConst(list) ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   
@@ -299,7 +299,7 @@ void test6()
   
   Printf(Con,"top #;\n",*list.getTop());
   
-  for(int obj : list ) Printf(Con,"#;\n",obj);
+  for(int obj : ToConst(list) ) Printf(Con,"#;\n",obj);
   
   Putch(Con,'\n');
   

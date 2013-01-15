@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_ContainerLists.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Container lists</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,127 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Container lists</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/ContainerList.h</b> <b>CCore/src/ContainerList.cpp</b></p>
 
+<p>
+Here are six non-intrusive container list classes. They are parametrized by the object type and the
+<a href="page_NodeAllocators.html">node allocator type</a>, which is defaulted to the <b>NodeAllocator</b>. The only requirement for
+the object type is its destructor must be no-throw. The default node allocator uses the <b>new</b> and 
+<b>delete</b> operation to allocate/destroy each list node. It may be expensive. To improve the performance
+and reduce the heap usage consider the using of the <b>NodePoolAllocator</b> or compact lists.
+</p>
+
+<h4>LinearSList</h4>
+
+<pre>
+
+template &lt;class T,template &lt;class Node&gt; class Allocator=NodeAllocator&gt; 
+class <span class="Att">LinearSList</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit LinearSList(SS &amp;&amp; ... ss);
+   
+   ~LinearSList();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+   
+   // content
+   
+   T * getTop();
+   
+   const T * getTop() const;
+   
+   const T * getTop_const() const;
+   
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * ins(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool del();
+   
+   ulen erase();
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(LinearSList&lt;T,Allocator&gt; &amp;obj);
+   
+   explicit LinearSList(ToMoveCtor&lt;LinearSList&lt;T,Allocator&gt; &gt; obj);
+   
+   LinearSList&lt;T,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
 
 </body>
 

@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_NodeAllocators.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Node allocators</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,235 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Node allocators</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/NodeAllocator.h</b> <b>CCore/src/NodeAllocator.cpp</b></p>
 
+<p>
+Node allocator is used to allocate and destroy list and tree nodes. Node allocator type
+is a template parameter for list and tree map containers.
+</p>
+
+<h4>NodeAllocator</h4>
+
+<p>
+This is a default node allocator. Its only function is the counting allocated nodes.
+Node is allocated using the operator <b>new</b>. This class is also a model for other node allocators.
+</p>
+
+<pre>
+
+template &lt;class Node&gt;
+class <span class="Att">NodeAllocator</span> : NoCopy
+ {
+   ulen count;
+   
+  public: 
+   
+   // constructors
+   
+   NodeAllocator() : count(0) {}
+   
+   // props
+   
+   ulen operator + () const { return count; }
+   
+   bool operator ! () const { return !count; }
+   
+   ulen getCount() const { return count; }
+
+   // methods
+   
+   template &lt;class ... SS&gt;
+   Node * alloc(SS &amp;&amp; ... ss);
+  
+   void free_nonnull(Node *node);
+   
+   bool free(Node *node);
+
+   // swap/move objects
+   
+   void objSwap(NodeAllocator&lt;Node&gt; &amp;obj);
+   
+   explicit NodeAllocator(ToMoveCtor&lt;NodeAllocator&lt;Node&gt; &gt; obj);
+    
+   NodeAllocator&lt;Node&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+Constructor has no arguments. Destructor is trivial. Allocator has a counter for allocated nodes.
+So you have to destroy all allocated nodes before the object destruction.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to check, if there are allocated nodes.
+</p>
+
+<p>
+<b>getCount()</b> returns the number of allocated nodes.
+</p>
+
+<p>
+<b>alloc()</b> allocates a node. Arguments are forwarder to the node constructor.
+</p>
+
+<p>
+<b>free_nonnull()</b> destroys the node, pointer must not be null.
+</p>
+
+<p>
+<b>free()</b> destroys the node, if the <b>node</b> is not null. It returns <b>true</b>, iff the 
+<b>node</b> is not null.
+</p>
+
+<p>
+<b>NodeAllocator</b> is swappable and movable.
+</p>
+
+<h4>NodePoolAllocator</h4>
+
+<p>
+This allocator uses a memory block pool to store nodes. This approach greatly amortize the cost of the memory
+allocation, but it wastes memory if there are many destroyed nodes. To avoid this problem use
+compact variants of lists and maps.
+</p>
+
+<pre>
+
+template &lt;class Node&gt;
+class <span class="Att">NodePoolAllocator</span> : NoCopy
+ {
+   ....
+
+   ulen count;
+
+  public: 
+   
+   // constructors
+   
+   explicit NodePoolAllocator(ulen pool_count=MemBlockPool::DefaultCount); // == 100
+   
+   ~NodePoolAllocator() { if( count ) NodePoolAbort(); }
+   
+   // props
+   
+   ulen operator + () const { return count; }
+   
+   bool operator ! () const { return !count; }
+   
+   ulen getCount() const { return count; }
+   
+   // methods
+   
+   template &lt;class ... SS&gt;
+   Node * alloc(SS &amp;&amp; ... ss);
+  
+   void free_nonnull(Node *node);
+   
+   bool free(Node *node);
+   
+   // swap/move objects
+   
+   void objSwap(NodePoolAllocator&lt;Node&gt; &amp;obj);
+   
+   explicit NodePoolAllocator(ToMoveCtor&lt;NodePoolAllocator&lt;Node&gt; &gt; obj);
+    
+   NodePoolAllocator&lt;Node&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+Constructor takes the number of nodes in the single memory block as an argument, it is 100
+by default. Destructor calls abort, if not all nodes are destroyed.
+</p>
+
+<p>
+All other methods are the same as for <b>NodeAllocator</b>.
+</p>
+
+<h4>MemBlockPool</h4>
+
+<p>
+<b>MemBlockPool</b> can be used to allocate memory blocks of the given length and alignment.
+</p>
+
+<pre>
+
+class <span class="Att">MemBlockPool</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   // constructors
+   
+   static const ulen DefaultCount = 100 ;
+  
+   MemBlockPool(ulen len,ulen align_of,ulen alloc_count=DefaultCount);
+   
+   ~MemBlockPool();
+   
+   // methods
+   
+   void * alloc();
+   
+   void free(void *mem);
+   
+   // AllocGuard
+   
+   class AllocGuard : NoCopy
+    {
+      MemBlockPool &amp;pool;
+      void *mem;
+      
+     public:
+     
+      explicit AllocGuard(MemBlockPool &amp;pool);
+      
+      ~AllocGuard();
+      
+      operator void * () const { return mem; } // allocated memory block
+      
+      void * disarm(); // mem is returned
+    };
+   
+   // swap/move objects
+   
+   void objSwap(MemBlockPool &amp;obj);
+   
+   explicit MemBlockPool(ToMoveCtor&lt;MemBlockPool&gt; obj);
+    
+   MemBlockPool * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+Constructor takes the following arguments: <b>len</b> is the memory block length,
+<b>align_of</b> is the memory block alignment, <b>alloc_count</b> is the number of memory blocks
+in the single larger memory block. Destructor frees all allocated memory, so make sure the all
+memory blocks are freed before the object destruction.
+</p>
+
+<p>
+<b>alloc()</b> allocates a memory block. An exception is thrown in case of error.
+</p>
+
+<p>
+<b>free()</b> frees the memory block, <b>mem</b> must not be null.
+</p>
+
+<p>
+The inner class <b>AllocGuard</b> can be used to allocate and hold temporary a memory block.
+Destructor frees the block, unless you "disarm" the guard.
+</p>
+
+<p>
+<b>MemBlockPool</b> is swappable and movable.
+</p>
 
 </body>
 
