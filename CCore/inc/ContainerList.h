@@ -656,7 +656,7 @@ class CircularSList : NoCopy
    T * ins(SS && ... ss);
    
    template <class S,class ... SS>
-   T * insAfter(Cur<S> pos,SS && ... ss); // +pos   
+   T * insAfter(Cur<S> &pos,SS && ... ss); // +pos   
    
    bool del();
    
@@ -733,7 +733,7 @@ T * CircularSList<T,Allocator>::ins(SS && ... ss)
 
 template <class T,template <class Node> class Allocator> 
 template <class S,class ... SS>
-T * CircularSList<T,Allocator>::insAfter(Cur<S> pos,SS && ... ss)
+T * CircularSList<T,Allocator>::insAfter(Cur<S> &pos,SS && ... ss)
  {
   Node *node=allocator.alloc( std::forward<SS>(ss) ... );
   

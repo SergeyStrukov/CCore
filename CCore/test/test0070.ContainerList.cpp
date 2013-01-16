@@ -143,6 +143,15 @@ void test3()
   
   Putch(Con,'\n');
   
+  for(auto cur=list.getStart_const(); +cur ;++cur)
+    {
+     if( *cur==104 || *cur==101 ) list.insAfter(cur,2000);
+     
+     Printf(Con,"#;\n",*cur);
+    }
+  
+  Putch(Con,'\n');
+  
   Printf(Con,"rotate #;\n",*list.rotate());
   
   for(int obj : list ) Printf(Con,"#;\n",obj);
@@ -746,17 +755,17 @@ const char *const Testit<70>::Name="Test70 LinearSList";
 template<>
 bool Testit<70>::Main() 
  {
-  test1();
-  test2();
-  test3();
-  test4();
-  test5();
-  test6();
-  test7();
-  test8();
-  test9();
-  test10();
-  test11();
+  //test1();
+  //test2();
+  //test3();
+  //test4();
+  //test5();
+  //test6();
+  //test7();
+  //test8();
+  //test9();
+  //test10();
+  //test11();
   
   return true;
  }

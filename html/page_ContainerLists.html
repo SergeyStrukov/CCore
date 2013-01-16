@@ -35,10 +35,287 @@ Here are six non-intrusive container list classes. They are parametrized by the 
 <a href="page_NodeAllocators.html">node allocator type</a>, which is defaulted to the <b>NodeAllocator</b>. The only requirement for
 the object type is its destructor must be no-throw. The default node allocator uses the <b>new</b> and 
 <b>delete</b> operation to allocate/destroy each list node. It may be expensive. To improve the performance
-and reduce the heap usage consider the using of the <b>NodePoolAllocator</b> or compact lists.
+and reduce the heap usage consider the using of the <b>NodePoolAllocator</b> or 
+<a href="page_CompactLists.html">compact lists</a>.
+</p>
+
+<h4>Common lists properties</h4>
+
+<p>
+All lists have much common methods and properties. So here is a "common class" <b>AnyList</b>.
+</p>
+
+<p>
+Constant lists propagate constantness to its elements.
+</p>
+
+<p>
+List ins/del methods do not move existing list elements, but may invalidate list cursors. 
+If such method is using a cursor as the argument, this cursor remains valid and it is updated during
+the operation, if necessary.
+</p>
+
+<pre>
+
+template &lt;class T,template &lt;class Node&gt; class Allocator=NodeAllocator&gt; 
+class <span class="Att">AnyList</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit AnyList(SS &amp;&amp; ... ss);
+   
+   ~AnyList();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+   
+</pre>
+
+<p>
+Constructor forwards its arguments to the node allocator. Destructor destroys the list with all its elements.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to check, if the list is empty.
+</p>
+
+<p>
+<b>getCount()</b> returns the number of list elements.
+</p>
+
+<pre>
+   // content
+
+   <b>[For some Elem]</b>
+   
+   T * getElem();
+   
+   const T * getElem() const;
+   
+   const T * getElem_const() const;
+
+</pre>
+
+<p>
+List has a set of methods to access some specific list elements. They are following the shown above pattern.
+</p>
+
+<pre>
+
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+
+     <b>[may have]</b> void operator -- ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+
+   <b>[may have RevCur]</b>
+
+   template &lt;class S&gt;
+   struct RevCur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   RevCur&lt;T&gt; getStartReverse();
+   
+   RevCur&lt;const T&gt; getStartReverse() const;
+   
+   RevCur&lt;const T&gt; getStartReverse_const() const;
+
+</pre>
+
+<p>
+To access list elements a list cursor can be used. Any list always has a forward cursor.
+Methods <b>getStart...()</b> return a forward cursor, positioned on the first element, if any.
+For double linked lists the cursor type has the <b>operator --</b> to move back.
+</p>
+
+<p>
+List may have a backward cursor. 
+Methods <b>getStartReverse...()</b> return a backward cursor, positioned on the last element, if any.
+</p>
+
+<pre>
+
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+
+   <b>[may support reverse loops]</b>
+   
+   template &lt;class S&gt;
+   struct RevCountCur
+    {
+     ....
+    };
+   
+   RevCountCur&lt;T&gt; rbegin();
+   
+   RevCountCur&lt;T&gt; rend();
+   
+   RevCountCur&lt;const T&gt; rbegin() const;
+   
+   RevCountCur&lt;const T&gt; rend() const;
+   
+   template &lt;class S&gt;
+   struct ReverseAdapter
+    {
+     RevCountCur&lt;S&gt; cur;
+     
+     ReverseAdapter(RevCountCur&lt;S&gt; cur_) : cur(cur_) {}
+     
+     RevCountCur&lt;S&gt; begin() const { return cur; }
+     
+     RevCountCur&lt;S&gt; end() const { return RevCountCur&lt;S&gt;(); }
+    };
+   
+   ReverseAdapter&lt;T&gt; reverse();
+   
+   ReverseAdapter&lt;const T&gt; reverse() const;
+   
+   ReverseAdapter&lt;const T&gt; reverse_const() const;
+
+</pre>
+
+<p>
+Lists implement methods <b>begin()/end()</b> and can be used in <b>range-based for</b>.
+</p>
+
+<p>
+List may support a reverse order for <b>range-based for</b>. To run a reverse loop
+methods <b>reverse...()</b> are provided.
+</p>
+
+<pre>
+   // ins/del
+
+   <b>[ins/del methods]</b>
+
+   ....
+
+   ulen erase();
+   
+</pre>
+
+<p>
+Each list has a set of ins/del methods to insert or delete list elements. The method <b>erase()</b>
+destroys all elements, the number of destroyed elements is returned.
+</p>
+
+<pre>
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+
+   <b>[may have applyReverse]</b>
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
+
+</pre>
+
+<p>
+Methods <b>apply...()</b> can be used to apply a functor to list elements.
+<a href="page_FunctorType.html">Functor Init Pattern</a> is used.
+Double linked lists can apply a functor in the reverse order using methods <b>applyReverse...()</b>. 
+</p>
+
+<pre>   
+   // swap/move objects
+   
+   void objSwap(AnyList&lt;T,Allocator&gt; &amp;obj);
+   
+   explicit AnyList(ToMoveCtor&lt;AnyList&lt;T,Allocator&gt; &gt; obj);
+   
+   AnyList&lt;T,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+All lists are swappable and movable.
 </p>
 
 <h4>LinearSList</h4>
+
+<p>
+This is a linear single linked list with a top element pointer.
+</p>
 
 <pre>
 
@@ -147,6 +424,1018 @@ class <span class="Att">LinearSList</span> : NoCopy
  };
 
 </pre>
+
+<p>
+<b>getTop...()</b> methods return a pointer to the top element.
+</p>
+
+<p>
+<b>ins()</b> creates a new element as a top element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insAfter()</b> creates a new element in the list after the cursor given non-null position.
+Extra method arguments are forwarded to the object constructor.
+</p>
+
+<p>
+<b>del()</b> deletes the top element, if any. The return value if <b>true</b>, if the element was deleted.
+</p>
+
+<h4>LinearSList2</h4>
+
+<p>
+This is a linear single linked list with first and last element pointers.
+</p>
+
+<pre>
+
+template &lt;class T,template &lt;class Node&gt; class Allocator&gt; 
+class <span class="Att">LinearSList2</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit LinearSList2(SS &amp;&amp; ... ss);
+   
+   ~LinearSList2();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+   
+   // content
+   
+   T * getFirst();
+   
+   const T * getFirst() const;
+   
+   const T * getFirst_const() const;
+   
+   T * getLast();
+   
+   const T * getLast() const;
+   
+   const T * getLast_const() const;
+   
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * insFirst(SS &amp;&amp; ... ss);
+   
+   template &lt;class ... SS&gt;
+   T * insLast(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool delFirst();
+   
+   ulen erase();
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(LinearSList2&lt;T,Allocator&gt; &amp;obj);
+   
+   explicit LinearSList2(ToMoveCtor&lt;LinearSList2&lt;T,Allocator&gt; &gt; obj);
+   
+   LinearSList2&lt;T,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };  
+
+</pre>
+
+<p>
+<b>getFirst...()</b> methods return a pointer to the first element.
+</p>
+
+<p>
+<b>getLast...()</b> methods return a pointer to the last element.
+</p>
+
+<p>
+<b>insFirst()</b> creates a new element as a first element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insLast()</b> creates a new element as a last element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insAfter()</b> creates a new element in the list after the cursor given non-null position.
+Extra method arguments are forwarded to the object constructor.
+</p>
+
+<p>
+<b>delFirst()</b> deletes the first element, if any. The return value if <b>true</b>, if the element was deleted.
+</p>
+
+<h4>CircularSList</h4>
+
+<p>
+This is a circular single linked list with a bottom element pointer.
+</p>
+
+<pre>
+
+template &lt;class T,template &lt;class Node&gt; class Allocator&gt; 
+class <span class="Att">CircularSList</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit CircularSList(SS &amp;&amp; ... ss);
+   
+   ~CircularSList();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+   
+   // content
+   
+   T * getBottom();
+   
+   const T * getBottom() const;
+   
+   const T * getBottom_const() const;
+   
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * ins(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool del();
+   
+   ulen erase();
+   
+   T * rotate(); // return top element moved to bottom
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(CircularSList&lt;T,Allocator&gt; &amp;obj);
+   
+   explicit CircularSList(ToMoveCtor&lt;CircularSList&lt;T,Allocator&gt; &gt; obj);
+   
+   CircularSList&lt;T,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+<b>getBottom...()</b> methods return a pointer to the bottom element.
+</p>
+
+<p>
+<b>ins()</b> creates a new element as a top element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insAfter()</b> creates a new element in the list after the cursor given non-null position.
+Extra method arguments are forwarded to the object constructor.
+Cursor is updated.
+</p>
+
+<p>
+<b>del()</b> deletes the top element, if any. The return value if <b>true</b>, if the element was deleted.
+</p>
+
+<p>
+The method <b>rotate()</b> is specific for circular lists. It rotates the list. The top element moves to bottom.
+Pointer to this element is returned.
+</p>
+
+<h4>LinearDList</h4>
+
+<p>
+This is a linear double linked list with a top element pointer.
+</p>
+
+<pre>
+
+template &lt;class T,template &lt;class Node&gt; class Allocator&gt; 
+class <span class="Att">LinearDList</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit LinearDList(SS &amp;&amp; ... ss);
+   
+   ~LinearDList();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+ 
+   // content
+   
+   T * getTop();
+   
+   const T * getTop() const;
+   
+   const T * getTop_const() const;
+   
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * ins(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool del();
+   
+   template &lt;class S&gt;
+   void delAndMove(Cur&lt;S&gt; &amp;pos); // +pos
+   
+   ulen erase();
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(LinearDList&lt;T,Allocator&gt; &amp;obj);
+   
+   explicit LinearDList(ToMoveCtor&lt;LinearDList&lt;T,Allocator&gt; &gt; obj);
+   
+   LinearDList&lt;T,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+<b>getTop...()</b> methods return a pointer to the top element.
+</p>
+
+<p>
+Cursor can move backward.
+</p>
+
+<p>
+<b>ins()</b> creates a new element as a top element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insBefore()</b> creates a new element in the list before the cursor given non-null position.
+Extra method arguments are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insAfter()</b> creates a new element in the list after the cursor given non-null position.
+Extra method arguments are forwarded to the object constructor.
+</p>
+
+<p>
+<b>del()</b> deletes the top element, if any. The return value if <b>true</b>, if the element was deleted.
+</p>
+
+<p>
+<b>delAndMove()</b> deletes the element at the cursor given non-null position. Cursor is updated
+to point to the next element.
+</p>
+
+<h4>LinearDList2</h4>
+
+<p>
+This is a linear double linked list with first and last element pointers.
+</p>
+
+<pre>
+
+template &lt;class T,template &lt;class Node&gt; class Allocator&gt; 
+class <span class="Att">LinearDList2</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit LinearDList2(SS &amp;&amp; ... ss);
+   
+   ~LinearDList2();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+ 
+   // content
+   
+   T * getFirst();
+   
+   const T * getFirst() const;
+   
+   const T * getFirst_const() const;
+   
+   T * getLast();
+   
+   const T * getLast() const;
+   
+   const T * getLast_const() const;
+   
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct RevCur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   RevCur&lt;T&gt; getStartReverse();
+   
+   RevCur&lt;const T&gt; getStartReverse() const;
+   
+   RevCur&lt;const T&gt; getStartReverse_const() const;
+   
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   template &lt;class S&gt;
+   struct RevCountCur
+    {
+     ....
+    };
+   
+   RevCountCur&lt;T&gt; rbegin();
+   
+   RevCountCur&lt;T&gt; rend();
+   
+   RevCountCur&lt;const T&gt; rbegin() const;
+   
+   RevCountCur&lt;const T&gt; rend() const;
+   
+   template &lt;class S&gt;
+   struct ReverseAdapter
+    {
+     RevCountCur&lt;S&gt; cur;
+     
+     ReverseAdapter(RevCountCur&lt;S&gt; cur_) : cur(cur_) {}
+     
+     RevCountCur&lt;S&gt; begin() const { return cur; }
+     
+     RevCountCur&lt;S&gt; end() const { return RevCountCur&lt;S&gt;(); }
+    };
+   
+   ReverseAdapter&lt;T&gt; reverse();
+   
+   ReverseAdapter&lt;const T&gt; reverse() const;
+   
+   ReverseAdapter&lt;const T&gt; reverse_const() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * insFirst(SS &amp;&amp; ... ss);
+   
+   template &lt;class ... SS&gt;
+   T * insLast(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool delFirst();
+   
+   bool delLast();
+   
+   template &lt;class S&gt;
+   void delAndMove(Cur&lt;S&gt; &amp;pos); // +pos
+   
+   template &lt;class S&gt;
+   void delAndMove(RevCur&lt;S&gt; &amp;pos); // +pos
+   
+   ulen erase();
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(LinearDList2&lt;T,Allocator&gt; &amp;obj);
+   
+   explicit LinearDList2(ToMoveCtor&lt;LinearDList2&lt;T,Allocator&gt; &gt; obj);
+   
+   LinearDList2&lt;T,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+<b>getFirst...()</b> methods return a pointer to the first element.
+</p>
+
+<p>
+<b>getLast...()</b> methods return a pointer to the last element.
+</p>
+
+<p>
+Cursor can move backward.
+</p>
+
+<p>
+This list supports a backward cursor.
+</p>
+
+<p>
+This list supports a reverse order for <b>range-based for</b>.
+</p>
+
+<p>
+<b>insFirst()</b> creates a new element as a first element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insLast()</b> creates a new element as a last element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insBefore()</b> creates a new element in the list before the cursor (forward or backward) given non-null position.
+Extra method arguments are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insAfter()</b> creates a new element in the list after the cursor (forward or backward) given non-null position.
+Extra method arguments are forwarded to the object constructor.
+</p>
+
+<p>
+<b>delFirst()</b> deletes the first element, if any. The return value if <b>true</b>, if the element was deleted.
+</p>
+
+<p>
+<b>delLast()</b> deletes the last element, if any. The return value if <b>true</b>, if the element was deleted.
+</p>
+
+<p>
+<b>delAndMove()</b> deletes the element at the cursor (forward or backward) given non-null position. Cursor is updated
+to point to the next element (in respect to the cursor movement direction).
+</p>
+
+<p>
+This list supports the reverse functor applying.
+</p>
+
+<h4>CircularDList</h4>
+
+<p>
+This is a circular double linked list with a top element pointer.
+</p>
+
+<pre>
+
+template &lt;class T,template &lt;class Node&gt; class Allocator&gt; 
+class <span class="Att">CircularDList</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit CircularDList(SS &amp;&amp; ... ss);
+   
+   ~CircularDList();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+ 
+   // content
+   
+   T * getTop();
+   
+   const T * getTop() const;
+   
+   const T * getTop_const() const;
+   
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct RevCur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   RevCur&lt;T&gt; getStartReverse();
+   
+   RevCur&lt;const T&gt; getStartReverse() const;
+   
+   RevCur&lt;const T&gt; getStartReverse_const() const;
+   
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   template &lt;class S&gt;
+   struct RevCountCur
+    {
+     ....
+    };
+   
+   RevCountCur&lt;T&gt; rbegin();
+   
+   RevCountCur&lt;T&gt; rend();
+   
+   RevCountCur&lt;const T&gt; rbegin() const;
+   
+   RevCountCur&lt;const T&gt; rend() const;
+   
+   template &lt;class S&gt;
+   struct ReverseAdapter
+    {
+     RevCountCur&lt;S&gt; cur;
+     
+     ReverseAdapter(RevCountCur&lt;S&gt; cur_) : cur(cur_) {}
+     
+     RevCountCur&lt;S&gt; begin() const { return cur; }
+     
+     RevCountCur&lt;S&gt; end() const { return RevCountCur&lt;S&gt;(); }
+    };
+   
+   ReverseAdapter&lt;T&gt; reverse();
+   
+   ReverseAdapter&lt;const T&gt; reverse() const;
+   
+   ReverseAdapter&lt;const T&gt; reverse_const() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * insFirst(SS &amp;&amp; ... ss);
+   
+   template &lt;class ... SS&gt;
+   T * insLast(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(RevCur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool delFirst();
+   
+   bool delLast();
+
+   template &lt;class S&gt;
+   void delAndMove(Cur&lt;S&gt; &amp;pos); // +pos
+   
+   template &lt;class S&gt;
+   void delAndMove(RevCur&lt;S&gt; &amp;pos); // +pos
+   
+   ulen erase();
+   
+   T * rotateForward(); // return top element moved to bottom
+   
+   T * rotateBackward(); // return bottom element moved to top
+
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(CircularDList&lt;T,Allocator&gt; &amp;obj);
+   
+   explicit CircularDList(ToMoveCtor&lt;CircularDList&lt;T,Allocator&gt; &gt; obj);
+   
+   CircularDList&lt;T,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+<b>getTop...()</b> methods return a pointer to the top element.
+</p>
+
+<p>
+Cursor can move backward.
+</p>
+
+<p>
+This list supports a backward cursor.
+</p>
+
+<p>
+This list supports a reverse order for <b>range-based for</b>.
+</p>
+
+<p>
+<b>insFirst()</b> creates a new element as a first element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insLast()</b> creates a new element as a last element of the list and returns a pointer. Method arguments
+are forwarded to the object constructor.
+</p>
+
+<p>
+<b>insBefore()</b> creates a new element in the list before the cursor (forward or backward) given non-null position.
+Extra method arguments are forwarded to the object constructor.
+Backward cursor is updated.
+</p>
+
+<p>
+<b>insAfter()</b> creates a new element in the list after the cursor (forward or backward) given non-null position.
+Extra method arguments are forwarded to the object constructor.
+Forward cursor is updated.
+</p>
+
+<p>
+<b>delFirst()</b> deletes the first element, if any. The return value if <b>true</b>, if the element was deleted.
+</p>
+
+<p>
+<b>delLast()</b> deletes the last element, if any. The return value if <b>true</b>, if the element was deleted.
+</p>
+
+<p>
+<b>delAndMove()</b> deletes the element at the cursor (forward or backward) given non-null position. Cursor is updated
+to point to the next element (in respect to the cursor movement direction).
+</p>
+
+<p>
+This list supports the reverse functor applying.
+</p>
+
+<p>
+The following two methods <b>rotate...()</b> are specific for circular lists. They rotate the list. 
+</p>
+
+<p>
+<b>rotateForward()</b> rotates the list forward. The top element moves to bottom.
+Pointer to this element is returned.
+</p>
+
+<p>
+<b>rotateBackward()</b> rotates the list backward. The bottom element moves to top.
+Pointer to this element is returned.
+</p>
 
 </body>
 
