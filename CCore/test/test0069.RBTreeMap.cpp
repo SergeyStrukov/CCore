@@ -176,6 +176,36 @@ void test9()
   testMove<RadixTreeMap<ulen,ulen,NodePoolAllocator> >();
  }
 
+void test10()
+ {
+  RadixTreeMap<unsigned,int> map;
+  
+  for(int i=1; i<10 ;i++) map.find_or_add(i,i);
+  
+  map.applyIncr_const( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
+  
+  Putch(Con,'\n');
+  
+  map.applyDecr_const( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
+  
+  Putch(Con,'\n');
+ }
+
+void test11()
+ {
+  RadixTreeMap<unsigned,int,NodePoolAllocator> map(KeyRange<unsigned>(1,16),5);
+  
+  for(int i=1; i<10 ;i++) map.find_or_add(i,i);
+  
+  map.applyIncr_const( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
+  
+  Putch(Con,'\n');
+  
+  map.applyDecr_const( [] (int key,int obj) { Printf(Con,"#; #;\n",key,obj); } );
+  
+  Putch(Con,'\n');
+ }
+
 } // namespace Private_0069
  
 using namespace Private_0069; 
@@ -197,6 +227,8 @@ bool Testit<69>::Main()
   test7(20000000);
   test8();
   test9();
+  test10();
+  test11();
   
   return true;
  }

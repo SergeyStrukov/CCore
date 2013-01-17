@@ -1033,9 +1033,9 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_CmdInput.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Cmp.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_CommonIntAlgo.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_CompactLists.html" 1
+"D:/active/home/C++/CCore-Root-1-03/html/page_CompactLists.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_CompactMaps.html" 1
-"D:/active/home/C++/CCore-Root-1-03/html/page_CompactNodeAllocator.html" 1
+"D:/active/home/C++/CCore-Root-1-03/html/page_CompactNodeAllocator.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_CompletePacket.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_ConsoleInput.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_ContainerLists.html" 2

@@ -32,8 +32,9 @@
 
 <p>
 Here are six non-intrusive container list classes. They are parametrized by the object type and the
-<a href="page_NodeAllocators.html">node allocator type</a>, which is defaulted to the <b>NodeAllocator</b>. The only requirement for
-the object type is its destructor must be no-throw. The default node allocator uses the <b>new</b> and 
+<a href="page_NodeAllocators.html">node allocator type</a>, which is defaulted to the <b>NodeAllocator</b>. 
+The only requirement for the object type is its destructor must be no-throw. 
+The default node allocator uses the <b>new</b> and 
 <b>delete</b> operation to allocate/destroy each list node. It may be expensive. To improve the performance
 and reduce the heap usage consider the using of the <b>NodePoolAllocator</b> or 
 <a href="page_CompactLists.html">compact lists</a>.
@@ -733,7 +734,7 @@ The method <b>rotate()</b> is specific for circular lists. It rotates the list. 
 Pointer to this element is returned.
 </p>
 
-<h4>LinearDList</h4>
+<a name="LinearDList"><h4>LinearDList</h4></a>
 
 <p>
 This is a linear double linked list with a top element pointer.
@@ -887,7 +888,7 @@ Extra method arguments are forwarded to the object constructor.
 to point to the next element.
 </p>
 
-<h4>LinearDList2</h4>
+<a name="LinearDList2"><h4>LinearDList2</h4></a>
 
 <p>
 This is a linear double linked list with first and last element pointers.
@@ -1157,7 +1158,7 @@ to point to the next element (in respect to the cursor movement direction).
 This list supports the reverse functor applying.
 </p>
 
-<h4>CircularDList</h4>
+<a name="CircularDList"><h4>CircularDList</h4></a>
 
 <p>
 This is a circular double linked list with a top element pointer.
@@ -1333,7 +1334,7 @@ class <span class="Att">CircularDList</span> : NoCopy
    
    ulen erase();
    
-   T * rotateForward(); // return top element moved to bottom
+   T * rotateForward();  // return top element moved to bottom
    
    T * rotateBackward(); // return bottom element moved to top
 

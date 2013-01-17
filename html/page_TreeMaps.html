@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_TreeMaps.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Tree maps</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,383 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Tree maps</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/TreeMap.h</b> <b>CCore/src/TreeMap.cpp</b></p>
 
+<p>
+Here are two maps, built on <a href="page_Trees.html">red-black tree and radix tree</a> algorithms.
+They are parametrized by the key type, object type, <a href="page_NodeAllocators.html">node allocator</a> type.
+Node allocator is defaulted to the <b>NodeAllocator</b>.
+The only requirement for the object type is its destructor must be no-throw. 
+There are also <a href="page_CompactMaps.html">compact variants</a> of maps.
+</p>
+
+<h4>RBTreeMap</h4>
+
+<pre>
+
+template &lt;class K,class T,class KRef,template &lt;class Node&gt; class Allocator&gt;
+class <span class="Att">RBTreeMap</span> : NoCopy
+ {
+   ....
+
+  public: 
+   
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit RBTreeMap(SS &amp;&amp; ... ss);
+   
+   ~RBTreeMap();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+   
+   // find
+   
+   T * find(KRef key);
+   
+   T * findMin();
+   
+   T * findMin(KRef key);
+   
+   T * findMax();
+   
+   T * findMax(KRef key);
+
+
+   const T * find(KRef key) const;
+   
+   const T * findMin() const;
+   
+   const T * findMin(KRef key) const;
+   
+   const T * findMax() const;
+   
+   const T * findMax(KRef key) const;
+
+
+   const T * find_const(KRef key) const;
+   
+   const T * findMin_const() const;
+   
+   const T * findMin_const(KRef key) const;
+   
+   const T * findMax_const() const;
+   
+   const T * findMax_const(KRef key) const;
+   
+   
+   template &lt;class S&gt;
+   struct NodePtr
+    {
+     ....
+
+     // object ptr
+     
+     Node * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+     
+     S * operator -&gt; () const;
+     
+     const K &amp; getKey() const;
+    };
+   
+   
+   NodePtr&lt;T&gt; find_ptr(KRef key);
+   
+   NodePtr&lt;T&gt; findMin_ptr();
+   
+   NodePtr&lt;T&gt; findMin_ptr(KRef key);
+   
+   NodePtr&lt;T&gt; findMax_ptr();
+   
+   NodePtr&lt;T&gt; findMax_ptr(KRef key);
+   
+   
+   NodePtr&lt;const T&gt; find_ptr(KRef key) const;
+   
+   NodePtr&lt;const T&gt; findMin_ptr() const;
+   
+   NodePtr&lt;const T&gt; findMin_ptr(KRef key) const;
+   
+   NodePtr&lt;const T&gt; findMax_ptr() const;
+   
+   NodePtr&lt;const T&gt; findMax_ptr(KRef key) const;
+   
+   
+   NodePtr&lt;const T&gt; find_ptr_const(KRef key) const;
+   
+   NodePtr&lt;const T&gt; findMin_ptr_const() const;
+   
+   NodePtr&lt;const T&gt; findMin_ptr_const(KRef key) const;
+   
+   NodePtr&lt;const T&gt; findMax_ptr_const() const;
+   
+   NodePtr&lt;const T&gt; findMax_ptr_const(KRef key) const;
+   
+   // add/del
+   
+   struct Result
+    {
+     T *obj;
+     bool new_flag;
+     
+     Result(T *obj_,bool new_flag_) : obj(obj_),new_flag(new_flag_) {}
+     
+     operator T * () const { return obj; }
+    };
+   
+   template &lt;class ... SS&gt;
+   Result find_or_add(KRef key,SS &amp;&amp; ... ss);
+   
+   bool del(KRef key);
+   
+   bool delMin();
+   
+   bool delMax();
+   
+   template &lt;class S&gt;
+   bool del(NodePtr&lt;S&gt; node_ptr);
+   
+   ulen erase();
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void applyIncr(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyDecr(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyIncr(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyDecr(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyIncr_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyDecr_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(RBTreeMap&lt;K,T,KRef,Allocator&gt; &amp;obj);
+   
+   explicit RBTreeMap(ToMoveCtor&lt;RBTreeMap&lt;K,T,KRef,Allocator&gt; &gt; obj);
+   
+   RBTreeMap&lt;K,T,KRef,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<h4>KeyRange</h4>
+
+<pre>
+
+template &lt;class K&gt;
+struct <span class="Att">KeyRange</span>
+ {
+  K kmin;
+  K kmax;
+  
+  KeyRange();
+  
+  explicit KeyRange(K kmax);
+  
+  KeyRange(K kmin,K kmax);
+  
+  void guard(K key) const;
+ };
+
+</pre>
+
+<h4>RadixTreeMap</h4>
+
+<pre>
+
+template &lt;class K,class T,template &lt;class Node&gt; class Allocator&gt; 
+class <span class="Att">RadixTreeMap</span> : NoCopy
+ {
+   ....
+ 
+  public:
+ 
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit RadixTreeMap(SS &amp;&amp; ... ss);
+   
+   template &lt;class ... SS&gt;
+   explicit RadixTreeMap(KeyRange&lt;K&gt; key_range_,SS &amp;&amp; ... ss);
+   
+   ~RadixTreeMap();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+   
+   // find
+   
+   T * find(K key);
+   
+   T * findMin();
+   
+   T * findMin(K key);
+   
+   T * findMax();
+   
+   T * findMax(K key);
+   
+   
+   const T * find(K key) const;
+   
+   const T * findMin() const;
+   
+   const T * findMin(K key) const;
+   
+   const T * findMax() const;
+   
+   const T * findMax(K key) const;
+   
+   
+   const T * find_const(K key) const;
+   
+   const T * findMin_const() const;
+   
+   const T * findMin_const(K key) const;
+   
+   const T * findMax_const() const;
+   
+   const T * findMax_const(K key) const;
+   
+   
+   template &lt;class S&gt;
+   struct NodePtr
+    {
+     ....
+     
+     // object ptr
+     
+     Node * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+     
+     S * operator -&gt; () const;
+     
+     K getKey() const;
+    };
+   
+   
+   NodePtr&lt;T&gt; find_ptr(K key);
+   
+   NodePtr&lt;T&gt; findMin_ptr();
+   
+   NodePtr&lt;T&gt; findMin_ptr(K key);
+   
+   NodePtr&lt;T&gt; findMax_ptr();
+   
+   NodePtr&lt;T&gt; findMax_ptr(K key);
+   
+   
+   NodePtr&lt;const T&gt; find_ptr(K key) const;
+   
+   NodePtr&lt;const T&gt; findMin_ptr() const;
+   
+   NodePtr&lt;const T&gt; findMin_ptr(K key) const;
+   
+   NodePtr&lt;const T&gt; findMax_ptr() const;
+   
+   NodePtr&lt;const T&gt; findMax_ptr(K key) const;
+   
+   
+   NodePtr&lt;const T&gt; find_ptr_const(K key) const;
+   
+   NodePtr&lt;const T&gt; findMin_ptr_const() const;
+   
+   NodePtr&lt;const T&gt; findMin_ptr_const(K key) const;
+   
+   NodePtr&lt;const T&gt; findMax_ptr_const() const;
+   
+   NodePtr&lt;const T&gt; findMax_ptr_const(K key) const;
+   
+   // add/del
+   
+   struct Result
+    {
+     T *obj;
+     bool new_flag;
+     
+     Result(T *obj_,bool new_flag_) : obj(obj_),new_flag(new_flag_) {}
+     
+     operator T * () const { return obj; }
+    };
+   
+   template &lt;class ... SS&gt;
+   Result find_or_add(K key,SS &amp;&amp; ... ss);
+   
+   bool del(K key);
+   
+   bool delMin();
+   
+   bool delMax();
+   
+   template &lt;class S&gt;
+   bool del(NodePtr&lt;S&gt; node_ptr);
+   
+   ulen erase();
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void applyIncr(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyDecr(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyIncr(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyDecr(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyIncr_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyDecr_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(RadixTreeMap&lt;K,T,Allocator&gt; &amp;obj);
+   
+   explicit RadixTreeMap(ToMoveCtor&lt;RadixTreeMap&lt;K,T,Allocator&gt; &gt; obj);
+   
+   RadixTreeMap&lt;K,T,Allocator&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
 
 </body>
 

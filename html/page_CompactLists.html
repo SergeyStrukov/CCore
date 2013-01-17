@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_CompactLists.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Compact lists</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,564 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Compact lists</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/CompactList.h</b> <b>CCore/src/CompactList.cpp</b></p>
 
+<p>
+Compact lists are variants of <a href="page_ContainerLists.html">traditional lists</a>.
+They have the same set of methods and behavior, except compact lists move elements during
+delete operations. Compact lists are more efficient and consume less memory, than traditional.
+They require the object type to be swappable. They also have no node allocator template parameter:
+<a href="page_CompactNodeAllocator.html">compact node allocator</a> is always used.
+Constructor arguments are forwarded to the allocator.
+</p>
+
+<h4>CompactList</h4>
+
+<p>
+This is a variant of the <a href="page_ContainerLists.html#LinearDList">LinearDList</a>.
+</p>
+
+<pre>
+
+template &lt;class T&gt; 
+class <span class="Att">CompactList</span> : NoCopy
+ {
+   ....
+
+  public:
+ 
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit CompactList(SS &amp;&amp; ... ss);
+   
+   ~CompactList();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+ 
+   // content
+   
+   T * getTop();
+   
+   const T * getTop() const;
+   
+   const T * getTop_const() const;
+   
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * ins(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool del();
+   
+   template &lt;class S&gt;
+   void delAndMove(Cur&lt;S&gt; &amp;pos); // +pos
+   
+   ulen erase();
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(CompactList&lt;T&gt; &amp;obj);
+   
+   explicit CompactList(ToMoveCtor&lt;CompactList&lt;T&gt; &gt; obj);
+   
+   CompactList&lt;T&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<h4>CompactList2</h4>
+
+<p>
+This is a variant of the <a href="page_ContainerLists.html#LinearDList2">LinearDList2</a>.
+</p>
+
+<pre>
+
+template &lt;class T&gt; 
+class <span class="Att">CompactList2</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit CompactList2(SS &amp;&amp; ... ss);
+   
+   ~CompactList2();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+ 
+   // content
+   
+   T * getFirst();
+   
+   const T * getFirst() const;
+   
+   const T * getFirst_const() const;
+   
+   T * getLast();
+   
+   const T * getLast() const;
+   
+   const T * getLast_const() const;
+   
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct RevCur
+    {
+     ....
+
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   RevCur&lt;T&gt; getStartReverse();
+   
+   RevCur&lt;const T&gt; getStartReverse() const;
+   
+   RevCur&lt;const T&gt; getStartReverse_const() const;
+
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   template &lt;class S&gt;
+   struct RevCountCur
+    {
+     ....
+    };
+   
+   RevCountCur&lt;T&gt; rbegin();
+   
+   RevCountCur&lt;T&gt; rend();
+   
+   RevCountCur&lt;const T&gt; rbegin() const;
+   
+   RevCountCur&lt;const T&gt; rend() const;
+   
+   template &lt;class S&gt;
+   struct ReverseAdapter
+    {
+     RevCountCur&lt;S&gt; cur;
+     
+     ReverseAdapter(RevCountCur&lt;S&gt; cur_) : cur(cur_) {}
+     
+     RevCountCur&lt;S&gt; begin() const { return cur; }
+     
+     RevCountCur&lt;S&gt; end() const { return RevCountCur&lt;S&gt;(); }
+    };
+   
+   ReverseAdapter&lt;T&gt; reverse();
+   
+   ReverseAdapter&lt;const T&gt; reverse() const;
+   
+   ReverseAdapter&lt;const T&gt; reverse_const() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * insFirst(SS &amp;&amp; ... ss);
+   
+   template &lt;class ... SS&gt;
+   T * insLast(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool delFirst();
+   
+   bool delLast();
+   
+   template &lt;class S&gt;
+   void delAndMove(Cur&lt;S&gt; &amp;pos); // +pos
+   
+   template &lt;class S&gt;
+   void delAndMove(RevCur&lt;S&gt; &amp;pos); // +pos
+   
+   ulen erase();
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(CompactList2&lt;T&gt; &amp;obj);
+   
+   explicit CompactList2(ToMoveCtor&lt;CompactList2&lt;T&gt; &gt; obj);
+   
+   CompactList2&lt;T&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<h4>CompactCircularList</h4>
+
+<p>
+This is a variant of the <a href="page_ContainerLists.html#CircularDList">CircularDList</a>.
+</p>
+
+<pre>
+
+template &lt;class T&gt; 
+class CompactCircularList : NoCopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit CompactCircularList(SS &amp;&amp; ... ss);
+   
+   ~CompactCircularList();
+   
+   // props
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   ulen getCount() const;
+ 
+   // content
+   
+   T * getTop();
+   
+   const T * getTop() const;
+   
+   const T * getTop_const() const;
+
+   template &lt;class S&gt;
+   struct Cur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   Cur&lt;T&gt; getStart();
+   
+   Cur&lt;const T&gt; getStart() const;
+   
+   Cur&lt;const T&gt; getStart_const() const;
+   
+   template &lt;class S&gt;
+   struct RevCur
+    {
+     ....
+     
+     // object ptr
+     
+     void * operator + () const;
+     
+     bool operator ! () const;
+     
+     S * getPtr() const;
+     
+     S &amp; operator * () const;
+ 
+     S * operator -&gt; () const;
+     
+     // cursor
+     
+     void operator ++ ();
+     
+     void operator -- ();
+    };
+   
+   RevCur&lt;T&gt; getStartReverse();
+   
+   RevCur&lt;const T&gt; getStartReverse() const;
+   
+   RevCur&lt;const T&gt; getStartReverse_const() const;
+   
+   template &lt;class S&gt;
+   struct CountCur
+    {
+     ....
+    };
+   
+   CountCur&lt;T&gt; begin();
+   
+   CountCur&lt;T&gt; end();
+   
+   CountCur&lt;const T&gt; begin() const;
+   
+   CountCur&lt;const T&gt; end() const;
+   
+   template &lt;class S&gt;
+   struct RevCountCur
+    {
+     ....
+    };
+   
+   RevCountCur&lt;T&gt; rbegin();
+   
+   RevCountCur&lt;T&gt; rend();
+   
+   RevCountCur&lt;const T&gt; rbegin() const;
+   
+   RevCountCur&lt;const T&gt; rend() const;
+   
+   template &lt;class S&gt;
+   struct ReverseAdapter
+    {
+     RevCountCur&lt;S&gt; cur;
+     
+     ReverseAdapter(RevCountCur&lt;S&gt; cur_) : cur(cur_) {}
+     
+     RevCountCur&lt;S&gt; begin() const { return cur; }
+     
+     RevCountCur&lt;S&gt; end() const { return RevCountCur&lt;S&gt;(); }
+    };
+   
+   ReverseAdapter&lt;T&gt; reverse();
+   
+   ReverseAdapter&lt;const T&gt; reverse() const;
+   
+   ReverseAdapter&lt;const T&gt; reverse_const() const;
+   
+   // ins/del
+
+   template &lt;class ... SS&gt;
+   T * insFirst(SS &amp;&amp; ... ss);
+   
+   template &lt;class ... SS&gt;
+   T * insLast(SS &amp;&amp; ... ss);
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(Cur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insBefore(RevCur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(Cur&lt;S&gt; &amp;pos,SS &amp;&amp; ... ss); // +pos   
+   
+   template &lt;class S,class ... SS&gt;
+   T * insAfter(RevCur&lt;S&gt; pos,SS &amp;&amp; ... ss); // +pos   
+   
+   bool delFirst();
+   
+   bool delLast();
+   
+   template &lt;class S&gt;
+   void delAndMove(Cur&lt;S&gt; &amp;pos); // +pos
+   
+   template &lt;class S&gt;
+   void delAndMove(RevCur&lt;S&gt; &amp;pos); // +pos
+   
+   ulen erase();
+   
+   T * rotateForward();  // return top element moved to bottom
+   
+   T * rotateBackward(); // return bottom element moved to top
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
+   
+   // swap/move objects
+   
+   void objSwap(CompactCircularList&lt;T&gt; &amp;obj);
+   
+   explicit CompactCircularList(ToMoveCtor&lt;CompactCircularList&lt;T&gt; &gt; obj);
+   
+   CompactCircularList&lt;T&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
 
 </body>
 

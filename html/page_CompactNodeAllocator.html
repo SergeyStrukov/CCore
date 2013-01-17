@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_CompactNodeAllocator.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.03
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Compact node allocator</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,100 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Compact node allocator</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/CompactNodeAllocator.h</b> <b>CCore/src/CompactNodeAllocator.cpp</b></p>
 
+<p>
+Compact node allocator is used to allocate and destroy list and tree nodes in compact lists and tree maps.
+It is similar to <a href="page_NodeAllocators.html">node allocators</a>, but have different
+node deletion methods. This allocator is efficient both in the performance and the memory utilization.
+</p>
+
+<pre>
+
+template &lt;class Node&gt; 
+class <span class="Att">CompactNodeAllocator</span> : NoCopy
+ {
+   ....
+
+   ulen count;
+   
+  public: 
+   
+   // constructors
+   
+   static const ulen DefaultCount = 100 ;
+  
+   explicit CompactNodeAllocator(ulen block_len_=DefaultCount);
+   
+   ~CompactNodeAllocator();
+   
+   // props 
+   
+   ulen operator + () const { return count; }
+   
+   bool operator ! () const { return !count; }
+   
+   ulen getCount() const { return count; }
+   
+   // methods
+   
+   template &lt;class ... SS&gt;
+   Node * alloc(SS &amp;&amp; ... ss);
+  
+   ulen erase();
+ 
+   Node * todel();
+   
+   void del();
+
+   // swap/move objects
+   
+   void objSwap(CompactNodeAllocator&lt;Node&gt; &amp;obj);
+   
+   explicit CompactNodeAllocator(ToMoveCtor&lt;CompactNodeAllocator&lt;Node&gt; &gt; obj);
+   
+   CompactNodeAllocator&lt;Node&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+Constructor takes a node block length as the argument, it is 100 by default. 
+Memory for nodes is allocated in blocks of this capacity. Destructor calls abort, 
+if not all nodes are destroyed.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to check, if there are allocated nodes.
+</p>
+
+<p>
+<b>getCount()</b> returns the number of allocated nodes.
+</p>
+
+<p>
+<b>alloc()</b> allocates a node. Arguments are forwarder to the node constructor.
+</p>
+
+<p>
+<b>erase()</b> destroys all allocated nodes. The number of nodes is returned.
+</p>
+
+<p>
+<b>todel()</b> points to the "special" node, which can be deleted. If there are no allocated nodes,
+null is returned. Unlike other node allocators, compact variant can delete only one special node
+from the set of allocated nodes.
+</p>
+
+<p>
+<b>del()</b> deletes the special node, if any.
+</p>
+
+<p>
+<b>CompactNodeAllocator</b> is swappable and movable.
+</p>
 
 </body>
 
