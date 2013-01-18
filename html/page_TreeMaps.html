@@ -35,14 +35,24 @@ Here are two maps, built on <a href="page_Trees.html">red-black tree and radix t
 They are parametrized by the key type, object type, <a href="page_NodeAllocators.html">node allocator</a> type.
 Node allocator is defaulted to the <b>NodeAllocator</b>.
 The only requirement for the object type is its destructor must be no-throw. 
-There are also <a href="page_CompactMaps.html">compact variants</a> of maps.
+There are also <a href="page_CompactMaps.html">compact variants</a> of these maps.
 </p>
 
-<h4>RBTreeMap</h4>
+<p>
+Constant maps propagate constantness to its elements.
+</p>
+
+<a name="RBTreeMap"><h4>RBTreeMap</h4></a>
+
+<p>
+This is the first map, built on red-black tree algorithms. There is the additional template parameter 
+<b>KRef</b>. It is used to specify a key in methods. It is defaulted to the <b>K</b>, another
+typical choice would be the <b>const K &</b>.
+</p>
 
 <pre>
 
-template &lt;class K,class T,class KRef,template &lt;class Node&gt; class Allocator&gt;
+template &lt;class K,class T,class KRef=K,template &lt;class Node&gt; class Allocator=NodeAllocator&gt;
 class <span class="Att">RBTreeMap</span> : NoCopy
  {
    ....
@@ -209,7 +219,106 @@ class <span class="Att">RBTreeMap</span> : NoCopy
 
 </pre>
 
+<p>
+Constructor forwards its arguments to the node allocator. Destructor destroys the list with all its elements.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to check, if the list is empty.
+</p>
+
+<p>
+<b>getCount()</b> returns the number of list elements.
+</p>
+
+<p>
+<b>find...()</b> methods search a map element with some properties. A pointer to the found
+element is returned, or null if the element is not found.
+The properties are:
+</p>
+
+<p>
+<b>find(KRef key)</b> &mdash; element with the given key.
+</p>
+
+<p>
+<b>findMin()</b> &mdash; element with the minimum key.
+</p>
+
+<p>
+<b>findMin(KRef key)</b> &mdash; element with the minimum key, greater or equal the <b>key</b>.
+</p>
+
+<p>
+<b>findMax()</b> &mdash; element with the maximum key.
+</p>
+
+<p>
+<b>findMin(KRef key)</b> &mdash; element with the maximum key, less or equal the <b>key</b>.
+</p>
+
+<p>
+<b>find_ptr...()</b> methods do the same, but return a "node pointer". This object gives access
+to the found element through the <b>Object Pointer Interface</b>, 
+the key is also can be retrieved by the method <b>getKey()</b>. It also can be used to delete the element
+from the map.
+</p>
+
+<p>
+<b>find_or_add()</b> method finds or adds a new element to the map. The first argument is the required key.
+If there is a map element with this key, the element is found and returned. The field <b>new_flag</b>
+in the <b>Result</b> object will be <b>false</b>. If there is no such key in the map, the new element 
+with this key will be added. The field <b>new_flag</b> in the <b>Result</b> object will be <b>true</b>.
+Extra arguments are forwarded to the object constructor. Exception is thrown in case of error.
+</p>
+
+<p>
+<b>del...()</b> methods delete an element from the map. If an element is deleted, <b>true</b> is returned.
+</p>
+
+<p>
+<b>del(KRef)</b> deletes the element with the given key.
+</p>
+
+<p>
+<b>delMin()</b> deletes the element with the minimum key.
+</p>
+
+<p>
+<b>delMax()</b> deletes the element with the maximum key.
+</p>
+
+<p>
+<b>del("node pointer")</b> deletes the element, pointed by the "node pointer".
+</p>
+
+<p>
+<b>erase()</b> destroys all elements, the number of destroyed elements is returned.
+</p>
+
+<p>
+<b>apply...()</b> methods apply the functor to map elements. Functor is called with two 
+arguments: key and object.
+</p>
+
+<p>
+<b>applyIncr()</b> applies the functor in the incremental key order.
+</p>
+
+<p>
+<b>applyDecr()</b> applies the functor in the decremental key order.
+</p>
+
+<p>
+<b>RBTreeMap</b> is swappable and movable.
+</p>
+
 <h4>KeyRange</h4>
+
+<p>
+This class defines the key value range. The <b>K</b> must be an unsigned integral type.
+It is used to specify a key range for a radix tree map.
+</p>
 
 <pre>
 
@@ -230,11 +339,42 @@ struct <span class="Att">KeyRange</span>
 
 </pre>
 
-<h4>RadixTreeMap</h4>
+<p>
+<b>kmin</b> is the minimum key value.
+</p>
+
+<p>
+<b>kmax</b> is the maximum key value.
+</p>
+
+<p>
+<b>KeyRange()</b> is the default constructor. It creates the "all value" range.
+</p>
+
+<p>
+<b>KeyRange(kmax)</b> creates a key range with the given maximum key value, the minimum
+key value is zero.
+</p>
+
+<p>
+<b>KeyRange(kmin,kmax)</b> creates a key range with the given minimum and maximum key values.
+</p>
+
+<p>
+<b>guard()</b> is a guard method. It ensures the given <b>key</b> belongs to the key range.
+</p>
+
+<a name="RadixTreeMap"><h4>RadixTreeMap</h4></a>
+
+<p>
+This is the second map, built on radix tree algorithms. The <b>K</b> must be an unsigned integral type.
+Methods and behavior are the same as for <b>RBTreeMap</b>. The only difference is there is the additional
+constructor. The first argument of this constructor is the key value range.
+</p>
 
 <pre>
 
-template &lt;class K,class T,template &lt;class Node&gt; class Allocator&gt; 
+template &lt;class K,class T,template &lt;class Node&gt; class Allocator=NodeAllocator &gt; 
 class <span class="Att">RadixTreeMap</span> : NoCopy
  {
    ....
@@ -247,7 +387,7 @@ class <span class="Att">RadixTreeMap</span> : NoCopy
    explicit RadixTreeMap(SS &amp;&amp; ... ss);
    
    template &lt;class ... SS&gt;
-   explicit RadixTreeMap(KeyRange&lt;K&gt; key_range_,SS &amp;&amp; ... ss);
+   explicit RadixTreeMap(KeyRange&lt;K&gt; key_range,SS &amp;&amp; ... ss);
    
    ~RadixTreeMap();
    
