@@ -34,16 +34,17 @@
 
 <p>
 Serialization is a process of converting an object state into a byte sequence and inversely.
-We use the word "save" for the first operation and "load" for the inverse. The header <b>SaveLoad.h</b>
+We use the word "save" for the first operation and the "load" for the inverse. The header <b>SaveLoad.h</b>
 provides a basic binary serialization framework.
 </p>
 
 <p>
-To participate in te save/load process a class must implement a save/load methods.
+To participate in the save/load process a class must implement a save/load methods.
 The simple example, how to serialize a simple data structure:
 </p>
 
 <pre>
+
 struct Data
  {
   T1 t1;
@@ -66,16 +67,18 @@ struct Data
     dev.template use&lt;BeOrder&gt;(t1,t2,t3);
    }
  };
+
 </pre>
 
 <p>
 Four basic types <b>uint8</b>, <b>uint16</b>, <b>uint32</b>, and <b>uint64</b> are serializable,
 either in the big-endian or in the little-endian format.
 An order specifier (<b>BeOrder</b> or <b>LeOrder</b>) affects only the basic type argument's
-serialization (t1,t2,t3). If none of them has a basic type, you may use the <b>operator ()</b>:
+serialization <b>(t1,t2,t3)</b>. If none of them has a basic type, you may use the <b>operator ()</b>:
 </p>
 
 <pre>
+
   template &lt;class Dev&gt;
   void save(Dev &amp;dev) const
    {
@@ -87,15 +90,16 @@ serialization (t1,t2,t3). If none of them has a basic type, you may use the <b>o
    {
     dev(t1,t2,t3);
    }
+
 </pre>
 
 <p>
 Type may not define the constant <b>SaveLoadLen</b>. But if it is defined, the type must serialize itself
-in exact number of bytes. This constant is used to optimize a serializaion process.
+in exact number of bytes. This constant is used to optimize a serialization process.
 </p>
 
 <p>
-A serializaion device does its job with the <b>operator ()</b>, which accepts any number of arguments.
+A serialization device does its job with the <b>operator ()</b>, which accepts any number of arguments.
 If an <b>Order</b> must be specified, then the method <b>use&lt;Order&gt;</b> must be used instead.
 </p>
 
@@ -104,12 +108,14 @@ To calculate a save length of the set of objects the function <b>SaveLen()</b> c
 </p>
 
 <pre>
+
 template &lt;class ... TT&gt;
 ULenSat <span class="Att">SaveLen</span>(const TT &amp; ... tt);
+
 </pre>
 
 <p>
-Or the meta-function <b>SaveLenCounter</b> for a fixed-length types.
+Or the meta-function <b>SaveLenCounter</b> for fixed serialization length types.
 </p>
 
 <pre>
@@ -146,8 +152,8 @@ void <span class="Att">ProxyLoad</span>(T &amp;obj,Dev &amp;dev);
 </pre>
 
 <p>
-The following funtion family is a range serialization helpers. You may load or save the given range
-of objects using them. Range can be given as an abstract range cursor class or as the pointer/length 
+The following function family is a range serialization helpers. You may load or save the given range
+of objects using them. Range can be given as an abstract range cursor class or as the (pointer,length) 
 couple.
 </p>
 
@@ -180,8 +186,8 @@ void <span class="Att">LoadRange_use</span>(T *ptr,ulen len,Dev &amp;dev);
 </pre>
 
 <p>
-The following simple structure family is in particular is a proxy class family for
-the unsigned types serialization.
+The following simple structure family is, in particular, a proxy class family for
+the unsigned type serialization.
 </p>
 
 <pre>
@@ -256,7 +262,8 @@ A serialization output device must provide the following methods:
 </p>
 
 <pre>
-class <span class="Att">Dev</span>
+
+class Dev
  {
   public:
 
@@ -278,6 +285,7 @@ class <span class="Att">Dev</span>
    template &lt;class ... TT&gt;
    void operator () (const TT &amp; ... tt);
  };
+
 </pre>
 
 <p>
@@ -286,7 +294,7 @@ by an object being serialized.
 </p>
 
 <p>
-The default implementation of the save methods is below:
+The default implementation of save methods is below:
 </p>
 
 <pre>
@@ -315,7 +323,8 @@ A serialization input device must provide the following methods:
 </p>
 
 <pre>
-class <span class="Att">Dev</span>
+
+class Dev
  {
   public:
 
@@ -337,10 +346,11 @@ class <span class="Att">Dev</span>
    template &lt;class ... TT&gt;
    void operator () (TT &amp; ... tt);
  };
+
 </pre>
 
 <p>
-If the next byte is not avaliable, the method <b>get()</b> should return zero, <b>get(&lt;range&gt;)</b>
+If the next byte is not available, the method <b>get()</b> should return zero, <b>get(&lt;range&gt;)</b>
 may leave the range partially filled. <b>getRange()</b> may return the empty range.
 <b>RangeGetDev</b> provides additional load methods (see below).
 </p>
@@ -373,11 +383,12 @@ The default implementation of the load methods is below:
 <h4>PutDevBase/GetDevBase</h4>
 
 <p>
-These two classes are to simpify a serialization device's implementation. They implement the
-standard save/load operations sets.
+These two classes are to simplify a serialization device's implementation. They implement the
+standard save/load operation sets.
 </p>
 
 <pre>
+
 template &lt;class Dev&gt;
 class <span class="Att">PutDevBase</span>
  {
@@ -403,9 +414,11 @@ class <span class="Att">PutDevBase</span>
    template &lt;class ... TT&gt;
    void operator () (const TT &amp; ... tt);
  };
+
 </pre>
 
 <pre>
+
 template &lt;class Dev&gt;
 class <span class="Att">GetDevBase</span>
  {
@@ -431,6 +444,7 @@ class <span class="Att">GetDevBase</span>
    template &lt;class ... TT&gt;
    void operator () (TT &amp; ... tt);
  }; 
+
 </pre>
 
 <p>
@@ -438,6 +452,7 @@ To use these classes you must derive a class like this:
 </p>
 
 <pre>
+
 class Dev : public PutDevBase&lt;Dev&gt;
  {
    ....
@@ -450,9 +465,11 @@ class Dev : public PutDevBase&lt;Dev&gt;
    
    PtrLen&lt;uint8&gt; do_putRange(ulen len);
  };
+
 </pre>
 
 <pre>
+
 class Dev : public GetDevBase&lt;Dev&gt;
  {
    ....
@@ -465,17 +482,19 @@ class Dev : public GetDevBase&lt;Dev&gt;
    
    PtrLen&lt;const uint8&gt; do_getRange(ulen len);
  };
+
 </pre>
 
 <h4>BufPutDev</h4>
 
 <p>
-<b>BufPutDev</b> is a serialization output device. It is lightweight, in fact, it is a wrapper over an 
-output buffer pointer. It does not check output overflow, so make sure the output buffer has enough room
+<b>BufPutDev</b> is a serialization output device. It is lightweight, in fact, it is a wrapper over the 
+output buffer pointer. It does not check the output overflow, so make sure the output buffer has enough room
 before serialization.
 </p>
 
 <pre>
+
 class <span class="Att">BufPutDev</span>
  {
    uint8 *buf;
@@ -504,10 +523,11 @@ class <span class="Att">BufPutDev</span>
    template &lt;class ... TT&gt;
    void operator () (const TT &amp; ... tt);
  };
+
 </pre>
 
 <p>
-Constructor takes the pointer to the output buffer. Serialization bytes will be stored in this buffer.
+Constructor takes a pointer to the output buffer. Serialization bytes will be stored in this buffer.
 You can make a copy of an object of this class.
 </p>
 
@@ -523,11 +543,12 @@ and adjust the position.
 <h4>CountPutDev</h4>
 
 <p>
-This device is used to count the number of output bytes with overflow control. Data itself goes nowhere.
+This device is used to count the number of output bytes with the overflow control. Data itself goes nowhere.
 To represent the byte number the type <a href="page_UIntSat.html"><b>ULenSat</b></a> is used.
 </p>
 
 <pre>
+
 class <span class="Att">CountPutDev</span>
  {
    ULenSat count;
@@ -558,17 +579,19 @@ class <span class="Att">CountPutDev</span>
    template &lt;class ... TT&gt;
    void operator () (const TT &amp; ... tt);
  };
+
 </pre>
 
 <h4>BufGetDev</h4>
 
 <p>
-<b>BufGetDev</b> is a serialization input device. It is lightweight, in fact, it is a wrapper over an 
-input buffer pointer. It does not check input underflow. So it should be used mostly with fixed serialization 
+<b>BufGetDev</b> is a serialization input device. It is lightweight, in fact, it is a wrapper over the 
+input buffer pointer. It does not check the input underflow. So it should be used mostly with fixed serialization 
 length types.
 </p>
 
 <pre>
+
 class <span class="Att">BufGetDev</span>
  {
    const uint8 *buf;
@@ -597,10 +620,11 @@ class <span class="Att">BufGetDev</span>
    template &lt;class ... TT&gt;
    void operator () (TT &amp; ... tt);
  };
+
 </pre>
 
 <p>
-Constructor takes the pointer to the input buffer. Serialization bytes will be taken from this buffer.
+Constructor takes a pointer to the input buffer. Serialization bytes will be taken from this buffer.
 You can make a copy of an object of this class.
 </p>
 
@@ -621,6 +645,7 @@ error flag. This flag is set in case of underflow or manually by the object bein
 </p>
 
 <pre>
+
 class <span class="Att">RangeGetDev</span>
  {
    PtrLen&lt;const uint8&gt; range;
@@ -662,10 +687,11 @@ class <span class="Att">RangeGetDev</span>
    
    NegBool finish();
  };
+
 </pre>
 
 <p>
-Constructor argument is a input byte range.
+Constructor argument is an input byte range.
 </p>
 
 <p>

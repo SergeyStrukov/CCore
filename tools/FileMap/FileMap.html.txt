@@ -1127,7 +1127,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_Regen.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Replace.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_ResSem.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_SaveLoad.html" 1
+"D:/active/home/C++/CCore-Root-1-03/html/page_SaveLoad.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_ScanBit.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Sem.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_SingleHost.html" 2
