@@ -87,7 +87,7 @@ struct PtrLen
   
   ulen operator + () const { return len; }
   
-  bool operator ! () const { return !len;  }
+  bool operator ! () const { return !len; }
   
   T & operator * () const { return *ptr; }
   

@@ -70,7 +70,7 @@ struct <span class="Att">Empty</span>
 
 </pre>
 
-<h3>DefType</h3>
+<a name="DefType"><h3>DefType</h3></a>
 
 <p>
 <b>Meta-function</b> <b>DefType</b> returns its argument as a type:
@@ -78,7 +78,7 @@ struct <span class="Att">Empty</span>
 
 <pre>
 
-<a name="DefType">template &lt;class T&gt;</a>
+template &lt;class T&gt;
 struct <span class="Att">DefType</span>
  {
   typedef T Ret;
@@ -90,7 +90,7 @@ struct <span class="Att">DefType</span>
 
 </pre>
 
-<h3>DefConst</h3>
+<a name="DefConst"><h3>DefConst</h3></a> 
 
 <p>
 <b>Meta-function</b> <b>DefConst</b> returns its second argument as a constant, first argument defines the 
@@ -99,7 +99,7 @@ constant type:
 
 <pre>
 
-<a name="DefConst">template &lt;class SUInt,SUInt Val&gt;</a> 
+template &lt;class SUInt,SUInt Val&gt;
 struct <span class="Att">DefConst</span>
  {
   enum RetType : SUInt { Ret = Val };

@@ -46,7 +46,7 @@ The following ingredients are required:</p>
 <p>
 
 Install <b>Cygwin</b> first. Include <b>make</b> and <b>bash</b> in your installation.<br />
-If you are not familiar with this platform spend some time to learn it.
+If you are not familiar with this platform, spend some time to learn it.
 
 </p>
 <p>
@@ -59,10 +59,10 @@ You can also build compilers yourself. See <a href="#build-gcc">below</a> for in
 </p>
 <p>
 
-Copy 4 <b>dlls</b> from the directory <b>/opt/gcc-4.7.0/bin</b> (or from another newer host compiler directory) to
-the <b>/bin</b> directory (all pathes here are <b>Cygwin</b> pathes, <b>dlls</b> are <b>cyggcc_s-1.dll,
+Copy 4 <b>dll</b>s from the directory <b>/opt/gcc-4.7.1/bin</b> (or from another newer host compiler directory) to
+the <b>/bin</b> directory (all paths here are <b>Cygwin</b> paths, <b>dll</b>s are <b>cyggcc_s-1.dll,
 cygssp-0.dll, cygstdc++-6.dll, cygquadmath-0.dll</b>).<br />
-It is neccessary to make host programs runable.
+It is necessary to make host programs runnable.
 
 </p>
 <p>
@@ -74,7 +74,7 @@ You can also include this directory into the <b>Windows path</b>.
 </p>
 <p>
 
-Unpack <b>CCore</b> package (or checkout the source tree from a repository) somewere under you <b>Cygwin home</b> directory. <span class="Hint">Avoid file and directory names with space characters.</span>
+Unpack <b>CCore</b> package (or checkout the source tree from a repository) somewhere under you <b>Cygwin home</b> directory. <span class="Hint">Avoid file and directory names with space characters.</span>
 
 </p>
 <p>
@@ -84,10 +84,10 @@ Go to the <b>CCore root</b> directory. The following commands are used to prepar
 
 <ul>
 <li><span class="Cmd">make</span> &mdash; to build all,</li>
-<li><span class="Cmd">make warn</span> &mdash; to build all and put errors/warnings into <b>warn.txt</b> file,</li>
+<li><span class="Cmd">make warn</span> &mdash; to build all and put errors/warnings into the file <b>warn.txt</b>,</li>
 <li><span class="Cmd">make clean</span> &mdash; to clean,</li>
 <li><span class="Cmd">make list</span> &mdash; to build source file lists; you will need this command if you alter source file set,
-<span class="Alert">before using it you have, however, build CCore tools</span>.</li>
+<span class="Alert">before using it you have, however, build <b>CCore</b> tools</span>.</li>
 </ul>
 
 <h2>Post-install notes</h2>
@@ -104,7 +104,9 @@ and tests. You can use the following <a href="http://sourceforge.net/projects/co
 
 <p>
 You can use <b>Eclipse</b> as an <b>IDE</b> to work with <b>CCore</b> and <b>CCore</b>-based projects. <b>CCore</b> package includes
-the archive <b>eclipse.7z</b> with the <b>Eclipse Indigo</b> workbench. You will need <a href="http://www.ms-studio.com/FontSales/anonymouspro.html">Anonymouse Pro</a> 
+the archive <b>eclipse-Indigo.7z</b> with the <b>Eclipse Indigo</b> workbench and 
+<b>eclipse-Juno.7z</b> with the <b>Eclipse Juno</b> workbench. 
+You will need <a href="http://www.ms-studio.com/FontSales/anonymouspro.html">Anonymouse Pro</a> 
 font for text editor. Before using this workbench you have to adjust some settings.
 </p>
 
@@ -119,13 +121,13 @@ to the <b>CCore root</b> directory.
 </p>
 
 <p>
-There is a runable project in the workbench: <b>WIN32-test</b>. You have to adjust pathes in the project launch configuration also.
+There is a runnable project in the workbench: <b>WIN32-test</b>. You have to adjust paths in the project launch configuration also.
 Right-click on the project, pick the Properties dialog and and select <b>Run/Debug Settings</b> tab. Open the launch configuration for edit.
-Correct pathes in the <b>Main</b> and <b>Arguments</b> tabs.
+Correct paths in the <b>Main</b> and <b>Arguments</b> tabs.
 </p>
 
 <p>
-You likely would have to refresh linked resources, select each project and press F5.
+You likely would have to refresh linked resources, select each project and press <b>F5</b>.
 Finally, customize <b>Eclipse</b> as you like.
 </p>
 
@@ -152,10 +154,10 @@ You may try a newer versions.
 </p>
 
 <p>
-Bulding these packages are similar. You have to download source code, unpack it. Then create an empty build folder.
+Building these packages are similar. You have to download source code, unpack it. Then create an empty build folder.
 I am using directory <b>Download</b> to store the source and subdirectory <b>Build</b> for build directories. I.g.
-for tool XXX the source is located in <b>Download/XXX</b> and the build directory is <b>Download/Build/XXX</b>.
-Copy the file <b>MakeCfg</b> there. Then from the cygwin console issue the commands:
+for the tool XXX the source is located in the <b>Download/XXX</b> and the build directory is <b>Download/Build/XXX</b>.
+Copy the file <b>MakeCfg</b> there. Then from the <b>Cygwin</b> console issue commands:
 </p>
 
 <ul>
@@ -181,7 +183,7 @@ The last step is the building the cross-compiler for the target <b>IXDP465</b>. 
 
 <p>
 First, <b>binutils-2.20</b> must be built. To do this you have to create the <b>sysroot</b> directory: 
-<b>/opt/gcc-4.7.1-cross/armeb/sysroot</b> (cygwin path). For building you have to copy there include files. 
+<b>/opt/gcc-4.7.1-cross/armeb/sysroot</b> (<b>Cygwin</b> path). For building you have to copy there include files. 
 Build <b>sysroot</b> directory is located at <b>&lt;CCore&gt;/Target/IXDP465/sysroot</b>. Include files are in the directory
 <b>usr/include</b>. Before doing standard steps you have to replace two source files in the source folders. The files are <b>elf.sc</b> 
 and <b>armelf.sh</b>, they are located in the <b>&lt;SRC&gt;/ld/scripttempl/elf.sc</b> and <b>&lt;SRC&gt;/ld/emulparams/armelf.sh</b>. Replacement files 
@@ -232,7 +234,7 @@ Replace files <b>&lt;SRC&gt;/libstdc++-v3/libsupc++/eh_alloc.cc</b>,
 <p>
 Then fix configuration scripts. Find in <b>&lt;SRC&gt;/configure</b> the line <b>skipdirs=</b> and replace it with 
 <b>skipdirs="target-libiberty"</b>. Then correct <b>&lt;SRC&gt;/libstdc++-v3/configure</b>. This is a tricky part, you have to find
-a good location and place there the line <b>gcc_no_link=no</b>. In my version (gcc-4.7.1) it is at line number 10457 after the line
+a good location and place there the line <b>gcc_no_link=no</b>. In my version (<b>gcc-4.7.1</b>) it is at line number 10457 after the line
 <b>need_version=unknown</b>. You also have to comment out the line at "No support for this host/target combination" (line number 64104).
 
 </p>

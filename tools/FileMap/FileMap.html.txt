@@ -1027,7 +1027,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_Atomic.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_BaseRangeAlgo.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_BinarySearch.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_CCoreGeneral.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_CCoreGeneral.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_CancelPacketList.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_CharProp.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_CmdInput.html" 0
@@ -1066,8 +1066,8 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_Handle.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_HeapEngine.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Init.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_Installation.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_Introduction.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Installation.html" 2
+"D:/active/home/C++/CCore-Root-1-03/html/page_Introduction.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Job.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_LangLR1.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Len.html" 2
@@ -1079,7 +1079,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_MemAllocGuard.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_MemoryManagement.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Meta.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_Metaphysics.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Metaphysics.html" 1
 "D:/active/home/C++/CCore-Root-1-03/html/page_Move.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_MultiEvent.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_MultiSem.html" 0
@@ -1119,7 +1119,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_PrintTitle.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Printing.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_PtrLen.html" 2
-"D:/active/home/C++/CCore-Root-1-03/html/page_PtrLenReverse.html" 1
+"D:/active/home/C++/CCore-Root-1-03/html/page_PtrLenReverse.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_RadixHeap.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Random.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_RealTime.html" 0
@@ -1141,7 +1141,7 @@
 "D:/active/home/C++/CCore-Root-1-03/html/page_Sync.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_Task.html" 0
 "D:/active/home/C++/CCore-Root-1-03/html/page_TaskMonitor.html" 0
-"D:/active/home/C++/CCore-Root-1-03/html/page_Taxonomy.html" 0
+"D:/active/home/C++/CCore-Root-1-03/html/page_Taxonomy.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_TextLabel.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_TextTools.html" 2
 "D:/active/home/C++/CCore-Root-1-03/html/page_Tick.html" 0

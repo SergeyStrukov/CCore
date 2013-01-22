@@ -32,10 +32,10 @@
 
 <p>
 <b>CCore</b> is released without known bugs or defects. This code is made "as best as possible" and has 
-a top quality both in design and in implementation. This is a reliable piece of software. 
+a top quality both in design and implementation. It's a reliable piece of software. 
 So if you experience troubles, <b>CCore</b> code is the last place to look for bugs. This does not mean,
 naturally, that I do guarantee the code is completely bug-free and absolutely perfect. That is not
-achievable in the mean time. And, of course, everybody are welcome to contribute in its perfection: report a 
+achievable in the mean time. And, of course, everybody is welcome to contribute in its perfection: report a 
 real problem or suggest a design improvement.
 </p>
 
@@ -74,7 +74,7 @@ of the platform. The next part is <b>HCore</b> for host targets and <b>XCore</b>
 On host targets we rely on an operating system to perform some tasks (like primary memory management, 
 task synchronization etc.). So a host target provides a tiny layer between <b>HCore</b> and OS system calls.
 But on a stand-alone target we implements these fundamental functions ourself. <b>XCore</b> is an 
-implementaion of this part for single-core CPUs. A target provides an implementaion of very low-level 
+implementation of this part for single-core CPUs. A target provides an implementation of very low-level 
 CPU specific functions <b>XCore</b> is based on. For example, the following 3 functions are required for 
 interrupt lock support:
 </p>
@@ -110,7 +110,7 @@ class IntLock : NoCopy
 </pre>
 
 <p>
-<b>CCore</b> is designed as a <span class="Alert">compliant</span> C++11 libary. There are a few places where we are using non-standard 
+<b>CCore</b> is designed as a <span class="Alert">compliant</span> C++11 library. There are a few places where we are using non-standard 
 language extensions. In fact, we need only two of them: <b>restrict</b> and initialization priority
 attribute for static objects, supported in <b>gcc</b> family of compilers. As the result, there is no restriction
 on the compiler optimization level, unlike other OS cores. Another advantage is the platform-independence of the code. 
@@ -169,7 +169,7 @@ The core is designed for single-core CPU systems.
 <ol>
 <li>provides a rich set of synchronization objects and a simple way to construct additional ones,</li> 
 <li>implements priority inheritance and deadlock detection for mutexes,</li> 
-<li>task scheduler switchs on high frequency (10 kHz for IXDP465 platform),
+<li>task scheduler switches on high frequency (10 kHz for IXDP465 platform),
       that provides fine-grained task execution, ensure the system is highly responsive,</li>
 <li>scheduler supports task priority relaxation, that protects low priority tasks 
       from complete execution hold-on,</li> 
@@ -377,7 +377,7 @@ All synchronization classes "publish" "giving" functions callbacks.
 <h2>Packet</h2>
 
 <p>
-<b>Packet</b> is a micro-task. It has the associated small stack to store call paremeters and return values. 
+<b>Packet</b> is a micro-task. It has the associated small stack to store call parameters and return values. 
 A larger data buffer also may be attached.
 <b>Packet</b>s allow design of a request processing systems as a collection of packet-processing devices. <b>Packet</b>s are initiated 
 by some initiator and passed to the processing device. It may pass a packet further until it's completed or cancelled by 
@@ -392,18 +392,18 @@ result can be extracted and packet is disposed. Also a completion signaling is p
 </p>
 
 <p>
-<b>CCore</b> lists and trees are intrusive. Instrusive linked containers have the following advantages:
+<b>CCore</b> lists and trees are intrusive. Intrusive linked containers have the following advantages:
 </p>
 
 <ul>
 <li>they are more suitable for applications,</li>
 <li>they efficient, no memory allocation and error conditions for container operations,</li>
 <li>you may include one object in the several containers,</li>
-<li>you may build a non-intruisive container based on intruisive.</li>
+<li>you may build a non-intrusive container based on intrusive.</li>
 </ul>
 
 <p>
-<b>CCore</b> implements wide range of lists, both single linked and double linked, linear and cicular.
+<b>CCore</b> implements wide range of lists, both single linked and double linked, linear and circular.
 </p>
 
 <p>
@@ -412,19 +412,19 @@ result can be extracted and packet is disposed. Also a completion signaling is p
 
 <p>
 <b>CCore</b> provides implementation for dynamic arrays. Unlike STL vector, <b>CCore</b> arrays may contains object of any types,
-there is no requirement for copyrability. 
+there is no requirement for copyability. 
 </p>
 
 <h2>PTP</h2>
 
 <p>
-<b>PTP</b> &mdash; packet transaction protocol. It superseeds TCP as a main network protocol for client-server
+<b>PTP</b> &mdash; packet transaction protocol. It superseds TCP as a main network protocol for client-server
 applications. PTP is a packet-based, parallel and transactional protocol. It is simple and convenient
 for the development of "remote call" type interactions. Parallel nature of PTP makes obsolete such tricks
 as multi-thread FTP download. PTP is working atop a packet point-to-point or point-to-multipoint
 service like UDP (or even raw Ethernet). PTP has ability to adapt for smaller MTU lengths, 
 that is important to combine with another network protocols, which can reduce MTU (for example, 
-to implement incapsualation or encryption). 
+to implement encapsulation or encryption). 
 </p>
 
 <p>
@@ -432,7 +432,7 @@ There are several typical problems when network interaction is developed based o
 </p>
 
 <ul>
-<li>you have to parse continuous byte stream on packets,</li>
+<li>you have to parse a continuous byte stream on packets,</li>
 <li>you cannot perform parallel transactions, so if TCP is stalled on a packet loss, 
 then everything is stalled,</li>
 <li>you have to match calls with responses yourself, using sequence numbers, for example.</li>
@@ -485,7 +485,7 @@ State[22] StateTable=
 </pre>
 
 <p>
-<b>DDL</b> can be used for a manual introduced data, like configuration information.
+<b>DDL</b> can be used for a manually introduced data, like configuration information.
 Or it can be used to store a program-generated data to exchange with different data-processing programs.
 </p>
 
@@ -498,7 +498,7 @@ in any suitable for your purpose form. Another tool &mdash; <b>ParserGen</b> pro
 output in a some particular form.
 </p>
 <p>
-Here is an example, <b>AMP</b> language: 
+Here is an example, the <b>AMP</b> language: 
 </p>
 
 <pre>
@@ -826,12 +826,12 @@ NonTerminal[3] NonTerminalTable=
 <h2>Regen</h2>
 
 <p>
-<b>Regen</b> is a tool for generation helper classes and constants from a register description.
-It is used to simplify and beautify low-level register device programming.
+<b>Regen</b> is a tool for a generating helper classes and constants from a register description.
+It is used to simplify and beautify the low-level register device programming.
 </p>
 
 <p>
-An example of register description (IXP465 timers control):
+An example of the register description (IXP465 timers control):
 </p>
 
 <pre>
@@ -951,7 +951,7 @@ bar OSTBar : address
 </pre>
 
 <p>
-And output:
+And the output:
 </p>
 
 <pre>

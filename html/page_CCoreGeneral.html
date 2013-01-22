@@ -70,10 +70,11 @@ Each target is either <b>HCore</b> or <b>XCore</b> target, so it includes only o
 <p>
 To create a <b>CCore</b>-based project select a directory for it. Then place in this directory 
 (or in subdirectories) a source code. Two source files must not have the same name, even if they 
-are in different sudirectories.
+are in different subdirectories. You may use files with extension ".cpp" for C++ source files
+ans ".s" for assembler source files.
 Create the <b>Makefile</b>. Select and create a subdirectory for 
 object files (and other intermediate files), usually <b>obj</b>. Then issue the command <b>make</b>
-from the <b>cygwin</b> console. If you change the source file set issue the command <b>make list</b>.
+from the <b>Cygwin</b> console. If you change the source file set, then issue the command <b>make list</b>.
 </p>
 
 <p>
@@ -102,7 +103,7 @@ You have to define the following variables.
 </p>
 
 <p>
-<b>CCORE_ROOT</b> is the path to the <b>CCore</b> directory.
+<b>CCORE_ROOT</b> is the path to the <b>CCore</b> root directory.
 </p>
 
 <p>
@@ -110,15 +111,17 @@ You have to define the following variables.
 </p>
 
 <p>
-<b>OBJ_PATH</b> is the path to the object file directory.
+<b>OBJ_PATH</b> is the path to the object file directory. This variable can be omitted, in this case
+the default value "." is used.
 </p>
 
 <p>
-<b>TARGET</b> is the application file name.
+<b>TARGET</b> is the application file name. This variable can be omitted, in this case the default value
+"main.exe" is used.
 </p>
 
 <p>
-The following "magic line" must follows: 
+The following "magic line" must follow: 
 </p>
 
 <pre>
@@ -137,7 +140,7 @@ and method names start from lowercase letters.
 </p>
 
 <p>
-Here is an example of a class definition:
+Here is an example of the class definition:
 </p>
 
 <pre>
@@ -157,9 +160,10 @@ class SomeClass
 
 <p>
 The private part goes first, the public is last.
-Members are decorated like <b>"item_count"</b>. Methods like <b>"getItemCount()"</b>. 
+Members are decorated like <b>"item_count"</b>. 
+Methods like <b>"getItemCount()"</b>. 
 Getters like <b>"getItemCount()"</b> and setters like <b>"setItemCount()"</b>. 
-The argument, used to initialize a member <b>"item_count"</b> named as <b>"item_count_"</b>.
+The argument, used to initialize the member <b>"item_count"</b>, named as <b>"item_count_"</b>.
 </p>
 
 <p>
@@ -179,6 +183,7 @@ Sections are used to group members:
 </p>
 
 <pre>
+
 class Sem : public Funchor_nocopy
  {
    .... 
@@ -213,6 +218,7 @@ class Sem : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
  };
+
 </pre>
 
 <p>
@@ -243,25 +249,27 @@ for(ulen i=count; i-- ;) { .... }
 <h3>operator + and the "null" state</h3>
 
 <p>
-There are many types, which have a special state &mdash; <b>"null"</b> state.
-Usually for such types the default constructor initialize creates the <b>"null"</b> object.
+There are many types, which have a special state &mdash; "null" state.
+Usually for such types the default constructor creates a "null" object.
 <b>CCore</b> often defines the <b>Nothing</b>-constructor to do the same.
-And two operators: <b>operator +</b> and <b>operator !</b> can be used to check, if the object is <b>"null"</b>.
+And two operators: <b>operator +</b> and <b>operator !</b> can be used to check, if the object is "null".
 </p>
 
 <pre>
+
 class SomeClass
  {
   public:
 
-   SomeClass(); // set the object into the null state
+   SomeClass(); // set the object into the "null" state
 
-   SomeClass(NothinType); // set the object into the null state too
+   SomeClass(NothinType); // set the object into the "null" state too
 
    boolable operator + () const; // return true, if the object is not "null"
 
    bool operator ! () const; // return true, if the object is "null"
  };
+
 </pre>
 
 </body>

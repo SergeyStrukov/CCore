@@ -30,7 +30,7 @@
 
 <p>
 This page provides the list of common terms and the taxonomy of classes. <b>Class</b> in C++ is a very
-generic and powerfull entity, so we classify them by its purpose and nature.
+generic and powerful entity, so we classify them by their purpose and nature.
 </p>
 
 <h3>Terms</h3>
@@ -42,7 +42,7 @@ reasonably small execution time limit and always successful.
 
 
 <p>
-<b>Derivability</b> is an ability of some entity to be used as the building block of the whole. See, for example,
+<b>Derivability</b> is the ability of some entity to be used as the building block of the whole. See, for example,
 <a href="page_Swap.html"><b>Swap</b></a>.
 </p>
 
@@ -52,7 +52,7 @@ reasonably small execution time limit and always successful.
 <h4>Word</h4>
 
 <p>
-<b>Word</b> is a enumerator, purposed to verbose some generic action. In C++ there is no named constructors.
+<b>Word</b> is a enumerator, purposed to verbose some generic action. In C++ there are no named constructors.
 But it is possible to add an unused argument of a <b>Word</b> type to clearly distinguish between different
 overloaded constructors. See, for example, <a href="page_Nothing.html"><b>Nothing</b></a>. 
 </p>
@@ -104,8 +104,8 @@ Tuple&lt;TT...&gt; MakeTuple(const TT &amp; ... tt);
 <h4>Partial class</h4>
 
 <p>
-<b>Partial class</b> is a class not intended for a direct usage, but designed to be a builing block for a derived class.
-Like a sophisticated machines, built from a machine parts, in C++ the complex classes can be constructed from a smaller
+<b>Partial class</b> is a class not intended for a direct usage, but designed to be a building block for a derived class.
+Like a sophisticated machine, built from a machine parts, in C++ a complex class can be constructed from smaller
 and simpler classes. Sometimes such parts are not usable alone. Hence we call them <b>Partial</b>. 
 See, for example, <a href="page_ToMemBase.html"><b>ToMemBase</b></a>. Such classes often have names ending in "Base".
 </p>
@@ -130,13 +130,13 @@ struct Point
 <h4>Data Type</h4>
 
 <p>
-<b>Data Type</b> is a type with data semantic, but with an arbitary large state. The simplest example is the class 
+<b>Data Type</b> is a type with data semantic, but with an arbitrary large state. The simplest example is the class 
 <a href="page_String.html"><b>String</b></a>.
 The purpose of such types is to store some piece of data. The data is stored in some owned buffer.
 They may have the copy constructor and the assign operator. These operators can be implemented as <b>efficient</b> 
 operations using reference counting.
 In <b>CCore</b> we don't make a class copyable if there is no way to make it <b>efficient</b>. In such situation the class
-is not copyable, but usually swapable/moveable.
+is not copyable, but usually swappable/movable.
 </p>
 
 <h4>Resource Host Type</h4>
@@ -145,14 +145,14 @@ is not copyable, but usually swapable/moveable.
 <b>Resource Host Type</b> is a wrapper over some resource handle, like a file descriptor, a socket descriptor, any other OS
 object descriptor, object pointer, memory block pointer etc. In destructor the handle is released. The purpose of such types
 is to ensure the resource will be eventually released. It also provides some methods to use the resource.
-<b>Resource Host Type</b>s are not copyable, but swapable/moveable.
+<b>Resource Host Type</b>s are not copyable, but swappable/movable.
 </p>
 
 <h4>Scope Lock Type</h4>
 
 <p>
-<b>Scope Lock Type</b> objects are used to "lock" something for the duration of a scope. For example, <b>Mutex::Lock</b>
-object is used to lock a mutex:
+<b>Scope Lock Type</b> objects are used to "lock" something for the duration of a scope. For example, 
+the <b>Mutex::Lock</b> object is used to lock a mutex:
 </p>
 
 <pre>
@@ -200,6 +200,7 @@ is used for cursors:
 </p>
 
 <pre>
+
 class Cursor
  {
   public:
@@ -210,16 +211,17 @@ class Cursor
 
    void operator ++ (); // move to the next object, precondition( +(*this) )
 
-   // read-write variant
+   // reference variant, can be read-only
 
    T & operator * () const; // the current object, precondition( +(*this) )
 
    T * operator -> () const; // the current object, precondition( +(*this) )
 
-   // read-only variant 
+   // value variant, always read-only 
 
    T operator * () const; // the current object, precondition( +(*this) )
  };
+
 </pre>
 
 <p>
@@ -241,6 +243,7 @@ for(; +r ;++r) { do_with(*r); }
 </p>
 
 <pre>
+
 class SomeClass
  {
   public:
@@ -253,6 +256,7 @@ class SomeClass
    
    ulen getLen() const;
  };
+
 </pre>
 
 <p>
@@ -266,6 +270,7 @@ Usually, this interface is implemented by <b>Container Type</b>s or some <b>Prox
 </p>
 
 <pre>
+
 class SomeClass
  {
   public:
@@ -280,6 +285,7 @@ class SomeClass
    
    T * operator -> () const; // the current object, precondition( +(*this) )
  };
+
 </pre>
 
 <p>
@@ -287,16 +293,18 @@ This interface can be reduced to
 </p>
 
 <pre>
+
 class SomeClass
  {
   public:
 
-   T * getPtr() const; // the current object, precondition( +(*this) )
+   T * getPtr() const; // the current object
    
-   T & operator * () const; // the current object, precondition( +(*this) )
+   T & operator * () const; // the current object
    
-   T * operator -> () const; // the current object, precondition( +(*this) )
+   T * operator -> () const; // the current object
  };
+
 </pre>
 
 <p>
@@ -349,7 +357,7 @@ See, for example, <a href="page_OwnPtr.html"><b>OwnAlgo</b></a>.
 
 <p>
 <b>Class-function</b> is a class, used as a function. Its constructor is a function body. The constructed
-object is a return value. Such classes are usefull if you have to return a large or non-copyable object.
+object is a return value. Such classes are useful if you have to return a large or non-copyable object.
 See, for example, <a href="page_MemoryManagement.html#MemStat"><b>MemStat</b></a>.
 </p>
 
@@ -363,7 +371,7 @@ constants, types or static functions.
 <h4>Meta-function</h4>
 
 <p>
-<b>Meta-function</b> is a class template, instantination of meta-function produces a meta-class. Usually,
+<b>Meta-function</b> is a class template, instantiation of meta-function produces a meta-class. Usually,
 <b>Meta-function</b> are defined using partial or complete specialization. See, for example, 
 <a href="page_Meta.html#DefType"><b>DefType</b></a> or <a href="page_Meta.html#DefConst"><b>DefConst</b></a>.
 Here is the <b>Meta::ImpSelect</b>:
