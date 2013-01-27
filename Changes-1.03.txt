@@ -1,0 +1,49 @@
+/* Changes-1.03.txt */
+
+Reverse range support:
+
+  CCore/inc/gadget/PtrLenReverse.h
+
+New containers and algorithms:
+
+  CCore/inc/NodeAllocator.h
+  CCore/inc/ContainerList.h
+  CCore/inc/TreeMap.h
+
+  CCore/inc/CompactNodeAllocator.h
+  CCore/inc/CompactList.h
+  CCore/inc/CompactMap.h
+
+  CCore/inc/algon/ApplyToRange.h
+  CCore/inc/algon/BaseRangeAlgo.h
+  CCore/inc/algon/BinarySearch.h
+  CCore/inc/algon/CommonIntAlgo.h
+  CCore/inc/algon/EuclidRotate.h
+  CCore/inc/algon/GCDConst.h
+
+Incremental update:
+
+  add ToConst()
+
+    CCore/inc/gadget/UtilFunc.h
+
+  add apply...()
+
+    CCore/inc/array/AtomicRefArray.h
+    CCore/inc/array/DynArray.h
+    CCore/inc/array/RefArray.h
+    CCore/inc/array/SimpleArray.h
+    CCore/inc/array/TempArray.h
+
+  add replace() and back cursor movement
+
+    CCore/inc/List.h
+
+  add replace()
+
+    CCore/inc/tree/RBTreeUpLink.h
+
+  add replace() and PrepareIns
+
+    CCore/inc/tree/TreeUpLink.h
+

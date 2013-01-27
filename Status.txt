@@ -1,11 +1,17 @@
+/* Status.txt */
+
 Release 1-02
 
 Code is finalized.
 
 HTML part is preliminary done. Still needs to do much.
 
+//------------------------------------------------------------------------
+
 Release 1-03
 
 Code is finalized.
 
 Documentaion is improved. But is not finished yet.
+
+//------------------------------------------------------------------------
