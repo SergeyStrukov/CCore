@@ -171,6 +171,7 @@ obj/SaveLoad.o \
 obj/ScanBit.o \
 obj/Sem.o \
 obj/ShortSort.o \
+obj/Signal.o \
 obj/SimpleArray.o \
 obj/SingleHost.o \
 obj/SlowSem.o \
@@ -400,6 +401,7 @@ obj/SaveLoad.s \
 obj/ScanBit.s \
 obj/Sem.s \
 obj/ShortSort.s \
+obj/Signal.s \
 obj/SimpleArray.s \
 obj/SingleHost.s \
 obj/SlowSem.s \
@@ -629,6 +631,7 @@ obj/SaveLoad.dep \
 obj/ScanBit.dep \
 obj/Sem.dep \
 obj/ShortSort.dep \
+obj/Signal.dep \
 obj/SimpleArray.dep \
 obj/SingleHost.dep \
 obj/SlowSem.dep \
@@ -1210,6 +1213,9 @@ obj/Sem.o : ../../HCore/CCore/src/task/Sem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShortSort.o : ../../CCore/src/sort/ShortSort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Signal.o : ../../CCore/src/Signal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SimpleArray.o : ../../CCore/src/array/SimpleArray.cpp
@@ -1892,6 +1898,9 @@ obj/Sem.s : ../../HCore/CCore/src/task/Sem.cpp
 obj/ShortSort.s : ../../CCore/src/sort/ShortSort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Signal.s : ../../CCore/src/Signal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SimpleArray.s : ../../CCore/src/array/SimpleArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2571,6 +2580,9 @@ obj/Sem.dep : ../../HCore/CCore/src/task/Sem.cpp
 
 obj/ShortSort.dep : ../../CCore/src/sort/ShortSort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShortSort.o $< -MF $@
+
+obj/Signal.dep : ../../CCore/src/Signal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Signal.o $< -MF $@
 
 obj/SimpleArray.dep : ../../CCore/src/array/SimpleArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SimpleArray.o $< -MF $@
