@@ -56,6 +56,7 @@ obj/DDLTypes.o \
 obj/DDLValue.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
+obj/DeferCall.o \
 obj/DevInt.o \
 obj/DevIntHandle.o \
 obj/DevPCIHost.o \
@@ -312,6 +313,7 @@ obj/DDLTypes.s \
 obj/DDLValue.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
+obj/DeferCall.s \
 obj/DevInt.s \
 obj/DevIntHandle.s \
 obj/DevPCIHost.s \
@@ -568,6 +570,7 @@ obj/DDLTypes.dep \
 obj/DDLValue.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
+obj/DeferCall.dep \
 obj/DevInt.dep \
 obj/DevIntHandle.dep \
 obj/DevPCIHost.dep \
@@ -950,6 +953,9 @@ obj/DefaultTimeout.o : ../../CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DeferCall.o : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevInt.o : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
@@ -1713,6 +1719,9 @@ obj/DefaultTimeout.s : ../../CCore/src/gadget/DefaultTimeout.cpp
 obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DeferCall.s : ../../CCore/src/DeferCall.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DevInt.s : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2473,6 +2482,9 @@ obj/DefaultTimeout.dep : ../../CCore/src/gadget/DefaultTimeout.cpp
 
 obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DefaultValue.o $< -MF $@
+
+obj/DeferCall.dep : ../../CCore/src/DeferCall.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
 
 obj/DevInt.dep : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevInt.o $< -MF $@

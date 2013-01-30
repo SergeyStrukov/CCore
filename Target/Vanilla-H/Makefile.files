@@ -49,6 +49,7 @@ obj/DDLTypes.o \
 obj/DDLValue.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
+obj/DeferCall.o \
 obj/DirTreeRun.o \
 obj/DynArray.o \
 obj/EchoDevice.o \
@@ -275,6 +276,7 @@ obj/DDLTypes.s \
 obj/DDLValue.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
+obj/DeferCall.s \
 obj/DirTreeRun.s \
 obj/DynArray.s \
 obj/EchoDevice.s \
@@ -501,6 +503,7 @@ obj/DDLTypes.dep \
 obj/DDLValue.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
+obj/DeferCall.dep \
 obj/DirTreeRun.dep \
 obj/DynArray.dep \
 obj/EchoDevice.dep \
@@ -830,6 +833,9 @@ obj/DefaultTimeout.o : ../../CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DeferCall.o : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DirTreeRun.o : ../../HCore/CCore/src/DirTreeRun.cpp
@@ -1503,6 +1509,9 @@ obj/DefaultTimeout.s : ../../CCore/src/gadget/DefaultTimeout.cpp
 obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DeferCall.s : ../../CCore/src/DeferCall.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DirTreeRun.s : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2173,6 +2182,9 @@ obj/DefaultTimeout.dep : ../../CCore/src/gadget/DefaultTimeout.cpp
 
 obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DefaultValue.o $< -MF $@
+
+obj/DeferCall.dep : ../../CCore/src/DeferCall.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
 
 obj/DirTreeRun.dep : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DirTreeRun.o $< -MF $@

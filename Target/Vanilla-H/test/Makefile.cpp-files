@@ -75,6 +75,7 @@
 ../../../CCore/test/test0074.TreeUpIns.cpp
 ../../../CCore/test/test0075.PtrLenReverse.cpp
 ../../../CCore/test/test0076.Signal.cpp
+../../../CCore/test/test0077.DeferCall.cpp
 ../../../CCore/test/test0100.Bridge.cpp
 ../../../CCore/test/test0101.PTP.cpp
 ../../../CCore/test/test0102.PrintFile.cpp
