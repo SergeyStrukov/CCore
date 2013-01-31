@@ -159,6 +159,8 @@ struct MemBase
   
   void operator delete(void *mem) { MemFree(mem); }
   
+  void operator delete(void *mem,JustTryType) { MemFree(mem); }
+  
   // extra space
   
   template <class T>

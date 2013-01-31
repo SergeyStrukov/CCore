@@ -272,6 +272,8 @@ struct <a name="MemBase"><span class="Att">MemBase</span></a>
   
   void operator delete(void *mem) { MemFree(mem); }
   
+  void operator delete(void *mem,JustTryType) { MemFree(mem); }
+
   // extra space
   
   template &lt;class T&gt;
