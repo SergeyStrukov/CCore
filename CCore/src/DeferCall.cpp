@@ -82,7 +82,7 @@ constexpr MSec DeferCallQueue::DefaultTickPeriod ;
 
 void DeferCallQueue::cleanup() noexcept(EnableNoExcept)
  {
-  while( DeferCall *defer_call=list.del_first() ) delete defer_call;
+  while( DeferCall *defer_call=list.del_first() ) defer_call->destroy(this);
  }
 
 bool DeferCallQueue::pump() noexcept(EnableNoExcept)
@@ -91,7 +91,7 @@ bool DeferCallQueue::pump() noexcept(EnableNoExcept)
     {
      defer_call->safeCall();
      
-     delete defer_call;
+     defer_call->destroy(this);
     
      if( stop_flag ) return true;
     }
@@ -117,9 +117,10 @@ bool DeferCallQueue::tick() noexcept(EnableNoExcept)
   return false;
  }
 
-DeferCallQueue::DeferCallQueue() 
+DeferCallQueue::DeferCallQueue(ulen mem_len) 
  : tick_cur(0),
-   stop_flag(false) 
+   stop_flag(false),
+   heap(mem_len)
  {
  }
 
@@ -130,7 +131,7 @@ DeferCallQueue::~DeferCallQueue()
 
 void DeferCallQueue::loop(MSec tick_period)
  {
-  stop_flag=false;
+  if( stop_flag ) return;
   
   TimeScope time_scope(tick_period);
   

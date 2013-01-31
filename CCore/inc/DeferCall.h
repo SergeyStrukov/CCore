@@ -20,6 +20,7 @@
 #include <CCore/inc/List.h>
 #include <CCore/inc/Task.h>
 #include <CCore/inc/Tuple.h>
+#include <CCore/inc/MemSpaceHeap.h>
 
 namespace CCore {
 
@@ -37,7 +38,7 @@ template <class S> class DeferInput;
 
 /* class DeferCall */
 
-class DeferCall : public MemBase_nocopy
+class DeferCall : NoCopy
  {
    DLink<DeferCall> link;
    
@@ -47,11 +48,21 @@ class DeferCall : public MemBase_nocopy
   
    DeferCall() {}
   
-   virtual ~DeferCall() {}
+   ~DeferCall() {}
    
    virtual void call()=0;
    
+   virtual void destroy(DeferCallQueue *defer_queue)=0;
+   
    void safeCall();
+   
+   static void * operator new(std::size_t len,DeferCallQueue *defer_queue);
+   
+   static void * operator new(std::size_t len,JustTryType,DeferCallQueue *defer_queue) noexcept;
+   
+   static void operator delete(void *mem,DeferCallQueue *defer_queue);
+   
+   static void operator delete(void *mem,JustTryType,DeferCallQueue *defer_queue);
  };
 
 /* class DeferCallQueue */
@@ -64,6 +75,8 @@ class DeferCallQueue : NoCopy
    Algo::Top tick_list;
    Algo::Cur tick_cur;
    bool stop_flag;
+   
+   SpaceHeap heap;
    
   private:
    
@@ -85,9 +98,39 @@ class DeferCallQueue : NoCopy
    
    // constructors
    
-   DeferCallQueue();
+   static const ulen DefaultMemLen = 1_MByte ;
+   
+   explicit DeferCallQueue(ulen mem_len=DefaultMemLen);
    
    ~DeferCallQueue();
+   
+   // heap
+   
+   void * try_alloc(ulen len) { return heap.alloc(len); }
+   
+   void * alloc(ulen len)
+    {
+     void *ret=try_alloc(len);
+     
+     if( !ret ) 
+       {
+        stop();
+       
+        GuardNoMem(len);
+       }
+     
+     return ret;
+    }
+   
+   void free(void *mem) { heap.free(mem); } // mem!=0
+   
+   template <class T>
+   void destroy(T *obj)
+    {
+     obj->~T();
+     
+     free(obj);
+    }
    
    // call
    
@@ -126,6 +169,26 @@ class DeferCallQueue : NoCopy
    static void Stop() { Get()->stop(); }
  };
 
+inline void * DeferCall::operator new(std::size_t len,DeferCallQueue *defer_queue)
+ {
+  return defer_queue->alloc(len); 
+ }
+
+inline void * DeferCall::operator new(std::size_t len,JustTryType,DeferCallQueue *defer_queue) noexcept
+ {
+  return defer_queue->try_alloc(len); 
+ }
+
+inline void DeferCall::operator delete(void *mem,DeferCallQueue *defer_queue)
+ {
+  defer_queue->free(mem);
+ }
+
+inline void DeferCall::operator delete(void *mem,JustTryType,DeferCallQueue *defer_queue)
+ {
+  defer_queue->free(mem);
+ }
+
 /* struct DeferCouple */
 
 struct DeferCouple
@@ -148,9 +211,10 @@ struct DeferCouple
    {
     if( defer_queue )
       {
+       defer_call->destroy(defer_queue);
+      
        defer_queue=0;
-       
-       delete Replace_null(defer_call);
+       defer_call=0;
       }
    }
   
@@ -227,7 +291,7 @@ class DeferInput : NoCopy
         parent->list.ins(this);
        }
       
-      virtual ~DeferBase()
+      ~DeferBase()
        {
         if( parent )
           {
@@ -255,16 +319,19 @@ class DeferInput : NoCopy
        {
        }
       
-      virtual ~DeferMethod() {}
+      ~DeferMethod() {}
       
       virtual void call() 
        { 
         if( S *obj_=this->obj )
           {
-           void (S::* method_)(TT... tt)=method;
-          
-           args.call( [=] (const TT & ... tt) { (obj_->*method_)(tt...); } ); 
+           args.call( [=] (const TT & ... tt) { (obj_->*method)(tt...); } ); 
           }
+       }
+      
+      virtual void destroy(DeferCallQueue *defer_queue)
+       {
+        defer_queue->destroy(this);
        }
     };
    
@@ -277,11 +344,16 @@ class DeferInput : NoCopy
       
       DeferFunc(DeferInput<S> *parent,const Func &func_) : DeferBase(parent),func(func_) {}
       
-      virtual ~DeferFunc() {}
+      ~DeferFunc() {}
       
       virtual void call()
        {
         if( S *obj_=this->obj ) func(*obj_);
+       }
+      
+      virtual void destroy(DeferCallQueue *defer_queue)
+       {
+        defer_queue->destroy(this);
        }
     };
    
@@ -296,7 +368,7 @@ class DeferInput : NoCopy
    template <class ... TT>
    DeferCouple create(void (S::* method)(TT... tt),const TT & ... tt) 
     {  
-     return DeferCouple(defer_queue,new DeferMethod<TT...>(this,method,tt...));
+     return DeferCouple(defer_queue,new(defer_queue) DeferMethod<TT...>(this,method,tt...));
     }
    
    template <class ... TT>
@@ -314,7 +386,7 @@ class DeferInput : NoCopy
    template <class ... TT>
    DeferCouple try_create(void (S::* method)(TT... tt),const TT & ... tt) 
     {  
-     return DeferCouple(defer_queue,new(JustTry) DeferMethod<TT...>(this,method,tt...));
+     return DeferCouple(defer_queue,new(JustTry,defer_queue) DeferMethod<TT...>(this,method,tt...));
     }
    
    template <class ... TT>
@@ -332,7 +404,7 @@ class DeferInput : NoCopy
    template <class Func>
    DeferCouple create(Func func) // func(S &)
     {
-     return DeferCouple(defer_queue,new DeferFunc<Func>(this,func));
+     return DeferCouple(defer_queue,new(defer_queue) DeferFunc<Func>(this,func));
     }
    
    template <class Func>
@@ -350,7 +422,7 @@ class DeferInput : NoCopy
    template <class Func>
    DeferCouple try_create(Func func) // func(S &)
     {
-     return DeferCouple(defer_queue,new(JustTry) DeferFunc<Func>(this,func));
+     return DeferCouple(defer_queue,new(JustTry,defer_queue) DeferFunc<Func>(this,func));
     }
    
    template <class Func>

@@ -119,6 +119,7 @@
 ../../CCore/src/net/XPoint.cpp
 ../../CCore/src/NodeAllocator.cpp
 ../../CCore/src/ObjHost.cpp
+../../CCore/src/Optional.cpp
 ../../CCore/src/OwnPtr.cpp
 ../../CCore/src/Packet.cpp
 ../../CCore/src/PacketPool.cpp

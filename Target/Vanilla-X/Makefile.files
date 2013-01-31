@@ -116,6 +116,7 @@ obj/NoMutex.o \
 obj/NodeAllocator.o \
 obj/Nothing.o \
 obj/ObjHost.o \
+obj/Optional.o \
 obj/OwnPtr.o \
 obj/PCIBus.o \
 obj/PCIBusRW.o \
@@ -360,6 +361,7 @@ obj/NoMutex.s \
 obj/NodeAllocator.s \
 obj/Nothing.s \
 obj/ObjHost.s \
+obj/Optional.s \
 obj/OwnPtr.s \
 obj/PCIBus.s \
 obj/PCIBusRW.s \
@@ -604,6 +606,7 @@ obj/NoMutex.dep \
 obj/NodeAllocator.dep \
 obj/Nothing.dep \
 obj/ObjHost.dep \
+obj/Optional.dep \
 obj/OwnPtr.dep \
 obj/PCIBus.dep \
 obj/PCIBusRW.dep \
@@ -1085,6 +1088,9 @@ obj/Nothing.o : ../../CCore/src/gadget/Nothing.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ObjHost.o : ../../CCore/src/ObjHost.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Optional.o : ../../CCore/src/Optional.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/OwnPtr.o : ../../CCore/src/OwnPtr.cpp
@@ -1812,6 +1818,9 @@ obj/Nothing.s : ../../CCore/src/gadget/Nothing.cpp
 obj/ObjHost.s : ../../CCore/src/ObjHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Optional.s : ../../CCore/src/Optional.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/OwnPtr.s : ../../CCore/src/OwnPtr.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2536,6 +2545,9 @@ obj/Nothing.dep : ../../CCore/src/gadget/Nothing.cpp
 
 obj/ObjHost.dep : ../../CCore/src/ObjHost.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ObjHost.o $< -MF $@
+
+obj/Optional.dep : ../../CCore/src/Optional.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Optional.o $< -MF $@
 
 obj/OwnPtr.dep : ../../CCore/src/OwnPtr.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/OwnPtr.o $< -MF $@

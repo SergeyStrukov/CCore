@@ -235,6 +235,8 @@ bool Testit<77>::Main()
  {
   Queue queue;
   
+  Printf(Con,"#;\n",sizeof (Queue));
+  
   Window window;
   
   queue.set(window);

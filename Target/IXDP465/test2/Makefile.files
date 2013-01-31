@@ -78,6 +78,7 @@ OBJ_LIST = \
 ../test2-obj/test0075.PtrLenReverse.o \
 ../test2-obj/test0076.Signal.o \
 ../test2-obj/test0077.DeferCall.o \
+../test2-obj/test0078.Optional.o \
 ../test2-obj/test0100.Bridge.o \
 ../test2-obj/test0101.PTP.o \
 ../test2-obj/test0102.PrintFile.o \
@@ -198,6 +199,7 @@ ASM_LIST = \
 ../test2-obj/test0075.PtrLenReverse.s \
 ../test2-obj/test0076.Signal.s \
 ../test2-obj/test0077.DeferCall.s \
+../test2-obj/test0078.Optional.s \
 ../test2-obj/test0100.Bridge.s \
 ../test2-obj/test0101.PTP.s \
 ../test2-obj/test0102.PrintFile.s \
@@ -318,6 +320,7 @@ DEP_LIST = \
 ../test2-obj/test0075.PtrLenReverse.dep \
 ../test2-obj/test0076.Signal.dep \
 ../test2-obj/test0077.DeferCall.dep \
+../test2-obj/test0078.Optional.dep \
 ../test2-obj/test0100.Bridge.dep \
 ../test2-obj/test0101.PTP.dep \
 ../test2-obj/test0102.PrintFile.dep \
@@ -599,6 +602,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0077.DeferCall.o : ../../../CCore/test/test0077.DeferCall.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test2-obj/test0078.Optional.o : ../../../CCore/test/test0078.Optional.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -954,6 +960,9 @@ include $(RULES_FILE)
 ../test2-obj/test0077.DeferCall.s : ../../../CCore/test/test0077.DeferCall.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test2-obj/test0078.Optional.s : ../../../CCore/test/test0078.Optional.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test2-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1306,6 +1315,9 @@ include $(RULES_FILE)
 
 ../test2-obj/test0077.DeferCall.dep : ../../../CCore/test/test0077.DeferCall.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0077.DeferCall.o $< -MF $@
+
+../test2-obj/test0078.Optional.dep : ../../../CCore/test/test0078.Optional.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0078.Optional.o $< -MF $@
 
 ../test2-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

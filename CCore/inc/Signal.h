@@ -151,7 +151,13 @@ void Signal<TT...>::assert(TT ... tt)
      
      ++cur;
      
-     (temp->*(temp->call))(tt...);
+     try
+       {
+        (temp->*(temp->call))(tt...);
+       }
+     catch(...)
+       {
+       }
     }
  }
 
@@ -312,7 +318,13 @@ void SignalInterface<I>::assert(Func func)
      
      ++cur;
      
-     func(*temp);
+     try
+       {
+        func(*temp);
+       }
+     catch(...)
+       {
+       }
     }
  }
 
