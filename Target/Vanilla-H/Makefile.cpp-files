@@ -93,6 +93,7 @@
 ../../CCore/src/MemSpaceHeap.cpp
 ../../CCore/src/MersenneTwister.cpp
 ../../CCore/src/Move.cpp
+../../CCore/src/MultiSignal.cpp
 ../../CCore/src/NanoPacket.cpp
 ../../CCore/src/net/Bridge.cpp
 ../../CCore/src/net/CheckedData.cpp

@@ -78,6 +78,7 @@ OBJ_LIST = \
 ../test-obj/test0076.Signal.o \
 ../test-obj/test0077.DeferCall.o \
 ../test-obj/test0078.Optional.o \
+../test-obj/test0079.MultiSignal.o \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
@@ -210,6 +211,7 @@ ASM_LIST = \
 ../test-obj/test0076.Signal.s \
 ../test-obj/test0077.DeferCall.s \
 ../test-obj/test0078.Optional.s \
+../test-obj/test0079.MultiSignal.s \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
@@ -342,6 +344,7 @@ DEP_LIST = \
 ../test-obj/test0076.Signal.dep \
 ../test-obj/test0077.DeferCall.dep \
 ../test-obj/test0078.Optional.dep \
+../test-obj/test0079.MultiSignal.dep \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
@@ -635,6 +638,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0078.Optional.o : ../../../CCore/test/test0078.Optional.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0079.MultiSignal.o : ../../../CCore/test/test0079.MultiSignal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1026,6 +1032,9 @@ include $(RULES_FILE)
 ../test-obj/test0078.Optional.s : ../../../CCore/test/test0078.Optional.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0079.MultiSignal.s : ../../../CCore/test/test0079.MultiSignal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1414,6 +1423,9 @@ include $(RULES_FILE)
 
 ../test-obj/test0078.Optional.dep : ../../../CCore/test/test0078.Optional.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0078.Optional.o $< -MF $@
+
+../test-obj/test0079.MultiSignal.dep : ../../../CCore/test/test0079.MultiSignal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0079.MultiSignal.o $< -MF $@
 
 ../test-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

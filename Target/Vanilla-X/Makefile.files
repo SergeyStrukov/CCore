@@ -106,6 +106,7 @@ obj/Meta.o \
 obj/Move.o \
 obj/MultiEvent.o \
 obj/MultiSem.o \
+obj/MultiSignal.o \
 obj/Mutex.o \
 obj/NanoIPDevice.o \
 obj/NanoPacket.o \
@@ -351,6 +352,7 @@ obj/Meta.s \
 obj/Move.s \
 obj/MultiEvent.s \
 obj/MultiSem.s \
+obj/MultiSignal.s \
 obj/Mutex.s \
 obj/NanoIPDevice.s \
 obj/NanoPacket.s \
@@ -596,6 +598,7 @@ obj/Meta.dep \
 obj/Move.dep \
 obj/MultiEvent.dep \
 obj/MultiSem.dep \
+obj/MultiSignal.dep \
 obj/Mutex.dep \
 obj/NanoIPDevice.dep \
 obj/NanoPacket.dep \
@@ -1058,6 +1061,9 @@ obj/MultiEvent.o : ../../XCore/CCore/src/task/MultiEvent.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MultiSem.o : ../../XCore/CCore/src/task/MultiSem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MultiSignal.o : ../../CCore/src/MultiSignal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Mutex.o : ../../XCore/CCore/src/task/Mutex.cpp
@@ -1788,6 +1794,9 @@ obj/MultiEvent.s : ../../XCore/CCore/src/task/MultiEvent.cpp
 obj/MultiSem.s : ../../XCore/CCore/src/task/MultiSem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/MultiSignal.s : ../../CCore/src/MultiSignal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Mutex.s : ../../XCore/CCore/src/task/Mutex.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2515,6 +2524,9 @@ obj/MultiEvent.dep : ../../XCore/CCore/src/task/MultiEvent.cpp
 
 obj/MultiSem.dep : ../../XCore/CCore/src/task/MultiSem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MultiSem.o $< -MF $@
+
+obj/MultiSignal.dep : ../../CCore/src/MultiSignal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MultiSignal.o $< -MF $@
 
 obj/Mutex.dep : ../../XCore/CCore/src/task/Mutex.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Mutex.o $< -MF $@
