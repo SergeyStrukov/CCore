@@ -21,6 +21,7 @@
 #include <CCore/inc/Task.h>
 #include <CCore/inc/Tuple.h>
 #include <CCore/inc/MemSpaceHeap.h>
+#include <CCore/inc/FunctorType.h>
 
 namespace CCore {
 
@@ -196,6 +197,8 @@ struct DeferCouple
   DeferCallQueue *defer_queue;
   DeferCall *defer_call;
   
+  // constructors
+  
   DeferCouple() : defer_queue(0),defer_call(0) {}
   
   DeferCouple(DeferCallQueue *defer_queue_,DeferCall *defer_call_) 
@@ -205,7 +208,11 @@ struct DeferCouple
     if( !defer_call ) defer_queue=0; 
    }
   
+  // props
+  
   bool operator ! () const { return !defer_queue; }
+  
+  // cleanup
   
   void cleanup() noexcept(EnableNoExcept)
    {
@@ -217,6 +224,8 @@ struct DeferCouple
        defer_call=0;
       }
    }
+  
+  // post
   
   void post() { defer_queue->post(defer_call); }
   
@@ -240,15 +249,21 @@ class DeferTick : NoCopy
    
   public: 
    
+   // constructors
+   
    explicit DeferTick(DeferCouple couple_={}) : couple(couple_),active(false) {}
    
    ~DeferTick() { reset(); }
+   
+   // set/reset
    
    bool set(DeferCouple couple);
    
    bool reset() { return set({}); }
    
    void operator = (DeferCouple couple) { set(couple); }
+   
+   // start/stop
    
    bool start();
    
@@ -335,19 +350,21 @@ class DeferInput : NoCopy
        }
     };
    
-   template <class Func>
+   template <class FuncInit>
    class DeferFunc : public DeferBase
     {
-      Func func;
+      FuncInit func_init;
       
      public:
       
-      DeferFunc(DeferInput<S> *parent,const Func &func_) : DeferBase(parent),func(func_) {}
+      DeferFunc(DeferInput<S> *parent,const FuncInit &func_init_) : DeferBase(parent),func_init(func_init_) {}
       
       ~DeferFunc() {}
       
       virtual void call()
        {
+        FunctorTypeOf<FuncInit> func(func_init);
+
         if( S *obj_=this->obj ) func(*obj_);
        }
       
@@ -359,11 +376,15 @@ class DeferInput : NoCopy
    
   public:
  
+   // constructors
+   
    explicit DeferInput(S *obj);
    
    ~DeferInput() { cancel(); }
    
    void cancel();
+   
+   // post
    
    template <class ... TT>
    DeferCouple create(void (S::* method)(TT... tt),const TT & ... tt) 
@@ -382,6 +403,8 @@ class DeferInput : NoCopy
     { 
      create(method,tt...).post_first(); 
     }
+
+   // try post
    
    template <class ... TT>
    DeferCouple try_create(void (S::* method)(TT... tt),const TT & ... tt) 
@@ -401,40 +424,44 @@ class DeferInput : NoCopy
      try_create(method,tt...).try_post_first(); 
     }
    
-   template <class Func>
-   DeferCouple create(Func func) // func(S &)
+   // post interface
+   
+   template <class FuncInit>
+   DeferCouple create(FuncInit func_init) // func(S &)
     {
-     return DeferCouple(defer_queue,new(defer_queue) DeferFunc<Func>(this,func));
+     return DeferCouple(defer_queue,new(defer_queue) DeferFunc<FuncInit>(this,func_init));
     }
    
-   template <class Func>
-   void post(Func func) 
+   template <class FuncInit>
+   void post(FuncInit func_init) 
     { 
-     create(func).post(); 
+     create(func_init).post(); 
     }
    
-   template <class Func>
-   void post_first(Func func) 
+   template <class FuncInit>
+   void post_first(FuncInit func_init) 
     { 
-     create(func).post_first(); 
+     create(func_init).post_first(); 
     }
    
-   template <class Func>
-   DeferCouple try_create(Func func) // func(S &)
+   // try post interface
+   
+   template <class FuncInit>
+   DeferCouple try_create(FuncInit func_init) // func(S &)
     {
-     return DeferCouple(defer_queue,new(JustTry,defer_queue) DeferFunc<Func>(this,func));
+     return DeferCouple(defer_queue,new(JustTry,defer_queue) DeferFunc<FuncInit>(this,func_init));
     }
    
-   template <class Func>
-   void try_post(Func func) 
+   template <class FuncInit>
+   void try_post(FuncInit func_init) 
     { 
-     try_create(func).try_post(); 
+     try_create(func_init).try_post(); 
     }
    
-   template <class Func>
-   void try_post_first(Func func) 
+   template <class FuncInit>
+   void try_post_first(FuncInit func_init) 
     { 
-     try_create(func).try_post_first(); 
+     try_create(func_init).try_post_first(); 
     }
  };
 

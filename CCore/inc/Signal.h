@@ -17,6 +17,7 @@
 #define CCore_inc_Signal_h
 
 #include <CCore/inc/List.h>
+#include <CCore/inc/FunctorType.h>
  
 namespace CCore {
 
@@ -253,8 +254,8 @@ class SignalInterface : NoCopy
    
    // methods
    
-   template <class Func>
-   void assert(Func func); // func(I &)
+   template <class FuncInit>
+   void assert(FuncInit func_init); // func(I &)
    
    // class ConnectionBase
    
@@ -307,9 +308,11 @@ SignalInterface<I>::~SignalInterface()
  }
 
 template <class I>
-template <class Func>
-void SignalInterface<I>::assert(Func func)
+template <class FuncInit>
+void SignalInterface<I>::assert(FuncInit func_init)
  {
+  FunctorTypeOf<FuncInit> func(func_init);
+
   cur=list.start();
   
   while( +cur )
