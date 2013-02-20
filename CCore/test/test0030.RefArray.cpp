@@ -77,6 +77,8 @@ bool Testit<30>::Main()
   
   show(b);
   
+  b.shrink_reserve();
+  b.shrink_reserve(10);
   b.shrink_extra();
   
   show(b);

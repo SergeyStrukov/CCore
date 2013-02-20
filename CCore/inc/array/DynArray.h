@@ -276,6 +276,16 @@ class DynArray : DynArrayBase<T,Algo>
     {
      Base::Shrink_extra(ptr);
     } 
+   
+   void shrink_reserve(ulen maxlen)
+    {
+     Base::Shrink_reserve(ptr,maxlen);
+    }
+    
+   void shrink_reserve()
+    {
+     Base::Shrink_reserve(ptr);
+    }
     
    // extend
    

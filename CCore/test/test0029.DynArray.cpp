@@ -62,6 +62,14 @@ bool Testit<29>::Main()
   
   show(b);
   
+  b.shrink_reserve();
+  
+  show(b);
+  
+  b.shrink_reserve(10);
+  
+  show(b);
+  
   b.shrink_extra();
   
   show(b);

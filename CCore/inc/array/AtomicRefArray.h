@@ -377,6 +377,30 @@ class AtomicRefArray : AtomicRefArrayBase<T,Algo>
        }
     } 
     
+   void shrink_reserve(ulen maxlen)
+    {
+     if( ptr->isShared() )
+       {
+        // cannot do anything, ignore
+       }
+     else
+       {
+        Base::Shrink_reserve(ptr.getPtr(),maxlen);
+       }
+    }
+    
+   void shrink_reserve()
+    {
+     if( ptr->isShared() )
+       {
+        // cannot do anything, ignore
+       }
+     else
+       {
+        Base::Shrink_reserve(ptr.getPtr());
+       }
+    }
+   
    // extend
    
    PtrLen<T> extend_raw(ulen delta_len)

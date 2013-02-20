@@ -18,7 +18,7 @@
 #include <CCore/inc/OwnPtr.h>
 #include <CCore/inc/TlsSlot.h>
 #include <CCore/inc/Exception.h>
- 
+
 namespace CCore {
 
 /* class DeferCall */
@@ -33,6 +33,75 @@ void DeferCall::safeCall()
     {
     }
  }
+
+/* class DeferCallHeap */
+
+namespace Private_DeferCall {
+
+enum MaxLenType : ulen 
+ { 
+  MaxLen = DeferInput<Meta::Empty>::GetMessageLength<int,int,int,int,int,int,int,int>() 
+ };
+
+} // namespace Private_DeferCall
+
+using namespace Private_DeferCall;
+
+DeferCallHeap::DeferCallHeap(ulen mem_len)
+ : heap(mem_len),
+   cache(0),
+   count(0)
+ {
+ }
+   
+DeferCallHeap::~DeferCallHeap()
+ {
+  for(Node *node=cache; node ;)
+    {
+     Node *next=node->next;
+     
+     heap.free(node);
+     
+     node=next;
+    }
+ }
+   
+void * DeferCallHeap::alloc(ulen len)
+ {
+  if( len<=MaxLen )
+    {
+     if( Node *ret=cache )
+       {
+        cache=ret->next;
+        
+        count--;
+       
+        return ret;
+       }
+     else
+       {
+        return heap.alloc(MaxLen);       
+       }
+    }
+  
+  return heap.alloc(len); 
+ }
+   
+void DeferCallHeap::free(void *mem)
+ {
+  if( count<MaxCount && heap.getLen(mem)>=MaxLen )
+    {
+     cache=new(PlaceAt(mem)) Node(cache);
+     
+     count++;
+    }
+  else
+    {
+     heap.free(mem);
+    } 
+ }
+
+ulen DeferCallHeap::GetMaxLen() { return MaxLen; }
 
 /* per-thread DeferCallQueue */
 

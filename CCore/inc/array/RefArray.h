@@ -367,6 +367,16 @@ class RefArray : RefArrayBase<T,Algo>
      Base::Shrink_extra(ptr.getPtr());
     } 
     
+   void shrink_reserve(ulen maxlen)
+    {
+     Base::Shrink_reserve(ptr.getPtr(),maxlen);
+    }
+    
+   void shrink_reserve()
+    {
+     Base::Shrink_reserve(ptr.getPtr());
+    }
+   
    // extend
    
    PtrLen<T> extend_raw(ulen delta_len)

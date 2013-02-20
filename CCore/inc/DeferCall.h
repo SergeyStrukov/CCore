@@ -29,6 +29,8 @@ namespace CCore {
 
 class DeferCall;
 
+class DeferCallHeap;
+
 class DeferCallQueue;
 
 struct DeferCouple;
@@ -66,6 +68,39 @@ class DeferCall : NoCopy
    static void operator delete(void *mem,JustTryType,DeferCallQueue *defer_queue);
  };
 
+/* class DeferCallHeap */
+
+class DeferCallHeap : NoCopy
+ {
+   SpaceHeap heap;
+   
+   // cache
+   
+   const ulen MaxCount = 100 ;
+   
+   struct Node
+    {
+     Node *next;
+     
+     explicit Node(Node *next_) : next(next_) {}
+    };
+   
+   Node *cache;
+   ulen count;
+   
+  public:
+  
+   explicit DeferCallHeap(ulen mem_len);
+   
+   ~DeferCallHeap();
+   
+   void * alloc(ulen len);
+   
+   void free(void *mem);
+   
+   static ulen GetMaxLen(); // max cached length
+ };
+
 /* class DeferCallQueue */
 
 class DeferCallQueue : NoCopy
@@ -77,7 +112,7 @@ class DeferCallQueue : NoCopy
    Algo::Cur tick_cur;
    bool stop_flag;
    
-   SpaceHeap heap;
+   DeferCallHeap heap;
    
   private:
    
@@ -375,6 +410,9 @@ class DeferInput : NoCopy
     };
    
   public:
+   
+   template <class ... TT>
+   static constexpr ulen GetMessageLength() { return sizeof (DeferMethod<TT...>); } 
  
    // constructors
    

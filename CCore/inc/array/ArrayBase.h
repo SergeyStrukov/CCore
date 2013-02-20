@@ -270,6 +270,23 @@ struct ArrayBase
       }
    }
   
+  static void Shrink_reserve(H *ptr,ulen maxlen)
+   {
+    if( !maxlen ) maxlen=1;
+    
+    if( maxlen>=ptr->len && maxlen<ptr->maxlen )
+      {
+       ptr->maxlen=maxlen;
+        
+       MemShrink(ptr,Delta+maxlen*sizeof (T));
+      }
+   }
+  
+  static void Shrink_reserve(H *ptr)
+   {
+    Shrink_reserve(ptr,2*ptr->len+100);
+   }
+  
   // extend : ptr is not default and has enough room for delta_len elements
   
   static PtrLen<T> Extend_raw(H *ptr,ulen delta_len)

@@ -80,6 +80,8 @@ OBJ_LIST = \
 ../test2-obj/test0077.DeferCall.o \
 ../test2-obj/test0078.Optional.o \
 ../test2-obj/test0079.MultiSignal.o \
+../test2-obj/test0080.DeferCall-speed.o \
+../test2-obj/test0081.ObjectDomain.o \
 ../test2-obj/test0100.Bridge.o \
 ../test2-obj/test0101.PTP.o \
 ../test2-obj/test0102.PrintFile.o \
@@ -202,6 +204,8 @@ ASM_LIST = \
 ../test2-obj/test0077.DeferCall.s \
 ../test2-obj/test0078.Optional.s \
 ../test2-obj/test0079.MultiSignal.s \
+../test2-obj/test0080.DeferCall-speed.s \
+../test2-obj/test0081.ObjectDomain.s \
 ../test2-obj/test0100.Bridge.s \
 ../test2-obj/test0101.PTP.s \
 ../test2-obj/test0102.PrintFile.s \
@@ -324,6 +328,8 @@ DEP_LIST = \
 ../test2-obj/test0077.DeferCall.dep \
 ../test2-obj/test0078.Optional.dep \
 ../test2-obj/test0079.MultiSignal.dep \
+../test2-obj/test0080.DeferCall-speed.dep \
+../test2-obj/test0081.ObjectDomain.dep \
 ../test2-obj/test0100.Bridge.dep \
 ../test2-obj/test0101.PTP.dep \
 ../test2-obj/test0102.PrintFile.dep \
@@ -611,6 +617,12 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0079.MultiSignal.o : ../../../CCore/test/test0079.MultiSignal.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test2-obj/test0080.DeferCall-speed.o : ../../../CCore/test/test0080.DeferCall-speed.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test2-obj/test0081.ObjectDomain.o : ../../../CCore/test/test0081.ObjectDomain.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -972,6 +984,12 @@ include $(RULES_FILE)
 ../test2-obj/test0079.MultiSignal.s : ../../../CCore/test/test0079.MultiSignal.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test2-obj/test0080.DeferCall-speed.s : ../../../CCore/test/test0080.DeferCall-speed.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test2-obj/test0081.ObjectDomain.s : ../../../CCore/test/test0081.ObjectDomain.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test2-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1330,6 +1348,12 @@ include $(RULES_FILE)
 
 ../test2-obj/test0079.MultiSignal.dep : ../../../CCore/test/test0079.MultiSignal.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0079.MultiSignal.o $< -MF $@
+
+../test2-obj/test0080.DeferCall-speed.dep : ../../../CCore/test/test0080.DeferCall-speed.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0080.DeferCall-speed.o $< -MF $@
+
+../test2-obj/test0081.ObjectDomain.dep : ../../../CCore/test/test0081.ObjectDomain.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0081.ObjectDomain.o $< -MF $@
 
 ../test2-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

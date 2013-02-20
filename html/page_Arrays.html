@@ -509,6 +509,10 @@ Range access and index access methods are standard. Two additional methods repor
     
    void shrink_extra();
     
+   void shrink_reserve(ulen maxlen);
+
+   void shrink_reserve();
+
 </pre>   
 
 <p>
@@ -532,6 +536,17 @@ These three methods doesn't change the reserved array length.
 <p>
 <b>shrink_extra()</b> shrinks the memory block, returning the extra memory to the heap. After this method
 the reserved array length becomes equal to the array length.
+</p>
+
+<p>
+<b>shrink_reserve(ulen maxlen)</b> may shrink the memory block to store the given number of elements. It gives
+a more precise control over the reserved memory. It works only if the following natural condition satisfied:
+<b>maxlen&lt;getMaxLen()</b> and <b>maxlen&gt;=getLen()</b>.
+</p>
+
+<p>
+<b>shrink_reserve()</b> works as <b>shrink_reserve(ulen maxlen)</b> with <b>maxlen</b> equals "double size" of the 
+actual array length.
 </p>
 
 <pre>
@@ -770,6 +785,10 @@ class <span class="Att">RefArray</span>
     
    void shrink_extra();
     
+   void shrink_reserve(ulen maxlen);
+
+   void shrink_reserve();
+
    // extend
    
    PtrLen&lt;T&gt; extend_raw(ulen delta_len);
@@ -858,6 +877,10 @@ This is a constant method.
 <b>applyReverse()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements
 in the reverse order.
 This is a constant method.
+</p>
+
+<p>
+<b>AtomicRefArray</b> methods <b>shrink_extra()</b> and <b>shrink_reserve()</b> are not working, if the array is shared.
 </p>
 
 <h4>Collector</h4>

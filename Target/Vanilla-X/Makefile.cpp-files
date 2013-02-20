@@ -119,6 +119,7 @@
 ../../CCore/src/net/UDPoint.cpp
 ../../CCore/src/net/XPoint.cpp
 ../../CCore/src/NodeAllocator.cpp
+../../CCore/src/ObjectDomain.cpp
 ../../CCore/src/ObjHost.cpp
 ../../CCore/src/Optional.cpp
 ../../CCore/src/OwnPtr.cpp
