@@ -127,6 +127,13 @@ ReportException::~ReportException()
   SetTop( Algo::DelTop(Top(),this) );
  }
  
+void ReportException::Clear()
+ {
+  ReportException *report=Top();
+  
+  if( report ) report->clear();
+ }
+
 /* class SilentReportException */ 
 
 void SilentReportException::print(StrLen)

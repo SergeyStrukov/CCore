@@ -85,6 +85,8 @@ class ReportException : NoCopy
    void clear() { nok=false; }
   
    void guard() { if( nok ) throw CatchType(); }
+   
+   static void Clear();
  };
  
 /* class SilentReportException */ 

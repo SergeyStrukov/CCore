@@ -112,6 +112,7 @@ obj/NanoIPDevice.o \
 obj/NanoPacket.o \
 obj/NegBool.o \
 obj/NetBase.o \
+obj/NewDelete.o \
 obj/NoCopy.o \
 obj/NoMutex.o \
 obj/NodeAllocator.o \
@@ -359,6 +360,7 @@ obj/NanoIPDevice.s \
 obj/NanoPacket.s \
 obj/NegBool.s \
 obj/NetBase.s \
+obj/NewDelete.s \
 obj/NoCopy.s \
 obj/NoMutex.s \
 obj/NodeAllocator.s \
@@ -606,6 +608,7 @@ obj/NanoIPDevice.dep \
 obj/NanoPacket.dep \
 obj/NegBool.dep \
 obj/NetBase.dep \
+obj/NewDelete.dep \
 obj/NoCopy.dep \
 obj/NoMutex.dep \
 obj/NodeAllocator.dep \
@@ -1082,6 +1085,9 @@ obj/NegBool.o : ../../CCore/src/gadget/NegBool.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/NetBase.o : ../../CCore/src/net/NetBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NewDelete.o : ../../CCore/src/NewDelete.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/NoCopy.o : ../../CCore/src/gadget/NoCopy.cpp
@@ -1818,6 +1824,9 @@ obj/NegBool.s : ../../CCore/src/gadget/NegBool.cpp
 obj/NetBase.s : ../../CCore/src/net/NetBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/NewDelete.s : ../../CCore/src/NewDelete.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/NoCopy.s : ../../CCore/src/gadget/NoCopy.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2551,6 +2560,9 @@ obj/NegBool.dep : ../../CCore/src/gadget/NegBool.cpp
 
 obj/NetBase.dep : ../../CCore/src/net/NetBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NetBase.o $< -MF $@
+
+obj/NewDelete.dep : ../../CCore/src/NewDelete.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NewDelete.o $< -MF $@
 
 obj/NoCopy.dep : ../../CCore/src/gadget/NoCopy.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NoCopy.o $< -MF $@

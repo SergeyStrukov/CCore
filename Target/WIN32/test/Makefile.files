@@ -81,6 +81,7 @@ OBJ_LIST = \
 ../test-obj/test0079.MultiSignal.o \
 ../test-obj/test0080.DeferCall-speed.o \
 ../test-obj/test0081.ObjectDomain.o \
+../test-obj/test0082.NewDelete.o \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
@@ -212,6 +213,7 @@ ASM_LIST = \
 ../test-obj/test0079.MultiSignal.s \
 ../test-obj/test0080.DeferCall-speed.s \
 ../test-obj/test0081.ObjectDomain.s \
+../test-obj/test0082.NewDelete.s \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
@@ -343,6 +345,7 @@ DEP_LIST = \
 ../test-obj/test0079.MultiSignal.dep \
 ../test-obj/test0080.DeferCall-speed.dep \
 ../test-obj/test0081.ObjectDomain.dep \
+../test-obj/test0082.NewDelete.dep \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
@@ -641,6 +644,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0081.ObjectDomain.o : ../../../CCore/test/test0081.ObjectDomain.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0082.NewDelete.o : ../../../CCore/test/test0082.NewDelete.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1029,6 +1035,9 @@ include $(RULES_FILE)
 ../test-obj/test0081.ObjectDomain.s : ../../../CCore/test/test0081.ObjectDomain.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0082.NewDelete.s : ../../../CCore/test/test0082.NewDelete.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1414,6 +1423,9 @@ include $(RULES_FILE)
 
 ../test-obj/test0081.ObjectDomain.dep : ../../../CCore/test/test0081.ObjectDomain.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0081.ObjectDomain.o $< -MF $@
+
+../test-obj/test0082.NewDelete.dep : ../../../CCore/test/test0082.NewDelete.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0082.NewDelete.o $< -MF $@
 
 ../test-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

@@ -118,6 +118,7 @@
 ../../CCore/src/net/PTPSupportBase.cpp
 ../../CCore/src/net/UDPoint.cpp
 ../../CCore/src/net/XPoint.cpp
+../../CCore/src/NewDelete.cpp
 ../../CCore/src/NodeAllocator.cpp
 ../../CCore/src/ObjectDomain.cpp
 ../../CCore/src/ObjHost.cpp
