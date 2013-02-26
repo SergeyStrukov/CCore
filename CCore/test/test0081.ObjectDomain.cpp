@@ -16,16 +16,35 @@
 #include <CCore/test/test.h>
 
 #include <CCore/inc/ObjectDomain.h>
+#include <CCore/inc/MemSpaceHeap.h>
 #include <CCore/inc/Random.h>
-#include <CCore/inc/Timer.h>
 
 namespace App {
 
 namespace Private_0081 {
 
+/* class TestDomain */
+
+class TestDomain : public ObjectDomain
+ {
+   SpaceHeap heap;
+   
+  private: 
+   
+   virtual void * try_alloc(ulen len) { return heap.alloc(len); }
+  
+   virtual void free(void *mem) { heap.free(mem); }
+   
+  public:
+  
+   explicit TestDomain(ulen max_total_mem) : ObjectDomain(max_total_mem),heap(2*max_total_mem) {}
+   
+   ~TestDomain() { cleanup(); }
+ };
+
 /* global Domain */
 
-static ObjectDomain * Domain=0; 
+static ObjectDomain * Domain=0;
 
 /* class Test */
 
@@ -48,9 +67,9 @@ class Test
     {
      ulen count=random.select(10);
     
-     IntObjPtr<Test> temp(Domain,count);
+     ExtObjPtr<Test> temp(Domain,count);
    
-     subs.append_copy(temp);
+     subs.append_fill(temp);
     
      ulen len=subs.getLen();
     
@@ -89,6 +108,10 @@ class Test
     {
      subs.apply(keeper);
     }
+   
+   static_assert( Has_keepAlive<Test>::Ret ,"Test : keepAlive is missing");
+   
+   //static_assert( Has_breakWeak<Test>::Ret ,"Test : breakWeak is missing");
  };
 
 /* test1() */
@@ -110,21 +133,16 @@ void test2()
   Random random;
   
   ulen break_count=0;
-  MSecTimer::ValueType max_time=0;
   
   for(ulen cnt=1000000; cnt ;cnt--)
     {
      ulen collect_count=0;
     
-     while( Domain->getObjectCount()>=10000 )
+     while( Domain->getObjectCount()>10000 )
        {
         for(ulen cnt=1000; cnt ;cnt--) ptr->del(random);
         
-        MSecTimer timer;
-       
         Domain->collect();
-        
-        Replace_max(max_time,timer.get());
         
         collect_count++;
        }
@@ -136,7 +154,6 @@ void test2()
      ptr->add(random);
     }
   
-  Printf(Con,"time = #; msec\n",max_time);
   Printf(Con,"breaks #;\n",break_count);
  }
 
@@ -148,7 +165,6 @@ void test3()
   Random random;
   
   ulen break_count=0;
-  MSecTimer::ValueType max_time=0;
   
   for(ulen cnt=1000000; cnt ;cnt--)
     {
@@ -156,11 +172,7 @@ void test3()
        {
         ptr->delAll();      
         
-        MSecTimer timer;
-       
         Domain->collect();
-        
-        Replace_max(max_time,timer.get());
         
         break_count++;
        }
@@ -168,7 +180,6 @@ void test3()
      ptr->add(random);
     }
   
-  Printf(Con,"time = #; msec\n",max_time);
   Printf(Con,"breaks #;\n",break_count);
  }
 
@@ -184,7 +195,7 @@ const char *const Testit<81>::Name="Test81 ObjectDomain";
 template<>
 bool Testit<81>::Main() 
  {
-  ObjectDomain domain(10_MByte);
+  TestDomain domain(10_MByte);
   
   Domain=&domain;
   

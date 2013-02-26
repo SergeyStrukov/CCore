@@ -15,7 +15,6 @@
  
 #include <CCore/inc/ObjectDomain.h>
 
-#include <CCore/inc/OwnPtr.h>
 #include <CCore/inc/Abort.h>
  
 namespace CCore {
@@ -24,7 +23,38 @@ namespace CCore {
 
 void * ObjectDomain::alloc(ulen len)
  {
-  return MemAlloc(len);
+  if( len>getAvail() ) collect();
+  
+  if( len>getAvail() ) GuardNoMem(len);
+  
+  if( void *ret=try_alloc(len) ) 
+    {
+     total_len+=len;
+    
+     return ret;
+    }
+  
+  collect();
+  
+  void *ret=try_alloc(len);
+  
+  if( !ret ) GuardNoMem(len);
+  
+  total_len+=len;
+  
+  return ret;
+ }
+
+void ObjectDomain::free(void *mem,ulen len)
+ {
+  total_len-=len;
+  
+  free(mem);
+ }
+
+void * ObjectDomain::try_alloc(ulen len)
+ {
+  return TryMemAlloc(len);
  }
 
 void ObjectDomain::free(void *mem)
@@ -32,38 +62,44 @@ void ObjectDomain::free(void *mem)
   MemFree(mem);
  }
 
-bool ObjectDomain::enableAlloc(ulen len)
- {
-  if( len>getAvail() ) collect();
-  
-  return len<=getAvail();
- }
-
 void ObjectDomain::add(ObjBase *obj)
  {
+  if( addlock_flag )
+    {
+     Abort("Fatal error: object domain addlock");
+    }
+  
   ulen index=list.getLen();
   
   list.append_fill(obj);
   
   obj->index=index;
-  
-  total_len+=obj->len;
+ }
+
+void ObjectDomain::cleanup()
+ {
+  if( Replace_null(cleanup_flag) )
+    {
+     collect();
+    
+     if( getObjectCount() )
+       {
+        Abort("Fatal error: object domain leak");
+       }
+    }
  }
 
 ObjectDomain::ObjectDomain(ulen max_total_len_)
  : total_len(0),
-   max_total_len(max_total_len_)
+   max_total_len(max_total_len_),
+   cleanup_flag(true),
+   addlock_flag(false)
  {
  }
 
 ObjectDomain::~ObjectDomain()
  {
-  collect();
-  
-  if( getObjectCount() )
-    {
-     Abort("Fatal error: object domain leak");
-    }
+  cleanup();
  }
 
  // collect
@@ -128,10 +164,19 @@ void ObjectDomain::collect()
     {    
      ObjBase *cur=base[index].obj;
       
-     cur->keepAlive(this);
+     cur->keepAlive(this); // may increase preserved
     } 
   
+  for(ulen index=0,lim=preserved; index<lim ;index++)
+    {
+     ObjBase *cur=base[index].obj;
+     
+     cur->breakWeak(lim);
+    }
+  
   // destroy >=preserved
+  
+  addlock_flag=true;
   
   ulen delta=len-preserved;
   
@@ -139,13 +184,13 @@ void ObjectDomain::collect()
     {
      ObjBase *obj=r->obj;
      
-     total_len-=obj->len;
-     
      obj->destroy(this);
     }
   
   list.shrink(delta);
-  list.shrink_reserve();  
+  list.shrink_reserve();
+  
+  addlock_flag=false;
  }
 
 } // namespace CCore
