@@ -73,7 +73,7 @@ class ObjectDomain : NoCopy
       void operator () (IntPtr<T> int_ptr);
       
       template <class T>
-      void operator () (IntDelObjPtr<T> del_ptr);
+      void operator () (IntDelObjPtr<T> &del_ptr);
     };
    
    class Breaker
@@ -89,7 +89,7 @@ class ObjectDomain : NoCopy
      public:
       
       template <class T>
-      void operator () (WeakPtr<T> weak_ptr);
+      void operator () (WeakPtr<T> &weak_ptr);
     };
    
   private:
@@ -344,7 +344,7 @@ class ObjectDomain::IntPtr // default copying
    template <class ... SS>
    explicit IntPtr(ObjectDomain *domain,SS && ... ss)
     {
-     node=New<ObjNode<T>,AllocInit>(domain, domain,1, std::forward<SS>(ss)... );
+     node=New<ObjNode<T>,AllocInit>(domain, domain,0, std::forward<SS>(ss)... );
     }
   
    void nullify() { node=0; }
@@ -411,7 +411,7 @@ class ObjectDomain::WeakPtr // default copying
    template <class ... SS>
    explicit WeakPtr(ObjectDomain *domain,SS && ... ss)
     {
-     node=New<ObjNode<T>,AllocInit>(domain, domain,1, std::forward<SS>(ss)... );
+     node=New<ObjNode<T>,AllocInit>(domain, domain,0, std::forward<SS>(ss)... );
     }
   
    void nullify() { node=0; }
@@ -707,7 +707,7 @@ void ObjectDomain::Keeper::operator () (IntPtr<T> int_ptr)
  }
 
 template <class T>
-void ObjectDomain::Keeper::operator () (IntDelObjPtr<T> del_ptr)
+void ObjectDomain::Keeper::operator () (IntDelObjPtr<T> &del_ptr)
  {
   (*this)(del_ptr.getInnerPtr());
  }
@@ -715,7 +715,7 @@ void ObjectDomain::Keeper::operator () (IntDelObjPtr<T> del_ptr)
 /* class ObjectDomain::Breaker */
 
 template <class T>
-void ObjectDomain::Breaker::operator () (WeakPtr<T> weak_ptr)
+void ObjectDomain::Breaker::operator () (WeakPtr<T> &weak_ptr)
  {
   weak_ptr.breakWeak(preserved);
  }

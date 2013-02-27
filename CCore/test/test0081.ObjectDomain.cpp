@@ -183,6 +183,95 @@ void test3()
   Printf(Con,"breaks #;\n",break_count);
  }
 
+/* class Test1 */
+
+class Test1 : NoCopy
+ {
+   int num;
+   
+  public:
+   
+   IntObjPtr<Test1> ptr;
+   WeakObjPtr<Test1> weak_ptr;
+   IntDelObjPtr<Test1> del_ptr;
+   
+   explicit Test1(int num_) 
+    : num(num_)
+    {
+     Printf(Con,"Test1(#;)\n",num);
+    }
+   
+   ~Test1()
+    {
+     Printf(Con,"~Test1(#;)\n",num);
+    }
+   
+   template <class Keeper>
+   void keepAlive(Keeper keeper)
+    {
+     keeper(ptr);
+     keeper(del_ptr);
+    }
+   
+   template <class Breaker>
+   void breakWeak(Breaker breaker)
+    {
+     breaker(weak_ptr);
+    }
+ };
+
+/* test4() */
+
+void collect(int num)
+ {
+  Printf(Con,"\nbegin collect #;\n",num);
+  
+  Domain->collect();
+  
+  Printf(Con,"end collect\n");
+ }
+
+void test4()
+ {
+  ExtObjPtr<Test1> obj1(Domain,1);
+  
+  obj1->ptr=IntObjPtr<Test1>(Domain,2);
+  
+  collect(1);
+  
+  obj1->ptr.nullify();
+  
+  collect(2);
+  
+  obj1->ptr=obj1->weak_ptr=WeakObjPtr<Test1>(Domain,3);
+  
+  collect(3);
+  
+  obj1->ptr.nullify();
+  
+  collect(4);
+  
+  Printf(Con,"weak #;\n\n",!obj1->weak_ptr);
+  
+  ExtDelObjPtr<Test1> obj2(Domain,4);
+  
+  obj1->del_ptr=obj2;
+  
+  Printf(Con,"destroy1 #;\n",obj1->del_ptr.destroy());
+  
+  Printf(Con,"destroy2 #;\n",obj2.destroy());
+  
+  Printf(Con,"del #;\n",!obj1->del_ptr);
+  
+  Printf(Con,"objects = #;\n",Domain->getObjectCount());
+  
+  collect(5);
+  
+  Printf(Con,"objects = #;\n",Domain->getObjectCount());
+  
+  Printf(Con,"\nend test\n\n");
+ }
+
 } // namespace Private_0081
  
 using namespace Private_0081; 
@@ -200,8 +289,9 @@ bool Testit<81>::Main()
   Domain=&domain;
   
   //test1();
-  test2();
+  //test2();
   //test3();
+  test4();
   
   return true;
  }

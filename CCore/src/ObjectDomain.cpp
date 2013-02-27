@@ -165,7 +165,7 @@ void ObjectDomain::collect()
      ObjBase *cur=base[index].obj;
       
      cur->keepAlive(this); // may increase preserved
-    } 
+    }
   
   for(ulen index=0,lim=preserved; index<lim ;index++)
     {
