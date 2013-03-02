@@ -1,7 +1,7 @@
 /* DataMap.h */
 //----------------------------------------------------------------------------------------
 //
-//  Project: ParserGen 1.00
+//  Project: ParserGen 1.01
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -34,12 +34,15 @@ typedef DDL::imp_uint TIndex;
 typedef DDL::imp_uint RIndex;
 typedef DDL::imp_uint NTIndex;
 typedef DDL::imp_uint StateIndex;
+typedef DDL::imp_uint FinalIndex;
 
 /* classes */
 
 struct Rule;
 
 struct NonTerminal;
+
+struct Final;
 
 struct State;
 
@@ -99,6 +102,53 @@ struct NonTerminal
    }
  };
 
+/* struct Final */
+
+struct Final
+ {
+  FinalIndex final;
+  
+  struct Action 
+   { 
+    TIndex t; 
+    DataPtr rule; // Rule *
+    
+    Action() {}
+    
+    Action(const DDL::TypeDesc_struct<2> &desc,DataPtr ptr) 
+     {
+      t=*ptr.select(desc,0);
+      rule=*ptr.select(desc,1);
+     }
+    
+    template <class P,class Data>
+    void print(P &out,const Data &data) const
+     {
+      Printf(out,"\n  {#;} => #;",t,data.getRule(rule).name);
+     }
+   };
+  
+  ArrayPtr actions;
+  
+  Final() {}
+  
+  Final(const DDL::TypeDesc_struct<2> &desc,DataPtr ptr)
+   {
+    final=*ptr.select(desc,0);
+    actions=*ptr.select(desc,1);
+   }
+  
+  template <class P,class Data>
+  void print(P &out,const Data &data) const
+   {
+    Printf(out,"{#;}",final);
+    
+    for(ulen i=0; i<actions.len ;i++) data.getAction(actions.ptr,i).print(out,data);
+    
+    Putch(out,'\n');
+   }
+ };
+
 /* struct State */
 
 struct State
@@ -127,36 +177,15 @@ struct State
   
   ArrayPtr transitions;
 
-  struct Final 
-   { 
-    TIndex t; 
-    DataPtr rule; // Rule *
-    
-    Final() {}
-    
-    Final(const DDL::TypeDesc_struct<2> &desc,DataPtr ptr) 
-     {
-      t=*ptr.select(desc,0);
-      rule=*ptr.select(desc,1);
-     }
-    
-    template <class P,class Data>
-    void print(P &out,const Data &data) const
-     {
-      Printf(out,"\n  {#;} => #;",t,data.getRule(rule).name);
-     }
-   };
-  
-  ArrayPtr finals;
+  DataPtr final; // Final *
   
   State() {}
   
   State(const DDL::TypeDesc_struct<3> &desc,DataPtr ptr)
    {
     state=*ptr.select(desc,0);
-    
     transitions=*ptr.select(desc,1);
-    finals=*ptr.select(desc,2);
+    final=*ptr.select(desc,2);
    }
   
   template <class P,class Data>
@@ -166,9 +195,9 @@ struct State
 
     for(ulen i=0; i<transitions.len ;i++) data.getTransition(transitions.ptr,i).print(out,data);
     
-    for(ulen i=0; i<finals.len ;i++) data.getFinal(finals.ptr,i).print(out,data);
+    Putobj(out,"\n ");
     
-    Putch(out,'\n');
+    data.getFinal(final).print(out,data);
    }
  };
 
@@ -183,29 +212,28 @@ class DataMap : NoCopy
    DDL::TypeDesc_basic desc_RIndex;
    DDL::TypeDesc_basic desc_NTIndex;
    DDL::TypeDesc_basic desc_StateIndex;
+   DDL::TypeDesc_basic desc_FinalIndex;
    DDL::TypeDesc_basic desc_text;
    
    DDL::TypeDesc_ptr desc_State_ptr;
-  
-   DDL::TypeDesc_struct<2> desc_Transition;
-   
    DDL::TypeDesc_ptr desc_Rule_ptr;
    
+   DDL::TypeDesc_struct<2> desc_Action;
+   DDL::TypeDesc_array desc_Action_array;
    DDL::TypeDesc_struct<2> desc_Final;
    
+   DDL::TypeDesc_struct<2> desc_Transition;
    DDL::TypeDesc_array desc_Transition_array;
-   DDL::TypeDesc_array desc_Final_array;
-   
+   DDL::TypeDesc_ptr desc_Final_ptr;
    DDL::TypeDesc_struct<3> desc_State;
    
    DDL::TypeDesc_array desc_NTIndex_array;
-   
    DDL::TypeDesc_struct<4> desc_Rule;
    
    DDL::TypeDesc_array desc_Rule_ptr_array;
-   
    DDL::TypeDesc_struct<3> desc_NonTerminal;
    
+   DDL::TypeDesc_array_getlen desc_FinalTable;
    DDL::TypeDesc_array_getlen desc_StateTable;
    DDL::TypeDesc_array_getlen desc_NonTerminalTable;
    DDL::TypeDesc_array_getlen desc_RuleTable;
@@ -215,6 +243,7 @@ class DataMap : NoCopy
   
    void *mem;
    
+   DataPtr table_Final;
    DataPtr table_State;
    DataPtr table_NonTerminal;
    DataPtr table_Rule;
@@ -258,6 +287,32 @@ class DataMap : NoCopy
      return getNonTerminal(table_NonTerminal.elem(desc_NonTerminal,ind)); 
     }
    
+   // Final::Action
+   
+   Final::Action getAction(DataPtr ptr) const
+    {
+     return Final::Action(desc_Action,ptr);
+    }
+   
+   Final::Action getAction(DataPtr base,ulen ind) const
+    {
+     return getAction(base.elem(desc_Action,ind));
+    }
+   
+   // Final
+   
+   ulen getFinalCount() const { return desc_FinalTable.len; }
+   
+   Final getFinal(DataPtr ptr) const
+    {
+     return Final(desc_Final,ptr);
+    }
+   
+   Final getFinal(ulen ind) const
+    {
+     return getFinal(table_Final.elem(desc_Final,ind));
+    }
+   
    // State
    
    ulen getStateCount() const { return desc_StateTable.len; }
@@ -270,18 +325,6 @@ class DataMap : NoCopy
    State getState(ulen ind) const
     {
      return getState(table_State.elem(desc_State,ind));
-    }
-   
-   // State::Final
-   
-   State::Final getFinal(DataPtr ptr) const
-    {
-     return State::Final(desc_Final,ptr);
-    }
-   
-   State::Final getFinal(DataPtr base,ulen ind) const
-    {
-     return getFinal(base.elem(desc_Final,ind));
     }
    
    // State::Transition

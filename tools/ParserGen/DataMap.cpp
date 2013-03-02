@@ -1,7 +1,7 @@
 /* DataMap.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: ParserGen 1.00
+//  Project: ParserGen 1.01
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -32,20 +32,20 @@ DataMap::DataMap(StrLen file_name)
    desc_RIndex(DDL::TypeTag_uint),
    desc_NTIndex(DDL::TypeTag_uint),
    desc_StateIndex(DDL::TypeTag_uint),
+   desc_FinalIndex(DDL::TypeTag_uint),
    desc_text(DDL::TypeTag_text),
    
    desc_State_ptr(desc_State),
-   
-   desc_Transition(desc_NTIndex,desc_State_ptr),
-   
    desc_Rule_ptr(desc_Rule),
    
-   desc_Final(desc_TIndex,desc_Rule_ptr),
+   desc_Action(desc_TIndex,desc_Rule_ptr),
+   desc_Action_array(desc_Action),
+   desc_Final(desc_TIndex,desc_Action_array),
    
+   desc_Transition(desc_NTIndex,desc_State_ptr),
    desc_Transition_array(desc_Transition),
-   desc_Final_array(desc_Final),
-   
-   desc_State(desc_StateIndex,desc_Transition_array,desc_Final_array),
+   desc_Final_ptr(desc_Final),
+   desc_State(desc_StateIndex,desc_Transition_array,desc_Final_ptr),
    
    desc_NTIndex_array(desc_NTIndex),
    desc_Rule(desc_RIndex,desc_text,desc_NIndex,desc_NTIndex_array),
@@ -53,6 +53,7 @@ DataMap::DataMap(StrLen file_name)
    desc_Rule_ptr_array(desc_Rule_ptr),
    desc_NonTerminal(desc_NIndex,desc_text,desc_Rule_ptr_array),
    
+   desc_FinalTable(desc_Final),
    desc_StateTable(desc_State),
    desc_NonTerminalTable(desc_NonTerminal),
    desc_RuleTable(desc_Rule),
@@ -76,10 +77,16 @@ DataMap::DataMap(StrLen file_name)
 
      map(guard);
      
+     table_Final=map.findConst("FinalTable",desc_FinalTable);
      table_State=map.findConst("StateTable",desc_StateTable);
      table_NonTerminal=map.findConst("NonTerminalTable",desc_NonTerminalTable);
      table_Rule=map.findConst("RuleTable",desc_RuleTable);
      table_TNames=map.findConst("TNames",desc_TNames);
+     
+     if( !table_Final )
+       {
+        Printf(Exception,"Cannot find FinalTable");
+       }
      
      if( !table_State )
        {

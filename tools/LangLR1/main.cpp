@@ -48,7 +48,7 @@ int main(int argc,const char *argv[])
      ReportException report;
     
      {
-      Printf(Con,"--- LangLR1 1.00 ---\n--- Copyright (c) 2004, 2011 Sergey Strukov. All rights reserved. ---\n\n");
+      Printf(Con,"--- LangLR1 1.01 ---\n--- Copyright (c) 2004, 2011,2013 Sergey Strukov. All rights reserved. ---\n\n");
       
       if( argc!=4 )
         {

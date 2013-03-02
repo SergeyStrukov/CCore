@@ -1,7 +1,7 @@
 /* Run.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: LangLR1 1.00
+//  Project: LangLR1 1.01
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -379,6 +379,7 @@ void Run::stateDDL(bool nonLR1)
   ulen TIndexLim=lang.getTIndexLim();
   ulen NIndexLim=lang.getNIndexLim();
   ulen StateLim=state_list.getLen();
+  ulen FinalLim=finals.getLen();
   
   PrintFile out("State.ddl");
   
@@ -390,13 +391,22 @@ void Run::stateDDL(bool nonLR1)
           "type TIndex = uint ;\n"
           "type NIndex = uint ;\n"
           "type NTIndex = uint ;\n"
-          "type StateIndex = uint ;\n\n"
+          "type StateIndex = uint ;\n"
+          "type FinalIndex = uint ;\n\n"
     
           "RIndex RIndexLim = #; ;\n"
           "TIndex TIndexLim = #; ;\n"
           "NIndex NIndexLim = #; ;\n"
           "NTIndex NTIndexLim = #; ; // T , N\n"
-          "StateIndex StateIndexLim = #; ;\n\n"
+          "StateIndex StateIndexLim = #; ;\n"
+          "FinalIndex FinalIndexLim = #; ;\n\n"
+    
+          "struct Final\n"
+          " {\n"
+          "  FinalIndex final;\n\n"
+    
+          "  struct Action { TIndex t; #;; } [] actions;\n"
+          " };\n\n"
     
           "struct State\n"
           " {\n"
@@ -404,7 +414,7 @@ void Run::stateDDL(bool nonLR1)
     
           "  struct Transition { NTIndex ntt; State *state; } [] transitions;\n\n"
     
-          "  struct Final { TIndex t; #;; } [] finals;\n"
+          "  Final *final;\n"
           " };\n\n"
     
           "struct Rule\n"
@@ -422,17 +432,73 @@ void Run::stateDDL(bool nonLR1)
           "  Rule * [] rules;\n"
           " };\n\n"
     
-          "State[#;] StateTable=\n"
-          " {\n"
-    
         ,RIndexLim
         ,TIndexLim
         ,NIndexLim
         ,TIndexLim+NIndexLim
         ,StateLim
+        ,FinalLim
         ,(nonLR1?"Rule * [] rules":"Rule *rule")
-        ,StateLim);
+        );
   
+  Printf(out,
+    
+          "Final[#;] FinalTable=\n"
+          " {\n"
+    
+        ,FinalLim);
+  
+  for(ulen i=0; i<FinalLim ;i++)
+    {
+     Printf(out,"  { #; ,\n",i);
+     
+     auto p=finals[i].read();
+     
+     Putobj(out,"   {\n");
+     
+     if( nonLR1 )
+       {
+        if( +p )
+          {
+           Printf(out,"    { #; , #; }",p->index,PrintRules(p->object.read()));
+           
+           for(++p; +p ;++p) Printf(out,",\n    { #; , #; }",p->index,PrintRules(p->object.read()));
+           
+           Putch(out,'\n');
+          }
+       }
+     else
+       {
+        if( +p )
+          {
+           Printf(out,"    { #; , #; }",p->index,PrintRule(p->object.read()));
+           
+           for(++p; +p ;++p) Printf(out,",\n    { #; , #; }",p->index,PrintRule(p->object.read()));
+           
+           Putch(out,'\n');
+          }
+       }
+     
+     Putobj(out,"   }\n");
+     
+     Putobj(out,"  }");
+     
+     if( i+1<FinalLim ) Putobj(out,",\n"); else Putobj(out,"\n");
+    }
+  
+  Putobj(out,
+    
+          " };\n\n"
+    
+        );
+  
+  Printf(out,
+    
+          "State[#;] StateTable=\n"
+          " {\n"
+    
+        ,StateLim);
+
   for(ulen i=0; i<StateLim ;i++)
     {
      Printf(out,"  { #; ,\n",i);
@@ -453,37 +519,8 @@ void Run::stateDDL(bool nonLR1)
       
       Putobj(out,"   },\n");
      }
-     
-     {
-      auto p=state_list[i].getFinals().read();
-      
-      Putobj(out,"   {\n");
-      
-      if( nonLR1 )
-        {
-         if( +p )
-           {
-            Printf(out,"    { #; , #; }",p->index,PrintRules(p->object.read()));
-            
-            for(++p; +p ;++p) Printf(out,",\n    { #; , #; }",p->index,PrintRules(p->object.read()));
-            
-            Putch(out,'\n');
-           }
-        }
-      else
-        {
-         if( +p )
-           {
-            Printf(out,"    { #; , #; }",p->index,PrintRule(p->object.read()));
-            
-            for(++p; +p ;++p) Printf(out,",\n    { #; , #; }",p->index,PrintRule(p->object.read()));
-            
-            Putch(out,'\n');
-           }
-        }
-      
-      Putobj(out,"   }\n");
-     }
+
+     Printf(out,"    FinalTable+#;\n",state_list[i].getFinalNumber());
      
      Putobj(out,"  }");
      

@@ -1,7 +1,7 @@
 /* main.cpp */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: ParserGen 1.00
+//  Project: ParserGen 1.01
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -131,6 +131,10 @@ void Engine::test(StrLen file_name)
   Putobj(out,"\n/* NonTerminals */ \n\n");
   
   for(ulen i=0,n=data.getNonTerminalCount(); i<n ;i++) data.getNonTerminal(i).print(out,data);
+  
+  Putobj(out,"\n/* Finals */ \n\n");
+  
+  for(ulen i=0,n=data.getFinalCount(); i<n ;i++) data.getFinal(i).print(out,data);
   
   Putobj(out,"\n/* States */ \n\n");
   
@@ -433,15 +437,15 @@ void Engine::rule_table(StrLen file_name)
      Printf(out,"  {");
      
      {
-      auto finals=data.getState(i).finals;
+      auto actions=data.getFinal(data.getState(i).final).actions;
       
       Range(buf).set_null();
 
-      for(ulen j=0; j<finals.len ;j++)
+      for(ulen j=0; j<actions.len ;j++)
         {
-         auto final=data.getFinal(finals.ptr,j);
+         auto action=data.getAction(actions.ptr,j);
          
-         buf[final.t]=data.getRule(final.rule).rule+1;
+         buf[action.t]=data.getRule(action.rule).rule+1;
         }
      }
      
@@ -584,7 +588,7 @@ int main(int argc,const char *argv[])
      ReportException report;
     
      {
-      Putobj(Con,"--- ParserGen 1.00 ---\n--- Copyright (c) 2012 Sergey Strukov. All rights reserved. ---\n\n");
+      Putobj(Con,"--- ParserGen 1.01 ---\n--- Copyright (c) 2012 Sergey Strukov. All rights reserved. ---\n\n");
       
       if( argc!=3 ) 
         {
