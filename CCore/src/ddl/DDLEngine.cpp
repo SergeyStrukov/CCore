@@ -62,11 +62,12 @@ auto TextEngine::openFile(StrLen) -> File
      
 ParserResult TextEngine::parse() 
  { 
-  return parseFile(StrLen()); 
+  return parseFile(StrLen(),pretext); 
  }
 
-TextEngine::TextEngine(PrintBase &msg,StrLen text_) 
+TextEngine::TextEngine(PrintBase &msg,StrLen text_,StrLen pretext_) 
  : ParserContext(msg),
+   pretext(pretext_),
    text(text_),
    proc(getPool(),getPool(),msg)
  {

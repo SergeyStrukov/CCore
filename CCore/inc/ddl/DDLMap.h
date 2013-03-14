@@ -24,6 +24,30 @@ namespace DDL {
 
 /* functions */
 
+void GuardMapTooDeep();
+
+void GuardMapNameDuplication();
+
+void GuardMapStructNameDuplication();
+
+void GuardMapLenOverflow();
+
+inline ulen MapAddLen(ulen a,ulen b) 
+ {
+  ulen ret=a+b;
+  
+  if( ret<a ) GuardMapLenOverflow();
+  
+  return ret;
+ }
+
+inline ulen MapMulLen(ulen a,ulen b)
+ {
+  if( a && b>ulen(-1)/a ) GuardMapLenOverflow();
+  
+  return a*b;
+ }
+
 inline imp_uint32 MapIP(IP val)
  {  
   imp_uint32 b1=val.b[0];
@@ -103,14 +127,6 @@ class Map : NoCopy
      RBTreeLink<RecConst,NameKey> link;
      
      RecConst() : size_of(0) {}
-     
-     // no-throw flags
-     
-     enum NoThrowFlagType
-      {
-       Default_no_throw = true,
-       Copy_no_throw = true
-      };
     };
    
    enum TypeFlags
@@ -175,10 +191,6 @@ class Map : NoCopy
        Copy_no_throw = true
       };
     };
-   
-   static ulen AddLen(ulen a,ulen b);
-   
-   static ulen MulLen(ulen a,ulen b);
    
    template <ulen N> class AlignMulTable;
    
@@ -454,20 +466,32 @@ class Map : NoCopy
 
 class MapBase : NoCopy
  {
-   void *mem;
+   class MemHook : NoCopy
+    {
+      void *mem;
+    
+     public:
+     
+      explicit MemHook(ulen len) { mem=MemAlloc(len); }
+      
+      ~MemHook() { MemFree(mem); }
+      
+      void * getMem() const { return mem; }
+    };
+   
+   MemHook hook;
   
   public:
    
+   template <class Map>
    explicit MapBase(Map &map)
+    : hook(map.getLen())
     {
-     mem=MemAlloc(map.getLen());
-     
-     map(mem);
+     map(hook.getMem());
     }
    
    ~MapBase()
     {
-     MemFree(mem);
     }
  };
 

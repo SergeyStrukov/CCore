@@ -147,7 +147,12 @@ class Tokenizer : NoCopy
 
   public:
 
-   Tokenizer(PrintBase &msg_,FileId *file_id_,StrLen text_) : msg(msg_),file_id(file_id_),text(text_) {}
+   Tokenizer(PrintBase &msg_,FileId *file_id_,StrLen text_) 
+    : msg(msg_),
+      file_id(file_id_),
+      text(text_) 
+    {
+    }
  
    ulen operator + () const { return text.len; }
    

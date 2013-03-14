@@ -17,9 +17,32 @@
 
 #include <CCore/inc/Crc.h>
 #include <CCore/inc/Exception.h>
+#include <CCore/inc/algon/CommonIntAlgo.h>
 
 namespace CCore {
 namespace DDL {
+
+/* functions */
+
+void GuardMapTooDeep()
+ {
+  Printf(Exception,"CCore::DDL::(Typed)Map : too deep");
+ }
+
+void GuardMapNameDuplication()
+ {
+  Printf(Exception,"CCore::DDL::(Typed)Map : const name duplication");
+ }
+
+void GuardMapStructNameDuplication()
+ {
+  Printf(Exception,"CCore::DDL::Map : struct name duplication");
+ }
+
+void GuardMapLenOverflow()
+ {
+  Printf(Exception,"CCore::DDL::(Typed)Map : len overflow");
+ }
 
 /* struct NameKey */
 
@@ -102,53 +125,16 @@ CmpResult NameKey::objCmp(const NameKey &obj) const
 
 /* class Map */
 
-ulen Map::AddLen(ulen a,ulen b)
- {
-  ulen ret=a+b;
-  
-  if( ret<a )
-    {
-     Printf(Exception,"CCore::DDL::Map : len overflow");
-    }
-  
-  return ret;
- }
-
-ulen Map::MulLen(ulen a,ulen b)
- {
-  if( a && b>ulen(-1)/a )
-    {
-     Printf(Exception,"CCore::DDL::Map : len overflow");
-    }
-  
-  return a*b;
- }
-
 template <ulen N>
 class Map::AlignMulTable : NoCopy
  {
    ulen table[N];
    
-  private:
-   
-   static ulen GCD(ulen a,ulen b) // a<b
-    {
-     while( a )
-       {
-        ulen c=b%a;
-        
-        b=a;
-        a=c;
-       }
-     
-     return b;
-    }
-  
   public:
    
    AlignMulTable()
     {
-     for(ulen a=0; a<N ;a++) table[a]=N/GCD(a,N);
+     for(ulen a=0; a<N ;a++) table[a]=N/Algon::GCD(a,N);
     }
    
    ulen operator () (ulen a) const { return table[a%N]; } // N/GCD(a,N)
@@ -229,8 +215,8 @@ ulen Map::AlignOf(unsigned flags)
   if( flags&Type_sint64 ) ret=AlignAdd<imp_sint64>(ret);
   if( flags&Type_uint64 ) ret=AlignAdd<imp_uint64>(ret);
   
-  if( flags&Type_text )      ret=AlignAdd<PtrLen<char> >(ret);
-  if( flags&Type_ptr )       ret=AlignAdd<Place<void> >(ret);
+  if( flags&Type_text )      ret=AlignAdd<StrLen>(ret);
+  if( flags&Type_ptr )       ret=AlignAdd<DataPtr>(ret);
   if( flags&Type_array_ptr ) ret=AlignAdd<ArrayPtr>(ret);
   
   return ret;
@@ -238,16 +224,9 @@ ulen Map::AlignOf(unsigned flags)
 
 ulen Map::AlignFor(ulen off,unsigned flags)
  {
-  ulen len=AlignOf(flags);
+  if( !TryAlign(off,AlignOf(flags)) ) GuardMapLenOverflow();
   
-  ulen ret=((off+len-1)/len)*len;
-  
-  if( ret<off )
-    {
-     Printf(Exception,"CCore::DDL::Map : len overflow");
-    }
-  
-  return ret;
+  return off;
  }
 
 void Map::MapSwitch::do_sint8(TypeNode_suint<imp_sint8> *) { do_val<imp_sint8>(); }
@@ -447,10 +426,7 @@ void Map::PrepareSwitch::do_ref(TypeNode_ref *type)
 
 void Map::prepare(TypeNode *type,const Value &value,RecValue &rec)
  {
-  if( level>MaxLevel ) 
-    {
-     Printf(Exception,"CCore::DDL::Map : too deep");
-    }
+  if( level>MaxLevel ) GuardMapTooDeep(); 
   
   level++;
   
@@ -505,7 +481,7 @@ void Map::SizeSwitch::do_array_len(TypeNode_array_len *array_type)
   
   ulen len=array_type->len_node.index;
   
-  info.size_of=MulLen(info.size_of,len);
+  info.size_of=MapMulLen(info.size_of,len);
  }
 
 void Map::SizeSwitch::do_struct(StructNode *struct_node)
@@ -529,7 +505,7 @@ void Map::SizeSwitch::do_struct(StructNode *struct_node)
         
         node.index=off;
         
-        off=AddLen(off,s.size_of);
+        off=MapAddLen(off,s.size_of);
         
         flags|=s.flags;
        }
@@ -544,7 +520,7 @@ void Map::SizeSwitch::do_struct(StructNode *struct_node)
      
      if( prepare.found )
        {
-        Printf(Exception,"CCore::DDL::Map : struct name duplication");
+        GuardMapStructNameDuplication();
        }
      else
        {
@@ -728,34 +704,31 @@ void Map::place()
      
      if( prepare.found )
        {
-        Printf(Exception,"CCore::DDL::Map : const name duplication");
+        GuardMapNameDuplication();
        }
      else
        {
         prepare.complete(&const_buf[i]);
         
-        const_buf[i].type=result.node->type_node;
+        const_buf[i].type=result.type;
        }
     }
  }
 
 ulen Map::reserve(ulen len)
  {
-  if( !TryAlign(len) )
-    {
-     Printf(Exception,"CCore::DDL::Map : len overflow");
-    }
+  if( !TryAlign(len) ) GuardMapLenOverflow();
   
   ulen ret=total;
   
-  total=AddLen(total,len);
+  total=MapAddLen(total,len);
   
   return ret;
  }
 
 ulen Map::reserve(ulen len,ulen count)
  {
-  return reserve(MulLen(len,count));
+  return reserve(MapMulLen(len,count));
  }
 
 void Map::SetDesc(TypeDesc_struct_base &desc,RecStruct *rec)
@@ -898,9 +871,9 @@ void Map::MatchSwitch::do_struct(StructNode *struct_node)
         return; 
        }
      else
-       {
-        ptr->lock=struct_node->index+1;
-       }
+      {
+       ptr->lock=struct_node->index+1;
+      }
      
      if( ptr->field_count==struct_node->field_list.count )
        {
@@ -912,7 +885,12 @@ void Map::MatchSwitch::do_struct(StructNode *struct_node)
            
            field.type_node->dispatch(*this);
            
-           if( !result ) return;
+           if( !result ) 
+             {
+              ptr->lock=0;
+              
+              return;
+             }
            
            f->off=field.index;
            
@@ -925,6 +903,8 @@ void Map::MatchSwitch::do_struct(StructNode *struct_node)
        }
      else
        {
+        ptr->lock=0;
+        
         result=false;
        }
     }

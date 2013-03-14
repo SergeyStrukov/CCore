@@ -200,9 +200,16 @@ class ParserContext : Context
    bool ok;
    ulen error_cap;
    
+   struct PretextFile : FileId
+    {
+     virtual void printPos(PrintBase &out,TextPos pos);
+    };
+   
+   PretextFile pretext_file;
+   
   private:
    
-   Element_BODY * parseText(FileId *file_id,StrLen text);
+   Element_BODY * parseText(FileId *file_id,StrLen text,StrLen pretext={});
    
    Element_BODY * includeFile(FileId *file_id,const Token &file_name);
   
@@ -255,7 +262,7 @@ class ParserContext : Context
    
    PrintBase & getMsg() { return msg; }
    
-   ParserResult parseFile(StrLen file_name);
+   ParserResult parseFile(StrLen file_name,StrLen pretext={});
  };
 
 /* class ElementContext */

@@ -45,6 +45,8 @@ struct EngineResult
   Eval *eval;
   BodyNode *body;
   
+  EngineResult() : eval(0),body(0) {}
+  
   EngineResult(PrintBase &msg,Process<Eval> &proc,ParserResult result);
   
   bool operator ! () const { return !eval; }
@@ -55,6 +57,7 @@ struct EngineResult
 class TextEngine : ParserContext
  {
    FileId id;
+   StrLen pretext;
    StrLen text;
    
    Process<Eval> proc;
@@ -67,7 +70,7 @@ class TextEngine : ParserContext
    
   public: 
    
-   TextEngine(PrintBase &msg,StrLen text);
+   TextEngine(PrintBase &msg,StrLen text,StrLen pretext={});
    
    ~TextEngine();
    
@@ -254,7 +257,7 @@ class FileEngine : ParserContext
    
    ~FileEngine();
    
-   EngineResult process(StrLen file_name);
+   EngineResult process(StrLen file_name,StrLen pretext={});
  };
 
 template <class FileName,class FileText> 
@@ -364,11 +367,11 @@ FileEngine<FileName,FileText>::~FileEngine()
  }
 
 template <class FileName,class FileText> 
-EngineResult FileEngine<FileName,FileText>::process(StrLen file_name)
+EngineResult FileEngine<FileName,FileText>::process(StrLen file_name,StrLen pretext)
  {
   proc.reset();
   
-  return EngineResult(getMsg(),proc,parseFile(file_name));
+  return EngineResult(getMsg(),proc,parseFile(file_name,pretext));
  }
 
 } // namespace DDL

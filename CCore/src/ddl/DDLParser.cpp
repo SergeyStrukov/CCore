@@ -336,12 +336,46 @@ AtomClass Atom::GetAtomClass(const Token &token)
 
 /* struct ParserContext */
 
-Element_BODY * ParserContext::parseText(FileId *file_id,StrLen text)
+void ParserContext::PretextFile::printPos(PrintBase &out,TextPos pos)
  {
+  Printf(out,"pretext#;",pos);
+ }
+
+Element_BODY * ParserContext::parseText(FileId *file_id,StrLen text,StrLen pretext)
+ {
+  Tokenizer pretok(msg,&pretext_file,pretext);
   Tokenizer tok(msg,file_id,text);
   
   Parser parser(this,file_id);
 
+  while( +pretok )
+    {
+     Atom atom(pretok.next());
+     
+     if( !atom )
+       {
+        if( atom.token.tc==Token_Other ) 
+          {
+           printfError("\nTokenizer error\n");
+           
+           return 0;
+          }
+       }
+     else
+       {
+        Parser::Result result;
+
+        while( (result=parser.next(atom))==Parser::ResultRule );
+        
+        if( result==Parser::ResultAbort || !ok ) 
+          {
+           printfError("\nParser error\n");
+           
+           return 0;
+          }
+       }
+    }
+  
   while( +tok )
     {
      Atom atom(tok.next());
@@ -412,7 +446,7 @@ auto ParserContext::openFile(FileId *file_id,const Token &file_name) -> File
   return Nothing;
  }
 
-ParserResult ParserContext::parseFile(StrLen file_name)
+ParserResult ParserContext::parseFile(StrLen file_name,StrLen pretext)
  {
   MsgReport report(msg);
   
@@ -435,7 +469,7 @@ ParserResult ParserContext::parseFile(StrLen file_name)
          return ParserResult();
         }
      
-      Element_BODY *elem=parseText(file.file_id,file.text);
+      Element_BODY *elem=parseText(file.file_id,file.text,pretext);
       
       if( !elem ) return ParserResult();
       
