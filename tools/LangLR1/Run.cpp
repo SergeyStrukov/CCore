@@ -387,13 +387,6 @@ void Run::stateDDL(bool nonLR1)
   
   Printf(out,
 
-          "type RIndex = uint ;\n"
-          "type TIndex = uint ;\n"
-          "type NIndex = uint ;\n"
-          "type NTIndex = uint ;\n"
-          "type StateIndex = uint ;\n"
-          "type FinalIndex = uint ;\n\n"
-    
           "RIndex RIndexLim = #; ;\n"
           "TIndex TIndexLim = #; ;\n"
           "NIndex NIndexLim = #; ;\n"
@@ -401,44 +394,12 @@ void Run::stateDDL(bool nonLR1)
           "StateIndex StateIndexLim = #; ;\n"
           "FinalIndex FinalIndexLim = #; ;\n\n"
     
-          "struct Final\n"
-          " {\n"
-          "  FinalIndex final;\n\n"
-    
-          "  struct Action { TIndex t; #;; } [] actions;\n"
-          " };\n\n"
-    
-          "struct State\n"
-          " {\n"
-          "  StateIndex state;\n\n"
-    
-          "  struct Transition { NTIndex ntt; State *state; } [] transitions;\n\n"
-    
-          "  Final *final;\n"
-          " };\n\n"
-    
-          "struct Rule\n"
-          " {\n"
-          "  RIndex rule;\n"
-          "  text name;\n"
-          "  NIndex result;\n"
-          "  NTIndex[] str;\n"
-          " };\n\n"
-    
-          "struct NonTerminal\n"
-          " {\n"
-          "  NIndex nt;\n" 
-          "  text name;\n"
-          "  Rule * [] rules;\n"
-          " };\n\n"
-    
         ,RIndexLim
         ,TIndexLim
         ,NIndexLim
         ,TIndexLim+NIndexLim
         ,StateLim
         ,FinalLim
-        ,(nonLR1?"Rule * [] rules":"Rule *rule")
         );
   
   Printf(out,

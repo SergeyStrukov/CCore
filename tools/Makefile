@@ -24,6 +24,7 @@ all:
 	make $(OPT) -C ParserGen
 	make $(OPT) -C ArmGo
 	make $(OPT) -C DDLShow
+	make $(OPT) -C DDLTypeSet
 
 clean:
 	make -C EchoServer   clean
@@ -38,6 +39,7 @@ clean:
 	make -C ParserGen    clean
 	make -C ArmGo        clean
 	make -C DDLShow      clean
+	make -C DDLTypeSet   clean
 
 list:
 	make -C EchoServer   list
@@ -52,4 +54,5 @@ list:
 	make -C ParserGen    list
 	make -C ArmGo        list
 	make -C DDLShow      list
+	make -C DDLTypeSet   list
 

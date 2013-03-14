@@ -1,7 +1,7 @@
 # Makefile
 #----------------------------------------------------------------------------------------
 #
-#  Project: ParserGen 1.00
+#  Project: ParserGen 1.01
 #
 #  License: Boost Software License - Version 1.0 - August 17th, 2003 
 #

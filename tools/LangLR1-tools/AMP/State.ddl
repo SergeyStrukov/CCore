@@ -1,39 +1,110 @@
 /* State.ddl */ 
 
-type RIndex = uint ;
-type TIndex = uint ;
-type NIndex = uint ;
-type NTIndex = uint ;
-type StateIndex = uint ;
-
 RIndex RIndexLim = 7 ;
 TIndex TIndexLim = 6 ;
 NIndex NIndexLim = 3 ;
 NTIndex NTIndexLim = 9 ; // T , N
 StateIndex StateIndexLim = 22 ;
+FinalIndex FinalIndexLim = 15 ;
 
-struct State
+Final[15] FinalTable=
  {
-  StateIndex state;
-
-  struct Transition { NTIndex ntt; State *state; } [] transitions;
-
-  struct Final { TIndex t; Rule *rule; } [] finals;
- };
-
-struct Rule
- {
-  RIndex rule;
-  text name;
-  NIndex result;
-  NTIndex[] str;
- };
-
-struct NonTerminal
- {
-  NIndex nt;
-  text name;
-  Rule * [] rules;
+  { 0 ,
+   {
+    { 0 , RuleTable+0 },
+    { 4 , RuleTable+0 }
+   }
+  },
+  { 1 ,
+   {
+    { 0 , RuleTable+1 },
+    { 4 , RuleTable+1 }
+   }
+  },
+  { 2 ,
+   {
+    { 0 , RuleTable+2 },
+    { 4 , RuleTable+2 }
+   }
+  },
+  { 3 ,
+   {
+    { 0 , RuleTable+3 },
+    { 3 , RuleTable+0 },
+    { 4 , RuleTable+3 }
+   }
+  },
+  { 4 ,
+   {
+    { 0 , RuleTable+4 },
+    { 4 , RuleTable+4 }
+   }
+  },
+  { 5 ,
+   {
+    { 0 , RuleTable+5 },
+    { 3 , RuleTable+5 },
+    { 4 , RuleTable+5 }
+   }
+  },
+  { 6 ,
+   {
+    { 0 , RuleTable+6 },
+    { 3 , RuleTable+6 },
+    { 4 , RuleTable+6 }
+   }
+  },
+  { 7 ,
+   {
+    { 1 , RuleTable+0 },
+    { 5 , RuleTable+0 }
+   }
+  },
+  { 8 ,
+   {
+    { 2 , RuleTable+0 },
+    { 4 , RuleTable+0 }
+   }
+  },
+  { 9 ,
+   {
+    { 2 , RuleTable+1 },
+    { 4 , RuleTable+1 }
+   }
+  },
+  { 10 ,
+   {
+    { 2 , RuleTable+2 },
+    { 4 , RuleTable+2 }
+   }
+  },
+  { 11 ,
+   {
+    { 2 , RuleTable+3 },
+    { 3 , RuleTable+0 },
+    { 4 , RuleTable+3 }
+   }
+  },
+  { 12 ,
+   {
+    { 2 , RuleTable+4 },
+    { 4 , RuleTable+4 }
+   }
+  },
+  { 13 ,
+   {
+    { 2 , RuleTable+5 },
+    { 3 , RuleTable+5 },
+    { 4 , RuleTable+5 }
+   }
+  },
+  { 14 ,
+   {
+    { 2 , RuleTable+6 },
+    { 3 , RuleTable+6 },
+    { 4 , RuleTable+6 }
+   }
+  }
  };
 
 State[22] StateTable=
@@ -46,10 +117,7 @@ State[22] StateTable=
     { 7 , StateTable+4 },
     { 8 , StateTable+16 }
    },
-   {
-    { 1 , RuleTable+0 },
-    { 5 , RuleTable+0 }
-   }
+    FinalTable+7
   },
   { 1 ,
    {
@@ -59,36 +127,23 @@ State[22] StateTable=
     { 7 , StateTable+8 },
     { 8 , StateTable+19 }
    },
-   {
-    { 1 , RuleTable+0 },
-    { 5 , RuleTable+0 }
-   }
+    FinalTable+7
   },
   { 2 ,
    {
    },
-   {
-    { 0 , RuleTable+5 },
-    { 3 , RuleTable+5 },
-    { 4 , RuleTable+5 }
-   }
+    FinalTable+5
   },
   { 3 ,
    {
     { 4 , StateTable+9 }
    },
-   {
-    { 0 , RuleTable+0 },
-    { 4 , RuleTable+0 }
-   }
+    FinalTable+0
   },
   { 4 ,
    {
    },
-   {
-    { 0 , RuleTable+1 },
-    { 4 , RuleTable+1 }
-   }
+    FinalTable+1
   },
   { 5 ,
    {
@@ -98,37 +153,24 @@ State[22] StateTable=
     { 7 , StateTable+8 },
     { 8 , StateTable+19 }
    },
-   {
-    { 1 , RuleTable+0 },
-    { 5 , RuleTable+0 }
-   }
+    FinalTable+7
   },
   { 6 ,
    {
    },
-   {
-    { 2 , RuleTable+5 },
-    { 3 , RuleTable+5 },
-    { 4 , RuleTable+5 }
-   }
+    FinalTable+13
   },
   { 7 ,
    {
     { 2 , StateTable+11 },
     { 4 , StateTable+12 }
    },
-   {
-    { 2 , RuleTable+0 },
-    { 4 , RuleTable+0 }
-   }
+    FinalTable+8
   },
   { 8 ,
    {
    },
-   {
-    { 2 , RuleTable+1 },
-    { 4 , RuleTable+1 }
-   }
+    FinalTable+9
   },
   { 9 ,
    {
@@ -137,29 +179,19 @@ State[22] StateTable=
     { 7 , StateTable+14 },
     { 8 , StateTable+16 }
    },
-   {
-    { 1 , RuleTable+0 },
-    { 5 , RuleTable+0 }
-   }
+    FinalTable+7
   },
   { 10 ,
    {
     { 2 , StateTable+17 },
     { 4 , StateTable+12 }
    },
-   {
-    { 2 , RuleTable+0 },
-    { 4 , RuleTable+0 }
-   }
+    FinalTable+8
   },
   { 11 ,
    {
    },
-   {
-    { 0 , RuleTable+6 },
-    { 3 , RuleTable+6 },
-    { 4 , RuleTable+6 }
-   }
+    FinalTable+6
   },
   { 12 ,
    {
@@ -168,10 +200,7 @@ State[22] StateTable=
     { 7 , StateTable+18 },
     { 8 , StateTable+19 }
    },
-   {
-    { 1 , RuleTable+0 },
-    { 5 , RuleTable+0 }
-   }
+    FinalTable+7
   },
   { 13 ,
    {
@@ -180,71 +209,44 @@ State[22] StateTable=
     { 7 , StateTable+20 },
     { 8 , StateTable+19 }
    },
-   {
-    { 1 , RuleTable+0 },
-    { 5 , RuleTable+0 }
-   }
+    FinalTable+7
   },
   { 14 ,
    {
    },
-   {
-    { 0 , RuleTable+2 },
-    { 4 , RuleTable+2 }
-   }
+    FinalTable+2
   },
   { 15 ,
    {
    },
-   {
-    { 0 , RuleTable+4 },
-    { 4 , RuleTable+4 }
-   }
+    FinalTable+4
   },
   { 16 ,
    {
     { 3 , StateTable+21 }
    },
-   {
-    { 0 , RuleTable+3 },
-    { 3 , RuleTable+0 },
-    { 4 , RuleTable+3 }
-   }
+    FinalTable+3
   },
   { 17 ,
    {
    },
-   {
-    { 2 , RuleTable+6 },
-    { 3 , RuleTable+6 },
-    { 4 , RuleTable+6 }
-   }
+    FinalTable+14
   },
   { 18 ,
    {
    },
-   {
-    { 2 , RuleTable+2 },
-    { 4 , RuleTable+2 }
-   }
+    FinalTable+10
   },
   { 19 ,
    {
     { 3 , StateTable+13 }
    },
-   {
-    { 2 , RuleTable+3 },
-    { 3 , RuleTable+0 },
-    { 4 , RuleTable+3 }
-   }
+    FinalTable+11
   },
   { 20 ,
    {
    },
-   {
-    { 2 , RuleTable+4 },
-    { 4 , RuleTable+4 }
-   }
+    FinalTable+12
   },
   { 21 ,
    {
@@ -253,10 +255,7 @@ State[22] StateTable=
     { 7 , StateTable+15 },
     { 8 , StateTable+16 }
    },
-   {
-    { 1 , RuleTable+0 },
-    { 5 , RuleTable+0 }
-   }
+    FinalTable+7
   }
  };
 
