@@ -45,6 +45,7 @@ obj/DDLStep.o \
 obj/DDLToken.o \
 obj/DDLTools.o \
 obj/DDLTypeDesc.o \
+obj/DDLTypedMap.o \
 obj/DDLTypes.o \
 obj/DDLValue.o \
 obj/DefaultTimeout.o \
@@ -276,6 +277,7 @@ obj/DDLStep.s \
 obj/DDLToken.s \
 obj/DDLTools.s \
 obj/DDLTypeDesc.s \
+obj/DDLTypedMap.s \
 obj/DDLTypes.s \
 obj/DDLValue.s \
 obj/DefaultTimeout.s \
@@ -507,6 +509,7 @@ obj/DDLStep.dep \
 obj/DDLToken.dep \
 obj/DDLTools.dep \
 obj/DDLTypeDesc.dep \
+obj/DDLTypedMap.dep \
 obj/DDLTypes.dep \
 obj/DDLValue.dep \
 obj/DefaultTimeout.dep \
@@ -833,6 +836,9 @@ obj/DDLTools.o : ../../CCore/src/ddl/DDLTools.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DDLTypeDesc.o : ../../CCore/src/ddl/DDLTypeDesc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDLTypedMap.o : ../../CCore/src/ddl/DDLTypedMap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DDLTypes.o : ../../CCore/src/ddl/DDLTypes.cpp
@@ -1521,6 +1527,9 @@ obj/DDLTools.s : ../../CCore/src/ddl/DDLTools.cpp
 obj/DDLTypeDesc.s : ../../CCore/src/ddl/DDLTypeDesc.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DDLTypedMap.s : ../../CCore/src/ddl/DDLTypedMap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DDLTypes.s : ../../CCore/src/ddl/DDLTypes.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2206,6 +2215,9 @@ obj/DDLTools.dep : ../../CCore/src/ddl/DDLTools.cpp
 
 obj/DDLTypeDesc.dep : ../../CCore/src/ddl/DDLTypeDesc.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLTypeDesc.o $< -MF $@
+
+obj/DDLTypedMap.dep : ../../CCore/src/ddl/DDLTypedMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLTypedMap.o $< -MF $@
 
 obj/DDLTypes.dep : ../../CCore/src/ddl/DDLTypes.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLTypes.o $< -MF $@

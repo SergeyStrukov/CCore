@@ -46,6 +46,7 @@
 ../../CCore/src/ddl/DDLToken.cpp
 ../../CCore/src/ddl/DDLTools.cpp
 ../../CCore/src/ddl/DDLTypeDesc.cpp
+../../CCore/src/ddl/DDLTypedMap.cpp
 ../../CCore/src/ddl/DDLTypes.cpp
 ../../CCore/src/ddl/DDLValue.cpp
 ../../CCore/src/DeferCall.cpp
