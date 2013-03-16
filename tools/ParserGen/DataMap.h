@@ -30,123 +30,153 @@ using namespace CCore;
 
 /* classes */
 
-class DataMap;
+struct PrintNonTerminal;
 
-#if 0
+struct PrintRule;
 
-/* struct TypeDef */
+struct PrintState;
 
-struct TypeDef
+struct PrintFinal;
+
+struct PrintTransition;
+
+struct PrintAction;
+
+/* struct PrintNonTerminal */
+
+struct PrintNonTerminal : TypeDef::NonTerminal
  {
-  // types
+  PrintNonTerminal(const TypeDef::NonTerminal &obj) : TypeDef::NonTerminal(obj) {}
   
-  using RIndex = DDL::imp_uint ;
-  using TIndex = DDL::imp_uint ;
-  using NIndex = DDL::imp_uint ;
-  using NTIndex = DDL::imp_uint ;
-  using StateIndex = DDL::imp_uint ;
-  using FinalIndex = DDL::imp_uint ;
-  
-  // structures
-  
-  struct Rule;
-  
-  struct Final
+  template <class P>
+  void print(P &out) const
    {
-    struct Action 
-     { 
-      TIndex t; 
-      Rule *rule;
-      
-      template <class P>
-      void print(P &out) const
-       {
-        Printf(out,"{#;} => #;",t,rule->name);
-       }
-     };
+    Printf(out,"{#;,#;}",nt,name);
     
-    FinalIndex final;
-    PtrLen<Action> actions;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;}",final);
-
-      for(auto action : actions) Printf(out,"\n  #;",action);
-     }
-   };
-  
-  static_assert( std::is_standard_layout<Final>::value,"Final : non-standard layout");
-  static_assert( std::is_standard_layout<Final::Action>::value,"Final::Action : non-standard layout");
-
-  struct State
-   {
-    struct Transition 
-     { 
-      NTIndex ntt; 
-      State *state;
-      
-      template <class P>
-      void print(P &out) const
-       {
-        Printf(out,"{#;} -> #;",ntt,state->state);
-       }
-     };
-    
-    StateIndex state;
-    PtrLen<Transition> transitions;
-    Final *final;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;}",state);
-
-      for(auto transition : transitions ) Printf(out,"\n  #;",transition);
-      
-      Printf(out,"\n #;",*final);
-     }
-   };
-
-  static_assert( std::is_standard_layout<State>::value,"State : non-standard layout");
-  static_assert( std::is_standard_layout<State::Transition>::value,"State::Transition : non-standard layout");
-  
-  struct Rule
-   {
-    RIndex rule;
-    StrLen name;
-    NIndex result;
-    PtrLen<NTIndex> str;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;,#;,#;,#;}",rule,name,result,PrintSet(str));
-     }
-   };
-  
-  static_assert( std::is_standard_layout<Rule>::value,"Rule : non-standard layout");
-  
-  struct NonTerminal
-   {
-    NIndex nt;
-    StrLen name;
-    PtrLen<Rule *> rules;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;,#;}",nt,name);
-      
-      for(auto *ptr : rules ) Printf(out,"\n  #;",*ptr);
-     }
-   };
-  
-  static_assert( std::is_standard_layout<NonTerminal>::value,"NonTerminal : non-standard layout");
+    for(auto *ptr : rules ) Printf(out,"\n  #;",*ptr);
+   }
  };
 
-#endif
+/* struct PrintRule */
+
+struct PrintRule : TypeDef::Rule
+ {
+  PrintRule(const TypeDef::Rule &obj) : TypeDef::Rule(obj) {}
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"{#;,#;,#;,#;}",rule,name,result,PrintSet(str));
+   }
+ };
+
+/* struct PrintState */
+
+struct PrintState : TypeDef::State
+ {
+  PrintState(const TypeDef::State &obj) : TypeDef::State(obj) {}
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"{#;}",state);
+
+    for(auto transition : transitions ) Printf(out,"\n  #;",transition);
+    
+    Printf(out,"\n #;",*final);
+   }
+ };
+
+/* struct PrintFinal */
+
+struct PrintFinal : TypeDef::Final
+ {
+  PrintFinal(const TypeDef::Final &obj) : TypeDef::Final(obj) {}
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"{#;}",final);
+
+    for(auto action : actions) Printf(out,"\n  #;",action);
+   }
+ };
+
+/* struct PrintTransition */
+
+struct PrintTransition : TypeDef::State::Transition
+ {
+  PrintTransition(const TypeDef::State::Transition &obj) : TypeDef::State::Transition(obj) {}
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"{#;} -> #;",ntt,state->state);
+   }
+ };
+
+/* struct PrintAction */
+
+struct PrintAction : TypeDef::Final::Action
+ {
+  PrintAction(const TypeDef::Final::Action &obj) : TypeDef::Final::Action(obj) {}
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"{#;} => #;",t,rule->name);
+   }
+ };
+
+} // namespace App
+
+namespace CCore {
+
+/* print proxy */
+
+template <>
+struct PrintProxy<App::TypeDef::NonTerminal>
+ {
+  typedef App::PrintNonTerminal ProxyType;
+ };
+
+template <>
+struct PrintProxy<App::TypeDef::Rule>
+ {
+  typedef App::PrintRule ProxyType;
+ };
+
+template <>
+struct PrintProxy<App::TypeDef::State>
+ {
+  typedef App::PrintState ProxyType;
+ };
+
+template <>
+struct PrintProxy<App::TypeDef::Final>
+ {
+  typedef App::PrintFinal ProxyType;
+ };
+
+template <>
+struct PrintProxy<App::TypeDef::State::Transition>
+ {
+  typedef App::PrintTransition ProxyType;
+ };
+
+template <>
+struct PrintProxy<App::TypeDef::Final::Action>
+ {
+  typedef App::PrintAction ProxyType;
+ };
+
+} // namespace CCore
+
+namespace App {
+
+/* classes */
+
+class DataMap;
 
 /* class DataMap */
 

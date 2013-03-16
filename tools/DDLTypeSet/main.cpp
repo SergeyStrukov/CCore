@@ -437,14 +437,16 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
    
    Putobj(out2,"struct TypeSet : TypeDefCore , DDL::MapHackPtr\n"); 
    Putobj(out2," {\n");
-   Printf(out2,"  ulen indexes[#;];\n\n",Max<ulen>(data->struct_list.count,1));
+   Printf(out2,"  ulen indexes[#;];\n",Max<ulen>(data->struct_list.count,1));
+   Printf(out2,"  DynArray<ulen> ind_map;\n\n");
    
-   Putobj(out2,"  DDL::FindStructMap map;\n\n");
+   Putobj(out2,"  DDL::FindNodeMap map;\n\n");
   }
   
   // 201
   {
-   Putobj(out2,"  TypeSet()\n");
+   Putobj(out2,"  explicit TypeSet(ulen len)\n");
+   Putobj(out2,"   : ind_map(len)\n");
    Putobj(out2,"   {\n");
    Putobj(out2,"    Range(indexes).set(ulen(-1));\n\n");
      
@@ -459,32 +461,26 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
       
       Printf(out2,");\n");
      }
-     
+   
+   Putobj(out2,"\n    map.complete();\n");
    Putobj(out2,"   }\n\n");
   }
   
   // 202
   {
-   Putobj(out2,"  ulen findStruct(DDL::StructNode *struct_node)\n");
-   Putobj(out2,"   {\n");
-   Putobj(out2,"    return map.find(struct_node);\n");
-   Putobj(out2,"   }\n\n");
-  }
-  
-  // 203
-  {
    Putobj(out2,"  DDL::MapSizeInfo structSizeInfo(DDL::StructNode *struct_node)\n");
    Putobj(out2,"   {\n");
    Putobj(out2,"    DDL::MapSizeInfo ret;\n\n");
    
-   Putobj(out2,"    switch( findStruct(struct_node) )\n");
+   Putobj(out2,"    switch( map.find(struct_node) )\n");
    Putobj(out2,"      {\n");
    
    for(auto &node : data->struct_list )
      {
       Printf(out2,"       case #; :\n",node.index);
       Putobj(out2,"        {\n");
-      Printf(out2,"         indexes[#;]=struct_node->index;\n\n",node.index-1);
+      Printf(out2,"         indexes[#;]=struct_node->index;\n",node.index-1);
+      Printf(out2,"         ind_map[struct_node->index]=#;;\n\n",node.index);
       
       Printf(out2,"         ret.set<S#;>();\n\n",node.index);
       
@@ -510,7 +506,7 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
    Putobj(out2,"   }\n\n");
   }
   
-  // 204
+  // 203
   {
    Putobj(out2,"  template <class T> struct IsStruct;\n\n");
    
@@ -518,39 +514,44 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
    Putobj(out2,"  bool isStruct(DDL::StructNode *struct_node) const { return IsStruct<T>::Do(indexes,struct_node->index); }\n\n");
   }
   
-  // 205
+  // 204
   {
    Putobj(out2,"  void guardFieldTypes(DDL::MapTypeCheck &type_check,DDL::StructNode *struct_node) const\n");
    Putobj(out2,"   {\n");
+   Putobj(out2,"    switch( ind_map[struct_node->index] )\n");
+   Putobj(out2,"      {\n");
    
    for(auto &node : data->struct_list )
      {
-      Printf(out2,"    if( struct_node->index==indexes[#;] )\n",node.index-1);
-      Putobj(out2,"      {\n");
-      Putobj(out2,"       DDL::GuardFieldTypes<\n");
+      Printf(out2,"       case #; :\n",node.index);
+      Putobj(out2,"        {\n");
+      Putobj(out2,"         DDL::GuardFieldTypes<\n");
       
       for(auto &field : node.field_list )
         {
-         Putobj(out2,"                            ",PrintType(field.type_node,true));
+         Putobj(out2,"                              ",PrintType(field.type_node,true));
          
          if( field.next ) Putch(out2,',');
          
          Putch(out2,'\n');
         }
       
-      Putobj(out2,"                           >(*this,type_check,struct_node);\n");
-      Putobj(out2,"      }\n\n");
+      Putobj(out2,"                             >(*this,type_check,struct_node);\n");
+      Putobj(out2,"        }\n");
+      Putobj(out2,"       break;\n\n");
      }
    
+   Putobj(out2,"       default: Printf(Exception,\"Unknown structure\");\n");
+   Putobj(out2,"      }\n");
    Putobj(out2,"   }\n");
   }
   
-  // 206
+  // 205
   {
    Putobj(out2," };\n\n"); 
   }
   
-  // 207
+  // 206
   {
    Putobj(out2,"template <class T>\n"); 
    Putobj(out2,"struct TypeSet::IsStruct\n"); 
@@ -559,7 +560,7 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
    Putobj(out2," };\n\n"); 
   }
   
-  // 208
+  // 207
   {
    for(auto &node : data->struct_list )
      {

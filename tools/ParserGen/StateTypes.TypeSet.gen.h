@@ -3,104 +3,121 @@
 struct TypeSet : TypeDefCore , DDL::MapHackPtr
  {
   ulen indexes[6];
+  DynArray<ulen> ind_map;
 
-  TypeSet() { Range(indexes).set(ulen(-1)); }
+  DDL::FindNodeMap map;
+
+  explicit TypeSet(ulen len)
+   : ind_map(len)
+   {
+    Range(indexes).set(ulen(-1));
+
+    map.add(1,"NonTerminal");
+    map.add(2,"Rule");
+    map.add(3,"Transition","State");
+    map.add(4,"State");
+    map.add(5,"Action","Final");
+    map.add(6,"Final");
+
+    map.complete();
+   }
 
   DDL::MapSizeInfo structSizeInfo(DDL::StructNode *struct_node)
    {
     DDL::MapSizeInfo ret;
 
-    if( DDL::HasName(struct_node,"NonTerminal") )
+    switch( map.find(struct_node) )
       {
-       indexes[0]=struct_node->index;
+       case 1 :
+        {
+         indexes[0]=struct_node->index;
+         ind_map[struct_node->index]=1;
 
-       ret.set<S1>();
+         ret.set<S1>();
 
-       DDL::SetFieldOffsets(struct_node,
-                            "nt",offsetof(S1,nt),
-                            "name",offsetof(S1,name),
-                            "rules",offsetof(S1,rules)
-                           );
-
+         DDL::SetFieldOffsets(struct_node,
+                              "nt",offsetof(S1,nt),
+                              "name",offsetof(S1,name),
+                              "rules",offsetof(S1,rules)
+                             );
+        }
        return ret;
-      }
 
-    if( DDL::HasName(struct_node,"Rule") )
-      {
-       indexes[1]=struct_node->index;
+       case 2 :
+        {
+         indexes[1]=struct_node->index;
+         ind_map[struct_node->index]=2;
 
-       ret.set<S2>();
+         ret.set<S2>();
 
-       DDL::SetFieldOffsets(struct_node,
-                            "rule",offsetof(S2,rule),
-                            "name",offsetof(S2,name),
-                            "result",offsetof(S2,result),
-                            "str",offsetof(S2,str)
-                           );
-
+         DDL::SetFieldOffsets(struct_node,
+                              "rule",offsetof(S2,rule),
+                              "name",offsetof(S2,name),
+                              "result",offsetof(S2,result),
+                              "str",offsetof(S2,str)
+                             );
+        }
        return ret;
-      }
 
-    if( DDL::HasName(struct_node,"Transition","State") )
-      {
-       indexes[2]=struct_node->index;
+       case 3 :
+        {
+         indexes[2]=struct_node->index;
+         ind_map[struct_node->index]=3;
 
-       ret.set<S3>();
+         ret.set<S3>();
 
-       DDL::SetFieldOffsets(struct_node,
-                            "ntt",offsetof(S3,ntt),
-                            "state",offsetof(S3,state)
-                           );
-
+         DDL::SetFieldOffsets(struct_node,
+                              "ntt",offsetof(S3,ntt),
+                              "state",offsetof(S3,state)
+                             );
+        }
        return ret;
-      }
 
-    if( DDL::HasName(struct_node,"State") )
-      {
-       indexes[3]=struct_node->index;
+       case 4 :
+        {
+         indexes[3]=struct_node->index;
+         ind_map[struct_node->index]=4;
 
-       ret.set<S4>();
+         ret.set<S4>();
 
-       DDL::SetFieldOffsets(struct_node,
-                            "state",offsetof(S4,state),
-                            "transitions",offsetof(S4,transitions),
-                            "final",offsetof(S4,final)
-                           );
-
+         DDL::SetFieldOffsets(struct_node,
+                              "state",offsetof(S4,state),
+                              "transitions",offsetof(S4,transitions),
+                              "final",offsetof(S4,final)
+                             );
+        }
        return ret;
-      }
 
-    if( DDL::HasName(struct_node,"Action","Final") )
-      {
-       indexes[4]=struct_node->index;
+       case 5 :
+        {
+         indexes[4]=struct_node->index;
+         ind_map[struct_node->index]=5;
 
-       ret.set<S5>();
+         ret.set<S5>();
 
-       DDL::SetFieldOffsets(struct_node,
-                            "t",offsetof(S5,t),
-                            "rule",offsetof(S5,rule)
-                           );
-
+         DDL::SetFieldOffsets(struct_node,
+                              "t",offsetof(S5,t),
+                              "rule",offsetof(S5,rule)
+                             );
+        }
        return ret;
-      }
 
-    if( DDL::HasName(struct_node,"Final") )
-      {
-       indexes[5]=struct_node->index;
+       case 6 :
+        {
+         indexes[5]=struct_node->index;
+         ind_map[struct_node->index]=6;
 
-       ret.set<S6>();
+         ret.set<S6>();
 
-       DDL::SetFieldOffsets(struct_node,
-                            "final",offsetof(S6,final),
-                            "actions",offsetof(S6,actions)
-                           );
-
+         DDL::SetFieldOffsets(struct_node,
+                              "final",offsetof(S6,final),
+                              "actions",offsetof(S6,actions)
+                             );
+        }
        return ret;
+
+       default: Printf(Exception,"Unknown structure"); return ret;
       }
-
-    Printf(Exception,"Unknown structure");
-
-    return ret;
    }
 
   template <class T> struct IsStruct;
@@ -110,58 +127,68 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
   void guardFieldTypes(DDL::MapTypeCheck &type_check,DDL::StructNode *struct_node) const
    {
-    if( struct_node->index==indexes[0] )
+    switch( ind_map[struct_node->index] )
       {
-       DDL::GuardFieldTypes<
-                            A4,
-                            StrLen,
-                            PtrLen<S2 * >
-                           >(*this,type_check,struct_node);
-      }
+       case 1 :
+        {
+         DDL::GuardFieldTypes<
+                              A4,
+                              StrLen,
+                              PtrLen<S2 * >
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[1] )
-      {
-       DDL::GuardFieldTypes<
-                            A6,
-                            StrLen,
-                            A4,
-                            PtrLen<A3 >
-                           >(*this,type_check,struct_node);
-      }
+       case 2 :
+        {
+         DDL::GuardFieldTypes<
+                              A6,
+                              StrLen,
+                              A4,
+                              PtrLen<A3 >
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[2] )
-      {
-       DDL::GuardFieldTypes<
-                            A3,
-                            S4 *
-                           >(*this,type_check,struct_node);
-      }
+       case 3 :
+        {
+         DDL::GuardFieldTypes<
+                              A3,
+                              S4 *
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[3] )
-      {
-       DDL::GuardFieldTypes<
-                            A2,
-                            PtrLen<S3 >,
-                            S6 *
-                           >(*this,type_check,struct_node);
-      }
+       case 4 :
+        {
+         DDL::GuardFieldTypes<
+                              A2,
+                              PtrLen<S3 >,
+                              S6 *
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[4] )
-      {
-       DDL::GuardFieldTypes<
-                            A5,
-                            S2 *
-                           >(*this,type_check,struct_node);
-      }
+       case 5 :
+        {
+         DDL::GuardFieldTypes<
+                              A5,
+                              S2 *
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[5] )
-      {
-       DDL::GuardFieldTypes<
-                            A1,
-                            PtrLen<S5 >
-                           >(*this,type_check,struct_node);
-      }
+       case 6 :
+        {
+         DDL::GuardFieldTypes<
+                              A1,
+                              PtrLen<S5 >
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
+       default: Printf(Exception,"Unknown structure");
+      }
    }
  };
 

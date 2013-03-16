@@ -25,14 +25,6 @@ struct TypeDefCore
     A4 nt;
     StrLen name;
     PtrLen<S2 * > rules;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;,#;}",nt,name);
-      
-      for(auto *ptr : rules ) Printf(out,"\n  #;",*ptr);
-     }
    };
 
   struct S2
@@ -41,24 +33,12 @@ struct TypeDefCore
     StrLen name;
     A4 result;
     PtrLen<A3 > str;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;,#;,#;,#;}",rule,name,result,PrintSet(str));
-     }
    };
 
   struct S3
    {
     A3 ntt;
     S4 * state;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;} -> #;",ntt,state->state);
-     }
    };
 
   struct S4
@@ -68,28 +48,12 @@ struct TypeDefCore
     S6 * final;
 
     using Transition = S3 ;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;}",state);
-
-      for(auto transition : transitions ) Printf(out,"\n  #;",transition);
-      
-      Printf(out,"\n #;",*final);
-     }
    };
 
   struct S5
    {
     A5 t;
     S2 * rule;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;} => #;",t,rule->name);
-     }
    };
 
   struct S6
@@ -98,14 +62,6 @@ struct TypeDefCore
     PtrLen<S5 > actions;
 
     using Action = S5 ;
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"{#;}",final);
-
-      for(auto action : actions) Printf(out,"\n  #;",action);
-     }
    };
 
  };

@@ -3,10 +3,12 @@
 struct TypeSet : TypeDefCore , DDL::MapHackPtr
  {
   ulen indexes[6];
+  DynArray<ulen> ind_map;
 
-  DDL::FindStructMap map;
+  DDL::FindNodeMap map;
 
-  TypeSet()
+  explicit TypeSet(ulen len)
+   : ind_map(len)
    {
     Range(indexes).set(ulen(-1));
 
@@ -16,22 +18,20 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
     map.add(4,"State");
     map.add(5,"Action","Final");
     map.add(6,"Final");
-   }
 
-  ulen findStruct(DDL::StructNode *struct_node)
-   {
-    return map.find(struct_node);
+    map.complete();
    }
 
   DDL::MapSizeInfo structSizeInfo(DDL::StructNode *struct_node)
    {
     DDL::MapSizeInfo ret;
 
-    switch( findStruct(struct_node) )
+    switch( map.find(struct_node) )
       {
        case 1 :
         {
          indexes[0]=struct_node->index;
+         ind_map[struct_node->index]=1;
 
          ret.set<S1>();
 
@@ -46,6 +46,7 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 2 :
         {
          indexes[1]=struct_node->index;
+         ind_map[struct_node->index]=2;
 
          ret.set<S2>();
 
@@ -61,6 +62,7 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 3 :
         {
          indexes[2]=struct_node->index;
+         ind_map[struct_node->index]=3;
 
          ret.set<S3>();
 
@@ -74,6 +76,7 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 4 :
         {
          indexes[3]=struct_node->index;
+         ind_map[struct_node->index]=4;
 
          ret.set<S4>();
 
@@ -88,6 +91,7 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 5 :
         {
          indexes[4]=struct_node->index;
+         ind_map[struct_node->index]=5;
 
          ret.set<S5>();
 
@@ -101,6 +105,7 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 6 :
         {
          indexes[5]=struct_node->index;
+         ind_map[struct_node->index]=6;
 
          ret.set<S6>();
 
@@ -120,16 +125,9 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
   template <class T>
   bool isStruct(DDL::StructNode *struct_node) const { return IsStruct<T>::Do(indexes,struct_node->index); }
 
-  ulen findStruct(ulen index)
-   {
-    if( index==indexes[0] ) return 1;
-
-    ....
-   }
-
   void guardFieldTypes(DDL::MapTypeCheck &type_check,DDL::StructNode *struct_node) const
    {
-    switch( findStruct(struct_node->index) )
+    switch( ind_map[struct_node->index] )
       {
        case 1 :
         {
@@ -141,61 +139,56 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
         }
        break;
 
-       ....
-      }
+       case 2 :
+        {
+         DDL::GuardFieldTypes<
+                              A6,
+                              StrLen,
+                              A4,
+                              PtrLen<A3 >
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[0] )
-      {
-       DDL::GuardFieldTypes<
-                            A4,
-                            StrLen,
-                            PtrLen<S2 * >
-                           >(*this,type_check,struct_node);
-      }
+       case 3 :
+        {
+         DDL::GuardFieldTypes<
+                              A3,
+                              S4 *
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[1] )
-      {
-       DDL::GuardFieldTypes<
-                            A6,
-                            StrLen,
-                            A4,
-                            PtrLen<A3 >
-                           >(*this,type_check,struct_node);
-      }
+       case 4 :
+        {
+         DDL::GuardFieldTypes<
+                              A2,
+                              PtrLen<S3 >,
+                              S6 *
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[2] )
-      {
-       DDL::GuardFieldTypes<
-                            A3,
-                            S4 *
-                           >(*this,type_check,struct_node);
-      }
+       case 5 :
+        {
+         DDL::GuardFieldTypes<
+                              A5,
+                              S2 *
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[3] )
-      {
-       DDL::GuardFieldTypes<
-                            A2,
-                            PtrLen<S3 >,
-                            S6 *
-                           >(*this,type_check,struct_node);
-      }
+       case 6 :
+        {
+         DDL::GuardFieldTypes<
+                              A1,
+                              PtrLen<S5 >
+                             >(*this,type_check,struct_node);
+        }
+       break;
 
-    if( struct_node->index==indexes[4] )
-      {
-       DDL::GuardFieldTypes<
-                            A5,
-                            S2 *
-                           >(*this,type_check,struct_node);
+       default: Printf(Exception,"Unknown structure");
       }
-
-    if( struct_node->index==indexes[5] )
-      {
-       DDL::GuardFieldTypes<
-                            A1,
-                            PtrLen<S5 >
-                           >(*this,type_check,struct_node);
-      }
-
    }
  };
 

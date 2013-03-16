@@ -84,6 +84,8 @@ template <class TypeSet> class TypedMap;
 
 struct MapHackPtr;
 
+class FindNodeMap;
+
 /* struct MapSizeInfo */
 
 struct MapSizeInfo
@@ -1040,7 +1042,8 @@ TypedMap<TypeSet>::TypedMap(Eval *eval_,BodyNode *body_)
    ts_prepare(this),
    ts_size(this),
    ts_place(this),
-   ts_map(this)
+   ts_map(this),
+   type_set(body_->struct_list.count)
  {
   prepare();
   
@@ -1142,6 +1145,109 @@ struct MapHackPtr
    {
     new(place) PtrLen<char>(ptr,len);
    }
+ };
+
+/* class FindNodeMap */
+
+class FindNodeMap : NoCopy
+ {
+   struct CrcGen;
+ 
+   struct ToSearch
+    {
+     uint32 crc;
+     ulen len;
+     StrLen name;
+     DDL::ScopeNode *scope;
+     
+     void setCrc();
+     
+     template <class T>
+     explicit ToSearch(T *node)
+      {
+       len=node->depth+1;
+       name=node->name.name.token.str;
+       scope=node->parent;
+       
+       setCrc();
+      }
+    };
+ 
+   struct Rec : NoCopy , CmpComparable<Rec>
+    {
+     uint32 crc;
+     DynArray<StrLen> names;
+     ulen ind;
+     
+     void setCrc();
+     
+     template <class ... TT>
+     explicit Rec(ulen ind_,TT ... tt)
+      : names({tt...}),
+        ind(ind_)
+      {
+       setCrc();
+      }
+     
+     // cmp objects 
+     
+     CmpResult objCmp(const Rec &obj) const;
+     
+     CmpResult objCmp(const ToSearch &obj) const;
+     
+     bool operator >= (const ToSearch &ts) const { return objCmp(ts)>=0; }
+     
+     bool operator == (const ToSearch &ts) const { return objCmp(ts)==0; }
+     
+     // swap/move objects
+     
+     void objSwap(Rec &obj)
+      {
+       Swap(crc,obj.crc);
+       Swap(names,obj.names);
+       Swap(ind,obj.ind);
+      }
+     
+     explicit Rec(ToMoveCtor<Rec> obj)
+      : crc(obj->crc),
+        names(ObjToMove(obj->names)),
+        ind(obj->ind)
+      {
+      }
+
+     Rec * objMove(Place<void> place)
+      {
+       return CtorMove(this,place);
+      }
+     
+     // no-throw flags
+     
+     enum NoThrowFlagType
+      {
+       Default_no_throw = true,
+       Copy_no_throw = true
+      };
+    };
+   
+   DynArray<Rec> list; 
+ 
+  private: 
+   
+   ulen find(ToSearch ts);
+   
+  public:
+ 
+   FindNodeMap() {}
+   
+   ~FindNodeMap() {}
+
+   template <class ... TT>
+   void add(ulen ind,TT ... tt) { list.append_fill(ind,tt...); }
+   
+   void complete();
+   
+   template <class T>
+   ulen find(T *node) { return find(ToSearch(node)); }
  };
 
 } // namespace DDL
