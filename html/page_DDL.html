@@ -32,6 +32,8 @@
 
 <p class="Files">Files <b>CCore/inc/ddl/DDLMap.h</b> <b>CCore/src/ddl/DDLMap.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/ddl/DDLTypedMap.h</b> <b>CCore/src/ddl/DDLTypedMap.cpp</b></p>
+
 <p class="Files">Subfolders <b>CCore/inc/ddl</b> <b>CCore/src/ddl</b></p>
 
 
@@ -49,7 +51,7 @@ a waterless form. An here is a brief introduction to the language.
 </p>
 
 <p>
-<b>DDL</b> is to define named constants. Each constant has a type. Types can be basic and derived.
+<b>DDL</b> is to define named constants. Each constant has an associated type. Types can be basic and derived.
 The most important derived types are structures.
 </p>
 
@@ -74,6 +76,14 @@ ulen = uint32 or uint64 >= uint
 
 <p>
 <b>text</b> type represents a character string. <b>ip</b> type represents an IPv4 address.
+</p>
+
+<p>
+<b>int</b>, <b>sint</b>, <b>uint</b> are target-dependent "machine-word-length" types.
+</p>
+
+<p>
+<b>ulen</b> is a target-dependent "machine-address-length" type.
 </p>
 
 <p>
@@ -231,7 +241,7 @@ a type alias or a constant. Literals and expressions are used to define a consta
 
 <p>
 Scope is a "definition directory". Scopes can be nested and splitted. Each named language element
-belongs to the some scope. The full element name is <b># Scope1name # Scope2Name # ... # ElementName</b>.
+belongs to some scope. The full element name is <b># Scope1name # Scope2Name # ... # ElementName</b>.
 </p>
 
 <pre>
@@ -481,47 +491,61 @@ Without <b>const</b> it would be a member definition.
 <p>Universal null literal:</p>
 
 <pre>
+
 null
+
 </pre>
 
 <p>Decimal literals:</p>
 
 <pre>
+
 1234567890
+
 </pre>
 
 <p>Hexadecimal literals:</p>
 
 <pre>
+
 1234567890h
 0abcdefH
 0ABCDEFh
+
 </pre>
 
 <p>Binary literals:</p>
 
 <pre>
+
 1001B
 1010b
+
 </pre>
 
 <p>Simple string literals:</p>
 
 <pre>
+
 'simple text'
+
 </pre>
 
-<p>Advanced string literals:</p>
+<p>Advanced string literals process usual back-slash special character representations:</p>
 
 <pre>
+
 "advanced text\n"
 "\b\t\n\v\f\r"
+
 </pre>
 
 <p>IP literals:</p>
 
 <pre>
+
 192.168.1.10
+
 </pre>
 
 <h3>Expressions</h3>
@@ -585,8 +609,8 @@ S s2 = { 1 , 2 } { .a = -1 } ; // a = -1, b = 2, c = 10
 <p>
 Usual arithmetic operations <b>+a, -a, a+b, a-b, a*b, a/b, a%b</b> can be used with integral values.
 Operands are evaluated to the resulting integral type and operation is performed with this value types.
-Additive intergral operations and multiplication are operations in the correspondent residual ring.
-Division operations follows C convension:
+Additive integral operations and multiplication are operations in the correspondent residual ring.
+Division operations follows <b>C</b> convension:
 </p>
 
 <pre>
@@ -663,7 +687,7 @@ S s = null ; // a = 0, b = 0, c = 0
 </pre>
 
 <p>
-Pointers can be used the same way as in C.
+Pointers can be used the same way as in <b>C</b>.
 </p>
 
 <pre>
@@ -710,27 +734,32 @@ To process a <b>DDL</b> text there are two main classes: <b>TextEngine</b> and <
 </p>
 
 <pre>
+
 class <span class="Att">TextEngine</span> : NoCopy
  {
    ....
 
   public: 
    
-   TextEngine(PrintBase &msg,StrLen text);
+   TextEngine(PrintBase &msg,StrLen text,StrLen pretext={});
    
    ~TextEngine();
    
    EngineResult process();
  };
+
 </pre>
 
 <p>
 The first constructor argument is a stream, where error messages will be printed.
-The second is a text to be processed. To do the job use the method <b>process()</b>.
+The second is a text to be processed. 
+The third is a "pretext". It is included before the <b>text</b>.
+To do the job use the method <b>process()</b>.
 This class does not support a file inclusion.
 </p>
 
 <pre>
+
 template &lt;class FileName,class FileText&gt;
 class <span class="Att">FileEngine</span> : NoCopy
  {
@@ -749,20 +778,22 @@ class <span class="Att">FileEngine</span> : NoCopy
    
    ~FileEngine();
    
-   EngineResult process(StrLen file_name);
+   EngineResult process(StrLen file_name,StrLen pretext={});
  };
+
 </pre>
 
 <p>
 <b>FileEngine</b> can process a complex input from a real or a virtual file system.
 Two template parameters controls the file name processing and the file name to the file content mapping.
 The first constructor argument is a error report stream. Other are different engine limits.
-The method <b>process()</b> does the job. The argument is a file name with a <b>DDL</b> text. Additional
+The method <b>process()</b> does the job. The first argument is a file name with a <b>DDL</b> text. Additional
 files may be opened during include operations.
+The second argument is a "pretext". It is included before the file text.
 </p>
 
 <p>
-On <b>HCore</b> you can use <b>FileToMem</b> as the <b>FileText</b> template parameter.
+On <b>HCore</b> targets ou can use <b>FileToMem</b> as the <b>FileText</b> template parameter.
 </p>
 
 <p>
@@ -772,6 +803,7 @@ The class <b>FileName</b> is a default implementaion of the <b>FileName</b> temp
 <h3>EngineResult and Map</h3>
 
 <pre>
+
 struct <span class="Att">EngineResult</span>
  {
   Eval *eval;
@@ -781,6 +813,7 @@ struct <span class="Att">EngineResult</span>
 
   ....
  };
+
 </pre>
 
 <p>
@@ -794,6 +827,7 @@ to create a result representation in a single memory block.
 </p>
 
 <pre>
+
 class <span class="Att">Map</span> : NoCopy
  {
    ....
@@ -810,6 +844,7 @@ class <span class="Att">Map</span> : NoCopy
    
    void * findConst(StrLen name,const TypeDesc &desc);
  };
+
 </pre>
 
 <p>

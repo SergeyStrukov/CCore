@@ -154,7 +154,7 @@ In this case the type <b>C</b> must be castable to the <b>C::PrintProxyType</b>.
 </p>
 
 <p>
-And the last resort: define a function <b>GetTextDesc()</b>:
+For a non-class type you can define a function <b>GetTextDesc()</b>:
 </p>
 
 <pre>
@@ -192,11 +192,40 @@ inline unsigned long long <span class="Att">GetTextDesc</span>(unsigned long lon
 </pre>
 
 <p>
-It allows to print a type, castable to one of these types.
+It allows to print a non-class type, castable to one of these types.
 </p>
 
 <p>
-You can determine the printing option type using <b>PrintOptAdapter&lt;T&gt;</b>. If the type <b>T</b> has a printing option type
+You can also specialize the template <b>CCore::PrintProxy&lt;T&gt;</b> to define the print proxy type
+and optionally the print option type.
+</p>
+
+<pre>
+
+namespace App {
+
+struct S
+ {
+  ....
+ };
+
+}
+
+namespace CCore {
+
+template &lt;&gt;
+struct PrintProxy&lt;App::S&gt;
+ {
+  typedef .... ProxyType;
+  typedef .... OptType;
+ };
+
+}
+
+</pre>
+
+<p>
+You can determine the printing option type using the <b>PrintOptAdapter&lt;T&gt;</b>. If the type <b>T</b> has a printing option type
 (even through proxy), then <b>PrintOptAdapter&lt;T&gt;::PrintOptType</b> is that type.
 </p>
 
@@ -225,7 +254,7 @@ class POut
  {
   public:
 
-   typedef ... PrintOutType;
+   typedef .... PrintOutType;
  };
 </pre>
 

@@ -1,0 +1,23 @@
+/* Changes-1.04.txt */
+
+DDLEngines are updated, processing pretext is added:
+
+  CCore/inc/ddl/DDLEngine.h
+
+LangLR1 and ParserGen tools are updated. Generated file content is changed.
+Structure definitions are moved out, finals are added explicitely.
+
+DDL support improved:
+
+  CCore/inc/ddl/DDLTypedMap.h
+
+DDLTypeSet tool is added to support DDLTypedMap.
+
+New features added:
+
+  CCore/inc/NewDelete.h
+  CCore/inc/Optional.h
+  CCore/inc/ObjectDomain.h
+  CCore/inc/DeferCall.h
+  CCore/inc/Signal.h
+  CCore/inc/MultiSignal.h
