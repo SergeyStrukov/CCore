@@ -35,18 +35,18 @@ of the calling thread, until some condition is met.
 </p>
 
 <p>
-Most of synchronization object in <b>CCore</b> can be named in constructor, using a 
+Most of synchronization objects in <b>CCore</b> can be named in constructor, using a 
 <a href="page_TextLabel.html"><b>TextLabel</b></a>. If the name is not given explicitly, then some 
 auto-generated name is used. In <b>HCore</b> the provided name is ignored, but in <b>XCore</b>
-it is used by the system log and event recorder. You can get the name of the synchronization object
+it is used by the system log and an event recorder. You can get the name of a synchronization object
 in <b>XCore</b> by the method <b>getName()</b>.
 </p>
 
 <p>
 Blocking methods usually have four variants: try-variant which don't block, 
-main variant without timeout, and timed variants with <a href="page_MSec.html"><b>MSec</b></a> 
-timeout and with <a href="page_TimeScope.html"><b>TimeScope</b></a> timeout.
-The variant without timeout always successull (but may block indefinitely). Other variants returns the 
+main variant without timeout, and timed variants with the <a href="page_MSec.html"><b>MSec</b></a> 
+timeout and with the <a href="page_TimeScope.html"><b>TimeScope</b></a> timeout.
+The variant without timeout always successful (but may block indefinitely). Other variants return the 
 <b>bool</b> return value, which indicates if the method was successful.
 </p>
 
@@ -61,6 +61,7 @@ object, bound with the call of the correspondent releasing method.
 </p>
 
 <pre>
+
    // give
    
    void give();
@@ -68,6 +69,7 @@ object, bound with the call of the correspondent releasing method.
    // functions
    
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
+
 </pre>
 
 <p>

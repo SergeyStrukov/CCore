@@ -1073,7 +1073,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Event.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_ExceptionType.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Exceptions.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_FastMutex.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_FastMutex.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Fifo.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_FileSystem.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_FileToMem.html" 0
@@ -1105,13 +1105,13 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_MultiEvent.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_MultiSem.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_MultiSignal.html" 0
-"D:/active/home/C++/CCore-Root-1-04/html/page_Mutex.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_Mutex.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NanoPackets.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_NegBool.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NetBase.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_NewDelete.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_NoCopy.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_NoMutex.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_NoMutex.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NodeAllocators.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Nothing.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ObjectDomain.html" 0
@@ -1164,7 +1164,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_StrParse.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_String.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Swap.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_Sync.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_Sync.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Task.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_TaskMonitor.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_Taxonomy.html" 2

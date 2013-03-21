@@ -31,10 +31,11 @@
 <p class="Files">Files <b>CCore/inc/task/Mutex.h</b> <b>CCore/src/task/Mutex.cpp</b></p>
 
 <p>
-<b>Mutex</b> is a mutex, i.g. a class, used to serialize a group of code blocks, executing in a mutiple threads.
+<b>Mutex</b> is a mutex, i.g. a class, used to serialize a group of code blocks, executed by multiple threads.
 </p>
 
 <pre>
+
 class <span class="Att">Mutex</span> : NoCopy
  {
    ....
@@ -53,6 +54,7 @@ class <span class="Att">Mutex</span> : NoCopy
   
    typedef LockObject&lt;Mutex&gt; Lock;
  };
+
 </pre>
 
 <p>
@@ -104,6 +106,7 @@ The most common <b>Mutex</b> usage is to make a class thread-safe:
 </p>
 
 <pre>
+
 class SomeClass
  {
    Mutex mutex;
@@ -117,20 +120,21 @@ class SomeClass
      ....
     }
  };
+
 </pre>
 
 <p>
-Building a large-scale application, comprised of a multiple components, it is easy to create a sadden
+Building a large-scale application, comprised by multiple components, it is easy to create a sadden
 deadlock using mutexing in a non-systematic way. So to avoid it I recommend to follow these simple rules:
 </p>
 
 <p>
 Lock-free context is a part of code which does not hold any mutex. Most of application code must run
-in a lock-free context. If you locked a mutex, don't use any other synchonization methods, both
-blocking and releasing. Make a locked sections of code "quick". Avoid nested mutex lockes.
+in a lock-free context. If you locked a mutex, don't use any other synchronization methods, both
+blocking and releasing. Make locked sections of code "quick". Avoid nested mutex locks.
 Sometimes you have to nest mutexes, for example, you may call a memory allocation function, which holds
 a heap mutex. But in this case there is no risk to create a deadlock. "Leaf" mutexes, i.g. mutexes whose
-locked code regions does not make another locks, are deadlock safe. So keep mutexes "leaf", restrict
+locked code regions do not make another locks, are deadlock safe. So keep mutexes "leaf", restrict
 particular mutex usage by defined code regions, for example, methods of a single class. If you still
 have to nest mutex usage, decide an order of locks: one mutex always must be locked before another.
 </p>
@@ -166,7 +170,7 @@ class <span class="Att">Mutex</span> : NoCopy
 <p>
 <b>HCore</b> <b>Mutex</b> constructor uses the additional argument: <b>spin_count</b>. It is defaulted
 to the some target-dependent value. Spinning is used on multi-core systems. If the mutex is locked, then
-it is usefull not to lock the thread immediately, but to "spin" some times, waiting for the mutex release.
+it is useful not to block the thread immediately, but to "spin" some times, waiting for the mutex release.
 </p>
 
 <p>
@@ -177,6 +181,7 @@ the mutex called the internal system semaphore.
 <h4>XCore mutex</h4>
 
 <pre>
+
 class <span class="Att">Mutex</span> : NoCopy
  {
    ....
@@ -197,6 +202,7 @@ class <span class="Att">Mutex</span> : NoCopy
   
    typedef LockObject&lt;Mutex&gt; Lock;
  };
+
 </pre>
 
 <p>
