@@ -24,6 +24,10 @@
 
 namespace App {
 
+/* struct TypeDefCore */
+
+TypeDefCore::A4 TypeDefCore::S6::AtomLim;
+
 /* TypeSet */
 
 #include "StateTypes.TypeSet.gen.h"
@@ -32,43 +36,45 @@ namespace App {
 
 static const char *Pretext=
   
-"type RIndex = uint ;\n"
-"type TIndex = uint ;\n"
-"type NIndex = uint ;\n"
-"type NTIndex = uint ;\n"
-"type StateIndex = uint ;\n"
-"type FinalIndex = uint ;\n\n"
+"  type ElementIndex = uint ;"
+"  type RuleIndex = uint ;"
+"  type FinalIndex = uint ;"
+"  type StateIndex = uint ;"
 
-"struct Final\n"
-" {\n"
-"  FinalIndex final;\n\n"
+"  struct Element" 
+"   {"
+"    ElementIndex element;"
 
-"  struct Action { TIndex t; Rule *rule; } [] actions;\n"
-" };\n\n"
+"    text name;"
 
-"struct State\n"
-" {\n"
-"  StateIndex state;\n\n"
+"    Rule * [] rules;"
+"   };"
 
-"  struct Transition { NTIndex ntt; State *state; } [] transitions;\n\n"
+"  struct Rule"
+"   {"
+"    RuleIndex rule;"
 
-"  Final *final;\n"
-" };\n\n"
+"    text name;"
 
-"struct Rule\n"
-" {\n"
-"  RIndex rule;\n"
-"  text name;\n"
-"  NIndex result;\n"
-"  NTIndex[] str;\n"
-" };\n\n"
+"    Element * result;"
+"    Element * [] args;"
+"   };"
 
-"struct NonTerminal\n"
-" {\n"
-"  NIndex nt;\n"
-"  text name;\n"
-"  Rule * [] rules;\n"
-" };\n";
+"  struct Final"
+"   {"
+"    FinalIndex final;"
+
+"    struct Action { Element *atom; Rule *rule; } [] actions;"
+"   };"
+
+"  struct State"
+"   {"
+"    StateIndex state;"
+
+"    struct Transition { Element *element; State *state; } [] transitions;"
+
+"    Final *final;"
+"   };";
 
 DataMap::DataMap(StrLen file_name)
  {
@@ -89,12 +95,13 @@ DataMap::DataMap(StrLen file_name)
      MemAllocGuard guard(map.getLen());
 
      map(guard);
+
+     TypeDef::Element::AtomLim=map.takeConst<TypeDef::ElementIndex>("AtomIndexLim");
      
+     table_Element=map.takeConst<PtrLen<TypeDef::Element> >("ElementTable");
+     table_Rule=map.takeConst<PtrLen<TypeDef::Rule> >("RuleTable");
      table_Final=map.takeConst<PtrLen<TypeDef::Final> >("FinalTable");
      table_State=map.takeConst<PtrLen<TypeDef::State> >("StateTable");
-     table_NonTerminal=map.takeConst<PtrLen<TypeDef::NonTerminal> >("NonTerminalTable");
-     table_Rule=map.takeConst<PtrLen<TypeDef::Rule> >("RuleTable");
-     table_TNames=map.takeConst<PtrLen<StrLen> >("TNames");
      
      mem=guard.disarm();
     }

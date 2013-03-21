@@ -40,48 +40,37 @@ class Engine;
 class Engine : NoCopy
  {
    DataMap data;
-   TypeDef::NTIndex tlim;
    
   private:
    
    struct ElementName
     {
      StrLen name;
-     bool isNT;
+     bool is_atom;
      
-     ElementName() : isNT(false) {}
+     explicit ElementName(const TypeDef::Element &element) 
+      : name(element.name),
+        is_atom(element.element<TypeDef::Element::AtomLim) 
+      {
+      }
      
-     explicit ElementName(StrLen name_) : name(name_),isNT(true) {}
+     explicit ElementName(const TypeDef::Element *element) : ElementName(*element) {} 
      
      template <class P>
      void print(P &out) const
       {
-       if( isNT )
-         Printf(out,"Element_#;",name);
-       else
+       if( is_atom )
          Printf(out,"ElementAtom");
+       else
+         Printf(out,"Element_#;",name);
       }
     };
-   
-   ElementName getElementName(TypeDef::NTIndex ntt)
-    {
-     if( ntt<tlim )
-       {
-        return ElementName();
-       }
-     else
-       {
-        return ElementName(data.getNonTerminals().at(ntt-tlim).name);
-       }
-    }
    
   public: 
    
    explicit Engine(StrLen file_name) 
     : data(file_name) 
     {
-     tlim=data.getTNames().len;
-     
      if( !data.getRules() )
        {
         Printf(Exception,"Rule table is empty");
@@ -125,17 +114,13 @@ void Engine::test(StrLen file_name)
  {
   PrintFile out(file_name);
   
-  Printf(out,"/* TNames */ \n\n");
+  Putobj(out,"/* Elements */ \n\n");
   
-  for(auto name : data.getTNames() ) Printf(out,"#;\n",name);
+  for(auto element : data.getElements() ) Printf(out,"#;\n",element);
   
   Putobj(out,"\n/* Rules */ \n\n");
   
   for(auto rule : data.getRules() ) Printf(out,"#;\n",rule);
-  
-  Putobj(out,"\n/* NonTerminals */ \n\n");
-  
-  for(auto nt : data.getNonTerminals() ) Printf(out,"#;\n",nt);
   
   Putobj(out,"\n/* Finals */ \n\n");
   
@@ -150,16 +135,16 @@ void Engine::atom_h(StrLen file_name)
  {
   PrintFile out(file_name);
   
-  auto names=data.getTNames();
+  auto atoms=data.getAtoms();
   
   Printf(out,"/* enum AtomClass */ \n\nenum AtomClass\n {\n  Atom_Nothing,\n\n");
   
-  for(ulen i=1,n=names.len; i<n ;i++)
+  for(ulen i=1,n=atoms.len; i<n ;i++)
     {
      if( i+1<n )
-       Printf(out,"  Atom_<nake>, /*  #;  */\n",StrLen(names[i].inner(3,2)));
+       Printf(out,"  Atom_<nake>, /*  #;  */\n",StrLen(atoms[i].name.inner(3,2)));
      else
-       Printf(out,"  Atom_<nake>  /*  #;  */\n",StrLen(names[i].inner(3,2)));
+       Printf(out,"  Atom_<nake>  /*  #;  */\n",StrLen(atoms[i].name.inner(3,2)));
     }
   
   Printf(out," };\n\nconst char * GetTextDesc(AtomClass ac);\n\n");
@@ -169,7 +154,7 @@ void Engine::atom_cpp(StrLen file_name)
  {
   PrintFile out(file_name);
   
-  auto names=data.getTNames();
+  auto atoms=data.getAtoms();
   
   Printf(out,"/* enum AtomClass */ \n\nconst char * GetTextDesc(AtomClass ac)\n {\n");
   
@@ -177,12 +162,12 @@ void Engine::atom_cpp(StrLen file_name)
   
   Printf(out,"    \"no-atom\",\n\n");
   
-  for(ulen i=1,n=names.len; i<n ;i++)
+  for(ulen i=1,n=atoms.len; i<n ;i++)
     {
      if( i+1<n )
-       Printf(out,"    #;,\n",StrLen(names[i].inner(2,1)));
+       Printf(out,"    #;,\n",StrLen(atoms[i].name.inner(2,1)));
      else
-       Printf(out,"    #;\n",StrLen(names[i].inner(2,1)));
+       Printf(out,"    #;\n",StrLen(atoms[i].name.inner(2,1)));
     }
   
   Printf(out,"   };\n\n");
@@ -196,9 +181,9 @@ void Engine::elements1(StrLen file_name)
   
   Printf(out,"/* elements */ \n\n");
   
-  for(auto nt : data.getNonTerminals() ) 
+  for(auto element : data.getNonAtoms() ) 
     {
-     Printf(out,"struct Element_#;;\n",nt.name);
+     Printf(out,"struct Element_#;;\n",element.name);
     }
  }
 
@@ -206,19 +191,19 @@ void Engine::elements2(StrLen file_name)
  {
   PrintFile out(file_name);
   
-  for(auto nt : data.getNonTerminals() ) 
+  for(auto element : data.getNonAtoms() ) 
     {
-     Printf(out,"/* struct Element_#; */ \n\n",nt.name);
+     Printf(out,"/* struct Element_#; */ \n\n",element.name);
      
-     Printf(out,"struct Element_#; : ElementBase\n {\n",nt.name);
+     Printf(out,"struct Element_#; : ElementBase\n {\n",element.name);
      
      Printf(out,"  static ulen NextState(ulen state);\n");
      
-     for(auto *ptr: nt.rules )
+     for(auto *ptr: element.rules )
        {
         auto rule=*ptr;
 
-        if( !rule.str )
+        if( !rule.args )
           {
            Printf(out,"\n  void #;(ElementContext ctx);\n",rule.name);
           }
@@ -226,7 +211,7 @@ void Engine::elements2(StrLen file_name)
           {
            Printf(out,"\n  void #;(ElementContext ctx",rule.name);
            
-           for(auto ntt : rule.str ) Printf(out,",#; *",getElementName(ntt));
+           for(auto *arg : rule.args ) Printf(out,",#; *",ElementName(*arg));
            
            Printf(out,");\n");
           }
@@ -240,23 +225,23 @@ void Engine::elements3(StrLen file_name)
  {
   PrintFile out(file_name);
   
-  for(auto nt : data.getNonTerminals() ) 
+  for(auto element : data.getNonAtoms() ) 
     {
-     Printf(out,"/* struct Element_#; */ \n\n",nt.name);
+     Printf(out,"/* struct Element_#; */ \n\n",element.name);
      
-     for(auto *ptr: nt.rules )
+     for(auto *ptr: element.rules )
        {
         auto rule=*ptr;
 
-        if( !rule.str )
+        if( !rule.args )
           {
-           Printf(out,"void Element_#;::#;(ElementContext)\n",nt.name,rule.name);
+           Printf(out,"void Element_#;::#;(ElementContext)\n",element.name,rule.name);
           }
         else
           {
-           Printf(out,"void Element_#;::#;(ElementContext",nt.name,rule.name);
+           Printf(out,"void Element_#;::#;(ElementContext",element.name,rule.name);
            
-           for(auto ntt : rule.str ) Printf(out,",#; *",getElementName(ntt));
+           for(auto *arg : rule.args ) Printf(out,",#; *",ElementName(*arg));
            
            Printf(out,")\n");
           }
@@ -311,20 +296,20 @@ void Engine::do_cpp(StrLen file_name)
      
      Printf(out,"void Parser::do_#;()\n {\n",rule.name);
      
-     for(ulen j=0,m=rule.str.len; j<m ;j++)
+     for(ulen j=0,m=rule.args.len; j<m ;j++)
        {
         ulen k=m-1-j;
         
-        Printf(out,"  #; *arg#;=pop();\n",getElementName(rule.str[k]),k+1);
+        Printf(out,"  #; *arg#;=pop();\n",ElementName(rule.args[k]),k+1);
        }
      
-     auto result_name=data.getNonTerminals().at(rule.result).name;
+     auto result_name=rule.result->name;
      
-     if( rule.str.len ) Putch(out,'\n');
+     if( rule.args.len ) Putch(out,'\n');
      
      Printf(out,"  Element_#; *elem=elem_#;(",result_name,rule.name);
      
-     for(ulen j=0,m=rule.str.len; j<m ;j++) 
+     for(ulen j=0,m=rule.args.len; j<m ;j++) 
        {
         if( j )
           Printf(out,",arg#;",j+1);
@@ -354,16 +339,16 @@ void Engine::elem_h(StrLen file_name)
     {
      auto rule=*r;
      
-     auto result_name=data.getNonTerminals().at(rule.result).name;
+     auto result_name=rule.result->name;
 
      Printf(out,"   Element_#; * elem_#;(",result_name,rule.name);
      
-     for(ulen j=0,m=rule.str.len; j<m ;j++) 
+     for(ulen j=0,m=rule.args.len; j<m ;j++) 
        {
         if( j )
-          Printf(out,",#; *",getElementName(rule.str[j]));
+          Printf(out,",#; *",ElementName(rule.args[j]));
         else
-          Printf(out,"#; *",getElementName(rule.str[j]));
+          Printf(out,"#; *",ElementName(rule.args[j]));
        }
      
      Printf(out,");\n");
@@ -382,16 +367,16 @@ void Engine::elem_cpp(StrLen file_name)
     {
      auto rule=*r;
      
-     auto result_name=data.getNonTerminals().at(rule.result).name;
+     auto result_name=rule.result->name;
 
      Printf(out,"Element_#; * Parser::elem_#;(",result_name,rule.name);
   
-     for(ulen j=0,m=rule.str.len; j<m ;j++) 
+     for(ulen j=0,m=rule.args.len; j<m ;j++) 
        {
         if( j )
-          Printf(out,",#; *arg#;",getElementName(rule.str[j]),j+1);
+          Printf(out,",#; *arg#;",ElementName(rule.args[j]),j+1);
         else
-          Printf(out,"#; *arg#;",getElementName(rule.str[j]),j+1);
+          Printf(out,"#; *arg#;",ElementName(rule.args[j]),j+1);
        }
      
      Printf(out,")\n {\n");
@@ -400,7 +385,7 @@ void Engine::elem_cpp(StrLen file_name)
      
      Printf(out,"  elem->#;(ctx",rule.name);
      
-     for(ulen j=0,m=rule.str.len; j<m ;j++) Printf(out,",arg#;",j+1);
+     for(ulen j=0,m=rule.args.len; j<m ;j++) Printf(out,",arg#;",j+1);
       
      Printf(out,");\n\n");
      
@@ -431,9 +416,9 @@ void Engine::rule_table(StrLen file_name)
   PrintFile out(file_name);
   
   ulen n=data.getStates().len;
-  ulen m=tlim;
+  ulen m=TypeDef::Element::AtomLim;
   
-  DynArray<TypeDef::RIndex> buf(m);
+  DynArray<TypeDef::RuleIndex> buf(m);
   
   IntPrintOpt opt;
   
@@ -441,7 +426,7 @@ void Engine::rule_table(StrLen file_name)
   
   Printf(out,"/* RuleTable */ \n\n");
   
-  Printf(out,"static const RuleTableType RuleTable[#;][#;]=\n",n,tlim);
+  Printf(out,"static const RuleTableType RuleTable[#;][#;]=\n",n,m);
   
   Printf(out," {\n");
   
@@ -456,7 +441,7 @@ void Engine::rule_table(StrLen file_name)
       
       for(auto action : actions )
         {
-         buf.at(action.t)=action.rule->rule+1;
+         buf[action.atom->element]=action.rule->rule+1;
         }
      }
      
@@ -481,7 +466,7 @@ void Engine::atom_state_table(StrLen file_name)
   PrintFile out(file_name);
   
   ulen n=data.getStates().len;
-  ulen m=tlim;
+  ulen m=TypeDef::Element::AtomLim;
   
   DynArray<TypeDef::StateIndex> buf(m);
   
@@ -491,7 +476,7 @@ void Engine::atom_state_table(StrLen file_name)
   
   Printf(out,"/* AtomStateTable */ \n\n");
   
-  Printf(out,"static const StateTableType AtomStateTable[#;][#;]=\n",n,tlim);
+  Printf(out,"static const StateTableType AtomStateTable[#;][#;]=\n",n,m);
   
   Printf(out," {\n");
   
@@ -506,11 +491,11 @@ void Engine::atom_state_table(StrLen file_name)
       
       for(auto transition : transitions )
         {
-         auto ntt=transition.ntt;
+         auto ind=transition.element->element;
          
-         if( ntt<tlim )
+         if( ind<m )
            {
-            buf[ntt]=transition.state->state;
+            buf[ind]=transition.state->state;
            }
         }
      }
@@ -535,7 +520,7 @@ void Engine::next_state(StrLen file_name)
  {
   PrintFile out(file_name);
   
-  ulen n=data.getNonTerminals().len;
+  ulen n=data.getNonAtoms().len;
   ulen m=data.getStates().len;
   
   DynArray<DynArray<TypeDef::StateIndex> > buf(DoFill(m),n);
@@ -550,9 +535,11 @@ void Engine::next_state(StrLen file_name)
      
      for(auto transition : transitions )
        {
-        if( transition.ntt>=tlim )
+        auto ind=transition.element->element;
+       
+        if( ind>=TypeDef::Element::AtomLim )
           {
-           buf[j].at(transition.ntt-tlim)=transition.state->state;
+           buf[j][ind-TypeDef::Element::AtomLim]=transition.state->state;
           }
        }
     }
@@ -561,11 +548,11 @@ void Engine::next_state(StrLen file_name)
   
   for(ulen i=0; i<n ;i++)
     {
-     auto nt=data.getNonTerminals()[i];
+     auto element=data.getNonAtoms()[i];
      
-     Printf(out,"/* Element_#;::NextState() */ \n\n",nt.name);
+     Printf(out,"/* Element_#;::NextState() */ \n\n",element.name);
      
-     Printf(out,"ulen Element_#;::NextState(ulen state)\n {\n  static const StateTableType Table[]=\n   {",nt.name);
+     Printf(out,"ulen Element_#;::NextState(ulen state)\n {\n  static const StateTableType Table[]=\n   {",element.name);
      
      for(ulen j=0; j<m ;j++)
        {
@@ -599,7 +586,7 @@ int main(int argc,const char *argv[])
       
       if( argc!=3 ) 
         {
-         Putobj(Con,"Usage: ParserGen <input-file-name> <output-file-name>\n");
+         Putobj(Con,"Usage: ParserGen <input-file-name> <output-files-name-prefix>\n");
          
          return 1;
         }

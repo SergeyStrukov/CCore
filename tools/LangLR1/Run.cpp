@@ -375,11 +375,13 @@ bool Run::nonLR1()
  
 void Run::stateDDL(bool nonLR1)
  {
-  ulen RIndexLim=lang.getRIndexLim();
   ulen TIndexLim=lang.getTIndexLim();
   ulen NIndexLim=lang.getNIndexLim();
-  ulen StateLim=state_list.getLen();
+  
+  ulen RIndexLim=lang.getRIndexLim();
+  
   ulen FinalLim=finals.getLen();
+  ulen StateLim=state_list.getLen();
   
   PrintFile out("State.ddl");
   
@@ -387,19 +389,85 @@ void Run::stateDDL(bool nonLR1)
   
   Printf(out,
 
-          "RIndex RIndexLim = #; ;\n"
-          "TIndex TIndexLim = #; ;\n"
-          "NIndex NIndexLim = #; ;\n"
-          "NTIndex NTIndexLim = #; ; // T , N\n"
-          "StateIndex StateIndexLim = #; ;\n"
-          "FinalIndex FinalIndexLim = #; ;\n\n"
+          "ElementIndex AtomIndexLim = #; ;\n"
+          "ElementIndex NonAtomIndexLim = #; ;\n"
+          "ElementIndex ElementIndexLim = #; ; // atoms , non-atoms\n\n"
+          "RuleIndex RuleIndexLim = #; ;\n"
+          "FinalIndex FinalIndexLim = #; ;\n"
+          "StateIndex StateIndexLim = #; ;\n\n"
     
-        ,RIndexLim
         ,TIndexLim
         ,NIndexLim
         ,TIndexLim+NIndexLim
-        ,StateLim
+        ,RIndexLim
         ,FinalLim
+        ,StateLim
+        );
+  
+  Printf(out,
+    
+          "Element[#;] ElementTable=\n"
+          " {\n"
+          "  // atoms\n\n"
+    
+        ,TIndexLim+NIndexLim);
+  
+  {
+   auto p=lang.getTRange();
+   ulen ind=0;
+   
+   if( +p )
+     {
+      Printf(out,"  { #; , \"#;\" }",ind++,SlashQuote(lang,*p));
+      
+      for(++p; +p ;++p) Printf(out,",\n  { #; , \"#;\" }",ind++,SlashQuote(lang,*p));
+     }
+  }
+  
+  {
+   auto p=lang.getNRange();
+   
+   if( +p )
+     {
+      Putobj(out,",\n\n  // non-atoms\n\n");
+     
+      Printf(out,"  { #; , #.q; , #; }",TIndexLim+*p,lang.getTextDesc(*p),PrintRules_rec(lang.getRules(*p)));
+      
+      for(++p; +p ;++p) Printf(out,",\n  { #; , #.q; , #; }",TIndexLim+*p,lang.getTextDesc(*p),PrintRules_rec(lang.getRules(*p)));
+     }
+   
+   Putch(out,'\n');
+  }
+  
+  Putobj(out,
+    
+          " };\n\n"
+    
+        );
+  
+  Printf(out,
+    
+          "Rule[#;] RuleTable=\n"
+          " {\n"
+          "  /* shift, special */ { 0 , \"<-\" }"
+    
+        ,RIndexLim);
+  
+  {
+   for(auto p=lang.getRRange(RIndexFirst); +p ;++p)
+     {
+      auto rec=lang.getRule(*p);
+      
+      Printf(out,",\n  { #; , #.q; , ElementTable+#; , #; }",rec.rule,lang.getTextDesc(rec.rule),TIndexLim+rec.result,PrintRuleStr(TIndexLim,rec.str));
+     }
+   
+   Putch(out,'\n');
+  }
+  
+  Putobj(out,
+    
+          " };\n\n"
+    
         );
   
   Printf(out,
@@ -421,9 +489,9 @@ void Run::stateDDL(bool nonLR1)
        {
         if( +p )
           {
-           Printf(out,"    { #; , #; }",p->index,PrintRules(p->object.read()));
+           Printf(out,"    { ElementTable+#; , #; }",p->index,PrintRules(p->object.read()));
            
-           for(++p; +p ;++p) Printf(out,",\n    { #; , #; }",p->index,PrintRules(p->object.read()));
+           for(++p; +p ;++p) Printf(out,",\n    { ElementTable+#; , #; }",p->index,PrintRules(p->object.read()));
            
            Putch(out,'\n');
           }
@@ -432,9 +500,9 @@ void Run::stateDDL(bool nonLR1)
        {
         if( +p )
           {
-           Printf(out,"    { #; , #; }",p->index,PrintRule(p->object.read()));
+           Printf(out,"    { ElementTable+#; , #; }",p->index,PrintRule(p->object.read()));
            
-           for(++p; +p ;++p) Printf(out,",\n    { #; , #; }",p->index,PrintRule(p->object.read()));
+           for(++p; +p ;++p) Printf(out,",\n    { ElementTable+#; , #; }",p->index,PrintRule(p->object.read()));
            
            Putch(out,'\n');
           }
@@ -471,9 +539,9 @@ void Run::stateDDL(bool nonLR1)
       
       if( +p )
         {
-         Printf(out,"    { #; , StateTable+#; }",p->index-1,p->object);
+         Printf(out,"    { ElementTable+#; , StateTable+#; }",p->index-1,p->object);
          
-         for(++p; +p ;++p) Printf(out,",\n    { #; , StateTable+#; }",p->index-1,p->object);
+         for(++p; +p ;++p) Printf(out,",\n    { ElementTable+#; , StateTable+#; }",p->index-1,p->object);
          
          Putch(out,'\n');
         }
@@ -487,83 +555,6 @@ void Run::stateDDL(bool nonLR1)
      
      if( i+1<StateLim ) Putobj(out,",\n"); else Putobj(out,"\n");
     }
-  
-  Putobj(out,
-    
-          " };\n\n"
-    
-        );
-  
-  Printf(out,
-    
-          "text[#;] TNames=\n"
-          " {\n"
-    
-        ,TIndexLim);
-
-  {
-   auto p=lang.getTRange();
-   
-   if( +p )
-     {
-      Printf(out,"  \"#;\"",SlashQuote(lang,*p));
-      
-      for(++p; +p ;++p) Printf(out,",\n  \"#;\"",SlashQuote(lang,*p));
-      
-      Putch(out,'\n');
-     }
-  }
-  
-  Putobj(out,
-    
-          " };\n\n"
-    
-        );
-  
-  Printf(out,
-    
-          "Rule[#;] RuleTable=\n"
-          " {\n"
-          "  /* shift, special */ { 0 , \"<-\" }"
-    
-        ,RIndexLim);
-  
-  {
-   for(auto p=lang.getRRange(RIndexFirst); +p ;++p)
-     {
-      auto rec=lang.getRule(*p);
-      
-      Printf(out,",\n  { #; , #.q; , #; , #; }",rec.rule,lang.getTextDesc(rec.rule),rec.result,PrintRuleStr(TIndexLim,rec.str));
-     }
-   
-   Putch(out,'\n');
-  }
-  
-  Putobj(out,
-    
-          " };\n\n"
-    
-        );
-  
-  Printf(out,
-    
-          "NonTerminal[#;] NonTerminalTable=\n"
-          " {\n"
-    
-        ,NIndexLim);
-  
-  {
-   auto p=lang.getNRange();
-   
-   if( +p )
-     {
-      Printf(out,"  { #; , #.q; , #; }",*p,lang.getTextDesc(*p),PrintRules_rec(lang.getRules(*p)));
-      
-      for(++p; +p ;++p) Printf(out,",\n  { #; , #.q; , #; }",*p,lang.getTextDesc(*p),PrintRules_rec(lang.getRules(*p)));
-      
-      Putch(out,'\n');
-     }
-  }
   
   Putobj(out,
     

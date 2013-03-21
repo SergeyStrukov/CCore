@@ -35,26 +35,26 @@
 <p>
 Tasks and synchronization objects are the heart of any real-time system platform.
 The word "task" is used by tradition instead of thread. A typical embedded application may be regarded
-as a multi-threaded process, running in a single memory space. It has direct access to all hardware features. 
-The functionality of the application is implemented in a series of tasks. The board starts after reboot,
-performes a core initializations and runs the main task. At start you need a working RAM, CPU, timers,
-interrupt controller, serial port and may be some extra stuff.
-Main task performes additional working hardware initialization, prepares and runs tasks.
-There is special "interrupt context", this execution context is used to handle hardware interrupts.
+as a multi-threaded process, running in a single memory space. It has the direct access to all hardware features. 
+The functionality of the application is implemented in a series of tasks. The board starts after reset,
+performs a core initialization and runs the main task. At start you need a working RAM, CPU, timers,
+interrupt controller, serial port and may be some extra peripherals.
+Main task performs additional working hardware initialization, prepares and runs tasks.
+There is a special "interrupt context", this execution context is used to handle hardware interrupts.
 All actions in this context are limited: they must be "quick", in particular, it is forbidden to
 use any "blocking" calls. <b>XCore</b> does not support nested interrupts, so the interrupt context is
-muti-task safe.
+multi-task safe.
 </p>
 
 <p>
 In <b>XCore</b> the entry point to the main task is the usual function <b>main()</b>. Global objects
-are constructed before the <b>main()</b> and destructed after. During this phase interrupts are disabled and
+are constructed before the <b>main()</b> and destructed after. During this phase interrupts are disabled and the
 running extra tasks is not permitted. When <b>main()</b> is finished, the main task is blocked until all extra 
 tasks are completed and then global objects are destroyed.
 </p>
 
 <p>
-The header <b>Task.h</b> includes all task related stuff. <b>XCore</b> variants of the same classes have
+The header <b>Task.h</b> includes all task related entities. <b>XCore</b> variants of the same classes have
 extra features than <b>HCore</b>.
 </p>
 
@@ -76,6 +76,7 @@ execution. You may assume the task is logically finished when this method is cal
 </p>
 
 <pre>
+
 class <span class="Att">Task</span> : public MemBase_nocopy
  {
    ....
@@ -102,12 +103,13 @@ class <span class="Att">Task</span> : public MemBase_nocopy
    
    static Task * GetCurrent();
  };
+
 </pre>
 
 <p>
-<b>run_or_exit()</b> performes "run of exit" operation. I.g. it tries to start a task. If
-the task is started, true is returned. Otherwise, the method <b>exit()</b> is called and false is returned.
-You cannot run the same task twice. So <b>exit()</b> is called either way: as the part of <b>run_or_exit()</b> call
+<b>run_or_exit()</b> performs "run or exit" operation. I.g. it tries to start a task. If
+the task is started, <b>true</b> is returned. Otherwise, the method <b>exit()</b> is called and <b>false</b> is returned.
+You cannot run the same task twice. So <b>exit()</b> is called either way: as the part of the <b>run_or_exit()</b> call
 or after the task is finished. This method can be used to destroy a dynamically allocated task object, 
 to signal about task completion or to do another completion quick job.
 </p>
@@ -132,6 +134,7 @@ from the <b>Task</b> class, the return value is null.
 </p>
 
 <pre>
+
 class <span class="Att">Task</span> : public MemBase_nocopy
  {
    ....
@@ -169,13 +172,14 @@ class <span class="Att">Task</span> : public MemBase_nocopy
   
    static Task * GetCurrent() { return Current; }
  };
+
 </pre>
 
 <p>
 <b>XCore</b> <b>Task</b> constructors have additional task parameters. Task can be explicitly named. If the name is
-not provided, some auto-generated name is used. This name is used in system logging and event recording.
-The <b>TaskPriority</b> is assigned to the task. Task priority determines the task running sequence:
-a task with higher priority preempts an execution of tasks with lower priority. The task priority cannot be changed,
+not provided, some auto-generated name is used. This name is used in the system logging and the event recording.
+The <b>TaskPriority</b> value is assigned to the task. Task priorities determine tasks run sequence:
+a task with higher priority preempts an execution of tasks with lower priorities. The task priority cannot be changed,
 but can be temporary raised automatically by synchronization objects. Finally, the task <b>stack_len</b> 
 can be specified. The minimum and the default task stack length are defined by the target. 
 </p>
@@ -222,12 +226,12 @@ such packet completion.
 </p>
 
 <p>
-It is not recommeded to run a task with one of the special task priority.
+It is not recommended to run a task with one of the special task priorities.
 </p>
 
 <p>
-<b>XCore</b> performes tick task switch. The internal system tick is driven by a timer interrupt.
-This tick runs on a high frequency (like 10kHz). Tick switchs ready-to-run tasks and performes
+<b>XCore</b> performs tick task switch. The internal system tick is driven by a timer interrupt.
+This tick runs on a high frequency (like 10kHz). Tick switches ready-to-run tasks and performs
 timed jobs, like timeout processing. Without the task priority relaxation only a task with the highest
 priority gains CPU time. If there are several such tasks they are switched in a round-robin order.
 </p>

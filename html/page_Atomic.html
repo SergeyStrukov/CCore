@@ -32,12 +32,13 @@
 
 <p>
 Atomic is an unsigned integral variable with a set of "atomic" operations. Such variable can be used safely
-by multiple threads without using mutexes. Moreover, efficient mutex implementaion is based on atomics.
+by multiple threads without using mutexes. Moreover, efficient mutex implementation is based on atomics.
 Atomic operations (except reading a value) implies a "memory fence". This feature is irrelevant on single core
-systems, but for muti-core CPU it is essential to ensure the memory visibility coherence.
+systems, but for multi-core CPU it is essential to ensure the memory visibility coherence.
 </p>
 
 <pre>
+
 class <span class="Att">Atomic</span> : NoCopy
  {
    Sys::Atomic atomic;
@@ -66,10 +67,11 @@ class <span class="Att">Atomic</span> : NoCopy
   
    Type trySet(Type old_value,Type new_value);
  };
+
 </pre>
 
 <p>
-<b>Atomic::Type</b> is the undelying integral type. Usually it is a machine word type. This type is a
+<b>Atomic::Type</b> is the underlying integral type. Usually it is a machine word type. This type is a
 <b>PrintProxyType</b>. 
 </p>
 
@@ -84,11 +86,11 @@ a memory fence.
 
 <p>
 All modifying operations imply a memory fence and return the value of the object <b>before</b> the operation.
-"Memory fence" means that if a thread red the modifyed value of the atomic, it sees all variable 
-modification, made before the atomic operation has been performed by the thread, who has done atomic operation. 
-On single core CPU this is always true, because threads are not executed simultaneously and only a compiler 
-optimization may be an issue. But on multi-core CPU it is possible, that concurent excution of CPU read-write
-commands changes the order of visible variable modification. So a special CPU commands must be used
+"Memory fence" means that if a thread red the modified value of the atomic, it sees all variable 
+modifications, made before the atomic operation has been performed by the thread, who has done the atomic operation. 
+On a single core CPU this is always true, because threads are not executed simultaneously and only a compiler 
+optimization may be an issue. But on multi-core CPU it is possible, that concurrent execution of CPU read/write
+commands changes the order of visible variable modifications. So special CPU commands must be used
 to prevent this.
 </p>
 
@@ -111,7 +113,7 @@ int c=b; // c may be zero
 </pre>
 
 <p>
-<b>operator =</b> assignes a new value.
+<b>operator =</b> assigns a new value.
 </p>
 
 <p>
@@ -132,8 +134,8 @@ int c=b; // c may be zero
 
 <p>
 <b>trySet()</b> is a more complex operation. It compares the current value with the <b>old_value</b>.
-If they equal, then it assignes the <b>new_value</b>. Otherwise does nothing. You may learn what case
-has happend by comparing the return value with the <b>old_value</b>.
+If they are equal, then it assigns the <b>new_value</b>. Otherwise does nothing. You may learn what case
+has happened by comparing the return value with the <b>old_value</b>.
 </p>
 
 <h4>Sys::Atomic</h4>
@@ -144,6 +146,7 @@ declared in the header <b>sys/SysAtomic.h</b>.
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::Atomic</span> // POD type
  {
   // public
@@ -176,6 +179,7 @@ struct <span class="Att">Sys::Atomic</span> // POD type
   
   Type trySet(Type old_value,Type new_value);
  };
+
 </pre>
 
 <p>
@@ -183,6 +187,7 @@ A typical implementation would be:
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::Atomic</span>
  {
   // public
@@ -231,6 +236,7 @@ struct <span class="Att">Sys::Atomic</span>
   
   Type trySet(Type old_value,Type new_value) { return TrySet(&atomic,old_value,new_value); }
  };
+
 </pre>
 
 </body>

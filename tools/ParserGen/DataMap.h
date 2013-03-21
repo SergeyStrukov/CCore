@@ -30,28 +30,28 @@ using namespace CCore;
 
 /* classes */
 
-struct PrintNonTerminal;
+struct PrintElement;
 
 struct PrintRule;
 
-struct PrintState;
-
 struct PrintFinal;
 
-struct PrintTransition;
+struct PrintState;
 
 struct PrintAction;
 
-/* struct PrintNonTerminal */
+struct PrintTransition;
 
-struct PrintNonTerminal : TypeDef::NonTerminal
+/* struct PrintElement */
+
+struct PrintElement : TypeDef::Element
  {
-  PrintNonTerminal(const TypeDef::NonTerminal &obj) : TypeDef::NonTerminal(obj) {}
+  PrintElement(const TypeDef::Element &obj) : TypeDef::Element(obj) {}
   
   template <class P>
   void print(P &out) const
    {
-    Printf(out,"{#;,#;}",nt,name);
+    Printf(out,"( #; , #; )",element,name);
     
     for(auto *ptr : rules ) Printf(out,"\n  #;",*ptr);
    }
@@ -66,24 +66,25 @@ struct PrintRule : TypeDef::Rule
   template <class P>
   void print(P &out) const
    {
-    Printf(out,"{#;,#;,#;,#;}",rule,name,result,PrintSet(str));
-   }
- };
-
-/* struct PrintState */
-
-struct PrintState : TypeDef::State
- {
-  PrintState(const TypeDef::State &obj) : TypeDef::State(obj) {}
-  
-  template <class P>
-  void print(P &out) const
-   {
-    Printf(out,"{#;}",state);
-
-    for(auto transition : transitions ) Printf(out,"\n  #;",transition);
-    
-    Printf(out,"\n #;",*final);
+    if( result )
+      {
+       Printf(out,"( #; , #; , #; , {",rule,name,result->name);
+       
+       auto r=args;
+       
+       if( +r )
+         {
+          Printf(out," #;",(*r)->name);
+          
+          for(++r; +r ;++r) Printf(out,", #;",(*r)->name);
+         }
+       
+       Putobj(out," } )");
+      } 
+    else
+      {
+       Printf(out,"( #; , #; )",rule,name);
+      }
    }
  };
 
@@ -96,22 +97,26 @@ struct PrintFinal : TypeDef::Final
   template <class P>
   void print(P &out) const
    {
-    Printf(out,"{#;}",final);
+    Printf(out,"( #; )",final);
 
-    for(auto action : actions) Printf(out,"\n  #;",action);
+    for(auto action : actions ) Printf(out,"\n  #;",action);
    }
  };
 
-/* struct PrintTransition */
+/* struct PrintState */
 
-struct PrintTransition : TypeDef::State::Transition
+struct PrintState : TypeDef::State
  {
-  PrintTransition(const TypeDef::State::Transition &obj) : TypeDef::State::Transition(obj) {}
+  PrintState(const TypeDef::State &obj) : TypeDef::State(obj) {}
   
   template <class P>
   void print(P &out) const
    {
-    Printf(out,"{#;} -> #;",ntt,state->state);
+    Printf(out,"( #; )",state);
+
+    for(auto transition : transitions ) Printf(out,"\n  #;",transition);
+    
+    Printf(out,"\n  #;",*final);
    }
  };
 
@@ -124,7 +129,20 @@ struct PrintAction : TypeDef::Final::Action
   template <class P>
   void print(P &out) const
    {
-    Printf(out,"{#;} => #;",t,rule->name);
+    Printf(out,"#; => #;",atom->name,rule->name);
+   }
+ };
+
+/* struct PrintTransition */
+
+struct PrintTransition : TypeDef::State::Transition
+ {
+  PrintTransition(const TypeDef::State::Transition &obj) : TypeDef::State::Transition(obj) {}
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"#; -> #;",element->name,state->state);
    }
  };
 
@@ -135,9 +153,9 @@ namespace CCore {
 /* print proxy */
 
 template <>
-struct PrintProxy<App::TypeDef::NonTerminal>
+struct PrintProxy<App::TypeDef::Element>
  {
-  typedef App::PrintNonTerminal ProxyType;
+  typedef App::PrintElement ProxyType;
  };
 
 template <>
@@ -147,27 +165,27 @@ struct PrintProxy<App::TypeDef::Rule>
  };
 
 template <>
-struct PrintProxy<App::TypeDef::State>
- {
-  typedef App::PrintState ProxyType;
- };
-
-template <>
 struct PrintProxy<App::TypeDef::Final>
  {
   typedef App::PrintFinal ProxyType;
  };
 
 template <>
-struct PrintProxy<App::TypeDef::State::Transition>
+struct PrintProxy<App::TypeDef::State>
  {
-  typedef App::PrintTransition ProxyType;
+  typedef App::PrintState ProxyType;
  };
 
 template <>
 struct PrintProxy<App::TypeDef::Final::Action>
  {
   typedef App::PrintAction ProxyType;
+ };
+
+template <>
+struct PrintProxy<App::TypeDef::State::Transition>
+ {
+  typedef App::PrintTransition ProxyType;
  };
 
 } // namespace CCore
@@ -183,26 +201,25 @@ class DataMap;
 class DataMap : NoCopy
  {
    void *mem;
-   
+
+   PtrLen<TypeDef::Element>     table_Element;
+   PtrLen<TypeDef::Rule>        table_Rule;
    PtrLen<TypeDef::Final>       table_Final;
    PtrLen<TypeDef::State>       table_State;
-   PtrLen<TypeDef::NonTerminal> table_NonTerminal;
-   PtrLen<TypeDef::Rule>        table_Rule;
-   PtrLen<StrLen>               table_TNames;
    
-   //struct TypeSet;
- 
   public:
   
    explicit DataMap(StrLen file_name);
    
    ~DataMap();
    
-   PtrLen<TypeDef::Final>       getFinals() { return table_Final; }
-   PtrLen<TypeDef::State>       getStates() { return table_State; }
-   PtrLen<TypeDef::NonTerminal> getNonTerminals() { return table_NonTerminal; }
-   PtrLen<TypeDef::Rule>        getRules() { return table_Rule; }
-   PtrLen<StrLen>               getTNames() { return table_TNames; }
+   PtrLen<TypeDef::Element> getElements() const { return table_Element; }
+   PtrLen<TypeDef::Rule>    getRules() const { return table_Rule; }
+   PtrLen<TypeDef::Final>   getFinals() const { return table_Final; }
+   PtrLen<TypeDef::State>   getStates() const { return table_State; }
+   
+   PtrLen<TypeDef::Element> getAtoms() const { return table_Element.prefix(TypeDef::Element::AtomLim); }
+   PtrLen<TypeDef::Element> getNonAtoms() const { return table_Element.part(TypeDef::Element::AtomLim); }
  };
 
 } // namespace App

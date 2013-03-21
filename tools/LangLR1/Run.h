@@ -154,9 +154,9 @@ class PrintRuleStr
      
      if( +p )
        {
-        Printf(out,"{ #;",getIndex(*p));
+        Printf(out,"{ ElementTable+#;",getIndex(*p));
         
-        for(++p; +p ;++p) Printf(out,", #;",getIndex(*p));
+        for(++p; +p ;++p) Printf(out,", ElementTable+#;",getIndex(*p));
          
         Putobj(out," }"); 
        }
