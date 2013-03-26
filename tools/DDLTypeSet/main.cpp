@@ -14,6 +14,8 @@
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Cmp.h>
 #include <CCore/inc/Sort.h>
+#include <CCore/inc/CompactMap.h>
+#include <CCore/inc/OwnPtr.h>
 
 #include "Data.h"
 
@@ -211,133 +213,310 @@ class PrintName : NoCopy
 
 DynArray<StrLen> PrintName::Stack(DoReserve,100);
 
-/* struct Elem */
+/* struct NameS */
 
-struct Elem : CmpComparable<Elem>
+struct NameS
  {
-  StrLen name;
-  DDL::ScopeNode *parent;
-  DDL::ScopeNode *scope;
   ulen index;
-  bool is_struct;
   
-  template <class T>
-  void set(T &node)
+  explicit NameS(ulen index_) : index(index_) {}
+ };
+
+/* struct NameA */
+
+struct NameA
+ {
+  ulen index;
+  
+  explicit NameA(ulen index_) : index(index_) {}
+ };
+
+/* struct Name */
+
+struct Name
+ {
+  enum Type
    {
-    name=node.name.name.token.str;
-    parent=node.parent;
-    index=node.index;
-    
-    if( auto ptr=parent )
-      {
-       while( auto next=ptr->parent ) ptr=next;
-       
-       scope=ptr;
-      }
-    else
-      {
-       scope=0;
-      }
-   }
+    Type_S = 1,
+    Type_A = 2
+   };
   
-  explicit Elem(DDL::StructNode &node)
-   {
-    set(node);
-    is_struct=true;
-   }
+  Type type;
+  ulen index;
   
-  explicit Elem(DDL::AliasNode &node)
-   {
-    set(node);
-    is_struct=false;
-   }
+  Name(NameS name) : type(Type_S),index(name.index) {}
   
-  void upScope()
-   {
-    if( scope )
-      {
-       if( scope==parent )
-         {
-          scope=0;
-         }
-       else
-         {
-          auto ptr=parent;
-          
-          while( ptr->parent!=scope ) ptr=ptr->parent;
-          
-          scope=ptr;
-         }
-      }
-   }
-  
-  // cmp objects
-  
-  CmpResult objCmp(const Elem &obj) const
-   {
-    if( !scope )
-      {
-       if( obj.scope ) return CmpLess;
-       
-       return CmpEqual;
-      }
-     
-    if( !obj.scope ) return CmpGreater;
-    
-    return StrCmp(scope->name.name.token.str,obj.scope->name.name.token.str);
-   }
+  Name(NameA name) : type(Type_A),index(name.index) {}
   
   // print object
+  
+  friend const char * GetTextDesc(Type type)
+   {
+    switch( type )
+      {
+       case Type_S : return "S"; 
+       case Type_A : return "A";
+       default: return "???";
+      }
+   }
   
   template <class P>
   void print(P &out) const
    {
-    if( is_struct )
-      Printf(out,"TypeDefCore::S#;",index);
-    else
-      Printf(out,"TypeDefCore::A#;",index);
+    Printf(out,"#;#;",type,index);
    }
-  
-  // no-throw flags
-  
-  enum NoThrowFlagType
-   {
-    Default_no_throw = true,
-    Copy_no_throw = true
-   };
  };
 
-/* PrintElems() */
+/* class NameDirectory */
 
-template <class P>
-void PrintElems(P &out,PtrLen<Elem> r,ulen off=0)
+class NameDirectory : NoCopy
  {
-  Sort(r);
-  
-  for(; +r && !r->scope ;++r)
+   static DynArray<StrLen> Stack;
+   
+   struct Key : CmpComparable<Key>
     {
-     Printf(out,"#;using #; = #; ;\n\n",RepeatChar(off+2,' '),r->name,*r);
-    }
-  
-  while( +r )
+     StrLen name;
+     
+     // constructors
+     
+     Key() {}
+     
+     Key(StrLen name_) : name(name_) {}
+     
+     // cmp objects
+     
+     CmpResult objCmp(Key obj) const { return StrCmp(name,obj.name); }
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Putobj(out,name);
+      }
+    };
+   
+   struct Entry
     {
-     StrLen name=r->scope->name.name.token.str;
+     Name result;
      
-     Printf(out,"#;namespace #; {\n\n",RepeatChar(off+2,' '),name);
+     explicit Entry(Name result_) : result(result_) {}
      
-     auto s=r;
+     // print object
      
-     s->upScope();
+     template <class P>
+     void print(P &out) const
+      {
+       Putobj(out,result);
+      }
+    };
+   
+   struct DirName
+    {
+     ulen index;
+     ulen extra_index;
      
-     for(++s; +s && !StrCmp(s->scope->name.name.token.str,name) ;++s) s->upScope();
+     DirName() : index(0),extra_index(0) {}
      
-     PrintElems(out,r.prefix(s),off+2);
+     // print object
      
-     r=s;
+     template <class P>
+     void print(P &out) const
+      {
+       if( index )
+         Printf(out,"S#;",index);
+       else
+         Printf(out,"D#;",extra_index);
+      }
+    };
+   
+   struct Dir : DirName , MemBase_nocopy
+    {
+     CompactRBTreeMap<Key,Entry> entries;
+     CompactRBTreeMap<Key,OwnPtr<Dir> > dirs;
      
-     Printf(out,"#;} // namespace #;\n\n",RepeatChar(off+2,' '),name);
+     Dir() {}
+
+     DirName getName() const { return *this; }
+     
+     Dir * dir(StrLen name) 
+      { 
+       OwnPtr<Dir> *ptr=dirs.find_or_add(name);
+       
+       if( !*ptr ) ptr->set(new Dir());
+       
+       if( entries.find(name) )
+         {
+          Printf(Exception,"Unexpected name duplication");
+         }
+       
+       return ptr->getPtr(); 
+      }
+     
+     void entry(StrLen name,Name result) 
+      { 
+       if( !entries.find_or_add(name,result).new_flag )
+         {
+          Printf(Exception,"Unexpected name duplication");
+         }
+       
+       if( dirs.find(name) )
+         {
+          Printf(Exception,"Unexpected name duplication");
+         }
+      }
+     
+     void setIndex(ulen index_)
+      {
+       if( index )
+         {  
+          Printf(Exception,"Unexpected name duplication");
+         }
+       
+       index=index_;
+      }
+     
+     void complete(DynArray<Dir *> &struct_list,DynArray<Dir *> &extra_list)
+      {
+       if( index )
+         {
+          struct_list[index]=this;
+         }
+       else
+         {
+          extra_index=extra_list.getLen();
+         
+          extra_list.append_copy(this);
+         }
+       
+       dirs.applyIncr( [&] (const Key &,const OwnPtr<Dir> &dir) { dir->complete(struct_list,extra_list); } );
+      }
+     
+     void complete_root(DynArray<Dir *> &struct_list,DynArray<Dir *> &extra_list)
+      {
+       dirs.applyIncr( [&] (const Key &,const OwnPtr<Dir> &dir) { dir->complete(struct_list,extra_list); } );
+      }
+     
+     template <class P>
+     void printUsing(P &out,StrLen prefix) const
+      {
+       if( entries.getCount()+dirs.getCount() ) Putch(out,'\n');
+       
+       entries.applyIncr( [&,prefix] (const Key &key,const Entry &entry) { Printf(out,"    using #; = #;#; ;\n",key,prefix,entry); } );
+       
+       dirs.applyIncr( [&,prefix] (const Key &key,const OwnPtr<Dir> &dir) { Printf(out,"    using #; = #;#; ;\n",key,prefix,dir->getName()); } );
+      }
+     
+     // print object
+     
+     template <class P>
+     void print(P &out,StrLen name={},ulen off=0) const
+      {
+       if( index ) 
+         Printf(out,"#;#; -> S#;\n",RepeatChar(off,' '),name,index);
+       else if( extra_index )
+         Printf(out,"#;#; -> D#;\n",RepeatChar(off,' '),name,extra_index);
+       else
+         Printf(out,"#;(root)\n",RepeatChar(off,' '));
+       
+       entries.applyIncr_const( [&out,off] (const Key &key,const Entry &entry) { Printf(out,"#;#; = #;\n",RepeatChar(off+2,' '),key,entry); } );
+       
+       dirs.applyIncr_const( [&out,off] (const Key &key,const OwnPtr<Dir> &dir) { dir->print(out,key.name,off+2); } );
+      }
+    };
+   
+   Dir root;
+   DynArray<Dir *> struct_list;
+   DynArray<Dir *> extra_list;
+  
+  public:
+ 
+   NameDirectory() : extra_list(DoReserve,100) { extra_list.append_default(); }
+   
+   ~NameDirectory() {}
+   
+   void add(PtrLenReverse<StrLen> path,StrLen name,NameS result)
+    {
+     Dir *ptr=&root;
+     
+     for(; +path ;++path) ptr=ptr->dir(*path); 
+
+     ptr->dir(name)->setIndex(result.index);
     }
- }
+   
+   void add(PtrLenReverse<StrLen> path,StrLen name,NameA result)
+    {
+     Dir *ptr=&root;
+     
+     for(; +path ;++path) ptr=ptr->dir(*path); 
+
+     ptr->entry(name,result);
+    }
+   
+   template <class T,class N>
+   void add(T &node,N name)
+    {
+     Stack.shrink_all();
+     
+     for(auto *scope=node.parent; scope ;scope=scope->parent)
+       {
+        Stack.append_copy(scope->name.name.token.str);
+       }
+     
+     add(RangeReverse(Stack),node.name.name.token.str,name);
+    }
+   
+   void add(DDL::StructNode &node)
+    {
+     add(node,NameS(node.index));
+    }
+   
+   void add(DDL::AliasNode &node)
+    {
+     add(node,NameA(node.index));
+    }
+ 
+   void complete(ulen struct_lim)
+    {
+     struct_list.extend_default(struct_lim);
+     
+     root.complete_root(struct_list,extra_list);
+    }
+   
+   template <class P>
+   void printStruct(P &out,StrLen prefix,DDL::StructNode &node) const
+    {
+     Dir *dir=struct_list[node.index];
+     
+     dir->printUsing(out,prefix);
+    }
+   
+   template <class P>
+   void printExtra(P &out,StrLen prefix,ulen ind) const
+    {
+     Dir *dir=extra_list[ind];
+     
+     dir->printUsing(out,prefix);
+    }
+   
+   template <class P>
+   void printRoot(P &out,StrLen prefix) const
+    {
+     root.printUsing(out,prefix);
+    }
+   
+   ulen getExtraLim() const { return extra_list.getLen(); }
+   
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     Putobj(out,root);
+    }
+ };
+
+DynArray<StrLen> NameDirectory::Stack(DoReserve,100);
 
 /* Process() */
 
@@ -346,6 +525,9 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
   Data data(input_file_name);
   PrintFile out1(output1_file_name);
   PrintFile out2(output2_file_name);
+  
+  ulen struct_lim;
+  NameDirectory dir;
   
   // 1
   {
@@ -367,6 +549,8 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
       node.index=ind++;
      }
    
+   struct_lim=ind;
+   
    Putch(out1,'\n');
   }
   
@@ -386,10 +570,27 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
   
   // 4
   {
-   Putobj(out1,"  // structures\n\n");
+   for(auto &node : data->struct_list ) dir.add(node);
+   
+   for(auto &node : data->alias_list ) dir.add(node);
+   
+   dir.complete(struct_lim);
   }
   
   // 5
+  {
+   for(ulen ind=1,lim=dir.getExtraLim(); ind<lim ;ind++) Printf(out1,"  struct D#;;\n",ind);
+   
+   Putch(out1,'\n');
+  }
+  
+  // 6
+  {
+   Putobj(out1,"  using XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8 = TypeDefCore ;\n\n");
+   Putobj(out1,"  // structures\n\n");
+  }
+  
+  // 7
   {
    for(auto &node : data->struct_list )
      {
@@ -400,8 +601,27 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
         {
          Printf(out1,"    #; #;;\n",PrintType(field.type_node,true),field.name.name.token.str);
         }
+
+      dir.printStruct(out1,"XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::",node);
       
       Putobj(out1,"   };\n\n");
+     }
+  }
+  
+  // 8
+  {
+   Putobj(out1,"  // extra\n\n");
+  }
+  
+  // 9
+  {
+   for(ulen ind=1,lim=dir.getExtraLim(); ind<lim ;ind++) 
+     {
+      Printf(out1,"  struct D#;\n   {\n",ind);
+      
+      dir.printExtra(out1,"XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::",ind);
+      
+      Printf(out1,"   };\n\n");
      }
   }
   
@@ -412,18 +632,14 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
   
   // 100
   {
-   Putobj(out1,"namespace TypeDef {\n\n"); 
+   Putobj(out1,"using XXX212CD757_09B2_4D89_BE20_65C1E4E5A819 = TypeDefCore ;\n\n");
+   
+   Putobj(out1,"namespace TypeDef {\n"); 
   }
   
   // 101
   {
-   DynArray<Elem> buf;
-   
-   for(auto &node : data->struct_list ) buf.append_fill(node);
-   
-   for(auto &node : data->alias_list ) buf.append_fill(node);
-   
-   PrintElems(out1,Range(buf));
+   dir.printRoot(out1,"XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::");
   }
   
   // 199

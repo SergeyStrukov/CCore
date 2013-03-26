@@ -4,98 +4,83 @@ struct TypeDefCore
  {
   // types
 
-  struct S1; // NonTerminal
-  struct S2; // Rule
-  struct S3; // State#Transition
-  struct S4; // State
-  struct S5; // Final#Action
-  struct S6; // Final
+  struct S1; // State#Transition
+  struct S2; // State
+  struct S3; // Final#Action
+  struct S4; // Final
+  struct S5; // Rule
+  struct S6; // Element
 
-  using A1 = DDL::imp_uint32 ; // FinalIndex
-  using A2 = DDL::imp_uint32 ; // StateIndex
-  using A3 = DDL::imp_uint32 ; // NTIndex
-  using A4 = DDL::imp_uint32 ; // NIndex
-  using A5 = DDL::imp_uint32 ; // TIndex
-  using A6 = DDL::imp_uint32 ; // RIndex
+  using A1 = DDL::imp_uint32 ; // StateIndex
+  using A2 = DDL::imp_uint32 ; // FinalIndex
+  using A3 = DDL::imp_uint32 ; // RuleIndex
+  using A4 = DDL::imp_uint32 ; // ElementIndex
+
+
+  using XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8 = TypeDefCore ;
 
   // structures
 
   struct S1
    {
-    A4 nt;
-    StrLen name;
-    PtrLen<S2 * > rules;
+    S6 * element;
+    S2 * state;
    };
 
   struct S2
    {
-    A6 rule;
-    StrLen name;
-    A4 result;
-    PtrLen<A3 > str;
+    A1 state;
+    PtrLen<S1 > transitions;
+    S4 * final;
+
+    using Transition = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S1 ;
    };
 
   struct S3
    {
-    A3 ntt;
-    S4 * state;
+    S6 * atom;
+    S5 * rule;
    };
 
   struct S4
    {
-    A2 state;
-    PtrLen<S3 > transitions;
-    S6 * final;
+    A2 final;
+    PtrLen<S3 > actions;
+
+    using Action = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S3 ;
    };
 
   struct S5
    {
-    A5 t;
-    S2 * rule;
+    A3 rule;
+    StrLen name;
+    S6 * result;
+    PtrLen<S6 * > args;
    };
 
   struct S6
    {
-    A1 final;
-    PtrLen<S5 > actions;
+    A4 element;
+    StrLen name;
+    PtrLen<S5 * > rules;
    };
+
+  // extra
 
  };
 
+using XXX212CD757_09B2_4D89_BE20_65C1E4E5A819 = TypeDefCore ;
+
 namespace TypeDef {
 
-  using NonTerminal = TypeDefCore::S1 ;
-
-  using Rule = TypeDefCore::S2 ;
-
-  using FinalIndex = TypeDefCore::A1 ;
-
-  using State = TypeDefCore::S4 ;
-
-  using StateIndex = TypeDefCore::A2 ;
-
-  using Final = TypeDefCore::S6 ;
-
-  using NTIndex = TypeDefCore::A3 ;
-
-  using NIndex = TypeDefCore::A4 ;
-
-  using TIndex = TypeDefCore::A5 ;
-
-  using RIndex = TypeDefCore::A6 ;
-
-  namespace Final {
-
-    using Action = TypeDefCore::S5 ;
-
-  } // namespace Final
-
-  namespace State {
-
-    using Transition = TypeDefCore::S3 ;
-
-  } // namespace State
-
+    using ElementIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A4 ;
+    using FinalIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A2 ;
+    using RuleIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A3 ;
+    using StateIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A1 ;
+    using Element = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S6 ;
+    using Final = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S4 ;
+    using Rule = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S5 ;
+    using State = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S2 ;
 
 } // namespace TypeDef
 

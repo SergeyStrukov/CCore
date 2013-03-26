@@ -16,6 +16,9 @@ struct TypeDefCore
   using A3 = DDL::imp_uint32 ; // RuleIndex
   using A4 = DDL::imp_uint32 ; // ElementIndex
 
+
+  using XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8 = TypeDefCore ;
+
   // structures
 
   struct S1
@@ -30,7 +33,7 @@ struct TypeDefCore
     PtrLen<S1 > transitions;
     S4 * final;
 
-    using Transition = TypeDefCore::S1 ;
+    using Transition = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S1 ;
    };
 
   struct S3
@@ -44,7 +47,7 @@ struct TypeDefCore
     A2 final;
     PtrLen<S3 > actions;
 
-    using Action = TypeDefCore::S3 ;
+    using Action = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S3 ;
    };
 
   struct S5
@@ -64,25 +67,22 @@ struct TypeDefCore
     static A4 AtomLim;
    };
 
+  // extra
+
  };
+
+using XXX212CD757_09B2_4D89_BE20_65C1E4E5A819 = TypeDefCore ;
 
 namespace TypeDef {
 
-  using Element = TypeDefCore::S6 ;
-
-  using State = TypeDefCore::S2 ;
-
-  using StateIndex = TypeDefCore::A1 ;
-
-  using Rule = TypeDefCore::S5 ;
-
-  using Final = TypeDefCore::S4 ;
-
-  using FinalIndex = TypeDefCore::A2 ;
-
-  using RuleIndex = TypeDefCore::A3 ;
-
-  using ElementIndex = TypeDefCore::A4 ;
+    using ElementIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A4 ;
+    using FinalIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A2 ;
+    using RuleIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A3 ;
+    using StateIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A1 ;
+    using Element = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S6 ;
+    using Final = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S4 ;
+    using Rule = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S5 ;
+    using State = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S2 ;
 
 } // namespace TypeDef
 

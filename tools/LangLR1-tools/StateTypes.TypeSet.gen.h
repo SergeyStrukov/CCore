@@ -12,12 +12,12 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
    {
     Range(indexes).set(ulen(-1));
 
-    map.add(1,"NonTerminal");
-    map.add(2,"Rule");
-    map.add(3,"Transition","State");
-    map.add(4,"State");
-    map.add(5,"Action","Final");
-    map.add(6,"Final");
+    map.add(1,"Transition","State");
+    map.add(2,"State");
+    map.add(3,"Action","Final");
+    map.add(4,"Final");
+    map.add(5,"Rule");
+    map.add(6,"Element");
 
     map.complete();
    }
@@ -36,9 +36,8 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
          ret.set<S1>();
 
          DDL::SetFieldOffsets(struct_node,
-                              "nt",offsetof(S1,nt),
-                              "name",offsetof(S1,name),
-                              "rules",offsetof(S1,rules)
+                              "element",offsetof(S1,element),
+                              "state",offsetof(S1,state)
                              );
         }
        return ret;
@@ -51,10 +50,9 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
          ret.set<S2>();
 
          DDL::SetFieldOffsets(struct_node,
-                              "rule",offsetof(S2,rule),
-                              "name",offsetof(S2,name),
-                              "result",offsetof(S2,result),
-                              "str",offsetof(S2,str)
+                              "state",offsetof(S2,state),
+                              "transitions",offsetof(S2,transitions),
+                              "final",offsetof(S2,final)
                              );
         }
        return ret;
@@ -67,8 +65,8 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
          ret.set<S3>();
 
          DDL::SetFieldOffsets(struct_node,
-                              "ntt",offsetof(S3,ntt),
-                              "state",offsetof(S3,state)
+                              "atom",offsetof(S3,atom),
+                              "rule",offsetof(S3,rule)
                              );
         }
        return ret;
@@ -81,9 +79,8 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
          ret.set<S4>();
 
          DDL::SetFieldOffsets(struct_node,
-                              "state",offsetof(S4,state),
-                              "transitions",offsetof(S4,transitions),
-                              "final",offsetof(S4,final)
+                              "final",offsetof(S4,final),
+                              "actions",offsetof(S4,actions)
                              );
         }
        return ret;
@@ -96,8 +93,10 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
          ret.set<S5>();
 
          DDL::SetFieldOffsets(struct_node,
-                              "t",offsetof(S5,t),
-                              "rule",offsetof(S5,rule)
+                              "rule",offsetof(S5,rule),
+                              "name",offsetof(S5,name),
+                              "result",offsetof(S5,result),
+                              "args",offsetof(S5,args)
                              );
         }
        return ret;
@@ -110,8 +109,9 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
          ret.set<S6>();
 
          DDL::SetFieldOffsets(struct_node,
-                              "final",offsetof(S6,final),
-                              "actions",offsetof(S6,actions)
+                              "element",offsetof(S6,element),
+                              "name",offsetof(S6,name),
+                              "rules",offsetof(S6,rules)
                              );
         }
        return ret;
@@ -132,9 +132,8 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 1 :
         {
          DDL::GuardFieldTypes<
-                              A4,
-                              StrLen,
-                              PtrLen<S2 * >
+                              S6 *,
+                              S2 *
                              >(*this,type_check,struct_node);
         }
        break;
@@ -142,10 +141,9 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 2 :
         {
          DDL::GuardFieldTypes<
-                              A6,
-                              StrLen,
-                              A4,
-                              PtrLen<A3 >
+                              A1,
+                              PtrLen<S1 >,
+                              S4 *
                              >(*this,type_check,struct_node);
         }
        break;
@@ -153,8 +151,8 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 3 :
         {
          DDL::GuardFieldTypes<
-                              A3,
-                              S4 *
+                              S6 *,
+                              S5 *
                              >(*this,type_check,struct_node);
         }
        break;
@@ -163,8 +161,7 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
         {
          DDL::GuardFieldTypes<
                               A2,
-                              PtrLen<S3 >,
-                              S6 *
+                              PtrLen<S3 >
                              >(*this,type_check,struct_node);
         }
        break;
@@ -172,8 +169,10 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 5 :
         {
          DDL::GuardFieldTypes<
-                              A5,
-                              S2 *
+                              A3,
+                              StrLen,
+                              S6 *,
+                              PtrLen<S6 * >
                              >(*this,type_check,struct_node);
         }
        break;
@@ -181,8 +180,9 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 6 :
         {
          DDL::GuardFieldTypes<
-                              A1,
-                              PtrLen<S5 >
+                              A4,
+                              StrLen,
+                              PtrLen<S5 * >
                              >(*this,type_check,struct_node);
         }
        break;

@@ -261,7 +261,7 @@ NameLinkEngine::Map * NameLinkEngine::Map::findOrAddMap(PrintBase &msg,ElementPo
         return ret;
        }
      
-     Printf(msg,"Used name : #; , \n  Founded object is : #;\n",*name,*prepare.found);
+     Printf(msg,"Used name : #; , \n  Found object is : #;\n",*name,*prepare.found);
      
      return 0;
     }
@@ -287,7 +287,7 @@ NameLinkEngine::Rec * NameLinkEngine::Map::addRec(PrintBase &msg,ElementPool &po
         if( prepare.found->isMap() ) return prepare.found;
        }
      
-     Printf(msg,"Used name : #; , \n  Founded object is : #;\n",*name,*prepare.found);
+     Printf(msg,"Used name : #; , \n  Found object is : #;\n",*name,*prepare.found);
      
      return 0;
     }
@@ -314,6 +314,17 @@ auto NameLinkEngine::Map::findRec(NameLink *name) -> Rec *
  {
   return root.find(name->name_id);
  }
+
+/* struct NameLinkEngine::ScopeRec */
+
+struct NameLinkEngine::ScopeRec
+ {
+  ScopeRec *next;
+  ulen depth;
+  ScopeNode *node;
+  
+  ScopeRec(ScopeRec *next_,ulen depth_,ScopeNode *node_) : next(next_),depth(depth_),node(node_) {}
+ };
 
 /* class NameLinkEngine */
 
@@ -461,6 +472,7 @@ auto NameLinkEngine::find(From from,NameRef *name_ref) -> Rec *
 NameLinkEngine::NameLinkEngine(PrintBase &msg_,NameId max_id_)
  : msg(msg_),
    max_id(max_id_),
+   scope_list(0),
    buf(100)
  {
   root=pool.create<Map>();
@@ -503,6 +515,59 @@ bool NameLinkEngine::add(StructNode *node)
   return true;
  }
 
+void NameLinkEngine::add(ScopeNode *node)
+ {
+  scope_list=pool.create<ScopeRec>(scope_list,1,node);
+ }
+
+bool NameLinkEngine::check(ulen depth,ScopeNode *node)
+ {
+  PtrLen<NameLink *> path=makePath(depth,node);
+  
+  Map *map=root;
+
+  for(; +path ;++path)
+    {
+     Map *next=map->findOrAddMap(msg,pool,*path,max_id);
+     
+     if( !next ) return false;
+     
+     map=next;
+    }
+  
+  return true;
+ }
+
+bool NameLinkEngine::checkScopes()
+ {
+  // expand list 
+  
+  for(ScopeRec *cur=scope_list; cur ;)
+    {
+     ulen depth=cur->depth+1;
+     ScopeRec *next=cur->next;
+     
+     for(ScopeNode &node : cur->node->body->scope_list )
+       {
+        next=pool.create<ScopeRec>(next,depth,&node);
+       }
+     
+     cur->next=next;
+     cur=next;
+    }
+  
+  // check scopes
+  
+  AndFlag result;
+  
+  for(ScopeRec *cur=scope_list; cur ;cur=cur->next)
+    {
+     result+=check(cur->depth,cur->node); 
+    }
+  
+  return result;
+ }
+
 bool NameLinkEngine::link(From from,NameRef *name_ref,ConstNode * &node)
  {
   Rec *rec=find(from,name_ref);
@@ -516,7 +581,7 @@ bool NameLinkEngine::link(From from,NameRef *name_ref,ConstNode * &node)
   
   if( rec->get(node) ) return true;
   
-  Printf(msg,"Miskind name : #; , name of constant is expected\n  Founded object is : #;\n",*name_ref,*rec);
+  Printf(msg,"Miskind name : #; , name of constant is expected\n  Found object is : #;\n",*name_ref,*rec);
   
   return false;
  }
@@ -534,7 +599,7 @@ bool NameLinkEngine::link(From from,NameRef *name_ref,AliasNode * &alias_node,St
   
   if( rec->get(alias_node,struct_node) ) return true;
   
-  Printf(msg,"Miskind name : #; , name of type alias or structure is expected\n  Founded object is : #;\n",*name_ref,*rec);
+  Printf(msg,"Miskind name : #; , name of type alias or structure is expected\n  Found object is : #;\n",*name_ref,*rec);
   
   return false;
  }
@@ -552,7 +617,7 @@ bool NameLinkEngine::link(From from,NameRef *name_ref,AliasNode * &node)
   
   if( rec->get(node) ) return true;
   
-  Printf(msg,"Miskind name : #; , name of type alias is expected\n  Founded object is : #;\n",*name_ref,*rec);
+  Printf(msg,"Miskind name : #; , name of type alias is expected\n  Found object is : #;\n",*name_ref,*rec);
   
   return false;
  }
@@ -831,7 +896,7 @@ bool Context::SetTypeSwitch::setType(AliasNode &node,ulen mark)
        {
         if( next->index==mark ) 
           {
-           Printf(msg,"Loop type alias : #;\n",node.name);
+           Printf(msg,"Cyclic type alias : #;\n",node.name);
            
            return false;
           }
@@ -945,7 +1010,7 @@ bool Context::Loop1Switch::checkLoop1(AliasNode &node,ulen mark)
           {
            if( next_alias->index!=mark ) return true;
             
-           Printf(msg,"Loop type definition : #;\n",node.name);
+           Printf(msg,"Cyclic type definition : #;\n",node.name);
            
            return false;
           }
@@ -1177,7 +1242,7 @@ void FieldMap::add(PrintBase &msg,NameId max_id,FieldNode *node)
     
   if( prepare.found )
     {
-     Printf(msg,"Used field name : #;\n  Founded field is : #;\n",node->name,prepare.found->name);
+     Printf(msg,"Used field name : #;\n  Found field is : #;\n",node->name,prepare.found->name);
        
      ok=false;
     }
@@ -1235,6 +1300,10 @@ bool BodyNode::addTo(NameLinkEngine &engine)
   for(ConstNode &node : const_list ) result+=engine.add(&node);
   
   for(StructNode &node : struct_list ) result+=engine.add(&node);
+  
+  for(ScopeNode &node : scope_list ) engine.add(&node);
+  
+  result+=engine.checkScopes();
   
   return result;
  }

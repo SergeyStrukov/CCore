@@ -164,9 +164,11 @@ class NameLinkEngine : NoCopy
 
    struct Rec;
    class Map;
+   struct ScopeRec;
    
    ElementPool pool;
    Map *root;
+   ScopeRec *scope_list;
    
    DynArray<NameLink *> buf;
    
@@ -202,6 +204,12 @@ class NameLinkEngine : NoCopy
    bool add(ConstNode *node);
    
    bool add(StructNode *node);
+   
+   void add(ScopeNode *node);
+   
+   bool check(ulen depth,ScopeNode *node);
+   
+   bool checkScopes();
    
    bool link(From from,NameRef *name_ref,ConstNode * &node);
    
