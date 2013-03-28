@@ -1,0 +1,65 @@
+OBJ_LIST = \
+obj/DataMap.o \
+obj/Tools.o \
+obj/main.o \
+
+
+ASM_LIST = \
+obj/DataMap.s \
+obj/Tools.s \
+obj/main.s \
+
+
+DEP_LIST = \
+obj/DataMap.dep \
+obj/Tools.dep \
+obj/main.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+obj/DataMap.o : ./DataMap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Tools.o : ./Tools.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/main.o : ./main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/DataMap.s : ./DataMap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Tools.s : ./Tools.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/main.s : ./main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/DataMap.dep : ./DataMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DataMap.o $< -MF $@
+
+obj/Tools.dep : ./Tools.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tools.o $< -MF $@
+
+obj/main.dep : ./main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+
