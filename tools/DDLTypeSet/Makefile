@@ -23,6 +23,7 @@ include $(CCORE_ROOT)/Target/Makefile.app
 
 run: $(TARGET) 
 	$(TARGET) ../LangLR1-tools/StateTypes.ddl ../LangLR1-tools/StateTypes.TypeDef.gen.h ../LangLR1-tools/StateTypes.TypeSet.gen.h
+	$(TARGET) ../LangLR1-tools/ShiftStateTypes.ddl ../LangLR1-tools/ShiftStateTypes.TypeDef.gen.h ../LangLR1-tools/ShiftStateTypes.TypeSet.gen.h
 
 
 
