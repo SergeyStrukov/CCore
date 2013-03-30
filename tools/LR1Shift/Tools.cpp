@@ -15,6 +15,7 @@
 
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
+#include <CCore/inc/algon/SortUnique.h>
 
 namespace App {
 
@@ -22,29 +23,31 @@ namespace App {
 
 RefArray<TypeDef::Final *> BuildFinals(PtrLen<TypeDef::State *const> states)
  {
-  RefArray<TypeDef::Final *> finals;
   DynArray<TypeDef::Final *> temp;
   
   auto r=temp.extend_default(states.len);
   
   for(ulen i=0; i<states.len ;i++) r[i]=states[i]->final;
   
-  SortThenProcessUniqueBy(r, [] (TypeDef::Final *a) { return a->final; } , [&] (TypeDef::Final *a) { finals.append_copy(a); } );
+  RefArray<TypeDef::Final *> ret(DoReserve,100);
   
-  return finals;
+  Algon::IncrSortThenApplyUniqueBy(r, [] (TypeDef::Final *a) { return a->final; } , [&] (TypeDef::Final *a) { ret.append_copy(a); } );
+
+  ret.shrink_extra();
+  
+  return ret;
+ }
+
+/* struct ASet */
+
+void ASet::sort()
+ {
+  Sort(atoms.modify());
+  
+  atoms.shrink_extra();
  }
 
 /* struct StateGroup */
-
-StateGroup::Track::Track(ulen start_,TypeDef::Rule *rule_,const RefArray<ulen> &path_,PtrLen<TypeDef::State *> r) 
- : start(start_),
-   rule(rule_),
-   path(path_) 
- {
-  SortThenProcessUniqueBy(r, [] (TypeDef::State *a) { return a->state; } , [&] (TypeDef::State *a) { states.append_copy(a); } );
-  
-  finals=BuildFinals(Range(states));
- }
 
 void StateGroup::setTransitions(PtrLen<Transition> transitions_)
  {
@@ -53,14 +56,9 @@ void StateGroup::setTransitions(PtrLen<Transition> transitions_)
 
 void StateGroup::build()
  {
-  finals=BuildFinals(Range(states));
- }
-
-void StateGroup::mapTransitions(PtrLen<ulen> ret)
- {
-  ret.set(NoGroup);
+  states.shrink_extra();
   
-  for(auto transition : transitions ) ret[transition.element->element]=transition.group;
+  finals=BuildFinals(Range(states));
  }
 
 /* class StateCompressor */
@@ -75,7 +73,7 @@ StateCompressor::Fin::Fin(const TypeDef::Final &final_)
        shift.aset.atoms.append_fill(action.atom);
       }
   
-  Sort(shift.aset.atoms.modify());
+  shift.aset.sort();
  }
 
 StateCompressor::Map::Map(const TypeDef::State &state)
@@ -84,7 +82,7 @@ StateCompressor::Map::Map(const TypeDef::State &state)
   for(auto transition : state.transitions ) transitions[transition.element->element]=transition.state; 
  }
 
-ulen StateCompressor::initIndex(PtrLen<TypeDef::Final> finals)
+void StateCompressor::initIndex(PtrLen<TypeDef::Final> finals)
  {
   shift_index.extend_default(finals.len);
   
@@ -92,34 +90,17 @@ ulen StateCompressor::initIndex(PtrLen<TypeDef::Final> finals)
   
   auto r=Range(temp);
   
-  Sort(r);
-  
-  if( +r )
-    {
-     ulen index=0;
-     ShiftFinal shift=r->shift;
-     shifts.append_copy(shift);
-     
-     shift_index[r->final]=index;
+  Algon::SortThenApplyUniqueRange(r, [&] (PtrLen<Fin> delta) 
+                                        {
+                                         ulen index=shifts.getLen();
+                                         
+                                         shifts.append_copy(delta->shift); 
     
-     for(++r; +r ;++r)
-       {
-        ShiftFinal next=r->shift;
-        
-        if( shift!=next )
-          {
-           index++;
-           shift=next;
-           shifts.append_copy(shift);
-          }
-        
-        shift_index[r->final]=index;
-       }
-     
-     return index+1;
-    }
+                                         for(auto &fin : delta ) shift_index[fin.final]=index;
+                                        }
+                                 );
   
-  return 0;
+  group_count=shifts.getLen();
  }
 
 void StateCompressor::setSplitFlags(ulen split)
@@ -227,7 +208,7 @@ StateCompressor::StateCompressor(PtrLen<TypeDef::Final> finals,PtrLen<TypeDef::S
    maps(DoCast(states_.len),states_.ptr),
    groups(states_.len)
  {
-  group_count=initIndex(finals);
+  initIndex(finals);
   
   for(ulen i=0; i<states_.len ;i++)
     {
@@ -278,13 +259,11 @@ void StateCompressor::check()
     }
  }
 
-auto StateCompressor::getResult(PtrLen<TypeDef::Rule> rules) const -> Result
+auto StateCompressor::getResult() const -> Result
  {
   Result ret;
   
   PtrLen<StateGroup> sg=ret.state_groups.extend_default(group_count);
-  
-  // 1
   
   for(ulen i=0,len=sg.len; i<len ;i++) sg[i].group=i;
   
@@ -297,7 +276,7 @@ auto StateCompressor::getResult(PtrLen<TypeDef::Rule> rules) const -> Result
   
   for(ulen i=0,len=sg.len; i<len ;i++) 
     {
-     DynArray<StateGroup::Transition> transitions;
+     DynArray<StateGroup::Transition> transitions(DoReserve,100);
     
      for(auto transition : sg[i].states[0]->transitions )
        {
@@ -311,57 +290,6 @@ auto StateCompressor::getResult(PtrLen<TypeDef::Rule> rules) const -> Result
      sg[i].build();
     }
 
-  // 2
-  
-  ++rules;
-  
-  DynArray<DynArray<ulen> > transitions(DoFill(sg.len),TypeDef::Element::ElementLim);
-  
-  for(ulen g=0; g<sg.len ;g++)
-    {
-     sg[g].mapTransitions(Range(transitions[g]));
-    }
-  
-  for(ulen g=0; g<sg.len ;g++)
-    {
-     for(auto &rule : rules )
-       {
-        if( transitions[g][rule.result->element]!=NoGroup )
-          {
-           ulen dst=g;
-           RefArray<ulen> path; 
-           
-           for(auto *element : rule.args )
-             {
-              dst=transitions[dst][element->element];
-              
-              if( dst==NoGroup ) break;
-              
-              path.append_copy(dst);
-             } 
-           
-           if( dst!=NoGroup )
-             {
-              DynArray<TypeDef::State *> temp;
-             
-              for(auto *state : sg[g].states )
-                {
-                 auto *s=state;
-                
-                 for(auto *element : rule.args )
-                   {
-                    s=maps[s->state].transitions[element->element];
-                   }
-                 
-                 temp.append_copy(s);
-                }
-             
-              sg[dst].tracks.append_fill(g,&rule,path,Range(temp));
-             }
-          }
-       }
-    }
-  
   return ret;
  }
 

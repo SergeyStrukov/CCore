@@ -30,7 +30,15 @@ void Main(StrLen input_file_name,StrLen output_file_name)
    
   compr.check();
    
-  auto result=compr.getResult(data.getRules());
+  auto result=compr.getResult();
+  
+#if 1  
+  {
+   PrintFile out("ShiftResult.txt");
+    
+   Putobj(out,result);   
+  }
+#endif  
   
   PrintFile out(output_file_name);
   

@@ -15,111 +15,13 @@
 #define LR1Shift_Tools_h
 
 #include <CCore/inc/Array.h>
-#include <CCore/inc/Sort.h>
 #include <CCore/inc/Cmp.h>
 #include <CCore/inc/PrintSet.h>
-#include <CCore/inc/FunctorType.h>
 
 #include "DataMap.h" 
 
 namespace App {
 
-/* ...SortBy() */
-
-template <class Ran,class Len,class Func>
-void IncrSortBy(Ran ptr,Len len,Func by)
- {
-  using T = decltype(*ptr) ; 
-  
-  IncrSort(ptr,len, [=] (const T &a,const T &b) -> bool { return by(a) < by(b) ; } );
- }
-
-template <class Ran,class Len,class Func>
-void DecrSortBy(Ran ptr,Len len,Func by)
- {
-  using T = decltype(*ptr) ; 
-  
-  DecrSort(ptr,len, [=] (const T &a,const T &b) -> bool { return by(a) < by(b) ; } );
- }
-
-template <class T,class Func>
-void IncrSortBy(PtrLen<T> range,Func by) { IncrSortBy(range.ptr,range.len,by); }
-
-template <class T,class Func>
-void DecrSortBy(PtrLen<T> range,Func by) { DecrSortBy(range.ptr,range.len,by); }
-
-/* ProcessUnique() */
-
-template <class R,class FuncInit>
-void ProcessUnique(R r,FuncInit func_init)
- {
-  FunctorTypeOf<FuncInit> func(func_init);
-  
-  if( +r )
-    {
-     auto *last=&(*r);
-     
-     func(*last);
-     
-     for(++r; +r ;++r)
-       {
-        auto *next=&(*r);
-       
-        if( *last!=*next )
-          {
-           last=next;
-           
-           func(*last);
-          }
-       }
-    }
- }
-
-/* SortThenProcessUnique() */
-
-template <class R,class FuncInit>
-void SortThenProcessUnique(R r,FuncInit func_init)
- {
-  Sort(r);
-  ProcessUnique(r,func_init);
- }
-
-/* ProcessUniqueBy() */
-
-template <class R,class Func,class FuncInit>
-void ProcessUniqueBy(R r,Func by,FuncInit func_init)
- {
-  FunctorTypeOf<FuncInit> func(func_init);
-  
-  if( +r )
-    {
-     auto *last=&(*r);
-     
-     func(*last);
-     
-     for(++r; +r ;++r)
-       {
-        auto *next=&(*r);
-       
-        if( by(*last)!=by(*next) )
-          {
-           last=next;
-           
-           func(*last);
-          }
-       }
-    }
- }
-
-/* SortThenProcessUniqueBy() */
-
-template <class R,class Func,class FuncInit>
-void SortThenProcessUniqueBy(R r,Func by,FuncInit func_init)
- {
-  IncrSortBy(r,by);
-  ProcessUniqueBy(r,by,func_init);
- }
-  
 /* consts */
 
 const ulen NoGroup = ulen(-1) ;
@@ -129,8 +31,6 @@ const ulen NoGroup = ulen(-1) ;
 RefArray<TypeDef::Final *> BuildFinals(PtrLen<TypeDef::State *const> states);
 
 /* classes */
-
-struct NoThrowFlagsBase;
 
 struct Atom;
 
@@ -143,19 +43,6 @@ struct ShiftFinal;
 struct StateGroup;
 
 class StateCompressor;
-
-/* struct NoThrowFlagsBase */
-
-struct NoThrowFlagsBase
- {
-  // no-throw flags
-  
-  enum NoThrowFlagType
-   {
-    Default_no_throw = true,
-    Copy_no_throw = true
-   };
- };
 
 /* struct Atom */
 
@@ -221,7 +108,9 @@ struct ASet : CmpComparable<ASet> , NoThrowFlagsBase
  {
   RefArray<Atom> atoms; // sorted
   
-  ASet() {}
+  ASet() : atoms(DoReserve,100) {}
+  
+  void sort();
   
   // cmp objects 
   
@@ -292,54 +181,17 @@ struct StateGroup : NoThrowFlagsBase
      }
    };
   
-  struct Track : NoThrowFlagsBase
-   {
-    ulen start;
-    TypeDef::Rule *rule;
-    RefArray<ulen> path;
-    RefArray<TypeDef::State *> states;
-    RefArray<TypeDef::Final *> finals;
-    
-    Track(ulen start,TypeDef::Rule *rule,const RefArray<ulen> &path,PtrLen<TypeDef::State *> states); 
-    
-    // print object
-    
-    template <class P>
-    void print(P &out) const
-     {
-      Printf(out,"#;)",start);
-      
-      auto p=Range(path);
-      
-      for(auto *element : rule->args ) 
-        {
-         Printf(out," -> #; -> #;)",Element(element),*p);
-         
-         ++p;
-        }
-      
-      if( finals.getLen()>1 )
-        Printf(out,"\n  states = #; finals = #; #;",states.getLen(),finals.getLen(),rule->name);
-      else
-        Printf(out,"\n  states = #; #;",states.getLen(),rule->name);
-     }
-   };
-  
   ulen group;
   RefArray<TypeDef::State *> states;
   RefArray<TypeDef::Final *> finals;
   RefArray<Transition> transitions;
   ShiftFinal shift;
   
-  RefArray<Track> tracks;
-  
-  StateGroup() : group(0) {}
+  StateGroup() : group(0),states(DoReserve,100) {}
   
   void setTransitions(PtrLen<Transition> transitions);
   
   void build();
-  
-  void mapTransitions(PtrLen<ulen> ret);
   
   // print object
   
@@ -351,13 +203,25 @@ struct StateGroup : NoThrowFlagsBase
     else
       Printf(out,"Group #;) states = #;\n\n",group,states.getLen());
     
-    for(auto &obj : transitions ) Printf(out,"#;\n",obj);
+    for(auto *state : states ) Printf(out,"#; ",state->state);
+    
+    Putobj(out,"\n\n");
+    
+    for(auto &obj : transitions ) 
+      {
+       Printf(out,"#;\n",obj);
+       
+       for(auto *state : states )
+         {
+          for(auto t : state->transitions )
+            if( t.element->element==obj.element->element )
+              Printf(out,"  #;) -> #;)\n",state->state,t.state->state);
+         }
+      }
     
     Putch(out,'\n');
     
     Printf(out,"shift #;\n\n",shift);
-    
-    for(auto &obj : tracks ) Printf(out,"#;\n",obj);
    }
  };
 
@@ -438,7 +302,7 @@ class StateCompressor : NoCopy
    
   private:
    
-   ulen initIndex(PtrLen<TypeDef::Final> finals);
+   void initIndex(PtrLen<TypeDef::Final> finals);
 
    void setSplitFlags(ulen split);
    
@@ -495,7 +359,7 @@ class StateCompressor : NoCopy
       }
     };
    
-   Result getResult(PtrLen<TypeDef::Rule> rules) const;
+   Result getResult() const;
  };
 
 } // namespace App
