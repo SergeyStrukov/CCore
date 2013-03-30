@@ -25,6 +25,7 @@ all:
 	make $(OPT) -C ArmGo
 	make $(OPT) -C DDLShow
 	make $(OPT) -C DDLTypeSet
+	make $(OPT) -C LR1Shift
 
 clean:
 	make -C EchoServer   clean
@@ -40,6 +41,7 @@ clean:
 	make -C ArmGo        clean
 	make -C DDLShow      clean
 	make -C DDLTypeSet   clean
+	make -C LR1Shift     clean
 
 list:
 	make -C EchoServer   list
@@ -55,4 +57,5 @@ list:
 	make -C ArmGo        list
 	make -C DDLShow      list
 	make -C DDLTypeSet   list
+	make -C LR1Shift     list
 

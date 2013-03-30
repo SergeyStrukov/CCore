@@ -182,6 +182,7 @@ obj/SimpleArray.o \
 obj/SingleHost.o \
 obj/SlowSem.o \
 obj/Sort.o \
+obj/SortUnique.o \
 obj/Space.o \
 obj/StartStop.o \
 obj/Starter.o \
@@ -418,6 +419,7 @@ obj/SimpleArray.s \
 obj/SingleHost.s \
 obj/SlowSem.s \
 obj/Sort.s \
+obj/SortUnique.s \
 obj/Space.s \
 obj/StartStop.s \
 obj/Starter.s \
@@ -654,6 +656,7 @@ obj/SimpleArray.dep \
 obj/SingleHost.dep \
 obj/SlowSem.dep \
 obj/Sort.dep \
+obj/SortUnique.dep \
 obj/Space.dep \
 obj/StartStop.dep \
 obj/Starter.dep \
@@ -1264,6 +1267,9 @@ obj/SlowSem.o : ../../HCore/CCore/src/task/SlowSem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Sort.o : ../../CCore/src/Sort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SortUnique.o : ../../CCore/src/algon/SortUnique.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Space.o : ../../CCore/src/gadget/Space.cpp
@@ -1967,6 +1973,9 @@ obj/SlowSem.s : ../../HCore/CCore/src/task/SlowSem.cpp
 obj/Sort.s : ../../CCore/src/Sort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SortUnique.s : ../../CCore/src/algon/SortUnique.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Space.s : ../../CCore/src/gadget/Space.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2667,6 +2676,9 @@ obj/SlowSem.dep : ../../HCore/CCore/src/task/SlowSem.cpp
 
 obj/Sort.dep : ../../CCore/src/Sort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sort.o $< -MF $@
+
+obj/SortUnique.dep : ../../CCore/src/algon/SortUnique.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SortUnique.o $< -MF $@
 
 obj/Space.dep : ../../CCore/src/gadget/Space.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Space.o $< -MF $@
