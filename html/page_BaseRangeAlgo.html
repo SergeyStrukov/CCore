@@ -42,6 +42,8 @@ struct <span class="Att">Algon::BaseRangeAlgo</span>
  {
   typedef ??? LenType;
   
+  static ??? GetPtr(R r); // GetLen(r)>0
+
   static LenType GetLen(R r);
   
   static R GetPrefix(R r,LenType len); // len <= GetLen(r)
@@ -50,6 +52,8 @@ struct <span class="Att">Algon::BaseRangeAlgo</span>
   
   static R Split(R &amp;r,LenType prefix); // prefix <= GetLen(r)
   
+  static R GetPrefix(R r,R suffix); // suffix is an r suffix
+
   static void RangeSwap(R a,R b); // GetLen(a) == GetLen(b)
  };
 
@@ -57,6 +61,11 @@ struct <span class="Att">Algon::BaseRangeAlgo</span>
 
 <p>
 <b>LenType</b> is a range length type. It must be an unsigned integral type.
+</p>
+
+<p>
+<b>GetPtr()</b> returns a "pointer" to the first range element. This pointer must be used
+only to reference this element and not to iterate over the range.
 </p>
 
 <p>
@@ -80,6 +89,11 @@ suffix is set back in the argument <b>r</b>.
 </p>
 
 <p>
+<b>GetPrefix(R r,R suffix)</b> returns the prefix, complementary to the given range suffix.
+It is equivalent to the <b>GetPrefix(r,GetLen(r)-GetLen(suffix))</b>.
+</p>
+
+<p>
 <b>RangeSwap()</b> performs memberwise ranges element swap. Range lengths must be the same.
 </p>
 
@@ -88,11 +102,14 @@ The following specialization for the standard <b>PtrLen</b> range is provided:
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct <span class="Att">Algon::BaseRangeAlgo&lt;PtrLen&lt;T&gt; &gt;</span>
  {
   typedef ulen LenType;
   
+  static T * GetPtr(PtrLen&lt;T&gt; r) { return r.ptr; }
+
   static LenType GetLen(PtrLen&lt;T&gt; r) { return r.len; }
   
   static PtrLen&lt;T&gt; GetPrefix(PtrLen&lt;T&gt; r,LenType len) { return r.prefix(len); }
@@ -101,11 +118,45 @@ struct <span class="Att">Algon::BaseRangeAlgo&lt;PtrLen&lt;T&gt; &gt;</span>
   
   static PtrLen&lt;T&gt; Split(PtrLen&lt;T&gt; &amp;r,LenType prefix) { return r+=prefix; }
   
+  static PtrLen&lt;T&gt; GetPrefix(PtrLen&lt;T&gt; r,PtrLen&lt;T&gt; suffix) { return r.prefix(suffix); }
+
   static void RangeSwap(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b)
    {
     for(T *p=b.ptr; +a ;++a,++p) Swap(*a,*p); 
    }
  };
+
+</pre>
+
+<p>
+The following specialization for the standard <b>PtrLenReverse</b> range is provided:
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+struct <span class="Att">Algon::BaseRangeAlgo&lt;PtrLenReverse&lt;T&gt; &gt;</span>
+ {
+  typedef ulen LenType;
+  
+  static T * GetPtr(PtrLenReverse&lt;T&gt; r) { return r.ptr-1; }
+  
+  static LenType GetLen(PtrLenReverse&lt;T&gt; r) { return r.len; }
+  
+  static PtrLenReverse&lt;T&gt; GetPrefix(PtrLenReverse&lt;T&gt; r,LenType len) { return r.prefix(len); }
+   
+  static PtrLenReverse&lt;T&gt; GetSuffix(PtrLenReverse&lt;T&gt; r,LenType len) { return r.suffix(len); }
+  
+  static PtrLenReverse&lt;T&gt; Split(PtrLenReverse&lt;T&gt; &r,LenType prefix) { return r+=prefix; }
+  
+  static PtrLenReverse&lt;T&gt; GetPrefix(PtrLenReverse&lt;T&gt; r,PtrLenReverse&lt;T&gt; suffix) { return r.prefix(suffix); }
+  
+  static void RangeSwap(PtrLenReverse&lt;T&gt; a,PtrLenReverse&lt;T&gt; b)
+   {
+    for(T *p=b.ptr; +a ;++a,--p) Swap(*a,p[-1]); 
+   }
+ };
+
 </pre>
 
 </body>

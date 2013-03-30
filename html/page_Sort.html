@@ -67,6 +67,7 @@ An object of a sort context type is required to perform a sort.
 </p>
 
 <pre>
+
 template &lt;class Ran&gt;
 struct <span class="Att">SortCtx</span>
  {
@@ -74,6 +75,7 @@ struct <span class="Att">SortCtx</span>
    
   static bool less(Ran a,Ran b) { return *a &lt; *b ; }
  };
+
 </pre>
 
 <p>
@@ -82,6 +84,7 @@ struct <span class="Att">SortCtx</span>
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct <span class="Att">SortIndexCtx</span>
  {
@@ -95,6 +98,7 @@ struct <span class="Att">SortIndexCtx</span>
   template &lt;class Ind&gt;
   bool less(const Ind *a,const Ind *b) const { return base[*a] &lt; base[*b] ; }
  };
+
 </pre>
 
 <p>
@@ -108,6 +112,7 @@ Sort <b>Algorithm Package</b>s use the following pattern:
 </p>
 
 <pre>
+
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">XXXSort</span>
  {
@@ -117,6 +122,7 @@ struct <span class="Att">XXXSort</span>
   template &lt;class Len&gt;
   static void Sort(Ran ptr,Len len) { Sort(ptr,len,Ctx()); }
  };
+
 </pre>
 
 <p>
@@ -131,6 +137,7 @@ struct <span class="Att">XXXSort</span>
 </p>
 
 <pre>
+
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">ShortSort</span>
  {
@@ -172,6 +179,7 @@ struct <span class="Att">ShortSort</span>
   template &lt;class Len&gt;
   static bool Sort(Ran a,Len len);
  };
+
 </pre>
 
 <p>
@@ -202,6 +210,7 @@ which is faster in a common case, but has a bigger run time in special cases.
 </p>
 
 <pre>
+
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">HeapSort</span>
  {
@@ -211,6 +220,7 @@ struct <span class="Att">HeapSort</span>
   template &lt;class Len&gt;
   static void Sort(Ran ptr,Len len) { Sort(ptr,len,Ctx()); }
  };
+
 </pre>
 
 <h4>QuickSort</h4>
@@ -222,6 +232,7 @@ To ensure <b>O(N*log(N))</b> complexity, the implementation switches to the heap
 </p>
 
 <pre>
+
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">QuickSort</span>
  {
@@ -231,6 +242,7 @@ struct <span class="Att">QuickSort</span>
   template &lt;class Len&gt;
   static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
  };
+
 </pre>
 
 <h4>ParaQuickSort</h4>
@@ -242,12 +254,15 @@ To get a speed benefit you have to start it.
 </p>
 
 <pre>
+
 Job::Init job_init;
 
 ParaQuickSort<....>::Sort(....);
+
 </pre>
 
 <pre>
+
 template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
 struct <span class="Att">ParaQuickSort</span>
  {
@@ -257,6 +272,7 @@ struct <span class="Att">ParaQuickSort</span>
   template &lt;class Len&gt;
   static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
  };
+
 </pre>
 
 <h4>Sort functions</h4>
@@ -293,6 +309,28 @@ void <span class="Att">DecrSort</span>(PtrLen&lt;T&gt; range,Func less);
 
 <p>
 <b>DecrSort</b> sorts in decreasing order relative the functor <b>less</b>.
+</p>
+
+<p>
+The following functions can be used to sort a reverse range.
+</p>
+
+<pre>
+
+template &lt;class T,class Func&gt;
+void <span class="Att">IncrSort</span>(PtrLenReverse&lt;T&gt; range,Func less);
+
+template &lt;class T,class Func&gt;
+void <span class="Att">DecrSort</span>(PtrLenReverse&lt;T&gt; range,Func less);
+
+template &lt;class T&gt;
+void <span class="Att">Sort</span>(PtrLenReverse&lt;T&gt; range);
+
+</pre>
+
+<p>
+The order of sorting is a native reverse range order. I.g. after the <b>Sort()</b> the following is true:
+<b>range[0] < range[1] < range[2] < ...</b>.
 </p>
 
 <p>

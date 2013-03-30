@@ -151,6 +151,7 @@ the most cases.
 </p>
 
 <pre>
+
 template &lt;class T,ulen StackLen&gt;
 class <span class="Att">TempArray</span> : NoCopy
  {
@@ -215,6 +216,7 @@ class <span class="Att">TempArray</span> : NoCopy
    template &lt;class FuncInit&gt;
    void applyReverse_const(FuncInit func_init) const;
  };
+
 </pre>
 
 <p>
@@ -243,6 +245,7 @@ See <a href="#ArrayAlgo">below</a> about array algorithms.
 </p>
 
 <pre>
+
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
 class <span class="Att">SimpleArray</span> : NoCopy
  {
@@ -305,6 +308,7 @@ class <span class="Att">SimpleArray</span> : NoCopy
    
    SimpleArray&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
  };
+
 </pre>
 
 <p>
@@ -332,6 +336,7 @@ Alone with standard methods, <b>DynArray</b> has a bunch of methods to initializ
 </p>
 
 <pre>
+
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
 class <span class="Att">DynArray</span> : NoCopy
  {
@@ -437,6 +442,7 @@ I.g. new elements are created using the default constructor and swapped with mem
 </p>
 
 <pre>
+
    // range access
    
    T * getPtr();
@@ -476,6 +482,7 @@ Range access and index access methods are standard. Two additional methods repor
 </p>
 
 <pre>
+
    // methods
    
    void cloneTo(DynArray&lt;T,Algo&gt; &amp;ret) const;
@@ -499,6 +506,7 @@ Range access and index access methods are standard. Two additional methods repor
 </p>
 
 <pre>
+
    // shrink 
    
    ulen shrink(ulen delta_len);
@@ -550,6 +558,7 @@ actual array length.
 </p>
 
 <pre>
+
    // extend
    
    PtrLen&lt;T&gt; extend_raw(ulen delta_len);
@@ -618,6 +627,7 @@ new elements, and the second uses the <b>Builder</b>. See <a href="#Creator">bel
 </p>
 
 <pre>
+
    // append
    
    T * append_raw();
@@ -643,6 +653,7 @@ The return value is a pointer to the created element.
 </p>
 
 <pre>
+
    // apply
    
    template &lt;class FuncInit&gt;
@@ -670,6 +681,7 @@ The return value is a pointer to the created element.
 </p>
 
 <pre>
+
    // swap/move objects
    
    void objSwap(DynArray&lt;T,Algo&gt; &amp;obj);
@@ -678,6 +690,7 @@ The return value is a pointer to the created element.
     
    DynArray&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
  };
+
 </pre>
 
 <p>
@@ -705,6 +718,7 @@ This method "unshares" the array, if necessary, and gives a non-constant access 
 </p>
 
 <pre>
+
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
 class <span class="Att">RefArray</span>
  {
@@ -849,6 +863,7 @@ class <span class="Att">RefArray</span>
    
    RefArray&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
  };
+
 </pre>
 
 <p>
@@ -893,6 +908,7 @@ Or you can "flat" the <b>Collector</b> itself.
 </p>
 
 <pre>
+
 template &lt;class T,class Algo=ArrayAlgo&lt;T&gt; &gt;
 class <span class="Att">Collector</span> : NoCopy
  {
@@ -917,6 +933,7 @@ The default value is 1024.
 </p>
 
 <pre>
+
    // methods
    
    ulen getLen() const; 
@@ -972,6 +989,7 @@ modifying operation).
 </p>
 
 <pre>
+
    // shrink 
    
    ulen shrink(ulen delta_len);
@@ -1025,6 +1043,7 @@ modifying operation).
 </p>
 
 <pre>
+
    // swap/move object
    
    void objSwap(Collector&lt;T,Algo&gt; &amp;obj);
@@ -1033,6 +1052,7 @@ modifying operation).
     
    Collector&lt;T,Algo&gt; * objMove(Place&lt;void&gt; place);
  };
+
 </pre>
 
 <p>
@@ -1076,6 +1096,7 @@ It's an obligation of the class.
 </p>
 
 <pre>
+
 template &lt;class T,class Flags&gt;
 struct <span class="Att">ArrayAlgo_class</span>
  {
@@ -1155,6 +1176,7 @@ struct <span class="Att">ArrayAlgo_class</span>
   class CreateGuard_nothrow;
   template &lt;bool no_throw&gt; class CreateGuardNoThrow;
  };
+
 </pre>
 
 <p>
@@ -1234,6 +1256,7 @@ responsible for the object destruction in case of failure.
 </p>
 
 <pre>
+
 class <span class="Att">BuildGuard</span> : NoCopy
  {
    Place&lt;void&gt; place;
@@ -1252,6 +1275,7 @@ class <span class="Att">BuildGuard</span> : NoCopy
      
    PtrLen&lt;T&gt; disarm() { return Range(ptr,Replace_null(len)); }
  };
+
 </pre>
 
 <p>
@@ -1279,6 +1303,7 @@ The <b>BuildGuard</b> destructor destroys the created objects. It must be disarm
 </p>
 
 <pre>
+
 class <span class="Att">CreateGuard</span> : public BuildGuard
  {
   public:
@@ -1287,6 +1312,7 @@ class <span class="Att">CreateGuard</span> : public BuildGuard
      
    ~CreateGuard() {}
  };
+
 </pre>
 
 <p>
@@ -1297,6 +1323,7 @@ you must create the exact number of objects.
 </p>
 
 <pre>
+
 class <span class="Att">CreateGuard_nothrow</span> : NoCopy
  {
    Place&lt;void&gt; place;
@@ -1313,6 +1340,7 @@ class <span class="Att">CreateGuard_nothrow</span> : NoCopy
      
    PtrLen&lt;T&gt; disarm() { return Range(ptr,final_len); }
  };
+
 </pre>
 
 <p>
@@ -1322,6 +1350,7 @@ construction.
 </p>
 
 <pre>
+
 template &lt;bool no_throw&gt;
 class <span class="Att">CreateGuardNoThrow</span> : NoCopy
  {
@@ -1331,6 +1360,7 @@ class <span class="Att">CreateGuardNoThrow</span> : NoCopy
     
    ~CreateGuardNoThrow();
  };
+
 </pre>
 
 <p>
@@ -1343,6 +1373,7 @@ Below is the implementation of the generic <b>Create</b>, it uses the <b>CreateG
 </p>
 
 <pre>
+
 template &lt;class Creator&gt;
 static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,ulen len,Creator creator) noexcept( EnableNoExcept && Creator::NoThrow )
  {
@@ -1354,6 +1385,7 @@ static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,u
     
   return guard.disarm();
  }
+
 </pre>
 
 <h4>ArrayAlgo_pod</h4>
@@ -1363,6 +1395,7 @@ static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,u
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct <span class="Att">ArrayAlgo_pod</span>
  {
@@ -1438,6 +1471,7 @@ struct <span class="Att">ArrayAlgo_pod</span>
   class CreateGuard_nothrow;
   template &lt;bool no_throw&gt; class CreateGuardNoThrow;
  };
+
 </pre>
 
 <p>
@@ -1460,6 +1494,7 @@ It is assumed only, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and
 </p>
 
 <pre>
+
 template &lt;class T,class Flags&gt;
 struct <span class="Att">ArrayAlgo_mini</span>
  {
@@ -1519,6 +1554,7 @@ struct <span class="Att">ArrayAlgo_mini</span>
   class CreateGuard_nothrow;
   template &lt;bool no_throw&gt; class CreateGuardNoThrow;
  };
+
 </pre>
 
 <p>
@@ -1537,6 +1573,7 @@ Array, constructed with this algorithm package, cannot be extended beyond the in
 </p>
 
 <pre>
+
 class Creator // copy efficient
  {
    ....
@@ -1549,6 +1586,7 @@ class Creator // copy efficient
   
    T * operator () (Place&lt;void&gt; place) noexcept(NoThrow);
  };
+
 </pre>
 
 <p>
@@ -1556,6 +1594,7 @@ Or like this:
 </p>
 
 <pre>
+
 class Creator // copy efficient functor initializer
  {
    ....
@@ -1579,6 +1618,7 @@ class Creator // copy efficient functor initializer
       T * operator () (Place&lt;void&gt; place) noexcept(NoThrow);
     };
  };
+
 </pre>
 
 <p>
@@ -1590,6 +1630,7 @@ You may use a <b>Creator</b> in a generic array "Creator" constructors and metho
 </p>
 
 <pre>
+
 class Builder // copy efficient
  {
   public:
@@ -1600,6 +1641,7 @@ class Builder // copy efficient
    
    PtrLen&lt;T&gt; operator () (Place&lt;void&gt; place) const; // may create up to getLen() objects
  };
+
 </pre>
 
 <p>
@@ -1607,6 +1649,7 @@ Or like this:
 </p>
 
 <pre>
+
 class Builder // copy efficient functor initializer
  {
   public:
@@ -1628,6 +1671,7 @@ class Builder // copy efficient functor initializer
       PtrLen&lt;T&gt; operator () (Place&lt;void&gt; place) const; // may create up to getLen() objects
     };
  };
+
 </pre>
 
 <p>
@@ -1647,6 +1691,7 @@ There is a list of standard creators.
 </p>
 
 <pre>
+
 /* struct Creator_default&lt;T,bool no_throw&gt; */ 
  
 template &lt;class T,bool no_throw&gt; 
@@ -1733,6 +1778,7 @@ struct <span class="Att">Creator_swap</span>
     return Algo::Create_swap(place,*(objs++));
    }
  };
+
 </pre>
 
 <h4>NoThrowFlags</h4>
@@ -1775,6 +1821,7 @@ They may be defined like this:
 </p>
 
 <pre>
+
 /* struct HasNoThrowDefault&lt;T&gt; */
 
 template &lt;class T&gt;
@@ -1794,6 +1841,7 @@ struct HasNoThrowCopy
                         std::is_nothrow_copy_constructible&lt;T&gt;::value 
                };
  };
+
 </pre>
 
 <p>
@@ -1801,6 +1849,30 @@ The <b>NoThrowFlags</b> is implemented in such a way, that it will emit a warnin
 This behavior is not desirable and it is highly recommended to design common classes either without
 the default or copy constructor, or with <b>efficient</b> ones. 
 </p>
+
+<h4>NoThrowFlagsBase</h4>
+
+<p>
+The following class can be used to include no-throw flags in a class definition, simply specify it as 
+the public base class.
+</p>
+
+<pre>
+
+/* struct NoThrowFlagsBase */
+
+struct <span class="Att">NoThrowFlagsBase</span>
+ {
+  // no-throw flags
+  
+  enum NoThrowFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true
+   };
+ };
+
+</pre>
 
 </body>
 
