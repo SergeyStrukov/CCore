@@ -33,6 +33,8 @@ struct ProbeSet_Copy_no_throw;
 
 template <class T> struct NoThrowFlags;
 
+struct NoThrowFlagsBase;
+
 template <class T,bool no_throw> struct Creator_default;
 
 template <class T,class ... SS> struct Creator_fill;
@@ -107,6 +109,19 @@ struct NoThrowFlags
    {
     NotUsed = Meta::Warning< NutDefault<T> , !Default_no_throw >::NotUsed() + 
               Meta::Warning< NutCopy<T> , !Copy_no_throw >::NotUsed()
+   };
+ };
+
+/* struct NoThrowFlagsBase */
+
+struct NoThrowFlagsBase
+ {
+  // no-throw flags
+  
+  enum NoThrowFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true
    };
  };
 
