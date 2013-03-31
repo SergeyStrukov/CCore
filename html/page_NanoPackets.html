@@ -50,6 +50,7 @@ you must use it with the same caution as a raw pointer. The pointer may be null.
 </p>
 
 <pre>
+
 template &lt;class POD&gt;
 class <span class="Att">NanoPacket</span>
  {
@@ -93,6 +94,7 @@ class <span class="Att">NanoPacket</span>
    
    PtrLen&lt;POD&gt; setDataLen(ulen len);
  };
+
 </pre>
 
 <p>
@@ -150,11 +152,12 @@ The new data range is returned.
 <h4>NanoPacketList</h4>
 
 <p>
-<b>NanoPacket</b> can be put into a <b>NanoPacketList</b>. A particular packet can be inserted into an only
+<b>NanoPacket</b> can be put into a <b>NanoPacketList</b>. A particular packet can be inserted into only
 one list. 
 </p>
 
 <pre>
+
 template &lt;class POD&gt;
 class <span class="Att">NanoPacketList</span> : NoCopy
  {
@@ -188,6 +191,7 @@ class <span class="Att">NanoPacketList</span> : NoCopy
    
    NanoPacketList&lt;POD&gt; * objMove(Place&lt;void&gt; place);
  };
+
 </pre>
 
 <p>
@@ -223,7 +227,7 @@ Destructor calls abort, if the list is not empty.
 </p>
 
 <p>
-<b>NanoPacketList</b> is swapable and moveable.
+<b>NanoPacketList</b> is swappable and movable.
 </p>
 
 <h4>NanoPacketPool</h4>
@@ -233,6 +237,7 @@ Destructor calls abort, if the list is not empty.
 </p>
 
 <pre>
+
 template &lt;class POD&gt;
 class <span class="Att">NanoPacketPool</span> : NoCopy
  {
@@ -251,11 +256,12 @@ class <span class="Att">NanoPacketPool</span> : NoCopy
    
    NanoPacket&lt;POD&gt; try_get();
  };
+
 </pre>
 
 <p>
-<b>NanoPacketPool</b> constructor creates a packet pool in the provided memory region. <b>max_data_len</b> is
-the capacity of each packet. <b>count</b> is the number of packets. Memory must be aligned and of size at least
+<b>NanoPacketPool</b> constructor creates a packet pool in the provided memory region, <b>max_data_len</b> is
+the capacity of each packet, <b>count</b> is the number of packets. Memory must be aligned and of size at least
 <b>NanoPacket&lt;POD&gt;::AllocLen(max_data_len)*count</b>. The pool uses the memory, but is not responsible
 for the life-time control of it. You may use a static memory region, or allocate it dynamically. In the last case,
 you must do it prior the pool construction and release it after the pool destruction.
@@ -274,6 +280,7 @@ logic of packet control.
 <p>
 <b>NanoPacketPool</b> uses <b>FastMutex</b> to protect operations. So it can be used safely by multiple threads
 and even in the interrupt context on <b>XCore</b> targets. <b>post_free()</b> is called after the lock is released.
+On <b>XCore</b> it may be called in any execution context.
 </p>
 
 </body>

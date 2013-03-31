@@ -41,6 +41,7 @@ The event "basket" can store only one apple.
 </p>
 
 <pre>
+
 class <span class="Att">Event</span> : public Funchor_nocopy
  {
    ....
@@ -75,19 +76,20 @@ class <span class="Att">Event</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;Event::trigger_void); }
  };
+
 </pre>
 
 <p>
-The constructor argument <b>flag</b> is the initial event state. It is false by default.
+The constructor argument <b>flag</b> is the initial event state. It is <b>false</b> by default.
 </p>
 
 <p>
-<b>trigger()</b> sets the flag. If the flag is already set, the return value is false, otherwise it is true.
+<b>trigger()</b> sets the flag. If the flag is already set, the return value is <b>false</b>, otherwise it is <b>true</b>.
 </p>
 
 <p>
 <b>try_wait()</b> tries to consume the event. This method never blocks. If the event is not triggered, 
-the return value is false.
+the return value is <b>false</b>.
 </p>
 
 <p>
@@ -97,16 +99,17 @@ the return value is false.
 <p>
 <b>wait(MSec)</b> and <b>wait(TimeScope)</b> are timed variants of the <b>wait()</b>.
 These methods wait up to the specified timeout is expired, then operation failed. The return value
-is true, if the method was successful.
+is <b>true</b>, if the method was successful.
 </p>
 
 <h4>HCore Event</h4>
 
 <p>
-<b>HCore</b> <b>Event</b> has a common interface.
+<b>HCore</b> <b>Event</b> has the common interface.
 </p>
 
 <pre>
+
 class <span class="Att">Event</span> : public Funchor_nocopy
  {
    ....
@@ -141,15 +144,18 @@ class <span class="Att">Event</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;Event::trigger_void); }
  };
+
 </pre>
 
 <h4>XCore Event</h4>
 
 <p>
-<b>XCore</b> <b>Event</b> is essentially the same, but has <b>trigger()</b> method variants.
+<b>XCore</b> <b>Event</b> is essentially the same, but has <b>trigger()</b> method variants for different 
+execution contexts.
 </p>
 
 <pre>
+
 class <span class="Att">Event</span> : public Funchor_nocopy
  {
    ....
@@ -198,6 +204,7 @@ class <span class="Att">Event</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_trigger_any() { return FunctionOf(this,&amp;Event::trigger_any_void); }
  };
+
 </pre>
 
 </body>

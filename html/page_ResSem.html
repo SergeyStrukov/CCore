@@ -40,12 +40,13 @@ the counter gets back to its maximum value.
 </p>
 
 <p>
-Return back to the basket with apples. Initialy basket contains a number of apples.
+Return back to the basket with apples. Initially basket contains a number of apples.
 When somebody takes an apple, it must give it back after time. I.g. an apple is not consumed,
-but is borrowed. Basket host is waitng until all apples are returned. 
+but is borrowed. Basket host is waiting until all apples are returned. 
 </p>
 
 <pre>
+
 class <span class="Att">ResSem</span> : public Funchor_nocopy
  {
    ....
@@ -88,6 +89,7 @@ class <span class="Att">ResSem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;ResSem::give); }
  };
+
 </pre>
 
 <p>
@@ -99,12 +101,12 @@ Initially the counter is at that maximum.
 <b>give()</b> increments the counter. If the counter is at maximum, the <b>Abort()</b> is called.
 This method may release threads, blocked by the method <b>wait()</b>. 
 It also may release a thread, blocked by the method <b>take()</b>. These two situations
-cannot happens simultaneousely.
+cannot happens simultaneously.
 </p>
 
 <p>
 <b>try_take()</b> tries to decrement the counter. This method never blocks. The return value
-is true, if the method was successful. 
+is <b>true</b>, if the method was successful. 
 </p>
 
 <p>
@@ -113,9 +115,9 @@ the operation becomes possible.
 </p>
 
 <p>
-<b>take(MSec)</b> and <b>take(TimeScope)</b> are the timed variants of the <b>take()</b>. These methods
+<b>take(MSec)</b> and <b>take(TimeScope)</b> are timed variants of the <b>take()</b>. These methods
 wait up to the specified timeout is expired, then operation failed. The return value
-is true, if the method was successful.
+is <b>true</b>, if the method was successful.
 </p>
 
 <p>
@@ -129,16 +131,17 @@ is true, if the method was successful.
 <p>
 <b>wait(MSec)</b> and <b>wait(TimeScope)</b> are timed variants of the <b>wait()</b>. 
 These methods wait up to the specified timeout is expired, then operation failed. The return value
-is true, if the method was successful.
+is <b>true</b>, if the method was successful.
 </p>
 
 <h4>HCore ResSem</h4>
 
 <p>
-<b>HCore</b> <b>ResSem</b> has a common interface.
+<b>HCore</b> <b>ResSem</b> has the common interface.
 </p>
 
 <pre>
+
 class <span class="Att">ResSem</span> : public Funchor_nocopy
  {
    ....
@@ -181,15 +184,18 @@ class <span class="Att">ResSem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;ResSem::give); }
  };
+
 </pre>
 
 <h4>XCore ResSem</h4>
 
 <p>
-<b>XCore</b> <b>ResSem</b> is essentially the same, but has <b>give()</b> method variants.
+<b>XCore</b> <b>ResSem</b> is essentially the same, but has <b>give()</b> method variants for different 
+execution contexts.
 </p>
 
 <pre>
+
 class <span class="Att">ResSem</span> : public Funchor_nocopy
  {
    ....
@@ -242,6 +248,7 @@ class <span class="Att">ResSem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_give_any() { return FunctionOf(this,&amp;ResSem::give_any); }
  };
+
 </pre>
 
 </body>

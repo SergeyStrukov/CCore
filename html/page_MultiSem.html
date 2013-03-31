@@ -32,19 +32,20 @@
 
 <p>
 <b>MultiSem</b> is a small set of semaphores. Each can be given. But the take operation takes
-from any of them, if some of them is available. The take operation uses round-robin priority
+from any of them, if some of them is available. The take operation uses the round-robin priority
 algorithm to equalize semaphores.  
 </p>
 
 <p>
-Consider an example with apples. In multi-semaphore case, there are several baskets for different
-sort of apples. Somebody can put an apple to the one of the proper basket. And somebody
+Consider the example with apples. In the multi-semaphore case, there are several baskets for different
+sorts of apples. Somebody can put an apple to the one of the basket. And somebody
 can take an apple from a non-empty basket. To do this, he is looking for a non-empty basket in the 
 cyclic order, starting from some basket. Next time the starting basket is changed to the following.
 If all baskets are empty, he waits.
 </p>
 
 <pre>
+
 template &lt;ulen Len&gt;
 class <span class="Att">MultiSem</span> : public Funchor_nocopy
  {
@@ -84,6 +85,7 @@ class <span class="Att">MultiSem</span> : public Funchor_nocopy
    template &lt;ulen Index&gt;
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;MultiSemBase::give_index&lt;Index&gt;); }
  };
+
 </pre>
 
 <p>
@@ -102,7 +104,7 @@ the operation becomes possible.
 </p>
 
 <p>
-<b>take(MSec)</b> and <b>take(TimeScope)</b> are the timed variants of the <b>take()</b>. These methods
+<b>take(MSec)</b> and <b>take(TimeScope)</b> are timed variants of the <b>take()</b>. These methods
 wait up to the specified timeout is expired, then operation failed. The return value
 is zero in this case.
 </p>
@@ -110,10 +112,11 @@ is zero in this case.
 <h4>HCore MultiSem</h4>
 
 <p>
-<b>HCore</b> <b>MultiSem</b> has a common interface.
+<b>HCore</b> <b>MultiSem</b> has the common interface.
 </p>
 
 <pre>
+
 template &lt;ulen Len&gt;
 class <span class="Att">MultiSem</span> : public Funchor_nocopy
  {
@@ -153,15 +156,18 @@ class <span class="Att">MultiSem</span> : public Funchor_nocopy
    template &lt;ulen Index&gt;
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;MultiSemBase::give_index&lt;Index&gt;); }
  };
+
 </pre>
 
 <h4>XCore MultiSem</h4>
 
 <p>
-<b>XCore</b> <b>MultiSem</b> is essentially the same, but has <b>give()</b> methods variants.
+<b>XCore</b> <b>MultiSem</b> is essentially the same, but has <b>give()</b> method variants for different 
+execution contexts.
 </p>
 
 <pre>
+
 template &lt;ulen Len&gt;
 class <span class="Att">MultiSem</span> : public Funchor_nocopy
  {
@@ -219,6 +225,7 @@ class <span class="Att">MultiSem</span> : public Funchor_nocopy
    template &lt;ulen Index&gt;
    Function&lt;void (void)&gt; function_give_any() { return FunctionOf(this,&amp;MultiSemBase::give_index_any&lt;Index&gt;); }
  };
+
 </pre>
 
 </body>

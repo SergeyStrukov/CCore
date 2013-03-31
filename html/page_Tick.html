@@ -37,6 +37,7 @@
 </p>
 
 <pre>
+
 class <span class="Att">TickJob</span> : NoCopy
  {
    ....
@@ -55,16 +56,17 @@ class <span class="Att">TickJob</span> : NoCopy
    
    void stop();
  };
+
 </pre>
 
 <p>
-<b>TickJob</b> constructor is given an action function. This function will be called during the system tick 
+<b>TickJob</b> constructor is given an action function. This function will be called during the system tick, 
 if the <b>TickJob</b> object is activated. The function is called in the interrupt context 
 and as such must be a "quick function".
 </p>
 
 <p>
-<b>TickJob</b> destructor calls <b>Abort()</b>, if the object is no deactivated.
+<b>TickJob</b> destructor calls <b>Abort()</b>, if the object is not deactivated.
 </p>
 
 <p>
@@ -91,6 +93,7 @@ It is built using a generic class, parametrized by a tick frequency.
 </p>
 
 <pre>
+
 template &lt;unsigned TPS&gt;
 class <span class="Att">TickCount_gen</span>
  {
@@ -115,11 +118,12 @@ typedef TickCount_gen&lt;TicksPerSec&gt; <span class="Att">TickCount</span>;
 </pre>
 
 <p>
-Internally <b>TickCount</b> stores the remaing time until an event. It decrements it each tick and generates a signal.
+Internally <b>TickCount</b> stores the remaining time until an event. It decrements it each tick.
 The initial time in milliseconds can be set by the method <b>set()</b>. Countdown is performed by the method <b>tick()</b>.
 The method without parameter is used, if the only one event is required. If the periodic tick is required,
-then <b>tick()</b> with the required period in milliseconds must be used. The generated period is statistically 
-precise, unless it is less than the tick period (more precisely, the enequality <b>period_msec > 1000/TPS</b> 
+then <b>tick()</b> with the required period in milliseconds must be used. Both methods return <b>true</b>
+to signal about the event. The generated event period is statistically 
+precise, unless it is less than the tick period (more precisely, the inequality <b>period_msec > 1000/TPS</b> 
 must hold true, this is satisfied, if <b>TPS >1000</b> ).
 </p>
 

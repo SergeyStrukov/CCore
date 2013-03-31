@@ -36,6 +36,7 @@ semaphore. This semaphore is used as a building block in implementations of othe
 </p>
 
 <pre>
+
 class <span class="Att">SlowSem</span> : public Funchor_nocopy
  {
    Sys::Sem sem;
@@ -74,6 +75,7 @@ class <span class="Att">SlowSem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;SlowSem::give); }
  };
+
 </pre>
 
 <p>
@@ -81,8 +83,13 @@ The implementation of the <b>SlowSem</b> is based on the target-provided <b>Sys:
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::Sem</span>
  {
+  // private
+
+  ....
+
   // public
   
   Sys::ErrorType init(ulen count=0);
@@ -99,6 +106,7 @@ struct <span class="Att">Sys::Sem</span>
   
   bool take(MSec timeout);
  };
+
 </pre>
 
 </body>

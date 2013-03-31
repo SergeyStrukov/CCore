@@ -37,17 +37,18 @@
 <p>
 <b>Sem</b> has an internal semaphore counter. <b>give...()</b> methods increase this counter.
 <b>Abort()</b> is called in case of overflow.
-<b>take...()</b> decrements the counter if it is not zero. But if the counter is zero, the method
+<b>take...()</b> decrement the counter if it is not zero. But if the counter is zero, the method
 blocks the calling thread until the counter becomes non-zero. Then it decrements the counter.
 </p>
 
 <p>
 Consider a basket with apples. Somebody may put an apple to the basket, and somebody may take it, but
 nobody can take an apple from an empty basket, so he has to wait until the basket becomes non-empty. 
-That is how a semapore is working, it counts apples in the basket.
+That is how a semaphore is working, it counts apples in the basket.
 </p>
 
 <pre>
+
 class <span class="Att">Sem</span> : public Funchor_nocopy
  {
    ....
@@ -82,6 +83,7 @@ class <span class="Att">Sem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
  };
+
 </pre>
 
 <p>
@@ -89,29 +91,29 @@ The constructor argument <b>count</b> is the initial semaphore counter value. It
 </p>
 
 <p>
-<b>give()</b> increments the counter. If there are waiting threads on semaphore, the counter is zero and 
+<b>give()</b> increments the counter. If there are waiting threads on the semaphore, the counter is zero and 
 remains zero after operation, but one thread is released.
 </p>
 
 <p>
-<b>give_many()</b> increases the semaphore counter by a give value. It may release several threads,
+<b>give_many()</b> increases the semaphore counter by a given value. It may release several threads,
 waiting the semaphore.
 </p>
 
 <p>
 <b>try_take()</b> tries to decrement the semaphore counter. This method never blocks. The return value
-is true, if the method was successful. 
+is <b>true</b>, if the method was successful. 
 </p>
 
 <p>
-<b>take()</b> decrements the semapore counter. It may block the calling thread indefinitely, until
+<b>take()</b> decrements the semaphore counter. It may block the calling thread indefinitely, until
 the operation becomes possible.
 </p>
 
 <p>
-<b>take(MSec)</b> and <b>take(TimeScope)</b> are the timed variants of the <b>take()</b>. These methods
+<b>take(MSec)</b> and <b>take(TimeScope)</b> are timed variants of the <b>take()</b>. These methods
 wait up to the specified timeout is expired, then operation failed. The return value
-is true, if the method was successful.
+is <b>true</b>, if the method was successful.
 </p>
 
 <p>
@@ -119,6 +121,7 @@ Here is an example of a typical <b>Sem</b> usage:
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 class Queue
  {
@@ -140,7 +143,7 @@ class Queue
       queue.put(obj);
      }
 
-     // the order is important : put resource, then give semaphore
+     // the order is important : put resource first, then give semaphore
 
      // don't give a semaphore under a mutex lock !
 
@@ -158,19 +161,21 @@ class Queue
 
       // it is guaranteed now, the queue is not empty
 
-      queue.get();
+      return queue.get();
      }
     }
  };
+
 </pre>
 
 <h4>HCore Sem</h4>
 
 <p>
-<b>HCore</b> <b>Sem</b> has a common interface.
+<b>HCore</b> <b>Sem</b> has the common interface.
 </p>
 
 <pre>
+
 class <span class="Att">Sem</span> : public Funchor_nocopy
  {
    ....
@@ -205,15 +210,18 @@ class <span class="Att">Sem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_give() { return FunctionOf(this,&amp;Sem::give); }
  };
+
 </pre>
 
 <h4>XCore Sem</h4>
 
 <p>
-<b>XCore</b> <b>Sem</b> is essentially the same, but has <b>give...()</b> methods variants.
+<b>XCore</b> <b>Sem</b> is essentially the same, but has <b>give...()</b> method variants for different 
+execution contexts.
 </p>
 
 <pre>
+
 class <span class="Att">Sem</span> : public Funchor_nocopy
  {
    ....
@@ -262,6 +270,7 @@ class <span class="Att">Sem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_give_any() { return FunctionOf(this,&amp;Sem::give_any); }
  };
+
 </pre>
 
 </body>

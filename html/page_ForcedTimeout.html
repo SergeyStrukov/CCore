@@ -35,6 +35,7 @@
 </p>
 
 <pre>
+
 class <span class="Att">ForcedTimeout</span> : NoCopy
  {
    ....
@@ -55,6 +56,7 @@ class <span class="Att">ForcedTimeout</span> : NoCopy
    
    Function&lt;void (void)&gt; function_abort_any();
  };
+
 </pre>
 
 <p>
@@ -62,6 +64,7 @@ Lets consider an example.
 </p>
 
 <pre>
+
   ForcedTimeout fto;
   
   Ticker ticker(fto.function_abort_int());
@@ -73,25 +76,26 @@ Lets consider an example.
   sem.take(100_sec);
   
   Printf(Con,"done #;\n",fto.clear());
+
 </pre>
 
 <p>
 In this example we create the <b>ForcedTimeout</b> object.
 Then we take one of abort functions, provided by the object, and create and start a <b>Ticker</b>.
-The <b>ticker</b> will call this function after the 3 second delay. Abort function interrupts
+The <b>ticker</b> will call this function after the 3 seconds delay. Abort function interrupts
 any call of a timed blocking synchronization object method. In the example we are using the <b>Sem</b>.
 Without <b>ForcedTimeout</b> the call <b>sem.take(100_sec)</b> would block the execution
 for 100 seconds. Abort function is interrupting the wait after 3 seconds.
 </p>
 
 <p>
-Three variants of the abort function are called from different contexts: 
-<b>function_abort()</b> from a task context, <b>function_abort_int()</b> from interrupt context
+Three variants of the abort function are called from different execution contexts: 
+<b>function_abort()</b> from a task context, <b>function_abort_int()</b> from the interrupt context
 and <b>function_abort_any()</b> from everywhere.
 </p>
 
 <p>
-Only timed variants of the blocking methods can be interrupted.
+Only timed variants of blocking methods can be interrupted.
 </p>
 
 <p>
@@ -102,6 +106,10 @@ cannot be timed blocked, and any timed block is released.
 <p>
 The method <b>clear()</b> can be used to clear the forced timeout state from the task.
 The return value is this state, before is is cleared.
+</p>
+
+<p>
+<b>ForcedTimeout</b> destructor clears the forced timeout state.
 </p>
 
 </body>

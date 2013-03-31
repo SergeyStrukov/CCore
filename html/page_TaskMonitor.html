@@ -38,6 +38,7 @@ derived class to use it.
 </p>
 
 <pre>
+
 class <span class="Att">TaskMonitor</span> : NoCopy
  {
   public:
@@ -100,6 +101,7 @@ class <span class="Att">TaskMonitor</span> : NoCopy
    
    ~TaskMonitor();
  };
+
 </pre>
 
 <p>
@@ -111,7 +113,7 @@ class <span class="Att">TaskMonitor</span> : NoCopy
 </p>
 
 <p>
-<b>guardStopped()</b> is a guard method, it throw an exception, if a monitoring is in progress.
+<b>guardStopped()</b> is a guard method, it throws an exception, if a monitoring is in progress.
 </p>
 
 <p>
@@ -120,7 +122,7 @@ a monitoring with the given <b>TaskMonitor</b> object. The destructor or the met
 </p>
 
 <p>
-When a monitoring is started, record objects are used to trace a task context switches. The type of these
+When a monitoring is started, record objects are used to monitor task context switches. The type of these
 objects is derived from the <b>TaskMonitor::Record</b> class. Each task and the interrupt context
 uses an associated such record. The record is allocated dynamically by the methods <b>alloc()</b> and 
 <b>getInt()</b>. Record is allocated once per task. Allocation methods are called under <b>IntLock</b> protection,
@@ -130,9 +132,9 @@ with multiple tasks. <b>alloc()</b> method arguments are: the task name and the 
 </p>
 
 <p>
-<b>TaskMonitor::Record</b> has tree methods used to track a task switchs: <b>transit()</b>, <b>begin()</b>, 
-<b>end()</b>. These methods are called under <b>IntLock</b> protection. The first method first argument
-is always the same as the object. This methods is called when a context switch happens. Other methods are called
+<b>TaskMonitor::Record</b> has tree methods used to monitor task switches: <b>transit()</b>, <b>begin()</b>, 
+<b>end()</b>. These methods are called under <b>IntLock</b> protection. The <b>transit()</b> first argument
+is always the same as the object (unless it is called in the <b>begin()</b> method). This method is called when a context switch happens. Other methods are called
 once when a monitoring is started and stopped.
 </p>
 
@@ -144,6 +146,7 @@ It counts CPU time usage.
 </p>
 
 <pre>
+
 class <span class="Att">TaskMonitor_CPU</span> : public TaskMonitor
  {
    ....
@@ -159,6 +162,7 @@ class <span class="Att">TaskMonitor_CPU</span> : public TaskMonitor
    template &lt;class P&gt;
    void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>

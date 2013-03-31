@@ -42,6 +42,7 @@ the given level, <b>AntiSem</b> is opened, otherwise it is closed. When it is cl
 </p>
 
 <pre>
+
 class <span class="Att">AntiSem</span> : public Funchor_nocopy
  {
    ....
@@ -84,11 +85,12 @@ class <span class="Att">AntiSem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_dec() { return FunctionOf(this,&amp;AntiSem::dec); }
  };
+
 </pre>
 
 <p>
 The constructor argument <b>level</b> is a sensitive level of the <b>AntiSem</b>. The object is opened if
-the counter <= level. It has zero value by default.
+<b>counter <= level</b>. It has zero value by default.
 </p>
 
 <p>
@@ -97,7 +99,7 @@ the counter <= level. It has zero value by default.
 
 <p>
 <b>sub()</b> decreases the counter by the given value. If the underflow happens, the <b>Abort()</b> is called.
-If the counter value becomes <= level, all blocked on the <b>AntiSem</b> threads are released.
+If the counter value becomes <b><= level</b>, all blocked on the <b>AntiSem</b> threads are released.
 </p>
 
 <p>
@@ -119,20 +121,21 @@ If the counter value becomes <= level, all blocked on the <b>AntiSem</b> threads
 <p>
 <b>wait(MSec)</b> and <b>wait(TimeScope)</b> are timed variants of the <b>wait()</b>. 
 These methods wait up to the specified timeout is expired, then operation failed. The return value
-is true, if the method was successful.
+is <b>true</b>, if the method was successful.
 </p>
 
 <p>
-The most common usage of the <b>AntiSem</b> is the implementaion of the atomic reference counter with waiting.
+The most common usage of the <b>AntiSem</b> is the implementation of the atomic reference counter with waiting.
 </p>
 
 <h4>HCore AntiSem</h4>
 
 <p>
-<b>HCore</b> <b>AntiSem</b> has a common interface.
+<b>HCore</b> <b>AntiSem</b> has the common interface.
 </p>
 
 <pre>
+
 class <span class="Att">AntiSem</span> : public Funchor_nocopy
  {
    ....
@@ -175,16 +178,19 @@ class <span class="Att">AntiSem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_dec() { return FunctionOf(this,&amp;AntiSem::dec); }
  };
+
 </pre>
 
 <h4>XCore AntiSem</h4>
 
 <p>
 <b>XCore</b> <b>AntiSem</b> is essentially the same, but has <b>add()</b>, <b>sub()</b>, <b>inc()</b>, 
-<b>dec()</b> methods variants.
+<b>dec()</b> methods variants for different 
+execution contexts.
 </p>
 
 <pre>
+
 class <span class="Att">AntiSem</span> : public Funchor_nocopy
  {
    ....
@@ -253,6 +259,7 @@ class <span class="Att">AntiSem</span> : public Funchor_nocopy
    
    Function&lt;void (void)&gt; function_dec_any() { return FunctionOf(this,&amp;AntiSem::dec_any); }
  };
+
 </pre>
 
 </body>

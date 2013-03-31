@@ -38,6 +38,7 @@ used to schedule a timed job.
 </p>
 
 <pre>
+
 class <span class="Att">Ticker</span> : public Funchor_nocopy
  {
    ....
@@ -54,6 +55,7 @@ class <span class="Att">Ticker</span> : public Funchor_nocopy
    
    void stop();
  };
+
 </pre>
 
 <p>
@@ -73,16 +75,17 @@ with the given periodicity.
 </p>
 
 <p>
-<b>stop()</b> stops ticker.
+<b>stop()</b> stops the ticker.
 </p>
 
 <h4>TimedTrigger</h4>
 
 <p>
-<b>TimedTrigger</b> allows delay and combine actions to reduce action call frequency.
+<b>TimedTrigger</b> allows delay and combine actions to reduce the action call frequency.
 </p>
 
 <pre>
+
 class <span class="Att">TimedTrigger</span> : public Funchor_nocopy
  {
    ....
@@ -97,6 +100,7 @@ class <span class="Att">TimedTrigger</span> : public Funchor_nocopy
    
    void stop();
  };
+
 </pre>
 
 <p>

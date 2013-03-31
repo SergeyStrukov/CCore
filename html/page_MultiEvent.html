@@ -35,6 +35,7 @@
 </p>
 
 <pre>
+
 template &lt;ulen Len&gt;
 class <span class="Att">MultiEvent</span> : public Funchor_nocopy 
  {
@@ -74,6 +75,7 @@ class <span class="Att">MultiEvent</span> : public Funchor_nocopy
    template &lt;ulen Index&gt;
    Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;MultiEventBase::trigger_index&lt;Index&gt;); }
  };
+
 </pre>
 
 <p>
@@ -100,10 +102,11 @@ is zero in this case.
 <h4>HCore MultiEvent</h4>
 
 <p>
-<b>HCore</b> <b>MultiEvent</b> has a common interface.
+<b>HCore</b> <b>MultiEvent</b> has the common interface.
 </p>
 
 <pre>
+
 template &lt;ulen Len&gt;
 class <span class="Att">MultiEvent</span> : public Funchor_nocopy 
  {
@@ -143,15 +146,18 @@ class <span class="Att">MultiEvent</span> : public Funchor_nocopy
    template &lt;ulen Index&gt;
    Function&lt;void (void)&gt; function_trigger() { return FunctionOf(this,&amp;MultiEventBase::trigger_index&lt;Index&gt;); }
  };
+
 </pre>
 
 <h4>XCore MultiEvent</h4>
 
 <p>
-<b>XCore</b> <b>MultiEvent</b> is essentially the same, but has <b>trigger()</b> method variants.
+<b>XCore</b> <b>MultiEvent</b> is essentially the same, but has <b>trigger()</b> method variants for different 
+execution contexts.
 </p>
 
 <pre>
+
 template &lt;ulen Len&gt;
 class <span class="Att">MultiEvent</span> : public Funchor_nocopy 
  {
@@ -209,6 +215,7 @@ class <span class="Att">MultiEvent</span> : public Funchor_nocopy
    template &lt;ulen Index&gt;
    Function&lt;void (void)&gt; function_trigger_any() { return FunctionOf(this,&amp;MultiEventBase::trigger_index_any&lt;Index&gt;); }
  };
+
 </pre>
 
 </body>
