@@ -1343,7 +1343,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_PosSub.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PrintAbort.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PrintBits.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_PrintDevice.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_PrintDevice.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PrintError.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PrintSet.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PrintTime.html" 2

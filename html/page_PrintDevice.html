@@ -33,8 +33,8 @@
 <p class="Files">Subfolders <b>CCore/inc/print</b> <b>CCore/src/print</b></p>
 
 <p>
-There are several standard "printing device" classes, implemented in the <b>CCore</b>.
-The lists are differ in <b>XCore</b> and <b>HCore</b>.
+There are several standard "printing device" classes, implemented in <b>CCore</b>.
+Lists are differ in <b>XCore</b> and <b>HCore</b>.
 </p>
 
 <h4>PrintCon (HCore)</h4>
@@ -56,6 +56,7 @@ The word <b>Con</b> is used to print to the console.
 </p>
 
 <pre>
+
 /* words */ 
 
 enum ConType { <span class="Att">Con</span> };
@@ -69,10 +70,11 @@ struct PrintOutAdapter&lt;ConType&gt;
 </pre>
 
 <p>
-The class <b>PrintCon</b> uses a small stack buffer to accumulate the printing text:
+The class <b>PrintCon</b> uses a small stack buffer to accumulate the incoming text stream:
 </p>
 
 <pre>
+
 class <span class="Att">PrintCon</span> : public PrintBase
  {
    char buf[TextBufLen];
@@ -93,6 +95,7 @@ class <span class="Att">PrintCon</span> : public PrintBase
    
    static void Print(StrLen str); // ignore errors
  };
+
 </pre>
 
 <p>
@@ -106,6 +109,7 @@ The <b>XCore</b> varaint of the <b>PrintCon</b> is close to the <b>HCore</b>.
 </p>
 
 <pre>
+
 class <span class="Att">PrintCon</span> : public PrintBase
  {
    MSec timeout;
@@ -127,11 +131,12 @@ class <span class="Att">PrintCon</span> : public PrintBase
    
    static void Print(StrLen str) { Print(str.ptr,str.len); } 
  };
+
 </pre>
 
 <p>
 The small difference is the constructor takes the additional argument <b>timeout</b>, defaulted to the  
-<b>DefaultTimeout</b>. The main diffrerence, however, not the interface, but the implementation.
+<b>DefaultTimeout</b>. The main difference, however, not the interface, but the implementation.
 <b>XCore</b> <b>PrintCon</b> uses <a href="page_NanoPackets.html"><b>NanoPacket</b></a>s. Methods <b>Print()</b> create a temporary <b>PrintCon</b>
 object to print the text. Printing is not permitted in the interrupt context.
 </p>
@@ -158,11 +163,12 @@ to the host computer through the port driver.
 <a name="PrintFile"><h4>PrintFile (HCore only)</h4></a>
 
 <p>
-<b>PrintFile</b> class is designed to print to the file. On <b>HCore</b> targets this class is based on the 
+<b>PrintFile</b> class is designed to print to the file. On <b>HCore</b> targets this class is based on
 OS file input-output functions.
 </p>
 
 <pre>
+
 class <span class="Att">PrintFile</span> : public PrintBase
  {
    ....
@@ -191,6 +197,7 @@ class <span class="Att">PrintFile</span> : public PrintBase
    
    void preserveFile();
  };
+
 </pre>
 
 <p>
@@ -201,11 +208,11 @@ an object in the closed state. Non-default opens a file. In case of error an exc
 </p>
 
 <p>
-Destructor flushs and closes opened object. Errors are reported.
+Destructor flushes and closes opened object. Errors are reported.
 </p>
 
 <p>
-<b>isOpened()</b> returns true, if the file is opened, and false otherwise.
+<b>isOpened()</b> returns <b>true</b>, if the file is opened, and <b>false</b> otherwise.
 </p>
 
 <p>
@@ -236,6 +243,7 @@ an exception is thrown.
 </p>
 
 <pre>
+
 class <span class="Att">SafeBuf</span> : NoCopy
  {
    static const ulen SafeLen = 32 ;
@@ -255,15 +263,17 @@ class <span class="Att">SafeBuf</span> : NoCopy
  
    ulen getLen() const { return len; }
  };
+
 </pre>
 
 <p>
 The <b>SafeBuf</b> class is used to allocate a file buffer. <b>PrintFile</b> uses the file buffer
-of size 64 KBytes. But if the required memory is not avaliable, <b>SafeBuf</b> uses an internal
+of size 64 KBytes. But if the required memory is not available, <b>SafeBuf</b> uses an internal
 small safeguard buffer of size 32 bytes. 
 </p>
 
 <pre>
+
 class <span class="Att">RawFileToPrint</span> : NoCopy
  {
    Sys::File file;
@@ -290,11 +300,12 @@ class <span class="Att">RawFileToPrint</span> : NoCopy
    
    FileError write(const uint8 *buf,ulen len);
  }; 
+
 </pre>
 
 <p>
 The <b>RawFileToPrint</b> class is built on the target class <b>Sys::File</b>,
-declared in the header <b>sys/SysFile.h</b>. It performes open/close
+declared in the header <b>sys/SysFile.h</b>. It performs open/close
 operations and the raw file output.
 </p>
 
@@ -303,8 +314,11 @@ The target <b>Sys::File</b> class implements the classical set of file operation
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::File</span>
  {
+  // private
+
   ....
 
   // public
@@ -337,21 +351,23 @@ struct <span class="Att">Sys::File</span>
   
   FileError setPos(FilePosType pos) noexcept;
  };
+
 </pre>
 
 <p>
-The methods of this class call directly OS file system interface functions.
+Methods of this class call directly OS file system interface functions.
 </p>
 
 <h4>PrintAsyncFile</h4>
 
 <p>
 <b>PrintAsyncFile</b> is built using the <a href="page_AsyncFileClients.html"><b>AsyncFile</b></a> class.
-Output stream is bufferred using packet data buffers. Once a packet is filled, it is submitted
-to the <b>AsyncFile</b> object, the packet may be sent to the target device asynchonously.
+Output stream is buffered using packet data buffers. Once a packet is filled, it is submitted
+to the <b>AsyncFile</b> object, the packet may be sent to the target device asynchronously.
 </p>
 
 <pre>
+
 class <span class="Att">PrintAsyncFile</span> : public PrintBase
  {
    AsyncFile file;
@@ -394,6 +410,7 @@ class <span class="Att">PrintAsyncFile</span> : public PrintBase
    
    void cancel_and_wait() { file.cancel_and_wait(); }
  };
+
 </pre>
 
 <p>
@@ -403,11 +420,11 @@ Constructors arguments <b>timeout</b> and <b>max_packets</b> are propagated to t
 </p>
 
 <p>
-Destructors completes operations, closes the file and reports errors if any.
+Destructor completes operations, closes the file and reports errors if any.
 </p>
 
 <p>
-<b>isOpened()</b> returns true, if the file is opened.
+<b>isOpened()</b> returns <b>true</b>, if the file is opened.
 </p>
 
 <p>
@@ -415,20 +432,20 @@ Destructors completes operations, closes the file and reports errors if any.
 </p>
 
 <p>
-<b>exec2()</b> methods are used to execute a program. Some <b>AsyncFileSystem</b> object is involved.
+<b>exec2()</b> methods are used to execute a program. Some <a href="page_AsyncFileClients.html#AsyncFileSystem"><b>AsyncFileSystem</b></a> object is involved.
 Once you "open" a file with this method, you may print the program command-line. To run a program,
 you have to call the method <b>preserveFile()</b> and close the file. The first variant creates 
 a temporary <b>AsyncFileSystem</b> object with the device name found in arguments (both device names
-in <b>dir</b> and <b>program</b> must be the same). Additional arguments are applyed to this object.
+in <b>dir</b> and <b>program</b> must be the same). Additional arguments are applied to this object.
 </p>
 
 <p>
-<b>soft_close()</b> flushs output and closes the file. Errors are reported to the given <b>FileMultiError</b>
+<b>soft_close()</b> flushes output and closes the file. Errors are reported to the given <b>FileMultiError</b>
 object.
 </p>
 
 <p>
-<b>close()</b> flushs output and closes the file. An exception is thrown in case of errors.
+<b>close()</b> flushes output and closes the file. An exception is thrown in case of errors.
 </p>
 
 <p>
@@ -443,10 +460,11 @@ not required.
 <h4>PrintPTPCon</h4>
 
 <p>
-This class uses <a href="page_PTPCon.html"><b>PTP Con</b></a> protocol to print over a net.
+This class uses the <a href="page_PTPCon.html"><b>PTP Console</b></a> protocol to print over a net.
 </p>
 
 <pre>
+
 class <span class="Att">PrintPTPCon</span> : public PrintBase
  {
    ....
@@ -461,10 +479,11 @@ class <span class="Att">PrintPTPCon</span> : public PrintBase
    
    void flush_and_wait();
  };
+
 </pre>
 
 <p>
-Constructor connects to the PTP Con device.
+Constructor connects to the <b>PTP Con</b> client device.
 </p>
 
 <p>
@@ -472,7 +491,7 @@ Constructor connects to the PTP Con device.
 </p>
 
 <p>
-<b>flush_and_wait()</b> flushs stream and waits until PTP operations are finished (up to timeout). 
+<b>flush_and_wait()</b> flushes stream and waits until <b>PTP</b> operations are finished (up to timeout). 
 </p>
 
 <p>
@@ -481,6 +500,7 @@ You can do it using the class <b>PTPConOpenClose</b>.
 </p>
 
 <pre>
+
 class <span class="Att">PTPConOpenClose</span> : NoCopy
  {
    ....
@@ -507,11 +527,17 @@ class <span class="Att">PTPConOpenClose</span> : NoCopy
    
    void write(Packet&lt;uint8&gt; packet) { con->write(packet); }
  };
+
 </pre>
 
 <p>
-Constructor opens a console with the given name and configuration properies.
+Constructor opens a console with the given name and configuration properties.
 Destructor closes it.
+</p>
+
+<p>
+This class also can be used to read or write <b>PTP Con</b> device, using "raw" methods.
+But it is better to use classes, intended for printing or <a href="page_ConsoleInput.html#ReadPTPCon">console reading</a>.
 </p>
 
 </body>
