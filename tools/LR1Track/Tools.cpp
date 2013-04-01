@@ -1,7 +1,7 @@
 /* Tools.cpp */
 //----------------------------------------------------------------------------------------
 //
-//  Project: LR1Shift 1.00
+//  Project: LR1Track 1.00
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -13,356 +13,178 @@
 
 #include "Tools.h"
 
-#include <CCore/inc/Print.h>
-#include <CCore/inc/Exception.h>
 #include <CCore/inc/algon/SortUnique.h>
+#include <CCore/inc/Print.h>
 
 namespace App {
 
-/* functions */
+/* struct Track */
 
-RefArray<TypeDef::Final *> BuildFinals(PtrLen<TypeDef::State *const> states)
+void Track::testActions(PtrLen<TypeDef::Final::Action> r)
  {
-  DynArray<TypeDef::Final *> temp;
+  auto rule=r->rule->rule;
   
-  auto r=temp.extend_default(states.len);
-  
-  for(ulen i=0; i<states.len ;i++) r[i]=states[i]->final;
-  
-  RefArray<TypeDef::Final *> ret;
-  
-  Algon::IncrSortThenApplyUniqueBy(r, [] (TypeDef::Final *a) { return a->final; } , [&] (TypeDef::Final *a) { ret.append_copy(a); } );
-  
-  return ret;
- }
-
-/* struct ASet */
-
-void ASet::sort()
- {
-  Sort(atoms.modify());
- }
-
-/* struct StateGroup */
-
-#if 0
-
-StateGroup::Track::Track(ulen start_,TypeDef::Rule *rule_,const RefArray<ulen> &path_,PtrLen<TypeDef::State *> r) 
- : start(start_),
-   rule(rule_),
-   path(path_) 
- {
-  SortThenProcessUniqueBy(r, [] (TypeDef::State *a) { return a->state; } , [&] (TypeDef::State *a) { states.append_copy(a); } );
-  
-  finals=BuildFinals(Range(states));
- }
-
-void StateGroup::mapTransitions(PtrLen<ulen> ret)
- {
-  ret.set(NoGroup);
-  
-  for(auto transition : transitions ) ret[transition.element->element]=transition.group;
- }
-
-#endif
-
-void StateGroup::setTransitions(PtrLen<Transition> transitions_)
- {
-  transitions.extend_copy(transitions_.len,transitions_.ptr);
- }
-
-void StateGroup::build()
- {
-  finals=BuildFinals(Range(states));
- }
-
-/* class StateCompressor */
-
-StateCompressor::Fin::Fin(const TypeDef::Final &final_)
- {
-  final=final_.final;
-  
-  for(auto action : final_.actions ) 
-    if( action.rule->rule==0 )
-      {
-       shift.aset.atoms.append_fill(action.atom);
-      }
-  
-  shift.aset.sort();
- }
-
-StateCompressor::Map::Map(const TypeDef::State &state)
- : transitions(TypeDef::Element::ElementLim)
- {
-  for(auto transition : state.transitions ) transitions[transition.element->element]=transition.state; 
- }
-
-void StateCompressor::initIndex(PtrLen<TypeDef::Final> finals)
- {
-  shift_index.extend_default(finals.len);
-  
-  DynArray<Fin> temp(DoCast(finals.len),finals.ptr);
-  
-  auto r=Range(temp);
-  
-  Algon::SortThenApplyUniqueRange(r, [&] (PtrLen<Fin> delta) 
-                                        {
-                                         ulen index=shifts.getLen();
-                                         
-                                         shifts.append_copy(delta->shift); 
-    
-                                         for(auto &fin : delta ) shift_index[fin.final]=index;
-                                        }
-                                 );
-  
-  group_count=shifts.getLen();
- }
-
-void StateCompressor::setSplitFlags(ulen split)
- {
-  for(ulen i=0,len=states.len; i<len ;i++)
+  for(++r; +r ;++r)
     {
-     maps[i].split_flag = ( maps[i].group == split ) ;
-    }
- }
-
-void StateCompressor::setFlags(ulen element)
- {
-  for(ulen i=0,len=states.len; i<len ;i++)
-    {
-     TypeDef::State *state=maps[i].transitions[element];
-    
-     maps[i].flag = ( state && maps[state->state].split_flag ) ;
-    }
- }
-
-void StateCompressor::setCounts()
- {
-  for(ulen i=0,count=group_count; i<count ;i++) groups[i].clean();
-  
-  for(ulen i=0,len=states.len; i<len ;i++) groups[maps[i].group].count[maps[i].flag]++;
- }
-
-void StateCompressor::splitGroups(ulen split)
- {
-  ulen count=group_count;
-  
-  for(ulen i=0; i<=split ;i++)
-    {
-     if( groups[i].needSplit() )
+     if( rule!=r->rule->rule )
        {
-        ulen g=group_count++;
+        Printf(Con,"Bad track\n");
         
-        groups[i].setBigSmall(i,g);
-       }
-     else
-       {
-        groups[i].set(i,i);
-       }
-    }
-  
-  for(ulen i=split+1; i<count ;i++)
-    {
-     if( groups[i].needSplit() )
-       {
-        ulen g=group_count++;
-       
-        groups[i].set(i,g);
-       }
-     else
-       {
-        groups[i].set(i,i);
+        finals_ok=false;
+        
+        break;
        }
     }
  }
 
-void StateCompressor::mapGroups()
+void Track::testFinals()
  {
-  for(ulen i=0,len=states.len; i<len ;i++) 
+  if( finals.getLen()<2 ) return;
+  
+  DynArray<TypeDef::Final::Action> temp(DoReserve,100);
+  
+  for(auto *final : finals )
     {
-     ulen g=maps[i].group;
+     for(auto action : final->actions )
+       {
+        temp.append_copy(action);
+       }
+    }
+  
+  Algon::IncrSortThenApplyUniqueRangeBy(Range(temp), [] (TypeDef::Final::Action action) { return action.atom->element; } , 
+                                                     [&] (PtrLen<TypeDef::Final::Action> r) { testActions(r); } );
+ }
+
+/* class TrackBuilder */
+
+void TrackBuilder::buildTransitions()
+ {
+  auto table=transitions.extend_fill(shift_states.len,TypeDef::Element::Ext::ElementLim);
+  
+  for(auto shift_state : shift_states )
+    {
+     auto row=Range(table[shift_state.state]);
      
-     maps[i].group=groups[g].next_group[maps[i].flag];
-    }
- }
-
-void StateCompressor::checkGroups()
- {
-  for(ulen i=0,count=group_count; i<count ;i++)
-    {
-     if( groups[i].needSplit() )
+     for(auto transition : shift_state.transitions )
        {
-        Printf(Exception,"StateCompressor check failed");
-       }
-    }  
- }
-
-void StateCompressor::setGroup0()
- {
-  ulen g0=maps[0].group;
-  
-  if( g0==0 ) return;
-  
-  for(ulen i=0,len=states.len; i<len ;i++)
-    {
-     ulen g=maps[i].group;
-     
-     if( g==0 )
-       {
-        maps[i].group=g0;
-       }
-     else if( g==g0 )
-       {
-        maps[i].group=0;
+        row[transition.element->element]=transition.state;
        }
     }
  }
-
-StateCompressor::StateCompressor(PtrLen<TypeDef::Final> finals,PtrLen<TypeDef::State> states_)
- : states(states_),
-   maps(DoCast(states_.len),states_.ptr),
-   groups(states_.len)
- {
-  initIndex(finals);
-  
-  for(ulen i=0; i<states_.len ;i++)
-    {
-     maps[i].group=shift_index[states_[i].final->final];
-    }
- }
-
-void StateCompressor::run()
- {
-  Printf(Con,"state count = #;\n",states.len);
-  Printf(Con,"initial group count = #;\n",group_count);
-  
-  for(ulen split=0; split<group_count ;split++)
-    {
-     setSplitFlags(split);
-    
-     for(ulen element=0; element<TypeDef::Element::ElementLim ;element++)
-       {
-        setFlags(element);
-        
-        setCounts();
-        
-        splitGroups(split);
-        
-        mapGroups();
-       }
-    }
-  
-  Printf(Con,"group count = #;\n",group_count);
-  
-  setGroup0();
- }
-
-void StateCompressor::check()
- {
-  for(ulen split=0; split<group_count ;split++)
-    {
-     setSplitFlags(split);
    
-     for(ulen element=0; element<TypeDef::Element::ElementLim ;element++)
+void TrackBuilder::buildStateTransitions()
+ {
+  PtrLen<TypeDef::State> states=data->getStates();
+  
+  auto table=state_transitions.extend_fill(states.len,TypeDef::Element::Ext::ElementLim);
+  
+  for(auto state : states )
+    {
+     auto row=Range(table[state.state]);
+     
+     for(auto transition : state.transitions )
        {
-        setFlags(element);
-        
-        setCounts();
-        
-        checkGroups();
+        row[transition.element->element]=transition.state;
        }
     }
  }
-
-auto StateCompressor::getResult() const -> Result
+   
+void TrackBuilder::buildTracks()
  {
-  Result ret;
-  
-  PtrLen<StateGroup> sg=ret.state_groups.extend_default(group_count);
-  
-  // 1
-  
-  for(ulen i=0,len=sg.len; i<len ;i++) sg[i].group=i;
-  
-  for(ulen i=0,len=states.len; i<len ;i++)
-    {
-     ulen g=maps[i].group;
-     
-     sg[g].states.append_copy(states.ptr+i);
-    }
-  
-  for(ulen i=0,len=sg.len; i<len ;i++) 
-    {
-     DynArray<StateGroup::Transition> transitions;
-    
-     for(auto transition : sg[i].states[0]->transitions )
-       {
-        transitions.append_fill(transition.element,maps[transition.state->state].group);
-       }
-     
-     sg[i].setTransitions(Range(transitions));
-     
-     sg[i].shift=shifts[shift_index[sg[i].states[0]->final->final]];
-     
-     sg[i].build();
-    }
-
-  // 2
-  
-#if 0  
-  
-  ++rules;
-  
-  DynArray<DynArray<ulen> > transitions(DoFill(sg.len),TypeDef::Element::ElementLim);
-  
-  for(ulen g=0; g<sg.len ;g++)
-    {
-     sg[g].mapTransitions(Range(transitions[g]));
-    }
-  
-  for(ulen g=0; g<sg.len ;g++)
+  for(auto &shift_state : shift_states )
     {
      for(auto &rule : rules )
        {
-        if( transitions[g][rule.result->element]!=NoGroup )
+        RefArray<TypeDef::ShiftState *> path(DoReserve,100);
+        
+        TypeDef::ShiftState *ptr=&shift_state;
+        
+        if( transitions[ptr->state][rule.result->element] )
           {
-           ulen dst=g;
-           RefArray<ulen> path; 
-           
            for(auto *element : rule.args )
              {
-              dst=transitions[dst][element->element];
+              ptr=transitions[ptr->state][element->element];
               
-              if( dst==NoGroup ) break;
+              if( !ptr ) break;
               
-              path.append_copy(dst);
-             } 
+              path.append_copy(ptr);
+             }
            
-           if( dst!=NoGroup )
+           if( ptr )
              {
-              DynArray<TypeDef::State *> temp;
+              path.shrink_extra();
              
-              for(auto *state : sg[g].states )
-                {
-                 auto *s=state;
-                
-                 for(auto *element : rule.args )
-                   {
-                    s=maps[s->state].transitions[element->element];
-                   }
-                 
-                 temp.append_copy(s);
-                }
-             
-              sg[dst].tracks.append_fill(g,&rule,path,Range(temp));
+              Track *track=tracks.append_default();
+              
+              track->start=&shift_state;
+              track->rule=&rule;
+              track->finish=ptr;
+              track->path=path;
+              
+              // states
+              {
+               DynArray<TypeDef::State *> temp(DoReserve,100);
+               
+               for(auto *state : shift_state.states )
+                 {
+                  for(auto *element : rule.args )
+                    {
+                     state=state_transitions[state->state][element->element];
+                    }
+                  
+                  temp.append_copy(state);
+                 }
+
+               track->states.reserve(100);
+               
+               Algon::IncrSortThenApplyUniqueBy(Range(temp), [] (TypeDef::State *state) { return state->state; } ,
+                                                             [=] (TypeDef::State *state) { track->states.append_copy(state); } );
+               
+               track->states.shrink_extra();
+              }
+              
+              // finals
+              {
+               DynArray<TypeDef::Final *> temp(DoReserve,100);
+               
+               for(auto *state : track->states )
+                 {
+                  temp.append_copy(state->final);
+                 }
+               
+               track->finals.reserve(100);
+               
+               Algon::IncrSortThenApplyUniqueBy(Range(temp), [] (TypeDef::Final *final) { return final->final; } ,
+                                                             [=] (TypeDef::Final *final) { track->finals.append_copy(final); } );
+               
+               track->finals.shrink_extra();
+              }
+              
+              track->testFinals();
              }
           }
        }
     }
   
-#endif  
+  tracks.shrink_extra();
+ }
+   
+TrackBuilder::TrackBuilder(DataMap *data_)
+ : data(data_),
+   tracks(DoReserve,100)
+ {
+  shift_states=data->getShiftStates();
+  rules=data->getRules();
   
-  return ret;
+  ++rules;
+  
+  buildTransitions();
+  buildStateTransitions();
+  buildTracks();
+ }
+   
+TrackBuilder::~TrackBuilder()
+ {
  }
 
 } // namespace App

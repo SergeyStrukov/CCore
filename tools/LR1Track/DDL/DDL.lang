@@ -1,0 +1,220 @@
+/* DDL.lang */
+//----------------------------------------------------------------------------------------
+//
+//  Project: DDLab 1.00
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2011 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+// BODY -----------------------------------------------------------------------
+
+BODY :
+ {
+                               : startBody
+                         
+  BODY SCOPE                   : extBody_SCOPE
+  BODY INCLUDE                 : extBody_INCLUDE
+  BODY TYPE                    : extBody_TYPE 
+  BODY CONST                   : extBody_CONST
+  BODY STRUCT ;                : extBody_STRUCT
+ }
+
+SCOPE
+ {
+  scope Name `{ BODY `}        : buildScope
+ }
+
+INCLUDE
+ {
+  include FileName             : includeFile
+ }
+
+TYPE
+ {
+  type Name = TYPEDEF ;        : defType 
+ }
+
+CONST
+ {
+  TYPEDEF Name = EXPR ;        : defConst
+ }
+ 
+// names ---------------------------------------------------------------------- 
+
+RNAME
+ {
+  Name                         : startName
+  RNAME # Name                 : extName
+ }
+
+NAME
+ {
+  RNAME                        : relName
+  # RNAME                      : absName
+  . # RNAME                    : dotName  
+  Dots # RNAME                 : dotsName
+ }
+
+INAME
+ {
+  int                          : intName
+  sint                         : sintName
+  uint                         : uintName
+  ulen                         : ulenName
+  sint8                        : sint8Name
+  uint8                        : uint8Name
+  sint16                       : sint16Name 
+  uint16                       : uint16Name 
+  sint32                       : sint32Name 
+  uint32                       : uint32Name 
+  sint64                       : sint64Name 
+  uint64                       : uint64Name 
+ }
+
+TNAME
+ {
+  INAME                        : cast_INAME
+  
+  text                         : textName
+  ip                           : ipName
+ }
+ 
+// TYPEDEF -------------------------------------------------------------------- 
+
+TYPEDEF
+ {
+  NAME                         : namedType
+  TNAME                        : baseType
+  TYPEDEF *                    : ptrType
+  TYPEDEF [ ]                  : arrayType
+  TYPEDEF [ EXPR ]             : arrayLenType
+  STRUCT                       : structType
+ }
+
+// STRUCT ---------------------------------------------------------------------
+
+STRUCT
+ {
+  struct Name `{ SBODY `}      : buildStruct
+ }
+
+SBODY
+ {
+                               : startSBody
+                         
+  SBODY TYPE                   : extSBody_TYPE
+  SBODY const CONST            : extSBody_CONST
+  SBODY STRUCT ;               : extSBody_STRUCT 
+   
+  SBODY TYPEDEF Name ;         : extSBody_field  
+  SBODY TYPEDEF Name = EXPR ;  : extSBody_fieldVal
+ }
+
+// EXPR -----------------------------------------------------------------------
+
+EXPR
+ {
+  EXPR_ADD                     : cast_EXPR_ADD
+  
+  `{ `}                        : emptyExprList
+  `{ ELIST `}                  : buildExprList
+  `{ NELIST `}                 : buildNamedExprList
+  EXPR `{ `}                   : applyEmpty 
+  EXPR `{ NELIST `}            : applyNamedExprList
+ }
+ 
+EXPR_ADD
+ {
+  EXPR_MUL                     : cast_EXPR_MUL
+  
+  EXPR_ADD + EXPR_MUL          : opAdd
+  EXPR_ADD - EXPR_MUL          : opSub
+ }
+
+EXPR_MUL
+ {
+  EXPR_UN                      : cast_EXPR_UN
+  
+  EXPR_MUL * EXPR_UN           : opMul
+  EXPR_MUL / EXPR_UN           : opDiv
+  EXPR_MUL % EXPR_UN           : opRem
+ }
+
+EXPR_UN
+ {
+  EXPR_POST                    : cast_EXPR_POST
+  
+  * EXPR_UN                    : opAst
+  & EXPR_UN                    : opAmp
+  + EXPR_UN                    : opPlus
+  - EXPR_UN                    : opMinus
+ }
+
+EXPR_POST
+ {
+  EXPR_NNPOST                  : cast_EXPR_NNPOST
+  
+  Number                       : cast_Number
+ }
+
+EXPR_NNPOST
+ {
+  EXPR_NNPRIM                  : cast_EXPR_NNPRIM
+  
+  EXPR_POST [ EXPR ]           : opInd
+  EXPR_NNPOST . Name           : opSelect
+  EXPR_NNPOST -> Name          : opPtrSelect
+ }
+
+EXPR_NNPRIM
+ {
+  ( EXPR )                     : cast_EXPR
+  
+  NAME                         : cast_NAME
+  NNLIT                        : cast_NNLIT 
+  
+  ITYPE ( EXPR )               : opDomain
+ }
+
+// ----------------------------------------------------------------------------
+
+ELIST
+ {
+  EXPR                         : startExprList
+  ELIST , EXPR                 : extExprList
+ }
+ 
+NEXPR
+ {
+  . Name = EXPR                : nameExpr
+ }
+
+NELIST
+ {
+  NEXPR                        : startNamedExprList
+  NELIST , NEXPR               : extNamedExprList
+ }
+
+// ----------------------------------------------------------------------------
+
+ITYPE
+ {
+  NAME                         : type_NAME
+  INAME                        : type_INAME
+ }
+
+NNLIT
+ {
+  null                         : cast_null
+  String                       : cast_String
+  Number . Number . Number . Number : buildIP 
+ }
+
+// ----------------------------------------------------------------------------
+
+
