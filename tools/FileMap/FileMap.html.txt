@@ -1246,7 +1246,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_ArmGo.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_Arrays.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_AsyncFileClients.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_AsyncFileDevice.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_AsyncFileDevice.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_AsyncFiles.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_AsyncUDPDevice.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_Atomic.html" 2
@@ -1255,14 +1255,14 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_CCoreGeneral.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CancelPacketList.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_CharProp.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_CmdInput.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_CmdInput.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Cmp.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CommonIntAlgo.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CompactLists.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CompactMaps.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CompactNodeAllocator.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CompletePacket.html" 0
-"D:/active/home/C++/CCore-Root-1-04/html/page_ConsoleInput.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_ConsoleInput.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ContainerLists.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Counters.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Crc.html" 2
@@ -1272,7 +1272,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_DefaultTimeout.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DefaultValue.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DeferCall.html" 0
-"D:/active/home/C++/CCore-Root-1-04/html/page_DirTreeRun.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_DirTreeRun.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ElementPool.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_EllipticPi.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_EuclidRotate.html" 2
@@ -1281,8 +1281,8 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Exceptions.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_FastMutex.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Fifo.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_FileSystem.html" 0
-"D:/active/home/C++/CCore-Root-1-04/html/page_FileToMem.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_FileSystem.html" 2
+"D:/active/home/C++/CCore-Root-1-04/html/page_FileToMem.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Files.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ForcedTimeout.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_FuncTask.html" 2
@@ -1298,7 +1298,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Job.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_LangLR1.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_Len.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_LineInput.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_LineInput.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Lists.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Lock.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_MSec.html" 2

@@ -36,6 +36,7 @@ It performs operations on the local file system.
 </p>
 
 <pre>
+
 class <span class="Att">AsyncFileDevice</span> : public ObjBase , public Sys::AsyncFileDevice
  {
    ....
@@ -52,6 +53,7 @@ class <span class="Att">AsyncFileDevice</span> : public ObjBase , public Sys::As
   
    virtual Sys::AsyncFileState * createState(const ObjHook &hook) noexcept(EnableNoExcept) ;
  };
+
 </pre>
 
 <p>
@@ -60,8 +62,11 @@ This class is implemented upon the target classes <b>Sys::AltAsyncFile</b> and
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AltAsyncFile</span>
  {
+  // private
+
   ....
 
   // public
@@ -100,11 +105,15 @@ struct <span class="Att">Sys::AltAsyncFile</span>
   
   FileError completeWrite(Async async,ulen len) noexcept;
  };
+
 </pre>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFileWait</span>
  {
+  // private
+
   ....
 
   // public
@@ -127,6 +136,7 @@ struct <span class="Att">Sys::AsyncFileWait</span>
   
   void interrupt() noexcept; // async , semaphore
  };
+
 </pre>
 
 </body>

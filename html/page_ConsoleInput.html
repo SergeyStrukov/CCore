@@ -33,10 +33,11 @@
 <p>
 <b>ReadCon</b> is a class that can read a console input. Any class with the following interface
 can be used as a console reader. There is a default console reader, defined in the header <b>CCore/inc/ReadCon.h</b>. 
-Console reader performes the "non-buffered read without echo".
+Console reader performs the "non-buffered read without echo".
 </p>
 
 <pre>
+
 class <span class="Att">ReadCon</span> : NoCopy
  {
    ....
@@ -63,6 +64,7 @@ class <span class="Att">ReadCon</span> : NoCopy
    
    void put(StrLen str);
  };
+
 </pre>
 
 <p>
@@ -83,11 +85,11 @@ The return value is true, if the character was received.
 </p>
 
 <p>
-<b>put(const char *,ulen)</b> puts the string of character to the console.
+<b>put(const char *,ulen)</b> puts the string of characters to the console.
 </p>
 
 <p>
-<b>put(StrLen)</b> puts the string of character to the console.
+<b>put(StrLen)</b> puts the string of characters to the console.
 </p>
 
 <p>
@@ -97,13 +99,16 @@ All methods <b>put()</b> flushes output.
 <h4>HCore console reader</h4>
 
 <p>
-<b>HCore</b> <b>ReadCon</b> is built upon the <b>Sys::ConRead</b> class, declared in the
+<b>HCore</b> <b>ReadCon</b> is built upon the target-provided class <b>Sys::ConRead</b>, declared in the
 header <b>sys/SysCon.h</b>.
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::ConRead</span>
  {
+  // private
+
   ....
 
   // public
@@ -122,16 +127,18 @@ struct <span class="Att">Sys::ConRead</span>
   
   IOResult read(char *buf,ulen len,MSec timeout) noexcept;
  };
+
 </pre>
 
 <h4>XCore console reader</h4>
 
 <p>
-<b>XCore</b> <b>ReadCon</b> constructor has the argument: <b>timeout</b>. It is used in methods
+<b>XCore</b> <b>ReadCon</b> constructor has the extra argument <b>timeout</b>. It is used in methods
 <b>put()</b> for nano-packet allocation. Normally, you should use the default value.
 </p>
 
 <pre>
+
 class <span class="Att">ReadCon</span> : NoCopy
  {
    ....
@@ -143,7 +150,7 @@ class <span class="Att">ReadCon</span> : NoCopy
 </pre>
 
 <p>
-This class is implemented using the <b>Sys::OwnConInput</b> class, declared in the header 
+This class is implemented using the class <b>Sys::OwnConInput</b>, declared in the header 
 <b>sys/SysCon.h</b>.
 </p>
 
@@ -178,15 +185,43 @@ class <span class="Att">OwnConInput</span> : NoCopy
 
 </pre>
 
+<p>
+Constructor of this class "owns" the console input and directs it to the provided function.
+The function can be called in any execution context, including interrupt context. It is called when a character 
+has arrived, the character is passed as the argument. The function must return the value, which
+indicates the required reaction:
+</p>
+
+<p>
+<b>Con_Drop</b> &mdash; character must be counted as dropped.
+</p>
+
+<p>
+<b>Con_Echo</b> &mdash; character must be echoed.
+</p>
+
+<p>
+<b>Con_NoEcho</b> &mdash; character must not be echoed.
+</p>
+
+<p>
+<b>Con_EOL</b> &mdash; character must be echoed as the End-Of-Line character.
+</p>
+
+<p>
+Destructor releases the console input.
+</p>
+
 <h4>(XCore) StdioReadCon</h4>
 
 <p>
-<b>XCore</b> provides an implementation of some C standard libray functions, including <b>stdio</b>
+<b>XCore</b> provides an implementation of some C standard library functions, including <b>stdio</b>
 functions. By default, the <b>stdin</b> stream is not connected to any input.
 To connect this stream to the console input, the class <b>StdioReadCon</b> is used.
 </p>
 
 <pre>
+
 class <span class="Att">StdioReadCon</span> : NoCopy
  {
    ....
@@ -201,6 +236,7 @@ class <span class="Att">StdioReadCon</span> : NoCopy
    
    class Access;
  };
+
 </pre>
 
 <p>
@@ -212,10 +248,11 @@ Constructor makes connection, destructor disconnects.
 <p>
 Usually <b>XCore</b> console is backed by a serial port. But it is possible to redirect
 console input/output to another device. The class <b>RedirectPTPCon</b> redirects the console
-to a <a href="page_PTPCon.html"><b>PTPCon</b></a> device.
+to a <a href="page_PTPCon.html"><b>PTP Con</b></a> client device.
 </p>
 
 <pre>
+
 class <span class="Att">RedirectPTPCon</span> : NoCopy
  {
    ....
@@ -226,10 +263,11 @@ class <span class="Att">RedirectPTPCon</span> : NoCopy
    
    ~RedirectPTPCon();
  };
+
 </pre>
 
 <p>
-Constructor opens PTP console with the given name and configuration parameters using the given <b>PTPCon</b>
+Constructor opens PTP console with the given name and configuration parameters using the given <b>PTP Con</b>
 device. Then it redirects console to the PTP console.
 </p>
 
@@ -245,6 +283,7 @@ The class <b>ReadPTPCon</b> is a <b>PTP Con</b> device reader. It is declared in
 </p>
 
 <pre>
+
 class <span class="Att">ReadPTPCon</span> : NoCopy
  {
    ....
@@ -273,6 +312,7 @@ class <span class="Att">ReadPTPCon</span> : NoCopy
    
    void put(StrLen str);
  };
+
 </pre>
 
 <p>

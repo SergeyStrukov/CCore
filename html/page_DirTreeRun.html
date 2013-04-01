@@ -35,6 +35,7 @@ The class <b>DirTreeRun</b> can recursively iterate a directory content.
 </p>
 
 <pre>
+
 class <span class="Att">DirTreeRun</span> : NoCopy
  {
    ....
@@ -50,6 +51,7 @@ class <span class="Att">DirTreeRun</span> : NoCopy
    template &lt;class Proc&gt;
    void apply(Proc &proc);
  };
+
 </pre>
 
 <p>
@@ -71,6 +73,7 @@ The class <b>Proc</b> must implement the following interface:
 </p>
 
 <pre>
+
 class <span class="Att">Proc</span>
  {
   public:
@@ -85,6 +88,7 @@ class <span class="Att">Proc</span>
 
    void enddir(StrLen path,StrLen name,DataType *data);
  };
+
 </pre>
 
 <p>

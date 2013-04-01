@@ -33,11 +33,12 @@
 <h4>FileToMem</h4>
 
 <p>
-The <b>FileToMem</b> class loads the file to the memory. It is derived from the 
-<a href="page_ToMemBase.html"><b>ToMemBase</b></a> class.
+The class <b>FileToMem</b> loads the file to the memory. It is derived from the class 
+<a href="page_ToMemBase.html"><b>ToMemBase</b></a>.
 </p>
 
 <pre>
+
 class <span class="Att">FileToMem</span> : public ToMemBase
  {
   public:
@@ -54,6 +55,7 @@ class <span class="Att">FileToMem</span> : public ToMemBase
    
    FileToMem * objMove(Place&lt;void&gt; place);
  };
+
 </pre>
 
 <p>
@@ -61,7 +63,7 @@ The first argument of the constructor is the <b>file_name</b>. The second <b>max
 </p>
 
 <p>
-This class is swapable and moveable.
+This class is swappable and movable.
 </p>
 
 <h4>RawFileToRead</h4>
@@ -75,6 +77,7 @@ about file writing and printing and about <b>Sys::File</b>.
 </p>
 
 <pre>
+
 class <span class="Att">RawFileToRead</span> : NoCopy
  {
    Sys::File file;
@@ -91,10 +94,11 @@ class <span class="Att">RawFileToRead</span> : NoCopy
    
    void read_all(uint8 *buf,ulen len); 
  };
+
 </pre>
 
 <p>
-Constructor opens the file with the given anme and open flags. An exception is thrown in case of error. 
+Constructor opens the file with the given name and open flags. An exception is thrown in case of error. 
 </p>
 
 <p>
