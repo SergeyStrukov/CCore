@@ -27,6 +27,8 @@ struct TypeDefCore
    {
     S8 * element;
     S2 * state;
+
+    struct Ext;
    };
 
   struct S2
@@ -38,12 +40,16 @@ struct TypeDefCore
     PtrLen<S8 * > shift;
 
     using Transition = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S1 ;
+
+    struct Ext;
    };
 
   struct S3
    {
     S8 * element;
     S4 * state;
+
+    struct Ext;
    };
 
   struct S4
@@ -53,12 +59,16 @@ struct TypeDefCore
     S6 * final;
 
     using Transition = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S3 ;
+
+    struct Ext;
    };
 
   struct S5
    {
     S8 * atom;
     S7 * rule;
+
+    struct Ext;
    };
 
   struct S6
@@ -67,6 +77,8 @@ struct TypeDefCore
     PtrLen<S5 > actions;
 
     using Action = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S5 ;
+
+    struct Ext;
    };
 
   struct S7
@@ -75,6 +87,8 @@ struct TypeDefCore
     StrLen name;
     S8 * result;
     PtrLen<S8 * > args;
+
+    struct Ext;
    };
 
   struct S8
@@ -82,6 +96,8 @@ struct TypeDefCore
     A4 element;
     StrLen name;
     PtrLen<S7 * > rules;
+
+    struct Ext;
    };
 
   // extra

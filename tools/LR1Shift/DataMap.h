@@ -16,8 +16,6 @@
 
 #include <CCore/inc/ddl/DDLTypes.h>
 
-#include <CCore/inc/PrintSet.h>
-
 namespace App {
 
 /* using */
@@ -27,6 +25,14 @@ using namespace CCore;
 /* TypeDef */
 
 #include "StateTypes.TypeDef.gen.h"
+
+/* struct TypeDef::Element::Ext */
+
+struct TypeDef::Element::Ext
+ {
+  static TypeDef::ElementIndex ElementLim;
+  static TypeDef::ElementIndex AtomLim;
+ };
 
 /* classes */
 
@@ -54,8 +60,8 @@ class DataMap : NoCopy
    PtrLen<TypeDef::Final>   getFinals() const { return table_Final; }
    PtrLen<TypeDef::State>   getStates() const { return table_State; }
    
-   PtrLen<TypeDef::Element> getAtoms() const { return table_Element.prefix(TypeDef::Element::AtomLim); }
-   PtrLen<TypeDef::Element> getNonAtoms() const { return table_Element.part(TypeDef::Element::AtomLim); }
+   PtrLen<TypeDef::Element> getAtoms() const { return table_Element.prefix(TypeDef::Element::Ext::AtomLim); }
+   PtrLen<TypeDef::Element> getNonAtoms() const { return table_Element.part(TypeDef::Element::Ext::AtomLim); }
  };
 
 } // namespace App

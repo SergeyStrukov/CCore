@@ -604,6 +604,7 @@ void Process(StrLen input_file_name,StrLen output1_file_name,StrLen output2_file
 
       dir.printStruct(out1,"XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::",node);
       
+      Putobj(out1,"\n    struct Ext;\n");
       Putobj(out1,"   };\n\n");
      }
   }
@@ -802,7 +803,7 @@ int main(int argc,const char *argv[])
   try
     {
      {
-      Putobj(Con,"--- DDLTypeSet 1.00 ---\n--- Copyright (c) 2012 Sergey Strukov. All rights reserved. ---\n\n");
+      Putobj(Con,"--- DDLTypeSet 1.00 ---\n--- Copyright (c) 2013 Sergey Strukov. All rights reserved. ---\n\n");
 
       if( argc!=4 ) 
         {

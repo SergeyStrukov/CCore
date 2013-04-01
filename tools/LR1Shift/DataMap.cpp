@@ -24,10 +24,10 @@
 
 namespace App {
 
-/* struct TypeDefCore */
+/* struct TypeDef::Element::Ext */
 
-TypeDefCore::A4 TypeDefCore::S6::ElementLim;
-TypeDefCore::A4 TypeDefCore::S6::AtomLim;
+TypeDef::ElementIndex TypeDef::Element::Ext::ElementLim;
+TypeDef::ElementIndex TypeDef::Element::Ext::AtomLim;
 
 /* TypeSet */
 
@@ -97,8 +97,8 @@ DataMap::DataMap(StrLen file_name)
 
      map(guard);
 
-     TypeDefCore::S6::ElementLim=map.takeConst<TypeDef::ElementIndex>("ElementIndexLim");
-     TypeDef::Element::AtomLim=map.takeConst<TypeDef::ElementIndex>("AtomIndexLim");
+     TypeDef::Element::Ext::ElementLim=map.takeConst<TypeDef::ElementIndex>("ElementIndexLim");
+     TypeDef::Element::Ext::AtomLim=map.takeConst<TypeDef::ElementIndex>("AtomIndexLim");
      
      table_Element=map.takeConst<PtrLen<TypeDef::Element> >("ElementTable");
      table_Rule=map.takeConst<PtrLen<TypeDef::Rule> >("RuleTable");

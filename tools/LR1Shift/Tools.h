@@ -91,7 +91,7 @@ struct Element : CmpComparable<Element> , NoThrowFlagsBase
   template <class P>
   void print(P &out) const
    {
-    if( element->element<TypeDef::Element::AtomLim && element->element )
+    if( element->element<TypeDef::Element::Ext::AtomLim && element->element )
       {
        Putobj(out,StrLen(element->name.inner(2,1)));
       }

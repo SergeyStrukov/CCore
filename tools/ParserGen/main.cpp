@@ -582,7 +582,7 @@ int main(int argc,const char *argv[])
      ReportException report;
     
      {
-      Putobj(Con,"--- ParserGen 1.01 ---\n--- Copyright (c) 2012 Sergey Strukov. All rights reserved. ---\n\n");
+      Putobj(Con,"--- ParserGen 1.01 ---\n--- Copyright (c) 2012, 2013 Sergey Strukov. All rights reserved. ---\n\n");
       
       if( argc!=3 ) 
         {

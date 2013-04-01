@@ -32,7 +32,7 @@ void Main(StrLen input_file_name,StrLen output_file_name)
    
   auto result=compr.getResult();
   
-#if 1  
+#if 0
   {
    PrintFile out("ShiftResult.txt");
     
@@ -134,11 +134,15 @@ using namespace App;
 
 int main()
  {
+  ReportException report;
+  
   try
     {
-     ReportException report;
-     
-     Main("State.ddl","ShiftState.ddl");
+     {
+      Putobj(Con,"--- LR1Shift 1.00 ---\n--- Copyright (c) 2013 Sergey Strukov. All rights reserved. ---\n\n");
+      
+      Main("State.ddl","ShiftState.ddl");
+     } 
      
      report.guard();
     }

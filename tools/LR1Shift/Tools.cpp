@@ -77,7 +77,7 @@ StateCompressor::Fin::Fin(const TypeDef::Final &final_)
  }
 
 StateCompressor::Map::Map(const TypeDef::State &state)
- : transitions(TypeDef::Element::ElementLim)
+ : transitions(TypeDef::Element::Ext::ElementLim)
  {
   for(auto transition : state.transitions ) transitions[transition.element->element]=transition.state; 
  }
@@ -225,7 +225,7 @@ void StateCompressor::run()
     {
      setSplitFlags(split);
     
-     for(ulen element=0; element<TypeDef::Element::ElementLim ;element++)
+     for(ulen element=0; element<TypeDef::Element::Ext::ElementLim ;element++)
        {
         setFlags(element);
         
@@ -248,7 +248,7 @@ void StateCompressor::check()
     {
      setSplitFlags(split);
    
-     for(ulen element=0; element<TypeDef::Element::ElementLim ;element++)
+     for(ulen element=0; element<TypeDef::Element::Ext::ElementLim ;element++)
        {
         setFlags(element);
         
