@@ -17,6 +17,7 @@
 #include "DataMap.h"
 
 #include <CCore/inc/Array.h>
+#include <CCore/inc/Cmp.h>
 
 namespace App {
 
@@ -28,31 +29,45 @@ class TrackBuilder;
 
 /* struct Track */
 
-struct Track : NoThrowFlagsBase
+struct Track : CmpComparable<Track> , NoThrowFlagsBase
  {
   TypeDef::ShiftState *start;
-  TypeDef::Rule *rule;
+  PtrLen<TypeDef::Element *> args;
   TypeDef::ShiftState *finish;
   
   RefArray<TypeDef::ShiftState *> path;
   RefArray<TypeDef::State *> states;
-  RefArray<TypeDef::Final *> finals;
-  bool finals_ok;
   
-  Track() : finals_ok(true) {}
+  RefArray<TypeDef::Final *> finals;
+  RefArray<TypeDef::Rule *> rules;
+  
+  RefArray<TypeDef::Final::Action> combined_final; 
   
   // methods
   
-  void testActions(PtrLen<TypeDef::Final::Action> r);
+  void buildStates(PtrLen<DynArray<TypeDef::State *> > state_transitions);
   
-  void testFinals();
+  void buildFinals();
+  
+  void buildCombinedFinal();
+  
+  void appendActions(PtrLen<TypeDef::Final::Action> r);
+  
+  // cmp objects
+  
+  CmpResult objCmp(const Track &obj) const
+   {
+    if( CmpResult ret=Cmp(start->state,obj.start->state) ) return ret;
+    
+    return RangeCmpBy(args,obj.args, [] (TypeDef::Element *element) { return element->element; } );
+   }
   
   // print object
   
   template <class P>
   void print(P &out) const
    {
-    Printf(out,"#;) #; #;)\n",start->state,rule->name,finish->state);
+    Printf(out,"#;) #;)\n",start->state,finish->state);
 
     for(auto *shift_state : path ) Printf(out," -> #;)",shift_state->state);
     
@@ -64,7 +79,9 @@ struct Track : NoThrowFlagsBase
     
     for(auto *final : finals ) Printf(out," #;)",final->final);
     
-    if( !finals_ok ) Putobj(out," Bad finals");
+    Putobj(out,"\nRules:");
+    
+    for(auto *rule : rules ) Printf(out," #;",rule->name);
     
     Putch(out,'\n');
    }
@@ -92,6 +109,10 @@ class TrackBuilder : NoCopy
    
    void buildTracks();
    
+   void uniqueTracks();
+   
+   void completeTracks();
+   
   public: 
   
    explicit TrackBuilder(DataMap *data);
@@ -103,7 +124,7 @@ class TrackBuilder : NoCopy
    template <class P>
    void print(P &out) const
     {
-     for(auto &t : tracks ) Printf(out,"#;\n",t);
+     for(auto &t : tracks ) if( t.finals.getLen()>1 ) Printf(out,"#;\n",t);
     }
  };
 

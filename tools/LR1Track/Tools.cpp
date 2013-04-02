@@ -15,32 +15,79 @@
 
 #include <CCore/inc/algon/SortUnique.h>
 #include <CCore/inc/Print.h>
+#include <CCore/inc/Exception.h>
 
 namespace App {
 
 /* struct Track */
 
-void Track::testActions(PtrLen<TypeDef::Final::Action> r)
+void Track::buildStates(PtrLen<DynArray<TypeDef::State *> > state_transitions)
  {
-  auto rule=r->rule->rule;
-  
-  for(++r; +r ;++r)
+  DynArray<TypeDef::State *> temp(DoReserve,100);
+   
+  for(auto *state : start->states )
     {
-     if( rule!=r->rule->rule )
+     for(auto *element : args )
        {
-        Printf(Con,"Bad track\n");
-        
-        finals_ok=false;
-        
-        break;
+        state=state_transitions[state->state][element->element];
        }
+      
+     temp.append_copy(state);
     }
+
+  states.reserve(100);
+   
+  Algon::IncrSortThenApplyUniqueBy(Range(temp), [] (TypeDef::State *state) { return state->state; } ,
+                                                [&] (TypeDef::State *state) { states.append_copy(state); } );
+   
+  states.shrink_extra();
  }
 
-void Track::testFinals()
+void Track::buildFinals()
  {
-  if( finals.getLen()<2 ) return;
+  // finals
+  {
+   DynArray<TypeDef::Final *> temp(DoReserve,100);
+   
+   for(auto *state : states )
+     {
+      temp.append_copy(state->final);
+     }
+   
+   finals.reserve(100);
+   
+   Algon::IncrSortThenApplyUniqueBy(Range(temp), [] (TypeDef::Final *final) { return final->final; } ,
+                                                 [&] (TypeDef::Final *final) { finals.append_copy(final); } );
+   
+   finals.shrink_extra();
+  }
   
+  // rules
+  {
+   DynArray<TypeDef::Rule *> temp(DoReserve,100);
+   
+   for(auto *final : finals )
+     {
+      for(auto action : final->actions )
+        {
+         if( action.rule->rule )
+           temp.append_copy(action.rule);
+        }
+     }
+   
+   rules.reserve(100);
+   
+   Algon::IncrSortThenApplyUniqueBy(Range(temp), [] (TypeDef::Rule *rule) { return rule->rule; } ,
+                                                 [&] (TypeDef::Rule *rule) { rules.append_copy(rule); } );
+   
+   rules.shrink_extra();
+  }
+  
+  buildCombinedFinal();
+ }
+
+void Track::buildCombinedFinal()
+ {
   DynArray<TypeDef::Final::Action> temp(DoReserve,100);
   
   for(auto *final : finals )
@@ -51,8 +98,27 @@ void Track::testFinals()
        }
     }
   
+  combined_final.reserve(100);
+  
   Algon::IncrSortThenApplyUniqueRangeBy(Range(temp), [] (TypeDef::Final::Action action) { return action.atom->element; } , 
-                                                     [&] (PtrLen<TypeDef::Final::Action> r) { testActions(r); } );
+                                                     [&] (PtrLen<TypeDef::Final::Action> r) { appendActions(r); } );
+  
+  combined_final.shrink_extra();
+ }
+
+void Track::appendActions(PtrLen<TypeDef::Final::Action> r)
+ {
+  auto rule=r->rule->rule;
+  
+  for(++r; +r ;++r)
+    {
+     if( rule!=r->rule->rule )
+       {
+        Printf(Exception,"Final conflict");
+       }
+    }
+  
+  combined_final.append_copy(*r);
  }
 
 /* class TrackBuilder */
@@ -117,50 +183,9 @@ void TrackBuilder::buildTracks()
               Track *track=tracks.append_default();
               
               track->start=&shift_state;
-              track->rule=&rule;
+              track->args=rule.args;
               track->finish=ptr;
               track->path=path;
-              
-              // states
-              {
-               DynArray<TypeDef::State *> temp(DoReserve,100);
-               
-               for(auto *state : shift_state.states )
-                 {
-                  for(auto *element : rule.args )
-                    {
-                     state=state_transitions[state->state][element->element];
-                    }
-                  
-                  temp.append_copy(state);
-                 }
-
-               track->states.reserve(100);
-               
-               Algon::IncrSortThenApplyUniqueBy(Range(temp), [] (TypeDef::State *state) { return state->state; } ,
-                                                             [=] (TypeDef::State *state) { track->states.append_copy(state); } );
-               
-               track->states.shrink_extra();
-              }
-              
-              // finals
-              {
-               DynArray<TypeDef::Final *> temp(DoReserve,100);
-               
-               for(auto *state : track->states )
-                 {
-                  temp.append_copy(state->final);
-                 }
-               
-               track->finals.reserve(100);
-               
-               Algon::IncrSortThenApplyUniqueBy(Range(temp), [] (TypeDef::Final *final) { return final->final; } ,
-                                                             [=] (TypeDef::Final *final) { track->finals.append_copy(final); } );
-               
-               track->finals.shrink_extra();
-              }
-              
-              track->testFinals();
              }
           }
        }
@@ -168,7 +193,27 @@ void TrackBuilder::buildTracks()
   
   tracks.shrink_extra();
  }
-   
+
+void TrackBuilder::uniqueTracks()
+ {
+  DynArray<Track> temp(DoReserve,100);
+  
+  Algon::SortThenApplyUnique(Range(tracks), [&] (const Track &track) { temp.append_copy(track); } );
+  
+  temp.shrink_extra();
+  
+  Swap(tracks,temp);
+ }
+
+void TrackBuilder::completeTracks()
+ {
+  for(auto &track : tracks ) 
+    {
+     track.buildStates(Range(state_transitions));
+     track.buildFinals();
+    }
+ }
+
 TrackBuilder::TrackBuilder(DataMap *data_)
  : data(data_),
    tracks(DoReserve,100)
@@ -181,6 +226,8 @@ TrackBuilder::TrackBuilder(DataMap *data_)
   buildTransitions();
   buildStateTransitions();
   buildTracks();
+  uniqueTracks();
+  completeTracks();
  }
    
 TrackBuilder::~TrackBuilder()

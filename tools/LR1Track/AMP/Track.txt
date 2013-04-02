@@ -1,80 +1,24 @@
-0) A1 5)
- -> 5)
-States: 4)
-Finals: 1)
-
-0) A2 5)
- -> 1) -> 2) -> 5)
-States: 14)
-Finals: 2)
-
-0) M1 4)
- -> 4)
-States: 16)
-Finals: 3)
-
-0) M2 5)
- -> 4) -> 2) -> 5)
-States: 15)
-Finals: 4)
-
-0) P1 5)
- -> 5)
-States: 2)
-Finals: 5)
-
-0) P2 5)
- -> 6) -> 3) -> 5)
-States: 11)
-Finals: 6)
-
-2) M1 4)
- -> 4)
-States: 16) 19)
-Finals: 3) 11)
-
-2) M2 5)
- -> 4) -> 2) -> 5)
-States: 15) 20)
-Finals: 4) 12)
-
-2) P1 5)
- -> 5)
-States: 2) 6)
-Finals: 5) 13)
-
-2) P2 5)
+2) 5)
  -> 6) -> 3) -> 5)
 States: 11) 17)
 Finals: 6) 14)
+Rules: P2
 
-6) A1 5)
+2) 5)
  -> 5)
-States: 8)
-Finals: 9)
+States: 2) 6)
+Finals: 5) 13)
+Rules: P1
 
-6) A2 5)
- -> 3) -> 2) -> 5)
-States: 18)
-Finals: 10)
-
-6) M1 4)
+2) 4)
  -> 4)
-States: 19)
-Finals: 11)
+States: 16) 19)
+Finals: 3) 11)
+Rules: M1
 
-6) M2 5)
+2) 5)
  -> 4) -> 2) -> 5)
-States: 20)
-Finals: 12)
-
-6) P1 5)
- -> 5)
-States: 6)
-Finals: 13)
-
-6) P2 5)
- -> 6) -> 3) -> 5)
-States: 17)
-Finals: 14)
+States: 15) 20)
+Finals: 4) 12)
+Rules: M2
 

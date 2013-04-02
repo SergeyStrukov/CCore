@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_NewDelete.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.04
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> NewDelete</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,150 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>NewDelete</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/NewDelete.h</b> <b>CCore/src/NewDelete.cpp</b></p>
 
+<p>
+This set of tools assists in the custom memory allocation/deallocation during an object creation.
+It is working with a custom memory allocator initialization class. Such class looks like:
+</p>
+
+<pre>
+
+class <span class="Att">CustomAllocInit</span>
+ {
+  ....
+
+  public:
+
+   class <span class="Att">AllocType</span> : NoCopy
+    {
+     ....
+
+     public:
+
+      explicit AllocType(CustomAllocInit init);
+
+      ~AllocType();
+
+      void * alloc(ulen len); // throw exception on failure
+
+      void free(void *mem,ulen len);
+    };
+ };
+
+</pre>
+
+<p>
+You may also use a simpler way:
+</p>
+
+<pre>
+
+class <span class="Att">CustomAllocInit</span>
+ {
+  ....
+
+  public:
+
+   using <span class="Att">AllocType</span> = CustomAllocInit ;
+
+   void * alloc(ulen len);
+
+   void free(void *mem,ulen len);
+ };
+
+</pre>
+
+<p>
+I.g. the class <b>CustomAllocInit</b> is a lightweight copyable class. It defines the inner type
+<b>AllocType</b>, responsible for the actual memory allocation/deallocation. The method <b>alloc()</b>
+throws an exception in case of failure. The type of exception is not restricted. Otherwise it must
+return an aligned memory block pointer of the required length. The method <b>free()</b> is called
+to release the allocated memory block. The first argument is the memory block pointer, the second is the
+length. The first argument is always non-null, the second equals the argument, which was passed 
+to the <b>alloc()</b> during the original memory allocation.
+</p>
+
+<p>
+To create an object using this custom memory allocator use the function <b>New()</b>.
+</p>
+
+<pre>
+
+template &lt;class T,class AllocInit,class ... SS&gt;
+T * <span class="Att">New</span>(AllocInit init,SS &amp;&amp; ... ss);
+
+</pre>
+
+<p>
+The first argument is a memory allocator initialization object. The rest are used in an object constructor.
+If the object constructor throw an exception, the allocated memory is freed.
+</p>
+
+<p>
+To destroy the object, the function <b>Delete()</b> is used.
+</p>
+
+<pre>
+
+template &lt;class T,class AllocInit&gt;
+void <span class="Att">Delete</span>(AllocInit init,T *obj);
+
+</pre>
+
+<p>
+The class <b>CustomAllocGuard</b> is used in the <b>New()</b> implementation.
+</p>
+
+<pre>
+
+template &lt;class AllocInit&gt;
+class <span class="Att">CustomAllocGuard</span> : NoCopy
+ {
+   typedef typename AllocInit::AllocType AllocType;
+ 
+   AllocType alloc;
+   ulen len;
+   void *mem;
+   
+  public: 
+   
+   CustomAllocGuard(AllocInit init,ulen len_)
+    : alloc(init)
+    {
+     len=len_;
+     mem=alloc.alloc(len);
+    }
+   
+   ~CustomAllocGuard()
+    {
+     if( mem ) alloc.free(mem,len);
+    }
+   
+   Place&lt;void&gt; getPlace() { return PlaceAt(mem); }
+   
+   void disarm() { mem=0; }
+ };
+
+</pre>
+
+<p>
+Constructor creates an <b>AllocType</b> object and uses it to allocate a memory.
+</p>
+
+<p>
+Destructor frees the memory, if the object is not "disarmed".
+</p>
+
+<p>
+<b>disarm()</b> disarms the object.
+</p>
+
+<p>
+<b>getPlace()</b> is the place of the allocated memory block. 
+</p>
 
 </body>
 
