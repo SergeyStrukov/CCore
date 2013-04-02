@@ -43,6 +43,7 @@ in the language. So the following helper entities are used for it.
 </p>
 
 <pre>
+
 enum <span class="Att">CmpResult</span>
  {
   <span class="Att">CmpLess</span>    = -1,
@@ -53,6 +54,7 @@ enum <span class="Att">CmpResult</span>
 inline CmpResult operator - (CmpResult cmp) { return CmpResult(-int(cmp)); }
  
 const char * GetTextDesc(CmpResult cmp);
+
 </pre>
 
 <p>
@@ -61,11 +63,13 @@ of types with defined <b>operator &lt;</b>. It covers all basic integral types.
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 CmpResult <span class="Att">LessCmp</span>(const T &amp;a,const T &amp;b)
  {
   return (a&lt;b)?CmpLess:( (b&lt;a)?CmpGreater:CmpEqual );
  }
+
 </pre>
 
 <p>
@@ -85,6 +89,7 @@ Use the function <b>AlphaCmp()</b> to perform the alphabetical comparison:
 </p>
 
 <pre>
+
 struct S
  {
   A a;
@@ -98,6 +103,7 @@ struct S
     return <span class="Att">AlphaCmp</span>(a,obj.a,b,obj.b,c,obj.c);
    }
  };
+
 </pre>
 
 <p>
@@ -115,6 +121,7 @@ As usual, you may specialize the <b>struct CmpAdapters</b> to implement the 3-wa
 </p>
 
 <pre>
+
 namespace N {
 
 class C
@@ -133,13 +140,15 @@ struct CmpAdapters&lt;false,N::C&gt;
  };
 
 }
+
 </pre>
 
 <p>
-Use the function <b>RangeCmp()</b> or <b>RangeLess()</b> to perform the alphabetical comparison of the ranges of an objects:
+Use the function <b>RangeCmp()</b> or <b>RangeLess()</b> to perform the alphabetical comparison of two ranges of objects:
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 CmpResult <span class="Att">RangeCmp</span>(const T *a,const T *b,ulen count);
 
@@ -148,6 +157,25 @@ CmpResult <span class="Att">RangeCmp</span>(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b)
 
 template &lt;class T&gt;
 bool <span class="Att">RangeLess</span>(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b);
+
+</pre>
+
+<p>
+There are also "by" variants of these functions. These variant use the given functor <b>by</b> to compare objects:
+to compare objects <b>a</b> and <b>b</b> they do compare <b>by(a)</b> and <b>by(b)</b>.
+</p>
+
+<pre>
+
+template &lt;class T,class Func&gt;
+CmpResult <span class="Att">RangeCmpBy</span>(const T *a,const T *b,ulen count,Func by);
+ 
+template &lt;class T,class Func&gt;
+CmpResult <span class="Att">RangeCmpBy</span>(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b,Func by);
+
+template &lt;class T,class Func&gt;
+bool <span class="Att">RangeLessBy</span>(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b,Func by); 
+
 </pre>
 
 <p>
@@ -155,9 +183,11 @@ Use the functions <b>StrCmp()</b> or <b>StrLess()</b> to compare strings:
 </p>
 
 <pre>
+
 CmpResult <span class="Att">StrCmp</span>(StrLen a,StrLen b);
  
 bool <span class="Att">StrLess</span>(StrLen a,StrLen b);
+
 </pre>
 
 <p>
@@ -165,6 +195,7 @@ There are two <b>Property Type</b> classes <b>LessComparable</b> and <b>CmpCompa
 </p>
 
 <pre>
+
 /* struct LessComparable&lt;T&gt; */ 
 
 template &lt;class T&gt;
@@ -198,6 +229,7 @@ struct <span class="Att">CmpComparable</span>
   
   friend bool operator != (const T &a,const T &b) { return a.objCmp(b)!=0; }
  };
+
 </pre>
 
 <p>
@@ -205,6 +237,7 @@ They can be used to simplify the implementation of the comparable classes:
 </p>
 
 <pre>
+
 class C : public CmpComparable&lt;C&gt; // provides all comparison operators for class C
  {
   public:
@@ -213,9 +246,11 @@ class C : public CmpComparable&lt;C&gt; // provides all comparison operators for
 
    CmpResult objCmp(const C &obj) const { .... }
  };
+
 </pre>
 
 <pre>
+
 class C : public LessComparable&lt;C&gt; // provides all comparison operators for class C
  {
   public:
@@ -224,9 +259,11 @@ class C : public LessComparable&lt;C&gt; // provides all comparison operators fo
  }; 
 
 // Cmp() uses LessCmp() for this class
+
 </pre>
 
 <pre>
+
 class C : public LessComparable&lt;C&gt; // provides all comparison operators for class C
  {
   public:
@@ -237,6 +274,7 @@ class C : public LessComparable&lt;C&gt; // provides all comparison operators fo
 
    bool operator != (const C &obj) const { .... } // for efficiency
  };
+
 </pre>
 
 <h2>Why 3-Way is better than 2-Way?</h2>
@@ -253,6 +291,7 @@ But once we compare combined types (usually using alphabetical ordering) we star
 </p>
 
 <pre>
+
 bool Less(T1 a1,T1 b1,T2 a2,T2 b2)
  {
   if( a1&lt;b1 )
@@ -273,6 +312,7 @@ CmpResult Cmp(T1 a1,T1 b1,T2 a2,T2 b2) // more efficient, simple and clear code
 
   return Cmp(a2,b2);
  }
+
 </pre>
 
 <p>

@@ -191,7 +191,53 @@ bool RangeLess(PtrLen<T> a,PtrLen<T> b)
      return RangeCmp(a.ptr,b.ptr,b.len) < 0 ;
     }
  }
+
+/* Range...By() */
  
+template <class T,class Func>
+CmpResult RangeCmpBy(const T *a,const T *b,ulen count,Func by)
+ {
+  for(; count ;count--)
+    if( CmpResult ret=Cmp(by(*(a++)),by(*(b++))) ) 
+      return ret;
+     
+  return CmpEqual;   
+ }
+ 
+template <class T,class Func>
+CmpResult RangeCmpBy(PtrLen<T> a,PtrLen<T> b,Func by)
+ {
+  if( a.len<b.len )
+    {
+     if( CmpResult ret=RangeCmpBy(a.ptr,b.ptr,a.len,by) ) return ret;
+     
+     return CmpLess;
+    }
+  else if( a.len>b.len )
+    {
+     if( CmpResult ret=RangeCmpBy(a.ptr,b.ptr,b.len,by) ) return ret;
+     
+     return CmpGreater;
+    }
+  else
+    {
+     return RangeCmpBy(a.ptr,b.ptr,b.len,by);
+    }
+ }
+
+template <class T,class Func>
+bool RangeLessBy(PtrLen<T> a,PtrLen<T> b,Func by) 
+ {
+  if( a.len<b.len )
+    {
+     return RangeCmpBy(a.ptr,b.ptr,a.len,by) <= 0 ;
+    }
+  else
+    {
+     return RangeCmpBy(a.ptr,b.ptr,b.len,by) < 0 ;
+    }
+ }
+
 } // namespace CCore
  
 #endif
