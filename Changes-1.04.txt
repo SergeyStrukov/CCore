@@ -1,23 +1,47 @@
 /* Changes-1.04.txt */
 
-DDLEngines are updated, processing pretext is added:
+--- Updates ----------
 
-  CCore/inc/ddl/DDLEngine.h
+CCore/inc/MemBase.h
 
-LangLR1 and ParserGen tools are updated. Generated file content is changed.
-Structure definitions are moved out, finals are added explicitely.
+  Minor fix: missed JustTry operator delete is added.
 
-DDL support improved:
+CCore/inc/ddl/*
 
-  CCore/inc/ddl/DDLTypedMap.h
+  DDLEngines are updated, processing pretext is added. 
+  Minor fix: implementation is updated to diagnose one rare error condition: ...
+
+LangLR1 and ParserGen tools are updated. Generated file structure is changed.
+Structure definitions are moved out, finals are added explicitly.
+
+CCore/inc/Cmp.h
+
+  RangeCmpBy()
+
+CCore/inc/algon/BaseRangeAlgo.h
+
+  Extra base algorithms and support for reverse ranges.
+
+CCore/inc/ArrayAlgo.h
+
+  NoThrowFlagsBase 
+
+--- New features -----
+
+CCore/inc/ddl/DDLTypedMap.h
 
 DDLTypeSet tool is added to support DDLTypedMap.
 
-New features added:
+CCore/inc/algon/SortUnique.h
 
-  CCore/inc/NewDelete.h
-  CCore/inc/Optional.h
-  CCore/inc/ObjectDomain.h
-  CCore/inc/DeferCall.h
-  CCore/inc/Signal.h
-  CCore/inc/MultiSignal.h
+CCore/inc/NewDelete.h
+
+CCore/inc/Optional.h
+
+CCore/inc/ObjectDomain.h
+
+CCore/inc/DeferCall.h
+
+CCore/inc/Signal.h
+
+CCore/inc/MultiSignal.h
