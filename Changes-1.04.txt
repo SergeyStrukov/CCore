@@ -18,6 +18,10 @@ CCore/inc/Cmp.h
 
   RangeCmpBy()
 
+CCore/inc/Sort.h
+
+  Reverse range Sort()-s are added.
+
 CCore/inc/algon/BaseRangeAlgo.h
 
   Extra base algorithms and support for reverse ranges.
