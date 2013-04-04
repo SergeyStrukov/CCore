@@ -36,6 +36,7 @@ with a packet processing control and packet cancellation features. This class is
 </p>
 
 <pre>
+
 template &lt;class POD&gt;
 class <span class="Att">PacketSet</span> : public Funchor_nocopy
  {
@@ -65,7 +66,7 @@ active packets from this packet set ("external" packets are not counted).
 </p>
 
 <p>
-<b>PacketSet</b> destructor performes the <b>cancel_and_wait()</b> operation. It also
+<b>PacketSet</b> destructor performs the <b>cancel_and_wait()</b> operation. It also
 waits until all "external" packets are completed.
 </p>
 
@@ -116,8 +117,8 @@ are completed ("external" packets are not included).
 <p>
 <b>wait()</b> waits until all active packets are completed ("external" packets are not included) 
 or up to timeout expired. 
-The return value is true, if the first case happens. If timeout expired, then <b>wait()</b>
-performes the <b>cancel_and_wait()</b> operation.
+The return value is <b>true</b>, if the first case happens. If the timeout expires, then <b>wait()</b>
+performs the <b>cancel_and_wait()</b> operation.
 </p>
 
 <pre>
@@ -176,7 +177,7 @@ You may use this list further to cancel all packets from this list.
 Using the inner class <b>Cancel</b>, you can cancel packets from the given external list or several
 such lists in two phase.
 The method <b>build()</b> cancels packets from the given external list and collects them into the
-working list. Then the method <b>cancel()</b> calls cancel functions of the collected packets.
+working list. Then the method <b>cancel()</b> calls cancel functions of collected packets.
 </p>
 
 <pre>
@@ -187,6 +188,7 @@ working list. Then the method <b>cancel()</b> calls cancel functions of the coll
   
    Packet&lt;POD&gt; enlist(ExtTop &amp;ext_list,Packet&lt;POD&gt; packet);
  };
+
 </pre>
 
 <p>

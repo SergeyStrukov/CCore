@@ -34,11 +34,11 @@
 Packets is an infra-structure for efficient flexible parallel mass request processing.
 In this infra-structure processing nodes, also called devices, are exchanging packets. Packet is
 a task request. It contains a small stack for request parameters and return value and typically has an
-attached data buffer to transfer a bulk of data. Packet may be cancelled by the originator.
-Each packet device has a packet entry gate, through which packets are coming for processing.
+attached data buffer to transfer a bulk of data. Packet may be canceled by the originator.
+Each packet device has a packet entry gate, through which packets are coming for a processing.
 During processing packet can be stored, transferred to another packet device or completed.
 Eventually packet must be completed and during completion returned to the packet pool, from which
-it was borrowed. Packet cancellation is a mean, the packet originator can use to ask a current
+it was borrowed. Packet cancellation is a mean the packet originator can use to ask a current
 packet device to cancel a packet processing. It is assumed, that packet should be quickly disengaged from the 
 processing and completed.
 </p>
@@ -140,7 +140,7 @@ void DropPacketExt(PacketHeader *packet_)
 </pre>
 
 <p>
-<b>LenSub()</b> performs the length subtraction. It is expected, the result is positive.
+<b>LenSub()</b> performs the length subtraction. It is expected, that the result is positive.
 Otherwise, an exception is thrown. <b>GuardLenSubTooShort()</b> throw an exception. <b>name</b> 
 is a function name in the exception message.
 </p>
@@ -157,12 +157,13 @@ to pop some packet extension.
 <h4>PacketBuf</h4>
 
 <p>
-<b>PacketBuf</b> is used to handle a packet data buffer. This class keeps a pointer to the data buffer
+The class <b>PacketBuf</b> is used to handle a packet data buffer. This class keeps a pointer to the data buffer
 alone with its length and the data length, stored in the buffer. From the <b>PacketBuf</b>
 perspective data is a raw data, i.g. a sequence of bytes.
 </p>
 
 <pre>
+
 class <span class="Att">PacketBuf</span> : NoCopy
  {
    void *data;
@@ -201,6 +202,7 @@ class <span class="Att">PacketBuf</span> : NoCopy
    
    Place&lt;void&gt; getRaw() { return PlaceAt(data); }
  };
+
 </pre>
 
 <p>
@@ -264,6 +266,7 @@ some predefined length. Packet extension is organized as a stack of any type obj
 </p>
 
 <pre>
+
 class <span class="Att">PacketHeader</span> : NoCopy
  {
    PacketBuf pbuf;
@@ -308,12 +311,12 @@ packet from a packet pool. This constructor creates a clean packet with the give
 <p>
 The destructor is not trivial: it calls a destructor of the inner <b>PacketBuf</b>.
 And again, you don't use it directly, because once you finished with a packet, you call its complete
-method and packet returns to the packet pool, where it was originaly taken.
+method and packet returns to the packet pool, where it was originally taken.
 </p>
 
 <p>
 <b>recycle()</b> is used to prepare the packet for reuse. The packet must have empty extension,
-complete stack and no cancel function.
+complete stack and no cancel function, otherwise the <b>Abort()</b> is called.
 </p>
 
 <p>
@@ -333,14 +336,14 @@ complete stack and no cancel function.
 </pre>
 
 <p>
-Packet has the inner complete function stack. Onec the packet processing is finished, the method 
-<b>complete()</b> must be called to complete the packet. A packet originator assignes a complete function,
+Packet has the inner complete function stack. Once the packet processing is finished, the method 
+<b>complete()</b> must be called to complete the packet. A packet originator assigns a complete function,
 when preparing packet for processing. When packet is taken from a packet pool, it has the one complete
-function, which returns the packet to the pool.
+function in the stack, which returns the packet to the pool.
 </p>
 
 <p>
-<b>pushCompleteFunction()</b> pushs a packet function to the complete function stack.
+<b>pushCompleteFunction()</b> pushes a packet function to the complete function stack.
 </p>
 
 <p>
@@ -375,16 +378,16 @@ Packet has a cancel state. The state has one of three values: <b>Packet_NoCancel
 </p>
 
 <p>
-<b>setCancelFunction()</b> assigns a cancel function with optionally argument. The packet
-must not have a cancel function assigned. If the packet is already cancelled, the function does nothing,
+<b>setCancelFunction()</b> assigns a cancel function with an optional argument. The packet
+must not have a cancel function assigned. If the packet is already canceled, the function does nothing,
 otherwise it assigns a cancel function and changes the packet state to the <b>Packet_HasCancelFunction</b>.
 The previous state is returned.
 </p>
 
 <p>
-<b>clearCancelFunction()</b> clears a cancel function. The packet must be in 
+<b>clearCancelFunction()</b> clears the cancel function. The packet must be in 
 <b>Packet_HasCancelFunction</b> or <b>Packet_Cancelled</b> state.
-If the packet is already cancelled, the function does nothing, otherwise it clears
+If the packet is already canceled, the function does nothing, otherwise it clears
 a cancel function and changes the packet state to the <b>Packet_NoCancelFunction</b>.
 The previous state is returned.
 </p>
@@ -392,21 +395,21 @@ The previous state is returned.
 <p>
 These two functions are called by packet processors. Once packet is received for processing,
 a packet processor may assign a cancel function to it, if the packet processing is not
-immediate. Before packet is disengaged, a cancel function must be cleared. To learn how
-to properly use this feature, see <a href="page_CancelPacketList.html"><b>CancelPacketList</b></a>
+immediate. Before the packet is disengaged, a cancel function must be cleared. To learn how
+to properly use this feature, see the <a href="page_CancelPacketList.html"><b>CancelPacketList</b></a>
 implementation.
 </p>
 
 <p>
-<b>getCancelFunction()</b> cancels a packet. The state is change to <b>Packet_Cancelled</b>.
-The previous state is returned and a cancel function is returned if has been set.
-This function is called by the packet orignator to cancel the packet processing.
+<b>getCancelFunction()</b> cancels the packet. The state is changed to <b>Packet_Cancelled</b>.
+The previous state is returned and the cancel function is returned if has been set.
+This function is called by the packet originator to cancel the packet processing.
 If the packet has an assigned cancel function, then it must be called to request the packet
 processing cancellation. The cancel function, if exists, completes the packet.
 </p>
 
 <p>
-<b>getCancelArg()</b> returns a cancel argument.
+<b>getCancelArg()</b> returns the cancel argument.
 </p>
 
 <pre>
@@ -422,7 +425,7 @@ processing cancellation. The cancel function, if exists, completes the packet.
 </pre>
 
 <p>
-<b>PacketHeader</b> has the inner time-stamp field. The second timer is used for the time-stamping.
+<b>PacketHeader</b> has the inner time-stamp field. The seconds timer is used for the time-stamping.
 </p>
 
 <p>
@@ -430,8 +433,8 @@ processing cancellation. The cancel function, if exists, completes the packet.
 </p>
 
 <p>
-<b>isOld()</b> is used to check if the packet is old enough. The first argument is the current time
-and the second is a desired time.
+<b>isOld()</b> is used to check, if the packet is old enough. The first argument is the current time
+and the second is a desired life-time.
 </p>
 
 <p>
@@ -463,11 +466,11 @@ The next set of methods are to "extend" the packet.
 <p>
 <b>pushExt()</b> pushs the object of the type <b>T</b> to the extension stack. The object
 is constructed using the given set of arguments. Pointer to the constructed object is returned.
-If there is no enough room for the object the <b>Abort()</b> is called.
+If there is no enough room for the object, the <b>Abort()</b> is called.
 </p>
 
 <p>
-<b>getExt()</b> returns a pointer to the top of the extension stack. You must known exactly, the
+<b>getExt()</b> returns a pointer to the top of the extension stack. You must known exactly, that the
 object exists and has the given type.
 </p>
 
@@ -478,7 +481,7 @@ to get a pointer to the deep object of the type <b>T</b>.
 </p>
 
 <p>
-<b>popExt()</b> pops and destroys the top object from the extension stack. You must known exactly, the
+<b>popExt()</b> pops and destroys the top object from the extension stack. You must known exactly, that the
 object exists and has the given type.
 </p>
 
@@ -500,14 +503,14 @@ object exists and has the given type.
 
 <p>
 <b>PacketHeader</b> has the inner <b>PacketBuf</b> field and a set of methods
-to manipulate with it. This buffer can be used to store a bulk of data with a packet.
+to deal with it. This buffer can be used to store a bulk of data with a packet.
 </p>
 
 <p>
 These methods are direct calls of the correspondent <b>PacketBuf</b> methods.
 Last three methods use the <b>moveTo()</b> <b>PacketBuf</b> method to move the data buffer.
 The only difference they are not allowed if the packet belongs to a packet list.
-In this case <b>Abort()</b> is called. The last method moves the packet buffer to another packet.
+In this case the <b>Abort()</b> is called. The last method moves the packet buffer to another packet.
 This packet also must not belong to a packet list.
 </p>
 
@@ -525,6 +528,7 @@ This packet also must not belong to a packet list.
    
    Place&lt;void&gt; getRaw() { return pbuf.getRaw(); }
  };
+
 </pre>
 
 <p>
@@ -540,6 +544,7 @@ it cannot be completed also.
 </p>
 
 <pre>
+
 class <span class="Att">PacketList</span> : NoCopy
  {
    ....
@@ -595,10 +600,11 @@ class <span class="Att">PacketList</span> : NoCopy
    
    PacketList * objMove(Place&lt;void&gt; place);
  };
+
 </pre>
 
 <p>
-<b>PacketList</b> must be empty before destructor is called, otherwise the <b>Abort()</b> is called.
+<b>PacketList</b> must be empty before the destructor is called, otherwise the <b>Abort()</b> is called.
 </p>
 
 <p>
@@ -620,11 +626,11 @@ otherwise the <b>Abort()</b> is called.
 </p>
 
 <p>
-<b>get()</b> gets the first packet from the list. If the list is empty, null pointer is returned.
+<b>get()</b> gets the first packet from the list. If the list is empty, a null pointer is returned.
 </p>
 
 <p>
-<b>get_last()</b> gets the last packet from the list. If the list is empty, null pointer is returned.
+<b>get_last()</b> gets the last packet from the list. If the list is empty, a null pointer is returned.
 </p>
 
 <p>
@@ -640,19 +646,20 @@ otherwise the <b>Abort()</b> is called.
 </p>
 
 <p>
-<b>PacketList</b> is swapable and moveable.
+<b>PacketList</b> is swappable and movable.
 </p>
 
 <h4>Packet</h4>
 
 <p>
-<b>Packet</b> is a <b>PacketHeader</b> pointer wrapper. It behaves like a raw pointer, so use it 
+The class <b>Packet</b> is a <b>PacketHeader</b> pointer wrapper. It behaves like a raw pointer, so use it 
 with caution.
 </p>
 
 <pre>
+
 template &lt;class POD,class ... TT&gt; // T1, T2, ... , Ttop
-class Packet
+class <span class="Att">Packet</span>
  {
    PacketHeader *packet;
    
@@ -674,7 +681,7 @@ Usually, it is <b>char</b> or <b>uint8</b>. Other parameters are types of top ex
 </p>
 
 <p>
-<b>Packet</b> can be implicitly constructed from a raw pointer. Make sure, the pointer either null,
+<b>Packet</b> can be implicitly constructed from a raw pointer. Make sure the pointer either null,
 or points to a packet with required properties.
 </p>
 
@@ -712,7 +719,7 @@ Complete function methods.
 </p>
 
 <p>
-The method complete not only complets the packet, but also nullify it.
+The method <b>complete()</b> not only completes the packet, but also nullifies it.
 After this method call the object becomes null. Remember, once you called the method complete, the packet
 is no longer available for you. That is why we nullify the pointer in this class.
 </p>
@@ -943,6 +950,7 @@ the <b>data_len</b> fits into the data buffer capacity.
      return Range(getData()+format.prefix,data_len.value);
     }
  };
+
 </pre>
 
 <p>
@@ -996,6 +1004,7 @@ The set of data methods with <b>PacketFormat</b>. See below more explanations ab
 </p>
 
 <pre>
+
 class <span class="Att">PacketCanceller</span> : NoCopy
  {
    PacketHeader *packet;
@@ -1010,6 +1019,7 @@ class <span class="Att">PacketCanceller</span> : NoCopy
    
    void cancel() { cancel_function(packet); }
  };
+
 </pre>
 
 <p>
@@ -1022,7 +1032,7 @@ has been retrieved.
 </p>
 
 <p>
-<b>cancel()</b> calls the cancel function. Use must call it, if the <b>getCancelFunction()</b> returned true.
+<b>cancel()</b> calls the cancel function. Use must call it, if the <b>getCancelFunction()</b> returned <b>true</b>.
 </p>
 
 <p>
@@ -1033,10 +1043,10 @@ must be called in a lock-free context.
 <h4>PacketFormat</h4>
 
 <p>
-Packet format consists of three values: prefix length, suffix length and maximum working data length.
+Packet format consists of three values: the prefix length, the suffix length and the maximum working data length.
 It is often required to reserve some prefix and suffix in the data range for a further processing.
 Fox example, when you prepare UDP packet, the prefix for UDP header, IP header and Ethernet header
-is reserved. This part is filled by the next-layer packet devices. You put data into the working 
+is reserved. These parts are filled by the next-layer packet devices. You put data into the working 
 subrange after this prefix.
 </p>
 
@@ -1046,6 +1056,7 @@ with lengths and data ranges.
 </p>
 
 <pre>
+
 struct <span class="Att">PacketFormat</span>
  {
   ulen prefix;
@@ -1085,17 +1096,17 @@ length and the maximum working data length.
 
 <p>
 <b>addPrefix()</b> creates the new <b>PacketFormat</b> with increased prefix, <b>max_data</b> is decreased.
-Exception is thrown if there is no space.
+Exception is thrown, if there is no space.
 </p>
 
 <p>
 <b>addSuffix()</b> creates the new <b>PacketFormat</b> with increased suffix, <b>max_data</b> is decreased.
-Exception is thrown if there is no space.
+Exception is thrown, if there is no space.
 </p>
 
 <p>
 <b>addPrefixSuffix()</b> creates the new <b>PacketFormat</b> with increased prefix and suffix, 
-<b>max_data</b> is decreased. Exception is thrown if there is no space.
+<b>max_data</b> is decreased. Exception is thrown, if there is no space.
 </p>
 
 <pre>
@@ -1126,14 +1137,14 @@ Exception is thrown if there is no space.
 
 <p>
 <b>sub()</b> performs the inverse operation: it calculates the working range length from the total data range length.
-But it is checked operation, so it returns a data structure with two fields: <b>len</b> and <b>status</b>.
+But it is a checked operation, so it returns a data structure with two fields: <b>len</b> and <b>status</b>.
 If the <b>total_len</b> is too short, the <b>status</b> is <b>Len_too_short</b> and the <b>len</b> is zero.
 If the <b>total_len</b> is too large, the <b>status</b> is <b>Len_too_long</b> and the <b>len</b> is
 <b>max_data</b>. Otherwise <b>status</b> is <b>Len_ok</b> and the <b>len</b> is the working range length.
 </p>
 
 <p>
-<b>checkLen()</b> checks if the len can be used as the working data length and the total data length
+<b>checkLen()</b> checks, if the <b>len</b> can be used as the working data length and the total data length
 is limited by the given limit.
 </p>
 
@@ -1164,10 +1175,11 @@ is limited by the given limit.
   template &lt;class T&gt;
   CutResult&lt;T&gt; cutMax(PtrLen&lt;T&gt; range) const;
  };
+
 </pre>
 
 <p>
-<b>check()</b> checks if the given length can be a total data length.
+<b>check()</b> checks, if the given length can be a total data length.
 </p>
 
 <p>

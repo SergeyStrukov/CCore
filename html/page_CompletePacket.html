@@ -32,9 +32,10 @@
 
 <p>
 The function <b>CompletePacket_int</b> is <b>XCore</b> only. This function is required to complete a packet
-in the interrupt context. You cannot call <b>complete()</b> directly there, so a special high priority task 
+in the interrupt context. You cannot call <b>complete()</b> directly there, so the special high priority task 
 &mdash; <b>Complete Task</b> , is running in the system to do this job. The function simply puts the packet into
 its input queue and gives the semaphore.
+This function can be called only in the interrupt context.
 </p>
 
 <pre>

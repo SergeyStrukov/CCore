@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/PacketPool.h</b> <b>CCore/src/PacketPool.cpp</b></p>
 
 <p>
-<b>PacketPool</b> implements a pool of packets. There is a default global packet pool
+The class <b>PacketPool</b> implements a pool of packets. There is the default global packet pool
 in the <b>CCore</b>. Two global constants <b>PacketPool_PacketCount</b> and
 <b>PacketPool_PacketMaxDataLen</b> determine properties of this pool. You may
 override these constants by defining them in you project. Default values are provided by the target
@@ -71,10 +71,10 @@ The length of the buffer is <b>PacketPool_PacketMaxDataLen</b>.
 </p>
 
 <p>
-<b>AllocPacket_raw()</b> is blocking allocation function. It blocks while packet pool is empty. 
+<b>AllocPacket_raw()</b> is a blocking allocation function. It blocks while packet pool is empty. 
 Once a packet becomes available it tries to attach a data buffer and return this packet. 
 If this failed, the return pointer is null. So, despite the function is blocking, it still 
-may return null pointer.
+may return a null pointer.
 </p>
 
 <p>
@@ -84,8 +84,8 @@ timed variants of the <b>AllocPacket_raw()</b>. In case of timeout the null poin
 
 <p>
 There are "short" variants of four functions, mentioned above. They allocate a "short" packet,
-i.g. this packet does not necessary has an attached data buffer (but may has).
-<b>AllocPacket_raw_short()</b> never return null, because of this.
+i.g. this packet does not necessary has an attached data buffer (but may have).
+<b>AllocPacket_raw_short()</b> never returns null, because of this.
 </p>
 
 <p>
@@ -133,7 +133,7 @@ Packet&lt;POD&gt; <span class="Att">AllocPacket_short</span>(TimeScope time_scop
 <h4>PacketPool</h4>
 
 <p>
-Here is the <b>PacketPoll</b> class itself. You may use its methods only in a task context.
+Here is the <b>PacketPoll</b> class itself. On <b>XCore</b> you may use its methods only in a task context.
 So you cannot complete a packet in the interrupt context.
 </p>
 
@@ -146,7 +146,7 @@ The <b>name</b> is used to name internal synchronization objects.
 </p>
 
 <p>
-Internally all packets are stores in a list. Packets with attached data buffer goes first.
+Internally all packets are stores in a list. Packets with an attached data buffer goes first.
 </p>
 
 <p>
@@ -154,6 +154,7 @@ Destructor calls <b>Abort()</b>, if not all packets are released at the moment.
 </p>
 
 <pre>
+
 class <span class="Att">PacketPool</span> : public Funchor_nocopy
  {
    ....
@@ -192,6 +193,7 @@ class <span class="Att">PacketPool</span> : public Funchor_nocopy
    
    void detachBufs();
  };
+
 </pre>
 
 </body>
