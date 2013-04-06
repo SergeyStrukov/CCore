@@ -29,20 +29,24 @@
 <h2>DDLShow</h2>
 
 <p>
-<b>DDLShow</b> is a simple utility, it takes a DDL file and prints the result of processing of it.
+<b>DDLShow</b> is a simple utility, it takes a <b>DDL</b> file and prints the result of processing it.
 </p>
 
 <pre>
+
 DDLShow.exe file<sub>1</sub> ... file<sub>n</sub>
+
 </pre>
 
 <p>
-This command process eseach of given files and prints a processing result to the correspondent
+This command processes each of given files and prints a processing result to the correspondent
 <b>.txt</b> file:
 </p>
 
 <pre>
+
 file<sub>1</sub>.txt ... file<sub>n</sub>.txt
+
 </pre>
 
 <p>
@@ -54,6 +58,7 @@ Here is a sample:
 </p>
 
 <pre>
+
 /* sample.ddl */
 
 sint8 s8 = 1 ;
@@ -93,6 +98,7 @@ struct Struct
 type List = Struct[] ;
 
 List list={ {-1,-2,"neg"},{3,4,"pos"},{},null };
+
 </pre>
 
 <p>
@@ -100,6 +106,7 @@ and the output <b>sample.ddl.txt</b> is:
 </p>
 
 <pre>
+
 /* sample.ddl */
 
 /* result */
@@ -177,6 +184,7 @@ s16 = (sint16) 3
 u8 = (uint8) 2
 
 s8 = (sint8) 1
+
 </pre>
 
 </body>

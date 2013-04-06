@@ -29,24 +29,26 @@
 <h2>MakeList</h2>
 
 <p>
-<b>MakeList</b> prepares a part of makefile from a file lists. This utility is used in the <b>CCore</b> 
+<b>MakeList</b> prepares a part of makefile from file lists. This utility is used in the <b>CCore</b> 
 build system.
 </p>
 
 <pre>
+
 MakeList.exe &lt;obj-path&gt; &lt;cpp-list-file-name&gt; &lt;s-list-file-name&gt;
+
 </pre>
 
 <p>
-The first command line parameter is the obj path.
+The first command line parameter is the <b>obj</b> path.
 </p>
 
 <p>
-The second is the name of file with <b>.cpp</b> file list.
+The second is the name of the file with a <b>.cpp</b> file list.
 </p>
 
 <p>
-The third is the name of file with <b>.s</b> file list.
+The third is the name of the file with a <b>.s</b> file list.
 </p>
 
 <p>
@@ -54,6 +56,7 @@ The utility creates the output file <b>Makefile.files</b>. It looks like:
 </p>
 
 <pre>
+
 OBJ_LIST = \
 obj/main.o \
 

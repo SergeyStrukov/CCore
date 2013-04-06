@@ -1243,7 +1243,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Algon.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_AntiSem.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ApplyToRange.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_ArmGo.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_ArmGo.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Arrays.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_AsyncFileClients.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_AsyncFileDevice.html" 2
@@ -1267,14 +1267,14 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Counters.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Crc.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DDL.html" 0
-"D:/active/home/C++/CCore-Root-1-04/html/page_DDLShow.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_DDLShow.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DDLTypeSet.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_DefaultTimeout.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DefaultValue.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DeferCall.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_DirTreeRun.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ElementPool.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_EllipticPi.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_EllipticPi.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_EuclidRotate.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Event.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ExceptionType.html" 2
@@ -1302,7 +1302,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Lists.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Lock.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_MSec.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_MakeList.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_MakeList.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_MemAllocGuard.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_MemoryManagement.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Meta.html" 2
