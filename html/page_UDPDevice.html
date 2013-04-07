@@ -38,10 +38,11 @@ These devices implement packet communication using UDP protocol.
 <h4>UDPEndpointDevice</h4>
 
 <p>
-Class <b>UDPEndpointDevice</b> implements the <b>PacketEndpointDevice</b> interface.
+The class <b>UDPEndpointDevice</b> implements the <b>PacketEndpointDevice</b> interface.
 </p>
 
 <pre>
+
 class <span class="Att">UDPEndpointDevice</span> : public ObjBase , public PacketEndpointDevice
  {
    ....
@@ -108,11 +109,12 @@ class <span class="Att">UDPEndpointDevice</span> : public ObjBase , public Packe
       ~StartStop();
     };
  };
+
 </pre>
 
 <p>
 The first constructor argument is the local UDP port, the second is the UDP address (IP address+UDP port) of the 
-communication target. <b>max_packets</b> limits the packet usage for the inbound processing.
+communication peer. <b>max_packets</b> limits the packet usage for the inbound processing.
 </p>
 
 <p>
@@ -120,7 +122,7 @@ communication target. <b>max_packets</b> limits the packet usage for the inbound
 </p>
 
 <p>
-<b>getDst()</b> return the destination UDP address.
+<b>getDst()</b> returns the peer UDP address.
 </p>
 
 <p>
@@ -140,10 +142,11 @@ So attach first, then start. Additional constructor arguments are not used.
 <h4>UDPMultipointDevice</h4>
 
 <p>
-Class <b>UDPMultipointDevice</b> implements the <b>PacketMultipointDevice</b> interface.
+The class <b>UDPMultipointDevice</b> implements the <b>PacketMultipointDevice</b> interface.
 </p>
 
 <pre>
+
 class <span class="Att">UDPMultipointDevice</span> : public ObjBase , public PacketMultipointDevice
  {
    ....
@@ -209,6 +212,7 @@ class <span class="Att">UDPMultipointDevice</span> : public ObjBase , public Pac
       ~StartStop();
     };
  };
+
 </pre>
 
 <p>
@@ -225,7 +229,7 @@ The first constructor argument is the local UDP port.
 </p>
 
 <p>
-Other methods are the <b>PacketEndpointDevice</b> interface implementaion.
+Other methods are the <b>PacketEndpointDevice</b> interface implementation.
 </p>
 
 <p>
@@ -234,36 +238,42 @@ You cannot attach an inbound processor (or detach it) to the object while it is 
 So attach first, then start. Additional constructor arguments are not used.
 </p>
 
-<h4>Sys::Socket</h4>
+<h4>Sys::UDPSocket</h4>
 
 <p>
-Both classes are implemented using <b>Sys::UDPSocket</b> class, declared in the target header <b>sys/SysNet.h</b>.
+Both UDP device classes are implemented using the class <b>Sys::UDPSocket</b>, declared in the target header <b>sys/SysNet.h</b>.
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::UDPSocket</span>
  {
+  // private
+
+  ....
+
   // public
   
   struct InResult
    {
     Net::UDPoint src;
     ulen len;
-    ErrorType error;
+    Sys::ErrorType error;
    };
   
-  ErrorType open(Net::UDPort udport) noexcept;
+  Sys::ErrorType open(Net::UDPort udport) noexcept;
   
-  ErrorType close() noexcept;
+  Sys::ErrorType close() noexcept;
   
-  ErrorType outbound(Net::UDPoint dst,PtrLen&lt;const uint8&gt; data) noexcept;
+  Sys::ErrorType outbound(Net::UDPoint dst,PtrLen&lt;const uint8&gt; data) noexcept;
   
-  WaitResult wait_in(MSec timeout) noexcept;
+  Sys::WaitResult wait_in(MSec timeout) noexcept;
   
-  WaitResult wait_in(TimeScope time_scope) noexcept;
+  Sys::WaitResult wait_in(TimeScope time_scope) noexcept;
   
   InResult inbound(PtrLen&lt;uint8&gt; buf) noexcept;
  };
+
 </pre>
 
 </body>

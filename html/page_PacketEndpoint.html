@@ -46,6 +46,7 @@ It is used in point-to-point communication scenarios.
 </p>
 
 <pre>
+
 struct <span class="Att">PacketEndpointDevice</span>
  {
   virtual PacketFormat getOutboundFormat()=0;
@@ -65,16 +66,17 @@ struct <span class="Att">PacketEndpointDevice</span>
    
   virtual void detach()=0;
  };
+
 </pre>
 
 <p>
-<b>getOutboundFormat()</b> returns an outbound packets format.
+<b>getOutboundFormat()</b> returns the outbound packet format.
 </p>
 
 <p>
 <b>outbound()</b> starts the packet outbound. When the packet processing is complete, 
 the packet is completed. There is no error signaling, because the communication is not assumed reliable.
-The fact the packet is processed does not mean the data are received or will be received by the target.
+The fact the packet is processed does not mean the data are received or will be received by the communication peer.
 </p>
 
 <p>
@@ -82,28 +84,28 @@ The fact the packet is processed does not mean the data are received or will be 
 </p>
 
 <p>
-Data income is an asynchronous process. So to receive it some inbound processor must be attached
+Data income is an asynchronous process. So to receive incoming packets some inbound processor must be attached
 to the endpoint.
 </p>
           
 <p>
 <b>attach()</b> attaches the given processor to the endpoint. Only one processor can be attached
-at the one moment of time. Processor must be detached before endpoint is destroyed.
-Processor methods are called in a unknown task context.
+at any time. Processor must be detached before endpoint is destroyed.
+Processor methods are called in an unknown task context.
 </p>
 
 <p>
-<b>detach()</b> detaches inbound processor form the endpoint.
+<b>detach()</b> detaches inbound processor from the endpoint.
 </p>
 
 <p>
-<b>inbound()</b> is called to handle inbound packet. The first argument is a packet, the second
+<b>inbound()</b> is called to handle an inbound packet. The first argument is a packet, the second
 is an inbound data, it is a part of the 
 packet data buffer.
 </p>
 
 <p>
-<b>tick()</b> is a "network tick". It happens 10 times per seconds. It is used for a protocol timeout
+<b>tick()</b> is a "network tick". It happens 10 times per second. It is used for a protocol timeout
 processing.
 </p>
 
@@ -128,6 +130,7 @@ the packet should be sent to or is received from.
 </p>
 
 <pre>
+
 struct <span class="Att">PacketMultipointDevice</span>
  {
   virtual StrLen toText(XPoint point,PtrLen&lt;char&gt; buf)=0;
@@ -149,6 +152,7 @@ struct <span class="Att">PacketMultipointDevice</span>
    
   virtual void detach()=0;
  };
+
 </pre>
 
 <p>
@@ -170,10 +174,11 @@ const unsigned <span class="Att">InboundTicksPerSec</span> = 10 ;
 </pre>
 
 <p>
-This constant is a net tick frequency.
+This constant is the net tick frequency.
 </p>
 
 <pre>
+
 class <span class="Att">PointDesc</span> : NoCopy
  {
    char buf[TextBufLen];
@@ -198,6 +203,7 @@ class <span class="Att">PointDesc</span> : NoCopy
      Putobj(out,BindOpt(opt,str));
     }
  };
+
 </pre>
 
 <p>

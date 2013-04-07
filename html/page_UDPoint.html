@@ -31,10 +31,11 @@
 <p class="Files">Files <b>CCore/inc/net/UDPoint.h</b> <b>CCore/src/net/UDPoint.cpp</b></p>
 
 <p>
-<b>UDPoint</b> is a UDP address, i.g. IP address + UDP port.
+<b>UDPoint</b> is the UDP address, i.g. IP address + UDP port.
 </p>
 
 <pre>
+
 struct <span class="Att">UDPoint</span>
  {
   IPAddress address;
@@ -63,6 +64,7 @@ struct <span class="Att">UDPoint</span>
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>
@@ -80,15 +82,15 @@ const UDPort <span class="Att">PTPClientUDPort</span> = 52001 ;
 </pre>
 
 <p>
-<b>EchoUDPort</b> &mdash; UDP echo port.
+<b>EchoUDPort</b> &mdash; the standard UDP echo port.
 </p>
 
 <p>
-<b>PTPServerUDPort</b> &mdash; PTP over UDP server port.
+<b>PTPServerUDPort</b> &mdash; PTP over UDP server port. This is not a standard port.
 </p>
 
 <p>
-<b>PTPClientUDPort</b> &mdash; PTP over UDP client port.
+<b>PTPClientUDPort</b> &mdash; PTP over UDP client port. This is not a standard port.
 </p>
 
 </body>

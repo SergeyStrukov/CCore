@@ -39,10 +39,11 @@ These devices implement packet communication using UDP protocol. They are simila
 <h4>AsyncUDPEndpointDevice</h4>
 
 <p>
-Class <b>AsyncUDPEndpointDevice</b> implements the <b>PacketEndpointDevice</b> interface.
+The class <b>AsyncUDPEndpointDevice</b> implements the <b>PacketEndpointDevice</b> interface.
 </p>
 
 <pre>
+
 class <span class="Att">AsyncUDPEndpointDevice</span> : public ObjBase , public PacketEndpointDevice
  {
    ....
@@ -112,11 +113,12 @@ class <span class="Att">AsyncUDPEndpointDevice</span> : public ObjBase , public 
       ~StartStop();
     };
  };
+
 </pre>
 
 <p>
 The first constructor argument is the local UDP port, the second is the UDP address (IP address+UDP port) of the 
-communication target. <b>max_packets</b> limits the packet usage for the inbound processing.
+communication peer. <b>max_packets</b> limits the packet usage for the inbound processing.
 </p>
 
 <p>
@@ -124,7 +126,7 @@ communication target. <b>max_packets</b> limits the packet usage for the inbound
 </p>
 
 <p>
-<b>getDst()</b> return the destination UDP address.
+<b>getDst()</b> returns the peer UDP address.
 </p>
 
 <p>
@@ -144,10 +146,11 @@ So attach first, then start. Additional constructor arguments are not used.
 <h4>AsyncUDPMultipointDevice</h4>
 
 <p>
-Class <b>AsyncUDPMultipointDevice</b> implements the <b>PacketMultipointDevice</b> interface.
+The class <b>AsyncUDPMultipointDevice</b> implements the <b>PacketMultipointDevice</b> interface.
 </p>
 
 <pre>
+
 class <span class="Att">AsyncUDPMultipointDevice</span> : public ObjBase , public PacketMultipointDevice
  {
    ....
@@ -216,6 +219,7 @@ class <span class="Att">AsyncUDPMultipointDevice</span> : public ObjBase , publi
       ~StartStop();
     };
  };
+
 </pre>
 
 <p>
@@ -232,7 +236,7 @@ The first constructor argument is the local UDP port.
 </p>
 
 <p>
-Other methods are the <b>PacketEndpointDevice</b> interface implementaion.
+Other methods are the <b>PacketEndpointDevice</b> interface implementation.
 </p>
 
 <p>
@@ -240,6 +244,96 @@ The inner class <b>StartStop</b> should be used to activate the object of this c
 You cannot attach an inbound processor (or detach it) to the object while it is running.
 So attach first, then start. Additional constructor arguments are not used.
 </p>
+
+<h4>Sys::AsyncUDPSocket</h4>
+
+<p>
+Both async UDP device classes are implemented using <b>Sys::AsyncUDPSocket</b> and <b>Sys::AsyncUDPSocketWait</b>
+classes, provided by the target. They are declared in the header <b>sys/SysNet.h</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">Sys::AsyncUDPSocket</span>
+ {
+  // private
+
+  ....
+  
+  // public
+  
+  struct AsyncState;
+  
+  typedef AsyncState * Async;
+  
+  struct OutResult
+   {
+    bool pending;
+    Sys::ErrorType error;
+   };
+  
+  struct InResult
+   {
+    Sys::ErrorType error;
+    Net::UDPoint src;
+    ulen len;
+   };
+  
+  struct StartInResult
+   {
+    bool pending;
+    InResult result;
+   };
+  
+  Sys::ErrorType open(Net::UDPort udport) noexcept;
+  
+  Sys::ErrorType close() noexcept;
+  
+  OutResult startOutbound(Async async,Net::UDPoint dst,PtrLen&lt;const uint8&gt; data) noexcept;
+  
+  Sys::ErrorType completeOutbound(Async async) noexcept;
+  
+  StartInResult startInbound(Async async,PtrLen&lt;uint8&gt; buf) noexcept;
+  
+  InResult completeInbound(Async async) noexcept;
+ };
+
+</pre>
+
+<pre>
+
+struct <span class="Att">Sys::AsyncUDPSocketWait</span>
+ {
+  // private
+
+  ....
+  
+  // public
+  
+  static const ulen MaxAsyncs = 50 ;
+  
+  Sys::ErrorType init(ulen async_count) noexcept;
+  
+  void exit() noexcept;
+  
+  AsyncUDPSocket::Async getAsync(ulen index) noexcept;
+  
+  bool addWait(ulen index) noexcept;
+  
+  bool delWait(ulen index) noexcept;
+  
+  Sys::WaitResult wait(MSec timeout) noexcept;
+  
+  Sys::WaitResult wait(TimeScope time_scope) noexcept;
+  
+  void interrupt() noexcept; // async , semaphore
+  
+  Sys::WaitResult waitAll(MSec timeout) noexcept;
+  
+  Sys::WaitResult waitAll(TimeScope time_scope) noexcept;
+ };
+
+</pre>
 
 </body>
 
