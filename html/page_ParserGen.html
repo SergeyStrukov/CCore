@@ -35,7 +35,9 @@ build a C++ language parser.
 </p>
 
 <pre>
+
 ParserGen.exe &lt;State.dll-file&gt; &lt;output-prefix&gt;
+
 </pre>
 
 <p>
@@ -50,6 +52,7 @@ Below is an example for AMP language.
 <p><b>Prefix.atom.gen.h</b></p>
 
 <pre>
+
 /* enum AtomClass */ 
 
 enum AtomClass
@@ -75,6 +78,7 @@ enumerators.
 <p><b>Prefix.atom.gen.cpp</b></p>
 
 <pre>
+
 /* enum AtomClass */ 
 
 const char * GetTextDesc(AtomClass ac)
@@ -102,11 +106,13 @@ Implements <b>GetTextDesc(AtomClass ac)</b>.
 <p><b>Prefix.elements1.gen.h</b></p>
 
 <pre>
+
 /* elements */ 
 
 struct Element_A;
 struct Element_M;
 struct Element_P;
+
 </pre>
 
 <p>
@@ -116,6 +122,7 @@ Forward declaration of types, associated with non-terminals. Called "elements".
 <p><b>Prefix.elements2.gen.h</b></p>
 
 <pre>
+
 /* struct Element_A */ 
 
 struct Element_A : ElementBase
@@ -153,12 +160,13 @@ struct Element_P : ElementBase
 
 <p>
 Declaration of elements. Each element has a default constructor and a set of "production" methods,
-correspondent rules. An element context is given as the first argument.
+correspondent rules. An element context is given as the first argument. This type is yours to define.
 </p>
 
 <p><b>Prefix.actions.gen.h</b></p>
 
 <pre>
+
 /* Action::Rule */ 
 
     Do_A1,
@@ -167,6 +175,7 @@ correspondent rules. An element context is given as the first argument.
     Do_M2,
     Do_P1,
     Do_P2
+
 </pre>
 
 <p>
@@ -176,6 +185,7 @@ Rule enumerators declaration.
 <p><b>Prefix.elem.gen.h</b></p>
 
 <pre>
+
 /* elem_...() */ 
 
    Element_A * elem_A1(Element_M *);
@@ -184,6 +194,7 @@ Rule enumerators declaration.
    Element_M * elem_M2(Element_P *,ElementAtom *,Element_M *);
    Element_P * elem_P1(ElementAtom *);
    Element_P * elem_P2(ElementAtom *,Element_A *,ElementAtom *);
+
 </pre>
 
 <p>
@@ -193,6 +204,7 @@ Element creation methods declaration.
 <p><b>Prefix.do.gen.h</b></p>
 
 <pre>
+
 /* do_...() */ 
 
    void do_A1();
@@ -201,6 +213,7 @@ Element creation methods declaration.
    void do_M2();
    void do_P1();
    void do_P2();
+
 </pre>
 
 <p>
@@ -210,6 +223,7 @@ Rule methods declaration.
 <p><b>Prefix.rule_table.gen.cpp</b></p>
 
 <pre>
+
 /* RuleTable */ 
 
 static const RuleTableType RuleTable[22][6]=
@@ -241,13 +255,14 @@ static const RuleTableType RuleTable[22][6]=
 </pre>
 
 <p>
-Table of rules, applyed, when the given atom comes at the given top state.
+Table of rules, applied, when the given atom comes at the given top state.
 You must define a value type (define smaller type to reduce the memory consumption).
 </p>
 
 <p><b>Prefix.atom_state_table.gen.cpp</b></p>
 
 <pre>
+
 /* AtomStateTable */ 
 
 static const StateTableType AtomStateTable[22][6]=
@@ -286,6 +301,7 @@ You must define a value type (define smaller type to reduce the memory consumpti
 <p><b>Prefix.elem.gen.cpp</b></p>
 
 <pre>
+
 /* elem_...() */ 
 
 Element_A * Parser::elem_A1(Element_M *arg1)
@@ -351,6 +367,7 @@ Implementations of element creation methods.
 <p><b>Prefix.do.gen.cpp</b></p>
 
 <pre>
+
 /* do_...() */ 
 
 void Parser::do_A1()
@@ -434,6 +451,7 @@ Implementations of rule methods.
 <p><b>Prefix.do_rule.gen.cpp</b></p>
 
 <pre>
+
 /* doRule */ 
 
      case Action::Do_A1 : do_A1(); break;
@@ -442,6 +460,7 @@ Implementations of rule methods.
      case Action::Do_M2 : do_M2(); break;
      case Action::Do_P1 : do_P1(); break;
      case Action::Do_P2 : do_P2(); break;
+
 </pre>
 
 <p>
@@ -451,6 +470,7 @@ Implementation of <b>doRule()</b> method.
 <p><b>Prefix.next_state.gen.cpp</b></p>
 
 <pre>
+
 /* Element_...::NextState() */ 
 
 /* Element_A::NextState() */ 
@@ -504,6 +524,7 @@ Implementations of <b>NextState()</b> methods.
 <p><b>Prefix.elements3.gen.cpp</b></p>
 
 <pre>
+
 /* struct Element_A */ 
 
 void Element_A::A1(ElementContext,Element_M *)
@@ -543,14 +564,15 @@ void Element_P::P2(ElementContext,ElementAtom *,Element_A *,ElementAtom *)
 </pre>
 
 <p>
-Blank for element production methods.
+Blanks for element production methods.
 </p>
 
 <p>
-These files are pieces of parser declaration. The parser itself can be built like this (many words):
+These files are pieces of parser declaration. The parser itself can be built like this (long text):
 </p>
 
 <pre>
+
 /* classes */
 
 //enum AtomClass;
@@ -862,6 +884,12 @@ auto Parser::complete() -&gt; Result
 <span class="Att">#include "Prefix.elements3.gen.cpp"</span>
 
 </pre>
+
+<p>
+Parser is fed by atoms. During parsing it creates a number of elements. Finally, it creates
+the element of resulting type at the top of parsing stack. The class <b>ElementContext</b>
+is responsible, among other, for the elements creation. Typically, elements are created in an element pool.
+</p>
 
 </body>
 

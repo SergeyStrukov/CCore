@@ -1323,7 +1323,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_ObjectDomain.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_ObjectHost.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ObjectHosting.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_Optional.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_Optional.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_OwnPtr.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTP.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPBoot.html" 0
@@ -1336,7 +1336,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_PacketEndpoint.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PacketPool.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PacketSet.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_ParserGen.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_ParserGen.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Paths.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Place.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PlanInit.html" 2

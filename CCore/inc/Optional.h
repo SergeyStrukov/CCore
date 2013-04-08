@@ -69,8 +69,6 @@ class Optional : NoCopy
    
    template <unsigned slot,class T>
    T * take();
-   
-   // swap/move object
  };
 
 template <class T>
