@@ -90,7 +90,7 @@ class Signal : NoCopy
    
    void assert(TT ... tt);
    
-   // class ConnectionBase
+   // class ConnectorBase
    
    class ConnectorBase : Node
     {

@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_Signal.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.04
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Signals</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,163 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Signals</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/Signal.h</b> <b>CCore/src/Signal.cpp</b></p>
 
+<p>
+A signal represents some event. Anybody interested in a reacting on the event may subscribe to receive a signal.
+Technically, signal is a list of subscribers. A signal assertion calls subscribers reaction methods.
+</p>
+
+<h4>Signal</h4>
+
+<p>
+The class <b>Signal</b> itself is very simple.
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+class <span class="Att">Signal</span> : NoCopy
+ {
+   ....
+
+  public:
+ 
+   // constructors
+ 
+   Signal();
+   
+   ~Signal();
+   
+   // props
+   
+   ulen getConnectedCount() const;
+   
+   // methods
+   
+   void assert(TT ... tt);
+   
+   // class ConnectorBase
+   
+   class ConnectorBase : NoCopy
+    {
+      ....
+
+     public:
+
+      // constructors
+    
+      template &lt;class S&gt;
+      explicit ConnectorBase(void (S::* call)(TT ... tt));
+      
+      ~ConnectorBase() {} // disconnect() must be called in the destructor of a derived class
+      
+      // props
+      
+      bool isConnected() const;
+      
+      // methods
+      
+      bool connect(Signal&lt;TT...&gt; &amp;signal);
+      
+      bool disconnect();
+    };
+ };
+
+</pre>
+
+<p>
+<b>getConnectedCount()</b> returns the number of subscribers.
+</p>
+
+<p>
+<b>assert()</b> asserts the signal. All subscribers are called. Subscriber may disconnect itself during the call.
+</p>
+
+<p>
+The inner class <b>ConnectorBase</b> is used to build connector classes. A connector class manages
+connection and disconnection to a signal.
+</p>
+
+<p>
+The constructor argument <b>call</b> is a pointer to a method of a derived from the <b>ConnectorBase</b> class.
+This method is called when a connected signal is asserted.
+</p>
+
+<p>
+<b>isConnected()</b> returns <b>true</b>, if the connector is connected to a signal.
+</p>
+
+<p>
+<b>connect()</b> connects to a signal. The return value indicates success. Connector must be disconnected.
+</p>
+
+<p>
+<b>disconnect()</b> disconnects a signal. The return value indicates success. Connector must be connected.
+</p>
+
+<p>
+Connector can be connected only to one signal. Derived class must call <b>disconnect()</b> in its destructor.
+When a signal dies, it's automatically disconnected from all subscribers.
+</p>
+
+<h4>SignalConnector</h4>
+
+<p>
+The class <b>SignalConnector</b> should be used as a connector class.
+</p>
+
+<pre>
+
+template &lt;class S,class ... TT&gt;
+class <span class="Att">SignalConnector</span> : public Signal&lt;TT...&gt;::ConnectorBase 
+ {
+   ....
+
+  public:
+
+   // constructors
+ 
+   SignalConnector(S *obj,void (S::* method)(TT ... tt));
+   
+   SignalConnector(S *obj,void (S::* method)(TT ... tt),Signal&lt;TT...&gt; &amp;signal);
+   
+   ~SignalConnector();
+ };
+
+</pre>
+
+<p>
+It uses the given object and its method to react on a signal. The second constructor also connects the object
+to the given signal. 
+</p>
+
+<p>
+Normally, you should include the connector object in the subscribers class:
+</p>
+
+<pre>
+
+class Subscriber
+ {
+   SignalConnector&lt;Subscriber,int&gt; connector;
+
+  private:
+
+   void method(int);
+
+  public:
+
+   Subscriber() : connector(this,&Subscriber::method) {}
+ };
+
+</pre>
+
+<h4>SignalInterface</h4>
+
+<h4>SignalInterfaceConnector</h4>
 
 </body>
 
