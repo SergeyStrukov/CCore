@@ -182,7 +182,91 @@ class Subscriber
 
 <h4>SignalInterface</h4>
 
+<p>
+The class <b>SignalInterface</b> is similar to the <b>Signal</b>, but provides an alternative way of the signal assertion.
+</p>
+
+<pre>
+
+template &lt;class I&gt;
+class <span class="Att">SignalInterface</span> : NoCopy
+ {
+   ....
+
+  public:
+ 
+   // constructors
+ 
+   SignalInterface();
+   
+   ~SignalInterface();
+   
+   // props
+   
+   ulen getConnectedCount() const;
+   
+   // methods
+   
+   template &lt;class FuncInit&gt;
+   void assert(FuncInit func_init); // func(I &amp;)
+   
+   // class ConnectorBase
+   
+   class ConnectorBase : NoCopy
+    {
+      ....
+     
+     public:
+
+      // constructors
+    
+      explicit ConnectorBase(I *iptr);
+      
+      ~ConnectorBase() {} // disconnect() must be called in the destructor of a derived class
+      
+      // props
+      
+      bool isConnected() const;
+      
+      // methods
+      
+      bool connect(SignalInterface&lt;I&gt; &amp;signal);
+      
+      bool disconnect();
+    };
+ };
+
+</pre>
+
+<p>
+<b>assert()</b> creates a functor, using <a href="page_FunctorType.html"><b>Functor Init Pattern</b></a>,
+and applies it to the interface, supplied by a subscriber. The pointer to the interface is recorded
+by the <b>ConnectorBase</b> class constructor.
+</p>
+
 <h4>SignalInterfaceConnector</h4>
+
+<p>
+The class <b>SignalInterfaceConnector</b> should be used as a connector class to work with the <b>SignalInterface</b>.
+</p>
+
+<pre>
+
+template &lt;class I&gt;
+class <span class="Att">SignalInterfaceConnector</span> : public SignalInterface&lt;I&gt;::ConnectorBase 
+ {
+  public:
+
+   // constructors
+ 
+   explicit SignalInterfaceConnector(I *obj);
+   
+   SignalInterfaceConnector(I *obj,SignalInterface&lt;I&gt; &amp;signal);
+   
+   ~SignalInterfaceConnector();
+ };
+
+</pre>
 
 </body>
 

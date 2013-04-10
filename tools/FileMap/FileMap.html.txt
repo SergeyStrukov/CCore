@@ -1296,7 +1296,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Installation.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Introduction.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Job.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_LangLR1.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_LangLR1.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Len.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_LineInput.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Lists.html" 2
@@ -1361,7 +1361,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_SaveLoad.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ScanBit.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Sem.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_Signal.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_Signal.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_SingleHost.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_SlowSem.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Sort.html" 2

@@ -257,7 +257,7 @@ class SignalInterface : NoCopy
    template <class FuncInit>
    void assert(FuncInit func_init); // func(I &)
    
-   // class ConnectionBase
+   // class ConnectorBase
    
    class ConnectorBase : Node
     {
