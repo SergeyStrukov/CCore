@@ -1329,7 +1329,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPBoot.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPCon.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPHFS.html" 0
-"D:/active/home/C++/CCore-Root-1-04/html/page_PTPServer.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_PTPServer.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPService.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPSupport.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_Packet.html" 2
@@ -1355,7 +1355,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Random.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_RealTime.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_RefPtr.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_Regen.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_Regen.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Replace.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ResSem.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_SaveLoad.html" 2

@@ -34,7 +34,9 @@ C++ code to work with register values.
 </p>
 
 <pre>
+
 Regen.exe &lt;input file&gt; &lt;output file&gt;
+
 </pre>
 
 <p>
@@ -42,6 +44,7 @@ Here is a sample description:
 </p>
 
 <pre>
+
 reg ISR : 8 // interrupt status register
  {
   A : 0
@@ -80,6 +83,7 @@ bar Test : address
 
   TEMP = hidden
  }
+
 </pre>
 
 <p>
@@ -87,6 +91,7 @@ It defines a set of registers and the register bar. Register is defined as:
 </p>
 
 <pre>
+
 reg CTRL : 32
  {
   RUN   : 0
@@ -102,6 +107,7 @@ reg CTRL : 32
     ACK  = 7
    }
  }
+
 </pre>
 
 <p>
@@ -113,15 +119,15 @@ Dot denotes the current bit.
 A bit field can be given either as <b>first-last</b> bits or as <b>.+bit length</b>. 
 Asterisk can be used to insert unused bits. 
 Bit field may have an associated named value list.
-Value can be given in decimal, hexadecimal (with suffix h) or binary (with suffix b) form.
+Value can be given in decimal, hexadecimal (with suffix <b>h</b>) or binary (with suffix <b>b</b>) form.
 If the bits description is empty, the register is assumed untyped.
 </p>
 
 <p>
-Register bar is a set of registers as a unit. Hardware units are controlled using a register bars.
-A method of reading and writing registers may vary. It can be a memory-mapped registers, or the
+Register bar is a set of registers as a unit. Hardware units are usually controlled using register bars.
+A method of reading and writing registers may vary. It can be memory-mapped registers, or the
 register access may involve some function calls and, in fact, can be quite expensive.
-<b>Regen</b> generates a helper class to abstract from an exact register access process.
+<b>Regen</b> generates a helper class to abstract from the exact register access process.
 </p>
 
 <p>
@@ -129,11 +135,11 @@ Register bar has a register refer mode: address or index.
 Dot denotes the current address or index.
 Bar description is a list of registers or register blocks with its properties. 
 The first property is the address (or index).
-It can be given explicitly or imlpicitly. 
+It can be given explicitly or implicitly. 
 If the address mode is used, then the next address is defined using the register byte length. 
 The next attribute is the access mode. It can be <b>RO</b>, <b>WO</b>, <b>RW</b> or <b>hidden</b>,
 <b>RW</b> by default. 
-Finally, a register type can given using the directive <b>as</b>. Multiple registers can share the same
+Finally, a register type can be given using the directive <b>as</b>. Multiple registers can share the same
 register structure.
 </p>
 
@@ -142,6 +148,7 @@ register structure.
 </p>
 
 <pre>
+
 /* Test.gen.h */ 
 
 ....
@@ -188,6 +195,7 @@ inline PrintField_CTRL_MODE GetTextDesc(Field_CTRL_MODE field)
  {
   return PrintField_CTRL_MODE(field);
  }
+
 </pre>
 
 <p>
@@ -198,6 +206,7 @@ Finally, the type <b>Type_CTRL</b> to represent and manipulate with the register
 </p>
  
 <pre>
+
 struct Type_CTRL
  {
   typedef uint32 Type;
@@ -279,6 +288,7 @@ and return a reference to the object, so they can be chained.
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>
@@ -286,6 +296,7 @@ Finally, the print method is provided to print the value in a verbose manner.
 </p>
  
 <pre>
+
 /* type Type_TEMP */ 
 
 typedef uint16 Type_TEMP;
@@ -301,6 +312,7 @@ Register bar generates a register bar class.
 </p>
 
 <pre>
+
 /* struct Test&lt;RW&gt; */ 
 
 template &lt;class RW&gt;
@@ -318,6 +330,7 @@ The inner object <b>rw</b> is a mean to read or write a register. It must implem
 </p>
 
 <pre>
+
 class RW
  {
    ....
@@ -332,6 +345,7 @@ class RW
    template &lt;class UInt&gt;
    void set(AddressType address,UInt value);
  };
+
 </pre>
 
 <p>
@@ -340,6 +354,7 @@ template parameters.
 </p>
 
 <pre>
+
   template &lt;class T&gt;
   struct Setter
    {
@@ -350,6 +365,7 @@ template parameters.
 
     void operator () (T value) { rw.set(address,value.value); }
    };
+
 </pre>
 
 <p>
@@ -357,6 +373,7 @@ Setter classes are used to set a register value. They bind the read-writer and t
 </p>
 
 <pre>
+
   //--- CTRL
 
   Type_CTRL get_CTRL();
@@ -389,6 +406,7 @@ with all bits equals null or one.
 </p>
 
 <pre>
+
   //--- EXT
 
   Type_CTRL get_EXT(uint32 ind);
@@ -400,10 +418,11 @@ with all bits equals null or one.
 </pre>
 
 <p>
-Block register methods have additional argument &mdash; register index.
+Block register methods have additional argument &mdash; the register index.
 </p>
 
 <pre>
+
   //--- ISR
 
   Type_ISR get_ISR();
@@ -419,6 +438,7 @@ Read-only registers have no set methods.
 </p>
 
 <pre>
+
   //--- IMR
 
   void set_IMR(Type_ISR value);
@@ -428,10 +448,11 @@ Read-only registers have no set methods.
 </pre>
 
 <p>
-Write-only registers have no get methogs.
+Write-only registers have no get methods.
 </p>
 
 <pre>
+
   //--- TEMP
 
  };
