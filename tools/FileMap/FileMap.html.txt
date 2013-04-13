@@ -1330,8 +1330,8 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPCon.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPHFS.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPServer.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_PTPService.html" 0
-"D:/active/home/C++/CCore-Root-1-04/html/page_PTPSupport.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_PTPService.html" 2
+"D:/active/home/C++/CCore-Root-1-04/html/page_PTPSupport.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Packet.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PacketEndpoint.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PacketPool.html" 2

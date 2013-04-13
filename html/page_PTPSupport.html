@@ -72,9 +72,9 @@ struct LenOutput
 
 <p>
 This function is used to cap an input/output packet lengths. Client sends its limits to the
-server. The limits should not exceed <b>MaxInfoLen</b> (1440). Server downs these limits to its own
+server. Limits should not exceed <b>MaxInfoLen</b> (1440). Server downs these limits to its own
 limits and sends back to the client. These values can be used further to calculate different
-data limits in other PTP service/functions.
+data limits in other <b>PTP</b> service/functions.
 </p>
 
 <p>
@@ -117,7 +117,7 @@ struct SessionOutput
 
 <p>
 This function is used to inform the server, that this particular client starts a new session and all
-remaining state information from the past should be discarded if any. It is recommended, that
+remaining state information from the past should be discarded, if any. It is recommended, that
 <b>PTP</b> client-server interaction starts with <b>Len</b> and <b>Session</b> functions.
 </p>
 
@@ -143,7 +143,7 @@ struct EchoOutput
 </pre>
 
 <p>
-This function echos the input data after the given delay in msec. The maximum delay value
+This function echoes the input data after the given delay in milliseconds. The maximum delay value
 is 1000*60*60 (1 hour).
 </p>
 
@@ -169,7 +169,7 @@ struct ErrorDescOutput
 </pre>
 
 <p>
-This function returns a text desciption of the particular error code. The input contains
+This function returns a text description of the particular error code. The input contains
 a service/function ids and the error code. The output is a text (byte) string, up to 255 byte length.
 </p>
 
@@ -204,11 +204,15 @@ is <b>NoError</b> or <b>NoFunction</b>.
 The file <b>txt/PTPSupport.txt.cpp</b> contains this service definition.
 </p>
 
+<p>
+<b>PTPSupportBase.h</b> defines these entities withing namespace <b>PTPSupport</b>.
+</p>
+
 <h3>Support functions with ClientDevice</h3>
 
 <p>
 Support functions can be performed using the <b>ClientDevice</b> class.
-There are several helper classes for this.
+There are several helper classes for this. They are withing namespace <b>PTP</b>.
 </p>
 
 <p>
@@ -218,7 +222,7 @@ The packet set is used to take a transaction packet.
 </p>
 
 <p>
-The method <b>perform()</b> or <b>perform_guarded()</b> performes the transaction.
+The method <b>perform()</b> or <b>perform_guarded()</b> performs the transaction.
 It is a blocking call.
 The first argument is a timeout, both <b>MSec</b> and <b>TimeScope</b> argument types are allowed.
 <b>perform()</b> returns a boolean value to indicate a success, 
@@ -229,6 +233,7 @@ If the operation successfully finished, the result can be obtained by the corres
 <h4>Support_Exist</h4>
 
 <pre>
+
 class <span class="Att">Support_Exist</span> : NoCopy 
  {
    ....
@@ -251,6 +256,7 @@ class <span class="Att">Support_Exist</span> : NoCopy
     
    ResultType getResult();
  };
+
 </pre>
 
 <p>
@@ -265,6 +271,7 @@ the <b>Unknown</b> is returned.
 <h4>Support_ErrorDesc</h4>
 
 <pre>
+
 class <span class="Att">Support_ErrorDesc</span> : NoCopy
  {
    ....
@@ -278,6 +285,7 @@ class <span class="Att">Support_ErrorDesc</span> : NoCopy
     
    StrLen getDesc() const;
  };
+
 </pre>
 
 <p>
@@ -292,6 +300,7 @@ If the operation is failed, <b>"Unknown error"</b> is returned.
 <h4>Support_Seed</h4>
 
 <pre>
+
 class <span class="Att">Support_Seed</span> : NoCopy
  {
    ....
@@ -310,6 +319,7 @@ class <span class="Att">Support_Seed</span> : NoCopy
     
    uint64 getSeed2() const;
  };
+
 </pre>
 
 <p>
@@ -319,6 +329,7 @@ class <span class="Att">Support_Seed</span> : NoCopy
 <h4>Support_Echo</h4>
 
 <pre>
+
 class <span class="Att">Support_Echo</span> : NoCopy
  {
    ....
@@ -335,6 +346,7 @@ class <span class="Att">Support_Echo</span> : NoCopy
     
    PtrLen&lt;const uint8&gt; getEcho() const;
  };
+
 </pre>
 
 <p>
@@ -343,6 +355,7 @@ This class is responsible for the echo data creation. It must implement the foll
 </p>
 
 <pre>
+
 class Fill
  {
   public:
@@ -351,6 +364,7 @@ class Fill
 
    void fill(PtrLen&lt;uint8&gt; buf);
  };
+
 </pre>
 
 <p>

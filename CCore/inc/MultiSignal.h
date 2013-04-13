@@ -38,6 +38,8 @@ class MultiSignal : NoCopy
   
    explicit MultiSignal(ulen max_slot) : optional(max_slot) {}
    
+   ~MultiSignal() {}
+   
    template <unsigned slot,class ... TT>
    void assert(TT... tt)
     {

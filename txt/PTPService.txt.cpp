@@ -43,7 +43,7 @@
      FunctionIdType function_id;
     };
  
-   struct Result // if( error==NoError ) output follows
+   struct Result // if( error_id==NoError ) result follows
     {
      ServiceFunction serv_func;
      ErrorIdType error_id;

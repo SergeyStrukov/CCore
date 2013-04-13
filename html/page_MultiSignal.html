@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_MultiSignal.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.04
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> MultiSignals</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,115 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>MultiSignals</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/MultiSignal.h</b> <b>CCore/src/MultiSignal.cpp</b></p>
 
+<p>
+<b>MultiSignal</b> is a group of signals. They are combined using the class <a href="page_Optional.html"><b>Optional</b></a>. 
+This construction is useful if you have an object with number of signals, but only a small subset 
+of them are practically used. Only a signal being subscribed is constructed as an object.
+</p>
+
+<h4>MultiSignal</h4>
+
+<p>
+Particular signals are identified by slot numbers.
+</p>
+
+<pre>
+
+class <span class="Att">MultiSignal</span> : NoCopy
+ {
+   ....
+   
+  public:
+  
+   explicit MultiSignal(ulen max_slot);
+   
+   ~MultiSignal();
+
+   template &lt;unsigned slot,class ... TT&gt;
+   void assert(TT... tt);
+   
+   template &lt;unsigned slot,class ... TT&gt;
+   Signal&lt;TT...&gt; &amp; take();
+ };
+
+</pre>
+
+<p>
+<b>max_slot</b> is a maximum slot number.
+</p>
+
+<p>
+<b>assert()</b> asserts the given signal. You must always use the same combination of the slot and the argument type list
+in all methods. If the signal has not been constructed the method has no effect.
+</p>
+
+<p>
+<b>take()</b> takes particular signal. If the signal has not been constructed, it is constructed.
+</p>
+
+<p>
+It is recommended to hide the class <b>MultiSignal</b> behind some facade class.
+</p>
+
+<pre>
+
+class SignallingClass
+ {
+   MultiSignal msignal;
+
+   ....
+
+  public:
+
+   SignallingClass() : msignal(99) {}
+
+   // 100 signals
+
+   void assertSignal0(int a) { msignal.assert&lt;0,int&gt;(a); }
+
+   Signal&lt;int&gt; &amp; takeSignal0() { return msignal.take&lt;0,int&gt;(); } 
+
+   void assertSignal1(int a,int b) { msignal.assert&lt;1,int,int&gt;(a,b); }
+
+   Signal&lt;int,int&gt; &amp; takeSignal1() { return msignal.take&lt;1,int,int&gt;(); } 
+
+   ....
+ };
+
+</pre>
+
+<h4>DeferMultiSignal</h4>
+
+<p>
+<b>DeferMultiSignal</b> extends the <b>MultiSignal</b> by two methods. They can be used to post a signal assertion
+into a <a href="page_DeferCall.html"><b>DeferCall</b></a> processing loop. Remember, arguments are copied and used
+later.
+</p>
+
+<pre>
+
+class <span class="Att">DeferMultiSignal</span> : public MultiSignal
+ {
+   ....
+   
+  public:
+  
+   explicit DeferMultiSignal(unsigned max_slot);
+   
+   ~DeferMultiSignal();
+   
+   template &lt;unsigned slot,class ... TT&gt;
+   void post(const TT &amp; ... tt);
+   
+   template &lt;unsigned slot,class ... TT&gt;
+   void post_first(const TT &amp; ... tt);
+ };
+
+</pre>
 
 </body>
 

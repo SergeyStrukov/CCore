@@ -106,7 +106,7 @@ const ErrorIdType Unknown    = 4 ;
 </p>
 
 <p>
-<b>Exhausted</b> &mdash; server has not enough resourses to serve the request.
+<b>Exhausted</b> &mdash; server has not enough resources to serve the request.
 </p>
 
 <p>
@@ -125,7 +125,7 @@ struct ServiceFunction
   FunctionIdType function_id;
  };
  
-struct Result // if( error==NoError ) output follows
+struct Result // if( error_id==NoError ) result follows
  {
   ServiceFunction serv_func;
   ErrorIdType error_id;
@@ -134,7 +134,8 @@ struct Result // if( error==NoError ) output follows
 </pre>
 
 <p>
-Client info starts from the <b>ServiceFunction</b> header, followed by the function arguments.
+Client info starts from the <b>ServiceFunction</b> header, followed by function arguments.
+The bigendian byte order is used to encode values.
 </p>
 
 <p>
@@ -148,6 +149,10 @@ If a client info has no proper header (i.g. it is too short), the server cancels
 
 <p>
 The file <b>txt/PTPService.txt.cpp</b> contains all of these definitions.
+</p>
+
+<p>
+<b>PTPExtra.h</b> defines these entities withing namespace <b>PTP</b>.
 </p>
 
 </body>
