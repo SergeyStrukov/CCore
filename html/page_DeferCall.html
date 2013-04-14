@@ -30,6 +30,339 @@
 
 <p class="Files">Files <b>CCore/inc/DeferCall.h</b> <b>CCore/src/DeferCall.cpp</b></p>
 
+<p>
+<b>DeferCall</b> is a defer call engine. It allows record actions and execute them in a defer call loop.
+This technology is similar to the message loop processing, known in the GUI application development, but is not 
+restricted to a predefined set of messages.
+</p>
+
+<p>
+<b>DeferCall</b> is essentially single-threaded. You may run several defer call loops on one per thread basis.
+</p>
+
+<p>
+To run a <b>DeferCall</b> loop, you have to derive a class from the <b>DeferCallQueue</b>.
+</p>
+
+<pre>
+
+class Queue : public DeferCallQueue
+ {
+   ....
+
+  public:
+  
+   Queue() 
+    {
+     activate();
+    }
+   
+   ~Queue() 
+    {
+     deactivate();
+    }
+   
+   void forward(TimeScope time_scope)
+    {
+     ....
+    }
+ };
+
+</pre>
+
+<p>
+<b>forward()</b> is called when the defer call queue is empty. This method must generate a new defer call or sleep
+within the given <b>time_scope</b> period. This method is used to generate defer calls to handle external events,
+like key pressing of mouse movement.
+</p>
+
+<p>
+Next, you have to create a queue object, then prepare other entities and run the loop.
+</p>
+
+<pre>
+
+Queue queue;
+
+....
+
+Queue::Loop();
+
+</pre>
+
+<p>
+To stop the loop use the <b>DeferCallQueue::Stop()</b>. The global methods address the current active <b>DeferCallQueue</b>
+object for the current thread.
+</p>
+
+<h4>DeferCall</h4>
+
+<p>
+The class <b>DeferCall</b> serves as the base class of other defer call classes. You don't need to use it directly.
+</p>
+
+<pre>
+
+class <span class="Att">DeferCall</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   DeferCall();
+  
+   ~DeferCall();
+   
+   virtual void call()=0;
+   
+   virtual void destroy(DeferCallQueue *defer_queue)=0;
+   
+   void safeCall();
+   
+   static void * operator new(std::size_t len,DeferCallQueue *defer_queue);
+   
+   static void * operator new(std::size_t len,JustTryType,DeferCallQueue *defer_queue) noexcept;
+   
+   static void operator delete(void *mem,DeferCallQueue *defer_queue);
+   
+   static void operator delete(void *mem,JustTryType,DeferCallQueue *defer_queue);
+ };
+
+</pre>
+
+<p>
+<b>call()</b> is defined in a derived class and is an actual processing method.
+</p>
+
+<p>
+<b>destroy()</b> is defined in a derived class to properly destroy the object.
+</p>
+
+<p>
+<b>safeCall()</b> calls the <b>call()</b> and catches and ignores all exceptions.
+</p>
+
+<p>
+Other methods are used to allocate and free memory for the object from the given <b>DeferCallQueue</b>.
+</p>
+
+<h4>DeferCallHeap</h4>
+
+<p>
+The class <b>DeferCallHeap</b> is used to allocate and free memory for <b>DeferCall</b> objects.
+An object of this class is used by a <b>DeferCallQueue</b> object for the memory management.
+</p>
+
+<pre>
+
+class <span class="Att">DeferCallHeap</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   explicit DeferCallHeap(ulen mem_len);
+   
+   ~DeferCallHeap();
+   
+   void * alloc(ulen len);
+   
+   void free(void *mem);
+   
+   static ulen GetMaxLen(); // max cached length
+ };
+
+</pre>
+
+<p>
+The memory is taken from a memory block of <b>mem_len</b> length. This block is allocated by the constructor
+and released by the destructor.
+</p>
+
+<p>
+<b>alloc()</b> returns null if there is no memory available.
+</p>
+
+<p>
+<b>free()</b> argument must not be null.
+</p>
+
+<p>
+<b>GetMaxLen()</b> is used for the memory allocation caching. To speed up memory operations for short objects 
+<b>DeferCallHeap</b> mantains a list of short memory blocks up to some count for such allocations.
+</p>
+
+<h4>DeferCallQueue</h4>
+
+<pre>
+
+class <span class="Att">DeferCallQueue</span> : NoCopy
+ {
+   ....
+
+  private:
+   
+   virtual void forward(TimeScope time_scope)=0;
+   
+  protected:
+   
+   void activate(); 
+   
+   void deactivate();
+   
+  public:
+   
+   // constructors
+   
+   static const ulen DefaultMemLen = 1_MByte ;
+   
+   explicit DeferCallQueue(ulen mem_len=DefaultMemLen);
+   
+   ~DeferCallQueue();
+   
+   // heap
+   
+   void * try_alloc(ulen len);
+   
+   void * alloc(ulen len);
+   
+   void free(void *mem); // mem!=0
+   
+   template &lt;class T&gt;
+   void destroy(T *obj);
+   
+   // call
+   
+   void post(DeferCall *defer_call);
+   
+   void post_first(DeferCall *defer_call);
+   
+   void start_tick(DeferCall *defer_call);
+   
+   void stop_tick(DeferCall *defer_call); 
+   
+   // loop
+   
+   static constexpr MSec DefaultTickPeriod = 40_msec ; // 25 Hz 
+   
+   void loop(MSec tick_period=DefaultTickPeriod);
+   
+   void stop();
+   
+   // per-thread queue
+   
+   static DeferCallQueue * Get();
+   
+   static void Loop(MSec tick_period=DefaultTickPeriod);
+   
+   static void Stop();
+ };
+
+</pre>
+
+<h4>DeferCouple</h4>
+
+<h4>DeferTick</h4>
+
+<pre>
+
+class <span class="Att">DeferTick</span> : NoCopy
+ {
+   ....
+
+  public: 
+   
+   // constructors
+   
+   explicit DeferTick(DeferCouple couple_={});
+   
+   ~DeferTick();
+   
+   // set/reset
+   
+   bool set(DeferCouple couple);
+   
+   bool reset();
+   
+   void operator = (DeferCouple couple);
+   
+   // start/stop
+   
+   bool start();
+   
+   bool stop();
+ };
+
+</pre>
+
+<h4>DeferInput</h4>
+
+<pre>
+
+template &lt;class S&gt;
+class <span class="Att">DeferInput</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   template &lt;class ... TT&gt;
+   static constexpr ulen GetMessageLength();
+ 
+   // constructors
+   
+   explicit DeferInput(S *obj);
+   
+   ~DeferInput();
+   
+   void cancel();
+   
+   // post
+   
+   template &lt;class ... TT&gt;
+   DeferCouple create(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   
+   template &lt;class ... TT&gt;
+   void post(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   
+   template &lt;class ... TT&gt;
+   void post_first(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+
+   // try post
+   
+   template &lt;class ... TT&gt;
+   DeferCouple try_create(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   
+   template &lt;class ... TT&gt;
+   void try_post(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   
+   template &lt;class ... TT&gt;
+   void try_post_first(void (S::* method)(TT... tt),const TT &amp; ... tt); 
+   
+   // post interface
+   
+   template &lt;class FuncInit&gt;
+   DeferCouple create(FuncInit func_init); // func(S &amp;)
+   
+   template &lt;class FuncInit&gt;
+   void post(FuncInit func_init); 
+   
+   template &lt;class FuncInit&gt;
+   void post_first(FuncInit func_init); 
+   
+   // try post interface
+   
+   template &lt;class FuncInit&gt;
+   DeferCouple try_create(FuncInit func_init); // func(S &amp;)
+   
+   template &lt;class FuncInit&gt;
+   void try_post(FuncInit func_init); 
+   
+   template &lt;class FuncInit&gt;
+   void try_post_first(FuncInit func_init); 
+ };
+
+</pre>
 
 </body>
 
