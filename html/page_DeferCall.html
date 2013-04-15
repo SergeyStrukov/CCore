@@ -72,8 +72,8 @@ class Queue : public DeferCallQueue
 
 <p>
 <b>forward()</b> is called when the defer call queue is empty. This method must generate a new defer call or sleep
-within the given <b>time_scope</b> period. This method is used to generate defer calls to handle external events,
-like key pressing of mouse movement.
+within the given <b>time_scope</b> period. <b>forward()</b> should be used to generate defer calls 
+to handle external events, like key pressing of mouse movement.
 </p>
 
 <p>
@@ -92,7 +92,8 @@ Queue::Loop();
 
 <p>
 To stop the loop use the <b>DeferCallQueue::Stop()</b>. The global methods address the current active <b>DeferCallQueue</b>
-object for the current thread.
+object for the current thread. Objects, involved in the <b>DeferQueue</b> processing on this thread, 
+should live withing the queue object life-time.
 </p>
 
 <h4>DeferCall</h4>
@@ -151,6 +152,7 @@ Other methods are used to allocate and free memory for the object from the given
 <p>
 The class <b>DeferCallHeap</b> is used to allocate and free memory for <b>DeferCall</b> objects.
 An object of this class is used by a <b>DeferCallQueue</b> object for the memory management.
+You don't need to use this class directly.
 </p>
 
 <pre>
@@ -180,7 +182,7 @@ and released by the destructor.
 </p>
 
 <p>
-<b>alloc()</b> returns null if there is no memory available.
+<b>alloc()</b> returns null, if there is no memory available.
 </p>
 
 <p>
@@ -189,10 +191,17 @@ and released by the destructor.
 
 <p>
 <b>GetMaxLen()</b> is used for the memory allocation caching. To speed up memory operations for short objects 
-<b>DeferCallHeap</b> mantains a list of short memory blocks up to some count for such allocations.
+<b>DeferCallHeap</b> maintains a list of short memory blocks up to some count for such allocations.
+<b>GetMaxLen()</b> determines the maximum short allocation length.
 </p>
 
 <h4>DeferCallQueue</h4>
+
+<p>
+The class <b>DeferCallQueue</b> is a main <b>DeferCall</b> engine class. It maintains the list of <b>DeferCall</b>s
+and executes them in a loop. The object of this type is registered per thread as the current thread
+<b>DeferCall</b> loop object.
+</p>
 
 <pre>
 
@@ -260,7 +269,152 @@ class <span class="Att">DeferCallQueue</span> : NoCopy
 
 </pre>
 
+<p>
+<b>forward()</b> must be defined in a derived class. This method is called when the defer call queue is empty.
+</p>
+
+<p>
+<b>activate()</b> must be called in a derived class constructor to register the object with the current thread. 
+If some object is already registered, an exception is thrown.
+</p>
+
+<p>
+<b>deactivate()</b> must be called in a derived class destructor to unregister the object with the current thread.
+</p>
+
+<p>
+<b>DefaultMemLen</b> is the default heap capacity.
+</p>
+
+<p>
+<b>mem_len</b> is a heap capacity. All <b>DeferCall</b> objects for this loop are created in the heap of this capacity.
+</p>
+
+<p>
+The following four methods are heap methods. You don't need to use these methods directly.
+</p>
+
+<p>
+<b>try_alloc()</b> returns null, if there is no memory.
+</p>
+
+<p>
+<b>alloc()</b> throws an exception, if there is no memory.
+</p>
+
+<p>
+<b>free()</b> releases the memory, the argument must not be null.
+</p>
+
+<p>
+<b>destroy()</b> destroys a <b>DeferCall</b> object.
+</p>
+
+<p>
+The following four methods are queue methods. You don't need to use these methods directly.
+Arguments must not be null.
+</p>
+
+<p>
+<b>post()</b> puts the <b>DeferCall</b> object in the queue. The object is consumed.
+It will be destroyed after processing or during the queue cleanup after stop.
+</p>
+
+<p>
+<b>post_first()</b> puts the <b>DeferCall</b> object in the queue head. The object is consumed.
+It will be destroyed after processing or during the queue cleanup after stop.
+</p>
+
+<p>
+<b>start_tick()</b> starts ticks on the object. The object is not consumed. It retains the owner.
+</p>
+
+<p>
+<b>stop_tick()</b> stops ticks on the object. The object can be destroyed now.
+</p>
+
+<p>
+The next two methods are loop methods. You don't need to use these methods directly.
+</p>
+
+<p>
+<b>loop()</b> starts the defer calls loop. The argument is the tick period, defaulted to the <b>DefaultTickPeriod</b>,
+equals 40 milliseconds, that gives 25 Hz tick frequency. 
+</p>
+
+<p>
+<b>stop()</b> stops the loop.
+</p>
+
+<p>
+Finally, three global methods.
+</p>
+
+<p>
+<b>Get()</b> gets the active <b>DeferCallQueue</b> object. An exception is thrown, if there is no one.
+</p>
+
+<p>
+<b>Loop()</b> starts the defer call loop.
+</p>
+
+<p>
+<b>Stop()</b> stops the loop.
+</p>
+
 <h4>DeferCouple</h4>
+
+<pre>
+
+struct <span class="Att">DeferCouple</span>
+ {
+  DeferCallQueue *defer_queue;
+  DeferCall *defer_call;
+  
+  // constructors
+  
+  DeferCouple() : defer_queue(0),defer_call(0) {}
+  
+  DeferCouple(DeferCallQueue *defer_queue_,DeferCall *defer_call_) 
+   : defer_queue(defer_queue_),
+     defer_call(defer_call_) 
+   {
+    if( !defer_call ) defer_queue=0; 
+   }
+  
+  // props
+  
+  bool operator ! () const { return !defer_queue; }
+  
+  // cleanup
+  
+  void cleanup() noexcept(EnableNoExcept)
+   {
+    if( defer_queue )
+      {
+       defer_call->destroy(defer_queue);
+      
+       defer_queue=0;
+       defer_call=0;
+      }
+   }
+  
+  // post
+  
+  void post() { defer_queue->post(defer_call); }
+  
+  void post_first() { defer_queue->post_first(defer_call); }
+  
+  void try_post() { if( defer_queue ) defer_queue->post(defer_call); }
+  
+  void try_post_first() { if( defer_queue ) defer_queue->post_first(defer_call); }
+  
+  void start_tick() { defer_queue->start_tick(defer_call); }
+  
+  void stop_tick() { defer_queue->stop_tick(defer_call); }
+ };
+
+</pre>
 
 <h4>DeferTick</h4>
 
