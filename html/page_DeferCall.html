@@ -327,6 +327,7 @@ It will be destroyed after processing or during the queue cleanup after stop.
 
 <p>
 <b>start_tick()</b> starts ticks on the object. The object is not consumed. It retains the owner.
+Defer tick is a periodic event, during this event all specified defer calls are called to do a periodic processing.
 </p>
 
 <p>
@@ -339,7 +340,7 @@ The next two methods are loop methods. You don't need to use these methods direc
 
 <p>
 <b>loop()</b> starts the defer calls loop. The argument is the tick period, defaulted to the <b>DefaultTickPeriod</b>,
-equals 40 milliseconds, that gives 25 Hz tick frequency. 
+equals 40 milliseconds, that gives 25 Hz tick frequency. The tick period is maintained as accurate, as possible.
 </p>
 
 <p>
@@ -363,6 +364,11 @@ Finally, three global methods.
 </p>
 
 <h4>DeferCouple</h4>
+
+<p>
+The class <b>DeferCouple</b> is a helper class, it stores a pointer to a <b>DeferCallQueue</b> object
+and a pointer to a <b>DeferCall</b> object.
+</p>
 
 <pre>
 
@@ -418,6 +424,11 @@ struct <span class="Att">DeferCouple</span>
 
 <h4>DeferTick</h4>
 
+<p>
+The class <b>DeferTick</b> is a defer tick controller. It may own some defer call, given as a <b>DeferCouple</b> object.
+If it owns some defer call, the defer tick can be started on this defer call.
+</p>
+
 <pre>
 
 class <span class="Att">DeferTick</span> : NoCopy
@@ -449,7 +460,47 @@ class <span class="Att">DeferTick</span> : NoCopy
 
 </pre>
 
+<p>
+Constructor builds the object, owning the given defer call, provided as a <b>DeferCouple</b> object.
+If the <b>DeferCouple</b> object is null, the tick object is null.
+</p>
+
+<p>
+Destructor resets the object. If a defer call object was owned, it is destroyed.
+</p>
+
+<p>
+<b>set()</b> and <b>operator =</b> sets a new defer call object, or null. The previous
+defer call is destroyed, if any. If the defer tick was started, it remains
+started on the new defer call, unless null is provided. In the last case the tick becomes 
+stopped and the return value is <b>true</b>.
+</p>
+
+<p>
+<b>reset()</b> is the same as <b>set({})</b>. I.g. it destroys the old defer call object and resets
+the tick object to the null state. The defer tick is stopped, if it was running. In the last case the return value is <b>true</b>.
+</p>
+
+<p>
+<b>start()</b> starts the defer tick on the owned defer call, if any. 
+The return value is <b>true</b>, if the defer tick has been successfully started.
+</p>
+
+<p>
+<b>stop()</b> stops the defer tick, if it is running. The return value is <b>true</b>, if the defer tick 
+has been successfully stopped.
+</p>
+
+<p>
+All four methods return <b>true</b>, if the defer tick status (running or stopped) has been changed.
+</p>
+
 <h4>DeferInput</h4>
+
+<p>
+The class <b>DeferInput</b> is the main "input" class. It is used to build and use defer calls, bounded
+with method calls of some object.
+</p>
 
 <pre>
 
@@ -517,6 +568,92 @@ class <span class="Att">DeferInput</span> : NoCopy
  };
 
 </pre>
+
+<p>
+The constructor argument is a pointer to the target object . It should be non-null (otherwise the object is useless). 
+The object life-time must be greater than the <b>DeferInput</b> object life-time.
+Constructor also captures the pointer to the current <b>DeferCallQueue</b> object. So the input object must be used 
+withing the thread has created the input object.
+</p>
+
+<p>
+<b>cancel()</b> deactivates all pending defer calls. They <b>call()</b> methods become nop.
+</p>
+
+<p>
+There are four groups of methods for the defer call creation and submission.
+The first method creates a defer call and returns one as a <b>DeferCouple</b> object.
+The second creates and posts the defer call.
+The third creates and posts at the queue head.
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b>post()</b> creates and post a defer call, bounded with the given object method and the set of arguments.
+</p>
+
+<p>
+<b>post_first()</b> creates and post a defer call, bounded with the given object method and the set of arguments.
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
+
+<p>
+<b></b>
+</p>
 
 </body>
 
