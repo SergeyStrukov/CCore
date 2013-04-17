@@ -299,7 +299,8 @@ The following four methods are heap methods. You don't need to use these methods
 </p>
 
 <p>
-<b>alloc()</b> throws an exception, if there is no memory.
+<b>alloc()</b> throws an exception, if there is no memory. 
+It also <span class="Alert">stops the defer call loop</span> in this case.
 </p>
 
 <p>
@@ -367,7 +368,9 @@ Finally, three global methods.
 
 <p>
 The class <b>DeferCouple</b> is a helper class, it stores a pointer to a <b>DeferCallQueue</b> object
-and a pointer to a <b>DeferCall</b> object.
+and a pointer to a <b>DeferCall</b> object. You don't need to use this class directly.
+If you desire to do it, think throw how its methods are working, they have been designed to serve a
+particular purpose.
 </p>
 
 <pre>
@@ -379,14 +382,9 @@ struct <span class="Att">DeferCouple</span>
   
   // constructors
   
-  DeferCouple() : defer_queue(0),defer_call(0) {}
+  DeferCouple();
   
-  DeferCouple(DeferCallQueue *defer_queue_,DeferCall *defer_call_) 
-   : defer_queue(defer_queue_),
-     defer_call(defer_call_) 
-   {
-    if( !defer_call ) defer_queue=0; 
-   }
+  DeferCouple(DeferCallQueue *defer_queue,DeferCall *defer_call); 
   
   // props
   
@@ -394,16 +392,7 @@ struct <span class="Att">DeferCouple</span>
   
   // cleanup
   
-  void cleanup() noexcept(EnableNoExcept)
-   {
-    if( defer_queue )
-      {
-       defer_call->destroy(defer_queue);
-      
-       defer_queue=0;
-       defer_call=0;
-      }
-   }
+  void cleanup() noexcept(EnableNoExcept);
   
   // post
   
@@ -421,6 +410,31 @@ struct <span class="Att">DeferCouple</span>
  };
 
 </pre>
+
+<p>
+Default constructor creates a null object.
+</p>
+
+<p>
+The second constructor creates an object with given object pointers. If the <b>DeferCall</b> pointer is null, 
+a null object is constructed.
+</p>
+
+<p>
+There is no destructor, so you have to cleanup the object manually by the method <b>cleanup()</b>.
+</p>
+
+<p>
+<b>operator !()</b> returns <b>true</b>, if the object is null.
+</p>
+
+<p>
+<b>cleanup()</b> destroys the <b>DeferCall</b> object and nullifies the object.
+</p>
+
+<p>
+Other methods posts the defer call or starts the defer tick on it.
+</p>
 
 <h4>DeferTick</h4>
 
@@ -570,14 +584,14 @@ class <span class="Att">DeferInput</span> : NoCopy
 </pre>
 
 <p>
-The constructor argument is a pointer to the target object . It should be non-null (otherwise the object is useless). 
+The constructor argument is a pointer to the target object. It should be non-null (otherwise the object is useless). 
 The object life-time must be greater than the <b>DeferInput</b> object life-time.
 Constructor also captures the pointer to the current <b>DeferCallQueue</b> object. So the input object must be used 
-withing the thread has created the input object.
+withing the thread has created the input object and after the thread is attached with a <b>DeferCallQueue</b> object.
 </p>
 
 <p>
-<b>cancel()</b> deactivates all pending defer calls. They <b>call()</b> methods become nop.
+<b>cancel()</b> deactivates all pending defer calls. They <b>call()</b> methods become "doing nothing".
 </p>
 
 <p>
@@ -588,71 +602,47 @@ The third creates and posts at the queue head.
 </p>
 
 <p>
-<b></b>
+The first group creates a defer call from an object method and a set of arguments. Rememebr, the arguments are copied and stored,
+so you must be caution with arguments of a "pointer type". Also if the method is failed due to the lack
+of memory, the defer call loop will be stopped. The method can also throw an exception from the argument copying. This 
+situation is considered as a bad design, it's better avoid it. Don't use types with not efficient copy constructors!
 </p>
 
 <p>
-<b>post()</b> creates and post a defer call, bounded with the given object method and the set of arguments.
+<b>create</b> creates a defer call from the given object method and the set of arguments.
+You need this method for the defer tick processing.
 </p>
 
 <p>
-<b>post_first()</b> creates and post a defer call, bounded with the given object method and the set of arguments.
+<b>post()</b> creates and post a defer call from the given object method and the set of arguments.
 </p>
 
 <p>
-<b></b>
+<b>post_first()</b> creates and post at the head a defer call from the given object method and the set of arguments.
 </p>
 
 <p>
-<b></b>
+The second group of methods is try variants.
 </p>
 
 <p>
-<b></b>
+<b>try_create()</b> is the same as the <b>create()</b>, but does not throw exception if no memory. In this case
+the method returns a null object.
 </p>
 
 <p>
-<b></b>
+<b>try_post()</b> is the same as the <b>post()</b>, but does not throw exception if no memory. In this case
+the method does nothing.
 </p>
 
 <p>
-<b></b>
+<b>try_post_first()</b> is the same as the <b>post_first()</b>, but does not throw exception if no memory. In this case
+the method does nothing.
 </p>
 
 <p>
-<b></b>
-</p>
-
-<p>
-<b></b>
-</p>
-
-<p>
-<b></b>
-</p>
-
-<p>
-<b></b>
-</p>
-
-<p>
-<b></b>
-</p>
-
-<p>
-<b></b>
-</p>
-
-<p>
-<b></b>
-</p>
-
-<p>
-<b></b>
-</p>
-
-<p>
-<b></b>
+Last methods are similar, but create defer calls not from object methods, but from functor initialization objects.
+Each time the defer call is called, the functor is created from the initializer and applied to the object.
 </p>
 
 </body>
