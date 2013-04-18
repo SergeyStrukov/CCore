@@ -71,7 +71,7 @@ class Queue : public DeferCallQueue
 </pre>
 
 <p>
-<b>forward()</b> is called when the defer call queue is empty. This method must generate a new defer call or sleep
+<b>forward()</b> is called when the defer call queue is empty. This method must generate new defer calls or sleep
 within the given <b>time_scope</b> period. <b>forward()</b> should be used to generate defer calls 
 to handle external events, like key pressing of mouse movement.
 </p>
@@ -95,6 +95,52 @@ To stop the loop use the <b>DeferCallQueue::Stop()</b>. The global methods addre
 object for the current thread. Objects, involved in the <b>DeferQueue</b> processing on this thread, 
 should live withing the queue object life-time.
 </p>
+
+<p>
+To add a defer call input to some class use the <b>DeferInput</b> class:
+</p>
+
+<pre>
+
+class Window
+ {
+   ....
+
+   DeferTick defer_tick;
+
+  private:
+
+   void put(char ch);
+
+   void tick();
+
+  public:
+
+   class Input : DeferInput&lt;Window&gt;
+    {
+      friend class Window;
+    
+      explicit Input(Window *window) : DeferInput&lt;Window&gt;(window) {} 
+      
+      ~Input() {}
+      
+     public:
+    
+      void put(char ch) { try_post(&Window::put,ch); }
+    };
+   
+   Input input;
+
+   Window() 
+    : input(this)
+    {
+     defer_tick=input.create(&Window::tick);
+
+     defer_tick.start();
+    }
+ };
+
+</pre>
 
 <h4>DeferCall</h4>
 
