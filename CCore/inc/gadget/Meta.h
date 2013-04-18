@@ -47,6 +47,8 @@ template <class T,class ProbeSet> struct Has;
 
 template <class ... TT> struct TypeListLen;
 
+template <class ... TT> struct IndexOf;
+
 template <class R> struct ImpRangeObjType;
 
 template <class T> struct IsSInt;
@@ -183,7 +185,18 @@ using EnableIf = typename Select<Cond, DefType<RetType> , Empty >::Ret ;
  
 template <class ... TT> 
 struct TypeListLen : DefConst<unsigned,( sizeof...(TT) )> {};
- 
+
+/* struct IndexOf<TT> */
+
+template <class T>
+struct IndexOf<T> {};
+
+template <class T,class ... TT>
+struct IndexOf<T,T,TT...> : DefConst<unsigned,1> {};
+
+template <class T,class S,class ... TT>
+struct IndexOf<T,S,TT...> : DefConst<unsigned,( 1+IndexOf<T,TT...>::Ret )> {};
+
 /* struct ImpRangeObjType<R> */
  
 template <class R> 

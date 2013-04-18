@@ -303,6 +303,31 @@ It is also a template typedef, so you get the result without extra typing.
 
 </pre>
 
+<h3>IndexOf</h3>
+
+<p>
+<b>IndexOf</b> searches the type in the given type list and returns its 1-based index.
+If the type is not in the list, nothing is returned.
+</p>
+
+<pre>
+
+template &lt;class T,class ... TT&gt; struct IndexOf&lt;T,TT...&gt;;
+
+</pre>
+
+<pre>
+
+//
+// IndexOf&lt;short, short,int,long&gt;::Ret == 1
+//
+// IndexOf&lt;int,   short,int,long&gt;::Ret == 2
+//
+// IndexOf&lt;long,  short,int,long&gt;::Ret == 3
+//
+
+</pre>
+
 <h3>RangeObjType</h3>
 
 <p>
