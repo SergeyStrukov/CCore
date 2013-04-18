@@ -1,0 +1,121 @@
+<!--
+/* page_AnyPtr.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.04
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> AnyPtr</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>AnyPtr</h2>
+
+<p class="Files">Files <b>CCore/inc/AnyPtr.h</b> <b>CCore/src/AnyPtr.cpp</b></p>
+
+<p>
+Two similar classes implement a "polymorphic pointer" type. They can store multiple type pointers.
+The pointee type list is the template parameter list. <b>AnyPtr</b> stores non-constant pointers and 
+<b>AnyPtr_const</b> stores constant pointers.
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+class <span class="Att">AnyPtr</span>
+ {
+   ....
+
+  public:
+  
+   AnyPtr();
+   
+   template &lt;class T&gt;
+   AnyPtr(T *ptr);
+   
+   boolable operator + () const;
+   
+   bool operator ! () const;
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+ };
+
+template &lt;class ... TT&gt;
+class <span class="Att">AnyPtr_const</span>
+ {
+   ....
+
+  public:
+  
+   AnyPtr_const();
+   
+   template &lt;class T&gt;
+   AnyPtr_const(const T *ptr);
+   
+   boolable operator + () const;
+   
+   bool operator ! () const;
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+ };
+
+</pre>
+
+<p>
+Default constructor creates a null object.
+</p>
+
+<p>
+The second implicit constructor creates an object with the given pointer stored. The type <b>T</b> must be
+a type from the template parameter list. Even if the pointer is null, the object is not null: 
+it remembers the pointer type.
+</p>
+
+<p>
+<b>operator +</b> and <b>operator !</b> can be used to check, if the pointer is non-null.
+</p>
+
+<p>
+The method <b>apply()</b> applies the given functor, using the <a href="page_FunctorType.html"><b>Functor Init Pattern</b></a>,
+to the stored pointer. It does nothing for the null object, but if it is not null, the proper variant
+of the functor is applied to the initial pointer. The functor must be polymorphic and capable to handle all possible
+pointer types.
+</p>
+
+<p>
+An example:
+</p>
+
+<pre>
+
+int *a=....;
+
+AnyPtr&lt;short,int,long&gt; ptr=a;
+
+ptr.apply(func_init); // func_init -> func ; calls func(a);
+
+</pre>
+
+</body>
+
+</html>
+
