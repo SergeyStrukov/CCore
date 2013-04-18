@@ -84,6 +84,7 @@ OBJ_LIST = \
 ../test2-obj/test0081.ObjectDomain.o \
 ../test2-obj/test0082.NewDelete.o \
 ../test2-obj/test0083.SortUnique.o \
+../test2-obj/test0084.AnyPtr.o \
 ../test2-obj/test0100.Bridge.o \
 ../test2-obj/test0101.PTP.o \
 ../test2-obj/test0102.PrintFile.o \
@@ -210,6 +211,7 @@ ASM_LIST = \
 ../test2-obj/test0081.ObjectDomain.s \
 ../test2-obj/test0082.NewDelete.s \
 ../test2-obj/test0083.SortUnique.s \
+../test2-obj/test0084.AnyPtr.s \
 ../test2-obj/test0100.Bridge.s \
 ../test2-obj/test0101.PTP.s \
 ../test2-obj/test0102.PrintFile.s \
@@ -336,6 +338,7 @@ DEP_LIST = \
 ../test2-obj/test0081.ObjectDomain.dep \
 ../test2-obj/test0082.NewDelete.dep \
 ../test2-obj/test0083.SortUnique.dep \
+../test2-obj/test0084.AnyPtr.dep \
 ../test2-obj/test0100.Bridge.dep \
 ../test2-obj/test0101.PTP.dep \
 ../test2-obj/test0102.PrintFile.dep \
@@ -635,6 +638,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0083.SortUnique.o : ../../../CCore/test/test0083.SortUnique.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test2-obj/test0084.AnyPtr.o : ../../../CCore/test/test0084.AnyPtr.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1008,6 +1014,9 @@ include $(RULES_FILE)
 ../test2-obj/test0083.SortUnique.s : ../../../CCore/test/test0083.SortUnique.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test2-obj/test0084.AnyPtr.s : ../../../CCore/test/test0084.AnyPtr.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test2-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1378,6 +1387,9 @@ include $(RULES_FILE)
 
 ../test2-obj/test0083.SortUnique.dep : ../../../CCore/test/test0083.SortUnique.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0083.SortUnique.o $< -MF $@
+
+../test2-obj/test0084.AnyPtr.dep : ../../../CCore/test/test0084.AnyPtr.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0084.AnyPtr.o $< -MF $@
 
 ../test2-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

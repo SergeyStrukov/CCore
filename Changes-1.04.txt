@@ -2,6 +2,10 @@
 
 --- Updates ----------
 
+CCore/inc/gadget/Meta.h
+
+  IndexOf
+
 CCore/inc/MemBase.h
 
   Minor fix: missed JustTry operator delete is added.
@@ -49,3 +53,6 @@ CCore/inc/DeferCall.h
 CCore/inc/Signal.h
 
 CCore/inc/MultiSignal.h
+
+CCore/inc/AnyPtr.h
+
