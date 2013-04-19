@@ -29,7 +29,7 @@ ulen CheckedData::getLen(ulen max_len)
  {
   if( max_len<=2 ) return max_len;
     
-  return random.select(2,max_len);
+  return random.select(2,(uint32)max_len);
  }
     
 bool CheckedData::fill(PtrLen<uint8> data) 
