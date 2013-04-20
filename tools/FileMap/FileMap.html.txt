@@ -1539,7 +1539,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Atomic.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_BaseRangeAlgo.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_BinarySearch.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_Bridge.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_Bridge.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CCoreGeneral.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CancelPacketList.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_CharProp.html" 2
@@ -1562,7 +1562,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_DefaultValue.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DeferCall.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DirTreeRun.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_EchoDevice.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_EchoDevice.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ElementPool.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_EllipticPi.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_EuclidRotate.html" 2

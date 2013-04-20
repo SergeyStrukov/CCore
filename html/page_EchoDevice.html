@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_EchoDevice.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.04
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> EchoDevice</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,64 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>EchoDevice</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/net/EchoDevice.h</b> <b>CCore/src/net/EchoDevice.cpp</b></p>
 
+<p>
+The class <b>EchoDevice</b> implements echo service. It can be attached to a packet multi-point device.
+Been attached the service simply reflects incoming packets. This class is useful in net testing.
+</p>
+
+<pre>
+
+class <span class="Att">EchoDevice</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   enum Event
+    {
+     Event_inbound,
+     
+     Event_nopacket,
+     Event_badformat,
+    
+     EventLim
+    };
+    
+   friend const char * GetTextDesc(Event ev); 
+   
+   typedef Counters&lt;Event,EventLim&gt; StatInfo;
+    
+  public: 
+  
+   static const ulen DefaultMaxPackets = 200 ;
+  
+   explicit EchoDevice(StrLen mp_dev_name,ulen max_packets=DefaultMaxPackets);
+   
+   ~EchoDevice();
+   
+   void getStat(StatInfo &ret);
+   
+   uint64 getTraffic();
+ };
+
+</pre>
+
+<p>
+Constructor attaches the object to the packet multi-point device registered under the given name.
+<b>max_packets</b> limits the packet usage.
+</p>
+
+<p>
+<b>getStat()</b> returns device statistic.
+</p>
+
+<p>
+<b>getTraffic()</b> returns device traffic counter.
+</p>
 
 </body>
 

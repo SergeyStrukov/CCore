@@ -31,12 +31,12 @@
 <p class="Files">Files <b>CCore/inc/Packet.h</b> <b>CCore/src/Packet.cpp</b></p>
  
 <p>
-Packets is an infra-structure for efficient flexible parallel mass request processing.
+Packets is an infra-structure for efficient, flexible, parallel mass request processing.
 In this infra-structure processing nodes, also called devices, are exchanging packets. Packet is
 a task request. It contains a small stack for request parameters and return value and typically has an
 attached data buffer to transfer a bulk of data. Packet may be canceled by the originator.
 Each packet device has a packet entry gate, through which packets are coming for a processing.
-During processing packet can be stored, transferred to another packet device or completed.
+During processing a packet can be stored, transferred to another packet device or completed.
 Eventually packet must be completed and during completion returned to the packet pool, from which
 it was borrowed. Packet cancellation is a mean the packet originator can use to ask a current
 packet device to cancel a packet processing. It is assumed, that packet should be quickly disengaged from the 
@@ -1201,6 +1201,103 @@ the resulting range and <b>status</b> with the length status. If the input range
 is <b>Len_too_short</b> and the <b>range</b> is empty. If the input range has a good length, the status is
 <b>Len_ok</b> and the <b>range</b> is the working range. Finally, if the input range is too long,
 the status is <b>Len_too_long</b> and the <b>range</b> has <b>max_data</b> length.
+</p>
+
+<h3>Working with packets</h3>
+
+<p>
+Assume, we have a packet processing device, like this:
+</p>
+
+<pre>
+
+class Device
+ {
+   ....
+
+  public:
+
+   ....
+
+
+   void put(Packet&lt;uint8,int&gt; packet);
+ };
+
+</pre>
+
+<p>
+To use this device a packet must be acquired. You may simply borrow it from the default packet pool:
+</p>
+
+<pre>
+
+Packet&lt;uint8&gt; packet=AllocPacket&lt;uint8&gt;();
+
+if( !packet ) { .... } // error handling
+
+</pre>
+
+<p>
+If the pool is empty, the call is blocked until some packet is returned. This is different, than a memory
+allocation behavior. We assume, that packets will be eventually completed and return to the pool. So if there is no available packets,
+processing will be delayed.
+</p>
+
+<p>
+Or (preffered), you may use the packet set.
+</p>
+
+<pre>
+
+PacketSet&lt;uint8&gt; pset;
+
+Packet&lt;uint8&gt; packet=pset.get();
+
+if( !packet ) { .... } // error handling
+
+</pre>
+
+<p>
+Packet set takes packets from the same pool, but it limits the number. You may aslo wait until all packets,
+taken from this set, are completed.
+</p>
+
+<p>
+Then you have to prepare the packet:
+</p>
+
+<pre>
+
+Packet&lt;uint8,int&gt; packet2=packet.pushExt(12345); // int = 12345 is pushed 
+
+auto range=packet2.setDataLen(100);
+
+.... // fill range
+
+packet2.pushCompleteFunction(DropPacketExt&lt;uint8,int&gt;);
+
+</pre>
+
+<p>
+You should push the required packet extension and fill the data buffer. You also have to push a complete function.
+In our case we push the function to drop the additional packet extension we have pushed to the packet.
+</p>
+
+<p>
+When the packet is ready, submit it to the processing.
+</p>
+
+<pre>
+
+Device *device;
+
+device->put(packet2);
+
+</pre>
+
+<p>
+Now the device owns the packet. When it finish to deal with one, the packet will be completed
+and returned to the packet pool (or packet set).
 </p>
 
 </body>
