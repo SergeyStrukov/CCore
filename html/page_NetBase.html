@@ -32,11 +32,12 @@
 
 <p>
 The header <b>net/NetBase.h</b> contains a lot of definitions, related with Ethernet and IP protocols.
-The most usable are below.
 </p>
 
+<h4>Types and constants</h4>
+
 <p>
-<b>UDPort</b> s a UDP port type, in is a 16-bit unsigned intergal type.
+<b>UDPort</b> is a UDP port type, it is a 16-bit unsigned integral type.
 </p>
 
 <pre>
@@ -46,10 +47,297 @@ typedef uint16 <span class="Att">UDPort</span>;
 </pre>
 
 <p>
+<b>IPLen</b> represents IP payload length, it is a 16-bit unsigned integral type.
+</p>
+
+<pre>
+
+typedef uint16 <span class="Att">IPLen</span>;
+
+</pre>
+
+<p>
+The following constants represent different protocol lengths.
+</p>
+
+<pre>
+
+const ulen EthHeaderLen = 14 ;
+
+const ulen IPHeaderLen  = 20 ;
+
+const ulen ARPacketLen  = 28 ;
+
+const ulen ICMPEchoLen  =  8 ;
+
+const ulen UDPHeaderLen =  8 ;
+
+const ulen MaxEthFrameLen = 1514 ;
+
+const ulen MaxEthDataLen  = MaxEthFrameLen - EthHeaderLen ; // 1500
+
+const ulen MaxIPDataLen   = MaxEthDataLen - IPHeaderLen ;   // 1480
+
+const ulen MaxUDPDataLen  = MaxIPDataLen - UDPHeaderLen ;   // 1472
+
+</pre>
+
+<h4>struct EthType</h4>
+
+<p>
+<b>EthType</b> represents an Ethernet packet type.
+</p>
+
+<pre>
+
+enum <span class="Att">KnownEthType</span> : uint16
+ {
+  Eth_IP  = 0x800,
+  Eth_ARP = 0x806
+ };
+
+struct <span class="Att">EthType</span>
+ {
+  uint16 type;
+  
+  // constructors
+  
+  EthType() : type() {}
+  
+  EthType(KnownEthType type_) : type(type_) {}
+  
+  // methods
+  
+  uint16 get() const { return type; }
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 2 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+Default constructor creates a null value type.
+</p>
+
+<p>
+The second implicit constructor creates the "known" type from the enumeration. 
+</p>
+
+<p>
+<b>get()</b> returns an <b>uint16</b> representation of the type.
+</p>
+
+<p>
+The class may participate in save/load operations. It also printable in the verbose form.
+</p>
+
+<h4>struct IProto</h4>
+
+<p>
+<b>IProto</b> represents an IP protocol number.
+</p>
+
+<pre>
+
+enum <span class="Att">KnownIProto</span> : uint8
+ {
+  IP_ICMP =  1,
+  IP_UDP  = 17
+ };
+
+struct <span class="Att">IProto</span> 
+ {
+  uint8 proto;
+  
+  // constructors
+  
+  IProto() : proto() {}
+  
+  IProto(KnownIProto proto_) : proto(proto_) {}
+  
+  // methods
+  
+  uint8 get() const { return proto; }
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 1 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+  
+  // print object
+   
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+Default constructor creates a null value number.
+</p>
+
+<p>
+The second implicit constructor creates the "known" number from the enumeration. 
+</p>
+
+<p>
+<b>get()</b> returns an <b>uint8</b> representation of the number.
+</p>
+
+<p>
+The class may participate in save/load operations. It also printable in the verbose form.
+</p>
+
+<h4>struct ARPType</h4>
+
+<p>
+<b>ARPType</b> represents an ARP packet type.
+</p>
+
+<pre>
+
+enum <span class="Att">KnownARPType</span> : uint16
+ {
+  ARP_Request = 1,
+  ARP_Reply   = 2
+ };
+
+struct <span class="Att">ARPType</span>
+ {
+  uint16 type;
+  
+  // constructors
+  
+  ARPType() : type() {}
+  
+  ARPType(KnownARPType type_) : type(type_) {}
+  
+  // methods
+  
+  uint16 get() const { return type; }
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 2 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+  
+  // print object
+   
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+Default constructor creates a null value type.
+</p>
+
+<p>
+The second implicit constructor creates the "known" type from the enumeration. 
+</p>
+
+<p>
+<b>get()</b> returns an <b>uint16</b> representation of the type.
+</p>
+
+<p>
+The class may participate in save/load operations. It also printable in the verbose form.
+</p>
+
+<h4>struct ICMPEchoType</h4>
+
+<p>
+<b>ICMPEchoType</b> represents an ICMP Echo packet type.
+</p>
+
+<pre>
+
+enum <span class="Att">KnownICMPEchoType</span> : uint8
+ {
+  ICMPEcho_Request = 8,
+  ICMPEcho_Reply   = 0
+ };
+
+struct <span class="Att">ICMPEchoType</span>
+ {
+  uint8 type;
+  
+  // constructors
+  
+  ICMPEchoType() : type() {}
+  
+  ICMPEchoType(KnownICMPEchoType type_) : type(type_) {}
+  
+  // methods
+  
+  uint8 get() const { return type; }
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 1 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+  
+  // print object
+   
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+Default constructor creates a null value type.
+</p>
+
+<p>
+The second implicit constructor creates the "known" type from the enumeration. 
+</p>
+
+<p>
+<b>get()</b> returns an <b>uint8</b> representation of the type.
+</p>
+
+<p>
+The class may participate in save/load operations. It also printable in the verbose form.
+</p>
+
+<h4>struct MACAddress</h4>
+
+<p>
 <b>MACAddress</b> represents a MAC address (48 bit).
 </p>
 
 <pre>
+
 struct <span class="Att">MACAddress</span>
  {
   uint8 address[6];
@@ -83,13 +371,38 @@ struct <span class="Att">MACAddress</span>
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>
-<b>IPAddress</b> represents a IPv4 address (32 bit).
+Default constructor creates a null address.
+</p>
+
+<p>
+The second constructor creates the address from six byte components. 
+</p>
+
+<p>
+<b>Broadcast()</b> returns a broadcast MAC address.
+</p>
+
+<p>
+<b>get()</b> returns an <b>XPoint</b> representation of the address. You may convert it back using the
+constructor with the <b>XPoint</b> argument.
+</p>
+
+<p>
+The class may participate in save/load operations. It also printable in the standard MAC address form.
+</p>
+
+<h4>struct IPAddress</h4>
+
+<p>
+<b>IPAddress</b> represents an IPv4 address (32 bit).
 </p>
 
 <pre>
+
 struct <span class="Att">IPAddress</span>
  {
   uint32 address;
@@ -98,9 +411,9 @@ struct <span class="Att">IPAddress</span>
   
   IPAddress() : address() {}
    
-  explicit IPAddress(uint32 address_) { address=address_; }
-  
   IPAddress(uint8 b0,uint8 b1,uint8 b2,uint8 b3);
+  
+  explicit IPAddress(uint32 address_) { address=address_; }
   
   // methods
    
@@ -129,7 +442,37 @@ struct <span class="Att">IPAddress</span>
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
+
+<p>
+Default constructor creates a null address.
+</p>
+
+<p>
+The second constructor creates the address from four byte components. 
+</p>
+
+<p>
+<b>get()</b> returns an <b>uint32</b> representation of the address. You may convert it back using the
+constructor with the <b>uint32</b> argument.
+</p>
+
+<p>
+You can use <b>operator =</b> and <b>operator !=</b> to compare IP addresses.
+</p>
+
+<p>
+<b>getNet()</b> masks IP address to extract the net address part.
+</p>
+
+<p>
+<b>sameNet()</b> can be used to compare net address parts.
+</p>
+
+<p>
+The class may participate in save/load operations. It also printable in the standard IP address dot form.
+</p>
 
 <p>
 The function <b>ParseIPAddress()</b> can be used to parse an IP address from a
@@ -142,6 +485,146 @@ template &lt;class Dev&gt;
 void <span class="Att">ParseIPAddress</span>(Dev &dev,IPAddress &ret);
 
 </pre>
+
+<h4>struct EthHeader</h4>
+
+<p>
+<b>EthHeader</b> represents Ethernet packet header.
+</p>
+
+<pre>
+
+struct EthHeader
+ {
+  MACAddress dst;
+  MACAddress src;
+  EthType type;
+  
+  // constructors
+  
+  EthHeader() : dst(),src(),type() {}
+  
+  EthHeader(MACAddress src,MACAddress dst,EthType type);
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 14 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+  
+  // print object
+   
+  struct PrintOptType
+   {
+    static const bool Default_inbound = false ;
+    
+    bool inbound;
+   
+    void setDefault() { inbound=Default_inbound; }
+    
+    PrintOptType() { setDefault(); }
+    
+    PrintOptType(const char *ptr,const char *lim);
+    
+    //
+    // [i|o|I|O]
+    //
+    
+    template &lt;class Dev&gt;
+    static void ParseInbound(Dev &dev,bool &amp;inbound);
+   }; 
+   
+  template &lt;class P&gt;
+  void print(P &amp;out,PrintOptType opt) const;
+ };
+
+</pre>
+
+<p>
+Default constructor nullifies all fields.
+</p>
+
+<p>
+The second constructor creates a header with given source and destination MAC addresses and the Ethernet packet type.
+</p>
+
+<p>
+The class may participate in save/load operations. It also printable. It accepts printing options: "i" or "I"
+to use the inbound format, "o" or "O" to use the outbound format.
+</p>
+
+<h4>struct CheckSum</h4>
+
+<h4>struct IPHeader</h4>
+
+<h4>struct ARPacket</h4>
+
+<h4>struct ICMPEcho</h4>
+
+<h4>struct UDPHeader</h4>
+
+<p>
+<b>UDPHeader</b> represents a UDP packet header.
+</p>
+
+<pre>
+
+struct <span class="Att">UDPHeader</span> 
+ {
+  UDPort src_port;
+  UDPort dst_port;
+  IPLen len;
+  uint16 check_sum;
+  
+  // constructors
+  
+  UDPHeader();
+   
+  UDPHeader(UDPort src_port,UDPort dst_port,IPLen len);
+  
+  // methods
+  
+  void setCheckSum(IPAddress src,IPAddress dst,IPLen len,PtrLen&lt;const uint8&gt; data);
+  
+  bool testCheckSum(IPAddress src,IPAddress dst,IPLen len,PtrLen&lt;const uint8&gt; data) const;
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 8 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+ };
+
+</pre>
+
+<p>
+Default constructor nullifies all fields.
+</p>
+
+<p>
+The second constructor creates a header with given ports and the IP payload length (which includes UDP header). 
+It sets check sum to zero.
+</p>
+
+<p>
+<b>setCheckSum()</b> sets the check sum. The <b>len</b> is the IP payload length, <b>data</b> is the UDP payload.
+</p>
+
+<p>
+<b>testCheckSum()</b> test the check sum.
+</p>
+
+<p>
+The class may participate in save/load operations.
+</p>
 
 </body>
 

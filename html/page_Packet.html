@@ -1244,7 +1244,7 @@ processing will be delayed.
 </p>
 
 <p>
-Or (preffered), you may use the packet set.
+Or (preferred), you may use the packet set.
 </p>
 
 <pre>
@@ -1258,8 +1258,8 @@ if( !packet ) { .... } // error handling
 </pre>
 
 <p>
-Packet set takes packets from the same pool, but it limits the number. You may aslo wait until all packets,
-taken from this set, are completed.
+Packet set takes packets from the same pool, but it limits the number. It also tracks packets,
+so you may also wait until all packets, taken from this set, are completed, or cancel them.
 </p>
 
 <p>
@@ -1268,7 +1268,7 @@ Then you have to prepare the packet:
 
 <pre>
 
-Packet&lt;uint8,int&gt; packet2=packet.pushExt(12345); // int = 12345 is pushed 
+Packet&lt;uint8,int&gt; packet2=packet.pushExt&lt;int&gt;(12345); // int = 12345 is pushed 
 
 auto range=packet2.setDataLen(100);
 
@@ -1289,7 +1289,7 @@ When the packet is ready, submit it to the processing.
 
 <pre>
 
-Device *device;
+Device *device=....;
 
 device->put(packet2);
 
@@ -1297,7 +1297,74 @@ device->put(packet2);
 
 <p>
 Now the device owns the packet. When it finish to deal with one, the packet will be completed
-and returned to the packet pool (or packet set).
+and returned to the packet pool (or packet set). You may prepare and submit several packets.
+If you need a packet processing result, you may push such a complete function, which examines the result.
+Let's assume, the device above returns some integer code in the packet extension. Then you may proceed as following:
+</p>
+
+<pre>
+
+class Submitter : public Funchor_nocopy
+ {
+   int code;
+   Sem sem;
+
+  private:
+
+   void complete(PacketHeader *packet_)
+    {
+     Packet&lt;uint8,int&gt; packet=packet_;
+
+     code=*packet.getExt();
+
+     sem.give();
+
+     packet.popExt().complete();
+    }
+
+   PacketFunction function_complete() { return FunctionOf(this,&Submitter::complete); }
+
+  public:
+
+   Submitter();
+
+   ~Submitter();
+
+   int submit(Device *device,Packet&lt;uint8&gt; packet)
+    {
+     Packet&lt;uint8,int&gt; packet2=packet.pushExt&lt;int&gt;(0);
+
+     packet2.pushCompleteFunction(function_complete());
+
+     device->put(packet2);
+
+     sem.take();
+
+     return code;
+    }
+ };
+
+....
+
+Submitter submitter;
+
+Device *device=....;
+
+Packet&lt;uint8&gt; packet=AllocPacket&lt;uint8&gt;();
+
+if( !packet ) { .... } // error handling
+
+auto range=packet.setDataLen(100);
+
+.... // fill range
+
+int code=submitter.submit(device,packet);
+
+</pre>
+
+<p>
+It is recommended to use the <b>PacketSet</b> class as a packet source. To learn more
+about packet processing see the <b>test0027.PacketSet.cpp</b>.
 </p>
 
 </body>
