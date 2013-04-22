@@ -58,6 +58,10 @@ class AnyPtr
   
    AnyPtr() : ptr(0),type(0) {}
    
+   AnyPtr(NothingType) : AnyPtr() {}
+   
+   AnyPtr(std::nullptr_t) : AnyPtr() {}
+   
    template <class T>
    AnyPtr(T *ptr_) : ptr(ptr_),type(Meta::IndexOf<T,TT...>::Ret) {}
    
@@ -87,6 +91,10 @@ class AnyPtr_const
   public:
   
    AnyPtr_const() : ptr(0),type(0) {}
+   
+   AnyPtr_const(NothingType) : AnyPtr_const() {}
+   
+   AnyPtr_const(std::nullptr_t) : AnyPtr_const() {}
    
    template <class T>
    AnyPtr_const(const T *ptr_) : ptr(ptr_),type(Meta::IndexOf<T,TT...>::Ret) {}

@@ -47,6 +47,10 @@ class <span class="Att">AnyPtr</span>
   
    AnyPtr();
    
+   AnyPtr(NothingType) : AnyPtr() {}
+   
+   AnyPtr(std::nullptr_t) : AnyPtr() {}
+
    template &lt;class T&gt;
    AnyPtr(T *ptr);
    
@@ -67,6 +71,10 @@ class <span class="Att">AnyPtr_const</span>
   
    AnyPtr_const();
    
+   AnyPtr_const(NothingType) : AnyPtr_const() {}
+   
+   AnyPtr_const(std::nullptr_t) : AnyPtr_const() {}
+
    template &lt;class T&gt;
    AnyPtr_const(const T *ptr);
    
@@ -81,11 +89,12 @@ class <span class="Att">AnyPtr_const</span>
 </pre>
 
 <p>
-Default constructor creates a null object.
+Default constructor creates a null object. There are also constructors from <b>NothingType</b> words 
+and <b>nullptr</b> literal.
 </p>
 
 <p>
-The second implicit constructor creates an object with the given pointer stored. The type <b>T</b> must be
+The last implicit constructor creates an object with the given pointer stored. The type <b>T</b> must be
 a type from the template parameter list. Even if the pointer is null, the object is not null: 
 it remembers the pointer type.
 </p>

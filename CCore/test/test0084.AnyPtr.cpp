@@ -57,6 +57,9 @@ bool Testit<84>::Main()
    ptr=&b;
     
    ptr.apply( PrintVal() );
+   
+   ptr=Nothing;
+   ptr=nullptr;
   }
   
   {
@@ -72,6 +75,9 @@ bool Testit<84>::Main()
    ptr=&b;
     
    ptr.apply( PrintVal() );
+   
+   ptr=Nothing;
+   ptr=nullptr;
   }
   
   return true;

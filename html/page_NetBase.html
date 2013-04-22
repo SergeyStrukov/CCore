@@ -62,23 +62,23 @@ The following constants represent different protocol lengths.
 
 <pre>
 
-const ulen EthHeaderLen = 14 ;
+const ulen <span class="Att">EthHeaderLen</span> = 14 ;
 
-const ulen IPHeaderLen  = 20 ;
+const ulen <span class="Att">IPHeaderLen</span>  = 20 ;
 
-const ulen ARPacketLen  = 28 ;
+const ulen <span class="Att">ARPacketLen</span>  = 28 ;
 
-const ulen ICMPEchoLen  =  8 ;
+const ulen <span class="Att">ICMPEchoLen</span>  =  8 ;
 
-const ulen UDPHeaderLen =  8 ;
+const ulen <span class="Att">UDPHeaderLen</span> =  8 ;
 
-const ulen MaxEthFrameLen = 1514 ;
+const ulen <span class="Att">MaxEthFrameLen</span> = 1514 ;
 
-const ulen MaxEthDataLen  = MaxEthFrameLen - EthHeaderLen ; // 1500
+const ulen <span class="Att">MaxEthDataLen</span>  = MaxEthFrameLen - EthHeaderLen ; // 1500
 
-const ulen MaxIPDataLen   = MaxEthDataLen - IPHeaderLen ;   // 1480
+const ulen <span class="Att">MaxIPDataLen</span>   = MaxEthDataLen - IPHeaderLen ;   // 1480
 
-const ulen MaxUDPDataLen  = MaxIPDataLen - UDPHeaderLen ;   // 1472
+const ulen <span class="Att">MaxUDPDataLen</span>  = MaxIPDataLen - UDPHeaderLen ;   // 1472
 
 </pre>
 
@@ -141,7 +141,7 @@ The second implicit constructor creates the "known" type from the enumeration.
 </p>
 
 <p>
-The class may participate in save/load operations. It also printable in the verbose form.
+The class may participate in save/load operations. It is also printable in the verbose form.
 </p>
 
 <h4>struct IProto</h4>
@@ -203,7 +203,7 @@ The second implicit constructor creates the "known" number from the enumeration.
 </p>
 
 <p>
-The class may participate in save/load operations. It also printable in the verbose form.
+The class may participate in save/load operations. It is also printable in the verbose form.
 </p>
 
 <h4>struct ARPType</h4>
@@ -265,7 +265,7 @@ The second implicit constructor creates the "known" type from the enumeration.
 </p>
 
 <p>
-The class may participate in save/load operations. It also printable in the verbose form.
+The class may participate in save/load operations. It is also printable in the verbose form.
 </p>
 
 <h4>struct ICMPEchoType</h4>
@@ -327,7 +327,7 @@ The second implicit constructor creates the "known" type from the enumeration.
 </p>
 
 <p>
-The class may participate in save/load operations. It also printable in the verbose form.
+The class may participate in save/load operations. It is also printable in the verbose form.
 </p>
 
 <h4>struct MACAddress</h4>
@@ -392,7 +392,7 @@ constructor with the <b>XPoint</b> argument.
 </p>
 
 <p>
-The class may participate in save/load operations. It also printable in the standard MAC address form.
+The class may participate in save/load operations. It is also printable in the standard MAC address form.
 </p>
 
 <h4>struct IPAddress</h4>
@@ -471,7 +471,7 @@ You can use <b>operator =</b> and <b>operator !=</b> to compare IP addresses.
 </p>
 
 <p>
-The class may participate in save/load operations. It also printable in the standard IP address dot form.
+The class may participate in save/load operations. It is also printable in the standard IP address dot form.
 </p>
 
 <p>
@@ -494,7 +494,7 @@ void <span class="Att">ParseIPAddress</span>(Dev &dev,IPAddress &ret);
 
 <pre>
 
-struct EthHeader
+struct <span class="Att">EthHeader</span>
  {
   MACAddress dst;
   MACAddress src;
@@ -545,7 +545,7 @@ struct EthHeader
 </pre>
 
 <p>
-Default constructor nullifies all fields.
+Default constructor sets all fields to null.
 </p>
 
 <p>
@@ -553,7 +553,7 @@ The second constructor creates a header with given source and destination MAC ad
 </p>
 
 <p>
-The class may participate in save/load operations. It also printable. It accepts printing options: "i" or "I"
+The class may participate in save/load operations. It is also printable. It accepts printing options: "i" or "I"
 to use the inbound format, "o" or "O" to use the outbound format.
 </p>
 
@@ -563,7 +563,142 @@ to use the inbound format, "o" or "O" to use the outbound format.
 
 <h4>struct ARPacket</h4>
 
+<p>
+<b>ARPacket</b> represents ARP packet. We implement only IP/MAC ARP. It means that some ARP packet fields
+have its defined value for this particular case.
+</p>
+
+<pre>
+
+struct <span class="Att">ARPacket</span>
+ {
+  // consts
+  
+  static const uint16 DefaultMACType = 1                       ;
+  static const uint16 DefaultIPType  = Eth_IP                  ;
+  static const uint8  DefaultMACLen  = MACAddress::SaveLoadLen ;
+  static const uint8  DefaultIPLen   = IPAddress::SaveLoadLen  ;
+  
+  // data
+ 
+  uint16 mac_type; // default
+  uint16 ip_type;  // default
+  uint8  mac_len;  // default
+  uint8  ip_len;   // default
+  
+  ARPType type;
+
+  MACAddress src_mac;
+  IPAddress  src_ip;
+  MACAddress dst_mac;
+  IPAddress  dst_ip;
+  
+  // constructors
+  
+  ARPacket(); 
+  
+  ARPacket(ARPType type,MACAddress src_mac,IPAddress src_ip,MACAddress dst_mac,IPAddress dst_ip);
+  
+  // methods
+  
+  void setDefault();
+  
+  bool testDefault() const;
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 28 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+ };
+
+</pre>
+
+<p>
+Both constructors set "default fields" to default values. Default constructor sets all other fields to null.
+</p>
+
+<p>
+<b>setDefault()</b> sets "default fields" to default values.
+</p>
+
+<p>
+<b>testDefault()</b> checks, if "default fields" have default values.
+</p>
+
+<p>
+The class may participate in save/load operations.
+</p>
+
 <h4>struct ICMPEcho</h4>
+
+<p>
+<b>ICMPEcho</b> represents ICMP Echo packet header.
+</p>
+
+<pre>
+
+struct <span class="Att">ICMPEcho</span> 
+ {
+  ICMPEchoType type;
+  uint8 code;
+  uint16 check_sum;
+  uint16 id;
+  uint16 num;
+  
+  // constructors
+  
+  ICMPEcho();
+  
+  ICMPEcho(ICMPEchoType type,uint16 id,uint16 num);
+  
+  // methods
+  
+  void setCheckSum(PtrLen&lt;const uint8&gt; data);
+  
+  bool testCheckSum(PtrLen&lt;const uint8&gt; data) const;
+  
+  // save/load object
+  
+  enum { SaveLoadLen = 8 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+   
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+Default constructor sets all fields to null.
+</p>
+
+<p>
+The second constructor sets <b>code</b> and check sum to null.
+</p>
+
+<p>
+<b>setCheckSum()</b> sets the check sum, <b>data</b> is the ICMP data payload.
+</p>
+
+<p>
+<b>testCheckSum()</b> checks the check sum, <b>data</b> is the ICMP data payload.
+</p>
+
+<p>
+The class may participate in save/load operations. It is also printable.
+</p>
 
 <h4>struct UDPHeader</h4>
 
@@ -606,7 +741,7 @@ struct <span class="Att">UDPHeader</span>
 </pre>
 
 <p>
-Default constructor nullifies all fields.
+Default constructor sets all fields to null.
 </p>
 
 <p>
