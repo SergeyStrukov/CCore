@@ -559,7 +559,206 @@ to use the inbound format, "o" or "O" to use the outbound format.
 
 <h4>struct CheckSum</h4>
 
+<p>
+<b>CheckSum</b> is an IP check sum accumulator.
+</p>
+
+<pre>
+
+struct <span class="Att">CheckSum</span> 
+ {
+  ....
+  
+  // constructors
+  
+  CheckSum();
+  
+  // add
+  
+  void add(uint8 b1,uint8 b2);
+   
+  void add(uint16 word); 
+   
+  void add(uint32 dword); 
+   
+  void add(PtrLen&lt;const uint8&gt; data);
+  
+  // (TT)
+   
+  void operator () () {}
+  
+  template &lt;class ... TT&gt;
+  void operator () (uint8 b0,uint8 b1,TT... tt);
+   
+  template &lt;class ... TT&gt;
+  void operator () (uint16 word,TT... tt);
+   
+  template &lt;class ... TT&gt;
+  void operator () (uint32 dword,TT... tt);
+  
+  // complete 
+   
+  uint16 complete() const;
+   
+  bool test() const;
+ };
+
+</pre>
+
+<p>
+The default constructor creates an object in the initial null state. To calculate a check sum it must be fed
+with data elements. Data elements can be a couple of <b>uint8</b>, an <b>uint16</b> or <b>uint32</b> value.
+You may use <b>add()</b> methods of <b>operator ()</b> methods. To accumulate a tail use the <b>add()</b>
+method. The tail range may have odd number of elements.
+</p>
+
+<p>
+<b>complete()</b> completes accumulate and return the check sum.
+</p>
+
+<p>
+<b>test()</b> tests the check sum. For this method the check sum field must be included in the accumulation process.
+</p>
+
 <h4>struct IPHeader</h4>
+
+<p>
+<b>IPHeader</b> represents base IPv4 header (20 bytes). This class is design to support 
+a simplified IP implementation, so some fields are expected to have some default values.
+</p>
+
+<pre>
+
+struct <span class="Att">IPHeader</span>
+ {
+  // consts
+  
+  static const uint8  DefaultVHL         = 0x45 ;
+  static const uint8  DefaultTOS         = 0    ;
+  static const uint16 DefaultFlagsOffset = 0    ;
+  static const uint8  DefaultTTL         = 128  ;
+  
+  static const uint16 Flag_DF    = 1u&lt;&lt;14     ; // don't fragment
+  static const uint16 Flag_MF    = 1u&lt;&lt;13     ; // more fragments
+  static const uint16 OffsetMask = (1u&lt;&lt;13)-1 ;
+  
+  // data
+ 
+  uint8 vhl; // default
+  uint8 tos; // default
+  IPLen len;
+  uint16 id;
+  
+  uint16 flags_offset; // default
+  uint8  ttl;          // default
+  IProto proto;
+  uint16 check_sum;
+  
+  IPAddress src;
+  IPAddress dst;
+  
+  // constructors
+  
+  IPHeader();
+    
+  IPHeader(IPAddress src,IPAddress dst,IProto proto,IPLen len);
+   
+  // methods
+  
+  void setDefault();
+   
+  static uint16 GetId(); 
+   
+  void setId() { id=GetId(); }
+   
+  void setCheckSum(); 
+  
+  bool testCheckSum() const;
+  
+  bool isFragment() const;
+  
+  // save/load object
+ 
+  enum { SaveLoadLen = 20 };
+ 
+  template &lt;class Dev&gt;
+  void save(Dev &amp;dev) const;
+   
+  template &lt;class Dev&gt;
+  void load(Dev &amp;dev);
+  
+  // print object
+   
+  struct PrintOptType
+   {
+    static const bool Default_inbound = false ;
+    static const bool Default_extra = false ;
+    
+    bool inbound;
+    bool extra;
+   
+    void setDefault() { inbound=Default_inbound; extra=Default_extra; }
+    
+    PrintOptType() { setDefault(); }
+    
+    PrintOptType(const char *ptr,const char *lim);
+    
+    //
+    // [i|o|I|O][x|X]
+    //
+    
+    template &lt;class Dev&gt;
+    static void ParseInbound(Dev &amp;dev,bool &amp;inbound);
+     
+    template &lt;class Dev&gt;
+    void ParseExtra(Dev &amp;dev,bool &amp;extra);
+   }; 
+   
+  template &lt;class P&gt;
+  void print(P &amp;out,PrintOptType opt) const;
+ };
+
+</pre>
+
+<p>
+The default constructor sets default fields to its default values and other fields to null.
+</p>
+
+<p>
+The second constructor sets default fields to its default values, but other fields sets to its proper values,
+i.g. this constructor creates a proper IP header with given fields <b>src</b>, <b>dst</b>, <b>len</b> and <b>proto</b>.
+</p>
+
+<p>
+<b>setDefault()</b> sets default fields to its default values.
+</p>
+
+<p>
+<b>GetId()</b> generates a "unique" packet header id.
+</p>
+
+<p>
+<b>setId()</b> sets the packet header id.
+</p>
+
+<p>
+<b>setCheckSum()</b> sets the check sum of the header. The header must have the basic length 20 bytes. 
+</p>
+
+<p>
+<b>testCheckSum()</b> tests the check sum of the header. The header must have the basic length 20 bytes.
+</p>
+
+<p>
+<b>isFragment()</b> returns <b>true</b>, if the packet is a fragment.
+</p>
+
+<p>
+The class may participate in save/load operations. It is also printable. The two printing options are supported:
+"i","I" or "o","O" controls inbound or outbound formatting of the text. You may also specify "x","X" options
+to print extra information. In the short form only four fields are printed: <b>src</b>, <b>dst</b>, 
+<b>len</b> and <b>proto</b>.
+</p>
 
 <h4>struct ARPacket</h4>
 
