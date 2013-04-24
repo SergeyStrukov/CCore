@@ -596,7 +596,7 @@
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/HFSClientDevice.h" 0
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/HFSFileSystemDevice.h" 0
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/NanoIPDevice.h" 0
-"D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/NetBase.h" 0
+"D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/NetBase.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPBase.h" 0
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPBoot.h" 0
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPBootBase.h" 0
@@ -1604,7 +1604,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Mutex.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NanoPackets.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NegBool.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_NetBase.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_NetBase.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NewDelete.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NoCopy.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NoMutex.html" 2
