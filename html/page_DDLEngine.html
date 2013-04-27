@@ -1,0 +1,527 @@
+<!--
+/* page_DDLEngine.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.04
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> DDL Engine</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>DDL Engine</h2>
+
+<p class="Files">Files <b>CCore/inc/ddl/DDLEngine.h</b> <b>CCore/src/ddl/DDLEngine.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/ddl/DDLMap.h</b> <b>CCore/src/ddl/DDLMap.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/ddl/DDLTypedMap.h</b> <b>CCore/src/ddl/DDLTypedMap.cpp</b></p>
+
+<p class="Files">Subfolders <b>CCore/inc/ddl</b> <b>CCore/src/ddl</b></p>
+
+<h2>DDL implementation</h2>
+
+<p>
+The directory <b>ddl</b> contains a <b>DDL</b> implementation. It is contained in the namespace <b>DDL</b>.
+To process a <b>DDL</b> text there are two main classes: <b>TextEngine</b> and <b>FileEngine</b>.
+The most of content of this directory is a <b>DDL</b> parser implementation and not needed to be used directly.
+</p>
+
+<pre>
+
+class <span class="Att">TextEngine</span> : NoCopy
+ {
+   ....
+
+  public: 
+   
+   TextEngine(PrintBase &msg,StrLen text,StrLen pretext={});
+   
+   ~TextEngine();
+   
+   EngineResult process();
+ };
+
+</pre>
+
+<p>
+The first constructor argument is a stream, where error messages will be printed to.
+The second is a text to be processed. 
+The third is a "pretext". It is included before the <b>text</b>.
+To do the job use the method <b>process()</b>.
+This engine does not support the file inclusion.
+</p>
+
+<pre>
+
+template &lt;class FileName,class FileText&gt;
+class <span class="Att">FileEngine</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   static const ulen DefaultMaxFiles = 1000 ;
+   static const ulen DefaultMaxIncludes = 100 ;
+   static const ulen DefaultMaxFileLen = MaxULen ;
+  
+   explicit FileEngine(PrintBase &msg,ulen mem_cap=MaxULen,
+                                      ulen max_files=DefaultMaxFiles,
+                                      ulen max_inc=DefaultMaxIncludes,
+                                      ulen max_file_len=DefaultMaxFileLen);
+   
+   ~FileEngine();
+   
+   EngineResult process(StrLen file_name,StrLen pretext={});
+ };
+
+</pre>
+
+<p>
+<b>FileEngine</b> can process a complex input from a real or a virtual file system.
+Two template parameters controls the file name processing and the file name to the file content mapping.
+The first constructor argument is a error report stream. Others are different engine limits.
+The method <b>process()</b> does the job. The first argument is a file name with a <b>DDL</b> text. Additional
+files may be opened during include operations.
+The second argument is a "pretext". It is included before the file text.
+</p>
+
+<p>
+On <b>HCore</b> targets you can use the class <a href="page_FileToMem.html"><b>FileToMem</b></a> as the <b>FileText</b> template parameter.
+</p>
+
+<p>
+The class <b>FileName</b> is the default implementation of the <b>FileName</b> template parameter.
+</p>
+
+<pre>
+
+class <span class="Att">FileName</span>
+ {
+   ....
+
+  public: 
+   
+   // constructors
+  
+   FileName();
+  
+   explicit FileName(StrLen file_name);
+  
+   FileName(StrLen path,StrLen file_name);
+   
+   ~FileName();
+   
+   // methods
+   
+   bool operator ! () const;
+  
+   StrLen getStr() const;
+  
+   StrLen getPath() const;
+   
+   StrLen getFile() const;
+   
+   void printPos(PrintBase &out,TextPos pos);
+  
+   // swap objects
+  
+   void objSwap(FileName &obj);
+ };
+
+</pre>
+
+<h3>EngineResult and Map</h3>
+
+<pre>
+
+struct <span class="Att">EngineResult</span>
+ {
+  Eval *eval;
+  BodyNode *body;
+  
+  bool operator ! () const { return !eval; }
+
+  ....
+ };
+
+</pre>
+
+<p>
+<b>EngineResult</b> is null in case of error. You may check it using the <b>operator !</b>.
+</p>
+
+<p>
+You can print <b>Eval</b> object to see the result of processing. This object contains a 
+complete processing outcome. But for something more useful, you may use the class <b>Map</b> 
+to create a result representation in a single memory block.
+</p>
+
+<pre>
+
+class <span class="Att">Map</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   Map(Eval *eval,BodyNode *body);
+   
+   ~Map();
+   
+   ulen getLen() const { return total; }
+   
+   void operator () (void *mem);
+   
+   void * findConst(StrLen name,const TypeDesc &desc);
+ };
+
+</pre>
+
+<p>
+When you create a <b>Map</b> object, it is ready to map data into memory. The method <b>getLen()</b>
+returns the required memory block length. Once you allocate it, the <b>operator ()</b> can be used
+to perform the data mapping. There is a simple helper class <b>MapBase</b> to do these operations.
+</p>
+
+<pre>
+
+class <span class="Att">MapBase</span> : NoCopy
+ {
+   void *mem;
+  
+  public:
+   
+   explicit MapBase(Map &map)
+    {
+     mem=MemAlloc(map.getLen());
+     
+     map(mem);
+    }
+   
+   ~MapBase()
+    {
+     MemFree(mem);
+    }
+ };
+
+</pre>
+
+<p>
+Once the mapping is done, you can retrieve the pointer to the particular constant using
+the method <b>findConst()</b>. This method takes the constant name and the <b>TypeDesc</b> reference.
+There is a set of types, derived from the <b>TypeDesc</b> type, which are used to define
+a constant type in a way, compatible with the <b>DDL</b> type system. 
+Some fields of these types are mutable, their values are assigned by the <b>findConst()</b>.
+Null pointer is returned in case of error.
+</p>
+
+<pre>
+
+/* consts */
+
+enum <span class="Att">TypeTag</span>
+ {
+  TypeTag_sint8,
+  TypeTag_uint8,
+  
+  TypeTag_sint16,
+  TypeTag_uint16,
+  
+  TypeTag_sint32,
+  TypeTag_uint32,
+  
+  TypeTag_sint64,
+  TypeTag_uint64,
+  
+  TypeTag_text,
+  TypeTag_ip,
+  
+  TypeTag_ptr,
+  TypeTag_array,
+  TypeTag_array_len,
+  TypeTag_array_getlen,
+  
+  TypeTag_struct,
+  
+  // size-less types 
+  
+  TypeTag_sint = .... ,
+  TypeTag_uint = .... ,
+  TypeTag_ulen = .... ,
+   
+  TypeTag_int = TypeTag_sint 
+ };
+
+/* struct TypeDesc_basic */
+
+struct <span class="Att">TypeDesc_basic</span> : TypeDesc
+ {
+  explicit TypeDesc_basic(TypeTag tag_) { tag=tag_; }
+ };
+
+/* struct TypeDesc_ptr */
+
+struct <span class="Att">TypeDesc_ptr</span> : TypeDesc
+ {
+  const TypeDesc &amp;type;
+  
+  explicit TypeDesc_ptr(const TypeDesc &amp;type_) : type(type_) { tag=TypeTag_ptr; }
+ };
+
+/* struct TypeDesc_array */
+
+struct <span class="Att">TypeDesc_array</span> : TypeDesc
+ {
+  const TypeDesc &amp;type;
+  
+  explicit TypeDesc_array(const TypeDesc &amp;type_) : type(type_) { tag=TypeTag_array; }
+ };
+
+/* struct TypeDesc_array_len */
+
+struct <span class="Att">TypeDesc_array_len</span> : TypeDesc
+ {
+  const TypeDesc &amp;type;
+  ulen len;
+  
+  TypeDesc_array_len(const TypeDesc &amp;type_,ulen len_) : type(type_),len(len_) { tag=TypeTag_array_len; }
+ };
+
+/* struct TypeDesc_array_getlen */
+
+struct <span class="Att">TypeDesc_array_getlen</span> : TypeDesc
+ {
+  const TypeDesc &amp;type;
+  mutable ulen len;
+  
+  explicit TypeDesc_array_getlen(const TypeDesc &amp;type_) : type(type_),len(0) { tag=TypeTag_array_getlen; }
+ };
+
+/* struct TypeDesc_struct&lt;ulen FieldCount&gt; */
+
+template &lt;ulen FieldCount&gt;
+struct <span class="Att">TypeDesc_struct</span> : TypeDesc_struct_base
+ {
+  Field buf[FieldCount];
+  
+  template &lt;class ... TT&gt;
+  TypeDesc_struct(const TT &amp; ... tt) : TypeDesc_struct_base(buf),buf{tt...} { tag=TypeTag_struct; field_count=FieldCount; }
+ };
+
+</pre>
+
+<p>
+<b>TypeDesc_basic</b> designates a basic type, it is used with the following tags:
+</p>
+
+<pre>
+
+TypeTag_sint8
+TypeTag_uint8
+  
+TypeTag_sint16
+TypeTag_uint16
+  
+TypeTag_sint32
+TypeTag_uint32
+  
+TypeTag_sint64
+TypeTag_uint64
+  
+TypeTag_text
+TypeTag_ip
+
+</pre>
+
+<p>
+<b>TypeDesc_ptr</b> designates a pointer type (<b>T *</b>).
+</p>
+
+<p>
+<b>TypeDesc_array</b> designates an array type with an implicit length (<b>T []</b>).
+</p>
+
+<p>
+<b>TypeDesc_array_len</b> designates an array type with the explicit length (<b>T [len]</b>).
+</p>
+
+<p>
+<b>TypeDesc_array_getlen</b> designates an array type with an explicit length (<b>T [len]</b>), but this length
+is extracted from data. The field <b>len</b> is filled by the <b>findConst()</b> method.
+</p>
+
+<p>
+<b>TypeDesc_struct</b> designates a structure type.
+</p>
+
+<p>
+The actual data access is performed by the class <b>DataPtr</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">DataPtr</span>
+ {
+  void *ptr;
+  
+  // constructors
+  
+  DataPtr() : ptr(0) {}
+  
+  DataPtr(void *ptr_) : ptr(ptr_) {}
+  
+  // methods
+  
+  bool operator ! () const { return !ptr; }
+  
+  struct Proxy
+   {
+    void *ptr;
+    
+    Proxy(void *ptr_) : ptr(ptr_) {}
+    
+    template &lt;class T&gt; 
+    operator T() const;
+   };
+  
+  Proxy operator * () const { return ptr; }
+  
+  DataPtr elem(const TypeDesc_struct_base &amp;desc,ulen ind) const;
+  
+  DataPtr select(const TypeDesc_struct_base &amp;desc,ulen ind) const;
+  
+  struct ProxyRange
+   {
+    void *ptr;
+    ulen len;
+    
+    ProxyRange(void *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
+    
+    template &lt;class T&gt; 
+    operator PtrLen&lt;T&gt;() const;
+   };
+  
+  ProxyRange range(ulen len) const { return ProxyRange(ptr,len); }
+ };
+
+</pre>
+
+<p>
+The object of this type serves as an "universal" constant pointer. It should be initialized by the value, returned 
+by the <b>findConst()</b> method. Then if the type of the constant is simple, you can retrieve the value using the
+<b>operator *</b>.
+</p>
+
+<pre>
+
+DDL::TypeDesc_basic type(DDL::TypeTag_int);
+
+DDL::Map map(....);
+
+DDL::DataPtr ptr=map.findConst("name",type);
+
+if( !ptr )
+  {
+   // no such constant
+
+   ....
+  }
+else
+  {
+   DDL::imp_int value=*ptr;
+  }
+
+</pre>
+
+<p>
+The following types must be used:
+</p>
+
+<pre>
+
+imp_sint8   for  sint8
+imp_uint8   for  uint8
+imp_sint16  for  sint16
+imp_uint16  for  uint16
+imp_sint32  for  sint32 
+imp_uint32  for  uint32
+imp_sint64  for  sint64
+imp_uint64  for  uint64
+
+imp_sint    for  sint
+imp_uint    for  uint
+
+imp_ulen    for  ulen
+imp_int     for  int
+
+StrLen      for  text
+imp_uint32  for  ip
+
+ArrayPtr    for  T[]  where
+
+struct <span class="Att">ArrayPtr</span>
+ {
+  void *ptr;
+  ulen len;
+
+  ArrayPtr() : ptr(0),len(0) {}
+  
+  ArrayPtr(void *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
+ };
+
+</pre>
+
+<p>
+For a pointer type use the <b>DataPtr</b> type.
+</p>
+
+<p>
+For an array type with an implicit length use the <b>PtrLen&lt;T&gt;</b> type. You cannot do it, if the 
+<b>T</b> is a structure type.
+</p>
+
+<p>
+Two methods <b>elem()</b> and <b>select()</b> support working with a structure type.
+</p>
+
+<p>
+<b>select()</b> returns the pointer to the structure field, <b>ind</b> is a field index.  
+</p>
+
+<p>
+<b>elem()</b> can be used to move a pointer to a structure, if the element is a member of an array.
+<b>ind</b> is an element index after the current element.
+</p>
+
+<p>
+For arrays with an explicit length, <b>DataPtr</b> points to the first element. 
+</p>
+
+<h3>TypedMap</h3>
+
+<p>
+There is an advanced method of a <b>DDL</b> data mapping, implemented by the class <b>TypedMap</b>.
+</p>
+
+</body>
+
+</html>
+

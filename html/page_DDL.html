@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> DDL</title>
+ <title>CCore -> DDL language</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,37 +26,28 @@
 
 <body>
 
-<h2>DDL</h2>
-
-<p class="Files">Files <b>CCore/inc/ddl/DDLEngine.h</b> <b>CCore/src/ddl/DDLEngine.cpp</b></p>
-
-<p class="Files">Files <b>CCore/inc/ddl/DDLMap.h</b> <b>CCore/src/ddl/DDLMap.cpp</b></p>
-
-<p class="Files">Files <b>CCore/inc/ddl/DDLTypedMap.h</b> <b>CCore/src/ddl/DDLTypedMap.cpp</b></p>
-
-<p class="Files">Subfolders <b>CCore/inc/ddl</b> <b>CCore/src/ddl</b></p>
-
+<h2>DDL language</h2>
 
 <p>
 <b>DDL</b> is the <b>Data Definition Language</b>. This language is to record a general-kind data
 in a textual form similar to the C language. But there are important differences between how DDL interprets
-data and expresions and C. <b>DDL</b> is a "bye-bye <b>XML</b>" language.
+data and expressions and C. <b>DDL</b> is a "bye-bye <b>XML</b>" language.
 </p>
 
 <h2>Brief introduction</h2>
 
 <p>
-Documents <b>txt/DDL-1*.*</b> contains number of precise definitions, related to <b>DDL</b> in
-a waterless form. An here is a brief introduction to the language.
+Documents <b>txt/DDL-1*.*</b> contain number of precise definitions, related to <b>DDL</b> in
+a "waterless" form. And here is a brief introduction to the language.
 </p>
 
 <p>
-<b>DDL</b> is to define named constants. Each constant has an associated type. Types can be basic and derived.
+<b>DDL</b> is to define named constants. Each constant has an associated type. Types can be basic or derived.
 The most important derived types are structures.
 </p>
 
 <p>
-Basic types are integral, <b>text</b> and <b>ip</b>. Intergral types are:
+Basic types are integral types, <b>text</b> and <b>ip</b>. Integral types are:
 </p>
 
 <pre>
@@ -75,7 +66,11 @@ ulen = uint32 or uint64 >= uint
 </pre>
 
 <p>
-<b>text</b> type represents a character string. <b>ip</b> type represents an IPv4 address.
+<b>text</b> type represents a character string. 
+</p>
+
+<p>
+<b>ip</b> type represents an IPv4 address.
 </p>
 
 <p>
@@ -111,12 +106,12 @@ S record = { "" , 10 } ;
 </pre>
 
 <p>
-If the array length is not given explicitly, then it is infered from the initializer.
+If the array length is not given explicitly, then it is inferred from the initializer.
 Structure members may have default initializers.
 </p>
 
 <p>
-Type aliases and scopes are supported:
+Type aliases and scopes (aka "namespaces") are supported:
 </p>
 
 <pre>
@@ -219,8 +214,8 @@ is implementation-defined.
 
 <p>
 <b>DDL</b> elements are: scopes, types, type aliases, constants, literals and expressions.
-<b>DDL</b> text is a sequence of definitions. A definition defines a scope, a struct, 
-a type alias or a constant. Literals and expressions are used to define a constant's value.
+<b>DDL</b> text is a sequence of definitions. A definition defines a scope, a structure, 
+a type alias or a constant. Literals and expressions are used to define a constants value.
 </p>
 
 <h3>Comments</h3>
@@ -240,7 +235,7 @@ a type alias or a constant. Literals and expressions are used to define a consta
 <h3>Scopes</h3>
 
 <p>
-Scope is a "definition directory". Scopes can be nested and splitted. Each named language element
+Scope is a "definition directory". Scopes can be nested or split. Each named language element
 belongs to some scope. The full element name is <b># Scope1name # Scope2Name # ... # ElementName</b>.
 </p>
 
@@ -254,11 +249,11 @@ scope A { // open scope #A
 
 scope B { // open scope #B
 
-scope C { // open scope #B#C
+ scope C { // open scope #B#C
 
-....
+ ....
 
-} // close scope #B#C
+ } // close scope #B#C
 
 ....
 
@@ -285,39 +280,39 @@ scope S1 {
 
 int i = 1 ;
 
-scope S2 {
+ scope S2 {
 
-int i = 2 ;
+ int i = 2 ;
 
-scope S3 {
+  scope S3 {
 
-int i = 3 ;
+  int i = 3 ;
 
-int j = -3 ;
+  int j = -3 ;
 
-scope S4 {
+   scope S4 {
 
-int i = 4 ;
+   int i = 4 ;
 
-int i1 = i ; // 4
+   int i1 = i ; // 4
 
-int i2 = j ; // -3
+   int i2 = j ; // -3
 
-int i3 = S1#i ; // 1
+   int i3 = S1#i ; // 1
 
-int i4 = #S1#i ; // 1
+   int i4 = #S1#i ; // 1
 
-int i5 = .#i ; // 4
+   int i5 = .#i ; // 4
 
-int i6 = ..#i ; // 3
+   int i6 = ..#i ; // 3
 
-int i7 = ...#i ; // 2
+   int i7 = ...#i ; // 2
 
-}
+   }
 
-}
+  }
 
-}
+ }
 
 }
 
@@ -381,7 +376,7 @@ or a structure definition.
 
 // basic type name
 
-int a = 0;
+int a = 0 ;
 ulen b = 0 ;
 
 // type alias name
@@ -408,7 +403,7 @@ Type alias definition looks like:
 
 <pre>
 
-type <i>name</i> = Type ;
+type <i>Name</i> = Type ;
 
 </pre>
 
@@ -420,7 +415,7 @@ Structure definition looks like:
 
 <pre>
 
-struct <i>name</i>
+struct <i>Name</i>
  {
   Type<sub>1</sub> <i>field_name<sub>1</sub></i> [ = Expression<sub>1</sub> ] ;
 
@@ -433,7 +428,7 @@ struct <i>name</i>
 
 <p>
 Each structure has a name and a list of fields. Each field has a name, a type and an optional
-default value, determined by an expression. It also defines a scope. This scope can be extended.
+default value, determined by an expression. A structure also defines a scope. This scope can be extended.
 A structure definition can also defines a scope type aliases, structures and constants:
 </p>
 
@@ -452,6 +447,10 @@ struct S
 
 </pre>
 
+<p>
+To define a constant inside a structure (not a field) the keyword <b>const</b> must be used.
+</p>
+
 <h3>Constants</h3>
 
 <p>
@@ -460,7 +459,7 @@ Constant definition looks like:
 
 <pre>
 
-Type <i>name</i> = Expression ; 
+Type <i>Name</i> = Expression ; 
 
 </pre>
 
@@ -470,7 +469,7 @@ and value, determined by the expression.
 </p>
 
 <p>
-Constant can be defined inside a structure definiton with the keyword <b>const</b>:
+Constant can be defined inside a structure definition with the keyword <b>const</b>:
 </p>
 
 <pre>
@@ -483,7 +482,7 @@ struct S
 </pre>
 
 <p>
-Without <b>const</b> it would be a member definition.
+Without <b>const</b> it would be a field definition.
 </p>
 
 <h3>Literals</h3>
@@ -531,7 +530,7 @@ null
 
 </pre>
 
-<p>Advanced string literals process usual back-slash special character representations:</p>
+<p>Advanced string literals accept usual back-slash special character representations:</p>
 
 <pre>
 
@@ -554,7 +553,7 @@ null
 Expressions are used to assign a value to a constant (including implicitly defined constants, like
 array lengths or default structure member values). Expression can be scalar or compound.
 Scalar expressions can be used to assign a value of a basic type, compound &mdash; for structures
-and arrays. A special class of scalar expressions defines a pointer values.
+and arrays. A special class of scalar expressions defines pointer values.
 </p>
 
 <p>
@@ -586,7 +585,7 @@ S s4 = { .a = 1 } ; // named list, a = 1, b = 0, c = 10
 </pre>
 
 <p>
-Named lists can be used as a value modifier:
+Named lists can be used as value modifiers:
 </p>
 
 <pre>
@@ -610,7 +609,7 @@ S s2 = { 1 , 2 } { .a = -1 } ; // a = -1, b = 2, c = 10
 Usual arithmetic operations <b>+a, -a, a+b, a-b, a*b, a/b, a%b</b> can be used with integral values.
 Operands are evaluated to the resulting integral type and operation is performed with this value types.
 Additive integral operations and multiplication are operations in the correspondent residual ring.
-Division operations follows <b>C</b> convension:
+Division operations follows <b>C</b> convention:
 </p>
 
 <pre>
@@ -624,7 +623,7 @@ abs( a%b ) < abs(b)
 </pre>
 
 <p>
-Signed intergal types use 2'd complementary representation. Integral literal conversion performes
+Signed integral types use 2'd complementary representation. Integral literal conversions are performed
 by the module reduction. 
 </p>
 
@@ -647,7 +646,7 @@ The expression inside a cast expression is evaluated to the resulting cast type.
 </p>
 
 <p>
-<b>text</b> constant can be received from a text literal, IP literals, integral literals and from
+<b>text</b> constant can be received from a text literal, an IP literal, an integral literal and from
 a binary plus operator.
 </p>
 
@@ -725,447 +724,6 @@ int a = ps->a ;
 int b = (*ps).b ;
 
 </pre>
-
-<h2>DDL implementation</h2>
-
-<p>
-The directory <b>ddl</b> contains a <b>DDL</b> implementaion. It is contained in the namespace <b>DDL</b>.
-To process a <b>DDL</b> text there are two main classes: <b>TextEngine</b> and <b>FileEngine</b>.
-</p>
-
-<pre>
-
-class <span class="Att">TextEngine</span> : NoCopy
- {
-   ....
-
-  public: 
-   
-   TextEngine(PrintBase &msg,StrLen text,StrLen pretext={});
-   
-   ~TextEngine();
-   
-   EngineResult process();
- };
-
-</pre>
-
-<p>
-The first constructor argument is a stream, where error messages will be printed.
-The second is a text to be processed. 
-The third is a "pretext". It is included before the <b>text</b>.
-To do the job use the method <b>process()</b>.
-This class does not support a file inclusion.
-</p>
-
-<pre>
-
-template &lt;class FileName,class FileText&gt;
-class <span class="Att">FileEngine</span> : NoCopy
- {
-   ....
-
-  public:
-   
-   static const ulen DefaultMaxFiles = 1000 ;
-   static const ulen DefaultMaxIncludes = 100 ;
-   static const ulen DefaultMaxFileLen = MaxULen ;
-  
-   explicit FileEngine(PrintBase &msg,ulen mem_cap=MaxULen,
-                                      ulen max_files=DefaultMaxFiles,
-                                      ulen max_inc=DefaultMaxIncludes,
-                                      ulen max_file_len=DefaultMaxFileLen);
-   
-   ~FileEngine();
-   
-   EngineResult process(StrLen file_name,StrLen pretext={});
- };
-
-</pre>
-
-<p>
-<b>FileEngine</b> can process a complex input from a real or a virtual file system.
-Two template parameters controls the file name processing and the file name to the file content mapping.
-The first constructor argument is a error report stream. Other are different engine limits.
-The method <b>process()</b> does the job. The first argument is a file name with a <b>DDL</b> text. Additional
-files may be opened during include operations.
-The second argument is a "pretext". It is included before the file text.
-</p>
-
-<p>
-On <b>HCore</b> targets ou can use <b>FileToMem</b> as the <b>FileText</b> template parameter.
-</p>
-
-<p>
-The class <b>FileName</b> is a default implementaion of the <b>FileName</b> template parameter.
-</p>
-
-<h3>EngineResult and Map</h3>
-
-<pre>
-
-struct <span class="Att">EngineResult</span>
- {
-  Eval *eval;
-  BodyNode *body;
-  
-  bool operator ! () const { return !eval; }
-
-  ....
- };
-
-</pre>
-
-<p>
-<b>EngineResult</b> is null in case of error. You may check it using <b>operator !</b>.
-</p>
-
-<p>
-You can print <b>Eval</b> object to see the result of processing. This object contains a 
-complete processing outcome. But for something more usefull, you may use the class <b>Map</b> 
-to create a result representation in a single memory block.
-</p>
-
-<pre>
-
-class <span class="Att">Map</span> : NoCopy
- {
-   ....
-
-  public:
-   
-   Map(Eval *eval,BodyNode *body);
-   
-   ~Map();
-   
-   ulen getLen() const { return total; }
-   
-   void operator () (void *mem);
-   
-   void * findConst(StrLen name,const TypeDesc &desc);
- };
-
-</pre>
-
-<p>
-When you create a <b>Map</b> object, it is ready to map data into memory. The method <b>getLen()</b>
-returns the required memory block length. Once you allocate it, the <b>operator ()</b> can be used
-to perform the data mapping. There is a simple helper class <b>MapBase</b> to do these operations.
-</p>
-
-<pre>
-class <span class="Att">MapBase</span> : NoCopy
- {
-   void *mem;
-  
-  public:
-   
-   explicit MapBase(Map &map)
-    {
-     mem=MemAlloc(map.getLen());
-     
-     map(mem);
-    }
-   
-   ~MapBase()
-    {
-     MemFree(mem);
-    }
- };
-</pre>
-
-<p>
-Once the mapping is done, you can retrieve the pointer to the particular constant using
-the method <b>findConst()</b>. This method takes the constant name and the <b>TypeDesc</b> reference.
-There is a set of types, derived from the <b>TypeDesc</b> type, which are used to define
-a constant type in a way, compatible with the <b>DDL</b> type system. 
-Some fields of these types are mutable, their values are assigned by the <b>findConst()</b>.
-Null pointer is returned in case of error.
-</p>
-
-<pre>
-/* consts */
-
-enum <span class="Att">TypeTag</span>
- {
-  TypeTag_sint8,
-  TypeTag_uint8,
-  
-  TypeTag_sint16,
-  TypeTag_uint16,
-  
-  TypeTag_sint32,
-  TypeTag_uint32,
-  
-  TypeTag_sint64,
-  TypeTag_uint64,
-  
-  TypeTag_text,
-  TypeTag_ip,
-  
-  TypeTag_ptr,
-  TypeTag_array,
-  TypeTag_array_len,
-  TypeTag_array_getlen,
-  
-  TypeTag_struct,
-  
-  // size-less types 
-  
-  TypeTag_sint = .... ,
-  TypeTag_uint = .... ,
-  TypeTag_ulen = .... ,
-   
-  TypeTag_int = TypeTag_sint 
- };
-
-/* struct TypeDesc_basic */
-
-struct <span class="Att">TypeDesc_basic</span> : TypeDesc
- {
-  explicit TypeDesc_basic(TypeTag tag_) { tag=tag_; }
- };
-
-/* struct TypeDesc_ptr */
-
-struct <span class="Att">TypeDesc_ptr</span> : TypeDesc
- {
-  const TypeDesc &amp;type;
-  
-  explicit TypeDesc_ptr(const TypeDesc &amp;type_) : type(type_) { tag=TypeTag_ptr; }
- };
-
-/* struct TypeDesc_array */
-
-struct <span class="Att">TypeDesc_array</span> : TypeDesc
- {
-  const TypeDesc &amp;type;
-  
-  explicit TypeDesc_array(const TypeDesc &amp;type_) : type(type_) { tag=TypeTag_array; }
- };
-
-/* struct TypeDesc_array_len */
-
-struct <span class="Att">TypeDesc_array_len</span> : TypeDesc
- {
-  const TypeDesc &amp;type;
-  ulen len;
-  
-  TypeDesc_array_len(const TypeDesc &amp;type_,ulen len_) : type(type_),len(len_) { tag=TypeTag_array_len; }
- };
-
-/* struct TypeDesc_array_getlen */
-
-struct <span class="Att">TypeDesc_array_getlen</span> : TypeDesc
- {
-  const TypeDesc &amp;type;
-  mutable ulen len;
-  
-  explicit TypeDesc_array_getlen(const TypeDesc &amp;type_) : type(type_),len(0) { tag=TypeTag_array_getlen; }
- };
-
-/* struct TypeDesc_struct&lt;ulen FieldCount&gt; */
-
-template &lt;ulen FieldCount&gt;
-struct <span class="Att">TypeDesc_struct</span> : TypeDesc_struct_base
- {
-  Field buf[FieldCount];
-  
-  template &lt;class ... TT&gt;
-  TypeDesc_struct(const TT &amp; ... tt) : TypeDesc_struct_base(buf),buf{tt...} { tag=TypeTag_struct; field_count=FieldCount; }
- };
-
-</pre>
-
-<p>
-<b>TypeDesc_basic</b> designates a basic type, it is used with the following tags:
-</p>
-
-<pre>
-
-TypeTag_sint8
-TypeTag_uint8
-  
-TypeTag_sint16
-TypeTag_uint16
-  
-TypeTag_sint32
-TypeTag_uint32
-  
-TypeTag_sint64
-TypeTag_uint64
-  
-TypeTag_text
-TypeTag_ip
-
-</pre>
-
-<p>
-<b>TypeDesc_ptr</b> designates a pointer type (<b>T *</b>).
-</p>
-
-<p>
-<b>TypeDesc_array</b> designates an array type with implicit length (<b>T []</b>).
-</p>
-
-<p>
-<b>TypeDesc_array_len</b> designates an array type with explicit length (<b>T [len]</b>).
-</p>
-
-<p>
-<b>TypeDesc_array_getlen</b> designates an array type with explicit length (<b>T [len]</b>), but this length
-is extracted from data. The field <b>len</b> is filled by the <b>findConst()</b> method.
-</p>
-
-<p>
-<b>TypeDesc_struct</b> designates a struct type.
-</p>
-
-<p>
-The actual data access is performed by the class <b>DataPtr</b>.
-</p>
-
-<pre>
-struct <span class="Att">DataPtr</span>
- {
-  void *ptr;
-  
-  // constructors
-  
-  DataPtr() : ptr(0) {}
-  
-  DataPtr(void *ptr_) : ptr(ptr_) {}
-  
-  // methods
-  
-  bool operator ! () const { return !ptr; }
-  
-  struct Proxy
-   {
-    void *ptr;
-    
-    Proxy(void *ptr_) : ptr(ptr_) {}
-    
-    template &lt;class T&gt; 
-    operator T() const;
-   };
-  
-  Proxy operator * () const { return ptr; }
-  
-  DataPtr elem(const TypeDesc_struct_base &amp;desc,ulen ind) const;
-  
-  DataPtr select(const TypeDesc_struct_base &amp;desc,ulen ind) const;
-  
-  struct ProxyRange
-   {
-    void *ptr;
-    ulen len;
-    
-    ProxyRange(void *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
-    
-    template &lt;class T&gt; 
-    operator PtrLen&lt;T&gt;() const;
-   };
-  
-  ProxyRange range(ulen len) const { return ProxyRange(ptr,len); }
- };
-</pre>
-
-<p>
-The object of this type serves as an "universal" constant pointer. It should be initialized by the value, returned 
-by the <b>findConst()</b> method. Then if the type of the constant is simple, you can retrieve the value using 
-<b>operator *</b>.
-</p>
-
-<pre>
-
-DDL::TypeDesc_basic type(DDL::TypeTag_int);
-
-DDL::Map map(....);
-
-DDL::DataPtr ptr=map.findConst("name",type);
-
-if( !ptr )
-  {
-   // no such constant
-
-   ....
-  }
-else
-  {
-   DDL::imp_int value=*ptr;
-  }
-
-</pre>
-
-<p>
-The following types must be used:
-</p>
-
-<pre>
-
-imp_sint8   for  sint8
-imp_uint8   for  uint8
-imp_sint16  for  sint16
-imp_uint16  for  uint16
-imp_sint32  for  sint32 
-imp_uint32  for  uint32
-imp_sint64  for  sint64
-imp_uint64  for  uint64
-
-imp_sint    for  sint
-imp_uint    for  uint
-
-imp_ulen    for  ulen
-imp_int     for  int
-
-StrLen      for  text
-imp_uint32  for  ip
-
-ArrayPtr    for  T[]  where
-
-struct <span class="Att">ArrayPtr</span>
- {
-  void *ptr;
-  ulen len;
-
-  ArrayPtr() : ptr(0),len(0) {}
-  
-  ArrayPtr(void *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
- };
-
-</pre>
-
-<p>
-For a pointer type use the <b>DataPtr</b> type.
-</p>
-
-<p>
-For an array type with implicit length use the <b>PtrLen&lt;T&gt;</b> type. You cannot do it, if the 
-<b>T</b> is a structure type.
-</p>
-
-<p>
-Two methods <b>elem()</b> and <b>select()</b> support working with a structure type.
-</p>
-
-<p>
-<b>select()</b> returns the pointer to the structure field, <b>ind</b> is a field index.  
-</p>
-
-<p>
-<b>elem()</b> can be used to move a pointer to a strucrture, if the element is a member of an array.
-<b>ind</b> is an element index after the current element.
-</p>
-
-<p>
-For arrays with an explicit length, <b>DataPtr</b> points to the first element. 
-</p>
-
-<p>
-See <b>tools/ParserGen/DataMap.h</b> and <b>tools/ParserGen/DataMap.cpp</b> for an example
-of data mapping.
-</p>
 
 </body>
 
