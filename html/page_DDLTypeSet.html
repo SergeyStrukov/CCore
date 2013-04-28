@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_DDlTypeSet.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.04
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> DDLTypeSet</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,30 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>DDLTypeSet</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p>
+<b>DDLTypeSet</b> is a tool for generation a <b>TypeSet</b> class. This class can be used to
+map <b>DDL</b> data using the <a href="page_DDlEngine.html#TypedMap"><b>DDL::TypedMap</b></a>.
+</p>
 
+<pre>
+
+DDLTypeSet.exe &lt;ddl-file-name&gt; &lt;output-file1&gt; &lt;output-file2&gt;
+
+</pre>
+
+<p>
+<b>ddl-file-name</b> is the name of a <b>DDL</b> file, which contains type definitions.
+</p>
+
+<p>
+<b>output-file1</b> will contain <b>TypeDef</b> declarations.
+</p>
+
+<p>
+<b>output-file2</b> will contain <b>TypeSet</b> declarations.
+</p>
 
 </body>
 

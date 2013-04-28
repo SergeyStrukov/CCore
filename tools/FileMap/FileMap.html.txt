@@ -1073,9 +1073,9 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_Counters.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Crc.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DDL.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_DDLEngine.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_DDLEngine.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DDLShow.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_DDLTypeSet.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_DDLTypeSet.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DefaultTimeout.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DefaultValue.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_DeferCall.html" 2

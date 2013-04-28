@@ -101,6 +101,7 @@ The first constructor argument is a error report stream. Others are different en
 The method <b>process()</b> does the job. The first argument is a file name with a <b>DDL</b> text. Additional
 files may be opened during include operations.
 The second argument is a "pretext". It is included before the file text.
+The method <b>process()</b> can be called multiple times for different files. Loaded files are cached.
 </p>
 
 <p>
@@ -109,6 +110,7 @@ On <b>HCore</b> targets you can use the class <a href="page_FileToMem.html"><b>F
 
 <p>
 The class <b>FileName</b> is the default implementation of the <b>FileName</b> template parameter.
+This class is responsible for the file name manipulations.
 </p>
 
 <pre>
@@ -148,6 +150,71 @@ class <span class="Att">FileName</span>
 
 </pre>
 
+<p>
+Default constructor creates a null object.
+</p>
+
+<p>
+The second constructor is used to build a file name object of the original file. Its argument is the given file name
+in the method <b>FileEngine<....>::process()</b>.
+</p>
+
+<p>
+The third constructor is used to build a file name object for an included file. The first argument is the
+path (not the full name) of the host file, the second is the given file name in the directive <b>include</b>.
+If the file name has no device specifier and does not start with the "root" character, then the name is considered
+a relative to the host file path. Otherwise it is an absolute file name. The file name is normalized.
+</p>
+
+<p>
+<b>operator !</b> is used to check, if the object is well constructed. The class <b>FileName</b> throws exception
+in a case of exception situation, like no memory. But in a case of error situation, like a bad given file name, 
+it sets itself to the null state.
+</p>
+
+<p>
+<b>getStr()</b> returns the full file name. It is used to open the file.
+</p>
+
+<p>
+<b>getPath()</b> returns the path of the file, without the file name.
+</p>
+
+<p>
+<b>getFile()</b> returns the only file name.
+</p>
+
+<p>
+<b>printPos()</b> prints the position inside the file.
+</p>
+
+<p>
+If you desire, you may develop your own "file name" class with this interface and use it as the template
+parameter.
+</p>
+
+<p>
+The second template parameter must do the same thing as the <b>FileToMem</b> class, i.g. load
+the file content into the memory.
+</p>
+
+<pre>
+
+class <span class="Att">FileText</span> : NoCopy
+ {
+  public:
+
+   FileText(StrLen file_name,ulen max_len);
+
+   ~FileText();
+
+   const uint8 * getPtr() const;
+
+   ulen getLen() const;
+ };
+
+</pre>
+
 <h3>EngineResult and Map</h3>
 
 <pre>
@@ -169,8 +236,13 @@ struct <span class="Att">EngineResult</span>
 </p>
 
 <p>
-You can print <b>Eval</b> object to see the result of processing. This object contains a 
-complete processing outcome. But for something more useful, you may use the class <b>Map</b> 
+The <b>Eval</b> object contains a complete processing outcome. The <b>BodyNode</b> object represents
+the source <b>DDL</b> text as a tree. These objects live withing the Engine object life-time.
+</p>
+
+<p>
+You can print <b>Eval</b> object to see the result of processing. 
+But for something more useful, you may use the class <b>Map</b> 
 to create a result representation in a single memory block.
 </p>
 
@@ -196,7 +268,7 @@ class <span class="Att">Map</span> : NoCopy
 </pre>
 
 <p>
-When you create a <b>Map</b> object, it is ready to map data into memory. The method <b>getLen()</b>
+When you create a <b>Map</b> object, it is ready to map data into the memory. The method <b>getLen()</b>
 returns the required memory block length. Once you allocate it, the <b>operator ()</b> can be used
 to perform the data mapping. There is a simple helper class <b>MapBase</b> to do these operations.
 </p>
@@ -231,6 +303,11 @@ There is a set of types, derived from the <b>TypeDesc</b> type, which are used t
 a constant type in a way, compatible with the <b>DDL</b> type system. 
 Some fields of these types are mutable, their values are assigned by the <b>findConst()</b>.
 Null pointer is returned in case of error.
+</p>
+
+<p>
+The important thing about data mapping is: <span class="Alert">you may preserve the memory block and all pointers, returned by the
+<b>findConst()</b> method, they remain valid even the Map object (and the Engine object) is destroyed</span>.
 </p>
 
 <pre>
@@ -494,7 +571,7 @@ For a pointer type use the <b>DataPtr</b> type.
 </p>
 
 <p>
-For an array type with an implicit length use the <b>PtrLen&lt;T&gt;</b> type. You cannot do it, if the 
+For an array type with an implicit length you may also use the <b>PtrLen&lt;T&gt;</b> type. You cannot do it, if the 
 <b>T</b> is a structure type.
 </p>
 
@@ -512,14 +589,469 @@ Two methods <b>elem()</b> and <b>select()</b> support working with a structure t
 </p>
 
 <p>
-For arrays with an explicit length, <b>DataPtr</b> points to the first element. 
+For arrays with an explicit length, <b>DataPtr</b> points to the first element. You may use the method
+range to cast to the <b>PtrLen&lt;T&gt;</b> type, if the <b>T</b> is not a structure type.
 </p>
 
-<h3>TypedMap</h3>
+<pre>
+
+DDL::TypeDesc_basic type(DDL::TypeTag_int);
+
+DDL::TypeDesc_array_getlen atype(type);
+
+DDL::Map map(....);
+
+DDL::DataPtr ptr=map.findConst("name",atype);
+
+if( !ptr )
+  {
+   // no such constant
+
+   ....
+  }
+else
+  {
+   PtrLen&lt;DDL::imp_int&gt; value=ptr.range(atype.len);
+  }
+
+</pre>
+
+<a name="TypedMap"><h3>TypedMap</h3></a>
 
 <p>
 There is an advanced method of a <b>DDL</b> data mapping, implemented by the class <b>TypedMap</b>.
+This class is similar in the usage to the class <b>Map</b>.
+There are two important differences. You have to supply a template parameter <b>TypeSet</b>.
+This template parameter provides some types description. The original <b>DDL</b> content must be represented
+using these types. Next, when you extract a constant from the data map you receive a true object of an appropriate type.
 </p>
+
+<pre>
+
+template &lt;class TypeSet&gt;
+class <span class="Att">TypedMap</span> : NoCopy
+ {
+  public:
+   
+   TypedMap(Eval *eval,BodyNode *body);
+   
+   ~TypedMap();
+   
+   ulen getLen() const;
+   
+   void operator () (void *mem);
+   
+   template &lt;class T&gt;
+   T * findConst(StrLen name);
+   
+   template &lt;class T&gt;
+   T takeConst(StrLen name);
+ };
+
+</pre>
+
+<p>
+<b>finsConst()</b> returns the pointer to the desired object, if found, or null if not found or type mismatch happens.
+</p>
+
+<p>
+<b>takeConst()</b> returns the constant value. An exception is thrown in case of error.
+</p>
+
+<p>
+You don't need to write a <b>TypeSet</b> class directly. There is a tool <a href="page_DDLTypeSet.html"><b>DDLTypeSet</b></a>.
+This tool generates two description files from a <b>DDL</b> source.
+</p>
+
+<p>
+Consider an example. There is the file <b>StateType.ddl</b> in the directory <b>tools/langLR1-tools</b>.
+This file describe types for a <b>DDL</b> output from the <a href="page_LangLR1.html"><b>LangLR1</b></a> tool.
+</p>
+
+<pre>
+/* StateTypes.ddl */
+//----------------------------------------------------------------------------------------
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+type ElementIndex = uint ;
+type RuleIndex = uint ;
+type FinalIndex = uint ;
+type StateIndex = uint ;
+
+struct Element 
+ {
+  ElementIndex element;
+
+  text name;
+
+  Rule * [] rules; // for non-atoms
+ };
+
+struct Rule
+ {
+  RuleIndex rule;
+
+  text name;
+
+  Element * result; // non-atom
+  Element * [] args;
+ };
+
+struct Final
+ {
+  FinalIndex final;
+
+  struct Action { Element *atom; Rule *rule; } [] actions;
+ };
+
+struct State
+ {
+  StateIndex state;
+
+  struct Transition { Element *element; State *state; } [] transitions;
+
+  Final *final;
+ };
+
+</pre>
+
+<p>
+Several <b>DDL</b> type aliases and structures are defined here. If you apply the <b>DDLTypeSet</b> you will get
+the following output:
+</p>
+
+<pre>
+/* struct TypeDefCore */
+
+struct TypeDefCore
+ {
+  // types
+
+  struct S1; // State#Transition
+  struct S2; // State
+  struct S3; // Final#Action
+  struct S4; // Final
+  struct S5; // Rule
+  struct S6; // Element
+
+  using A1 = DDL::imp_uint32 ; // StateIndex
+  using A2 = DDL::imp_uint32 ; // FinalIndex
+  using A3 = DDL::imp_uint32 ; // RuleIndex
+  using A4 = DDL::imp_uint32 ; // ElementIndex
+
+
+  using XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8 = TypeDefCore ;
+
+  // structures
+
+  struct S1
+   {
+    S6 * element;
+    S2 * state;
+
+    struct Ext;
+   };
+
+  struct S2
+   {
+    A1 state;
+    PtrLen&lt;S1 &gt; transitions;
+    S4 * final;
+
+    using Transition = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S1 ;
+
+    struct Ext;
+   };
+
+  struct S3
+   {
+    S6 * atom;
+    S5 * rule;
+
+    struct Ext;
+   };
+
+  struct S4
+   {
+    A2 final;
+    PtrLen&lt;S3 &gt; actions;
+
+    using Action = XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::S3 ;
+
+    struct Ext;
+   };
+
+  struct S5
+   {
+    A3 rule;
+    StrLen name;
+    S6 * result;
+    PtrLen&lt;S6 * &gt; args;
+
+    struct Ext;
+   };
+
+  struct S6
+   {
+    A4 element;
+    StrLen name;
+    PtrLen&lt;S5 * &gt; rules;
+
+    struct Ext;
+   };
+
+  // extra
+
+ };
+
+using XXX212CD757_09B2_4D89_BE20_65C1E4E5A819 = TypeDefCore ;
+
+namespace TypeDef {
+
+    using ElementIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A4 ;
+    using FinalIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A2 ;
+    using RuleIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A3 ;
+    using StateIndex = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::A1 ;
+    using Element = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S6 ;
+    using Final = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S4 ;
+    using Rule = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S5 ;
+    using State = XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::S2 ;
+
+} // namespace TypeDef
+
+</pre>
+
+<p>
+The structure <b>TypeDefCore</b> contains inside type definitions. The namespace <b>TypeDef</b> contains
+aliases to these definitions with the original <b>DDL</b> type names. When mapping from <b>DLL</b> types to <b>C++</b> 
+types arrays are mapped as <b>PtrLen&lt;T&gt;</b> types, <b>text</b> as <b>StrLen</b> type, <b>ip</b> as 
+<b>DDL::imp_uint32</b> type, integral types as correspondent <b>DDL::imp_....</b> types.
+Types declared here must be used to retrieve constant values from the map object.
+</p>
+
+<p>
+The second file contains the definition for <b>TypeSet</b> class. This class inherits the <b>TypeDefCore</b> and the
+<b>DDL::MapHackPtr</b> class from the <b>DDLMap.h</b> header. The last class implements some pointer
+operations, using some hacks. <span class="Alert">These hacks assume pointer physical representations are the same for all pointer types
+on the target CPU</span>.
+</p>
+
+<pre>
+/* struct TypeSet */
+
+struct TypeSet : TypeDefCore , DDL::MapHackPtr
+ {
+  ....
+ };
+
+....
+
+</pre>
+
+<p>
+Below is a <b>TypedMap</b> example from the <b>LR1Shift</b> tool.
+</p>
+
+<pre>
+/* DataMap.h */
+//----------------------------------------------------------------------------------------
+//
+//  Project: LR1Shift 1.00
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+#ifndef LR1Shift_DataMap_h
+#define LR1Shift_DataMap_h
+
+#include &lt;CCore/inc/ddl/DDLTypes.h&gt;
+
+namespace App {
+
+/* using */
+
+using namespace CCore;
+
+/* TypeDef */
+
+#include "StateTypes.TypeDef.gen.h"
+
+/* struct TypeDef::Element::Ext */
+
+struct TypeDef::Element::Ext
+ {
+  static TypeDef::ElementIndex ElementLim;
+  static TypeDef::ElementIndex AtomLim;
+ };
+
+/* classes */
+
+class DataMap;
+
+/* class DataMap */
+
+class DataMap : NoCopy
+ {
+   void *mem;
+
+   PtrLen&lt;TypeDef::Element&gt;     table_Element;
+   PtrLen&lt;TypeDef::Rule&gt;        table_Rule;
+   PtrLen&lt;TypeDef::Final&gt;       table_Final;
+   PtrLen&lt;TypeDef::State&gt;       table_State;
+   
+  public:
+  
+   explicit DataMap(StrLen file_name);
+   
+   ~DataMap();
+   
+   PtrLen&lt;TypeDef::Element&gt; getElements() const { return table_Element; }
+   PtrLen&lt;TypeDef::Rule&gt;    getRules() const { return table_Rule; }
+   PtrLen&lt;TypeDef::Final&gt;   getFinals() const { return table_Final; }
+   PtrLen&lt;TypeDef::State&gt;   getStates() const { return table_State; }
+   
+   PtrLen&lt;TypeDef::Element&gt; getAtoms() const { return table_Element.prefix(TypeDef::Element::Ext::AtomLim); }
+   PtrLen&lt;TypeDef::Element&gt; getNonAtoms() const { return table_Element.part(TypeDef::Element::Ext::AtomLim); }
+ };
+
+} // namespace App
+
+#endif
+
+</pre>
+
+<pre>
+/* DataMap.cpp */
+//----------------------------------------------------------------------------------------
+//
+//  Project: LR1Shift 1.00
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+#include "DataMap.h"
+
+#include &lt;CCore/inc/Print.h&gt;
+#include &lt;CCore/inc/FileToMem.h&gt;
+#include &lt;CCore/inc/MemAllocGuard.h&gt;
+
+#include &lt;CCore/inc/ddl/DDLEngine.h&gt;
+#include &lt;CCore/inc/ddl/DDLTypedMap.h&gt;
+
+#include &lt;CCore/inc/Exception.h&gt;
+
+namespace App {
+
+/* struct TypeDef::Element::Ext */
+
+TypeDef::ElementIndex TypeDef::Element::Ext::ElementLim;
+TypeDef::ElementIndex TypeDef::Element::Ext::AtomLim;
+
+/* TypeSet */
+
+#include "StateTypes.TypeSet.gen.h"
+
+/* class DataMap */
+
+static const char *Pretext=
+  
+"  type ElementIndex = uint ;"
+"  type RuleIndex = uint ;"
+"  type FinalIndex = uint ;"
+"  type StateIndex = uint ;"
+
+"  struct Element" 
+"   {"
+"    ElementIndex element;"
+
+"    text name;"
+
+"    Rule * [] rules;"
+"   };"
+
+"  struct Rule"
+"   {"
+"    RuleIndex rule;"
+
+"    text name;"
+
+"    Element * result;"
+"    Element * [] args;"
+"   };"
+
+"  struct Final"
+"   {"
+"    FinalIndex final;"
+
+"    struct Action { Element *atom; Rule *rule; } [] actions;"
+"   };"
+
+"  struct State"
+"   {"
+"    StateIndex state;"
+
+"    struct Transition { Element *element; State *state; } [] transitions;"
+
+"    Final *final;"
+"   };";
+
+DataMap::DataMap(StrLen file_name)
+ {
+  PrintCon out(Con);
+  DDL::FileEngine&lt;DDL::FileName,FileToMem&gt; engine(out);
+
+  auto result=engine.process(file_name,Pretext);
+  
+  out.flush();
+  
+  if( !result )
+    {
+     Printf(Exception,"Input file processing error");
+    }
+  else
+    {
+     DDL::TypedMap&lt;TypeSet&gt; map(result.eval,result.body);
+     MemAllocGuard guard(map.getLen());
+
+     map(guard);
+
+     TypeDef::Element::Ext::ElementLim=map.takeConst&lt;TypeDef::ElementIndex&gt;("ElementIndexLim");
+     TypeDef::Element::Ext::AtomLim=map.takeConst&lt;TypeDef::ElementIndex&gt;("AtomIndexLim");
+     
+     table_Element=map.takeConst&lt;PtrLen&lt;TypeDef::Element&gt; &gt;("ElementTable");
+     table_Rule=map.takeConst&lt;PtrLen&lt;TypeDef::Rule&gt; &gt;("RuleTable");
+     table_Final=map.takeConst&lt;PtrLen&lt;TypeDef::Final&gt; &gt;("FinalTable");
+     table_State=map.takeConst&lt;PtrLen&lt;TypeDef::State&gt; &gt;("StateTable");
+     
+     mem=guard.disarm();
+    }
+ }
+   
+DataMap::~DataMap()
+ {
+  MemFree(mem);
+ }
+
+} // namespace App
+
+</pre>
 
 </body>
 
