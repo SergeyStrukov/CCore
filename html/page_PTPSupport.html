@@ -71,7 +71,7 @@ struct LenOutput
 </pre>
 
 <p>
-This function is used to cap an input/output packet lengths. Client sends its limits to the
+This function is used to cap input/output packet lengths. Client sends its limits to the
 server. Limits should not exceed <b>MaxInfoLen</b> (1440). Server downs these limits to its own
 limits and sends back to the client. These values can be used further to calculate different
 data limits in other <b>PTP</b> service/functions.
@@ -227,7 +227,7 @@ It is a blocking call.
 The first argument is a timeout, both <b>MSec</b> and <b>TimeScope</b> argument types are allowed.
 <b>perform()</b> returns a boolean value to indicate a success, 
 <b>perform_guarded()</b> throws an exception in case of error.
-If the operation successfully finished, the result can be obtained by the correspondent <b>get</b> methods.
+If the operation successfully finished, the result can be obtained by the correspondent <b>get()</b> methods.
 </p>
 
 <h4>Support_Exist</h4>

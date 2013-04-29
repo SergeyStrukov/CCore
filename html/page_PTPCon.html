@@ -104,17 +104,17 @@ This function opens a console with the given name and parameters. The console id
 </p>
 
 <p>
-<b>write_timeout_msec</b> is a time in msec. The write character frame print may be delayed on this
+<b>write_timeout_msec</b> is a time in milliseconds. The write character frame print may be delayed on this
 timeout to catch a previously sent frames.
 </p>
 
 <p>
-<b>read_timeout_msec</b> is a time in msec. The read operation completion may be delayed on this
+<b>read_timeout_msec</b> is a time in milliseconds. The read operation completion may be delayed on this
 timeout if there is no trigger character in the input stream.
 </p>
 
 <p>
-<b>trigger_mask</b> is a 256-bit character mask. The masked character is a trigger chracter. I.g.
+<b>trigger_mask</b> is a 256-bit character mask. The masked character is a trigger character. I.g.
 the appearance of these characters in the input stream causes a read operation completion.
 </p>
 
@@ -196,14 +196,20 @@ This function closes the given console.
 The file <b>txt/PTPCon.txt.cpp</b> contains this service definition.
 </p>
 
+<p>
+The file <b>net/PTPConBase.h</b> contains this service definition in <b>C++</b> in the namespace
+<b>PTPCon</b>.
+</p>
+
 <h3>ClientDevice</h3>
 
 <p>
 There is a client class <b>ClientDevice</b> to work with <b>PTP</b> console. The class is located
-in the namespace <b>PTPCon</b> (i.g. the full namespace is <b>::CCore::Net::PTPCon</b>).
+in the namespace <b>PTPCon</b>.
 </p>
 
 <pre>
+
 class <span class="Att">ClientDevice</span> : public ObjBase
  {
    ....
@@ -250,10 +256,11 @@ class <span class="Att">ClientDevice</span> : public ObjBase
       ~OpenClose(); 
     };
  };
+
 </pre>
 
 <p>
-The constructor argument is a <b>PTP</b> client device object name.
+The constructor argument is a <b>PTP</b> <b>ClientDevice</b> object name.
 </p>
 
 <p>
@@ -266,11 +273,15 @@ and <b>cfg</b> is the configuration parameters (see below).
 To read the method <b>start_read()</b> is called. The argument is a pointer to the abstract interface.
 The method <b>input()</b> is called when input data arrives. The first argument refers the packet buffer,
 the second is the input string, it is stored in the buffer. The method <b>stop()</b> is called to signal
-about console input is shutdown by any reason.
+about console input is shutdown by any reason. These methods are call in the "unknown task context".
 </p>
 
 <p>
-<b>getWriteErrorFlag()</b> returns true, if there were some write errors. 
+<b>stop_read()</b> stops reading. After this method has returned, the input processor may be destroyed.
+</p>
+
+<p>
+<b>getWriteErrorFlag()</b> returns <b>true</b>, if there were some write errors. 
 </p>
 
 <p>
@@ -282,15 +293,12 @@ about console input is shutdown by any reason.
 </p>
 
 <p>
-<b>stop_read()</b> stops reading. After this method returned, the input processor may be dismissed.
-</p>
-
-<p>
 The structure <b>Cfg</b> stores configuration properties for a <b>PTP</b> console. The field
 <b>timeout</b> is the timeout for <b>Open</b> and <b>Close</b> operations.
 </p>
 
 <pre>
+
 struct <span class="Att">Cfg</span>
  {
   uint32 write_timeout_msec;
@@ -329,6 +337,7 @@ struct <span class="Att">Cfg</span>
     setDefaultTimeouts();
    }
  };
+
 </pre>
 
 <p>
@@ -372,6 +381,35 @@ struct <span class="Att">TriggerMask</span>
  };
 
 </pre>
+
+<p>
+<b>TriggerMask</b> can be initialize by default (which means the null trigger mask), or from the given zero-terminated string, or
+using the <b>Trigger</b> enumeration.
+</p>
+
+<p>
+<b>setNone()</b> sets the mask to null.
+</p>
+
+<p>
+<b>setDefault()</b> sets the mask to the default set.
+</p>
+
+<p>
+<b>setAll()</b> sets the mask to the all one.
+</p>
+
+<p>
+<b>set(char ch)</b> sets only the given character bit to one. Other bits remain unchanged.
+</p>
+
+<p>
+<b>set(const char *zstr)</b> sets only the given character set bits to ones. Other bits remain unchanged.
+</p>
+
+<p>
+<b>test()</b> can be used to test the particular character bit.
+</p>
 
 </body>
 

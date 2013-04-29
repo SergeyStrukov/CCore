@@ -34,10 +34,10 @@
 
 <p>
 <b>PTP Boot</b> is a PTP service with 3 functions. The service id is 4.
-Function ids are 1-3. This protocol is used for remote boot. Abstract boot is a process during which
+Function ids are 1-3. This protocol is used for the remote boot. Abstract boot is a process, during which
 a group of boot sections are allocated and filled. Then the boot command is issued to start
-an execution from the given entry point. The most common example is an application boot, sections are
-placed in the target memory and filled with application data and code.
+an execution from the given address (aka "entry point"). The most common example is an application boot, sections are
+placed in the target memory and filled with the application data and code.
 </p>
 
 <pre>
@@ -86,7 +86,7 @@ struct AllocOutput
 
 <p>
 This function allocates a boot section at the given address with the given length.
-Return vaue is the section index. Section is a continuous byte range. 
+Return value is the section index. Section is a continuous byte range. 
 </p>
 
 <p>
@@ -110,8 +110,8 @@ struct WriteOutput
 </pre>
 
 <p>
-This function is used to fill a section. <b>index</b> is a previousely allocated section index.
-<b>off</b> is a data offset inside a section. Then data follows.
+This function is used to fill a section. <b>index</b> is a previously allocated section index.
+<b>off</b> is a data offset inside the section. Then data follows.
 </p>
 
 <p>
@@ -133,7 +133,7 @@ struct BootOutput
 </pre>
 
 <p>
-This function completes a boot process. It specifies the entry point and boot flags.
+This function completes the boot process. It specifies the entry point and boot flags.
 The meaning of the flags is implementation-defined.
 </p>
 
@@ -141,11 +141,15 @@ The meaning of the flags is implementation-defined.
 The file <b>txt/PTPBoot.txt.cpp</b> contains this service definition.
 </p>
 
+<p>
+The file <b>net/PTPBootBase.h</b> contains this service definition in <b>C++</b> in the namespace <b>PTPBoot</b>.
+</p>
+
 <h3>PTP Boot classes</h3>
 
 <p>
 There are two <b>PTP Boot</b> classes: <b>BootClient</b> and <b>BootInfo</b>. They are located
-in the namespace <b>PTPBoot</b> (i.g. the full name is <b>::CCore::Net::PTPBoot</b>).
+in the namespace <b>PTPBoot</b>.
 <b>BootClient</b> is a client part (host part), and <b>BootInfo</b> is a server part (target part).
 A target serves as a server in this case.
 </p>
@@ -153,10 +157,12 @@ A target serves as a server in this case.
 <h4>BootClient</h4>
 
 <p>
+This class can be used to perform <b>PTPBoot</b> operations via a <b>PTP Client</b> device. 
 </p>
 
 <pre>
-class <span class="Att">BootClient</span> : public Funchor_nocopy
+
+class <span class="Att">BootClient</span> : NoCopy
  {
    ....
 
@@ -176,11 +182,12 @@ class <span class="Att">BootClient</span> : public Funchor_nocopy
    
    void boot(AddressType entry_point,FlagType flags);
  };
+
 </pre>
 
 <p>
 The first constructor argument is a <b>PTP</b> <b>ClientDevice</b> object name. 
-Other is an operations timeout and a packet cap. All methods throw an exception in case of error.
+Others are the operations timeout and the packet count limit. All methods throw an exception in case of error.
 </p>
 
 <p>
@@ -203,6 +210,7 @@ as many write operations as necessary to do the job.
 </p>
 
 <pre>
+
 class <span class="Att">BootInfo</span> : NoCopy
  {
    ....
@@ -241,12 +249,14 @@ class <span class="Att">BootInfo</span> : NoCopy
    
    void get(StrLen ptp_server_name,MSec timeout=DefaultTimeout);
  };
+
 </pre>
 
 <p>
 Once a <b>BootInfo</b> object is created, you can start a remote boot process by the method <b>get()</b>.
 The first argument is a <b>PTP</b> <b>ServerDevice</b> object name.
-During boot process all data are accumulated in the protected members.
+During the boot process all data are accumulated in the protected members.
+The second argument is used to wait for the completion of <b>PTP</b> transactions after the boot process is finished.
 </p>
 
 <p>
@@ -264,11 +274,14 @@ During boot process all data are accumulated in the protected members.
 <p>
 <b>wait_complete()</b> is called inside the method <b>get()</b> to wait for the process completion.
 A derived class must block the execution in this method until the <b>signal_complete()</b> is called.
+You may use a semaphore for the waiting. In this case the <b>wait_complete()</b> method simply calls the 
+semaphore method <b>take()</b>.
 </p>
 
 <p>
 <b>signal_complete()</b> is called asynchronously during the boot process. It should be used to stop
-waiting.
+waiting. If you are using a semaphore for the waiting, the <b>signal_complete()</b> method
+simply calls the semaphore method <b>give()</b>.
 </p>
 
 </body>
