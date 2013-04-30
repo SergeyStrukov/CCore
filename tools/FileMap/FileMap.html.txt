@@ -1155,8 +1155,8 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTP.html" 0
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPBoot.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPCon.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_PTPEchoTest.html" 0
-"D:/active/home/C++/CCore-Root-1-04/html/page_PTPHFS.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_PTPEchoTest.html" 2
+"D:/active/home/C++/CCore-Root-1-04/html/page_PTPHFS.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPServer.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPService.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPSupport.html" 2

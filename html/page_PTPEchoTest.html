@@ -30,6 +30,46 @@
 
 <p class="Files">Files <b>CCore/inc/net/PTPEchoTest.h</b> <b>CCore/src/net/PTPEchoTest.cpp</b></p>
 
+<p>
+<b>EchoTest</b> class is a simple <b>PTP::ServerDevice</b> processor class.
+It accepts <b>PTP</b> transactions with service id equals 10000 and function id equals 1.
+The client info payload must start with the data length, encoded as an <b>uint32</b> value in bigendian 
+byte order and continues with arbitrary data payload of this length.
+<b>EchoTest</b> sends the packet back with the error code equals 0 and the same data payload. 
+</p>
+
+<pre>
+
+struct Input
+ {
+  uint32 service_id;  // 10000
+  uint32 function_id; // 1
+  uint32 len;
+  uint8 data[len];
+ };
+
+struct Output
+ {
+  uint32 service_id;  // 10000
+  uint32 function_id; // 1
+  uint32 error_id;    // 0
+  uint8 data[len];
+ };
+
+</pre>
+
+<p>
+I.g. the output packet content is almost the same as the input, except the <b>len</b> field is erased.
+</p>
+
+<p>
+This class is designed for the testing purpose.
+</p>
+
+<p>
+The inner class <b>EchoTest::Ext</b> can be used to perform transactions from the <b>PTP::ClientDevice</b>, 
+using <a href="page_PTP.html#Ext"><b>Ext</b> extension</a>.
+</p>
 
 </body>
 

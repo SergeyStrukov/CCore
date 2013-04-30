@@ -162,9 +162,9 @@ struct ReadOutput
 </pre>
 
 <p>
-This function reads data from the specified position. Server may ether truncate or completely fail 
-the operation if the required range continues past the end of file. The output data length may also
-be less than input length, if the input length is too high (exceeds the packet length based limit).
+This function reads the file data from the specified file position. Server may ether truncate or completely fail 
+the operation if the required range continues past the end of the file. The output data length may also
+be less than the input length, if the input length is too high (exceeds the packet length based limit).
 </p>
 
 
@@ -190,7 +190,7 @@ struct WriteOutput
 </pre>
 
 <p>
-This function writes data at the specified offset. The new file length is returned.
+This function writes the data to the file at the specified file position. The new file length is returned.
 </p>
 
 <p>
@@ -261,7 +261,7 @@ struct GetFileListOutput
 This function opens a virtual temporary file with the file list of the given directory.
 The file id and the file length is returned. Then usual file operations can be used.
 File is opened for reading. The file has number of lines, each line starts with a file or directory name, 
-then space, then 'f' for a file or 'd' for a directory. End of line symbol is '\n'. 
+then space, then 'f' for a file and 'd' for a directory. End of line symbol is '\n'. 
 </p>
 
 <p>
@@ -447,15 +447,22 @@ When the file is closed if the <b>preserve_file</b> flag is set, then the progra
 The file <b>txt/HFS.txt.cpp</b> contains this service definition.
 </p>
 
+<p>
+The file <b>net/HFSBase.h</b> contains this service definition in <b>C++</b> in the namespace
+<b>HFS</b>.
+</p>
+
 <h3>ClientDevice</h3>
 
 <p>
-This class is located in the namespace <b>HFS</b> (<b>::CCore::Net::HFS</b>). 
-It is a <b>HFS</b> client class. You probably should not use its methods directlty.
-The best way is to create a <b>FileSystemDevice</b> object an register it. 
+This class is withing the namespace <b>HFS</b>. 
+It is a <b>HFS</b> client class. You probably should not use its methods directly.
+The best way is to create a <b>FileSystemDevice</b> object an register it, then use <b>AsyncFiles</b>
+classes. 
 </p>
 
 <pre>
+
 class <span class="Att">ClientDevice</span> : public ObjBase
  {
    ....
@@ -532,14 +539,15 @@ class <span class="Att">ClientDevice</span> : public ObjBase
    
    void exec2(Packet&lt;uint8,Exec2Ext&gt; packet,StrLen dir,StrLen program);
  };
+
 </pre>
 
 <p>
-Constructor takes an <b>PTP</b> client device object name as the argument.
+Constructor takes a <b>PTP</b> client device object name as the argument.
 </p>
 
 <p>
-<b>getPTPDevice()</b> returns a pointer to the <b>PTP</b> <b>ClientDevice</b> this object uses.
+<b>getPTPDevice()</b> returns a pointer to the <b>PTP</b> <b>ClientDevice</b> being used.
 </p>
 
 <p>
@@ -549,11 +557,12 @@ Each function is performed with a packet with the proper <a href="page_PTP.html#
 <h3>FileSystemDevice</h3>
 
 <p>
-This class is located in the namespace <b>HFS</b> (<b>::CCore::Net::HFS</b>). 
+This class is located in the namespace <b>HFS</b>. 
 It implements <a href="page_AsyncFiles.html">async file and file system interfaces</a> over a <b>PTP</b> <b>HFS</b> service.
 </p>
 
 <pre>
+
 class <span class="Att">FileSystemDevice</span> : public ObjBase , public Sys::AsyncFileDevice , 
                                           public Sys::AsyncFileSystemDevice
  {
@@ -573,11 +582,46 @@ class <span class="Att">FileSystemDevice</span> : public ObjBase , public Sys::A
    
    ....
  };
+
 </pre>
 
 <p>
 Constructor takes an <b>HFS</b> client device object name as the argument.
 </p>
+
+<p>
+Below is an example for an <b>HCore</b> target:
+</p>
+
+<pre>
+
+Net::AsyncUDPEndpointDevice udp(Net::PTPClientUDPort,Net::UDPoint(127,0,0,1,Net::PTPServerUDPort));
+  
+ObjMaster udp_master(udp,"udp");
+  
+Net::PTP::ClientDevice ptp("udp");
+  
+ObjMaster ptp_master(ptp,"ptp");
+  
+Net::AsyncUDPEndpointDevice::StartStop start_stop(udp);
+  
+ptp.support_guarded();
+
+Net::HFS::ClientDevice hfs("ptp");
+
+ObjMaster hfs_master(hfs,"hfs"); 
+
+Net::HFS::FileSystemDevice fs("hfs");
+
+ObjMaster fs_master(fs,"host");
+
+....
+
+PrintAsyncFile out("host:/file_name.txt");
+
+....
+
+</pre>
 
 </body>
 
