@@ -1147,7 +1147,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_NoMutex.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_NodeAllocators.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Nothing.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_ObjectDomain.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_ObjectDomain.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ObjectHost.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_ObjectHosting.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Optional.html" 2

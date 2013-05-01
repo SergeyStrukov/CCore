@@ -15,3 +15,11 @@ Code is finalized.
 Documentaion is improved. But is not finished yet.
 
 //------------------------------------------------------------------------
+
+Release 1-04
+
+Code is finalized.
+
+Documentaion is greatly improved. But is not finished yet.
+
+//------------------------------------------------------------------------

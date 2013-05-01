@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_ObjectDomain.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.04
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> Object Domain</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,572 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>Object Domain</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/ObjectDomain.h</b> <b>CCore/src/ObjectDomain.cpp</b></p>
 
+<p>
+<b>ObjectDomain</b> is an arbitrary object collection with Garbage Collection capabilities.
+It means the domain implements the garbage collection algorithm, during the garbage collection all unreferenced objects 
+are destroyed. Objects, included in the domain, must participate in GC operations. It is implemented throw
+two special object methods.
+</p>
+
+<pre>
+
+class SomeClass
+ {
+   IntObjPtr&lt;Type1&gt; ptr;
+   WeakObjPtr&lt;Type2&gt; weak_ptr;
+   IntDelObjPtr&lt;Type3&gt; del_ptr;
+
+  public:
+
+   template &lt;class Keeper&gt;
+   void keepAlive(Keeper keeper)
+    {
+     keeper(ptr);
+     keeper(del_ptr);
+    }
+   
+   template &lt;class Breaker&gt;
+   void breakWeak(Breaker breaker)
+    {
+     breaker(weak_ptr);
+    }
+ };
+
+</pre>
+
+<p>
+There are 3 special smart pointer classes to support object referencing. When a class member reference
+another object being governed by the domain, it must be one of these three types.
+</p>
+
+<p>
+<b>IntObjPtr&lt;Type&gt;</b> is used to reference another domain object by class members. If this pointer is not null, then
+the correspondent object is kept alive at least the referencing object is alive. So you may safely
+assume the pointer is valid. You must use this pointer in the <b>keepAlive()</b> method as the argument
+of the <b>keeper</b> call.
+</p>
+
+<p>
+<b>IntDelObjPtr&lt;Type&gt;</b> is similar to the <b>IntObjPtr&lt;Type&gt;</b>, but is has the method <b>destroy()</b>.
+This method destroys the object being referenced, so other such pointers referencing the same object are nullified.
+Using this kind of pointer you must always check the pointer is not null, before using the object being referenced.
+</p>
+
+<p>
+<b>WeakObjPtr&lt;Type&gt;</b> is a weak pointer. It does not keep the object being referenced alive.
+If this object is destroyed, the pointer is nullified. You must use this pointer in the <b>breakWeak()</b>
+method as the argument of the <b>breaker</b> call.
+</p>
+
+<p>
+If one of the <b>keepAlive()</b> or <b>keepAlive()</b> method has an empty body, you may
+skip its definition entirely.
+</p>
+
+<p>
+If you reference a domain object not from a member, but from a local or global variable, you must use another
+smart pointers:
+</p>
+
+<pre>
+
+ExtObjPtr&lt;Type1&gt; ptr;
+
+ExtDelObjPtr&lt;Type2&gt; del_ptr;
+
+</pre>
+
+<p>
+You may freely cast between <b>IntObjPtr&lt;Type&gt;</b>, <b>WeakObjPtr&lt;Type&gt;</b>
+and <b>ExtObjPtr&lt;Type&gt;</b>.
+</p>
+
+<p>
+You may also freely cast between <b>IntDelObjPtr&lt;Type&gt;</b> and <b>ExtDelObjPtr&lt;Type&gt;</b>.
+</p>
+
+<h3>ObjectDomain</h3>
+
+<p>
+<span class="Alert">The class <b>ObjectDomain</b> is essentially single-threaded.</span>
+You may use it as is, but it's likely, you would derive another class from it to serve as an object domain.
+It is convenient to create a domain object and store a global pointer to it for a further use. 
+</p>
+
+<pre>
+
+class <span class="Att">ObjectDomain</span> : NoCopy
+ {
+   ....
+  
+  private:
+   
+   virtual void * try_alloc(ulen len);
+  
+   virtual void free(void *mem);
+
+  protected:
+   
+   void cleanup(); // must be called in the destructor of a derived class
+  
+  public:
+  
+   // constructors
+  
+   explicit ObjectDomain(ulen max_total_len);
+   
+   ~ObjectDomain();
+   
+   void collect();
+   
+   // props
+   
+   ulen getObjectCount() const { return list.getLen(); }
+   
+   ulen getTotalLen() const { return total_len; }
+   
+   ulen getMaxTotalLen() const { return max_total_len; }
+   
+   ulen getAvail() const { return max_total_len-total_len; }
+ };
+
+</pre>
+
+<p>
+<b>try_alloc()</b> and <b>free()</b> may be overloaded in a derived class to implement heap operations.
+</p>
+
+<p>
+<b>cleanup()</b> must be called in the destructor of a derived class.
+</p>
+
+<p>
+The constructor argument <b>max_total_len</b> is a total memory allocation limit for domain objects.
+</p>
+
+<p>
+<b>collect()</b> performs the garbage collection.
+</p>
+
+<p>
+<b>getObjectCount()</b> returns the number of domain objects.
+</p>
+
+<p>
+<b>getTotalLen()</b> returns the total memory, occupied by domain objects.
+</p>
+
+<p>
+<b>getMaxTotalLen()</b> is a total memory allocation limit for domain objects.
+</p>
+
+<p>
+<b>getAvail()</b> is remaining available memory.
+</p>
+
+<p>
+Below is an example of the <b>ObjectDomain</b> usage.
+</p>
+
+<pre>
+
+/* class TestDomain */
+
+class TestDomain : public ObjectDomain
+ {
+   SpaceHeap heap;
+   
+  private: 
+   
+   virtual void * try_alloc(ulen len) { return heap.alloc(len); }
+  
+   virtual void free(void *mem) { heap.free(mem); }
+   
+  public:
+  
+   explicit TestDomain(ulen max_total_mem) : ObjectDomain(max_total_mem),heap(2*max_total_mem) {}
+   
+   ~TestDomain() { cleanup(); }
+ };
+
+/* global Domain */
+
+static ObjectDomain * Domain=0;
+
+....
+
+int main()
+ {
+  TestDomain domain(10_MByte);
+  
+  Domain=&amp;domain;
+
+  ....
+  
+  return 0;
+ }
+
+</pre>
+
+<h3>Object pointers</h3>
+
+<p>
+You create and manipulate domain objects via a set of smart pointers.
+</p>
+
+<p>
+Each smart pointer has the default constructor and the <b>NothingType</b> constructor, both
+creates a null pointer.
+</p>
+
+<p>
+Each smart pointer has also the method <b>nullify()</b> to set the pointer to the null state. 
+</p>
+
+<p>
+Each smart pointer has a generic constructor to create a domain object. The pointer will reference the created object.
+</p>
+
+<pre>
+
+template &lt;class ... SS&gt;
+explicit SomePtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+
+</pre>
+
+<p>
+The first argument is the <b>ObjectDomain</b> pointer. Other arguments are used to create the object.
+</p>
+
+<p>
+Each smart pointer implements the <b>Object Pointer Interface</b>.
+</p>
+
+<p>
+Each smart pointer is efficiently copyable. For some the swap/move operations are implemented
+for the sake of efficiency.
+</p>
+
+<h4>ExtObjPtr</h4>
+
+<p>
+This smart pointer should be used to reference domain objects by local or global variables. 
+It keeps the object being referenced alive. So you must destroy or nullify all such objects before
+the <b>ObjectDomain</b> is destroyed. <b>ExtObjPtr&lt;T&gt;</b>, in fact, is the alias of the
+<b>ObjectDomain::ExtPtr&lt;T&gt;</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">ObjectDomain::ExtPtr</span>
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   ExtPtr();
+   
+   explicit ExtPtr(NothingType);
+   
+   ExtPtr(const IntPtr&lt;T&gt; &amp;obj); 
+   
+   ExtPtr(const WeakPtr&lt;T&gt; &amp;obj); 
+   
+   template &lt;class ... SS&gt;
+   explicit ExtPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+   
+   ~ExtPtr();
+   
+   void nullify(); 
+
+   // copying
+   
+   ExtPtr(const ExtPtr&lt;T&gt; &amp;obj); 
+   
+   ExtPtr&lt;T&gt; &amp; operator = (const ExtPtr&lt;T&gt; &amp;obj);
+   
+   // object ptr
+   
+   void * operator + () const;
+   
+   bool operator ! () const;
+  
+   T * getPtr() const;
+   
+   T &amp; operator * () const;
+   
+   T * operator -> () const;
+   
+   ulen getExtRefs() const;
+   
+   // swap/move objects
+   
+   void objSwap(ExtPtr&lt;T&gt; &amp;obj);
+   
+   explicit ExtPtr(ToMoveCtor&lt;ExtPtr&lt;T&gt; &gt; obj);
+    
+   ExtPtr&lt;T&gt; * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+<b>ExtObjPtr&lt;T&gt;</b> is implicitly convertible from the <b>IntObjPtr&lt;T&gt;</b> and <b>WeakObjPtr&lt;T&gt;</b>.
+</p>
+
+<p>
+<b>getExtRefs()</b> returns the external reference counter. The pointer must be non-null.
+</p>
+
+<h4>IntObjPtr</h4>
+
+<p>
+This smart pointer should be used to reference domain objects by members of another domain objects. 
+It keeps the object being referenced alive. If a domain object contains members of this type, it must
+define the method <b>keepAlive()</b> and use these pointers as arguments of <b>keeper</b> calls inside this method.
+<b>IntObjPtr&lt;T&gt;</b>, in fact, is the alias of the
+<b>ObjectDomain::IntPtr&lt;T&gt;</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt; 
+class <span class="Att">ObjectDomain::IntPtr</span> // default copying
+ {
+   ....
+
+  public:
+  
+   // constructors
+ 
+   IntPtr();
+  
+   explicit IntPtr(NothingType);
+   
+   IntPtr(const ExtPtr&lt;T&gt; &amp;obj);
+  
+   IntPtr(const WeakPtr&lt;T&gt; &amp;obj);
+   
+   template &lt;class ... SS&gt;
+   explicit IntPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+  
+   void nullify();
+   
+   // object ptr
+   
+   void * operator + () const;
+   
+   bool operator ! () const;
+  
+   T * getPtr() const;
+   
+   T &amp; operator * () const;
+   
+   T * operator -> () const;
+   
+   ulen getExtRefs() const;
+ };
+
+</pre>
+
+<p>
+<b>IntObjPtr&lt;T&gt;</b> is implicitly convertible from the <b>ExtObjPtr&lt;T&gt;</b> and <b>WeakObjPtr&lt;T&gt;</b>.
+</p>
+
+<p>
+<b>getExtRefs()</b> returns the external reference counter. The pointer must be non-null.
+</p>
+
+<h4>WeakObjPtr</h4>
+
+<p>
+This smart pointer should be used to reference domain objects by members of another domain objects. 
+It <b>does not</b> keep the object being referenced alive. So the object
+may be destroyed and if this happens the weak pointer is set to null. If a domain object contains members of this type, it must
+define the method <b>breakWeak()</b> and use these pointers as arguments of <b>breaker</b> calls inside this method.
+<b>WeakObjPtr&lt;T&gt;</b>, in fact, is the alias of the
+<b>ObjectDomain::WeakPtr&lt;T&gt;</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">ObjectDomain::WeakPtr</span> // default copying
+ {
+   ....
+
+  public:
+  
+   // constructors
+ 
+   WeakPtr();
+  
+   explicit WeakPtr(NothingType);
+   
+   WeakPtr(const ExtPtr&lt;T&gt; &amp;obj);
+  
+   WeakPtr(const IntPtr&lt;T&gt; &amp;obj);
+   
+   template &lt;class ... SS&gt;
+   explicit WeakPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+  
+   void nullify();
+   
+   // object ptr
+   
+   void * operator + () const;
+   
+   bool operator ! () const;
+  
+   T * getPtr() const;
+   
+   T &amp; operator * () const;
+   
+   T * operator -> () const;
+   
+   ulen getExtRefs() const;
+ };
+
+</pre>
+
+<p>
+<b>WeakObjPtr&lt;T&gt;</b> is implicitly convertible from the <b>ExtObjPtr&lt;T&gt;</b> and <b>IntObjPtr&lt;T&gt;</b>.
+</p>
+
+<p>
+<b>getExtRefs()</b> returns the external reference counter. The pointer must be non-null.
+</p>
+
+<h4>ExtDelObjPtr</h4>
+
+<p>
+This smart pointer should be used to reference domain objects by local or global variables. 
+It keeps the object being referenced alive. So you must destroy or nullify all such objects before
+the <b>ObjectDomain</b> is destroyed. The difference from the <b>ExtObjPtr&lt;T&gt;</b> is this pointer supports
+the manual object destruction via the method <b>destroy()</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">ExtDelObjPtr</span>
+ {
+   ....
+
+  public: 
+   
+   // constructors
+   
+   ExtDelObjPtr();
+   
+   ExtDelObjPtr(NothingType);
+   
+   ExtDelObjPtr(const IntDelObjPtr&lt;T&gt; &amp;obj);
+   
+   template &lt;class ... SS&gt;
+   ExtDelObjPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+   
+   ~ExtDelObjPtr();
+   
+   void nullify();
+   
+   // object ptr
+   
+   void * operator + () const;
+   
+   bool operator ! () const;
+  
+   T * getPtr() const;
+   
+   T &amp; operator * () const;
+   
+   T * operator -> () const;
+   
+   // destroy
+   
+   bool destroy();
+ };
+
+</pre>
+
+<p>
+<b>ExtDelObjPtr&lt;T&gt;</b> is implicitly convertible from the <b>IntDelObjPtr&lt;T&gt;</b>.
+</p>
+
+<p>
+<b>destroy()</b> destroys the object and nullifies the pointer. This is not possible, if there are other
+external references to this object, in this case the method simply returns <b>false</b>. Internal pointers
+to this object, if any, are nullified.
+</p>
+
+<h4>IntDelObjPtr</h4>
+
+<p>
+This smart pointer should be used to reference domain objects by members of another domain objects. 
+It keeps the object being referenced alive, unless somebody
+destroys it manually. If a domain object contains members of this type, it must
+define the method <b>keepAlive()</b> and use these pointers as arguments of <b>keeper</b> calls inside this method.
+The difference from the <b>IntObjPtr&lt;T&gt;</b> is this pointer supports
+the manual object destruction via the method <b>destroy()</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">IntDelObjPtr</span>
+ {
+   ....
+
+  public: 
+   
+   // constructors
+   
+   IntDelObjPtr();
+   
+   IntDelObjPtr(NothingType);
+   
+   IntDelObjPtr(const ExtDelObjPtr&lt;T&gt; &amp;obj);
+   
+   template &lt;class ... SS&gt;
+   IntDelObjPtr(ObjectDomain *domain,SS &amp;&amp; ... ss);
+   
+   void nullify();
+   
+   // object ptr
+   
+   void * operator + () const;
+   
+   bool operator ! () const;
+  
+   T * getPtr() const;
+   
+   T &amp; operator * () const;
+   
+   T * operator -> () const;
+   
+   // destroy
+   
+   bool destroy();
+ };
+
+</pre>
+
+<p>
+<b>IntDelObjPtr&lt;T&gt;</b> is implicitly convertible from the <b>ExtDelObjPtr&lt;T&gt;</b>.
+</p>
+
+<p>
+<b>destroy()</b> destroys the object and nullifies the pointer. This is not possible, if there are some
+external references to this object, in this case the method simply returns <b>false</b>. Internal pointers
+to this object, if any, are nullified.
+</p>
 
 </body>
 
