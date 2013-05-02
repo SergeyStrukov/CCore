@@ -133,15 +133,15 @@
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/HFSFileSystemDevice.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/NanoIPDevice.h" 0
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/NetBase.h" 2
-"D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPBase.h" 0
+"D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPBase.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPBoot.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPBootBase.h" 2
-"D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPClientDevice.h" 0
+"D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPClientDevice.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPConBase.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPConDevice.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPEchoTest.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPExtra.h" 2
-"D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPServerDevice.h" 0
+"D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPServerDevice.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPSupport.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PTPSupportBase.h" 2
 "D:/active/home/C++/CCore-Root-1-04/CCore/inc/net/PacketEndpointDevice.h" 2
@@ -1152,7 +1152,7 @@
 "D:/active/home/C++/CCore-Root-1-04/html/page_ObjectHosting.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_Optional.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_OwnPtr.html" 2
-"D:/active/home/C++/CCore-Root-1-04/html/page_PTP.html" 0
+"D:/active/home/C++/CCore-Root-1-04/html/page_PTP.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPBoot.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPCon.html" 2
 "D:/active/home/C++/CCore-Root-1-04/html/page_PTPEchoTest.html" 2
