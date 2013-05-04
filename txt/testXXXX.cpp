@@ -1,7 +1,7 @@
 /* testXXXX..cpp */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.04
+//  Project: CCore 1.05
 //
 //  Tag: General HCore XCore Target/ 
 //
