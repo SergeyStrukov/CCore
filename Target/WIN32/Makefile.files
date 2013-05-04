@@ -87,6 +87,8 @@ obj/Integer.o \
 obj/IntegerFastAlgo.o \
 obj/IntegerSlowAlgo.o \
 obj/IntelAES.o \
+obj/IntelCPUID.o \
+obj/IntelRandom.o \
 obj/Job.o \
 obj/Len.o \
 obj/LineInput.o \
@@ -325,6 +327,8 @@ obj/Integer.s \
 obj/IntegerFastAlgo.s \
 obj/IntegerSlowAlgo.s \
 obj/IntelAES.s \
+obj/IntelCPUID.s \
+obj/IntelRandom.s \
 obj/Job.s \
 obj/Len.s \
 obj/LineInput.s \
@@ -563,6 +567,8 @@ obj/Integer.dep \
 obj/IntegerFastAlgo.dep \
 obj/IntegerSlowAlgo.dep \
 obj/IntelAES.dep \
+obj/IntelCPUID.dep \
+obj/IntelRandom.dep \
 obj/Job.dep \
 obj/Len.dep \
 obj/LineInput.dep \
@@ -715,6 +721,8 @@ obj/XPoint.dep \
 ASM_OBJ_LIST = \
 obj/IntegerFastAlgo.s.o \
 obj/IntelAES.s.o \
+obj/IntelCPUID.s.o \
+obj/IntelRandom.s.o \
 obj/Quick.s.o \
 obj/SysAtomic.s.o \
 obj/SysTime.s.o \
@@ -985,6 +993,12 @@ obj/IntegerSlowAlgo.o : ../../CCore/src/math/IntegerSlowAlgo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntelAES.o : ../../Target/WIN32/CCore/src/crypton/IntelAES.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntelCPUID.o : ../../Target/WIN32/CCore/src/crypton/IntelCPUID.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntelRandom.o : ../../Target/WIN32/CCore/src/crypton/IntelRandom.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Job.o : ../../CCore/src/Job.cpp
@@ -1694,6 +1708,12 @@ obj/IntegerSlowAlgo.s : ../../CCore/src/math/IntegerSlowAlgo.cpp
 obj/IntelAES.s : ../../Target/WIN32/CCore/src/crypton/IntelAES.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/IntelCPUID.s : ../../Target/WIN32/CCore/src/crypton/IntelCPUID.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/IntelRandom.s : ../../Target/WIN32/CCore/src/crypton/IntelRandom.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Job.s : ../../CCore/src/Job.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2401,6 +2421,12 @@ obj/IntegerSlowAlgo.dep : ../../CCore/src/math/IntegerSlowAlgo.cpp
 obj/IntelAES.dep : ../../Target/WIN32/CCore/src/crypton/IntelAES.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntelAES.o $< -MF $@
 
+obj/IntelCPUID.dep : ../../Target/WIN32/CCore/src/crypton/IntelCPUID.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntelCPUID.o $< -MF $@
+
+obj/IntelRandom.dep : ../../Target/WIN32/CCore/src/crypton/IntelRandom.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntelRandom.o $< -MF $@
+
 obj/Job.dep : ../../CCore/src/Job.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Job.o $< -MF $@
 
@@ -2848,6 +2874,12 @@ obj/IntegerFastAlgo.s.o : ../../Target/WIN32/CCore/src/math/IntegerFastAlgo.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/IntelAES.s.o : ../../Target/WIN32/CCore/src/crypton/IntelAES.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/IntelCPUID.s.o : ../../Target/WIN32/CCore/src/crypton/IntelCPUID.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/IntelRandom.s.o : ../../Target/WIN32/CCore/src/crypton/IntelRandom.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/Quick.s.o : ../../Target/WIN32/CCore/src/base/Quick.s

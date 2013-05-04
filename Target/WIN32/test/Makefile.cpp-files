@@ -129,3 +129,4 @@
 ../../../Target/WIN32/CCore/test/test3004.MulSpeed.cpp
 ../../../Target/WIN32/CCore/test/test3005.IntelAES.cpp
 ../../../Target/WIN32/CCore/test/test3006.IntelAESSpeed.cpp
+../../../Target/WIN32/CCore/test/test3007.IntelRandom.cpp
