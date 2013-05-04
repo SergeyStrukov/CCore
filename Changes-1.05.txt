@@ -1,0 +1,7 @@
+/* Changes-1.05.txt */
+
+--- New features -----
+
+WIN32 IntelRandom
+
+
