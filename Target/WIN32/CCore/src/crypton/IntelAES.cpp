@@ -15,31 +15,26 @@
 
 #include <CCore/inc/crypton/IntelAES.h>
 
+#include <CCore/inc/crypton/IntelCPUID.h>
+
 #include <CCore/inc/Exception.h>
 
 namespace CCore {
 namespace Crypton {
 
-namespace Private_IntelAES {
-
-unsigned CpuidECX1();
-
-inline unsigned Bit(unsigned num) { return 1u<<num; }
-
-} // namespace Private_IntelAES
-
-using namespace Private_IntelAES;
-
 /* functions */
 
 bool DetectIntelAES()
  {
-  return CpuidECX1()&Bit(25);  
+  IntelCPUID1 cpuid;
+  
+  return cpuid.capableAES();  
  }
+
 
 void GuardIntelAESNotAvailable()
  {
-  Printf(Exception,"CCore::IntelAESBase::IntelAESBase() : Intel AES commands are not available");
+  Printf(Exception,"CCore::Crypton::IntelAESBase::IntelAESBase() : Intel AES commands are not available");
  }
 
 /* struct IntelAES128Func */

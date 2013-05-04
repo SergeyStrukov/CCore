@@ -17,33 +17,6 @@
 
 #-----------------------------------------------------------------------------------------
 
-        .global __ZN5CCore7Crypton16Private_IntelAES9CpuidECX1Ev
-
-        .p2align 4,,15
-        
-__ZN5CCore7Crypton16Private_IntelAES9CpuidECX1Ev: 
-
-#
-# unsigned CCore::Crypton::Private_IntelAES::CpuidECX1();
-#         
-
-        pushl   %ebp
-        movl    %esp, %ebp
-
-        pushl   %ebx
-
-        movl    $1, %eax
-        cpuid
-
-        movl    %ecx, %eax
-
-        popl    %ebx
-
-        popl    %ebp
-        ret
-
-#-----------------------------------------------------------------------------------------
-
         .global __ZN5CCore7Crypton15IntelAES128Func5IntelEPKhPh
 
         .p2align 4,,15
