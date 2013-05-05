@@ -395,8 +395,8 @@ void BootInfo::PTPServerProc::support_Len(Inbound &inbound)
   
   if( inbound.input(input) )
     {
-     PTPSupport::LenOutput output(Min(input.to_server_info_len,ptp->getMaxInboundInfoLen()),
-                                  Min(input.to_client_info_len,ptp->getMaxOutboundInfoLen()));
+     PTPSupport::LenOutput output(Min<LenType>(input.to_server_info_len,ptp->getMaxInboundInfoLen()),
+                                  Min<LenType>(input.to_client_info_len,ptp->getMaxOutboundInfoLen()));
   
      inbound.info(output);
     }
