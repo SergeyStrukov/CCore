@@ -1,0 +1,113 @@
+<!--
+/* page_Logging.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.05
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Logging</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Logging</h2>
+
+<p class="Files">Files <b>CCore/inc/Log.h</b> <b>CCore/src/Log.cpp</b></p>
+
+<p>
+<b>CCore</b> provides a log implementation, it can be used as a system-wide log in embedded applications
+or as a local log of an application or a system component. The log is <b>efficient</b>, providing
+you use efficient types for log message arguments. To store log messages a fixed memory space is used.
+</p>
+
+<h4>LogCategory_enum</h4>
+
+<h4>LogFilter_enum</h4>
+
+<h4>LogStamp</h4>
+
+<h4>LogCounter</h4>
+
+<h4>LogMem</h4>
+
+<h4>LogMsgBase</h4>
+
+<h4>LogStorage</h4>
+
+<h4>LogMsg</h4>
+
+<h4>UserLog</h4>
+
+<p>
+This class is a "user" any-purpose log.
+</p>
+
+<pre>
+
+template &lt;class Cat,class Stamp,class Filter,class Mutex&gt;
+class <span class="Att">UserLog</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   UserLog(TextLabel name,ulen mem_len,bool overrun=true);
+   
+   UserLog(TextLabel name,Space space,bool overrun=true) // space.mem aligned
+   
+   ~UserLog();
+   
+   // methods
+   
+   TextLabel getName() const;
+   
+   void getCounter(LogCounter &amp;ret) const; 
+   
+   void setOverrun(bool overrun); 
+    
+   void setFilter(Filter filter);
+   
+   void getFilter(Filter &amp;ret) const;
+   
+   // message
+   
+   class Access; 
+    
+   template &lt;class ... TT&gt;
+   void operator () (Cat cat,const char *format,const TT &amp; ... tt);
+   
+   // cursor
+    
+   class Cursor;
+   
+   // print
+   
+   class PrintFunc;
+   
+   PrintFunc getPrint(ulen count,Filter filter=Filter());
+ };
+
+</pre>
+
+</body>
+
+</html>
+
