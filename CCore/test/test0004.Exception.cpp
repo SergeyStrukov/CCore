@@ -119,6 +119,8 @@ bool Testit<4>::Main()
      Printf(Con,"catch bad_alloc\n\n");
     }
   
+  ReportException::Clear();
+  
   return true; 
  }
  
