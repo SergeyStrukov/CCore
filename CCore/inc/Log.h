@@ -643,7 +643,7 @@ void UserLog<Cat,Stamp,Filter,Mutex>::operator () (Cat cat,const char *format,co
  // cursor
 
 template <class Cat,class Stamp,class Filter,class Mutex> 
-class UserLog<Cat,Stamp,Filter,Mutex>::Cursor
+class UserLog<Cat,Stamp,Filter,Mutex>::Cursor : NoCopy
  {
    UserLog<Cat,Stamp,Filter,Mutex> &log;
    ulen count;
