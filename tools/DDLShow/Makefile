@@ -13,7 +13,7 @@
 
 CCORE_ROOT = ../..
 
-CCORE_TARGET = WIN32
+include $(CCORE_ROOT)/Makefile.host
 
 OBJ_PATH = obj
 
