@@ -1,7 +1,23 @@
 /* Changes-1.05.txt */
 
+--- Updates ----------
+
+CCore/src/net/PTPBoot.cpp
+
+  Fixed Min() usage. Explicit template parameter is added.
+
+*Core/CCore/inc/task/Event.h
+
+  Fixed declaration of the 1st constructor of Event to avoid error-prone overloading.
+
+CCore/inc/Log.h
+
+  Fixed UserLog::Cursor. NoCopy is added.
+
 --- New features -----
 
 WIN32 IntelRandom
 
+LIN64 target for 64-bit Linux host platform
 
+----------------------

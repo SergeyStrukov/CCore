@@ -110,7 +110,7 @@ class Data : public Funchor_nocopy
    
   public: 
   
-   Data() { flag=1; }
+   Data() : event("TestEvent") { flag=1; }
   
    void run()
     {

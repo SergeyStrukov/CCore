@@ -77,7 +77,7 @@ bool Event::begin_trigger(bool &ret)
     }  
  }
  
-Event::Event(bool flag)
+Event::Event(int flag)
  {
   init(flag);
  }
