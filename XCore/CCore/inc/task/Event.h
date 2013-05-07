@@ -150,7 +150,7 @@ class Event : public Funchor_nocopy
    
    // constructors
   
-   explicit Event(bool flag=false);
+   explicit Event(int flag=false); // bool is assumed
    
    explicit Event(TextLabel name,bool flag=false);
    
