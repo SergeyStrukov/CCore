@@ -114,6 +114,7 @@ OBJ_LIST = \
 ../test-obj/test1021.PTPEcho.o \
 ../test-obj/test1022.PTPServer.o \
 ../test-obj/test1023.DDLEngine.o \
+../test-obj/test3001.LIN64.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -242,6 +243,7 @@ ASM_LIST = \
 ../test-obj/test1021.PTPEcho.s \
 ../test-obj/test1022.PTPServer.s \
 ../test-obj/test1023.DDLEngine.s \
+../test-obj/test3001.LIN64.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -370,6 +372,7 @@ DEP_LIST = \
 ../test-obj/test1021.PTPEcho.dep \
 ../test-obj/test1022.PTPServer.dep \
 ../test-obj/test1023.DDLEngine.dep \
+../test-obj/test3001.LIN64.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -731,6 +734,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test1023.DDLEngine.o : ../../../HCore/CCore/test/test1023.DDLEngine.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3001.LIN64.o : ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1110,6 +1116,9 @@ include $(RULES_FILE)
 ../test-obj/test1023.DDLEngine.s : ../../../HCore/CCore/test/test1023.DDLEngine.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3001.LIN64.s : ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1486,6 +1495,9 @@ include $(RULES_FILE)
 
 ../test-obj/test1023.DDLEngine.dep : ../../../HCore/CCore/test/test1023.DDLEngine.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1023.DDLEngine.o $< -MF $@
+
+../test-obj/test3001.LIN64.dep : ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3001.LIN64.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

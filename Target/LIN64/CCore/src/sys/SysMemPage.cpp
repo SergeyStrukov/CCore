@@ -26,38 +26,21 @@ namespace Sys {
 
 void * MemPageAlloc(ulen num_pages) noexcept
  {
-#if 0
-  
   if( num_pages>MaxULen/MemPageLen ) return 0;
   
   ulen len=num_pages*MemPageLen;
+  void *mem=mmap(0,len,PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_PRIVATE,-1,0);
+  
+  if( mem==MAP_FAILED ) return 0;
 
-  return mmap(0,len,PROT_READ|PROT_WRITE,MAP_ANONYMOUS,-1,0);
-  
-#else
-  
-  if( num_pages>MaxULen/MemPageLen ) return 0;
-  
-  ulen len=num_pages*MemPageLen;
-  
-  return malloc(len);
-  
-#endif  
+  return mem;
  }
  
 void MemPageFree(void *mem,ulen num_pages) noexcept
  {
-#if 0
-  
   ulen len=num_pages*MemPageLen;
   
   AbortIf( munmap(mem,len)!=0 ,"CCore::Sys::MemPageFree()");
-  
-#else
-  
-  free(mem);
-  
-#endif  
  }
  
 bool MemPageExtend(void *,ulen,ulen) noexcept

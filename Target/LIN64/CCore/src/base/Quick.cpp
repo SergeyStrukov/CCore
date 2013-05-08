@@ -20,14 +20,15 @@ namespace Quick {
 
 /* functions */ 
 
-#if 1
+#if 0
  
 unsigned ScanLSBit(ScanUInt value) noexcept
  {
   unsigned ret=0;
  
-  if( !(value&0xFFFF) ) ret+=16,value>>=16;
-  if( !(value&0x00FF) ) ret+= 8,value>>= 8;
+  if( !(value&0xFFFFFFFF) ) ret+=32,value>>=32;
+  if( !(value&0x0000FFFF) ) ret+=16,value>>=16;
+  if( !(value&0x000000FF) ) ret+= 8,value>>= 8;
   
   static const unsigned Table[256]=
    {
@@ -57,14 +58,15 @@ unsigned ScanLSBit(ScanUInt value) noexcept
  
 #endif  
 
-#if 1
+#if 0
  
 unsigned ScanMSBit(ScanUInt value) noexcept
  {
   unsigned ret=0;
   
-  if( value&0xFFFF0000 ) ret+=16,value>>=16;
-  if( value&0xFF00     ) ret+= 8,value>>= 8;
+  if( value&0xFFFFFFFF00000000 ) ret+=32,value>>=32;
+  if( value&0xFFFF0000         ) ret+=16,value>>=16;
+  if( value&0xFF00             ) ret+= 8,value>>= 8;
   
   static const unsigned Table[256]=
    {
@@ -94,7 +96,7 @@ unsigned ScanMSBit(ScanUInt value) noexcept
  
 #endif  
 
-#if 1
+#if 0
 
 uint16 ByteSwap16(uint16 value) noexcept
  {
@@ -103,7 +105,7 @@ uint16 ByteSwap16(uint16 value) noexcept
  
 #endif  
 
-#if 1
+#if 0
 
 uint32 ByteSwap32(uint32 value) noexcept
  {
@@ -112,7 +114,7 @@ uint32 ByteSwap32(uint32 value) noexcept
  
 #endif  
 
-#if 1
+#if 0
 
 uint64 ByteSwap64(uint64 value) noexcept
  {

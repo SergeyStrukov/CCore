@@ -23,12 +23,12 @@ namespace Quick {
 
 /* consts */
 
-const bool ScanLSBitIsFast = false ;
-const bool ScanMSBitIsFast = false ;
+const bool ScanLSBitIsFast = true ;
+const bool ScanMSBitIsFast = true ;
 
 /* types */ 
 
-typedef uint32 ScanUInt;
+typedef uint64 ScanUInt;
 
 /* functions */ 
 

@@ -1,15 +1,15 @@
 /* SysFile.h */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.02
+//  Project: CCore 1.05
 //
-//  Tag: Target/Vanilla-H
+//  Tag: Target/LIN64
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2011 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
@@ -52,23 +52,71 @@ struct File
     FileError error;
    };
  
+  // private data
+  
+  typedef int Type;
+  
+  Type handle;
+  FileOpenFlags oflags;
+  char *to_unlink;
+  
+  // private
+  
+  struct OpenType
+   {
+    Type handle;
+    char *to_unlink;
+    FileError error;
+   };
+ 
+  static OpenType Open(StrLen file_name,FileOpenFlags oflags) noexcept;
+
+  static void Close(FileMultiError &errout,Type handle,FileOpenFlags oflags,char *to_unlink,bool preserve_file) noexcept;
+  
+  static IOResult Write(Type handle,FileOpenFlags oflags,const uint8 *buf,ulen len) noexcept;
+  
+  static IOResult Read(Type handle,FileOpenFlags oflags,uint8 *buf,ulen len) noexcept;
+  
+  static PosResult GetLen(Type handle,FileOpenFlags oflags) noexcept;
+  
+  static PosResult GetPos(Type handle,FileOpenFlags oflags) noexcept;
+  
+  static FileError SetPos(Type handle,FileOpenFlags oflags,FilePosType pos) noexcept;
+  
   // public
   
-  FileError open(StrLen file_name,FileOpenFlags oflags) noexcept;
+  FileError open(StrLen file_name,FileOpenFlags oflags_)
+   {
+    OpenType result=Open(file_name,oflags_);
+    
+    handle=result.handle;
+    to_unlink=result.to_unlink;
+    oflags=oflags_;
+    
+    return result.error;
+   }
  
-  void close(FileMultiError &errout,bool preserve_file=false) noexcept;
+  void close(FileMultiError &errout,bool preserve_file=false)
+   { 
+    Close(errout,handle,oflags,to_unlink,preserve_file); 
+   }
   
-  void close() noexcept; 
+  void close()
+   { 
+    FileMultiError errout;
    
-  IOResult write(const uint8 *buf,ulen len) noexcept;
+    close(errout);
+   }
+   
+  IOResult write(const uint8 *buf,ulen len) { return Write(handle,oflags,buf,len); }
   
-  IOResult read(uint8 *buf,ulen len) noexcept;
+  IOResult read(uint8 *buf,ulen len) { return Read(handle,oflags,buf,len); }
   
-  PosResult getLen() noexcept;
+  PosResult getLen() { return GetLen(handle,oflags); }
   
-  PosResult getPos() noexcept;
+  PosResult getPos() { return GetPos(handle,oflags); }
   
-  FileError setPos(FilePosType pos) noexcept;
+  FileError setPos(FilePosType pos) { return SetPos(handle,oflags,pos); }
  };
  
 /* struct AltFile */ 
