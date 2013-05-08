@@ -3,6 +3,7 @@
 --- Updates ----------
 
 CCore/src/net/PTPBoot.cpp
+CCore/tools/PTPServer/PTPConProc.cpp
 
   Fixed Min() usage. Explicit template parameter is added.
 

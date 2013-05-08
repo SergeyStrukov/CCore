@@ -34,4 +34,4 @@ $(DEP_FILE) : $(DEP_LIST)
 	@echo CAT ; cat $(DEP_LIST) > $(DEP_FILE)
 
 %.gen.h : %.desc
-	Regen $< $@
+	Regen.exe $< $@

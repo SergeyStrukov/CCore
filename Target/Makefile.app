@@ -28,7 +28,7 @@ all: $(TARGET)
 Makefile.files:
 	find $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
 	find $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
-	MakeList $(OBJ_PATH) Makefile.cpp-files Makefile.s-files
+	MakeList.exe $(OBJ_PATH) Makefile.cpp-files Makefile.s-files
 
 ifneq ($(MAKECMDGOALS),list)
 
@@ -39,6 +39,6 @@ endif
 list:
 	find $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
 	find $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
-	MakeList $(OBJ_PATH) Makefile.cpp-files Makefile.s-files
+	MakeList.exe $(OBJ_PATH) Makefile.cpp-files Makefile.s-files
 
 
