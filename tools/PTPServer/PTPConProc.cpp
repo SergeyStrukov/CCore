@@ -368,7 +368,7 @@ ErrorIdType PTPConRead::start(Inbound &inbound,uint32 number_,LenType len_)
    if( outbound.init(inbound,function_cancel()) ) 
      {
       number=number_;
-      len=Min(Net::PTPCon::MaxReadDataLen,len_);
+      len=Min<LenType>(Net::PTPCon::MaxReadDataLen,len_);
       ticks=read_ticks;
   
       is_started=true;
