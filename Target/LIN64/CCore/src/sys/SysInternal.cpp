@@ -1,4 +1,4 @@
-/* SysTime.cpp */ 
+/* SysInternal.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.05
@@ -13,40 +13,12 @@
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/sys/SysTime.h>
-
 #include <CCore/inc/sys/SysInternal.h>
  
 namespace CCore {
 namespace Sys {
 
-/* functions */ 
 
-MSecTimeType GetMSecTime() noexcept
- {
-  TimeSpec time(CLOCK_REALTIME);
-
-  return time.getMSec();
- }
- 
-SecTimeType GetSecTime() noexcept
- {
-  TimeSpec time(CLOCK_REALTIME);
-  
-  return time.getSec();
- }
- 
-#if 0
-
-ClockTimeType GetClockTime() noexcept
- {
-  TimeSpec time(CLOCK_REALTIME);
-
-  return time.getNanoSec();
- }
-
-#endif
- 
 } // namespace Sys
 } // namespace CCore
  

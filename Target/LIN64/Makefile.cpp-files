@@ -227,5 +227,6 @@
 ../../Target/LIN64/CCore/src/sys/SysError.cpp
 ../../Target/LIN64/CCore/src/sys/SysMemPage.cpp
 ../../Target/LIN64/CCore/src/sys/SysPlanInit.cpp
+../../Target/LIN64/CCore/src/sys/SysInternal.cpp
 ../../Target/LIN64/CCore/src/base/PlatformBase.cpp
 ../../Target/LIN64/CCore/src/base/Quick.cpp

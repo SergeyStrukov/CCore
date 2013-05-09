@@ -18,6 +18,8 @@
  
 #include <CCore/inc/sys/SysError.h>
 
+#include <termios.h>
+
 namespace CCore {
 namespace Sys {
 
@@ -33,6 +35,10 @@ struct ConRead;
 
 struct ConRead
  {
+  // private data
+  
+  struct termios con_attr;
+  
   // public
   
   struct IOResult

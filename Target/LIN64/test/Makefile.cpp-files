@@ -124,3 +124,8 @@
 ../../../HCore/CCore/test/test1010.SysFile.cpp
 ../../../HCore/CCore/test/test1012.NamesCrc.cpp
 ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
+../../../Target/LIN64/CCore/test/test3005.Task.cpp
+../../../Target/LIN64/CCore/test/test3004.Atomic.cpp
+../../../Target/LIN64/CCore/test/test3006.Time.cpp
+../../../Target/LIN64/CCore/test/test3002.SysError.cpp
+../../../Target/LIN64/CCore/test/test3003.Exception.cpp

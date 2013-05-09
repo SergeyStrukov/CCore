@@ -197,6 +197,7 @@ obj/SysCon.o \
 obj/SysError.o \
 obj/SysFile.o \
 obj/SysFileSystem.o \
+obj/SysInternal.o \
 obj/SysMemPage.o \
 obj/SysNet.o \
 obj/SysPlanInit.o \
@@ -431,6 +432,7 @@ obj/SysCon.s \
 obj/SysError.s \
 obj/SysFile.s \
 obj/SysFileSystem.s \
+obj/SysInternal.s \
 obj/SysMemPage.s \
 obj/SysNet.s \
 obj/SysPlanInit.s \
@@ -665,6 +667,7 @@ obj/SysCon.dep \
 obj/SysError.dep \
 obj/SysFile.dep \
 obj/SysFileSystem.dep \
+obj/SysInternal.dep \
 obj/SysMemPage.dep \
 obj/SysNet.dep \
 obj/SysPlanInit.dep \
@@ -703,6 +706,7 @@ obj/XPoint.dep \
 ASM_OBJ_LIST = \
 obj/Quick.s.o \
 obj/SysAtomic.s.o \
+obj/SysTime.s.o \
 
 
 include $(RULES_FILE)
@@ -1300,6 +1304,9 @@ obj/SysFile.o : ../../Target/LIN64/CCore/src/sys/SysFile.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SysFileSystem.o : ../../Target/LIN64/CCore/src/sys/SysFileSystem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysInternal.o : ../../Target/LIN64/CCore/src/sys/SysInternal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SysMemPage.o : ../../Target/LIN64/CCore/src/sys/SysMemPage.cpp
@@ -1997,6 +2004,9 @@ obj/SysFile.s : ../../Target/LIN64/CCore/src/sys/SysFile.cpp
 obj/SysFileSystem.s : ../../Target/LIN64/CCore/src/sys/SysFileSystem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SysInternal.s : ../../Target/LIN64/CCore/src/sys/SysInternal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SysMemPage.s : ../../Target/LIN64/CCore/src/sys/SysMemPage.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2692,6 +2702,9 @@ obj/SysFile.dep : ../../Target/LIN64/CCore/src/sys/SysFile.cpp
 obj/SysFileSystem.dep : ../../Target/LIN64/CCore/src/sys/SysFileSystem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysFileSystem.o $< -MF $@
 
+obj/SysInternal.dep : ../../Target/LIN64/CCore/src/sys/SysInternal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysInternal.o $< -MF $@
+
 obj/SysMemPage.dep : ../../Target/LIN64/CCore/src/sys/SysMemPage.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysMemPage.o $< -MF $@
 
@@ -2797,6 +2810,9 @@ obj/Quick.s.o : ../../Target/LIN64/CCore/src/base/Quick.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/SysAtomic.s.o : ../../Target/LIN64/CCore/src/sys/SysAtomic.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/SysTime.s.o : ../../Target/LIN64/CCore/src/sys/SysTime.s
 	$(AS) $(ASOPT) $< -o $@
 
 

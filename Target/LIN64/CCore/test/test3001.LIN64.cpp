@@ -25,6 +25,19 @@ namespace App {
 
 namespace Private_3001 {
 
+void PrintClockRes(clockid_t clock_id,const char *name)
+ {
+  timespec res;
+
+  if( clock_getres(clock_id,&res)==-1 )
+    {
+     Printf(Con,"#; : resolution is not available\n",name);
+    }
+  else
+    {
+     Printf(Con,"#; : #; sec #; nsec\n",name,res.tv_sec,res.tv_nsec);
+    }
+ }
 
 } // namespace Private_3001
  
@@ -66,6 +79,9 @@ bool Testit<3001>::Main()
   Printf(Con,"SEM_VALUE_MAX = #;\n",SEM_VALUE_MAX);
   
   Printf(Con,"CLOCKS_PER_SEC = #;\n",CLOCKS_PER_SEC);
+  
+  PrintClockRes(CLOCK_REALTIME,"CLOCK_REALTIME");
+  PrintClockRes(CLOCK_PROCESS_CPUTIME_ID,"CLOCK_PROCESS_CPUTIME_ID");
   
   return true;
  }

@@ -16,7 +16,8 @@
 #include <CCore/inc/sys/SysSem.h>
 #include <CCore/inc/sys/SysAbort.h>
 
-#include <time.h>
+#include <CCore/inc/sys/SysInternal.h>
+
 #include <errno.h>
 #include <limits.h>
 
@@ -65,21 +66,8 @@ void Sem::take() noexcept
   
 bool Sem::take(MSec timeout) noexcept
  {
-  struct timespec abs_to;
+  TimeSpec abs_to(CLOCK_REALTIME,timeout);
 
-  AbortIf( clock_gettime(CLOCK_REALTIME,&abs_to)!=0 ,"CCore::Sys::Sem::take()");
-  
-  unsigned delta_sec=(+timeout/1000);
-  unsigned delta_nsec=(+timeout%1000)*1000000;
-  
-  if( (abs_to.tv_nsec+=delta_nsec)>=1000000000 ) 
-    {
-     abs_to.tv_nsec-=1000000000;
-     delta_sec++;
-    }
-  
-  abs_to.tv_sec+=delta_sec;
-  
   if( sem_timedwait(&sem,&abs_to)==0 ) return true;
   
   AbortIf( errno!=ETIMEDOUT ,"CCore::Sys::Sem::take()");

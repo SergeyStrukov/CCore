@@ -16,8 +16,9 @@
 #include <CCore/inc/sys/SysTask.h>
 #include <CCore/inc/sys/SysAbort.h>
  
+#include <CCore/inc/sys/SysInternal.h>
+
 #include <pthread.h>
-#include <time.h>
 
 namespace CCore {
 namespace Sys {
@@ -33,10 +34,7 @@ void YieldTask() noexcept
  
 void SleepTask(MSec time) noexcept 
  {
-  struct timespec reqtime;
-  
-  reqtime.tv_sec=(+time/1000);
-  reqtime.tv_nsec=(+time%1000)*1000000;
+  TimeSpec reqtime(time);
   
   AbortIf( nanosleep(&reqtime,NULL)!=0 ,"CCore::Sys::SleepTask()");
  }

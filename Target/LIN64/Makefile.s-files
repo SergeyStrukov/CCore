@@ -1,2 +1,3 @@
 ../../Target/LIN64/CCore/src/sys/SysAtomic.s
+../../Target/LIN64/CCore/src/sys/SysTime.s
 ../../Target/LIN64/CCore/src/base/Quick.s
