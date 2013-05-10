@@ -1,9 +1,9 @@
-/* test3004.Atomic.cpp */ 
+/* test1025.Atomic.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.05
 //
-//  Tag: Target/LIN64 
+//  Tag: HCore 
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -18,7 +18,7 @@
 
 namespace App {
 
-namespace Private_3004 {
+namespace Private_1025 {
 
 /* test1() */
 
@@ -62,17 +62,17 @@ void test2()
   }
  }
 
-} // namespace Private_3004
+} // namespace Private_1025
  
-using namespace Private_3004; 
+using namespace Private_1025; 
  
-/* Testit<3004> */ 
+/* Testit<1025> */ 
 
 template<>
-const char *const Testit<3004>::Name="Test3004 Atomic";
+const char *const Testit<1025>::Name="Test1025 Atomic";
 
 template<>
-bool Testit<3004>::Main() 
+bool Testit<1025>::Main() 
  {
   test1();
   test2();

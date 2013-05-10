@@ -157,6 +157,10 @@ int main()
   //Testit<1021>().run();
   //Testit<1022>().run();
   //Testit<1023>().run();
+  //Testit<1024>().run();
+  //Testit<1025>().run();
+  //Testit<1026>().run();
+  //Testit<1027>().run();
   
   //Testit<3001>().run();
   //Testit<3002>().run();

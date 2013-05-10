@@ -1,9 +1,9 @@
-/* test3005.Task.cpp */ 
+/* test1026.Task.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.05
 //
-//  Tag: Target/LIN64 
+//  Tag: HCore 
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -19,20 +19,20 @@
 
 namespace App {
 
-namespace Private_3005 {
+namespace Private_1026 {
 
 
-} // namespace Private_3005
+} // namespace Private_1026
  
-using namespace Private_3005; 
+using namespace Private_1026; 
  
-/* Testit<3005> */ 
+/* Testit<1026> */ 
 
 template<>
-const char *const Testit<3005>::Name="Test3005 Task";
+const char *const Testit<1026>::Name="Test1026 Task";
 
 template<>
-bool Testit<3005>::Main() 
+bool Testit<1026>::Main() 
  {
   MSecDiffTimer timer1;
   ClockDiffTimer timer2;

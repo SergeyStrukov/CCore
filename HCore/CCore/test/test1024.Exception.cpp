@@ -1,9 +1,9 @@
-/* test3003.Exception.cpp */ 
+/* test1024.Exception.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.05
 //
-//  Tag: Target/LIN64 
+//  Tag: HCore 
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -18,7 +18,7 @@
 
 namespace App {
 
-namespace Private_3003 {
+namespace Private_1024 {
 
 /* testException() */
 
@@ -41,17 +41,17 @@ void testException()
   Printf(Con,"count = #;\n",count);
  }
 
-} // namespace Private_3003
+} // namespace Private_1024
  
-using namespace Private_3003; 
+using namespace Private_1024; 
  
-/* Testit<3003> */ 
+/* Testit<1024> */ 
 
 template<>
-const char *const Testit<3003>::Name="Test3003 Exception";
+const char *const Testit<1024>::Name="Test1024 Exception";
 
 template<>
-bool Testit<3003>::Main() 
+bool Testit<1024>::Main() 
  {
   RunTasks run_tasks;
   

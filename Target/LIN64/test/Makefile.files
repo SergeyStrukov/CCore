@@ -114,12 +114,12 @@ OBJ_LIST = \
 ../test-obj/test1021.PTPEcho.o \
 ../test-obj/test1022.PTPServer.o \
 ../test-obj/test1023.DDLEngine.o \
+../test-obj/test1024.Exception.o \
+../test-obj/test1025.Atomic.o \
+../test-obj/test1026.Task.o \
+../test-obj/test1027.Time.o \
 ../test-obj/test3001.LIN64.o \
 ../test-obj/test3002.SysError.o \
-../test-obj/test3003.Exception.o \
-../test-obj/test3004.Atomic.o \
-../test-obj/test3005.Task.o \
-../test-obj/test3006.Time.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -248,12 +248,12 @@ ASM_LIST = \
 ../test-obj/test1021.PTPEcho.s \
 ../test-obj/test1022.PTPServer.s \
 ../test-obj/test1023.DDLEngine.s \
+../test-obj/test1024.Exception.s \
+../test-obj/test1025.Atomic.s \
+../test-obj/test1026.Task.s \
+../test-obj/test1027.Time.s \
 ../test-obj/test3001.LIN64.s \
 ../test-obj/test3002.SysError.s \
-../test-obj/test3003.Exception.s \
-../test-obj/test3004.Atomic.s \
-../test-obj/test3005.Task.s \
-../test-obj/test3006.Time.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -382,12 +382,12 @@ DEP_LIST = \
 ../test-obj/test1021.PTPEcho.dep \
 ../test-obj/test1022.PTPServer.dep \
 ../test-obj/test1023.DDLEngine.dep \
+../test-obj/test1024.Exception.dep \
+../test-obj/test1025.Atomic.dep \
+../test-obj/test1026.Task.dep \
+../test-obj/test1027.Time.dep \
 ../test-obj/test3001.LIN64.dep \
 ../test-obj/test3002.SysError.dep \
-../test-obj/test3003.Exception.dep \
-../test-obj/test3004.Atomic.dep \
-../test-obj/test3005.Task.dep \
-../test-obj/test3006.Time.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -751,22 +751,22 @@ include $(RULES_FILE)
 ../test-obj/test1023.DDLEngine.o : ../../../HCore/CCore/test/test1023.DDLEngine.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+../test-obj/test1024.Exception.o : ../../../HCore/CCore/test/test1024.Exception.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test1025.Atomic.o : ../../../HCore/CCore/test/test1025.Atomic.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test1026.Task.o : ../../../HCore/CCore/test/test1026.Task.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test1027.Time.o : ../../../HCore/CCore/test/test1027.Time.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 ../test-obj/test3001.LIN64.o : ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3002.SysError.o : ../../../Target/LIN64/CCore/test/test3002.SysError.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-../test-obj/test3003.Exception.o : ../../../Target/LIN64/CCore/test/test3003.Exception.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-../test-obj/test3004.Atomic.o : ../../../Target/LIN64/CCore/test/test3004.Atomic.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-../test-obj/test3005.Task.o : ../../../Target/LIN64/CCore/test/test3005.Task.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-../test-obj/test3006.Time.o : ../../../Target/LIN64/CCore/test/test3006.Time.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1146,22 +1146,22 @@ include $(RULES_FILE)
 ../test-obj/test1023.DDLEngine.s : ../../../HCore/CCore/test/test1023.DDLEngine.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test1024.Exception.s : ../../../HCore/CCore/test/test1024.Exception.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test1025.Atomic.s : ../../../HCore/CCore/test/test1025.Atomic.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test1026.Task.s : ../../../HCore/CCore/test/test1026.Task.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test1027.Time.s : ../../../HCore/CCore/test/test1027.Time.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test3001.LIN64.s : ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 ../test-obj/test3002.SysError.s : ../../../Target/LIN64/CCore/test/test3002.SysError.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../test-obj/test3003.Exception.s : ../../../Target/LIN64/CCore/test/test3003.Exception.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../test-obj/test3004.Atomic.s : ../../../Target/LIN64/CCore/test/test3004.Atomic.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../test-obj/test3005.Task.s : ../../../Target/LIN64/CCore/test/test3005.Task.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../test-obj/test3006.Time.s : ../../../Target/LIN64/CCore/test/test3006.Time.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
@@ -1541,23 +1541,23 @@ include $(RULES_FILE)
 ../test-obj/test1023.DDLEngine.dep : ../../../HCore/CCore/test/test1023.DDLEngine.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1023.DDLEngine.o $< -MF $@
 
+../test-obj/test1024.Exception.dep : ../../../HCore/CCore/test/test1024.Exception.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1024.Exception.o $< -MF $@
+
+../test-obj/test1025.Atomic.dep : ../../../HCore/CCore/test/test1025.Atomic.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1025.Atomic.o $< -MF $@
+
+../test-obj/test1026.Task.dep : ../../../HCore/CCore/test/test1026.Task.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1026.Task.o $< -MF $@
+
+../test-obj/test1027.Time.dep : ../../../HCore/CCore/test/test1027.Time.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1027.Time.o $< -MF $@
+
 ../test-obj/test3001.LIN64.dep : ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3001.LIN64.o $< -MF $@
 
 ../test-obj/test3002.SysError.dep : ../../../Target/LIN64/CCore/test/test3002.SysError.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3002.SysError.o $< -MF $@
-
-../test-obj/test3003.Exception.dep : ../../../Target/LIN64/CCore/test/test3003.Exception.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3003.Exception.o $< -MF $@
-
-../test-obj/test3004.Atomic.dep : ../../../Target/LIN64/CCore/test/test3004.Atomic.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3004.Atomic.o $< -MF $@
-
-../test-obj/test3005.Task.dep : ../../../Target/LIN64/CCore/test/test3005.Task.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3005.Task.o $< -MF $@
-
-../test-obj/test3006.Time.dep : ../../../Target/LIN64/CCore/test/test3006.Time.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3006.Time.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

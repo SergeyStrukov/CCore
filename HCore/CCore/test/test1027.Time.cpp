@@ -1,9 +1,9 @@
-/* test3006.Time.cpp */ 
+/* test1027.Time.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.05
 //
-//  Tag: Target/LIN64 
+//  Tag: HCore 
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -19,20 +19,20 @@
 
 namespace App {
 
-namespace Private_3006 {
+namespace Private_1027 {
 
 
-} // namespace Private_3006
+} // namespace Private_1027
  
-using namespace Private_3006; 
+using namespace Private_1027; 
  
-/* Testit<3006> */ 
+/* Testit<1027> */ 
 
 template<>
-const char *const Testit<3006>::Name="Test3006 Time";
+const char *const Testit<1027>::Name="Test1027 Time";
 
 template<>
-bool Testit<3006>::Main() 
+bool Testit<1027>::Main() 
  {
   ClockDiffTimer::ValueType buf[20];
   

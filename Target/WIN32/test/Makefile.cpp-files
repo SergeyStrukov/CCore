@@ -122,6 +122,10 @@
 ../../../HCore/CCore/test/test1021.PTPEcho.cpp
 ../../../HCore/CCore/test/test1022.PTPServer.cpp
 ../../../HCore/CCore/test/test1023.DDLEngine.cpp
+../../../HCore/CCore/test/test1024.Exception.cpp
+../../../HCore/CCore/test/test1025.Atomic.cpp
+../../../HCore/CCore/test/test1026.Task.cpp
+../../../HCore/CCore/test/test1027.Time.cpp
 ../../../HCore/CCore/test/testPrint.cpp
 ../../../Target/WIN32/CCore/test/test3001.SysError.cpp
 ../../../Target/WIN32/CCore/test/test3002.IntegerFastAlgo.cpp
