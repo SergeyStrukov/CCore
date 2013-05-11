@@ -15,9 +15,15 @@
 
 #ifndef CCore_inc_sys_SysProp_h
 #define CCore_inc_sys_SysProp_h
+
+#include <CCore/inc/PlanInit.h>
  
 namespace CCore {
 namespace Sys {
+
+/* GetPlanInitNode_...() */ 
+
+PlanInitNode * GetPlanInitNode_SysProp();
 
 /* functions */ 
 

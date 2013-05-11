@@ -18,6 +18,7 @@
 
 #include <CCore/inc/sys/SysInternal.h>
 
+#include <semaphore.h>
 #include <errno.h>
 #include <limits.h>
 
@@ -30,19 +31,19 @@ ErrorType Sem::init(ulen count) noexcept
  {
   if( count>SEM_VALUE_MAX ) return ErrorType(EINVAL);
    
-  if( sem_init(&sem,0,(unsigned)count)!=0 ) return NonNullError();
+  if( sem_init(sem.getObj<sem_t>(),0,(unsigned)count)!=0 ) return NonNullError();
 
   return NoError;
  }
   
 void Sem::exit() noexcept
  {
-  AbortIf( sem_destroy(&sem)!=0 ,"CCore::Sys::Sem::exit()");
+  AbortIf( sem_destroy(sem.getObj<sem_t>())!=0 ,"CCore::Sys::Sem::exit()");
  }
   
 void Sem::give() noexcept
  {
-  AbortIf( sem_post(&sem)!=0 ,"CCore::Sys::Sem::give()");
+  AbortIf( sem_post(sem.getObj<sem_t>())!=0 ,"CCore::Sys::Sem::give()");
  }
   
 void Sem::give_many(ulen count) noexcept
@@ -52,7 +53,7 @@ void Sem::give_many(ulen count) noexcept
   
 bool Sem::try_take() noexcept
  {
-  if( sem_trywait(&sem)==0 ) return true;
+  if( sem_trywait(sem.getObj<sem_t>())==0 ) return true;
    
   AbortIf( errno!=EAGAIN ,"CCore::Sys::Sem::try_take()");
 
@@ -61,14 +62,14 @@ bool Sem::try_take() noexcept
   
 void Sem::take() noexcept
  {
-  AbortIf( sem_wait(&sem)!=0 ,"CCore::Sys::Sem::take()");
+  AbortIf( sem_wait(sem.getObj<sem_t>())!=0 ,"CCore::Sys::Sem::take()");
  }
   
 bool Sem::take(MSec timeout) noexcept
  {
   TimeSpec abs_to(CLOCK_REALTIME,timeout);
 
-  if( sem_timedwait(&sem,&abs_to)==0 ) return true;
+  if( sem_timedwait(sem.getObj<sem_t>(),&abs_to)==0 ) return true;
   
   AbortIf( errno!=ETIMEDOUT ,"CCore::Sys::Sem::take()");
 

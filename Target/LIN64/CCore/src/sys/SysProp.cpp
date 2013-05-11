@@ -14,24 +14,58 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/sys/SysProp.h>
+
+#include <CCore/inc/Exception.h>
  
+#include <unistd.h>
+
 namespace CCore {
 namespace Sys {
+
+/* GetPlanInitNode_...() */
+
+namespace Private_SysProp {
+
+struct SysConfig
+ {
+  unsigned cpu_count;
+  unsigned spin_count;
+  
+  SysConfig()
+   {
+    auto result=sysconf(_SC_NPROCESSORS_ONLN);
+    
+    if( result<=0 )
+      {
+       Printf(Exception,"CCore::Sys::SysConfig::SysConfig() : cannot determine the number of CPUs");
+      }
+      
+    cpu_count=(unsigned)result;
+    
+    spin_count=(cpu_count>1)?1000:0;
+   }
+  
+  static const char * GetTag() { return "SysConfig"; }
+ };
+ 
+PlanInitObject<SysConfig> Object CCORE_INITPRI_1 ;
+
+} // namespace Private_SysProp
+
+using namespace Private_SysProp;
+
+PlanInitNode * GetPlanInitNode_SysProp() { return &Object; }
 
 /* functions */ 
 
 unsigned GetCpuCount() noexcept
  {
-  // TODO
-
-  return 4;
+  return Object->cpu_count;
  }
  
 unsigned GetSpinCount() noexcept 
  {
-  // TODO
-
-  return 1000;
+  return Object->spin_count;
  }
  
 } // namespace Sys

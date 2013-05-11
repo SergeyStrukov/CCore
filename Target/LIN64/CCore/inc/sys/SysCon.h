@@ -17,8 +17,7 @@
 #define CCore_inc_sys_SysCon_h
  
 #include <CCore/inc/sys/SysError.h>
-
-#include <termios.h>
+#include <CCore/inc/sys/SysData.h>
 
 namespace CCore {
 namespace Sys {
@@ -37,7 +36,7 @@ struct ConRead
  {
   // private data
   
-  struct termios con_attr;
+  SysData<64> con_attr;
   
   // public
   

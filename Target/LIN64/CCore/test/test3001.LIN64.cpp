@@ -15,11 +15,15 @@
 
 #include <CCore/test/test.h>
 
+#include <CCore/inc/sys/SysProp.h>
+
 #include <unistd.h>
 #include <pthread.h>
 #include <string.h>
 #include <time.h>
 #include <limits.h>
+#include <termios.h>
+#include <semaphore.h>
 
 namespace App {
 
@@ -82,6 +86,14 @@ bool Testit<3001>::Main()
   
   PrintClockRes(CLOCK_REALTIME,"CLOCK_REALTIME");
   PrintClockRes(CLOCK_PROCESS_CPUTIME_ID,"CLOCK_PROCESS_CPUTIME_ID");
+  
+  Printf(Con,"sizeof (struct termios) = #;\n",sizeof (struct termios));
+  Printf(Con,"sizeof (sem_t) = #;\n",sizeof (sem_t));
+  
+  Printf(Con,"CPU Count = #;\n",sysconf(_SC_NPROCESSORS_ONLN));
+  
+  Printf(Con,"GetCpuCount = #;\n",Sys::GetCpuCount());
+  Printf(Con,"GetSpinCount = #;\n",Sys::GetSpinCount());
   
   return true;
  }

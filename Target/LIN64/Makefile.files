@@ -194,6 +194,7 @@ obj/SysAsyncFile.o \
 obj/SysAsyncFileSystem.o \
 obj/SysAtomic.o \
 obj/SysCon.o \
+obj/SysData.o \
 obj/SysError.o \
 obj/SysFile.o \
 obj/SysFileSystem.o \
@@ -429,6 +430,7 @@ obj/SysAsyncFile.s \
 obj/SysAsyncFileSystem.s \
 obj/SysAtomic.s \
 obj/SysCon.s \
+obj/SysData.s \
 obj/SysError.s \
 obj/SysFile.s \
 obj/SysFileSystem.s \
@@ -664,6 +666,7 @@ obj/SysAsyncFile.dep \
 obj/SysAsyncFileSystem.dep \
 obj/SysAtomic.dep \
 obj/SysCon.dep \
+obj/SysData.dep \
 obj/SysError.dep \
 obj/SysFile.dep \
 obj/SysFileSystem.dep \
@@ -1295,6 +1298,9 @@ obj/SysAtomic.o : ../../Target/LIN64/CCore/src/sys/SysAtomic.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SysCon.o : ../../Target/LIN64/CCore/src/sys/SysCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysData.o : ../../Target/LIN64/CCore/src/sys/SysData.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SysError.o : ../../Target/LIN64/CCore/src/sys/SysError.cpp
@@ -1995,6 +2001,9 @@ obj/SysAtomic.s : ../../Target/LIN64/CCore/src/sys/SysAtomic.cpp
 obj/SysCon.s : ../../Target/LIN64/CCore/src/sys/SysCon.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SysData.s : ../../Target/LIN64/CCore/src/sys/SysData.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SysError.s : ../../Target/LIN64/CCore/src/sys/SysError.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2692,6 +2701,9 @@ obj/SysAtomic.dep : ../../Target/LIN64/CCore/src/sys/SysAtomic.cpp
 
 obj/SysCon.dep : ../../Target/LIN64/CCore/src/sys/SysCon.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysCon.o $< -MF $@
+
+obj/SysData.dep : ../../Target/LIN64/CCore/src/sys/SysData.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysData.o $< -MF $@
 
 obj/SysError.dep : ../../Target/LIN64/CCore/src/sys/SysError.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysError.o $< -MF $@

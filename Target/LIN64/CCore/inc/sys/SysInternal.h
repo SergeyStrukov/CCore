@@ -27,6 +27,8 @@ namespace Sys {
 
 struct TimeSpec;
 
+struct TimeVal;
+
 /* struct TimeSpec */
 
 struct TimeSpec : timespec
@@ -69,6 +71,23 @@ struct TimeSpec : timespec
   unsigned long long getSec() const { return tv_sec; }
   
   unsigned long long getNanoSec() const { return tv_nsec+tv_sec*1000000000ull; }
+ };
+
+/* struct TimeVal */
+
+struct TimeVal : timeval
+ {
+  static unsigned GetSec(MSec time) { return +time/1000u; }
+  
+  static unsigned GetMilliSec(MSec time) { return (+time%1000u)*1000u; }
+  
+  TimeVal() {}
+  
+  explicit TimeVal(MSec time)
+   {
+    tv_sec=GetSec(time);
+    tv_usec=GetMilliSec(time);
+   }
  };
 
 } // namespace Sys

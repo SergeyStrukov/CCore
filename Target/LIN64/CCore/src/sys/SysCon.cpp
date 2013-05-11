@@ -15,6 +15,8 @@
  
 #include <CCore/inc/sys/SysCon.h>
 
+#include <CCore/inc/sys/SysInternal.h>
+
 #include <unistd.h>
 #include <termios.h>
 #include <sys/select.h>
@@ -35,9 +37,9 @@ void ConWrite(StrLen str) noexcept
 
 ErrorType ConRead::init() noexcept
  {
-  if( tcgetattr(STDIN_FILENO,&con_attr)==-1 ) return NonNullError();
+  if( tcgetattr(STDIN_FILENO,con_attr.getObj<termios>())==-1 ) return NonNullError();
   
-  struct termios new_attr=con_attr;
+  termios new_attr=*con_attr.getObj<termios>();
   
   BitClear(new_attr.c_lflag,ECHO|ICANON);
   
@@ -51,7 +53,7 @@ ErrorType ConRead::init() noexcept
   
 ErrorType ConRead::exit() noexcept
  {
-  if( tcsetattr(STDIN_FILENO,TCSANOW,&con_attr)==-1 ) return NonNullError();  
+  if( tcsetattr(STDIN_FILENO,TCSANOW,con_attr.getObj<termios>())==-1 ) return NonNullError();  
 
   return NoError;
  }
@@ -84,10 +86,7 @@ auto ConRead::read(char *buf,ulen len,MSec timeout) noexcept -> IOResult
   FD_ZERO(&read_set);
   FD_SET(STDIN_FILENO,&read_set);
   
-  struct timeval to;
-  
-  to.tv_sec=(+timeout/1000u);
-  to.tv_usec=(+timeout%1000u)*1000u;
+  TimeVal to(timeout);
   
   if( select(STDIN_FILENO+1,&read_set,0,0,&to)==-1 )
     {

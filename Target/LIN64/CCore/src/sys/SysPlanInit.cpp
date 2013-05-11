@@ -14,6 +14,8 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/sys/SysPlanInit.h>
+
+#include <CCore/inc/sys/SysProp.h>
  
 namespace CCore {
 namespace Sys {
@@ -27,7 +29,8 @@ struct Empty
   static const char * GetTag() { return "Sys"; }
  };
  
-PlanInitObject<Empty> Object CCORE_INITPRI_1 ; // TODO
+PlanInitObject<Empty,PlanInitReq<GetPlanInitNode_SysProp>
+                    > Object CCORE_INITPRI_1 ;
 
 } // namespace Private_SysPlanInit
  
