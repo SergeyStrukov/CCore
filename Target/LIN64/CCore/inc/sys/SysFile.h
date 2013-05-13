@@ -131,17 +131,81 @@ struct AltFile
     FileError error;
    };
  
+  // private data
+  
+  typedef int Type;
+  
+  Type handle;
+  FilePosType file_len;
+  FileOpenFlags oflags;
+  char *to_unlink;
+  
+  // private
+  
+  struct OpenType
+   {
+    Type handle;
+    FilePosType file_len;
+    char *to_unlink;
+    FileError error;
+   };
+  
+  static OpenType Open(StrLen file_name,FileOpenFlags oflags) noexcept;
+  
+  static void Close(FileMultiError &errout,Type handle,FileOpenFlags oflags,char *to_unlink,bool preserve_file) noexcept;
+  
+  static FileError Write(Type handle,FileOpenFlags oflags,FilePosType off,const uint8 *buf,ulen len) noexcept;
+  
+  static FileError Read(Type handle,FileOpenFlags oflags,FilePosType off,uint8 *buf,ulen len) noexcept;
+ 
   // public
   
-  Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
- 
-  void close(FileMultiError &errout,bool preserve_file=false) noexcept;
-  
-  void close() noexcept; 
+  Result open(StrLen file_name,FileOpenFlags oflags_)
+   {
+    OpenType result=Open(file_name,oflags_);
    
-  Result write(FilePosType off,const uint8 *buf,ulen len) noexcept; 
+    handle=result.handle;
+    file_len=result.file_len;
+    to_unlink=result.to_unlink;
+    oflags=oflags_;
+   
+    return {result.file_len,result.error};
+   }
+ 
+  void close(FileMultiError &errout,bool preserve_file=false)
+   { 
+    Close(errout,handle,oflags,to_unlink,preserve_file); 
+   }
   
-  FileError read(FilePosType off,uint8 *buf,ulen len) noexcept; 
+  void close()
+   { 
+    FileMultiError errout;
+   
+    close(errout);
+   }
+   
+  Result write(FilePosType off,const uint8 *buf,ulen len) 
+   { 
+    FileError fe=Write(handle,oflags,off,buf,len);
+    
+    if( fe )
+      {
+       return {0,fe};
+      }
+    else
+      {
+       Replace_max(file_len,off+len);
+      
+       return {file_len,fe};
+      }
+   } 
+  
+  FileError read(FilePosType off,uint8 *buf,ulen len) 
+   {
+    if( off>file_len ) return FileError_BadPosition;
+    
+    return Read(handle,oflags,off,buf,len); 
+   } 
  };
 
 /* struct AltAsyncFile */
