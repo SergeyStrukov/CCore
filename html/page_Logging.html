@@ -45,9 +45,107 @@ Format arguments are copied, so they must have a value semantic. It is recommend
 should be <b>Small Data Type</b>s.
 </p>
 
-<h4>LogCategory_enum tbc</h4>
+<h4>LogCategory_enum</h4>
 
-<h4>LogFilter_enum tbc</h4>
+<p>
+The class <b>LogCategory_enum</b> implements a log message category type, based on two enums.
+</p>
+
+<pre>
+
+template &lt;class Src,class Type&gt; // Src and Type are uint5 enums
+class <span class="Att">LogCategory_enum</span>
+ {
+   ....
+   
+  public:
+   
+   // constructors
+  
+   LogCategory_enum();
+  
+   LogCategory_enum(Src src,Type type);
+   
+   // methods
+   
+   Src getSource() const;
+  
+   Type getType() const;
+   
+   // print object
+ 
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+It stores internally two enum values: <b>Src</b> and <b>Type</b>. It is assumed that the <b>Src</b> describes
+the message source, and the <b>Type</b> describes the message type. <b>Src</b> and <b>Type</b> must
+be <b>"uint5"</b> enums, i.g. the usable value range should be representable by a 5-bits unsigned.
+</p>
+
+<h4>LogFilter_enum</h4>
+
+<p>
+The class <b>LogFilter_enum</b> implements a log message filter for the category type of the
+<b>LogCategory_enum</b>.
+</p>
+
+<pre>
+
+template &lt;class Src,class Type&gt; // Src and Type are uint5 enums
+class <span class="Att">LogFilter_enum</span>
+ {
+   ....
+
+  public:
+   
+   // constructors
+  
+   LogFilter_enum(); // enable all
+   
+   LogFilter_enum(LogCategory_enum&lt;Src,Type&gt; cat); // filter all other cats
+   
+   // enable/disable
+   
+   void enable(Src src);
+    
+   void enable(Type type);
+    
+   void disable(Src src);
+    
+   void disable(Type type);
+   
+   // filter all cats with disabled src OR disabled type
+   
+   bool operator () (LogCategory_enum&lt;Src,Type&gt; cat) const;
+ };
+ 
+</pre>
+
+<p>
+Default constructor creates a filter, which passes all categories.
+</p>
+
+<p>
+The second constructor creates a filter, which passes only the given category.
+</p>
+
+<p>
+<b>enable()</b> enables the given type or source.
+</p>
+
+<p>
+<b>disable()</b> disables the given type or source.
+</p>
+
+<p>
+The <b>operator ()</b> is a filter function. It is called to filter out the given category.
+If the return value is <b>true</b>, the category must be filtered out.
+This filter filters categories, whose source is disabled OR whose type is disabled.
+</p>
 
 <h4>LogStamp</h4>
 
@@ -250,10 +348,11 @@ class <span class="Att">LogMsg&lt;Cat,Stamp,TT...&gt;</span> : public LogMsgBase
 
 </pre>
 
-<h4>LogMem tbc</h4>
+<h4>LogMem</h4>
 
 <p>
-The class <b>LogMem</b> is a memory distributor for log messages.
+The class <b>LogMem</b> is a memory distributor for log messages. This class is used by the
+<b>LogStorage</b> to manage the log message memory blocks. You don't need to use it directly.
 </p>
 
 <pre>
@@ -285,10 +384,10 @@ class <span class="Att">LogMem</span> : NoCopy
 
 </pre>
 
-<h4>LogStorage tbc</h4>
+<h4>LogStorage</h4>
 
 <p>
-This class is a storage for log messages. It is the core class for the log implementation.
+This class is a storage for log messages. It is a core class for the log implementation.
 </p>
 
 <pre>
@@ -312,9 +411,9 @@ class <span class="Att">LogStorage</span> : NoCopy
    
    ulen getCount() const;
    
-   void getCounter(LogCounter &ret) const;
+   void getCounter(LogCounter &amp;ret) const;
    
-   void setOverrun(bool overrun_);
+   void setOverrun(bool overrun);
    
    void delAll();
    
@@ -336,6 +435,70 @@ class <span class="Att">LogStorage</span> : NoCopy
  };
 
 </pre>
+
+<p>
+The first constructor allocates the memory dynamically. The second uses the provided memory space.
+The base address of this space must be aligned.
+</p>
+
+<p>
+<b>getCount()</b> returns the number of messages in the storage.
+</p>
+
+<p>
+<b>getCounter()</b> returns the current message counter.
+</p>
+
+<p>
+<b>setOverrun()</b> sets the overrun flag. If this flag is set and there is no enough memory
+for a new message, the oldest messages are deleted to acquire the memory.
+</p>
+
+<p>
+<b>delAll()</b> deletes all messages.
+</p>
+
+<p>
+To add a new message to the storage, you must allocate the memory for the message using the
+method <b>alloc()</b>. The argument is the required memory length. If there is no enough memory,
+<b>alloc()</b> returns null (but the current message counter is updated). Otherwise, you get the address
+of the memory block. You must create a message at this address, or return this block, using the
+method <b>free()</b>. If you are succeeded in the message creation, you must commit the message
+into the storage using the method <b>commit()</b>. The first argument is the address of the memory block,
+the second is the pointer to the message base class (the message type is derived from the
+<b>LogMsgBase&lt;Cat,Stamp&gt;</b>).
+</p>
+
+<p>
+A storage is responsible for the message counting and the message stamping.
+</p>
+
+<p>
+You can iterate over the storage content using the storage cursor. There can be only one active
+storage cursor at any moment. 
+</p>
+
+<p>
+<b>startCursor()</b> starts the cursor. If the cursor is already active, the null is returned.
+Otherwise, the pointer to the first message is returned, or null if there is no one, 
+in the last case the cursor is not activated. 
+</p>
+
+<p>
+<b>nextCursor()</b> moves to the next message.
+If the return value is null, the cursor is not active anymore.
+</p>
+
+<p>
+<b>stopCursor()</b> deactivates the cursor. You must use this method when you have done with an
+iteration, unless the last call of the <b>nextCursor()</b> has returned null.
+</p>
+
+<p>
+Be advised, while the storage cursor is active, the current cursor message and all following cannot be
+deleted. The method <b>delAll()</b>, in particular, leaves these messages alive.
+It means, you have to finish with the cursor before the storage object destructor call.
+</p>
 
 <h4>UserLog</h4>
 
@@ -447,7 +610,7 @@ as the <b>Printf()</b> function is working.
 
 <p>
 <b>getPrint()</b> builds a temporary object to be used for printing. It prints up to the given count of
-log messages from the begining of the log using the given filter to filter out messages for printing.
+log messages from the beginning of the log using the given filter to filter out messages for printing.
 Printing doesn't lock the log: logging may continue during the print operation. That is why 
 we need some message count limit. If you are sure the log is not appending anymore, you may use the
 <b>MaxULen</b> value for the <b>count</b>. <span class="Alert">Be advised, a log can be printed only to printer objects,

@@ -30,6 +30,24 @@
 
 <p class="Files">Files <b>CCore/inc/sys/SysLog.h</b> <b>CCore/src/sys/SysLog.cpp</b></p>
 
+<p>
+<b>XCore</b> uses <b>SysLog</b> to log some operations, like synchonization object operations.
+You may use it to log your own messages. By default, <b>SysLog</b> is disabled.
+To enable it you have to uncomment the following line in the <b>SysLog.h</b> files
+and rebuild <b>CCore</b>:
+</p>
+
+<pre>
+
+//#define CCORE_SYS_LOG_ENABLE
+
+</pre>
+
+<p>
+<b>SysLog</b> can be used in any context, including interrupt context, but you must be aware
+of the log message argument types: they must be lightweight types, there should be no memory allocation
+or other resource allocation operations in constructors, destructors, copy constructors, etc.   
+</p>
 
 </body>
 
