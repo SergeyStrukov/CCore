@@ -56,6 +56,7 @@ the following targets:</p>
 <li><b>IXDP465</b> &mdash; stand-alone target for Intel IXDP465 development board,</li>
 <li><b>Vanilla-H</b> &mdash; host target template,</li>
 <li><b>Vanilla-X</b> &mdash; stand-alone target template.</li>
+<li><b>LIN64</b> &mdash; host target for 64-bits Linux</li>
 </ul>
 <p>
 <b>Target</b> includes compiler and tools, makefile rules and parts of source code, specific for the target. 
@@ -115,6 +116,67 @@ language extensions. In fact, we need only two of them: <b>restrict</b> and init
 attribute for static objects, supported in <b>gcc</b> family of compilers. As the result, there is no restriction
 on the compiler optimization level, unlike other OS cores. Another advantage is the platform-independence of the code. 
 </p>
+
+<h2>LIN64</h2>
+
+<p>
+Since the version 1.05 <b>CCore</b> supports the 64-bits Linux development. The host target <b>LIN64</b> is provided.
+This target is developed based on <a href="http://www.ubuntu.com/">Ubuntu 13.04</a> (running on the <a href="https://www.virtualbox.org/">VirtualBox</a>),
+but should be fine on others 64-bits Linux platforms.
+</p>
+
+<p>
+To deploy <b>CCore</b> on Linux, you need to install some additional developers components.
+</p>
+
+<p>
+First, you need <b>gcc-4.7.1</b> or later. 
+</p>
+
+<p>
+Second, you need the library <b>libaio</b>. 
+</p>
+
+<p>
+Finally, you need the library <b>libgmp</b>. 
+</p>
+
+<p>
+On <b>Ubuntu</b> you may use the following command to install additional packages:
+</p>
+
+<pre>
+
+sudo apt-get install &lt;package-name&gt;
+
+</pre>
+
+<p>
+The packages you need are: <b>g++</b>, <b>libaio-dev</b>, <b>libgmp-dev</b> (double check with the system support).
+</p>
+
+<p>
+Once you have installed required packages, place <b>CCore</b> at a desired directory. You need <b>/bin</b> subdirectory 
+in your home directory for tools, it must be included in the search path. You have to replace the <b>Makefile</b>
+in the <b>CCore</b> root by the <b>Makefile.LIN64</b>. You also have to edit the file <b>Makefile.host</b>:
+change from 
+</p>
+
+<pre>
+
+CCORE_TARGET = WIN32
+
+</pre>
+
+<p>
+to
+</p>
+
+<pre>
+
+CCORE_TARGET = LIN64
+
+</pre>
 
 <h2>CCore</h2>
 
