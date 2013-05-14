@@ -17,17 +17,87 @@
 #define CCore_inc_sys_SysInternal_h
 
 #include <CCore/inc/sys/SysAbort.h>
- 
+
+#include <CCore/inc/GenFile.h>
+
 #include <time.h>
+#include <errno.h>
 
 namespace CCore {
 namespace Sys {
 
+/* functions */
+
+inline FileError MakeError(FileError fe,int error)
+ {
+  switch( error )
+    {
+     case ENOENT       : return FileError_NoFile;
+     case EMFILE       : return FileError_SysOverload;
+     case ENFILE       : return FileError_SysOverload;
+     case EACCES       : return FileError_NoAccess;
+     case ENOMEM       : return FileError_SysOverload;
+     case ENODEV       : return FileError_NoDevice;
+     case ENOSPC       : return FileError_DiskFull;
+     case EBADF        : return FileError_BadId;
+     case EEXIST       : return FileError_FileExist;
+     case ENOTEMPTY    : return FileError_DirIsNotEmpty;
+     case EFBIG        : return FileError_SysOverload;
+     case ENAMETOOLONG : return FileError_TooLongPath;
+    
+     default: 
+      {
+       return fe;
+      }
+    }
+ }
+ 
+inline FileError MakeError(FileError fe)
+ {
+  return MakeError(fe,errno);
+ }
+
 /* classes */
+
+struct FileName;
 
 struct TimeSpec;
 
 struct TimeVal;
+
+/* struct FileName */ 
+
+struct FileName
+ {
+  char buf[MaxPathLen+1];
+    
+  operator const char * () const { return buf; }
+    
+  template <class T>  
+  bool set(T str)
+   {
+    if( str.len>MaxPathLen ) return false;
+      
+    str.copyTo(buf);
+  
+    buf[str.len]=0;
+      
+    return true;
+   }
+   
+  template <class T1,class T2>  
+  bool set(T1 str1,T2 str2)
+   {
+    if( str1.len>MaxPathLen || str2.len>MaxPathLen-str1.len ) return false;
+      
+    str1.copyTo(buf);
+    str2.copyTo(buf+str1.len);
+  
+    buf[str1.len+str2.len]=0;
+      
+    return true;
+   }
+ };
 
 /* struct TimeSpec */
 

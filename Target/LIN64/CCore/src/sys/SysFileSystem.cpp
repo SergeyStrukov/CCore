@@ -15,6 +15,12 @@
  
 #include <CCore/inc/sys/SysFileSystem.h>
  
+#include <CCore/inc/sys/SysInternal.h>
+
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+
 namespace CCore {
 namespace Sys {
 
@@ -49,37 +55,77 @@ FileError FileSystem::exit() noexcept
   return FileError_Ok;
  }
   
-auto FileSystem::getFileType(StrLen /*path*/) noexcept -> TypeResult
+auto FileSystem::getFileType(StrLen path) noexcept -> TypeResult
  {
-  // TODO
+  FileName file_name;
+  
+  if( !file_name.set(path) ) return {FileType_none,FileError_TooLongPath};
 
-  return TypeResult{};
+  struct stat result;
+  
+  if( stat(file_name,&result)==-1 ) 
+    {
+     int error=errno;
+     
+     if( error==ENOENT || error==ENOTDIR ) return {FileType_none,FileError_Ok};
+    
+     return {FileType_none,MakeError(FileError_OpFault,error)};
+    }
+
+  return {(S_ISDIR(result.st_mode))?FileType_dir:FileType_file,FileError_Ok};
  }
   
-FileError FileSystem::createFile(StrLen /*file_name*/) noexcept
+FileError FileSystem::createFile(StrLen file_name_) noexcept
  {
-  // TODO
+  FileName file_name;
+  
+  if( !file_name.set(file_name_) ) return FileError_TooLongPath;
+  
+  int flags=O_RDWR|O_CREAT|O_EXCL;
+  int mode=S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP;
+  
+  int handle=open(file_name,flags,mode);
+  
+  if( handle==-1 ) return MakeError(FileError_OpenFault);
+  
+  close(handle);
 
   return FileError_Ok;
  }
   
-FileError FileSystem::deleteFile(StrLen /*file_name*/) noexcept
+FileError FileSystem::deleteFile(StrLen file_name_) noexcept
  {
-  // TODO
+  FileName file_name;
+  
+  if( !file_name.set(file_name_) ) return FileError_TooLongPath;
+  
+  if( unlink(file_name)==-1 ) return MakeError(FileError_OpFault);
 
   return FileError_Ok;
  }
   
-FileError FileSystem::createDir(StrLen /*dir_name*/) noexcept
+FileError FileSystem::createDir(StrLen dir_name) noexcept
  {
-  // TODO
+  FileName file_name;
+  
+  if( !file_name.set(dir_name) ) return FileError_TooLongPath;
+  
+  int mode=S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP;
+  
+  if( mkdir(file_name,mode)==-1 ) return MakeError(FileError_OpFault);
 
   return FileError_Ok;
  }
   
-FileError FileSystem::deleteDir(StrLen /*dir_name*/,bool /*recursive*/) noexcept
+FileError FileSystem::deleteDir(StrLen dir_name,bool recursive) noexcept
  {
-  // TODO
+  FileName file_name;
+  
+  if( !file_name.set(dir_name) ) return FileError_TooLongPath;
+  
+  if( recursive ) return FileError_NoMethod; // TODO
+
+  if( rmdir(file_name)==-1 ) return MakeError(FileError_OpFault);
 
   return FileError_Ok;
  }
@@ -91,11 +137,35 @@ FileError FileSystem::rename(StrLen /*old_path*/,StrLen /*new_path*/,bool /*allo
   return FileError_Ok;
  }
   
-FileError FileSystem::remove(StrLen /*path*/) noexcept
+FileError FileSystem::remove(StrLen path) noexcept
  {
-  // TODO
+  FileName file_name;
+  
+  if( !file_name.set(path) ) return FileError_TooLongPath;
 
-  return FileError_Ok;
+  struct stat result;
+  
+  if( stat(file_name,&result)==-1 ) 
+    {
+     int error=errno;
+     
+     if( error==ENOENT || error==ENOTDIR ) return FileError_NoPath;
+    
+     return MakeError(FileError_OpFault,error);
+    }
+
+  if( S_ISDIR(result.st_mode) )
+    {
+     if( rmdir(file_name)==-1 ) return MakeError(FileError_OpFault);
+     
+     return FileError_Ok;
+    }
+  else
+    {
+     if( unlink(file_name)==-1 ) return MakeError(FileError_OpFault);
+     
+     return FileError_Ok;
+    }
  }
  
 FileError FileSystem::exec(StrLen /*dir*/,StrLen /*program*/,StrLen /*arg*/) noexcept

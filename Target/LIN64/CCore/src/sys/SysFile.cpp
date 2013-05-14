@@ -15,6 +15,8 @@
  
 #include <CCore/inc/sys/SysFile.h>
 
+#include <CCore/inc/sys/SysInternal.h>
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -28,37 +30,6 @@ namespace Sys {
 namespace Private_SysFile {
 
 /* functions */
-
-inline FileError MakeError(FileError fe,int error)
- {
-  switch( error )
-    {
-     case ENOENT       : return FileError_NoFile;
-     case EMFILE       : return FileError_SysOverload;
-     case ENFILE       : return FileError_SysOverload;
-     case EACCES       : return FileError_NoAccess;
-     case ENOMEM       : return FileError_SysOverload;
-     case ENODEV       : return FileError_NoDevice;
-     case ENOSPC       : return FileError_DiskFull;
-     case EBADF        : return FileError_BadId;
-     case EEXIST       : return FileError_FileExist;
-     case ENOTEMPTY    : return FileError_DirIsNotEmpty;
-     case EFBIG        : return FileError_SysOverload;
-     case ENAMETOOLONG : return FileError_TooLongPath;
-    
-     default: 
-      {
-       //Printf(Con,"error = #;\n",error); 
-       
-       return fe;
-      }
-    }
- }
- 
-inline FileError MakeError(FileError fe)
- {
-  return MakeError(fe,errno);
- }
 
 inline void AddErrorIf(FileMultiError &errout,FileError fe,bool nok)
  {
@@ -114,45 +85,9 @@ inline int MakeOpenFlags(FileOpenFlags oflags)
 
 /* classes */
 
-struct FileName;
-
 struct OpenFile;
 
 struct OpenAltFile;
-
-/* struct FileName */ 
-
-struct FileName
- {
-  char buf[MaxPathLen+1];
-    
-  operator const char * () const { return buf; }
-    
-  template <class T>  
-  bool set(T str)
-   {
-    if( str.len>MaxPathLen ) return false;
-      
-    str.copyTo(buf);
-  
-    buf[str.len]=0;
-      
-    return true;
-   }
-   
-  template <class T1,class T2>  
-  bool set(T1 str1,T2 str2)
-   {
-    if( str1.len>MaxPathLen || str2.len>MaxPathLen-str1.len ) return false;
-      
-    str1.copyTo(buf);
-    str2.copyTo(buf+str1.len);
-  
-    buf[str1.len+str2.len]=0;
-      
-    return true;
-   }
- };
 
 /* struct OpenFile */ 
  
