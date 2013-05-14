@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/sys/SysLog.h</b> <b>CCore/src/sys/SysLog.cpp</b></p>
 
 <p>
-<b>XCore</b> uses <b>SysLog</b> to log some operations, like synchonization object operations.
+<b>XCore</b> uses <b>SysLog</b> to log some operations, like synchronization object operations.
 You may use it to log your own messages. By default, <b>SysLog</b> is disabled.
 To enable it you have to uncomment the following line in the <b>SysLog.h</b> files
 and rebuild <b>CCore</b>:
@@ -48,6 +48,276 @@ and rebuild <b>CCore</b>:
 of the log message argument types: they must be lightweight types, there should be no memory allocation
 or other resource allocation operations in constructors, destructors, copy constructors, etc.   
 </p>
+
+<p>
+To log a message use the function <b>Sys::Log</b>:
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+void <span class="Att">Sys::Log</span>(Sys::LogCategory cat,const char *format,const TT &amp; ... tt); 
+
+</pre>
+
+<p>
+This function does nothing, if <b>SysLog</b> is disabled.
+</p>
+
+<p>
+The following software entities are located in the <b>Sys</b> namespace. You can use them
+to access <b>SysLog</b> features, even if you disable <b>SysLog</b>. "Disabling" does not mean the
+complete <b>SysLog</b> removal, it just make the function <b>Sys::Log</b> doing nothing.
+</p>
+
+<h4>LogSource</h4>
+
+<p>
+This enum describe a log message source. There are reserved values for system sources and other can be used
+by user.
+</p>
+
+<pre>
+
+enum <span class="Att">LogSource</span>
+ {
+  LogSourceCRT,
+  
+  LogSourceTask,
+  LogSourceMutex,
+  LogSourceSem,
+  LogSourceEvent,
+  LogSourceAntiSem,
+  LogSourceResSem,
+  LogSourceMultiSem,
+  LogSourceMultiEvent,
+  
+  LogSourceUserMin = 10,
+  LogSourceUserMax = 31
+ };
+ 
+const char * GetTextDesc(LogSource src); 
+ 
+</pre>
+
+<h4>LogType</h4>
+
+<p>
+This enum describe a log message type. There are four common types: <b>LogDebug</b>,
+<b>LogEvent</b>, <b>LogError</b>, <b>LogAlert</b>. Other can be used by user.
+</p>
+
+<pre>
+
+enum <span class="Att">LogType</span>
+ {
+  LogDebug,
+  LogEvent,
+  LogError,
+  LogAlert,
+  
+  LogTypeUserMin = 10,
+  LogTypeUserMax = 31
+ };
+ 
+const char * GetTextDesc(LogType type); 
+
+</pre>
+
+<h4>LogCategory and LogFilter</h4>
+
+<p>
+<b>LogCategory</b> and <b>LogFilter</b> are built on <b>LogSource</b> and <b>LogType</b>.
+To create a <b>LogCategory</b> value you can use the <b>operator |</b>.
+</p>
+
+<pre>
+
+typedef LogCategory_enum&lt;LogSource,LogType&gt; <span class="Att">LogCategory</span>;
+
+typedef LogFilter_enum&lt;LogSource,LogType&gt; <span class="Att">LogFilter</span>;
+
+/* functions */  
+ 
+inline LogCategory operator | (LogSource src,LogType type) { return LogCategory(src,type); }
+ 
+</pre>
+
+<h4>LogAccess</h4>
+
+<p>
+<b>LogAccess</b> is used to add a new message to the log.
+</p>
+
+<pre>
+
+class <span class="Att">LogAccess</span> : Dev::IntLock
+ {
+   void *mem;
+ 
+  public:
+  
+   LogAccess(LogCategory cat,ulen msg_len);
+   
+   ~LogAccess();
+   
+   operator void * () const { return mem; }
+   
+   void commit(LogMsgBase&lt;LogCategory,LogStamp&gt; *msg);
+ };
+
+</pre>
+
+<p>
+Below is an example how to add a message.
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+void Log(LogCategory cat,const char *format,const TT &amp; ... tt) 
+ {
+  typedef LogMsg&lt;LogCategory,LogStamp,TT...&gt; MsgType;
+  
+  LogAccess access(cat,sizeof (MsgType));
+ 
+  if( access )
+    {
+     MsgType *msg=new(PlaceAt(access)) MsgType(cat,format,tt...);
+     
+     access.commit(msg);
+    } 
+ }
+
+</pre>
+
+<h4>LogFilterAccess</h4>
+
+<p>
+<b>LogFilterAccess</b> can be used to access the internal input <b>SysLog</b> message filter.
+</p>
+
+<pre>
+
+class <span class="Att">LogFilterAccess</span> : Dev::IntLock
+ {
+   LogFilter *filter;
+ 
+  public:
+  
+   LogFilterAccess();
+   
+   ~LogFilterAccess() {}
+   
+   LogFilter * getPtr() const { return filter; }
+   
+   LogFilter & operator * () const { return *getPtr(); }
+   
+   LogFilter * operator -> () const { return getPtr(); }
+ };
+
+</pre>
+
+<p>
+The object of this class must be a local object with a short life-time.
+</p>
+
+<pre>
+
+*Sys::LogFilterAccess()=filter;
+
+filter=*Sys::LogFilterAccess();
+
+Sys::LogFilterAccess()->disable(Sys::LogDebug);
+
+</pre>
+
+<h4>LogCursor</h4>
+
+<p>
+<b>LogCursor</b> can be used to iterate over the <b>SysLog</b> content. 
+It iterates <b>the last count</b> messages. <b>LogCursor</b> implements the <b>Cursor</b> interface.
+</p>
+
+<pre>
+
+class <span class="Att">LogCursor</span> : NoCopy
+ {
+   const LogMsgBase&lt;LogCategory,LogStamp&gt; *cur;
+   ulen count;
+ 
+  public:
+  
+   explicit LogCursor(ulen count);
+   
+   ~LogCursor();
+   
+   // object ptr
+   
+   bool operator + () const { return cur!=0; }
+   
+   bool operator ! () const { return cur==0; }
+   
+   const LogMsgBase&lt;LogCategory,LogStamp&gt; * getPtr() const { return cur; }
+   
+   const LogMsgBase&lt;LogCategory,LogStamp&gt; &amp; operator * () const { return *cur; }
+    
+   const LogMsgBase&lt;LogCategory,LogStamp&gt; * operator -> () const { return cur; }
+   
+   // cursor
+   
+   void operator ++ ();
+ };
+
+</pre>
+
+<h4>PrintLog</h4>
+
+<p>
+<b>PrintLog</b> can be used to print the <b>SysLog</b> content. It prints <b>the last count</b> messages.
+You can provide a filter to exclude messages from the printing.
+</p>
+
+<pre>
+
+class <span class="Att">PrintLog</span>
+ {
+   ulen count;
+   LogFilter filter;
+   
+  public:
+  
+   explicit PrintLog(ulen count_,LogFilter filter_=LogFilter()) : count(count_),filter(filter_) {}
+   
+   void print(PrintBase &amp;out) const;
+ };
+
+</pre>
+
+<h2>Target support for SysLog</h2>
+
+<p>
+<b>SysLog</b> is created on an earlier stage of the system initialization. It uses <b>IntLock</b>
+to serialize the log access. <b>SysLog</b> stores messages in the reserved memory region, provided
+by the target. The function <b>AllocLogSpace()</b>, declared in the target header <b>SysMemSpace.h</b>, 
+is called once during the <b>SysLog</b> initialization.
+</p>
+
+<pre>
+
+/* functions */
+
+ // one-time call , aligned
+
+Space AllocHeapSpace();
+
+Space AllocHeapSpace_int();
+
+Space AllocHeapSpace_shared();
+
+Space <span class="Att">AllocLogSpace</span>();
+
+</pre>
 
 </body>
 
