@@ -17,6 +17,7 @@
 #define CCore_inc_print_PrintFile_h
 
 #include <CCore/inc/Printf.h>
+#include <CCore/inc/SafeBuf.h>
 
 #include <CCore/inc/sys/SysFile.h>
  
@@ -24,34 +25,10 @@ namespace CCore {
 
 /* classes */ 
 
-class SafeBuf;
-
 class RawFileToPrint;
 
 class PrintFile;
 
-/* class SafeBuf */ 
- 
-class SafeBuf : NoCopy
- {
-   static const ulen SafeLen = 32 ;
-   
-   char *ptr;
-   ulen len;
-   
-   char safebuf[SafeLen];
- 
-  public:
-  
-   explicit SafeBuf(ulen len);
-   
-   ~SafeBuf();
-
-   char * getPtr() const { return ptr; }
- 
-   ulen getLen() const { return len; }
- };
- 
 /* class RawFileToPrint */  
  
 class RawFileToPrint : NoCopy

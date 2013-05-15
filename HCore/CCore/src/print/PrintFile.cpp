@@ -15,38 +15,10 @@
  
 #include <CCore/inc/print/PrintFile.h>
 
-#include <CCore/inc/MemBase.h>
 #include <CCore/inc/Exception.h>
  
 namespace CCore {
 
-/* class SafeBuf */ 
- 
-SafeBuf::SafeBuf(ulen len_)
- {
-  if( len_>SafeLen )
-    {
-     if( void *mem=TryMemAlloc(len_) )
-       {
-        ptr=static_cast<char *>(mem);
-        len=len_;
-        
-        return;
-       }
-    }
-    
-  ptr=safebuf;
-  len=SafeLen;
- }
-   
-SafeBuf::~SafeBuf()
- {
-  if( ptr!=safebuf )
-    {
-     MemFree(ptr);
-    }
- }
- 
 /* class RawFileToPrint */
 
 FileError RawFileToPrint::open(StrLen file_name,FileOpenFlags oflags)
