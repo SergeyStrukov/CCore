@@ -172,8 +172,14 @@ obj/Replace.o \
 obj/ResSem.o \
 obj/Rot.o \
 obj/SHA.o \
+obj/SafeBuf.o \
 obj/SaveLoad.o \
+obj/Scan.o \
+obj/ScanAsyncFile.o \
+obj/ScanBase.o \
 obj/ScanBit.o \
+obj/ScanFile.o \
+obj/Scanf.o \
 obj/Sem.o \
 obj/ShortSort.o \
 obj/Signal.o \
@@ -408,8 +414,14 @@ obj/Replace.s \
 obj/ResSem.s \
 obj/Rot.s \
 obj/SHA.s \
+obj/SafeBuf.s \
 obj/SaveLoad.s \
+obj/Scan.s \
+obj/ScanAsyncFile.s \
+obj/ScanBase.s \
 obj/ScanBit.s \
+obj/ScanFile.s \
+obj/Scanf.s \
 obj/Sem.s \
 obj/ShortSort.s \
 obj/Signal.s \
@@ -644,8 +656,14 @@ obj/Replace.dep \
 obj/ResSem.dep \
 obj/Rot.dep \
 obj/SHA.dep \
+obj/SafeBuf.dep \
 obj/SaveLoad.dep \
+obj/Scan.dep \
+obj/ScanAsyncFile.dep \
+obj/ScanBase.dep \
 obj/ScanBit.dep \
+obj/ScanFile.dep \
+obj/Scanf.dep \
 obj/Sem.dep \
 obj/ShortSort.dep \
 obj/Signal.dep \
@@ -1234,10 +1252,28 @@ obj/Rot.o : ../../CCore/src/crypton/Rot.cpp
 obj/SHA.o : ../../CCore/src/crypton/SHA.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/SafeBuf.o : ../../CCore/src/SafeBuf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/SaveLoad.o : ../../CCore/src/SaveLoad.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Scan.o : ../../HCore/CCore/src/Scan.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ScanAsyncFile.o : ../../CCore/src/scan/ScanAsyncFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ScanBase.o : ../../CCore/src/scanf/ScanBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/ScanBit.o : ../../CCore/src/ScanBit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ScanFile.o : ../../HCore/CCore/src/scan/ScanFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Scanf.o : ../../CCore/src/Scanf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Sem.o : ../../HCore/CCore/src/task/Sem.cpp
@@ -1935,10 +1971,28 @@ obj/Rot.s : ../../CCore/src/crypton/Rot.cpp
 obj/SHA.s : ../../CCore/src/crypton/SHA.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SafeBuf.s : ../../CCore/src/SafeBuf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SaveLoad.s : ../../CCore/src/SaveLoad.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Scan.s : ../../HCore/CCore/src/Scan.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ScanAsyncFile.s : ../../CCore/src/scan/ScanAsyncFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ScanBase.s : ../../CCore/src/scanf/ScanBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ScanBit.s : ../../CCore/src/ScanBit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ScanFile.s : ../../HCore/CCore/src/scan/ScanFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Scanf.s : ../../CCore/src/Scanf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Sem.s : ../../HCore/CCore/src/task/Sem.cpp
@@ -2636,11 +2690,29 @@ obj/Rot.dep : ../../CCore/src/crypton/Rot.cpp
 obj/SHA.dep : ../../CCore/src/crypton/SHA.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SHA.o $< -MF $@
 
+obj/SafeBuf.dep : ../../CCore/src/SafeBuf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SafeBuf.o $< -MF $@
+
 obj/SaveLoad.dep : ../../CCore/src/SaveLoad.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SaveLoad.o $< -MF $@
 
+obj/Scan.dep : ../../HCore/CCore/src/Scan.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Scan.o $< -MF $@
+
+obj/ScanAsyncFile.dep : ../../CCore/src/scan/ScanAsyncFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ScanAsyncFile.o $< -MF $@
+
+obj/ScanBase.dep : ../../CCore/src/scanf/ScanBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ScanBase.o $< -MF $@
+
 obj/ScanBit.dep : ../../CCore/src/ScanBit.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ScanBit.o $< -MF $@
+
+obj/ScanFile.dep : ../../HCore/CCore/src/scan/ScanFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ScanFile.o $< -MF $@
+
+obj/Scanf.dep : ../../CCore/src/Scanf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Scanf.o $< -MF $@
 
 obj/Sem.dep : ../../HCore/CCore/src/task/Sem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sem.o $< -MF $@

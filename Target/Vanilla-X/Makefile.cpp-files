@@ -150,8 +150,12 @@
 ../../CCore/src/RadixHeap.cpp
 ../../CCore/src/Random.cpp
 ../../CCore/src/RefPtr.cpp
+../../CCore/src/SafeBuf.cpp
 ../../CCore/src/SaveLoad.cpp
+../../CCore/src/scan/ScanAsyncFile.cpp
 ../../CCore/src/ScanBit.cpp
+../../CCore/src/scanf/ScanBase.cpp
+../../CCore/src/Scanf.cpp
 ../../CCore/src/Signal.cpp
 ../../CCore/src/SingleHost.cpp
 ../../CCore/src/sort/HeapSort.cpp
@@ -203,6 +207,7 @@
 ../../XCore/CCore/src/Print.cpp
 ../../XCore/CCore/src/ReadCon.cpp
 ../../XCore/CCore/src/RedirectPTPCon.cpp
+../../XCore/CCore/src/Scan.cpp
 ../../XCore/CCore/src/SpecialMemBase.cpp
 ../../XCore/CCore/src/StdioReadCon.cpp
 ../../XCore/CCore/src/sys/SysCon_general.cpp

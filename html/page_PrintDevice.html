@@ -239,32 +239,8 @@ an exception is thrown.
 </p>
 
 <p>
-<b>PrintFile</b> class is constructed from two classes: <b>SafeBuf</b> and <b>RawFileToPrint</b>.
+<b>PrintFile</b> class is constructed from two classes: <a href="page_SafeBuf.html"><b>SafeBuf</b></a> and <b>RawFileToPrint</b>.
 </p>
-
-<pre>
-
-class <span class="Att">SafeBuf</span> : NoCopy
- {
-   static const ulen SafeLen = 32 ;
-   
-   char *ptr;
-   ulen len;
-   
-   char safebuf[SafeLen];
- 
-  public:
-  
-   explicit SafeBuf(ulen len);
-   
-   ~SafeBuf();
-
-   char * getPtr() const { return ptr; }
- 
-   ulen getLen() const { return len; }
- };
-
-</pre>
 
 <p>
 The <b>SafeBuf</b> class is used to allocate a file buffer. <b>PrintFile</b> uses the file buffer

@@ -1,0 +1,235 @@
+<!--
+/* page_EventRecord.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.04
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Event Recording</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Event Recording</h2>
+
+<p class="Files">Files <b>CCore/inc/EventRecorder.h</b> <b>CCore/src/EventRecorder.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/task/TaskEvent.h</b> <b>CCore/src/task/TaskEvent.cpp</b></p>
+
+<p>
+Event recorder is a tool to trace an application execution. It record events: small data structures
+with high-precision time-stamp and event id. An event may also contain some additional descriptive fields.
+</p>
+
+<p>
+Event recorder is efficient, event record operation takes only a small number of CPU clocks.
+On <b>XCore</b> targets recoring is permitted in any context, including interrupt context.
+Once recording if finished, you can save recorded data in a binary form and transport it to a host
+machine. Binary representation contains meta-information, which helps display events in a user-friendly
+fashion. The data format is standard. <b>CCore</b> has a prototype tool <b>EventView</b> to display and work
+with the event records. You may also create and use your own such tools for your particular purpose.
+</p>
+
+<h2>EventRecorder</h2>
+
+<p>
+There are two main event recording classes: <b>EventRecorderHost</b> and <b>EventRecorder</b>. 
+The first serves as a recoding operation class. 
+The second is a recording operation buffer. Normally, you create
+a global object of the first type (or use the default one) and use it for the event recording.
+Events are not recorded, unless some <b>EventRecorder</b> is attached to the <b>EventRecorderHost</b>.
+</p>
+
+<pre>
+
+EventRecorderHost&lt;EventRecorder&lt;EventRecorderAlgo&gt; &gt; Host;
+
+void func()
+ {
+  ....
+
+  Host.add&lt;SomeEvent&gt;();
+
+  ....
+ }
+
+int main()
+ {
+  ....
+
+  EventRecorder&lt;EventRecorderAlgo&gt; recorder(10_MByte);
+
+  ....
+
+  {
+   EventRecorderHost&lt;EventRecorder&lt;EventRecorderAlgo&gt; &gt;::StartStop start_stop(Host,&amp;recorder); 
+
+   ....
+
+  }
+
+  ....
+
+  return 0;
+ }
+
+</pre>
+
+<p>
+Both <b>HCore</b> and <b>XCore</b> provides default event recorders. They are declared in
+the header <b>task/TaskEvent.h</b>, included in the <b>Task.h</b>. To enable event recording,
+you have to uncomment the following line:
+</p>
+
+<pre>
+
+//#define CCORE_TASK_EVENT_ENABLE
+
+</pre>
+
+<p>
+and rebuild <b>CCore</b>. You may also comment or uncomment the lines:
+</p>
+
+<pre>
+
+#define CCORE_TASK_EVENT_ENABLE_SYNC
+#define CCORE_TASK_EVENT_ENABLE_PROTO
+#define CCORE_TASK_EVENT_ENABLE_DEV
+
+</pre>
+
+<p>
+to control the recording of the particular event classes.
+</p>
+
+<p>
+Below is a default recoding object declarations:
+</p>
+
+<pre>
+
+/* struct TaskEventAlgo */
+
+struct TaskEventAlgo
+ {
+  ....
+ };
+
+/* types */
+
+typedef EventRecorder&lt;TaskEventAlgo&gt; TaskEventRecorder;
+
+/* class TaskEventHostType */
+
+class TaskEventHostType
+ {
+  public:
+  
+   class StartStop : NoCopy
+    {
+     public: 
+      
+      StartStop(TaskEventHostType &amp;host,TaskEventRecorder *recorder); 
+
+      ~StartStop();
+    };
+   
+   template &lt;class T,class ... SS&gt;
+   void add(SS &amp;&amp; ...);
+   
+   template &lt;class T,class ... SS&gt;
+   void addSync(SS &amp;&amp; ...);
+ 
+   template &lt;class T,class ... SS&gt;
+   void addProto(SS &amp;&amp; ...);
+ 
+   template &lt;class T,class ... SS&gt;
+   void addDev(SS &amp;&amp; ...);
+ 
+   void tick();
+ };
+
+/* global TaskEventHost */
+
+extern TaskEventHostType TaskEventHost;
+
+</pre>
+
+<h3>EventRecorderHost</h3>
+
+<p>
+This class implements the event recording logic and the recorder attach/detach logic.
+</p>
+
+<pre>
+
+template &lt;class Recorder,unsigned GuardCount=1000000&gt;
+class EventRecorderHost : NoCopy
+ {
+   ....
+
+  public:
+   
+   EventRecorderHost();
+   
+   class StartStop : NoCopy
+    {
+      ....
+      
+     public: 
+      
+      StartStop(EventRecorderHost &host,Recorder *recorder); 
+      
+      ~StartStop(); 
+    };
+   
+   template &lt;class T,class ... SS&gt;
+   void add(SS &amp;&amp; ... ss);
+   
+   void tick()
+    {
+     add&lt;EventControl&gt;(EventControl::Type_Tick);
+    }
+ };
+
+</pre>
+
+<p>
+<b>StartStop</b> is used to start/stop recording. Constructors starts operations,
+destructor stops them. The <b>recorder</b> must live while the recording is running.
+</p>
+
+<p>
+<b>add()</b> adds an event. The event type must be provided as well as required by this type event arguments.
+The type must follow the event type class rules. 
+</p>
+
+<p>
+<b>tick()</b> adds the tick <b>EventControl</b> event. There is a special event type: <b>EventControl</b>.
+The start event of this types begins the recording, stop event ends it and tick events must
+be generated periodically.
+</p>
+
+<h3>EventRecorder</h3>
+
+</body>
+
+</html>
+

@@ -150,8 +150,12 @@
 ../../CCore/src/RadixHeap.cpp
 ../../CCore/src/Random.cpp
 ../../CCore/src/RefPtr.cpp
+../../CCore/src/SafeBuf.cpp
 ../../CCore/src/SaveLoad.cpp
+../../CCore/src/scan/ScanAsyncFile.cpp
 ../../CCore/src/ScanBit.cpp
+../../CCore/src/scanf/ScanBase.cpp
+../../CCore/src/Scanf.cpp
 ../../CCore/src/Signal.cpp
 ../../CCore/src/SingleHost.cpp
 ../../CCore/src/sort/HeapSort.cpp
@@ -198,6 +202,8 @@
 ../../HCore/CCore/src/print/PrintFile.cpp
 ../../HCore/CCore/src/Print.cpp
 ../../HCore/CCore/src/ReadCon.cpp
+../../HCore/CCore/src/scan/ScanFile.cpp
+../../HCore/CCore/src/Scan.cpp
 ../../HCore/CCore/src/task/AntiSem.cpp
 ../../HCore/CCore/src/task/Event.cpp
 ../../HCore/CCore/src/task/FastMutex.cpp
