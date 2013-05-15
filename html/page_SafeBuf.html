@@ -1,0 +1,65 @@
+<!--
+/* page_SafeBuf.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.04
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> SafeBuf</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>SafeBuf</h2>
+
+<p class="Files">Files <b>CCore/inc/SafeBuf.h</b> <b>CCore/src/SafeBuf.cpp</b></p>
+
+<p>
+This class is used to allocate file buffers. It provides a buffer of required length, but if the memory
+cannot be allocated, the small safeguard internal buffer is used.
+</p>
+
+<pre>
+
+class <span class="Att">SafeBuf</span> : NoCopy
+ {
+   static const ulen SafeLen = 32 ;
+   
+   char *ptr;
+   ulen len;
+   
+   char safebuf[SafeLen];
+ 
+  public:
+  
+   explicit SafeBuf(ulen len);
+   
+   ~SafeBuf();
+
+   char * getPtr() const { return ptr; }
+ 
+   ulen getLen() const { return len; }
+ };
+
+</pre>
+
+</body>
+
+</html>
+
