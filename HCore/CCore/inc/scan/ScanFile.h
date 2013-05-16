@@ -42,17 +42,17 @@ class RawFileToScan : NoCopy
   
    RawFileToScan() {}
    
-    // No destructor ! 
+   // No destructor ! 
   
-   // methods
+  // methods
   
-   bool isOpened() const { return opened; }
+  bool isOpened() const { return opened; }
   
-   FileError open(StrLen file_name);
+  FileError open(StrLen file_name);
   
-   void close(FileMultiError &errout);
+  void close(FileMultiError &errout);
   
-   Sys::File::IOResult read(uint8 *buf,ulen len);
+  Sys::File::IOResult read(uint8 *buf,ulen len);
  };
 
 /* class ScanFile */
@@ -76,7 +76,7 @@ class ScanFile : public ScanBase
   
    ScanFile();
   
-   explicit ScanFile(StrLen file_name);
+   explicit ScanFile(StrLen file_name,bool disable_exceptions=false);
   
    ~ScanFile();
    
@@ -84,7 +84,7 @@ class ScanFile : public ScanBase
    
    bool isOpened() const { return file.isOpened(); }
    
-   void open(StrLen file_name);
+   void open(StrLen file_name,bool disable_exceptions=false);
    
    void disableExceptions(); 
    

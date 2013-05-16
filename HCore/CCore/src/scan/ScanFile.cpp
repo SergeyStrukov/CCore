@@ -16,7 +16,7 @@
 #include <CCore/inc/scan/ScanFile.h>
 
 #include <CCore/inc/Exception.h>
- 
+
 namespace CCore {
 
 /* class RawFileToScan */
@@ -87,10 +87,10 @@ ScanFile::ScanFile()
  {
  }
 
-ScanFile::ScanFile(StrLen file_name)
+ScanFile::ScanFile(StrLen file_name,bool disable_exceptions)
  : buf(BufLen)
  {
-  open(file_name);
+  open(file_name,disable_exceptions);
  }
 
 ScanFile::~ScanFile()
@@ -108,12 +108,16 @@ ScanFile::~ScanFile()
     }
  }
 
-void ScanFile::open(StrLen file_name)
+void ScanFile::open(StrLen file_name,bool disable_exceptions)
  {
   if( FileError error=file.open(file_name) )
     {
      Printf(Exception,"CCore::ScanFile::open(#.q;) : #;",file_name,error);
     }
+  
+  reset();
+  
+  if( disable_exceptions ) disableExceptions();
   
   pump();
  }
@@ -132,11 +136,11 @@ void ScanFile::soft_close(FileMultiError &errout)
  {
   if( isOpened() ) 
     {
-     errout.add(underflow_error);
+     if( no_underflow_exception ) errout.add(underflow_error);
   
-     file.close(errout);
-     
      no_underflow_exception=false;
+     
+     file.close(errout);
      
      reset();
     }

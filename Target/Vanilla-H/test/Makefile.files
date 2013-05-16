@@ -119,6 +119,7 @@ OBJ_LIST = \
 ../test-obj/test1025.Atomic.o \
 ../test-obj/test1026.Task.o \
 ../test-obj/test1027.Time.o \
+../test-obj/test1028.ScanFile.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -252,6 +253,7 @@ ASM_LIST = \
 ../test-obj/test1025.Atomic.s \
 ../test-obj/test1026.Task.s \
 ../test-obj/test1027.Time.s \
+../test-obj/test1028.ScanFile.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -385,6 +387,7 @@ DEP_LIST = \
 ../test-obj/test1025.Atomic.dep \
 ../test-obj/test1026.Task.dep \
 ../test-obj/test1027.Time.dep \
+../test-obj/test1028.ScanFile.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -761,6 +764,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test1027.Time.o : ../../../HCore/CCore/test/test1027.Time.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test1028.ScanFile.o : ../../../HCore/CCore/test/test1028.ScanFile.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1155,6 +1161,9 @@ include $(RULES_FILE)
 ../test-obj/test1027.Time.s : ../../../HCore/CCore/test/test1027.Time.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test1028.ScanFile.s : ../../../HCore/CCore/test/test1028.ScanFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1546,6 +1555,9 @@ include $(RULES_FILE)
 
 ../test-obj/test1027.Time.dep : ../../../HCore/CCore/test/test1027.Time.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1027.Time.o $< -MF $@
+
+../test-obj/test1028.ScanFile.dep : ../../../HCore/CCore/test/test1028.ScanFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1028.ScanFile.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@
