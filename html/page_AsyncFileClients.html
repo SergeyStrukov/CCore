@@ -133,7 +133,9 @@ opens the file.
 </p>
 
 <p>
-<b>setFinalTimeout()</b> sets the <b>final_timeout</b> to the given value.
+<b>setFinalTimeout()</b> sets the <b>final_timeout</b> to the given value. By default, constructors
+set this value to the triple of <b>timeout</b>. This extended timeout is used to wait for the completion
+of all pending operations in the <b>read_all()</b> and <b>close()</b> methods.
 </p>
 
 <p>

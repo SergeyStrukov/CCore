@@ -155,6 +155,7 @@
 ../../CCore/src/scan/ScanAsyncFile.cpp
 ../../CCore/src/ScanBit.cpp
 ../../CCore/src/scanf/ScanBase.cpp
+../../CCore/src/scanf/ScanProxy.cpp
 ../../CCore/src/Scanf.cpp
 ../../CCore/src/Signal.cpp
 ../../CCore/src/SingleHost.cpp

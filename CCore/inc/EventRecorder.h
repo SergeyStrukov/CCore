@@ -1166,6 +1166,8 @@ class EventRecorder : public EventMetaInfo
     {
      static_assert( std::is_pod<T>::value ,"CCore::EventRecorder<Algo>::add(...) : T must be POD");
      
+     static_assert( RecordAlign%alignof(T)==0 ,"CCore::EventRecorder<Algo>::add(...) : T has too large alignment");
+     
      const ulen len=Align(sizeof (T),RecordAlign);
      
      static_assert( len<=MaxEventLen ,"CCore::EventRecorder<Algo>::add(...) : T is too large");

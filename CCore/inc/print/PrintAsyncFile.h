@@ -55,6 +55,8 @@ class PrintAsyncFile : public PrintBase
    
    bool isOpened() const { return file.isOpened(); }
    
+   void setFinalTimeout(MSec t) { file.setFinalTimeout(t); }
+   
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
    
    void exec2(StrLen dir,StrLen program,MSec timeout=DefaultTimeout,ulen max_packets=DefaultMaxPackets);

@@ -127,18 +127,18 @@ Below is a default recoding object declarations:
 
 /* struct TaskEventAlgo */
 
-struct TaskEventAlgo
+struct <span class="Att">TaskEventAlgo</span>
  {
   ....
  };
 
 /* types */
 
-typedef EventRecorder&lt;TaskEventAlgo&gt; TaskEventRecorder;
+typedef EventRecorder&lt;TaskEventAlgo&gt; <span class="Att">TaskEventRecorder</span>;
 
 /* class TaskEventHostType */
 
-class TaskEventHostType
+class <span class="Att">TaskEventHostType</span>
  {
   public:
   
@@ -168,9 +168,22 @@ class TaskEventHostType
 
 /* global TaskEventHost */
 
-extern TaskEventHostType TaskEventHost;
+extern TaskEventHostType <span class="Att">TaskEventHost</span>;
 
 </pre>
+
+<p>
+The class <b>TaskEventAlgo</b> contains some basic algorithms, required by the class <b>EventRecorder</b>.
+It is <b>Core</b>-specific.
+</p>
+
+<p>
+<b>TaskEventRecorder</b> and <b>TaskEventHostType</b> are the default recorder and the recorder host types.
+</p>
+
+<p>
+<b>TaskEventHost</b> is the default event recorder host, it should be used to record events.
+</p>
 
 <h3>EventRecorderHost</h3>
 
@@ -181,7 +194,7 @@ This class implements the event recording logic and the recorder attach/detach l
 <pre>
 
 template &lt;class Recorder,unsigned GuardCount=1000000&gt;
-class EventRecorderHost : NoCopy
+class <span class="Att">EventRecorderHost</span> : NoCopy
  {
    ....
 
@@ -228,6 +241,77 @@ be generated periodically.
 </p>
 
 <h3>EventRecorder</h3>
+
+<p>
+The class <b>EventRecorder</b> is a recorder class. It stores recorded events.
+</p>
+
+<pre>
+
+template &lt;class Algo&gt;
+class <span class="Att">EventRecorder</span> : NoCopy
+ {
+   ....
+
+  public: 
+   
+   static const ulen RecordAlign = Algo::RecordAlign ;
+   
+   explicit EventRecorder(ulen buf_len);
+   
+   ~EventRecorder();
+   
+   template &lt;class T,class ... SS&gt;
+   void add(SS &amp;&amp; ... ss);
+   
+   template &lt;class FuncInit&gt;
+   void parse(FuncInit func_init) const // func(const EventMetaInfo &info,const EventDesc &desc,void *ptr);
+   
+   // save/load object
+
+   template &lt;class Dev&gt;
+   void save(Dev &amp;dev) const;
+   
+   // print object
+   
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+Constructor creates an object with the given event buffer capacity.
+</p>
+
+<p>
+<b>add()</b> adds an event. The first template argument is the event object type and 
+must be provided explicitly. If there is no enough space the event is discarded.
+</p>
+
+<p>
+<b>parse()</b> iterates over the recorder content. For each recorded event the given functor is called
+with three arguments: <b>EventMetaInfo</b> constant reference, the event <b>EventMetaInfo::EventDesc</b> constant reference
+and the pointer to the event record. 
+</p>
+
+<p>
+<b>save()</b> saves the recorder content in a binary form to the given <a href="page_SaveLoad.html">binary output device</a>.
+</p>
+
+<p>
+<b>print()</b> prints the recorder content (can be a large output).
+</p>
+
+<p>
+Yuo may find an example of event recording in the <b>test0101.PTP.cpp</b>. 
+</p>
+
+<h2>TaskEventAlgo</h2>
+
+<h2>Event types</h2>
+
+<h2>Binary output format</h2>
 
 </body>
 
