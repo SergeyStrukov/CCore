@@ -17,7 +17,6 @@
 #define CCore_inc_scan_ScanAsyncFile_h
  
 #include <CCore/inc/Scanf.h>
-#include <CCore/inc/List.h>
  
 #include <CCore/inc/PacketSet.h>
 
@@ -43,6 +42,14 @@ class ScanAsyncFile : public ScanBase , public Funchor
    
    // read engine
    
+   FilePosType file_pos;
+   FilePosType file_len;
+   ulen max_read_len;
+   
+   FilePosType remaining_len;
+   
+   PacketBuf pbuf;
+   
    static const ulen MaxSlots = 100 ;
    static const ulen MaxReadLen = 64_KByte ;
    
@@ -52,27 +59,43 @@ class ScanAsyncFile : public ScanBase , public Funchor
      FilePosType off;
      ulen len;
      const uint8 *data;
+     bool done;
+     FileError error;
+     
+     PtrLen<const char> getRange() const { return Range(MutatePtr<const char>(data),len);}
     };
    
    Slot slots[MaxSlots];
    
-   FilePosType file_pos;
-   FilePosType file_len;
-   ulen max_read_len;
-   
    Mutex mutex;
+   Sem sem;
  
-   ulen inuse_ind;
+   ulen done_ind;
+   ulen done_count;
+   ulen op_ind;
+   ulen op_count;
    ulen free_ind;
-   ulen inuse_count;
+   ulen free_count;
+   
+   FileError error;
    
   private: 
    
    void init_slots();
    
+   void clean_slots();
+   
+   static ulen NextInd(ulen ind) { return (ind<MaxSlots-1)?ind+1:0; }
+   
+   static ulen PrevInd(ulen ind) { return (ind>0)?ind-1:(MaxSlots-1); }
+   
    Slot * getFreeSlot();
    
-   void backFreeSlot(Slot *slot);
+   void backFreeSlot();
+   
+   void setError(FileError error);
+   
+   void complete(Slot *slot);
    
    void complete_read(PacketHeader *packet);
    
@@ -81,6 +104,16 @@ class ScanAsyncFile : public ScanBase , public Funchor
    bool add_read();
    
    void pump_read();
+   
+  private: 
+   
+   void complete_open(PacketHeader *packet);
+   
+   PacketFunction function_complete_open() { return FunctionOf(this,&ScanAsyncFile::complete_open); }
+   
+   void complete_close(PacketHeader *packet);
+   
+   PacketFunction function_complete_close() { return FunctionOf(this,&ScanAsyncFile::complete_close); }
    
   private:
   
@@ -100,6 +133,8 @@ class ScanAsyncFile : public ScanBase , public Funchor
   
    bool isOpened() const { return is_opened; }
   
+   void setFinalTimeout(MSec t) { final_timeout=t; }
+   
    void open(StrLen file_name);
    
    void soft_close(FileMultiError &errout);

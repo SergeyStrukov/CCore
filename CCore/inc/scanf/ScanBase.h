@@ -22,9 +22,19 @@ namespace CCore {
 
 /* classes */
 
+template <class S> struct ScanInpAdapter;
+
 class ScanBase;
 
 class ScanString;
+
+/* struct ScanInpAdapter<S> */
+
+template <class S> 
+struct ScanInpAdapter
+ {
+  typedef typename S::ScanInpType ScanInpType;
+ };
 
 /* class ScanBase */
 

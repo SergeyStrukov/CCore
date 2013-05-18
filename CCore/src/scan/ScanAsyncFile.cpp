@@ -23,35 +23,113 @@ namespace CCore {
 
 void ScanAsyncFile::init_slots()
  {
+  done_ind=0;
+  done_count=0;
+  op_ind=0;
+  op_count=0;
+  free_ind=0;
+  free_count=MaxSlots;
  }
 
-#if 0  
+void ScanAsyncFile::clean_slots()
+ {
+  pbuf.detach();
   
+  while( done_count )
+    {
+     slots[done_ind].pbuf.detach();
+   
+     done_ind=NextInd(done_ind);
+     done_count--;
+    }
+ }
+
+auto ScanAsyncFile::getFreeSlot() -> Slot *
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( free_count==0 ) return 0;
+  
+  Slot *ret=slots+free_ind;
+  
+  free_ind=NextInd(free_ind);
+  free_count--;
+  op_count++;
+  
+  ret->done=false;
+  
+  return ret;
+ }
+
+void ScanAsyncFile::backFreeSlot()
+ {
+  Mutex::Lock lock(mutex);
+  
+  free_ind=PrevInd(free_ind);
+  free_count++;
+  op_count--;
+ }
+
+void ScanAsyncFile::setError(FileError error_)
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( !error ) error=error_;
+ }
+
+void ScanAsyncFile::complete(Slot *slot)
+ {
+  ulen ind=Dist(slots,slot);
+  ulen delta=0;
+  
+  {
+   Mutex::Lock lock(mutex);
+    
+   slot->done=true;
+    
+   if( ind==op_ind )
+     {
+      while( op_count && slots[op_ind].done )
+        {
+         op_ind=NextInd(op_ind);
+         op_count--;
+         done_count++;
+         delta++;
+        }
+     }
+  }
+
+  sem.give_many(delta);
+ }
+
 void ScanAsyncFile::complete_read(PacketHeader *packet_)
  {
   Packet<uint8,Slot *,Sys::AsyncFile::ReadBufExt> packet=packet_;
   
-  Sys::AsyncFile::ReadBufExt *ext=packet.getExt();
-
-  if( FileError error=ext->error )
+  auto *ext=packet.getExt();
+  Slot *slot=*packet.getDeepExt<1>();
+  
+  FileError error=ext->error;
+  
+  slot->error=error;
+  
+  if( error )
     {
-     parent->complete(this,error);
+     setError(error);
     }
   else
     {
-     data=ext->data;
-     len=ext->len;
-     off=ext->off;
-     
-     packet->detach(pbuf);
-     
-     parent->complete(this);
+     packet.detach(slot->pbuf);
+    
+     slot->data=ext->data;
+     slot->off=ext->off;
+     slot->len=ext->len;
     }
   
-  packet.popExt().complete();
+  complete(slot);
+  
+  packet.popExt().popExt().complete();
  }
-
-#endif  
   
 bool ScanAsyncFile::add_read()
  {
@@ -65,7 +143,7 @@ bool ScanAsyncFile::add_read()
   
   if( !packet )
     {
-     backFreeSlot(slot);
+     backFreeSlot();
     
      return false;
     }
@@ -90,7 +168,38 @@ void ScanAsyncFile::pump_read()
   for(ulen cap=MaxSlots; cap && add_read() ;cap--);
  }
 
-#if 0
+void ScanAsyncFile::complete_open(PacketHeader *packet_)
+ {
+  Packet<uint8,Sys::AsyncFile::OpenExt> packet=packet_;
+  
+  auto ext=packet.getExt();
+  
+  error=ext->error;
+  
+  if( !error )
+    {
+     is_opened=true;
+     
+     file_pos=0;
+     file_len=ext->file_len;
+     max_read_len=Min(MaxReadLen,ext->max_read_len);
+     
+     remaining_len=file_len;
+    }
+  
+  packet.popExt().complete();
+ }
+
+void ScanAsyncFile::complete_close(PacketHeader *packet_)
+ {
+  Packet<uint8,Sys::AsyncFile::CloseExt> packet=packet_;
+  
+  auto ext=packet.getExt();
+  
+  error=ext->error;
+  
+  packet.popExt().complete();
+ }
 
 PtrLen<const char> ScanAsyncFile::underflow()
  {
@@ -103,18 +212,47 @@ PtrLen<const char> ScanAsyncFile::underflow()
      return Nothing;
     }
   
+  if( !remaining_len ) return Nothing;
+  
   pump_read();
   
-  // TODO
+  if( sem.take(timeout) )
+    {
+     Mutex::Lock lock(mutex);
+    
+     Slot *slot=slots+done_ind;
+    
+     done_ind=NextInd(done_ind);
+     done_count--;
+     free_count++;
+    
+     if( !slot->error )
+       {
+        slot->pbuf.moveTo(pbuf);
+       
+        remaining_len-=slot->len;
+       
+        return slot->getRange(); 
+       }
+    }
+  else
+    {
+     setError(FileError_ReadFault);
+    }
+  
+  fail();
+  
+  pset.cancel_and_wait();
+  
+  return Nothing;
  }
-
-#endif
   
 ScanAsyncFile::ScanAsyncFile(MSec timeout_,ulen max_packets)
  : pset("ScanAsyncFile.pset",max_packets),
    timeout(timeout_),
    final_timeout(3*timeout_),
-   mutex("ScanAsyncFile")
+   mutex("ScanAsyncFile"),
+   sem("ScanAsyncFile")
  {
   init_slots();
  }
@@ -140,28 +278,86 @@ ScanAsyncFile::~ScanAsyncFile()
     }
  }
   
-#if 0
-  
 void ScanAsyncFile::open(StrLen file_name)
  {
-  file_len=file.open(file_name,Open_ToRead);  
-  file_pos=0;
-  max_read_len=Min(MaxReadLen,file.getMaxReadLen());
+  if( is_opened )
+    {
+     Printf(Exception,"CCore::ScanAsyncFile::open(...) : file is already opened");
+    }
+
+  TimeScope time_scope(timeout);
+    
+  Packet<uint8> packet=pset.get(time_scope); 
+  
+  if( !packet )
+    {
+     Printf(Exception,"CCore::ScanAsyncFile::open(...) : no packet");
+    }
+    
+  Packet<uint8,Sys::AsyncFile::OpenExt> packet2=packet.pushExt<Sys::AsyncFile::OpenExt>();  
+  
+  packet2.pushCompleteFunction(function_complete_open());
+    
+  file.open(packet2,file_name,Open_ToRead);  
+  
+  pset.wait(time_scope);
+  
+  if( !is_opened )
+    {
+     file.closeState();
+     
+     Printf(Exception,"CCore::ScanAsyncFile::open(#.q;) : #;",file_name,error);
+    }  
+  
+  init_slots();
   
   reset();
   pump();
-  
-  // TODO
  }
    
 void ScanAsyncFile::soft_close(FileMultiError &errout)
  {
-  // TODO
+  if( !is_opened ) 
+    {
+     errout.add(FileError_NoMethod);
+     
+     return;
+    }
   
+  is_opened=false;
+    
+  pset.wait(final_timeout);
+  
+  errout.add(error);
+  
+  clean_slots();
+  
+  Packet<uint8> packet=pset.get(timeout);
+  
+  if( !packet )
+    {
+     errout.add(FileError_SysOverload);
+     
+     file.closeState();
+    
+     return;
+    }
+    
+  Packet<uint8,Sys::AsyncFile::CloseExt> packet2=packet.pushExt<Sys::AsyncFile::CloseExt>(); 
+  
+  packet2.pushCompleteFunction(function_complete_close());
+  
+  file.close(packet2);
+  
+  pset.wait(timeout);
+  
+  file.closeState();
+  
+  errout.add(error);
+  
+  reset();
  }
    
-#endif  
-  
 void ScanAsyncFile::close()
  {
   FileMultiError errout;
