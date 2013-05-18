@@ -128,6 +128,7 @@
 ../../../HCore/CCore/test/test1026.Task.cpp
 ../../../HCore/CCore/test/test1027.Time.cpp
 ../../../HCore/CCore/test/test1028.ScanFile.cpp
+../../../HCore/CCore/test/test1029.ScanAsyncFile.cpp
 ../../../HCore/CCore/test/testPrint.cpp
 ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
 ../../../Target/LIN64/CCore/test/test3002.SysError.cpp
