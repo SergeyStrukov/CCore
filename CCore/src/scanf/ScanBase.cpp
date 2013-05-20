@@ -51,7 +51,17 @@ void ScanBase::operator ++ ()
   
   ++buf; 
   
-  if( !buf ) pump();
+  if( !buf ) 
+    try 
+      { 
+       pump(); 
+      } 
+    catch(...) 
+      {
+       updateTextPos(ch);
+      
+       throw;
+      }
   
   updateTextPos(ch);
  }

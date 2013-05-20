@@ -1,4 +1,4 @@
-/* Scanf.cpp */ 
+/* IntScan.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.05
@@ -13,18 +13,10 @@
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/Scanf.h>
+#include <CCore/inc/scanf/IntScan.h>
  
 namespace CCore {
 
-/* struct ScanDevBase */  
-
-const char * ScanDevBase::Find(const char *format,char ch)
- {
-  for(; NotFound(*format,ch) ;format++);
-  
-  return format;
- }
 
 } // namespace CCore
  

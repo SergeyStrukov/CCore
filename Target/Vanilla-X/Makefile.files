@@ -90,6 +90,7 @@ obj/HeapEngine.o \
 obj/HeapSort.o \
 obj/Init.o \
 obj/IntPrint.o \
+obj/IntScan.o \
 obj/Integer.o \
 obj/IntegerSlowAlgo.o \
 obj/Job.o \
@@ -347,6 +348,7 @@ obj/HeapEngine.s \
 obj/HeapSort.s \
 obj/Init.s \
 obj/IntPrint.s \
+obj/IntScan.s \
 obj/Integer.s \
 obj/IntegerSlowAlgo.s \
 obj/Job.s \
@@ -604,6 +606,7 @@ obj/HeapEngine.dep \
 obj/HeapSort.dep \
 obj/Init.dep \
 obj/IntPrint.dep \
+obj/IntScan.dep \
 obj/Integer.dep \
 obj/IntegerSlowAlgo.dep \
 obj/Job.dep \
@@ -1046,6 +1049,9 @@ obj/Init.o : ../../CCore/src/gadget/Init.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntPrint.o : ../../CCore/src/printf/IntPrint.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntScan.o : ../../CCore/src/scanf/IntScan.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Integer.o : ../../CCore/src/math/Integer.cpp
@@ -1812,6 +1818,9 @@ obj/Init.s : ../../CCore/src/gadget/Init.cpp
 obj/IntPrint.s : ../../CCore/src/printf/IntPrint.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/IntScan.s : ../../CCore/src/scanf/IntScan.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Integer.s : ../../CCore/src/math/Integer.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2575,6 +2584,9 @@ obj/Init.dep : ../../CCore/src/gadget/Init.cpp
 
 obj/IntPrint.dep : ../../CCore/src/printf/IntPrint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntPrint.o $< -MF $@
+
+obj/IntScan.dep : ../../CCore/src/scanf/IntScan.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntScan.o $< -MF $@
 
 obj/Integer.dep : ../../CCore/src/math/Integer.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Integer.o $< -MF $@

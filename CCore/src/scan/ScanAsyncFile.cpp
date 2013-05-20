@@ -77,6 +77,13 @@ void ScanAsyncFile::setError(FileError error_)
   if( !error ) error=error_;
  }
 
+FileError ScanAsyncFile::getError()
+ {
+  Mutex::Lock lock(mutex);
+  
+  return error;
+ }
+
 void ScanAsyncFile::complete(Slot *slot)
  {
   ulen ind=Dist(slots,slot);
@@ -240,9 +247,11 @@ PtrLen<const char> ScanAsyncFile::underflow()
      setError(FileError_ReadFault);
     }
   
+  pset.cancel_and_wait();
+  
   fail();
   
-  pset.cancel_and_wait();
+  Printf(Exception,"CCore::ScanAsyncFile::underflow() : #;",getError());
   
   return Nothing;
  }

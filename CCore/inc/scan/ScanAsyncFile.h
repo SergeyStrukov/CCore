@@ -95,6 +95,8 @@ class ScanAsyncFile : public ScanBase , public Funchor
    
    void setError(FileError error);
    
+   FileError getError();
+   
    void complete(Slot *slot);
    
    void complete_read(PacketHeader *packet);
