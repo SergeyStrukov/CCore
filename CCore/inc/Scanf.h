@@ -22,14 +22,6 @@
  
 namespace CCore {
 
-/* SkipSpace() */
-
-template <class S>
-void SkipSpace(S &inp)
- {
-  for(; +inp && CharIsSpace(*inp) ;++inp);
- }
-
 /* classes */
 
 struct ProbeSet_ScanSwitch;

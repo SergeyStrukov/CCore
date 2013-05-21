@@ -181,6 +181,7 @@ obj/ScanBase.o \
 obj/ScanBit.o \
 obj/ScanFile.o \
 obj/ScanProxy.o \
+obj/ScanTools.o \
 obj/Scanf.o \
 obj/Sem.o \
 obj/ShortSort.o \
@@ -423,6 +424,7 @@ obj/ScanBase.s \
 obj/ScanBit.s \
 obj/ScanFile.s \
 obj/ScanProxy.s \
+obj/ScanTools.s \
 obj/Scanf.s \
 obj/Sem.s \
 obj/ShortSort.s \
@@ -665,6 +667,7 @@ obj/ScanBase.dep \
 obj/ScanBit.dep \
 obj/ScanFile.dep \
 obj/ScanProxy.dep \
+obj/ScanTools.dep \
 obj/Scanf.dep \
 obj/Sem.dep \
 obj/ShortSort.dep \
@@ -1274,6 +1277,9 @@ obj/ScanFile.o : ../../HCore/CCore/src/scan/ScanFile.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ScanProxy.o : ../../CCore/src/scanf/ScanProxy.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ScanTools.o : ../../CCore/src/scanf/ScanTools.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Scanf.o : ../../CCore/src/Scanf.cpp
@@ -1995,6 +2001,9 @@ obj/ScanFile.s : ../../HCore/CCore/src/scan/ScanFile.cpp
 obj/ScanProxy.s : ../../CCore/src/scanf/ScanProxy.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ScanTools.s : ../../CCore/src/scanf/ScanTools.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Scanf.s : ../../CCore/src/Scanf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2713,6 +2722,9 @@ obj/ScanFile.dep : ../../HCore/CCore/src/scan/ScanFile.cpp
 
 obj/ScanProxy.dep : ../../CCore/src/scanf/ScanProxy.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ScanProxy.o $< -MF $@
+
+obj/ScanTools.dep : ../../CCore/src/scanf/ScanTools.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ScanTools.o $< -MF $@
 
 obj/Scanf.dep : ../../CCore/src/Scanf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Scanf.o $< -MF $@

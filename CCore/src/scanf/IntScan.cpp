@@ -14,9 +14,37 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/scanf/IntScan.h>
+
+#include <CCore/inc/StrParse.h>
  
 namespace CCore {
 
+/* struct IntScanOpt */
+
+IntScanOpt::IntScanOpt(const char *ptr,const char *lim)
+ {
+  StrParse dev(ptr,lim);
+
+  if( ParseChar_try(dev,'.') )
+    {
+     if( Parse_try(dev,scan_base) )
+       {
+        base=0;
+       }
+     else
+       {
+        scan_base=IntScanNone;
+        
+        ParseUInt(dev,base,2,16);
+       }
+
+     if( !dev.finish() ) setDefault();
+    }
+  else
+    {
+     setDefault();
+    }
+ }
 
 } // namespace CCore
  

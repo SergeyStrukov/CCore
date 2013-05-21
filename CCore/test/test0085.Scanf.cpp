@@ -15,12 +15,29 @@
 
 #include <CCore/test/test.h>
 
-#include <CCore/inc/scanf/ScanBase.h>
+#include <CCore/inc/Scanf.h>
 
 namespace App {
 
 namespace Private_0085 {
 
+/* test1() */
+
+void test1()
+ {
+  ScanString scan("line1\rline2\nline3\r\nline4\n\r\n\r");
+  
+  for(; +scan ;++scan)
+    Printf(Con,"#; #;\n",CharCode(*scan),scan.getTextPos());
+ }
+
+/* test2() */
+
+void test2()
+ {
+  ScanString scan("");
+  
+ }
 
 } // namespace Private_0085
  
@@ -34,10 +51,8 @@ const char *const Testit<85>::Name="Test85 Scanf";
 template<>
 bool Testit<85>::Main() 
  {
-  ScanString scan("line1\rline2\nline3\r\nline4\n\r\n\r");
-  
-  for(; +scan ;++scan)
-    Printf(Con,"#; #;\n",CharCode(*scan),scan.getTextPos());
+  test1();
+  test2();
   
   return true;
  }
