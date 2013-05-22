@@ -35,7 +35,7 @@ IntScanOpt::IntScanOpt(const char *ptr,const char *lim)
        {
         scan_base=IntScanNone;
         
-        ParseUInt(dev,base,2,16);
+        ParseUInt(dev,base,MinScanIntBase,MaxScanIntBase);
        }
 
      if( !dev.finish() ) setDefault();

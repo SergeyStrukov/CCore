@@ -54,7 +54,7 @@ void PassChars(S &inp,C ch,CC ... cc)
     {
      ++inp;
         
-     PassChar(inp,cc...);
+     PassChars(inp,cc...);
     }
   else
     {
@@ -75,6 +75,14 @@ void PassOneOfChar(S &inp,Func func)
     {
      inp.fail();
     }
+ }
+
+/* PassAllOfChar() */
+
+template <class S,class Func>
+void PassAllOfChar(S &inp,Func func)
+ {
+  for(; +inp && func(*inp) ;++inp);
  }
 
 } // namespace CCore

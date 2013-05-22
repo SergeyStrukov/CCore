@@ -20,6 +20,11 @@
 
 namespace CCore {
 
+/* consts */ 
+
+const unsigned MinScanIntBase =  2 ;
+const unsigned MaxScanIntBase = 16 ;
+ 
 /* classes */
 
 //enum IntScanBase;
@@ -28,9 +33,11 @@ struct IntScanOpt;
 
 template <class UInt> class UIntDigitAcc;
 
-template <class S,ulen Len> class DetectIntFormat;
+template <class SInt> class SIntDigitAcc;
 
-template <class S,class UInt> struct UIntScanAlgo;
+template <ulen Len> class DetectIntFormat;
+
+template <class SUInt,class Acc> struct IntScanAlgo;
 
 template <class UInt> class UIntScan;
 
@@ -94,7 +101,7 @@ struct IntScanOpt
 /* class UIntDigitAcc<UInt> */
 
 template <class UInt> 
-class UIntDigitAcc
+class UIntDigitAcc : NoCopy
  {
    static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::UIntDigitAcc<UInt> : UInt must be an unsigned integral type");
    
@@ -102,21 +109,27 @@ class UIntDigitAcc
    
    UInt a;
    UInt b;
+   bool minus;
    
   public: 
    
-   UIntDigitAcc(unsigned dig,unsigned base) 
+   static const unsigned Bits = Meta::UIntBits<UInt>::Ret ;
+   
+   UIntDigitAcc(int dig,unsigned base,bool minus_) 
     { 
      value=UInt(dig);
      
-     const UInt MaxVal=UInt(-1);
+     const UInt MaxVal=UIntFunc<UInt>::MaxUnsigned;
      
-     a=MaxVal/base;
-     b=MaxVal%base;
+     a=UInt(MaxVal/base);
+     b=UInt(MaxVal%base);
+     minus=minus_;
     }
    
-   bool next_uns(unsigned dig,unsigned base)
+   bool next(int dig_,unsigned base)
     {
+     unsigned dig=(unsigned)dig_;
+     
      if( value>a || ( value==a && dig>b ) ) return false;
      
      value=UInt(base*value+dig);
@@ -124,35 +137,128 @@ class UIntDigitAcc
      return true;
     }
    
-   bool next(int dig,unsigned base) { return next_uns((unsigned)dig,base); }
-   
    typedef UInt ValueType;
    
-   operator UInt() const { return value; }
+   operator UInt() const { return minus?UIntFunc<UInt>::Neg(value):value; }
  };
 
-/* class DetectIntFormat<S,ulen Len> */
+/* class SIntDigitAcc<SInt> */
 
-template <class S,ulen Len> 
+template <class SInt> 
+struct SIntFunc // TODO
+ {
+  static_assert( Meta::IsSInt<SInt>::Ret ,"CCore::SIntFunc<SInt> : SInt must be a signed integral type");
+
+  // types
+  
+  typedef typename Meta::SIntToUInt<SInt>::UType UInt;
+
+  // consts
+  
+  static const UInt MaxPositiveAbs = UIntFunc<UInt>::MaxPositive ;
+  
+  static const UInt MinNegativeAbs = UIntFunc<UInt>::MinNegative ;
+  
+  static const SInt MaxPositive = SInt(MaxPositiveAbs) ;
+  
+  static const SInt MinNegative = SInt(MinNegativeAbs) ;
+  
+  // abs
+  
+  static SInt PosAbs(UInt abs) { return SInt(abs); }
+  
+  static SInt NegAbs(UInt abs) { return SInt(UIntFunc<UInt>::Neg(abs)); }
+ };
+
+template <class SInt> 
+class SIntDigitAcc : NoCopy
+ {
+   static_assert( Meta::IsSInt<SInt>::Ret ,"CCore::SIntDigitAcc<SInt> : SInt must be a signed integral type");
+   
+   typedef typename SIntFunc<SInt>::UInt UInt;
+ 
+   UInt value;
+   
+   UInt a;
+   UInt b;
+   bool minus;
+   
+  public: 
+   
+   static const unsigned Bits = Meta::UIntBits<UInt>::Ret ;
+   
+   SIntDigitAcc(int dig,unsigned base,bool minus_) 
+    { 
+     value=UInt(dig);
+     
+     const UInt MaxVal=(minus_?SIntFunc<SInt>::MinNegativeAbs:SIntFunc<SInt>::MaxPositiveAbs);
+     
+     a=UInt(MaxVal/base);
+     b=UInt(MaxVal%base);
+     minus=minus_;
+    }
+   
+   bool next(int dig_,unsigned base)
+    {
+     unsigned dig=(unsigned)dig_;
+     
+     if( value>a || ( value==a && dig>b ) ) return false;
+     
+     value=UInt(base*value+dig);
+     
+     return true;
+    }
+   
+   typedef SInt ValueType;
+   
+   operator SInt() const { return minus?SIntFunc<SInt>::NegAbs(value):SIntFunc<SInt>::PosAbs(value); }
+ };
+
+/* class DetectIntFormat<ulen Len> */
+
+template <ulen Len> 
 class DetectIntFormat : NoCopy
  {
    char buf[Len];
    IntScanBase scan_base;
    
-   PtrLen<const char> cur;
+   PtrLen<char> cur;
    bool fail_flag = false ;
+   
+  private:
+   
+   void put(char ch) 
+    { 
+     if( +cur )
+       {
+        *cur=ch;
+        
+        ++cur;
+       }
+     else
+       {
+        fail();
+       }
+    }
  
+   template <class S>
+   IntScanBase finish(int max_dig,S &inp);
+   
+   template <class S>
+   IntScanBase detect(S &inp);
+   
   public:
    
+   template <class S>
    explicit DetectIntFormat(S &inp);
    
    IntScanBase getFormat() const { return scan_base; }
    
    // cursor
    
-   ulen operator + () const { return cur.len; }
+   ulen operator + () const { return +cur; }
    
-   bool operator ! () const { return !cur.len; }
+   bool operator ! () const { return !cur; }
    
    char operator * () const { return *cur; }
    
@@ -167,24 +273,216 @@ class DetectIntFormat : NoCopy
    void fail() { cur=Nothing; fail_flag=true; }
  };
 
-template <class S,ulen Len> 
-DetectIntFormat<S,Len>::DetectIntFormat(S &inp)
+template <ulen Len>
+template <class S>
+IntScanBase DetectIntFormat<Len>::finish(int max_dig,S &inp)
  {
-  // TODO
+  for(; +inp ;++inp)
+    {
+     char ch=*inp;
+     int dig=CharHexValue(ch);
+     
+     if( dig<0 )
+       {
+        switch( ch )
+          {
+           case 'b' : case 'B' :
+            {
+             if( max_dig>=2 ) inp.fail();
+             
+             put(ch);
+             
+             ++inp;
+            }
+           return IntScanBin;
+          
+           case 'h' : case 'H' :
+            {
+             put(ch);
+             
+             ++inp;
+            }
+           return IntScanHex;
+          }
+        
+        break;
+       }
+     else
+       {
+        put(ch);
+       
+        Replace_max(max_dig,dig);
+       }
+    }
+  
+  if( max_dig>=10 ) inp.fail();
+  
+  return IntScanNone;
  }
 
-/* struct UIntScanAlgo<S,UInt> */
-
-template <class S,class UInt> 
-struct UIntScanAlgo
+template <ulen Len>
+template <class S>
+IntScanBase DetectIntFormat<Len>::detect(S &inp)
  {
-  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::UIntScanAlgo<S,UInt> : UInt must be an unsigned integral type");
+  if( +inp )
+    {
+     char ch=*inp;
+
+     if( ch=='+' || ch=='-' )
+       {
+        put(ch);
+        
+        ++inp; 
+       }
+     
+     if( +inp )
+       {
+        ch=*inp;
+        
+        if( ch=='0' )
+          {
+           ++inp;
+          
+           if( +inp )
+             {
+              ch=*inp;
+              
+              switch( ch )
+                {
+                 case 'x' : case 'X' :
+                  {
+                   put('0');
+                   put(ch);
+                   put('0');
+                   
+                   ++inp;
+                   
+                   PassAllOfChar(inp, [] (char ch) { return ch=='0'; } );
+                   
+                   for(; +inp && CharHexValue(ch=*inp)>=0 ;++inp)
+                     {
+                      put(ch);
+                     }
+                  }
+                 return IntScan0X;
+                 
+                 case '0' :
+                  {
+                   ++inp;
+                   
+                   PassAllOfChar(inp, [] (char ch) { return ch=='0'; } );
+
+                   if( +inp )
+                     {
+                      ch=*inp;
+                     }
+                   else
+                     {
+                      put('0');
+                      
+                      return IntScanNone;
+                     }
+                  }
+                 // falldown;
+                 
+                 default:
+                  {
+                   int dig=CharHexValue(ch);
+                  
+                   if( dig<0 )
+                     {
+                      put('0');
+                      
+                      switch( ch )
+                        {
+                         case 'b' : case 'B' :
+                          {
+                           put(ch);
+                          
+                           ++inp;
+                          }
+                         return IntScanBin;
+                       
+                         case 'h' : case 'H' :
+                          {
+                           put(ch);
+                          
+                           ++inp;
+                          }
+                         return IntScanHex;
+                        }
+                       
+                      return IntScanNone;
+                     }
+                   else
+                     {
+                      put(ch);
+                      
+                      ++inp;
+                      
+                      return finish(dig,inp);
+                     } 
+                  }
+                }
+             }
+           else
+             {
+              put(ch);
+            
+              return IntScanNone;
+             }
+          }
+        else
+          {
+           int dig=CharHexValue(ch);
+          
+           if( dig<0 )
+             {
+              inp.fail();
+             }
+           else
+             {
+              put(ch);
+              
+              ++inp;
+              
+              return finish(dig,inp);
+             } 
+          }
+       }
+     else
+       {
+        inp.fail();
+       }
+    }
+  else
+    {
+     inp.fail();
+    }
   
-  typedef UInt ValueType;
+  return IntScanNone; 
+ }
+
+template <ulen Len>
+template <class S>
+DetectIntFormat<Len>::DetectIntFormat(S &inp)
+ {
+  cur=Range(buf);
   
+  scan_base=detect(inp);
+  
+  if( isOk() ) cur=Range(buf).prefix(cur); else inp.fail();
+ }
+
+/* struct IntScanAlgo<SUInt,Acc> */
+
+template <class SUInt,class Acc> 
+struct IntScanAlgo
+ {
   // Hex
   
-  static void PlusHex(S &inp,UInt &ret)
+  template <class S>
+  static void ScanHex(S &inp,SUInt &ret,bool minus)
    {
     if( +inp )
       {
@@ -196,30 +494,41 @@ struct UIntScanAlgo
          }
        else
          {
-          UIntDigitAcc<UInt> acc(dig,16);
+          Acc acc(dig,16,minus);
           
-          char ch;
-         
-          for(++inp; (dig=CharHexValue(ch=*inp))>=0 ;++inp)
+          for(++inp; +inp ;++inp)
             {
-             if( !acc.next(dig,16) )
+             char ch=*inp;
+           
+             dig=CharHexValue(ch);
+             
+             if( dig<0 )
                {
-                inp.fail();
+                if( ch=='h' || ch=='H' )
+                  {
+                   ++inp;
+                  
+                   ret=acc;
+                  }
+                else
+                  {
+                   inp.fail();
+                  }
                 
                 return;
                }
+             else
+               {
+                if( !acc.next(dig,16) )
+                  {
+                   inp.fail();
+                  
+                   return;
+                  }
+               }
             }
           
-          if( ch=='h' || ch=='H' )
-            {
-             ++inp;
-             
-             ret=acc;
-            }
-          else
-            {
-             inp.fail();
-            }
+          inp.fail();
          }
       }
     else
@@ -228,14 +537,8 @@ struct UIntScanAlgo
       }
    }
   
-  static void MinusHex(S &inp,UInt &ret)
-   {
-    PlusHex(inp,ret);
-    
-    if( inp.isOk() ) ret=UInt(-ret);
-   }
-  
-  static void ScanHex(S &inp,UInt &ret)
+  template <class S>
+  static void ScanHex(S &inp,SUInt &ret)
    {
     if( +inp )
       {
@@ -243,9 +546,9 @@ struct UIntScanAlgo
          {
           case '+' : ++inp; // falldown;
           
-          default: PlusHex(inp,ret); break;
+          default: ScanHex(inp,ret,false); break;
            
-          case '-' : ++inp; MinusHex(inp,ret);
+          case '-' : ++inp; ScanHex(inp,ret,true);
          }
       }
     else
@@ -256,7 +559,8 @@ struct UIntScanAlgo
   
   // Bin
   
-  static void PlusBin(S &inp,UInt &ret)
+  template <class S>
+  static void ScanBin(S &inp,SUInt &ret,bool minus)
    {
     if( +inp )
       {
@@ -268,30 +572,41 @@ struct UIntScanAlgo
          }
        else
          {
-          UIntDigitAcc<UInt> acc(dig,2);
+          Acc acc(dig,2,minus);
           
-          char ch;
-         
-          for(++inp; (dig=CharBinValue(ch=*inp))>=0 ;++inp)
+          for(++inp; +inp ;++inp)
             {
-             if( !acc.next(dig,2) )
+             char ch=*inp;
+           
+             dig=CharBinValue(ch);
+             
+             if( dig<0 )
                {
-                inp.fail();
+                if( ch=='b' || ch=='B' )
+                  {
+                   ++inp;
+                  
+                   ret=acc;
+                  }
+                else
+                  {
+                   inp.fail();
+                  }
                 
                 return;
                }
+             else
+               {
+                if( !acc.next(dig,2) )
+                  {
+                   inp.fail();
+                  
+                   return;
+                  }
+               }
             }
           
-          if( ch=='b' || ch=='B' )
-            {
-             ++inp;
-             
-             ret=acc;
-            }
-          else
-            {
-             inp.fail();
-            }
+          inp.fail();
          }
       }
     else
@@ -300,14 +615,8 @@ struct UIntScanAlgo
       }
    }
   
-  static void MinusBin(S &inp,UInt &ret)
-   {
-    PlusBin(inp,ret);
-    
-    if( inp.isOk() ) ret=UInt(-ret);
-   }
-  
-  static void ScanBin(S &inp,UInt &ret)
+  template <class S>
+  static void ScanBin(S &inp,SUInt &ret)
    {
     if( +inp )
       {
@@ -315,9 +624,9 @@ struct UIntScanAlgo
          {
           case '+' : ++inp; // falldown;
           
-          default: PlusBin(inp,ret); break;
+          default: ScanBin(inp,ret,false); break;
            
-          case '-' : ++inp; MinusBin(inp,ret);
+          case '-' : ++inp; ScanBin(inp,ret,true);
          }
       }
     else
@@ -325,10 +634,11 @@ struct UIntScanAlgo
        inp.fail();
       }
    }
-
+  
   // 0X
   
-  static void Plus0X(S &inp,UInt &ret)
+  template <class S>
+  static void Scan0X(S &inp,SUInt &ret,bool minus)
    {
     PassChars(inp,'0');
     PassOneOfChar(inp, [] (char ch) { return ch=='x' || ch=='X'; } );
@@ -343,9 +653,9 @@ struct UIntScanAlgo
          }
        else
          {
-          UIntDigitAcc<UInt> acc(dig,16);
+          Acc acc(dig,16,minus);
           
-          for(++inp; (dig=CharHexValue(*inp))>=0 ;++inp)
+          for(++inp; +inp && (dig=CharHexValue(*inp))>=0 ;++inp)
             {
              if( !acc.next(dig,16) )
                {
@@ -364,14 +674,8 @@ struct UIntScanAlgo
       }
    }
   
-  static void Minus0X(S &inp,UInt &ret)
-   {
-    Plus0X(inp,ret);
-    
-    if( inp.isOk() ) ret=UInt(-ret);
-   }
-  
-  static void Scan0X(S &inp,UInt &ret)
+  template <class S>
+  static void Scan0X(S &inp,SUInt &ret)
    {
     if( +inp )
       {
@@ -379,9 +683,9 @@ struct UIntScanAlgo
          {
           case '+' : ++inp; // falldown;
           
-          default: Plus0X(inp,ret); break;
+          default: Scan0X(inp,ret,false); break;
            
-          case '-' : ++inp; Minus0X(inp,ret);
+          case '-' : ++inp; Scan0X(inp,ret,true);
          }
       }
     else
@@ -389,10 +693,11 @@ struct UIntScanAlgo
        inp.fail();
       }
    }
- 
+  
   // base
   
-  static void PlusBase(S &inp,UInt &ret,unsigned base)
+  template <class S>
+  static void ScanBase(S &inp,SUInt &ret,unsigned base,bool minus)
    {
     if( +inp )
       {
@@ -404,9 +709,9 @@ struct UIntScanAlgo
          }
        else
          {
-          UIntDigitAcc<UInt> acc(dig,base);
+          Acc acc(dig,base,minus);
           
-          for(++inp; (dig=CharBaseValue(*inp,base))>=0 ;++inp)
+          for(++inp; +inp && (dig=CharBaseValue(*inp,base))>=0 ;++inp)
             {
              if( !acc.next(dig,base) )
                {
@@ -425,14 +730,8 @@ struct UIntScanAlgo
       }
    }
   
-  static void MinusBase(S &inp,UInt &ret,unsigned base)
-   {
-    PlusBase(inp,ret,base);
-    
-    if( inp.isOk() ) ret=UInt(-ret);
-   }
-  
-  static void ScanBase(S &inp,UInt &ret,unsigned base)
+  template <class S>
+  static void ScanBase(S &inp,SUInt &ret,unsigned base)
    {
     if( +inp )
       {
@@ -440,9 +739,9 @@ struct UIntScanAlgo
          {
           case '+' : ++inp; // falldown;
           
-          default: PlusBase(inp,ret,base); break;
+          default: ScanBase(inp,ret,base,false); break;
            
-          case '-' : ++inp; MinusBase(inp,ret,base);
+          case '-' : ++inp; ScanBase(inp,ret,base,true);
          }
       }
     else
@@ -450,12 +749,13 @@ struct UIntScanAlgo
        inp.fail();
       }
    }
- 
+  
   // any
   
-  static void ScanAny(S &inp,UInt &ret) // Hex | Bin | 0X | Base(10)
+  template <class S>
+  static void ScanAny(S &inp,SUInt &ret) // Hex | Bin | 0X | Base(10)
    {
-    DetectIntFormat<S,128> detect(inp);
+    DetectIntFormat<Acc::Bits+10> detect(inp);
     
     if( inp.isFailed() ) return;
     
@@ -475,7 +775,8 @@ struct UIntScanAlgo
   
   // opt
   
-  static void Scan(S &inp,IntScanOpt opt,UInt &ret)
+  template <class S>
+  static void Scan(S &inp,IntScanOpt opt,SUInt &ret)
    {
     switch( opt.scan_base )
       {
@@ -516,7 +817,7 @@ class UIntScan : NoCopy
     {
      var=0;
      
-     UIntScanAlgo<S,UInt>::Scan(inp,opt,var);
+     IntScanAlgo<UInt,UIntDigitAcc<UInt> >::Scan(inp,opt,var);
     }
  };
 
@@ -536,7 +837,7 @@ class SIntScan : NoCopy
     {
      var=0;
      
-     // SIntScanAlgo<S,UInt>::Scan(inp,opt,var);
+     IntScanAlgo<SInt,SIntDigitAcc<SInt> >::Scan(inp,opt,var);
     }
  };
 

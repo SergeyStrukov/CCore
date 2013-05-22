@@ -75,9 +75,9 @@ class ScanBase : NoCopy
    
    // cursor
    
-   ulen operator + () const { return buf.len; }
+   ulen operator + () const { return +buf; }
    
-   bool operator ! () const { return !buf.len; }
+   bool operator ! () const { return !buf; }
    
    char operator * () const { return *buf; }
    

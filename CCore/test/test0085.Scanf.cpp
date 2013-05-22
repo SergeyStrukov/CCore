@@ -35,8 +35,13 @@ void test1()
 
 void test2()
  {
-  ScanString scan("");
+  ScanString scan("12345h");
   
+  int x;
+  
+  Scanf(scan,"#.h;",x);
+  
+  Printf(Con,"x = #.h;\n",x);
  }
 
 } // namespace Private_0085
@@ -51,7 +56,7 @@ const char *const Testit<85>::Name="Test85 Scanf";
 template<>
 bool Testit<85>::Main() 
  {
-  test1();
+  //test1();
   test2();
   
   return true;

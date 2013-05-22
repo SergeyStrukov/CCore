@@ -272,7 +272,7 @@ class ScanfDev : ScanDevBase
     }
  
    template <class T1,class T2,class ... TT>
-   void print(T1 &t1,T2 &t2,TT & ... tt)
+   void scan(T1 &t1,T2 &t2,TT & ... tt)
     {
      step(t1);
      step(t2);
@@ -281,7 +281,7 @@ class ScanfDev : ScanDevBase
     }
  
    template <class T1,class T2,class T3,class ... TT>
-   void print(T1 &t1,T2 &t2,T3 &t3,TT & ... tt)
+   void scan(T1 &t1,T2 &t2,T3 &t3,TT & ... tt)
     {
      step(t1);
      step(t2);
@@ -315,7 +315,7 @@ void ScanfDev<S>::match(char ch)
     }
   else
     {
-     if( !inp || *inp!=ch ) inp.fail(); else ++inp;
+     PassChars(inp,ch);
     }
  }
 
