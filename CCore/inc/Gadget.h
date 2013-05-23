@@ -36,6 +36,7 @@
 #include <CCore/inc/gadget/Replace.h>
 #include <CCore/inc/gadget/Space.h>
 #include <CCore/inc/gadget/UIntFunc.h>
+#include <CCore/inc/gadget/SIntFunc.h>
 #include <CCore/inc/gadget/UIntMax.h>
 #include <CCore/inc/gadget/UIntSat.h>
 #include <CCore/inc/gadget/UtilFunc.h>
