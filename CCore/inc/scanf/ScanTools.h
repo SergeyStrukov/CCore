@@ -77,10 +77,10 @@ void PassOneOfChar(S &inp,Func func)
     }
  }
 
-/* PassAllOfChar() */
+/* SkipAllOfChar() */
 
 template <class S,class Func>
-void PassAllOfChar(S &inp,Func func)
+void SkipAllOfChar(S &inp,Func func)
  {
   for(; +inp && func(*inp) ;++inp);
  }

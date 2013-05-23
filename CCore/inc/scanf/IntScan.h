@@ -145,32 +145,6 @@ class UIntDigitAcc : NoCopy
 /* class SIntDigitAcc<SInt> */
 
 template <class SInt> 
-struct SIntFunc // TODO
- {
-  static_assert( Meta::IsSInt<SInt>::Ret ,"CCore::SIntFunc<SInt> : SInt must be a signed integral type");
-
-  // types
-  
-  typedef typename Meta::SIntToUInt<SInt>::UType UInt;
-
-  // consts
-  
-  static const UInt MaxPositiveAbs = UIntFunc<UInt>::MaxPositive ;
-  
-  static const UInt MinNegativeAbs = UIntFunc<UInt>::MinNegative ;
-  
-  static const SInt MaxPositive = SInt(MaxPositiveAbs) ;
-  
-  static const SInt MinNegative = SInt(MinNegativeAbs) ;
-  
-  // abs
-  
-  static SInt PosAbs(UInt abs) { return SInt(abs); }
-  
-  static SInt NegAbs(UInt abs) { return SInt(UIntFunc<UInt>::Neg(abs)); }
- };
-
-template <class SInt> 
 class SIntDigitAcc : NoCopy
  {
    static_assert( Meta::IsSInt<SInt>::Ret ,"CCore::SIntDigitAcc<SInt> : SInt must be a signed integral type");
@@ -277,6 +251,8 @@ template <ulen Len>
 template <class S>
 IntScanBase DetectIntFormat<Len>::finish(int max_dig,S &inp)
  {
+  bool bin_flag=false;
+  
   for(; +inp ;++inp)
     {
      char ch=*inp;
@@ -284,24 +260,12 @@ IntScanBase DetectIntFormat<Len>::finish(int max_dig,S &inp)
      
      if( dig<0 )
        {
-        switch( ch )
+        if( ch=='h' || ch=='H' )
           {
-           case 'b' : case 'B' :
-            {
-             if( max_dig>=2 ) inp.fail();
-             
-             put(ch);
-             
-             ++inp;
-            }
-           return IntScanBin;
+           put(ch);
           
-           case 'h' : case 'H' :
-            {
-             put(ch);
-             
-             ++inp;
-            }
+           ++inp;
+           
            return IntScanHex;
           }
         
@@ -309,11 +273,15 @@ IntScanBase DetectIntFormat<Len>::finish(int max_dig,S &inp)
        }
      else
        {
+        bin_flag=( max_dig<2 && ( ch=='b' || ch=='B' ) );
+       
         put(ch);
        
         Replace_max(max_dig,dig);
        }
     }
+  
+  if( bin_flag ) return IntScanBin;
   
   if( max_dig>=10 ) inp.fail();
   
@@ -357,7 +325,7 @@ IntScanBase DetectIntFormat<Len>::detect(S &inp)
                    
                    ++inp;
                    
-                   PassAllOfChar(inp, [] (char ch) { return ch=='0'; } );
+                   SkipAllOfChar(inp, [] (char ch) { return ch=='0'; } );
                    
                    for(; +inp && CharHexValue(ch=*inp)>=0 ;++inp)
                      {
@@ -370,7 +338,7 @@ IntScanBase DetectIntFormat<Len>::detect(S &inp)
                   {
                    ++inp;
                    
-                   PassAllOfChar(inp, [] (char ch) { return ch=='0'; } );
+                   SkipAllOfChar(inp, [] (char ch) { return ch=='0'; } );
 
                    if( +inp )
                      {

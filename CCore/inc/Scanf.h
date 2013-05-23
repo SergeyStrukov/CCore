@@ -480,10 +480,10 @@ BindScanOptType<OptType,T> BindScanOpt(const OptType &opt,T &t) { return BindSca
 /* Scanf() */
 
 template <class S,class ... TT>
-void Scanf(S &&inp,const char *format,TT & ... tt) CCORE_NOINLINE ;
+void Scanf(S &&inp,const char *format,TT && ... tt) CCORE_NOINLINE ;
 
 template <class S,class ... TT>
-void Scanf(S &&inp,const char *format,TT & ... tt)
+void Scanf(S &&inp,const char *format,TT && ... tt)
  {
   typedef typename ScanInpAdapter<typename std::remove_reference<S>::type>::ScanInpType SInp;
   
@@ -495,10 +495,10 @@ void Scanf(S &&inp,const char *format,TT & ... tt)
 /* Scanobj() */
 
 template <class S,class ... TT>
-void Scanobj(S &&inp,TT & ... tt) CCORE_NOINLINE ;
+void Scanobj(S &&inp,TT && ... tt) CCORE_NOINLINE ;
 
 template <class S,class ... TT>
-void Scanobj(S &&inp,TT & ... tt) 
+void Scanobj(S &&inp,TT && ... tt) 
  {
   typedef typename ScanInpAdapter<typename std::remove_reference<S>::type>::ScanInpType SInp;
   

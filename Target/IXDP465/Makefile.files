@@ -191,6 +191,7 @@ obj/Replace.o \
 obj/ResSem.o \
 obj/Rot.o \
 obj/SHA.o \
+obj/SIntFunc.o \
 obj/SafeBuf.o \
 obj/SaveLoad.o \
 obj/Scan.o \
@@ -463,6 +464,7 @@ obj/Replace.s \
 obj/ResSem.s \
 obj/Rot.s \
 obj/SHA.s \
+obj/SIntFunc.s \
 obj/SafeBuf.s \
 obj/SaveLoad.s \
 obj/Scan.s \
@@ -735,6 +737,7 @@ obj/Replace.dep \
 obj/ResSem.dep \
 obj/Rot.dep \
 obj/SHA.dep \
+obj/SIntFunc.dep \
 obj/SafeBuf.dep \
 obj/SaveLoad.dep \
 obj/Scan.dep \
@@ -1403,6 +1406,9 @@ obj/Rot.o : ../../CCore/src/crypton/Rot.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SHA.o : ../../CCore/src/crypton/SHA.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SIntFunc.o : ../../CCore/src/gadget/SIntFunc.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SafeBuf.o : ../../CCore/src/SafeBuf.cpp
@@ -2214,6 +2220,9 @@ obj/Rot.s : ../../CCore/src/crypton/Rot.cpp
 obj/SHA.s : ../../CCore/src/crypton/SHA.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SIntFunc.s : ../../CCore/src/gadget/SIntFunc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SafeBuf.s : ../../CCore/src/SafeBuf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3022,6 +3031,9 @@ obj/Rot.dep : ../../CCore/src/crypton/Rot.cpp
 
 obj/SHA.dep : ../../CCore/src/crypton/SHA.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SHA.o $< -MF $@
+
+obj/SIntFunc.dep : ../../CCore/src/gadget/SIntFunc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SIntFunc.o $< -MF $@
 
 obj/SafeBuf.dep : ../../CCore/src/SafeBuf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SafeBuf.o $< -MF $@

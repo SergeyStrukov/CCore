@@ -35,13 +35,189 @@ void test1()
 
 void test2()
  {
-  ScanString scan("12345h");
+  ScanString scan("12345 +12345 -12345 1001b ABCDh 0x12345");
   
   int x;
   
-  Scanf(scan,"#.h;",x);
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"x = #;\n",x);
+  
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"x = #;\n",x);
+  
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"x = #;\n",x);
+  
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"x = #.b;\n",x);
+  
+  
+  Scanf(scan," #;",x);
   
   Printf(Con,"x = #.h;\n",x);
+  
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"x = #.x;\n",x);
+  
+  
+  if( scan.isFailed() )
+    {
+     Printf(Exception,"test2 failed");
+    }
+ }
+
+/* test3() */
+
+struct Test1
+ {
+  int x = 0 ;
+  int y = 0 ;
+
+  template <class S>
+  void scan(S &inp)
+   {
+    Scanf(inp,"( #; , #; )",x,y);
+   }
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"(#;,#;)",x,y);
+   }
+ };
+
+struct Test2
+ {
+  int x = 0 ;
+  int y = 0 ;
+  
+  typedef IntScanOpt ScanOptType;
+
+  template <class S>
+  void scan(S &inp,const ScanOptType &opt)
+   {
+    Scanf(inp,"( #; , #; )",BindScanOpt(opt,x),BindScanOpt(opt,y));
+   }
+  
+  typedef IntPrintOpt PrintOptType;
+  
+  template <class P>
+  void print(P &out,const PrintOptType &opt) const
+   {
+    Printf(out,"(#;,#;)",BindOpt(opt,x),BindOpt(opt,y));
+   }
+ };
+
+struct Test3
+ {
+  int val = 0 ;
+  
+  typedef int ScanProxyType;
+  
+  typedef int PrintProxyType;
+  
+  operator int & () { return val; }
+  
+  operator int() const { return val; }
+ };
+
+void test3()
+ {
+  ScanString scan("( 12345,6789 )  ( 12345h,6789h ) 12345  4444 5555");
+  
+  Test1 test1;
+  
+
+  Scanf(scan,"#;",test1);
+  
+  Printf(Con,"#;\n",test1);
+  
+  
+  Test2 test2;
+  
+  
+  Scanf(scan," #.h;",test2);
+  
+  Printf(Con,"#.h;\n",test2);
+  
+  Test3 test3;
+  
+
+  Scanf(scan," #;",test3);
+  
+  Printf(Con,"#;\n",test3);
+  
+  
+  Tuple<int,int> test4;
+  
+  
+  Scanf(scan," #; #;",test4);
+  
+  Printf(Con,"#; #;\n",test4.first,test4.rest.first);
+  
+  
+  if( scan.isFailed() )
+    {
+     Printf(Exception,"test3 failed");
+    }
+ }
+
+/* test4() */
+
+void test4()
+ {
+  ScanString scan(
+                  "000000000000000000000000000000000000000011111111b 01111111b -10000000b"
+                  " FFFFh 7fffH -0000000000000000000000000000000000000000000000000008000H"
+                  " 0xFFFF 0x7FFF -0x0000000000000000000000000000000000000000000000000008000"
+                  " 4294967295 +2147483647 -2147483648"
+                 );
+
+  uint8 u8;
+  sint8 s8;
+  sint8 m8;
+  
+  Scanf(scan,"#; #; #;",u8,s8,m8);
+  
+  Printf(Con,"#.b; #.b; #.b;\n",u8,s8,m8);
+  
+  
+  uint16 u16;
+  sint16 s16;
+  sint16 m16;
+  
+  Scanf(scan," #; #; #;",u16,s16,m16);
+  
+  Printf(Con,"#.h; #.h; #.h;\n",u16,s16,m16);
+  
+  Scanf(scan," #; #; #;",u16,s16,m16);
+  
+  Printf(Con,"#.h; #.h; #.h;\n",u16,s16,m16);
+  
+  
+  uint32 u32;
+  sint32 s32;
+  sint32 m32;
+  
+  Scanf(scan," #; #; #;",u32,s32,m32);
+  
+  Printf(Con,"#; #; #;\n",u32,s32,m32);
+  
+  
+  if( scan.isFailed() )
+    {
+     Printf(Exception,"test4 failed");
+    }
  }
 
 } // namespace Private_0085
@@ -57,7 +233,9 @@ template<>
 bool Testit<85>::Main() 
  {
   //test1();
-  test2();
+  //test2();
+  //test3();
+  test4();
   
   return true;
  }
