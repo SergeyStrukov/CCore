@@ -68,11 +68,15 @@ class ASCIICode
     // +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
     // |  60 I  `  |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |  i  |  j  |  k  |  l  |  m  |  n  |  o  |
     // +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
-    // |  70 I  p  |  q  |  r  |  s  |  t  |  u  |  v  |  w  |  x  |  y  |  z  |  {  |  |  |  }  |  ~  |     |
+    // |  70 I  p  |  q  |  r  |  s  |  t  |  u  |  v  |  w  |  x  |  y  |  z  |  {  |  |  |  }  |  ~  |     |
     // +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
     // 
     
    static const bool IsSpaceTable[256];
+   
+   static const bool IsPunctTable[256];
+   
+   static const bool IsSpaceOrPunctTable[256];
     
    static const signed char DecValueTable[256];
 
@@ -104,6 +108,14 @@ class ASCIICode
    bool isSpace() const { return IsSpaceTable[code]; }
    
         // space-like -- " \t\n\v\f\r"
+   
+   bool isPunct() const { return IsPunctTable[code]; }
+   
+        // punctuation characters
+   
+   bool isSpaceOrPunct() const { return IsSpaceOrPunctTable[code]; }
+   
+        // space or punct
   
    int decValue() const { return DecValueTable[code]; }
    
@@ -213,6 +225,12 @@ template <class Char>
 bool CharIsSpace(Char ch) { return CharCode(ch).isSpace(); }
   
 template <class Char>
+bool CharIsPunct(Char ch) { return CharCode(ch).isPunct(); }
+
+template <class Char>
+bool CharIsSpaceOrPunct(Char ch) { return CharCode(ch).isSpaceOrPunct(); }
+
+template <class Char>
 int CharDecValue(Char ch) { return CharCode(ch).decValue(); }
  
 template <class Char>
@@ -221,6 +239,8 @@ int CharHexValue(Char ch) { return CharCode(ch).hexValue(); }
 /* char sets */
 
 inline const char * GetSpaceChars() { return " \t\f\v\r\n"; }
+
+inline const char * GetPunctChars() { return "!\"#$%&'()*+,-./:;<=>?@[\\]^`{|}~"; }
 
 inline const char * GetDigitChars() { return "0123456789"; }
 

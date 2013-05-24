@@ -39,6 +39,46 @@ const bool ASCIICode::IsSpaceTable[256]=
   false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false
  };
  
+const bool ASCIICode::IsPunctTable[256]=
+ {
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,
+  false,false,false,false,false,false,false,false,false,false,true ,true ,true ,true ,true ,true ,
+  true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,true ,true ,true ,true ,false,
+  true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,true ,true ,true ,true ,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false
+ };
+
+const bool ASCIICode::IsSpaceOrPunctTable[256]=
+ {
+  false,false,false,false,false,false,false,false,false,true ,true ,true ,true ,true ,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,
+  false,false,false,false,false,false,false,false,false,false,true ,true ,true ,true ,true ,true ,
+  true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,true ,true ,true ,true ,false,
+  true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,true ,true ,true ,true ,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,
+  false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false
+ };
+
 const signed char ASCIICode::DecValueTable[256]=
  {
    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,

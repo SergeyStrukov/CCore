@@ -33,7 +33,7 @@ const char *const Testit<43>::Name="Test43 CharProp";
 
 template<>
 bool Testit<43>::Main() 
- { 
+ {
   for(uint8 ch=0; ch<128 ;ch++)
     {
      CharCode code(ch);
@@ -45,6 +45,10 @@ bool Testit<43>::Main()
      if( code.isVisible() ) Printf(Con," visible");
      
      if( code.isSpace() ) Printf(Con," space");
+     
+     if( code.isPunct() ) Printf(Con," punct");
+     
+     if( code.isSpaceOrPunct() ) Printf(Con," space-or-punct");
      
      int dec=code.decValue();
      
