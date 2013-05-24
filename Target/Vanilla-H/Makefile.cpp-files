@@ -159,6 +159,7 @@
 ../../CCore/src/scanf/ScanBase.cpp
 ../../CCore/src/scanf/ScanProxy.cpp
 ../../CCore/src/scanf/ScanTools.cpp
+../../CCore/src/scanf/StringScan.cpp
 ../../CCore/src/Scanf.cpp
 ../../CCore/src/Signal.cpp
 ../../CCore/src/SingleHost.cpp

@@ -44,6 +44,7 @@ positions). The class <b>ASCIICode</b> represents an ASCII code.
 </p>
 
 <pre>
+
 class <span class="Att">ASCIICode</span>
  {
   public:
@@ -75,6 +76,10 @@ class <span class="Att">ASCIICode</span>
  
    bool isSpace() const;
   
+   bool isPunct() const;
+
+   bool isSpaceOrPunct() const;
+
    int decValue() const;
    
    int hexValue() const;
@@ -115,7 +120,15 @@ typedef ASCIICode <span class="Att">CharCode</span>;
 </p>
 
 <p>
-<b>isSpace()</b>&mdash; space and some special characters.
+<b>isSpace()</b> &mdash; space and some special "space-like" characters.
+</p>
+
+<p>
+<b>isPunct()</b> &mdash; punctuation characters.
+</p>
+
+<p>
+<b>isSpaceOrPunct()</b> &mdash; equivalent of <b>isSpace() || isPunct()</b>.
 </p>
 
 <p>
@@ -131,7 +144,7 @@ typedef ASCIICode <span class="Att">CharCode</span>;
 </p>
 
 <p>
-<b>ASCIICode</b> is printable. Special characters are printed using C-slash representation, like "\n".
+<b>ASCIICode</b> is printable. Special characters are printed using C-slash representation, like <b>"\n"</b>.
 </p>
 
 <p>
@@ -142,10 +155,11 @@ typedef ASCIICode <span class="Att">CharCode</span>;
 
 <p>
 <b>PrintCString</b> is a helper class to print a string. Each special symbol is printed using its 
-C representation, like "\n".
+C representation, like <b>"\n"</b>.
 </p>
 
 <pre>
+
 class <span class="Att">PrintCString</span>
  {
    StrLen str;
@@ -159,6 +173,7 @@ class <span class="Att">PrintCString</span>
    template &lt;class P&gt;
    void print(P &amp;out,PrintOptType opt) const;
  };
+
 </pre>
 
 <h4>Character properties</h4>
@@ -183,6 +198,12 @@ template &lt;class Char&gt;
 bool <span class="Att">CharIsSpace</span>(Char ch) { return CharCode(ch).isSpace(); }
   
 template &lt;class Char&gt;
+bool <span class="Att">CharIsPunct</span>(Char ch) { return CharCode(ch).isPunct(); }
+
+template &lt;class Char&gt;
+bool <span class="Att">CharIsSpaceOrPunct</span>(Char ch) { return CharCode(ch).isSpaceOrPunct(); }
+
+template &lt;class Char&gt;
 int <span class="Att">CharDecValue</span>(Char ch) { return CharCode(ch).decValue(); }
  
 template &lt;class Char&gt;
@@ -203,16 +224,24 @@ int <span class="Att">CharHexValue</span>(Char ch) { return CharCode(ch).hexValu
 </p>
 
 <p>
-<b>CharIsSpace()</b> &mdash; space and some special characters. The full list is " \t\f\v\r\n".
+<b>CharIsSpace()</b> &mdash; space and some special characters. The full list is <b>" \t\f\v\r\n"</b>.
 This list can be obtained by the <b>GetSpaceChars()</b> function.
 </p>
 
 <p>
-<b>CharDecValue()</b> &mdash; decimal value of the character, or -1 if not a decimal digit.
+<b>CharIsPunct()</b> &mdash; punctuation characters.
 </p>
 
 <p>
-<b>CharHexValue()</b> &mdash; hexadecimal value of the character, or -1 if not a hexadecimal digit.
+<b>CharIsSpaceOrPunct()</b> &mdash; equivalent of <b>CharIsSpace() || CharIsPunct()</b>.
+</p>
+
+<p>
+<b>CharDecValue()</b> &mdash; decimal value of the character, or <b>-1</b> if not a decimal digit.
+</p>
+
+<p>
+<b>CharHexValue()</b> &mdash; hexadecimal value of the character, or <b>-1</b> if not a hexadecimal digit.
 </p>
 
 <h4>Character sets</h4>
@@ -226,6 +255,8 @@ important character sets.
 
 inline const char * <span class="Att">GetSpaceChars</span>() { return " \t\f\v\r\n"; }
 
+inline const char * <span class="Att">GetPunctChars</span>() { return "!\"#$%&'()*+,-./:;<=>?&#64;[\\]^`{|}~"; } 
+
 inline const char * <span class="Att">GetDigitChars</span>() { return "0123456789"; }
 
 inline const char * <span class="Att">GetHexDigitChars</span>() { return "0123456789abcdefABCDEF"; }
@@ -236,6 +267,10 @@ inline const char * <span class="Att">GetCLetterChars</span>() { return "ABCDEFG
 
 <p>
 <b>GetSpaceChars()</b> &mdash; "traditional" C-space characters.
+</p>
+
+<p>
+<b>GetPunctChars()</b> &mdash; punctuation characters.
 </p>
 
 <p>

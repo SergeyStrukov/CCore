@@ -216,6 +216,7 @@ obj/StdioReadCon.o \
 obj/StrParse.o \
 obj/StrPrint.o \
 obj/String.o \
+obj/StringScan.o \
 obj/Swap.o \
 obj/SysAbort.o \
 obj/SysAsyncFile.o \
@@ -489,6 +490,7 @@ obj/StdioReadCon.s \
 obj/StrParse.s \
 obj/StrPrint.s \
 obj/String.s \
+obj/StringScan.s \
 obj/Swap.s \
 obj/SysAbort.s \
 obj/SysAsyncFile.s \
@@ -762,6 +764,7 @@ obj/StdioReadCon.dep \
 obj/StrParse.dep \
 obj/StrPrint.dep \
 obj/String.dep \
+obj/StringScan.dep \
 obj/Swap.dep \
 obj/SysAbort.dep \
 obj/SysAsyncFile.dep \
@@ -1481,6 +1484,9 @@ obj/StrPrint.o : ../../CCore/src/printf/StrPrint.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/String.o : ../../CCore/src/String.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StringScan.o : ../../CCore/src/scanf/StringScan.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Swap.o : ../../CCore/src/Swap.cpp
@@ -2295,6 +2301,9 @@ obj/StrPrint.s : ../../CCore/src/printf/StrPrint.cpp
 obj/String.s : ../../CCore/src/String.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/StringScan.s : ../../CCore/src/scanf/StringScan.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Swap.s : ../../CCore/src/Swap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3106,6 +3115,9 @@ obj/StrPrint.dep : ../../CCore/src/printf/StrPrint.cpp
 
 obj/String.dep : ../../CCore/src/String.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/String.o $< -MF $@
+
+obj/StringScan.dep : ../../CCore/src/scanf/StringScan.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StringScan.o $< -MF $@
 
 obj/Swap.dep : ../../CCore/src/Swap.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Swap.o $< -MF $@

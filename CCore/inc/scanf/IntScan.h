@@ -51,7 +51,9 @@ enum IntScanBase
   
   IntScanHex,
   IntScanBin,
-  IntScan0X
+  IntScan0X,
+  
+  IntScanDefault = IntScanNone
  };
 
 template <class Dev>
@@ -86,7 +88,7 @@ struct IntScanOpt
   void setDefault()
    {
     base=0;
-    scan_base=IntScanNone;
+    scan_base=IntScanDefault;
    }
   
   IntScanOpt() { setDefault(); }
@@ -94,7 +96,7 @@ struct IntScanOpt
   IntScanOpt(const char *ptr,const char *lim);
   
   //
-  // [.base|.x|.b|.h]
+  // [.base|.x|.X|.b|.B|.h|.H]
   //
  };
 
@@ -219,6 +221,15 @@ class DetectIntFormat : NoCopy
    IntScanBase finish(int max_dig,S &inp);
    
    template <class S>
+   IntScanBase detect_0X(S &inp);
+   
+   template <class S>
+   IntScanBase detect_0(S &inp);
+   
+   template <class S>
+   IntScanBase detect_nosign(S &inp);
+   
+   template <class S>
    IntScanBase detect(S &inp);
    
   public:
@@ -290,6 +301,123 @@ IntScanBase DetectIntFormat<Len>::finish(int max_dig,S &inp)
 
 template <ulen Len>
 template <class S>
+IntScanBase DetectIntFormat<Len>::detect_0X(S &inp) 
+ {
+  if( +inp )
+    {
+     char ch=*inp;
+     
+     if( ch=='0' )
+       {
+        put(ch);
+        
+        ++inp;
+        
+        SkipAllOfChar(inp, [] (char ch) { return ch=='0'; } );
+       }
+     else
+       {
+        if( CharHexValue(ch)>=0 )
+          {
+           put(ch);
+          
+           ++inp;
+          }
+        else
+          {
+           inp.fail();
+           
+           return IntScan0X;
+          }
+       }
+     
+     for(char ch; +inp && CharHexValue(ch=*inp)>=0 ;++inp) put(ch);
+    }
+  else
+    {
+     inp.fail();
+    }
+  
+  return IntScan0X;
+ }
+
+template <ulen Len>
+template <class S>
+IntScanBase DetectIntFormat<Len>::detect_0(S &inp)
+ {
+  if( +inp )
+    {
+     char ch=*inp;
+     
+     switch( ch )
+       {
+        case 'x' : case 'X' :
+         {
+          put(ch);
+          
+          ++inp;
+          
+          return detect_0X(inp);
+         }
+        
+        default:
+         {
+          SkipAllOfChar(inp, [] (char ch) { return ch=='0'; } );
+          
+          return finish(0,inp);
+         }
+       }
+    }
+  else
+    {
+     return IntScanNone;
+    }
+ }
+
+template <ulen Len>
+template <class S>
+IntScanBase DetectIntFormat<Len>::detect_nosign(S &inp)
+ {
+  if( +inp )
+    {
+     char ch=*inp;
+     
+     if( ch=='0' )
+       {
+        put(ch);
+       
+        ++inp;
+       
+        return detect_0(inp);
+       }
+     else
+       {
+        int dig=CharHexValue(ch);
+       
+        if( dig<0 )
+          {
+           inp.fail();
+          }
+        else
+          {
+           put(ch);
+           
+           ++inp;
+           
+           return finish(dig,inp);
+          } 
+       }
+    }
+  else
+    {
+     inp.fail();
+    }
+  
+  return IntScanNone; 
+ }
+
+template <ulen Len>
+template <class S>
 IntScanBase DetectIntFormat<Len>::detect(S &inp)
  {
   if( +inp )
@@ -303,125 +431,7 @@ IntScanBase DetectIntFormat<Len>::detect(S &inp)
         ++inp; 
        }
      
-     if( +inp )
-       {
-        ch=*inp;
-        
-        if( ch=='0' )
-          {
-           ++inp;
-          
-           if( +inp )
-             {
-              ch=*inp;
-              
-              switch( ch )
-                {
-                 case 'x' : case 'X' :
-                  {
-                   put('0');
-                   put(ch);
-                   put('0');
-                   
-                   ++inp;
-                   
-                   SkipAllOfChar(inp, [] (char ch) { return ch=='0'; } );
-                   
-                   for(; +inp && CharHexValue(ch=*inp)>=0 ;++inp)
-                     {
-                      put(ch);
-                     }
-                  }
-                 return IntScan0X;
-                 
-                 case '0' :
-                  {
-                   ++inp;
-                   
-                   SkipAllOfChar(inp, [] (char ch) { return ch=='0'; } );
-
-                   if( +inp )
-                     {
-                      ch=*inp;
-                     }
-                   else
-                     {
-                      put('0');
-                      
-                      return IntScanNone;
-                     }
-                  }
-                 // falldown;
-                 
-                 default:
-                  {
-                   int dig=CharHexValue(ch);
-                  
-                   if( dig<0 )
-                     {
-                      put('0');
-                      
-                      switch( ch )
-                        {
-                         case 'b' : case 'B' :
-                          {
-                           put(ch);
-                          
-                           ++inp;
-                          }
-                         return IntScanBin;
-                       
-                         case 'h' : case 'H' :
-                          {
-                           put(ch);
-                          
-                           ++inp;
-                          }
-                         return IntScanHex;
-                        }
-                       
-                      return IntScanNone;
-                     }
-                   else
-                     {
-                      put(ch);
-                      
-                      ++inp;
-                      
-                      return finish(dig,inp);
-                     } 
-                  }
-                }
-             }
-           else
-             {
-              put(ch);
-            
-              return IntScanNone;
-             }
-          }
-        else
-          {
-           int dig=CharHexValue(ch);
-          
-           if( dig<0 )
-             {
-              inp.fail();
-             }
-           else
-             {
-              put(ch);
-              
-              ++inp;
-              
-              return finish(dig,inp);
-             } 
-          }
-       }
-     else
-       {
-        inp.fail();
-       }
+     return detect_nosign(inp);
     }
   else
     {

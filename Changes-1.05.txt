@@ -25,6 +25,10 @@ WIN32 IntelRandom
 
 LIN64 target for 64-bit Linux host platform
 
-Scanf is added.
+Scanf() is added.
+
+CharIsPunct() is added.
+
+CharIsSpaceOrPunct() is added.
 
 ----------------------

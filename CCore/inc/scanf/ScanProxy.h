@@ -17,6 +17,7 @@
 #define CCore_inc_ScanProxy_h
 
 #include <CCore/inc/scanf/IntScan.h>
+#include <CCore/inc/scanf/StringScan.h>
  
 namespace CCore {
 
@@ -161,6 +162,13 @@ struct ScanProxies<false,T> : ScanProxy_noclass<T> {};
 
 template <class T> 
 struct ScanProxy : ScanProxies<std::is_class<T>::value,T> {};
+
+template <>
+struct ScanProxy<String>
+ {
+  typedef StringScanOpt OptType;
+  typedef StringScan ProxyType;
+ };
 
 } // namespace CCore
  

@@ -180,7 +180,7 @@ void test4()
                   "000000000000000000000000000000000000000011111111b 01111111b -10000000b"
                   " FFFFh 7fffH -0000000000000000000000000000000000000000000000000008000H"
                   " 0xFFFF 0x7FFF -0x0000000000000000000000000000000000000000000000000008000"
-                  " 4294967295 +2147483647 -2147483648"
+                  " 004294967295 +02147483647 -000000000000000000000002147483648"
                  );
 
   uint8 u8;
@@ -220,6 +220,71 @@ void test4()
     }
  }
 
+/* test5() */
+
+void test5()
+ {
+  ScanString scan(
+                  "+0x01 -0x01 +0x00001"
+                  " 0 +0 -0"
+                  " -01 +002 -0003"
+                  " -01h +002h -0003h"
+                  " -01b +001b -0001b"
+                  " 0b 00b 000b"
+                  " 0h 00h 000h"
+                  " 0 00 000"
+                  " 0x0 0x00 0x000"
+                  " 0x01 0x002 0x0003"
+                 );
+  
+  int x,y,z;
+  
+  Scanf(scan,"#; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #; #; #;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  if( scan.isFailed() )
+    {
+     Printf(Exception,"test5 failed");
+    }
+ }
+
 } // namespace Private_0085
  
 using namespace Private_0085; 
@@ -232,10 +297,11 @@ const char *const Testit<85>::Name="Test85 Scanf";
 template<>
 bool Testit<85>::Main() 
  {
-  //test1();
-  //test2();
-  //test3();
+  test1();
+  test2();
+  test3();
   test4();
+  test5();
   
   return true;
  }
