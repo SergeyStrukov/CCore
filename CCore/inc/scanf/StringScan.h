@@ -35,7 +35,9 @@ enum StringScanType
  {
   StringScanQuote,
   StringScanToSpace,
-  StringScanToPunct
+  StringScanToPunct,
+  
+  StringScanDefault = StringScanToPunct 
  };
 
 template <class Dev>
@@ -66,9 +68,9 @@ struct StringScanOpt
  {
   StringScanType type;
   
-  void setDefault() 
+  void setDefault()
    {
-    type=StringScanToPunct;
+    type=StringScanDefault;
    }
   
   StringScanOpt() { setDefault(); }

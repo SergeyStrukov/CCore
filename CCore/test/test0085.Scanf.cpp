@@ -285,6 +285,32 @@ void test5()
     }
  }
 
+/* test6() */
+
+void test6()
+ {
+  ScanString scan("string1, string2 string3= string4=== string5 string6 \"name1\" \"name2\"");
+  
+  String x,y,z;
+  
+  Scanf(scan,"#; , #; #; =",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #.s; #.s; #.s;",x,y,z);
+  
+  Printf(Con,"#; #; #;\n",x,y,z);
+  
+  Scanf(scan," #.q; #.q;",x,y);
+  
+  Printf(Con,"#; #;\n",x,y);
+  
+  if( scan.isFailed() )
+    {
+     Printf(Exception,"test6 failed");
+    }
+ }
+
 } // namespace Private_0085
  
 using namespace Private_0085; 
@@ -302,6 +328,7 @@ bool Testit<85>::Main()
   test3();
   test4();
   test5();
+  test6();
   
   return true;
  }
