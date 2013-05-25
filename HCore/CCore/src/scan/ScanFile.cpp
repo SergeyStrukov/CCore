@@ -112,7 +112,7 @@ void ScanFile::open(StrLen file_name,bool disable_exceptions)
  {
   if( FileError error=file.open(file_name) )
     {
-     Printf(Exception,"CCore::ScanFile::open(#.q;) : #;",file_name,error);
+     Printf(Exception,"CCore::ScanFile::open(#.q;,...) : #;",file_name,error);
     }
   
   reset();

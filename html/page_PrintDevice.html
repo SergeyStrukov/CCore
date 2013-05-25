@@ -136,7 +136,7 @@ class <span class="Att">PrintCon</span> : public PrintBase
 
 <p>
 The small difference is the constructor takes the additional argument <b>timeout</b>, defaulted to the  
-<b>DefaultTimeout</b>. The main difference, however, not the interface, but the implementation.
+<b>DefaultTimeout</b>. The main difference, however, is not the interface, but the implementation.
 <b>XCore</b> <b>PrintCon</b> uses <a href="page_NanoPackets.html"><b>NanoPacket</b></a>s. Methods <b>Print()</b> create a temporary <b>PrintCon</b>
 object to print the text. Printing is not permitted in the interrupt context.
 </p>
@@ -163,8 +163,8 @@ to the host computer through the port driver.
 <a name="PrintFile"><h4>PrintFile (HCore only)</h4></a>
 
 <p>
-<b>PrintFile</b> class is designed to print to the file. On <b>HCore</b> targets this class is based on
-OS file input-output functions.
+<b>PrintFile</b> class is designed to print to a file. On <b>HCore</b> targets this class is based on
+OS native file input-output functions.
 </p>
 
 <pre>
@@ -201,7 +201,7 @@ class <span class="Att">PrintFile</span> : public PrintBase
 </pre>
 
 <p>
-<b>PrintFile</b> object can be opened or closed. To print to the particular file, a <b>PrintFile</b>
+<b>PrintFile</b> object can be opened or closed. To print to the particular file, the <b>PrintFile</b>
 object must be opened and the file name and <a href="page_Files.html">open flags</a> must be provided.
 It can be done using the constructor or the method <b>open()</b>. Default constructor creates
 an object in the closed state. Non-default opens a file. In case of error an exception is thrown.
@@ -231,7 +231,9 @@ an exception is thrown.
 </p>
 
 <p>
-<b>disableExceptions()</b> disables exceptions during print operations.
+<b>disableExceptions()</b> disables exceptions during print operations. You may call this method after the <b>open()</b>.
+If exceptions are disabled, the special internal error flag is set in case of printing error. This flag
+is added in the error list during a close operation.
 </p>
 
 <p>

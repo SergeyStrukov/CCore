@@ -40,6 +40,13 @@ bool Testit<1028>::Main()
   for(; +scan ;++scan)
     Printf(out,"#; #;\n",CharCode(*scan),scan.getTextPos());
   
+  scan.close();
+  
+  scan.open("Makefile",true);
+  
+  for(; +scan ;++scan)
+    Printf(out,"#; #;\n",CharCode(*scan),scan.getTextPos());
+  
   return true;
  }
  
