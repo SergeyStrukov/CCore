@@ -14,7 +14,11 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/scanf/StringScan.h>
- 
+
+#include <CCore/inc/Sort.h>
+#include <CCore/inc/Cmp.h>
+#include <CCore/inc/algon/BinarySearch.h>
+
 namespace CCore {
 
 /* struct StringScanOpt */
@@ -31,6 +35,30 @@ StringScanOpt::StringScanOpt(const char *ptr,const char *lim)
     {
      setDefault();
     }
+ }
+
+/* class StringSetScan */
+
+PtrLen<StrLen> StringSetScan::Select(PtrLen<StrLen> r,char ch,ulen off)
+ {
+  Algon::BinarySearch_if(r, [=] (StrLen a) { return a.len>off && a[off]>=ch ; } );
+  
+  return Algon::BinarySearch_if(r, [=] (StrLen a) { return a[off]>ch ; } );
+ }
+
+PtrLen<StrLen> StringSetScan::Select(PtrLen<StrLen> r,ulen off)
+ {
+  return Algon::BinarySearch_if(r, [=] (StrLen a) { return a.len>off; } );
+ }
+
+StringSetScan::StringSetScan(std::initializer_list<const char *> zstr_list)
+ : list(zstr_list)
+ {
+  IncrSort(Range(list), [] (StrLen a,StrLen b) { return StrLess(a,b); } );
+ }
+
+StringSetScan::~StringSetScan()
+ {
  }
 
 } // namespace CCore

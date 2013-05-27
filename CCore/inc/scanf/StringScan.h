@@ -29,6 +29,8 @@ struct StringScanOpt;
 
 class StringScan;
 
+class StringSetScan;
+
 /* enum StringScanType */
 
 enum StringScanType
@@ -152,6 +154,63 @@ class StringScan
         case StringScanQuote : scanQuote(inp); break;
         case StringScanToSpace : scanToSpace(inp); break;
         case StringScanToPunct : scanToPunct(inp); break;
+       }
+    }
+ };
+
+/* class StringSetScan */
+
+class StringSetScan : NoCopy
+ {
+   ulen index = 0 ;
+   
+   DynArray<StrLen> list;
+   
+  private:
+   
+   static PtrLen<StrLen> Select(PtrLen<StrLen> r,char ch,ulen off);
+   
+   static PtrLen<StrLen> Select(PtrLen<StrLen> r,ulen off);
+   
+  public:
+  
+   StringSetScan(std::initializer_list<const char *> zstr_list);
+   
+   ~StringSetScan();
+   
+   typedef ulen PrintProxyType;
+   
+   operator ulen() const { return index; }
+   
+   template <class S>
+   void scan(S &inp)
+    {
+     index=0;
+     
+     auto r=Range(list);
+     ulen off=0;
+     
+     for(; +inp ;++inp)
+       {
+        char ch=*inp;
+        
+        auto next_r=Select(r,ch,off);
+          
+        if( !next_r ) break;
+        
+        r=next_r;
+        off++;
+       }
+     
+     r=Select(r,off);
+     
+     if( !r )
+       {
+        inp.fail();
+       }
+     else
+       {
+        index=Dist(list.getPtr(),r.ptr)+1;
        }
     }
  };

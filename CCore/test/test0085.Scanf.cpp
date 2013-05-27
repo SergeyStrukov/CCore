@@ -311,6 +311,40 @@ void test6()
     }
  }
 
+/* test7() */
+
+void test7()
+ {
+  ScanString scan("set setX go help select");
+  
+  StringSetScan x{"set","setX","go","help","select"};
+  
+  Scanf(scan,"#;",x);
+  
+  Printf(Con,"#;\n",x);
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"#;\n",x);
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"#;\n",x);
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"#;\n",x);
+  
+  Scanf(scan," #;",x);
+  
+  Printf(Con,"#;\n",x);
+  
+  if( scan.isFailed() )
+    {
+     Printf(Exception,"test7 failed");
+    }
+ }
+
 } // namespace Private_0085
  
 using namespace Private_0085; 
@@ -329,6 +363,7 @@ bool Testit<85>::Main()
   test4();
   test5();
   test6();
+  test7();
   
   return true;
  }
