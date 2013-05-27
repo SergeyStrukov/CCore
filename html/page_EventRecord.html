@@ -43,7 +43,7 @@ On <b>XCore</b> targets recoring is permitted in any context, including interrup
 Once recording if finished, you can save recorded data in a binary form and transport it to a host
 machine. Binary representation contains meta-information, which helps display events in a user-friendly
 fashion. The data format is standard. <b>CCore</b> has a prototype tool <b>EventView</b> to display and work
-with the event records. You may also create and use your own such tools for your particular purpose.
+with event records. You may also create and use your own such tools for your particular purpose.
 </p>
 
 <h2>EventRecorder</h2>
@@ -185,6 +185,27 @@ It is <b>Core</b>-specific.
 <b>TaskEventHost</b> is the default event recorder host, it should be used to record events.
 </p>
 
+<p>
+To record an event you have to use one of the methods: <b>add()</b>, <b>addSync()</b>,
+<b>addProto()</b> and <b>addDev()</b>. They do the same thing: record an event. The difference is:
+some of these methods can be defined as NOP operations, by commenting the correspondent macros.
+It allows to filter out events by their sources. <b>Sync</b> events come from synchronization classes,
+<b>Proto</b> events come from protocols and <b>Dev</b> events come from device drivers. Any other
+events come from the application layer.
+</p>
+
+<p>
+<b>tick()</b> is used to add tick events. You done need to call this method directly.
+On <b>XCore</b> it is called from the timer interrupt. On <b>HCore</b> there is a special task 
+to generate this event. You have to start it manually.
+</p>
+
+<p>
+The inner class <b>StartStop</b> starts and stops the event recording. Its constructor starts the process,
+the first argument is a recorder host, the second is a pointer to the recorder buffer. 
+Destructor stops the recording.
+</p>
+
 <h3>EventRecorderHost</h3>
 
 <p>
@@ -304,12 +325,93 @@ and the pointer to the event record.
 </p>
 
 <p>
-Yuo may find an example of event recording in the <b>test0101.PTP.cpp</b>. 
+You may find an example of the event recording in the <b>test0101.PTP.cpp</b>. 
 </p>
 
 <h2>TaskEventAlgo</h2>
 
+<p>
+This is a core-specific structure with some basic algorithms.
+</p>
+
+<pre>
+
+struct <span class="Att">TaskEventAlgo</span>
+ {
+  static const ulen RecordAlign = 4 ;
+  
+  static const uint64 TimeFreq = .... ;
+
+  class AllocPos : NoCopy
+   {
+     ....
+     
+    public:
+    
+     AllocPos();
+     
+     ~AllocPos();
+     
+     operator ulen() const;
+     
+     EventRecordPos alloc(ulen len);
+     
+     void back(ulen len);
+   };
+ };
+
+</pre>
+
+<p>
+<b>RecordAlign</b> is a memory alignment for event types. This value equals 4 both for <b>HCore</b> 
+and <b>XCore</b>. It means any event type must not have stronger alignment requirement than this value. 
+</p>
+
+<p>
+<b>TimeFreq</b> is a time-stamp frequency. This value is 0 for <b>HCore</b> and a real timer interrupt
+frequency on <b>XCore</b>.
+</p>
+
+<p>
+The last member is the class <b>AllocPos</b>. It is used to allocate a space for an event and time-stamp it.
+The implementation is differ on <b>XCore</b> than on <b>HCore</b>.
+</p>
+
+<h2>TickTask</h2>
+
+<p>
+This class is used on <b>HCore</b> to inject tick events with 10 Hz frequency.
+</p>
+
+<pre>
+
+class <span class="Att">TickTask</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   TickTask();
+   
+   ~TickTask();
+ };
+
+</pre>
+
+<p>
+Constructor starts the tick task, destructor stops it. You should always use this class on <b>HCore</b>
+targets to properly time events, because the time-stamp frequency is unknown and may vary.
+</p>
+
+<p>
+The class with the same name exists on <b>XCore</b> also, but it is empty.
+</p>
+
 <h2>Event types</h2>
+
+<h2>EventControl</h2>
+
+<h2>EventMarker</h2>
 
 <h2>Binary output format</h2>
 
