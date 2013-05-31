@@ -48,6 +48,12 @@ struct PrintOutAdapter<NoPrintType>
   typedef void PrintOutType;
  };
  
+template <> 
+struct PrintOutAdapter<const NoPrintType> 
+ {
+  typedef void PrintOutType;
+ };
+ 
 /* class PrintBase */ 
 
 class PrintBase : NoCopy
