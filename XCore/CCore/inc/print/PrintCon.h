@@ -59,6 +59,12 @@ struct PrintOutAdapter<ConType>
   typedef PrintCon PrintOutType;
  };
  
+template <> 
+struct PrintOutAdapter<const ConType> 
+ {
+  typedef PrintCon PrintOutType;
+ };
+ 
 } // namespace CCore
  
 #endif
