@@ -19,6 +19,14 @@ CCore/inc/SafeBuf.h
 
   Moved from PrintFile.
 
+CCore/inc/printf/PrintBase.h
+
+  PrintOutAdapter<const NoPrintType> is added
+
+CCore/inc/print/PrintCon.h
+
+  PrintOutAdapter<const ConType> is added
+
 --- New features -----
 
 WIN32 IntelRandom
