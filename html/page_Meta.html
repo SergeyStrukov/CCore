@@ -161,7 +161,7 @@ condition:
 <pre>
 
 template &lt;bool Cond,class T1,class T2&gt;
-using Select = typename ImpSelect&lt;Cond,T1,T2&gt;::Ret ;
+using <span class="Att">Select</span> = typename ImpSelect&lt;Cond,T1,T2&gt;::Ret ;
 
 //
 // Select&lt;true,T1,T2&gt; == T1
@@ -184,7 +184,7 @@ the necessity of the keyword <b>typename</b>.
 
 <pre>
 
-template &lt;bool Cond,template &lt;class&gt; class F,class T&gt; struct BuildIf;
+template &lt;bool Cond,template &lt;class&gt; class F,class T&gt; struct <span class="Att">BuildIf</span>;
 
 template &lt;template &lt;class&gt; class F,class T&gt;
 struct BuildIf&lt;true,F,T&gt; : F&lt;T&gt; {};
@@ -209,7 +209,7 @@ struct BuildIf&lt;false,F,T&gt; {};
 <pre>
 
 template &lt;class T,class ProbeSet&gt;
-struct Has
+struct <span class="Att">Has</span>
  {
   enum RetType { Ret = ProbeSet::template Probe&lt;T&gt;(0) };
  };
@@ -262,7 +262,7 @@ it can be used to enable or disable a function instantiation.
 <pre>
 
 template &lt;bool Cond,class RetType=int&gt;
-using EnableIf = typename Select&lt;Cond, DefType&lt;RetType&gt; , Empty &gt;::Ret ;
+using <span class="Att">EnableIf</span> = typename Select&lt;Cond, DefType&lt;RetType&gt; , Empty &gt;::Ret ;
 
 </pre>
 
@@ -289,6 +289,9 @@ It is also a template typedef, so you get the result without extra typing.
 
 <pre>
 
+template &lt;class ... TT&gt;
+struct <span class="Att">TypeListLen</span> : DefConst&lt;unsigned,( sizeof...(TT) )&gt; {};
+
 //
 // TypeListLen&lt;&gt;::Ret == 0
 //
@@ -312,11 +315,7 @@ If the type is not in the list, nothing is returned.
 
 <pre>
 
-template &lt;class T,class ... TT&gt; struct IndexOf&lt;T,TT...&gt;;
-
-</pre>
-
-<pre>
+template &lt;class T,class ... TT&gt; struct <span class="Att">IndexOf</span>&lt;T,TT...&gt;;
 
 //
 // IndexOf&lt;short, short,int,long&gt;::Ret == 1
@@ -328,6 +327,32 @@ template &lt;class T,class ... TT&gt; struct IndexOf&lt;T,TT...&gt;;
 
 </pre>
 
+<h3>UnRef</h3>
+
+<p>
+<b>UnRef</b> removes reference modifier from the type, if any. 
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+using <span class="Att">UnRef</span> = typename std::remove_reference&lt;T&gt;::type ; 
+
+</pre>
+
+<h3>UnConst</h3>
+
+<p>
+<b>UnConst</b> removes <b>const</b> modifier from the type, if any. 
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+using <span class="Att">UnConst</span> = typename std::remove_const&lt;T&gt;::type ; 
+
+</pre>
+
 <h3>RangeObjType</h3>
 
 <p>
@@ -335,6 +360,9 @@ template &lt;class T,class ... TT&gt; struct IndexOf&lt;T,TT...&gt;;
 </p>
 
 <pre>
+
+template &lt;class R&gt;
+using <span class="Att">RangeObjType</span> = .... ;
 
 struct SomeRange
  {
@@ -357,6 +385,8 @@ using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the he
 
 <pre>
 
+template &lt;class T&gt; struct <span class="Att">IsSInt</span>;
+
 //
 // IsSInt&lt;T&gt;::Ret == true if T is a signed integral type
 //
@@ -373,6 +403,8 @@ using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the he
 
 <pre>
 
+template &lt;class T&gt; struct <span class="Att">IsUInt</span>;
+
 //
 // IsUInt&lt;T&gt;::Ret == true if T is an unsigned integral type
 //
@@ -388,6 +420,8 @@ using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the he
 
 <pre>
 
+template &lt;class T&gt; struct <span class="Att">IsSUInt</span>;
+
 //
 // IsSUInt&lt;T&gt;::Ret == true if T is an integral type
 //
@@ -401,6 +435,8 @@ using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the he
 </p>
 
 <pre>
+
+template &lt;class T&gt; struct <span class="Att">SIntToUInt</span>;
 
 //
 // SIntToUInt&lt;T&gt; is empty if IsSInt&lt;T&gt;::Ret == false
@@ -421,6 +457,8 @@ using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the he
 
 <pre>
 
+template &ltclass T&gt; struct <span class="Att">PromoteUInt</span>;
+
 //
 // PromoteUInt&lt;T&gt; is empty if IsUInt&lt;T&gt;::Ret == false
 //
@@ -438,6 +476,8 @@ using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the he
 </p>
 
 <pre>
+
+template &ltclass T&gt; struct <span class="Att">PromoteSInt</span>;
 
 //
 // PromoteSInt&lt;T&gt; is empty if IsSInt&lt;T&gt;::Ret == false
@@ -457,6 +497,8 @@ using a specialization of the <b>ExtraInt::Prop&lt;T&gt;</b> structure in the he
 
 <pre>
 
+template &lt;class T&gt; struct <span class="Att">UIntBits</span>;
+
 //
 // UIntBits&lt;T&gt;::Ret == "bit size of T"
 //
@@ -471,6 +513,8 @@ The type must be unsigned integral.
 </p>
 
 <pre>
+
+template &lt;class UInt&gt; struct <span class="Att">HexWidth</span>;
 
 //
 // HexWidth&lt;T&gt;::Ret == "hex size of T"

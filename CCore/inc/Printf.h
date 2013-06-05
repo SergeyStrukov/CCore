@@ -102,11 +102,7 @@ struct PrintOptAdapters<0,T>
  {
   static const T & GetT();
 
-  typedef decltype( GetTextDesc(GetT()) ) S1;
-
-  typedef typename std::remove_reference<S1>::type S2;
-
-  typedef typename std::remove_const<S2>::type S;
+  typedef Meta::UnConst<Meta::UnRef<decltype( GetTextDesc(GetT()) )> > S;
 
   typedef typename PrintProxy<S>::OptType PrintOptType;
  }; 
@@ -573,7 +569,7 @@ void Printf(P &&out,const char *format,const TT & ... tt) CCORE_NOINLINE ;
 template <class P,class ... TT>
 void Printf(P &&out,const char *format,const TT & ... tt)
  {
-  typedef typename PrintOutAdapter<typename std::remove_reference<P>::type>::PrintOutType POut;
+  typedef typename PrintOutAdapter<Meta::UnRef<P> >::PrintOutType POut;
   
   PrintfDev<POut> dev(out,format);
   
@@ -588,7 +584,7 @@ void Putobj(P &&out,const TT & ... tt) CCORE_NOINLINE ;
 template <class P,class ... TT>
 void Putobj(P &&out,const TT & ... tt)
  {
-  typedef typename PrintOutAdapter<typename std::remove_reference<P>::type>::PrintOutType POut;
+  typedef typename PrintOutAdapter<Meta::UnRef<P> >::PrintOutType POut;
   
   PutobjDev<POut> dev(out);
   
@@ -603,7 +599,7 @@ void Putch(P &&out,TT ... tt) CCORE_NOINLINE ;
 template <class P,class ... TT>
 void Putch(P &&out,TT ... tt)
  {
-  typedef typename PrintOutAdapter<typename std::remove_reference<P>::type>::PrintOutType POut;
+  typedef typename PrintOutAdapter<Meta::UnRef<P> >::PrintOutType POut;
   
   PutobjDev<POut> dev(out);
   

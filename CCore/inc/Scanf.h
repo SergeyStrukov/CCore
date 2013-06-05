@@ -485,7 +485,7 @@ void Scanf(S &&inp,const char *format,TT && ... tt) CCORE_NOINLINE ;
 template <class S,class ... TT>
 void Scanf(S &&inp,const char *format,TT && ... tt)
  {
-  typedef typename ScanInpAdapter<typename std::remove_reference<S>::type>::ScanInpType SInp;
+  typedef typename ScanInpAdapter<Meta::UnRef<S> >::ScanInpType SInp;
   
   ScanfDev<SInp> dev(inp,format);
   
@@ -500,7 +500,7 @@ void Scanobj(S &&inp,TT && ... tt) CCORE_NOINLINE ;
 template <class S,class ... TT>
 void Scanobj(S &&inp,TT && ... tt) 
  {
-  typedef typename ScanInpAdapter<typename std::remove_reference<S>::type>::ScanInpType SInp;
+  typedef typename ScanInpAdapter<Meta::UnRef<S> >::ScanInpType SInp;
   
   ScanobjDev<SInp> dev(inp);
   

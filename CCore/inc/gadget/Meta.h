@@ -197,6 +197,16 @@ struct IndexOf<T,T,TT...> : DefConst<unsigned,1> {};
 template <class T,class S,class ... TT>
 struct IndexOf<T,S,TT...> : DefConst<unsigned,( 1+IndexOf<T,TT...>::Ret )> {};
 
+/* type UnRef<T> */
+
+template <class T>
+using UnRef = typename std::remove_reference<T>::type ; 
+
+/* type UnConst<T> */
+
+template <class T>
+using UnConst = typename std::remove_const<T>::type ; 
+
 /* struct ImpRangeObjType<R> */
  
 template <class R> 
@@ -204,7 +214,7 @@ struct ImpRangeObjType
  {
   static R & GetR();
   
-  typedef typename std::remove_reference<decltype( *GetR() )>::type Ret;
+  typedef UnRef<decltype( *GetR() )> Ret;
  };
 
 /* type RangeObjType<R> */
