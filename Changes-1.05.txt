@@ -27,6 +27,10 @@ CCore/inc/print/PrintCon.h
 
   PrintOutAdapter<const ConType> is added
 
+CCore/inc/gadget/Meta.h
+
+  UnRef<T> and UnConst<T> are added
+
 --- New features -----
 
 WIN32 IntelRandom
