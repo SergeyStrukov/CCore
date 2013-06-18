@@ -505,6 +505,7 @@ class Filter : NoCopy
  {
    StrLen dir1;
    StrLen dir2;
+   StrLen dir3;
    StrLen obj;
    
    StrLen ext1;
@@ -518,6 +519,7 @@ class Filter : NoCopy
    Filter()
     : dir1(".svn"),
       dir2("eclipse"),
+      dir3(".git"),
       obj("obj"),
       
       ext1(".o"),
@@ -536,7 +538,8 @@ class Filter : NoCopy
    bool noDir(StrLen name) const
     {
      return name.equal(dir1) || 
-            name.equal(dir2) || 
+            name.equal(dir2) ||
+            name.equal(dir3) ||
             HasSuffix(name,obj) ;
     }
    
