@@ -63,7 +63,7 @@ struct InitExitObject
    { 
     if( obj ) return;
    
-    static_assert( std::is_pod<InitExitObject<T> >::value ,"CCore::InitExitObject<T> must be pod");
+    static_assert( std::is_pod<InitExitObject<T> >::value ,"CCore::InitExitObject<T> must be POD");
 
     obj=new(storage.getPlace()) T( std::forward<SS>(ss)... );
    }

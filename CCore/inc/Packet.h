@@ -507,7 +507,7 @@ struct PacketForgetExt<1,POD,T,TT...>
 template <class POD,class ... TT> // T1, T2, ... , Ttop
 class Packet
  {
-   static_assert( std::is_pod<POD>::value ,"CCore::Packet<POD,...> : POD must be pod");
+   static_assert( std::is_pod<POD>::value ,"CCore::Packet<POD,...> : POD must be POD");
      
   private:
    

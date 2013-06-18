@@ -42,7 +42,7 @@ template <class POD> class NanoPacketPool;
 template <class POD>
 class NanoPacket
  {
-   static_assert( std::is_pod<POD>::value ,"CCore::NanoPacket<POD> : POD must be pod");
+   static_assert( std::is_pod<POD>::value ,"CCore::NanoPacket<POD> : POD must be POD");
    
    typedef Function<void (NanoPacket<POD> packet)> NanoPacketFunction;
 
