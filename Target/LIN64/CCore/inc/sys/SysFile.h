@@ -186,6 +186,8 @@ struct AltFile
    
   Result write(FilePosType off,const uint8 *buf,ulen len) 
    { 
+    if( len>FilePosType(-1)-off ) return {0,FileError_BadPosition};
+    
     FileError fe=Write(handle,oflags,off,buf,len);
     
     if( fe )
@@ -202,7 +204,7 @@ struct AltFile
   
   FileError read(FilePosType off,uint8 *buf,ulen len) 
    {
-    if( off>file_len ) return FileError_BadPosition;
+    if( off>file_len || len>file_len-off ) return FileError_BadPosition;
     
     return Read(handle,oflags,off,buf,len); 
    } 
@@ -230,31 +232,115 @@ struct AltAsyncFile
     FileError error;
    };
  
+  // private data
+  
+  typedef int Type;
+  
+  Type handle;
+  FilePosType file_len;
+  FileOpenFlags oflags;
+  char *to_unlink;
+  
+  // private
+  
+  struct OpenType
+   {
+    Type handle;
+    FilePosType file_len;
+    char *to_unlink;
+    FileError error;
+   };
+  
+  static OpenType Open(StrLen file_name,FileOpenFlags oflags) noexcept;
+  
+  static void Close(FileMultiError &errout,Type handle,FileOpenFlags oflags,char *to_unlink,bool preserve_file) noexcept;
+  
+  static RWResult StartRead(Type handle,Async async,FilePosType off,uint8 *buf,ulen len) noexcept;
+  
+  static FileError CompleteRead(Type handle,Async async,ulen len) noexcept;
+  
+  static RWResult StartWrite(Type handle,Async async,FilePosType off,const uint8 *buf,ulen len) noexcept;
+  
+  static FileError CompleteWrite(Type handle,Async async,ulen len) noexcept;
+  
   // public
   
-  Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
+  Result open(StrLen file_name,FileOpenFlags oflags_)
+   {
+    OpenType result=Open(file_name,oflags_);
   
-  void close(FileMultiError &errout,bool preserve_file=false) noexcept; 
+    handle=result.handle;
+    file_len=result.file_len;
+    to_unlink=result.to_unlink;
+    oflags=oflags_;
   
-  void close() noexcept; 
+    return {result.file_len,result.error};
+   }
   
-  FileError testRead(FilePosType off,ulen len) noexcept;
+  void close(FileMultiError &errout,bool preserve_file=false)
+   {
+    Close(errout,handle,oflags,to_unlink,preserve_file);
+   }
   
-  Result setWrite(FilePosType off,ulen len) noexcept;
+  void close()
+   { 
+    FileMultiError errout;
   
-  RWResult startRead(Async async,FilePosType off,uint8 *buf,ulen len) noexcept;
+    close(errout);
+   }
   
-  FileError completeRead(Async async,ulen len) noexcept;
+  FileError testRead(FilePosType off,ulen len)
+   {
+    if( !(oflags&Open_Read) ) return FileError_NoMethod;
+   
+    if( off>file_len || len>file_len-off ) return FileError_BadPosition;
+   
+    return FileError_Ok;
+   }
   
-  RWResult startWrite(Async async,FilePosType off,const uint8 *buf,ulen len) noexcept;
+  Result setWrite(FilePosType off,ulen len)
+   {
+    if( !(oflags&Open_Write) ) return {0,FileError_NoMethod}; 
+    
+    if( len>FilePosType(-1)-off ) return {0,FileError_BadPosition}; 
+    
+    Replace_max(file_len,off+len);
+    
+    return {file_len,FileError_Ok};
+   }
   
-  FileError completeWrite(Async async,ulen len) noexcept;
+  RWResult startRead(Async async,FilePosType off,uint8 *buf,ulen len)
+   {
+    return StartRead(handle,async,off,buf,len);
+   }
+  
+  FileError completeRead(Async async,ulen len)
+   {
+    return CompleteRead(handle,async,len);
+   }
+  
+  RWResult startWrite(Async async,FilePosType off,const uint8 *buf,ulen len)
+   {
+    return StartWrite(handle,async,off,buf,len);
+   }
+  
+  FileError completeWrite(Async async,ulen len)
+   {
+    return CompleteWrite(handle,async,len);
+   }
  };
 
 /* struct AsyncFileWait */
 
 struct AsyncFileWait
  {
+  // private
+  
+  class Engine;
+  
+  Engine *obj;
+  AltAsyncFile::Async *asyncs;
+  
   // public
   
   static const ulen MaxAsyncs = 50 ;
@@ -263,7 +349,7 @@ struct AsyncFileWait
   
   void exit() noexcept;
   
-  AltAsyncFile::Async getAsync(ulen index) noexcept;
+  AltAsyncFile::Async getAsync(ulen index) { return asyncs[index]; }
   
   bool addWait(ulen index) noexcept;
   
@@ -271,7 +357,14 @@ struct AsyncFileWait
   
   WaitResult wait(MSec timeout) noexcept;
   
-  WaitResult wait(TimeScope time_scope) noexcept;
+  WaitResult wait(TimeScope time_scope)
+   {
+    auto timeout=time_scope.get();
+    
+    if( !timeout ) return Wait_timeout;
+    
+    return wait(timeout);
+   }
   
   void interrupt() noexcept; // async , semaphore
  };

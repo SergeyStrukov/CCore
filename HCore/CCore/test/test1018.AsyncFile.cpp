@@ -198,7 +198,7 @@ bool Testit<1018>::Main()
 #else
   
   {
-   AEngine aengine(10*tuMSec);
+   AEngine aengine(10_msec);
   
    aengine.run();
   }

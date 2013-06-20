@@ -14,8 +14,13 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/sys/SysFile.h>
-
 #include <CCore/inc/sys/SysInternal.h>
+
+#include <CCore/inc/Array.h>
+#include <CCore/inc/Fifo.h>
+#include <CCore/inc/Exception.h>
+
+#include <CCore/inc/Print.h>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -23,6 +28,10 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <libaio.h>
+#include <sys/eventfd.h>
+#include <poll.h>
 
 namespace CCore {
 namespace Sys {
@@ -88,6 +97,8 @@ inline int MakeOpenFlags(FileOpenFlags oflags)
 struct OpenFile;
 
 struct OpenAltFile;
+
+struct OpenAltAsyncFile;
 
 /* struct OpenFile */ 
  
@@ -206,6 +217,89 @@ struct OpenAltFile : AltFile::OpenType
    }
      
   OpenAltFile(const char *file_name,FileOpenFlags oflags)
+   {
+    to_unlink=0;
+    
+    // flags & mode
+    
+    int flags=MakeOpenFlags(oflags);
+    int mode=S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP;
+    
+    // open
+  
+    if( !set( open(file_name,flags,mode) ) ) return;
+    
+    // post-open  
+    
+    {
+     struct stat result;
+      
+     if( fstat(handle,&result)==-1 )
+       {
+        close();
+        
+        return;
+       }
+     else
+       {
+        file_len=(FilePosType)result.st_size;
+       }
+    }
+  
+    if( oflags&Open_AutoDelete )
+      {
+       to_unlink=realpath(file_name,nullptr);
+       
+       if( !to_unlink )
+         {
+          close();
+         }
+      }
+   }
+ };
+
+/* struct OpenAltAsyncFile */ 
+ 
+struct OpenAltAsyncFile : AltAsyncFile::OpenType
+ {
+  bool set(int fd)
+   {
+    handle=fd;
+      
+    if( fd==-1 )
+      {
+       error=MakeError(FileError_OpenFault);
+       file_len=0;
+          
+       return false;
+      }
+    else
+      {  
+       error=FileError_Ok;
+          
+       return true;
+      }
+   }
+     
+  void close()
+   {
+    file_len=0;
+    error=MakeError(FileError_OpenFault);
+        
+    ::close(handle); // ignore unprobable error
+        
+    handle=-1;
+   }
+   
+  explicit OpenAltAsyncFile(FileError fe)
+   {
+    handle=-1;
+    file_len=0;
+    to_unlink=0;
+    error=fe;
+   }
+     
+  OpenAltAsyncFile(const char *file_name,FileOpenFlags oflags)
    {
     to_unlink=0;
     
@@ -510,119 +604,451 @@ FileError AltFile::Read(Type handle,FileOpenFlags oflags,FilePosType off,uint8 *
 
 /* struct AltAsyncFile */
 
-auto AltAsyncFile::open(StrLen /*file_name*/,FileOpenFlags /*oflags*/) noexcept -> Result
+struct AltAsyncFile::AsyncState
  {
-  // TODO
-
-  return Result{};
- }
+  struct iocb control_block;
   
-void AltAsyncFile::close(FileMultiError & /*errout*/,bool /*preserve_file*/) noexcept
- {
-  // TODO
- }
+  ulen index;
   
-void AltAsyncFile::close() noexcept
- {
-  FileMultiError errout;
-
-  close(errout);
- }
+  ssize_t retlen;
+  int error;
   
-FileError AltAsyncFile::testRead(FilePosType /*off*/,ulen /*len*/) noexcept
- {
-  // TODO
-
-  return FileError_Ok;
- }
+  void prepareRead(Type handle,uint8 *buf,ulen len,FilePosType off)
+   {
+    io_prep_pread(&control_block,handle,buf,len,off);
+    
+    control_block.data=this;
+   }
   
-auto AltAsyncFile::setWrite(FilePosType /*off*/,ulen /*len*/) noexcept -> Result
- {
-  // TODO
-
-  return Result{};
- }
+  void prepareWrite(Type handle,const uint8 *buf,ulen len,FilePosType off)
+   {
+    io_prep_pwrite(&control_block,handle,const_cast<uint8 *>(buf),len,off);
+    
+    control_block.data=this;
+   }
   
-auto AltAsyncFile::startRead(Async /*async*/,FilePosType /*off*/,uint8 * /*buf*/,ulen /*len*/) noexcept -> RWResult
- {
-  // TODO
-
-  return RWResult{};
- }
+  void setEventFd(int fd)
+   {
+    io_set_eventfd(&control_block,fd);
+   }
   
-FileError AltAsyncFile::completeRead(Async /*async*/,ulen /*len*/) noexcept
- {
-  // TODO
-
-  return FileError_Ok;
- }
+  FileError completeRead(ulen len)
+   {
+    if( retlen==-1 )
+      {
+       return MakeError(FileError_ReadFault,error);
+      }
+    else
+      {
+       if( len!=(ulen)retlen ) return FileError_ReadLenMismatch;
+       
+       return FileError_Ok;
+      }
+   }
   
-auto AltAsyncFile::startWrite(Async /*async*/,FilePosType /*off*/,const uint8 * /*buf*/,ulen /*len*/) noexcept -> RWResult
- {
-  // TODO
-
-  return RWResult{};
- }
+  FileError completeWrite(ulen len)
+   {
+    if( retlen==-1 )
+      {
+       return MakeError(FileError_WriteFault,error);
+      }
+    else
+      {
+       if( len!=(ulen)retlen ) return FileError_WriteLenMismatch;
+       
+       return FileError_Ok;
+      }
+   }
   
-FileError AltAsyncFile::completeWrite(Async /*async*/,ulen /*len*/) noexcept
- {
-  // TODO
+  bool submit(io_context_t ctx)
+   {
+    struct iocb * temp[1]={&control_block};
+    
+    int result=io_submit(ctx,1,temp);
+    
+    if( result==1 ) return true;
+    
+    retlen=-1;
+    error=-result;
+    
+    return false;
+   }
+  
+  void complete(io_event *ev)
+   {
+    ssize_t result=ev->res;
+    
+    if( result<0 )
+      {
+       retlen=-1;
+       error=int(-result);
+      }
+    else
+      {
+       retlen=result;
+       error=0;
+      }
+   }
+ };
 
-  return FileError_Ok;
+auto AltAsyncFile::Open(StrLen file_name_,FileOpenFlags oflags) noexcept -> OpenType
+ {
+  FileName file_name;
+ 
+  if( !file_name.set(file_name_) ) return OpenAltAsyncFile(FileError_TooLongPath); 
+  
+  return OpenAltAsyncFile(file_name,oflags); 
+ }
+
+void AltAsyncFile::Close(FileMultiError &errout,Type handle,FileOpenFlags oflags,char *to_unlink,bool preserve_file) noexcept
+ {
+  if( to_unlink )
+    {
+     if( !preserve_file )
+       {
+        AddErrorIf(errout,FileError_CloseFault, unlink(to_unlink)==-1 );
+       }
+    
+     free(to_unlink);
+    }
+    
+  if( oflags&Open_Write )  
+    {
+     AddErrorIf(errout,FileError_CloseFault, fsync(handle)==-1 );  
+    }
+  
+  AddErrorIf(errout,FileError_CloseFault, ::close(handle)==-1 );
+ }
+
+auto AltAsyncFile::StartRead(Type handle,Async async,FilePosType off,uint8 *buf,ulen len) noexcept -> RWResult
+ {
+  async->prepareRead(handle,buf,len,off);
+  
+  return {true,FileError_Ok};
+ }
+
+FileError AltAsyncFile::CompleteRead(Type,Async async,ulen len) noexcept
+ {
+  return async->completeRead(len);
+ }
+
+auto AltAsyncFile::StartWrite(Type handle,Async async,FilePosType off,const uint8 *buf,ulen len) noexcept -> RWResult
+ {
+  async->prepareWrite(handle,buf,len,off);
+  
+  return {true,FileError_Ok};
+ }
+
+FileError AltAsyncFile::CompleteWrite(Type,Async async,ulen len) noexcept
+ {
+  return async->completeWrite(len);
+ }
+
+/* class AsyncFileWait::Engine */
+
+class AsyncFileWait::Engine : public MemBase_nocopy
+ {
+   class Context : NoCopy
+    {
+      io_context_t ctx;
+      
+     public: 
+      
+      explicit Context(ulen async_count)
+       {
+        int result=io_queue_init((int)async_count,&ctx);
+        
+        if( result )
+          {
+           Printf(Exception,"io_queue_init() : #;",-result);
+          }
+       }
+      
+      ~Context()
+       {
+        int result=io_queue_release(ctx);
+        
+        AbortIfError( -result ,"CCore::Sys::AsyncFileWait::Engine::Context::~Context()");
+       }
+    
+      operator io_context_t() { return ctx; }
+    };
+  
+   typedef AltAsyncFile::AsyncState AsyncState;
+   
+   enum Status
+    {
+     StatusReady,
+     StatusFailed,
+     StatusPending
+    };
+ 
+   class State : NoCopy , public NoThrowFlagsBase
+    {
+      AsyncState state;
+      
+     public: 
+      
+      Status status;
+      
+      State() : status(StatusReady) {}
+      
+      AsyncState * getAsync() { return &state; }
+    };
+   
+   class FdSem : NoCopy
+    {
+      int fd;
+     
+     public: 
+      
+      FdSem()
+       {
+        fd=eventfd(0,EFD_SEMAPHORE);
+        
+        if( fd==-1 )
+          {
+           int error=errno;
+          
+           Printf(Exception,"eventfd() : #;",error);
+          }
+       }
+      
+      ~FdSem()
+       {
+        AbortIf( close(fd)==-1 ,"CCore::Sys::AsyncFileWait::Engine::FdSem::~FdSem()");
+       }
+      
+      operator int() { return fd; }
+      
+      void give()
+       {
+        AbortIf( eventfd_write(fd,1)==-1 ,"CCore::Sys::AsyncFileWait::Engine::FdSem::give()");
+       }
+      
+      void take()
+       {
+        eventfd_t value;
+        
+        AbortIf( eventfd_read(fd,&value)==-1 ,"CCore::Sys::AsyncFileWait::Engine::FdSem::take()");
+       }
+    };
+   
+   Context ctx;
+   
+   SimpleArray<State> state_buf;
+   SimpleArray<AsyncState *> async_buf;
+   
+   SimpleArray<ulen> failed_buf;
+   Fifo<ulen> failed_list;
+   
+   FdSem async_sem;
+   FdSem interrupt_sem;
+   bool async_first = false ;
+   
+  private:
+   
+   WaitResult waitAsync();
+   
+   WaitResult waitInterrupt();
+   
+  public:
+   
+   explicit Engine(ulen async_count);
+   
+   ~Engine();
+   
+   AsyncState ** getAsyncs() { return async_buf.getPtr(); }
+   
+   bool addWait(ulen index);
+   
+   bool delWait(ulen index);
+   
+   WaitResult wait(MSec timeout);
+   
+   void interrupt();
+ };
+
+WaitResult AsyncFileWait::Engine::waitAsync()
+ {
+  async_sem.take();
+  
+  struct io_event temp[1];
+  
+  int result=io_getevents(ctx,0,1,temp,NULL);
+  
+  if( result<=0 ) return Wait_error;
+  
+  AsyncState *async=static_cast<AsyncState *>(temp[0].data);
+  
+  async->complete(temp);
+  
+  return WaitResult(async->index);
+ }
+
+WaitResult AsyncFileWait::Engine::waitInterrupt()
+ {
+  interrupt_sem.take();
+  
+  return Wait_interrupt;
+ }
+
+AsyncFileWait::Engine::Engine(ulen async_count)
+ : ctx(async_count),
+   state_buf(async_count),
+   async_buf(async_count),
+   failed_buf(async_count),
+   failed_list(failed_buf.getPtr(),failed_buf.getLen())
+ {
+  for(ulen i=0; i<async_count ;i++) 
+    {
+     AsyncState *async=state_buf[i].getAsync();
+     
+     async->index=i;
+     
+     async_buf[i]=async;
+    }
+ }
+
+AsyncFileWait::Engine::~Engine()
+ {
+ }
+
+bool AsyncFileWait::Engine::addWait(ulen index)
+ {
+  if( index>=state_buf.getLen() || state_buf[index].status!=StatusReady ) return false;
+  
+  AsyncState *async=state_buf[index].getAsync();
+  
+  async->setEventFd(async_sem);
+  
+  if( async->submit(ctx) )
+    {
+     state_buf[index].status=StatusPending;
+    }
+  else
+    {
+     state_buf[index].status=StatusFailed;
+    
+     failed_list.put(index);
+    }
+  
+  return true;
+ }
+
+bool AsyncFileWait::Engine::delWait(ulen index)
+ {
+  if( index>=state_buf.getLen() || state_buf[index].status==StatusReady ) return false;
+  
+  state_buf[index].status=StatusReady;
+  
+  return true;
+ }
+
+WaitResult AsyncFileWait::Engine::wait(MSec timeout)
+ {
+  ulen index;
+  
+  if( failed_list.get(index) ) return WaitResult(index);
+
+  struct pollfd towait[2];
+    
+  towait[0].fd=async_sem;
+  towait[0].events=POLLIN;
+    
+  towait[1].fd=interrupt_sem;
+  towait[1].events=POLLIN;
+    
+  int result=poll(towait,2,+timeout);
+   
+  if( result==-1 ) return Wait_error;
+   
+  if( result==0 ) return Wait_timeout;
+   
+  if( async_first )
+    {
+     if( towait[0].revents&POLLIN )
+       {
+        async_first=false;
+         
+        return waitAsync();
+       }
+     
+     if( towait[1].revents&POLLIN )
+       {
+        return waitInterrupt();
+       }
+    }
+  else
+    {
+     if( towait[1].revents&POLLIN )
+       {
+        async_first=true;
+        
+        return waitInterrupt();
+       }
+    
+     if( towait[0].revents&POLLIN )
+       {
+        return waitAsync();
+       }
+    }
+  
+  return Wait_error;
+ }
+
+void AsyncFileWait::Engine::interrupt()
+ {
+  interrupt_sem.give();
  }
 
 /* struct AsyncFileWait */
 
-FileError AsyncFileWait::init(ulen /*async_count*/) noexcept
+FileError AsyncFileWait::init(ulen async_count) noexcept
  {
-  // TODO
-
-  return FileError_Ok;
- }
+  if( async_count>MaxAsyncs ) return FileError_BadLen;
   
+  SilentReportException report;
+  
+  try
+    {
+     obj=new Engine(async_count);
+     
+     asyncs=obj->getAsyncs();
+     
+     return FileError_Ok;
+    }
+  catch(CatchType)
+    {
+     return FileError_SysOverload;
+    }
+ }
+
 void AsyncFileWait::exit() noexcept
  {
-  // TODO
- }
+  delete Replace_null(obj);
   
-AltAsyncFile::Async AsyncFileWait::getAsync(ulen /*index*/) noexcept
- {
-  // TODO
+  asyncs=0;
+ }
 
-  return 0;
- }
-  
-bool AsyncFileWait::addWait(ulen /*index*/) noexcept
+bool AsyncFileWait::addWait(ulen index) noexcept
  {
-  // TODO
-
-  return false;
+  return obj->addWait(index);
  }
-  
-bool AsyncFileWait::delWait(ulen /*index*/) noexcept
+
+bool AsyncFileWait::delWait(ulen index) noexcept
  {
-  // TODO
-
-  return false;
+  return obj->delWait(index);
  }
-  
-WaitResult AsyncFileWait::wait(MSec /*timeout*/) noexcept
+
+auto AsyncFileWait::wait(MSec timeout) noexcept -> WaitResult
  {
-  // TODO
-
-  return Wait_error; 
+  return obj->wait(timeout);
  }
-  
-WaitResult AsyncFileWait::wait(TimeScope /*time_scope*/) noexcept
- {
-  // TODO
 
-  return Wait_error; 
- }
-  
 void AsyncFileWait::interrupt() noexcept
  {
-  // TODO
+  obj->interrupt();
  }
 
 } // namespace Sys

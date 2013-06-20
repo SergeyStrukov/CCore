@@ -37,7 +37,7 @@ struct SysData
   template <class T>
   T * getObj()
    {
-    static_assert( std::is_pod<T>::value ,"CCore::Sys::SysData::getObj<T>() : T must be pod");    
+    static_assert( std::is_pod<T>::value ,"CCore::Sys::SysData::getObj<T>() : T must be POD");    
     
     static_assert( sizeof (T) <= Len ,"CCore::Sys::SysData::getObj<T>() : T is too large");
     
