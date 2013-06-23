@@ -3,7 +3,7 @@
 //
 //  Project: CCore 1.02
 //
-//  Tag: Target/WIN32 
+//  Tag: HCore
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //

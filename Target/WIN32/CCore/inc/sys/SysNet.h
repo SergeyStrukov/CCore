@@ -134,9 +134,9 @@ struct AsyncUDPSocket
   
   struct InResult
    {
-    ErrorType error;
     Net::UDPoint src;
     ulen len;
+    ErrorType error;
    };
   
   struct StartInResult

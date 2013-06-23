@@ -384,17 +384,17 @@ auto AsyncUDPSocket::StartInbound(Type sockid,Async async,PtrLen<uint8> buf) noe
        {
         ret.pending=true;
         
-        ret.result.error=NoError;
         ret.result.src=Net::UDPoint();
         ret.result.len=0;
+        ret.result.error=NoError;
        }
      else
        {
         ret.pending=false;
         
-        ret.result.error=error;
         ret.result.src=Net::UDPoint();
         ret.result.len=0;
+        ret.result.error=error;
        }
     }
   else
@@ -403,16 +403,16 @@ auto AsyncUDPSocket::StartInbound(Type sockid,Async async,PtrLen<uint8> buf) noe
      
      if( ret_len>buf.len || async->address_len!=async->address.getLen() )
        {
-        ret.result.error=Error_Socket;
         ret.result.src=Net::UDPoint();
         ret.result.len=0;
+        ret.result.error=Error_Socket;
        }
      else
        {
         async->address.get(ret.result.src);
         
-        ret.result.error=NoError;
         ret.result.len=ret_len;
+        ret.result.error=NoError;
        }
     }
   
@@ -430,23 +430,23 @@ auto AsyncUDPSocket::CompleteInbound(Type sockid,Async async) noexcept -> InResu
     {
      if( ret_len>async->buf.len || async->address_len!=async->address.getLen() )
        {
-        ret.error=Error_Socket;
         ret.src=Net::UDPoint();
         ret.len=0;
+        ret.error=Error_Socket;
        }
      else
        {
         async->address.get(ret.src);
         
-        ret.error=NoError;
         ret.len=ret_len;
+        ret.error=NoError;
        }
     }
   else
     {
-     ret.error=WSAError();
      ret.src=Net::UDPoint();
      ret.len=0;
+     ret.error=WSAError();
     }
   
   return ret;
