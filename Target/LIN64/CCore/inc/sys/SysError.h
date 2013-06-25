@@ -27,7 +27,8 @@ enum ErrorType : int
  {
   NoError = 0,
     
-  Error_SysErrorFault = -1
+  Error_SysErrorFault = -1,
+  Error_Socket        = -2
  };
  
 /* private functions */ 

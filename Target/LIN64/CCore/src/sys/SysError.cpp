@@ -53,6 +53,7 @@ bool ErrorDesc::init(ErrorType error,PtrLen<char> buf) noexcept
   switch( error )
     {
      case Error_SysErrorFault : return set("System failed to report error");
+     case Error_Socket        : return set("System socket failure");
     }
   
 #if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE

@@ -45,6 +45,10 @@ struct FileSystem
    
   struct DirCursor 
    {
+    // private data
+    
+    void *dir;
+    
     // public
    
     char file_name[MaxPathLen]; // file name only
