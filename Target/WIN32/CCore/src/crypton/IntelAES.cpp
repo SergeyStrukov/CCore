@@ -31,7 +31,6 @@ bool DetectIntelAES()
   return cpuid.capableAES();  
  }
 
-
 void GuardIntelAESNotAvailable()
  {
   Printf(Exception,"CCore::Crypton::IntelAESBase::IntelAESBase() : Intel AES commands are not available");

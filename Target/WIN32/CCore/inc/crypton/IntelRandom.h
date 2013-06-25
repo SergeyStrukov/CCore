@@ -44,6 +44,8 @@ class IntelRandom : NoCopy
   
    IntelRandom() { GuardIntelRDRAND(); }
    
+   typedef uint32 UnitType;
+   
    uint32 next();
    
    uint8  next8()  { return uint8 (next()); }
