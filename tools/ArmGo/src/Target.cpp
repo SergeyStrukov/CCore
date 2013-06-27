@@ -200,7 +200,7 @@ NegMemTag UARTDev::putD(Word address,Word value)
 
 unsigned INTDev::GetHi(Word set)
  {
-  static_assert( Word(-1)==Quick::ScanUInt(-1) ,"Type mismatch");
+  static_assert( Word(-1)<=Quick::ScanUInt(-1) ,"Type mismatch");
   
   return Quick::ScanLSBit(set);
  }

@@ -15,7 +15,7 @@
 #include <CCore/inc/Print.h>
 
 #include <inc/Target.h>
-#include <inc/ArmCore.h>
+#include <inc/ARMCore.h>
 
 namespace App {
 

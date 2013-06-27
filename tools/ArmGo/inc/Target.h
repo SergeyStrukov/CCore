@@ -14,9 +14,9 @@
 #ifndef ARMGo_inc_Target_h
 #define ARMGo_inc_Target_h
 
-#include <inc/ArmBase.h>
+#include <inc/ARMBase.h>
 
-#include <CCore/inc/FIFO.h>
+#include <CCore/inc/Fifo.h>
 #include <CCore/inc/Print.h>
 
 namespace App {

@@ -123,6 +123,8 @@ OBJ_LIST = \
 ../test-obj/test1029.ScanAsyncFile.o \
 ../test-obj/test3001.LIN64.o \
 ../test-obj/test3002.SysError.o \
+../test-obj/test3003.IntelRandom.o \
+../test-obj/test3004.IntelAES.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -260,6 +262,8 @@ ASM_LIST = \
 ../test-obj/test1029.ScanAsyncFile.s \
 ../test-obj/test3001.LIN64.s \
 ../test-obj/test3002.SysError.s \
+../test-obj/test3003.IntelRandom.s \
+../test-obj/test3004.IntelAES.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -397,6 +401,8 @@ DEP_LIST = \
 ../test-obj/test1029.ScanAsyncFile.dep \
 ../test-obj/test3001.LIN64.dep \
 ../test-obj/test3002.SysError.dep \
+../test-obj/test3003.IntelRandom.dep \
+../test-obj/test3004.IntelAES.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -785,6 +791,12 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3002.SysError.o : ../../../Target/LIN64/CCore/test/test3002.SysError.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3003.IntelRandom.o : ../../../Target/LIN64/CCore/test/test3003.IntelRandom.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3004.IntelAES.o : ../../../Target/LIN64/CCore/test/test3004.IntelAES.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1191,6 +1203,12 @@ include $(RULES_FILE)
 ../test-obj/test3002.SysError.s : ../../../Target/LIN64/CCore/test/test3002.SysError.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3003.IntelRandom.s : ../../../Target/LIN64/CCore/test/test3003.IntelRandom.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test3004.IntelAES.s : ../../../Target/LIN64/CCore/test/test3004.IntelAES.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1594,6 +1612,12 @@ include $(RULES_FILE)
 
 ../test-obj/test3002.SysError.dep : ../../../Target/LIN64/CCore/test/test3002.SysError.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3002.SysError.o $< -MF $@
+
+../test-obj/test3003.IntelRandom.dep : ../../../Target/LIN64/CCore/test/test3003.IntelRandom.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3003.IntelRandom.o $< -MF $@
+
+../test-obj/test3004.IntelAES.dep : ../../../Target/LIN64/CCore/test/test3004.IntelAES.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3004.IntelAES.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@
