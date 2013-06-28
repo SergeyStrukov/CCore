@@ -1196,7 +1196,7 @@ class EventRecorder : public EventMetaInfo
        {
         void *ptr=PtrAdd(buf,off);
         EventPrefix *prefix=static_cast<EventPrefix *>(ptr);
-       
+        
         auto &desc=getEvent(prefix->id);
         
         func(*this,desc,ptr);

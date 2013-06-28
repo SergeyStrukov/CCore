@@ -156,8 +156,11 @@ class TaskEventHostType
     {
      public: 
       
-      StartStop(TaskEventHostType &,TaskEventRecorder *) 
+      StartStop(TaskEventHostType &,TaskEventRecorder *obj) 
        {
+        EventTypeIdNode::Register(*obj);
+      
+        EventIdNode::Register(*obj,TaskEventRecorder::RecordAlign);
        } 
     };
    
