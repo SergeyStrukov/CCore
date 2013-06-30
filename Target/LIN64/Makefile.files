@@ -85,6 +85,7 @@ obj/Init.o \
 obj/IntPrint.o \
 obj/IntScan.o \
 obj/Integer.o \
+obj/IntegerFastAlgo.o \
 obj/IntegerSlowAlgo.o \
 obj/IntelAES.o \
 obj/IntelCPUID.o \
@@ -335,6 +336,7 @@ obj/Init.s \
 obj/IntPrint.s \
 obj/IntScan.s \
 obj/Integer.s \
+obj/IntegerFastAlgo.s \
 obj/IntegerSlowAlgo.s \
 obj/IntelAES.s \
 obj/IntelCPUID.s \
@@ -585,6 +587,7 @@ obj/Init.dep \
 obj/IntPrint.dep \
 obj/IntScan.dep \
 obj/Integer.dep \
+obj/IntegerFastAlgo.dep \
 obj/IntegerSlowAlgo.dep \
 obj/IntelAES.dep \
 obj/IntelCPUID.dep \
@@ -749,6 +752,7 @@ obj/XPoint.dep \
 
 
 ASM_OBJ_LIST = \
+obj/IntegerFastAlgo.s.o \
 obj/IntelAES.s.o \
 obj/IntelCPUID.s.o \
 obj/IntelRandom.s.o \
@@ -1016,6 +1020,9 @@ obj/IntScan.o : ../../CCore/src/scanf/IntScan.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Integer.o : ../../CCore/src/math/Integer.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntegerFastAlgo.o : ../../Target/LIN64/CCore/src/math/IntegerFastAlgo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntegerSlowAlgo.o : ../../CCore/src/math/IntegerSlowAlgo.cpp
@@ -1761,6 +1768,9 @@ obj/IntScan.s : ../../CCore/src/scanf/IntScan.cpp
 obj/Integer.s : ../../CCore/src/math/Integer.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/IntegerFastAlgo.s : ../../Target/LIN64/CCore/src/math/IntegerFastAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/IntegerSlowAlgo.s : ../../CCore/src/math/IntegerSlowAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2504,6 +2514,9 @@ obj/IntScan.dep : ../../CCore/src/scanf/IntScan.cpp
 obj/Integer.dep : ../../CCore/src/math/Integer.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Integer.o $< -MF $@
 
+obj/IntegerFastAlgo.dep : ../../Target/LIN64/CCore/src/math/IntegerFastAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntegerFastAlgo.o $< -MF $@
+
 obj/IntegerSlowAlgo.dep : ../../CCore/src/math/IntegerSlowAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntegerSlowAlgo.o $< -MF $@
 
@@ -2988,6 +3001,9 @@ obj/XPoint.dep : ../../CCore/src/net/XPoint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/XPoint.o $< -MF $@
 
 
+
+obj/IntegerFastAlgo.s.o : ../../Target/LIN64/CCore/src/math/IntegerFastAlgo.s
+	$(AS) $(ASOPT) $< -o $@
 
 obj/IntelAES.s.o : ../../Target/LIN64/CCore/src/crypton/IntelAES.s
 	$(AS) $(ASOPT) $< -o $@

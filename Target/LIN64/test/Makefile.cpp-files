@@ -133,4 +133,5 @@
 ../../../Target/LIN64/CCore/test/test3001.LIN64.cpp
 ../../../Target/LIN64/CCore/test/test3003.IntelRandom.cpp
 ../../../Target/LIN64/CCore/test/test3002.SysError.cpp
+../../../Target/LIN64/CCore/test/test3005.IntegerFastAlgo.cpp
 ../../../Target/LIN64/CCore/test/test3004.IntelAES.cpp

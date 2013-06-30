@@ -222,6 +222,7 @@
 ../../HCore/CCore/src/MemPageHeap.cpp
 ../../HCore/CCore/src/print/PrintFile.cpp
 ../../HCore/CCore/src/print/PrintCon.cpp
+../../Target/LIN64/CCore/src/math/IntegerFastAlgo.cpp
 ../../Target/LIN64/CCore/src/PlanInit_CCore.cpp
 ../../Target/LIN64/CCore/src/crypton/IntelAES.cpp
 ../../Target/LIN64/CCore/src/crypton/IntelCPUID.cpp

@@ -1,3 +1,4 @@
+../../Target/LIN64/CCore/src/math/IntegerFastAlgo.s
 ../../Target/LIN64/CCore/src/crypton/IntelCPUID.s
 ../../Target/LIN64/CCore/src/crypton/IntelAES.s
 ../../Target/LIN64/CCore/src/crypton/IntelRandom.s

@@ -172,6 +172,8 @@ int main()
   //Testit<3003>().run();
   //Testit<3004>().run();
   
+  Testit<3005>().run();
+  
   Printf(Con,"\nPeak memory usage #;\n\n",MemPeak());
   
   DetachPacketBufs();
