@@ -126,6 +126,7 @@ OBJ_LIST = \
 ../test-obj/test3003.IntelRandom.o \
 ../test-obj/test3004.IntelAES.o \
 ../test-obj/test3005.IntegerFastAlgo.o \
+../test-obj/test3006.exec.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -266,6 +267,7 @@ ASM_LIST = \
 ../test-obj/test3003.IntelRandom.s \
 ../test-obj/test3004.IntelAES.s \
 ../test-obj/test3005.IntegerFastAlgo.s \
+../test-obj/test3006.exec.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -406,6 +408,7 @@ DEP_LIST = \
 ../test-obj/test3003.IntelRandom.dep \
 ../test-obj/test3004.IntelAES.dep \
 ../test-obj/test3005.IntegerFastAlgo.dep \
+../test-obj/test3006.exec.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -803,6 +806,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3005.IntegerFastAlgo.o : ../../../Target/LIN64/CCore/test/test3005.IntegerFastAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3006.exec.o : ../../../Target/LIN64/CCore/test/test3006.exec.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1218,6 +1224,9 @@ include $(RULES_FILE)
 ../test-obj/test3005.IntegerFastAlgo.s : ../../../Target/LIN64/CCore/test/test3005.IntegerFastAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3006.exec.s : ../../../Target/LIN64/CCore/test/test3006.exec.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1630,6 +1639,9 @@ include $(RULES_FILE)
 
 ../test-obj/test3005.IntegerFastAlgo.dep : ../../../Target/LIN64/CCore/test/test3005.IntegerFastAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3005.IntegerFastAlgo.o $< -MF $@
+
+../test-obj/test3006.exec.dep : ../../../Target/LIN64/CCore/test/test3006.exec.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3006.exec.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

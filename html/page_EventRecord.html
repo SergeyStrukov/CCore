@@ -409,9 +409,327 @@ The class with the same name exists on <b>XCore</b> also, but it is empty.
 
 <h2>Event types</h2>
 
+<p>
+Each event type must be a short POD structure with the following starting fields:
+</p>
+
+<pre>
+
+struct SomeEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+
+  ....
+ };
+
+</pre>
+
+<p>
+It must also have two methods: <b>init()</b> to initialize the object and <b>Register()</b> to register 
+a type meta-information. The total structure length must not exceed 256 bytes.
+</p>
+
+<pre>
+
+struct SomeEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+
+  ....
+
+  void init(EventTimeType time_,EventIdType id_,....)
+   {
+    time=time_;
+    id=id_;
+    
+    ....
+   }
+
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+</pre>
+
+<p>
+Additional arguments of the method <b>init()</b> must be provided in the method <b>add()</b> 
+during an event recording.
+</p>
+
+<p>
+For example, the type <b>EventControl</b> is implemented as following:
+</p>
+
+<pre>
+
+struct <span class="Att">EventControl</span>
+ {
+  EventTimeType time;
+  EventIdType id;
+  uint8 type;
+  
+  enum Type
+   {
+    Type_Start,
+    Type_Tick,
+    Type_Stop,
+    Type_End
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,Type type_)
+   {
+    time=time_;
+    id=id_;
+    
+    type=type_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &amp;(static_cast&lt;EventControl *&gt;(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &amp;(static_cast&lt;EventControl *&gt;(ptr)->id); }
+  
+  static void * Offset_type(void *ptr) { return &amp;(static_cast&lt;EventControl *&gt;(ptr)->type); }
+  
+  static void Register(EventMetaInfo &amp;info,EventMetaInfo::EventDesc &amp;desc);
+ };
+
+</pre>
+
+<p>
+And here is the method <b>Register()</b>:
+</p>
+
+<pre>
+
+void <span class="Att">EventControl::Register</span>(EventMetaInfo &amp;info,EventMetaInfo::EventDesc &amp;desc)
+ {
+  auto id_Type=info.addEnum_uint8("EventControlType")
+                   .addValueName(Type_Start,"Start",EventMarker_Push)
+                   .addValueName(Type_Tick,"Tick",EventMarker_Tick)
+                   .addValueName(Type_Stop,"Stop",EventMarker_Stop)
+                   .addValueName(Type_End,"End")
+                   .getId();
+  
+  auto id=info.addStruct("EventControl")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint8(id_Type,"type",Offset_type)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+
+</pre>
+
+<p>
+To register a type, you have to add a structure description to the given <b>EventMetaInfo</b> object
+and then complete the registration using the method <b>setStructId()</b> of the given 
+<b>EventMetaInfo::EventDesc</b> descriptor object as shown above. To add a structure description
+you do the following chain call:
+</p>
+
+<pre>
+
+  auto id=info.addStruct("Structure Name") // add a structure description
+
+              .addField....(....) // add a field description
+
+              ....
+
+              .getId(); // get the structure description id
+
+</pre>
+
+<p>
+To add a field description you will need the "field cast function". This function takes a pointer to
+the structure and returns the pointer to the correspondent field. In the example above 
+<b>Offset_time()</b>, <b>Offset_id()</b> and <b>Offset_type()</b> are such functions.
+You may use the following methods to add a field description:
+</p>
+
+<pre>
+
+StructDesc & addField_uint8(const String &name,OffsetFunc offset);
+StructDesc & addField_uint16(const String &name,OffsetFunc offset);
+StructDesc & addField_uint32(const String &name,OffsetFunc offset);
+
+StructDesc & addField_enum_uint8(EventIdType id,const String &name,OffsetFunc offset);
+StructDesc & addField_enum_uint16(EventIdType id,const String &name,OffsetFunc offset);
+StructDesc & addField_enum_uint32(EventIdType id,const String &name,OffsetFunc offset);
+      
+StructDesc & addField_struct(EventIdType id,const String &name,OffsetFunc offset);
+
+</pre>
+
+<p>
+The first three methods describe fields of types <b>uint8</b>, <b>uint16</b> and <b>uint32</b>.
+The next three describe "enum" fields. You have to provide an enum id.
+And the last one describes a "structure" field. You have to provide a structure id.
+You may use the <b>const char *</b> type to specify a name.
+</p>
+
+<p>
+"Enum" types are, in fact, the types <b>uint8</b>, <b>uint16</b> and <b>uint32</b>, but supplied
+with names for some values (and optionally event markers). To add an enum description
+you do the following chain call:
+</p>
+
+<pre>
+
+  auto id_Type=info.addEnum_uint8("Enum name") // add an enum description
+
+                   .addValueName(&lt;value&gt;,"name",&lt;event marker&gt;) // add a value description
+
+                   .addValueName(&lt;value&gt;,"name")
+
+                   ....
+
+                   .getId(); // get the enum description id
+
+</pre>
+
+<p>
+You may use the following methods to add an enum description:
+</p>
+
+<pre>
+
+EnumDesc &amp; addEnum_uint8(const String &amp;name);
+EnumDesc &amp; addEnum_uint16(const String &amp;name);
+EnumDesc &amp; addEnum_uint32(const String &amp;name);
+
+</pre>
+
+<p>
+The following method is used to add a value description:
+</p>
+
+<pre>
+
+EnumDesc &amp; addValueName(uint32 value,const String &amp;name,EventMarker marker=EventMarker_None);
+      
+</pre>
+
+<p>
+You may specify an "append" function for enum:
+</p>
+
+<pre>
+
+typedef void (*AppendFunc)(EnumDesc &desc);
+
+EnumDesc &amp; setAppendFunc(AppendFunc append_func);
+
+</pre>
+
+<p>
+This function is called for each enum description after the recording process is stopped to update
+value/name couples.
+</p>
+
+<p>
+In some cases you may want to use the same meta type to define multiple meta types.
+You must use for this the <b>EventTypeId</b> template: 
+</p>
+
+<pre>
+
+      .addField_enum_uint8( EventTypeId&lt;TypeReg&gt;::GetId() ,....)
+
+</pre>
+
+<p>
+The structure <b>TypeReg</b> provides a registration method:
+</p>
+
+<pre>
+
+struct TypeReg
+ {
+  static EventIdType Register(EventMetaInfo &info)
+   {
+    return info.addEnum_uint8("Enum name")
+
+               ....
+
+               .getId();
+   }
+ };
+
+</pre>
+
 <h2>EventControl</h2>
 
+<p>
+<b>EventControl</b> is a special control event. It has the field <b>type</b> with possible four 
+enum values:
+</p>
+
+<pre>
+
+enum <span class="Att">EventControl::Type</span>
+ {
+  Type_Start,
+  Type_Tick,
+  Type_Stop,
+  Type_End
+ };
+
+</pre>
+
+<p>
+The event <b>Start</b> is generated as the first event once the recording process is started.
+The event <b>Stop</b> is generated as the last event once the recording process is stopped.
+The event <b>End</b> is not generated, but added during the saving operation as the last event
+to mark the end of a binary stream.
+The event <b>Tick</b> is generated with some period during the recording process.
+</p>
+
 <h2>EventMarker</h2>
+
+<p>
+<b>EventMarker</b> may be assigned to an enum value. This marker can be used by event visualization
+tools to show a marker on this event. There is a standard list of marker glyphs.
+</p>
+
+<p>
+By convension, the marker from an enum field with a non-null markers is used to mark an event.
+The field with the name <b>type</b> is preffered over others.
+</p>
+
+<pre>
+
+enum <span class="Att">EventMarker</span>
+ {
+  EventMarker_None,
+  
+  EventMarker_Up,
+  EventMarker_Down,
+  
+  EventMarker_UpBlock,
+  EventMarker_DownBlock,
+  
+  EventMarker_UpUp,
+  EventMarker_UpPush,
+  EventMarker_UpUpPush,
+  
+  EventMarker_Push,
+  
+  EventMarker_Inc,
+  EventMarker_Dec,
+  
+  EventMarker_Wait,
+  EventMarker_Pass,
+  
+  EventMarker_Tick,
+  
+  EventMarker_Stop,
+  
+  EventMarker_Error
+ };
+
+</pre>
 
 <h2>Binary output format</h2>
 

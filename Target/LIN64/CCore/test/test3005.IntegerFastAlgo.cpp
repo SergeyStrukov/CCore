@@ -41,11 +41,11 @@ const char *const Testit<3005>::Name="Test3005 IntegerFastAlgo";
 template<>
 bool Testit<3005>::Main() 
  {
-  TestIntegerAlgo<Fast>().run(100);
+  TestIntegerAlgo<Fast>().run(1000);
   
-  TestIntegerAlgo2<Fast,Slow>().run(100);
+  TestIntegerAlgo2<Fast,Slow>().run(1000);
   
-  TestInteger<Fast>().run(100);
+  TestInteger<Fast>().run(1000);
   
   return true;
  }

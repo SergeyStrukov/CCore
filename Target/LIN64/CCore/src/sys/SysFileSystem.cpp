@@ -17,6 +17,11 @@
  
 #include <CCore/inc/sys/SysInternal.h>
 
+#include <CCore/inc/Exception.h>
+#include <CCore/inc/ElementPool.h>
+#include <CCore/inc/Array.h>
+#include <CCore/inc/CharProp.h>
+
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -24,6 +29,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <dirent.h>
+#include <spawn.h>
 
 #ifndef _DIRENT_HAVE_D_TYPE
 #error "Bad dirent"
@@ -158,6 +164,145 @@ FileError DeleteDirRecursive(StrLen dir_name)
   if( rmdir(dir_name.ptr)==-1 ) return MakeError(FileError_OpFault);
 
   return FileError_Ok;
+ }
+
+/* class StrPool */
+
+class StrPool : NoCopy
+ {
+   ElementPool pool;
+ 
+  public:
+ 
+   StrPool() : pool(4_KByte) {}
+   
+   ~StrPool() {}
+   
+   char * add(StrLen str)
+    {
+     auto buf=pool.createArray_raw<char>(LenAdd(str.len,1));
+     
+     str.copyTo(buf.ptr);
+     
+     buf.back(1)=0;
+     
+     return buf.ptr;
+    }
+   
+   char * add(StrLen str1,StrLen str2)
+    {
+     auto buf=pool.createArray_raw<char>(LenAdd(LenAdd(str1.len,str2.len),1));
+     
+     str1.copyTo(buf.ptr);
+     str2.copyTo(buf.ptr+str1.len);
+     
+     buf.back(1)=0;
+     
+     return buf.ptr;
+    }
+ };
+
+/* class StrList */
+
+class StrList : NoCopy
+ {
+   StrPool &pool;
+   DynArray<char *> list;
+   
+  public:
+  
+   explicit StrList(StrPool &pool_) : pool(pool_),list(DoReserve,100) {}
+   
+   ~StrList() {}
+   
+   void add(StrLen str)
+    {
+     list.append_copy(pool.add(str));
+    }
+   
+   void add(StrLen str1,StrLen str2)
+    {
+     list.append_copy(pool.add(str1,str2));
+    }
+   
+   char ** complete()
+    {
+     list.append_copy(0);
+     
+     return list.getPtr();
+    }
+   
+   void prepareArg(StrLen program,StrLen arg);
+   
+   static bool HasPrefix(StrLen str,StrLen prefix)
+    {
+     return str.len>=prefix.len && prefix.equal(str.ptr) ;
+    }
+   
+   void prepareEnv(StrLen dir);
+ };
+
+void StrList::prepareArg(StrLen program,StrLen arg)
+ {
+  add(program);
+  
+  while( +arg )
+    {
+     for(; +arg && CharIsSpace(*arg) ;++arg);
+     
+     if( !arg ) return;
+     
+     if( *arg=='\'' )
+       {
+        ++arg;
+        
+        StrLen cur=arg;
+        
+        for(; +cur && *cur!='\'' ;++cur);
+        
+        add(arg.prefix(cur));
+        
+        arg=cur;
+        
+        if( +arg ) ++arg;
+       }
+     else if( *arg=='"' )
+       {
+        ++arg;
+       
+        StrLen cur=arg;
+       
+        for(; +cur && *cur!='"' ;++cur);
+       
+        add(arg.prefix(cur));
+       
+        arg=cur;
+       
+        if( +arg ) ++arg;
+       }
+     else
+       {
+        StrLen cur=arg;
+       
+        for(; +cur && !CharIsSpace(*cur) ;++cur);
+        
+        add(arg.prefix(cur));
+        
+        arg=cur;
+       }
+    }
+ }
+
+void StrList::prepareEnv(StrLen dir)
+ {
+  StrLen prefix("PWD=");
+  
+  add(prefix,dir);
+  
+  for(char **env=environ; char *str=*env ;env++)
+    {
+     if( !HasPrefix(str,prefix) ) add(str);
+    }
  }
 
 } // namespace Private_SysFileSystem
@@ -409,11 +554,36 @@ FileError FileSystem::remove(StrLen path) noexcept
     }
  }
  
-FileError FileSystem::exec(StrLen /*dir*/,StrLen /*program*/,StrLen /*arg*/) noexcept
+FileError FileSystem::exec(StrLen dir,StrLen program,StrLen arg) noexcept
  {
-  // TODO
-
-  return FileError_Ok;
+  try
+    {
+     SilentReportException report;
+     
+     StrPool pool;
+     StrList argc(pool);
+     StrList envp(pool);
+     
+     const char *path=pool.add(program);
+     
+     argc.prepareArg(program,arg);
+     
+     char temp[MaxPathLen+1];
+     
+     auto result=pathOf(dir,temp);
+     
+     if( result.error ) return result.error;
+     
+     envp.prepareEnv(result.path);
+     
+     if( posix_spawn(0,path,0,0,argc.complete(),envp.complete())!=0 ) return FileError_OpFault;
+     
+     return FileError_Ok;
+    }
+  catch(CatchType)
+    {
+     return FileError_SysOverload;
+    }
  }
  
 auto FileSystem::pathOf(StrLen path_,char buf[MaxPathLen+1]) noexcept -> PathOfResult
