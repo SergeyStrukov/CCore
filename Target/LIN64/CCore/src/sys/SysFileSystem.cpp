@@ -234,11 +234,6 @@ class StrList : NoCopy
    
    void prepareArg(StrLen program,StrLen arg);
    
-   static bool HasPrefix(StrLen str,StrLen prefix)
-    {
-     return str.len>=prefix.len && prefix.equal(str.ptr) ;
-    }
-   
    void prepareEnv(StrLen dir);
  };
 
