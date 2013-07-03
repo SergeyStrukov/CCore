@@ -212,6 +212,12 @@ struct PtrLen
   template <class S>
   bool equal(PtrLen<S> src) const { return len==src.len && equal(src.ptr) ; }
   
+  template <class S>
+  bool hasPrefix(PtrLen<S> src) const { return len>=src.len && src.equal(ptr) ; }
+  
+  template <class S>
+  bool hasSuffix(PtrLen<S> src) const { return len>=src.len && src.equal(ptr+(len-src.len)) ; }
+  
   // begin()/end() support
   
   bool operator != (PtrLen<T> end) const { return len!=end.len; }
