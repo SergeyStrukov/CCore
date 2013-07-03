@@ -191,7 +191,7 @@ class StrPool : NoCopy
    
    char * add(StrLen str1,StrLen str2)
     {
-     auto buf=pool.createArray_raw<char>(LenAdd(LenAdd(str1.len,str2.len),1));
+     auto buf=pool.createArray_raw<char>(LenAdd(str1.len,str2.len,1));
      
      str1.copyTo(buf.ptr);
      str2.copyTo(buf.ptr+str1.len);
@@ -299,9 +299,11 @@ void StrList::prepareEnv(StrLen dir)
   
   add(prefix,dir);
   
-  for(char **env=environ; char *str=*env ;env++)
+  for(char **env=environ; char *str_=*env ;env++)
     {
-     if( !HasPrefix(str,prefix) ) add(str);
+     StrLen str(str_);
+    
+     if( !str.hasPrefix(prefix) ) add(str);
     }
  }
 

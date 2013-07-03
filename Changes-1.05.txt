@@ -31,6 +31,14 @@ CCore/inc/gadget/Meta.h
 
   UnRef<T> and UnConst<T> are added
 
+CCore/inc/gadget/PtrLen.h
+
+  hasPrefix() and hasSuffix() methods are added
+
+CCore/inc/gadget/Len.h
+
+  LenAdd() with many arguments is added
+
 --- New features -----
 
 WIN32 IntelRandom
