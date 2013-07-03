@@ -44,6 +44,12 @@ inline ulen LenAdd(ulen len,ulen extra_len)
   
   return ret;
  }
+
+template <class ... TT>
+ulen LenAdd(ulen len1,ulen len2,ulen len3,TT ... extra_len)
+ {
+  return LenAdd(len1,LenAdd(len2,len3,extra_len...));
+ }
  
 void GuardLenFailed(ulen len,ulen maxlen); 
  
