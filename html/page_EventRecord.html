@@ -39,7 +39,7 @@ with high-precision time-stamp and event id. An event may also contain some addi
 
 <p>
 Event recorder is efficient, event record operation takes only a small number of CPU clocks.
-On <b>XCore</b> targets recoring is permitted in any context, including interrupt context.
+On <b>XCore</b> targets recording is permitted in any context, including interrupt context.
 Once recording if finished, you can save recorded data in a binary form and transport it to a host
 machine. Binary representation contains meta-information, which helps display events in a user-friendly
 fashion. The data format is standard. <b>CCore</b> has a prototype tool <b>EventView</b> to display and work
@@ -625,7 +625,8 @@ EnumDesc &amp; setAppendFunc(AppendFunc append_func);
 
 <p>
 This function is called for each enum description after the recording process is stopped to update
-value/name couples.
+value/name couples. There is a helper class <b>EventEnumValue</b>, which 
+implements a run-time enum name allocation.
 </p>
 
 <p>
@@ -658,6 +659,24 @@ struct TypeReg
  };
 
 </pre>
+
+<p>
+You may assign a classid to the event, using the method <b>classId()</b>:
+</p>
+
+<pre>
+
+  desc.classId&lt;AnotherEvent&gt;();
+
+  desc.setStructId(info,id);
+
+</pre>
+
+<p>
+An event descriptor is assigned the event classid, equals the event id by default.
+But you may assign a different classid. This value is used to group multiple event types
+into a group to help a visualization of events of related types.
+</p>
 
 <h2>EventControl</h2>
 
@@ -694,8 +713,8 @@ tools to show a marker on this event. There is a standard list of marker glyphs.
 </p>
 
 <p>
-By convension, the marker from an enum field with a non-null markers is used to mark an event.
-The field with the name <b>type</b> is preffered over others.
+By convention, the marker from an enum field with a non-null markers is used to mark an event.
+The field with the name <b>type</b> is preferred over others.
 </p>
 
 <pre>
@@ -731,7 +750,195 @@ enum <span class="Att">EventMarker</span>
 
 </pre>
 
+<h2>EventEnumValue</h2>
+
+<p>
+The class <b>EventEnumValue</b> can be used to update a value/name couple list of an enum at run-time.
+</p>
+
+<pre>
+
+#if 0
+
+struct T
+ {
+  typedef uint16 ValueType;
+  
+  static const ValueType Base = 10 ;
+  static const ValueType Lim = 100 ;
+ };
+
+#endif
+
+template &lt;class T&gt;
+class <span class="Att">EventEnumValue</span>
+ {
+   ....
+
+  public: 
+   
+   explicit EventEnumValue(TextLabel name);
+   
+   operator ValueType() const;
+   
+   template &lt;class Desc&gt;
+   static void Append(Desc &desc);
+ };
+
+</pre>
+
+<p>
+You must declare a structure with some static members first. The members are: <b>ValueType</b>,
+<b>Base</b> and <b>Lim</b>. A value range from <b>Base</b> to <b>Lim</b> can be used to allocate
+a value with an assigned name. To allocate a value simply create an instance of the type
+<b>EventEnumValue&lt;T&gt;</b>. Constructor takes a <b>TextLabel</b> argument to specify the value name.
+The static method <b>Append</b> must be used as the append function when registering the 
+correspondent enum meta-type.
+</p>
+
 <h2>Binary output format</h2>
+
+<p>
+Binary output uses the big-endian byte order to represent base types (<b>uint8, uint16, uint32, uint64</b>).
+The following type representation is used to encode the meta-information. 
+</p>
+
+<pre>
+
+enum Kind : uint8
+ {
+  Uint8,
+  Uint16,
+  Uint32,
+     
+  enum_Uint8,
+  enum_Uint16,
+  enum_Uint32,
+     
+  struct
+ };
+
+enum Marker : uint8
+ {
+  None,
+  
+  Up,
+  Down,
+  
+  UpBlock,
+  DownBlock,
+  
+  UpUp,
+  UpPush,
+  UpUpPush,
+  
+  Push,
+  
+  Inc,
+  Dec,
+  
+  Wait,
+  Pass,
+  
+  Tick,
+  
+  Stop,
+  
+  Error
+ };
+
+type String
+ {
+  uint32 len;
+  uint8 text[len];
+ };
+
+type List&lt;T&gt;
+ {
+  uint32 len;
+  T items[len];
+ };
+
+type Value
+ {
+  uint32 value;
+  String name;
+  Marker marker;
+ };
+
+type Enum
+ {
+  Kind kind;
+  String name;
+  List&lt;Value&gt; values;
+ };
+
+type Field
+ {
+  Kind kind;
+  uint16 id; // id of enum or struct
+  String name;
+ };
+
+type Struct
+ {
+  String name;
+  List&lt;Field&gt; fields;
+ };
+
+type Event
+ {
+  uint32 struct_id;
+  uint32 class_id; // event id 
+  uint32 save_len; // save length of an event record
+ };
+
+type MetaInfo
+ {
+  uint64 time_freq;
+  List&lt;Enum&gt; enums;
+  List&lt;Struct&gt; structs;
+  List&lt;Event&gt; events;
+ };
+
+</pre>
+
+<p>
+An item id is the index in the correspondent item list.
+</p>
+
+<p>
+<b>time_freq</b> may be zero. In this case time-stamp frequency is unknown and should be derived 
+from tick events.
+</p>
+
+<p>
+A binary output starts from the meta-information and followed by event records. The last record
+is the record of the <b>EventControl</b> event with the type equals <b>End</b>.
+Each event record starts from two fields:
+</p>
+
+<pre>
+
+type RecordPrefix
+ {
+  uint32 time;
+  uint16 id;
+ };
+
+</pre>
+
+<p>
+You may parse an event record using the event id. The rest of the event record is the list of fields
+of the correspondent structure (except first two). You may use also the <b>save_len</b> field
+of the event meta-info.
+</p>
+
+<p>
+Time-stamp is represented using the <b>uint32</b>. As long as a periodic tick is present in the record
+with enough frequency you always may restore the extended time-stamp by the differentiation and the
+following reaccumulation of time stamps in a variable with higher value range. 
+</p>
 
 </body>
 
