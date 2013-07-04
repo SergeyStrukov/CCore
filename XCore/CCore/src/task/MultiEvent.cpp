@@ -57,8 +57,8 @@ void MultiEventEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc
  {
   auto id_Type=info.addEnum_uint8("MultiEventEventTaskType")
                    .addValueName(ToTask,"ToTask",EventMarker_UpPush)
-                   .addValueName(Block,"Block",EventMarker_DownBlock)
                    .addValueName(Consume,"Consume",EventMarker_Down)
+                   .addValueName(Block,"Block",EventMarker_DownBlock)
                    .getId();
   
   auto id=info.addStruct("MultiEventEventTask")

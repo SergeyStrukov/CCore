@@ -678,33 +678,6 @@ But you may assign a different classid. This value is used to group multiple eve
 into a group to help a visualization of events of related types.
 </p>
 
-<h2>EventControl</h2>
-
-<p>
-<b>EventControl</b> is a special control event. It has the field <b>type</b> with possible four 
-enum values:
-</p>
-
-<pre>
-
-enum <span class="Att">EventControl::Type</span>
- {
-  Type_Start,
-  Type_Tick,
-  Type_Stop,
-  Type_End
- };
-
-</pre>
-
-<p>
-The event <b>Start</b> is generated as the first event once the recording process is started.
-The event <b>Stop</b> is generated as the last event once the recording process is stopped.
-The event <b>End</b> is not generated, but added during the saving operation as the last event
-to mark the end of a binary stream.
-The event <b>Tick</b> is generated with some period during the recording process.
-</p>
-
 <h2>EventMarker</h2>
 
 <p>
@@ -750,6 +723,45 @@ enum <span class="Att">EventMarker</span>
 
 </pre>
 
+<h2>EventControl</h2>
+
+<p>
+<b>EventControl</b> is a special control event. It has the field <b>type</b> with possible four 
+enum values:
+</p>
+
+<pre>
+
+enum <span class="Att">EventControl::Type</span>
+ {
+  Type_Start,
+  Type_Tick,
+  Type_Stop,
+  Type_End
+ };
+
+</pre>
+
+<p>
+The event <b>Start</b> is generated as the first event once the recording process is started.
+The correspondent marker is <b>Push</b>.
+</p>
+
+<p>
+The event <b>Tick</b> is generated with some period during the recording process.
+The correspondent marker is <b>Tick</b>.
+</p>
+
+<p>
+The event <b>Stop</b> is generated as the last event once the recording process is stopped.
+The correspondent marker is <b>Stop</b>.
+</p>
+
+<p>
+The event <b>End</b> is not generated, but added during the saving operation as the last event
+to mark the end of the binary stream.
+</p>
+
 <h2>EventEnumValue</h2>
 
 <p>
@@ -766,6 +778,7 @@ struct T
   
   static const ValueType Base = 10 ;
   static const ValueType Lim = 100 ;
+  static const EventMarker Marker = EventMarker_None ;
  };
 
 #endif
@@ -793,7 +806,7 @@ You must declare a structure with some static members first. The members are: <b
 a value with an assigned name. To allocate a value simply create an instance of the type
 <b>EventEnumValue&lt;T&gt;</b>. Constructor takes a <b>TextLabel</b> argument to specify the value name.
 The static method <b>Append</b> must be used as the append function when registering the 
-correspondent enum meta-type.
+correspondent enum meta-type. <b>T::Marker</b> is used when appending allocated values.
 </p>
 
 <h2>Binary output format</h2>

@@ -126,6 +126,7 @@ struct Value
   
   static const ValueType Base = 10 ;
   static const ValueType Lim = 100 ;
+  static const EventMarker Marker = EventMarker_None ;
  };
 
 #endif

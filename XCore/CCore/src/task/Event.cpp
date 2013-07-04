@@ -35,7 +35,7 @@ EventIdType EventNumber::Register(EventMetaInfo &info)
 void EventEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("EventEventType")
-                   .addValueName(Trigger,"Trigger")
+                   .addValueName(Trigger,"Trigger",EventMarker_Up)
                    .getId();
   
   auto id=info.addStruct("EventEvent")
@@ -53,9 +53,9 @@ void EventEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
 void EventEvent_task::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
  {
   auto id_Type=info.addEnum_uint8("EventEventTaskType")
-                   .addValueName(ToTask,"ToTask")
-                   .addValueName(Consume,"Consume")
-                   .addValueName(Block,"Block")
+                   .addValueName(ToTask,"ToTask",EventMarker_UpPush)
+                   .addValueName(Consume,"Consume",EventMarker_Down)
+                   .addValueName(Block,"Block",EventMarker_DownBlock)
                    .getId();
   
   auto id=info.addStruct("EventEventTask")

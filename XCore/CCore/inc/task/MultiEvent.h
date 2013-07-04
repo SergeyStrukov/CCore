@@ -99,8 +99,8 @@ struct MultiEventEvent_task
   enum Type : uint8
    {
     ToTask,
-    Block,
-    Consume
+    Consume,
+    Block
    };
   
   void init(EventTimeType time_,EventIdType id_,uint16 task_,uint16 mevent_,Type type_,ulen index_)

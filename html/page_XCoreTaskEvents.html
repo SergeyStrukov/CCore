@@ -39,12 +39,12 @@ Task switch events are generated when task switch occurs or interupt occurs. Tas
 an enum value of the <b>TaskNumber</b> type. The name, given to the task, is also
 assigned to the correspondent task number. Two special value: <b>EnterInt</b> and <b>LeaveInt</b>, are used
 to designate entry of the interrupt context and exit of the interrupt context.
-Task switches generates events of the <b>TaskSwitchEvent</b> type. 
+Task switch generates an event of the <b>TaskSwitchEvent</b> type. 
 </p>
 
 <pre>
 
-struct <span class="Att">TaskSwitchEvent</span>
+struct <span class="Att">TaskSwitchEvent</span> // meta-named as TaskSwitch
  {
   EventTimeType time;
   EventIdType id;
@@ -55,7 +55,8 @@ struct <span class="Att">TaskSwitchEvent</span>
 </pre>
 
 <p>
-<b>task</b> is the number of the task, which become active.
+<b>task</b> is the number of the task, which become active. The correspondent marker is
+<b>Up</b> for <b>EnterInt</b>, <b>Down</b> for <b>LeaveInt</b> and <b>Push</b> for tasks.
 </p>
 
 <h2>Mutex events</h2>
@@ -67,7 +68,7 @@ assigned to the correspondent mutex number. Mutex generates events of the <b>Mut
 
 <pre>
 
-struct <span class="Att">MutexEvent</span>
+struct <span class="Att">MutexEvent</span> // meta-named as MutexEvent
  {
   EventTimeType time;
   EventIdType id;
@@ -101,33 +102,216 @@ struct <span class="Att">MutexEvent</span>
 </p>
 
 <p>
-<b>Lock</b> is generated when the mutex is locked by the task. 
+<b>Lock</b> is generated when the task locks the mutex. 
 The correspondent maker is <b>Up</b>.
 </p>
 
 <p>
-<b>Unlock</b> is generated when the mutex is released by the task. 
+<b>Unlock</b> is generated when the task unlocks the mutex. 
 The correspondent maker is <b>Down</b>.
 </p>
 
 <p>
-<b>IncLock</b> is generated when the task increments the lock count of the mutex. 
+<b>IncLock</b> is generated when the task increments the lock count of the mutex, 
+which is already locked by the task. 
 The correspondent maker is <b>Inc</b>.
 </p>
 
 <p>
-<b>DecLock</b> is generated when the task decrements the lock count of the mutex.
+<b>DecLock</b> is generated when the task decrements the lock count of the mutex,
+which is remaning locked by the task. 
 The correspondent maker is <b>Dec</b>.
 </p>
 
 <p>
-<b>Block</b> is generated when the task is blocked on the mutex.
+<b>Block</b> is generated when the task becomes blocked by the mutex, which is already locked
+by another task.
 The correspondent maker is <b>UpBlock</b>.
 </p>
 
 <h2>Sem events</h2>
 
+<p>
+Semaphore is assigned an enum value of the <b>SemNumber</b> type. The name, given to the semaphore, is also
+assigned to the correspondent semaphore number. Semaphore generates events of the <b>SemEvent</b> type
+and the <b>SemEvent_task</b> type. 
+</p>
+
+<pre>
+
+struct <span class="Att">SemEvent</span> // meta-named as SemEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 sem;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    ToTaskList,
+    Give,
+    GiveMany
+   };
+ };
+
+</pre>
+
+<p>
+<b>sem</b> is a sem number.
+</p>
+
+<p>
+<b>type</b> is an event type. There are three event types.
+</p>
+
+<p>
+<b>ToTaskList</b> is generated when a group of tasks being released by the <b>give_many()</b> operation.
+The correspondent marker is <b>UpUpPush</b>.
+</p>
+
+<p>
+<b>Give</b> is generated when the semaphore being given.
+The correspondent marker is <b>Up</b>.
+</p>
+
+<p>
+<b>GiveMany</b> is generated when the semaphore being given many times.
+The correspondent marker is <b>UpUp</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">SemEvent_task</span> // meta-named as SemEventTask
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 task;
+  uint16 sem;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    ToTask, 
+    Take,    
+    Block  
+   };
+ };
+
+</pre>
+
+<p>
+<b>task</b> is a task number.
+</p>
+
+<p>
+<b>sem</b> is a semaphore number.
+</p>
+
+<p>
+<b>type</b> is an event type. There are three event types.
+</p>
+
+<p>
+<b>ToTask</b> is generated when the task being released by the semaphore, which being given by another task
+or interrupt. 
+The correspondent marker is <b>UpPush</b>.
+</p>
+
+<p>                                    
+<b>Take</b> is generated when the task takes the semaphore. 
+The correspondent marker is <b>Down</b>.
+</p>
+
+<p>
+<b>Block</b> is generated when the task becomes blocked by the empty semaphore. 
+The correspondent marker is <b>DownBlock</b>.
+</p>
+
 <h2>Event events</h2>
+
+<p>
+Event is assigned an enum value of the <b>EventNumber</b> type. The name, given to the event, is also
+assigned to the correspondent event number. Event generates events of the <b>EventEvent</b> type
+and the <b>EventEvent_task</b> type. 
+</p>
+
+<pre>
+
+struct <span class="Att">EventEvent</span>
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 event;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    Trigger
+   };
+ };
+
+</pre>
+
+<p>
+<b>event</b> is an event number.
+</p>
+
+<p>
+<b>type</b> is an event type. There is only one event type.
+</p>
+
+<p>
+<b>Trigger</b> is generated when the event being triggered.
+</p>
+
+<pre>
+
+struct <span class="Att">EventEvent_task</span>
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint16 task;
+  uint16 event;
+  uint8 type;
+  
+  enum Type : uint8
+   {
+    ToTask,
+    Consume,
+    Block
+   };
+ };
+
+</pre>
+
+<p>
+<b>task</b> is a task number.
+</p>
+
+<p>
+<b>event</b> is an event number.
+</p>
+
+<p>
+<b>type</b> is an event type. There are three event types.
+</p>
+
+<p>
+<b>ToTask</b> is generated when the task being released by the event, which being triggered by another task
+or interrupt.
+</p>
+
+<p>
+<b>Consume</b> is generated when the task consumes the event.
+</p>
+
+<p>
+<b>Block</b> is generated when the task becomes blocked by the empty event.
+</p>
 
 <h2>MultiSem events</h2>
 
