@@ -99,8 +99,8 @@ struct MultiSemEvent_task
   enum Type : uint8
    {
     ToTask,
-    Block,
-    Take
+    Take,
+    Block
    };
   
   void init(EventTimeType time_,EventIdType id_,uint16 task_,uint16 msem_,Type type_,ulen index_)
