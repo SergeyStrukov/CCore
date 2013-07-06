@@ -1,0 +1,81 @@
+<!--
+/* page_NanoIPDeviceEvents.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.05
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> NanoIPDevice events</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>NanoIPDevice events</h2>
+
+<p>
+<b>NanoIPDevice</b> generates events of the type <b>NetEvent</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">NetEvent</span> // meta-named as NetEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ip_event;
+ };
+
+</pre>
+
+<p>
+<b>ip_event</b> is an enum, describing the event.
+</p>
+
+<pre>
+
+enum <span class="Att">IPEvent</span> : uint8
+ {
+  IPTx_ARP,                  // "IP Tx ARP"             Up
+  IPTx_IP,                   // "IP Tx IP"              Up
+  IPTx_UDP,                  // "IP Tx UDP"             Up
+  
+  IPRx_ARP,                  // "IP Rx ARP"             Down
+  IPRx_IP,                   // "IP Rx IP"              Down
+  IPRx_UDP,                  // "IP Rx UDP"             Down
+  
+  IPTx_BadPacketLen,         // "IP Tx bad packet len"  UpBlock
+  IPTx_TimeoutDrop,          // "IP Tx timeout drop"    UpBlock
+  IPTx_ARP_Missing,          // "IP Tx ARP missing"     UpBlock
+  IPTx_ARP_Drop,             // "IP Tx ARP drop"        UpBlock
+  IPTx_Drop,                 // "IP Tx drop"            UpBlock
+  
+  IPRx_BadPacket,            // "IP Rx bad packet"      DownBlock
+  IPRx_Drop,                 // "IP Rx drop"            DownBlock
+  IPRx_UDP_NoPort,           // "IP Rx UDP no port"     DownBlock
+  
+  IPEventLim
+ };
+
+</pre>
+
+</body>
+
+</html>
+

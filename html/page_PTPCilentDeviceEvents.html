@@ -1,0 +1,113 @@
+<!--
+/* page_PTPClientDeviceEvents.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.05
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> PTP ClientDevice events</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>PTP ClientDevice events</h2>
+
+<p>
+<a href="page_PTP.html#ClientDevice">PTP ClientDevice</a> generates protocol events of the following types:
+<b>ClientProtoEvent</b> and <b>ClientProtoEvent_slot</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">ClientProtoEvent</span> // meta-named as PTPClientEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+ };
+
+</pre>
+
+<p>
+<b>ev</b> is en event type.
+</p>
+
+<pre>
+
+struct <span class="Att">ClientProtoEvent_slot</span> // meta-named as PTPClientEventSlot 
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+  uint32 slot;
+ };
+
+</pre>
+
+<p>
+<b>ev</b> is en event type.
+</p>
+
+<p>
+<b>slot</b> is a slot number.
+</p>
+
+<p>
+Event type is represented by the following enum:
+</p>
+
+<pre>
+
+enum <span class="Att">ClientEvent</span> : uint8
+ {
+  ClientEvent_Trans,         // "Trans"         UpPush
+  ClientEvent_TransDone,     // "Trans done"    Stop
+  
+  ClientEvent_BadInfoLen,    // "Bad info len"  Error
+  ClientEvent_Timeout,       // "Timeout"       Pass
+  ClientEvent_Cancel,        // "Cancel"        Pass
+  ClientEvent_Abort,         // "Abort"         Pass
+  
+  ClientEvent_CALL,          // "-&gt; CALL"       Up
+  ClientEvent_RECALL,        // "-&gt; RECALL"     Up
+  ClientEvent_ACK,           // "-&gt; ACK"        Up
+  ClientEvent_SENDRET,       // "-&gt; SENDRET"    Up
+  
+  ClientEvent_RET,           // "&lt;- RET"        Down
+  ClientEvent_NOINFO,        // "&lt;- NOINFO"     Down
+  ClientEvent_RERET,         // "&lt;- RERET"      Down
+  ClientEvent_CANCEL,        // "&lt;- CANCEL"     Down
+  
+  ClientEvent_NoSlot,        // "No slot"       DownBlock
+  ClientEvent_NoPacket,      // "No packet"     Error
+  
+  ClientEvent_BadInbound,    // "Bad inbound"   Error
+  ClientEvent_BadOutbound,   // "Bad outbound"  Error
+ 
+  ClientEventLim
+ };
+
+</pre>
+
+</body>
+
+</html>
+

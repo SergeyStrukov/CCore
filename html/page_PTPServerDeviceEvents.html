@@ -1,0 +1,117 @@
+<!--
+/* page_PTPServerDeviceEvents.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.05
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> PTP ServerDevice events</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>PTP ServerDevice events</h2>
+
+<p>
+<a href="page_PTP.html#ServerDevice">PTP ServerDevice</a> generates protocol events of the following types:
+<b>ServerProtoEvent</b> and <b>ServerProtoEvent_slot</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">ServerProtoEvent</span> // meta-named as PTPServerEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+ };
+
+</pre>
+
+<p>
+<b>ev</b> is en event type.
+</p>
+
+<pre>
+
+struct <span class="Att">ServerProtoEvent_slot</span> // meta-named as PTPServerEventSlot
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+  uint32 slot;
+ };
+
+</pre>
+
+<p>
+<b>ev</b> is en event type.
+</p>
+
+<p>
+<b>slot</b> is a slot number.
+</p>
+
+<p>
+Event type is represented by the following enum:
+</p>
+
+<pre>
+
+enum <span class="Att">ServerEvent</span> : uint8
+ {
+  ServerEvent_Trans,         // "Trans"          Push
+  ServerEvent_TransDone,     // "Trans done"     Stop
+  
+  ServerEvent_Timeout,       // "Timeout"        Pass
+  ServerEvent_Cancel,        // "Cancel"         Pass
+  ServerEvent_ClientCancel,  // "Client cancel"  Pass
+  ServerEvent_Abort,         // "Abort"          Pass
+  
+  ServerEvent_CALL,          // "&lt;- CALL"        Down
+  ServerEvent_RECALL,        // "&lt;- RECALL"      Down
+  ServerEvent_SENDRET,       // "&lt;- SENDRET"     Down
+  ServerEvent_ACK,           // "&lt;- ACK"         Down
+  
+  ServerEvent_RET,           // "-&gt; RET"         Up
+  ServerEvent_CANCEL,        // "-&gt; CANCEL"      Up
+  ServerEvent_NOINFO,        // "-&gt; NOINFO"      Up
+  ServerEvent_RERET,         // "-&gt; RERET"       Up
+  
+  ServerEvent_BadTransId,    // "Bad TransId"    Error
+
+  ServerEvent_NoSlot,        // "No slot"        Error
+  ServerEvent_NoSlotCancel,  // "No slot cancel" Error
+  ServerEvent_NoFreeSlot,    // "No free slot"   DownBlock
+  ServerEvent_NoPacket,      // "No packet"      Error
+  
+  ServerEvent_BadInbound,    // "Bad inbound"    Error
+  ServerEvent_BadOutbound,   // "Bad outbound"   Error
+  
+  ServerEventLim
+ };
+
+</pre>
+
+</body>
+
+</html>
+

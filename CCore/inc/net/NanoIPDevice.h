@@ -79,7 +79,7 @@ class NanoUDPMultipointDevice;
 
 /* enum IPEvent */ 
 
-enum IPEvent
+enum IPEvent : uint8
  {
   IPTx_ARP,
   IPTx_IP,
