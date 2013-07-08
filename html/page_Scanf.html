@@ -1,0 +1,62 @@
+<!--
+/* page_Scanf.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.05
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Scanning</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Scanning</h2>
+
+<p class="Files">Files <b>CCore/inc/Scanf.h</b> <b>CCore/src/Scanf.cpp</b></p>
+
+<p class="Files">Subfolders <b>CCore/inc/scanf</b> <b>CCore/src/scanf</b></p>
+
+<p>
+Scanning is a process, inverse to the printing. I.g. scanning is a creation of an object value from 
+a sequence of characters. There are three actors in a scanning process: the object, the input device and
+scannig options. The input device provides a character sequence, scanning options determines how 
+the object value is encoded. The type of the object is responsible for the scanning implementation.
+There are default implementations for integral and string types.
+</p>
+
+<h3>Scanning functions</h3>
+
+<p>
+Scanning is performed with the following scanning functions:
+</p>
+
+<pre>
+
+template &lt;class S,class ... TT&gt;
+void <span class="Att">Scanf</span>(S &amp;&amp;inp,const char *format,TT &amp;&amp; ... tt) CCORE_NOINLINE ;
+
+template &lt;class S,class ... TT&gt;
+void <span class="Att">Scanobj</span>(S &amp;&amp;inp,TT &amp;&amp; ... tt) CCORE_NOINLINE ;
+
+</pre>
+
+</body>
+
+</html>
+

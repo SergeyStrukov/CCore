@@ -1,0 +1,103 @@
+<!--
+/* page_SIntFunc.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.05
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> SIntFunc</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>SIntFunc</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/SIntFunc.h</b> <b>CCore/src/gadget/SIntFunc.cpp</b></p>
+
+<p>
+<b>SIntFunc</b> is an <b>Algorithm Package</b>, parametrized by a signed integral type. 
+Currently it is assumed, that the type uses 2's complementary representation.
+</p>
+
+<pre>
+
+template &lt;class SInt&gt;
+struct <span class="Att">SIntFunc</span>
+ {
+  // types
+  
+  typedef typename Meta::SIntToUInt&lt;SInt&gt;::UType UInt;
+
+  // consts
+  
+  static const UInt MaxPositiveAbs = .... ;
+  
+  static const UInt MinNegativeAbs = .... ;
+  
+  static const SInt MaxPositive = .... ;
+  
+  static const SInt MinNegative = .... ;
+
+</pre>
+
+<p>
+<b>UInt</b> is the correspondent unsigned integral type.
+</p>
+
+<p>
+<b>MaxPositiveAbs</b> is the absolute value of the maximum (positive) value of the <b>SInt</b>,
+represented as <b>UInt</b> type.
+</p>
+
+<p>
+<b>MinNegativeAbs</b> is the absolute value of the minimum (negative) value of the <b>SInt</b>,
+represented as <b>UInt</b> type.
+</p>
+
+<p>
+<b>MaxPositive</b> is the maximum (positive) value of the <b>SInt</b>.
+</p>
+
+<p>
+<b>MinNegative</b> is the minimum (negative) value of the <b>SInt</b>.
+</p>
+
+<pre>
+
+  // abs
+  
+  static SInt PosAbs(UInt abs);
+  
+  static SInt NegAbs(UInt abs);
+ };
+
+</pre>
+
+<p>
+<b>PosAbs()</b> returns <b>+abs</b> as <b>SInt</b> value. It is assumed, that <b>abs<=MaxPositiveAbs</b>.
+</p>
+
+<p>
+<b>NegAbs()</b> returns <b>-abs</b> as <b>SInt</b> value. It is assumed, that <b>abs<=MinNegativeAbs</b>.
+</p>
+
+</body>
+
+</html>
+
