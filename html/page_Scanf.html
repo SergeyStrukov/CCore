@@ -33,10 +33,10 @@
 <p class="Files">Subfolders <b>CCore/inc/scanf</b> <b>CCore/src/scanf</b></p>
 
 <p>
-Scanning is a process, inverse to the printing. I.g. scanning is a creation of an object value from 
+Scanning is a process, inverse to the printing. I.g. scanning is a creation of an object state from 
 a sequence of characters. There are three actors in a scanning process: the object, the input device and
 scannig options. The input device provides a character sequence, scanning options determines how 
-the object value is encoded. The type of the object is responsible for the scanning implementation.
+the object state is encoded. The type of the object is responsible for the scanning implementation.
 There are default implementations for integral and string types.
 </p>
 
@@ -55,6 +55,370 @@ template &lt;class S,class ... TT&gt;
 void <span class="Att">Scanobj</span>(S &amp;&amp;inp,TT &amp;&amp; ... tt) CCORE_NOINLINE ;
 
 </pre>
+
+<p>
+<b>Scanf()</b> uses the given format string to scan. Format string may specify options for 
+each object to scan.
+</p>
+
+<p>
+<b>Scanobj()</b> scans the input to the given set of objects with default scan options.
+</p>
+
+<p>
+Format string contains embedded format specifiers. Each character not in a format specifier
+causes <b>Scanf()</b> to read a single character from the input and match it with the format character. 
+If there is no input characters or characters are different then the scanning is failed. 
+The character <b>' '(space)</b> is treated especially: it extracts from the input device space-like 
+characters up to the end or a non-space character. Format specifier has a form <b>"#&lt;options&gt;;"</b>,
+where <b>&lt;options&gt;</b> is the option string. It is converted to the correspondent object scan options. 
+To scan the character <b>'#'</b> use <b>"##"</b> as a format specifier.
+</p>
+
+<h3>How to make a type scanable</h3>
+
+<p>
+There are three ways to make a type scanable.
+</p>
+
+<p>
+The most direct way: define in the class definition the method template <b>scan()</b> like this:
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   template &lt;class S&gt;
+   void scan(S &amp;inp)
+    {
+     ....
+    }
+ };
+
+</pre>
+
+<p>
+If you need scanning options do like this:
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   struct ScanOptType
+    {
+     ....
+
+     ScanOptType(); // default options
+
+     ScanOptType(const char *ptr,const char *lim); 
+
+      // [ptr,lim) -- options from the format string
+      // if the format string has a format specifier #XXX;, 
+      // then [ptr,lim) points to the string XXX
+    };
+
+   template &lt;class S&gt;
+   void scan(S &amp;inp,const ScanOptType &amp;opt)
+    {
+     ....
+    }
+ };
+
+</pre>
+
+<p>
+The second way is to specify a scan proxy type:
+</p>
+
+<pre>
+
+class C
+ {
+  public:
+
+   typedef ... ScanProxyType;
+ };
+
+</pre>
+
+<p>
+In this case the <b>C::ScanProxyType &</b> must be castable from the type <b>C</b>. For example:
+</p>
+
+<pre>
+
+struct S
+ {
+  int val = 0 ;
+  
+  typedef int ScanProxyType;
+  
+  operator int & () { return val; }
+ };
+
+</pre>
+
+<p>
+You can also specialize the template <b>CCore::ScanProxy&lt;T&gt;</b> to define the scan proxy type
+and optionally the scan option type.
+</p>
+
+<pre>
+
+namespace App {
+
+struct S
+ {
+  ....
+ };
+
+}
+
+namespace CCore {
+
+template &lt;&gt;
+struct ScanProxy&lt;App::S&gt;
+ {
+  typedef .... ProxyType;
+  typedef .... OptType;
+ };
+
+}
+
+</pre>
+
+<p>
+You can determine the scan option type using the <b>ScanOptAdapter&lt;T&gt;</b>. 
+If the type <b>T</b> has a scan option type
+(even through proxy), then <b>ScanOptAdapter&lt;T&gt;::ScanOptType</b> is that type.
+</p>
+
+<p>
+Sometimes you need to specify scan options using the object, not the format string. In such case use the
+function <b>BindScanOpt()</b>:
+</p>
+
+<pre>
+
+T obj;
+Opt opt;
+
+Scanf(out,"#;",BindScanOpt(opt,obj));
+
+</pre>
+
+<h3>Input devices</h3>
+
+<p>
+An input device for scanning provides a sequential access to a character sequence.
+An input device type must be either an actual input device type or redirect the input functionality 
+to another type using a specialization of the <b>ScanInpAdapter</b>. By default, the actual input device type
+is declared as the innner type <b>ScanInpType</b>.
+</p>
+
+<pre>
+
+/* struct ScanInpAdapter&lt;S&gt; */
+
+template &lt;class S&gt;
+struct <span class="Att">ScanInpAdapter</span>
+ {
+  typedef typename S::ScanInpType ScanInpType;
+ };
+
+</pre>
+
+<p>
+The input device must provide the following methods:
+</p>
+
+<pre>
+
+class IDev
+ {
+  public:
+
+   typedef IDev & ScanInpType;
+   
+   ScanInpType scanRef() { return *this; }
+   
+   // cursor
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   char operator * () const;
+   
+   void operator ++ (); 
+   
+   // error
+   
+   bool isOk() const;
+   
+   bool isFailed() const;
+   
+   void fail();
+ };
+
+</pre>
+
+<p>
+It behaves like a character cursor plus internal fail flag is implemented to signal about scanning errors
+or input errors.
+</p>
+
+<p>
+The simplest way of the building input object classes is to derive them from the <b>ScanBase</b> class.
+</p>
+
+<pre>
+
+class <span class="Att">ScanBase</span> : NoCopy
+ {
+   ....
+
+  private:
+   
+   virtual PtrLen&lt;const char&gt; underflow()=0;
+  
+  protected:
+  
+   void pump(); // must be called in constructor of derived class
+   
+   void reset(); 
+  
+  public:
+   
+   typedef ScanBase & ScanInpType;
+   
+   ScanInpType scanRef() { return *this; }
+   
+   // constructors
+  
+   ScanBase();
+   
+   ~ScanBase();
+   
+   // cursor
+   
+   ulen operator + () const;
+   
+   bool operator ! () const;
+   
+   char operator * () const;
+   
+   void operator ++ (); 
+   
+   // position
+   
+   TextPos getTextPos() const;
+   
+   // error
+   
+   bool isOk() const;
+   
+   bool isFailed() const;
+   
+   void fail();
+ };
+
+</pre>
+
+<p>
+This class counts the current text position. You can retrieve it
+with the method <b>getTextPos()</b>. A derived class must implement the virtual method 
+<b>underflow()</b>. This method is called when the previous input character frame is consumed.
+It must return a character range. This range can be empty, if the end of input is reached.
+It must remains valid until the next call of <b>underflow()</b>.
+In case of error the method <b>fail()</b> must be called and an exception may be thrown. 
+There are two protected methods to be used in a derived class. <b>pump()</b> performes 
+the character pumping, it must be called in the derived class constructor as the last action.
+<b>reset()</b> resets the base to the initial state. It can be used in such derived class methods 
+like <b>open()</b> or <b>close()</b> when the input is changed.
+</p>
+
+<p>
+To scan a given string the class <b>ScanString</b> exists:
+</p>
+
+<pre>
+
+class <span class="Att">ScanString</span> : public ScanBase
+ {
+   PtrLen&lt;const char&gt; str;
+   
+  private:
+  
+   virtual PtrLen&lt;const char&gt; underflow() { return Replace_null(str); }
+  
+  public: 
+  
+   explicit ScanString(StrLen str_) : str(str_) { pump(); }
+   
+   ~ScanString() {}
+ };
+
+</pre>
+
+<h3>String scanning</h3>
+
+<p>
+There is a default implementation of the string scanning. It is applied to objects of the type <b>String</b>.
+The following scan options are suported:
+</p>
+
+<pre>
+
+/* enum StringScanType */
+
+enum <span class="Att">StringScanType</span>
+ {
+  StringScanQuote,
+  StringScanToSpace,
+  StringScanToPunct,
+  
+  StringScanDefault = StringScanToPunct 
+ };
+
+template &lt;class Dev&gt;
+bool Parse_try(Dev &amp;dev,StringScanType &amp;ret);
+
+/* struct StringScanOpt */
+
+struct <span class="Att">StringScanOpt</span>
+ {
+  StringScanType type;
+  
+  void setDefault()
+   {
+    type=StringScanDefault;
+   }
+  
+  StringScanOpt() { setDefault(); }
+  
+  StringScanOpt(const char *ptr,const char *lim);
+  
+  //
+  // [.q|.Q|.s|.S|.p|.P]
+  //
+ };
+
+</pre>
+
+<p>
+
+</p>
+
+<h3>Integer scanning</h3>
+
+<h3>Utilities</h3>
 
 </body>
 

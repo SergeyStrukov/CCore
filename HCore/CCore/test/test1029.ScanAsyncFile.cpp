@@ -14,6 +14,7 @@
 //----------------------------------------------------------------------------------------
 
 #include <CCore/test/test.h>
+#include <CCore/test/testRun.h>
 
 #include <CCore/inc/Scan.h>
 
@@ -35,6 +36,46 @@ void test1()
   
   for(; +scan ;++scan)
     Printf(out,"#; #;\n",CharCode(*scan),scan.getTextPos());
+ }
+
+/* test2() */
+
+static void test_scan(ulen i)
+ {
+  String file_name=Stringf("host:/test#;.txt",i); 
+  String scan_file_name=Stringf("host:/scan_test#;.txt",i); 
+  
+  // 1
+  {
+   PrintAsyncFile out(Range(file_name));
+   
+   for(ulen line=1; line<=1000000 ;line++) Printf(out,"--- #; ---\n",line);
+  }
+  
+  // 2
+  {
+   ScanAsyncFile scan(Range(file_name));
+   PrintAsyncFile out(Range(scan_file_name));
+   
+   for(; +scan ;++scan)
+     Printf(out,"#; #;\n",CharCode(*scan),scan.getTextPos());
+  }
+  
+  // 3
+  {
+   AsyncFileSystem::Remove(Range(file_name));
+   AsyncFileSystem::Remove(Range(scan_file_name));
+  }
+  
+  Printf(Con,"test #; finished\n",i);
+ }
+
+void test2()
+ {
+  RunTasks run;
+  
+  for(ulen i=1; i<=10 ;i++)
+    run( [=] () { test_scan(i); } );
  }
 
 } // namespace Private_1029
@@ -74,7 +115,8 @@ bool Testit<1029>::Main()
   ptp.support_guarded();
   
   
-  test1();
+  //test1();
+  test2();
   
   return true;
  }
