@@ -348,6 +348,8 @@ void ScanAsyncFile::soft_close(FileMultiError &errout)
      errout.add(FileError_SysOverload);
      
      file.closeState();
+     
+     reset();
     
      return;
     }

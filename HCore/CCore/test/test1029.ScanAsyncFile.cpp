@@ -40,42 +40,59 @@ void test1()
 
 /* test2() */
 
-static void test_scan(ulen i)
+struct Task
  {
-  String file_name=Stringf("host:/test#;.txt",i); 
-  String scan_file_name=Stringf("host:/scan_test#;.txt",i); 
+  ulen ind;
   
-  // 1
-  {
-   PrintAsyncFile out(Range(file_name));
-   
-   for(ulen line=1; line<=1000000 ;line++) Printf(out,"--- #; ---\n",line);
-  }
+  explicit Task(ulen ind_) : ind(ind_) {}
   
-  // 2
-  {
-   ScanAsyncFile scan(Range(file_name));
-   PrintAsyncFile out(Range(scan_file_name));
-   
-   for(; +scan ;++scan)
-     Printf(out,"#; #;\n",CharCode(*scan),scan.getTextPos());
-  }
-  
-  // 3
-  {
-   AsyncFileSystem::Remove(Range(file_name));
-   AsyncFileSystem::Remove(Range(scan_file_name));
-  }
-  
-  Printf(Con,"test #; finished\n",i);
- }
+  void operator () ()
+   {
+    String file_name=Stringf("host:/test#;.txt",ind); 
+    String scan_file_name=Stringf("host:/scan_test#;.txt",ind); 
+    
+    // 1
+    {
+     PrintAsyncFile out(Range(file_name));
+     
+     for(ulen line=1; line<=1000000 ;line++) Printf(out,"--- #; ---\n",line);
+    }
+    
+    Printf(Con,"test #; stage1 finished\n",ind);
+    
+    // 2
+    {
+     ScanAsyncFile scan(Range(file_name),30_sec);
+     PrintAsyncFile out(Range(scan_file_name),Open_ToWrite,30_sec);
+     
+     for(; +scan ;++scan)
+       Printf(out,"#; #;\n",CharCode(*scan),scan.getTextPos());
+    }
+    
+    Printf(Con,"test #; stage2 finished\n",ind);
+    
+    // 3
+    {
+     AsyncFileSystem::Remove(Range(file_name),30_sec);
+     AsyncFileSystem::Remove(Range(scan_file_name),30_sec);
+    }
+    
+    Printf(Con,"test #; finished\n",ind);
+   }
+ };
 
 void test2()
  {
   RunTasks run;
   
-  for(ulen i=1; i<=10 ;i++)
-    run( [=] () { test_scan(i); } );
+  for(ulen i=1; i<=5 ;i++) run( Task(i) );
+ }
+
+/* test3() */
+
+void test3()
+ {
+  Task(1)();
  }
 
 } // namespace Private_1029
@@ -117,6 +134,7 @@ bool Testit<1029>::Main()
   
   //test1();
   test2();
+  //test3();
   
   return true;
  }
