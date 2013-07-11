@@ -371,7 +371,7 @@ class <span class="Att">ScanString</span> : public ScanBase
 
 <p>
 There is a default implementation of the string scanning. It is applied to objects of the type <b>String</b>.
-The following scan options are suported:
+The following scan options are supported:
 </p>
 
 <pre>
@@ -413,12 +413,144 @@ struct <span class="Att">StringScanOpt</span>
 </pre>
 
 <p>
+There are three variants of the string scanning, they are selected by options.
+Options <b>".q"</b> and <b>".Q"</b> means scan a quoted string (<b>StringScanQuote</b>),
+<b>".s"</b> and <b>".S"</b> means scan up to a space character (<b>StringScanToSpace</b>),
+and <b>".p"</b> and <b>".P"</b> means scan up to a punctuation character (<b>StringScanToPunct</b>). 
+The last mode is default, punctuation characters are: <b>! " # $ % &amp; ' ( ) * + , - . / : ; &lt; = &gt; ? &#64; [ \ ] ^ ` { | } ~</b>.
+</p>
 
+<p>
+When scanning a quoted string the input is scanned for a string of characters, enclosed in double quotes.
+Quotes are not included in the result. If the input does not begin with a quoted string, it is failed. 
+</p>
+
+<p>
+When scanning up to a some kind of character the input is scanned 
+for a string of characters up to the first character of that kind.
 </p>
 
 <h3>Integer scanning</h3>
 
+<p>
+There is a default implementation of the integral types scanning.
+It is applied to objects of integral type.
+The following scan options are supported:
+</p>
+
+<pre>
+
+/* enum IntScanBase */
+
+enum <span class="Att">IntScanBase</span>
+ {
+  IntScanNone,
+  
+  IntScanHex,
+  IntScanBin,
+  IntScan0X,
+  
+  IntScanDefault = IntScanNone
+ };
+
+template &lt;class Dev&gt;
+bool Parse_try(Dev &amp;dev,IntScanBase &amp;ret);
+
+/* struct IntScanOpt */
+
+struct <span class="Att">IntScanOpt</span>
+ {
+  unsigned base; // 2..16, 0 for any
+  IntScanBase scan_base; 
+  
+  void setDefault()
+   {
+    base=0;
+    scan_base=IntScanDefault;
+   }
+  
+  IntScanOpt() { setDefault(); }
+  
+  IntScanOpt(const char *ptr,const char *lim);
+  
+  //
+  // [.base|.x|.X|.b|.B|.h|.H]
+  //
+ };
+
+</pre>
+
+<p>
+By default the integer scanning accepts all form of the integer representation.
+They are: <b>[+|-][0|1|2|3|4|5|6|7|8|9]<sup>1..</sup></b>, 
+<b>[+|-][0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F]<sup>1..</sup>[H|h]</b>, 
+<b></b>
+</p>
+
 <h3>Utilities</h3>
+
+<p>
+There is a family of scan utility functions.
+</p>
+
+<pre>
+
+int <span class="Att">CharBaseValue</span>(char ch,unsigned base);
+
+</pre>
+
+<p>
+This function returns the digit value of the given character or -1, if the character
+is not a digit, where <b>base</b> is a representation base. It must be in the range [2,16].
+</p>
+
+<pre>
+
+template &lt;class S&gt;
+void <span class="Att">SkipSpace</span>(S &amp;inp);
+
+</pre>
+
+<p>
+This function extracts space-like characters from the input up to the end or a first non-space
+character.
+</p>
+
+<pre>
+
+template &lt;class S,class ... CC&gt;
+void <span class="Att">PassChars</span>(S &amp;inp,CC ... cc);
+
+</pre>
+
+<p>
+This function extracts the given sequence of characters or fail the input. 
+</p>
+
+<pre>
+
+template &lt;class S,class Func&gt;
+void <span class="Att">PassOneOfChar</span>(S &amp;inp,Func func);
+
+</pre>
+
+<p>
+This function extracts one character, which satisfies the given condition, or fail the input.
+<b>func</b> is a functor with the signature <b>boolable (char ch)</b>. It is used to specify the condition.
+</p>
+
+<pre>
+
+template &lt;class S,class Func&gt;
+void <span class="Att">SkipAllOfChar</span>(S &amp;inp,Func func);
+
+</pre>
+
+<p>
+This function extracts characters, which satisfies the given condition, up to the end or a first
+character, which does not satisfy the condition.
+<b>func</b> is a functor with the signature <b>boolable (char ch)</b>. It is used to specify the condition.
+</p>
 
 </body>
 

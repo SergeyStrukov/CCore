@@ -42,6 +42,14 @@ void ScanAsyncFile::clean_slots()
      done_ind=NextInd(done_ind);
      done_count--;
     }
+  
+  while( op_count )
+    {
+     slots[op_ind].pbuf.detach();
+   
+     op_ind=NextInd(op_ind);
+     op_count--;
+    }
  }
 
 auto ScanAsyncFile::getFreeSlot() -> Slot *
@@ -138,7 +146,7 @@ void ScanAsyncFile::complete_read(PacketHeader *packet_)
   packet.popExt().popExt().complete();
  }
   
-bool ScanAsyncFile::add_read()
+bool ScanAsyncFile::add_read(TimeScope time_scope)
  {
   if( file_pos>=file_len ) return false;
   
@@ -147,12 +155,20 @@ bool ScanAsyncFile::add_read()
   if( !slot ) return false;
   
   Packet<uint8> packet=pset.try_get();
+  bool ret=true;
   
   if( !packet )
     {
-     backFreeSlot();
+     packet=pset.get(time_scope);
+
+     if( !packet )
+       {
+        backFreeSlot();
     
-     return false;
+        return false;
+       }
+     
+     ret=false;
     }
   
   ulen len=(ulen)Min<FilePosType>(file_len-file_pos,max_read_len);
@@ -167,12 +183,12 @@ bool ScanAsyncFile::add_read()
   
   file.read(packet2.forgetExt<1>());
   
-  return true;
+  return ret;
  }
 
-void ScanAsyncFile::pump_read()
+void ScanAsyncFile::pump_read(TimeScope time_scope)
  {
-  for(ulen cap=MaxSlots; cap && add_read() ;cap--);
+  for(ulen cap=MaxSlots; cap && add_read(time_scope) ;cap--);
  }
 
 void ScanAsyncFile::complete_open(PacketHeader *packet_)
@@ -221,9 +237,11 @@ PtrLen<const char> ScanAsyncFile::underflow()
   
   if( !remaining_len ) return Nothing;
   
-  pump_read();
+  TimeScope time_scope(timeout);
   
-  if( sem.take(timeout) )
+  pump_read(time_scope);
+  
+  if( sem.take(time_scope) )
     {
      Mutex::Lock lock(mutex);
     

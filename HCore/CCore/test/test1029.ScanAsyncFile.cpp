@@ -62,8 +62,8 @@ struct Task
     
     // 2
     {
-     ScanAsyncFile scan(Range(file_name),30_sec);
-     PrintAsyncFile out(Range(scan_file_name),Open_ToWrite,30_sec);
+     ScanAsyncFile scan(Range(file_name));
+     PrintAsyncFile out(Range(scan_file_name));
      
      for(; +scan ;++scan)
        Printf(out,"#; #;\n",CharCode(*scan),scan.getTextPos());
@@ -73,8 +73,8 @@ struct Task
     
     // 3
     {
-     AsyncFileSystem::Remove(Range(file_name),30_sec);
-     AsyncFileSystem::Remove(Range(scan_file_name),30_sec);
+     AsyncFileSystem::Remove(Range(file_name));
+     AsyncFileSystem::Remove(Range(scan_file_name));
     }
     
     Printf(Con,"test #; finished\n",ind);

@@ -103,9 +103,9 @@ class ScanAsyncFile : public ScanBase , public Funchor
    
    PacketFunction function_complete_read() { return FunctionOf(this,&ScanAsyncFile::complete_read); }
    
-   bool add_read();
+   bool add_read(TimeScope time_scope);
    
-   void pump_read();
+   void pump_read(TimeScope time_scope);
    
   private: 
    
