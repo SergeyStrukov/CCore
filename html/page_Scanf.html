@@ -481,11 +481,56 @@ struct <span class="Att">IntScanOpt</span>
 </pre>
 
 <p>
-By default the integer scanning accepts all form of the integer representation.
-They are: <b>[+|-][0|1|2|3|4|5|6|7|8|9]<sup>1..</sup></b>, 
-<b>[+|-][0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|A|B|C|D|E|F]<sup>1..</sup>[H|h]</b>, 
-<b></b>
+There are four forms of the integer representation.
 </p>
+
+<p>
+Binary form:
+</p>
+
+<pre>
+
+[+|-]D<sup>1..</sup>(b|B) , where D is a binary digit
+
+</pre>
+
+<p>
+Hex form:
+</p>
+
+<pre>
+
+[+|-]D<sup>1..</sup>(h|H) , where D is a hex digit
+
+</pre>
+
+<p>
+0x form:
+</p>
+
+<pre>
+
+[+|-]0xD<sup>1..</sup> , where D is a hex digit
+
+</pre>
+
+<p>
+And <b>base</b> form, where <b>base</b> is the representation base from 2 to 16:
+</p>
+
+<pre>
+
+[+|-]D<sup>1..</sup> , where D is a <b>base</b> digit
+
+</pre>
+
+<p>
+By default the integer scanner accepts all form of the integer representation, <b>base</b> is assumed 10.
+But using options you may specify a desired form. Use <b>.b</b> or <b>.B</b> 
+to specify the binary form, <b>.h</b> or <b>.H</b> to specify the hex form, <b>.x</b> or <b>.X</b>
+to specify the 0x form and <b>.base</b> to specify the <b>base</b> form.
+</p>
+
 
 <h3>Utilities</h3>
 

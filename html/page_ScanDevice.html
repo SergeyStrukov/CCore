@@ -32,7 +32,15 @@
 
 <p class="Files">Subfolders <b>CCore/inc/scan</b> <b>CCore/src/scan</b></p>
 
+<p>
+There are several classes for the <a href="page_Scanf.html">scanning</a>.
+</p>
+
 <h4>ScanAsyncFile</h4>
+
+<p>
+The class <b>ScanAsyncFile</b> can be used to scan <a href="page_AsyncFiles.html">async files</a>.
+</p>
 
 <pre>
 
@@ -68,6 +76,50 @@ class <span class="Att">ScanAsyncFile</span> : public ScanBase
  };
 
 </pre>
+
+<p>
+<b>ScanAsyncFile</b> object can be opened or closed. To scan from a particular file, the <b>ScanAsyncFile</b>
+object must be opened and the file name must be provided.
+It can be done using the constructor or the method <b>open()</b>. Default constructor creates
+an object in the closed state. Non-default opens a file. In case of error an exception is thrown.
+</p>
+
+<p>
+<b>timeout</b> is used as timeout on file read operations.
+</p>
+
+<p>
+<b>max_packets</b> is the maximum number of packets are simultaneously used to read the file.
+</p>
+
+<p>
+Destructor closes an opened object. Errors are reported.
+</p>
+
+<p>
+<b>isOpened()</b> returns <b>true</b>, if the file is opened, and <b>false</b> otherwise.
+</p>
+
+<p>
+<b>open()</b> opens a closed object with the given file name. 
+In case of error an exception is thrown.
+</p>
+
+<p>
+<b>close()</b> closes an opened object. In case of error and if there is a pending read error
+an exception is thrown.
+</p>
+
+<p>
+<b>soft_close()</b> does not throw, it returns instead a group of errors using the 
+<a href="page_Files.html"><b>FileMultiError</b></a> object.
+</p>
+
+<p>
+<b>setFinalTimeout()</b> can be used to set the "final timeout". This timeout is used during close operations
+to wait until all pending read operations are finished. By default, this value is the triple times of the
+<b>timeout</b>.
+</p>
 
 <h4>(HCore) ScanFile</h4>
 
