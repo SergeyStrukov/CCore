@@ -35,7 +35,7 @@
 <p>
 Scanning is a process, inverse to the printing. I.g. scanning is a creation of an object state from 
 a sequence of characters. There are three actors in a scanning process: the object, the input device and
-scannig options. The input device provides a character sequence, scanning options determines how 
+scanning options. The input device provides a character sequence, scanning options determines how 
 the object state is encoded. The type of the object is responsible for the scanning implementation.
 There are default implementations for integral and string types.
 </p>
@@ -219,7 +219,7 @@ Scanf(out,"#;",BindScanOpt(opt,obj));
 An input device for scanning provides a sequential access to a character sequence.
 An input device type must be either an actual input device type or redirect the input functionality 
 to another type using a specialization of the <b>ScanInpAdapter</b>. By default, the actual input device type
-is declared as the innner type <b>ScanInpType</b>.
+is declared as the inner type <b>ScanInpType</b>.
 </p>
 
 <pre>
@@ -338,7 +338,7 @@ with the method <b>getTextPos()</b>. A derived class must implement the virtual 
 It must return a character range. This range can be empty, if the end of input is reached.
 It must remains valid until the next call of <b>underflow()</b>.
 In case of error the method <b>fail()</b> must be called and an exception may be thrown. 
-There are two protected methods to be used in a derived class. <b>pump()</b> performes 
+There are two protected methods to be used in a derived class. <b>pump()</b> performs 
 the character pumping, it must be called in the derived class constructor as the last action.
 <b>reset()</b> resets the base to the initial state. It can be used in such derived class methods 
 like <b>open()</b> or <b>close()</b> when the input is changed.

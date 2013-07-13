@@ -1233,8 +1233,8 @@
 "D:/active/home/C++/CCore-Root-1-05/html/page_SafeBuf.html" 2
 "D:/active/home/C++/CCore-Root-1-05/html/page_SaveLoad.html" 2
 "D:/active/home/C++/CCore-Root-1-05/html/page_ScanBit.html" 2
-"D:/active/home/C++/CCore-Root-1-05/html/page_ScanDevice.html" 0
-"D:/active/home/C++/CCore-Root-1-05/html/page_Scanf.html" 0
+"D:/active/home/C++/CCore-Root-1-05/html/page_ScanDevice.html" 2
+"D:/active/home/C++/CCore-Root-1-05/html/page_Scanf.html" 2
 "D:/active/home/C++/CCore-Root-1-05/html/page_Sem.html" 2
 "D:/active/home/C++/CCore-Root-1-05/html/page_Signal.html" 2
 "D:/active/home/C++/CCore-Root-1-05/html/page_SingleHost.html" 2
