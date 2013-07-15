@@ -1,0 +1,13 @@
+/* Changes-1.06.txt */
+
+--- Updates ---
+
+CCore/inc/AnyPtr.h 
+
+  AnyPtr_const::operator +   is fixed
+
+--- New features -----
+
+
+
+----------------------
