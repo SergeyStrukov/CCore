@@ -99,7 +99,7 @@ class AnyPtr_const
    template <class T>
    AnyPtr_const(const T *ptr_) : ptr(ptr_),type(Meta::IndexOf<T,TT...>::Ret) {}
    
-   void * operator + () const { return ptr; }
+   const void * operator + () const { return ptr; }
    
    bool operator ! () const { return !ptr; }
    
