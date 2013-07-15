@@ -1,0 +1,12 @@
+/* AMP.lang */
+
+! EXPR : A , M , P 
+ {
+  x               : opVar  = P
+
+  ( EXPR )        : opBra  = P
+
+  EXPR + EXPR.a   : if( a>=M ) opAdd  = A
+
+  EXPR.a * EXPR.b : if( a>=P & b>=M ) opMul  = M
+ }

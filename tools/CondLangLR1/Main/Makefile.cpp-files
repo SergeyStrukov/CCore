@@ -1,0 +1,4 @@
+./lang/Lang.cpp
+./lang/LangParser.cpp
+./main.cpp
+./Tools.cpp

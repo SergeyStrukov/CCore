@@ -1,0 +1,77 @@
+OBJ_LIST = \
+obj/Lang.o \
+obj/LangParser.o \
+obj/Tools.o \
+obj/main.o \
+
+
+ASM_LIST = \
+obj/Lang.s \
+obj/LangParser.s \
+obj/Tools.s \
+obj/main.s \
+
+
+DEP_LIST = \
+obj/Lang.dep \
+obj/LangParser.dep \
+obj/Tools.dep \
+obj/main.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+obj/Lang.o : ./lang/Lang.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LangParser.o : ./lang/LangParser.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Tools.o : ./Tools.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/main.o : ./main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/Lang.s : ./lang/Lang.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LangParser.s : ./lang/LangParser.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Tools.s : ./Tools.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/main.s : ./main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/Lang.dep : ./lang/Lang.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Lang.o $< -MF $@
+
+obj/LangParser.dep : ./lang/LangParser.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangParser.o $< -MF $@
+
+obj/Tools.dep : ./Tools.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tools.o $< -MF $@
+
+obj/main.dep : ./main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+
