@@ -19,75 +19,184 @@
 
 namespace App {
 
-using namespace LangParser;
-
 /* class Lang::Builder */
 
 class Lang::Builder : NoCopy
  {
    Lang &lang;
    
-   enum State
+  public:
+   
+   struct BuildCondAND;
+   struct BuildCondOR;
+   struct BuildCondNOT;
+   struct BuildCondEQ;
+   struct BuildCondNE;
+   struct BuildCondGT;
+   struct BuildCondGE;
+   struct BuildCondLT;
+   struct BuildCondLE;
+   
+   using BuildCond = AnyPtr<BuildCondAND,
+                            BuildCondOR,
+                            BuildCondNOT,
+                            BuildCondEQ,
+                            BuildCondNE,
+                            BuildCondGT,
+                            BuildCondGE,
+                            BuildCondLT,
+                            BuildCondLE> ;
+   
+   struct BuildCondAND
     {
-     Beg,      // 
-     Name,     // !
-     Kinds,    // Name
-     NextKind, // Name :
-     EndKind,  // Name : A
-     Rules,    // Name {
-     RuleEnd,  // Name { ... :
-     RuleIf,   // Name { ... : if
-     RuleCond, // Name { ... : if (
+     BuildCond a;
+     BuildCond b;
     };
    
-   State state = Beg ;
-   bool has_kinds;
+   struct BuildCondOR
+    {
+     BuildCond a;
+     BuildCond b;
+    };
    
-  private:
+   struct CondNOT
+    {
+     BuildCond a;
+    };
+   
+   struct CondEQ
+    {
+     StrLen a;
+     StrLen b;
+    };
+   
+   struct CondNE
+    {
+     StrLen a;
+     StrLen b;
+    };
+   
+   struct CondGT
+    {
+     StrLen a;
+     StrLen b;
+    };
+   
+   struct CondGE
+    {
+     StrLen a;
+     StrLen b;
+    };
+   
+   struct CondLT
+    {
+     StrLen a;
+     StrLen b;
+    };
+   
+   struct CondLE
+    {
+     StrLen a;
+     StrLen b;
+    };
+   
+   BuildCond condOR(BuildCond a,BuildCond b);
+   BuildCond condAND(BuildCond a,BuildCond b);
+   BuildCond condNOT(BuildCond a);
+   BuildCond condEQ(StrLen a,StrLen b);
+   BuildCond condNE(StrLen a,StrLen b);
+   BuildCond condGT(StrLen a,StrLen b);
+   BuildCond condGE(StrLen a,StrLen b);
+   BuildCond condLT(StrLen a,StrLen b);
+   BuildCond condLE(StrLen a,StrLen b);
    
    void startSynt(StrLen name,bool is_lang);
    
    void addKind(StrLen name);
+   void endKinds();
    
    void addElement(StrLen elem);
-   
    void endElements();
+   
+   void rule(BuildCond cond);
+   void rule(StrLen name);
+   void result(StrLen name);
    
    void endSynt();
    
-  private:
- 
-   void put_Beg(Token token);
-   void put_Name(Token token);
-   void put_Kinds(Token token);
-   void put_NextKind(Token token);
-   void put_EndKind(Token token);
-   void put_Rules(Token token);
-   void put_RuleEnd(Token token);
- 
+   void endLang();
+   
+   template <class ... TT>
+   static void error(const char *format,const TT & ... tt)
+    {
+     Printf(Exception,format,tt...);
+    }
+   
   public:
  
    explicit Builder(Lang &lang);
    
    ~Builder();
-   
-   bool isNextRelaxed() const { return state==Rules; }
-   
-   void put(Token token);
  };
+
+auto Lang::Builder::condOR(BuildCond a,BuildCond b) -> BuildCond
+ {
+  return Null;
+ }
+
+auto Lang::Builder::condAND(BuildCond a,BuildCond b) -> BuildCond
+ {
+  return Null;
+ }
+
+auto Lang::Builder::condNOT(BuildCond a) -> BuildCond
+ {
+  return Null;
+ }
+
+auto Lang::Builder::condEQ(StrLen a,StrLen b) -> BuildCond
+ {
+  return Null;
+ }
+
+auto Lang::Builder::condNE(StrLen a,StrLen b) -> BuildCond
+ {
+  return Null;
+ }
+
+auto Lang::Builder::condGT(StrLen a,StrLen b) -> BuildCond
+ {
+  return Null;
+ }
+
+auto Lang::Builder::condGE(StrLen a,StrLen b) -> BuildCond
+ {
+  return Null;
+ }
+
+auto Lang::Builder::condLT(StrLen a,StrLen b) -> BuildCond
+ {
+  return Null;
+ }
+
+auto Lang::Builder::condLE(StrLen a,StrLen b) -> BuildCond
+ {
+  return Null;
+ }
 
 void Lang::Builder::startSynt(StrLen name,bool is_lang)
  {
   Printf(Con,"startSynt(#.q;,#;)\n",name,is_lang);
-  
-  has_kinds=false;
  }
 
 void Lang::Builder::addKind(StrLen name)
  {
   Printf(Con,"addKind(#.q;)\n",name);
-  
-  has_kinds=true;
+ }
+
+void Lang::Builder::endKinds()
+ {
+  Printf(Con,"endKinds()\n");
  }
 
 void Lang::Builder::addElement(StrLen elem)
@@ -100,189 +209,29 @@ void Lang::Builder::endElements()
   Printf(Con,"endElements()\n");
  }
 
+void Lang::Builder::rule(BuildCond cond)
+ {
+  Printf(Con,"rule( cond )\n");
+ }
+
+void Lang::Builder::rule(StrLen name)
+ {
+  Printf(Con,"rule(#.q;)\n",name);
+ }
+
+void Lang::Builder::result(StrLen name)
+ {
+  Printf(Con,"result(#.q;)\n",name);
+ }
+
 void Lang::Builder::endSynt()
  {
   Printf(Con,"endSynt()\n");
  }
 
-
-void Lang::Builder::put_Beg(Token token)
+void Lang::Builder::endLang()
  {
-  switch( token.tc )
-    {
-     case Token_Punct :
-      {
-       if( token.is('!') ) 
-         {
-          state=Name;
-         }
-      }
-     return;
-      
-     case Token_Name :
-      {
-       startSynt(token.str,false);
-       
-       state=Kinds;
-      }
-     return;
-     
-     case Token_END :
-     case Token_Space :
-     case Token_ShortComment :
-     case Token_LongComment :
-      {
-       // do nothing
-      }
-     return;
-    }
-  
-  Printf(Exception,"Parser #; : unexpected token, NAME or '!' are expected",token.pos);
- }
-
-void Lang::Builder::put_Name(Token token)
- {
-  switch( token.tc )
-    {
-     case Token_Name :
-      {
-       startSynt(token.str,true);
-       
-       state=Kinds;
-      }
-     return;
-     
-     case Token_Space :
-     case Token_ShortComment :
-     case Token_LongComment :
-      {
-       // do nothing
-      }
-     return;
-    }
-  
-  Printf(Exception,"Parser #; : unexpected token, NAME is expected",token.pos);
- }
-
-void Lang::Builder::put_Kinds(Token token)
- {
-  switch( token.tc )
-    {
-     case Token_Punct :
-      {
-       if( token.is(':') ) 
-         {
-          state=NextKind;
-         }
-       else if( token.is('{') )
-         {
-          state=Rules;
-         }
-      }
-     return;
-    
-     case Token_Space :
-     case Token_ShortComment :
-     case Token_LongComment :
-      {
-       // do nothing
-      }
-     return;
-    }
-  
-  Printf(Exception,"Parser #; : unexpected token, ':' or '{' are expected",token.pos);
- }
-
-void Lang::Builder::put_NextKind(Token token)
- {
-  switch( token.tc )
-    {
-     case Token_Name :
-      {
-       addKind(token.str);
-       
-       state=EndKind;
-      }
-     return;
-    
-     case Token_Space :
-     case Token_ShortComment :
-     case Token_LongComment :
-      {
-       // do nothing
-      }
-     return;
-    }
-  
-  Printf(Exception,"Parser #; : unexpected token, NAME is expected",token.pos);
- }
-
-void Lang::Builder::put_EndKind(Token token)
- {
-  switch( token.tc )
-    {
-     case Token_Punct :
-      {
-       if( token.is(',') )
-         {
-          state=NextKind;
-         }
-       else if( token.is('{') )
-         {
-          state=Rules;
-         }
-      }
-     return;
-     
-     case Token_Space :
-     case Token_ShortComment :
-     case Token_LongComment :
-      {
-       // do nothing
-      }
-     return;
-    }
-  
-  Printf(Exception,"Parser #; : unexpected token, ',' or '{' are expected",token.pos);
- }
-
-void Lang::Builder::put_Rules(Token token)
- {
-  switch( token.tc )
-    {
-     case Token_Visible :
-      {
-       if( token.is('}') )
-         {
-          endSynt();
-         
-          state=Beg;
-         }
-       else if( token.is(':') )
-         {
-          endElements();
-          
-          state=RuleEnd;
-         }
-       else
-         {
-          addElement(token.str);
-         }
-      }
-     return;
-     
-     case Token_Space :
-      {
-       // do nothing
-      }
-     return;
-    }
-  
-  Printf(Exception,"Parser #; : unexpected token",token.pos);
- }
-
-void Lang::Builder::put_RuleEnd(Token token)
- {
+  Printf(Con,"endLang()\n");
  }
 
 Lang::Builder::Builder(Lang &lang_) 
@@ -294,37 +243,15 @@ Lang::Builder::~Builder()
  {
  }
 
-void Lang::Builder::put(Token token)
- {
-  switch( state )
-    {
-     case Beg : put_Beg(token); break;
-     case Name : put_Name(token); break;
-     case Kinds : put_Kinds(token); break;
-     case NextKind : put_NextKind(token); break;
-     case EndKind : put_EndKind(token); break;
-     case Rules : put_Rules(token); break;
-     case RuleEnd : put_RuleEnd(token); break;
-    }
- }
-
 /* class Lang */
 
 Lang::Lang(StrLen file_name)
  {
   FileToMem file(file_name);
-  Tokenizer tok(Mutate<const char>(Range(file)));
-  Builder builder(*this);
-
-  while( +tok )
-    {
-     if( builder.isNextRelaxed() )
-       builder.put(tok.next_relaxed());
-     else
-       builder.put(tok.next());
-    }
   
-  builder.put(Token(tok.getPos()));
+  LangParser::Parser<Builder> parser(*this);
+  
+  parser.run(Mutate<const char>(Range(file)));
  }
 
 Lang::~Lang()

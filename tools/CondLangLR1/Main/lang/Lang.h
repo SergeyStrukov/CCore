@@ -189,6 +189,7 @@ class Lang : public LangBase
  {
   private:
   
+   class CondParser;
    class Builder;
   
   public:

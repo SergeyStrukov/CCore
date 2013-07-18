@@ -14,6 +14,8 @@
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
 
+#include "lang/Lang.h"
+
 /* Main() */
 
 namespace App {
@@ -23,6 +25,8 @@ using namespace CCore;
 int Main(StrLen lang_name,StrLen file_name,StrLen CCORE_Root)
  {
   Printf(Con,"#.q;\n#.q;\n#.q;\n",lang_name,file_name,CCORE_Root);
+  
+  Lang lang(file_name);
   
   return 0;
  }

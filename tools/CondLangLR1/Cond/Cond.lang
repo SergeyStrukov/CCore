@@ -1,0 +1,31 @@
+/* Cond.lang */
+
+COND :
+ {
+  COND_MUL        : CastMUL
+  COND | COND_MUL : OpOR
+ }
+
+COND_MUL
+ {
+  COND_UN            : CastUN
+  COND_MUL & COND_UN : OpAND
+ }
+
+COND_UN
+ {
+  COND_PRIM : CastPRIM
+  ! COND_UN : OpNOT
+ }
+
+COND_PRIM
+ {
+  Name == Name : OpEQ
+  Name != Name : OpNE
+  Name < Name  : OpLT
+  Name <= Name : OpLE
+  Name > Name  : OpGT
+  Name >= Name : OpGE
+
+  ( COND )     : Brackets
+ }

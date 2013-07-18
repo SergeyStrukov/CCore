@@ -23,7 +23,7 @@ CharProp::CharProp()
   setSet(GetDigitChars(),Char_Digit);
   setSet(GetCLetterChars(),Char_Letter);
   
-  setSet("!,{}()&|=<>",Char_Punct);
+  setSet("!,{}()&|=<>:",Char_Punct);
   setSet("/",Char_Comment);
   
   setSet(GetSpaceChars(),Char_Space);
@@ -230,6 +230,13 @@ Token Tokenizer::next_relaxed()
 
   return next_other();
  }
+
+/* struct CondPaserBase */
+
+const CondPaserBase::State CondPaserBase::StateTable[52]=
+ {
+#include "../Cond/StateTable.gen.cpp"   
+ };
 
 } // namespace LangParser
 } // namespace App

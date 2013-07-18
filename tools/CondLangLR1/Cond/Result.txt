@@ -1,0 +1,755 @@
+/* Result.txt */ 
+
+/* Finals */ 
+
+Final 0
+ {
+  (End) -> ( <- )
+  T("|") -> ( <- )
+ }
+
+Final 1
+ {
+  (End) -> ( CastMUL )
+  T("&") -> ( <- )
+  T("|") -> ( CastMUL )
+ }
+
+Final 2
+ {
+  (End) -> ( OpOR )
+  T("&") -> ( <- )
+  T("|") -> ( OpOR )
+ }
+
+Final 3
+ {
+  (End) -> ( CastUN )
+  T("&") -> ( CastUN )
+  T("|") -> ( CastUN )
+ }
+
+Final 4
+ {
+  (End) -> ( OpAND )
+  T("&") -> ( OpAND )
+  T("|") -> ( OpAND )
+ }
+
+Final 5
+ {
+  (End) -> ( CastPRIM )
+  T("&") -> ( CastPRIM )
+  T("|") -> ( CastPRIM )
+ }
+
+Final 6
+ {
+  (End) -> ( OpNOT )
+  T("&") -> ( OpNOT )
+  T("|") -> ( OpNOT )
+ }
+
+Final 7
+ {
+  (End) -> ( OpEQ )
+  T("&") -> ( OpEQ )
+  T("|") -> ( OpEQ )
+ }
+
+Final 8
+ {
+  (End) -> ( OpNE )
+  T("&") -> ( OpNE )
+  T("|") -> ( OpNE )
+ }
+
+Final 9
+ {
+  (End) -> ( OpLT )
+  T("&") -> ( OpLT )
+  T("|") -> ( OpLT )
+ }
+
+Final 10
+ {
+  (End) -> ( OpLE )
+  T("&") -> ( OpLE )
+  T("|") -> ( OpLE )
+ }
+
+Final 11
+ {
+  (End) -> ( OpGT )
+  T("&") -> ( OpGT )
+  T("|") -> ( OpGT )
+ }
+
+Final 12
+ {
+  (End) -> ( OpGE )
+  T("&") -> ( OpGE )
+  T("|") -> ( OpGE )
+ }
+
+Final 13
+ {
+  (End) -> ( Brackets )
+  T("&") -> ( Brackets )
+  T("|") -> ( Brackets )
+ }
+
+Final 14
+ {
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+Final 15
+ {
+  T("!=") -> ( <- )
+  T("<") -> ( <- )
+  T("<=") -> ( <- )
+  T("==") -> ( <- )
+  T(">") -> ( <- )
+  T(">=") -> ( <- )
+ }
+
+Final 16
+ {
+  T("&") -> ( <- )
+  T(")") -> ( CastMUL )
+  T("|") -> ( CastMUL )
+ }
+
+Final 17
+ {
+  T("&") -> ( <- )
+  T(")") -> ( OpOR )
+  T("|") -> ( OpOR )
+ }
+
+Final 18
+ {
+  T("&") -> ( CastUN )
+  T(")") -> ( CastUN )
+  T("|") -> ( CastUN )
+ }
+
+Final 19
+ {
+  T("&") -> ( OpAND )
+  T(")") -> ( OpAND )
+  T("|") -> ( OpAND )
+ }
+
+Final 20
+ {
+  T("&") -> ( CastPRIM )
+  T(")") -> ( CastPRIM )
+  T("|") -> ( CastPRIM )
+ }
+
+Final 21
+ {
+  T("&") -> ( OpNOT )
+  T(")") -> ( OpNOT )
+  T("|") -> ( OpNOT )
+ }
+
+Final 22
+ {
+  T("&") -> ( OpEQ )
+  T(")") -> ( OpEQ )
+  T("|") -> ( OpEQ )
+ }
+
+Final 23
+ {
+  T("&") -> ( OpNE )
+  T(")") -> ( OpNE )
+  T("|") -> ( OpNE )
+ }
+
+Final 24
+ {
+  T("&") -> ( OpLT )
+  T(")") -> ( OpLT )
+  T("|") -> ( OpLT )
+ }
+
+Final 25
+ {
+  T("&") -> ( OpLE )
+  T(")") -> ( OpLE )
+  T("|") -> ( OpLE )
+ }
+
+Final 26
+ {
+  T("&") -> ( OpGT )
+  T(")") -> ( OpGT )
+  T("|") -> ( OpGT )
+ }
+
+Final 27
+ {
+  T("&") -> ( OpGE )
+  T(")") -> ( OpGE )
+  T("|") -> ( OpGE )
+ }
+
+Final 28
+ {
+  T("&") -> ( Brackets )
+  T(")") -> ( Brackets )
+  T("|") -> ( Brackets )
+ }
+
+Final 29
+ {
+  T(")") -> ( <- )
+  T("|") -> ( <- )
+ }
+
+Final 30
+ {
+  T("Name") -> ( <- )
+ }
+
+/* Compressed States */ 
+
+State 0
+ : ( )
+ {
+  T("!") -> State 7
+  T("(") -> State 1
+  T("Name") -> State 2
+  COND -> State 3
+  COND_MUL -> State 4
+  COND_UN -> State 5
+  COND_PRIM -> State 6
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+State 1
+ : ( T("(") )
+ {
+  T("!") -> State 9
+  T("(") -> State 10
+  T("Name") -> State 11
+  COND -> State 12
+  COND_MUL -> State 13
+  COND_UN -> State 14
+  COND_PRIM -> State 15
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+State 2
+ : ( T("Name") )
+ {
+  T("!=") -> State 16
+  T("<") -> State 17
+  T("<=") -> State 18
+  T("==") -> State 19
+  T(">") -> State 20
+  T(">=") -> State 21
+  ---------------------
+  T("!=") -> ( <- )
+  T("<") -> ( <- )
+  T("<=") -> ( <- )
+  T("==") -> ( <- )
+  T(">") -> ( <- )
+  T(">=") -> ( <- )
+ }
+
+State 3
+ : ( COND )
+ {
+  T("|") -> State 22
+  ---------------------
+  (End) -> ( <- )
+  T("|") -> ( <- )
+ }
+
+State 4
+ : ( COND_MUL )
+ {
+  T("&") -> State 50
+  ---------------------
+  (End) -> ( CastMUL )
+  T("&") -> ( <- )
+  T("|") -> ( CastMUL )
+ }
+
+State 5
+ : ( COND_UN )
+ {
+  ---------------------
+  (End) -> ( CastUN )
+  T("&") -> ( CastUN )
+  T("|") -> ( CastUN )
+ }
+
+State 6
+ : ( COND_PRIM )
+ {
+  ---------------------
+  (End) -> ( CastPRIM )
+  T("&") -> ( CastPRIM )
+  T("|") -> ( CastPRIM )
+ }
+
+State 7
+ : ( T("!") , T("!") )
+ {
+  T("!") -> State 7
+  T("(") -> State 1
+  T("Name") -> State 2
+  COND_UN -> State 8
+  COND_PRIM -> State 6
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+State 8
+ : ( T("!") , COND_UN )
+ {
+  ---------------------
+  (End) -> ( OpNOT )
+  T("&") -> ( OpNOT )
+  T("|") -> ( OpNOT )
+ }
+
+State 9
+ : ( T("(") , T("!") )
+ {
+  T("!") -> State 9
+  T("(") -> State 10
+  T("Name") -> State 11
+  COND_UN -> State 23
+  COND_PRIM -> State 15
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+State 10
+ : ( T("(") , T("(") )
+ {
+  T("!") -> State 9
+  T("(") -> State 10
+  T("Name") -> State 11
+  COND -> State 24
+  COND_MUL -> State 13
+  COND_UN -> State 14
+  COND_PRIM -> State 15
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+State 11
+ : ( T("(") , T("Name") )
+ {
+  T("!=") -> State 25
+  T("<") -> State 26
+  T("<=") -> State 27
+  T("==") -> State 28
+  T(">") -> State 29
+  T(">=") -> State 30
+  ---------------------
+  T("!=") -> ( <- )
+  T("<") -> ( <- )
+  T("<=") -> ( <- )
+  T("==") -> ( <- )
+  T(">") -> ( <- )
+  T(">=") -> ( <- )
+ }
+
+State 12
+ : ( T("(") , COND )
+ {
+  T(")") -> State 31
+  T("|") -> State 32
+  ---------------------
+  T(")") -> ( <- )
+  T("|") -> ( <- )
+ }
+
+State 13
+ : ( T("(") , COND_MUL )
+ {
+  T("&") -> State 51
+  ---------------------
+  T("&") -> ( <- )
+  T(")") -> ( CastMUL )
+  T("|") -> ( CastMUL )
+ }
+
+State 14
+ : ( T("(") , COND_UN )
+ {
+  ---------------------
+  T("&") -> ( CastUN )
+  T(")") -> ( CastUN )
+  T("|") -> ( CastUN )
+ }
+
+State 15
+ : ( T("(") , COND_PRIM )
+ {
+  ---------------------
+  T("&") -> ( CastPRIM )
+  T(")") -> ( CastPRIM )
+  T("|") -> ( CastPRIM )
+ }
+
+State 16
+ : ( T("Name") , T("!=") )
+ {
+  T("Name") -> State 33
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 17
+ : ( T("Name") , T("<") )
+ {
+  T("Name") -> State 34
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 18
+ : ( T("Name") , T("<=") )
+ {
+  T("Name") -> State 35
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 19
+ : ( T("Name") , T("==") )
+ {
+  T("Name") -> State 36
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 20
+ : ( T("Name") , T(">") )
+ {
+  T("Name") -> State 37
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 21
+ : ( T("Name") , T(">=") )
+ {
+  T("Name") -> State 38
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 22
+ : ( COND , T("|") )
+ {
+  T("!") -> State 7
+  T("(") -> State 1
+  T("Name") -> State 2
+  COND_MUL -> State 39
+  COND_UN -> State 5
+  COND_PRIM -> State 6
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+State 23
+ : ( T("(") , T("!") , COND_UN )
+ {
+  ---------------------
+  T("&") -> ( OpNOT )
+  T(")") -> ( OpNOT )
+  T("|") -> ( OpNOT )
+ }
+
+State 24
+ : ( T("(") , T("(") , COND )
+ {
+  T(")") -> State 41
+  T("|") -> State 32
+  ---------------------
+  T(")") -> ( <- )
+  T("|") -> ( <- )
+ }
+
+State 25
+ : ( T("(") , T("Name") , T("!=") )
+ {
+  T("Name") -> State 42
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 26
+ : ( T("(") , T("Name") , T("<") )
+ {
+  T("Name") -> State 43
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 27
+ : ( T("(") , T("Name") , T("<=") )
+ {
+  T("Name") -> State 44
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 28
+ : ( T("(") , T("Name") , T("==") )
+ {
+  T("Name") -> State 45
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 29
+ : ( T("(") , T("Name") , T(">") )
+ {
+  T("Name") -> State 46
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 30
+ : ( T("(") , T("Name") , T(">=") )
+ {
+  T("Name") -> State 47
+  ---------------------
+  T("Name") -> ( <- )
+ }
+
+State 31
+ : ( T("(") , COND , T(")") )
+ {
+  ---------------------
+  (End) -> ( Brackets )
+  T("&") -> ( Brackets )
+  T("|") -> ( Brackets )
+ }
+
+State 32
+ : ( T("(") , COND , T("|") )
+ {
+  T("!") -> State 9
+  T("(") -> State 10
+  T("Name") -> State 11
+  COND_MUL -> State 48
+  COND_UN -> State 14
+  COND_PRIM -> State 15
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+State 33
+ : ( T("Name") , T("!=") , T("Name") )
+ {
+  ---------------------
+  (End) -> ( OpNE )
+  T("&") -> ( OpNE )
+  T("|") -> ( OpNE )
+ }
+
+State 34
+ : ( T("Name") , T("<") , T("Name") )
+ {
+  ---------------------
+  (End) -> ( OpLT )
+  T("&") -> ( OpLT )
+  T("|") -> ( OpLT )
+ }
+
+State 35
+ : ( T("Name") , T("<=") , T("Name") )
+ {
+  ---------------------
+  (End) -> ( OpLE )
+  T("&") -> ( OpLE )
+  T("|") -> ( OpLE )
+ }
+
+State 36
+ : ( T("Name") , T("==") , T("Name") )
+ {
+  ---------------------
+  (End) -> ( OpEQ )
+  T("&") -> ( OpEQ )
+  T("|") -> ( OpEQ )
+ }
+
+State 37
+ : ( T("Name") , T(">") , T("Name") )
+ {
+  ---------------------
+  (End) -> ( OpGT )
+  T("&") -> ( OpGT )
+  T("|") -> ( OpGT )
+ }
+
+State 38
+ : ( T("Name") , T(">=") , T("Name") )
+ {
+  ---------------------
+  (End) -> ( OpGE )
+  T("&") -> ( OpGE )
+  T("|") -> ( OpGE )
+ }
+
+State 39
+ : ( COND , T("|") , COND_MUL )
+ {
+  T("&") -> State 50
+  ---------------------
+  (End) -> ( OpOR )
+  T("&") -> ( <- )
+  T("|") -> ( OpOR )
+ }
+
+State 40
+ : ( COND_MUL , T("&") , COND_UN )
+ {
+  ---------------------
+  (End) -> ( OpAND )
+  T("&") -> ( OpAND )
+  T("|") -> ( OpAND )
+ }
+
+State 41
+ : ( T("(") , T("(") , COND , T(")") )
+ {
+  ---------------------
+  T("&") -> ( Brackets )
+  T(")") -> ( Brackets )
+  T("|") -> ( Brackets )
+ }
+
+State 42
+ : ( T("(") , T("Name") , T("!=") , T("Name") )
+ {
+  ---------------------
+  T("&") -> ( OpNE )
+  T(")") -> ( OpNE )
+  T("|") -> ( OpNE )
+ }
+
+State 43
+ : ( T("(") , T("Name") , T("<") , T("Name") )
+ {
+  ---------------------
+  T("&") -> ( OpLT )
+  T(")") -> ( OpLT )
+  T("|") -> ( OpLT )
+ }
+
+State 44
+ : ( T("(") , T("Name") , T("<=") , T("Name") )
+ {
+  ---------------------
+  T("&") -> ( OpLE )
+  T(")") -> ( OpLE )
+  T("|") -> ( OpLE )
+ }
+
+State 45
+ : ( T("(") , T("Name") , T("==") , T("Name") )
+ {
+  ---------------------
+  T("&") -> ( OpEQ )
+  T(")") -> ( OpEQ )
+  T("|") -> ( OpEQ )
+ }
+
+State 46
+ : ( T("(") , T("Name") , T(">") , T("Name") )
+ {
+  ---------------------
+  T("&") -> ( OpGT )
+  T(")") -> ( OpGT )
+  T("|") -> ( OpGT )
+ }
+
+State 47
+ : ( T("(") , T("Name") , T(">=") , T("Name") )
+ {
+  ---------------------
+  T("&") -> ( OpGE )
+  T(")") -> ( OpGE )
+  T("|") -> ( OpGE )
+ }
+
+State 48
+ : ( T("(") , COND , T("|") , COND_MUL )
+ {
+  T("&") -> State 51
+  ---------------------
+  T("&") -> ( <- )
+  T(")") -> ( OpOR )
+  T("|") -> ( OpOR )
+ }
+
+State 49
+ : ( T("(") , COND_MUL , T("&") , COND_UN )
+ {
+  ---------------------
+  T("&") -> ( OpAND )
+  T(")") -> ( OpAND )
+  T("|") -> ( OpAND )
+ }
+
+State 50
+ : ( COND , T("|") , COND_MUL , T("&") )
+ {
+  T("!") -> State 7
+  T("(") -> State 1
+  T("Name") -> State 2
+  COND_UN -> State 40
+  COND_PRIM -> State 6
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
+State 51
+ : ( T("(") , COND , T("|") , COND_MUL , T("&") )
+ {
+  T("!") -> State 9
+  T("(") -> State 10
+  T("Name") -> State 11
+  COND_UN -> State 49
+  COND_PRIM -> State 15
+  ---------------------
+  T("!") -> ( <- )
+  T("(") -> ( <- )
+  T("Name") -> ( <- )
+ }
+
