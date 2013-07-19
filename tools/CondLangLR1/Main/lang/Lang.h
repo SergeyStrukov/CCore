@@ -17,6 +17,7 @@
 #include "Tools.h"
 
 #include <CCore/inc/AnyPtr.h>
+#include <CCore/inc/ElementPool.h>
 
 namespace App {
 
@@ -60,9 +61,9 @@ struct LangBase : NoCopy
     PtrLen<const Rule> rules;
     bool is_lang;
     
-    ulen hasKinds() const { return kinds.len; }
+    ulen hasKinds() const { return +kinds; }
     
-    bool noKinds() const { return !kinds.len; }
+    bool noKinds() const { return !kinds; }
    };
   
   // Element
@@ -189,7 +190,6 @@ class Lang : public LangBase
  {
   private:
   
-   class CondParser;
    class Builder;
   
   public:

@@ -10,3 +10,7 @@
 
   EXPR.a * EXPR.b : if( a>=P & b>=M ) opMul  = M
  }
+ 
+EXPR {} 
+
+ 

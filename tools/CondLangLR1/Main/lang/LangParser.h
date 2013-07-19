@@ -21,15 +21,30 @@
 namespace App {
 namespace LangParser {
 
+/* functions */
+
+ulen ScanName(StrLen text);
+
+inline bool IsName(StrLen text)
+ {
+  ulen len=ScanName(text);
+  
+  return len && len==text.len;
+ }
+
 /* classes */
 
 //enum CharClass;
+
+class CharProp;
 
 //enum TokenClass;
 
 struct Token;
 
-class Tokenizer;
+struct TokenizerBase;
+
+template <class Action> class Tokenizer;
 
 //enum CondAtom;
 
@@ -124,25 +139,51 @@ struct Token
   bool is(char ch1,char ch2) const { return str.len==2 && str[0]==ch1 && str[1]==ch2 ; }
  };
 
-/* class Tokenizer */
+/* struct TokenizerBase */
 
-class Tokenizer : NoCopy
+struct TokenizerBase : NoCopy
  {
+  template <class Pred>
+  static ulen ScanExtraChars(StrLen text,Pred pred) // >=1
+   {
+    ulen len=text.len;
+
+    for(++text; +text && pred(*text) ;++text);
+
+    return len-text.len;
+   }
+  
+  struct Scan
+   {
+    ulen len;
+    bool ok;
+    
+    Scan(ulen len_,bool ok_=true) : len(len_),ok(ok_) {}
+   };
+  
+  struct BadScan : Scan
+   {
+    explicit BadScan(ulen len) : Scan(len,false) {}
+   };
+  
+  static ulen ScanShortComment(StrLen text); // >=2
+  static Scan ScanLongComment(StrLen text); // >=2
+  
+  static ulen ScanLetterDigit(StrLen text); // >=1
+  static ulen ScanSpace(StrLen text); // >=1
+  
+  static ulen ScanVisible(StrLen text); // >=1
+ };
+
+/* class Tokenizer<Action> */
+
+template <class Action> 
+class Tokenizer : TokenizerBase
+ {
+   Action &action;
+   
    TextPos pos;
    StrLen text;
-   
-  private:
-   
-   struct Scan;
-   struct BadScan;
-   
-   static ulen ScanShortComment(StrLen text); // >=2
-   static Scan ScanLongComment(StrLen text); // >=2
-   
-   static ulen ScanLetterDigit(StrLen text); // >=1
-   static ulen ScanSpace(StrLen text); // >=1
-   
-   static ulen ScanVisible(StrLen text); // >=1
    
   private: 
    
@@ -161,11 +202,11 @@ class Tokenizer : NoCopy
    
   public:
   
-   explicit Tokenizer(StrLen text_) : text(text_) {}
+   Tokenizer(Action &action_,StrLen text_) : action(action_),text(text_) {}
    
-   ulen operator + () const { return text.len; }
+   ulen operator + () const { return +text; }
    
-   bool operator ! () const { return !text.len; }
+   bool operator ! () const { return !text; }
  
    Token next();
    
@@ -173,6 +214,124 @@ class Tokenizer : NoCopy
    
    TextPos getPos() const { return pos; }
  };
+
+template <class Action> 
+Token Tokenizer<Action>::cut(TokenClass tc,ulen len)
+ {
+  Token ret(tc,pos,text+=len);
+
+  pos.update(len);
+
+  return ret;
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::cut_pos(TokenClass tc,ulen len)
+ {
+  Token ret(tc,pos,text+=len);
+  
+  pos.update(ret.str);
+
+  return ret;
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next_short_comment()
+ {
+  return cut(Token_ShortComment,ScanShortComment(text));
+ }
+ 
+template <class Action> 
+Token Tokenizer<Action>::next_long_comment()
+ {
+  auto scan=ScanLongComment(text);
+  
+  if( scan.ok ) return cut_pos(Token_LongComment,scan.len); 
+  
+  action.error("Tokenizer #; : not closed long comment",pos);
+  
+  return cut_pos(Token_Other,scan.len);
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next_word()
+ {
+  return cut(Token_Name,ScanLetterDigit(text));
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next_punct()
+ {
+  if( text.len>=2 )
+    {
+     if( text[1]=='=' )
+       {
+        char ch=text[0];
+        
+        if( ch=='=' || ch=='<' || ch=='>' || ch=='!' ) return cut(Token_Punct,2);
+       }
+    }
+  
+  return cut(Token_Punct,1);
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next_comment()
+ {
+  if( text.len>=2 )
+    {
+     if( text[1]=='/' ) return next_short_comment();
+     if( text[1]=='*' ) return next_long_comment();
+    }
+  
+  return next_other();
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next_space()
+ {
+  return cut_pos(Token_Space,ScanSpace(text));
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next_visible()
+ {
+  return cut(Token_Visible,ScanVisible(text));
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next_other()
+ {
+  action.error("Tokenizer #; : unexpected character",pos);
+  
+  return cut(Token_Other,1);
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next()
+ {
+  switch( GetCharClass(text[0]) )
+    {
+     case Char_Letter : return next_word();
+     case Char_Punct  : return next_punct();
+     case Char_Comment : return next_comment();
+     case Char_Space  : return next_space();
+     
+     default: return next_other();
+    }
+ }
+
+template <class Action> 
+Token Tokenizer<Action>::next_relaxed()
+ {
+  char ch=text[0];
+  
+  if( CharIsSpace(ch) ) return next_space();
+  
+  if( CharIsVisible(ch) ) return next_visible();
+
+  return next_other();
+ }
 
 /* enum CondAtom */
 
@@ -415,7 +574,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
    
      default: // case RuleError
       {
-       action.error("Parser #; : unexpected atom",pos);
+       action.exception("Parser #; : unexpected atom",pos);
       }
      return false; 
     }
@@ -443,7 +602,7 @@ void CondParser<Action>::put(CondAtom atom,TextPos pos)
     }
   else
     {
-     action.error("Parser #; : stack overflow",pos);
+     action.exception("Parser #; : stack overflow",pos);
     }
  }
 
@@ -460,7 +619,7 @@ void CondParser<Action>::putName(StrLen name,TextPos pos)
     }
   else
     {
-     action.error("Parser #; : stack overflow",pos);
+     action.exception("Parser #; : stack overflow",pos);
     }
  }
 
@@ -487,6 +646,7 @@ class Parser : NoCopy
      State_NextKind,   // Name :     ...
      State_EndKind,    // Name : A   ...
      State_Rules,      // Name {     ...
+     State_Elements,   // Name { E1  ...    
      
      State_RuleEnd,    // Name { ... :
      State_RuleIf,     // Name { ... : if
@@ -505,7 +665,7 @@ class Parser : NoCopy
    
   private: 
    
-   bool isNextRelaxed() const { return state==State_Rules; }
+   bool isNextRelaxed() const { return state==State_Rules || state==State_Elements ; }
    
    void put_Beg(Token token);
    void put_Name(Token token);
@@ -513,6 +673,7 @@ class Parser : NoCopy
    void put_NextKind(Token token);
    void put_EndKind(Token token);
    void put_Rules(Token token);
+   void put_Elements(Token token);
    void put_RuleEnd(Token token);
    void put_RuleIf(Token token);
    void put_RuleCond(Token token);
@@ -550,7 +711,7 @@ void Parser<Action>::put_Beg(Token token)
       
      case Token_Name :
       {
-       action.startSynt(token.str,false);
+       action.startSynt(token.str,token.pos,false);
        
        has_kinds=false;
        
@@ -569,7 +730,7 @@ void Parser<Action>::put_Beg(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token, NAME or '!' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME or '!' are expected",token.pos);
  }
 
 template <class Action> 
@@ -579,7 +740,7 @@ void Parser<Action>::put_Name(Token token)
     {
      case Token_Name :
       {
-       action.startSynt(token.str,true);
+       action.startSynt(token.str,token.pos,true);
        
        has_kinds=false;
        
@@ -590,7 +751,7 @@ void Parser<Action>::put_Name(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
  }
 
 template <class Action> 
@@ -617,7 +778,7 @@ void Parser<Action>::put_Kinds(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token, ':' or '{' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, ':' or '{' are expected",token.pos);
  }
 
 template <class Action> 
@@ -627,7 +788,7 @@ void Parser<Action>::put_NextKind(Token token)
     {
      case Token_Name :
       {
-       action.addKind(token.str);
+       action.addKind(token.str,token.pos);
        
        state=State_EndKind;
        
@@ -636,7 +797,7 @@ void Parser<Action>::put_NextKind(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
  }
 
 template <class Action> 
@@ -667,7 +828,7 @@ void Parser<Action>::put_EndKind(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token, ',' or '{' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, ',' or '{' are expected",token.pos);
  }
 
 template <class Action> 
@@ -686,6 +847,8 @@ void Parser<Action>::put_Rules(Token token)
           return;
          }
        
+       action.startRule();
+       
        if( token.is(':') )
          {
           action.endElements();
@@ -695,14 +858,44 @@ void Parser<Action>::put_Rules(Token token)
           return;
          }
        
-       action.addElement(token.str);
+       action.addElement(token.str,token.pos);
+       
+       state=State_Elements;
        
        return;
       }
      break;
     }
   
-  action.error("Parser #; : unexpected token",token.pos);
+  action.exception("Parser #; : unexpected token",token.pos);
+ }
+
+template <class Action> 
+void Parser<Action>::put_Elements(Token token)
+ {
+  switch( token.tc )
+    {
+     case Token_Visible :
+      {
+       if( token.is('}') ) break;
+       
+       if( token.is(':') )
+         {
+          action.endElements();
+          
+          state=State_RuleEnd;
+          
+          return;
+         }
+       
+       action.addElement(token.str,token.pos);
+       
+       return;
+      }
+     break;
+    }
+  
+  action.exception("Parser #; : unexpected token",token.pos);
  }
 
 template <class Action> 
@@ -719,16 +912,25 @@ void Parser<Action>::put_RuleEnd(Token token)
           return;
          }
        
-       action.rule(token.str);
+       action.rule(token.str,token.pos);
           
-       state=has_kinds?State_Result:State_Rules;
+       if( has_kinds )
+         {
+          state=State_Result;
+         }
+       else
+         {
+          action.endRule();
+         
+          state=State_Rules;
+         }
        
        return;
       }
      break;
     }
   
-  action.error("Parser #; : unexpected token, NAME or 'if' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME or 'if' are expected",token.pos);
  }
 
 template <class Action> 
@@ -751,7 +953,7 @@ void Parser<Action>::put_RuleIf(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token, '(' is expected",token.pos);
+  action.exception("Parser #; : unexpected token, '(' is expected",token.pos);
  }
 
 template <class Action> 
@@ -823,7 +1025,7 @@ void Parser<Action>::put_RuleCond(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token",token.pos);
+  action.exception("Parser #; : unexpected token",token.pos);
  }
 
 template <class Action> 
@@ -833,16 +1035,25 @@ void Parser<Action>::put_RuleName(Token token)
     {
      case Token_Name :
       {
-       action.rule(token.str);
+       action.rule(token.str,token.pos);
        
-       state=has_kinds?State_Result:State_Rules;
+       if( has_kinds )
+         {
+          state=State_Result;
+         }
+       else
+         {
+          action.endRule();
+         
+          state=State_Rules;
+         }
        
        return;
       }
      break;
     }
   
-  action.error("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
  }
 
 template <class Action> 
@@ -862,7 +1073,7 @@ void Parser<Action>::put_Result(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token, '=' is expected",token.pos);
+  action.exception("Parser #; : unexpected token, '=' is expected",token.pos);
  }
 
 template <class Action> 
@@ -872,7 +1083,8 @@ void Parser<Action>::put_ResultName(Token token)
     {
      case Token_Name :
       {
-       action.result(token.str);
+       action.result(token.str,token.pos);
+       action.endRule();
        
        state=State_Rules;
        
@@ -881,7 +1093,7 @@ void Parser<Action>::put_ResultName(Token token)
      break;
     }
   
-  action.error("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
  }
 
 template <class Action> 
@@ -896,6 +1108,12 @@ void Parser<Action>::put(Token token)
        // do nothing
       }
      return;
+     
+     case Token_Other :
+      {
+       action.exception("Parser #; : unexpected token",token.pos);
+      }
+     return; 
     }
   
   switch( state )
@@ -906,6 +1124,7 @@ void Parser<Action>::put(Token token)
      case State_NextKind   : put_NextKind(token); break;
      case State_EndKind    : put_EndKind(token); break;
      case State_Rules      : put_Rules(token); break;
+     case State_Elements   : put_Elements(token); break;
      case State_RuleEnd    : put_RuleEnd(token); break;
      case State_RuleIf     : put_RuleIf(token); break;
      case State_RuleCond   : put_RuleCond(token); break;
@@ -918,7 +1137,7 @@ void Parser<Action>::put(Token token)
 template <class Action> 
 void Parser<Action>::run(StrLen text)
  {
-  Tokenizer tok(text);
+  Tokenizer<Action> tok(action,text);
 
   while( +tok )
     {

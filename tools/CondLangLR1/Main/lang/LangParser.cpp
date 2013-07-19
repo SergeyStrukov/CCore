@@ -16,6 +16,15 @@
 namespace App {
 namespace LangParser {
 
+/* functions */
+
+ulen ScanName(StrLen text)
+ {
+  if( +text && GetCharClass(text[0])==Char_Letter ) return TokenizerBase::ScanLetterDigit(text); 
+   
+  return 0;
+ }
+
 /* class CharProp */
 
 CharProp::CharProp()
@@ -55,39 +64,22 @@ const char * GetTextDesc(TokenClass tc)
     }
  }
 
-/* class Tokenizer */
-
-struct Tokenizer::Scan
- {
-  ulen len;
-  bool ok;
-  
-  Scan(ulen len_,bool ok_=true) : len(len_),ok(ok_) {}
- };
-
-struct Tokenizer::BadScan : Scan
- {
-  explicit BadScan(ulen len) : Scan(len,false) {}
- };
+/* struct TokenizerBase */
    
-ulen Tokenizer::ScanShortComment(StrLen text)
+ulen TokenizerBase::ScanShortComment(StrLen text)
  {
   ulen len=text.len;
 
-  text+=2;
-  
-  for(; +text && !CharIsEOL(*text) ;++text);
+  for(text+=2; +text && !CharIsEOL(*text) ;++text);
 
   return len-text.len;
  }
  
-auto Tokenizer::ScanLongComment(StrLen text) -> Scan
+auto TokenizerBase::ScanLongComment(StrLen text) -> Scan
  {
   ulen len=text.len;
 
-  text+=2;
-
-  for(; text.len>=2 ;++text)
+  for(text+=2; text.len>=2 ;++text)
     {
      if( text[0]=='*' && text[1]=='/' )
        {
@@ -98,137 +90,19 @@ auto Tokenizer::ScanLongComment(StrLen text) -> Scan
   return BadScan(len);
  }
 
-ulen Tokenizer::ScanLetterDigit(StrLen text)
+ulen TokenizerBase::ScanLetterDigit(StrLen text)
  {
-  ulen len=text.len;
-
-  for(++text; +text && CharIsLetterDigit(*text) ;++text);
-
-  return len-text.len;
+  return ScanExtraChars(text,CharIsLetterDigit);
  }
 
-ulen Tokenizer::ScanSpace(StrLen text)
+ulen TokenizerBase::ScanSpace(StrLen text)
  {
-  ulen len=text.len;
-
-  for(++text; +text && CharIsSpace(*text) ;++text);
-
-  return len-text.len;
+  return ScanExtraChars(text,CharIsSpace<char>);
  }
    
-ulen Tokenizer::ScanVisible(StrLen text)
+ulen TokenizerBase::ScanVisible(StrLen text)
  {
-  ulen len=text.len;
-
-  for(++text; +text && CharIsVisible(*text) ;++text);
-
-  return len-text.len;
- }
-
-Token Tokenizer::cut(TokenClass tc,ulen len)
- {
-  Token ret(tc,pos,text+=len);
-
-  pos.update(len);
-
-  return ret;
- }
-
-Token Tokenizer::cut_pos(TokenClass tc,ulen len)
- {
-  Token ret(tc,pos,text+=len);
-  
-  pos.update(ret.str);
-
-  return ret;
- }
-
-Token Tokenizer::next_short_comment()
- {
-  return cut(Token_ShortComment,ScanShortComment(text));
- }
- 
-Token Tokenizer::next_long_comment()
- {
-  auto scan=ScanLongComment(text);
-  
-  if( scan.ok ) return cut_pos(Token_LongComment,scan.len); 
-  
-  Printf(Err,"Tokenizer #; : not closed long comment\n\n",pos);
-  
-  return cut_pos(Token_Other,scan.len);
- }
-
-Token Tokenizer::next_word()
- {
-  return cut(Token_Name,ScanLetterDigit(text));
- }
-
-Token Tokenizer::next_punct()
- {
-  if( text.len>=2 )
-    {
-     if( text[1]=='=' )
-       {
-        char ch=text[0];
-        
-        if( ch=='=' || ch=='<' || ch=='>' || ch=='!' ) return cut(Token_Punct,2);
-       }
-    }
-  
-  return cut(Token_Punct,1);
- }
-
-Token Tokenizer::next_comment()
- {
-  if( text.len>=2 )
-    {
-     if( text[1]=='/' ) return next_short_comment();
-     if( text[1]=='*' ) return next_long_comment();
-    }
-  
-  return next_other();
- }
-
-Token Tokenizer::next_space()
- {
-  return cut_pos(Token_Space,ScanSpace(text));
- }
-
-Token Tokenizer::next_visible()
- {
-  return cut(Token_Visible,ScanVisible(text));
- }
-
-Token Tokenizer::next_other()
- {
-  Printf(Err,"Tokenizer #; : unexpected character\n\n",pos);
-  
-  return cut(Token_Other,1);
- }
-
-Token Tokenizer::next()
- {
-  switch( GetCharClass(text[0]) )
-    {
-     case Char_Letter : return next_word();
-     case Char_Punct  : return next_punct();
-     case Char_Comment : return next_comment();
-     case Char_Space  : return next_space();
-     
-     default: return next_other();
-    }
- }
-
-Token Tokenizer::next_relaxed()
- {
-  char ch=text[0];
-  
-  if( CharIsSpace(ch) ) return next_space();
-  
-  if( CharIsVisible(ch) ) return next_visible();
-
-  return next_other();
+  return ScanExtraChars(text,CharIsVisible<char>);
  }
 
 /* struct CondPaserBase */
