@@ -6,6 +6,10 @@ CCore/inc/AnyPtr.h
 
   AnyPtr_const::operator +   is fixed
 
+CCore/inc/Exception.h
+
+  ~PrintException() noexcept(false) is added
+
 --- New features -----
 
 
