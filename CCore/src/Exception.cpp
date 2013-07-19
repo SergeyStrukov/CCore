@@ -186,7 +186,7 @@ PrintException::PrintException(ExceptionType ex_)
   report=ReportException::Start(ex_);
  }
    
-PrintException::~PrintException()
+PrintException::~PrintException() noexcept(false)
  {
   flush();
   

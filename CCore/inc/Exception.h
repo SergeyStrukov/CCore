@@ -134,7 +134,7 @@ class PrintException : public PrintBase
   
    explicit PrintException(ExceptionType ex); 
    
-   ~PrintException();
+   ~PrintException() noexcept(false);
  };
  
 template <> 
