@@ -252,6 +252,21 @@ class Lang::Builder : NoCopy
        }
     };
    
+   struct BuildAtom : NoCopy
+    {
+     SLink<BuildAtom> link;
+     
+     StrLen name;
+     
+     explicit BuildAtom(StrLen name_) : name(name_) {}
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Putobj(out,name);
+      }
+    };
+   
    struct BuildSynt;
    
    struct BuildKind : NoCopy
@@ -272,8 +287,9 @@ class Lang::Builder : NoCopy
      TextPos pos;
      BuildSynt *synt;
      StrLen arg;
+     BuildAtom *atom;
      
-     BuildElement(StrLen name_,TextPos pos_) : name(name_),pos(pos_),synt(0) {}
+     BuildElement(StrLen name_,TextPos pos_) : name(name_),pos(pos_),synt(0),atom(0) {}
      
      template <class P>
      void print(P &out) const
@@ -282,9 +298,14 @@ class Lang::Builder : NoCopy
        
        if( synt )
          {
-          Putobj(out,"$");
+          Putch(out,'$');
           
-          if( +arg ) Printf(out,"#;$",arg);
+          if( +arg ) Putch(out,'$');
+         }
+       
+       if( atom )
+         {
+          Putch(out,'@');
          }
       }
     };
@@ -300,7 +321,9 @@ class Lang::Builder : NoCopy
      TextPos result_pos;
      ObjList<BuildElement> element_list;
      
-     BuildRule() {}
+     BuildKind *result_kind;
+     
+     BuildRule() : result_kind(0) {}
      
      template <class P>
      void print(P &out) const
@@ -322,7 +345,7 @@ class Lang::Builder : NoCopy
        
        Putobj(out," )");
        
-       if( +result ) Printf(out," -> #;",result);
+       if( result_kind ) Printf(out," -> #;",result_kind->name);
       }
     };
    
@@ -402,6 +425,7 @@ class Lang::Builder : NoCopy
    ElementPool pool;
    
    ObjList<BuildSynt> synt_list;
+   ObjList<BuildAtom> atom_list;
    
    BuildSynt *current_synt = 0 ;
    BuildRule *current_rule = 0 ;
@@ -467,6 +491,64 @@ class Lang::Builder : NoCopy
    
    void bindElements();
    
+   struct BindAtom : BindName
+    {
+     BuildElement *element;
+     
+     explicit BindAtom(BuildElement &element_) : BindName(element_.name),element(&element_) {} 
+    };
+   
+   void bindAtom(PtrLen<BindAtom> range);
+   
+   void buildAtoms();
+   
+   struct CheckRuleName : BindName
+    {
+     BuildRule *rule;
+     
+     explicit CheckRuleName(BuildRule &rule_) : BindName(rule_.name),rule(&rule_) {}
+    };
+   
+   void checkRuleNames();
+   
+   struct BindResult : BindName
+    {
+     AnyPtr<BuildRule,BuildKind> ptr;
+     
+     explicit BindResult(BuildRule &rule) : BindName(rule.result),ptr(&rule) {}
+     
+     explicit BindResult(BuildKind &kind) : BindName(kind.name),ptr(&kind) {}
+    };
+   
+   struct FindKind : NoCopy
+    {
+     BuildKind *kind;
+     ulen count;
+     
+     BuildRule *rule;
+     
+     FindKind() : kind(0),count(0),rule(0) {}
+     
+     void operator () (BuildRule *rule_) { rule=rule_; }
+     
+     void operator () (BuildKind *kind_) { kind=kind_; count++; }
+    };
+   
+   struct SetResult
+    {
+     BuildKind *kind;
+     
+     explicit SetResult(BuildKind *kind_) : kind(kind_) {}
+     
+     void operator () (BuildRule *rule) { rule->result_kind=kind; }
+     
+     void operator () (BuildKind *) {}
+    };
+   
+   void bindResults(PtrLen<BindResult> range);
+   
+   void bindResults();
+   
   public:
  
    explicit Builder(Lang &lang);
@@ -476,6 +558,10 @@ class Lang::Builder : NoCopy
    template <class P>
    void print(P &out) const
     {
+     atom_list.apply( [&] (const BuildAtom &atom) { Printf(out,"#;\n",atom); } );
+     
+     Putch(out,'\n');
+     
      synt_list.apply( [&] (const BuildSynt &synt) { Printf(out,"#;\n",synt); } );
     }
  };
@@ -586,11 +672,12 @@ void Lang::Builder::endSynt()
 
 void Lang::Builder::endLang()
  {
-  //Putobj(Con,*this);
-  
   ReportException report;
   
   bindElements();
+  buildAtoms();
+  checkRuleNames();
+  bindResults();
   // ...
   
   report.guard();
@@ -646,9 +733,9 @@ void Lang::Builder::bindElements(PtrLen<BindElement> range)
      
      case 1 :
       {
-       SetElement bind_element(find.synt);
+       SetElement set_element(find.synt);
        
-       for(auto &bind : range ) bind.ptr.apply(bind_element);
+       for(auto &bind : range ) bind.ptr.apply(set_element);
       }
      break;
      
@@ -661,26 +748,146 @@ void Lang::Builder::bindElements(PtrLen<BindElement> range)
 
 void Lang::Builder::bindElements()
  {
+  ulen lang_count=0;
   Collector<BindElement> collector;
   
   synt_list.apply( [&] (BuildSynt &synt) 
                        {
+                        lang_count+=synt.is_lang;  
+    
                         collector.append_fill(synt);
                         
                         synt.rule_list.apply( [&] (BuildRule &rule) 
                                                   {
                                                    rule.element_list.apply( [&] (BuildElement &element) 
-                                                                          {
-                                                                           StrLen name=SyntElementName(element.name);
+                                                                                {
+                                                                                 StrLen name=SyntElementName(element.name);
                                                      
-                                                                           if( +name ) collector.append_fill(name,element); 
-                                                                          } );
+                                                                                 if( +name ) collector.append_fill(name,element); 
+                                                                                } 
+                                                                          );
                                                   } 
                                             );
                        } 
                  );
   
   Algon::SortThenApplyUniqueRange(collector.flat(), [&] (PtrLen<BindElement> range) { bindElements(range); } );
+  
+  if( !lang_count ) error("Builder : no lang syntax class");
+ }
+
+void Lang::Builder::bindAtom(PtrLen<BindAtom> range)
+ {
+  StrLen name=range->element->name;
+  BuildAtom *atom=pool.create<BuildAtom>(name);
+  
+  atom_list.add(atom);
+  
+  for(auto &bind: range ) bind.element->atom=atom;
+ }
+
+void Lang::Builder::buildAtoms()
+ {
+  Collector<BindAtom> collector;
+  
+  synt_list.apply( [&] (BuildSynt &synt) 
+                       {
+                        synt.rule_list.apply( [&] (BuildRule &rule) 
+                                                  {
+                                                   rule.element_list.apply( [&] (BuildElement &element) 
+                                                                                {
+                                                                                 if( !element.synt ) collector.append_fill(element);
+                                                                                } 
+                                                                          );
+                                                  } 
+                                            );
+                       } 
+                 );
+  
+  Algon::SortThenApplyUniqueRange(collector.flat(), [&] (PtrLen<BindAtom> range) { bindAtom(range); } );
+ }
+
+void Lang::Builder::checkRuleNames()
+ {
+  Collector<CheckRuleName> collector; 
+  
+  synt_list.apply( [&] (BuildSynt &synt) 
+                       {
+                        synt.rule_list.apply( [&] (BuildRule &rule) 
+                                                  {
+                                                   collector.append_fill(rule);  
+                                                  } 
+                                            );
+                       } 
+                 );
+  
+  Algon::SortThenApplyUniqueRange(collector.flat(), [&] (PtrLen<CheckRuleName> range) 
+                                                        {
+                                                         if( range.len>1 )
+                                                           {
+                                                            error("Builder #; : multiple declaration of rule #;",range->rule->pos,range->name);
+                                                           }
+                                                        } 
+                                 );
+ }
+
+void Lang::Builder::bindResults(PtrLen<BindResult> range)
+ {
+  FindKind find;
+  
+  for(auto &bind : range ) bind.ptr.apply( FunctorRef(find) );
+  
+  switch( find.count )
+    {
+     case 0 :
+      {
+       error("Builder #; : no declaration of kind #;",find.rule->result_pos,find.rule->result);
+      }
+     break;
+     
+     case 1 :
+      {
+       SetResult set_result(find.kind);
+       
+       for(auto &bind : range ) bind.ptr.apply(set_result);
+      }
+     break;
+     
+     default:
+      {
+       error("Builder #; : multiple declaration of kind #;",find.kind->pos,find.kind->name);
+      }
+    }
+ }
+
+void Lang::Builder::bindResults()
+ {
+  synt_list.apply( [&] (BuildSynt &synt) 
+                       {
+                        if( +synt.kind_list )
+                          {
+                           Collector<BindResult> collector;  
+      
+                           synt.rule_list.apply( [&] (BuildRule &rule) 
+                                                     {
+                                                      collector.append_fill(rule);  
+                                                     } 
+                                               );
+                          
+                           synt.kind_list.apply( [&] (BuildKind &kind) 
+                                                     {
+                                                      collector.append_fill(kind);
+                                                     } 
+                                               );
+                           
+                           Algon::SortThenApplyUniqueRange(collector.flat(), [&] (PtrLen<BindResult> range)
+                                                                                 {
+                                                                                  bindResults(range);
+                                                                                 }
+                                                          );
+                          }
+                       } 
+                 );
  }
 
 Lang::Builder::Builder(Lang &lang_) 
