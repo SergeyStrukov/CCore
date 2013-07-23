@@ -33,17 +33,17 @@ struct LangBase : NoCopy
  {
   // Atom
   
-  struct Atom
+  struct Atom : NoThrowFlagsBase
    {
-    ulen index;
+    ulen index = MaxULen ;
     StrLen name;
    };
   
   // Kind
   
-  struct Kind
+  struct Kind : NoThrowFlagsBase
    {
-    ulen index;
+    ulen index = MaxULen ;
     StrLen name;
    };
   
@@ -51,15 +51,15 @@ struct LangBase : NoCopy
   
   struct Rule;
   
-  struct Synt
+  struct Synt : NoThrowFlagsBase
    {
-    ulen index;
+    ulen index = MaxULen ;
     StrLen name;
     
     PtrLen<const Kind> kinds;
     
     PtrLen<const Rule> rules;
-    bool is_lang;
+    bool is_lang = false ;
     
     ulen hasKinds() const { return +kinds; }
     
@@ -68,9 +68,9 @@ struct LangBase : NoCopy
   
   // Element
   
-  struct Element
+  struct Element : NoThrowFlagsBase
    {
-    ulen index;
+    ulen index = MaxULen ;
     StrLen name;
     
     AnyPtr_const<Atom,Synt> ptr;
@@ -80,7 +80,7 @@ struct LangBase : NoCopy
   
   struct CmpArgElement
    {
-    ulen index;
+    ulen index = MaxULen ;
    };
   
   struct CmpArgKind
@@ -167,9 +167,9 @@ struct LangBase : NoCopy
   
   // Rule
   
-  struct Rule
+  struct Rule : NoThrowFlagsBase
    {
-    ulen index;
+    ulen index = MaxULen ;
     StrLen name;
     
     Synt ret;
@@ -188,6 +188,13 @@ struct LangBase : NoCopy
 
 class Lang : public LangBase
  {
+   ElementPool pool;
+   
+   PtrLen<Atom> atoms;
+   PtrLen<Synt> synts;
+   PtrLen<Element> elements;
+   PtrLen<Rule> rules;
+  
   private:
   
    class Builder;
@@ -202,21 +209,21 @@ class Lang : public LangBase
    
    // description
    
-   PtrLen<const Atom> getAtoms() const;
+   PtrLen<const Atom> getAtoms() const { return Range_const(atoms); }
    
-   ulen getAtomCount() const;
+   ulen getAtomCount() const { return atoms.len; }
    
-   PtrLen<const Synt> getSynts() const;
+   PtrLen<const Synt> getSynts() const { return Range_const(synts); }
    
-   ulen getSyntCount() const;
+   ulen getSyntCount() const { return synts.len; }
    
-   PtrLen<const Element> getElements() const;
+   PtrLen<const Element> getElements() const { return Range_const(elements); }
    
-   ulen getElementCount() const;
+   ulen getElementCount() const { return elements.len; }
    
-   PtrLen<const Rule> getRules() const;
+   PtrLen<const Rule> getRules() const { return Range_const(rules); }
    
-   ulen getRuleCount() const;
+   ulen getRuleCount() const { return rules.len; }
  };
 
 } // namespace App

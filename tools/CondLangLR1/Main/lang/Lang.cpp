@@ -213,6 +213,8 @@ class Lang::Builder : NoCopy
       ulen operator + () const { return count; }
      
       bool operator ! () const { return !count; }
+      
+      ulen getCount() const { return count; }
      
       void add(T *obj) { list.ins_last(obj); count++; }
       
@@ -257,6 +259,7 @@ class Lang::Builder : NoCopy
      SLink<BuildAtom> link;
      
      StrLen name;
+     ulen index;
      
      explicit BuildAtom(StrLen name_) : name(name_) {}
      
@@ -275,6 +278,7 @@ class Lang::Builder : NoCopy
      
      StrLen name;
      TextPos pos;
+     ulen index;
      
      BuildKind(StrLen name_,TextPos pos_) : name(name_),pos(pos_) {}
     };
@@ -323,6 +327,8 @@ class Lang::Builder : NoCopy
      
      BuildKind *result_kind;
      
+     ulen index;
+     
      BuildRule() : result_kind(0) {}
      
      template <class P>
@@ -358,6 +364,8 @@ class Lang::Builder : NoCopy
      bool is_lang;
      ObjList<BuildKind> kind_list;
      ObjList<BuildRule> rule_list;
+     ulen index;
+     ulen rule_off;
      
      BuildSynt(StrLen name_,TextPos pos_,bool is_lang_) : name(name_),pos(pos_),is_lang(is_lang_) {}
      
@@ -549,6 +557,8 @@ class Lang::Builder : NoCopy
    
    void bindResults();
    
+   void complete();
+   
   public:
  
    explicit Builder(Lang &lang);
@@ -682,7 +692,9 @@ void Lang::Builder::endLang()
   
   report.guard();
   
-  Putobj(Con,*this);
+  //Putobj(Con,*this);
+  
+  complete();
  }
 
 bool Lang::Builder::CorrectElement(StrLen name)
@@ -888,6 +900,175 @@ void Lang::Builder::bindResults()
                           }
                        } 
                  );
+ }
+
+void Lang::Builder::complete()
+ {
+  // atoms
+  {
+   ulen len=LenAdd(atom_list.getCount(),1);
+   
+   PtrLen<Atom> atoms=lang.pool.createArray<Atom>(len);
+   
+   lang.atoms=atoms;
+   
+   atoms[0].name="(End)";
+   atoms[0].index=0;
+   
+   ulen index=1;
+   
+   atom_list.apply( [&] (BuildAtom &atom) 
+                        {
+                         atoms[index].name=lang.pool.dup(atom.name);
+                         atoms[index].index=index;
+                         
+                         atom.index=index++;
+                        } 
+                  );
+  }
+  
+  // synt
+  {
+   ulen len=synt_list.getCount();
+   
+   PtrLen<Synt> synts=lang.pool.createArray<Synt>(len);
+   
+   lang.synts=synts;
+   
+   ulen index=0;
+   
+   synt_list.apply( [&] (BuildSynt &synt) 
+                        {
+                         synts[index].name=lang.pool.dup(synt.name);
+                         synts[index].index=index;
+                         synts[index].is_lang=synt.is_lang;
+                         
+                         if( ulen klen=synt.kind_list.getCount() )
+                           {
+                            PtrLen<Kind> kinds=lang.pool.createArray<Kind>(klen);
+                            
+                            synts[index].kinds=Range_const(kinds);
+                            
+                            ulen kindex=0;
+                            
+                            synt.kind_list.apply( [&] (BuildKind &kind) 
+                                                      {
+                                                       kinds[kindex].name=lang.pool.dup(kind.name);
+                                                       kinds[kindex].index=kindex;
+                                                       
+                                                       kind.index=kindex++;
+                                                      }
+                                                );
+                           }
+                         
+                         synt.index=index++;
+                        } 
+                  );
+  }
+  
+  // elements
+  {
+   ulen len=LenAdd(lang.atoms.len,lang.synts.len);
+   
+   PtrLen<Element> elements=pool.createArray<Element>(len);
+   
+   lang.elements=elements;
+   
+   ulen index=0;
+   
+   for(Atom &atom : lang.atoms )
+     {
+      elements[index].name=atom.name;
+      elements[index].index=index;
+      elements[index].ptr=&atom;
+      
+      index++;
+     }
+   
+   for(Synt &synt : lang.synts )
+     {
+      elements[index].name=synt.name;
+      elements[index].index=index;
+      elements[index].ptr=&synt;
+      
+      index++;
+     }
+  }
+  
+  // rules
+  {
+   ulen len=1;
+   
+   synt_list.apply( [&] (BuildSynt &synt) 
+                        { 
+                         synt.rule_off=len;
+     
+                         len=LenAdd(len,synt.rule_list.getCount()); 
+                        } 
+                  );
+   
+   PtrLen<Rule> rules=lang.pool.createArray<Rule>(len);
+   
+   lang.rules=rules;
+   
+   rules[0].name="<-";
+   rules[0].index=0;
+   
+   PtrLen<Synt> synts=lang.synts;
+   
+   synt_list.apply( [&] (BuildSynt &synt) 
+                        { 
+                         ulen index=synt.index;
+                         
+                         synts[index].rules=Range_const(rules.part(synt.rule_off,synt.rule_list.getCount()));
+                         
+                         ulen rindex=synt.rule_off;
+                         
+                         synt.rule_list.apply( [&] (BuildRule &rule)
+                                                   {
+                                                    rules[rindex].name=lang.pool.dup(rule.name);
+                                                    rules[rindex].index=rindex;
+                                                    rules[rindex].ret=synts[index];
+                                                    
+                                                    if( rule.result_kind )
+                                                      rules[rindex].kind=synts[index].kinds[rule.result_kind->index];
+                                                    
+                                                    ulen alen=rule.element_list.getCount();
+                                                    
+                                                    PtrLen<Element> args=pool.createArray<Element>(alen);
+                                                    
+                                                    rules[rindex].args=Range_const(args);
+                                                    
+                                                    PtrLen<Element> elements=lang.elements;
+                                                    
+                                                    ulen eindex=0;
+                                                    ulen delta=lang.atoms.len;
+                                                    
+                                                    rule.element_list.apply( [&] (BuildElement &element)
+                                                                                 {
+                                                                                  ulen i;
+                                                                                  
+                                                                                  if( BuildSynt *synt=element.synt )
+                                                                                    {
+                                                                                     i=synt->index+delta;
+                                                                                    }
+                                                                                  else
+                                                                                    {
+                                                                                     i=element.atom->index;
+                                                                                    }
+                                                                                  
+                                                                                  args[eindex]=elements[i];
+                                                                                  
+                                                                                  eindex++;
+                                                                                 }
+                                                                           );
+                                                    
+                                                    rule.index=rindex++;
+                                                   }
+                                             );
+                        } 
+                  );
+  }
  }
 
 Lang::Builder::Builder(Lang &lang_) 

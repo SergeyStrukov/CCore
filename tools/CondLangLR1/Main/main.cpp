@@ -28,6 +28,32 @@ int Main(StrLen lang_name,StrLen file_name,StrLen CCORE_Root)
   
   Lang lang(file_name);
   
+  Putobj(Con,"-----\n");
+  
+  for(auto atom : lang.getAtoms() ) Printf(Con,"#;) #;\n",atom.index,atom.name);
+  
+  Putobj(Con,"-----\n");
+  
+  for(auto synt : lang.getSynts() ) 
+    {
+     Printf(Con,"#;) #;",synt.index,synt.name);
+     
+     if( synt.is_lang ) Putobj(Con," !");
+     
+     if( +synt.kinds )
+       {
+        Putobj(Con," { ");
+       
+        for(auto kind : synt.kinds ) Printf(Con,"#;) #; ",kind.index,kind.name);
+        
+        Putch(Con,'}');
+       }
+     
+     Putch(Con,'\n');
+    }
+  
+  Putobj(Con,"-----\n");
+  
   return 0;
  }
 
