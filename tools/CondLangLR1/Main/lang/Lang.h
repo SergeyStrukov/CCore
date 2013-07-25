@@ -31,31 +31,34 @@ class Lang;
 
 struct LangBase : NoCopy
  {
-  // Atom
-  
-  struct Atom : NoThrowFlagsBase
+  struct RecordBase : NoThrowFlagsBase
    {
     ulen index = MaxULen ;
     StrLen name;
+    
+    bool operator + () const { return index!=MaxULen; }
+    
+    bool operator ! () const { return index==MaxULen; }
+   };
+  
+  // Atom
+  
+  struct Atom : RecordBase 
+   {
    };
   
   // Kind
   
-  struct Kind : NoThrowFlagsBase
+  struct Kind : RecordBase
    {
-    ulen index = MaxULen ;
-    StrLen name;
    };
   
   // Synt
   
   struct Rule;
   
-  struct Synt : NoThrowFlagsBase
+  struct Synt : RecordBase
    {
-    ulen index = MaxULen ;
-    StrLen name;
-    
     PtrLen<const Kind> kinds;
     
     PtrLen<const Rule> rules;
@@ -68,11 +71,8 @@ struct LangBase : NoCopy
   
   // Element
   
-  struct Element : NoThrowFlagsBase
+  struct Element : RecordBase
    {
-    ulen index = MaxULen ;
-    StrLen name;
-    
     AnyPtr_const<Atom,Synt> ptr;
    };
   
@@ -167,11 +167,8 @@ struct LangBase : NoCopy
   
   // Rule
   
-  struct Rule : NoThrowFlagsBase
+  struct Rule : RecordBase
    {
-    ulen index = MaxULen ;
-    StrLen name;
-    
     Synt ret;
     PtrLen<const Element> args;
     
@@ -198,6 +195,18 @@ class Lang : public LangBase
   private:
   
    class Builder;
+   
+   template <class P>
+   struct PrintElementPtr
+    {
+     P &out;
+     
+     explicit PrintElementPtr(P &out_) : out(out_) {}
+     
+     void operator () (const Atom *atom) { Printf(out,"Atom(#;)",atom->index); }
+     
+     void operator () (const Synt *synt) { Printf(out,"Synt(#;)",synt->index); }
+    };
   
   public:
   
@@ -224,6 +233,70 @@ class Lang : public LangBase
    PtrLen<const Rule> getRules() const { return Range_const(rules); }
    
    ulen getRuleCount() const { return rules.len; }
+   
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     Printf(out,"#;\n\n",Title("Atoms"));
+     
+     for(auto &atom : getAtoms() ) Printf(out,"#;) #;\n",atom.index,atom.name);
+     
+     Printf(out,"\n#;\n\n",Title("Syntax classes"));
+     
+     for(auto &synt : getSynts() ) 
+       {
+        Printf(out,"#;) #;",synt.index,synt.name);
+        
+        if( synt.is_lang ) Putobj(out," !");
+        
+        if( +synt.kinds )
+          {
+           Putobj(out," { ");
+          
+           for(auto &kind : synt.kinds ) Printf(out,"#;) #; ",kind.index,kind.name);
+           
+           Putch(out,'}');
+          }
+        
+        Putch(out,'\n');
+        
+        for(auto &rule : synt.rules ) Printf(out,"  Rule(#;)\n",rule.index);
+       }
+     
+     Printf(out,"\n#;\n\n",Title("Elements"));
+     
+     for(auto &element : getElements() )
+       {
+        Printf(out,"#;) #; -> ",element.index,element.name);
+        
+        element.ptr.apply( PrintElementPtr<P>(out) );
+        
+        Putch(out,'\n');
+       }
+     
+     Printf(out,"\n#;\n\n",Title("Rules"));
+     
+     for(auto &rule : getRules() )
+       if( rule.index )
+         {
+          if( +rule.kind )
+            Printf(out,"#;) #; -> #;.#;\n",rule.index,rule.name,rule.ret.name,rule.kind.name);
+          else
+            Printf(out,"#;) #; -> #;\n",rule.index,rule.name,rule.ret.name);
+        
+          for(auto &element : rule.args ) Printf(out,"  #;",element.name);
+        
+          Putch(out,'\n');
+         }
+       else
+         {
+          Printf(out,"#;) #;\n",rule.index,rule.name);
+         }
+     
+     Printf(out,"\n#;\n",TextDivider());
+    }
  };
 
 } // namespace App

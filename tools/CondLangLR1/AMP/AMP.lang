@@ -11,5 +11,8 @@
   EXPR.a * EXPR.b : if( a>=P & b>=M ) opMul  = M
  }
  
- 
- 
+TEST
+ {
+  : op
+  EXPR + EXPR : op1
+ } 

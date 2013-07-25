@@ -29,6 +29,19 @@ namespace App {
 class Lang::Builder : NoCopy
  {
   public:
+ 
+   struct BuildKind;
+ 
+   struct BuildCondArg : NoCopy
+    {
+     StrLen name;
+     
+     ulen index;
+     BuildKind *kind;
+     BuildCondArg *peer;
+     
+     explicit BuildCondArg(StrLen name_) : name(name_),index(MaxULen),kind(0),peer(0) {}
+    };
    
    struct BuildCondAND;
    struct BuildCondOR;
@@ -75,48 +88,48 @@ class Lang::Builder : NoCopy
    
    struct BuildCondEQ : NoCopy
     {
-     StrLen a;
-     StrLen b;
+     BuildCondArg a;
+     BuildCondArg b;
      
      BuildCondEQ(StrLen a_,StrLen b_) : a(a_),b(b_) {}
     };
    
    struct BuildCondNE : NoCopy
     {
-     StrLen a;
-     StrLen b;
+     BuildCondArg a;
+     BuildCondArg b;
      
      BuildCondNE(StrLen a_,StrLen b_) : a(a_),b(b_) {}
     };
    
    struct BuildCondGT : NoCopy
     {
-     StrLen a;
-     StrLen b;
+     BuildCondArg a;
+     BuildCondArg b;
      
      BuildCondGT(StrLen a_,StrLen b_) : a(a_),b(b_) {}
     };
    
    struct BuildCondGE : NoCopy
     {
-     StrLen a;
-     StrLen b;
+     BuildCondArg a;
+     BuildCondArg b;
      
      BuildCondGE(StrLen a_,StrLen b_) : a(a_),b(b_) {}
     };
    
    struct BuildCondLT : NoCopy
     {
-     StrLen a;
-     StrLen b;
+     BuildCondArg a;
+     BuildCondArg b;
      
      BuildCondLT(StrLen a_,StrLen b_) : a(a_),b(b_) {}
     };
    
    struct BuildCondLE : NoCopy
     {
-     StrLen a;
-     StrLen b;
+     BuildCondArg a;
+     BuildCondArg b;
      
      BuildCondLE(StrLen a_,StrLen b_) : a(a_),b(b_) {}
     };
@@ -261,7 +274,7 @@ class Lang::Builder : NoCopy
      StrLen name;
      ulen index;
      
-     explicit BuildAtom(StrLen name_) : name(name_) {}
+     explicit BuildAtom(StrLen name_) : name(name_),index(MaxULen) {}
      
      template <class P>
      void print(P &out) const
@@ -280,7 +293,7 @@ class Lang::Builder : NoCopy
      TextPos pos;
      ulen index;
      
-     BuildKind(StrLen name_,TextPos pos_) : name(name_),pos(pos_) {}
+     BuildKind(StrLen name_,TextPos pos_) : name(name_),pos(pos_),index(MaxULen) {}
     };
    
    struct BuildElement : NoCopy
@@ -293,7 +306,9 @@ class Lang::Builder : NoCopy
      StrLen arg;
      BuildAtom *atom;
      
-     BuildElement(StrLen name_,TextPos pos_) : name(name_),pos(pos_),synt(0),atom(0) {}
+     ulen index;
+     
+     BuildElement(StrLen name_,TextPos pos_) : name(name_),pos(pos_),synt(0),atom(0),index(MaxULen) {}
      
      template <class P>
      void print(P &out) const
@@ -329,7 +344,7 @@ class Lang::Builder : NoCopy
      
      ulen index;
      
-     BuildRule() : result_kind(0) {}
+     BuildRule() : result_kind(0),index(MaxULen) {}
      
      template <class P>
      void print(P &out) const
@@ -367,7 +382,7 @@ class Lang::Builder : NoCopy
      ulen index;
      ulen rule_off;
      
-     BuildSynt(StrLen name_,TextPos pos_,bool is_lang_) : name(name_),pos(pos_),is_lang(is_lang_) {}
+     BuildSynt(StrLen name_,TextPos pos_,bool is_lang_) : name(name_),pos(pos_),is_lang(is_lang_),index(MaxULen),rule_off(MaxULen) {}
      
      template <class P>
      void print(P &out) const
@@ -506,6 +521,54 @@ class Lang::Builder : NoCopy
      explicit BindAtom(BuildElement &element_) : BindName(element_.name),element(&element_) {} 
     };
    
+   static bool IsExpChar(char ch) { return ch=='\\' || ch=='"' ; }
+   
+   template <class R>
+   static ulen ExpCharCount(R r) 
+    { 
+     ulen ret=0; 
+     
+     for(; +r ;++r) if( IsExpChar(*r) ) ret++;
+     
+     return ret;
+    }
+   
+   class PutChar : NoCopy
+    {
+      PtrLen<char> out;
+      
+     public:
+     
+      explicit PutChar(PtrLen<char> out_) : out(out_) {}
+      
+      void put() {}
+      
+      void put(char ch) { *out=ch; ++out; }
+      
+      template <class ... CC>
+      void put(char ch,CC ... cc)
+       {
+        put(ch);
+        put(cc...);
+       }
+      
+      void transform(char ch)
+       {
+        if( IsExpChar(ch) )
+          put('\\',ch);
+        else
+          put(ch);
+       }
+    
+      template <class R>
+      void transform(R r)
+       {
+        for(; +r ;++r) transform(*r);
+       }
+    };
+   
+   StrLen buildAtomName(StrLen name);
+   
    void bindAtom(PtrLen<BindAtom> range);
    
    void buildAtoms();
@@ -556,6 +619,199 @@ class Lang::Builder : NoCopy
    void bindResults(PtrLen<BindResult> range);
    
    void bindResults();
+   
+   struct BindArgs : BindName
+    {
+     AnyPtr<BuildElement,BuildCondArg> ptr;
+     
+     explicit BindArgs(BuildElement &element) : BindName(element.arg),ptr(&element) {}
+     
+     explicit BindArgs(BuildCondArg &arg) : BindName(arg.name),ptr(&arg) {}
+    };
+   
+   struct BindCondArgs
+    {
+     Collector<BindArgs> &collector;
+     
+     explicit BindCondArgs(Collector<BindArgs> &collector_) : collector(collector_) {}
+     
+     void operator () (BuildCondAND *cond)
+      {
+       cond->a.apply(*this);
+       cond->b.apply(*this);
+      }
+     
+     void operator () (BuildCondOR *cond)
+      {
+       cond->a.apply(*this);
+       cond->b.apply(*this);
+      }
+     
+     void operator () (BuildCondNOT *cond)
+      {
+       cond->a.apply(*this);
+      }
+     
+     template <class T>
+     void operator () (T *cond)
+      {
+       cond->a.peer=&cond->b;
+       cond->b.peer=&cond->a;
+         
+       collector.append_fill(cond->a);
+       collector.append_fill(cond->b);
+      }
+    };
+   
+   void bindArgs(BuildRule &rule);
+   
+   void bindArgs();
+   
+   struct BuildLangCond : NoCopy
+    {
+     Builder *builder;
+     Cond result;
+     
+     CmpArg buildArg(BuildCondArg &arg)
+      {
+       if( arg.kind )
+         {
+          auto ptr=builder->lang.pool.create<CmpArgKind>();
+         
+          ptr->kind.index=arg.kind->index;
+          ptr->kind.name=arg.kind->name;
+         
+          return {ptr};
+         }
+       else
+         {
+          auto ptr=builder->lang.pool.create<CmpArgElement>();
+          
+          ptr->index=arg.index;
+          
+          return {ptr};
+         }
+      }
+     
+     explicit BuildLangCond(Builder *builder_) : builder(builder_) {}
+     
+     void operator () (BuildCondAND *cond)
+      {
+       auto a=builder->buildCond(cond->a);
+       auto b=builder->buildCond(cond->b);
+       
+       auto result_=builder->lang.pool.create<CondAND>();
+       
+       result_->a=a;
+       result_->b=b;
+       
+       result.ptr=result_;
+      }
+     
+     void operator () (BuildCondOR *cond)
+      {
+       auto a=builder->buildCond(cond->a);
+       auto b=builder->buildCond(cond->b);
+       
+       auto result_=builder->lang.pool.create<CondOR>();
+       
+       result_->a=a;
+       result_->b=b;
+       
+       result.ptr=result_;
+      }
+     
+     void operator () (BuildCondNOT *cond)
+      {
+       auto a=builder->buildCond(cond->a);
+       
+       auto result_=builder->lang.pool.create<CondNOT>();
+       
+       result_->a=a;
+       
+       result.ptr=result_;
+      }
+     
+     void operator () (BuildCondEQ *cond)
+      {
+       auto a=buildArg(cond->a);
+       auto b=buildArg(cond->b);
+       
+       auto result_=builder->lang.pool.create<CondEQ>();
+       
+       result_->a=a;
+       result_->b=b;
+       
+       result.ptr=result_;
+      }
+     
+     void operator () (BuildCondNE *cond)
+      {
+       auto a=buildArg(cond->a);
+       auto b=buildArg(cond->b);
+       
+       auto result_=builder->lang.pool.create<CondNE>();
+       
+       result_->a=a;
+       result_->b=b;
+       
+       result.ptr=result_;
+      }
+     
+     void operator () (BuildCondGT *cond)
+      {
+       auto a=buildArg(cond->a);
+       auto b=buildArg(cond->b);
+       
+       auto result_=builder->lang.pool.create<CondGT>();
+       
+       result_->a=a;
+       result_->b=b;
+       
+       result.ptr=result_;
+      }
+     
+     void operator () (BuildCondGE *cond)
+      {
+       auto a=buildArg(cond->a);
+       auto b=buildArg(cond->b);
+       
+       auto result_=builder->lang.pool.create<CondGE>();
+       
+       result_->a=a;
+       result_->b=b;
+       
+       result.ptr=result_;
+      }
+      
+     void operator () (BuildCondLT *cond)
+      {
+       auto a=buildArg(cond->a);
+       auto b=buildArg(cond->b);
+        
+       auto result_=builder->lang.pool.create<CondLT>();
+        
+       result_->a=a;
+       result_->b=b;
+        
+       result.ptr=result_;
+      }
+      
+     void operator () (BuildCondLE *cond)
+      {
+       auto a=buildArg(cond->a);
+       auto b=buildArg(cond->b);
+        
+       auto result_=builder->lang.pool.create<CondLE>();
+        
+       result_->a=a;
+       result_->b=b;
+        
+       result.ptr=result_;
+      }
+    };
+   
+   Cond buildCond(BuildCond cond);
    
    void complete();
    
@@ -688,7 +944,7 @@ void Lang::Builder::endLang()
   buildAtoms();
   checkRuleNames();
   bindResults();
-  // ...
+  bindArgs();
   
   report.guard();
   
@@ -788,10 +1044,27 @@ void Lang::Builder::bindElements()
   if( !lang_count ) error("Builder : no lang syntax class");
  }
 
+StrLen Lang::Builder::buildAtomName(StrLen name)
+ {
+  ulen len=LenAdd(5,name.len,ExpCharCount(name));
+  
+  auto ret=pool.createArray_raw<char>(len);
+
+  PutChar out(ret);
+  
+  out.put('T','(','"');
+  
+  out.transform(name);
+  
+  out.put('"',')');
+  
+  return Range_const(ret);
+ }
+
 void Lang::Builder::bindAtom(PtrLen<BindAtom> range)
  {
   StrLen name=range->element->name;
-  BuildAtom *atom=pool.create<BuildAtom>(name);
+  BuildAtom *atom=pool.create<BuildAtom>(buildAtomName(name));
   
   atom_list.add(atom);
   
@@ -900,6 +1173,52 @@ void Lang::Builder::bindResults()
                           }
                        } 
                  );
+ }
+
+void Lang::Builder::bindArgs(BuildRule &rule)
+ {
+  Collector<BindArgs> collector;
+  
+  ulen index=0;
+  
+  rule.element_list.apply( [&] (BuildElement &element) 
+                               {
+                                if( +element.arg ) 
+                                  {
+                                   element.index=index;
+                                 
+                                   collector.append_fill(element);
+                                  }
+                               
+                                index++;
+                               } 
+                         );
+  
+  rule.cond.apply( BindCondArgs(collector) );
+  
+  // TODO
+ }
+
+void Lang::Builder::bindArgs()
+ {
+  synt_list.apply( [&] (BuildSynt &synt) 
+                       {
+                        synt.rule_list.apply( [&] (BuildRule &rule) 
+                                                  {
+                                                   if( +rule.cond ) bindArgs(rule);
+                                                  } 
+                                            );
+                       } 
+                 );
+ }
+
+auto Lang::Builder::buildCond(BuildCond cond) -> Cond
+ {
+  BuildLangCond func(this);
+  
+  cond.apply( FunctorRef(func) );
+  
+  return func.result;
  }
 
 void Lang::Builder::complete()
@@ -1032,6 +1351,9 @@ void Lang::Builder::complete()
                                                     
                                                     if( rule.result_kind )
                                                       rules[rindex].kind=synts[index].kinds[rule.result_kind->index];
+                                                    
+                                                    if( +rule.cond )
+                                                      rules[rindex].cond=buildCond(rule.cond);
                                                     
                                                     ulen alen=rule.element_list.getCount();
                                                     
