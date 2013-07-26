@@ -15,6 +15,7 @@
 #define CondLangLR1_Tools_h
 
 #include <CCore/inc/Print.h>
+#include <CCore/inc/TextTools.h>
 
 namespace App {
 
@@ -22,9 +23,23 @@ namespace App {
 
 using namespace CCore;
 
-/* Err */
+/* classes */
 
-const ConType Err = Con ;
+struct PosStr;
+
+/* struct PosStr */
+
+struct PosStr
+ {
+  StrLen str;
+  TextPos pos;
+  
+  PosStr() {}
+  
+  explicit PosStr(TextPos pos_) : pos(pos_) {}
+  
+  PosStr(StrLen str_,TextPos pos_) : str(str_),pos(pos_) {}
+ };
 
 } // namespace App
 

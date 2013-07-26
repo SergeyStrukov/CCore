@@ -12,6 +12,8 @@ CCore/inc/Exception.h
 
 --- New features -----
 
+CCore/inc/AnyPtr.h 
 
+  hasType() and applyFor() methods are added
 
 ----------------------

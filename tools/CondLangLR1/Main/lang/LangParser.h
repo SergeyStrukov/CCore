@@ -16,8 +16,6 @@
 
 #include "Tools.h"
 
-#include <CCore/inc/TextTools.h>
-
 namespace App {
 namespace LangParser {
 
@@ -125,18 +123,17 @@ const char * GetTextDesc(TokenClass tc);
 struct Token
  {
   TokenClass tc;
-  TextPos pos;
-  StrLen str;
+  PosStr postr;
 
   Token() : tc(Token_Other) {}
  
-  Token(TokenClass tc_,TextPos pos_,StrLen str_) : tc(tc_),pos(pos_),str(str_) {}
+  Token(TokenClass tc_,StrLen str_,TextPos pos_) : tc(tc_),postr(str_,pos_) {}
   
-  explicit Token(TextPos pos_) : tc(Token_END),pos(pos_) {}
+  explicit Token(TextPos pos_) : tc(Token_END),postr(pos_) {}
   
-  bool is(char ch) const { return str.len==1 && str[0]==ch ; }
+  bool is(char ch) const { return postr.str.len==1 && postr.str[0]==ch ; }
   
-  bool is(char ch1,char ch2) const { return str.len==2 && str[0]==ch1 && str[1]==ch2 ; }
+  bool is(char ch1,char ch2) const { return postr.str.len==2 && postr.str[0]==ch1 && postr.str[1]==ch2 ; }
  };
 
 /* struct TokenizerBase */
@@ -218,7 +215,7 @@ class Tokenizer : TokenizerBase
 template <class Action> 
 Token Tokenizer<Action>::cut(TokenClass tc,ulen len)
  {
-  Token ret(tc,pos,text+=len);
+  Token ret(tc,text+=len,pos);
 
   pos.update(len);
 
@@ -228,7 +225,7 @@ Token Tokenizer<Action>::cut(TokenClass tc,ulen len)
 template <class Action> 
 Token Tokenizer<Action>::cut_pos(TokenClass tc,ulen len)
  {
-  Token ret(tc,pos,text+=len);
+  Token ret(tc,text+=len,pos);
   
   pos.update(ret.str);
 
@@ -414,7 +411,7 @@ class CondParser : CondPaserBase
     {
      const State *state;
      BuildCond cond;
-     StrLen name;
+     PosStr postr;
     };
    
    static const ulen Len = 100 ;
@@ -511,7 +508,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
      
      case Rule_OpEQ :
       {
-       BuildCond cond=action.condEQ(top(3)->name,top(1)->name);
+       BuildCond cond=action.condEQ(top(3)->postr,top(1)->postr);
        
        pop(3);
        push(Synt_COND_PRIM,cond);
@@ -520,7 +517,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
      
      case Rule_OpNE :
       {
-       BuildCond cond=action.condNE(top(3)->name,top(1)->name);
+       BuildCond cond=action.condNE(top(3)->postr,top(1)->postr);
        
        pop(3);
        push(Synt_COND_PRIM,cond);
@@ -529,7 +526,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
      
      case Rule_OpLT :
       {
-       BuildCond cond=action.condLT(top(3)->name,top(1)->name);
+       BuildCond cond=action.condLT(top(3)->postr,top(1)->postr);
        
        pop(3);
        push(Synt_COND_PRIM,cond);
@@ -538,7 +535,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
      
      case Rule_OpLE :
       {
-       BuildCond cond=action.condLE(top(3)->name,top(1)->name);
+       BuildCond cond=action.condLE(top(3)->postr,top(1)->postr);
        
        pop(3);
        push(Synt_COND_PRIM,cond);
@@ -547,7 +544,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
      
      case Rule_OpGT :
       {
-       BuildCond cond=action.condGT(top(3)->name,top(1)->name);
+       BuildCond cond=action.condGT(top(3)->postr,top(1)->postr);
        
        pop(3);
        push(Synt_COND_PRIM,cond);
@@ -556,7 +553,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
      
      case Rule_OpGE :
       {
-       BuildCond cond=action.condGE(top(3)->name,top(1)->name);
+       BuildCond cond=action.condGE(top(3)->postr,top(1)->postr);
        
        pop(3);
        push(Synt_COND_PRIM,cond);
@@ -607,19 +604,19 @@ void CondParser<Action>::put(CondAtom atom,TextPos pos)
  }
 
 template <class Action> 
-void CondParser<Action>::putName(StrLen name,TextPos pos)
+void CondParser<Action>::putName(PosStr postr)
  {
-  while( putAtom(CondAtom_Name,pos) );
+  while( putAtom(CondAtom_Name,postr.pos) );
   
   if( len<Len )
     {
      const State *state=top()->state->atom_transitions[CondAtom_Name];
      
-     buf[len++]={state,{},name};
+     buf[len++]={state,{},postr};
     }
   else
     {
-     action.exception("Parser #; : stack overflow",pos);
+     action.exception("Parser #; : stack overflow",postr.pos);
     }
  }
 
@@ -711,7 +708,7 @@ void Parser<Action>::put_Beg(Token token)
       
      case Token_Name :
       {
-       action.startSynt(token.str,token.pos,false);
+       action.startSynt(token.postr,false);
        
        has_kinds=false;
        
@@ -730,7 +727,7 @@ void Parser<Action>::put_Beg(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME or '!' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME or '!' are expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -740,7 +737,7 @@ void Parser<Action>::put_Name(Token token)
     {
      case Token_Name :
       {
-       action.startSynt(token.str,token.pos,true);
+       action.startSynt(token.postr,true);
        
        has_kinds=false;
        
@@ -751,7 +748,7 @@ void Parser<Action>::put_Name(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -778,7 +775,7 @@ void Parser<Action>::put_Kinds(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, ':' or '{' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, ':' or '{' are expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -788,7 +785,7 @@ void Parser<Action>::put_NextKind(Token token)
     {
      case Token_Name :
       {
-       action.addKind(token.str,token.pos);
+       action.addKind(token.postr);
        
        state=State_EndKind;
        
@@ -797,7 +794,7 @@ void Parser<Action>::put_NextKind(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -828,7 +825,7 @@ void Parser<Action>::put_EndKind(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, ',' or '{' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, ',' or '{' are expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -858,7 +855,7 @@ void Parser<Action>::put_Rules(Token token)
           return;
          }
        
-       action.addElement(token.str,token.pos);
+       action.addElement(token.postr);
        
        state=State_Elements;
        
@@ -867,7 +864,7 @@ void Parser<Action>::put_Rules(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token",token.pos);
+  action.exception("Parser #; : unexpected token",token.postr.pos);
  }
 
 template <class Action> 
@@ -888,14 +885,14 @@ void Parser<Action>::put_Elements(Token token)
           return;
          }
        
-       action.addElement(token.str,token.pos);
+       action.addElement(token.postr);
        
        return;
       }
      break;
     }
   
-  action.exception("Parser #; : unexpected token",token.pos);
+  action.exception("Parser #; : unexpected token",token.postr.pos);
  }
 
 template <class Action> 
@@ -912,7 +909,7 @@ void Parser<Action>::put_RuleEnd(Token token)
           return;
          }
        
-       action.rule(token.str,token.pos);
+       action.rule(token.postr);
           
        if( has_kinds )
          {
@@ -930,7 +927,7 @@ void Parser<Action>::put_RuleEnd(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME or 'if' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME or 'if' are expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -953,7 +950,7 @@ void Parser<Action>::put_RuleIf(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, '(' is expected",token.pos);
+  action.exception("Parser #; : unexpected token, '(' is expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -963,51 +960,51 @@ void Parser<Action>::put_RuleCond(Token token)
     {
      case Token_Punct :
       {
-       switch( token.str.len )
+       switch( token.postr.str.len )
          {
           case 1 :
            {
-            switch( token.str[0] )
+            switch( token.postr.str[0] )
               {
-               case '!' : cond_parser.put(CondAtom_NOT,token.pos); return;
-               case '&' : cond_parser.put(CondAtom_AND,token.pos); return;
+               case '!' : cond_parser.put(CondAtom_NOT,token.postr.pos); return;
+               case '&' : cond_parser.put(CondAtom_AND,token.postr.pos); return;
                
-               case '(' : cond_parser.put(CondAtom_OBR,token.pos); cond_count++; return;
+               case '(' : cond_parser.put(CondAtom_OBR,token.postr.pos); cond_count++; return;
                
                case ')' :
                 {
                  if( cond_count ) 
                    { 
-                    cond_parser.put(CondAtom_CBR,token.pos);
+                    cond_parser.put(CondAtom_CBR,token.postr.pos);
                     
                     cond_count--; 
                    }
                  else
                    {
-                    cond_parser.putEnd(token.pos);
+                    cond_parser.putEnd(token.postr.pos);
                     
                     state=State_RuleName;
                    }
                 }
                return; 
                 
-               case '<' : cond_parser.put(CondAtom_LT,token.pos); return;
-               case '>' : cond_parser.put(CondAtom_GT,token.pos); return;
-               case '|' : cond_parser.put(CondAtom_OR,token.pos); return;
+               case '<' : cond_parser.put(CondAtom_LT,token.postr.pos); return;
+               case '>' : cond_parser.put(CondAtom_GT,token.postr.pos); return;
+               case '|' : cond_parser.put(CondAtom_OR,token.postr.pos); return;
               }
            }
           break;
           
           case 2 :
            {
-            if( token.str[1]=='=' )
+            if( token.postr.str[1]=='=' )
               {
-               switch( token.str[0] )
+               switch( token.postr.str[0] )
                  {
-                  case '!' : cond_parser.put(CondAtom_NE,token.pos); return;
-                  case '<' : cond_parser.put(CondAtom_LE,token.pos); return;
-                  case '>' : cond_parser.put(CondAtom_GE,token.pos); return;
-                  case '=' : cond_parser.put(CondAtom_EQ,token.pos); return;
+                  case '!' : cond_parser.put(CondAtom_NE,token.postr.pos); return;
+                  case '<' : cond_parser.put(CondAtom_LE,token.postr.pos); return;
+                  case '>' : cond_parser.put(CondAtom_GE,token.postr.pos); return;
+                  case '=' : cond_parser.put(CondAtom_EQ,token.postr.pos); return;
                  }
               }
            }
@@ -1018,14 +1015,14 @@ void Parser<Action>::put_RuleCond(Token token)
      
      case Token_Name :
       {
-       cond_parser.putName(token.str,token.pos);
+       cond_parser.putName(token.postr);
        
        return;
       }
      break;
     }
   
-  action.exception("Parser #; : unexpected token",token.pos);
+  action.exception("Parser #; : unexpected token",token.postr.pos);
  }
 
 template <class Action> 
@@ -1035,7 +1032,7 @@ void Parser<Action>::put_RuleName(Token token)
     {
      case Token_Name :
       {
-       action.rule(token.str,token.pos);
+       action.rule(token.postr);
        
        if( has_kinds )
          {
@@ -1053,7 +1050,7 @@ void Parser<Action>::put_RuleName(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -1073,7 +1070,7 @@ void Parser<Action>::put_Result(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, '=' is expected",token.pos);
+  action.exception("Parser #; : unexpected token, '=' is expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -1083,7 +1080,7 @@ void Parser<Action>::put_ResultName(Token token)
     {
      case Token_Name :
       {
-       action.result(token.str,token.pos);
+       action.result(token.postr);
        action.endRule();
        
        state=State_Rules;
@@ -1093,7 +1090,7 @@ void Parser<Action>::put_ResultName(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.postr.pos);
  }
 
 template <class Action> 
@@ -1111,7 +1108,7 @@ void Parser<Action>::put(Token token)
      
      case Token_Other :
       {
-       action.exception("Parser #; : unexpected token",token.pos);
+       action.exception("Parser #; : unexpected token",token.postr.pos);
       }
      return; 
     }

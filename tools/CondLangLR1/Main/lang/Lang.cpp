@@ -28,19 +28,79 @@ namespace App {
 
 class Lang::Builder : NoCopy
  {
-  public:
+   template <class T>
+   class ObjList : NoCopy
+    {
+      using Algo = typename SLink<T>::template LinearAlgo<&T::link> ;
+     
+      typename Algo::FirstLast list;
+      ulen count;
+      
+     public: 
+     
+      ObjList() : count(0) {}
+     
+      ulen operator + () const { return count; }
+     
+      bool operator ! () const { return !count; }
+      
+      ulen getCount() const { return count; }
+     
+      void add(T *obj) { list.ins_last(obj); count++; }
+      
+      T * del() { if( T *ret=list.del_first() ) { count--; return ret; } return 0; }
+      
+      template <class FuncInit>
+      void apply(FuncInit func_init) const
+       {
+        FunctorTypeOf<FuncInit> func(func_init);
+  
+        auto cur=list.start();
+        
+        for(ulen cnt=count; cnt ;cnt--) 
+          {
+           func(*cur);
+           
+           ++cur;
+          }
+       }
+      
+      template <class FuncInit,class EndFuncInit>
+      void apply(FuncInit func_init,EndFuncInit end_func_init) const
+       {
+        FunctorTypeOf<FuncInit> func(func_init);
+        FunctorTypeOf<EndFuncInit> end_func(end_func_init);
+  
+        if( !count ) return;
+        
+        auto cur=list.start();
+        
+        for(ulen cnt=count-1; cnt ;cnt--) 
+          {
+           func(*cur);
+           
+           ++cur;
+          }
+        
+        end_func(*cur);
+       }
+    };
  
    struct BuildKind;
+   struct BuildElement;
  
    struct BuildCondArg : NoCopy
     {
-     StrLen name;
+     SLink<BuildCondArg> link;
      
-     ulen index;
+     StrLen name;
+     TextPos pos;
+     
+     BuildElement *element;
      BuildKind *kind;
      BuildCondArg *peer;
      
-     explicit BuildCondArg(StrLen name_) : name(name_),index(MaxULen),kind(0),peer(0) {}
+     BuildCondArg(StrLen name_,TextPos pos_) : name(name_),pos(pos_),element(0),kind(0),peer(0) {}
     };
    
    struct BuildCondAND;
@@ -53,6 +113,8 @@ class Lang::Builder : NoCopy
    struct BuildCondLT;
    struct BuildCondLE;
    
+  public: 
+   
    using BuildCond = AnyPtr<BuildCondAND,
                             BuildCondOR,
                             BuildCondNOT,
@@ -62,6 +124,8 @@ class Lang::Builder : NoCopy
                             BuildCondGE,
                             BuildCondLT,
                             BuildCondLE> ;
+   
+  private: 
    
    struct BuildCondAND : NoCopy
     {
@@ -91,7 +155,7 @@ class Lang::Builder : NoCopy
      BuildCondArg a;
      BuildCondArg b;
      
-     BuildCondEQ(StrLen a_,StrLen b_) : a(a_),b(b_) {}
+     BuildCondEQ(StrLen a_,TextPos pos_a,StrLen b_,TextPos pos_b) : a(a_,pos_a),b(b_,pos_b) {}
     };
    
    struct BuildCondNE : NoCopy
@@ -99,7 +163,7 @@ class Lang::Builder : NoCopy
      BuildCondArg a;
      BuildCondArg b;
      
-     BuildCondNE(StrLen a_,StrLen b_) : a(a_),b(b_) {}
+     BuildCondNE(StrLen a_,TextPos pos_a,StrLen b_,TextPos pos_b) : a(a_,pos_a),b(b_,pos_b) {}
     };
    
    struct BuildCondGT : NoCopy
@@ -107,7 +171,7 @@ class Lang::Builder : NoCopy
      BuildCondArg a;
      BuildCondArg b;
      
-     BuildCondGT(StrLen a_,StrLen b_) : a(a_),b(b_) {}
+     BuildCondGT(StrLen a_,TextPos pos_a,StrLen b_,TextPos pos_b) : a(a_,pos_a),b(b_,pos_b) {}
     };
    
    struct BuildCondGE : NoCopy
@@ -115,7 +179,7 @@ class Lang::Builder : NoCopy
      BuildCondArg a;
      BuildCondArg b;
      
-     BuildCondGE(StrLen a_,StrLen b_) : a(a_),b(b_) {}
+     BuildCondGE(StrLen a_,TextPos pos_a,StrLen b_,TextPos pos_b) : a(a_,pos_a),b(b_,pos_b) {}
     };
    
    struct BuildCondLT : NoCopy
@@ -123,7 +187,7 @@ class Lang::Builder : NoCopy
      BuildCondArg a;
      BuildCondArg b;
      
-     BuildCondLT(StrLen a_,StrLen b_) : a(a_),b(b_) {}
+     BuildCondLT(StrLen a_,TextPos pos_a,StrLen b_,TextPos pos_b) : a(a_,pos_a),b(b_,pos_b) {}
     };
    
    struct BuildCondLE : NoCopy
@@ -131,7 +195,7 @@ class Lang::Builder : NoCopy
      BuildCondArg a;
      BuildCondArg b;
      
-     BuildCondLE(StrLen a_,StrLen b_) : a(a_),b(b_) {}
+     BuildCondLE(StrLen a_,TextPos pos_a,StrLen b_,TextPos pos_b) : a(a_,pos_a),b(b_,pos_b) {}
     };
 
    template <class P>
@@ -167,104 +231,38 @@ class Lang::Builder : NoCopy
      
      void operator () (BuildCondEQ *ptr)
       {
-       Printf(out,"#; == #;",ptr->a,ptr->b);
+       Printf(out,"#; == #;",ptr->a.name,ptr->b.name);
       }
      
      void operator () (BuildCondNE *ptr)
       {
-       Printf(out,"#; != #;",ptr->a,ptr->b);
+       Printf(out,"#; != #;",ptr->a.name,ptr->b.name);
       }
      
      void operator () (BuildCondGT *ptr)
       {
-       Printf(out,"#; > #;",ptr->a,ptr->b);
+       Printf(out,"#; > #;",ptr->a.name,ptr->b.name);
       }
      
      void operator () (BuildCondGE *ptr)
       {
-       Printf(out,"#; >= #;",ptr->a,ptr->b);
+       Printf(out,"#; >= #;",ptr->a.name,ptr->b.name);
       }
      
      void operator () (BuildCondLT *ptr)
       {
-       Printf(out,"#; < #;",ptr->a,ptr->b);
+       Printf(out,"#; < #;",ptr->a.name,ptr->b.name);
       }
      
      void operator () (BuildCondLE *ptr)
       {
-       Printf(out,"#; <= #;",ptr->a,ptr->b);
+       Printf(out,"#; <= #;",ptr->a.name,ptr->b.name);
       }
      
      void print(BuildCond cond)
       {
        cond.apply(*this);
       }
-    };
-   
-   BuildCond condOR(BuildCond a,BuildCond b);
-   BuildCond condAND(BuildCond a,BuildCond b);
-   BuildCond condNOT(BuildCond a);
-   BuildCond condEQ(StrLen a,StrLen b);
-   BuildCond condNE(StrLen a,StrLen b);
-   BuildCond condGT(StrLen a,StrLen b);
-   BuildCond condGE(StrLen a,StrLen b);
-   BuildCond condLT(StrLen a,StrLen b);
-   BuildCond condLE(StrLen a,StrLen b);
-   
-   template <class T>
-   class ObjList : NoCopy
-    {
-      using Algo = typename SLink<T>::template LinearAlgo<&T::link> ;
-     
-      typename Algo::FirstLast list;
-      ulen count;
-      
-     public: 
-     
-      ObjList() : count(0) {}
-     
-      ulen operator + () const { return count; }
-     
-      bool operator ! () const { return !count; }
-      
-      ulen getCount() const { return count; }
-     
-      void add(T *obj) { list.ins_last(obj); count++; }
-      
-      template <class FuncInit>
-      void apply(FuncInit func_init) const
-       {
-        FunctorTypeOf<FuncInit> func(func_init);
-
-        auto cur=list.start();
-        
-        for(ulen cnt=count; cnt ;cnt--) 
-          {
-           func(*cur);
-           
-           ++cur;
-          }
-       }
-      
-      template <class FuncInit,class EndFuncInit>
-      void apply(FuncInit func_init,EndFuncInit end_func_init) const
-       {
-        FunctorTypeOf<FuncInit> func(func_init);
-        FunctorTypeOf<EndFuncInit> end_func(end_func_init);
-
-        if( !count ) return;
-        
-        auto cur=list.start();
-        
-        for(ulen cnt=count-1; cnt ;cnt--) 
-          {
-           func(*cur);
-           
-           ++cur;
-          }
-        
-        end_func(*cur);
-       }
     };
    
    struct BuildAtom : NoCopy
@@ -382,7 +380,11 @@ class Lang::Builder : NoCopy
      ulen index;
      ulen rule_off;
      
+     ObjList<BuildCondArg> arg_list;
+     
      BuildSynt(StrLen name_,TextPos pos_,bool is_lang_) : name(name_),pos(pos_),is_lang(is_lang_),index(MaxULen),rule_off(MaxULen) {}
+     
+     void add(BuildCondArg *arg) { arg_list.add(arg); }
      
      template <class P>
      void print(P &out) const
@@ -409,6 +411,18 @@ class Lang::Builder : NoCopy
        Putch(out,'\n');
       }
     };
+   
+  public:
+ 
+   BuildCond condOR(BuildCond a,BuildCond b);
+   BuildCond condAND(BuildCond a,BuildCond b);
+   BuildCond condNOT(BuildCond a);
+   BuildCond condEQ(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b);
+   BuildCond condNE(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b);
+   BuildCond condGT(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b);
+   BuildCond condGE(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b);
+   BuildCond condLT(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b);
+   BuildCond condLE(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b);
    
    void startSynt(StrLen name,TextPos pos,bool is_lang);
    
@@ -452,6 +466,8 @@ class Lang::Builder : NoCopy
    
    BuildSynt *current_synt = 0 ;
    BuildRule *current_rule = 0 ;
+   
+   ObjList<BuildCondArg> arg_list;
    
   private: 
    
@@ -663,7 +679,47 @@ class Lang::Builder : NoCopy
       }
     };
    
+   struct FindElement : NoCopy
+    {
+     BuildElement *element;
+     ulen count;
+     
+     FindElement() : element(0),count(0) {}
+     
+     void operator () (BuildElement *element_) { element=element_; count++; }
+     
+     void operator () (BuildCondArg *) {}
+    };
+   
+   struct SetArgElement
+    {
+     BuildElement *element;
+     
+     explicit SetArgElement(BuildElement *element_) : element(element_) {}
+     
+     void operator () (BuildElement *) {}
+     
+     void operator () (BuildCondArg *arg) { arg->element=element; }
+    };
+   
+   struct RecordArg
+    {
+     Builder *builder;
+     
+     explicit RecordArg(Builder *builder_) : builder(builder_) {}
+     
+     void operator () (BuildElement *) {}
+     
+     void operator () (BuildCondArg *arg) { builder->arg_list.add(arg); }
+    };
+   
+   void bindKindArgs();
+   
+   void bindArgs(PtrLen<BindArgs> range);
+   
    void bindArgs(BuildRule &rule);
+   
+   void bindArgs(BuildSynt &synt);
    
    void bindArgs();
    
@@ -683,12 +739,20 @@ class Lang::Builder : NoCopy
          
           return {ptr};
          }
-       else
+       else if( arg.element )
          {
           auto ptr=builder->lang.pool.create<CmpArgElement>();
           
-          ptr->index=arg.index;
+          ptr->index=arg.element->index;
           
+          return {ptr};
+         }
+       else
+         {
+          auto ptr=builder->lang.pool.create<CmpArgKind>();
+        
+          ptr->kind.index=MaxULen;
+        
           return {ptr};
          }
       }
@@ -847,34 +911,34 @@ auto Lang::Builder::condNOT(BuildCond a) -> BuildCond
   return pool.create<BuildCondNOT>(a);
  }
 
-auto Lang::Builder::condEQ(StrLen a,StrLen b) -> BuildCond
+auto Lang::Builder::condEQ(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b) -> BuildCond
  {
-  return pool.create<BuildCondEQ>(a,b);
+  return pool.create<BuildCondEQ>(a,pos_a,b,pos_b);
  }
 
-auto Lang::Builder::condNE(StrLen a,StrLen b) -> BuildCond
+auto Lang::Builder::condNE(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b) -> BuildCond
  {
-  return pool.create<BuildCondNE>(a,b);
+  return pool.create<BuildCondNE>(a,pos_a,b,pos_b);
  }
 
-auto Lang::Builder::condGT(StrLen a,StrLen b) -> BuildCond
+auto Lang::Builder::condGT(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b) -> BuildCond
  {
-  return pool.create<BuildCondGT>(a,b);
+  return pool.create<BuildCondGT>(a,pos_a,b,pos_b);
  }
 
-auto Lang::Builder::condGE(StrLen a,StrLen b) -> BuildCond
+auto Lang::Builder::condGE(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b) -> BuildCond
  {
-  return pool.create<BuildCondGE>(a,b);
+  return pool.create<BuildCondGE>(a,pos_a,b,pos_b);
  }
 
-auto Lang::Builder::condLT(StrLen a,StrLen b) -> BuildCond
+auto Lang::Builder::condLT(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b) -> BuildCond
  {
-  return pool.create<BuildCondLT>(a,b);
+  return pool.create<BuildCondLT>(a,pos_a,b,pos_b);
  }
 
-auto Lang::Builder::condLE(StrLen a,StrLen b) -> BuildCond
+auto Lang::Builder::condLE(StrLen a,TextPos pos_a,StrLen b,TextPos pos_b) -> BuildCond
  {
-  return pool.create<BuildCondLE>(a,b);
+  return pool.create<BuildCondLE>(a,pos_a,b,pos_b);
  }
 
 void Lang::Builder::startSynt(StrLen name,TextPos pos,bool is_lang)
@@ -940,11 +1004,11 @@ void Lang::Builder::endLang()
  {
   ReportException report;
   
-  bindElements();
-  buildAtoms();
-  checkRuleNames();
-  bindResults();
-  bindArgs();
+  bindElements();    
+  buildAtoms();      
+  checkRuleNames();  
+  bindResults();     
+  bindArgs();        
   
   report.guard();
   
@@ -1039,7 +1103,7 @@ void Lang::Builder::bindElements()
                        } 
                  );
   
-  Algon::SortThenApplyUniqueRange(collector.flat(), [&] (PtrLen<BindElement> range) { bindElements(range); } );
+  Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindElement> range) { bindElements(range); } );
   
   if( !lang_count ) error("Builder : no lang syntax class");
  }
@@ -1089,7 +1153,7 @@ void Lang::Builder::buildAtoms()
                        } 
                  );
   
-  Algon::SortThenApplyUniqueRange(collector.flat(), [&] (PtrLen<BindAtom> range) { bindAtom(range); } );
+  Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindAtom> range) { bindAtom(range); } );
  }
 
 void Lang::Builder::checkRuleNames()
@@ -1106,13 +1170,13 @@ void Lang::Builder::checkRuleNames()
                        } 
                  );
   
-  Algon::SortThenApplyUniqueRange(collector.flat(), [&] (PtrLen<CheckRuleName> range) 
-                                                        {
-                                                         if( range.len>1 )
+  Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<CheckRuleName> range) 
                                                            {
-                                                            error("Builder #; : multiple declaration of rule #;",range->rule->pos,range->name);
-                                                           }
-                                                        } 
+                                                            if( range.len>1 )
+                                                              {
+                                                               error("Builder #; : multiple declaration of rule #;",range->rule->pos,range->name);
+                                                              }
+                                                           } 
                                  );
  }
 
@@ -1147,32 +1211,78 @@ void Lang::Builder::bindResults(PtrLen<BindResult> range)
 
 void Lang::Builder::bindResults()
  {
-  synt_list.apply( [&] (BuildSynt &synt) 
-                       {
-                        if( +synt.kind_list )
+  synt_list.apply( [this] (BuildSynt &synt) 
                           {
-                           Collector<BindResult> collector;  
+                           if( +synt.kind_list )
+                             {
+                              Collector<BindResult> collector;  
       
-                           synt.rule_list.apply( [&] (BuildRule &rule) 
-                                                     {
-                                                      collector.append_fill(rule);  
-                                                     } 
-                                               );
+                              synt.rule_list.apply( [&] (BuildRule &rule) 
+                                                        {
+                                                         collector.append_fill(rule);  
+                                                        } 
+                                                  );
                           
-                           synt.kind_list.apply( [&] (BuildKind &kind) 
-                                                     {
-                                                      collector.append_fill(kind);
-                                                     } 
-                                               );
+                              synt.kind_list.apply( [&] (BuildKind &kind) 
+                                                        {
+                                                         collector.append_fill(kind);
+                                                        } 
+                                                  );
                            
-                           Algon::SortThenApplyUniqueRange(collector.flat(), [&] (PtrLen<BindResult> range)
-                                                                                 {
-                                                                                  bindResults(range);
-                                                                                 }
-                                                          );
-                          }
-                       } 
+                              Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindResult> range)
+                                                                                       {
+                                                                                        bindResults(range);
+                                                                                       }
+                                                             );
+                             }
+                          } 
                  );
+ }
+
+void Lang::Builder::bindKindArgs()
+ {
+  while( BuildCondArg *arg=arg_list.del() )
+    {
+     if( BuildElement *element=arg->peer->element )
+       {
+        element->synt->add(arg);
+       }
+     else
+       {
+        error("Builder #; : comparision of constants",arg->pos);
+       } 
+    }
+ }
+
+void Lang::Builder::bindArgs(PtrLen<BindArgs> range)
+ {
+  FindElement find;
+  
+  for(auto &bind : range ) bind.ptr.apply( FunctorRef(find) );
+  
+  switch( find.count )
+    {
+     case 0 :
+      {
+       RecordArg record(this);
+       
+       for(auto &bind : range ) bind.ptr.apply(record);
+      }
+     break;
+     
+     case 1 :
+      {
+       SetArgElement set_element(find.element);
+       
+       for(auto &bind : range ) bind.ptr.apply(set_element);
+      }
+     break;
+     
+     default:
+      {
+       error("Builder #; : multiple declaration of element #; argument",find.element->pos,find.element->name);
+      }
+    }
  }
 
 void Lang::Builder::bindArgs(BuildRule &rule)
@@ -1196,20 +1306,28 @@ void Lang::Builder::bindArgs(BuildRule &rule)
   
   rule.cond.apply( BindCondArgs(collector) );
   
-  // TODO
+  Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindArgs> range) { bindArgs(range); } );
+ }
+
+void Lang::Builder::bindArgs(BuildSynt &synt)
+ {
  }
 
 void Lang::Builder::bindArgs()
  {
-  synt_list.apply( [&] (BuildSynt &synt) 
-                       {
-                        synt.rule_list.apply( [&] (BuildRule &rule) 
-                                                  {
-                                                   if( +rule.cond ) bindArgs(rule);
-                                                  } 
-                                            );
-                       } 
+  synt_list.apply( [this] (BuildSynt &synt) 
+                          {
+                           synt.rule_list.apply( [this] (BuildRule &rule) 
+                                                        {
+                                                         if( +rule.cond ) bindArgs(rule);
+                                                        } 
+                                               );
+                          } 
                  );
+  
+  bindKindArgs();
+  
+  synt_list.apply( [this] (BuildSynt &synt) { bindArgs(synt); } );
  }
 
 auto Lang::Builder::buildCond(BuildCond cond) -> Cond
