@@ -58,8 +58,14 @@ class <span class="Att">AnyPtr</span>
    
    bool operator ! () const;
    
+   template &lt;class T&gt;
+   bool hasType() const;
+   
    template &lt;class FuncInit&gt;
    void apply(FuncInit func_init) const;
+   
+   template &lt;class T,class FuncInit&gt;
+   void applyFor(FuncInit func_init) const;
  };
 
 template &lt;class ... TT&gt;
@@ -82,8 +88,14 @@ class <span class="Att">AnyPtr_const</span>
    
    bool operator ! () const;
    
+   template &lt;class T&gt;
+   bool hasType() const;
+   
    template &lt;class FuncInit&gt;
    void apply(FuncInit func_init) const;
+   
+   template &lt;class T,class FuncInit&gt;
+   void applyFor(FuncInit func_init) const;
  };
 
 </pre>
@@ -101,6 +113,11 @@ it remembers the pointer type.
 
 <p>
 <b>operator +</b> and <b>operator !</b> can be used to check, if the pointer is non-null.
+</p>
+
+<p>
+<b>hasType()</b> can be used to check the type of the pointer. The template parameter <b>T</b> must be in the list 
+<b>TT</b>.
 </p>
 
 <p>
@@ -123,6 +140,11 @@ AnyPtr&lt;short,int,long&gt; ptr=a;
 ptr.apply(func_init); // func_init -> func ; calls func(a);
 
 </pre>
+
+<p>
+<b>applyFor()</b> applies the functor to the pointer of the given type. If the object is null or stores the pointer of another type,
+this method does nothing.
+</p>
 
 </body>
 

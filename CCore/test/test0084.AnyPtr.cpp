@@ -54,9 +54,15 @@ bool Testit<84>::Main()
     
    ptr.apply( PrintVal() );
     
+   ptr.applyFor<int>( [] (int *ptr) { Printf(Con,"int val = #;\n",*ptr); } );
+   ptr.applyFor<short>( [] (short *ptr) { Printf(Con,"short val = #;\n",*ptr); } );
+   
    ptr=&b;
     
    ptr.apply( PrintVal() );
+   
+   ptr.applyFor<int>( [] (int *ptr) { Printf(Con,"int val = #;\n",*ptr); } );
+   ptr.applyFor<short>( [] (short *ptr) { Printf(Con,"short val = #;\n",*ptr); } );
    
    ptr=Nothing;
    ptr=nullptr;
@@ -72,9 +78,15 @@ bool Testit<84>::Main()
     
    ptr.apply( PrintVal() );
     
+   ptr.applyFor<int>( [] (const int *ptr) { Printf(Con,"int val = #;\n",*ptr); } );
+   ptr.applyFor<short>( [] (const short *ptr) { Printf(Con,"short val = #;\n",*ptr); } );
+   
    ptr=&b;
     
    ptr.apply( PrintVal() );
+   
+   ptr.applyFor<int>( [] (const int *ptr) { Printf(Con,"int val = #;\n",*ptr); } );
+   ptr.applyFor<short>( [] (const short *ptr) { Printf(Con,"short val = #;\n",*ptr); } );
    
    ptr=Nothing;
    ptr=nullptr;

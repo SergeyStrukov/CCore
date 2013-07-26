@@ -69,6 +69,9 @@ class AnyPtr
    
    bool operator ! () const { return !ptr; }
    
+   template <class T>
+   bool hasType() const { return type==Meta::IndexOf<T,TT...>::Ret; }
+   
    template <class FuncInit>
    void apply(FuncInit func_init) const
     {
@@ -77,6 +80,12 @@ class AnyPtr
      static const FuncType Table[]={ ApplyToPtr<TT,FuncInit>... };
      
      if( type ) Table[type-1](ptr,func_init);
+    }
+   
+   template <class T,class FuncInit>
+   void applyFor(FuncInit func_init) const
+    {
+     if( hasType<T>() ) ApplyToPtr<T>(ptr,func_init);
     }
  };
 
@@ -103,6 +112,9 @@ class AnyPtr_const
    
    bool operator ! () const { return !ptr; }
    
+   template <class T>
+   bool hasType() const { return type==Meta::IndexOf<T,TT...>::Ret; }
+   
    template <class FuncInit>
    void apply(FuncInit func_init) const
     {
@@ -111,6 +123,12 @@ class AnyPtr_const
      static const FuncType Table[]={ ApplyToPtr_const<TT,FuncInit>... };
      
      if( type ) Table[type-1](ptr,func_init);
+    }
+   
+   template <class T,class FuncInit>
+   void applyFor(FuncInit func_init) const
+    {
+     if( hasType<T>() ) ApplyToPtr_const<T>(ptr,func_init);
     }
  };
 
