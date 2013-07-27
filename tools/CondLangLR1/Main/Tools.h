@@ -31,14 +31,14 @@ struct PosStr;
 
 struct PosStr
  {
-  StrLen str;
   TextPos pos;
+  StrLen str;
   
   PosStr() {}
   
   explicit PosStr(TextPos pos_) : pos(pos_) {}
   
-  PosStr(StrLen str_,TextPos pos_) : str(str_),pos(pos_) {}
+  PosStr(TextPos pos_,StrLen str_) : pos(pos_),str(str_) {}
  };
 
 } // namespace App

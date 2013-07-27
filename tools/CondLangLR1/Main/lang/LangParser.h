@@ -120,20 +120,19 @@ const char * GetTextDesc(TokenClass tc);
 
 /* struct Token */
 
-struct Token
+struct Token : PosStr
  {
   TokenClass tc;
-  PosStr postr;
 
   Token() : tc(Token_Other) {}
  
-  Token(TokenClass tc_,StrLen str_,TextPos pos_) : tc(tc_),postr(str_,pos_) {}
+  Token(TokenClass tc_,TextPos pos,StrLen str) : PosStr(pos,str),tc(tc_) {}
   
-  explicit Token(TextPos pos_) : tc(Token_END),postr(pos_) {}
+  explicit Token(TextPos pos) : PosStr(pos),tc(Token_END) {}
   
-  bool is(char ch) const { return postr.str.len==1 && postr.str[0]==ch ; }
+  bool is(char ch) const { return str.len==1 && str[0]==ch ; }
   
-  bool is(char ch1,char ch2) const { return postr.str.len==2 && postr.str[0]==ch1 && postr.str[1]==ch2 ; }
+  bool is(char ch1,char ch2) const { return str.len==2 && str[0]==ch1 && str[1]==ch2 ; }
  };
 
 /* struct TokenizerBase */
@@ -215,7 +214,7 @@ class Tokenizer : TokenizerBase
 template <class Action> 
 Token Tokenizer<Action>::cut(TokenClass tc,ulen len)
  {
-  Token ret(tc,text+=len,pos);
+  Token ret(tc,pos,text+=len);
 
   pos.update(len);
 
@@ -225,7 +224,7 @@ Token Tokenizer<Action>::cut(TokenClass tc,ulen len)
 template <class Action> 
 Token Tokenizer<Action>::cut_pos(TokenClass tc,ulen len)
  {
-  Token ret(tc,text+=len,pos);
+  Token ret(tc,pos,text+=len);
   
   pos.update(ret.str);
 
@@ -449,7 +448,7 @@ class CondParser : CondPaserBase
 
    void put(CondAtom atom,TextPos pos);
    
-   void putName(StrLen name,TextPos pos);
+   void putName(PosStr postr);
    
    void putEnd(TextPos pos);
  };
@@ -708,7 +707,7 @@ void Parser<Action>::put_Beg(Token token)
       
      case Token_Name :
       {
-       action.startSynt(token.postr,false);
+       action.startSynt(token,false);
        
        has_kinds=false;
        
@@ -727,7 +726,7 @@ void Parser<Action>::put_Beg(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME or '!' are expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, NAME or '!' are expected",token.pos);
  }
 
 template <class Action> 
@@ -737,7 +736,7 @@ void Parser<Action>::put_Name(Token token)
     {
      case Token_Name :
       {
-       action.startSynt(token.postr,true);
+       action.startSynt(token,true);
        
        has_kinds=false;
        
@@ -748,7 +747,7 @@ void Parser<Action>::put_Name(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
  }
 
 template <class Action> 
@@ -775,7 +774,7 @@ void Parser<Action>::put_Kinds(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, ':' or '{' are expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, ':' or '{' are expected",token.pos);
  }
 
 template <class Action> 
@@ -785,7 +784,7 @@ void Parser<Action>::put_NextKind(Token token)
     {
      case Token_Name :
       {
-       action.addKind(token.postr);
+       action.addKind(token);
        
        state=State_EndKind;
        
@@ -794,7 +793,7 @@ void Parser<Action>::put_NextKind(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
  }
 
 template <class Action> 
@@ -825,7 +824,7 @@ void Parser<Action>::put_EndKind(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, ',' or '{' are expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, ',' or '{' are expected",token.pos);
  }
 
 template <class Action> 
@@ -855,7 +854,7 @@ void Parser<Action>::put_Rules(Token token)
           return;
          }
        
-       action.addElement(token.postr);
+       action.addElement(token);
        
        state=State_Elements;
        
@@ -864,7 +863,7 @@ void Parser<Action>::put_Rules(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token",token.postr.pos);
+  action.exception("Parser #; : unexpected token",token.pos);
  }
 
 template <class Action> 
@@ -885,14 +884,14 @@ void Parser<Action>::put_Elements(Token token)
           return;
          }
        
-       action.addElement(token.postr);
+       action.addElement(token);
        
        return;
       }
      break;
     }
   
-  action.exception("Parser #; : unexpected token",token.postr.pos);
+  action.exception("Parser #; : unexpected token",token.pos);
  }
 
 template <class Action> 
@@ -909,7 +908,7 @@ void Parser<Action>::put_RuleEnd(Token token)
           return;
          }
        
-       action.rule(token.postr);
+       action.rule(token);
           
        if( has_kinds )
          {
@@ -927,7 +926,7 @@ void Parser<Action>::put_RuleEnd(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME or 'if' are expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, NAME or 'if' are expected",token.pos);
  }
 
 template <class Action> 
@@ -950,7 +949,7 @@ void Parser<Action>::put_RuleIf(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, '(' is expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, '(' is expected",token.pos);
  }
 
 template <class Action> 
@@ -960,51 +959,51 @@ void Parser<Action>::put_RuleCond(Token token)
     {
      case Token_Punct :
       {
-       switch( token.postr.str.len )
+       switch( token.str.len )
          {
           case 1 :
            {
-            switch( token.postr.str[0] )
+            switch( token.str[0] )
               {
-               case '!' : cond_parser.put(CondAtom_NOT,token.postr.pos); return;
-               case '&' : cond_parser.put(CondAtom_AND,token.postr.pos); return;
+               case '!' : cond_parser.put(CondAtom_NOT,token.pos); return;
+               case '&' : cond_parser.put(CondAtom_AND,token.pos); return;
                
-               case '(' : cond_parser.put(CondAtom_OBR,token.postr.pos); cond_count++; return;
+               case '(' : cond_parser.put(CondAtom_OBR,token.pos); cond_count++; return;
                
                case ')' :
                 {
                  if( cond_count ) 
                    { 
-                    cond_parser.put(CondAtom_CBR,token.postr.pos);
+                    cond_parser.put(CondAtom_CBR,token.pos);
                     
                     cond_count--; 
                    }
                  else
                    {
-                    cond_parser.putEnd(token.postr.pos);
+                    cond_parser.putEnd(token.pos);
                     
                     state=State_RuleName;
                    }
                 }
                return; 
                 
-               case '<' : cond_parser.put(CondAtom_LT,token.postr.pos); return;
-               case '>' : cond_parser.put(CondAtom_GT,token.postr.pos); return;
-               case '|' : cond_parser.put(CondAtom_OR,token.postr.pos); return;
+               case '<' : cond_parser.put(CondAtom_LT,token.pos); return;
+               case '>' : cond_parser.put(CondAtom_GT,token.pos); return;
+               case '|' : cond_parser.put(CondAtom_OR,token.pos); return;
               }
            }
           break;
           
           case 2 :
            {
-            if( token.postr.str[1]=='=' )
+            if( token.str[1]=='=' )
               {
-               switch( token.postr.str[0] )
+               switch( token.str[0] )
                  {
-                  case '!' : cond_parser.put(CondAtom_NE,token.postr.pos); return;
-                  case '<' : cond_parser.put(CondAtom_LE,token.postr.pos); return;
-                  case '>' : cond_parser.put(CondAtom_GE,token.postr.pos); return;
-                  case '=' : cond_parser.put(CondAtom_EQ,token.postr.pos); return;
+                  case '!' : cond_parser.put(CondAtom_NE,token.pos); return;
+                  case '<' : cond_parser.put(CondAtom_LE,token.pos); return;
+                  case '>' : cond_parser.put(CondAtom_GE,token.pos); return;
+                  case '=' : cond_parser.put(CondAtom_EQ,token.pos); return;
                  }
               }
            }
@@ -1015,14 +1014,14 @@ void Parser<Action>::put_RuleCond(Token token)
      
      case Token_Name :
       {
-       cond_parser.putName(token.postr);
+       cond_parser.putName(token);
        
        return;
       }
      break;
     }
   
-  action.exception("Parser #; : unexpected token",token.postr.pos);
+  action.exception("Parser #; : unexpected token",token.pos);
  }
 
 template <class Action> 
@@ -1032,7 +1031,7 @@ void Parser<Action>::put_RuleName(Token token)
     {
      case Token_Name :
       {
-       action.rule(token.postr);
+       action.rule(token);
        
        if( has_kinds )
          {
@@ -1050,7 +1049,7 @@ void Parser<Action>::put_RuleName(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
  }
 
 template <class Action> 
@@ -1070,7 +1069,7 @@ void Parser<Action>::put_Result(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, '=' is expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, '=' is expected",token.pos);
  }
 
 template <class Action> 
@@ -1080,7 +1079,7 @@ void Parser<Action>::put_ResultName(Token token)
     {
      case Token_Name :
       {
-       action.result(token.postr);
+       action.result(token);
        action.endRule();
        
        state=State_Rules;
@@ -1090,7 +1089,7 @@ void Parser<Action>::put_ResultName(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.postr.pos);
+  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
  }
 
 template <class Action> 
@@ -1108,7 +1107,7 @@ void Parser<Action>::put(Token token)
      
      case Token_Other :
       {
-       action.exception("Parser #; : unexpected token",token.postr.pos);
+       action.exception("Parser #; : unexpected token",token.pos);
       }
      return; 
     }
