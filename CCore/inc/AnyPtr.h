@@ -72,6 +72,9 @@ class AnyPtr
    template <class T>
    bool hasType() const { return type==Meta::IndexOf<T,TT...>::Ret; }
    
+   template <class T>
+   T * castPtr() const { if( hasType<T>() ) return static_cast<T *>(ptr); return 0; }
+   
    template <class FuncInit>
    void apply(FuncInit func_init) const
     {
@@ -114,6 +117,9 @@ class AnyPtr_const
    
    template <class T>
    bool hasType() const { return type==Meta::IndexOf<T,TT...>::Ret; }
+   
+   template <class T>
+   const T * castPtr() const { if( hasType<T>() ) return static_cast<const T *>(ptr); return 0; }
    
    template <class FuncInit>
    void apply(FuncInit func_init) const

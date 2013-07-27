@@ -61,6 +61,9 @@ class <span class="Att">AnyPtr</span>
    template &lt;class T&gt;
    bool hasType() const;
    
+   template &lt;class T&gt;
+   T * castPtr() const;
+
    template &lt;class FuncInit&gt;
    void apply(FuncInit func_init) const;
    
@@ -91,6 +94,9 @@ class <span class="Att">AnyPtr_const</span>
    template &lt;class T&gt;
    bool hasType() const;
    
+   template &lt;class T&gt;
+   const T * castPtr() const;
+   
    template &lt;class FuncInit&gt;
    void apply(FuncInit func_init) const;
    
@@ -118,6 +124,11 @@ it remembers the pointer type.
 <p>
 <b>hasType()</b> can be used to check the type of the pointer. The template parameter <b>T</b> must be in the list 
 <b>TT</b>.
+</p>
+
+<p>
+<b>castPtr()</b> returns the original pointer of the given type <b>T</b>, or null 
+if the stored pointer has another type.
 </p>
 
 <p>
