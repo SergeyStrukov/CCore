@@ -430,6 +430,45 @@ When scanning up to a some kind of character the input is scanned
 for a string of characters up to the first character of that kind.
 </p>
 
+<h3>StringSetScan</h3>
+
+<p>
+The class <b>StringSetScan</b> scans the input for one of the given strings and returns the string index.
+Index is 1-based. If the input does not begin with one of the expected strings, the input is failed and the index
+is set to null.
+</p>
+
+<pre>
+
+class <span class="Att">StringSetScan</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   StringSetScan(std::initializer_list&lt;const char *&gt; zstr_list);
+   
+   ~StringSetScan();
+   
+   typedef ulen PrintProxyType;
+   
+   operator ulen() const { return index; }
+   
+   template &lt;class S&gt;
+   void scan(S &amp;inp);
+ };
+
+</pre>
+
+<p>
+Constructor takes a braced list of zero-terminated strings. These strings must persist over the object life-time.
+Usually, they are string literals.
+</p>
+
+<p>
+The cast operator returns the 1-based index of the found string or null if the scan has failed.
+</p>
+
 <h3>Integer scanning</h3>
 
 <p>
