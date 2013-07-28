@@ -81,16 +81,40 @@ struct LangBase : NoCopy
   struct CmpArgElement
    {
     ulen index = MaxULen ;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"@#;",index);
+     }
    };
   
   struct CmpArgKind
    {
     Kind kind;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Putobj(out,kind.name);
+     }
    };
   
   struct CmpArg
    {
     AnyPtr_const<CmpArgElement,CmpArgKind> ptr;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      ptr.apply(PrintObj<P>(out));
+     }
    };
   
   struct CondAND;
@@ -110,59 +134,139 @@ struct LangBase : NoCopy
     bool operator + () const { return +ptr; }
     
     bool operator ! () const { return !ptr; }
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      ptr.apply(PrintObj<P>(out));
+     };
    };
   
   struct CondAND
    {
     Cond a;
     Cond b;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"( #; & #; )",a,b);
+     }
    };
   
   struct CondOR
    {
     Cond a;
     Cond b;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"( #; | #; )",a,b);
+     }
    };
   
   struct CondNOT
    {
     Cond a;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"! #;",a);
+     }
    };
   
   struct CondEQ
    {
     CmpArg a;
     CmpArg b;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#; == #;",a,b);
+     }
    };
   
   struct CondNE
    {
     CmpArg a;
     CmpArg b;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#; != #;",a,b);
+     }
    };
   
   struct CondGT
    {
     CmpArg a;
     CmpArg b;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#; > #;",a,b);
+     }
    };
   
   struct CondGE
    {
     CmpArg a;
     CmpArg b;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#; >= #;",a,b);
+     }
    };
   
   struct CondLT
    {
     CmpArg a;
     CmpArg b;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#; < #;",a,b);
+     }
    };
   
   struct CondLE
    {
     CmpArg a;
     CmpArg b;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#; <= #;",a,b);
+     }
    };
   
   // Rule
@@ -282,9 +386,16 @@ class Lang : public LangBase
        if( rule.index )
          {
           if( +rule.kind )
-            Printf(out,"#;) #; -> #;.#;\n",rule.index,rule.name,rule.ret.name,rule.kind.name);
+            Printf(out,"#;) #; -> #;.#;",rule.index,rule.name,rule.ret.name,rule.kind.name);
           else
-            Printf(out,"#;) #; -> #;\n",rule.index,rule.name,rule.ret.name);
+            Printf(out,"#;) #; -> #;",rule.index,rule.name,rule.ret.name);
+          
+          if( rule.hasCond() )
+            {
+             Printf(out," if( #; )",rule.cond);
+            }
+          
+          Putch(out,'\n');
         
           for(auto &element : rule.args ) Printf(out,"  #;",element.name);
         

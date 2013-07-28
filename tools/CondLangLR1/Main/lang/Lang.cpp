@@ -640,38 +640,13 @@ class Lang::Builder : NoCopy
       }
     };
    
-   struct FindElement : NoCopy
+   struct BindKindArg : BindName
     {
-     BuildElement *element;
-     ulen count;
+     AnyPtr<BuildKind,BuildCondArg> ptr;
      
-     FindElement() : element(0),count(0) {}
+     explicit BindKindArg(BuildKind &kind) : BindName(kind.str),ptr(&kind) {}
      
-     void operator () (BuildElement *element_) { element=element_; count++; }
-     
-     void operator () (BuildCondArg *) {}
-    };
-   
-   struct SetArgElement
-    {
-     BuildElement *element;
-     
-     explicit SetArgElement(BuildElement *element_) : element(element_) {}
-     
-     void operator () (BuildElement *) {}
-     
-     void operator () (BuildCondArg *arg) { arg->element=element; }
-    };
-   
-   struct RecordArg
-    {
-     Builder *builder;
-     
-     explicit RecordArg(Builder *builder_) : builder(builder_) {}
-     
-     void operator () (BuildElement *) {}
-     
-     void operator () (BuildCondArg *arg) { builder->arg_list.add(arg); }
+     explicit BindKindArg(BuildCondArg &arg) : BindName(arg.str),ptr(&arg) {}
     };
    
    void bindKindArgs();
@@ -679,6 +654,8 @@ class Lang::Builder : NoCopy
    void bindArgs(PtrLen<BindArgs> range);
    
    void bindArgs(BuildRule &rule);
+   
+   void bindArgs(PtrLen<BindKindArg> range);
    
    void bindArgs(BuildSynt &synt);
    
@@ -971,7 +948,7 @@ void Lang::Builder::endLang()
   
   report.guard();
   
-  Putobj(Con,*this);
+  //Putobj(Con,*this);
   
   complete();
  }
@@ -1224,31 +1201,28 @@ void Lang::Builder::bindKindArgs()
 
 void Lang::Builder::bindArgs(PtrLen<BindArgs> range)
  {
-  FindElement find;
+  BuildElement *element=0;
+  ulen count=0;
   
-  for(auto &bind : range ) bind.ptr.apply( FunctorRef(find) );
+  for(auto &bind : range ) bind.ptr.applyFor<BuildElement>( [&] (BuildElement *element_) { element=element_; count++; } );
   
-  switch( find.count )
+  switch( count )
     {
      case 0 :
       {
-       RecordArg record(this);
-       
-       for(auto &bind : range ) bind.ptr.apply(record);
+       for(auto &bind : range ) bind.ptr.applyFor<BuildCondArg>( [this] (BuildCondArg *arg) { arg_list.add(arg); } );
       }
      break;
      
      case 1 :
       {
-       SetArgElement set_element(find.element);
-       
-       for(auto &bind : range ) bind.ptr.apply(set_element);
+       for(auto &bind : range ) bind.ptr.applyFor<BuildCondArg>( [=] (BuildCondArg *arg) { arg->element=element; } );
       }
      break;
      
      default:
       {
-       error("Builder #; : multiple declaration of element #; argument",find.element->pos,find.element->str);
+       error("Builder #; : multiple declaration of element #; argument",element->pos,element->str);
       }
     }
  }
@@ -1277,8 +1251,33 @@ void Lang::Builder::bindArgs(BuildRule &rule)
   Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindArgs> range) { bindArgs(range); } );
  }
 
+void Lang::Builder::bindArgs(PtrLen<BindKindArg> range)
+ {
+  BuildKind *kind=0;
+  
+  for(auto &bind : range ) bind.ptr.applyFor<BuildKind>( [&] (BuildKind *kind_) { kind=kind_; } );
+  
+  if( kind )
+    {
+     for(auto &bind : range ) bind.ptr.applyFor<BuildCondArg>( [=] (BuildCondArg *arg) { arg->kind=kind; } );
+    }
+  else
+    {
+     BuildCondArg *arg=range->ptr.castPtr<BuildCondArg>();
+    
+     error("Builder #; : bad kind name #;",arg->pos,arg->str);
+    }
+ }
+
 void Lang::Builder::bindArgs(BuildSynt &synt)
  {
+  Collector<BindKindArg> collector;
+  
+  synt.kind_list.apply( [&] (BuildKind &kind) { collector.append_fill(kind); } );
+  
+  synt.arg_list.apply( [&] (BuildCondArg &arg) { collector.append_fill(arg); } );
+  
+  Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindKindArg> range) { bindArgs(range); } );
  }
 
 void Lang::Builder::bindArgs()

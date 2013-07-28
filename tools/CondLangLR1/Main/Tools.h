@@ -27,6 +27,8 @@ using namespace CCore;
 
 struct PosStr;
 
+template <class P> struct PrintObj;
+
 /* struct PosStr */
 
 struct PosStr
@@ -39,6 +41,22 @@ struct PosStr
   explicit PosStr(TextPos pos_) : pos(pos_) {}
   
   PosStr(TextPos pos_,StrLen str_) : pos(pos_),str(str_) {}
+ };
+
+/* struct PrintObj<P> */
+
+template <class P>
+struct PrintObj
+ {
+  P &out;
+  
+  explicit PrintObj(P &out_) : out(out_) {}
+  
+  template <class T>
+  void operator () (T *obj)
+   {
+    Putobj(out,*obj);
+   }
  };
 
 } // namespace App
