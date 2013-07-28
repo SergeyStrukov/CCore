@@ -1017,7 +1017,12 @@ void Lang::Builder::bindElements(PtrLen<BindElement> range)
      
      default:
       {
-       error("Builder #; : multiple declaration of syntax class #;",synt->pos,synt->str);
+       for(auto &bind : range ) 
+         bind.ptr.applyFor<BuildSynt>( [this] (BuildSynt *synt) 
+                                              {
+                                               error("Builder #; : multiple declaration of syntax class #;",synt->pos,synt->str);   
+                                              } 
+                                     );
       }
     }
  }
@@ -1118,7 +1123,8 @@ void Lang::Builder::checkRuleNames()
                                                            {
                                                             if( range.len>1 )
                                                               {
-                                                               error("Builder #; : multiple declaration of rule #;",range->rule->pos,range->name);
+                                                               for(; +range ;++range)
+                                                                 error("Builder #; : multiple declaration of rule #;",range->rule->pos,range->name);
                                                               }
                                                            } 
                                  );
@@ -1135,9 +1141,12 @@ void Lang::Builder::bindResults(PtrLen<BindResult> range)
     {
      case 0 :
       {
-       BuildRule *rule=range->ptr.castPtr<BuildRule>();
-       
-       error("Builder #; : no declaration of kind #;",rule->result.pos,rule->result.str);
+       for(auto &bind : range ) 
+         bind.ptr.applyFor<BuildRule>( [this] (BuildRule *rule) 
+                                              { 
+                                               error("Builder #; : bad kind name #;",rule->result.pos,rule->result.str); 
+                                              } 
+                                     );
       }
      break;
      
@@ -1149,7 +1158,12 @@ void Lang::Builder::bindResults(PtrLen<BindResult> range)
      
      default:
       {
-       error("Builder #; : multiple declaration of kind #;",kind->pos,kind->str);
+       for(auto &bind : range ) 
+         bind.ptr.applyFor<BuildKind>( [this] (BuildKind *kind) 
+                                              {
+                                               error("Builder #; : multiple declaration of kind #;",kind->pos,kind->str);
+                                              } 
+                                     );
       }
     }
  }
@@ -1222,7 +1236,12 @@ void Lang::Builder::bindArgs(PtrLen<BindArgs> range)
      
      default:
       {
-       error("Builder #; : multiple declaration of element #; argument",element->pos,element->str);
+       for(auto &bind : range ) 
+         bind.ptr.applyFor<BuildElement>( [this] (BuildElement *element) 
+                                                 {
+                                                  error("Builder #; : multiple declaration of element #; argument",element->pos,element->str);
+                                                 } 
+                                        );
       }
     }
  }
@@ -1263,9 +1282,12 @@ void Lang::Builder::bindArgs(PtrLen<BindKindArg> range)
     }
   else
     {
-     BuildCondArg *arg=range->ptr.castPtr<BuildCondArg>();
-    
-     error("Builder #; : bad kind name #;",arg->pos,arg->str);
+     for(auto &bind : range ) 
+       bind.ptr.applyFor<BuildCondArg>( [this] (BuildCondArg *arg) 
+                                               { 
+                                                error("Builder #; : bad kind name #;",arg->pos,arg->str); 
+                                               } 
+                                      );
     }
  }
 

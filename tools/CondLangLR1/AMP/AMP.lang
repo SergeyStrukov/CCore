@@ -1,6 +1,6 @@
 /* AMP.lang */
 
-! EXPR : A , M , P 
+! EXPR : A , M , P
  {
   x               : opVar  = P
 
