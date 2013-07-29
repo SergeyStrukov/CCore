@@ -23,24 +23,32 @@ namespace App {
 
 /* classes */
 
+struct RecordBase;
+
+struct CondLangBase;
+
+class CondLang;
+
 struct LangBase;
 
 class Lang;
 
-/* struct LangBase */
+/* struct RecordBase */
 
-struct LangBase : NoCopy
+struct RecordBase : NoThrowFlagsBase
  {
-  struct RecordBase : NoThrowFlagsBase
-   {
-    ulen index = MaxULen ;
-    StrLen name;
-    
-    bool operator + () const { return index!=MaxULen; }
-    
-    bool operator ! () const { return index==MaxULen; }
-   };
+  ulen index = MaxULen ;
+  StrLen name;
   
+  bool operator + () const { return index!=MaxULen; }
+  
+  bool operator ! () const { return index==MaxULen; }
+ };
+
+/* struct CondLangBase */
+
+struct CondLangBase : NoCopy
+ {
   // Atom
   
   struct Atom : RecordBase 
@@ -285,9 +293,9 @@ struct LangBase : NoCopy
    };
  };
 
-/* class Lang */
+/* class CondLang */
 
-class Lang : public LangBase
+class CondLang : public CondLangBase
  {
    ElementPool pool;
    
@@ -314,11 +322,9 @@ class Lang : public LangBase
   
   public:
   
-   explicit Lang(StrLen file_name);
+   explicit CondLang(StrLen file_name);
    
-   explicit Lang(const Lang &lang);
-   
-   ~Lang();
+   ~CondLang();
    
    // description
    
@@ -394,6 +400,146 @@ class Lang : public LangBase
             {
              Printf(out," if( #; )",rule.cond);
             }
+          
+          Putch(out,'\n');
+        
+          for(auto &element : rule.args ) Printf(out,"  #;",element.name);
+        
+          Putch(out,'\n');
+         }
+       else
+         {
+          Printf(out,"#;) #;\n",rule.index,rule.name);
+         }
+     
+     Printf(out,"\n#;\n",TextDivider());
+    }
+ };
+
+/* struct LangBase */
+
+struct LangBase : NoCopy
+ {
+  // Atom
+  
+  struct Atom : RecordBase 
+   {
+   };
+  
+  // Synt
+  
+  struct Rule;
+  
+  struct Synt : RecordBase
+   {
+    PtrLen<const Rule> rules;
+    bool is_lang = false ;
+   };
+  
+  // Element
+  
+  struct Element : RecordBase
+   {
+    AnyPtr_const<Atom,Synt> ptr;
+   };
+  
+  // Rule
+  
+  struct Rule : RecordBase
+   {
+    Synt ret;
+    PtrLen<const Element> args;
+   };
+ };
+
+/* class Lang */
+
+class Lang : public LangBase
+ {
+   ElementPool pool;
+  
+   PtrLen<Atom> atoms;
+   PtrLen<Synt> synts;
+   PtrLen<Element> elements;
+   PtrLen<Rule> rules;
+ 
+  private:
+ 
+   template <class P>
+   struct PrintElementPtr
+    {
+     P &out;
+    
+     explicit PrintElementPtr(P &out_) : out(out_) {}
+    
+     void operator () (const Atom *atom) { Printf(out,"Atom(#;)",atom->index); }
+    
+     void operator () (const Synt *synt) { Printf(out,"Synt(#;)",synt->index); }
+    };
+ 
+  public:
+  
+   explicit Lang(const CondLang &clang);
+   
+   ~Lang();
+   
+   // description
+   
+   PtrLen<const Atom> getAtoms() const { return Range_const(atoms); }
+   
+   ulen getAtomCount() const { return atoms.len; }
+   
+   PtrLen<const Synt> getSynts() const { return Range_const(synts); }
+   
+   ulen getSyntCount() const { return synts.len; }
+   
+   PtrLen<const Element> getElements() const { return Range_const(elements); }
+   
+   ulen getElementCount() const { return elements.len; }
+   
+   PtrLen<const Rule> getRules() const { return Range_const(rules); }
+   
+   ulen getRuleCount() const { return rules.len; }
+   
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     Printf(out,"#;\n\n",Title("Atoms"));
+     
+     for(auto &atom : getAtoms() ) Printf(out,"#;) #;\n",atom.index,atom.name);
+     
+     Printf(out,"\n#;\n\n",Title("Syntax classes"));
+     
+     for(auto &synt : getSynts() ) 
+       {
+        Printf(out,"#;) #;",synt.index,synt.name);
+        
+        if( synt.is_lang ) Putobj(out," !");
+        
+        Putch(out,'\n');
+        
+        for(auto &rule : synt.rules ) Printf(out,"  Rule(#;)\n",rule.index);
+       }
+     
+     Printf(out,"\n#;\n\n",Title("Elements"));
+     
+     for(auto &element : getElements() )
+       {
+        Printf(out,"#;) #; -> ",element.index,element.name);
+        
+        element.ptr.apply( PrintElementPtr<P>(out) );
+        
+        Putch(out,'\n');
+       }
+     
+     Printf(out,"\n#;\n\n",Title("Rules"));
+     
+     for(auto &rule : getRules() )
+       if( rule.index )
+         {
+          Printf(out,"#;) #; -> #;",rule.index,rule.name,rule.ret.name);
           
           Putch(out,'\n');
         

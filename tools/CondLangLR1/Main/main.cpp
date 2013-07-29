@@ -26,7 +26,7 @@ int Main(StrLen lang_name,StrLen file_name,StrLen CCORE_Root)
  {
   Printf(Con,"#.q;\n#.q;\n#.q;\n",lang_name,file_name,CCORE_Root);
   
-  Lang lang(file_name);
+  CondLang lang(file_name);
   
   Putobj(Con,lang);
   

@@ -24,9 +24,9 @@
 
 namespace App {
 
-/* class Lang::Builder */
+/* class CondLang::Builder */
 
-class Lang::Builder : NoCopy
+class CondLang::Builder : NoCopy
  {
    template <class T>
    class ObjList : NoCopy
@@ -475,7 +475,7 @@ class Lang::Builder : NoCopy
 
   private: 
    
-   Lang &lang;
+   CondLang &lang;
    ElementPool pool;
    
    ObjList<BuildSynt> synt_list;
@@ -819,7 +819,7 @@ class Lang::Builder : NoCopy
    
   public:
  
-   explicit Builder(Lang &lang);
+   explicit Builder(CondLang &lang);
    
    ~Builder();
    
@@ -834,109 +834,109 @@ class Lang::Builder : NoCopy
     }
  };
 
-auto Lang::Builder::condOR(BuildCond a,BuildCond b) -> BuildCond
+auto CondLang::Builder::condOR(BuildCond a,BuildCond b) -> BuildCond
  {
   return pool.create<BuildCondOR>(a,b);
  }
 
-auto Lang::Builder::condAND(BuildCond a,BuildCond b) -> BuildCond
+auto CondLang::Builder::condAND(BuildCond a,BuildCond b) -> BuildCond
  {
   return pool.create<BuildCondAND>(a,b);
  }
 
-auto Lang::Builder::condNOT(BuildCond a) -> BuildCond
+auto CondLang::Builder::condNOT(BuildCond a) -> BuildCond
  {
   return pool.create<BuildCondNOT>(a);
  }
 
-auto Lang::Builder::condEQ(PosStr a,PosStr b) -> BuildCond
+auto CondLang::Builder::condEQ(PosStr a,PosStr b) -> BuildCond
  {
   return pool.create<BuildCondEQ>(a,b);
  }
 
-auto Lang::Builder::condNE(PosStr a,PosStr b) -> BuildCond
+auto CondLang::Builder::condNE(PosStr a,PosStr b) -> BuildCond
  {
   return pool.create<BuildCondNE>(a,b);
  }
 
-auto Lang::Builder::condGT(PosStr a,PosStr b) -> BuildCond
+auto CondLang::Builder::condGT(PosStr a,PosStr b) -> BuildCond
  {
   return pool.create<BuildCondGT>(a,b);
  }
 
-auto Lang::Builder::condGE(PosStr a,PosStr b) -> BuildCond
+auto CondLang::Builder::condGE(PosStr a,PosStr b) -> BuildCond
  {
   return pool.create<BuildCondGE>(a,b);
  }
 
-auto Lang::Builder::condLT(PosStr a,PosStr b) -> BuildCond
+auto CondLang::Builder::condLT(PosStr a,PosStr b) -> BuildCond
  {
   return pool.create<BuildCondLT>(a,b);
  }
 
-auto Lang::Builder::condLE(PosStr a,PosStr b) -> BuildCond
+auto CondLang::Builder::condLE(PosStr a,PosStr b) -> BuildCond
  {
   return pool.create<BuildCondLE>(a,b);
  }
 
-void Lang::Builder::startSynt(PosStr postr,bool is_lang)
+void CondLang::Builder::startSynt(PosStr postr,bool is_lang)
  {
   current_synt=pool.create<BuildSynt>(postr,is_lang);
  }
 
-void Lang::Builder::addKind(PosStr postr)
+void CondLang::Builder::addKind(PosStr postr)
  {
   current_synt->kind_list.add(pool.create<BuildKind>(postr));
  }
 
-void Lang::Builder::endKinds()
+void CondLang::Builder::endKinds()
  {
   // do nothing
  }
 
-void Lang::Builder::startRule()
+void CondLang::Builder::startRule()
  {
   current_rule=pool.create<BuildRule>();
  }
 
-void Lang::Builder::addElement(PosStr postr)
+void CondLang::Builder::addElement(PosStr postr)
  {
   if( CorrectElement(postr.str) ) ++postr.str;
   
   current_rule->element_list.add(pool.create<BuildElement>(postr));
  }
 
-void Lang::Builder::endElements()
+void CondLang::Builder::endElements()
  {
   // do nothing
  }
 
-void Lang::Builder::rule(BuildCond cond)
+void CondLang::Builder::rule(BuildCond cond)
  {
   current_rule->cond=cond;
  }
 
-void Lang::Builder::rule(PosStr postr)
+void CondLang::Builder::rule(PosStr postr)
  {
   *(PosStr *)current_rule=postr;
  }
 
-void Lang::Builder::result(PosStr postr)
+void CondLang::Builder::result(PosStr postr)
  {
   current_rule->result=postr;
  }
 
-void Lang::Builder::endRule()
+void CondLang::Builder::endRule()
  {
   current_synt->rule_list.add(Replace_null(current_rule));
  }
 
-void Lang::Builder::endSynt()
+void CondLang::Builder::endSynt()
  {
   synt_list.add(Replace_null(current_synt));
  }
 
-void Lang::Builder::endLang()
+void CondLang::Builder::endLang()
  {
   ReportException report;
   
@@ -953,7 +953,7 @@ void Lang::Builder::endLang()
   complete();
  }
 
-bool Lang::Builder::CorrectElement(StrLen name)
+bool CondLang::Builder::CorrectElement(StrLen name)
  {
   if( name.len>=2 && name[0]=='`' )
     {
@@ -972,7 +972,7 @@ bool Lang::Builder::CorrectElement(StrLen name)
   return false;
  }
 
-StrLen Lang::Builder::SyntElementName(StrLen name)
+StrLen CondLang::Builder::SyntElementName(StrLen name)
  {
   ulen len=LangParser::ScanName(name);
   
@@ -985,7 +985,7 @@ StrLen Lang::Builder::SyntElementName(StrLen name)
   return {}; 
  }
 
-void Lang::Builder::bindElements(PtrLen<BindElement> range)
+void CondLang::Builder::bindElements(PtrLen<BindElement> range)
  {
   BuildSynt *synt=0;
   ulen count=0;
@@ -1027,7 +1027,7 @@ void Lang::Builder::bindElements(PtrLen<BindElement> range)
     }
  }
 
-void Lang::Builder::bindElements()
+void CondLang::Builder::bindElements()
  {
   ulen lang_count=0;
   Collector<BindElement> collector;
@@ -1057,7 +1057,7 @@ void Lang::Builder::bindElements()
   if( !lang_count ) error("Builder : no lang syntax class");
  }
 
-StrLen Lang::Builder::buildAtomName(StrLen name)
+StrLen CondLang::Builder::buildAtomName(StrLen name)
  {
   ulen len=LenAdd(5,name.len,ExpCharCount(name));
   
@@ -1074,7 +1074,7 @@ StrLen Lang::Builder::buildAtomName(StrLen name)
   return Range_const(ret);
  }
 
-void Lang::Builder::bindAtom(PtrLen<BindAtom> range)
+void CondLang::Builder::bindAtom(PtrLen<BindAtom> range)
  {
   StrLen name=range->element->str;
   BuildAtom *atom=pool.create<BuildAtom>(buildAtomName(name));
@@ -1084,7 +1084,7 @@ void Lang::Builder::bindAtom(PtrLen<BindAtom> range)
   for(auto &bind: range ) bind.element->atom=atom;
  }
 
-void Lang::Builder::buildAtoms()
+void CondLang::Builder::buildAtoms()
  {
   Collector<BindAtom> collector;
   
@@ -1105,7 +1105,7 @@ void Lang::Builder::buildAtoms()
   Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindAtom> range) { bindAtom(range); } );
  }
 
-void Lang::Builder::checkRuleNames()
+void CondLang::Builder::checkRuleNames()
  {
   Collector<CheckRuleName> collector; 
   
@@ -1130,7 +1130,7 @@ void Lang::Builder::checkRuleNames()
                                  );
  }
 
-void Lang::Builder::bindResults(PtrLen<BindResult> range)
+void CondLang::Builder::bindResults(PtrLen<BindResult> range)
  {
   BuildKind *kind=0;
   ulen count=0;
@@ -1168,7 +1168,7 @@ void Lang::Builder::bindResults(PtrLen<BindResult> range)
     }
  }
 
-void Lang::Builder::bindResults()
+void CondLang::Builder::bindResults()
  {
   synt_list.apply( [this] (BuildSynt &synt) 
                           {
@@ -1198,7 +1198,7 @@ void Lang::Builder::bindResults()
                  );
  }
 
-void Lang::Builder::bindKindArgs()
+void CondLang::Builder::bindKindArgs()
  {
   while( BuildCondArg *arg=arg_list.del() )
     {
@@ -1213,7 +1213,7 @@ void Lang::Builder::bindKindArgs()
     }
  }
 
-void Lang::Builder::bindArgs(PtrLen<BindArgs> range)
+void CondLang::Builder::bindArgs(PtrLen<BindArgs> range)
  {
   BuildElement *element=0;
   ulen count=0;
@@ -1246,7 +1246,7 @@ void Lang::Builder::bindArgs(PtrLen<BindArgs> range)
     }
  }
 
-void Lang::Builder::bindArgs(BuildRule &rule)
+void CondLang::Builder::bindArgs(BuildRule &rule)
  {
   Collector<BindArgs> collector;
   
@@ -1270,7 +1270,7 @@ void Lang::Builder::bindArgs(BuildRule &rule)
   Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindArgs> range) { bindArgs(range); } );
  }
 
-void Lang::Builder::bindArgs(PtrLen<BindKindArg> range)
+void CondLang::Builder::bindArgs(PtrLen<BindKindArg> range)
  {
   BuildKind *kind=0;
   
@@ -1291,7 +1291,7 @@ void Lang::Builder::bindArgs(PtrLen<BindKindArg> range)
     }
  }
 
-void Lang::Builder::bindArgs(BuildSynt &synt)
+void CondLang::Builder::bindArgs(BuildSynt &synt)
  {
   Collector<BindKindArg> collector;
   
@@ -1302,7 +1302,7 @@ void Lang::Builder::bindArgs(BuildSynt &synt)
   Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindKindArg> range) { bindArgs(range); } );
  }
 
-void Lang::Builder::bindArgs()
+void CondLang::Builder::bindArgs()
  {
   synt_list.apply( [this] (BuildSynt &synt) 
                           {
@@ -1319,7 +1319,7 @@ void Lang::Builder::bindArgs()
   synt_list.apply( [this] (BuildSynt &synt) { bindArgs(synt); } );
  }
 
-auto Lang::Builder::buildCond(BuildCond cond) -> Cond
+auto CondLang::Builder::buildCond(BuildCond cond) -> Cond
  {
   BuildLangCond func(this);
   
@@ -1328,7 +1328,7 @@ auto Lang::Builder::buildCond(BuildCond cond) -> Cond
   return func.result;
  }
 
-void Lang::Builder::complete()
+void CondLang::Builder::complete()
  {
   // atoms
   {
@@ -1500,24 +1500,58 @@ void Lang::Builder::complete()
   }
  }
 
-Lang::Builder::Builder(Lang &lang_) 
+CondLang::Builder::Builder(CondLang &lang_) 
  : lang(lang_)
  {
  }
 
-Lang::Builder::~Builder()
+CondLang::Builder::~Builder()
  {
  }
 
-/* class Lang */
+/* class CondLang */
 
-Lang::Lang(StrLen file_name)
+CondLang::CondLang(StrLen file_name)
  {
   FileToMem file(file_name);
   
   LangParser::Parser<Builder> parser(*this);
   
   parser.run(Mutate<const char>(Range(file)));
+ }
+
+CondLang::~CondLang()
+ {
+ }
+
+/* class Lang */
+
+Lang::Lang(const CondLang &clang)
+ {
+  // atoms
+  {
+   auto range=clang.getAtoms();
+   
+   PtrLen<Atom> atoms=pool.createArray<Atom>(range.len);
+
+   for(; +atoms ;++atoms,++range)
+     {
+      atoms->index=range->index;
+      atoms->name=pool.dup(range->name);
+     }
+  }
+  
+  // synts
+  {
+  }
+  
+  // elements
+  {
+  }
+  
+  // rules
+  {
+  }
  }
 
 Lang::~Lang()
