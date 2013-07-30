@@ -1,0 +1,180 @@
+/* DDL.lang */
+
+// BODY -----------------------------------------------------------------------
+
+! BODY
+ {
+                               : startBody
+                         
+  BODY SCOPE                   : extBody_SCOPE
+  BODY INCLUDE                 : extBody_INCLUDE
+  BODY TYPE                    : extBody_TYPE 
+  BODY CONST                   : extBody_CONST
+  BODY STRUCT ;                : extBody_STRUCT
+ }
+
+SCOPE
+ {
+  scope Name { BODY `}         : buildScope
+ }
+
+INCLUDE
+ {
+  include FileName             : includeFile
+ }
+
+TYPE
+ {
+  type Name = TYPEDEF ;        : defType 
+ }
+
+CONST
+ {
+  TYPEDEF Name = EXPR ;        : defConst
+ }
+ 
+// names ---------------------------------------------------------------------- 
+
+RNAME
+ {
+  Name                         : startName
+  RNAME # Name                 : extName
+ }
+
+NAME
+ {
+  RNAME                        : relName
+  # RNAME                      : absName
+  . # RNAME                    : dotName  
+  Dots # RNAME                 : dotsName
+ }
+
+INAME
+ {
+  int                          : intName
+  sint                         : sintName
+  uint                         : uintName
+  ulen                         : ulenName
+  sint8                        : sint8Name
+  uint8                        : uint8Name
+  sint16                       : sint16Name 
+  uint16                       : uint16Name 
+  sint32                       : sint32Name 
+  uint32                       : uint32Name 
+  sint64                       : sint64Name 
+  uint64                       : uint64Name 
+ }
+
+TNAME
+ {
+  INAME                        : cast_INAME
+  
+  text                         : textName
+  ip                           : ipName
+ }
+ 
+// TYPEDEF -------------------------------------------------------------------- 
+
+TYPEDEF
+ {
+  NAME                         : namedType
+  TNAME                        : baseType
+  TYPEDEF *                    : ptrType
+  TYPEDEF [ ]                  : arrayType
+  TYPEDEF [ EXPR ]             : arrayLenType
+  STRUCT                       : structType
+ }
+
+// STRUCT ---------------------------------------------------------------------
+
+STRUCT
+ {
+  struct Name { SBODY `}       : buildStruct
+ }
+
+SBODY
+ {
+                               : startSBody
+                         
+  SBODY TYPE                   : extSBody_TYPE
+  SBODY const CONST            : extSBody_CONST
+  SBODY STRUCT ;               : extSBody_STRUCT 
+   
+  SBODY TYPEDEF Name ;         : extSBody_field  
+  SBODY TYPEDEF Name = EXPR ;  : extSBody_fieldVal
+ }
+
+// EXPR -----------------------------------------------------------------------
+
+EXPR : LIST , ADD , MUL , UN , NUM , POST , PRIM
+ {
+  ( EXPR )                     : cast_EXPR  = PRIM
+  
+  NAME                         : cast_NAME  = PRIM
+  NNLIT                        : cast_NNLIT = PRIM 
+  
+  ITYPE ( EXPR )               : opDomain   = PRIM
+  
+  EXPR.a [ EXPR ]              : if( a>=NUM ) opInd        = POST
+  
+  EXPR.a . Name                : if( a>=POST ) opSelect    = POST
+  EXPR.a -> Name               : if( a>=POST ) opPtrSelect = POST
+  
+  Number                       : cast_Number = NUM
+  
+  * EXPR.a                     : if( a>=UN ) opAst   = UN
+  & EXPR.a                     : if( a>=UN ) opAmp   = UN
+  + EXPR.a                     : if( a>=UN ) opPlus  = UN
+  - EXPR.a                     : if( a>=UN ) opMinus = UN
+  
+  EXPR.a * EXPR.b              : if( a>=MUL & b>=UN ) opMul = MUL
+  EXPR.a / EXPR.b              : if( a>=MUL & b>=UN ) opDiv = MUL
+  EXPR.a % EXPR.b              : if( a>=MUL & b>=UN ) opRem = MUL
+  
+  EXPR.a + EXPR.b              : if( a>=ADD & b>=MUL ) opAdd = ADD
+  EXPR.a - EXPR.b              : if( a>=ADD & b>=MUL ) opSub = ADD
+  
+  { `}                         : emptyExprList      = LIST
+  { ELIST `}                   : buildExprList      = LIST
+  { NELIST `}                  : buildNamedExprList = LIST
+  EXPR { `}                    : applyEmpty         = LIST
+  EXPR { NELIST `}             : applyNamedExprList = LIST
+ }
+
+// ----------------------------------------------------------------------------
+
+ELIST
+ {
+  EXPR                         : startExprList
+  ELIST , EXPR                 : extExprList
+ }
+ 
+NEXPR
+ {
+  . Name = EXPR                : nameExpr
+ }
+
+NELIST
+ {
+  NEXPR                        : startNamedExprList
+  NELIST , NEXPR               : extNamedExprList
+ }
+
+// ----------------------------------------------------------------------------
+
+ITYPE
+ {
+  NAME                         : type_NAME
+  INAME                        : type_INAME
+ }
+
+NNLIT
+ {
+  null                         : cast_null
+  String                       : cast_String
+  Number . Number . Number . Number : buildIP 
+ }
+
+// ----------------------------------------------------------------------------
+
+

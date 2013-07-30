@@ -22,13 +22,19 @@ namespace App {
 
 using namespace CCore;
 
-int Main(StrLen lang_name,StrLen file_name,StrLen CCORE_Root)
+int Main(StrLen file_name)
  {
-  Printf(Con,"#.q;\n#.q;\n#.q;\n",lang_name,file_name,CCORE_Root);
+  CondLang clang(file_name);
   
-  CondLang lang(file_name);
+  Putobj(Con,clang);
+  
+  Lang lang(clang);
   
   Putobj(Con,lang);
+  
+  TopLang top(clang);
+  
+  Putobj(Con,top);
   
   return 0;
  }
@@ -50,14 +56,14 @@ int main(int argc,const char *argv[])
      {
       Printf(Con,"--- CondLangLR1 1.00 ---\n--- Copyright (c) 2013 Sergey Strukov. All rights reserved. ---\n\n");
       
-      if( argc!=4 )
+      if( argc!=2 )
         {
-         Printf(Con,"Usage: CondLangLR1 <lang-name> <file.lang> <CCore-Root>\n");
+         Printf(Con,"Usage: CondLangLR1 <file.lang>\n");
          
          return 1;
         }
 
-      return App::Main(argv[1],argv[2],argv[3]);
+      return App::Main(argv[1]);
      } 
      
      report.guard();

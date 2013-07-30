@@ -323,11 +323,18 @@ class CondLang::Builder : NoCopy
      
      explicit BuildElement(PosStr postr) : PosStr(postr),synt(0),atom(0),index(MaxULen) {}
      
-     void cutArg(ulen len)
+     bool cutArg(ulen len)
       {
        ulen name_len=str.len;
 
-       if( name_len>len ) arg=str.part(len+1);
+       if( name_len>len ) 
+         {
+          arg=str.part(len+1);
+          
+          return true;
+         }
+       
+       return false;
       }
      
      template <class P>
@@ -1009,7 +1016,10 @@ void CondLang::Builder::bindElements(PtrLen<BindElement> range)
                                               {
                                                element->synt=synt;
                                                
-                                               element->cutArg(len);
+                                               if( element->cutArg(len) && !synt->kind_list )
+                                                 {
+                                                  error("Builder #; : no syntax class kinds, argument is not allowed",element->pos);
+                                                 }
                                               } 
                                         );
       }
@@ -1533,6 +1543,8 @@ Lang::Lang(const CondLang &clang)
    auto range=clang.getAtoms();
    
    PtrLen<Atom> atoms=pool.createArray<Atom>(range.len);
+   
+   this->atoms=atoms;
 
    for(; +atoms ;++atoms,++range)
      {
@@ -1543,14 +1555,110 @@ Lang::Lang(const CondLang &clang)
   
   // synts
   {
+   auto range=clang.getSynts();
+   
+   PtrLen<Synt> synts=pool.createArray<Synt>(range.len);
+   
+   this->synts=synts;
+   
+   for(; +synts ;++synts,++range)
+     {
+      synts->index=range->index;
+      synts->name=pool.dup(range->name);
+      
+      synts->is_lang=range->is_lang;
+     }
   }
   
   // elements
   {
+   ulen len=LenAdd(getAtomCount(),getSyntCount());
+   
+   PtrLen<Element> elements=pool.createArray<Element>(len);
+   
+   this->elements=elements;
+   
+   ulen index=0;
+
+   for(auto &atom : getAtoms() )
+     {
+      elements->index=index++;
+      elements->name=atom.name;
+      elements->ptr=&atom;
+      
+      ++elements;
+     }
+   
+   for(auto &synt : getSynts() )
+     {
+      elements->index=index++;
+      elements->name=synt.name;
+      elements->ptr=&synt;
+      
+      ++elements;
+     }
   }
   
   // rules
   {
+   auto range=clang.getRules();
+   
+   PtrLen<Rule> rules=pool.createArray<Rule>(range.len);
+   
+   this->rules=rules;
+   
+   rules->index=0;
+   rules->name="<-";
+   
+   for(++rules,++range; +rules ;++rules,++range)
+     {
+      rules->index=range->index;
+      rules->name=pool.dup(range->name);
+     }
+  }
+  
+  // synts.rules
+  {
+   auto range=clang.getSynts();
+   
+   PtrLen<Synt> synts=this->synts;
+   
+   ulen off=1;
+   auto rules=getRules();
+   
+   for(; +synts ;++synts,++range)
+     {
+      ulen len=range->rules.len;
+      
+      synts->rules=rules.part(off,len);
+      
+      off+=len;
+     }
+  }
+  
+  // rules.ret rules.args
+  {
+   auto range=clang.getRules();
+   
+   PtrLen<Rule> rules=this->rules;
+   auto synts=getSynts();
+   auto elements=getElements();
+   
+   for(++rules,++range; +rules ;++rules,++range)
+     {
+      rules->ret=synts[ range->ret.index ];
+      
+      auto arange=range->args;
+      
+      PtrLen<Element> args=pool.createArray<Element>(arange.len);
+      
+      rules->args=Range_const(args);
+      
+      for(; +args ;++args,++arange)
+        {
+         *args=elements[ arange->index ];
+        }
+     }
   }
  }
 
@@ -1558,5 +1666,118 @@ Lang::~Lang()
  {
  }
 
+/* class TopLang */
+
+StrLen TopLang::makeName(StrLen name,StrLen ext)
+ {
+  ulen len=LenAdd(name.len,1,ext.len);
+  
+  PtrLen<char> ret=pool.createArray_raw<char>(len);
+  
+  name.copyTo(ret.ptr);
+  
+  ret[name.len]='.';
+  
+  ext.copyTo(ret.ptr+1+name.len);
+  
+  return ret;
+ }
+
+TopLang::TopLang(const CondLang &clang)
+ {
+  // atoms
+  {
+   auto range=clang.getAtoms();
+   
+   PtrLen<Atom> atoms=pool.createArray<Atom>(range.len);
+   
+   this->atoms=atoms;
+
+   for(; +atoms ;++atoms,++range)
+     {
+      atoms->index=range->index;
+      atoms->name=pool.dup(range->name);
+     }
+  }
+  
+  // synts
+  {
+   auto range=clang.getSynts();
+   
+   ulen len=0;
+   
+   for(auto &synt : range ) len=LenAdd(len, synt.hasKinds()?synt.kinds.len:1 );
+   
+   PtrLen<Synt> synts=pool.createArray<Synt>(len);
+   
+   this->synts=synts;
+   
+   ulen index=0;
+   
+   for(; +range ;++range)
+     if( range->hasKinds() )
+       {
+        StrLen name=range->name;
+        bool is_lang=range->is_lang;
+       
+        for(auto &kinds : range->kinds )
+          {
+           synts->index=index++;
+           synts->name=makeName(name,kinds.name);
+         
+           synts->is_lang=is_lang;
+          
+           ++synts;
+          }
+       }
+     else
+       {
+        synts->index=index++;
+        synts->name=pool.dup(range->name);
+       
+        synts->is_lang=range->is_lang;
+        
+        ++synts;
+       }
+  }
+  
+  // elements
+  {
+   ulen len=LenAdd(getAtomCount(),getSyntCount());
+   
+   PtrLen<Element> elements=pool.createArray<Element>(len);
+   
+   this->elements=elements;
+   
+   ulen index=0;
+
+   for(auto &atom : getAtoms() )
+     {
+      elements->index=index++;
+      elements->name=atom.name;
+      elements->ptr=&atom;
+      
+      ++elements;
+     }
+   
+   for(auto &synt : getSynts() )
+     {
+      elements->index=index++;
+      elements->name=synt.name;
+      elements->ptr=&synt;
+      
+      ++elements;
+     }
+  }
+  
+  // rules
+  {
+  }
+ }
+  
+TopLang::~TopLang()
+ {
+ }
+   
 } // namespace App
 

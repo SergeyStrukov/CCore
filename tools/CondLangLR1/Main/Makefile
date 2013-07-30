@@ -24,7 +24,8 @@ CCOPT_EXTRA = -I.
 include $(CCORE_ROOT)/Target/Makefile.app
 
 run: $(TARGET)
-	cd ../AMP && $(TARGET) AMP AMP.lang $(CCORE_ROOT)
+	cd ../AMP && $(TARGET) AMP.lang
+	cd ../DDL && $(TARGET) DDL.lang
 
 
 

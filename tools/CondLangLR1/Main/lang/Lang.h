@@ -31,7 +31,11 @@ class CondLang;
 
 struct LangBase;
 
+class LangClassBase;
+
 class Lang;
+
+class TopLang;
 
 /* struct RecordBase */
 
@@ -452,37 +456,41 @@ struct LangBase : NoCopy
    };
  };
 
-/* class Lang */
+/* class LangClassBase */
 
-class Lang : public LangBase
+class LangClassBase : public LangBase
  {
-   ElementPool pool;
+  protected:
   
+   ElementPool pool;
+ 
    PtrLen<Atom> atoms;
    PtrLen<Synt> synts;
    PtrLen<Element> elements;
    PtrLen<Rule> rules;
- 
+
   private:
- 
+
    template <class P>
    struct PrintElementPtr
     {
      P &out;
-    
+   
      explicit PrintElementPtr(P &out_) : out(out_) {}
-    
+   
      void operator () (const Atom *atom) { Printf(out,"Atom(#;)",atom->index); }
-    
+   
      void operator () (const Synt *synt) { Printf(out,"Synt(#;)",synt->index); }
     };
- 
+   
+  protected:
+   
+   LangClassBase() {}
+   
+   ~LangClassBase() {}
+   
   public:
   
-   explicit Lang(const CondLang &clang);
-   
-   ~Lang();
-   
    // description
    
    PtrLen<const Atom> getAtoms() const { return Range_const(atoms); }
@@ -554,6 +562,32 @@ class Lang : public LangBase
      
      Printf(out,"\n#;\n",TextDivider());
     }
+ };
+
+/* class Lang */
+
+class Lang : public LangClassBase
+ {
+  public:
+  
+   explicit Lang(const CondLang &clang);
+   
+   ~Lang();
+ };
+
+/* class TopLang */
+
+class TopLang : public LangClassBase
+ {
+  private:
+  
+   StrLen makeName(StrLen name,StrLen ext); // name.ext
+  
+  public:
+ 
+   explicit TopLang(const CondLang &clang);
+  
+   ~TopLang();
  };
 
 } // namespace App
