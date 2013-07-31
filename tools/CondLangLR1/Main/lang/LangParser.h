@@ -11,8 +11,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CondLangLR1_LangParser_h
-#define CondLangLR1_LangParser_h
+#ifndef CondLangLR1_lang_LangParser_h
+#define CondLangLR1_lang_LangParser_h
 
 #include "Tools.h"
 

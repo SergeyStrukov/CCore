@@ -25,7 +25,7 @@ include $(CCORE_ROOT)/Target/Makefile.app
 
 run: $(TARGET)
 	cd ../AMP && $(TARGET) AMP.lang
-	cd ../DDL && $(TARGET) DDL.lang
+#	cd ../DDL && $(TARGET) DDL.lang
 
 
 

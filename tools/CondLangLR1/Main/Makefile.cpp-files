@@ -1,4 +1,6 @@
+./lang/CondLang.cpp
 ./lang/Lang.cpp
 ./lang/LangParser.cpp
+./lang/TopLang.cpp
 ./main.cpp
 ./Tools.cpp
