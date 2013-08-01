@@ -36,6 +36,8 @@ struct RecordBase : NoThrowFlagsBase
   ulen index = MaxULen ;
   StrLen name;
   
+  RecordBase() {}
+  
   bool operator + () const { return index!=MaxULen; }
   
   bool operator ! () const { return index==MaxULen; }
@@ -47,26 +49,29 @@ struct CondLangBase : NoCopy
  {
   // Atom
   
-  struct Atom : RecordBase 
-   {
-   };
+  struct Atom : RecordBase // index in the atom list 
+   { 
+    Atom() {}
+   }; 
   
   // Kind
   
-  struct Kind : RecordBase
-   {
-   };
+  struct Kind : RecordBase // index in the kind list of the synt 
+   { 
+    Kind() {}  
+   }; 
   
   // Synt
   
   struct Rule;
   
-  struct Synt : RecordBase
+  struct Synt : RecordBase // index in the synt list
    {
     PtrLen<const Kind> kinds;
-    
     PtrLen<const Rule> rules;
     bool is_lang = false ;
+    
+    Synt() {}
     
     ulen hasKinds() const { return +kinds; }
     
@@ -75,16 +80,20 @@ struct CondLangBase : NoCopy
   
   // Element
   
-  struct Element : RecordBase
+  struct Element : RecordBase // index in the element list , atoms first, synts next
    {
     AnyPtr_const<Atom,Synt> ptr;
+    
+    Element() {}
    };
   
   // Cond
   
   struct CmpArgElement
    {
-    ulen index = MaxULen ;
+    ulen index = MaxULen ; // index of element in the rule
+    
+    CmpArgElement() {}
     
     // print object
     
@@ -99,6 +108,8 @@ struct CondLangBase : NoCopy
    {
     Kind kind;
     
+    CmpArgKind() {}
+    
     // print object
     
     template <class P>
@@ -111,6 +122,8 @@ struct CondLangBase : NoCopy
   struct CmpArg
    {
     AnyPtr_const<CmpArgElement,CmpArgKind> ptr;
+    
+    CmpArg() {}
     
     // print object
     
@@ -135,6 +148,8 @@ struct CondLangBase : NoCopy
    {
     AnyPtr_const<CondAND,CondOR,CondNOT,CondEQ,CondNE,CondGT,CondGE,CondLT,CondLE> ptr;
     
+    Cond() {}
+    
     bool operator + () const { return +ptr; }
     
     bool operator ! () const { return !ptr; }
@@ -153,6 +168,8 @@ struct CondLangBase : NoCopy
     Cond a;
     Cond b;
     
+    CondAND() {}
+    
     // print object
     
     template <class P>
@@ -167,6 +184,8 @@ struct CondLangBase : NoCopy
     Cond a;
     Cond b;
     
+    CondOR() {}
+    
     // print object
     
     template <class P>
@@ -179,6 +198,8 @@ struct CondLangBase : NoCopy
   struct CondNOT
    {
     Cond a;
+    
+    CondNOT() {}
     
     // print object
     
@@ -194,6 +215,8 @@ struct CondLangBase : NoCopy
     CmpArg a;
     CmpArg b;
     
+    CondEQ() {}
+    
     // print object
     
     template <class P>
@@ -207,6 +230,8 @@ struct CondLangBase : NoCopy
    {
     CmpArg a;
     CmpArg b;
+    
+    CondNE() {}
     
     // print object
     
@@ -222,6 +247,8 @@ struct CondLangBase : NoCopy
     CmpArg a;
     CmpArg b;
     
+    CondGT() {}
+    
     // print object
     
     template <class P>
@@ -235,6 +262,8 @@ struct CondLangBase : NoCopy
    {
     CmpArg a;
     CmpArg b;
+    
+    CondGE() {}
     
     // print object
     
@@ -250,6 +279,8 @@ struct CondLangBase : NoCopy
     CmpArg a;
     CmpArg b;
     
+    CondLT() {}
+    
     // print object
     
     template <class P>
@@ -264,6 +295,8 @@ struct CondLangBase : NoCopy
     CmpArg a;
     CmpArg b;
     
+    CondLE() {}
+    
     // print object
     
     template <class P>
@@ -275,13 +308,15 @@ struct CondLangBase : NoCopy
   
   // Rule
   
-  struct Rule : RecordBase
+  struct Rule : RecordBase // index in rule list
    {
     Synt ret;
     PtrLen<const Element> args;
     
     Kind kind;
     Cond cond;
+    
+    Rule() {}
     
     bool hasCond() const { return +cond; }
     
@@ -411,8 +446,6 @@ class CondLang : public CondLangBase
      Printf(out,"\n#;\n",TextDivider());
     }
  };
-
-
 
 } // namespace App
 

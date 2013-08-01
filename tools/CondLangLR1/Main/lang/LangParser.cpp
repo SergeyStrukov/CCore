@@ -66,15 +66,6 @@ const char * GetTextDesc(TokenClass tc)
 
 /* struct TokenizerBase */
    
-ulen TokenizerBase::ScanShortComment(StrLen text)
- {
-  ulen len=text.len;
-
-  for(text+=2; +text && !CharIsEOL(*text) ;++text);
-
-  return len-text.len;
- }
- 
 auto TokenizerBase::ScanLongComment(StrLen text) -> Scan
  {
   ulen len=text.len;
@@ -90,6 +81,15 @@ auto TokenizerBase::ScanLongComment(StrLen text) -> Scan
   return BadScan(len);
  }
 
+ulen TokenizerBase::ScanShortComment(StrLen text)
+ {
+  ulen len=text.len;
+
+  for(text+=2; +text && !CharIsEOL(*text) ;++text);
+
+  return len-text.len;
+ }
+ 
 ulen TokenizerBase::ScanLetterDigit(StrLen text)
  {
   return ScanExtraChars(text,CharIsLetterDigit);

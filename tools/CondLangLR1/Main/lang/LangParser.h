@@ -139,16 +139,6 @@ struct Token : PosStr
 
 struct TokenizerBase : NoCopy
  {
-  template <class Pred>
-  static ulen ScanExtraChars(StrLen text,Pred pred) // >=1
-   {
-    ulen len=text.len;
-
-    for(++text; +text && pred(*text) ;++text);
-
-    return len-text.len;
-   }
-  
   struct Scan
    {
     ulen len;
@@ -162,13 +152,24 @@ struct TokenizerBase : NoCopy
     explicit BadScan(ulen len) : Scan(len,false) {}
    };
   
+  static Scan ScanLongComment(StrLen text);  // >=2
+  
   static ulen ScanShortComment(StrLen text); // >=2
-  static Scan ScanLongComment(StrLen text); // >=2
   
-  static ulen ScanLetterDigit(StrLen text); // >=1
-  static ulen ScanSpace(StrLen text); // >=1
+  template <class Pred>
+  static ulen ScanExtraChars(StrLen text,Pred pred) // >=1
+   {
+    ulen len=text.len;
+
+    for(++text; +text && pred(*text) ;++text);
+
+    return len-text.len;
+   }
   
-  static ulen ScanVisible(StrLen text); // >=1
+  static ulen ScanLetterDigit(StrLen text);  // >=1
+  static ulen ScanSpace(StrLen text);        // >=1
+  
+  static ulen ScanVisible(StrLen text);      // >=1
  };
 
 /* class Tokenizer<Action> */
@@ -184,12 +185,12 @@ class Tokenizer : TokenizerBase
   private: 
    
    Token cut(TokenClass tc,ulen len);
-   Token cut_pos(TokenClass tc,ulen len);
+   Token cut_multiline(TokenClass tc,ulen len);
    
    Token next_short_comment();
    Token next_long_comment();
    
-   Token next_word();
+   Token next_name();
    Token next_punct();
    Token next_comment();
    Token next_space();
@@ -222,7 +223,7 @@ Token Tokenizer<Action>::cut(TokenClass tc,ulen len)
  }
 
 template <class Action> 
-Token Tokenizer<Action>::cut_pos(TokenClass tc,ulen len)
+Token Tokenizer<Action>::cut_multiline(TokenClass tc,ulen len)
  {
   Token ret(tc,pos,text+=len);
   
@@ -242,15 +243,15 @@ Token Tokenizer<Action>::next_long_comment()
  {
   auto scan=ScanLongComment(text);
   
-  if( scan.ok ) return cut_pos(Token_LongComment,scan.len); 
+  if( scan.ok ) return cut_multiline(Token_LongComment,scan.len); 
   
   action.error("Tokenizer #; : not closed long comment",pos);
   
-  return cut_pos(Token_Other,scan.len);
+  return cut_multiline(Token_Other,scan.len);
  }
 
 template <class Action> 
-Token Tokenizer<Action>::next_word()
+Token Tokenizer<Action>::next_name()
  {
   return cut(Token_Name,ScanLetterDigit(text));
  }
@@ -286,7 +287,7 @@ Token Tokenizer<Action>::next_comment()
 template <class Action> 
 Token Tokenizer<Action>::next_space()
  {
-  return cut_pos(Token_Space,ScanSpace(text));
+  return cut_multiline(Token_Space,ScanSpace(text));
  }
 
 template <class Action> 
@@ -308,7 +309,7 @@ Token Tokenizer<Action>::next()
  {
   switch( GetCharClass(text[0]) )
     {
-     case Char_Letter : return next_word();
+     case Char_Letter : return next_name();
      case Char_Punct  : return next_punct();
      case Char_Comment : return next_comment();
      case Char_Space  : return next_space();
@@ -450,7 +451,7 @@ class CondParser : CondPaserBase
    
    void putName(PosStr postr);
    
-   void putEnd(TextPos pos);
+   BuildCond putEnd(TextPos pos);
  };
 
 template <class Action> 
@@ -464,7 +465,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
       {
        cast(Synt_COND);
       }
-     break; 
+     return true;
       
      case Rule_OpOR :
       {
@@ -473,13 +474,13 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND,cond);
       }
-     break;
+     return true;
      
      case Rule_CastUN :
       {
        cast(Synt_COND_MUL);
       }
-     break;
+     return true;
      
      case Rule_OpAND :
       {
@@ -488,13 +489,13 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND_MUL,cond);
       }
-     break;
+     return true;
      
      case Rule_CastPRIM :
       {
        cast(Synt_COND_UN);
       }
-     break;
+     return true;
      
      case Rule_OpNOT :
       {
@@ -503,7 +504,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(2);
        push(Synt_COND_UN,cond);
       }
-     break;
+     return true;
      
      case Rule_OpEQ :
       {
@@ -512,7 +513,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND_PRIM,cond);
       }
-     break;
+     return true;
      
      case Rule_OpNE :
       {
@@ -521,7 +522,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND_PRIM,cond);
       }
-     break;
+     return true;
      
      case Rule_OpLT :
       {
@@ -530,7 +531,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND_PRIM,cond);
       }
-     break;
+     return true;
      
      case Rule_OpLE :
       {
@@ -539,7 +540,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND_PRIM,cond);
       }
-     break;
+     return true;
      
      case Rule_OpGT :
       {
@@ -548,7 +549,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND_PRIM,cond);
       }
-     break;
+     return true;
      
      case Rule_OpGE :
       {
@@ -557,7 +558,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND_PRIM,cond);
       }
-     break;
+     return true;
      
      case Rule_Brackets :
       {
@@ -566,7 +567,7 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
        pop(3);
        push(Synt_COND_PRIM,cond);
       }
-     break; 
+     return true;
    
      default: // case RuleError
       {
@@ -574,8 +575,6 @@ bool CondParser<Action>::putAtom(CondAtom atom,TextPos pos)
       }
      return false; 
     }
-  
-  return true;
  }
 
 template <class Action> 
@@ -620,11 +619,11 @@ void CondParser<Action>::putName(PosStr postr)
  }
 
 template <class Action> 
-void CondParser<Action>::putEnd(TextPos pos)
+auto CondParser<Action>::putEnd(TextPos pos) -> BuildCond
  {
   while( putAtom(CondAtomEnd,pos) );
   
-  action.rule(top()->cond);
+  return top()->cond;
  }
 
 /* class Parser<Action> */
@@ -726,7 +725,7 @@ void Parser<Action>::put_Beg(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME or '!' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, <Name> or '!' are expected",token.pos);
  }
 
 template <class Action> 
@@ -747,7 +746,7 @@ void Parser<Action>::put_Name(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, <Name> is expected",token.pos);
  }
 
 template <class Action> 
@@ -793,7 +792,7 @@ void Parser<Action>::put_NextKind(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, <Name> is expected",token.pos);
  }
 
 template <class Action> 
@@ -839,24 +838,24 @@ void Parser<Action>::put_Rules(Token token)
           action.endSynt();
          
           state=State_Beg;
-          
-          return;
          }
-       
-       action.startRule();
-       
-       if( token.is(':') )
+       else
          {
-          action.endElements();
-          
-          state=State_RuleEnd;
-          
-          return;
+          action.startRule();
+         
+          if( token.is(':') )
+            {
+             action.endElements();
+            
+             state=State_RuleEnd;
+            }
+          else
+            {
+             action.addElement(token);
+           
+             state=State_Elements;
+            }
          }
-       
-       action.addElement(token);
-       
-       state=State_Elements;
        
        return;
       }
@@ -880,11 +879,11 @@ void Parser<Action>::put_Elements(Token token)
           action.endElements();
           
           state=State_RuleEnd;
-          
-          return;
          }
-       
-       action.addElement(token);
+       else
+         {
+          action.addElement(token);
+         }
        
        return;
       }
@@ -904,21 +903,21 @@ void Parser<Action>::put_RuleEnd(Token token)
        if( token.is('i','f') )
          {
           state=State_RuleIf;
-          
-          return;
-         }
-       
-       action.rule(token);
-          
-       if( has_kinds )
-         {
-          state=State_Result;
          }
        else
          {
-          action.endRule();
-         
-          state=State_Rules;
+          action.rule(token);
+            
+          if( has_kinds )
+            {
+             state=State_Result;
+            }
+          else
+            {
+             action.endRule();
+           
+             state=State_Rules;
+            }
          }
        
        return;
@@ -926,7 +925,7 @@ void Parser<Action>::put_RuleEnd(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME or 'if' are expected",token.pos);
+  action.exception("Parser #; : unexpected token, <Name> or 'if' are expected",token.pos);
  }
 
 template <class Action> 
@@ -980,7 +979,7 @@ void Parser<Action>::put_RuleCond(Token token)
                    }
                  else
                    {
-                    cond_parser.putEnd(token.pos);
+                    action.rule( cond_parser.putEnd(token.pos) );
                     
                     state=State_RuleName;
                    }
@@ -1049,7 +1048,7 @@ void Parser<Action>::put_RuleName(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, <Name> is expected",token.pos);
  }
 
 template <class Action> 
@@ -1089,7 +1088,7 @@ void Parser<Action>::put_ResultName(Token token)
      break;
     }
   
-  action.exception("Parser #; : unexpected token, NAME is expected",token.pos);
+  action.exception("Parser #; : unexpected token, <Name> is expected",token.pos);
  }
 
 template <class Action> 

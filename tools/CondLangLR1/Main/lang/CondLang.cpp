@@ -48,7 +48,7 @@ class CondLang::Builder : NoCopy
      
       void add(T *obj) { list.ins_last(obj); count++; }
       
-      T * del() 
+      T * del()
        { 
         if( T *ret=list.del_first() ) 
           { 
@@ -95,6 +95,8 @@ class CondLang::Builder : NoCopy
         end_func(*cur);
        }
     };
+   
+   // Build...
  
    struct BuildKind;
    struct BuildElement;
@@ -108,6 +110,8 @@ class CondLang::Builder : NoCopy
      BuildCondArg *peer;
      
      explicit BuildCondArg(PosStr postr_) : PosStr(postr_),element(0),kind(0),peer(0) {}
+     
+     // print object
      
      template <class P>
      void print(P &out) const
@@ -146,6 +150,18 @@ class CondLang::Builder : NoCopy
      BuildCond b;
      
      BuildCondAND(BuildCond a_,BuildCond b_) : a(a_),b(b_) {}
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Putobj(out,"( ");
+       a.apply(PrintObj<P>(out));
+       Putobj(out," & ");
+       b.apply(PrintObj<P>(out));
+       Putobj(out," )");
+      }
     };
    
    struct BuildCondOR : NoCopy
@@ -154,6 +170,18 @@ class CondLang::Builder : NoCopy
      BuildCond b;
      
      BuildCondOR(BuildCond a_,BuildCond b_) : a(a_),b(b_) {}
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Putobj(out,"( ");
+       a.apply(PrintObj<P>(out));
+       Putobj(out," | ");
+       b.apply(PrintObj<P>(out));
+       Putobj(out," )");
+      }
     };
    
    struct BuildCondNOT : NoCopy
@@ -161,6 +189,15 @@ class CondLang::Builder : NoCopy
      BuildCond a;
      
      explicit BuildCondNOT(BuildCond a_) : a(a_) {}
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Putobj(out,"! ");
+       a.apply(PrintObj<P>(out));
+      }
     };
    
    struct BuildCondEQ : NoCopy
@@ -169,6 +206,14 @@ class CondLang::Builder : NoCopy
      BuildCondArg b;
      
      BuildCondEQ(PosStr a_,PosStr b_) : a(a_),b(b_) {}
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Printf(out,"#; == #;",a,b);
+      }
     };
    
    struct BuildCondNE : NoCopy
@@ -177,6 +222,14 @@ class CondLang::Builder : NoCopy
      BuildCondArg b;
      
      BuildCondNE(PosStr a_,PosStr b_) : a(a_),b(b_) {}
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Printf(out,"#; != #;",a,b);
+      }
     };
    
    struct BuildCondGT : NoCopy
@@ -185,6 +238,14 @@ class CondLang::Builder : NoCopy
      BuildCondArg b;
      
      BuildCondGT(PosStr a_,PosStr b_) : a(a_),b(b_) {}
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Printf(out,"#; > #;",a,b);
+      }
     };
    
    struct BuildCondGE : NoCopy
@@ -193,6 +254,14 @@ class CondLang::Builder : NoCopy
      BuildCondArg b;
      
      BuildCondGE(PosStr a_,PosStr b_) : a(a_),b(b_) {}
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Printf(out,"#; >= #;",a,b);
+      }
     };
    
    struct BuildCondLT : NoCopy
@@ -201,6 +270,14 @@ class CondLang::Builder : NoCopy
      BuildCondArg b;
      
      BuildCondLT(PosStr a_,PosStr b_) : a(a_),b(b_) {}
+     
+     // print object
+     
+     template <class P>
+     void print(P &out) const
+      {
+       Printf(out,"#; < #;",a,b);
+      }
     };
    
    struct BuildCondLE : NoCopy
@@ -209,72 +286,13 @@ class CondLang::Builder : NoCopy
      BuildCondArg b;
      
      BuildCondLE(PosStr a_,PosStr b_) : a(a_),b(b_) {}
-    };
-
-   template <class P>
-   struct PrintCond
-    {
-     P &out;
      
-     explicit PrintCond(P &out_) : out(out_) {}
+     // print object
      
-     void operator () (BuildCondAND *ptr)
+     template <class P>
+     void print(P &out) const
       {
-       Putobj(out,"( ");
-       print(ptr->a);
-       Putobj(out," & ");
-       print(ptr->b);
-       Putobj(out," )");
-      }
-     
-     void operator () (BuildCondOR *ptr)
-      {
-       Putobj(out,"( ");
-       print(ptr->a);
-       Putobj(out," | ");
-       print(ptr->b);
-       Putobj(out," )");
-      }
-     
-     void operator () (BuildCondNOT *ptr)
-      {
-       Putobj(out,"! ");
-       print(ptr->a);
-      }
-     
-     void operator () (BuildCondEQ *ptr)
-      {
-       Printf(out,"#; == #;",ptr->a,ptr->b);
-      }
-     
-     void operator () (BuildCondNE *ptr)
-      {
-       Printf(out,"#; != #;",ptr->a,ptr->b);
-      }
-     
-     void operator () (BuildCondGT *ptr)
-      {
-       Printf(out,"#; > #;",ptr->a,ptr->b);
-      }
-     
-     void operator () (BuildCondGE *ptr)
-      {
-       Printf(out,"#; >= #;",ptr->a,ptr->b);
-      }
-     
-     void operator () (BuildCondLT *ptr)
-      {
-       Printf(out,"#; < #;",ptr->a,ptr->b);
-      }
-     
-     void operator () (BuildCondLE *ptr)
-      {
-       Printf(out,"#; <= #;",ptr->a,ptr->b);
-      }
-     
-     void print(BuildCond cond)
-      {
-       cond.apply(*this);
+       Printf(out,"#; <= #;",a,b);
       }
     };
    
@@ -286,6 +304,8 @@ class CondLang::Builder : NoCopy
      ulen index;
      
      explicit BuildAtom(StrLen str_) : str(str_),index(MaxULen) {}
+     
+     // print object
      
      template <class P>
      void print(P &out) const
@@ -303,6 +323,8 @@ class CondLang::Builder : NoCopy
      ulen index;
      
      explicit BuildKind(PosStr postr) : PosStr(postr),index(MaxULen) {}
+     
+     // print object
      
      template <class P>
      void print(P &out) const
@@ -323,19 +345,21 @@ class CondLang::Builder : NoCopy
      
      explicit BuildElement(PosStr postr) : PosStr(postr),synt(0),atom(0),index(MaxULen) {}
      
-     bool cutArg(ulen len)
+     bool cutArg(ulen name_len)
       {
-       ulen name_len=str.len;
+       ulen len=str.len;
 
-       if( name_len>len ) 
+       if( len>name_len ) 
          {
-          arg=str.part(len+1);
+          arg=str.part(name_len+1);
           
           return true;
          }
        
        return false;
       }
+     
+     // print object
      
      template <class P>
      void print(P &out) const
@@ -370,6 +394,8 @@ class CondLang::Builder : NoCopy
      
      BuildRule() : result_kind(0),index(MaxULen) {}
      
+     // print object
+     
      template <class P>
      void print(P &out) const
       {
@@ -379,12 +405,12 @@ class CondLang::Builder : NoCopy
          {
           Putobj(out,"if( ");
          
-          PrintCond<P>(out).print(cond);
+          cond.apply(PrintObj<P>(out));
           
           Putobj(out," ) ");
          }
        
-       Putch(out,'(');
+       Putch(out,' ','(');
        
        element_list.apply( [&] (const BuildElement &element) { Printf(out," #;",element); } );
        
@@ -409,6 +435,8 @@ class CondLang::Builder : NoCopy
      BuildSynt(PosStr postr,bool is_lang_) : PosStr(postr),is_lang(is_lang_),index(MaxULen),rule_off(MaxULen) {}
      
      void add(BuildCondArg *arg) { arg_list.add(arg); }
+     
+     // print object
      
      template <class P>
      void print(P &out) const
@@ -448,6 +476,8 @@ class CondLang::Builder : NoCopy
    BuildCond condLT(PosStr a,PosStr b);
    BuildCond condLE(PosStr a,PosStr b);
    
+  public: 
+   
    void startSynt(PosStr postr,bool is_lang);
    
    void addKind(PosStr postr);
@@ -467,6 +497,8 @@ class CondLang::Builder : NoCopy
    void endSynt();
    
    void endLang();
+   
+  public: 
    
    template <class ... TT>
    static void error(const char *format,const TT & ... tt)
@@ -516,7 +548,7 @@ class CondLang::Builder : NoCopy
      
      explicit BindElement(BuildSynt &synt) : BindName(synt.str),ptr(&synt) {}
      
-     BindElement(StrLen name_,BuildElement &element) : BindName(name_),ptr(&element) {}
+     BindElement(StrLen name,BuildElement &element) : BindName(name),ptr(&element) {}
     };
    
    void bindElements(PtrLen<BindElement> range);
@@ -675,6 +707,8 @@ class CondLang::Builder : NoCopy
      
      CmpArg buildArg(BuildCondArg &arg)
       {
+       CmpArg ret;
+       
        if( arg.kind )
          {
           auto ptr=builder->lang.pool.create<CmpArgKind>();
@@ -682,7 +716,7 @@ class CondLang::Builder : NoCopy
           ptr->kind.index=arg.kind->index;
           ptr->kind.name=arg.kind->str;
          
-          return {ptr};
+          ret.ptr=ptr;
          }
        else if( arg.element )
          {
@@ -690,7 +724,7 @@ class CondLang::Builder : NoCopy
           
           ptr->index=arg.element->index;
           
-          return {ptr};
+          ret.ptr=ptr;
          }
        else
          {
@@ -698,8 +732,10 @@ class CondLang::Builder : NoCopy
         
           ptr->kind.index=MaxULen;
         
-          return {ptr};
+          ret.ptr=ptr;
          }
+       
+       return ret;
       }
      
      explicit BuildLangCond(Builder *builder_) : builder(builder_) {}
@@ -945,17 +981,19 @@ void CondLang::Builder::endSynt()
 
 void CondLang::Builder::endLang()
  {
-  ReportException report;
+  {
+   ReportException report;
   
-  bindElements();    
-  buildAtoms();      
-  checkRuleNames();  
-  bindResults();     
-  bindArgs();        
+   bindElements();    
+   buildAtoms();      
+   checkRuleNames();  
+   bindResults();     
+   bindArgs();        
   
-  report.guard();
+   report.guard();
+  } 
   
-  //Putobj(Con,*this);
+  Putobj(Con,*this);
   
   complete();
  }
@@ -1009,14 +1047,14 @@ void CondLang::Builder::bindElements(PtrLen<BindElement> range)
      
      case 1 :
       {
-       ulen len=synt->str.len;
+       ulen name_len=synt->str.len;
        
        for(auto &bind : range ) 
          bind.ptr.applyFor<BuildElement>( [=] (BuildElement *element) 
                                               {
                                                element->synt=synt;
                                                
-                                               if( element->cutArg(len) && !synt->kind_list )
+                                               if( element->cutArg(name_len) && !synt->kind_list )
                                                  {
                                                   error("Builder #; : no syntax class kinds, argument is not allowed",element->pos);
                                                  }
