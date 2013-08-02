@@ -71,8 +71,8 @@ struct TopLang::TestCondArg
     bool ret_a;
     bool ret_b;
     
-    cond->a.ptr.apply( TestCondArg(args,ret_a) );
-    cond->b.ptr.apply( TestCondArg(args,ret_b) );
+    cond->a.apply( TestCondArg(args,ret_a) );
+    cond->b.apply( TestCondArg(args,ret_b) );
     
     ret=( ret_a && ret_b );
    }
@@ -82,8 +82,8 @@ struct TopLang::TestCondArg
     bool ret_a;
     bool ret_b;
     
-    cond->a.ptr.apply( TestCondArg(args,ret_a) );
-    cond->b.ptr.apply( TestCondArg(args,ret_b) );
+    cond->a.apply( TestCondArg(args,ret_a) );
+    cond->b.apply( TestCondArg(args,ret_b) );
     
     ret=( ret_a || ret_b );
    }
@@ -92,7 +92,7 @@ struct TopLang::TestCondArg
    {
     bool ret_a;
     
-    cond->a.ptr.apply( TestCondArg(args,ret_a) );
+    cond->a.apply( TestCondArg(args,ret_a) );
     
     ret=( !ret_a );
    }
@@ -102,8 +102,8 @@ struct TopLang::TestCondArg
     ulen ret_a;
     ulen ret_b;
     
-    cond->a.ptr.apply( EvalCondArg(args,ret_a) );
-    cond->b.ptr.apply( EvalCondArg(args,ret_b) );
+    cond->a.apply( EvalCondArg(args,ret_a) );
+    cond->b.apply( EvalCondArg(args,ret_b) );
     
     ret=( ret_a==ret_b );
    }
@@ -113,8 +113,8 @@ struct TopLang::TestCondArg
     ulen ret_a;
     ulen ret_b;
     
-    cond->a.ptr.apply( EvalCondArg(args,ret_a) );
-    cond->b.ptr.apply( EvalCondArg(args,ret_b) );
+    cond->a.apply( EvalCondArg(args,ret_a) );
+    cond->b.apply( EvalCondArg(args,ret_b) );
     
     ret=( ret_a!=ret_b );
    }
@@ -124,8 +124,8 @@ struct TopLang::TestCondArg
     ulen ret_a;
     ulen ret_b;
     
-    cond->a.ptr.apply( EvalCondArg(args,ret_a) );
-    cond->b.ptr.apply( EvalCondArg(args,ret_b) );
+    cond->a.apply( EvalCondArg(args,ret_a) );
+    cond->b.apply( EvalCondArg(args,ret_b) );
     
     ret=( ret_a>ret_b );
    }
@@ -135,8 +135,8 @@ struct TopLang::TestCondArg
     ulen ret_a;
     ulen ret_b;
     
-    cond->a.ptr.apply( EvalCondArg(args,ret_a) );
-    cond->b.ptr.apply( EvalCondArg(args,ret_b) );
+    cond->a.apply( EvalCondArg(args,ret_a) );
+    cond->b.apply( EvalCondArg(args,ret_b) );
     
     ret=( ret_a>=ret_b );
    }
@@ -146,8 +146,8 @@ struct TopLang::TestCondArg
     ulen ret_a;
     ulen ret_b;
     
-    cond->a.ptr.apply( EvalCondArg(args,ret_a) );
-    cond->b.ptr.apply( EvalCondArg(args,ret_b) );
+    cond->a.apply( EvalCondArg(args,ret_a) );
+    cond->b.apply( EvalCondArg(args,ret_b) );
     
     ret=( ret_a<ret_b );
    }
@@ -157,8 +157,8 @@ struct TopLang::TestCondArg
     ulen ret_a;
     ulen ret_b;
     
-    cond->a.ptr.apply( EvalCondArg(args,ret_a) );
-    cond->b.ptr.apply( EvalCondArg(args,ret_b) );
+    cond->a.apply( EvalCondArg(args,ret_a) );
+    cond->b.apply( EvalCondArg(args,ret_b) );
     
     ret=( ret_a<=ret_b );
    }
@@ -170,7 +170,7 @@ bool TopLang::TestCond(PtrLen<const ElementRecExt> args,CondLangBase::Cond cond)
   
   bool ret;
   
-  cond.ptr.apply( TestCondArg(args,ret) );
+  cond.apply( TestCondArg(args,ret) );
   
   return ret;
  }

@@ -52,6 +52,14 @@ struct CondLangBase : NoCopy
   struct Atom : RecordBase // index in the atom list 
    { 
     Atom() {}
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#;) #;",index,name);
+     }
    }; 
   
   // Kind
@@ -59,6 +67,14 @@ struct CondLangBase : NoCopy
   struct Kind : RecordBase // index in the kind list of the synt 
    { 
     Kind() {}  
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#;) #;",index,name);
+     }
    }; 
   
   // Synt
@@ -76,6 +92,25 @@ struct CondLangBase : NoCopy
     ulen hasKinds() const { return +kinds; }
     
     bool noKinds() const { return !kinds; }
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#;) #;",index,name);
+      
+      if( is_lang ) Putobj(out," !");
+      
+      if( +kinds )
+        {
+         Putobj(out," { ");
+        
+         for(auto &kind : kinds ) Printf(out,"#; ",kind);
+         
+         Putch(out,'}');
+        }
+     }
    };
   
   // Element
@@ -85,13 +120,34 @@ struct CondLangBase : NoCopy
     AnyPtr_const<Atom,Synt> ptr;
     
     Element() {}
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#;) #; -> ",index,name);
+      
+      struct PrintElementPtr
+       {
+        P &out;
+        
+        explicit PrintElementPtr(P &out_) : out(out_) {}
+        
+        void operator () (const Atom *atom) { Printf(out,"Atom(#;)",atom->index); }
+        
+        void operator () (const Synt *synt) { Printf(out,"Synt(#;)",synt->index); }
+       };
+      
+      ptr.apply( PrintElementPtr(out) );
+     }
    };
   
   // Cond
   
   struct CmpArgElement
    {
-    ulen index = MaxULen ; // index of element in the rule
+    ulen index = MaxULen ; // index of the element in the rule argument list
     
     CmpArgElement() {}
     
@@ -119,20 +175,7 @@ struct CondLangBase : NoCopy
      }
    };
   
-  struct CmpArg
-   {
-    AnyPtr_const<CmpArgElement,CmpArgKind> ptr;
-    
-    CmpArg() {}
-    
-    // print object
-    
-    template <class P>
-    void print(P &out) const
-     {
-      ptr.apply(PrintObj<P>(out));
-     }
-   };
+  using CmpArg = AnyPtr_const<CmpArgElement,CmpArgKind> ;
   
   struct CondAND;
   struct CondOR;
@@ -144,24 +187,7 @@ struct CondLangBase : NoCopy
   struct CondLT;
   struct CondLE;
   
-  struct Cond
-   {
-    AnyPtr_const<CondAND,CondOR,CondNOT,CondEQ,CondNE,CondGT,CondGE,CondLT,CondLE> ptr;
-    
-    Cond() {}
-    
-    bool operator + () const { return +ptr; }
-    
-    bool operator ! () const { return !ptr; }
-    
-    // print object
-    
-    template <class P>
-    void print(P &out) const
-     {
-      ptr.apply(PrintObj<P>(out));
-     };
-   };
+  using Cond = AnyPtr_const<CondAND,CondOR,CondNOT,CondEQ,CondNE,CondGT,CondGE,CondLT,CondLE> ;
   
   struct CondAND
    {
@@ -308,7 +334,7 @@ struct CondLangBase : NoCopy
   
   // Rule
   
-  struct Rule : RecordBase // index in rule list
+  struct Rule : RecordBase // index in the rule list
    {
     Synt ret;
     PtrLen<const Element> args;
@@ -339,18 +365,6 @@ class CondLang : public CondLangBase
   
    class Builder;
    
-   template <class P>
-   struct PrintElementPtr
-    {
-     P &out;
-     
-     explicit PrintElementPtr(P &out_) : out(out_) {}
-     
-     void operator () (const Atom *atom) { Printf(out,"Atom(#;)",atom->index); }
-     
-     void operator () (const Synt *synt) { Printf(out,"Synt(#;)",synt->index); }
-    };
-  
   public:
   
    explicit CondLang(StrLen file_name);
@@ -382,26 +396,13 @@ class CondLang : public CondLangBase
     {
      Printf(out,"#;\n\n",Title("Atoms"));
      
-     for(auto &atom : getAtoms() ) Printf(out,"#;) #;\n",atom.index,atom.name);
+     for(auto &atom : getAtoms() ) Printf(out,"#;\n",atom);
      
      Printf(out,"\n#;\n\n",Title("Syntax classes"));
      
      for(auto &synt : getSynts() ) 
        {
-        Printf(out,"#;) #;",synt.index,synt.name);
-        
-        if( synt.is_lang ) Putobj(out," !");
-        
-        if( +synt.kinds )
-          {
-           Putobj(out," { ");
-          
-           for(auto &kind : synt.kinds ) Printf(out,"#;) #; ",kind.index,kind.name);
-           
-           Putch(out,'}');
-          }
-        
-        Putch(out,'\n');
+        Printf(out,"#;\n",synt);
         
         for(auto &rule : synt.rules ) Printf(out,"  Rule(#;)\n",rule.index);
        }
@@ -429,7 +430,9 @@ class CondLang : public CondLangBase
           
           if( rule.hasCond() )
             {
-             Printf(out," if( #; )",rule.cond);
+             Putobj(out," if( ");
+             rule.cond.apply(PrintObj<P>(out));
+             Putobj(out," )");
             }
           
           Putch(out,'\n');

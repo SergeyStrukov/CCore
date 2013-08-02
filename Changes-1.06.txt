@@ -15,5 +15,6 @@ CCore/inc/Exception.h
 CCore/inc/AnyPtr.h 
 
   hasType(), castPtr() and applyFor() methods are added
+  print() is added
 
 ----------------------

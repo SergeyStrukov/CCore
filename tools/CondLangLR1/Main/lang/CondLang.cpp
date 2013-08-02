@@ -320,9 +320,11 @@ class CondLang::Builder : NoCopy
     {
      SLink<BuildKind> link;
      
+     BuildSynt *synt;
+     
      ulen index;
      
-     explicit BuildKind(PosStr postr) : PosStr(postr),index(MaxULen) {}
+     BuildKind(PosStr postr,BuildSynt *synt_) : PosStr(postr),synt(synt_),index(MaxULen) {}
      
      // print object
      
@@ -390,9 +392,7 @@ class CondLang::Builder : NoCopy
      
      BuildKind *result_kind;
      
-     ulen index;
-     
-     BuildRule() : result_kind(0),index(MaxULen) {}
+     BuildRule() : result_kind(0) {}
      
      // print object
      
@@ -707,35 +707,25 @@ class CondLang::Builder : NoCopy
      
      CmpArg buildArg(BuildCondArg &arg)
       {
-       CmpArg ret;
-       
        if( arg.kind )
          {
           auto ptr=builder->lang.pool.create<CmpArgKind>();
          
-          ptr->kind.index=arg.kind->index;
-          ptr->kind.name=arg.kind->str;
+          ulen kindex=arg.kind->index;
+          ulen sindex=arg.kind->synt->index;
+          
+          ptr->kind=builder->lang.synts[sindex].kinds[kindex];
          
-          ret.ptr=ptr;
+          return ptr;
          }
-       else if( arg.element )
+       else
          {
           auto ptr=builder->lang.pool.create<CmpArgElement>();
           
           ptr->index=arg.element->index;
           
-          ret.ptr=ptr;
+          return ptr;
          }
-       else
-         {
-          auto ptr=builder->lang.pool.create<CmpArgKind>();
-        
-          ptr->kind.index=MaxULen;
-        
-          ret.ptr=ptr;
-         }
-       
-       return ret;
       }
      
      explicit BuildLangCond(Builder *builder_) : builder(builder_) {}
@@ -750,7 +740,7 @@ class CondLang::Builder : NoCopy
        result_->a=a;
        result_->b=b;
        
-       result.ptr=result_;
+       result=result_;
       }
      
      void operator () (BuildCondOR *cond)
@@ -763,7 +753,7 @@ class CondLang::Builder : NoCopy
        result_->a=a;
        result_->b=b;
        
-       result.ptr=result_;
+       result=result_;
       }
      
      void operator () (BuildCondNOT *cond)
@@ -774,7 +764,7 @@ class CondLang::Builder : NoCopy
        
        result_->a=a;
        
-       result.ptr=result_;
+       result=result_;
       }
      
      void operator () (BuildCondEQ *cond)
@@ -787,7 +777,7 @@ class CondLang::Builder : NoCopy
        result_->a=a;
        result_->b=b;
        
-       result.ptr=result_;
+       result=result_;
       }
      
      void operator () (BuildCondNE *cond)
@@ -800,7 +790,7 @@ class CondLang::Builder : NoCopy
        result_->a=a;
        result_->b=b;
        
-       result.ptr=result_;
+       result=result_;
       }
      
      void operator () (BuildCondGT *cond)
@@ -813,7 +803,7 @@ class CondLang::Builder : NoCopy
        result_->a=a;
        result_->b=b;
        
-       result.ptr=result_;
+       result=result_;
       }
      
      void operator () (BuildCondGE *cond)
@@ -826,7 +816,7 @@ class CondLang::Builder : NoCopy
        result_->a=a;
        result_->b=b;
        
-       result.ptr=result_;
+       result=result_;
       }
       
      void operator () (BuildCondLT *cond)
@@ -839,7 +829,7 @@ class CondLang::Builder : NoCopy
        result_->a=a;
        result_->b=b;
         
-       result.ptr=result_;
+       result=result_;
       }
       
      void operator () (BuildCondLE *cond)
@@ -852,7 +842,7 @@ class CondLang::Builder : NoCopy
        result_->a=a;
        result_->b=b;
         
-       result.ptr=result_;
+       result=result_;
       }
     };
    
@@ -929,7 +919,7 @@ void CondLang::Builder::startSynt(PosStr postr,bool is_lang)
 
 void CondLang::Builder::addKind(PosStr postr)
  {
-  current_synt->kind_list.add(pool.create<BuildKind>(postr));
+  current_synt->kind_list.add(pool.create<BuildKind>(postr,current_synt));
  }
 
 void CondLang::Builder::endKinds()
@@ -993,7 +983,7 @@ void CondLang::Builder::endLang()
    report.guard();
   } 
   
-  Putobj(Con,*this);
+  //Putobj(Con,*this);
   
   complete();
  }
@@ -1540,7 +1530,7 @@ void CondLang::Builder::complete()
                                                                                  }
                                                                            );
                                                     
-                                                    rule.index=rindex++;
+                                                    rindex++;
                                                    }
                                              );
                         } 
