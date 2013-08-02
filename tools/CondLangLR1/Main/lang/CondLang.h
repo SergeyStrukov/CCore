@@ -347,6 +347,26 @@ struct CondLangBase : NoCopy
     bool hasCond() const { return +cond; }
     
     bool noCond() const { return !cond; }
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      if( index )
+        {
+         if( +kind )
+           Printf(out,"#;) #; -> #;.#;",index,name,ret.name,kind.name);
+         else
+           Printf(out,"#;) #; -> #;",index,name,ret.name);
+        
+         if( +cond ) Printf(out," if( #; )",cond);
+        }
+      else
+        {
+         Printf(out,"#;) #;",index,name);
+        }
+     }
    };
  };
 
@@ -409,42 +429,21 @@ class CondLang : public CondLangBase
      
      Printf(out,"\n#;\n\n",Title("Elements"));
      
-     for(auto &element : getElements() )
-       {
-        Printf(out,"#;) #; -> ",element.index,element.name);
-        
-        element.ptr.apply( PrintElementPtr<P>(out) );
-        
-        Putch(out,'\n');
-       }
+     for(auto &element : getElements() ) Printf(out,"#;\n",element);
      
      Printf(out,"\n#;\n\n",Title("Rules"));
      
      for(auto &rule : getRules() )
-       if( rule.index )
-         {
-          if( +rule.kind )
-            Printf(out,"#;) #; -> #;.#;",rule.index,rule.name,rule.ret.name,rule.kind.name);
-          else
-            Printf(out,"#;) #; -> #;",rule.index,rule.name,rule.ret.name);
-          
-          if( rule.hasCond() )
-            {
-             Putobj(out," if( ");
-             rule.cond.apply(PrintObj<P>(out));
-             Putobj(out," )");
-            }
-          
-          Putch(out,'\n');
+       {
+        Printf(out,"#;\n",rule);
         
-          for(auto &element : rule.args ) Printf(out,"  #;",element.name);
+        if( rule.index )
+          {
+           for(auto &element : rule.args ) Printf(out,"  #;",element.name);
         
-          Putch(out,'\n');
-         }
-       else
-         {
-          Printf(out,"#;) #;\n",rule.index,rule.name);
-         }
+           Putch(out,'\n');
+          }
+       }
      
      Printf(out,"\n#;\n",TextDivider());
     }

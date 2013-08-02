@@ -156,11 +156,7 @@ class CondLang::Builder : NoCopy
      template <class P>
      void print(P &out) const
       {
-       Putobj(out,"( ");
-       a.apply(PrintObj<P>(out));
-       Putobj(out," & ");
-       b.apply(PrintObj<P>(out));
-       Putobj(out," )");
+       Printf(out,"( #; & #; )",a,b);
       }
     };
    
@@ -176,11 +172,7 @@ class CondLang::Builder : NoCopy
      template <class P>
      void print(P &out) const
       {
-       Putobj(out,"( ");
-       a.apply(PrintObj<P>(out));
-       Putobj(out," | ");
-       b.apply(PrintObj<P>(out));
-       Putobj(out," )");
+       Printf(out,"( #; | #; )",a,b);
       }
     };
    
@@ -195,8 +187,7 @@ class CondLang::Builder : NoCopy
      template <class P>
      void print(P &out) const
       {
-       Putobj(out,"! ");
-       a.apply(PrintObj<P>(out));
+       Printf(out,"! #;",a);
       }
     };
    
@@ -401,16 +392,9 @@ class CondLang::Builder : NoCopy
       {
        Printf(out,"rule #; ",str);
        
-       if( +cond )
-         {
-          Putobj(out,"if( ");
-         
-          cond.apply(PrintObj<P>(out));
-          
-          Putobj(out," ) ");
-         }
+       if( +cond ) Printf(out,"if( #; ) ",cond);
        
-       Putch(out,' ','(');
+       Putobj(out," (");
        
        element_list.apply( [&] (const BuildElement &element) { Printf(out," #;",element); } );
        
