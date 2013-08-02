@@ -45,6 +45,8 @@ class <span class="Att">AnyPtr</span>
 
   public:
   
+   // constructors
+
    AnyPtr();
    
    AnyPtr(NothingType) : AnyPtr() {}
@@ -54,6 +56,8 @@ class <span class="Att">AnyPtr</span>
    template &lt;class T&gt;
    AnyPtr(T *ptr);
    
+   // methods
+
    boolable operator + () const;
    
    bool operator ! () const;
@@ -69,6 +73,11 @@ class <span class="Att">AnyPtr</span>
    
    template &lt;class T,class FuncInit&gt;
    void applyFor(FuncInit func_init) const;
+
+   // print object
+   
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
  };
 
 template &lt;class ... TT&gt;
@@ -78,6 +87,8 @@ class <span class="Att">AnyPtr_const</span>
 
   public:
   
+   // constructors
+
    AnyPtr_const();
    
    AnyPtr_const(NothingType) : AnyPtr_const() {}
@@ -87,6 +98,8 @@ class <span class="Att">AnyPtr_const</span>
    template &lt;class T&gt;
    AnyPtr_const(const T *ptr);
    
+   // methods
+
    boolable operator + () const;
    
    bool operator ! () const;
@@ -102,6 +115,11 @@ class <span class="Att">AnyPtr_const</span>
    
    template &lt;class T,class FuncInit&gt;
    void applyFor(FuncInit func_init) const;
+
+   // print object
+   
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
  };
 
 </pre>
@@ -156,6 +174,31 @@ ptr.apply(func_init); // func_init -> func ; calls func(a);
 <b>applyFor()</b> applies the functor to the pointer of the given type. If the object is null or stores the pointer of another type,
 this method does nothing.
 </p>
+
+<p>
+<b>AnyPtr</b> can print the pointed object. If the pointer is null, the "(null)" is printed, otherwise
+the object. Printing is implemented with the following functor:
+</p>
+
+<pre>
+
+template &lt;class P&gt;
+class <span class="Att">PrintAnyObj</span>
+ {
+   P &amp;out;
+   
+  public: 
+  
+   explicit PrintAnyObj(P &amp;out_) : out(out_) {}
+  
+   template &lt;class T&gt;
+   void operator () (T *obj)
+    {
+     Putobj(out,*obj);
+    }
+ };
+
+</pre>
 
 </body>
 

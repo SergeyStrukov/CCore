@@ -17,6 +17,7 @@
 #define CCore_inc_AnyPtr_h
 
 #include <CCore/inc/FunctorType.h>
+#include <CCore/inc/Printf.h>
  
 namespace CCore {
 
@@ -42,9 +43,29 @@ void ApplyToPtr_const(const void *ptr,FuncInit func_init)
 
 /* classes */
 
+template <class P> class PrintAnyObj;
+
 template <class ... TT> class AnyPtr;
 
 template <class ... TT> class AnyPtr_const;
+
+/* class PrintAnyObj<P> */
+
+template <class P>
+class PrintAnyObj
+ {
+   P &out;
+   
+  public: 
+  
+   explicit PrintAnyObj(P &out_) : out(out_) {}
+  
+   template <class T>
+   void operator () (T *obj)
+    {
+     Putobj(out,*obj);
+    }
+ };
 
 /* class AnyPtr<TT> */
 
@@ -55,6 +76,8 @@ class AnyPtr
    unsigned type;
    
   public:
+   
+   // constructors
   
    AnyPtr() : ptr(0),type(0) {}
    
@@ -64,6 +87,8 @@ class AnyPtr
    
    template <class T>
    AnyPtr(T *ptr_) : ptr(ptr_),type(Meta::IndexOf<T,TT...>::Ret) {}
+   
+   // methods
    
    void * operator + () const { return ptr; }
    
@@ -90,6 +115,25 @@ class AnyPtr
     {
      if( hasType<T>() ) ApplyToPtr<T>(ptr,func_init);
     }
+ 
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     if( ptr )
+       apply(PrintAnyObj<P>(out));
+     else
+       Putobj(out,"(null)");
+    }
+
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = true,
+     Copy_no_throw = true
+    };
  };
 
 /* class AnyPtr_const<TT> */
@@ -102,6 +146,8 @@ class AnyPtr_const
    
   public:
   
+   // constructors
+  
    AnyPtr_const() : ptr(0),type(0) {}
    
    AnyPtr_const(NothingType) : AnyPtr_const() {}
@@ -110,6 +156,8 @@ class AnyPtr_const
    
    template <class T>
    AnyPtr_const(const T *ptr_) : ptr(ptr_),type(Meta::IndexOf<T,TT...>::Ret) {}
+   
+   // methods
    
    const void * operator + () const { return ptr; }
    
@@ -136,6 +184,25 @@ class AnyPtr_const
     {
      if( hasType<T>() ) ApplyToPtr_const<T>(ptr,func_init);
     }
+   
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     if( ptr )
+       apply(PrintAnyObj<P>(out));
+     else
+       Putobj(out,"(null)");
+    }
+
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = true,
+     Copy_no_throw = true
+    };
  };
 
 } // namespace CCore
