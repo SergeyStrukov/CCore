@@ -89,10 +89,6 @@ struct CondLangBase : NoCopy
     
     Synt() {}
     
-    ulen hasKinds() const { return +kinds; }
-    
-    bool noKinds() const { return !kinds; }
-    
     // print object
     
     template <class P>
@@ -343,10 +339,6 @@ struct CondLangBase : NoCopy
     Cond cond;
     
     Rule() {}
-    
-    bool hasCond() const { return +cond; }
-    
-    bool noCond() const { return !cond; }
     
     // print object
     

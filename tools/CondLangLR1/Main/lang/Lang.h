@@ -38,6 +38,15 @@ struct LangBase : NoCopy
   
   struct Atom : RecordBase 
    {
+    Atom() {}
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#;) #;",index,name);
+     }
    };
   
   // Synt
@@ -48,6 +57,18 @@ struct LangBase : NoCopy
    {
     PtrLen<const Rule> rules;
     bool is_lang = false ;
+    
+    Synt() {}
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#;) #;",index,name);
+      
+      if( is_lang ) Putobj(out," !");
+     }
    };
   
   // Element
@@ -55,6 +76,29 @@ struct LangBase : NoCopy
   struct Element : RecordBase
    {
     AnyPtr_const<Atom,Synt> ptr;
+    
+    Element() {}
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#;) #; -> ",index,name);
+      
+      struct PrintElementPtr
+       {
+        P &out;
+      
+        explicit PrintElementPtr(P &out_) : out(out_) {}
+      
+        void operator () (const Atom *atom) { Printf(out,"Atom(#;)",atom->index); }
+      
+        void operator () (const Synt *synt) { Printf(out,"Synt(#;)",synt->index); }
+       };
+      
+      ptr.apply( PrintElementPtr(out) );
+     }
    };
   
   // Rule
@@ -63,6 +107,23 @@ struct LangBase : NoCopy
    {
     Synt ret;
     PtrLen<const Element> args;
+    
+    Rule() {}
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      if( index )
+        {
+         Printf(out,"#;) #; -> #;",index,name,ret.name);
+        }
+      else
+        {
+         Printf(out,"#;) #;",index,name);
+        }
+     }
    };
  };
 
@@ -79,20 +140,6 @@ class LangClassBase : public LangBase
    PtrLen<Element> elements;
    PtrLen<Rule> rules;
 
-  private:
-
-   template <class P>
-   struct PrintElementPtr
-    {
-     P &out;
-   
-     explicit PrintElementPtr(P &out_) : out(out_) {}
-   
-     void operator () (const Atom *atom) { Printf(out,"Atom(#;)",atom->index); }
-   
-     void operator () (const Synt *synt) { Printf(out,"Synt(#;)",synt->index); }
-    };
-   
   protected:
    
    LangClassBase() {}
@@ -126,49 +173,34 @@ class LangClassBase : public LangBase
     {
      Printf(out,"#;\n\n",Title("Atoms"));
      
-     for(auto &atom : getAtoms() ) Printf(out,"#;) #;\n",atom.index,atom.name);
+     for(auto &atom : getAtoms() ) Printf(out,"#;\n",atom);
      
      Printf(out,"\n#;\n\n",Title("Syntax classes"));
      
      for(auto &synt : getSynts() ) 
        {
-        Printf(out,"#;) #;",synt.index,synt.name);
-        
-        if( synt.is_lang ) Putobj(out," !");
-        
-        Putch(out,'\n');
+        Printf(out,"#;\n",synt);
         
         for(auto &rule : synt.rules ) Printf(out,"  Rule(#;)\n",rule.index);
        }
      
      Printf(out,"\n#;\n\n",Title("Elements"));
      
-     for(auto &element : getElements() )
-       {
-        Printf(out,"#;) #; -> ",element.index,element.name);
-        
-        element.ptr.apply( PrintElementPtr<P>(out) );
-        
-        Putch(out,'\n');
-       }
+     for(auto &element : getElements() ) Printf(out,"#;\n",element);
      
      Printf(out,"\n#;\n\n",Title("Rules"));
      
      for(auto &rule : getRules() )
-       if( rule.index )
-         {
-          Printf(out,"#;) #; -> #;",rule.index,rule.name,rule.ret.name);
-          
-          Putch(out,'\n');
+       {
+        Printf(out,"#;\n",rule);
         
-          for(auto &element : rule.args ) Printf(out,"  #;",element.name);
+        if( rule.index )
+          {
+           for(auto &element : rule.args ) Printf(out,"  #;",element.name);
         
-          Putch(out,'\n');
-         }
-       else
-         {
-          Printf(out,"#;) #;\n",rule.index,rule.name);
-         }
+           Putch(out,'\n');
+          }
+       }
      
      Printf(out,"\n#;\n",TextDivider());
     }
@@ -211,7 +243,7 @@ class TopLang : public LangClassBase
        
        void operator () (const CondLangBase::Atom *) { ret=1; }
        
-       void operator () (const CondLangBase::Synt *synt) { ret=synt->hasKinds()?synt->kinds.len:1; }
+       void operator () (const CondLangBase::Synt *synt) { ret=Max<ulen>(synt->kinds.len,1); }
       };
      
      explicit ElementRecExt(const CondLangBase::Element &element) 
@@ -269,11 +301,11 @@ class TopLang : public LangClassBase
    
    static bool TestCond(PtrLen<const ElementRecExt> args,CondLangBase::Cond cond);
 
-   ulen makeRules(Collector<RuleRec> &collector,CondLangBase::Rule rule);
+   ulen makeRules(Collector<RuleRec> &collector,const CondLangBase::Rule &rule);
    
-   ulen makeRules(Collector<RuleRec> &collector,CondLangBase::Synt synt);
+   ulen makeRules(Collector<RuleRec> &collector,const CondLangBase::Synt &synt);
   
-   ulen makeRules(Collector<RuleRec> &collector,CondLangBase::Synt synt,ulen kind_index);
+   ulen makeRules(Collector<RuleRec> &collector,const CondLangBase::Synt &synt,ulen kind_index);
    
   public:
  

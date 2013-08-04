@@ -175,7 +175,7 @@ bool TopLang::TestCond(PtrLen<const ElementRecExt> args,CondLangBase::Cond cond)
   return ret;
  }
 
-ulen TopLang::makeRules(Collector<RuleRec> &collector,CondLangBase::Rule rule)
+ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::Rule &rule)
  {
   ulen ret=0;
   
@@ -199,7 +199,7 @@ ulen TopLang::makeRules(Collector<RuleRec> &collector,CondLangBase::Rule rule)
   return ret;
  }
 
-ulen TopLang::makeRules(Collector<RuleRec> &collector,CondLangBase::Synt synt)
+ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::Synt &synt)
  {
   ulen ret=0;
   
@@ -208,7 +208,7 @@ ulen TopLang::makeRules(Collector<RuleRec> &collector,CondLangBase::Synt synt)
   return ret;
  }
 
-ulen TopLang::makeRules(Collector<RuleRec> &collector,CondLangBase::Synt synt,ulen kind_index)
+ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::Synt &synt,ulen kind_index)
  {
   ulen ret=0;
   
@@ -243,7 +243,7 @@ TopLang::TopLang(const CondLang &clang)
    
    ulen len=0;
    
-   for(auto &synt : range ) len=LenAdd(len, synt.hasKinds()?synt.kinds.len:1 );
+   for(auto &synt : range ) len=LenAdd(len, Max<ulen>(synt.kinds.len,1) );
    
    PtrLen<Synt> synts=pool.createArray<Synt>(len);
    
@@ -253,7 +253,7 @@ TopLang::TopLang(const CondLang &clang)
    ulen map_index=0;
    
    for(; +range ;++range,++map_index)
-     if( range->hasKinds() )
+     if( +range->kinds )
        {
         map[map_index]=index;
       
@@ -357,21 +357,17 @@ TopLang::TopLang(const CondLang &clang)
   // synt.rules
   {
    PtrLen<Synt> synts=this->synts;
-   Rule *base=rules.ptr;
-   
-   ulen off=1;
+   Rule *ptr=rules.ptr+1;
    
    for(; +synts ;++synts)
      {
       ulen len=synts->rules.len;
       
-      Rule *ptr=base+off;
-     
-      for(auto &rule : Range(ptr,len) ) rule.ret=*synts;
-      
       synts->rules.ptr=ptr;
       
-      off+=len;
+      for(auto &rule : Range(ptr,len) ) rule.ret=*synts;
+      
+      ptr+=len;
      }
   }
  }
