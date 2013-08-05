@@ -14,7 +14,7 @@
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
 
-#include "lang/Lang.h"
+#include "process/GoodEstimate.h"
 
 /* Main() */
 
@@ -25,16 +25,24 @@ using namespace CCore;
 int Main(StrLen file_name)
  {
   CondLang clang(file_name);
-  
-  Putobj(Con,clang);
-  
   Lang lang(clang);
-  
-  Putobj(Con,lang);
-  
   TopLang top(clang);
   
-  Putobj(Con,top);
+  // good test
+  {
+   GoodTest test(top);
+   
+   while( test.step() );
+   
+   PrintCon out(Con);
+   
+   if( !test.check(out) )
+     {
+      out.flush();
+     
+      Printf(Exception,"Sanity test failed");
+     }
+  }
   
   return 0;
  }

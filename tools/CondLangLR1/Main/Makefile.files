@@ -1,7 +1,10 @@
 OBJ_LIST = \
 obj/CondLang.o \
+obj/GoodEstimate.o \
 obj/Lang.o \
 obj/LangParser.o \
+obj/Set.o \
+obj/SparseMatrix.o \
 obj/Tools.o \
 obj/TopLang.o \
 obj/main.o \
@@ -9,8 +12,11 @@ obj/main.o \
 
 ASM_LIST = \
 obj/CondLang.s \
+obj/GoodEstimate.s \
 obj/Lang.s \
 obj/LangParser.s \
+obj/Set.s \
+obj/SparseMatrix.s \
 obj/Tools.s \
 obj/TopLang.s \
 obj/main.s \
@@ -18,8 +24,11 @@ obj/main.s \
 
 DEP_LIST = \
 obj/CondLang.dep \
+obj/GoodEstimate.dep \
 obj/Lang.dep \
 obj/LangParser.dep \
+obj/Set.dep \
+obj/SparseMatrix.dep \
 obj/Tools.dep \
 obj/TopLang.dep \
 obj/main.dep \
@@ -34,10 +43,19 @@ include $(RULES_FILE)
 obj/CondLang.o : ./lang/CondLang.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/GoodEstimate.o : ./process/GoodEstimate.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Lang.o : ./lang/Lang.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/LangParser.o : ./lang/LangParser.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Set.o : ./Set.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SparseMatrix.o : ./SparseMatrix.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Tools.o : ./Tools.cpp
@@ -54,10 +72,19 @@ obj/main.o : ./main.cpp
 obj/CondLang.s : ./lang/CondLang.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/GoodEstimate.s : ./process/GoodEstimate.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Lang.s : ./lang/Lang.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/LangParser.s : ./lang/LangParser.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Set.s : ./Set.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SparseMatrix.s : ./SparseMatrix.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Tools.s : ./Tools.cpp
@@ -74,11 +101,20 @@ obj/main.s : ./main.cpp
 obj/CondLang.dep : ./lang/CondLang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CondLang.o $< -MF $@
 
+obj/GoodEstimate.dep : ./process/GoodEstimate.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/GoodEstimate.o $< -MF $@
+
 obj/Lang.dep : ./lang/Lang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Lang.o $< -MF $@
 
 obj/LangParser.dep : ./lang/LangParser.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangParser.o $< -MF $@
+
+obj/Set.dep : ./Set.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Set.o $< -MF $@
+
+obj/SparseMatrix.dep : ./SparseMatrix.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SparseMatrix.o $< -MF $@
 
 obj/Tools.dep : ./Tools.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tools.o $< -MF $@

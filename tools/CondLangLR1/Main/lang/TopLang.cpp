@@ -354,7 +354,7 @@ TopLang::TopLang(const CondLang &clang)
      }
   }
   
-  // synt.rules
+  // synt.rules rules.ret
   {
    PtrLen<Synt> synts=this->synts;
    Rule *ptr=rules.ptr+1;

@@ -16,8 +16,6 @@
 
 #include "CondLang.h"
 
-#include <CCore/inc/Array.h>
-
 namespace App {
 
 /* classes */
@@ -235,21 +233,21 @@ class TopLang : public LangClassBase
     {
      ulen kind_lim;
      
-     struct GetLim
-      {
-       ulen &ret;
-       
-       explicit GetLim(ulen &ret_) : ret(ret_) {}
-       
-       void operator () (const CondLangBase::Atom *) { ret=1; }
-       
-       void operator () (const CondLangBase::Synt *synt) { ret=Max<ulen>(synt->kinds.len,1); }
-      };
-     
      explicit ElementRecExt(const CondLangBase::Element &element) 
       {
        element_index=element.index;
        kind_index=0;
+       
+       struct GetLim
+        {
+         ulen &ret;
+         
+         explicit GetLim(ulen &ret_) : ret(ret_) {}
+         
+         void operator () (const CondLangBase::Atom *) { ret=1; }
+         
+         void operator () (const CondLangBase::Synt *synt) { ret=Max<ulen>(synt->kinds.len,1); }
+        };
        
        element.ptr.apply( GetLim(kind_lim) );
       }

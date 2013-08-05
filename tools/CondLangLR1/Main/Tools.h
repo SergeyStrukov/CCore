@@ -16,6 +16,7 @@
 
 #include <CCore/inc/Print.h>
 #include <CCore/inc/TextTools.h>
+#include <CCore/inc/Array.h>
 
 namespace App {
 
@@ -26,6 +27,8 @@ using namespace CCore;
 /* classes */
 
 struct PosStr;
+
+struct OffLen;
 
 /* struct PosStr */
 
@@ -39,6 +42,29 @@ struct PosStr
   explicit PosStr(TextPos pos_) : pos(pos_) {}
   
   PosStr(TextPos pos_,StrLen str_) : pos(pos_),str(str_) {}
+ };
+
+/* struct OffLen */
+
+struct OffLen : NoThrowFlagsBase
+ {
+  ulen off;
+  ulen len;
+  
+  OffLen() : off(0),len(0) {}
+  
+  OffLen(NothingType) : off(0),len(0) {}
+  
+  OffLen(ulen off_,ulen len_) : off(off_),len(len_) {}
+  
+  void init(ulen off_,ulen len_) 
+   {
+    off=off_;
+    len=len_;
+   }
+  
+  template <class T>
+  PtrLen<T> cut(T *base) const { return Range(base+off,len); }
  };
 
 } // namespace App

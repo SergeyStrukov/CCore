@@ -3,4 +3,7 @@
 ./lang/LangParser.cpp
 ./lang/TopLang.cpp
 ./main.cpp
+./process/GoodEstimate.cpp
+./Set.cpp
+./SparseMatrix.cpp
 ./Tools.cpp
