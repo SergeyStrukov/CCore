@@ -73,6 +73,8 @@ class MemPool : NoCopy
    
    Place<void> alloc(ulen len);
    
+   void shrink_extra();
+   
    // swap/move objects
    
    void objSwap(MemPool &obj)
@@ -125,6 +127,37 @@ class ElementPool : NoCopy
      return pool.alloc(LenOf(len,sizeof (T)));
     }
    
+   struct Out
+    {
+     char *ptr;
+     
+     explicit Out(char *ptr_) : ptr(ptr_) {}
+     
+     void operator () () {}
+     
+     void operator () (StrLen str) { str.copyTo(ptr); ptr+=str.len; }
+     
+     template <class ... TT>
+     void operator () (StrLen str,TT ... tt)
+      {
+       (*this)(str);
+       (*this)(tt...);
+      }
+    };
+   
+   template <class ... TT>
+   StrLen cat_(TT ... tt)
+    {
+     ulen len=LenAdd( tt.len ... );
+     char *base=pool.alloc(len);
+     
+     Out out(base);
+     
+     out(tt...);
+     
+     return StrLen(base,len);
+    }
+   
   public:
    
    // constructors
@@ -145,6 +178,14 @@ class ElementPool : NoCopy
     }
    
    StrLen dup(StrLen str);
+   
+   template <class ... TT>
+   StrLen cat(TT ... tt)
+    {
+     return cat_( StrLen(tt)... );
+    }
+   
+   void shrink_extra() { pool.shrink_extra(); }
    
    // createArray
    

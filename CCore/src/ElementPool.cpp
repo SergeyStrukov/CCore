@@ -92,6 +92,16 @@ Place<void> MemPool::alloc(ulen len)
   return cur+=len;
  }
 
+void MemPool::shrink_extra()
+ {
+  if( avail ) 
+    {
+     MemShrink(block,block_len-avail);
+     
+     avail=0;
+    }
+ }
+
 /* class ElementPool */
 
 StrLen ElementPool::dup(StrLen str) 

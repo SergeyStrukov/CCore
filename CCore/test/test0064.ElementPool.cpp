@@ -57,6 +57,18 @@ void test2(ulen count)
   Printf(Con,"#; sec\n",timer.get());
  }
 
+void test3()
+ {
+  ElementPool pool;
+  
+  auto str1=pool.cat("prefix","12345","suffix");
+  pool.shrink_extra();
+  auto str2=pool.cat("prefix","12345","suffix");
+  pool.shrink_extra();
+  
+  Printf(Con,"#;\n#;\n",str1,str2);
+ }
+
 } // namespace Private_0064
  
 using namespace Private_0064; 
@@ -75,6 +87,8 @@ bool Testit<64>::Main()
   test2(1000000);
   test2(10000000);
   test2(100000000);
+  
+  test3();
   
   return true;
  }

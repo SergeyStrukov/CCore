@@ -17,4 +17,10 @@ CCore/inc/AnyPtr.h
   hasType(), castPtr() and applyFor() methods are added
   print() is added
 
+CCore/inc/ElementPool.h
+
+  cat() and shrink_extra() are added to the ElementPool
+
+  shrink_extra() is added() to the MemPool
+
 ----------------------
