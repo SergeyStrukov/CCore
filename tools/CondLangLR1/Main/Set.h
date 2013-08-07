@@ -16,9 +16,6 @@
 
 #include "Tools.h"
 
-#include <CCore/inc/Array.h>
-#include <CCore/inc/Cmp.h>
-
 namespace App {
 
 /* classes */ 
@@ -40,7 +37,7 @@ template <class I,class T> struct IndexPair;
 template <class T>
 struct Joiner
  {
-  static T Join(const T &a,const T &b) { return a.join(b); } // a weak equals b
+  static T Join(const T &a,const T &b) { return a.join(b); } // a weak equals b, result weak equals a
   
   static CmpResult WeakCmp(const T &a,const T &b) { return a.weakCmp(b); }
  };
@@ -128,7 +125,7 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
   
    Set() {}
    
-   explicit Set(const T &t) : array(DoFill(1,128),t) {} // single element set
+   explicit Set(const T &t) : array(DoFill(1),t) {} // single element set
    
    Set(const Set<T,J> &a,const Set<T,J> &b) : array(DoBuild,JoinBuilder<T,J>(a.read(),b.read())) {}
    

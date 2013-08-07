@@ -17,21 +17,6 @@ namespace App {
 
 /* class TopLang */
 
-StrLen TopLang::makeName(StrLen name,StrLen ext)
- {
-  ulen len=LenAdd(name.len,1,ext.len);
-  
-  PtrLen<char> ret=pool.createArray_raw<char>(len);
-  
-  name.copyTo(ret.ptr);
-  
-  ret[name.len]='.';
-  
-  ext.copyTo(ret.ptr+1+name.len);
-  
-  return ret;
- }
-
 bool TopLang::Next(PtrLen<ElementRecExt> range)
  {
   for(; +range ;++range)
@@ -55,7 +40,7 @@ struct TopLang::EvalCondArg
   
   void operator () (const CondLangBase::CmpArgKind *kind)
    {
-    ret=kind->kind.index;
+    ret=kind->kind->index;
    }
  };
 
@@ -175,13 +160,19 @@ bool TopLang::TestCond(PtrLen<const ElementRecExt> args,CondLangBase::Cond cond)
   return ret;
  }
 
-ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::Rule &rule)
+ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::RuleDesc &rule)
  {
   ulen ret=0;
   
   StrLen name=pool.dup(rule.name);
   
   DynArray<ElementRecExt> temp(DoCast(rule.args.len),rule.args.ptr);
+  
+  {
+   ulen index=0; 
+    
+   for(auto &rec : temp ) rec.element_index=index++;
+  }
   
   auto args=Range(temp);
   
@@ -199,20 +190,20 @@ ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::Rule &
   return ret;
  }
 
-ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::Synt &synt)
+ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::SyntDesc &synt)
  {
   ulen ret=0;
   
-  for(auto rule : synt.rules ) ret+=makeRules(collector,rule);
+  for(auto &rule : synt.rules ) ret+=makeRules(collector,rule);
   
   return ret;
  }
 
-ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::Synt &synt,ulen kind_index)
+ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::SyntDesc &synt,ulen kind_index)
  {
   ulen ret=0;
   
-  for(auto rule : synt.rules ) if( rule.kind.index==kind_index ) ret+=makeRules(collector,rule);
+  for(auto &rule : synt.rules ) if( rule.kind->index==kind_index ) ret+=makeRules(collector,rule);
   
   return ret;
  }
@@ -226,10 +217,8 @@ TopLang::TopLang(const CondLang &clang)
   {
    auto range=clang.getAtoms();
    
-   PtrLen<Atom> atoms=pool.createArray<Atom>(range.len);
+   auto atoms=createAtoms(range.len);
    
-   this->atoms=atoms;
-
    for(; +atoms ;++atoms,++range)
      {
       atoms->index=range->index;
@@ -245,9 +234,7 @@ TopLang::TopLang(const CondLang &clang)
    
    for(auto &synt : range ) len=LenAdd(len, Max<ulen>(synt.kinds.len,1) );
    
-   PtrLen<Synt> synts=pool.createArray<Synt>(len);
-   
-   this->synts=synts;
+   auto synts=createSynts(len);
    
    ulen index=0;
    ulen map_index=0;
@@ -265,7 +252,7 @@ TopLang::TopLang(const CondLang &clang)
            synts->rules.len=makeRules(collector,*range,kind.index);
           
            synts->index=index++;
-           synts->name=makeName(name,kind.name);
+           synts->name=pool.cat(name,StrLen(".",1),kind.name);
          
            synts->is_lang=is_lang;
           
@@ -287,77 +274,38 @@ TopLang::TopLang(const CondLang &clang)
        }
   }
   
-  // elements
-  {
-   ulen len=LenAdd(getAtomCount(),getSyntCount());
-   
-   PtrLen<Element> elements=pool.createArray<Element>(len);
-   
-   this->elements=elements;
-   
-   ulen index=0;
-
-   for(auto &atom : getAtoms() )
-     {
-      elements->index=index++;
-      elements->name=atom.name;
-      elements->ptr=&atom;
-      
-      ++elements;
-     }
-   
-   for(auto &synt : getSynts() )
-     {
-      elements->index=index++;
-      elements->name=synt.name;
-      elements->ptr=&synt;
-      
-      ++elements;
-     }
-  }
-  
   // rules
   {
    auto range=collector.flat();
    
-   PtrLen<Rule> rules=pool.createArray<Rule>(LenAdd(range.len,1));
+   auto rules=createRules(range.len);
    
-   this->rules=rules;
+   auto atoms=getAtoms();
+   auto synts=getSynts();
    
-   rules[0].index=0;
-   rules[0].name="<-";
+   ulen index=0;
    
-   ulen index=1;
-   
-   for(++rules; +rules ;++rules,++range)
+   for(; +rules ;++rules,++range)
      {
       rules->index=index++;
       rules->name=range->name;
       
       auto arange=Range_const(range->args);
       
-      PtrLen<Element> args=pool.createArray<Element>(arange.len);
-      
-      rules->args=Range_const(args);
-      
-      ulen delta=atoms.len;
+      auto args=createElements(*rules,arange.len);
       
       for(; +args ;++args,++arange)
         {
-         ulen index=arange->element_index;
-         
-         if( index<delta )
-           *args=elements[index];
-         else
-           *args=elements[delta+map[index-delta]+arange->kind_index];
+         arange->element.apply( [=] (const CondLangBase::AtomDesc *atom) { args->ptr=&(atoms[atom->index]); } , 
+                                [=,&map] (const CondLangBase::SyntDesc *synt) { args->ptr=&(synts[map[synt->index]+arange->kind_index]); } );
         }
      }
   }
   
   // synt.rules rules.ret
   {
-   PtrLen<Synt> synts=this->synts;
-   Rule *ptr=rules.ptr+1;
+   auto synts=this->synts;
+   auto *ptr=rules.ptr;
    
    for(; +synts ;++synts)
      {
@@ -365,11 +313,13 @@ TopLang::TopLang(const CondLang &clang)
       
       synts->rules.ptr=ptr;
       
-      for(auto &rule : Range(ptr,len) ) rule.ret=*synts;
+      for(auto &rule : Range(ptr,len) ) rule.ret=synts.ptr;
       
       ptr+=len;
      }
   }
+  
+  pool.shrink_extra();
  }
   
 TopLang::~TopLang()

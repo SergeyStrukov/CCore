@@ -14,12 +14,9 @@
 #include "CondLang.h"
 #include "LangParser.h"
 
-#include <CCore/inc/FunctorType.h>
 #include <CCore/inc/FileToMem.h>
 #include <CCore/inc/Exception.h>
-#include <CCore/inc/Cmp.h>
 #include <CCore/inc/List.h>
-#include <CCore/inc/Array.h>
 #include <CCore/inc/algon/SortUnique.h>
 
 namespace App {
@@ -34,11 +31,11 @@ class CondLang::Builder : NoCopy
       using Algo = typename SLink<T>::template LinearAlgo<&T::link> ;
      
       typename Algo::FirstLast list;
-      ulen count;
+      ulen count = 0 ;
       
      public: 
      
-      ObjList() : count(0) {}
+      ObjList() {}
      
       ulen operator + () const { return count; }
      
@@ -105,11 +102,11 @@ class CondLang::Builder : NoCopy
     {
      SLink<BuildCondArg> link;
      
-     BuildElement *element;
-     BuildKind *kind;
-     BuildCondArg *peer;
+     BuildElement *element = 0 ;
+     BuildKind *kind = 0 ;
+     BuildCondArg *peer = 0 ;
      
-     explicit BuildCondArg(PosStr postr_) : PosStr(postr_),element(0),kind(0),peer(0) {}
+     explicit BuildCondArg(PosStr postr_) : PosStr(postr_) {}
      
      // print object
      
@@ -292,9 +289,10 @@ class CondLang::Builder : NoCopy
      SLink<BuildAtom> link;
      
      StrLen str;
-     ulen index;
      
-     explicit BuildAtom(StrLen str_) : str(str_),index(MaxULen) {}
+     AtomDesc *desc = 0 ;
+     
+     explicit BuildAtom(StrLen str_) : str(str_) {}
      
      // print object
      
@@ -313,9 +311,9 @@ class CondLang::Builder : NoCopy
      
      BuildSynt *synt;
      
-     ulen index;
+     KindDesc *desc = 0 ;
      
-     BuildKind(PosStr postr,BuildSynt *synt_) : PosStr(postr),synt(synt_),index(MaxULen) {}
+     BuildKind(PosStr postr,BuildSynt *synt_) : PosStr(postr),synt(synt_) {}
      
      // print object
      
@@ -330,13 +328,13 @@ class CondLang::Builder : NoCopy
     {
      SLink<BuildElement> link;
      
-     BuildSynt *synt;
+     BuildSynt *synt = 0 ;
      StrLen arg;
-     BuildAtom *atom;
+     BuildAtom *atom = 0 ;
      
-     ulen index;
+     ulen index = MaxULen ;
      
-     explicit BuildElement(PosStr postr) : PosStr(postr),synt(0),atom(0),index(MaxULen) {}
+     explicit BuildElement(PosStr postr) : PosStr(postr) {}
      
      bool cutArg(ulen name_len)
       {
@@ -381,9 +379,9 @@ class CondLang::Builder : NoCopy
      PosStr result;
      ObjList<BuildElement> element_list;
      
-     BuildKind *result_kind;
+     BuildKind *result_kind = 0 ;
      
-     BuildRule() : result_kind(0) {}
+     BuildRule() {}
      
      // print object
      
@@ -411,12 +409,13 @@ class CondLang::Builder : NoCopy
      bool is_lang;
      ObjList<BuildKind> kind_list;
      ObjList<BuildRule> rule_list;
-     ulen index;
-     ulen rule_off;
+     
+     SyntDesc *desc = 0 ;
+     ulen rule_off = MaxULen ;
      
      ObjList<BuildCondArg> arg_list;
      
-     BuildSynt(PosStr postr,bool is_lang_) : PosStr(postr),is_lang(is_lang_),index(MaxULen),rule_off(MaxULen) {}
+     BuildSynt(PosStr postr,bool is_lang_) : PosStr(postr),is_lang(is_lang_) {}
      
      void add(BuildCondArg *arg) { arg_list.add(arg); }
      
@@ -691,14 +690,11 @@ class CondLang::Builder : NoCopy
      
      CmpArg buildArg(BuildCondArg &arg)
       {
-       if( arg.kind )
+       if( BuildKind *kind=arg.kind )
          {
           auto ptr=builder->lang.pool.create<CmpArgKind>();
          
-          ulen kindex=arg.kind->index;
-          ulen sindex=arg.kind->synt->index;
-          
-          ptr->kind=builder->lang.synts[sindex].kinds[kindex];
+          ptr->kind=kind->desc;
          
           return ptr;
          }
@@ -1087,7 +1083,7 @@ StrLen CondLang::Builder::buildAtomName(StrLen name)
 
   PutChar out(ret);
   
-  out.put('T','(','"');
+  out.put('A','(','"');
   
   out.transform(name);
   
@@ -1354,23 +1350,20 @@ void CondLang::Builder::complete()
  {
   // atoms
   {
-   ulen len=LenAdd(atom_list.getCount(),1);
+   ulen len=atom_list.getCount();
    
-   PtrLen<Atom> atoms=lang.pool.createArray<Atom>(len);
+   auto atoms=lang.createAtoms(len);
    
-   lang.atoms=atoms;
-   
-   atoms[0].name="(End)";
-   atoms[0].index=0;
-   
-   ulen index=1;
+   ulen index=0;
    
    atom_list.apply( [&] (BuildAtom &atom) 
                         {
-                         atoms[index].name=lang.pool.dup(atom.str);
-                         atoms[index].index=index;
+                         auto &desc=atoms[index];
                          
-                         atom.index=index++;
+                         desc.index=index++;
+                         desc.name=lang.pool.dup(atom.str);
+                         
+                         atom.desc=&desc;
                         } 
                   );
   }
@@ -1379,73 +1372,45 @@ void CondLang::Builder::complete()
   {
    ulen len=synt_list.getCount();
    
-   PtrLen<Synt> synts=lang.pool.createArray<Synt>(len);
-   
-   lang.synts=synts;
+   auto synts=lang.createSynts(len);
    
    ulen index=0;
    
    synt_list.apply( [&] (BuildSynt &synt) 
                         {
-                         synts[index].name=lang.pool.dup(synt.str);
-                         synts[index].index=index;
-                         synts[index].is_lang=synt.is_lang;
+                         auto &desc=synts[index];
+     
+                         desc.index=index++;
+                         desc.name=lang.pool.dup(synt.str);
+                         
+                         desc.is_lang=synt.is_lang;
                          
                          if( ulen klen=synt.kind_list.getCount() )
                            {
-                            PtrLen<Kind> kinds=lang.pool.createArray<Kind>(klen);
-                            
-                            synts[index].kinds=Range_const(kinds);
+                            auto kinds=lang.createKinds(desc,klen);
                             
                             ulen kindex=0;
                             
                             synt.kind_list.apply( [&] (BuildKind &kind) 
                                                       {
-                                                       kinds[kindex].name=lang.pool.dup(kind.str);
-                                                       kinds[kindex].index=kindex;
+                                                       KindDesc &kdesc=kinds[kindex];
                                                        
-                                                       kind.index=kindex++;
+                                                       kdesc.index=kindex++;
+                                                       kdesc.name=lang.pool.dup(kind.str);
+                                                       
+                                                       kind.desc=&kdesc;
                                                       }
                                                 );
                            }
                          
-                         synt.index=index++;
+                         synt.desc=&desc;
                         } 
                   );
   }
   
-  // elements
-  {
-   ulen len=LenAdd(lang.atoms.len,lang.synts.len);
-   
-   PtrLen<Element> elements=lang.pool.createArray<Element>(len);
-   
-   lang.elements=elements;
-   
-   ulen index=0;
-   
-   for(Atom &atom : lang.atoms )
-     {
-      elements[index].name=atom.name;
-      elements[index].index=index;
-      elements[index].ptr=&atom;
-      
-      index++;
-     }
-   
-   for(Synt &synt : lang.synts )
-     {
-      elements[index].name=synt.name;
-      elements[index].index=index;
-      elements[index].ptr=&synt;
-      
-      index++;
-     }
-  }
-  
   // rules
   {
-   ulen len=1;
+   ulen len=0;
    
    synt_list.apply( [&] (BuildSynt &synt) 
                         { 
@@ -1455,66 +1420,47 @@ void CondLang::Builder::complete()
                         } 
                   );
    
-   PtrLen<Rule> rules=lang.pool.createArray<Rule>(len);
-   
-   lang.rules=rules;
-   
-   rules[0].name="<-";
-   rules[0].index=0;
-   
-   PtrLen<Synt> synts=lang.synts;
+   auto rules=lang.createRules(len);
    
    synt_list.apply( [&] (BuildSynt &synt) 
                         { 
-                         ulen index=synt.index;
-                         
-                         synts[index].rules=Range_const(rules.part(synt.rule_off,synt.rule_list.getCount()));
-                         
-                         ulen rindex=synt.rule_off;
+                         ulen index=synt.rule_off;
+     
+                         synt.desc->rules=Range_const(rules.part(index,synt.rule_list.getCount()));
                          
                          synt.rule_list.apply( [&] (BuildRule &rule)
                                                    {
-                                                    rules[rindex].name=lang.pool.dup(rule.str);
-                                                    rules[rindex].index=rindex;
-                                                    rules[rindex].ret=synts[index];
+                                                    RuleDesc &desc=rules[index];
+                                                    
+                                                    desc.index=index++;
+                                                    desc.name=lang.pool.dup(rule.str);
+                                                    
+                                                    desc.ret=synt.desc;
                                                     
                                                     if( rule.result_kind )
-                                                      rules[rindex].kind=synts[index].kinds[rule.result_kind->index];
+                                                      desc.kind=rule.result_kind->desc;
                                                     
                                                     if( +rule.cond )
-                                                      rules[rindex].cond=buildCond(rule.cond);
+                                                      desc.cond=buildCond(rule.cond);
                                                     
                                                     ulen alen=rule.element_list.getCount();
                                                     
-                                                    PtrLen<Element> args=lang.pool.createArray<Element>(alen);
-                                                    
-                                                    rules[rindex].args=Range_const(args);
-                                                    
-                                                    PtrLen<Element> elements=lang.elements;
-                                                    
-                                                    ulen eindex=0;
-                                                    ulen delta=lang.atoms.len;
+                                                    auto args=lang.createElements(desc,alen);
                                                     
                                                     rule.element_list.apply( [&] (BuildElement &element)
                                                                                  {
-                                                                                  ulen i;
-                                                                                  
                                                                                   if( BuildSynt *synt=element.synt )
                                                                                     {
-                                                                                     i=synt->index+delta;
+                                                                                     args->ptr=synt->desc;
                                                                                     }
                                                                                   else
                                                                                     {
-                                                                                     i=element.atom->index;
+                                                                                     args->ptr=element.atom->desc;
                                                                                     }
                                                                                   
-                                                                                  args[eindex]=elements[i];
-                                                                                  
-                                                                                  eindex++;
+                                                                                  ++args;
                                                                                  }
                                                                            );
-                                                    
-                                                    rindex++;
                                                    }
                                              );
                         } 
@@ -1540,6 +1486,8 @@ CondLang::CondLang(StrLen file_name)
   LangParser::Parser<Builder> parser(*this);
   
   parser.run(Mutate<const char>(Range(file)));
+  
+  pool.shrink_extra();
  }
 
 CondLang::~CondLang()

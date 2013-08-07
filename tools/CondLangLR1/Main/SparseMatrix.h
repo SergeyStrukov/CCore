@@ -139,7 +139,7 @@ PtrLen<Cell> MatrixMulBuilder<I,T,Row,Cell>::FillRow::Sort(Cell *buf,Cell *spare
 
 template <class I,class T,class Row,class Cell> 
 MatrixMulBuilder<I,T,Row,Cell>::FillRow::FillRow(PtrLen<const Cell> a,PtrLen<const Row> b)
- : array(DoReserve,128)
+ : array(DoReserve,1024)
  {
   for(; +a && +b ;)
     switch( Cmp(a->index,b->index) )
@@ -216,6 +216,9 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
    
    explicit SparseMatrix(const Set<Row,Joiner> &rowset_) : rowset(rowset_) {}
  
+   template <class Builder>
+   SparseMatrix(DoBuildType,Builder builder) : rowset(DoBuild,builder) {}
+      
   public:
    
    // constructors
@@ -226,9 +229,6 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
    
    explicit SparseMatrix(const MonotonicFill &fill);
    
-   template <class Builder>
-   SparseMatrix(DoBuildType,Builder builder) : rowset(DoBuild,builder) {}
-      
    ~SparseMatrix() {}
    
    // methods

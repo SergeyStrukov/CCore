@@ -20,29 +20,36 @@
 
 namespace App {
 
-using namespace CCore;
+/* GoodTest() */
+
+void RunGoodTest(Lang &lang)
+ {
+  GoodTest test(lang);
+  
+  while( test.step() );
+  
+  PrintCon out(Con);
+  
+  if( !test.check(out) )
+    {
+     out.flush();
+    
+     Printf(Exception,"Sanity test failed");
+    }
+ }
+
+/* Main() */
 
 int Main(StrLen file_name)
  {
   CondLang clang(file_name);
-  Lang lang(clang);
+  BottomLang bottom(clang);
   TopLang top(clang);
+  ExtLang ext(bottom);
   
-  // good test
-  {
-   GoodTest test(top);
-   
-   while( test.step() );
-   
-   PrintCon out(Con);
-   
-   if( !test.check(out) )
-     {
-      out.flush();
-     
-      Printf(Exception,"Sanity test failed");
-     }
-  }
+  //Putobj(Con,top);
+  
+  RunGoodTest(top);
   
   return 0;
  }

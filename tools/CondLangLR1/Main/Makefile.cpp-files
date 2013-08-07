@@ -1,9 +1,14 @@
+./lang/BottomLang.cpp
 ./lang/CondLang.cpp
+./lang/ExtLang.cpp
 ./lang/Lang.cpp
 ./lang/LangParser.cpp
 ./lang/TopLang.cpp
 ./main.cpp
 ./process/GoodEstimate.cpp
+./process/LangDiagram.cpp
+./process/LangStateMachine.cpp
+./process/NonEmptyEstimate.cpp
 ./Set.cpp
 ./SparseMatrix.cpp
 ./Tools.cpp

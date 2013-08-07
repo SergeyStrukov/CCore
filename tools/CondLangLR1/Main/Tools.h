@@ -17,6 +17,7 @@
 #include <CCore/inc/Print.h>
 #include <CCore/inc/TextTools.h>
 #include <CCore/inc/Array.h>
+#include <CCore/inc/Cmp.h>
 
 namespace App {
 
@@ -29,6 +30,8 @@ using namespace CCore;
 struct PosStr;
 
 struct OffLen;
+
+struct DescBase;
 
 /* struct PosStr */
 
@@ -57,14 +60,22 @@ struct OffLen : NoThrowFlagsBase
   
   OffLen(ulen off_,ulen len_) : off(off_),len(len_) {}
   
-  void init(ulen off_,ulen len_) 
-   {
-    off=off_;
-    len=len_;
-   }
-  
   template <class T>
   PtrLen<T> cut(T *base) const { return Range(base+off,len); }
+ };
+
+/* struct DescBase */
+
+struct DescBase : NoCopy , NoThrowFlagsBase
+ {
+  ulen index = MaxULen ;
+  StrLen name;
+  
+  DescBase() {}
+  
+  bool operator + () const { return index!=MaxULen; }
+  
+  bool operator ! () const { return index==MaxULen; }
  };
 
 } // namespace App

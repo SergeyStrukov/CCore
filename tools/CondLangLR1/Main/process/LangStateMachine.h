@@ -1,4 +1,4 @@
-/* Lang.cpp */
+/* LangStateMachine.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CondLangLR1 1.00
@@ -11,9 +11,13 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include "Lang.h"
+#ifndef CondLangLR1_process_LangStateMachine_h
+#define CondLangLR1_process_LangStateMachine_h
 
 namespace App {
 
 
 } // namespace App
+
+#endif
+

@@ -1,4 +1,4 @@
-/* Lang.cpp */
+/* NonEmptyEstimate.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CondLangLR1 1.00
@@ -11,9 +11,12 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include "Lang.h"
+#ifndef CondLangLR1_process_NonEmptyEstimate_h
+#define CondLangLR1_process_NonEmptyEstimate_h
 
 namespace App {
 
 
 } // namespace App
+
+#endif

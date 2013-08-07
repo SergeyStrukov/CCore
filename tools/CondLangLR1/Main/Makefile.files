@@ -1,8 +1,13 @@
 OBJ_LIST = \
+obj/BottomLang.o \
 obj/CondLang.o \
+obj/ExtLang.o \
 obj/GoodEstimate.o \
 obj/Lang.o \
+obj/LangDiagram.o \
 obj/LangParser.o \
+obj/LangStateMachine.o \
+obj/NonEmptyEstimate.o \
 obj/Set.o \
 obj/SparseMatrix.o \
 obj/Tools.o \
@@ -11,10 +16,15 @@ obj/main.o \
 
 
 ASM_LIST = \
+obj/BottomLang.s \
 obj/CondLang.s \
+obj/ExtLang.s \
 obj/GoodEstimate.s \
 obj/Lang.s \
+obj/LangDiagram.s \
 obj/LangParser.s \
+obj/LangStateMachine.s \
+obj/NonEmptyEstimate.s \
 obj/Set.s \
 obj/SparseMatrix.s \
 obj/Tools.s \
@@ -23,10 +33,15 @@ obj/main.s \
 
 
 DEP_LIST = \
+obj/BottomLang.dep \
 obj/CondLang.dep \
+obj/ExtLang.dep \
 obj/GoodEstimate.dep \
 obj/Lang.dep \
+obj/LangDiagram.dep \
 obj/LangParser.dep \
+obj/LangStateMachine.dep \
+obj/NonEmptyEstimate.dep \
 obj/Set.dep \
 obj/SparseMatrix.dep \
 obj/Tools.dep \
@@ -40,7 +55,13 @@ ASM_OBJ_LIST = \
 include $(RULES_FILE)
 
 
+obj/BottomLang.o : ./lang/BottomLang.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/CondLang.o : ./lang/CondLang.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ExtLang.o : ./lang/ExtLang.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/GoodEstimate.o : ./process/GoodEstimate.cpp
@@ -49,7 +70,16 @@ obj/GoodEstimate.o : ./process/GoodEstimate.cpp
 obj/Lang.o : ./lang/Lang.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/LangDiagram.o : ./process/LangDiagram.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/LangParser.o : ./lang/LangParser.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LangStateMachine.o : ./process/LangStateMachine.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/NonEmptyEstimate.o : ./process/NonEmptyEstimate.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Set.o : ./Set.cpp
@@ -69,7 +99,13 @@ obj/main.o : ./main.cpp
 
 
 
+obj/BottomLang.s : ./lang/BottomLang.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/CondLang.s : ./lang/CondLang.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ExtLang.s : ./lang/ExtLang.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/GoodEstimate.s : ./process/GoodEstimate.cpp
@@ -78,7 +114,16 @@ obj/GoodEstimate.s : ./process/GoodEstimate.cpp
 obj/Lang.s : ./lang/Lang.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/LangDiagram.s : ./process/LangDiagram.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/LangParser.s : ./lang/LangParser.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LangStateMachine.s : ./process/LangStateMachine.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/NonEmptyEstimate.s : ./process/NonEmptyEstimate.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Set.s : ./Set.cpp
@@ -98,8 +143,14 @@ obj/main.s : ./main.cpp
 
 
 
+obj/BottomLang.dep : ./lang/BottomLang.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BottomLang.o $< -MF $@
+
 obj/CondLang.dep : ./lang/CondLang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CondLang.o $< -MF $@
+
+obj/ExtLang.dep : ./lang/ExtLang.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ExtLang.o $< -MF $@
 
 obj/GoodEstimate.dep : ./process/GoodEstimate.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/GoodEstimate.o $< -MF $@
@@ -107,8 +158,17 @@ obj/GoodEstimate.dep : ./process/GoodEstimate.cpp
 obj/Lang.dep : ./lang/Lang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Lang.o $< -MF $@
 
+obj/LangDiagram.dep : ./process/LangDiagram.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangDiagram.o $< -MF $@
+
 obj/LangParser.dep : ./lang/LangParser.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangParser.o $< -MF $@
+
+obj/LangStateMachine.dep : ./process/LangStateMachine.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LangStateMachine.o $< -MF $@
+
+obj/NonEmptyEstimate.dep : ./process/NonEmptyEstimate.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NonEmptyEstimate.o $< -MF $@
 
 obj/Set.dep : ./Set.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Set.o $< -MF $@

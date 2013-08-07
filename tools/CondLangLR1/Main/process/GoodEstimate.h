@@ -26,7 +26,7 @@ class GoodTest;
 
 /* struct GoodEstimate */ 
 
-struct GoodEstimate 
+struct GoodEstimate : NoCopy
  {
   enum Const
    {
@@ -75,9 +75,9 @@ struct GoodEstimate
 
 /* class GoodTest */
 
-class GoodTest : NoCopy , GoodEstimate
+class GoodTest : GoodEstimate
  {
-   const LangClassBase &lang;
+   const Lang &lang;
  
    DynArray<Type> flags;
    DynArray<ulen> list;
@@ -110,11 +110,11 @@ class GoodTest : NoCopy , GoodEstimate
    
    MulRec buildMul(PtrLen<const LangBase::Element> args);
    
-   OffLen buildStep(const LangBase::Synt &synt);
+   OffLen buildStep(const LangBase::SyntDesc &synt);
    
   public:
    
-   explicit GoodTest(const LangClassBase &lang);
+   explicit GoodTest(const Lang &lang);
    
    ~GoodTest();
    

@@ -28,19 +28,19 @@ auto GoodTest::mul(MulRec rec) const -> Type
 
 auto GoodTest::step(ulen synt_index) -> SetResult
  {
-  auto p=getStep(step_list[synt_index]);
+  auto muls=getStep(step_list[synt_index]);
   
   Type result;
   
-  if( !p ) 
+  if( !muls ) 
     {
      result=Empty;
     }
   else
     {
-     result=mul(*p);
+     result=mul(*muls);
      
-     for(++p; +p ;++p) result=result+mul(*p);
+     for(++muls; +muls ;++muls) result=result+mul(*muls);
     }
   
   return flags[synt_index].set(result);
@@ -56,17 +56,9 @@ auto GoodTest::buildMul(PtrLen<const LangBase::Element> args) -> MulRec
   ulen *buf=mul_pool.extend_raw(ext_len).ptr;
   ulen *out=buf;
   
-  ulen delta=lang.getAtomCount();
-
   for(; +args ;++args)
-    if( args->index>=delta )
-      {
-       *(out++)=args->index-delta;
-      }
-    else
-      {
-       good=true;
-      }
+    args->apply( [&] (const LangBase::AtomDesc *) { good=true; } , 
+                 [&] (const LangBase::SyntDesc *synt) { *(out++)=synt->index; } );
   
   ulen len=Dist(buf,out);
   
@@ -75,28 +67,28 @@ auto GoodTest::buildMul(PtrLen<const LangBase::Element> args) -> MulRec
   return MulRec(off,len,good);
  }
 
-OffLen GoodTest::buildStep(const LangBase::Synt &synt)
+OffLen GoodTest::buildStep(const LangBase::SyntDesc &synt)
  {
   ulen off=step_pool.getLen();
   
-  auto p=synt.rules;
+  auto rules=synt.rules;
   
-  ulen len=p.len;
+  ulen len=rules.len;
   
   MulRec *out=step_pool.extend_default(len).ptr;
   
-  for(; +p ;++p,++out) *out=buildMul(p->args);
+  for(; +rules ;++rules,++out) *out=buildMul(rules->args);
   
   return OffLen(off,len);
  }
 
-GoodTest::GoodTest(const LangClassBase &lang_)
+GoodTest::GoodTest(const Lang &lang_)
  : lang(lang_), 
    flags(lang.getSyntCount()),
    list(lang.getSyntCount()),
    list_len(0),
-   mul_pool(DoReserve,128),
-   step_pool(DoReserve,128),
+   mul_pool(DoReserve,1024),
+   step_pool(DoReserve,1024),
    step_list(lang.getSyntCount())
  {
   for(auto synts=lang.getSynts(); +synts ;++synts) 
