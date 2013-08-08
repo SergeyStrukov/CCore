@@ -91,6 +91,9 @@ struct LangBase : NoCopy
     
     Element(const SyntDesc *synt) : ptr(synt) {}
     
+    template <class T>
+    Element(T obj) : ptr(obj.desc) {}
+    
     // properties
     
     bool operator + () const { return +ptr; }
@@ -100,7 +103,7 @@ struct LangBase : NoCopy
     // atoms and synts
     
     template <class AtomFuncInit,class SyntFuncInit>
-    void apply(AtomFuncInit atom_func_init,SyntFuncInit synt_func_init) const
+    void apply(AtomFuncInit atom_func_init,SyntFuncInit synt_func_init) const // atom_func(Atom) synt_func(Synt)
      {
       struct Func
        {
@@ -128,13 +131,13 @@ struct LangBase : NoCopy
      }
     
     template <class FuncInit>
-    void applyForAtom(FuncInit func_init) const
+    void applyForAtom(FuncInit func_init) const // func(Atom)
      {
       ptr.applyFor<AtomDesc>(func_init);
      }
     
     template <class FuncInit>
-    void applyForSynt(FuncInit func_init) const
+    void applyForSynt(FuncInit func_init) const // func(Synt)
      {
       ptr.applyFor<SyntDesc>(func_init);
      }
@@ -144,8 +147,8 @@ struct LangBase : NoCopy
     template <class P>
     void print(P &out) const
      {
-      apply( [&] (const AtomDesc *atom) { Printf(out,"Atom(#;,#;)",atom->index,atom->name); } , 
-             [&] (const SyntDesc *synt) { Printf(out,"Synt(#;,#;)",synt->index,synt->name); } );
+      apply( [&] (const AtomDesc *atom) { Putobj(out,atom->name); } , 
+             [&] (const SyntDesc *synt) { Putobj(out,synt->name); } );
      }
    };
   
@@ -170,7 +173,7 @@ struct LangBase : NoCopy
 
 /* struct Atom */
 
-struct Atom : NoThrowFlagsBase , CmpComparable<Atom>
+struct Atom : CmpComparable<Atom> , NoThrowFlagsBase 
  {
   const LangBase::AtomDesc *desc;
   
@@ -197,7 +200,7 @@ struct Atom : NoThrowFlagsBase , CmpComparable<Atom>
 
 /* struct Synt */
 
-struct Synt : NoThrowFlagsBase , CmpComparable<Synt>
+struct Synt : CmpComparable<Synt> , NoThrowFlagsBase 
  {
   const LangBase::SyntDesc *desc;
   
@@ -240,7 +243,7 @@ using Element = LangBase::Element ;
 
 /* struct Rule */
 
-struct Rule : NoThrowFlagsBase , CmpComparable<Rule>
+struct Rule : CmpComparable<Rule> , NoThrowFlagsBase 
  {
   const LangBase::RuleDesc *desc;
  
@@ -263,6 +266,8 @@ struct Rule : NoThrowFlagsBase , CmpComparable<Rule>
   Synt getRet() const { return desc->ret; }
   
   // elements
+  
+  PtrLen<const Element> getArgs() const { return desc->args; }
   
   template <class FuncInit>
   void apply(FuncInit func_init) const // func(Element)
@@ -352,6 +357,32 @@ class Lang : public LangBase
    PtrLen<const RuleDesc> getRules() const { return Range_const(rules); }
    
    ulen getRuleCount() const { return rules.len; }
+   
+   // apply
+   
+   template <class FuncInit>
+   void applyForAtoms(FuncInit func_init) const // func(Atom)
+    {
+     FunctorTypeOf<FuncInit> func(func_init);
+     
+     for(auto r=getAtoms(); +r ;++r) func(r.ptr);
+    }
+   
+   template <class FuncInit>
+   void applyForSynts(FuncInit func_init) const // func(Synt)
+    {
+     FunctorTypeOf<FuncInit> func(func_init);
+     
+     for(auto r=getSynts(); +r ;++r) func(r.ptr);
+    }
+   
+   template <class FuncInit>
+   void applyForRules(FuncInit func_init) const // func(Rule)
+    {
+     FunctorTypeOf<FuncInit> func(func_init);
+     
+     for(auto r=getRules(); +r ;++r) func(r.ptr);
+    }
    
    // print object
    

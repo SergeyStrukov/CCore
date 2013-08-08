@@ -40,77 +40,104 @@ class LangDiagram::ExtraVertex : NoCopy
     }
  };
 
+class LangDiagram::ArrowBuilder : NoCopy
+ {
+   ulen N;
+   ExtraVertex extra;
+   Collector<Arrow> collector;
+   
+  public: 
+   
+   explicit ArrowBuilder(ulen N_) : N(N_),extra(N_) {}
+   
+   ~ArrowBuilder() {}
+   
+   void add(Synt synt,const Element *base)
+    {
+     Element T(synt);
+     ulen K=synt.getIndex();
+     
+     collector.append_fill(K,N,T);
+     collector.append_fill(K,N,Range(base+K,1));
+    }
+   
+   void add(Rule rule)
+    {
+     ulen K=rule.getRet().getIndex();
+     
+     PtrLen<const Element> args=rule.getArgs();
+    
+     if( +args )
+       {
+        Vertex cur(K);
+        
+        Element E=*args;
+        
+        ++args;
+        
+        E.applyForSynt( [=] (Synt synt) { collector.append_fill(cur,synt.getIndex(),args); } );
+        
+        if( +args )
+          for(;;)
+            {
+             collector.append_fill(cur,N,E,args);
+             
+             Element F=*args;
+             
+             ++args;
+             
+             F.applyForSynt( [=] (Synt synt) { collector.append_fill(cur,synt.getIndex(),E,args); } );
+              
+             if( !args ) break;
+              
+             Vertex v=extra.get();
+              
+             collector.append_fill(cur,v,E);
+              
+             cur=v;
+             E=F;
+            }
+       }
+    }
+   
+   void finish(DynArray<Arrow> &ret)
+    {
+     collector.copyTo(ret);
+    }
+ };
+
 LangDiagram::LangDiagram(const Lang &lang)
- : start(DoReserve,1024)
  {
   ulen N=lang.getSyntCount();
   
   // start/stop
   {
    stop=N;
+   
+   start.reserve(N);
     
-   for(auto &synt : lang.getSynts() ) if( synt.is_lang ) start.append_fill(synt.index);
-    
+   lang.applyForSynts( [this] (Synt synt) { if( synt.isLang() ) start.append_fill(synt.getIndex()); } );
+   
    start.shrink_extra();
   }
   
   // elements
   {
-   auto *out=elements.extend_default(N).ptr;
+   elements.reserve(N);
    
-   for(auto &synt : lang.getSynts() ) *(out++)=&synt;
+   lang.applyForSynts( [this] (Synt synt) { elements.append_fill(synt); } );
   }
 
   // arrows
   {
-   ExtraVertex extra(N);
-   Collector<Arrow> collector;
+   ArrowBuilder builder(N);
+   const Element *base=elements.getPtr();
    
-   for(auto &rule : lang.getRules() )
-     {
-      ulen K=rule.ret->index;
-      
-      Element T(rule.ret);
-      
-      collector.append_fill(K,N,T);
-      collector.append_fill(K,N,Range_const(elements.getPtr()+K,1));
-      
-      PtrLen<const Element> args=rule.args;
-     
-      if( args.len )
-        {
-         Vertex cur(K);
-         
-         Element E=*args;
-         
-         ++args;
-         
-         E.applyForSynt( [=,&collector] (Synt synt) { collector.append_fill(cur,synt.getIndex(),args); } );
-         
-         if( +args )
-           for(;;)
-             {
-              collector.append_fill(cur,N,E,args);
-              
-              Element F=*args;
-              
-              ++args;
-              
-              F.applyForSynt( [=,&collector] (Synt synt) { collector.append_fill(cur,synt.getIndex(),E,args); } );
-               
-              if( !args ) break;
-               
-              Vertex v=extra.get();
-               
-              collector.append_fill(cur,v,E);
-               
-              cur=v;
-              E=F;
-             }
-        }
-     }
+   lang.applyForSynts( [=,&builder] (Synt synt) { builder.add(synt,base); } );
    
-   collector.copyTo(arrows);
+   lang.applyForRules( [&builder] (Rule rule) { builder.add(rule); } );
+   
+   builder.finish(arrows);
   }
  }
 

@@ -1,4 +1,4 @@
-/* GoodEstimate.cpp */
+/* LangEstimate.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CondLangLR1 1.00
@@ -11,9 +11,10 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include "GoodEstimate.h"
+#include "LangEstimate.h"
 
 namespace App {
 
 
 } // namespace App
+

@@ -28,7 +28,7 @@ class LangDiagram;
 
 /* struct Vertex */
 
-struct Vertex : NoThrowFlagsBase , CmpComparable<Vertex>
+struct Vertex : CmpComparable<Vertex> , NoThrowFlagsBase 
  {
   ulen index = MaxULen ;
   
@@ -39,6 +39,14 @@ struct Vertex : NoThrowFlagsBase , CmpComparable<Vertex>
   // cmp objects
   
   CmpResult objCmp(Vertex obj) const { return LessCmp(index,obj.index); }
+  
+  // print object
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"V(#;)",index);
+   }
  };
 
 /* struct Arrow */
@@ -58,21 +66,35 @@ struct Arrow : NoThrowFlagsBase
   
   Arrow(Vertex src_,Vertex dst_,PtrLen<const Element> beta_) 
    : src(src_),dst(dst_),beta(beta_) {}
+  
+  // print object
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"#; -> #; ( #; ;",src,dst,alpha);
+    
+    for(Element e : beta ) Printf(out," #;",e);
+    
+    Putobj(out," )");
+   }
  };
 
 /* class LangDiagram */
 
 class LangDiagram : NoCopy
  {
-   DynArray<Arrow> arrows;
    DynArray<Vertex> start;
    Vertex stop;
+   DynArray<Arrow> arrows;
    
    DynArray<Element> elements;
    
   private:
    
    class ExtraVertex;
+   
+   class ArrowBuilder;
    
   public:
   
@@ -87,6 +109,26 @@ class LangDiagram : NoCopy
    PtrLen<const Vertex> getStart() const { return Range(start); }
    
    Vertex getStop() const { return stop; }
+   
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     Printf(out,"#;\n\n",Title("Start"));
+     
+     for(Vertex v : start ) Printf(out,"#;\n",v);
+     
+     Printf(out,"\n#;\n\n",Title("Stop"));
+     
+     Printf(out,"#;\n",stop);
+     
+     Printf(out,"\n#;\n\n",Title("Arrows"));
+     
+     for(const Arrow &a : arrows ) Printf(out,"#;\n",a);
+     
+     Printf(out,"\n#;\n",TextDivider());
+    }
  };
 
 } // namespace App

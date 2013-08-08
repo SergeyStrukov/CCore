@@ -28,7 +28,7 @@ template <class T,template <class> class J> class JoinBuilder;
 
 template <class T,template <class> class J> class Set;
 
-template <class I,class T> struct NoThrowFlagsBaseFor;
+template <class ... TT> struct NoThrowFlagsBaseFor;
 
 template <class I,class T> struct IndexPair;
 
@@ -129,13 +129,15 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
    
    Set(const Set<T,J> &a,const Set<T,J> &b) : array(DoBuild,JoinBuilder<T,J>(a.read(),b.read())) {}
    
+   ~Set() {}
+   
+   // unsafe constructors
+   
    explicit Set(PtrLen<const T> olist) : array(DoCopy(olist.len),olist.ptr) {} // strictly weak ordered input
    
    template <class Builder>
-   Set(DoBuildType,Builder builder) : array(DoBuild,builder) {}
+   Set(DoBuildType,Builder builder) : array(DoBuild,builder) {} // builder is responsible for the ordering
       
-   ~Set() {}
-   
    // methods
    
    bool isEmpty() const { return !array.getLen(); }
@@ -147,6 +149,8 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
    PtrLen<const T> read() const { return Range_const(array); }
    
    PtrLen<T> write() { return array.modify(); }
+   
+   // cmp objects
    
    CmpResult objCmp(const Set<T,J> &obj) const { return RangeCmp(read(),obj.read()); }
    
@@ -161,15 +165,25 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
     }
  };
 
-/* struct NoThrowFlagsBaseFor<I,T> */
+/* struct NoThrowFlagsBaseFor<TT> */
 
-template <class I,class T> 
-struct NoThrowFlagsBaseFor
+template <>
+struct NoThrowFlagsBaseFor<>
  {
   enum NoThrowFlagType
    {
-    Default_no_throw = NoThrowFlags<I>::Default_no_throw && NoThrowFlags<T>::Default_no_throw ,
-    Copy_no_throw = NoThrowFlags<I>::Copy_no_throw && NoThrowFlags<T>::Copy_no_throw
+    Default_no_throw = true ,
+    Copy_no_throw = true
+   };
+ };
+
+template <class T,class ... TT> 
+struct NoThrowFlagsBaseFor<T,TT...>
+ {
+  enum NoThrowFlagType
+   {
+    Default_no_throw = NoThrowFlags<T>::Default_no_throw && NoThrowFlagsBaseFor<TT...>::Default_no_throw ,
+    Copy_no_throw = NoThrowFlags<T>::Copy_no_throw && NoThrowFlagsBaseFor<TT...>::Copy_no_throw
    };
  };
 
@@ -185,7 +199,7 @@ struct IndexPair : CmpComparable<IndexPair<I,T> > , NoThrowFlagsBaseFor<I,T>
   
   IndexPair() : index(),object() {}
        
-  IndexPair(const I &index_,const T &object_) : index(index_),object(object_) {}
+  IndexPair(I index_,const T &object_) : index(index_),object(object_) {}
   
   // methods
        

@@ -25,6 +25,18 @@ namespace App {
 
 using namespace CCore;
 
+/* words */
+
+enum ElementNullType
+ {
+  ElementNull = 0
+ };
+
+enum ElementOneType
+ {
+  ElementOne = 1
+ };
+
 /* classes */
 
 struct PosStr;
@@ -32,6 +44,8 @@ struct PosStr;
 struct OffLen;
 
 struct DescBase;
+
+class TrackStep;
 
 /* struct PosStr */
 
@@ -49,6 +63,8 @@ struct PosStr
 
 /* struct OffLen */
 
+#if 0
+
 struct OffLen : NoThrowFlagsBase
  {
   ulen off;
@@ -64,6 +80,8 @@ struct OffLen : NoThrowFlagsBase
   PtrLen<T> cut(T *base) const { return Range(base+off,len); }
  };
 
+#endif
+
 /* struct DescBase */
 
 struct DescBase : NoCopy , NoThrowFlagsBase
@@ -76,6 +94,32 @@ struct DescBase : NoCopy , NoThrowFlagsBase
   bool operator + () const { return index!=MaxULen; }
   
   bool operator ! () const { return index==MaxULen; }
+ };
+
+/* class TrackStep */
+
+class TrackStep : NoCopy
+ {
+   ulen count = 0 ;
+   
+  public:
+  
+   TrackStep() {}
+   
+   void step() 
+    {
+     ++count;
+     
+     if( count%100==0 )
+       {
+        Printf(Con,"  step #;\r",count);
+       }
+    }
+   
+   void finish()
+    {
+     Printf(Con,"  step #;\n",count);
+    }
  };
 
 } // namespace App

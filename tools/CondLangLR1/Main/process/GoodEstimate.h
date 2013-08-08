@@ -20,125 +20,80 @@ namespace App {
 
 /* classes */
 
-struct GoodEstimate;
+class GoodEstimate;
 
-class GoodTest;
+/* class GoodEstimate */ 
 
-/* struct GoodEstimate */ 
-
-struct GoodEstimate : NoCopy
+class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBase 
  {
-  enum Const
-   {
-    Empty,Null,Good
-   };
- 
-  enum SetResult
-   {
-    NoChange,Change,ChangeToMax
-   };
- 
-  class Type : public NoThrowFlagsBase
-   {
-     int value;
-     
-    private: 
-     
-     explicit Type(int value_) : value(value_) {}
-  
-    public: 
-  
-     Type(Const c=Empty) : value(c) {}
-     
-     // methods
-  
-     bool isBad() const { return value!=Good; }
-  
-     const char * badDesc() const { return (value==Empty)?"empty":"only null string"; }
-  
-     SetResult set(Type t)
-      {
-       if( value==t.value ) return NoChange;
-    
-       value=t.value;
-    
-       return (value==Good)?ChangeToMax:Change;
-      }
-     
-     // operators
-      
-     friend Type operator + (Type a,Type b) { return Type(Max(a.value,b.value)); }
-     
-     friend Type operator * (Type a,Type b) { return Type(Min(a.value*b.value,2)); }
-   };
- };
-
-/* class GoodTest */
-
-class GoodTest : GoodEstimate
- {
-   const Lang &lang;
- 
-   DynArray<Type> flags;
-   DynArray<ulen> list;
-   ulen list_len;
-   
-   DynArray<ulen> mul_pool;
-   
-   struct MulRec : OffLen
+   enum Type
     {
-     Type first;
-     
-     MulRec() {}
-     
-     MulRec(ulen off,ulen len,bool good) : OffLen(off,len),first(good?Good:Null) {}
+     Empty,Null,Good
     };
    
-   DynArray<MulRec> step_pool;
+   Type value;
    
-   DynArray<OffLen> step_list;
+  private: 
    
-  private:
-   
-   PtrLen<const ulen> getMul(MulRec rec) const { return rec.cut(mul_pool.getPtr()); }
-   
-   PtrLen<const MulRec> getStep(OffLen rec) const { return rec.cut(step_pool.getPtr()); }
-   
-   Type mul(MulRec rec) const;
-   
-   SetResult step(ulen synt_index);
-   
-   MulRec buildMul(PtrLen<const LangBase::Element> args);
-   
-   OffLen buildStep(const LangBase::SyntDesc &synt);
+   GoodEstimate(Type value_) : value(value_) {}
    
   public:
    
-   explicit GoodTest(const Lang &lang);
+   // constructors
    
-   ~GoodTest();
+   GoodEstimate() : value(Empty) {}
    
-   bool step();
+   GoodEstimate(ElementNullType) : value(Empty) {}
+   
+   GoodEstimate(ElementOneType) : value(Null) {}
+   
+   struct Context {};
+   
+   GoodEstimate(Atom,Context) : value(Good) {}
+   
+   // methods
+   
+   bool operator + () const { return value!=Empty; }
+   
+   bool operator ! () const { return value==Empty; }
+   
+   bool notGood() const { return value!=Good; }
+   
+   bool set(GoodEstimate obj)
+    {
+     if( value!=obj.value )
+       {
+        value=obj.value;
+       
+        return true;
+       }
+     
+     return false;
+    }
+   
+   // cmp objects
+   
+   CmpResult objCmp(GoodEstimate obj) const { return LessCmp(value,obj.value); }
+   
+   // operations
+   
+   friend GoodEstimate operator + (GoodEstimate a,GoodEstimate b) { return Max(a.value,b.value); }
+   
+   friend GoodEstimate operator * (GoodEstimate a,GoodEstimate b) { return Type(Min<int>(a.value*b.value,2)); }
+   
+   // print object
    
    template <class P>
-   bool check(P &out) const;
+   void print(P &out) const
+    {
+     switch( value )
+       {
+        case Empty : Putobj(out,"empty"); break;
+        case Null  : Putobj(out,"null"); break;
+        case Good  : Putobj(out,"good"); break;
+       }
+    }
  };
-
-template <class P>
-bool GoodTest::check(P &out) const
- {
-  bool ret=true;
-
-  for(auto synts=lang.getSynts(); +synts ;++synts)
-    if( flags[synts->index].isBad() )
-      {
-       Printf(out,"Bad syntax class #; : #;\n",synts->name,flags[synts->index].badDesc());
-     
-       ret=false;
-      }
-
-  return ret;
- }
 
 } // namespace App
 

@@ -7,8 +7,10 @@
 ./main.cpp
 ./process/GoodEstimate.cpp
 ./process/LangDiagram.cpp
+./process/LangEstimate.cpp
 ./process/LangStateMachine.cpp
 ./process/NonEmptyEstimate.cpp
+./process/Process.cpp
 ./Set.cpp
 ./SparseMatrix.cpp
 ./Tools.cpp

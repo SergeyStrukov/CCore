@@ -14,42 +14,17 @@
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
 
-#include "process/GoodEstimate.h"
+#include "process/Process.h"
 
 /* Main() */
 
 namespace App {
 
-/* GoodTest() */
-
-void RunGoodTest(Lang &lang)
- {
-  GoodTest test(lang);
-  
-  while( test.step() );
-  
-  PrintCon out(Con);
-  
-  if( !test.check(out) )
-    {
-     out.flush();
-    
-     Printf(Exception,"Sanity test failed");
-    }
- }
-
 /* Main() */
 
 int Main(StrLen file_name)
  {
-  CondLang clang(file_name);
-  BottomLang bottom(clang);
-  TopLang top(clang);
-  ExtLang ext(bottom);
-  
-  //Putobj(Con,top);
-  
-  RunGoodTest(top);
+  Process(file_name);
   
   return 0;
  }

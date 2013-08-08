@@ -37,6 +37,8 @@ const T * FindIndex(I index,PtrLen<const IndexPair<I,T> > range)
 
 template <class I,class T,class Row,class Cell> class MatrixMulBuilder;
 
+template <class I,class T> struct MatrixPosition;
+
 template <class I,class T> class SparseMatrix;
 
 /* class MatrixMulBuilder<I,T,Row,Cell> */ 
@@ -161,7 +163,11 @@ MatrixMulBuilder<I,T,Row,Cell>::FillRow::FillRow(PtrLen<const Cell> a,PtrLen<con
          T ma=a->object;
         
          for(auto p=b->object.read(); +p ;++p)
-           array.append_fill(p->index,ma*p->object);
+           {
+            T prod=ma*p->object;
+            
+            if( +prod ) array.append_fill(p->index,prod);
+           } 
        
          ++a;
          ++b;
@@ -184,11 +190,11 @@ PtrLen<Row> MatrixMulBuilder<I,T,Row,Cell>::operator () (Place<void> place) cons
     {
      FillRow fill(p->object.read(),b);
      
-     Set<Cell,Joiner> set(fill.getResult());
-
-     if( set.nonEmpty() )
+     auto result=fill.getResult();
+     
+     if( +result )
        {
-        new(guard.at()) Row(p->index,set);
+        new(guard.at()) Row(p->index,Set<Cell,Joiner>(result));
      
         ++guard;
        }
@@ -196,7 +202,36 @@ PtrLen<Row> MatrixMulBuilder<I,T,Row,Cell>::operator () (Place<void> place) cons
  
   return guard.disarm();  
  }
-      
+
+/* struct MatrixPosition<I,T> */
+
+template <class I,class T> 
+struct MatrixPosition : CmpComparable<MatrixPosition<I,T> > , NoThrowFlagsBaseFor<I,T>
+ {
+  I i;
+  I j;
+  T object;
+  
+  // constuctors
+  
+  MatrixPosition() : i(),j(),object() {}
+  
+  // cmp objects
+  
+  CmpResult objCmp(const MatrixPosition<I,T> &obj) const 
+   { 
+    return AlphaCmp(i,obj.i,j,obj.j);
+   }
+  
+  // print object
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"(#;,#;) #;",i,j,object);
+   }
+ };
+
 /* class SparseMatrix<I,T> */ 
 
 template <class I,class T>
@@ -227,15 +262,11 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
     
    SparseMatrix() {}
    
-   explicit SparseMatrix(const MonotonicFill &fill);
+   explicit SparseMatrix(MonotonicFill &fill);
    
    ~SparseMatrix() {}
    
    // methods
-   
-   bool isEmpty() const { return rowset.isEmpty(); }
-   
-   bool nonEmpty() const { return rowset.nonEmpty(); }
    
    PtrLen<const Row> getRowset() const { return rowset.read(); }
    
@@ -253,6 +284,8 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
      return FindIndex(j,findRow(i));
     }
    
+   // cmp objects
+   
    CmpResult objCmp(const SparseMatrix<I,T> &obj) const
     {
      return rowset.objCmp(obj.rowset);
@@ -269,6 +302,21 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
     {
      return SparseMatrix<I,T>(DoBuild,MatrixMulBuilder<I,T,Row,Cell>(a.rowset.read(),b.rowset.read()));
     }
+
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     for(auto &row : rowset.read() )
+       {
+        Printf(out,"#; -----\n",row.index);
+        
+        for(auto &cell : row.object.read() ) Printf(out,"  #; #;\n",cell.index,cell.object);
+       }
+     
+     Printf(out,"-----\n");
+    }
  };
 
 /* class SparseMatrix<I,T>::MonotonicFill */
@@ -276,92 +324,101 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
 template <class I,class T>
 class SparseMatrix<I,T>::MonotonicFill : NoCopy
  {
-   struct Rec : NoThrowFlagsBaseFor<I,T>
-    {
-     I i;
-     I j;
-     T object;
-     
-     Rec() : i(),j(),object() {}
-     
-     void set(const I &i_,const I &j_,const T &object_)
-      {
-       i=i_;
-       j=j_;
-       object=object_;
-      }
-    };
-    
-   DynArray<Rec> buf;
-   DynArray<PtrLen<const Rec> > rows;
+   using Pos = MatrixPosition<I,T> ;
+  
+   DynArray<Pos> buf;
+   DynArray<PtrLen<const Pos> > rows;
    
   private: 
       
    class RowBuilder
     {
-      PtrLen<const Rec> row;
+      PtrLen<const Pos> row;
+      
+     private:
+      
+      static T SumOf(PtrLen<const Pos> range)
+       {
+        T ret(range->object);
+        
+        for(++range; +range ;++range) ret=ret+(range->object);
+         
+        return ret; 
+       }
       
      public:
      
-      explicit RowBuilder(PtrLen<const Rec> row_) : row(row_) {}
+      explicit RowBuilder(PtrLen<const Pos> row_) : row(row_) {}
       
       ulen getLen() const { return row.len; }
       
       PtrLen<Cell> operator () (Place<void> place) const
        {
-        typename ArrayAlgo<Cell>::template CreateGuardNoThrow<NoThrowFlags<Cell>::Copy_no_throw> guard(place,getLen());
+        typename ArrayAlgo<Cell>::BuildGuard guard(place);
         
-        for(auto p=row; +p ;++p,++guard) new(guard.at()) Cell(p->j,p->object);
-             
+        Algon::ApplyUniqueRangeBy(row, [] (const Pos &pos) { return pos.j; } ,
+                                       [&] (PtrLen<const Pos> toadd) 
+                                           { 
+                                            new(guard.at()) Cell(toadd->j,RowBuilder::SumOf(toadd));
+                                            
+                                            ++guard;
+                                           } 
+                                 );
+        
         return guard.disarm();  
        }
     };
    
    class Builder
     {
-      PtrLen<const PtrLen<const Rec> > rows;
+      PtrLen<const PtrLen<const Pos> > rows;
       
      public:
       
-      explicit Builder(PtrLen<const PtrLen<const Rec> > rows_) : rows(rows_) {}
+      explicit Builder(PtrLen<const PtrLen<const Pos> > rows_) : rows(rows_) {}
      
       ulen getLen() const { return rows.len; }
         
-      PtrLen<Row> operator () (Place<void> place) const;
+      PtrLen<Row> operator () (Place<void> place) const
+       {
+        typename ArrayAlgo<Row>::CreateGuard guard(place,getLen());
+        
+        for(auto p=rows; +p ;++p,++guard) new(guard.at()) Row((*p)->i,Set<Cell,Joiner>(DoBuild,RowBuilder(*p)));
+          
+        return guard.disarm();  
+       }
     };
     
+   void complete()
+    {
+     rows.erase();
+     
+     auto range=Range(buf);
+     
+     Sort(range);
+     
+     Algon::ApplyUniqueRangeBy(range, [] (const Pos &pos) { return pos.i; } , 
+                                      [this] (PtrLen<Pos> row) { rows.append_copy(Range_const(row)); } );
+    }
+   
   public:
      
-   explicit MonotonicFill(ulen len) : buf(len),rows(DoReserve,128) {}
+   explicit MonotonicFill(ulen capacity) : buf(DoReserve,capacity) {}
    
    ~MonotonicFill() {}
       
-   void set(ulen ind,const I &i,const I &j,const T &object) { buf[ind].set(i,j,object); }
+   void add(const Pos &pos) { if( +pos.object ) buf.append_copy(pos); }
    
-   void complete();
-   
-   Builder getBuilder() const { return Builder(Range(rows)); }
+   Builder getBuilder()
+    {
+     complete();
+     
+     return Builder(Range_const(rows));
+    }
  };
     
 template <class I,class T>
-PtrLen<typename SparseMatrix<I,T>::Row> SparseMatrix<I,T>::MonotonicFill::Builder::operator () (Place<void> place) const
- {
-  typename ArrayAlgo<Row>::CreateGuard guard(place,getLen());
-  
-  for(auto p=rows; +p ;++p,++guard) new(guard.at()) Row((*p)->i,Set<Cell,Joiner>(DoBuild,RowBuilder(*p)));
-    
-  return guard.disarm();  
- }
-      
-template <class I,class T>
-void SparseMatrix<I,T>::MonotonicFill::complete()
- {
-  Algon::ApplyUniqueRangeBy(Range_const(buf), [] (const Rec &obj) { return obj.i; } , 
-                                              [this] (PtrLen<const Rec> range) { rows.append_copy(range); } );
- }
-
-template <class I,class T>
-SparseMatrix<I,T>::SparseMatrix(const MonotonicFill &fill) : rowset(DoBuild,fill.getBuilder()) {}
+SparseMatrix<I,T>::SparseMatrix(MonotonicFill &fill) : rowset(DoBuild,fill.getBuilder()) {}
 
 } // namespace App
 

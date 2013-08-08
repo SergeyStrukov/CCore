@@ -1,4 +1,4 @@
-/* GoodEstimate.cpp */
+/* Process.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CondLangLR1 1.00
@@ -11,9 +11,18 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include "GoodEstimate.h"
+#ifndef CondLangLR1_process_Process_h
+#define CondLangLR1_process_Process_h
+
+#include "Tools.h"
 
 namespace App {
 
+/* functions */
+
+void Process(StrLen file_name);
 
 } // namespace App
+
+#endif
+
