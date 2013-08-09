@@ -9,6 +9,7 @@
 ./process/LangDiagram.cpp
 ./process/LangEstimate.cpp
 ./process/LangStateMachine.cpp
+./process/LR1Estimate.cpp
 ./process/NonEmptyEstimate.cpp
 ./process/Process.cpp
 ./Set.cpp

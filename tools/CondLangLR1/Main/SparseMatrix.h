@@ -21,25 +21,90 @@
 
 namespace App {
 
-/* functions */
-
-template <class I,class T>
-const T * FindIndex(I index,PtrLen<const IndexPair<I,T> > range)
- {
-  Algon::BinarySearch_if(range, [=] (const IndexPair<I,T> &obj) { return index<=obj.index; } );
-  
-  if( +range && index==range->index ) return &range->object;
-  
-  return 0;    
- }
-
 /* classes */ 
 
+template <class I,class T,class Row,class Cell> class VectorMulBuilder;
+
 template <class I,class T,class Row,class Cell> class MatrixMulBuilder;
+
+template <class I,class T> class SparseVector;
 
 template <class I,class T> struct MatrixPosition;
 
 template <class I,class T> class SparseMatrix;
+
+/* class VectorMulBuilder<I,T,Row,Cell> */
+
+template <class I,class T,class Row,class Cell> 
+class VectorMulBuilder
+ {
+   PtrLen<const Row> a;
+   PtrLen<const Cell> b;
+   
+  private: 
+   
+   static T Prod(PtrLen<const Cell> a,PtrLen<const Cell> b);
+   
+  public: 
+   
+   VectorMulBuilder(PtrLen<const Row> a_,PtrLen<const Cell> b_) : a(a_),b(b_) {}
+   
+   ulen getLen() const { return a.len; }
+      
+   PtrLen<Cell> operator () (Place<void> place) const;
+ };
+
+template <class I,class T,class Row,class Cell> 
+T VectorMulBuilder<I,T,Row,Cell>::Prod(PtrLen<const Cell> a,PtrLen<const Cell> b)
+ {
+  T ret; // null
+  
+  while( +a && +b )
+    switch( (*a).weakCmp(*b) )
+      {
+       case CmpLess : 
+        {
+         ++a; 
+        }
+       break;
+       
+       case CmpGreater :
+        {
+         ++b;
+        }
+       break; 
+        
+       default: // case CmpEqual 
+        {
+         ret=ret+(a->object)*(b->object); 
+         
+         ++a; 
+         ++b;
+        }
+      }
+  
+  return ret;
+ }
+
+template <class I,class T,class Row,class Cell> 
+PtrLen<Cell> VectorMulBuilder<I,T,Row,Cell>::operator () (Place<void> place) const
+ {
+  typename ArrayAlgo<Cell>::BuildGuard guard(place);
+  
+  for(auto p=a; +p ;++p)
+    {
+     T prod=Prod(p->object.read(),b);
+     
+     if( +prod )
+       {
+        new(guard.at()) Cell(p->index,prod);
+     
+        ++guard;
+       }
+    }
+ 
+  return guard.disarm();  
+ }
 
 /* class MatrixMulBuilder<I,T,Row,Cell> */ 
 
@@ -203,6 +268,81 @@ PtrLen<Row> MatrixMulBuilder<I,T,Row,Cell>::operator () (Place<void> place) cons
   return guard.disarm();  
  }
 
+/* class SparseVector<I,T> */
+
+template <class I,class T> 
+SparseVector<I,T> operator * (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b);
+
+template <class I,class T> 
+class SparseVector : CmpComparable<SparseVector<I,T> > , NoThrowFlagsBase
+ {
+  public:
+ 
+   typedef IndexPair<I,T> Cell;
+   
+  private:
+   
+   Set<Cell,Joiner> cellset;
+   
+  private:
+   
+   explicit SparseVector(const Set<Cell,Joiner> &cellset_) : cellset(cellset_) {}
+   
+   template <class Builder>
+   SparseVector(DoBuildType,Builder builder) : cellset(DoBuild,builder) {}
+   
+  public:
+   
+   // constructors
+  
+   SparseVector() {}
+   
+   ~SparseVector() {}
+   
+   // unsafe constructors
+   
+   explicit SparseVector(PtrLen<const Cell> range) : cellset(range) {} // strictly weak ordered input
+   
+   // methods
+   
+   T operator [] (I index) const
+    {
+     auto range=cellset.read();
+     
+     Algon::BinarySearch_if(range, [=] (const Cell &obj) { return index<=obj.index; } );
+     
+     if( +range && index==range->index ) return range->object;
+     
+     return T();    
+    }
+   
+   // cmp objects
+   
+   CmpResult objCmp(const SparseVector<I,T> &obj) const
+    {
+     return cellset.objCmp(obj.cellset);
+    }
+   
+   // operators
+   
+   friend SparseVector<I,T> operator + (const SparseVector<I,T> &a,const SparseVector<I,T> &b)
+    {
+     return SparseVector<I,T>(a.cellset+b.cellset);
+    }
+
+   friend SparseVector<I,T> operator * <> (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b);
+     
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     for(auto &cell : cellset.read() ) Printf(out,"#; #;\n",cell.index,cell.object);
+  
+     Printf(out,"-----\n");
+    }
+ };
+
 /* struct MatrixPosition<I,T> */
 
 template <class I,class T> 
@@ -215,6 +355,8 @@ struct MatrixPosition : CmpComparable<MatrixPosition<I,T> > , NoThrowFlagsBaseFo
   // constuctors
   
   MatrixPosition() : i(),j(),object() {}
+  
+  MatrixPosition(I i_,I j_,const T &object_) : i(i_),j(j_),object(object_) {}
   
   // cmp objects
   
@@ -258,31 +400,15 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
    
    // constructors
   
-   class MonotonicFill;
+   class PosFill;
     
    SparseMatrix() {}
    
-   explicit SparseMatrix(MonotonicFill &fill);
+   explicit SparseMatrix(PosFill &fill);
    
    ~SparseMatrix() {}
    
    // methods
-   
-   PtrLen<const Row> getRowset() const { return rowset.read(); }
-   
-   PtrLen<const Cell> findRow(I i) const
-    {
-     auto ptr=FindIndex(i,rowset.read());
-     
-     if( ptr ) return ptr->read();
-     
-     return Nothing;    
-    }
-   
-   const T * findCell(I i,I j) const
-    {
-     return FindIndex(j,findRow(i));
-    }
    
    // cmp objects
    
@@ -303,6 +429,8 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
      return SparseMatrix<I,T>(DoBuild,MatrixMulBuilder<I,T,Row,Cell>(a.rowset.read(),b.rowset.read()));
     }
 
+   friend SparseVector<I,T> operator * <> (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b);
+   
    // print object
    
    template <class P>
@@ -319,10 +447,17 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
     }
  };
 
-/* class SparseMatrix<I,T>::MonotonicFill */
+template <class I,class T> 
+SparseVector<I,T> operator * (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b)
+ {
+  return SparseVector<I,T>(DoBuild,VectorMulBuilder<I,T,typename SparseMatrix<I,T>::Row,
+                                                        typename SparseVector<I,T>::Cell>(a.rowset.read(),b.cellset.read()));
+ }
+
+/* class SparseMatrix<I,T>::PosFill */
     
 template <class I,class T>
-class SparseMatrix<I,T>::MonotonicFill : NoCopy
+class SparseMatrix<I,T>::PosFill : NoCopy
  {
    using Pos = MatrixPosition<I,T> ;
   
@@ -403,9 +538,9 @@ class SparseMatrix<I,T>::MonotonicFill : NoCopy
    
   public:
      
-   explicit MonotonicFill(ulen capacity) : buf(DoReserve,capacity) {}
+   explicit PosFill(ulen capacity) : buf(DoReserve,capacity) {}
    
-   ~MonotonicFill() {}
+   ~PosFill() {}
       
    void add(const Pos &pos) { if( +pos.object ) buf.append_copy(pos); }
    
@@ -418,7 +553,7 @@ class SparseMatrix<I,T>::MonotonicFill : NoCopy
  };
     
 template <class I,class T>
-SparseMatrix<I,T>::SparseMatrix(MonotonicFill &fill) : rowset(DoBuild,fill.getBuilder()) {}
+SparseMatrix<I,T>::SparseMatrix(PosFill &fill) : rowset(DoBuild,fill.getBuilder()) {}
 
 } // namespace App
 

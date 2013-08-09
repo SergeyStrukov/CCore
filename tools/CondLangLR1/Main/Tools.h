@@ -37,6 +37,31 @@ enum ElementOneType
   ElementOne = 1
  };
 
+/* TrackStage() */
+
+template <class ... TT>
+void TrackStage(const char *format,const TT & ... tt)
+ {
+  Printf(Con,format,tt...);
+  
+  Putch(Con,'\n','\n');
+ }
+
+/* SetCmp() */
+
+template <class T>
+bool SetCmp(T &x,const T &a) 
+ {
+  if( x!=a )
+    {
+     x=a;
+     
+     return true;
+    }
+  
+  return false;
+ }
+
 /* classes */
 
 struct PosStr;
@@ -118,7 +143,7 @@ class TrackStep : NoCopy
    
    void finish()
     {
-     Printf(Con,"  step #;\n",count);
+     Printf(Con,"  step #;\n\n",count);
     }
  };
 

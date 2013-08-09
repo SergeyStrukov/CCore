@@ -196,6 +196,17 @@ struct Atom : CmpComparable<Atom> , NoThrowFlagsBase
   // cmp objects
   
   CmpResult objCmp(Atom obj) const { return LessCmp(desc,obj.desc); }
+  
+  // print object
+  
+  template <class P>
+  void print(P &out) const
+   {
+    if( !desc )
+      Putobj(out,"(Null)");
+    else
+      Putobj(out,desc->name);
+   }
  };
 
 /* struct Synt */

@@ -57,8 +57,6 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
    
    bool operator ! () const { return value==Empty; }
    
-   bool notGood() const { return value!=Good; }
-   
    bool set(GoodEstimate obj)
     {
      if( value!=obj.value )
@@ -70,6 +68,10 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
      
      return false;
     }
+   
+   // properties
+   
+   bool notGood() const { return value!=Good; }
    
    // cmp objects
    

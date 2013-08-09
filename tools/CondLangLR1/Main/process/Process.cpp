@@ -16,8 +16,11 @@
 #include "LangDiagram.h"
 #include "LangEstimate.h"
 #include "NonEmptyEstimate.h"
+#include "LR1Estimate.h"
 #include "GoodEstimate.h"
 #include "LangStateMachine.h"
+
+#include <CCore/inc/Exception.h>
 
 namespace App {
 
@@ -35,7 +38,7 @@ static bool RunGoodTest(const Lang &lang)
                            
                            if( est.notGood() )
                              {
-                              Printf(Con,"#; is #;\n",synt.getName(),est);
+                              Printf(NoException,"#; is #;\n",synt.getName(),est);
                              
                               ret=false;
                              }
@@ -45,45 +48,55 @@ static bool RunGoodTest(const Lang &lang)
   return ret;
  }
 
-static void ProcessNonEmpty(const Lang &lang)
+static void ProcessNonEmpty(const ExtLang &lang)
  {
   LangStateMachine<NonEmptyEstimate> machine(lang,{});
-  
+
+  Putobj(Con,lang);
+  Putobj(Con,machine);
   // TODO
  }
 
 static void ProcessLR1(const ExtLang &lang)
  {
+  LangStateMachine<LR1Estimate> machine(lang,lang.getOriginalAtomCount());
+
+  Putobj(Con,lang);
+  Putobj(Con,machine);
   // TODO
  }
 
 void Process(StrLen file_name)
  {
-  Printf(Con,"Load file #.q;\n",file_name);
+  TrackStage("Load file #.q;",file_name);
   
   CondLang clang(file_name);
   
-  Printf(Con,"Build bottom lang\n");
-  
-  BottomLang bottom(clang);
-  
-  Printf(Con,"Build top lang\n");
+  TrackStage("Build top lang");
   
   TopLang top(clang);
   
-  Printf(Con,"Build extended bottom lang\n");
-  
-  ExtLang ext(bottom);
-  
-  Printf(Con,"Run good test on top lang\n");
+  TrackStage("Run good test on top lang");
   
   if( !RunGoodTest(top) ) return;
   
-  // TODO
-  ProcessNonEmpty(top);
-  ProcessLR1(ext);
+  TrackStage("Build bottom lang");
   
-  Printf(Con,"Finish\n");
+  BottomLang bottom(clang);
+  
+  TrackStage("Build extended top lang");
+  
+  ExtLang ext_top(top);
+  
+  TrackStage("Build extended bottom lang");
+  
+  ExtLang ext_bottom(bottom);
+  
+  // TODO
+  ProcessNonEmpty(ext_top);
+  ProcessLR1(ext_bottom);
+  
+  TrackStage("Finish");
  }
 
 } // namespace App

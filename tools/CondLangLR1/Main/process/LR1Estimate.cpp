@@ -1,4 +1,4 @@
-/* LangStateMachine.cpp */
+/* LR1Estimate.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CondLangLR1 1.00
@@ -11,19 +11,10 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include "LangStateMachine.h"
-
-#include <CCore/inc/Exception.h>
+#include "LR1Estimate.h"
 
 namespace App {
 
-/* functions */
-
-void GuardStateCap()
- {
-  Printf(Exception,"App::LangStateMachine<Estimate>::LangStateMachine(...) : state cap reached");
- }
 
 } // namespace App
-
 

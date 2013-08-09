@@ -163,6 +163,21 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
   
      return Set<T,J>(a,b);
     }
+ 
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     auto p=read();
+     
+     if( +p )
+       {
+        Putobj(out,*p);
+        
+        for(++p; +p ;++p) Printf(out," #;",*p);
+       }
+    }
  };
 
 /* struct NoThrowFlagsBaseFor<TT> */
@@ -216,6 +231,14 @@ struct IndexPair : CmpComparable<IndexPair<I,T> > , NoThrowFlagsBaseFor<I,T>
   CmpResult objCmp(const IndexPair<I,T> &obj) const 
    { 
     return AlphaCmp(index,obj.index,object,obj.object);
+   }
+  
+  // print object
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"#; : #;",index,object);
    }
  };
 

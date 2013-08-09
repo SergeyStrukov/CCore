@@ -16,21 +16,6 @@
 
 #include "process/Process.h"
 
-/* Main() */
-
-namespace App {
-
-/* Main() */
-
-int Main(StrLen file_name)
- {
-  Process(file_name);
-  
-  return 0;
- }
-
-} // namespace App
-
 /* main() */ 
 
 using namespace CCore;
@@ -53,16 +38,16 @@ int main(int argc,const char *argv[])
          return 1;
         }
 
-      return App::Main(argv[1]);
+      App::Process(argv[1]);
      } 
      
      report.guard();
+     
+     return 0;
     }
   catch(CatchType)   
     {
      return 1;
     }
-  
-  return 0;
  }
 
