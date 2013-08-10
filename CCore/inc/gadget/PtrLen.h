@@ -131,24 +131,9 @@ struct PtrLen
   
   // reverse cursor
   
-  struct Fin : PtrLen<T>
-   {
-    ulen max_len;
-    
-    Fin(T *ptr,ulen len) : PtrLen<T>(ptr+len,0),max_len(len) {}
-    
-    bool next() 
-     {
-      if( len>=max_len ) return false;
-      
-      ptr--;
-      len++;
-      
-      return true;
-     }
-   };
+  struct Fin;
   
-  Fin getFin() const { return Fin(ptr,len); }
+  Fin getFin() const;
   
   // fit
    
@@ -231,6 +216,27 @@ struct PtrLen
    };
  };
  
+template <class T>
+struct PtrLen<T>::Fin : PtrLen<T>
+ {
+  ulen max_len;
+  
+  Fin(T *ptr,ulen len) : PtrLen<T>(ptr+len,0),max_len(len) {}
+  
+  bool next() 
+   {
+    if( len>=max_len ) return false;
+    
+    ptr--;
+    len++;
+    
+    return true;
+   }
+ };
+
+template <class T>
+auto PtrLen<T>::getFin() const -> Fin { return Fin(ptr,len); }
+
 /* struct StrLen */ 
  
 struct StrLen : PtrLen<const char>

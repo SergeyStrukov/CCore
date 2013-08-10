@@ -23,4 +23,6 @@ CCore/inc/ElementPool.h
 
   shrink_extra() is added() to the MemPool
 
+new target WIN64 for cygwin64 platform
+
 ----------------------

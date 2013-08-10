@@ -47,6 +47,8 @@ void Sem::Give(Type handle) noexcept
   
 void Sem::GiveMany(Type handle,ulen count) noexcept
  {
+  if( !count ) return;
+
   AbortIf( count>(ulen)Win32::MaxSemaphoreCount || !Win32::ReleaseSemaphore(handle,count,0) ,"CCore::Sys::Sem::GiveMany()");
  }
  
