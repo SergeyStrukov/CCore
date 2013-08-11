@@ -8,7 +8,11 @@ CCore/inc/AnyPtr.h
 
 CCore/inc/Exception.h
 
-  ~PrintException() noexcept(false) is added
+  ~PrintException() noexcept(false) and others is added
+
+...
+
+  Sys::AltAsyncFile::MaxRWLen is added
 
 --- New features -----
 
@@ -23,6 +27,8 @@ CCore/inc/ElementPool.h
 
   shrink_extra() is added() to the MemPool
 
-new target WIN64 for cygwin64 platform
+--- New target ---
+
+WIN64 for cygwin64 platform
 
 ----------------------
