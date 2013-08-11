@@ -120,6 +120,8 @@ struct AltAsyncFile
  
   // public
   
+  static const ulen MaxRWLen = 1_MByte ;
+  
   Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
   
   void close(FileMultiError &errout,bool preserve_file=false) noexcept; 

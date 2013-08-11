@@ -269,6 +269,8 @@ struct AltAsyncFile
   
   // public
   
+  static const ulen MaxRWLen = 1_MByte ;
+  
   Result open(StrLen file_name,FileOpenFlags oflags_)
    {
     OpenType result=Open(file_name,oflags_);

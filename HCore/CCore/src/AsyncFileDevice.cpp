@@ -484,10 +484,10 @@ AsyncFileDevice::FileState::FileState(const ObjHook &hook,Engine &engine_)
    is_opened(false)
  {
   write_format.prefix=0;
-  write_format.max_data=MaxULen;
+  write_format.max_data=Sys::AltAsyncFile::MaxRWLen;
   write_format.suffix=0;
   
-  max_read_len=MaxULen;
+  max_read_len=Sys::AltAsyncFile::MaxRWLen;
  }
 
 AsyncFileDevice::FileState::~FileState()
