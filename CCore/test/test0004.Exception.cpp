@@ -82,7 +82,7 @@ bool Testit<4>::Main()
       Test2 test;
       
       Used(test);
-     
+      
       Printf(Exception,"exception");
      }
      

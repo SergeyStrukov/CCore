@@ -155,7 +155,7 @@ class CustomThrow : NoCopy
    template <class ... SS>
    explicit CustomThrow(SS && ... ss) : obj( std::forward<SS>(ss)... ) {}
    
-   ~CustomThrow() { throw obj; }
+   ~CustomThrow() noexcept(false) { throw obj; }
  };
  
 /* class PrintCustomException<T> */ 
@@ -167,6 +167,8 @@ class PrintCustomException : public CustomThrow<T> , public PrintException
    
    template <class ... SS>
    explicit PrintCustomException(SS && ... ss) : CustomThrow<T>( std::forward<SS>(ss)... ) {}
+   
+   ~PrintCustomException() noexcept(false) {}
  };
 
 } // namespace CCore

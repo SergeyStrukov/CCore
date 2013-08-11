@@ -334,7 +334,7 @@ class PrintfDev : PrintDevBase
    template <class S>
    PrintfDev(S &&out_,const char *format_) : out(out_),format(format_) {}
    
-   ~PrintfDev() {}
+   ~PrintfDev() noexcept(false) {}
    
    template <class ... TT>
    void operator () (const TT & ... tt)
@@ -480,7 +480,7 @@ class PutobjDev : NoCopy
    template <class S>
    explicit PutobjDev(S &&out_) : out(out_) {}
    
-   ~PutobjDev() {}
+   ~PutobjDev() noexcept(false) {}
    
    template <class ... TT>
    void operator () (const TT & ... tt)
