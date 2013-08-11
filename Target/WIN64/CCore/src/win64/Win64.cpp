@@ -24,6 +24,17 @@ bool_t ExtWriteFile(handle_t h_file,
                     ulen_t buf_len,
                     ulen_t *ret_len)
  {
+  if( buf_len<=MaxUShortLen )
+    {
+     ushortlen_t ret_short_len;     
+    
+     bool_t ret=WriteFile(h_file,buf,(ushortlen_t)buf_len,&ret_short_len,0);
+     
+     if( ret_len ) *ret_len=ret_short_len;
+     
+     return ret;
+    }
+  
   return false;
  }
 
@@ -32,6 +43,17 @@ bool_t ExtReadFile(handle_t h_file,
                    ulen_t buf_len,
                    ulen_t *ret_len)
  {
+  if( buf_len<=MaxUShortLen )
+    {
+     ushortlen_t ret_short_len;     
+ 
+     bool_t ret=ReadFile(h_file,buf,(ushortlen_t)buf_len,&ret_short_len,0);
+     
+     if( ret_len ) *ret_len=ret_short_len;
+     
+     return ret;
+    }
+  
   return false;
  }
  

@@ -15,7 +15,6 @@
  
 #include <CCore/inc/sys/SysPlanInit.h>
 #include <CCore/inc/sys/SysProp.h>
-#include <CCore/inc/sys/SysFile.h>
 #include <CCore/inc/sys/SysNet.h>
  
 namespace CCore {
@@ -31,7 +30,6 @@ struct Empty
  };
  
 PlanInitObject<Empty,PlanInitReq<GetPlanInitNode_SysProp>
-                    ,PlanInitReq<GetPlanInitNode_SysFile>
                     ,PlanInitReq<GetPlanInitNode_SysNet>
                     > Object CCORE_INITPRI_1 ;
 

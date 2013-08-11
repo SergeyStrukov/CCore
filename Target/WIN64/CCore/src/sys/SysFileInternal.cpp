@@ -1,4 +1,4 @@
-/* SysTime.cpp */ 
+/* SysFileInternal.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.06
@@ -13,40 +13,12 @@
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/sys/SysTime.h>
+#include <CCore/inc/sys/SysFileInternal.h>
  
-#include <CCore/inc/win64/Win64.h>
-
 namespace CCore {
 namespace Sys {
 
-/* functions */ 
 
-MSecTimeType GetMSecTime() noexcept
- {
-  return Win64::GetTickCount();
- }
- 
-SecTimeType GetSecTime() noexcept
- {
-  Win64::file_time_t sys_time;
- 
-  Win64::GetSystemTimeAsFileTime(&sys_time);
-  
-  return SecTimeType( sys_time/10000000-11644473600ul );
- }
- 
-#if 1
-
-// Fake code
-
-ClockTimeType GetClockTime() noexcept
- {
-  return 0; 
- }
- 
-#endif
- 
 } // namespace Sys
 } // namespace CCore
  

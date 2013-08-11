@@ -229,7 +229,11 @@
 ../../Target/WIN64/CCore/src/sys/SysAtomic.cpp
 ../../Target/WIN64/CCore/src/sys/SysCon.cpp
 ../../Target/WIN64/CCore/src/sys/SysError.cpp
+../../Target/WIN64/CCore/src/sys/SysFile.cpp
+../../Target/WIN64/CCore/src/sys/SysFileInternal.cpp
+../../Target/WIN64/CCore/src/sys/SysFileSystem.cpp
 ../../Target/WIN64/CCore/src/sys/SysMemPage.cpp
+../../Target/WIN64/CCore/src/sys/SysNet.cpp
 ../../Target/WIN64/CCore/src/sys/SysPlanInit.cpp
 ../../Target/WIN64/CCore/src/sys/SysProp.cpp
 ../../Target/WIN64/CCore/src/sys/SysSem.cpp
@@ -237,4 +241,5 @@
 ../../Target/WIN64/CCore/src/sys/SysTime.cpp
 ../../Target/WIN64/CCore/src/sys/SysTlsSlot.cpp
 ../../Target/WIN64/CCore/src/sys/SysWait.cpp
+../../Target/WIN64/CCore/src/sys/SysWaitInternal.cpp
 ../../Target/WIN64/CCore/src/win64/Win64.cpp

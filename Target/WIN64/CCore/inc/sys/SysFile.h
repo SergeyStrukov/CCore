@@ -25,10 +25,6 @@
 namespace CCore {
 namespace Sys {
 
-/* GetPlanInitNode_...() */ 
-
-PlanInitNode * GetPlanInitNode_SysFile();
-
 /* classes */ 
 
 struct File;

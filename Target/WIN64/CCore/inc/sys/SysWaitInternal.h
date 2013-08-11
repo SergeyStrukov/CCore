@@ -1,15 +1,15 @@
 /* SysWaitInternal.h */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.02
+//  Project: CCore 1.06
 //
-//  Tag: Target/WIN32
+//  Tag: Target/WIN64
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2011 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@
 
 #include <CCore/inc/Array.h>
 
-#include <CCore/inc/win32/Win32.h>
+#include <CCore/inc/win64/Win64.h>
  
 namespace CCore {
 namespace Sys {
@@ -46,7 +46,7 @@ template <class AsyncState,class Wait> class WaitBase;
 
 class WaitSem : NoCopy
  {
-   Win32::handle_t h_sem;
+   Win64::handle_t h_sem;
   
   public:
    
@@ -54,7 +54,7 @@ class WaitSem : NoCopy
    
    ~WaitSem();
    
-   Win32::handle_t getHandle() { return h_sem; }
+   Win64::handle_t getHandle() { return h_sem; }
    
    void give();
  };
@@ -63,31 +63,31 @@ class WaitSem : NoCopy
 
 struct WaitFile
  {
-  static Win32::handle_t CreateEvent()
+  static Win64::handle_t CreateEvent()
    {
-    return Win32::CreateEventA(0,true,false,0);
+    return Win64::CreateEventA(0,true,false,0);
    }
   
-  static Win32::bool_t DestroyEvent(Win32::handle_t h_event)
+  static Win64::bool_t DestroyEvent(Win64::handle_t h_event)
    {
-    return Win32::CloseHandle(h_event);
+    return Win64::CloseHandle(h_event);
    }
   
-  static WaitResult WaitSome(Win32::handle_t *hlist,ulen hcount,MSec timeout)
+  static WaitResult WaitSome(Win64::handle_t *hlist,Win64::ushortlen_t hcount,MSec timeout)
    {
-    auto result=Win32::WaitForMultipleObjects(hcount,hlist,false,+timeout);
+    auto result=Win64::WaitForMultipleObjects(hcount,hlist,false,+timeout);
        
     switch( result )
       {
-       case Win32::WaitFailed : return Wait_error; 
+       case Win64::WaitFailed : return Wait_error; 
         
-       case Win32::WaitTimeout : return Wait_timeout;
+       case Win64::WaitTimeout : return Wait_timeout;
        
        default: 
         {
          ulen slot;
          
-         if( result>=Win32::WaitObject_0 && (slot=ulen(result-Win32::WaitObject_0))<hcount )
+         if( result>=Win64::WaitObject_0 && (slot=ulen(result-Win64::WaitObject_0))<hcount )
            {
             return WaitResult(slot);
            }
@@ -104,31 +104,31 @@ struct WaitFile
 
 struct WaitNet
  {
-  static Win32::handle_t CreateEvent()
+  static Win64::handle_t CreateEvent()
    {
-    return Win32::WSACreateEvent();
+    return Win64::WSACreateEvent();
    }
   
-  static Win32::bool_t DestroyEvent(Win32::handle_t h_event)
+  static Win64::bool_t DestroyEvent(Win64::handle_t h_event)
    {
-    return Win32::WSACloseEvent(h_event);
+    return Win64::WSACloseEvent(h_event);
    }
   
-  static WaitResult WaitSome(Win32::handle_t *hlist,ulen hcount,MSec timeout)
+  static WaitResult WaitSome(Win64::handle_t *hlist,Win64::ushortlen_t hcount,MSec timeout)
    {
-    auto result=Win32::WSAWaitForMultipleEvents(hcount,hlist,false,+timeout,false);
+    auto result=Win64::WSAWaitForMultipleEvents(hcount,hlist,false,+timeout,false);
        
     switch( result )
       {
-       case Win32::WSAWaitFailed : return Wait_error; 
+       case Win64::WSAWaitFailed : return Wait_error; 
         
-       case Win32::WSAWaitTimeout : return Wait_timeout;
+       case Win64::WSAWaitTimeout : return Wait_timeout;
        
        default: 
         {
          ulen slot;
          
-         if( result>=Win32::WSAWaitObject_0 && (slot=ulen(result-Win32::WSAWaitObject_0))<hcount )
+         if( result>=Win64::WSAWaitObject_0 && (slot=ulen(result-Win64::WSAWaitObject_0))<hcount )
            {
             return WaitResult(slot);
            }
@@ -140,19 +140,19 @@ struct WaitNet
       }
    }
   
-  static WaitResult WaitAll(Win32::handle_t *hlist,ulen hcount,MSec timeout)
+  static WaitResult WaitAll(Win64::handle_t *hlist,Win64::ushortlen_t hcount,MSec timeout)
    {
-    auto result=Win32::WSAWaitForMultipleEvents(hcount,hlist,true,+timeout,false);
+    auto result=Win64::WSAWaitForMultipleEvents(hcount,hlist,true,+timeout,false);
     
     switch( result )
       {
-       case Win32::WSAWaitFailed : return Wait_error;
+       case Win64::WSAWaitFailed : return Wait_error;
         
-       case Win32::WSAWaitTimeout : return Wait_timeout;
+       case Win64::WSAWaitTimeout : return Wait_timeout;
        
        default: 
         {
-         if( result>=Win32::WSAWaitObject_0 && ulen(result-Win32::WSAWaitObject_0)<hcount )
+         if( result>=Win64::WSAWaitObject_0 && ulen(result-Win64::WSAWaitObject_0)<hcount )
            {
             return WaitResult(0);
            }
@@ -182,7 +182,7 @@ class WaitBase : public MemBase_nocopy
       
       ~State();
       
-      Win32::handle_t getHandle() { return state.olap.h_event; }
+      Win64::handle_t getHandle() { return state.olap.h_event; }
       
       AsyncState * getAsync() { return &state; }
       
@@ -201,12 +201,12 @@ class WaitBase : public MemBase_nocopy
    SimpleArray<State,ArrayAlgo<State,typename State::Flags> > state_buf;
    SimpleArray<AsyncState *> async_buf;
    
-   SimpleArray<Win32::handle_t> handle_buf;
+   SimpleArray<Win64::handle_t> handle_buf;
    SimpleArray<ulen> index_buf;
    
    WaitSem sem;
    
-   ulen count;
+   Win64::ushortlen_t count;
    bool sem_first;
    
   private:

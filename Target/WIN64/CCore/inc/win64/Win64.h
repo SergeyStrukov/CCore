@@ -64,9 +64,17 @@ typedef void *void_ptr;
 
 typedef const void *const_void_ptr;
 
+/* type proc_t */ 
+
+typedef void (*proc_t)(void);
+
 /* type handle_t */ 
 
 typedef long handle_t;
+
+/* type socket_t */
+
+typedef long socket_t;
 
 /* type numid_t */ 
 
@@ -100,8 +108,8 @@ struct SecurityAttributes;
 
 struct Overlapped
  {
-  file_len_t internal;
-  file_len_t internal_hi;
+  ulen_t internal;
+  ulen_t internal_hi;
   file_len_t offset;
   handle_t h_event;
  };
@@ -284,6 +292,62 @@ options_t WIN64_API WaitForMultipleObjects(ushortlen_t hcount,
                                            timeout_t timeout);
 
 /*--------------------------------------------------------------------------------------*/ 
+/* Process flags                                                                        */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* enum ProcessCreationFlags */ 
+
+enum ProcessCreationFlags
+ {
+  CreateNewConsole = 0x0010
+ };
+ 
+/*--------------------------------------------------------------------------------------*/ 
+/* Process structures                                                                   */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* struct StartupInfo */  
+ 
+struct StartupInfo 
+ {
+  ushortlen_t cb;
+  
+  const char *reserved;
+  const char *desktop;
+  const char *title;
+  
+  unsigned x;
+  unsigned y;
+  unsigned dx;
+  unsigned dy;
+  
+  unsigned dx_chars;
+  unsigned dy_chars;
+  
+  flags_t fill_attr;
+  flags_t flags;
+  
+  short show_window;
+  short reserved2;
+  
+  void_ptr reserved3;
+  
+  handle_t h_stdin;
+  handle_t h_stdout;
+  handle_t h_stderr;
+ };
+ 
+/* struct ProcessInfo */  
+ 
+struct ProcessInfo
+ {
+  handle_t h_process;
+  handle_t h_thread;
+  numid_t process_id;
+  numid_t thread_id;
+ };
+ 
+/*--------------------------------------------------------------------------------------*/ 
 /* Process functions                                                                    */ 
 /*--------------------------------------------------------------------------------------*/ 
 
@@ -302,6 +366,19 @@ void WIN64_API Sleep(timeout_t timeout);
 /* GetCurrentThreadId() */ 
 
 numid_t WIN64_API GetCurrentThreadId(void);
+
+/* CreateProcessA() */ 
+
+bool_t WIN64_API CreateProcessA(const char *program,
+                                const char *arg,
+                                SecurityAttributes *,
+                                SecurityAttributes *,
+                                bool_t inherit_handles,
+                                flags_t process_creation_flags,
+                                void_ptr,
+                                const char *dir,
+                                StartupInfo *info,
+                                ProcessInfo *pinfo);
 
 /*--------------------------------------------------------------------------------------*/ 
 /* System property functions                                                            */ 
@@ -625,6 +702,321 @@ bool_t WIN64_API SetFileInformationByHandle(handle_t h_file,
                                             ushortlen_t buf_len);
 
 /*--------------------------------------------------------------------------------------*/ 
+/* File system structures                                                               */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* struct FileTime */
+
+struct FileTime
+ {
+  unsigned lo;
+  unsigned hi;
+ };
+
+/* struct FindFileData */  
+
+struct FindFileData
+ {
+  flags_t attr;
+  
+  FileTime creation_time;
+  FileTime last_access_time;
+  FileTime last_write_time;
+  
+  unsigned file_len_hi;
+  unsigned file_len_lo;
+  
+  flags_t reserved0;
+  flags_t reserved1;
+  
+  char file_name[260];
+  char alt_file_name[16];
+ }; 
+ 
+/*--------------------------------------------------------------------------------------*/ 
+/* File system functions                                                                */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* GetFileAttributesA() */ 
+
+flags_t WIN64_API GetFileAttributesA(const char *path);
+
+/* DeleteFileA() */ 
+
+bool_t WIN64_API DeleteFileA(const char *path);
+
+/* CreateDirectoryA() */ 
+
+bool_t WIN64_API CreateDirectoryA(const char *path,SecurityAttributes *);
+
+/* RemoveDirectoryA() */ 
+
+bool_t WIN64_API RemoveDirectoryA(const char *path);
+
+/* MoveFileExA() */ 
+
+bool_t WIN64_API MoveFileExA(const char *old_path,const char *new_path,flags_t flags);
+
+/* FindFirstFileA() */ 
+
+handle_t WIN64_API FindFirstFileA(const char *path,FindFileData *find_data);
+
+/* FindNextFileA() */ 
+
+bool_t WIN64_API FindNextFileA(handle_t h_find,FindFileData *find_data);
+
+/* FindClose() */ 
+
+bool_t WIN64_API FindClose(handle_t h_find);
+
+/* GetFullPathNameA() */
+
+ulen_t WIN64_API GetFullPathNameA(const char *path,
+                                  ushortlen_t buf_len,
+                                  char *buf,
+                                  char **file_part);
+
+/*--------------------------------------------------------------------------------------*/ 
+/* Socket flags and options                                                             */ 
+/*--------------------------------------------------------------------------------------*/
+
+/* const InvalidSocket */
+
+const socket_t InvalidSocket = -1 ;
+
+/* const InvalidULen */
+
+const ushortlen_t InvalidUShortLen = ushortlen_t(-1) ;
+
+/* enum WSAVersions */
+
+enum WSAVersions
+ {
+  WSAVersion_2_00 = 0x0002,
+  WSAVersion_2_02 = 0x0202
+ };
+
+/* enum WSAAddressFamily */
+
+enum WSAAddressFamily
+ {
+  WSA_IPv4 = 2
+ };
+
+/* enum WSASocketType */
+
+enum WSASocketType
+ {
+  WSA_Datagram = 2
+ };
+
+/* enum WSAProtocol */
+
+enum WSAProtocol
+ {
+  WSA_UDP = 17
+ };
+
+/* enum WSASocketFlags */
+
+enum WSASocketFlags
+ {
+  WSA_AsyncIO = 0x0001
+ };
+
+/* enum WSAWaitOptions */ 
+
+enum WSAWaitOptions
+ {
+  WSAWaitFailed     =  -1,
+  WSAWaitObject_0   =   0,
+  WSAWaitTimeout    = 258
+ };
+ 
+/*--------------------------------------------------------------------------------------*/ 
+/* Socket structures                                                                    */ 
+/*--------------------------------------------------------------------------------------*/
+
+/* type WSAGroup */
+
+typedef unsigned WSAGroup;
+
+/* type WSAVersion */
+
+typedef unsigned short WSAVersion;
+
+/* struct WSAInfo */
+
+struct WSAInfo
+ {
+  WSAVersion version;
+  WSAVersion hi_version;
+  
+  unsigned short max_sockets;
+  unsigned short max_UDP_data_len;
+  
+  char *vendor_info;
+  
+  char desc[257];
+  char status[129];
+ };
+
+/* struct WSAProtocolInfo */
+
+struct WSAProtocolInfo;
+
+/* struct WSASockSet */
+
+struct WSASockSet
+ {
+  ushortlen_t count;
+  socket_t set[64];
+ };
+
+/* struct WSATimeout */
+
+struct WSATimeout
+ {
+  unsigned sec;
+  unsigned usec;
+ };
+
+/* struct WSAOverlapped */ 
+
+struct WSAOverlapped
+ {
+  ulen_t internal;
+  ulen_t internal_hi;
+  file_len_t offset;
+  handle_t h_event;
+ };
+
+/* struct WSABuf */
+
+struct WSABuf
+ {
+  ushortlen_t len;
+  void_ptr ptr;
+ };
+
+/*--------------------------------------------------------------------------------------*/ 
+/* Socket functions                                                                     */ 
+/*--------------------------------------------------------------------------------------*/
+
+/* WSAStartup() */
+
+error_t WIN64_API WSAStartup(WSAVersion version,WSAInfo *info);
+
+/* WSACleanup() */
+
+negbool_t WIN64_API WSACleanup(void);
+
+/* WSAGetLastError() */
+
+error_t WIN64_API WSAGetLastError(void);
+
+/* WSASocket() */
+
+socket_t WIN64_API WSASocketA(options_t address_family,
+                              options_t type,
+                              options_t protocol,
+                              WSAProtocolInfo *,
+                              WSAGroup,
+                              flags_t flags);
+
+/* bind() */
+
+negbool_t WIN64_API bind(socket_t sock,
+                         const_void_ptr address,
+                         ushortlen_t address_len);
+
+/* closesocket() */
+
+negbool_t WIN64_API closesocket(socket_t sock);
+
+/* sendto() */
+
+ushortlen_t WIN64_API sendto(socket_t sock,
+                             const_void_ptr data,
+                             ushortlen_t data_len,
+                             flags_t,
+                             const_void_ptr address,
+                             ushortlen_t address_len);
+
+/* recvfrom() */
+
+ushortlen_t WIN64_API recvfrom(socket_t sock,
+                               void_ptr buf,
+                               ushortlen_t buf_len,
+                               flags_t,
+                               void_ptr address,
+                               ushortlen_t *address_len);
+
+/* select() */
+
+ushortlen_t WIN64_API select(int,
+                             WSASockSet *read_set,
+                             WSASockSet *write_set,
+                             WSASockSet *error_set,
+                             const WSATimeout *timeout);
+
+/* WSASendTo() */
+
+negbool_t WIN64_API WSASendTo(socket_t sock,
+                              WSABuf *buf,
+                              ushortlen_t buf_len,
+                              ushortlen_t *ret_len,
+                              flags_t,
+                              const_void_ptr address,
+                              ushortlen_t address_len,
+                              WSAOverlapped *olap,
+                              proc_t);
+
+/* WSARecvFrom() */
+
+negbool_t WIN64_API WSARecvFrom(socket_t sock,
+                                WSABuf *buf,
+                                ushortlen_t buf_len,
+                                ushortlen_t *ret_len,
+                                flags_t *ret_flags,
+                                void_ptr address,
+                                ushortlen_t *address_len,
+                                WSAOverlapped *olap,
+                                proc_t);
+
+/* WSAGetOverlappedResult() */
+
+bool_t WIN64_API WSAGetOverlappedResult(socket_t sock,
+                                        WSAOverlapped *olap,
+                                        ushortlen_t *ret_len,
+                                        bool_t wait_flag,
+                                        flags_t *ret_flags);
+
+/* WSACreateEvent() */
+
+handle_t WIN64_API WSACreateEvent(void);
+
+/* WSACloseEvent() */
+
+bool_t WIN64_API WSACloseEvent(handle_t h_event);
+
+/* WSASetEvent() */
+
+bool_t WIN64_API WSASetEvent(handle_t h_event);
+
+/* WSAResetEvent() */
+
+bool_t WIN64_API WSAResetEvent(handle_t h_event);
+
+/* WSAWaitForMultipleEvents() */
+
+options_t WIN64_API WSAWaitForMultipleEvents(ushortlen_t hcount,
+                                             handle_t hlist[/* hcount */],
+                                             bool_t wait_all,
+                                             timeout_t timeout,
+                                             bool_t);
+
+/*--------------------------------------------------------------------------------------*/ 
 /* TLS constants                                                                        */ 
 /*--------------------------------------------------------------------------------------*/ 
 
@@ -652,6 +1044,21 @@ void_ptr WIN64_API TlsGetValue(int index);
 
 bool_t WIN64_API TlsSetValue(int index,void_ptr value);
 
+/*--------------------------------------------------------------------------------------*/ 
+/* Event functions                                                                      */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* CreateEventA() */ 
+
+handle_t WIN64_API CreateEventA(SecurityAttributes *,
+                                bool_t manual_reset,
+                                bool_t initial_state,
+                                const char *object_name);
+
+/* SetEvent() */ 
+ 
+bool_t WIN64_API SetEvent(handle_t h_event);
+ 
 /*--------------------------------------------------------------------------------------*/ 
 /* Semaphore constants                                                                  */ 
 /*--------------------------------------------------------------------------------------*/ 
@@ -681,7 +1088,7 @@ bool_t WIN64_API ReleaseSemaphore(handle_t h_sem,sem_count_t delta,sem_count_t *
 
 const ushortlen_t MaxUShortLen = ushortlen_t(-1) ;
 
-inline ushortlen_t CapLen(ulen_t len) { if( len>MaxUShortLen ) return MaxUShortLen; return len; }
+inline ushortlen_t CapLen(ulen_t len) { if( len>MaxUShortLen ) return MaxUShortLen; return (ushortlen_t)len; }
 
 bool_t ExtWriteFile(handle_t h_file,
                     const_void_ptr buf,

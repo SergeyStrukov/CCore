@@ -53,7 +53,7 @@ struct UDPSocket
   
   // private data
   
-  typedef int Type;
+  typedef long Type;
   
   Type sockid;
   
@@ -147,7 +147,7 @@ struct AsyncUDPSocket
   
   // private data
   
-  typedef int Type;
+  typedef long Type;
   
   Type sockid;
   

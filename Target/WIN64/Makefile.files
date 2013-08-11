@@ -206,7 +206,11 @@ obj/SysAsyncFileSystem.o \
 obj/SysAtomic.o \
 obj/SysCon.o \
 obj/SysError.o \
+obj/SysFile.o \
+obj/SysFileInternal.o \
+obj/SysFileSystem.o \
 obj/SysMemPage.o \
+obj/SysNet.o \
 obj/SysPlanInit.o \
 obj/SysProp.o \
 obj/SysSem.o \
@@ -214,6 +218,7 @@ obj/SysTask.o \
 obj/SysTime.o \
 obj/SysTlsSlot.o \
 obj/SysWait.o \
+obj/SysWaitInternal.o \
 obj/Task.o \
 obj/TaskCore.o \
 obj/TaskEvent.o \
@@ -449,7 +454,11 @@ obj/SysAsyncFileSystem.s \
 obj/SysAtomic.s \
 obj/SysCon.s \
 obj/SysError.s \
+obj/SysFile.s \
+obj/SysFileInternal.s \
+obj/SysFileSystem.s \
 obj/SysMemPage.s \
+obj/SysNet.s \
 obj/SysPlanInit.s \
 obj/SysProp.s \
 obj/SysSem.s \
@@ -457,6 +466,7 @@ obj/SysTask.s \
 obj/SysTime.s \
 obj/SysTlsSlot.s \
 obj/SysWait.s \
+obj/SysWaitInternal.s \
 obj/Task.s \
 obj/TaskCore.s \
 obj/TaskEvent.s \
@@ -692,7 +702,11 @@ obj/SysAsyncFileSystem.dep \
 obj/SysAtomic.dep \
 obj/SysCon.dep \
 obj/SysError.dep \
+obj/SysFile.dep \
+obj/SysFileInternal.dep \
+obj/SysFileSystem.dep \
 obj/SysMemPage.dep \
+obj/SysNet.dep \
 obj/SysPlanInit.dep \
 obj/SysProp.dep \
 obj/SysSem.dep \
@@ -700,6 +714,7 @@ obj/SysTask.dep \
 obj/SysTime.dep \
 obj/SysTlsSlot.dep \
 obj/SysWait.dep \
+obj/SysWaitInternal.dep \
 obj/Task.dep \
 obj/TaskCore.dep \
 obj/TaskEvent.dep \
@@ -1354,7 +1369,19 @@ obj/SysCon.o : ../../Target/WIN64/CCore/src/sys/SysCon.cpp
 obj/SysError.o : ../../Target/WIN64/CCore/src/sys/SysError.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/SysFile.o : ../../Target/WIN64/CCore/src/sys/SysFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysFileInternal.o : ../../Target/WIN64/CCore/src/sys/SysFileInternal.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysFileSystem.o : ../../Target/WIN64/CCore/src/sys/SysFileSystem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/SysMemPage.o : ../../Target/WIN64/CCore/src/sys/SysMemPage.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysNet.o : ../../Target/WIN64/CCore/src/sys/SysNet.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SysPlanInit.o : ../../Target/WIN64/CCore/src/sys/SysPlanInit.cpp
@@ -1376,6 +1403,9 @@ obj/SysTlsSlot.o : ../../Target/WIN64/CCore/src/sys/SysTlsSlot.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SysWait.o : ../../Target/WIN64/CCore/src/sys/SysWait.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SysWaitInternal.o : ../../Target/WIN64/CCore/src/sys/SysWaitInternal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Task.o : ../../HCore/CCore/src/Task.cpp
@@ -2076,7 +2106,19 @@ obj/SysCon.s : ../../Target/WIN64/CCore/src/sys/SysCon.cpp
 obj/SysError.s : ../../Target/WIN64/CCore/src/sys/SysError.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SysFile.s : ../../Target/WIN64/CCore/src/sys/SysFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysFileInternal.s : ../../Target/WIN64/CCore/src/sys/SysFileInternal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysFileSystem.s : ../../Target/WIN64/CCore/src/sys/SysFileSystem.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SysMemPage.s : ../../Target/WIN64/CCore/src/sys/SysMemPage.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysNet.s : ../../Target/WIN64/CCore/src/sys/SysNet.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/SysPlanInit.s : ../../Target/WIN64/CCore/src/sys/SysPlanInit.cpp
@@ -2098,6 +2140,9 @@ obj/SysTlsSlot.s : ../../Target/WIN64/CCore/src/sys/SysTlsSlot.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/SysWait.s : ../../Target/WIN64/CCore/src/sys/SysWait.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SysWaitInternal.s : ../../Target/WIN64/CCore/src/sys/SysWaitInternal.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Task.s : ../../HCore/CCore/src/Task.cpp
@@ -2798,8 +2843,20 @@ obj/SysCon.dep : ../../Target/WIN64/CCore/src/sys/SysCon.cpp
 obj/SysError.dep : ../../Target/WIN64/CCore/src/sys/SysError.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysError.o $< -MF $@
 
+obj/SysFile.dep : ../../Target/WIN64/CCore/src/sys/SysFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysFile.o $< -MF $@
+
+obj/SysFileInternal.dep : ../../Target/WIN64/CCore/src/sys/SysFileInternal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysFileInternal.o $< -MF $@
+
+obj/SysFileSystem.dep : ../../Target/WIN64/CCore/src/sys/SysFileSystem.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysFileSystem.o $< -MF $@
+
 obj/SysMemPage.dep : ../../Target/WIN64/CCore/src/sys/SysMemPage.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysMemPage.o $< -MF $@
+
+obj/SysNet.dep : ../../Target/WIN64/CCore/src/sys/SysNet.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysNet.o $< -MF $@
 
 obj/SysPlanInit.dep : ../../Target/WIN64/CCore/src/sys/SysPlanInit.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysPlanInit.o $< -MF $@
@@ -2821,6 +2878,9 @@ obj/SysTlsSlot.dep : ../../Target/WIN64/CCore/src/sys/SysTlsSlot.cpp
 
 obj/SysWait.dep : ../../Target/WIN64/CCore/src/sys/SysWait.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysWait.o $< -MF $@
+
+obj/SysWaitInternal.dep : ../../Target/WIN64/CCore/src/sys/SysWaitInternal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysWaitInternal.o $< -MF $@
 
 obj/Task.dep : ../../HCore/CCore/src/Task.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Task.o $< -MF $@
