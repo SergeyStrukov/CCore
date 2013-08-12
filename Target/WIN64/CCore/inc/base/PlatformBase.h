@@ -53,8 +53,8 @@ const unsigned MaxAlign  = 16   ;
 
 /* types */ 
 
-typedef unsigned long        ulen  ;
-typedef unsigned long        uptr  ;
+typedef unsigned long       ulen   ;
+typedef unsigned long       uptr   ;
  
 typedef unsigned char       uint8  ;
 typedef unsigned short      uint16 ;

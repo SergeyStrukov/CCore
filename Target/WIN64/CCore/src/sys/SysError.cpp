@@ -52,7 +52,7 @@ bool ErrorDesc::init(ErrorType error,PtrLen<char> buf) noexcept
                       |Win64::FormatMessageIgnoreInserts
                       |Win64::FormatMessageMaxWidthMask;
   
-  len=Win64::FormatMessageA(flags,0,error,0,buf.ptr,Win64::CapLen(buf.len),0);
+  len=Win64::FormatMessageA(flags,0,error,0,buf.ptr,(Win64::ushortlen_t)Min<ulen>(buf.len,4_KByte),0);
 
   if( len )
     {
