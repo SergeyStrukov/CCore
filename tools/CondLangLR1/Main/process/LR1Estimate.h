@@ -79,6 +79,27 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
    using Rec = IndexPair<Atom,ExtRuleSet> ;
    
    using RecSet = Set<Rec,Joiner> ;
+   
+   class CrossBuilder
+    {
+      PtrLen<const Rec> beta;
+      RuleSet alpha;
+      
+     public:
+      
+      CrossBuilder(const RecSet &beta_,const RuleSet &alpha_) : beta(beta_.read()),alpha(alpha_) {}
+      
+      ulen getLen() const { return beta.len; }
+      
+      PtrLen<Rec> operator () (Place<void> place)
+       {
+        typename ArrayAlgo<Rec>::CreateGuard_nothrow guard(place,getLen());
+        
+        for(auto p=beta; +p ;++p,++guard) new(guard.at()) Rec(p->index,alpha); 
+        
+        return guard.disarm();
+       }
+    };
   
   private:
   
@@ -115,11 +136,7 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
         
      if( a.alpha.nonEmpty() )
        {
-        RecSet cross(b.beta);
-        
-        for(auto p=cross.write(); +p ;++p) p->object=a.alpha;
-           
-        beta=beta+cross;
+        beta=beta+RecSet(DoBuild,CrossBuilder(b.beta,a.alpha));
        }
     }
    
@@ -164,7 +181,7 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
    
    bool operator ! () const { return empty; }
    
-   bool set(const LR1Estimate &obj) { return SetCmp(*this,obj); }
+   bool setCmp(const LR1Estimate &obj) { return SetCmp(*this,obj); }
    
    // properties
    
@@ -192,6 +209,8 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
     
      return LR1Estimate(a,b);
     }
+
+   class Accumulator;
    
    // print object
    
@@ -227,6 +246,32 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
           }
        }
     }
+ };
+
+class LR1Estimate::Accumulator : NoCopy
+ {
+   bool empty;
+   bool null;
+   RuleSet::Accumulator alpha;
+   RecSet::Accumulator beta;
+   
+  public:
+ 
+   Accumulator() 
+    {
+     empty=true;
+     null=false;
+    }
+   
+   void operator += (LR1Estimate obj) 
+    { 
+     empty&=obj.empty;
+     null|=obj.null;
+     alpha+=obj.alpha;
+     beta+=obj.beta;
+    }
+
+   operator LR1Estimate() const { return LR1Estimate(empty,null,alpha,beta); } 
  };
 
 } // namespace App

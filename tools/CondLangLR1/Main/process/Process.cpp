@@ -13,11 +13,10 @@
 
 #include "Process.h"
 
-#include "LangDiagram.h"
-#include "LangEstimate.h"
 #include "NonEmptyEstimate.h"
-#include "LR1Estimate.h"
 #include "GoodEstimate.h"
+#include "LR1Estimate.h"
+
 #include "LangStateMachine.h"
 
 #include <CCore/inc/Exception.h>

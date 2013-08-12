@@ -52,7 +52,7 @@ class NonEmptyEstimate : public CmpComparable<NonEmptyEstimate> , public NoThrow
    
    bool operator ! () const { return !value; }
    
-   bool set(NonEmptyEstimate obj)
+   bool setCmp(NonEmptyEstimate obj)
     {
      if( value!=obj.value )
        {
@@ -73,6 +73,10 @@ class NonEmptyEstimate : public CmpComparable<NonEmptyEstimate> , public NoThrow
    friend NonEmptyEstimate operator + (NonEmptyEstimate a,NonEmptyEstimate b) { return a.value|b.value; }
    
    friend NonEmptyEstimate operator * (NonEmptyEstimate a,NonEmptyEstimate b) { return a.value&b.value; }
+   
+   using Accumulator = NonEmptyEstimate ;
+   
+   void operator += (NonEmptyEstimate obj) { (*this)=(*this)+obj; }
    
    // print object
    

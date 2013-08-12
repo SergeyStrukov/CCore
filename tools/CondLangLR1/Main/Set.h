@@ -148,8 +148,6 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
    
    PtrLen<const T> read() const { return Range_const(array); }
    
-   PtrLen<T> write() { return array.modify(); }
-   
    // cmp objects
    
    CmpResult objCmp(const Set<T,J> &obj) const { return RangeCmp(read(),obj.read()); }
@@ -164,6 +162,10 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
      return Set<T,J>(a,b);
     }
  
+   using Accumulator = Set<T,J> ;
+   
+   void operator += (const Set<T,J> &obj) { (*this)=(*this)+obj; }
+   
    // print object
    
    template <class P>

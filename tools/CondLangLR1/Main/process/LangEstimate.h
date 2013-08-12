@@ -53,11 +53,11 @@ class LangEstimate : NoCopy
 template <class Estimate> 
 bool LangEstimate<Estimate>::step(Synt synt)
  {
-  Estimate est(ElementNull);
+  typename Estimate::Accumulator est;
   
-  synt.apply( [&] (Rule rule) { est=est+(*this)(rule.getArgs()); } );
+  synt.apply( [&] (Rule rule) { est+=(*this)(rule.getArgs()); } );
   
-  return buf[synt.getIndex()].set(est);
+  return buf[synt.getIndex()].setCmp(est);
  }
 
 template <class Estimate> 

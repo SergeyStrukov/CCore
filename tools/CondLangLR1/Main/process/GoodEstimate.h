@@ -57,7 +57,7 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
    
    bool operator ! () const { return value==Empty; }
    
-   bool set(GoodEstimate obj)
+   bool setCmp(GoodEstimate obj)
     {
      if( value!=obj.value )
        {
@@ -82,6 +82,10 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
    friend GoodEstimate operator + (GoodEstimate a,GoodEstimate b) { return Max(a.value,b.value); }
    
    friend GoodEstimate operator * (GoodEstimate a,GoodEstimate b) { return Type(Min<int>(a.value*b.value,2)); }
+   
+   using Accumulator = GoodEstimate ;
+   
+   void operator += (GoodEstimate obj) { (*this)=(*this)+obj; }
    
    // print object
    

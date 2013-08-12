@@ -106,7 +106,7 @@ class LangDiagram : NoCopy
    
    PtrLen<const Arrow> getArrows() const { return Range(arrows); }
    
-   PtrLen<const Vertex> getStart() const { return Range(start); }
+   PtrLen<const Vertex> getStart() const { return Range(start); } // strictly ordered
    
    Vertex getStop() const { return stop; }
    

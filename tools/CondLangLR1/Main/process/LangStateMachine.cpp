@@ -19,7 +19,7 @@ namespace App {
 
 /* functions */
 
-void GuardStateCap()
+void GuardStateCapReached()
  {
   Printf(Exception,"App::LangStateMachine<Estimate>::LangStateMachine(...) : state cap reached");
  }

@@ -31,7 +31,12 @@ const ulen StateCap = 1000000 ;
 
 /* functions */
 
-void GuardStateCap();
+void GuardStateCapReached();
+
+inline void GuardStateCap(ulen count)
+ {
+  if( count>=StateCap ) GuardStateCapReached();
+ }
 
 /* classes */
 
@@ -50,7 +55,7 @@ class LangStateMachine : NoCopy
    
    using Position = MatrixPosition<Vertex,Estimate> ;
    
-   struct ArrowRec : NoThrowFlagsBaseFor<Position>
+   struct ArrowRec : NoCopy , NoThrowFlagsBaseFor<Position>
     {
      ArrowRec *next = 0 ;
      
@@ -151,10 +156,7 @@ class LangStateMachine : NoCopy
         
         ulen index=allocator.getCount();
         
-        if( index>=StateCap )
-          {
-           GuardStateCap();
-          }
+        GuardStateCap(index);
         
         State *ret=allocator.alloc(index,transition_count);
         
@@ -174,7 +176,7 @@ class LangStateMachine : NoCopy
    
   public:
    
-   struct StateDesc : NoCopy , NoThrowFlagsBase
+   struct StateDesc : NoCopy , NoThrowFlagsBaseFor<Estimate>
     {
      ulen index;
      Estimate est;
@@ -208,7 +210,7 @@ class LangStateMachine : NoCopy
    
    LangStateMachine(const ExtLang &lang,const Context &ctx) : LangStateMachine(lang,lang.getOriginalAtomCount(),ctx) {}
    
-   ~LangStateMachine();
+   ~LangStateMachine() {}
    
    // description
    
@@ -238,6 +240,8 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
   
   LangEstimate<Estimate> estimate(lang,ctx);
 
+  //--------------------------------------------------------------------------
+  
   LangDiagram diagram(lang);
   
   //--------------------------------------------------------------------------
@@ -257,7 +261,7 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
    
    auto arrows=diagram.getArrows();
    
-   DynArray<ArrowRec> buf(DoReserve,arrows.len);
+   DynArray<ArrowRec,ArrayAlgo_mini<ArrowRec> > buf(DoReserve,arrows.len);
    
    for(auto &arrow : arrows )
      {
@@ -296,21 +300,9 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
   {
    TrackStep track;
    
-   for(;;)
-     {
-      Matrix X=F+F*F;
-      
-      if( F==X ) 
-        {
-         track.finish();
-        
-         break;
-        }
-     
-      F=X;
-      
-      track.step();
-     }
+   while( SetCmp(F,F+F*F) ) track.step();
+   
+   track.finish();
   }
   
   {
@@ -339,58 +331,57 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
   
   StateStorage storage(count,diagram.getStop());
   
-  TrackStep track;
-  
-  for(StateCur cur(storage.find_or_add(S)); +cur ;++cur)
-    {
-     const Vector &V=cur->getVector();
-     
-     for(ulen i=0; i<count ;i++)
-       {
-        State *dst=storage.find_or_add(T[i]*V);
-        
-        cur->transitions[i]=dst;
-       }
-     
-     track.step();
-    }
-  
-  track.finish();
+  {
+   TrackStep track;
+    
+   for(StateCur cur(storage.find_or_add(S)); +cur ;++cur)
+     {
+      const Vector &V=cur->getVector();
+       
+      for(ulen i=0; i<count ;i++)
+        {
+         State *dst=storage.find_or_add(T[i]*V);
+          
+         cur->transitions[i]=dst;
+        }
+       
+      track.step();
+     }
+    
+   track.finish();
+  }
   
   //--------------------------------------------------------------------------
   
-  ulen state_count=storage.getCount();
-  
-  DynArray<StateDesc> state_table(state_count);
-  DynArray<const StateDesc *> transitions_buf(LenOf(count,state_count));
-  
-  auto tbuf=Range(transitions_buf);
-  
-  for(StateCur cur(storage.getStart()); +cur ;++cur)
-    {
-     ulen index=cur->index;
-     
-     auto &desc=state_table[index];
-     
-     desc.index=index;
-     desc.est=cur->est;
-     desc.transitions=tbuf.part(index*count,count);
-     
-     for(ulen i=0; i<count ;i++)
-       {
-        ulen dst=cur->transitions[i]->index;
-        
-        desc.transitions[i]=state_table.getPtr()+dst;
-       }
-    }
-  
-  Swap(state_table,this->state_table);
-  Swap(transitions_buf,this->transitions_buf);
- }
-
-template <class Estimate> 
-LangStateMachine<Estimate>::~LangStateMachine() 
- {
+  {
+   ulen state_count=storage.getCount();
+   
+   DynArray<StateDesc> state_table(state_count);
+   DynArray<const StateDesc *> transitions_buf(DoRaw(LenOf(count,state_count)));
+   
+   auto tbuf=Range(transitions_buf);
+   
+   for(StateCur cur(storage.getStart()); +cur ;++cur)
+     {
+      ulen index=cur->index;
+      
+      auto &desc=state_table[index];
+      
+      desc.index=index;
+      desc.est=cur->est;
+      desc.transitions=tbuf.part(index*count,count);
+      
+      for(ulen i=0; i<count ;i++)
+        {
+         ulen dst=cur->transitions[i]->index;
+         
+         desc.transitions[i]=state_table.getPtr()+dst;
+        }
+     }
+   
+   Swap(state_table,this->state_table);
+   Swap(transitions_buf,this->transitions_buf);
+  }
  }
 
 } // namespace App

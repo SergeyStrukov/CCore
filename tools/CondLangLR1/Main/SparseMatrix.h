@@ -23,15 +23,90 @@ namespace App {
 
 /* classes */ 
 
+template <class I,class T> class SparseVector;
+
 template <class I,class T,class Row,class Cell> class VectorMulBuilder;
 
 template <class I,class T,class Row,class Cell> class MatrixMulBuilder;
 
-template <class I,class T> class SparseVector;
-
 template <class I,class T> struct MatrixPosition;
 
 template <class I,class T> class SparseMatrix;
+
+/* class SparseVector<I,T> */
+
+template <class I,class T> 
+SparseVector<I,T> operator * (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b);
+
+template <class I,class T> 
+class SparseVector : CmpComparable<SparseVector<I,T> > , NoThrowFlagsBase
+ {
+  public:
+ 
+   typedef IndexPair<I,T> Cell;
+   
+  private:
+   
+   Set<Cell,Joiner> cellset;
+   
+  private:
+   
+   explicit SparseVector(const Set<Cell,Joiner> &cellset_) : cellset(cellset_) {}
+   
+   template <class Builder>
+   SparseVector(DoBuildType,Builder builder) : cellset(DoBuild,builder) {}
+   
+  public:
+   
+   // constructors
+  
+   SparseVector() {}
+   
+   ~SparseVector() {}
+   
+   // unsafe constructors
+   
+   explicit SparseVector(PtrLen<const Cell> range) : cellset(range) {} // strictly weak ordered input
+   
+   // methods
+   
+   T operator [] (I index) const
+    {
+     auto range=cellset.read();
+     
+     Algon::BinarySearch_if(range, [=] (const Cell &obj) { return index<=obj.index; } );
+     
+     if( +range && index==range->index ) return range->object;
+     
+     return T();    
+    }
+   
+   // cmp objects
+   
+   CmpResult objCmp(const SparseVector<I,T> &obj) const
+    {
+     return cellset.objCmp(obj.cellset);
+    }
+   
+   // operators
+   
+   friend SparseVector<I,T> operator + (const SparseVector<I,T> &a,const SparseVector<I,T> &b)
+    {
+     return SparseVector<I,T>(a.cellset+b.cellset);
+    }
+
+   friend SparseVector<I,T> operator * <> (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b);
+     
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     for(auto &cell : cellset.read() ) Printf(out,"#;\n",cell);
+  
+     Printf(out,"-----\n");
+    }
+ };
 
 /* class VectorMulBuilder<I,T,Row,Cell> */
 
@@ -57,7 +132,7 @@ class VectorMulBuilder
 template <class I,class T,class Row,class Cell> 
 T VectorMulBuilder<I,T,Row,Cell>::Prod(PtrLen<const Cell> a,PtrLen<const Cell> b)
  {
-  T ret; // null
+  typename T::Accumulator ret;
   
   while( +a && +b )
     switch( (*a).weakCmp(*b) )
@@ -76,7 +151,7 @@ T VectorMulBuilder<I,T,Row,Cell>::Prod(PtrLen<const Cell> a,PtrLen<const Cell> b
         
        default: // case CmpEqual 
         {
-         ret=ret+(a->object)*(b->object); 
+         ret+=(a->object)*(b->object); 
          
          ++a; 
          ++b;
@@ -268,81 +343,6 @@ PtrLen<Row> MatrixMulBuilder<I,T,Row,Cell>::operator () (Place<void> place) cons
   return guard.disarm();  
  }
 
-/* class SparseVector<I,T> */
-
-template <class I,class T> 
-SparseVector<I,T> operator * (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b);
-
-template <class I,class T> 
-class SparseVector : CmpComparable<SparseVector<I,T> > , NoThrowFlagsBase
- {
-  public:
- 
-   typedef IndexPair<I,T> Cell;
-   
-  private:
-   
-   Set<Cell,Joiner> cellset;
-   
-  private:
-   
-   explicit SparseVector(const Set<Cell,Joiner> &cellset_) : cellset(cellset_) {}
-   
-   template <class Builder>
-   SparseVector(DoBuildType,Builder builder) : cellset(DoBuild,builder) {}
-   
-  public:
-   
-   // constructors
-  
-   SparseVector() {}
-   
-   ~SparseVector() {}
-   
-   // unsafe constructors
-   
-   explicit SparseVector(PtrLen<const Cell> range) : cellset(range) {} // strictly weak ordered input
-   
-   // methods
-   
-   T operator [] (I index) const
-    {
-     auto range=cellset.read();
-     
-     Algon::BinarySearch_if(range, [=] (const Cell &obj) { return index<=obj.index; } );
-     
-     if( +range && index==range->index ) return range->object;
-     
-     return T();    
-    }
-   
-   // cmp objects
-   
-   CmpResult objCmp(const SparseVector<I,T> &obj) const
-    {
-     return cellset.objCmp(obj.cellset);
-    }
-   
-   // operators
-   
-   friend SparseVector<I,T> operator + (const SparseVector<I,T> &a,const SparseVector<I,T> &b)
-    {
-     return SparseVector<I,T>(a.cellset+b.cellset);
-    }
-
-   friend SparseVector<I,T> operator * <> (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b);
-     
-   // print object
-   
-   template <class P>
-   void print(P &out) const
-    {
-     for(auto &cell : cellset.read() ) Printf(out,"#; #;\n",cell.index,cell.object);
-  
-     Printf(out,"-----\n");
-    }
- };
-
 /* struct MatrixPosition<I,T> */
 
 template <class I,class T> 
@@ -370,7 +370,7 @@ struct MatrixPosition : CmpComparable<MatrixPosition<I,T> > , NoThrowFlagsBaseFo
   template <class P>
   void print(P &out) const
    {
-    Printf(out,"(#;,#;) #;",i,j,object);
+    Printf(out,"( #; , #; ) #;",i,j,object);
    }
  };
 
@@ -408,8 +408,6 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
    
    ~SparseMatrix() {}
    
-   // methods
-   
    // cmp objects
    
    CmpResult objCmp(const SparseMatrix<I,T> &obj) const
@@ -440,7 +438,7 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
        {
         Printf(out,"#; -----\n",row.index);
         
-        for(auto &cell : row.object.read() ) Printf(out,"  #; #;\n",cell.index,cell.object);
+        for(auto &cell : row.object.read() ) Printf(out,"  #;\n",cell);
        }
      
      Printf(out,"-----\n");
@@ -474,11 +472,11 @@ class SparseMatrix<I,T>::PosFill : NoCopy
       
       static T SumOf(PtrLen<const Pos> range)
        {
-        T ret(range->object);
+        typename T::Accumulator acc;
         
-        for(++range; +range ;++range) ret=ret+(range->object);
+        for(; +range ;++range) acc+=range->object;
          
-        return ret; 
+        return acc; 
        }
       
      public:
