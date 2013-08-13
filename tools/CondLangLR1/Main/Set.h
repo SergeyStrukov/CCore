@@ -18,6 +18,66 @@
 
 namespace App {
 
+/* JoinSort() */
+
+template <class T,template <class> class J>
+T * JoinSorted(T *out,PtrLen<T> a,PtrLen<T> b)
+ {
+  while( +a && +b )
+    switch( J<T>::WeakCmp(*a,*b) )
+      {
+       case CmpLess : 
+        {
+         *(out++)=*a; 
+         
+         ++a; 
+        }
+       break;
+       
+       case CmpGreater :
+        {
+         *(out++)=*b; 
+         
+         ++b;
+        }
+       break; 
+        
+       default: // case CmpEqual 
+        {
+         *(out++)=J<T>::Join(*a,*b); 
+         
+         ++a; 
+         ++b;
+        }
+      }
+      
+  for(; +a ;++a) *(out++)=*a; 
+
+  if( b.ptr!=out )  
+    for(; +b ;++b) *(out++)=*b; 
+  else
+    out=b.ptr+b.len;
+    
+  return out;  
+ }
+
+template <class T,template <class> class J>
+PtrLen<T> JoinSort(T *buf,T *spare,ulen len)
+ {
+  if( len<2 ) return Range(buf,len);
+    
+  ulen len2=len/2;
+  ulen len1=len-len2;  
+  
+  PtrLen<T> ret1=JoinSort<T,J>(buf,spare,len1);
+  PtrLen<T> ret2=JoinSort<T,J>(buf+len1,spare+len1,len2);
+  
+  T *out=(ret1.ptr==buf)?spare:buf;
+  T *lim=JoinSorted<T,J>(out,ret1,ret2);
+  
+  return Range(out,lim);
+ }
+
 /* classes */ 
 
 template <class T> struct Joiner; 
@@ -161,10 +221,8 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
   
      return Set<T,J>(a,b);
     }
- 
-   using Accumulator = Set<T,J> ;
-   
-   void operator += (const Set<T,J> &obj) { (*this)=(*this)+obj; }
+
+   struct Accumulator;
    
    // print object
    
@@ -178,6 +236,62 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
         Putobj(out,*p);
         
         for(++p; +p ;++p) Printf(out," #;",*p);
+       }
+    }
+ };
+
+template <class T,template <class> class J>
+struct Set<T,J>::Accumulator : NoCopy
+ {
+   Set<T,J> first;
+   ulen count = 0 ;
+   Collector<T> collector;
+   
+  private:
+   
+   void add(const Set<T,J> &obj)
+    {
+     PtrLen<const T> range=obj.read();
+     
+     collector.extend_copy(range.len,range.ptr);
+    }
+   
+   Set<T,J> build()
+    {
+     PtrLen<T> range=collector.flat();
+     
+     DynArray<T> temp(range.len);
+     
+     return Set<T,J>(Range_const(JoinSort<T,J>(range.ptr,temp.getPtr(),range.len)));
+    }
+   
+  public:
+  
+   Accumulator() {}
+  
+   void operator += (const Set<T,J> &obj) 
+    {
+     if( count )
+       {
+        if( count==1 ) add(Replace_null(first));
+         
+        add(obj);
+       }
+     else
+       {
+        first=obj;
+       }
+     
+     count++;
+    }
+  
+   operator Set<T,J>()
+    {
+     switch( count )
+       {
+        case 0 : return Set<T,J>();
+        case 1 : return first; 
+        default: return build();
        }
     }
  };

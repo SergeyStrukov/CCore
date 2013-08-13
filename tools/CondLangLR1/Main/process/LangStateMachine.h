@@ -196,7 +196,7 @@ class LangStateMachine : NoCopy
   private:
    
    DynArray<StateDesc> state_table;
-   DynArray<const StateDesc *> transitions_buf;
+   DynArray<const StateDesc *> transition_buf;
  
   private:
  
@@ -357,9 +357,9 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
    ulen state_count=storage.getCount();
    
    DynArray<StateDesc> state_table(state_count);
-   DynArray<const StateDesc *> transitions_buf(DoRaw(LenOf(count,state_count)));
+   DynArray<const StateDesc *> transition_buf(DoRaw(LenOf(count,state_count)));
    
-   auto tbuf=Range(transitions_buf);
+   auto tbuf=Range(transition_buf);
    
    for(StateCur cur(storage.getStart()); +cur ;++cur)
      {
@@ -380,7 +380,7 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
      }
    
    Swap(state_table,this->state_table);
-   Swap(transitions_buf,this->transitions_buf);
+   Swap(transition_buf,this->transition_buf);
   }
  }
 

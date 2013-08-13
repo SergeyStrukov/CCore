@@ -17,7 +17,7 @@
 #include "GoodEstimate.h"
 #include "LR1Estimate.h"
 
-#include "LangStateMachine.h"
+#include "StateCompress.h"
 
 #include <CCore/inc/Exception.h>
 
@@ -59,9 +59,11 @@ static void ProcessNonEmpty(const ExtLang &lang)
 static void ProcessLR1(const ExtLang &lang)
  {
   LangStateMachine<LR1Estimate> machine(lang,lang.getOriginalAtomCount());
+  StateCompress<LR1Estimate> compress(machine);
 
   Putobj(Con,lang);
   Putobj(Con,machine);
+  Putobj(Con,compress);
   // TODO
  }
 

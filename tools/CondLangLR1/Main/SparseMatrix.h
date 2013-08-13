@@ -193,16 +193,11 @@ class MatrixMulBuilder
    
    class FillRow : NoCopy
     {
+      Collector<Cell> collector;
       DynArray<Cell> array;
        
       PtrLen<Cell> result;
       
-     private: 
-  
-      static Cell * Join(Cell *out,PtrLen<Cell> a,PtrLen<Cell> b);
-      
-      static PtrLen<Cell> Sort(Cell *buf,Cell *spare,ulen len);
-    
      public:
         
       FillRow(PtrLen<const Cell> a,PtrLen<const Row> b);
@@ -222,66 +217,7 @@ class MatrixMulBuilder
  };
  
 template <class I,class T,class Row,class Cell> 
-Cell * MatrixMulBuilder<I,T,Row,Cell>::FillRow::Join(Cell *out,PtrLen<Cell> a,PtrLen<Cell> b)
- {
-  while( +a && +b )
-    switch( (*a).weakCmp(*b) )
-      {
-       case CmpLess : 
-        {
-         *(out++)=*a; 
-         
-         ++a; 
-        }
-       break;
-       
-       case CmpGreater :
-        {
-         *(out++)=*b; 
-         
-         ++b;
-        }
-       break; 
-        
-       default: // case CmpEqual 
-        {
-         *(out++)=(*a).join(*b); 
-         
-         ++a; 
-         ++b;
-        }
-      }
-      
-  for(; +a ;++a) *(out++)=*a; 
-
-  if( b.ptr!=out )  
-    for(; +b ;++b) *(out++)=*b; 
-  else
-    out=b.ptr+b.len;
-    
-  return out;  
- }
-
-template <class I,class T,class Row,class Cell> 
-PtrLen<Cell> MatrixMulBuilder<I,T,Row,Cell>::FillRow::Sort(Cell *buf,Cell *spare,ulen len)
- {
-  if( len<2 ) return Range(buf,len);
-    
-  ulen len2=len/2;
-  ulen len1=len-len2;  
-  
-  PtrLen<Cell> ret1=Sort(buf,spare,len1);
-  PtrLen<Cell> ret2=Sort(buf+len1,spare+len1,len2);
-  
-  Cell *out=(ret1.ptr==buf)?spare:buf;
-  Cell *lim=Join(out,ret1,ret2);
-  
-  return Range(out,lim);
- }
-
-template <class I,class T,class Row,class Cell> 
 MatrixMulBuilder<I,T,Row,Cell>::FillRow::FillRow(PtrLen<const Cell> a,PtrLen<const Row> b)
- : array(DoReserve,1024)
  {
   for(; +a && +b ;)
     switch( Cmp(a->index,b->index) )
@@ -306,7 +242,7 @@ MatrixMulBuilder<I,T,Row,Cell>::FillRow::FillRow(PtrLen<const Cell> a,PtrLen<con
            {
             T prod=ma*p->object;
             
-            if( +prod ) array.append_fill(p->index,prod);
+            if( +prod ) collector.append_fill(p->index,prod);
            } 
        
          ++a;
@@ -314,11 +250,11 @@ MatrixMulBuilder<I,T,Row,Cell>::FillRow::FillRow(PtrLen<const Cell> a,PtrLen<con
         }
     }
 
-  ulen len=array.getLen();
+  PtrLen<Cell> range=collector.flat();
   
-  array.extend_default(len);
+  array.extend_default(range.len);
   
-  result=Sort(array.getPtr(),array.getPtr()+len,len);
+  result=JoinSort<Cell,Joiner>(range.ptr,array.getPtr(),range.len);
  }
          
 template <class I,class T,class Row,class Cell> 

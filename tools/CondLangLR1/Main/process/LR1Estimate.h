@@ -271,7 +271,7 @@ class LR1Estimate::Accumulator : NoCopy
      beta+=obj.beta;
     }
 
-   operator LR1Estimate() const { return LR1Estimate(empty,null,alpha,beta); } 
+   operator LR1Estimate() { return LR1Estimate(empty,null,alpha,beta); } 
  };
 
 } // namespace App
