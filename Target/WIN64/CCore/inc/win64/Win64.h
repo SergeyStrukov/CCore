@@ -381,6 +381,72 @@ bool_t WIN64_API CreateProcessA(const char *program,
                                 ProcessInfo *pinfo);
 
 /*--------------------------------------------------------------------------------------*/ 
+/* TLS constants                                                                        */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* const TlsNoIndex */ 
+
+const int TlsNoIndex = -1 ;
+
+/*--------------------------------------------------------------------------------------*/ 
+/* TLS functions                                                                        */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* TlsAlloc() */ 
+
+int WIN64_API TlsAlloc(void);
+
+/* TlsFree() */ 
+
+bool_t WIN64_API TlsFree(int index);
+
+/* TlsGetValue() */ 
+
+void_ptr WIN64_API TlsGetValue(int index);
+
+/* TlsSetValue() */ 
+
+bool_t WIN64_API TlsSetValue(int index,void_ptr value);
+
+/*--------------------------------------------------------------------------------------*/ 
+/* Event functions                                                                      */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* CreateEventA() */ 
+
+handle_t WIN64_API CreateEventA(SecurityAttributes *,
+                                bool_t manual_reset,
+                                bool_t initial_state,
+                                const char *object_name);
+
+/* SetEvent() */ 
+ 
+bool_t WIN64_API SetEvent(handle_t h_event);
+ 
+/*--------------------------------------------------------------------------------------*/ 
+/* Semaphore constants                                                                  */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* const MaxSemaphoreCount */ 
+
+const sem_count_t MaxSemaphoreCount = 0x7FFFFFFF ;
+
+/*--------------------------------------------------------------------------------------*/ 
+/* Semaphore functions                                                                  */ 
+/*--------------------------------------------------------------------------------------*/ 
+
+/* CreateSemaphoreA() */ 
+
+handle_t WIN64_API CreateSemaphoreA(SecurityAttributes *,
+                                    sem_count_t initial_count,
+                                    sem_count_t max_count,
+                                    const char *object_name);
+
+/* ReleaseSemaphore() */ 
+
+bool_t WIN64_API ReleaseSemaphore(handle_t h_sem,sem_count_t delta,sem_count_t *prev_count);
+
+/*--------------------------------------------------------------------------------------*/ 
 /* System property functions                                                            */ 
 /*--------------------------------------------------------------------------------------*/ 
 
@@ -1015,72 +1081,6 @@ options_t WIN64_API WSAWaitForMultipleEvents(ushortlen_t hcount,
                                              bool_t wait_all,
                                              timeout_t timeout,
                                              bool_t);
-
-/*--------------------------------------------------------------------------------------*/ 
-/* TLS constants                                                                        */ 
-/*--------------------------------------------------------------------------------------*/ 
-
-/* const TlsNoIndex */ 
-
-const int TlsNoIndex = -1 ;
-
-/*--------------------------------------------------------------------------------------*/ 
-/* TLS functions                                                                        */ 
-/*--------------------------------------------------------------------------------------*/ 
-
-/* TlsAlloc() */ 
-
-int WIN64_API TlsAlloc(void);
-
-/* TlsFree() */ 
-
-bool_t WIN64_API TlsFree(int index);
-
-/* TlsGetValue() */ 
-
-void_ptr WIN64_API TlsGetValue(int index);
-
-/* TlsSetValue() */ 
-
-bool_t WIN64_API TlsSetValue(int index,void_ptr value);
-
-/*--------------------------------------------------------------------------------------*/ 
-/* Event functions                                                                      */ 
-/*--------------------------------------------------------------------------------------*/ 
-
-/* CreateEventA() */ 
-
-handle_t WIN64_API CreateEventA(SecurityAttributes *,
-                                bool_t manual_reset,
-                                bool_t initial_state,
-                                const char *object_name);
-
-/* SetEvent() */ 
- 
-bool_t WIN64_API SetEvent(handle_t h_event);
- 
-/*--------------------------------------------------------------------------------------*/ 
-/* Semaphore constants                                                                  */ 
-/*--------------------------------------------------------------------------------------*/ 
-
-/* const MaxSemaphoreCount */ 
-
-const sem_count_t MaxSemaphoreCount = 0x7FFFFFFF ;
-
-/*--------------------------------------------------------------------------------------*/ 
-/* Semaphore functions                                                                  */ 
-/*--------------------------------------------------------------------------------------*/ 
-
-/* CreateSemaphoreA() */ 
-
-handle_t WIN64_API CreateSemaphoreA(SecurityAttributes *,
-                                    sem_count_t initial_count,
-                                    sem_count_t max_count,
-                                    const char *object_name);
-
-/* ReleaseSemaphore() */ 
-
-bool_t WIN64_API ReleaseSemaphore(handle_t h_sem,sem_count_t delta,sem_count_t *prev_count);
  
 } // extern "C"
 

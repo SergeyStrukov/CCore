@@ -28,9 +28,18 @@ auto Sem::Create(ulen count) noexcept -> CreateType
  {
   CreateType ret;
   
-  ret.handle=Win64::CreateSemaphoreA(0,count,Win64::MaxSemaphoreCount,0);
-  
-  ret.error=ErrorIf( ret.handle==0 );
+  if( count>(ulen)Win64::MaxSemaphoreCount )
+    {
+     ret.handle=0;
+     
+     ret.error=ErrorType(Win64::ErrorInvalidParameter);
+    }
+  else
+    {
+     ret.handle=Win64::CreateSemaphoreA(0,(Win64::sem_count_t)count,Win64::MaxSemaphoreCount,0);
+    
+     ret.error=ErrorIf( ret.handle==0 );
+    }
   
   return ret;  
  }
@@ -49,7 +58,7 @@ void Sem::GiveMany(Type handle,ulen count) noexcept
  {
   if( !count ) return; 
   
-  AbortIf( count>(ulen)Win64::MaxSemaphoreCount || !Win64::ReleaseSemaphore(handle,count,0) ,"CCore::Sys::Sem::GiveMany()");
+  AbortIf( count>(ulen)Win64::MaxSemaphoreCount || !Win64::ReleaseSemaphore(handle,(Win64::sem_count_t)count,0) ,"CCore::Sys::Sem::GiveMany()");
  }
  
 bool Sem::TryTake(Type handle) noexcept
