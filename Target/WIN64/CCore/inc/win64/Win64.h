@@ -837,10 +837,10 @@ bool_t WIN64_API FindClose(handle_t h_find);
 
 /* GetFullPathNameA() */
 
-ulen_t WIN64_API GetFullPathNameA(const char *path,
-                                  ushortlen_t buf_len,
-                                  char *buf,
-                                  char **file_part);
+ushortlen_t WIN64_API GetFullPathNameA(const char *path,
+                                       ushortlen_t buf_len,
+                                       char *buf,
+                                       char **file_part);
 
 /*--------------------------------------------------------------------------------------*/ 
 /* Socket flags and options                                                             */ 

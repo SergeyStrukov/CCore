@@ -20,7 +20,7 @@ namespace Quick {
 
 /* functions */ 
 
-#if 1
+#if 0
  
 unsigned ScanLSBit(ScanUInt value) noexcept
  {
@@ -58,7 +58,7 @@ unsigned ScanLSBit(ScanUInt value) noexcept
  
 #endif  
 
-#if 1
+#if 0
  
 unsigned ScanMSBit(ScanUInt value) noexcept
  {
@@ -96,7 +96,7 @@ unsigned ScanMSBit(ScanUInt value) noexcept
  
 #endif  
 
-#if 1
+#if 0
 
 uint16 ByteSwap16(uint16 value) noexcept
  {
@@ -105,7 +105,7 @@ uint16 ByteSwap16(uint16 value) noexcept
  
 #endif  
 
-#if 1
+#if 0
 
 uint32 ByteSwap32(uint32 value) noexcept
  {
@@ -114,7 +114,7 @@ uint32 ByteSwap32(uint32 value) noexcept
  
 #endif  
 
-#if 1
+#if 0
 
 uint64 ByteSwap64(uint64 value) noexcept
  {

@@ -1,0 +1,3 @@
+../../Target/WIN64/CCore/src/base/Quick.s
+../../Target/WIN64/CCore/src/sys/SysAtomic.s
+../../Target/WIN64/CCore/src/sys/SysTime.s

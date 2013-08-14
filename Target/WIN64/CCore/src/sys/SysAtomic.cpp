@@ -20,7 +20,7 @@ namespace Sys {
 
 /* struct Atomic */ 
 
-#if 1
+#if 0
 
 // Fake code
 

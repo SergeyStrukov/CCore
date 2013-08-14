@@ -36,7 +36,7 @@ SecTimeType GetSecTime() noexcept
   return SecTimeType( sys_time/10000000-11644473600ul );
  }
  
-#if 1
+#if 0
 
 // Fake code
 

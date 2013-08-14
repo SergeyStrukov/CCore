@@ -743,6 +743,9 @@ obj/XPoint.dep \
 
 
 ASM_OBJ_LIST = \
+obj/Quick.s.o \
+obj/SysAtomic.s.o \
+obj/SysTime.s.o \
 
 
 include $(RULES_FILE)
@@ -2958,6 +2961,15 @@ obj/XPoint.dep : ../../CCore/src/net/XPoint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/XPoint.o $< -MF $@
 
 
+
+obj/Quick.s.o : ../../Target/WIN64/CCore/src/base/Quick.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/SysAtomic.s.o : ../../Target/WIN64/CCore/src/sys/SysAtomic.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/SysTime.s.o : ../../Target/WIN64/CCore/src/sys/SysTime.s
+	$(AS) $(ASOPT) $< -o $@
 
 
 
