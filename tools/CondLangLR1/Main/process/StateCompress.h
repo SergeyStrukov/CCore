@@ -22,47 +22,55 @@ namespace App {
 
 /* classes */
 
+struct StateCompressBase;
+
 template <class Estimate> class StateCompress;
+
+/* struct StateCompressBase */
+
+struct StateCompressBase : NoCopy
+ {
+  struct StateDesc;
+  
+  struct Transition : NoThrowFlagsBase
+   {
+    ulen element;
+    const StateDesc *dst;
+    
+    Transition(ulen element_,const StateDesc *dst_) : element(element_),dst(dst_) {}
+   };
+  
+  struct StateDesc : NoCopy , NoThrowFlagsBase
+   {
+    ulen index;
+    ulen estimate_index;
+    PtrLen<const Transition> transitions;
+    
+    // print object
+    
+    template <class P>
+    void print(P &out) const
+     {
+      Printf(out,"#;) #;\n",index,estimate_index);
+      
+      for(auto &trans : transitions ) Printf(out,"  #3; -> #3;",trans.element,trans.dst->index);
+     }
+   };
+ };
 
 /* class StateCompress<Estimate> */
 
 template <class Estimate> 
-class StateCompress : NoCopy
+class StateCompress : public StateCompressBase
  {
-  public:
- 
-   struct StateDesc;
-   
-   struct Transition : NoThrowFlagsBase
-    {
-     ulen element;
-     const StateDesc *dst;
-     
-     Transition(ulen element_,const StateDesc *dst_) : element(element_),dst(dst_) {}
-    };
-   
-   struct StateDesc : NoCopy , NoThrowFlagsBase
-    {
-     ulen index;
-     ulen estimate_index;
-     PtrLen<const Transition> transitions;
-     
-     // print object
-     
-     template <class P>
-     void print(P &out) const
-      {
-       Printf(out,"#;) #;\n",index,estimate_index);
-       
-       for(auto &trans : transitions ) Printf(out,"  #3; -> #3;",trans.element,trans.dst->index);
-      }
-    };
-   
   private:
    
    DynArray<StateDesc> state_table;
    DynArray<Estimate> estimate_buf;
    DynArray<Transition> transition_buf;
+   
+   ulen atom_count;
+   ulen element_count;
    
   private: 
    
@@ -118,6 +126,10 @@ class StateCompress : NoCopy
    
    PtrLen<const Estimate> getEstimates() const { return Range_const(estimate_buf); }
    
+   ulen getAtomCount() const { return atom_count; }
+   
+   ulen getElementCount() const { return element_count; }
+   
    // print object
    
    template <class P>
@@ -125,9 +137,14 @@ class StateCompress : NoCopy
     {
      Putobj(out,"-----\n");
      
+     Printf(out,"atoms = #; elements = #;\n",getAtomCount(),getElementCount());
+     
+     Putobj(out,"-----\n");
+     
      for(auto &state : getStateTable() )
        {
         Printf(out,"#;\n",state);
+        
         Putobj(out,"-----\n");
        }
      
@@ -138,6 +155,7 @@ class StateCompress : NoCopy
      for(auto &est : getEstimates() )
        {
         Printf(out,"#;) #;\n",index,est);
+        
         Putobj(out,"-----\n");
         
         index++;
@@ -148,6 +166,9 @@ class StateCompress : NoCopy
 template <class Estimate> 
 StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine)
  {
+  atom_count=machine.getAtomCount();
+  element_count=machine.getElementCount();
+  
   auto table=machine.getStateTable();
   
   DynArray<ulen> initial_num;
@@ -297,9 +318,7 @@ StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine
   
   if( error!=MaxULen && error!=0 )
     {
-     auto num=Range(num_buf);
- 
-     for(; +num ;++num) SkipError(*num,error);
+     for(ulen &x : num_buf ) SkipError(x,error);
      
      num_count--;
     }

@@ -66,8 +66,6 @@ bool SetCmp(T &x,const T &a)
 
 struct PosStr;
 
-struct OffLen;
-
 struct DescBase;
 
 class TrackStep;
@@ -85,27 +83,6 @@ struct PosStr
   
   PosStr(TextPos pos_,StrLen str_) : pos(pos_),str(str_) {}
  };
-
-/* struct OffLen */
-
-#if 0
-
-struct OffLen : NoThrowFlagsBase
- {
-  ulen off;
-  ulen len;
-  
-  OffLen() : off(0),len(0) {}
-  
-  OffLen(NothingType) : off(0),len(0) {}
-  
-  OffLen(ulen off_,ulen len_) : off(off_),len(len_) {}
-  
-  template <class T>
-  PtrLen<T> cut(T *base) const { return Range(base+off,len); }
- };
-
-#endif
 
 /* struct DescBase */
 

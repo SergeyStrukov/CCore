@@ -12,6 +12,8 @@
 ./process/LR1Estimate.cpp
 ./process/NonEmptyEstimate.cpp
 ./process/Process.cpp
+./process/StateCompress.cpp
+./process/StateTrace.cpp
 ./Set.cpp
 ./SparseMatrix.cpp
 ./Tools.cpp

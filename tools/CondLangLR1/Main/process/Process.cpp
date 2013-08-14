@@ -17,7 +17,7 @@
 #include "GoodEstimate.h"
 #include "LR1Estimate.h"
 
-#include "StateCompress.h"
+#include "Engine.h"
 
 #include <CCore/inc/Exception.h>
 
@@ -47,26 +47,6 @@ static bool RunGoodTest(const Lang &lang)
   return ret;
  }
 
-static void ProcessNonEmpty(const ExtLang &lang)
- {
-  LangStateMachine<NonEmptyEstimate> machine(lang,{});
-
-  Putobj(Con,lang);
-  Putobj(Con,machine);
-  // TODO
- }
-
-static void ProcessLR1(const ExtLang &lang)
- {
-  LangStateMachine<LR1Estimate> machine(lang,lang.getOriginalAtomCount());
-  StateCompress<LR1Estimate> compress(machine);
-
-  Putobj(Con,lang);
-  Putobj(Con,machine);
-  Putobj(Con,compress);
-  // TODO
- }
-
 void Process(StrLen file_name)
  {
   TrackStage("Load file #.q;",file_name);
@@ -85,17 +65,17 @@ void Process(StrLen file_name)
   
   BottomLang bottom(clang);
   
-  TrackStage("Build extended top lang");
+  TrackStage("Process bottom lang");
   
-  ExtLang ext_top(top);
+  Engine<LR1Estimate> engine_bottom(bottom);
   
-  TrackStage("Build extended bottom lang");
+  TrackStage("Process top lang");
   
-  ExtLang ext_bottom(bottom);
+  Engine<LR1Estimate> engine_top(top);
   
-  // TODO
-  ProcessNonEmpty(ext_top);
-  ProcessLR1(ext_bottom);
+  PrintFile out("Result.txt");
+  
+  Putobj(out,engine_bottom,engine_top);
   
   TrackStage("Finish");
  }

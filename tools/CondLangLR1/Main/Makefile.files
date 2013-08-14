@@ -13,6 +13,8 @@ obj/NonEmptyEstimate.o \
 obj/Process.o \
 obj/Set.o \
 obj/SparseMatrix.o \
+obj/StateCompress.o \
+obj/StateTrace.o \
 obj/Tools.o \
 obj/TopLang.o \
 obj/main.o \
@@ -33,6 +35,8 @@ obj/NonEmptyEstimate.s \
 obj/Process.s \
 obj/Set.s \
 obj/SparseMatrix.s \
+obj/StateCompress.s \
+obj/StateTrace.s \
 obj/Tools.s \
 obj/TopLang.s \
 obj/main.s \
@@ -53,6 +57,8 @@ obj/NonEmptyEstimate.dep \
 obj/Process.dep \
 obj/Set.dep \
 obj/SparseMatrix.dep \
+obj/StateCompress.dep \
+obj/StateTrace.dep \
 obj/Tools.dep \
 obj/TopLang.dep \
 obj/main.dep \
@@ -104,6 +110,12 @@ obj/Set.o : ./Set.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SparseMatrix.o : ./SparseMatrix.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StateCompress.o : ./process/StateCompress.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StateTrace.o : ./process/StateTrace.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Tools.o : ./Tools.cpp
@@ -159,6 +171,12 @@ obj/Set.s : ./Set.cpp
 obj/SparseMatrix.s : ./SparseMatrix.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/StateCompress.s : ./process/StateCompress.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/StateTrace.s : ./process/StateTrace.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Tools.s : ./Tools.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -211,6 +229,12 @@ obj/Set.dep : ./Set.cpp
 
 obj/SparseMatrix.dep : ./SparseMatrix.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SparseMatrix.o $< -MF $@
+
+obj/StateCompress.dep : ./process/StateCompress.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StateCompress.o $< -MF $@
+
+obj/StateTrace.dep : ./process/StateTrace.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StateTrace.o $< -MF $@
 
 obj/Tools.dep : ./Tools.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tools.o $< -MF $@

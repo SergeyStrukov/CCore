@@ -197,6 +197,9 @@ class LangStateMachine : NoCopy
    
    DynArray<StateDesc> state_table;
    DynArray<const StateDesc *> transition_buf;
+   
+   ulen atom_count;
+   ulen element_count;
  
   private:
  
@@ -216,6 +219,10 @@ class LangStateMachine : NoCopy
    
    PtrLen<const StateDesc> getStateTable() const { return Range_const(state_table); }
    
+   ulen getAtomCount() const { return atom_count; }
+   
+   ulen getElementCount() const { return element_count; }
+   
    // print object
    
    template <class P>
@@ -223,9 +230,14 @@ class LangStateMachine : NoCopy
     {
      Putobj(out,"-----\n");
      
+     Printf(out,"atoms = #; elements = #;\n",getAtomCount(),getElementCount());
+     
+     Putobj(out,"-----\n");
+     
      for(auto &state : getStateTable() )
        {
         Printf(out,"#;\n",state);
+        
         Putobj(out,"-----\n");
        }
     }
@@ -249,6 +261,9 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
   TrackStage("Build matrix");
 
   ulen count=LenAdd(atom_count,lang.getSyntCount());
+  
+  this->atom_count=atom_count;
+  this->element_count=count;
   
   Matrix N;
   
@@ -357,9 +372,8 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
    ulen state_count=storage.getCount();
    
    DynArray<StateDesc> state_table(state_count);
-   DynArray<const StateDesc *> transition_buf(DoRaw(LenOf(count,state_count)));
    
-   auto tbuf=Range(transition_buf);
+   auto tbuf=transition_buf.extend_raw(LenOf(count,state_count));
    
    for(StateCur cur(storage.getStart()); +cur ;++cur)
      {
@@ -380,7 +394,6 @@ LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,co
      }
    
    Swap(state_table,this->state_table);
-   Swap(transition_buf,this->transition_buf);
   }
  }
 

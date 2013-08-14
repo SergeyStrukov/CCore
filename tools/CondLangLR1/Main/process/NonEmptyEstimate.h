@@ -88,6 +88,12 @@ class NonEmptyEstimate : public CmpComparable<NonEmptyEstimate> , public NoThrow
      else
        Putobj(out,"empty");
     }
+   
+   template <class P>
+   void printBlock(P &out,ulen index) const
+    {
+     Printf(out,"#;) #;\n",index,*this);
+    }
  };
 
 } // namespace App

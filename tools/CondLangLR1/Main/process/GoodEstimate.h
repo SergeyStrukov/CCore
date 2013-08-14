@@ -99,6 +99,12 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
         case Good  : Putobj(out,"good"); break;
        }
     }
+   
+   template <class P>
+   void printBlock(P &out,ulen index) const
+    {
+     Printf(out,"#;) #;\n",index,*this);
+    }
  };
 
 } // namespace App

@@ -43,7 +43,11 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
      ExtRuleSet(const RuleSet &rules_) : shift(false),rules(rules_) {}
      
      ExtRuleSet(bool shift_,const RuleSet &rules_) : shift(shift_),rules(rules_) {}
+     
+     // properties
 
+     bool hasConflict() const { return rules.getLen()>1u-shift; }
+     
      // cmp objects
      
      CmpResult objCmp(const ExtRuleSet &obj) const
@@ -187,6 +191,17 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
    
    bool isStrong() const { return !null && alpha.isEmpty() ; }
    
+   bool hasEndConflict() const { return alpha.getLen()>1u-null; }
+   
+   bool hasConflict() const
+    {
+     if( hasEndConflict() ) return true;
+     
+     for(auto &rec : beta.read() ) if( rec.object.hasConflict() ) return true;
+     
+     return false;
+    }
+   
    // cmp objects
    
    CmpResult objCmp(const LR1Estimate &obj) const
@@ -223,11 +238,14 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
        }
      else
        {
+        if( hasConflict() ) Putobj(out,"CONFLICT ");
+        
         if( null ) 
           {
-           Putobj(out,"STOP");
-           
-           if( alpha.nonEmpty() ) Printf(out," (End) : #;",alpha);
+           if( alpha.nonEmpty() ) 
+             Printf(out," (End) : STOP #;",alpha);
+           else
+             Putobj(out," (End) : STOP");
            
            if( beta.nonEmpty() ) Printf(out," #;",beta);
           }
@@ -243,6 +261,56 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
              {
               Putobj(out,beta);
              }
+          }
+       }
+    }
+   
+   template <class P>
+   void printBlock(P &out,ulen index) const
+    {
+     if( empty )
+       {
+        Printf(out,"#;) EMPTY\n",index);
+       }
+     else
+       {
+        Printf(out,"#;)",index);
+        
+        if( hasConflict() ) Putobj(out," CONFLICT");
+        
+        Putch(out,'\n');
+        
+        if( null ) 
+          {
+           if( alpha.nonEmpty() ) 
+             Printf(out,"\n  (End) : STOP #;",alpha);
+           else
+             Putobj(out,"\n  (End) : STOP");
+           
+           if( hasEndConflict() )
+             Putobj(out,"CONFLICT\n");
+           else
+             Putch(out,'\n');
+          }
+        else
+          {
+           if( alpha.nonEmpty() ) 
+             {
+              Printf(out,"\n  (End) : #;",alpha);
+              
+              if( hasEndConflict() )
+                Putobj(out,"CONFLICT\n");
+              else
+                Putch(out,'\n');
+             }
+          }
+        
+        for(auto &rec : beta.read() )
+          {
+           if( rec.object.hasConflict() )
+             Printf(out,"\n  #; : #;  CONFLICT\n",rec.index,rec.object);
+           else
+             Printf(out,"\n  #; : #;\n",rec.index,rec.object);
           }
        }
     }
