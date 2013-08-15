@@ -153,6 +153,10 @@ struct AltFile
 
   static void Close(FileMultiError &errout,Type handle,EventType h_event,FileOpenFlags oflags,bool preserve_file) noexcept;
   
+  static FileError ShortWrite(Type handle,EventType h_event,FilePosType off,const uint8 *buf,unsigned len) noexcept;
+  
+  static FileError ShortRead(Type handle,EventType h_event,FilePosType off,uint8 *buf,unsigned len) noexcept;
+  
   static FileError Write(Type handle,EventType h_event,FileOpenFlags oflags,FilePosType off,const uint8 *buf,ulen len) noexcept;
   
   static FileError Read(Type handle,EventType h_event,FileOpenFlags oflags,FilePosType off,uint8 *buf,ulen len) noexcept;

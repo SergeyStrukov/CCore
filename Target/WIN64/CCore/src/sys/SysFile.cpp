@@ -483,44 +483,97 @@ void AltFile::Close(FileMultiError &errout,Type handle,EventType h_event,FileOpe
   AbortIf( !Win64::CloseHandle(h_event) ,"CCore::Sys::AltFile::Close()");
  }
   
-FileError AltFile::Write(Type handle,EventType h_event,FileOpenFlags oflags,FilePosType off,const uint8 *buf,ulen len) noexcept
+FileError AltFile::ShortWrite(Type handle,EventType h_event,FilePosType off,const uint8 *buf,Win64::ushortlen_t len) noexcept
  {
-#if 0
+  Win64::Overlapped olap;
+  Win64::ushortlen_t ret_len;
   
-  if( oflags&Open_Write )
+  olap.internal=0;
+  olap.internal_hi=0;
+  olap.offset=off;
+  olap.h_event=h_event;
+  
+  if( Win64::WriteFile(handle,buf,len,&ret_len,&olap) )
     {
-     Win64::Overlapped olap;
-     Win64::ulen_t ret_len;
-     
-     olap.internal=0;
-     olap.offset=off;
-     olap.h_event=h_event;
-     
-     if( Win64::WriteFile(handle,buf,len,&ret_len,&olap) )
+     // all done
+    }
+  else
+    {
+     auto error=Win64::GetLastError();
+    
+     if( error==Win64::ErrorIOPending ) 
        {
-        // all done
+        if( !Win64::GetOverlappedResult(handle,&olap,&ret_len,true) ) return MakeError(FileError_WriteFault);
        }
      else
        {
-        auto error=Win64::GetLastError();
-       
-        if( error==Win64::ErrorIOPending ) 
-          {
-           if( !Win64::GetOverlappedResult(handle,&olap,&ret_len,true) ) return MakeError(FileError_WriteFault);
-          }
-        else
-          {
-           return MakeError(FileError_WriteFault,error);
-          }
+        return MakeError(FileError_WriteFault,error);
        }
-     
-     if( ret_len!=len ) return FileError_WriteLenMismatch;
-     
-     return FileError_Ok;
+    }
+  
+  if( ret_len!=len ) return FileError_WriteLenMismatch;
+  
+  return FileError_Ok;
+ }
+
+FileError AltFile::ShortRead(Type handle,EventType h_event,FilePosType off,uint8 *buf,Win64::ushortlen_t len) noexcept
+ {
+  Win64::Overlapped olap;
+  Win64::ushortlen_t ret_len;
+  
+  olap.internal=0;
+  olap.internal_hi=0;
+  olap.offset=off;
+  olap.h_event=h_event;
+  
+  if( Win64::ReadFile(handle,buf,len,&ret_len,&olap) )
+    {
+     // all done
     }
   else
-   
-#endif   
+    {
+     auto error=Win64::GetLastError();
+     
+     if( error==Win64::ErrorIOPending )
+       {
+        if( !Win64::GetOverlappedResult(handle,&olap,&ret_len,true) ) return MakeError(FileError_ReadFault);
+       }
+     else
+       {
+        return MakeError(FileError_ReadFault,error);
+       }
+    }
+  
+  if( ret_len!=len ) return FileError_ReadLenMismatch;
+  
+  return FileError_Ok;
+ }
+
+FileError AltFile::Write(Type handle,EventType h_event,FileOpenFlags oflags,FilePosType off,const uint8 *buf,ulen len) noexcept
+ {
+  if( oflags&Open_Write )
+    {
+     if( len>FilePosType(-1)-off ) return FileError_LenOverflow;
+    
+     if( len<=Win64::SplitLen )
+       {
+        return ShortWrite(handle,h_event,off,buf,(Win64::ushortlen_t)len);
+       }
+     else
+       {
+        while( len>2*Win64::SplitLen )
+          {
+           if( auto error=ShortWrite(handle,h_event,off,buf,Win64::SplitLen) ) return error;
+           
+           off+=Win64::SplitLen;
+           buf+=Win64::SplitLen;
+           len-=Win64::SplitLen;
+          }
+
+        return ShortWrite(handle,h_event,off,buf,(Win64::ushortlen_t)len);
+       }
+    }
+  else
     {
      return FileError_NoMethod;
     }  
@@ -528,42 +581,29 @@ FileError AltFile::Write(Type handle,EventType h_event,FileOpenFlags oflags,File
 
 FileError AltFile::Read(Type handle,EventType h_event,FileOpenFlags oflags,FilePosType off,uint8 *buf,ulen len) noexcept
  {
-#if 0
-  
   if( oflags&Open_Read )
     {
-     Win64::Overlapped olap;
-     Win64::ulen_t ret_len;
-     
-     olap.internal=0;
-     olap.offset=off;
-     olap.h_event=h_event;
-     
-     if( Win64::ReadFile(handle,buf,len,&ret_len,&olap) )
-       {
-        // all done
-       }
-     else
-       {
-        auto error=Win64::GetLastError();
-        
-        if( error==Win64::ErrorIOPending )
-          {
-           if( !Win64::GetOverlappedResult(handle,&olap,&ret_len,true) ) return MakeError(FileError_ReadFault);
-          }
-        else
-          {
-           return MakeError(FileError_ReadFault,error);
-          }
-       }
-     
-     if( ret_len!=len ) return FileError_ReadLenMismatch;
-     
-     return FileError_Ok;
+    if( len>FilePosType(-1)-off ) return FileError_LenOverflow;
+   
+    if( len<=Win64::SplitLen )
+      {
+       return ShortRead(handle,h_event,off,buf,(Win64::ushortlen_t)len);
+      }
+    else
+      {
+       while( len>2*Win64::SplitLen )
+         {
+          if( auto error=ShortRead(handle,h_event,off,buf,Win64::SplitLen) ) return error;
+          
+          off+=Win64::SplitLen;
+          buf+=Win64::SplitLen;
+          len-=Win64::SplitLen;
+         }
+
+       return ShortRead(handle,h_event,off,buf,(Win64::ushortlen_t)len);
+      }
     }
   else
-   
-#endif   
     {
      return FileError_NoMethod;
     }  

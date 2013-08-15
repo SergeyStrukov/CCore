@@ -961,7 +961,7 @@ struct WSAOverlapped
 
 struct WSABuf
  {
-  ushortlen_t len;
+  ulen_t len;
   void_ptr ptr;
  };
 
@@ -1084,9 +1084,21 @@ options_t WIN64_API WSAWaitForMultipleEvents(ushortlen_t hcount,
  
 } // extern "C"
 
+/* PtrAdd() */
+
+inline char * CastPtr(void *ptr) { return static_cast<char *>(ptr); }
+ 
+inline const char * CastPtr(const void *ptr) { return static_cast<const char *>(ptr); }
+ 
+inline void * PtrAdd(void *ptr,ulen_t delta) { return CastPtr(ptr)+delta; }
+ 
+inline const void * PtrAdd(const void *ptr,ulen_t delta) { return CastPtr(ptr)+delta; }
+
 /* adapters */
 
 const ushortlen_t MaxUShortLen = ushortlen_t(-1) ;
+
+const ushortlen_t SplitLen = 0x100000 ;
 
 inline ushortlen_t CapLen(ulen_t len) { if( len>MaxUShortLen ) return MaxUShortLen; return (ushortlen_t)len; }
 
