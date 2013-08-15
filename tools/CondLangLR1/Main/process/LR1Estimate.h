@@ -91,7 +91,7 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
       
      public:
       
-      CrossBuilder(const RecSet &beta_,const RuleSet &alpha_) : beta(beta_.read()),alpha(alpha_) {}
+      CrossBuilder(const RecSet &beta_,const RuleSet &alpha_) : beta(Range(beta_)),alpha(alpha_) {}
       
       ulen getLen() const { return beta.len; }
       
@@ -162,20 +162,30 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
      null=true;
     }
    
-   using Context = ulen ;
+   struct Context
+    {
+     ulen atom_count;
+     
+     explicit Context(const ExtLang &lang) : atom_count(lang.getOriginalAtomCount()) {}
+     
+     bool isRule(Atom atom) const
+      {
+       return atom.getIndex()>=atom_count;
+      }
+    };
    
-   LR1Estimate(Atom atom,ulen atom_count)
+   LR1Estimate(Atom atom,Context ctx)
     {
      empty=false;
      null=false;
      
-     if( atom.getIndex()<atom_count )
+     if( ctx.isRule(atom) )
        {
-        beta=RecSet( Rec(atom,ExtRuleSet()) );
+        alpha=RuleSet(atom);
        }
      else
        {
-        alpha=RuleSet(atom);
+        beta=RecSet( Rec(atom,ExtRuleSet()) );
        }
     }
    
@@ -197,7 +207,7 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
     {
      if( hasEndConflict() ) return true;
      
-     for(auto &rec : beta.read() ) if( rec.object.hasConflict() ) return true;
+     for(auto &rec : Range(beta) ) if( rec.object.hasConflict() ) return true;
      
      return false;
     }
@@ -229,54 +239,20 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
    
    // print object
    
+   using PrintOptType = BlockPrintOpt ;
+   
    template <class P>
-   void print(P &out) const
+   void print(P &out,PrintOptType opt) const
     {
      if( empty )
        {
         Putobj(out,"EMPTY");
-       }
-     else
-       {
-        if( hasConflict() ) Putobj(out,"CONFLICT ");
         
-        if( null ) 
-          {
-           if( alpha.nonEmpty() ) 
-             Printf(out," (End) : STOP #;",alpha);
-           else
-             Putobj(out," (End) : STOP");
-           
-           if( beta.nonEmpty() ) Printf(out," #;",beta);
-          }
-        else
-          {
-           if( alpha.nonEmpty() ) 
-             {
-              Printf(out,"(End) : #;",alpha);
-              
-              if( beta.nonEmpty() ) Printf(out," #;",beta);
-             }
-           else
-             {
-              Putobj(out,beta);
-             }
-          }
+        if( opt.flag ) Putch(out,'\n');
        }
-    }
-   
-   template <class P>
-   void printBlock(P &out,ulen index) const
-    {
-     if( empty )
+     else if( opt.flag )
        {
-        Printf(out,"#;) EMPTY\n",index);
-       }
-     else
-       {
-        Printf(out,"#;)",index);
-        
-        if( hasConflict() ) Putobj(out," CONFLICT");
+        if( hasConflict() ) Putobj(out,"CONFLICT");
         
         Putch(out,'\n');
         
@@ -305,12 +281,39 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
              }
           }
         
-        for(auto &rec : beta.read() )
+        for(auto &rec : Range(beta) )
           {
            if( rec.object.hasConflict() )
              Printf(out,"\n  #; : #;  CONFLICT\n",rec.index,rec.object);
            else
              Printf(out,"\n  #; : #;\n",rec.index,rec.object);
+          }
+       }
+     else
+       {
+        if( hasConflict() ) Putobj(out,"CONFLICT ");
+        
+        if( null ) 
+          {
+           if( alpha.nonEmpty() ) 
+             Printf(out," (End) : STOP #;",alpha);
+           else
+             Putobj(out," (End) : STOP");
+           
+           if( beta.nonEmpty() ) Printf(out," #;",beta);
+          }
+        else
+          {
+           if( alpha.nonEmpty() ) 
+             {
+              Printf(out,"(End) : #;",alpha);
+              
+              if( beta.nonEmpty() ) Printf(out," #;",beta);
+             }
+           else
+             {
+              Putobj(out,beta);
+             }
           }
        }
     }

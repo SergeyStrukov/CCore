@@ -15,6 +15,19 @@
 
 namespace App {
 
+/* struct BlockPrintOpt */
+
+BlockPrintOpt::BlockPrintOpt(const char *ptr,const char *lim)
+ {
+  flag=true;
+  
+  StrParse dev(ptr,lim);
+  
+  ParseChar(dev,'.');
+  ParseChar(dev,'b');
+  
+  if( !dev.finish() ) setDefault();
+ }
 
 } // namespace App
 

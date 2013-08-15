@@ -72,7 +72,7 @@ class SparseVector : CmpComparable<SparseVector<I,T> > , NoThrowFlagsBase
    
    T operator [] (I index) const
     {
-     auto range=cellset.read();
+     auto range=Range(cellset);
      
      Algon::BinarySearch_if(range, [=] (const Cell &obj) { return index<=obj.index; } );
      
@@ -102,7 +102,7 @@ class SparseVector : CmpComparable<SparseVector<I,T> > , NoThrowFlagsBase
    template <class P>
    void print(P &out) const
     {
-     for(auto &cell : cellset.read() ) Printf(out,"#;\n",cell);
+     for(auto &cell : Range(cellset) ) Printf(out,"#;\n",cell);
   
      Printf(out,"-----\n");
     }
@@ -168,7 +168,7 @@ PtrLen<Cell> VectorMulBuilder<I,T,Row,Cell>::operator () (Place<void> place) con
   
   for(auto p=a; +p ;++p)
     {
-     T prod=Prod(p->object.read(),b);
+     T prod=Prod(Range(p->object),b);
      
      if( +prod )
        {
@@ -238,7 +238,7 @@ MatrixMulBuilder<I,T,Row,Cell>::FillRow::FillRow(PtrLen<const Cell> a,PtrLen<con
         {
          T ma=a->object;
         
-         for(auto p=b->object.read(); +p ;++p)
+         for(auto p=Range(b->object); +p ;++p)
            {
             T prod=ma*p->object;
             
@@ -264,7 +264,7 @@ PtrLen<Row> MatrixMulBuilder<I,T,Row,Cell>::operator () (Place<void> place) cons
   
   for(auto p=a; +p ;++p)
     {
-     FillRow fill(p->object.read(),b);
+     FillRow fill(Range(p->object),b);
      
      auto result=fill.getResult();
      
@@ -360,7 +360,7 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
     
    friend SparseMatrix<I,T> operator * (const SparseMatrix<I,T> &a,const SparseMatrix<I,T> &b)
     {
-     return SparseMatrix<I,T>(DoBuild,MatrixMulBuilder<I,T,Row,Cell>(a.rowset.read(),b.rowset.read()));
+     return SparseMatrix<I,T>(DoBuild,MatrixMulBuilder<I,T,Row,Cell>(Range(a.rowset),Range(b.rowset)));
     }
 
    friend SparseVector<I,T> operator * <> (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b);
@@ -370,11 +370,11 @@ class SparseMatrix : public CmpComparable<SparseMatrix<I,T> > , public NoThrowFl
    template <class P>
    void print(P &out) const
     {
-     for(auto &row : rowset.read() )
+     for(auto &row : Range(rowset) )
        {
         Printf(out,"#; -----\n",row.index);
         
-        for(auto &cell : row.object.read() ) Printf(out,"  #;\n",cell);
+        for(auto &cell : Range(row.object) ) Printf(out,"  #;\n",cell);
        }
      
      Printf(out,"-----\n");
@@ -385,7 +385,7 @@ template <class I,class T>
 SparseVector<I,T> operator * (const SparseMatrix<I,T> &a,const SparseVector<I,T> &b)
  {
   return SparseVector<I,T>(DoBuild,VectorMulBuilder<I,T,typename SparseMatrix<I,T>::Row,
-                                                        typename SparseVector<I,T>::Cell>(a.rowset.read(),b.cellset.read()));
+                                                        typename SparseVector<I,T>::Cell>(Range(a.rowset),Range(b.cellset)));
  }
 
 /* class SparseMatrix<I,T>::PosFill */

@@ -32,6 +32,8 @@ struct Vertex : CmpComparable<Vertex> , NoThrowFlagsBase
  {
   ulen index = MaxULen ;
   
+  // constructors
+  
   Vertex() {}
   
   Vertex(ulen index_) : index(index_) {}
@@ -72,11 +74,7 @@ struct Arrow : NoThrowFlagsBase
   template <class P>
   void print(P &out) const
    {
-    Printf(out,"#; -> #; ( #; ;",src,dst,alpha);
-    
-    for(Element e : beta ) Printf(out," #;",e);
-    
-    Putobj(out," )");
+    Printf(out,"#; -> #; ( #; ; #; )",src,dst,alpha,PrintRange(beta));
    }
  };
 
@@ -117,7 +115,7 @@ class LangDiagram : NoCopy
     {
      Printf(out,"#;\n\n",Title("Start"));
      
-     for(Vertex v : start ) Printf(out,"#;\n",v);
+     for(auto v : start ) Printf(out,"#;\n",v);
      
      Printf(out,"\n#;\n\n",Title("Stop"));
      
@@ -125,7 +123,7 @@ class LangDiagram : NoCopy
      
      Printf(out,"\n#;\n\n",Title("Arrows"));
      
-     for(const Arrow &a : arrows ) Printf(out,"#;\n",a);
+     for(auto &a : arrows ) Printf(out,"#;\n",a);
      
      Printf(out,"\n#;\n",TextDivider());
     }

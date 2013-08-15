@@ -64,11 +64,65 @@ bool SetCmp(T &x,const T &a)
 
 /* classes */
 
+struct BlockPrintOpt;
+
+template <class R> class PrintRangeType;
+
 struct PosStr;
 
 struct DescBase;
 
 class TrackStep;
+
+/* struct BlockPrintOpt */
+
+struct BlockPrintOpt
+ {
+  bool flag;
+  
+  void setDefault() { flag=false; }
+  
+  BlockPrintOpt() { setDefault(); }
+  
+  BlockPrintOpt(const char *ptr,const char *lim);
+  
+  //
+  // [.b]
+  //
+ };
+
+/* class PrintRangeType<R> */
+
+template <class R> 
+class PrintRangeType
+ {
+   R range;
+   
+  public: 
+   
+   explicit PrintRangeType(const R &range_) : range(range_) {}
+   
+   template <class P>
+   void print(P &out) const
+    {
+     R p=range;
+     
+     if( +p )
+       {
+        Putobj(out,*p);
+        
+        for(++p; +p ;++p)
+          {
+           Putch(out,' ');
+           
+           Putobj(out,*p);
+          }
+       }
+    }
+ };
+
+template <class R>
+PrintRangeType<R> PrintRange(R range) { return PrintRangeType<R>(range); }
 
 /* struct PosStr */
 

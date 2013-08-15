@@ -27,7 +27,7 @@ namespace App {
 
 static bool RunGoodTest(const Lang &lang)
  {
-  LangEstimate<GoodEstimate> estimate(lang,{});
+  LangEstimate<GoodEstimate> estimate(lang,GoodEstimate::Context(lang));
   
   bool ret=true;
 

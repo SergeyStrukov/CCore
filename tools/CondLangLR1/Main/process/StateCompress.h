@@ -22,9 +22,29 @@ namespace App {
 
 /* classes */
 
+struct ExtLangOpt;
+
 struct StateCompressBase;
 
 template <class Estimate> class StateCompress;
+
+/* struct ExtLangOpt */
+
+struct ExtLangOpt
+ {
+  const Lang &lang;
+  ulen atom_count;
+  
+  ExtLangOpt(const Lang &lang_,ulen atom_count_) : lang(lang_),atom_count(atom_count_) {}
+  
+  StrLen operator [] (ulen element) const
+   {
+    if( element<atom_count )
+      return lang.getAtoms()[element].name;
+    else
+      return lang.getSynts()[element-atom_count].name;
+   }
+ };
 
 /* struct StateCompressBase */
 
@@ -48,12 +68,16 @@ struct StateCompressBase : NoCopy
     
     // print object
     
+    using PrintOptType = ExtLangOpt ;
+    
     template <class P>
-    void print(P &out) const
+    void print(P &out,ExtLangOpt opt) const
      {
       Printf(out,"#;) #;\n",index,estimate_index);
       
-      for(auto &trans : transitions ) Printf(out,"  #3; -> #3;",trans.element,trans.dst->index);
+      for(auto &trans : transitions ) Printf(out,"  #3; -> #3;",opt[trans.element],trans.dst->index);
+      
+      Putch(out,'\n');
      }
    };
  };
@@ -132,23 +156,25 @@ class StateCompress : public StateCompressBase
    
    // print object
    
+   using PrintOptType = LangOpt ;
+   
    template <class P>
-   void print(P &out) const
+   void print(P &out,LangOpt opt) const
     {
      Putobj(out,"-----\n");
      
      Printf(out,"atoms = #; elements = #;\n",getAtomCount(),getElementCount());
      
-     Putobj(out,"-----\n");
+     opt.lang.applyForAtoms(getAtomCount(), [&] (Atom atom) { Printf(out,"#; ",atom.getName()); } );
+     
+     opt.lang.applyForSynts( [&] (Synt synt) { Printf(out,"#; ",synt.getName()); } );
+     
+     Putobj(out,"\n-----\n");
      
      for(auto &state : getStateTable() )
        {
-        Printf(out,"#;\n",state);
-        
-        Putobj(out,"-----\n");
+        Putobj(out,BindOpt(ExtLangOpt(opt.lang,getAtomCount()),state),"-----\n");
        }
-     
-     Putobj(out,"-----\n");
      
      ulen index=0;
      

@@ -20,27 +20,7 @@ namespace App {
 
 /* classes */
 
-template <class Estimate> struct MakeContext;
-
 template <class Estimate> class Engine;
-
-/* struct MakeContext<Estimate> */
-
-template <class Estimate> 
-struct MakeContext : Estimate::Context
- {
-  explicit MakeContext(const ExtLang &) {}
- };
-
-template <>
-struct MakeContext<LR1Estimate> 
- {
-  ulen atom_count;
-  
-  explicit MakeContext(const ExtLang &lang) : atom_count(lang.getOriginalAtomCount()) {}
-  
-  operator ulen() const { return atom_count; } 
- };
 
 /* class Engine<Estimate> */
 
@@ -54,50 +34,34 @@ class Engine : NoCopy
    
   private:
    
-   template <class P>
-   void printElement(P &out,ulen element) const
-    {
-     ulen atom_count=compress.getAtomCount();
-  
-     if( element<atom_count )
-       Putobj(out,ext_lang.getAtoms()[element].name);
-     else
-       Putobj(out,ext_lang.getSynts()[element-atom_count].name);
-    }
+   using Context = typename Estimate::Context ; 
    
-   template <class P>
-   void printTrace(P &out,Trace trace) const
+   struct PrintState
     {
-     if( trace.ok )
-       {
-        for(ulen element : trace.trace )
-          {
-           Putch(out,' ');
-           
-           printElement(out,element);
-          }
-       }
-     else
-       {
-        Putobj(out," NO-TRACE");
-       }
-    }
-   
-   template <class P,class T>
-   void printState(P &out,ulen index,const T &trace_table) const
-    {
-     Printf(out,"( #; ,",index);
+     ulen index;
+     const DynArray<Trace> &trace_table;
      
-     printTrace(out,trace_table[index]);
+     // constructors
      
-     Putobj(out," )");
-    }
+     PrintState(ulen index_,const DynArray<Trace> &trace_table_) : index(index_),trace_table(trace_table_) {}
+     
+     // print object
+     
+     using PrintOptType = ExtLangOpt ;
+     
+     template <class P>
+     void print(P &out,ExtLangOpt opt) const
+      {
+       Printf(out,"( #; ; #; )",index,BindOpt(opt,trace_table[index]));
+      }
+    };
    
   public:
  
-   explicit Engine(const Lang &lang)
+   template <class ... TT>
+   explicit Engine(const Lang &lang,TT && ... tt)
     : ext_lang(lang),
-      machine(ext_lang,MakeContext<Estimate>(ext_lang)),
+      machine(ext_lang,Context(ext_lang, std::forward<TT>(tt)... )),
       compress(machine),
       trace(compress)
     {
@@ -114,7 +78,12 @@ class Engine : NoCopy
     {
      Printf(out,"#;\n",ext_lang);
      
+     //Printf(out,"#;\n",BindOpt(LangOpt(ext_lang),machine));
+     //Printf(out,"#;\n",BindOpt(LangOpt(ext_lang),compress));
+     
      // state table
+     
+     ExtLangOpt opt(ext_lang,compress.getAtomCount());
      
      Printf(out,"#;\n",Title("States"));
      
@@ -126,23 +95,11 @@ class Engine : NoCopy
      
      for(auto p=compress.getStateTable(); +p ;++p)
        {
-        Putch(out,'\n');
-        
-        printState(out,p->index,trace_table);
-        
-        Printf(out," = #;\n\n",p->estimate_index);
+        Printf(out,"\n#; = #;\n\n",BindOpt(opt,PrintState(p->index,trace_table)),p->estimate_index);
         
         for(auto &t : p->transitions )
           {
-           Putobj(out,"  ");
-           
-           printElement(out,t.element);
-           
-           Putobj(out," -> ");
-           
-           printState(out,t.dst->index,trace_table);
-           
-           Putobj(out,"\n\n");
+           Printf(out,"  #; -> #;\n\n",opt[t.element],BindOpt(opt,PrintState(t.dst->index,trace_table)));
           }
        
         if( p.len>1 )
@@ -157,9 +114,7 @@ class Engine : NoCopy
      
      for(auto p=compress.getEstimates(); +p ;++p)
        {
-        Putch(out,'\n');
-       
-        p->printBlock(out,index);
+        Printf(out,"\n#;) #.b;",index,*p);
         
         index++;
         

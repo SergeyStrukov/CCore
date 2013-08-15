@@ -47,7 +47,11 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
    
    GoodEstimate(ElementOneType) : value(Null) {}
    
-   struct Context {};
+   struct Context 
+    {
+     template <class T>
+     explicit Context(const T &) {}
+    };
    
    GoodEstimate(Atom,Context) : value(Good) {}
    
@@ -89,8 +93,10 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
    
    // print object
    
+   using PrintOptType = BlockPrintOpt ;
+   
    template <class P>
-   void print(P &out) const
+   void print(P &out,PrintOptType opt) const
     {
      switch( value )
        {
@@ -98,12 +104,8 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
         case Null  : Putobj(out,"null"); break;
         case Good  : Putobj(out,"good"); break;
        }
-    }
-   
-   template <class P>
-   void printBlock(P &out,ulen index) const
-    {
-     Printf(out,"#;) #;\n",index,*this);
+     
+     if( opt.flag ) Putch(out,'\n');
     }
  };
 

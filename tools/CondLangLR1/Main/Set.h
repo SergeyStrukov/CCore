@@ -187,7 +187,7 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
    
    explicit Set(const T &t) : array(DoFill(1),t) {} // single element set
    
-   Set(const Set<T,J> &a,const Set<T,J> &b) : array(DoBuild,JoinBuilder<T,J>(a.read(),b.read())) {}
+   Set(const Set<T,J> &a,const Set<T,J> &b) : array(DoBuild,JoinBuilder<T,J>(Range(a),Range(b))) {}
    
    ~Set() {}
    
@@ -204,13 +204,15 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
    
    bool nonEmpty() const { return array.getLen(); }
    
-   ulen getLen() const { return array.getLen(); }
+   const T * getPtr() const { return array.getPtr(); }
    
-   PtrLen<const T> read() const { return Range_const(array); }
+   const T * getPtr_const() const { return array.getPtr(); }
+   
+   ulen getLen() const { return array.getLen(); }
    
    // cmp objects
    
-   CmpResult objCmp(const Set<T,J> &obj) const { return RangeCmp(read(),obj.read()); }
+   CmpResult objCmp(const Set<T,J> &obj) const { return RangeCmp(Range(*this),Range(obj)); }
    
    // operators
     
@@ -229,14 +231,7 @@ class Set : public CmpComparable<Set<T,J> > , public NoThrowFlagsBase
    template <class P>
    void print(P &out) const
     {
-     auto p=read();
-     
-     if( +p )
-       {
-        Putobj(out,*p);
-        
-        for(++p; +p ;++p) Printf(out," #;",*p);
-       }
+     Putobj(out,PrintRange(Range(*this)));
     }
  };
 
@@ -251,7 +246,7 @@ struct Set<T,J>::Accumulator : NoCopy
    
    void add(const Set<T,J> &obj)
     {
-     PtrLen<const T> range=obj.read();
+     PtrLen<const T> range=Range(obj);
      
      collector.extend_copy(range.len,range.ptr);
     }

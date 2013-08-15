@@ -18,6 +18,16 @@
 
 namespace App {
 
+/* ApplyToDesc */
+
+template <class R,class FuncInit>
+void ApplyToDesc(R range,FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+  
+  for(; +range ;++range) func(range.ptr);
+ }
+
 /* classes */
 
 struct LangBase;
@@ -240,7 +250,7 @@ struct Synt : CmpComparable<Synt> , NoThrowFlagsBase
    {
     FunctorTypeOf<FuncInit> func(func_init);
     
-    for(auto r=desc->rules; +r ;++r) func(r.ptr);
+    for(auto p=desc->rules; +p ;++p) func(p.ptr);
    }
   
   // cmp objects
@@ -285,13 +295,13 @@ struct Rule : CmpComparable<Rule> , NoThrowFlagsBase
    {
     FunctorTypeOf<FuncInit> func(func_init);
     
-    for(auto r=desc->args; +r ;++r) func(*r);
+    for(auto p=desc->args; +p ;++p) func(*p);
    }
   
   template <class AtomFuncInit,class SyntFuncInit>
   void apply(AtomFuncInit atom_func_init,SyntFuncInit synt_func_init) const // atom_func(Atom),synt_func(Synt)
    {
-    for(auto r=desc->args; +r ; ++r) r->apply(atom_func_init,synt_func_init);
+    for(auto p=desc->args; +p ; ++p) p->apply(atom_func_init,synt_func_init);
    }
   
   // cmp objects
@@ -374,25 +384,25 @@ class Lang : public LangBase
    template <class FuncInit>
    void applyForAtoms(FuncInit func_init) const // func(Atom)
     {
-     FunctorTypeOf<FuncInit> func(func_init);
-     
-     for(auto r=getAtoms(); +r ;++r) func(r.ptr);
+     ApplyToDesc(getAtoms(),func_init);
+    }
+   
+   template <class FuncInit>
+   void applyForAtoms(ulen atom_count,FuncInit func_init) const // func(Atom)
+    {
+     ApplyToDesc(getAtoms().prefix(atom_count),func_init);
     }
    
    template <class FuncInit>
    void applyForSynts(FuncInit func_init) const // func(Synt)
     {
-     FunctorTypeOf<FuncInit> func(func_init);
-     
-     for(auto r=getSynts(); +r ;++r) func(r.ptr);
+     ApplyToDesc(getSynts(),func_init);
     }
    
    template <class FuncInit>
    void applyForRules(FuncInit func_init) const // func(Rule)
     {
-     FunctorTypeOf<FuncInit> func(func_init);
-     
-     for(auto r=getRules(); +r ;++r) func(r.ptr);
+     ApplyToDesc(getRules(),func_init);
     }
    
    // print object
@@ -538,11 +548,29 @@ class ExtLang : public Lang
    
    ~ExtLang();
    
-   ulen getOriginalAtomCount() const { return original_atom_count; }
+   // description
    
    PtrLen<const AtomDesc> getOriginalAtoms() const { return getAtoms().prefix(original_atom_count); }
    
+   ulen getOriginalAtomCount() const { return original_atom_count; }
+   
    PtrLen<const AtomDesc> getRuleAtoms() const { return getAtoms().part(original_atom_count); }
+   
+   ulen getRuleAtomCount() const { return getAtomCount()-original_atom_count; }
+   
+   // apply
+   
+   template <class FuncInit>
+   void applyForOriginalAtoms(FuncInit func_init) const // func(Atom)
+    {
+     ApplyToDesc(getOriginalAtoms(),func_init);
+    }
+   
+   template <class FuncInit>
+   void applyForRuleAtoms(FuncInit func_init) const // func(Atom)
+    {
+     ApplyToDesc(getRuleAtoms(),func_init);
+    }
  };
 
 } // namespace App

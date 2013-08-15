@@ -31,9 +31,43 @@ struct Trace : NoThrowFlagsBase
   bool ok;
   RefArray<ulen> trace;
   
+  // constructors
+  
   Trace() : ok(false) {}
   
   Trace(RefArray<ulen> trace_) : ok(true),trace(trace_) {}
+  
+  // print object
+  
+  using PrintOptType = ExtLangOpt ;
+  
+  template <class P>
+  void print(P &out,ExtLangOpt opt) const
+   {
+    if( ok )
+      {
+       auto p=Range(trace);
+       
+       if( +p )
+         {
+          Putobj(out,opt[*p]);
+          
+          for(++p; +p ;++p)
+            {
+             Putch(out,' ');
+             Putobj(out,opt[*p]);
+            }
+         }
+       else
+         {
+          Putobj(out,"NULL");
+         }
+      }
+    else
+      {
+       Putobj(out,"NO-TRACE");
+      }
+   }
  };
 
 /* class StateTrace */

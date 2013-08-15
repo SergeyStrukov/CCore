@@ -42,7 +42,11 @@ class NonEmptyEstimate : public CmpComparable<NonEmptyEstimate> , public NoThrow
    
    NonEmptyEstimate(ElementOneType) : value(true) {}
    
-   struct Context {};
+   struct Context 
+    {
+     template <class T>
+     explicit Context(const T &) {}
+    };
    
    NonEmptyEstimate(Atom,Context) : value(true) {}
    
@@ -80,19 +84,17 @@ class NonEmptyEstimate : public CmpComparable<NonEmptyEstimate> , public NoThrow
    
    // print object
    
+   using PrintOptType = BlockPrintOpt ;
+   
    template <class P>
-   void print(P &out) const
+   void print(P &out,PrintOptType opt) const
     {
      if( value )
        Putobj(out,"non-empty");
      else
        Putobj(out,"empty");
-    }
-   
-   template <class P>
-   void printBlock(P &out,ulen index) const
-    {
-     Printf(out,"#;) #;\n",index,*this);
+     
+     if( opt.flag ) Putch(out,'\n');
     }
  };
 

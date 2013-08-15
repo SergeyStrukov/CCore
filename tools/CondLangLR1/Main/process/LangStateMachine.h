@@ -40,7 +40,18 @@ inline void GuardStateCap(ulen count)
 
 /* classes */
 
+struct LangOpt;
+
 template <class Estimate> class LangStateMachine;
+
+/* struct LangOpt */
+
+struct LangOpt
+ {
+  const Lang &lang;
+  
+  explicit LangOpt(const Lang &lang_) : lang(lang_) {}
+ };
 
 /* class LangStateMachine<Estimate> */
 
@@ -83,10 +94,7 @@ class LangStateMachine : NoCopy
       {
        typename Matrix::PosFill fill(count);
        
-       for(ArrowRec *ptr=top; ptr ;ptr=ptr->next) 
-         {
-          fill.add(ptr->pos);
-         }
+       for(ArrowRec *ptr=top; ptr ;ptr=ptr->next) fill.add(ptr->pos); 
        
        Matrix ret(fill);
        
@@ -190,6 +198,8 @@ class LangStateMachine : NoCopy
        Printf(out,"#;) #;\n",index,est);
        
        for(auto *dst : transitions ) Printf(out,"  #3;",dst->index);
+       
+       Putch(out,'\n');
       }
     };
    
@@ -225,20 +235,24 @@ class LangStateMachine : NoCopy
    
    // print object
    
+   using PrintOptType = LangOpt ;
+   
    template <class P>
-   void print(P &out) const
+   void print(P &out,LangOpt opt) const
     {
      Putobj(out,"-----\n");
      
      Printf(out,"atoms = #; elements = #;\n",getAtomCount(),getElementCount());
      
-     Putobj(out,"-----\n");
+     opt.lang.applyForAtoms(getAtomCount(), [&] (Atom atom) { Printf(out,"#; ",atom.getName()); } );
+     
+     opt.lang.applyForSynts( [&] (Synt synt) { Printf(out,"#; ",synt.getName()); } );
+     
+     Putobj(out,"\n-----\n");
      
      for(auto &state : getStateTable() )
        {
-        Printf(out,"#;\n",state);
-        
-        Putobj(out,"-----\n");
+        Putobj(out,state,"-----\n");
        }
     }
  };
