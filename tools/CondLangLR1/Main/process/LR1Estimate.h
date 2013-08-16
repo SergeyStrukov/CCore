@@ -23,6 +23,8 @@ namespace App {
 
 class LR1Context;
 
+class LR1MapContext;
+
 class LR1Estimate;
 
 /* class LR1Context */
@@ -34,6 +36,25 @@ class LR1Context
   public: 
   
    explicit LR1Context(const ExtLang &lang) : atom_count(lang.getOriginalAtomCount()) {}
+  
+   bool isRule(Atom atom) const
+    {
+     return atom.getIndex()>=atom_count;
+    }
+ };
+
+/* class LR1MapContext */
+
+class LR1MapContext
+ {
+   LangMap map;
+   ulen atom_count;
+   
+  public: 
+  
+   LR1MapContext(const ExtLang &,const ExtLang &lang) : map(lang),atom_count(lang.getOriginalAtomCount()) {}
+   
+   Atom operator () (Atom atom) const { return map(atom); }
   
    bool isRule(Atom atom) const
     {
@@ -213,6 +234,23 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
     {
      empty=false;
      null=false;
+     
+     if( ctx.isRule(atom) )
+       {
+        alpha=RuleSet(atom);
+       }
+     else
+       {
+        beta=RecSet( Rec(atom,ExtRuleSet()) );
+       }
+    }
+   
+   LR1Estimate(Atom atom,LR1MapContext ctx)
+    {
+     empty=false;
+     null=false;
+     
+     atom=ctx(atom);
      
      if( ctx.isRule(atom) )
        {

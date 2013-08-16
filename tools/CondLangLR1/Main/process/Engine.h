@@ -57,8 +57,8 @@ class Engine : NoCopy
    
   public:
  
-   template <class ... TT>
-   explicit Engine(const Lang &lang,TT && ... tt)
+   template <class L,class ... TT>
+   explicit Engine(const L &lang,TT && ... tt)
     : ext_lang(lang),
       diagram(ext_lang),
       machine(ext_lang,diagram,ext_lang, std::forward<TT>(tt)... ),
@@ -74,15 +74,16 @@ class Engine : NoCopy
    
    // properties
    
+   const ExtLang & getExtLang() const { return ext_lang; }
+   
    PtrLen<const Estimate> getProps() const { return compress.getProps(); }
    
    // print object
-   
+
    template <class P>
    void print(P &out) const
     {
-     Printf(out,"#;\n",ext_lang);
-     
+     //Printf(out,"#;\n",ext_lang);
      //Printf(out,"#;\n",diagram);
      //Printf(out,"#;\n",BindOpt(LangOpt(ext_lang),machine));
      //Printf(out,"#;\n",BindOpt(LangOpt(ext_lang),compress));

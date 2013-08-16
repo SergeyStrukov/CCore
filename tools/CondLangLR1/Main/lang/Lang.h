@@ -46,6 +46,8 @@ class TopLang;
 
 class ExtLang;
 
+class LangMap;
+
 /* struct LangBase */
 
 struct LangBase : NoCopy
@@ -55,6 +57,8 @@ struct LangBase : NoCopy
   struct AtomDesc : DescBase 
    {
     AtomDesc() {}
+    
+    ulen map_index = MaxULen ;
     
     // print object
     
@@ -411,35 +415,10 @@ class Lang : public LangBase
    
    // print object
    
+   struct PrintOptType;
+   
    template <class P>
-   void print(P &out) const
-    {
-     Printf(out,"#;\n\n",Title("Atoms"));
-     
-     for(auto &atom : getAtoms() ) Printf(out,"#;\n",atom);
-     
-     Printf(out,"\n#;\n\n",Title("Syntax classes"));
-     
-     for(auto &synt : getSynts() ) 
-       {
-        Printf(out,"#;\n",synt);
-        
-        for(auto &rule : synt.rules ) Printf(out,"  Rule(#;)\n",rule.index);
-       }
-     
-     Printf(out,"\n#;\n\n",Title("Rules"));
-     
-     for(auto &rule : getRules() )
-       {
-        Printf(out,"#;\n",rule);
-        
-        for(auto &element : rule.args ) Printf(out,"  #;",element);
-        
-        Putch(out,'\n');
-       }
-     
-     Printf(out,"\n#;\n",TextDivider());
-    }
+   void print(P &out,PrintOptType opt) const;
  };
 
 /* class BottomLang */
@@ -518,11 +497,13 @@ class TopLang : public Lang
      void objSwap(RuleRec &obj)
       {
        Swap(name,obj.name);
+       Swap(map_index,obj.map_index);
        Swap(args,obj.args);
       }
      
      explicit RuleRec(ToMoveCtor<RuleRec> obj)
       : name(obj->name),
+        map_index(obj->map_index),
         args(ObjToMove(obj->args)) 
       {
       }
@@ -560,10 +541,16 @@ class TopLang : public Lang
 class ExtLang : public Lang
  {
    ulen original_atom_count;
+
+  private: 
+   
+   ExtLang(const Lang &lang,ulen map_atom_count);
    
   public:
   
-   explicit ExtLang(const Lang &lang);
+   explicit ExtLang(const Lang &lang) : ExtLang(lang,0) {}
+   
+   explicit ExtLang(const TopLang &lang) : ExtLang(lang,lang.getAtomCount()) {}
    
    ~ExtLang();
    
@@ -591,6 +578,112 @@ class ExtLang : public Lang
      ApplyToDesc(getRuleAtoms(),func_init);
     }
  };
+
+/* class LangMap */
+
+class LangMap
+ {
+   const LangBase::AtomDesc *atoms;
+   const LangBase::SyntDesc *synts;
+   const LangBase::RuleDesc *rules;
+   
+  public:
+
+   LangMap() : atoms(0),synts(0),rules(0) {}
+   
+   explicit LangMap(const Lang &lang)
+    {
+     atoms=lang.getAtoms().ptr;
+     synts=lang.getSynts().ptr;
+     rules=lang.getRules().ptr;
+    }
+   
+   bool operator + () const { return atoms; }
+   
+   bool operator ! () const { return !atoms; }
+   
+   Atom operator () (Atom atom) const { return atoms+atom.desc->map_index; }
+   
+   Synt operator () (Synt synt) const { return synts+synt.desc->map_index; }
+   
+   Rule operator () (Rule rule) const { return rules+rule.desc->map_index; }
+   
+   const LangBase::AtomDesc & operator () (const LangBase::AtomDesc &atom) const { return atoms[atom.map_index]; }
+   
+   const LangBase::SyntDesc & operator () (const LangBase::SyntDesc &synt) const { return synts[synt.map_index]; }
+   
+   const LangBase::RuleDesc & operator () (const LangBase::RuleDesc &rule) const { return rules[rule.map_index]; }
+ };
+
+/* Lang::print() */
+
+struct Lang::PrintOptType
+ {
+  LangMap map;
+  
+  PrintOptType() {}
+  
+  PrintOptType(const char *,const char *) {}
+  
+  PrintOptType(const LangMap &map_) : map(map_) {}
+ };
+
+template <class P>
+void Lang::print(P &out,PrintOptType opt) const
+ {
+  Printf(out,"#;\n\n",Title("Atoms"));
+  
+  if( +opt.map )
+    {
+     for(auto &atom : getAtoms() ) Printf(out,"#;  -->  #;\n",atom,opt.map(atom));
+     
+     Printf(out,"\n#;\n\n",Title("Syntax classes"));
+  
+     for(auto &synt : getSynts() ) 
+       {
+        Printf(out,"#;  -->  #;\n",synt,opt.map(synt));
+     
+        for(auto &rule : synt.rules ) Printf(out,"  Rule(#;)\n",rule.index);
+       }
+  
+     Printf(out,"\n#;\n\n",Title("Rules"));
+  
+     for(auto &rule : getRules() )
+       {
+        Printf(out,"#;  -->  #;\n",rule,opt.map(rule));
+     
+        for(auto &element : rule.args ) Printf(out,"  #;",element);
+     
+        Putch(out,'\n');
+       }
+    }
+  else
+    {
+     for(auto &atom : getAtoms() ) Printf(out,"#;\n",atom);
+  
+     Printf(out,"\n#;\n\n",Title("Syntax classes"));
+  
+     for(auto &synt : getSynts() ) 
+       {
+        Printf(out,"#;\n",synt);
+     
+        for(auto &rule : synt.rules ) Printf(out,"  Rule(#;)\n",rule.index);
+       }
+  
+     Printf(out,"\n#;\n\n",Title("Rules"));
+  
+     for(auto &rule : getRules() )
+       {
+        Printf(out,"#;\n",rule);
+     
+        for(auto &element : rule.args ) Printf(out,"  #;",element);
+     
+        Putch(out,'\n');
+       }
+    }
+  
+  Printf(out,"\n#;\n",TextDivider());
+ }
 
 } // namespace App
 

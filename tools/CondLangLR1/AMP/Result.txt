@@ -30,7 +30,6 @@
   EXPR  A("*")  EXPR  @opMul
 
 --------------------------------------------------------------------------------
-
 --- States ---------------------------------------------------------------------
 
 ( 0 ; NULL ) = 0
@@ -288,37 +287,37 @@
 --------------------------------------------------------------------------------
 --- Atoms ----------------------------------------------------------------------
 
-0) A("(")
-1) A(")")
-2) A("*")
-3) A("+")
-4) A("x")
-5) @opAdd.A.M
-6) @opAdd.M.M
-7) @opAdd.P.M
-8) @opAdd.A.P
-9) @opAdd.M.P
-10) @opAdd.P.P
-11) @opMul.P.M
-12) @opMul.P.P
-13) @opVar
-14) @opBra.A
-15) @opBra.M
-16) @opBra.P
+0) A("(")  -->  0) A("(")
+1) A(")")  -->  1) A(")")
+2) A("*")  -->  2) A("*")
+3) A("+")  -->  3) A("+")
+4) A("x")  -->  4) A("x")
+5) @opAdd.A.M  -->  7) @opAdd
+6) @opAdd.M.M  -->  7) @opAdd
+7) @opAdd.P.M  -->  7) @opAdd
+8) @opAdd.A.P  -->  7) @opAdd
+9) @opAdd.M.P  -->  7) @opAdd
+10) @opAdd.P.P  -->  7) @opAdd
+11) @opMul.P.M  -->  8) @opMul
+12) @opMul.P.P  -->  8) @opMul
+13) @opVar  -->  5) @opVar
+14) @opBra.A  -->  6) @opBra
+15) @opBra.M  -->  6) @opBra
+16) @opBra.P  -->  6) @opBra
 
 --- Syntax classes -------------------------------------------------------------
 
-0) EXPR.A !
+0) EXPR.A !  -->  0) EXPR !
   Rule(0)
   Rule(1)
   Rule(2)
   Rule(3)
   Rule(4)
   Rule(5)
-1) EXPR.M !
+1) EXPR.M !  -->  0) EXPR !
   Rule(6)
   Rule(7)
-2) EXPR.P !
+2) EXPR.P !  -->  0) EXPR !
   Rule(8)
   Rule(9)
   Rule(10)
@@ -326,354 +325,227 @@
 
 --- Rules ----------------------------------------------------------------------
 
-0) opAdd.A.M -> EXPR.A
+0) opAdd.A.M -> EXPR.A  -->  2) opAdd -> EXPR
   EXPR.A  A("+")  EXPR.M  @opAdd.A.M
-1) opAdd.M.M -> EXPR.A
+1) opAdd.M.M -> EXPR.A  -->  2) opAdd -> EXPR
   EXPR.M  A("+")  EXPR.M  @opAdd.M.M
-2) opAdd.P.M -> EXPR.A
+2) opAdd.P.M -> EXPR.A  -->  2) opAdd -> EXPR
   EXPR.P  A("+")  EXPR.M  @opAdd.P.M
-3) opAdd.A.P -> EXPR.A
+3) opAdd.A.P -> EXPR.A  -->  2) opAdd -> EXPR
   EXPR.A  A("+")  EXPR.P  @opAdd.A.P
-4) opAdd.M.P -> EXPR.A
+4) opAdd.M.P -> EXPR.A  -->  2) opAdd -> EXPR
   EXPR.M  A("+")  EXPR.P  @opAdd.M.P
-5) opAdd.P.P -> EXPR.A
+5) opAdd.P.P -> EXPR.A  -->  2) opAdd -> EXPR
   EXPR.P  A("+")  EXPR.P  @opAdd.P.P
-6) opMul.P.M -> EXPR.M
+6) opMul.P.M -> EXPR.M  -->  3) opMul -> EXPR
   EXPR.P  A("*")  EXPR.M  @opMul.P.M
-7) opMul.P.P -> EXPR.M
+7) opMul.P.P -> EXPR.M  -->  3) opMul -> EXPR
   EXPR.P  A("*")  EXPR.P  @opMul.P.P
-8) opVar -> EXPR.P
+8) opVar -> EXPR.P  -->  0) opVar -> EXPR
   A("x")  @opVar
-9) opBra.A -> EXPR.P
+9) opBra.A -> EXPR.P  -->  1) opBra -> EXPR
   A("(")  EXPR.A  A(")")  @opBra.A
-10) opBra.M -> EXPR.P
+10) opBra.M -> EXPR.P  -->  1) opBra -> EXPR
   A("(")  EXPR.M  A(")")  @opBra.M
-11) opBra.P -> EXPR.P
+11) opBra.P -> EXPR.P  -->  1) opBra -> EXPR
   A("(")  EXPR.P  A(")")  @opBra.P
 
 --------------------------------------------------------------------------------
-
 --- States ---------------------------------------------------------------------
 
 ( 0 ; NULL ) = 0
 
   A("(") -> ( 1 ; A("(") )
 
-  A("x") -> ( 37 ; A("x") )
+  A("x") -> ( 17 ; A("x") )
 
-  EXPR.A -> ( 42 ; EXPR.A )
+  EXPR.A -> ( 24 ; EXPR.A )
 
-  EXPR.M -> ( 43 ; EXPR.M )
+  EXPR.M -> ( 24 ; EXPR.A )
 
-  EXPR.P -> ( 41 ; EXPR.P )
+  EXPR.P -> ( 23 ; EXPR.P )
 
 -----
 
 ( 1 ; A("(") ) = 0
 
-  A("(") -> ( 6 ; A("(") A("(") )
+  A("(") -> ( 4 ; A("(") A("(") )
 
-  A("x") -> ( 19 ; A("(") A("x") )
+  A("x") -> ( 7 ; A("(") A("x") )
 
-  EXPR.A -> ( 27 ; A("(") EXPR.A )
+  EXPR.A -> ( 16 ; A("(") EXPR.A )
 
-  EXPR.M -> ( 28 ; A("(") EXPR.M )
+  EXPR.M -> ( 16 ; A("(") EXPR.A )
 
-  EXPR.P -> ( 24 ; A("(") EXPR.P )
+  EXPR.P -> ( 14 ; A("(") EXPR.P )
 
 -----
 
 ( 2 ; A("(") EXPR.A A("+") ) = 0
 
-  A("(") -> ( 6 ; A("(") A("(") )
+  A("(") -> ( 4 ; A("(") A("(") )
 
-  A("x") -> ( 19 ; A("(") A("x") )
+  A("x") -> ( 7 ; A("(") A("x") )
 
-  EXPR.M -> ( 11 ; A("(") EXPR.A A("+") EXPR.M )
+  EXPR.M -> ( 10 ; A("(") EXPR.A A("+") EXPR.M )
 
-  EXPR.P -> ( 14 ; A("(") EXPR.A A("+") EXPR.P )
-
------
-
-( 3 ; A("(") EXPR.M A("+") ) = 0
-
-  A("(") -> ( 6 ; A("(") A("(") )
-
-  A("x") -> ( 19 ; A("(") A("x") )
-
-  EXPR.M -> ( 12 ; A("(") EXPR.M A("+") EXPR.M )
-
-  EXPR.P -> ( 15 ; A("(") EXPR.M A("+") EXPR.P )
+  EXPR.P -> ( 9 ; A("(") EXPR.A A("+") EXPR.P )
 
 -----
 
-( 4 ; A("(") EXPR.P A("+") ) = 0
+( 3 ; A("(") EXPR.P A("*") ) = 0
 
-  A("(") -> ( 6 ; A("(") A("(") )
+  A("(") -> ( 4 ; A("(") A("(") )
 
-  A("x") -> ( 19 ; A("(") A("x") )
+  A("x") -> ( 7 ; A("(") A("x") )
 
-  EXPR.M -> ( 13 ; A("(") EXPR.P A("+") EXPR.M )
+  EXPR.M -> ( 12 ; A("(") EXPR.P A("*") EXPR.M )
 
-  EXPR.P -> ( 16 ; A("(") EXPR.P A("+") EXPR.P )
-
------
-
-( 5 ; A("(") EXPR.P A("*") ) = 0
-
-  A("(") -> ( 6 ; A("(") A("(") )
-
-  A("x") -> ( 19 ; A("(") A("x") )
-
-  EXPR.M -> ( 17 ; A("(") EXPR.P A("*") EXPR.M )
-
-  EXPR.P -> ( 18 ; A("(") EXPR.P A("*") EXPR.P )
+  EXPR.P -> ( 11 ; A("(") EXPR.P A("*") EXPR.P )
 
 -----
 
-( 6 ; A("(") A("(") ) = 0
+( 4 ; A("(") A("(") ) = 0
 
-  A("(") -> ( 6 ; A("(") A("(") )
+  A("(") -> ( 4 ; A("(") A("(") )
 
-  A("x") -> ( 19 ; A("(") A("x") )
+  A("x") -> ( 7 ; A("(") A("x") )
 
-  EXPR.A -> ( 25 ; A("(") A("(") EXPR.A )
+  EXPR.A -> ( 15 ; A("(") A("(") EXPR.A )
 
-  EXPR.M -> ( 26 ; A("(") A("(") EXPR.M )
+  EXPR.M -> ( 15 ; A("(") A("(") EXPR.A )
 
-  EXPR.P -> ( 23 ; A("(") A("(") EXPR.P )
+  EXPR.P -> ( 13 ; A("(") A("(") EXPR.P )
 
 -----
 
-( 7 ; EXPR.A A("+") ) = 0
+( 5 ; EXPR.A A("+") ) = 0
 
   A("(") -> ( 1 ; A("(") )
 
-  A("x") -> ( 37 ; A("x") )
+  A("x") -> ( 17 ; A("x") )
 
-  EXPR.M -> ( 29 ; EXPR.A A("+") EXPR.M )
+  EXPR.M -> ( 20 ; EXPR.A A("+") EXPR.M )
 
-  EXPR.P -> ( 32 ; EXPR.A A("+") EXPR.P )
+  EXPR.P -> ( 19 ; EXPR.A A("+") EXPR.P )
 
 -----
 
-( 8 ; EXPR.M A("+") ) = 0
+( 6 ; EXPR.P A("*") ) = 0
 
   A("(") -> ( 1 ; A("(") )
 
-  A("x") -> ( 37 ; A("x") )
+  A("x") -> ( 17 ; A("x") )
 
-  EXPR.M -> ( 30 ; EXPR.M A("+") EXPR.M )
+  EXPR.M -> ( 22 ; EXPR.P A("*") EXPR.M )
 
-  EXPR.P -> ( 33 ; EXPR.M A("+") EXPR.P )
-
------
-
-( 9 ; EXPR.P A("+") ) = 0
-
-  A("(") -> ( 1 ; A("(") )
-
-  A("x") -> ( 37 ; A("x") )
-
-  EXPR.M -> ( 31 ; EXPR.P A("+") EXPR.M )
-
-  EXPR.P -> ( 34 ; EXPR.P A("+") EXPR.P )
+  EXPR.P -> ( 21 ; EXPR.P A("*") EXPR.P )
 
 -----
 
-( 10 ; EXPR.P A("*") ) = 0
-
-  A("(") -> ( 1 ; A("(") )
-
-  A("x") -> ( 37 ; A("x") )
-
-  EXPR.M -> ( 35 ; EXPR.P A("*") EXPR.M )
-
-  EXPR.P -> ( 36 ; EXPR.P A("*") EXPR.P )
+( 7 ; A("(") A("x") ) = 1
 
 -----
 
-( 11 ; A("(") EXPR.A A("+") EXPR.M ) = 1
+( 8 ; A("(") A("(") EXPR.A A(")") ) = 2
 
 -----
 
-( 12 ; A("(") EXPR.M A("+") EXPR.M ) = 2
+( 9 ; A("(") EXPR.A A("+") EXPR.P ) = 3
+
+  A("*") -> ( 3 ; A("(") EXPR.P A("*") )
 
 -----
 
-( 13 ; A("(") EXPR.P A("+") EXPR.M ) = 3
+( 10 ; A("(") EXPR.A A("+") EXPR.M ) = 4
 
 -----
 
-( 14 ; A("(") EXPR.A A("+") EXPR.P ) = 4
+( 11 ; A("(") EXPR.P A("*") EXPR.P ) = 5
 
-  A("*") -> ( 5 ; A("(") EXPR.P A("*") )
-
------
-
-( 15 ; A("(") EXPR.M A("+") EXPR.P ) = 5
-
-  A("*") -> ( 5 ; A("(") EXPR.P A("*") )
+  A("*") -> ( 3 ; A("(") EXPR.P A("*") )
 
 -----
 
-( 16 ; A("(") EXPR.P A("+") EXPR.P ) = 6
-
-  A("*") -> ( 5 ; A("(") EXPR.P A("*") )
+( 12 ; A("(") EXPR.P A("*") EXPR.M ) = 6
 
 -----
 
-( 17 ; A("(") EXPR.P A("*") EXPR.M ) = 7
+( 13 ; A("(") A("(") EXPR.P ) = 7
 
------
+  A(")") -> ( 8 ; A("(") A("(") EXPR.A A(")") )
 
-( 18 ; A("(") EXPR.P A("*") EXPR.P ) = 8
-
-  A("*") -> ( 5 ; A("(") EXPR.P A("*") )
-
------
-
-( 19 ; A("(") A("x") ) = 9
-
------
-
-( 20 ; A("(") A("(") EXPR.A A(")") ) = 10
-
------
-
-( 21 ; A("(") A("(") EXPR.M A(")") ) = 11
-
------
-
-( 22 ; A("(") A("(") EXPR.P A(")") ) = 12
-
------
-
-( 23 ; A("(") A("(") EXPR.P ) = 13
-
-  A(")") -> ( 22 ; A("(") A("(") EXPR.P A(")") )
-
-  A("*") -> ( 5 ; A("(") EXPR.P A("*") )
-
-  A("+") -> ( 4 ; A("(") EXPR.P A("+") )
-
------
-
-( 24 ; A("(") EXPR.P ) = 13
-
-  A(")") -> ( 40 ; A("(") EXPR.P A(")") )
-
-  A("*") -> ( 5 ; A("(") EXPR.P A("*") )
-
-  A("+") -> ( 4 ; A("(") EXPR.P A("+") )
-
------
-
-( 25 ; A("(") A("(") EXPR.A ) = 14
-
-  A(")") -> ( 20 ; A("(") A("(") EXPR.A A(")") )
+  A("*") -> ( 3 ; A("(") EXPR.P A("*") )
 
   A("+") -> ( 2 ; A("(") EXPR.A A("+") )
 
 -----
 
-( 26 ; A("(") A("(") EXPR.M ) = 14
+( 14 ; A("(") EXPR.P ) = 7
 
-  A(")") -> ( 21 ; A("(") A("(") EXPR.M A(")") )
+  A(")") -> ( 18 ; A("(") EXPR.A A(")") )
 
-  A("+") -> ( 3 ; A("(") EXPR.M A("+") )
-
------
-
-( 27 ; A("(") EXPR.A ) = 14
-
-  A(")") -> ( 38 ; A("(") EXPR.A A(")") )
+  A("*") -> ( 3 ; A("(") EXPR.P A("*") )
 
   A("+") -> ( 2 ; A("(") EXPR.A A("+") )
 
 -----
 
-( 28 ; A("(") EXPR.M ) = 14
+( 15 ; A("(") A("(") EXPR.A ) = 8
 
-  A(")") -> ( 39 ; A("(") EXPR.M A(")") )
+  A(")") -> ( 8 ; A("(") A("(") EXPR.A A(")") )
 
-  A("+") -> ( 3 ; A("(") EXPR.M A("+") )
-
------
-
-( 29 ; EXPR.A A("+") EXPR.M ) = 15
+  A("+") -> ( 2 ; A("(") EXPR.A A("+") )
 
 -----
 
-( 30 ; EXPR.M A("+") EXPR.M ) = 16
+( 16 ; A("(") EXPR.A ) = 8
+
+  A(")") -> ( 18 ; A("(") EXPR.A A(")") )
+
+  A("+") -> ( 2 ; A("(") EXPR.A A("+") )
 
 -----
 
-( 31 ; EXPR.P A("+") EXPR.M ) = 17
+( 17 ; A("x") ) = 9
 
 -----
 
-( 32 ; EXPR.A A("+") EXPR.P ) = 18
-
-  A("*") -> ( 10 ; EXPR.P A("*") )
+( 18 ; A("(") EXPR.A A(")") ) = 10
 
 -----
 
-( 33 ; EXPR.M A("+") EXPR.P ) = 19
+( 19 ; EXPR.A A("+") EXPR.P ) = 11
 
-  A("*") -> ( 10 ; EXPR.P A("*") )
-
------
-
-( 34 ; EXPR.P A("+") EXPR.P ) = 20
-
-  A("*") -> ( 10 ; EXPR.P A("*") )
+  A("*") -> ( 6 ; EXPR.P A("*") )
 
 -----
 
-( 35 ; EXPR.P A("*") EXPR.M ) = 21
+( 20 ; EXPR.A A("+") EXPR.M ) = 12
 
 -----
 
-( 36 ; EXPR.P A("*") EXPR.P ) = 22
+( 21 ; EXPR.P A("*") EXPR.P ) = 13
 
-  A("*") -> ( 10 ; EXPR.P A("*") )
-
------
-
-( 37 ; A("x") ) = 23
+  A("*") -> ( 6 ; EXPR.P A("*") )
 
 -----
 
-( 38 ; A("(") EXPR.A A(")") ) = 24
+( 22 ; EXPR.P A("*") EXPR.M ) = 14
 
 -----
 
-( 39 ; A("(") EXPR.M A(")") ) = 25
+( 23 ; EXPR.P ) = 15
+
+  A("*") -> ( 6 ; EXPR.P A("*") )
+
+  A("+") -> ( 5 ; EXPR.A A("+") )
 
 -----
 
-( 40 ; A("(") EXPR.P A(")") ) = 26
+( 24 ; EXPR.A ) = 16
 
------
-
-( 41 ; EXPR.P ) = 27
-
-  A("*") -> ( 10 ; EXPR.P A("*") )
-
-  A("+") -> ( 9 ; EXPR.P A("+") )
-
------
-
-( 42 ; EXPR.A ) = 28
-
-  A("+") -> ( 7 ; EXPR.A A("+") )
-
------
-
-( 43 ; EXPR.M ) = 28
-
-  A("+") -> ( 8 ; EXPR.M A("+") )
+  A("+") -> ( 5 ; EXPR.A A("+") )
 
 --- Estimates ------------------------------------------------------------------
 
@@ -687,78 +559,6 @@
 
 1) 
 
-  A(")") : @opAdd.A.M
-
-  A("+") : @opAdd.A.M
-
------
-
-2) 
-
-  A(")") : @opAdd.M.M
-
-  A("+") : @opAdd.M.M
-
------
-
-3) 
-
-  A(")") : @opAdd.P.M
-
-  A("+") : @opAdd.P.M
-
------
-
-4) 
-
-  A(")") : @opAdd.A.P
-
-  A("*") : <-
-
-  A("+") : @opAdd.A.P
-
------
-
-5) 
-
-  A(")") : @opAdd.M.P
-
-  A("*") : <-
-
-  A("+") : @opAdd.M.P
-
------
-
-6) 
-
-  A(")") : @opAdd.P.P
-
-  A("*") : <-
-
-  A("+") : @opAdd.P.P
-
------
-
-7) 
-
-  A(")") : @opMul.P.M
-
-  A("+") : @opMul.P.M
-
------
-
-8) 
-
-  A(")") : @opMul.P.P
-
-  A("*") : <-
-
-  A("+") : @opMul.P.P
-
------
-
-9) 
-
   A(")") : @opVar
 
   A("*") : @opVar
@@ -767,37 +567,53 @@
 
 -----
 
-10) 
+2) 
 
-  A(")") : @opBra.A
+  A(")") : @opBra
 
-  A("*") : @opBra.A
+  A("*") : @opBra
 
-  A("+") : @opBra.A
-
------
-
-11) 
-
-  A(")") : @opBra.M
-
-  A("*") : @opBra.M
-
-  A("+") : @opBra.M
+  A("+") : @opBra
 
 -----
 
-12) 
+3) 
 
-  A(")") : @opBra.P
+  A(")") : @opAdd
 
-  A("*") : @opBra.P
+  A("*") : <-
 
-  A("+") : @opBra.P
+  A("+") : @opAdd
 
 -----
 
-13) 
+4) 
+
+  A(")") : @opAdd
+
+  A("+") : @opAdd
+
+-----
+
+5) 
+
+  A(")") : @opMul
+
+  A("*") : <-
+
+  A("+") : @opMul
+
+-----
+
+6) 
+
+  A(")") : @opMul
+
+  A("+") : @opMul
+
+-----
+
+7) 
 
   A(")") : <-
 
@@ -807,7 +623,7 @@
 
 -----
 
-14) 
+8) 
 
   A(")") : <-
 
@@ -815,79 +631,7 @@
 
 -----
 
-15) 
-
-  (End) : @opAdd.A.M
-
-  A("+") : @opAdd.A.M
-
------
-
-16) 
-
-  (End) : @opAdd.M.M
-
-  A("+") : @opAdd.M.M
-
------
-
-17) 
-
-  (End) : @opAdd.P.M
-
-  A("+") : @opAdd.P.M
-
------
-
-18) 
-
-  (End) : @opAdd.A.P
-
-  A("*") : <-
-
-  A("+") : @opAdd.A.P
-
------
-
-19) 
-
-  (End) : @opAdd.M.P
-
-  A("*") : <-
-
-  A("+") : @opAdd.M.P
-
------
-
-20) 
-
-  (End) : @opAdd.P.P
-
-  A("*") : <-
-
-  A("+") : @opAdd.P.P
-
------
-
-21) 
-
-  (End) : @opMul.P.M
-
-  A("+") : @opMul.P.M
-
------
-
-22) 
-
-  (End) : @opMul.P.P
-
-  A("*") : <-
-
-  A("+") : @opMul.P.P
-
------
-
-23) 
+9) 
 
   (End) : @opVar
 
@@ -897,37 +641,53 @@
 
 -----
 
-24) 
+10) 
 
-  (End) : @opBra.A
+  (End) : @opBra
 
-  A("*") : @opBra.A
+  A("*") : @opBra
 
-  A("+") : @opBra.A
-
------
-
-25) 
-
-  (End) : @opBra.M
-
-  A("*") : @opBra.M
-
-  A("+") : @opBra.M
+  A("+") : @opBra
 
 -----
 
-26) 
+11) 
 
-  (End) : @opBra.P
+  (End) : @opAdd
 
-  A("*") : @opBra.P
+  A("*") : <-
 
-  A("+") : @opBra.P
+  A("+") : @opAdd
 
 -----
 
-27) 
+12) 
+
+  (End) : @opAdd
+
+  A("+") : @opAdd
+
+-----
+
+13) 
+
+  (End) : @opMul
+
+  A("*") : <-
+
+  A("+") : @opMul
+
+-----
+
+14) 
+
+  (End) : @opMul
+
+  A("+") : @opMul
+
+-----
+
+15) 
 
   (End) : STOP
 
@@ -937,7 +697,7 @@
 
 -----
 
-28) 
+16) 
 
   (End) : STOP
 

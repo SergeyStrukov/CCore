@@ -89,11 +89,16 @@ void Process(StrLen file_name)
   
   TrackStage("Process top lang");
   
-  Engine<LR1Estimate,LR1Context> engine_top(top);
+  const ExtLang &ext_bottom=engine_bottom.getExtLang();
+  
+  Engine<LR1Estimate,LR1MapContext> engine_top(top,ext_bottom);
   
   PrintFile out("Result.txt");
   
-  Putobj(out,engine_bottom,engine_top);
+  Putobj(out,ext_bottom,
+             engine_bottom,
+             BindOpt(LangMap(ext_bottom),engine_top.getExtLang()),
+             engine_top);
 
   TrackStage("Finish");
  }

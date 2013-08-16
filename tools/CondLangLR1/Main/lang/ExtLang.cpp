@@ -17,7 +17,7 @@ namespace App {
 
 /* class ExtLang */
 
-ExtLang::ExtLang(const Lang &lang)
+ExtLang::ExtLang(const Lang &lang,ulen map_atom_count)
  {
   original_atom_count=lang.getAtomCount();
   
@@ -34,6 +34,8 @@ ExtLang::ExtLang(const Lang &lang)
       atoms->index=index++;
       atoms->name=pool.dup(atom.name);
       
+      atoms->map_index=atom.map_index;
+      
       ++atoms;
      }
    
@@ -41,6 +43,8 @@ ExtLang::ExtLang(const Lang &lang)
      {
       atoms->index=index++;
       atoms->name=pool.cat(StrLen("@",1),rule.name);
+      
+      atoms->map_index=rule.map_index+map_atom_count;
       
       ++atoms;
      }
@@ -58,6 +62,8 @@ ExtLang::ExtLang(const Lang &lang)
       synts->name=pool.dup(synt.name);
       
       synts->is_lang=synt.is_lang;
+      
+      synts->map_index=synt.map_index;
       
       synts->rules.len=synt.rules.len;
      
@@ -80,6 +86,8 @@ ExtLang::ExtLang(const Lang &lang)
      {
       rules->index=rule.index;
       rules->name=pool.dup(rule.name);
+      
+      rules->map_index=rule.map_index;
       
       rules->ret=&(synts[rule.ret->index]);
       

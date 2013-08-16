@@ -241,6 +241,8 @@ TopLang::TopLang(const CondLang &clang)
      {
       atoms->index=range->index;
       atoms->name=pool.dup(range->name);
+      
+      atoms->map_index=range->index;
      }
   }
   
