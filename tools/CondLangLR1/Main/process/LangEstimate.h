@@ -20,16 +20,14 @@ namespace App {
 
 /* classes */
 
-template <class Estimate> class LangEstimate;
+template <class Estimate,class Context=EmptyContext> class LangEstimate;
 
-/* class LangEstimate<Estimate> */
+/* class LangEstimate<Estimate,Context> */
 
-template <class Estimate> 
+template <class Estimate,class Context> 
 class LangEstimate : NoCopy
  {
    DynArray<Estimate> buf;
-   
-   using Context = typename Estimate::Context ;
    
    Context ctx;
    
@@ -41,7 +39,8 @@ class LangEstimate : NoCopy
    
   public:
   
-   LangEstimate(const Lang &lang,const Context &ctx);
+   template <class ... TT>
+   explicit LangEstimate(const Lang &lang,TT && ... tt);
    
    ~LangEstimate();
    
@@ -50,8 +49,8 @@ class LangEstimate : NoCopy
    Estimate operator () (PtrLen<const Element> str) const;
  };
 
-template <class Estimate> 
-bool LangEstimate<Estimate>::step(Synt synt)
+template <class Estimate,class Context> 
+bool LangEstimate<Estimate,Context>::step(Synt synt)
  {
   typename Estimate::Accumulator est;
   
@@ -60,8 +59,8 @@ bool LangEstimate<Estimate>::step(Synt synt)
   return buf[synt.getIndex()].setCmp(est);
  }
 
-template <class Estimate> 
-bool LangEstimate<Estimate>::step(const Lang &lang)
+template <class Estimate,class Context> 
+bool LangEstimate<Estimate,Context>::step(const Lang &lang)
  {
   bool ret=false;
   
@@ -70,10 +69,11 @@ bool LangEstimate<Estimate>::step(const Lang &lang)
   return ret;
  }
 
-template <class Estimate> 
-LangEstimate<Estimate>::LangEstimate(const Lang &lang,const Context &ctx_)
+template <class Estimate,class Context>
+template <class ... TT>
+LangEstimate<Estimate,Context>::LangEstimate(const Lang &lang,TT && ... tt)
  : buf(DoFill(lang.getSyntCount()),ElementNull),
-   ctx(ctx_)
+   ctx( std::forward<TT>(tt)... )
  {
   TrackStep track; 
   
@@ -82,13 +82,13 @@ LangEstimate<Estimate>::LangEstimate(const Lang &lang,const Context &ctx_)
   track.finish();
  }
 
-template <class Estimate> 
-LangEstimate<Estimate>::~LangEstimate()
+template <class Estimate,class Context> 
+LangEstimate<Estimate,Context>::~LangEstimate()
  {
  }
 
-template <class Estimate> 
-Estimate LangEstimate<Estimate>::operator () (PtrLen<const Element> str) const
+template <class Estimate,class Context> 
+Estimate LangEstimate<Estimate,Context>::operator () (PtrLen<const Element> str) const
  {
   Estimate ret(ElementOne);
   

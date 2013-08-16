@@ -129,6 +129,18 @@ struct CondLangBase : NoCopy
       ptr.apply( Func(atom_func_init,synt_func_init) );
      }
     
+    template <class FuncInit>
+    void applyForAtom(FuncInit func_init) const
+     {
+      ptr.applyFor<AtomDesc>(func_init);
+     }
+    
+    template <class FuncInit>
+    void applyForSynt(FuncInit func_init) const
+     {
+      ptr.applyFor<SyntDesc>(func_init);
+     }
+    
     // print object
     
     template <class P>

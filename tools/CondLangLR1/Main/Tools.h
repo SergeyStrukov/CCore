@@ -64,6 +64,8 @@ bool SetCmp(T &x,const T &a)
 
 /* classes */
 
+struct EmptyContext;
+
 struct BlockPrintOpt;
 
 template <class R> class PrintRangeType;
@@ -73,6 +75,14 @@ struct PosStr;
 struct DescBase;
 
 class TrackStep;
+
+/* struct EmptyContext */
+
+struct EmptyContext
+ {
+  template <class ... TT>
+  explicit EmptyContext(TT && ...) {}
+ };
 
 /* struct BlockPrintOpt */
 

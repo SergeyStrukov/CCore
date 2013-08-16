@@ -42,7 +42,9 @@ inline void GuardStateCap(ulen count)
 
 struct LangOpt;
 
-template <class Estimate> class LangStateMachine;
+template <class Estimate> struct StateMachineDesc;
+
+template <class Estimate,class Context=EmptyContext> class LangStateMachine;
 
 /* struct LangOpt */
 
@@ -53,13 +55,33 @@ struct LangOpt
   explicit LangOpt(const Lang &lang_) : lang(lang_) {}
  };
 
-/* class LangStateMachine<Estimate> */
+/* struct StateMachineDesc<Estimate> */
 
-template <class Estimate> 
+template <class Estimate>
+struct StateMachineDesc : NoCopy , NoThrowFlagsBaseFor<Estimate>
+ {
+  ulen index;
+  Estimate est;
+  PtrLen<const StateMachineDesc *> transitions;
+  
+  // print object
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"#;) #;\n",index,est);
+    
+    for(auto *dst : transitions ) Printf(out,"  #3;",dst->index);
+    
+    Putch(out,'\n');
+   }
+ };
+
+/* class LangStateMachine<Estimate,Context> */
+
+template <class Estimate,class Context> 
 class LangStateMachine : NoCopy
  {
-   using Context = typename Estimate::Context ;
-   
    using Matrix = SparseMatrix<Vertex,Estimate> ;
    
    using Vector = SparseVector<Vertex,Estimate> ;
@@ -181,27 +203,10 @@ class LangStateMachine : NoCopy
       
       StateCur getStart() const { return list.start(); }
     };
+
+  public: 
    
-  public:
-   
-   struct StateDesc : NoCopy , NoThrowFlagsBaseFor<Estimate>
-    {
-     ulen index;
-     Estimate est;
-     PtrLen<const StateDesc *> transitions;
-     
-     // print object
-     
-     template <class P>
-     void print(P &out) const
-      {
-       Printf(out,"#;) #;\n",index,est);
-       
-       for(auto *dst : transitions ) Printf(out,"  #3;",dst->index);
-       
-       Putch(out,'\n');
-      }
-    };
+   using StateDesc = StateMachineDesc<Estimate> ;
    
   private:
    
@@ -213,15 +218,24 @@ class LangStateMachine : NoCopy
  
   private:
  
-   LangStateMachine(const Lang &lang,ulen atom_count,const Context &ctx);
+   template <class ... TT>
+   void build(const Lang &lang,const LangDiagram &diagram,ulen atom_count,TT && ... tt);
  
   public:
  
    // constructors
    
-   LangStateMachine(const Lang &lang,const Context &ctx) : LangStateMachine(lang,lang.getAtomCount(),ctx) {}
+   template <class ... TT>
+   LangStateMachine(const Lang &lang,const LangDiagram &diagram,TT && ... tt) 
+    {
+     build(lang,diagram,lang.getAtomCount(), std::forward<TT>(tt)... );
+    }
    
-   LangStateMachine(const ExtLang &lang,const Context &ctx) : LangStateMachine(lang,lang.getOriginalAtomCount(),ctx) {}
+   template <class ... TT>
+   LangStateMachine(const ExtLang &lang,const LangDiagram &diagram,TT && ... tt) 
+    {
+     build(lang,diagram,lang.getOriginalAtomCount(), std::forward<TT>(tt)... );
+    }
    
    ~LangStateMachine() {}
    
@@ -257,19 +271,16 @@ class LangStateMachine : NoCopy
     }
  };
 
-template <class Estimate> 
-LangStateMachine<Estimate>::LangStateMachine(const Lang &lang,ulen atom_count,const Context &ctx)
+template <class Estimate,class Context>
+template <class ... TT>
+void LangStateMachine<Estimate,Context>::build(const Lang &lang,const LangDiagram &diagram,ulen atom_count,TT && ... tt)
  {
   //--------------------------------------------------------------------------
   
   TrackStage("Estimate lang");
   
-  LangEstimate<Estimate> estimate(lang,ctx);
+  LangEstimate<Estimate,Context> estimate(lang, std::forward<TT>(tt)... );
 
-  //--------------------------------------------------------------------------
-  
-  LangDiagram diagram(lang);
-  
   //--------------------------------------------------------------------------
   
   TrackStage("Build matrix");

@@ -26,7 +26,7 @@ struct ExtLangOpt;
 
 struct StateCompressBase;
 
-template <class Estimate> class StateCompress;
+template <class Estimate,class EstProp=Estimate> class StateCompress;
 
 /* struct ExtLangOpt */
 
@@ -63,7 +63,7 @@ struct StateCompressBase : NoCopy
   struct StateDesc : NoCopy , NoThrowFlagsBase
    {
     ulen index;
-    ulen estimate_index;
+    ulen prop_index;
     PtrLen<const Transition> transitions;
     
     // print object
@@ -73,7 +73,7 @@ struct StateCompressBase : NoCopy
     template <class P>
     void print(P &out,ExtLangOpt opt) const
      {
-      Printf(out,"#;) #;\n",index,estimate_index);
+      Printf(out,"#;) #;\n",index,prop_index);
       
       for(auto &trans : transitions ) Printf(out,"  #3; -> #3;",opt[trans.element],trans.dst->index);
       
@@ -82,15 +82,15 @@ struct StateCompressBase : NoCopy
    };
  };
 
-/* class StateCompress<Estimate> */
+/* class StateCompress<Estimate,EstProp> */
 
-template <class Estimate> 
+template <class Estimate,class EstProp> 
 class StateCompress : public StateCompressBase
  {
   private:
    
    DynArray<StateDesc> state_table;
-   DynArray<Estimate> estimate_buf;
+   DynArray<EstProp> prop_buf;
    DynArray<Transition> transition_buf;
    
    ulen atom_count;
@@ -140,7 +140,8 @@ class StateCompress : public StateCompressBase
    
   public: 
    
-   explicit StateCompress(const LangStateMachine<Estimate> &machine);
+   template <class Machine,class ... TT>
+   explicit StateCompress(const Machine &machine,const TT & ... tt);
    
    ~StateCompress() {}
    
@@ -148,7 +149,7 @@ class StateCompress : public StateCompressBase
    
    PtrLen<const StateDesc> getStateTable() const { return Range_const(state_table); }
    
-   PtrLen<const Estimate> getEstimates() const { return Range_const(estimate_buf); }
+   PtrLen<const EstProp> getProps() const { return Range_const(prop_buf); }
    
    ulen getAtomCount() const { return atom_count; }
    
@@ -178,9 +179,9 @@ class StateCompress : public StateCompressBase
      
      ulen index=0;
      
-     for(auto &est : getEstimates() )
+     for(auto &prop : getProps() )
        {
-        Printf(out,"#;) #;\n",index,est);
+        Printf(out,"#;) #;\n",index,prop);
         
         Putobj(out,"-----\n");
         
@@ -189,13 +190,21 @@ class StateCompress : public StateCompressBase
     }
  };
 
-template <class Estimate> 
-StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine)
+template <class Estimate,class EstProp> 
+template <class Machine,class ... TT>
+StateCompress<Estimate,EstProp>::StateCompress(const Machine &machine,const TT & ... tt)
  {
   atom_count=machine.getAtomCount();
   element_count=machine.getElementCount();
   
   auto table=machine.getStateTable();
+  
+  DynArray<EstProp> props(DoReserve,table.len);
+  
+  for(auto &t : table )
+    {
+     props.append_fill(t.est,tt...);
+    }
   
   DynArray<ulen> initial_num;
   
@@ -218,12 +227,12 @@ StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine
    
    ulen count=0;
    
-   estimate_buf.reserve(table.len);
+   prop_buf.reserve(table.len);
    
-   Algon::IncrSortThenApplyUniqueRangeBy(ind, [=] (ulen i) { return table[i].est; } , 
+   Algon::IncrSortThenApplyUniqueRangeBy(ind, [&] (ulen i) { return props[i]; } , 
                                               [&] (PtrLen<ulen> r) 
                                                   {
-                                                   estimate_buf.append_copy(table[*r].est);
+                                                   prop_buf.append_copy(props[*r]);
                                                    
                                                    for(; +r ;++r) result[*r]=count;
                                                   
@@ -240,13 +249,13 @@ StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine
   
   {
    for(ulen i=0; i<num_count ;i++)
-     if( !estimate_buf[i] )
+     if( !prop_buf[i] )
        {
         ulen j=num_count-1;
         
         if( i!=j )
           {
-           Swap(estimate_buf[i],estimate_buf[j]);
+           Swap(prop_buf[i],prop_buf[j]);
            
            for(ulen &x : initial_num ) SwapNum(x,i,j);
           }
@@ -317,7 +326,7 @@ StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine
      {
       auto &desc=table[i];
       
-      if( !desc.est )
+      if( !props[i] )
         {
          ulen n=num[i];
          bool ok=true;
@@ -370,7 +379,7 @@ StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine
    DynArray<StateDesc> state_table(num_count);
    Collector<Transition> tbuf;
    
-   ulen null_estimate=estimate_buf.getLen()-1;
+   ulen last_prop=prop_buf.getLen()-1;
    bool drop_null=true;
    
    for(ulen i=0; i<num_count ;i++)
@@ -380,11 +389,11 @@ StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine
       
       state_table[i].index=i;
       
-      ulen estimate_index=initial_num[index];
+      ulen prop_index=initial_num[index];
       
-      if( estimate_index==null_estimate ) drop_null=false;
+      if( prop_index==last_prop ) drop_null=false;
       
-      state_table[i].estimate_index=estimate_index;
+      state_table[i].prop_index=prop_index;
       
       ulen element=0;
       ulen len=0;
@@ -421,10 +430,10 @@ StateCompress<Estimate>::StateCompress(const LangStateMachine<Estimate> &machine
    
    Swap(state_table,this->state_table);
    
-   if( drop_null ) estimate_buf.shrink_one();
+   if( drop_null ) prop_buf.shrink_one();
   }
   
-  estimate_buf.shrink_extra();
+  prop_buf.shrink_extra();
  }
 
 } // namespace App

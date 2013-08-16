@@ -20,21 +20,20 @@ namespace App {
 
 /* classes */
 
-template <class Estimate> class Engine;
+template <class Estimate,class Context=EmptyContext> class Engine;
 
-/* class Engine<Estimate> */
+/* class Engine<Estimate,Context> */
 
-template <class Estimate>
+template <class Estimate,class Context>
 class Engine : NoCopy
  {
    ExtLang ext_lang;
-   LangStateMachine<Estimate> machine;
+   LangDiagram diagram;
+   LangStateMachine<Estimate,Context> machine;
    StateCompress<Estimate> compress;
    StateTrace trace;
    
   private:
-   
-   using Context = typename Estimate::Context ; 
    
    struct PrintState
     {
@@ -61,15 +60,21 @@ class Engine : NoCopy
    template <class ... TT>
    explicit Engine(const Lang &lang,TT && ... tt)
     : ext_lang(lang),
-      machine(ext_lang,Context(ext_lang, std::forward<TT>(tt)... )),
+      diagram(ext_lang),
+      machine(ext_lang,diagram,ext_lang, std::forward<TT>(tt)... ),
       compress(machine),
       trace(compress)
     {
+     TrackStage("State count = #;",compress.getStateTable().len);
     }
    
    ~Engine() 
     {
     }
+   
+   // properties
+   
+   PtrLen<const Estimate> getProps() const { return compress.getProps(); }
    
    // print object
    
@@ -78,6 +83,7 @@ class Engine : NoCopy
     {
      Printf(out,"#;\n",ext_lang);
      
+     //Printf(out,"#;\n",diagram);
      //Printf(out,"#;\n",BindOpt(LangOpt(ext_lang),machine));
      //Printf(out,"#;\n",BindOpt(LangOpt(ext_lang),compress));
      
@@ -95,7 +101,7 @@ class Engine : NoCopy
      
      for(auto p=compress.getStateTable(); +p ;++p)
        {
-        Printf(out,"\n#; = #;\n\n",BindOpt(opt,PrintState(p->index,trace_table)),p->estimate_index);
+        Printf(out,"\n#; = #;\n\n",BindOpt(opt,PrintState(p->index,trace_table)),p->prop_index);
         
         for(auto &t : p->transitions )
           {
@@ -112,7 +118,7 @@ class Engine : NoCopy
      
      ulen index=0;
      
-     for(auto p=compress.getEstimates(); +p ;++p)
+     for(auto p=compress.getProps(); +p ;++p)
        {
         Printf(out,"\n#;) #.b;",index,*p);
         

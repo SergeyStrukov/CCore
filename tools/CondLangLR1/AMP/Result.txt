@@ -293,18 +293,18 @@
 2) A("*")
 3) A("+")
 4) A("x")
-5) @opAdd
-6) @opAdd
-7) @opAdd
-8) @opAdd
-9) @opAdd
-10) @opAdd
-11) @opMul
-12) @opMul
+5) @opAdd.A.M
+6) @opAdd.M.M
+7) @opAdd.P.M
+8) @opAdd.A.P
+9) @opAdd.M.P
+10) @opAdd.P.P
+11) @opMul.P.M
+12) @opMul.P.P
 13) @opVar
-14) @opBra
-15) @opBra
-16) @opBra
+14) @opBra.A
+15) @opBra.M
+16) @opBra.P
 
 --- Syntax classes -------------------------------------------------------------
 
@@ -326,30 +326,30 @@
 
 --- Rules ----------------------------------------------------------------------
 
-0) opAdd -> EXPR.A
-  EXPR.A  A("+")  EXPR.M  @opAdd
-1) opAdd -> EXPR.A
-  EXPR.M  A("+")  EXPR.M  @opAdd
-2) opAdd -> EXPR.A
-  EXPR.P  A("+")  EXPR.M  @opAdd
-3) opAdd -> EXPR.A
-  EXPR.A  A("+")  EXPR.P  @opAdd
-4) opAdd -> EXPR.A
-  EXPR.M  A("+")  EXPR.P  @opAdd
-5) opAdd -> EXPR.A
-  EXPR.P  A("+")  EXPR.P  @opAdd
-6) opMul -> EXPR.M
-  EXPR.P  A("*")  EXPR.M  @opMul
-7) opMul -> EXPR.M
-  EXPR.P  A("*")  EXPR.P  @opMul
+0) opAdd.A.M -> EXPR.A
+  EXPR.A  A("+")  EXPR.M  @opAdd.A.M
+1) opAdd.M.M -> EXPR.A
+  EXPR.M  A("+")  EXPR.M  @opAdd.M.M
+2) opAdd.P.M -> EXPR.A
+  EXPR.P  A("+")  EXPR.M  @opAdd.P.M
+3) opAdd.A.P -> EXPR.A
+  EXPR.A  A("+")  EXPR.P  @opAdd.A.P
+4) opAdd.M.P -> EXPR.A
+  EXPR.M  A("+")  EXPR.P  @opAdd.M.P
+5) opAdd.P.P -> EXPR.A
+  EXPR.P  A("+")  EXPR.P  @opAdd.P.P
+6) opMul.P.M -> EXPR.M
+  EXPR.P  A("*")  EXPR.M  @opMul.P.M
+7) opMul.P.P -> EXPR.M
+  EXPR.P  A("*")  EXPR.P  @opMul.P.P
 8) opVar -> EXPR.P
   A("x")  @opVar
-9) opBra -> EXPR.P
-  A("(")  EXPR.A  A(")")  @opBra
-10) opBra -> EXPR.P
-  A("(")  EXPR.M  A(")")  @opBra
-11) opBra -> EXPR.P
-  A("(")  EXPR.P  A(")")  @opBra
+9) opBra.A -> EXPR.P
+  A("(")  EXPR.A  A(")")  @opBra.A
+10) opBra.M -> EXPR.P
+  A("(")  EXPR.M  A(")")  @opBra.M
+11) opBra.P -> EXPR.P
+  A("(")  EXPR.P  A(")")  @opBra.P
 
 --------------------------------------------------------------------------------
 
@@ -687,73 +687,73 @@
 
 1) 
 
-  A(")") : @opAdd
+  A(")") : @opAdd.A.M
 
-  A("+") : @opAdd
+  A("+") : @opAdd.A.M
 
 -----
 
 2) 
 
-  A(")") : @opAdd
+  A(")") : @opAdd.M.M
 
-  A("+") : @opAdd
+  A("+") : @opAdd.M.M
 
 -----
 
 3) 
 
-  A(")") : @opAdd
+  A(")") : @opAdd.P.M
 
-  A("+") : @opAdd
+  A("+") : @opAdd.P.M
 
 -----
 
 4) 
 
-  A(")") : @opAdd
+  A(")") : @opAdd.A.P
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @opAdd.A.P
 
 -----
 
 5) 
 
-  A(")") : @opAdd
+  A(")") : @opAdd.M.P
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @opAdd.M.P
 
 -----
 
 6) 
 
-  A(")") : @opAdd
+  A(")") : @opAdd.P.P
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @opAdd.P.P
 
 -----
 
 7) 
 
-  A(")") : @opMul
+  A(")") : @opMul.P.M
 
-  A("+") : @opMul
+  A("+") : @opMul.P.M
 
 -----
 
 8) 
 
-  A(")") : @opMul
+  A(")") : @opMul.P.P
 
   A("*") : <-
 
-  A("+") : @opMul
+  A("+") : @opMul.P.P
 
 -----
 
@@ -769,31 +769,31 @@
 
 10) 
 
-  A(")") : @opBra
+  A(")") : @opBra.A
 
-  A("*") : @opBra
+  A("*") : @opBra.A
 
-  A("+") : @opBra
+  A("+") : @opBra.A
 
 -----
 
 11) 
 
-  A(")") : @opBra
+  A(")") : @opBra.M
 
-  A("*") : @opBra
+  A("*") : @opBra.M
 
-  A("+") : @opBra
+  A("+") : @opBra.M
 
 -----
 
 12) 
 
-  A(")") : @opBra
+  A(")") : @opBra.P
 
-  A("*") : @opBra
+  A("*") : @opBra.P
 
-  A("+") : @opBra
+  A("+") : @opBra.P
 
 -----
 
@@ -817,73 +817,73 @@
 
 15) 
 
-  (End) : @opAdd
+  (End) : @opAdd.A.M
 
-  A("+") : @opAdd
+  A("+") : @opAdd.A.M
 
 -----
 
 16) 
 
-  (End) : @opAdd
+  (End) : @opAdd.M.M
 
-  A("+") : @opAdd
+  A("+") : @opAdd.M.M
 
 -----
 
 17) 
 
-  (End) : @opAdd
+  (End) : @opAdd.P.M
 
-  A("+") : @opAdd
+  A("+") : @opAdd.P.M
 
 -----
 
 18) 
 
-  (End) : @opAdd
+  (End) : @opAdd.A.P
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @opAdd.A.P
 
 -----
 
 19) 
 
-  (End) : @opAdd
+  (End) : @opAdd.M.P
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @opAdd.M.P
 
 -----
 
 20) 
 
-  (End) : @opAdd
+  (End) : @opAdd.P.P
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @opAdd.P.P
 
 -----
 
 21) 
 
-  (End) : @opMul
+  (End) : @opMul.P.M
 
-  A("+") : @opMul
+  A("+") : @opMul.P.M
 
 -----
 
 22) 
 
-  (End) : @opMul
+  (End) : @opMul.P.P
 
   A("*") : <-
 
-  A("+") : @opMul
+  A("+") : @opMul.P.P
 
 -----
 
@@ -899,31 +899,31 @@
 
 24) 
 
-  (End) : @opBra
+  (End) : @opBra.A
 
-  A("*") : @opBra
+  A("*") : @opBra.A
 
-  A("+") : @opBra
+  A("+") : @opBra.A
 
 -----
 
 25) 
 
-  (End) : @opBra
+  (End) : @opBra.M
 
-  A("*") : @opBra
+  A("*") : @opBra.M
 
-  A("+") : @opBra
+  A("+") : @opBra.M
 
 -----
 
 26) 
 
-  (End) : @opBra
+  (End) : @opBra.P
 
-  A("*") : @opBra
+  A("*") : @opBra.P
 
-  A("+") : @opBra
+  A("+") : @opBra.P
 
 -----
 

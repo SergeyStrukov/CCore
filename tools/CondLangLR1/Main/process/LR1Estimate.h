@@ -21,7 +21,25 @@ namespace App {
 
 /* classes */
 
+class LR1Context;
+
 class LR1Estimate;
+
+/* class LR1Context */
+
+class LR1Context
+ {
+   ulen atom_count;
+   
+  public: 
+  
+   explicit LR1Context(const ExtLang &lang) : atom_count(lang.getOriginalAtomCount()) {}
+  
+   bool isRule(Atom atom) const
+    {
+     return atom.getIndex()>=atom_count;
+    }
+ };
 
 /* class LR1Estimate */
 
@@ -30,6 +48,15 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
   public:
   
    using RuleSet = Set<Atom,SimpleJoiner> ;
+   
+   static bool HasConflict(bool shift,const RuleSet &rules) { return rules.getLen()>1u-shift; }
+   
+   static RuleSet GetConflictSet(bool shift,const RuleSet &rules)
+    {
+     if( shift || rules.getLen()>1 ) return rules;
+     
+     return RuleSet(); 
+    }
    
    struct ExtRuleSet : NoThrowFlagsBase
     {
@@ -46,7 +73,9 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
      
      // properties
 
-     bool hasConflict() const { return rules.getLen()>1u-shift; }
+     bool hasConflict() const { return HasConflict(shift,rules); }
+     
+     RuleSet getConflictSet() const { return GetConflictSet(shift,rules); }
      
      // cmp objects
      
@@ -64,12 +93,30 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
 
      // print object
      
+     struct PrintOptType
+      {
+       bool flag;
+       
+       void setDefault() { flag=false; }
+       
+       PrintOptType() { setDefault(); }
+       
+       PrintOptType(const char *ptr,const char *lim);
+       
+       //
+       // [.s]
+       //
+      };
+     
      template <class P>
-     void print(P &out) const
+     void print(P &out,PrintOptType opt) const
       {
        if( shift ) 
          {
-          Putobj(out,"<-");
+          if( opt.flag )
+            Putobj(out,"STOP");
+          else
+            Putobj(out,"<-");
           
           if( rules.nonEmpty() ) Printf(out," #;",rules);
          }
@@ -162,19 +209,7 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
      null=true;
     }
    
-   struct Context
-    {
-     ulen atom_count;
-     
-     explicit Context(const ExtLang &lang) : atom_count(lang.getOriginalAtomCount()) {}
-     
-     bool isRule(Atom atom) const
-      {
-       return atom.getIndex()>=atom_count;
-      }
-    };
-   
-   LR1Estimate(Atom atom,Context ctx)
+   LR1Estimate(Atom atom,LR1Context ctx)
     {
      empty=false;
      null=false;
@@ -201,15 +236,32 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
    
    bool isStrong() const { return !null && alpha.isEmpty() ; }
    
-   bool hasEndConflict() const { return alpha.getLen()>1u-null; }
-   
    bool hasConflict() const
     {
-     if( hasEndConflict() ) return true;
+     if( HasConflict(null,alpha) ) return true;
      
      for(auto &rec : Range(beta) ) if( rec.object.hasConflict() ) return true;
      
      return false;
+    }
+   
+   bool isEmpty() const { return empty; }
+   
+   bool hasNull() const { return null; }
+   
+   RuleSet getAlpha() const { return alpha; }
+   
+   RecSet getBeta() const { return beta; }
+   
+   RuleSet getConflictSet() const
+    {
+     RuleSet::Accumulator acc;
+     
+     acc+=GetConflictSet(null,alpha);
+     
+     for(auto &rec : Range(beta) ) acc+=rec.object.getConflictSet();
+     
+     return acc;
     }
    
    // cmp objects
@@ -256,64 +308,37 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
         
         Putch(out,'\n');
         
-        if( null ) 
+        if( null || alpha.nonEmpty() )
           {
-           if( alpha.nonEmpty() ) 
-             Printf(out,"\n  (End) : STOP #;",alpha);
+           ExtRuleSet object(null,alpha);
+          
+           if( object.hasConflict() )
+             Printf(out,"\n  (End) : #.s;  CONFLICT\n",object);
            else
-             Putobj(out,"\n  (End) : STOP");
-           
-           if( hasEndConflict() )
-             Putobj(out,"CONFLICT\n");
-           else
-             Putch(out,'\n');
-          }
-        else
-          {
-           if( alpha.nonEmpty() ) 
-             {
-              Printf(out,"\n  (End) : #;",alpha);
-              
-              if( hasEndConflict() )
-                Putobj(out,"CONFLICT\n");
-              else
-                Putch(out,'\n');
-             }
+             Printf(out,"\n  (End) : #.s;\n",object);
           }
         
         for(auto &rec : Range(beta) )
           {
            if( rec.object.hasConflict() )
-             Printf(out,"\n  #; : #;  CONFLICT\n",rec.index,rec.object);
+             Printf(out,"\n  #;  CONFLICT\n",rec);
            else
-             Printf(out,"\n  #; : #;\n",rec.index,rec.object);
+             Printf(out,"\n  #;\n",rec);
           }
        }
      else
        {
         if( hasConflict() ) Putobj(out,"CONFLICT ");
         
-        if( null ) 
+        if( null || alpha.nonEmpty() )
           {
-           if( alpha.nonEmpty() ) 
-             Printf(out," (End) : STOP #;",alpha);
-           else
-             Putobj(out," (End) : STOP");
+           Printf(out," (End) : #.s;",ExtRuleSet(null,alpha));
            
            if( beta.nonEmpty() ) Printf(out," #;",beta);
           }
         else
           {
-           if( alpha.nonEmpty() ) 
-             {
-              Printf(out,"(End) : #;",alpha);
-              
-              if( beta.nonEmpty() ) Printf(out," #;",beta);
-             }
-           else
-             {
-              Putobj(out,beta);
-             }
+           Putobj(out,beta);
           }
        }
     }

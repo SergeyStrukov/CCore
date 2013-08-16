@@ -27,7 +27,7 @@ namespace App {
 
 static bool RunGoodTest(const Lang &lang)
  {
-  LangEstimate<GoodEstimate> estimate(lang,GoodEstimate::Context(lang));
+  LangEstimate<GoodEstimate> estimate(lang);
   
   bool ret=true;
 
@@ -66,17 +66,35 @@ void Process(StrLen file_name)
   BottomLang bottom(clang);
   
   TrackStage("Process bottom lang");
+
+  Engine<LR1Estimate,LR1Context> engine_bottom(bottom);
   
-  Engine<LR1Estimate> engine_bottom(bottom);
+  for(auto range=engine_bottom.getProps(); +range ;++range)
+    if( range->hasConflict() )
+      {
+       TrackStage("CONFLICT");
+        
+       break;
+      }
+  
+  {
+   LR1Estimate::RuleSet::Accumulator acc;
+   
+   for(auto range=engine_bottom.getProps(); +range ;++range) acc+=range->getConflictSet();
+   
+   LR1Estimate::RuleSet result=acc;
+   
+   TrackStage("Conflict set: #;",result);
+  }
   
   TrackStage("Process top lang");
   
-  Engine<LR1Estimate> engine_top(top);
+  Engine<LR1Estimate,LR1Context> engine_top(top);
   
   PrintFile out("Result.txt");
   
   Putobj(out,engine_bottom,engine_top);
-  
+
   TrackStage("Finish");
  }
 

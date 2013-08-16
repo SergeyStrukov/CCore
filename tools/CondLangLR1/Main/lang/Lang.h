@@ -74,6 +74,8 @@ struct LangBase : NoCopy
     PtrLen<const RuleDesc> rules;
     bool is_lang = false ;
     
+    ulen map_index = MaxULen ;
+   
     SyntDesc() {}
     
     // print object
@@ -169,6 +171,8 @@ struct LangBase : NoCopy
     const SyntDesc *ret = 0 ;
     PtrLen<const Element> args;
     
+    ulen map_index = MaxULen ;
+   
     RuleDesc() {}
     
     // print object
@@ -487,14 +491,27 @@ class TopLang : public Lang
        
        return true;
       }
+    
+     StrLen getExtraName() const 
+      { 
+       if( kind_lim==1 ) return StrLen();
+       
+       StrLen ret;
+       
+       element.applyForSynt( [&] (const CondLangBase::SyntDesc *synt) { ret=synt->kinds[kind_index].name; } );
+       
+       return ret;
+      }
     };
    
    struct RuleRec : NoThrowFlagsBase
     {
      StrLen name;
+     ulen map_index;
      DynArray<ElementRec> args;
      
-     RuleRec(StrLen name_,PtrLen<const ElementRecExt> args_) : name(name_),args(DoCast(args_.len),args_.ptr) {}
+     RuleRec(StrLen name_,ulen map_index_,PtrLen<const ElementRecExt> args_) 
+      : name(name_),map_index(map_index_),args(DoCast(args_.len),args_.ptr) {}
      
      // swap/move objects
      
@@ -528,6 +545,8 @@ class TopLang : public Lang
    ulen makeRules(Collector<RuleRec> &collector,const CondLangBase::SyntDesc &synt);
   
    ulen makeRules(Collector<RuleRec> &collector,const CondLangBase::SyntDesc &synt,ulen kind_index);
+   
+   StrLen makeRuleName(StrLen name,PtrLen<const ElementRecExt> args);
    
   public:
  

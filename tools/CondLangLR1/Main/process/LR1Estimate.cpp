@@ -15,6 +15,19 @@
 
 namespace App {
 
+/* class LR1Estimate */
+
+LR1Estimate::ExtRuleSet::PrintOptType::PrintOptType(const char *ptr,const char *lim)
+ {
+  flag=true;
+  
+  StrParse dev(ptr,lim);
+  
+  ParseChar(dev,'.');
+  ParseChar(dev,'s');
+  
+  if( !dev.finish() ) setDefault();
+ }
 
 } // namespace App
 

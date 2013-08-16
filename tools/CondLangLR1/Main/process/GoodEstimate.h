@@ -47,13 +47,7 @@ class GoodEstimate : public CmpComparable<GoodEstimate> , public NoThrowFlagsBas
    
    GoodEstimate(ElementOneType) : value(Null) {}
    
-   struct Context 
-    {
-     template <class T>
-     explicit Context(const T &) {}
-    };
-   
-   GoodEstimate(Atom,Context) : value(Good) {}
+   GoodEstimate(Atom,EmptyContext) : value(Good) {}
    
    // methods
    

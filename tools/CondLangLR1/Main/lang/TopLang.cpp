@@ -13,6 +13,8 @@
 
 #include "Lang.h"
 
+#include <CCore/inc/String.h>
+
 namespace App {
 
 /* class TopLang */
@@ -164,8 +166,6 @@ ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::RuleDe
  {
   ulen ret=0;
   
-  StrLen name=pool.dup(rule.name);
-  
   DynArray<ElementRecExt> temp(DoCast(rule.args.len),rule.args.ptr);
   
   {
@@ -180,7 +180,7 @@ ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::RuleDe
     {
      if( TestCond(Range_const(args),rule.cond) )
        {
-        collector.append_fill(name,Range_const(args));
+        collector.append_fill(makeRuleName(rule.name,Range_const(args)),rule.index,Range_const(args));
       
         ret++;
        }
@@ -206,6 +206,24 @@ ulen TopLang::makeRules(Collector<RuleRec> &collector,const CondLangBase::SyntDe
   for(auto &rule : synt.rules ) if( rule.kind->index==kind_index ) ret+=makeRules(collector,rule);
   
   return ret;
+ }
+
+StrLen TopLang::makeRuleName(StrLen name,PtrLen<const ElementRecExt> args)
+ {
+  PrintString out;
+  
+  Putobj(out,name);
+  
+  for(auto rec : args )
+    {
+     StrLen extra=rec.getExtraName();
+     
+     if( +extra ) Printf(out,".#;",extra);
+    }
+  
+  String str=out.close();
+  
+  return pool.dup(Range(str));
  }
 
 TopLang::TopLang(const CondLang &clang)
@@ -246,6 +264,7 @@ TopLang::TopLang(const CondLang &clang)
       
         StrLen name=range->name;
         bool is_lang=range->is_lang;
+        ulen map_index=range->index;
        
         for(auto &kind : range->kinds )
           {
@@ -256,6 +275,8 @@ TopLang::TopLang(const CondLang &clang)
          
            synts->is_lang=is_lang;
           
+           synts->map_index=map_index;
+           
            ++synts;
           }
        }
@@ -269,6 +290,8 @@ TopLang::TopLang(const CondLang &clang)
         synts->name=pool.dup(range->name);
        
         synts->is_lang=range->is_lang;
+        
+        synts->map_index=range->index;
         
         ++synts;
        }
@@ -289,6 +312,8 @@ TopLang::TopLang(const CondLang &clang)
      {
       rules->index=index++;
       rules->name=range->name;
+      
+      rules->map_index=range->map_index;
       
       auto arange=Range_const(range->args);
       

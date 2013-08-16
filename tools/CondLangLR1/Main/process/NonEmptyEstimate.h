@@ -42,13 +42,7 @@ class NonEmptyEstimate : public CmpComparable<NonEmptyEstimate> , public NoThrow
    
    NonEmptyEstimate(ElementOneType) : value(true) {}
    
-   struct Context 
-    {
-     template <class T>
-     explicit Context(const T &) {}
-    };
-   
-   NonEmptyEstimate(Atom,Context) : value(true) {}
+   NonEmptyEstimate(Atom,EmptyContext) : value(true) {}
    
    // methods
    
