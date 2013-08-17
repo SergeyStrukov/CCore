@@ -76,6 +76,7 @@ void Process(StrLen file_name)
   ExtLang ext_top(top);
   LangDiagram diagram(ext_top);
   LangStateMachine<LR1Estimate,LR1MapContext> machine(ext_top,diagram,ext_bottom);
+  
   StateCompress<LR1Estimate> compress(machine);
   StateTrace trace(compress);
   
@@ -101,10 +102,28 @@ void Process(StrLen file_name)
   
   TrackStage("NonEmpty) State count = #; Estimate count = #;",compress_ne.getStateCount(),compress_ne.getPropCount());
   
+  StateCompress<LR1Estimate,LR1PropShiftSet> compress_shift(machine);
+  StateTrace trace_shift(compress_shift);
+  
+  TrackStage("Shift) State count = #; Estimate count = #;",compress_shift.getStateCount(),compress_shift.getPropCount());
+  
+  StateCompress<LR1Estimate,LR1PropValidSet> compress_valid(machine);
+  StateTrace trace_valid(compress_valid);
+  
+  TrackStage("Valid) State count = #; Estimate count = #;",compress_valid.getStateCount(),compress_valid.getPropCount());
+  
+  StateCompress<LR1Estimate,LR1PropRuleSet> compress_rules(machine);
+  StateTrace trace_rules(compress_rules);
+  
+  TrackStage("Rules) State count = #; Estimate count = #;",compress_rules.getStateCount(),compress_rules.getPropCount());
+  
   PrintFile out("Result.txt");
   
   PrintCompress(out,ext_top,compress,trace);
   PrintCompress(out,ext_top,compress_ne,trace_ne);
+  PrintCompress(out,ext_top,compress_shift,trace_shift);
+  PrintCompress(out,ext_top,compress_valid,trace_valid);
+  PrintCompress(out,ext_top,compress_rules,trace_rules);
 
   TrackStage("Finish");
  }
