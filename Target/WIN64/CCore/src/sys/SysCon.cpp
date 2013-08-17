@@ -18,7 +18,7 @@
 #include <CCore/inc/TimeScope.h>
 
 #include <CCore/inc/win64/Win64.h>
- 
+
 namespace CCore {
 namespace Sys {
 

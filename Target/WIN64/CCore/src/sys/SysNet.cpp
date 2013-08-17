@@ -67,7 +67,7 @@ class Address : NoCopy
   
   private:
   
-   uint8 data[Len];
+   alignas(8) uint8 data[Len];
   
   private:
   
@@ -226,7 +226,9 @@ ErrorType UDPSocket::Outbound(Type sockid,Net::UDPoint dst,PtrLen<const uint8> d
   
   auto result=Win64::sendto(sockid,data.ptr,(Win64::ushortlen_t)data.len,0,address.getPtr(),address.getLen());
   
-  if( result!=data.len ) return WSAError();
+  if( result==Win64::InvalidUShortLen ) return WSAError();
+  
+  if( result!=data.len ) return Error_Socket;
   
   return NoError;
  }
@@ -238,14 +240,16 @@ auto UDPSocket::Inbound(Type sockid,PtrLen<uint8> buf) noexcept -> InResult
   Address address;
   Win64::ushortlen_t address_len=address.getLen();
   
-  auto result=Win64::recvfrom(sockid,buf.ptr,Win64::CapLen(buf.len),0,address.getPtr(),&address_len);
+  Win64::ushortlen_t len=Win64::CapLen(buf.len);
   
-  if( result==Win64::InvalidUShortLen || result>buf.len )
+  auto result=Win64::recvfrom(sockid,buf.ptr,len,0,address.getPtr(),&address_len);
+  
+  if( result==Win64::InvalidUShortLen )
     {
      ret.len=0;
      ret.error=WSAError();
     }
-  else if( address_len!=address.getLen() )
+  else if( address_len!=address.getLen() || result>len )
     {
      ret.len=0;
      ret.error=Error_Socket;
@@ -413,7 +417,7 @@ auto AsyncUDPSocket::StartInbound(Type sockid,Async async,PtrLen<uint8> buf) noe
     {
      ret.pending=false;
      
-     if( ret_len>buf.len || async->address_len!=async->address.getLen() )
+     if( ret_len>async->buf.len || async->address_len!=async->address.getLen() )
        {
         ret.result.src=Net::UDPoint();
         ret.result.len=0;

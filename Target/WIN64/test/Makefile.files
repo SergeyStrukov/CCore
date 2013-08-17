@@ -121,6 +121,8 @@ OBJ_LIST = \
 ../test-obj/test1027.Time.o \
 ../test-obj/test1028.ScanFile.o \
 ../test-obj/test1029.ScanAsyncFile.o \
+../test-obj/test3001.Atomic.o \
+../test-obj/test3002.WIN64.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -256,6 +258,8 @@ ASM_LIST = \
 ../test-obj/test1027.Time.s \
 ../test-obj/test1028.ScanFile.s \
 ../test-obj/test1029.ScanAsyncFile.s \
+../test-obj/test3001.Atomic.s \
+../test-obj/test3002.WIN64.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -391,6 +395,8 @@ DEP_LIST = \
 ../test-obj/test1027.Time.dep \
 ../test-obj/test1028.ScanFile.dep \
 ../test-obj/test1029.ScanAsyncFile.dep \
+../test-obj/test3001.Atomic.dep \
+../test-obj/test3002.WIN64.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -773,6 +779,12 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test1029.ScanAsyncFile.o : ../../../HCore/CCore/test/test1029.ScanAsyncFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3001.Atomic.o : ../../../Target/WIN64/CCore/test/test3001.Atomic.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3002.WIN64.o : ../../../Target/WIN64/CCore/test/test3002.WIN64.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1173,6 +1185,12 @@ include $(RULES_FILE)
 ../test-obj/test1029.ScanAsyncFile.s : ../../../HCore/CCore/test/test1029.ScanAsyncFile.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3001.Atomic.s : ../../../Target/WIN64/CCore/test/test3001.Atomic.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test3002.WIN64.s : ../../../Target/WIN64/CCore/test/test3002.WIN64.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1570,6 +1588,12 @@ include $(RULES_FILE)
 
 ../test-obj/test1029.ScanAsyncFile.dep : ../../../HCore/CCore/test/test1029.ScanAsyncFile.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1029.ScanAsyncFile.o $< -MF $@
+
+../test-obj/test3001.Atomic.dep : ../../../Target/WIN64/CCore/test/test3001.Atomic.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3001.Atomic.o $< -MF $@
+
+../test-obj/test3002.WIN64.dep : ../../../Target/WIN64/CCore/test/test3002.WIN64.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3002.WIN64.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@
