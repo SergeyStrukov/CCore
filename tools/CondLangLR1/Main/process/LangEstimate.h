@@ -39,8 +39,8 @@ class LangEstimate : NoCopy
    
   public:
   
-   template <class ... TT>
-   explicit LangEstimate(const Lang &lang,TT && ... tt);
+   template <class ... SS>
+   explicit LangEstimate(const Lang &lang,SS && ... ss);
    
    ~LangEstimate();
    
@@ -70,10 +70,10 @@ bool LangEstimate<Estimate,Context>::step(const Lang &lang)
  }
 
 template <class Estimate,class Context>
-template <class ... TT>
-LangEstimate<Estimate,Context>::LangEstimate(const Lang &lang,TT && ... tt)
+template <class ... SS>
+LangEstimate<Estimate,Context>::LangEstimate(const Lang &lang,SS && ... ss)
  : buf(DoFill(lang.getSyntCount()),ElementNull),
-   ctx( std::forward<TT>(tt)... )
+   ctx( std::forward<SS>(ss)... )
  {
   TrackStep track; 
   

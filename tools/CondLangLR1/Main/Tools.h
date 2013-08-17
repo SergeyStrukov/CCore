@@ -80,8 +80,7 @@ class TrackStep;
 
 struct EmptyContext
  {
-  template <class ... TT>
-  explicit EmptyContext(TT && ...) {}
+  explicit EmptyContext() {}
  };
 
 /* struct BlockPrintOpt */

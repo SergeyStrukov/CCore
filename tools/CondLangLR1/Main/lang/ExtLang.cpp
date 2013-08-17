@@ -17,7 +17,7 @@ namespace App {
 
 /* class ExtLang */
 
-ExtLang::ExtLang(const Lang &lang,ulen map_atom_count)
+void ExtLang::build(const Lang &lang,ulen map_atom_count)
  {
   original_atom_count=lang.getAtomCount();
   

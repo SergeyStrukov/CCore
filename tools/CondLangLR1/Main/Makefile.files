@@ -1,9 +1,11 @@
 OBJ_LIST = \
 obj/BottomLang.o \
 obj/CondLang.o \
+obj/Engine.o \
 obj/ExtLang.o \
 obj/GoodEstimate.o \
 obj/LR1Estimate.o \
+obj/LR1Prop.o \
 obj/Lang.o \
 obj/LangDiagram.o \
 obj/LangEstimate.o \
@@ -23,9 +25,11 @@ obj/main.o \
 ASM_LIST = \
 obj/BottomLang.s \
 obj/CondLang.s \
+obj/Engine.s \
 obj/ExtLang.s \
 obj/GoodEstimate.s \
 obj/LR1Estimate.s \
+obj/LR1Prop.s \
 obj/Lang.s \
 obj/LangDiagram.s \
 obj/LangEstimate.s \
@@ -45,9 +49,11 @@ obj/main.s \
 DEP_LIST = \
 obj/BottomLang.dep \
 obj/CondLang.dep \
+obj/Engine.dep \
 obj/ExtLang.dep \
 obj/GoodEstimate.dep \
 obj/LR1Estimate.dep \
+obj/LR1Prop.dep \
 obj/Lang.dep \
 obj/LangDiagram.dep \
 obj/LangEstimate.dep \
@@ -76,6 +82,9 @@ obj/BottomLang.o : ./lang/BottomLang.cpp
 obj/CondLang.o : ./lang/CondLang.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Engine.o : ./process/Engine.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/ExtLang.o : ./lang/ExtLang.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -83,6 +92,9 @@ obj/GoodEstimate.o : ./process/GoodEstimate.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/LR1Estimate.o : ./process/LR1Estimate.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/LR1Prop.o : ./process/LR1Prop.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Lang.o : ./lang/Lang.cpp
@@ -135,6 +147,9 @@ obj/BottomLang.s : ./lang/BottomLang.cpp
 obj/CondLang.s : ./lang/CondLang.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Engine.s : ./process/Engine.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ExtLang.s : ./lang/ExtLang.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -142,6 +157,9 @@ obj/GoodEstimate.s : ./process/GoodEstimate.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/LR1Estimate.s : ./process/LR1Estimate.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/LR1Prop.s : ./process/LR1Prop.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Lang.s : ./lang/Lang.cpp
@@ -194,6 +212,9 @@ obj/BottomLang.dep : ./lang/BottomLang.cpp
 obj/CondLang.dep : ./lang/CondLang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CondLang.o $< -MF $@
 
+obj/Engine.dep : ./process/Engine.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Engine.o $< -MF $@
+
 obj/ExtLang.dep : ./lang/ExtLang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ExtLang.o $< -MF $@
 
@@ -202,6 +223,9 @@ obj/GoodEstimate.dep : ./process/GoodEstimate.cpp
 
 obj/LR1Estimate.dep : ./process/LR1Estimate.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LR1Estimate.o $< -MF $@
+
+obj/LR1Prop.dep : ./process/LR1Prop.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/LR1Prop.o $< -MF $@
 
 obj/Lang.dep : ./lang/Lang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Lang.o $< -MF $@

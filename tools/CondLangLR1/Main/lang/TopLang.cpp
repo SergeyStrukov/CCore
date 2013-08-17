@@ -266,7 +266,7 @@ TopLang::TopLang(const CondLang &clang)
       
         StrLen name=range->name;
         bool is_lang=range->is_lang;
-        ulen map_index=range->index;
+        ulen desc_map_index=range->index;
        
         for(auto &kind : range->kinds )
           {
@@ -277,7 +277,7 @@ TopLang::TopLang(const CondLang &clang)
          
            synts->is_lang=is_lang;
           
-           synts->map_index=map_index;
+           synts->map_index=desc_map_index;
            
            ++synts;
           }

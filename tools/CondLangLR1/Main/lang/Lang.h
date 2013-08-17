@@ -544,13 +544,13 @@ class ExtLang : public Lang
 
   private: 
    
-   ExtLang(const Lang &lang,ulen map_atom_count);
+   void build(const Lang &lang,ulen map_atom_count);
    
   public:
   
-   explicit ExtLang(const Lang &lang) : ExtLang(lang,0) {}
+   explicit ExtLang(const Lang &lang) { build(lang,0); }
    
-   explicit ExtLang(const TopLang &lang) : ExtLang(lang,lang.getAtomCount()) {}
+   explicit ExtLang(const TopLang &lang) { build(lang,lang.getAtomCount()); }
    
    ~ExtLang();
    

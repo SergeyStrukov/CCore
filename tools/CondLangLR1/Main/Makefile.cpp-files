@@ -5,11 +5,13 @@
 ./lang/LangParser.cpp
 ./lang/TopLang.cpp
 ./main.cpp
+./process/Engine.cpp
 ./process/GoodEstimate.cpp
 ./process/LangDiagram.cpp
 ./process/LangEstimate.cpp
 ./process/LangStateMachine.cpp
 ./process/LR1Estimate.cpp
+./process/LR1Prop.cpp
 ./process/NonEmptyEstimate.cpp
 ./process/Process.cpp
 ./process/StateCompress.cpp

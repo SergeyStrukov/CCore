@@ -98,7 +98,7 @@ class StateCompress : public StateCompressBase
    
   private: 
    
-   using Desc = typename LangStateMachine<Estimate>::StateDesc ; 
+   using Desc = StateMachineDesc<Estimate> ; 
     
    struct ToCmp : CmpComparable<ToCmp>
     {
@@ -140,8 +140,8 @@ class StateCompress : public StateCompressBase
    
   public: 
    
-   template <class Machine,class ... TT>
-   explicit StateCompress(const Machine &machine,const TT & ... tt);
+   template <class Machine,class ... SS>
+   explicit StateCompress(const Machine &machine,const SS & ... ss);
    
    ~StateCompress() {}
    
@@ -149,7 +149,11 @@ class StateCompress : public StateCompressBase
    
    PtrLen<const StateDesc> getStateTable() const { return Range_const(state_table); }
    
+   ulen getStateCount() const { return state_table.getLen(); }
+   
    PtrLen<const EstProp> getProps() const { return Range_const(prop_buf); }
+   
+   ulen getPropCount() const { return prop_buf.getLen(); }
    
    ulen getAtomCount() const { return atom_count; }
    
@@ -191,8 +195,8 @@ class StateCompress : public StateCompressBase
  };
 
 template <class Estimate,class EstProp> 
-template <class Machine,class ... TT>
-StateCompress<Estimate,EstProp>::StateCompress(const Machine &machine,const TT & ... tt)
+template <class Machine,class ... SS>
+StateCompress<Estimate,EstProp>::StateCompress(const Machine &machine,const SS & ... ss)
  {
   atom_count=machine.getAtomCount();
   element_count=machine.getElementCount();
@@ -203,7 +207,7 @@ StateCompress<Estimate,EstProp>::StateCompress(const Machine &machine,const TT &
   
   for(auto &t : table )
     {
-     props.append_fill(t.est,tt...);
+     props.append_fill(t.est, std::forward<SS>(ss)... );
     }
   
   DynArray<ulen> initial_num;

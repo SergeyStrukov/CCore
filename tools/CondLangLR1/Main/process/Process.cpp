@@ -17,6 +17,8 @@
 #include "GoodEstimate.h"
 #include "LR1Estimate.h"
 
+#include "LR1Prop.h"
+
 #include "Engine.h"
 
 #include <CCore/inc/Exception.h>
@@ -65,40 +67,44 @@ void Process(StrLen file_name)
   
   BottomLang bottom(clang);
   
-  TrackStage("Process bottom lang");
+  TrackStage("Extend bottom lang");
 
-  Engine<LR1Estimate,LR1Context> engine_bottom(bottom);
-  
-  for(auto range=engine_bottom.getProps(); +range ;++range)
-    if( range->hasConflict() )
-      {
-       TrackStage("CONFLICT");
-        
-       break;
-      }
-  
-  {
-   LR1Estimate::RuleSet::Accumulator acc;
-   
-   for(auto range=engine_bottom.getProps(); +range ;++range) acc+=range->getConflictSet();
-   
-   LR1Estimate::RuleSet result=acc;
-   
-   TrackStage("Conflict set: #;",result);
-  }
+  ExtLang ext_bottom(bottom);
   
   TrackStage("Process top lang");
   
-  const ExtLang &ext_bottom=engine_bottom.getExtLang();
+  ExtLang ext_top(top);
+  LangDiagram diagram(ext_top);
+  LangStateMachine<LR1Estimate,LR1MapContext> machine(ext_top,diagram,ext_bottom);
+  StateCompress<LR1Estimate> compress(machine);
+  StateTrace trace(compress);
   
-  Engine<LR1Estimate,LR1MapContext> engine_top(top,ext_bottom);
+  TrackStage("LR1) State count = #; Estimate count = #;",compress.getStateCount(),compress.getPropCount());
+  
+  {
+   ulen conflicts=0;
+   
+   for(auto &est : compress.getProps() ) conflicts+=est.hasConflict();
+   
+   if( conflicts )
+     {
+      TrackStage("#; CONFLICTs detected. Not LR1 language.",conflicts);
+     }
+   else
+     {
+      TrackStage("No conflicts. LR1 language.");
+     }
+  }
+  
+  StateCompress<LR1Estimate,LR1PropNonEmpty> compress_ne(machine);
+  StateTrace trace_ne(compress_ne);
+  
+  TrackStage("NonEmpty) State count = #; Estimate count = #;",compress_ne.getStateCount(),compress_ne.getPropCount());
   
   PrintFile out("Result.txt");
   
-  Putobj(out,ext_bottom,
-             engine_bottom,
-             BindOpt(LangMap(ext_bottom),engine_top.getExtLang()),
-             engine_top);
+  PrintCompress(out,ext_top,compress,trace);
+  PrintCompress(out,ext_top,compress_ne,trace_ne);
 
   TrackStage("Finish");
  }

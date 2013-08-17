@@ -218,23 +218,23 @@ class LangStateMachine : NoCopy
  
   private:
  
-   template <class ... TT>
-   void build(const Lang &lang,const LangDiagram &diagram,ulen atom_count,TT && ... tt);
+   template <class ... SS>
+   void build(const Lang &lang,const LangDiagram &diagram,ulen atom_count,SS && ... ss);
  
   public:
  
    // constructors
    
-   template <class ... TT>
-   LangStateMachine(const Lang &lang,const LangDiagram &diagram,TT && ... tt) 
+   template <class ... SS>
+   LangStateMachine(const Lang &lang,const LangDiagram &diagram,SS && ... ss) 
     {
-     build(lang,diagram,lang.getAtomCount(), std::forward<TT>(tt)... );
+     build(lang,diagram,lang.getAtomCount(), std::forward<SS>(ss)... );
     }
    
-   template <class ... TT>
-   LangStateMachine(const ExtLang &lang,const LangDiagram &diagram,TT && ... tt) 
+   template <class ... SS>
+   LangStateMachine(const ExtLang &lang,const LangDiagram &diagram,SS && ... ss) 
     {
-     build(lang,diagram,lang.getOriginalAtomCount(), std::forward<TT>(tt)... );
+     build(lang,diagram,lang.getOriginalAtomCount(), std::forward<SS>(ss)... );
     }
    
    ~LangStateMachine() {}
@@ -242,6 +242,8 @@ class LangStateMachine : NoCopy
    // description
    
    PtrLen<const StateDesc> getStateTable() const { return Range_const(state_table); }
+   
+   ulen getStateCount() const { return state_table.getLen(); }
    
    ulen getAtomCount() const { return atom_count; }
    
@@ -272,14 +274,14 @@ class LangStateMachine : NoCopy
  };
 
 template <class Estimate,class Context>
-template <class ... TT>
-void LangStateMachine<Estimate,Context>::build(const Lang &lang,const LangDiagram &diagram,ulen atom_count,TT && ... tt)
+template <class ... SS>
+void LangStateMachine<Estimate,Context>::build(const Lang &lang,const LangDiagram &diagram,ulen atom_count,SS && ... ss)
  {
   //--------------------------------------------------------------------------
   
   TrackStage("Estimate lang");
   
-  LangEstimate<Estimate,Context> estimate(lang, std::forward<TT>(tt)... );
+  LangEstimate<Estimate,Context> estimate(lang, std::forward<SS>(ss)... );
 
   //--------------------------------------------------------------------------
   

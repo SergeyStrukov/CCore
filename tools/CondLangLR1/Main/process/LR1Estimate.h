@@ -52,7 +52,7 @@ class LR1MapContext
    
   public: 
   
-   LR1MapContext(const ExtLang &,const ExtLang &lang) : map(lang),atom_count(lang.getOriginalAtomCount()) {}
+   explicit LR1MapContext(const ExtLang &lang) : map(lang),atom_count(lang.getOriginalAtomCount()) {}
    
    Atom operator () (Atom atom) const { return map(atom); }
   
