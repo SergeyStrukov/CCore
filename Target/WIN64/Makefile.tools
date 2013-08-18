@@ -54,5 +54,5 @@ ASOPT =
 
 CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
 
-LDOPT = $(CCORELIB) -lws2_32 -Wl,-s $(LDOPT_EXTRA)
+LDOPT = $(CCORELIB) -lws2_32 -lgmp -Wl,-s $(LDOPT_EXTRA)
 

@@ -224,6 +224,10 @@
 ../../HCore/CCore/src/Task.cpp
 ../../Target/WIN64/CCore/src/base/PlatformBase.cpp
 ../../Target/WIN64/CCore/src/base/Quick.cpp
+../../Target/WIN64/CCore/src/crypton/IntelAES.cpp
+../../Target/WIN64/CCore/src/crypton/IntelCPUID.cpp
+../../Target/WIN64/CCore/src/crypton/IntelRandom.cpp
+../../Target/WIN64/CCore/src/math/IntegerFastAlgo.cpp
 ../../Target/WIN64/CCore/src/PlanInit_CCore.cpp
 ../../Target/WIN64/CCore/src/sys/SysAbort.cpp
 ../../Target/WIN64/CCore/src/sys/SysAtomic.cpp

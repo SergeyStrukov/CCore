@@ -39,7 +39,13 @@ const char *const Testit<3002>::Name="Test3002 WIN64";
 template<>
 bool Testit<3002>::Main() 
  {
-#if 1
+#if 0
+  
+  Printf(Con,"sizeof (SIZE_T) = #;\n",sizeof (SIZE_T));
+    
+#endif
+  
+#if 0
 
   Printf(Con,"#;\n",sizeof (Win64::Coord));
   Printf(Con,"#; #;\n",sizeof (COORD),
@@ -47,7 +53,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"#;\n",sizeof (Win64::Overlapped));
   Printf(Con,"#; #; #; #;\n",sizeof (OVERLAPPED),
@@ -57,14 +63,14 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"#;\n",MAXIMUM_WAIT_OBJECTS);
   Printf(Con,"#.h;\n",INFINITE);
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"#;\n",sizeof (Win64::ProcessInfo));
   Printf(Con,"#; #; #; #;\n",sizeof (PROCESS_INFORMATION),
@@ -74,32 +80,32 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"#;\n",sizeof (Win64::StartupInfo));
   Printf(Con,"#;\n",sizeof (STARTUPINFO));
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"#.h;\n",TLS_OUT_OF_INDEXES);
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"sizeof (LONG) = #;\n",sizeof (LONG));
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"ACP = #;\n",Win64::GetACP());
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"sizeof (SYSTEM_INFO) = #;\n",sizeof (SYSTEM_INFO));
   Printf(Con,"sizeof (Win64::SystemInfo) = #;\n",sizeof (Win64::SystemInfo));
@@ -108,7 +114,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   {
    Win64::SystemInfo info;
@@ -125,13 +131,13 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"#.h;\n",(uptr)INVALID_HANDLE_VALUE);
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"#;\n",Win64::GetConsoleOutputCP());
 
@@ -139,7 +145,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   {
    Printf(Con,"sizeof (INPUT_RECORD) = #;\n",sizeof (INPUT_RECORD));
@@ -156,7 +162,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"#;\n",sizeof (uint8));
   Printf(Con,"#;\n",sizeof (uint16));
@@ -165,7 +171,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"sizeof (WSAEVENT) = #;\n",sizeof (WSAEVENT));
 
@@ -177,7 +183,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"INVALID_FILE_ATTRIBUTES = #.h;\n",INVALID_FILE_ATTRIBUTES);
   Printf(Con,"GENERIC_READ = #.h;\n",GENERIC_READ);
@@ -186,7 +192,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"sizeof (WIN32_FIND_DATA) = #;\n",sizeof (WIN32_FIND_DATA));
   Printf(Con,"sizeof (Win64::FindFileData) = #;\n",sizeof (Win64::FindFileData));
@@ -202,7 +208,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"SOCKET_ERROR = #;\n",SOCKET_ERROR);
   Printf(Con,"sizeof (GROUP) = #;\n",sizeof (GROUP));
@@ -217,7 +223,7 @@ bool Testit<3002>::Main()
 
 #endif
  
-#if 1
+#if 0
 
   {
    Printf(Con,"sizeof (WSADATA) = #;\n",sizeof (WSADATA));
@@ -240,7 +246,7 @@ bool Testit<3002>::Main()
 
 #endif
 
-#if 1
+#if 0
 
   Printf(Con,"sizeof (sockaddr_in) = #;\n",sizeof (sockaddr_in));
   Printf(Con,"sizeof (u_long) = #;\n",sizeof (u_long));

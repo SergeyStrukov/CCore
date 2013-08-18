@@ -123,6 +123,12 @@ OBJ_LIST = \
 ../test-obj/test1029.ScanAsyncFile.o \
 ../test-obj/test3001.Atomic.o \
 ../test-obj/test3002.WIN64.o \
+../test-obj/test3003.Blank.o \
+../test-obj/test3004.IntegerFastAlgo.o \
+../test-obj/test3005.IntelRandom.o \
+../test-obj/test3006.IntelAES.o \
+../test-obj/test3007.MemAlloc.o \
+../test-obj/test3008.Time.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -260,6 +266,12 @@ ASM_LIST = \
 ../test-obj/test1029.ScanAsyncFile.s \
 ../test-obj/test3001.Atomic.s \
 ../test-obj/test3002.WIN64.s \
+../test-obj/test3003.Blank.s \
+../test-obj/test3004.IntegerFastAlgo.s \
+../test-obj/test3005.IntelRandom.s \
+../test-obj/test3006.IntelAES.s \
+../test-obj/test3007.MemAlloc.s \
+../test-obj/test3008.Time.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -397,6 +409,12 @@ DEP_LIST = \
 ../test-obj/test1029.ScanAsyncFile.dep \
 ../test-obj/test3001.Atomic.dep \
 ../test-obj/test3002.WIN64.dep \
+../test-obj/test3003.Blank.dep \
+../test-obj/test3004.IntegerFastAlgo.dep \
+../test-obj/test3005.IntelRandom.dep \
+../test-obj/test3006.IntelAES.dep \
+../test-obj/test3007.MemAlloc.dep \
+../test-obj/test3008.Time.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -785,6 +803,24 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3002.WIN64.o : ../../../Target/WIN64/CCore/test/test3002.WIN64.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3003.Blank.o : ../../../Target/WIN64/CCore/test/test3003.Blank.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3004.IntegerFastAlgo.o : ../../../Target/WIN64/CCore/test/test3004.IntegerFastAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3005.IntelRandom.o : ../../../Target/WIN64/CCore/test/test3005.IntelRandom.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3006.IntelAES.o : ../../../Target/WIN64/CCore/test/test3006.IntelAES.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3007.MemAlloc.o : ../../../Target/WIN64/CCore/test/test3007.MemAlloc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3008.Time.o : ../../../Target/WIN64/CCore/test/test3008.Time.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1191,6 +1227,24 @@ include $(RULES_FILE)
 ../test-obj/test3002.WIN64.s : ../../../Target/WIN64/CCore/test/test3002.WIN64.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3003.Blank.s : ../../../Target/WIN64/CCore/test/test3003.Blank.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test3004.IntegerFastAlgo.s : ../../../Target/WIN64/CCore/test/test3004.IntegerFastAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test3005.IntelRandom.s : ../../../Target/WIN64/CCore/test/test3005.IntelRandom.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test3006.IntelAES.s : ../../../Target/WIN64/CCore/test/test3006.IntelAES.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test3007.MemAlloc.s : ../../../Target/WIN64/CCore/test/test3007.MemAlloc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test3008.Time.s : ../../../Target/WIN64/CCore/test/test3008.Time.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1594,6 +1648,24 @@ include $(RULES_FILE)
 
 ../test-obj/test3002.WIN64.dep : ../../../Target/WIN64/CCore/test/test3002.WIN64.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3002.WIN64.o $< -MF $@
+
+../test-obj/test3003.Blank.dep : ../../../Target/WIN64/CCore/test/test3003.Blank.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3003.Blank.o $< -MF $@
+
+../test-obj/test3004.IntegerFastAlgo.dep : ../../../Target/WIN64/CCore/test/test3004.IntegerFastAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3004.IntegerFastAlgo.o $< -MF $@
+
+../test-obj/test3005.IntelRandom.dep : ../../../Target/WIN64/CCore/test/test3005.IntelRandom.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3005.IntelRandom.o $< -MF $@
+
+../test-obj/test3006.IntelAES.dep : ../../../Target/WIN64/CCore/test/test3006.IntelAES.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3006.IntelAES.o $< -MF $@
+
+../test-obj/test3007.MemAlloc.dep : ../../../Target/WIN64/CCore/test/test3007.MemAlloc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3007.MemAlloc.o $< -MF $@
+
+../test-obj/test3008.Time.dep : ../../../Target/WIN64/CCore/test/test3008.Time.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3008.Time.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

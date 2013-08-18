@@ -28,7 +28,7 @@ void * MemPageAlloc(ulen num_pages) noexcept
   if( num_pages>MaxULen/MemPageLen ) return 0;
  
   ulen len=num_pages*MemPageLen;
- 
+  
   return Win64::VirtualAlloc(0,len,Win64::AllocReserve|Win64::AllocCommit,Win64::PageReadWrite);
  }
  

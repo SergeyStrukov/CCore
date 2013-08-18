@@ -132,3 +132,9 @@
 ../../../HCore/CCore/test/testPrint.cpp
 ../../../Target/WIN64/CCore/test/test3001.Atomic.cpp
 ../../../Target/WIN64/CCore/test/test3002.WIN64.cpp
+../../../Target/WIN64/CCore/test/test3003.Blank.cpp
+../../../Target/WIN64/CCore/test/test3004.IntegerFastAlgo.cpp
+../../../Target/WIN64/CCore/test/test3005.IntelRandom.cpp
+../../../Target/WIN64/CCore/test/test3006.IntelAES.cpp
+../../../Target/WIN64/CCore/test/test3007.MemAlloc.cpp
+../../../Target/WIN64/CCore/test/test3008.Time.cpp
