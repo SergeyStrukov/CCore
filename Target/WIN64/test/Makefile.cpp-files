@@ -138,3 +138,4 @@
 ../../../Target/WIN64/CCore/test/test3006.IntelAES.cpp
 ../../../Target/WIN64/CCore/test/test3007.MemAlloc.cpp
 ../../../Target/WIN64/CCore/test/test3008.Time.cpp
+../../../Target/WIN64/CCore/test/test3009.SysFile.cpp
