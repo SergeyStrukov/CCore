@@ -17,6 +17,7 @@
 #include "LangStateMachine.h"
 
 #include <CCore/inc/algon/SortUnique.h>
+#include <CCore/inc/algon/BinarySearch.h>
 
 namespace App {
 
@@ -25,6 +26,16 @@ namespace App {
 struct ExtLangOpt;
 
 struct StateCompressBase;
+
+struct State;
+
+struct Trace;
+
+class StateTrace;
+
+struct PrintState;
+
+struct PrintCompressCounts;
 
 template <class Estimate,class EstProp=Estimate> class StateCompress;
 
@@ -64,7 +75,18 @@ struct StateCompressBase : NoCopy
    {
     ulen index;
     ulen prop_index;
-    PtrLen<const Transition> transitions;
+    PtrLen<const Transition> transitions; // strictly ordered by element
+    
+    const StateDesc * find(ulen element) const
+     {
+      auto r=transitions;
+      
+      Algon::BinarySearch_if(r, [=] (const Transition &t) { return t.element>=element; } );
+      
+      if( +r && r->element==element ) return r->dst;
+      
+      return 0;
+     }
     
     // print object
     
@@ -82,6 +104,183 @@ struct StateCompressBase : NoCopy
    };
  };
 
+/* struct State */
+
+struct State : CmpComparable<State> , NoThrowFlagsBase
+ {
+  const StateCompressBase::StateDesc *desc;
+  
+  // constructors
+  
+  State() : desc(0) {}
+  
+  State(const StateCompressBase::StateDesc *desc_) : desc(desc_) {}
+  
+  // properties
+  
+  bool operator + () const { return desc!=0; }
+  
+  bool operator ! () const { return desc==0; }
+  
+  ulen getIndex() const { return desc->index; }
+  
+  ulen getPropIndex() const { return desc->prop_index; }
+  
+  PtrLen<const StateCompressBase::Transition> getTransitions() const { return desc->transitions; }
+  
+  State find(ulen element) const { return desc->find(element); }
+  
+  // cmp objects
+  
+  ulen getExtIndex() const { return desc?desc->index:MaxULen; }
+  
+  CmpResult objCmp(State obj) const { return LessCmp(getExtIndex(),obj.getExtIndex()); }
+ };
+
+/* struct Trace */
+
+struct Trace : NoThrowFlagsBase 
+ {
+  bool ok;
+  RefArray<ulen> trace;
+  
+  // constructors
+  
+  Trace() : ok(false) {}
+  
+  Trace(RefArray<ulen> trace_) : ok(true),trace(trace_) {}
+  
+  // print object
+  
+  using PrintOptType = ExtLangOpt ;
+  
+  template <class P>
+  void print(P &out,ExtLangOpt opt) const
+   {
+    if( ok )
+      {
+       auto p=Range(trace);
+       
+       if( +p )
+         {
+          Putobj(out,opt[*p]);
+          
+          for(++p; +p ;++p)
+            {
+             Putch(out,' ');
+             Putobj(out,opt[*p]);
+            }
+         }
+       else
+         {
+          Putobj(out,"NULL");
+         }
+      }
+    else
+      {
+       Putobj(out,"NO-TRACE");
+      }
+   }
+ };
+
+/* class StateTrace */
+
+class StateTrace : NoCopy
+ {
+   using Desc = StateCompressBase::StateDesc ;
+  
+   struct BackTrace : NoCopy , NoThrowFlagsBase
+    {
+     bool ok;
+     
+     const BackTrace *from;
+     ulen element;
+     ulen len;
+     
+     BackTrace() : ok(false) {}
+     
+     void start()
+      {
+       ok=true;
+       len=0;
+      }
+     
+     bool setCmp(const BackTrace *from_,ulen element_)
+      {
+       if( ok ) return false;
+       
+       ok=true;
+       from=from_;
+       element=element_;
+       len=LenAdd(from_->len,1);
+       
+       return true;
+      }
+
+     Trace build() const;
+    };
+   
+  private: 
+  
+   DynArray<BackTrace> trace;
+   
+  public:
+
+   StateTrace() {}
+   
+   ~StateTrace() {}
+   
+   // methods
+   
+   void create(PtrLen<const Desc> table);
+   
+   Trace build(ulen index) const { return trace[index].build(); }
+ };
+
+/* struct PrintState */
+
+struct PrintState
+ {
+  ulen index;
+  Trace trace;
+  
+  // constructors
+  
+  PrintState(ulen index_,const DynArray<Trace> &trace_table) : index(index_),trace(trace_table[index_]) {}
+  
+  // print object
+  
+  using PrintOptType = ExtLangOpt ;
+  
+  template <class P>
+  void print(P &out,ExtLangOpt opt) const
+   {
+    Printf(out,"( #; ; #; )",index,BindOpt(opt,trace));
+   }
+ };
+
+/* struct PrintCompressCounts */
+
+struct PrintCompressCounts
+ {
+  ulen state_count;
+  ulen prop_count;
+  
+  // constructors
+  
+  template <class Compress>
+  PrintCompressCounts(const Compress &compress) 
+   : state_count(compress.getStateCount()),prop_count(compress.getPropCount()) {}
+  
+  // print object
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Printf(out,"State count = #; Prop count = #;",state_count,prop_count);
+   }
+ };
+
 /* class StateCompress<Estimate,EstProp> */
 
 template <class Estimate,class EstProp> 
@@ -95,6 +294,8 @@ class StateCompress : public StateCompressBase
    
    ulen atom_count;
    ulen element_count;
+   
+   StateTrace trace;
    
   private: 
    
@@ -159,6 +360,22 @@ class StateCompress : public StateCompressBase
    
    ulen getElementCount() const { return element_count; }
    
+   State getStart() const { return State(state_table.getPtr()); } 
+   
+   // apply
+   
+   template <class FuncInit>
+   void applyForStates(FuncInit func_init) const // func(State)
+    {
+     ApplyToDesc(getStateTable(),func_init);
+    }
+   
+   // trace
+   
+   Trace buildTrace(ulen index) const { return trace.build(index); }
+   
+   Trace buildTrace(State state) const { return trace.build(state.getIndex()); }
+   
    // print object
    
    using PrintOptType = LangOpt ;
@@ -166,30 +383,45 @@ class StateCompress : public StateCompressBase
    template <class P>
    void print(P &out,LangOpt opt) const
     {
-     Putobj(out,"-----\n");
+     ExtLangOpt extopt(opt.lang,getAtomCount());
      
-     Printf(out,"atoms = #; elements = #;\n",getAtomCount(),getElementCount());
+     Printf(out,"#;\n",Title("States"));
      
-     opt.lang.applyForAtoms(getAtomCount(), [&] (Atom atom) { Printf(out,"#; ",atom.getName()); } );
+     ulen state_count=getStateCount();
      
-     opt.lang.applyForSynts( [&] (Synt synt) { Printf(out,"#; ",synt.getName()); } );
+     DynArray<Trace> trace_table(state_count);
      
-     Putobj(out,"\n-----\n");
+     for(ulen i=0; i<state_count ;i++) trace_table[i]=buildTrace(i);
      
-     for(auto &state : getStateTable() )
+     for(auto p=getStateTable(); +p ;++p)
        {
-        Putobj(out,BindOpt(ExtLangOpt(opt.lang,getAtomCount()),state),"-----\n");
+        Printf(out,"\n#; = #;\n\n",BindOpt(extopt,PrintState(p->index,trace_table)),p->prop_index);
+        
+        for(auto &t : p->transitions )
+          {
+           Printf(out,"  #; -> #;\n\n",extopt[t.element],BindOpt(extopt,PrintState(t.dst->index,trace_table)));
+          }
+       
+        if( p.len>1 )
+          Putobj(out,"-----\n");
+        else
+          Printf(out,"#;\n",Title("Properties"));
        }
+     
+     // properties 
      
      ulen index=0;
      
-     for(auto &prop : getProps() )
+     for(auto p=getProps(); +p ;++p)
        {
-        Printf(out,"#;) #;\n",index,prop);
-        
-        Putobj(out,"-----\n");
+        Printf(out,"\n#;) #.b;",index,*p);
         
         index++;
+        
+        if( p.len>1 )
+          Putobj(out,"\n-----\n");
+        else
+          Printf(out,"\n#;\n",TextDivider());
        }
     }
  };
@@ -438,6 +670,8 @@ StateCompress<Estimate,EstProp>::StateCompress(const Machine &machine,const SS &
   }
   
   prop_buf.shrink_extra();
+  
+  trace.create(getStateTable());
  }
 
 } // namespace App

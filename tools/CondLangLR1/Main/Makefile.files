@@ -1,7 +1,6 @@
 OBJ_LIST = \
 obj/BottomLang.o \
 obj/CondLang.o \
-obj/Engine.o \
 obj/ExtLang.o \
 obj/GoodEstimate.o \
 obj/LR1Estimate.o \
@@ -16,7 +15,7 @@ obj/Process.o \
 obj/Set.o \
 obj/SparseMatrix.o \
 obj/StateCompress.o \
-obj/StateTrace.o \
+obj/StateMap.o \
 obj/Tools.o \
 obj/TopLang.o \
 obj/main.o \
@@ -25,7 +24,6 @@ obj/main.o \
 ASM_LIST = \
 obj/BottomLang.s \
 obj/CondLang.s \
-obj/Engine.s \
 obj/ExtLang.s \
 obj/GoodEstimate.s \
 obj/LR1Estimate.s \
@@ -40,7 +38,7 @@ obj/Process.s \
 obj/Set.s \
 obj/SparseMatrix.s \
 obj/StateCompress.s \
-obj/StateTrace.s \
+obj/StateMap.s \
 obj/Tools.s \
 obj/TopLang.s \
 obj/main.s \
@@ -49,7 +47,6 @@ obj/main.s \
 DEP_LIST = \
 obj/BottomLang.dep \
 obj/CondLang.dep \
-obj/Engine.dep \
 obj/ExtLang.dep \
 obj/GoodEstimate.dep \
 obj/LR1Estimate.dep \
@@ -64,7 +61,7 @@ obj/Process.dep \
 obj/Set.dep \
 obj/SparseMatrix.dep \
 obj/StateCompress.dep \
-obj/StateTrace.dep \
+obj/StateMap.dep \
 obj/Tools.dep \
 obj/TopLang.dep \
 obj/main.dep \
@@ -80,9 +77,6 @@ obj/BottomLang.o : ./lang/BottomLang.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CondLang.o : ./lang/CondLang.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/Engine.o : ./process/Engine.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ExtLang.o : ./lang/ExtLang.cpp
@@ -127,7 +121,7 @@ obj/SparseMatrix.o : ./SparseMatrix.cpp
 obj/StateCompress.o : ./process/StateCompress.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/StateTrace.o : ./process/StateTrace.cpp
+obj/StateMap.o : ./process/StateMap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Tools.o : ./Tools.cpp
@@ -145,9 +139,6 @@ obj/BottomLang.s : ./lang/BottomLang.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/CondLang.s : ./lang/CondLang.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/Engine.s : ./process/Engine.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ExtLang.s : ./lang/ExtLang.cpp
@@ -192,7 +183,7 @@ obj/SparseMatrix.s : ./SparseMatrix.cpp
 obj/StateCompress.s : ./process/StateCompress.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/StateTrace.s : ./process/StateTrace.cpp
+obj/StateMap.s : ./process/StateMap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Tools.s : ./Tools.cpp
@@ -211,9 +202,6 @@ obj/BottomLang.dep : ./lang/BottomLang.cpp
 
 obj/CondLang.dep : ./lang/CondLang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CondLang.o $< -MF $@
-
-obj/Engine.dep : ./process/Engine.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Engine.o $< -MF $@
 
 obj/ExtLang.dep : ./lang/ExtLang.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ExtLang.o $< -MF $@
@@ -257,8 +245,8 @@ obj/SparseMatrix.dep : ./SparseMatrix.cpp
 obj/StateCompress.dep : ./process/StateCompress.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StateCompress.o $< -MF $@
 
-obj/StateTrace.dep : ./process/StateTrace.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StateTrace.o $< -MF $@
+obj/StateMap.dep : ./process/StateMap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StateMap.o $< -MF $@
 
 obj/Tools.dep : ./Tools.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tools.o $< -MF $@

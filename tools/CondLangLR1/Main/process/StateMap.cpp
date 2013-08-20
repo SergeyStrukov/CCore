@@ -1,4 +1,4 @@
-/* Engine.cpp */
+/* StateMap.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CondLangLR1 1.00
@@ -11,9 +11,22 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include "Engine.h"
+#include "StateMap.h"
+
+#include <CCore/inc/Exception.h>
 
 namespace App {
 
+/* functions */
+
+void GuardNoTrace()
+ {
+  Printf(Exception,"App::StateMap::StateMap(...) : no trace"); 
+ }
+
+void GuardBrokenMap(ulen state,ulen element)
+ {
+  Printf(Exception,"App::StateMap::StateMap(...) : map is broken at state #; , element #;",state,element); 
+ }
 
 } // namespace App

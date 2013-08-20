@@ -160,11 +160,13 @@ class LR1PropValidSet : public CmpComparable<LR1PropValidSet> , public NoThrowFl
        }
      else
        {
-        end=est.hasNull();
+        end=est.getAlpha().nonEmpty();
         
         Collector<Atom> collector;
         
-        for(auto &rec : est.getBeta() ) collector.append_copy(rec.index);
+        for(auto &rec : est.getBeta() ) 
+          if( rec.object.rules.nonEmpty() ) 
+            collector.append_copy(rec.index);
         
         valid_set=AtomSet(Range_const(collector.flat()));
        }

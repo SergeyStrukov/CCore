@@ -19,13 +19,15 @@
 
 #include "LR1Prop.h"
 
-#include "Engine.h"
+#include "StateMap.h"
 
+#include <CCore/inc/Path.h>
+#include <CCore/inc/String.h>
 #include <CCore/inc/Exception.h>
 
 namespace App {
 
-/* functions */
+/* RunGoodTest() */
 
 static bool RunGoodTest(const Lang &lang)
  {
@@ -49,8 +51,119 @@ static bool RunGoodTest(const Lang &lang)
   return ret;
  }
 
+/* PrintFibres() */
+
+template <class P,class TopCompress>
+void PrintFibre(P &out,const TopCompress &compress,PtrLen<const State> range)
+ {
+  ulen prop=range->getPropIndex();
+  bool flag=false;
+  
+  for(State top : range ) 
+    {
+     ulen index=top.getPropIndex();
+     
+     Printf(out," #;:#;)",top.getIndex(),index);
+     
+     if( index!=prop ) flag=true;
+    }
+
+  if( flag )
+    {
+     for(State top : range )
+       {
+        Printf(out,"  #.b;\n  -----\n",compress.getProps()[top.getPropIndex()]);
+       }
+    }
+  
+  Putch(out,'\n');
+ }
+
+static bool HasMultipleProps(PtrLen<const State> range)
+ {
+  ulen prop=range->getPropIndex();
+  
+  for(State top : range ) 
+    {
+     if( top.getPropIndex()!=prop ) return true;
+    }
+  
+  return false;
+ }
+
+template <class P,class TopCompress,class BottomCompress>
+void PrintFibres(P &out,const TopCompress &compress,const BottomCompress &bottom,const StateMap &map)
+ {
+  Printf(out,"#;\n",Title("Fibres"));
+  
+  bottom.applyForStates( [&] (State state) 
+                             { 
+                              auto range=map.getFibre(state);
+                             
+                              Printf(out,"\n#;:#;) <-",state.getIndex(),state.getPropIndex());
+                             
+                              if( !range )
+                                {
+                                 Putobj(out," empty\n");
+                                }
+                              else
+                                {
+                                 PrintFibre(out,compress,range);
+                                }
+                             } 
+                       );
+  
+  {
+   auto range=map.getNullFibre();
+   
+   if( +range )
+     {
+      Printf(out,"\nNULL <-");
+      
+      PrintFibre(out,compress,range);
+     }
+  }
+  
+  Printf(out,"\n#;\n",TextDivider());
+  
+  ulen count=0;
+  
+  bottom.applyForStates( [&] (State state) 
+                             { 
+                              auto range=map.getFibre(state);
+                              
+                              if( range.len>1 && HasMultipleProps(range) )
+                                {
+                                 Printf(out,"\n#;) MP fibre size #;\n",state.getIndex(),range.len);
+                                 
+                                 count++;
+                                }
+                             } 
+                       );
+  
+  {
+   auto range=map.getNullFibre();
+   
+   if( range.len>1 && HasMultipleProps(range) )
+     {
+      Printf(out,"\nNULL MP fibre size #;\n",range.len);
+      
+      count++;
+     }
+  }
+  
+  Printf(out,"\nMP fibres = #;\n",count);
+  
+  Printf(out,"\n#;\n",TextDivider());
+ }
+
+/* Process() */
+
 void Process(StrLen file_name)
  {
+  SplitPath dev_name(file_name);
+  SplitName path_name(dev_name.path);
+  
   TrackStage("Load file #.q;",file_name);
   
   CondLang clang(file_name);
@@ -78,9 +191,8 @@ void Process(StrLen file_name)
   LangStateMachine<LR1Estimate,LR1MapContext> machine(ext_top,diagram,ext_bottom);
   
   StateCompress<LR1Estimate> compress(machine);
-  StateTrace trace(compress);
   
-  TrackStage("LR1) State count = #; Estimate count = #;",compress.getStateCount(),compress.getPropCount());
+  TrackStage("LR1) #;",PrintCompressCounts(compress));
   
   {
    ulen conflicts=0;
@@ -89,7 +201,12 @@ void Process(StrLen file_name)
    
    if( conflicts )
      {
-      TrackStage("#; CONFLICTs detected. Not LR1 language.",conflicts);
+      String out_name=StringCat(dev_name.dev,path_name.path,"BadResult.txt");
+      PrintFile out(Range(out_name));
+      
+      Putobj(out,BindOpt(ext_top,compress));
+     
+      Printf(Exception,"#; CONFLICTs detected. Not LR1 language.",conflicts);
      }
    else
      {
@@ -98,32 +215,34 @@ void Process(StrLen file_name)
   }
   
   StateCompress<LR1Estimate,LR1PropNonEmpty> compress_ne(machine);
-  StateTrace trace_ne(compress_ne);
   
-  TrackStage("NonEmpty) State count = #; Estimate count = #;",compress_ne.getStateCount(),compress_ne.getPropCount());
+  TrackStage("NonEmpty) #;",PrintCompressCounts(compress_ne));
+
+#if 0  
   
   StateCompress<LR1Estimate,LR1PropShiftSet> compress_shift(machine);
-  StateTrace trace_shift(compress_shift);
   
-  TrackStage("Shift) State count = #; Estimate count = #;",compress_shift.getStateCount(),compress_shift.getPropCount());
+  TrackStage("Shift) #;",PrintCompressCounts(compress_shift));
   
   StateCompress<LR1Estimate,LR1PropValidSet> compress_valid(machine);
-  StateTrace trace_valid(compress_valid);
   
-  TrackStage("Valid) State count = #; Estimate count = #;",compress_valid.getStateCount(),compress_valid.getPropCount());
+  TrackStage("Valid) #;",PrintCompressCounts(compress_valid));
   
   StateCompress<LR1Estimate,LR1PropRuleSet> compress_rules(machine);
-  StateTrace trace_rules(compress_rules);
   
-  TrackStage("Rules) State count = #; Estimate count = #;",compress_rules.getStateCount(),compress_rules.getPropCount());
+  TrackStage("Rules) #;",PrintCompressCounts(compress_rules));
   
-  PrintFile out("Result.txt");
+#endif  
   
-  PrintCompress(out,ext_top,compress,trace);
-  PrintCompress(out,ext_top,compress_ne,trace_ne);
-  PrintCompress(out,ext_top,compress_shift,trace_shift);
-  PrintCompress(out,ext_top,compress_valid,trace_valid);
-  PrintCompress(out,ext_top,compress_rules,trace_rules);
+  StateMap map(compress,compress_ne);
+  
+  String out_name=StringCat(dev_name.dev,path_name.path,"Result.txt");
+  PrintFile out(Range(out_name));
+  
+  PrintFibres(out,compress,compress_ne,map);
+  
+  Putobj(out,BindOpt(ext_top,compress));
+  Putobj(out,BindOpt(ext_top,compress_ne));
 
   TrackStage("Finish");
  }

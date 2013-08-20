@@ -287,9 +287,9 @@ class LR1Estimate : public CmpComparable<LR1Estimate> , public NoThrowFlagsBase
    
    bool hasNull() const { return null; }
    
-   RuleSet getAlpha() const { return alpha; }
+   const RuleSet & getAlpha() const { return alpha; }
    
-   RecSet getBeta() const { return beta; }
+   const RecSet & getBeta() const { return beta; }
    
    RuleSet getConflictSet() const
     {

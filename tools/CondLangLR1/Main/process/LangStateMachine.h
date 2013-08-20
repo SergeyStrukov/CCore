@@ -52,7 +52,7 @@ struct LangOpt
  {
   const Lang &lang;
   
-  explicit LangOpt(const Lang &lang_) : lang(lang_) {}
+  LangOpt(const Lang &lang_) : lang(lang_) {}
  };
 
 /* struct StateMachineDesc<Estimate> */

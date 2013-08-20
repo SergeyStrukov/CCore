@@ -5,7 +5,6 @@
 ./lang/LangParser.cpp
 ./lang/TopLang.cpp
 ./main.cpp
-./process/Engine.cpp
 ./process/GoodEstimate.cpp
 ./process/LangDiagram.cpp
 ./process/LangEstimate.cpp
@@ -15,7 +14,7 @@
 ./process/NonEmptyEstimate.cpp
 ./process/Process.cpp
 ./process/StateCompress.cpp
-./process/StateTrace.cpp
+./process/StateMap.cpp
 ./Set.cpp
 ./SparseMatrix.cpp
 ./Tools.cpp

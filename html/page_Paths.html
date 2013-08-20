@@ -31,14 +31,14 @@
 <p class="Files">Files <b>CCore/inc/Path.h</b> <b>CCore/src/Path.cpp</b></p>
 
 <p>
-There is a set of classes to work with file paths. The path may have the following components:
+There is a set of classes to work with file paths. A path may have the following components:
 </p>
 
 <ul>
- <li>device, ended with ':'</li>
- <li>directory, separated with '/' or '\'</li>
+ <li>device, ended with <b>':'</b></li>
+ <li>directory, separated with <b>'/'</b> or <b>'\'</b></li>
  <li>file name</li>
- <li>file extension, started with '.'</li>
+ <li>file extension, started with <b>'.'</b></li>
 </ul>
 
 <p>
@@ -47,7 +47,9 @@ multiple file extension components:
 </p>
 
 <pre>
+
 host:d:\exchange\device.1\device.log.txt
+
 </pre>
 
 <h4>PathBase</h4>
@@ -57,6 +59,7 @@ This structure is a collection of tools for the path scanning.
 </p>
 
 <pre>
+
 struct <span class="Att">PathBase</span>
  {
   static bool IsSlash(char ch) { return ch=='/' || ch=='\\' ; }
@@ -126,6 +129,7 @@ struct <span class="Att">PathBase</span>
     explicit BackwardScan(StrLen str);
    };
  };
+
 </pre>
 
 <p>
@@ -183,7 +187,7 @@ The remaining classes are used to split the string at the found position.
 
 <p>
 <b>ToPrefix</b> splits after the found position, i.g. the found character goes to the prefix. 
-In case a required character is not found, the prefix is empty.
+In case the required character is not found, the prefix is empty.
 </p>
 
 <p>
@@ -192,12 +196,13 @@ In case a required character is not found, the prefix is empty.
 
 <p>
 <b>ToSuffix</b> splits before the found position, i.g. the found character goes to the suffix.
-In case a required character is not found, the suffix is empty.
+In case the required character is not found, the suffix is empty.
 </p>
 
 <h4>SplitDev</h4>
 
 <pre>
+
 struct <span class="Att">SplitDev</span> : PathBase
  {
   StrLen dev; // first  dev:
@@ -208,21 +213,25 @@ struct <span class="Att">SplitDev</span> : PathBase
   
   bool operator ! () const { return no_dev; }
  };
+
 </pre>
 
 <p>
 This <b>Class-function</b> splits the given path into the first device component and the rest. The <b>no_dev</b>
-is true, if there is no device component. In this case the <b>dev</b> is null and the <b>dev_path</b> is the given path.
+is <b>true</b>, if there is no device component. In this case the <b>dev</b> is null and the <b>dev_path</b> is the given path.
 Colon goes to the <b>dev</b>.
 </p>
 
 <pre>
+
 host:   d:\exchange\device.1\device.log.txt
+
 </pre>
 
 <h4>SplitPath</h4>
 
 <pre>
+
 struct <span class="Att">SplitPath</span> : PathBase
  {
   StrLen dev; // all  dev1:dev2:...:
@@ -233,21 +242,25 @@ struct <span class="Att">SplitPath</span> : PathBase
   
   bool operator ! () const { return no_dev; }
  };
+
 </pre>
 
 <p>
 This <b>Class-function</b> splits the given path into the all device components and the rest. The <b>no_dev</b>
-is true, if there is no device component. In this case the <b>dev</b> is null and the <b>path</b> is the given path.
+is <b>true</b>, if there is no device component. In this case the <b>dev</b> is null and the <b>path</b> is the given path.
 Colon goes to the <b>dev</b>.
 </p>
 
 <pre>
+
 host:d:   \exchange\device.1\device.log.txt
+
 </pre>
 
 <h4>SplitDir</h4>
 
 <pre>
+
 struct <span class="Att">SplitDir</span> : PathBase
  {
   StrLen dir; // first  dir/
@@ -258,25 +271,31 @@ struct <span class="Att">SplitDir</span> : PathBase
   
   bool operator ! () const { return no_path; }
  };
+
 </pre>
 
 <p>
 This <b>Class-function</b> splits the given path (assumed without device component) into the first directory
-component and the rest. The <b>no_path</b> is true, if there is no directory component. In this case the <b>dir</b>
+component and the rest. The <b>no_path</b> is <b>true</b>, if there is no directory component. In this case the <b>dir</b>
 is null and the <b>path</b> is the given path. Slash goes to the <b>dir</b>.
 </p>
 
 <pre>
+
 \   exchange\device.1\device.log.txt
+
 </pre>
 
 <pre>
+
 exchange\   device.1\device.log.txt
+
 </pre>
 
 <h4>SplitName</h4>
 
 <pre>
+
 struct <span class="Att">SplitName</span> : PathBase
  {
   StrLen path; // all  dir1/dir2/.../
@@ -289,12 +308,13 @@ struct <span class="Att">SplitName</span> : PathBase
   
   NameType getNameType() const { return GetNameType(name); }
  };
+
 </pre>
 
 <p>
 This <b>Class-function</b> splits the given path (assumed without device component) into the all directory
-components and the rest. The <b>no_path</b> is true, if there is no directory component. In this case <b>dir</b>
-is null and the <b>path</b> is the given path. Slash goes to the <b>dir</b>.
+components and the rest. The <b>no_path</b> is <b>true</b>, if there is no directory component. In this case <b>path</b>
+is null and the <b>name</b> is the given path. Slash goes to the <b>path</b>.
 </p>
 
 <p>
@@ -302,12 +322,15 @@ is null and the <b>path</b> is the given path. Slash goes to the <b>dir</b>.
 </p>
 
 <pre>
+
 \exchange\device.1\   device.log.txt
+
 </pre>
 
 <h4>SplitFullExt</h4>
 
 <pre>
+
 struct <span class="Att">SplitFullExt</span> : PathBase
  {
   StrLen name;
@@ -318,21 +341,25 @@ struct <span class="Att">SplitFullExt</span> : PathBase
   
   bool operator ! () const { return no_ext; }
  };
+
 </pre>
 
 <p>
 This <b>Class-function</b> splits the given file name into the all extensions and the name.
-The <b>no_ext</b> is true, if there is no extension. In this case the <b>ext</b> is null and
+The <b>no_ext</b> is <b>true</b>, if there is no extension. In this case the <b>ext</b> is null and
 the <b>name</b> is the given name. Dot goes to the <b>ext</b>.
 </p>
 
 <pre>
+
 device   .log.txt
+
 </pre>
 
 <h4>SplitExt</h4>
 
 <pre>
+
 struct <span class="Att">SplitExt</span> : PathBase
  {
   StrLen name;
@@ -343,21 +370,25 @@ struct <span class="Att">SplitExt</span> : PathBase
   
   bool operator ! () const { return no_ext; }
  };
+
 </pre>
 
 <p>
 This <b>Class-function</b> splits the given file name into the last extension and the rest.
-The <b>no_ext</b> is true, if there is no extension. In this case the <b>ext</b> is null and
+The <b>no_ext</b> is <b>true</b>, if there is no extension. In this case the <b>ext</b> is null and
 the <b>name</b> is the given name. Dot goes to the <b>ext</b>.
 </p>
 
 <pre>
+
 device.log   .txt
+
 </pre>
 
 <h4>SplitDevName</h4>
 
 <pre>
+
 struct <span class="Att">SplitDevName</span> : PathBase
  {                   
   StrLen dev_name; // first  dev_name: , : removed
@@ -368,6 +399,7 @@ struct <span class="Att">SplitDevName</span> : PathBase
   
   bool operator ! () const { return no_dev; }
  };
+
 </pre>
 
 <p>
@@ -375,12 +407,15 @@ struct <span class="Att">SplitDevName</span> : PathBase
 </p>
 
 <pre>
+
 host   d:\exchange\device.1\device.log.txt
+
 </pre>
 
 <h4>SplitDirName</h4>
 
 <pre>
+
 struct <span class="Att">SplitDirName</span> : PathBase
  {
   StrLen dir_name; // first  dir_name/ , / removed
@@ -393,6 +428,7 @@ struct <span class="Att">SplitDirName</span> : PathBase
   
   NameType getNameType() const { return GetNameType(dir_name); }
  };
+
 </pre>
 
 <p>
@@ -404,16 +440,21 @@ struct <span class="Att">SplitDirName</span> : PathBase
 </p>
 
 <pre>
+
    exchange\device.1\device.log.txt
+
 </pre>
 
 <pre>
+
 exchange   device.1\device.log.txt
+
 </pre>
 
 <h4>SplitPathName</h4>
 
 <pre>
+
 struct <span class="Att">SplitPathName</span> : PathBase
  {             
   StrLen path; // all  dir1/dir2/.../ , / removed
@@ -426,6 +467,7 @@ struct <span class="Att">SplitPathName</span> : PathBase
   
   NameType getNameType() const { return GetNameType(name); }
  };
+
 </pre>
 
 <p>
@@ -433,19 +475,22 @@ struct <span class="Att">SplitPathName</span> : PathBase
 </p>
 
 <pre>
+
 \exchange\device.1   device.log.txt
+
 </pre>
 
 <h4>Path</h4>
 
 <p>
 The class <b>Path</b> is designed to manipulate with a path. The path inside <b>Path</b> is stored
-in an internal buffer. It has a non-mutable prefix. This prefix is determined by the constructor.
-The string after prefix is a normalized path. I.g. it may be empty or "." or
-"dir1/dir2/.../dir_or_file", where <b>dir</b>s are normal names, <b>dir_of_file</b> may be ".".
+in the internal buffer. It has a non-mutable prefix. This prefix is determined by the constructor.
+The string after prefix is a normalized path. I.g. it may be empty or <b>"."</b> or
+<b>"dir1/dir2/.../dir_or_file"</b>, where <b>dir</b>s are normal names, <b>dir_of_file</b> may be <b>"."</b>.
 </p>
 
 <pre>
+
 class <span class="Att">Path</span> : NoCopyBase&lt;PathBase&gt;
  {
    char buf[MaxPathLen];
@@ -483,6 +528,7 @@ class <span class="Att">Path</span> : NoCopyBase&lt;PathBase&gt;
    
    void addPath(StrLen path);
  };
+
 </pre>
 
 <p>
@@ -506,7 +552,7 @@ class <span class="Att">Path</span> : NoCopyBase&lt;PathBase&gt;
 </p>
 
 <p>
-<b>rootDir()</b> sets the <b>Path</b> value to its path prefix + ".".
+<b>rootDir()</b> sets the <b>Path</b> value to its path prefix + <b>"."</b>.
 </p>
 
 <p>

@@ -45,8 +45,7 @@ real problem or suggest a design improvement.
 <b>CCore</b> is a platform mainly for the development of real-time applications. It is distributed under the
 <a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License</a>.
 You can use <b>CCore</b> to build host applications also, but without any real-time properties. 
-We use the term "host application" to designate an application, running on a host machine, 
-currently under OS Windows.
+We use the term "host application" to designate an application, running on a host machine.
 "Stand-alone application" means an application, running on a stand-alone device. 
 <b>CCore</b> is a multi-target platform, you can (and, in fact, must!) develop your own target 
 (host or stand-alone) for your specific target device. The installation of <b>CCore</b> provides 
@@ -55,12 +54,13 @@ the following targets:</p>
 <li><b>WIN32</b> &mdash; default host target,</li>
 <li><b>IXDP465</b> &mdash; stand-alone target for Intel IXDP465 development board,</li>
 <li><b>Vanilla-H</b> &mdash; host target template,</li>
-<li><b>Vanilla-X</b> &mdash; stand-alone target template.</li>
-<li><b>LIN64</b> &mdash; host target for 64-bits Linux</li>
+<li><b>Vanilla-X</b> &mdash; stand-alone target template,</li>
+<li><b>LIN64</b> &mdash; host target for 64-bits Linux,</li>
+<li><b>WIN64</b> &mdash; host target for cygwin64.</li>
 </ul>
 <p>
 <b>Target</b> includes compiler and tools, makefile rules and parts of source code, specific for the target. 
-In most cases you are encouraged to develop components of your application using <b>WIN32</b> target and 
+In most cases you are encouraged to develop components of your application using <b>WIN32</b> target (or another host target) and 
 then port it to a stand-alone target when it's ready. <b>CCore</b> is designed in target-independent 
 and platform-independent manner (despite it's a platform itself!). So it's recommended to follow this
 practice. Developing components on a host target is usually simpler and more productive.
@@ -175,6 +175,41 @@ to
 <pre>
 
 CCORE_TARGET = LIN64
+
+</pre>
+
+<a name="WIN64"><h2>WIN64</h2></a>
+
+<p>
+Since the version 1.06 <b>CCore</b> supports the 64-bits Windows development using cygwin64. The host target <b>WIN64</b> is provided.
+This target is simpler in use, than <b>WIN32</b>. All you need to deal is the cygwin64 installation. You don't need
+additional compilers and dll mangement. 
+</p>
+
+<p>
+To use <b>WIN64</b>, you need to install cygwin64 with gcc-4.8.1 (or later) and libgmp-devel.
+</p>
+
+<p>
+Once you have installed required packages, place <b>CCore</b> at a desired directory. You need <b>/bin</b> subdirectory 
+in your home directory for tools, it must be included in the search path. You have to replace the <b>Makefile</b>
+in the <b>CCore</b> root by the <b>Makefile.WIN64</b>. You also have to edit the file <b>Makefile.host</b>:
+change from 
+</p>
+
+<pre>
+
+CCORE_TARGET = WIN32
+
+</pre>
+
+<p>
+to
+</p>
+
+<pre>
+
+CCORE_TARGET = WIN64
 
 </pre>
 
