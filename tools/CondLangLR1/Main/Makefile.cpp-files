@@ -5,6 +5,7 @@
 ./lang/LangParser.cpp
 ./lang/TopLang.cpp
 ./main.cpp
+./PrintTools.cpp
 ./process/GoodEstimate.cpp
 ./process/LangDiagram.cpp
 ./process/LangEstimate.cpp

@@ -26,6 +26,7 @@ struct Lang
   Element[] elements;
   Rule[] rules;
   State[] states;
+  Final[] finals;
  };
 
 struct Atom
@@ -38,7 +39,9 @@ struct Synt
  {
   SyntIndex index;
   text name;
+  
   Kind[] kinds;
+  Rule * [] rules;
  };
 
 struct Kind
@@ -47,13 +50,12 @@ struct Kind
   text name;
 
   Synt *synt;
-
-  Rule * [] rules;
  };
 
 struct Element
  {
   ElementIndex index;
+  
   Atom *atom;
   Kind *kind;
  };
@@ -63,7 +65,7 @@ struct Rule
   RuleIndex index;
   text name;
 
-  Element *result;
+  Kind *result;
 
   struct Arg
    {
@@ -79,13 +81,13 @@ struct State
   StateIndex index;
   Final *final;
 
-  struct Desc
+  struct Transition
    {
     Element *element;
     State *state;
    };
 
-  Desc[] transitions;
+  Transition[] transitions;
  };
 
 struct Final

@@ -11,6 +11,7 @@ obj/LangEstimate.o \
 obj/LangParser.o \
 obj/LangStateMachine.o \
 obj/NonEmptyEstimate.o \
+obj/PrintTools.o \
 obj/Process.o \
 obj/Set.o \
 obj/SparseMatrix.o \
@@ -34,6 +35,7 @@ obj/LangEstimate.s \
 obj/LangParser.s \
 obj/LangStateMachine.s \
 obj/NonEmptyEstimate.s \
+obj/PrintTools.s \
 obj/Process.s \
 obj/Set.s \
 obj/SparseMatrix.s \
@@ -57,6 +59,7 @@ obj/LangEstimate.dep \
 obj/LangParser.dep \
 obj/LangStateMachine.dep \
 obj/NonEmptyEstimate.dep \
+obj/PrintTools.dep \
 obj/Process.dep \
 obj/Set.dep \
 obj/SparseMatrix.dep \
@@ -107,6 +110,9 @@ obj/LangStateMachine.o : ./process/LangStateMachine.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/NonEmptyEstimate.o : ./process/NonEmptyEstimate.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PrintTools.o : ./PrintTools.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Process.o : ./process/Process.cpp
@@ -171,6 +177,9 @@ obj/LangStateMachine.s : ./process/LangStateMachine.cpp
 obj/NonEmptyEstimate.s : ./process/NonEmptyEstimate.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PrintTools.s : ./PrintTools.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Process.s : ./process/Process.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -232,6 +241,9 @@ obj/LangStateMachine.dep : ./process/LangStateMachine.cpp
 
 obj/NonEmptyEstimate.dep : ./process/NonEmptyEstimate.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NonEmptyEstimate.o $< -MF $@
+
+obj/PrintTools.dep : ./PrintTools.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PrintTools.o $< -MF $@
 
 obj/Process.dep : ./process/Process.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Process.o $< -MF $@
