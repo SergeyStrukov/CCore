@@ -1,22 +1,43 @@
 /* AMP.ddl */
 
-include <../LangTypes.ddl>
+//include <LangTypes.ddl>
 
 Lang lang=
  {
    {
-    { 0 , "(" },
-    { 1 , ")" },
-    { 2 , "*" },
-    { 3 , "+" },
-    { 4 , "x" }
+    { 0 , "(" , lang.elements+0 },
+    { 1 , ")" , lang.elements+1 },
+    { 2 , "*" , lang.elements+2 },
+    { 3 , "+" , lang.elements+3 },
+    { 4 , "x" , lang.elements+4 }
    },
    {
     { 0 , "EXPR" ,
                    {
-                    { 0 , "A" , lang.synts+0 },
-                    { 1 , "M" , lang.synts+0 },
-                    { 2 , "P" , lang.synts+0 }
+                    { 0 , "A" , lang.synts+0 , lang.elements+5 ,
+                                                                 {
+                                                                  lang.top_rules+0,
+                                                                  lang.top_rules+1,
+                                                                  lang.top_rules+2,
+                                                                  lang.top_rules+3,
+                                                                  lang.top_rules+4,
+                                                                  lang.top_rules+5
+                                                                 }
+                    },
+                    { 1 , "M" , lang.synts+0 , lang.elements+6 ,
+                                                                 {
+                                                                  lang.top_rules+6,
+                                                                  lang.top_rules+7
+                                                                 }
+                    },
+                    { 2 , "P" , lang.synts+0 , lang.elements+7 ,
+                                                                 {
+                                                                  lang.top_rules+8,
+                                                                  lang.top_rules+9,
+                                                                  lang.top_rules+10,
+                                                                  lang.top_rules+11
+                                                                 }
+                    }
                    } ,
                    {
                     lang.rules+0,
@@ -25,6 +46,9 @@ Lang lang=
                     lang.rules+3
                    }
     }
+   },
+   {
+    lang.synts+0
    },
    {
     { 0 , lang.atoms+0 , null },
@@ -62,6 +86,90 @@ Lang lang=
                                              { lang.atoms+2 , null },
                                              { null , lang.synts+0 }
                                             }
+    }
+   },
+   {
+    { 0 , "opAdd.A.M" , lang.rules+2 , lang.synts[0].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+0 },
+                                                                { lang.atoms+3 , null },
+                                                                { null , lang.synts[0].kinds+1 }
+                                                               }
+    },
+    { 1 , "opAdd.M.M" , lang.rules+2 , lang.synts[0].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+1 },
+                                                                { lang.atoms+3 , null },
+                                                                { null , lang.synts[0].kinds+1 }
+                                                               }
+    },
+    { 2 , "opAdd.P.M" , lang.rules+2 , lang.synts[0].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+2 },
+                                                                { lang.atoms+3 , null },
+                                                                { null , lang.synts[0].kinds+1 }
+                                                               }
+    },
+    { 3 , "opAdd.A.P" , lang.rules+2 , lang.synts[0].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+0 },
+                                                                { lang.atoms+3 , null },
+                                                                { null , lang.synts[0].kinds+2 }
+                                                               }
+    },
+    { 4 , "opAdd.M.P" , lang.rules+2 , lang.synts[0].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+1 },
+                                                                { lang.atoms+3 , null },
+                                                                { null , lang.synts[0].kinds+2 }
+                                                               }
+    },
+    { 5 , "opAdd.P.P" , lang.rules+2 , lang.synts[0].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+2 },
+                                                                { lang.atoms+3 , null },
+                                                                { null , lang.synts[0].kinds+2 }
+                                                               }
+    },
+    { 6 , "opMul.P.M" , lang.rules+3 , lang.synts[0].kinds+1 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+2 },
+                                                                { lang.atoms+2 , null },
+                                                                { null , lang.synts[0].kinds+1 }
+                                                               }
+    },
+    { 7 , "opMul.P.P" , lang.rules+3 , lang.synts[0].kinds+1 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+2 },
+                                                                { lang.atoms+2 , null },
+                                                                { null , lang.synts[0].kinds+2 }
+                                                               }
+    },
+    { 8 , "opVar" , lang.rules+0 , lang.synts[0].kinds+2 ,
+                                                           {
+                                                            { lang.atoms+4 , null }
+                                                           }
+    },
+    { 9 , "opBra.A" , lang.rules+1 , lang.synts[0].kinds+2 ,
+                                                             {
+                                                              { lang.atoms+0 , null },
+                                                              { null , lang.synts[0].kinds+0 },
+                                                              { lang.atoms+1 , null }
+                                                             }
+    },
+    { 10 , "opBra.M" , lang.rules+1 , lang.synts[0].kinds+2 ,
+                                                              {
+                                                               { lang.atoms+0 , null },
+                                                               { null , lang.synts[0].kinds+1 },
+                                                               { lang.atoms+1 , null }
+                                                              }
+    },
+    { 11 , "opBra.P" , lang.rules+1 , lang.synts[0].kinds+2 ,
+                                                              {
+                                                               { lang.atoms+0 , null },
+                                                               { null , lang.synts[0].kinds+2 },
+                                                               { lang.atoms+1 , null }
+                                                              }
     }
    },
    {
@@ -231,42 +339,42 @@ Lang lang=
     },
     { 1 ,
           {
-           { lang.atoms+1 , lang.rules+5 },
-           { lang.atoms+2 , lang.rules+5 },
-           { lang.atoms+3 , lang.rules+5 }
+           { lang.atoms+1 , lang.rules+0 },
+           { lang.atoms+2 , lang.rules+0 },
+           { lang.atoms+3 , lang.rules+0 }
           }
     },
     { 2 ,
           {
-           { lang.atoms+1 , lang.rules+6 },
-           { lang.atoms+2 , lang.rules+6 },
-           { lang.atoms+3 , lang.rules+6 }
+           { lang.atoms+1 , lang.rules+1 },
+           { lang.atoms+2 , lang.rules+1 },
+           { lang.atoms+3 , lang.rules+1 }
           }
     },
     { 3 ,
           {
-           { lang.atoms+1 , lang.rules+7 },
+           { lang.atoms+1 , lang.rules+2 },
            { lang.atoms+2 , null },
-           { lang.atoms+3 , lang.rules+7 }
+           { lang.atoms+3 , lang.rules+2 }
           }
     },
     { 4 ,
           {
-           { lang.atoms+1 , lang.rules+7 },
-           { lang.atoms+3 , lang.rules+7 }
+           { lang.atoms+1 , lang.rules+2 },
+           { lang.atoms+3 , lang.rules+2 }
           }
     },
     { 5 ,
           {
-           { lang.atoms+1 , lang.rules+8 },
+           { lang.atoms+1 , lang.rules+3 },
            { lang.atoms+2 , null },
-           { lang.atoms+3 , lang.rules+8 }
+           { lang.atoms+3 , lang.rules+3 }
           }
     },
     { 6 ,
           {
-           { lang.atoms+1 , lang.rules+8 },
-           { lang.atoms+3 , lang.rules+8 }
+           { lang.atoms+1 , lang.rules+3 },
+           { lang.atoms+3 , lang.rules+3 }
           }
     },
     { 7 ,
@@ -284,42 +392,42 @@ Lang lang=
     },
     { 9 ,
           {
-           { null , lang.rules+5 },
-           { lang.atoms+2 , lang.rules+5 },
-           { lang.atoms+3 , lang.rules+5 }
+           { null , lang.rules+0 },
+           { lang.atoms+2 , lang.rules+0 },
+           { lang.atoms+3 , lang.rules+0 }
           }
     },
     { 10 ,
            {
-            { null , lang.rules+6 },
-            { lang.atoms+2 , lang.rules+6 },
-            { lang.atoms+3 , lang.rules+6 }
+            { null , lang.rules+1 },
+            { lang.atoms+2 , lang.rules+1 },
+            { lang.atoms+3 , lang.rules+1 }
            }
     },
     { 11 ,
            {
-            { null , lang.rules+7 },
+            { null , lang.rules+2 },
             { lang.atoms+2 , null },
-            { lang.atoms+3 , lang.rules+7 }
+            { lang.atoms+3 , lang.rules+2 }
            }
     },
     { 12 ,
            {
-            { null , lang.rules+7 },
-            { lang.atoms+3 , lang.rules+7 }
+            { null , lang.rules+2 },
+            { lang.atoms+3 , lang.rules+2 }
            }
     },
     { 13 ,
            {
-            { null , lang.rules+8 },
+            { null , lang.rules+3 },
             { lang.atoms+2 , null },
-            { lang.atoms+3 , lang.rules+8 }
+            { lang.atoms+3 , lang.rules+3 }
            }
     },
     { 14 ,
            {
-            { null , lang.rules+8 },
-            { lang.atoms+3 , lang.rules+8 }
+            { null , lang.rules+3 },
+            { lang.atoms+3 , lang.rules+3 }
            }
     },
     { 15 ,

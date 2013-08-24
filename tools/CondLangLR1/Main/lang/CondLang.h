@@ -352,6 +352,8 @@ struct CondLangBase : NoCopy
     
     RuleDesc() {}
     
+    ulen getKindIndex() const { return kind?kind->index:0; }
+    
     // print object
     
     template <class P>

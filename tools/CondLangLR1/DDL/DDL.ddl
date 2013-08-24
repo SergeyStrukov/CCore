@@ -1,156 +1,482 @@
 /* DDL.ddl */
 
-include <../LangTypes.ddl>
+//include <LangTypes.ddl>
 
 Lang lang=
  {
    {
-    { 0 , "#" },
-    { 1 , "%" },
-    { 2 , "&" },
-    { 3 , "(" },
-    { 4 , ")" },
-    { 5 , "*" },
-    { 6 , "+" },
-    { 7 , "," },
-    { 8 , "-" },
-    { 9 , "->" },
-    { 10 , "." },
-    { 11 , "/" },
-    { 12 , ";" },
-    { 13 , "=" },
-    { 14 , "Dots" },
-    { 15 , "FileName" },
-    { 16 , "Name" },
-    { 17 , "Number" },
-    { 18 , "String" },
-    { 19 , "[" },
-    { 20 , "]" },
-    { 21 , "const" },
-    { 22 , "include" },
-    { 23 , "int" },
-    { 24 , "ip" },
-    { 25 , "null" },
-    { 26 , "scope" },
-    { 27 , "sint" },
-    { 28 , "sint16" },
-    { 29 , "sint32" },
-    { 30 , "sint64" },
-    { 31 , "sint8" },
-    { 32 , "struct" },
-    { 33 , "text" },
-    { 34 , "type" },
-    { 35 , "uint" },
-    { 36 , "uint16" },
-    { 37 , "uint32" },
-    { 38 , "uint64" },
-    { 39 , "uint8" },
-    { 40 , "ulen" },
-    { 41 , "{" },
-    { 42 , "}" }
+    { 0 , "#" , lang.elements+0 },
+    { 1 , "%" , lang.elements+1 },
+    { 2 , "&" , lang.elements+2 },
+    { 3 , "(" , lang.elements+3 },
+    { 4 , ")" , lang.elements+4 },
+    { 5 , "*" , lang.elements+5 },
+    { 6 , "+" , lang.elements+6 },
+    { 7 , "," , lang.elements+7 },
+    { 8 , "-" , lang.elements+8 },
+    { 9 , "->" , lang.elements+9 },
+    { 10 , "." , lang.elements+10 },
+    { 11 , "/" , lang.elements+11 },
+    { 12 , ";" , lang.elements+12 },
+    { 13 , "=" , lang.elements+13 },
+    { 14 , "Dots" , lang.elements+14 },
+    { 15 , "FileName" , lang.elements+15 },
+    { 16 , "Name" , lang.elements+16 },
+    { 17 , "Number" , lang.elements+17 },
+    { 18 , "String" , lang.elements+18 },
+    { 19 , "[" , lang.elements+19 },
+    { 20 , "]" , lang.elements+20 },
+    { 21 , "const" , lang.elements+21 },
+    { 22 , "include" , lang.elements+22 },
+    { 23 , "int" , lang.elements+23 },
+    { 24 , "ip" , lang.elements+24 },
+    { 25 , "null" , lang.elements+25 },
+    { 26 , "scope" , lang.elements+26 },
+    { 27 , "sint" , lang.elements+27 },
+    { 28 , "sint16" , lang.elements+28 },
+    { 29 , "sint32" , lang.elements+29 },
+    { 30 , "sint64" , lang.elements+30 },
+    { 31 , "sint8" , lang.elements+31 },
+    { 32 , "struct" , lang.elements+32 },
+    { 33 , "text" , lang.elements+33 },
+    { 34 , "type" , lang.elements+34 },
+    { 35 , "uint" , lang.elements+35 },
+    { 36 , "uint16" , lang.elements+36 },
+    { 37 , "uint32" , lang.elements+37 },
+    { 38 , "uint64" , lang.elements+38 },
+    { 39 , "uint8" , lang.elements+39 },
+    { 40 , "ulen" , lang.elements+40 },
+    { 41 , "{" , lang.elements+41 },
+    { 42 , "}" , lang.elements+42 }
    },
    {
-    { 0 , "BODY" , { { 0 , "" , lang.synts+0 } } ,
-                                                   {
-                                                    lang.rules+0,
-                                                    lang.rules+1,
-                                                    lang.rules+2,
-                                                    lang.rules+3,
-                                                    lang.rules+4,
-                                                    lang.rules+5
-                                                   }
+    { 0 , "BODY" , { { 0 , "" , lang.synts+0 , lang.elements+43 ,
+                                                                  {
+                                                                   lang.top_rules+0,
+                                                                   lang.top_rules+1,
+                                                                   lang.top_rules+2,
+                                                                   lang.top_rules+3,
+                                                                   lang.top_rules+4,
+                                                                   lang.top_rules+5
+                                                                  }
+                     }
+                   } ,
+                   {
+                    lang.rules+0,
+                    lang.rules+1,
+                    lang.rules+2,
+                    lang.rules+3,
+                    lang.rules+4,
+                    lang.rules+5
+                   }
     },
-    { 1 , "SCOPE" , { { 0 , "" , lang.synts+1 } } ,
-                                                    {
-                                                     lang.rules+6
-                                                    }
+    { 1 , "SCOPE" , { { 0 , "" , lang.synts+1 , lang.elements+44 ,
+                                                                   {
+                                                                    lang.top_rules+6
+                                                                   }
+                      }
+                    } ,
+                    {
+                     lang.rules+6
+                    }
     },
-    { 2 , "INCLUDE" , { { 0 , "" , lang.synts+2 } } ,
-                                                      {
-                                                       lang.rules+7
-                                                      }
+    { 2 , "INCLUDE" , { { 0 , "" , lang.synts+2 , lang.elements+45 ,
+                                                                     {
+                                                                      lang.top_rules+7
+                                                                     }
+                        }
+                      } ,
+                      {
+                       lang.rules+7
+                      }
     },
-    { 3 , "TYPE" , { { 0 , "" , lang.synts+3 } } ,
-                                                   {
-                                                    lang.rules+8
-                                                   }
+    { 3 , "TYPE" , { { 0 , "" , lang.synts+3 , lang.elements+46 ,
+                                                                  {
+                                                                   lang.top_rules+8
+                                                                  }
+                     }
+                   } ,
+                   {
+                    lang.rules+8
+                   }
     },
-    { 4 , "CONST" , { { 0 , "" , lang.synts+4 } } ,
-                                                    {
-                                                     lang.rules+9
-                                                    }
+    { 4 , "CONST" , { { 0 , "" , lang.synts+4 , lang.elements+47 ,
+                                                                   {
+                                                                    lang.top_rules+9,
+                                                                    lang.top_rules+10,
+                                                                    lang.top_rules+11,
+                                                                    lang.top_rules+12,
+                                                                    lang.top_rules+13,
+                                                                    lang.top_rules+14,
+                                                                    lang.top_rules+15
+                                                                   }
+                      }
+                    } ,
+                    {
+                     lang.rules+9
+                    }
     },
-    { 5 , "RNAME" , { { 0 , "" , lang.synts+5 } } ,
-                                                    {
-                                                     lang.rules+10,
-                                                     lang.rules+11
-                                                    }
+    { 5 , "RNAME" , { { 0 , "" , lang.synts+5 , lang.elements+48 ,
+                                                                   {
+                                                                    lang.top_rules+16,
+                                                                    lang.top_rules+17
+                                                                   }
+                      }
+                    } ,
+                    {
+                     lang.rules+10,
+                     lang.rules+11
+                    }
     },
-    { 6 , "NAME" , { { 0 , "" , lang.synts+6 } } ,
-                                                   {
-                                                    lang.rules+12,
-                                                    lang.rules+13,
-                                                    lang.rules+14,
-                                                    lang.rules+15
-                                                   }
+    { 6 , "NAME" , { { 0 , "" , lang.synts+6 , lang.elements+49 ,
+                                                                  {
+                                                                   lang.top_rules+18,
+                                                                   lang.top_rules+19,
+                                                                   lang.top_rules+20,
+                                                                   lang.top_rules+21
+                                                                  }
+                     }
+                   } ,
+                   {
+                    lang.rules+12,
+                    lang.rules+13,
+                    lang.rules+14,
+                    lang.rules+15
+                   }
     },
-    { 7 , "INAME" , { { 0 , "" , lang.synts+7 } } ,
-                                                    {
-                                                     lang.rules+16,
-                                                     lang.rules+17,
-                                                     lang.rules+18,
-                                                     lang.rules+19,
-                                                     lang.rules+20,
-                                                     lang.rules+21,
-                                                     lang.rules+22,
-                                                     lang.rules+23,
-                                                     lang.rules+24,
-                                                     lang.rules+25,
-                                                     lang.rules+26,
-                                                     lang.rules+27
-                                                    }
+    { 7 , "INAME" , { { 0 , "" , lang.synts+7 , lang.elements+50 ,
+                                                                   {
+                                                                    lang.top_rules+22,
+                                                                    lang.top_rules+23,
+                                                                    lang.top_rules+24,
+                                                                    lang.top_rules+25,
+                                                                    lang.top_rules+26,
+                                                                    lang.top_rules+27,
+                                                                    lang.top_rules+28,
+                                                                    lang.top_rules+29,
+                                                                    lang.top_rules+30,
+                                                                    lang.top_rules+31,
+                                                                    lang.top_rules+32,
+                                                                    lang.top_rules+33
+                                                                   }
+                      }
+                    } ,
+                    {
+                     lang.rules+16,
+                     lang.rules+17,
+                     lang.rules+18,
+                     lang.rules+19,
+                     lang.rules+20,
+                     lang.rules+21,
+                     lang.rules+22,
+                     lang.rules+23,
+                     lang.rules+24,
+                     lang.rules+25,
+                     lang.rules+26,
+                     lang.rules+27
+                    }
     },
-    { 8 , "TNAME" , { { 0 , "" , lang.synts+8 } } ,
-                                                    {
-                                                     lang.rules+28,
-                                                     lang.rules+29,
-                                                     lang.rules+30
-                                                    }
+    { 8 , "TNAME" , { { 0 , "" , lang.synts+8 , lang.elements+51 ,
+                                                                   {
+                                                                    lang.top_rules+34,
+                                                                    lang.top_rules+35,
+                                                                    lang.top_rules+36
+                                                                   }
+                      }
+                    } ,
+                    {
+                     lang.rules+28,
+                     lang.rules+29,
+                     lang.rules+30
+                    }
     },
-    { 9 , "TYPEDEF" , { { 0 , "" , lang.synts+9 } } ,
-                                                      {
-                                                       lang.rules+31,
-                                                       lang.rules+32,
-                                                       lang.rules+33,
-                                                       lang.rules+34,
-                                                       lang.rules+35,
-                                                       lang.rules+36
-                                                      }
+    { 9 , "TYPEDEF" , { { 0 , "" , lang.synts+9 , lang.elements+52 ,
+                                                                     {
+                                                                      lang.top_rules+37,
+                                                                      lang.top_rules+38,
+                                                                      lang.top_rules+39,
+                                                                      lang.top_rules+40,
+                                                                      lang.top_rules+41,
+                                                                      lang.top_rules+42,
+                                                                      lang.top_rules+43,
+                                                                      lang.top_rules+44,
+                                                                      lang.top_rules+45,
+                                                                      lang.top_rules+46,
+                                                                      lang.top_rules+47,
+                                                                      lang.top_rules+48
+                                                                     }
+                        }
+                      } ,
+                      {
+                       lang.rules+31,
+                       lang.rules+32,
+                       lang.rules+33,
+                       lang.rules+34,
+                       lang.rules+35,
+                       lang.rules+36
+                      }
     },
-    { 10 , "STRUCT" , { { 0 , "" , lang.synts+10 } } ,
-                                                       {
-                                                        lang.rules+37
-                                                       }
+    { 10 , "STRUCT" , { { 0 , "" , lang.synts+10 , lang.elements+53 ,
+                                                                      {
+                                                                       lang.top_rules+49
+                                                                      }
+                        }
+                      } ,
+                      {
+                       lang.rules+37
+                      }
     },
-    { 11 , "SBODY" , { { 0 , "" , lang.synts+11 } } ,
-                                                      {
-                                                       lang.rules+38,
-                                                       lang.rules+39,
-                                                       lang.rules+40,
-                                                       lang.rules+41,
-                                                       lang.rules+42,
-                                                       lang.rules+43
-                                                      }
+    { 11 , "SBODY" , { { 0 , "" , lang.synts+11 , lang.elements+54 ,
+                                                                     {
+                                                                      lang.top_rules+50,
+                                                                      lang.top_rules+51,
+                                                                      lang.top_rules+52,
+                                                                      lang.top_rules+53,
+                                                                      lang.top_rules+54,
+                                                                      lang.top_rules+55,
+                                                                      lang.top_rules+56,
+                                                                      lang.top_rules+57,
+                                                                      lang.top_rules+58,
+                                                                      lang.top_rules+59,
+                                                                      lang.top_rules+60,
+                                                                      lang.top_rules+61
+                                                                     }
+                       }
+                     } ,
+                     {
+                      lang.rules+38,
+                      lang.rules+39,
+                      lang.rules+40,
+                      lang.rules+41,
+                      lang.rules+42,
+                      lang.rules+43
+                     }
     },
     { 12 , "EXPR" ,
                     {
-                     { 0 , "LIST" , lang.synts+12 },
-                     { 1 , "ADD" , lang.synts+12 },
-                     { 2 , "MUL" , lang.synts+12 },
-                     { 3 , "UN" , lang.synts+12 },
-                     { 4 , "NUM" , lang.synts+12 },
-                     { 5 , "POST" , lang.synts+12 },
-                     { 6 , "PRIM" , lang.synts+12 }
+                     { 0 , "LIST" , lang.synts+12 , lang.elements+55 ,
+                                                                       {
+                                                                        lang.top_rules+62,
+                                                                        lang.top_rules+63,
+                                                                        lang.top_rules+64,
+                                                                        lang.top_rules+65,
+                                                                        lang.top_rules+66,
+                                                                        lang.top_rules+67,
+                                                                        lang.top_rules+68,
+                                                                        lang.top_rules+69,
+                                                                        lang.top_rules+70,
+                                                                        lang.top_rules+71,
+                                                                        lang.top_rules+72,
+                                                                        lang.top_rules+73,
+                                                                        lang.top_rules+74,
+                                                                        lang.top_rules+75,
+                                                                        lang.top_rules+76,
+                                                                        lang.top_rules+77,
+                                                                        lang.top_rules+78
+                                                                       }
+                     },
+                     { 1 , "ADD" , lang.synts+12 , lang.elements+56 ,
+                                                                      {
+                                                                       lang.top_rules+79,
+                                                                       lang.top_rules+80,
+                                                                       lang.top_rules+81,
+                                                                       lang.top_rules+82,
+                                                                       lang.top_rules+83,
+                                                                       lang.top_rules+84,
+                                                                       lang.top_rules+85,
+                                                                       lang.top_rules+86,
+                                                                       lang.top_rules+87,
+                                                                       lang.top_rules+88,
+                                                                       lang.top_rules+89,
+                                                                       lang.top_rules+90,
+                                                                       lang.top_rules+91,
+                                                                       lang.top_rules+92,
+                                                                       lang.top_rules+93,
+                                                                       lang.top_rules+94,
+                                                                       lang.top_rules+95,
+                                                                       lang.top_rules+96,
+                                                                       lang.top_rules+97,
+                                                                       lang.top_rules+98,
+                                                                       lang.top_rules+99,
+                                                                       lang.top_rules+100,
+                                                                       lang.top_rules+101,
+                                                                       lang.top_rules+102,
+                                                                       lang.top_rules+103,
+                                                                       lang.top_rules+104,
+                                                                       lang.top_rules+105,
+                                                                       lang.top_rules+106,
+                                                                       lang.top_rules+107,
+                                                                       lang.top_rules+108,
+                                                                       lang.top_rules+109,
+                                                                       lang.top_rules+110,
+                                                                       lang.top_rules+111,
+                                                                       lang.top_rules+112,
+                                                                       lang.top_rules+113,
+                                                                       lang.top_rules+114,
+                                                                       lang.top_rules+115,
+                                                                       lang.top_rules+116,
+                                                                       lang.top_rules+117,
+                                                                       lang.top_rules+118,
+                                                                       lang.top_rules+119,
+                                                                       lang.top_rules+120,
+                                                                       lang.top_rules+121,
+                                                                       lang.top_rules+122,
+                                                                       lang.top_rules+123,
+                                                                       lang.top_rules+124,
+                                                                       lang.top_rules+125,
+                                                                       lang.top_rules+126,
+                                                                       lang.top_rules+127,
+                                                                       lang.top_rules+128,
+                                                                       lang.top_rules+129,
+                                                                       lang.top_rules+130,
+                                                                       lang.top_rules+131,
+                                                                       lang.top_rules+132,
+                                                                       lang.top_rules+133,
+                                                                       lang.top_rules+134,
+                                                                       lang.top_rules+135,
+                                                                       lang.top_rules+136,
+                                                                       lang.top_rules+137,
+                                                                       lang.top_rules+138
+                                                                      }
+                     },
+                     { 2 , "MUL" , lang.synts+12 , lang.elements+57 ,
+                                                                      {
+                                                                       lang.top_rules+139,
+                                                                       lang.top_rules+140,
+                                                                       lang.top_rules+141,
+                                                                       lang.top_rules+142,
+                                                                       lang.top_rules+143,
+                                                                       lang.top_rules+144,
+                                                                       lang.top_rules+145,
+                                                                       lang.top_rules+146,
+                                                                       lang.top_rules+147,
+                                                                       lang.top_rules+148,
+                                                                       lang.top_rules+149,
+                                                                       lang.top_rules+150,
+                                                                       lang.top_rules+151,
+                                                                       lang.top_rules+152,
+                                                                       lang.top_rules+153,
+                                                                       lang.top_rules+154,
+                                                                       lang.top_rules+155,
+                                                                       lang.top_rules+156,
+                                                                       lang.top_rules+157,
+                                                                       lang.top_rules+158,
+                                                                       lang.top_rules+159,
+                                                                       lang.top_rules+160,
+                                                                       lang.top_rules+161,
+                                                                       lang.top_rules+162,
+                                                                       lang.top_rules+163,
+                                                                       lang.top_rules+164,
+                                                                       lang.top_rules+165,
+                                                                       lang.top_rules+166,
+                                                                       lang.top_rules+167,
+                                                                       lang.top_rules+168,
+                                                                       lang.top_rules+169,
+                                                                       lang.top_rules+170,
+                                                                       lang.top_rules+171,
+                                                                       lang.top_rules+172,
+                                                                       lang.top_rules+173,
+                                                                       lang.top_rules+174,
+                                                                       lang.top_rules+175,
+                                                                       lang.top_rules+176,
+                                                                       lang.top_rules+177,
+                                                                       lang.top_rules+178,
+                                                                       lang.top_rules+179,
+                                                                       lang.top_rules+180,
+                                                                       lang.top_rules+181,
+                                                                       lang.top_rules+182,
+                                                                       lang.top_rules+183,
+                                                                       lang.top_rules+184,
+                                                                       lang.top_rules+185,
+                                                                       lang.top_rules+186,
+                                                                       lang.top_rules+187,
+                                                                       lang.top_rules+188,
+                                                                       lang.top_rules+189,
+                                                                       lang.top_rules+190,
+                                                                       lang.top_rules+191,
+                                                                       lang.top_rules+192,
+                                                                       lang.top_rules+193,
+                                                                       lang.top_rules+194,
+                                                                       lang.top_rules+195,
+                                                                       lang.top_rules+196,
+                                                                       lang.top_rules+197,
+                                                                       lang.top_rules+198
+                                                                      }
+                     },
+                     { 3 , "UN" , lang.synts+12 , lang.elements+58 ,
+                                                                     {
+                                                                      lang.top_rules+199,
+                                                                      lang.top_rules+200,
+                                                                      lang.top_rules+201,
+                                                                      lang.top_rules+202,
+                                                                      lang.top_rules+203,
+                                                                      lang.top_rules+204,
+                                                                      lang.top_rules+205,
+                                                                      lang.top_rules+206,
+                                                                      lang.top_rules+207,
+                                                                      lang.top_rules+208,
+                                                                      lang.top_rules+209,
+                                                                      lang.top_rules+210,
+                                                                      lang.top_rules+211,
+                                                                      lang.top_rules+212,
+                                                                      lang.top_rules+213,
+                                                                      lang.top_rules+214
+                                                                     }
+                     },
+                     { 4 , "NUM" , lang.synts+12 , lang.elements+59 ,
+                                                                      {
+                                                                       lang.top_rules+215
+                                                                      }
+                     },
+                     { 5 , "POST" , lang.synts+12 , lang.elements+60 ,
+                                                                       {
+                                                                        lang.top_rules+216,
+                                                                        lang.top_rules+217,
+                                                                        lang.top_rules+218,
+                                                                        lang.top_rules+219,
+                                                                        lang.top_rules+220,
+                                                                        lang.top_rules+221,
+                                                                        lang.top_rules+222,
+                                                                        lang.top_rules+223,
+                                                                        lang.top_rules+224,
+                                                                        lang.top_rules+225,
+                                                                        lang.top_rules+226,
+                                                                        lang.top_rules+227,
+                                                                        lang.top_rules+228,
+                                                                        lang.top_rules+229,
+                                                                        lang.top_rules+230,
+                                                                        lang.top_rules+231,
+                                                                        lang.top_rules+232,
+                                                                        lang.top_rules+233,
+                                                                        lang.top_rules+234,
+                                                                        lang.top_rules+235,
+                                                                        lang.top_rules+236,
+                                                                        lang.top_rules+237,
+                                                                        lang.top_rules+238,
+                                                                        lang.top_rules+239,
+                                                                        lang.top_rules+240
+                                                                       }
+                     },
+                     { 6 , "PRIM" , lang.synts+12 , lang.elements+61 ,
+                                                                       {
+                                                                        lang.top_rules+241,
+                                                                        lang.top_rules+242,
+                                                                        lang.top_rules+243,
+                                                                        lang.top_rules+244,
+                                                                        lang.top_rules+245,
+                                                                        lang.top_rules+246,
+                                                                        lang.top_rules+247,
+                                                                        lang.top_rules+248,
+                                                                        lang.top_rules+249,
+                                                                        lang.top_rules+250,
+                                                                        lang.top_rules+251,
+                                                                        lang.top_rules+252,
+                                                                        lang.top_rules+253,
+                                                                        lang.top_rules+254,
+                                                                        lang.top_rules+255,
+                                                                        lang.top_rules+256
+                                                                       }
+                     }
                     } ,
                     {
                      lang.rules+44,
@@ -177,36 +503,87 @@ Lang lang=
                      lang.rules+65
                     }
     },
-    { 13 , "ELIST" , { { 0 , "" , lang.synts+13 } } ,
-                                                      {
-                                                       lang.rules+66,
-                                                       lang.rules+67
-                                                      }
+    { 13 , "ELIST" , { { 0 , "" , lang.synts+13 , lang.elements+62 ,
+                                                                     {
+                                                                      lang.top_rules+257,
+                                                                      lang.top_rules+258,
+                                                                      lang.top_rules+259,
+                                                                      lang.top_rules+260,
+                                                                      lang.top_rules+261,
+                                                                      lang.top_rules+262,
+                                                                      lang.top_rules+263,
+                                                                      lang.top_rules+264,
+                                                                      lang.top_rules+265,
+                                                                      lang.top_rules+266,
+                                                                      lang.top_rules+267,
+                                                                      lang.top_rules+268,
+                                                                      lang.top_rules+269,
+                                                                      lang.top_rules+270
+                                                                     }
+                       }
+                     } ,
+                     {
+                      lang.rules+66,
+                      lang.rules+67
+                     }
     },
-    { 14 , "NEXPR" , { { 0 , "" , lang.synts+14 } } ,
-                                                      {
-                                                       lang.rules+68
-                                                      }
+    { 14 , "NEXPR" , { { 0 , "" , lang.synts+14 , lang.elements+63 ,
+                                                                     {
+                                                                      lang.top_rules+271,
+                                                                      lang.top_rules+272,
+                                                                      lang.top_rules+273,
+                                                                      lang.top_rules+274,
+                                                                      lang.top_rules+275,
+                                                                      lang.top_rules+276,
+                                                                      lang.top_rules+277
+                                                                     }
+                       }
+                     } ,
+                     {
+                      lang.rules+68
+                     }
     },
-    { 15 , "NELIST" , { { 0 , "" , lang.synts+15 } } ,
-                                                       {
-                                                        lang.rules+69,
-                                                        lang.rules+70
-                                                       }
+    { 15 , "NELIST" , { { 0 , "" , lang.synts+15 , lang.elements+64 ,
+                                                                      {
+                                                                       lang.top_rules+278,
+                                                                       lang.top_rules+279
+                                                                      }
+                        }
+                      } ,
+                      {
+                       lang.rules+69,
+                       lang.rules+70
+                      }
     },
-    { 16 , "ITYPE" , { { 0 , "" , lang.synts+16 } } ,
-                                                      {
-                                                       lang.rules+71,
-                                                       lang.rules+72
-                                                      }
+    { 16 , "ITYPE" , { { 0 , "" , lang.synts+16 , lang.elements+65 ,
+                                                                     {
+                                                                      lang.top_rules+280,
+                                                                      lang.top_rules+281
+                                                                     }
+                       }
+                     } ,
+                     {
+                      lang.rules+71,
+                      lang.rules+72
+                     }
     },
-    { 17 , "NNLIT" , { { 0 , "" , lang.synts+17 } } ,
-                                                      {
-                                                       lang.rules+73,
-                                                       lang.rules+74,
-                                                       lang.rules+75
-                                                      }
+    { 17 , "NNLIT" , { { 0 , "" , lang.synts+17 , lang.elements+66 ,
+                                                                     {
+                                                                      lang.top_rules+282,
+                                                                      lang.top_rules+283,
+                                                                      lang.top_rules+284
+                                                                     }
+                       }
+                     } ,
+                     {
+                      lang.rules+73,
+                      lang.rules+74,
+                      lang.rules+75
+                     }
     }
+   },
+   {
+    lang.synts+0
    },
    {
     { 0 , lang.atoms+0 , null },
@@ -755,6 +1132,1999 @@ Lang lang=
                                                  { lang.atoms+10 , null },
                                                  { lang.atoms+17 , null }
                                                 }
+    }
+   },
+   {
+    { 0 , "startBody" , lang.rules+0 , lang.synts[0].kinds+0 ,
+                                                               {
+                                                                
+                                                               }
+    },
+    { 1 , "extBody_SCOPE" , lang.rules+1 , lang.synts[0].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[0].kinds+0 },
+                                                                    { null , lang.synts[1].kinds+0 }
+                                                                   }
+    },
+    { 2 , "extBody_INCLUDE" , lang.rules+2 , lang.synts[0].kinds+0 ,
+                                                                     {
+                                                                      { null , lang.synts[0].kinds+0 },
+                                                                      { null , lang.synts[2].kinds+0 }
+                                                                     }
+    },
+    { 3 , "extBody_TYPE" , lang.rules+3 , lang.synts[0].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[0].kinds+0 },
+                                                                   { null , lang.synts[3].kinds+0 }
+                                                                  }
+    },
+    { 4 , "extBody_CONST" , lang.rules+4 , lang.synts[0].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[0].kinds+0 },
+                                                                    { null , lang.synts[4].kinds+0 }
+                                                                   }
+    },
+    { 5 , "extBody_STRUCT" , lang.rules+5 , lang.synts[0].kinds+0 ,
+                                                                    {
+                                                                     { null , lang.synts[0].kinds+0 },
+                                                                     { null , lang.synts[10].kinds+0 },
+                                                                     { lang.atoms+12 , null }
+                                                                    }
+    },
+    { 6 , "buildScope" , lang.rules+6 , lang.synts[1].kinds+0 ,
+                                                                {
+                                                                 { lang.atoms+26 , null },
+                                                                 { lang.atoms+16 , null },
+                                                                 { lang.atoms+41 , null },
+                                                                 { null , lang.synts[0].kinds+0 },
+                                                                 { lang.atoms+42 , null }
+                                                                }
+    },
+    { 7 , "includeFile" , lang.rules+7 , lang.synts[2].kinds+0 ,
+                                                                 {
+                                                                  { lang.atoms+22 , null },
+                                                                  { lang.atoms+15 , null }
+                                                                 }
+    },
+    { 8 , "defType" , lang.rules+8 , lang.synts[3].kinds+0 ,
+                                                             {
+                                                              { lang.atoms+34 , null },
+                                                              { lang.atoms+16 , null },
+                                                              { lang.atoms+13 , null },
+                                                              { null , lang.synts[9].kinds+0 },
+                                                              { lang.atoms+12 , null }
+                                                             }
+    },
+    { 9 , "defConst.LIST" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[9].kinds+0 },
+                                                                    { lang.atoms+16 , null },
+                                                                    { lang.atoms+13 , null },
+                                                                    { null , lang.synts[12].kinds+0 },
+                                                                    { lang.atoms+12 , null }
+                                                                   }
+    },
+    { 10 , "defConst.ADD" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[9].kinds+0 },
+                                                                    { lang.atoms+16 , null },
+                                                                    { lang.atoms+13 , null },
+                                                                    { null , lang.synts[12].kinds+1 },
+                                                                    { lang.atoms+12 , null }
+                                                                   }
+    },
+    { 11 , "defConst.MUL" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[9].kinds+0 },
+                                                                    { lang.atoms+16 , null },
+                                                                    { lang.atoms+13 , null },
+                                                                    { null , lang.synts[12].kinds+2 },
+                                                                    { lang.atoms+12 , null }
+                                                                   }
+    },
+    { 12 , "defConst.UN" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[9].kinds+0 },
+                                                                   { lang.atoms+16 , null },
+                                                                   { lang.atoms+13 , null },
+                                                                   { null , lang.synts[12].kinds+3 },
+                                                                   { lang.atoms+12 , null }
+                                                                  }
+    },
+    { 13 , "defConst.NUM" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[9].kinds+0 },
+                                                                    { lang.atoms+16 , null },
+                                                                    { lang.atoms+13 , null },
+                                                                    { null , lang.synts[12].kinds+4 },
+                                                                    { lang.atoms+12 , null }
+                                                                   }
+    },
+    { 14 , "defConst.POST" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                    {
+                                                                     { null , lang.synts[9].kinds+0 },
+                                                                     { lang.atoms+16 , null },
+                                                                     { lang.atoms+13 , null },
+                                                                     { null , lang.synts[12].kinds+5 },
+                                                                     { lang.atoms+12 , null }
+                                                                    }
+    },
+    { 15 , "defConst.PRIM" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                    {
+                                                                     { null , lang.synts[9].kinds+0 },
+                                                                     { lang.atoms+16 , null },
+                                                                     { lang.atoms+13 , null },
+                                                                     { null , lang.synts[12].kinds+6 },
+                                                                     { lang.atoms+12 , null }
+                                                                    }
+    },
+    { 16 , "startName" , lang.rules+10 , lang.synts[5].kinds+0 ,
+                                                                 {
+                                                                  { lang.atoms+16 , null }
+                                                                 }
+    },
+    { 17 , "extName" , lang.rules+11 , lang.synts[5].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[5].kinds+0 },
+                                                                { lang.atoms+0 , null },
+                                                                { lang.atoms+16 , null }
+                                                               }
+    },
+    { 18 , "relName" , lang.rules+12 , lang.synts[6].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[5].kinds+0 }
+                                                               }
+    },
+    { 19 , "absName" , lang.rules+13 , lang.synts[6].kinds+0 ,
+                                                               {
+                                                                { lang.atoms+0 , null },
+                                                                { null , lang.synts[5].kinds+0 }
+                                                               }
+    },
+    { 20 , "dotName" , lang.rules+14 , lang.synts[6].kinds+0 ,
+                                                               {
+                                                                { lang.atoms+10 , null },
+                                                                { lang.atoms+0 , null },
+                                                                { null , lang.synts[5].kinds+0 }
+                                                               }
+    },
+    { 21 , "dotsName" , lang.rules+15 , lang.synts[6].kinds+0 ,
+                                                                {
+                                                                 { lang.atoms+14 , null },
+                                                                 { lang.atoms+0 , null },
+                                                                 { null , lang.synts[5].kinds+0 }
+                                                                }
+    },
+    { 22 , "intName" , lang.rules+16 , lang.synts[7].kinds+0 ,
+                                                               {
+                                                                { lang.atoms+23 , null }
+                                                               }
+    },
+    { 23 , "sintName" , lang.rules+17 , lang.synts[7].kinds+0 ,
+                                                                {
+                                                                 { lang.atoms+27 , null }
+                                                                }
+    },
+    { 24 , "uintName" , lang.rules+18 , lang.synts[7].kinds+0 ,
+                                                                {
+                                                                 { lang.atoms+35 , null }
+                                                                }
+    },
+    { 25 , "ulenName" , lang.rules+19 , lang.synts[7].kinds+0 ,
+                                                                {
+                                                                 { lang.atoms+40 , null }
+                                                                }
+    },
+    { 26 , "sint8Name" , lang.rules+20 , lang.synts[7].kinds+0 ,
+                                                                 {
+                                                                  { lang.atoms+31 , null }
+                                                                 }
+    },
+    { 27 , "uint8Name" , lang.rules+21 , lang.synts[7].kinds+0 ,
+                                                                 {
+                                                                  { lang.atoms+39 , null }
+                                                                 }
+    },
+    { 28 , "sint16Name" , lang.rules+22 , lang.synts[7].kinds+0 ,
+                                                                  {
+                                                                   { lang.atoms+28 , null }
+                                                                  }
+    },
+    { 29 , "uint16Name" , lang.rules+23 , lang.synts[7].kinds+0 ,
+                                                                  {
+                                                                   { lang.atoms+36 , null }
+                                                                  }
+    },
+    { 30 , "sint32Name" , lang.rules+24 , lang.synts[7].kinds+0 ,
+                                                                  {
+                                                                   { lang.atoms+29 , null }
+                                                                  }
+    },
+    { 31 , "uint32Name" , lang.rules+25 , lang.synts[7].kinds+0 ,
+                                                                  {
+                                                                   { lang.atoms+37 , null }
+                                                                  }
+    },
+    { 32 , "sint64Name" , lang.rules+26 , lang.synts[7].kinds+0 ,
+                                                                  {
+                                                                   { lang.atoms+30 , null }
+                                                                  }
+    },
+    { 33 , "uint64Name" , lang.rules+27 , lang.synts[7].kinds+0 ,
+                                                                  {
+                                                                   { lang.atoms+38 , null }
+                                                                  }
+    },
+    { 34 , "cast_INAME" , lang.rules+28 , lang.synts[8].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[7].kinds+0 }
+                                                                  }
+    },
+    { 35 , "textName" , lang.rules+29 , lang.synts[8].kinds+0 ,
+                                                                {
+                                                                 { lang.atoms+33 , null }
+                                                                }
+    },
+    { 36 , "ipName" , lang.rules+30 , lang.synts[8].kinds+0 ,
+                                                              {
+                                                               { lang.atoms+24 , null }
+                                                              }
+    },
+    { 37 , "namedType" , lang.rules+31 , lang.synts[9].kinds+0 ,
+                                                                 {
+                                                                  { null , lang.synts[6].kinds+0 }
+                                                                 }
+    },
+    { 38 , "baseType" , lang.rules+32 , lang.synts[9].kinds+0 ,
+                                                                {
+                                                                 { null , lang.synts[8].kinds+0 }
+                                                                }
+    },
+    { 39 , "ptrType" , lang.rules+33 , lang.synts[9].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[9].kinds+0 },
+                                                                { lang.atoms+5 , null }
+                                                               }
+    },
+    { 40 , "arrayType" , lang.rules+34 , lang.synts[9].kinds+0 ,
+                                                                 {
+                                                                  { null , lang.synts[9].kinds+0 },
+                                                                  { lang.atoms+19 , null },
+                                                                  { lang.atoms+20 , null }
+                                                                 }
+    },
+    { 41 , "arrayLenType.LIST" , lang.rules+35 , lang.synts[9].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[9].kinds+0 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+0 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 42 , "arrayLenType.ADD" , lang.rules+35 , lang.synts[9].kinds+0 ,
+                                                                        {
+                                                                         { null , lang.synts[9].kinds+0 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+1 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 43 , "arrayLenType.MUL" , lang.rules+35 , lang.synts[9].kinds+0 ,
+                                                                        {
+                                                                         { null , lang.synts[9].kinds+0 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 44 , "arrayLenType.UN" , lang.rules+35 , lang.synts[9].kinds+0 ,
+                                                                       {
+                                                                        { null , lang.synts[9].kinds+0 },
+                                                                        { lang.atoms+19 , null },
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+20 , null }
+                                                                       }
+    },
+    { 45 , "arrayLenType.NUM" , lang.rules+35 , lang.synts[9].kinds+0 ,
+                                                                        {
+                                                                         { null , lang.synts[9].kinds+0 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 46 , "arrayLenType.POST" , lang.rules+35 , lang.synts[9].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[9].kinds+0 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 47 , "arrayLenType.PRIM" , lang.rules+35 , lang.synts[9].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[9].kinds+0 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 48 , "structType" , lang.rules+36 , lang.synts[9].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[10].kinds+0 }
+                                                                  }
+    },
+    { 49 , "buildStruct" , lang.rules+37 , lang.synts[10].kinds+0 ,
+                                                                    {
+                                                                     { lang.atoms+32 , null },
+                                                                     { lang.atoms+16 , null },
+                                                                     { lang.atoms+41 , null },
+                                                                     { null , lang.synts[11].kinds+0 },
+                                                                     { lang.atoms+42 , null }
+                                                                    }
+    },
+    { 50 , "startSBody" , lang.rules+38 , lang.synts[11].kinds+0 ,
+                                                                   {
+                                                                    
+                                                                   }
+    },
+    { 51 , "extSBody_TYPE" , lang.rules+39 , lang.synts[11].kinds+0 ,
+                                                                      {
+                                                                       { null , lang.synts[11].kinds+0 },
+                                                                       { null , lang.synts[3].kinds+0 }
+                                                                      }
+    },
+    { 52 , "extSBody_CONST" , lang.rules+40 , lang.synts[11].kinds+0 ,
+                                                                       {
+                                                                        { null , lang.synts[11].kinds+0 },
+                                                                        { lang.atoms+21 , null },
+                                                                        { null , lang.synts[4].kinds+0 }
+                                                                       }
+    },
+    { 53 , "extSBody_STRUCT" , lang.rules+41 , lang.synts[11].kinds+0 ,
+                                                                        {
+                                                                         { null , lang.synts[11].kinds+0 },
+                                                                         { null , lang.synts[10].kinds+0 },
+                                                                         { lang.atoms+12 , null }
+                                                                        }
+    },
+    { 54 , "extSBody_field" , lang.rules+42 , lang.synts[11].kinds+0 ,
+                                                                       {
+                                                                        { null , lang.synts[11].kinds+0 },
+                                                                        { null , lang.synts[9].kinds+0 },
+                                                                        { lang.atoms+16 , null },
+                                                                        { lang.atoms+12 , null }
+                                                                       }
+    },
+    { 55 , "extSBody_fieldVal.LIST" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                               {
+                                                                                { null , lang.synts[11].kinds+0 },
+                                                                                { null , lang.synts[9].kinds+0 },
+                                                                                { lang.atoms+16 , null },
+                                                                                { lang.atoms+13 , null },
+                                                                                { null , lang.synts[12].kinds+0 },
+                                                                                { lang.atoms+12 , null }
+                                                                               }
+    },
+    { 56 , "extSBody_fieldVal.ADD" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                              {
+                                                                               { null , lang.synts[11].kinds+0 },
+                                                                               { null , lang.synts[9].kinds+0 },
+                                                                               { lang.atoms+16 , null },
+                                                                               { lang.atoms+13 , null },
+                                                                               { null , lang.synts[12].kinds+1 },
+                                                                               { lang.atoms+12 , null }
+                                                                              }
+    },
+    { 57 , "extSBody_fieldVal.MUL" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                              {
+                                                                               { null , lang.synts[11].kinds+0 },
+                                                                               { null , lang.synts[9].kinds+0 },
+                                                                               { lang.atoms+16 , null },
+                                                                               { lang.atoms+13 , null },
+                                                                               { null , lang.synts[12].kinds+2 },
+                                                                               { lang.atoms+12 , null }
+                                                                              }
+    },
+    { 58 , "extSBody_fieldVal.UN" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                             {
+                                                                              { null , lang.synts[11].kinds+0 },
+                                                                              { null , lang.synts[9].kinds+0 },
+                                                                              { lang.atoms+16 , null },
+                                                                              { lang.atoms+13 , null },
+                                                                              { null , lang.synts[12].kinds+3 },
+                                                                              { lang.atoms+12 , null }
+                                                                             }
+    },
+    { 59 , "extSBody_fieldVal.NUM" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                              {
+                                                                               { null , lang.synts[11].kinds+0 },
+                                                                               { null , lang.synts[9].kinds+0 },
+                                                                               { lang.atoms+16 , null },
+                                                                               { lang.atoms+13 , null },
+                                                                               { null , lang.synts[12].kinds+4 },
+                                                                               { lang.atoms+12 , null }
+                                                                              }
+    },
+    { 60 , "extSBody_fieldVal.POST" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                               {
+                                                                                { null , lang.synts[11].kinds+0 },
+                                                                                { null , lang.synts[9].kinds+0 },
+                                                                                { lang.atoms+16 , null },
+                                                                                { lang.atoms+13 , null },
+                                                                                { null , lang.synts[12].kinds+5 },
+                                                                                { lang.atoms+12 , null }
+                                                                               }
+    },
+    { 61 , "extSBody_fieldVal.PRIM" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                               {
+                                                                                { null , lang.synts[11].kinds+0 },
+                                                                                { null , lang.synts[9].kinds+0 },
+                                                                                { lang.atoms+16 , null },
+                                                                                { lang.atoms+13 , null },
+                                                                                { null , lang.synts[12].kinds+6 },
+                                                                                { lang.atoms+12 , null }
+                                                                               }
+    },
+    { 62 , "emptyExprList" , lang.rules+61 , lang.synts[12].kinds+0 ,
+                                                                      {
+                                                                       { lang.atoms+41 , null },
+                                                                       { lang.atoms+42 , null }
+                                                                      }
+    },
+    { 63 , "buildExprList" , lang.rules+62 , lang.synts[12].kinds+0 ,
+                                                                      {
+                                                                       { lang.atoms+41 , null },
+                                                                       { null , lang.synts[13].kinds+0 },
+                                                                       { lang.atoms+42 , null }
+                                                                      }
+    },
+    { 64 , "buildNamedExprList" , lang.rules+63 , lang.synts[12].kinds+0 ,
+                                                                           {
+                                                                            { lang.atoms+41 , null },
+                                                                            { null , lang.synts[15].kinds+0 },
+                                                                            { lang.atoms+42 , null }
+                                                                           }
+    },
+    { 65 , "applyEmpty.LIST" , lang.rules+64 , lang.synts[12].kinds+0 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+0 },
+                                                                         { lang.atoms+41 , null },
+                                                                         { lang.atoms+42 , null }
+                                                                        }
+    },
+    { 66 , "applyEmpty.ADD" , lang.rules+64 , lang.synts[12].kinds+0 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+1 },
+                                                                        { lang.atoms+41 , null },
+                                                                        { lang.atoms+42 , null }
+                                                                       }
+    },
+    { 67 , "applyEmpty.MUL" , lang.rules+64 , lang.synts[12].kinds+0 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+41 , null },
+                                                                        { lang.atoms+42 , null }
+                                                                       }
+    },
+    { 68 , "applyEmpty.UN" , lang.rules+64 , lang.synts[12].kinds+0 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+41 , null },
+                                                                       { lang.atoms+42 , null }
+                                                                      }
+    },
+    { 69 , "applyEmpty.NUM" , lang.rules+64 , lang.synts[12].kinds+0 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+41 , null },
+                                                                        { lang.atoms+42 , null }
+                                                                       }
+    },
+    { 70 , "applyEmpty.POST" , lang.rules+64 , lang.synts[12].kinds+0 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+41 , null },
+                                                                         { lang.atoms+42 , null }
+                                                                        }
+    },
+    { 71 , "applyEmpty.PRIM" , lang.rules+64 , lang.synts[12].kinds+0 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+41 , null },
+                                                                         { lang.atoms+42 , null }
+                                                                        }
+    },
+    { 72 , "applyNamedExprList.LIST" , lang.rules+65 , lang.synts[12].kinds+0 ,
+                                                                                {
+                                                                                 { null , lang.synts[12].kinds+0 },
+                                                                                 { lang.atoms+41 , null },
+                                                                                 { null , lang.synts[15].kinds+0 },
+                                                                                 { lang.atoms+42 , null }
+                                                                                }
+    },
+    { 73 , "applyNamedExprList.ADD" , lang.rules+65 , lang.synts[12].kinds+0 ,
+                                                                               {
+                                                                                { null , lang.synts[12].kinds+1 },
+                                                                                { lang.atoms+41 , null },
+                                                                                { null , lang.synts[15].kinds+0 },
+                                                                                { lang.atoms+42 , null }
+                                                                               }
+    },
+    { 74 , "applyNamedExprList.MUL" , lang.rules+65 , lang.synts[12].kinds+0 ,
+                                                                               {
+                                                                                { null , lang.synts[12].kinds+2 },
+                                                                                { lang.atoms+41 , null },
+                                                                                { null , lang.synts[15].kinds+0 },
+                                                                                { lang.atoms+42 , null }
+                                                                               }
+    },
+    { 75 , "applyNamedExprList.UN" , lang.rules+65 , lang.synts[12].kinds+0 ,
+                                                                              {
+                                                                               { null , lang.synts[12].kinds+3 },
+                                                                               { lang.atoms+41 , null },
+                                                                               { null , lang.synts[15].kinds+0 },
+                                                                               { lang.atoms+42 , null }
+                                                                              }
+    },
+    { 76 , "applyNamedExprList.NUM" , lang.rules+65 , lang.synts[12].kinds+0 ,
+                                                                               {
+                                                                                { null , lang.synts[12].kinds+4 },
+                                                                                { lang.atoms+41 , null },
+                                                                                { null , lang.synts[15].kinds+0 },
+                                                                                { lang.atoms+42 , null }
+                                                                               }
+    },
+    { 77 , "applyNamedExprList.POST" , lang.rules+65 , lang.synts[12].kinds+0 ,
+                                                                                {
+                                                                                 { null , lang.synts[12].kinds+5 },
+                                                                                 { lang.atoms+41 , null },
+                                                                                 { null , lang.synts[15].kinds+0 },
+                                                                                 { lang.atoms+42 , null }
+                                                                                }
+    },
+    { 78 , "applyNamedExprList.PRIM" , lang.rules+65 , lang.synts[12].kinds+0 ,
+                                                                                {
+                                                                                 { null , lang.synts[12].kinds+6 },
+                                                                                 { lang.atoms+41 , null },
+                                                                                 { null , lang.synts[15].kinds+0 },
+                                                                                 { lang.atoms+42 , null }
+                                                                                }
+    },
+    { 79 , "opAdd.ADD.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+1 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+2 }
+                                                                      }
+    },
+    { 80 , "opAdd.MUL.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+2 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+2 }
+                                                                      }
+    },
+    { 81 , "opAdd.UN.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+3 },
+                                                                      { lang.atoms+6 , null },
+                                                                      { null , lang.synts[12].kinds+2 }
+                                                                     }
+    },
+    { 82 , "opAdd.NUM.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+4 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+2 }
+                                                                      }
+    },
+    { 83 , "opAdd.POST.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+6 , null },
+                                                                        { null , lang.synts[12].kinds+2 }
+                                                                       }
+    },
+    { 84 , "opAdd.PRIM.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+6 , null },
+                                                                        { null , lang.synts[12].kinds+2 }
+                                                                       }
+    },
+    { 85 , "opAdd.ADD.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+1 },
+                                                                      { lang.atoms+6 , null },
+                                                                      { null , lang.synts[12].kinds+3 }
+                                                                     }
+    },
+    { 86 , "opAdd.MUL.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+2 },
+                                                                      { lang.atoms+6 , null },
+                                                                      { null , lang.synts[12].kinds+3 }
+                                                                     }
+    },
+    { 87 , "opAdd.UN.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                    {
+                                                                     { null , lang.synts[12].kinds+3 },
+                                                                     { lang.atoms+6 , null },
+                                                                     { null , lang.synts[12].kinds+3 }
+                                                                    }
+    },
+    { 88 , "opAdd.NUM.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+4 },
+                                                                      { lang.atoms+6 , null },
+                                                                      { null , lang.synts[12].kinds+3 }
+                                                                     }
+    },
+    { 89 , "opAdd.POST.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+5 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 90 , "opAdd.PRIM.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+6 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 91 , "opAdd.ADD.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+1 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+4 }
+                                                                      }
+    },
+    { 92 , "opAdd.MUL.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+2 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+4 }
+                                                                      }
+    },
+    { 93 , "opAdd.UN.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+3 },
+                                                                      { lang.atoms+6 , null },
+                                                                      { null , lang.synts[12].kinds+4 }
+                                                                     }
+    },
+    { 94 , "opAdd.NUM.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+4 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+4 }
+                                                                      }
+    },
+    { 95 , "opAdd.POST.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+6 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 96 , "opAdd.PRIM.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+6 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 97 , "opAdd.ADD.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+1 },
+                                                                        { lang.atoms+6 , null },
+                                                                        { null , lang.synts[12].kinds+5 }
+                                                                       }
+    },
+    { 98 , "opAdd.MUL.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+6 , null },
+                                                                        { null , lang.synts[12].kinds+5 }
+                                                                       }
+    },
+    { 99 , "opAdd.UN.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+6 , null },
+                                                                       { null , lang.synts[12].kinds+5 }
+                                                                      }
+    },
+    { 100 , "opAdd.NUM.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+6 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 101 , "opAdd.POST.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+6 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 102 , "opAdd.PRIM.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+6 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 103 , "opAdd.ADD.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+1 },
+                                                                         { lang.atoms+6 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 104 , "opAdd.MUL.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+6 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 105 , "opAdd.UN.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+6 , null },
+                                                                        { null , lang.synts[12].kinds+6 }
+                                                                       }
+    },
+    { 106 , "opAdd.NUM.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+6 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 107 , "opAdd.POST.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+6 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 108 , "opAdd.PRIM.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+6 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 109 , "opSub.ADD.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+1 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+2 }
+                                                                       }
+    },
+    { 110 , "opSub.MUL.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+2 }
+                                                                       }
+    },
+    { 111 , "opSub.UN.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+8 , null },
+                                                                       { null , lang.synts[12].kinds+2 }
+                                                                      }
+    },
+    { 112 , "opSub.NUM.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+2 }
+                                                                       }
+    },
+    { 113 , "opSub.POST.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+2 }
+                                                                        }
+    },
+    { 114 , "opSub.PRIM.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+2 }
+                                                                        }
+    },
+    { 115 , "opSub.ADD.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+1 },
+                                                                       { lang.atoms+8 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 116 , "opSub.MUL.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+2 },
+                                                                       { lang.atoms+8 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 117 , "opSub.UN.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+3 },
+                                                                      { lang.atoms+8 , null },
+                                                                      { null , lang.synts[12].kinds+3 }
+                                                                     }
+    },
+    { 118 , "opSub.NUM.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+4 },
+                                                                       { lang.atoms+8 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 119 , "opSub.POST.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+3 }
+                                                                       }
+    },
+    { 120 , "opSub.PRIM.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+3 }
+                                                                       }
+    },
+    { 121 , "opSub.ADD.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+1 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 122 , "opSub.MUL.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 123 , "opSub.UN.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+8 , null },
+                                                                       { null , lang.synts[12].kinds+4 }
+                                                                      }
+    },
+    { 124 , "opSub.NUM.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 125 , "opSub.POST.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+4 }
+                                                                        }
+    },
+    { 126 , "opSub.PRIM.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+4 }
+                                                                        }
+    },
+    { 127 , "opSub.ADD.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+1 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 128 , "opSub.MUL.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 129 , "opSub.UN.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+5 }
+                                                                       }
+    },
+    { 130 , "opSub.NUM.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 131 , "opSub.POST.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+8 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 132 , "opSub.PRIM.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+8 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 133 , "opSub.ADD.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+1 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 134 , "opSub.MUL.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 135 , "opSub.UN.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+8 , null },
+                                                                        { null , lang.synts[12].kinds+6 }
+                                                                       }
+    },
+    { 136 , "opSub.NUM.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+8 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 137 , "opSub.POST.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+8 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 138 , "opSub.PRIM.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+8 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 139 , "opMul.MUL.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+2 },
+                                                                       { lang.atoms+5 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 140 , "opMul.UN.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+3 },
+                                                                      { lang.atoms+5 , null },
+                                                                      { null , lang.synts[12].kinds+3 }
+                                                                     }
+    },
+    { 141 , "opMul.NUM.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+4 },
+                                                                       { lang.atoms+5 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 142 , "opMul.POST.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+5 , null },
+                                                                        { null , lang.synts[12].kinds+3 }
+                                                                       }
+    },
+    { 143 , "opMul.PRIM.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+5 , null },
+                                                                        { null , lang.synts[12].kinds+3 }
+                                                                       }
+    },
+    { 144 , "opMul.MUL.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+5 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 145 , "opMul.UN.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+5 , null },
+                                                                       { null , lang.synts[12].kinds+4 }
+                                                                      }
+    },
+    { 146 , "opMul.NUM.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+5 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 147 , "opMul.POST.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+5 , null },
+                                                                         { null , lang.synts[12].kinds+4 }
+                                                                        }
+    },
+    { 148 , "opMul.PRIM.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+5 , null },
+                                                                         { null , lang.synts[12].kinds+4 }
+                                                                        }
+    },
+    { 149 , "opMul.MUL.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+5 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 150 , "opMul.UN.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+5 , null },
+                                                                        { null , lang.synts[12].kinds+5 }
+                                                                       }
+    },
+    { 151 , "opMul.NUM.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+5 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 152 , "opMul.POST.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+5 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 153 , "opMul.PRIM.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+5 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 154 , "opMul.MUL.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+5 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 155 , "opMul.UN.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+5 , null },
+                                                                        { null , lang.synts[12].kinds+6 }
+                                                                       }
+    },
+    { 156 , "opMul.NUM.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+5 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 157 , "opMul.POST.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+5 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 158 , "opMul.PRIM.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+5 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 159 , "opDiv.MUL.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+2 },
+                                                                       { lang.atoms+11 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 160 , "opDiv.UN.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+3 },
+                                                                      { lang.atoms+11 , null },
+                                                                      { null , lang.synts[12].kinds+3 }
+                                                                     }
+    },
+    { 161 , "opDiv.NUM.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+4 },
+                                                                       { lang.atoms+11 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 162 , "opDiv.POST.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+11 , null },
+                                                                        { null , lang.synts[12].kinds+3 }
+                                                                       }
+    },
+    { 163 , "opDiv.PRIM.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+11 , null },
+                                                                        { null , lang.synts[12].kinds+3 }
+                                                                       }
+    },
+    { 164 , "opDiv.MUL.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+11 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 165 , "opDiv.UN.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+11 , null },
+                                                                       { null , lang.synts[12].kinds+4 }
+                                                                      }
+    },
+    { 166 , "opDiv.NUM.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+11 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 167 , "opDiv.POST.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+11 , null },
+                                                                         { null , lang.synts[12].kinds+4 }
+                                                                        }
+    },
+    { 168 , "opDiv.PRIM.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+11 , null },
+                                                                         { null , lang.synts[12].kinds+4 }
+                                                                        }
+    },
+    { 169 , "opDiv.MUL.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+11 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 170 , "opDiv.UN.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+11 , null },
+                                                                        { null , lang.synts[12].kinds+5 }
+                                                                       }
+    },
+    { 171 , "opDiv.NUM.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+11 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 172 , "opDiv.POST.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+11 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 173 , "opDiv.PRIM.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+11 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 174 , "opDiv.MUL.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+11 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 175 , "opDiv.UN.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+11 , null },
+                                                                        { null , lang.synts[12].kinds+6 }
+                                                                       }
+    },
+    { 176 , "opDiv.NUM.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+11 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 177 , "opDiv.POST.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+11 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 178 , "opDiv.PRIM.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+11 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 179 , "opRem.MUL.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+2 },
+                                                                       { lang.atoms+1 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 180 , "opRem.UN.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                     {
+                                                                      { null , lang.synts[12].kinds+3 },
+                                                                      { lang.atoms+1 , null },
+                                                                      { null , lang.synts[12].kinds+3 }
+                                                                     }
+    },
+    { 181 , "opRem.NUM.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+4 },
+                                                                       { lang.atoms+1 , null },
+                                                                       { null , lang.synts[12].kinds+3 }
+                                                                      }
+    },
+    { 182 , "opRem.POST.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+1 , null },
+                                                                        { null , lang.synts[12].kinds+3 }
+                                                                       }
+    },
+    { 183 , "opRem.PRIM.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+1 , null },
+                                                                        { null , lang.synts[12].kinds+3 }
+                                                                       }
+    },
+    { 184 , "opRem.MUL.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+1 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 185 , "opRem.UN.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+1 , null },
+                                                                       { null , lang.synts[12].kinds+4 }
+                                                                      }
+    },
+    { 186 , "opRem.NUM.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+1 , null },
+                                                                        { null , lang.synts[12].kinds+4 }
+                                                                       }
+    },
+    { 187 , "opRem.POST.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+1 , null },
+                                                                         { null , lang.synts[12].kinds+4 }
+                                                                        }
+    },
+    { 188 , "opRem.PRIM.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+1 , null },
+                                                                         { null , lang.synts[12].kinds+4 }
+                                                                        }
+    },
+    { 189 , "opRem.MUL.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+1 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 190 , "opRem.UN.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+1 , null },
+                                                                        { null , lang.synts[12].kinds+5 }
+                                                                       }
+    },
+    { 191 , "opRem.NUM.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+1 , null },
+                                                                         { null , lang.synts[12].kinds+5 }
+                                                                        }
+    },
+    { 192 , "opRem.POST.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+1 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 193 , "opRem.PRIM.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+1 , null },
+                                                                          { null , lang.synts[12].kinds+5 }
+                                                                         }
+    },
+    { 194 , "opRem.MUL.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+1 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 195 , "opRem.UN.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+1 , null },
+                                                                        { null , lang.synts[12].kinds+6 }
+                                                                       }
+    },
+    { 196 , "opRem.NUM.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+1 , null },
+                                                                         { null , lang.synts[12].kinds+6 }
+                                                                        }
+    },
+    { 197 , "opRem.POST.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+1 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 198 , "opRem.PRIM.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+1 , null },
+                                                                          { null , lang.synts[12].kinds+6 }
+                                                                         }
+    },
+    { 199 , "opAst.UN" , lang.rules+52 , lang.synts[12].kinds+3 ,
+                                                                  {
+                                                                   { lang.atoms+5 , null },
+                                                                   { null , lang.synts[12].kinds+3 }
+                                                                  }
+    },
+    { 200 , "opAst.NUM" , lang.rules+52 , lang.synts[12].kinds+3 ,
+                                                                   {
+                                                                    { lang.atoms+5 , null },
+                                                                    { null , lang.synts[12].kinds+4 }
+                                                                   }
+    },
+    { 201 , "opAst.POST" , lang.rules+52 , lang.synts[12].kinds+3 ,
+                                                                    {
+                                                                     { lang.atoms+5 , null },
+                                                                     { null , lang.synts[12].kinds+5 }
+                                                                    }
+    },
+    { 202 , "opAst.PRIM" , lang.rules+52 , lang.synts[12].kinds+3 ,
+                                                                    {
+                                                                     { lang.atoms+5 , null },
+                                                                     { null , lang.synts[12].kinds+6 }
+                                                                    }
+    },
+    { 203 , "opAmp.UN" , lang.rules+53 , lang.synts[12].kinds+3 ,
+                                                                  {
+                                                                   { lang.atoms+2 , null },
+                                                                   { null , lang.synts[12].kinds+3 }
+                                                                  }
+    },
+    { 204 , "opAmp.NUM" , lang.rules+53 , lang.synts[12].kinds+3 ,
+                                                                   {
+                                                                    { lang.atoms+2 , null },
+                                                                    { null , lang.synts[12].kinds+4 }
+                                                                   }
+    },
+    { 205 , "opAmp.POST" , lang.rules+53 , lang.synts[12].kinds+3 ,
+                                                                    {
+                                                                     { lang.atoms+2 , null },
+                                                                     { null , lang.synts[12].kinds+5 }
+                                                                    }
+    },
+    { 206 , "opAmp.PRIM" , lang.rules+53 , lang.synts[12].kinds+3 ,
+                                                                    {
+                                                                     { lang.atoms+2 , null },
+                                                                     { null , lang.synts[12].kinds+6 }
+                                                                    }
+    },
+    { 207 , "opPlus.UN" , lang.rules+54 , lang.synts[12].kinds+3 ,
+                                                                   {
+                                                                    { lang.atoms+6 , null },
+                                                                    { null , lang.synts[12].kinds+3 }
+                                                                   }
+    },
+    { 208 , "opPlus.NUM" , lang.rules+54 , lang.synts[12].kinds+3 ,
+                                                                    {
+                                                                     { lang.atoms+6 , null },
+                                                                     { null , lang.synts[12].kinds+4 }
+                                                                    }
+    },
+    { 209 , "opPlus.POST" , lang.rules+54 , lang.synts[12].kinds+3 ,
+                                                                     {
+                                                                      { lang.atoms+6 , null },
+                                                                      { null , lang.synts[12].kinds+5 }
+                                                                     }
+    },
+    { 210 , "opPlus.PRIM" , lang.rules+54 , lang.synts[12].kinds+3 ,
+                                                                     {
+                                                                      { lang.atoms+6 , null },
+                                                                      { null , lang.synts[12].kinds+6 }
+                                                                     }
+    },
+    { 211 , "opMinus.UN" , lang.rules+55 , lang.synts[12].kinds+3 ,
+                                                                    {
+                                                                     { lang.atoms+8 , null },
+                                                                     { null , lang.synts[12].kinds+3 }
+                                                                    }
+    },
+    { 212 , "opMinus.NUM" , lang.rules+55 , lang.synts[12].kinds+3 ,
+                                                                     {
+                                                                      { lang.atoms+8 , null },
+                                                                      { null , lang.synts[12].kinds+4 }
+                                                                     }
+    },
+    { 213 , "opMinus.POST" , lang.rules+55 , lang.synts[12].kinds+3 ,
+                                                                      {
+                                                                       { lang.atoms+8 , null },
+                                                                       { null , lang.synts[12].kinds+5 }
+                                                                      }
+    },
+    { 214 , "opMinus.PRIM" , lang.rules+55 , lang.synts[12].kinds+3 ,
+                                                                      {
+                                                                       { lang.atoms+8 , null },
+                                                                       { null , lang.synts[12].kinds+6 }
+                                                                      }
+    },
+    { 215 , "cast_Number" , lang.rules+51 , lang.synts[12].kinds+4 ,
+                                                                     {
+                                                                      { lang.atoms+17 , null }
+                                                                     }
+    },
+    { 216 , "opInd.NUM.LIST" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+0 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 217 , "opInd.POST.LIST" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+0 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 218 , "opInd.PRIM.LIST" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+0 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 219 , "opInd.NUM.ADD" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+19 , null },
+                                                                        { null , lang.synts[12].kinds+1 },
+                                                                        { lang.atoms+20 , null }
+                                                                       }
+    },
+    { 220 , "opInd.POST.ADD" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+1 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 221 , "opInd.PRIM.ADD" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+1 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 222 , "opInd.NUM.MUL" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+19 , null },
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+20 , null }
+                                                                       }
+    },
+    { 223 , "opInd.POST.MUL" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 224 , "opInd.PRIM.MUL" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+2 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 225 , "opInd.NUM.UN" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                      {
+                                                                       { null , lang.synts[12].kinds+4 },
+                                                                       { lang.atoms+19 , null },
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+20 , null }
+                                                                      }
+    },
+    { 226 , "opInd.POST.UN" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+19 , null },
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+20 , null }
+                                                                       }
+    },
+    { 227 , "opInd.PRIM.UN" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+19 , null },
+                                                                        { null , lang.synts[12].kinds+3 },
+                                                                        { lang.atoms+20 , null }
+                                                                       }
+    },
+    { 228 , "opInd.NUM.NUM" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+19 , null },
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+20 , null }
+                                                                       }
+    },
+    { 229 , "opInd.POST.NUM" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 230 , "opInd.PRIM.NUM" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 231 , "opInd.NUM.POST" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 232 , "opInd.POST.POST" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 233 , "opInd.PRIM.POST" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 234 , "opInd.NUM.PRIM" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                        {
+                                                                         { null , lang.synts[12].kinds+4 },
+                                                                         { lang.atoms+19 , null },
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+20 , null }
+                                                                        }
+    },
+    { 235 , "opInd.POST.PRIM" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+5 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 236 , "opInd.PRIM.PRIM" , lang.rules+48 , lang.synts[12].kinds+5 ,
+                                                                         {
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+19 , null },
+                                                                          { null , lang.synts[12].kinds+6 },
+                                                                          { lang.atoms+20 , null }
+                                                                         }
+    },
+    { 237 , "opSelect.POST" , lang.rules+49 , lang.synts[12].kinds+5 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+10 , null },
+                                                                        { lang.atoms+16 , null }
+                                                                       }
+    },
+    { 238 , "opSelect.PRIM" , lang.rules+49 , lang.synts[12].kinds+5 ,
+                                                                       {
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+10 , null },
+                                                                        { lang.atoms+16 , null }
+                                                                       }
+    },
+    { 239 , "opPtrSelect.POST" , lang.rules+50 , lang.synts[12].kinds+5 ,
+                                                                          {
+                                                                           { null , lang.synts[12].kinds+5 },
+                                                                           { lang.atoms+9 , null },
+                                                                           { lang.atoms+16 , null }
+                                                                          }
+    },
+    { 240 , "opPtrSelect.PRIM" , lang.rules+50 , lang.synts[12].kinds+5 ,
+                                                                          {
+                                                                           { null , lang.synts[12].kinds+6 },
+                                                                           { lang.atoms+9 , null },
+                                                                           { lang.atoms+16 , null }
+                                                                          }
+    },
+    { 241 , "cast_EXPR.LIST" , lang.rules+44 , lang.synts[12].kinds+6 ,
+                                                                        {
+                                                                         { lang.atoms+3 , null },
+                                                                         { null , lang.synts[12].kinds+0 },
+                                                                         { lang.atoms+4 , null }
+                                                                        }
+    },
+    { 242 , "cast_EXPR.ADD" , lang.rules+44 , lang.synts[12].kinds+6 ,
+                                                                       {
+                                                                        { lang.atoms+3 , null },
+                                                                        { null , lang.synts[12].kinds+1 },
+                                                                        { lang.atoms+4 , null }
+                                                                       }
+    },
+    { 243 , "cast_EXPR.MUL" , lang.rules+44 , lang.synts[12].kinds+6 ,
+                                                                       {
+                                                                        { lang.atoms+3 , null },
+                                                                        { null , lang.synts[12].kinds+2 },
+                                                                        { lang.atoms+4 , null }
+                                                                       }
+    },
+    { 244 , "cast_EXPR.UN" , lang.rules+44 , lang.synts[12].kinds+6 ,
+                                                                      {
+                                                                       { lang.atoms+3 , null },
+                                                                       { null , lang.synts[12].kinds+3 },
+                                                                       { lang.atoms+4 , null }
+                                                                      }
+    },
+    { 245 , "cast_EXPR.NUM" , lang.rules+44 , lang.synts[12].kinds+6 ,
+                                                                       {
+                                                                        { lang.atoms+3 , null },
+                                                                        { null , lang.synts[12].kinds+4 },
+                                                                        { lang.atoms+4 , null }
+                                                                       }
+    },
+    { 246 , "cast_EXPR.POST" , lang.rules+44 , lang.synts[12].kinds+6 ,
+                                                                        {
+                                                                         { lang.atoms+3 , null },
+                                                                         { null , lang.synts[12].kinds+5 },
+                                                                         { lang.atoms+4 , null }
+                                                                        }
+    },
+    { 247 , "cast_EXPR.PRIM" , lang.rules+44 , lang.synts[12].kinds+6 ,
+                                                                        {
+                                                                         { lang.atoms+3 , null },
+                                                                         { null , lang.synts[12].kinds+6 },
+                                                                         { lang.atoms+4 , null }
+                                                                        }
+    },
+    { 248 , "cast_NAME" , lang.rules+45 , lang.synts[12].kinds+6 ,
+                                                                   {
+                                                                    { null , lang.synts[6].kinds+0 }
+                                                                   }
+    },
+    { 249 , "cast_NNLIT" , lang.rules+46 , lang.synts[12].kinds+6 ,
+                                                                    {
+                                                                     { null , lang.synts[17].kinds+0 }
+                                                                    }
+    },
+    { 250 , "opDomain.LIST" , lang.rules+47 , lang.synts[12].kinds+6 ,
+                                                                       {
+                                                                        { null , lang.synts[16].kinds+0 },
+                                                                        { lang.atoms+3 , null },
+                                                                        { null , lang.synts[12].kinds+0 },
+                                                                        { lang.atoms+4 , null }
+                                                                       }
+    },
+    { 251 , "opDomain.ADD" , lang.rules+47 , lang.synts[12].kinds+6 ,
+                                                                      {
+                                                                       { null , lang.synts[16].kinds+0 },
+                                                                       { lang.atoms+3 , null },
+                                                                       { null , lang.synts[12].kinds+1 },
+                                                                       { lang.atoms+4 , null }
+                                                                      }
+    },
+    { 252 , "opDomain.MUL" , lang.rules+47 , lang.synts[12].kinds+6 ,
+                                                                      {
+                                                                       { null , lang.synts[16].kinds+0 },
+                                                                       { lang.atoms+3 , null },
+                                                                       { null , lang.synts[12].kinds+2 },
+                                                                       { lang.atoms+4 , null }
+                                                                      }
+    },
+    { 253 , "opDomain.UN" , lang.rules+47 , lang.synts[12].kinds+6 ,
+                                                                     {
+                                                                      { null , lang.synts[16].kinds+0 },
+                                                                      { lang.atoms+3 , null },
+                                                                      { null , lang.synts[12].kinds+3 },
+                                                                      { lang.atoms+4 , null }
+                                                                     }
+    },
+    { 254 , "opDomain.NUM" , lang.rules+47 , lang.synts[12].kinds+6 ,
+                                                                      {
+                                                                       { null , lang.synts[16].kinds+0 },
+                                                                       { lang.atoms+3 , null },
+                                                                       { null , lang.synts[12].kinds+4 },
+                                                                       { lang.atoms+4 , null }
+                                                                      }
+    },
+    { 255 , "opDomain.POST" , lang.rules+47 , lang.synts[12].kinds+6 ,
+                                                                       {
+                                                                        { null , lang.synts[16].kinds+0 },
+                                                                        { lang.atoms+3 , null },
+                                                                        { null , lang.synts[12].kinds+5 },
+                                                                        { lang.atoms+4 , null }
+                                                                       }
+    },
+    { 256 , "opDomain.PRIM" , lang.rules+47 , lang.synts[12].kinds+6 ,
+                                                                       {
+                                                                        { null , lang.synts[16].kinds+0 },
+                                                                        { lang.atoms+3 , null },
+                                                                        { null , lang.synts[12].kinds+6 },
+                                                                        { lang.atoms+4 , null }
+                                                                       }
+    },
+    { 257 , "startExprList.LIST" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                            {
+                                                                             { null , lang.synts[12].kinds+0 }
+                                                                            }
+    },
+    { 258 , "startExprList.ADD" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                           {
+                                                                            { null , lang.synts[12].kinds+1 }
+                                                                           }
+    },
+    { 259 , "startExprList.MUL" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                           {
+                                                                            { null , lang.synts[12].kinds+2 }
+                                                                           }
+    },
+    { 260 , "startExprList.UN" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                          {
+                                                                           { null , lang.synts[12].kinds+3 }
+                                                                          }
+    },
+    { 261 , "startExprList.NUM" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                           {
+                                                                            { null , lang.synts[12].kinds+4 }
+                                                                           }
+    },
+    { 262 , "startExprList.POST" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                            {
+                                                                             { null , lang.synts[12].kinds+5 }
+                                                                            }
+    },
+    { 263 , "startExprList.PRIM" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                            {
+                                                                             { null , lang.synts[12].kinds+6 }
+                                                                            }
+    },
+    { 264 , "extExprList.LIST" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                          {
+                                                                           { null , lang.synts[13].kinds+0 },
+                                                                           { lang.atoms+7 , null },
+                                                                           { null , lang.synts[12].kinds+0 }
+                                                                          }
+    },
+    { 265 , "extExprList.ADD" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[13].kinds+0 },
+                                                                          { lang.atoms+7 , null },
+                                                                          { null , lang.synts[12].kinds+1 }
+                                                                         }
+    },
+    { 266 , "extExprList.MUL" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[13].kinds+0 },
+                                                                          { lang.atoms+7 , null },
+                                                                          { null , lang.synts[12].kinds+2 }
+                                                                         }
+    },
+    { 267 , "extExprList.UN" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                        {
+                                                                         { null , lang.synts[13].kinds+0 },
+                                                                         { lang.atoms+7 , null },
+                                                                         { null , lang.synts[12].kinds+3 }
+                                                                        }
+    },
+    { 268 , "extExprList.NUM" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[13].kinds+0 },
+                                                                          { lang.atoms+7 , null },
+                                                                          { null , lang.synts[12].kinds+4 }
+                                                                         }
+    },
+    { 269 , "extExprList.POST" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                          {
+                                                                           { null , lang.synts[13].kinds+0 },
+                                                                           { lang.atoms+7 , null },
+                                                                           { null , lang.synts[12].kinds+5 }
+                                                                          }
+    },
+    { 270 , "extExprList.PRIM" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                          {
+                                                                           { null , lang.synts[13].kinds+0 },
+                                                                           { lang.atoms+7 , null },
+                                                                           { null , lang.synts[12].kinds+6 }
+                                                                          }
+    },
+    { 271 , "nameExpr.LIST" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                       {
+                                                                        { lang.atoms+10 , null },
+                                                                        { lang.atoms+16 , null },
+                                                                        { lang.atoms+13 , null },
+                                                                        { null , lang.synts[12].kinds+0 }
+                                                                       }
+    },
+    { 272 , "nameExpr.ADD" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                      {
+                                                                       { lang.atoms+10 , null },
+                                                                       { lang.atoms+16 , null },
+                                                                       { lang.atoms+13 , null },
+                                                                       { null , lang.synts[12].kinds+1 }
+                                                                      }
+    },
+    { 273 , "nameExpr.MUL" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                      {
+                                                                       { lang.atoms+10 , null },
+                                                                       { lang.atoms+16 , null },
+                                                                       { lang.atoms+13 , null },
+                                                                       { null , lang.synts[12].kinds+2 }
+                                                                      }
+    },
+    { 274 , "nameExpr.UN" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                     {
+                                                                      { lang.atoms+10 , null },
+                                                                      { lang.atoms+16 , null },
+                                                                      { lang.atoms+13 , null },
+                                                                      { null , lang.synts[12].kinds+3 }
+                                                                     }
+    },
+    { 275 , "nameExpr.NUM" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                      {
+                                                                       { lang.atoms+10 , null },
+                                                                       { lang.atoms+16 , null },
+                                                                       { lang.atoms+13 , null },
+                                                                       { null , lang.synts[12].kinds+4 }
+                                                                      }
+    },
+    { 276 , "nameExpr.POST" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                       {
+                                                                        { lang.atoms+10 , null },
+                                                                        { lang.atoms+16 , null },
+                                                                        { lang.atoms+13 , null },
+                                                                        { null , lang.synts[12].kinds+5 }
+                                                                       }
+    },
+    { 277 , "nameExpr.PRIM" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                       {
+                                                                        { lang.atoms+10 , null },
+                                                                        { lang.atoms+16 , null },
+                                                                        { lang.atoms+13 , null },
+                                                                        { null , lang.synts[12].kinds+6 }
+                                                                       }
+    },
+    { 278 , "startNamedExprList" , lang.rules+69 , lang.synts[15].kinds+0 ,
+                                                                            {
+                                                                             { null , lang.synts[14].kinds+0 }
+                                                                            }
+    },
+    { 279 , "extNamedExprList" , lang.rules+70 , lang.synts[15].kinds+0 ,
+                                                                          {
+                                                                           { null , lang.synts[15].kinds+0 },
+                                                                           { lang.atoms+7 , null },
+                                                                           { null , lang.synts[14].kinds+0 }
+                                                                          }
+    },
+    { 280 , "type_NAME" , lang.rules+71 , lang.synts[16].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[6].kinds+0 }
+                                                                   }
+    },
+    { 281 , "type_INAME" , lang.rules+72 , lang.synts[16].kinds+0 ,
+                                                                    {
+                                                                     { null , lang.synts[7].kinds+0 }
+                                                                    }
+    },
+    { 282 , "cast_null" , lang.rules+73 , lang.synts[17].kinds+0 ,
+                                                                   {
+                                                                    { lang.atoms+25 , null }
+                                                                   }
+    },
+    { 283 , "cast_String" , lang.rules+74 , lang.synts[17].kinds+0 ,
+                                                                     {
+                                                                      { lang.atoms+18 , null }
+                                                                     }
+    },
+    { 284 , "buildIP" , lang.rules+75 , lang.synts[17].kinds+0 ,
+                                                                 {
+                                                                  { lang.atoms+17 , null },
+                                                                  { lang.atoms+10 , null },
+                                                                  { lang.atoms+17 , null },
+                                                                  { lang.atoms+10 , null },
+                                                                  { lang.atoms+17 , null },
+                                                                  { lang.atoms+10 , null },
+                                                                  { lang.atoms+17 , null }
+                                                                 }
     }
    },
    {
@@ -6776,642 +9146,642 @@ Lang lang=
    {
     { 0 ,
           {
-           { lang.atoms+0 , lang.rules+43 },
-           { lang.atoms+10 , lang.rules+43 },
-           { lang.atoms+14 , lang.rules+43 },
-           { lang.atoms+16 , lang.rules+43 },
-           { lang.atoms+22 , lang.rules+43 },
-           { lang.atoms+23 , lang.rules+43 },
-           { lang.atoms+24 , lang.rules+43 },
-           { lang.atoms+26 , lang.rules+43 },
-           { lang.atoms+27 , lang.rules+43 },
-           { lang.atoms+28 , lang.rules+43 },
-           { lang.atoms+29 , lang.rules+43 },
-           { lang.atoms+30 , lang.rules+43 },
-           { lang.atoms+31 , lang.rules+43 },
-           { lang.atoms+32 , lang.rules+43 },
-           { lang.atoms+33 , lang.rules+43 },
-           { lang.atoms+34 , lang.rules+43 },
-           { lang.atoms+35 , lang.rules+43 },
-           { lang.atoms+36 , lang.rules+43 },
-           { lang.atoms+37 , lang.rules+43 },
-           { lang.atoms+38 , lang.rules+43 },
-           { lang.atoms+39 , lang.rules+43 },
-           { lang.atoms+40 , lang.rules+43 },
-           { lang.atoms+42 , lang.rules+43 }
+           { lang.atoms+0 , lang.rules+0 },
+           { lang.atoms+10 , lang.rules+0 },
+           { lang.atoms+14 , lang.rules+0 },
+           { lang.atoms+16 , lang.rules+0 },
+           { lang.atoms+22 , lang.rules+0 },
+           { lang.atoms+23 , lang.rules+0 },
+           { lang.atoms+24 , lang.rules+0 },
+           { lang.atoms+26 , lang.rules+0 },
+           { lang.atoms+27 , lang.rules+0 },
+           { lang.atoms+28 , lang.rules+0 },
+           { lang.atoms+29 , lang.rules+0 },
+           { lang.atoms+30 , lang.rules+0 },
+           { lang.atoms+31 , lang.rules+0 },
+           { lang.atoms+32 , lang.rules+0 },
+           { lang.atoms+33 , lang.rules+0 },
+           { lang.atoms+34 , lang.rules+0 },
+           { lang.atoms+35 , lang.rules+0 },
+           { lang.atoms+36 , lang.rules+0 },
+           { lang.atoms+37 , lang.rules+0 },
+           { lang.atoms+38 , lang.rules+0 },
+           { lang.atoms+39 , lang.rules+0 },
+           { lang.atoms+40 , lang.rules+0 },
+           { lang.atoms+42 , lang.rules+0 }
           }
     },
     { 1 ,
           {
-           { lang.atoms+0 , lang.rules+44 },
-           { lang.atoms+10 , lang.rules+44 },
-           { lang.atoms+14 , lang.rules+44 },
-           { lang.atoms+16 , lang.rules+44 },
-           { lang.atoms+22 , lang.rules+44 },
-           { lang.atoms+23 , lang.rules+44 },
-           { lang.atoms+24 , lang.rules+44 },
-           { lang.atoms+26 , lang.rules+44 },
-           { lang.atoms+27 , lang.rules+44 },
-           { lang.atoms+28 , lang.rules+44 },
-           { lang.atoms+29 , lang.rules+44 },
-           { lang.atoms+30 , lang.rules+44 },
-           { lang.atoms+31 , lang.rules+44 },
-           { lang.atoms+32 , lang.rules+44 },
-           { lang.atoms+33 , lang.rules+44 },
-           { lang.atoms+34 , lang.rules+44 },
-           { lang.atoms+35 , lang.rules+44 },
-           { lang.atoms+36 , lang.rules+44 },
-           { lang.atoms+37 , lang.rules+44 },
-           { lang.atoms+38 , lang.rules+44 },
-           { lang.atoms+39 , lang.rules+44 },
-           { lang.atoms+40 , lang.rules+44 },
-           { lang.atoms+42 , lang.rules+44 }
+           { lang.atoms+0 , lang.rules+1 },
+           { lang.atoms+10 , lang.rules+1 },
+           { lang.atoms+14 , lang.rules+1 },
+           { lang.atoms+16 , lang.rules+1 },
+           { lang.atoms+22 , lang.rules+1 },
+           { lang.atoms+23 , lang.rules+1 },
+           { lang.atoms+24 , lang.rules+1 },
+           { lang.atoms+26 , lang.rules+1 },
+           { lang.atoms+27 , lang.rules+1 },
+           { lang.atoms+28 , lang.rules+1 },
+           { lang.atoms+29 , lang.rules+1 },
+           { lang.atoms+30 , lang.rules+1 },
+           { lang.atoms+31 , lang.rules+1 },
+           { lang.atoms+32 , lang.rules+1 },
+           { lang.atoms+33 , lang.rules+1 },
+           { lang.atoms+34 , lang.rules+1 },
+           { lang.atoms+35 , lang.rules+1 },
+           { lang.atoms+36 , lang.rules+1 },
+           { lang.atoms+37 , lang.rules+1 },
+           { lang.atoms+38 , lang.rules+1 },
+           { lang.atoms+39 , lang.rules+1 },
+           { lang.atoms+40 , lang.rules+1 },
+           { lang.atoms+42 , lang.rules+1 }
           }
     },
     { 2 ,
           {
-           { lang.atoms+0 , lang.rules+45 },
-           { lang.atoms+10 , lang.rules+45 },
-           { lang.atoms+14 , lang.rules+45 },
-           { lang.atoms+16 , lang.rules+45 },
-           { lang.atoms+22 , lang.rules+45 },
-           { lang.atoms+23 , lang.rules+45 },
-           { lang.atoms+24 , lang.rules+45 },
-           { lang.atoms+26 , lang.rules+45 },
-           { lang.atoms+27 , lang.rules+45 },
-           { lang.atoms+28 , lang.rules+45 },
-           { lang.atoms+29 , lang.rules+45 },
-           { lang.atoms+30 , lang.rules+45 },
-           { lang.atoms+31 , lang.rules+45 },
-           { lang.atoms+32 , lang.rules+45 },
-           { lang.atoms+33 , lang.rules+45 },
-           { lang.atoms+34 , lang.rules+45 },
-           { lang.atoms+35 , lang.rules+45 },
-           { lang.atoms+36 , lang.rules+45 },
-           { lang.atoms+37 , lang.rules+45 },
-           { lang.atoms+38 , lang.rules+45 },
-           { lang.atoms+39 , lang.rules+45 },
-           { lang.atoms+40 , lang.rules+45 },
-           { lang.atoms+42 , lang.rules+45 }
+           { lang.atoms+0 , lang.rules+2 },
+           { lang.atoms+10 , lang.rules+2 },
+           { lang.atoms+14 , lang.rules+2 },
+           { lang.atoms+16 , lang.rules+2 },
+           { lang.atoms+22 , lang.rules+2 },
+           { lang.atoms+23 , lang.rules+2 },
+           { lang.atoms+24 , lang.rules+2 },
+           { lang.atoms+26 , lang.rules+2 },
+           { lang.atoms+27 , lang.rules+2 },
+           { lang.atoms+28 , lang.rules+2 },
+           { lang.atoms+29 , lang.rules+2 },
+           { lang.atoms+30 , lang.rules+2 },
+           { lang.atoms+31 , lang.rules+2 },
+           { lang.atoms+32 , lang.rules+2 },
+           { lang.atoms+33 , lang.rules+2 },
+           { lang.atoms+34 , lang.rules+2 },
+           { lang.atoms+35 , lang.rules+2 },
+           { lang.atoms+36 , lang.rules+2 },
+           { lang.atoms+37 , lang.rules+2 },
+           { lang.atoms+38 , lang.rules+2 },
+           { lang.atoms+39 , lang.rules+2 },
+           { lang.atoms+40 , lang.rules+2 },
+           { lang.atoms+42 , lang.rules+2 }
           }
     },
     { 3 ,
           {
-           { lang.atoms+0 , lang.rules+46 },
-           { lang.atoms+10 , lang.rules+46 },
-           { lang.atoms+14 , lang.rules+46 },
-           { lang.atoms+16 , lang.rules+46 },
-           { lang.atoms+22 , lang.rules+46 },
-           { lang.atoms+23 , lang.rules+46 },
-           { lang.atoms+24 , lang.rules+46 },
-           { lang.atoms+26 , lang.rules+46 },
-           { lang.atoms+27 , lang.rules+46 },
-           { lang.atoms+28 , lang.rules+46 },
-           { lang.atoms+29 , lang.rules+46 },
-           { lang.atoms+30 , lang.rules+46 },
-           { lang.atoms+31 , lang.rules+46 },
-           { lang.atoms+32 , lang.rules+46 },
-           { lang.atoms+33 , lang.rules+46 },
-           { lang.atoms+34 , lang.rules+46 },
-           { lang.atoms+35 , lang.rules+46 },
-           { lang.atoms+36 , lang.rules+46 },
-           { lang.atoms+37 , lang.rules+46 },
-           { lang.atoms+38 , lang.rules+46 },
-           { lang.atoms+39 , lang.rules+46 },
-           { lang.atoms+40 , lang.rules+46 },
-           { lang.atoms+42 , lang.rules+46 }
+           { lang.atoms+0 , lang.rules+3 },
+           { lang.atoms+10 , lang.rules+3 },
+           { lang.atoms+14 , lang.rules+3 },
+           { lang.atoms+16 , lang.rules+3 },
+           { lang.atoms+22 , lang.rules+3 },
+           { lang.atoms+23 , lang.rules+3 },
+           { lang.atoms+24 , lang.rules+3 },
+           { lang.atoms+26 , lang.rules+3 },
+           { lang.atoms+27 , lang.rules+3 },
+           { lang.atoms+28 , lang.rules+3 },
+           { lang.atoms+29 , lang.rules+3 },
+           { lang.atoms+30 , lang.rules+3 },
+           { lang.atoms+31 , lang.rules+3 },
+           { lang.atoms+32 , lang.rules+3 },
+           { lang.atoms+33 , lang.rules+3 },
+           { lang.atoms+34 , lang.rules+3 },
+           { lang.atoms+35 , lang.rules+3 },
+           { lang.atoms+36 , lang.rules+3 },
+           { lang.atoms+37 , lang.rules+3 },
+           { lang.atoms+38 , lang.rules+3 },
+           { lang.atoms+39 , lang.rules+3 },
+           { lang.atoms+40 , lang.rules+3 },
+           { lang.atoms+42 , lang.rules+3 }
           }
     },
     { 4 ,
           {
-           { lang.atoms+0 , lang.rules+47 },
-           { lang.atoms+10 , lang.rules+47 },
-           { lang.atoms+14 , lang.rules+47 },
-           { lang.atoms+16 , lang.rules+47 },
-           { lang.atoms+22 , lang.rules+47 },
-           { lang.atoms+23 , lang.rules+47 },
-           { lang.atoms+24 , lang.rules+47 },
-           { lang.atoms+26 , lang.rules+47 },
-           { lang.atoms+27 , lang.rules+47 },
-           { lang.atoms+28 , lang.rules+47 },
-           { lang.atoms+29 , lang.rules+47 },
-           { lang.atoms+30 , lang.rules+47 },
-           { lang.atoms+31 , lang.rules+47 },
-           { lang.atoms+32 , lang.rules+47 },
-           { lang.atoms+33 , lang.rules+47 },
-           { lang.atoms+34 , lang.rules+47 },
-           { lang.atoms+35 , lang.rules+47 },
-           { lang.atoms+36 , lang.rules+47 },
-           { lang.atoms+37 , lang.rules+47 },
-           { lang.atoms+38 , lang.rules+47 },
-           { lang.atoms+39 , lang.rules+47 },
-           { lang.atoms+40 , lang.rules+47 },
-           { lang.atoms+42 , lang.rules+47 }
+           { lang.atoms+0 , lang.rules+4 },
+           { lang.atoms+10 , lang.rules+4 },
+           { lang.atoms+14 , lang.rules+4 },
+           { lang.atoms+16 , lang.rules+4 },
+           { lang.atoms+22 , lang.rules+4 },
+           { lang.atoms+23 , lang.rules+4 },
+           { lang.atoms+24 , lang.rules+4 },
+           { lang.atoms+26 , lang.rules+4 },
+           { lang.atoms+27 , lang.rules+4 },
+           { lang.atoms+28 , lang.rules+4 },
+           { lang.atoms+29 , lang.rules+4 },
+           { lang.atoms+30 , lang.rules+4 },
+           { lang.atoms+31 , lang.rules+4 },
+           { lang.atoms+32 , lang.rules+4 },
+           { lang.atoms+33 , lang.rules+4 },
+           { lang.atoms+34 , lang.rules+4 },
+           { lang.atoms+35 , lang.rules+4 },
+           { lang.atoms+36 , lang.rules+4 },
+           { lang.atoms+37 , lang.rules+4 },
+           { lang.atoms+38 , lang.rules+4 },
+           { lang.atoms+39 , lang.rules+4 },
+           { lang.atoms+40 , lang.rules+4 },
+           { lang.atoms+42 , lang.rules+4 }
           }
     },
     { 5 ,
           {
-           { lang.atoms+0 , lang.rules+48 },
-           { lang.atoms+10 , lang.rules+48 },
-           { lang.atoms+14 , lang.rules+48 },
-           { lang.atoms+16 , lang.rules+48 },
-           { lang.atoms+22 , lang.rules+48 },
-           { lang.atoms+23 , lang.rules+48 },
-           { lang.atoms+24 , lang.rules+48 },
-           { lang.atoms+26 , lang.rules+48 },
-           { lang.atoms+27 , lang.rules+48 },
-           { lang.atoms+28 , lang.rules+48 },
-           { lang.atoms+29 , lang.rules+48 },
-           { lang.atoms+30 , lang.rules+48 },
-           { lang.atoms+31 , lang.rules+48 },
-           { lang.atoms+32 , lang.rules+48 },
-           { lang.atoms+33 , lang.rules+48 },
-           { lang.atoms+34 , lang.rules+48 },
-           { lang.atoms+35 , lang.rules+48 },
-           { lang.atoms+36 , lang.rules+48 },
-           { lang.atoms+37 , lang.rules+48 },
-           { lang.atoms+38 , lang.rules+48 },
-           { lang.atoms+39 , lang.rules+48 },
-           { lang.atoms+40 , lang.rules+48 },
-           { lang.atoms+42 , lang.rules+48 }
+           { lang.atoms+0 , lang.rules+5 },
+           { lang.atoms+10 , lang.rules+5 },
+           { lang.atoms+14 , lang.rules+5 },
+           { lang.atoms+16 , lang.rules+5 },
+           { lang.atoms+22 , lang.rules+5 },
+           { lang.atoms+23 , lang.rules+5 },
+           { lang.atoms+24 , lang.rules+5 },
+           { lang.atoms+26 , lang.rules+5 },
+           { lang.atoms+27 , lang.rules+5 },
+           { lang.atoms+28 , lang.rules+5 },
+           { lang.atoms+29 , lang.rules+5 },
+           { lang.atoms+30 , lang.rules+5 },
+           { lang.atoms+31 , lang.rules+5 },
+           { lang.atoms+32 , lang.rules+5 },
+           { lang.atoms+33 , lang.rules+5 },
+           { lang.atoms+34 , lang.rules+5 },
+           { lang.atoms+35 , lang.rules+5 },
+           { lang.atoms+36 , lang.rules+5 },
+           { lang.atoms+37 , lang.rules+5 },
+           { lang.atoms+38 , lang.rules+5 },
+           { lang.atoms+39 , lang.rules+5 },
+           { lang.atoms+40 , lang.rules+5 },
+           { lang.atoms+42 , lang.rules+5 }
           }
     },
     { 6 ,
           {
-           { lang.atoms+0 , lang.rules+49 },
-           { lang.atoms+10 , lang.rules+49 },
-           { lang.atoms+14 , lang.rules+49 },
-           { lang.atoms+16 , lang.rules+49 },
-           { lang.atoms+22 , lang.rules+49 },
-           { lang.atoms+23 , lang.rules+49 },
-           { lang.atoms+24 , lang.rules+49 },
-           { lang.atoms+26 , lang.rules+49 },
-           { lang.atoms+27 , lang.rules+49 },
-           { lang.atoms+28 , lang.rules+49 },
-           { lang.atoms+29 , lang.rules+49 },
-           { lang.atoms+30 , lang.rules+49 },
-           { lang.atoms+31 , lang.rules+49 },
-           { lang.atoms+32 , lang.rules+49 },
-           { lang.atoms+33 , lang.rules+49 },
-           { lang.atoms+34 , lang.rules+49 },
-           { lang.atoms+35 , lang.rules+49 },
-           { lang.atoms+36 , lang.rules+49 },
-           { lang.atoms+37 , lang.rules+49 },
-           { lang.atoms+38 , lang.rules+49 },
-           { lang.atoms+39 , lang.rules+49 },
-           { lang.atoms+40 , lang.rules+49 },
-           { lang.atoms+42 , lang.rules+49 }
+           { lang.atoms+0 , lang.rules+6 },
+           { lang.atoms+10 , lang.rules+6 },
+           { lang.atoms+14 , lang.rules+6 },
+           { lang.atoms+16 , lang.rules+6 },
+           { lang.atoms+22 , lang.rules+6 },
+           { lang.atoms+23 , lang.rules+6 },
+           { lang.atoms+24 , lang.rules+6 },
+           { lang.atoms+26 , lang.rules+6 },
+           { lang.atoms+27 , lang.rules+6 },
+           { lang.atoms+28 , lang.rules+6 },
+           { lang.atoms+29 , lang.rules+6 },
+           { lang.atoms+30 , lang.rules+6 },
+           { lang.atoms+31 , lang.rules+6 },
+           { lang.atoms+32 , lang.rules+6 },
+           { lang.atoms+33 , lang.rules+6 },
+           { lang.atoms+34 , lang.rules+6 },
+           { lang.atoms+35 , lang.rules+6 },
+           { lang.atoms+36 , lang.rules+6 },
+           { lang.atoms+37 , lang.rules+6 },
+           { lang.atoms+38 , lang.rules+6 },
+           { lang.atoms+39 , lang.rules+6 },
+           { lang.atoms+40 , lang.rules+6 },
+           { lang.atoms+42 , lang.rules+6 }
           }
     },
     { 7 ,
           {
-           { lang.atoms+0 , lang.rules+50 },
-           { lang.atoms+10 , lang.rules+50 },
-           { lang.atoms+14 , lang.rules+50 },
-           { lang.atoms+16 , lang.rules+50 },
-           { lang.atoms+22 , lang.rules+50 },
-           { lang.atoms+23 , lang.rules+50 },
-           { lang.atoms+24 , lang.rules+50 },
-           { lang.atoms+26 , lang.rules+50 },
-           { lang.atoms+27 , lang.rules+50 },
-           { lang.atoms+28 , lang.rules+50 },
-           { lang.atoms+29 , lang.rules+50 },
-           { lang.atoms+30 , lang.rules+50 },
-           { lang.atoms+31 , lang.rules+50 },
-           { lang.atoms+32 , lang.rules+50 },
-           { lang.atoms+33 , lang.rules+50 },
-           { lang.atoms+34 , lang.rules+50 },
-           { lang.atoms+35 , lang.rules+50 },
-           { lang.atoms+36 , lang.rules+50 },
-           { lang.atoms+37 , lang.rules+50 },
-           { lang.atoms+38 , lang.rules+50 },
-           { lang.atoms+39 , lang.rules+50 },
-           { lang.atoms+40 , lang.rules+50 },
-           { lang.atoms+42 , lang.rules+50 }
+           { lang.atoms+0 , lang.rules+7 },
+           { lang.atoms+10 , lang.rules+7 },
+           { lang.atoms+14 , lang.rules+7 },
+           { lang.atoms+16 , lang.rules+7 },
+           { lang.atoms+22 , lang.rules+7 },
+           { lang.atoms+23 , lang.rules+7 },
+           { lang.atoms+24 , lang.rules+7 },
+           { lang.atoms+26 , lang.rules+7 },
+           { lang.atoms+27 , lang.rules+7 },
+           { lang.atoms+28 , lang.rules+7 },
+           { lang.atoms+29 , lang.rules+7 },
+           { lang.atoms+30 , lang.rules+7 },
+           { lang.atoms+31 , lang.rules+7 },
+           { lang.atoms+32 , lang.rules+7 },
+           { lang.atoms+33 , lang.rules+7 },
+           { lang.atoms+34 , lang.rules+7 },
+           { lang.atoms+35 , lang.rules+7 },
+           { lang.atoms+36 , lang.rules+7 },
+           { lang.atoms+37 , lang.rules+7 },
+           { lang.atoms+38 , lang.rules+7 },
+           { lang.atoms+39 , lang.rules+7 },
+           { lang.atoms+40 , lang.rules+7 },
+           { lang.atoms+42 , lang.rules+7 }
           }
     },
     { 8 ,
           {
-           { lang.atoms+0 , lang.rules+51 },
-           { lang.atoms+10 , lang.rules+51 },
-           { lang.atoms+14 , lang.rules+51 },
-           { lang.atoms+16 , lang.rules+51 },
-           { lang.atoms+21 , lang.rules+51 },
-           { lang.atoms+23 , lang.rules+51 },
-           { lang.atoms+24 , lang.rules+51 },
-           { lang.atoms+27 , lang.rules+51 },
-           { lang.atoms+28 , lang.rules+51 },
-           { lang.atoms+29 , lang.rules+51 },
-           { lang.atoms+30 , lang.rules+51 },
-           { lang.atoms+31 , lang.rules+51 },
-           { lang.atoms+32 , lang.rules+51 },
-           { lang.atoms+33 , lang.rules+51 },
-           { lang.atoms+34 , lang.rules+51 },
-           { lang.atoms+35 , lang.rules+51 },
-           { lang.atoms+36 , lang.rules+51 },
-           { lang.atoms+37 , lang.rules+51 },
-           { lang.atoms+38 , lang.rules+51 },
-           { lang.atoms+39 , lang.rules+51 },
-           { lang.atoms+40 , lang.rules+51 },
-           { lang.atoms+42 , lang.rules+51 }
+           { lang.atoms+0 , lang.rules+8 },
+           { lang.atoms+10 , lang.rules+8 },
+           { lang.atoms+14 , lang.rules+8 },
+           { lang.atoms+16 , lang.rules+8 },
+           { lang.atoms+21 , lang.rules+8 },
+           { lang.atoms+23 , lang.rules+8 },
+           { lang.atoms+24 , lang.rules+8 },
+           { lang.atoms+27 , lang.rules+8 },
+           { lang.atoms+28 , lang.rules+8 },
+           { lang.atoms+29 , lang.rules+8 },
+           { lang.atoms+30 , lang.rules+8 },
+           { lang.atoms+31 , lang.rules+8 },
+           { lang.atoms+32 , lang.rules+8 },
+           { lang.atoms+33 , lang.rules+8 },
+           { lang.atoms+34 , lang.rules+8 },
+           { lang.atoms+35 , lang.rules+8 },
+           { lang.atoms+36 , lang.rules+8 },
+           { lang.atoms+37 , lang.rules+8 },
+           { lang.atoms+38 , lang.rules+8 },
+           { lang.atoms+39 , lang.rules+8 },
+           { lang.atoms+40 , lang.rules+8 },
+           { lang.atoms+42 , lang.rules+8 }
           }
     },
     { 9 ,
           {
-           { lang.atoms+0 , lang.rules+51 },
-           { lang.atoms+10 , lang.rules+51 },
-           { lang.atoms+14 , lang.rules+51 },
-           { lang.atoms+16 , lang.rules+51 },
-           { lang.atoms+22 , lang.rules+51 },
-           { lang.atoms+23 , lang.rules+51 },
-           { lang.atoms+24 , lang.rules+51 },
-           { lang.atoms+26 , lang.rules+51 },
-           { lang.atoms+27 , lang.rules+51 },
-           { lang.atoms+28 , lang.rules+51 },
-           { lang.atoms+29 , lang.rules+51 },
-           { lang.atoms+30 , lang.rules+51 },
-           { lang.atoms+31 , lang.rules+51 },
-           { lang.atoms+32 , lang.rules+51 },
-           { lang.atoms+33 , lang.rules+51 },
-           { lang.atoms+34 , lang.rules+51 },
-           { lang.atoms+35 , lang.rules+51 },
-           { lang.atoms+36 , lang.rules+51 },
-           { lang.atoms+37 , lang.rules+51 },
-           { lang.atoms+38 , lang.rules+51 },
-           { lang.atoms+39 , lang.rules+51 },
-           { lang.atoms+40 , lang.rules+51 },
-           { lang.atoms+42 , lang.rules+51 }
+           { lang.atoms+0 , lang.rules+8 },
+           { lang.atoms+10 , lang.rules+8 },
+           { lang.atoms+14 , lang.rules+8 },
+           { lang.atoms+16 , lang.rules+8 },
+           { lang.atoms+22 , lang.rules+8 },
+           { lang.atoms+23 , lang.rules+8 },
+           { lang.atoms+24 , lang.rules+8 },
+           { lang.atoms+26 , lang.rules+8 },
+           { lang.atoms+27 , lang.rules+8 },
+           { lang.atoms+28 , lang.rules+8 },
+           { lang.atoms+29 , lang.rules+8 },
+           { lang.atoms+30 , lang.rules+8 },
+           { lang.atoms+31 , lang.rules+8 },
+           { lang.atoms+32 , lang.rules+8 },
+           { lang.atoms+33 , lang.rules+8 },
+           { lang.atoms+34 , lang.rules+8 },
+           { lang.atoms+35 , lang.rules+8 },
+           { lang.atoms+36 , lang.rules+8 },
+           { lang.atoms+37 , lang.rules+8 },
+           { lang.atoms+38 , lang.rules+8 },
+           { lang.atoms+39 , lang.rules+8 },
+           { lang.atoms+40 , lang.rules+8 },
+           { lang.atoms+42 , lang.rules+8 }
           }
     },
     { 10 ,
            {
-            { lang.atoms+0 , lang.rules+52 },
-            { lang.atoms+10 , lang.rules+52 },
-            { lang.atoms+14 , lang.rules+52 },
-            { lang.atoms+16 , lang.rules+52 },
-            { lang.atoms+21 , lang.rules+52 },
-            { lang.atoms+23 , lang.rules+52 },
-            { lang.atoms+24 , lang.rules+52 },
-            { lang.atoms+27 , lang.rules+52 },
-            { lang.atoms+28 , lang.rules+52 },
-            { lang.atoms+29 , lang.rules+52 },
-            { lang.atoms+30 , lang.rules+52 },
-            { lang.atoms+31 , lang.rules+52 },
-            { lang.atoms+32 , lang.rules+52 },
-            { lang.atoms+33 , lang.rules+52 },
-            { lang.atoms+34 , lang.rules+52 },
-            { lang.atoms+35 , lang.rules+52 },
-            { lang.atoms+36 , lang.rules+52 },
-            { lang.atoms+37 , lang.rules+52 },
-            { lang.atoms+38 , lang.rules+52 },
-            { lang.atoms+39 , lang.rules+52 },
-            { lang.atoms+40 , lang.rules+52 },
-            { lang.atoms+42 , lang.rules+52 }
+            { lang.atoms+0 , lang.rules+9 },
+            { lang.atoms+10 , lang.rules+9 },
+            { lang.atoms+14 , lang.rules+9 },
+            { lang.atoms+16 , lang.rules+9 },
+            { lang.atoms+21 , lang.rules+9 },
+            { lang.atoms+23 , lang.rules+9 },
+            { lang.atoms+24 , lang.rules+9 },
+            { lang.atoms+27 , lang.rules+9 },
+            { lang.atoms+28 , lang.rules+9 },
+            { lang.atoms+29 , lang.rules+9 },
+            { lang.atoms+30 , lang.rules+9 },
+            { lang.atoms+31 , lang.rules+9 },
+            { lang.atoms+32 , lang.rules+9 },
+            { lang.atoms+33 , lang.rules+9 },
+            { lang.atoms+34 , lang.rules+9 },
+            { lang.atoms+35 , lang.rules+9 },
+            { lang.atoms+36 , lang.rules+9 },
+            { lang.atoms+37 , lang.rules+9 },
+            { lang.atoms+38 , lang.rules+9 },
+            { lang.atoms+39 , lang.rules+9 },
+            { lang.atoms+40 , lang.rules+9 },
+            { lang.atoms+42 , lang.rules+9 }
            }
     },
     { 11 ,
            {
-            { lang.atoms+0 , lang.rules+52 },
-            { lang.atoms+10 , lang.rules+52 },
-            { lang.atoms+14 , lang.rules+52 },
-            { lang.atoms+16 , lang.rules+52 },
-            { lang.atoms+22 , lang.rules+52 },
-            { lang.atoms+23 , lang.rules+52 },
-            { lang.atoms+24 , lang.rules+52 },
-            { lang.atoms+26 , lang.rules+52 },
-            { lang.atoms+27 , lang.rules+52 },
-            { lang.atoms+28 , lang.rules+52 },
-            { lang.atoms+29 , lang.rules+52 },
-            { lang.atoms+30 , lang.rules+52 },
-            { lang.atoms+31 , lang.rules+52 },
-            { lang.atoms+32 , lang.rules+52 },
-            { lang.atoms+33 , lang.rules+52 },
-            { lang.atoms+34 , lang.rules+52 },
-            { lang.atoms+35 , lang.rules+52 },
-            { lang.atoms+36 , lang.rules+52 },
-            { lang.atoms+37 , lang.rules+52 },
-            { lang.atoms+38 , lang.rules+52 },
-            { lang.atoms+39 , lang.rules+52 },
-            { lang.atoms+40 , lang.rules+52 },
-            { lang.atoms+42 , lang.rules+52 }
+            { lang.atoms+0 , lang.rules+9 },
+            { lang.atoms+10 , lang.rules+9 },
+            { lang.atoms+14 , lang.rules+9 },
+            { lang.atoms+16 , lang.rules+9 },
+            { lang.atoms+22 , lang.rules+9 },
+            { lang.atoms+23 , lang.rules+9 },
+            { lang.atoms+24 , lang.rules+9 },
+            { lang.atoms+26 , lang.rules+9 },
+            { lang.atoms+27 , lang.rules+9 },
+            { lang.atoms+28 , lang.rules+9 },
+            { lang.atoms+29 , lang.rules+9 },
+            { lang.atoms+30 , lang.rules+9 },
+            { lang.atoms+31 , lang.rules+9 },
+            { lang.atoms+32 , lang.rules+9 },
+            { lang.atoms+33 , lang.rules+9 },
+            { lang.atoms+34 , lang.rules+9 },
+            { lang.atoms+35 , lang.rules+9 },
+            { lang.atoms+36 , lang.rules+9 },
+            { lang.atoms+37 , lang.rules+9 },
+            { lang.atoms+38 , lang.rules+9 },
+            { lang.atoms+39 , lang.rules+9 },
+            { lang.atoms+40 , lang.rules+9 },
+            { lang.atoms+42 , lang.rules+9 }
            }
     },
     { 12 ,
            {
-            { lang.atoms+0 , lang.rules+53 },
-            { lang.atoms+1 , lang.rules+53 },
-            { lang.atoms+3 , lang.rules+53 },
-            { lang.atoms+4 , lang.rules+53 },
-            { lang.atoms+5 , lang.rules+53 },
-            { lang.atoms+6 , lang.rules+53 },
-            { lang.atoms+8 , lang.rules+53 },
-            { lang.atoms+9 , lang.rules+53 },
-            { lang.atoms+10 , lang.rules+53 },
-            { lang.atoms+11 , lang.rules+53 },
-            { lang.atoms+19 , lang.rules+53 },
-            { lang.atoms+41 , lang.rules+53 }
+            { lang.atoms+0 , lang.rules+10 },
+            { lang.atoms+1 , lang.rules+10 },
+            { lang.atoms+3 , lang.rules+10 },
+            { lang.atoms+4 , lang.rules+10 },
+            { lang.atoms+5 , lang.rules+10 },
+            { lang.atoms+6 , lang.rules+10 },
+            { lang.atoms+8 , lang.rules+10 },
+            { lang.atoms+9 , lang.rules+10 },
+            { lang.atoms+10 , lang.rules+10 },
+            { lang.atoms+11 , lang.rules+10 },
+            { lang.atoms+19 , lang.rules+10 },
+            { lang.atoms+41 , lang.rules+10 }
            }
     },
     { 13 ,
            {
-            { lang.atoms+0 , lang.rules+53 },
-            { lang.atoms+1 , lang.rules+53 },
-            { lang.atoms+3 , lang.rules+53 },
-            { lang.atoms+5 , lang.rules+53 },
-            { lang.atoms+6 , lang.rules+53 },
-            { lang.atoms+7 , lang.rules+53 },
-            { lang.atoms+8 , lang.rules+53 },
-            { lang.atoms+9 , lang.rules+53 },
-            { lang.atoms+10 , lang.rules+53 },
-            { lang.atoms+11 , lang.rules+53 },
-            { lang.atoms+19 , lang.rules+53 },
-            { lang.atoms+41 , lang.rules+53 },
-            { lang.atoms+42 , lang.rules+53 }
+            { lang.atoms+0 , lang.rules+10 },
+            { lang.atoms+1 , lang.rules+10 },
+            { lang.atoms+3 , lang.rules+10 },
+            { lang.atoms+5 , lang.rules+10 },
+            { lang.atoms+6 , lang.rules+10 },
+            { lang.atoms+7 , lang.rules+10 },
+            { lang.atoms+8 , lang.rules+10 },
+            { lang.atoms+9 , lang.rules+10 },
+            { lang.atoms+10 , lang.rules+10 },
+            { lang.atoms+11 , lang.rules+10 },
+            { lang.atoms+19 , lang.rules+10 },
+            { lang.atoms+41 , lang.rules+10 },
+            { lang.atoms+42 , lang.rules+10 }
            }
     },
     { 14 ,
            {
-            { lang.atoms+0 , lang.rules+53 },
-            { lang.atoms+1 , lang.rules+53 },
-            { lang.atoms+3 , lang.rules+53 },
-            { lang.atoms+5 , lang.rules+53 },
-            { lang.atoms+6 , lang.rules+53 },
-            { lang.atoms+8 , lang.rules+53 },
-            { lang.atoms+9 , lang.rules+53 },
-            { lang.atoms+10 , lang.rules+53 },
-            { lang.atoms+11 , lang.rules+53 },
-            { lang.atoms+12 , lang.rules+53 },
-            { lang.atoms+19 , lang.rules+53 },
-            { lang.atoms+41 , lang.rules+53 }
+            { lang.atoms+0 , lang.rules+10 },
+            { lang.atoms+1 , lang.rules+10 },
+            { lang.atoms+3 , lang.rules+10 },
+            { lang.atoms+5 , lang.rules+10 },
+            { lang.atoms+6 , lang.rules+10 },
+            { lang.atoms+8 , lang.rules+10 },
+            { lang.atoms+9 , lang.rules+10 },
+            { lang.atoms+10 , lang.rules+10 },
+            { lang.atoms+11 , lang.rules+10 },
+            { lang.atoms+12 , lang.rules+10 },
+            { lang.atoms+19 , lang.rules+10 },
+            { lang.atoms+41 , lang.rules+10 }
            }
     },
     { 15 ,
            {
-            { lang.atoms+0 , lang.rules+53 },
-            { lang.atoms+1 , lang.rules+53 },
-            { lang.atoms+3 , lang.rules+53 },
-            { lang.atoms+5 , lang.rules+53 },
-            { lang.atoms+6 , lang.rules+53 },
-            { lang.atoms+8 , lang.rules+53 },
-            { lang.atoms+9 , lang.rules+53 },
-            { lang.atoms+10 , lang.rules+53 },
-            { lang.atoms+11 , lang.rules+53 },
-            { lang.atoms+19 , lang.rules+53 },
-            { lang.atoms+20 , lang.rules+53 },
-            { lang.atoms+41 , lang.rules+53 }
+            { lang.atoms+0 , lang.rules+10 },
+            { lang.atoms+1 , lang.rules+10 },
+            { lang.atoms+3 , lang.rules+10 },
+            { lang.atoms+5 , lang.rules+10 },
+            { lang.atoms+6 , lang.rules+10 },
+            { lang.atoms+8 , lang.rules+10 },
+            { lang.atoms+9 , lang.rules+10 },
+            { lang.atoms+10 , lang.rules+10 },
+            { lang.atoms+11 , lang.rules+10 },
+            { lang.atoms+19 , lang.rules+10 },
+            { lang.atoms+20 , lang.rules+10 },
+            { lang.atoms+41 , lang.rules+10 }
            }
     },
     { 16 ,
            {
-            { lang.atoms+0 , lang.rules+53 },
-            { lang.atoms+5 , lang.rules+53 },
-            { lang.atoms+12 , lang.rules+53 },
-            { lang.atoms+19 , lang.rules+53 }
+            { lang.atoms+0 , lang.rules+10 },
+            { lang.atoms+5 , lang.rules+10 },
+            { lang.atoms+12 , lang.rules+10 },
+            { lang.atoms+19 , lang.rules+10 }
            }
     },
     { 17 ,
            {
-            { lang.atoms+0 , lang.rules+53 },
-            { lang.atoms+5 , lang.rules+53 },
-            { lang.atoms+16 , lang.rules+53 },
-            { lang.atoms+19 , lang.rules+53 }
+            { lang.atoms+0 , lang.rules+10 },
+            { lang.atoms+5 , lang.rules+10 },
+            { lang.atoms+16 , lang.rules+10 },
+            { lang.atoms+19 , lang.rules+10 }
            }
     },
     { 18 ,
            {
-            { lang.atoms+0 , lang.rules+54 },
-            { lang.atoms+1 , lang.rules+54 },
-            { lang.atoms+3 , lang.rules+54 },
-            { lang.atoms+4 , lang.rules+54 },
-            { lang.atoms+5 , lang.rules+54 },
-            { lang.atoms+6 , lang.rules+54 },
-            { lang.atoms+8 , lang.rules+54 },
-            { lang.atoms+9 , lang.rules+54 },
-            { lang.atoms+10 , lang.rules+54 },
-            { lang.atoms+11 , lang.rules+54 },
-            { lang.atoms+19 , lang.rules+54 },
-            { lang.atoms+41 , lang.rules+54 }
+            { lang.atoms+0 , lang.rules+11 },
+            { lang.atoms+1 , lang.rules+11 },
+            { lang.atoms+3 , lang.rules+11 },
+            { lang.atoms+4 , lang.rules+11 },
+            { lang.atoms+5 , lang.rules+11 },
+            { lang.atoms+6 , lang.rules+11 },
+            { lang.atoms+8 , lang.rules+11 },
+            { lang.atoms+9 , lang.rules+11 },
+            { lang.atoms+10 , lang.rules+11 },
+            { lang.atoms+11 , lang.rules+11 },
+            { lang.atoms+19 , lang.rules+11 },
+            { lang.atoms+41 , lang.rules+11 }
            }
     },
     { 19 ,
            {
-            { lang.atoms+0 , lang.rules+54 },
-            { lang.atoms+1 , lang.rules+54 },
-            { lang.atoms+3 , lang.rules+54 },
-            { lang.atoms+5 , lang.rules+54 },
-            { lang.atoms+6 , lang.rules+54 },
-            { lang.atoms+7 , lang.rules+54 },
-            { lang.atoms+8 , lang.rules+54 },
-            { lang.atoms+9 , lang.rules+54 },
-            { lang.atoms+10 , lang.rules+54 },
-            { lang.atoms+11 , lang.rules+54 },
-            { lang.atoms+19 , lang.rules+54 },
-            { lang.atoms+41 , lang.rules+54 },
-            { lang.atoms+42 , lang.rules+54 }
+            { lang.atoms+0 , lang.rules+11 },
+            { lang.atoms+1 , lang.rules+11 },
+            { lang.atoms+3 , lang.rules+11 },
+            { lang.atoms+5 , lang.rules+11 },
+            { lang.atoms+6 , lang.rules+11 },
+            { lang.atoms+7 , lang.rules+11 },
+            { lang.atoms+8 , lang.rules+11 },
+            { lang.atoms+9 , lang.rules+11 },
+            { lang.atoms+10 , lang.rules+11 },
+            { lang.atoms+11 , lang.rules+11 },
+            { lang.atoms+19 , lang.rules+11 },
+            { lang.atoms+41 , lang.rules+11 },
+            { lang.atoms+42 , lang.rules+11 }
            }
     },
     { 20 ,
            {
-            { lang.atoms+0 , lang.rules+54 },
-            { lang.atoms+1 , lang.rules+54 },
-            { lang.atoms+3 , lang.rules+54 },
-            { lang.atoms+5 , lang.rules+54 },
-            { lang.atoms+6 , lang.rules+54 },
-            { lang.atoms+8 , lang.rules+54 },
-            { lang.atoms+9 , lang.rules+54 },
-            { lang.atoms+10 , lang.rules+54 },
-            { lang.atoms+11 , lang.rules+54 },
-            { lang.atoms+12 , lang.rules+54 },
-            { lang.atoms+19 , lang.rules+54 },
-            { lang.atoms+41 , lang.rules+54 }
+            { lang.atoms+0 , lang.rules+11 },
+            { lang.atoms+1 , lang.rules+11 },
+            { lang.atoms+3 , lang.rules+11 },
+            { lang.atoms+5 , lang.rules+11 },
+            { lang.atoms+6 , lang.rules+11 },
+            { lang.atoms+8 , lang.rules+11 },
+            { lang.atoms+9 , lang.rules+11 },
+            { lang.atoms+10 , lang.rules+11 },
+            { lang.atoms+11 , lang.rules+11 },
+            { lang.atoms+12 , lang.rules+11 },
+            { lang.atoms+19 , lang.rules+11 },
+            { lang.atoms+41 , lang.rules+11 }
            }
     },
     { 21 ,
            {
-            { lang.atoms+0 , lang.rules+54 },
-            { lang.atoms+1 , lang.rules+54 },
-            { lang.atoms+3 , lang.rules+54 },
-            { lang.atoms+5 , lang.rules+54 },
-            { lang.atoms+6 , lang.rules+54 },
-            { lang.atoms+8 , lang.rules+54 },
-            { lang.atoms+9 , lang.rules+54 },
-            { lang.atoms+10 , lang.rules+54 },
-            { lang.atoms+11 , lang.rules+54 },
-            { lang.atoms+19 , lang.rules+54 },
-            { lang.atoms+20 , lang.rules+54 },
-            { lang.atoms+41 , lang.rules+54 }
+            { lang.atoms+0 , lang.rules+11 },
+            { lang.atoms+1 , lang.rules+11 },
+            { lang.atoms+3 , lang.rules+11 },
+            { lang.atoms+5 , lang.rules+11 },
+            { lang.atoms+6 , lang.rules+11 },
+            { lang.atoms+8 , lang.rules+11 },
+            { lang.atoms+9 , lang.rules+11 },
+            { lang.atoms+10 , lang.rules+11 },
+            { lang.atoms+11 , lang.rules+11 },
+            { lang.atoms+19 , lang.rules+11 },
+            { lang.atoms+20 , lang.rules+11 },
+            { lang.atoms+41 , lang.rules+11 }
            }
     },
     { 22 ,
            {
-            { lang.atoms+0 , lang.rules+54 },
-            { lang.atoms+5 , lang.rules+54 },
-            { lang.atoms+12 , lang.rules+54 },
-            { lang.atoms+19 , lang.rules+54 }
+            { lang.atoms+0 , lang.rules+11 },
+            { lang.atoms+5 , lang.rules+11 },
+            { lang.atoms+12 , lang.rules+11 },
+            { lang.atoms+19 , lang.rules+11 }
            }
     },
     { 23 ,
            {
-            { lang.atoms+0 , lang.rules+54 },
-            { lang.atoms+5 , lang.rules+54 },
-            { lang.atoms+16 , lang.rules+54 },
-            { lang.atoms+19 , lang.rules+54 }
+            { lang.atoms+0 , lang.rules+11 },
+            { lang.atoms+5 , lang.rules+11 },
+            { lang.atoms+16 , lang.rules+11 },
+            { lang.atoms+19 , lang.rules+11 }
            }
     },
     { 24 ,
            {
-            { lang.atoms+0 , lang.rules+81 },
-            { lang.atoms+10 , lang.rules+81 },
-            { lang.atoms+14 , lang.rules+81 },
-            { lang.atoms+16 , lang.rules+81 },
-            { lang.atoms+21 , lang.rules+81 },
-            { lang.atoms+23 , lang.rules+81 },
-            { lang.atoms+24 , lang.rules+81 },
-            { lang.atoms+27 , lang.rules+81 },
-            { lang.atoms+28 , lang.rules+81 },
-            { lang.atoms+29 , lang.rules+81 },
-            { lang.atoms+30 , lang.rules+81 },
-            { lang.atoms+31 , lang.rules+81 },
-            { lang.atoms+32 , lang.rules+81 },
-            { lang.atoms+33 , lang.rules+81 },
-            { lang.atoms+34 , lang.rules+81 },
-            { lang.atoms+35 , lang.rules+81 },
-            { lang.atoms+36 , lang.rules+81 },
-            { lang.atoms+37 , lang.rules+81 },
-            { lang.atoms+38 , lang.rules+81 },
-            { lang.atoms+39 , lang.rules+81 },
-            { lang.atoms+40 , lang.rules+81 },
-            { lang.atoms+42 , lang.rules+81 }
+            { lang.atoms+0 , lang.rules+38 },
+            { lang.atoms+10 , lang.rules+38 },
+            { lang.atoms+14 , lang.rules+38 },
+            { lang.atoms+16 , lang.rules+38 },
+            { lang.atoms+21 , lang.rules+38 },
+            { lang.atoms+23 , lang.rules+38 },
+            { lang.atoms+24 , lang.rules+38 },
+            { lang.atoms+27 , lang.rules+38 },
+            { lang.atoms+28 , lang.rules+38 },
+            { lang.atoms+29 , lang.rules+38 },
+            { lang.atoms+30 , lang.rules+38 },
+            { lang.atoms+31 , lang.rules+38 },
+            { lang.atoms+32 , lang.rules+38 },
+            { lang.atoms+33 , lang.rules+38 },
+            { lang.atoms+34 , lang.rules+38 },
+            { lang.atoms+35 , lang.rules+38 },
+            { lang.atoms+36 , lang.rules+38 },
+            { lang.atoms+37 , lang.rules+38 },
+            { lang.atoms+38 , lang.rules+38 },
+            { lang.atoms+39 , lang.rules+38 },
+            { lang.atoms+40 , lang.rules+38 },
+            { lang.atoms+42 , lang.rules+38 }
            }
     },
     { 25 ,
            {
-            { lang.atoms+0 , lang.rules+82 },
-            { lang.atoms+10 , lang.rules+82 },
-            { lang.atoms+14 , lang.rules+82 },
-            { lang.atoms+16 , lang.rules+82 },
-            { lang.atoms+21 , lang.rules+82 },
-            { lang.atoms+23 , lang.rules+82 },
-            { lang.atoms+24 , lang.rules+82 },
-            { lang.atoms+27 , lang.rules+82 },
-            { lang.atoms+28 , lang.rules+82 },
-            { lang.atoms+29 , lang.rules+82 },
-            { lang.atoms+30 , lang.rules+82 },
-            { lang.atoms+31 , lang.rules+82 },
-            { lang.atoms+32 , lang.rules+82 },
-            { lang.atoms+33 , lang.rules+82 },
-            { lang.atoms+34 , lang.rules+82 },
-            { lang.atoms+35 , lang.rules+82 },
-            { lang.atoms+36 , lang.rules+82 },
-            { lang.atoms+37 , lang.rules+82 },
-            { lang.atoms+38 , lang.rules+82 },
-            { lang.atoms+39 , lang.rules+82 },
-            { lang.atoms+40 , lang.rules+82 },
-            { lang.atoms+42 , lang.rules+82 }
+            { lang.atoms+0 , lang.rules+39 },
+            { lang.atoms+10 , lang.rules+39 },
+            { lang.atoms+14 , lang.rules+39 },
+            { lang.atoms+16 , lang.rules+39 },
+            { lang.atoms+21 , lang.rules+39 },
+            { lang.atoms+23 , lang.rules+39 },
+            { lang.atoms+24 , lang.rules+39 },
+            { lang.atoms+27 , lang.rules+39 },
+            { lang.atoms+28 , lang.rules+39 },
+            { lang.atoms+29 , lang.rules+39 },
+            { lang.atoms+30 , lang.rules+39 },
+            { lang.atoms+31 , lang.rules+39 },
+            { lang.atoms+32 , lang.rules+39 },
+            { lang.atoms+33 , lang.rules+39 },
+            { lang.atoms+34 , lang.rules+39 },
+            { lang.atoms+35 , lang.rules+39 },
+            { lang.atoms+36 , lang.rules+39 },
+            { lang.atoms+37 , lang.rules+39 },
+            { lang.atoms+38 , lang.rules+39 },
+            { lang.atoms+39 , lang.rules+39 },
+            { lang.atoms+40 , lang.rules+39 },
+            { lang.atoms+42 , lang.rules+39 }
            }
     },
     { 26 ,
            {
-            { lang.atoms+0 , lang.rules+83 },
-            { lang.atoms+10 , lang.rules+83 },
-            { lang.atoms+14 , lang.rules+83 },
-            { lang.atoms+16 , lang.rules+83 },
-            { lang.atoms+21 , lang.rules+83 },
-            { lang.atoms+23 , lang.rules+83 },
-            { lang.atoms+24 , lang.rules+83 },
-            { lang.atoms+27 , lang.rules+83 },
-            { lang.atoms+28 , lang.rules+83 },
-            { lang.atoms+29 , lang.rules+83 },
-            { lang.atoms+30 , lang.rules+83 },
-            { lang.atoms+31 , lang.rules+83 },
-            { lang.atoms+32 , lang.rules+83 },
-            { lang.atoms+33 , lang.rules+83 },
-            { lang.atoms+34 , lang.rules+83 },
-            { lang.atoms+35 , lang.rules+83 },
-            { lang.atoms+36 , lang.rules+83 },
-            { lang.atoms+37 , lang.rules+83 },
-            { lang.atoms+38 , lang.rules+83 },
-            { lang.atoms+39 , lang.rules+83 },
-            { lang.atoms+40 , lang.rules+83 },
-            { lang.atoms+42 , lang.rules+83 }
+            { lang.atoms+0 , lang.rules+40 },
+            { lang.atoms+10 , lang.rules+40 },
+            { lang.atoms+14 , lang.rules+40 },
+            { lang.atoms+16 , lang.rules+40 },
+            { lang.atoms+21 , lang.rules+40 },
+            { lang.atoms+23 , lang.rules+40 },
+            { lang.atoms+24 , lang.rules+40 },
+            { lang.atoms+27 , lang.rules+40 },
+            { lang.atoms+28 , lang.rules+40 },
+            { lang.atoms+29 , lang.rules+40 },
+            { lang.atoms+30 , lang.rules+40 },
+            { lang.atoms+31 , lang.rules+40 },
+            { lang.atoms+32 , lang.rules+40 },
+            { lang.atoms+33 , lang.rules+40 },
+            { lang.atoms+34 , lang.rules+40 },
+            { lang.atoms+35 , lang.rules+40 },
+            { lang.atoms+36 , lang.rules+40 },
+            { lang.atoms+37 , lang.rules+40 },
+            { lang.atoms+38 , lang.rules+40 },
+            { lang.atoms+39 , lang.rules+40 },
+            { lang.atoms+40 , lang.rules+40 },
+            { lang.atoms+42 , lang.rules+40 }
            }
     },
     { 27 ,
            {
-            { lang.atoms+0 , lang.rules+84 },
-            { lang.atoms+10 , lang.rules+84 },
-            { lang.atoms+14 , lang.rules+84 },
-            { lang.atoms+16 , lang.rules+84 },
-            { lang.atoms+21 , lang.rules+84 },
-            { lang.atoms+23 , lang.rules+84 },
-            { lang.atoms+24 , lang.rules+84 },
-            { lang.atoms+27 , lang.rules+84 },
-            { lang.atoms+28 , lang.rules+84 },
-            { lang.atoms+29 , lang.rules+84 },
-            { lang.atoms+30 , lang.rules+84 },
-            { lang.atoms+31 , lang.rules+84 },
-            { lang.atoms+32 , lang.rules+84 },
-            { lang.atoms+33 , lang.rules+84 },
-            { lang.atoms+34 , lang.rules+84 },
-            { lang.atoms+35 , lang.rules+84 },
-            { lang.atoms+36 , lang.rules+84 },
-            { lang.atoms+37 , lang.rules+84 },
-            { lang.atoms+38 , lang.rules+84 },
-            { lang.atoms+39 , lang.rules+84 },
-            { lang.atoms+40 , lang.rules+84 },
-            { lang.atoms+42 , lang.rules+84 }
+            { lang.atoms+0 , lang.rules+41 },
+            { lang.atoms+10 , lang.rules+41 },
+            { lang.atoms+14 , lang.rules+41 },
+            { lang.atoms+16 , lang.rules+41 },
+            { lang.atoms+21 , lang.rules+41 },
+            { lang.atoms+23 , lang.rules+41 },
+            { lang.atoms+24 , lang.rules+41 },
+            { lang.atoms+27 , lang.rules+41 },
+            { lang.atoms+28 , lang.rules+41 },
+            { lang.atoms+29 , lang.rules+41 },
+            { lang.atoms+30 , lang.rules+41 },
+            { lang.atoms+31 , lang.rules+41 },
+            { lang.atoms+32 , lang.rules+41 },
+            { lang.atoms+33 , lang.rules+41 },
+            { lang.atoms+34 , lang.rules+41 },
+            { lang.atoms+35 , lang.rules+41 },
+            { lang.atoms+36 , lang.rules+41 },
+            { lang.atoms+37 , lang.rules+41 },
+            { lang.atoms+38 , lang.rules+41 },
+            { lang.atoms+39 , lang.rules+41 },
+            { lang.atoms+40 , lang.rules+41 },
+            { lang.atoms+42 , lang.rules+41 }
            }
     },
     { 28 ,
            {
-            { lang.atoms+0 , lang.rules+85 },
-            { lang.atoms+10 , lang.rules+85 },
-            { lang.atoms+14 , lang.rules+85 },
-            { lang.atoms+16 , lang.rules+85 },
-            { lang.atoms+21 , lang.rules+85 },
-            { lang.atoms+23 , lang.rules+85 },
-            { lang.atoms+24 , lang.rules+85 },
-            { lang.atoms+27 , lang.rules+85 },
-            { lang.atoms+28 , lang.rules+85 },
-            { lang.atoms+29 , lang.rules+85 },
-            { lang.atoms+30 , lang.rules+85 },
-            { lang.atoms+31 , lang.rules+85 },
-            { lang.atoms+32 , lang.rules+85 },
-            { lang.atoms+33 , lang.rules+85 },
-            { lang.atoms+34 , lang.rules+85 },
-            { lang.atoms+35 , lang.rules+85 },
-            { lang.atoms+36 , lang.rules+85 },
-            { lang.atoms+37 , lang.rules+85 },
-            { lang.atoms+38 , lang.rules+85 },
-            { lang.atoms+39 , lang.rules+85 },
-            { lang.atoms+40 , lang.rules+85 },
-            { lang.atoms+42 , lang.rules+85 }
+            { lang.atoms+0 , lang.rules+42 },
+            { lang.atoms+10 , lang.rules+42 },
+            { lang.atoms+14 , lang.rules+42 },
+            { lang.atoms+16 , lang.rules+42 },
+            { lang.atoms+21 , lang.rules+42 },
+            { lang.atoms+23 , lang.rules+42 },
+            { lang.atoms+24 , lang.rules+42 },
+            { lang.atoms+27 , lang.rules+42 },
+            { lang.atoms+28 , lang.rules+42 },
+            { lang.atoms+29 , lang.rules+42 },
+            { lang.atoms+30 , lang.rules+42 },
+            { lang.atoms+31 , lang.rules+42 },
+            { lang.atoms+32 , lang.rules+42 },
+            { lang.atoms+33 , lang.rules+42 },
+            { lang.atoms+34 , lang.rules+42 },
+            { lang.atoms+35 , lang.rules+42 },
+            { lang.atoms+36 , lang.rules+42 },
+            { lang.atoms+37 , lang.rules+42 },
+            { lang.atoms+38 , lang.rules+42 },
+            { lang.atoms+39 , lang.rules+42 },
+            { lang.atoms+40 , lang.rules+42 },
+            { lang.atoms+42 , lang.rules+42 }
            }
     },
     { 29 ,
            {
-            { lang.atoms+0 , lang.rules+86 },
-            { lang.atoms+10 , lang.rules+86 },
-            { lang.atoms+14 , lang.rules+86 },
-            { lang.atoms+16 , lang.rules+86 },
-            { lang.atoms+21 , lang.rules+86 },
-            { lang.atoms+23 , lang.rules+86 },
-            { lang.atoms+24 , lang.rules+86 },
-            { lang.atoms+27 , lang.rules+86 },
-            { lang.atoms+28 , lang.rules+86 },
-            { lang.atoms+29 , lang.rules+86 },
-            { lang.atoms+30 , lang.rules+86 },
-            { lang.atoms+31 , lang.rules+86 },
-            { lang.atoms+32 , lang.rules+86 },
-            { lang.atoms+33 , lang.rules+86 },
-            { lang.atoms+34 , lang.rules+86 },
-            { lang.atoms+35 , lang.rules+86 },
-            { lang.atoms+36 , lang.rules+86 },
-            { lang.atoms+37 , lang.rules+86 },
-            { lang.atoms+38 , lang.rules+86 },
-            { lang.atoms+39 , lang.rules+86 },
-            { lang.atoms+40 , lang.rules+86 },
-            { lang.atoms+42 , lang.rules+86 }
+            { lang.atoms+0 , lang.rules+43 },
+            { lang.atoms+10 , lang.rules+43 },
+            { lang.atoms+14 , lang.rules+43 },
+            { lang.atoms+16 , lang.rules+43 },
+            { lang.atoms+21 , lang.rules+43 },
+            { lang.atoms+23 , lang.rules+43 },
+            { lang.atoms+24 , lang.rules+43 },
+            { lang.atoms+27 , lang.rules+43 },
+            { lang.atoms+28 , lang.rules+43 },
+            { lang.atoms+29 , lang.rules+43 },
+            { lang.atoms+30 , lang.rules+43 },
+            { lang.atoms+31 , lang.rules+43 },
+            { lang.atoms+32 , lang.rules+43 },
+            { lang.atoms+33 , lang.rules+43 },
+            { lang.atoms+34 , lang.rules+43 },
+            { lang.atoms+35 , lang.rules+43 },
+            { lang.atoms+36 , lang.rules+43 },
+            { lang.atoms+37 , lang.rules+43 },
+            { lang.atoms+38 , lang.rules+43 },
+            { lang.atoms+39 , lang.rules+43 },
+            { lang.atoms+40 , lang.rules+43 },
+            { lang.atoms+42 , lang.rules+43 }
            }
     },
     { 30 ,
@@ -7422,261 +9792,261 @@ Lang lang=
     { 31 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+55 },
-            { lang.atoms+3 , lang.rules+55 },
-            { lang.atoms+4 , lang.rules+55 },
-            { lang.atoms+5 , lang.rules+55 },
-            { lang.atoms+6 , lang.rules+55 },
-            { lang.atoms+8 , lang.rules+55 },
-            { lang.atoms+9 , lang.rules+55 },
-            { lang.atoms+10 , lang.rules+55 },
-            { lang.atoms+11 , lang.rules+55 },
-            { lang.atoms+19 , lang.rules+55 },
-            { lang.atoms+41 , lang.rules+55 }
+            { lang.atoms+1 , lang.rules+12 },
+            { lang.atoms+3 , lang.rules+12 },
+            { lang.atoms+4 , lang.rules+12 },
+            { lang.atoms+5 , lang.rules+12 },
+            { lang.atoms+6 , lang.rules+12 },
+            { lang.atoms+8 , lang.rules+12 },
+            { lang.atoms+9 , lang.rules+12 },
+            { lang.atoms+10 , lang.rules+12 },
+            { lang.atoms+11 , lang.rules+12 },
+            { lang.atoms+19 , lang.rules+12 },
+            { lang.atoms+41 , lang.rules+12 }
            }
     },
     { 32 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+55 },
-            { lang.atoms+3 , lang.rules+55 },
-            { lang.atoms+5 , lang.rules+55 },
-            { lang.atoms+6 , lang.rules+55 },
-            { lang.atoms+7 , lang.rules+55 },
-            { lang.atoms+8 , lang.rules+55 },
-            { lang.atoms+9 , lang.rules+55 },
-            { lang.atoms+10 , lang.rules+55 },
-            { lang.atoms+11 , lang.rules+55 },
-            { lang.atoms+19 , lang.rules+55 },
-            { lang.atoms+41 , lang.rules+55 },
-            { lang.atoms+42 , lang.rules+55 }
+            { lang.atoms+1 , lang.rules+12 },
+            { lang.atoms+3 , lang.rules+12 },
+            { lang.atoms+5 , lang.rules+12 },
+            { lang.atoms+6 , lang.rules+12 },
+            { lang.atoms+7 , lang.rules+12 },
+            { lang.atoms+8 , lang.rules+12 },
+            { lang.atoms+9 , lang.rules+12 },
+            { lang.atoms+10 , lang.rules+12 },
+            { lang.atoms+11 , lang.rules+12 },
+            { lang.atoms+19 , lang.rules+12 },
+            { lang.atoms+41 , lang.rules+12 },
+            { lang.atoms+42 , lang.rules+12 }
            }
     },
     { 33 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+55 },
-            { lang.atoms+3 , lang.rules+55 },
-            { lang.atoms+5 , lang.rules+55 },
-            { lang.atoms+6 , lang.rules+55 },
-            { lang.atoms+8 , lang.rules+55 },
-            { lang.atoms+9 , lang.rules+55 },
-            { lang.atoms+10 , lang.rules+55 },
-            { lang.atoms+11 , lang.rules+55 },
-            { lang.atoms+12 , lang.rules+55 },
-            { lang.atoms+19 , lang.rules+55 },
-            { lang.atoms+41 , lang.rules+55 }
+            { lang.atoms+1 , lang.rules+12 },
+            { lang.atoms+3 , lang.rules+12 },
+            { lang.atoms+5 , lang.rules+12 },
+            { lang.atoms+6 , lang.rules+12 },
+            { lang.atoms+8 , lang.rules+12 },
+            { lang.atoms+9 , lang.rules+12 },
+            { lang.atoms+10 , lang.rules+12 },
+            { lang.atoms+11 , lang.rules+12 },
+            { lang.atoms+12 , lang.rules+12 },
+            { lang.atoms+19 , lang.rules+12 },
+            { lang.atoms+41 , lang.rules+12 }
            }
     },
     { 34 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+55 },
-            { lang.atoms+3 , lang.rules+55 },
-            { lang.atoms+5 , lang.rules+55 },
-            { lang.atoms+6 , lang.rules+55 },
-            { lang.atoms+8 , lang.rules+55 },
-            { lang.atoms+9 , lang.rules+55 },
-            { lang.atoms+10 , lang.rules+55 },
-            { lang.atoms+11 , lang.rules+55 },
-            { lang.atoms+19 , lang.rules+55 },
-            { lang.atoms+20 , lang.rules+55 },
-            { lang.atoms+41 , lang.rules+55 }
+            { lang.atoms+1 , lang.rules+12 },
+            { lang.atoms+3 , lang.rules+12 },
+            { lang.atoms+5 , lang.rules+12 },
+            { lang.atoms+6 , lang.rules+12 },
+            { lang.atoms+8 , lang.rules+12 },
+            { lang.atoms+9 , lang.rules+12 },
+            { lang.atoms+10 , lang.rules+12 },
+            { lang.atoms+11 , lang.rules+12 },
+            { lang.atoms+19 , lang.rules+12 },
+            { lang.atoms+20 , lang.rules+12 },
+            { lang.atoms+41 , lang.rules+12 }
            }
     },
     { 35 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+56 },
-            { lang.atoms+3 , lang.rules+56 },
-            { lang.atoms+4 , lang.rules+56 },
-            { lang.atoms+5 , lang.rules+56 },
-            { lang.atoms+6 , lang.rules+56 },
-            { lang.atoms+8 , lang.rules+56 },
-            { lang.atoms+9 , lang.rules+56 },
-            { lang.atoms+10 , lang.rules+56 },
-            { lang.atoms+11 , lang.rules+56 },
-            { lang.atoms+19 , lang.rules+56 },
-            { lang.atoms+41 , lang.rules+56 }
+            { lang.atoms+1 , lang.rules+13 },
+            { lang.atoms+3 , lang.rules+13 },
+            { lang.atoms+4 , lang.rules+13 },
+            { lang.atoms+5 , lang.rules+13 },
+            { lang.atoms+6 , lang.rules+13 },
+            { lang.atoms+8 , lang.rules+13 },
+            { lang.atoms+9 , lang.rules+13 },
+            { lang.atoms+10 , lang.rules+13 },
+            { lang.atoms+11 , lang.rules+13 },
+            { lang.atoms+19 , lang.rules+13 },
+            { lang.atoms+41 , lang.rules+13 }
            }
     },
     { 36 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+56 },
-            { lang.atoms+3 , lang.rules+56 },
-            { lang.atoms+5 , lang.rules+56 },
-            { lang.atoms+6 , lang.rules+56 },
-            { lang.atoms+7 , lang.rules+56 },
-            { lang.atoms+8 , lang.rules+56 },
-            { lang.atoms+9 , lang.rules+56 },
-            { lang.atoms+10 , lang.rules+56 },
-            { lang.atoms+11 , lang.rules+56 },
-            { lang.atoms+19 , lang.rules+56 },
-            { lang.atoms+41 , lang.rules+56 },
-            { lang.atoms+42 , lang.rules+56 }
+            { lang.atoms+1 , lang.rules+13 },
+            { lang.atoms+3 , lang.rules+13 },
+            { lang.atoms+5 , lang.rules+13 },
+            { lang.atoms+6 , lang.rules+13 },
+            { lang.atoms+7 , lang.rules+13 },
+            { lang.atoms+8 , lang.rules+13 },
+            { lang.atoms+9 , lang.rules+13 },
+            { lang.atoms+10 , lang.rules+13 },
+            { lang.atoms+11 , lang.rules+13 },
+            { lang.atoms+19 , lang.rules+13 },
+            { lang.atoms+41 , lang.rules+13 },
+            { lang.atoms+42 , lang.rules+13 }
            }
     },
     { 37 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+56 },
-            { lang.atoms+3 , lang.rules+56 },
-            { lang.atoms+5 , lang.rules+56 },
-            { lang.atoms+6 , lang.rules+56 },
-            { lang.atoms+8 , lang.rules+56 },
-            { lang.atoms+9 , lang.rules+56 },
-            { lang.atoms+10 , lang.rules+56 },
-            { lang.atoms+11 , lang.rules+56 },
-            { lang.atoms+12 , lang.rules+56 },
-            { lang.atoms+19 , lang.rules+56 },
-            { lang.atoms+41 , lang.rules+56 }
+            { lang.atoms+1 , lang.rules+13 },
+            { lang.atoms+3 , lang.rules+13 },
+            { lang.atoms+5 , lang.rules+13 },
+            { lang.atoms+6 , lang.rules+13 },
+            { lang.atoms+8 , lang.rules+13 },
+            { lang.atoms+9 , lang.rules+13 },
+            { lang.atoms+10 , lang.rules+13 },
+            { lang.atoms+11 , lang.rules+13 },
+            { lang.atoms+12 , lang.rules+13 },
+            { lang.atoms+19 , lang.rules+13 },
+            { lang.atoms+41 , lang.rules+13 }
            }
     },
     { 38 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+56 },
-            { lang.atoms+3 , lang.rules+56 },
-            { lang.atoms+5 , lang.rules+56 },
-            { lang.atoms+6 , lang.rules+56 },
-            { lang.atoms+8 , lang.rules+56 },
-            { lang.atoms+9 , lang.rules+56 },
-            { lang.atoms+10 , lang.rules+56 },
-            { lang.atoms+11 , lang.rules+56 },
-            { lang.atoms+19 , lang.rules+56 },
-            { lang.atoms+20 , lang.rules+56 },
-            { lang.atoms+41 , lang.rules+56 }
+            { lang.atoms+1 , lang.rules+13 },
+            { lang.atoms+3 , lang.rules+13 },
+            { lang.atoms+5 , lang.rules+13 },
+            { lang.atoms+6 , lang.rules+13 },
+            { lang.atoms+8 , lang.rules+13 },
+            { lang.atoms+9 , lang.rules+13 },
+            { lang.atoms+10 , lang.rules+13 },
+            { lang.atoms+11 , lang.rules+13 },
+            { lang.atoms+19 , lang.rules+13 },
+            { lang.atoms+20 , lang.rules+13 },
+            { lang.atoms+41 , lang.rules+13 }
            }
     },
     { 39 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+57 },
-            { lang.atoms+3 , lang.rules+57 },
-            { lang.atoms+4 , lang.rules+57 },
-            { lang.atoms+5 , lang.rules+57 },
-            { lang.atoms+6 , lang.rules+57 },
-            { lang.atoms+8 , lang.rules+57 },
-            { lang.atoms+9 , lang.rules+57 },
-            { lang.atoms+10 , lang.rules+57 },
-            { lang.atoms+11 , lang.rules+57 },
-            { lang.atoms+19 , lang.rules+57 },
-            { lang.atoms+41 , lang.rules+57 }
+            { lang.atoms+1 , lang.rules+14 },
+            { lang.atoms+3 , lang.rules+14 },
+            { lang.atoms+4 , lang.rules+14 },
+            { lang.atoms+5 , lang.rules+14 },
+            { lang.atoms+6 , lang.rules+14 },
+            { lang.atoms+8 , lang.rules+14 },
+            { lang.atoms+9 , lang.rules+14 },
+            { lang.atoms+10 , lang.rules+14 },
+            { lang.atoms+11 , lang.rules+14 },
+            { lang.atoms+19 , lang.rules+14 },
+            { lang.atoms+41 , lang.rules+14 }
            }
     },
     { 40 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+57 },
-            { lang.atoms+3 , lang.rules+57 },
-            { lang.atoms+5 , lang.rules+57 },
-            { lang.atoms+6 , lang.rules+57 },
-            { lang.atoms+7 , lang.rules+57 },
-            { lang.atoms+8 , lang.rules+57 },
-            { lang.atoms+9 , lang.rules+57 },
-            { lang.atoms+10 , lang.rules+57 },
-            { lang.atoms+11 , lang.rules+57 },
-            { lang.atoms+19 , lang.rules+57 },
-            { lang.atoms+41 , lang.rules+57 },
-            { lang.atoms+42 , lang.rules+57 }
+            { lang.atoms+1 , lang.rules+14 },
+            { lang.atoms+3 , lang.rules+14 },
+            { lang.atoms+5 , lang.rules+14 },
+            { lang.atoms+6 , lang.rules+14 },
+            { lang.atoms+7 , lang.rules+14 },
+            { lang.atoms+8 , lang.rules+14 },
+            { lang.atoms+9 , lang.rules+14 },
+            { lang.atoms+10 , lang.rules+14 },
+            { lang.atoms+11 , lang.rules+14 },
+            { lang.atoms+19 , lang.rules+14 },
+            { lang.atoms+41 , lang.rules+14 },
+            { lang.atoms+42 , lang.rules+14 }
            }
     },
     { 41 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+57 },
-            { lang.atoms+3 , lang.rules+57 },
-            { lang.atoms+5 , lang.rules+57 },
-            { lang.atoms+6 , lang.rules+57 },
-            { lang.atoms+8 , lang.rules+57 },
-            { lang.atoms+9 , lang.rules+57 },
-            { lang.atoms+10 , lang.rules+57 },
-            { lang.atoms+11 , lang.rules+57 },
-            { lang.atoms+12 , lang.rules+57 },
-            { lang.atoms+19 , lang.rules+57 },
-            { lang.atoms+41 , lang.rules+57 }
+            { lang.atoms+1 , lang.rules+14 },
+            { lang.atoms+3 , lang.rules+14 },
+            { lang.atoms+5 , lang.rules+14 },
+            { lang.atoms+6 , lang.rules+14 },
+            { lang.atoms+8 , lang.rules+14 },
+            { lang.atoms+9 , lang.rules+14 },
+            { lang.atoms+10 , lang.rules+14 },
+            { lang.atoms+11 , lang.rules+14 },
+            { lang.atoms+12 , lang.rules+14 },
+            { lang.atoms+19 , lang.rules+14 },
+            { lang.atoms+41 , lang.rules+14 }
            }
     },
     { 42 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+57 },
-            { lang.atoms+3 , lang.rules+57 },
-            { lang.atoms+5 , lang.rules+57 },
-            { lang.atoms+6 , lang.rules+57 },
-            { lang.atoms+8 , lang.rules+57 },
-            { lang.atoms+9 , lang.rules+57 },
-            { lang.atoms+10 , lang.rules+57 },
-            { lang.atoms+11 , lang.rules+57 },
-            { lang.atoms+19 , lang.rules+57 },
-            { lang.atoms+20 , lang.rules+57 },
-            { lang.atoms+41 , lang.rules+57 }
+            { lang.atoms+1 , lang.rules+14 },
+            { lang.atoms+3 , lang.rules+14 },
+            { lang.atoms+5 , lang.rules+14 },
+            { lang.atoms+6 , lang.rules+14 },
+            { lang.atoms+8 , lang.rules+14 },
+            { lang.atoms+9 , lang.rules+14 },
+            { lang.atoms+10 , lang.rules+14 },
+            { lang.atoms+11 , lang.rules+14 },
+            { lang.atoms+19 , lang.rules+14 },
+            { lang.atoms+20 , lang.rules+14 },
+            { lang.atoms+41 , lang.rules+14 }
            }
     },
     { 43 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+58 },
-            { lang.atoms+3 , lang.rules+58 },
-            { lang.atoms+4 , lang.rules+58 },
-            { lang.atoms+5 , lang.rules+58 },
-            { lang.atoms+6 , lang.rules+58 },
-            { lang.atoms+8 , lang.rules+58 },
-            { lang.atoms+9 , lang.rules+58 },
-            { lang.atoms+10 , lang.rules+58 },
-            { lang.atoms+11 , lang.rules+58 },
-            { lang.atoms+19 , lang.rules+58 },
-            { lang.atoms+41 , lang.rules+58 }
+            { lang.atoms+1 , lang.rules+15 },
+            { lang.atoms+3 , lang.rules+15 },
+            { lang.atoms+4 , lang.rules+15 },
+            { lang.atoms+5 , lang.rules+15 },
+            { lang.atoms+6 , lang.rules+15 },
+            { lang.atoms+8 , lang.rules+15 },
+            { lang.atoms+9 , lang.rules+15 },
+            { lang.atoms+10 , lang.rules+15 },
+            { lang.atoms+11 , lang.rules+15 },
+            { lang.atoms+19 , lang.rules+15 },
+            { lang.atoms+41 , lang.rules+15 }
            }
     },
     { 44 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+58 },
-            { lang.atoms+3 , lang.rules+58 },
-            { lang.atoms+5 , lang.rules+58 },
-            { lang.atoms+6 , lang.rules+58 },
-            { lang.atoms+7 , lang.rules+58 },
-            { lang.atoms+8 , lang.rules+58 },
-            { lang.atoms+9 , lang.rules+58 },
-            { lang.atoms+10 , lang.rules+58 },
-            { lang.atoms+11 , lang.rules+58 },
-            { lang.atoms+19 , lang.rules+58 },
-            { lang.atoms+41 , lang.rules+58 },
-            { lang.atoms+42 , lang.rules+58 }
+            { lang.atoms+1 , lang.rules+15 },
+            { lang.atoms+3 , lang.rules+15 },
+            { lang.atoms+5 , lang.rules+15 },
+            { lang.atoms+6 , lang.rules+15 },
+            { lang.atoms+7 , lang.rules+15 },
+            { lang.atoms+8 , lang.rules+15 },
+            { lang.atoms+9 , lang.rules+15 },
+            { lang.atoms+10 , lang.rules+15 },
+            { lang.atoms+11 , lang.rules+15 },
+            { lang.atoms+19 , lang.rules+15 },
+            { lang.atoms+41 , lang.rules+15 },
+            { lang.atoms+42 , lang.rules+15 }
            }
     },
     { 45 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+58 },
-            { lang.atoms+3 , lang.rules+58 },
-            { lang.atoms+5 , lang.rules+58 },
-            { lang.atoms+6 , lang.rules+58 },
-            { lang.atoms+8 , lang.rules+58 },
-            { lang.atoms+9 , lang.rules+58 },
-            { lang.atoms+10 , lang.rules+58 },
-            { lang.atoms+11 , lang.rules+58 },
-            { lang.atoms+12 , lang.rules+58 },
-            { lang.atoms+19 , lang.rules+58 },
-            { lang.atoms+41 , lang.rules+58 }
+            { lang.atoms+1 , lang.rules+15 },
+            { lang.atoms+3 , lang.rules+15 },
+            { lang.atoms+5 , lang.rules+15 },
+            { lang.atoms+6 , lang.rules+15 },
+            { lang.atoms+8 , lang.rules+15 },
+            { lang.atoms+9 , lang.rules+15 },
+            { lang.atoms+10 , lang.rules+15 },
+            { lang.atoms+11 , lang.rules+15 },
+            { lang.atoms+12 , lang.rules+15 },
+            { lang.atoms+19 , lang.rules+15 },
+            { lang.atoms+41 , lang.rules+15 }
            }
     },
     { 46 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+1 , lang.rules+58 },
-            { lang.atoms+3 , lang.rules+58 },
-            { lang.atoms+5 , lang.rules+58 },
-            { lang.atoms+6 , lang.rules+58 },
-            { lang.atoms+8 , lang.rules+58 },
-            { lang.atoms+9 , lang.rules+58 },
-            { lang.atoms+10 , lang.rules+58 },
-            { lang.atoms+11 , lang.rules+58 },
-            { lang.atoms+19 , lang.rules+58 },
-            { lang.atoms+20 , lang.rules+58 },
-            { lang.atoms+41 , lang.rules+58 }
+            { lang.atoms+1 , lang.rules+15 },
+            { lang.atoms+3 , lang.rules+15 },
+            { lang.atoms+5 , lang.rules+15 },
+            { lang.atoms+6 , lang.rules+15 },
+            { lang.atoms+8 , lang.rules+15 },
+            { lang.atoms+9 , lang.rules+15 },
+            { lang.atoms+10 , lang.rules+15 },
+            { lang.atoms+11 , lang.rules+15 },
+            { lang.atoms+19 , lang.rules+15 },
+            { lang.atoms+20 , lang.rules+15 },
+            { lang.atoms+41 , lang.rules+15 }
            }
     },
     { 47 ,
@@ -7799,65 +10169,65 @@ Lang lang=
     { 51 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+5 , lang.rules+55 },
-            { lang.atoms+12 , lang.rules+55 },
-            { lang.atoms+19 , lang.rules+55 }
+            { lang.atoms+5 , lang.rules+12 },
+            { lang.atoms+12 , lang.rules+12 },
+            { lang.atoms+19 , lang.rules+12 }
            }
     },
     { 52 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+5 , lang.rules+55 },
-            { lang.atoms+16 , lang.rules+55 },
-            { lang.atoms+19 , lang.rules+55 }
+            { lang.atoms+5 , lang.rules+12 },
+            { lang.atoms+16 , lang.rules+12 },
+            { lang.atoms+19 , lang.rules+12 }
            }
     },
     { 53 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+5 , lang.rules+56 },
-            { lang.atoms+12 , lang.rules+56 },
-            { lang.atoms+19 , lang.rules+56 }
+            { lang.atoms+5 , lang.rules+13 },
+            { lang.atoms+12 , lang.rules+13 },
+            { lang.atoms+19 , lang.rules+13 }
            }
     },
     { 54 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+5 , lang.rules+56 },
-            { lang.atoms+16 , lang.rules+56 },
-            { lang.atoms+19 , lang.rules+56 }
+            { lang.atoms+5 , lang.rules+13 },
+            { lang.atoms+16 , lang.rules+13 },
+            { lang.atoms+19 , lang.rules+13 }
            }
     },
     { 55 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+5 , lang.rules+57 },
-            { lang.atoms+12 , lang.rules+57 },
-            { lang.atoms+19 , lang.rules+57 }
+            { lang.atoms+5 , lang.rules+14 },
+            { lang.atoms+12 , lang.rules+14 },
+            { lang.atoms+19 , lang.rules+14 }
            }
     },
     { 56 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+5 , lang.rules+57 },
-            { lang.atoms+16 , lang.rules+57 },
-            { lang.atoms+19 , lang.rules+57 }
+            { lang.atoms+5 , lang.rules+14 },
+            { lang.atoms+16 , lang.rules+14 },
+            { lang.atoms+19 , lang.rules+14 }
            }
     },
     { 57 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+5 , lang.rules+58 },
-            { lang.atoms+12 , lang.rules+58 },
-            { lang.atoms+19 , lang.rules+58 }
+            { lang.atoms+5 , lang.rules+15 },
+            { lang.atoms+12 , lang.rules+15 },
+            { lang.atoms+19 , lang.rules+15 }
            }
     },
     { 58 ,
            {
             { lang.atoms+0 , null },
-            { lang.atoms+5 , lang.rules+58 },
-            { lang.atoms+16 , lang.rules+58 },
-            { lang.atoms+19 , lang.rules+58 }
+            { lang.atoms+5 , lang.rules+15 },
+            { lang.atoms+16 , lang.rules+15 },
+            { lang.atoms+19 , lang.rules+15 }
            }
     },
     { 59 ,
@@ -7944,1760 +10314,1760 @@ Lang lang=
     },
     { 63 ,
            {
-            { lang.atoms+1 , lang.rules+87 },
-            { lang.atoms+4 , lang.rules+87 },
-            { lang.atoms+5 , lang.rules+87 },
-            { lang.atoms+6 , lang.rules+87 },
-            { lang.atoms+8 , lang.rules+87 },
-            { lang.atoms+9 , lang.rules+87 },
-            { lang.atoms+10 , lang.rules+87 },
-            { lang.atoms+11 , lang.rules+87 },
-            { lang.atoms+19 , lang.rules+87 },
-            { lang.atoms+41 , lang.rules+87 }
+            { lang.atoms+1 , lang.rules+44 },
+            { lang.atoms+4 , lang.rules+44 },
+            { lang.atoms+5 , lang.rules+44 },
+            { lang.atoms+6 , lang.rules+44 },
+            { lang.atoms+8 , lang.rules+44 },
+            { lang.atoms+9 , lang.rules+44 },
+            { lang.atoms+10 , lang.rules+44 },
+            { lang.atoms+11 , lang.rules+44 },
+            { lang.atoms+19 , lang.rules+44 },
+            { lang.atoms+41 , lang.rules+44 }
            }
     },
     { 64 ,
            {
-            { lang.atoms+1 , lang.rules+87 },
-            { lang.atoms+5 , lang.rules+87 },
-            { lang.atoms+6 , lang.rules+87 },
-            { lang.atoms+7 , lang.rules+87 },
-            { lang.atoms+8 , lang.rules+87 },
-            { lang.atoms+9 , lang.rules+87 },
-            { lang.atoms+10 , lang.rules+87 },
-            { lang.atoms+11 , lang.rules+87 },
-            { lang.atoms+19 , lang.rules+87 },
-            { lang.atoms+41 , lang.rules+87 },
-            { lang.atoms+42 , lang.rules+87 }
+            { lang.atoms+1 , lang.rules+44 },
+            { lang.atoms+5 , lang.rules+44 },
+            { lang.atoms+6 , lang.rules+44 },
+            { lang.atoms+7 , lang.rules+44 },
+            { lang.atoms+8 , lang.rules+44 },
+            { lang.atoms+9 , lang.rules+44 },
+            { lang.atoms+10 , lang.rules+44 },
+            { lang.atoms+11 , lang.rules+44 },
+            { lang.atoms+19 , lang.rules+44 },
+            { lang.atoms+41 , lang.rules+44 },
+            { lang.atoms+42 , lang.rules+44 }
            }
     },
     { 65 ,
            {
-            { lang.atoms+1 , lang.rules+87 },
-            { lang.atoms+5 , lang.rules+87 },
-            { lang.atoms+6 , lang.rules+87 },
-            { lang.atoms+8 , lang.rules+87 },
-            { lang.atoms+9 , lang.rules+87 },
-            { lang.atoms+10 , lang.rules+87 },
-            { lang.atoms+11 , lang.rules+87 },
-            { lang.atoms+12 , lang.rules+87 },
-            { lang.atoms+19 , lang.rules+87 },
-            { lang.atoms+41 , lang.rules+87 }
+            { lang.atoms+1 , lang.rules+44 },
+            { lang.atoms+5 , lang.rules+44 },
+            { lang.atoms+6 , lang.rules+44 },
+            { lang.atoms+8 , lang.rules+44 },
+            { lang.atoms+9 , lang.rules+44 },
+            { lang.atoms+10 , lang.rules+44 },
+            { lang.atoms+11 , lang.rules+44 },
+            { lang.atoms+12 , lang.rules+44 },
+            { lang.atoms+19 , lang.rules+44 },
+            { lang.atoms+41 , lang.rules+44 }
            }
     },
     { 66 ,
            {
-            { lang.atoms+1 , lang.rules+87 },
-            { lang.atoms+5 , lang.rules+87 },
-            { lang.atoms+6 , lang.rules+87 },
-            { lang.atoms+8 , lang.rules+87 },
-            { lang.atoms+9 , lang.rules+87 },
-            { lang.atoms+10 , lang.rules+87 },
-            { lang.atoms+11 , lang.rules+87 },
-            { lang.atoms+19 , lang.rules+87 },
-            { lang.atoms+20 , lang.rules+87 },
-            { lang.atoms+41 , lang.rules+87 }
+            { lang.atoms+1 , lang.rules+44 },
+            { lang.atoms+5 , lang.rules+44 },
+            { lang.atoms+6 , lang.rules+44 },
+            { lang.atoms+8 , lang.rules+44 },
+            { lang.atoms+9 , lang.rules+44 },
+            { lang.atoms+10 , lang.rules+44 },
+            { lang.atoms+11 , lang.rules+44 },
+            { lang.atoms+19 , lang.rules+44 },
+            { lang.atoms+20 , lang.rules+44 },
+            { lang.atoms+41 , lang.rules+44 }
            }
     },
     { 67 ,
            {
-            { lang.atoms+1 , lang.rules+88 },
-            { lang.atoms+3 , lang.rules+114 },
-            { lang.atoms+4 , lang.rules+88 },
-            { lang.atoms+5 , lang.rules+88 },
-            { lang.atoms+6 , lang.rules+88 },
-            { lang.atoms+8 , lang.rules+88 },
-            { lang.atoms+9 , lang.rules+88 },
-            { lang.atoms+10 , lang.rules+88 },
-            { lang.atoms+11 , lang.rules+88 },
-            { lang.atoms+19 , lang.rules+88 },
-            { lang.atoms+41 , lang.rules+88 }
+            { lang.atoms+1 , lang.rules+45 },
+            { lang.atoms+3 , lang.rules+71 },
+            { lang.atoms+4 , lang.rules+45 },
+            { lang.atoms+5 , lang.rules+45 },
+            { lang.atoms+6 , lang.rules+45 },
+            { lang.atoms+8 , lang.rules+45 },
+            { lang.atoms+9 , lang.rules+45 },
+            { lang.atoms+10 , lang.rules+45 },
+            { lang.atoms+11 , lang.rules+45 },
+            { lang.atoms+19 , lang.rules+45 },
+            { lang.atoms+41 , lang.rules+45 }
            }
     },
     { 68 ,
            {
-            { lang.atoms+1 , lang.rules+88 },
-            { lang.atoms+3 , lang.rules+114 },
-            { lang.atoms+5 , lang.rules+88 },
-            { lang.atoms+6 , lang.rules+88 },
-            { lang.atoms+7 , lang.rules+88 },
-            { lang.atoms+8 , lang.rules+88 },
-            { lang.atoms+9 , lang.rules+88 },
-            { lang.atoms+10 , lang.rules+88 },
-            { lang.atoms+11 , lang.rules+88 },
-            { lang.atoms+19 , lang.rules+88 },
-            { lang.atoms+41 , lang.rules+88 },
-            { lang.atoms+42 , lang.rules+88 }
+            { lang.atoms+1 , lang.rules+45 },
+            { lang.atoms+3 , lang.rules+71 },
+            { lang.atoms+5 , lang.rules+45 },
+            { lang.atoms+6 , lang.rules+45 },
+            { lang.atoms+7 , lang.rules+45 },
+            { lang.atoms+8 , lang.rules+45 },
+            { lang.atoms+9 , lang.rules+45 },
+            { lang.atoms+10 , lang.rules+45 },
+            { lang.atoms+11 , lang.rules+45 },
+            { lang.atoms+19 , lang.rules+45 },
+            { lang.atoms+41 , lang.rules+45 },
+            { lang.atoms+42 , lang.rules+45 }
            }
     },
     { 69 ,
            {
-            { lang.atoms+1 , lang.rules+88 },
-            { lang.atoms+3 , lang.rules+114 },
-            { lang.atoms+5 , lang.rules+88 },
-            { lang.atoms+6 , lang.rules+88 },
-            { lang.atoms+8 , lang.rules+88 },
-            { lang.atoms+9 , lang.rules+88 },
-            { lang.atoms+10 , lang.rules+88 },
-            { lang.atoms+11 , lang.rules+88 },
-            { lang.atoms+12 , lang.rules+88 },
-            { lang.atoms+19 , lang.rules+88 },
-            { lang.atoms+41 , lang.rules+88 }
+            { lang.atoms+1 , lang.rules+45 },
+            { lang.atoms+3 , lang.rules+71 },
+            { lang.atoms+5 , lang.rules+45 },
+            { lang.atoms+6 , lang.rules+45 },
+            { lang.atoms+8 , lang.rules+45 },
+            { lang.atoms+9 , lang.rules+45 },
+            { lang.atoms+10 , lang.rules+45 },
+            { lang.atoms+11 , lang.rules+45 },
+            { lang.atoms+12 , lang.rules+45 },
+            { lang.atoms+19 , lang.rules+45 },
+            { lang.atoms+41 , lang.rules+45 }
            }
     },
     { 70 ,
            {
-            { lang.atoms+1 , lang.rules+88 },
-            { lang.atoms+3 , lang.rules+114 },
-            { lang.atoms+5 , lang.rules+88 },
-            { lang.atoms+6 , lang.rules+88 },
-            { lang.atoms+8 , lang.rules+88 },
-            { lang.atoms+9 , lang.rules+88 },
-            { lang.atoms+10 , lang.rules+88 },
-            { lang.atoms+11 , lang.rules+88 },
-            { lang.atoms+19 , lang.rules+88 },
-            { lang.atoms+20 , lang.rules+88 },
-            { lang.atoms+41 , lang.rules+88 }
+            { lang.atoms+1 , lang.rules+45 },
+            { lang.atoms+3 , lang.rules+71 },
+            { lang.atoms+5 , lang.rules+45 },
+            { lang.atoms+6 , lang.rules+45 },
+            { lang.atoms+8 , lang.rules+45 },
+            { lang.atoms+9 , lang.rules+45 },
+            { lang.atoms+10 , lang.rules+45 },
+            { lang.atoms+11 , lang.rules+45 },
+            { lang.atoms+19 , lang.rules+45 },
+            { lang.atoms+20 , lang.rules+45 },
+            { lang.atoms+41 , lang.rules+45 }
            }
     },
     { 71 ,
            {
-            { lang.atoms+1 , lang.rules+89 },
-            { lang.atoms+4 , lang.rules+89 },
-            { lang.atoms+5 , lang.rules+89 },
-            { lang.atoms+6 , lang.rules+89 },
-            { lang.atoms+8 , lang.rules+89 },
-            { lang.atoms+9 , lang.rules+89 },
-            { lang.atoms+10 , lang.rules+89 },
-            { lang.atoms+11 , lang.rules+89 },
-            { lang.atoms+19 , lang.rules+89 },
-            { lang.atoms+41 , lang.rules+89 }
+            { lang.atoms+1 , lang.rules+46 },
+            { lang.atoms+4 , lang.rules+46 },
+            { lang.atoms+5 , lang.rules+46 },
+            { lang.atoms+6 , lang.rules+46 },
+            { lang.atoms+8 , lang.rules+46 },
+            { lang.atoms+9 , lang.rules+46 },
+            { lang.atoms+10 , lang.rules+46 },
+            { lang.atoms+11 , lang.rules+46 },
+            { lang.atoms+19 , lang.rules+46 },
+            { lang.atoms+41 , lang.rules+46 }
            }
     },
     { 72 ,
            {
-            { lang.atoms+1 , lang.rules+89 },
-            { lang.atoms+5 , lang.rules+89 },
-            { lang.atoms+6 , lang.rules+89 },
-            { lang.atoms+7 , lang.rules+89 },
-            { lang.atoms+8 , lang.rules+89 },
-            { lang.atoms+9 , lang.rules+89 },
-            { lang.atoms+10 , lang.rules+89 },
-            { lang.atoms+11 , lang.rules+89 },
-            { lang.atoms+19 , lang.rules+89 },
-            { lang.atoms+41 , lang.rules+89 },
-            { lang.atoms+42 , lang.rules+89 }
+            { lang.atoms+1 , lang.rules+46 },
+            { lang.atoms+5 , lang.rules+46 },
+            { lang.atoms+6 , lang.rules+46 },
+            { lang.atoms+7 , lang.rules+46 },
+            { lang.atoms+8 , lang.rules+46 },
+            { lang.atoms+9 , lang.rules+46 },
+            { lang.atoms+10 , lang.rules+46 },
+            { lang.atoms+11 , lang.rules+46 },
+            { lang.atoms+19 , lang.rules+46 },
+            { lang.atoms+41 , lang.rules+46 },
+            { lang.atoms+42 , lang.rules+46 }
            }
     },
     { 73 ,
            {
-            { lang.atoms+1 , lang.rules+89 },
-            { lang.atoms+5 , lang.rules+89 },
-            { lang.atoms+6 , lang.rules+89 },
-            { lang.atoms+8 , lang.rules+89 },
-            { lang.atoms+9 , lang.rules+89 },
-            { lang.atoms+10 , lang.rules+89 },
-            { lang.atoms+11 , lang.rules+89 },
-            { lang.atoms+12 , lang.rules+89 },
-            { lang.atoms+19 , lang.rules+89 },
-            { lang.atoms+41 , lang.rules+89 }
+            { lang.atoms+1 , lang.rules+46 },
+            { lang.atoms+5 , lang.rules+46 },
+            { lang.atoms+6 , lang.rules+46 },
+            { lang.atoms+8 , lang.rules+46 },
+            { lang.atoms+9 , lang.rules+46 },
+            { lang.atoms+10 , lang.rules+46 },
+            { lang.atoms+11 , lang.rules+46 },
+            { lang.atoms+12 , lang.rules+46 },
+            { lang.atoms+19 , lang.rules+46 },
+            { lang.atoms+41 , lang.rules+46 }
            }
     },
     { 74 ,
            {
-            { lang.atoms+1 , lang.rules+89 },
-            { lang.atoms+5 , lang.rules+89 },
-            { lang.atoms+6 , lang.rules+89 },
-            { lang.atoms+8 , lang.rules+89 },
-            { lang.atoms+9 , lang.rules+89 },
-            { lang.atoms+10 , lang.rules+89 },
-            { lang.atoms+11 , lang.rules+89 },
-            { lang.atoms+19 , lang.rules+89 },
-            { lang.atoms+20 , lang.rules+89 },
-            { lang.atoms+41 , lang.rules+89 }
+            { lang.atoms+1 , lang.rules+46 },
+            { lang.atoms+5 , lang.rules+46 },
+            { lang.atoms+6 , lang.rules+46 },
+            { lang.atoms+8 , lang.rules+46 },
+            { lang.atoms+9 , lang.rules+46 },
+            { lang.atoms+10 , lang.rules+46 },
+            { lang.atoms+11 , lang.rules+46 },
+            { lang.atoms+19 , lang.rules+46 },
+            { lang.atoms+20 , lang.rules+46 },
+            { lang.atoms+41 , lang.rules+46 }
            }
     },
     { 75 ,
            {
-            { lang.atoms+1 , lang.rules+90 },
-            { lang.atoms+4 , lang.rules+90 },
-            { lang.atoms+5 , lang.rules+90 },
-            { lang.atoms+6 , lang.rules+90 },
-            { lang.atoms+8 , lang.rules+90 },
-            { lang.atoms+9 , lang.rules+90 },
-            { lang.atoms+10 , lang.rules+90 },
-            { lang.atoms+11 , lang.rules+90 },
-            { lang.atoms+19 , lang.rules+90 },
-            { lang.atoms+41 , lang.rules+90 }
+            { lang.atoms+1 , lang.rules+47 },
+            { lang.atoms+4 , lang.rules+47 },
+            { lang.atoms+5 , lang.rules+47 },
+            { lang.atoms+6 , lang.rules+47 },
+            { lang.atoms+8 , lang.rules+47 },
+            { lang.atoms+9 , lang.rules+47 },
+            { lang.atoms+10 , lang.rules+47 },
+            { lang.atoms+11 , lang.rules+47 },
+            { lang.atoms+19 , lang.rules+47 },
+            { lang.atoms+41 , lang.rules+47 }
            }
     },
     { 76 ,
            {
-            { lang.atoms+1 , lang.rules+90 },
-            { lang.atoms+5 , lang.rules+90 },
-            { lang.atoms+6 , lang.rules+90 },
-            { lang.atoms+7 , lang.rules+90 },
-            { lang.atoms+8 , lang.rules+90 },
-            { lang.atoms+9 , lang.rules+90 },
-            { lang.atoms+10 , lang.rules+90 },
-            { lang.atoms+11 , lang.rules+90 },
-            { lang.atoms+19 , lang.rules+90 },
-            { lang.atoms+41 , lang.rules+90 },
-            { lang.atoms+42 , lang.rules+90 }
+            { lang.atoms+1 , lang.rules+47 },
+            { lang.atoms+5 , lang.rules+47 },
+            { lang.atoms+6 , lang.rules+47 },
+            { lang.atoms+7 , lang.rules+47 },
+            { lang.atoms+8 , lang.rules+47 },
+            { lang.atoms+9 , lang.rules+47 },
+            { lang.atoms+10 , lang.rules+47 },
+            { lang.atoms+11 , lang.rules+47 },
+            { lang.atoms+19 , lang.rules+47 },
+            { lang.atoms+41 , lang.rules+47 },
+            { lang.atoms+42 , lang.rules+47 }
            }
     },
     { 77 ,
            {
-            { lang.atoms+1 , lang.rules+90 },
-            { lang.atoms+5 , lang.rules+90 },
-            { lang.atoms+6 , lang.rules+90 },
-            { lang.atoms+8 , lang.rules+90 },
-            { lang.atoms+9 , lang.rules+90 },
-            { lang.atoms+10 , lang.rules+90 },
-            { lang.atoms+11 , lang.rules+90 },
-            { lang.atoms+12 , lang.rules+90 },
-            { lang.atoms+19 , lang.rules+90 },
-            { lang.atoms+41 , lang.rules+90 }
+            { lang.atoms+1 , lang.rules+47 },
+            { lang.atoms+5 , lang.rules+47 },
+            { lang.atoms+6 , lang.rules+47 },
+            { lang.atoms+8 , lang.rules+47 },
+            { lang.atoms+9 , lang.rules+47 },
+            { lang.atoms+10 , lang.rules+47 },
+            { lang.atoms+11 , lang.rules+47 },
+            { lang.atoms+12 , lang.rules+47 },
+            { lang.atoms+19 , lang.rules+47 },
+            { lang.atoms+41 , lang.rules+47 }
            }
     },
     { 78 ,
            {
-            { lang.atoms+1 , lang.rules+90 },
-            { lang.atoms+5 , lang.rules+90 },
-            { lang.atoms+6 , lang.rules+90 },
-            { lang.atoms+8 , lang.rules+90 },
-            { lang.atoms+9 , lang.rules+90 },
-            { lang.atoms+10 , lang.rules+90 },
-            { lang.atoms+11 , lang.rules+90 },
-            { lang.atoms+19 , lang.rules+90 },
-            { lang.atoms+20 , lang.rules+90 },
-            { lang.atoms+41 , lang.rules+90 }
+            { lang.atoms+1 , lang.rules+47 },
+            { lang.atoms+5 , lang.rules+47 },
+            { lang.atoms+6 , lang.rules+47 },
+            { lang.atoms+8 , lang.rules+47 },
+            { lang.atoms+9 , lang.rules+47 },
+            { lang.atoms+10 , lang.rules+47 },
+            { lang.atoms+11 , lang.rules+47 },
+            { lang.atoms+19 , lang.rules+47 },
+            { lang.atoms+20 , lang.rules+47 },
+            { lang.atoms+41 , lang.rules+47 }
            }
     },
     { 79 ,
            {
-            { lang.atoms+1 , lang.rules+91 },
-            { lang.atoms+4 , lang.rules+91 },
-            { lang.atoms+5 , lang.rules+91 },
-            { lang.atoms+6 , lang.rules+91 },
-            { lang.atoms+8 , lang.rules+91 },
-            { lang.atoms+9 , lang.rules+91 },
-            { lang.atoms+10 , lang.rules+91 },
-            { lang.atoms+11 , lang.rules+91 },
-            { lang.atoms+19 , lang.rules+91 },
-            { lang.atoms+41 , lang.rules+91 }
+            { lang.atoms+1 , lang.rules+48 },
+            { lang.atoms+4 , lang.rules+48 },
+            { lang.atoms+5 , lang.rules+48 },
+            { lang.atoms+6 , lang.rules+48 },
+            { lang.atoms+8 , lang.rules+48 },
+            { lang.atoms+9 , lang.rules+48 },
+            { lang.atoms+10 , lang.rules+48 },
+            { lang.atoms+11 , lang.rules+48 },
+            { lang.atoms+19 , lang.rules+48 },
+            { lang.atoms+41 , lang.rules+48 }
            }
     },
     { 80 ,
            {
-            { lang.atoms+1 , lang.rules+91 },
-            { lang.atoms+5 , lang.rules+91 },
-            { lang.atoms+6 , lang.rules+91 },
-            { lang.atoms+7 , lang.rules+91 },
-            { lang.atoms+8 , lang.rules+91 },
-            { lang.atoms+9 , lang.rules+91 },
-            { lang.atoms+10 , lang.rules+91 },
-            { lang.atoms+11 , lang.rules+91 },
-            { lang.atoms+19 , lang.rules+91 },
-            { lang.atoms+41 , lang.rules+91 },
-            { lang.atoms+42 , lang.rules+91 }
+            { lang.atoms+1 , lang.rules+48 },
+            { lang.atoms+5 , lang.rules+48 },
+            { lang.atoms+6 , lang.rules+48 },
+            { lang.atoms+7 , lang.rules+48 },
+            { lang.atoms+8 , lang.rules+48 },
+            { lang.atoms+9 , lang.rules+48 },
+            { lang.atoms+10 , lang.rules+48 },
+            { lang.atoms+11 , lang.rules+48 },
+            { lang.atoms+19 , lang.rules+48 },
+            { lang.atoms+41 , lang.rules+48 },
+            { lang.atoms+42 , lang.rules+48 }
            }
     },
     { 81 ,
            {
-            { lang.atoms+1 , lang.rules+91 },
-            { lang.atoms+5 , lang.rules+91 },
-            { lang.atoms+6 , lang.rules+91 },
-            { lang.atoms+8 , lang.rules+91 },
-            { lang.atoms+9 , lang.rules+91 },
-            { lang.atoms+10 , lang.rules+91 },
-            { lang.atoms+11 , lang.rules+91 },
-            { lang.atoms+12 , lang.rules+91 },
-            { lang.atoms+19 , lang.rules+91 },
-            { lang.atoms+41 , lang.rules+91 }
+            { lang.atoms+1 , lang.rules+48 },
+            { lang.atoms+5 , lang.rules+48 },
+            { lang.atoms+6 , lang.rules+48 },
+            { lang.atoms+8 , lang.rules+48 },
+            { lang.atoms+9 , lang.rules+48 },
+            { lang.atoms+10 , lang.rules+48 },
+            { lang.atoms+11 , lang.rules+48 },
+            { lang.atoms+12 , lang.rules+48 },
+            { lang.atoms+19 , lang.rules+48 },
+            { lang.atoms+41 , lang.rules+48 }
            }
     },
     { 82 ,
            {
-            { lang.atoms+1 , lang.rules+91 },
-            { lang.atoms+5 , lang.rules+91 },
-            { lang.atoms+6 , lang.rules+91 },
-            { lang.atoms+8 , lang.rules+91 },
-            { lang.atoms+9 , lang.rules+91 },
-            { lang.atoms+10 , lang.rules+91 },
-            { lang.atoms+11 , lang.rules+91 },
-            { lang.atoms+19 , lang.rules+91 },
-            { lang.atoms+20 , lang.rules+91 },
-            { lang.atoms+41 , lang.rules+91 }
+            { lang.atoms+1 , lang.rules+48 },
+            { lang.atoms+5 , lang.rules+48 },
+            { lang.atoms+6 , lang.rules+48 },
+            { lang.atoms+8 , lang.rules+48 },
+            { lang.atoms+9 , lang.rules+48 },
+            { lang.atoms+10 , lang.rules+48 },
+            { lang.atoms+11 , lang.rules+48 },
+            { lang.atoms+19 , lang.rules+48 },
+            { lang.atoms+20 , lang.rules+48 },
+            { lang.atoms+41 , lang.rules+48 }
            }
     },
     { 83 ,
            {
-            { lang.atoms+1 , lang.rules+92 },
-            { lang.atoms+4 , lang.rules+92 },
-            { lang.atoms+5 , lang.rules+92 },
-            { lang.atoms+6 , lang.rules+92 },
-            { lang.atoms+8 , lang.rules+92 },
-            { lang.atoms+9 , lang.rules+92 },
-            { lang.atoms+10 , lang.rules+92 },
-            { lang.atoms+11 , lang.rules+92 },
-            { lang.atoms+19 , lang.rules+92 },
-            { lang.atoms+41 , lang.rules+92 }
+            { lang.atoms+1 , lang.rules+49 },
+            { lang.atoms+4 , lang.rules+49 },
+            { lang.atoms+5 , lang.rules+49 },
+            { lang.atoms+6 , lang.rules+49 },
+            { lang.atoms+8 , lang.rules+49 },
+            { lang.atoms+9 , lang.rules+49 },
+            { lang.atoms+10 , lang.rules+49 },
+            { lang.atoms+11 , lang.rules+49 },
+            { lang.atoms+19 , lang.rules+49 },
+            { lang.atoms+41 , lang.rules+49 }
            }
     },
     { 84 ,
            {
-            { lang.atoms+1 , lang.rules+92 },
-            { lang.atoms+5 , lang.rules+92 },
-            { lang.atoms+6 , lang.rules+92 },
-            { lang.atoms+7 , lang.rules+92 },
-            { lang.atoms+8 , lang.rules+92 },
-            { lang.atoms+9 , lang.rules+92 },
-            { lang.atoms+10 , lang.rules+92 },
-            { lang.atoms+11 , lang.rules+92 },
-            { lang.atoms+19 , lang.rules+92 },
-            { lang.atoms+41 , lang.rules+92 },
-            { lang.atoms+42 , lang.rules+92 }
+            { lang.atoms+1 , lang.rules+49 },
+            { lang.atoms+5 , lang.rules+49 },
+            { lang.atoms+6 , lang.rules+49 },
+            { lang.atoms+7 , lang.rules+49 },
+            { lang.atoms+8 , lang.rules+49 },
+            { lang.atoms+9 , lang.rules+49 },
+            { lang.atoms+10 , lang.rules+49 },
+            { lang.atoms+11 , lang.rules+49 },
+            { lang.atoms+19 , lang.rules+49 },
+            { lang.atoms+41 , lang.rules+49 },
+            { lang.atoms+42 , lang.rules+49 }
            }
     },
     { 85 ,
            {
-            { lang.atoms+1 , lang.rules+92 },
-            { lang.atoms+5 , lang.rules+92 },
-            { lang.atoms+6 , lang.rules+92 },
-            { lang.atoms+8 , lang.rules+92 },
-            { lang.atoms+9 , lang.rules+92 },
-            { lang.atoms+10 , lang.rules+92 },
-            { lang.atoms+11 , lang.rules+92 },
-            { lang.atoms+12 , lang.rules+92 },
-            { lang.atoms+19 , lang.rules+92 },
-            { lang.atoms+41 , lang.rules+92 }
+            { lang.atoms+1 , lang.rules+49 },
+            { lang.atoms+5 , lang.rules+49 },
+            { lang.atoms+6 , lang.rules+49 },
+            { lang.atoms+8 , lang.rules+49 },
+            { lang.atoms+9 , lang.rules+49 },
+            { lang.atoms+10 , lang.rules+49 },
+            { lang.atoms+11 , lang.rules+49 },
+            { lang.atoms+12 , lang.rules+49 },
+            { lang.atoms+19 , lang.rules+49 },
+            { lang.atoms+41 , lang.rules+49 }
            }
     },
     { 86 ,
            {
-            { lang.atoms+1 , lang.rules+92 },
-            { lang.atoms+5 , lang.rules+92 },
-            { lang.atoms+6 , lang.rules+92 },
-            { lang.atoms+8 , lang.rules+92 },
-            { lang.atoms+9 , lang.rules+92 },
-            { lang.atoms+10 , lang.rules+92 },
-            { lang.atoms+11 , lang.rules+92 },
-            { lang.atoms+19 , lang.rules+92 },
-            { lang.atoms+20 , lang.rules+92 },
-            { lang.atoms+41 , lang.rules+92 }
+            { lang.atoms+1 , lang.rules+49 },
+            { lang.atoms+5 , lang.rules+49 },
+            { lang.atoms+6 , lang.rules+49 },
+            { lang.atoms+8 , lang.rules+49 },
+            { lang.atoms+9 , lang.rules+49 },
+            { lang.atoms+10 , lang.rules+49 },
+            { lang.atoms+11 , lang.rules+49 },
+            { lang.atoms+19 , lang.rules+49 },
+            { lang.atoms+20 , lang.rules+49 },
+            { lang.atoms+41 , lang.rules+49 }
            }
     },
     { 87 ,
            {
-            { lang.atoms+1 , lang.rules+93 },
-            { lang.atoms+4 , lang.rules+93 },
-            { lang.atoms+5 , lang.rules+93 },
-            { lang.atoms+6 , lang.rules+93 },
-            { lang.atoms+8 , lang.rules+93 },
-            { lang.atoms+9 , lang.rules+93 },
-            { lang.atoms+10 , lang.rules+93 },
-            { lang.atoms+11 , lang.rules+93 },
-            { lang.atoms+19 , lang.rules+93 },
-            { lang.atoms+41 , lang.rules+93 }
+            { lang.atoms+1 , lang.rules+50 },
+            { lang.atoms+4 , lang.rules+50 },
+            { lang.atoms+5 , lang.rules+50 },
+            { lang.atoms+6 , lang.rules+50 },
+            { lang.atoms+8 , lang.rules+50 },
+            { lang.atoms+9 , lang.rules+50 },
+            { lang.atoms+10 , lang.rules+50 },
+            { lang.atoms+11 , lang.rules+50 },
+            { lang.atoms+19 , lang.rules+50 },
+            { lang.atoms+41 , lang.rules+50 }
            }
     },
     { 88 ,
            {
-            { lang.atoms+1 , lang.rules+93 },
-            { lang.atoms+5 , lang.rules+93 },
-            { lang.atoms+6 , lang.rules+93 },
-            { lang.atoms+7 , lang.rules+93 },
-            { lang.atoms+8 , lang.rules+93 },
-            { lang.atoms+9 , lang.rules+93 },
-            { lang.atoms+10 , lang.rules+93 },
-            { lang.atoms+11 , lang.rules+93 },
-            { lang.atoms+19 , lang.rules+93 },
-            { lang.atoms+41 , lang.rules+93 },
-            { lang.atoms+42 , lang.rules+93 }
+            { lang.atoms+1 , lang.rules+50 },
+            { lang.atoms+5 , lang.rules+50 },
+            { lang.atoms+6 , lang.rules+50 },
+            { lang.atoms+7 , lang.rules+50 },
+            { lang.atoms+8 , lang.rules+50 },
+            { lang.atoms+9 , lang.rules+50 },
+            { lang.atoms+10 , lang.rules+50 },
+            { lang.atoms+11 , lang.rules+50 },
+            { lang.atoms+19 , lang.rules+50 },
+            { lang.atoms+41 , lang.rules+50 },
+            { lang.atoms+42 , lang.rules+50 }
            }
     },
     { 89 ,
            {
-            { lang.atoms+1 , lang.rules+93 },
-            { lang.atoms+5 , lang.rules+93 },
-            { lang.atoms+6 , lang.rules+93 },
-            { lang.atoms+8 , lang.rules+93 },
-            { lang.atoms+9 , lang.rules+93 },
-            { lang.atoms+10 , lang.rules+93 },
-            { lang.atoms+11 , lang.rules+93 },
-            { lang.atoms+12 , lang.rules+93 },
-            { lang.atoms+19 , lang.rules+93 },
-            { lang.atoms+41 , lang.rules+93 }
+            { lang.atoms+1 , lang.rules+50 },
+            { lang.atoms+5 , lang.rules+50 },
+            { lang.atoms+6 , lang.rules+50 },
+            { lang.atoms+8 , lang.rules+50 },
+            { lang.atoms+9 , lang.rules+50 },
+            { lang.atoms+10 , lang.rules+50 },
+            { lang.atoms+11 , lang.rules+50 },
+            { lang.atoms+12 , lang.rules+50 },
+            { lang.atoms+19 , lang.rules+50 },
+            { lang.atoms+41 , lang.rules+50 }
            }
     },
     { 90 ,
            {
-            { lang.atoms+1 , lang.rules+93 },
-            { lang.atoms+5 , lang.rules+93 },
-            { lang.atoms+6 , lang.rules+93 },
-            { lang.atoms+8 , lang.rules+93 },
-            { lang.atoms+9 , lang.rules+93 },
-            { lang.atoms+10 , lang.rules+93 },
-            { lang.atoms+11 , lang.rules+93 },
-            { lang.atoms+19 , lang.rules+93 },
-            { lang.atoms+20 , lang.rules+93 },
-            { lang.atoms+41 , lang.rules+93 }
+            { lang.atoms+1 , lang.rules+50 },
+            { lang.atoms+5 , lang.rules+50 },
+            { lang.atoms+6 , lang.rules+50 },
+            { lang.atoms+8 , lang.rules+50 },
+            { lang.atoms+9 , lang.rules+50 },
+            { lang.atoms+10 , lang.rules+50 },
+            { lang.atoms+11 , lang.rules+50 },
+            { lang.atoms+19 , lang.rules+50 },
+            { lang.atoms+20 , lang.rules+50 },
+            { lang.atoms+41 , lang.rules+50 }
            }
     },
     { 91 ,
            {
-            { lang.atoms+1 , lang.rules+94 },
-            { lang.atoms+4 , lang.rules+94 },
-            { lang.atoms+5 , lang.rules+94 },
-            { lang.atoms+6 , lang.rules+94 },
-            { lang.atoms+8 , lang.rules+94 },
+            { lang.atoms+1 , lang.rules+51 },
+            { lang.atoms+4 , lang.rules+51 },
+            { lang.atoms+5 , lang.rules+51 },
+            { lang.atoms+6 , lang.rules+51 },
+            { lang.atoms+8 , lang.rules+51 },
             { lang.atoms+10 , null },
-            { lang.atoms+11 , lang.rules+94 },
-            { lang.atoms+19 , lang.rules+94 },
-            { lang.atoms+41 , lang.rules+94 }
+            { lang.atoms+11 , lang.rules+51 },
+            { lang.atoms+19 , lang.rules+51 },
+            { lang.atoms+41 , lang.rules+51 }
            }
     },
     { 92 ,
            {
-            { lang.atoms+1 , lang.rules+94 },
-            { lang.atoms+5 , lang.rules+94 },
-            { lang.atoms+6 , lang.rules+94 },
-            { lang.atoms+7 , lang.rules+94 },
-            { lang.atoms+8 , lang.rules+94 },
+            { lang.atoms+1 , lang.rules+51 },
+            { lang.atoms+5 , lang.rules+51 },
+            { lang.atoms+6 , lang.rules+51 },
+            { lang.atoms+7 , lang.rules+51 },
+            { lang.atoms+8 , lang.rules+51 },
             { lang.atoms+10 , null },
-            { lang.atoms+11 , lang.rules+94 },
-            { lang.atoms+19 , lang.rules+94 },
-            { lang.atoms+41 , lang.rules+94 },
-            { lang.atoms+42 , lang.rules+94 }
+            { lang.atoms+11 , lang.rules+51 },
+            { lang.atoms+19 , lang.rules+51 },
+            { lang.atoms+41 , lang.rules+51 },
+            { lang.atoms+42 , lang.rules+51 }
            }
     },
     { 93 ,
            {
-            { lang.atoms+1 , lang.rules+94 },
-            { lang.atoms+5 , lang.rules+94 },
-            { lang.atoms+6 , lang.rules+94 },
-            { lang.atoms+8 , lang.rules+94 },
+            { lang.atoms+1 , lang.rules+51 },
+            { lang.atoms+5 , lang.rules+51 },
+            { lang.atoms+6 , lang.rules+51 },
+            { lang.atoms+8 , lang.rules+51 },
             { lang.atoms+10 , null },
-            { lang.atoms+11 , lang.rules+94 },
-            { lang.atoms+12 , lang.rules+94 },
-            { lang.atoms+19 , lang.rules+94 },
-            { lang.atoms+41 , lang.rules+94 }
+            { lang.atoms+11 , lang.rules+51 },
+            { lang.atoms+12 , lang.rules+51 },
+            { lang.atoms+19 , lang.rules+51 },
+            { lang.atoms+41 , lang.rules+51 }
            }
     },
     { 94 ,
            {
-            { lang.atoms+1 , lang.rules+94 },
-            { lang.atoms+5 , lang.rules+94 },
-            { lang.atoms+6 , lang.rules+94 },
-            { lang.atoms+8 , lang.rules+94 },
+            { lang.atoms+1 , lang.rules+51 },
+            { lang.atoms+5 , lang.rules+51 },
+            { lang.atoms+6 , lang.rules+51 },
+            { lang.atoms+8 , lang.rules+51 },
             { lang.atoms+10 , null },
-            { lang.atoms+11 , lang.rules+94 },
-            { lang.atoms+19 , lang.rules+94 },
-            { lang.atoms+20 , lang.rules+94 },
-            { lang.atoms+41 , lang.rules+94 }
+            { lang.atoms+11 , lang.rules+51 },
+            { lang.atoms+19 , lang.rules+51 },
+            { lang.atoms+20 , lang.rules+51 },
+            { lang.atoms+41 , lang.rules+51 }
            }
     },
     { 95 ,
            {
-            { lang.atoms+1 , lang.rules+95 },
-            { lang.atoms+4 , lang.rules+95 },
-            { lang.atoms+5 , lang.rules+95 },
-            { lang.atoms+6 , lang.rules+95 },
-            { lang.atoms+8 , lang.rules+95 },
+            { lang.atoms+1 , lang.rules+52 },
+            { lang.atoms+4 , lang.rules+52 },
+            { lang.atoms+5 , lang.rules+52 },
+            { lang.atoms+6 , lang.rules+52 },
+            { lang.atoms+8 , lang.rules+52 },
             { lang.atoms+9 , null },
             { lang.atoms+10 , null },
-            { lang.atoms+11 , lang.rules+95 },
+            { lang.atoms+11 , lang.rules+52 },
             { lang.atoms+19 , null },
-            { lang.atoms+41 , lang.rules+95 }
+            { lang.atoms+41 , lang.rules+52 }
            }
     },
     { 96 ,
            {
-            { lang.atoms+1 , lang.rules+95 },
-            { lang.atoms+4 , lang.rules+95 },
-            { lang.atoms+5 , lang.rules+95 },
-            { lang.atoms+6 , lang.rules+95 },
-            { lang.atoms+8 , lang.rules+95 },
-            { lang.atoms+11 , lang.rules+95 },
+            { lang.atoms+1 , lang.rules+52 },
+            { lang.atoms+4 , lang.rules+52 },
+            { lang.atoms+5 , lang.rules+52 },
+            { lang.atoms+6 , lang.rules+52 },
+            { lang.atoms+8 , lang.rules+52 },
+            { lang.atoms+11 , lang.rules+52 },
             { lang.atoms+19 , null },
-            { lang.atoms+41 , lang.rules+95 }
+            { lang.atoms+41 , lang.rules+52 }
            }
     },
     { 97 ,
            {
-            { lang.atoms+1 , lang.rules+95 },
-            { lang.atoms+4 , lang.rules+95 },
-            { lang.atoms+5 , lang.rules+95 },
-            { lang.atoms+6 , lang.rules+95 },
-            { lang.atoms+8 , lang.rules+95 },
-            { lang.atoms+11 , lang.rules+95 },
-            { lang.atoms+41 , lang.rules+95 }
+            { lang.atoms+1 , lang.rules+52 },
+            { lang.atoms+4 , lang.rules+52 },
+            { lang.atoms+5 , lang.rules+52 },
+            { lang.atoms+6 , lang.rules+52 },
+            { lang.atoms+8 , lang.rules+52 },
+            { lang.atoms+11 , lang.rules+52 },
+            { lang.atoms+41 , lang.rules+52 }
            }
     },
     { 98 ,
            {
-            { lang.atoms+1 , lang.rules+95 },
-            { lang.atoms+5 , lang.rules+95 },
-            { lang.atoms+6 , lang.rules+95 },
-            { lang.atoms+7 , lang.rules+95 },
-            { lang.atoms+8 , lang.rules+95 },
+            { lang.atoms+1 , lang.rules+52 },
+            { lang.atoms+5 , lang.rules+52 },
+            { lang.atoms+6 , lang.rules+52 },
+            { lang.atoms+7 , lang.rules+52 },
+            { lang.atoms+8 , lang.rules+52 },
             { lang.atoms+9 , null },
             { lang.atoms+10 , null },
-            { lang.atoms+11 , lang.rules+95 },
+            { lang.atoms+11 , lang.rules+52 },
             { lang.atoms+19 , null },
-            { lang.atoms+41 , lang.rules+95 },
-            { lang.atoms+42 , lang.rules+95 }
+            { lang.atoms+41 , lang.rules+52 },
+            { lang.atoms+42 , lang.rules+52 }
            }
     },
     { 99 ,
            {
-            { lang.atoms+1 , lang.rules+95 },
-            { lang.atoms+5 , lang.rules+95 },
-            { lang.atoms+6 , lang.rules+95 },
-            { lang.atoms+7 , lang.rules+95 },
-            { lang.atoms+8 , lang.rules+95 },
-            { lang.atoms+11 , lang.rules+95 },
+            { lang.atoms+1 , lang.rules+52 },
+            { lang.atoms+5 , lang.rules+52 },
+            { lang.atoms+6 , lang.rules+52 },
+            { lang.atoms+7 , lang.rules+52 },
+            { lang.atoms+8 , lang.rules+52 },
+            { lang.atoms+11 , lang.rules+52 },
             { lang.atoms+19 , null },
-            { lang.atoms+41 , lang.rules+95 },
-            { lang.atoms+42 , lang.rules+95 }
+            { lang.atoms+41 , lang.rules+52 },
+            { lang.atoms+42 , lang.rules+52 }
            }
     },
     { 100 ,
             {
-             { lang.atoms+1 , lang.rules+95 },
-             { lang.atoms+5 , lang.rules+95 },
-             { lang.atoms+6 , lang.rules+95 },
-             { lang.atoms+7 , lang.rules+95 },
-             { lang.atoms+8 , lang.rules+95 },
-             { lang.atoms+11 , lang.rules+95 },
-             { lang.atoms+41 , lang.rules+95 },
-             { lang.atoms+42 , lang.rules+95 }
+             { lang.atoms+1 , lang.rules+52 },
+             { lang.atoms+5 , lang.rules+52 },
+             { lang.atoms+6 , lang.rules+52 },
+             { lang.atoms+7 , lang.rules+52 },
+             { lang.atoms+8 , lang.rules+52 },
+             { lang.atoms+11 , lang.rules+52 },
+             { lang.atoms+41 , lang.rules+52 },
+             { lang.atoms+42 , lang.rules+52 }
             }
     },
     { 101 ,
             {
-             { lang.atoms+1 , lang.rules+95 },
-             { lang.atoms+5 , lang.rules+95 },
-             { lang.atoms+6 , lang.rules+95 },
-             { lang.atoms+8 , lang.rules+95 },
+             { lang.atoms+1 , lang.rules+52 },
+             { lang.atoms+5 , lang.rules+52 },
+             { lang.atoms+6 , lang.rules+52 },
+             { lang.atoms+8 , lang.rules+52 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+95 },
-             { lang.atoms+12 , lang.rules+95 },
+             { lang.atoms+11 , lang.rules+52 },
+             { lang.atoms+12 , lang.rules+52 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+95 }
+             { lang.atoms+41 , lang.rules+52 }
             }
     },
     { 102 ,
             {
-             { lang.atoms+1 , lang.rules+95 },
-             { lang.atoms+5 , lang.rules+95 },
-             { lang.atoms+6 , lang.rules+95 },
-             { lang.atoms+8 , lang.rules+95 },
+             { lang.atoms+1 , lang.rules+52 },
+             { lang.atoms+5 , lang.rules+52 },
+             { lang.atoms+6 , lang.rules+52 },
+             { lang.atoms+8 , lang.rules+52 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+95 },
+             { lang.atoms+11 , lang.rules+52 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+95 },
-             { lang.atoms+41 , lang.rules+95 }
+             { lang.atoms+20 , lang.rules+52 },
+             { lang.atoms+41 , lang.rules+52 }
             }
     },
     { 103 ,
             {
-             { lang.atoms+1 , lang.rules+95 },
-             { lang.atoms+5 , lang.rules+95 },
-             { lang.atoms+6 , lang.rules+95 },
-             { lang.atoms+8 , lang.rules+95 },
-             { lang.atoms+11 , lang.rules+95 },
-             { lang.atoms+12 , lang.rules+95 },
+             { lang.atoms+1 , lang.rules+52 },
+             { lang.atoms+5 , lang.rules+52 },
+             { lang.atoms+6 , lang.rules+52 },
+             { lang.atoms+8 , lang.rules+52 },
+             { lang.atoms+11 , lang.rules+52 },
+             { lang.atoms+12 , lang.rules+52 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+95 }
+             { lang.atoms+41 , lang.rules+52 }
             }
     },
     { 104 ,
             {
-             { lang.atoms+1 , lang.rules+95 },
-             { lang.atoms+5 , lang.rules+95 },
-             { lang.atoms+6 , lang.rules+95 },
-             { lang.atoms+8 , lang.rules+95 },
-             { lang.atoms+11 , lang.rules+95 },
-             { lang.atoms+12 , lang.rules+95 },
-             { lang.atoms+41 , lang.rules+95 }
+             { lang.atoms+1 , lang.rules+52 },
+             { lang.atoms+5 , lang.rules+52 },
+             { lang.atoms+6 , lang.rules+52 },
+             { lang.atoms+8 , lang.rules+52 },
+             { lang.atoms+11 , lang.rules+52 },
+             { lang.atoms+12 , lang.rules+52 },
+             { lang.atoms+41 , lang.rules+52 }
             }
     },
     { 105 ,
             {
-             { lang.atoms+1 , lang.rules+95 },
-             { lang.atoms+5 , lang.rules+95 },
-             { lang.atoms+6 , lang.rules+95 },
-             { lang.atoms+8 , lang.rules+95 },
-             { lang.atoms+11 , lang.rules+95 },
+             { lang.atoms+1 , lang.rules+52 },
+             { lang.atoms+5 , lang.rules+52 },
+             { lang.atoms+6 , lang.rules+52 },
+             { lang.atoms+8 , lang.rules+52 },
+             { lang.atoms+11 , lang.rules+52 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+95 },
-             { lang.atoms+41 , lang.rules+95 }
+             { lang.atoms+20 , lang.rules+52 },
+             { lang.atoms+41 , lang.rules+52 }
             }
     },
     { 106 ,
             {
-             { lang.atoms+1 , lang.rules+95 },
-             { lang.atoms+5 , lang.rules+95 },
-             { lang.atoms+6 , lang.rules+95 },
-             { lang.atoms+8 , lang.rules+95 },
-             { lang.atoms+11 , lang.rules+95 },
-             { lang.atoms+20 , lang.rules+95 },
-             { lang.atoms+41 , lang.rules+95 }
+             { lang.atoms+1 , lang.rules+52 },
+             { lang.atoms+5 , lang.rules+52 },
+             { lang.atoms+6 , lang.rules+52 },
+             { lang.atoms+8 , lang.rules+52 },
+             { lang.atoms+11 , lang.rules+52 },
+             { lang.atoms+20 , lang.rules+52 },
+             { lang.atoms+41 , lang.rules+52 }
             }
     },
     { 107 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+4 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+4 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+96 },
+             { lang.atoms+11 , lang.rules+53 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 108 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+4 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
-             { lang.atoms+11 , lang.rules+96 },
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+4 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
+             { lang.atoms+11 , lang.rules+53 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 109 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+4 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
-             { lang.atoms+11 , lang.rules+96 },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+4 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
+             { lang.atoms+11 , lang.rules+53 },
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 110 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+7 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+7 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+96 },
+             { lang.atoms+11 , lang.rules+53 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+96 },
-             { lang.atoms+42 , lang.rules+96 }
+             { lang.atoms+41 , lang.rules+53 },
+             { lang.atoms+42 , lang.rules+53 }
             }
     },
     { 111 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+7 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
-             { lang.atoms+11 , lang.rules+96 },
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+7 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
+             { lang.atoms+11 , lang.rules+53 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+96 },
-             { lang.atoms+42 , lang.rules+96 }
+             { lang.atoms+41 , lang.rules+53 },
+             { lang.atoms+42 , lang.rules+53 }
             }
     },
     { 112 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+7 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
-             { lang.atoms+11 , lang.rules+96 },
-             { lang.atoms+41 , lang.rules+96 },
-             { lang.atoms+42 , lang.rules+96 }
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+7 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
+             { lang.atoms+11 , lang.rules+53 },
+             { lang.atoms+41 , lang.rules+53 },
+             { lang.atoms+42 , lang.rules+53 }
             }
     },
     { 113 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+96 },
-             { lang.atoms+12 , lang.rules+96 },
+             { lang.atoms+11 , lang.rules+53 },
+             { lang.atoms+12 , lang.rules+53 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 114 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+96 },
+             { lang.atoms+11 , lang.rules+53 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+96 },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+20 , lang.rules+53 },
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 115 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
-             { lang.atoms+11 , lang.rules+96 },
-             { lang.atoms+12 , lang.rules+96 },
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
+             { lang.atoms+11 , lang.rules+53 },
+             { lang.atoms+12 , lang.rules+53 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 116 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
-             { lang.atoms+11 , lang.rules+96 },
-             { lang.atoms+12 , lang.rules+96 },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
+             { lang.atoms+11 , lang.rules+53 },
+             { lang.atoms+12 , lang.rules+53 },
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 117 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
-             { lang.atoms+11 , lang.rules+96 },
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
+             { lang.atoms+11 , lang.rules+53 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+96 },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+20 , lang.rules+53 },
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 118 ,
             {
-             { lang.atoms+1 , lang.rules+96 },
-             { lang.atoms+5 , lang.rules+96 },
-             { lang.atoms+6 , lang.rules+96 },
-             { lang.atoms+8 , lang.rules+96 },
-             { lang.atoms+11 , lang.rules+96 },
-             { lang.atoms+20 , lang.rules+96 },
-             { lang.atoms+41 , lang.rules+96 }
+             { lang.atoms+1 , lang.rules+53 },
+             { lang.atoms+5 , lang.rules+53 },
+             { lang.atoms+6 , lang.rules+53 },
+             { lang.atoms+8 , lang.rules+53 },
+             { lang.atoms+11 , lang.rules+53 },
+             { lang.atoms+20 , lang.rules+53 },
+             { lang.atoms+41 , lang.rules+53 }
             }
     },
     { 119 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+4 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+4 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+97 },
+             { lang.atoms+11 , lang.rules+54 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 120 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+4 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
-             { lang.atoms+11 , lang.rules+97 },
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+4 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
+             { lang.atoms+11 , lang.rules+54 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 121 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+4 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
-             { lang.atoms+11 , lang.rules+97 },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+4 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
+             { lang.atoms+11 , lang.rules+54 },
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 122 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+7 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+7 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+97 },
+             { lang.atoms+11 , lang.rules+54 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+97 },
-             { lang.atoms+42 , lang.rules+97 }
+             { lang.atoms+41 , lang.rules+54 },
+             { lang.atoms+42 , lang.rules+54 }
             }
     },
     { 123 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+7 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
-             { lang.atoms+11 , lang.rules+97 },
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+7 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
+             { lang.atoms+11 , lang.rules+54 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+97 },
-             { lang.atoms+42 , lang.rules+97 }
+             { lang.atoms+41 , lang.rules+54 },
+             { lang.atoms+42 , lang.rules+54 }
             }
     },
     { 124 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+7 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
-             { lang.atoms+11 , lang.rules+97 },
-             { lang.atoms+41 , lang.rules+97 },
-             { lang.atoms+42 , lang.rules+97 }
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+7 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
+             { lang.atoms+11 , lang.rules+54 },
+             { lang.atoms+41 , lang.rules+54 },
+             { lang.atoms+42 , lang.rules+54 }
             }
     },
     { 125 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+97 },
-             { lang.atoms+12 , lang.rules+97 },
+             { lang.atoms+11 , lang.rules+54 },
+             { lang.atoms+12 , lang.rules+54 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 126 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+97 },
+             { lang.atoms+11 , lang.rules+54 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+97 },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+20 , lang.rules+54 },
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 127 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
-             { lang.atoms+11 , lang.rules+97 },
-             { lang.atoms+12 , lang.rules+97 },
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
+             { lang.atoms+11 , lang.rules+54 },
+             { lang.atoms+12 , lang.rules+54 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 128 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
-             { lang.atoms+11 , lang.rules+97 },
-             { lang.atoms+12 , lang.rules+97 },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
+             { lang.atoms+11 , lang.rules+54 },
+             { lang.atoms+12 , lang.rules+54 },
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 129 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
-             { lang.atoms+11 , lang.rules+97 },
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
+             { lang.atoms+11 , lang.rules+54 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+97 },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+20 , lang.rules+54 },
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 130 ,
             {
-             { lang.atoms+1 , lang.rules+97 },
-             { lang.atoms+5 , lang.rules+97 },
-             { lang.atoms+6 , lang.rules+97 },
-             { lang.atoms+8 , lang.rules+97 },
-             { lang.atoms+11 , lang.rules+97 },
-             { lang.atoms+20 , lang.rules+97 },
-             { lang.atoms+41 , lang.rules+97 }
+             { lang.atoms+1 , lang.rules+54 },
+             { lang.atoms+5 , lang.rules+54 },
+             { lang.atoms+6 , lang.rules+54 },
+             { lang.atoms+8 , lang.rules+54 },
+             { lang.atoms+11 , lang.rules+54 },
+             { lang.atoms+20 , lang.rules+54 },
+             { lang.atoms+41 , lang.rules+54 }
             }
     },
     { 131 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+4 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+4 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+98 },
+             { lang.atoms+11 , lang.rules+55 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 132 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+4 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
-             { lang.atoms+11 , lang.rules+98 },
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+4 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
+             { lang.atoms+11 , lang.rules+55 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 133 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+4 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
-             { lang.atoms+11 , lang.rules+98 },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+4 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
+             { lang.atoms+11 , lang.rules+55 },
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 134 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+7 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+7 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+98 },
+             { lang.atoms+11 , lang.rules+55 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+98 },
-             { lang.atoms+42 , lang.rules+98 }
+             { lang.atoms+41 , lang.rules+55 },
+             { lang.atoms+42 , lang.rules+55 }
             }
     },
     { 135 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+7 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
-             { lang.atoms+11 , lang.rules+98 },
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+7 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
+             { lang.atoms+11 , lang.rules+55 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+98 },
-             { lang.atoms+42 , lang.rules+98 }
+             { lang.atoms+41 , lang.rules+55 },
+             { lang.atoms+42 , lang.rules+55 }
             }
     },
     { 136 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+7 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
-             { lang.atoms+11 , lang.rules+98 },
-             { lang.atoms+41 , lang.rules+98 },
-             { lang.atoms+42 , lang.rules+98 }
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+7 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
+             { lang.atoms+11 , lang.rules+55 },
+             { lang.atoms+41 , lang.rules+55 },
+             { lang.atoms+42 , lang.rules+55 }
             }
     },
     { 137 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+98 },
-             { lang.atoms+12 , lang.rules+98 },
+             { lang.atoms+11 , lang.rules+55 },
+             { lang.atoms+12 , lang.rules+55 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 138 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+98 },
+             { lang.atoms+11 , lang.rules+55 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+98 },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+20 , lang.rules+55 },
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 139 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
-             { lang.atoms+11 , lang.rules+98 },
-             { lang.atoms+12 , lang.rules+98 },
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
+             { lang.atoms+11 , lang.rules+55 },
+             { lang.atoms+12 , lang.rules+55 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 140 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
-             { lang.atoms+11 , lang.rules+98 },
-             { lang.atoms+12 , lang.rules+98 },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
+             { lang.atoms+11 , lang.rules+55 },
+             { lang.atoms+12 , lang.rules+55 },
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 141 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
-             { lang.atoms+11 , lang.rules+98 },
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
+             { lang.atoms+11 , lang.rules+55 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+98 },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+20 , lang.rules+55 },
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 142 ,
             {
-             { lang.atoms+1 , lang.rules+98 },
-             { lang.atoms+5 , lang.rules+98 },
-             { lang.atoms+6 , lang.rules+98 },
-             { lang.atoms+8 , lang.rules+98 },
-             { lang.atoms+11 , lang.rules+98 },
-             { lang.atoms+20 , lang.rules+98 },
-             { lang.atoms+41 , lang.rules+98 }
+             { lang.atoms+1 , lang.rules+55 },
+             { lang.atoms+5 , lang.rules+55 },
+             { lang.atoms+6 , lang.rules+55 },
+             { lang.atoms+8 , lang.rules+55 },
+             { lang.atoms+11 , lang.rules+55 },
+             { lang.atoms+20 , lang.rules+55 },
+             { lang.atoms+41 , lang.rules+55 }
             }
     },
     { 143 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+4 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+4 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+99 },
+             { lang.atoms+11 , lang.rules+56 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 144 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+4 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
-             { lang.atoms+11 , lang.rules+99 },
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+4 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
+             { lang.atoms+11 , lang.rules+56 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 145 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+4 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
-             { lang.atoms+11 , lang.rules+99 },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+4 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
+             { lang.atoms+11 , lang.rules+56 },
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 146 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+7 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+7 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+99 },
+             { lang.atoms+11 , lang.rules+56 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+99 },
-             { lang.atoms+42 , lang.rules+99 }
+             { lang.atoms+41 , lang.rules+56 },
+             { lang.atoms+42 , lang.rules+56 }
             }
     },
     { 147 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+7 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
-             { lang.atoms+11 , lang.rules+99 },
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+7 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
+             { lang.atoms+11 , lang.rules+56 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+99 },
-             { lang.atoms+42 , lang.rules+99 }
+             { lang.atoms+41 , lang.rules+56 },
+             { lang.atoms+42 , lang.rules+56 }
             }
     },
     { 148 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+7 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
-             { lang.atoms+11 , lang.rules+99 },
-             { lang.atoms+41 , lang.rules+99 },
-             { lang.atoms+42 , lang.rules+99 }
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+7 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
+             { lang.atoms+11 , lang.rules+56 },
+             { lang.atoms+41 , lang.rules+56 },
+             { lang.atoms+42 , lang.rules+56 }
             }
     },
     { 149 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+99 },
-             { lang.atoms+12 , lang.rules+99 },
+             { lang.atoms+11 , lang.rules+56 },
+             { lang.atoms+12 , lang.rules+56 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 150 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+99 },
+             { lang.atoms+11 , lang.rules+56 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+99 },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+20 , lang.rules+56 },
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 151 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
-             { lang.atoms+11 , lang.rules+99 },
-             { lang.atoms+12 , lang.rules+99 },
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
+             { lang.atoms+11 , lang.rules+56 },
+             { lang.atoms+12 , lang.rules+56 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 152 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
-             { lang.atoms+11 , lang.rules+99 },
-             { lang.atoms+12 , lang.rules+99 },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
+             { lang.atoms+11 , lang.rules+56 },
+             { lang.atoms+12 , lang.rules+56 },
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 153 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
-             { lang.atoms+11 , lang.rules+99 },
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
+             { lang.atoms+11 , lang.rules+56 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+99 },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+20 , lang.rules+56 },
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 154 ,
             {
-             { lang.atoms+1 , lang.rules+99 },
-             { lang.atoms+5 , lang.rules+99 },
-             { lang.atoms+6 , lang.rules+99 },
-             { lang.atoms+8 , lang.rules+99 },
-             { lang.atoms+11 , lang.rules+99 },
-             { lang.atoms+20 , lang.rules+99 },
-             { lang.atoms+41 , lang.rules+99 }
+             { lang.atoms+1 , lang.rules+56 },
+             { lang.atoms+5 , lang.rules+56 },
+             { lang.atoms+6 , lang.rules+56 },
+             { lang.atoms+8 , lang.rules+56 },
+             { lang.atoms+11 , lang.rules+56 },
+             { lang.atoms+20 , lang.rules+56 },
+             { lang.atoms+41 , lang.rules+56 }
             }
     },
     { 155 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+4 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+4 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+100 },
+             { lang.atoms+11 , lang.rules+57 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 156 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+4 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
-             { lang.atoms+11 , lang.rules+100 },
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+4 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
+             { lang.atoms+11 , lang.rules+57 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 157 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+4 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
-             { lang.atoms+11 , lang.rules+100 },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+4 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
+             { lang.atoms+11 , lang.rules+57 },
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 158 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+7 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+7 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+100 },
+             { lang.atoms+11 , lang.rules+57 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+100 },
-             { lang.atoms+42 , lang.rules+100 }
+             { lang.atoms+41 , lang.rules+57 },
+             { lang.atoms+42 , lang.rules+57 }
             }
     },
     { 159 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+7 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
-             { lang.atoms+11 , lang.rules+100 },
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+7 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
+             { lang.atoms+11 , lang.rules+57 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+100 },
-             { lang.atoms+42 , lang.rules+100 }
+             { lang.atoms+41 , lang.rules+57 },
+             { lang.atoms+42 , lang.rules+57 }
             }
     },
     { 160 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+7 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
-             { lang.atoms+11 , lang.rules+100 },
-             { lang.atoms+41 , lang.rules+100 },
-             { lang.atoms+42 , lang.rules+100 }
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+7 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
+             { lang.atoms+11 , lang.rules+57 },
+             { lang.atoms+41 , lang.rules+57 },
+             { lang.atoms+42 , lang.rules+57 }
             }
     },
     { 161 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+100 },
-             { lang.atoms+12 , lang.rules+100 },
+             { lang.atoms+11 , lang.rules+57 },
+             { lang.atoms+12 , lang.rules+57 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 162 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+100 },
+             { lang.atoms+11 , lang.rules+57 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+100 },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+20 , lang.rules+57 },
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 163 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
-             { lang.atoms+11 , lang.rules+100 },
-             { lang.atoms+12 , lang.rules+100 },
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
+             { lang.atoms+11 , lang.rules+57 },
+             { lang.atoms+12 , lang.rules+57 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 164 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
-             { lang.atoms+11 , lang.rules+100 },
-             { lang.atoms+12 , lang.rules+100 },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
+             { lang.atoms+11 , lang.rules+57 },
+             { lang.atoms+12 , lang.rules+57 },
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 165 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
-             { lang.atoms+11 , lang.rules+100 },
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
+             { lang.atoms+11 , lang.rules+57 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+100 },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+20 , lang.rules+57 },
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 166 ,
             {
-             { lang.atoms+1 , lang.rules+100 },
-             { lang.atoms+5 , lang.rules+100 },
-             { lang.atoms+6 , lang.rules+100 },
-             { lang.atoms+8 , lang.rules+100 },
-             { lang.atoms+11 , lang.rules+100 },
-             { lang.atoms+20 , lang.rules+100 },
-             { lang.atoms+41 , lang.rules+100 }
+             { lang.atoms+1 , lang.rules+57 },
+             { lang.atoms+5 , lang.rules+57 },
+             { lang.atoms+6 , lang.rules+57 },
+             { lang.atoms+8 , lang.rules+57 },
+             { lang.atoms+11 , lang.rules+57 },
+             { lang.atoms+20 , lang.rules+57 },
+             { lang.atoms+41 , lang.rules+57 }
             }
     },
     { 167 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+4 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+4 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+101 },
+             { lang.atoms+11 , lang.rules+58 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 168 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+4 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
-             { lang.atoms+11 , lang.rules+101 },
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+4 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
+             { lang.atoms+11 , lang.rules+58 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 169 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+4 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
-             { lang.atoms+11 , lang.rules+101 },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+4 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
+             { lang.atoms+11 , lang.rules+58 },
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 170 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+7 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+7 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+101 },
+             { lang.atoms+11 , lang.rules+58 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+101 },
-             { lang.atoms+42 , lang.rules+101 }
+             { lang.atoms+41 , lang.rules+58 },
+             { lang.atoms+42 , lang.rules+58 }
             }
     },
     { 171 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+7 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
-             { lang.atoms+11 , lang.rules+101 },
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+7 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
+             { lang.atoms+11 , lang.rules+58 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+101 },
-             { lang.atoms+42 , lang.rules+101 }
+             { lang.atoms+41 , lang.rules+58 },
+             { lang.atoms+42 , lang.rules+58 }
             }
     },
     { 172 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+7 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
-             { lang.atoms+11 , lang.rules+101 },
-             { lang.atoms+41 , lang.rules+101 },
-             { lang.atoms+42 , lang.rules+101 }
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+7 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
+             { lang.atoms+11 , lang.rules+58 },
+             { lang.atoms+41 , lang.rules+58 },
+             { lang.atoms+42 , lang.rules+58 }
             }
     },
     { 173 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+101 },
-             { lang.atoms+12 , lang.rules+101 },
+             { lang.atoms+11 , lang.rules+58 },
+             { lang.atoms+12 , lang.rules+58 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 174 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
-             { lang.atoms+11 , lang.rules+101 },
+             { lang.atoms+11 , lang.rules+58 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+101 },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+20 , lang.rules+58 },
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 175 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
-             { lang.atoms+11 , lang.rules+101 },
-             { lang.atoms+12 , lang.rules+101 },
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
+             { lang.atoms+11 , lang.rules+58 },
+             { lang.atoms+12 , lang.rules+58 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 176 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
-             { lang.atoms+11 , lang.rules+101 },
-             { lang.atoms+12 , lang.rules+101 },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
+             { lang.atoms+11 , lang.rules+58 },
+             { lang.atoms+12 , lang.rules+58 },
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 177 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
-             { lang.atoms+11 , lang.rules+101 },
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
+             { lang.atoms+11 , lang.rules+58 },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+101 },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+20 , lang.rules+58 },
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 178 ,
             {
-             { lang.atoms+1 , lang.rules+101 },
-             { lang.atoms+5 , lang.rules+101 },
-             { lang.atoms+6 , lang.rules+101 },
-             { lang.atoms+8 , lang.rules+101 },
-             { lang.atoms+11 , lang.rules+101 },
-             { lang.atoms+20 , lang.rules+101 },
-             { lang.atoms+41 , lang.rules+101 }
+             { lang.atoms+1 , lang.rules+58 },
+             { lang.atoms+5 , lang.rules+58 },
+             { lang.atoms+6 , lang.rules+58 },
+             { lang.atoms+8 , lang.rules+58 },
+             { lang.atoms+11 , lang.rules+58 },
+             { lang.atoms+20 , lang.rules+58 },
+             { lang.atoms+41 , lang.rules+58 }
             }
     },
     { 179 ,
             {
-             { lang.atoms+1 , lang.rules+116 },
-             { lang.atoms+4 , lang.rules+116 },
-             { lang.atoms+5 , lang.rules+116 },
-             { lang.atoms+6 , lang.rules+116 },
-             { lang.atoms+8 , lang.rules+116 },
-             { lang.atoms+9 , lang.rules+116 },
-             { lang.atoms+10 , lang.rules+116 },
-             { lang.atoms+11 , lang.rules+116 },
-             { lang.atoms+19 , lang.rules+116 },
-             { lang.atoms+41 , lang.rules+116 }
+             { lang.atoms+1 , lang.rules+73 },
+             { lang.atoms+4 , lang.rules+73 },
+             { lang.atoms+5 , lang.rules+73 },
+             { lang.atoms+6 , lang.rules+73 },
+             { lang.atoms+8 , lang.rules+73 },
+             { lang.atoms+9 , lang.rules+73 },
+             { lang.atoms+10 , lang.rules+73 },
+             { lang.atoms+11 , lang.rules+73 },
+             { lang.atoms+19 , lang.rules+73 },
+             { lang.atoms+41 , lang.rules+73 }
             }
     },
     { 180 ,
             {
-             { lang.atoms+1 , lang.rules+116 },
-             { lang.atoms+5 , lang.rules+116 },
-             { lang.atoms+6 , lang.rules+116 },
-             { lang.atoms+7 , lang.rules+116 },
-             { lang.atoms+8 , lang.rules+116 },
-             { lang.atoms+9 , lang.rules+116 },
-             { lang.atoms+10 , lang.rules+116 },
-             { lang.atoms+11 , lang.rules+116 },
-             { lang.atoms+19 , lang.rules+116 },
-             { lang.atoms+41 , lang.rules+116 },
-             { lang.atoms+42 , lang.rules+116 }
+             { lang.atoms+1 , lang.rules+73 },
+             { lang.atoms+5 , lang.rules+73 },
+             { lang.atoms+6 , lang.rules+73 },
+             { lang.atoms+7 , lang.rules+73 },
+             { lang.atoms+8 , lang.rules+73 },
+             { lang.atoms+9 , lang.rules+73 },
+             { lang.atoms+10 , lang.rules+73 },
+             { lang.atoms+11 , lang.rules+73 },
+             { lang.atoms+19 , lang.rules+73 },
+             { lang.atoms+41 , lang.rules+73 },
+             { lang.atoms+42 , lang.rules+73 }
             }
     },
     { 181 ,
             {
-             { lang.atoms+1 , lang.rules+116 },
-             { lang.atoms+5 , lang.rules+116 },
-             { lang.atoms+6 , lang.rules+116 },
-             { lang.atoms+8 , lang.rules+116 },
-             { lang.atoms+9 , lang.rules+116 },
-             { lang.atoms+10 , lang.rules+116 },
-             { lang.atoms+11 , lang.rules+116 },
-             { lang.atoms+12 , lang.rules+116 },
-             { lang.atoms+19 , lang.rules+116 },
-             { lang.atoms+41 , lang.rules+116 }
+             { lang.atoms+1 , lang.rules+73 },
+             { lang.atoms+5 , lang.rules+73 },
+             { lang.atoms+6 , lang.rules+73 },
+             { lang.atoms+8 , lang.rules+73 },
+             { lang.atoms+9 , lang.rules+73 },
+             { lang.atoms+10 , lang.rules+73 },
+             { lang.atoms+11 , lang.rules+73 },
+             { lang.atoms+12 , lang.rules+73 },
+             { lang.atoms+19 , lang.rules+73 },
+             { lang.atoms+41 , lang.rules+73 }
             }
     },
     { 182 ,
             {
-             { lang.atoms+1 , lang.rules+116 },
-             { lang.atoms+5 , lang.rules+116 },
-             { lang.atoms+6 , lang.rules+116 },
-             { lang.atoms+8 , lang.rules+116 },
-             { lang.atoms+9 , lang.rules+116 },
-             { lang.atoms+10 , lang.rules+116 },
-             { lang.atoms+11 , lang.rules+116 },
-             { lang.atoms+19 , lang.rules+116 },
-             { lang.atoms+20 , lang.rules+116 },
-             { lang.atoms+41 , lang.rules+116 }
+             { lang.atoms+1 , lang.rules+73 },
+             { lang.atoms+5 , lang.rules+73 },
+             { lang.atoms+6 , lang.rules+73 },
+             { lang.atoms+8 , lang.rules+73 },
+             { lang.atoms+9 , lang.rules+73 },
+             { lang.atoms+10 , lang.rules+73 },
+             { lang.atoms+11 , lang.rules+73 },
+             { lang.atoms+19 , lang.rules+73 },
+             { lang.atoms+20 , lang.rules+73 },
+             { lang.atoms+41 , lang.rules+73 }
             }
     },
     { 183 ,
             {
-             { lang.atoms+1 , lang.rules+117 },
-             { lang.atoms+4 , lang.rules+117 },
-             { lang.atoms+5 , lang.rules+117 },
-             { lang.atoms+6 , lang.rules+117 },
-             { lang.atoms+8 , lang.rules+117 },
-             { lang.atoms+9 , lang.rules+117 },
-             { lang.atoms+10 , lang.rules+117 },
-             { lang.atoms+11 , lang.rules+117 },
-             { lang.atoms+19 , lang.rules+117 },
-             { lang.atoms+41 , lang.rules+117 }
+             { lang.atoms+1 , lang.rules+74 },
+             { lang.atoms+4 , lang.rules+74 },
+             { lang.atoms+5 , lang.rules+74 },
+             { lang.atoms+6 , lang.rules+74 },
+             { lang.atoms+8 , lang.rules+74 },
+             { lang.atoms+9 , lang.rules+74 },
+             { lang.atoms+10 , lang.rules+74 },
+             { lang.atoms+11 , lang.rules+74 },
+             { lang.atoms+19 , lang.rules+74 },
+             { lang.atoms+41 , lang.rules+74 }
             }
     },
     { 184 ,
             {
-             { lang.atoms+1 , lang.rules+117 },
-             { lang.atoms+5 , lang.rules+117 },
-             { lang.atoms+6 , lang.rules+117 },
-             { lang.atoms+7 , lang.rules+117 },
-             { lang.atoms+8 , lang.rules+117 },
-             { lang.atoms+9 , lang.rules+117 },
-             { lang.atoms+10 , lang.rules+117 },
-             { lang.atoms+11 , lang.rules+117 },
-             { lang.atoms+19 , lang.rules+117 },
-             { lang.atoms+41 , lang.rules+117 },
-             { lang.atoms+42 , lang.rules+117 }
+             { lang.atoms+1 , lang.rules+74 },
+             { lang.atoms+5 , lang.rules+74 },
+             { lang.atoms+6 , lang.rules+74 },
+             { lang.atoms+7 , lang.rules+74 },
+             { lang.atoms+8 , lang.rules+74 },
+             { lang.atoms+9 , lang.rules+74 },
+             { lang.atoms+10 , lang.rules+74 },
+             { lang.atoms+11 , lang.rules+74 },
+             { lang.atoms+19 , lang.rules+74 },
+             { lang.atoms+41 , lang.rules+74 },
+             { lang.atoms+42 , lang.rules+74 }
             }
     },
     { 185 ,
             {
-             { lang.atoms+1 , lang.rules+117 },
-             { lang.atoms+5 , lang.rules+117 },
-             { lang.atoms+6 , lang.rules+117 },
-             { lang.atoms+8 , lang.rules+117 },
-             { lang.atoms+9 , lang.rules+117 },
-             { lang.atoms+10 , lang.rules+117 },
-             { lang.atoms+11 , lang.rules+117 },
-             { lang.atoms+12 , lang.rules+117 },
-             { lang.atoms+19 , lang.rules+117 },
-             { lang.atoms+41 , lang.rules+117 }
+             { lang.atoms+1 , lang.rules+74 },
+             { lang.atoms+5 , lang.rules+74 },
+             { lang.atoms+6 , lang.rules+74 },
+             { lang.atoms+8 , lang.rules+74 },
+             { lang.atoms+9 , lang.rules+74 },
+             { lang.atoms+10 , lang.rules+74 },
+             { lang.atoms+11 , lang.rules+74 },
+             { lang.atoms+12 , lang.rules+74 },
+             { lang.atoms+19 , lang.rules+74 },
+             { lang.atoms+41 , lang.rules+74 }
             }
     },
     { 186 ,
             {
-             { lang.atoms+1 , lang.rules+117 },
-             { lang.atoms+5 , lang.rules+117 },
-             { lang.atoms+6 , lang.rules+117 },
-             { lang.atoms+8 , lang.rules+117 },
-             { lang.atoms+9 , lang.rules+117 },
-             { lang.atoms+10 , lang.rules+117 },
-             { lang.atoms+11 , lang.rules+117 },
-             { lang.atoms+19 , lang.rules+117 },
-             { lang.atoms+20 , lang.rules+117 },
-             { lang.atoms+41 , lang.rules+117 }
+             { lang.atoms+1 , lang.rules+74 },
+             { lang.atoms+5 , lang.rules+74 },
+             { lang.atoms+6 , lang.rules+74 },
+             { lang.atoms+8 , lang.rules+74 },
+             { lang.atoms+9 , lang.rules+74 },
+             { lang.atoms+10 , lang.rules+74 },
+             { lang.atoms+11 , lang.rules+74 },
+             { lang.atoms+19 , lang.rules+74 },
+             { lang.atoms+20 , lang.rules+74 },
+             { lang.atoms+41 , lang.rules+74 }
             }
     },
     { 187 ,
             {
-             { lang.atoms+1 , lang.rules+118 },
-             { lang.atoms+4 , lang.rules+118 },
-             { lang.atoms+5 , lang.rules+118 },
-             { lang.atoms+6 , lang.rules+118 },
-             { lang.atoms+8 , lang.rules+118 },
-             { lang.atoms+9 , lang.rules+118 },
-             { lang.atoms+10 , lang.rules+118 },
-             { lang.atoms+11 , lang.rules+118 },
-             { lang.atoms+19 , lang.rules+118 },
-             { lang.atoms+41 , lang.rules+118 }
+             { lang.atoms+1 , lang.rules+75 },
+             { lang.atoms+4 , lang.rules+75 },
+             { lang.atoms+5 , lang.rules+75 },
+             { lang.atoms+6 , lang.rules+75 },
+             { lang.atoms+8 , lang.rules+75 },
+             { lang.atoms+9 , lang.rules+75 },
+             { lang.atoms+10 , lang.rules+75 },
+             { lang.atoms+11 , lang.rules+75 },
+             { lang.atoms+19 , lang.rules+75 },
+             { lang.atoms+41 , lang.rules+75 }
             }
     },
     { 188 ,
             {
-             { lang.atoms+1 , lang.rules+118 },
-             { lang.atoms+5 , lang.rules+118 },
-             { lang.atoms+6 , lang.rules+118 },
-             { lang.atoms+7 , lang.rules+118 },
-             { lang.atoms+8 , lang.rules+118 },
-             { lang.atoms+9 , lang.rules+118 },
-             { lang.atoms+10 , lang.rules+118 },
-             { lang.atoms+11 , lang.rules+118 },
-             { lang.atoms+19 , lang.rules+118 },
-             { lang.atoms+41 , lang.rules+118 },
-             { lang.atoms+42 , lang.rules+118 }
+             { lang.atoms+1 , lang.rules+75 },
+             { lang.atoms+5 , lang.rules+75 },
+             { lang.atoms+6 , lang.rules+75 },
+             { lang.atoms+7 , lang.rules+75 },
+             { lang.atoms+8 , lang.rules+75 },
+             { lang.atoms+9 , lang.rules+75 },
+             { lang.atoms+10 , lang.rules+75 },
+             { lang.atoms+11 , lang.rules+75 },
+             { lang.atoms+19 , lang.rules+75 },
+             { lang.atoms+41 , lang.rules+75 },
+             { lang.atoms+42 , lang.rules+75 }
             }
     },
     { 189 ,
             {
-             { lang.atoms+1 , lang.rules+118 },
-             { lang.atoms+5 , lang.rules+118 },
-             { lang.atoms+6 , lang.rules+118 },
-             { lang.atoms+8 , lang.rules+118 },
-             { lang.atoms+9 , lang.rules+118 },
-             { lang.atoms+10 , lang.rules+118 },
-             { lang.atoms+11 , lang.rules+118 },
-             { lang.atoms+12 , lang.rules+118 },
-             { lang.atoms+19 , lang.rules+118 },
-             { lang.atoms+41 , lang.rules+118 }
+             { lang.atoms+1 , lang.rules+75 },
+             { lang.atoms+5 , lang.rules+75 },
+             { lang.atoms+6 , lang.rules+75 },
+             { lang.atoms+8 , lang.rules+75 },
+             { lang.atoms+9 , lang.rules+75 },
+             { lang.atoms+10 , lang.rules+75 },
+             { lang.atoms+11 , lang.rules+75 },
+             { lang.atoms+12 , lang.rules+75 },
+             { lang.atoms+19 , lang.rules+75 },
+             { lang.atoms+41 , lang.rules+75 }
             }
     },
     { 190 ,
             {
-             { lang.atoms+1 , lang.rules+118 },
-             { lang.atoms+5 , lang.rules+118 },
-             { lang.atoms+6 , lang.rules+118 },
-             { lang.atoms+8 , lang.rules+118 },
-             { lang.atoms+9 , lang.rules+118 },
-             { lang.atoms+10 , lang.rules+118 },
-             { lang.atoms+11 , lang.rules+118 },
-             { lang.atoms+19 , lang.rules+118 },
-             { lang.atoms+20 , lang.rules+118 },
-             { lang.atoms+41 , lang.rules+118 }
+             { lang.atoms+1 , lang.rules+75 },
+             { lang.atoms+5 , lang.rules+75 },
+             { lang.atoms+6 , lang.rules+75 },
+             { lang.atoms+8 , lang.rules+75 },
+             { lang.atoms+9 , lang.rules+75 },
+             { lang.atoms+10 , lang.rules+75 },
+             { lang.atoms+11 , lang.rules+75 },
+             { lang.atoms+19 , lang.rules+75 },
+             { lang.atoms+20 , lang.rules+75 },
+             { lang.atoms+41 , lang.rules+75 }
             }
     },
     { 191 ,
             {
              { lang.atoms+1 , null },
-             { lang.atoms+4 , lang.rules+102 },
+             { lang.atoms+4 , lang.rules+59 },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 192 ,
             {
              { lang.atoms+1 , null },
-             { lang.atoms+4 , lang.rules+102 },
+             { lang.atoms+4 , lang.rules+59 },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 193 ,
             {
              { lang.atoms+1 , null },
-             { lang.atoms+4 , lang.rules+102 },
+             { lang.atoms+4 , lang.rules+59 },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+11 , null },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 194 ,
             {
              { lang.atoms+1 , null },
-             { lang.atoms+4 , lang.rules+103 },
+             { lang.atoms+4 , lang.rules+60 },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 195 ,
             {
              { lang.atoms+1 , null },
-             { lang.atoms+4 , lang.rules+103 },
+             { lang.atoms+4 , lang.rules+60 },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 196 ,
             {
              { lang.atoms+1 , null },
-             { lang.atoms+4 , lang.rules+103 },
+             { lang.atoms+4 , lang.rules+60 },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+11 , null },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 197 ,
@@ -9741,228 +12111,228 @@ Lang lang=
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+7 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+7 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+102 },
-             { lang.atoms+42 , lang.rules+102 }
+             { lang.atoms+41 , lang.rules+59 },
+             { lang.atoms+42 , lang.rules+59 }
             }
     },
     { 201 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+7 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+7 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+102 },
-             { lang.atoms+42 , lang.rules+102 }
+             { lang.atoms+41 , lang.rules+59 },
+             { lang.atoms+42 , lang.rules+59 }
             }
     },
     { 202 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+7 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+7 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+11 , null },
-             { lang.atoms+41 , lang.rules+102 },
-             { lang.atoms+42 , lang.rules+102 }
+             { lang.atoms+41 , lang.rules+59 },
+             { lang.atoms+42 , lang.rules+59 }
             }
     },
     { 203 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
-             { lang.atoms+12 , lang.rules+102 },
+             { lang.atoms+12 , lang.rules+59 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 204 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+102 },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+20 , lang.rules+59 },
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 205 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+11 , null },
-             { lang.atoms+12 , lang.rules+102 },
+             { lang.atoms+12 , lang.rules+59 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 206 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+11 , null },
-             { lang.atoms+12 , lang.rules+102 },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+12 , lang.rules+59 },
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 207 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+102 },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+20 , lang.rules+59 },
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 208 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+102 },
-             { lang.atoms+8 , lang.rules+102 },
+             { lang.atoms+6 , lang.rules+59 },
+             { lang.atoms+8 , lang.rules+59 },
              { lang.atoms+11 , null },
-             { lang.atoms+20 , lang.rules+102 },
-             { lang.atoms+41 , lang.rules+102 }
+             { lang.atoms+20 , lang.rules+59 },
+             { lang.atoms+41 , lang.rules+59 }
             }
     },
     { 209 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+7 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+7 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+103 },
-             { lang.atoms+42 , lang.rules+103 }
+             { lang.atoms+41 , lang.rules+60 },
+             { lang.atoms+42 , lang.rules+60 }
             }
     },
     { 210 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+7 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+7 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+103 },
-             { lang.atoms+42 , lang.rules+103 }
+             { lang.atoms+41 , lang.rules+60 },
+             { lang.atoms+42 , lang.rules+60 }
             }
     },
     { 211 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+7 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+7 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+11 , null },
-             { lang.atoms+41 , lang.rules+103 },
-             { lang.atoms+42 , lang.rules+103 }
+             { lang.atoms+41 , lang.rules+60 },
+             { lang.atoms+42 , lang.rules+60 }
             }
     },
     { 212 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
-             { lang.atoms+12 , lang.rules+103 },
+             { lang.atoms+12 , lang.rules+60 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 213 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+103 },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+20 , lang.rules+60 },
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 214 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+11 , null },
-             { lang.atoms+12 , lang.rules+103 },
+             { lang.atoms+12 , lang.rules+60 },
              { lang.atoms+19 , null },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 215 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+11 , null },
-             { lang.atoms+12 , lang.rules+103 },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+12 , lang.rules+60 },
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 216 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
-             { lang.atoms+20 , lang.rules+103 },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+20 , lang.rules+60 },
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 217 ,
             {
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
-             { lang.atoms+6 , lang.rules+103 },
-             { lang.atoms+8 , lang.rules+103 },
+             { lang.atoms+6 , lang.rules+60 },
+             { lang.atoms+8 , lang.rules+60 },
              { lang.atoms+11 , null },
-             { lang.atoms+20 , lang.rules+103 },
-             { lang.atoms+41 , lang.rules+103 }
+             { lang.atoms+20 , lang.rules+60 },
+             { lang.atoms+41 , lang.rules+60 }
             }
     },
     { 218 ,
@@ -9970,14 +12340,14 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+109 },
+             { lang.atoms+7 , lang.rules+66 },
              { lang.atoms+8 , null },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+109 }
+             { lang.atoms+42 , lang.rules+66 }
             }
     },
     { 219 ,
@@ -9985,12 +12355,12 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+109 },
+             { lang.atoms+7 , lang.rules+66 },
              { lang.atoms+8 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+109 }
+             { lang.atoms+42 , lang.rules+66 }
             }
     },
     { 220 ,
@@ -9998,11 +12368,11 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+109 },
+             { lang.atoms+7 , lang.rules+66 },
              { lang.atoms+8 , null },
              { lang.atoms+11 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+109 }
+             { lang.atoms+42 , lang.rules+66 }
             }
     },
     { 221 ,
@@ -10010,14 +12380,14 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+110 },
+             { lang.atoms+7 , lang.rules+67 },
              { lang.atoms+8 , null },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+110 }
+             { lang.atoms+42 , lang.rules+67 }
             }
     },
     { 222 ,
@@ -10025,12 +12395,12 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+110 },
+             { lang.atoms+7 , lang.rules+67 },
              { lang.atoms+8 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+110 }
+             { lang.atoms+42 , lang.rules+67 }
             }
     },
     { 223 ,
@@ -10038,11 +12408,11 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+110 },
+             { lang.atoms+7 , lang.rules+67 },
              { lang.atoms+8 , null },
              { lang.atoms+11 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+110 }
+             { lang.atoms+42 , lang.rules+67 }
             }
     },
     { 224 ,
@@ -10050,14 +12420,14 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+111 },
+             { lang.atoms+7 , lang.rules+68 },
              { lang.atoms+8 , null },
              { lang.atoms+9 , null },
              { lang.atoms+10 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+111 }
+             { lang.atoms+42 , lang.rules+68 }
             }
     },
     { 225 ,
@@ -10065,12 +12435,12 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+111 },
+             { lang.atoms+7 , lang.rules+68 },
              { lang.atoms+8 , null },
              { lang.atoms+11 , null },
              { lang.atoms+19 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+111 }
+             { lang.atoms+42 , lang.rules+68 }
             }
     },
     { 226 ,
@@ -10078,11 +12448,11 @@ Lang lang=
              { lang.atoms+1 , null },
              { lang.atoms+5 , null },
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+111 },
+             { lang.atoms+7 , lang.rules+68 },
              { lang.atoms+8 , null },
              { lang.atoms+11 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+111 }
+             { lang.atoms+42 , lang.rules+68 }
             }
     },
     { 227 ,
@@ -10161,67 +12531,67 @@ Lang lang=
     },
     { 233 ,
             {
-             { lang.atoms+3 , lang.rules+59 }
+             { lang.atoms+3 , lang.rules+16 }
             }
     },
     { 234 ,
             {
-             { lang.atoms+3 , lang.rules+60 }
+             { lang.atoms+3 , lang.rules+17 }
             }
     },
     { 235 ,
             {
-             { lang.atoms+3 , lang.rules+61 }
+             { lang.atoms+3 , lang.rules+18 }
             }
     },
     { 236 ,
             {
-             { lang.atoms+3 , lang.rules+62 }
+             { lang.atoms+3 , lang.rules+19 }
             }
     },
     { 237 ,
             {
-             { lang.atoms+3 , lang.rules+63 }
+             { lang.atoms+3 , lang.rules+20 }
             }
     },
     { 238 ,
             {
-             { lang.atoms+3 , lang.rules+64 }
+             { lang.atoms+3 , lang.rules+21 }
             }
     },
     { 239 ,
             {
-             { lang.atoms+3 , lang.rules+65 }
+             { lang.atoms+3 , lang.rules+22 }
             }
     },
     { 240 ,
             {
-             { lang.atoms+3 , lang.rules+66 }
+             { lang.atoms+3 , lang.rules+23 }
             }
     },
     { 241 ,
             {
-             { lang.atoms+3 , lang.rules+67 }
+             { lang.atoms+3 , lang.rules+24 }
             }
     },
     { 242 ,
             {
-             { lang.atoms+3 , lang.rules+68 }
+             { lang.atoms+3 , lang.rules+25 }
             }
     },
     { 243 ,
             {
-             { lang.atoms+3 , lang.rules+69 }
+             { lang.atoms+3 , lang.rules+26 }
             }
     },
     { 244 ,
             {
-             { lang.atoms+3 , lang.rules+70 }
+             { lang.atoms+3 , lang.rules+27 }
             }
     },
     { 245 ,
             {
-             { lang.atoms+3 , lang.rules+115 }
+             { lang.atoms+3 , lang.rules+72 }
             }
     },
     { 246 ,
@@ -10231,32 +12601,32 @@ Lang lang=
     },
     { 247 ,
             {
-             { lang.atoms+4 , lang.rules+104 },
-             { lang.atoms+41 , lang.rules+104 }
+             { lang.atoms+4 , lang.rules+61 },
+             { lang.atoms+41 , lang.rules+61 }
             }
     },
     { 248 ,
             {
-             { lang.atoms+4 , lang.rules+105 },
-             { lang.atoms+41 , lang.rules+105 }
+             { lang.atoms+4 , lang.rules+62 },
+             { lang.atoms+41 , lang.rules+62 }
             }
     },
     { 249 ,
             {
-             { lang.atoms+4 , lang.rules+106 },
-             { lang.atoms+41 , lang.rules+106 }
+             { lang.atoms+4 , lang.rules+63 },
+             { lang.atoms+41 , lang.rules+63 }
             }
     },
     { 250 ,
             {
-             { lang.atoms+4 , lang.rules+107 },
-             { lang.atoms+41 , lang.rules+107 }
+             { lang.atoms+4 , lang.rules+64 },
+             { lang.atoms+41 , lang.rules+64 }
             }
     },
     { 251 ,
             {
-             { lang.atoms+4 , lang.rules+108 },
-             { lang.atoms+41 , lang.rules+108 }
+             { lang.atoms+4 , lang.rules+65 },
+             { lang.atoms+41 , lang.rules+65 }
             }
     },
     { 252 ,
@@ -10275,326 +12645,326 @@ Lang lang=
     },
     { 254 ,
             {
-             { lang.atoms+5 , lang.rules+59 },
-             { lang.atoms+12 , lang.rules+59 },
-             { lang.atoms+19 , lang.rules+59 }
+             { lang.atoms+5 , lang.rules+16 },
+             { lang.atoms+12 , lang.rules+16 },
+             { lang.atoms+19 , lang.rules+16 }
             }
     },
     { 255 ,
             {
-             { lang.atoms+5 , lang.rules+59 },
-             { lang.atoms+16 , lang.rules+59 },
-             { lang.atoms+19 , lang.rules+59 }
+             { lang.atoms+5 , lang.rules+16 },
+             { lang.atoms+16 , lang.rules+16 },
+             { lang.atoms+19 , lang.rules+16 }
             }
     },
     { 256 ,
             {
-             { lang.atoms+5 , lang.rules+60 },
-             { lang.atoms+12 , lang.rules+60 },
-             { lang.atoms+19 , lang.rules+60 }
+             { lang.atoms+5 , lang.rules+17 },
+             { lang.atoms+12 , lang.rules+17 },
+             { lang.atoms+19 , lang.rules+17 }
             }
     },
     { 257 ,
             {
-             { lang.atoms+5 , lang.rules+60 },
-             { lang.atoms+16 , lang.rules+60 },
-             { lang.atoms+19 , lang.rules+60 }
+             { lang.atoms+5 , lang.rules+17 },
+             { lang.atoms+16 , lang.rules+17 },
+             { lang.atoms+19 , lang.rules+17 }
             }
     },
     { 258 ,
             {
-             { lang.atoms+5 , lang.rules+61 },
-             { lang.atoms+12 , lang.rules+61 },
-             { lang.atoms+19 , lang.rules+61 }
+             { lang.atoms+5 , lang.rules+18 },
+             { lang.atoms+12 , lang.rules+18 },
+             { lang.atoms+19 , lang.rules+18 }
             }
     },
     { 259 ,
             {
-             { lang.atoms+5 , lang.rules+61 },
-             { lang.atoms+16 , lang.rules+61 },
-             { lang.atoms+19 , lang.rules+61 }
+             { lang.atoms+5 , lang.rules+18 },
+             { lang.atoms+16 , lang.rules+18 },
+             { lang.atoms+19 , lang.rules+18 }
             }
     },
     { 260 ,
             {
-             { lang.atoms+5 , lang.rules+62 },
-             { lang.atoms+12 , lang.rules+62 },
-             { lang.atoms+19 , lang.rules+62 }
+             { lang.atoms+5 , lang.rules+19 },
+             { lang.atoms+12 , lang.rules+19 },
+             { lang.atoms+19 , lang.rules+19 }
             }
     },
     { 261 ,
             {
-             { lang.atoms+5 , lang.rules+62 },
-             { lang.atoms+16 , lang.rules+62 },
-             { lang.atoms+19 , lang.rules+62 }
+             { lang.atoms+5 , lang.rules+19 },
+             { lang.atoms+16 , lang.rules+19 },
+             { lang.atoms+19 , lang.rules+19 }
             }
     },
     { 262 ,
             {
-             { lang.atoms+5 , lang.rules+63 },
-             { lang.atoms+12 , lang.rules+63 },
-             { lang.atoms+19 , lang.rules+63 }
+             { lang.atoms+5 , lang.rules+20 },
+             { lang.atoms+12 , lang.rules+20 },
+             { lang.atoms+19 , lang.rules+20 }
             }
     },
     { 263 ,
             {
-             { lang.atoms+5 , lang.rules+63 },
-             { lang.atoms+16 , lang.rules+63 },
-             { lang.atoms+19 , lang.rules+63 }
+             { lang.atoms+5 , lang.rules+20 },
+             { lang.atoms+16 , lang.rules+20 },
+             { lang.atoms+19 , lang.rules+20 }
             }
     },
     { 264 ,
             {
-             { lang.atoms+5 , lang.rules+64 },
-             { lang.atoms+12 , lang.rules+64 },
-             { lang.atoms+19 , lang.rules+64 }
+             { lang.atoms+5 , lang.rules+21 },
+             { lang.atoms+12 , lang.rules+21 },
+             { lang.atoms+19 , lang.rules+21 }
             }
     },
     { 265 ,
             {
-             { lang.atoms+5 , lang.rules+64 },
-             { lang.atoms+16 , lang.rules+64 },
-             { lang.atoms+19 , lang.rules+64 }
+             { lang.atoms+5 , lang.rules+21 },
+             { lang.atoms+16 , lang.rules+21 },
+             { lang.atoms+19 , lang.rules+21 }
             }
     },
     { 266 ,
             {
-             { lang.atoms+5 , lang.rules+65 },
-             { lang.atoms+12 , lang.rules+65 },
-             { lang.atoms+19 , lang.rules+65 }
+             { lang.atoms+5 , lang.rules+22 },
+             { lang.atoms+12 , lang.rules+22 },
+             { lang.atoms+19 , lang.rules+22 }
             }
     },
     { 267 ,
             {
-             { lang.atoms+5 , lang.rules+65 },
-             { lang.atoms+16 , lang.rules+65 },
-             { lang.atoms+19 , lang.rules+65 }
+             { lang.atoms+5 , lang.rules+22 },
+             { lang.atoms+16 , lang.rules+22 },
+             { lang.atoms+19 , lang.rules+22 }
             }
     },
     { 268 ,
             {
-             { lang.atoms+5 , lang.rules+66 },
-             { lang.atoms+12 , lang.rules+66 },
-             { lang.atoms+19 , lang.rules+66 }
+             { lang.atoms+5 , lang.rules+23 },
+             { lang.atoms+12 , lang.rules+23 },
+             { lang.atoms+19 , lang.rules+23 }
             }
     },
     { 269 ,
             {
-             { lang.atoms+5 , lang.rules+66 },
-             { lang.atoms+16 , lang.rules+66 },
-             { lang.atoms+19 , lang.rules+66 }
+             { lang.atoms+5 , lang.rules+23 },
+             { lang.atoms+16 , lang.rules+23 },
+             { lang.atoms+19 , lang.rules+23 }
             }
     },
     { 270 ,
             {
-             { lang.atoms+5 , lang.rules+67 },
-             { lang.atoms+12 , lang.rules+67 },
-             { lang.atoms+19 , lang.rules+67 }
+             { lang.atoms+5 , lang.rules+24 },
+             { lang.atoms+12 , lang.rules+24 },
+             { lang.atoms+19 , lang.rules+24 }
             }
     },
     { 271 ,
             {
-             { lang.atoms+5 , lang.rules+67 },
-             { lang.atoms+16 , lang.rules+67 },
-             { lang.atoms+19 , lang.rules+67 }
+             { lang.atoms+5 , lang.rules+24 },
+             { lang.atoms+16 , lang.rules+24 },
+             { lang.atoms+19 , lang.rules+24 }
             }
     },
     { 272 ,
             {
-             { lang.atoms+5 , lang.rules+68 },
-             { lang.atoms+12 , lang.rules+68 },
-             { lang.atoms+19 , lang.rules+68 }
+             { lang.atoms+5 , lang.rules+25 },
+             { lang.atoms+12 , lang.rules+25 },
+             { lang.atoms+19 , lang.rules+25 }
             }
     },
     { 273 ,
             {
-             { lang.atoms+5 , lang.rules+68 },
-             { lang.atoms+16 , lang.rules+68 },
-             { lang.atoms+19 , lang.rules+68 }
+             { lang.atoms+5 , lang.rules+25 },
+             { lang.atoms+16 , lang.rules+25 },
+             { lang.atoms+19 , lang.rules+25 }
             }
     },
     { 274 ,
             {
-             { lang.atoms+5 , lang.rules+69 },
-             { lang.atoms+12 , lang.rules+69 },
-             { lang.atoms+19 , lang.rules+69 }
+             { lang.atoms+5 , lang.rules+26 },
+             { lang.atoms+12 , lang.rules+26 },
+             { lang.atoms+19 , lang.rules+26 }
             }
     },
     { 275 ,
             {
-             { lang.atoms+5 , lang.rules+69 },
-             { lang.atoms+16 , lang.rules+69 },
-             { lang.atoms+19 , lang.rules+69 }
+             { lang.atoms+5 , lang.rules+26 },
+             { lang.atoms+16 , lang.rules+26 },
+             { lang.atoms+19 , lang.rules+26 }
             }
     },
     { 276 ,
             {
-             { lang.atoms+5 , lang.rules+70 },
-             { lang.atoms+12 , lang.rules+70 },
-             { lang.atoms+19 , lang.rules+70 }
+             { lang.atoms+5 , lang.rules+27 },
+             { lang.atoms+12 , lang.rules+27 },
+             { lang.atoms+19 , lang.rules+27 }
             }
     },
     { 277 ,
             {
-             { lang.atoms+5 , lang.rules+70 },
-             { lang.atoms+16 , lang.rules+70 },
-             { lang.atoms+19 , lang.rules+70 }
+             { lang.atoms+5 , lang.rules+27 },
+             { lang.atoms+16 , lang.rules+27 },
+             { lang.atoms+19 , lang.rules+27 }
             }
     },
     { 278 ,
             {
-             { lang.atoms+5 , lang.rules+71 },
-             { lang.atoms+12 , lang.rules+71 },
-             { lang.atoms+19 , lang.rules+71 }
+             { lang.atoms+5 , lang.rules+28 },
+             { lang.atoms+12 , lang.rules+28 },
+             { lang.atoms+19 , lang.rules+28 }
             }
     },
     { 279 ,
             {
-             { lang.atoms+5 , lang.rules+71 },
-             { lang.atoms+16 , lang.rules+71 },
-             { lang.atoms+19 , lang.rules+71 }
+             { lang.atoms+5 , lang.rules+28 },
+             { lang.atoms+16 , lang.rules+28 },
+             { lang.atoms+19 , lang.rules+28 }
             }
     },
     { 280 ,
             {
-             { lang.atoms+5 , lang.rules+72 },
-             { lang.atoms+12 , lang.rules+72 },
-             { lang.atoms+19 , lang.rules+72 }
+             { lang.atoms+5 , lang.rules+29 },
+             { lang.atoms+12 , lang.rules+29 },
+             { lang.atoms+19 , lang.rules+29 }
             }
     },
     { 281 ,
             {
-             { lang.atoms+5 , lang.rules+72 },
-             { lang.atoms+16 , lang.rules+72 },
-             { lang.atoms+19 , lang.rules+72 }
+             { lang.atoms+5 , lang.rules+29 },
+             { lang.atoms+16 , lang.rules+29 },
+             { lang.atoms+19 , lang.rules+29 }
             }
     },
     { 282 ,
             {
-             { lang.atoms+5 , lang.rules+73 },
-             { lang.atoms+12 , lang.rules+73 },
-             { lang.atoms+19 , lang.rules+73 }
+             { lang.atoms+5 , lang.rules+30 },
+             { lang.atoms+12 , lang.rules+30 },
+             { lang.atoms+19 , lang.rules+30 }
             }
     },
     { 283 ,
             {
-             { lang.atoms+5 , lang.rules+73 },
-             { lang.atoms+16 , lang.rules+73 },
-             { lang.atoms+19 , lang.rules+73 }
+             { lang.atoms+5 , lang.rules+30 },
+             { lang.atoms+16 , lang.rules+30 },
+             { lang.atoms+19 , lang.rules+30 }
             }
     },
     { 284 ,
             {
-             { lang.atoms+5 , lang.rules+74 },
-             { lang.atoms+12 , lang.rules+74 },
-             { lang.atoms+19 , lang.rules+74 }
+             { lang.atoms+5 , lang.rules+31 },
+             { lang.atoms+12 , lang.rules+31 },
+             { lang.atoms+19 , lang.rules+31 }
             }
     },
     { 285 ,
             {
-             { lang.atoms+5 , lang.rules+74 },
-             { lang.atoms+16 , lang.rules+74 },
-             { lang.atoms+19 , lang.rules+74 }
+             { lang.atoms+5 , lang.rules+31 },
+             { lang.atoms+16 , lang.rules+31 },
+             { lang.atoms+19 , lang.rules+31 }
             }
     },
     { 286 ,
             {
-             { lang.atoms+5 , lang.rules+75 },
-             { lang.atoms+12 , lang.rules+75 },
-             { lang.atoms+19 , lang.rules+75 }
+             { lang.atoms+5 , lang.rules+32 },
+             { lang.atoms+12 , lang.rules+32 },
+             { lang.atoms+19 , lang.rules+32 }
             }
     },
     { 287 ,
             {
-             { lang.atoms+5 , lang.rules+75 },
-             { lang.atoms+16 , lang.rules+75 },
-             { lang.atoms+19 , lang.rules+75 }
+             { lang.atoms+5 , lang.rules+32 },
+             { lang.atoms+16 , lang.rules+32 },
+             { lang.atoms+19 , lang.rules+32 }
             }
     },
     { 288 ,
             {
-             { lang.atoms+5 , lang.rules+76 },
-             { lang.atoms+12 , lang.rules+76 },
-             { lang.atoms+19 , lang.rules+76 }
+             { lang.atoms+5 , lang.rules+33 },
+             { lang.atoms+12 , lang.rules+33 },
+             { lang.atoms+19 , lang.rules+33 }
             }
     },
     { 289 ,
             {
-             { lang.atoms+5 , lang.rules+76 },
-             { lang.atoms+16 , lang.rules+76 },
-             { lang.atoms+19 , lang.rules+76 }
+             { lang.atoms+5 , lang.rules+33 },
+             { lang.atoms+16 , lang.rules+33 },
+             { lang.atoms+19 , lang.rules+33 }
             }
     },
     { 290 ,
             {
-             { lang.atoms+5 , lang.rules+77 },
-             { lang.atoms+12 , lang.rules+77 },
-             { lang.atoms+19 , lang.rules+77 }
+             { lang.atoms+5 , lang.rules+34 },
+             { lang.atoms+12 , lang.rules+34 },
+             { lang.atoms+19 , lang.rules+34 }
             }
     },
     { 291 ,
             {
-             { lang.atoms+5 , lang.rules+77 },
-             { lang.atoms+16 , lang.rules+77 },
-             { lang.atoms+19 , lang.rules+77 }
+             { lang.atoms+5 , lang.rules+34 },
+             { lang.atoms+16 , lang.rules+34 },
+             { lang.atoms+19 , lang.rules+34 }
             }
     },
     { 292 ,
             {
-             { lang.atoms+5 , lang.rules+78 },
-             { lang.atoms+12 , lang.rules+78 },
-             { lang.atoms+19 , lang.rules+78 }
+             { lang.atoms+5 , lang.rules+35 },
+             { lang.atoms+12 , lang.rules+35 },
+             { lang.atoms+19 , lang.rules+35 }
             }
     },
     { 293 ,
             {
-             { lang.atoms+5 , lang.rules+78 },
-             { lang.atoms+16 , lang.rules+78 },
-             { lang.atoms+19 , lang.rules+78 }
+             { lang.atoms+5 , lang.rules+35 },
+             { lang.atoms+16 , lang.rules+35 },
+             { lang.atoms+19 , lang.rules+35 }
             }
     },
     { 294 ,
             {
-             { lang.atoms+5 , lang.rules+79 },
-             { lang.atoms+12 , lang.rules+79 },
-             { lang.atoms+19 , lang.rules+79 }
+             { lang.atoms+5 , lang.rules+36 },
+             { lang.atoms+12 , lang.rules+36 },
+             { lang.atoms+19 , lang.rules+36 }
             }
     },
     { 295 ,
             {
-             { lang.atoms+5 , lang.rules+79 },
+             { lang.atoms+5 , lang.rules+36 },
              { lang.atoms+12 , null },
-             { lang.atoms+16 , lang.rules+79 },
-             { lang.atoms+19 , lang.rules+79 }
+             { lang.atoms+16 , lang.rules+36 },
+             { lang.atoms+19 , lang.rules+36 }
             }
     },
     { 296 ,
             {
-             { lang.atoms+5 , lang.rules+79 },
-             { lang.atoms+16 , lang.rules+79 },
-             { lang.atoms+19 , lang.rules+79 }
+             { lang.atoms+5 , lang.rules+36 },
+             { lang.atoms+16 , lang.rules+36 },
+             { lang.atoms+19 , lang.rules+36 }
             }
     },
     { 297 ,
             {
-             { lang.atoms+5 , lang.rules+80 },
-             { lang.atoms+12 , lang.rules+80 },
-             { lang.atoms+16 , lang.rules+80 },
-             { lang.atoms+19 , lang.rules+80 }
+             { lang.atoms+5 , lang.rules+37 },
+             { lang.atoms+12 , lang.rules+37 },
+             { lang.atoms+16 , lang.rules+37 },
+             { lang.atoms+19 , lang.rules+37 }
             }
     },
     { 298 ,
             {
-             { lang.atoms+5 , lang.rules+80 },
-             { lang.atoms+12 , lang.rules+80 },
-             { lang.atoms+19 , lang.rules+80 }
+             { lang.atoms+5 , lang.rules+37 },
+             { lang.atoms+12 , lang.rules+37 },
+             { lang.atoms+19 , lang.rules+37 }
             }
     },
     { 299 ,
             {
-             { lang.atoms+5 , lang.rules+80 },
-             { lang.atoms+16 , lang.rules+80 },
-             { lang.atoms+19 , lang.rules+80 }
+             { lang.atoms+5 , lang.rules+37 },
+             { lang.atoms+16 , lang.rules+37 },
+             { lang.atoms+19 , lang.rules+37 }
             }
     },
     { 300 ,
@@ -10614,28 +12984,28 @@ Lang lang=
     { 302 ,
             {
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+109 },
+             { lang.atoms+7 , lang.rules+66 },
              { lang.atoms+8 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+109 }
+             { lang.atoms+42 , lang.rules+66 }
             }
     },
     { 303 ,
             {
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+110 },
+             { lang.atoms+7 , lang.rules+67 },
              { lang.atoms+8 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+110 }
+             { lang.atoms+42 , lang.rules+67 }
             }
     },
     { 304 ,
             {
              { lang.atoms+6 , null },
-             { lang.atoms+7 , lang.rules+111 },
+             { lang.atoms+7 , lang.rules+68 },
              { lang.atoms+8 , null },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+111 }
+             { lang.atoms+42 , lang.rules+68 }
             }
     },
     { 305 ,
@@ -10656,70 +13026,70 @@ Lang lang=
     },
     { 307 ,
             {
-             { lang.atoms+7 , lang.rules+104 },
-             { lang.atoms+41 , lang.rules+104 },
-             { lang.atoms+42 , lang.rules+104 }
+             { lang.atoms+7 , lang.rules+61 },
+             { lang.atoms+41 , lang.rules+61 },
+             { lang.atoms+42 , lang.rules+61 }
             }
     },
     { 308 ,
             {
-             { lang.atoms+7 , lang.rules+105 },
-             { lang.atoms+41 , lang.rules+105 },
-             { lang.atoms+42 , lang.rules+105 }
+             { lang.atoms+7 , lang.rules+62 },
+             { lang.atoms+41 , lang.rules+62 },
+             { lang.atoms+42 , lang.rules+62 }
             }
     },
     { 309 ,
             {
-             { lang.atoms+7 , lang.rules+106 },
-             { lang.atoms+41 , lang.rules+106 },
-             { lang.atoms+42 , lang.rules+106 }
+             { lang.atoms+7 , lang.rules+63 },
+             { lang.atoms+41 , lang.rules+63 },
+             { lang.atoms+42 , lang.rules+63 }
             }
     },
     { 310 ,
             {
-             { lang.atoms+7 , lang.rules+107 },
-             { lang.atoms+41 , lang.rules+107 },
-             { lang.atoms+42 , lang.rules+107 }
+             { lang.atoms+7 , lang.rules+64 },
+             { lang.atoms+41 , lang.rules+64 },
+             { lang.atoms+42 , lang.rules+64 }
             }
     },
     { 311 ,
             {
-             { lang.atoms+7 , lang.rules+108 },
-             { lang.atoms+41 , lang.rules+108 },
-             { lang.atoms+42 , lang.rules+108 }
+             { lang.atoms+7 , lang.rules+65 },
+             { lang.atoms+41 , lang.rules+65 },
+             { lang.atoms+42 , lang.rules+65 }
             }
     },
     { 312 ,
             {
-             { lang.atoms+7 , lang.rules+109 },
+             { lang.atoms+7 , lang.rules+66 },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+109 }
+             { lang.atoms+42 , lang.rules+66 }
             }
     },
     { 313 ,
             {
-             { lang.atoms+7 , lang.rules+110 },
+             { lang.atoms+7 , lang.rules+67 },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+110 }
+             { lang.atoms+42 , lang.rules+67 }
             }
     },
     { 314 ,
             {
-             { lang.atoms+7 , lang.rules+111 },
+             { lang.atoms+7 , lang.rules+68 },
              { lang.atoms+41 , null },
-             { lang.atoms+42 , lang.rules+111 }
+             { lang.atoms+42 , lang.rules+68 }
             }
     },
     { 315 ,
             {
-             { lang.atoms+7 , lang.rules+112 },
-             { lang.atoms+42 , lang.rules+112 }
+             { lang.atoms+7 , lang.rules+69 },
+             { lang.atoms+42 , lang.rules+69 }
             }
     },
     { 316 ,
             {
-             { lang.atoms+7 , lang.rules+113 },
-             { lang.atoms+42 , lang.rules+113 }
+             { lang.atoms+7 , lang.rules+70 },
+             { lang.atoms+42 , lang.rules+70 }
             }
     },
     { 317 ,
@@ -10741,32 +13111,32 @@ Lang lang=
     },
     { 320 ,
             {
-             { lang.atoms+12 , lang.rules+104 },
-             { lang.atoms+41 , lang.rules+104 }
+             { lang.atoms+12 , lang.rules+61 },
+             { lang.atoms+41 , lang.rules+61 }
             }
     },
     { 321 ,
             {
-             { lang.atoms+12 , lang.rules+105 },
-             { lang.atoms+41 , lang.rules+105 }
+             { lang.atoms+12 , lang.rules+62 },
+             { lang.atoms+41 , lang.rules+62 }
             }
     },
     { 322 ,
             {
-             { lang.atoms+12 , lang.rules+106 },
-             { lang.atoms+41 , lang.rules+106 }
+             { lang.atoms+12 , lang.rules+63 },
+             { lang.atoms+41 , lang.rules+63 }
             }
     },
     { 323 ,
             {
-             { lang.atoms+12 , lang.rules+107 },
-             { lang.atoms+41 , lang.rules+107 }
+             { lang.atoms+12 , lang.rules+64 },
+             { lang.atoms+41 , lang.rules+64 }
             }
     },
     { 324 ,
             {
-             { lang.atoms+12 , lang.rules+108 },
-             { lang.atoms+41 , lang.rules+108 }
+             { lang.atoms+12 , lang.rules+65 },
+             { lang.atoms+41 , lang.rules+65 }
             }
     },
     { 325 ,
@@ -10803,32 +13173,32 @@ Lang lang=
     },
     { 331 ,
             {
-             { lang.atoms+20 , lang.rules+104 },
-             { lang.atoms+41 , lang.rules+104 }
+             { lang.atoms+20 , lang.rules+61 },
+             { lang.atoms+41 , lang.rules+61 }
             }
     },
     { 332 ,
             {
-             { lang.atoms+20 , lang.rules+105 },
-             { lang.atoms+41 , lang.rules+105 }
+             { lang.atoms+20 , lang.rules+62 },
+             { lang.atoms+41 , lang.rules+62 }
             }
     },
     { 333 ,
             {
-             { lang.atoms+20 , lang.rules+106 },
-             { lang.atoms+41 , lang.rules+106 }
+             { lang.atoms+20 , lang.rules+63 },
+             { lang.atoms+41 , lang.rules+63 }
             }
     },
     { 334 ,
             {
-             { lang.atoms+20 , lang.rules+107 },
-             { lang.atoms+41 , lang.rules+107 }
+             { lang.atoms+20 , lang.rules+64 },
+             { lang.atoms+41 , lang.rules+64 }
             }
     },
     { 335 ,
             {
-             { lang.atoms+20 , lang.rules+108 },
-             { lang.atoms+41 , lang.rules+108 }
+             { lang.atoms+20 , lang.rules+65 },
+             { lang.atoms+41 , lang.rules+65 }
             }
     },
     { 336 ,
@@ -10844,272 +13214,272 @@ Lang lang=
     },
     { 338 ,
             {
-             { null , lang.rules+43 },
-             { lang.atoms+0 , lang.rules+43 },
-             { lang.atoms+10 , lang.rules+43 },
-             { lang.atoms+14 , lang.rules+43 },
-             { lang.atoms+16 , lang.rules+43 },
-             { lang.atoms+22 , lang.rules+43 },
-             { lang.atoms+23 , lang.rules+43 },
-             { lang.atoms+24 , lang.rules+43 },
-             { lang.atoms+26 , lang.rules+43 },
-             { lang.atoms+27 , lang.rules+43 },
-             { lang.atoms+28 , lang.rules+43 },
-             { lang.atoms+29 , lang.rules+43 },
-             { lang.atoms+30 , lang.rules+43 },
-             { lang.atoms+31 , lang.rules+43 },
-             { lang.atoms+32 , lang.rules+43 },
-             { lang.atoms+33 , lang.rules+43 },
-             { lang.atoms+34 , lang.rules+43 },
-             { lang.atoms+35 , lang.rules+43 },
-             { lang.atoms+36 , lang.rules+43 },
-             { lang.atoms+37 , lang.rules+43 },
-             { lang.atoms+38 , lang.rules+43 },
-             { lang.atoms+39 , lang.rules+43 },
-             { lang.atoms+40 , lang.rules+43 }
+             { null , lang.rules+0 },
+             { lang.atoms+0 , lang.rules+0 },
+             { lang.atoms+10 , lang.rules+0 },
+             { lang.atoms+14 , lang.rules+0 },
+             { lang.atoms+16 , lang.rules+0 },
+             { lang.atoms+22 , lang.rules+0 },
+             { lang.atoms+23 , lang.rules+0 },
+             { lang.atoms+24 , lang.rules+0 },
+             { lang.atoms+26 , lang.rules+0 },
+             { lang.atoms+27 , lang.rules+0 },
+             { lang.atoms+28 , lang.rules+0 },
+             { lang.atoms+29 , lang.rules+0 },
+             { lang.atoms+30 , lang.rules+0 },
+             { lang.atoms+31 , lang.rules+0 },
+             { lang.atoms+32 , lang.rules+0 },
+             { lang.atoms+33 , lang.rules+0 },
+             { lang.atoms+34 , lang.rules+0 },
+             { lang.atoms+35 , lang.rules+0 },
+             { lang.atoms+36 , lang.rules+0 },
+             { lang.atoms+37 , lang.rules+0 },
+             { lang.atoms+38 , lang.rules+0 },
+             { lang.atoms+39 , lang.rules+0 },
+             { lang.atoms+40 , lang.rules+0 }
             }
     },
     { 339 ,
             {
-             { null , lang.rules+44 },
-             { lang.atoms+0 , lang.rules+44 },
-             { lang.atoms+10 , lang.rules+44 },
-             { lang.atoms+14 , lang.rules+44 },
-             { lang.atoms+16 , lang.rules+44 },
-             { lang.atoms+22 , lang.rules+44 },
-             { lang.atoms+23 , lang.rules+44 },
-             { lang.atoms+24 , lang.rules+44 },
-             { lang.atoms+26 , lang.rules+44 },
-             { lang.atoms+27 , lang.rules+44 },
-             { lang.atoms+28 , lang.rules+44 },
-             { lang.atoms+29 , lang.rules+44 },
-             { lang.atoms+30 , lang.rules+44 },
-             { lang.atoms+31 , lang.rules+44 },
-             { lang.atoms+32 , lang.rules+44 },
-             { lang.atoms+33 , lang.rules+44 },
-             { lang.atoms+34 , lang.rules+44 },
-             { lang.atoms+35 , lang.rules+44 },
-             { lang.atoms+36 , lang.rules+44 },
-             { lang.atoms+37 , lang.rules+44 },
-             { lang.atoms+38 , lang.rules+44 },
-             { lang.atoms+39 , lang.rules+44 },
-             { lang.atoms+40 , lang.rules+44 }
+             { null , lang.rules+1 },
+             { lang.atoms+0 , lang.rules+1 },
+             { lang.atoms+10 , lang.rules+1 },
+             { lang.atoms+14 , lang.rules+1 },
+             { lang.atoms+16 , lang.rules+1 },
+             { lang.atoms+22 , lang.rules+1 },
+             { lang.atoms+23 , lang.rules+1 },
+             { lang.atoms+24 , lang.rules+1 },
+             { lang.atoms+26 , lang.rules+1 },
+             { lang.atoms+27 , lang.rules+1 },
+             { lang.atoms+28 , lang.rules+1 },
+             { lang.atoms+29 , lang.rules+1 },
+             { lang.atoms+30 , lang.rules+1 },
+             { lang.atoms+31 , lang.rules+1 },
+             { lang.atoms+32 , lang.rules+1 },
+             { lang.atoms+33 , lang.rules+1 },
+             { lang.atoms+34 , lang.rules+1 },
+             { lang.atoms+35 , lang.rules+1 },
+             { lang.atoms+36 , lang.rules+1 },
+             { lang.atoms+37 , lang.rules+1 },
+             { lang.atoms+38 , lang.rules+1 },
+             { lang.atoms+39 , lang.rules+1 },
+             { lang.atoms+40 , lang.rules+1 }
             }
     },
     { 340 ,
             {
-             { null , lang.rules+45 },
-             { lang.atoms+0 , lang.rules+45 },
-             { lang.atoms+10 , lang.rules+45 },
-             { lang.atoms+14 , lang.rules+45 },
-             { lang.atoms+16 , lang.rules+45 },
-             { lang.atoms+22 , lang.rules+45 },
-             { lang.atoms+23 , lang.rules+45 },
-             { lang.atoms+24 , lang.rules+45 },
-             { lang.atoms+26 , lang.rules+45 },
-             { lang.atoms+27 , lang.rules+45 },
-             { lang.atoms+28 , lang.rules+45 },
-             { lang.atoms+29 , lang.rules+45 },
-             { lang.atoms+30 , lang.rules+45 },
-             { lang.atoms+31 , lang.rules+45 },
-             { lang.atoms+32 , lang.rules+45 },
-             { lang.atoms+33 , lang.rules+45 },
-             { lang.atoms+34 , lang.rules+45 },
-             { lang.atoms+35 , lang.rules+45 },
-             { lang.atoms+36 , lang.rules+45 },
-             { lang.atoms+37 , lang.rules+45 },
-             { lang.atoms+38 , lang.rules+45 },
-             { lang.atoms+39 , lang.rules+45 },
-             { lang.atoms+40 , lang.rules+45 }
+             { null , lang.rules+2 },
+             { lang.atoms+0 , lang.rules+2 },
+             { lang.atoms+10 , lang.rules+2 },
+             { lang.atoms+14 , lang.rules+2 },
+             { lang.atoms+16 , lang.rules+2 },
+             { lang.atoms+22 , lang.rules+2 },
+             { lang.atoms+23 , lang.rules+2 },
+             { lang.atoms+24 , lang.rules+2 },
+             { lang.atoms+26 , lang.rules+2 },
+             { lang.atoms+27 , lang.rules+2 },
+             { lang.atoms+28 , lang.rules+2 },
+             { lang.atoms+29 , lang.rules+2 },
+             { lang.atoms+30 , lang.rules+2 },
+             { lang.atoms+31 , lang.rules+2 },
+             { lang.atoms+32 , lang.rules+2 },
+             { lang.atoms+33 , lang.rules+2 },
+             { lang.atoms+34 , lang.rules+2 },
+             { lang.atoms+35 , lang.rules+2 },
+             { lang.atoms+36 , lang.rules+2 },
+             { lang.atoms+37 , lang.rules+2 },
+             { lang.atoms+38 , lang.rules+2 },
+             { lang.atoms+39 , lang.rules+2 },
+             { lang.atoms+40 , lang.rules+2 }
             }
     },
     { 341 ,
             {
-             { null , lang.rules+46 },
-             { lang.atoms+0 , lang.rules+46 },
-             { lang.atoms+10 , lang.rules+46 },
-             { lang.atoms+14 , lang.rules+46 },
-             { lang.atoms+16 , lang.rules+46 },
-             { lang.atoms+22 , lang.rules+46 },
-             { lang.atoms+23 , lang.rules+46 },
-             { lang.atoms+24 , lang.rules+46 },
-             { lang.atoms+26 , lang.rules+46 },
-             { lang.atoms+27 , lang.rules+46 },
-             { lang.atoms+28 , lang.rules+46 },
-             { lang.atoms+29 , lang.rules+46 },
-             { lang.atoms+30 , lang.rules+46 },
-             { lang.atoms+31 , lang.rules+46 },
-             { lang.atoms+32 , lang.rules+46 },
-             { lang.atoms+33 , lang.rules+46 },
-             { lang.atoms+34 , lang.rules+46 },
-             { lang.atoms+35 , lang.rules+46 },
-             { lang.atoms+36 , lang.rules+46 },
-             { lang.atoms+37 , lang.rules+46 },
-             { lang.atoms+38 , lang.rules+46 },
-             { lang.atoms+39 , lang.rules+46 },
-             { lang.atoms+40 , lang.rules+46 }
+             { null , lang.rules+3 },
+             { lang.atoms+0 , lang.rules+3 },
+             { lang.atoms+10 , lang.rules+3 },
+             { lang.atoms+14 , lang.rules+3 },
+             { lang.atoms+16 , lang.rules+3 },
+             { lang.atoms+22 , lang.rules+3 },
+             { lang.atoms+23 , lang.rules+3 },
+             { lang.atoms+24 , lang.rules+3 },
+             { lang.atoms+26 , lang.rules+3 },
+             { lang.atoms+27 , lang.rules+3 },
+             { lang.atoms+28 , lang.rules+3 },
+             { lang.atoms+29 , lang.rules+3 },
+             { lang.atoms+30 , lang.rules+3 },
+             { lang.atoms+31 , lang.rules+3 },
+             { lang.atoms+32 , lang.rules+3 },
+             { lang.atoms+33 , lang.rules+3 },
+             { lang.atoms+34 , lang.rules+3 },
+             { lang.atoms+35 , lang.rules+3 },
+             { lang.atoms+36 , lang.rules+3 },
+             { lang.atoms+37 , lang.rules+3 },
+             { lang.atoms+38 , lang.rules+3 },
+             { lang.atoms+39 , lang.rules+3 },
+             { lang.atoms+40 , lang.rules+3 }
             }
     },
     { 342 ,
             {
-             { null , lang.rules+47 },
-             { lang.atoms+0 , lang.rules+47 },
-             { lang.atoms+10 , lang.rules+47 },
-             { lang.atoms+14 , lang.rules+47 },
-             { lang.atoms+16 , lang.rules+47 },
-             { lang.atoms+22 , lang.rules+47 },
-             { lang.atoms+23 , lang.rules+47 },
-             { lang.atoms+24 , lang.rules+47 },
-             { lang.atoms+26 , lang.rules+47 },
-             { lang.atoms+27 , lang.rules+47 },
-             { lang.atoms+28 , lang.rules+47 },
-             { lang.atoms+29 , lang.rules+47 },
-             { lang.atoms+30 , lang.rules+47 },
-             { lang.atoms+31 , lang.rules+47 },
-             { lang.atoms+32 , lang.rules+47 },
-             { lang.atoms+33 , lang.rules+47 },
-             { lang.atoms+34 , lang.rules+47 },
-             { lang.atoms+35 , lang.rules+47 },
-             { lang.atoms+36 , lang.rules+47 },
-             { lang.atoms+37 , lang.rules+47 },
-             { lang.atoms+38 , lang.rules+47 },
-             { lang.atoms+39 , lang.rules+47 },
-             { lang.atoms+40 , lang.rules+47 }
+             { null , lang.rules+4 },
+             { lang.atoms+0 , lang.rules+4 },
+             { lang.atoms+10 , lang.rules+4 },
+             { lang.atoms+14 , lang.rules+4 },
+             { lang.atoms+16 , lang.rules+4 },
+             { lang.atoms+22 , lang.rules+4 },
+             { lang.atoms+23 , lang.rules+4 },
+             { lang.atoms+24 , lang.rules+4 },
+             { lang.atoms+26 , lang.rules+4 },
+             { lang.atoms+27 , lang.rules+4 },
+             { lang.atoms+28 , lang.rules+4 },
+             { lang.atoms+29 , lang.rules+4 },
+             { lang.atoms+30 , lang.rules+4 },
+             { lang.atoms+31 , lang.rules+4 },
+             { lang.atoms+32 , lang.rules+4 },
+             { lang.atoms+33 , lang.rules+4 },
+             { lang.atoms+34 , lang.rules+4 },
+             { lang.atoms+35 , lang.rules+4 },
+             { lang.atoms+36 , lang.rules+4 },
+             { lang.atoms+37 , lang.rules+4 },
+             { lang.atoms+38 , lang.rules+4 },
+             { lang.atoms+39 , lang.rules+4 },
+             { lang.atoms+40 , lang.rules+4 }
             }
     },
     { 343 ,
             {
-             { null , lang.rules+48 },
-             { lang.atoms+0 , lang.rules+48 },
-             { lang.atoms+10 , lang.rules+48 },
-             { lang.atoms+14 , lang.rules+48 },
-             { lang.atoms+16 , lang.rules+48 },
-             { lang.atoms+22 , lang.rules+48 },
-             { lang.atoms+23 , lang.rules+48 },
-             { lang.atoms+24 , lang.rules+48 },
-             { lang.atoms+26 , lang.rules+48 },
-             { lang.atoms+27 , lang.rules+48 },
-             { lang.atoms+28 , lang.rules+48 },
-             { lang.atoms+29 , lang.rules+48 },
-             { lang.atoms+30 , lang.rules+48 },
-             { lang.atoms+31 , lang.rules+48 },
-             { lang.atoms+32 , lang.rules+48 },
-             { lang.atoms+33 , lang.rules+48 },
-             { lang.atoms+34 , lang.rules+48 },
-             { lang.atoms+35 , lang.rules+48 },
-             { lang.atoms+36 , lang.rules+48 },
-             { lang.atoms+37 , lang.rules+48 },
-             { lang.atoms+38 , lang.rules+48 },
-             { lang.atoms+39 , lang.rules+48 },
-             { lang.atoms+40 , lang.rules+48 }
+             { null , lang.rules+5 },
+             { lang.atoms+0 , lang.rules+5 },
+             { lang.atoms+10 , lang.rules+5 },
+             { lang.atoms+14 , lang.rules+5 },
+             { lang.atoms+16 , lang.rules+5 },
+             { lang.atoms+22 , lang.rules+5 },
+             { lang.atoms+23 , lang.rules+5 },
+             { lang.atoms+24 , lang.rules+5 },
+             { lang.atoms+26 , lang.rules+5 },
+             { lang.atoms+27 , lang.rules+5 },
+             { lang.atoms+28 , lang.rules+5 },
+             { lang.atoms+29 , lang.rules+5 },
+             { lang.atoms+30 , lang.rules+5 },
+             { lang.atoms+31 , lang.rules+5 },
+             { lang.atoms+32 , lang.rules+5 },
+             { lang.atoms+33 , lang.rules+5 },
+             { lang.atoms+34 , lang.rules+5 },
+             { lang.atoms+35 , lang.rules+5 },
+             { lang.atoms+36 , lang.rules+5 },
+             { lang.atoms+37 , lang.rules+5 },
+             { lang.atoms+38 , lang.rules+5 },
+             { lang.atoms+39 , lang.rules+5 },
+             { lang.atoms+40 , lang.rules+5 }
             }
     },
     { 344 ,
             {
-             { null , lang.rules+49 },
-             { lang.atoms+0 , lang.rules+49 },
-             { lang.atoms+10 , lang.rules+49 },
-             { lang.atoms+14 , lang.rules+49 },
-             { lang.atoms+16 , lang.rules+49 },
-             { lang.atoms+22 , lang.rules+49 },
-             { lang.atoms+23 , lang.rules+49 },
-             { lang.atoms+24 , lang.rules+49 },
-             { lang.atoms+26 , lang.rules+49 },
-             { lang.atoms+27 , lang.rules+49 },
-             { lang.atoms+28 , lang.rules+49 },
-             { lang.atoms+29 , lang.rules+49 },
-             { lang.atoms+30 , lang.rules+49 },
-             { lang.atoms+31 , lang.rules+49 },
-             { lang.atoms+32 , lang.rules+49 },
-             { lang.atoms+33 , lang.rules+49 },
-             { lang.atoms+34 , lang.rules+49 },
-             { lang.atoms+35 , lang.rules+49 },
-             { lang.atoms+36 , lang.rules+49 },
-             { lang.atoms+37 , lang.rules+49 },
-             { lang.atoms+38 , lang.rules+49 },
-             { lang.atoms+39 , lang.rules+49 },
-             { lang.atoms+40 , lang.rules+49 }
+             { null , lang.rules+6 },
+             { lang.atoms+0 , lang.rules+6 },
+             { lang.atoms+10 , lang.rules+6 },
+             { lang.atoms+14 , lang.rules+6 },
+             { lang.atoms+16 , lang.rules+6 },
+             { lang.atoms+22 , lang.rules+6 },
+             { lang.atoms+23 , lang.rules+6 },
+             { lang.atoms+24 , lang.rules+6 },
+             { lang.atoms+26 , lang.rules+6 },
+             { lang.atoms+27 , lang.rules+6 },
+             { lang.atoms+28 , lang.rules+6 },
+             { lang.atoms+29 , lang.rules+6 },
+             { lang.atoms+30 , lang.rules+6 },
+             { lang.atoms+31 , lang.rules+6 },
+             { lang.atoms+32 , lang.rules+6 },
+             { lang.atoms+33 , lang.rules+6 },
+             { lang.atoms+34 , lang.rules+6 },
+             { lang.atoms+35 , lang.rules+6 },
+             { lang.atoms+36 , lang.rules+6 },
+             { lang.atoms+37 , lang.rules+6 },
+             { lang.atoms+38 , lang.rules+6 },
+             { lang.atoms+39 , lang.rules+6 },
+             { lang.atoms+40 , lang.rules+6 }
             }
     },
     { 345 ,
             {
-             { null , lang.rules+50 },
-             { lang.atoms+0 , lang.rules+50 },
-             { lang.atoms+10 , lang.rules+50 },
-             { lang.atoms+14 , lang.rules+50 },
-             { lang.atoms+16 , lang.rules+50 },
-             { lang.atoms+22 , lang.rules+50 },
-             { lang.atoms+23 , lang.rules+50 },
-             { lang.atoms+24 , lang.rules+50 },
-             { lang.atoms+26 , lang.rules+50 },
-             { lang.atoms+27 , lang.rules+50 },
-             { lang.atoms+28 , lang.rules+50 },
-             { lang.atoms+29 , lang.rules+50 },
-             { lang.atoms+30 , lang.rules+50 },
-             { lang.atoms+31 , lang.rules+50 },
-             { lang.atoms+32 , lang.rules+50 },
-             { lang.atoms+33 , lang.rules+50 },
-             { lang.atoms+34 , lang.rules+50 },
-             { lang.atoms+35 , lang.rules+50 },
-             { lang.atoms+36 , lang.rules+50 },
-             { lang.atoms+37 , lang.rules+50 },
-             { lang.atoms+38 , lang.rules+50 },
-             { lang.atoms+39 , lang.rules+50 },
-             { lang.atoms+40 , lang.rules+50 }
+             { null , lang.rules+7 },
+             { lang.atoms+0 , lang.rules+7 },
+             { lang.atoms+10 , lang.rules+7 },
+             { lang.atoms+14 , lang.rules+7 },
+             { lang.atoms+16 , lang.rules+7 },
+             { lang.atoms+22 , lang.rules+7 },
+             { lang.atoms+23 , lang.rules+7 },
+             { lang.atoms+24 , lang.rules+7 },
+             { lang.atoms+26 , lang.rules+7 },
+             { lang.atoms+27 , lang.rules+7 },
+             { lang.atoms+28 , lang.rules+7 },
+             { lang.atoms+29 , lang.rules+7 },
+             { lang.atoms+30 , lang.rules+7 },
+             { lang.atoms+31 , lang.rules+7 },
+             { lang.atoms+32 , lang.rules+7 },
+             { lang.atoms+33 , lang.rules+7 },
+             { lang.atoms+34 , lang.rules+7 },
+             { lang.atoms+35 , lang.rules+7 },
+             { lang.atoms+36 , lang.rules+7 },
+             { lang.atoms+37 , lang.rules+7 },
+             { lang.atoms+38 , lang.rules+7 },
+             { lang.atoms+39 , lang.rules+7 },
+             { lang.atoms+40 , lang.rules+7 }
             }
     },
     { 346 ,
             {
-             { null , lang.rules+51 },
-             { lang.atoms+0 , lang.rules+51 },
-             { lang.atoms+10 , lang.rules+51 },
-             { lang.atoms+14 , lang.rules+51 },
-             { lang.atoms+16 , lang.rules+51 },
-             { lang.atoms+22 , lang.rules+51 },
-             { lang.atoms+23 , lang.rules+51 },
-             { lang.atoms+24 , lang.rules+51 },
-             { lang.atoms+26 , lang.rules+51 },
-             { lang.atoms+27 , lang.rules+51 },
-             { lang.atoms+28 , lang.rules+51 },
-             { lang.atoms+29 , lang.rules+51 },
-             { lang.atoms+30 , lang.rules+51 },
-             { lang.atoms+31 , lang.rules+51 },
-             { lang.atoms+32 , lang.rules+51 },
-             { lang.atoms+33 , lang.rules+51 },
-             { lang.atoms+34 , lang.rules+51 },
-             { lang.atoms+35 , lang.rules+51 },
-             { lang.atoms+36 , lang.rules+51 },
-             { lang.atoms+37 , lang.rules+51 },
-             { lang.atoms+38 , lang.rules+51 },
-             { lang.atoms+39 , lang.rules+51 },
-             { lang.atoms+40 , lang.rules+51 }
+             { null , lang.rules+8 },
+             { lang.atoms+0 , lang.rules+8 },
+             { lang.atoms+10 , lang.rules+8 },
+             { lang.atoms+14 , lang.rules+8 },
+             { lang.atoms+16 , lang.rules+8 },
+             { lang.atoms+22 , lang.rules+8 },
+             { lang.atoms+23 , lang.rules+8 },
+             { lang.atoms+24 , lang.rules+8 },
+             { lang.atoms+26 , lang.rules+8 },
+             { lang.atoms+27 , lang.rules+8 },
+             { lang.atoms+28 , lang.rules+8 },
+             { lang.atoms+29 , lang.rules+8 },
+             { lang.atoms+30 , lang.rules+8 },
+             { lang.atoms+31 , lang.rules+8 },
+             { lang.atoms+32 , lang.rules+8 },
+             { lang.atoms+33 , lang.rules+8 },
+             { lang.atoms+34 , lang.rules+8 },
+             { lang.atoms+35 , lang.rules+8 },
+             { lang.atoms+36 , lang.rules+8 },
+             { lang.atoms+37 , lang.rules+8 },
+             { lang.atoms+38 , lang.rules+8 },
+             { lang.atoms+39 , lang.rules+8 },
+             { lang.atoms+40 , lang.rules+8 }
             }
     },
     { 347 ,
             {
-             { null , lang.rules+52 },
-             { lang.atoms+0 , lang.rules+52 },
-             { lang.atoms+10 , lang.rules+52 },
-             { lang.atoms+14 , lang.rules+52 },
-             { lang.atoms+16 , lang.rules+52 },
-             { lang.atoms+22 , lang.rules+52 },
-             { lang.atoms+23 , lang.rules+52 },
-             { lang.atoms+24 , lang.rules+52 },
-             { lang.atoms+26 , lang.rules+52 },
-             { lang.atoms+27 , lang.rules+52 },
-             { lang.atoms+28 , lang.rules+52 },
-             { lang.atoms+29 , lang.rules+52 },
-             { lang.atoms+30 , lang.rules+52 },
-             { lang.atoms+31 , lang.rules+52 },
-             { lang.atoms+32 , lang.rules+52 },
-             { lang.atoms+33 , lang.rules+52 },
-             { lang.atoms+34 , lang.rules+52 },
-             { lang.atoms+35 , lang.rules+52 },
-             { lang.atoms+36 , lang.rules+52 },
-             { lang.atoms+37 , lang.rules+52 },
-             { lang.atoms+38 , lang.rules+52 },
-             { lang.atoms+39 , lang.rules+52 },
-             { lang.atoms+40 , lang.rules+52 }
+             { null , lang.rules+9 },
+             { lang.atoms+0 , lang.rules+9 },
+             { lang.atoms+10 , lang.rules+9 },
+             { lang.atoms+14 , lang.rules+9 },
+             { lang.atoms+16 , lang.rules+9 },
+             { lang.atoms+22 , lang.rules+9 },
+             { lang.atoms+23 , lang.rules+9 },
+             { lang.atoms+24 , lang.rules+9 },
+             { lang.atoms+26 , lang.rules+9 },
+             { lang.atoms+27 , lang.rules+9 },
+             { lang.atoms+28 , lang.rules+9 },
+             { lang.atoms+29 , lang.rules+9 },
+             { lang.atoms+30 , lang.rules+9 },
+             { lang.atoms+31 , lang.rules+9 },
+             { lang.atoms+32 , lang.rules+9 },
+             { lang.atoms+33 , lang.rules+9 },
+             { lang.atoms+34 , lang.rules+9 },
+             { lang.atoms+35 , lang.rules+9 },
+             { lang.atoms+36 , lang.rules+9 },
+             { lang.atoms+37 , lang.rules+9 },
+             { lang.atoms+38 , lang.rules+9 },
+             { lang.atoms+39 , lang.rules+9 },
+             { lang.atoms+40 , lang.rules+9 }
             }
     },
     { 348 ,

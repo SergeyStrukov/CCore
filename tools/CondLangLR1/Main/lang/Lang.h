@@ -79,6 +79,7 @@ struct LangBase : NoCopy
     bool is_lang = false ;
     
     ulen map_index = MaxULen ;
+    ulen kind_index = 0 ;
    
     SyntDesc() {}
     

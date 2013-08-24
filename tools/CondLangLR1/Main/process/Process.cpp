@@ -331,7 +331,7 @@ void Process(StrLen file_name)
    
    Printf(out,"/* #;.ddl */\n\n",no_ext.name);
    
-   Putobj(out,"include <../LangTypes.ddl>\n\n");
+   Putobj(out,"//include <LangTypes.ddl>\n\n");
    
    Putobj(out,"Lang lang=\n");
 
@@ -344,7 +344,7 @@ void Process(StrLen file_name)
      ListPrint<decltype(lang_out)> atom_out(lang_out);
       
      for(auto &atom : clang.getAtoms() )
-       Printf(atom_out,"{ #; , #; }#;",atom.index,StrLen(atom.name.inner(2,1)),EndItem());
+       Printf(atom_out,"{ #; , #; , lang.elements+#; }#;",atom.index,StrLen(atom.name.inner(2,1)),atom.index,EndItem());
      
      Putobj(atom_out,EndList());
     }
@@ -354,6 +354,9 @@ void Process(StrLen file_name)
     // synts
     {
      ListPrint<decltype(lang_out)> synt_out(lang_out);
+     
+     ulen element=clang.getAtomCount();
+     ulen top_index=0;
 
      for(auto &synt : clang.getSynts() )
        {
@@ -363,7 +366,22 @@ void Process(StrLen file_name)
         
         if( !kinds )
           {
-           Printf(synt_out," { { 0 , \"\" , lang.synts+#; } } ,#;",synt.index,AutoIndent());
+           Indent indent(synt_out.getCol());
+          
+           Printf(synt_out," { { 0 , \"\" , lang.synts+#; , lang.elements+#; ,#;",synt.index,element++,AutoIndent());
+
+           auto &top_synt=top.getSynts()[top_index];
+           
+           top_index++;
+           
+           ListPrint<decltype(synt_out)> rule_out(synt_out);
+           
+           for(auto &top_rule : top_synt.rules )
+             Printf(rule_out,"lang.top_rules+#;#;",top_rule.index,EndItem()); 
+           
+           Putobj(rule_out,EndList());
+           
+           Printf(synt_out,"#;   }#; } ,#;",indent,indent,indent);
           }
         else
           {
@@ -374,7 +392,22 @@ void Process(StrLen file_name)
            ListPrint<decltype(synt_out)> kind_out(synt_out);
            
            for(auto &kind : kinds )
-             Printf(kind_out,"{ #; , #.q; , lang.synts+#; }#;",kind.index,kind.name,synt.index,EndItem());
+             {
+              Printf(kind_out,"{ #; , #.q; , lang.synts+#; , lang.elements+#; ,#;",kind.index,kind.name,synt.index,element++,AutoIndent());
+              
+              auto &top_synt=top.getSynts()[top_index];
+              
+              top_index++;
+              
+              ListPrint<decltype(kind_out)> rule_out(kind_out);
+              
+              for(auto &top_rule : top_synt.rules )
+                Printf(rule_out,"lang.top_rules+#;#;",top_rule.index,EndItem()); 
+              
+              Putobj(rule_out,EndList());
+              
+              Printf(kind_out,"\n}#;",EndItem());
+             } 
             
            Putobj(kind_out,EndList());
            
@@ -390,6 +423,21 @@ void Process(StrLen file_name)
         
         Putobj(synt_out,"\n}",EndItem());
        }
+     
+     Putobj(synt_out,EndList());
+    }
+    
+    Putobj(lang_out,EndItem());
+    
+    // lang
+    {
+     ListPrint<decltype(lang_out)> synt_out(lang_out);
+     
+     for(auto &synt : clang.getSynts() )
+       if( synt.is_lang )
+         {
+          Printf(synt_out,"lang.synts+#;",synt.index);
+         }
      
      Putobj(synt_out,EndList());
     }
@@ -428,11 +476,7 @@ void Process(StrLen file_name)
      
      for(auto &rule : clang.getRules() )
        {
-        ulen kindex=0;
-        
-        if( rule.kind ) kindex=rule.kind->index;
-       
-        Printf(rule_out,"{ #; , #.q; , lang.synts[#;].kinds+#; ,#;",rule.index,rule.name,rule.ret->index,kindex,AutoIndent());
+        Printf(rule_out,"{ #; , #.q; , lang.synts[#;].kinds+#; ,#;",rule.index,rule.name,rule.ret->index,rule.getKindIndex(),AutoIndent());
         
         ListPrint<decltype(rule_out)> arg_out(rule_out);
          
@@ -447,6 +491,38 @@ void Process(StrLen file_name)
                              } 
                        );
          
+        Putobj(arg_out,EndList());
+        
+        Putobj(rule_out,"\n}",EndItem());
+       }
+     
+     Putobj(rule_out,EndList());
+    }
+    
+    Putobj(lang_out,EndItem());
+    
+    // top rules
+    {
+     ListPrint<decltype(lang_out)> rule_out(lang_out);
+     
+     for(auto &rule : top.getRules() )
+       {
+        Printf(rule_out,"{ #; , #.q; , lang.rules+#; , lang.synts[#;].kinds+#; ,#;",
+          rule.index,rule.name,rule.map_index,rule.ret->map_index,rule.ret->kind_index,AutoIndent());
+        
+        ListPrint<decltype(rule_out)> arg_out(rule_out);
+        
+        for(auto &element : rule.args )
+          element.apply( [&] (const LangBase::AtomDesc *desc) 
+                             {
+                              Printf(arg_out,"{ lang.atoms+#; , null }#;",desc->index,EndItem()); 
+                             } , 
+                         [&] (const LangBase::SyntDesc *desc) 
+                             {
+                              Printf(arg_out,"{ null , lang.synts[#;].kinds+#; }#;",desc->map_index,desc->kind_index,EndItem());
+                             } 
+                       );
+        
         Putobj(arg_out,EndList());
         
         Putobj(rule_out,"\n}",EndItem());
@@ -484,6 +560,8 @@ void Process(StrLen file_name)
     {
      ListPrint<decltype(lang_out)> final_out(lang_out);
      
+     ulen atom_count=clang.getAtomCount();
+     
      ulen index=0;
      
      for(auto &final : compress.getProps() )
@@ -502,7 +580,7 @@ void Process(StrLen file_name)
            
            if( alpha.nonEmpty() )
              {
-              Printf(action_out,"{ null , lang.rules+#; }#;",alpha.getPtr()->getIndex(),EndItem());
+              Printf(action_out,"{ null , lang.rules+#; }#;",alpha.getPtr()->getIndex()-atom_count,EndItem());
              }
           }
         
@@ -518,7 +596,7 @@ void Process(StrLen file_name)
               
               if( rules.nonEmpty() )
                 {
-                 Printf(action_out,"{ lang.atoms+#; , lang.rules+#; }#;",rec.index.getIndex(),rules.getPtr()->getIndex(),EndItem());
+                 Printf(action_out,"{ lang.atoms+#; , lang.rules+#; }#;",rec.index.getIndex(),rules.getPtr()->getIndex()-atom_count,EndItem());
                 }
              }
           }

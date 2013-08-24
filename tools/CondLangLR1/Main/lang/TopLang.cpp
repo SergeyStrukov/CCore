@@ -278,6 +278,7 @@ TopLang::TopLang(const CondLang &clang)
            synts->is_lang=is_lang;
           
            synts->map_index=desc_map_index;
+           synts->kind_index=kind.index;
            
            ++synts;
           }

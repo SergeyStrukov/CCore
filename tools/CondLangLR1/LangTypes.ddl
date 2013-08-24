@@ -11,20 +11,22 @@
 //
 //----------------------------------------------------------------------------------------
 
-type AtomIndex = ulen ;
-type SyntIndex = ulen ;
-type KindIndex = ulen ;
-type ElementIndex = ulen ;
-type RuleIndex = ulen ;
-type StateIndex = ulen ;
-type FinalIndex = ulen ;
+type AtomIndex = uint32 ;
+type SyntIndex = uint32 ;
+type KindIndex = uint32 ;
+type ElementIndex = uint32 ;
+type RuleIndex = uint32 ;
+type StateIndex = uint32 ;
+type FinalIndex = uint32 ;
 
 struct Lang
  {
   Atom[] atoms;
   Synt[] synts;
+  Synt * [] lang;
   Element[] elements;
   Rule[] rules;
+  TopRule[] top_rules;
   State[] states;
   Final[] finals;
  };
@@ -33,6 +35,8 @@ struct Atom
  {
   AtomIndex index;
   text name;
+  
+  Element *element;
  };
 
 struct Synt
@@ -50,6 +54,10 @@ struct Kind
   text name;
 
   Synt *synt;
+  
+  Element *element;
+  
+  TopRule * [] rules;
  };
 
 struct Element
@@ -75,6 +83,24 @@ struct Rule
 
   Arg[] args;
  };
+ 
+struct TopRule
+ {
+  RuleIndex index;
+  text name;
+  
+  Rule *bottom;
+
+  Kind *result;
+
+  struct Arg
+   {
+    Atom *atom;
+    Kind *kind;
+   };
+
+  Arg[] args;
+ }; 
 
 struct State
  {
