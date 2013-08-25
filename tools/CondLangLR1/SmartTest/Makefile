@@ -1,7 +1,7 @@
 # Makefile
 #----------------------------------------------------------------------------------------
 #
-#  Project: CondLangLR1-BFTest 1.00
+#  Project: CondLangLR1-SmartTest 1.00
 #
 #  License: Boost Software License - Version 1.0 - August 17th, 2003 
 #
@@ -17,7 +17,7 @@ include $(CCORE_ROOT)/Makefile.host
 
 OBJ_PATH = obj
 
-TARGET = ./BFTest.exe
+TARGET = ./SmartTest.exe
 
 include $(CCORE_ROOT)/Target/Makefile.app
 

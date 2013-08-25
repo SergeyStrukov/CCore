@@ -28,11 +28,27 @@ void Process(StrLen file_name);
 
 /* classes */
 
+class TrackStep;
+
 class TopGenerator;
 
 class Parser;
 
 class TestParser;
+
+/* class TrackStep */
+
+class TrackStep : NoCopy
+ {
+   ulen count;
+   ulen ind;
+   
+  public:
+  
+   explicit TrackStep(ulen count_) : count(count_),ind(0) {}
+   
+   bool step();
+ };
 
 /* class TopGenerator */
 

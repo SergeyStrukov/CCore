@@ -38,16 +38,27 @@ void Process(StrLen file_name)
   
   TestParser test(data);
   
-  Printf(Con,"count = #10L;\r",Count);
+  for(TrackStep track(Count); track.step() ;) gen(test,Cap);
   
-  for(ulen count=Count; count ;count--)
+  Printf(Con,"Top test is OK\n\n");
+ }
+
+/* class TrackStep */
+
+bool TrackStep::step()
+ {
+  if( ind>=count )
     {
-     if( (count%100)==0 ) Printf(Con,"count = #10L;\r",count);
+     Printf(Con,"step = #;\n\n",ind);
     
-     gen(test,Cap);
+     return false;
     }
+
+  if( (ind%100)==0 ) Printf(Con,"step = #;\r",ind);
   
-  Printf(Con,"\nTop test is OK\n\n");
+  ind++;
+  
+  return true;
  }
 
 /* class TopGenerator */
