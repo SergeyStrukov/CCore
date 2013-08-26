@@ -14,29 +14,29 @@ Lang lang=
    {
     { 0 , "EXPR" ,
                    {
-                    { 0 , "A" , lang.synts+0 , lang.elements+5 ,
-                                                                 {
-                                                                  lang.top_rules+0,
-                                                                  lang.top_rules+1,
-                                                                  lang.top_rules+2,
-                                                                  lang.top_rules+3,
-                                                                  lang.top_rules+4,
-                                                                  lang.top_rules+5
-                                                                 }
+                    { 0 , 0 , "A" , lang.synts+0 , lang.elements+5 ,
+                                                                     {
+                                                                      lang.top_rules+0,
+                                                                      lang.top_rules+1,
+                                                                      lang.top_rules+2,
+                                                                      lang.top_rules+3,
+                                                                      lang.top_rules+4,
+                                                                      lang.top_rules+5
+                                                                     }
                     },
-                    { 1 , "M" , lang.synts+0 , lang.elements+6 ,
-                                                                 {
-                                                                  lang.top_rules+6,
-                                                                  lang.top_rules+7
-                                                                 }
+                    { 1 , 1 , "M" , lang.synts+0 , lang.elements+6 ,
+                                                                     {
+                                                                      lang.top_rules+6,
+                                                                      lang.top_rules+7
+                                                                     }
                     },
-                    { 2 , "P" , lang.synts+0 , lang.elements+7 ,
-                                                                 {
-                                                                  lang.top_rules+8,
-                                                                  lang.top_rules+9,
-                                                                  lang.top_rules+10,
-                                                                  lang.top_rules+11
-                                                                 }
+                    { 2 , 2 , "P" , lang.synts+0 , lang.elements+7 ,
+                                                                     {
+                                                                      lang.top_rules+8,
+                                                                      lang.top_rules+9,
+                                                                      lang.top_rules+10,
+                                                                      lang.top_rules+11
+                                                                     }
                     }
                    } ,
                    {

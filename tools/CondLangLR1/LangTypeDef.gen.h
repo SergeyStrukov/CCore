@@ -120,6 +120,7 @@ struct TypeDefCore
 
   struct S10
    {
+    A5 kindex;
     A5 index;
     StrLen name;
     S11 * synt;

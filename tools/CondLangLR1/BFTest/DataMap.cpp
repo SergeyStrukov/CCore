@@ -71,6 +71,7 @@ static const char *Pretext=
 
 "  struct Kind"
 "   {"
+"    KindIndex kindex;"
 "    KindIndex index;"
 "    text name;"
 

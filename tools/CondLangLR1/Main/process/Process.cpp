@@ -368,11 +368,9 @@ void Process(StrLen file_name)
           {
            Indent indent(synt_out.getCol());
           
-           Printf(synt_out," { { 0 , \"\" , lang.synts+#; , lang.elements+#; ,#;",synt.index,element++,AutoIndent());
+           Printf(synt_out," { { #; , 0 , \"\" , lang.synts+#; , lang.elements+#; ,#;",top_index,synt.index,element++,AutoIndent());
 
-           auto &top_synt=top.getSynts()[top_index];
-           
-           top_index++;
+           auto &top_synt=top.getSynts()[top_index++];
            
            ListPrint<decltype(synt_out)> rule_out(synt_out);
            
@@ -393,11 +391,9 @@ void Process(StrLen file_name)
            
            for(auto &kind : kinds )
              {
-              Printf(kind_out,"{ #; , #.q; , lang.synts+#; , lang.elements+#; ,#;",kind.index,kind.name,synt.index,element++,AutoIndent());
+              Printf(kind_out,"{ #; , #; , #.q; , lang.synts+#; , lang.elements+#; ,#;",top_index,kind.index,kind.name,synt.index,element++,AutoIndent());
               
-              auto &top_synt=top.getSynts()[top_index];
-              
-              top_index++;
+              auto &top_synt=top.getSynts()[top_index++];
               
               ListPrint<decltype(kind_out)> rule_out(kind_out);
               

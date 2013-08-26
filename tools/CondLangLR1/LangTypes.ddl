@@ -50,7 +50,8 @@ struct Synt
 
 struct Kind
  {
-  KindIndex index;
+  KindIndex kindex; // index among all kinds
+  KindIndex index; // index in synt array
   text name;
 
   Synt *synt;

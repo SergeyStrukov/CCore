@@ -176,6 +176,7 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
          ret.set<S10>();
 
          DDL::SetFieldOffsets(struct_node,
+                              "kindex",offsetof(S10,kindex),
                               "index",offsetof(S10,index),
                               "name",offsetof(S10,name),
                               "synt",offsetof(S10,synt),
@@ -340,6 +341,7 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
        case 10 :
         {
          DDL::GuardFieldTypes<
+                              A5,
                               A5,
                               StrLen,
                               S11 *,

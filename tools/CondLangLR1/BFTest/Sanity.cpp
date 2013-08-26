@@ -55,6 +55,7 @@ void DataMap::sanity_synts()
   auto rules=lang.rules;
   
   ulen eindex=lang.atoms.len;
+  ulen kindex=0;
   
   if( !synts )
     {
@@ -81,6 +82,13 @@ void DataMap::sanity_synts()
        {
         auto &kind=kinds[j];
         
+        if( kind.kindex!=kindex )
+          {
+           Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; kindex",i,j);
+          }
+        
+        kindex++;
+        
         if( kind.index!=j )
           {
            Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; index",i,j);
@@ -98,11 +106,21 @@ void DataMap::sanity_synts()
            Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; element",i,j);
           }
         
+        if( !kind.rules )
+          {
+           Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; , no rules",i,j);
+          }
+        
         for(auto *rule : kind.rules )
           if( !Checkin(rule,top_rules) || rule->result!=&kind )
             {
              Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; rules",i,j);
             }
+       }
+     
+     if( !synt.rules )
+       {
+        Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , no rules",i);
        }
      
      for(auto *rule : synt.rules )
