@@ -655,50 +655,50 @@ Lang lang=
     { 66 , null , lang.synts[17].kinds+0 }
    },
    {
-    { 0 , "startBody" , lang.synts[0].kinds+0 ,
+    { 0 , "start" , lang.synts[0].kinds+0 ,
+                                            {
+                                             
+                                            }
+    },
+    { 1 , "ext_SCOPE" , lang.synts[0].kinds+0 ,
                                                 {
-                                                 
+                                                 { null , lang.synts+0 },
+                                                 { null , lang.synts+1 }
                                                 }
     },
-    { 1 , "extBody_SCOPE" , lang.synts[0].kinds+0 ,
-                                                    {
-                                                     { null , lang.synts+0 },
-                                                     { null , lang.synts+1 }
-                                                    }
+    { 2 , "ext_INCLUDE" , lang.synts[0].kinds+0 ,
+                                                  {
+                                                   { null , lang.synts+0 },
+                                                   { null , lang.synts+2 }
+                                                  }
     },
-    { 2 , "extBody_INCLUDE" , lang.synts[0].kinds+0 ,
-                                                      {
-                                                       { null , lang.synts+0 },
-                                                       { null , lang.synts+2 }
-                                                      }
+    { 3 , "ext_TYPE" , lang.synts[0].kinds+0 ,
+                                               {
+                                                { null , lang.synts+0 },
+                                                { null , lang.synts+3 }
+                                               }
     },
-    { 3 , "extBody_TYPE" , lang.synts[0].kinds+0 ,
-                                                   {
-                                                    { null , lang.synts+0 },
-                                                    { null , lang.synts+3 }
-                                                   }
+    { 4 , "ext_CONST" , lang.synts[0].kinds+0 ,
+                                                {
+                                                 { null , lang.synts+0 },
+                                                 { null , lang.synts+4 }
+                                                }
     },
-    { 4 , "extBody_CONST" , lang.synts[0].kinds+0 ,
-                                                    {
-                                                     { null , lang.synts+0 },
-                                                     { null , lang.synts+4 }
-                                                    }
-    },
-    { 5 , "extBody_STRUCT" , lang.synts[0].kinds+0 ,
-                                                     {
-                                                      { null , lang.synts+0 },
-                                                      { null , lang.synts+10 },
-                                                      { lang.atoms+12 , null }
-                                                     }
-    },
-    { 6 , "buildScope" , lang.synts[1].kinds+0 ,
+    { 5 , "ext_STRUCT" , lang.synts[0].kinds+0 ,
                                                  {
-                                                  { lang.atoms+26 , null },
-                                                  { lang.atoms+16 , null },
-                                                  { lang.atoms+41 , null },
                                                   { null , lang.synts+0 },
-                                                  { lang.atoms+42 , null }
+                                                  { null , lang.synts+10 },
+                                                  { lang.atoms+12 , null }
                                                  }
+    },
+    { 6 , "build" , lang.synts[1].kinds+0 ,
+                                            {
+                                             { lang.atoms+26 , null },
+                                             { lang.atoms+16 , null },
+                                             { lang.atoms+41 , null },
+                                             { null , lang.synts+0 },
+                                             { lang.atoms+42 , null }
+                                            }
     },
     { 7 , "includeFile" , lang.synts[2].kinds+0 ,
                                                   {
@@ -706,60 +706,60 @@ Lang lang=
                                                    { lang.atoms+15 , null }
                                                   }
     },
-    { 8 , "defType" , lang.synts[3].kinds+0 ,
-                                              {
-                                               { lang.atoms+34 , null },
-                                               { lang.atoms+16 , null },
-                                               { lang.atoms+13 , null },
-                                               { null , lang.synts+9 },
-                                               { lang.atoms+12 , null }
-                                              }
+    { 8 , "build" , lang.synts[3].kinds+0 ,
+                                            {
+                                             { lang.atoms+34 , null },
+                                             { lang.atoms+16 , null },
+                                             { lang.atoms+13 , null },
+                                             { null , lang.synts+9 },
+                                             { lang.atoms+12 , null }
+                                            }
     },
-    { 9 , "defConst" , lang.synts[4].kinds+0 ,
-                                               {
-                                                { null , lang.synts+9 },
-                                                { lang.atoms+16 , null },
-                                                { lang.atoms+13 , null },
-                                                { null , lang.synts+12 },
-                                                { lang.atoms+12 , null }
-                                               }
+    { 9 , "build" , lang.synts[4].kinds+0 ,
+                                            {
+                                             { null , lang.synts+9 },
+                                             { lang.atoms+16 , null },
+                                             { lang.atoms+13 , null },
+                                             { null , lang.synts+12 },
+                                             { lang.atoms+12 , null }
+                                            }
     },
-    { 10 , "startName" , lang.synts[5].kinds+0 ,
-                                                 {
-                                                  { lang.atoms+16 , null }
-                                                 }
+    { 10 , "start" , lang.synts[5].kinds+0 ,
+                                             {
+                                              { lang.atoms+16 , null }
+                                             }
     },
-    { 11 , "extName" , lang.synts[5].kinds+0 ,
-                                               {
-                                                { null , lang.synts+5 },
-                                                { lang.atoms+0 , null },
-                                                { lang.atoms+16 , null }
-                                               }
+    { 11 , "ext" , lang.synts[5].kinds+0 ,
+                                           {
+                                            { null , lang.synts+5 },
+                                            { lang.atoms+0 , null },
+                                            { lang.atoms+16 , null }
+                                           }
     },
-    { 12 , "relName" , lang.synts[6].kinds+0 ,
-                                               {
-                                                { null , lang.synts+5 }
-                                               }
+    { 12 , "rel" , lang.synts[6].kinds+0 ,
+                                           {
+                                            { null , lang.synts+5 }
+                                           }
     },
-    { 13 , "absName" , lang.synts[6].kinds+0 ,
-                                               {
-                                                { lang.atoms+0 , null },
-                                                { null , lang.synts+5 }
-                                               }
+    { 13 , "abs" , lang.synts[6].kinds+0 ,
+                                           {
+                                            { lang.atoms+0 , null },
+                                            { null , lang.synts+5 }
+                                           }
     },
-    { 14 , "dotName" , lang.synts[6].kinds+0 ,
-                                               {
-                                                { lang.atoms+10 , null },
-                                                { lang.atoms+0 , null },
-                                                { null , lang.synts+5 }
-                                               }
+    { 14 , "dot" , lang.synts[6].kinds+0 ,
+                                           {
+                                            { lang.atoms+10 , null },
+                                            { lang.atoms+0 , null },
+                                            { null , lang.synts+5 }
+                                           }
     },
-    { 15 , "dotsName" , lang.synts[6].kinds+0 ,
-                                                {
-                                                 { lang.atoms+14 , null },
-                                                 { lang.atoms+0 , null },
-                                                 { null , lang.synts+5 }
-                                                }
+    { 15 , "dots" , lang.synts[6].kinds+0 ,
+                                            {
+                                             { lang.atoms+14 , null },
+                                             { lang.atoms+0 , null },
+                                             { null , lang.synts+5 }
+                                            }
     },
     { 16 , "intName" , lang.synts[7].kinds+0 ,
                                                {
@@ -821,20 +821,20 @@ Lang lang=
                                                    { lang.atoms+38 , null }
                                                   }
     },
-    { 28 , "cast_INAME" , lang.synts[8].kinds+0 ,
-                                                  {
-                                                   { null , lang.synts+7 }
-                                                  }
+    { 28 , "cast" , lang.synts[8].kinds+0 ,
+                                            {
+                                             { null , lang.synts+7 }
+                                            }
     },
-    { 29 , "textName" , lang.synts[8].kinds+0 ,
-                                                {
-                                                 { lang.atoms+33 , null }
-                                                }
+    { 29 , "text" , lang.synts[8].kinds+0 ,
+                                            {
+                                             { lang.atoms+33 , null }
+                                            }
     },
-    { 30 , "ipName" , lang.synts[8].kinds+0 ,
-                                              {
-                                               { lang.atoms+24 , null }
-                                              }
+    { 30 , "ip" , lang.synts[8].kinds+0 ,
+                                          {
+                                           { lang.atoms+24 , null }
+                                          }
     },
     { 31 , "namedType" , lang.synts[9].kinds+0 ,
                                                  {
@@ -872,57 +872,57 @@ Lang lang=
                                                    { null , lang.synts+10 }
                                                   }
     },
-    { 37 , "buildStruct" , lang.synts[10].kinds+0 ,
-                                                    {
-                                                     { lang.atoms+32 , null },
-                                                     { lang.atoms+16 , null },
-                                                     { lang.atoms+41 , null },
-                                                     { null , lang.synts+11 },
-                                                     { lang.atoms+42 , null }
-                                                    }
+    { 37 , "build" , lang.synts[10].kinds+0 ,
+                                              {
+                                               { lang.atoms+32 , null },
+                                               { lang.atoms+16 , null },
+                                               { lang.atoms+41 , null },
+                                               { null , lang.synts+11 },
+                                               { lang.atoms+42 , null }
+                                              }
     },
-    { 38 , "startSBody" , lang.synts[11].kinds+0 ,
+    { 38 , "start" , lang.synts[11].kinds+0 ,
+                                              {
+                                               
+                                              }
+    },
+    { 39 , "ext_TYPE" , lang.synts[11].kinds+0 ,
+                                                 {
+                                                  { null , lang.synts+11 },
+                                                  { null , lang.synts+3 }
+                                                 }
+    },
+    { 40 , "ext_CONST" , lang.synts[11].kinds+0 ,
+                                                  {
+                                                   { null , lang.synts+11 },
+                                                   { lang.atoms+21 , null },
+                                                   { null , lang.synts+4 }
+                                                  }
+    },
+    { 41 , "ext_STRUCT" , lang.synts[11].kinds+0 ,
                                                    {
-                                                    
+                                                    { null , lang.synts+11 },
+                                                    { null , lang.synts+10 },
+                                                    { lang.atoms+12 , null }
                                                    }
     },
-    { 39 , "extSBody_TYPE" , lang.synts[11].kinds+0 ,
-                                                      {
-                                                       { null , lang.synts+11 },
-                                                       { null , lang.synts+3 }
-                                                      }
+    { 42 , "ext_field" , lang.synts[11].kinds+0 ,
+                                                  {
+                                                   { null , lang.synts+11 },
+                                                   { null , lang.synts+9 },
+                                                   { lang.atoms+16 , null },
+                                                   { lang.atoms+12 , null }
+                                                  }
     },
-    { 40 , "extSBody_CONST" , lang.synts[11].kinds+0 ,
-                                                       {
-                                                        { null , lang.synts+11 },
-                                                        { lang.atoms+21 , null },
-                                                        { null , lang.synts+4 }
-                                                       }
-    },
-    { 41 , "extSBody_STRUCT" , lang.synts[11].kinds+0 ,
-                                                        {
-                                                         { null , lang.synts+11 },
-                                                         { null , lang.synts+10 },
-                                                         { lang.atoms+12 , null }
-                                                        }
-    },
-    { 42 , "extSBody_field" , lang.synts[11].kinds+0 ,
-                                                       {
-                                                        { null , lang.synts+11 },
-                                                        { null , lang.synts+9 },
-                                                        { lang.atoms+16 , null },
-                                                        { lang.atoms+12 , null }
-                                                       }
-    },
-    { 43 , "extSBody_fieldVal" , lang.synts[11].kinds+0 ,
-                                                          {
-                                                           { null , lang.synts+11 },
-                                                           { null , lang.synts+9 },
-                                                           { lang.atoms+16 , null },
-                                                           { lang.atoms+13 , null },
-                                                           { null , lang.synts+12 },
-                                                           { lang.atoms+12 , null }
-                                                          }
+    { 43 , "ext_fieldVal" , lang.synts[11].kinds+0 ,
+                                                     {
+                                                      { null , lang.synts+11 },
+                                                      { null , lang.synts+9 },
+                                                      { lang.atoms+16 , null },
+                                                      { lang.atoms+13 , null },
+                                                      { null , lang.synts+12 },
+                                                      { lang.atoms+12 , null }
+                                                     }
     },
     { 44 , "cast_EXPR" , lang.synts[12].kinds+6 ,
                                                   {
@@ -1070,37 +1070,37 @@ Lang lang=
                                                             { lang.atoms+42 , null }
                                                            }
     },
-    { 66 , "startExprList" , lang.synts[13].kinds+0 ,
-                                                      {
-                                                       { null , lang.synts+12 }
-                                                      }
+    { 66 , "start" , lang.synts[13].kinds+0 ,
+                                              {
+                                               { null , lang.synts+12 }
+                                              }
     },
-    { 67 , "extExprList" , lang.synts[13].kinds+0 ,
-                                                    {
-                                                     { null , lang.synts+13 },
-                                                     { lang.atoms+7 , null },
-                                                     { null , lang.synts+12 }
-                                                    }
+    { 67 , "ext" , lang.synts[13].kinds+0 ,
+                                            {
+                                             { null , lang.synts+13 },
+                                             { lang.atoms+7 , null },
+                                             { null , lang.synts+12 }
+                                            }
     },
-    { 68 , "nameExpr" , lang.synts[14].kinds+0 ,
-                                                 {
-                                                  { lang.atoms+10 , null },
-                                                  { lang.atoms+16 , null },
-                                                  { lang.atoms+13 , null },
-                                                  { null , lang.synts+12 }
-                                                 }
+    { 68 , "build" , lang.synts[14].kinds+0 ,
+                                              {
+                                               { lang.atoms+10 , null },
+                                               { lang.atoms+16 , null },
+                                               { lang.atoms+13 , null },
+                                               { null , lang.synts+12 }
+                                              }
     },
-    { 69 , "startNamedExprList" , lang.synts[15].kinds+0 ,
-                                                           {
-                                                            { null , lang.synts+14 }
-                                                           }
+    { 69 , "start" , lang.synts[15].kinds+0 ,
+                                              {
+                                               { null , lang.synts+14 }
+                                              }
     },
-    { 70 , "extNamedExprList" , lang.synts[15].kinds+0 ,
-                                                         {
-                                                          { null , lang.synts+15 },
-                                                          { lang.atoms+7 , null },
-                                                          { null , lang.synts+14 }
-                                                         }
+    { 70 , "ext" , lang.synts[15].kinds+0 ,
+                                            {
+                                             { null , lang.synts+15 },
+                                             { lang.atoms+7 , null },
+                                             { null , lang.synts+14 }
+                                            }
     },
     { 71 , "type_NAME" , lang.synts[16].kinds+0 ,
                                                   {
@@ -1135,50 +1135,50 @@ Lang lang=
     }
    },
    {
-    { 0 , "startBody" , lang.rules+0 , lang.synts[0].kinds+0 ,
+    { 0 , "start" , lang.rules+0 , lang.synts[0].kinds+0 ,
+                                                           {
+                                                            
+                                                           }
+    },
+    { 1 , "ext_SCOPE" , lang.rules+1 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                
+                                                                { null , lang.synts[0].kinds+0 },
+                                                                { null , lang.synts[1].kinds+0 }
                                                                }
     },
-    { 1 , "extBody_SCOPE" , lang.rules+1 , lang.synts[0].kinds+0 ,
-                                                                   {
-                                                                    { null , lang.synts[0].kinds+0 },
-                                                                    { null , lang.synts[1].kinds+0 }
-                                                                   }
+    { 2 , "ext_INCLUDE" , lang.rules+2 , lang.synts[0].kinds+0 ,
+                                                                 {
+                                                                  { null , lang.synts[0].kinds+0 },
+                                                                  { null , lang.synts[2].kinds+0 }
+                                                                 }
     },
-    { 2 , "extBody_INCLUDE" , lang.rules+2 , lang.synts[0].kinds+0 ,
-                                                                     {
-                                                                      { null , lang.synts[0].kinds+0 },
-                                                                      { null , lang.synts[2].kinds+0 }
-                                                                     }
+    { 3 , "ext_TYPE" , lang.rules+3 , lang.synts[0].kinds+0 ,
+                                                              {
+                                                               { null , lang.synts[0].kinds+0 },
+                                                               { null , lang.synts[3].kinds+0 }
+                                                              }
     },
-    { 3 , "extBody_TYPE" , lang.rules+3 , lang.synts[0].kinds+0 ,
-                                                                  {
-                                                                   { null , lang.synts[0].kinds+0 },
-                                                                   { null , lang.synts[3].kinds+0 }
-                                                                  }
+    { 4 , "ext_CONST" , lang.rules+4 , lang.synts[0].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[0].kinds+0 },
+                                                                { null , lang.synts[4].kinds+0 }
+                                                               }
     },
-    { 4 , "extBody_CONST" , lang.rules+4 , lang.synts[0].kinds+0 ,
-                                                                   {
-                                                                    { null , lang.synts[0].kinds+0 },
-                                                                    { null , lang.synts[4].kinds+0 }
-                                                                   }
-    },
-    { 5 , "extBody_STRUCT" , lang.rules+5 , lang.synts[0].kinds+0 ,
-                                                                    {
-                                                                     { null , lang.synts[0].kinds+0 },
-                                                                     { null , lang.synts[10].kinds+0 },
-                                                                     { lang.atoms+12 , null }
-                                                                    }
-    },
-    { 6 , "buildScope" , lang.rules+6 , lang.synts[1].kinds+0 ,
+    { 5 , "ext_STRUCT" , lang.rules+5 , lang.synts[0].kinds+0 ,
                                                                 {
-                                                                 { lang.atoms+26 , null },
-                                                                 { lang.atoms+16 , null },
-                                                                 { lang.atoms+41 , null },
                                                                  { null , lang.synts[0].kinds+0 },
-                                                                 { lang.atoms+42 , null }
+                                                                 { null , lang.synts[10].kinds+0 },
+                                                                 { lang.atoms+12 , null }
                                                                 }
+    },
+    { 6 , "build" , lang.rules+6 , lang.synts[1].kinds+0 ,
+                                                           {
+                                                            { lang.atoms+26 , null },
+                                                            { lang.atoms+16 , null },
+                                                            { lang.atoms+41 , null },
+                                                            { null , lang.synts[0].kinds+0 },
+                                                            { lang.atoms+42 , null }
+                                                           }
     },
     { 7 , "includeFile" , lang.rules+7 , lang.synts[2].kinds+0 ,
                                                                  {
@@ -1186,114 +1186,114 @@ Lang lang=
                                                                   { lang.atoms+15 , null }
                                                                  }
     },
-    { 8 , "defType" , lang.rules+8 , lang.synts[3].kinds+0 ,
-                                                             {
-                                                              { lang.atoms+34 , null },
-                                                              { lang.atoms+16 , null },
-                                                              { lang.atoms+13 , null },
-                                                              { null , lang.synts[9].kinds+0 },
-                                                              { lang.atoms+12 , null }
-                                                             }
+    { 8 , "build" , lang.rules+8 , lang.synts[3].kinds+0 ,
+                                                           {
+                                                            { lang.atoms+34 , null },
+                                                            { lang.atoms+16 , null },
+                                                            { lang.atoms+13 , null },
+                                                            { null , lang.synts[9].kinds+0 },
+                                                            { lang.atoms+12 , null }
+                                                           }
     },
-    { 9 , "defConst.LIST" , lang.rules+9 , lang.synts[4].kinds+0 ,
-                                                                   {
-                                                                    { null , lang.synts[9].kinds+0 },
-                                                                    { lang.atoms+16 , null },
-                                                                    { lang.atoms+13 , null },
-                                                                    { null , lang.synts[12].kinds+0 },
-                                                                    { lang.atoms+12 , null }
-                                                                   }
+    { 9 , "build.LIST" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                {
+                                                                 { null , lang.synts[9].kinds+0 },
+                                                                 { lang.atoms+16 , null },
+                                                                 { lang.atoms+13 , null },
+                                                                 { null , lang.synts[12].kinds+0 },
+                                                                 { lang.atoms+12 , null }
+                                                                }
     },
-    { 10 , "defConst.ADD" , lang.rules+9 , lang.synts[4].kinds+0 ,
-                                                                   {
-                                                                    { null , lang.synts[9].kinds+0 },
-                                                                    { lang.atoms+16 , null },
-                                                                    { lang.atoms+13 , null },
-                                                                    { null , lang.synts[12].kinds+1 },
-                                                                    { lang.atoms+12 , null }
-                                                                   }
+    { 10 , "build.ADD" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                {
+                                                                 { null , lang.synts[9].kinds+0 },
+                                                                 { lang.atoms+16 , null },
+                                                                 { lang.atoms+13 , null },
+                                                                 { null , lang.synts[12].kinds+1 },
+                                                                 { lang.atoms+12 , null }
+                                                                }
     },
-    { 11 , "defConst.MUL" , lang.rules+9 , lang.synts[4].kinds+0 ,
-                                                                   {
-                                                                    { null , lang.synts[9].kinds+0 },
-                                                                    { lang.atoms+16 , null },
-                                                                    { lang.atoms+13 , null },
-                                                                    { null , lang.synts[12].kinds+2 },
-                                                                    { lang.atoms+12 , null }
-                                                                   }
+    { 11 , "build.MUL" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                {
+                                                                 { null , lang.synts[9].kinds+0 },
+                                                                 { lang.atoms+16 , null },
+                                                                 { lang.atoms+13 , null },
+                                                                 { null , lang.synts[12].kinds+2 },
+                                                                 { lang.atoms+12 , null }
+                                                                }
     },
-    { 12 , "defConst.UN" , lang.rules+9 , lang.synts[4].kinds+0 ,
-                                                                  {
-                                                                   { null , lang.synts[9].kinds+0 },
-                                                                   { lang.atoms+16 , null },
-                                                                   { lang.atoms+13 , null },
-                                                                   { null , lang.synts[12].kinds+3 },
-                                                                   { lang.atoms+12 , null }
-                                                                  }
+    { 12 , "build.UN" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[9].kinds+0 },
+                                                                { lang.atoms+16 , null },
+                                                                { lang.atoms+13 , null },
+                                                                { null , lang.synts[12].kinds+3 },
+                                                                { lang.atoms+12 , null }
+                                                               }
     },
-    { 13 , "defConst.NUM" , lang.rules+9 , lang.synts[4].kinds+0 ,
-                                                                   {
-                                                                    { null , lang.synts[9].kinds+0 },
-                                                                    { lang.atoms+16 , null },
-                                                                    { lang.atoms+13 , null },
-                                                                    { null , lang.synts[12].kinds+4 },
-                                                                    { lang.atoms+12 , null }
-                                                                   }
+    { 13 , "build.NUM" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                {
+                                                                 { null , lang.synts[9].kinds+0 },
+                                                                 { lang.atoms+16 , null },
+                                                                 { lang.atoms+13 , null },
+                                                                 { null , lang.synts[12].kinds+4 },
+                                                                 { lang.atoms+12 , null }
+                                                                }
     },
-    { 14 , "defConst.POST" , lang.rules+9 , lang.synts[4].kinds+0 ,
-                                                                    {
-                                                                     { null , lang.synts[9].kinds+0 },
-                                                                     { lang.atoms+16 , null },
-                                                                     { lang.atoms+13 , null },
-                                                                     { null , lang.synts[12].kinds+5 },
-                                                                     { lang.atoms+12 , null }
-                                                                    }
-    },
-    { 15 , "defConst.PRIM" , lang.rules+9 , lang.synts[4].kinds+0 ,
-                                                                    {
-                                                                     { null , lang.synts[9].kinds+0 },
-                                                                     { lang.atoms+16 , null },
-                                                                     { lang.atoms+13 , null },
-                                                                     { null , lang.synts[12].kinds+6 },
-                                                                     { lang.atoms+12 , null }
-                                                                    }
-    },
-    { 16 , "startName" , lang.rules+10 , lang.synts[5].kinds+0 ,
+    { 14 , "build.POST" , lang.rules+9 , lang.synts[4].kinds+0 ,
                                                                  {
-                                                                  { lang.atoms+16 , null }
+                                                                  { null , lang.synts[9].kinds+0 },
+                                                                  { lang.atoms+16 , null },
+                                                                  { lang.atoms+13 , null },
+                                                                  { null , lang.synts[12].kinds+5 },
+                                                                  { lang.atoms+12 , null }
                                                                  }
     },
-    { 17 , "extName" , lang.rules+11 , lang.synts[5].kinds+0 ,
-                                                               {
-                                                                { null , lang.synts[5].kinds+0 },
-                                                                { lang.atoms+0 , null },
-                                                                { lang.atoms+16 , null }
-                                                               }
+    { 15 , "build.PRIM" , lang.rules+9 , lang.synts[4].kinds+0 ,
+                                                                 {
+                                                                  { null , lang.synts[9].kinds+0 },
+                                                                  { lang.atoms+16 , null },
+                                                                  { lang.atoms+13 , null },
+                                                                  { null , lang.synts[12].kinds+6 },
+                                                                  { lang.atoms+12 , null }
+                                                                 }
     },
-    { 18 , "relName" , lang.rules+12 , lang.synts[6].kinds+0 ,
-                                                               {
-                                                                { null , lang.synts[5].kinds+0 }
-                                                               }
+    { 16 , "start" , lang.rules+10 , lang.synts[5].kinds+0 ,
+                                                             {
+                                                              { lang.atoms+16 , null }
+                                                             }
     },
-    { 19 , "absName" , lang.rules+13 , lang.synts[6].kinds+0 ,
-                                                               {
-                                                                { lang.atoms+0 , null },
-                                                                { null , lang.synts[5].kinds+0 }
-                                                               }
+    { 17 , "ext" , lang.rules+11 , lang.synts[5].kinds+0 ,
+                                                           {
+                                                            { null , lang.synts[5].kinds+0 },
+                                                            { lang.atoms+0 , null },
+                                                            { lang.atoms+16 , null }
+                                                           }
     },
-    { 20 , "dotName" , lang.rules+14 , lang.synts[6].kinds+0 ,
-                                                               {
-                                                                { lang.atoms+10 , null },
-                                                                { lang.atoms+0 , null },
-                                                                { null , lang.synts[5].kinds+0 }
-                                                               }
+    { 18 , "rel" , lang.rules+12 , lang.synts[6].kinds+0 ,
+                                                           {
+                                                            { null , lang.synts[5].kinds+0 }
+                                                           }
     },
-    { 21 , "dotsName" , lang.rules+15 , lang.synts[6].kinds+0 ,
-                                                                {
-                                                                 { lang.atoms+14 , null },
-                                                                 { lang.atoms+0 , null },
-                                                                 { null , lang.synts[5].kinds+0 }
-                                                                }
+    { 19 , "abs" , lang.rules+13 , lang.synts[6].kinds+0 ,
+                                                           {
+                                                            { lang.atoms+0 , null },
+                                                            { null , lang.synts[5].kinds+0 }
+                                                           }
+    },
+    { 20 , "dot" , lang.rules+14 , lang.synts[6].kinds+0 ,
+                                                           {
+                                                            { lang.atoms+10 , null },
+                                                            { lang.atoms+0 , null },
+                                                            { null , lang.synts[5].kinds+0 }
+                                                           }
+    },
+    { 21 , "dots" , lang.rules+15 , lang.synts[6].kinds+0 ,
+                                                            {
+                                                             { lang.atoms+14 , null },
+                                                             { lang.atoms+0 , null },
+                                                             { null , lang.synts[5].kinds+0 }
+                                                            }
     },
     { 22 , "intName" , lang.rules+16 , lang.synts[7].kinds+0 ,
                                                                {
@@ -1355,20 +1355,20 @@ Lang lang=
                                                                    { lang.atoms+38 , null }
                                                                   }
     },
-    { 34 , "cast_INAME" , lang.rules+28 , lang.synts[8].kinds+0 ,
-                                                                  {
-                                                                   { null , lang.synts[7].kinds+0 }
-                                                                  }
+    { 34 , "cast" , lang.rules+28 , lang.synts[8].kinds+0 ,
+                                                            {
+                                                             { null , lang.synts[7].kinds+0 }
+                                                            }
     },
-    { 35 , "textName" , lang.rules+29 , lang.synts[8].kinds+0 ,
-                                                                {
-                                                                 { lang.atoms+33 , null }
-                                                                }
+    { 35 , "text" , lang.rules+29 , lang.synts[8].kinds+0 ,
+                                                            {
+                                                             { lang.atoms+33 , null }
+                                                            }
     },
-    { 36 , "ipName" , lang.rules+30 , lang.synts[8].kinds+0 ,
-                                                              {
-                                                               { lang.atoms+24 , null }
-                                                              }
+    { 36 , "ip" , lang.rules+30 , lang.synts[8].kinds+0 ,
+                                                          {
+                                                           { lang.atoms+24 , null }
+                                                          }
     },
     { 37 , "namedType" , lang.rules+31 , lang.synts[9].kinds+0 ,
                                                                  {
@@ -1454,117 +1454,117 @@ Lang lang=
                                                                    { null , lang.synts[10].kinds+0 }
                                                                   }
     },
-    { 49 , "buildStruct" , lang.rules+37 , lang.synts[10].kinds+0 ,
-                                                                    {
-                                                                     { lang.atoms+32 , null },
-                                                                     { lang.atoms+16 , null },
-                                                                     { lang.atoms+41 , null },
-                                                                     { null , lang.synts[11].kinds+0 },
-                                                                     { lang.atoms+42 , null }
-                                                                    }
+    { 49 , "build" , lang.rules+37 , lang.synts[10].kinds+0 ,
+                                                              {
+                                                               { lang.atoms+32 , null },
+                                                               { lang.atoms+16 , null },
+                                                               { lang.atoms+41 , null },
+                                                               { null , lang.synts[11].kinds+0 },
+                                                               { lang.atoms+42 , null }
+                                                              }
     },
-    { 50 , "startSBody" , lang.rules+38 , lang.synts[11].kinds+0 ,
+    { 50 , "start" , lang.rules+38 , lang.synts[11].kinds+0 ,
+                                                              {
+                                                               
+                                                              }
+    },
+    { 51 , "ext_TYPE" , lang.rules+39 , lang.synts[11].kinds+0 ,
+                                                                 {
+                                                                  { null , lang.synts[11].kinds+0 },
+                                                                  { null , lang.synts[3].kinds+0 }
+                                                                 }
+    },
+    { 52 , "ext_CONST" , lang.rules+40 , lang.synts[11].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[11].kinds+0 },
+                                                                   { lang.atoms+21 , null },
+                                                                   { null , lang.synts[4].kinds+0 }
+                                                                  }
+    },
+    { 53 , "ext_STRUCT" , lang.rules+41 , lang.synts[11].kinds+0 ,
                                                                    {
-                                                                    
+                                                                    { null , lang.synts[11].kinds+0 },
+                                                                    { null , lang.synts[10].kinds+0 },
+                                                                    { lang.atoms+12 , null }
                                                                    }
     },
-    { 51 , "extSBody_TYPE" , lang.rules+39 , lang.synts[11].kinds+0 ,
-                                                                      {
-                                                                       { null , lang.synts[11].kinds+0 },
-                                                                       { null , lang.synts[3].kinds+0 }
-                                                                      }
+    { 54 , "ext_field" , lang.rules+42 , lang.synts[11].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[11].kinds+0 },
+                                                                   { null , lang.synts[9].kinds+0 },
+                                                                   { lang.atoms+16 , null },
+                                                                   { lang.atoms+12 , null }
+                                                                  }
     },
-    { 52 , "extSBody_CONST" , lang.rules+40 , lang.synts[11].kinds+0 ,
-                                                                       {
-                                                                        { null , lang.synts[11].kinds+0 },
-                                                                        { lang.atoms+21 , null },
-                                                                        { null , lang.synts[4].kinds+0 }
-                                                                       }
+    { 55 , "ext_fieldVal.LIST" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                          {
+                                                                           { null , lang.synts[11].kinds+0 },
+                                                                           { null , lang.synts[9].kinds+0 },
+                                                                           { lang.atoms+16 , null },
+                                                                           { lang.atoms+13 , null },
+                                                                           { null , lang.synts[12].kinds+0 },
+                                                                           { lang.atoms+12 , null }
+                                                                          }
     },
-    { 53 , "extSBody_STRUCT" , lang.rules+41 , lang.synts[11].kinds+0 ,
+    { 56 , "ext_fieldVal.ADD" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[11].kinds+0 },
+                                                                          { null , lang.synts[9].kinds+0 },
+                                                                          { lang.atoms+16 , null },
+                                                                          { lang.atoms+13 , null },
+                                                                          { null , lang.synts[12].kinds+1 },
+                                                                          { lang.atoms+12 , null }
+                                                                         }
+    },
+    { 57 , "ext_fieldVal.MUL" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[11].kinds+0 },
+                                                                          { null , lang.synts[9].kinds+0 },
+                                                                          { lang.atoms+16 , null },
+                                                                          { lang.atoms+13 , null },
+                                                                          { null , lang.synts[12].kinds+2 },
+                                                                          { lang.atoms+12 , null }
+                                                                         }
+    },
+    { 58 , "ext_fieldVal.UN" , lang.rules+43 , lang.synts[11].kinds+0 ,
                                                                         {
                                                                          { null , lang.synts[11].kinds+0 },
-                                                                         { null , lang.synts[10].kinds+0 },
+                                                                         { null , lang.synts[9].kinds+0 },
+                                                                         { lang.atoms+16 , null },
+                                                                         { lang.atoms+13 , null },
+                                                                         { null , lang.synts[12].kinds+3 },
                                                                          { lang.atoms+12 , null }
                                                                         }
     },
-    { 54 , "extSBody_field" , lang.rules+42 , lang.synts[11].kinds+0 ,
-                                                                       {
-                                                                        { null , lang.synts[11].kinds+0 },
-                                                                        { null , lang.synts[9].kinds+0 },
-                                                                        { lang.atoms+16 , null },
-                                                                        { lang.atoms+12 , null }
-                                                                       }
+    { 59 , "ext_fieldVal.NUM" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                         {
+                                                                          { null , lang.synts[11].kinds+0 },
+                                                                          { null , lang.synts[9].kinds+0 },
+                                                                          { lang.atoms+16 , null },
+                                                                          { lang.atoms+13 , null },
+                                                                          { null , lang.synts[12].kinds+4 },
+                                                                          { lang.atoms+12 , null }
+                                                                         }
     },
-    { 55 , "extSBody_fieldVal.LIST" , lang.rules+43 , lang.synts[11].kinds+0 ,
-                                                                               {
-                                                                                { null , lang.synts[11].kinds+0 },
-                                                                                { null , lang.synts[9].kinds+0 },
-                                                                                { lang.atoms+16 , null },
-                                                                                { lang.atoms+13 , null },
-                                                                                { null , lang.synts[12].kinds+0 },
-                                                                                { lang.atoms+12 , null }
-                                                                               }
+    { 60 , "ext_fieldVal.POST" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                          {
+                                                                           { null , lang.synts[11].kinds+0 },
+                                                                           { null , lang.synts[9].kinds+0 },
+                                                                           { lang.atoms+16 , null },
+                                                                           { lang.atoms+13 , null },
+                                                                           { null , lang.synts[12].kinds+5 },
+                                                                           { lang.atoms+12 , null }
+                                                                          }
     },
-    { 56 , "extSBody_fieldVal.ADD" , lang.rules+43 , lang.synts[11].kinds+0 ,
-                                                                              {
-                                                                               { null , lang.synts[11].kinds+0 },
-                                                                               { null , lang.synts[9].kinds+0 },
-                                                                               { lang.atoms+16 , null },
-                                                                               { lang.atoms+13 , null },
-                                                                               { null , lang.synts[12].kinds+1 },
-                                                                               { lang.atoms+12 , null }
-                                                                              }
-    },
-    { 57 , "extSBody_fieldVal.MUL" , lang.rules+43 , lang.synts[11].kinds+0 ,
-                                                                              {
-                                                                               { null , lang.synts[11].kinds+0 },
-                                                                               { null , lang.synts[9].kinds+0 },
-                                                                               { lang.atoms+16 , null },
-                                                                               { lang.atoms+13 , null },
-                                                                               { null , lang.synts[12].kinds+2 },
-                                                                               { lang.atoms+12 , null }
-                                                                              }
-    },
-    { 58 , "extSBody_fieldVal.UN" , lang.rules+43 , lang.synts[11].kinds+0 ,
-                                                                             {
-                                                                              { null , lang.synts[11].kinds+0 },
-                                                                              { null , lang.synts[9].kinds+0 },
-                                                                              { lang.atoms+16 , null },
-                                                                              { lang.atoms+13 , null },
-                                                                              { null , lang.synts[12].kinds+3 },
-                                                                              { lang.atoms+12 , null }
-                                                                             }
-    },
-    { 59 , "extSBody_fieldVal.NUM" , lang.rules+43 , lang.synts[11].kinds+0 ,
-                                                                              {
-                                                                               { null , lang.synts[11].kinds+0 },
-                                                                               { null , lang.synts[9].kinds+0 },
-                                                                               { lang.atoms+16 , null },
-                                                                               { lang.atoms+13 , null },
-                                                                               { null , lang.synts[12].kinds+4 },
-                                                                               { lang.atoms+12 , null }
-                                                                              }
-    },
-    { 60 , "extSBody_fieldVal.POST" , lang.rules+43 , lang.synts[11].kinds+0 ,
-                                                                               {
-                                                                                { null , lang.synts[11].kinds+0 },
-                                                                                { null , lang.synts[9].kinds+0 },
-                                                                                { lang.atoms+16 , null },
-                                                                                { lang.atoms+13 , null },
-                                                                                { null , lang.synts[12].kinds+5 },
-                                                                                { lang.atoms+12 , null }
-                                                                               }
-    },
-    { 61 , "extSBody_fieldVal.PRIM" , lang.rules+43 , lang.synts[11].kinds+0 ,
-                                                                               {
-                                                                                { null , lang.synts[11].kinds+0 },
-                                                                                { null , lang.synts[9].kinds+0 },
-                                                                                { lang.atoms+16 , null },
-                                                                                { lang.atoms+13 , null },
-                                                                                { null , lang.synts[12].kinds+6 },
-                                                                                { lang.atoms+12 , null }
-                                                                               }
+    { 61 , "ext_fieldVal.PRIM" , lang.rules+43 , lang.synts[11].kinds+0 ,
+                                                                          {
+                                                                           { null , lang.synts[11].kinds+0 },
+                                                                           { null , lang.synts[9].kinds+0 },
+                                                                           { lang.atoms+16 , null },
+                                                                           { lang.atoms+13 , null },
+                                                                           { null , lang.synts[12].kinds+6 },
+                                                                           { lang.atoms+12 , null }
+                                                                          }
     },
     { 62 , "emptyExprList" , lang.rules+61 , lang.synts[12].kinds+0 ,
                                                                       {
@@ -2943,157 +2943,157 @@ Lang lang=
                                                                         { lang.atoms+4 , null }
                                                                        }
     },
-    { 257 , "startExprList.LIST" , lang.rules+66 , lang.synts[13].kinds+0 ,
-                                                                            {
-                                                                             { null , lang.synts[12].kinds+0 }
-                                                                            }
+    { 257 , "start.LIST" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                    {
+                                                                     { null , lang.synts[12].kinds+0 }
+                                                                    }
     },
-    { 258 , "startExprList.ADD" , lang.rules+66 , lang.synts[13].kinds+0 ,
-                                                                           {
-                                                                            { null , lang.synts[12].kinds+1 }
-                                                                           }
+    { 258 , "start.ADD" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[12].kinds+1 }
+                                                                   }
     },
-    { 259 , "startExprList.MUL" , lang.rules+66 , lang.synts[13].kinds+0 ,
-                                                                           {
-                                                                            { null , lang.synts[12].kinds+2 }
-                                                                           }
+    { 259 , "start.MUL" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[12].kinds+2 }
+                                                                   }
     },
-    { 260 , "startExprList.UN" , lang.rules+66 , lang.synts[13].kinds+0 ,
-                                                                          {
-                                                                           { null , lang.synts[12].kinds+3 }
-                                                                          }
+    { 260 , "start.UN" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[12].kinds+3 }
+                                                                  }
     },
-    { 261 , "startExprList.NUM" , lang.rules+66 , lang.synts[13].kinds+0 ,
-                                                                           {
-                                                                            { null , lang.synts[12].kinds+4 }
-                                                                           }
+    { 261 , "start.NUM" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                   {
+                                                                    { null , lang.synts[12].kinds+4 }
+                                                                   }
     },
-    { 262 , "startExprList.POST" , lang.rules+66 , lang.synts[13].kinds+0 ,
-                                                                            {
-                                                                             { null , lang.synts[12].kinds+5 }
-                                                                            }
+    { 262 , "start.POST" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                    {
+                                                                     { null , lang.synts[12].kinds+5 }
+                                                                    }
     },
-    { 263 , "startExprList.PRIM" , lang.rules+66 , lang.synts[13].kinds+0 ,
-                                                                            {
-                                                                             { null , lang.synts[12].kinds+6 }
-                                                                            }
+    { 263 , "start.PRIM" , lang.rules+66 , lang.synts[13].kinds+0 ,
+                                                                    {
+                                                                     { null , lang.synts[12].kinds+6 }
+                                                                    }
     },
-    { 264 , "extExprList.LIST" , lang.rules+67 , lang.synts[13].kinds+0 ,
-                                                                          {
-                                                                           { null , lang.synts[13].kinds+0 },
-                                                                           { lang.atoms+7 , null },
-                                                                           { null , lang.synts[12].kinds+0 }
-                                                                          }
+    { 264 , "ext.LIST" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[13].kinds+0 },
+                                                                   { lang.atoms+7 , null },
+                                                                   { null , lang.synts[12].kinds+0 }
+                                                                  }
     },
-    { 265 , "extExprList.ADD" , lang.rules+67 , lang.synts[13].kinds+0 ,
-                                                                         {
-                                                                          { null , lang.synts[13].kinds+0 },
-                                                                          { lang.atoms+7 , null },
-                                                                          { null , lang.synts[12].kinds+1 }
-                                                                         }
+    { 265 , "ext.ADD" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                 {
+                                                                  { null , lang.synts[13].kinds+0 },
+                                                                  { lang.atoms+7 , null },
+                                                                  { null , lang.synts[12].kinds+1 }
+                                                                 }
     },
-    { 266 , "extExprList.MUL" , lang.rules+67 , lang.synts[13].kinds+0 ,
-                                                                         {
-                                                                          { null , lang.synts[13].kinds+0 },
-                                                                          { lang.atoms+7 , null },
-                                                                          { null , lang.synts[12].kinds+2 }
-                                                                         }
+    { 266 , "ext.MUL" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                 {
+                                                                  { null , lang.synts[13].kinds+0 },
+                                                                  { lang.atoms+7 , null },
+                                                                  { null , lang.synts[12].kinds+2 }
+                                                                 }
     },
-    { 267 , "extExprList.UN" , lang.rules+67 , lang.synts[13].kinds+0 ,
-                                                                        {
-                                                                         { null , lang.synts[13].kinds+0 },
-                                                                         { lang.atoms+7 , null },
-                                                                         { null , lang.synts[12].kinds+3 }
-                                                                        }
+    { 267 , "ext.UN" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                {
+                                                                 { null , lang.synts[13].kinds+0 },
+                                                                 { lang.atoms+7 , null },
+                                                                 { null , lang.synts[12].kinds+3 }
+                                                                }
     },
-    { 268 , "extExprList.NUM" , lang.rules+67 , lang.synts[13].kinds+0 ,
-                                                                         {
-                                                                          { null , lang.synts[13].kinds+0 },
-                                                                          { lang.atoms+7 , null },
-                                                                          { null , lang.synts[12].kinds+4 }
-                                                                         }
+    { 268 , "ext.NUM" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                 {
+                                                                  { null , lang.synts[13].kinds+0 },
+                                                                  { lang.atoms+7 , null },
+                                                                  { null , lang.synts[12].kinds+4 }
+                                                                 }
     },
-    { 269 , "extExprList.POST" , lang.rules+67 , lang.synts[13].kinds+0 ,
-                                                                          {
-                                                                           { null , lang.synts[13].kinds+0 },
-                                                                           { lang.atoms+7 , null },
-                                                                           { null , lang.synts[12].kinds+5 }
-                                                                          }
+    { 269 , "ext.POST" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[13].kinds+0 },
+                                                                   { lang.atoms+7 , null },
+                                                                   { null , lang.synts[12].kinds+5 }
+                                                                  }
     },
-    { 270 , "extExprList.PRIM" , lang.rules+67 , lang.synts[13].kinds+0 ,
-                                                                          {
-                                                                           { null , lang.synts[13].kinds+0 },
-                                                                           { lang.atoms+7 , null },
-                                                                           { null , lang.synts[12].kinds+6 }
-                                                                          }
+    { 270 , "ext.PRIM" , lang.rules+67 , lang.synts[13].kinds+0 ,
+                                                                  {
+                                                                   { null , lang.synts[13].kinds+0 },
+                                                                   { lang.atoms+7 , null },
+                                                                   { null , lang.synts[12].kinds+6 }
+                                                                  }
     },
-    { 271 , "nameExpr.LIST" , lang.rules+68 , lang.synts[14].kinds+0 ,
-                                                                       {
-                                                                        { lang.atoms+10 , null },
-                                                                        { lang.atoms+16 , null },
-                                                                        { lang.atoms+13 , null },
-                                                                        { null , lang.synts[12].kinds+0 }
-                                                                       }
+    { 271 , "build.LIST" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                    {
+                                                                     { lang.atoms+10 , null },
+                                                                     { lang.atoms+16 , null },
+                                                                     { lang.atoms+13 , null },
+                                                                     { null , lang.synts[12].kinds+0 }
+                                                                    }
     },
-    { 272 , "nameExpr.ADD" , lang.rules+68 , lang.synts[14].kinds+0 ,
-                                                                      {
-                                                                       { lang.atoms+10 , null },
-                                                                       { lang.atoms+16 , null },
-                                                                       { lang.atoms+13 , null },
-                                                                       { null , lang.synts[12].kinds+1 }
-                                                                      }
+    { 272 , "build.ADD" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                   {
+                                                                    { lang.atoms+10 , null },
+                                                                    { lang.atoms+16 , null },
+                                                                    { lang.atoms+13 , null },
+                                                                    { null , lang.synts[12].kinds+1 }
+                                                                   }
     },
-    { 273 , "nameExpr.MUL" , lang.rules+68 , lang.synts[14].kinds+0 ,
-                                                                      {
-                                                                       { lang.atoms+10 , null },
-                                                                       { lang.atoms+16 , null },
-                                                                       { lang.atoms+13 , null },
-                                                                       { null , lang.synts[12].kinds+2 }
-                                                                      }
+    { 273 , "build.MUL" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                   {
+                                                                    { lang.atoms+10 , null },
+                                                                    { lang.atoms+16 , null },
+                                                                    { lang.atoms+13 , null },
+                                                                    { null , lang.synts[12].kinds+2 }
+                                                                   }
     },
-    { 274 , "nameExpr.UN" , lang.rules+68 , lang.synts[14].kinds+0 ,
-                                                                     {
-                                                                      { lang.atoms+10 , null },
-                                                                      { lang.atoms+16 , null },
-                                                                      { lang.atoms+13 , null },
-                                                                      { null , lang.synts[12].kinds+3 }
-                                                                     }
+    { 274 , "build.UN" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                  {
+                                                                   { lang.atoms+10 , null },
+                                                                   { lang.atoms+16 , null },
+                                                                   { lang.atoms+13 , null },
+                                                                   { null , lang.synts[12].kinds+3 }
+                                                                  }
     },
-    { 275 , "nameExpr.NUM" , lang.rules+68 , lang.synts[14].kinds+0 ,
-                                                                      {
-                                                                       { lang.atoms+10 , null },
-                                                                       { lang.atoms+16 , null },
-                                                                       { lang.atoms+13 , null },
-                                                                       { null , lang.synts[12].kinds+4 }
-                                                                      }
+    { 275 , "build.NUM" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                   {
+                                                                    { lang.atoms+10 , null },
+                                                                    { lang.atoms+16 , null },
+                                                                    { lang.atoms+13 , null },
+                                                                    { null , lang.synts[12].kinds+4 }
+                                                                   }
     },
-    { 276 , "nameExpr.POST" , lang.rules+68 , lang.synts[14].kinds+0 ,
-                                                                       {
-                                                                        { lang.atoms+10 , null },
-                                                                        { lang.atoms+16 , null },
-                                                                        { lang.atoms+13 , null },
-                                                                        { null , lang.synts[12].kinds+5 }
-                                                                       }
+    { 276 , "build.POST" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                    {
+                                                                     { lang.atoms+10 , null },
+                                                                     { lang.atoms+16 , null },
+                                                                     { lang.atoms+13 , null },
+                                                                     { null , lang.synts[12].kinds+5 }
+                                                                    }
     },
-    { 277 , "nameExpr.PRIM" , lang.rules+68 , lang.synts[14].kinds+0 ,
-                                                                       {
-                                                                        { lang.atoms+10 , null },
-                                                                        { lang.atoms+16 , null },
-                                                                        { lang.atoms+13 , null },
-                                                                        { null , lang.synts[12].kinds+6 }
-                                                                       }
+    { 277 , "build.PRIM" , lang.rules+68 , lang.synts[14].kinds+0 ,
+                                                                    {
+                                                                     { lang.atoms+10 , null },
+                                                                     { lang.atoms+16 , null },
+                                                                     { lang.atoms+13 , null },
+                                                                     { null , lang.synts[12].kinds+6 }
+                                                                    }
     },
-    { 278 , "startNamedExprList" , lang.rules+69 , lang.synts[15].kinds+0 ,
-                                                                            {
-                                                                             { null , lang.synts[14].kinds+0 }
-                                                                            }
+    { 278 , "start" , lang.rules+69 , lang.synts[15].kinds+0 ,
+                                                               {
+                                                                { null , lang.synts[14].kinds+0 }
+                                                               }
     },
-    { 279 , "extNamedExprList" , lang.rules+70 , lang.synts[15].kinds+0 ,
-                                                                          {
-                                                                           { null , lang.synts[15].kinds+0 },
-                                                                           { lang.atoms+7 , null },
-                                                                           { null , lang.synts[14].kinds+0 }
-                                                                          }
+    { 279 , "ext" , lang.rules+70 , lang.synts[15].kinds+0 ,
+                                                             {
+                                                              { null , lang.synts[15].kinds+0 },
+                                                              { lang.atoms+7 , null },
+                                                              { null , lang.synts[14].kinds+0 }
+                                                             }
     },
     { 280 , "type_NAME" , lang.rules+71 , lang.synts[16].kinds+0 ,
                                                                    {

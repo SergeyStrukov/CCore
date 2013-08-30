@@ -1,3 +1,31 @@
+--- Atoms ----------------------------------------------------------------------
+
+0) A("(")
+1) A(")")
+2) A("*")
+3) A("+")
+4) A("x")
+
+--- Syntax classes -------------------------------------------------------------
+
+0) EXPR ! { 0) A 1) M 2) P }
+  Rule(0)
+  Rule(1)
+  Rule(2)
+  Rule(3)
+
+--- Rules ----------------------------------------------------------------------
+
+0) EXPR::opVar -> EXPR.P
+  Atom(4,A("x"))
+1) EXPR::opBra -> EXPR.P
+  Atom(0,A("("))  Synt(0,EXPR)  Atom(1,A(")"))
+2) EXPR::opAdd -> EXPR.A if( @2 >= M(1) )
+  Synt(0,EXPR)  Atom(3,A("+"))  Synt(0,EXPR)
+3) EXPR::opMul -> EXPR.M if( ( @0 >= P(2) & @2 >= M(1) ) )
+  Synt(0,EXPR)  Atom(2,A("*"))  Synt(0,EXPR)
+
+--------------------------------------------------------------------------------
 --- States ---------------------------------------------------------------------
 
 ( 0 ; NULL ) = 0
@@ -206,57 +234,57 @@
 
 1) 
 
-  A(")") : @opVar
+  A(")") : @EXPR::opVar
 
-  A("*") : @opVar
+  A("*") : @EXPR::opVar
 
-  A("+") : @opVar
+  A("+") : @EXPR::opVar
 
 -----
 
 2) 
 
-  A(")") : @opBra
+  A(")") : @EXPR::opBra
 
-  A("*") : @opBra
+  A("*") : @EXPR::opBra
 
-  A("+") : @opBra
+  A("+") : @EXPR::opBra
 
 -----
 
 3) 
 
-  A(")") : @opAdd
+  A(")") : @EXPR::opAdd
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
 -----
 
 4) 
 
-  A(")") : @opAdd
+  A(")") : @EXPR::opAdd
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
 -----
 
 5) 
 
-  A(")") : @opMul
+  A(")") : @EXPR::opMul
 
   A("*") : <-
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
 -----
 
 6) 
 
-  A(")") : @opMul
+  A(")") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
 -----
 
@@ -280,57 +308,57 @@
 
 9) 
 
-  (End) : @opVar
+  (End) : @EXPR::opVar
 
-  A("*") : @opVar
+  A("*") : @EXPR::opVar
 
-  A("+") : @opVar
+  A("+") : @EXPR::opVar
 
 -----
 
 10) 
 
-  (End) : @opBra
+  (End) : @EXPR::opBra
 
-  A("*") : @opBra
+  A("*") : @EXPR::opBra
 
-  A("+") : @opBra
+  A("+") : @EXPR::opBra
 
 -----
 
 11) 
 
-  (End) : @opAdd
+  (End) : @EXPR::opAdd
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
 -----
 
 12) 
 
-  (End) : @opAdd
+  (End) : @EXPR::opAdd
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
 -----
 
 13) 
 
-  (End) : @opMul
+  (End) : @EXPR::opMul
 
   A("*") : <-
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
 -----
 
 14) 
 
-  (End) : @opMul
+  (End) : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
 -----
 

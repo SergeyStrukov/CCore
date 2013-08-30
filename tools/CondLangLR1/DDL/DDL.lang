@@ -4,18 +4,18 @@
 
 ! BODY
  {
-                               : startBody
+                               : start
                          
-  BODY SCOPE                   : extBody_SCOPE
-  BODY INCLUDE                 : extBody_INCLUDE
-  BODY TYPE                    : extBody_TYPE 
-  BODY CONST                   : extBody_CONST
-  BODY STRUCT ;                : extBody_STRUCT
+  BODY SCOPE                   : ext_SCOPE
+  BODY INCLUDE                 : ext_INCLUDE
+  BODY TYPE                    : ext_TYPE 
+  BODY CONST                   : ext_CONST
+  BODY STRUCT ;                : ext_STRUCT
  }
 
 SCOPE
  {
-  scope Name { BODY `}         : buildScope
+  scope Name { BODY `}         : build
  }
 
 INCLUDE
@@ -25,28 +25,28 @@ INCLUDE
 
 TYPE
  {
-  type Name = TYPEDEF ;        : defType 
+  type Name = TYPEDEF ;        : build 
  }
 
 CONST
  {
-  TYPEDEF Name = EXPR ;        : defConst
+  TYPEDEF Name = EXPR ;        : build
  }
  
 // names ---------------------------------------------------------------------- 
 
 RNAME
  {
-  Name                         : startName
-  RNAME # Name                 : extName
+  Name                         : start
+  RNAME # Name                 : ext
  }
 
 NAME
  {
-  RNAME                        : relName
-  # RNAME                      : absName
-  . # RNAME                    : dotName  
-  Dots # RNAME                 : dotsName
+  RNAME                        : rel
+  # RNAME                      : abs
+  . # RNAME                    : dot  
+  Dots # RNAME                 : dots
  }
 
 INAME
@@ -67,10 +67,10 @@ INAME
 
 TNAME
  {
-  INAME                        : cast_INAME
+  INAME                        : cast
   
-  text                         : textName
-  ip                           : ipName
+  text                         : text
+  ip                           : ip
  }
  
 // TYPEDEF -------------------------------------------------------------------- 
@@ -89,19 +89,19 @@ TYPEDEF
 
 STRUCT
  {
-  struct Name { SBODY `}       : buildStruct
+  struct Name { SBODY `}       : build
  }
 
 SBODY
  {
-                               : startSBody
+                               : start
                          
-  SBODY TYPE                   : extSBody_TYPE
-  SBODY const CONST            : extSBody_CONST
-  SBODY STRUCT ;               : extSBody_STRUCT 
+  SBODY TYPE                   : ext_TYPE
+  SBODY const CONST            : ext_CONST
+  SBODY STRUCT ;               : ext_STRUCT 
    
-  SBODY TYPEDEF Name ;         : extSBody_field  
-  SBODY TYPEDEF Name = EXPR ;  : extSBody_fieldVal
+  SBODY TYPEDEF Name ;         : ext_field  
+  SBODY TYPEDEF Name = EXPR ;  : ext_fieldVal
  }
 
 // EXPR -----------------------------------------------------------------------
@@ -145,19 +145,19 @@ EXPR : LIST , ADD , MUL , UN , NUM , POST , PRIM
 
 ELIST
  {
-  EXPR                         : startExprList
-  ELIST , EXPR                 : extExprList
+  EXPR                         : start
+  ELIST , EXPR                 : ext
  }
  
 NEXPR
  {
-  . Name = EXPR                : nameExpr
+  . Name = EXPR                : build
  }
 
 NELIST
  {
-  NEXPR                        : startNamedExprList
-  NELIST , NEXPR               : extNamedExprList
+  NEXPR                        : start
+  NELIST , NEXPR               : ext
  }
 
 // ----------------------------------------------------------------------------

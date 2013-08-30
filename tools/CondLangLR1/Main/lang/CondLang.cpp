@@ -18,6 +18,7 @@
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/List.h>
 #include <CCore/inc/algon/SortUnique.h>
+#include <CCore/inc/String.h>
 
 namespace App {
 
@@ -447,6 +448,33 @@ class CondLang::Builder : NoCopy
       }
     };
    
+   struct BuildNoneofAtom : NoCopy
+    {
+     SLink<BuildNoneofAtom> link;
+     
+     PosStr name;
+     
+     explicit BuildNoneofAtom(PosStr postr) : name(postr) {}
+    };
+   
+   struct BuildNoneofSynt : NoCopy
+    {
+     SLink<BuildNoneofSynt> link;
+     
+     PosStr name;
+     PosStr rule_name;
+     
+     ObjList<BuildNoneofAtom> atom_list;
+     
+     BuildSynt *synt = 0 ;
+     
+     explicit BuildNoneofSynt(PosStr postr) : name(postr) {}
+     
+     void addAtom(BuildNoneofAtom *atom) { atom_list.add(atom); }
+     
+     void setRuleName(PosStr postr) { rule_name=postr; }
+    };
+   
   public:
  
    BuildCond condOR(BuildCond a,BuildCond b);
@@ -479,6 +507,14 @@ class CondLang::Builder : NoCopy
    
    void endSynt();
    
+   void startNoneofSynt(PosStr postr);
+   
+   void addAtom(PosStr postr);
+   
+   void endAtoms();
+   
+   void ruleNoneofSynt(PosStr postr);
+   
    void endLang();
    
   public: 
@@ -502,9 +538,11 @@ class CondLang::Builder : NoCopy
    
    ObjList<BuildSynt> synt_list;
    ObjList<BuildAtom> atom_list;
+   ObjList<BuildNoneofSynt> noneof_list;
    
    BuildSynt *current_synt = 0 ;
    BuildRule *current_rule = 0 ;
+   BuildNoneofSynt *current_noneof = 0 ;
    
    ObjList<BuildCondArg> arg_list;
    
@@ -513,6 +551,14 @@ class CondLang::Builder : NoCopy
    static bool CorrectElement(StrLen name);
    
    static StrLen SyntElementName(StrLen name);
+   
+   PosStr buildRuleName(PosStr name,ulen index);
+   
+   void buildNoneofSynts();
+   
+   void updateNoneofSynts(BuildSynt *synt,PosStr rule_name,ObjList<BuildNoneofAtom> &atom_list);
+   
+   void updateNoneofSynts();
    
    struct BindName
     {
@@ -603,6 +649,8 @@ class CondLang::Builder : NoCopy
      
      explicit CheckRuleName(BuildRule &rule_) : BindName(rule_.str),rule(&rule_) {}
     };
+   
+   void checkRuleNames(BuildSynt &synt);
    
    void checkRuleNames();
    
@@ -949,14 +997,40 @@ void CondLang::Builder::endSynt()
   synt_list.add(Replace_null(current_synt));
  }
 
+void CondLang::Builder::startNoneofSynt(PosStr postr) 
+ {
+  current_noneof=pool.create<BuildNoneofSynt>(postr);
+ }
+
+void CondLang::Builder::addAtom(PosStr postr) 
+ {
+  if( CorrectElement(postr.str) ) ++postr.str;
+  
+  current_noneof->addAtom(pool.create<BuildNoneofAtom>(postr));
+ }
+
+void CondLang::Builder::endAtoms() 
+ {
+  // do nothing
+ }
+
+void CondLang::Builder::ruleNoneofSynt(PosStr postr) 
+ {
+  current_noneof->setRuleName(postr);
+  
+  noneof_list.add(Replace_null(current_noneof));
+ }
+
 void CondLang::Builder::endLang()
  {
   {
    ReportException report;
   
+   buildNoneofSynts();
    bindElements();    
-   buildAtoms();      
-   checkRuleNames();  
+   buildAtoms();
+   checkRuleNames();
+   updateNoneofSynts();
    bindResults();     
    bindArgs();        
   
@@ -998,6 +1072,68 @@ StrLen CondLang::Builder::SyntElementName(StrLen name)
   if( name[len]=='.' && LangParser::IsName(name.part(len+1)) ) return name.prefix(len);
    
   return {}; 
+ }
+
+void CondLang::Builder::buildNoneofSynts()
+ {
+  noneof_list.apply( [this] (BuildNoneofSynt &noneof) 
+                            { 
+                             BuildSynt *synt=pool.create<BuildSynt>(noneof.name,false);
+                          
+                             synt_list.add(synt);
+                          
+                             noneof.synt=synt;
+                            } 
+                   );
+ }
+
+PosStr CondLang::Builder::buildRuleName(PosStr name,ulen index)
+ {
+  String name_ind=Stringf("#;@A#;",name.str,index);
+  
+  return PosStr(name.pos,pool.dup(Range(name_ind)));
+ }
+
+void CondLang::Builder::updateNoneofSynts(BuildSynt *synt,PosStr rule_name,ObjList<BuildNoneofAtom> &none_list)
+ {
+  DynArray<StrLen> temp(DoReserve,none_list.getCount());
+  
+  none_list.apply( [&] (BuildNoneofAtom &atom) { temp.append_copy(buildAtomName(atom.name.str)); } );
+  
+  ulen index=0;
+  
+  atom_list.apply( [&] (BuildAtom &atom) 
+                       {
+                        for(StrLen str : temp ) 
+                          if( str.equal(atom.str) )
+                            {
+                             index++;
+                             
+                             return;
+                            }
+    
+                        BuildRule *rule=pool.create<BuildRule>();
+                        
+                        *(PosStr *)rule=buildRuleName(rule_name,index++);
+                        
+                        BuildElement *element=pool.create<BuildElement>(PosStr(atom.str));
+                        
+                        element->atom=&atom;
+                        
+                        rule->element_list.add(element);
+    
+                        synt->rule_list.add(rule);
+                       } 
+                 );
+ }
+
+void CondLang::Builder::updateNoneofSynts()
+ {
+  noneof_list.apply( [this] (BuildNoneofSynt &noneof) 
+                            { 
+                             updateNoneofSynts(noneof.synt,noneof.rule_name,noneof.atom_list);
+                            } 
+                   );
  }
 
 void CondLang::Builder::bindElements(PtrLen<BindElement> range)
@@ -1123,29 +1259,26 @@ void CondLang::Builder::buildAtoms()
   Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<BindAtom> range) { bindAtom(range); } );
  }
 
-void CondLang::Builder::checkRuleNames()
+void CondLang::Builder::checkRuleNames(BuildSynt &synt)
  {
   Collector<CheckRuleName> collector; 
   
-  synt_list.apply( [&] (BuildSynt &synt) 
-                       {
-                        synt.rule_list.apply( [&] (BuildRule &rule) 
-                                                  {
-                                                   collector.append_fill(rule);  
-                                                  } 
-                                            );
-                       } 
-                 );
+  synt.rule_list.apply( [&] (BuildRule &rule) { collector.append_fill(rule); } );
   
   Algon::SortThenApplyUniqueRange(collector.flat(), [this] (PtrLen<CheckRuleName> range) 
                                                            {
                                                             if( range.len>1 )
                                                               {
                                                                for(; +range ;++range)
-                                                                 error("Builder #; : multiple declaration of rule #;",range->rule->pos,range->name);
+                                                                 error("Builder #; : multiple declaration of rule #;",range->rule->pos,range->rule->str);
                                                               }
                                                            } 
                                  );
+ }
+
+void CondLang::Builder::checkRuleNames()
+ {
+  synt_list.apply( [this] (BuildSynt &synt) { checkRuleNames(synt); } );
  }
 
 void CondLang::Builder::bindResults(PtrLen<BindResult> range)

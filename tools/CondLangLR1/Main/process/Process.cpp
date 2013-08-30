@@ -236,11 +236,22 @@ void Process(StrLen file_name)
  {
   SplitPath dev_name(file_name);
   SplitName path_name(dev_name.path);
-  SplitExt no_ext(path_name.name);
+  SplitExt name_ext(path_name.name);
   
-  TrackStage("Load file #.q;",file_name);
+  String in_name;
   
-  CondLang clang(file_name);
+  if( !name_ext )
+    {
+     in_name=StringCat(dev_name.dev,path_name.path,name_ext.name,".lang");     
+    }
+  else
+    {
+     in_name=file_name;
+    }
+  
+  TrackStage("Load file #.q;",StrLen(Range(in_name)));
+  
+  CondLang clang(Range(in_name));
   
   TrackStage("Build top lang");
   
@@ -275,8 +286,10 @@ void Process(StrLen file_name)
    
    if( conflicts )
      {
-      String out_name=StringCat(dev_name.dev,path_name.path,no_ext.name,".bad.txt");
-      PrintFile out(Range(out_name)); 
+      String out_name=StringCat(dev_name.dev,path_name.path,name_ext.name,".bad.txt");
+      PrintFile out(Range(out_name));
+      
+      Putobj(out,clang);
     
       PrintBad(out,ext_top,compress);
       
@@ -318,18 +331,20 @@ void Process(StrLen file_name)
 #endif  
 
   {
-   String out_name=StringCat(dev_name.dev,path_name.path,no_ext.name,".txt");
+   String out_name=StringCat(dev_name.dev,path_name.path,name_ext.name,".txt");
    PrintFile out(Range(out_name));
+   
+   Putobj(out,clang);
   
    Putobj(out,BindOpt(ext_top,compress));
   }
   
   {
-   String out_name=StringCat(dev_name.dev,path_name.path,no_ext.name,".ddl");
+   String out_name=StringCat(dev_name.dev,path_name.path,name_ext.name,".ddl");
    
    PosPrint<PrintFile> out(Range(out_name));
    
-   Printf(out,"/* #;.ddl */\n\n",no_ext.name);
+   Printf(out,"/* #;.ddl */\n\n",name_ext.name);
    
    Putobj(out,"//include <LangTypes.ddl>\n\n");
    

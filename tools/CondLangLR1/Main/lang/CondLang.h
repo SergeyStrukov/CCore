@@ -360,9 +360,9 @@ struct CondLangBase : NoCopy
     void print(P &out) const
      {
       if( kind )
-        Printf(out,"#;) #; -> #;.#;",index,name,ret->name,kind->name);
+        Printf(out,"#;) #;::#; -> #;.#;",index,ret->name,name,ret->name,kind->name);
       else
-        Printf(out,"#;) #; -> #;",index,name,ret->name);
+        Printf(out,"#;) #;::#; -> #;",index,ret->name,name,ret->name);
         
       if( +cond ) Printf(out," if( #; )",cond);
      }

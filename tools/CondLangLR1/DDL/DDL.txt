@@ -1,3 +1,302 @@
+--- Atoms ----------------------------------------------------------------------
+
+0) A("#")
+1) A("%")
+2) A("&")
+3) A("(")
+4) A(")")
+5) A("*")
+6) A("+")
+7) A(",")
+8) A("-")
+9) A("->")
+10) A(".")
+11) A("/")
+12) A(";")
+13) A("=")
+14) A("Dots")
+15) A("FileName")
+16) A("Name")
+17) A("Number")
+18) A("String")
+19) A("[")
+20) A("]")
+21) A("const")
+22) A("include")
+23) A("int")
+24) A("ip")
+25) A("null")
+26) A("scope")
+27) A("sint")
+28) A("sint16")
+29) A("sint32")
+30) A("sint64")
+31) A("sint8")
+32) A("struct")
+33) A("text")
+34) A("type")
+35) A("uint")
+36) A("uint16")
+37) A("uint32")
+38) A("uint64")
+39) A("uint8")
+40) A("ulen")
+41) A("{")
+42) A("}")
+
+--- Syntax classes -------------------------------------------------------------
+
+0) BODY !
+  Rule(0)
+  Rule(1)
+  Rule(2)
+  Rule(3)
+  Rule(4)
+  Rule(5)
+1) SCOPE
+  Rule(6)
+2) INCLUDE
+  Rule(7)
+3) TYPE
+  Rule(8)
+4) CONST
+  Rule(9)
+5) RNAME
+  Rule(10)
+  Rule(11)
+6) NAME
+  Rule(12)
+  Rule(13)
+  Rule(14)
+  Rule(15)
+7) INAME
+  Rule(16)
+  Rule(17)
+  Rule(18)
+  Rule(19)
+  Rule(20)
+  Rule(21)
+  Rule(22)
+  Rule(23)
+  Rule(24)
+  Rule(25)
+  Rule(26)
+  Rule(27)
+8) TNAME
+  Rule(28)
+  Rule(29)
+  Rule(30)
+9) TYPEDEF
+  Rule(31)
+  Rule(32)
+  Rule(33)
+  Rule(34)
+  Rule(35)
+  Rule(36)
+10) STRUCT
+  Rule(37)
+11) SBODY
+  Rule(38)
+  Rule(39)
+  Rule(40)
+  Rule(41)
+  Rule(42)
+  Rule(43)
+12) EXPR { 0) LIST 1) ADD 2) MUL 3) UN 4) NUM 5) POST 6) PRIM }
+  Rule(44)
+  Rule(45)
+  Rule(46)
+  Rule(47)
+  Rule(48)
+  Rule(49)
+  Rule(50)
+  Rule(51)
+  Rule(52)
+  Rule(53)
+  Rule(54)
+  Rule(55)
+  Rule(56)
+  Rule(57)
+  Rule(58)
+  Rule(59)
+  Rule(60)
+  Rule(61)
+  Rule(62)
+  Rule(63)
+  Rule(64)
+  Rule(65)
+13) ELIST
+  Rule(66)
+  Rule(67)
+14) NEXPR
+  Rule(68)
+15) NELIST
+  Rule(69)
+  Rule(70)
+16) ITYPE
+  Rule(71)
+  Rule(72)
+17) NNLIT
+  Rule(73)
+  Rule(74)
+  Rule(75)
+
+--- Rules ----------------------------------------------------------------------
+
+0) BODY::start -> BODY
+
+1) BODY::ext_SCOPE -> BODY
+  Synt(0,BODY)  Synt(1,SCOPE)
+2) BODY::ext_INCLUDE -> BODY
+  Synt(0,BODY)  Synt(2,INCLUDE)
+3) BODY::ext_TYPE -> BODY
+  Synt(0,BODY)  Synt(3,TYPE)
+4) BODY::ext_CONST -> BODY
+  Synt(0,BODY)  Synt(4,CONST)
+5) BODY::ext_STRUCT -> BODY
+  Synt(0,BODY)  Synt(10,STRUCT)  Atom(12,A(";"))
+6) SCOPE::build -> SCOPE
+  Atom(26,A("scope"))  Atom(16,A("Name"))  Atom(41,A("{"))  Synt(0,BODY)  Atom(42,A("}"))
+7) INCLUDE::includeFile -> INCLUDE
+  Atom(22,A("include"))  Atom(15,A("FileName"))
+8) TYPE::build -> TYPE
+  Atom(34,A("type"))  Atom(16,A("Name"))  Atom(13,A("="))  Synt(9,TYPEDEF)  Atom(12,A(";"))
+9) CONST::build -> CONST
+  Synt(9,TYPEDEF)  Atom(16,A("Name"))  Atom(13,A("="))  Synt(12,EXPR)  Atom(12,A(";"))
+10) RNAME::start -> RNAME
+  Atom(16,A("Name"))
+11) RNAME::ext -> RNAME
+  Synt(5,RNAME)  Atom(0,A("#"))  Atom(16,A("Name"))
+12) NAME::rel -> NAME
+  Synt(5,RNAME)
+13) NAME::abs -> NAME
+  Atom(0,A("#"))  Synt(5,RNAME)
+14) NAME::dot -> NAME
+  Atom(10,A("."))  Atom(0,A("#"))  Synt(5,RNAME)
+15) NAME::dots -> NAME
+  Atom(14,A("Dots"))  Atom(0,A("#"))  Synt(5,RNAME)
+16) INAME::intName -> INAME
+  Atom(23,A("int"))
+17) INAME::sintName -> INAME
+  Atom(27,A("sint"))
+18) INAME::uintName -> INAME
+  Atom(35,A("uint"))
+19) INAME::ulenName -> INAME
+  Atom(40,A("ulen"))
+20) INAME::sint8Name -> INAME
+  Atom(31,A("sint8"))
+21) INAME::uint8Name -> INAME
+  Atom(39,A("uint8"))
+22) INAME::sint16Name -> INAME
+  Atom(28,A("sint16"))
+23) INAME::uint16Name -> INAME
+  Atom(36,A("uint16"))
+24) INAME::sint32Name -> INAME
+  Atom(29,A("sint32"))
+25) INAME::uint32Name -> INAME
+  Atom(37,A("uint32"))
+26) INAME::sint64Name -> INAME
+  Atom(30,A("sint64"))
+27) INAME::uint64Name -> INAME
+  Atom(38,A("uint64"))
+28) TNAME::cast -> TNAME
+  Synt(7,INAME)
+29) TNAME::text -> TNAME
+  Atom(33,A("text"))
+30) TNAME::ip -> TNAME
+  Atom(24,A("ip"))
+31) TYPEDEF::namedType -> TYPEDEF
+  Synt(6,NAME)
+32) TYPEDEF::baseType -> TYPEDEF
+  Synt(8,TNAME)
+33) TYPEDEF::ptrType -> TYPEDEF
+  Synt(9,TYPEDEF)  Atom(5,A("*"))
+34) TYPEDEF::arrayType -> TYPEDEF
+  Synt(9,TYPEDEF)  Atom(19,A("["))  Atom(20,A("]"))
+35) TYPEDEF::arrayLenType -> TYPEDEF
+  Synt(9,TYPEDEF)  Atom(19,A("["))  Synt(12,EXPR)  Atom(20,A("]"))
+36) TYPEDEF::structType -> TYPEDEF
+  Synt(10,STRUCT)
+37) STRUCT::build -> STRUCT
+  Atom(32,A("struct"))  Atom(16,A("Name"))  Atom(41,A("{"))  Synt(11,SBODY)  Atom(42,A("}"))
+38) SBODY::start -> SBODY
+
+39) SBODY::ext_TYPE -> SBODY
+  Synt(11,SBODY)  Synt(3,TYPE)
+40) SBODY::ext_CONST -> SBODY
+  Synt(11,SBODY)  Atom(21,A("const"))  Synt(4,CONST)
+41) SBODY::ext_STRUCT -> SBODY
+  Synt(11,SBODY)  Synt(10,STRUCT)  Atom(12,A(";"))
+42) SBODY::ext_field -> SBODY
+  Synt(11,SBODY)  Synt(9,TYPEDEF)  Atom(16,A("Name"))  Atom(12,A(";"))
+43) SBODY::ext_fieldVal -> SBODY
+  Synt(11,SBODY)  Synt(9,TYPEDEF)  Atom(16,A("Name"))  Atom(13,A("="))  Synt(12,EXPR)  Atom(12,A(";"))
+44) EXPR::cast_EXPR -> EXPR.PRIM
+  Atom(3,A("("))  Synt(12,EXPR)  Atom(4,A(")"))
+45) EXPR::cast_NAME -> EXPR.PRIM
+  Synt(6,NAME)
+46) EXPR::cast_NNLIT -> EXPR.PRIM
+  Synt(17,NNLIT)
+47) EXPR::opDomain -> EXPR.PRIM
+  Synt(16,ITYPE)  Atom(3,A("("))  Synt(12,EXPR)  Atom(4,A(")"))
+48) EXPR::opInd -> EXPR.POST if( @0 >= NUM(4) )
+  Synt(12,EXPR)  Atom(19,A("["))  Synt(12,EXPR)  Atom(20,A("]"))
+49) EXPR::opSelect -> EXPR.POST if( @0 >= POST(5) )
+  Synt(12,EXPR)  Atom(10,A("."))  Atom(16,A("Name"))
+50) EXPR::opPtrSelect -> EXPR.POST if( @0 >= POST(5) )
+  Synt(12,EXPR)  Atom(9,A("->"))  Atom(16,A("Name"))
+51) EXPR::cast_Number -> EXPR.NUM
+  Atom(17,A("Number"))
+52) EXPR::opAst -> EXPR.UN if( @1 >= UN(3) )
+  Atom(5,A("*"))  Synt(12,EXPR)
+53) EXPR::opAmp -> EXPR.UN if( @1 >= UN(3) )
+  Atom(2,A("&"))  Synt(12,EXPR)
+54) EXPR::opPlus -> EXPR.UN if( @1 >= UN(3) )
+  Atom(6,A("+"))  Synt(12,EXPR)
+55) EXPR::opMinus -> EXPR.UN if( @1 >= UN(3) )
+  Atom(8,A("-"))  Synt(12,EXPR)
+56) EXPR::opMul -> EXPR.MUL if( ( @0 >= MUL(2) & @2 >= UN(3) ) )
+  Synt(12,EXPR)  Atom(5,A("*"))  Synt(12,EXPR)
+57) EXPR::opDiv -> EXPR.MUL if( ( @0 >= MUL(2) & @2 >= UN(3) ) )
+  Synt(12,EXPR)  Atom(11,A("/"))  Synt(12,EXPR)
+58) EXPR::opRem -> EXPR.MUL if( ( @0 >= MUL(2) & @2 >= UN(3) ) )
+  Synt(12,EXPR)  Atom(1,A("%"))  Synt(12,EXPR)
+59) EXPR::opAdd -> EXPR.ADD if( ( @0 >= ADD(1) & @2 >= MUL(2) ) )
+  Synt(12,EXPR)  Atom(6,A("+"))  Synt(12,EXPR)
+60) EXPR::opSub -> EXPR.ADD if( ( @0 >= ADD(1) & @2 >= MUL(2) ) )
+  Synt(12,EXPR)  Atom(8,A("-"))  Synt(12,EXPR)
+61) EXPR::emptyExprList -> EXPR.LIST
+  Atom(41,A("{"))  Atom(42,A("}"))
+62) EXPR::buildExprList -> EXPR.LIST
+  Atom(41,A("{"))  Synt(13,ELIST)  Atom(42,A("}"))
+63) EXPR::buildNamedExprList -> EXPR.LIST
+  Atom(41,A("{"))  Synt(15,NELIST)  Atom(42,A("}"))
+64) EXPR::applyEmpty -> EXPR.LIST
+  Synt(12,EXPR)  Atom(41,A("{"))  Atom(42,A("}"))
+65) EXPR::applyNamedExprList -> EXPR.LIST
+  Synt(12,EXPR)  Atom(41,A("{"))  Synt(15,NELIST)  Atom(42,A("}"))
+66) ELIST::start -> ELIST
+  Synt(12,EXPR)
+67) ELIST::ext -> ELIST
+  Synt(13,ELIST)  Atom(7,A(","))  Synt(12,EXPR)
+68) NEXPR::build -> NEXPR
+  Atom(10,A("."))  Atom(16,A("Name"))  Atom(13,A("="))  Synt(12,EXPR)
+69) NELIST::start -> NELIST
+  Synt(14,NEXPR)
+70) NELIST::ext -> NELIST
+  Synt(15,NELIST)  Atom(7,A(","))  Synt(14,NEXPR)
+71) ITYPE::type_NAME -> ITYPE
+  Synt(6,NAME)
+72) ITYPE::type_INAME -> ITYPE
+  Synt(7,INAME)
+73) NNLIT::cast_null -> NNLIT
+  Atom(25,A("null"))
+74) NNLIT::cast_String -> NNLIT
+  Atom(18,A("String"))
+75) NNLIT::buildIP -> NNLIT
+  Atom(17,A("Number"))  Atom(10,A("."))  Atom(17,A("Number"))  Atom(10,A("."))  Atom(17,A("Number"))  Atom(10,A("."))  Atom(17,A("Number"))
+
+--------------------------------------------------------------------------------
 --- States ---------------------------------------------------------------------
 
 ( 0 ; NULL ) = 338
@@ -9284,1161 +9583,1161 @@
 
 0) 
 
-  A("#") : @startBody
+  A("#") : @BODY::start
 
-  A(".") : @startBody
+  A(".") : @BODY::start
 
-  A("Dots") : @startBody
+  A("Dots") : @BODY::start
 
-  A("Name") : @startBody
+  A("Name") : @BODY::start
 
-  A("include") : @startBody
+  A("include") : @BODY::start
 
-  A("int") : @startBody
+  A("int") : @BODY::start
 
-  A("ip") : @startBody
+  A("ip") : @BODY::start
 
-  A("scope") : @startBody
+  A("scope") : @BODY::start
 
-  A("sint") : @startBody
+  A("sint") : @BODY::start
 
-  A("sint16") : @startBody
+  A("sint16") : @BODY::start
 
-  A("sint32") : @startBody
+  A("sint32") : @BODY::start
 
-  A("sint64") : @startBody
+  A("sint64") : @BODY::start
 
-  A("sint8") : @startBody
+  A("sint8") : @BODY::start
 
-  A("struct") : @startBody
+  A("struct") : @BODY::start
 
-  A("text") : @startBody
+  A("text") : @BODY::start
 
-  A("type") : @startBody
+  A("type") : @BODY::start
 
-  A("uint") : @startBody
+  A("uint") : @BODY::start
 
-  A("uint16") : @startBody
+  A("uint16") : @BODY::start
 
-  A("uint32") : @startBody
+  A("uint32") : @BODY::start
 
-  A("uint64") : @startBody
+  A("uint64") : @BODY::start
 
-  A("uint8") : @startBody
+  A("uint8") : @BODY::start
 
-  A("ulen") : @startBody
+  A("ulen") : @BODY::start
 
-  A("}") : @startBody
+  A("}") : @BODY::start
 
 -----
 
 1) 
 
-  A("#") : @extBody_SCOPE
+  A("#") : @BODY::ext_SCOPE
 
-  A(".") : @extBody_SCOPE
+  A(".") : @BODY::ext_SCOPE
 
-  A("Dots") : @extBody_SCOPE
+  A("Dots") : @BODY::ext_SCOPE
 
-  A("Name") : @extBody_SCOPE
+  A("Name") : @BODY::ext_SCOPE
 
-  A("include") : @extBody_SCOPE
+  A("include") : @BODY::ext_SCOPE
 
-  A("int") : @extBody_SCOPE
+  A("int") : @BODY::ext_SCOPE
 
-  A("ip") : @extBody_SCOPE
+  A("ip") : @BODY::ext_SCOPE
 
-  A("scope") : @extBody_SCOPE
+  A("scope") : @BODY::ext_SCOPE
 
-  A("sint") : @extBody_SCOPE
+  A("sint") : @BODY::ext_SCOPE
 
-  A("sint16") : @extBody_SCOPE
+  A("sint16") : @BODY::ext_SCOPE
 
-  A("sint32") : @extBody_SCOPE
+  A("sint32") : @BODY::ext_SCOPE
 
-  A("sint64") : @extBody_SCOPE
+  A("sint64") : @BODY::ext_SCOPE
 
-  A("sint8") : @extBody_SCOPE
+  A("sint8") : @BODY::ext_SCOPE
 
-  A("struct") : @extBody_SCOPE
+  A("struct") : @BODY::ext_SCOPE
 
-  A("text") : @extBody_SCOPE
+  A("text") : @BODY::ext_SCOPE
 
-  A("type") : @extBody_SCOPE
+  A("type") : @BODY::ext_SCOPE
 
-  A("uint") : @extBody_SCOPE
+  A("uint") : @BODY::ext_SCOPE
 
-  A("uint16") : @extBody_SCOPE
+  A("uint16") : @BODY::ext_SCOPE
 
-  A("uint32") : @extBody_SCOPE
+  A("uint32") : @BODY::ext_SCOPE
 
-  A("uint64") : @extBody_SCOPE
+  A("uint64") : @BODY::ext_SCOPE
 
-  A("uint8") : @extBody_SCOPE
+  A("uint8") : @BODY::ext_SCOPE
 
-  A("ulen") : @extBody_SCOPE
+  A("ulen") : @BODY::ext_SCOPE
 
-  A("}") : @extBody_SCOPE
+  A("}") : @BODY::ext_SCOPE
 
 -----
 
 2) 
 
-  A("#") : @extBody_INCLUDE
+  A("#") : @BODY::ext_INCLUDE
 
-  A(".") : @extBody_INCLUDE
+  A(".") : @BODY::ext_INCLUDE
 
-  A("Dots") : @extBody_INCLUDE
+  A("Dots") : @BODY::ext_INCLUDE
 
-  A("Name") : @extBody_INCLUDE
+  A("Name") : @BODY::ext_INCLUDE
 
-  A("include") : @extBody_INCLUDE
+  A("include") : @BODY::ext_INCLUDE
 
-  A("int") : @extBody_INCLUDE
+  A("int") : @BODY::ext_INCLUDE
 
-  A("ip") : @extBody_INCLUDE
+  A("ip") : @BODY::ext_INCLUDE
 
-  A("scope") : @extBody_INCLUDE
+  A("scope") : @BODY::ext_INCLUDE
 
-  A("sint") : @extBody_INCLUDE
+  A("sint") : @BODY::ext_INCLUDE
 
-  A("sint16") : @extBody_INCLUDE
+  A("sint16") : @BODY::ext_INCLUDE
 
-  A("sint32") : @extBody_INCLUDE
+  A("sint32") : @BODY::ext_INCLUDE
 
-  A("sint64") : @extBody_INCLUDE
+  A("sint64") : @BODY::ext_INCLUDE
 
-  A("sint8") : @extBody_INCLUDE
+  A("sint8") : @BODY::ext_INCLUDE
 
-  A("struct") : @extBody_INCLUDE
+  A("struct") : @BODY::ext_INCLUDE
 
-  A("text") : @extBody_INCLUDE
+  A("text") : @BODY::ext_INCLUDE
 
-  A("type") : @extBody_INCLUDE
+  A("type") : @BODY::ext_INCLUDE
 
-  A("uint") : @extBody_INCLUDE
+  A("uint") : @BODY::ext_INCLUDE
 
-  A("uint16") : @extBody_INCLUDE
+  A("uint16") : @BODY::ext_INCLUDE
 
-  A("uint32") : @extBody_INCLUDE
+  A("uint32") : @BODY::ext_INCLUDE
 
-  A("uint64") : @extBody_INCLUDE
+  A("uint64") : @BODY::ext_INCLUDE
 
-  A("uint8") : @extBody_INCLUDE
+  A("uint8") : @BODY::ext_INCLUDE
 
-  A("ulen") : @extBody_INCLUDE
+  A("ulen") : @BODY::ext_INCLUDE
 
-  A("}") : @extBody_INCLUDE
+  A("}") : @BODY::ext_INCLUDE
 
 -----
 
 3) 
 
-  A("#") : @extBody_TYPE
+  A("#") : @BODY::ext_TYPE
 
-  A(".") : @extBody_TYPE
+  A(".") : @BODY::ext_TYPE
 
-  A("Dots") : @extBody_TYPE
+  A("Dots") : @BODY::ext_TYPE
 
-  A("Name") : @extBody_TYPE
+  A("Name") : @BODY::ext_TYPE
 
-  A("include") : @extBody_TYPE
+  A("include") : @BODY::ext_TYPE
 
-  A("int") : @extBody_TYPE
+  A("int") : @BODY::ext_TYPE
 
-  A("ip") : @extBody_TYPE
+  A("ip") : @BODY::ext_TYPE
 
-  A("scope") : @extBody_TYPE
+  A("scope") : @BODY::ext_TYPE
 
-  A("sint") : @extBody_TYPE
+  A("sint") : @BODY::ext_TYPE
 
-  A("sint16") : @extBody_TYPE
+  A("sint16") : @BODY::ext_TYPE
 
-  A("sint32") : @extBody_TYPE
+  A("sint32") : @BODY::ext_TYPE
 
-  A("sint64") : @extBody_TYPE
+  A("sint64") : @BODY::ext_TYPE
 
-  A("sint8") : @extBody_TYPE
+  A("sint8") : @BODY::ext_TYPE
 
-  A("struct") : @extBody_TYPE
+  A("struct") : @BODY::ext_TYPE
 
-  A("text") : @extBody_TYPE
+  A("text") : @BODY::ext_TYPE
 
-  A("type") : @extBody_TYPE
+  A("type") : @BODY::ext_TYPE
 
-  A("uint") : @extBody_TYPE
+  A("uint") : @BODY::ext_TYPE
 
-  A("uint16") : @extBody_TYPE
+  A("uint16") : @BODY::ext_TYPE
 
-  A("uint32") : @extBody_TYPE
+  A("uint32") : @BODY::ext_TYPE
 
-  A("uint64") : @extBody_TYPE
+  A("uint64") : @BODY::ext_TYPE
 
-  A("uint8") : @extBody_TYPE
+  A("uint8") : @BODY::ext_TYPE
 
-  A("ulen") : @extBody_TYPE
+  A("ulen") : @BODY::ext_TYPE
 
-  A("}") : @extBody_TYPE
+  A("}") : @BODY::ext_TYPE
 
 -----
 
 4) 
 
-  A("#") : @extBody_CONST
+  A("#") : @BODY::ext_CONST
 
-  A(".") : @extBody_CONST
+  A(".") : @BODY::ext_CONST
 
-  A("Dots") : @extBody_CONST
+  A("Dots") : @BODY::ext_CONST
 
-  A("Name") : @extBody_CONST
+  A("Name") : @BODY::ext_CONST
 
-  A("include") : @extBody_CONST
+  A("include") : @BODY::ext_CONST
 
-  A("int") : @extBody_CONST
+  A("int") : @BODY::ext_CONST
 
-  A("ip") : @extBody_CONST
+  A("ip") : @BODY::ext_CONST
 
-  A("scope") : @extBody_CONST
+  A("scope") : @BODY::ext_CONST
 
-  A("sint") : @extBody_CONST
+  A("sint") : @BODY::ext_CONST
 
-  A("sint16") : @extBody_CONST
+  A("sint16") : @BODY::ext_CONST
 
-  A("sint32") : @extBody_CONST
+  A("sint32") : @BODY::ext_CONST
 
-  A("sint64") : @extBody_CONST
+  A("sint64") : @BODY::ext_CONST
 
-  A("sint8") : @extBody_CONST
+  A("sint8") : @BODY::ext_CONST
 
-  A("struct") : @extBody_CONST
+  A("struct") : @BODY::ext_CONST
 
-  A("text") : @extBody_CONST
+  A("text") : @BODY::ext_CONST
 
-  A("type") : @extBody_CONST
+  A("type") : @BODY::ext_CONST
 
-  A("uint") : @extBody_CONST
+  A("uint") : @BODY::ext_CONST
 
-  A("uint16") : @extBody_CONST
+  A("uint16") : @BODY::ext_CONST
 
-  A("uint32") : @extBody_CONST
+  A("uint32") : @BODY::ext_CONST
 
-  A("uint64") : @extBody_CONST
+  A("uint64") : @BODY::ext_CONST
 
-  A("uint8") : @extBody_CONST
+  A("uint8") : @BODY::ext_CONST
 
-  A("ulen") : @extBody_CONST
+  A("ulen") : @BODY::ext_CONST
 
-  A("}") : @extBody_CONST
+  A("}") : @BODY::ext_CONST
 
 -----
 
 5) 
 
-  A("#") : @extBody_STRUCT
+  A("#") : @BODY::ext_STRUCT
 
-  A(".") : @extBody_STRUCT
+  A(".") : @BODY::ext_STRUCT
 
-  A("Dots") : @extBody_STRUCT
+  A("Dots") : @BODY::ext_STRUCT
 
-  A("Name") : @extBody_STRUCT
+  A("Name") : @BODY::ext_STRUCT
 
-  A("include") : @extBody_STRUCT
+  A("include") : @BODY::ext_STRUCT
 
-  A("int") : @extBody_STRUCT
+  A("int") : @BODY::ext_STRUCT
 
-  A("ip") : @extBody_STRUCT
+  A("ip") : @BODY::ext_STRUCT
 
-  A("scope") : @extBody_STRUCT
+  A("scope") : @BODY::ext_STRUCT
 
-  A("sint") : @extBody_STRUCT
+  A("sint") : @BODY::ext_STRUCT
 
-  A("sint16") : @extBody_STRUCT
+  A("sint16") : @BODY::ext_STRUCT
 
-  A("sint32") : @extBody_STRUCT
+  A("sint32") : @BODY::ext_STRUCT
 
-  A("sint64") : @extBody_STRUCT
+  A("sint64") : @BODY::ext_STRUCT
 
-  A("sint8") : @extBody_STRUCT
+  A("sint8") : @BODY::ext_STRUCT
 
-  A("struct") : @extBody_STRUCT
+  A("struct") : @BODY::ext_STRUCT
 
-  A("text") : @extBody_STRUCT
+  A("text") : @BODY::ext_STRUCT
 
-  A("type") : @extBody_STRUCT
+  A("type") : @BODY::ext_STRUCT
 
-  A("uint") : @extBody_STRUCT
+  A("uint") : @BODY::ext_STRUCT
 
-  A("uint16") : @extBody_STRUCT
+  A("uint16") : @BODY::ext_STRUCT
 
-  A("uint32") : @extBody_STRUCT
+  A("uint32") : @BODY::ext_STRUCT
 
-  A("uint64") : @extBody_STRUCT
+  A("uint64") : @BODY::ext_STRUCT
 
-  A("uint8") : @extBody_STRUCT
+  A("uint8") : @BODY::ext_STRUCT
 
-  A("ulen") : @extBody_STRUCT
+  A("ulen") : @BODY::ext_STRUCT
 
-  A("}") : @extBody_STRUCT
+  A("}") : @BODY::ext_STRUCT
 
 -----
 
 6) 
 
-  A("#") : @buildScope
+  A("#") : @SCOPE::build
 
-  A(".") : @buildScope
+  A(".") : @SCOPE::build
 
-  A("Dots") : @buildScope
+  A("Dots") : @SCOPE::build
 
-  A("Name") : @buildScope
+  A("Name") : @SCOPE::build
 
-  A("include") : @buildScope
+  A("include") : @SCOPE::build
 
-  A("int") : @buildScope
+  A("int") : @SCOPE::build
 
-  A("ip") : @buildScope
+  A("ip") : @SCOPE::build
 
-  A("scope") : @buildScope
+  A("scope") : @SCOPE::build
 
-  A("sint") : @buildScope
+  A("sint") : @SCOPE::build
 
-  A("sint16") : @buildScope
+  A("sint16") : @SCOPE::build
 
-  A("sint32") : @buildScope
+  A("sint32") : @SCOPE::build
 
-  A("sint64") : @buildScope
+  A("sint64") : @SCOPE::build
 
-  A("sint8") : @buildScope
+  A("sint8") : @SCOPE::build
 
-  A("struct") : @buildScope
+  A("struct") : @SCOPE::build
 
-  A("text") : @buildScope
+  A("text") : @SCOPE::build
 
-  A("type") : @buildScope
+  A("type") : @SCOPE::build
 
-  A("uint") : @buildScope
+  A("uint") : @SCOPE::build
 
-  A("uint16") : @buildScope
+  A("uint16") : @SCOPE::build
 
-  A("uint32") : @buildScope
+  A("uint32") : @SCOPE::build
 
-  A("uint64") : @buildScope
+  A("uint64") : @SCOPE::build
 
-  A("uint8") : @buildScope
+  A("uint8") : @SCOPE::build
 
-  A("ulen") : @buildScope
+  A("ulen") : @SCOPE::build
 
-  A("}") : @buildScope
+  A("}") : @SCOPE::build
 
 -----
 
 7) 
 
-  A("#") : @includeFile
+  A("#") : @INCLUDE::includeFile
 
-  A(".") : @includeFile
+  A(".") : @INCLUDE::includeFile
 
-  A("Dots") : @includeFile
+  A("Dots") : @INCLUDE::includeFile
 
-  A("Name") : @includeFile
+  A("Name") : @INCLUDE::includeFile
 
-  A("include") : @includeFile
+  A("include") : @INCLUDE::includeFile
 
-  A("int") : @includeFile
+  A("int") : @INCLUDE::includeFile
 
-  A("ip") : @includeFile
+  A("ip") : @INCLUDE::includeFile
 
-  A("scope") : @includeFile
+  A("scope") : @INCLUDE::includeFile
 
-  A("sint") : @includeFile
+  A("sint") : @INCLUDE::includeFile
 
-  A("sint16") : @includeFile
+  A("sint16") : @INCLUDE::includeFile
 
-  A("sint32") : @includeFile
+  A("sint32") : @INCLUDE::includeFile
 
-  A("sint64") : @includeFile
+  A("sint64") : @INCLUDE::includeFile
 
-  A("sint8") : @includeFile
+  A("sint8") : @INCLUDE::includeFile
 
-  A("struct") : @includeFile
+  A("struct") : @INCLUDE::includeFile
 
-  A("text") : @includeFile
+  A("text") : @INCLUDE::includeFile
 
-  A("type") : @includeFile
+  A("type") : @INCLUDE::includeFile
 
-  A("uint") : @includeFile
+  A("uint") : @INCLUDE::includeFile
 
-  A("uint16") : @includeFile
+  A("uint16") : @INCLUDE::includeFile
 
-  A("uint32") : @includeFile
+  A("uint32") : @INCLUDE::includeFile
 
-  A("uint64") : @includeFile
+  A("uint64") : @INCLUDE::includeFile
 
-  A("uint8") : @includeFile
+  A("uint8") : @INCLUDE::includeFile
 
-  A("ulen") : @includeFile
+  A("ulen") : @INCLUDE::includeFile
 
-  A("}") : @includeFile
+  A("}") : @INCLUDE::includeFile
 
 -----
 
 8) 
 
-  A("#") : @defType
+  A("#") : @TYPE::build
 
-  A(".") : @defType
+  A(".") : @TYPE::build
 
-  A("Dots") : @defType
+  A("Dots") : @TYPE::build
 
-  A("Name") : @defType
+  A("Name") : @TYPE::build
 
-  A("const") : @defType
+  A("const") : @TYPE::build
 
-  A("int") : @defType
+  A("int") : @TYPE::build
 
-  A("ip") : @defType
+  A("ip") : @TYPE::build
 
-  A("sint") : @defType
+  A("sint") : @TYPE::build
 
-  A("sint16") : @defType
+  A("sint16") : @TYPE::build
 
-  A("sint32") : @defType
+  A("sint32") : @TYPE::build
 
-  A("sint64") : @defType
+  A("sint64") : @TYPE::build
 
-  A("sint8") : @defType
+  A("sint8") : @TYPE::build
 
-  A("struct") : @defType
+  A("struct") : @TYPE::build
 
-  A("text") : @defType
+  A("text") : @TYPE::build
 
-  A("type") : @defType
+  A("type") : @TYPE::build
 
-  A("uint") : @defType
+  A("uint") : @TYPE::build
 
-  A("uint16") : @defType
+  A("uint16") : @TYPE::build
 
-  A("uint32") : @defType
+  A("uint32") : @TYPE::build
 
-  A("uint64") : @defType
+  A("uint64") : @TYPE::build
 
-  A("uint8") : @defType
+  A("uint8") : @TYPE::build
 
-  A("ulen") : @defType
+  A("ulen") : @TYPE::build
 
-  A("}") : @defType
+  A("}") : @TYPE::build
 
 -----
 
 9) 
 
-  A("#") : @defType
+  A("#") : @TYPE::build
 
-  A(".") : @defType
+  A(".") : @TYPE::build
 
-  A("Dots") : @defType
+  A("Dots") : @TYPE::build
 
-  A("Name") : @defType
+  A("Name") : @TYPE::build
 
-  A("include") : @defType
+  A("include") : @TYPE::build
 
-  A("int") : @defType
+  A("int") : @TYPE::build
 
-  A("ip") : @defType
+  A("ip") : @TYPE::build
 
-  A("scope") : @defType
+  A("scope") : @TYPE::build
 
-  A("sint") : @defType
+  A("sint") : @TYPE::build
 
-  A("sint16") : @defType
+  A("sint16") : @TYPE::build
 
-  A("sint32") : @defType
+  A("sint32") : @TYPE::build
 
-  A("sint64") : @defType
+  A("sint64") : @TYPE::build
 
-  A("sint8") : @defType
+  A("sint8") : @TYPE::build
 
-  A("struct") : @defType
+  A("struct") : @TYPE::build
 
-  A("text") : @defType
+  A("text") : @TYPE::build
 
-  A("type") : @defType
+  A("type") : @TYPE::build
 
-  A("uint") : @defType
+  A("uint") : @TYPE::build
 
-  A("uint16") : @defType
+  A("uint16") : @TYPE::build
 
-  A("uint32") : @defType
+  A("uint32") : @TYPE::build
 
-  A("uint64") : @defType
+  A("uint64") : @TYPE::build
 
-  A("uint8") : @defType
+  A("uint8") : @TYPE::build
 
-  A("ulen") : @defType
+  A("ulen") : @TYPE::build
 
-  A("}") : @defType
+  A("}") : @TYPE::build
 
 -----
 
 10) 
 
-  A("#") : @defConst
+  A("#") : @CONST::build
 
-  A(".") : @defConst
+  A(".") : @CONST::build
 
-  A("Dots") : @defConst
+  A("Dots") : @CONST::build
 
-  A("Name") : @defConst
+  A("Name") : @CONST::build
 
-  A("const") : @defConst
+  A("const") : @CONST::build
 
-  A("int") : @defConst
+  A("int") : @CONST::build
 
-  A("ip") : @defConst
+  A("ip") : @CONST::build
 
-  A("sint") : @defConst
+  A("sint") : @CONST::build
 
-  A("sint16") : @defConst
+  A("sint16") : @CONST::build
 
-  A("sint32") : @defConst
+  A("sint32") : @CONST::build
 
-  A("sint64") : @defConst
+  A("sint64") : @CONST::build
 
-  A("sint8") : @defConst
+  A("sint8") : @CONST::build
 
-  A("struct") : @defConst
+  A("struct") : @CONST::build
 
-  A("text") : @defConst
+  A("text") : @CONST::build
 
-  A("type") : @defConst
+  A("type") : @CONST::build
 
-  A("uint") : @defConst
+  A("uint") : @CONST::build
 
-  A("uint16") : @defConst
+  A("uint16") : @CONST::build
 
-  A("uint32") : @defConst
+  A("uint32") : @CONST::build
 
-  A("uint64") : @defConst
+  A("uint64") : @CONST::build
 
-  A("uint8") : @defConst
+  A("uint8") : @CONST::build
 
-  A("ulen") : @defConst
+  A("ulen") : @CONST::build
 
-  A("}") : @defConst
+  A("}") : @CONST::build
 
 -----
 
 11) 
 
-  A("#") : @defConst
+  A("#") : @CONST::build
 
-  A(".") : @defConst
+  A(".") : @CONST::build
 
-  A("Dots") : @defConst
+  A("Dots") : @CONST::build
 
-  A("Name") : @defConst
+  A("Name") : @CONST::build
 
-  A("include") : @defConst
+  A("include") : @CONST::build
 
-  A("int") : @defConst
+  A("int") : @CONST::build
 
-  A("ip") : @defConst
+  A("ip") : @CONST::build
 
-  A("scope") : @defConst
+  A("scope") : @CONST::build
 
-  A("sint") : @defConst
+  A("sint") : @CONST::build
 
-  A("sint16") : @defConst
+  A("sint16") : @CONST::build
 
-  A("sint32") : @defConst
+  A("sint32") : @CONST::build
 
-  A("sint64") : @defConst
+  A("sint64") : @CONST::build
 
-  A("sint8") : @defConst
+  A("sint8") : @CONST::build
 
-  A("struct") : @defConst
+  A("struct") : @CONST::build
 
-  A("text") : @defConst
+  A("text") : @CONST::build
 
-  A("type") : @defConst
+  A("type") : @CONST::build
 
-  A("uint") : @defConst
+  A("uint") : @CONST::build
 
-  A("uint16") : @defConst
+  A("uint16") : @CONST::build
 
-  A("uint32") : @defConst
+  A("uint32") : @CONST::build
 
-  A("uint64") : @defConst
+  A("uint64") : @CONST::build
 
-  A("uint8") : @defConst
+  A("uint8") : @CONST::build
 
-  A("ulen") : @defConst
+  A("ulen") : @CONST::build
 
-  A("}") : @defConst
+  A("}") : @CONST::build
 
 -----
 
 12) 
 
-  A("#") : @startName
+  A("#") : @RNAME::start
 
-  A("%") : @startName
+  A("%") : @RNAME::start
 
-  A("(") : @startName
+  A("(") : @RNAME::start
 
-  A(")") : @startName
+  A(")") : @RNAME::start
 
-  A("*") : @startName
+  A("*") : @RNAME::start
 
-  A("+") : @startName
+  A("+") : @RNAME::start
 
-  A("-") : @startName
+  A("-") : @RNAME::start
 
-  A("->") : @startName
+  A("->") : @RNAME::start
 
-  A(".") : @startName
+  A(".") : @RNAME::start
 
-  A("/") : @startName
+  A("/") : @RNAME::start
 
-  A("[") : @startName
+  A("[") : @RNAME::start
 
-  A("{") : @startName
+  A("{") : @RNAME::start
 
 -----
 
 13) 
 
-  A("#") : @startName
+  A("#") : @RNAME::start
 
-  A("%") : @startName
+  A("%") : @RNAME::start
 
-  A("(") : @startName
+  A("(") : @RNAME::start
 
-  A("*") : @startName
+  A("*") : @RNAME::start
 
-  A("+") : @startName
+  A("+") : @RNAME::start
 
-  A(",") : @startName
+  A(",") : @RNAME::start
 
-  A("-") : @startName
+  A("-") : @RNAME::start
 
-  A("->") : @startName
+  A("->") : @RNAME::start
 
-  A(".") : @startName
+  A(".") : @RNAME::start
 
-  A("/") : @startName
+  A("/") : @RNAME::start
 
-  A("[") : @startName
+  A("[") : @RNAME::start
 
-  A("{") : @startName
+  A("{") : @RNAME::start
 
-  A("}") : @startName
+  A("}") : @RNAME::start
 
 -----
 
 14) 
 
-  A("#") : @startName
+  A("#") : @RNAME::start
 
-  A("%") : @startName
+  A("%") : @RNAME::start
 
-  A("(") : @startName
+  A("(") : @RNAME::start
 
-  A("*") : @startName
+  A("*") : @RNAME::start
 
-  A("+") : @startName
+  A("+") : @RNAME::start
 
-  A("-") : @startName
+  A("-") : @RNAME::start
 
-  A("->") : @startName
+  A("->") : @RNAME::start
 
-  A(".") : @startName
+  A(".") : @RNAME::start
 
-  A("/") : @startName
+  A("/") : @RNAME::start
 
-  A(";") : @startName
+  A(";") : @RNAME::start
 
-  A("[") : @startName
+  A("[") : @RNAME::start
 
-  A("{") : @startName
+  A("{") : @RNAME::start
 
 -----
 
 15) 
 
-  A("#") : @startName
+  A("#") : @RNAME::start
 
-  A("%") : @startName
+  A("%") : @RNAME::start
 
-  A("(") : @startName
+  A("(") : @RNAME::start
 
-  A("*") : @startName
+  A("*") : @RNAME::start
 
-  A("+") : @startName
+  A("+") : @RNAME::start
 
-  A("-") : @startName
+  A("-") : @RNAME::start
 
-  A("->") : @startName
+  A("->") : @RNAME::start
 
-  A(".") : @startName
+  A(".") : @RNAME::start
 
-  A("/") : @startName
+  A("/") : @RNAME::start
 
-  A("[") : @startName
+  A("[") : @RNAME::start
 
-  A("]") : @startName
+  A("]") : @RNAME::start
 
-  A("{") : @startName
+  A("{") : @RNAME::start
 
 -----
 
 16) 
 
-  A("#") : @startName
+  A("#") : @RNAME::start
 
-  A("*") : @startName
+  A("*") : @RNAME::start
 
-  A(";") : @startName
+  A(";") : @RNAME::start
 
-  A("[") : @startName
+  A("[") : @RNAME::start
 
 -----
 
 17) 
 
-  A("#") : @startName
+  A("#") : @RNAME::start
 
-  A("*") : @startName
+  A("*") : @RNAME::start
 
-  A("Name") : @startName
+  A("Name") : @RNAME::start
 
-  A("[") : @startName
+  A("[") : @RNAME::start
 
 -----
 
 18) 
 
-  A("#") : @extName
+  A("#") : @RNAME::ext
 
-  A("%") : @extName
+  A("%") : @RNAME::ext
 
-  A("(") : @extName
+  A("(") : @RNAME::ext
 
-  A(")") : @extName
+  A(")") : @RNAME::ext
 
-  A("*") : @extName
+  A("*") : @RNAME::ext
 
-  A("+") : @extName
+  A("+") : @RNAME::ext
 
-  A("-") : @extName
+  A("-") : @RNAME::ext
 
-  A("->") : @extName
+  A("->") : @RNAME::ext
 
-  A(".") : @extName
+  A(".") : @RNAME::ext
 
-  A("/") : @extName
+  A("/") : @RNAME::ext
 
-  A("[") : @extName
+  A("[") : @RNAME::ext
 
-  A("{") : @extName
+  A("{") : @RNAME::ext
 
 -----
 
 19) 
 
-  A("#") : @extName
+  A("#") : @RNAME::ext
 
-  A("%") : @extName
+  A("%") : @RNAME::ext
 
-  A("(") : @extName
+  A("(") : @RNAME::ext
 
-  A("*") : @extName
+  A("*") : @RNAME::ext
 
-  A("+") : @extName
+  A("+") : @RNAME::ext
 
-  A(",") : @extName
+  A(",") : @RNAME::ext
 
-  A("-") : @extName
+  A("-") : @RNAME::ext
 
-  A("->") : @extName
+  A("->") : @RNAME::ext
 
-  A(".") : @extName
+  A(".") : @RNAME::ext
 
-  A("/") : @extName
+  A("/") : @RNAME::ext
 
-  A("[") : @extName
+  A("[") : @RNAME::ext
 
-  A("{") : @extName
+  A("{") : @RNAME::ext
 
-  A("}") : @extName
+  A("}") : @RNAME::ext
 
 -----
 
 20) 
 
-  A("#") : @extName
+  A("#") : @RNAME::ext
 
-  A("%") : @extName
+  A("%") : @RNAME::ext
 
-  A("(") : @extName
+  A("(") : @RNAME::ext
 
-  A("*") : @extName
+  A("*") : @RNAME::ext
 
-  A("+") : @extName
+  A("+") : @RNAME::ext
 
-  A("-") : @extName
+  A("-") : @RNAME::ext
 
-  A("->") : @extName
+  A("->") : @RNAME::ext
 
-  A(".") : @extName
+  A(".") : @RNAME::ext
 
-  A("/") : @extName
+  A("/") : @RNAME::ext
 
-  A(";") : @extName
+  A(";") : @RNAME::ext
 
-  A("[") : @extName
+  A("[") : @RNAME::ext
 
-  A("{") : @extName
+  A("{") : @RNAME::ext
 
 -----
 
 21) 
 
-  A("#") : @extName
+  A("#") : @RNAME::ext
 
-  A("%") : @extName
+  A("%") : @RNAME::ext
 
-  A("(") : @extName
+  A("(") : @RNAME::ext
 
-  A("*") : @extName
+  A("*") : @RNAME::ext
 
-  A("+") : @extName
+  A("+") : @RNAME::ext
 
-  A("-") : @extName
+  A("-") : @RNAME::ext
 
-  A("->") : @extName
+  A("->") : @RNAME::ext
 
-  A(".") : @extName
+  A(".") : @RNAME::ext
 
-  A("/") : @extName
+  A("/") : @RNAME::ext
 
-  A("[") : @extName
+  A("[") : @RNAME::ext
 
-  A("]") : @extName
+  A("]") : @RNAME::ext
 
-  A("{") : @extName
+  A("{") : @RNAME::ext
 
 -----
 
 22) 
 
-  A("#") : @extName
+  A("#") : @RNAME::ext
 
-  A("*") : @extName
+  A("*") : @RNAME::ext
 
-  A(";") : @extName
+  A(";") : @RNAME::ext
 
-  A("[") : @extName
+  A("[") : @RNAME::ext
 
 -----
 
 23) 
 
-  A("#") : @extName
+  A("#") : @RNAME::ext
 
-  A("*") : @extName
+  A("*") : @RNAME::ext
 
-  A("Name") : @extName
+  A("Name") : @RNAME::ext
 
-  A("[") : @extName
+  A("[") : @RNAME::ext
 
 -----
 
 24) 
 
-  A("#") : @startSBody
+  A("#") : @SBODY::start
 
-  A(".") : @startSBody
+  A(".") : @SBODY::start
 
-  A("Dots") : @startSBody
+  A("Dots") : @SBODY::start
 
-  A("Name") : @startSBody
+  A("Name") : @SBODY::start
 
-  A("const") : @startSBody
+  A("const") : @SBODY::start
 
-  A("int") : @startSBody
+  A("int") : @SBODY::start
 
-  A("ip") : @startSBody
+  A("ip") : @SBODY::start
 
-  A("sint") : @startSBody
+  A("sint") : @SBODY::start
 
-  A("sint16") : @startSBody
+  A("sint16") : @SBODY::start
 
-  A("sint32") : @startSBody
+  A("sint32") : @SBODY::start
 
-  A("sint64") : @startSBody
+  A("sint64") : @SBODY::start
 
-  A("sint8") : @startSBody
+  A("sint8") : @SBODY::start
 
-  A("struct") : @startSBody
+  A("struct") : @SBODY::start
 
-  A("text") : @startSBody
+  A("text") : @SBODY::start
 
-  A("type") : @startSBody
+  A("type") : @SBODY::start
 
-  A("uint") : @startSBody
+  A("uint") : @SBODY::start
 
-  A("uint16") : @startSBody
+  A("uint16") : @SBODY::start
 
-  A("uint32") : @startSBody
+  A("uint32") : @SBODY::start
 
-  A("uint64") : @startSBody
+  A("uint64") : @SBODY::start
 
-  A("uint8") : @startSBody
+  A("uint8") : @SBODY::start
 
-  A("ulen") : @startSBody
+  A("ulen") : @SBODY::start
 
-  A("}") : @startSBody
+  A("}") : @SBODY::start
 
 -----
 
 25) 
 
-  A("#") : @extSBody_TYPE
+  A("#") : @SBODY::ext_TYPE
 
-  A(".") : @extSBody_TYPE
+  A(".") : @SBODY::ext_TYPE
 
-  A("Dots") : @extSBody_TYPE
+  A("Dots") : @SBODY::ext_TYPE
 
-  A("Name") : @extSBody_TYPE
+  A("Name") : @SBODY::ext_TYPE
 
-  A("const") : @extSBody_TYPE
+  A("const") : @SBODY::ext_TYPE
 
-  A("int") : @extSBody_TYPE
+  A("int") : @SBODY::ext_TYPE
 
-  A("ip") : @extSBody_TYPE
+  A("ip") : @SBODY::ext_TYPE
 
-  A("sint") : @extSBody_TYPE
+  A("sint") : @SBODY::ext_TYPE
 
-  A("sint16") : @extSBody_TYPE
+  A("sint16") : @SBODY::ext_TYPE
 
-  A("sint32") : @extSBody_TYPE
+  A("sint32") : @SBODY::ext_TYPE
 
-  A("sint64") : @extSBody_TYPE
+  A("sint64") : @SBODY::ext_TYPE
 
-  A("sint8") : @extSBody_TYPE
+  A("sint8") : @SBODY::ext_TYPE
 
-  A("struct") : @extSBody_TYPE
+  A("struct") : @SBODY::ext_TYPE
 
-  A("text") : @extSBody_TYPE
+  A("text") : @SBODY::ext_TYPE
 
-  A("type") : @extSBody_TYPE
+  A("type") : @SBODY::ext_TYPE
 
-  A("uint") : @extSBody_TYPE
+  A("uint") : @SBODY::ext_TYPE
 
-  A("uint16") : @extSBody_TYPE
+  A("uint16") : @SBODY::ext_TYPE
 
-  A("uint32") : @extSBody_TYPE
+  A("uint32") : @SBODY::ext_TYPE
 
-  A("uint64") : @extSBody_TYPE
+  A("uint64") : @SBODY::ext_TYPE
 
-  A("uint8") : @extSBody_TYPE
+  A("uint8") : @SBODY::ext_TYPE
 
-  A("ulen") : @extSBody_TYPE
+  A("ulen") : @SBODY::ext_TYPE
 
-  A("}") : @extSBody_TYPE
+  A("}") : @SBODY::ext_TYPE
 
 -----
 
 26) 
 
-  A("#") : @extSBody_CONST
+  A("#") : @SBODY::ext_CONST
 
-  A(".") : @extSBody_CONST
+  A(".") : @SBODY::ext_CONST
 
-  A("Dots") : @extSBody_CONST
+  A("Dots") : @SBODY::ext_CONST
 
-  A("Name") : @extSBody_CONST
+  A("Name") : @SBODY::ext_CONST
 
-  A("const") : @extSBody_CONST
+  A("const") : @SBODY::ext_CONST
 
-  A("int") : @extSBody_CONST
+  A("int") : @SBODY::ext_CONST
 
-  A("ip") : @extSBody_CONST
+  A("ip") : @SBODY::ext_CONST
 
-  A("sint") : @extSBody_CONST
+  A("sint") : @SBODY::ext_CONST
 
-  A("sint16") : @extSBody_CONST
+  A("sint16") : @SBODY::ext_CONST
 
-  A("sint32") : @extSBody_CONST
+  A("sint32") : @SBODY::ext_CONST
 
-  A("sint64") : @extSBody_CONST
+  A("sint64") : @SBODY::ext_CONST
 
-  A("sint8") : @extSBody_CONST
+  A("sint8") : @SBODY::ext_CONST
 
-  A("struct") : @extSBody_CONST
+  A("struct") : @SBODY::ext_CONST
 
-  A("text") : @extSBody_CONST
+  A("text") : @SBODY::ext_CONST
 
-  A("type") : @extSBody_CONST
+  A("type") : @SBODY::ext_CONST
 
-  A("uint") : @extSBody_CONST
+  A("uint") : @SBODY::ext_CONST
 
-  A("uint16") : @extSBody_CONST
+  A("uint16") : @SBODY::ext_CONST
 
-  A("uint32") : @extSBody_CONST
+  A("uint32") : @SBODY::ext_CONST
 
-  A("uint64") : @extSBody_CONST
+  A("uint64") : @SBODY::ext_CONST
 
-  A("uint8") : @extSBody_CONST
+  A("uint8") : @SBODY::ext_CONST
 
-  A("ulen") : @extSBody_CONST
+  A("ulen") : @SBODY::ext_CONST
 
-  A("}") : @extSBody_CONST
+  A("}") : @SBODY::ext_CONST
 
 -----
 
 27) 
 
-  A("#") : @extSBody_STRUCT
+  A("#") : @SBODY::ext_STRUCT
 
-  A(".") : @extSBody_STRUCT
+  A(".") : @SBODY::ext_STRUCT
 
-  A("Dots") : @extSBody_STRUCT
+  A("Dots") : @SBODY::ext_STRUCT
 
-  A("Name") : @extSBody_STRUCT
+  A("Name") : @SBODY::ext_STRUCT
 
-  A("const") : @extSBody_STRUCT
+  A("const") : @SBODY::ext_STRUCT
 
-  A("int") : @extSBody_STRUCT
+  A("int") : @SBODY::ext_STRUCT
 
-  A("ip") : @extSBody_STRUCT
+  A("ip") : @SBODY::ext_STRUCT
 
-  A("sint") : @extSBody_STRUCT
+  A("sint") : @SBODY::ext_STRUCT
 
-  A("sint16") : @extSBody_STRUCT
+  A("sint16") : @SBODY::ext_STRUCT
 
-  A("sint32") : @extSBody_STRUCT
+  A("sint32") : @SBODY::ext_STRUCT
 
-  A("sint64") : @extSBody_STRUCT
+  A("sint64") : @SBODY::ext_STRUCT
 
-  A("sint8") : @extSBody_STRUCT
+  A("sint8") : @SBODY::ext_STRUCT
 
-  A("struct") : @extSBody_STRUCT
+  A("struct") : @SBODY::ext_STRUCT
 
-  A("text") : @extSBody_STRUCT
+  A("text") : @SBODY::ext_STRUCT
 
-  A("type") : @extSBody_STRUCT
+  A("type") : @SBODY::ext_STRUCT
 
-  A("uint") : @extSBody_STRUCT
+  A("uint") : @SBODY::ext_STRUCT
 
-  A("uint16") : @extSBody_STRUCT
+  A("uint16") : @SBODY::ext_STRUCT
 
-  A("uint32") : @extSBody_STRUCT
+  A("uint32") : @SBODY::ext_STRUCT
 
-  A("uint64") : @extSBody_STRUCT
+  A("uint64") : @SBODY::ext_STRUCT
 
-  A("uint8") : @extSBody_STRUCT
+  A("uint8") : @SBODY::ext_STRUCT
 
-  A("ulen") : @extSBody_STRUCT
+  A("ulen") : @SBODY::ext_STRUCT
 
-  A("}") : @extSBody_STRUCT
+  A("}") : @SBODY::ext_STRUCT
 
 -----
 
 28) 
 
-  A("#") : @extSBody_field
+  A("#") : @SBODY::ext_field
 
-  A(".") : @extSBody_field
+  A(".") : @SBODY::ext_field
 
-  A("Dots") : @extSBody_field
+  A("Dots") : @SBODY::ext_field
 
-  A("Name") : @extSBody_field
+  A("Name") : @SBODY::ext_field
 
-  A("const") : @extSBody_field
+  A("const") : @SBODY::ext_field
 
-  A("int") : @extSBody_field
+  A("int") : @SBODY::ext_field
 
-  A("ip") : @extSBody_field
+  A("ip") : @SBODY::ext_field
 
-  A("sint") : @extSBody_field
+  A("sint") : @SBODY::ext_field
 
-  A("sint16") : @extSBody_field
+  A("sint16") : @SBODY::ext_field
 
-  A("sint32") : @extSBody_field
+  A("sint32") : @SBODY::ext_field
 
-  A("sint64") : @extSBody_field
+  A("sint64") : @SBODY::ext_field
 
-  A("sint8") : @extSBody_field
+  A("sint8") : @SBODY::ext_field
 
-  A("struct") : @extSBody_field
+  A("struct") : @SBODY::ext_field
 
-  A("text") : @extSBody_field
+  A("text") : @SBODY::ext_field
 
-  A("type") : @extSBody_field
+  A("type") : @SBODY::ext_field
 
-  A("uint") : @extSBody_field
+  A("uint") : @SBODY::ext_field
 
-  A("uint16") : @extSBody_field
+  A("uint16") : @SBODY::ext_field
 
-  A("uint32") : @extSBody_field
+  A("uint32") : @SBODY::ext_field
 
-  A("uint64") : @extSBody_field
+  A("uint64") : @SBODY::ext_field
 
-  A("uint8") : @extSBody_field
+  A("uint8") : @SBODY::ext_field
 
-  A("ulen") : @extSBody_field
+  A("ulen") : @SBODY::ext_field
 
-  A("}") : @extSBody_field
+  A("}") : @SBODY::ext_field
 
 -----
 
 29) 
 
-  A("#") : @extSBody_fieldVal
+  A("#") : @SBODY::ext_fieldVal
 
-  A(".") : @extSBody_fieldVal
+  A(".") : @SBODY::ext_fieldVal
 
-  A("Dots") : @extSBody_fieldVal
+  A("Dots") : @SBODY::ext_fieldVal
 
-  A("Name") : @extSBody_fieldVal
+  A("Name") : @SBODY::ext_fieldVal
 
-  A("const") : @extSBody_fieldVal
+  A("const") : @SBODY::ext_fieldVal
 
-  A("int") : @extSBody_fieldVal
+  A("int") : @SBODY::ext_fieldVal
 
-  A("ip") : @extSBody_fieldVal
+  A("ip") : @SBODY::ext_fieldVal
 
-  A("sint") : @extSBody_fieldVal
+  A("sint") : @SBODY::ext_fieldVal
 
-  A("sint16") : @extSBody_fieldVal
+  A("sint16") : @SBODY::ext_fieldVal
 
-  A("sint32") : @extSBody_fieldVal
+  A("sint32") : @SBODY::ext_fieldVal
 
-  A("sint64") : @extSBody_fieldVal
+  A("sint64") : @SBODY::ext_fieldVal
 
-  A("sint8") : @extSBody_fieldVal
+  A("sint8") : @SBODY::ext_fieldVal
 
-  A("struct") : @extSBody_fieldVal
+  A("struct") : @SBODY::ext_fieldVal
 
-  A("text") : @extSBody_fieldVal
+  A("text") : @SBODY::ext_fieldVal
 
-  A("type") : @extSBody_fieldVal
+  A("type") : @SBODY::ext_fieldVal
 
-  A("uint") : @extSBody_fieldVal
+  A("uint") : @SBODY::ext_fieldVal
 
-  A("uint16") : @extSBody_fieldVal
+  A("uint16") : @SBODY::ext_fieldVal
 
-  A("uint32") : @extSBody_fieldVal
+  A("uint32") : @SBODY::ext_fieldVal
 
-  A("uint64") : @extSBody_fieldVal
+  A("uint64") : @SBODY::ext_fieldVal
 
-  A("uint8") : @extSBody_fieldVal
+  A("uint8") : @SBODY::ext_fieldVal
 
-  A("ulen") : @extSBody_fieldVal
+  A("ulen") : @SBODY::ext_fieldVal
 
-  A("}") : @extSBody_fieldVal
+  A("}") : @SBODY::ext_fieldVal
 
 -----
 
@@ -10452,27 +10751,27 @@
 
   A("#") : <-
 
-  A("%") : @relName
+  A("%") : @NAME::rel
 
-  A("(") : @relName
+  A("(") : @NAME::rel
 
-  A(")") : @relName
+  A(")") : @NAME::rel
 
-  A("*") : @relName
+  A("*") : @NAME::rel
 
-  A("+") : @relName
+  A("+") : @NAME::rel
 
-  A("-") : @relName
+  A("-") : @NAME::rel
 
-  A("->") : @relName
+  A("->") : @NAME::rel
 
-  A(".") : @relName
+  A(".") : @NAME::rel
 
-  A("/") : @relName
+  A("/") : @NAME::rel
 
-  A("[") : @relName
+  A("[") : @NAME::rel
 
-  A("{") : @relName
+  A("{") : @NAME::rel
 
 -----
 
@@ -10480,29 +10779,29 @@
 
   A("#") : <-
 
-  A("%") : @relName
+  A("%") : @NAME::rel
 
-  A("(") : @relName
+  A("(") : @NAME::rel
 
-  A("*") : @relName
+  A("*") : @NAME::rel
 
-  A("+") : @relName
+  A("+") : @NAME::rel
 
-  A(",") : @relName
+  A(",") : @NAME::rel
 
-  A("-") : @relName
+  A("-") : @NAME::rel
 
-  A("->") : @relName
+  A("->") : @NAME::rel
 
-  A(".") : @relName
+  A(".") : @NAME::rel
 
-  A("/") : @relName
+  A("/") : @NAME::rel
 
-  A("[") : @relName
+  A("[") : @NAME::rel
 
-  A("{") : @relName
+  A("{") : @NAME::rel
 
-  A("}") : @relName
+  A("}") : @NAME::rel
 
 -----
 
@@ -10510,27 +10809,27 @@
 
   A("#") : <-
 
-  A("%") : @relName
+  A("%") : @NAME::rel
 
-  A("(") : @relName
+  A("(") : @NAME::rel
 
-  A("*") : @relName
+  A("*") : @NAME::rel
 
-  A("+") : @relName
+  A("+") : @NAME::rel
 
-  A("-") : @relName
+  A("-") : @NAME::rel
 
-  A("->") : @relName
+  A("->") : @NAME::rel
 
-  A(".") : @relName
+  A(".") : @NAME::rel
 
-  A("/") : @relName
+  A("/") : @NAME::rel
 
-  A(";") : @relName
+  A(";") : @NAME::rel
 
-  A("[") : @relName
+  A("[") : @NAME::rel
 
-  A("{") : @relName
+  A("{") : @NAME::rel
 
 -----
 
@@ -10538,27 +10837,27 @@
 
   A("#") : <-
 
-  A("%") : @relName
+  A("%") : @NAME::rel
 
-  A("(") : @relName
+  A("(") : @NAME::rel
 
-  A("*") : @relName
+  A("*") : @NAME::rel
 
-  A("+") : @relName
+  A("+") : @NAME::rel
 
-  A("-") : @relName
+  A("-") : @NAME::rel
 
-  A("->") : @relName
+  A("->") : @NAME::rel
 
-  A(".") : @relName
+  A(".") : @NAME::rel
 
-  A("/") : @relName
+  A("/") : @NAME::rel
 
-  A("[") : @relName
+  A("[") : @NAME::rel
 
-  A("]") : @relName
+  A("]") : @NAME::rel
 
-  A("{") : @relName
+  A("{") : @NAME::rel
 
 -----
 
@@ -10566,27 +10865,27 @@
 
   A("#") : <-
 
-  A("%") : @absName
+  A("%") : @NAME::abs
 
-  A("(") : @absName
+  A("(") : @NAME::abs
 
-  A(")") : @absName
+  A(")") : @NAME::abs
 
-  A("*") : @absName
+  A("*") : @NAME::abs
 
-  A("+") : @absName
+  A("+") : @NAME::abs
 
-  A("-") : @absName
+  A("-") : @NAME::abs
 
-  A("->") : @absName
+  A("->") : @NAME::abs
 
-  A(".") : @absName
+  A(".") : @NAME::abs
 
-  A("/") : @absName
+  A("/") : @NAME::abs
 
-  A("[") : @absName
+  A("[") : @NAME::abs
 
-  A("{") : @absName
+  A("{") : @NAME::abs
 
 -----
 
@@ -10594,29 +10893,29 @@
 
   A("#") : <-
 
-  A("%") : @absName
+  A("%") : @NAME::abs
 
-  A("(") : @absName
+  A("(") : @NAME::abs
 
-  A("*") : @absName
+  A("*") : @NAME::abs
 
-  A("+") : @absName
+  A("+") : @NAME::abs
 
-  A(",") : @absName
+  A(",") : @NAME::abs
 
-  A("-") : @absName
+  A("-") : @NAME::abs
 
-  A("->") : @absName
+  A("->") : @NAME::abs
 
-  A(".") : @absName
+  A(".") : @NAME::abs
 
-  A("/") : @absName
+  A("/") : @NAME::abs
 
-  A("[") : @absName
+  A("[") : @NAME::abs
 
-  A("{") : @absName
+  A("{") : @NAME::abs
 
-  A("}") : @absName
+  A("}") : @NAME::abs
 
 -----
 
@@ -10624,27 +10923,27 @@
 
   A("#") : <-
 
-  A("%") : @absName
+  A("%") : @NAME::abs
 
-  A("(") : @absName
+  A("(") : @NAME::abs
 
-  A("*") : @absName
+  A("*") : @NAME::abs
 
-  A("+") : @absName
+  A("+") : @NAME::abs
 
-  A("-") : @absName
+  A("-") : @NAME::abs
 
-  A("->") : @absName
+  A("->") : @NAME::abs
 
-  A(".") : @absName
+  A(".") : @NAME::abs
 
-  A("/") : @absName
+  A("/") : @NAME::abs
 
-  A(";") : @absName
+  A(";") : @NAME::abs
 
-  A("[") : @absName
+  A("[") : @NAME::abs
 
-  A("{") : @absName
+  A("{") : @NAME::abs
 
 -----
 
@@ -10652,27 +10951,27 @@
 
   A("#") : <-
 
-  A("%") : @absName
+  A("%") : @NAME::abs
 
-  A("(") : @absName
+  A("(") : @NAME::abs
 
-  A("*") : @absName
+  A("*") : @NAME::abs
 
-  A("+") : @absName
+  A("+") : @NAME::abs
 
-  A("-") : @absName
+  A("-") : @NAME::abs
 
-  A("->") : @absName
+  A("->") : @NAME::abs
 
-  A(".") : @absName
+  A(".") : @NAME::abs
 
-  A("/") : @absName
+  A("/") : @NAME::abs
 
-  A("[") : @absName
+  A("[") : @NAME::abs
 
-  A("]") : @absName
+  A("]") : @NAME::abs
 
-  A("{") : @absName
+  A("{") : @NAME::abs
 
 -----
 
@@ -10680,27 +10979,27 @@
 
   A("#") : <-
 
-  A("%") : @dotName
+  A("%") : @NAME::dot
 
-  A("(") : @dotName
+  A("(") : @NAME::dot
 
-  A(")") : @dotName
+  A(")") : @NAME::dot
 
-  A("*") : @dotName
+  A("*") : @NAME::dot
 
-  A("+") : @dotName
+  A("+") : @NAME::dot
 
-  A("-") : @dotName
+  A("-") : @NAME::dot
 
-  A("->") : @dotName
+  A("->") : @NAME::dot
 
-  A(".") : @dotName
+  A(".") : @NAME::dot
 
-  A("/") : @dotName
+  A("/") : @NAME::dot
 
-  A("[") : @dotName
+  A("[") : @NAME::dot
 
-  A("{") : @dotName
+  A("{") : @NAME::dot
 
 -----
 
@@ -10708,29 +11007,29 @@
 
   A("#") : <-
 
-  A("%") : @dotName
+  A("%") : @NAME::dot
 
-  A("(") : @dotName
+  A("(") : @NAME::dot
 
-  A("*") : @dotName
+  A("*") : @NAME::dot
 
-  A("+") : @dotName
+  A("+") : @NAME::dot
 
-  A(",") : @dotName
+  A(",") : @NAME::dot
 
-  A("-") : @dotName
+  A("-") : @NAME::dot
 
-  A("->") : @dotName
+  A("->") : @NAME::dot
 
-  A(".") : @dotName
+  A(".") : @NAME::dot
 
-  A("/") : @dotName
+  A("/") : @NAME::dot
 
-  A("[") : @dotName
+  A("[") : @NAME::dot
 
-  A("{") : @dotName
+  A("{") : @NAME::dot
 
-  A("}") : @dotName
+  A("}") : @NAME::dot
 
 -----
 
@@ -10738,27 +11037,27 @@
 
   A("#") : <-
 
-  A("%") : @dotName
+  A("%") : @NAME::dot
 
-  A("(") : @dotName
+  A("(") : @NAME::dot
 
-  A("*") : @dotName
+  A("*") : @NAME::dot
 
-  A("+") : @dotName
+  A("+") : @NAME::dot
 
-  A("-") : @dotName
+  A("-") : @NAME::dot
 
-  A("->") : @dotName
+  A("->") : @NAME::dot
 
-  A(".") : @dotName
+  A(".") : @NAME::dot
 
-  A("/") : @dotName
+  A("/") : @NAME::dot
 
-  A(";") : @dotName
+  A(";") : @NAME::dot
 
-  A("[") : @dotName
+  A("[") : @NAME::dot
 
-  A("{") : @dotName
+  A("{") : @NAME::dot
 
 -----
 
@@ -10766,27 +11065,27 @@
 
   A("#") : <-
 
-  A("%") : @dotName
+  A("%") : @NAME::dot
 
-  A("(") : @dotName
+  A("(") : @NAME::dot
 
-  A("*") : @dotName
+  A("*") : @NAME::dot
 
-  A("+") : @dotName
+  A("+") : @NAME::dot
 
-  A("-") : @dotName
+  A("-") : @NAME::dot
 
-  A("->") : @dotName
+  A("->") : @NAME::dot
 
-  A(".") : @dotName
+  A(".") : @NAME::dot
 
-  A("/") : @dotName
+  A("/") : @NAME::dot
 
-  A("[") : @dotName
+  A("[") : @NAME::dot
 
-  A("]") : @dotName
+  A("]") : @NAME::dot
 
-  A("{") : @dotName
+  A("{") : @NAME::dot
 
 -----
 
@@ -10794,27 +11093,27 @@
 
   A("#") : <-
 
-  A("%") : @dotsName
+  A("%") : @NAME::dots
 
-  A("(") : @dotsName
+  A("(") : @NAME::dots
 
-  A(")") : @dotsName
+  A(")") : @NAME::dots
 
-  A("*") : @dotsName
+  A("*") : @NAME::dots
 
-  A("+") : @dotsName
+  A("+") : @NAME::dots
 
-  A("-") : @dotsName
+  A("-") : @NAME::dots
 
-  A("->") : @dotsName
+  A("->") : @NAME::dots
 
-  A(".") : @dotsName
+  A(".") : @NAME::dots
 
-  A("/") : @dotsName
+  A("/") : @NAME::dots
 
-  A("[") : @dotsName
+  A("[") : @NAME::dots
 
-  A("{") : @dotsName
+  A("{") : @NAME::dots
 
 -----
 
@@ -10822,29 +11121,29 @@
 
   A("#") : <-
 
-  A("%") : @dotsName
+  A("%") : @NAME::dots
 
-  A("(") : @dotsName
+  A("(") : @NAME::dots
 
-  A("*") : @dotsName
+  A("*") : @NAME::dots
 
-  A("+") : @dotsName
+  A("+") : @NAME::dots
 
-  A(",") : @dotsName
+  A(",") : @NAME::dots
 
-  A("-") : @dotsName
+  A("-") : @NAME::dots
 
-  A("->") : @dotsName
+  A("->") : @NAME::dots
 
-  A(".") : @dotsName
+  A(".") : @NAME::dots
 
-  A("/") : @dotsName
+  A("/") : @NAME::dots
 
-  A("[") : @dotsName
+  A("[") : @NAME::dots
 
-  A("{") : @dotsName
+  A("{") : @NAME::dots
 
-  A("}") : @dotsName
+  A("}") : @NAME::dots
 
 -----
 
@@ -10852,27 +11151,27 @@
 
   A("#") : <-
 
-  A("%") : @dotsName
+  A("%") : @NAME::dots
 
-  A("(") : @dotsName
+  A("(") : @NAME::dots
 
-  A("*") : @dotsName
+  A("*") : @NAME::dots
 
-  A("+") : @dotsName
+  A("+") : @NAME::dots
 
-  A("-") : @dotsName
+  A("-") : @NAME::dots
 
-  A("->") : @dotsName
+  A("->") : @NAME::dots
 
-  A(".") : @dotsName
+  A(".") : @NAME::dots
 
-  A("/") : @dotsName
+  A("/") : @NAME::dots
 
-  A(";") : @dotsName
+  A(";") : @NAME::dots
 
-  A("[") : @dotsName
+  A("[") : @NAME::dots
 
-  A("{") : @dotsName
+  A("{") : @NAME::dots
 
 -----
 
@@ -10880,27 +11179,27 @@
 
   A("#") : <-
 
-  A("%") : @dotsName
+  A("%") : @NAME::dots
 
-  A("(") : @dotsName
+  A("(") : @NAME::dots
 
-  A("*") : @dotsName
+  A("*") : @NAME::dots
 
-  A("+") : @dotsName
+  A("+") : @NAME::dots
 
-  A("-") : @dotsName
+  A("-") : @NAME::dots
 
-  A("->") : @dotsName
+  A("->") : @NAME::dots
 
-  A(".") : @dotsName
+  A(".") : @NAME::dots
 
-  A("/") : @dotsName
+  A("/") : @NAME::dots
 
-  A("[") : @dotsName
+  A("[") : @NAME::dots
 
-  A("]") : @dotsName
+  A("]") : @NAME::dots
 
-  A("{") : @dotsName
+  A("{") : @NAME::dots
 
 -----
 
@@ -11126,11 +11425,11 @@
 
   A("#") : <-
 
-  A("*") : @relName
+  A("*") : @NAME::rel
 
-  A(";") : @relName
+  A(";") : @NAME::rel
 
-  A("[") : @relName
+  A("[") : @NAME::rel
 
 -----
 
@@ -11138,11 +11437,11 @@
 
   A("#") : <-
 
-  A("*") : @relName
+  A("*") : @NAME::rel
 
-  A("Name") : @relName
+  A("Name") : @NAME::rel
 
-  A("[") : @relName
+  A("[") : @NAME::rel
 
 -----
 
@@ -11150,11 +11449,11 @@
 
   A("#") : <-
 
-  A("*") : @absName
+  A("*") : @NAME::abs
 
-  A(";") : @absName
+  A(";") : @NAME::abs
 
-  A("[") : @absName
+  A("[") : @NAME::abs
 
 -----
 
@@ -11162,11 +11461,11 @@
 
   A("#") : <-
 
-  A("*") : @absName
+  A("*") : @NAME::abs
 
-  A("Name") : @absName
+  A("Name") : @NAME::abs
 
-  A("[") : @absName
+  A("[") : @NAME::abs
 
 -----
 
@@ -11174,11 +11473,11 @@
 
   A("#") : <-
 
-  A("*") : @dotName
+  A("*") : @NAME::dot
 
-  A(";") : @dotName
+  A(";") : @NAME::dot
 
-  A("[") : @dotName
+  A("[") : @NAME::dot
 
 -----
 
@@ -11186,11 +11485,11 @@
 
   A("#") : <-
 
-  A("*") : @dotName
+  A("*") : @NAME::dot
 
-  A("Name") : @dotName
+  A("Name") : @NAME::dot
 
-  A("[") : @dotName
+  A("[") : @NAME::dot
 
 -----
 
@@ -11198,11 +11497,11 @@
 
   A("#") : <-
 
-  A("*") : @dotsName
+  A("*") : @NAME::dots
 
-  A(";") : @dotsName
+  A(";") : @NAME::dots
 
-  A("[") : @dotsName
+  A("[") : @NAME::dots
 
 -----
 
@@ -11210,11 +11509,11 @@
 
   A("#") : <-
 
-  A("*") : @dotsName
+  A("*") : @NAME::dots
 
-  A("Name") : @dotsName
+  A("Name") : @NAME::dots
 
-  A("[") : @dotsName
+  A("[") : @NAME::dots
 
 -----
 
@@ -11368,2857 +11667,2857 @@
 
 63) 
 
-  A("%") : @cast_EXPR
+  A("%") : @EXPR::cast_EXPR
 
-  A(")") : @cast_EXPR
+  A(")") : @EXPR::cast_EXPR
 
-  A("*") : @cast_EXPR
+  A("*") : @EXPR::cast_EXPR
 
-  A("+") : @cast_EXPR
+  A("+") : @EXPR::cast_EXPR
 
-  A("-") : @cast_EXPR
+  A("-") : @EXPR::cast_EXPR
 
-  A("->") : @cast_EXPR
+  A("->") : @EXPR::cast_EXPR
 
-  A(".") : @cast_EXPR
+  A(".") : @EXPR::cast_EXPR
 
-  A("/") : @cast_EXPR
+  A("/") : @EXPR::cast_EXPR
 
-  A("[") : @cast_EXPR
+  A("[") : @EXPR::cast_EXPR
 
-  A("{") : @cast_EXPR
+  A("{") : @EXPR::cast_EXPR
 
 -----
 
 64) 
 
-  A("%") : @cast_EXPR
+  A("%") : @EXPR::cast_EXPR
 
-  A("*") : @cast_EXPR
+  A("*") : @EXPR::cast_EXPR
 
-  A("+") : @cast_EXPR
+  A("+") : @EXPR::cast_EXPR
 
-  A(",") : @cast_EXPR
+  A(",") : @EXPR::cast_EXPR
 
-  A("-") : @cast_EXPR
+  A("-") : @EXPR::cast_EXPR
 
-  A("->") : @cast_EXPR
+  A("->") : @EXPR::cast_EXPR
 
-  A(".") : @cast_EXPR
+  A(".") : @EXPR::cast_EXPR
 
-  A("/") : @cast_EXPR
+  A("/") : @EXPR::cast_EXPR
 
-  A("[") : @cast_EXPR
+  A("[") : @EXPR::cast_EXPR
 
-  A("{") : @cast_EXPR
+  A("{") : @EXPR::cast_EXPR
 
-  A("}") : @cast_EXPR
+  A("}") : @EXPR::cast_EXPR
 
 -----
 
 65) 
 
-  A("%") : @cast_EXPR
+  A("%") : @EXPR::cast_EXPR
 
-  A("*") : @cast_EXPR
+  A("*") : @EXPR::cast_EXPR
 
-  A("+") : @cast_EXPR
+  A("+") : @EXPR::cast_EXPR
 
-  A("-") : @cast_EXPR
+  A("-") : @EXPR::cast_EXPR
 
-  A("->") : @cast_EXPR
+  A("->") : @EXPR::cast_EXPR
 
-  A(".") : @cast_EXPR
+  A(".") : @EXPR::cast_EXPR
 
-  A("/") : @cast_EXPR
+  A("/") : @EXPR::cast_EXPR
 
-  A(";") : @cast_EXPR
+  A(";") : @EXPR::cast_EXPR
 
-  A("[") : @cast_EXPR
+  A("[") : @EXPR::cast_EXPR
 
-  A("{") : @cast_EXPR
+  A("{") : @EXPR::cast_EXPR
 
 -----
 
 66) 
 
-  A("%") : @cast_EXPR
+  A("%") : @EXPR::cast_EXPR
 
-  A("*") : @cast_EXPR
+  A("*") : @EXPR::cast_EXPR
 
-  A("+") : @cast_EXPR
+  A("+") : @EXPR::cast_EXPR
 
-  A("-") : @cast_EXPR
+  A("-") : @EXPR::cast_EXPR
 
-  A("->") : @cast_EXPR
+  A("->") : @EXPR::cast_EXPR
 
-  A(".") : @cast_EXPR
+  A(".") : @EXPR::cast_EXPR
 
-  A("/") : @cast_EXPR
+  A("/") : @EXPR::cast_EXPR
 
-  A("[") : @cast_EXPR
+  A("[") : @EXPR::cast_EXPR
 
-  A("]") : @cast_EXPR
+  A("]") : @EXPR::cast_EXPR
 
-  A("{") : @cast_EXPR
+  A("{") : @EXPR::cast_EXPR
 
 -----
 
 67) 
 
-  A("%") : @cast_NAME
+  A("%") : @EXPR::cast_NAME
 
-  A("(") : @type_NAME
+  A("(") : @ITYPE::type_NAME
 
-  A(")") : @cast_NAME
+  A(")") : @EXPR::cast_NAME
 
-  A("*") : @cast_NAME
+  A("*") : @EXPR::cast_NAME
 
-  A("+") : @cast_NAME
+  A("+") : @EXPR::cast_NAME
 
-  A("-") : @cast_NAME
+  A("-") : @EXPR::cast_NAME
 
-  A("->") : @cast_NAME
+  A("->") : @EXPR::cast_NAME
 
-  A(".") : @cast_NAME
+  A(".") : @EXPR::cast_NAME
 
-  A("/") : @cast_NAME
+  A("/") : @EXPR::cast_NAME
 
-  A("[") : @cast_NAME
+  A("[") : @EXPR::cast_NAME
 
-  A("{") : @cast_NAME
+  A("{") : @EXPR::cast_NAME
 
 -----
 
 68) 
 
-  A("%") : @cast_NAME
+  A("%") : @EXPR::cast_NAME
 
-  A("(") : @type_NAME
+  A("(") : @ITYPE::type_NAME
 
-  A("*") : @cast_NAME
+  A("*") : @EXPR::cast_NAME
 
-  A("+") : @cast_NAME
+  A("+") : @EXPR::cast_NAME
 
-  A(",") : @cast_NAME
+  A(",") : @EXPR::cast_NAME
 
-  A("-") : @cast_NAME
+  A("-") : @EXPR::cast_NAME
 
-  A("->") : @cast_NAME
+  A("->") : @EXPR::cast_NAME
 
-  A(".") : @cast_NAME
+  A(".") : @EXPR::cast_NAME
 
-  A("/") : @cast_NAME
+  A("/") : @EXPR::cast_NAME
 
-  A("[") : @cast_NAME
+  A("[") : @EXPR::cast_NAME
 
-  A("{") : @cast_NAME
+  A("{") : @EXPR::cast_NAME
 
-  A("}") : @cast_NAME
+  A("}") : @EXPR::cast_NAME
 
 -----
 
 69) 
 
-  A("%") : @cast_NAME
+  A("%") : @EXPR::cast_NAME
 
-  A("(") : @type_NAME
+  A("(") : @ITYPE::type_NAME
 
-  A("*") : @cast_NAME
+  A("*") : @EXPR::cast_NAME
 
-  A("+") : @cast_NAME
+  A("+") : @EXPR::cast_NAME
 
-  A("-") : @cast_NAME
+  A("-") : @EXPR::cast_NAME
 
-  A("->") : @cast_NAME
+  A("->") : @EXPR::cast_NAME
 
-  A(".") : @cast_NAME
+  A(".") : @EXPR::cast_NAME
 
-  A("/") : @cast_NAME
+  A("/") : @EXPR::cast_NAME
 
-  A(";") : @cast_NAME
+  A(";") : @EXPR::cast_NAME
 
-  A("[") : @cast_NAME
+  A("[") : @EXPR::cast_NAME
 
-  A("{") : @cast_NAME
+  A("{") : @EXPR::cast_NAME
 
 -----
 
 70) 
 
-  A("%") : @cast_NAME
+  A("%") : @EXPR::cast_NAME
 
-  A("(") : @type_NAME
+  A("(") : @ITYPE::type_NAME
 
-  A("*") : @cast_NAME
+  A("*") : @EXPR::cast_NAME
 
-  A("+") : @cast_NAME
+  A("+") : @EXPR::cast_NAME
 
-  A("-") : @cast_NAME
+  A("-") : @EXPR::cast_NAME
 
-  A("->") : @cast_NAME
+  A("->") : @EXPR::cast_NAME
 
-  A(".") : @cast_NAME
+  A(".") : @EXPR::cast_NAME
 
-  A("/") : @cast_NAME
+  A("/") : @EXPR::cast_NAME
 
-  A("[") : @cast_NAME
+  A("[") : @EXPR::cast_NAME
 
-  A("]") : @cast_NAME
+  A("]") : @EXPR::cast_NAME
 
-  A("{") : @cast_NAME
+  A("{") : @EXPR::cast_NAME
 
 -----
 
 71) 
 
-  A("%") : @cast_NNLIT
+  A("%") : @EXPR::cast_NNLIT
 
-  A(")") : @cast_NNLIT
+  A(")") : @EXPR::cast_NNLIT
 
-  A("*") : @cast_NNLIT
+  A("*") : @EXPR::cast_NNLIT
 
-  A("+") : @cast_NNLIT
+  A("+") : @EXPR::cast_NNLIT
 
-  A("-") : @cast_NNLIT
+  A("-") : @EXPR::cast_NNLIT
 
-  A("->") : @cast_NNLIT
+  A("->") : @EXPR::cast_NNLIT
 
-  A(".") : @cast_NNLIT
+  A(".") : @EXPR::cast_NNLIT
 
-  A("/") : @cast_NNLIT
+  A("/") : @EXPR::cast_NNLIT
 
-  A("[") : @cast_NNLIT
+  A("[") : @EXPR::cast_NNLIT
 
-  A("{") : @cast_NNLIT
+  A("{") : @EXPR::cast_NNLIT
 
 -----
 
 72) 
 
-  A("%") : @cast_NNLIT
+  A("%") : @EXPR::cast_NNLIT
 
-  A("*") : @cast_NNLIT
+  A("*") : @EXPR::cast_NNLIT
 
-  A("+") : @cast_NNLIT
+  A("+") : @EXPR::cast_NNLIT
 
-  A(",") : @cast_NNLIT
+  A(",") : @EXPR::cast_NNLIT
 
-  A("-") : @cast_NNLIT
+  A("-") : @EXPR::cast_NNLIT
 
-  A("->") : @cast_NNLIT
+  A("->") : @EXPR::cast_NNLIT
 
-  A(".") : @cast_NNLIT
+  A(".") : @EXPR::cast_NNLIT
 
-  A("/") : @cast_NNLIT
+  A("/") : @EXPR::cast_NNLIT
 
-  A("[") : @cast_NNLIT
+  A("[") : @EXPR::cast_NNLIT
 
-  A("{") : @cast_NNLIT
+  A("{") : @EXPR::cast_NNLIT
 
-  A("}") : @cast_NNLIT
+  A("}") : @EXPR::cast_NNLIT
 
 -----
 
 73) 
 
-  A("%") : @cast_NNLIT
+  A("%") : @EXPR::cast_NNLIT
 
-  A("*") : @cast_NNLIT
+  A("*") : @EXPR::cast_NNLIT
 
-  A("+") : @cast_NNLIT
+  A("+") : @EXPR::cast_NNLIT
 
-  A("-") : @cast_NNLIT
+  A("-") : @EXPR::cast_NNLIT
 
-  A("->") : @cast_NNLIT
+  A("->") : @EXPR::cast_NNLIT
 
-  A(".") : @cast_NNLIT
+  A(".") : @EXPR::cast_NNLIT
 
-  A("/") : @cast_NNLIT
+  A("/") : @EXPR::cast_NNLIT
 
-  A(";") : @cast_NNLIT
+  A(";") : @EXPR::cast_NNLIT
 
-  A("[") : @cast_NNLIT
+  A("[") : @EXPR::cast_NNLIT
 
-  A("{") : @cast_NNLIT
+  A("{") : @EXPR::cast_NNLIT
 
 -----
 
 74) 
 
-  A("%") : @cast_NNLIT
+  A("%") : @EXPR::cast_NNLIT
 
-  A("*") : @cast_NNLIT
+  A("*") : @EXPR::cast_NNLIT
 
-  A("+") : @cast_NNLIT
+  A("+") : @EXPR::cast_NNLIT
 
-  A("-") : @cast_NNLIT
+  A("-") : @EXPR::cast_NNLIT
 
-  A("->") : @cast_NNLIT
+  A("->") : @EXPR::cast_NNLIT
 
-  A(".") : @cast_NNLIT
+  A(".") : @EXPR::cast_NNLIT
 
-  A("/") : @cast_NNLIT
+  A("/") : @EXPR::cast_NNLIT
 
-  A("[") : @cast_NNLIT
+  A("[") : @EXPR::cast_NNLIT
 
-  A("]") : @cast_NNLIT
+  A("]") : @EXPR::cast_NNLIT
 
-  A("{") : @cast_NNLIT
+  A("{") : @EXPR::cast_NNLIT
 
 -----
 
 75) 
 
-  A("%") : @opDomain
+  A("%") : @EXPR::opDomain
 
-  A(")") : @opDomain
+  A(")") : @EXPR::opDomain
 
-  A("*") : @opDomain
+  A("*") : @EXPR::opDomain
 
-  A("+") : @opDomain
+  A("+") : @EXPR::opDomain
 
-  A("-") : @opDomain
+  A("-") : @EXPR::opDomain
 
-  A("->") : @opDomain
+  A("->") : @EXPR::opDomain
 
-  A(".") : @opDomain
+  A(".") : @EXPR::opDomain
 
-  A("/") : @opDomain
+  A("/") : @EXPR::opDomain
 
-  A("[") : @opDomain
+  A("[") : @EXPR::opDomain
 
-  A("{") : @opDomain
+  A("{") : @EXPR::opDomain
 
 -----
 
 76) 
 
-  A("%") : @opDomain
+  A("%") : @EXPR::opDomain
 
-  A("*") : @opDomain
+  A("*") : @EXPR::opDomain
 
-  A("+") : @opDomain
+  A("+") : @EXPR::opDomain
 
-  A(",") : @opDomain
+  A(",") : @EXPR::opDomain
 
-  A("-") : @opDomain
+  A("-") : @EXPR::opDomain
 
-  A("->") : @opDomain
+  A("->") : @EXPR::opDomain
 
-  A(".") : @opDomain
+  A(".") : @EXPR::opDomain
 
-  A("/") : @opDomain
+  A("/") : @EXPR::opDomain
 
-  A("[") : @opDomain
+  A("[") : @EXPR::opDomain
 
-  A("{") : @opDomain
+  A("{") : @EXPR::opDomain
 
-  A("}") : @opDomain
+  A("}") : @EXPR::opDomain
 
 -----
 
 77) 
 
-  A("%") : @opDomain
+  A("%") : @EXPR::opDomain
 
-  A("*") : @opDomain
+  A("*") : @EXPR::opDomain
 
-  A("+") : @opDomain
+  A("+") : @EXPR::opDomain
 
-  A("-") : @opDomain
+  A("-") : @EXPR::opDomain
 
-  A("->") : @opDomain
+  A("->") : @EXPR::opDomain
 
-  A(".") : @opDomain
+  A(".") : @EXPR::opDomain
 
-  A("/") : @opDomain
+  A("/") : @EXPR::opDomain
 
-  A(";") : @opDomain
+  A(";") : @EXPR::opDomain
 
-  A("[") : @opDomain
+  A("[") : @EXPR::opDomain
 
-  A("{") : @opDomain
+  A("{") : @EXPR::opDomain
 
 -----
 
 78) 
 
-  A("%") : @opDomain
+  A("%") : @EXPR::opDomain
 
-  A("*") : @opDomain
+  A("*") : @EXPR::opDomain
 
-  A("+") : @opDomain
+  A("+") : @EXPR::opDomain
 
-  A("-") : @opDomain
+  A("-") : @EXPR::opDomain
 
-  A("->") : @opDomain
+  A("->") : @EXPR::opDomain
 
-  A(".") : @opDomain
+  A(".") : @EXPR::opDomain
 
-  A("/") : @opDomain
+  A("/") : @EXPR::opDomain
 
-  A("[") : @opDomain
+  A("[") : @EXPR::opDomain
 
-  A("]") : @opDomain
+  A("]") : @EXPR::opDomain
 
-  A("{") : @opDomain
+  A("{") : @EXPR::opDomain
 
 -----
 
 79) 
 
-  A("%") : @opInd
+  A("%") : @EXPR::opInd
 
-  A(")") : @opInd
+  A(")") : @EXPR::opInd
 
-  A("*") : @opInd
+  A("*") : @EXPR::opInd
 
-  A("+") : @opInd
+  A("+") : @EXPR::opInd
 
-  A("-") : @opInd
+  A("-") : @EXPR::opInd
 
-  A("->") : @opInd
+  A("->") : @EXPR::opInd
 
-  A(".") : @opInd
+  A(".") : @EXPR::opInd
 
-  A("/") : @opInd
+  A("/") : @EXPR::opInd
 
-  A("[") : @opInd
+  A("[") : @EXPR::opInd
 
-  A("{") : @opInd
+  A("{") : @EXPR::opInd
 
 -----
 
 80) 
 
-  A("%") : @opInd
+  A("%") : @EXPR::opInd
 
-  A("*") : @opInd
+  A("*") : @EXPR::opInd
 
-  A("+") : @opInd
+  A("+") : @EXPR::opInd
 
-  A(",") : @opInd
+  A(",") : @EXPR::opInd
 
-  A("-") : @opInd
+  A("-") : @EXPR::opInd
 
-  A("->") : @opInd
+  A("->") : @EXPR::opInd
 
-  A(".") : @opInd
+  A(".") : @EXPR::opInd
 
-  A("/") : @opInd
+  A("/") : @EXPR::opInd
 
-  A("[") : @opInd
+  A("[") : @EXPR::opInd
 
-  A("{") : @opInd
+  A("{") : @EXPR::opInd
 
-  A("}") : @opInd
+  A("}") : @EXPR::opInd
 
 -----
 
 81) 
 
-  A("%") : @opInd
+  A("%") : @EXPR::opInd
 
-  A("*") : @opInd
+  A("*") : @EXPR::opInd
 
-  A("+") : @opInd
+  A("+") : @EXPR::opInd
 
-  A("-") : @opInd
+  A("-") : @EXPR::opInd
 
-  A("->") : @opInd
+  A("->") : @EXPR::opInd
 
-  A(".") : @opInd
+  A(".") : @EXPR::opInd
 
-  A("/") : @opInd
+  A("/") : @EXPR::opInd
 
-  A(";") : @opInd
+  A(";") : @EXPR::opInd
 
-  A("[") : @opInd
+  A("[") : @EXPR::opInd
 
-  A("{") : @opInd
+  A("{") : @EXPR::opInd
 
 -----
 
 82) 
 
-  A("%") : @opInd
+  A("%") : @EXPR::opInd
 
-  A("*") : @opInd
+  A("*") : @EXPR::opInd
 
-  A("+") : @opInd
+  A("+") : @EXPR::opInd
 
-  A("-") : @opInd
+  A("-") : @EXPR::opInd
 
-  A("->") : @opInd
+  A("->") : @EXPR::opInd
 
-  A(".") : @opInd
+  A(".") : @EXPR::opInd
 
-  A("/") : @opInd
+  A("/") : @EXPR::opInd
 
-  A("[") : @opInd
+  A("[") : @EXPR::opInd
 
-  A("]") : @opInd
+  A("]") : @EXPR::opInd
 
-  A("{") : @opInd
+  A("{") : @EXPR::opInd
 
 -----
 
 83) 
 
-  A("%") : @opSelect
+  A("%") : @EXPR::opSelect
 
-  A(")") : @opSelect
+  A(")") : @EXPR::opSelect
 
-  A("*") : @opSelect
+  A("*") : @EXPR::opSelect
 
-  A("+") : @opSelect
+  A("+") : @EXPR::opSelect
 
-  A("-") : @opSelect
+  A("-") : @EXPR::opSelect
 
-  A("->") : @opSelect
+  A("->") : @EXPR::opSelect
 
-  A(".") : @opSelect
+  A(".") : @EXPR::opSelect
 
-  A("/") : @opSelect
+  A("/") : @EXPR::opSelect
 
-  A("[") : @opSelect
+  A("[") : @EXPR::opSelect
 
-  A("{") : @opSelect
+  A("{") : @EXPR::opSelect
 
 -----
 
 84) 
 
-  A("%") : @opSelect
+  A("%") : @EXPR::opSelect
 
-  A("*") : @opSelect
+  A("*") : @EXPR::opSelect
 
-  A("+") : @opSelect
+  A("+") : @EXPR::opSelect
 
-  A(",") : @opSelect
+  A(",") : @EXPR::opSelect
 
-  A("-") : @opSelect
+  A("-") : @EXPR::opSelect
 
-  A("->") : @opSelect
+  A("->") : @EXPR::opSelect
 
-  A(".") : @opSelect
+  A(".") : @EXPR::opSelect
 
-  A("/") : @opSelect
+  A("/") : @EXPR::opSelect
 
-  A("[") : @opSelect
+  A("[") : @EXPR::opSelect
 
-  A("{") : @opSelect
+  A("{") : @EXPR::opSelect
 
-  A("}") : @opSelect
+  A("}") : @EXPR::opSelect
 
 -----
 
 85) 
 
-  A("%") : @opSelect
+  A("%") : @EXPR::opSelect
 
-  A("*") : @opSelect
+  A("*") : @EXPR::opSelect
 
-  A("+") : @opSelect
+  A("+") : @EXPR::opSelect
 
-  A("-") : @opSelect
+  A("-") : @EXPR::opSelect
 
-  A("->") : @opSelect
+  A("->") : @EXPR::opSelect
 
-  A(".") : @opSelect
+  A(".") : @EXPR::opSelect
 
-  A("/") : @opSelect
+  A("/") : @EXPR::opSelect
 
-  A(";") : @opSelect
+  A(";") : @EXPR::opSelect
 
-  A("[") : @opSelect
+  A("[") : @EXPR::opSelect
 
-  A("{") : @opSelect
+  A("{") : @EXPR::opSelect
 
 -----
 
 86) 
 
-  A("%") : @opSelect
+  A("%") : @EXPR::opSelect
 
-  A("*") : @opSelect
+  A("*") : @EXPR::opSelect
 
-  A("+") : @opSelect
+  A("+") : @EXPR::opSelect
 
-  A("-") : @opSelect
+  A("-") : @EXPR::opSelect
 
-  A("->") : @opSelect
+  A("->") : @EXPR::opSelect
 
-  A(".") : @opSelect
+  A(".") : @EXPR::opSelect
 
-  A("/") : @opSelect
+  A("/") : @EXPR::opSelect
 
-  A("[") : @opSelect
+  A("[") : @EXPR::opSelect
 
-  A("]") : @opSelect
+  A("]") : @EXPR::opSelect
 
-  A("{") : @opSelect
+  A("{") : @EXPR::opSelect
 
 -----
 
 87) 
 
-  A("%") : @opPtrSelect
+  A("%") : @EXPR::opPtrSelect
 
-  A(")") : @opPtrSelect
+  A(")") : @EXPR::opPtrSelect
 
-  A("*") : @opPtrSelect
+  A("*") : @EXPR::opPtrSelect
 
-  A("+") : @opPtrSelect
+  A("+") : @EXPR::opPtrSelect
 
-  A("-") : @opPtrSelect
+  A("-") : @EXPR::opPtrSelect
 
-  A("->") : @opPtrSelect
+  A("->") : @EXPR::opPtrSelect
 
-  A(".") : @opPtrSelect
+  A(".") : @EXPR::opPtrSelect
 
-  A("/") : @opPtrSelect
+  A("/") : @EXPR::opPtrSelect
 
-  A("[") : @opPtrSelect
+  A("[") : @EXPR::opPtrSelect
 
-  A("{") : @opPtrSelect
+  A("{") : @EXPR::opPtrSelect
 
 -----
 
 88) 
 
-  A("%") : @opPtrSelect
+  A("%") : @EXPR::opPtrSelect
 
-  A("*") : @opPtrSelect
+  A("*") : @EXPR::opPtrSelect
 
-  A("+") : @opPtrSelect
+  A("+") : @EXPR::opPtrSelect
 
-  A(",") : @opPtrSelect
+  A(",") : @EXPR::opPtrSelect
 
-  A("-") : @opPtrSelect
+  A("-") : @EXPR::opPtrSelect
 
-  A("->") : @opPtrSelect
+  A("->") : @EXPR::opPtrSelect
 
-  A(".") : @opPtrSelect
+  A(".") : @EXPR::opPtrSelect
 
-  A("/") : @opPtrSelect
+  A("/") : @EXPR::opPtrSelect
 
-  A("[") : @opPtrSelect
+  A("[") : @EXPR::opPtrSelect
 
-  A("{") : @opPtrSelect
+  A("{") : @EXPR::opPtrSelect
 
-  A("}") : @opPtrSelect
+  A("}") : @EXPR::opPtrSelect
 
 -----
 
 89) 
 
-  A("%") : @opPtrSelect
+  A("%") : @EXPR::opPtrSelect
 
-  A("*") : @opPtrSelect
+  A("*") : @EXPR::opPtrSelect
 
-  A("+") : @opPtrSelect
+  A("+") : @EXPR::opPtrSelect
 
-  A("-") : @opPtrSelect
+  A("-") : @EXPR::opPtrSelect
 
-  A("->") : @opPtrSelect
+  A("->") : @EXPR::opPtrSelect
 
-  A(".") : @opPtrSelect
+  A(".") : @EXPR::opPtrSelect
 
-  A("/") : @opPtrSelect
+  A("/") : @EXPR::opPtrSelect
 
-  A(";") : @opPtrSelect
+  A(";") : @EXPR::opPtrSelect
 
-  A("[") : @opPtrSelect
+  A("[") : @EXPR::opPtrSelect
 
-  A("{") : @opPtrSelect
+  A("{") : @EXPR::opPtrSelect
 
 -----
 
 90) 
 
-  A("%") : @opPtrSelect
+  A("%") : @EXPR::opPtrSelect
 
-  A("*") : @opPtrSelect
+  A("*") : @EXPR::opPtrSelect
 
-  A("+") : @opPtrSelect
+  A("+") : @EXPR::opPtrSelect
 
-  A("-") : @opPtrSelect
+  A("-") : @EXPR::opPtrSelect
 
-  A("->") : @opPtrSelect
+  A("->") : @EXPR::opPtrSelect
 
-  A(".") : @opPtrSelect
+  A(".") : @EXPR::opPtrSelect
 
-  A("/") : @opPtrSelect
+  A("/") : @EXPR::opPtrSelect
 
-  A("[") : @opPtrSelect
+  A("[") : @EXPR::opPtrSelect
 
-  A("]") : @opPtrSelect
+  A("]") : @EXPR::opPtrSelect
 
-  A("{") : @opPtrSelect
+  A("{") : @EXPR::opPtrSelect
 
 -----
 
 91) 
 
-  A("%") : @cast_Number
+  A("%") : @EXPR::cast_Number
 
-  A(")") : @cast_Number
+  A(")") : @EXPR::cast_Number
 
-  A("*") : @cast_Number
+  A("*") : @EXPR::cast_Number
 
-  A("+") : @cast_Number
+  A("+") : @EXPR::cast_Number
 
-  A("-") : @cast_Number
+  A("-") : @EXPR::cast_Number
 
   A(".") : <-
 
-  A("/") : @cast_Number
+  A("/") : @EXPR::cast_Number
 
-  A("[") : @cast_Number
+  A("[") : @EXPR::cast_Number
 
-  A("{") : @cast_Number
+  A("{") : @EXPR::cast_Number
 
 -----
 
 92) 
 
-  A("%") : @cast_Number
+  A("%") : @EXPR::cast_Number
 
-  A("*") : @cast_Number
+  A("*") : @EXPR::cast_Number
 
-  A("+") : @cast_Number
+  A("+") : @EXPR::cast_Number
 
-  A(",") : @cast_Number
+  A(",") : @EXPR::cast_Number
 
-  A("-") : @cast_Number
+  A("-") : @EXPR::cast_Number
 
   A(".") : <-
 
-  A("/") : @cast_Number
+  A("/") : @EXPR::cast_Number
 
-  A("[") : @cast_Number
+  A("[") : @EXPR::cast_Number
 
-  A("{") : @cast_Number
+  A("{") : @EXPR::cast_Number
 
-  A("}") : @cast_Number
+  A("}") : @EXPR::cast_Number
 
 -----
 
 93) 
 
-  A("%") : @cast_Number
+  A("%") : @EXPR::cast_Number
 
-  A("*") : @cast_Number
+  A("*") : @EXPR::cast_Number
 
-  A("+") : @cast_Number
+  A("+") : @EXPR::cast_Number
 
-  A("-") : @cast_Number
+  A("-") : @EXPR::cast_Number
 
   A(".") : <-
 
-  A("/") : @cast_Number
+  A("/") : @EXPR::cast_Number
 
-  A(";") : @cast_Number
+  A(";") : @EXPR::cast_Number
 
-  A("[") : @cast_Number
+  A("[") : @EXPR::cast_Number
 
-  A("{") : @cast_Number
+  A("{") : @EXPR::cast_Number
 
 -----
 
 94) 
 
-  A("%") : @cast_Number
+  A("%") : @EXPR::cast_Number
 
-  A("*") : @cast_Number
+  A("*") : @EXPR::cast_Number
 
-  A("+") : @cast_Number
+  A("+") : @EXPR::cast_Number
 
-  A("-") : @cast_Number
+  A("-") : @EXPR::cast_Number
 
   A(".") : <-
 
-  A("/") : @cast_Number
+  A("/") : @EXPR::cast_Number
 
-  A("[") : @cast_Number
+  A("[") : @EXPR::cast_Number
 
-  A("]") : @cast_Number
+  A("]") : @EXPR::cast_Number
 
-  A("{") : @cast_Number
+  A("{") : @EXPR::cast_Number
 
 -----
 
 95) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A(")") : @opAst
+  A(")") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
   A("[") : <-
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 96) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A(")") : @opAst
+  A(")") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
   A("[") : <-
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 97) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A(")") : @opAst
+  A(")") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 98) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A(",") : @opAst
+  A(",") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
   A("[") : <-
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
-  A("}") : @opAst
+  A("}") : @EXPR::opAst
 
 -----
 
 99) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A(",") : @opAst
+  A(",") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
   A("[") : <-
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
-  A("}") : @opAst
+  A("}") : @EXPR::opAst
 
 -----
 
 100) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A(",") : @opAst
+  A(",") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
-  A("}") : @opAst
+  A("}") : @EXPR::opAst
 
 -----
 
 101) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
-  A(";") : @opAst
+  A(";") : @EXPR::opAst
 
   A("[") : <-
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 102) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
   A("[") : <-
 
-  A("]") : @opAst
+  A("]") : @EXPR::opAst
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 103) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
-  A(";") : @opAst
+  A(";") : @EXPR::opAst
 
   A("[") : <-
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 104) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
-  A(";") : @opAst
+  A(";") : @EXPR::opAst
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 105) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
   A("[") : <-
 
-  A("]") : @opAst
+  A("]") : @EXPR::opAst
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 106) 
 
-  A("%") : @opAst
+  A("%") : @EXPR::opAst
 
-  A("*") : @opAst
+  A("*") : @EXPR::opAst
 
-  A("+") : @opAst
+  A("+") : @EXPR::opAst
 
-  A("-") : @opAst
+  A("-") : @EXPR::opAst
 
-  A("/") : @opAst
+  A("/") : @EXPR::opAst
 
-  A("]") : @opAst
+  A("]") : @EXPR::opAst
 
-  A("{") : @opAst
+  A("{") : @EXPR::opAst
 
 -----
 
 107) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A(")") : @opAmp
+  A(")") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
   A("[") : <-
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 108) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A(")") : @opAmp
+  A(")") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
   A("[") : <-
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 109) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A(")") : @opAmp
+  A(")") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 110) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A(",") : @opAmp
+  A(",") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
   A("[") : <-
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
-  A("}") : @opAmp
+  A("}") : @EXPR::opAmp
 
 -----
 
 111) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A(",") : @opAmp
+  A(",") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
   A("[") : <-
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
-  A("}") : @opAmp
+  A("}") : @EXPR::opAmp
 
 -----
 
 112) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A(",") : @opAmp
+  A(",") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
-  A("}") : @opAmp
+  A("}") : @EXPR::opAmp
 
 -----
 
 113) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
-  A(";") : @opAmp
+  A(";") : @EXPR::opAmp
 
   A("[") : <-
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 114) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
   A("[") : <-
 
-  A("]") : @opAmp
+  A("]") : @EXPR::opAmp
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 115) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
-  A(";") : @opAmp
+  A(";") : @EXPR::opAmp
 
   A("[") : <-
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 116) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
-  A(";") : @opAmp
+  A(";") : @EXPR::opAmp
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 117) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
   A("[") : <-
 
-  A("]") : @opAmp
+  A("]") : @EXPR::opAmp
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 118) 
 
-  A("%") : @opAmp
+  A("%") : @EXPR::opAmp
 
-  A("*") : @opAmp
+  A("*") : @EXPR::opAmp
 
-  A("+") : @opAmp
+  A("+") : @EXPR::opAmp
 
-  A("-") : @opAmp
+  A("-") : @EXPR::opAmp
 
-  A("/") : @opAmp
+  A("/") : @EXPR::opAmp
 
-  A("]") : @opAmp
+  A("]") : @EXPR::opAmp
 
-  A("{") : @opAmp
+  A("{") : @EXPR::opAmp
 
 -----
 
 119) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A(")") : @opPlus
+  A(")") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
   A("[") : <-
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 120) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A(")") : @opPlus
+  A(")") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
   A("[") : <-
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 121) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A(")") : @opPlus
+  A(")") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 122) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A(",") : @opPlus
+  A(",") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
   A("[") : <-
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
-  A("}") : @opPlus
+  A("}") : @EXPR::opPlus
 
 -----
 
 123) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A(",") : @opPlus
+  A(",") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
   A("[") : <-
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
-  A("}") : @opPlus
+  A("}") : @EXPR::opPlus
 
 -----
 
 124) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A(",") : @opPlus
+  A(",") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
-  A("}") : @opPlus
+  A("}") : @EXPR::opPlus
 
 -----
 
 125) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
-  A(";") : @opPlus
+  A(";") : @EXPR::opPlus
 
   A("[") : <-
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 126) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
   A("[") : <-
 
-  A("]") : @opPlus
+  A("]") : @EXPR::opPlus
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 127) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
-  A(";") : @opPlus
+  A(";") : @EXPR::opPlus
 
   A("[") : <-
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 128) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
-  A(";") : @opPlus
+  A(";") : @EXPR::opPlus
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 129) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
   A("[") : <-
 
-  A("]") : @opPlus
+  A("]") : @EXPR::opPlus
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 130) 
 
-  A("%") : @opPlus
+  A("%") : @EXPR::opPlus
 
-  A("*") : @opPlus
+  A("*") : @EXPR::opPlus
 
-  A("+") : @opPlus
+  A("+") : @EXPR::opPlus
 
-  A("-") : @opPlus
+  A("-") : @EXPR::opPlus
 
-  A("/") : @opPlus
+  A("/") : @EXPR::opPlus
 
-  A("]") : @opPlus
+  A("]") : @EXPR::opPlus
 
-  A("{") : @opPlus
+  A("{") : @EXPR::opPlus
 
 -----
 
 131) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A(")") : @opMinus
+  A(")") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
   A("[") : <-
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 132) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A(")") : @opMinus
+  A(")") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
   A("[") : <-
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 133) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A(")") : @opMinus
+  A(")") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 134) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A(",") : @opMinus
+  A(",") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
   A("[") : <-
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
-  A("}") : @opMinus
+  A("}") : @EXPR::opMinus
 
 -----
 
 135) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A(",") : @opMinus
+  A(",") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
   A("[") : <-
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
-  A("}") : @opMinus
+  A("}") : @EXPR::opMinus
 
 -----
 
 136) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A(",") : @opMinus
+  A(",") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
-  A("}") : @opMinus
+  A("}") : @EXPR::opMinus
 
 -----
 
 137) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
-  A(";") : @opMinus
+  A(";") : @EXPR::opMinus
 
   A("[") : <-
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 138) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
   A("[") : <-
 
-  A("]") : @opMinus
+  A("]") : @EXPR::opMinus
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 139) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
-  A(";") : @opMinus
+  A(";") : @EXPR::opMinus
 
   A("[") : <-
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 140) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
-  A(";") : @opMinus
+  A(";") : @EXPR::opMinus
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 141) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
   A("[") : <-
 
-  A("]") : @opMinus
+  A("]") : @EXPR::opMinus
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 142) 
 
-  A("%") : @opMinus
+  A("%") : @EXPR::opMinus
 
-  A("*") : @opMinus
+  A("*") : @EXPR::opMinus
 
-  A("+") : @opMinus
+  A("+") : @EXPR::opMinus
 
-  A("-") : @opMinus
+  A("-") : @EXPR::opMinus
 
-  A("/") : @opMinus
+  A("/") : @EXPR::opMinus
 
-  A("]") : @opMinus
+  A("]") : @EXPR::opMinus
 
-  A("{") : @opMinus
+  A("{") : @EXPR::opMinus
 
 -----
 
 143) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A(")") : @opMul
+  A(")") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
   A("[") : <-
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 144) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A(")") : @opMul
+  A(")") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
   A("[") : <-
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 145) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A(")") : @opMul
+  A(")") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 146) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A(",") : @opMul
+  A(",") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
   A("[") : <-
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
-  A("}") : @opMul
+  A("}") : @EXPR::opMul
 
 -----
 
 147) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A(",") : @opMul
+  A(",") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
   A("[") : <-
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
-  A("}") : @opMul
+  A("}") : @EXPR::opMul
 
 -----
 
 148) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A(",") : @opMul
+  A(",") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
-  A("}") : @opMul
+  A("}") : @EXPR::opMul
 
 -----
 
 149) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
-  A(";") : @opMul
+  A(";") : @EXPR::opMul
 
   A("[") : <-
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 150) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
   A("[") : <-
 
-  A("]") : @opMul
+  A("]") : @EXPR::opMul
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 151) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
-  A(";") : @opMul
+  A(";") : @EXPR::opMul
 
   A("[") : <-
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 152) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
-  A(";") : @opMul
+  A(";") : @EXPR::opMul
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 153) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
   A("[") : <-
 
-  A("]") : @opMul
+  A("]") : @EXPR::opMul
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 154) 
 
-  A("%") : @opMul
+  A("%") : @EXPR::opMul
 
-  A("*") : @opMul
+  A("*") : @EXPR::opMul
 
-  A("+") : @opMul
+  A("+") : @EXPR::opMul
 
-  A("-") : @opMul
+  A("-") : @EXPR::opMul
 
-  A("/") : @opMul
+  A("/") : @EXPR::opMul
 
-  A("]") : @opMul
+  A("]") : @EXPR::opMul
 
-  A("{") : @opMul
+  A("{") : @EXPR::opMul
 
 -----
 
 155) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A(")") : @opDiv
+  A(")") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
   A("[") : <-
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 156) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A(")") : @opDiv
+  A(")") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
   A("[") : <-
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 157) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A(")") : @opDiv
+  A(")") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 158) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A(",") : @opDiv
+  A(",") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
   A("[") : <-
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
-  A("}") : @opDiv
+  A("}") : @EXPR::opDiv
 
 -----
 
 159) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A(",") : @opDiv
+  A(",") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
   A("[") : <-
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
-  A("}") : @opDiv
+  A("}") : @EXPR::opDiv
 
 -----
 
 160) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A(",") : @opDiv
+  A(",") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
-  A("}") : @opDiv
+  A("}") : @EXPR::opDiv
 
 -----
 
 161) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
-  A(";") : @opDiv
+  A(";") : @EXPR::opDiv
 
   A("[") : <-
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 162) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
   A("[") : <-
 
-  A("]") : @opDiv
+  A("]") : @EXPR::opDiv
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 163) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
-  A(";") : @opDiv
+  A(";") : @EXPR::opDiv
 
   A("[") : <-
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 164) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
-  A(";") : @opDiv
+  A(";") : @EXPR::opDiv
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 165) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
   A("[") : <-
 
-  A("]") : @opDiv
+  A("]") : @EXPR::opDiv
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 166) 
 
-  A("%") : @opDiv
+  A("%") : @EXPR::opDiv
 
-  A("*") : @opDiv
+  A("*") : @EXPR::opDiv
 
-  A("+") : @opDiv
+  A("+") : @EXPR::opDiv
 
-  A("-") : @opDiv
+  A("-") : @EXPR::opDiv
 
-  A("/") : @opDiv
+  A("/") : @EXPR::opDiv
 
-  A("]") : @opDiv
+  A("]") : @EXPR::opDiv
 
-  A("{") : @opDiv
+  A("{") : @EXPR::opDiv
 
 -----
 
 167) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A(")") : @opRem
+  A(")") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
   A("[") : <-
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 168) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A(")") : @opRem
+  A(")") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
   A("[") : <-
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 169) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A(")") : @opRem
+  A(")") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 170) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A(",") : @opRem
+  A(",") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
   A("[") : <-
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
-  A("}") : @opRem
+  A("}") : @EXPR::opRem
 
 -----
 
 171) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A(",") : @opRem
+  A(",") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
   A("[") : <-
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
-  A("}") : @opRem
+  A("}") : @EXPR::opRem
 
 -----
 
 172) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A(",") : @opRem
+  A(",") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
-  A("}") : @opRem
+  A("}") : @EXPR::opRem
 
 -----
 
 173) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
-  A(";") : @opRem
+  A(";") : @EXPR::opRem
 
   A("[") : <-
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 174) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
   A("->") : <-
 
   A(".") : <-
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
   A("[") : <-
 
-  A("]") : @opRem
+  A("]") : @EXPR::opRem
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 175) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
-  A(";") : @opRem
+  A(";") : @EXPR::opRem
 
   A("[") : <-
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 176) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
-  A(";") : @opRem
+  A(";") : @EXPR::opRem
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 177) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
   A("[") : <-
 
-  A("]") : @opRem
+  A("]") : @EXPR::opRem
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 178) 
 
-  A("%") : @opRem
+  A("%") : @EXPR::opRem
 
-  A("*") : @opRem
+  A("*") : @EXPR::opRem
 
-  A("+") : @opRem
+  A("+") : @EXPR::opRem
 
-  A("-") : @opRem
+  A("-") : @EXPR::opRem
 
-  A("/") : @opRem
+  A("/") : @EXPR::opRem
 
-  A("]") : @opRem
+  A("]") : @EXPR::opRem
 
-  A("{") : @opRem
+  A("{") : @EXPR::opRem
 
 -----
 
 179) 
 
-  A("%") : @cast_null
+  A("%") : @NNLIT::cast_null
 
-  A(")") : @cast_null
+  A(")") : @NNLIT::cast_null
 
-  A("*") : @cast_null
+  A("*") : @NNLIT::cast_null
 
-  A("+") : @cast_null
+  A("+") : @NNLIT::cast_null
 
-  A("-") : @cast_null
+  A("-") : @NNLIT::cast_null
 
-  A("->") : @cast_null
+  A("->") : @NNLIT::cast_null
 
-  A(".") : @cast_null
+  A(".") : @NNLIT::cast_null
 
-  A("/") : @cast_null
+  A("/") : @NNLIT::cast_null
 
-  A("[") : @cast_null
+  A("[") : @NNLIT::cast_null
 
-  A("{") : @cast_null
+  A("{") : @NNLIT::cast_null
 
 -----
 
 180) 
 
-  A("%") : @cast_null
+  A("%") : @NNLIT::cast_null
 
-  A("*") : @cast_null
+  A("*") : @NNLIT::cast_null
 
-  A("+") : @cast_null
+  A("+") : @NNLIT::cast_null
 
-  A(",") : @cast_null
+  A(",") : @NNLIT::cast_null
 
-  A("-") : @cast_null
+  A("-") : @NNLIT::cast_null
 
-  A("->") : @cast_null
+  A("->") : @NNLIT::cast_null
 
-  A(".") : @cast_null
+  A(".") : @NNLIT::cast_null
 
-  A("/") : @cast_null
+  A("/") : @NNLIT::cast_null
 
-  A("[") : @cast_null
+  A("[") : @NNLIT::cast_null
 
-  A("{") : @cast_null
+  A("{") : @NNLIT::cast_null
 
-  A("}") : @cast_null
+  A("}") : @NNLIT::cast_null
 
 -----
 
 181) 
 
-  A("%") : @cast_null
+  A("%") : @NNLIT::cast_null
 
-  A("*") : @cast_null
+  A("*") : @NNLIT::cast_null
 
-  A("+") : @cast_null
+  A("+") : @NNLIT::cast_null
 
-  A("-") : @cast_null
+  A("-") : @NNLIT::cast_null
 
-  A("->") : @cast_null
+  A("->") : @NNLIT::cast_null
 
-  A(".") : @cast_null
+  A(".") : @NNLIT::cast_null
 
-  A("/") : @cast_null
+  A("/") : @NNLIT::cast_null
 
-  A(";") : @cast_null
+  A(";") : @NNLIT::cast_null
 
-  A("[") : @cast_null
+  A("[") : @NNLIT::cast_null
 
-  A("{") : @cast_null
+  A("{") : @NNLIT::cast_null
 
 -----
 
 182) 
 
-  A("%") : @cast_null
+  A("%") : @NNLIT::cast_null
 
-  A("*") : @cast_null
+  A("*") : @NNLIT::cast_null
 
-  A("+") : @cast_null
+  A("+") : @NNLIT::cast_null
 
-  A("-") : @cast_null
+  A("-") : @NNLIT::cast_null
 
-  A("->") : @cast_null
+  A("->") : @NNLIT::cast_null
 
-  A(".") : @cast_null
+  A(".") : @NNLIT::cast_null
 
-  A("/") : @cast_null
+  A("/") : @NNLIT::cast_null
 
-  A("[") : @cast_null
+  A("[") : @NNLIT::cast_null
 
-  A("]") : @cast_null
+  A("]") : @NNLIT::cast_null
 
-  A("{") : @cast_null
+  A("{") : @NNLIT::cast_null
 
 -----
 
 183) 
 
-  A("%") : @cast_String
+  A("%") : @NNLIT::cast_String
 
-  A(")") : @cast_String
+  A(")") : @NNLIT::cast_String
 
-  A("*") : @cast_String
+  A("*") : @NNLIT::cast_String
 
-  A("+") : @cast_String
+  A("+") : @NNLIT::cast_String
 
-  A("-") : @cast_String
+  A("-") : @NNLIT::cast_String
 
-  A("->") : @cast_String
+  A("->") : @NNLIT::cast_String
 
-  A(".") : @cast_String
+  A(".") : @NNLIT::cast_String
 
-  A("/") : @cast_String
+  A("/") : @NNLIT::cast_String
 
-  A("[") : @cast_String
+  A("[") : @NNLIT::cast_String
 
-  A("{") : @cast_String
+  A("{") : @NNLIT::cast_String
 
 -----
 
 184) 
 
-  A("%") : @cast_String
+  A("%") : @NNLIT::cast_String
 
-  A("*") : @cast_String
+  A("*") : @NNLIT::cast_String
 
-  A("+") : @cast_String
+  A("+") : @NNLIT::cast_String
 
-  A(",") : @cast_String
+  A(",") : @NNLIT::cast_String
 
-  A("-") : @cast_String
+  A("-") : @NNLIT::cast_String
 
-  A("->") : @cast_String
+  A("->") : @NNLIT::cast_String
 
-  A(".") : @cast_String
+  A(".") : @NNLIT::cast_String
 
-  A("/") : @cast_String
+  A("/") : @NNLIT::cast_String
 
-  A("[") : @cast_String
+  A("[") : @NNLIT::cast_String
 
-  A("{") : @cast_String
+  A("{") : @NNLIT::cast_String
 
-  A("}") : @cast_String
+  A("}") : @NNLIT::cast_String
 
 -----
 
 185) 
 
-  A("%") : @cast_String
+  A("%") : @NNLIT::cast_String
 
-  A("*") : @cast_String
+  A("*") : @NNLIT::cast_String
 
-  A("+") : @cast_String
+  A("+") : @NNLIT::cast_String
 
-  A("-") : @cast_String
+  A("-") : @NNLIT::cast_String
 
-  A("->") : @cast_String
+  A("->") : @NNLIT::cast_String
 
-  A(".") : @cast_String
+  A(".") : @NNLIT::cast_String
 
-  A("/") : @cast_String
+  A("/") : @NNLIT::cast_String
 
-  A(";") : @cast_String
+  A(";") : @NNLIT::cast_String
 
-  A("[") : @cast_String
+  A("[") : @NNLIT::cast_String
 
-  A("{") : @cast_String
+  A("{") : @NNLIT::cast_String
 
 -----
 
 186) 
 
-  A("%") : @cast_String
+  A("%") : @NNLIT::cast_String
 
-  A("*") : @cast_String
+  A("*") : @NNLIT::cast_String
 
-  A("+") : @cast_String
+  A("+") : @NNLIT::cast_String
 
-  A("-") : @cast_String
+  A("-") : @NNLIT::cast_String
 
-  A("->") : @cast_String
+  A("->") : @NNLIT::cast_String
 
-  A(".") : @cast_String
+  A(".") : @NNLIT::cast_String
 
-  A("/") : @cast_String
+  A("/") : @NNLIT::cast_String
 
-  A("[") : @cast_String
+  A("[") : @NNLIT::cast_String
 
-  A("]") : @cast_String
+  A("]") : @NNLIT::cast_String
 
-  A("{") : @cast_String
+  A("{") : @NNLIT::cast_String
 
 -----
 
 187) 
 
-  A("%") : @buildIP
+  A("%") : @NNLIT::buildIP
 
-  A(")") : @buildIP
+  A(")") : @NNLIT::buildIP
 
-  A("*") : @buildIP
+  A("*") : @NNLIT::buildIP
 
-  A("+") : @buildIP
+  A("+") : @NNLIT::buildIP
 
-  A("-") : @buildIP
+  A("-") : @NNLIT::buildIP
 
-  A("->") : @buildIP
+  A("->") : @NNLIT::buildIP
 
-  A(".") : @buildIP
+  A(".") : @NNLIT::buildIP
 
-  A("/") : @buildIP
+  A("/") : @NNLIT::buildIP
 
-  A("[") : @buildIP
+  A("[") : @NNLIT::buildIP
 
-  A("{") : @buildIP
+  A("{") : @NNLIT::buildIP
 
 -----
 
 188) 
 
-  A("%") : @buildIP
+  A("%") : @NNLIT::buildIP
 
-  A("*") : @buildIP
+  A("*") : @NNLIT::buildIP
 
-  A("+") : @buildIP
+  A("+") : @NNLIT::buildIP
 
-  A(",") : @buildIP
+  A(",") : @NNLIT::buildIP
 
-  A("-") : @buildIP
+  A("-") : @NNLIT::buildIP
 
-  A("->") : @buildIP
+  A("->") : @NNLIT::buildIP
 
-  A(".") : @buildIP
+  A(".") : @NNLIT::buildIP
 
-  A("/") : @buildIP
+  A("/") : @NNLIT::buildIP
 
-  A("[") : @buildIP
+  A("[") : @NNLIT::buildIP
 
-  A("{") : @buildIP
+  A("{") : @NNLIT::buildIP
 
-  A("}") : @buildIP
+  A("}") : @NNLIT::buildIP
 
 -----
 
 189) 
 
-  A("%") : @buildIP
+  A("%") : @NNLIT::buildIP
 
-  A("*") : @buildIP
+  A("*") : @NNLIT::buildIP
 
-  A("+") : @buildIP
+  A("+") : @NNLIT::buildIP
 
-  A("-") : @buildIP
+  A("-") : @NNLIT::buildIP
 
-  A("->") : @buildIP
+  A("->") : @NNLIT::buildIP
 
-  A(".") : @buildIP
+  A(".") : @NNLIT::buildIP
 
-  A("/") : @buildIP
+  A("/") : @NNLIT::buildIP
 
-  A(";") : @buildIP
+  A(";") : @NNLIT::buildIP
 
-  A("[") : @buildIP
+  A("[") : @NNLIT::buildIP
 
-  A("{") : @buildIP
+  A("{") : @NNLIT::buildIP
 
 -----
 
 190) 
 
-  A("%") : @buildIP
+  A("%") : @NNLIT::buildIP
 
-  A("*") : @buildIP
+  A("*") : @NNLIT::buildIP
 
-  A("+") : @buildIP
+  A("+") : @NNLIT::buildIP
 
-  A("-") : @buildIP
+  A("-") : @NNLIT::buildIP
 
-  A("->") : @buildIP
+  A("->") : @NNLIT::buildIP
 
-  A(".") : @buildIP
+  A(".") : @NNLIT::buildIP
 
-  A("/") : @buildIP
+  A("/") : @NNLIT::buildIP
 
-  A("[") : @buildIP
+  A("[") : @NNLIT::buildIP
 
-  A("]") : @buildIP
+  A("]") : @NNLIT::buildIP
 
-  A("{") : @buildIP
+  A("{") : @NNLIT::buildIP
 
 -----
 
@@ -14226,13 +14525,13 @@
 
   A("%") : <-
 
-  A(")") : @opAdd
+  A(")") : @EXPR::opAdd
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("->") : <-
 
@@ -14242,7 +14541,7 @@
 
   A("[") : <-
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14250,19 +14549,19 @@
 
   A("%") : <-
 
-  A(")") : @opAdd
+  A(")") : @EXPR::opAdd
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("/") : <-
 
   A("[") : <-
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14270,17 +14569,17 @@
 
   A("%") : <-
 
-  A(")") : @opAdd
+  A(")") : @EXPR::opAdd
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("/") : <-
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14288,13 +14587,13 @@
 
   A("%") : <-
 
-  A(")") : @opSub
+  A(")") : @EXPR::opSub
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("->") : <-
 
@@ -14304,7 +14603,7 @@
 
   A("[") : <-
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14312,19 +14611,19 @@
 
   A("%") : <-
 
-  A(")") : @opSub
+  A(")") : @EXPR::opSub
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("/") : <-
 
   A("[") : <-
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14332,17 +14631,17 @@
 
   A("%") : <-
 
-  A(")") : @opSub
+  A(")") : @EXPR::opSub
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("/") : <-
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14414,11 +14713,11 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A(",") : @opAdd
+  A(",") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("->") : <-
 
@@ -14428,9 +14727,9 @@
 
   A("[") : <-
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
-  A("}") : @opAdd
+  A("}") : @EXPR::opAdd
 
 -----
 
@@ -14440,19 +14739,19 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A(",") : @opAdd
+  A(",") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("/") : <-
 
   A("[") : <-
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
-  A("}") : @opAdd
+  A("}") : @EXPR::opAdd
 
 -----
 
@@ -14462,17 +14761,17 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A(",") : @opAdd
+  A(",") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("/") : <-
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
-  A("}") : @opAdd
+  A("}") : @EXPR::opAdd
 
 -----
 
@@ -14482,9 +14781,9 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("->") : <-
 
@@ -14492,11 +14791,11 @@
 
   A("/") : <-
 
-  A(";") : @opAdd
+  A(";") : @EXPR::opAdd
 
   A("[") : <-
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14506,9 +14805,9 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("->") : <-
 
@@ -14518,9 +14817,9 @@
 
   A("[") : <-
 
-  A("]") : @opAdd
+  A("]") : @EXPR::opAdd
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14530,17 +14829,17 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("/") : <-
 
-  A(";") : @opAdd
+  A(";") : @EXPR::opAdd
 
   A("[") : <-
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14550,15 +14849,15 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("/") : <-
 
-  A(";") : @opAdd
+  A(";") : @EXPR::opAdd
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14568,17 +14867,17 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("/") : <-
 
   A("[") : <-
 
-  A("]") : @opAdd
+  A("]") : @EXPR::opAdd
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14588,15 +14887,15 @@
 
   A("*") : <-
 
-  A("+") : @opAdd
+  A("+") : @EXPR::opAdd
 
-  A("-") : @opAdd
+  A("-") : @EXPR::opAdd
 
   A("/") : <-
 
-  A("]") : @opAdd
+  A("]") : @EXPR::opAdd
 
-  A("{") : @opAdd
+  A("{") : @EXPR::opAdd
 
 -----
 
@@ -14606,11 +14905,11 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A(",") : @opSub
+  A(",") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("->") : <-
 
@@ -14620,9 +14919,9 @@
 
   A("[") : <-
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
-  A("}") : @opSub
+  A("}") : @EXPR::opSub
 
 -----
 
@@ -14632,19 +14931,19 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A(",") : @opSub
+  A(",") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("/") : <-
 
   A("[") : <-
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
-  A("}") : @opSub
+  A("}") : @EXPR::opSub
 
 -----
 
@@ -14654,17 +14953,17 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A(",") : @opSub
+  A(",") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("/") : <-
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
-  A("}") : @opSub
+  A("}") : @EXPR::opSub
 
 -----
 
@@ -14674,9 +14973,9 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("->") : <-
 
@@ -14684,11 +14983,11 @@
 
   A("/") : <-
 
-  A(";") : @opSub
+  A(";") : @EXPR::opSub
 
   A("[") : <-
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14698,9 +14997,9 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("->") : <-
 
@@ -14710,9 +15009,9 @@
 
   A("[") : <-
 
-  A("]") : @opSub
+  A("]") : @EXPR::opSub
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14722,17 +15021,17 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("/") : <-
 
-  A(";") : @opSub
+  A(";") : @EXPR::opSub
 
   A("[") : <-
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14742,15 +15041,15 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("/") : <-
 
-  A(";") : @opSub
+  A(";") : @EXPR::opSub
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14760,17 +15059,17 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("/") : <-
 
   A("[") : <-
 
-  A("]") : @opSub
+  A("]") : @EXPR::opSub
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14780,15 +15079,15 @@
 
   A("*") : <-
 
-  A("+") : @opSub
+  A("+") : @EXPR::opSub
 
-  A("-") : @opSub
+  A("-") : @EXPR::opSub
 
   A("/") : <-
 
-  A("]") : @opSub
+  A("]") : @EXPR::opSub
 
-  A("{") : @opSub
+  A("{") : @EXPR::opSub
 
 -----
 
@@ -14800,7 +15099,7 @@
 
   A("+") : <-
 
-  A(",") : @startExprList
+  A(",") : @ELIST::start
 
   A("-") : <-
 
@@ -14814,7 +15113,7 @@
 
   A("{") : <-
 
-  A("}") : @startExprList
+  A("}") : @ELIST::start
 
 -----
 
@@ -14826,7 +15125,7 @@
 
   A("+") : <-
 
-  A(",") : @startExprList
+  A(",") : @ELIST::start
 
   A("-") : <-
 
@@ -14836,7 +15135,7 @@
 
   A("{") : <-
 
-  A("}") : @startExprList
+  A("}") : @ELIST::start
 
 -----
 
@@ -14848,7 +15147,7 @@
 
   A("+") : <-
 
-  A(",") : @startExprList
+  A(",") : @ELIST::start
 
   A("-") : <-
 
@@ -14856,7 +15155,7 @@
 
   A("{") : <-
 
-  A("}") : @startExprList
+  A("}") : @ELIST::start
 
 -----
 
@@ -14868,7 +15167,7 @@
 
   A("+") : <-
 
-  A(",") : @extExprList
+  A(",") : @ELIST::ext
 
   A("-") : <-
 
@@ -14882,7 +15181,7 @@
 
   A("{") : <-
 
-  A("}") : @extExprList
+  A("}") : @ELIST::ext
 
 -----
 
@@ -14894,7 +15193,7 @@
 
   A("+") : <-
 
-  A(",") : @extExprList
+  A(",") : @ELIST::ext
 
   A("-") : <-
 
@@ -14904,7 +15203,7 @@
 
   A("{") : <-
 
-  A("}") : @extExprList
+  A("}") : @ELIST::ext
 
 -----
 
@@ -14916,7 +15215,7 @@
 
   A("+") : <-
 
-  A(",") : @extExprList
+  A(",") : @ELIST::ext
 
   A("-") : <-
 
@@ -14924,7 +15223,7 @@
 
   A("{") : <-
 
-  A("}") : @extExprList
+  A("}") : @ELIST::ext
 
 -----
 
@@ -14936,7 +15235,7 @@
 
   A("+") : <-
 
-  A(",") : @nameExpr
+  A(",") : @NEXPR::build
 
   A("-") : <-
 
@@ -14950,7 +15249,7 @@
 
   A("{") : <-
 
-  A("}") : @nameExpr
+  A("}") : @NEXPR::build
 
 -----
 
@@ -14962,7 +15261,7 @@
 
   A("+") : <-
 
-  A(",") : @nameExpr
+  A(",") : @NEXPR::build
 
   A("-") : <-
 
@@ -14972,7 +15271,7 @@
 
   A("{") : <-
 
-  A("}") : @nameExpr
+  A("}") : @NEXPR::build
 
 -----
 
@@ -14984,7 +15283,7 @@
 
   A("+") : <-
 
-  A(",") : @nameExpr
+  A(",") : @NEXPR::build
 
   A("-") : <-
 
@@ -14992,7 +15291,7 @@
 
   A("{") : <-
 
-  A("}") : @nameExpr
+  A("}") : @NEXPR::build
 
 -----
 
@@ -15122,79 +15421,79 @@
 
 233) 
 
-  A("(") : @intName
+  A("(") : @INAME::intName
 
 -----
 
 234) 
 
-  A("(") : @sintName
+  A("(") : @INAME::sintName
 
 -----
 
 235) 
 
-  A("(") : @uintName
+  A("(") : @INAME::uintName
 
 -----
 
 236) 
 
-  A("(") : @ulenName
+  A("(") : @INAME::ulenName
 
 -----
 
 237) 
 
-  A("(") : @sint8Name
+  A("(") : @INAME::sint8Name
 
 -----
 
 238) 
 
-  A("(") : @uint8Name
+  A("(") : @INAME::uint8Name
 
 -----
 
 239) 
 
-  A("(") : @sint16Name
+  A("(") : @INAME::sint16Name
 
 -----
 
 240) 
 
-  A("(") : @uint16Name
+  A("(") : @INAME::uint16Name
 
 -----
 
 241) 
 
-  A("(") : @sint32Name
+  A("(") : @INAME::sint32Name
 
 -----
 
 242) 
 
-  A("(") : @uint32Name
+  A("(") : @INAME::uint32Name
 
 -----
 
 243) 
 
-  A("(") : @sint64Name
+  A("(") : @INAME::sint64Name
 
 -----
 
 244) 
 
-  A("(") : @uint64Name
+  A("(") : @INAME::uint64Name
 
 -----
 
 245) 
 
-  A("(") : @type_INAME
+  A("(") : @ITYPE::type_INAME
 
 -----
 
@@ -15206,41 +15505,41 @@
 
 247) 
 
-  A(")") : @emptyExprList
+  A(")") : @EXPR::emptyExprList
 
-  A("{") : @emptyExprList
+  A("{") : @EXPR::emptyExprList
 
 -----
 
 248) 
 
-  A(")") : @buildExprList
+  A(")") : @EXPR::buildExprList
 
-  A("{") : @buildExprList
+  A("{") : @EXPR::buildExprList
 
 -----
 
 249) 
 
-  A(")") : @buildNamedExprList
+  A(")") : @EXPR::buildNamedExprList
 
-  A("{") : @buildNamedExprList
+  A("{") : @EXPR::buildNamedExprList
 
 -----
 
 250) 
 
-  A(")") : @applyEmpty
+  A(")") : @EXPR::applyEmpty
 
-  A("{") : @applyEmpty
+  A("{") : @EXPR::applyEmpty
 
 -----
 
 251) 
 
-  A(")") : @applyNamedExprList
+  A(")") : @EXPR::applyNamedExprList
 
-  A("{") : @applyNamedExprList
+  A("{") : @EXPR::applyNamedExprList
 
 -----
 
@@ -15266,465 +15565,465 @@
 
 254) 
 
-  A("*") : @intName
+  A("*") : @INAME::intName
 
-  A(";") : @intName
+  A(";") : @INAME::intName
 
-  A("[") : @intName
+  A("[") : @INAME::intName
 
 -----
 
 255) 
 
-  A("*") : @intName
+  A("*") : @INAME::intName
 
-  A("Name") : @intName
+  A("Name") : @INAME::intName
 
-  A("[") : @intName
+  A("[") : @INAME::intName
 
 -----
 
 256) 
 
-  A("*") : @sintName
+  A("*") : @INAME::sintName
 
-  A(";") : @sintName
+  A(";") : @INAME::sintName
 
-  A("[") : @sintName
+  A("[") : @INAME::sintName
 
 -----
 
 257) 
 
-  A("*") : @sintName
+  A("*") : @INAME::sintName
 
-  A("Name") : @sintName
+  A("Name") : @INAME::sintName
 
-  A("[") : @sintName
+  A("[") : @INAME::sintName
 
 -----
 
 258) 
 
-  A("*") : @uintName
+  A("*") : @INAME::uintName
 
-  A(";") : @uintName
+  A(";") : @INAME::uintName
 
-  A("[") : @uintName
+  A("[") : @INAME::uintName
 
 -----
 
 259) 
 
-  A("*") : @uintName
+  A("*") : @INAME::uintName
 
-  A("Name") : @uintName
+  A("Name") : @INAME::uintName
 
-  A("[") : @uintName
+  A("[") : @INAME::uintName
 
 -----
 
 260) 
 
-  A("*") : @ulenName
+  A("*") : @INAME::ulenName
 
-  A(";") : @ulenName
+  A(";") : @INAME::ulenName
 
-  A("[") : @ulenName
+  A("[") : @INAME::ulenName
 
 -----
 
 261) 
 
-  A("*") : @ulenName
+  A("*") : @INAME::ulenName
 
-  A("Name") : @ulenName
+  A("Name") : @INAME::ulenName
 
-  A("[") : @ulenName
+  A("[") : @INAME::ulenName
 
 -----
 
 262) 
 
-  A("*") : @sint8Name
+  A("*") : @INAME::sint8Name
 
-  A(";") : @sint8Name
+  A(";") : @INAME::sint8Name
 
-  A("[") : @sint8Name
+  A("[") : @INAME::sint8Name
 
 -----
 
 263) 
 
-  A("*") : @sint8Name
+  A("*") : @INAME::sint8Name
 
-  A("Name") : @sint8Name
+  A("Name") : @INAME::sint8Name
 
-  A("[") : @sint8Name
+  A("[") : @INAME::sint8Name
 
 -----
 
 264) 
 
-  A("*") : @uint8Name
+  A("*") : @INAME::uint8Name
 
-  A(";") : @uint8Name
+  A(";") : @INAME::uint8Name
 
-  A("[") : @uint8Name
+  A("[") : @INAME::uint8Name
 
 -----
 
 265) 
 
-  A("*") : @uint8Name
+  A("*") : @INAME::uint8Name
 
-  A("Name") : @uint8Name
+  A("Name") : @INAME::uint8Name
 
-  A("[") : @uint8Name
+  A("[") : @INAME::uint8Name
 
 -----
 
 266) 
 
-  A("*") : @sint16Name
+  A("*") : @INAME::sint16Name
 
-  A(";") : @sint16Name
+  A(";") : @INAME::sint16Name
 
-  A("[") : @sint16Name
+  A("[") : @INAME::sint16Name
 
 -----
 
 267) 
 
-  A("*") : @sint16Name
+  A("*") : @INAME::sint16Name
 
-  A("Name") : @sint16Name
+  A("Name") : @INAME::sint16Name
 
-  A("[") : @sint16Name
+  A("[") : @INAME::sint16Name
 
 -----
 
 268) 
 
-  A("*") : @uint16Name
+  A("*") : @INAME::uint16Name
 
-  A(";") : @uint16Name
+  A(";") : @INAME::uint16Name
 
-  A("[") : @uint16Name
+  A("[") : @INAME::uint16Name
 
 -----
 
 269) 
 
-  A("*") : @uint16Name
+  A("*") : @INAME::uint16Name
 
-  A("Name") : @uint16Name
+  A("Name") : @INAME::uint16Name
 
-  A("[") : @uint16Name
+  A("[") : @INAME::uint16Name
 
 -----
 
 270) 
 
-  A("*") : @sint32Name
+  A("*") : @INAME::sint32Name
 
-  A(";") : @sint32Name
+  A(";") : @INAME::sint32Name
 
-  A("[") : @sint32Name
+  A("[") : @INAME::sint32Name
 
 -----
 
 271) 
 
-  A("*") : @sint32Name
+  A("*") : @INAME::sint32Name
 
-  A("Name") : @sint32Name
+  A("Name") : @INAME::sint32Name
 
-  A("[") : @sint32Name
+  A("[") : @INAME::sint32Name
 
 -----
 
 272) 
 
-  A("*") : @uint32Name
+  A("*") : @INAME::uint32Name
 
-  A(";") : @uint32Name
+  A(";") : @INAME::uint32Name
 
-  A("[") : @uint32Name
+  A("[") : @INAME::uint32Name
 
 -----
 
 273) 
 
-  A("*") : @uint32Name
+  A("*") : @INAME::uint32Name
 
-  A("Name") : @uint32Name
+  A("Name") : @INAME::uint32Name
 
-  A("[") : @uint32Name
+  A("[") : @INAME::uint32Name
 
 -----
 
 274) 
 
-  A("*") : @sint64Name
+  A("*") : @INAME::sint64Name
 
-  A(";") : @sint64Name
+  A(";") : @INAME::sint64Name
 
-  A("[") : @sint64Name
+  A("[") : @INAME::sint64Name
 
 -----
 
 275) 
 
-  A("*") : @sint64Name
+  A("*") : @INAME::sint64Name
 
-  A("Name") : @sint64Name
+  A("Name") : @INAME::sint64Name
 
-  A("[") : @sint64Name
+  A("[") : @INAME::sint64Name
 
 -----
 
 276) 
 
-  A("*") : @uint64Name
+  A("*") : @INAME::uint64Name
 
-  A(";") : @uint64Name
+  A(";") : @INAME::uint64Name
 
-  A("[") : @uint64Name
+  A("[") : @INAME::uint64Name
 
 -----
 
 277) 
 
-  A("*") : @uint64Name
+  A("*") : @INAME::uint64Name
 
-  A("Name") : @uint64Name
+  A("Name") : @INAME::uint64Name
 
-  A("[") : @uint64Name
+  A("[") : @INAME::uint64Name
 
 -----
 
 278) 
 
-  A("*") : @cast_INAME
+  A("*") : @TNAME::cast
 
-  A(";") : @cast_INAME
+  A(";") : @TNAME::cast
 
-  A("[") : @cast_INAME
+  A("[") : @TNAME::cast
 
 -----
 
 279) 
 
-  A("*") : @cast_INAME
+  A("*") : @TNAME::cast
 
-  A("Name") : @cast_INAME
+  A("Name") : @TNAME::cast
 
-  A("[") : @cast_INAME
+  A("[") : @TNAME::cast
 
 -----
 
 280) 
 
-  A("*") : @textName
+  A("*") : @TNAME::text
 
-  A(";") : @textName
+  A(";") : @TNAME::text
 
-  A("[") : @textName
+  A("[") : @TNAME::text
 
 -----
 
 281) 
 
-  A("*") : @textName
+  A("*") : @TNAME::text
 
-  A("Name") : @textName
+  A("Name") : @TNAME::text
 
-  A("[") : @textName
+  A("[") : @TNAME::text
 
 -----
 
 282) 
 
-  A("*") : @ipName
+  A("*") : @TNAME::ip
 
-  A(";") : @ipName
+  A(";") : @TNAME::ip
 
-  A("[") : @ipName
+  A("[") : @TNAME::ip
 
 -----
 
 283) 
 
-  A("*") : @ipName
+  A("*") : @TNAME::ip
 
-  A("Name") : @ipName
+  A("Name") : @TNAME::ip
 
-  A("[") : @ipName
+  A("[") : @TNAME::ip
 
 -----
 
 284) 
 
-  A("*") : @namedType
+  A("*") : @TYPEDEF::namedType
 
-  A(";") : @namedType
+  A(";") : @TYPEDEF::namedType
 
-  A("[") : @namedType
+  A("[") : @TYPEDEF::namedType
 
 -----
 
 285) 
 
-  A("*") : @namedType
+  A("*") : @TYPEDEF::namedType
 
-  A("Name") : @namedType
+  A("Name") : @TYPEDEF::namedType
 
-  A("[") : @namedType
+  A("[") : @TYPEDEF::namedType
 
 -----
 
 286) 
 
-  A("*") : @baseType
+  A("*") : @TYPEDEF::baseType
 
-  A(";") : @baseType
+  A(";") : @TYPEDEF::baseType
 
-  A("[") : @baseType
+  A("[") : @TYPEDEF::baseType
 
 -----
 
 287) 
 
-  A("*") : @baseType
+  A("*") : @TYPEDEF::baseType
 
-  A("Name") : @baseType
+  A("Name") : @TYPEDEF::baseType
 
-  A("[") : @baseType
+  A("[") : @TYPEDEF::baseType
 
 -----
 
 288) 
 
-  A("*") : @ptrType
+  A("*") : @TYPEDEF::ptrType
 
-  A(";") : @ptrType
+  A(";") : @TYPEDEF::ptrType
 
-  A("[") : @ptrType
+  A("[") : @TYPEDEF::ptrType
 
 -----
 
 289) 
 
-  A("*") : @ptrType
+  A("*") : @TYPEDEF::ptrType
 
-  A("Name") : @ptrType
+  A("Name") : @TYPEDEF::ptrType
 
-  A("[") : @ptrType
+  A("[") : @TYPEDEF::ptrType
 
 -----
 
 290) 
 
-  A("*") : @arrayType
+  A("*") : @TYPEDEF::arrayType
 
-  A(";") : @arrayType
+  A(";") : @TYPEDEF::arrayType
 
-  A("[") : @arrayType
+  A("[") : @TYPEDEF::arrayType
 
 -----
 
 291) 
 
-  A("*") : @arrayType
+  A("*") : @TYPEDEF::arrayType
 
-  A("Name") : @arrayType
+  A("Name") : @TYPEDEF::arrayType
 
-  A("[") : @arrayType
+  A("[") : @TYPEDEF::arrayType
 
 -----
 
 292) 
 
-  A("*") : @arrayLenType
+  A("*") : @TYPEDEF::arrayLenType
 
-  A(";") : @arrayLenType
+  A(";") : @TYPEDEF::arrayLenType
 
-  A("[") : @arrayLenType
+  A("[") : @TYPEDEF::arrayLenType
 
 -----
 
 293) 
 
-  A("*") : @arrayLenType
+  A("*") : @TYPEDEF::arrayLenType
 
-  A("Name") : @arrayLenType
+  A("Name") : @TYPEDEF::arrayLenType
 
-  A("[") : @arrayLenType
+  A("[") : @TYPEDEF::arrayLenType
 
 -----
 
 294) 
 
-  A("*") : @structType
+  A("*") : @TYPEDEF::structType
 
-  A(";") : @structType
+  A(";") : @TYPEDEF::structType
 
-  A("[") : @structType
+  A("[") : @TYPEDEF::structType
 
 -----
 
 295) 
 
-  A("*") : @structType
+  A("*") : @TYPEDEF::structType
 
   A(";") : <-
 
-  A("Name") : @structType
+  A("Name") : @TYPEDEF::structType
 
-  A("[") : @structType
+  A("[") : @TYPEDEF::structType
 
 -----
 
 296) 
 
-  A("*") : @structType
+  A("*") : @TYPEDEF::structType
 
-  A("Name") : @structType
+  A("Name") : @TYPEDEF::structType
 
-  A("[") : @structType
+  A("[") : @TYPEDEF::structType
 
 -----
 
 297) 
 
-  A("*") : @buildStruct
+  A("*") : @STRUCT::build
 
-  A(";") : @buildStruct
+  A(";") : @STRUCT::build
 
-  A("Name") : @buildStruct
+  A("Name") : @STRUCT::build
 
-  A("[") : @buildStruct
+  A("[") : @STRUCT::build
 
 -----
 
 298) 
 
-  A("*") : @buildStruct
+  A("*") : @STRUCT::build
 
-  A(";") : @buildStruct
+  A(";") : @STRUCT::build
 
-  A("[") : @buildStruct
+  A("[") : @STRUCT::build
 
 -----
 
 299) 
 
-  A("*") : @buildStruct
+  A("*") : @STRUCT::build
 
-  A("Name") : @buildStruct
+  A("Name") : @STRUCT::build
 
-  A("[") : @buildStruct
+  A("[") : @STRUCT::build
 
 -----
 
@@ -15752,13 +16051,13 @@
 
   A("+") : <-
 
-  A(",") : @startExprList
+  A(",") : @ELIST::start
 
   A("-") : <-
 
   A("{") : <-
 
-  A("}") : @startExprList
+  A("}") : @ELIST::start
 
 -----
 
@@ -15766,13 +16065,13 @@
 
   A("+") : <-
 
-  A(",") : @extExprList
+  A(",") : @ELIST::ext
 
   A("-") : <-
 
   A("{") : <-
 
-  A("}") : @extExprList
+  A("}") : @ELIST::ext
 
 -----
 
@@ -15780,13 +16079,13 @@
 
   A("+") : <-
 
-  A(",") : @nameExpr
+  A(",") : @NEXPR::build
 
   A("-") : <-
 
   A("{") : <-
 
-  A("}") : @nameExpr
+  A("}") : @NEXPR::build
 
 -----
 
@@ -15816,97 +16115,97 @@
 
 307) 
 
-  A(",") : @emptyExprList
+  A(",") : @EXPR::emptyExprList
 
-  A("{") : @emptyExprList
+  A("{") : @EXPR::emptyExprList
 
-  A("}") : @emptyExprList
+  A("}") : @EXPR::emptyExprList
 
 -----
 
 308) 
 
-  A(",") : @buildExprList
+  A(",") : @EXPR::buildExprList
 
-  A("{") : @buildExprList
+  A("{") : @EXPR::buildExprList
 
-  A("}") : @buildExprList
+  A("}") : @EXPR::buildExprList
 
 -----
 
 309) 
 
-  A(",") : @buildNamedExprList
+  A(",") : @EXPR::buildNamedExprList
 
-  A("{") : @buildNamedExprList
+  A("{") : @EXPR::buildNamedExprList
 
-  A("}") : @buildNamedExprList
+  A("}") : @EXPR::buildNamedExprList
 
 -----
 
 310) 
 
-  A(",") : @applyEmpty
+  A(",") : @EXPR::applyEmpty
 
-  A("{") : @applyEmpty
+  A("{") : @EXPR::applyEmpty
 
-  A("}") : @applyEmpty
+  A("}") : @EXPR::applyEmpty
 
 -----
 
 311) 
 
-  A(",") : @applyNamedExprList
+  A(",") : @EXPR::applyNamedExprList
 
-  A("{") : @applyNamedExprList
+  A("{") : @EXPR::applyNamedExprList
 
-  A("}") : @applyNamedExprList
+  A("}") : @EXPR::applyNamedExprList
 
 -----
 
 312) 
 
-  A(",") : @startExprList
+  A(",") : @ELIST::start
 
   A("{") : <-
 
-  A("}") : @startExprList
+  A("}") : @ELIST::start
 
 -----
 
 313) 
 
-  A(",") : @extExprList
+  A(",") : @ELIST::ext
 
   A("{") : <-
 
-  A("}") : @extExprList
+  A("}") : @ELIST::ext
 
 -----
 
 314) 
 
-  A(",") : @nameExpr
+  A(",") : @NEXPR::build
 
   A("{") : <-
 
-  A("}") : @nameExpr
+  A("}") : @NEXPR::build
 
 -----
 
 315) 
 
-  A(",") : @startNamedExprList
+  A(",") : @NELIST::start
 
-  A("}") : @startNamedExprList
+  A("}") : @NELIST::start
 
 -----
 
 316) 
 
-  A(",") : @extNamedExprList
+  A(",") : @NELIST::ext
 
-  A("}") : @extNamedExprList
+  A("}") : @NELIST::ext
 
 -----
 
@@ -15934,41 +16233,41 @@
 
 320) 
 
-  A(";") : @emptyExprList
+  A(";") : @EXPR::emptyExprList
 
-  A("{") : @emptyExprList
+  A("{") : @EXPR::emptyExprList
 
 -----
 
 321) 
 
-  A(";") : @buildExprList
+  A(";") : @EXPR::buildExprList
 
-  A("{") : @buildExprList
+  A("{") : @EXPR::buildExprList
 
 -----
 
 322) 
 
-  A(";") : @buildNamedExprList
+  A(";") : @EXPR::buildNamedExprList
 
-  A("{") : @buildNamedExprList
+  A("{") : @EXPR::buildNamedExprList
 
 -----
 
 323) 
 
-  A(";") : @applyEmpty
+  A(";") : @EXPR::applyEmpty
 
-  A("{") : @applyEmpty
+  A("{") : @EXPR::applyEmpty
 
 -----
 
 324) 
 
-  A(";") : @applyNamedExprList
+  A(";") : @EXPR::applyNamedExprList
 
-  A("{") : @applyNamedExprList
+  A("{") : @EXPR::applyNamedExprList
 
 -----
 
@@ -16014,41 +16313,41 @@
 
 331) 
 
-  A("]") : @emptyExprList
+  A("]") : @EXPR::emptyExprList
 
-  A("{") : @emptyExprList
+  A("{") : @EXPR::emptyExprList
 
 -----
 
 332) 
 
-  A("]") : @buildExprList
+  A("]") : @EXPR::buildExprList
 
-  A("{") : @buildExprList
+  A("{") : @EXPR::buildExprList
 
 -----
 
 333) 
 
-  A("]") : @buildNamedExprList
+  A("]") : @EXPR::buildNamedExprList
 
-  A("{") : @buildNamedExprList
+  A("{") : @EXPR::buildNamedExprList
 
 -----
 
 334) 
 
-  A("]") : @applyEmpty
+  A("]") : @EXPR::applyEmpty
 
-  A("{") : @applyEmpty
+  A("{") : @EXPR::applyEmpty
 
 -----
 
 335) 
 
-  A("]") : @applyNamedExprList
+  A("]") : @EXPR::applyNamedExprList
 
-  A("{") : @applyNamedExprList
+  A("{") : @EXPR::applyNamedExprList
 
 -----
 
@@ -16068,501 +16367,501 @@
 
 338) 
 
-  (End) : @startBody
+  (End) : @BODY::start
 
-  A("#") : @startBody
+  A("#") : @BODY::start
 
-  A(".") : @startBody
+  A(".") : @BODY::start
 
-  A("Dots") : @startBody
+  A("Dots") : @BODY::start
 
-  A("Name") : @startBody
+  A("Name") : @BODY::start
 
-  A("include") : @startBody
+  A("include") : @BODY::start
 
-  A("int") : @startBody
+  A("int") : @BODY::start
 
-  A("ip") : @startBody
+  A("ip") : @BODY::start
 
-  A("scope") : @startBody
+  A("scope") : @BODY::start
 
-  A("sint") : @startBody
+  A("sint") : @BODY::start
 
-  A("sint16") : @startBody
+  A("sint16") : @BODY::start
 
-  A("sint32") : @startBody
+  A("sint32") : @BODY::start
 
-  A("sint64") : @startBody
+  A("sint64") : @BODY::start
 
-  A("sint8") : @startBody
+  A("sint8") : @BODY::start
 
-  A("struct") : @startBody
+  A("struct") : @BODY::start
 
-  A("text") : @startBody
+  A("text") : @BODY::start
 
-  A("type") : @startBody
+  A("type") : @BODY::start
 
-  A("uint") : @startBody
+  A("uint") : @BODY::start
 
-  A("uint16") : @startBody
+  A("uint16") : @BODY::start
 
-  A("uint32") : @startBody
+  A("uint32") : @BODY::start
 
-  A("uint64") : @startBody
+  A("uint64") : @BODY::start
 
-  A("uint8") : @startBody
+  A("uint8") : @BODY::start
 
-  A("ulen") : @startBody
+  A("ulen") : @BODY::start
 
 -----
 
 339) 
 
-  (End) : @extBody_SCOPE
+  (End) : @BODY::ext_SCOPE
 
-  A("#") : @extBody_SCOPE
+  A("#") : @BODY::ext_SCOPE
 
-  A(".") : @extBody_SCOPE
+  A(".") : @BODY::ext_SCOPE
 
-  A("Dots") : @extBody_SCOPE
+  A("Dots") : @BODY::ext_SCOPE
 
-  A("Name") : @extBody_SCOPE
+  A("Name") : @BODY::ext_SCOPE
 
-  A("include") : @extBody_SCOPE
+  A("include") : @BODY::ext_SCOPE
 
-  A("int") : @extBody_SCOPE
+  A("int") : @BODY::ext_SCOPE
 
-  A("ip") : @extBody_SCOPE
+  A("ip") : @BODY::ext_SCOPE
 
-  A("scope") : @extBody_SCOPE
+  A("scope") : @BODY::ext_SCOPE
 
-  A("sint") : @extBody_SCOPE
+  A("sint") : @BODY::ext_SCOPE
 
-  A("sint16") : @extBody_SCOPE
+  A("sint16") : @BODY::ext_SCOPE
 
-  A("sint32") : @extBody_SCOPE
+  A("sint32") : @BODY::ext_SCOPE
 
-  A("sint64") : @extBody_SCOPE
+  A("sint64") : @BODY::ext_SCOPE
 
-  A("sint8") : @extBody_SCOPE
+  A("sint8") : @BODY::ext_SCOPE
 
-  A("struct") : @extBody_SCOPE
+  A("struct") : @BODY::ext_SCOPE
 
-  A("text") : @extBody_SCOPE
+  A("text") : @BODY::ext_SCOPE
 
-  A("type") : @extBody_SCOPE
+  A("type") : @BODY::ext_SCOPE
 
-  A("uint") : @extBody_SCOPE
+  A("uint") : @BODY::ext_SCOPE
 
-  A("uint16") : @extBody_SCOPE
+  A("uint16") : @BODY::ext_SCOPE
 
-  A("uint32") : @extBody_SCOPE
+  A("uint32") : @BODY::ext_SCOPE
 
-  A("uint64") : @extBody_SCOPE
+  A("uint64") : @BODY::ext_SCOPE
 
-  A("uint8") : @extBody_SCOPE
+  A("uint8") : @BODY::ext_SCOPE
 
-  A("ulen") : @extBody_SCOPE
+  A("ulen") : @BODY::ext_SCOPE
 
 -----
 
 340) 
 
-  (End) : @extBody_INCLUDE
+  (End) : @BODY::ext_INCLUDE
 
-  A("#") : @extBody_INCLUDE
+  A("#") : @BODY::ext_INCLUDE
 
-  A(".") : @extBody_INCLUDE
+  A(".") : @BODY::ext_INCLUDE
 
-  A("Dots") : @extBody_INCLUDE
+  A("Dots") : @BODY::ext_INCLUDE
 
-  A("Name") : @extBody_INCLUDE
+  A("Name") : @BODY::ext_INCLUDE
 
-  A("include") : @extBody_INCLUDE
+  A("include") : @BODY::ext_INCLUDE
 
-  A("int") : @extBody_INCLUDE
+  A("int") : @BODY::ext_INCLUDE
 
-  A("ip") : @extBody_INCLUDE
+  A("ip") : @BODY::ext_INCLUDE
 
-  A("scope") : @extBody_INCLUDE
+  A("scope") : @BODY::ext_INCLUDE
 
-  A("sint") : @extBody_INCLUDE
+  A("sint") : @BODY::ext_INCLUDE
 
-  A("sint16") : @extBody_INCLUDE
+  A("sint16") : @BODY::ext_INCLUDE
 
-  A("sint32") : @extBody_INCLUDE
+  A("sint32") : @BODY::ext_INCLUDE
 
-  A("sint64") : @extBody_INCLUDE
+  A("sint64") : @BODY::ext_INCLUDE
 
-  A("sint8") : @extBody_INCLUDE
+  A("sint8") : @BODY::ext_INCLUDE
 
-  A("struct") : @extBody_INCLUDE
+  A("struct") : @BODY::ext_INCLUDE
 
-  A("text") : @extBody_INCLUDE
+  A("text") : @BODY::ext_INCLUDE
 
-  A("type") : @extBody_INCLUDE
+  A("type") : @BODY::ext_INCLUDE
 
-  A("uint") : @extBody_INCLUDE
+  A("uint") : @BODY::ext_INCLUDE
 
-  A("uint16") : @extBody_INCLUDE
+  A("uint16") : @BODY::ext_INCLUDE
 
-  A("uint32") : @extBody_INCLUDE
+  A("uint32") : @BODY::ext_INCLUDE
 
-  A("uint64") : @extBody_INCLUDE
+  A("uint64") : @BODY::ext_INCLUDE
 
-  A("uint8") : @extBody_INCLUDE
+  A("uint8") : @BODY::ext_INCLUDE
 
-  A("ulen") : @extBody_INCLUDE
+  A("ulen") : @BODY::ext_INCLUDE
 
 -----
 
 341) 
 
-  (End) : @extBody_TYPE
+  (End) : @BODY::ext_TYPE
 
-  A("#") : @extBody_TYPE
+  A("#") : @BODY::ext_TYPE
 
-  A(".") : @extBody_TYPE
+  A(".") : @BODY::ext_TYPE
 
-  A("Dots") : @extBody_TYPE
+  A("Dots") : @BODY::ext_TYPE
 
-  A("Name") : @extBody_TYPE
+  A("Name") : @BODY::ext_TYPE
 
-  A("include") : @extBody_TYPE
+  A("include") : @BODY::ext_TYPE
 
-  A("int") : @extBody_TYPE
+  A("int") : @BODY::ext_TYPE
 
-  A("ip") : @extBody_TYPE
+  A("ip") : @BODY::ext_TYPE
 
-  A("scope") : @extBody_TYPE
+  A("scope") : @BODY::ext_TYPE
 
-  A("sint") : @extBody_TYPE
+  A("sint") : @BODY::ext_TYPE
 
-  A("sint16") : @extBody_TYPE
+  A("sint16") : @BODY::ext_TYPE
 
-  A("sint32") : @extBody_TYPE
+  A("sint32") : @BODY::ext_TYPE
 
-  A("sint64") : @extBody_TYPE
+  A("sint64") : @BODY::ext_TYPE
 
-  A("sint8") : @extBody_TYPE
+  A("sint8") : @BODY::ext_TYPE
 
-  A("struct") : @extBody_TYPE
+  A("struct") : @BODY::ext_TYPE
 
-  A("text") : @extBody_TYPE
+  A("text") : @BODY::ext_TYPE
 
-  A("type") : @extBody_TYPE
+  A("type") : @BODY::ext_TYPE
 
-  A("uint") : @extBody_TYPE
+  A("uint") : @BODY::ext_TYPE
 
-  A("uint16") : @extBody_TYPE
+  A("uint16") : @BODY::ext_TYPE
 
-  A("uint32") : @extBody_TYPE
+  A("uint32") : @BODY::ext_TYPE
 
-  A("uint64") : @extBody_TYPE
+  A("uint64") : @BODY::ext_TYPE
 
-  A("uint8") : @extBody_TYPE
+  A("uint8") : @BODY::ext_TYPE
 
-  A("ulen") : @extBody_TYPE
+  A("ulen") : @BODY::ext_TYPE
 
 -----
 
 342) 
 
-  (End) : @extBody_CONST
+  (End) : @BODY::ext_CONST
 
-  A("#") : @extBody_CONST
+  A("#") : @BODY::ext_CONST
 
-  A(".") : @extBody_CONST
+  A(".") : @BODY::ext_CONST
 
-  A("Dots") : @extBody_CONST
+  A("Dots") : @BODY::ext_CONST
 
-  A("Name") : @extBody_CONST
+  A("Name") : @BODY::ext_CONST
 
-  A("include") : @extBody_CONST
+  A("include") : @BODY::ext_CONST
 
-  A("int") : @extBody_CONST
+  A("int") : @BODY::ext_CONST
 
-  A("ip") : @extBody_CONST
+  A("ip") : @BODY::ext_CONST
 
-  A("scope") : @extBody_CONST
+  A("scope") : @BODY::ext_CONST
 
-  A("sint") : @extBody_CONST
+  A("sint") : @BODY::ext_CONST
 
-  A("sint16") : @extBody_CONST
+  A("sint16") : @BODY::ext_CONST
 
-  A("sint32") : @extBody_CONST
+  A("sint32") : @BODY::ext_CONST
 
-  A("sint64") : @extBody_CONST
+  A("sint64") : @BODY::ext_CONST
 
-  A("sint8") : @extBody_CONST
+  A("sint8") : @BODY::ext_CONST
 
-  A("struct") : @extBody_CONST
+  A("struct") : @BODY::ext_CONST
 
-  A("text") : @extBody_CONST
+  A("text") : @BODY::ext_CONST
 
-  A("type") : @extBody_CONST
+  A("type") : @BODY::ext_CONST
 
-  A("uint") : @extBody_CONST
+  A("uint") : @BODY::ext_CONST
 
-  A("uint16") : @extBody_CONST
+  A("uint16") : @BODY::ext_CONST
 
-  A("uint32") : @extBody_CONST
+  A("uint32") : @BODY::ext_CONST
 
-  A("uint64") : @extBody_CONST
+  A("uint64") : @BODY::ext_CONST
 
-  A("uint8") : @extBody_CONST
+  A("uint8") : @BODY::ext_CONST
 
-  A("ulen") : @extBody_CONST
+  A("ulen") : @BODY::ext_CONST
 
 -----
 
 343) 
 
-  (End) : @extBody_STRUCT
+  (End) : @BODY::ext_STRUCT
 
-  A("#") : @extBody_STRUCT
+  A("#") : @BODY::ext_STRUCT
 
-  A(".") : @extBody_STRUCT
+  A(".") : @BODY::ext_STRUCT
 
-  A("Dots") : @extBody_STRUCT
+  A("Dots") : @BODY::ext_STRUCT
 
-  A("Name") : @extBody_STRUCT
+  A("Name") : @BODY::ext_STRUCT
 
-  A("include") : @extBody_STRUCT
+  A("include") : @BODY::ext_STRUCT
 
-  A("int") : @extBody_STRUCT
+  A("int") : @BODY::ext_STRUCT
 
-  A("ip") : @extBody_STRUCT
+  A("ip") : @BODY::ext_STRUCT
 
-  A("scope") : @extBody_STRUCT
+  A("scope") : @BODY::ext_STRUCT
 
-  A("sint") : @extBody_STRUCT
+  A("sint") : @BODY::ext_STRUCT
 
-  A("sint16") : @extBody_STRUCT
+  A("sint16") : @BODY::ext_STRUCT
 
-  A("sint32") : @extBody_STRUCT
+  A("sint32") : @BODY::ext_STRUCT
 
-  A("sint64") : @extBody_STRUCT
+  A("sint64") : @BODY::ext_STRUCT
 
-  A("sint8") : @extBody_STRUCT
+  A("sint8") : @BODY::ext_STRUCT
 
-  A("struct") : @extBody_STRUCT
+  A("struct") : @BODY::ext_STRUCT
 
-  A("text") : @extBody_STRUCT
+  A("text") : @BODY::ext_STRUCT
 
-  A("type") : @extBody_STRUCT
+  A("type") : @BODY::ext_STRUCT
 
-  A("uint") : @extBody_STRUCT
+  A("uint") : @BODY::ext_STRUCT
 
-  A("uint16") : @extBody_STRUCT
+  A("uint16") : @BODY::ext_STRUCT
 
-  A("uint32") : @extBody_STRUCT
+  A("uint32") : @BODY::ext_STRUCT
 
-  A("uint64") : @extBody_STRUCT
+  A("uint64") : @BODY::ext_STRUCT
 
-  A("uint8") : @extBody_STRUCT
+  A("uint8") : @BODY::ext_STRUCT
 
-  A("ulen") : @extBody_STRUCT
+  A("ulen") : @BODY::ext_STRUCT
 
 -----
 
 344) 
 
-  (End) : @buildScope
+  (End) : @SCOPE::build
 
-  A("#") : @buildScope
+  A("#") : @SCOPE::build
 
-  A(".") : @buildScope
+  A(".") : @SCOPE::build
 
-  A("Dots") : @buildScope
+  A("Dots") : @SCOPE::build
 
-  A("Name") : @buildScope
+  A("Name") : @SCOPE::build
 
-  A("include") : @buildScope
+  A("include") : @SCOPE::build
 
-  A("int") : @buildScope
+  A("int") : @SCOPE::build
 
-  A("ip") : @buildScope
+  A("ip") : @SCOPE::build
 
-  A("scope") : @buildScope
+  A("scope") : @SCOPE::build
 
-  A("sint") : @buildScope
+  A("sint") : @SCOPE::build
 
-  A("sint16") : @buildScope
+  A("sint16") : @SCOPE::build
 
-  A("sint32") : @buildScope
+  A("sint32") : @SCOPE::build
 
-  A("sint64") : @buildScope
+  A("sint64") : @SCOPE::build
 
-  A("sint8") : @buildScope
+  A("sint8") : @SCOPE::build
 
-  A("struct") : @buildScope
+  A("struct") : @SCOPE::build
 
-  A("text") : @buildScope
+  A("text") : @SCOPE::build
 
-  A("type") : @buildScope
+  A("type") : @SCOPE::build
 
-  A("uint") : @buildScope
+  A("uint") : @SCOPE::build
 
-  A("uint16") : @buildScope
+  A("uint16") : @SCOPE::build
 
-  A("uint32") : @buildScope
+  A("uint32") : @SCOPE::build
 
-  A("uint64") : @buildScope
+  A("uint64") : @SCOPE::build
 
-  A("uint8") : @buildScope
+  A("uint8") : @SCOPE::build
 
-  A("ulen") : @buildScope
+  A("ulen") : @SCOPE::build
 
 -----
 
 345) 
 
-  (End) : @includeFile
+  (End) : @INCLUDE::includeFile
 
-  A("#") : @includeFile
+  A("#") : @INCLUDE::includeFile
 
-  A(".") : @includeFile
+  A(".") : @INCLUDE::includeFile
 
-  A("Dots") : @includeFile
+  A("Dots") : @INCLUDE::includeFile
 
-  A("Name") : @includeFile
+  A("Name") : @INCLUDE::includeFile
 
-  A("include") : @includeFile
+  A("include") : @INCLUDE::includeFile
 
-  A("int") : @includeFile
+  A("int") : @INCLUDE::includeFile
 
-  A("ip") : @includeFile
+  A("ip") : @INCLUDE::includeFile
 
-  A("scope") : @includeFile
+  A("scope") : @INCLUDE::includeFile
 
-  A("sint") : @includeFile
+  A("sint") : @INCLUDE::includeFile
 
-  A("sint16") : @includeFile
+  A("sint16") : @INCLUDE::includeFile
 
-  A("sint32") : @includeFile
+  A("sint32") : @INCLUDE::includeFile
 
-  A("sint64") : @includeFile
+  A("sint64") : @INCLUDE::includeFile
 
-  A("sint8") : @includeFile
+  A("sint8") : @INCLUDE::includeFile
 
-  A("struct") : @includeFile
+  A("struct") : @INCLUDE::includeFile
 
-  A("text") : @includeFile
+  A("text") : @INCLUDE::includeFile
 
-  A("type") : @includeFile
+  A("type") : @INCLUDE::includeFile
 
-  A("uint") : @includeFile
+  A("uint") : @INCLUDE::includeFile
 
-  A("uint16") : @includeFile
+  A("uint16") : @INCLUDE::includeFile
 
-  A("uint32") : @includeFile
+  A("uint32") : @INCLUDE::includeFile
 
-  A("uint64") : @includeFile
+  A("uint64") : @INCLUDE::includeFile
 
-  A("uint8") : @includeFile
+  A("uint8") : @INCLUDE::includeFile
 
-  A("ulen") : @includeFile
+  A("ulen") : @INCLUDE::includeFile
 
 -----
 
 346) 
 
-  (End) : @defType
+  (End) : @TYPE::build
 
-  A("#") : @defType
+  A("#") : @TYPE::build
 
-  A(".") : @defType
+  A(".") : @TYPE::build
 
-  A("Dots") : @defType
+  A("Dots") : @TYPE::build
 
-  A("Name") : @defType
+  A("Name") : @TYPE::build
 
-  A("include") : @defType
+  A("include") : @TYPE::build
 
-  A("int") : @defType
+  A("int") : @TYPE::build
 
-  A("ip") : @defType
+  A("ip") : @TYPE::build
 
-  A("scope") : @defType
+  A("scope") : @TYPE::build
 
-  A("sint") : @defType
+  A("sint") : @TYPE::build
 
-  A("sint16") : @defType
+  A("sint16") : @TYPE::build
 
-  A("sint32") : @defType
+  A("sint32") : @TYPE::build
 
-  A("sint64") : @defType
+  A("sint64") : @TYPE::build
 
-  A("sint8") : @defType
+  A("sint8") : @TYPE::build
 
-  A("struct") : @defType
+  A("struct") : @TYPE::build
 
-  A("text") : @defType
+  A("text") : @TYPE::build
 
-  A("type") : @defType
+  A("type") : @TYPE::build
 
-  A("uint") : @defType
+  A("uint") : @TYPE::build
 
-  A("uint16") : @defType
+  A("uint16") : @TYPE::build
 
-  A("uint32") : @defType
+  A("uint32") : @TYPE::build
 
-  A("uint64") : @defType
+  A("uint64") : @TYPE::build
 
-  A("uint8") : @defType
+  A("uint8") : @TYPE::build
 
-  A("ulen") : @defType
+  A("ulen") : @TYPE::build
 
 -----
 
 347) 
 
-  (End) : @defConst
+  (End) : @CONST::build
 
-  A("#") : @defConst
+  A("#") : @CONST::build
 
-  A(".") : @defConst
+  A(".") : @CONST::build
 
-  A("Dots") : @defConst
+  A("Dots") : @CONST::build
 
-  A("Name") : @defConst
+  A("Name") : @CONST::build
 
-  A("include") : @defConst
+  A("include") : @CONST::build
 
-  A("int") : @defConst
+  A("int") : @CONST::build
 
-  A("ip") : @defConst
+  A("ip") : @CONST::build
 
-  A("scope") : @defConst
+  A("scope") : @CONST::build
 
-  A("sint") : @defConst
+  A("sint") : @CONST::build
 
-  A("sint16") : @defConst
+  A("sint16") : @CONST::build
 
-  A("sint32") : @defConst
+  A("sint32") : @CONST::build
 
-  A("sint64") : @defConst
+  A("sint64") : @CONST::build
 
-  A("sint8") : @defConst
+  A("sint8") : @CONST::build
 
-  A("struct") : @defConst
+  A("struct") : @CONST::build
 
-  A("text") : @defConst
+  A("text") : @CONST::build
 
-  A("type") : @defConst
+  A("type") : @CONST::build
 
-  A("uint") : @defConst
+  A("uint") : @CONST::build
 
-  A("uint16") : @defConst
+  A("uint16") : @CONST::build
 
-  A("uint32") : @defConst
+  A("uint32") : @CONST::build
 
-  A("uint64") : @defConst
+  A("uint64") : @CONST::build
 
-  A("uint8") : @defConst
+  A("uint8") : @CONST::build
 
-  A("ulen") : @defConst
+  A("ulen") : @CONST::build
 
 -----
 

@@ -144,6 +144,8 @@ struct PosStr
   
   explicit PosStr(TextPos pos_) : pos(pos_) {}
   
+  explicit PosStr(StrLen str_) : str(str_) { pos.line=0; pos.col=0; }
+  
   PosStr(TextPos pos_,StrLen str_) : pos(pos_),str(str_) {}
  };
 

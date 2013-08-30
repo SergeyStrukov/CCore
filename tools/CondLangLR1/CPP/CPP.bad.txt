@@ -1,0 +1,5134 @@
+--- Atoms ----------------------------------------------------------------------
+
+0) A("!")
+1) A("!=")
+2) A("\"\"")
+3) A("%")
+4) A("%=")
+5) A("&")
+6) A("&&")
+7) A("&=")
+8) A("(")
+9) A(")")
+10) A("*")
+11) A("*=")
+12) A("+")
+13) A("++")
+14) A("+=")
+15) A(",")
+16) A("-")
+17) A("--")
+18) A("-=")
+19) A("->")
+20) A("->*")
+21) A("...")
+22) A("/")
+23) A("/=")
+24) A("0")
+25) A(":")
+26) A("::")
+27) A(";")
+28) A("<")
+29) A("<<")
+30) A("<<=")
+31) A("<=")
+32) A("=")
+33) A("==")
+34) A(">")
+35) A(">=")
+36) A(">>")
+37) A(">>=")
+38) A("@1")
+39) A("@2")
+40) A("@3")
+41) A("@4")
+42) A("@5")
+43) A("@6")
+44) A("@7")
+45) A("@8")
+46) A("@9")
+47) A("Name")
+48) A("String")
+49) A("TODO_CONVERSION_TYPE_ID")
+50) A("TODO_EXPR")
+51) A("TODO_EXPR_ASSIGN")
+52) A("TODO_EXPR_CONST")
+53) A("TODO_FUNCTION_BODY")
+54) A("TODO_TYPE_ID")
+55) A("TODO_TYPE_ID_OR_EXPR_ASSIGN")
+56) A("TODO_TYPE_ID_OR_EXPR_CONST")
+57) A("[")
+58) A("]")
+59) A("^")
+60) A("^=")
+61) A("alignas")
+62) A("asm")
+63) A("auto")
+64) A("bool")
+65) A("char")
+66) A("char16_t")
+67) A("char32_t")
+68) A("class")
+69) A("const")
+70) A("constexpr")
+71) A("decltype")
+72) A("delete")
+73) A("double")
+74) A("enum")
+75) A("explicit")
+76) A("extern")
+77) A("final")
+78) A("float")
+79) A("friend")
+80) A("inline")
+81) A("int")
+82) A("long")
+83) A("mutable")
+84) A("namespace")
+85) A("new")
+86) A("noexcept")
+87) A("operator")
+88) A("override")
+89) A("private")
+90) A("protected")
+91) A("public")
+92) A("register")
+93) A("short")
+94) A("signed")
+95) A("static")
+96) A("static_assert")
+97) A("struct")
+98) A("template")
+99) A("thread_local")
+100) A("throw")
+101) A("typedef")
+102) A("typename")
+103) A("union")
+104) A("unsigned")
+105) A("using")
+106) A("virtual")
+107) A("void")
+108) A("volatile")
+109) A("wchar_t")
+110) A("{")
+111) A("|")
+112) A("|=")
+113) A("||")
+114) A("}")
+115) A("~")
+
+--- Syntax classes -------------------------------------------------------------
+
+0) BODY !
+  Rule(0)
+  Rule(1)
+1) DECL
+  Rule(2)
+  Rule(3)
+  Rule(4)
+  Rule(5)
+  Rule(6)
+  Rule(7)
+  Rule(8)
+  Rule(9)
+  Rule(10)
+  Rule(11)
+  Rule(12)
+  Rule(13)
+  Rule(14)
+  Rule(15)
+  Rule(16)
+  Rule(17)
+2) DECL_EMPTY
+  Rule(18)
+3) DECL_ASM
+  Rule(19)
+4) DECL_STATIC_ASSERT
+  Rule(20)
+5) DECL_NAMESPACE_ALIAS
+  Rule(21)
+6) DECL_USING
+  Rule(22)
+  Rule(23)
+  Rule(24)
+7) DECL_USING_NAMESPACE
+  Rule(25)
+8) DECL_ALIAS
+  Rule(26)
+9) DECL_SIMPLE
+  Rule(27)
+  Rule(28)
+  Rule(29)
+10) DECL_SPEC_LIST { 0) no_type 1) class 2) enum 3) elenum 4) type }
+  Rule(30)
+  Rule(31)
+  Rule(32)
+  Rule(33)
+  Rule(34)
+  Rule(35)
+  Rule(36)
+  Rule(37)
+  Rule(38)
+  Rule(39)
+11) DECL_SPEC { 0) no_type 1) class 2) enum 3) elenum 4) type }
+  Rule(40)
+  Rule(41)
+  Rule(42)
+  Rule(43)
+  Rule(44)
+  Rule(45)
+  Rule(46)
+  Rule(47)
+  Rule(48)
+  Rule(49)
+12) STORAGE_CLASS_SPEC
+  Rule(50)
+  Rule(51)
+  Rule(52)
+  Rule(53)
+  Rule(54)
+13) FUNCTION_SPEC
+  Rule(55)
+  Rule(56)
+  Rule(57)
+14) TYPE_SPEC { 0) no_type 1) class 2) enum 3) elenum 4) type }
+  Rule(58)
+  Rule(59)
+  Rule(60)
+  Rule(61)
+  Rule(62)
+  Rule(63)
+15) TRAILING_TYPE_SPEC { 0) no_type 1) class 2) enum 3) type }
+  Rule(64)
+  Rule(65)
+  Rule(66)
+  Rule(67)
+  Rule(68)
+  Rule(69)
+16) SIMPLE_TYPE_SPEC { 0) no_type 1) type }
+  Rule(70)
+  Rule(71)
+  Rule(72)
+  Rule(73)
+  Rule(74)
+  Rule(75)
+  Rule(76)
+  Rule(77)
+  Rule(78)
+  Rule(79)
+  Rule(80)
+  Rule(81)
+  Rule(82)
+  Rule(83)
+  Rule(84)
+  Rule(85)
+  Rule(86)
+  Rule(87)
+17) ELABORATED_TYPE_SPEC { 0) class 1) enum }
+  Rule(88)
+  Rule(89)
+  Rule(90)
+  Rule(91)
+  Rule(92)
+  Rule(93)
+18) CV
+  Rule(94)
+  Rule(95)
+19) DECL_LINKAGE
+  Rule(96)
+20) DECL_LINKAGE_BODY
+  Rule(97)
+21) DECL_NAMESPACE
+  Rule(98)
+  Rule(99)
+  Rule(100)
+  Rule(101)
+22) TYPE_SPEC_LIST { 0) no_type 1) class 2) enum 3) elenum 4) type }
+  Rule(102)
+  Rule(103)
+  Rule(104)
+  Rule(105)
+  Rule(106)
+  Rule(107)
+  Rule(108)
+  Rule(109)
+  Rule(110)
+  Rule(111)
+23) DECL_TEMPLATE
+  Rule(112)
+24) TEMPLATE_PARAMETER_LIST
+  Rule(113)
+  Rule(114)
+25) TEMPLATE_PARAMETER
+  Rule(115)
+  Rule(116)
+26) TYPE_PARAMETER
+  Rule(117)
+  Rule(118)
+  Rule(119)
+  Rule(120)
+  Rule(121)
+  Rule(122)
+  Rule(123)
+  Rule(124)
+  Rule(125)
+  Rule(126)
+  Rule(127)
+  Rule(128)
+  Rule(129)
+  Rule(130)
+  Rule(131)
+  Rule(132)
+  Rule(133)
+  Rule(134)
+27) DECL_EXPLICIT_INST
+  Rule(135)
+  Rule(136)
+28) DECL_EXPLICIT_SPEC
+  Rule(137)
+29) ATTRIBUTES
+  Rule(138)
+  Rule(139)
+  Rule(140)
+30) ATTR_COMMON
+  Rule(141)
+31) ATTR_LIST
+  Rule(142)
+  Rule(143)
+32) ATTR_ITEM
+  Rule(144)
+  Rule(145)
+  Rule(146)
+33) ATTR
+  Rule(147)
+  Rule(148)
+  Rule(149)
+  Rule(150)
+34) ATTR_BODY
+  Rule(151)
+  Rule(152)
+  Rule(153)
+  Rule(154)
+  Rule(155)
+35) ATTR_ALIGN
+  Rule(156)
+  Rule(157)
+36) ENUM_SPEC
+  Rule(158)
+  Rule(159)
+  Rule(160)
+37) DECL_OPAQUE_ENUM
+  Rule(161)
+  Rule(162)
+38) ENUM_HEAD
+  Rule(163)
+  Rule(164)
+  Rule(165)
+  Rule(166)
+  Rule(167)
+  Rule(168)
+39) ENUM_LIST
+  Rule(169)
+  Rule(170)
+40) ENUM_DEF
+  Rule(171)
+  Rule(172)
+41) ENUM_BASE
+  Rule(173)
+42) ENUM_KEY { 0) enum 1) enum_class }
+  Rule(174)
+  Rule(175)
+  Rule(176)
+43) CLASS_SPEC
+  Rule(177)
+  Rule(178)
+44) CLASS_HEAD
+  Rule(179)
+  Rule(180)
+  Rule(181)
+  Rule(182)
+  Rule(183)
+  Rule(184)
+45) CLASS_HEAD_NAME
+  Rule(185)
+  Rule(186)
+  Rule(187)
+  Rule(188)
+46) CLASS_BASE_CLAUSE
+  Rule(189)
+47) BASE_SPEC_LIST
+  Rule(190)
+  Rule(191)
+48) BASE_SPEC_EXP
+  Rule(192)
+  Rule(193)
+49) BASE_SPEC
+  Rule(194)
+  Rule(195)
+  Rule(196)
+  Rule(197)
+  Rule(198)
+50) BASE_TYPE_SPEC
+  Rule(199)
+  Rule(200)
+  Rule(201)
+  Rule(202)
+  Rule(203)
+51) MEMBER_LIST
+  Rule(204)
+  Rule(205)
+52) ACCESS_OR_MEMBER
+  Rule(206)
+  Rule(207)
+53) MEMBER
+  Rule(208)
+  Rule(209)
+  Rule(210)
+  Rule(211)
+  Rule(212)
+  Rule(213)
+  Rule(214)
+  Rule(215)
+  Rule(216)
+54) MEMBER_DECLARATOR_LIST
+  Rule(217)
+  Rule(218)
+55) MEMBER_DECLARATOR
+  Rule(219)
+  Rule(220)
+  Rule(221)
+  Rule(222)
+56) ACCESS_SPEC
+  Rule(223)
+  Rule(224)
+  Rule(225)
+57) CLASS_KEY
+  Rule(226)
+  Rule(227)
+  Rule(228)
+58) CLASS_VIRT_SPEC
+  Rule(229)
+59) PURE_SPEC
+  Rule(230)
+  Rule(231)
+60) NAME
+  Rule(232)
+  Rule(233)
+61) NESTED_NAME_SPEC
+  Rule(234)
+  Rule(235)
+  Rule(236)
+  Rule(237)
+  Rule(238)
+  Rule(239)
+62) TYPE_NAME
+  Rule(240)
+  Rule(241)
+63) DECLTYPE
+  Rule(242)
+64) SIMPLE_TEMPLATE_ID
+  Rule(243)
+65) TEMPLATE_ID
+  Rule(244)
+  Rule(245)
+  Rule(246)
+66) TEMPLATE_ARG_LIST
+  Rule(247)
+  Rule(248)
+67) TEMPLATE_ARG_LIST1
+  Rule(249)
+  Rule(250)
+68) TEMPLATE_ARG_ITEM
+  Rule(251)
+  Rule(252)
+69) TEMPLATE_ARG
+  Rule(253)
+70) QUALIFIED_ID { 0) non_operator 1) operator }
+  Rule(254)
+  Rule(255)
+  Rule(256)
+  Rule(257)
+  Rule(258)
+  Rule(259)
+  Rule(260)
+  Rule(261)
+71) UNQUALIFIED_ID { 0) non_operator 1) operator }
+  Rule(262)
+  Rule(263)
+  Rule(264)
+  Rule(265)
+  Rule(266)
+  Rule(267)
+  Rule(268)
+72) OPERATOR_ID
+  Rule(269)
+73) OPID
+  Rule(270)
+  Rule(271)
+  Rule(272)
+  Rule(273)
+  Rule(274)
+  Rule(275)
+  Rule(276)
+  Rule(277)
+  Rule(278)
+  Rule(279)
+  Rule(280)
+  Rule(281)
+  Rule(282)
+  Rule(283)
+  Rule(284)
+  Rule(285)
+  Rule(286)
+  Rule(287)
+  Rule(288)
+  Rule(289)
+  Rule(290)
+  Rule(291)
+  Rule(292)
+  Rule(293)
+  Rule(294)
+  Rule(295)
+  Rule(296)
+  Rule(297)
+  Rule(298)
+  Rule(299)
+  Rule(300)
+  Rule(301)
+  Rule(302)
+  Rule(303)
+  Rule(304)
+  Rule(305)
+  Rule(306)
+  Rule(307)
+  Rule(308)
+  Rule(309)
+  Rule(310)
+  Rule(311)
+74) CONVERSION_ID
+  Rule(312)
+75) LITERAL_ID
+  Rule(313)
+76) TYPENAME_SPEC
+  Rule(314)
+  Rule(315)
+  Rule(316)
+77) INIT_DECLARATOR_LIST
+  Rule(317)
+  Rule(318)
+78) INIT_DECLARATOR
+  Rule(319)
+  Rule(320)
+79) DECLARATOR
+  Rule(321)
+  Rule(322)
+80) PTR_DECLARATOR { 0) non_operator 1) operator 2) func 3) ptr }
+  Rule(323)
+  Rule(324)
+  Rule(325)
+  Rule(326)
+81) PTR_OP
+  Rule(327)
+  Rule(328)
+  Rule(329)
+  Rule(330)
+82) CV_QUALIFIER
+  Rule(331)
+  Rule(332)
+  Rule(333)
+83) NOPTR_DECLARATOR { 0) non_operator 1) operator 2) func }
+  Rule(334)
+  Rule(335)
+  Rule(336)
+  Rule(337)
+  Rule(338)
+  Rule(339)
+  Rule(340)
+  Rule(341)
+84) DECLARATOR_ID { 0) non_operator 1) operator }
+  Rule(342)
+  Rule(343)
+  Rule(344)
+  Rule(345)
+85) PARAMETERS_AND_QUALIFIERS
+  Rule(346)
+86) REF_QUALIFIER
+  Rule(347)
+  Rule(348)
+  Rule(349)
+87) PARAMETER_DECL_CLAUSE
+  Rule(350)
+  Rule(351)
+  Rule(352)
+  Rule(353)
+  Rule(354)
+88) PARAMETER_DECL_LIST
+  Rule(355)
+  Rule(356)
+89) PARAMETER_DECL { 0) no_class 1) class }
+  Rule(357)
+  Rule(358)
+90) PARAMETER_DECL_TAIL
+  Rule(359)
+  Rule(360)
+  Rule(361)
+  Rule(362)
+  Rule(363)
+  Rule(364)
+91) TRAILING_RETURN_TYPE
+  Rule(365)
+  Rule(366)
+92) TRAILING_TYPE_SPEC_LIST { 0) no_type 1) type }
+  Rule(367)
+  Rule(368)
+  Rule(369)
+  Rule(370)
+93) ABSTRACT_DECLARATOR
+  Rule(371)
+  Rule(372)
+  Rule(373)
+  Rule(374)
+94) PTR_ABSTRACT_DECLARATOR
+  Rule(375)
+  Rule(376)
+  Rule(377)
+95) NOPTR_ABSTRACT_DECLARATOR
+  Rule(378)
+  Rule(379)
+  Rule(380)
+  Rule(381)
+  Rule(382)
+  Rule(383)
+  Rule(384)
+96) ABSTRACT_PACK_DECLARATOR
+  Rule(385)
+  Rule(386)
+97) NOPTR_ABSTRACT_PACK_DECLARATOR
+  Rule(387)
+  Rule(388)
+  Rule(389)
+  Rule(390)
+98) EXCEPTION_SPEC
+  Rule(391)
+  Rule(392)
+  Rule(393)
+  Rule(394)
+  Rule(395)
+99) TYPE_ID_LIST
+  Rule(396)
+  Rule(397)
+100) TYPE_ID_LIST_ITEM
+  Rule(398)
+  Rule(399)
+101) VIRT_SPEC_LIST
+  Rule(400)
+  Rule(401)
+102) VIRT_SPEC
+  Rule(402)
+  Rule(403)
+103) INIT
+  Rule(404)
+  Rule(405)
+104) BRACE_OR_EQUAL_INIT
+  Rule(406)
+  Rule(407)
+105) INIT_LIST
+  Rule(408)
+  Rule(409)
+106) INIT_EXP
+  Rule(410)
+  Rule(411)
+107) INIT_CLAUSE
+  Rule(412)
+  Rule(413)
+108) BRACED_INIT_LIST
+  Rule(414)
+  Rule(415)
+  Rule(416)
+109) TYPE_ID
+  Rule(417)
+110) CONVERSION_TYPE_ID
+  Rule(418)
+111) DECL_FUNCTION_DEFINITION
+  Rule(419)
+  Rule(420)
+112) FUNCTION_BODY
+  Rule(421)
+113) EXPR_CONST
+  Rule(422)
+114) EXPR_ASSIGN
+  Rule(423)
+115) EXPR_ID { 0) non_operator 1) operator }
+  Rule(424)
+  Rule(425)
+  Rule(426)
+  Rule(427)
+116) EXPR
+  Rule(428)
+117) TYPE_ID_OR_EXPR_ASSIGN
+  Rule(429)
+118) TYPE_ID_OR_EXPR_CONST_OR_EXPR_ID
+  Rule(430)
+119) NBATOM
+  Rule(431)
+  Rule(432)
+  Rule(433)
+  Rule(434)
+  Rule(435)
+  Rule(436)
+  Rule(437)
+  Rule(438)
+  Rule(439)
+  Rule(440)
+  Rule(441)
+  Rule(442)
+  Rule(443)
+  Rule(444)
+  Rule(445)
+  Rule(446)
+  Rule(447)
+  Rule(448)
+  Rule(449)
+  Rule(450)
+  Rule(451)
+  Rule(452)
+  Rule(453)
+  Rule(454)
+  Rule(455)
+  Rule(456)
+  Rule(457)
+  Rule(458)
+  Rule(459)
+  Rule(460)
+  Rule(461)
+  Rule(462)
+  Rule(463)
+  Rule(464)
+  Rule(465)
+  Rule(466)
+  Rule(467)
+  Rule(468)
+  Rule(469)
+  Rule(470)
+  Rule(471)
+  Rule(472)
+  Rule(473)
+  Rule(474)
+  Rule(475)
+  Rule(476)
+  Rule(477)
+  Rule(478)
+  Rule(479)
+  Rule(480)
+  Rule(481)
+  Rule(482)
+  Rule(483)
+  Rule(484)
+  Rule(485)
+  Rule(486)
+  Rule(487)
+  Rule(488)
+  Rule(489)
+  Rule(490)
+  Rule(491)
+  Rule(492)
+  Rule(493)
+  Rule(494)
+  Rule(495)
+  Rule(496)
+  Rule(497)
+  Rule(498)
+  Rule(499)
+  Rule(500)
+  Rule(501)
+  Rule(502)
+  Rule(503)
+  Rule(504)
+  Rule(505)
+  Rule(506)
+  Rule(507)
+  Rule(508)
+  Rule(509)
+  Rule(510)
+  Rule(511)
+  Rule(512)
+  Rule(513)
+  Rule(514)
+  Rule(515)
+  Rule(516)
+  Rule(517)
+  Rule(518)
+  Rule(519)
+  Rule(520)
+  Rule(521)
+  Rule(522)
+  Rule(523)
+  Rule(524)
+  Rule(525)
+  Rule(526)
+  Rule(527)
+  Rule(528)
+  Rule(529)
+  Rule(530)
+  Rule(531)
+  Rule(532)
+  Rule(533)
+  Rule(534)
+  Rule(535)
+  Rule(536)
+  Rule(537)
+  Rule(538)
+  Rule(539)
+  Rule(540)
+
+--- Rules ----------------------------------------------------------------------
+
+0) BODY::start -> BODY
+
+1) BODY::ext -> BODY
+  Synt(0,BODY)  Synt(1,DECL)
+2) DECL::cast@EMPTY -> DECL
+  Synt(2,DECL_EMPTY)
+3) DECL::cast@ASM -> DECL
+  Synt(3,DECL_ASM)
+4) DECL::cast@STATIC_ASSERT -> DECL
+  Synt(4,DECL_STATIC_ASSERT)
+5) DECL::cast@NAMESPACE_ALIAS -> DECL
+  Synt(5,DECL_NAMESPACE_ALIAS)
+6) DECL::cast@USING -> DECL
+  Synt(6,DECL_USING)
+7) DECL::cast@USING_NAMESPACE -> DECL
+  Synt(7,DECL_USING_NAMESPACE)
+8) DECL::cast@ALIAS -> DECL
+  Synt(8,DECL_ALIAS)
+9) DECL::cast@SIMPLE -> DECL
+  Synt(9,DECL_SIMPLE)
+10) DECL::cast@OPAQUE_ENUM -> DECL
+  Synt(29,ATTRIBUTES)  Synt(37,DECL_OPAQUE_ENUM)
+11) DECL::cast@LINKAGE -> DECL
+  Synt(19,DECL_LINKAGE)
+12) DECL::cast@LINKAGE_BODY -> DECL
+  Synt(20,DECL_LINKAGE_BODY)
+13) DECL::cast@NAMESPACE -> DECL
+  Synt(21,DECL_NAMESPACE)
+14) DECL::cast@TEMPLATE -> DECL
+  Synt(23,DECL_TEMPLATE)
+15) DECL::cast@EXPLICIT_INST -> DECL
+  Synt(27,DECL_EXPLICIT_INST)
+16) DECL::cast@EXPLICIT_SPEC -> DECL
+  Synt(28,DECL_EXPLICIT_SPEC)
+17) DECL::cast@FUNCTION_DEFINITION -> DECL
+  Synt(111,DECL_FUNCTION_DEFINITION)
+18) DECL_EMPTY::build -> DECL_EMPTY
+  Synt(29,ATTRIBUTES)  Atom(27,A(";"))
+19) DECL_ASM::build -> DECL_ASM
+  Atom(62,A("asm"))  Atom(8,A("("))  Atom(48,A("String"))  Atom(9,A(")"))  Atom(27,A(";"))
+20) DECL_STATIC_ASSERT::build -> DECL_STATIC_ASSERT
+  Atom(96,A("static_assert"))  Atom(8,A("("))  Synt(113,EXPR_CONST)  Atom(15,A(","))  Atom(48,A("String"))  Atom(9,A(")"))  Atom(27,A(";"))
+21) DECL_NAMESPACE_ALIAS::build -> DECL_NAMESPACE_ALIAS
+  Atom(84,A("namespace"))  Atom(47,A("Name"))  Atom(32,A("="))  Synt(60,NAME)  Atom(27,A(";"))
+22) DECL_USING::build -> DECL_USING
+  Synt(29,ATTRIBUTES)  Atom(105,A("using"))  Atom(26,A("::"))  Synt(71,UNQUALIFIED_ID)  Atom(27,A(";"))
+23) DECL_USING::build_nested -> DECL_USING
+  Synt(29,ATTRIBUTES)  Atom(105,A("using"))  Synt(61,NESTED_NAME_SPEC)  Synt(71,UNQUALIFIED_ID)  Atom(27,A(";"))
+24) DECL_USING::build_typename_nested -> DECL_USING
+  Synt(29,ATTRIBUTES)  Atom(105,A("using"))  Atom(102,A("typename"))  Synt(61,NESTED_NAME_SPEC)  Synt(71,UNQUALIFIED_ID)  Atom(27,A(";"))
+25) DECL_USING_NAMESPACE::build -> DECL_USING_NAMESPACE
+  Synt(29,ATTRIBUTES)  Atom(105,A("using"))  Atom(84,A("namespace"))  Synt(60,NAME)  Atom(27,A(";"))
+26) DECL_ALIAS::build -> DECL_ALIAS
+  Synt(29,ATTRIBUTES)  Atom(105,A("using"))  Atom(47,A("Name"))  Synt(29,ATTRIBUTES)  Atom(32,A("="))  Synt(109,TYPE_ID)  Atom(27,A(";"))
+27) DECL_SIMPLE::build -> DECL_SIMPLE
+  Synt(29,ATTRIBUTES)  Synt(10,DECL_SPEC_LIST)  Synt(77,INIT_DECLARATOR_LIST)  Atom(27,A(";"))
+28) DECL_SIMPLE::build_spec -> DECL_SIMPLE if( ( @1 == class(1) | @1 == enum(2) ) )
+  Synt(29,ATTRIBUTES)  Synt(10,DECL_SPEC_LIST)  Atom(27,A(";"))
+29) DECL_SIMPLE::build_list -> DECL_SIMPLE
+  Synt(29,ATTRIBUTES)  Synt(77,INIT_DECLARATOR_LIST)  Atom(27,A(";"))
+30) DECL_SPEC_LIST::start -> DECL_SPEC_LIST.no_type if( @0 == no_type(0) )
+  Synt(11,DECL_SPEC)  Synt(29,ATTRIBUTES)
+31) DECL_SPEC_LIST::start@class -> DECL_SPEC_LIST.class if( @0 == class(1) )
+  Synt(11,DECL_SPEC)  Synt(29,ATTRIBUTES)
+32) DECL_SPEC_LIST::start@enum -> DECL_SPEC_LIST.enum if( @0 == enum(2) )
+  Synt(11,DECL_SPEC)  Synt(29,ATTRIBUTES)
+33) DECL_SPEC_LIST::start@elenum -> DECL_SPEC_LIST.elenum if( @0 == elenum(3) )
+  Synt(11,DECL_SPEC)  Synt(29,ATTRIBUTES)
+34) DECL_SPEC_LIST::start@type -> DECL_SPEC_LIST.type if( @0 == type(4) )
+  Synt(11,DECL_SPEC)  Synt(29,ATTRIBUTES)
+35) DECL_SPEC_LIST::ext -> DECL_SPEC_LIST.no_type if( ( @0 == no_type(0) & @1 == no_type(0) ) )
+  Synt(11,DECL_SPEC)  Synt(10,DECL_SPEC_LIST)
+36) DECL_SPEC_LIST::ext@class -> DECL_SPEC_LIST.class if( ( ( @0 == class(1) & @1 == no_type(0) ) | ( @0 == no_type(0) & @1 == class(1) ) ) )
+  Synt(11,DECL_SPEC)  Synt(10,DECL_SPEC_LIST)
+37) DECL_SPEC_LIST::ext@enum -> DECL_SPEC_LIST.enum if( ( ( @0 == enum(2) & @1 == no_type(0) ) | ( @0 == no_type(0) & @1 == enum(2) ) ) )
+  Synt(11,DECL_SPEC)  Synt(10,DECL_SPEC_LIST)
+38) DECL_SPEC_LIST::ext@elenum -> DECL_SPEC_LIST.elenum if( ( ( @0 == elenum(3) & @1 == no_type(0) ) | ( @0 == no_type(0) & @1 == elenum(3) ) ) )
+  Synt(11,DECL_SPEC)  Synt(10,DECL_SPEC_LIST)
+39) DECL_SPEC_LIST::ext@type -> DECL_SPEC_LIST.type if( ( ( @0 == type(4) & @1 == no_type(0) ) | ( @0 == no_type(0) & @1 == type(4) ) ) )
+  Synt(11,DECL_SPEC)  Synt(10,DECL_SPEC_LIST)
+40) DECL_SPEC::build_friend -> DECL_SPEC.no_type
+  Atom(79,A("friend"))
+41) DECL_SPEC::build_typedef -> DECL_SPEC.no_type
+  Atom(101,A("typedef"))
+42) DECL_SPEC::build_constexpr -> DECL_SPEC.no_type
+  Atom(70,A("constexpr"))
+43) DECL_SPEC::cast@STORAGE_CLASS_SPEC -> DECL_SPEC.no_type
+  Synt(12,STORAGE_CLASS_SPEC)
+44) DECL_SPEC::cast@FUNCTION_SPEC -> DECL_SPEC.no_type
+  Synt(13,FUNCTION_SPEC)
+45) DECL_SPEC::cast@TYPE_SPEC -> DECL_SPEC.no_type if( @0 == no_type(0) )
+  Synt(14,TYPE_SPEC)
+46) DECL_SPEC::cast@TYPE_SPEC@class -> DECL_SPEC.class if( @0 == class(1) )
+  Synt(14,TYPE_SPEC)
+47) DECL_SPEC::cast@TYPE_SPEC@enum -> DECL_SPEC.enum if( @0 == enum(2) )
+  Synt(14,TYPE_SPEC)
+48) DECL_SPEC::cast@TYPE_SPEC@elenum -> DECL_SPEC.elenum if( @0 == elenum(3) )
+  Synt(14,TYPE_SPEC)
+49) DECL_SPEC::cast@TYPE_SPEC@type -> DECL_SPEC.type if( @0 == type(4) )
+  Synt(14,TYPE_SPEC)
+50) STORAGE_CLASS_SPEC::build_register -> STORAGE_CLASS_SPEC
+  Atom(92,A("register"))
+51) STORAGE_CLASS_SPEC::build_static -> STORAGE_CLASS_SPEC
+  Atom(95,A("static"))
+52) STORAGE_CLASS_SPEC::build_thread_local -> STORAGE_CLASS_SPEC
+  Atom(99,A("thread_local"))
+53) STORAGE_CLASS_SPEC::build_extern -> STORAGE_CLASS_SPEC
+  Atom(76,A("extern"))
+54) STORAGE_CLASS_SPEC::build_mutable -> STORAGE_CLASS_SPEC
+  Atom(83,A("mutable"))
+55) FUNCTION_SPEC::build_inline -> FUNCTION_SPEC
+  Atom(80,A("inline"))
+56) FUNCTION_SPEC::build_virtual -> FUNCTION_SPEC
+  Atom(106,A("virtual"))
+57) FUNCTION_SPEC::build_explicit -> FUNCTION_SPEC
+  Atom(75,A("explicit"))
+58) TYPE_SPEC::cast@TRAILING_TYPE_SPEC -> TYPE_SPEC.no_type if( @0 == no_type(0) )
+  Synt(15,TRAILING_TYPE_SPEC)
+59) TYPE_SPEC::cast@TRAILING_TYPE_SPEC@class -> TYPE_SPEC.class if( @0 == class(1) )
+  Synt(15,TRAILING_TYPE_SPEC)
+60) TYPE_SPEC::cast@TRAILING_TYPE_SPEC@enum -> TYPE_SPEC.elenum if( @0 == enum(2) )
+  Synt(15,TRAILING_TYPE_SPEC)
+61) TYPE_SPEC::cast@TRAILING_TYPE_SPEC@type -> TYPE_SPEC.type if( @0 == type(3) )
+  Synt(15,TRAILING_TYPE_SPEC)
+62) TYPE_SPEC::cast@CLASS_SPEC -> TYPE_SPEC.class
+  Synt(43,CLASS_SPEC)
+63) TYPE_SPEC::cast@ENUM_SPEC -> TYPE_SPEC.enum
+  Synt(36,ENUM_SPEC)
+64) TRAILING_TYPE_SPEC::cast@SIMPLE_TYPE_SPEC -> TRAILING_TYPE_SPEC.no_type if( @0 == no_type(0) )
+  Synt(16,SIMPLE_TYPE_SPEC)
+65) TRAILING_TYPE_SPEC::cast@SIMPLE_TYPE_SPEC@type -> TRAILING_TYPE_SPEC.type if( @0 == type(1) )
+  Synt(16,SIMPLE_TYPE_SPEC)
+66) TRAILING_TYPE_SPEC::cast@ELABORATED_TYPE_SPEC@class -> TRAILING_TYPE_SPEC.class if( @0 == class(0) )
+  Synt(17,ELABORATED_TYPE_SPEC)
+67) TRAILING_TYPE_SPEC::cast@ELABORATED_TYPE_SPEC@enum -> TRAILING_TYPE_SPEC.enum if( @0 == enum(1) )
+  Synt(17,ELABORATED_TYPE_SPEC)
+68) TRAILING_TYPE_SPEC::cast@CV -> TRAILING_TYPE_SPEC.no_type
+  Synt(18,CV)
+69) TRAILING_TYPE_SPEC::cast@TYPENAME_SPEC -> TRAILING_TYPE_SPEC.type
+  Synt(76,TYPENAME_SPEC)
+70) SIMPLE_TYPE_SPEC::build_name -> SIMPLE_TYPE_SPEC.type
+  Synt(62,TYPE_NAME)
+71) SIMPLE_TYPE_SPEC::build_nested_name -> SIMPLE_TYPE_SPEC.type
+  Synt(61,NESTED_NAME_SPEC)  Synt(62,TYPE_NAME)
+72) SIMPLE_TYPE_SPEC::build_template -> SIMPLE_TYPE_SPEC.type
+  Synt(61,NESTED_NAME_SPEC)  Atom(98,A("template"))  Synt(64,SIMPLE_TEMPLATE_ID)
+73) SIMPLE_TYPE_SPEC::build_decltype -> SIMPLE_TYPE_SPEC.type
+  Synt(63,DECLTYPE)
+74) SIMPLE_TYPE_SPEC::build_char -> SIMPLE_TYPE_SPEC.type
+  Atom(65,A("char"))
+75) SIMPLE_TYPE_SPEC::build_char16 -> SIMPLE_TYPE_SPEC.type
+  Atom(66,A("char16_t"))
+76) SIMPLE_TYPE_SPEC::build_char32 -> SIMPLE_TYPE_SPEC.type
+  Atom(67,A("char32_t"))
+77) SIMPLE_TYPE_SPEC::build_wchar -> SIMPLE_TYPE_SPEC.type
+  Atom(109,A("wchar_t"))
+78) SIMPLE_TYPE_SPEC::build_bool -> SIMPLE_TYPE_SPEC.type
+  Atom(64,A("bool"))
+79) SIMPLE_TYPE_SPEC::build_int -> SIMPLE_TYPE_SPEC.type
+  Atom(81,A("int"))
+80) SIMPLE_TYPE_SPEC::build_float -> SIMPLE_TYPE_SPEC.type
+  Atom(78,A("float"))
+81) SIMPLE_TYPE_SPEC::build_double -> SIMPLE_TYPE_SPEC.type
+  Atom(73,A("double"))
+82) SIMPLE_TYPE_SPEC::build_void -> SIMPLE_TYPE_SPEC.type
+  Atom(107,A("void"))
+83) SIMPLE_TYPE_SPEC::build_auto -> SIMPLE_TYPE_SPEC.type
+  Atom(63,A("auto"))
+84) SIMPLE_TYPE_SPEC::build_long -> SIMPLE_TYPE_SPEC.no_type
+  Atom(82,A("long"))
+85) SIMPLE_TYPE_SPEC::build_short -> SIMPLE_TYPE_SPEC.no_type
+  Atom(93,A("short"))
+86) SIMPLE_TYPE_SPEC::build_signed -> SIMPLE_TYPE_SPEC.no_type
+  Atom(94,A("signed"))
+87) SIMPLE_TYPE_SPEC::build_unsigned -> SIMPLE_TYPE_SPEC.no_type
+  Atom(104,A("unsigned"))
+88) ELABORATED_TYPE_SPEC::build_class_name -> ELABORATED_TYPE_SPEC.class
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(60,NAME)
+89) ELABORATED_TYPE_SPEC::build_class_template -> ELABORATED_TYPE_SPEC.class
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(64,SIMPLE_TEMPLATE_ID)
+90) ELABORATED_TYPE_SPEC::build_class_nested_template -> ELABORATED_TYPE_SPEC.class
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(61,NESTED_NAME_SPEC)  Synt(64,SIMPLE_TEMPLATE_ID)
+91) ELABORATED_TYPE_SPEC::build_class_template_template -> ELABORATED_TYPE_SPEC.class
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Atom(98,A("template"))  Synt(64,SIMPLE_TEMPLATE_ID)
+92) ELABORATED_TYPE_SPEC::build_class_nested_template_template -> ELABORATED_TYPE_SPEC.class
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(61,NESTED_NAME_SPEC)  Atom(98,A("template"))  Synt(64,SIMPLE_TEMPLATE_ID)
+93) ELABORATED_TYPE_SPEC::build_enum -> ELABORATED_TYPE_SPEC.enum if( @0 == enum(0) )
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)  Synt(60,NAME)
+94) CV::build_const -> CV
+  Atom(69,A("const"))
+95) CV::build_volatile -> CV
+  Atom(108,A("volatile"))
+96) DECL_LINKAGE::build -> DECL_LINKAGE
+  Synt(29,ATTRIBUTES)  Atom(76,A("extern"))  Atom(48,A("String"))  Synt(1,DECL)
+97) DECL_LINKAGE_BODY::build -> DECL_LINKAGE_BODY
+  Synt(29,ATTRIBUTES)  Atom(76,A("extern"))  Atom(48,A("String"))  Atom(110,A("{"))  Synt(0,BODY)  Atom(114,A("}"))
+98) DECL_NAMESPACE::build -> DECL_NAMESPACE
+  Atom(84,A("namespace"))  Atom(110,A("{"))  Synt(0,BODY)  Atom(114,A("}"))
+99) DECL_NAMESPACE::build_inline -> DECL_NAMESPACE
+  Synt(29,ATTRIBUTES)  Atom(80,A("inline"))  Atom(84,A("namespace"))  Atom(110,A("{"))  Synt(0,BODY)  Atom(114,A("}"))
+100) DECL_NAMESPACE::build_name -> DECL_NAMESPACE
+  Atom(84,A("namespace"))  Atom(47,A("Name"))  Atom(110,A("{"))  Synt(0,BODY)  Atom(114,A("}"))
+101) DECL_NAMESPACE::build_inline_name -> DECL_NAMESPACE
+  Synt(29,ATTRIBUTES)  Atom(80,A("inline"))  Atom(84,A("namespace"))  Atom(47,A("Name"))  Atom(110,A("{"))  Synt(0,BODY)  Atom(114,A("}"))
+102) TYPE_SPEC_LIST::start -> TYPE_SPEC_LIST.no_type if( @0 == no_type(0) )
+  Synt(14,TYPE_SPEC)  Synt(29,ATTRIBUTES)
+103) TYPE_SPEC_LIST::start@class -> TYPE_SPEC_LIST.class if( @0 == class(1) )
+  Synt(14,TYPE_SPEC)  Synt(29,ATTRIBUTES)
+104) TYPE_SPEC_LIST::start@enum -> TYPE_SPEC_LIST.enum if( @0 == enum(2) )
+  Synt(14,TYPE_SPEC)  Synt(29,ATTRIBUTES)
+105) TYPE_SPEC_LIST::start@elenum -> TYPE_SPEC_LIST.elenum if( @0 == elenum(3) )
+  Synt(14,TYPE_SPEC)  Synt(29,ATTRIBUTES)
+106) TYPE_SPEC_LIST::start@type -> TYPE_SPEC_LIST.type if( @0 == type(4) )
+  Synt(14,TYPE_SPEC)  Synt(29,ATTRIBUTES)
+107) TYPE_SPEC_LIST::ext -> TYPE_SPEC_LIST.no_type if( ( @0 == no_type(0) & @1 == no_type(0) ) )
+  Synt(14,TYPE_SPEC)  Synt(22,TYPE_SPEC_LIST)
+108) TYPE_SPEC_LIST::ext@class -> TYPE_SPEC_LIST.class if( ( ( @0 == class(1) & @1 == no_type(0) ) | ( @0 == no_type(0) & @1 == class(1) ) ) )
+  Synt(14,TYPE_SPEC)  Synt(22,TYPE_SPEC_LIST)
+109) TYPE_SPEC_LIST::ext@enum -> TYPE_SPEC_LIST.enum if( ( ( @0 == enum(2) & @1 == no_type(0) ) | ( @0 == no_type(0) & @1 == enum(2) ) ) )
+  Synt(14,TYPE_SPEC)  Synt(22,TYPE_SPEC_LIST)
+110) TYPE_SPEC_LIST::ext@elenum -> TYPE_SPEC_LIST.elenum if( ( ( @0 == elenum(3) & @1 == no_type(0) ) | ( @0 == no_type(0) & @1 == elenum(3) ) ) )
+  Synt(14,TYPE_SPEC)  Synt(22,TYPE_SPEC_LIST)
+111) TYPE_SPEC_LIST::ext@type -> TYPE_SPEC_LIST.type if( ( ( @0 == type(4) & @1 == no_type(0) ) | ( @0 == no_type(0) & @1 == type(4) ) ) )
+  Synt(14,TYPE_SPEC)  Synt(22,TYPE_SPEC_LIST)
+112) DECL_TEMPLATE::build -> DECL_TEMPLATE
+  Atom(98,A("template"))  Atom(28,A("<"))  Synt(24,TEMPLATE_PARAMETER_LIST)  Atom(34,A(">"))  Synt(1,DECL)
+113) TEMPLATE_PARAMETER_LIST::start -> TEMPLATE_PARAMETER_LIST
+  Synt(25,TEMPLATE_PARAMETER)
+114) TEMPLATE_PARAMETER_LIST::ext -> TEMPLATE_PARAMETER_LIST
+  Synt(24,TEMPLATE_PARAMETER_LIST)  Atom(15,A(","))  Synt(25,TEMPLATE_PARAMETER)
+115) TEMPLATE_PARAMETER::cast_type -> TEMPLATE_PARAMETER
+  Synt(26,TYPE_PARAMETER)
+116) TEMPLATE_PARAMETER::cast_const -> TEMPLATE_PARAMETER if( @0 != class(1) )
+  Synt(89,PARAMETER_DECL)
+117) TYPE_PARAMETER::build_class -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(68,A("class"))
+118) TYPE_PARAMETER::build_class_name -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(68,A("class"))  Atom(47,A("Name"))
+119) TYPE_PARAMETER::build_class_exp -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(68,A("class"))  Atom(21,A("..."))
+120) TYPE_PARAMETER::build_class_exp_name -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(68,A("class"))  Atom(21,A("..."))  Atom(47,A("Name"))
+121) TYPE_PARAMETER::build_class_def -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(68,A("class"))  Atom(32,A("="))  Synt(109,TYPE_ID)
+122) TYPE_PARAMETER::build_class_def_name -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(68,A("class"))  Atom(47,A("Name"))  Atom(32,A("="))  Synt(109,TYPE_ID)
+123) TYPE_PARAMETER::build_typename -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(102,A("typename"))
+124) TYPE_PARAMETER::build_typename_name -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(102,A("typename"))  Atom(47,A("Name"))
+125) TYPE_PARAMETER::build_typename_exp -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(102,A("typename"))  Atom(21,A("..."))
+126) TYPE_PARAMETER::build_typename_exp_name -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(102,A("typename"))  Atom(21,A("..."))  Atom(47,A("Name"))
+127) TYPE_PARAMETER::build_typename_def -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(102,A("typename"))  Atom(32,A("="))  Synt(109,TYPE_ID)
+128) TYPE_PARAMETER::build_typename_def_name -> TYPE_PARAMETER
+  Synt(29,ATTRIBUTES)  Atom(102,A("typename"))  Atom(47,A("Name"))  Atom(32,A("="))  Synt(109,TYPE_ID)
+129) TYPE_PARAMETER::build_template -> TYPE_PARAMETER
+  Atom(98,A("template"))  Atom(28,A("<"))  Synt(24,TEMPLATE_PARAMETER_LIST)  Atom(34,A(">"))  Atom(68,A("class"))
+130) TYPE_PARAMETER::build_template_name -> TYPE_PARAMETER
+  Atom(98,A("template"))  Atom(28,A("<"))  Synt(24,TEMPLATE_PARAMETER_LIST)  Atom(34,A(">"))  Atom(68,A("class"))  Atom(47,A("Name"))
+131) TYPE_PARAMETER::build_template_exp -> TYPE_PARAMETER
+  Atom(98,A("template"))  Atom(28,A("<"))  Synt(24,TEMPLATE_PARAMETER_LIST)  Atom(34,A(">"))  Atom(68,A("class"))  Atom(21,A("..."))
+132) TYPE_PARAMETER::build_template_exp_name -> TYPE_PARAMETER
+  Atom(98,A("template"))  Atom(28,A("<"))  Synt(24,TEMPLATE_PARAMETER_LIST)  Atom(34,A(">"))  Atom(68,A("class"))  Atom(21,A("..."))  Atom(47,A("Name"))
+133) TYPE_PARAMETER::build_template_def -> TYPE_PARAMETER
+  Atom(98,A("template"))  Atom(28,A("<"))  Synt(24,TEMPLATE_PARAMETER_LIST)  Atom(34,A(">"))  Atom(68,A("class"))  Atom(32,A("="))  Synt(115,EXPR_ID)
+134) TYPE_PARAMETER::build_template_def_name -> TYPE_PARAMETER
+  Atom(98,A("template"))  Atom(28,A("<"))  Synt(24,TEMPLATE_PARAMETER_LIST)  Atom(34,A(">"))  Atom(68,A("class"))  Atom(47,A("Name"))  Atom(32,A("="))  Synt(115,EXPR_ID)
+135) DECL_EXPLICIT_INST::build -> DECL_EXPLICIT_INST
+  Atom(98,A("template"))  Synt(1,DECL)
+136) DECL_EXPLICIT_INST::build_extern -> DECL_EXPLICIT_INST
+  Synt(29,ATTRIBUTES)  Atom(76,A("extern"))  Atom(98,A("template"))  Synt(1,DECL)
+137) DECL_EXPLICIT_SPEC::build -> DECL_EXPLICIT_SPEC
+  Atom(98,A("template"))  Atom(28,A("<"))  Atom(34,A(">"))  Synt(1,DECL)
+138) ATTRIBUTES::start -> ATTRIBUTES
+
+139) ATTRIBUTES::ext_COMMON -> ATTRIBUTES
+  Synt(29,ATTRIBUTES)  Synt(30,ATTR_COMMON)
+140) ATTRIBUTES::ext_ALIGN -> ATTRIBUTES
+  Synt(29,ATTRIBUTES)  Synt(35,ATTR_ALIGN)
+141) ATTR_COMMON::build -> ATTR_COMMON
+  Atom(57,A("["))  Atom(57,A("["))  Synt(31,ATTR_LIST)  Atom(58,A("]"))  Atom(58,A("]"))
+142) ATTR_LIST::start -> ATTR_LIST
+  Synt(32,ATTR_ITEM)
+143) ATTR_LIST::ext -> ATTR_LIST
+  Synt(31,ATTR_LIST)  Atom(15,A(","))  Synt(32,ATTR_ITEM)
+144) ATTR_ITEM::build_empty -> ATTR_ITEM
+
+145) ATTR_ITEM::build -> ATTR_ITEM
+  Synt(33,ATTR)
+146) ATTR_ITEM::build_exp -> ATTR_ITEM
+  Synt(33,ATTR)  Atom(21,A("..."))
+147) ATTR::build_name -> ATTR
+  Atom(47,A("Name"))
+148) ATTR::build_name_body -> ATTR
+  Atom(47,A("Name"))  Atom(8,A("("))  Synt(34,ATTR_BODY)  Atom(9,A(")"))
+149) ATTR::build_scope_name -> ATTR
+  Atom(47,A("Name"))  Atom(26,A("::"))  Atom(47,A("Name"))
+150) ATTR::build_scope_name_body -> ATTR
+  Atom(47,A("Name"))  Atom(26,A("::"))  Atom(47,A("Name"))  Atom(8,A("("))  Synt(34,ATTR_BODY)  Atom(9,A(")"))
+151) ATTR_BODY::start -> ATTR_BODY
+
+152) ATTR_BODY::ext_atom -> ATTR_BODY
+  Synt(34,ATTR_BODY)  Synt(119,NBATOM)
+153) ATTR_BODY::ext_brackets -> ATTR_BODY
+  Synt(34,ATTR_BODY)  Atom(8,A("("))  Synt(34,ATTR_BODY)  Atom(9,A(")"))
+154) ATTR_BODY::ext_square_brackets -> ATTR_BODY
+  Synt(34,ATTR_BODY)  Atom(57,A("["))  Synt(34,ATTR_BODY)  Atom(58,A("]"))
+155) ATTR_BODY::ext_figure_brackets -> ATTR_BODY
+  Synt(34,ATTR_BODY)  Atom(110,A("{"))  Synt(34,ATTR_BODY)  Atom(114,A("}"))
+156) ATTR_ALIGN::build -> ATTR_ALIGN
+  Atom(61,A("alignas"))  Atom(8,A("("))  Synt(117,TYPE_ID_OR_EXPR_ASSIGN)  Atom(9,A(")"))
+157) ATTR_ALIGN::build_exp -> ATTR_ALIGN
+  Atom(61,A("alignas"))  Atom(8,A("("))  Synt(117,TYPE_ID_OR_EXPR_ASSIGN)  Atom(21,A("..."))  Atom(9,A(")"))
+158) ENUM_SPEC::build -> ENUM_SPEC
+  Synt(38,ENUM_HEAD)  Atom(110,A("{"))  Atom(114,A("}"))
+159) ENUM_SPEC::build_list -> ENUM_SPEC
+  Synt(38,ENUM_HEAD)  Atom(110,A("{"))  Synt(39,ENUM_LIST)  Atom(114,A("}"))
+160) ENUM_SPEC::build_list_comma -> ENUM_SPEC
+  Synt(38,ENUM_HEAD)  Atom(110,A("{"))  Synt(39,ENUM_LIST)  Atom(15,A(","))  Atom(114,A("}"))
+161) DECL_OPAQUE_ENUM::build -> DECL_OPAQUE_ENUM
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)  Atom(47,A("Name"))  Atom(27,A(";"))
+162) DECL_OPAQUE_ENUM::build_base -> DECL_OPAQUE_ENUM
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)  Atom(47,A("Name"))  Synt(41,ENUM_BASE)  Atom(27,A(";"))
+163) ENUM_HEAD::build -> ENUM_HEAD
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)
+164) ENUM_HEAD::build_name -> ENUM_HEAD
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)  Atom(47,A("Name"))
+165) ENUM_HEAD::build_base -> ENUM_HEAD
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)  Synt(41,ENUM_BASE)
+166) ENUM_HEAD::build_name_base -> ENUM_HEAD
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)  Atom(47,A("Name"))  Synt(41,ENUM_BASE)
+167) ENUM_HEAD::build_nested_name -> ENUM_HEAD
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)  Synt(61,NESTED_NAME_SPEC)  Atom(47,A("Name"))
+168) ENUM_HEAD::build_nested_name_base -> ENUM_HEAD
+  Synt(42,ENUM_KEY)  Synt(29,ATTRIBUTES)  Synt(61,NESTED_NAME_SPEC)  Atom(47,A("Name"))  Synt(41,ENUM_BASE)
+169) ENUM_LIST::start -> ENUM_LIST
+  Synt(40,ENUM_DEF)
+170) ENUM_LIST::ext -> ENUM_LIST
+  Synt(39,ENUM_LIST)  Atom(15,A(","))  Synt(40,ENUM_DEF)
+171) ENUM_DEF::build -> ENUM_DEF
+  Atom(47,A("Name"))
+172) ENUM_DEF::build_expr -> ENUM_DEF
+  Atom(47,A("Name"))  Atom(32,A("="))  Synt(113,EXPR_CONST)
+173) ENUM_BASE::build -> ENUM_BASE if( ( @1 == type(4) | @1 == no_type(0) ) )
+  Atom(25,A(":"))  Synt(22,TYPE_SPEC_LIST)
+174) ENUM_KEY::build_enum -> ENUM_KEY.enum
+  Atom(74,A("enum"))
+175) ENUM_KEY::build_enum_class -> ENUM_KEY.enum_class
+  Atom(74,A("enum"))  Atom(68,A("class"))
+176) ENUM_KEY::build_enum_struct -> ENUM_KEY.enum_class
+  Atom(74,A("enum"))  Atom(97,A("struct"))
+177) CLASS_SPEC::build_empty -> CLASS_SPEC
+  Synt(44,CLASS_HEAD)  Atom(110,A("{"))  Atom(114,A("}"))
+178) CLASS_SPEC::build -> CLASS_SPEC
+  Synt(44,CLASS_HEAD)  Atom(110,A("{"))  Synt(51,MEMBER_LIST)  Atom(114,A("}"))
+179) CLASS_HEAD::build_name -> CLASS_HEAD
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(45,CLASS_HEAD_NAME)
+180) CLASS_HEAD::build_name_base -> CLASS_HEAD
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(45,CLASS_HEAD_NAME)  Synt(46,CLASS_BASE_CLAUSE)
+181) CLASS_HEAD::build_name_virt -> CLASS_HEAD
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(45,CLASS_HEAD_NAME)  Synt(58,CLASS_VIRT_SPEC)
+182) CLASS_HEAD::build_name_virt_base -> CLASS_HEAD
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(45,CLASS_HEAD_NAME)  Synt(58,CLASS_VIRT_SPEC)  Synt(46,CLASS_BASE_CLAUSE)
+183) CLASS_HEAD::build_base -> CLASS_HEAD
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)  Synt(46,CLASS_BASE_CLAUSE)
+184) CLASS_HEAD::build -> CLASS_HEAD
+  Synt(57,CLASS_KEY)  Synt(29,ATTRIBUTES)
+185) CLASS_HEAD_NAME::build_name -> CLASS_HEAD_NAME
+  Atom(47,A("Name"))
+186) CLASS_HEAD_NAME::build_template_name -> CLASS_HEAD_NAME
+  Synt(64,SIMPLE_TEMPLATE_ID)
+187) CLASS_HEAD_NAME::build_nested_name -> CLASS_HEAD_NAME
+  Synt(61,NESTED_NAME_SPEC)  Atom(47,A("Name"))
+188) CLASS_HEAD_NAME::build_nested_template_name -> CLASS_HEAD_NAME
+  Synt(61,NESTED_NAME_SPEC)  Synt(64,SIMPLE_TEMPLATE_ID)
+189) CLASS_BASE_CLAUSE::build -> CLASS_BASE_CLAUSE
+  Atom(25,A(":"))  Synt(47,BASE_SPEC_LIST)
+190) BASE_SPEC_LIST::start -> BASE_SPEC_LIST
+  Synt(48,BASE_SPEC_EXP)
+191) BASE_SPEC_LIST::ext -> BASE_SPEC_LIST
+  Synt(47,BASE_SPEC_LIST)  Atom(15,A(","))  Synt(48,BASE_SPEC_EXP)
+192) BASE_SPEC_EXP::build -> BASE_SPEC_EXP
+  Synt(49,BASE_SPEC)
+193) BASE_SPEC_EXP::build_exp -> BASE_SPEC_EXP
+  Synt(49,BASE_SPEC)  Atom(21,A("..."))
+194) BASE_SPEC::build -> BASE_SPEC
+  Synt(29,ATTRIBUTES)  Synt(50,BASE_TYPE_SPEC)
+195) BASE_SPEC::build_virtual -> BASE_SPEC
+  Synt(29,ATTRIBUTES)  Atom(106,A("virtual"))  Synt(50,BASE_TYPE_SPEC)
+196) BASE_SPEC::build_virtual_access -> BASE_SPEC
+  Synt(29,ATTRIBUTES)  Atom(106,A("virtual"))  Synt(56,ACCESS_SPEC)  Synt(50,BASE_TYPE_SPEC)
+197) BASE_SPEC::build_access -> BASE_SPEC
+  Synt(29,ATTRIBUTES)  Synt(56,ACCESS_SPEC)  Synt(50,BASE_TYPE_SPEC)
+198) BASE_SPEC::build_access_virtual -> BASE_SPEC
+  Synt(29,ATTRIBUTES)  Synt(56,ACCESS_SPEC)  Atom(106,A("virtual"))  Synt(50,BASE_TYPE_SPEC)
+199) BASE_TYPE_SPEC::build_name -> BASE_TYPE_SPEC
+  Atom(47,A("Name"))
+200) BASE_TYPE_SPEC::build_template_name -> BASE_TYPE_SPEC
+  Synt(64,SIMPLE_TEMPLATE_ID)
+201) BASE_TYPE_SPEC::build_nested_name -> BASE_TYPE_SPEC
+  Synt(61,NESTED_NAME_SPEC)  Atom(47,A("Name"))
+202) BASE_TYPE_SPEC::build_nested_template_name -> BASE_TYPE_SPEC
+  Synt(61,NESTED_NAME_SPEC)  Synt(64,SIMPLE_TEMPLATE_ID)
+203) BASE_TYPE_SPEC::build_decltype -> BASE_TYPE_SPEC
+  Synt(63,DECLTYPE)
+204) MEMBER_LIST::start -> MEMBER_LIST
+  Synt(52,ACCESS_OR_MEMBER)
+205) MEMBER_LIST::ext -> MEMBER_LIST
+  Synt(51,MEMBER_LIST)  Synt(52,ACCESS_OR_MEMBER)
+206) ACCESS_OR_MEMBER::cast@ACCESS_SPEC -> ACCESS_OR_MEMBER
+  Synt(56,ACCESS_SPEC)  Atom(25,A(":"))
+207) ACCESS_OR_MEMBER::cast@MEMBER -> ACCESS_OR_MEMBER
+  Synt(53,MEMBER)
+208) MEMBER::build_spec -> MEMBER if( @1 != elenum(3) )
+  Synt(29,ATTRIBUTES)  Synt(10,DECL_SPEC_LIST)  Atom(27,A(";"))
+209) MEMBER::build_decl -> MEMBER
+  Synt(29,ATTRIBUTES)  Synt(54,MEMBER_DECLARATOR_LIST)  Atom(27,A(";"))
+210) MEMBER::build_spec_decl -> MEMBER
+  Synt(29,ATTRIBUTES)  Synt(10,DECL_SPEC_LIST)  Synt(54,MEMBER_DECLARATOR_LIST)  Atom(27,A(";"))
+211) MEMBER::cast@FUNCTION_DEFINITION -> MEMBER
+  Synt(111,DECL_FUNCTION_DEFINITION)
+212) MEMBER::cast@FUNCTION_DEFINITION@comma -> MEMBER
+  Synt(111,DECL_FUNCTION_DEFINITION)  Atom(27,A(";"))
+213) MEMBER::cast@USING -> MEMBER
+  Synt(6,DECL_USING)
+214) MEMBER::cast@STATIC_ASSERT -> MEMBER
+  Synt(4,DECL_STATIC_ASSERT)
+215) MEMBER::cast@ALIAS -> MEMBER
+  Synt(8,DECL_ALIAS)
+216) MEMBER::cast@TEMPLATE -> MEMBER
+  Synt(23,DECL_TEMPLATE)
+217) MEMBER_DECLARATOR_LIST::start -> MEMBER_DECLARATOR_LIST
+  Synt(55,MEMBER_DECLARATOR)
+218) MEMBER_DECLARATOR_LIST::ext -> MEMBER_DECLARATOR_LIST
+  Synt(54,MEMBER_DECLARATOR_LIST)  Atom(15,A(","))  Synt(55,MEMBER_DECLARATOR)
+219) MEMBER_DECLARATOR::build -> MEMBER_DECLARATOR
+  Synt(79,DECLARATOR)  Synt(101,VIRT_SPEC_LIST)  Synt(59,PURE_SPEC)
+220) MEMBER_DECLARATOR::build_init -> MEMBER_DECLARATOR
+  Synt(79,DECLARATOR)  Atom(42,A("@5"))  Synt(104,BRACE_OR_EQUAL_INIT)
+221) MEMBER_DECLARATOR::build_bitfield_name -> MEMBER_DECLARATOR
+  Atom(43,A("@6"))  Atom(47,A("Name"))  Synt(29,ATTRIBUTES)  Atom(25,A(":"))  Synt(113,EXPR_CONST)
+222) MEMBER_DECLARATOR::build_bitfield -> MEMBER_DECLARATOR
+  Atom(43,A("@6"))  Synt(29,ATTRIBUTES)  Atom(25,A(":"))  Synt(113,EXPR_CONST)
+223) ACCESS_SPEC::build_private -> ACCESS_SPEC
+  Atom(89,A("private"))
+224) ACCESS_SPEC::build_protected -> ACCESS_SPEC
+  Atom(90,A("protected"))
+225) ACCESS_SPEC::build_public -> ACCESS_SPEC
+  Atom(91,A("public"))
+226) CLASS_KEY::build_class -> CLASS_KEY
+  Atom(68,A("class"))
+227) CLASS_KEY::build_struct -> CLASS_KEY
+  Atom(97,A("struct"))
+228) CLASS_KEY::build_union -> CLASS_KEY
+  Atom(103,A("union"))
+229) CLASS_VIRT_SPEC::build -> CLASS_VIRT_SPEC
+  Atom(77,A("final"))
+230) PURE_SPEC::build_empty -> PURE_SPEC
+
+231) PURE_SPEC::build_pure -> PURE_SPEC
+  Atom(32,A("="))  Atom(24,A("0"))
+232) NAME::build -> NAME
+  Atom(47,A("Name"))
+233) NAME::build_nested -> NAME
+  Synt(61,NESTED_NAME_SPEC)  Atom(47,A("Name"))
+234) NESTED_NAME_SPEC::start -> NESTED_NAME_SPEC
+  Synt(62,TYPE_NAME)  Atom(26,A("::"))
+235) NESTED_NAME_SPEC::start_decltype -> NESTED_NAME_SPEC
+  Synt(63,DECLTYPE)  Atom(26,A("::"))
+236) NESTED_NAME_SPEC::start_abs -> NESTED_NAME_SPEC
+  Atom(26,A("::"))  Synt(62,TYPE_NAME)  Atom(26,A("::"))
+237) NESTED_NAME_SPEC::ext -> NESTED_NAME_SPEC
+  Synt(61,NESTED_NAME_SPEC)  Atom(47,A("Name"))  Atom(26,A("::"))
+238) NESTED_NAME_SPEC::ext_template -> NESTED_NAME_SPEC
+  Synt(61,NESTED_NAME_SPEC)  Synt(64,SIMPLE_TEMPLATE_ID)  Atom(26,A("::"))
+239) NESTED_NAME_SPEC::ext_template_template -> NESTED_NAME_SPEC
+  Synt(61,NESTED_NAME_SPEC)  Atom(98,A("template"))  Synt(64,SIMPLE_TEMPLATE_ID)  Atom(26,A("::"))
+240) TYPE_NAME::build -> TYPE_NAME
+  Atom(47,A("Name"))
+241) TYPE_NAME::build_template -> TYPE_NAME
+  Synt(64,SIMPLE_TEMPLATE_ID)
+242) DECLTYPE::build -> DECLTYPE
+  Atom(71,A("decltype"))  Atom(8,A("("))  Synt(116,EXPR)  Atom(9,A(")"))
+243) SIMPLE_TEMPLATE_ID::build -> SIMPLE_TEMPLATE_ID
+  Atom(47,A("Name"))  Atom(28,A("<"))  Synt(66,TEMPLATE_ARG_LIST)  Atom(34,A(">"))
+244) TEMPLATE_ID::cast -> TEMPLATE_ID
+  Synt(64,SIMPLE_TEMPLATE_ID)
+245) TEMPLATE_ID::build_operator -> TEMPLATE_ID
+  Synt(72,OPERATOR_ID)  Atom(28,A("<"))  Synt(66,TEMPLATE_ARG_LIST)  Atom(34,A(">"))
+246) TEMPLATE_ID::build_literal -> TEMPLATE_ID
+  Synt(75,LITERAL_ID)  Atom(28,A("<"))  Synt(66,TEMPLATE_ARG_LIST)  Atom(34,A(">"))
+247) TEMPLATE_ARG_LIST::empty -> TEMPLATE_ARG_LIST
+
+248) TEMPLATE_ARG_LIST::cast -> TEMPLATE_ARG_LIST
+  Synt(67,TEMPLATE_ARG_LIST1)
+249) TEMPLATE_ARG_LIST1::start -> TEMPLATE_ARG_LIST1
+  Synt(68,TEMPLATE_ARG_ITEM)
+250) TEMPLATE_ARG_LIST1::ext -> TEMPLATE_ARG_LIST1
+  Synt(66,TEMPLATE_ARG_LIST)  Atom(15,A(","))  Synt(68,TEMPLATE_ARG_ITEM)
+251) TEMPLATE_ARG_ITEM::build -> TEMPLATE_ARG_ITEM
+  Synt(69,TEMPLATE_ARG)
+252) TEMPLATE_ARG_ITEM::build_exp -> TEMPLATE_ARG_ITEM
+  Synt(69,TEMPLATE_ARG)  Atom(21,A("..."))
+253) TEMPLATE_ARG::build -> TEMPLATE_ARG
+  Synt(118,TYPE_ID_OR_EXPR_CONST_OR_EXPR_ID)
+254) QUALIFIED_ID::build_nested@non_operator -> QUALIFIED_ID.non_operator if( @1 == non_operator(0) )
+  Synt(61,NESTED_NAME_SPEC)  Synt(71,UNQUALIFIED_ID)
+255) QUALIFIED_ID::build_nested@operator -> QUALIFIED_ID.operator if( @1 == operator(1) )
+  Synt(61,NESTED_NAME_SPEC)  Synt(71,UNQUALIFIED_ID)
+256) QUALIFIED_ID::build_nested_template@non_operator -> QUALIFIED_ID.non_operator if( @2 == non_operator(0) )
+  Synt(61,NESTED_NAME_SPEC)  Atom(98,A("template"))  Synt(71,UNQUALIFIED_ID)
+257) QUALIFIED_ID::build_nested_template@operator -> QUALIFIED_ID.operator if( @2 == operator(1) )
+  Synt(61,NESTED_NAME_SPEC)  Atom(98,A("template"))  Synt(71,UNQUALIFIED_ID)
+258) QUALIFIED_ID::build_name -> QUALIFIED_ID.non_operator
+  Atom(26,A("::"))  Atom(47,A("Name"))
+259) QUALIFIED_ID::build_operator -> QUALIFIED_ID.operator
+  Atom(26,A("::"))  Synt(72,OPERATOR_ID)
+260) QUALIFIED_ID::build_literal -> QUALIFIED_ID.operator
+  Atom(26,A("::"))  Synt(75,LITERAL_ID)
+261) QUALIFIED_ID::build_template -> QUALIFIED_ID.non_operator
+  Atom(26,A("::"))  Synt(65,TEMPLATE_ID)
+262) UNQUALIFIED_ID::build_name -> UNQUALIFIED_ID.non_operator
+  Atom(47,A("Name"))
+263) UNQUALIFIED_ID::build_operator -> UNQUALIFIED_ID.operator
+  Synt(72,OPERATOR_ID)
+264) UNQUALIFIED_ID::build_conversion -> UNQUALIFIED_ID.operator
+  Synt(74,CONVERSION_ID)
+265) UNQUALIFIED_ID::build_literal -> UNQUALIFIED_ID.operator
+  Synt(75,LITERAL_ID)
+266) UNQUALIFIED_ID::build_template -> UNQUALIFIED_ID.non_operator
+  Synt(65,TEMPLATE_ID)
+267) UNQUALIFIED_ID::build_dtor -> UNQUALIFIED_ID.non_operator
+  Atom(115,A("~"))  Synt(62,TYPE_NAME)
+268) UNQUALIFIED_ID::build_dtor_decltype -> UNQUALIFIED_ID.non_operator
+  Atom(115,A("~"))  Synt(63,DECLTYPE)
+269) OPERATOR_ID::build -> OPERATOR_ID
+  Atom(87,A("operator"))  Synt(73,OPID)
+270) OPID::build_new -> OPID
+  Atom(85,A("new"))
+271) OPID::build_delete -> OPID
+  Atom(72,A("delete"))
+272) OPID::build_array_new -> OPID
+  Atom(85,A("new"))  Atom(57,A("["))  Atom(58,A("]"))
+273) OPID::build_array_delete -> OPID
+  Atom(72,A("delete"))  Atom(57,A("["))  Atom(58,A("]"))
+274) OPID::build_plus -> OPID
+  Atom(12,A("+"))
+275) OPID::build_minus -> OPID
+  Atom(16,A("-"))
+276) OPID::build_mul -> OPID
+  Atom(10,A("*"))
+277) OPID::build_div -> OPID
+  Atom(22,A("/"))
+278) OPID::build_rem -> OPID
+  Atom(3,A("%"))
+279) OPID::build_bitxor -> OPID
+  Atom(59,A("^"))
+280) OPID::build_bitand -> OPID
+  Atom(5,A("&"))
+281) OPID::build_bitor -> OPID
+  Atom(111,A("|"))
+282) OPID::build_bitnot -> OPID
+  Atom(115,A("~"))
+283) OPID::build_not -> OPID
+  Atom(0,A("!"))
+284) OPID::build_set -> OPID
+  Atom(32,A("="))
+285) OPID::build_LT -> OPID
+  Atom(28,A("<"))
+286) OPID::build_GT -> OPID
+  Atom(34,A(">"))
+287) OPID::build_plus_set -> OPID
+  Atom(14,A("+="))
+288) OPID::build_minus_set -> OPID
+  Atom(18,A("-="))
+289) OPID::build_mul_set -> OPID
+  Atom(11,A("*="))
+290) OPID::build_div_set -> OPID
+  Atom(23,A("/="))
+291) OPID::build_rem_set -> OPID
+  Atom(4,A("%="))
+292) OPID::build_bitxor_set -> OPID
+  Atom(60,A("^="))
+293) OPID::build_bitand_set -> OPID
+  Atom(7,A("&="))
+294) OPID::build_bitor_set -> OPID
+  Atom(112,A("|="))
+295) OPID::build_lshift -> OPID
+  Atom(29,A("<<"))
+296) OPID::build_lshift_set -> OPID
+  Atom(30,A("<<="))
+297) OPID::build_rshift -> OPID
+  Atom(36,A(">>"))
+298) OPID::build_rshift_set -> OPID
+  Atom(37,A(">>="))
+299) OPID::build_EQ -> OPID
+  Atom(33,A("=="))
+300) OPID::build_NE -> OPID
+  Atom(1,A("!="))
+301) OPID::build_LE -> OPID
+  Atom(31,A("<="))
+302) OPID::build_GE -> OPID
+  Atom(35,A(">="))
+303) OPID::build_and -> OPID
+  Atom(6,A("&&"))
+304) OPID::build_or -> OPID
+  Atom(113,A("||"))
+305) OPID::build_inc -> OPID
+  Atom(13,A("++"))
+306) OPID::build_dec -> OPID
+  Atom(17,A("--"))
+307) OPID::build_combine -> OPID
+  Atom(15,A(","))
+308) OPID::build_member_ptr -> OPID
+  Atom(20,A("->*"))
+309) OPID::build_member -> OPID
+  Atom(19,A("->"))
+310) OPID::build_call -> OPID
+  Atom(8,A("("))  Atom(9,A(")"))
+311) OPID::build_index -> OPID
+  Atom(57,A("["))  Atom(58,A("]"))
+312) CONVERSION_ID::build -> CONVERSION_ID
+  Atom(87,A("operator"))  Synt(110,CONVERSION_TYPE_ID)
+313) LITERAL_ID::build -> LITERAL_ID
+  Atom(87,A("operator"))  Atom(2,A("\"\""))  Atom(47,A("Name"))
+314) TYPENAME_SPEC::build_name -> TYPENAME_SPEC
+  Atom(102,A("typename"))  Synt(61,NESTED_NAME_SPEC)  Atom(47,A("Name"))
+315) TYPENAME_SPEC::build_template -> TYPENAME_SPEC
+  Atom(102,A("typename"))  Synt(61,NESTED_NAME_SPEC)  Synt(64,SIMPLE_TEMPLATE_ID)
+316) TYPENAME_SPEC::build_template_template -> TYPENAME_SPEC
+  Atom(102,A("typename"))  Synt(61,NESTED_NAME_SPEC)  Atom(98,A("template"))  Synt(64,SIMPLE_TEMPLATE_ID)
+317) INIT_DECLARATOR_LIST::start -> INIT_DECLARATOR_LIST
+  Synt(78,INIT_DECLARATOR)
+318) INIT_DECLARATOR_LIST::ext -> INIT_DECLARATOR_LIST
+  Synt(77,INIT_DECLARATOR_LIST)  Atom(15,A(","))  Synt(78,INIT_DECLARATOR)
+319) INIT_DECLARATOR::build -> INIT_DECLARATOR
+  Synt(79,DECLARATOR)
+320) INIT_DECLARATOR::build_init -> INIT_DECLARATOR
+  Synt(79,DECLARATOR)  Synt(103,INIT)
+321) DECLARATOR::cast -> DECLARATOR
+  Atom(39,A("@2"))  Synt(80,PTR_DECLARATOR)
+322) DECLARATOR::build -> DECLARATOR
+  Atom(39,A("@2"))  Synt(83,NOPTR_DECLARATOR)  Synt(85,PARAMETERS_AND_QUALIFIERS)  Synt(91,TRAILING_RETURN_TYPE)
+323) PTR_DECLARATOR::start@non_operator -> PTR_DECLARATOR.non_operator if( @0 == non_operator(0) )
+  Synt(83,NOPTR_DECLARATOR)
+324) PTR_DECLARATOR::start@operator -> PTR_DECLARATOR.operator if( @0 == operator(1) )
+  Synt(83,NOPTR_DECLARATOR)
+325) PTR_DECLARATOR::start@func -> PTR_DECLARATOR.func if( @0 == func(2) )
+  Synt(83,NOPTR_DECLARATOR)
+326) PTR_DECLARATOR::ext -> PTR_DECLARATOR.ptr
+  Synt(81,PTR_OP)  Synt(80,PTR_DECLARATOR)
+327) PTR_OP::build_ptr -> PTR_OP
+  Atom(10,A("*"))  Synt(29,ATTRIBUTES)  Synt(82,CV_QUALIFIER)
+328) PTR_OP::build_ref -> PTR_OP
+  Atom(5,A("&"))  Synt(29,ATTRIBUTES)
+329) PTR_OP::build_rref -> PTR_OP
+  Atom(6,A("&&"))  Synt(29,ATTRIBUTES)
+330) PTR_OP::build_nested -> PTR_OP
+  Synt(61,NESTED_NAME_SPEC)  Atom(10,A("*"))  Synt(29,ATTRIBUTES)  Synt(82,CV_QUALIFIER)
+331) CV_QUALIFIER::start -> CV_QUALIFIER
+
+332) CV_QUALIFIER::ext_const -> CV_QUALIFIER
+  Synt(82,CV_QUALIFIER)  Atom(69,A("const"))
+333) CV_QUALIFIER::ext_volatile -> CV_QUALIFIER
+  Synt(82,CV_QUALIFIER)  Atom(108,A("volatile"))
+334) NOPTR_DECLARATOR::build@non_operator -> NOPTR_DECLARATOR.non_operator if( @0 == non_operator(0) )
+  Synt(84,DECLARATOR_ID)  Atom(40,A("@3"))  Synt(29,ATTRIBUTES)
+335) NOPTR_DECLARATOR::build@operator -> NOPTR_DECLARATOR.operator if( @0 == operator(1) )
+  Synt(84,DECLARATOR_ID)  Atom(40,A("@3"))  Synt(29,ATTRIBUTES)
+336) NOPTR_DECLARATOR::build_func -> NOPTR_DECLARATOR.func if( @0 != func(2) )
+  Synt(83,NOPTR_DECLARATOR)  Synt(85,PARAMETERS_AND_QUALIFIERS)
+337) NOPTR_DECLARATOR::build_array -> NOPTR_DECLARATOR.non_operator if( @0 != operator(1) )
+  Synt(83,NOPTR_DECLARATOR)  Atom(41,A("@4"))  Atom(57,A("["))  Atom(58,A("]"))  Synt(29,ATTRIBUTES)
+338) NOPTR_DECLARATOR::build_array_len -> NOPTR_DECLARATOR.non_operator if( @0 != operator(1) )
+  Synt(83,NOPTR_DECLARATOR)  Atom(41,A("@4"))  Atom(57,A("["))  Synt(113,EXPR_CONST)  Atom(58,A("]"))  Synt(29,ATTRIBUTES)
+339) NOPTR_DECLARATOR::cast@non_operator -> NOPTR_DECLARATOR.non_operator if( ( @1 == non_operator(0) | @1 == ptr(3) ) )
+  Atom(8,A("("))  Synt(80,PTR_DECLARATOR)  Atom(9,A(")"))
+340) NOPTR_DECLARATOR::cast@operator -> NOPTR_DECLARATOR.operator if( @1 == operator(1) )
+  Atom(8,A("("))  Synt(80,PTR_DECLARATOR)  Atom(9,A(")"))
+341) NOPTR_DECLARATOR::cast@func -> NOPTR_DECLARATOR.func if( @1 == func(2) )
+  Atom(8,A("("))  Synt(80,PTR_DECLARATOR)  Atom(9,A(")"))
+342) DECLARATOR_ID::build@non_operator -> DECLARATOR_ID.non_operator if( @0 == non_operator(0) )
+  Synt(115,EXPR_ID)
+343) DECLARATOR_ID::build@operator -> DECLARATOR_ID.operator if( @0 == operator(1) )
+  Synt(115,EXPR_ID)
+344) DECLARATOR_ID::build_exp@non_operator -> DECLARATOR_ID.non_operator if( @1 == non_operator(0) )
+  Atom(21,A("..."))  Synt(115,EXPR_ID)
+345) DECLARATOR_ID::build_exp@operator -> DECLARATOR_ID.operator if( @1 == operator(1) )
+  Atom(21,A("..."))  Synt(115,EXPR_ID)
+346) PARAMETERS_AND_QUALIFIERS::func -> PARAMETERS_AND_QUALIFIERS
+  Atom(8,A("("))  Synt(87,PARAMETER_DECL_CLAUSE)  Atom(9,A(")"))  Synt(82,CV_QUALIFIER)  Synt(86,REF_QUALIFIER)  Synt(98,EXCEPTION_SPEC)  Synt(29,ATTRIBUTES)
+347) REF_QUALIFIER::empty -> REF_QUALIFIER
+
+348) REF_QUALIFIER::build_ref -> REF_QUALIFIER
+  Atom(5,A("&"))
+349) REF_QUALIFIER::build_rref -> REF_QUALIFIER
+  Atom(6,A("&&"))
+350) PARAMETER_DECL_CLAUSE::empty -> PARAMETER_DECL_CLAUSE
+
+351) PARAMETER_DECL_CLAUSE::build -> PARAMETER_DECL_CLAUSE
+  Synt(88,PARAMETER_DECL_LIST)
+352) PARAMETER_DECL_CLAUSE::build_exp -> PARAMETER_DECL_CLAUSE
+  Synt(88,PARAMETER_DECL_LIST)  Atom(21,A("..."))
+353) PARAMETER_DECL_CLAUSE::vargs -> PARAMETER_DECL_CLAUSE
+  Atom(21,A("..."))
+354) PARAMETER_DECL_CLAUSE::build_vargs -> PARAMETER_DECL_CLAUSE
+  Synt(88,PARAMETER_DECL_LIST)  Atom(15,A(","))  Atom(21,A("..."))
+355) PARAMETER_DECL_LIST::start -> PARAMETER_DECL_LIST
+  Synt(89,PARAMETER_DECL)
+356) PARAMETER_DECL_LIST::ext -> PARAMETER_DECL_LIST
+  Synt(88,PARAMETER_DECL_LIST)  Atom(15,A(","))  Synt(89,PARAMETER_DECL)
+357) PARAMETER_DECL::build -> PARAMETER_DECL.no_class if( @1 != class(1) )
+  Synt(29,ATTRIBUTES)  Synt(10,DECL_SPEC_LIST)  Synt(90,PARAMETER_DECL_TAIL)
+358) PARAMETER_DECL::build_class -> PARAMETER_DECL.class if( @1 == class(1) )
+  Synt(29,ATTRIBUTES)  Synt(10,DECL_SPEC_LIST)  Synt(90,PARAMETER_DECL_TAIL)
+359) PARAMETER_DECL_TAIL::build -> PARAMETER_DECL_TAIL
+
+360) PARAMETER_DECL_TAIL::build_decl -> PARAMETER_DECL_TAIL
+  Synt(79,DECLARATOR)
+361) PARAMETER_DECL_TAIL::build_abstract -> PARAMETER_DECL_TAIL
+  Synt(93,ABSTRACT_DECLARATOR)
+362) PARAMETER_DECL_TAIL::build_init -> PARAMETER_DECL_TAIL
+  Atom(32,A("="))  Synt(107,INIT_CLAUSE)
+363) PARAMETER_DECL_TAIL::build_decl_init -> PARAMETER_DECL_TAIL
+  Synt(79,DECLARATOR)  Atom(32,A("="))  Synt(107,INIT_CLAUSE)
+364) PARAMETER_DECL_TAIL::build_abstract_init -> PARAMETER_DECL_TAIL
+  Synt(93,ABSTRACT_DECLARATOR)  Atom(32,A("="))  Synt(107,INIT_CLAUSE)
+365) TRAILING_RETURN_TYPE::build -> TRAILING_RETURN_TYPE
+  Atom(19,A("->"))  Synt(92,TRAILING_TYPE_SPEC_LIST)
+366) TRAILING_RETURN_TYPE::build_decl -> TRAILING_RETURN_TYPE
+  Atom(19,A("->"))  Synt(92,TRAILING_TYPE_SPEC_LIST)  Synt(93,ABSTRACT_DECLARATOR)
+367) TRAILING_TYPE_SPEC_LIST::start@no_type -> TRAILING_TYPE_SPEC_LIST.no_type if( @0 == no_type(0) )
+  Synt(15,TRAILING_TYPE_SPEC)  Synt(29,ATTRIBUTES)
+368) TRAILING_TYPE_SPEC_LIST::start@type -> TRAILING_TYPE_SPEC_LIST.type if( @0 != no_type(0) )
+  Synt(15,TRAILING_TYPE_SPEC)  Synt(29,ATTRIBUTES)
+369) TRAILING_TYPE_SPEC_LIST::ext@no_type -> TRAILING_TYPE_SPEC_LIST.no_type if( ( @0 == no_type(0) & @1 == no_type(0) ) )
+  Synt(15,TRAILING_TYPE_SPEC)  Synt(92,TRAILING_TYPE_SPEC_LIST)
+370) TRAILING_TYPE_SPEC_LIST::ext@type -> TRAILING_TYPE_SPEC_LIST.type if( ( ( @0 == no_type(0) & @1 != no_type(0) ) | ( @0 != no_type(0) & @1 == no_type(0) ) ) )
+  Synt(15,TRAILING_TYPE_SPEC)  Synt(92,TRAILING_TYPE_SPEC_LIST)
+371) ABSTRACT_DECLARATOR::build -> ABSTRACT_DECLARATOR
+  Atom(45,A("@8"))  Synt(94,PTR_ABSTRACT_DECLARATOR)
+372) ABSTRACT_DECLARATOR::build_func_decl -> ABSTRACT_DECLARATOR
+  Atom(45,A("@8"))  Synt(95,NOPTR_ABSTRACT_DECLARATOR)  Synt(85,PARAMETERS_AND_QUALIFIERS)  Synt(91,TRAILING_RETURN_TYPE)
+373) ABSTRACT_DECLARATOR::build_func -> ABSTRACT_DECLARATOR
+  Atom(45,A("@8"))  Synt(85,PARAMETERS_AND_QUALIFIERS)  Synt(91,TRAILING_RETURN_TYPE)
+374) ABSTRACT_DECLARATOR::cast -> ABSTRACT_DECLARATOR
+  Atom(45,A("@8"))  Synt(96,ABSTRACT_PACK_DECLARATOR)
+375) PTR_ABSTRACT_DECLARATOR::cast -> PTR_ABSTRACT_DECLARATOR
+  Synt(95,NOPTR_ABSTRACT_DECLARATOR)
+376) PTR_ABSTRACT_DECLARATOR::start -> PTR_ABSTRACT_DECLARATOR
+  Synt(81,PTR_OP)
+377) PTR_ABSTRACT_DECLARATOR::ext -> PTR_ABSTRACT_DECLARATOR
+  Synt(81,PTR_OP)  Synt(94,PTR_ABSTRACT_DECLARATOR)
+378) NOPTR_ABSTRACT_DECLARATOR::build_func -> NOPTR_ABSTRACT_DECLARATOR
+  Synt(85,PARAMETERS_AND_QUALIFIERS)
+379) NOPTR_ABSTRACT_DECLARATOR::build_func_decl -> NOPTR_ABSTRACT_DECLARATOR
+  Synt(95,NOPTR_ABSTRACT_DECLARATOR)  Synt(85,PARAMETERS_AND_QUALIFIERS)
+380) NOPTR_ABSTRACT_DECLARATOR::build_array -> NOPTR_ABSTRACT_DECLARATOR
+  Atom(57,A("["))  Atom(58,A("]"))  Atom(46,A("@9"))  Synt(29,ATTRIBUTES)
+381) NOPTR_ABSTRACT_DECLARATOR::build_array_len -> NOPTR_ABSTRACT_DECLARATOR
+  Atom(57,A("["))  Synt(113,EXPR_CONST)  Atom(58,A("]"))  Atom(46,A("@9"))  Synt(29,ATTRIBUTES)
+382) NOPTR_ABSTRACT_DECLARATOR::build_array_decl -> NOPTR_ABSTRACT_DECLARATOR
+  Synt(95,NOPTR_ABSTRACT_DECLARATOR)  Atom(57,A("["))  Atom(58,A("]"))  Atom(46,A("@9"))  Synt(29,ATTRIBUTES)
+383) NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl -> NOPTR_ABSTRACT_DECLARATOR
+  Synt(95,NOPTR_ABSTRACT_DECLARATOR)  Atom(57,A("["))  Synt(113,EXPR_CONST)  Atom(58,A("]"))  Atom(46,A("@9"))  Synt(29,ATTRIBUTES)
+384) NOPTR_ABSTRACT_DECLARATOR::cast -> NOPTR_ABSTRACT_DECLARATOR
+  Atom(8,A("("))  Synt(94,PTR_ABSTRACT_DECLARATOR)  Atom(9,A(")"))
+385) ABSTRACT_PACK_DECLARATOR::start -> ABSTRACT_PACK_DECLARATOR
+  Synt(97,NOPTR_ABSTRACT_PACK_DECLARATOR)
+386) ABSTRACT_PACK_DECLARATOR::ext -> ABSTRACT_PACK_DECLARATOR
+  Synt(81,PTR_OP)  Synt(96,ABSTRACT_PACK_DECLARATOR)
+387) NOPTR_ABSTRACT_PACK_DECLARATOR::build_func -> NOPTR_ABSTRACT_PACK_DECLARATOR
+  Synt(97,NOPTR_ABSTRACT_PACK_DECLARATOR)  Synt(85,PARAMETERS_AND_QUALIFIERS)
+388) NOPTR_ABSTRACT_PACK_DECLARATOR::build_array -> NOPTR_ABSTRACT_PACK_DECLARATOR
+  Synt(97,NOPTR_ABSTRACT_PACK_DECLARATOR)  Atom(57,A("["))  Atom(58,A("]"))  Atom(46,A("@9"))  Synt(29,ATTRIBUTES)
+389) NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len -> NOPTR_ABSTRACT_PACK_DECLARATOR
+  Synt(97,NOPTR_ABSTRACT_PACK_DECLARATOR)  Atom(57,A("["))  Synt(113,EXPR_CONST)  Atom(58,A("]"))  Atom(46,A("@9"))  Synt(29,ATTRIBUTES)
+390) NOPTR_ABSTRACT_PACK_DECLARATOR::build_exp -> NOPTR_ABSTRACT_PACK_DECLARATOR
+  Atom(21,A("..."))
+391) EXCEPTION_SPEC::empty -> EXCEPTION_SPEC
+
+392) EXCEPTION_SPEC::build_throw -> EXCEPTION_SPEC
+  Atom(100,A("throw"))  Atom(8,A("("))  Atom(9,A(")"))  Atom(44,A("@7"))
+393) EXCEPTION_SPEC::build_throw_list -> EXCEPTION_SPEC
+  Atom(100,A("throw"))  Atom(8,A("("))  Synt(99,TYPE_ID_LIST)  Atom(9,A(")"))  Atom(44,A("@7"))
+394) EXCEPTION_SPEC::build_noexcept -> EXCEPTION_SPEC
+  Atom(86,A("noexcept"))  Atom(44,A("@7"))
+395) EXCEPTION_SPEC::build_noexcept_expr -> EXCEPTION_SPEC
+  Atom(86,A("noexcept"))  Atom(8,A("("))  Synt(113,EXPR_CONST)  Atom(9,A(")"))  Atom(44,A("@7"))
+396) TYPE_ID_LIST::start -> TYPE_ID_LIST
+  Synt(100,TYPE_ID_LIST_ITEM)
+397) TYPE_ID_LIST::ext -> TYPE_ID_LIST
+  Synt(99,TYPE_ID_LIST)  Atom(15,A(","))  Synt(100,TYPE_ID_LIST_ITEM)
+398) TYPE_ID_LIST_ITEM::build -> TYPE_ID_LIST_ITEM
+  Synt(109,TYPE_ID)
+399) TYPE_ID_LIST_ITEM::build_exp -> TYPE_ID_LIST_ITEM
+  Synt(109,TYPE_ID)  Atom(21,A("..."))
+400) VIRT_SPEC_LIST::start -> VIRT_SPEC_LIST
+
+401) VIRT_SPEC_LIST::ext -> VIRT_SPEC_LIST
+  Synt(101,VIRT_SPEC_LIST)  Synt(102,VIRT_SPEC)
+402) VIRT_SPEC::build_override -> VIRT_SPEC
+  Atom(88,A("override"))
+403) VIRT_SPEC::build_final -> VIRT_SPEC
+  Atom(77,A("final"))
+404) INIT::build -> INIT
+  Synt(104,BRACE_OR_EQUAL_INIT)
+405) INIT::build_list -> INIT
+  Atom(38,A("@1"))  Atom(8,A("("))  Synt(105,INIT_LIST)  Atom(9,A(")"))
+406) BRACE_OR_EQUAL_INIT::build -> BRACE_OR_EQUAL_INIT
+  Atom(32,A("="))  Synt(107,INIT_CLAUSE)
+407) BRACE_OR_EQUAL_INIT::build_list -> BRACE_OR_EQUAL_INIT
+  Synt(108,BRACED_INIT_LIST)
+408) INIT_LIST::start -> INIT_LIST
+  Synt(106,INIT_EXP)
+409) INIT_LIST::ext -> INIT_LIST
+  Synt(105,INIT_LIST)  Atom(15,A(","))  Synt(106,INIT_EXP)
+410) INIT_EXP::build -> INIT_EXP
+  Synt(107,INIT_CLAUSE)
+411) INIT_EXP::build_exp -> INIT_EXP
+  Synt(107,INIT_CLAUSE)  Atom(21,A("..."))
+412) INIT_CLAUSE::build -> INIT_CLAUSE
+  Synt(114,EXPR_ASSIGN)
+413) INIT_CLAUSE::build_list -> INIT_CLAUSE
+  Synt(108,BRACED_INIT_LIST)
+414) BRACED_INIT_LIST::build_empty -> BRACED_INIT_LIST
+  Atom(110,A("{"))  Atom(114,A("}"))
+415) BRACED_INIT_LIST::build -> BRACED_INIT_LIST
+  Atom(110,A("{"))  Synt(105,INIT_LIST)  Atom(114,A("}"))
+416) BRACED_INIT_LIST::build_comma -> BRACED_INIT_LIST
+  Atom(110,A("{"))  Synt(105,INIT_LIST)  Atom(15,A(","))  Atom(114,A("}"))
+417) TYPE_ID::build -> TYPE_ID
+  Atom(54,A("TODO_TYPE_ID"))
+418) CONVERSION_TYPE_ID::build -> CONVERSION_TYPE_ID
+  Atom(49,A("TODO_CONVERSION_TYPE_ID"))
+419) DECL_FUNCTION_DEFINITION::build -> DECL_FUNCTION_DEFINITION
+  Synt(29,ATTRIBUTES)  Synt(10,DECL_SPEC_LIST)  Synt(79,DECLARATOR)  Synt(101,VIRT_SPEC_LIST)  Synt(112,FUNCTION_BODY)
+420) DECL_FUNCTION_DEFINITION::build_nospec -> DECL_FUNCTION_DEFINITION
+  Synt(29,ATTRIBUTES)  Synt(79,DECLARATOR)  Synt(101,VIRT_SPEC_LIST)  Synt(112,FUNCTION_BODY)
+421) FUNCTION_BODY::build -> FUNCTION_BODY
+  Atom(53,A("TODO_FUNCTION_BODY"))
+422) EXPR_CONST::build -> EXPR_CONST
+  Atom(52,A("TODO_EXPR_CONST"))
+423) EXPR_ASSIGN::build -> EXPR_ASSIGN
+  Atom(51,A("TODO_EXPR_ASSIGN"))
+424) EXPR_ID::build_qualified@non_operator -> EXPR_ID.non_operator if( @0 == non_operator(0) )
+  Synt(70,QUALIFIED_ID)
+425) EXPR_ID::build_qualified@operator -> EXPR_ID.operator if( @0 == operator(1) )
+  Synt(70,QUALIFIED_ID)
+426) EXPR_ID::build_unqualified@non_operator -> EXPR_ID.non_operator if( @0 == non_operator(0) )
+  Synt(71,UNQUALIFIED_ID)
+427) EXPR_ID::build_unqualified@operator -> EXPR_ID.operator if( @0 == operator(1) )
+  Synt(71,UNQUALIFIED_ID)
+428) EXPR::build -> EXPR
+  Atom(50,A("TODO_EXPR"))
+429) TYPE_ID_OR_EXPR_ASSIGN::build -> TYPE_ID_OR_EXPR_ASSIGN
+  Atom(55,A("TODO_TYPE_ID_OR_EXPR_ASSIGN"))
+430) TYPE_ID_OR_EXPR_CONST_OR_EXPR_ID::build -> TYPE_ID_OR_EXPR_CONST_OR_EXPR_ID
+  Atom(56,A("TODO_TYPE_ID_OR_EXPR_CONST"))
+431) NBATOM::build@A0 -> NBATOM
+  Atom(0,A("!"))
+432) NBATOM::build@A1 -> NBATOM
+  Atom(1,A("!="))
+433) NBATOM::build@A2 -> NBATOM
+  Atom(2,A("\"\""))
+434) NBATOM::build@A3 -> NBATOM
+  Atom(3,A("%"))
+435) NBATOM::build@A4 -> NBATOM
+  Atom(4,A("%="))
+436) NBATOM::build@A5 -> NBATOM
+  Atom(5,A("&"))
+437) NBATOM::build@A6 -> NBATOM
+  Atom(6,A("&&"))
+438) NBATOM::build@A7 -> NBATOM
+  Atom(7,A("&="))
+439) NBATOM::build@A10 -> NBATOM
+  Atom(10,A("*"))
+440) NBATOM::build@A11 -> NBATOM
+  Atom(11,A("*="))
+441) NBATOM::build@A12 -> NBATOM
+  Atom(12,A("+"))
+442) NBATOM::build@A13 -> NBATOM
+  Atom(13,A("++"))
+443) NBATOM::build@A14 -> NBATOM
+  Atom(14,A("+="))
+444) NBATOM::build@A15 -> NBATOM
+  Atom(15,A(","))
+445) NBATOM::build@A16 -> NBATOM
+  Atom(16,A("-"))
+446) NBATOM::build@A17 -> NBATOM
+  Atom(17,A("--"))
+447) NBATOM::build@A18 -> NBATOM
+  Atom(18,A("-="))
+448) NBATOM::build@A19 -> NBATOM
+  Atom(19,A("->"))
+449) NBATOM::build@A20 -> NBATOM
+  Atom(20,A("->*"))
+450) NBATOM::build@A21 -> NBATOM
+  Atom(21,A("..."))
+451) NBATOM::build@A22 -> NBATOM
+  Atom(22,A("/"))
+452) NBATOM::build@A23 -> NBATOM
+  Atom(23,A("/="))
+453) NBATOM::build@A24 -> NBATOM
+  Atom(24,A("0"))
+454) NBATOM::build@A25 -> NBATOM
+  Atom(25,A(":"))
+455) NBATOM::build@A26 -> NBATOM
+  Atom(26,A("::"))
+456) NBATOM::build@A27 -> NBATOM
+  Atom(27,A(";"))
+457) NBATOM::build@A28 -> NBATOM
+  Atom(28,A("<"))
+458) NBATOM::build@A29 -> NBATOM
+  Atom(29,A("<<"))
+459) NBATOM::build@A30 -> NBATOM
+  Atom(30,A("<<="))
+460) NBATOM::build@A31 -> NBATOM
+  Atom(31,A("<="))
+461) NBATOM::build@A32 -> NBATOM
+  Atom(32,A("="))
+462) NBATOM::build@A33 -> NBATOM
+  Atom(33,A("=="))
+463) NBATOM::build@A34 -> NBATOM
+  Atom(34,A(">"))
+464) NBATOM::build@A35 -> NBATOM
+  Atom(35,A(">="))
+465) NBATOM::build@A36 -> NBATOM
+  Atom(36,A(">>"))
+466) NBATOM::build@A37 -> NBATOM
+  Atom(37,A(">>="))
+467) NBATOM::build@A38 -> NBATOM
+  Atom(38,A("@1"))
+468) NBATOM::build@A39 -> NBATOM
+  Atom(39,A("@2"))
+469) NBATOM::build@A40 -> NBATOM
+  Atom(40,A("@3"))
+470) NBATOM::build@A41 -> NBATOM
+  Atom(41,A("@4"))
+471) NBATOM::build@A42 -> NBATOM
+  Atom(42,A("@5"))
+472) NBATOM::build@A43 -> NBATOM
+  Atom(43,A("@6"))
+473) NBATOM::build@A44 -> NBATOM
+  Atom(44,A("@7"))
+474) NBATOM::build@A45 -> NBATOM
+  Atom(45,A("@8"))
+475) NBATOM::build@A46 -> NBATOM
+  Atom(46,A("@9"))
+476) NBATOM::build@A47 -> NBATOM
+  Atom(47,A("Name"))
+477) NBATOM::build@A48 -> NBATOM
+  Atom(48,A("String"))
+478) NBATOM::build@A49 -> NBATOM
+  Atom(49,A("TODO_CONVERSION_TYPE_ID"))
+479) NBATOM::build@A50 -> NBATOM
+  Atom(50,A("TODO_EXPR"))
+480) NBATOM::build@A51 -> NBATOM
+  Atom(51,A("TODO_EXPR_ASSIGN"))
+481) NBATOM::build@A52 -> NBATOM
+  Atom(52,A("TODO_EXPR_CONST"))
+482) NBATOM::build@A53 -> NBATOM
+  Atom(53,A("TODO_FUNCTION_BODY"))
+483) NBATOM::build@A54 -> NBATOM
+  Atom(54,A("TODO_TYPE_ID"))
+484) NBATOM::build@A55 -> NBATOM
+  Atom(55,A("TODO_TYPE_ID_OR_EXPR_ASSIGN"))
+485) NBATOM::build@A56 -> NBATOM
+  Atom(56,A("TODO_TYPE_ID_OR_EXPR_CONST"))
+486) NBATOM::build@A59 -> NBATOM
+  Atom(59,A("^"))
+487) NBATOM::build@A60 -> NBATOM
+  Atom(60,A("^="))
+488) NBATOM::build@A61 -> NBATOM
+  Atom(61,A("alignas"))
+489) NBATOM::build@A62 -> NBATOM
+  Atom(62,A("asm"))
+490) NBATOM::build@A63 -> NBATOM
+  Atom(63,A("auto"))
+491) NBATOM::build@A64 -> NBATOM
+  Atom(64,A("bool"))
+492) NBATOM::build@A65 -> NBATOM
+  Atom(65,A("char"))
+493) NBATOM::build@A66 -> NBATOM
+  Atom(66,A("char16_t"))
+494) NBATOM::build@A67 -> NBATOM
+  Atom(67,A("char32_t"))
+495) NBATOM::build@A68 -> NBATOM
+  Atom(68,A("class"))
+496) NBATOM::build@A69 -> NBATOM
+  Atom(69,A("const"))
+497) NBATOM::build@A70 -> NBATOM
+  Atom(70,A("constexpr"))
+498) NBATOM::build@A71 -> NBATOM
+  Atom(71,A("decltype"))
+499) NBATOM::build@A72 -> NBATOM
+  Atom(72,A("delete"))
+500) NBATOM::build@A73 -> NBATOM
+  Atom(73,A("double"))
+501) NBATOM::build@A74 -> NBATOM
+  Atom(74,A("enum"))
+502) NBATOM::build@A75 -> NBATOM
+  Atom(75,A("explicit"))
+503) NBATOM::build@A76 -> NBATOM
+  Atom(76,A("extern"))
+504) NBATOM::build@A77 -> NBATOM
+  Atom(77,A("final"))
+505) NBATOM::build@A78 -> NBATOM
+  Atom(78,A("float"))
+506) NBATOM::build@A79 -> NBATOM
+  Atom(79,A("friend"))
+507) NBATOM::build@A80 -> NBATOM
+  Atom(80,A("inline"))
+508) NBATOM::build@A81 -> NBATOM
+  Atom(81,A("int"))
+509) NBATOM::build@A82 -> NBATOM
+  Atom(82,A("long"))
+510) NBATOM::build@A83 -> NBATOM
+  Atom(83,A("mutable"))
+511) NBATOM::build@A84 -> NBATOM
+  Atom(84,A("namespace"))
+512) NBATOM::build@A85 -> NBATOM
+  Atom(85,A("new"))
+513) NBATOM::build@A86 -> NBATOM
+  Atom(86,A("noexcept"))
+514) NBATOM::build@A87 -> NBATOM
+  Atom(87,A("operator"))
+515) NBATOM::build@A88 -> NBATOM
+  Atom(88,A("override"))
+516) NBATOM::build@A89 -> NBATOM
+  Atom(89,A("private"))
+517) NBATOM::build@A90 -> NBATOM
+  Atom(90,A("protected"))
+518) NBATOM::build@A91 -> NBATOM
+  Atom(91,A("public"))
+519) NBATOM::build@A92 -> NBATOM
+  Atom(92,A("register"))
+520) NBATOM::build@A93 -> NBATOM
+  Atom(93,A("short"))
+521) NBATOM::build@A94 -> NBATOM
+  Atom(94,A("signed"))
+522) NBATOM::build@A95 -> NBATOM
+  Atom(95,A("static"))
+523) NBATOM::build@A96 -> NBATOM
+  Atom(96,A("static_assert"))
+524) NBATOM::build@A97 -> NBATOM
+  Atom(97,A("struct"))
+525) NBATOM::build@A98 -> NBATOM
+  Atom(98,A("template"))
+526) NBATOM::build@A99 -> NBATOM
+  Atom(99,A("thread_local"))
+527) NBATOM::build@A100 -> NBATOM
+  Atom(100,A("throw"))
+528) NBATOM::build@A101 -> NBATOM
+  Atom(101,A("typedef"))
+529) NBATOM::build@A102 -> NBATOM
+  Atom(102,A("typename"))
+530) NBATOM::build@A103 -> NBATOM
+  Atom(103,A("union"))
+531) NBATOM::build@A104 -> NBATOM
+  Atom(104,A("unsigned"))
+532) NBATOM::build@A105 -> NBATOM
+  Atom(105,A("using"))
+533) NBATOM::build@A106 -> NBATOM
+  Atom(106,A("virtual"))
+534) NBATOM::build@A107 -> NBATOM
+  Atom(107,A("void"))
+535) NBATOM::build@A108 -> NBATOM
+  Atom(108,A("volatile"))
+536) NBATOM::build@A109 -> NBATOM
+  Atom(109,A("wchar_t"))
+537) NBATOM::build@A111 -> NBATOM
+  Atom(111,A("|"))
+538) NBATOM::build@A112 -> NBATOM
+  Atom(112,A("|="))
+539) NBATOM::build@A113 -> NBATOM
+  Atom(113,A("||"))
+540) NBATOM::build@A115 -> NBATOM
+  Atom(115,A("~"))
+
+--------------------------------------------------------------------------------
+--- Bad States -----------------------------------------------------------------
+
+( 489 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("&") ATTRIBUTES ) = 454
+
+454) CONFLICT
+
+  A("&") : @PTR_OP::build_ref
+
+  A("&&") : @PTR_OP::build_ref
+
+  A("(") : @PTR_OP::build_ref
+
+  A(")") : @PTR_OP::build_ref
+
+  A("*") : @PTR_OP::build_ref
+
+  A(",") : @PTR_OP::build_ref
+
+  A("...") : @PTR_OP::build_ref
+
+  A("::") : @PTR_OP::build_ref
+
+  A("=") : @PTR_OP::build_ref
+
+  A("Name") : @PTR_OP::build_ref
+
+  A("[") : <- @PTR_OP::build_ref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_ref
+
+( 490 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") A("&") ATTRIBUTES ) = 455
+
+455) CONFLICT
+
+  A("&") : @PTR_OP::build_ref
+
+  A("&&") : @PTR_OP::build_ref
+
+  A("(") : @PTR_OP::build_ref
+
+  A(")") : @PTR_OP::build_ref
+
+  A("*") : @PTR_OP::build_ref
+
+  A("::") : @PTR_OP::build_ref
+
+  A("Name") : @PTR_OP::build_ref
+
+  A("[") : <- @PTR_OP::build_ref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_ref
+
+( 491 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("&") ATTRIBUTES ) = 456
+
+456) CONFLICT
+
+  A("&") : @PTR_OP::build_ref
+
+  A("&&") : @PTR_OP::build_ref
+
+  A("(") : @PTR_OP::build_ref
+
+  A("*") : @PTR_OP::build_ref
+
+  A(",") : @PTR_OP::build_ref
+
+  A("...") : @PTR_OP::build_ref
+
+  A("::") : @PTR_OP::build_ref
+
+  A(";") : @PTR_OP::build_ref
+
+  A("=") : @PTR_OP::build_ref
+
+  A("@1") : @PTR_OP::build_ref
+
+  A("Name") : @PTR_OP::build_ref
+
+  A("TODO_FUNCTION_BODY") : @PTR_OP::build_ref
+
+  A("[") : <- @PTR_OP::build_ref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_ref
+
+  A("final") : @PTR_OP::build_ref
+
+  A("override") : @PTR_OP::build_ref
+
+  A("{") : @PTR_OP::build_ref
+
+( 492 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("&") ATTRIBUTES ) = 457
+
+457) CONFLICT
+
+  A("&") : @PTR_OP::build_ref
+
+  A("&&") : @PTR_OP::build_ref
+
+  A("(") : @PTR_OP::build_ref
+
+  A("*") : @PTR_OP::build_ref
+
+  A(",") : @PTR_OP::build_ref
+
+  A("...") : @PTR_OP::build_ref
+
+  A("::") : @PTR_OP::build_ref
+
+  A(";") : @PTR_OP::build_ref
+
+  A("=") : @PTR_OP::build_ref
+
+  A("@1") : @PTR_OP::build_ref
+
+  A("Name") : @PTR_OP::build_ref
+
+  A("[") : <- @PTR_OP::build_ref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_ref
+
+  A("{") : @PTR_OP::build_ref
+
+( 493 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("&") ATTRIBUTES ) = 458
+
+458) CONFLICT
+
+  A("&") : @PTR_OP::build_ref
+
+  A("&&") : @PTR_OP::build_ref
+
+  A("(") : @PTR_OP::build_ref
+
+  A("*") : @PTR_OP::build_ref
+
+  A(",") : @PTR_OP::build_ref
+
+  A("...") : @PTR_OP::build_ref
+
+  A("::") : @PTR_OP::build_ref
+
+  A(";") : @PTR_OP::build_ref
+
+  A("=") : @PTR_OP::build_ref
+
+  A("@5") : @PTR_OP::build_ref
+
+  A("Name") : @PTR_OP::build_ref
+
+  A("TODO_FUNCTION_BODY") : @PTR_OP::build_ref
+
+  A("[") : <- @PTR_OP::build_ref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_ref
+
+  A("final") : @PTR_OP::build_ref
+
+  A("override") : @PTR_OP::build_ref
+
+( 494 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("&") ATTRIBUTES ) = 459
+
+459) CONFLICT
+
+  A("&") : @PTR_OP::build_ref
+
+  A("&&") : @PTR_OP::build_ref
+
+  A("(") : @PTR_OP::build_ref
+
+  A("*") : @PTR_OP::build_ref
+
+  A(",") : @PTR_OP::build_ref
+
+  A("...") : @PTR_OP::build_ref
+
+  A("::") : @PTR_OP::build_ref
+
+  A(";") : @PTR_OP::build_ref
+
+  A("=") : @PTR_OP::build_ref
+
+  A("@5") : @PTR_OP::build_ref
+
+  A("Name") : @PTR_OP::build_ref
+
+  A("[") : <- @PTR_OP::build_ref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_ref
+
+  A("final") : @PTR_OP::build_ref
+
+  A("override") : @PTR_OP::build_ref
+
+( 495 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("&") ATTRIBUTES ) = 460
+
+460) CONFLICT
+
+  A("&") : @PTR_OP::build_ref
+
+  A("&&") : @PTR_OP::build_ref
+
+  A("(") : @PTR_OP::build_ref
+
+  A("*") : @PTR_OP::build_ref
+
+  A(",") : @PTR_OP::build_ref
+
+  A("...") : @PTR_OP::build_ref
+
+  A("::") : @PTR_OP::build_ref
+
+  A("=") : @PTR_OP::build_ref
+
+  A(">") : @PTR_OP::build_ref
+
+  A("Name") : @PTR_OP::build_ref
+
+  A("[") : <- @PTR_OP::build_ref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_ref
+
+( 497 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("&&") ATTRIBUTES ) = 462
+
+462) CONFLICT
+
+  A("&") : @PTR_OP::build_rref
+
+  A("&&") : @PTR_OP::build_rref
+
+  A("(") : @PTR_OP::build_rref
+
+  A(")") : @PTR_OP::build_rref
+
+  A("*") : @PTR_OP::build_rref
+
+  A(",") : @PTR_OP::build_rref
+
+  A("...") : @PTR_OP::build_rref
+
+  A("::") : @PTR_OP::build_rref
+
+  A("=") : @PTR_OP::build_rref
+
+  A("Name") : @PTR_OP::build_rref
+
+  A("[") : <- @PTR_OP::build_rref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_rref
+
+( 498 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") A("&&") ATTRIBUTES ) = 463
+
+463) CONFLICT
+
+  A("&") : @PTR_OP::build_rref
+
+  A("&&") : @PTR_OP::build_rref
+
+  A("(") : @PTR_OP::build_rref
+
+  A(")") : @PTR_OP::build_rref
+
+  A("*") : @PTR_OP::build_rref
+
+  A("::") : @PTR_OP::build_rref
+
+  A("Name") : @PTR_OP::build_rref
+
+  A("[") : <- @PTR_OP::build_rref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_rref
+
+( 499 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("&&") ATTRIBUTES ) = 464
+
+464) CONFLICT
+
+  A("&") : @PTR_OP::build_rref
+
+  A("&&") : @PTR_OP::build_rref
+
+  A("(") : @PTR_OP::build_rref
+
+  A("*") : @PTR_OP::build_rref
+
+  A(",") : @PTR_OP::build_rref
+
+  A("...") : @PTR_OP::build_rref
+
+  A("::") : @PTR_OP::build_rref
+
+  A(";") : @PTR_OP::build_rref
+
+  A("=") : @PTR_OP::build_rref
+
+  A("@1") : @PTR_OP::build_rref
+
+  A("Name") : @PTR_OP::build_rref
+
+  A("TODO_FUNCTION_BODY") : @PTR_OP::build_rref
+
+  A("[") : <- @PTR_OP::build_rref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_rref
+
+  A("final") : @PTR_OP::build_rref
+
+  A("override") : @PTR_OP::build_rref
+
+  A("{") : @PTR_OP::build_rref
+
+( 500 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("&&") ATTRIBUTES ) = 465
+
+465) CONFLICT
+
+  A("&") : @PTR_OP::build_rref
+
+  A("&&") : @PTR_OP::build_rref
+
+  A("(") : @PTR_OP::build_rref
+
+  A("*") : @PTR_OP::build_rref
+
+  A(",") : @PTR_OP::build_rref
+
+  A("...") : @PTR_OP::build_rref
+
+  A("::") : @PTR_OP::build_rref
+
+  A(";") : @PTR_OP::build_rref
+
+  A("=") : @PTR_OP::build_rref
+
+  A("@1") : @PTR_OP::build_rref
+
+  A("Name") : @PTR_OP::build_rref
+
+  A("[") : <- @PTR_OP::build_rref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_rref
+
+  A("{") : @PTR_OP::build_rref
+
+( 501 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("&&") ATTRIBUTES ) = 466
+
+466) CONFLICT
+
+  A("&") : @PTR_OP::build_rref
+
+  A("&&") : @PTR_OP::build_rref
+
+  A("(") : @PTR_OP::build_rref
+
+  A("*") : @PTR_OP::build_rref
+
+  A(",") : @PTR_OP::build_rref
+
+  A("...") : @PTR_OP::build_rref
+
+  A("::") : @PTR_OP::build_rref
+
+  A(";") : @PTR_OP::build_rref
+
+  A("=") : @PTR_OP::build_rref
+
+  A("@5") : @PTR_OP::build_rref
+
+  A("Name") : @PTR_OP::build_rref
+
+  A("TODO_FUNCTION_BODY") : @PTR_OP::build_rref
+
+  A("[") : <- @PTR_OP::build_rref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_rref
+
+  A("final") : @PTR_OP::build_rref
+
+  A("override") : @PTR_OP::build_rref
+
+( 502 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("&&") ATTRIBUTES ) = 467
+
+467) CONFLICT
+
+  A("&") : @PTR_OP::build_rref
+
+  A("&&") : @PTR_OP::build_rref
+
+  A("(") : @PTR_OP::build_rref
+
+  A("*") : @PTR_OP::build_rref
+
+  A(",") : @PTR_OP::build_rref
+
+  A("...") : @PTR_OP::build_rref
+
+  A("::") : @PTR_OP::build_rref
+
+  A(";") : @PTR_OP::build_rref
+
+  A("=") : @PTR_OP::build_rref
+
+  A("@5") : @PTR_OP::build_rref
+
+  A("Name") : @PTR_OP::build_rref
+
+  A("[") : <- @PTR_OP::build_rref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_rref
+
+  A("final") : @PTR_OP::build_rref
+
+  A("override") : @PTR_OP::build_rref
+
+( 503 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("&&") ATTRIBUTES ) = 468
+
+468) CONFLICT
+
+  A("&") : @PTR_OP::build_rref
+
+  A("&&") : @PTR_OP::build_rref
+
+  A("(") : @PTR_OP::build_rref
+
+  A("*") : @PTR_OP::build_rref
+
+  A(",") : @PTR_OP::build_rref
+
+  A("...") : @PTR_OP::build_rref
+
+  A("::") : @PTR_OP::build_rref
+
+  A("=") : @PTR_OP::build_rref
+
+  A(">") : @PTR_OP::build_rref
+
+  A("Name") : @PTR_OP::build_rref
+
+  A("[") : <- @PTR_OP::build_rref  CONFLICT
+
+  A("alignas") : <-
+
+  A("decltype") : @PTR_OP::build_rref
+
+( 513 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("*") ATTRIBUTES ) = 478
+
+478) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A(")") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 514 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NESTED_NAME_SPEC A("*") ATTRIBUTES ) = 478
+
+478) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A(")") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 515 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") A("*") ATTRIBUTES ) = 479
+
+479) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A(")") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 516 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") NESTED_NAME_SPEC A("*") ATTRIBUTES ) = 479
+
+479) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A(")") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 521 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("*") ATTRIBUTES ) = 484
+
+484) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A(";") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("@1") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("TODO_FUNCTION_BODY") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("final") : @CV_QUALIFIER::start
+
+  A("override") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+  A("{") : @CV_QUALIFIER::start
+
+( 522 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NESTED_NAME_SPEC A("*") ATTRIBUTES ) = 484
+
+484) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A(";") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("@1") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("TODO_FUNCTION_BODY") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("final") : @CV_QUALIFIER::start
+
+  A("override") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+  A("{") : @CV_QUALIFIER::start
+
+( 523 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("*") ATTRIBUTES ) = 485
+
+485) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A(";") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("@1") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+  A("{") : @CV_QUALIFIER::start
+
+( 524 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NESTED_NAME_SPEC A("*") ATTRIBUTES ) = 485
+
+485) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A(";") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("@1") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+  A("{") : @CV_QUALIFIER::start
+
+( 525 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("*") ATTRIBUTES ) = 486
+
+486) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A(";") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("@5") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("TODO_FUNCTION_BODY") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("final") : @CV_QUALIFIER::start
+
+  A("override") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 526 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NESTED_NAME_SPEC A("*") ATTRIBUTES ) = 486
+
+486) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A(";") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("@5") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("TODO_FUNCTION_BODY") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("final") : @CV_QUALIFIER::start
+
+  A("override") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 527 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("*") ATTRIBUTES ) = 487
+
+487) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A(";") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("@5") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("final") : @CV_QUALIFIER::start
+
+  A("override") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 528 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NESTED_NAME_SPEC A("*") ATTRIBUTES ) = 487
+
+487) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A(";") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A("@5") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("final") : @CV_QUALIFIER::start
+
+  A("override") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 529 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("*") ATTRIBUTES ) = 488
+
+488) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A(">") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 530 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NESTED_NAME_SPEC A("*") ATTRIBUTES ) = 488
+
+488) CONFLICT
+
+  A("&") : @CV_QUALIFIER::start
+
+  A("&&") : @CV_QUALIFIER::start
+
+  A("(") : @CV_QUALIFIER::start
+
+  A("*") : @CV_QUALIFIER::start
+
+  A(",") : @CV_QUALIFIER::start
+
+  A("...") : @CV_QUALIFIER::start
+
+  A("::") : @CV_QUALIFIER::start
+
+  A("=") : @CV_QUALIFIER::start
+
+  A(">") : @CV_QUALIFIER::start
+
+  A("Name") : @CV_QUALIFIER::start
+
+  A("[") : <- @CV_QUALIFIER::start  CONFLICT
+
+  A("alignas") : <-
+
+  A("const") : @CV_QUALIFIER::start
+
+  A("decltype") : @CV_QUALIFIER::start
+
+  A("volatile") : @CV_QUALIFIER::start
+
+( 645 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 646 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") PTR_OP A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 647 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 648 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 649 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 650 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 651 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 652 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 653 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") PTR_OP A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 654 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") PTR_OP A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 655 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") PTR_OP A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 656 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") PTR_OP A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 657 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") PTR_OP A("(") ) = 602
+
+602) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PARAMETER_DECL_CLAUSE::empty
+
+  A("*") : <-
+
+  A("...") : <-
+
+  A("::") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("Name") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("[") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("alignas") : @ATTRIBUTES::start
+
+  A("auto") : @ATTRIBUTES::start
+
+  A("bool") : @ATTRIBUTES::start
+
+  A("char") : @ATTRIBUTES::start
+
+  A("char16_t") : @ATTRIBUTES::start
+
+  A("char32_t") : @ATTRIBUTES::start
+
+  A("class") : @ATTRIBUTES::start
+
+  A("const") : @ATTRIBUTES::start
+
+  A("constexpr") : @ATTRIBUTES::start
+
+  A("decltype") : <- @ATTRIBUTES::start  CONFLICT
+
+  A("double") : @ATTRIBUTES::start
+
+  A("enum") : @ATTRIBUTES::start
+
+  A("explicit") : @ATTRIBUTES::start
+
+  A("extern") : @ATTRIBUTES::start
+
+  A("float") : @ATTRIBUTES::start
+
+  A("friend") : @ATTRIBUTES::start
+
+  A("inline") : @ATTRIBUTES::start
+
+  A("int") : @ATTRIBUTES::start
+
+  A("long") : @ATTRIBUTES::start
+
+  A("mutable") : @ATTRIBUTES::start
+
+  A("register") : @ATTRIBUTES::start
+
+  A("short") : @ATTRIBUTES::start
+
+  A("signed") : @ATTRIBUTES::start
+
+  A("static") : @ATTRIBUTES::start
+
+  A("struct") : @ATTRIBUTES::start
+
+  A("thread_local") : @ATTRIBUTES::start
+
+  A("typedef") : @ATTRIBUTES::start
+
+  A("typename") : @ATTRIBUTES::start
+
+  A("union") : @ATTRIBUTES::start
+
+  A("unsigned") : @ATTRIBUTES::start
+
+  A("virtual") : @ATTRIBUTES::start
+
+  A("void") : @ATTRIBUTES::start
+
+  A("volatile") : @ATTRIBUTES::start
+
+  A("wchar_t") : @ATTRIBUTES::start
+
+( 658 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") PTR_OP ) = 603
+
+603) CONFLICT
+
+  A("&") : <-
+
+  A("&&") : <-
+
+  A("(") : <-
+
+  A(")") : @PTR_ABSTRACT_DECLARATOR::start
+
+  A("*") : <-
+
+  A(",") : @PTR_ABSTRACT_DECLARATOR::start
+
+  A("...") : <- @PTR_ABSTRACT_DECLARATOR::start  CONFLICT
+
+  A("::") : <-
+
+  A("=") : @PTR_ABSTRACT_DECLARATOR::start
+
+  A("Name") : <-
+
+  A("[") : <-
+
+  A("decltype") : <-
+
+( 977 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 831
+
+831) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(")") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("->") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("...") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+( 978 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") PTR_OP A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 832
+
+832) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(")") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("...") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+( 979 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 833
+
+833) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(")") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+( 982 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 836
+
+836) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("->") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(";") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("@1") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("TODO_FUNCTION_BODY") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("override") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("{") : @PARAMETERS_AND_QUALIFIERS::func
+
+( 983 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 837
+
+837) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("->") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(";") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("@1") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+  A("{") : @PARAMETERS_AND_QUALIFIERS::func
+
+( 986 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 840
+
+840) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("->") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(";") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("@5") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("TODO_FUNCTION_BODY") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("override") : @PARAMETERS_AND_QUALIFIERS::func
+
+( 987 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 841
+
+841) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("->") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(";") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("@5") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("override") : @PARAMETERS_AND_QUALIFIERS::func
+
+( 989 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 843
+
+843) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("->") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(">") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+( 990 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") PTR_OP A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 844
+
+844) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(";") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("@1") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("TODO_FUNCTION_BODY") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("override") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("{") : @PARAMETERS_AND_QUALIFIERS::func
+
+( 991 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") PTR_OP A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 845
+
+845) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(";") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("@1") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+  A("{") : @PARAMETERS_AND_QUALIFIERS::func
+
+( 992 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") PTR_OP A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 846
+
+846) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(";") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("@5") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("TODO_FUNCTION_BODY") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("override") : @PARAMETERS_AND_QUALIFIERS::func
+
+( 993 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") PTR_OP A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 847
+
+847) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(";") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("@5") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("override") : @PARAMETERS_AND_QUALIFIERS::func
+
+( 994 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") PTR_OP A("(") PARAMETER_DECL_CLAUSE A(")") CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES ) = 848
+
+848) CONFLICT
+
+  A("(") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(",") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("=") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A(">") : @PARAMETERS_AND_QUALIFIERS::func
+
+  A("[") : <- @PARAMETERS_AND_QUALIFIERS::func  CONFLICT
+
+  A("alignas") : <-
+
+( 1059 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("[") A("]") A("@9") ATTRIBUTES ) = 913
+
+913) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(")") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("...") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+( 1060 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") A("[") A("]") A("@9") ATTRIBUTES ) = 914
+
+914) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(")") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+( 1061 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("[") A("]") A("@9") ATTRIBUTES ) = 915
+
+915) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("@1") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("{") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+( 1062 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("[") A("]") A("@9") ATTRIBUTES ) = 916
+
+916) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("@1") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+  A("{") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+( 1063 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("[") A("]") A("@9") ATTRIBUTES ) = 917
+
+917) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("@5") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+( 1064 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("[") A("]") A("@9") ATTRIBUTES ) = 918
+
+918) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("@5") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+( 1065 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("[") A("]") A("@9") ATTRIBUTES ) = 919
+
+919) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A(">") : @NOPTR_ABSTRACT_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+( 1066 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 920
+
+920) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(")") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("...") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+( 1067 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 921
+
+921) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(")") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+( 1068 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 922
+
+922) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("@1") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("{") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+( 1069 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 923
+
+923) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("@1") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+  A("{") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+( 1070 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 924
+
+924) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("@5") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+( 1071 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 925
+
+925) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("@5") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+( 1072 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 926
+
+926) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A(">") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+( 1073 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 927
+
+927) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(")") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("...") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_decl  CONFLICT
+
+  A("alignas") : <-
+
+( 1074 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") NOPTR_ABSTRACT_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 928
+
+928) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(")") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_decl  CONFLICT
+
+  A("alignas") : <-
+
+( 1075 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 929
+
+929) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("@1") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_decl  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("{") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+( 1076 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 930
+
+930) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("@1") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_decl  CONFLICT
+
+  A("alignas") : <-
+
+  A("{") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+( 1077 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 931
+
+931) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("@5") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_decl  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+( 1078 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 932
+
+932) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("@5") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_decl  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+( 1079 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 933
+
+933) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A(">") : @NOPTR_ABSTRACT_DECLARATOR::build_array_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_decl  CONFLICT
+
+  A("alignas") : <-
+
+( 1080 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 934
+
+934) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(")") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("...") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl  CONFLICT
+
+  A("alignas") : <-
+
+( 1081 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") A("(") NOPTR_ABSTRACT_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 935
+
+935) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(")") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl  CONFLICT
+
+  A("alignas") : <-
+
+( 1082 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 936
+
+936) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("@1") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("{") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+( 1083 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 937
+
+937) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("@1") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl  CONFLICT
+
+  A("alignas") : <-
+
+  A("{") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+( 1084 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 938
+
+938) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("@5") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+( 1085 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 939
+
+939) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(";") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("@5") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("override") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+( 1086 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 940
+
+940) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(",") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("=") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A(">") : @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl
+
+  A("[") : <- @NOPTR_ABSTRACT_DECLARATOR::build_array_len_decl  CONFLICT
+
+  A("alignas") : <-
+
+( 1100 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 954
+
+954) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(")") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("...") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+( 1101 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 955
+
+955) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(";") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("@1") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("override") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("{") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+( 1102 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 956
+
+956) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(";") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("@1") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+  A("{") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+( 1103 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 957
+
+957) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(";") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("@5") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("override") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+( 1104 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 958
+
+958) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(";") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("@5") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("override") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+( 1105 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") A("]") A("@9") ATTRIBUTES ) = 959
+
+959) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A(">") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array  CONFLICT
+
+  A("alignas") : <-
+
+( 1106 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator A("(") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 960
+
+960) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(")") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("...") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+( 1107 ; BODY ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 961
+
+961) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(";") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("@1") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("override") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("{") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+( 1108 ; BODY ATTRIBUTES INIT_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 962
+
+962) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(";") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("@1") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+  A("{") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+( 1109 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 963
+
+963) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(";") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("@5") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("TODO_FUNCTION_BODY") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("override") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+( 1110 ; BODY ATTRIBUTES CLASS_HEAD A("{") ATTRIBUTES MEMBER_DECLARATOR_LIST A(",") A("@2") NOPTR_DECLARATOR.non_operator PARAMETERS_AND_QUALIFIERS A("->") TRAILING_TYPE_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 964
+
+964) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(";") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("@5") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+  A("final") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("override") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+( 1111 ; BODY A("template") A("<") ATTRIBUTES DECL_SPEC_LIST.no_type A("@8") NOPTR_ABSTRACT_PACK_DECLARATOR A("[") EXPR_CONST A("]") A("@9") ATTRIBUTES ) = 965
+
+965) CONFLICT
+
+  A("(") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(",") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("=") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A(">") : @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len
+
+  A("[") : <- @NOPTR_ABSTRACT_PACK_DECLARATOR::build_array_len  CONFLICT
+
+  A("alignas") : <-
+
+--------------------------------------------------------------------------------

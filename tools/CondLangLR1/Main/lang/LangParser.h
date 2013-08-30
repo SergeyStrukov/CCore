@@ -27,7 +27,7 @@ inline bool IsName(StrLen text)
  {
   ulen len=ScanName(text);
   
-  return len && len==text.len;
+  return len && len==text.len ;
  }
 
 /* classes */
@@ -104,6 +104,7 @@ enum TokenClass
  {
   Token_Punct,
   Token_Name,
+  Token_AtName,
   Token_Visible,
   
   Token_Space,
@@ -133,6 +134,8 @@ struct Token : PosStr
   bool is(char ch) const { return str.len==1 && str[0]==ch ; }
   
   bool is(char ch1,char ch2) const { return str.len==2 && str[0]==ch1 && str[1]==ch2 ; }
+  
+  bool is(StrLen name) const { return str.equal(name); } 
  };
 
 /* struct TokenizerBase */
@@ -170,6 +173,8 @@ struct TokenizerBase : NoCopy
   static ulen ScanSpace(StrLen text);        // >=1
   
   static ulen ScanVisible(StrLen text);      // >=1
+  
+  static ulen ScanNameExt(StrLen text);
  };
 
 /* class Tokenizer<Action> */
@@ -253,7 +258,16 @@ Token Tokenizer<Action>::next_long_comment()
 template <class Action> 
 Token Tokenizer<Action>::next_name()
  {
-  return cut(Token_Name,ScanLetterDigit(text));
+  ulen len=ScanLetterDigit(text);
+  TokenClass tc=Token_Name;
+  
+  while( ulen ext=ScanNameExt(text.part(len)) )
+    {
+     len+=ext;
+     tc=Token_AtName;
+    }
+  
+  return cut(tc,len);
  }
 
 template <class Action> 
@@ -635,21 +649,27 @@ class Parser : NoCopy
    
    enum State
     {
-     State_Beg,        // ...        Name { 
-     State_Name,       // !          Name
-     State_Kinds,      // Name       ...
-     State_NextKind,   // Name :     ...
-     State_EndKind,    // Name : A   ...
-     State_Rules,      // Name {     ...
-     State_Elements,   // Name { E1  ...    
+     State_Beg,        // ...         Name { 
+     State_Name,       // !           Name
+     State_Kinds,      // Name        ...
+     State_NextKind,   // Name :      ...
+     State_EndKind,    // Name : A    ...
+     State_Rules,      // Name {      ...
+     State_Elements,   // Name { E1   ...    
      
-     State_RuleEnd,    // Name { ... :
-     State_RuleIf,     // Name { ... : if
-     State_RuleCond,   // Name { ... : if (
-     State_RuleName,   // ...        Name
+     State_RuleEnd,    // Name { ...  :
+     State_RuleIf,     // Name { ...  : if
+     State_RuleCond,   // Name { ...  : if (
+     State_RuleName,   // ...         Name
      
-     State_Result,     // ...        = Name
-     State_ResultName  // ... =      Name
+     State_Result,     // ...         = Name
+     State_ResultName, // ... =       Name
+     
+     State_Noneof,     // noneof          Name {
+     State_NoneofName, // noneof Name     {
+     State_NoneofAtom, // noneof Name {   a
+     State_NoneofRule, // ...         :   R
+     State_NoneofEnd   // ...         R   }
     };
    
    State state = State_Beg ;
@@ -660,7 +680,7 @@ class Parser : NoCopy
    
   private: 
    
-   bool isNextRelaxed() const { return state==State_Rules || state==State_Elements ; }
+   bool isNextRelaxed() const { return state==State_Rules || state==State_Elements || state==State_NoneofAtom ; }
    
    void put_Beg(Token token);
    void put_Name(Token token);
@@ -675,6 +695,12 @@ class Parser : NoCopy
    void put_RuleName(Token token);
    void put_Result(Token token);
    void put_ResultName(Token token);
+   
+   void put_Noneof(Token token);
+   void put_NoneofName(Token token);
+   void put_NoneofAtom(Token token);
+   void put_NoneofRule(Token token);
+   void put_NoneofEnd(Token token);
    
    void put(Token token);
    
@@ -706,13 +732,22 @@ void Parser<Action>::put_Beg(Token token)
       
      case Token_Name :
       {
-       action.startSynt(token,false);
-       
-       has_kinds=false;
-       
-       state=State_Kinds;
-       
-       return;
+       if( token.is("noneof") )
+         {
+          state=State_Noneof;
+          
+          return;
+         }
+       else
+         {
+          action.startSynt(token,false);
+         
+          has_kinds=false;
+         
+          state=State_Kinds;
+         
+          return;
+         }
       }
      break;
      
@@ -899,6 +934,7 @@ void Parser<Action>::put_RuleEnd(Token token)
   switch( token.tc )
     {
      case Token_Name :
+     case Token_AtName :
       {
        if( token.is('i','f') )
          {
@@ -1029,6 +1065,7 @@ void Parser<Action>::put_RuleName(Token token)
   switch( token.tc )
     {
      case Token_Name :
+     case Token_AtName :
       {
        action.rule(token);
        
@@ -1092,6 +1129,110 @@ void Parser<Action>::put_ResultName(Token token)
  }
 
 template <class Action> 
+void Parser<Action>::put_Noneof(Token token)
+ {
+  switch( token.tc )
+    {
+     case Token_Name :
+      {
+       action.startNoneofSynt(token);
+      
+       state=State_NoneofName;
+      
+       return;
+      }
+     break;
+    }
+  
+  action.exception("Parser #; : unexpected token, <Name> is expected",token.pos);
+ }
+
+template <class Action> 
+void Parser<Action>::put_NoneofName(Token token)
+ {
+  switch( token.tc )
+    {
+     case Token_Punct :
+      {
+       if( token.is('{') )
+         {
+          state=State_NoneofAtom;
+        
+          return;
+         }
+      }
+     break;
+    }
+  
+  action.exception("Parser #; : unexpected token, '{' is expected",token.pos);
+ }
+
+template <class Action> 
+void Parser<Action>::put_NoneofAtom(Token token)
+ {
+  switch( token.tc )
+    {
+     case Token_Visible :
+      {
+       if( token.is(':') )
+         {
+          action.endAtoms();
+          
+          state=State_NoneofRule;
+         }
+       else
+         {
+          action.addAtom(token);
+         }
+       
+       return;
+      }
+     break;
+    }
+  
+  action.exception("Parser #; : unexpected token",token.pos);
+ }
+
+template <class Action> 
+void Parser<Action>::put_NoneofRule(Token token)
+ {
+  switch( token.tc )
+    {
+     case Token_Name :
+      {
+       action.ruleNoneofSynt(token);
+      
+       state=State_NoneofEnd;
+      
+       return;
+      }
+     break;
+    }
+  
+  action.exception("Parser #; : unexpected token, <Name> is expected",token.pos);
+ }
+
+template <class Action> 
+void Parser<Action>::put_NoneofEnd(Token token)
+ {
+  switch( token.tc )
+    {
+     case Token_Punct :
+      {
+       if( token.is('}') )
+         {
+          state=State_Beg;
+        
+          return;
+         }
+      }
+     break;
+    }
+  
+  action.exception("Parser #; : unexpected token, '}' is expected",token.pos);
+ }
+
+template <class Action> 
 void Parser<Action>::put(Token token)
  {
   switch( token.tc )
@@ -1126,6 +1267,12 @@ void Parser<Action>::put(Token token)
      case State_RuleName   : put_RuleName(token); break;
      case State_Result     : put_Result(token); break;
      case State_ResultName : put_ResultName(token); break;
+     
+     case State_Noneof     : put_Noneof(token); break;
+     case State_NoneofName : put_NoneofName(token); break;
+     case State_NoneofAtom : put_NoneofAtom(token); break;
+     case State_NoneofRule : put_NoneofRule(token); break;
+     case State_NoneofEnd  : put_NoneofEnd(token); break; 
     }
  }
 

@@ -105,6 +105,15 @@ ulen TokenizerBase::ScanVisible(StrLen text)
   return ScanExtraChars(text,CharIsVisible<char>);
  }
 
+ulen TokenizerBase::ScanNameExt(StrLen text)
+ {
+  if( text.len<2 || text[0]!='@' || GetCharClass(text[1])!=Char_Letter ) return 0;
+  
+  ++text;
+  
+  return 1+ScanLetterDigit(text); 
+ }
+
 /* struct CondPaserBase */
 
 const CondPaserBase::State CondPaserBase::StateTable[52]=

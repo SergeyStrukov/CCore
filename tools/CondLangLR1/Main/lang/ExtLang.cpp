@@ -42,7 +42,7 @@ void ExtLang::build(const Lang &lang,ulen map_atom_count)
    for(auto &rule : lang.getRules() )
      {
       atoms->index=index++;
-      atoms->name=pool.cat(StrLen("@",1),rule.name);
+      atoms->name=pool.cat(StrLen("@",1),rule.ret->name,StrLen("::",2),rule.name);
       
       atoms->map_index=rule.map_index+map_atom_count;
       
