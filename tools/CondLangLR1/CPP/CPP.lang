@@ -11,995 +11,368 @@
 //
 //----------------------------------------------------------------------------------------
 
-/*----- BODY (declaration-seq-opt) -----------------------------------------------------*/
-
-! BODY
+! TEST
  {
-             : start
-  BODY DECL  : ext
- }                                
-    
-DECL                 // declaration
- {    
-  DECL_EMPTY                                                : cast@EMPTY
-  DECL_ASM                                                  : cast@ASM
-  DECL_STATIC_ASSERT                                        : cast@STATIC_ASSERT   
-  DECL_NAMESPACE_ALIAS                                      : cast@NAMESPACE_ALIAS 
-  DECL_USING                                                : cast@USING  
-  DECL_USING_NAMESPACE                                      : cast@USING_NAMESPACE
-  DECL_ALIAS                                                : cast@ALIAS
-  DECL_SIMPLE                                               : cast@SIMPLE
-  ATTRIBUTES DECL_OPAQUE_ENUM                               : /* !ATTRIBUTES */ cast@OPAQUE_ENUM 
+  @ATTRIBUTES        ATTRIBUTES           : test@ATTRIBUTES
   
-  DECL_LINKAGE                                              : cast@LINKAGE
-  DECL_LINKAGE_BODY                                         : cast@LINKAGE_BODY
-  DECL_NAMESPACE                                            : cast@NAMESPACE  
+  @NAME              NAME                 : test@NAME
+  @TYPE_NAME         TYPE_NAME            : test@TYPE_NAME
+  @DECLTYPE          DECLTYPE             : test@DECLTYPE
+  @TEMPLATE_ID       TEMPLATE_ID          : test@TEMPLATE_ID
+  @QUALIFIED_ID      QUALIFIED_ID         : test@QUALIFIED_ID
+  @UNQUALIFIED_ID    UNQUALIFIED_ID       : test@UNQUALIFIED_ID
   
-  DECL_TEMPLATE                                             : cast@TEMPLATE 
-  DECL_EXPLICIT_INST                                        : cast@EXPLICIT_INST 
-  DECL_EXPLICIT_SPEC                                        : cast@EXPLICIT_SPEC
-   
-  DECL_FUNCTION_DEFINITION                                  : cast@FUNCTION_DEFINITION  
- }
- 
-DECL_EMPTY
- {
-  ATTRIBUTES ;                                              : build
- } 
-
-DECL_ASM             // asm-definition
- {
-  asm ( String ) ;                                          : build 
- } 
- 
-DECL_STATIC_ASSERT   // static_assert-declaration
- {
-  static_assert ( EXPR_CONST , String ) ;                   : build
- } 
- 
-DECL_NAMESPACE_ALIAS // namespace-alias-definition
- {
-  namespace Name = NAME ;                                   : build
- }
- 
-DECL_USING           // using-declaration
- {
-  ATTRIBUTES using ::                        UNQUALIFIED_ID ;    : /* !ATTRIBUTES */ build
-  ATTRIBUTES using          NESTED_NAME_SPEC UNQUALIFIED_ID ;    : /* !ATTRIBUTES */ build_nested
-  ATTRIBUTES using typename NESTED_NAME_SPEC UNQUALIFIED_ID ;    : /* !ATTRIBUTES */ build_typename_nested
- }  
- 
-DECL_USING_NAMESPACE // using-directive
- {
-  ATTRIBUTES using namespace NAME ;                         : build
- } 
- 
-DECL_ALIAS           // alias-declaration
- {
-  ATTRIBUTES using Name ATTRIBUTES = TYPE_ID ;              : /* !ATTRIBUTES */ build
+  @ENUM_SPEC         ENUM_SPEC            : test@ENUM_SPEC
+  @DECL_OPAQUE_ENUM  DECL_OPAQUE_ENUM     : test@DECL_OPAQUE_ENUM
+  @INIT              INIT                 : test@INIT 
  }
 
-DECL_SIMPLE          // simple-declaration \ ;
- {
-  ATTRIBUTES DECL_SPEC_LIST INIT_DECLARATOR_LIST ;          : build
-  ATTRIBUTES DECL_SPEC_LIST.x                    ;          : /* !ATTRIBUTES */ if( x==class | x==enum ) build_spec 
-  ATTRIBUTES                INIT_DECLARATOR_LIST ;          : build_list
- }
- 
-DECL_SPEC_LIST : no_type,class,enum,elenum,type      // decl-specifier-seq
- {
-  DECL_SPEC.x ATTRIBUTES                                    : if( x==no_type ) start        = no_type
-  DECL_SPEC.x ATTRIBUTES                                    : if( x==class )   start@class  = class
-  DECL_SPEC.x ATTRIBUTES                                    : if( x==enum )    start@enum   = enum
-  DECL_SPEC.x ATTRIBUTES                                    : if( x==elenum )  start@elenum = elenum
-  DECL_SPEC.x ATTRIBUTES                                    : if( x==type )    start@type   = type
-  
-  DECL_SPEC.x DECL_SPEC_LIST.y                              : if( x==no_type & y==no_type )                                 ext        = no_type
-  DECL_SPEC.x DECL_SPEC_LIST.y                              : if( ( x==class & y==no_type ) | ( x==no_type & y==class ) )   ext@class  = class
-  DECL_SPEC.x DECL_SPEC_LIST.y                              : if( ( x==enum & y==no_type ) | ( x==no_type & y==enum ) )     ext@enum   = enum
-  DECL_SPEC.x DECL_SPEC_LIST.y                              : if( ( x==elenum & y==no_type ) | ( x==no_type & y==elenum ) ) ext@elenum = elenum
-  DECL_SPEC.x DECL_SPEC_LIST.y                              : if( ( x==type & y==no_type ) | ( x==no_type & y==type ) )     ext@type   = type
- }
- 
-DECL_SPEC : no_type,class,enum,elenum,type    // decl-specifier
- {
-  friend                                                    : build_friend               = no_type
-  typedef                                                   : build_typedef              = no_type
-  constexpr                                                 : build_constexpr            = no_type
-  
-  STORAGE_CLASS_SPEC                                        : cast@STORAGE_CLASS_SPEC    = no_type
-  FUNCTION_SPEC                                             : cast@FUNCTION_SPEC         = no_type
-  
-  TYPE_SPEC.x                                               : if( x==no_type ) cast@TYPE_SPEC        = no_type
-  TYPE_SPEC.x                                               : if( x==class )   cast@TYPE_SPEC@class  = class
-  TYPE_SPEC.x                                               : if( x==enum )    cast@TYPE_SPEC@enum   = enum
-  TYPE_SPEC.x                                               : if( x==elenum )  cast@TYPE_SPEC@elenum = elenum
-  TYPE_SPEC.x                                               : if( x==type )    cast@TYPE_SPEC@type   = type
- } 
- 
-STORAGE_CLASS_SPEC   // storage-class-specifier
- {
-  register                                                  : build_register
-  static                                                    : build_static
-  thread_local                                              : build_thread_local
-  extern                                                    : build_extern
-  mutable                                                   : build_mutable
- }
-
-FUNCTION_SPEC        // function-specifier
- {
-  inline                                                    : build_inline
-  virtual                                                   : build_virtual
-  explicit                                                  : build_explicit 
- }
-  
-TYPE_SPEC : no_type,class,enum,elenum,type    // type-specifier
- {
-  TRAILING_TYPE_SPEC.x                                      : if( x==no_type ) cast@TRAILING_TYPE_SPEC        = no_type
-  TRAILING_TYPE_SPEC.x                                      : if( x==class )   cast@TRAILING_TYPE_SPEC@class  = class
-  TRAILING_TYPE_SPEC.x                                      : if( x==enum )    cast@TRAILING_TYPE_SPEC@enum   = elenum
-  TRAILING_TYPE_SPEC.x                                      : if( x==type )    cast@TRAILING_TYPE_SPEC@type   = type
-  
-  CLASS_SPEC                                                : cast@CLASS_SPEC  = class
-  ENUM_SPEC                                                 : cast@ENUM_SPEC   = enum
- }
- 
-TRAILING_TYPE_SPEC : no_type,class,enum,type  // trailing-type-specifier
- {
-  SIMPLE_TYPE_SPEC.x                                        : if( x==no_type ) cast@SIMPLE_TYPE_SPEC            = no_type
-  SIMPLE_TYPE_SPEC.x                                        : if( x==type )    cast@SIMPLE_TYPE_SPEC@type       = type
-  
-  ELABORATED_TYPE_SPEC.x                                    : if( x==class )   cast@ELABORATED_TYPE_SPEC@class  = class
-  ELABORATED_TYPE_SPEC.x                                    : if( x==enum )    cast@ELABORATED_TYPE_SPEC@enum   = enum
-  
-  CV                                                        : cast@CV             = no_type
-  TYPENAME_SPEC                                             : cast@TYPENAME_SPEC  = type
- }
- 
-SIMPLE_TYPE_SPEC : no_type,type               // simple-type-specifier
- {
-  TYPE_NAME                                                 : build_name         = type
-  NESTED_NAME_SPEC TYPE_NAME                                : build_nested_name  = type
-  NESTED_NAME_SPEC template SIMPLE_TEMPLATE_ID              : build_template     = type
-  DECLTYPE                                                  : build_decltype     = type
-  
-  char                                                      : build_char         = type
-  char16_t                                                  : build_char16       = type
-  char32_t                                                  : build_char32       = type
-  wchar_t                                                   : build_wchar        = type
-  bool                                                      : build_bool         = type
-  int                                                       : build_int          = type
-  float                                                     : build_float        = type
-  double                                                    : build_double       = type
-  void                                                      : build_void         = type
-  auto                                                      : build_auto         = type
-  
-  long                                                      : build_long         = no_type
-  short                                                     : build_short        = no_type
-  signed                                                    : build_signed       = no_type
-  unsigned                                                  : build_unsigned     = no_type
- }
- 
-ELABORATED_TYPE_SPEC : class,enum             // elaborated-type-specifier
- {
-  CLASS_KEY ATTRIBUTES NAME                                           : build_class_name  = class
-  
-  CLASS_KEY ATTRIBUTES                           SIMPLE_TEMPLATE_ID   : /* !ATTRIBUTES */ build_class_template                  = class
-  CLASS_KEY ATTRIBUTES NESTED_NAME_SPEC          SIMPLE_TEMPLATE_ID   : /* !ATTRIBUTES */ build_class_nested_template           = class
-  CLASS_KEY ATTRIBUTES                  template SIMPLE_TEMPLATE_ID   : /* !ATTRIBUTES */ build_class_template_template         = class
-  CLASS_KEY ATTRIBUTES NESTED_NAME_SPEC template SIMPLE_TEMPLATE_ID   : /* !ATTRIBUTES */ build_class_nested_template_template  = class
-  
-  ENUM_KEY.x ATTRIBUTES NAME                                          : /* !ATTRIBUTES */ if( x==enum ) build_enum  = enum
- }
-  
-CV                                            // cv-qualifier
- {
-  const                                                     : build_const
-  volatile                                                  : build_volatile
- } 
- 
-/*
-
-block-declaration
- {
-  ;
-  DECL_ASM                   
-  DECL_STATIC_ASSERT
-  DECL_NAMESPACE_ALIAS       
-  DECL_USING                 
-  DECL_USING_NAMESPACE
-  DECL_ALIAS    
-  DECL_SIMPLE                
-  DECL_OPAQUE_ENUM   
- }        
-
-*/
-
-DECL_LINKAGE
- {
-  ATTRIBUTES extern String DECL                             : /* !ATTRIBUTES */ build
- }
- 
-DECL_LINKAGE_BODY
- {
-  ATTRIBUTES extern String { BODY `}                        : /* !ATTRIBUTES */ build
- } 
-
-DECL_NAMESPACE
- {
-                    namespace      { BODY `}                : build
-  ATTRIBUTES inline namespace      { BODY `}                : /* !ATTRIBUTES */ build_inline
-                    namespace Name { BODY `}                : build_name
-  ATTRIBUTES inline namespace Name { BODY `}                : /* !ATTRIBUTES */ build_inline_name
- }
-
-TYPE_SPEC_LIST : no_type,class,enum,elenum,type // type-specifier-seq
- {
-  TYPE_SPEC.x ATTRIBUTES                                    : if( x==no_type ) start         = no_type
-  TYPE_SPEC.x ATTRIBUTES                                    : if( x==class )   start@class   = class
-  TYPE_SPEC.x ATTRIBUTES                                    : if( x==enum )    start@enum    = enum
-  TYPE_SPEC.x ATTRIBUTES                                    : if( x==elenum )  start@elenum  = elenum
-  TYPE_SPEC.x ATTRIBUTES                                    : if( x==type )    start@type    = type
-  
-  TYPE_SPEC.x TYPE_SPEC_LIST.y                              : if( x==no_type & y==no_type )                                 ext        = no_type
-  TYPE_SPEC.x TYPE_SPEC_LIST.y                              : if( ( x==class & y==no_type ) | ( x==no_type & y==class ) )   ext@class  = class
-  TYPE_SPEC.x TYPE_SPEC_LIST.y                              : if( ( x==enum & y==no_type ) | ( x==no_type & y==enum ) )     ext@enum   = enum
-  TYPE_SPEC.x TYPE_SPEC_LIST.y                              : if( ( x==elenum & y==no_type ) | ( x==no_type & y==elenum ) ) ext@elenum = elenum
-  TYPE_SPEC.x TYPE_SPEC_LIST.y                              : if( ( x==type & y==no_type ) | ( x==no_type & y==type ) )     ext@type   = type
- }
-  
-/*----- Templates ----------------------------------------------------------------------*/
-
-DECL_TEMPLATE            // template-declaration
- {
-  template < TEMPLATE_PARAMETER_LIST > DECL                 : build
- }
- 
-TEMPLATE_PARAMETER_LIST  // template-parameter-list 
- {
-  TEMPLATE_PARAMETER                                        : start
-  TEMPLATE_PARAMETER_LIST , TEMPLATE_PARAMETER              : ext
- } 
- 
-TEMPLATE_PARAMETER       // template-parameter
- {
-  TYPE_PARAMETER                                            : cast_type
-  PARAMETER_DECL.x                                          : if( x!=class ) cast_const
- } 
- 
-TYPE_PARAMETER           // type-parameter
- {
-  ATTRIBUTES class                                          : /* !ATTRIBUTES */ build_class 
-  ATTRIBUTES class     Name                                 : /* !ATTRIBUTES */ build_class_name
-  ATTRIBUTES class ...                                      : /* !ATTRIBUTES */ build_class_exp 
-  ATTRIBUTES class ... Name                                 : /* !ATTRIBUTES */ build_class_exp_name
-  
-  ATTRIBUTES class      = TYPE_ID                           : /* !ATTRIBUTES */ build_class_def
-  ATTRIBUTES class Name = TYPE_ID                           : /* !ATTRIBUTES */ build_class_def_name
-  
-  ATTRIBUTES typename                                       : /* !ATTRIBUTES */ build_typename 
-  ATTRIBUTES typename     Name                              : /* !ATTRIBUTES */ build_typename_name
-  ATTRIBUTES typename ...                                   : /* !ATTRIBUTES */ build_typename_exp 
-  ATTRIBUTES typename ... Name                              : /* !ATTRIBUTES */ build_typename_exp_name
-  
-  ATTRIBUTES typename      = TYPE_ID                        : /* !ATTRIBUTES */ build_typename_def
-  ATTRIBUTES typename Name = TYPE_ID                        : /* !ATTRIBUTES */ build_typename_def_name
-  
-  template < TEMPLATE_PARAMETER_LIST > class                : build_template
-  template < TEMPLATE_PARAMETER_LIST > class Name           : build_template_name
-  template < TEMPLATE_PARAMETER_LIST > class ...            : build_template_exp
-  template < TEMPLATE_PARAMETER_LIST > class ... Name       : build_template_exp_name
-  
-  template < TEMPLATE_PARAMETER_LIST > class      = EXPR_ID : build_template_def
-  template < TEMPLATE_PARAMETER_LIST > class Name = EXPR_ID : build_template_def_name
- }
- 
-DECL_EXPLICIT_INST       // explicit-instantiation
- {
-                    template DECL                           : build
-  ATTRIBUTES extern template DECL                           : /* !ATTRIBUTES */ build_extern
- }
- 
-DECL_EXPLICIT_SPEC       // explicit-specialization
- {
-  template < > DECL                                         : build
- }
- 
 /*----- ATTRIBUTES (attribute-specifier-seq-opt) ---------------------------------------*/
 
-ATTRIBUTES
+//
+// define
+//
+//   ATTRIBUTES
+//
+// required
+// 
+//   TYPE_ID_OR_EXPR_ASSIGN
+//
+
+ATTRIBUTES                   // attribute-specifier-seq-opt
  {
-                                          : start      
-  ATTRIBUTES ATTR_COMMON                  : ext_COMMON 
-  ATTRIBUTES ATTR_ALIGN                   : ext_ALIGN  
+                                                 : start      
+  ATTRIBUTES ATTR_COMMON                         : ext@COMMON 
+  ATTRIBUTES ATTR_ALIGN                          : ext@ALIGN  
  }
  
 ATTR_COMMON
  {
-  [ [ ATTR_LIST ] ]                       : build
+  [ [ ATTR_LIST ] ]                              : build
  } 
  
 ATTR_LIST
  {
-  ATTR_ITEM                               : start
-  ATTR_LIST , ATTR_ITEM                   : ext
+  ATTR_ITEM                                      : start
+  ATTR_LIST , ATTR_ITEM                          : ext
  }
  
 ATTR_ITEM
  {
-                                          : build_empty
-  ATTR                                    : build
-  ATTR ...                                : build_exp
+                                                 : build_empty
+  ATTR                                           : build
+  ATTR ...                                       : build_exp
  } 
  
 ATTR
  {
-  Name                                    : build_name 
-  Name ( ATTR_BODY )                      : build_name_body
-  Name :: Name                            : build_scope_name
-  Name :: Name ( ATTR_BODY )              : build_scope_name_body
+  Name                                           : build_name 
+  Name ( ATTR_BODY )                             : build_name_body
+  Name :: Name                                   : build_scope_name
+  Name :: Name ( ATTR_BODY )                     : build_scope_name_body
  }
  
 ATTR_BODY
  {
-                                          : start
-  ATTR_BODY NBATOM                        : ext_atom
-  ATTR_BODY ( ATTR_BODY )                 : ext_brackets
-  ATTR_BODY [ ATTR_BODY ]                 : ext_square_brackets
-  ATTR_BODY { ATTR_BODY `}                : ext_figure_brackets
+                                                 : start
+  ATTR_BODY NBATOM                               : ext_atom
+  ATTR_BODY ( ATTR_BODY )                        : ext_brackets
+  ATTR_BODY [ ATTR_BODY ]                        : ext_square_brackets
+  ATTR_BODY { ATTR_BODY `}                       : ext_figure_brackets
  }  
  
 noneof NBATOM
  {
-  ( ) [ ] { `} : build
+  ( ) [ ] { `}                                   : build
  }  
 
 ATTR_ALIGN
  {
-  alignas ( TYPE_ID_OR_EXPR_ASSIGN     )  : build
-  alignas ( TYPE_ID_OR_EXPR_ASSIGN ... )  : build_exp
+  alignas ( TYPE_ID_OR_EXPR_ASSIGN     )         : build
+  alignas ( TYPE_ID_OR_EXPR_ASSIGN ... )         : build_exp
  } 
 
-/*----- Enums --------------------------------------------------------------------------*/
-
-ENUM_SPEC            // enum-specifier
- {
-  ENUM_HEAD {  `}                         : build
-  ENUM_HEAD { ENUM_LIST `}                : build_list
-  ENUM_HEAD { ENUM_LIST , `}              : build_list_comma
- }
-  
-DECL_OPAQUE_ENUM     // opaque-enum-declaration
- {
-  ENUM_KEY ATTRIBUTES Name           ;    : build
-  ENUM_KEY ATTRIBUTES Name ENUM_BASE ;    : build_base
- }
- 
-ENUM_HEAD            // enum-head
- {
-  ENUM_KEY ATTRIBUTES                                 : build 
-  ENUM_KEY ATTRIBUTES Name                            : build_name
-  ENUM_KEY ATTRIBUTES      ENUM_BASE                  : build_base
-  ENUM_KEY ATTRIBUTES Name ENUM_BASE                  : build_name_base
-  
-  ENUM_KEY ATTRIBUTES NESTED_NAME_SPEC Name           : build_nested_name
-  ENUM_KEY ATTRIBUTES NESTED_NAME_SPEC Name ENUM_BASE : build_nested_name_base
- } 
- 
-ENUM_LIST            // enumerator-list
- {
-  ENUM_DEF                                : start
-  ENUM_LIST , ENUM_DEF                    : ext
- }
- 
-ENUM_DEF             // enumerator-definition
- {
-  Name                                    : build
-  Name = EXPR_CONST                       : build_expr
- } 
- 
-ENUM_BASE            // enum-base
- {
-  `: TYPE_SPEC_LIST.x                     : if( x==type | x==no_type ) build
- } 
-
-ENUM_KEY : enum,enum_class               // enum-key
- {
-  enum                                    : build_enum         = enum 
-  enum class                              : build_enum_class   = enum_class
-  enum struct                             : build_enum_struct  = enum_class
- }
-  
-/*----- Classes ------------------------------------------------------------------------*/ 
-
-CLASS_SPEC           // class-specifier
- {
-  CLASS_HEAD {  `}                        : build_empty
-  CLASS_HEAD { MEMBER_LIST `}             : build
- }
- 
-CLASS_HEAD           // class-head
- {
-  CLASS_KEY ATTRIBUTES CLASS_HEAD_NAME                                   : build_name  
-  CLASS_KEY ATTRIBUTES CLASS_HEAD_NAME                 CLASS_BASE_CLAUSE : build_name_base
-  CLASS_KEY ATTRIBUTES CLASS_HEAD_NAME CLASS_VIRT_SPEC                   : build_name_virt
-  CLASS_KEY ATTRIBUTES CLASS_HEAD_NAME CLASS_VIRT_SPEC CLASS_BASE_CLAUSE : build_name_virt_base
-  
-  CLASS_KEY ATTRIBUTES CLASS_BASE_CLAUSE                                 : build_base
-  CLASS_KEY ATTRIBUTES                                                   : build
- } 
- 
-CLASS_HEAD_NAME      // class-head-name
- {
-  Name                                    : build_name
-  SIMPLE_TEMPLATE_ID                      : build_template_name
-  NESTED_NAME_SPEC Name                   : build_nested_name
-  NESTED_NAME_SPEC SIMPLE_TEMPLATE_ID     : build_nested_template_name
- } 
- 
-CLASS_BASE_CLAUSE    // base-clause
- {
-  `: BASE_SPEC_LIST                       : build
- } 
- 
-BASE_SPEC_LIST       // base-specifier-list
- {
-  BASE_SPEC_EXP                           : start
-  BASE_SPEC_LIST , BASE_SPEC_EXP          : ext 
- } 
- 
-BASE_SPEC_EXP
- {
-  BASE_SPEC                               : build
-  BASE_SPEC ...                           : build_exp
- } 
- 
-BASE_SPEC            // base-specifier
- {
-  ATTRIBUTES                     BASE_TYPE_SPEC  : build 
-  ATTRIBUTES virtual             BASE_TYPE_SPEC  : build_virtual 
-  ATTRIBUTES virtual ACCESS_SPEC BASE_TYPE_SPEC  : build_virtual_access
-  ATTRIBUTES ACCESS_SPEC         BASE_TYPE_SPEC  : build_access
-  ATTRIBUTES ACCESS_SPEC virtual BASE_TYPE_SPEC  : build_access_virtual
- } 
- 
-BASE_TYPE_SPEC       // base-type-specifier
- {
-  Name                                    : build_name
-  SIMPLE_TEMPLATE_ID                      : build_template_name
-  NESTED_NAME_SPEC Name                   : build_nested_name
-  NESTED_NAME_SPEC SIMPLE_TEMPLATE_ID     : build_nested_template_name
-  
-  DECLTYPE                                : build_decltype
- } 
- 
-MEMBER_LIST          // member-specification
- {
-  ACCESS_OR_MEMBER                        : start
-  MEMBER_LIST ACCESS_OR_MEMBER            : ext
- }
- 
-ACCESS_OR_MEMBER
- {
-  ACCESS_SPEC `:                          : cast@ACCESS_SPEC
-  MEMBER                                  : cast@MEMBER
- } 
- 
-MEMBER               // member-declaration
- {
-  ATTRIBUTES DECL_SPEC_LIST.x                      ;  : if( x!=elenum ) build_spec
-  ATTRIBUTES                MEMBER_DECLARATOR_LIST ;  : build_decl
-  ATTRIBUTES DECL_SPEC_LIST MEMBER_DECLARATOR_LIST ;  : build_spec_decl
-  
-  DECL_FUNCTION_DEFINITION                : cast@FUNCTION_DEFINITION
-  DECL_FUNCTION_DEFINITION ;              : cast@FUNCTION_DEFINITION@comma
-  DECL_USING                              : cast@USING
-  DECL_STATIC_ASSERT                      : cast@STATIC_ASSERT 
-  DECL_ALIAS                              : cast@ALIAS
-  DECL_TEMPLATE                           : cast@TEMPLATE
- }
-  
-MEMBER_DECLARATOR_LIST // member-declarator-list
- {
-  MEMBER_DECLARATOR                           : start
-  MEMBER_DECLARATOR_LIST , MEMBER_DECLARATOR  : ext
- } 
- 
-MEMBER_DECLARATOR    // member-declarator
- {
-  DECLARATOR VIRT_SPEC_LIST PURE_SPEC     : build
-  DECLARATOR @5 BRACE_OR_EQUAL_INIT       : build_init
-  
-  @6 Name ATTRIBUTES `: EXPR_CONST           : build_bitfield_name
-  @6 ATTRIBUTES `: EXPR_CONST                : build_bitfield
- }
-  
-ACCESS_SPEC          // access-specifier 
- {
-  private                                 : build_private
-  protected                               : build_protected
-  public                                  : build_public
- }  
-
-CLASS_KEY            // class-key
- {
-  class                                   : build_class
-  struct                                  : build_struct
-  union                                   : build_union
- }
- 
-CLASS_VIRT_SPEC      // class-virt-specifier
- {
-  final                                   : build
- } 
- 
-PURE_SPEC            // pure-specifier-opt
- {
-                                          : build_empty
-  = 0                                     : build_pure
- } 
- 
 /*----- Ids ----------------------------------------------------------------------------*/
+
+//
+// defines
+//
+//   NAME  NESTED_NAME_SPEC  TYPE_NAME  DECLTYPE  TEMPLATE_ID  QUALIFIED_ID  UNQUALIFIED_ID
+//
+// required
+//
+//   EXPR  TYPE_ID_OR_EXPR_CONST_OR_EXPR_ID  CONVERSION_TYPE_ID
+//
 
 NAME
  {
-                   Name                             : build
-  NESTED_NAME_SPEC Name                             : build_nested
+                   Name                                    : build
+  NESTED_NAME_SPEC Name                                    : build_nested
  }
 
-NESTED_NAME_SPEC     // nested-name-specifier
+NESTED_NAME_SPEC             // nested-name-specifier
  {
-     TYPE_NAME ::                                   : start
-      DECLTYPE ::                                   : start_decltype
-  :: TYPE_NAME ::                                   : start_abs
+     TYPE_NAME ::                                          : start
+  :: TYPE_NAME ::                                          : start_abs
+      DECLTYPE ::                                          : start_decltype
   
-  NESTED_NAME_SPEC                        Name ::   : ext
-  NESTED_NAME_SPEC          SIMPLE_TEMPLATE_ID ::   : ext_template
-  NESTED_NAME_SPEC template SIMPLE_TEMPLATE_ID ::   : ext_template_template
+  NESTED_NAME_SPEC                   Name ::               : ext
+  NESTED_NAME_SPEC          TEMPLATE_ID.x ::               : if( x==simple ) ext_template
+  NESTED_NAME_SPEC template TEMPLATE_ID.x ::               : if( x==simple ) ext_template_template
  }
  
-TYPE_NAME            // type-name
+TYPE_NAME                    // type-name
  {
-  Name                                              : build
-  SIMPLE_TEMPLATE_ID                                : build_template
+  Name                                                     : build
+  TEMPLATE_ID.x                                            : if( x==simple ) build_template
  }
  
-DECLTYPE             // decltype-specifier 
+DECLTYPE                     // decltype-specifier 
  {
-  decltype ( EXPR )                                 : build
+  decltype ( EXPR )                                        : build
  }  
  
-SIMPLE_TEMPLATE_ID   // simple-template-id
+TEMPLATE_ID : simple,operator          // template-id
  {
-  Name < TEMPLATE_ARG_LIST >                        : build
- }
-  
-TEMPLATE_ID          // template-id
- {
-  SIMPLE_TEMPLATE_ID                                : cast
-  OPERATOR_ID < TEMPLATE_ARG_LIST >                 : build_operator
-  LITERAL_ID < TEMPLATE_ARG_LIST >                  : build_literal
+  Name        < TEMPLATE_ARG_LIST >                        : build_simple    = simple
+  OPERATOR_ID < TEMPLATE_ARG_LIST >                        : build_operator  = operator
+  LITERAL_ID  < TEMPLATE_ARG_LIST >                        : build_literal   = operator
  } 
  
-TEMPLATE_ARG_LIST    // template-argument-list-opt
+TEMPLATE_ARG_LIST            // template-argument-list-opt
  {
-                                                    : empty
-  TEMPLATE_ARG_LIST1                                : cast
+                                                           : empty
+  NON_EMPTY_TEMPLATE_ARG_LIST                              : cast
  } 
  
-TEMPLATE_ARG_LIST1   // template-argument-list
+NON_EMPTY_TEMPLATE_ARG_LIST  // template-argument-list
  {
-  TEMPLATE_ARG_ITEM                                 : start
-  TEMPLATE_ARG_LIST , TEMPLATE_ARG_ITEM             : ext
+  TEMPLATE_ARG_ITEM                                        : start
+  NON_EMPTY_TEMPLATE_ARG_LIST , TEMPLATE_ARG_ITEM          : ext
  } 
  
 TEMPLATE_ARG_ITEM
  {
-  TEMPLATE_ARG                                      : build
-  TEMPLATE_ARG ...                                  : build_exp
+  TEMPLATE_ARG                                             : build
+  TEMPLATE_ARG ...                                         : build_exp
  }
  
-TEMPLATE_ARG         // template-argument
+TEMPLATE_ARG                 // template-argument
  {
-  TYPE_ID_OR_EXPR_CONST_OR_EXPR_ID                  : build
+  TYPE_ID_OR_EXPR_CONST_OR_EXPR_ID                         : build
  }  
 
-QUALIFIED_ID : non_operator,operator      // qualified-id
+QUALIFIED_ID : non_operator,operator   // qualified-id
  {
-  NESTED_NAME_SPEC          UNQUALIFIED_ID.x        : if( x==non_operator ) build_nested@non_operator  = non_operator
-  NESTED_NAME_SPEC          UNQUALIFIED_ID.x        : if( x==operator )     build_nested@operator      = operator
+  NESTED_NAME_SPEC          UNQUALIFIED_ID.x               : if( x==non_operator ) build_nested@non_operator          = non_operator
+  NESTED_NAME_SPEC          UNQUALIFIED_ID.x               : if( x==operator )     build_nested@operator              = operator
    
-  NESTED_NAME_SPEC template UNQUALIFIED_ID.x        : if( x==non_operator ) build_nested_template@non_operator = non_operator
-  NESTED_NAME_SPEC template UNQUALIFIED_ID.x        : if( x==operator )     build_nested_template@operator     = operator
+  NESTED_NAME_SPEC template UNQUALIFIED_ID.x               : if( x==non_operator ) build_nested_template@non_operator = non_operator
+  NESTED_NAME_SPEC template UNQUALIFIED_ID.x               : if( x==operator )     build_nested_template@operator     = operator
    
-  :: Name                                           : build_name           = non_operator
-  :: OPERATOR_ID                                    : build_operator       = operator
-  :: LITERAL_ID                                     : build_literal        = operator
-  :: TEMPLATE_ID                                    : build_template       = non_operator
+  :: Name                                                  : build_name           = non_operator
+  :: OPERATOR_ID                                           : build_operator       = operator
+  :: LITERAL_ID                                            : build_literal        = operator
+  :: TEMPLATE_ID                                           : build_template       = non_operator
  } 
  
-UNQUALIFIED_ID : non_operator,operator    // unqualified-id
+UNQUALIFIED_ID : non_operator,operator // unqualified-id
  {
-  Name                                              : build_name           = non_operator
-  OPERATOR_ID                                       : build_operator       = operator
-  CONVERSION_ID                                     : build_conversion     = operator
-  LITERAL_ID                                        : build_literal        = operator
-  TEMPLATE_ID                                       : build_template       = non_operator
+  Name                                                     : build_name           = non_operator
+  OPERATOR_ID                                              : build_operator       = operator
+  LITERAL_ID                                               : build_literal        = operator
+  TEMPLATE_ID                                              : build_template       = non_operator
   
-  ~ TYPE_NAME                                       : build_dtor           = non_operator
-  ~ DECLTYPE                                        : build_dtor_decltype  = non_operator
+  CONVERSION_ID                                            : build_conversion     = operator
+  
+  ~ TYPE_NAME                                              : build_dtor           = non_operator
+  ~ DECLTYPE                                               : build_dtor_decltype  = non_operator
  } 
  
-OPERATOR_ID // operator-function-id
+CONVERSION_ID                // conversion-function-id
  {
-  operator OPID                                     : build
+  operator CONVERSION_TYPE_ID                              : build
+ }
+ 
+OPERATOR_ID                  // operator-function-id
+ {
+  operator OPID                                            : build
  }
  
 OPID
  {
-  new                                               : build_new 
-  delete                                            : build_delete
-  new [ ]                                           : build_array_new
-  delete [ ]                                        : build_array_delete
+  new                                                      : build_new 
+  delete                                                   : build_delete
+  new [ ]                                                  : build_array_new
+  delete [ ]                                               : build_array_delete
   
-  +                                                 : build_plus
-  -                                                 : build_minus 
-  *                                                 : build_mul
-  /                                                 : build_div
-  %                                                 : build_rem
-  ^                                                 : build_bitxor
-  &                                                 : build_bitand
-  |                                                 : build_bitor
-  ~                                                 : build_bitnot
-  !                                                 : build_not
-  =                                                 : build_set
+  +                                                        : build_plus
+  -                                                        : build_minus 
+  *                                                        : build_mul
+  /                                                        : build_div
+  %                                                        : build_rem
+  ^                                                        : build_bitxor
+  &                                                        : build_bitand
+  |                                                        : build_bitor
+  ~                                                        : build_bitnot
+  !                                                        : build_not
+  =                                                        : build_set
   
-  <                                                 : build_LT
-  >                                                 : build_GT
+  <                                                        : build_LT
+  >                                                        : build_GT
   
-  +=                                                : build_plus_set
-  -=                                                : build_minus_set
-  *=                                                : build_mul_set
-  /=                                                : build_div_set
-  %=                                                : build_rem_set
-  ^=                                                : build_bitxor_set
-  &=                                                : build_bitand_set
-  |=                                                : build_bitor_set
-  <<                                                : build_lshift
-  <<=                                               : build_lshift_set
-  >>                                                : build_rshift
-  >>=                                               : build_rshift_set
+  +=                                                       : build_plus_set
+  -=                                                       : build_minus_set
+  *=                                                       : build_mul_set
+  /=                                                       : build_div_set
+  %=                                                       : build_rem_set
+  ^=                                                       : build_bitxor_set
+  &=                                                       : build_bitand_set
+  |=                                                       : build_bitor_set
+  <<                                                       : build_lshift
+  <<=                                                      : build_lshift_set
+  >>                                                       : build_rshift
+  >>=                                                      : build_rshift_set
   
-  ==                                                : build_EQ
-  !=                                                : build_NE
-  <=                                                : build_LE
-  >=                                                : build_GE
+  ==                                                       : build_EQ
+  !=                                                       : build_NE
+  <=                                                       : build_LE
+  >=                                                       : build_GE
   
-  &&                                                : build_and
-  ||                                                : build_or
-  ++                                                : build_inc
-  --                                                : build_dec
-  ,                                                 : build_combine
-  ->*                                               : build_member_ptr
-  ->                                                : build_member
-  ( )                                               : build_call
-  [ ]                                               : build_index
+  &&                                                       : build_and
+  ||                                                       : build_or
+  ++                                                       : build_inc
+  --                                                       : build_dec
+  ,                                                        : build_combine
+  ->*                                                      : build_member_ptr
+  ->                                                       : build_member
+  ( )                                                      : build_call
+  [ ]                                                      : build_index
  } 
  
-CONVERSION_ID // conversion-function-id
+LITERAL_ID                   // literal-operator-id
  {
-  operator CONVERSION_TYPE_ID                       : build
- }
- 
-LITERAL_ID // literal-operator-id
- {
-  operator "" Name                                  : build
+  operator "" Name                                         : build
  }   
  
-TYPENAME_SPEC // typename-specifier
- {
-  typename NESTED_NAME_SPEC                        Name : build_name 
-  typename NESTED_NAME_SPEC          SIMPLE_TEMPLATE_ID : build_template
-  typename NESTED_NAME_SPEC template SIMPLE_TEMPLATE_ID : build_template_template 
- }
-  
-/*----- Declarators --------------------------------------------------------------------*/
+/*----- Enums --------------------------------------------------------------------------*/
 
-INIT_DECLARATOR_LIST // init-declarator-list
- {
-  INIT_DECLARATOR                                   : start
-  INIT_DECLARATOR_LIST , INIT_DECLARATOR            : ext
- }
- 
-INIT_DECLARATOR      // init-declarator
- {
-  DECLARATOR                                        : build
-  DECLARATOR INIT                                   : build_init
- }  
-  
-DECLARATOR          // declarator
- {
-  @2 PTR_DECLARATOR                                    : cast
-  @2 NOPTR_DECLARATOR PARAMETERS_AND_QUALIFIERS TRAILING_RETURN_TYPE : build
- } 
- 
-PTR_DECLARATOR : non_operator,operator,func,ptr      // ptr-declarator
- {
-  NOPTR_DECLARATOR.x                                : if( x==non_operator ) start@non_operator = non_operator
-  NOPTR_DECLARATOR.x                                : if( x==operator )     start@operator     = operator
-  NOPTR_DECLARATOR.x                                : if( x==func )         start@func         = func
-  
-  PTR_OP PTR_DECLARATOR.x                           : ext   = ptr
- } 
- 
-PTR_OP               // ptr-operator
- {
-  * ATTRIBUTES CV_QUALIFIER                         : build_ptr
-  & ATTRIBUTES                                      : build_ref
-  && ATTRIBUTES                                     : build_rref
-  NESTED_NAME_SPEC * ATTRIBUTES CV_QUALIFIER        : build_nested
- } 
- 
-CV_QUALIFIER // cv-qualifier-seq-opt
- {
-                                                    : start
-  CV_QUALIFIER const                                : ext_const
-  CV_QUALIFIER volatile                             : ext_volatile
- }
- 
-NOPTR_DECLARATOR : non_operator,operator,func    // noptr-declarator
- {
-  DECLARATOR_ID.x @3 ATTRIBUTES                     : if( x==non_operator ) build@non_operator = non_operator
-  DECLARATOR_ID.x @3 ATTRIBUTES                     : if( x==operator )     build@operator     = operator  
-  
-  NOPTR_DECLARATOR.x PARAMETERS_AND_QUALIFIERS      : if( x!=func ) build_func = func
-  
-  NOPTR_DECLARATOR.x @4 [            ] ATTRIBUTES   : if( x!=operator ) build_array      = non_operator
-  NOPTR_DECLARATOR.x @4 [ EXPR_CONST ] ATTRIBUTES   : if( x!=operator ) build_array_len  = non_operator
-  
-  ( PTR_DECLARATOR.x )                              : if( x==non_operator | x==ptr ) cast@non_operator = non_operator
-  ( PTR_DECLARATOR.x )                              : if( x==operator )              cast@operator     = operator
-  ( PTR_DECLARATOR.x )                              : if( x==func )                  cast@func         = func
- }
- 
-// ATTRIBUTES 
+//
+// define
+//
+//   DECL_OPAQUE_ENUM  ENUM_SPEC  
+//
+// required
+//
+//   ATTRIBUTES  NAME  EXPR_CONST  TYPE_SPEC_LIST
+//
 
-DECLARATOR_ID : non_operator,operator       // declarator-id
+DECL_OPAQUE_ENUM             // opaque-enum-declaration
  {
-  EXPR_ID.x                                         : if( x==non_operator ) build@non_operator = non_operator
-  EXPR_ID.x                                         : if( x==operator )     build@operator     = operator
+  ENUM_KEY ATTRIBUTES Name           ;                     : build
+  ENUM_KEY ATTRIBUTES Name ENUM_BASE ;                     : build_base
+ }
+ 
+ENUM_SPEC                    // enum-specifier
+ {
+  ENUM_HEAD {  `}                                          : build
+  ENUM_HEAD { ENUM_LIST `}                                 : build_list
+  ENUM_HEAD { ENUM_LIST , `}                               : build_list_comma
+ }
   
-  ... EXPR_ID.x                                     : if( x==non_operator ) build_exp@non_operator = non_operator
-  ... EXPR_ID.x                                     : if( x==operator )     build_exp@operator     = operator
+ENUM_HEAD                    
+ {
+  ENUM_KEY ATTRIBUTES                                      : build 
+  ENUM_KEY ATTRIBUTES      ENUM_BASE                       : build_base
+  ENUM_KEY ATTRIBUTES NAME                                 : build_name
+  ENUM_KEY ATTRIBUTES NAME ENUM_BASE                       : build_name_base
  } 
  
-//  Name                                            : build_name
-//  SIMPLE_TEMPLATE_ID                              : build_template_name
-//  NESTED_NAME_SPEC Name                           : build_nested_name
-//  NESTED_NAME_SPEC SIMPLE_TEMPLATE_ID             : build_nested_template_name
-
-PARAMETERS_AND_QUALIFIERS // parameters-and-qualifiers
+ENUM_LIST                    
  {
-  ( PARAMETER_DECL_CLAUSE ) CV_QUALIFIER REF_QUALIFIER EXCEPTION_SPEC ATTRIBUTES : func
+  ENUM_DEF                                                 : start
+  ENUM_LIST , ENUM_DEF                                     : ext
+ }
+ 
+ENUM_DEF                     
+ {
+  Name                                                     : build
+  Name = EXPR_CONST                                        : build_expr
  } 
  
-REF_QUALIFIER        // ref-qualifier-opt
+ENUM_BASE                    
  {
-                                                    : empty
-  &                                                 : build_ref
-  &&                                                : build_rref
- } 
- 
-PARAMETER_DECL_CLAUSE     // parameter-declaration-clause
- {
-                                                    : empty
-  PARAMETER_DECL_LIST                               : build
-  PARAMETER_DECL_LIST ...                           : build_exp
-  ...                                               : vargs
-  PARAMETER_DECL_LIST , ...                         : build_vargs 
+  `: TYPE_SPEC_LIST.x                                      : if( x==no_type | x==type ) build
  } 
 
-PARAMETER_DECL_LIST       // parameter-declaration-list
+ENUM_KEY : enum,enum_class   
  {
-  PARAMETER_DECL                                    : start
-  PARAMETER_DECL_LIST , PARAMETER_DECL              : ext
- } 
-  
-PARAMETER_DECL : no_class,class // parameter-declaration
- {
-  ATTRIBUTES DECL_SPEC_LIST.x PARAMETER_DECL_TAIL   : if( x!=class ) build       = no_class
-  ATTRIBUTES DECL_SPEC_LIST.x PARAMETER_DECL_TAIL   : if( x==class ) build_class = class
+  enum                                                     : build_enum         = enum 
+  enum class                                               : build_enum_class   = enum_class
+  enum struct                                              : build_enum_struct  = enum_class
  }
- 
-PARAMETER_DECL_TAIL
- {
-                                                    : build 
-  DECLARATOR                                        : build_decl
-  ABSTRACT_DECLARATOR                               : build_abstract
-                       = INIT_CLAUSE                : build_init
-  DECLARATOR           = INIT_CLAUSE                : build_decl_init
-  ABSTRACT_DECLARATOR  = INIT_CLAUSE                : build_abstract_init
- } 
- 
-TRAILING_RETURN_TYPE      // trailing-return-type
- {
-  -> TRAILING_TYPE_SPEC_LIST                        : build 
-  -> TRAILING_TYPE_SPEC_LIST ABSTRACT_DECLARATOR    : build_decl
- }
-  
-TRAILING_TYPE_SPEC_LIST : no_type,type  // trailing-type-specifier-seq
- {
-  TRAILING_TYPE_SPEC.x ATTRIBUTES                   : if( x==no_type ) start@no_type = no_type
-  TRAILING_TYPE_SPEC.x ATTRIBUTES                   : if( x!=no_type ) start@type    = type
-  
-  TRAILING_TYPE_SPEC.x TRAILING_TYPE_SPEC_LIST.y    : if( x==no_type & y==no_type ) ext@no_type = no_type  
-  TRAILING_TYPE_SPEC.x TRAILING_TYPE_SPEC_LIST.y    : if( ( x==no_type & y!=no_type ) | ( x!=no_type & y==no_type ) ) ext@type  = type  
- } 
-  
-ABSTRACT_DECLARATOR       // abstract-declarator
- { 
-  @8 PTR_ABSTRACT_DECLARATOR                                                  : build
-  @8 NOPTR_ABSTRACT_DECLARATOR PARAMETERS_AND_QUALIFIERS TRAILING_RETURN_TYPE : build_func_decl
-  @8                           PARAMETERS_AND_QUALIFIERS TRAILING_RETURN_TYPE : build_func
-  @8 ABSTRACT_PACK_DECLARATOR                                                 : cast
- } 
- 
-PTR_ABSTRACT_DECLARATOR   // ptr-abstract-declarator
- {
-  NOPTR_ABSTRACT_DECLARATOR                         : cast
-  PTR_OP                                            : start
-  PTR_OP PTR_ABSTRACT_DECLARATOR                    : ext
- } 
-
-NOPTR_ABSTRACT_DECLARATOR // noptr-abstract-declarator
- {
-                            PARAMETERS_AND_QUALIFIERS : build_func
-  NOPTR_ABSTRACT_DECLARATOR PARAMETERS_AND_QUALIFIERS : build_func_decl
-  
-  [            ] @9 ATTRIBUTES                           : build_array
-  [ EXPR_CONST ] @9 ATTRIBUTES                           : build_array_len
-  
-  NOPTR_ABSTRACT_DECLARATOR [            ] @9 ATTRIBUTES : build_array_decl
-  NOPTR_ABSTRACT_DECLARATOR [ EXPR_CONST ] @9 ATTRIBUTES : build_array_len_decl
-  
-  ( PTR_ABSTRACT_DECLARATOR )                         : cast
- } 
- 
-ABSTRACT_PACK_DECLARATOR  // abstract-pack-declarator
- {
-  NOPTR_ABSTRACT_PACK_DECLARATOR                      : start
-  PTR_OP ABSTRACT_PACK_DECLARATOR                     : ext
- }
-
-NOPTR_ABSTRACT_PACK_DECLARATOR // noptr-abstract-pack-declarator
- {
-  NOPTR_ABSTRACT_PACK_DECLARATOR PARAMETERS_AND_QUALIFIERS : build_func
-  NOPTR_ABSTRACT_PACK_DECLARATOR [            ] @9 ATTRIBUTES : build_array
-  NOPTR_ABSTRACT_PACK_DECLARATOR [ EXPR_CONST ] @9 ATTRIBUTES : build_array_len
-  ...                                                      : build_exp
- }
-
-EXCEPTION_SPEC            // exception-specification-opt
- {
-                                                    : empty
-  throw (  )              @7                        : build_throw
-  throw ( TYPE_ID_LIST )  @7                        : build_throw_list
-  noexcept                @7                        : build_noexcept 
-  noexcept ( EXPR_CONST ) @7                        : build_noexcept_expr
- }
-
-TYPE_ID_LIST              // type-id-list
- {
-  TYPE_ID_LIST_ITEM                                 : start
-  TYPE_ID_LIST , TYPE_ID_LIST_ITEM                  : ext
- }
- 
-TYPE_ID_LIST_ITEM
- {
-  TYPE_ID                                           : build
-  TYPE_ID ...                                       : build_exp
- } 
-
-VIRT_SPEC_LIST            // virt-specifier-seq-opt
- {
-                                                    : start
-  VIRT_SPEC_LIST VIRT_SPEC                          : ext
- }
-  
-VIRT_SPEC                 // virt-specifier  
- {
-  override                                          : build_override
-  final                                             : build_final
- } 
   
 /*----- Init ---------------------------------------------------------------------------*/
+
+//
+// define
+//
+//  INIT  BRACE_OR_EQUAL_INIT  INIT_CLAUSE  BRACED_INIT_LIST
+//
+// required
+//
+//   EXPR_ASSIGN
+//
  
-INIT                 // initializer
+INIT : assign,braced,list              // initializer
  {
-  BRACE_OR_EQUAL_INIT                               : build
-  @1 ( INIT_LIST )                                  : build_list
+  = INIT_CLAUSE                                  : build         = assign
+  BRACED_INIT_LIST                               : build_braced  = braced
+  ( INIT_LIST )                                  : build_list    = list
  } 
  
-BRACE_OR_EQUAL_INIT  // brace-or-equal-initializer 
+INIT_CLAUSE                  // initializer-clause
  {
-  = INIT_CLAUSE                                     : build
-  BRACED_INIT_LIST                                  : build_list
+  EXPR_ASSIGN                                    : build
+  BRACED_INIT_LIST                               : build_list
  }
- 
-INIT_LIST            // initializer-list // expressiont-list
+  
+BRACED_INIT_LIST             // braced-init-list
  {
-  INIT_EXP                                          : start
-  INIT_LIST , INIT_EXP                              : ext
+  { `}                                           : build_empty
+  { INIT_LIST  `}                                : build
+  { INIT_LIST , `}                               : build_comma
+ }
+
+INIT_LIST                    // initializer-list // expressiont-list
+ {
+  INIT_EXP                                       : start
+  INIT_LIST , INIT_EXP                           : ext
  } 
  
 INIT_EXP
  {
-  INIT_CLAUSE                                       : build
-  INIT_CLAUSE ...                                   : build_exp
+  INIT_CLAUSE                                    : build
+  INIT_CLAUSE ...                                : build_exp
  }
   
-INIT_CLAUSE          // initializer-clause
- {
-  EXPR_ASSIGN                                       : build
-  BRACED_INIT_LIST                                  : build_list
- }
-  
-BRACED_INIT_LIST     // braced-init-list
- {
-  { `}                                              : build_empty
-  { INIT_LIST  `}                                   : build
-  { INIT_LIST , `}                                  : build_comma
- }
- 
-/*----- TODO ---------------------------------------------------------------------------*/
-
-TYPE_ID // type-id
- {
-  TODO_TYPE_ID : build
- }
- 
-CONVERSION_TYPE_ID // conversion-type-id
- {
-  TODO_CONVERSION_TYPE_ID : build
- } 
-
-DECL_FUNCTION_DEFINITION // function-definition
- {
-  ATTRIBUTES DECL_SPEC_LIST DECLARATOR VIRT_SPEC_LIST FUNCTION_BODY : build
-  ATTRIBUTES                DECLARATOR VIRT_SPEC_LIST FUNCTION_BODY : build_nospec
- }
-
-FUNCTION_BODY // function-body
- {
-  TODO_FUNCTION_BODY : build
- } 
- 
-/*----- TODO ---------------------------------------------------------------------------*/
+//-------------------------------------------
 
 EXPR_CONST // constant-expression
  {
   TODO_EXPR_CONST : build
  }
  
-EXPR_ASSIGN // assignment-expression
- {
-  TODO_EXPR_ASSIGN : build
- }
-   
-EXPR_ID : non_operator,operator // id-expression
- {
-  QUALIFIED_ID.x                                    : if( x==non_operator ) build_qualified@non_operator = non_operator
-  QUALIFIED_ID.x                                    : if( x==operator )     build_qualified@operator     = operator
-  
-  UNQUALIFIED_ID.x                                  : if( x==non_operator ) build_unqualified@non_operator = non_operator
-  UNQUALIFIED_ID.x                                  : if( x==operator )     build_unqualified@operator     = operator
- } 
-
 EXPR // expr
  {
   TODO_EXPR : build
  }  
 
+EXPR_ASSIGN // assignment-expression
+ {
+  TODO_EXPR_ASSIGN : build
+ }
+   
 TYPE_ID_OR_EXPR_ASSIGN // type-id | assignment-expression // for alignas 
  {
   TODO_TYPE_ID_OR_EXPR_ASSIGN : build
@@ -1009,14 +382,16 @@ TYPE_ID_OR_EXPR_CONST_OR_EXPR_ID // type-id | constant-expression | id-expressio
  {
   TODO_TYPE_ID_OR_EXPR_CONST : build 
  }  
+ 
+CONVERSION_TYPE_ID // conversion-type-id
+ {
+  TODO_CONVERSION_TYPE_ID : build
+ } 
 
-/*----- EOF ----------------------------------------------------------------------------*/
-
-
-
-
-
-
-
+TYPE_SPEC_LIST : no_type,type 
+ {
+  TODO_TYPE_SPEC_LIST1 : build@no_type = no_type
+  TODO_TYPE_SPEC_LIST2 : build@type    = type
+ }
 
  
