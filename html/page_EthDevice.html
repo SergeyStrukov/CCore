@@ -1,0 +1,141 @@
+<!--
+/* page_EthDevice.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.07
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> EthDevice</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>EthDevice</h2>
+
+<p class="Files">Files <b>CCore/inc/net/EthDevice.h</b> <b>CCore/src/net/EthDevice.cpp</b></p>
+
+<p>
+<b>EthDevice</b> is an abstract interface. This interface should be implemented by an Ethernet device driver class
+to be used as such.
+</p>
+
+<pre>
+
+struct <span class="Att">EthDevice</span>
+ {
+  // static properties
+ 
+  virtual MACAddress getAddress()=0;
+  
+  virtual PacketFormat getTxFormat()=0; // max_data <= IPLen(-1)
+  
+  virtual PacketFormat getRxFormat()=0; // max_data <= IPLen(-1)
+  
+  // attach/detach
+  
+  virtual void attach(EthProc *proc)=0;
+  
+  virtual void detach()=0;
+  
+  // dynamic properties
+  
+  typedef EthStatInfo StatInfo;
+  
+  virtual void getStat(EthStatInfo &ret)=0;
+  
+  virtual bool getPromiscMode()=0;
+  
+  virtual void setPromiscMode(bool enable)=0;
+  
+  // outbound
+  
+  virtual void signalOutbound()=0;
+ };
+
+</pre>
+
+<p>
+Methods of this interface are called asynchronously. The implementation must take all necessary measures
+to deal with the race condition.
+</p>
+
+<p>
+The first three methods are static properties of the device. They must not be changed during the object life-time.
+</p>
+
+<p>
+<b>getAddress()</b> returns the MAC address of the device.
+</p>
+
+<p>
+<b>getTxFormat()</b> returns the <a href="page_Packet.html#PacketFormat">packet format</a> for outbound operations.
+</p>
+
+<p>
+<b>getRxFormat()</b> returns the packet format for inbound operations.
+</p>
+
+<p>
+The <b>max_len</b> of both packet formats must be represented by <b>IPLen</b> type 
+(i.g. must not exceed 2<sup>16</sup>-1).
+</p>
+
+<p>
+To process traffic a traffic processor must be attached. Only one processor may be attached at the time.
+While a processor is attached, it is received the inbound traffic as well as other notification events.
+It also serves as the source of outbound packets. It must stay alive while been attached.
+</p>
+
+<p>
+<b>attach()</b> attaches the inbound processor.
+</p>
+
+<p>
+<b>detach()</b> detaches the inbound processor.
+</p>
+
+<p>
+The next group of methods deals with dynamic properties of the device.
+</p>
+
+<p>
+<b>getStat()</b> returns the device statistic counters.
+</p>
+
+<p>
+<b>getPromiscMode()</b> returns the promiscuous mode flag.
+</p>
+
+<p>
+<b>setPromiscMode()</b> sets the promiscuous mode flag.
+</p>
+
+<p>
+The last methods signals to the device, that there are some outbound packets. In response device must
+extract and send out packets from the traffic processor.
+</p>
+
+<p>
+<b>signalOutbound()</b> signals to push outbound process.
+</p>
+
+</body>
+
+</html>
+
