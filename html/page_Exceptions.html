@@ -134,6 +134,7 @@ target for exception messages. It also has an internal flag, which signals if th
 </p>
 
 <pre>
+
 class <span class="Att">ReportException</span> : NoCopy
  {
    bool nok;
@@ -168,6 +169,7 @@ class <span class="Att">ReportException</span> : NoCopy
 
    static void Clear();
  };
+
 </pre>
 
 <p>
@@ -258,6 +260,49 @@ ReportException report1;
  // report1 is the current again
 
 </pre>
+
+<h3>ReportExceptionTo</h3>
+
+<p>
+<b>ReportExceptionTo</b> class is a derived class from the <b>ReportException</b>, this class redirects
+exception message output to the given output object.
+</p>
+
+<pre>
+
+template &lt;class P&gt;
+class <span class="Att">ReportExceptionTo</span> : public ReportException
+ {
+   P &amp;out;
+   
+  public: 
+   
+   explicit ReportExceptionTo(P &amp;out_) : out(out_) {}
+   
+   ~ReportExceptionTo() {}
+   
+   virtual void print(StrLen str)
+    {
+     SilentReportException report;
+     
+     try
+       {
+        out.put(str.ptr,str.len);
+       }
+     catch(...) {}
+    }
+ };
+ 
+</pre>
+
+<p>
+Constructor takes and stores the reference to the target object. The class of this object must provide the method
+<b>put(const char *str,ulen len)</b>. For example, any printing object classes are acceptable.
+</p>
+
+<p>
+The virtual method <b>print()</b> is public for this class.
+</p>
 
 <h3>Custom exceptions</h3>
 

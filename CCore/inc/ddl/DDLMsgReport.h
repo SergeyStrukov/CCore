@@ -21,24 +21,9 @@
 namespace CCore {
 namespace DDL {
 
-/* classes */
+/* using */
 
-class MsgReport;
-
-/* class MsgReport */
-
-class MsgReport : public ReportException
- {
-   PrintBase &msg;
-   
-  public: 
-   
-   explicit MsgReport(PrintBase &msg_) : msg(msg_) {}
-   
-   ~MsgReport() {}
-   
-   virtual void print(StrLen str);
- };
+using MsgReport = ReportExceptionTo<PrintBase> ;
 
 } // namespace DDL
 } // namespace CCore

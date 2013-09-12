@@ -18,18 +18,6 @@
 namespace CCore {
 namespace DDL {
 
-/* class MsgReport */
-
-void MsgReport::print(StrLen str)
- {
-  SilentReportException report;
-  
-  try
-    {
-     msg.put(str.ptr,str.len);
-    }
-  catch(...) {}
- }
 
 } // namespace DDL
 } // namespace CCore

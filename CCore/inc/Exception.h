@@ -31,6 +31,8 @@ class ReportException;
 
 class SilentReportException;
 
+template <class P> class ReportExceptionTo;
+
 class PrintException;
 
 template <class T> class CustomThrow;
@@ -108,6 +110,31 @@ class SilentReportException : public ReportException
    SilentReportException();
    
    ~SilentReportException();
+ };
+
+/* class ReportExceptionTo<P> */
+
+template <class P>
+class ReportExceptionTo : public ReportException
+ {
+   P &out;
+   
+  public: 
+   
+   explicit ReportExceptionTo(P &out_) : out(out_) {}
+   
+   ~ReportExceptionTo() {}
+   
+   virtual void print(StrLen str)
+    {
+     SilentReportException report;
+     
+     try
+       {
+        out.put(str.ptr,str.len);
+       }
+     catch(...) {}
+    }
  };
  
 /* class PrintException */ 
