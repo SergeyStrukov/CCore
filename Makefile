@@ -53,6 +53,8 @@ list:
 	make -C Target/Win32/test     list
 	make -C Target/LIN64          list
 	make -C Target/LIN64/test     list
+	make -C Target/WIN64          list
+	make -C Target/WIN64/test     list
 	make -C tools                 list
 	make -C Target/IXDP465        list
 	make -C Target/IXDP465/test   list
@@ -68,5 +70,3 @@ src:
 	find . -name *.cpp > txt/cpp-list.txt
 	find . -name *.s > txt/s-list.txt
 
-svnclean:
-	find . -type d -name .svn -exec rm -r -f '{}' \;

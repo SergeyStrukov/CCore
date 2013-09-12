@@ -1,7 +1,7 @@
-../../Target/LIN64/CCore/src/math/IntegerFastAlgo.s
-../../Target/LIN64/CCore/src/crypton/IntelCPUID.s
+../../Target/LIN64/CCore/src/base/Quick.s
 ../../Target/LIN64/CCore/src/crypton/IntelAES.s
+../../Target/LIN64/CCore/src/crypton/IntelCPUID.s
 ../../Target/LIN64/CCore/src/crypton/IntelRandom.s
+../../Target/LIN64/CCore/src/math/IntegerFastAlgo.s
 ../../Target/LIN64/CCore/src/sys/SysAtomic.s
 ../../Target/LIN64/CCore/src/sys/SysTime.s
-../../Target/LIN64/CCore/src/base/Quick.s

@@ -27,6 +27,10 @@ template <class UInt> struct RandomFill_gen;
 
 template <class UInt> struct RandomFill;
 
+template <class UInt> struct RandomSelect;
+
+template <class T> class RandomBase;
+
 class Random;
 
 /* struct RandomFill_gen<UInt> */ 
@@ -113,10 +117,87 @@ struct RandomFill<uint64>
   template <class T>
   static uint64 Do(T &random) { return random.next64(); }
  };
+
+/* struct RandomSelect<UInt> */
+
+template <class UInt> 
+struct RandomSelect
+ {
+  static UInt Do(UInt a,uint32 b,UInt lim) // lim!=0
+   {
+    a%=lim;
+    
+    for(unsigned cnt=32; cnt ;cnt--,b<<=1)
+      if( b&0x80000000 )
+        {
+         if( a+1<=lim/2 )
+           a=2*a+1;
+         else
+           a=2*a+1-lim;
+        }
+      else
+        {
+         if( a<=(lim-1)/2 )
+           a=2*a;
+         else
+           a=2*a-lim;
+        }
+    
+    return a;
+   }
+  
+  template <class T>
+  static UInt Do(T &random,UInt lim) // lim!=0
+   {
+    if( lim<=uint32(-1) ) return (UInt)random.select((uint32)lim);
+    
+    UInt a=random.template next_uint<UInt>();
+    uint32 b=random.next32();
+    
+    return Do(a,b,lim);
+   }
+ };
+
+/* class RandomBase<T> */
+
+template <class T> 
+class RandomBase : NoCopy
+ {
+  private:
  
+   T & getObj() { return *static_cast<T *>(this); }
+   
+  public:
+ 
+   template <class UInt> 
+   UInt next_uint() { return RandomFill<UInt>::Do(getObj()); }
+ 
+   uint32 select(uint32 lim) { return lim?uint32( getObj().next64()%lim ):getObj().next32(); }
+ 
+   uint32 select(uint32 a,uint32 b) { return a+select(b-a+1); }
+ 
+   template <class UInt>
+   UInt select_uint(UInt lim) { return lim?RandomSelect<UInt>::Do(getObj(),lim):next_uint<UInt>(); }
+ 
+   template <class UInt>
+   UInt select_uint(UInt a,UInt b) { return a+select_uint<UInt>(b-a+1); }
+ 
+   template <class UInt> 
+   void fill(PtrLen<UInt> r) 
+    { 
+     for(; +r ;++r) *r=next_uint<UInt>(); 
+    }
+ 
+   template <class UInt> 
+   void fill(UInt *ptr,ulen len) 
+    { 
+     fill(Range(ptr,len));
+    } 
+ };
+
 /* class Random */ 
 
-class Random : public MersenneTwister::Gen<MersenneTwister::MT19937>
+class Random : public MersenneTwister::Gen<MersenneTwister::MT19937> , public RandomBase<Random>
  {
   public:
   
@@ -137,25 +218,6 @@ class Random : public MersenneTwister::Gen<MersenneTwister::MT19937>
      
      return split.get(); 
     }
-    
-   template <class UInt> 
-   UInt next_uint() { return RandomFill<UInt>::Do(*this); }
-   
-   uint32 select(uint32 lim) { return lim?uint32( next64()%lim ):next32(); }
-   
-   uint32 select(uint32 a,uint32 b) { return a+select(b-a+1); }
-   
-   template <class UInt> 
-   void fill(PtrLen<UInt> r) 
-    { 
-     for(; +r ;++r) *r=next_uint<UInt>(); 
-    }
-   
-   template <class UInt> 
-   void fill(UInt *ptr,ulen len) 
-    { 
-     fill(Range(ptr,len));
-    } 
  };
  
 } // namespace CCore

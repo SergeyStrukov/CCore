@@ -6,4 +6,10 @@ CondLangLR1
 
 DDL2
 
+--- Updates ---
+
+CCore/inc/Random.h
+
+ RandomBase class and methods select_uint are added
+
 ----------------------

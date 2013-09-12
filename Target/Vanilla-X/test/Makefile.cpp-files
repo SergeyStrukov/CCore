@@ -84,6 +84,7 @@
 ../../../CCore/test/test0083.SortUnique.cpp
 ../../../CCore/test/test0084.AnyPtr.cpp
 ../../../CCore/test/test0085.Scanf.cpp
+../../../CCore/test/test0086.RandomSelect.cpp
 ../../../CCore/test/test0100.Bridge.cpp
 ../../../CCore/test/test0101.PTP.cpp
 ../../../CCore/test/test0102.PrintFile.cpp

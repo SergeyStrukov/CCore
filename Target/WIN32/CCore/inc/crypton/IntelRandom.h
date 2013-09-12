@@ -38,7 +38,7 @@ class IntelRandom;
 
 /* class IntelRandom */ 
 
-class IntelRandom : NoCopy
+class IntelRandom : public RandomBase<IntelRandom>
  {
   public:
   
@@ -63,25 +63,6 @@ class IntelRandom : NoCopy
      
      return split.get(); 
     }
-    
-   template <class UInt> 
-   UInt next_uint() { return RandomFill<UInt>::Do(*this); }
-   
-   uint32 select(uint32 lim) { return lim?uint32( next64()%lim ):next32(); }
-   
-   uint32 select(uint32 a,uint32 b) { return a+select(b-a+1); }
-   
-   template <class UInt> 
-   void fill(PtrLen<UInt> r) 
-    { 
-     for(; +r ;++r) *r=next_uint<UInt>(); 
-    }
-   
-   template <class UInt> 
-   void fill(UInt *ptr,ulen len) 
-    { 
-     fill(Range(ptr,len));
-    } 
  };
 
 } // namespace Crypton
