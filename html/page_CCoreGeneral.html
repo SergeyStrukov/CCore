@@ -148,6 +148,14 @@ There are additional optional variables you may define.
 <b>LDOPT_EXTRA</b> &mdash; additional options for the linker. It is empty by default.
 </p>
 
+<p>
+If you want to build a libray, not an executable, then use another "magic line":
+</p>
+
+<pre>
+include $(CCORE_ROOT)/Target/Makefile.lib
+</pre>
+
 <h3>Names and decorations</h3>
 
 <p>

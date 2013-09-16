@@ -39,8 +39,8 @@ implementation, based on the <a href="http://en.wikipedia.org/wiki/Mersenne_twis
 There are several reasons why we use our own RNG. First, we need quality. Second, we need some properties
 from RNG: it must be lightweight and generate unique and non-periodical random number sequence.
 Finally, RNG must be an object, not a global function. Because it requires some state to work, using a global function
-introduces a global variable, the access to this variable must be synchronized in the multithreaded applications.
-That is implies an excessive bottleneck and a performance penalty.
+introduces a global variable, the access to this variable must be synchronized in multithreaded applications.
+That implies an excessive bottleneck and a performance penalty.
 That is why we abstain from the using the standard C function <b>rand()</b>. 
 </p>
 
@@ -51,6 +51,7 @@ periodically during the random number generation process.
 </p>
 
 <pre>
+
 class <span class="Att">Random</span> : NoCopy
  {
    ....
@@ -75,11 +76,18 @@ class <span class="Att">Random</span> : NoCopy
    uint32 select(uint32 a,uint32 b) { return a+select(b-a+1); }
    
    template &lt;class UInt&gt;
+   UInt select_uint(UInt lim);
+ 
+   template &lt;class UInt&gt;
+   UInt select_uint(UInt a,UInt b);
+
+   template &lt;class UInt&gt;
    void fill(PtrLen&lt;UInt&gt; r); 
    
    template &lt;class UInt&gt;
    void fill(UInt *ptr,ulen len); 
  };
+
 </pre>
 
 <p>
@@ -112,6 +120,113 @@ for casual applications.
 <b>a</b> must be less or equal than <b>b</b>.
 </p>
 
+<p>
+<b>select_uint(UInt lim)</b> is similar to <b>select(uint32 lim)</b>, but works for the any unsigned integral type, 
+specified as the template argument.
+</p>
+
+<p>
+<b>select_uint(UInt a,UInt b)</b> is similar to <b>select(uint32 a,uint32 b)</b>, but works for the any unsigned integral type, 
+specified as the template argument.
+</p>
+
+<h4>RandomBase</h4>
+
+<p>
+<b>Random</b> is implemented with help of the <b>RandomBase</b> class.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">RandomBase</span> : NoCopy
+ {
+  private:
+ 
+   T & getObj() { return *static_cast&lt;T *&gt;(this); }
+   
+  public:
+ 
+   template &lt;class UInt&gt;
+   UInt next_uint();
+ 
+   uint32 select(uint32 lim);
+ 
+   uint32 select(uint32 a,uint32 b);
+ 
+   template &lt;class UInt&gt;
+   UInt select_uint(UInt lim);
+ 
+   template &lt;class UInt&gt;
+   UInt select_uint(UInt a,UInt b);
+ 
+   template &lt;class UInt&gt;
+   void fill(PtrLen<UInt> r); 
+ 
+   template &lt;class UInt&gt;
+   void fill(UInt *ptr,ulen len) 
+ };
+
+</pre>
+
+<p>
+You may use this class to build you custom random class using the following pattern:
+</p>
+
+<pre>
+
+class <span class="Att">CustomRandom</span> : public RandomBase&lt;CustomRandom&gt;
+ {
+  public:
+
+   ....
+
+   uint8  next8();
+   
+   uint16 next16();
+   
+   uint32 next32();
+   
+   uint64 next64(); 
+ };
+
+</pre>
+
+<p>
+You have to implement only four base methods. You may derive them from the one like this:
+</p>
+
+<pre>
+
+class <span class="Att">CustomRandom</span> : public RandomBase&lt;CustomRandom&gt;
+ {
+  public:
+
+   ....
+
+   <span class="Att">typedef UnitType uint32;</span>
+
+   <span class="Att">uint32 next();</span>
+
+   uint8  next8()  { return uint8 (next()); }
+   
+   uint16 next16() { return uint16(next()); }
+   
+   uint32 next32() { return uint32(next()); }
+   
+   uint64 next64() 
+    {
+     UIntSplit&lt;uint64,uint32&gt; split;
+     
+     split[0]=next32();
+     split[1]=next32();
+     
+     return split.get(); 
+    }
+ };
+
+</pre>
+
 <h4>Mersenne Twister</h4>
 
 <p>
@@ -120,6 +235,7 @@ Implementation of the Mersenne Twister is enclose in the namespace <b>MersenneTw
 </p>
 
 <pre>
+
 struct <span class="Att">MT19937</span>
  {
   // unit
@@ -153,6 +269,7 @@ struct <span class="Att">MT19937</span>
   
   static const UnitType HotBits[N];
  };
+
 </pre>
 
 <p>
@@ -161,6 +278,7 @@ from <a href="http://www.fourmilab.ch/hotbits/">HotBits</a>.
 </p>
 
 <pre>
+
 template &lt;class P&gt;
 class <span class="Att">Gen</span> : NoCopy
  {
@@ -190,6 +308,7 @@ class <span class="Att">Gen</span> : NoCopy
   
    UnitType next();
  };
+
 </pre>
 
 <p>

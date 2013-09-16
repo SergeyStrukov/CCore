@@ -12,4 +12,8 @@ CCore/inc/Random.h
 
  RandomBase class and methods select_uint are added
 
+CCore/inc/Exception.h
+
+ ReportExceptionTo is added
+
 ----------------------

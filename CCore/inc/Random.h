@@ -123,6 +123,8 @@ struct RandomFill<uint64>
 template <class UInt> 
 struct RandomSelect
  {
+  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::RandomSelect<UInt> : UInt must be an unsigned integral type");
+ 
   static UInt Do(UInt a,uint32 b,UInt lim) // lim!=0
    {
     a%=lim;
