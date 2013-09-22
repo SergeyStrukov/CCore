@@ -97,7 +97,7 @@ The <b>max_len</b> of both packet formats must be represented by <b>IPLen</b> ty
 </p>
 
 <p>
-To process traffic a traffic processor must be attached. Only one processor may be attached at the time.
+To process the traffic a traffic processor must be attached. Only one processor may be attached at the time.
 While a processor is attached, it is received the inbound traffic as well as other notification events.
 It also serves as the source of outbound packets. It must stay alive while been attached.
 </p>
@@ -127,13 +127,192 @@ The next group of methods deals with dynamic properties of the device.
 </p>
 
 <p>
-The last methods signals to the device, that there are some outbound packets. In response device must
+The last methods signals to the device, that there are some outbound packets. In response driver must
 extract and send out packets from the traffic processor.
 </p>
 
 <p>
 <b>signalOutbound()</b> signals to push outbound process.
 </p>
+
+<h4>EthStatInfo</h4>
+
+<p>
+<b>EthStatInfo</b> is a set of statistic counters for Ethernet driver.
+</p>
+
+<pre>
+
+enum <span class="Att">EthEvent</span>
+ {
+  EthLink_Up,
+  EthLink_Down,
+ 
+  EthTx_Done,
+  EthRx_Done,
+  
+  EthTx_BadPacketLen,
+  EthTx_Error,
+  
+  EthRx_BadPacketLen,
+  EthRx_Drop,
+  EthRx_Broadcast,
+  EthRx_Error,
+ 
+  EthEventLim
+ };
+ 
+const char * GetTextDesc(EthEvent ev); 
+ 
+typedef Counters&lt;EthEvent,EthEventLim&gt; <span class="Att">EthStatInfo</span>;
+
+</pre>
+
+<h4>EthProc</h4>
+
+<p>
+<b>EthProc</b> is an abstract interface of a traffic processor.
+</p>
+
+<pre>
+
+struct <span class="Att">EthProc</span>
+ {
+  // serialized
+ 
+  virtual void start()=0;
+   
+  virtual void linkUp()=0;
+   
+  virtual void linkDown()=0;
+   
+  virtual void tick()=0; // InboundTicksPerSec
+   
+  virtual void inbound(Packet&lt;uint8,EthRxExt&gt; packet)=0;
+   
+  virtual void prepareOutbound()=0;
+   
+  virtual Packet&lt;uint8,EthTxExt&gt; outbound()=0;
+   
+  virtual void stop()=0;
+ };
+
+</pre>
+
+<p>
+It is a responsibility of the driver to call methods of this interface synchronously.
+So traffic processor don't have to protect method calls by a mutex.
+</p>
+
+<p>
+<b>start()</b> is called once at the moment the driver is started. 
+</p>
+
+<p>
+<b>linkUp()</b> is called to inform the link is up.
+</p>
+
+<p>
+<b>linkDown()</b> is called to inform the link is down.
+</p>
+
+<p>
+<b>tick()</b> is called periodically with the frequence <b>InboundTicksPerSec</b>(10 Hz) and can be used 
+for a protocols timeout processing.
+</p>
+
+<p>
+<b>inbound()</b> is called to process an inbound Ethernet packet. The <b>packet</b> has the proper packet format
+(<b>getRxFormat()</b>) and has the attached extension of the type <b>EthRxExt</b> with additional information. Packet carries
+an Ethernet packet payload.
+</p>
+
+<p>
+<b>prepareOutbound()</b> is called to process the outbound traffic. This method is called first as the
+reaction on the <b>signalOutbound()</b> method call. Then driver extracts and sends out packets by
+the calling of the method <b>outbound()</b>.
+</p>
+
+<p>
+<b>outbound()</b> method is used to retrieve packets from the outbound packet queue. The null packet is
+returned, if the queue is empty. The packet must carry Ethernet payload and must have the proper packet format
+(<b>getTxFormat()</b>).
+It also has the attached packet extension of the type <b>EthTxExt</b> with additional information.
+</p>
+
+<p>
+<b>stop()</b> is called once at the moment the driver is stopped.
+</p>
+
+<p>
+It is intended that packet formats reserve a space for Ethernet packet header and uses <b>max_data</b> 
+to reflect the MTU length.
+</p>
+
+<p>
+A typical implementation of the Ethernet driver would start a task for the packet processing ("Ethernet task").
+It is assumed, that a traffic processor is attached first and then task is started. At that moment the method 
+<b>start()</b> is called. At the proper moment a management entity should stop the task, the task calls <b>stop()</b> 
+before exit. Then traffic processor is detached and may be destroyed, as well as the driver object.
+</p>
+
+<h4>EthTxExt</h4>
+
+<p>
+This structure supplements outbound packets and used by a driver to build the Ethernet packet header.
+It has two fields: <b>dst</b> with a destination MAC address and <b>type</b> with an Ethernet packet type.
+</p>
+
+<pre>
+
+struct <span class="Att">EthTxExt</span>
+ {
+  MACAddress dst;
+  EthType type;
+  
+  // constructors
+  
+  EthTxExt() : dst(),type() {}
+  
+  EthTxExt(MACAddress dst_,EthType type_) : dst(dst_),type(type_) {}
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &out) const;
+ };
+
+</pre>
+
+<h4>EthRxExt</h4>
+
+<p>
+This structure supplements inbound packets and filled by a driver from the Ethernet packet header.
+It has three fields: <b>src</b> with a source MAC address, <b>dst</b> with a destination MAC address
+and <b>type</b> with an Ethernet packet type.
+</p>
+
+<pre>
+
+struct <span class="Att">EthRxExt</span>
+ {
+  MACAddress src;
+  MACAddress dst;
+  EthType type;
+  
+  // constructors
+  
+  EthRxExt() : src(),dst(),type() {}
+  
+  EthRxExt(MACAddress src_,MACAddress dst_,EthType type_) : src(src_),dst(dst_),type(type_) {}
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &out) const;
+ };
+
+</pre>
 
 </body>
 
