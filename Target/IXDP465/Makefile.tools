@@ -50,7 +50,7 @@ ASOPT = -mcpu=xscale -EB
 
 CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
 
-LDOPT = $(CCORELIB) -lsupc++ -lstdc++ -Wl,-s $(LDOPT_EXTRA)
+LDOPT = -Wl,-s $(LDOPT_EXTRA) $(CCORELIB) -lsupc++ -lstdc++ 
 
 
 

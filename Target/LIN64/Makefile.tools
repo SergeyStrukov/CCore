@@ -50,4 +50,4 @@ ASOPT =
 
 CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
 
-LDOPT = $(CCORELIB) -pthread -laio -lgmp -Wl,-s $(LDOPT_EXTRA)
+LDOPT = -Wl,-s $(LDOPT_EXTRA) $(CCORELIB) -pthread -laio -lgmp 
