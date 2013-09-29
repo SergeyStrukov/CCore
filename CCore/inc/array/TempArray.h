@@ -42,10 +42,10 @@ class TempArray : NoCopy
    
   private:
    
-   void init()
+   void init(ulen len_)
     {
      ptr=buf;
-     len=StackLen;
+     len=len_;
     }
    
    void alloc(ulen len_)
@@ -58,18 +58,33 @@ class TempArray : NoCopy
     {
      if( ptr!=buf ) MemFree(ptr);
     }
+   
+   void recreate(ulen len_)
+    {
+     free();
+     
+     if( len_<=StackLen )
+       {
+        init(len_);
+       }
+     else
+       {
+        init(0);
+        alloc(len_);
+       }
+    }
   
   public:
    
    // constructors
    
-   TempArray() { init(); }
+   TempArray() { init(0); }
    
    explicit TempArray(ulen len_)
     {
      if( len_<=StackLen )
        {
-        init();
+        init(len_);
        }
      else
        {
@@ -83,12 +98,21 @@ class TempArray : NoCopy
    
    void provide(ulen len_)
     {
-     if( len_<=len ) return; 
-     
-     free();
-     init();
-     
-     if( len_>StackLen ) alloc(len_);
+     if( len_<=len ) return;
+
+     recreate(len_);
+    }
+   
+   void reset(ulen len_)
+    {
+     if( len_<=len ) 
+       {
+        len=len_;
+        
+        return;
+       }
+
+     recreate(len_);
     }
    
    // range access

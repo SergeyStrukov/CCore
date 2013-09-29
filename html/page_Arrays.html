@@ -176,6 +176,8 @@ class <span class="Att">TempArray</span> : NoCopy
    
    void provide(ulen len);
    
+   void reset(ulen len);
+
    // range access
    
    T * getPtr() { return ptr; }
@@ -226,6 +228,10 @@ Otherwise, the space for elements is dynamically allocated.
 
 <p>
 <b>provide()</b> ensures the array has at least the given length, reallocating it if required.
+</p>
+
+<p>
+<b>reset()</b> recreates the array with the given length, reallocating it if required.
 </p>
 
 <p>

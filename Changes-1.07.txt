@@ -18,4 +18,8 @@ CCore/inc/Exception.h
 
  ReportExceptionTo is added
 
+CCore/inc/array/TempArray.h
+
+ reset() method is added
+
 ----------------------
