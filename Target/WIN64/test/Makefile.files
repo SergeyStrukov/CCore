@@ -86,6 +86,7 @@ OBJ_LIST = \
 ../test-obj/test0084.AnyPtr.o \
 ../test-obj/test0085.Scanf.o \
 ../test-obj/test0086.RandomSelect.o \
+../test-obj/test0087.StepEval.o \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
@@ -231,6 +232,7 @@ ASM_LIST = \
 ../test-obj/test0084.AnyPtr.s \
 ../test-obj/test0085.Scanf.s \
 ../test-obj/test0086.RandomSelect.s \
+../test-obj/test0087.StepEval.s \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
@@ -376,6 +378,7 @@ DEP_LIST = \
 ../test-obj/test0084.AnyPtr.dep \
 ../test-obj/test0085.Scanf.dep \
 ../test-obj/test0086.RandomSelect.dep \
+../test-obj/test0087.StepEval.dep \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
@@ -698,6 +701,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0086.RandomSelect.o : ../../../CCore/test/test0086.RandomSelect.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0087.StepEval.o : ../../../CCore/test/test0087.StepEval.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1128,6 +1134,9 @@ include $(RULES_FILE)
 ../test-obj/test0086.RandomSelect.s : ../../../CCore/test/test0086.RandomSelect.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0087.StepEval.s : ../../../CCore/test/test0087.StepEval.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1555,6 +1564,9 @@ include $(RULES_FILE)
 
 ../test-obj/test0086.RandomSelect.dep : ../../../CCore/test/test0086.RandomSelect.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0086.RandomSelect.o $< -MF $@
+
+../test-obj/test0087.StepEval.dep : ../../../CCore/test/test0087.StepEval.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0087.StepEval.o $< -MF $@
 
 ../test-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

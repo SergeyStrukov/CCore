@@ -170,6 +170,7 @@
 ../../CCore/src/Sort.cpp
 ../../CCore/src/Starter.cpp
 ../../CCore/src/StartStop.cpp
+../../CCore/src/StepEval.cpp
 ../../CCore/src/String.cpp
 ../../CCore/src/StrParse.cpp
 ../../CCore/src/Swap.cpp

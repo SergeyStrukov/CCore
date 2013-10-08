@@ -2,6 +2,10 @@
 
 --- New features -----
 
+CCore/inc/StepEval.h
+
+  Engine for step evaluation with dependencies.
+
 CondLangLR1
 
 DDL2
@@ -12,14 +16,14 @@ Keywords
 
 CCore/inc/Random.h
 
- RandomBase class and methods select_uint are added
+  RandomBase class and methods select_uint are added
 
 CCore/inc/Exception.h
 
- ReportExceptionTo is added
+  ReportExceptionTo is added
 
 CCore/inc/array/TempArray.h
 
- reset() method is added
+  reset() method is added
 
 ----------------------

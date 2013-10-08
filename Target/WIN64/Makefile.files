@@ -199,6 +199,7 @@ obj/SortUnique.o \
 obj/Space.o \
 obj/StartStop.o \
 obj/Starter.o \
+obj/StepEval.o \
 obj/StrParse.o \
 obj/StrPrint.o \
 obj/String.o \
@@ -451,6 +452,7 @@ obj/SortUnique.s \
 obj/Space.s \
 obj/StartStop.s \
 obj/Starter.s \
+obj/StepEval.s \
 obj/StrParse.s \
 obj/StrPrint.s \
 obj/String.s \
@@ -703,6 +705,7 @@ obj/SortUnique.dep \
 obj/Space.dep \
 obj/StartStop.dep \
 obj/Starter.dep \
+obj/StepEval.dep \
 obj/StrParse.dep \
 obj/StrPrint.dep \
 obj/String.dep \
@@ -1365,6 +1368,9 @@ obj/StartStop.o : ../../CCore/src/StartStop.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Starter.o : ../../CCore/src/Starter.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StepEval.o : ../../CCore/src/StepEval.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/StrParse.o : ../../CCore/src/StrParse.cpp
@@ -2116,6 +2122,9 @@ obj/StartStop.s : ../../CCore/src/StartStop.cpp
 obj/Starter.s : ../../CCore/src/Starter.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/StepEval.s : ../../CCore/src/StepEval.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/StrParse.s : ../../CCore/src/StrParse.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2864,6 +2873,9 @@ obj/StartStop.dep : ../../CCore/src/StartStop.cpp
 
 obj/Starter.dep : ../../CCore/src/Starter.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Starter.o $< -MF $@
+
+obj/StepEval.dep : ../../CCore/src/StepEval.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StepEval.o $< -MF $@
 
 obj/StrParse.dep : ../../CCore/src/StrParse.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StrParse.o $< -MF $@
