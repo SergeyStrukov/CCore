@@ -16,13 +16,28 @@
 #ifndef CCore_inc_NewDelete_h
 #define CCore_inc_NewDelete_h
 
-#include <CCore/inc/Gadget.h>
+#include <CCore/inc/MemBase.h>
 
 namespace CCore {
 
 /* classes */
 
+struct DefaultHeapAlloc;
+
 template <class AllocInit> class CustomAllocGuard;
+
+/* struct DefaultHeapAlloc */
+
+struct DefaultHeapAlloc
+ {
+  DefaultHeapAlloc() {}
+  
+  using AllocType = DefaultHeapAlloc ;
+  
+  void * alloc(ulen len) { return MemAlloc(len); }
+  
+  void free(void *ptr,ulen) { MemFree(ptr); }
+ };
 
 /* class CustomAllocGuard<AllocInit> */
 

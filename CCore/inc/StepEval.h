@@ -18,37 +18,47 @@
 
 #include <CCore/inc/FunctorType.h>
 #include <CCore/inc/List.h>
-#include <CCore/inc/MemBase.h>
+#include <CCore/inc/NewDelete.h>
  
 namespace CCore {
 
+/* type StepId */
+
+using StepId = void * ;
+
 /* classes */
 
+template <class T> struct RetStep;
+
 template <class Ctx> class StepEval;
+
+/* struct RetStep<T> */
+
+template <class T>
+struct RetStep
+ {
+  T &obj;
+  StepId id;
+
+  RetStep(T &obj_,StepId id_) : obj(obj_),id(id_) {}
+ };
 
 /* class StepEval<Ctx> */
 
 template <class Ctx> 
-class StepEval : NoCopy
+class StepEval : public Ctx
  {
-  public:
- 
-   using StepId = void * ;
- 
-   template <class T>
-   struct RetStep
-    {
-     T &obj;
-     StepId id;
-   
-     RetStep(T &obj_,StepId id_) : obj(obj_),id(id_) {}
-    };
-   
   private:
   
-   Ctx ctx;
+   StepEval(const StepEval &) = delete ;
    
-   struct NodeBase : MemBase_nocopy
+   void operator = (const StepEval &) = delete ;
+  
+  private:
+ 
+   using Ctx::getAlloc;
+  
+   struct NodeBase : NoCopy
     {
      DLink<NodeBase> link;
      
@@ -148,12 +158,12 @@ class StepEval : NoCopy
    template <class FuncInit>
    Node<FunctorTypeOf<FuncInit> > * create(FuncInit func_init,StepId dep,bool gated)
     {
-     return new Node<FunctorTypeOf<FuncInit> >(func_init,dep,gated);
+     return New<Node<FunctorTypeOf<FuncInit> > >(getAlloc(),func_init,dep,gated);
     }
    
    void destroy(NodeBase *node)
     {
-     delete node;
+     Delete(getAlloc(),node);
     }
    
    void lockStep(NodeBase *node);
@@ -162,7 +172,7 @@ class StepEval : NoCopy
    
   public: 
  
-   class Gate : public MemBase_nocopy  
+   class Gate : public NoCopy  
     {
       SLink<Gate> link;
      
@@ -171,7 +181,7 @@ class StepEval : NoCopy
       typename Algo::Top list;
       bool opened;
       
-      friend class StepEval;  
+      friend class StepEval<Ctx>;  
       
      public:
      
@@ -214,7 +224,7 @@ class StepEval : NoCopy
    
    void destroy(Gate *gate)
     {
-     delete gate;
+     Delete(getAlloc(),gate);
     }
    
    template <class List>
@@ -232,11 +242,9 @@ class StepEval : NoCopy
   public:
 
    template <class ... SS>
-   explicit StepEval(SS && ... ss) : ctx( std::forward<SS>(ss)... ) {}
+   explicit StepEval(SS && ... ss) : Ctx( std::forward<SS>(ss)... ) {}
    
    ~StepEval();
-   
-   Ctx & getCtx() { return ctx; }
    
    Gate * createGate(); 
    
@@ -335,7 +343,7 @@ StepEval<Ctx>::~StepEval()
 template <class Ctx>
 auto StepEval<Ctx>::createGate() -> Gate * 
  { 
-  Gate *ret=new Gate(this);
+  Gate *ret=New<Gate>(getAlloc(),this);
   
   gate_list.ins(ret);
    

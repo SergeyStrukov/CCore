@@ -40,7 +40,26 @@ class Context : NoCopy
    Random random;
    ElementPool pool;
    
-   using Gate = StepGate<Context &> ;
+   class ContextPtr
+    {
+      Context *ctx;
+      
+     public:
+      
+      explicit ContextPtr(Context *ctx_) : ctx(ctx_) {}
+      
+      Context * operator -> () const { return ctx; }
+      
+      ContextPtr getAlloc() { return *this; }
+      
+      using AllocType = ContextPtr ;
+      
+      void * alloc(ulen len) { return ctx->alloc(len); }
+      
+      void free(void *ptr,ulen len) { ctx->free(ptr,len); }
+    };
+   
+   using Gate = StepGate<ContextPtr> ;
    
    struct Var : NoCopy , NoThrowFlagsBase
     {
@@ -55,7 +74,7 @@ class Context : NoCopy
    
   private: 
    
-   using Eval = StepEval<Context &> ;
+   using Eval = StepEval<ContextPtr> ;
 
    struct NegStep;
    
@@ -68,6 +87,36 @@ class Context : NoCopy
    struct ExprStep;
    
    struct GateStep;
+
+  private:
+   
+#if 1   
+   
+   MemPool step_pool;
+   
+   void * alloc(ulen len)
+    {
+     return step_pool.alloc(len);
+    }
+   
+   void free(void *,ulen)
+    {
+     // do nothing
+    }
+   
+#else
+   
+   void * alloc(ulen len)
+    {
+     return MemAlloc(len);
+    }
+   
+   void free(void *ptr,ulen)
+    {
+     MemFree(ptr);
+    }
+   
+#endif   
    
   public:
    
@@ -279,7 +328,7 @@ struct Context::NegStep
     
     ret=-arg;
     
-    eval.getCtx().count++;
+    eval->count++;
    }
  };
 
@@ -297,7 +346,7 @@ struct Context::AddStep
     
     ret=arg1+arg2;
     
-    eval.getCtx().count++;
+    eval->count++;
    }
  };
 
@@ -315,7 +364,7 @@ struct Context::MulStep
     
     ret=arg1*arg2;
     
-    eval.getCtx().count++;
+    eval->count++;
    }
  };
 
@@ -332,7 +381,7 @@ struct Context::GetVarStep
     
     ret=var;
     
-    eval.getCtx().count++;
+    eval->count++;
    }
  };
 
@@ -340,17 +389,17 @@ struct Context::ExprStep
  {
   Expr *expr;
   int &ret;
-  Eval::StepId dep;
+  StepId dep;
   
-  ExprStep(Expr *expr_,int &ret_,Eval::StepId dep_) : expr(expr_),ret(ret_),dep(dep_) {}
+  ExprStep(Expr *expr_,int &ret_,StepId dep_) : expr(expr_),ret(ret_),dep(dep_) {}
   
   struct Func
    {
     Eval &eval;
     int &ret;
-    Eval::StepId dep;
+    StepId dep;
     
-    Func(Eval &eval_,int &ret_,Eval::StepId dep_) : eval(eval_),ret(ret_),dep(dep_) {}
+    Func(Eval &eval_,int &ret_,StepId dep_) : eval(eval_),ret(ret_),dep(dep_) {}
     
     void operator () (Expr::Const *ptr)
      {
@@ -362,7 +411,7 @@ struct Context::ExprStep
     void operator () (Expr::Var *ptr)
      {
       ulen index=ptr->index;
-      Var &var=eval.getCtx().table[index];
+      Var &var=eval->table[index];
       
       var.gate->createStep(GetVarStep(var.value,ret),dep);
      }
@@ -395,7 +444,7 @@ struct Context::ExprStep
    {
     expr->ptr.apply(Func(eval,ret,dep));
     
-    eval.getCtx().count++;
+    eval->count++;
    }
  };
 
@@ -412,7 +461,7 @@ struct Context::GateStep
     
     gate->open();
     
-    eval.getCtx().count++;
+    eval->count++;
    }
   
   void final(Eval &)
@@ -423,7 +472,7 @@ struct Context::GateStep
 
 void Context::eval()
  {
-  Eval step_eval(*this);
+  Eval step_eval(this);
   
   ulen len=table.getLen();
   

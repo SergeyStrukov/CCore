@@ -171,6 +171,25 @@ Destructor frees the memory, if the object is not "disarmed".
 <b>getPlace()</b> is the place of the allocated memory block. 
 </p>
 
+<p>
+You can use the following class to get memory from the default heap.
+</p>
+
+<pre>
+
+struct <span class="Att">DefaultHeapAlloc</span>
+ {
+  DefaultHeapAlloc() {}
+  
+  using AllocType = DefaultHeapAlloc ;
+  
+  void * alloc(ulen len) { return MemAlloc(len); }
+  
+  void free(void *ptr,ulen) { MemFree(ptr); }
+ };
+
+</pre>
+
 </body>
 
 </html>
