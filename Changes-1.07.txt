@@ -14,6 +14,10 @@ Keywords
 
 --- Updates ---
 
+CCore/inc/NewDelete.h
+
+  DefaultHeapAlloc is added
+
 CCore/inc/Random.h
 
   RandomBase class and methods select_uint are added
