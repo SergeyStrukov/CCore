@@ -30,4 +30,8 @@ CCore/inc/array/TempArray.h
 
   reset() method is added
 
+CCore/inc/AnyPtr.h
+
+  apply() improved, Binary() and ElaborateAnyPtr() are added
+
 ----------------------

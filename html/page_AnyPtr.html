@@ -32,8 +32,8 @@
 
 <p>
 Two similar classes implement a "polymorphic pointer" type. They can store multiple type pointers.
-The pointee type list is the template parameter list. <b>AnyPtr</b> stores non-constant pointers and 
-<b>AnyPtr_const</b> stores constant pointers.
+The pointee type list is the template parameter list. <b>AnyPtr</b> stores pointers to non-constants and 
+<b>AnyPtr_const</b> stores pointers to constants.
 </p>
 
 <pre>
@@ -68,11 +68,16 @@ class <span class="Att">AnyPtr</span>
    template &lt;class T&gt;
    T * castPtr() const;
 
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   template &lt;class FuncInit,class ... SS&gt;
+   void apply(FuncInit func_init,SS && ... ss) const;
    
    template &lt;class T,class FuncInit&gt;
    void applyFor(FuncInit func_init) const;
+
+   // Binary
+   
+   template &lt;class Ret,class FuncInit&gt;
+   static Ret Binary(AnyPtr&lt;TT...&gt; a,AnyPtr&lt;TT...&gt; b,FuncInit func_init);
 
    // print object
    
@@ -110,11 +115,16 @@ class <span class="Att">AnyPtr_const</span>
    template &lt;class T&gt;
    const T * castPtr() const;
    
-   template &lt;class FuncInit&gt;
-   void apply(FuncInit func_init) const;
+   template &lt;class FuncInit,class ... SS&gt;
+   void apply(FuncInit func_init,SS && ... ss) const;
    
    template &lt;class T,class FuncInit&gt;
    void applyFor(FuncInit func_init) const;
+
+   // Binary
+   
+   template &lt;class Ret,class FuncInit&gt;
+   static Ret Binary(AnyPtr_const&lt;TT...&gt; a,AnyPtr_const&lt;TT...&gt; b,FuncInit func_init);
 
    // print object
    
@@ -153,7 +163,7 @@ if the stored pointer has another type.
 The method <b>apply()</b> applies the given functor, using the <a href="page_FunctorType.html"><b>Functor Init Pattern</b></a>,
 to the stored pointer. It does nothing for the null object, but if it is not null, the proper variant
 of the functor is applied to the initial pointer. The functor must be polymorphic and capable to handle all possible
-pointer types.
+pointer types. Extra arguments are passed as extra arguments to the functor call.
 </p>
 
 <p>
@@ -167,6 +177,8 @@ int *a=....;
 AnyPtr&lt;short,int,long&gt; ptr=a;
 
 ptr.apply(func_init); // func_init -> func ; calls func(a);
+
+ptr.apply(func_init,a1,a2,a3); // func_init -> func ; calls func(a,a1,a2,a3);
 
 </pre>
 
@@ -197,6 +209,59 @@ class <span class="Att">PrintAnyObj</span>
      Putobj(out,*obj);
     }
  };
+
+</pre>
+
+<p>
+The static method <b>Binary</b> is used with two any-pointers. If pointer types are different then the return object is
+constructed as <b>Ret(a.type,b.type)</b>, so you can handle this case separately. Otherwise if both pointers are not
+null objects, then the functor with two elaborated pointers is called. Finally, <b>Ret()</b> is returned if both arguments 
+are null. An example:
+</p>
+
+<pre>
+
+using Type = AnyPtr&lt;int,double&gt; ;
+
+int *a=....;
+double *b=....;
+int *c=....;
+
+Type::Binary&lt;Ret&gt;(Type(),Type(),func); // return Ret();
+
+Type::Binary&lt;Ret&gt;(Type(a),Type(b),func); // return Ret(1,2);
+
+Type::Binary&lt;Ret&gt;(Type(a),Type(c),func); // return func(a,c);
+
+</pre>
+
+<p>
+This method is useful for a comparison implementation.
+</p>
+
+<p>
+The global function <b>ElaborateAnyPtr</b> is another way to demultiplex any-pointers.
+</p>
+
+<pre>
+
+template &lt;class T,class ... SS&gt;
+void <span class="Att">ElaborateAnyPtr</span>(T &obj,SS && ... ss);
+
+</pre>
+
+<p>
+This function simply calls <b>obj(ss...)</b> with the given arguments. But if one of the argument is <b>AnyPtr</b>, then
+the correspondent pointer is extracted and passed instead. If the pointer object is null, there will be no call.
+An example:
+</p>
+
+<pre>
+
+int *a=....;
+double *b=....;
+
+ElaborateAnyPtr(obj,AnyPtr&lt;int,double&gt;(a),AnyPtr&lt;int,double&gt;(b),3,4,5); // calls obj(a,b,3,4,5);
 
 </pre>
 
