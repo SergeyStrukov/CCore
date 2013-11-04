@@ -22,15 +22,22 @@
  
 namespace CCore {
 
-/* type StepId */
-
-using StepId = void * ;
-
 /* classes */
+
+struct StepId;
 
 template <class T> struct RetStep;
 
+struct ProbeSet_StepEval;
+
 template <class Ctx> class StepEval;
+
+/* struct StepId */
+
+struct StepId
+ {
+  void *ptr; 
+ };
 
 /* struct RetStep<T> */
 
@@ -41,6 +48,27 @@ struct RetStep
   StepId id;
 
   RetStep(T &obj_,StepId id_) : obj(obj_),id(id_) {}
+ };
+
+/* struct ProbeSet_StepEval */
+
+struct ProbeSet_StepEval
+ {
+  template <class T> static T & Ref();
+  template <class T> static T Obj();
+
+  template <class T,class E,class R=decltype( Ref<T>()(Ref<E>()) )> struct Host1;
+  
+  template <class T,class E,class R=decltype( Ref<T>()(Ref<E>(),Obj<StepId>()) )> struct Host2;
+  
+  template <class T,class E>
+  static constexpr int Probe(...) { return 0; }
+
+  template <class T,class E>
+  static constexpr int Probe(Host1<T,E> *) { return 1; }
+  
+  template <class T,class E>
+  static constexpr int Probe(Host2<T,E> *) { return 2; }
  };
 
 /* class StepEval<Ctx> */
@@ -57,6 +85,13 @@ class StepEval : public Ctx
   private:
  
    using Ctx::getAlloc;
+   
+   struct EmptyStep
+    {
+     EmptyStep() {}
+     
+     void operator () (StepEval<Ctx> &) {}
+    };
   
    struct NodeBase : NoCopy
     {
@@ -69,11 +104,13 @@ class StepEval : public Ctx
      NodeBase(StepId dep_,bool gated_) 
       { 
        lock_count=0;
-       dep=static_cast<NodeBase *>(dep_); 
+       dep=static_cast<NodeBase *>(dep_.ptr); 
        gated=gated_;
       }
      
      virtual ~NodeBase() {}
+     
+     StepId getDep() const { return {dep}; }
      
      bool incLock()
       {
@@ -95,7 +132,43 @@ class StepEval : public Ctx
      
      virtual void final(StepEval<Ctx> &step_eval)=0;
     };
- 
+   
+   template <class T>
+   struct CallIndex 
+    {
+     enum RetType { Ret = ProbeSet_StepEval::Probe<T,StepEval<Ctx> >(0) };
+    };
+   
+   template <class T>
+   struct CallMain_0
+    {
+     static void Do(T &obj,StepEval<Ctx> &,StepId)
+      {
+       obj();
+      }
+    };
+   
+   template <class T>
+   struct CallMain_1
+    {
+     static void Do(T &obj,StepEval<Ctx> &step_eval,StepId)
+      {
+       obj(step_eval);
+      }
+    };
+   
+   template <class T>
+   struct CallMain_2
+    {
+     static void Do(T &obj,StepEval<Ctx> &step_eval,StepId dep)
+      {
+       obj(step_eval,dep);
+      }
+    };
+   
+   template <class T>
+   struct CallMain : Meta::SelectList<Meta::ProbeIndex<ProbeSet_StepEval,T,StepEval<Ctx> >::Ret,CallMain_0<T>,CallMain_1<T>,CallMain_2<T> > {};
+   
    struct ProbeSet_final
     {
      template <class T,void (T::*M)(StepEval<Ctx> &)> struct Host;
@@ -141,11 +214,11 @@ class StepEval : public Ctx
      
      ~Node() {}
      
-     virtual void call(StepEval<Ctx> &step_eval) { obj(step_eval); }
+     virtual void call(StepEval<Ctx> &step_eval) { CallMain<T>::Do(obj,step_eval,this->getDep()); }
      
      virtual void final(StepEval<Ctx> &step_eval) { CallFinal<T>::Do(obj,step_eval); }
      
-     RetStep<T> getRetStep() { return RetStep<T>(obj,(NodeBase *)this); } 
+     RetStep<T> getRetStep() { return RetStep<T>(obj,{(NodeBase *)this}); } 
     };
  
    using Algo = typename DLink<NodeBase>::template LinearAlgo<&NodeBase::link> ;
@@ -190,7 +263,9 @@ class StepEval : public Ctx
       ~Gate(); 
       
       template <class FuncInit>
-      RetStep<FunctorTypeOf<FuncInit> > createStep(FuncInit func_init,StepId dep=0); // dep executes after
+      RetStep<FunctorTypeOf<FuncInit> > createStep(FuncInit func_init,StepId dep={0}); // dep executes after
+      
+      void delay(StepId dep) { createStep(EmptyStep(),dep); }
       
       void open();
     };
@@ -249,7 +324,7 @@ class StepEval : public Ctx
    Gate * createGate(); 
    
    template <class FuncInit>
-   RetStep<FunctorTypeOf<FuncInit> > createStep(FuncInit func_init,StepId dep=0); // dep executes after
+   RetStep<FunctorTypeOf<FuncInit> > createStep(FuncInit func_init,StepId dep={0}); // dep executes after
    
    void run();
  };

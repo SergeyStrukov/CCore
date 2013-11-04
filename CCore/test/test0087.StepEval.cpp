@@ -25,7 +25,8 @@ namespace Private_0087 {
 
 /* TOut */
 
-const auto Trace = NoPrint ;
+//const auto Trace = NoPrint ;
+const auto Trace = Con ;
 
 /* classes */
 
@@ -389,60 +390,60 @@ struct Context::ExprStep
  {
   Expr *expr;
   int &ret;
-  StepId dep;
   
-  ExprStep(Expr *expr_,int &ret_,StepId dep_) : expr(expr_),ret(ret_),dep(dep_) {}
+  ExprStep(Expr *expr_,int &ret_) : expr(expr_),ret(ret_) {}
   
-  struct Func
+  void operator () (Eval &,StepId,Expr::Const *ptr)
    {
-    Eval &eval;
-    int &ret;
-    StepId dep;
+    Printf(Trace,"#;\n",ptr->value);
     
-    Func(Eval &eval_,int &ret_,StepId dep_) : eval(eval_),ret(ret_),dep(dep_) {}
-    
-    void operator () (Expr::Const *ptr)
-     {
-      Printf(Trace,"#;\n",ptr->value);
-      
-      ret=ptr->value;
-     }
-    
-    void operator () (Expr::Var *ptr)
-     {
-      ulen index=ptr->index;
-      Var &var=eval->table[index];
-      
-      var.gate->createStep(GetVarStep(var.value,ret),dep);
-     }
-    
-    void operator () (Expr::Neg *ptr)
-     {
-      auto step=eval.createStep(NegStep(ret),dep);
-      
-      eval.createStep(ExprStep(ptr->arg,step.obj.arg,step.id),step.id);
-     }
-    
-    void operator () (Expr::Add *ptr)
-     {
-      auto step=eval.createStep(AddStep(ret),dep);
-      
-      eval.createStep(ExprStep(ptr->arg1,step.obj.arg1,step.id),step.id);
-      eval.createStep(ExprStep(ptr->arg2,step.obj.arg2,step.id),step.id);
-     }
-    
-    void operator () (Expr::Mul *ptr)
-     {
-      auto step=eval.createStep(MulStep(ret),dep);
-      
-      eval.createStep(ExprStep(ptr->arg1,step.obj.arg1,step.id),step.id);
-      eval.createStep(ExprStep(ptr->arg2,step.obj.arg2,step.id),step.id);
-     }
-   };
+    ret=ptr->value;
+   }
   
-  void operator () (Eval &eval)
+  void operator () (Eval &eval,StepId dep,Expr::Var *ptr)
    {
-    expr->ptr.apply(Func(eval,ret,dep));
+    ulen index=ptr->index;
+    Var &var=eval->table[index];
+    
+#if 0      
+    
+    var.gate->createStep(GetVarStep(var.value,ret),dep);
+    
+#else
+    
+    auto step=eval.createStep(GetVarStep(var.value,ret),dep);
+    
+    var.gate->delay(step.id);
+    
+#endif      
+   }
+  
+  void operator () (Eval &eval,StepId dep,Expr::Neg *ptr)
+   {
+    auto step=eval.createStep(NegStep(ret),dep);
+    
+    eval.createStep(ExprStep(ptr->arg,step.obj.arg),step.id);
+   }
+  
+  void operator () (Eval &eval,StepId dep,Expr::Add *ptr)
+   {
+    auto step=eval.createStep(AddStep(ret),dep);
+    
+    eval.createStep(ExprStep(ptr->arg1,step.obj.arg1),step.id);
+    eval.createStep(ExprStep(ptr->arg2,step.obj.arg2),step.id);
+   }
+  
+  void operator () (Eval &eval,StepId dep,Expr::Mul *ptr)
+   {
+    auto step=eval.createStep(MulStep(ret),dep);
+    
+    eval.createStep(ExprStep(ptr->arg1,step.obj.arg1),step.id);
+    eval.createStep(ExprStep(ptr->arg2,step.obj.arg2),step.id);
+   }
+  
+  void operator () (Eval &eval,StepId dep)
+   {
+    ElaborateAnyPtr(*this,eval,dep,expr->ptr);
     
     eval->count++;
    }
@@ -498,7 +499,7 @@ void Context::eval()
      
      auto step=step_eval.createStep(GateStep(gate,i));
      
-     step_eval.createStep(ExprStep(var.expr,var.value,step.id));
+     step_eval.createStep(ExprStep(var.expr,var.value),step.id);
     }
   
   step_eval.run();
@@ -516,6 +517,16 @@ const char *const Testit<87>::Name="Test87 StepEval";
 template<>
 bool Testit<87>::Main() 
  {
+#if 1
+  
+  Context ctx(10);
+  
+  ctx.generate(2);
+ 
+  ctx.eval();
+  
+#else
+  
   MSecTimer::ValueType time=0;
   ulen count=0;
   
@@ -534,6 +545,8 @@ bool Testit<87>::Main()
     }
   
   Printf(Con,"time = #; msec count= #;\n",time,count);
+  
+#endif  
 
   return true;
  }
