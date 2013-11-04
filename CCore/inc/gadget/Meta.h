@@ -41,9 +41,13 @@ template <bool Cond> struct IfNot;
 
 template <bool Cond,class T1,class T2> struct ImpSelect;
 
+template <int Index,class ... TT> struct ImpSelectList;
+
 template <bool Cond,template <class> class F,class T> struct BuildIf;
 
 template <class T,class ProbeSet> struct Has;
+
+template <class ProbeSet,class ... TT> struct ProbeIndex;
 
 template <class ... TT> struct TypeListLen;
 
@@ -160,6 +164,25 @@ struct ImpSelect<false,T1,T2>
 template <bool Cond,class T1,class T2>
 using Select = typename ImpSelect<Cond,T1,T2>::Ret ;
 
+/* struct ImpSelectList<int Index,TT> */
+
+template <int Index,class T,class ... TT> 
+struct ImpSelectList<Index,T,TT...>
+ {
+  using Ret = typename ImpSelectList<Index-1,TT...>::Ret ;
+ };
+
+template <class T,class ... TT> 
+struct ImpSelectList<0,T,TT...>
+ {
+  using Ret = T ;
+ };
+
+/* type SelectList<int Index,TT> */
+
+template <int Index,class ... TT> 
+using SelectList = typename ImpSelectList<Index,TT...>::Ret ;
+
 /* struct BuildIf<bool Cond,F<T>,T> */
 
 template <template <class> class F,class T> 
@@ -174,6 +197,14 @@ template <class T,class ProbeSet>
 struct Has
  {
   enum RetType { Ret = ProbeSet::template Probe<T>(0) };
+ };
+
+/* struct ProbeIndex<ProbeSet,TT> */
+
+template <class ProbeSet,class ... TT>
+struct ProbeIndex
+ {
+  enum RetType { Ret = ProbeSet::template Probe<TT...>(0) };
  };
 
 /* type EnableIf<bool Cond,RetType> */

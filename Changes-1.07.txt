@@ -34,4 +34,8 @@ CCore/inc/AnyPtr.h
 
   apply() improved, Binary() and ElaborateAnyPtr() are added
 
+CCore/inc/gadget/Meta.h
+
+  SelectList and ProbeIndex are added
+
 ----------------------

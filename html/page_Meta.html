@@ -172,9 +172,30 @@ using <span class="Att">Select</span> = typename ImpSelect&lt;Cond,T1,T2&gt;::Re
 </pre>
 
 <p>
-<b>Select</b> is widely used in the recursive meta-programming. It is implemented using template typedef, that eliminate 
-the necessity of the keyword <b>typename</b>.
+<b>Select</b> is widely used in the recursive meta-programming. It is implemented using template typedef, that eliminates 
+the usage of the keyword <b>typename</b>.
 </p>
+
+<h3>SelectList</h3>
+
+<p>
+<b>SelectList</b> selects a type from the given type list by its zero-based index.
+</p>
+
+<pre>
+
+template &lt;int Index,class ... TT&gt;
+using <span class="Att">SelectList</span> = typename ImpSelectList&lt;Index,TT...&gt;::Ret ;
+
+//
+// SelectList&lt;0,T0,T1,T2&gt; == T0
+//
+// SelectList&lt;1,T0,T1,T2&gt; == T1
+//
+// SelectList&lt;2,T0,T1,T2&gt; == T2
+//
+
+</pre>
 
 <h3>BuildIf</h3>
 
@@ -251,6 +272,22 @@ Then apply <b>Has</b> to get the result:
 <p>
 This solution is temporary, until <B>concepts</B> will be implemented in the C++.
 </p>
+
+<h3>ProbeIndex</h3>
+
+<p>
+<b>ProbeIndex</b> is an extended variant of <b>Has</b>. It can be used with multiple template type parameters.
+</p>
+
+<pre>
+
+template &lt;class ProbeSet,class ... TT&gt;
+struct <span class="Att">ProbeIndex</span>
+ {
+  enum RetType { Ret = ProbeSet::template Probe&lt;TT...&gt;(0) };
+ };
+
+</pre>
 
 <h3>EnableIf</h3>
 
