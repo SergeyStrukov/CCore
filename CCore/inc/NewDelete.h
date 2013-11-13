@@ -88,13 +88,31 @@ T * New(AllocInit init,SS && ... ss)
 template <class T,class AllocInit>
 void Delete(AllocInit init,T *obj)
  {
+  void *mem=obj;
+  
   typedef typename AllocInit::AllocType AllocType;
   
   obj->~T();
   
   AllocType alloc(init);
   
-  alloc.free(obj,sizeof (T));
+  alloc.free(mem,sizeof (T));
+ }
+
+/* Delete_dynamic() */
+
+template <class T,class AllocInit>
+void Delete_dynamic(AllocInit init,T *obj)
+ {
+  Space space=obj->getSpace();
+  
+  typedef typename AllocInit::AllocType AllocType;
+  
+  obj->~T();
+  
+  AllocType alloc(init);
+  
+  alloc.free(space.mem,space.len);
  }
 
 } // namespace CCore

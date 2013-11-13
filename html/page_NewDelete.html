@@ -120,6 +120,66 @@ void <span class="Att">Delete</span>(AllocInit init,T *obj);
 </pre>
 
 <p>
+For this function you must provide the original object pointer.
+</p>
+
+<p>
+There is a polymorphic variant of <b>Delete</b>.
+</p>
+
+<pre>
+
+template &lt;class T,class AllocInit&gt;
+void <span class="Att">Delete_dynamic</span>(AllocInit init,T *obj);
+
+</pre>
+
+<p>
+This function may be used with the pointer to some base class of the original object. You must declare the
+destructor to the base class virtual and provide the virtual method <b>getSpace()</b>:
+</p>
+
+<pre>
+
+class Base
+ {
+  public:
+
+   ....
+
+   virtual ~Base();
+
+   virtual Space getSpace();
+ };
+
+class Derived : public Base
+ {
+  public:
+
+   ....
+
+   virtual ~Derived();
+
+   virtual Space getSpace() { return Space(this,sizeof (*this)); }
+ };
+
+</pre>
+
+<p>
+Then you can use <b>Delete_dynamic</b> with the pointer to the base class:
+</p>
+
+<pre>
+
+Derived *derived=New&lt;Derived&gt;(alloc_init,....);
+
+Base *base=derived;
+
+Delete_dynamic(alloc_init,base);
+
+</pre>
+
+<p>
 The class <b>CustomAllocGuard</b> is used in the <b>New()</b> implementation.
 </p>
 
