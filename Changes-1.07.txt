@@ -17,6 +17,7 @@ Keywords
 CCore/inc/NewDelete.h
 
   DefaultHeapAlloc is added
+  Delete_dynamic is added
 
 CCore/inc/Random.h
 

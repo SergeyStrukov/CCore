@@ -88,6 +88,8 @@ class Context : NoCopy
    struct ExprStep;
    
    struct GateStep;
+   
+   struct GateFinalStep;
 
   private:
    
@@ -97,12 +99,19 @@ class Context : NoCopy
    
    void * alloc(ulen len)
     {
-     return step_pool.alloc(len);
+     void *mem=step_pool.alloc(len);
+     
+     //Printf(Trace,"alloc(#;) -> #;\n",len,(uptr)mem);
+     
+     return mem;
     }
    
-   void free(void *,ulen)
+   void free(void *mem,ulen len)
     {
-     // do nothing
+     Used(mem);
+     Used(len);
+     
+     //Printf(Trace,"free(#;,#;)\n",(uptr)mem,len);
     }
    
 #else
@@ -405,7 +414,7 @@ struct Context::ExprStep
     ulen index=ptr->index;
     Var &var=eval->table[index];
     
-#if 0      
+#if 1      
     
     var.gate->createStep(GetVarStep(var.value,ret),dep);
     
@@ -471,6 +480,25 @@ struct Context::GateStep
    }
  };
 
+struct Context::GateFinalStep
+ {
+  ulen index;
+  
+  explicit GateFinalStep(ulen index_) : index(index_) {}
+  
+  void operator () (Eval &eval)
+   {
+    Printf(Trace,"[#;]\n",index);
+    
+    eval->count++;
+   }
+  
+  void final(Eval &)
+   {
+    Printf(Con,"Cyclic variable dependency #;\n",index);
+   }
+ };
+
 void Context::eval()
  {
   Eval step_eval(this);
@@ -493,6 +521,9 @@ void Context::eval()
      ulen i=order[index];
      
      Var &var=table[i];
+     
+#if 0     
+     
      auto *gate=step_eval.createGate();
      
      var.gate=gate;
@@ -500,6 +531,12 @@ void Context::eval()
      auto step=step_eval.createStep(GateStep(gate,i));
      
      step_eval.createStep(ExprStep(var.expr,var.value),step.id);
+     
+#else
+     
+     var.gate=step_eval.createGate(GateFinalStep(i),ExprStep(var.expr,var.value));
+     
+#endif     
     }
   
   step_eval.run();

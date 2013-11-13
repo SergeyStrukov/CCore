@@ -84,15 +84,6 @@ class StepEval : public Ctx
   
   private:
  
-   using Ctx::getAlloc;
-   
-   struct EmptyStep
-    {
-     EmptyStep() {}
-     
-     void operator () (StepEval<Ctx> &) {}
-    };
-  
    struct NodeBase : NoCopy
     {
      DLink<NodeBase> link;
@@ -101,7 +92,7 @@ class StepEval : public Ctx
      NodeBase *dep;
      bool gated;
      
-     NodeBase(StepId dep_,bool gated_) 
+     NodeBase(StepId dep_,bool gated_)
       { 
        lock_count=0;
        dep=static_cast<NodeBase *>(dep_.ptr); 
@@ -112,9 +103,11 @@ class StepEval : public Ctx
      
      StepId getDep() const { return {dep}; }
      
+     bool notLocked() const { return !lock_count && !gated ; }
+     
      bool incLock()
       {
-       bool ret = !lock_count && !gated ;
+       bool ret=notLocked();
        
        lock_count++;
        
@@ -125,56 +118,49 @@ class StepEval : public Ctx
       {
        --lock_count;
        
-       return !lock_count && !gated ;
+       return notLocked();
       }
      
-     virtual void call(StepEval<Ctx> &step_eval)=0;
+     virtual Space getSpace()=0;
      
-     virtual void final(StepEval<Ctx> &step_eval)=0;
+     virtual void call(StepEval &eval)=0;
+     
+     virtual void final(StepEval &eval)=0;
     };
    
    template <class T>
    struct CallIndex 
     {
-     enum RetType { Ret = ProbeSet_StepEval::Probe<T,StepEval<Ctx> >(0) };
+     enum RetType { Ret = ProbeSet_StepEval::Probe<T,StepEval>(0) };
     };
    
    template <class T>
    struct CallMain_0
     {
-     static void Do(T &obj,StepEval<Ctx> &,StepId)
-      {
-       obj();
-      }
+     static void Do(T &obj,StepEval &,StepId) { obj(); }
     };
    
    template <class T>
    struct CallMain_1
     {
-     static void Do(T &obj,StepEval<Ctx> &step_eval,StepId)
-      {
-       obj(step_eval);
-      }
+     static void Do(T &obj,StepEval &eval,StepId) { obj(eval); }
     };
    
    template <class T>
    struct CallMain_2
     {
-     static void Do(T &obj,StepEval<Ctx> &step_eval,StepId dep)
-      {
-       obj(step_eval,dep);
-      }
+     static void Do(T &obj,StepEval &eval,StepId dep) { obj(eval,dep); }
     };
    
    template <class T>
-   struct CallMain : Meta::SelectList<Meta::ProbeIndex<ProbeSet_StepEval,T,StepEval<Ctx> >::Ret,CallMain_0<T>,CallMain_1<T>,CallMain_2<T> > {};
+   struct CallMain : Meta::SelectList<Meta::ProbeIndex<ProbeSet_StepEval,T,StepEval>::Ret,CallMain_0<T>,CallMain_1<T>,CallMain_2<T> > {};
    
    struct ProbeSet_final
     {
-     template <class T,void (T::*M)(StepEval<Ctx> &)> struct Host;
+     template <class T,void (T::*M)(StepEval &)> struct Host;
     
      template <class T>
-     static constexpr bool Probe(...) { return false; } 
+     static constexpr bool Probe(...) { return false; }
     
      template <class T>
      static constexpr bool Probe(Host<T,&T::final> *) { return true; }
@@ -184,25 +170,19 @@ class StepEval : public Ctx
    struct Has_final : Meta::Has<T,ProbeSet_final> {};
    
    template <class T>
-   struct CallFinal_method
+   struct CallFinal_yes
     {
-     static void Do(T &obj,StepEval<Ctx> &step_eval)
-      {
-       obj.final(step_eval);
-      }
+     static void Do(T &obj,StepEval &eval) { obj.final(eval); }
     };
    
    template <class T>
    struct CallFinal_no
     {
-     static void Do(T &,StepEval<Ctx> &)
-      {
-       // do nothing
-      }
+     static void Do(T &,StepEval &) {}
     };
    
    template <class T>
-   struct CallFinal : Meta::Select<Has_final<T>::Ret,CallFinal_method<T>,CallFinal_no<T> > {};
+   struct CallFinal : Meta::Select<Has_final<T>::Ret,CallFinal_yes<T>,CallFinal_no<T> > {};
    
    template <class T>
    struct Node : NodeBase
@@ -214,13 +194,82 @@ class StepEval : public Ctx
      
      ~Node() {}
      
-     virtual void call(StepEval<Ctx> &step_eval) { CallMain<T>::Do(obj,step_eval,this->getDep()); }
+     Space getSpace() { return Space(this,sizeof (*this)); }
      
-     virtual void final(StepEval<Ctx> &step_eval) { CallFinal<T>::Do(obj,step_eval); }
+     virtual void call(StepEval &eval) { CallMain<T>::Do(obj,eval,this->getDep()); }
+     
+     virtual void final(StepEval &eval) { CallFinal<T>::Do(obj,eval); }
      
      RetStep<T> getRetStep() { return RetStep<T>(obj,{(NodeBase *)this}); } 
     };
  
+  public: 
+   
+   class Gate;
+   
+  private: 
+   
+   struct EmptyStep
+    {
+     EmptyStep() {}
+     
+     void operator () () {}
+    };
+  
+   template <class FuncInit>
+   struct GateStep 
+    {
+     FuncInit func_init;
+     Gate *gate;
+
+     GateStep(FuncInit func_init_,Gate *gate_) : func_init(func_init_),gate(gate_) {}
+     
+     struct FunctorType : NoCopy
+      {
+       using Type = FunctorTypeOf<FuncInit> ;
+      
+       Type obj;
+       Gate *gate;
+       
+       explicit FunctorType(GateStep<FuncInit> init) : obj(init.func_init),gate(init.gate) {}
+       
+       void operator () (StepEval &eval)
+        {
+         CallMain<Type>::Do(obj,eval,{0});
+         
+         gate->open();
+        }
+       
+       void final(StepEval &eval)
+        {
+         CallFinal<Type>::Do(obj,eval);
+        }
+      };
+    };
+   
+   template <class T>
+   struct GateNode : NodeBase
+    {
+     T obj;
+     Gate *gate;
+     
+     template <class Init>
+     GateNode(Init init,StepId dep,Gate *gate_) : NodeBase(dep,false),obj(init),gate(gate_) {}
+     
+     ~GateNode() {}
+     
+     Space getSpace() { return Space(this,sizeof (*this)); }
+     
+     virtual void call(StepEval &eval) 
+      { 
+       CallMain<T>::Do(obj,eval,this->getDep());
+       
+       gate->gate_node=0;
+      }
+     
+     virtual void final(StepEval &eval) { CallFinal<T>::Do(obj,eval); }
+    };
+   
    using Algo = typename DLink<NodeBase>::template LinearAlgo<&NodeBase::link> ;
    
    typename Algo::Top ready_list;
@@ -228,20 +277,30 @@ class StepEval : public Ctx
    
   private: 
    
+   using Ctx::getAlloc;
+   
    template <class FuncInit>
-   Node<FunctorTypeOf<FuncInit> > * create(FuncInit func_init,StepId dep,bool gated)
+   Node<FunctorTypeOf<FuncInit> > * createNode(FuncInit func_init,StepId dep,bool gated)
     {
      return New<Node<FunctorTypeOf<FuncInit> > >(getAlloc(),func_init,dep,gated);
     }
    
+   template <class FuncInit>
+   GateNode<FunctorTypeOf<FuncInit> > * createGateNode(FuncInit func_init,StepId dep,Gate *gate)
+    {
+     return New<GateNode<FunctorTypeOf<FuncInit> > >(getAlloc(),func_init,dep,gate);
+    }
+
    void destroy(NodeBase *node)
     {
-     Delete(getAlloc(),node);
+     Delete_dynamic(getAlloc(),node);
     }
    
    void lockStep(NodeBase *node);
    
    void unlockStep(NodeBase *node);
+   
+   void boostStep(NodeBase *node);
    
   public: 
  
@@ -249,16 +308,17 @@ class StepEval : public Ctx
     {
       SLink<Gate> link;
      
-      StepEval<Ctx> *eval; 
+      StepEval *eval;
+      NodeBase *gate_node;
      
       typename Algo::Top list;
       bool opened;
       
-      friend class StepEval<Ctx>;  
+      friend class StepEval;
       
      public:
      
-      explicit Gate(StepEval<Ctx> *eval);
+      explicit Gate(StepEval *eval);
       
       ~Gate(); 
       
@@ -268,6 +328,8 @@ class StepEval : public Ctx
       void delay(StepId dep) { createStep(EmptyStep(),dep); }
       
       void open();
+      
+      void boost() { eval->boostStep(gate_node); }
     };
    
   private: 
@@ -280,12 +342,12 @@ class StepEval : public Ctx
    
    class Guard : NoCopy
     {
-      StepEval<Ctx> *eval;
+      StepEval *eval;
       NodeBase *node;
       
      public:
       
-      Guard(StepEval<Ctx> *eval_,NodeBase *node_) 
+      Guard(StepEval *eval_,NodeBase *node_) 
        {  
         eval=eval_;
         node=node_;
@@ -314,6 +376,9 @@ class StepEval : public Ctx
      for(auto cur=list.start(); +cur ;++cur) cur->final(*this);
     }
    
+   template <class FuncInit>
+   void createGateStep(FuncInit func_init,StepId dep,Gate *gate);
+   
   public:
 
    template <class ... SS>
@@ -322,6 +387,9 @@ class StepEval : public Ctx
    ~StepEval();
    
    Gate * createGate(); 
+   
+   template <class OpenFuncInit,class FuncInit>
+   Gate * createGate(OpenFuncInit openfunc_init,FuncInit func_init);
    
    template <class FuncInit>
    RetStep<FunctorTypeOf<FuncInit> > createStep(FuncInit func_init,StepId dep={0}); // dep executes after
@@ -355,11 +423,25 @@ void StepEval<Ctx>::unlockStep(NodeBase *node)
     }
  }
 
+template <class Ctx> 
+void StepEval<Ctx>::boostStep(NodeBase *node)
+ {
+  if( node )
+    {
+     if( node->notLocked() )
+       {
+        ready_list.del(node);
+        ready_list.ins(node);       
+       }
+    }
+ }
+
 template <class Ctx>
-StepEval<Ctx>::Gate::Gate(StepEval<Ctx> *eval_)
+StepEval<Ctx>::Gate::Gate(StepEval *eval_)
  {
   eval=eval_;
   opened=false;
+  gate_node=0;
  }
 
 template <class Ctx>
@@ -378,11 +460,13 @@ auto StepEval<Ctx>::Gate::createStep(FuncInit func_init,StepId dep) -> RetStep<F
     }
   else
     {
-     auto *node=eval->create(func_init,dep,true);
+     auto *node=eval->createNode(func_init,dep,true);
     
      list.ins(node);
     
      eval->lockStep(node->dep);
+     
+     boost();
     
      return node->getRetStep();
     }
@@ -408,6 +492,19 @@ void StepEval<Ctx>::Gate::open()
  }
 
 template <class Ctx> 
+template <class FuncInit>
+void StepEval<Ctx>::createGateStep(FuncInit func_init,StepId dep,Gate *gate)
+ {
+  auto *node=createGateNode(func_init,dep,gate);
+  
+  ready_list.ins(node);
+  
+  lockStep(node->dep);
+  
+  gate->gate_node=node;
+ }
+
+template <class Ctx> 
 StepEval<Ctx>::~StepEval()
  {
   destroyList(ready_list);
@@ -425,11 +522,24 @@ auto StepEval<Ctx>::createGate() -> Gate *
   return ret; 
  }
 
+template <class Ctx>
+template <class OpenFuncInit,class FuncInit>
+auto StepEval<Ctx>::createGate(OpenFuncInit openfunc_init,FuncInit func_init) -> Gate * 
+ { 
+  Gate *ret=createGate();
+  
+  auto step=createStep(GateStep<OpenFuncInit>(openfunc_init,ret));
+  
+  createGateStep(func_init,step.id,ret);
+   
+  return ret; 
+ }
+
 template <class Ctx> 
 template <class FuncInit>
 auto StepEval<Ctx>::createStep(FuncInit func_init,StepId dep) -> RetStep<FunctorTypeOf<FuncInit> >
  {
-  auto *node=create(func_init,dep,false);
+  auto *node=createNode(func_init,dep,false);
   
   ready_list.ins(node);
   
