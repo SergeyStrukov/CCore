@@ -204,6 +204,12 @@ struct EvalResult : NoCopy
   
   EvalResult() {}
   
+  void erase()
+   {
+    const_table.erase();
+    len_table.erase();
+   }
+  
   ulen_type getLen(const LenNode &node) const { return len_table[node.index].value; }
  };
 

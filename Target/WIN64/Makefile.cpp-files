@@ -52,6 +52,7 @@
 ../../CCore/src/ddl/DDLTypes.cpp
 ../../CCore/src/ddl/DDLValue.cpp
 ../../CCore/src/ddl2/DDL2Char.cpp
+../../CCore/src/ddl2/DDL2Engine.cpp
 ../../CCore/src/ddl2/DDL2ErrorMsg.cpp
 ../../CCore/src/ddl2/DDL2Eval.cpp
 ../../CCore/src/ddl2/DDL2Parser.cpp
@@ -69,6 +70,7 @@
 ../../CCore/src/EventRecorder.cpp
 ../../CCore/src/Exception.cpp
 ../../CCore/src/Fifo.cpp
+../../CCore/src/FileName.cpp
 ../../CCore/src/FunctorType.cpp
 ../../CCore/src/gadget/DefaultTimeout.cpp
 ../../CCore/src/gadget/DefaultValue.cpp
@@ -184,6 +186,7 @@
 ../../CCore/src/StartStop.cpp
 ../../CCore/src/StepEval.cpp
 ../../CCore/src/String.cpp
+../../CCore/src/StrKey.cpp
 ../../CCore/src/StrParse.cpp
 ../../CCore/src/Swap.cpp
 ../../CCore/src/sys/SysAsyncFile.cpp

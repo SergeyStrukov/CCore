@@ -507,7 +507,7 @@ BodyNode * ParserContext::do_parseFile(StrLen file_name,Func func)
     }
   catch(CatchType)
     {
-     report.print("\nFatal error");
+     report.print("\nFatal error\n");
      
      return 0;
     }

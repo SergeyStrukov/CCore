@@ -39,6 +39,7 @@ obj/ContainerList.o \
 obj/Counters.o \
 obj/Crc.o \
 obj/DDL2Char.o \
+obj/DDL2Engine.o \
 obj/DDL2ErrorMsg.o \
 obj/DDL2Eval.o \
 obj/DDL2Parser.o \
@@ -87,6 +88,7 @@ obj/ExceptionType.o \
 obj/FastMul.o \
 obj/FastMutex.o \
 obj/Fifo.o \
+obj/FileName.o \
 obj/FuncTask.o \
 obj/Function.o \
 obj/FunctorType.o \
@@ -214,6 +216,7 @@ obj/StartStop.o \
 obj/Starter.o \
 obj/StdioReadCon.o \
 obj/StepEval.o \
+obj/StrKey.o \
 obj/StrParse.o \
 obj/StrPrint.o \
 obj/String.o \
@@ -313,6 +316,7 @@ obj/ContainerList.s \
 obj/Counters.s \
 obj/Crc.s \
 obj/DDL2Char.s \
+obj/DDL2Engine.s \
 obj/DDL2ErrorMsg.s \
 obj/DDL2Eval.s \
 obj/DDL2Parser.s \
@@ -361,6 +365,7 @@ obj/ExceptionType.s \
 obj/FastMul.s \
 obj/FastMutex.s \
 obj/Fifo.s \
+obj/FileName.s \
 obj/FuncTask.s \
 obj/Function.s \
 obj/FunctorType.s \
@@ -488,6 +493,7 @@ obj/StartStop.s \
 obj/Starter.s \
 obj/StdioReadCon.s \
 obj/StepEval.s \
+obj/StrKey.s \
 obj/StrParse.s \
 obj/StrPrint.s \
 obj/String.s \
@@ -587,6 +593,7 @@ obj/ContainerList.dep \
 obj/Counters.dep \
 obj/Crc.dep \
 obj/DDL2Char.dep \
+obj/DDL2Engine.dep \
 obj/DDL2ErrorMsg.dep \
 obj/DDL2Eval.dep \
 obj/DDL2Parser.dep \
@@ -635,6 +642,7 @@ obj/ExceptionType.dep \
 obj/FastMul.dep \
 obj/FastMutex.dep \
 obj/Fifo.dep \
+obj/FileName.dep \
 obj/FuncTask.dep \
 obj/Function.dep \
 obj/FunctorType.dep \
@@ -762,6 +770,7 @@ obj/StartStop.dep \
 obj/Starter.dep \
 obj/StdioReadCon.dep \
 obj/StepEval.dep \
+obj/StrKey.dep \
 obj/StrParse.dep \
 obj/StrPrint.dep \
 obj/String.dep \
@@ -946,6 +955,9 @@ obj/Crc.o : ../../CCore/src/Crc.cpp
 obj/DDL2Char.o : ../../CCore/src/ddl2/DDL2Char.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/DDL2Engine.o : ../../CCore/src/ddl2/DDL2Engine.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/DDL2ErrorMsg.o : ../../CCore/src/ddl2/DDL2ErrorMsg.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1088,6 +1100,9 @@ obj/FastMutex.o : ../../XCore/CCore/src/task/FastMutex.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Fifo.o : ../../CCore/src/Fifo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FileName.o : ../../CCore/src/FileName.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FuncTask.o : ../../CCore/src/task/FuncTask.cpp
@@ -1471,6 +1486,9 @@ obj/StdioReadCon.o : ../../XCore/CCore/src/StdioReadCon.cpp
 obj/StepEval.o : ../../CCore/src/StepEval.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/StrKey.o : ../../CCore/src/StrKey.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/StrParse.o : ../../CCore/src/StrParse.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1761,6 +1779,9 @@ obj/Crc.s : ../../CCore/src/Crc.cpp
 obj/DDL2Char.s : ../../CCore/src/ddl2/DDL2Char.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DDL2Engine.s : ../../CCore/src/ddl2/DDL2Engine.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DDL2ErrorMsg.s : ../../CCore/src/ddl2/DDL2ErrorMsg.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1903,6 +1924,9 @@ obj/FastMutex.s : ../../XCore/CCore/src/task/FastMutex.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Fifo.s : ../../CCore/src/Fifo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/FileName.s : ../../CCore/src/FileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/FuncTask.s : ../../CCore/src/task/FuncTask.cpp
@@ -2286,6 +2310,9 @@ obj/StdioReadCon.s : ../../XCore/CCore/src/StdioReadCon.cpp
 obj/StepEval.s : ../../CCore/src/StepEval.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/StrKey.s : ../../CCore/src/StrKey.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/StrParse.s : ../../CCore/src/StrParse.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2576,6 +2603,9 @@ obj/Crc.dep : ../../CCore/src/Crc.cpp
 obj/DDL2Char.dep : ../../CCore/src/ddl2/DDL2Char.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2Char.o $< -MF $@
 
+obj/DDL2Engine.dep : ../../CCore/src/ddl2/DDL2Engine.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2Engine.o $< -MF $@
+
 obj/DDL2ErrorMsg.dep : ../../CCore/src/ddl2/DDL2ErrorMsg.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2ErrorMsg.o $< -MF $@
 
@@ -2719,6 +2749,9 @@ obj/FastMutex.dep : ../../XCore/CCore/src/task/FastMutex.cpp
 
 obj/Fifo.dep : ../../CCore/src/Fifo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Fifo.o $< -MF $@
+
+obj/FileName.dep : ../../CCore/src/FileName.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@
 
 obj/FuncTask.dep : ../../CCore/src/task/FuncTask.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FuncTask.o $< -MF $@
@@ -3100,6 +3133,9 @@ obj/StdioReadCon.dep : ../../XCore/CCore/src/StdioReadCon.cpp
 
 obj/StepEval.dep : ../../CCore/src/StepEval.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StepEval.o $< -MF $@
+
+obj/StrKey.dep : ../../CCore/src/StrKey.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StrKey.o $< -MF $@
 
 obj/StrParse.dep : ../../CCore/src/StrParse.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StrParse.o $< -MF $@

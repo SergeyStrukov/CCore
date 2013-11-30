@@ -7323,9 +7323,30 @@ EvalContext::~EvalContext()
 
 bool EvalContext::Process(ErrorMsg &error,ElementPool &pool,BodyNode *body_node,EvalResult &result)
  {
-  Eval eval(error,pool);
+  result.erase();
   
-  return eval.process(eval,body_node,result);
+  ReportExceptionTo<PrintBase> report(error.getMsg());
+  
+  try
+    {
+     bool ret;
+     
+     {
+      Eval eval(error,pool);
+      
+      ret=eval.process(eval,body_node,result);
+     }
+     
+     report.guard();
+    
+     return ret;
+    }
+  catch(CatchType)
+    {
+     report.print("\nFatal error\n");
+    
+     return false;
+    }
  }
 
 } // namespace DDL2

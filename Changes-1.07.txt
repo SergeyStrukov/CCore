@@ -6,6 +6,14 @@ CCore/inc/StepEval.h
 
   Engine for step evaluation with dependencies.
 
+CCore/inc/StrKey.h
+
+  Hashed string key type.
+
+CCore/inc/FileName.h
+
+  File name manipulation class.
+
 CondLangLR1
 
 DDL2
