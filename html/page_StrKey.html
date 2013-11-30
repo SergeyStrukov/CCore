@@ -30,6 +30,26 @@
 
 <p class="Files">Files <b>CCore/inc/StrKey.h</b> <b>CCore/src/StrKey.cpp</b></p>
 
+<p>
+<b>StrKey</b> is a simple class. It is a combination of <b>StrLen</b> class and hash code.
+This class can be used as the key type to build maps. It speeds-up string comparison.
+</p>
+
+<pre>
+
+struct <span class="Att">StrKey</span> : CmpComparable&lt;StrKey&gt;
+ {
+  uint32 hash;
+  StrLen str;
+  
+  StrKey();
+  
+  explicit StrKey(StrLen str);
+  
+  CmpResult objCmp(const StrKey &obj) const;
+ };
+
+</pre>
 
 </body>
 

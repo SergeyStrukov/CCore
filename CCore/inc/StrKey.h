@@ -26,7 +26,7 @@ struct StrKey;
 
 /* struct StrKey */
 
-struct StrKey
+struct StrKey : CmpComparable<StrKey>
  {
   uint32 hash;
   StrLen str;
