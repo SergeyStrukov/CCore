@@ -1,0 +1,478 @@
+/* files/sample.ddl */
+
+/* result */
+
+sint #Temp#A = (sint) 10
+
+sint #Temp#Len = (sint) 10
+
+uint [] #Ptr#C = 
+ {
+  (uint) 4294967295,
+  (uint) 2
+ }
+
+{ uint , sint } * #Ptr#ptrB = -> #Ptr#B
+
+{ uint , sint } * #Ptr#ptrA = -> #Ptr#A
+
+uint #Ptr#B = (uint) 2
+
+sint #Ptr#A = (sint) -1
+
+sint #Ptr#b = (sint) 7
+
+struct #Ptr#R * #Ptr#ptr = -> #Ptr#list[6]
+
+sint #Ptr#d1 = (sint) -3
+
+sint [] #Ptr#ind = 
+ {
+  (sint) 2,
+  (sint) 5,
+  (sint) 1,
+  (sint) 6,
+  (sint) 7,
+  (sint) 3,
+  (sint) 4
+ }
+
+struct #Ptr#R [] #Ptr#list = 
+ {
+   {
+    (sint) 1,
+    -> #Ptr#list[1]
+   },
+   {
+    (sint) 2,
+    -> #Ptr#list[4]
+   },
+   {
+    (sint) 3,
+    -> #Ptr#list[0]
+   },
+   {
+    (sint) 4,
+    -> #Ptr#list[5]
+   },
+   {
+    (sint) 5,
+    -> #Ptr#list[6]
+   },
+   {
+    (sint) 6,
+    -> #Ptr#list[2]
+   },
+   {
+    (sint) 7,
+    -> #Ptr#list[3]
+   }
+ }
+
+sint #Block#de = (sint) 100
+
+struct #Block#E #Block#e = 
+ {
+   {
+    (sint) 100
+   }
+ }
+
+sint #Block#E#def_e = (sint) 100
+
+struct #Block#S [4] #Block#s4 = 
+ {
+   {
+    (sint) 66,
+    (text) .b,
+     {
+      (sint) 1,
+      (sint) 2,
+      (sint) 3,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0
+     }
+   },
+   {
+    (sint) 0,
+    (text) default,
+     {
+      (sint) 1,
+      (sint) 2,
+      (sint) 3,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0
+     }
+   },
+   {
+    (sint) 0,
+    (text) default,
+     {
+      (sint) 1,
+      (sint) 2,
+      (sint) 3,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0
+     }
+   },
+   {
+    (sint) 0,
+    (text) default,
+     {
+      (sint) 1,
+      (sint) 2,
+      (sint) 3,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0
+     }
+   }
+ }
+
+struct #Block#S [3] #Block#s3 = 
+ {
+   {
+    (sint) 0,
+    (text) b,
+     {
+      (sint) 5,
+      (sint) 6,
+      (sint) 7,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0
+     }
+   },
+   {
+    (sint) 0,
+    (text) default,
+     {
+      (sint) 1,
+      (sint) 2,
+      (sint) 3,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0
+     }
+   },
+   {
+    (sint) 0,
+    (text) ,
+     {
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0,
+      (sint) 0
+     }
+   }
+ }
+
+struct #Block#T #Block#t1 = 
+ {
+  (text) b,
+   {
+    (sint) 5,
+    (sint) 6,
+    (sint) 7,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0
+   }
+ }
+
+struct #Block#S #Block#s1 = 
+ {
+  (sint) 1,
+  (text) default,
+   {
+    (sint) 1,
+    (sint) 2,
+    (sint) 3,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0,
+    (sint) 0
+   }
+ }
+
+sint #Scope#S1#S2#S3#j4 = (sint) 2
+
+sint #Scope#S1#S2#S3#j3 = (sint) 0
+
+sint #Scope#S1#S2#S3#j2 = (sint) 1
+
+sint #Scope#S1#S2#S3#j1 = (sint) 2
+
+sint #Scope#S1#S2#S3#j0 = (sint) 3
+
+struct #Scope#S #Scope#S1#S2#S3#s = 
+ {
+  (sint) 3
+ }
+
+sint #Scope#S1#S2#S3#j = (sint) 3
+
+sint #Scope#S1#S2#S3#i = (sint) 3
+
+struct #Scope#S #Scope#S1#S2#s = 
+ {
+  (sint) 2
+ }
+
+sint #Scope#S1#S2#j = (sint) 2
+
+struct #Scope#S #Scope#S1#s = 
+ {
+  (sint) 1
+ }
+
+sint #Scope#S1#j = (sint) 1
+
+sint #Scope#S1#S2#i = (sint) 2
+
+sint #Scope#S1#i = (sint) 1
+
+struct #Scope#S #Scope#s = 
+ {
+  (sint) 0
+ }
+
+sint #Scope#j = (sint) 0
+
+sint #Scope#i = (sint) 0
+
+text #Text#t4 = (text) 0ABCDEFh
+
+text #Text#t3 = (text) 192.168.1.10
+
+text #Text#t2 = (text) aaabbb\n\r\\\
+
+text #Text#b = (text) bbb\n\r\\\
+
+text #Text#a = (text) aaa
+
+text #Text#t1 = (text) text	
+
+
+sint #Int#diff3 = (sint) -24
+
+sint #Int#diff2 = (sint) -10
+
+sint #Int#diff1 = (sint) 10
+
+sint [] #Int#a = { }
+
+uint64 #Int#u64 = (uint64) 1537228672809099311
+
+sint64 #Int#s64 = (sint64) -29990
+
+uint32 #Int#u32 = (uint32) 357883951
+
+sint32 #Int#s32 = (sint32) -29990
+
+uint16 #Int#u16 = (uint16) 2772
+
+sint16 #Int#s16 = (sint16) -2580
+
+uint8 #Int#u8 = (uint8) 46
+
+sint8 #Int#s8 = (sint8) 56
+
+sint #Int#i = (sint) -29990
+
+struct #Struct [] #list = 
+ {
+   {
+    (sint) -1,
+    (uint) 4294967294,
+    (text) neg
+   },
+   {
+    (sint) 3,
+    (uint) 4,
+    (text) pos
+   },
+   {
+    (sint) 1,
+    (uint) 2,
+    (text) default
+   },
+   {
+    (sint) 0,
+    (uint) 0,
+    (text) 
+   }
+ }
+
+sint [] #array_i = 
+ {
+  (sint) 1,
+  (sint) 2,
+  (sint) 3,
+  (sint) 4,
+  (sint) 5
+ }
+
+sint [10] #array_len_i = 
+ {
+  (sint) 1,
+  (sint) 2,
+  (sint) 3,
+  (sint) 4,
+  (sint) 5,
+  (sint) 6,
+  (sint) 7,
+  (sint) 8,
+  (sint) 9,
+  (sint) 0
+ }
+
+text #at_ptr_t = (text) text
+
+text * #ptr_t = -> #t
+
+ip #a = (ip) 192.168.1.10
+
+text #t = (text) text
+
+uint #u = (uint) 11
+
+sint #s = (sint) 10
+
+sint #i = (sint) 9
+
+uint64 #u64 = (uint64) 8
+
+sint64 #s64 = (sint64) 7
+
+uint32 #u32 = (uint32) 6
+
+sint32 #s32 = (sint32) 5
+
+uint16 #u16 = (uint16) 4
+
+sint16 #s16 = (sint16) 3
+
+uint8 #u8 = (uint8) 2
+
+sint8 #s8 = (sint8) 1
+
+struct #Basic#Struct [] #Basic#list = 
+ {
+   {
+    (sint) -1,
+    (uint) 4294967294,
+    (text) neg
+   },
+   {
+    (sint) 3,
+    (uint) 4,
+    (text) pos
+   },
+   {
+    (sint) 1,
+    (uint) 2,
+    (text) default
+   },
+   {
+    (sint) 0,
+    (uint) 0,
+    (text) 
+   }
+ }
+
+sint [] #Basic#array_i = 
+ {
+  (sint) 1,
+  (sint) 2,
+  (sint) 3,
+  (sint) 4,
+  (sint) 5
+ }
+
+sint [10] #Basic#array_len_i = 
+ {
+  (sint) 1,
+  (sint) 2,
+  (sint) 3,
+  (sint) 4,
+  (sint) 5,
+  (sint) 6,
+  (sint) 7,
+  (sint) 8,
+  (sint) 9,
+  (sint) 0
+ }
+
+text #Basic#at_ptr_t = (text) text
+
+text * #Basic#ptr_t = -> #Basic#t
+
+ip #Basic#a = (ip) 192.168.1.10
+
+text #Basic#t = (text) text
+
+uint #Basic#u = (uint) 11
+
+sint #Basic#s = (sint) 10
+
+sint #Basic#i = (sint) 9
+
+uint64 #Basic#u64 = (uint64) 8
+
+sint64 #Basic#s64 = (sint64) 7
+
+uint32 #Basic#u32 = (uint32) 6
+
+sint32 #Basic#s32 = (sint32) 5
+
+uint16 #Basic#u16 = (uint16) 4
+
+sint16 #Basic#s16 = (sint16) 3
+
+uint8 #Basic#u8 = (uint8) 2
+
+sint8 #Basic#s8 = (sint8) 1
+
+
+

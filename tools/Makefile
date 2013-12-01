@@ -24,6 +24,7 @@ all:
 	make $(OPT) -C ParserGen
 	make $(OPT) -C ArmGo
 	make $(OPT) -C DDLShow
+	make $(OPT) -C DDL2Show
 	make $(OPT) -C DDLTypeSet
 	make $(OPT) -C LR1Shift
 	make $(OPT) -C LR1Track
@@ -42,6 +43,7 @@ clean:
 	make -C ParserGen    clean
 	make -C ArmGo        clean
 	make -C DDLShow      clean
+	make -C DDL2Show     clean
 	make -C DDLTypeSet   clean
 	make -C LR1Shift     clean
 	make -C LR1Track     clean
@@ -60,6 +62,7 @@ list:
 	make -C ParserGen    list
 	make -C ArmGo        list
 	make -C DDLShow      list
+	make -C DDL2Show     list
 	make -C DDLTypeSet   list
 	make -C LR1Shift     list
 	make -C LR1Track     list
