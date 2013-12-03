@@ -75,6 +75,8 @@ struct SLen;
 template <class T,class SUInt>
 struct IntType : NoThrowFlagsBase
  {
+  using ValueType = SUInt ;
+ 
   SUInt value;
   
   // methods
@@ -265,6 +267,18 @@ struct IP
   IP() : address{} {}
   
   IP(uint8 a1,uint8 a2,uint8 a3,uint8 a4) : address{a1,a2,a3,a4} {}
+  
+  // methods
+  
+  uint32 toInt() const
+   {
+    uint32 a1=address[0];
+    uint32 a2=address[1];
+    uint32 a3=address[2];
+    uint32 a4=address[3];
+    
+    return uint32( (a1<<24)|(a2<<16)|(a3<<8)|a4 );
+   }
   
   // print object
   

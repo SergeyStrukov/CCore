@@ -55,6 +55,8 @@
 ../../CCore/src/ddl2/DDL2Engine.cpp
 ../../CCore/src/ddl2/DDL2ErrorMsg.cpp
 ../../CCore/src/ddl2/DDL2Eval.cpp
+../../CCore/src/ddl2/DDL2Map.cpp
+../../CCore/src/ddl2/DDL2MapTools.cpp
 ../../CCore/src/ddl2/DDL2Parser.cpp
 ../../CCore/src/ddl2/DDL2ParserElements.cpp
 ../../CCore/src/ddl2/DDL2ParserRules.cpp
@@ -62,6 +64,7 @@
 ../../CCore/src/ddl2/DDL2Semantic.cpp
 ../../CCore/src/ddl2/DDL2Token.cpp
 ../../CCore/src/ddl2/DDL2Tools.cpp
+../../CCore/src/ddl2/DDL2TypeDesc.cpp
 ../../CCore/src/ddl2/DDL2Types.cpp
 ../../CCore/src/ddl2/DDL2Value.cpp
 ../../CCore/src/DeferCall.cpp
