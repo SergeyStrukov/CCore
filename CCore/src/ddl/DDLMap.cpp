@@ -203,21 +203,21 @@ ulen Map::AlignOf(unsigned flags)
  {
   ulen ret=1;
   
-  if( flags&Type_sint8 ) ret=AlignAdd<imp_sint8>(ret);
-  if( flags&Type_uint8 ) ret=AlignAdd<imp_uint8>(ret);
+  if( flags&(1u<<Type_sint8) ) ret=AlignAdd<imp_sint8>(ret);
+  if( flags&(1u<<Type_uint8) ) ret=AlignAdd<imp_uint8>(ret);
   
-  if( flags&Type_sint16 ) ret=AlignAdd<imp_sint16>(ret);
-  if( flags&Type_uint16 ) ret=AlignAdd<imp_uint16>(ret);
+  if( flags&(1u<<Type_sint16) ) ret=AlignAdd<imp_sint16>(ret);
+  if( flags&(1u<<Type_uint16) ) ret=AlignAdd<imp_uint16>(ret);
   
-  if( flags&Type_sint32 ) ret=AlignAdd<imp_sint32>(ret);
-  if( flags&Type_uint32 ) ret=AlignAdd<imp_uint32>(ret);
+  if( flags&(1u<<Type_sint32) ) ret=AlignAdd<imp_sint32>(ret);
+  if( flags&(1u<<Type_uint32) ) ret=AlignAdd<imp_uint32>(ret);
   
-  if( flags&Type_sint64 ) ret=AlignAdd<imp_sint64>(ret);
-  if( flags&Type_uint64 ) ret=AlignAdd<imp_uint64>(ret);
+  if( flags&(1u<<Type_sint64) ) ret=AlignAdd<imp_sint64>(ret);
+  if( flags&(1u<<Type_uint64) ) ret=AlignAdd<imp_uint64>(ret);
   
-  if( flags&Type_text )      ret=AlignAdd<StrLen>(ret);
-  if( flags&Type_ptr )       ret=AlignAdd<DataPtr>(ret);
-  if( flags&Type_array_ptr ) ret=AlignAdd<ArrayPtr>(ret);
+  if( flags&(1u<<Type_text) )      ret=AlignAdd<StrLen>(ret);
+  if( flags&(1u<<Type_ptr) )       ret=AlignAdd<DataPtr>(ret);
+  if( flags&(1u<<Type_array_ptr) ) ret=AlignAdd<ArrayPtr>(ret);
   
   return ret;
  }
