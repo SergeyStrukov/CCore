@@ -25,32 +25,41 @@ namespace DDL2 {
 
 enum TypeTag
  {
-  TypeTag_sint,
-  TypeTag_uint,
-  TypeTag_ulen,
-  
-  TypeTag_int = TypeTag_sint, 
+  // basic
  
-  TypeTag_sint8,
-  TypeTag_uint8,
-  TypeTag_sint16,
-  TypeTag_uint16,
-  TypeTag_sint32,
-  TypeTag_uint32,
-  TypeTag_sint64,
-  TypeTag_uint64,
+  TypeTag_sint,         // sint_type
+  TypeTag_uint,         // uint_type
+  TypeTag_ulen,         // ulen_type
   
-  TypeTag_text,
-  TypeTag_ip,
+  TypeTag_sint8,        // sint8
+  TypeTag_uint8,        // uint8
+  TypeTag_sint16,       // sint16
+  TypeTag_uint16,       // uint16
+  TypeTag_sint32,       // sint32
+  TypeTag_uint32,       // uint32
+  TypeTag_sint64,       // sint64
+  TypeTag_uint64,       // uint64
   
-  TypeTag_ptr,
-  TypeTag_polyptr,
-  TypeTag_array,
-  TypeTag_array_len,
-  TypeTag_array_getlen,
+  TypeTag_text,         // StrLen
+  TypeTag_ip,           // uint32
   
-  TypeTag_struct,
-  TypeTag_none
+  // other
+  
+  TypeTag_ptr,          // DataPtr
+  TypeTag_polyptr,      // TypedDataPtr
+  TypeTag_array,        // ArrayPtr -> elem[len]
+  TypeTag_array_len,    // elem[len]
+  TypeTag_array_getlen, // elem[len]
+  
+  TypeTag_struct,       // {field1,field2,...}
+  
+  // none
+  
+  TypeTag_none,
+  
+  // int
+  
+  TypeTag_int = TypeTag_sint 
  };
 
 /* classes */
@@ -80,6 +89,8 @@ struct ArrayPtr;
 template <class T> struct ExtractData;
 
 struct DataPtr;
+
+struct TypedDataPtr;
 
 /* struct TypeDesc */
 
@@ -273,6 +284,19 @@ struct DataPtr
    };
   
   ProxyRange range(ulen len) const { return ProxyRange(ptr,len); }
+ };
+
+/* struct TypedDataPtr */
+
+struct TypedDataPtr : DataPtr
+ {
+  ulen type; // 1-based type index
+  
+  // constructors
+  
+  TypedDataPtr() : type(0) {}
+  
+  TypedDataPtr(void *ptr,ulen type_) : DataPtr(ptr),type(type_) {}
  };
 
 } // namespace DDL2

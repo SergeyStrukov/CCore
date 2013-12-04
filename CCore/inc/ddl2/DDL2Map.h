@@ -92,27 +92,6 @@ class Map : NoCopy
       }
     };
   
-   enum TypeFlags
-    {
-     Type_sint,
-     Type_uint,
-     Type_ulen,
-    
-     Type_sint8,
-     Type_uint8,
-     Type_sint16,
-     Type_uint16,
-     Type_sint32,
-     Type_uint32,
-     Type_sint64,
-     Type_uint64,
-    
-     Type_text,
-     Type_ptr,
-     Type_polyptr,
-     Type_array_ptr
-    };
-  
    struct SizeInfo
     {
      ulen size_of;
@@ -122,10 +101,10 @@ class Map : NoCopy
 
      SizeInfo(ulen size_of_,unsigned flags_) : size_of(size_of_),flags(flags_) {}
     
-     void set(ulen size_of_,TypeFlags flag)
+     void set(ulen size_of_,TypeTag tag)
       {
        size_of=size_of_;
-       flags=1u<<flag;
+       flags=1u<<tag;
       }
     
      void mul(ulen count) { size_of=MapMulLen(size_of,count); }
@@ -209,23 +188,29 @@ class Map : NoCopy
    
   private:
    
-   struct PlaceFunc;
-   
-   void place(TypeNode *type,const Value &value,const RecValue &rec);
-   
-   void place();
-   
    ulen reserve(ulen len);
    
    ulen reserve(ulen len,ulen count);
    
    void reserve(RecConst &rec) { rec.off=reserve(rec.size_of); }
    
+   struct PlaceFunc;
+   
+   void place(TypeNode *type,const Value &value,const RecValue &rec);
+   
+   void place();
+   
+  private: 
+   
+   ulen typeIndex(TypeNode *type,TypeList *type_list);
+   
   private: 
   
    const RecValue & getRec(PtrNode *node);
    
    DataPtr mapPtr(Ptr ptr);
+   
+   TypedDataPtr mapTypedPtr(Ptr ptr,TypeList *type_list);
    
    struct MapFunc;
    

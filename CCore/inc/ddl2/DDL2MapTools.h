@@ -16,7 +16,7 @@
 #ifndef CCore_inc_ddl2_DDL2MapTools_h
 #define CCore_inc_ddl2_DDL2MapTools_h
 
-#include <CCore/inc/Gadget.h>
+#include <CCore/inc/ddl2/DDL2Eval.h>
  
 namespace CCore {
 namespace DDL2 {
@@ -46,6 +46,23 @@ inline ulen MapMulLen(ulen a,ulen b)
   
   return a*b;
  }
+
+/* classes */
+
+class TypeComparer;
+
+/* class TypeComparer */
+
+class TypeComparer
+ {
+   EvalResult *eval;
+   
+  public: 
+   
+   explicit TypeComparer(EvalResult *eval_) : eval(eval_) {}
+   
+   CmpResult operator () (TypeNode *a,TypeNode *b); 
+ };
 
 } // namespace DDL2
 } // namespace CCore

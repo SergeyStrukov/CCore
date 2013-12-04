@@ -42,6 +42,13 @@ void GuardMapLenOverflow()
   Printf(Exception,"CCore::DDL2::(Typed)Map : len overflow");
  }
 
+/* class TypeComparer */
+
+CmpResult TypeComparer::operator () (TypeNode *a,TypeNode *b) // TODO
+ {
+  
+ }
+
 } // namespace DDL2
 } // namespace CCore
  

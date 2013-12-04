@@ -176,27 +176,27 @@ ulen Map::AlignAdd(ulen a)
   return a*AlignMulTable<alignof (T)>::Object(a);
  }
 
-ulen Map::AlignOf(unsigned flags) // TODO
+ulen Map::AlignOf(unsigned flags)
  {
   ulen ret=1;
   
-  if( flags&Type_sint ) ret=AlignAdd<sint_type>(ret);
-  if( flags&Type_uint ) ret=AlignAdd<uint_type>(ret);
-  if( flags&Type_ulen ) ret=AlignAdd<ulen_type>(ret);
+  if( flags&(1u<<TypeTag_sint) )    ret=AlignAdd<sint_type>(ret);
+  if( flags&(1u<<TypeTag_uint) )    ret=AlignAdd<uint_type>(ret);
+  if( flags&(1u<<TypeTag_ulen) )    ret=AlignAdd<ulen_type>(ret);
   
-  if( flags&Type_sint8 ) ret=AlignAdd<sint8>(ret);
-  if( flags&Type_uint8 ) ret=AlignAdd<uint8>(ret);
-  if( flags&Type_sint16 ) ret=AlignAdd<sint16>(ret);
-  if( flags&Type_uint16 ) ret=AlignAdd<uint16>(ret);
-  if( flags&Type_sint32 ) ret=AlignAdd<sint32>(ret);
-  if( flags&Type_uint32 ) ret=AlignAdd<uint32>(ret);
-  if( flags&Type_sint64 ) ret=AlignAdd<sint64>(ret);
-  if( flags&Type_uint64 ) ret=AlignAdd<uint64>(ret);
+  if( flags&(1u<<TypeTag_sint8) )   ret=AlignAdd<sint8>(ret);
+  if( flags&(1u<<TypeTag_uint8) )   ret=AlignAdd<uint8>(ret);
+  if( flags&(1u<<TypeTag_sint16) )  ret=AlignAdd<sint16>(ret);
+  if( flags&(1u<<TypeTag_uint16) )  ret=AlignAdd<uint16>(ret);
+  if( flags&(1u<<TypeTag_sint32) )  ret=AlignAdd<sint32>(ret);
+  if( flags&(1u<<TypeTag_uint32) )  ret=AlignAdd<uint32>(ret);
+  if( flags&(1u<<TypeTag_sint64) )  ret=AlignAdd<sint64>(ret);
+  if( flags&(1u<<TypeTag_uint64) )  ret=AlignAdd<uint64>(ret);
   
-  if( flags&Type_text )      ret=AlignAdd<StrLen>(ret);
-  if( flags&Type_ptr )       ret=AlignAdd<DataPtr>(ret);
-  if( flags&Type_polyptr )   ret=AlignAdd<DataPtr>(ret);
-  if( flags&Type_array_ptr ) ret=AlignAdd<ArrayPtr>(ret);
+  if( flags&(1u<<TypeTag_text) )    ret=AlignAdd<StrLen>(ret);
+  if( flags&(1u<<TypeTag_ptr) )     ret=AlignAdd<DataPtr>(ret);
+  if( flags&(1u<<TypeTag_polyptr) ) ret=AlignAdd<TypedDataPtr>(ret);
+  if( flags&(1u<<TypeTag_array) )   ret=AlignAdd<ArrayPtr>(ret);
   
   return ret;
  }
@@ -338,37 +338,37 @@ struct Map::SizeOfFunc
    {
     switch( type_ptr->type )
       {
-       case TypeNode::Base::Type_sint   : ret.set(sizeof (sint_type),Type_sint); break; 
-       case TypeNode::Base::Type_uint   : ret.set(sizeof (uint_type),Type_uint); break; 
-       case TypeNode::Base::Type_ulen   : ret.set(sizeof (ulen_type),Type_ulen); break;
+       case TypeNode::Base::Type_sint   : ret.set(sizeof (sint_type),TypeTag_sint); break; 
+       case TypeNode::Base::Type_uint   : ret.set(sizeof (uint_type),TypeTag_uint); break; 
+       case TypeNode::Base::Type_ulen   : ret.set(sizeof (ulen_type),TypeTag_ulen); break;
        
-       case TypeNode::Base::Type_sint8  : ret.set(sizeof (sint8),Type_sint8); break; 
-       case TypeNode::Base::Type_uint8  : ret.set(sizeof (uint8),Type_uint8); break; 
-       case TypeNode::Base::Type_sint16 : ret.set(sizeof (sint16),Type_sint16); break; 
-       case TypeNode::Base::Type_uint16 : ret.set(sizeof (uint16),Type_uint16); break;
-       case TypeNode::Base::Type_sint32 : ret.set(sizeof (sint32),Type_sint32); break; 
-       case TypeNode::Base::Type_uint32 : ret.set(sizeof (uint32),Type_uint32); break;
-       case TypeNode::Base::Type_sint64 : ret.set(sizeof (sint64),Type_sint64); break; 
-       case TypeNode::Base::Type_uint64 : ret.set(sizeof (uint64),Type_uint64); break;
+       case TypeNode::Base::Type_sint8  : ret.set(sizeof (sint8),TypeTag_sint8); break; 
+       case TypeNode::Base::Type_uint8  : ret.set(sizeof (uint8),TypeTag_uint8); break; 
+       case TypeNode::Base::Type_sint16 : ret.set(sizeof (sint16),TypeTag_sint16); break; 
+       case TypeNode::Base::Type_uint16 : ret.set(sizeof (uint16),TypeTag_uint16); break;
+       case TypeNode::Base::Type_sint32 : ret.set(sizeof (sint32),TypeTag_sint32); break; 
+       case TypeNode::Base::Type_uint32 : ret.set(sizeof (uint32),TypeTag_uint32); break;
+       case TypeNode::Base::Type_sint64 : ret.set(sizeof (sint64),TypeTag_sint64); break; 
+       case TypeNode::Base::Type_uint64 : ret.set(sizeof (uint64),TypeTag_uint64); break;
        
-       case TypeNode::Base::Type_text   : ret.set(sizeof (StrLen),Type_text); break; 
-       case TypeNode::Base::Type_ip     : ret.set(sizeof (uint32),Type_uint32); break; 
+       case TypeNode::Base::Type_text   : ret.set(sizeof (StrLen),TypeTag_text); break; 
+       case TypeNode::Base::Type_ip     : ret.set(sizeof (uint32),TypeTag_uint32); break; 
       }
    }
   
   void operator () (TypeNode::Ptr *) 
    {
-    ret.set(sizeof (DataPtr),Type_ptr);
+    ret.set(sizeof (DataPtr),TypeTag_ptr);
    }
   
-  void operator () (TypeNode::PolyPtr *) // TODO 
+  void operator () (TypeNode::PolyPtr *) 
    {
-    ret.set(sizeof (DataPtr),Type_polyptr);
+    ret.set(sizeof (TypedDataPtr),TypeTag_polyptr);
    }
   
   void operator () (TypeNode::Array *)
    {
-    ret.set(sizeof (ArrayPtr),Type_array_ptr);
+    ret.set(sizeof (ArrayPtr),TypeTag_array);
    }
   
   void operator () (TypeNode::ArrayLen *type_ptr)
@@ -416,6 +416,22 @@ void Map::sizeOf()
      
      const_buf[i].set(result.type,sizeOf(result.type).size_of);
     }
+ }
+
+ulen Map::reserve(ulen len)
+ {
+  if( !TryAlign(len) ) GuardMapLenOverflow();
+  
+  ulen ret=total;
+  
+  total=MapAddLen(total,len);
+  
+  return ret;
+ }
+
+ulen Map::reserve(ulen len,ulen count)
+ {
+  return reserve(MapMulLen(len,count));
  }
 
 struct Map::PlaceFunc
@@ -531,20 +547,18 @@ void Map::place()
     }
  }
 
-ulen Map::reserve(ulen len)
+ulen Map::typeIndex(TypeNode *type,TypeList *type_list)
  {
-  if( !TryAlign(len) ) GuardMapLenOverflow();
+  ulen ret=0;
   
-  ulen ret=total;
+  for(TypeListNode &node : *type_list )
+    {
+     if( !TypeComparer(eval)(type,node.type_node) ) return type_list->count-ret;
+     
+     ret++;
+    }
   
-  total=MapAddLen(total,len);
-  
-  return ret;
- }
-
-ulen Map::reserve(ulen len,ulen count)
- {
-  return reserve(MapMulLen(len,count));
+  return 0;
  }
 
 auto Map::getRec(PtrNode *node) -> const RecValue &
@@ -568,6 +582,17 @@ DataPtr Map::mapPtr(Ptr ptr)
   return place;
  }
 
+TypedDataPtr Map::mapTypedPtr(Ptr ptr,TypeList *type_list)
+ {
+  if( !ptr ) return TypedDataPtr();
+  
+  if( ptr.null ) return TypedDataPtr(0,typeIndex(ptr.ptr_node->type,type_list));
+  
+  void *place=base+getRec(ptr.ptr_node).off;
+  
+  return TypedDataPtr(place,typeIndex(ptr.ptr_node->type,type_list));
+ }
+
 struct Map::MapFunc
  {
   Map *map;
@@ -582,10 +607,10 @@ struct Map::MapFunc
     new(map->base+rec.off) T( std::forward<SS>(ss)... );
    }
   
-  template <class T>
-  void placeBase(T value)
+  template <class IntType>
+  void placeBase(IntType value)
    {
-    place<typename T::ValueType>(value.value);
+    place<typename IntType::ValueType>(value.value);
    }
   
   void placeBase(IP ip)
@@ -617,12 +642,12 @@ struct Map::MapFunc
   
   void operator () (TypeNode::Ptr *) 
    {
-    place<DataPtr>(map->mapPtr(value.get<Ptr>()));
+    place<DataPtr>( map->mapPtr(value.get<Ptr>()) );
    }
   
-  void operator () (TypeNode::PolyPtr *) // TODO 
+  void operator () (TypeNode::PolyPtr *type_ptr) 
    {
-    place<DataPtr>(map->mapPtr(value.get<Ptr>()));
+    place<TypedDataPtr>( map->mapTypedPtr(value.get<Ptr>(),type_ptr->type_list) );
    }
   
   void operator () (TypeNode::Array *type_ptr)
@@ -733,8 +758,32 @@ struct Map::MatchFunc
       }
    }
   
-  void operator () (TypeNode::PolyPtr *type_ptr) // TODO
+  bool match(const TypeDesc_polyptr_base &desc,TypeList *type_list)
    {
+    ulen ind=desc.type_count;
+    
+    if( ind!=type_list->count ) return false;
+    
+    for(TypeListNode &node : *type_list )
+      {
+       --ind;
+      
+       if( !map->match(node.type_node,desc.types[ind].type) ) return false;
+      }
+    
+    return true;
+   }
+  
+  void operator () (TypeNode::PolyPtr *type_ptr)
+   {
+    if( desc.tag==TypeTag_polyptr )
+      {
+       ret=match(static_cast<const TypeDesc_polyptr_base &>(desc),type_ptr->type_list);
+      }
+    else
+      {
+       ret=false;
+      }
    }
   
   void operator () (TypeNode::Array *type_ptr)
@@ -751,10 +800,90 @@ struct Map::MatchFunc
   
   void operator () (TypeNode::ArrayLen *type_ptr)
    {
+    switch( desc.tag )
+      {
+       case TypeTag_array_len :
+        {
+         const TypeDesc_array_len &updesc=static_cast<const TypeDesc_array_len &>(desc);
+         
+         if( map->eval->getLen(type_ptr->len_node)==updesc.len )
+           {
+            ret=map->match(type_ptr->type_node,updesc.type);
+           }
+         else
+           {
+            ret=false;
+           }
+        }
+       break;
+       
+       case TypeTag_array_getlen :
+        {
+         const TypeDesc_array_getlen &updesc=static_cast<const TypeDesc_array_getlen &>(desc);
+         
+         updesc.len=map->eval->getLen(type_ptr->len_node);
+         
+         ret=map->match(type_ptr->type_node,updesc.type);
+        }
+       break;
+       
+       default:
+        {
+         ret=false;
+        }
+      }
    }
   
   void operator () (StructNode *struct_node)
    {
+    if( desc.tag==TypeTag_struct )
+      {
+       const TypeDesc_struct_base &updesc=static_cast<const TypeDesc_struct_base &>(desc);
+       
+       if( updesc.lock )
+         {
+          ret=( updesc.lock==struct_node->index+1 );
+           
+          return; 
+         }
+       
+       updesc.lock=struct_node->index+1;
+       
+       if( updesc.field_count==struct_node->field_list.count )
+         {
+          auto *ptr=updesc.fields;
+          
+          for(FieldNode &field_node : struct_node->field_list )
+            {
+             if( !map->match(field_node.type_node,ptr->type) ) 
+               {
+                updesc.lock=0;
+                
+                ret=false;
+                
+                return;
+               }
+             
+             ptr->off=field_node.index;
+             
+             ++ptr;
+            }
+          
+          updesc.size_of=map->struct_buf[struct_node->index].size_of;
+          
+          ret=true;
+         }
+       else
+         {
+          updesc.lock=0;
+          
+          ret=false;
+         }
+      }
+    else
+      {
+       ret=false;
+      }
    }
  };
 
