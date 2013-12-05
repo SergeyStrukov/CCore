@@ -56,12 +56,18 @@ class TypeComparer;
 class TypeComparer
  {
    EvalResult *eval;
+   unsigned level;
+   
+   struct CmpRet;
+   struct CmpFunc;
    
   public: 
    
-   explicit TypeComparer(EvalResult *eval_) : eval(eval_) {}
+   TypeComparer(EvalResult *eval_,unsigned level_) : eval(eval_),level(level_) {}
    
-   CmpResult operator () (TypeNode *a,TypeNode *b); 
+   CmpResult operator () (TypeNode *a,TypeNode *b);
+   
+   CmpResult operator () (LenNode &a,LenNode &b) { return Cmp(eval->getLen(a),eval->getLen(b)); }
  };
 
 } // namespace DDL2

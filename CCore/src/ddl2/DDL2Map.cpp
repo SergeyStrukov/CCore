@@ -553,7 +553,7 @@ ulen Map::typeIndex(TypeNode *type,TypeList *type_list)
   
   for(TypeListNode &node : *type_list )
     {
-     if( !TypeComparer(eval)(type,node.type_node) ) return type_list->count-ret;
+     if( !TypeComparer(eval,MaxLevel)(type,node.type_node) ) return type_list->count-ret;
      
      ret++;
     }
