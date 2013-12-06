@@ -27,8 +27,6 @@ void GuardMapTooDeep();
 
 void GuardMapNameDuplication();
 
-void GuardMapStructNameDuplication();
-
 void GuardMapLenOverflow();
 
 inline ulen MapAddLen(ulen a,ulen b) 
@@ -51,6 +49,8 @@ inline ulen MapMulLen(ulen a,ulen b)
 
 class TypeComparer;
 
+class NameKey;
+
 /* class TypeComparer */
 
 class TypeComparer
@@ -68,6 +68,38 @@ class TypeComparer
    CmpResult operator () (TypeNode *a,TypeNode *b);
    
    CmpResult operator () (LenNode &a,LenNode &b) { return Cmp(eval->getLen(a),eval->getLen(b)); }
+ };
+
+/* class NameKey */
+
+class NameKey : CmpComparable<NameKey>
+ {
+   StrLen name;
+   ScopeNode *parent;
+   uint32 hash;
+   
+  private: 
+  
+   struct Cur;
+  
+   Cur getCur() const;
+  
+   void setHash();
+  
+  public:
+  
+   // constructors
+  
+   NameKey() : parent(0),hash(0) {}
+  
+   template <class T>
+   explicit NameKey(T *node) : name(node->name.getStr()),parent(node->parent) { setHash(); }
+  
+   explicit NameKey(const StrLen &name_) : name(name_),parent(0) { setHash(); }
+  
+   // cmp objects 
+  
+   CmpResult objCmp(const NameKey &obj) const;
  };
 
 } // namespace DDL2

@@ -65,6 +65,7 @@
 ../../CCore/src/ddl2/DDL2Token.cpp
 ../../CCore/src/ddl2/DDL2Tools.cpp
 ../../CCore/src/ddl2/DDL2TypeDesc.cpp
+../../CCore/src/ddl2/DDL2TypedMap.cpp
 ../../CCore/src/ddl2/DDL2Types.cpp
 ../../CCore/src/ddl2/DDL2Value.cpp
 ../../CCore/src/DeferCall.cpp

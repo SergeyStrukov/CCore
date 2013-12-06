@@ -15,89 +15,17 @@
  
 #include <CCore/inc/ddl2/DDL2Map.h>
 
-#include <CCore/inc/Crc.h>
+#include <CCore/inc/Exception.h>
 #include <CCore/inc/algon/CommonIntAlgo.h>
  
 namespace CCore {
 namespace DDL2 {
 
-/* class NameKey */
+/* functions */
 
-struct NameKey::Cur
+void GuardMapStructNameDuplication()
  {
-  StrLen::Fin fin;
-  ScopeNode *parent;
-  char ch;
-  
-  Cur(const StrLen::Fin &fin_,ScopeNode *parent_) : fin(fin_),parent(parent_),ch(0) {}
-  
-  bool next()
-   {
-    if( fin.next() ) 
-      {
-       ch=*fin;
-       
-       return true;
-      }
-    else
-      {
-       if( parent )
-         {
-          ch='#';
-          
-          fin=parent->name.getStr().getFin();
-          parent=parent->parent;
-          
-          return true;
-         }
-       else
-         {
-          return false;
-         }
-      }
-   }
-  
-  char operator * () const { return ch; }
- };
-
-auto NameKey::getCur() const -> Cur { return Cur(name.getFin(),parent); }
-
-void NameKey::setHash()
- {
-  Crc32 crc;
-  
-  for(auto cur=getCur(); cur.next() ;) crc.add(*cur);
-  
-  hash=crc;
- }
-
-CmpResult NameKey::objCmp(const NameKey &obj) const
- {
-  if( CmpResult ret=Cmp(hash,obj.hash) ) return ret;
-  
-  Cur a=getCur();
-  Cur b=obj.getCur();
-
-  while( a.next() )
-    {
-     if( b.next() )
-       {
-        if( CmpResult ret=Cmp(*a,*b) ) return ret;
-       }
-     else
-       {
-        return CmpGreater;
-       }
-    }
-  
-  if( b.next() )
-    {
-     return CmpLess; 
-    }
-  else
-    {
-     return CmpEqual;
-    }
+  Printf(Exception,"CCore::DDL2::Map : struct name duplication");
  }
 
 /* class Map */

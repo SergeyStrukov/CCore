@@ -23,43 +23,13 @@
 namespace CCore {
 namespace DDL2 {
 
+/* functions */
+
+void GuardMapStructNameDuplication();
+
 /* classes */
 
-class NameKey;
-
 class Map;
-
-/* class NameKey */
-
-class NameKey : CmpComparable<NameKey>
- {
-   StrLen name;
-   ScopeNode *parent;
-   uint32 hash;
-   
-  private: 
-  
-   struct Cur;
-  
-   Cur getCur() const;
-  
-   void setHash();
-  
-  public:
-  
-   // constructors
-  
-   NameKey() : parent(0),hash(0) {}
-  
-   template <class T>
-   explicit NameKey(T *node) : name(node->name.getStr()),parent(node->parent) { setHash(); }
-  
-   explicit NameKey(const StrLen &name_) : name(name_),parent(0) { setHash(); }
-  
-   // cmp objects 
-  
-   CmpResult objCmp(const NameKey &obj) const;
- };
 
 /* class Map */
 
