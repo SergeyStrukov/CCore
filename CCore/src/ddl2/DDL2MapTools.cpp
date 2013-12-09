@@ -146,11 +146,25 @@ struct TypeComparer::CmpFunc
    }
  };
 
-CmpResult TypeComparer::operator () (TypeNode *a,TypeNode *b)
+CmpResult TypeComparer::operator () (TypeNode *a,TypeNode *b) const
  {
   if( !level ) GuardMapTooDeep();
   
   return TypeAdapter::Binary<CmpRet>(a,b,CmpFunc(eval,level-1)).result;
+ }
+
+ulen TypeComparer::typeIndex(TypeNode *type,TypeList *type_list) const
+ {
+  ulen ret=0;
+  
+  for(TypeListNode &node : *type_list )
+    {
+     if( !(*this)(type,node.type_node) ) return type_list->count-ret;
+     
+     ret++;
+    }
+  
+  return 0;
  }
 
 /* class NameKey */

@@ -171,10 +171,6 @@ class Map : NoCopy
    void place();
    
   private: 
-   
-   ulen typeIndex(TypeNode *type,TypeList *type_list);
-   
-  private: 
   
    const RecValue & getRec(PtrNode *node);
    

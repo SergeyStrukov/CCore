@@ -475,20 +475,6 @@ void Map::place()
     }
  }
 
-ulen Map::typeIndex(TypeNode *type,TypeList *type_list)
- {
-  ulen ret=0;
-  
-  for(TypeListNode &node : *type_list )
-    {
-     if( !TypeComparer(eval,MaxLevel)(type,node.type_node) ) return type_list->count-ret;
-     
-     ret++;
-    }
-  
-  return 0;
- }
-
 auto Map::getRec(PtrNode *node) -> const RecValue &
  {
   if( PtrNode *parent=node->parent )
@@ -514,11 +500,11 @@ TypedDataPtr Map::mapTypedPtr(Ptr ptr,TypeList *type_list)
  {
   if( !ptr ) return TypedDataPtr();
   
-  if( ptr.null ) return TypedDataPtr(0,typeIndex(ptr.ptr_node->type,type_list));
+  if( ptr.null ) return TypedDataPtr(0,TypeComparer(eval,MaxLevel).typeIndex(ptr.ptr_node->type,type_list));
   
   void *place=base+getRec(ptr.ptr_node).off;
   
-  return TypedDataPtr(place,typeIndex(ptr.ptr_node->type,type_list));
+  return TypedDataPtr(place,TypeComparer(eval,MaxLevel).typeIndex(ptr.ptr_node->type,type_list));
  }
 
 struct Map::MapFunc

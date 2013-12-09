@@ -65,9 +65,11 @@ class TypeComparer
    
    TypeComparer(EvalResult *eval_,unsigned level_) : eval(eval_),level(level_) {}
    
-   CmpResult operator () (TypeNode *a,TypeNode *b);
+   CmpResult operator () (TypeNode *a,TypeNode *b) const;
    
-   CmpResult operator () (LenNode &a,LenNode &b) { return Cmp(eval->getLen(a),eval->getLen(b)); }
+   CmpResult operator () (LenNode &a,LenNode &b) const { return Cmp(eval->getLen(a),eval->getLen(b)); }
+   
+   ulen typeIndex(TypeNode *type,TypeList *type_list) const;
  };
 
 /* class NameKey */
