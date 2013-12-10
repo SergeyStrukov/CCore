@@ -34,6 +34,8 @@ void GuardMapBadConstType(StrLen name);
 
 struct MapSizeInfo;
 
+struct MapText;
+
 template <class T> struct MapPtr;
 
 template <class T> struct MapRange;
@@ -67,12 +69,34 @@ struct MapSizeInfo
    }
  };
 
+/* struct MapText */
+
+struct MapText
+ {
+  // data
+  
+  char *ptr;
+  ulen len;
+  
+  // methods
+  
+  StrLen getStr() const { return StrLen(ptr,len); }
+  
+  // cast
+  
+  operator StrLen() const { return getStr(); }
+ };
+
 /* struct MapPtr<T> */
 
 template <class T> 
-struct MapPtr // layout-compatible with MapPtr<void>
+struct MapPtr // layout-compatible with MapPtr<char>
  {
+  // data
+  
   void *ptr;
+  
+  // object ptr
   
   void * operator + () const { return ptr; }
   
@@ -80,30 +104,71 @@ struct MapPtr // layout-compatible with MapPtr<void>
   
   T * getPtr() const { return static_cast<T *>(ptr); }
   
-  operator T * () const { return getPtr(); }
+  T & operator * () const { return *getPtr(); }
   
   T * operator -> () const { return getPtr(); }
+  
+  // cast
+  
+  operator T * () const { return getPtr(); }
  };
 
 /* struct MapRange<T> */
 
 template <class T> 
-struct MapRange // layout-compatible with MapRange<void>
+struct MapRange // layout-compatible with MapRange<char>
  {
+  // data
+  
   void *ptr;
   ulen len;
   
-  operator PtrLen<T> () const { return Range(static_cast<T *>(ptr),len); }
+  // methods
+  
+  PtrLen<T> getRange() const { return Range(static_cast<T *>(ptr),len); }
+  
+  // cast
+  
+  operator PtrLen<T> () const { return getRange(); }
  };
 
 /* struct MapPolyPtr<TT> */
 
-template <class ... TT> struct MapPolyPtr // layout-compatible with MapPolyPtr<>
+template <class ... TT> 
+struct MapPolyPtr // layout-compatible with MapPolyPtr<>
  {
+  // data
+  
   void *ptr;
   ulen type;
   
-  // TODO
+  // methods
+  
+  using AnyPtrType = AnyPtr<TT...> ;
+  
+  template <class T>
+  static AnyPtrType CastTo(void *ptr)
+   {
+    return AnyPtrType(static_cast<T *>(ptr));
+   }
+  
+  AnyPtrType getPtr() const
+   {
+    if( type && type<=Meta::TypeListLen<TT...>::Ret )
+      {
+       using FuncType = AnyPtrType (*) (void *ptr) ; 
+      
+       static const FuncType Table[]={ CastTo<TT>... };
+       
+       return Table[type-1](ptr);
+      }
+     
+    return Null; 
+   }
+
+  // cast
+  
+  operator AnyPtrType() const { return getPtr(); }
  };
 
 /* struct MapTypeCheck<T> */
@@ -201,7 +266,7 @@ struct MapBaseType
 template <>
 struct MapBaseType<Text>
  {
-  using Ret = StrLen ;
+  using Ret = MapText ;
  };
 
 template <>
@@ -308,9 +373,9 @@ struct MapTypeFunc<MapRange<T>,TypeSet>
 //    MapSizeInfo structSizeInfo(StructNode *struct_node); // fill field_node.index with offset 
 //
 //    template <class T>
-//    bool isStruct(StructNode *struct_node);
+//    bool isStruct(StructNode *struct_node) const;
 //
-//    void guardFieldTypes(StructNode *struct_node);
+//    void guardFieldTypes(StructNode *struct_node) const;
 //  };
 //
 
@@ -559,14 +624,14 @@ struct TypedMap<TypeSet>::SizeInfoFunc
        case TypeNode::Base::Type_sint64 : ret.set<sint64>(); break; 
        case TypeNode::Base::Type_uint64 : ret.set<uint64>(); break;
        
-       case TypeNode::Base::Type_text   : ret.set<StrLen>(); break; 
+       case TypeNode::Base::Type_text   : ret.set<MapText>(); break; 
        case TypeNode::Base::Type_ip     : ret.set<uint32>(); break; 
       }
    }
   
   void operator () (TypeNode::Ptr *) 
    {
-    ret.set<MapPtr<void> >();
+    ret.set<MapPtr<char> >();
    }
   
   void operator () (TypeNode::PolyPtr *)
@@ -576,12 +641,12 @@ struct TypedMap<TypeSet>::SizeInfoFunc
   
   void operator () (TypeNode::Array *)
    {
-    ret.set<MapRange<void> >();
+    ret.set<MapRange<char> >();
    }
   
   void operator () (TypeNode::ArrayLen *)
    {
-    ret.set<MapRange<void> >();
+    ret.set<MapRange<char> >();
    }
   
   void operator () (StructNode *struct_node)
@@ -803,6 +868,12 @@ struct TypedMap<TypeSet>::MapFunc
     place<uint32>(ip.toInt());
    }
   
+  void set(MapText *obj,char *ptr,ulen len)
+   {
+    obj->ptr=ptr;
+    obj->len=len;
+   }
+  
   void placeBase(Text text)
    {
     StrLen str=text.str;
@@ -811,7 +882,7 @@ struct TypedMap<TypeSet>::MapFunc
     
     str.copyTo(dst);
     
-    place<StrLen>(dst,str.len);
+    set(place<MapText>(),dst,str.len);
    }
   
   template <class T>
@@ -825,27 +896,27 @@ struct TypedMap<TypeSet>::MapFunc
     ExtBaseType(*this,type_ptr->type);
    }
   
-  void set(MapPtr<void> *obj)
+  void set(MapPtr<char> *obj)
    {
     obj->ptr=0;
    }
   
-  void set(MapPtr<void> *obj,void *ptr)
+  void set(MapPtr<char> *obj,void *ptr)
    {
     obj->ptr=ptr;
    }
   
-  void operator () (TypeNode::Ptr *type_ptr) 
+  void operator () (TypeNode::Ptr *) 
    {
     Ptr ptr=value.get<Ptr>();
 
     if( !ptr || ptr.null )
       {
-       set(place<MapPtr<void> >());
+       set(place<MapPtr<char> >());
       }
     else
       {
-       set(place<MapPtr<void> >(),map->base+map->getRec(ptr.ptr_node).off);
+       set(place<MapPtr<char> >(),map->base+map->getRec(ptr.ptr_node).off);
       }
    }
   
@@ -858,7 +929,7 @@ struct TypedMap<TypeSet>::MapFunc
   void set(MapPolyPtr<> *obj,void *ptr,TypeNode *type,TypeList *type_list)
    {
     obj->ptr=ptr;
-    obj->type=TypeComparer(eval,MaxLevel).typeIndex(type,type_list);
+    obj->type=TypeComparer(map->eval,MaxLevel).typeIndex(type,type_list);
    }
   
   void operator () (TypeNode::PolyPtr *type_ptr) 
@@ -879,13 +950,13 @@ struct TypedMap<TypeSet>::MapFunc
       }
    }
   
-  void set(MapRange<void> *obj)
+  void set(MapRange<char> *obj)
    {
     obj->ptr=0;
     obj->len=0;
    }
   
-  void set(MapRange<void> *obj,void *ptr,ulen len)
+  void set(MapRange<char> *obj,void *ptr,ulen len)
    {
     obj->ptr=ptr;
     obj->len=len;
@@ -897,13 +968,13 @@ struct TypedMap<TypeSet>::MapFunc
     
     if( !data )
       {
-       set(place<MapRange<void> >());
+       set(place<MapRange<char> >());
       }
     else
       {
        PtrLen<RecValue> elems=rec.elems;
        
-       set(place<MapRange<void> >(),map->base+elems->off,data.len);
+       set(place<MapRange<char> >(),map->base+elems->off,data.len);
        
        for(; +data ;++data,++elems) map->map(type,*data,*elems);
       }
@@ -987,7 +1058,7 @@ T * TypedMap<TypeSet>::findConst(StrLen name)
   
   RecConst *rec=const_map.find(key);
   
-  if( !rec || !MapTypeCheck<T>::template Match<T>(type_set,rec->type) ) return 0;
+  if( !rec || !MapTypeCheck<T>::Match(type_set,rec->type) ) return 0;
   
   return base+rec->off;
  }
@@ -1002,7 +1073,7 @@ T TypedMap<TypeSet>::takeConst(StrLen name)
   
   if( !rec ) GuardMapNoConst(name);
    
-  if( !MapTypeCheck<T>::template Match(type_set,rec->type) ) GuardMapBadConstType(name); 
+  if( !MapTypeCheck<T>::Match(type_set,rec->type) ) GuardMapBadConstType(name); 
   
   T *ptr=base+rec->off;
   

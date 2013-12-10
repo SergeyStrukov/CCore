@@ -46,6 +46,7 @@ obj/DDL2Semantic.o \
 obj/DDL2Token.o \
 obj/DDL2Tools.o \
 obj/DDL2TypeDesc.o \
+obj/DDL2TypeSet.o \
 obj/DDL2TypedMap.o \
 obj/DDL2Types.o \
 obj/DDL2Value.o \
@@ -317,6 +318,7 @@ obj/DDL2Semantic.s \
 obj/DDL2Token.s \
 obj/DDL2Tools.s \
 obj/DDL2TypeDesc.s \
+obj/DDL2TypeSet.s \
 obj/DDL2TypedMap.s \
 obj/DDL2Types.s \
 obj/DDL2Value.s \
@@ -588,6 +590,7 @@ obj/DDL2Semantic.dep \
 obj/DDL2Token.dep \
 obj/DDL2Tools.dep \
 obj/DDL2TypeDesc.dep \
+obj/DDL2TypeSet.dep \
 obj/DDL2TypedMap.dep \
 obj/DDL2Types.dep \
 obj/DDL2Value.dep \
@@ -963,6 +966,9 @@ obj/DDL2Tools.o : ../../CCore/src/ddl2/DDL2Tools.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DDL2TypeDesc.o : ../../CCore/src/ddl2/DDL2TypeDesc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDL2TypeSet.o : ../../CCore/src/ddl2/DDL2TypeSet.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DDL2TypedMap.o : ../../CCore/src/ddl2/DDL2TypedMap.cpp
@@ -1771,6 +1777,9 @@ obj/DDL2Tools.s : ../../CCore/src/ddl2/DDL2Tools.cpp
 obj/DDL2TypeDesc.s : ../../CCore/src/ddl2/DDL2TypeDesc.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DDL2TypeSet.s : ../../CCore/src/ddl2/DDL2TypeSet.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DDL2TypedMap.s : ../../CCore/src/ddl2/DDL2TypedMap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2576,6 +2585,9 @@ obj/DDL2Tools.dep : ../../CCore/src/ddl2/DDL2Tools.cpp
 
 obj/DDL2TypeDesc.dep : ../../CCore/src/ddl2/DDL2TypeDesc.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2TypeDesc.o $< -MF $@
+
+obj/DDL2TypeSet.dep : ../../CCore/src/ddl2/DDL2TypeSet.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2TypeSet.o $< -MF $@
 
 obj/DDL2TypedMap.dep : ../../CCore/src/ddl2/DDL2TypedMap.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2TypedMap.o $< -MF $@

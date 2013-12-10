@@ -223,7 +223,7 @@ struct PrintName
   StrLen name;
   
   template <class Node>
-  explicit PrintName(Node *node) : scope(node->parent),depth(node->depth),name(node->name.name.str) {}
+  explicit PrintName(Node *node) : scope(node->parent),depth(node->depth),name(node->name.getStr()) {}
   
   template <class P>
   void print(P &out) const
@@ -241,7 +241,7 @@ struct PrintName
     for(ScopeNode * ptr : RangeReverse(temp) )
       {
        Putch(out,'#');
-       Putobj(out,ptr->name.name.str);
+       Putobj(out,ptr->name.getStr());
       }
     
     Putch(out,'#');
