@@ -51,124 +51,124 @@ Lang lang=
     lang.synts+0
    },
    {
-    { 0 , lang.atoms+0 , null },
-    { 1 , lang.atoms+1 , null },
-    { 2 , lang.atoms+2 , null },
-    { 3 , lang.atoms+3 , null },
-    { 4 , lang.atoms+4 , null },
-    { 5 , null , lang.synts[0].kinds+0 },
-    { 6 , null , lang.synts[0].kinds+1 },
-    { 7 , null , lang.synts[0].kinds+2 }
+    { 0 , lang.atoms+0 },
+    { 1 , lang.atoms+1 },
+    { 2 , lang.atoms+2 },
+    { 3 , lang.atoms+3 },
+    { 4 , lang.atoms+4 },
+    { 5 , lang.synts[0].kinds+0 },
+    { 6 , lang.synts[0].kinds+1 },
+    { 7 , lang.synts[0].kinds+2 }
    },
    {
     { 0 , "opVar" , lang.synts[0].kinds+2 ,
                                             {
-                                             { lang.atoms+4 , null }
+                                             lang.atoms+4
                                             }
     },
     { 1 , "opBra" , lang.synts[0].kinds+2 ,
                                             {
-                                             { lang.atoms+0 , null },
-                                             { null , lang.synts+0 },
-                                             { lang.atoms+1 , null }
+                                             lang.atoms+0,
+                                             lang.synts+0,
+                                             lang.atoms+1
                                             }
     },
     { 2 , "opAdd" , lang.synts[0].kinds+0 ,
                                             {
-                                             { null , lang.synts+0 },
-                                             { lang.atoms+3 , null },
-                                             { null , lang.synts+0 }
+                                             lang.synts+0,
+                                             lang.atoms+3,
+                                             lang.synts+0
                                             }
     },
     { 3 , "opMul" , lang.synts[0].kinds+1 ,
                                             {
-                                             { null , lang.synts+0 },
-                                             { lang.atoms+2 , null },
-                                             { null , lang.synts+0 }
+                                             lang.synts+0,
+                                             lang.atoms+2,
+                                             lang.synts+0
                                             }
     }
    },
    {
     { 0 , "opAdd.A.M" , lang.rules+2 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+0 },
-                                                                { lang.atoms+3 , null },
-                                                                { null , lang.synts[0].kinds+1 }
+                                                                lang.synts[0].kinds+0,
+                                                                lang.atoms+3,
+                                                                lang.synts[0].kinds+1
                                                                }
     },
     { 1 , "opAdd.M.M" , lang.rules+2 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+1 },
-                                                                { lang.atoms+3 , null },
-                                                                { null , lang.synts[0].kinds+1 }
+                                                                lang.synts[0].kinds+1,
+                                                                lang.atoms+3,
+                                                                lang.synts[0].kinds+1
                                                                }
     },
     { 2 , "opAdd.P.M" , lang.rules+2 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+2 },
-                                                                { lang.atoms+3 , null },
-                                                                { null , lang.synts[0].kinds+1 }
+                                                                lang.synts[0].kinds+2,
+                                                                lang.atoms+3,
+                                                                lang.synts[0].kinds+1
                                                                }
     },
     { 3 , "opAdd.A.P" , lang.rules+2 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+0 },
-                                                                { lang.atoms+3 , null },
-                                                                { null , lang.synts[0].kinds+2 }
+                                                                lang.synts[0].kinds+0,
+                                                                lang.atoms+3,
+                                                                lang.synts[0].kinds+2
                                                                }
     },
     { 4 , "opAdd.M.P" , lang.rules+2 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+1 },
-                                                                { lang.atoms+3 , null },
-                                                                { null , lang.synts[0].kinds+2 }
+                                                                lang.synts[0].kinds+1,
+                                                                lang.atoms+3,
+                                                                lang.synts[0].kinds+2
                                                                }
     },
     { 5 , "opAdd.P.P" , lang.rules+2 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+2 },
-                                                                { lang.atoms+3 , null },
-                                                                { null , lang.synts[0].kinds+2 }
+                                                                lang.synts[0].kinds+2,
+                                                                lang.atoms+3,
+                                                                lang.synts[0].kinds+2
                                                                }
     },
     { 6 , "opMul.P.M" , lang.rules+3 , lang.synts[0].kinds+1 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+2 },
-                                                                { lang.atoms+2 , null },
-                                                                { null , lang.synts[0].kinds+1 }
+                                                                lang.synts[0].kinds+2,
+                                                                lang.atoms+2,
+                                                                lang.synts[0].kinds+1
                                                                }
     },
     { 7 , "opMul.P.P" , lang.rules+3 , lang.synts[0].kinds+1 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+2 },
-                                                                { lang.atoms+2 , null },
-                                                                { null , lang.synts[0].kinds+2 }
+                                                                lang.synts[0].kinds+2,
+                                                                lang.atoms+2,
+                                                                lang.synts[0].kinds+2
                                                                }
     },
     { 8 , "opVar" , lang.rules+0 , lang.synts[0].kinds+2 ,
                                                            {
-                                                            { lang.atoms+4 , null }
+                                                            lang.atoms+4
                                                            }
     },
     { 9 , "opBra.A" , lang.rules+1 , lang.synts[0].kinds+2 ,
                                                              {
-                                                              { lang.atoms+0 , null },
-                                                              { null , lang.synts[0].kinds+0 },
-                                                              { lang.atoms+1 , null }
+                                                              lang.atoms+0,
+                                                              lang.synts[0].kinds+0,
+                                                              lang.atoms+1
                                                              }
     },
     { 10 , "opBra.M" , lang.rules+1 , lang.synts[0].kinds+2 ,
                                                               {
-                                                               { lang.atoms+0 , null },
-                                                               { null , lang.synts[0].kinds+1 },
-                                                               { lang.atoms+1 , null }
+                                                               lang.atoms+0,
+                                                               lang.synts[0].kinds+1,
+                                                               lang.atoms+1
                                                               }
     },
     { 11 , "opBra.P" , lang.rules+1 , lang.synts[0].kinds+2 ,
                                                               {
-                                                               { lang.atoms+0 , null },
-                                                               { null , lang.synts[0].kinds+2 },
-                                                               { lang.atoms+1 , null }
+                                                               lang.atoms+0,
+                                                               lang.synts[0].kinds+2,
+                                                               lang.atoms+1
                                                               }
     }
    },

@@ -14,11 +14,11 @@
 #include "DataMap.h"
 
 #include <CCore/inc/Print.h>
+#include <CCore/inc/FileName.h>
 #include <CCore/inc/FileToMem.h>
 #include <CCore/inc/MemAllocGuard.h>
 
-#include <CCore/inc/ddl/DDLEngine.h>
-#include <CCore/inc/ddl/DDLTypedMap.h>
+#include <CCore/inc/ddl2/DDL2Engine.h>
 
 #include <CCore/inc/Exception.h>
 
@@ -86,8 +86,7 @@ static const char *Pretext=
 "   {"
 "    ElementIndex index;"
     
-"    Atom *atom;"
-"    Kind *kind;"
+"    {Atom,Kind} * elem;"
 "   };"
 
 "  struct Rule"
@@ -97,11 +96,7 @@ static const char *Pretext=
 
 "    Kind *result;"
 
-"    struct Arg"
-"     {"
-"      Atom *atom;"
-"      Synt *synt;"
-"     };"
+"    type Arg = {Atom,Synt} * ;"
 
 "    Arg[] args;"
 "   };"
@@ -115,11 +110,7 @@ static const char *Pretext=
 
 "    Kind *result;"
 
-"    struct Arg"
-"     {"
-"      Atom *atom;"
-"      Kind *kind;"
-"     };"
+"    type Arg = {Atom,Kind} * ;"
 
 "    Arg[] args;"
 "   };" 
@@ -156,7 +147,7 @@ static const char *Pretext=
 DataMap::DataMap(StrLen file_name)
  {
   PrintCon out(Con);
-  DDL::FileEngine<DDL::FileName,FileToMem> engine(out);
+  DDL2::FileEngine<FileName,FileToMem> engine(out);
 
   auto result=engine.process(file_name,Pretext);
    
@@ -168,7 +159,7 @@ DataMap::DataMap(StrLen file_name)
     }
   else
     {
-     DDL::TypedMap<TypeSet> map(result.eval,result.body);
+     DDL2::TypedMap<TypeSet> map(result);
      MemAllocGuard guard(map.getLen());
 
      map(guard);

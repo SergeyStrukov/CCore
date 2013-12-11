@@ -14,10 +14,10 @@
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
 
-#include <CCore/inc/Cmp.h>
-#include <CCore/inc/Sort.h>
+#include <CCore/inc/StrKey.h>
 #include <CCore/inc/CompactMap.h>
 #include <CCore/inc/OwnPtr.h>
+#include <CCore/inc/Sort.h>
 
 #include <CCore/inc/ddl2/DDL2Engine.h>
 
@@ -71,6 +71,7 @@ using PrintName = DDL2::PrintName ;
 class PrintType : NoCopy
  {
    DDL2::TypeNode *type;
+   unsigned level;
    bool use_alias;
    
   private: 
@@ -79,9 +80,10 @@ class PrintType : NoCopy
    struct PrintFunc
     {
      P &out;
+     unsigned level;
      bool use_alias;
      
-     PrintFunc(P &out_,bool use_alias_) : out(out_),use_alias(use_alias_) {}
+     PrintFunc(P &out_,unsigned level_,bool use_alias_) : out(out_),level(level_),use_alias(use_alias_) {}
      
      void operator () (DDL2::TypeNode::Base *type_ptr)
       {
@@ -129,7 +131,7 @@ class PrintType : NoCopy
      
      void operator () (DDL2::TypeNode::Ptr *type_ptr)
       {
-       Printf(out,"DDL2::MapPtr< #; >",PrintType(type_ptr->type_node,use_alias));
+       Printf(out,"DDL2::MapPtr< #; >",PrintType(type_ptr->type_node,level-1,use_alias));
       }
      
      void operator () (DDL2::TypeNode::PolyPtr *type_ptr)
@@ -151,7 +153,7 @@ class PrintType : NoCopy
          {
           auto type=*(--ptr);
           
-          Printf(out,"#;",PrintType(type,use_alias));
+          Printf(out,"#;",PrintType(type,level-1,use_alias));
           
           if( cnt>1 ) Putobj(out," , ");
          }
@@ -161,12 +163,12 @@ class PrintType : NoCopy
      
      void operator () (DDL2::TypeNode::Array *type_ptr)
       {
-       Printf(out,"DDL2::MapRange< #; >",PrintType(type_ptr->type_node,use_alias));
+       Printf(out,"DDL2::MapRange< #; >",PrintType(type_ptr->type_node,level-1,use_alias));
       }
      
      void operator () (DDL2::TypeNode::ArrayLen *type_ptr)
       {
-       Printf(out,"DDL2::MapRange< #; >",PrintType(type_ptr->type_node,use_alias));
+       Printf(out,"DDL2::MapRange< #; >",PrintType(type_ptr->type_node,level-1,use_alias));
       }
      
      void operator () (DDL2::TypeNode::Struct *type_ptr)
@@ -177,16 +179,21 @@ class PrintType : NoCopy
    
   public:
 
-   explicit PrintType(DDL2::TypeNode *type_,bool use_alias_=false) : type(type_),use_alias(use_alias_) {}
+   explicit PrintType(DDL2::TypeNode *type_,unsigned level_,bool use_alias_=false) 
+    : type(type_),level(level_),use_alias(use_alias_) 
+    {
+     if( !level )
+       {
+        Printf(Exception,"App : too deep type");
+       }
+    }
   
    template <class P>
    void print(P &out) const
     {
-     type->ptr.apply(PrintFunc<P>(out,use_alias));
+     type->ptr.apply(PrintFunc<P>(out,level,use_alias));
     }
  };
-
-#if 0
 
 /* struct NameS */
 
@@ -231,6 +238,7 @@ struct Name
       {
        case Type_S : return "S"; 
        case Type_A : return "A";
+       
        default: return "???";
       }
    }
@@ -247,29 +255,6 @@ struct Name
 class NameDirectory : NoCopy
  {
    static DynArray<StrLen> Stack;
-   
-   struct Key : CmpComparable<Key>
-    {
-     StrLen name;
-     
-     // constructors
-     
-     Key() {}
-     
-     Key(StrLen name_) : name(name_) {}
-     
-     // cmp objects
-     
-     CmpResult objCmp(Key obj) const { return StrCmp(name,obj.name); }
-     
-     // print object
-     
-     template <class P>
-     void print(P &out) const
-      {
-       Putobj(out,name);
-      }
-    };
    
    struct Entry
     {
@@ -307,8 +292,8 @@ class NameDirectory : NoCopy
    
    struct Dir : DirName , MemBase_nocopy
     {
-     CompactRBTreeMap<Key,Entry> entries;
-     CompactRBTreeMap<Key,OwnPtr<Dir> > dirs;
+     CompactRBTreeMap<StrKey,Entry> entries;
+     CompactRBTreeMap<StrKey,OwnPtr<Dir> > dirs;
      
      Dir() {}
 
@@ -316,11 +301,12 @@ class NameDirectory : NoCopy
      
      Dir * dir(StrLen name) 
       { 
-       OwnPtr<Dir> *ptr=dirs.find_or_add(name);
+       StrKey key(name);
+       OwnPtr<Dir> *ptr=dirs.find_or_add(key);
        
        if( !*ptr ) ptr->set(new Dir());
        
-       if( entries.find(name) )
+       if( entries.find(key) )
          {
           Printf(Exception,"Unexpected name duplication");
          }
@@ -330,12 +316,14 @@ class NameDirectory : NoCopy
      
      void entry(StrLen name,Name result) 
       { 
-       if( !entries.find_or_add(name,result).new_flag )
+       StrKey key(name);
+       
+       if( !entries.find_or_add(key,result).new_flag )
          {
           Printf(Exception,"Unexpected name duplication");
          }
        
-       if( dirs.find(name) )
+       if( dirs.find(key) )
          {
           Printf(Exception,"Unexpected name duplication");
          }
@@ -364,12 +352,12 @@ class NameDirectory : NoCopy
           extra_list.append_copy(this);
          }
        
-       dirs.applyIncr( [&] (const Key &,const OwnPtr<Dir> &dir) { dir->complete(struct_list,extra_list); } );
+       dirs.applyIncr( [&] (const StrKey &,const OwnPtr<Dir> &dir) { dir->complete(struct_list,extra_list); } );
       }
      
      void complete_root(DynArray<Dir *> &struct_list,DynArray<Dir *> &extra_list)
       {
-       dirs.applyIncr( [&] (const Key &,const OwnPtr<Dir> &dir) { dir->complete(struct_list,extra_list); } );
+       dirs.applyIncr( [&] (const StrKey &,const OwnPtr<Dir> &dir) { dir->complete(struct_list,extra_list); } );
       }
      
      template <class P>
@@ -377,9 +365,9 @@ class NameDirectory : NoCopy
       {
        if( entries.getCount()+dirs.getCount() ) Putch(out,'\n');
        
-       entries.applyIncr( [&,prefix] (const Key &key,const Entry &entry) { Printf(out,"    using #; = #;#; ;\n",key,prefix,entry); } );
+       entries.applyIncr( [&,prefix] (const StrKey &key,const Entry &entry) { Printf(out,"    using #; = #;#; ;\n",key.str,prefix,entry); } );
        
-       dirs.applyIncr( [&,prefix] (const Key &key,const OwnPtr<Dir> &dir) { Printf(out,"    using #; = #;#; ;\n",key,prefix,dir->getName()); } );
+       dirs.applyIncr( [&,prefix] (const StrKey &key,const OwnPtr<Dir> &dir) { Printf(out,"    using #; = #;#; ;\n",key.str,prefix,dir->getName()); } );
       }
      
      // print object
@@ -394,9 +382,9 @@ class NameDirectory : NoCopy
        else
          Printf(out,"#;(root)\n",RepeatChar(off,' '));
        
-       entries.applyIncr_const( [&out,off] (const Key &key,const Entry &entry) { Printf(out,"#;#; = #;\n",RepeatChar(off+2,' '),key,entry); } );
+       entries.applyIncr_const( [&out,off] (const StrKey &key,const Entry &entry) { Printf(out,"#;#; = #;\n",RepeatChar(off+2,' '),key.str,entry); } );
        
-       dirs.applyIncr_const( [&out,off] (const Key &key,const OwnPtr<Dir> &dir) { dir->print(out,key.name,off+2); } );
+       dirs.applyIncr_const( [&out,off] (const StrKey &key,const OwnPtr<Dir> &dir) { dir->print(out,key.str,off+2); } );
       }
     };
    
@@ -435,18 +423,18 @@ class NameDirectory : NoCopy
      
      for(auto *scope=node.parent; scope ;scope=scope->parent)
        {
-        Stack.append_copy(scope->name.name.token.str);
+        Stack.append_copy(scope->name.getStr());
        }
      
-     add(RangeReverse(Stack),node.name.name.token.str,name);
+     add(RangeReverse(Stack),node.name.getStr(),name);
     }
    
-   void add(DDL::StructNode &node)
+   void add(DDL2::StructNode &node)
     {
      add(node,NameS(node.index));
     }
    
-   void add(DDL::AliasNode &node)
+   void add(DDL2::AliasNode &node)
     {
      add(node,NameA(node.index));
     }
@@ -459,7 +447,7 @@ class NameDirectory : NoCopy
     }
    
    template <class P>
-   void printStruct(P &out,StrLen prefix,DDL::StructNode &node) const
+   void printStruct(P &out,StrLen prefix,DDL2::StructNode &node) const
     {
      Dir *dir=struct_list[node.index];
      
@@ -493,61 +481,57 @@ class NameDirectory : NoCopy
 
 DynArray<StrLen> NameDirectory::Stack(DoReserve,100);
 
-#endif
-
 /* Process() */
 
 void Process(StrLen input_file_name,StrLen typedef_file_name,StrLen typeset_file_name)
  {
   Data data(input_file_name);
-  PrintFile out1(typedef_file_name);
-  PrintFile out2(typeset_file_name);
+  PrintFile outdef(typedef_file_name);
+  PrintFile outset(typeset_file_name);
   
   ulen struct_lim;
-  //NameDirectory dir;
+  NameDirectory dir;
   
-  // 1
+  // 101
   {
-   Putobj(out1,"/* struct TypeDefCore */\n\n");
+   Putobj(outdef,"/* struct TypeDefCore */\n\n");
    
-   Putobj(out1,"struct TypeDefCore\n"); 
-   Putobj(out1," {\n"); 
-   Putobj(out1,"  // types\n\n"); 
+   Putobj(outdef,"struct TypeDefCore\n"); 
+   Putobj(outdef," {\n"); 
+   Putobj(outdef,"  // types\n\n"); 
   }
   
-  // 2
+  // 102
   {
    ulen ind=1; 
     
    for(auto &node : data->struct_list )
      {
-      Printf(out1,"  struct S#;; // #;\n",ind,PrintName(&node));
+      Printf(outdef,"  struct S#;; // #;\n",ind,PrintName(&node));
       
       node.index=ind++;
      }
    
    struct_lim=ind;
    
-   Putch(out1,'\n');
+   Putch(outdef,'\n');
   }
   
-  // 3
+  // 103
   {
    ulen ind=1; 
     
    for(auto &node : data->alias_list )
      {
-      Printf(out1,"  using A#; = #; ; // #;\n",ind,PrintType(node.result_type),PrintName(&node));
+      Printf(outdef,"  using A#; = #; ; // #;\n",ind,PrintType(node.result_type,MaxLevel),PrintName(&node));
       
       node.index=ind++;
      }
    
-   Putch(out1,'\n');
+   Putch(outdef,'\n');
   }
   
-#if 0  
-  
-  // 4
+  // 104
   {
    for(auto &node : data->struct_list ) dir.add(node);
    
@@ -556,219 +540,212 @@ void Process(StrLen input_file_name,StrLen typedef_file_name,StrLen typeset_file
    dir.complete(struct_lim);
   }
   
-  // 5
+  // 105
   {
-   for(ulen ind=1,lim=dir.getExtraLim(); ind<lim ;ind++) Printf(out1,"  struct D#;;\n",ind);
+   for(ulen ind=1,lim=dir.getExtraLim(); ind<lim ;ind++) Printf(outdef,"  struct D#;;\n",ind);
    
-   Putch(out1,'\n');
+   Putch(outdef,'\n');
   }
   
-  // 6
+  // 106
   {
-   Putobj(out1,"  using XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8 = TypeDefCore ;\n\n");
-   Putobj(out1,"  // structures\n\n");
+   Putobj(outdef,"  using XXX8226D906_9898_43AA_B1BE_D60B0A6E31C8 = TypeDefCore ;\n\n");
+   
+   Putobj(outdef,"  // structures\n\n");
   }
   
-  // 7
+  // 107
   {
    for(auto &node : data->struct_list )
      {
-      Printf(out1,"  struct S#;\n",node.index);
-      Putobj(out1,"   {\n");
+      Printf(outdef,"  struct S#;\n",node.index);
+      Putobj(outdef,"   {\n");
       
       for(auto &field : node.field_list )
         {
-         Printf(out1,"    #; #;;\n",PrintType(field.type_node,true),field.name.name.token.str);
+         Printf(outdef,"    #; #;;\n",PrintType(field.type_node,MaxLevel,true),field.name.getStr());
         }
 
-      dir.printStruct(out1,"XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::",node);
+      dir.printStruct(outdef,"XXX8226D906_9898_43AA_B1BE_D60B0A6E31C8::",node);
       
-      Putobj(out1,"\n    struct Ext;\n");
-      Putobj(out1,"   };\n\n");
+      Putobj(outdef,"\n    struct Ext;\n");
+      Putobj(outdef,"   };\n\n");
      }
   }
   
-  // 8
+  // 108
   {
-   Putobj(out1,"  // extra\n\n");
+   Putobj(outdef,"  // extra\n\n");
   }
   
-  // 9
+  // 109
   {
    for(ulen ind=1,lim=dir.getExtraLim(); ind<lim ;ind++) 
      {
-      Printf(out1,"  struct D#;\n   {\n",ind);
+      Printf(outdef,"  struct D#;\n   {\n",ind);
       
-      dir.printExtra(out1,"XXX8226D906_9897_43AA_B1BE_D60B0A6E31C8::",ind);
+      dir.printExtra(outdef,"XXX8226D906_9898_43AA_B1BE_D60B0A6E31C8::",ind);
       
-      Printf(out1,"   };\n\n");
+      Printf(outdef,"   };\n\n");
      }
   }
   
-  // 99
+  // 110
   {
-   Putobj(out1," };\n\n"); 
+   Putobj(outdef," };\n\n"); 
   }
   
-  // 100
+  // 111
   {
-   Putobj(out1,"using XXX212CD757_09B2_4D89_BE20_65C1E4E5A819 = TypeDefCore ;\n\n");
+   Putobj(outdef,"using XXX212CD757_09B3_4D89_BE20_65C1E4E5A819 = TypeDefCore ;\n\n");
    
-   Putobj(out1,"namespace TypeDef {\n"); 
-  }
-  
-  // 101
-  {
-   dir.printRoot(out1,"XXX212CD757_09B2_4D89_BE20_65C1E4E5A819::");
-  }
-  
-  // 199
-  {
-   Putobj(out1,"\n} // namespace TypeDef\n\n"); 
+   Putobj(outdef,"namespace TypeDef {\n");
+   
+   dir.printRoot(outdef,"XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::");
+   
+   Putobj(outdef,"\n} // namespace TypeDef\n\n"); 
   }
   
   // 200
   {
-   Putobj(out2,"/* struct TypeSet */\n\n");
+   Putobj(outset,"/* struct TypeSet */\n\n");
    
-   Putobj(out2,"struct TypeSet : TypeDefCore , DDL::MapHackPtr\n"); 
-   Putobj(out2," {\n");
-   Printf(out2,"  ulen indexes[#;];\n",Max<ulen>(data->struct_list.count,1));
-   Printf(out2,"  DynArray<ulen> ind_map;\n\n");
+   Putobj(outset,"struct TypeSet : TypeDefCore\n"); 
+   Putobj(outset," {\n");
+   Printf(outset,"  ulen indexes[#;];\n",Max<ulen>(data->struct_list.count,1));
+   Printf(outset,"  DynArray<ulen> ind_map;\n\n");
    
-   Putobj(out2,"  DDL::FindNodeMap map;\n\n");
+   Putobj(outset,"  DDL2::FindNodeMap map;\n\n");
   }
   
   // 201
   {
-   Putobj(out2,"  explicit TypeSet(ulen len)\n");
-   Putobj(out2,"   : ind_map(len)\n");
-   Putobj(out2,"   {\n");
-   Putobj(out2,"    Range(indexes).set(ulen(-1));\n\n");
+   Putobj(outset,"  explicit TypeSet(ulen len)\n");
+   Putobj(outset,"   : ind_map(len)\n");
+   Putobj(outset,"   {\n");
+   Putobj(outset,"    Range(indexes).set(ulen(-1));\n\n");
      
    for(auto &node : data->struct_list )
      {
-      Printf(out2,"    map.add(#;,#.q;",node.index,node.name.name.token.str);
+      Printf(outset,"    map.add(#;,#.q;",node.index,node.name.getStr());
       
       for(auto *scope=node.parent; scope ;scope=scope->parent)
         {
-         Printf(out2,",#.q;",scope->name.name.token.str);
+         Printf(outset,",#.q;",scope->name.getStr());
         }
       
-      Printf(out2,");\n");
+      Printf(outset,");\n");
      }
    
-   Putobj(out2,"\n    map.complete();\n");
-   Putobj(out2,"   }\n\n");
+   Putobj(outset,"\n    map.complete();\n");
+   Putobj(outset,"   }\n\n");
   }
   
   // 202
   {
-   Putobj(out2,"  DDL::MapSizeInfo structSizeInfo(DDL::StructNode *struct_node)\n");
-   Putobj(out2,"   {\n");
-   Putobj(out2,"    DDL::MapSizeInfo ret;\n\n");
+   Putobj(outset,"  DDL2::MapSizeInfo structSizeInfo(DDL2::StructNode *struct_node)\n");
+   Putobj(outset,"   {\n");
+   Putobj(outset,"    DDL2::MapSizeInfo ret;\n\n");
    
-   Putobj(out2,"    switch( map.find(struct_node) )\n");
-   Putobj(out2,"      {\n");
+   Putobj(outset,"    switch( map.find(struct_node) )\n");
+   Putobj(outset,"      {\n");
    
    for(auto &node : data->struct_list )
      {
-      Printf(out2,"       case #; :\n",node.index);
-      Putobj(out2,"        {\n");
-      Printf(out2,"         indexes[#;]=struct_node->index;\n",node.index-1);
-      Printf(out2,"         ind_map[struct_node->index]=#;;\n\n",node.index);
+      Printf(outset,"       case #; :\n",node.index);
+      Putobj(outset,"        {\n");
+      Printf(outset,"         indexes[#;]=struct_node->index;\n",node.index-1);
+      Printf(outset,"         ind_map[struct_node->index]=#;;\n\n",node.index);
       
-      Printf(out2,"         ret.set<S#;>();\n\n",node.index);
+      Printf(outset,"         ret.set<S#;>();\n\n",node.index);
       
-      Putobj(out2,"         DDL::SetFieldOffsets(struct_node,\n");
+      Putobj(outset,"         DDL2::SetFieldOffsets(struct_node,\n");
       
       for(auto &field : node.field_list )
         {
-         Printf(out2,"                              #.q;,offsetof(S#;,#;)",field.name.name.token.str,node.index,field.name.name.token.str);
+         Printf(outset,"                               #.q;,offsetof(S#;,#;)",field.name.getStr(),node.index,field.name.getStr());
          
-         if( field.next ) Putch(out2,',');
+         if( field.next ) Putch(outset,',');
          
-         Putch(out2,'\n');
+         Putch(outset,'\n');
         }
       
-      Putobj(out2,"                             );\n");
+      Putobj(outset,"                              );\n");
 
-      Putobj(out2,"        }\n");
-      Putobj(out2,"       return ret;\n\n");
+      Putobj(outset,"        }\n");
+      Putobj(outset,"       return ret;\n\n");
      }
    
-   Putobj(out2,"       default: Printf(Exception,\"Unknown structure\"); return ret;\n");
-   Putobj(out2,"      }\n");
-   Putobj(out2,"   }\n\n");
+   Putobj(outset,"       default: Printf(Exception,\"Unknown structure\"); return ret;\n");
+   Putobj(outset,"      }\n");
+   Putobj(outset,"   }\n\n");
   }
   
   // 203
   {
-   Putobj(out2,"  template <class T> struct IsStruct;\n\n");
+   Putobj(outset,"  template <class T> struct IsStruct;\n\n");
    
-   Putobj(out2,"  template <class T>\n");
-   Putobj(out2,"  bool isStruct(DDL::StructNode *struct_node) const { return IsStruct<T>::Do(indexes,struct_node->index); }\n\n");
+   Putobj(outset,"  template <class T>\n");
+   Putobj(outset,"  bool isStruct(DDL2::StructNode *struct_node) const { return IsStruct<T>::Do(indexes,struct_node->index); }\n\n");
   }
   
   // 204
   {
-   Putobj(out2,"  void guardFieldTypes(DDL::MapTypeCheck &type_check,DDL::StructNode *struct_node) const\n");
-   Putobj(out2,"   {\n");
-   Putobj(out2,"    switch( ind_map[struct_node->index] )\n");
-   Putobj(out2,"      {\n");
+   Putobj(outset,"  void guardFieldTypes(DDL2::StructNode *struct_node) const\n");
+   Putobj(outset,"   {\n");
+   Putobj(outset,"    switch( ind_map[struct_node->index] )\n");
+   Putobj(outset,"      {\n");
    
    for(auto &node : data->struct_list )
      {
-      Printf(out2,"       case #; :\n",node.index);
-      Putobj(out2,"        {\n");
-      Putobj(out2,"         DDL::GuardFieldTypes<\n");
+      Printf(outset,"       case #; :\n",node.index);
+      Putobj(outset,"        {\n");
+      Putobj(outset,"         DDL2::GuardFieldTypes<\n");
       
       for(auto &field : node.field_list )
         {
-         Putobj(out2,"                              ",PrintType(field.type_node,true));
+         Putobj(outset,"                               ",PrintType(field.type_node,MaxLevel,true));
          
-         if( field.next ) Putch(out2,',');
+         if( field.next ) Putch(outset,',');
          
-         Putch(out2,'\n');
+         Putch(outset,'\n');
         }
       
-      Putobj(out2,"                             >(*this,type_check,struct_node);\n");
-      Putobj(out2,"        }\n");
-      Putobj(out2,"       break;\n\n");
+      Putobj(outset,"                              >(*this,struct_node);\n");
+      Putobj(outset,"        }\n");
+      Putobj(outset,"       break;\n\n");
      }
    
-   Putobj(out2,"       default: Printf(Exception,\"Unknown structure\");\n");
-   Putobj(out2,"      }\n");
-   Putobj(out2,"   }\n");
+   Putobj(outset,"       default: Printf(Exception,\"Unknown structure\");\n");
+   Putobj(outset,"      }\n");
+   Putobj(outset,"   }\n");
   }
   
   // 205
   {
-   Putobj(out2," };\n\n"); 
+   Putobj(outset," };\n\n"); 
   }
   
   // 206
   {
-   Putobj(out2,"template <class T>\n"); 
-   Putobj(out2,"struct TypeSet::IsStruct\n"); 
-   Putobj(out2," {\n"); 
-   Putobj(out2,"  static bool Do(const ulen *,ulen) { return false; }\n"); 
-   Putobj(out2," };\n\n"); 
+   Putobj(outset,"template <class T>\n"); 
+   Putobj(outset,"struct TypeSet::IsStruct\n"); 
+   Putobj(outset," {\n"); 
+   Putobj(outset,"  static bool Do(const ulen *,ulen) { return false; }\n"); 
+   Putobj(outset," };\n\n"); 
   }
   
   // 207
   {
    for(auto &node : data->struct_list )
      {
-      Putobj(out2,"template <>\n");
-      Printf(out2,"struct TypeSet::IsStruct<TypeDefCore::S#;>\n",node.index); 
-      Putobj(out2," {\n");
-      Printf(out2,"  static bool Do(const ulen *indexes,ulen index) { return index==indexes[#;]; }\n",node.index-1);
-      Putobj(out2," };\n\n"); 
+      Putobj(outset,"template <>\n");
+      Printf(outset,"struct TypeSet::IsStruct<TypeDefCore::S#;>\n",node.index); 
+      Putobj(outset," {\n");
+      Printf(outset,"  static bool Do(const ulen *indexes,ulen index) { return index==indexes[#;]; }\n",node.index-1);
+      Putobj(outset," };\n\n"); 
      }
   }
-  
-#endif  
  }
 
 } // namespace App

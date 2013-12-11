@@ -29,6 +29,7 @@ all:
 	make $(OPT) -C LR1Shift
 	make $(OPT) -C LR1Track
 	make $(OPT) -C Keywords
+	make $(OPT) -C DDL2TypeSet
 
 clean:
 	make -C EchoServer   clean
@@ -48,6 +49,7 @@ clean:
 	make -C LR1Shift     clean
 	make -C LR1Track     clean
 	make -C Keywords     clean
+	make -C DDL2TypeSet  clean
 
 list:
 	make -C EchoServer   list
@@ -67,4 +69,5 @@ list:
 	make -C LR1Shift     list
 	make -C LR1Track     list
 	make -C Keywords     list
+	make -C DDL2TypeSet  list
 

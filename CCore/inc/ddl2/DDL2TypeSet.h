@@ -72,6 +72,8 @@ void SetFieldOffsets(StructNode *struct_node,TT ... args)
 
 template <class ... TT> struct GuardFieldTypes;
 
+class FindNodeMap;
+
 /* struct GuardFieldTypes<TT> */
 
 template <> 
@@ -108,6 +110,96 @@ struct GuardFieldTypes<T,TT...>
    : GuardFieldTypes(type_set,struct_node->field_list.beg) 
    {
    }
+ };
+
+/* class FindNodeMap */
+
+class FindNodeMap : NoCopy
+ {
+   struct CrcGen;
+ 
+   struct ToSearch
+    {
+     uint32 crc;
+     ulen len;
+     StrLen name;
+     DDL2::ScopeNode *scope;
+     
+     void setCrc();
+     
+     template <class T>
+     explicit ToSearch(T *node)
+      {
+       len=node->depth+1;
+       name=node->name.getStr();
+       scope=node->parent;
+       
+       setCrc();
+      }
+    };
+ 
+   struct Rec : NoCopy , CmpComparable<Rec> , NoThrowFlagsBase
+    {
+     ulen ind;
+     DynArray<StrLen> names;
+     uint32 crc;
+     
+     void setCrc();
+     
+     template <class ... TT>
+     explicit Rec(ulen ind_,TT ... tt) : ind(ind_),names({tt...}) { setCrc(); }
+     
+     // cmp objects 
+     
+     CmpResult objCmp(const Rec &obj) const;
+     
+     CmpResult objCmp(const ToSearch &obj) const;
+     
+     bool operator >= (const ToSearch &ts) const { return objCmp(ts)>=0; }
+     
+     bool operator == (const ToSearch &ts) const { return objCmp(ts)==0; }
+     
+     // swap/move objects
+     
+     void objSwap(Rec &obj)
+      {
+       Swap(ind,obj.ind);
+       Swap(names,obj.names);
+       Swap(crc,obj.crc);
+      }
+     
+     explicit Rec(ToMoveCtor<Rec> obj)
+      : ind(obj->ind),
+        names(ObjToMove(obj->names)),
+        crc(obj->crc)
+      {
+      }
+
+     Rec * objMove(Place<void> place)
+      {
+       return CtorMove(this,place);
+      }
+    };
+   
+   DynArray<Rec> list; 
+ 
+  private: 
+   
+   ulen find(ToSearch ts);
+   
+  public:
+ 
+   FindNodeMap() : list(DoReserve,100) {}
+   
+   ~FindNodeMap() {}
+
+   template <class ... TT>
+   void add(ulen ind,TT ... tt) { list.append_fill(ind,tt...); }
+   
+   void complete();
+   
+   template <class T>
+   ulen find(T *node) { return find(ToSearch(node)); }
  };
 
 } // namespace DDL2

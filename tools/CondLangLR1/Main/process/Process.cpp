@@ -462,7 +462,7 @@ void Process(StrLen file_name)
      ulen element=0;
      
      for(auto &atom : clang.getAtoms() )
-       Printf(elem_out,"{ #; , lang.atoms+#; , null }#;",element++,atom.index,EndItem());
+       Printf(elem_out,"{ #; , lang.atoms+#; }#;",element++,atom.index,EndItem());
      
      for(auto &synt : clang.getSynts() )
        {
@@ -472,7 +472,7 @@ void Process(StrLen file_name)
        
         for(ulen i=0; i<len ;i++)
           {
-           Printf(elem_out,"{ #; , null , lang.synts[#;].kinds+#; }#;",element++,synt.index,i,EndItem());
+           Printf(elem_out,"{ #; , lang.synts[#;].kinds+#; }#;",element++,synt.index,i,EndItem());
           }
        }
      
@@ -494,11 +494,11 @@ void Process(StrLen file_name)
         for(auto &element : rule.args )
           element.apply( [&] (const CondLangBase::AtomDesc *desc) 
                              {
-                              Printf(arg_out,"{ lang.atoms+#; , null }#;",desc->index,EndItem()); 
+                              Printf(arg_out,"lang.atoms+#;#;",desc->index,EndItem()); 
                              } , 
                          [&] (const CondLangBase::SyntDesc *desc) 
                              {
-                              Printf(arg_out,"{ null , lang.synts+#; }#;",desc->index,EndItem());
+                              Printf(arg_out,"lang.synts+#;#;",desc->index,EndItem());
                              } 
                        );
          
@@ -526,11 +526,11 @@ void Process(StrLen file_name)
         for(auto &element : rule.args )
           element.apply( [&] (const LangBase::AtomDesc *desc) 
                              {
-                              Printf(arg_out,"{ lang.atoms+#; , null }#;",desc->index,EndItem()); 
+                              Printf(arg_out,"lang.atoms+#;#;",desc->index,EndItem()); 
                              } , 
                          [&] (const LangBase::SyntDesc *desc) 
                              {
-                              Printf(arg_out,"{ null , lang.synts[#;].kinds+#; }#;",desc->map_index,desc->kind_index,EndItem());
+                              Printf(arg_out,"lang.synts[#;].kinds+#;#;",desc->map_index,desc->kind_index,EndItem());
                              } 
                        );
         

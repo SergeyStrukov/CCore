@@ -1,11 +1,11 @@
 /* struct TypeSet */
 
-struct TypeSet : TypeDefCore , DDL::MapHackPtr
+struct TypeSet : TypeDefCore
  {
-  ulen indexes[13];
+  ulen indexes[11];
   DynArray<ulen> ind_map;
 
-  DDL::FindNodeMap map;
+  DDL2::FindNodeMap map;
 
   explicit TypeSet(ulen len)
    : ind_map(len)
@@ -16,22 +16,20 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
     map.add(2,"Final");
     map.add(3,"Transition","State");
     map.add(4,"State");
-    map.add(5,"Arg","TopRule");
-    map.add(6,"TopRule");
-    map.add(7,"Arg","Rule");
-    map.add(8,"Rule");
-    map.add(9,"Element");
-    map.add(10,"Kind");
-    map.add(11,"Synt");
-    map.add(12,"Atom");
-    map.add(13,"Lang");
+    map.add(5,"TopRule");
+    map.add(6,"Rule");
+    map.add(7,"Element");
+    map.add(8,"Kind");
+    map.add(9,"Synt");
+    map.add(10,"Atom");
+    map.add(11,"Lang");
 
     map.complete();
    }
 
-  DDL::MapSizeInfo structSizeInfo(DDL::StructNode *struct_node)
+  DDL2::MapSizeInfo structSizeInfo(DDL2::StructNode *struct_node)
    {
-    DDL::MapSizeInfo ret;
+    DDL2::MapSizeInfo ret;
 
     switch( map.find(struct_node) )
       {
@@ -42,10 +40,10 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S1>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "atom",offsetof(S1,atom),
-                              "rule",offsetof(S1,rule)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "atom",offsetof(S1,atom),
+                               "rule",offsetof(S1,rule)
+                              );
         }
        return ret;
 
@@ -56,10 +54,10 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S2>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "index",offsetof(S2,index),
-                              "actions",offsetof(S2,actions)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "index",offsetof(S2,index),
+                               "actions",offsetof(S2,actions)
+                              );
         }
        return ret;
 
@@ -70,10 +68,10 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S3>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "element",offsetof(S3,element),
-                              "state",offsetof(S3,state)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "element",offsetof(S3,element),
+                               "state",offsetof(S3,state)
+                              );
         }
        return ret;
 
@@ -84,11 +82,11 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S4>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "index",offsetof(S4,index),
-                              "final",offsetof(S4,final),
-                              "transitions",offsetof(S4,transitions)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "index",offsetof(S4,index),
+                               "final",offsetof(S4,final),
+                               "transitions",offsetof(S4,transitions)
+                              );
         }
        return ret;
 
@@ -99,10 +97,13 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S5>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "atom",offsetof(S5,atom),
-                              "kind",offsetof(S5,kind)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "index",offsetof(S5,index),
+                               "name",offsetof(S5,name),
+                               "bottom",offsetof(S5,bottom),
+                               "result",offsetof(S5,result),
+                               "args",offsetof(S5,args)
+                              );
         }
        return ret;
 
@@ -113,13 +114,12 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S6>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "index",offsetof(S6,index),
-                              "name",offsetof(S6,name),
-                              "bottom",offsetof(S6,bottom),
-                              "result",offsetof(S6,result),
-                              "args",offsetof(S6,args)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "index",offsetof(S6,index),
+                               "name",offsetof(S6,name),
+                               "result",offsetof(S6,result),
+                               "args",offsetof(S6,args)
+                              );
         }
        return ret;
 
@@ -130,10 +130,10 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S7>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "atom",offsetof(S7,atom),
-                              "synt",offsetof(S7,synt)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "index",offsetof(S7,index),
+                               "elem",offsetof(S7,elem)
+                              );
         }
        return ret;
 
@@ -144,12 +144,14 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S8>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "index",offsetof(S8,index),
-                              "name",offsetof(S8,name),
-                              "result",offsetof(S8,result),
-                              "args",offsetof(S8,args)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "kindex",offsetof(S8,kindex),
+                               "index",offsetof(S8,index),
+                               "name",offsetof(S8,name),
+                               "synt",offsetof(S8,synt),
+                               "element",offsetof(S8,element),
+                               "rules",offsetof(S8,rules)
+                              );
         }
        return ret;
 
@@ -160,11 +162,12 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S9>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "index",offsetof(S9,index),
-                              "atom",offsetof(S9,atom),
-                              "kind",offsetof(S9,kind)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "index",offsetof(S9,index),
+                               "name",offsetof(S9,name),
+                               "kinds",offsetof(S9,kinds),
+                               "rules",offsetof(S9,rules)
+                              );
         }
        return ret;
 
@@ -175,14 +178,11 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S10>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "kindex",offsetof(S10,kindex),
-                              "index",offsetof(S10,index),
-                              "name",offsetof(S10,name),
-                              "synt",offsetof(S10,synt),
-                              "element",offsetof(S10,element),
-                              "rules",offsetof(S10,rules)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "index",offsetof(S10,index),
+                               "name",offsetof(S10,name),
+                               "element",offsetof(S10,element)
+                              );
         }
        return ret;
 
@@ -193,47 +193,16 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
 
          ret.set<S11>();
 
-         DDL::SetFieldOffsets(struct_node,
-                              "index",offsetof(S11,index),
-                              "name",offsetof(S11,name),
-                              "kinds",offsetof(S11,kinds),
-                              "rules",offsetof(S11,rules)
-                             );
-        }
-       return ret;
-
-       case 12 :
-        {
-         indexes[11]=struct_node->index;
-         ind_map[struct_node->index]=12;
-
-         ret.set<S12>();
-
-         DDL::SetFieldOffsets(struct_node,
-                              "index",offsetof(S12,index),
-                              "name",offsetof(S12,name),
-                              "element",offsetof(S12,element)
-                             );
-        }
-       return ret;
-
-       case 13 :
-        {
-         indexes[12]=struct_node->index;
-         ind_map[struct_node->index]=13;
-
-         ret.set<S13>();
-
-         DDL::SetFieldOffsets(struct_node,
-                              "atoms",offsetof(S13,atoms),
-                              "synts",offsetof(S13,synts),
-                              "lang",offsetof(S13,lang),
-                              "elements",offsetof(S13,elements),
-                              "rules",offsetof(S13,rules),
-                              "top_rules",offsetof(S13,top_rules),
-                              "states",offsetof(S13,states),
-                              "finals",offsetof(S13,finals)
-                             );
+         DDL2::SetFieldOffsets(struct_node,
+                               "atoms",offsetof(S11,atoms),
+                               "synts",offsetof(S11,synts),
+                               "lang",offsetof(S11,lang),
+                               "elements",offsetof(S11,elements),
+                               "rules",offsetof(S11,rules),
+                               "top_rules",offsetof(S11,top_rules),
+                               "states",offsetof(S11,states),
+                               "finals",offsetof(S11,finals)
+                              );
         }
        return ret;
 
@@ -244,146 +213,127 @@ struct TypeSet : TypeDefCore , DDL::MapHackPtr
   template <class T> struct IsStruct;
 
   template <class T>
-  bool isStruct(DDL::StructNode *struct_node) const { return IsStruct<T>::Do(indexes,struct_node->index); }
+  bool isStruct(DDL2::StructNode *struct_node) const { return IsStruct<T>::Do(indexes,struct_node->index); }
 
-  void guardFieldTypes(DDL::MapTypeCheck &type_check,DDL::StructNode *struct_node) const
+  void guardFieldTypes(DDL2::StructNode *struct_node) const
    {
     switch( ind_map[struct_node->index] )
       {
        case 1 :
         {
-         DDL::GuardFieldTypes<
-                              S12 *,
-                              S8 *
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               DDL2::MapPtr< S10 >,
+                               DDL2::MapPtr< S6 >
+                              >(*this,struct_node);
         }
        break;
 
        case 2 :
         {
-         DDL::GuardFieldTypes<
-                              A1,
-                              PtrLen<S1 >
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               A3,
+                               DDL2::MapRange< S1 >
+                              >(*this,struct_node);
         }
        break;
 
        case 3 :
         {
-         DDL::GuardFieldTypes<
-                              S9 *,
-                              S4 *
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               DDL2::MapPtr< S7 >,
+                               DDL2::MapPtr< S4 >
+                              >(*this,struct_node);
         }
        break;
 
        case 4 :
         {
-         DDL::GuardFieldTypes<
-                              A2,
-                              S2 *,
-                              PtrLen<S3 >
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               A4,
+                               DDL2::MapPtr< S2 >,
+                               DDL2::MapRange< S3 >
+                              >(*this,struct_node);
         }
        break;
 
        case 5 :
         {
-         DDL::GuardFieldTypes<
-                              S12 *,
-                              S10 *
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               A5,
+                               DDL2::MapText,
+                               DDL2::MapPtr< S6 >,
+                               DDL2::MapPtr< S8 >,
+                               DDL2::MapRange< A1 >
+                              >(*this,struct_node);
         }
        break;
 
        case 6 :
         {
-         DDL::GuardFieldTypes<
-                              A3,
-                              StrLen,
-                              S8 *,
-                              S10 *,
-                              PtrLen<S5 >
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               A5,
+                               DDL2::MapText,
+                               DDL2::MapPtr< S8 >,
+                               DDL2::MapRange< A2 >
+                              >(*this,struct_node);
         }
        break;
 
        case 7 :
         {
-         DDL::GuardFieldTypes<
-                              S12 *,
-                              S11 *
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               A6,
+                               DDL2::MapPolyPtr< S10 , S8 >
+                              >(*this,struct_node);
         }
        break;
 
        case 8 :
         {
-         DDL::GuardFieldTypes<
-                              A3,
-                              StrLen,
-                              S10 *,
-                              PtrLen<S7 >
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               A7,
+                               A7,
+                               DDL2::MapText,
+                               DDL2::MapPtr< S9 >,
+                               DDL2::MapPtr< S7 >,
+                               DDL2::MapRange< DDL2::MapPtr< S5 > >
+                              >(*this,struct_node);
         }
        break;
 
        case 9 :
         {
-         DDL::GuardFieldTypes<
-                              A4,
-                              S12 *,
-                              S10 *
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               A8,
+                               DDL2::MapText,
+                               DDL2::MapRange< S8 >,
+                               DDL2::MapRange< DDL2::MapPtr< S6 > >
+                              >(*this,struct_node);
         }
        break;
 
        case 10 :
         {
-         DDL::GuardFieldTypes<
-                              A5,
-                              A5,
-                              StrLen,
-                              S11 *,
-                              S9 *,
-                              PtrLen<S6 * >
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               A9,
+                               DDL2::MapText,
+                               DDL2::MapPtr< S7 >
+                              >(*this,struct_node);
         }
        break;
 
        case 11 :
         {
-         DDL::GuardFieldTypes<
-                              A6,
-                              StrLen,
-                              PtrLen<S10 >,
-                              PtrLen<S8 * >
-                             >(*this,type_check,struct_node);
-        }
-       break;
-
-       case 12 :
-        {
-         DDL::GuardFieldTypes<
-                              A7,
-                              StrLen,
-                              S9 *
-                             >(*this,type_check,struct_node);
-        }
-       break;
-
-       case 13 :
-        {
-         DDL::GuardFieldTypes<
-                              PtrLen<S12 >,
-                              PtrLen<S11 >,
-                              PtrLen<S11 * >,
-                              PtrLen<S9 >,
-                              PtrLen<S8 >,
-                              PtrLen<S6 >,
-                              PtrLen<S4 >,
-                              PtrLen<S2 >
-                             >(*this,type_check,struct_node);
+         DDL2::GuardFieldTypes<
+                               DDL2::MapRange< S10 >,
+                               DDL2::MapRange< S9 >,
+                               DDL2::MapRange< DDL2::MapPtr< S9 > >,
+                               DDL2::MapRange< S7 >,
+                               DDL2::MapRange< S6 >,
+                               DDL2::MapRange< S5 >,
+                               DDL2::MapRange< S4 >,
+                               DDL2::MapRange< S2 >
+                              >(*this,struct_node);
         }
        break;
 
@@ -462,17 +412,5 @@ template <>
 struct TypeSet::IsStruct<TypeDefCore::S11>
  {
   static bool Do(const ulen *indexes,ulen index) { return index==indexes[10]; }
- };
-
-template <>
-struct TypeSet::IsStruct<TypeDefCore::S12>
- {
-  static bool Do(const ulen *indexes,ulen index) { return index==indexes[11]; }
- };
-
-template <>
-struct TypeSet::IsStruct<TypeDefCore::S13>
- {
-  static bool Do(const ulen *indexes,ulen index) { return index==indexes[12]; }
  };
 

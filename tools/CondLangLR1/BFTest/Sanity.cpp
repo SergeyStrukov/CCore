@@ -21,8 +21,8 @@ namespace App {
 
 void DataMap::sanity_atoms()
  {
-  auto atoms=lang.atoms;
-  auto elements=lang.elements;
+  auto atoms=lang.atoms.getRange();
+  auto elements=lang.elements.getRange();
   
   if( !atoms )
     {
@@ -38,9 +38,9 @@ void DataMap::sanity_atoms()
         Printf(Exception,"App::DataMap::sanity_atoms(...) : bad atom #; index",i);
        }
      
-     auto *element=atom.element;
+     auto *element=atom.element.getPtr();
      
-     if( !Checkin(element,elements) || element->index!=i || element->atom!=&atom || element->kind )
+     if( !Checkin(element,elements) || element->index!=i || element->elem.getPtr().castPtr<TypeDef::Atom>()!=&atom )
        {
         Printf(Exception,"App::DataMap::sanity_atoms(...) : bad atom #; element",i);
        }
@@ -49,10 +49,10 @@ void DataMap::sanity_atoms()
 
 void DataMap::sanity_synts()
  {
-  auto synts=lang.synts;
-  auto elements=lang.elements;
-  auto top_rules=lang.top_rules;
-  auto rules=lang.rules;
+  auto synts=lang.synts.getRange();
+  auto elements=lang.elements.getRange();
+  auto top_rules=lang.top_rules.getRange();
+  auto rules=lang.rules.getRange();
   
   ulen eindex=lang.atoms.len;
   ulen kindex=0;
@@ -71,7 +71,7 @@ void DataMap::sanity_synts()
         Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; index",i);
        }
      
-     auto kinds=synt.kinds;
+     auto kinds=synt.kinds.getRange();
      
      if( !kinds )
        {
@@ -94,37 +94,37 @@ void DataMap::sanity_synts()
            Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; index",i,j);
           }
         
-        if( kind.synt!=&synt )
+        if( kind.synt.getPtr()!=&synt )
           {
            Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; synt",i,j);
           }
         
-        auto *element=kind.element;
+        auto *element=kind.element.getPtr();
         
-        if( !Checkin(element,elements) || element->index!=eindex || element->kind!=&kind || element->atom )
+        if( !Checkin(element,elements) || element->index!=eindex || element->elem.getPtr().castPtr<TypeDef::Kind>()!=&kind )
           {
            Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; element",i,j);
           }
         
-        if( !kind.rules )
+        if( !kind.rules.getRange() )
           {
            Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; , no rules",i,j);
           }
         
-        for(auto *rule : kind.rules )
-          if( !Checkin(rule,top_rules) || rule->result!=&kind )
+        for(auto rule : kind.rules.getRange() )
+          if( !Checkin(rule.getPtr(),top_rules) || rule.getPtr()->result.getPtr()!=&kind )
             {
              Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad kind #; rules",i,j);
             }
        }
      
-     if( !synt.rules )
+     if( !synt.rules.getRange() )
        {
         Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , no rules",i);
        }
      
-     for(auto *rule : synt.rules )
-       if( !Checkin(rule,rules) || !rule->result || rule->result->synt!=&synt )
+     for(auto rule : synt.rules.getRange() )
+       if( !Checkin(rule.getPtr(),rules) || !rule.getPtr()->result.getPtr() || rule.getPtr()->result.getPtr()->synt.getPtr()!=&synt )
          {
           Printf(Exception,"App::DataMap::sanity_synts(...) : bad synt #; , bad rules",i);
          }
@@ -138,15 +138,15 @@ void DataMap::sanity_synts()
 
 void DataMap::sanity_lang()
  {
-  auto synts=lang.synts;
+  auto synts=lang.synts.getRange();
   
-  if( !lang.lang )
+  if( !lang.lang.getRange() )
     {
      Printf(Exception,"App::DataMap::sanity_lang(...) : no lang synts");
     }
   
-  for(auto *synt : lang.lang )
-    if( !Checkin(synt,synts) )
+  for(auto synt : lang.lang.getRange() )
+    if( !Checkin(synt.getPtr(),synts) )
       {
        Printf(Exception,"App::DataMap::sanity_lang(...) : bad lang synt");
       }
@@ -154,9 +154,9 @@ void DataMap::sanity_lang()
 
 void DataMap::sanity_rules()
  {
-  auto rules=lang.rules;
-  auto synts=lang.synts;
-  auto atoms=lang.atoms;
+  auto rules=lang.rules.getRange();
+  auto synts=lang.synts.getRange();
+  auto atoms=lang.atoms.getRange();
   
   for(ulen i=0; i<rules.len ;i++)
     {
@@ -167,35 +167,49 @@ void DataMap::sanity_rules()
         Printf(Exception,"App::DataMap::sanity_rules(...) : bad rule #; index",i);
        }
      
-     auto *result=rule.result;
+     auto *result=rule.result.getPtr();
      
-     if( !result || !Checkin(result->synt,synts) || !Checkin(result,result->synt->kinds) )
+     if( !result || !Checkin(result->synt.getPtr(),synts) || !Checkin(result,result->synt.getPtr()->kinds.getRange()) )
        {
         Printf(Exception,"App::DataMap::sanity_rules(...) : bad rule #; result",i);
        }
      
-     for(auto arg : rule.args )
-       if( arg.atom )
+     for(auto arg : rule.args.getRange() )
+       {
+        struct Func
          {
-          if( arg.synt || !Checkin(arg.atom,atoms) )
-            {
-             Printf(Exception,"App::DataMap::sanity_rules(...) : bad rule #; args",i);
-            }
-         }
-       else
-         {
-          if( !Checkin(arg.synt,synts) )
-            {
-             Printf(Exception,"App::DataMap::sanity_rules(...) : bad rule #; args",i);
-            }
-         }
+          PtrLen<TypeDef::Atom> atoms;
+          PtrLen<TypeDef::Synt> synts;
+          ulen i;
+          
+          Func(PtrLen<TypeDef::Atom> atoms_,PtrLen<TypeDef::Synt> synts_,ulen i_) : atoms(atoms_),synts(synts_),i(i_) {}
+          
+          void operator () (TypeDef::Atom *atom)
+           {
+            if( !Checkin(atom,atoms) )
+              {
+               Printf(Exception,"App::DataMap::sanity_rules(...) : bad rule #; args",i);
+              }
+           }
+          
+          void operator () (TypeDef::Synt *synt)
+           {
+            if( !Checkin(synt,synts) )
+              {
+               Printf(Exception,"App::DataMap::sanity_rules(...) : bad rule #; args",i);
+              }
+           }
+         };
+       
+        arg.getPtr().apply(Func(atoms,synts,i));
+       }
     }
  }
 
 void DataMap::sanity_top_rules()
  {
-  auto top_rules=lang.top_rules;
-  auto rules=lang.rules;
+  auto top_rules=lang.top_rules.getRange();
+  auto rules=lang.rules.getRange();
   
   for(ulen i=0; i<top_rules.len ;i++)
     {
@@ -206,20 +220,22 @@ void DataMap::sanity_top_rules()
         Printf(Exception,"App::DataMap::sanity_top_rules(...) : bad top rule #; index",i);
        }
      
-     auto *bottom=rule.bottom;
+     auto *bottom=rule.bottom.getPtr();
      
      if( !Checkin(bottom,rules) )
        {
         Printf(Exception,"App::DataMap::sanity_top_rules(...) : bad top rule #; bottom",i);
        }
       
-     if( rule.result!=bottom->result )
+     if( rule.result.getPtr()!=bottom->result.getPtr() )
        {
         Printf(Exception,"App::DataMap::sanity_top_rules(...) : bad top rule #; result",i);
        }
      
-     auto args=rule.args;
-     auto bottom_args=bottom->args;
+     auto args=rule.args.getRange();
+     auto bottom_args=bottom->args.getRange();
+     
+     using Type = decltype(bottom_args) ;
      
      if( args.len!=bottom_args.len )
        {
@@ -228,32 +244,43 @@ void DataMap::sanity_top_rules()
      
      for(ulen j=0; j<args.len ;j++)
        {
-        if( auto *atom=args[j].atom )
-          {
-           if( args[j].kind || bottom_args[j].atom!=atom )
-             {
-              Printf(Exception,"App::DataMap::sanity_top_rules(...) : bad top rule #; args",i);
-             }
-          }
-        else
-          {
-           auto *kind=args[j].kind;
-           auto *synt=bottom_args[j].synt;
-           
-           if( !Checkin(kind,synt->kinds) )
-             {
-              Printf(Exception,"App::DataMap::sanity_top_rules(...) : bad top rule #; args",i);
-             }
-          }
+        struct Func
+         {
+          Type bottom_args;
+          ulen i;
+          ulen j;
+          
+          Func(Type bottom_args_,ulen i_,ulen j_) : bottom_args(bottom_args_),i(i_),j(j_) {}
+          
+          void operator () (TypeDef::Atom *atom)
+           {
+            if( bottom_args[j].getPtr().castPtr<TypeDef::Atom>()!=atom )
+              {
+               Printf(Exception,"App::DataMap::sanity_top_rules(...) : bad top rule #; args",i);
+              }
+           }
+          
+          void operator () (TypeDef::Kind *kind)
+           {
+            auto *synt=bottom_args[j].getPtr().castPtr<TypeDef::Synt>();
+            
+            if( !synt || !Checkin(kind,synt->kinds.getRange()) )
+              {
+               Printf(Exception,"App::DataMap::sanity_top_rules(...) : bad top rule #; args",i);
+              }
+           }
+         };
+       
+        args[j].getPtr().apply(Func(bottom_args,i,j));
        }
     }
  }
 
 void DataMap::sanity_states()
  {
-  auto states=lang.states;
-  auto finals=lang.finals;
-  auto elements=lang.elements;
+  auto states=lang.states.getRange();
+  auto finals=lang.finals.getRange();
+  auto elements=lang.elements.getRange();
   
   if( !states )
     {
@@ -269,20 +296,20 @@ void DataMap::sanity_states()
         Printf(Exception,"App::DataMap::sanity_states(...) : bad state #; index",i);
        }
      
-     if( !Checkin(state.final,finals) )
+     if( !Checkin(state.final.getPtr(),finals) )
        {
         Printf(Exception,"App::DataMap::sanity_states(...) : bad state #; final",i);
        }
      
-     for(auto p=state.transitions; +p ;++p)
+     for(auto p=state.transitions.getRange(); +p ;++p)
        {
-        if( !Checkin(p->element,elements) || !Checkin(p->state,states) )
+        if( !Checkin(p->element.getPtr(),elements) || !Checkin(p->state.getPtr(),states) )
           {
            Printf(Exception,"App::DataMap::sanity_states(...) : bad state #; transitions",i);
           }
        }
      
-     for(auto p=state.transitions; p.len>1 ;++p)
+     for(auto p=state.transitions.getRange(); p.len>1 ;++p)
        if( p[0].element->index>=p[1].element->index )
          {
           Printf(Exception,"App::DataMap::sanity_states(...) : bad state #; transitions",i);
@@ -292,9 +319,9 @@ void DataMap::sanity_states()
 
 void DataMap::sanity_finals()
  {
-  auto finals=lang.finals;
-  auto atoms=lang.atoms;
-  auto rules=lang.rules;
+  auto finals=lang.finals.getRange();
+  auto atoms=lang.atoms.getRange();
+  auto rules=lang.rules.getRange();
   
   for(ulen i=0; i<finals.len ;i++)
     {
@@ -305,16 +332,16 @@ void DataMap::sanity_finals()
         Printf(Exception,"App::DataMap::sanity_finals(...) : bad final #; index",i);
        }
      
-     for(auto action : final.actions )
+     for(auto action : final.actions.getRange() )
        {
-        if( !Checkin_null(action.atom,atoms) || !Checkin_null(action.rule,rules) )
+        if( !Checkin_null(action.atom.getPtr(),atoms) || !Checkin_null(action.rule.getPtr(),rules) )
           {
            Printf(Exception,"App::DataMap::sanity_finals(...) : bad final #; actions",i);
           }
        }
      
      {
-      auto actions=final.actions;
+      auto actions=final.actions.getRange();
       
       if( +actions && !actions->atom ) ++actions;
       

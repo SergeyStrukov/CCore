@@ -65,8 +65,7 @@ struct Element
  {
   ElementIndex index;
   
-  Atom *atom;
-  Kind *kind;
+  {Atom,Kind} * elem;
  };
 
 struct Rule
@@ -76,11 +75,7 @@ struct Rule
 
   Kind *result;
 
-  struct Arg
-   {
-    Atom *atom;
-    Synt *synt;
-   };
+  type Arg = {Atom,Synt} * ;
 
   Arg[] args;
  };
@@ -94,11 +89,7 @@ struct TopRule
 
   Kind *result;
 
-  struct Arg
-   {
-    Atom *atom;
-    Kind *kind;
-   };
+  type Arg = {Atom,Kind} * ;
 
   Arg[] args;
  }; 

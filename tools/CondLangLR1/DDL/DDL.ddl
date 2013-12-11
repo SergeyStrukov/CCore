@@ -586,73 +586,73 @@ Lang lang=
     lang.synts+0
    },
    {
-    { 0 , lang.atoms+0 , null },
-    { 1 , lang.atoms+1 , null },
-    { 2 , lang.atoms+2 , null },
-    { 3 , lang.atoms+3 , null },
-    { 4 , lang.atoms+4 , null },
-    { 5 , lang.atoms+5 , null },
-    { 6 , lang.atoms+6 , null },
-    { 7 , lang.atoms+7 , null },
-    { 8 , lang.atoms+8 , null },
-    { 9 , lang.atoms+9 , null },
-    { 10 , lang.atoms+10 , null },
-    { 11 , lang.atoms+11 , null },
-    { 12 , lang.atoms+12 , null },
-    { 13 , lang.atoms+13 , null },
-    { 14 , lang.atoms+14 , null },
-    { 15 , lang.atoms+15 , null },
-    { 16 , lang.atoms+16 , null },
-    { 17 , lang.atoms+17 , null },
-    { 18 , lang.atoms+18 , null },
-    { 19 , lang.atoms+19 , null },
-    { 20 , lang.atoms+20 , null },
-    { 21 , lang.atoms+21 , null },
-    { 22 , lang.atoms+22 , null },
-    { 23 , lang.atoms+23 , null },
-    { 24 , lang.atoms+24 , null },
-    { 25 , lang.atoms+25 , null },
-    { 26 , lang.atoms+26 , null },
-    { 27 , lang.atoms+27 , null },
-    { 28 , lang.atoms+28 , null },
-    { 29 , lang.atoms+29 , null },
-    { 30 , lang.atoms+30 , null },
-    { 31 , lang.atoms+31 , null },
-    { 32 , lang.atoms+32 , null },
-    { 33 , lang.atoms+33 , null },
-    { 34 , lang.atoms+34 , null },
-    { 35 , lang.atoms+35 , null },
-    { 36 , lang.atoms+36 , null },
-    { 37 , lang.atoms+37 , null },
-    { 38 , lang.atoms+38 , null },
-    { 39 , lang.atoms+39 , null },
-    { 40 , lang.atoms+40 , null },
-    { 41 , lang.atoms+41 , null },
-    { 42 , lang.atoms+42 , null },
-    { 43 , null , lang.synts[0].kinds+0 },
-    { 44 , null , lang.synts[1].kinds+0 },
-    { 45 , null , lang.synts[2].kinds+0 },
-    { 46 , null , lang.synts[3].kinds+0 },
-    { 47 , null , lang.synts[4].kinds+0 },
-    { 48 , null , lang.synts[5].kinds+0 },
-    { 49 , null , lang.synts[6].kinds+0 },
-    { 50 , null , lang.synts[7].kinds+0 },
-    { 51 , null , lang.synts[8].kinds+0 },
-    { 52 , null , lang.synts[9].kinds+0 },
-    { 53 , null , lang.synts[10].kinds+0 },
-    { 54 , null , lang.synts[11].kinds+0 },
-    { 55 , null , lang.synts[12].kinds+0 },
-    { 56 , null , lang.synts[12].kinds+1 },
-    { 57 , null , lang.synts[12].kinds+2 },
-    { 58 , null , lang.synts[12].kinds+3 },
-    { 59 , null , lang.synts[12].kinds+4 },
-    { 60 , null , lang.synts[12].kinds+5 },
-    { 61 , null , lang.synts[12].kinds+6 },
-    { 62 , null , lang.synts[13].kinds+0 },
-    { 63 , null , lang.synts[14].kinds+0 },
-    { 64 , null , lang.synts[15].kinds+0 },
-    { 65 , null , lang.synts[16].kinds+0 },
-    { 66 , null , lang.synts[17].kinds+0 }
+    { 0 , lang.atoms+0 },
+    { 1 , lang.atoms+1 },
+    { 2 , lang.atoms+2 },
+    { 3 , lang.atoms+3 },
+    { 4 , lang.atoms+4 },
+    { 5 , lang.atoms+5 },
+    { 6 , lang.atoms+6 },
+    { 7 , lang.atoms+7 },
+    { 8 , lang.atoms+8 },
+    { 9 , lang.atoms+9 },
+    { 10 , lang.atoms+10 },
+    { 11 , lang.atoms+11 },
+    { 12 , lang.atoms+12 },
+    { 13 , lang.atoms+13 },
+    { 14 , lang.atoms+14 },
+    { 15 , lang.atoms+15 },
+    { 16 , lang.atoms+16 },
+    { 17 , lang.atoms+17 },
+    { 18 , lang.atoms+18 },
+    { 19 , lang.atoms+19 },
+    { 20 , lang.atoms+20 },
+    { 21 , lang.atoms+21 },
+    { 22 , lang.atoms+22 },
+    { 23 , lang.atoms+23 },
+    { 24 , lang.atoms+24 },
+    { 25 , lang.atoms+25 },
+    { 26 , lang.atoms+26 },
+    { 27 , lang.atoms+27 },
+    { 28 , lang.atoms+28 },
+    { 29 , lang.atoms+29 },
+    { 30 , lang.atoms+30 },
+    { 31 , lang.atoms+31 },
+    { 32 , lang.atoms+32 },
+    { 33 , lang.atoms+33 },
+    { 34 , lang.atoms+34 },
+    { 35 , lang.atoms+35 },
+    { 36 , lang.atoms+36 },
+    { 37 , lang.atoms+37 },
+    { 38 , lang.atoms+38 },
+    { 39 , lang.atoms+39 },
+    { 40 , lang.atoms+40 },
+    { 41 , lang.atoms+41 },
+    { 42 , lang.atoms+42 },
+    { 43 , lang.synts[0].kinds+0 },
+    { 44 , lang.synts[1].kinds+0 },
+    { 45 , lang.synts[2].kinds+0 },
+    { 46 , lang.synts[3].kinds+0 },
+    { 47 , lang.synts[4].kinds+0 },
+    { 48 , lang.synts[5].kinds+0 },
+    { 49 , lang.synts[6].kinds+0 },
+    { 50 , lang.synts[7].kinds+0 },
+    { 51 , lang.synts[8].kinds+0 },
+    { 52 , lang.synts[9].kinds+0 },
+    { 53 , lang.synts[10].kinds+0 },
+    { 54 , lang.synts[11].kinds+0 },
+    { 55 , lang.synts[12].kinds+0 },
+    { 56 , lang.synts[12].kinds+1 },
+    { 57 , lang.synts[12].kinds+2 },
+    { 58 , lang.synts[12].kinds+3 },
+    { 59 , lang.synts[12].kinds+4 },
+    { 60 , lang.synts[12].kinds+5 },
+    { 61 , lang.synts[12].kinds+6 },
+    { 62 , lang.synts[13].kinds+0 },
+    { 63 , lang.synts[14].kinds+0 },
+    { 64 , lang.synts[15].kinds+0 },
+    { 65 , lang.synts[16].kinds+0 },
+    { 66 , lang.synts[17].kinds+0 }
    },
    {
     { 0 , "start" , lang.synts[0].kinds+0 ,
@@ -662,223 +662,223 @@ Lang lang=
     },
     { 1 , "ext_SCOPE" , lang.synts[0].kinds+0 ,
                                                 {
-                                                 { null , lang.synts+0 },
-                                                 { null , lang.synts+1 }
+                                                 lang.synts+0,
+                                                 lang.synts+1
                                                 }
     },
     { 2 , "ext_INCLUDE" , lang.synts[0].kinds+0 ,
                                                   {
-                                                   { null , lang.synts+0 },
-                                                   { null , lang.synts+2 }
+                                                   lang.synts+0,
+                                                   lang.synts+2
                                                   }
     },
     { 3 , "ext_TYPE" , lang.synts[0].kinds+0 ,
                                                {
-                                                { null , lang.synts+0 },
-                                                { null , lang.synts+3 }
+                                                lang.synts+0,
+                                                lang.synts+3
                                                }
     },
     { 4 , "ext_CONST" , lang.synts[0].kinds+0 ,
                                                 {
-                                                 { null , lang.synts+0 },
-                                                 { null , lang.synts+4 }
+                                                 lang.synts+0,
+                                                 lang.synts+4
                                                 }
     },
     { 5 , "ext_STRUCT" , lang.synts[0].kinds+0 ,
                                                  {
-                                                  { null , lang.synts+0 },
-                                                  { null , lang.synts+10 },
-                                                  { lang.atoms+12 , null }
+                                                  lang.synts+0,
+                                                  lang.synts+10,
+                                                  lang.atoms+12
                                                  }
     },
     { 6 , "build" , lang.synts[1].kinds+0 ,
                                             {
-                                             { lang.atoms+26 , null },
-                                             { lang.atoms+16 , null },
-                                             { lang.atoms+41 , null },
-                                             { null , lang.synts+0 },
-                                             { lang.atoms+42 , null }
+                                             lang.atoms+26,
+                                             lang.atoms+16,
+                                             lang.atoms+41,
+                                             lang.synts+0,
+                                             lang.atoms+42
                                             }
     },
     { 7 , "includeFile" , lang.synts[2].kinds+0 ,
                                                   {
-                                                   { lang.atoms+22 , null },
-                                                   { lang.atoms+15 , null }
+                                                   lang.atoms+22,
+                                                   lang.atoms+15
                                                   }
     },
     { 8 , "build" , lang.synts[3].kinds+0 ,
                                             {
-                                             { lang.atoms+34 , null },
-                                             { lang.atoms+16 , null },
-                                             { lang.atoms+13 , null },
-                                             { null , lang.synts+9 },
-                                             { lang.atoms+12 , null }
+                                             lang.atoms+34,
+                                             lang.atoms+16,
+                                             lang.atoms+13,
+                                             lang.synts+9,
+                                             lang.atoms+12
                                             }
     },
     { 9 , "build" , lang.synts[4].kinds+0 ,
                                             {
-                                             { null , lang.synts+9 },
-                                             { lang.atoms+16 , null },
-                                             { lang.atoms+13 , null },
-                                             { null , lang.synts+12 },
-                                             { lang.atoms+12 , null }
+                                             lang.synts+9,
+                                             lang.atoms+16,
+                                             lang.atoms+13,
+                                             lang.synts+12,
+                                             lang.atoms+12
                                             }
     },
     { 10 , "start" , lang.synts[5].kinds+0 ,
                                              {
-                                              { lang.atoms+16 , null }
+                                              lang.atoms+16
                                              }
     },
     { 11 , "ext" , lang.synts[5].kinds+0 ,
                                            {
-                                            { null , lang.synts+5 },
-                                            { lang.atoms+0 , null },
-                                            { lang.atoms+16 , null }
+                                            lang.synts+5,
+                                            lang.atoms+0,
+                                            lang.atoms+16
                                            }
     },
     { 12 , "rel" , lang.synts[6].kinds+0 ,
                                            {
-                                            { null , lang.synts+5 }
+                                            lang.synts+5
                                            }
     },
     { 13 , "abs" , lang.synts[6].kinds+0 ,
                                            {
-                                            { lang.atoms+0 , null },
-                                            { null , lang.synts+5 }
+                                            lang.atoms+0,
+                                            lang.synts+5
                                            }
     },
     { 14 , "dot" , lang.synts[6].kinds+0 ,
                                            {
-                                            { lang.atoms+10 , null },
-                                            { lang.atoms+0 , null },
-                                            { null , lang.synts+5 }
+                                            lang.atoms+10,
+                                            lang.atoms+0,
+                                            lang.synts+5
                                            }
     },
     { 15 , "dots" , lang.synts[6].kinds+0 ,
                                             {
-                                             { lang.atoms+14 , null },
-                                             { lang.atoms+0 , null },
-                                             { null , lang.synts+5 }
+                                             lang.atoms+14,
+                                             lang.atoms+0,
+                                             lang.synts+5
                                             }
     },
     { 16 , "intName" , lang.synts[7].kinds+0 ,
                                                {
-                                                { lang.atoms+23 , null }
+                                                lang.atoms+23
                                                }
     },
     { 17 , "sintName" , lang.synts[7].kinds+0 ,
                                                 {
-                                                 { lang.atoms+27 , null }
+                                                 lang.atoms+27
                                                 }
     },
     { 18 , "uintName" , lang.synts[7].kinds+0 ,
                                                 {
-                                                 { lang.atoms+35 , null }
+                                                 lang.atoms+35
                                                 }
     },
     { 19 , "ulenName" , lang.synts[7].kinds+0 ,
                                                 {
-                                                 { lang.atoms+40 , null }
+                                                 lang.atoms+40
                                                 }
     },
     { 20 , "sint8Name" , lang.synts[7].kinds+0 ,
                                                  {
-                                                  { lang.atoms+31 , null }
+                                                  lang.atoms+31
                                                  }
     },
     { 21 , "uint8Name" , lang.synts[7].kinds+0 ,
                                                  {
-                                                  { lang.atoms+39 , null }
+                                                  lang.atoms+39
                                                  }
     },
     { 22 , "sint16Name" , lang.synts[7].kinds+0 ,
                                                   {
-                                                   { lang.atoms+28 , null }
+                                                   lang.atoms+28
                                                   }
     },
     { 23 , "uint16Name" , lang.synts[7].kinds+0 ,
                                                   {
-                                                   { lang.atoms+36 , null }
+                                                   lang.atoms+36
                                                   }
     },
     { 24 , "sint32Name" , lang.synts[7].kinds+0 ,
                                                   {
-                                                   { lang.atoms+29 , null }
+                                                   lang.atoms+29
                                                   }
     },
     { 25 , "uint32Name" , lang.synts[7].kinds+0 ,
                                                   {
-                                                   { lang.atoms+37 , null }
+                                                   lang.atoms+37
                                                   }
     },
     { 26 , "sint64Name" , lang.synts[7].kinds+0 ,
                                                   {
-                                                   { lang.atoms+30 , null }
+                                                   lang.atoms+30
                                                   }
     },
     { 27 , "uint64Name" , lang.synts[7].kinds+0 ,
                                                   {
-                                                   { lang.atoms+38 , null }
+                                                   lang.atoms+38
                                                   }
     },
     { 28 , "cast" , lang.synts[8].kinds+0 ,
                                             {
-                                             { null , lang.synts+7 }
+                                             lang.synts+7
                                             }
     },
     { 29 , "text" , lang.synts[8].kinds+0 ,
                                             {
-                                             { lang.atoms+33 , null }
+                                             lang.atoms+33
                                             }
     },
     { 30 , "ip" , lang.synts[8].kinds+0 ,
                                           {
-                                           { lang.atoms+24 , null }
+                                           lang.atoms+24
                                           }
     },
     { 31 , "namedType" , lang.synts[9].kinds+0 ,
                                                  {
-                                                  { null , lang.synts+6 }
+                                                  lang.synts+6
                                                  }
     },
     { 32 , "baseType" , lang.synts[9].kinds+0 ,
                                                 {
-                                                 { null , lang.synts+8 }
+                                                 lang.synts+8
                                                 }
     },
     { 33 , "ptrType" , lang.synts[9].kinds+0 ,
                                                {
-                                                { null , lang.synts+9 },
-                                                { lang.atoms+5 , null }
+                                                lang.synts+9,
+                                                lang.atoms+5
                                                }
     },
     { 34 , "arrayType" , lang.synts[9].kinds+0 ,
                                                  {
-                                                  { null , lang.synts+9 },
-                                                  { lang.atoms+19 , null },
-                                                  { lang.atoms+20 , null }
+                                                  lang.synts+9,
+                                                  lang.atoms+19,
+                                                  lang.atoms+20
                                                  }
     },
     { 35 , "arrayLenType" , lang.synts[9].kinds+0 ,
                                                     {
-                                                     { null , lang.synts+9 },
-                                                     { lang.atoms+19 , null },
-                                                     { null , lang.synts+12 },
-                                                     { lang.atoms+20 , null }
+                                                     lang.synts+9,
+                                                     lang.atoms+19,
+                                                     lang.synts+12,
+                                                     lang.atoms+20
                                                     }
     },
     { 36 , "structType" , lang.synts[9].kinds+0 ,
                                                   {
-                                                   { null , lang.synts+10 }
+                                                   lang.synts+10
                                                   }
     },
     { 37 , "build" , lang.synts[10].kinds+0 ,
                                               {
-                                               { lang.atoms+32 , null },
-                                               { lang.atoms+16 , null },
-                                               { lang.atoms+41 , null },
-                                               { null , lang.synts+11 },
-                                               { lang.atoms+42 , null }
+                                               lang.atoms+32,
+                                               lang.atoms+16,
+                                               lang.atoms+41,
+                                               lang.synts+11,
+                                               lang.atoms+42
                                               }
     },
     { 38 , "start" , lang.synts[11].kinds+0 ,
@@ -888,249 +888,249 @@ Lang lang=
     },
     { 39 , "ext_TYPE" , lang.synts[11].kinds+0 ,
                                                  {
-                                                  { null , lang.synts+11 },
-                                                  { null , lang.synts+3 }
+                                                  lang.synts+11,
+                                                  lang.synts+3
                                                  }
     },
     { 40 , "ext_CONST" , lang.synts[11].kinds+0 ,
                                                   {
-                                                   { null , lang.synts+11 },
-                                                   { lang.atoms+21 , null },
-                                                   { null , lang.synts+4 }
+                                                   lang.synts+11,
+                                                   lang.atoms+21,
+                                                   lang.synts+4
                                                   }
     },
     { 41 , "ext_STRUCT" , lang.synts[11].kinds+0 ,
                                                    {
-                                                    { null , lang.synts+11 },
-                                                    { null , lang.synts+10 },
-                                                    { lang.atoms+12 , null }
+                                                    lang.synts+11,
+                                                    lang.synts+10,
+                                                    lang.atoms+12
                                                    }
     },
     { 42 , "ext_field" , lang.synts[11].kinds+0 ,
                                                   {
-                                                   { null , lang.synts+11 },
-                                                   { null , lang.synts+9 },
-                                                   { lang.atoms+16 , null },
-                                                   { lang.atoms+12 , null }
+                                                   lang.synts+11,
+                                                   lang.synts+9,
+                                                   lang.atoms+16,
+                                                   lang.atoms+12
                                                   }
     },
     { 43 , "ext_fieldVal" , lang.synts[11].kinds+0 ,
                                                      {
-                                                      { null , lang.synts+11 },
-                                                      { null , lang.synts+9 },
-                                                      { lang.atoms+16 , null },
-                                                      { lang.atoms+13 , null },
-                                                      { null , lang.synts+12 },
-                                                      { lang.atoms+12 , null }
+                                                      lang.synts+11,
+                                                      lang.synts+9,
+                                                      lang.atoms+16,
+                                                      lang.atoms+13,
+                                                      lang.synts+12,
+                                                      lang.atoms+12
                                                      }
     },
     { 44 , "cast_EXPR" , lang.synts[12].kinds+6 ,
                                                   {
-                                                   { lang.atoms+3 , null },
-                                                   { null , lang.synts+12 },
-                                                   { lang.atoms+4 , null }
+                                                   lang.atoms+3,
+                                                   lang.synts+12,
+                                                   lang.atoms+4
                                                   }
     },
     { 45 , "cast_NAME" , lang.synts[12].kinds+6 ,
                                                   {
-                                                   { null , lang.synts+6 }
+                                                   lang.synts+6
                                                   }
     },
     { 46 , "cast_NNLIT" , lang.synts[12].kinds+6 ,
                                                    {
-                                                    { null , lang.synts+17 }
+                                                    lang.synts+17
                                                    }
     },
     { 47 , "opDomain" , lang.synts[12].kinds+6 ,
                                                  {
-                                                  { null , lang.synts+16 },
-                                                  { lang.atoms+3 , null },
-                                                  { null , lang.synts+12 },
-                                                  { lang.atoms+4 , null }
+                                                  lang.synts+16,
+                                                  lang.atoms+3,
+                                                  lang.synts+12,
+                                                  lang.atoms+4
                                                  }
     },
     { 48 , "opInd" , lang.synts[12].kinds+5 ,
                                               {
-                                               { null , lang.synts+12 },
-                                               { lang.atoms+19 , null },
-                                               { null , lang.synts+12 },
-                                               { lang.atoms+20 , null }
+                                               lang.synts+12,
+                                               lang.atoms+19,
+                                               lang.synts+12,
+                                               lang.atoms+20
                                               }
     },
     { 49 , "opSelect" , lang.synts[12].kinds+5 ,
                                                  {
-                                                  { null , lang.synts+12 },
-                                                  { lang.atoms+10 , null },
-                                                  { lang.atoms+16 , null }
+                                                  lang.synts+12,
+                                                  lang.atoms+10,
+                                                  lang.atoms+16
                                                  }
     },
     { 50 , "opPtrSelect" , lang.synts[12].kinds+5 ,
                                                     {
-                                                     { null , lang.synts+12 },
-                                                     { lang.atoms+9 , null },
-                                                     { lang.atoms+16 , null }
+                                                     lang.synts+12,
+                                                     lang.atoms+9,
+                                                     lang.atoms+16
                                                     }
     },
     { 51 , "cast_Number" , lang.synts[12].kinds+4 ,
                                                     {
-                                                     { lang.atoms+17 , null }
+                                                     lang.atoms+17
                                                     }
     },
     { 52 , "opAst" , lang.synts[12].kinds+3 ,
                                               {
-                                               { lang.atoms+5 , null },
-                                               { null , lang.synts+12 }
+                                               lang.atoms+5,
+                                               lang.synts+12
                                               }
     },
     { 53 , "opAmp" , lang.synts[12].kinds+3 ,
                                               {
-                                               { lang.atoms+2 , null },
-                                               { null , lang.synts+12 }
+                                               lang.atoms+2,
+                                               lang.synts+12
                                               }
     },
     { 54 , "opPlus" , lang.synts[12].kinds+3 ,
                                                {
-                                                { lang.atoms+6 , null },
-                                                { null , lang.synts+12 }
+                                                lang.atoms+6,
+                                                lang.synts+12
                                                }
     },
     { 55 , "opMinus" , lang.synts[12].kinds+3 ,
                                                 {
-                                                 { lang.atoms+8 , null },
-                                                 { null , lang.synts+12 }
+                                                 lang.atoms+8,
+                                                 lang.synts+12
                                                 }
     },
     { 56 , "opMul" , lang.synts[12].kinds+2 ,
                                               {
-                                               { null , lang.synts+12 },
-                                               { lang.atoms+5 , null },
-                                               { null , lang.synts+12 }
+                                               lang.synts+12,
+                                               lang.atoms+5,
+                                               lang.synts+12
                                               }
     },
     { 57 , "opDiv" , lang.synts[12].kinds+2 ,
                                               {
-                                               { null , lang.synts+12 },
-                                               { lang.atoms+11 , null },
-                                               { null , lang.synts+12 }
+                                               lang.synts+12,
+                                               lang.atoms+11,
+                                               lang.synts+12
                                               }
     },
     { 58 , "opRem" , lang.synts[12].kinds+2 ,
                                               {
-                                               { null , lang.synts+12 },
-                                               { lang.atoms+1 , null },
-                                               { null , lang.synts+12 }
+                                               lang.synts+12,
+                                               lang.atoms+1,
+                                               lang.synts+12
                                               }
     },
     { 59 , "opAdd" , lang.synts[12].kinds+1 ,
                                               {
-                                               { null , lang.synts+12 },
-                                               { lang.atoms+6 , null },
-                                               { null , lang.synts+12 }
+                                               lang.synts+12,
+                                               lang.atoms+6,
+                                               lang.synts+12
                                               }
     },
     { 60 , "opSub" , lang.synts[12].kinds+1 ,
                                               {
-                                               { null , lang.synts+12 },
-                                               { lang.atoms+8 , null },
-                                               { null , lang.synts+12 }
+                                               lang.synts+12,
+                                               lang.atoms+8,
+                                               lang.synts+12
                                               }
     },
     { 61 , "emptyExprList" , lang.synts[12].kinds+0 ,
                                                       {
-                                                       { lang.atoms+41 , null },
-                                                       { lang.atoms+42 , null }
+                                                       lang.atoms+41,
+                                                       lang.atoms+42
                                                       }
     },
     { 62 , "buildExprList" , lang.synts[12].kinds+0 ,
                                                       {
-                                                       { lang.atoms+41 , null },
-                                                       { null , lang.synts+13 },
-                                                       { lang.atoms+42 , null }
+                                                       lang.atoms+41,
+                                                       lang.synts+13,
+                                                       lang.atoms+42
                                                       }
     },
     { 63 , "buildNamedExprList" , lang.synts[12].kinds+0 ,
                                                            {
-                                                            { lang.atoms+41 , null },
-                                                            { null , lang.synts+15 },
-                                                            { lang.atoms+42 , null }
+                                                            lang.atoms+41,
+                                                            lang.synts+15,
+                                                            lang.atoms+42
                                                            }
     },
     { 64 , "applyEmpty" , lang.synts[12].kinds+0 ,
                                                    {
-                                                    { null , lang.synts+12 },
-                                                    { lang.atoms+41 , null },
-                                                    { lang.atoms+42 , null }
+                                                    lang.synts+12,
+                                                    lang.atoms+41,
+                                                    lang.atoms+42
                                                    }
     },
     { 65 , "applyNamedExprList" , lang.synts[12].kinds+0 ,
                                                            {
-                                                            { null , lang.synts+12 },
-                                                            { lang.atoms+41 , null },
-                                                            { null , lang.synts+15 },
-                                                            { lang.atoms+42 , null }
+                                                            lang.synts+12,
+                                                            lang.atoms+41,
+                                                            lang.synts+15,
+                                                            lang.atoms+42
                                                            }
     },
     { 66 , "start" , lang.synts[13].kinds+0 ,
                                               {
-                                               { null , lang.synts+12 }
+                                               lang.synts+12
                                               }
     },
     { 67 , "ext" , lang.synts[13].kinds+0 ,
                                             {
-                                             { null , lang.synts+13 },
-                                             { lang.atoms+7 , null },
-                                             { null , lang.synts+12 }
+                                             lang.synts+13,
+                                             lang.atoms+7,
+                                             lang.synts+12
                                             }
     },
     { 68 , "build" , lang.synts[14].kinds+0 ,
                                               {
-                                               { lang.atoms+10 , null },
-                                               { lang.atoms+16 , null },
-                                               { lang.atoms+13 , null },
-                                               { null , lang.synts+12 }
+                                               lang.atoms+10,
+                                               lang.atoms+16,
+                                               lang.atoms+13,
+                                               lang.synts+12
                                               }
     },
     { 69 , "start" , lang.synts[15].kinds+0 ,
                                               {
-                                               { null , lang.synts+14 }
+                                               lang.synts+14
                                               }
     },
     { 70 , "ext" , lang.synts[15].kinds+0 ,
                                             {
-                                             { null , lang.synts+15 },
-                                             { lang.atoms+7 , null },
-                                             { null , lang.synts+14 }
+                                             lang.synts+15,
+                                             lang.atoms+7,
+                                             lang.synts+14
                                             }
     },
     { 71 , "type_NAME" , lang.synts[16].kinds+0 ,
                                                   {
-                                                   { null , lang.synts+6 }
+                                                   lang.synts+6
                                                   }
     },
     { 72 , "type_INAME" , lang.synts[16].kinds+0 ,
                                                    {
-                                                    { null , lang.synts+7 }
+                                                    lang.synts+7
                                                    }
     },
     { 73 , "cast_null" , lang.synts[17].kinds+0 ,
                                                   {
-                                                   { lang.atoms+25 , null }
+                                                   lang.atoms+25
                                                   }
     },
     { 74 , "cast_String" , lang.synts[17].kinds+0 ,
                                                     {
-                                                     { lang.atoms+18 , null }
+                                                     lang.atoms+18
                                                     }
     },
     { 75 , "buildIP" , lang.synts[17].kinds+0 ,
                                                 {
-                                                 { lang.atoms+17 , null },
-                                                 { lang.atoms+10 , null },
-                                                 { lang.atoms+17 , null },
-                                                 { lang.atoms+10 , null },
-                                                 { lang.atoms+17 , null },
-                                                 { lang.atoms+10 , null },
-                                                 { lang.atoms+17 , null }
+                                                 lang.atoms+17,
+                                                 lang.atoms+10,
+                                                 lang.atoms+17,
+                                                 lang.atoms+10,
+                                                 lang.atoms+17,
+                                                 lang.atoms+10,
+                                                 lang.atoms+17
                                                 }
     }
    },
@@ -1142,325 +1142,325 @@ Lang lang=
     },
     { 1 , "ext_SCOPE" , lang.rules+1 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+0 },
-                                                                { null , lang.synts[1].kinds+0 }
+                                                                lang.synts[0].kinds+0,
+                                                                lang.synts[1].kinds+0
                                                                }
     },
     { 2 , "ext_INCLUDE" , lang.rules+2 , lang.synts[0].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[0].kinds+0 },
-                                                                  { null , lang.synts[2].kinds+0 }
+                                                                  lang.synts[0].kinds+0,
+                                                                  lang.synts[2].kinds+0
                                                                  }
     },
     { 3 , "ext_TYPE" , lang.rules+3 , lang.synts[0].kinds+0 ,
                                                               {
-                                                               { null , lang.synts[0].kinds+0 },
-                                                               { null , lang.synts[3].kinds+0 }
+                                                               lang.synts[0].kinds+0,
+                                                               lang.synts[3].kinds+0
                                                               }
     },
     { 4 , "ext_CONST" , lang.rules+4 , lang.synts[0].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[0].kinds+0 },
-                                                                { null , lang.synts[4].kinds+0 }
+                                                                lang.synts[0].kinds+0,
+                                                                lang.synts[4].kinds+0
                                                                }
     },
     { 5 , "ext_STRUCT" , lang.rules+5 , lang.synts[0].kinds+0 ,
                                                                 {
-                                                                 { null , lang.synts[0].kinds+0 },
-                                                                 { null , lang.synts[10].kinds+0 },
-                                                                 { lang.atoms+12 , null }
+                                                                 lang.synts[0].kinds+0,
+                                                                 lang.synts[10].kinds+0,
+                                                                 lang.atoms+12
                                                                 }
     },
     { 6 , "build" , lang.rules+6 , lang.synts[1].kinds+0 ,
                                                            {
-                                                            { lang.atoms+26 , null },
-                                                            { lang.atoms+16 , null },
-                                                            { lang.atoms+41 , null },
-                                                            { null , lang.synts[0].kinds+0 },
-                                                            { lang.atoms+42 , null }
+                                                            lang.atoms+26,
+                                                            lang.atoms+16,
+                                                            lang.atoms+41,
+                                                            lang.synts[0].kinds+0,
+                                                            lang.atoms+42
                                                            }
     },
     { 7 , "includeFile" , lang.rules+7 , lang.synts[2].kinds+0 ,
                                                                  {
-                                                                  { lang.atoms+22 , null },
-                                                                  { lang.atoms+15 , null }
+                                                                  lang.atoms+22,
+                                                                  lang.atoms+15
                                                                  }
     },
     { 8 , "build" , lang.rules+8 , lang.synts[3].kinds+0 ,
                                                            {
-                                                            { lang.atoms+34 , null },
-                                                            { lang.atoms+16 , null },
-                                                            { lang.atoms+13 , null },
-                                                            { null , lang.synts[9].kinds+0 },
-                                                            { lang.atoms+12 , null }
+                                                            lang.atoms+34,
+                                                            lang.atoms+16,
+                                                            lang.atoms+13,
+                                                            lang.synts[9].kinds+0,
+                                                            lang.atoms+12
                                                            }
     },
     { 9 , "build.LIST" , lang.rules+9 , lang.synts[4].kinds+0 ,
                                                                 {
-                                                                 { null , lang.synts[9].kinds+0 },
-                                                                 { lang.atoms+16 , null },
-                                                                 { lang.atoms+13 , null },
-                                                                 { null , lang.synts[12].kinds+0 },
-                                                                 { lang.atoms+12 , null }
+                                                                 lang.synts[9].kinds+0,
+                                                                 lang.atoms+16,
+                                                                 lang.atoms+13,
+                                                                 lang.synts[12].kinds+0,
+                                                                 lang.atoms+12
                                                                 }
     },
     { 10 , "build.ADD" , lang.rules+9 , lang.synts[4].kinds+0 ,
                                                                 {
-                                                                 { null , lang.synts[9].kinds+0 },
-                                                                 { lang.atoms+16 , null },
-                                                                 { lang.atoms+13 , null },
-                                                                 { null , lang.synts[12].kinds+1 },
-                                                                 { lang.atoms+12 , null }
+                                                                 lang.synts[9].kinds+0,
+                                                                 lang.atoms+16,
+                                                                 lang.atoms+13,
+                                                                 lang.synts[12].kinds+1,
+                                                                 lang.atoms+12
                                                                 }
     },
     { 11 , "build.MUL" , lang.rules+9 , lang.synts[4].kinds+0 ,
                                                                 {
-                                                                 { null , lang.synts[9].kinds+0 },
-                                                                 { lang.atoms+16 , null },
-                                                                 { lang.atoms+13 , null },
-                                                                 { null , lang.synts[12].kinds+2 },
-                                                                 { lang.atoms+12 , null }
+                                                                 lang.synts[9].kinds+0,
+                                                                 lang.atoms+16,
+                                                                 lang.atoms+13,
+                                                                 lang.synts[12].kinds+2,
+                                                                 lang.atoms+12
                                                                 }
     },
     { 12 , "build.UN" , lang.rules+9 , lang.synts[4].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[9].kinds+0 },
-                                                                { lang.atoms+16 , null },
-                                                                { lang.atoms+13 , null },
-                                                                { null , lang.synts[12].kinds+3 },
-                                                                { lang.atoms+12 , null }
+                                                                lang.synts[9].kinds+0,
+                                                                lang.atoms+16,
+                                                                lang.atoms+13,
+                                                                lang.synts[12].kinds+3,
+                                                                lang.atoms+12
                                                                }
     },
     { 13 , "build.NUM" , lang.rules+9 , lang.synts[4].kinds+0 ,
                                                                 {
-                                                                 { null , lang.synts[9].kinds+0 },
-                                                                 { lang.atoms+16 , null },
-                                                                 { lang.atoms+13 , null },
-                                                                 { null , lang.synts[12].kinds+4 },
-                                                                 { lang.atoms+12 , null }
+                                                                 lang.synts[9].kinds+0,
+                                                                 lang.atoms+16,
+                                                                 lang.atoms+13,
+                                                                 lang.synts[12].kinds+4,
+                                                                 lang.atoms+12
                                                                 }
     },
     { 14 , "build.POST" , lang.rules+9 , lang.synts[4].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[9].kinds+0 },
-                                                                  { lang.atoms+16 , null },
-                                                                  { lang.atoms+13 , null },
-                                                                  { null , lang.synts[12].kinds+5 },
-                                                                  { lang.atoms+12 , null }
+                                                                  lang.synts[9].kinds+0,
+                                                                  lang.atoms+16,
+                                                                  lang.atoms+13,
+                                                                  lang.synts[12].kinds+5,
+                                                                  lang.atoms+12
                                                                  }
     },
     { 15 , "build.PRIM" , lang.rules+9 , lang.synts[4].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[9].kinds+0 },
-                                                                  { lang.atoms+16 , null },
-                                                                  { lang.atoms+13 , null },
-                                                                  { null , lang.synts[12].kinds+6 },
-                                                                  { lang.atoms+12 , null }
+                                                                  lang.synts[9].kinds+0,
+                                                                  lang.atoms+16,
+                                                                  lang.atoms+13,
+                                                                  lang.synts[12].kinds+6,
+                                                                  lang.atoms+12
                                                                  }
     },
     { 16 , "start" , lang.rules+10 , lang.synts[5].kinds+0 ,
                                                              {
-                                                              { lang.atoms+16 , null }
+                                                              lang.atoms+16
                                                              }
     },
     { 17 , "ext" , lang.rules+11 , lang.synts[5].kinds+0 ,
                                                            {
-                                                            { null , lang.synts[5].kinds+0 },
-                                                            { lang.atoms+0 , null },
-                                                            { lang.atoms+16 , null }
+                                                            lang.synts[5].kinds+0,
+                                                            lang.atoms+0,
+                                                            lang.atoms+16
                                                            }
     },
     { 18 , "rel" , lang.rules+12 , lang.synts[6].kinds+0 ,
                                                            {
-                                                            { null , lang.synts[5].kinds+0 }
+                                                            lang.synts[5].kinds+0
                                                            }
     },
     { 19 , "abs" , lang.rules+13 , lang.synts[6].kinds+0 ,
                                                            {
-                                                            { lang.atoms+0 , null },
-                                                            { null , lang.synts[5].kinds+0 }
+                                                            lang.atoms+0,
+                                                            lang.synts[5].kinds+0
                                                            }
     },
     { 20 , "dot" , lang.rules+14 , lang.synts[6].kinds+0 ,
                                                            {
-                                                            { lang.atoms+10 , null },
-                                                            { lang.atoms+0 , null },
-                                                            { null , lang.synts[5].kinds+0 }
+                                                            lang.atoms+10,
+                                                            lang.atoms+0,
+                                                            lang.synts[5].kinds+0
                                                            }
     },
     { 21 , "dots" , lang.rules+15 , lang.synts[6].kinds+0 ,
                                                             {
-                                                             { lang.atoms+14 , null },
-                                                             { lang.atoms+0 , null },
-                                                             { null , lang.synts[5].kinds+0 }
+                                                             lang.atoms+14,
+                                                             lang.atoms+0,
+                                                             lang.synts[5].kinds+0
                                                             }
     },
     { 22 , "intName" , lang.rules+16 , lang.synts[7].kinds+0 ,
                                                                {
-                                                                { lang.atoms+23 , null }
+                                                                lang.atoms+23
                                                                }
     },
     { 23 , "sintName" , lang.rules+17 , lang.synts[7].kinds+0 ,
                                                                 {
-                                                                 { lang.atoms+27 , null }
+                                                                 lang.atoms+27
                                                                 }
     },
     { 24 , "uintName" , lang.rules+18 , lang.synts[7].kinds+0 ,
                                                                 {
-                                                                 { lang.atoms+35 , null }
+                                                                 lang.atoms+35
                                                                 }
     },
     { 25 , "ulenName" , lang.rules+19 , lang.synts[7].kinds+0 ,
                                                                 {
-                                                                 { lang.atoms+40 , null }
+                                                                 lang.atoms+40
                                                                 }
     },
     { 26 , "sint8Name" , lang.rules+20 , lang.synts[7].kinds+0 ,
                                                                  {
-                                                                  { lang.atoms+31 , null }
+                                                                  lang.atoms+31
                                                                  }
     },
     { 27 , "uint8Name" , lang.rules+21 , lang.synts[7].kinds+0 ,
                                                                  {
-                                                                  { lang.atoms+39 , null }
+                                                                  lang.atoms+39
                                                                  }
     },
     { 28 , "sint16Name" , lang.rules+22 , lang.synts[7].kinds+0 ,
                                                                   {
-                                                                   { lang.atoms+28 , null }
+                                                                   lang.atoms+28
                                                                   }
     },
     { 29 , "uint16Name" , lang.rules+23 , lang.synts[7].kinds+0 ,
                                                                   {
-                                                                   { lang.atoms+36 , null }
+                                                                   lang.atoms+36
                                                                   }
     },
     { 30 , "sint32Name" , lang.rules+24 , lang.synts[7].kinds+0 ,
                                                                   {
-                                                                   { lang.atoms+29 , null }
+                                                                   lang.atoms+29
                                                                   }
     },
     { 31 , "uint32Name" , lang.rules+25 , lang.synts[7].kinds+0 ,
                                                                   {
-                                                                   { lang.atoms+37 , null }
+                                                                   lang.atoms+37
                                                                   }
     },
     { 32 , "sint64Name" , lang.rules+26 , lang.synts[7].kinds+0 ,
                                                                   {
-                                                                   { lang.atoms+30 , null }
+                                                                   lang.atoms+30
                                                                   }
     },
     { 33 , "uint64Name" , lang.rules+27 , lang.synts[7].kinds+0 ,
                                                                   {
-                                                                   { lang.atoms+38 , null }
+                                                                   lang.atoms+38
                                                                   }
     },
     { 34 , "cast" , lang.rules+28 , lang.synts[8].kinds+0 ,
                                                             {
-                                                             { null , lang.synts[7].kinds+0 }
+                                                             lang.synts[7].kinds+0
                                                             }
     },
     { 35 , "text" , lang.rules+29 , lang.synts[8].kinds+0 ,
                                                             {
-                                                             { lang.atoms+33 , null }
+                                                             lang.atoms+33
                                                             }
     },
     { 36 , "ip" , lang.rules+30 , lang.synts[8].kinds+0 ,
                                                           {
-                                                           { lang.atoms+24 , null }
+                                                           lang.atoms+24
                                                           }
     },
     { 37 , "namedType" , lang.rules+31 , lang.synts[9].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[6].kinds+0 }
+                                                                  lang.synts[6].kinds+0
                                                                  }
     },
     { 38 , "baseType" , lang.rules+32 , lang.synts[9].kinds+0 ,
                                                                 {
-                                                                 { null , lang.synts[8].kinds+0 }
+                                                                 lang.synts[8].kinds+0
                                                                 }
     },
     { 39 , "ptrType" , lang.rules+33 , lang.synts[9].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[9].kinds+0 },
-                                                                { lang.atoms+5 , null }
+                                                                lang.synts[9].kinds+0,
+                                                                lang.atoms+5
                                                                }
     },
     { 40 , "arrayType" , lang.rules+34 , lang.synts[9].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[9].kinds+0 },
-                                                                  { lang.atoms+19 , null },
-                                                                  { lang.atoms+20 , null }
+                                                                  lang.synts[9].kinds+0,
+                                                                  lang.atoms+19,
+                                                                  lang.atoms+20
                                                                  }
     },
     { 41 , "arrayLenType.LIST" , lang.rules+35 , lang.synts[9].kinds+0 ,
                                                                          {
-                                                                          { null , lang.synts[9].kinds+0 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+0 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[9].kinds+0,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+0,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 42 , "arrayLenType.ADD" , lang.rules+35 , lang.synts[9].kinds+0 ,
                                                                         {
-                                                                         { null , lang.synts[9].kinds+0 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+1 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[9].kinds+0,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+1,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 43 , "arrayLenType.MUL" , lang.rules+35 , lang.synts[9].kinds+0 ,
                                                                         {
-                                                                         { null , lang.synts[9].kinds+0 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[9].kinds+0,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 44 , "arrayLenType.UN" , lang.rules+35 , lang.synts[9].kinds+0 ,
                                                                        {
-                                                                        { null , lang.synts[9].kinds+0 },
-                                                                        { lang.atoms+19 , null },
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+20 , null }
+                                                                        lang.synts[9].kinds+0,
+                                                                        lang.atoms+19,
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+20
                                                                        }
     },
     { 45 , "arrayLenType.NUM" , lang.rules+35 , lang.synts[9].kinds+0 ,
                                                                         {
-                                                                         { null , lang.synts[9].kinds+0 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[9].kinds+0,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 46 , "arrayLenType.POST" , lang.rules+35 , lang.synts[9].kinds+0 ,
                                                                          {
-                                                                          { null , lang.synts[9].kinds+0 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[9].kinds+0,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 47 , "arrayLenType.PRIM" , lang.rules+35 , lang.synts[9].kinds+0 ,
                                                                          {
-                                                                          { null , lang.synts[9].kinds+0 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[9].kinds+0,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 48 , "structType" , lang.rules+36 , lang.synts[9].kinds+0 ,
                                                                   {
-                                                                   { null , lang.synts[10].kinds+0 }
+                                                                   lang.synts[10].kinds+0
                                                                   }
     },
     { 49 , "build" , lang.rules+37 , lang.synts[10].kinds+0 ,
                                                               {
-                                                               { lang.atoms+32 , null },
-                                                               { lang.atoms+16 , null },
-                                                               { lang.atoms+41 , null },
-                                                               { null , lang.synts[11].kinds+0 },
-                                                               { lang.atoms+42 , null }
+                                                               lang.atoms+32,
+                                                               lang.atoms+16,
+                                                               lang.atoms+41,
+                                                               lang.synts[11].kinds+0,
+                                                               lang.atoms+42
                                                               }
     },
     { 50 , "start" , lang.rules+38 , lang.synts[11].kinds+0 ,
@@ -1470,1660 +1470,1660 @@ Lang lang=
     },
     { 51 , "ext_TYPE" , lang.rules+39 , lang.synts[11].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[11].kinds+0 },
-                                                                  { null , lang.synts[3].kinds+0 }
+                                                                  lang.synts[11].kinds+0,
+                                                                  lang.synts[3].kinds+0
                                                                  }
     },
     { 52 , "ext_CONST" , lang.rules+40 , lang.synts[11].kinds+0 ,
                                                                   {
-                                                                   { null , lang.synts[11].kinds+0 },
-                                                                   { lang.atoms+21 , null },
-                                                                   { null , lang.synts[4].kinds+0 }
+                                                                   lang.synts[11].kinds+0,
+                                                                   lang.atoms+21,
+                                                                   lang.synts[4].kinds+0
                                                                   }
     },
     { 53 , "ext_STRUCT" , lang.rules+41 , lang.synts[11].kinds+0 ,
                                                                    {
-                                                                    { null , lang.synts[11].kinds+0 },
-                                                                    { null , lang.synts[10].kinds+0 },
-                                                                    { lang.atoms+12 , null }
+                                                                    lang.synts[11].kinds+0,
+                                                                    lang.synts[10].kinds+0,
+                                                                    lang.atoms+12
                                                                    }
     },
     { 54 , "ext_field" , lang.rules+42 , lang.synts[11].kinds+0 ,
                                                                   {
-                                                                   { null , lang.synts[11].kinds+0 },
-                                                                   { null , lang.synts[9].kinds+0 },
-                                                                   { lang.atoms+16 , null },
-                                                                   { lang.atoms+12 , null }
+                                                                   lang.synts[11].kinds+0,
+                                                                   lang.synts[9].kinds+0,
+                                                                   lang.atoms+16,
+                                                                   lang.atoms+12
                                                                   }
     },
     { 55 , "ext_fieldVal.LIST" , lang.rules+43 , lang.synts[11].kinds+0 ,
                                                                           {
-                                                                           { null , lang.synts[11].kinds+0 },
-                                                                           { null , lang.synts[9].kinds+0 },
-                                                                           { lang.atoms+16 , null },
-                                                                           { lang.atoms+13 , null },
-                                                                           { null , lang.synts[12].kinds+0 },
-                                                                           { lang.atoms+12 , null }
+                                                                           lang.synts[11].kinds+0,
+                                                                           lang.synts[9].kinds+0,
+                                                                           lang.atoms+16,
+                                                                           lang.atoms+13,
+                                                                           lang.synts[12].kinds+0,
+                                                                           lang.atoms+12
                                                                           }
     },
     { 56 , "ext_fieldVal.ADD" , lang.rules+43 , lang.synts[11].kinds+0 ,
                                                                          {
-                                                                          { null , lang.synts[11].kinds+0 },
-                                                                          { null , lang.synts[9].kinds+0 },
-                                                                          { lang.atoms+16 , null },
-                                                                          { lang.atoms+13 , null },
-                                                                          { null , lang.synts[12].kinds+1 },
-                                                                          { lang.atoms+12 , null }
+                                                                          lang.synts[11].kinds+0,
+                                                                          lang.synts[9].kinds+0,
+                                                                          lang.atoms+16,
+                                                                          lang.atoms+13,
+                                                                          lang.synts[12].kinds+1,
+                                                                          lang.atoms+12
                                                                          }
     },
     { 57 , "ext_fieldVal.MUL" , lang.rules+43 , lang.synts[11].kinds+0 ,
                                                                          {
-                                                                          { null , lang.synts[11].kinds+0 },
-                                                                          { null , lang.synts[9].kinds+0 },
-                                                                          { lang.atoms+16 , null },
-                                                                          { lang.atoms+13 , null },
-                                                                          { null , lang.synts[12].kinds+2 },
-                                                                          { lang.atoms+12 , null }
+                                                                          lang.synts[11].kinds+0,
+                                                                          lang.synts[9].kinds+0,
+                                                                          lang.atoms+16,
+                                                                          lang.atoms+13,
+                                                                          lang.synts[12].kinds+2,
+                                                                          lang.atoms+12
                                                                          }
     },
     { 58 , "ext_fieldVal.UN" , lang.rules+43 , lang.synts[11].kinds+0 ,
                                                                         {
-                                                                         { null , lang.synts[11].kinds+0 },
-                                                                         { null , lang.synts[9].kinds+0 },
-                                                                         { lang.atoms+16 , null },
-                                                                         { lang.atoms+13 , null },
-                                                                         { null , lang.synts[12].kinds+3 },
-                                                                         { lang.atoms+12 , null }
+                                                                         lang.synts[11].kinds+0,
+                                                                         lang.synts[9].kinds+0,
+                                                                         lang.atoms+16,
+                                                                         lang.atoms+13,
+                                                                         lang.synts[12].kinds+3,
+                                                                         lang.atoms+12
                                                                         }
     },
     { 59 , "ext_fieldVal.NUM" , lang.rules+43 , lang.synts[11].kinds+0 ,
                                                                          {
-                                                                          { null , lang.synts[11].kinds+0 },
-                                                                          { null , lang.synts[9].kinds+0 },
-                                                                          { lang.atoms+16 , null },
-                                                                          { lang.atoms+13 , null },
-                                                                          { null , lang.synts[12].kinds+4 },
-                                                                          { lang.atoms+12 , null }
+                                                                          lang.synts[11].kinds+0,
+                                                                          lang.synts[9].kinds+0,
+                                                                          lang.atoms+16,
+                                                                          lang.atoms+13,
+                                                                          lang.synts[12].kinds+4,
+                                                                          lang.atoms+12
                                                                          }
     },
     { 60 , "ext_fieldVal.POST" , lang.rules+43 , lang.synts[11].kinds+0 ,
                                                                           {
-                                                                           { null , lang.synts[11].kinds+0 },
-                                                                           { null , lang.synts[9].kinds+0 },
-                                                                           { lang.atoms+16 , null },
-                                                                           { lang.atoms+13 , null },
-                                                                           { null , lang.synts[12].kinds+5 },
-                                                                           { lang.atoms+12 , null }
+                                                                           lang.synts[11].kinds+0,
+                                                                           lang.synts[9].kinds+0,
+                                                                           lang.atoms+16,
+                                                                           lang.atoms+13,
+                                                                           lang.synts[12].kinds+5,
+                                                                           lang.atoms+12
                                                                           }
     },
     { 61 , "ext_fieldVal.PRIM" , lang.rules+43 , lang.synts[11].kinds+0 ,
                                                                           {
-                                                                           { null , lang.synts[11].kinds+0 },
-                                                                           { null , lang.synts[9].kinds+0 },
-                                                                           { lang.atoms+16 , null },
-                                                                           { lang.atoms+13 , null },
-                                                                           { null , lang.synts[12].kinds+6 },
-                                                                           { lang.atoms+12 , null }
+                                                                           lang.synts[11].kinds+0,
+                                                                           lang.synts[9].kinds+0,
+                                                                           lang.atoms+16,
+                                                                           lang.atoms+13,
+                                                                           lang.synts[12].kinds+6,
+                                                                           lang.atoms+12
                                                                           }
     },
     { 62 , "emptyExprList" , lang.rules+61 , lang.synts[12].kinds+0 ,
                                                                       {
-                                                                       { lang.atoms+41 , null },
-                                                                       { lang.atoms+42 , null }
+                                                                       lang.atoms+41,
+                                                                       lang.atoms+42
                                                                       }
     },
     { 63 , "buildExprList" , lang.rules+62 , lang.synts[12].kinds+0 ,
                                                                       {
-                                                                       { lang.atoms+41 , null },
-                                                                       { null , lang.synts[13].kinds+0 },
-                                                                       { lang.atoms+42 , null }
+                                                                       lang.atoms+41,
+                                                                       lang.synts[13].kinds+0,
+                                                                       lang.atoms+42
                                                                       }
     },
     { 64 , "buildNamedExprList" , lang.rules+63 , lang.synts[12].kinds+0 ,
                                                                            {
-                                                                            { lang.atoms+41 , null },
-                                                                            { null , lang.synts[15].kinds+0 },
-                                                                            { lang.atoms+42 , null }
+                                                                            lang.atoms+41,
+                                                                            lang.synts[15].kinds+0,
+                                                                            lang.atoms+42
                                                                            }
     },
     { 65 , "applyEmpty.LIST" , lang.rules+64 , lang.synts[12].kinds+0 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+0 },
-                                                                         { lang.atoms+41 , null },
-                                                                         { lang.atoms+42 , null }
+                                                                         lang.synts[12].kinds+0,
+                                                                         lang.atoms+41,
+                                                                         lang.atoms+42
                                                                         }
     },
     { 66 , "applyEmpty.ADD" , lang.rules+64 , lang.synts[12].kinds+0 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+1 },
-                                                                        { lang.atoms+41 , null },
-                                                                        { lang.atoms+42 , null }
+                                                                        lang.synts[12].kinds+1,
+                                                                        lang.atoms+41,
+                                                                        lang.atoms+42
                                                                        }
     },
     { 67 , "applyEmpty.MUL" , lang.rules+64 , lang.synts[12].kinds+0 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+41 , null },
-                                                                        { lang.atoms+42 , null }
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+41,
+                                                                        lang.atoms+42
                                                                        }
     },
     { 68 , "applyEmpty.UN" , lang.rules+64 , lang.synts[12].kinds+0 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+41 , null },
-                                                                       { lang.atoms+42 , null }
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+41,
+                                                                       lang.atoms+42
                                                                       }
     },
     { 69 , "applyEmpty.NUM" , lang.rules+64 , lang.synts[12].kinds+0 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+41 , null },
-                                                                        { lang.atoms+42 , null }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+41,
+                                                                        lang.atoms+42
                                                                        }
     },
     { 70 , "applyEmpty.POST" , lang.rules+64 , lang.synts[12].kinds+0 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+41 , null },
-                                                                         { lang.atoms+42 , null }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+41,
+                                                                         lang.atoms+42
                                                                         }
     },
     { 71 , "applyEmpty.PRIM" , lang.rules+64 , lang.synts[12].kinds+0 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+41 , null },
-                                                                         { lang.atoms+42 , null }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+41,
+                                                                         lang.atoms+42
                                                                         }
     },
     { 72 , "applyNamedExprList.LIST" , lang.rules+65 , lang.synts[12].kinds+0 ,
                                                                                 {
-                                                                                 { null , lang.synts[12].kinds+0 },
-                                                                                 { lang.atoms+41 , null },
-                                                                                 { null , lang.synts[15].kinds+0 },
-                                                                                 { lang.atoms+42 , null }
+                                                                                 lang.synts[12].kinds+0,
+                                                                                 lang.atoms+41,
+                                                                                 lang.synts[15].kinds+0,
+                                                                                 lang.atoms+42
                                                                                 }
     },
     { 73 , "applyNamedExprList.ADD" , lang.rules+65 , lang.synts[12].kinds+0 ,
                                                                                {
-                                                                                { null , lang.synts[12].kinds+1 },
-                                                                                { lang.atoms+41 , null },
-                                                                                { null , lang.synts[15].kinds+0 },
-                                                                                { lang.atoms+42 , null }
+                                                                                lang.synts[12].kinds+1,
+                                                                                lang.atoms+41,
+                                                                                lang.synts[15].kinds+0,
+                                                                                lang.atoms+42
                                                                                }
     },
     { 74 , "applyNamedExprList.MUL" , lang.rules+65 , lang.synts[12].kinds+0 ,
                                                                                {
-                                                                                { null , lang.synts[12].kinds+2 },
-                                                                                { lang.atoms+41 , null },
-                                                                                { null , lang.synts[15].kinds+0 },
-                                                                                { lang.atoms+42 , null }
+                                                                                lang.synts[12].kinds+2,
+                                                                                lang.atoms+41,
+                                                                                lang.synts[15].kinds+0,
+                                                                                lang.atoms+42
                                                                                }
     },
     { 75 , "applyNamedExprList.UN" , lang.rules+65 , lang.synts[12].kinds+0 ,
                                                                               {
-                                                                               { null , lang.synts[12].kinds+3 },
-                                                                               { lang.atoms+41 , null },
-                                                                               { null , lang.synts[15].kinds+0 },
-                                                                               { lang.atoms+42 , null }
+                                                                               lang.synts[12].kinds+3,
+                                                                               lang.atoms+41,
+                                                                               lang.synts[15].kinds+0,
+                                                                               lang.atoms+42
                                                                               }
     },
     { 76 , "applyNamedExprList.NUM" , lang.rules+65 , lang.synts[12].kinds+0 ,
                                                                                {
-                                                                                { null , lang.synts[12].kinds+4 },
-                                                                                { lang.atoms+41 , null },
-                                                                                { null , lang.synts[15].kinds+0 },
-                                                                                { lang.atoms+42 , null }
+                                                                                lang.synts[12].kinds+4,
+                                                                                lang.atoms+41,
+                                                                                lang.synts[15].kinds+0,
+                                                                                lang.atoms+42
                                                                                }
     },
     { 77 , "applyNamedExprList.POST" , lang.rules+65 , lang.synts[12].kinds+0 ,
                                                                                 {
-                                                                                 { null , lang.synts[12].kinds+5 },
-                                                                                 { lang.atoms+41 , null },
-                                                                                 { null , lang.synts[15].kinds+0 },
-                                                                                 { lang.atoms+42 , null }
+                                                                                 lang.synts[12].kinds+5,
+                                                                                 lang.atoms+41,
+                                                                                 lang.synts[15].kinds+0,
+                                                                                 lang.atoms+42
                                                                                 }
     },
     { 78 , "applyNamedExprList.PRIM" , lang.rules+65 , lang.synts[12].kinds+0 ,
                                                                                 {
-                                                                                 { null , lang.synts[12].kinds+6 },
-                                                                                 { lang.atoms+41 , null },
-                                                                                 { null , lang.synts[15].kinds+0 },
-                                                                                 { lang.atoms+42 , null }
+                                                                                 lang.synts[12].kinds+6,
+                                                                                 lang.atoms+41,
+                                                                                 lang.synts[15].kinds+0,
+                                                                                 lang.atoms+42
                                                                                 }
     },
     { 79 , "opAdd.ADD.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+1 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+2 }
+                                                                       lang.synts[12].kinds+1,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+2
                                                                       }
     },
     { 80 , "opAdd.MUL.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+2 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+2 }
+                                                                       lang.synts[12].kinds+2,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+2
                                                                       }
     },
     { 81 , "opAdd.UN.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+3 },
-                                                                      { lang.atoms+6 , null },
-                                                                      { null , lang.synts[12].kinds+2 }
+                                                                      lang.synts[12].kinds+3,
+                                                                      lang.atoms+6,
+                                                                      lang.synts[12].kinds+2
                                                                      }
     },
     { 82 , "opAdd.NUM.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+4 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+2 }
+                                                                       lang.synts[12].kinds+4,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+2
                                                                       }
     },
     { 83 , "opAdd.POST.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+6 , null },
-                                                                        { null , lang.synts[12].kinds+2 }
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+6,
+                                                                        lang.synts[12].kinds+2
                                                                        }
     },
     { 84 , "opAdd.PRIM.MUL" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+6 , null },
-                                                                        { null , lang.synts[12].kinds+2 }
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+6,
+                                                                        lang.synts[12].kinds+2
                                                                        }
     },
     { 85 , "opAdd.ADD.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+1 },
-                                                                      { lang.atoms+6 , null },
-                                                                      { null , lang.synts[12].kinds+3 }
+                                                                      lang.synts[12].kinds+1,
+                                                                      lang.atoms+6,
+                                                                      lang.synts[12].kinds+3
                                                                      }
     },
     { 86 , "opAdd.MUL.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+2 },
-                                                                      { lang.atoms+6 , null },
-                                                                      { null , lang.synts[12].kinds+3 }
+                                                                      lang.synts[12].kinds+2,
+                                                                      lang.atoms+6,
+                                                                      lang.synts[12].kinds+3
                                                                      }
     },
     { 87 , "opAdd.UN.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                     {
-                                                                     { null , lang.synts[12].kinds+3 },
-                                                                     { lang.atoms+6 , null },
-                                                                     { null , lang.synts[12].kinds+3 }
+                                                                     lang.synts[12].kinds+3,
+                                                                     lang.atoms+6,
+                                                                     lang.synts[12].kinds+3
                                                                     }
     },
     { 88 , "opAdd.NUM.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+4 },
-                                                                      { lang.atoms+6 , null },
-                                                                      { null , lang.synts[12].kinds+3 }
+                                                                      lang.synts[12].kinds+4,
+                                                                      lang.atoms+6,
+                                                                      lang.synts[12].kinds+3
                                                                      }
     },
     { 89 , "opAdd.POST.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+5 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+5,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 90 , "opAdd.PRIM.UN" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+6 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+6,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 91 , "opAdd.ADD.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+1 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+4 }
+                                                                       lang.synts[12].kinds+1,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+4
                                                                       }
     },
     { 92 , "opAdd.MUL.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+2 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+4 }
+                                                                       lang.synts[12].kinds+2,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+4
                                                                       }
     },
     { 93 , "opAdd.UN.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+3 },
-                                                                      { lang.atoms+6 , null },
-                                                                      { null , lang.synts[12].kinds+4 }
+                                                                      lang.synts[12].kinds+3,
+                                                                      lang.atoms+6,
+                                                                      lang.synts[12].kinds+4
                                                                      }
     },
     { 94 , "opAdd.NUM.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+4 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+4 }
+                                                                       lang.synts[12].kinds+4,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+4
                                                                       }
     },
     { 95 , "opAdd.POST.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+6 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+6,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 96 , "opAdd.PRIM.NUM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+6 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+6,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 97 , "opAdd.ADD.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+1 },
-                                                                        { lang.atoms+6 , null },
-                                                                        { null , lang.synts[12].kinds+5 }
+                                                                        lang.synts[12].kinds+1,
+                                                                        lang.atoms+6,
+                                                                        lang.synts[12].kinds+5
                                                                        }
     },
     { 98 , "opAdd.MUL.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+6 , null },
-                                                                        { null , lang.synts[12].kinds+5 }
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+6,
+                                                                        lang.synts[12].kinds+5
                                                                        }
     },
     { 99 , "opAdd.UN.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+6 , null },
-                                                                       { null , lang.synts[12].kinds+5 }
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+6,
+                                                                       lang.synts[12].kinds+5
                                                                       }
     },
     { 100 , "opAdd.NUM.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+6 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+6,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 101 , "opAdd.POST.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+6 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+6,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 102 , "opAdd.PRIM.POST" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+6 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+6,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 103 , "opAdd.ADD.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+1 },
-                                                                         { lang.atoms+6 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+1,
+                                                                         lang.atoms+6,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 104 , "opAdd.MUL.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+6 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+6,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 105 , "opAdd.UN.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+6 , null },
-                                                                        { null , lang.synts[12].kinds+6 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+6,
+                                                                        lang.synts[12].kinds+6
                                                                        }
     },
     { 106 , "opAdd.NUM.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+6 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+6,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 107 , "opAdd.POST.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+6 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+6,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 108 , "opAdd.PRIM.PRIM" , lang.rules+59 , lang.synts[12].kinds+1 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+6 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+6,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 109 , "opSub.ADD.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+1 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+2 }
+                                                                        lang.synts[12].kinds+1,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+2
                                                                        }
     },
     { 110 , "opSub.MUL.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+2 }
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+2
                                                                        }
     },
     { 111 , "opSub.UN.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+8 , null },
-                                                                       { null , lang.synts[12].kinds+2 }
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+8,
+                                                                       lang.synts[12].kinds+2
                                                                       }
     },
     { 112 , "opSub.NUM.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+2 }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+2
                                                                        }
     },
     { 113 , "opSub.POST.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+2 }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+2
                                                                         }
     },
     { 114 , "opSub.PRIM.MUL" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+2 }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+2
                                                                         }
     },
     { 115 , "opSub.ADD.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+1 },
-                                                                       { lang.atoms+8 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+1,
+                                                                       lang.atoms+8,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 116 , "opSub.MUL.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+2 },
-                                                                       { lang.atoms+8 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+2,
+                                                                       lang.atoms+8,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 117 , "opSub.UN.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+3 },
-                                                                      { lang.atoms+8 , null },
-                                                                      { null , lang.synts[12].kinds+3 }
+                                                                      lang.synts[12].kinds+3,
+                                                                      lang.atoms+8,
+                                                                      lang.synts[12].kinds+3
                                                                      }
     },
     { 118 , "opSub.NUM.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+4 },
-                                                                       { lang.atoms+8 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+4,
+                                                                       lang.atoms+8,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 119 , "opSub.POST.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+3 }
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+3
                                                                        }
     },
     { 120 , "opSub.PRIM.UN" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+3 }
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+3
                                                                        }
     },
     { 121 , "opSub.ADD.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+1 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+1,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 122 , "opSub.MUL.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 123 , "opSub.UN.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+8 , null },
-                                                                       { null , lang.synts[12].kinds+4 }
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+8,
+                                                                       lang.synts[12].kinds+4
                                                                       }
     },
     { 124 , "opSub.NUM.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 125 , "opSub.POST.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+4 }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+4
                                                                         }
     },
     { 126 , "opSub.PRIM.NUM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+4 }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+4
                                                                         }
     },
     { 127 , "opSub.ADD.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+1 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+1,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 128 , "opSub.MUL.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 129 , "opSub.UN.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+5 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+5
                                                                        }
     },
     { 130 , "opSub.NUM.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 131 , "opSub.POST.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+8 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+8,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 132 , "opSub.PRIM.POST" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+8 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+8,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 133 , "opSub.ADD.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+1 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+1,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 134 , "opSub.MUL.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 135 , "opSub.UN.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+8 , null },
-                                                                        { null , lang.synts[12].kinds+6 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+8,
+                                                                        lang.synts[12].kinds+6
                                                                        }
     },
     { 136 , "opSub.NUM.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+8 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+8,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 137 , "opSub.POST.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+8 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+8,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 138 , "opSub.PRIM.PRIM" , lang.rules+60 , lang.synts[12].kinds+1 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+8 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+8,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 139 , "opMul.MUL.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+2 },
-                                                                       { lang.atoms+5 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+2,
+                                                                       lang.atoms+5,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 140 , "opMul.UN.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+3 },
-                                                                      { lang.atoms+5 , null },
-                                                                      { null , lang.synts[12].kinds+3 }
+                                                                      lang.synts[12].kinds+3,
+                                                                      lang.atoms+5,
+                                                                      lang.synts[12].kinds+3
                                                                      }
     },
     { 141 , "opMul.NUM.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+4 },
-                                                                       { lang.atoms+5 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+4,
+                                                                       lang.atoms+5,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 142 , "opMul.POST.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+5 , null },
-                                                                        { null , lang.synts[12].kinds+3 }
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+5,
+                                                                        lang.synts[12].kinds+3
                                                                        }
     },
     { 143 , "opMul.PRIM.UN" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+5 , null },
-                                                                        { null , lang.synts[12].kinds+3 }
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+5,
+                                                                        lang.synts[12].kinds+3
                                                                        }
     },
     { 144 , "opMul.MUL.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+5 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+5,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 145 , "opMul.UN.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+5 , null },
-                                                                       { null , lang.synts[12].kinds+4 }
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+5,
+                                                                       lang.synts[12].kinds+4
                                                                       }
     },
     { 146 , "opMul.NUM.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+5 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+5,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 147 , "opMul.POST.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+5 , null },
-                                                                         { null , lang.synts[12].kinds+4 }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+5,
+                                                                         lang.synts[12].kinds+4
                                                                         }
     },
     { 148 , "opMul.PRIM.NUM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+5 , null },
-                                                                         { null , lang.synts[12].kinds+4 }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+5,
+                                                                         lang.synts[12].kinds+4
                                                                         }
     },
     { 149 , "opMul.MUL.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+5 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+5,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 150 , "opMul.UN.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+5 , null },
-                                                                        { null , lang.synts[12].kinds+5 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+5,
+                                                                        lang.synts[12].kinds+5
                                                                        }
     },
     { 151 , "opMul.NUM.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+5 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+5,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 152 , "opMul.POST.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+5 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+5,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 153 , "opMul.PRIM.POST" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+5 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+5,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 154 , "opMul.MUL.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+5 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+5,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 155 , "opMul.UN.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+5 , null },
-                                                                        { null , lang.synts[12].kinds+6 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+5,
+                                                                        lang.synts[12].kinds+6
                                                                        }
     },
     { 156 , "opMul.NUM.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+5 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+5,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 157 , "opMul.POST.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+5 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+5,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 158 , "opMul.PRIM.PRIM" , lang.rules+56 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+5 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+5,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 159 , "opDiv.MUL.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+2 },
-                                                                       { lang.atoms+11 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+2,
+                                                                       lang.atoms+11,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 160 , "opDiv.UN.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+3 },
-                                                                      { lang.atoms+11 , null },
-                                                                      { null , lang.synts[12].kinds+3 }
+                                                                      lang.synts[12].kinds+3,
+                                                                      lang.atoms+11,
+                                                                      lang.synts[12].kinds+3
                                                                      }
     },
     { 161 , "opDiv.NUM.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+4 },
-                                                                       { lang.atoms+11 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+4,
+                                                                       lang.atoms+11,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 162 , "opDiv.POST.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+11 , null },
-                                                                        { null , lang.synts[12].kinds+3 }
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+11,
+                                                                        lang.synts[12].kinds+3
                                                                        }
     },
     { 163 , "opDiv.PRIM.UN" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+11 , null },
-                                                                        { null , lang.synts[12].kinds+3 }
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+11,
+                                                                        lang.synts[12].kinds+3
                                                                        }
     },
     { 164 , "opDiv.MUL.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+11 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+11,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 165 , "opDiv.UN.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+11 , null },
-                                                                       { null , lang.synts[12].kinds+4 }
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+11,
+                                                                       lang.synts[12].kinds+4
                                                                       }
     },
     { 166 , "opDiv.NUM.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+11 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+11,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 167 , "opDiv.POST.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+11 , null },
-                                                                         { null , lang.synts[12].kinds+4 }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+11,
+                                                                         lang.synts[12].kinds+4
                                                                         }
     },
     { 168 , "opDiv.PRIM.NUM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+11 , null },
-                                                                         { null , lang.synts[12].kinds+4 }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+11,
+                                                                         lang.synts[12].kinds+4
                                                                         }
     },
     { 169 , "opDiv.MUL.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+11 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+11,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 170 , "opDiv.UN.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+11 , null },
-                                                                        { null , lang.synts[12].kinds+5 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+11,
+                                                                        lang.synts[12].kinds+5
                                                                        }
     },
     { 171 , "opDiv.NUM.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+11 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+11,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 172 , "opDiv.POST.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+11 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+11,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 173 , "opDiv.PRIM.POST" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+11 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+11,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 174 , "opDiv.MUL.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+11 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+11,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 175 , "opDiv.UN.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+11 , null },
-                                                                        { null , lang.synts[12].kinds+6 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+11,
+                                                                        lang.synts[12].kinds+6
                                                                        }
     },
     { 176 , "opDiv.NUM.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+11 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+11,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 177 , "opDiv.POST.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+11 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+11,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 178 , "opDiv.PRIM.PRIM" , lang.rules+57 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+11 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+11,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 179 , "opRem.MUL.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+2 },
-                                                                       { lang.atoms+1 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+2,
+                                                                       lang.atoms+1,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 180 , "opRem.UN.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                      {
-                                                                      { null , lang.synts[12].kinds+3 },
-                                                                      { lang.atoms+1 , null },
-                                                                      { null , lang.synts[12].kinds+3 }
+                                                                      lang.synts[12].kinds+3,
+                                                                      lang.atoms+1,
+                                                                      lang.synts[12].kinds+3
                                                                      }
     },
     { 181 , "opRem.NUM.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+4 },
-                                                                       { lang.atoms+1 , null },
-                                                                       { null , lang.synts[12].kinds+3 }
+                                                                       lang.synts[12].kinds+4,
+                                                                       lang.atoms+1,
+                                                                       lang.synts[12].kinds+3
                                                                       }
     },
     { 182 , "opRem.POST.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+1 , null },
-                                                                        { null , lang.synts[12].kinds+3 }
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+1,
+                                                                        lang.synts[12].kinds+3
                                                                        }
     },
     { 183 , "opRem.PRIM.UN" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+1 , null },
-                                                                        { null , lang.synts[12].kinds+3 }
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+1,
+                                                                        lang.synts[12].kinds+3
                                                                        }
     },
     { 184 , "opRem.MUL.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+1 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+1,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 185 , "opRem.UN.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+1 , null },
-                                                                       { null , lang.synts[12].kinds+4 }
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+1,
+                                                                       lang.synts[12].kinds+4
                                                                       }
     },
     { 186 , "opRem.NUM.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+1 , null },
-                                                                        { null , lang.synts[12].kinds+4 }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+1,
+                                                                        lang.synts[12].kinds+4
                                                                        }
     },
     { 187 , "opRem.POST.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+1 , null },
-                                                                         { null , lang.synts[12].kinds+4 }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+1,
+                                                                         lang.synts[12].kinds+4
                                                                         }
     },
     { 188 , "opRem.PRIM.NUM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+1 , null },
-                                                                         { null , lang.synts[12].kinds+4 }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+1,
+                                                                         lang.synts[12].kinds+4
                                                                         }
     },
     { 189 , "opRem.MUL.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+1 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+1,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 190 , "opRem.UN.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+1 , null },
-                                                                        { null , lang.synts[12].kinds+5 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+1,
+                                                                        lang.synts[12].kinds+5
                                                                        }
     },
     { 191 , "opRem.NUM.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+1 , null },
-                                                                         { null , lang.synts[12].kinds+5 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+1,
+                                                                         lang.synts[12].kinds+5
                                                                         }
     },
     { 192 , "opRem.POST.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+1 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+1,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 193 , "opRem.PRIM.POST" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+1 , null },
-                                                                          { null , lang.synts[12].kinds+5 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+1,
+                                                                          lang.synts[12].kinds+5
                                                                          }
     },
     { 194 , "opRem.MUL.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+1 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+1,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 195 , "opRem.UN.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+1 , null },
-                                                                        { null , lang.synts[12].kinds+6 }
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+1,
+                                                                        lang.synts[12].kinds+6
                                                                        }
     },
     { 196 , "opRem.NUM.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+1 , null },
-                                                                         { null , lang.synts[12].kinds+6 }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+1,
+                                                                         lang.synts[12].kinds+6
                                                                         }
     },
     { 197 , "opRem.POST.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+1 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+1,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 198 , "opRem.PRIM.PRIM" , lang.rules+58 , lang.synts[12].kinds+2 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+1 , null },
-                                                                          { null , lang.synts[12].kinds+6 }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+1,
+                                                                          lang.synts[12].kinds+6
                                                                          }
     },
     { 199 , "opAst.UN" , lang.rules+52 , lang.synts[12].kinds+3 ,
                                                                   {
-                                                                   { lang.atoms+5 , null },
-                                                                   { null , lang.synts[12].kinds+3 }
+                                                                   lang.atoms+5,
+                                                                   lang.synts[12].kinds+3
                                                                   }
     },
     { 200 , "opAst.NUM" , lang.rules+52 , lang.synts[12].kinds+3 ,
                                                                    {
-                                                                    { lang.atoms+5 , null },
-                                                                    { null , lang.synts[12].kinds+4 }
+                                                                    lang.atoms+5,
+                                                                    lang.synts[12].kinds+4
                                                                    }
     },
     { 201 , "opAst.POST" , lang.rules+52 , lang.synts[12].kinds+3 ,
                                                                     {
-                                                                     { lang.atoms+5 , null },
-                                                                     { null , lang.synts[12].kinds+5 }
+                                                                     lang.atoms+5,
+                                                                     lang.synts[12].kinds+5
                                                                     }
     },
     { 202 , "opAst.PRIM" , lang.rules+52 , lang.synts[12].kinds+3 ,
                                                                     {
-                                                                     { lang.atoms+5 , null },
-                                                                     { null , lang.synts[12].kinds+6 }
+                                                                     lang.atoms+5,
+                                                                     lang.synts[12].kinds+6
                                                                     }
     },
     { 203 , "opAmp.UN" , lang.rules+53 , lang.synts[12].kinds+3 ,
                                                                   {
-                                                                   { lang.atoms+2 , null },
-                                                                   { null , lang.synts[12].kinds+3 }
+                                                                   lang.atoms+2,
+                                                                   lang.synts[12].kinds+3
                                                                   }
     },
     { 204 , "opAmp.NUM" , lang.rules+53 , lang.synts[12].kinds+3 ,
                                                                    {
-                                                                    { lang.atoms+2 , null },
-                                                                    { null , lang.synts[12].kinds+4 }
+                                                                    lang.atoms+2,
+                                                                    lang.synts[12].kinds+4
                                                                    }
     },
     { 205 , "opAmp.POST" , lang.rules+53 , lang.synts[12].kinds+3 ,
                                                                     {
-                                                                     { lang.atoms+2 , null },
-                                                                     { null , lang.synts[12].kinds+5 }
+                                                                     lang.atoms+2,
+                                                                     lang.synts[12].kinds+5
                                                                     }
     },
     { 206 , "opAmp.PRIM" , lang.rules+53 , lang.synts[12].kinds+3 ,
                                                                     {
-                                                                     { lang.atoms+2 , null },
-                                                                     { null , lang.synts[12].kinds+6 }
+                                                                     lang.atoms+2,
+                                                                     lang.synts[12].kinds+6
                                                                     }
     },
     { 207 , "opPlus.UN" , lang.rules+54 , lang.synts[12].kinds+3 ,
                                                                    {
-                                                                    { lang.atoms+6 , null },
-                                                                    { null , lang.synts[12].kinds+3 }
+                                                                    lang.atoms+6,
+                                                                    lang.synts[12].kinds+3
                                                                    }
     },
     { 208 , "opPlus.NUM" , lang.rules+54 , lang.synts[12].kinds+3 ,
                                                                     {
-                                                                     { lang.atoms+6 , null },
-                                                                     { null , lang.synts[12].kinds+4 }
+                                                                     lang.atoms+6,
+                                                                     lang.synts[12].kinds+4
                                                                     }
     },
     { 209 , "opPlus.POST" , lang.rules+54 , lang.synts[12].kinds+3 ,
                                                                      {
-                                                                      { lang.atoms+6 , null },
-                                                                      { null , lang.synts[12].kinds+5 }
+                                                                      lang.atoms+6,
+                                                                      lang.synts[12].kinds+5
                                                                      }
     },
     { 210 , "opPlus.PRIM" , lang.rules+54 , lang.synts[12].kinds+3 ,
                                                                      {
-                                                                      { lang.atoms+6 , null },
-                                                                      { null , lang.synts[12].kinds+6 }
+                                                                      lang.atoms+6,
+                                                                      lang.synts[12].kinds+6
                                                                      }
     },
     { 211 , "opMinus.UN" , lang.rules+55 , lang.synts[12].kinds+3 ,
                                                                     {
-                                                                     { lang.atoms+8 , null },
-                                                                     { null , lang.synts[12].kinds+3 }
+                                                                     lang.atoms+8,
+                                                                     lang.synts[12].kinds+3
                                                                     }
     },
     { 212 , "opMinus.NUM" , lang.rules+55 , lang.synts[12].kinds+3 ,
                                                                      {
-                                                                      { lang.atoms+8 , null },
-                                                                      { null , lang.synts[12].kinds+4 }
+                                                                      lang.atoms+8,
+                                                                      lang.synts[12].kinds+4
                                                                      }
     },
     { 213 , "opMinus.POST" , lang.rules+55 , lang.synts[12].kinds+3 ,
                                                                       {
-                                                                       { lang.atoms+8 , null },
-                                                                       { null , lang.synts[12].kinds+5 }
+                                                                       lang.atoms+8,
+                                                                       lang.synts[12].kinds+5
                                                                       }
     },
     { 214 , "opMinus.PRIM" , lang.rules+55 , lang.synts[12].kinds+3 ,
                                                                       {
-                                                                       { lang.atoms+8 , null },
-                                                                       { null , lang.synts[12].kinds+6 }
+                                                                       lang.atoms+8,
+                                                                       lang.synts[12].kinds+6
                                                                       }
     },
     { 215 , "cast_Number" , lang.rules+51 , lang.synts[12].kinds+4 ,
                                                                      {
-                                                                      { lang.atoms+17 , null }
+                                                                      lang.atoms+17
                                                                      }
     },
     { 216 , "opInd.NUM.LIST" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+0 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+0,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 217 , "opInd.POST.LIST" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+0 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+0,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 218 , "opInd.PRIM.LIST" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+0 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+0,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 219 , "opInd.NUM.ADD" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+19 , null },
-                                                                        { null , lang.synts[12].kinds+1 },
-                                                                        { lang.atoms+20 , null }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+19,
+                                                                        lang.synts[12].kinds+1,
+                                                                        lang.atoms+20
                                                                        }
     },
     { 220 , "opInd.POST.ADD" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+1 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+1,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 221 , "opInd.PRIM.ADD" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+1 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+1,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 222 , "opInd.NUM.MUL" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+19 , null },
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+20 , null }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+19,
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+20
                                                                        }
     },
     { 223 , "opInd.POST.MUL" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 224 , "opInd.PRIM.MUL" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+2 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+2,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 225 , "opInd.NUM.UN" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                       {
-                                                                       { null , lang.synts[12].kinds+4 },
-                                                                       { lang.atoms+19 , null },
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+20 , null }
+                                                                       lang.synts[12].kinds+4,
+                                                                       lang.atoms+19,
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+20
                                                                       }
     },
     { 226 , "opInd.POST.UN" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+19 , null },
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+20 , null }
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+19,
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+20
                                                                        }
     },
     { 227 , "opInd.PRIM.UN" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+19 , null },
-                                                                        { null , lang.synts[12].kinds+3 },
-                                                                        { lang.atoms+20 , null }
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+19,
+                                                                        lang.synts[12].kinds+3,
+                                                                        lang.atoms+20
                                                                        }
     },
     { 228 , "opInd.NUM.NUM" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+19 , null },
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+20 , null }
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+19,
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+20
                                                                        }
     },
     { 229 , "opInd.POST.NUM" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 230 , "opInd.PRIM.NUM" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 231 , "opInd.NUM.POST" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 232 , "opInd.POST.POST" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 233 , "opInd.PRIM.POST" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 234 , "opInd.NUM.PRIM" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                         {
-                                                                         { null , lang.synts[12].kinds+4 },
-                                                                         { lang.atoms+19 , null },
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+20 , null }
+                                                                         lang.synts[12].kinds+4,
+                                                                         lang.atoms+19,
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+20
                                                                         }
     },
     { 235 , "opInd.POST.PRIM" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+5 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[12].kinds+5,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 236 , "opInd.PRIM.PRIM" , lang.rules+48 , lang.synts[12].kinds+5 ,
                                                                          {
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+19 , null },
-                                                                          { null , lang.synts[12].kinds+6 },
-                                                                          { lang.atoms+20 , null }
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+19,
+                                                                          lang.synts[12].kinds+6,
+                                                                          lang.atoms+20
                                                                          }
     },
     { 237 , "opSelect.POST" , lang.rules+49 , lang.synts[12].kinds+5 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+10 , null },
-                                                                        { lang.atoms+16 , null }
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+10,
+                                                                        lang.atoms+16
                                                                        }
     },
     { 238 , "opSelect.PRIM" , lang.rules+49 , lang.synts[12].kinds+5 ,
                                                                        {
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+10 , null },
-                                                                        { lang.atoms+16 , null }
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+10,
+                                                                        lang.atoms+16
                                                                        }
     },
     { 239 , "opPtrSelect.POST" , lang.rules+50 , lang.synts[12].kinds+5 ,
                                                                           {
-                                                                           { null , lang.synts[12].kinds+5 },
-                                                                           { lang.atoms+9 , null },
-                                                                           { lang.atoms+16 , null }
+                                                                           lang.synts[12].kinds+5,
+                                                                           lang.atoms+9,
+                                                                           lang.atoms+16
                                                                           }
     },
     { 240 , "opPtrSelect.PRIM" , lang.rules+50 , lang.synts[12].kinds+5 ,
                                                                           {
-                                                                           { null , lang.synts[12].kinds+6 },
-                                                                           { lang.atoms+9 , null },
-                                                                           { lang.atoms+16 , null }
+                                                                           lang.synts[12].kinds+6,
+                                                                           lang.atoms+9,
+                                                                           lang.atoms+16
                                                                           }
     },
     { 241 , "cast_EXPR.LIST" , lang.rules+44 , lang.synts[12].kinds+6 ,
                                                                         {
-                                                                         { lang.atoms+3 , null },
-                                                                         { null , lang.synts[12].kinds+0 },
-                                                                         { lang.atoms+4 , null }
+                                                                         lang.atoms+3,
+                                                                         lang.synts[12].kinds+0,
+                                                                         lang.atoms+4
                                                                         }
     },
     { 242 , "cast_EXPR.ADD" , lang.rules+44 , lang.synts[12].kinds+6 ,
                                                                        {
-                                                                        { lang.atoms+3 , null },
-                                                                        { null , lang.synts[12].kinds+1 },
-                                                                        { lang.atoms+4 , null }
+                                                                        lang.atoms+3,
+                                                                        lang.synts[12].kinds+1,
+                                                                        lang.atoms+4
                                                                        }
     },
     { 243 , "cast_EXPR.MUL" , lang.rules+44 , lang.synts[12].kinds+6 ,
                                                                        {
-                                                                        { lang.atoms+3 , null },
-                                                                        { null , lang.synts[12].kinds+2 },
-                                                                        { lang.atoms+4 , null }
+                                                                        lang.atoms+3,
+                                                                        lang.synts[12].kinds+2,
+                                                                        lang.atoms+4
                                                                        }
     },
     { 244 , "cast_EXPR.UN" , lang.rules+44 , lang.synts[12].kinds+6 ,
                                                                       {
-                                                                       { lang.atoms+3 , null },
-                                                                       { null , lang.synts[12].kinds+3 },
-                                                                       { lang.atoms+4 , null }
+                                                                       lang.atoms+3,
+                                                                       lang.synts[12].kinds+3,
+                                                                       lang.atoms+4
                                                                       }
     },
     { 245 , "cast_EXPR.NUM" , lang.rules+44 , lang.synts[12].kinds+6 ,
                                                                        {
-                                                                        { lang.atoms+3 , null },
-                                                                        { null , lang.synts[12].kinds+4 },
-                                                                        { lang.atoms+4 , null }
+                                                                        lang.atoms+3,
+                                                                        lang.synts[12].kinds+4,
+                                                                        lang.atoms+4
                                                                        }
     },
     { 246 , "cast_EXPR.POST" , lang.rules+44 , lang.synts[12].kinds+6 ,
                                                                         {
-                                                                         { lang.atoms+3 , null },
-                                                                         { null , lang.synts[12].kinds+5 },
-                                                                         { lang.atoms+4 , null }
+                                                                         lang.atoms+3,
+                                                                         lang.synts[12].kinds+5,
+                                                                         lang.atoms+4
                                                                         }
     },
     { 247 , "cast_EXPR.PRIM" , lang.rules+44 , lang.synts[12].kinds+6 ,
                                                                         {
-                                                                         { lang.atoms+3 , null },
-                                                                         { null , lang.synts[12].kinds+6 },
-                                                                         { lang.atoms+4 , null }
+                                                                         lang.atoms+3,
+                                                                         lang.synts[12].kinds+6,
+                                                                         lang.atoms+4
                                                                         }
     },
     { 248 , "cast_NAME" , lang.rules+45 , lang.synts[12].kinds+6 ,
                                                                    {
-                                                                    { null , lang.synts[6].kinds+0 }
+                                                                    lang.synts[6].kinds+0
                                                                    }
     },
     { 249 , "cast_NNLIT" , lang.rules+46 , lang.synts[12].kinds+6 ,
                                                                     {
-                                                                     { null , lang.synts[17].kinds+0 }
+                                                                     lang.synts[17].kinds+0
                                                                     }
     },
     { 250 , "opDomain.LIST" , lang.rules+47 , lang.synts[12].kinds+6 ,
                                                                        {
-                                                                        { null , lang.synts[16].kinds+0 },
-                                                                        { lang.atoms+3 , null },
-                                                                        { null , lang.synts[12].kinds+0 },
-                                                                        { lang.atoms+4 , null }
+                                                                        lang.synts[16].kinds+0,
+                                                                        lang.atoms+3,
+                                                                        lang.synts[12].kinds+0,
+                                                                        lang.atoms+4
                                                                        }
     },
     { 251 , "opDomain.ADD" , lang.rules+47 , lang.synts[12].kinds+6 ,
                                                                       {
-                                                                       { null , lang.synts[16].kinds+0 },
-                                                                       { lang.atoms+3 , null },
-                                                                       { null , lang.synts[12].kinds+1 },
-                                                                       { lang.atoms+4 , null }
+                                                                       lang.synts[16].kinds+0,
+                                                                       lang.atoms+3,
+                                                                       lang.synts[12].kinds+1,
+                                                                       lang.atoms+4
                                                                       }
     },
     { 252 , "opDomain.MUL" , lang.rules+47 , lang.synts[12].kinds+6 ,
                                                                       {
-                                                                       { null , lang.synts[16].kinds+0 },
-                                                                       { lang.atoms+3 , null },
-                                                                       { null , lang.synts[12].kinds+2 },
-                                                                       { lang.atoms+4 , null }
+                                                                       lang.synts[16].kinds+0,
+                                                                       lang.atoms+3,
+                                                                       lang.synts[12].kinds+2,
+                                                                       lang.atoms+4
                                                                       }
     },
     { 253 , "opDomain.UN" , lang.rules+47 , lang.synts[12].kinds+6 ,
                                                                      {
-                                                                      { null , lang.synts[16].kinds+0 },
-                                                                      { lang.atoms+3 , null },
-                                                                      { null , lang.synts[12].kinds+3 },
-                                                                      { lang.atoms+4 , null }
+                                                                      lang.synts[16].kinds+0,
+                                                                      lang.atoms+3,
+                                                                      lang.synts[12].kinds+3,
+                                                                      lang.atoms+4
                                                                      }
     },
     { 254 , "opDomain.NUM" , lang.rules+47 , lang.synts[12].kinds+6 ,
                                                                       {
-                                                                       { null , lang.synts[16].kinds+0 },
-                                                                       { lang.atoms+3 , null },
-                                                                       { null , lang.synts[12].kinds+4 },
-                                                                       { lang.atoms+4 , null }
+                                                                       lang.synts[16].kinds+0,
+                                                                       lang.atoms+3,
+                                                                       lang.synts[12].kinds+4,
+                                                                       lang.atoms+4
                                                                       }
     },
     { 255 , "opDomain.POST" , lang.rules+47 , lang.synts[12].kinds+6 ,
                                                                        {
-                                                                        { null , lang.synts[16].kinds+0 },
-                                                                        { lang.atoms+3 , null },
-                                                                        { null , lang.synts[12].kinds+5 },
-                                                                        { lang.atoms+4 , null }
+                                                                        lang.synts[16].kinds+0,
+                                                                        lang.atoms+3,
+                                                                        lang.synts[12].kinds+5,
+                                                                        lang.atoms+4
                                                                        }
     },
     { 256 , "opDomain.PRIM" , lang.rules+47 , lang.synts[12].kinds+6 ,
                                                                        {
-                                                                        { null , lang.synts[16].kinds+0 },
-                                                                        { lang.atoms+3 , null },
-                                                                        { null , lang.synts[12].kinds+6 },
-                                                                        { lang.atoms+4 , null }
+                                                                        lang.synts[16].kinds+0,
+                                                                        lang.atoms+3,
+                                                                        lang.synts[12].kinds+6,
+                                                                        lang.atoms+4
                                                                        }
     },
     { 257 , "start.LIST" , lang.rules+66 , lang.synts[13].kinds+0 ,
                                                                     {
-                                                                     { null , lang.synts[12].kinds+0 }
+                                                                     lang.synts[12].kinds+0
                                                                     }
     },
     { 258 , "start.ADD" , lang.rules+66 , lang.synts[13].kinds+0 ,
                                                                    {
-                                                                    { null , lang.synts[12].kinds+1 }
+                                                                    lang.synts[12].kinds+1
                                                                    }
     },
     { 259 , "start.MUL" , lang.rules+66 , lang.synts[13].kinds+0 ,
                                                                    {
-                                                                    { null , lang.synts[12].kinds+2 }
+                                                                    lang.synts[12].kinds+2
                                                                    }
     },
     { 260 , "start.UN" , lang.rules+66 , lang.synts[13].kinds+0 ,
                                                                   {
-                                                                   { null , lang.synts[12].kinds+3 }
+                                                                   lang.synts[12].kinds+3
                                                                   }
     },
     { 261 , "start.NUM" , lang.rules+66 , lang.synts[13].kinds+0 ,
                                                                    {
-                                                                    { null , lang.synts[12].kinds+4 }
+                                                                    lang.synts[12].kinds+4
                                                                    }
     },
     { 262 , "start.POST" , lang.rules+66 , lang.synts[13].kinds+0 ,
                                                                     {
-                                                                     { null , lang.synts[12].kinds+5 }
+                                                                     lang.synts[12].kinds+5
                                                                     }
     },
     { 263 , "start.PRIM" , lang.rules+66 , lang.synts[13].kinds+0 ,
                                                                     {
-                                                                     { null , lang.synts[12].kinds+6 }
+                                                                     lang.synts[12].kinds+6
                                                                     }
     },
     { 264 , "ext.LIST" , lang.rules+67 , lang.synts[13].kinds+0 ,
                                                                   {
-                                                                   { null , lang.synts[13].kinds+0 },
-                                                                   { lang.atoms+7 , null },
-                                                                   { null , lang.synts[12].kinds+0 }
+                                                                   lang.synts[13].kinds+0,
+                                                                   lang.atoms+7,
+                                                                   lang.synts[12].kinds+0
                                                                   }
     },
     { 265 , "ext.ADD" , lang.rules+67 , lang.synts[13].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[13].kinds+0 },
-                                                                  { lang.atoms+7 , null },
-                                                                  { null , lang.synts[12].kinds+1 }
+                                                                  lang.synts[13].kinds+0,
+                                                                  lang.atoms+7,
+                                                                  lang.synts[12].kinds+1
                                                                  }
     },
     { 266 , "ext.MUL" , lang.rules+67 , lang.synts[13].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[13].kinds+0 },
-                                                                  { lang.atoms+7 , null },
-                                                                  { null , lang.synts[12].kinds+2 }
+                                                                  lang.synts[13].kinds+0,
+                                                                  lang.atoms+7,
+                                                                  lang.synts[12].kinds+2
                                                                  }
     },
     { 267 , "ext.UN" , lang.rules+67 , lang.synts[13].kinds+0 ,
                                                                 {
-                                                                 { null , lang.synts[13].kinds+0 },
-                                                                 { lang.atoms+7 , null },
-                                                                 { null , lang.synts[12].kinds+3 }
+                                                                 lang.synts[13].kinds+0,
+                                                                 lang.atoms+7,
+                                                                 lang.synts[12].kinds+3
                                                                 }
     },
     { 268 , "ext.NUM" , lang.rules+67 , lang.synts[13].kinds+0 ,
                                                                  {
-                                                                  { null , lang.synts[13].kinds+0 },
-                                                                  { lang.atoms+7 , null },
-                                                                  { null , lang.synts[12].kinds+4 }
+                                                                  lang.synts[13].kinds+0,
+                                                                  lang.atoms+7,
+                                                                  lang.synts[12].kinds+4
                                                                  }
     },
     { 269 , "ext.POST" , lang.rules+67 , lang.synts[13].kinds+0 ,
                                                                   {
-                                                                   { null , lang.synts[13].kinds+0 },
-                                                                   { lang.atoms+7 , null },
-                                                                   { null , lang.synts[12].kinds+5 }
+                                                                   lang.synts[13].kinds+0,
+                                                                   lang.atoms+7,
+                                                                   lang.synts[12].kinds+5
                                                                   }
     },
     { 270 , "ext.PRIM" , lang.rules+67 , lang.synts[13].kinds+0 ,
                                                                   {
-                                                                   { null , lang.synts[13].kinds+0 },
-                                                                   { lang.atoms+7 , null },
-                                                                   { null , lang.synts[12].kinds+6 }
+                                                                   lang.synts[13].kinds+0,
+                                                                   lang.atoms+7,
+                                                                   lang.synts[12].kinds+6
                                                                   }
     },
     { 271 , "build.LIST" , lang.rules+68 , lang.synts[14].kinds+0 ,
                                                                     {
-                                                                     { lang.atoms+10 , null },
-                                                                     { lang.atoms+16 , null },
-                                                                     { lang.atoms+13 , null },
-                                                                     { null , lang.synts[12].kinds+0 }
+                                                                     lang.atoms+10,
+                                                                     lang.atoms+16,
+                                                                     lang.atoms+13,
+                                                                     lang.synts[12].kinds+0
                                                                     }
     },
     { 272 , "build.ADD" , lang.rules+68 , lang.synts[14].kinds+0 ,
                                                                    {
-                                                                    { lang.atoms+10 , null },
-                                                                    { lang.atoms+16 , null },
-                                                                    { lang.atoms+13 , null },
-                                                                    { null , lang.synts[12].kinds+1 }
+                                                                    lang.atoms+10,
+                                                                    lang.atoms+16,
+                                                                    lang.atoms+13,
+                                                                    lang.synts[12].kinds+1
                                                                    }
     },
     { 273 , "build.MUL" , lang.rules+68 , lang.synts[14].kinds+0 ,
                                                                    {
-                                                                    { lang.atoms+10 , null },
-                                                                    { lang.atoms+16 , null },
-                                                                    { lang.atoms+13 , null },
-                                                                    { null , lang.synts[12].kinds+2 }
+                                                                    lang.atoms+10,
+                                                                    lang.atoms+16,
+                                                                    lang.atoms+13,
+                                                                    lang.synts[12].kinds+2
                                                                    }
     },
     { 274 , "build.UN" , lang.rules+68 , lang.synts[14].kinds+0 ,
                                                                   {
-                                                                   { lang.atoms+10 , null },
-                                                                   { lang.atoms+16 , null },
-                                                                   { lang.atoms+13 , null },
-                                                                   { null , lang.synts[12].kinds+3 }
+                                                                   lang.atoms+10,
+                                                                   lang.atoms+16,
+                                                                   lang.atoms+13,
+                                                                   lang.synts[12].kinds+3
                                                                   }
     },
     { 275 , "build.NUM" , lang.rules+68 , lang.synts[14].kinds+0 ,
                                                                    {
-                                                                    { lang.atoms+10 , null },
-                                                                    { lang.atoms+16 , null },
-                                                                    { lang.atoms+13 , null },
-                                                                    { null , lang.synts[12].kinds+4 }
+                                                                    lang.atoms+10,
+                                                                    lang.atoms+16,
+                                                                    lang.atoms+13,
+                                                                    lang.synts[12].kinds+4
                                                                    }
     },
     { 276 , "build.POST" , lang.rules+68 , lang.synts[14].kinds+0 ,
                                                                     {
-                                                                     { lang.atoms+10 , null },
-                                                                     { lang.atoms+16 , null },
-                                                                     { lang.atoms+13 , null },
-                                                                     { null , lang.synts[12].kinds+5 }
+                                                                     lang.atoms+10,
+                                                                     lang.atoms+16,
+                                                                     lang.atoms+13,
+                                                                     lang.synts[12].kinds+5
                                                                     }
     },
     { 277 , "build.PRIM" , lang.rules+68 , lang.synts[14].kinds+0 ,
                                                                     {
-                                                                     { lang.atoms+10 , null },
-                                                                     { lang.atoms+16 , null },
-                                                                     { lang.atoms+13 , null },
-                                                                     { null , lang.synts[12].kinds+6 }
+                                                                     lang.atoms+10,
+                                                                     lang.atoms+16,
+                                                                     lang.atoms+13,
+                                                                     lang.synts[12].kinds+6
                                                                     }
     },
     { 278 , "start" , lang.rules+69 , lang.synts[15].kinds+0 ,
                                                                {
-                                                                { null , lang.synts[14].kinds+0 }
+                                                                lang.synts[14].kinds+0
                                                                }
     },
     { 279 , "ext" , lang.rules+70 , lang.synts[15].kinds+0 ,
                                                              {
-                                                              { null , lang.synts[15].kinds+0 },
-                                                              { lang.atoms+7 , null },
-                                                              { null , lang.synts[14].kinds+0 }
+                                                              lang.synts[15].kinds+0,
+                                                              lang.atoms+7,
+                                                              lang.synts[14].kinds+0
                                                              }
     },
     { 280 , "type_NAME" , lang.rules+71 , lang.synts[16].kinds+0 ,
                                                                    {
-                                                                    { null , lang.synts[6].kinds+0 }
+                                                                    lang.synts[6].kinds+0
                                                                    }
     },
     { 281 , "type_INAME" , lang.rules+72 , lang.synts[16].kinds+0 ,
                                                                     {
-                                                                     { null , lang.synts[7].kinds+0 }
+                                                                     lang.synts[7].kinds+0
                                                                     }
     },
     { 282 , "cast_null" , lang.rules+73 , lang.synts[17].kinds+0 ,
                                                                    {
-                                                                    { lang.atoms+25 , null }
+                                                                    lang.atoms+25
                                                                    }
     },
     { 283 , "cast_String" , lang.rules+74 , lang.synts[17].kinds+0 ,
                                                                      {
-                                                                      { lang.atoms+18 , null }
+                                                                      lang.atoms+18
                                                                      }
     },
     { 284 , "buildIP" , lang.rules+75 , lang.synts[17].kinds+0 ,
                                                                  {
-                                                                  { lang.atoms+17 , null },
-                                                                  { lang.atoms+10 , null },
-                                                                  { lang.atoms+17 , null },
-                                                                  { lang.atoms+10 , null },
-                                                                  { lang.atoms+17 , null },
-                                                                  { lang.atoms+10 , null },
-                                                                  { lang.atoms+17 , null }
+                                                                  lang.atoms+17,
+                                                                  lang.atoms+10,
+                                                                  lang.atoms+17,
+                                                                  lang.atoms+10,
+                                                                  lang.atoms+17,
+                                                                  lang.atoms+10,
+                                                                  lang.atoms+17
                                                                  }
     }
    },

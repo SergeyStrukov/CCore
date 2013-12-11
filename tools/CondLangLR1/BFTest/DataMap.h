@@ -14,7 +14,7 @@
 #ifndef BFTest_DataMap_h
 #define BFTest_DataMap_h
 
-#include <CCore/inc/ddl/DDLTypes.h>
+#include <CCore/inc/ddl2/DDL2TypeSet.h>
 
 namespace App {
 
