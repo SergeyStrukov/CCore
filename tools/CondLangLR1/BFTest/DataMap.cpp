@@ -19,6 +19,7 @@
 #include <CCore/inc/MemAllocGuard.h>
 
 #include <CCore/inc/ddl2/DDL2Engine.h>
+#include <CCore/inc/ddl2/DDL2TypeSet.h>
 
 #include <CCore/inc/Exception.h>
 

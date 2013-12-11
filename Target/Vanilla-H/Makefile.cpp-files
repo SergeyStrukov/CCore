@@ -57,10 +57,12 @@
 ../../CCore/src/ddl2/DDL2Eval.cpp
 ../../CCore/src/ddl2/DDL2Map.cpp
 ../../CCore/src/ddl2/DDL2MapTools.cpp
+../../CCore/src/ddl2/DDL2MapTypes.cpp
 ../../CCore/src/ddl2/DDL2Parser.cpp
 ../../CCore/src/ddl2/DDL2ParserElements.cpp
 ../../CCore/src/ddl2/DDL2ParserRules.cpp
 ../../CCore/src/ddl2/DDL2ParserTable.cpp
+../../CCore/src/ddl2/DDL2PlatformTypes.cpp
 ../../CCore/src/ddl2/DDL2Semantic.cpp
 ../../CCore/src/ddl2/DDL2Token.cpp
 ../../CCore/src/ddl2/DDL2Tools.cpp

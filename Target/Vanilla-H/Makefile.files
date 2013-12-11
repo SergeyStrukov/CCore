@@ -38,10 +38,12 @@ obj/DDL2ErrorMsg.o \
 obj/DDL2Eval.o \
 obj/DDL2Map.o \
 obj/DDL2MapTools.o \
+obj/DDL2MapTypes.o \
 obj/DDL2Parser.o \
 obj/DDL2ParserElements.o \
 obj/DDL2ParserRules.o \
 obj/DDL2ParserTable.o \
+obj/DDL2PlatformTypes.o \
 obj/DDL2Semantic.o \
 obj/DDL2Token.o \
 obj/DDL2Tools.o \
@@ -304,10 +306,12 @@ obj/DDL2ErrorMsg.s \
 obj/DDL2Eval.s \
 obj/DDL2Map.s \
 obj/DDL2MapTools.s \
+obj/DDL2MapTypes.s \
 obj/DDL2Parser.s \
 obj/DDL2ParserElements.s \
 obj/DDL2ParserRules.s \
 obj/DDL2ParserTable.s \
+obj/DDL2PlatformTypes.s \
 obj/DDL2Semantic.s \
 obj/DDL2Token.s \
 obj/DDL2Tools.s \
@@ -570,10 +574,12 @@ obj/DDL2ErrorMsg.dep \
 obj/DDL2Eval.dep \
 obj/DDL2Map.dep \
 obj/DDL2MapTools.dep \
+obj/DDL2MapTypes.dep \
 obj/DDL2Parser.dep \
 obj/DDL2ParserElements.dep \
 obj/DDL2ParserRules.dep \
 obj/DDL2ParserTable.dep \
+obj/DDL2PlatformTypes.dep \
 obj/DDL2Semantic.dep \
 obj/DDL2Token.dep \
 obj/DDL2Tools.dep \
@@ -919,6 +925,9 @@ obj/DDL2Map.o : ../../CCore/src/ddl2/DDL2Map.cpp
 obj/DDL2MapTools.o : ../../CCore/src/ddl2/DDL2MapTools.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/DDL2MapTypes.o : ../../CCore/src/ddl2/DDL2MapTypes.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/DDL2Parser.o : ../../CCore/src/ddl2/DDL2Parser.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -929,6 +938,9 @@ obj/DDL2ParserRules.o : ../../CCore/src/ddl2/DDL2ParserRules.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DDL2ParserTable.o : ../../CCore/src/ddl2/DDL2ParserTable.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DDL2PlatformTypes.o : ../../CCore/src/ddl2/DDL2PlatformTypes.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DDL2Semantic.o : ../../CCore/src/ddl2/DDL2Semantic.cpp
@@ -1710,6 +1722,9 @@ obj/DDL2Map.s : ../../CCore/src/ddl2/DDL2Map.cpp
 obj/DDL2MapTools.s : ../../CCore/src/ddl2/DDL2MapTools.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DDL2MapTypes.s : ../../CCore/src/ddl2/DDL2MapTypes.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DDL2Parser.s : ../../CCore/src/ddl2/DDL2Parser.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1720,6 +1735,9 @@ obj/DDL2ParserRules.s : ../../CCore/src/ddl2/DDL2ParserRules.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DDL2ParserTable.s : ../../CCore/src/ddl2/DDL2ParserTable.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DDL2PlatformTypes.s : ../../CCore/src/ddl2/DDL2PlatformTypes.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DDL2Semantic.s : ../../CCore/src/ddl2/DDL2Semantic.cpp
@@ -2501,6 +2519,9 @@ obj/DDL2Map.dep : ../../CCore/src/ddl2/DDL2Map.cpp
 obj/DDL2MapTools.dep : ../../CCore/src/ddl2/DDL2MapTools.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2MapTools.o $< -MF $@
 
+obj/DDL2MapTypes.dep : ../../CCore/src/ddl2/DDL2MapTypes.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2MapTypes.o $< -MF $@
+
 obj/DDL2Parser.dep : ../../CCore/src/ddl2/DDL2Parser.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2Parser.o $< -MF $@
 
@@ -2512,6 +2533,9 @@ obj/DDL2ParserRules.dep : ../../CCore/src/ddl2/DDL2ParserRules.cpp
 
 obj/DDL2ParserTable.dep : ../../CCore/src/ddl2/DDL2ParserTable.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2ParserTable.o $< -MF $@
+
+obj/DDL2PlatformTypes.dep : ../../CCore/src/ddl2/DDL2PlatformTypes.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2PlatformTypes.o $< -MF $@
 
 obj/DDL2Semantic.dep : ../../CCore/src/ddl2/DDL2Semantic.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2Semantic.o $< -MF $@

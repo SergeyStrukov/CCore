@@ -19,6 +19,8 @@
 #include <CCore/inc/Printf.h>
 #include <CCore/inc/Array.h>
 
+#include <CCore/inc/ddl2/DDL2PlatformTypes.h>
+
 namespace CCore {
 namespace DDL2 {
 
@@ -203,8 +205,6 @@ struct imp_uint64 : IntType<imp_uint64,uint64>
   explicit imp_uint64(S value) { cast(value); }
  };
 
-using sint_type = Meta::Select<( unsigned(-1)<=uint32(-1) ), sint32 , sint64 > ;
-
 struct imp_sint : IntType<imp_sint,sint_type>
  {
   imp_sint() { cast(0); }
@@ -213,8 +213,6 @@ struct imp_sint : IntType<imp_sint,sint_type>
   explicit imp_sint(S value) { cast(value); }
  };
 
-using uint_type = Meta::Select<( unsigned(-1)<=uint32(-1) ), uint32 , uint64 > ;
-
 struct imp_uint : IntType<imp_uint,uint_type>
  {
   imp_uint() { cast(0); }
@@ -222,8 +220,6 @@ struct imp_uint : IntType<imp_uint,uint_type>
   template <class S>
   explicit imp_uint(S value) { cast(value); }
  };
-
-using ulen_type = Meta::Select<( ulen(-1)<=uint32(-1) && unsigned(-1)<=uint32(-1) ), uint32 , uint64 > ;
 
 struct imp_ulen : IntType<imp_ulen,ulen_type>
  {
