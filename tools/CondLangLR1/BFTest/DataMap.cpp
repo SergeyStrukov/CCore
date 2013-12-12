@@ -156,7 +156,7 @@ DataMap::DataMap(StrLen file_name)
    
   if( !result )
     {
-     Printf(Exception,"Input file processing error");
+     Printf(Exception,"App::DataMap::DataMap() : input file processing error");
     }
   else
     {

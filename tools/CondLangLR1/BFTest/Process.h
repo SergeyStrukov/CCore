@@ -41,12 +41,6 @@ class TopParser;
 
 class TopTest;
 
-class BottomGenerator;
-
-class BottomParser;
-
-class BottomTest;
-
 /* class TrackStep */
 
 class TrackStep : NoCopy
@@ -114,7 +108,7 @@ class RunTasks : NoCopy
 class TopGenerator : NoCopy
  {
    Random random;
-   PtrLen<TypeDef::Synt *> lang;
+   PtrLen<DDL2::MapPtr<TypeDef::Synt> > lang;
    
    DynArray<TypeDef::TopRule *> table;
    
@@ -123,13 +117,13 @@ class TopGenerator : NoCopy
    template <class T>
    T select(PtrLen<T> range)
     { 
-     return range[random.select((uint32)range.len)];
+     return range[random.select_uint<ulen>(range.len)];
     }
    
    template <class T>
    T * select_ptr(PtrLen<T> range)
     { 
-     return range.ptr+random.select((uint32)range.len);
+     return range.ptr+random.select_uint<ulen>(range.len);
     }
    
    TypeDef::TopRule * defRule(TypeDef::Kind *kind)
@@ -144,15 +138,19 @@ class TopGenerator : NoCopy
    
    bool testRule(TypeDef::TopRule *rule)
     {
-     for(auto arg : rule->args )
-       if( arg.kind && !defRule(arg.kind) ) return false;
+     for(auto arg : rule->args.getRange() )
+       {
+        TypeDef::Kind *kind=arg.getPtr().castPtr<TypeDef::Kind>();
+        
+        if( kind && !defRule(kind) ) return false;
+       }
      
      return true;
     }
    
    TypeDef::TopRule * findRule(TypeDef::Kind *kind)
     {
-     for(TypeDef::TopRule *rule : kind->rules ) if( testRule(rule) ) return rule;
+     for(auto rule : kind->rules.getRange() ) if( testRule(rule) ) return rule;
       
      return 0; 
     }
@@ -160,15 +158,29 @@ class TopGenerator : NoCopy
    template <class Proc>
    void gen(TypeDef::TopRule *rule,Proc &proc,ulen cap)
     {
-     for(auto arg : rule->args )
-       if( arg.atom )
+     for(auto arg : rule->args.getRange() )
+       {
+        struct Func
          {
-          proc.next_atom(arg.atom);
-         }
-       else
-         {
-          gen(arg.kind,proc,cap);
-         }
+          TopGenerator *obj;
+          Proc &proc;
+          ulen cap;
+          
+          Func(TopGenerator *obj_,Proc &proc_,ulen cap_) : obj(obj_),proc(proc_),cap(cap_) {}
+          
+          void operator () (TypeDef::Atom *atom)
+           {
+            proc.next_atom(atom);
+           }
+          
+          void operator () (TypeDef::Kind *kind)
+           {
+            obj->gen(kind,proc,cap);
+           }
+         };
+       
+        arg.getPtr().apply(Func(this,proc,cap));
+       }
      
      proc.next_rule(rule);
     }
@@ -178,7 +190,7 @@ class TopGenerator : NoCopy
     {
      if( cap )
        {
-        gen(select(kind->rules),proc,cap-1);
+        gen(select(kind->rules.getRange()),proc,cap-1);
        }
      else
        {
@@ -197,9 +209,9 @@ class TopGenerator : NoCopy
     {
      proc.start();
      
-     auto *synt=select(lang);
+     auto synt=select(lang);
      
-     gen(select_ptr(synt->kinds),proc,cap);
+     gen(select_ptr(synt->kinds.getRange()),proc,cap);
      
      proc.stop();
     }
@@ -209,9 +221,11 @@ class TopGenerator : NoCopy
 
 class TopParser : NoCopy
  {
+   using Element = AnyPtr<TypeDef::Atom,TypeDef::Kind> ;
+  
    struct Rec : NoThrowFlagsBase
     {
-     AnyPtr<TypeDef::Atom,TypeDef::Kind> element;
+     Element element;
      TypeDef::State *state;
      
      explicit Rec(TypeDef::State *state_) : state(state_) {}
@@ -223,7 +237,7 @@ class TopParser : NoCopy
    DynArray<Rec> stack;
    
    TypeDef::State *start_state;
-   PtrLen<TypeDef::Synt *> lang;
+   PtrLen<DDL2::MapPtr<TypeDef::Synt> > lang;
    
   private:
    
@@ -250,7 +264,7 @@ class TopParser : NoCopy
    
    static TypeDef::State * Transition(PtrLen<TypeDef::State::Transition> transitions,TypeDef::Kind *kind);
    
-   static bool IsSame(AnyPtr<TypeDef::Atom,TypeDef::Kind> element,const TypeDef::TopRule::Arg &arg);
+   static bool IsSame(Element element,Element arg);
    
   public:
   
@@ -284,175 +298,6 @@ class TopTest : NoCopy
    void next_atom(TypeDef::Atom *atom);
    
    void next_rule(TypeDef::TopRule *rule);
-   
-   void stop();
- };
-
-/* class BottomGenerator */
-
-class BottomGenerator : NoCopy
- {
-   Random random;
-   PtrLen<TypeDef::Synt *> lang;
-   
-   DynArray<TypeDef::Rule *> table;
-   
-  private: 
-   
-   template <class T>
-   T select(PtrLen<T> range)
-    { 
-     return range[random.select((uint32)range.len)];
-    }
-   
-   template <class T>
-   T * select_ptr(PtrLen<T> range)
-    { 
-     return range.ptr+random.select((uint32)range.len);
-    }
-   
-   TypeDef::Rule * defRule(TypeDef::Synt *synt)
-    {
-     return table[synt->index];
-    }
-   
-   void defRule(TypeDef::Synt *synt,TypeDef::Rule *rule)
-    {
-     table[synt->index]=rule;
-    }
-   
-   bool testRule(TypeDef::Rule *rule)
-    {
-     for(auto arg : rule->args )
-       if( arg.synt && !defRule(arg.synt) ) return false;
-     
-     return true;
-    }
-   
-   TypeDef::Rule * findRule(TypeDef::Synt *synt)
-    {
-     for(TypeDef::Rule *rule : synt->rules ) if( testRule(rule) ) return rule;
-      
-     return 0; 
-    }
-   
-   template <class Proc>
-   void gen(TypeDef::Rule *rule,Proc &proc,ulen cap)
-    {
-     for(auto arg : rule->args )
-       if( arg.atom )
-         {
-          proc.next(arg.atom);
-         }
-       else
-         {
-          gen(arg.synt,proc,cap);
-         }
-    }
-   
-   template <class Proc>
-   void gen(TypeDef::Synt *synt,Proc &proc,ulen cap)
-    {
-     if( cap )
-       {
-        gen(select(synt->rules),proc,cap-1);
-       }
-     else
-       {
-        gen(defRule(synt),proc,0);
-       }
-    }
-   
-  public:
-  
-   explicit BottomGenerator(const DataMap &data);
-   
-   ~BottomGenerator();
-   
-   template <class Proc>
-   void operator () (Proc &proc,ulen cap)
-    {
-     proc.start();
-     
-     gen(select(lang),proc,cap);
-     
-     proc.stop();
-    }
- };
-
-/* class BottomParser */
-
-class BottomParser : NoCopy
- {
-   struct Rec : NoThrowFlagsBase
-    {
-     AnyPtr<TypeDef::Atom,TypeDef::Synt> element;
-     TypeDef::State *state;
-    
-     explicit Rec(TypeDef::State *state_) : state(state_) {}
-    
-     template <class T>
-     Rec(T *ptr,TypeDef::State *state_) : element(ptr),state(state_) {}
-    };
- 
-   DynArray<Rec> stack;
-  
-   TypeDef::State *start_state;
-   PtrLen<TypeDef::Synt *> lang;
-   
-  private: 
-   
-   void push(TypeDef::State *state) { stack.append_fill(state); }
-   
-   template <class T>
-   void push(T *ptr,TypeDef::State *state) { stack.append_fill(ptr,state); }
-   
-   TypeDef::State * topState();
-   
-   Rec * topElements(ulen count);
-   
-   void pop(ulen len) { stack.shrink(len); }
-   
-   void check_result();
-   
-  private: 
-   
-   static TypeDef::Rule * Find(TypeDef::State *state,TypeDef::Atom *atom);
-   
-   static TypeDef::State * Transition(PtrLen<TypeDef::State::Transition> transitions,TypeDef::Element *element);
-   
-   static TypeDef::State * Transition(PtrLen<TypeDef::State::Transition> transitions,TypeDef::Atom *atom);
-   
-   static TypeDef::State * Transition(PtrLen<TypeDef::State::Transition> transitions,TypeDef::Kind *kind);
-   
-   static bool IsSame(AnyPtr<TypeDef::Atom,TypeDef::Synt> element,const TypeDef::Rule::Arg &arg);
-   
-  public:
-  
-   explicit BottomParser(const DataMap &data);
-   
-   ~BottomParser();
-   
-   void reset();
-   
-   bool next(TypeDef::Atom *atom);
- };
-
-/* class BottomTest */
-
-class BottomTest : NoCopy
- {
-   BottomParser parser;
-   
-  public:
-  
-   explicit BottomTest(const DataMap &data);
-   
-   ~BottomTest();
-   
-   void start();
-   
-   void next(TypeDef::Atom *atom);
    
    void stop();
  };

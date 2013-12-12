@@ -23,7 +23,7 @@ include $(CCORE_ROOT)/Target/Makefile.app
 
 run: $(TARGET)
 	$(TARGET) ../AMP/AMP.ddl
-#	$(TARGET) ../DDL/DDL.ddl
+	$(TARGET) ../DDL/DDL.ddl
 
 
 
