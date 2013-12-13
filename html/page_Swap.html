@@ -32,17 +32,18 @@
 
 <p>
 <b>Swap</b> is not just a set of functions and classes, but a fundamental idiom. 
-Swapping means exchanging values as the one operation.
+Swapping means an exchanging object states as the one operation.
 Objects of a <b>Small Data Types</b> can be copied efficiently. In fact, it is a generalized definition
-of the such kind of types. <b>Efficiency</b> can be defined in another terms as a <span class="Hint">O(1)-nothrow property</span>.
-But for many types (actually, for most of them) 
-copying is either not logically possible, or is not efficient, because requires duplication 
-a large state, and that is time and space expensive and may fail. So instead of copying we should use 
-moving or swapping whenever possible.  
+of the such kind of types. <b>Efficiency</b> can be defined in another terms as 
+the <span class="Att">O(1)-nothrow property</span>.
+But for many types (actually, for most of them) copying is either not logically possible, 
+or not efficient, because requires duplication of a large state, and that is time and space expensive 
+and can fail. So instead of copying we should use moving or swapping whenever possible.  
 For example, to return a result from a function: 
 </p>
 
 <pre>
+
 void func(T &ret)
  {
   T result;
@@ -66,14 +67,16 @@ void other_func()
 
   ....
  }
+
 </pre>
 
 <p>
 <b>Swap</b> is <b>derivable</b>: if the state is a composition of states and each of them is swappable, then
-the whole state is swappable.
+the whole state is swappable:
 </p>
 
 <pre>
+
 struct S
  {
   A a;
@@ -89,6 +92,7 @@ struct S
     Swap(c,obj.c);
    }
  };
+
 </pre>
 
 <p>
@@ -96,6 +100,7 @@ But what the most important, <b>Resource Host Type</b>s are swappable.
 </p>
 
 <pre>
+
 class H : NoCopy
  {
   private:
@@ -117,6 +122,7 @@ class H : NoCopy
      Swap(h,obj.h);
     }
  };
+
 </pre>
 
 <p>
@@ -126,11 +132,13 @@ That is the main cause why <b>Swap</b> is applicable to the wide range of types.
 <h2>How to use</h2>
 
 <pre>
+
 template &lt;class T&gt;
 void <span class="Att">CopySwap</span>(T &a,T &b) noexcept(EnableNoExcept);
 
 template &lt;class T&gt;
 void <span class="Att">Swap</span>(T &a,T &b) noexcept(EnableNoExcept);
+
 </pre>
 
 <p>
@@ -148,6 +156,7 @@ specialize the <b>struct SwapAdapters</b> for your type:
 </p>
 
 <pre>
+
 namespace N {
 
 class C
@@ -155,7 +164,7 @@ class C
   ....
  };
 
-}
+} // namespace N
 
 namespace CCore {
 
@@ -165,12 +174,13 @@ struct SwapAdapters&lt;false,N::C&gt;
   static void Swap(N::C &a,N::C &b) { .... }
  };
 
-}
+} // namespace CCore
+
 </pre>
 
 <p>
-But there is a problem with this way: usually to implement <b>Swap</b> you need access to the private
-members of the class, so it may be impossible to implement <b>Swap</b> without 
+But there is a problem with this approach: usually to implement <b>Swap()</b> you need access to the private
+members of the class, so it may be impossible to implement <b>Swap()</b> without 
 an intervening in the class definition. 
 </p>
 

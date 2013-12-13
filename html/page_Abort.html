@@ -35,9 +35,11 @@ There are two functions to abort a program execution with a diagnostic message:
 </p>
 
 <pre>
+
 void <span class="Att">Abort</span>(StrLen str);
  
 void <span class="Att">Abort</span>(const char *zstr);
+
 </pre>
 
 <p>
@@ -51,6 +53,7 @@ There is also the global constant function pointer, which can be used to alter t
 </p>
 
 <pre>
+
 /* types */ 
 
 typedef void (*AbortMsgFuncType)(StrLen str);
@@ -58,13 +61,14 @@ typedef void (*AbortMsgFuncType)(StrLen str);
 /* global const AbortMsgFunc */ 
 
 extern const AbortMsgFuncType <span class="Att">AbortMsgFunc</span>;
+
 </pre>
 
 <p>
 You may link an object file in your project with this constant defined to introduce a hook in <b>Abort()</b>.
 Be reasonable with hook actions: on <b>XCore</b> targets it may be called in any context, so you cannot
-do any "heavy" job inside. The same on <b>HCore</b> targets: use it just to show a message 
-(using the <b>MessageBox()</b>, for example).
+do any "heavy" job inside. The same is true on <b>HCore</b> targets: use it just to show or log a message 
+(using <b>MessageBox()</b>, for example).
 </p>
 
 </body>
