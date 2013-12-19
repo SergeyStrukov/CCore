@@ -1,0 +1,62 @@
+<!--
+/* page_DDL2TypeSet.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.07
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> DDL2TypeSet</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>DDL2TypeSet</h2>
+
+<p>
+<b>DDL2TypeSet</b> is a tool for generation a <b>TypeSet</b> class. This class can be used to
+map <b>DDL2</b> data using the <a href="page_DDL2Engine.html#TypedMap"><b>DDL2::TypedMap</b></a>.
+</p>
+
+<pre>
+
+DDL2TypeSet.exe &lt;ddl-file-name&gt; &lt;typdef-file&gt; &lt;typeset-file&gt;
+
+</pre>
+
+<p>
+<b>ddl-file-name</b> is the name of a <b>DDL2</b> file, which contains type definitions.
+</p>
+
+<p>
+<b>typedef-file</b> will contain <b>TypeDef</b> declarations.
+</p>
+
+<p>
+<b>typeset-file</b> will contain <b>TypeSet</b> declarations.
+</p>
+
+<p>
+For example, see files <b>LangTypes.ddl</b>, <b>LangTypeDef.gen.h</b>, <b>LangTypeSet.gen.h</b> in the directory
+<b>CCORE_ROOT/tools/CondLangLR1</b>.
+</p>
+
+</body>
+
+</html>
+

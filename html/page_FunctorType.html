@@ -32,7 +32,7 @@
 
 <p>
 <b>Functor Init Pattern</b> is widely used in <b>CCore</b>. In the modern C++ functors are commonly used. 
-In <b>CCore</b> we do it in the following manner:
+In <b>CCore</b> we often do it in the following manner:
 </p>
 
 <pre>
@@ -104,6 +104,7 @@ The helper class <b>FunctorRefType</b> is designed to pass a functor reference:
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct <span class="Att">FunctorRefType</span>
  {
@@ -115,6 +116,7 @@ struct <span class="Att">FunctorRefType</span>
   
   operator FunctorType() const { return *obj; }
  };
+
 </pre>
 
 <p>

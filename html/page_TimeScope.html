@@ -40,6 +40,7 @@ It is a simple class, which represents some time interval:
 <img src="TimeScope.png" />
 
 <pre>
+
 class <span class="Att">TimeScope</span>
  {
    MSecTimer timer;
@@ -56,12 +57,13 @@ class <span class="Att">TimeScope</span>
    
    MSec get() const;
  };
+
 </pre>
 
 <p>
 <b>TimeScope</b> contains inside a millisecond timer and a millisecond timeout. It is started at the moment of construction,
 or at the moment when the method <b>start()</b> is called. You can retrieve the remaining time, using the method <b>get()</b>.
-If the given timeout is expired, then the <b>get()</b> returns 0.
+If the given timeout is expired, then <b>get()</b> returns 0.
 </p>
 
 <p>

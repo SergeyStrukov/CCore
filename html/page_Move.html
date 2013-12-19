@@ -54,6 +54,7 @@ the implementation point for it.
 <h2>How to use</h2>
 
 <pre>
+
 template &lt;class T&gt;
 T * <span class="Att">CopyMove</span>(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // for efficiently copyable classes
 
@@ -66,13 +67,14 @@ T * <span class="Att">CtorMove</span>(T *obj,Place&lt;void&gt; place) noexcept(E
 
 template &lt;class T&gt;
 T * <span class="Att">Move</span>(T *obj,Place&lt;void&gt; place) noexcept(EnableNoExcept); // general
+
 </pre>
 
 <p>
 Normally you should use the function <b>Move()</b> for <b>Move</b> operation.
 If the destined type is a class type with the method <b>objMove()</b>, it is called to do the job.
 Otherwise, if the destined type is a class type with the method <b>objSwap()</b>, the 
-<b>SwapMove()</b> is used. In this case <span class="Alert">class must have the default efficient constructor</span>.
+<b>SwapMove()</b> is used. In this case <span class="Alert">class must have the efficient default constructor</span>.
 Finally, <b>CopyMove()</b> is called for remaining cases. It is assumed, that such types are
 <span class="Alert">efficiently copyable</span>.
 </p>
@@ -82,6 +84,7 @@ You can also specialize the <b>struct MoveAdapters</b>.
 </p>
 
 <pre>
+
 namespace N {
 
 class C
@@ -89,7 +92,7 @@ class C
   ....
  };
 
-}
+} // namespace N
 
 namespace CCore {
 
@@ -99,7 +102,8 @@ struct MoveAdapters&lt;false,false,N::C&gt;
   static N::C * Move(N::C *obj,Place&lt;void&gt; place) { .... }
  };
 
-}
+} // namespace CCore
+
 </pre>
 
 <p>
@@ -111,6 +115,7 @@ Consider the following example:
 </p>
 
 <pre>
+
 struct S
  {
   A a; // class A has <b>Move constructor</b>
@@ -139,6 +144,7 @@ struct S
     return CtorMove(this,place);
    }
  };
+
 </pre>
 
 <p>
@@ -150,6 +156,7 @@ Here is the template for the moving of <b>Resource Host Type</b>s.
 </p>
 
 <pre>
+
 class H : NoCopy
  {
   private:
@@ -183,11 +190,13 @@ class H : NoCopy
      return CtorMove(this,place);
     }
  };
+
 </pre>
 
 <p>The class <b>ToMoveCtor&lt;T&gt;</b> is a simple wrapper over the pointer to the type T:</p>
 
 <pre>
+
 /* struct ToMoveCtor&lt;T&gt; */ 
 
 template &lt;class T&gt;
@@ -202,10 +211,11 @@ struct <span class="Att">ToMoveCtor</span>
   template &lt;class S&gt;
   ToMoveCtor&lt;S&gt; cast() const { return ToMoveCtor&lt;S&gt;(*obj); }
  };
+
 </pre>
 
-<p>It is solely introduced to designate <b>Move constructors</b>. The method <b>cast()</b> can be used to "touch" 
-a base class subobject in the <b>Move constructor</b> body.
+<p>It is solely introduced to designate <b>Move constructor</b>s. The method <b>cast()</b> can be used to "touch" 
+a base class subobject in the <b>Move constructor</b>'s body.
 </p>
 
 <h2>C++11 move constructor and Move constructor</h2>
@@ -213,13 +223,16 @@ a base class subobject in the <b>Move constructor</b> body.
 <p>
 <b>CCore</b> is not using C++11 move constructors for <b>Moving</b>.
 C++11 move constructors were introduced to solve some language problems.
-The first problem is the returning value from a function. Consider this:
+The one of such problems is the returning value from a function. Consider this:
 </p>
 
 <pre>
+
 class C
  {
   public:
+
+   C();
 
    C(C &&src);
 
@@ -232,6 +245,7 @@ C func()
 
   return obj; // move object here instead of copy
  }
+
 </pre>
 
 <p>
@@ -240,6 +254,7 @@ operator return should construct the object using any desired constructor instea
 </p>
 
 <pre>
+
 class Class
  {
   public:
@@ -257,6 +272,7 @@ Class func()
 
   return(a,b,c); // calls Class(a,b,c) to create the return object
  }
+
 </pre>
 
 <p>

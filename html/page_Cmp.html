@@ -112,7 +112,7 @@ The function <b>AlphaCmp()</b> expects any number of pairs of arguments:
 
 <pre>
 
-CmpResult <span class="Att">AlphaCmp</span>(const T1 &a1,const T1 &b1,const T2 &a2,const T2 &b2,...,const Tn &an,const Tn &bn);
+CmpResult <span class="Att">AlphaCmp</span>(const T<sub>1</sub> &a<sub>1</sub>,const T<sub>1</sub> &b<sub>1</sub>,const T<sub>2</sub> &a<sub>2</sub>,const T<sub>2</sub> &b<sub>2</sub>,...,const T<sub>n</sub> &a<sub>n</sub>,const T<sub>n</sub> &b<sub>n</sub>);
 
 </pre>
 
@@ -129,7 +129,7 @@ class C
   ....
  };
 
-}
+} // namespace N
 
 namespace CCore {
 
@@ -139,7 +139,7 @@ struct CmpAdapters&lt;false,N::C&gt;
   static CmpResult Cmp(const N::C &a,const N::C &b) { .... }
  };
 
-}
+} // namespace CCore
 
 </pre>
 
@@ -161,7 +161,7 @@ bool <span class="Att">RangeLess</span>(PtrLen&lt;T&gt; a,PtrLen&lt;T&gt; b);
 </pre>
 
 <p>
-There are also "by" variants of these functions. These variant use the given functor <b>by</b> to compare objects:
+There are also "by" variants of these functions. These variants use the given functor <b>by</b> to compare objects:
 to compare objects <b>a</b> and <b>b</b> they do compare <b>by(a)</b> and <b>by(b)</b>.
 </p>
 

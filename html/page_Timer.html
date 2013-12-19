@@ -41,6 +41,7 @@ The class <b>Timer</b> can be used to get a time. We need a class, because we ha
 </p>
 
 <pre>
+
 template &lt;class T,T Time()&gt;
 class <span class="Att">Timer</span>
  {
@@ -64,6 +65,7 @@ class <span class="Att">Timer</span>
    
    static T Get() { return Time(); }
  };
+
 </pre>
 
 <p>
@@ -74,7 +76,7 @@ adjusts the start time. Static members <b>ValueType</b> and <b>Get()</b> present
 </p>
 
 <p>
-The following example demonstrate the timed loop:
+The following example demonstrates the timed loop:
 </p>
 
 <pre>
@@ -90,6 +92,7 @@ The next class <b>DiffTimer</b> returns the differentiated time, i.g. the time b
 </p>
 
 <pre>
+
 template &lt;class T,T Time()&gt;
 class <span class="Att">DiffTimer</span>
  {
@@ -105,6 +108,7 @@ class <span class="Att">DiffTimer</span>
    
    T get() { return Diff(prev,Time()); }
  };
+
 </pre>
 
 <p>
