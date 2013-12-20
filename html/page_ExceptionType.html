@@ -36,11 +36,13 @@ situation in <b>CCore</b>.
 </p>
 
 <pre>
+
 enum <span class="Att">ExceptionType</span>
  {
   <span class="Att">NoException</span>, // don't throw exception, just report a error
   <span class="Att">Exception</span>    // throw exception
  };
+
 </pre>
 
 <p>
@@ -48,10 +50,12 @@ enum <span class="Att">ExceptionType</span>
 </p>
 
 <pre>
+
 struct <span class="Att">CatchType</span> 
  {
   CatchType() {}
  };
+
 </pre>
 
 <h2>Handling exceptional situations</h2>
@@ -87,6 +91,7 @@ To catch exceptions use the following pattern:
 </p>
 
 <pre>
+
 try
   {
    ReportException report; // or some derived from ReportException class
@@ -101,6 +106,7 @@ catch(CatchType)
   {
    // handle exception
   }
+
 </pre>
 
 <p>See <a href="page_Exceptions.html">Exceptions</a> for more details.</p>

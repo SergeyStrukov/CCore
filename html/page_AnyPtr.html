@@ -150,7 +150,7 @@ it remembers the pointer type.
 </p>
 
 <p>
-<b>hasType()</b> can be used to check the type of the pointer. The template parameter <b>T</b> must be in the list 
+<b>hasType()</b> can be used to check the type of the pointer. The template parameter <b>T</b> must be from the list 
 <b>TT</b>.
 </p>
 
@@ -183,7 +183,7 @@ ptr.apply(func_init,a1,a2,a3); // func_init -> func ; calls func(a,a1,a2,a3);
 </pre>
 
 <p>
-<b>applyFor()</b> applies the functor to the pointer of the given type. If the object is null or stores the pointer of another type,
+<b>applyFor()</b> applies the functor to the pointer of the given type. If the object is null or stores a pointer of another type,
 this method does nothing.
 </p>
 
@@ -214,7 +214,7 @@ class <span class="Att">PrintAnyObj</span>
 
 <p>
 The static method <b>Binary</b> is used with two any-pointers. If pointer types are different then the return object is
-constructed as <b>Ret(a.type,b.type)</b>, so you can handle this case separately. Otherwise if both pointers are not
+constructed as <b>Ret(a.type,b.type)</b>, so you can handle this case separately. Otherwise if both any-pointers are not
 null objects, then the functor with two elaborated pointers is called. Finally, <b>Ret()</b> is returned if both arguments 
 are null. An example:
 </p>
@@ -240,7 +240,7 @@ This method is useful for a comparison implementation.
 </p>
 
 <p>
-The global function <b>ElaborateAnyPtr</b> is another way to demultiplex any-pointers.
+The global function <b>ElaborateAnyPtr</b> is another great way to demultiplex any-pointers.
 </p>
 
 <pre>

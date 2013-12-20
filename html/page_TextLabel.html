@@ -119,8 +119,27 @@ Just remember, the handle must be persistent, it cannot have a limited life-time
 </p>
 
 <p>
-The next class is <b>NumTextLabel</b>. It is designed to generate such labels as "Sem1", "Sem2", ... .
-Use it as following:
+The next class is <b>NumTextLabel</b>. 
+</p>
+
+<pre>
+
+unsigned <span class="Att">GetTextLabelNumber</span>(unsigned &Next);
+
+template &lt;class T&gt;
+class <span class="Att">NumTextLabel</span> : public TextLabel
+ {
+   ....
+    
+  public:
+  
+   NumTextLabel();
+ };
+
+</pre>
+
+<p>
+It is designed to generate such labels as "Sem1", "Sem2", ... . Use it as following:
 </p>
 
 <pre>
@@ -142,7 +161,7 @@ Mutex Name::NextMutex;
 
 unsigned Name::Next=0;
 
-<span class="Att">NumTextLabel</span>&lt;Name&gt; label;
+<span class="Att">NumTextLabel</span>&lt;Name&gt; label; // "ObjName1" , "ObjName2" , ...
 
 </pre>
 

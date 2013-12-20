@@ -47,6 +47,7 @@ PrintBitsType&lt;P,UInt&gt; <span class="Att">PrintBits</span>(P &amp;out,UInt v
 </p>
 
 <pre>
+
 template &lt;class P,class UInt&gt;
 class <span class="Att">PrintBitsType</span>
  {
@@ -62,6 +63,7 @@ class <span class="Att">PrintBitsType</span>
     
    void complete();
  };
+
 </pre>
 
 <p>
@@ -69,6 +71,7 @@ Here is the usage pattern (from <b>GenFile.h</b>):
 </p>
 
 <pre>
+
 PrintBits&lt;uint32&gt;(out,oflags)
                  (Open_Read      ,"Read")
                  (Open_Write     ,"Write")
@@ -79,6 +82,11 @@ PrintBits&lt;uint32&gt;(out,oflags)
                  (Open_AutoDelete,"AutoDelete")
                  (Open_PosEnd    ,"PosEnd")
                  .complete();
+
+//
+// Prints like Read|Write|Pos
+//
+
 </pre>
 
 <p>

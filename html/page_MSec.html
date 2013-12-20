@@ -35,23 +35,28 @@ To create a <b>MSec</b> you can use the following user-defined literals:
 </p>
 
 <pre>
+
 100_msec // 100 milliseconds
 10_sec   // 10 seconds
 5_min    // 5 minutes
 1_hour   // 1 hour
+
 </pre>
 
 <p>
-You can also add <b>MSec</b>s or multiply by unsigned: 
+You can also sum <b>MSec</b>s or multiply by unsigned: 
 </p>
 
 <pre>
+
 10*1_hour+25_min
+
 </pre>
 
 <p>There are few helper methods of the class:</p>
 
 <pre>
+
 struct <span class="Att">MSec</span>
  {
   unsigned time;                                                    // in milliseconds
@@ -73,6 +78,7 @@ struct <span class="Att">MSec</span>
   
   MSec <span class="Att">cap(MSec lim)</span> { Replace_min(time,lim.time); return *this; }  // cap self to limit
  };
+
 </pre>
 
 <p>

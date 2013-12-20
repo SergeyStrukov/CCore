@@ -36,6 +36,7 @@ It is widely used in <b>CCore</b>. The class <b>Counters</b> is designed to simp
 </p>
 
 <pre>
+
 template &lt;class Enum,Enum Lim&gt;
 class <span class="Att">Counters</span> : public PrintOptAdapter&lt;Enum&gt;
  {
@@ -65,6 +66,7 @@ class <span class="Att">Counters</span> : public PrintOptAdapter&lt;Enum&gt;
    template &lt;class P,class Opt&gt;
    void print(P &amp;out,const Opt &amp;opt) const;
  };
+
 </pre>
 
 <p>
@@ -125,6 +127,14 @@ cur.diff(next);
 Finally, you can print the counters, to give names to indexes define <b>GetTextDesc(Enum)</b>.
 You may specify print options per <b>enum</b>. Only non-null counters are printed.
 </p>
+
+<pre>
+
+E1 = 5
+E2 = 1
+E3 = 15
+
+</pre>
 
 </body>
 

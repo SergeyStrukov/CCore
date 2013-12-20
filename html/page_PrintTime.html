@@ -46,6 +46,7 @@ PrintTimeType&lt;UInt&gt; <span class="Att">PrintTime</span>(UInt value) { retur
 </p>
 
 <pre>
+
 template &lt;class UInt&gt;
 class <span class="Att">PrintTimeType</span>
  {
@@ -58,6 +59,7 @@ class <span class="Att">PrintTimeType</span>
    template &lt;class P&gt;
    void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>
@@ -66,7 +68,7 @@ Time is printed in the form <b>hh:mm:ss</b> or <b>dd:hh:mm:ss</b>.
 
 <pre>
 
-Printf(Con,"#;\n",PrintTime(1000));
+Printf(Con,"#;\n",PrintTime(1000u)); // 00:16:40
 
 </pre>
 

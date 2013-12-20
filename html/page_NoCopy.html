@@ -41,6 +41,7 @@ First of them is the typedef <b>NoCopy</b>.
 </p>
 
 <pre>
+
 /* struct NoCopyType */ 
 
 struct NoCopyType
@@ -55,6 +56,7 @@ struct NoCopyType
 /* type NoCopy */ 
  
 typedef NoCopyType <span class="Att">NoCopy</span>; 
+
 </pre>
 
 <p>
@@ -62,9 +64,11 @@ Use it as the base class in the class definition to make the class non-copyable:
 </p>
 
 <pre>
+
 class C : NoCopy
  {
  };
+
 </pre>
 
 <p>
@@ -72,6 +76,7 @@ Second is the template typedef <b>NoCopyBase</b>.
 </p>
 
 <pre>
+
 /* struct ImpNoCopyBase&lt;TT&gt; */
 
 template &lt;class ... TT&gt;
@@ -88,6 +93,7 @@ struct ImpNoCopyBase : TT ...
  
 template &lt;class ... TT&gt;
 using <span class="Att">NoCopyBase</span> = ImpNoCopyBase&lt;TT...&gt; ;
+
 </pre>
 
 <p>
@@ -95,9 +101,11 @@ Use it as the base class in the class definition to inherit a group of classes a
 </p>
 
 <pre>
+
 class D : NoCopyBase&lt;A,B,C&gt;
  {
  };
+
 </pre>
 
 <p>
@@ -105,6 +113,7 @@ Why do we need typedefs here? To deal with the following case:
 </p>
 
 <pre>
+
 class C : NoCopy
  {
  };
@@ -115,6 +124,7 @@ class D : C
    {
    };
  };
+
 </pre>
 
 </body>

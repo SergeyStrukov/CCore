@@ -34,10 +34,11 @@
 <b>ScanBit</b> is a "bit-array" class, designed for the quick bit scanning. It stores a bit array in the
 internal buffer, packed in some unsigned integral units. Logically, it is the array of bits. The length 
 is determined by the second template argument. The first argument is an <b>Algorithm Package</b>, it provides
-a set of functions for efficient implementation of the <b>ScanBit</b>. 
+a set of functions for the efficient implementation of the <b>ScanBit</b>. 
 </p>
 
 <pre>
+
 template &lt;class Algo,ulen Len&gt;
 class <span class="Att">ScanBit</span>
  {
@@ -61,10 +62,11 @@ class <span class="Att">ScanBit</span>
    
    ulen findMax(ulen ind) const; // max<=ind , if( not found ) return IndexLim;
  };
+
 </pre>
 
 <p>
-The default constructor clears all bit.
+The default constructor clears all bits.
 </p>
 
 <p>
@@ -100,10 +102,11 @@ If there is no such one, <b>IndexLim</b> is returned. The efficiency of this met
 <p>
 Two prepared <b>Algorithm Package</b>s for the <b>ScanBit</b> are provided: <b>ScanMSBitAlgo</b> and <b>ScanLSBitAlgo</b>.
 They are built, based on "quick" functions, provided by the target. They use different order of numbering bits in the unit.
-They <b>ScanUp/Down()</b> methods use the opposite <b>Quick::ScanMSBit/LSBit()</b> function calls, as shown below.
+They <b>ScanUp/ScanDown()</b> methods use the opposite <b>Quick::ScanMSBit/ScanLSBit()</b> function calls, as shown below.
 </p>
 
 <pre>
+
 struct <span class="Att">ScanMSBitAlgo</span>
  {
   typedef Quick::ScanUInt Unit;
@@ -128,6 +131,7 @@ struct <span class="Att">ScanMSBitAlgo</span>
 </pre>
 
 <pre>
+
 struct <span class="Att">ScanLSBitAlgo</span>
  {
   typedef Quick::ScanUInt Unit;
@@ -148,6 +152,7 @@ struct <span class="Att">ScanLSBitAlgo</span>
   
   static ulen ScanDown(Unit bit); // uses Quick::ScanMSBit()
  };
+
 </pre>
 
 </body>

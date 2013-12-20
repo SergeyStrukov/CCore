@@ -33,6 +33,7 @@
 <p><b>Nothing</b>, <b>Null</b>, <b>Empty</b>, <b>Default</b> &mdash; are <b>Word</b>s of the type <b>NothingType</b>.</p>
 
 <pre>
+
 /* words */ 
 
 enum NothingType 
@@ -42,26 +43,31 @@ enum NothingType
   <span class="Att">Empty</span>   = 0,
   <span class="Att">Default</span> = 0
  };
+
 </pre>
 
 <p>They can be used to define an implicit constructor of a class.</p>
 
 <pre>
+
 class C
  {
   public:
 
    C(NothingType) { .... }
  };
+
 </pre>
 
 <p>Objects of such classes can be constructed using one of these <b>Word</b>s:</p>
 
 <pre>
+
 C func()
  {
   return Empty; // explicit intention
  }
+
 </pre>
 
 </body>

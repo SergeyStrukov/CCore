@@ -35,6 +35,7 @@
 </p>
 
 <pre>
+
 class <span class="Att">MemAllocGuard</span> : NoCopy
  {
    void *mem;
@@ -52,6 +53,7 @@ class <span class="Att">MemAllocGuard</span> : NoCopy
    
    void * disarm() { return Replace_null(mem); } // take the ownership on the block
  };
+
 </pre>
 
 <p>

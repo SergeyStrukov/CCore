@@ -39,6 +39,7 @@ The <b>Partial class</b> <b>Fifo</b> implements a buffer fifo upon a provided bu
 <img src="Fifo.png" />
 
 <pre>
+
 template &lt;class T&gt;
 class <span class="Att">Fifo</span> : NoCopy
  {
@@ -79,6 +80,7 @@ class <span class="Att">Fifo</span> : NoCopy
     
    bool get_swap(T &obj);
  };
+
 </pre>
 
 <p>
@@ -103,7 +105,7 @@ Constructor builds a fifo in the initial empty state, the provided buffer will b
 
 <p>
 Keep in mind, that the buffer is not just a memory space. It is the <b>object</b> array. Some of these objects
-are the logical part of the fifo, but others are unused. It is nothing, if the type <b>T</b> is <b>int</b> or any <b>Small Data Type</b>,
+are the logical part of the fifo, but other are unused. It is nothing, if the type <b>T</b> is <b>int</b> or any <b>Small Data Type</b>,
 but it would lead to a resource leak, if <b>T</b> is the <b>String</b>, for example.
 To deal with this problem, choose carefully an exact method of putting/getting objects into the fifo. 
 </p>
@@ -148,6 +150,7 @@ The class <b>FifoBuf</b> is an upgraded class <b>Fifo</b> with the embedded buff
 </p>
 
 <pre>
+
 template &lt;class T,ulen Len&gt;
 class <span class="Att">FifoBuf</span> : public Fifo&lt;T&gt;
  {
@@ -159,6 +162,7 @@ class <span class="Att">FifoBuf</span> : public Fifo&lt;T&gt;
   
    ~FifoBuf() {}
  };
+
 </pre>
 
 <p>

@@ -31,15 +31,15 @@
 <p class="Files">Files <b>CCore/inc/Crc.h</b> <b>CCore/src/Crc.cpp</b></p>
 
 <p>
-There are three Crc classes: <b>Crc16</b>, <b>Crc24</b>, <b>Crc32</b> to calculate a Crc value of a byte sequence.
-Technically, Crc is a polynomial division reminder. It is used to control sudden errors in a byte stream.
-There are 3 popular and standard such Crc, widely used in IT. We call them Crc16, Crc24 and Crc32 by the number of output
+There are three Crc classes: <b>Crc16</b>, <b>Crc24</b>, <b>Crc32</b> to calculate a CRC value of a byte sequence.
+Technically, CRC is a polynomial division reminder. It is used to control sudden errors in a byte stream.
+There are 3 popular and standard such CRC, widely used in IT. We call them Crc16, Crc24 and Crc32 by the number of output
 bits. In practical applications they are used with some adjustments, i.e. the byte sequence is extended with some start
-sequence in order to calculate its Crc.
+sequence in order to calculate its CRC.
 </p>
 
 <p>
-<b>CCore</b> uses a generic implementation of Crc based on lookup tables. So <b>Crc16</b>, <b>Crc24</b>, <b>Crc32</b> are
+<b>CCore</b> uses a generic implementation of CRC based on lookup tables. So <b>Crc16</b>, <b>Crc24</b>, <b>Crc32</b> are
 instantiations of the generic <b>CrcAccumulator</b> class, parametrized by the <b>Algorithm Package</b>s
 <b>AlgoCrc16, AlgoCrc24, AlgoCrc32</b>:
 </p>
@@ -98,6 +98,7 @@ struct <span class="Att">AlgoCrc32</span>
 </p>
 
 <pre>
+
 template &lt;class Algo&gt;
 class <span class="Att">CrcAccumulator</span>
  {
