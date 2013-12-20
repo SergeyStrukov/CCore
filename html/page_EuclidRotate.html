@@ -37,7 +37,7 @@ and contains range rotation algorithms. The second template parameter is default
 
 <pre>
 
-template &lt;class R,class Algo=BaseRangeAlgo&lt;R&gt; &gt;
+template &lt;class R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
 struct <span class="Att">Algon::EuclidRotateAlgo</span> : Algo
  {
   static void Rotate(R r,LenType prefix,LenType suffix); // prefix+suffix == GetLen(r)

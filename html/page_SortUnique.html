@@ -38,9 +38,9 @@ Usually, the initial range is sorted first to make equal elements adjacent.
 </p>
 
 <p>
-<b>Algon::ApplyUniqueAlgo</b> is an <b>Algorithm Package</b>, parametrized by the generalized range type.
+<b>ApplyUniqueAlgo</b> is an <b>Algorithm Package</b>, parametrized by the generalized range type.
 The second template parameter is a base range algorithm package, 
-defaulted to the <b>Algon::BaseRangeAlgo&lt;R&gt;</b>. The <a href="page_FunctorType.html">Functor Init Pattern</a> is used
+defaulted to the <b>BaseRangeAlgo&lt;R&gt;</b>. The <a href="page_FunctorType.html">Functor Init Pattern</a> is used
 to apply functors.
 </p>
 
@@ -49,9 +49,6 @@ to apply functors.
 template &lt;class R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
 struct <span class="Att">Algon::ApplyUniqueAlgo</span> : Algo
  {
-  using Algo::GetPtr;
-  using Algo::GetPrefix;
- 
   template &lt;class FuncInit&gt;
   static void ApplyUnique(R r,FuncInit func_init);
   
