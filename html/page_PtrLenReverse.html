@@ -40,7 +40,7 @@ in its reverse representation. They are similar to <b>PtrLen</b> methods.
 <pre>
 
 template &lt;class T&gt;
-struct PtrLenReverse
+struct <span class="Att">PtrLenReverse</span>
  {
   T *ptr;
   ulen len;
@@ -65,6 +65,7 @@ But it's better to use the <b>RangeReverse()</b> and <b>RangeReverse_const()</b>
 </p>
 
 <pre>
+
   // constructors
   
   PtrLenReverse() : ptr(0),len(0) {}
@@ -84,6 +85,7 @@ The set of cursor methods:
 </p>
 
 <pre>
+
   // cursor
   
   ulen operator + () const { return len; } // get length
@@ -125,6 +127,7 @@ Methods <b>fit()</b> can be used to check the length of the range.
 </p>
 
 <pre>
+
   // fit
    
   bool fit(ulen length) const { return length<=len; }
@@ -144,6 +147,7 @@ You can select a desired part of the range using parts methods:
 </p>
 
 <pre>
+
   // parts
   
   static PtrLenReverse&lt;T&gt; MakeFrom(T *ptr,ulen len);
@@ -175,6 +179,7 @@ You can pick an element of the range based on its index:
 </p>
 
 <pre>
+
   // index access
   
   T & operator [] (ulen index) const;
@@ -194,10 +199,12 @@ The last method is required to support <b>range-based for</b> with the <b>PtrLen
 </p>
 
 <pre>
+
   // begin()/end() support
   
   bool operator != (PtrLenReverse&lt;T&gt; end) const { return len!=end.len; }
  };
+
 </pre>
 
 <h3>RangeReverse() and RangeReverse_const()</h3>
@@ -210,19 +217,19 @@ reverse range creation.
 <pre>
 
 template &lt;class T&gt; 
-PtrLenReverse&lt;T&gt; RangeReverse(PtrLenReverse&lt;T&gt; a);
+PtrLenReverse&lt;T&gt; <span class="Att">RangeReverse</span>(PtrLenReverse&lt;T&gt; a);
  
 template &lt;class T&gt; 
-PtrLenReverse&lt;T&gt; RangeReverse(PtrLen&lt;T&gt; a);
+PtrLenReverse&lt;T&gt; <span class="Att">RangeReverse</span>(PtrLen&lt;T&gt; a);
  
 template &lt;class T,ulen Len&gt; 
-PtrLenReverse&lt;T&gt; RangeReverse(T (&amp;buf)[Len]);
+PtrLenReverse&lt;T&gt; <span class="Att">RangeReverse</span>(T (&amp;buf)[Len]);
  
 template &lt;class T&gt; 
-PtrLenReverse&lt;T&gt; RangeReverse(T *ptr,ulen len);
+PtrLenReverse&lt;T&gt; <span class="Att">RangeReverse</span>(T *ptr,ulen len);
  
 template &lt;class T&gt; 
-PtrLenReverse&lt;T&gt; RangeReverse(T *ptr,T *lim);
+PtrLenReverse&lt;T&gt; <span class="Att">RangeReverse</span>(T *ptr,T *lim);
 
 </pre>
 
@@ -233,19 +240,19 @@ And the correspondent const-variants.
 <pre>
  
 template &lt;class T&gt; 
-PtrLenReverse&lt;const T&gt; RangeReverse_const(PtrLenReverse&lt;T&gt; a);
+PtrLenReverse&lt;const T&gt; <span class="Att">RangeReverse_const</span>(PtrLenReverse&lt;T&gt; a);
  
 template &lt;class T&gt; 
-PtrLenReverse&lt;const T&gt; RangeReverse_const(PtrLen&lt;T&gt; a);
+PtrLenReverse&lt;const T&gt; <span class="Att">RangeReverse_const</span>(PtrLen&lt;T&gt; a);
  
 template &lt;class T,ulen Len&gt; 
-PtrLenReverse&lt;const T&gt; RangeReverse_const(T (&amp;buf)[Len]);
+PtrLenReverse&lt;const T&gt; <span class="Att">RangeReverse_const</span>(T (&amp;buf)[Len]);
  
 template &lt;class T&gt; 
-PtrLenReverse&lt;const T&gt; RangeReverse_const(T *ptr,ulen len);
+PtrLenReverse&lt;const T&gt; <span class="Att">RangeReverse_const</span>(T *ptr,ulen len);
  
 template &lt;class T&gt; 
-PtrLenReverse&lt;const T&gt; RangeReverse_const(T *ptr,T *lim);
+PtrLenReverse&lt;const T&gt; <span class="Att">RangeReverse_const</span>(T *ptr,T *lim);
 
 </pre>
 
@@ -256,10 +263,10 @@ Following generic functions can be used with objects of types with the <b>Range 
 <pre>
 
 template &lt;class S&gt;
-auto RangeReverse(S &amp;&amp;src);
+auto <span class="Att">RangeReverse</span>(S &amp;&amp;src);
  
 template &lt;class S&gt;
-auto RangeReverse_const(const S &amp;src);
+auto <span class="Att">RangeReverse_const</span>(const S &amp;src);
 
 </pre>
 

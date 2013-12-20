@@ -38,6 +38,7 @@ containing inside the storage room for the object and the object pointer.
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct <span class="Att">InitExitObject</span>
  {
@@ -109,6 +110,7 @@ and access it:
   
   T * operator -> () const { return getPtr(); }
  };
+
 </pre>
 
 <h4>InitStorage</h4>
@@ -118,6 +120,7 @@ and access it:
 </p>
 
 <pre>
+
 template &lt;ulen Len&gt;
 struct <span class="Att">InitStorage</span>
  {
@@ -127,6 +130,7 @@ struct <span class="Att">InitStorage</span>
   
   Place&lt;void&gt; getPlace() { return PlaceAt(getMem()); }
  };
+
 </pre>
 
 <p>

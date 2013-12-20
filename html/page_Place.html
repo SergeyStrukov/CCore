@@ -83,8 +83,9 @@ inline const void * <span class="Att">PtrSub</span>(const void *ptr,ulen delta) 
 </p>
 
 <pre>
+
 template &lt;class Void&gt;
-class Place
+class <span class="Att">Place</span>
  {
    Void *ptr;
   
@@ -107,6 +108,7 @@ class Place
    template &lt;class T&gt;
    operator T * () const { return static_cast&lt;T *&gt;(ptr); }
  };
+
 </pre>
 
 <p>

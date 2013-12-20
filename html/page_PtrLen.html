@@ -47,7 +47,8 @@ Finally, empty range may have the base address equals null.
 Sometimes <b>Range</b> is considered more generally using idiom of iterator, but we focus on the 
 basic type of ranges, because of its practical importance. Basic ranges are the most efficient
 and convenient way of representation of a set of similar data, so it must be used whenever possible.
-The main advantages of basic ranges are: best loops, best sequential and random object access.
+The main advantages of basic ranges are: best loops, best sequential and random object access, best cache
+locality.
 </p>
 
 <p>
@@ -132,11 +133,13 @@ the <b>operator !=</b> is used.
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct <span class="Att">PtrLen</span>
  {
   T *ptr;
   ulen len;
+
 </pre>
 
 <p>
@@ -390,7 +393,7 @@ You can pick an element of the range based on its index:
 </pre>
 
 <p>
-The following set of methods perform basic range operations:
+The following set of methods performs basic range operations:
 </p>
 
 <pre>
@@ -445,6 +448,7 @@ The last method is required to support <b>range-based for</b> with the <b>PtrLen
 </p>
 
 <pre>
+
 struct <span class="Att">StrLen</span> : PtrLen&lt;const char&gt;
  {
   // constructors
@@ -463,6 +467,7 @@ struct <span class="Att">StrLen</span> : PtrLen&lt;const char&gt;
   
   StrLen(const char *str,ulen len) : PtrLen&lt;const char&gt;(str,len) {}
  };
+
 </pre>
 
 <p>
@@ -480,9 +485,9 @@ The implicit encoding string length with zero termination was a language design 
 To perform string operations you have to know its length. So each time you will have to calculate it.
 It may lead to quadratic time algorithms instead of linear time if you are not steady enough.
 But the most goodless thing is you cannot select a substring from a zero-terminated string:
-it is not a zero-terminated. So you have to allocate memory and do copy!
+it is not a zero-terminated! So you have to allocate memory and do copy!
 In <b>CCore</b> we avoid it converting zero-terminated strings into <b>StrLen</b>. So we calculate
-zero-terminated string length only one time.
+zero-terminated string length only one time and then use it everywhere.
 </p>
 
 <h3>Range() and Range_const()</h3>
@@ -562,6 +567,7 @@ They are applicable to objects of types with the <b>Range Access Interface</b>:
 </p>
 
 <pre>
+
 class C
  {
   public:
@@ -576,6 +582,7 @@ class C
    
    ulen getLen() const;
  };
+
 </pre>
 
 <h3>Range and range-based for</h3>
@@ -632,7 +639,7 @@ for(auto r=Range(data); +r ;++r) { .... } // *r instead of obj
 
 <p>
 Sometimes you need to do something more complicated than merely run through a range. In such cases use
-the range loops instead of <b>range-based for</b>:
+range loops instead of <b>range-based for</b>:
 </p>
 
 <pre>
@@ -667,13 +674,13 @@ or the byte range.
 <pre>
 
 template &lt;class T&gt;
-T * MutatePtr(void *ptr);
+T * <span class="Att">MutatePtr</span>(void *ptr);
 
 template &lt;class T&gt;
-T * MutatePtr(const void *ptr);
+T * <span class="Att">MutatePtr</span>(const void *ptr);
 
 template &lt;class T,class S&gt;
-PtrLen&lt;T&gt; Mutate(PtrLen&lt;S&gt; a);
+PtrLen&lt;T&gt; <span class="Att">Mutate</span>(PtrLen&lt;S&gt; a);
 
 </pre>
 

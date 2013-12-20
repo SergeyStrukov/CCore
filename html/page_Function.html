@@ -36,6 +36,7 @@
 </p>
 
 <pre>
+
 template &lt;class R,class ... AA&gt;
 class <span class="Att">Function</span>&lt;R (AA...)&gt;
  {
@@ -65,6 +66,7 @@ class <span class="Att">Function</span>&lt;R (AA...)&gt;
    template &lt;class ... TT&gt;
    R operator () (TT && ... tt); // do call
  };
+
 </pre>
 
 <p>
@@ -74,11 +76,13 @@ control in the <b>Function</b>. The object type must be derived from the <b>Func
 </p>
 
 <pre>
+
 struct <span class="Att">Funchor</span>
  {
   template &lt;class T,class R,class ... AA&gt;
   static Function&lt;R (AA...)&gt; FunctionOf(T *obj,R (T::*method)(AA...)); 
  };
+
 </pre>
 
 <p>
@@ -100,6 +104,7 @@ The following pattern is used in <b>CCore</b> to work with <b>Function</b>s:
 </p>
 
 <pre>
+
 class C : public Funchor
  {
   public:
@@ -108,6 +113,7 @@ class C : public Funchor
 
    Function&lt;void (void)&gt; function_method() { return FunctionOf(this,&C::method); }
  };
+
 </pre>
 
 <p>

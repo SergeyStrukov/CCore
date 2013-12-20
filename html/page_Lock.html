@@ -33,6 +33,7 @@
 <p><b>LockObject</b> is a simple class, implementing the scope lock pattern:</p>
 
 <pre>
+
 template &lt;class T&gt;
 class <span class="Att">LockObject</span> : NoCopy
  {
@@ -44,6 +45,7 @@ class <span class="Att">LockObject</span> : NoCopy
    
    ~LockObject() { obj.unlock(); }
  };
+
 </pre>
 
 <p>
@@ -52,6 +54,7 @@ to "lock" this object for a scope duration:
 </p>
 
 <pre>
+
 class C
  {
   public:
@@ -73,6 +76,7 @@ C obj;
 
  ...
 }
+
 </pre>
 
 </body>
