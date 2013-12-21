@@ -94,6 +94,7 @@ The most direct way: define in the class definition the method template <b>print
 </p>
 
 <pre>
+
 class C
  {
   public:
@@ -104,6 +105,7 @@ class C
      ....
     }
  };
+
 </pre>
 
 <p>
@@ -111,6 +113,7 @@ If you need printing options do like this:
 </p>
 
 <pre>
+
 class C
  {
   public:
@@ -134,6 +137,7 @@ class C
      ....
     }
  };
+
 </pre>
 
 <p>
@@ -141,12 +145,14 @@ The second way is to specify a printing proxy type:
 </p>
 
 <pre>
+
 class C
  {
   public:
 
    typedef ... PrintProxyType;
  };
+
 </pre>
 
 <p>
@@ -158,6 +164,7 @@ For a non-class type you can define a function <b>GetTextDesc()</b>:
 </p>
 
 <pre>
+
 enum E
  {
   E1,
@@ -166,6 +173,7 @@ enum E
  };
 
 const char * GetTextDesc(E e);
+
 </pre>
 
 <p>
@@ -209,7 +217,7 @@ struct S
   ....
  };
 
-}
+} // namespace App
 
 namespace CCore {
 
@@ -220,7 +228,7 @@ struct PrintProxy&lt;App::S&gt;
   typedef .... OptType;
  };
 
-}
+} // namespace CCore
 
 </pre>
 
@@ -250,12 +258,14 @@ The type of the output device object must be ether output device class or define
 </p>
 
 <pre>
+
 class POut
  {
   public:
 
    typedef .... PrintOutType;
  };
+
 </pre>
 
 <p>
@@ -263,6 +273,7 @@ Or using specialization:
 </p>
 
 <pre>
+
 class POut;
 
 template &lt;&gt;
@@ -270,13 +281,20 @@ struct <span class="Att">PrintOutAdapter</span>&lt;POut&gt;
  {
   typedef .... PrintOutType;
  };
+
 </pre>
 
 <p>
-Output device class must provide the following methods:
+A temporary printing adapter type object is created from the first argument of a printing function in such case
+and used to do the printing.
+</p>
+
+<p>
+Output device class must provide the following members:
 </p>
 
 <pre>
+
 class PDev
  {
   public:
@@ -293,6 +311,7 @@ class PDev
 
    void flush(); // flush the object
  };
+
 </pre>
 
 <p>
@@ -318,6 +337,7 @@ Printf(NoPrint,"this string goes nowhere");
 <p>The next type is <b>PrintBase</b>. It is designed to be a base class for actual output types.
 
 <pre>
+
 class <span class="Att">PrintBase</span> : NoCopy
  {
    ....
@@ -346,6 +366,7 @@ class <span class="Att">PrintBase</span> : NoCopy
    
    PrintBase &amp; guardOverflow();
  };
+
 </pre>
 
 <p>
@@ -353,6 +374,7 @@ When you derive a class from <b>PrintBase</b>, you have to implement two virtual
 </p>
 
 <pre>
+
 class PDev : public PrintBase
  {
   private:
@@ -373,11 +395,12 @@ class PDev : public PrintBase
 
    ~PDev() { flush(); .... }
  };
+
 </pre>
 
 <p>
 <b>do_provide()</b> is called to setup the printing buffer. This method may either return a buffer for printing, or return
-an empty buffer or throw an exception. If an empty buffer is returned, <b>PrintBase</b> will skip some output characters and
+an empty buffer or throw an exception. If the empty buffer is returned, <b>PrintBase</b> will skip some output characters and
 set the internal overflow flag. Derived class may clear this flag using <b>clearOverflowFlag()</b> method. You can check this 
 flag using <b>getOverflowFlag()</b> method or call the guard method <b>guardOverflow()</b> to throw an exception if 
 the overflow has happened. When <b>PrintBase</b> got a buffer it will fill it with output characters and flush sometimes 
@@ -392,6 +415,7 @@ The next class is <b>PrintBuf</b>. This class prints to the memory buffer.
 </p>
 
 <pre>
+
 class <span class="Att">PrintBuf</span> : public PrintBase
  {
    ....
@@ -410,6 +434,7 @@ class <span class="Att">PrintBuf</span> : public PrintBase
    
    const char * closeZStr() { return close().ptr; }
  };
+
 </pre>
 
 <p>
@@ -425,6 +450,7 @@ If you need only counting, you can use <b>PrintCount&lt;void&gt;</b>
 </p>
 
 <pre>
+
 template &lt;class P&gt;
 class <span class="Att">PrintCount</span> : NoCopy
  {
@@ -436,6 +462,7 @@ class <span class="Att">PrintCount</span> : NoCopy
    
    ulen getCount() const { return count; }
  };
+
 </pre>
 
 <h3>Tuple printing</h3>
@@ -473,7 +500,7 @@ Printf(out,"a = #; b = #;\n",a,b);
 
 <p>
 The following types: <b>char *</b>, <b>const char *</b>, <b>char[N]</b>, <b>const char [N]</b>, <b>StrLen</b>, 
-are string-like types and printed as strings of characters using proxy class <b>StrPrint</b>. This class has a printing options,
+are string-like types and printed as strings of characters using the proxy class <b>StrPrint</b>. This class has a printing options,
 represented by the struct <b>StrPrintOpt</b>:
 </p>
 
@@ -534,6 +561,7 @@ To print the same character several times use the helper class <b>RepeatChar</b>
 </p>
 
 <pre>
+
 class <span class="Att">RepeatChar</span>
  {
    ulen count;
@@ -549,6 +577,7 @@ class <span class="Att">RepeatChar</span>
      out.put(ch,count);
     }
  };
+
 </pre>
 
 
@@ -563,10 +592,11 @@ Title looks like this:
 </pre>
 
 <p>
-The helper class <b>Title</b> can be used to print a title:
+The <b>Helper Class</b> <b>Title</b> can be used to print a title:
 </p>
 
 <pre>
+
 class <span class="Att">Title</span>
  {
    StrLen str;
@@ -580,6 +610,7 @@ class <span class="Att">Title</span>
    template &lt;class P&gt;
    void print(P &amp;out,PrintOptType opt) const;
  };
+
 </pre>
 
 <p>
@@ -587,6 +618,7 @@ And here is the <b>Title</b> printing options:
 </p>
 
 <pre>
+
 struct <span class="Att">TitlePrintOpt</span>
  {
   static const ulen Default_width  = 80  ;
@@ -612,6 +644,7 @@ struct <span class="Att">TitlePrintOpt</span>
   // [width=80][.off=3][border=-]
   //
  };
+
 </pre>
 
 <p>
@@ -631,6 +664,7 @@ It is printed by the helper class <b>TextDivider</b>:
 </p>
 
 <pre>
+
 class <span class="Att">TextDivider</span>
  {
   public:
@@ -642,6 +676,7 @@ class <span class="Att">TextDivider</span>
    template &lt;class P&gt;
    void print(P &amp;out,PrintOptType opt) const;
  };
+
 </pre>
 
 <p>
@@ -649,6 +684,7 @@ The following printing options can be used:
 </p>
 
 <pre>
+
 struct <span class="Att">TextDividerPrintOpt</span>
  {
   static const ulen Default_width  = TitlePrintOpt::Default_width  ;
@@ -671,6 +707,7 @@ struct <span class="Att">TextDividerPrintOpt</span>
   // [width=80][border=-]
   //
  };
+
 </pre>
 
 <p>
@@ -878,6 +915,7 @@ And here is the options:
 </p>
 
 <pre>
+
 struct <span class="Att">PrintDumpOptType</span>
  {
   static const ulen Default_line_len = 16 ;
@@ -899,6 +937,7 @@ struct <span class="Att">PrintDumpOptType</span>
   // [width=0][.line_len=16]
   //
  };
+
 </pre>
 
 <p>

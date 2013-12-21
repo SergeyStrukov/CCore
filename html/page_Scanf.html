@@ -49,10 +49,10 @@ Scanning is performed with the following scanning functions:
 <pre>
 
 template &lt;class S,class ... TT&gt;
-void <span class="Att">Scanf</span>(S &amp;&amp;inp,const char *format,TT &amp;&amp; ... tt) CCORE_NOINLINE ;
+void <span class="Att">Scanf</span>(S &amp;&amp;inp,const char *format,TT &amp;&amp; ... tt);
 
 template &lt;class S,class ... TT&gt;
-void <span class="Att">Scanobj</span>(S &amp;&amp;inp,TT &amp;&amp; ... tt) CCORE_NOINLINE ;
+void <span class="Att">Scanobj</span>(S &amp;&amp;inp,TT &amp;&amp; ... tt);
 
 </pre>
 
@@ -178,7 +178,7 @@ struct S
   ....
  };
 
-}
+} // namespace App
 
 namespace CCore {
 
@@ -189,7 +189,7 @@ struct ScanProxy&lt;App::S&gt;
   typedef .... OptType;
  };
 
-}
+} // namespace CCore
 
 </pre>
 
