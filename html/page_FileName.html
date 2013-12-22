@@ -30,6 +30,190 @@
 
 <p class="Files">Files <b>CCore/inc/FileName.h</b> <b>CCore/src/FileName.cpp</b></p>
 
+<p>
+<b>FileName</b> is a class, developed to deal with file names as required in standard handling of the
+directive <b>include</b>. It can be used with <a href="page_DDLEngine.html">DDL</a> 
+and <a href="page_DDL2Engine.html">DDL2</a> Engines.
+</p>
+
+<pre>
+
+class <span class="Att">FileName</span> : NoCopy
+ {
+   ....
+
+  public: 
+   
+   // constructors
+  
+   FileName();
+   
+   FileName(NothingType);
+  
+   explicit FileName(StrLen file_name);
+  
+   FileName(StrLen path,StrLen file_name);
+   
+   ~FileName();
+   
+   // methods
+   
+   bool operator + () const { return ok; }
+   
+   bool operator ! () const { return !ok; }
+  
+   StrLen getStr() const;
+  
+   StrLen getPath() const;
+   
+   StrLen getFile() const;
+   
+   template &lt;class P&gt;
+   void printPos(P &out,TextPos pos) { Putobj(out,getFile(),pos); }
+  
+   // swap/move objects
+  
+   void objSwap(FileName &obj);
+   
+   explicit FileName(ToMoveCtor&lt;FileName&gt; obj);
+   
+   FileName * objMove(Place&lt;void&gt; place);
+ };
+
+</pre>
+
+<p>
+A <b>FileName</b> object contains inside a normalized full file name. If the object is in the null state, 
+it contains empty string and useless.
+</p>
+
+<p>
+Below are some definitions.
+</p>
+
+<p>
+
+<b>extname</b> &mdash; non-empty file name, without <b>'/'</b>, <b>'\'</b>, <b>':'</b> characters, 
+may be special ( <b>“.”</b>, <b>“..”</b> ).
+
+</p>
+
+<p>
+
+<b>name</b> &mdash; a regular file name.
+
+</p>
+
+<p>
+General file name:
+</p>
+
+<pre>
+
+	(dev:)<sup>opt</sup>(/)<sup>opt</sup>(extname/)<sup>*</sup>name
+
+</pre>
+
+<p>
+Normalized file name:
+</p>
+
+<pre>
+
+	(dev:)<sup>opt</sup>(/)<sup>opt</sup>(name/)<sup>*</sup>name
+	(dev:)<sup>opt</sup>(../)<sup>1..</sup>(name/)<sup>*</sup>name
+
+</pre>
+
+<p>
+Absolute names:
+</p>
+
+<pre>
+
+	(dev:)<sup>opt</sup>/(name/)<sup>*</sup>name
+	dev:(name/)<sup>*</sup>name
+
+</pre>
+
+<p>
+Relative names:
+</p>
+
+<pre>
+
+	(name/)<sup>*</sup>name
+
+</pre>
+
+<p>
+Default constructor and Nothing-constructor create the null object.
+</p>
+
+<p>
+<b>operator + ()</b> returns true, if the object is not null.
+</p>
+
+<p>
+<b>operator ! ()</b> returns true, if the object is null.
+</p>
+
+<p>
+<b>getStr()</b> returns the full path.
+</p>
+
+<p>
+<b>getPath()</b> returns a path part, including trailing slash, if any.
+</p>
+
+<p>
+<b>getFile()</b> returns a file name part. 
+</p>
+
+<p>
+For example, if the full name is <b>"c:/dir/file_name.ext"</b>, then <b>getPath()</b> returns <b>"c:/dir/"</b> and
+<b>getFile()</b> returns <b>"file_name.ext"</b>.
+</p>
+
+<p>
+<b>printPos()</b> is a helper method, it prints the file name followed by the given text position.
+</p>
+
+<p>
+This class is swappable and movable.
+</p>
+
+<p>
+The main job this class is doing inside two non-trivial constructors. The first of them
+</p>
+
+<pre>
+
+   explicit FileName(StrLen file_name);
+
+</pre>
+
+<p>
+converts the given general file name into the normalized form. If the given name is bad the null object is created.
+Exception may be thrown if there is no enough memory.
+</p>
+
+<p>
+The second
+</p>
+
+<pre>
+
+   FileName(StrLen path,StrLen file_name);
+
+</pre>
+
+<p>
+prepares the normalized file name from the given path and the given general file name. If the given file name
+is absolute, it is normalized, but if it is relative, the given path is used to generate the full path.
+Again, if the given name is bad the null object is created. Exception may be thrown if there is no enough memory.
+<b>path</b> is expected to be the proper path part, like <b>getPath()</b> return value.
+</p>
 
 </body>
 
