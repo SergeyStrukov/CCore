@@ -30,6 +30,549 @@
 
 <p class="Files">Files <b>CCore/inc/StepEval.h</b> <b>CCore/src/StepEval.cpp</b></p>
 
+<p>
+<b>StepEval</b> is an execution machine. It executes a set of functional objects in some 
+undetermined order. But you may specify dependencies between these functors, aka evaluation steps. 
+You may also dynamically create new ones during execution.
+</p>
+
+<pre>
+
+template &lt;class Ctx&gt;
+class <span class="Att">StepEval</span> : public Ctx
+ {
+  public:
+
+   class Gate : public NoCopy  
+    {
+      ....
+
+     public:
+     
+      explicit Gate(StepEval *eval);
+      
+      ~Gate(); 
+      
+      template &lt;class FuncInit&gt;
+      RetStep&lt;FunctorTypeOf&lt;FuncInit&gt; &gt; createStep(FuncInit func_init,StepId dep={0}); // dep executes after
+      
+      void delay(StepId dep);
+      
+      void open();
+      
+      void boost();
+    };
+
+   template &lt;class ... SS&gt;
+   explicit StepEval(SS &amp;&amp; ... ss) : Ctx( std::forward&lt;SS&gt;(ss)... ) {}
+   
+   ~StepEval();
+   
+   Gate * createGate(); 
+   
+   template &lt;class OpenFuncInit,class FuncInit&gt;
+   Gate * createGate(OpenFuncInit openfunc_init,FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   RetStep&lt;FunctorTypeOf&lt;FuncInit&gt; &gt; createStep(FuncInit func_init,StepId dep={0}); // dep executes after
+   
+   void run();
+ };
+
+template &lt;class Ctx&gt;
+using <span class="Att">StepGate</span> = typename StepEval&lt;Ctx&gt;::Gate ;
+
+</pre>
+
+<p>
+<b>StepEval</b> is a template, it inherits its template parameter &mdash; <b>Ctx</b>, which is some 
+execution context. <b>StepEval</b> constructor forwards its arguments to <b>Ctx</b> constructor.  
+The only requirement for <b>Ctx</b> is it must provide the method <b>getAlloc()</b>. This method must return
+some <a href="page_NewDelete.html">alloc class</a> object to be used for functor space allocation/deallocation.
+You may use the default class <b>DefaultHeapAlloc</b>.
+</p>
+
+<pre>
+
+class Ctx 
+ {
+   ....
+
+  public:
+
+   DefaultHeapAlloc getAlloc() { return DefaultHeapAlloc(); }
+ };
+
+</pre>
+
+<p>
+Once you create an instance of the <b>StepEval</b> class, you may create some steps for execution
+using the method <b>createStep()</b>. The first argument is a <a href="page_FunctorType.html">functor init</a> object.
+The optional second argument is an id of the dependent step. <b>StepEval</b> ensures, that the dependent
+step is executed after, in particular, the correspondent functor exists during the call of the
+prerequisite step. Each step has an id of the transparent type <b>StepId</b>. The method <b>createStep()</b>
+returns the object of the type <b>RetStep</b> with two fields: the reference to the created functor <b>obj</b>
+and the step id <b>id</b>. You may use this id in further calls of the <b>createStep()</b>, you may
+also use the reference to the functor in prerequisite steps to supply some arguments, for example.
+</p>
+
+<pre>
+
+/* struct StepId */
+
+struct <span class="Att">StepId</span>
+ {
+  void *ptr; 
+ };
+
+/* struct RetStep&lt;T&gt; */
+
+template &lt;class T&gt;
+struct <span class="Att">RetStep</span>
+ {
+  T &amp;obj;
+  StepId id;
+
+  RetStep(T &amp;obj_,StepId id_) : obj(obj_),id(id_) {}
+ };
+
+</pre>
+
+<p>
+The method <b>run()</b> executes steps. Some steps may remain not executed due to cyclic dependencies
+on gates. A step execution is the call of the correspondent functor.
+The functor may have one of three forms:
+</p>
+
+<pre>
+
+class Functor1
+ {
+  public:
+
+   ....
+
+   void operator () ();
+ };
+
+class Functor2
+ {
+  public:
+
+   ....
+
+   void operator () (StepEval&lt;Ctx&gt; &amp;eval);
+ };
+
+class Functor3
+ {
+  public:
+
+   ....
+
+   void operator () (StepEval&lt;Ctx&gt; &amp;eval,StepId dep);
+ };
+
+</pre>
+
+<p>
+In the third case the id of the dependent step is provided as the second argument.
+You may create additional steps with this id and these steps are executed before the dependent step.
+</p>
+
+<p>
+Once step is executed it is destroyed. All remaining steps are destroyed by the <b>StepEval</b> destructor.
+For such steps the special method <b>final()</b> is called by the method <b>run()</b>, if it is defined
+in the correspondent class:
+</p>
+
+<pre>
+
+class Functor_final
+ {
+  public:
+
+   ....
+
+   void operator () ();
+
+   void final(StepEval&lt;Ctx&gt; &amp;eval);
+ };
+
+</pre>
+
+<p>
+<b>Gate</b> is an obstacle for the step execution. You may create a gate using methods <b>createGate()</b>.
+They are destroyed by the the <b>StepEval</b> destructor. The gate is closed right after the creation.
+You may open it by the method <b>open()</b>. Any gated steps are not executed while the gate is closed.
+</p>
+
+<p>
+You may create a gated step using the method <b>createStep()</b> <u>of the gate</u>.
+You may also delay execution of the existing step by the method <b>delay()</b>.
+</p>
+
+<p>
+There are two methods <b>createGate()</b>. The first of them has no arguments and creates a normal gate.
+The second has two arguments. Both are functor initializers. This gate has an associated step, which
+automatically opens the gate after been executed. The first argument initialize this step. 
+The second argument initializes a prerequisite step. This prerequisite can be "boosted" using the method 
+<b>boost()</b> of the gate. Normally you don't need to do it
+manually. Gate is boosted automatically once it is closed and a gated step is created.
+</p>
+
+<h2>An example</h2>
+
+<p>
+The test <b>test0087.StepEval.cpp</b> can be used to better understand how to work with <b>StepEval</b>
+and what is it good for. In this test we create a set of variables and associated expressions 
+and evaluate them. An expression can refer to another variable, so the order of evaluation is 
+hardly determined in general case. And cyclic dependencies can make this task impossible.
+</p>
+
+<p>
+An expression is represented by the structure <b>Expr</b>, these structures forms a polymorphic linked
+set using the <a href="page_AnyPtr.html">AnyPtr</a>.
+</p>
+
+<pre>
+
+struct Expr : NoCopy
+ {
+  struct Const
+   {
+    int value;
+    
+    explicit Const(int value_) : value(value_) {}
+   };
+  
+  struct Var
+   {
+    ulen index;
+    
+    explicit Var(ulen index_) : index(index_) {}
+   };
+  
+  struct Neg
+   {
+    Expr *arg;
+    
+    explicit Neg(Expr *arg_) : arg(arg_) {}
+   };
+  
+  struct Add
+   {
+    Expr *arg1;
+    Expr *arg2;
+    
+    Add(Expr *arg1_,Expr *arg2_) : arg1(arg1_),arg2(arg2_) {}
+   };
+  
+  struct Mul
+   {
+    Expr *arg1;
+    Expr *arg2;
+    
+    Mul(Expr *arg1_,Expr *arg2_) : arg1(arg1_),arg2(arg2_) {}
+   };
+  
+  AnyPtr&lt;Const,Var,Neg,Add,Mul&gt; ptr;
+
+  ....
+ };
+
+</pre>
+
+<p>
+The field <b>ptr</b> points to one of the inner structures: <b>Const</b>, <b>Var</b>, <b>Neg</b>, 
+<b>Add</b> and <b>Mul</b>. These structures represents correspondent operations and contains arguments.
+</p>
+
+<p>
+The variable set is represented by an array in the class <b>Context</b>. Elements of this array
+are structure. The field <b>value</b> is the value of the variable and must be evaluated from the
+expression, pointed by another field <b>expr</b>. The third field <b>gate</b> points
+to the <b>StepEval</b> gate, this gate is opened once the correspondent variable is evaluated and 
+the value is recorded.
+</p>
+
+<pre>
+
+class Context : NoCopy
+ {
+   ....
+
+   using Gate = StepGate&lt;ContextPtr&gt; ;
+   
+   struct Var : NoCopy , NoThrowFlagsBase
+    {
+     int value;
+     Expr *expr;
+     Gate *gate;
+     
+     Var() : value(0),expr(0),gate(0) {}
+    };
+   
+   DynArray&lt;Var&gt; table;
+
+   ....
+
+  private: 
+   
+   using Eval = StepEval&lt;ContextPtr&gt; ;
+
+   struct NegStep;
+   
+   struct AddStep;
+   
+   struct MulStep;
+   
+   struct GetVarStep;
+   
+   struct ExprStep;
+   
+   struct GateFinalStep;
+
+   ....
+ };
+
+</pre>
+
+<p>
+The family of inner structures <b>NegStep</b>, ... is used to perform evaluation steps. Each of them contains
+fields for operation arguments and reference where the result will be stored.
+</p>
+
+<pre>
+
+struct Context::NegStep
+ {
+  int arg;
+  int &amp;ret;
+  
+  explicit NegStep(int &amp;ret_) : ret(ret_) {}
+  
+  void operator () (Eval &amp;eval)
+   {
+    Printf(Trace,"- #;\n",arg);
+    
+    ret=-arg;
+    
+    eval->count++;
+   }
+ };
+
+struct Context::AddStep
+ {
+  int arg1;
+  int arg2;
+  int &amp;ret;
+  
+  explicit AddStep(int &amp;ret_) : ret(ret_) {}
+  
+  void operator () (Eval &amp;eval)
+   {
+    Printf(Trace,"#; + #;\n",arg1,arg2);
+    
+    ret=arg1+arg2;
+    
+    eval->count++;
+   }
+ };
+
+struct Context::MulStep
+ {
+  int arg1;
+  int arg2;
+  int &amp;ret;
+  
+  explicit MulStep(int &amp;ret_) : ret(ret_) {}
+  
+  void operator () (Eval &amp;eval)
+   {
+    Printf(Trace,"#; * #;\n",arg1,arg2);
+    
+    ret=arg1*arg2;
+    
+    eval->count++;
+   }
+ };
+
+struct Context::GetVarStep
+ {
+  const int &amp;var;
+  int &amp;ret;
+  
+  GetVarStep(const int &amp;var_,int &amp;ret_) : var(var_),ret(ret_) {}
+  
+  void operator () (Eval &amp;eval)
+   {
+    Printf(Trace,"[] #;\n",var);
+    
+    ret=var;
+    
+    eval->count++;
+   }
+ };
+
+</pre>
+
+<p>
+These steps are simple: they take arguments, perform the required arithmetic operation and store
+the result (plus some extra actions).
+</p>
+
+<pre>
+
+struct Context::ExprStep
+ {
+  Expr *expr;
+  int &amp;ret;
+  
+  ExprStep(Expr *expr_,int &amp;ret_) : expr(expr_),ret(ret_) {}
+  
+  void operator () (Eval &amp;,StepId,Expr::Const *ptr)
+   {
+    Printf(Trace,"#;\n",ptr->value);
+    
+    ret=ptr->value;
+   }
+  
+  void operator () (Eval &amp;eval,StepId dep,Expr::Var *ptr)
+   {
+    ulen index=ptr->index;
+    Var &var=eval->table[index];
+    
+    var.gate->createStep(GetVarStep(var.value,ret),dep);
+   }
+  
+  void operator () (Eval &amp;eval,StepId dep,Expr::Neg *ptr)
+   {
+    auto step=eval.createStep(NegStep(ret),dep);
+    
+    eval.createStep(ExprStep(ptr->arg,step.obj.arg),step.id);
+   }
+  
+  void operator () (Eval &amp;eval,StepId dep,Expr::Add *ptr)
+   {
+    auto step=eval.createStep(AddStep(ret),dep);
+    
+    eval.createStep(ExprStep(ptr->arg1,step.obj.arg1),step.id);
+    eval.createStep(ExprStep(ptr->arg2,step.obj.arg2),step.id);
+   }
+  
+  void operator () (Eval &amp;eval,StepId dep,Expr::Mul *ptr)
+   {
+    auto step=eval.createStep(MulStep(ret),dep);
+    
+    eval.createStep(ExprStep(ptr->arg1,step.obj.arg1),step.id);
+    eval.createStep(ExprStep(ptr->arg2,step.obj.arg2),step.id);
+   }
+  
+  void operator () (Eval &amp;eval,StepId dep)
+   {
+    ElaborateAnyPtr(*this,eval,dep,expr->ptr);
+    
+    eval->count++;
+   }
+ };
+
+</pre>
+
+<p>
+This step is more complicated. It takes the given expression, determines the exact type of it and creates
+required substeps to evaluate it. For example, to evaluate the <b>Add</b> expression three steps are created:
+</p>
+
+<pre>
+
+  void operator () (Eval &amp;eval,StepId dep,Expr::Add *ptr)
+   {
+    auto step=eval.createStep(AddStep(ret),dep);
+    
+    eval.createStep(ExprStep(ptr->arg1,step.obj.arg1),step.id);
+    eval.createStep(ExprStep(ptr->arg2,step.obj.arg2),step.id);
+   }
+
+</pre>
+
+<p>
+First, the step <b>AddStep</b> is created. The dependent step is propagated to it. Then two steps are created
+to evaluate arguments. These steps have the <b>AddStep</b> as the dependent step, so they may use the
+correspondent functor object to store their results. 
+</p>
+
+<p>
+The <b>GetVarStep</b> step is created gated for the 
+correspondent variable gate, so it is performed after this variable gets a value. 
+</p>
+
+<pre>
+
+struct Context::GateFinalStep
+ {
+  ulen index;
+  
+  explicit GateFinalStep(ulen index_) : index(index_) {}
+  
+  void operator () (Eval &amp;eval)
+   {
+    Printf(Trace,"[#;]\n",index);
+    
+    eval->count++;
+   }
+  
+  void final(Eval &amp;)
+   {
+    Printf(Con,"Cyclic variable dependency #;\n",index);
+   }
+ };
+
+</pre>
+
+<p>
+This step is created per each variable as the opening gate step. It does nothing particular and contains
+the method <b>final()</b> to report about cyclic dependency.
+</p>
+
+<pre>
+
+void Context::eval()
+ {
+  Eval step_eval(this);
+  
+  ulen len=table.getLen();
+  
+  DynArray&lt;ulen&gt; order(len);
+  
+  for(ulen index=0; index&lt;len ;index++) order[index]=index;
+  
+  for(ulen index=0; index+1&lt;len ;index++)
+    {
+     ulen i=random.select_uint&lt;ulen&gt;(index,len-1);
+     
+     if( i!=index ) Swap(order[index],order[i]);
+    }
+  
+  for(ulen index=0; index&lt;len ;index++) 
+    {
+     ulen i=order[index];
+     
+     Var &amp;var=table[i];
+     
+     var.gate=step_eval.createGate(GateFinalStep(i),ExprStep(var.expr,var.value));
+    }
+  
+  step_eval.run();
+ }
+
+</pre>
+
+<p>
+And here is the evaluation process. This method creates the <b>StepEval</b> object, then
+per each variable the gate is created with two associated steps: expression step to
+evaluate the variable and the <b>GateFinalStep</b>. Then the method <b>run()</b> does the job.
+</p>
 
 </body>
 

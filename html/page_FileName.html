@@ -69,11 +69,11 @@ class <span class="Att">FileName</span> : NoCopy
    StrLen getFile() const;
    
    template &lt;class P&gt;
-   void printPos(P &out,TextPos pos) { Putobj(out,getFile(),pos); }
+   void printPos(P &amp;out,TextPos pos) { Putobj(out,getFile(),pos); }
   
    // swap/move objects
   
-   void objSwap(FileName &obj);
+   void objSwap(FileName &amp;obj);
    
    explicit FileName(ToMoveCtor&lt;FileName&gt; obj);
    
