@@ -28,7 +28,93 @@
 
 <h2>Keywords</h2>
 
+<p>
+<b>Keywords</b> is a simple utility, which generate a text string recognizer from the given
+text string set. It is useful for the language development.
+</p>
 
+<pre>
+
+Keywords.exe &lt;input-file&gt; &lt;output-file&gt;
+
+</pre>
+
+<p>
+<b>Keywords</b> takes the required string set from the input file and place the generated code
+to the output file. The input file is a <b>DDL</b> file. It looks like this:
+</p>
+
+<pre>
+
+text[] Keywords=
+ {
+  "int",
+  "sint",
+  "uint",
+  "ulen",
+  
+  "sint8",
+  "sint16",
+  "sint32",
+  "sint64",
+  "uint8",
+  "uint16",
+  "uint32",
+  "uint64",
+  
+  "text",
+  "ip",
+  "struct",
+  "type",
+  "null",
+  "scope",
+  "include",
+  "const"
+ };
+
+</pre>
+
+<p>
+And the recognition code looks like this:
+</p>
+
+<pre>
+
+AtomClass Atom::GetWordClass(StrLen str)
+ {
+  if( !str ) return Atom_Name;
+
+  switch( str[0] )
+    {
+     case 'c' :
+      {
+       ++str;
+
+       if( str.len==4 && str[0]=='o' && str[1]=='n' && str[2]=='s' && str[3]=='t' ) return Atom_const; else return Atom_Name;
+      }
+
+     case 'i' :
+      {
+       ++str;
+
+       if( !str ) return Atom_Name;
+
+       ....
+
+      }
+
+     default: return Atom_Name;
+    }
+ }
+
+</pre>
+
+<p>
+It is the method body, with the argument of the type <b>StrLen</b> and the return value of the type <b>AtomClass</b>,
+which must be declared in your code as an <b>enum</b>. If the given string is not from the set, 
+the value <b>Atom_Name</b> is returned. Otherwise some <b>Atom_&lt;string&gt;</b> is returned, 
+if the argument equals <b>&lt;string&gt;</b>.
+</p>
 
 </body>
 

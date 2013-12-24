@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_DDL2.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.07
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> DDL2</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,56 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>DDL2 language</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p>
+<b>DDL2</b> is an extension of the <a href="page_DDL.html"><b>DDL</b> language</a>.
+Two additions has been made: 1) polymorphic pointers has been added, 2) a new class of names
+has been introduced, bounded at the point of usage.
+</p>
 
+<p>
+Polymorphic pointer may point to object of different types. It looks like:
+</p>
+
+<pre>
+
+type Ptr = {int,uint} * ; 
+
+int a = 1 ;
+
+uint b = 2 ;
+
+Ptr ptr_a = &a ; 
+
+Ptr ptr_b = &b ;
+
+</pre>
+
+<p>
+When you define a default value for the structure, you may use the name with question mark to refer a name,
+which is bounded with the definition at the point of usage.
+</p>
+
+<pre>
+
+struct S
+ {
+  int a = ?A + 10 ;
+ };
+
+int A = 100 ;
+
+S s = {} ; // s.a == 110
+
+scope Inner
+ {
+  int A = 200 ;
+
+  S s = {} ; // s.a == 210
+ }
+
+</pre>
 
 </body>
 
