@@ -1,5 +1,5 @@
 <!--
-/* page_XXX.html */
+/* page_DDL2Engine.html */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.07
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> XXX</title>
+ <title>CCore -> DDL2Engine</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,10 +26,150 @@
 
 <body>
 
-<h2>XXX</h2>
+<h2>DDL2Engine</h2>
 
-<p class="Files">Files <b>CCore/inc/XXX.h</b> <b>CCore/src/XXX.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/ddl2/DDL2Engine.h</b> <b>CCore/src/ddl2/DDL2Engine.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/ddl2/DDL2Map.h</b> <b>CCore/src/ddl2/DDL2Map.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/ddl2/DDL2TypedMap.h</b> <b>CCore/src/ddl2/DDL2TypeMap.cpp</b></p>
+
+<p class="Files">Subfolders <b>CCore/inc/ddl2</b> <b>CCore/src/ddl2</b></p>
+
+<h2>DDL2 implementation</h2>
+
+<p>
+The directory <b>ddl2</b> contains a <b>DDL2</b> implementation. It is contained in the namespace <b>DDL2</b>.
+To process a <b>DDL2</b> source there are two main classes: <b>TextEngine</b> and <b>FileEngine</b>.
+The most of content of this directory is a <b>DDL2</b> parser implementation and not needed to be used directly.
+</p>
+
+<p>
+Engines return the result of processing of the following type:
+</p>
+
+<pre>
+
+struct <span class="Att">EngineResult</span>
+ {
+  EvalResult *eval;
+  BodyNode *body;
+  
+  EngineResult() : eval(0),body(0) {}
+  
+  EngineResult(NothingType) : EngineResult() {}
+  
+  EngineResult(EvalResult *eval_,BodyNode *body_) : eval(eval_),body(body_) {}
+  
+  EvalResult * operator + () const { return eval; }
+  
+  bool operator ! () const { return !eval; }
+ };
+
+</pre>
+
+<p>
+It's a simple lightweight data structure with two fields. <b>eval</b> is a pointer to the <b>EvalResult</b>
+object, this object contains constant value table. <b>body</b> is a pointer to the root body node, this node
+represents the <b>DDL2</b> source. 
+</p>
+
+<pre>
+
+class <span class="Att">TextEngine</span> : NoCopy
+ {
+   ....
+
+  public: 
+   
+   TextEngine(PrintBase &msg,StrLen text,StrLen pretext={});
+   
+   ~TextEngine();
+   
+   EngineResult process();
+ };
+
+</pre>
+
+<p>
+The first constructor argument is a stream, where error messages will be printed to.
+The second is a text to be processed. 
+The third is a "pretext". It is included before the <b>text</b>.
+To do the job use the method <b>process()</b>.
+This engine does not support the file inclusion.
+This engine is one-shoot, it should be used to process one input once.
+Result objects life-time is ended with the engine life-time end.
+</p>
+
+<pre>
+
+template &lt;class FileName,class FileText&gt;
+class <span class="Att">FileEngine</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   static const ulen DefaultMaxFiles = 1000 ;
+   static const ulen DefaultMaxIncludes = 100 ;
+   static const ulen DefaultMaxFileLen = MaxULen ;
+  
+   explicit FileEngine(PrintBase &msg,ulen mem_cap=MaxULen,
+                                      ulen max_files=DefaultMaxFiles,
+                                      ulen max_inc=DefaultMaxIncludes,
+                                      ulen max_file_len=DefaultMaxFileLen);
+   
+   ~FileEngine();
+
+   EngineResult process(StrLen file_name,StrLen pretext);
+
+   EngineResult process(StrLen file_name);
+ };
+
+</pre>
+
+<p>
+<b>FileEngine</b> can process a complex input from a real or a virtual file system.
+Two template parameters controls the file name processing and the file name to the file content mapping.
+The first constructor argument is a error report stream. Others are different engine limits.
+The method <b>process()</b> does the job. The first argument is a file name with a <b>DDL2</b> text. 
+Additional files may be opened during include operations.
+The second argument is a "pretext". It is included before the file text.
+The method <b>process()</b> can be called multiple times for different files. Loaded files are cached.
+Result objects life-time is ended with the next call of <b>process()</b>, or with the engine life-time end.
+</p>
+
+<p>
+The first template parameter <b>FileName</b> is responsible for the file name manipulation.
+There is a <a href="page_FileName.html">default implementation of this class</a>. It is recommended
+to use this implementation.
+</p>
+
+<p>
+The second template parameter must do the same thing as the <b>FileToMem</b> class, i.g. load
+the file content into the memory.
+</p>
+
+<pre>
+
+class <span class="Att">FileText</span> : NoCopy
+ {
+  public:
+
+   FileText(StrLen file_name,ulen max_len);
+
+   ~FileText();
+
+   const uint8 * getPtr() const;
+
+   ulen getLen() const;
+ };
+
+</pre>
+
+<p>
+On <b>HCore</b> targets you can use the class <a href="page_FileToMem.html"><b>FileToMem</b></a> as the <b>FileText</b> template parameter.
+</p>
 
 </body>
 
