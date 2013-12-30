@@ -71,7 +71,8 @@ struct <span class="Att">EngineResult</span>
 <p>
 It's a simple lightweight data structure with two fields. <b>eval</b> is a pointer to the <b>EvalResult</b>
 object, this object contains constant value table. <b>body</b> is a pointer to the root body node, this node
-represents the <b>DDL2</b> source. 
+represents the <b>DDL2</b> source. Walking from this node you can examine the whole source content.
+If the processing has failed, the result is null.
 </p>
 
 <pre>
@@ -142,7 +143,7 @@ Result objects life-time is ended with the next call of <b>process()</b>, or wit
 <p>
 The first template parameter <b>FileName</b> is responsible for the file name manipulation.
 There is a <a href="page_FileName.html">default implementation of this class</a>. It is recommended
-to use this implementation.
+to use this implementation. Any other implementation must be interface compartible with this particular one.
 </p>
 
 <p>
@@ -169,6 +170,272 @@ class <span class="Att">FileText</span> : NoCopy
 
 <p>
 On <b>HCore</b> targets you can use the class <a href="page_FileToMem.html"><b>FileToMem</b></a> as the <b>FileText</b> template parameter.
+</p>
+
+<h3>EvalResult</h3>
+
+<pre>
+
+struct <span class="Att">EvalResult</span> : NoCopy
+ {
+  DynArray&lt;ConstResult&gt; const_table;
+  DynArray&lt;LenResult&gt; len_table;
+  
+  EvalResult() {}
+  
+  void erase();
+  
+  ulen_type getLen(const LenNode &amp;node) const;
+ };
+
+</pre>
+
+<p>
+<b>EvalResult</b> contains two tables. Each constant, defined in the <b>DDL2</b> source, 
+has an associated <b>ConstNode</b> object. This object contains the field <b>index</b>.
+The entry in the <b>const_table</b> with this index contains the calculated value of the constant.
+Each array type with an explicit array length has an associated <b>LenNode</b> object. 
+This object contains the field <b>index</b>.
+The entry in the <b>len_table</b> with this index contains the calculated value of the length.
+</p>
+
+<pre>
+
+struct <span class="Att">ConstResult</span> : NoThrowFlagsBase
+ {
+  TypeNode *type;
+  ConstNode *node;
+  Value value;
+  
+  void set(ConstNode *node,const Value &amp;value);
+
+  struct PrintOptType
+   {
+    EvalResult &amp;result;
+    
+    PrintOptType(EvalResult &amp;result_) : result(result_) {}
+   };
+  
+  template &lt;class P&gt;
+  void print(P &amp;out,PrintOptType opt) const;
+ };
+
+</pre>
+
+<p>
+<b>ConstResult</b> contains three fields. <b>type</b> is a <b>TypeNode</b> pointer,
+<b>node</b> is a <b>ConstNode</b> pointer, <b>value</b> is the calculated constant value.
+This class is printable. To print you must provide the option, bounded to the <b>EvalResult</b> object. 
+</p>
+
+<pre>
+
+struct <span class="Att">LenResult</span> : NoThrowFlagsBase
+ {
+  LenNode *node;
+  ulen_type value;
+  
+  void set(LenNode *node,ulen_type value);
+ 
+  template &lt;class P&gt;
+  void print(P &out) const;
+ };
+
+</pre>
+
+<p>
+<b>LenResult</b> contains two fields. <b>node</b> is a <b>LenNode</b> pointer,
+<b>value</b> is the calculated length value.
+</p>
+
+<pre>
+
+struct <span class="Att">LenNode</span>
+ {
+  ....
+
+  ulen index;
+ };
+
+struct <span class="Att">ConstNode</span>
+ {
+  ....
+
+  ScopeNode *parent;
+  ulen depth;
+
+  NameIdNode name;
+
+  ulen index;
+ };
+
+struct <span class="Att">ScopeNode</span>
+ {
+  ....
+
+  ScopeNode *parent;
+  
+  NameIdNode name;
+ };
+
+struct <span class="Att">NameIdNode</span>
+ {
+  ....
+
+  PosName name;
+  
+  StrLen getStr() const { return name.str; }
+ };
+
+</pre>
+
+<p>
+All <b>LenNode</b>s are zero-based indexed. The correspondent index is assigned to the <b>index</b> field.
+</p>
+
+<p>
+All <b>ConstNode</b>s are zero-based indexed. The correspondent index is assigned to the <b>index</b> field.
+<b>ConstNode</b> contains also the filed <b>name</b> with its name and the field <b>parent</b> with the
+pointer to the <b>ScopeNode</b> which it belongs to. <b>depth</b> is the scope depth. 
+</p>
+
+<p>
+<b>ScopeNode</b> has the field <b>parent</b> with the pointer to the <b>ScopeNode</b> which it belongs to.
+It also has the field <b>name</b> with the scope name.
+</p>
+
+<p>
+<b>NameIdNode</b> has the method <b>getStr()</b>. This method returns the name of the item.
+</p>
+
+<pre>
+
+union <span class="Att">Value</span>
+ {
+  imp_sint8  val_sint8;
+  imp_uint8  val_uint8;
+  imp_sint16 val_sint16;
+  imp_uint16 val_uint16;
+  imp_sint32 val_sint32;
+  imp_uint32 val_uint32;
+  imp_sint64 val_sint64;
+  imp_uint64 val_uint64;
+  
+  imp_sint   val_sint;
+  imp_uint   val_uint;
+  imp_ulen   val_ulen;
+  
+  SLen       val_slen;
+  Text       val_text;
+  IP         val_ip;
+  
+  Block      val_block;
+  Ptr        val_ptr;
+
+  // methods
+  
+  template &lt;class Type&gt;
+  Type get() const;
+  
+  template &lt;class Type&gt;
+  void set(Type val);
+ };
+
+</pre>
+
+<p>
+<b>Value</b> is a union of different types. The actual member depends on the value type.
+You may use <b>get&lt;Type&gt;()</b> and <b>set&lt;Type&gt;()</b> methods to get and set values.
+</p>
+
+<p>
+To represent integral types <b>imp_XXX</b> are used.
+</p>
+
+<pre>
+
+struct imp_XXX
+ {
+  XXX_integral_type value;
+
+  ....
+ };
+ 
+</pre>
+
+<p>
+Integral types are: <b>sint8, uint8, ...</b> and <b>sint_type, uint_type, ulen_type</b>.
+</p>
+
+<p>
+<b>Text</b> represents <b>text</b> type.
+</p>
+
+<pre>
+
+struct <span class="Att">Text</span>
+ {
+  StrLen str;
+  
+  // constructors
+  
+  Text() {}
+  
+  Text(StrLen str_) : str(str_) {}
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+<b>IP</b> represents <b>ip</b> type.
+</p>
+
+<pre>
+
+struct <span class="Att">IP</span>
+ {
+  uint8 address[4];
+  
+  // constructors
+  
+  IP() : address{} {}
+  
+  IP(uint8 a1,uint8 a2,uint8 a3,uint8 a4) : address{a1,a2,a3,a4} {}
+  
+  // methods
+  
+  uint32 toInt() const;
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+Non-sclalar values, like structures and arrays, are represented using the type <b>Block</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">Block</span>
+ {
+  PtrLen&lt;Value&gt; data;
+
+  ....
+ };
+
+</pre>
+
+<p>
+Pointer values are represented using the type <b>Ptr</b>.
 </p>
 
 </body>
