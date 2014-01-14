@@ -225,7 +225,8 @@ struct <span class="Att">ConstResult</span> : NoThrowFlagsBase
 <p>
 <b>ConstResult</b> contains three fields. <b>type</b> is a <b>TypeNode</b> pointer,
 <b>node</b> is a <b>ConstNode</b> pointer, <b>value</b> is the calculated constant value.
-This class is printable. To print you must provide the option, bounded to the <b>EvalResult</b> object. 
+This class is printable. To print you must provide the option, bounded to the original 
+<b>EvalResult</b> object. 
 </p>
 
 <pre>
@@ -365,6 +366,7 @@ struct imp_XXX
 
 <p>
 Integral types are: <b>sint8, uint8, ...</b> and <b>sint_type, uint_type, ulen_type</b>.
+Last three types are platform-dependent.
 </p>
 
 <p>
@@ -435,8 +437,449 @@ struct <span class="Att">Block</span>
 </pre>
 
 <p>
+Each member of the range <b>data</b> is the value of the correspondent element of aggregate.
+</p>
+
+<p>
 Pointer values are represented using the type <b>Ptr</b>.
 </p>
+
+<pre>
+
+struct <span class="Att">Ptr</span>
+ {
+  PtrNode *ptr_node;
+  bool null;
+
+  ....
+ };
+
+struct <span class="Att">PtrNode</span>
+ {
+  PtrNode *parent;
+  ulen_type index;
+  TypeNode *type;
+
+  ....
+ };
+
+</pre>
+
+<p>
+The field <b>ptr_node</b> points to the <b>PtrNode</b> object. This object contains three fileds.
+<b>type</b> describes the type of the pointee constant or sub-constant. 
+If this constant is a full constant, then <b>parent</b> is null and <b>index</b> is the <b>ConstNode</b> index.
+Otherwise <b>parent</b> represents the aggregate, the sub-constant is an element of, and <b>index</b> 
+is the aggregate element index.
+</p>
+
+<p>
+If the pointer is a null pointer of some type, then the field <b>null</b> is true and <b>ptr_node->type</b> 
+describes the type.
+</p>
+
+<pre>
+
+struct <span class="Att">TypeNode</span> : NoCopy
+ {
+  struct Base
+   {
+    enum Type
+     {
+      Type_none = 0,
+      
+      Type_sint,
+      Type_uint,
+      Type_ulen,
+      
+      Type_sint8,
+      Type_uint8,
+      Type_sint16,
+      Type_uint16,
+      Type_sint32,
+      Type_uint32,
+      Type_sint64,
+      Type_uint64,
+      
+      Type_text,
+      Type_ip,
+      
+      TypeIntMin=Type_sint,
+      TypeIntMax=Type_uint64
+     };
+    
+    Type type;
+    
+    explicit Base(Type type_) : type(type_) {}
+    
+    bool isIntegral() const { return type &amp;&amp; type&lt;Type_text ; }
+    
+    bool isText() const { return type==Type_text; }
+    
+    bool isIP() const { return type==Type_ip; }
+   };
+  
+  struct Ref
+   {
+    AnyPtr&lt;AliasNode,StructNode&gt; ptr;
+
+    ....
+   };
+  
+  struct Ptr
+   {
+    TypeNode *type_node;
+
+    ....
+   };
+  
+  struct PolyPtr
+   {
+    TypeList *type_list;
+    
+    ....
+   };
+  
+  struct Array
+   {
+    TypeNode *type_node;
+
+    ....
+   };
+  
+  struct ArrayLen
+   {
+    TypeNode *type_node;
+    
+    LenNode len_node;
+
+    ....
+   };
+  
+  struct Struct
+   {
+    StructNode *struct_node;
+
+    ....
+   };
+  
+  AnyPtr&lt;Base,Ref,Ptr,PolyPtr,Array,ArrayLen,Struct&gt; ptr;
+
+  .... 
+ };
+
+</pre>
+
+<p>
+<b>TypeNode</b> is used to represent a type. Different type classes are encoded using <b>AnyPtr</b>
+field <b>ptr</b>. For example, to encode the type <b>uint8</b>, <b>ptr</b> is initialized by the
+pointer to the object of type <b>TypeNode::Base</b> and the field <b>type</b> of this object
+has the value <b>TypeNode::Base::Type_uint8</b>.
+</p>
+
+<h2>Map</h2>
+
+<p>
+The best way to deal with a <b>DDL2</b> processing result is to map it into a block of memory.
+The class <b>Map</b> is to do it.
+</p>
+
+<pre>
+
+class <span class="Att">Map</span> : NoCopy
+ {
+  public:
+  
+   explicit Map(EngineResult result);
+  
+   ~Map();
+  
+   ulen getLen() const;
+  
+   void operator () (void *mem);
+  
+   bool findStruct(StrLen name,const TypeDesc &desc); 
+  
+   void * findConst(StrLen name,const TypeDesc &desc);
+ };
+
+</pre>
+
+<p>
+You create an object of the type <b>Map</b>, providing the <b>EngineResult</b> as the argument.
+Then you have to allocate an aligned block of memory of the length <b>getLen()</b>.
+Once it's done, use the overloaded <b>operator ()</b> to map data into this memory block.
+You may destroy the <b>Map</b> object and the <b>Engine</b> object at this point and keep the memory block
+as long as required. To find a particular constant you can use the method <b>findConst()</b> with 
+the constant name and type, encoded using the class <b>TypeDesc</b>. If there is no such constant or 
+types mismatch then null is returned. Otherwise the pointer to the mapped value is returned.
+</p>
+
+<pre>
+
+/* consts */
+
+enum <span class="Att">TypeTag</span>
+ {
+  // basic
+ 
+  TypeTag_sint,         // sint_type
+  TypeTag_uint,         // uint_type
+  TypeTag_ulen,         // ulen_type
+  
+  TypeTag_sint8,        // sint8
+  TypeTag_uint8,        // uint8
+  TypeTag_sint16,       // sint16
+  TypeTag_uint16,       // uint16
+  TypeTag_sint32,       // sint32
+  TypeTag_uint32,       // uint32
+  TypeTag_sint64,       // sint64
+  TypeTag_uint64,       // uint64
+  
+  TypeTag_text,         // StrLen
+  TypeTag_ip,           // uint32
+  
+  // other
+  
+  TypeTag_ptr,          // DataPtr
+  TypeTag_polyptr,      // TypedDataPtr
+  TypeTag_array,        // ArrayPtr -> elem[len]
+  TypeTag_array_len,    // elem[len]
+  TypeTag_array_getlen, // elem[len]
+  
+  TypeTag_struct,       // {field1,field2,...}
+  
+  // none
+  
+  TypeTag_none,
+  
+  // int
+  
+  TypeTag_int = TypeTag_sint 
+ };
+
+/* struct TypeDesc */
+
+struct <span class="Att">TypeDesc</span>
+ {
+  const TypeTag tag;
+  
+  explicit TypeDesc(const TypeTag tag_) : tag(tag_) {}
+ };
+
+</pre>
+
+<p>
+<b>TypeDesc</b>, in fact, is a base class for the family of derived classes, designed to represnt different
+type classes. The field <b>tag</b> has a describing type value, and derived classes has additional fields
+with extra information if required.
+</p>
+
+<pre>
+
+struct <span class="Att">TypeDesc_basic</span> : TypeDesc
+ {
+  explicit TypeDesc_basic(TypeTag tag);
+ };
+
+</pre>
+
+<p>
+This class is to represent basic types. You provide in constructor argument the correspondent type tag.
+</p>
+
+<pre>
+
+struct <span class="Att">TypeDesc_ptr</span> : TypeDesc
+ {
+  const TypeDesc &amp;type;
+  
+  explicit TypeDesc_ptr(const TypeDesc &amp;type);
+ };
+
+</pre>
+
+<p>
+This class reprensents single type pointers. You provide in constructor argument the type descriptor.
+</p>
+
+<pre>
+
+template &lt;ulen TypeCount&gt;
+struct <span class="Att">TypeDesc_polyptr</span> : TypeDesc_polyptr_base
+ {
+  const Type buf[TypeCount];
+ 
+  template &lt;class ... TT&gt;
+  explicit TypeDesc_polyptr(const TT &amp; ... tt);
+ };
+
+</pre>
+
+<p>
+This class represents polymorphic pointer types. You provide in constructor arguments a list of type 
+desciptors. <b>TypeCount</b> is a number of types.
+</p>
+
+<pre>
+
+struct <span class="Att">TypeDesc_array</span> : TypeDesc
+ {
+  const TypeDesc &amp;type;
+  
+  explicit TypeDesc_array(const TypeDesc &amp;type);
+ };
+
+</pre>
+
+<p>
+This class represents array types without length. You provide in constructor argument the element type descriptor.
+</p>
+
+<pre>
+
+struct <span class="Att">TypeDesc_array_len</span> : TypeDesc
+ {
+  const TypeDesc &amp;type;
+  const ulen_type len;
+  
+  TypeDesc_array_len(const TypeDesc &amp;type,ulen_type len);
+ };
+
+</pre>
+
+<p>
+This class represents array types with a given length. You provide in constructor arguments the element type descriptor
+and the array length.
+</p>
+
+<pre>
+
+struct <span class="Att">TypeDesc_array_getlen</span> : TypeDesc
+ {
+  const TypeDesc &type;
+  mutable ulen_type len; // filled by getConst() method
+  
+  explicit TypeDesc_array_getlen(const TypeDesc &amp;type);
+ };
+
+</pre>
+
+<p>
+This class represents array types with a given length. You provide in constructor argument the element type descriptor.
+But the actual array length is filled by the method <b>getConst()</b>.
+</p>
+
+<pre>
+
+template &lt;ulen FieldCount&gt;
+struct <span class="Att">TypeDesc_struct</span> : TypeDesc_struct_base
+ {
+  const Field buf[FieldCount];
+  
+  template &lt;class ... TT&gt;
+  explicit TypeDesc_struct(const TT &amp; ... tt);
+ };
+
+</pre>
+
+<p>
+This class represents structure types. You provide in constructor arguments a list of field type 
+desciptors. <b>FieldCount</b> is a number of fields.
+</p>
+
+<h3>DataPtr</h3>
+
+<p>
+<b>DataPtr</b> is a helper class. It is a "universal pointer" class. You may initialize an object
+of this type by the value, returned by the method <b>findConst()</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">DataPtr</span>
+ {
+  void *ptr;
+  
+  // constructors
+  
+  DataPtr() : ptr(0) {}
+  
+  DataPtr(void *ptr_) : ptr(ptr_) {}
+  
+  // methods
+  
+  void * operator + () const { return ptr; }
+  
+  bool operator ! () const { return !ptr; }
+  
+  struct Proxy
+   {
+    void *ptr;
+    
+    Proxy(void *ptr_) : ptr(ptr_) {}
+    
+    template &lt;class T&gt;
+    operator T() const;
+   };
+  
+  Proxy operator * () const { return ptr; }
+  
+  DataPtr elem(const TypeDesc_struct_base &amp;desc,ulen ind) const;
+  
+  DataPtr select(const TypeDesc_struct_base &amp;desc,ulen ind) const;
+  
+  struct ProxyRange
+   {
+    void *ptr;
+    ulen len;
+    
+    ProxyRange(void *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
+    
+    template &lt;class T&gt;
+    operator PtrLen&lt;T&gt;() const;
+   };
+  
+  ProxyRange range(ulen len) const { return ProxyRange(ptr,len); }
+ };
+
+</pre>
+
+<p>
+Then you may use this object to get the constant value. Use the <b>operator *</b> and assign the result to
+the variable of the proper type. You may find the proper type in the <b>TypeTag</b> definition above.
+</p>
+
+<p>
+You cannot use the <b>operator *</b>, however, if the constant type is a structure or an array with length.
+For structure types you may use the method <b>select()</b> to create a <b>DataPtr</b> to the desired field.
+The first argument is a structure type descriptor, the second is the zero-based field index. The desciptor
+contains inside some internal values, filled by the method <b>findConst()</b> to locate a particular field.
+</p>
+
+<p>
+If the constant type is an array without length, you can cast to the type <b>ArrayPtr</b>, but you can also
+use the type <b>PtrLen&lt;T&gt;</b>, where the type T corresponds to the element type. Again, you cannot do it,
+if the element type is a structure or an array with length.
+</p>
+
+<pre>
+
+struct <span class="Att">ArrayPtr</span>
+ {
+  void *ptr;
+  ulen len;
+
+  ArrayPtr() : ptr(0),len(0) {}
+  
+  ArrayPtr(void *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
+ };
+
+</pre>
+
+<h3>TypedDataPtr</h3>
+
+<h2>TypedMap</h2>
 
 </body>
 
