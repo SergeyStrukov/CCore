@@ -34,6 +34,10 @@
 
 <p class="Files">Files <b>CCore/inc/ddl2/DDL2TypedMap.h</b> <b>CCore/src/ddl2/DDL2TypeMap.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/ddl2/DDL2PlatformTypes.h</b> <b>CCore/src/ddl2/DDL2PlatformTypes.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/ddl2/DDL2MapTypes.h</b> <b>CCore/src/ddl2/DDL2MapTypes.cpp</b></p>
+
 <p class="Files">Subfolders <b>CCore/inc/ddl2</b> <b>CCore/src/ddl2</b></p>
 
 <h2>DDL2 implementation</h2>
@@ -588,6 +592,8 @@ The class <b>Map</b> is to do it.
 
 class <span class="Att">Map</span> : NoCopy
  {
+   ....
+
   public:
   
    explicit Map(EngineResult result);
@@ -758,7 +764,7 @@ and the array length.
 struct <span class="Att">TypeDesc_array_getlen</span> : TypeDesc
  {
   const TypeDesc &type;
-  mutable ulen_type len; // filled by getConst() method
+  mutable ulen_type len; // filled by findConst() method
   
   explicit TypeDesc_array_getlen(const TypeDesc &amp;type);
  };
@@ -767,7 +773,8 @@ struct <span class="Att">TypeDesc_array_getlen</span> : TypeDesc
 
 <p>
 This class represents array types with a given length. You provide in constructor argument the element type descriptor.
-But the actual array length is filled by the method <b>getConst()</b>.
+But the actual array length is filled by the method <b>findConst()</b>. This descriptor must participate
+in <b>findConst()</b> directly or indirectly to be used later.
 </p>
 
 <pre>
@@ -785,7 +792,9 @@ struct <span class="Att">TypeDesc_struct</span> : TypeDesc_struct_base
 
 <p>
 This class represents structure types. You provide in constructor arguments a list of field type 
-desciptors. <b>FieldCount</b> is a number of fields.
+desciptors. <b>FieldCount</b> is a number of fields. This structure has some internal fields, these fields
+are filled by the method <b>findConst()</b>. This descriptor must participate
+in <b>findConst()</b> directly or indirectly to be used later.
 </p>
 
 <h3>DataPtr</h3>
@@ -877,9 +886,573 @@ struct <span class="Att">ArrayPtr</span>
 
 </pre>
 
+<p>
+This structure holds a pointer to the first element of the array and the number of the array elements.
+You may initialize an object of type <b>DataPtr</b> from this pointer.
+</p>
+
+<p>
+If a <b>DataPtr</b> object corresponds to an array with length, you may use the method <b>range()</b>
+to build a <b>PtrLen&lt;T&gt;</b> object to access array elements. Just cast the return value to the
+proper range type. The element type cannot be a structure or array with length in this case.
+</p>
+
+<p>
+To deal with an array of structures, use the method <b>elem()</b>. It returns a pointer to the
+element with the given index. You must provide the structure descriptor.
+</p>
+
 <h3>TypedDataPtr</h3>
 
+<p>
+This class is used to deal with polymorphic pointers. It inherits the type <b>DataPtr</b> and
+has the additional field <b>type</b>. The value of this field is a 1-based index of the pointer type
+from the type list. It is zero if the pointer is a typeless null.
+</p>
+
+<pre>
+
+struct <span class="Att">TypedDataPtr</span> : DataPtr
+ {
+  ulen type; // 1-based type index
+  
+  // constructors
+  
+  TypedDataPtr() : type(0) {}
+  
+  TypedDataPtr(void *ptr,ulen type_) : DataPtr(ptr),type(type_) {}
+ };
+
+</pre>
+
 <h2>TypedMap</h2>
+
+<p>
+The most convenient way to map <b>DDL2</b> data is the class <b>TypedMap</b>. But with this class
+you are bounded by the given set of <b>DDL2</b> structure types. These type set is represented by 
+the template parameter <b>TypeSet</b>. You should use the utility <a href="page_DDL2TypeSet.html">DDL2TypeSet</a> 
+to generate the definition of this class from the <b>DDL2</b> source.
+</p>
+
+<pre>
+
+template &lt;class TypeSet&gt;
+class <span class="Att">TypedMap</span> : NoCopy
+ {
+   ....
+
+  public:
+   
+   explicit TypedMap(EngineResult result);
+   
+   ~TypedMap();
+   
+   ulen getLen() const { return total; }
+   
+   void operator () (void *mem);
+   
+   template &lt;class T&gt;
+   T * findConst(StrLen name);
+   
+   template &lt;class T&gt;
+   T takeConst(StrLen name);
+ };
+
+</pre>
+
+<p>
+<b>TypedMap</b> class usage is the same as for <b>Map</b> class. The difference is you have two methods
+to get a particular constant value.
+</p>
+
+<p>
+<b>findConst()</b> searches for the constant with the given name and with the given type and returns
+a pointer to it. Null is returned if there is no such constant or it has a different type.
+The type is specified as the template parameter.
+</p>
+
+<p>
+<b>takeConst()</b> does the same, but it returns the value and throw an exception on error.
+</p>
+
+<p>
+In this case you always get a value of some C++ type, compartible with the <b>DDL2</b> type.
+These types are available from the <b>ddl2/DDL2MapTypes.h</b> include file.
+</p>
+
+<p>
+For integral types the compartible type is an integral C++ type. I.g. <b>uint8</b> is mapped as <b>uint8</b> etc.
+<b>sint</b> is mapped as <b>sint_type</b>, <b>uint</b> as <b>uint_type</b> and <b>ulen</b> 
+as <b>ulen_type</b>.
+</p>
+
+<p>
+<b>ip</b> is mapped as <b>uint32</b>.
+</p>
+
+<p>
+<b>text</b> is mapped as <b>MapText</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">MapText</span>
+ {
+  // data
+  
+  char *ptr;
+  ulen len;
+  
+  // methods
+  
+  StrLen getStr() const { return StrLen(ptr,len); }
+  
+  // cast
+  
+  operator StrLen() const { return getStr(); }
+ };
+
+</pre>
+
+<p>
+Pointers are mapped as <b>MapPtr</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+struct <span class="Att">MapPtr</span> // layout-compatible with MapPtr&lt;char&gt;
+ {
+  // data
+  
+  void *ptr;
+  
+  // object ptr
+  
+  void * operator + () const { return ptr; }
+  
+  bool operator ! () const { return !ptr; }
+  
+  T * getPtr() const { return static_cast&lt;T *&gt;(ptr); }
+  
+  T &amp; operator * () const { return *getPtr(); }
+  
+  T * operator -> () const { return getPtr(); }
+  
+  // cast
+  
+  operator T * () const { return getPtr(); }
+ };
+
+</pre>
+
+<p>
+Polymorphic pointers are mapped as <b>MapPolyPtr</b>.
+</p>
+
+<pre>
+
+template &lt;class ... TT&gt;
+struct <span class="Att">MapPolyPtr</span> // layout-compatible with MapPolyPtr<>
+ {
+  // data
+  
+  void *ptr;
+  ulen type;
+  
+  // methods
+  
+  using AnyPtrType = AnyPtr&lt;TT...&gt; ;
+  
+  AnyPtrType getPtr() const;
+
+  // cast
+  
+  operator AnyPtrType() const { return getPtr(); }
+ };
+
+</pre>
+
+<p>
+Arrays are mapped as <b>MapRange</b>.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+struct <span class="Att">MapRange</span> // layout-compatible with MapRange&lt;char&gt;
+ {
+  // data
+  
+  void *ptr;
+  ulen len;
+  
+  // methods
+  
+  PtrLen&lt;T&gt; getRange() const;
+  
+  // cast
+  
+  operator PtrLen&lt;T&gt; () const { return getRange(); }
+ };
+
+</pre>
+
+<p>
+Finally, structure types are mapped using C++ structure definitions from the <b>TypeSet</b> class.
+</p>
+
+<h3>Example</h3>
+
+<p>
+Here is <b>LangTypes.ddl</b> file.
+</p>
+
+<pre>
+/* LangTypes.ddl */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CondLangLR1 1.00
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+type AtomIndex = uint32 ;
+type SyntIndex = uint32 ;
+type KindIndex = uint32 ;
+type ElementIndex = uint32 ;
+type RuleIndex = uint32 ;
+type StateIndex = uint32 ;
+type FinalIndex = uint32 ;
+
+struct Lang
+ {
+  Atom[] atoms;
+  Synt[] synts;
+  Synt * [] lang;
+  Element[] elements;
+  Rule[] rules;
+  TopRule[] top_rules;
+  State[] states;
+  Final[] finals;
+ };
+
+struct Atom
+ {
+  AtomIndex index;
+  text name;
+  
+  Element *element;
+ };
+
+struct Synt
+ {
+  SyntIndex index;
+  text name;
+  
+  Kind[] kinds;
+  Rule * [] rules;
+ };
+
+struct Kind
+ {
+  KindIndex kindex; // index among all kinds
+  KindIndex index; // index in synt array
+  text name;
+
+  Synt *synt;
+  
+  Element *element;
+  
+  TopRule * [] rules;
+ };
+
+struct Element
+ {
+  ElementIndex index;
+  
+  {Atom,Kind} * elem;
+ };
+
+struct Rule
+ {
+  RuleIndex index;
+  text name;
+
+  Kind *result;
+
+  type Arg = {Atom,Synt} * ;
+
+  Arg[] args;
+ };
+ 
+struct TopRule
+ {
+  RuleIndex index;
+  text name;
+  
+  Rule *bottom;
+
+  Kind *result;
+
+  type Arg = {Atom,Kind} * ;
+
+  Arg[] args;
+ }; 
+
+struct State
+ {
+  StateIndex index;
+  Final *final;
+
+  struct Transition
+   {
+    Element *element;
+    State *state;
+   };
+
+  Transition[] transitions;
+ };
+
+struct Final
+ {
+  FinalIndex index;
+
+  struct Action
+   {
+    Atom *atom; // null for (End)
+    Rule *rule; // null for &lt;- ( STOP if atom is (END) )
+   };
+
+  Action[] actions;
+ };
+
+</pre>
+
+<p>
+<b>DDL2TypeSet</b> generates two C++ header files: <b>LanTypeDef.gen.h</b> and <b>LangTypeSet.gen.h</b>.
+</p>
+
+<p>
+The first defines C++ structure types ans aliases.
+</p>
+
+<pre>
+/* struct TypeDefCore */
+
+struct TypeDefCore
+ {
+  // types
+
+  struct S1; // #Final#Action
+  struct S2; // #Final
+  struct S3; // #State#Transition
+  struct S4; // #State
+  struct S5; // #TopRule
+  struct S6; // #Rule
+  struct S7; // #Element
+  struct S8; // #Kind
+  struct S9; // #Synt
+  struct S10; // #Atom
+  struct S11; // #Lang
+
+  using A1 = DDL2::MapPolyPtr< S10 , S8 > ; // #TopRule#Arg
+  using A2 = DDL2::MapPolyPtr< S10 , S9 > ; // #Rule#Arg
+  using A3 = uint32 ; // #FinalIndex
+  using A4 = uint32 ; // #StateIndex
+  using A5 = uint32 ; // #RuleIndex
+  using A6 = uint32 ; // #ElementIndex
+  using A7 = uint32 ; // #KindIndex
+  using A8 = uint32 ; // #SyntIndex
+  using A9 = uint32 ; // #AtomIndex
+
+
+  using XXX8226D906_9898_43AA_B1BE_D60B0A6E31C8 = TypeDefCore ;
+
+  // structures
+
+  struct S1
+   {
+    DDL2::MapPtr< S10 > atom;
+    DDL2::MapPtr< S6 > rule;
+
+    struct Ext;
+   };
+
+  struct S2
+   {
+    A3 index;
+    DDL2::MapRange< S1 > actions;
+
+    using Action = XXX8226D906_9898_43AA_B1BE_D60B0A6E31C8::S1 ;
+
+    struct Ext;
+   };
+
+  struct S3
+   {
+    DDL2::MapPtr< S7 > element;
+    DDL2::MapPtr< S4 > state;
+
+    struct Ext;
+   };
+
+  struct S4
+   {
+    A4 index;
+    DDL2::MapPtr< S2 > final;
+    DDL2::MapRange< S3 > transitions;
+
+    using Transition = XXX8226D906_9898_43AA_B1BE_D60B0A6E31C8::S3 ;
+
+    struct Ext;
+   };
+
+  struct S5
+   {
+    A5 index;
+    DDL2::MapText name;
+    DDL2::MapPtr< S6 > bottom;
+    DDL2::MapPtr< S8 > result;
+    DDL2::MapRange< A1 > args;
+
+    using Arg = XXX8226D906_9898_43AA_B1BE_D60B0A6E31C8::A1 ;
+
+    struct Ext;
+   };
+
+  struct S6
+   {
+    A5 index;
+    DDL2::MapText name;
+    DDL2::MapPtr< S8 > result;
+    DDL2::MapRange< A2 > args;
+
+    using Arg = XXX8226D906_9898_43AA_B1BE_D60B0A6E31C8::A2 ;
+
+    struct Ext;
+   };
+
+  struct S7
+   {
+    A6 index;
+    DDL2::MapPolyPtr< S10 , S8 > elem;
+
+    struct Ext;
+   };
+
+  struct S8
+   {
+    A7 kindex;
+    A7 index;
+    DDL2::MapText name;
+    DDL2::MapPtr< S9 > synt;
+    DDL2::MapPtr< S7 > element;
+    DDL2::MapRange< DDL2::MapPtr< S5 > > rules;
+
+    struct Ext;
+   };
+
+  struct S9
+   {
+    A8 index;
+    DDL2::MapText name;
+    DDL2::MapRange< S8 > kinds;
+    DDL2::MapRange< DDL2::MapPtr< S6 > > rules;
+
+    struct Ext;
+   };
+
+  struct S10
+   {
+    A9 index;
+    DDL2::MapText name;
+    DDL2::MapPtr< S7 > element;
+
+    struct Ext;
+   };
+
+  struct S11
+   {
+    DDL2::MapRange< S10 > atoms;
+    DDL2::MapRange< S9 > synts;
+    DDL2::MapRange< DDL2::MapPtr< S9 > > lang;
+    DDL2::MapRange< S7 > elements;
+    DDL2::MapRange< S6 > rules;
+    DDL2::MapRange< S5 > top_rules;
+    DDL2::MapRange< S4 > states;
+    DDL2::MapRange< S2 > finals;
+
+    struct Ext;
+   };
+
+  // extra
+
+ };
+
+using XXX212CD757_09B3_4D89_BE20_65C1E4E5A819 = TypeDefCore ;
+
+namespace TypeDef {
+
+    using StateIndex = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::A4 ;
+    using KindIndex = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::A7 ;
+    using RuleIndex = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::A5 ;
+    using SyntIndex = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::A8 ;
+    using AtomIndex = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::A9 ;
+    using ElementIndex = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::A6 ;
+    using FinalIndex = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::A3 ;
+    using Atom = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S10 ;
+    using Kind = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S8 ;
+    using Lang = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S11 ;
+    using Rule = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S6 ;
+    using Synt = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S9 ;
+    using Element = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S7 ;
+    using TopRule = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S5 ;
+    using Final = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S2 ;
+    using State = XXX212CD757_09B3_4D89_BE20_65C1E4E5A819::S4 ;
+
+} // namespace TypeDef
+
+</pre>
+
+<p>
+You should use <b>TypeDef</b> namespace to refer a particular structure or a type alias. Use the same name, 
+as the name of the <b>DDL2</b> entity.
+</p>
+
+<p>
+To use this file include it in your C++ source code inside some namespace to isolate it from the other stuff.
+</p>
+
+<p>
+Each structure definition contains the declaration of the inner structure <b>Ext</b>.
+You may provide definitions of these structures to add additional functions to work with these structures.
+</p>
+
+<p>
+The second file contains a definition of the <b>TypeSet</b> class.
+</p>
+
+<pre>
+/* struct TypeSet */
+
+struct TypeSet : TypeDefCore
+ {
+  ....
+ };
+
+....
+
+</pre>
+
+<p>
+Use this class as the template argument for the <b>TypedMap</b> class template.
+</p>
 
 </body>
 
