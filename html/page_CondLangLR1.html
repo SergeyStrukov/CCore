@@ -28,7 +28,61 @@
 
 <h2>CondLangLR1</h2>
 
+<p>
+This utility generates LR1 parsing state machine for the given LR1 language.
+The language is define using the conditional recursive grammar.
+</p>
 
+<pre>
+
+CondLangLR1.exe &lt;file-name&gt;
+
+</pre>
+
+<p>
+The only command-line argument is the language file name. If the file name has no extension, <b>.lang</b> is added.
+</p>
+
+<p>
+On success two files are generated: <b>.txt</b> file and <b>.ddl</b> file.
+They have the same name as the input file and located in the same directory. 
+<b>.txt</b> file contains processing information in a readable form.
+<b>.ddl</b> file contains state machine definition in <b>DDL2</b> format.
+The file <b>LangType.ddl</b> in <b>CCORE_ROOT/tools/CondLangLR1</b> contains required <b>DDL2</b> type definitions.
+</p>
+
+<p>
+On failure the only <b>.bad.txt</b> file is generated. You can examine this file to understand, why
+the input is not an LR1 language and try to fix it.
+</p>
+
+<h3>AMP</h3>
+
+<p>
+Below is the file <b>AMP.lang</b> with the definition of the AMP language.
+</p>
+
+<pre>
+/* AMP.lang */
+
+! EXPR : A , M , P
+ {
+  x               : opVar  = P
+
+  ( EXPR )        : opBra  = P
+
+  EXPR + EXPR.a   : if( a&gt;=M ) opAdd  = A
+
+  EXPR.a * EXPR.b : if( a&gt;=P & b&gt;=M ) opMul  = M
+ }
+
+</pre>
+
+<p>
+You may see the output for this language in the directory <b>CCORE_ROOT/tools/CondLangLR1/AMP</b>.
+</p>
+
+<h2>Conditional recursive grammar</h2>
 
 </body>
 

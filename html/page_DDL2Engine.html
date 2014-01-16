@@ -147,7 +147,7 @@ Result objects life-time is ended with the next call of <b>process()</b>, or wit
 <p>
 The first template parameter <b>FileName</b> is responsible for the file name manipulation.
 There is a <a href="page_FileName.html">default implementation of this class</a>. It is recommended
-to use this implementation. Any other implementation must be interface compartible with this particular one.
+to use this implementation. Any other implementation must be interface compatible with this particular one.
 </p>
 
 <p>
@@ -426,7 +426,7 @@ struct <span class="Att">IP</span>
 </pre>
 
 <p>
-Non-sclalar values, like structures and arrays, are represented using the type <b>Block</b>.
+Non-scalar values, like structures and arrays, are represented using the type <b>Block</b>.
 </p>
 
 <pre>
@@ -470,7 +470,7 @@ struct <span class="Att">PtrNode</span>
 </pre>
 
 <p>
-The field <b>ptr_node</b> points to the <b>PtrNode</b> object. This object contains three fileds.
+The field <b>ptr_node</b> points to the <b>PtrNode</b> object. This object contains three fields.
 <b>type</b> describes the type of the pointee constant or sub-constant. 
 If this constant is a full constant, then <b>parent</b> is null and <b>index</b> is the <b>ConstNode</b> index.
 Otherwise <b>parent</b> represents the aggregate, the sub-constant is an element of, and <b>index</b> 
@@ -676,7 +676,7 @@ struct <span class="Att">TypeDesc</span>
 </pre>
 
 <p>
-<b>TypeDesc</b>, in fact, is a base class for the family of derived classes, designed to represnt different
+<b>TypeDesc</b>, in fact, is a base class for the family of derived classes, designed to represent different
 type classes. The field <b>tag</b> has a describing type value, and derived classes has additional fields
 with extra information if required.
 </p>
@@ -706,7 +706,7 @@ struct <span class="Att">TypeDesc_ptr</span> : TypeDesc
 </pre>
 
 <p>
-This class reprensents single type pointers. You provide in constructor argument the type descriptor.
+This class represents single type pointers. You provide in constructor argument the type descriptor.
 </p>
 
 <pre>
@@ -724,7 +724,7 @@ struct <span class="Att">TypeDesc_polyptr</span> : TypeDesc_polyptr_base
 
 <p>
 This class represents polymorphic pointer types. You provide in constructor arguments a list of type 
-desciptors. <b>TypeCount</b> is a number of types.
+descriptors. <b>TypeCount</b> is a number of types.
 </p>
 
 <pre>
@@ -792,7 +792,7 @@ struct <span class="Att">TypeDesc_struct</span> : TypeDesc_struct_base
 
 <p>
 This class represents structure types. You provide in constructor arguments a list of field type 
-desciptors. <b>FieldCount</b> is a number of fields. This structure has some internal fields, these fields
+descriptors. <b>FieldCount</b> is a number of fields. This structure has some internal fields, these fields
 are filled by the method <b>findConst()</b>. This descriptor must participate
 in <b>findConst()</b> directly or indirectly to be used later.
 </p>
@@ -862,7 +862,7 @@ the variable of the proper type. You may find the proper type in the <b>TypeTag<
 <p>
 You cannot use the <b>operator *</b>, however, if the constant type is a structure or an array with length.
 For structure types you may use the method <b>select()</b> to create a <b>DataPtr</b> to the desired field.
-The first argument is a structure type descriptor, the second is the zero-based field index. The desciptor
+The first argument is a structure type descriptor, the second is the zero-based field index. The descriptor
 contains inside some internal values, filled by the method <b>findConst()</b> to locate a particular field.
 </p>
 
@@ -976,12 +976,12 @@ The type is specified as the template parameter.
 </p>
 
 <p>
-In this case you always get a value of some C++ type, compartible with the <b>DDL2</b> type.
+In this case you always get a value of some C++ type, compatible with the <b>DDL2</b> type.
 These types are available from the <b>ddl2/DDL2MapTypes.h</b> include file.
 </p>
 
 <p>
-For integral types the compartible type is an integral C++ type. I.g. <b>uint8</b> is mapped as <b>uint8</b> etc.
+For integral types the compatible type is an integral C++ type. I.g. <b>uint8</b> is mapped as <b>uint8</b> etc.
 <b>sint</b> is mapped as <b>sint_type</b>, <b>uint</b> as <b>uint_type</b> and <b>ulen</b> 
 as <b>ulen_type</b>.
 </p>
