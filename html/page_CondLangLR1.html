@@ -84,6 +84,159 @@ You may see the output for this language in the directory <b>CCORE_ROOT/tools/Co
 
 <h2>Conditional recursive grammar</h2>
 
+<p>
+Conditional recursive grammar is an advanced version of <a href="page_LangLR1.html#lang">context-free grammer</a>. To define a language by
+a uniquely decoded grammar it is often you have to introduce extra non-terminals. For example, you can
+define <b>AMP</b> language by the following grammar:
+</p>
+
+<pre>
+
+! EXPR
+ {
+  x               : opVar
+
+  ( EXPR )        : opBra
+
+  EXPR + EXPR     : opAdd
+
+  EXPR * EXPR     : opMul
+ }
+
+</pre>
+
+<p>
+but this grammer is not uniquely decoded. To make it such you may introduce extra non-terminals:
+</p>
+
+<pre>
+
+! A
+ {
+  M     : cast_A
+  A + M : opAdd
+ }
+ 
+M
+ {
+  P     : cast_M
+  P * M : opMul
+ }
+ 
+P
+ {
+  x     : opVar
+  ( A ) : opBra 
+ } 
+
+</pre>
+
+<p>
+Conditional grammar is an alternative way. Instead defining of new non-terminals, we introduce
+"kinds". Kind is a property of a non-terminal production. 
+</p>
+
+<pre>
+
+! EXPR : A , M , P
+ {
+  x               : opVar  = P
+
+  ( EXPR )        : opBra  = P
+
+  EXPR + EXPR.a   : if( a&gt;=M ) opAdd  = A
+
+  EXPR.a * EXPR.b : if( a&gt;=P & b&gt;=M ) opMul  = M
+ }
+
+</pre>
+
+<p>
+Here is the non-terminal <b>EXPR</b> has three associated kinds: <b>A</b>, <b>M</b> and <b>P</b>.
+When we produce a word of this non-terminal, we assign a kind to it, it is designated by the trailing 
+<b>= kind</b> statement. Particular production rule may have an associated condition, 
+this condition must be satisfied to apply this rule. For example, the rule <b>opAdd</b> can only be applied
+if the kind of the second subexpression (<b>.a</b>) is <b>M</b> or <b>P</b>.
+</p>
+
+<p>
+Using conditional grammars you avoid rule redundance. You don't need "cast" rules.
+The language description becomes also more intuitive.
+</p>
+
+<h2>Grammar description</h2>
+
+<p>
+We use the term "syntax class" or "synt" for non-terminals. The grammar description consists of synt descriptions.
+Each synt has a unique name, it must be a <b>C</b> name. Some synts (usually one) are language synts, the 
+resulting language is a union of these synt's productions. These synts are prefixed with <b>!</b> sign.
+A synt description starts with the synt name, optionally preceedded by the sign <b>!</b>.
+If the synt has associated kinds, the synt description continues with the sign <b>:</b> and following
+comma separated kind names. Kind names must be <b>C</b> names and must be unique for each synt. At least 
+one kind must be provided.
+Then production rule decriptions follows, enclosed in the figure brackets.
+</p>
+
+<pre>
+
+LANG-DESCRIPTION  <b>=</b>  SYNT-DESCRIPTION<sub>1</sub> SYNT-DESCRIPTION<sub>2</sub> ... SYNT-DESCRIPTION<sub>n</sub>
+
+SYNT-DESCRIPTION  <b>=</b>  !<sup>opt</sup> SyntName KIND-DESCRIPTION<sup>opt</sup> { RULES-DESCRIPTION }
+
+KIND-DESCRIPTION  <b>=</b>  : KindName<sub>1</sub> , KindName<sub>2</sub> , ... , KindName<sub>n</sub>
+
+</pre>
+
+<p>
+Kinds of a same synt are considered as linear ordered. The orded is defined by the appearance, i.g. 
+a kind is less than another kind, if it appears early in the kinds list.  
+</p>
+
+<pre>
+
+KindName<sub>1</sub> < KindName<sub>2</sub> < ... < KindName<sub>n</sub>
+
+</pre>
+
+<p>
+Rules description is a sequence of rule descriptions.
+</p>
+
+<pre>
+
+RULES-DESCRIPTION  <b>=</b>  RULE-DESCRIPTION<sub>1</sub> RULE-DESCRIPTION<sub>2</sub> ... RULE-DESCRIPTION<sub>n</sub>
+
+</pre>
+
+<p>
+Each rule description starts from the rule elements sequence. During this part of the input text is parsed by 
+words, divided by space characters. To terminate it you must enter either <b>:</b> to finish the 
+rule elements sequence or <b>}</b> to close the rule descriptions, surrounded by at least one 
+space character before and after.
+</p>
+
+<pre>
+
+RULE-DESCRIPTION  <b>=</b>  RULE-ELEMENTS : RULE_COND<sup>opt</sup> RuleName RULE_KIND<sup>opt</sup>
+
+RULE_KIND         <b>=</b>  = KindName
+
+</pre>
+
+<p>
+Each rule has a rule name, it must be either a <b>C</b> name or a compound <b>C</b> name, concatenated from several
+<b>C</b> names by character @, and must be unique for each synt.
+</p>
+
+
+<h2>DDL output</h2>
+
+<p>
+<b>DDL</b> output consists of the full description of the language and the LR1 parsing state machine.
+</p>
+
+<h2>txt output</h2>
+
 </body>
 
 </html>
