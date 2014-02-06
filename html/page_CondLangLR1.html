@@ -152,7 +152,7 @@ Conditional grammar is an alternative way. Instead defining of new non-terminals
 </pre>
 
 <p>
-Here is the non-terminal <b>EXPR</b> has three associated kinds: <b>A</b>, <b>M</b> and <b>P</b>.
+Here is the non-terminal <b>EXPR</b> with three associated kinds: <b>A</b>, <b>M</b> and <b>P</b>.
 When we produce a word of this non-terminal, we assign a kind to it, it is designated by the trailing 
 <b>= kind</b> statement. Particular production rule may have an associated condition, 
 this condition must be satisfied to apply this rule. For example, the rule <b>opAdd</b> can only be applied
@@ -169,8 +169,8 @@ The language description becomes also more intuitive.
 <p>
 We use the term "syntax class" or "synt" for non-terminals. The grammar description consists of synt descriptions.
 Each synt has a unique name, it must be a <b>C</b> name. Some synts (usually one) are language synts, the 
-resulting language is a union of these synt's productions. These synts are prefixed with <b>!</b> sign.
-A synt description starts with the synt name, optionally preceedded by the sign <b>!</b>.
+resulting language is a union of these synt's productions. These synts are prefixed with the character <b>!</b>.
+A synt description starts with the synt name, optionally preceedded by the character <b>!</b>.
 If the synt has associated kinds, the synt description continues with the sign <b>:</b> and following
 comma separated kind names. Kind names must be <b>C</b> names and must be unique for each synt. At least 
 one kind must be provided.
@@ -199,6 +199,10 @@ KindName<sub>1</sub> < KindName<sub>2</sub> < ... < KindName<sub>n</sub>
 </pre>
 
 <p>
+A kind has an associated numeric value, which is the index in the kinds list.
+</p>
+
+<p>
 Rules description is a sequence of rule descriptions.
 </p>
 
@@ -209,7 +213,7 @@ RULES-DESCRIPTION  <b>=</b>  RULE-DESCRIPTION<sub>1</sub> RULE-DESCRIPTION<sub>2
 </pre>
 
 <p>
-Each rule description starts from the rule elements sequence. During this part of the input text is parsed by 
+Each rule description starts from the rule elements sequence. During this part of the input the text is parsed by 
 words, divided by space characters. To terminate it you must enter either <b>:</b> to finish the 
 rule elements sequence or <b>}</b> to close the rule descriptions, surrounded by at least one 
 space character before and after.
@@ -225,9 +229,86 @@ RULE_KIND         <b>=</b>  = KindName
 
 <p>
 Each rule has a rule name, it must be either a <b>C</b> name or a compound <b>C</b> name, concatenated from several
-<b>C</b> names by character @, and must be unique for each synt.
+<b>C</b> names by the character <b>@</b>, and must be unique for each synt. If the synt has kinds, 
+a rule kind must be given, otherwise it must not present.
 </p>
 
+<pre>
+
+RULE-ELEMENTS <b>=</b> ELEMENT<sub>1</sub> ... ELEMENT<sub>n</sub>
+
+</pre>
+
+<p>
+Rule elements part is parsed on words, separated by space characters. Each word is a 
+sequence of printable non-space characters. The word can be a synt name or an atom name. 
+Synt name may have a dot-suffix with variable name. Everything which is not a synt name 
+is considered as an atom name. Language atom set is defined implicitly by collecting atom names from
+rule definitions.
+</p>
+
+<pre>
+
+ELEMENT-SYNT <b>=</b> SyntName
+               SyntName.VariableName
+
+</pre>
+
+<p>
+Two one-character words <b>}</b> and <b>:</b> cannot be used to define an atom. But you can introduce an atom 
+with such name using the character <b>`</b> as the prefix, i.e. <b>`}</b> and <b>`:</b> 
+are considered as atom names, but modified to the names <b>}</b> and <b>:</b>. 
+Also <b>``}</b> is modified to <b>`}</b>, <b>```}</b> to <b>``}</b> and so on.
+</p>
+
+<p>
+A rule may have an associated rule condition of the form:
+</p>
+
+<pre>
+
+RULE-COND <b>=</b> if ( COND-EXPR )
+
+</pre>
+
+<p>
+A condition expression is an expression, built from prime expressions using the logical operations
+<b>&</b> (logical AND), <b>|</b> (logical OR) and <b>!</b> (logical NOT). <b>&</b> has a higher priority 
+than <b>|</b>. Brackets can be used to specify the order of evaluation.
+</p>
+
+<p>
+Prime expressions are comparision expressions:
+</p>
+
+<pre>
+
+  Name<sub>1</sub> == Name<sub>2</sub>
+  Name<sub>1</sub> != Name<sub>2</sub>
+  Name<sub>1</sub> < Name<sub>2</sub> 
+  Name<sub>1</sub> <= Name<sub>2</sub>
+  Name<sub>1</sub> > Name<sub>2</sub> 
+  Name<sub>1</sub> >= Name<sub>2</sub>
+
+</pre>
+
+<p>
+Each name either a variable name or a kind name. At least one name must be a variable name. 
+Variables are introduced in the rule element list as the dot-suffix of the synt name. For example,
+</p>
+
+<pre>
+
+  EXPR.a * EXPR.b : if( a&gt;=P & b&gt;=M ) opMul  = M
+
+</pre>
+
+<p>
+here two variables were introduced: <b>a</b> and <b>b</b>. Each of them designate the kind of 
+the correspondent synt production. If the name is a kind name, the corespondent kind is looked-up among the
+kinds of the synt, the other name is a variable of. I.e. in the example above <b>P</b> is looked-up among
+the kinds of the synt <b>EXPR</b>. Kinds are compared using they numeric values.
+</p>
 
 <h2>DDL output</h2>
 
