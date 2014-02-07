@@ -310,10 +310,159 @@ kinds of the synt, the other name is a variable of. I.e. in the example above <b
 the kinds of the synt <b>EXPR</b>. Kinds are compared using they numeric values.
 </p>
 
+<p>
+There is a special kind of synts: <b>noneof</b> synts. They are described as following:
+</p>
+
+<pre>
+
+noneof SyntName 
+ {
+  atom<sub>1</sub> ... atom<sub>n</sub> : RuleName
+ }
+
+</pre>
+
+<p>
+This synt produces all one-atom words from atoms not from the given list. I.e. it is equivalent the
+following description:
+</p>
+
+<pre>
+
+SyntName
+ {
+  atom<sub>n+1</sub> : RuleName@...
+  ...
+  atom<sub>m</sub>   : RuleName@...
+ }
+
+</pre>
+
 <h2>DDL output</h2>
 
 <p>
 <b>DDL</b> output consists of the full description of the language and the LR1 parsing state machine.
+This output is given as a single constant <b>lang</b> of the type <b>Lang</b>. The type definitions can
+be found in the file <b>CCORE_ROOT/tools/CondLangLR1/LangType.ddl</b>. 
+</p>
+
+<pre>
+
+type AtomIndex = uint32 ;
+type SyntIndex = uint32 ;
+type KindIndex = uint32 ;
+type ElementIndex = uint32 ;
+type RuleIndex = uint32 ;
+type StateIndex = uint32 ;
+type FinalIndex = uint32 ;
+
+struct Lang
+ {
+  Atom[] atoms;
+  Synt[] synts;
+  Synt * [] lang;
+  Element[] elements;
+  Rule[] rules;
+  TopRule[] top_rules;
+  State[] states;
+  Final[] finals;
+ };
+
+struct Atom
+ {
+  AtomIndex index;
+  text name;
+  
+  Element *element;
+ };
+
+struct Synt
+ {
+  SyntIndex index;
+  text name;
+  
+  Kind[] kinds;
+  Rule * [] rules;
+ };
+
+struct Kind
+ {
+  KindIndex kindex; // index among all kinds
+  KindIndex index; // index in synt array
+  text name;
+
+  Synt *synt;
+  
+  Element *element;
+  
+  TopRule * [] rules;
+ };
+
+struct Element
+ {
+  ElementIndex index;
+  
+  {Atom,Kind} * elem;
+ };
+
+struct Rule
+ {
+  RuleIndex index;
+  text name;
+
+  Kind *result;
+
+  type Arg = {Atom,Synt} * ;
+
+  Arg[] args;
+ };
+ 
+struct TopRule
+ {
+  RuleIndex index;
+  text name;
+  
+  Rule *bottom;
+
+  Kind *result;
+
+  type Arg = {Atom,Kind} * ;
+
+  Arg[] args;
+ }; 
+
+struct State
+ {
+  StateIndex index;
+  Final *final;
+
+  struct Transition
+   {
+    Element *element;
+    State *state;
+   };
+
+  Transition[] transitions;
+ };
+
+struct Final
+ {
+  FinalIndex index;
+
+  struct Action
+   {
+    Atom *atom; // null for (End)
+    Rule *rule; // null for &lt;- ( STOP if atom is (END) )
+   };
+
+  Action[] actions;
+ };
+
+</pre>
+
+<p>
+There are following description entities: <b>Atom, Synt, Kind, Element, Rule, TopRule, State and Final</b>.
 </p>
 
 <h2>txt output</h2>
