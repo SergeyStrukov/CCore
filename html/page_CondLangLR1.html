@@ -30,7 +30,7 @@
 
 <p>
 This utility generates LR1 parsing state machine for the given LR1 language.
-The language is define using the conditional recursive grammar.
+The language is defined using the <i>conditional recursive grammar</i>.
 </p>
 
 <pre>
@@ -47,7 +47,7 @@ The only command-line argument is the language file name. If the file name has n
 On success two files are generated: <b>.txt</b> file and <b>.ddl</b> file.
 They have the same name as the input file and located in the same directory. 
 <b>.txt</b> file contains processing information in a readable form.
-<b>.ddl</b> file contains state machine definition in <b>DDL2</b> format.
+<b>.ddl</b> file contains the state machine description in <b>DDL2</b> format.
 The file <b>LangType.ddl</b> in <b>CCORE_ROOT/tools/CondLangLR1</b> contains required <b>DDL2</b> type definitions.
 </p>
 
@@ -59,7 +59,7 @@ the input is not an LR1 language and try to fix it.
 <h3>AMP</h3>
 
 <p>
-Below is the file <b>AMP.lang</b> with the definition of the AMP language.
+Below is the file <b>AMP.lang</b> with the definition of the <b>AMP</b> language.
 </p>
 
 <pre>
@@ -153,8 +153,8 @@ Conditional grammar is an alternative way. Instead defining of new non-terminals
 
 <p>
 Here is the non-terminal <b>EXPR</b> with three associated kinds: <b>A</b>, <b>M</b> and <b>P</b>.
-When we produce a word of this non-terminal, we assign a kind to it, it is designated by the trailing 
-<b>= kind</b> statement. Particular production rule may have an associated condition, 
+When we produce a word of this non-terminal class, we assign a kind to it, it is designated by the trailing 
+<b>= kind</b> statement. A particular production rule may have an associated condition, 
 this condition must be satisfied to apply this rule. For example, the rule <b>opAdd</b> can only be applied
 if the kind of the second subexpression (<b>.a</b>) is <b>M</b> or <b>P</b>.
 </p>
@@ -472,7 +472,7 @@ The structure <b>Lang</b> consists of arrays of these entities. It also has the 
 which is the array of pointers to <b>Synt</b>, these synts are language synts.
 Each structure has the field <b>index</b>. This field is the index in the correspondent structure array.
 For example, <b>lang.atoms[I].index==I</b>. Also those structures, which has the associated name, have the 
-field <b>name</b> of the type text with this name.
+field <b>name</b> of the type <b>text</b> with this name.
 </p>
 
 <p>
@@ -655,7 +655,7 @@ The last section is the final list. Each final is a set of couples: atom, rule.
 <h2>Bad txt output</h2>
 
 <p>
-If the language is not a LR1 language, then the file with the extension <b>.bad.txt</b> is produced.
+If the language is not an LR1 language, then the file with the extension <b>.bad.txt</b> is produced.
 This file contains the list of bad states with conflicts. For example, for the language
 </p>
 
