@@ -19,7 +19,7 @@ CCore introduces number of new technologies, including
  4. and much more.... 
 
 You can find more information inside the project tree. 
-The root contains the file index.html, which is the root of the extensive html documentation, 
-supplied with the project. The first two sections: Introduction and Installation, 
-should be red to start working with CCore. Yoy can also read CCore wiki on github to brief
-yourself about this project.
+The root contains the file index.html, which is the root of the extensive html
+documentation, supplied with the project. The first two sections: Introduction 
+and Installation, should be red to start working with CCore. Yoy can also read 
+CCore wiki on github to brief yourself about this project.
