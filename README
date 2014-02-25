@@ -1,0 +1,25 @@
+CCore is a development platform. 
+Its primary purpose is a real-time embedded development, 
+but it also a great platform for a usual host development. 
+
+CCore gives a more professional language support for C++ development, 
+than a standard C++ library, with greater attention to details of 
+implementation, efficiency, robustness and derivability. 
+It is also more "encyclopedic". 
+
+Another important CCore mission: it opens the power of C++ to the system development. 
+It also eliminates borders between system and application development, 
+bringing methods, custom to system development, to the application level and back. 
+It also provides a great support for the network and distributed development.
+
+CCore introduces number of new technologies, including
+ 1. PTP -- new network protocol, and descendants,
+ 2. DDLv2 -- data definition language, substitution for XML,
+ 3. Packets -- system-level infrastructure for mass asynchronous request processing,
+ 4. and much more.... 
+
+You can find more information inside the project tree. 
+The root contains the file index.html, which is the root of the extensive html documentation, 
+supplied with the project. The first two sections: Introduction and Installation, 
+should be red to start working with CCore. Yoy can also read CCore wiki on github to brief
+yourself about this project.
