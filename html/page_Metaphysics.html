@@ -118,23 +118,25 @@ and make it good for a particular purpose. And a thing good for somebody has a c
 
 <p>
 Efficiency is the most important guide in the programming. 
+Programming itself can be considered as the efficient mathematics.
 It not only leads to fast code, but also to well-developed code.
 </p>
 
 <p>
 The first step to the code efficiency is to make it well-structured. 
-You cannot optimize a spaghetti code. If a code is well-organized, 
+You cannot optimize a spaghetti code. If the code is well-organized, 
 then you can identify parts, critical to improve performance, and work on them.  
 </p>
 
 <p>
-The second &mdash; no fat. Use efficient algorithms, use simple means to solve simple tasks.
+The second &mdash; no fat. Use efficient algorithms, use appropriate data structures, use simple means to solve simple tasks.
 </p>
 
 <p>
-Third &mdash; leave to compiler the most of optimization job. Compilers can solve many (but not all) 
-optimization tasks much better, than human. Modern compilers are good in local optimization.
-So focus on making a code "optimizable" and leave the routine optimization work to compiler.
+Third &mdash; leave to the compiler the most of optimization job. Compilers can solve many (but not all) 
+optimization tasks much better, than humans. Modern compilers are good in the "local" optimization.
+So focus on making the code "optimizable" and leave the routine optimization work to the compiler.
+You should learn, what the compiler can do and what cannot and why.
 </p>
 
 <h4>Complexity and metaphors</h4>
@@ -156,7 +158,7 @@ turn on the most deep and powerful human mind ability.
 <h4>A black cat in a dark room</h4>
 
 <p>
-Filthy programmers make a lot of errors. There is no problem to find them, usually you can read code
+Filthy programmers make a lot of errors. There is no problem to find them, usually you can read the code
 and find a lot. But what's about a good one? When you write a good code, how about errors? How to catch
 a black cat in a dark room? Despite the common misunderstanding, it is not too much difficult actually.
 The REAL problem is: how to prove there is no cat? It is possible to create a defectless software,
@@ -176,14 +178,15 @@ development tools does not record this part of job.
 There is a difference between the pure mathematics and the software development though. 
 In the software development
 to cover all significant code properties you must prove a huge number of simple statements.
-So to make it feasible it is necessary to build code in such a way, that this number will not be insane. 
+So to make it feasible it is necessary to build the code in such a way, that this number will not be insane. 
 And here we come to different software development techniques, like functional, object and abstract
 decompositions.
 </p>
 
 <p>
 Functional decomposition arose from an observation, that some action sequences are repeated again and again.
-Object decomposition arose from an observation, that some data combinations are repeated again and again.
+Object decomposition arose from an observation, that some data combinations and methods of manipulations 
+on them are repeated again and again.
 Abstract decomposition arose from an observation, that software entities can be "parametrized" by another
 software entities. Each time we repeat some build again and again, we can repeat its property proofs too.
 So a good software decomposition not only allows us to build a complex software, but it allows
