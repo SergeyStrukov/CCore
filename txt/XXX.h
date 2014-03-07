@@ -1,7 +1,7 @@
 /* XXX.h */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.07
+//  Project: CCore 1.08
 //
 //  Tag: General HCore XCore Target/
 //
@@ -9,7 +9,7 @@
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
