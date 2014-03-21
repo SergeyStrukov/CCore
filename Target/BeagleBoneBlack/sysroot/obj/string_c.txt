@@ -1,0 +1,90 @@
+
+string_c.o:     file format elf32-littlearm
+string_c.o
+architecture: arm, flags 0x00000011:
+HAS_RELOC, HAS_SYMS
+start address 0x00000000
+private flags = 5000000: [Version5 EABI]
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000003c  00000000  00000000  00000034  2**2
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  1 .data         00000000  00000000  00000000  00000070  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000000  00000000  00000000  00000070  2**0
+                  ALLOC
+  3 .comment      00000012  00000000  00000000  00000070  2**0
+                  CONTENTS, READONLY
+  4 .ARM.attributes 00000035  00000000  00000000  00000082  2**0
+                  CONTENTS, READONLY
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 string_c.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .ARM.attributes	00000000 .ARM.attributes
+00000000 g     F .text	00000014 memcpy
+00000000         *UND*	00000000 __std_memcpy
+00000014 g     F .text	00000014 memset
+00000000         *UND*	00000000 __std_memset
+00000028 g     F .text	00000014 strlen
+00000000         *UND*	00000000 __std_strend
+
+
+
+Disassembly of section .text:
+
+00000000 <memcpy>:
+   0:	e92d4010 	push	{r4, lr}
+   4:	e1a04000 	mov	r4, r0
+   8:	ebfffffe 	bl	0 <__std_memcpy>
+			8: R_ARM_CALL	__std_memcpy
+   c:	e1a00004 	mov	r0, r4
+  10:	e8bd8010 	pop	{r4, pc}
+
+00000014 <memset>:
+  14:	e92d4010 	push	{r4, lr}
+  18:	e1a04000 	mov	r4, r0
+  1c:	ebfffffe 	bl	0 <__std_memset>
+			1c: R_ARM_CALL	__std_memset
+  20:	e1a00004 	mov	r0, r4
+  24:	e8bd8010 	pop	{r4, pc}
+
+00000028 <strlen>:
+  28:	e92d4010 	push	{r4, lr}
+  2c:	e1a04000 	mov	r4, r0
+  30:	ebfffffe 	bl	0 <__std_strend>
+			30: R_ARM_CALL	__std_strend
+  34:	e0640000 	rsb	r0, r4, r0
+  38:	e8bd8010 	pop	{r4, pc}
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	43434700 	movtmi	r4, #14080	; 0x3700
+   4:	4728203a 			; <UNDEFINED> instruction: 0x4728203a
+   8:	2029554e 	eorcs	r5, r9, lr, asr #10
+   c:	2e382e34 	mrccs	14, 1, r2, cr8, cr4, {1}
+  10:	Address 0x0000000000000010 is out of bounds.
+
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00003441 	andeq	r3, r0, r1, asr #8
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	0000002a 	andeq	r0, r0, sl, lsr #32
+  10:	412d3705 	teqmi	sp, r5, lsl #14
+  14:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+  18:	09010841 	stmdbeq	r1, {r0, r6, fp}
+  1c:	12030a02 	andne	r0, r3, #8192	; 0x2000
+  20:	15011404 	strne	r1, [r1, #-1028]	; 0x404
+  24:	18031701 	stmdane	r3, {r0, r8, r9, sl, ip}
+  28:	1a011901 	bne	46434 <strlen+0x4640c>
+  2c:	1c031b01 	stcne	11, cr1, [r3], {1}
+  30:	22021e01 	andcs	r1, r2, #1, 28
+  34:	Address 0x0000000000000034 is out of bounds.
+

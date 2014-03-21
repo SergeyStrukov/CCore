@@ -1,0 +1,258 @@
+
+string.o:     file format elf32-littlearm
+string.o
+architecture: arm, flags 0x00000011:
+HAS_RELOC, HAS_SYMS
+start address 0x00000000
+private flags = 5000000: [Version5 EABI]
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000234  00000000  00000000  00000034  2**2
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  1 .data         00000000  00000000  00000000  00000268  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000000  00000000  00000000  00000268  2**0
+                  ALLOC
+  3 .ARM.extab    00000000  00000000  00000000  00000268  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .ARM.exidx    00000030  00000000  00000000  00000268  2**2
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
+  5 .comment      00000012  00000000  00000000  00000298  2**0
+                  CONTENTS, READONLY
+  6 .ARM.attributes 00000035  00000000  00000000  000002aa  2**0
+                  CONTENTS, READONLY
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 string.cpp
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .ARM.extab	00000000 .ARM.extab
+00000000 l    d  .ARM.exidx	00000000 .ARM.exidx
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .ARM.attributes	00000000 .ARM.attributes
+00000000 g     F .text	00000110 memmove
+00000110 g     F .text	00000048 memchr
+00000158 g     F .text	00000028 strcpy
+00000180 g     F .text	00000040 strcat
+00000000         *UND*	00000000 __std_strend
+000001c0 g     F .text	00000038 strdup
+00000000         *UND*	00000000 malloc
+00000000         *UND*	00000000 __std_memcpy
+00000000         *UND*	00000000 __aeabi_unwind_cpp_pr0
+000001f8 g     F .text	0000003c strxfrm
+
+
+
+Disassembly of section .text:
+
+00000000 <memmove>:
+   0:	e1500001 	cmp	r0, r1
+   4:	e92d00f0 	push	{r4, r5, r6, r7}
+   8:	8a00002d 	bhi	c4 <memmove+0xc4>
+   c:	e0802002 	add	r2, r0, r2
+  10:	e1500002 	cmp	r0, r2
+  14:	2a000028 	bcs	bc <memmove+0xbc>
+  18:	e1803001 	orr	r3, r0, r1
+  1c:	e2804004 	add	r4, r0, #4
+  20:	e3130003 	tst	r3, #3
+  24:	e2813004 	add	r3, r1, #4
+  28:	e0605002 	rsb	r5, r0, r2
+  2c:	13a0c000 	movne	ip, #0
+  30:	03a0c001 	moveq	ip, #1
+  34:	e1500003 	cmp	r0, r3
+  38:	31510004 	cmpcc	r1, r4
+  3c:	33a03000 	movcc	r3, #0
+  40:	23a03001 	movcs	r3, #1
+  44:	e3550009 	cmp	r5, #9
+  48:	93a0c000 	movls	ip, #0
+  4c:	820cc001 	andhi	ip, ip, #1
+  50:	e11c0003 	tst	ip, r3
+  54:	0a000027 	beq	f8 <memmove+0xf8>
+  58:	e1a04125 	lsr	r4, r5, #2
+  5c:	e3a03000 	mov	r3, #0
+  60:	e1a0c003 	mov	ip, r3
+  64:	e1a06104 	lsl	r6, r4, #2
+  68:	e7917003 	ldr	r7, [r1, r3]
+  6c:	e28cc001 	add	ip, ip, #1
+  70:	e154000c 	cmp	r4, ip
+  74:	e7807003 	str	r7, [r0, r3]
+  78:	e2833004 	add	r3, r3, #4
+  7c:	8afffff9 	bhi	68 <memmove+0x68>
+  80:	e1550006 	cmp	r5, r6
+  84:	e0803006 	add	r3, r0, r6
+  88:	e0816006 	add	r6, r1, r6
+  8c:	0a00000a 	beq	bc <memmove+0xbc>
+  90:	e7d11104 	ldrb	r1, [r1, r4, lsl #2]
+  94:	e283c001 	add	ip, r3, #1
+  98:	e152000c 	cmp	r2, ip
+  9c:	e7c01104 	strb	r1, [r0, r4, lsl #2]
+  a0:	9a000005 	bls	bc <memmove+0xbc>
+  a4:	e5d61001 	ldrb	r1, [r6, #1]
+  a8:	e283c002 	add	ip, r3, #2
+  ac:	e152000c 	cmp	r2, ip
+  b0:	e5c31001 	strb	r1, [r3, #1]
+  b4:	85d62002 	ldrbhi	r2, [r6, #2]
+  b8:	85c32002 	strbhi	r2, [r3, #2]
+  bc:	e8bd00f0 	pop	{r4, r5, r6, r7}
+  c0:	e12fff1e 	bx	lr
+  c4:	e0803002 	add	r3, r0, r2
+  c8:	e0812002 	add	r2, r1, r2
+  cc:	e1500003 	cmp	r0, r3
+  d0:	2afffff9 	bcs	bc <memmove+0xbc>
+  d4:	e5721001 	ldrb	r1, [r2, #-1]!
+  d8:	e5631001 	strb	r1, [r3, #-1]!
+  dc:	e1530000 	cmp	r3, r0
+  e0:	0afffff5 	beq	bc <memmove+0xbc>
+  e4:	e5721001 	ldrb	r1, [r2, #-1]!
+  e8:	e5631001 	strb	r1, [r3, #-1]!
+  ec:	e1530000 	cmp	r3, r0
+  f0:	1afffff7 	bne	d4 <memmove+0xd4>
+  f4:	eafffff0 	b	bc <memmove+0xbc>
+  f8:	e1a03000 	mov	r3, r0
+  fc:	e4d1c001 	ldrb	ip, [r1], #1
+ 100:	e4c3c001 	strb	ip, [r3], #1
+ 104:	e1530002 	cmp	r3, r2
+ 108:	1afffffb 	bne	fc <memmove+0xfc>
+ 10c:	eaffffea 	b	bc <memmove+0xbc>
+
+00000110 <memchr>:
+ 110:	e0802002 	add	r2, r0, r2
+ 114:	e1500002 	cmp	r0, r2
+ 118:	2a00000c 	bcs	150 <memchr+0x40>
+ 11c:	e5d03000 	ldrb	r3, [r0]
+ 120:	e6ef1071 	uxtb	r1, r1
+ 124:	e1530001 	cmp	r3, r1
+ 128:	012fff1e 	bxeq	lr
+ 12c:	e2803001 	add	r3, r0, #1
+ 130:	ea000002 	b	140 <memchr+0x30>
+ 134:	e5d0c000 	ldrb	ip, [r0]
+ 138:	e15c0001 	cmp	ip, r1
+ 13c:	012fff1e 	bxeq	lr
+ 140:	e1530002 	cmp	r3, r2
+ 144:	e1a00003 	mov	r0, r3
+ 148:	e2833001 	add	r3, r3, #1
+ 14c:	1afffff8 	bne	134 <memchr+0x24>
+ 150:	e3a00000 	mov	r0, #0
+ 154:	e12fff1e 	bx	lr
+
+00000158 <strcpy>:
+ 158:	e5d13000 	ldrb	r3, [r1]
+ 15c:	e3530000 	cmp	r3, #0
+ 160:	e5c03000 	strb	r3, [r0]
+ 164:	012fff1e 	bxeq	lr
+ 168:	e1a02000 	mov	r2, r0
+ 16c:	e5f13001 	ldrb	r3, [r1, #1]!
+ 170:	e3530000 	cmp	r3, #0
+ 174:	e5e23001 	strb	r3, [r2, #1]!
+ 178:	1afffffb 	bne	16c <strcpy+0x14>
+ 17c:	e12fff1e 	bx	lr
+
+00000180 <strcat>:
+ 180:	e92d4038 	push	{r3, r4, r5, lr}
+ 184:	e1a05001 	mov	r5, r1
+ 188:	e1a04000 	mov	r4, r0
+ 18c:	ebfffffe 	bl	0 <__std_strend>
+			18c: R_ARM_CALL	__std_strend
+ 190:	e5d53000 	ldrb	r3, [r5]
+ 194:	e3530000 	cmp	r3, #0
+ 198:	e5c03000 	strb	r3, [r0]
+ 19c:	0a000005 	beq	1b8 <strcat+0x38>
+ 1a0:	e1a01005 	mov	r1, r5
+ 1a4:	e1a02000 	mov	r2, r0
+ 1a8:	e5f13001 	ldrb	r3, [r1, #1]!
+ 1ac:	e3530000 	cmp	r3, #0
+ 1b0:	e5e23001 	strb	r3, [r2, #1]!
+ 1b4:	1afffffb 	bne	1a8 <strcat+0x28>
+ 1b8:	e1a00004 	mov	r0, r4
+ 1bc:	e8bd8038 	pop	{r3, r4, r5, pc}
+
+000001c0 <strdup>:
+ 1c0:	e92d4070 	push	{r4, r5, r6, lr}
+ 1c4:	e1a04000 	mov	r4, r0
+ 1c8:	ebfffffe 	bl	0 <__std_strend>
+			1c8: R_ARM_CALL	__std_strend
+ 1cc:	e0640000 	rsb	r0, r4, r0
+ 1d0:	e2805001 	add	r5, r0, #1
+ 1d4:	e1a00005 	mov	r0, r5
+ 1d8:	ebfffffe 	bl	0 <malloc>
+			1d8: R_ARM_CALL	malloc
+ 1dc:	e2506000 	subs	r6, r0, #0
+ 1e0:	0a000002 	beq	1f0 <strdup+0x30>
+ 1e4:	e1a01004 	mov	r1, r4
+ 1e8:	e1a02005 	mov	r2, r5
+ 1ec:	ebfffffe 	bl	0 <__std_memcpy>
+			1ec: R_ARM_CALL	__std_memcpy
+ 1f0:	e1a00006 	mov	r0, r6
+ 1f4:	e8bd8070 	pop	{r4, r5, r6, pc}
+
+000001f8 <strxfrm>:
+ 1f8:	e92d40f8 	push	{r3, r4, r5, r6, r7, lr}
+ 1fc:	e1a07000 	mov	r7, r0
+ 200:	e1a00001 	mov	r0, r1
+ 204:	e1a05001 	mov	r5, r1
+ 208:	e1a06002 	mov	r6, r2
+ 20c:	ebfffffe 	bl	0 <__std_strend>
+			20c: R_ARM_CALL	__std_strend
+ 210:	e0654000 	rsb	r4, r5, r0
+ 214:	e1560004 	cmp	r6, r4
+ 218:	9a000003 	bls	22c <strxfrm+0x34>
+ 21c:	e1a00007 	mov	r0, r7
+ 220:	e1a01005 	mov	r1, r5
+ 224:	e2842001 	add	r2, r4, #1
+ 228:	ebfffffe 	bl	0 <__std_memcpy>
+			228: R_ARM_CALL	__std_memcpy
+ 22c:	e1a00004 	mov	r0, r4
+ 230:	e8bd80f8 	pop	{r3, r4, r5, r6, r7, pc}
+
+Disassembly of section .ARM.exidx:
+
+00000000 <.ARM.exidx>:
+   0:	00000000 	andeq	r0, r0, r0
+			0: R_ARM_PREL31	.text
+   4:	00000001 	andeq	r0, r0, r1
+   8:	00000110 	andeq	r0, r0, r0, lsl r1
+			8: R_ARM_PREL31	.text
+   c:	00000001 	andeq	r0, r0, r1
+  10:	00000158 	andeq	r0, r0, r8, asr r1
+			10: R_ARM_PREL31	.text
+  14:	00000001 	andeq	r0, r0, r1
+  18:	00000180 	andeq	r0, r0, r0, lsl #3
+			18: R_ARM_PREL31	.text
+  1c:	00000001 	andeq	r0, r0, r1
+  20:	000001c0 	andeq	r0, r0, r0, asr #3
+			20: R_ARM_PREL31	.text
+			20: R_ARM_NONE	__aeabi_unwind_cpp_pr0
+  24:	80aab0b0 	strhthi	fp, [sl], r0
+  28:	000001f8 	strdeq	r0, [r0], -r8
+			28: R_ARM_PREL31	.text
+  2c:	00000001 	andeq	r0, r0, r1
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	43434700 	movtmi	r4, #14080	; 0x3700
+   4:	4728203a 			; <UNDEFINED> instruction: 0x4728203a
+   8:	2029554e 	eorcs	r5, r9, lr, asr #10
+   c:	2e382e34 	mrccs	14, 1, r2, cr8, cr4, {1}
+  10:	Address 0x0000000000000010 is out of bounds.
+
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00003441 	andeq	r3, r0, r1, asr #8
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	0000002a 	andeq	r0, r0, sl, lsr #32
+  10:	412d3705 	teqmi	sp, r5, lsl #14
+  14:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+  18:	09010841 	stmdbeq	r1, {r0, r6, fp}
+  1c:	12030a02 	andne	r0, r3, #8192	; 0x2000
+  20:	15011404 	strne	r1, [r1, #-1028]	; 0x404
+  24:	18031701 	stmdane	r3, {r0, r8, r9, sl, ip}
+  28:	1a011901 	bne	46434 <strxfrm+0x4623c>
+  2c:	1c031b01 	stcne	11, cr1, [r3], {1}
+  30:	22021e01 	andcs	r1, r2, #1, 28
+  34:	Address 0x0000000000000034 is out of bounds.
+

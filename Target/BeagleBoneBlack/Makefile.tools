@@ -1,0 +1,59 @@
+# Makefile.tools
+#----------------------------------------------------------------------------------------
+#
+#  Project: CCore 1.08
+#
+#  Tag: Target/BeagleBoneBlack
+#
+#  License: Boost Software License - Version 1.0 - August 17th, 2003 
+#
+#            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+#
+#  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+#
+#----------------------------------------------------------------------------------------
+
+CCOPT_EXTRA ?= 
+
+LDOPT_EXTRA ?=
+
+# tools
+
+CC_ = /opt/BeagleBoneBlack/bin/arm-g++.exe
+
+CC = @echo CC $< ; $(CC_)
+
+LD = @echo LD $@ ; $(CC_)
+
+AS_ = /opt/BeagleBoneBlack/bin/arm-as.exe
+
+AS = @echo AS $< ; $(AS_)
+
+AR_ = /opt/BeagleBoneBlack/bin/arm-ar.exe
+
+AR = @echo AR $@ ; $(AR_)
+
+RM_ = rm -f
+
+RM = @echo RM ; $(RM_)
+
+# options
+
+NOWARN = -Wno-non-virtual-dtor \
+         -Wno-switch -Wno-type-limits \
+         -Wno-enum-compare \
+         -Wno-missing-field-initializers \
+         -Wno-delete-non-virtual-dtor \
+
+CCINC = -I$(CCORE_ROOT) -I$(CCORE_ROOT)/XCore -I$(CCORE_ROOT)/Target/$(CCORE_TARGET)
+
+CCOPT = -c -std=c++11 -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
+
+ASOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard
+
+CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
+
+LDOPT = -Wl,-s $(LDOPT_EXTRA) $(CCORELIB) -lsupc++ -lstdc++ 
+
+
+
