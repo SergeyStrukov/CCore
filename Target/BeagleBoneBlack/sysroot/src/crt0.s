@@ -65,7 +65,7 @@ __std_context_data_init:  .space 4
         
 @------------------------------------------------------------------------------
         
-        .sect ".init"
+        .section ".absstart","ax"
         .align 2
         
         .global __std_start
@@ -207,117 +207,10 @@ __std_alloc:
         .text
         .align 2
         
-printchar:        
-        
-        ldr     r6, [r3]
-        tst     r6, #0x20
-        beq     printchar
-        str     r2, [r4]
-        
-        mov     pc, lr
-        
-printmsg:
-        
-        mov     r5, lr
-        
-        ldr     r3, .regEN
-        mov     r4, #0x40
-        str     r4, [r3]
-        
-        ldr     r3, .regLS
-        ldr     r4, .regTX
-        
-        mov     r2, #13
-        bl      printchar
-        
-        mov     r2, #10
-        bl      printchar
-        
-1:
-        ldrb    r2, [r0], #1
-        cmp     r2, #0
-        blne    printchar
-        bne     1b
-        
-        mov     r2, #13
-        bl      printchar
-        
-        mov     r2, #10
-        bl      printchar
-        
-        mov     pc, r5
-        
-printmsg2:
-        
-        mov     r5, lr
-        
-        ldr     r3, .regEN
-        mov     r4, #0x40
-        str     r4, [r3]
-        
-        ldr     r3, .regLS
-        ldr     r4, .regTX
-        
-        mov     r2, #13
-        bl      printchar
-        
-        mov     r2, #10
-        bl      printchar
-        
-2:
-        cmp     r1, #0
-        beq     3f
-        sub     r1, r1, #1
-        ldrb    r2, [r0], #1
-        bl      printchar
-        b       2b
-3:
-        
-        mov     r2, #13
-        bl      printchar
-        
-        mov     r2, #10
-        bl      printchar
-        
-        mov     pc, r5
-        
-        
-        .align 2
-        
-.regLS:    .word    0xC8000014   
-        
-.regTX:    .word    0xC8000000
-        
-.regEN:    .word    0xC8000004
-        
-@------------------------------------------------------------------------------
-        
-        .text
-        .align 2
-        
         .global __std_abort
         .global __std_abort2
         
 reset:
-        ldr     r0, .regLS
-        
-waituart:        
-        
-        ldr     r1, [r0]
-        tst     r1, #0x40
-        beq     waituart
-        
-        ldr     r0, .regWDKey
-        ldr     r1, .WDKeyOpen
-        str     r1, [r0]
-        
-        ldr     r0, .regWDCnt
-        mov     r1, #0
-        str     r1, [r0]
-        
-        ldr     r0, .regWDCtrl
-        mov     r1, #5
-        str     r1, [r0]
         
 waitreset:        
         
@@ -325,53 +218,11 @@ waitreset:
         
 __std_abort:
         
-        mov     r2, #0xD3
-        msr     CPSR_cxsf, r2
-        
-        ldr     r2, .INT_base
-        mov     r3, #0
-        str     r3, [r2, #4]
-        str     r3, [r2, #36]
-        
-        ldr     r2, .1.old_sp
-        ldr     sp, [r2]
-        
-        bl      printmsg
-        
-        bl      __std_intcleanup
-        
         b       reset
         
 __std_abort2:
         
-        mov     r2, #0xD3
-        msr     CPSR_cxsf, r2
-        
-        ldr     r2, .INT_base
-        mov     r3, #0
-        str     r3, [r2, #4]
-        str     r3, [r2, #36]
-        
-        ldr     r2, .1.old_sp
-        ldr     sp, [r2]
-        
-        bl      printmsg2
-        
-        bl      __std_intcleanup
-        
         b       reset
-        
-        .align 2
-        
-.1.old_sp:  .word  old_sp
-        
-.INT_base:  .word  0xC8003000
-        
-.regWDCnt:  .word  0xC8005014
-.regWDCtrl: .word  0xC8005018
-.regWDKey:  .word  0xC800501C
-        
-.WDKeyOpen: .word  0x482E
         
 @------------------------------------------------------------------------------
         
@@ -419,7 +270,11 @@ __std_intsetup:
      @ setup IRQ stack
         
         ldr     r0, .__std_int_stack_size
-        bl      __std_alloc_stack
+        mov     r4, r0
+        bl      __std_alloc
+        add     r0, r0, r4
+        sub     r0, r0, #16
+        
         mrs     r1, CPSR
         mov     r2, r1
         bic     r1, r1, #0x1F

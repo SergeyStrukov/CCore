@@ -1,0 +1,41 @@
+/* HowTo.txt */ 
+
+//
+// Patch source
+//
+
+<SRC>/libstdc++-v3/config/io/basic_file_stdio.cc   <--- replace
+
+
+<SRC>/libstdc++-v3/libsupc++/eh_alloc.cc
+
+  malloc <- malloc_int
+  free <- free_int
+
+  kill "emergency_buffer"
+
+<SRC>/libstdc++-v3/libsupc++/eh_globals.cc
+
+  // Single-threaded fallback buffer.
+  static __cxa_eh_globals eh_globals __attribute__((section(".context_data"))) = {} ;
+
+
+<SRC>/libgcc/config/arm/crti.S
+
+  label  _init <- __std_init_global
+  label  _fini <- __std_exit_global
+
+
+<SRC>/libstdc++-v3/libsupc++/pure.cc
+
+  #include <stdio.h>
+
+  #define writestr(str) fputs(str, stderr)
+
+
+<SRC>/libstdc++-v3/configure
+
+  gcc_no_link=no             at some place // after need_version=unknown at 10457
+
+  # at "No support for this host/target combination" 70718
+

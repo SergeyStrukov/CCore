@@ -58,18 +58,22 @@ OBJ_LIST = obj/ctype.o       \
 
 # deps
 
-all: lib/libc.a lib/crt0.o
+all: lib/libc.a lib/libm.a lib/crt0.o
 
 clean:
 	$(RM) $(OBJ_LIST) lib/libc.a lib/crt0.o
 
 install: all
 	cp -r -v ./lib /opt/BeagleBoneBlack/sysroot
-	cp -r -v ./usr /opt/BeagleBoneBlack/sysroot
+#	cp -r -v ./usr /opt/BeagleBoneBlack/sysroot
 
 lib/libc.a : $(OBJ_LIST)
 	$(RM) $@
 	$(AR) -r $@ $(OBJ_LIST)
+
+lib/libm.a :
+	$(RM) $@
+	$(AR) -r $@ 
 
 obj/%.o : src/%.cpp
 	$(CC) $(CCOPT) $< -o $@

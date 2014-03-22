@@ -246,3 +246,31 @@ void DisableInt(IntSource intsrc)
  
 #endif
 
+namespace CCore {
+namespace Dev {
+
+/* GetPlanInitNode_...() */ 
+
+namespace Private_DevIntHandle {
+
+class IntEngine : NoCopy
+ {
+  public:
+  
+   IntEngine() {}
+    
+   ~IntEngine() {}
+   
+   static const char * GetTag() { return "DevIntHandle"; }
+ };
+ 
+PlanInitObject<IntEngine> Object CCORE_INITPRI_1 ;
+
+} // namespace Private_DevIntHandle
+ 
+using namespace Private_DevIntHandle;
+
+PlanInitNode * GetPlanInitNode_DevIntHandle() { return &Object; }
+
+} // namespace Dev
+} // namespace CCore

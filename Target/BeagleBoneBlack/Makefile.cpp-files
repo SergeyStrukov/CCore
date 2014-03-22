@@ -273,8 +273,11 @@
 ../../Target/BeagleBoneBlack/CCore/src/libc/CBase.cpp
 ../../Target/BeagleBoneBlack/CCore/src/libc/__std_init.cpp
 ../../Target/BeagleBoneBlack/CCore/src/pci/PCIBusRW.cpp
+../../Target/BeagleBoneBlack/CCore/src/PlanInit_CCore.cpp
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysAbort.cpp
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysAtomic.cpp
+../../Target/BeagleBoneBlack/CCore/src/sys/SysCon.cpp
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysMemSpace.cpp
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysPlanInit.cpp
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysTime.cpp
+../../Target/BeagleBoneBlack/CCore/src/task/TaskContext.cpp

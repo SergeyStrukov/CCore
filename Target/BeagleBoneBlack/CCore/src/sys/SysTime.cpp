@@ -17,9 +17,10 @@
 
 #include <CCore/inc/Task.h>
 
+#include <CCore/inc/dev/DevPlanInit.h>
+
 #if 0
 
-#include <CCore/inc/dev/DevPlanInit.h>
 #include <CCore/inc/dev/DevTimer.h>
 #include <CCore/inc/dev/DevSignal.h>
 #include <CCore/inc/dev/DevIntHandle.h>
@@ -172,4 +173,43 @@ void ClockDelay(ClockTimeType clocks) noexcept
 } // namespace CCore
 
 #endif
+
+namespace CCore {
+namespace Sys {
+
+/* GetPlanInitNode_...() */ 
+
+namespace Private_SysTime {
+
+class StartStop : NoCopy
+ {
+  public:
+ 
+   StartStop() {}
+   
+   ~StartStop() {}
+ 
+   static const char * GetTag() { return "SysTime"; } 
+ };
+
+PlanInitObject<StartStop,PlanInitReq<Dev::GetPlanInitNode_Dev> > Object CCORE_INITPRI_1 ;
+
+} // namespace Private_SysTime
+ 
+using namespace Private_SysTime; 
+ 
+PlanInitNode * GetPlanInitNode_SysTime() { return &Object; }
+
+/* functions */
+
+MSecTimeType GetMSecTime() noexcept { return 0; }
+
+SecTimeType GetSecTime() noexcept { return 0; }
+ 
+ClockTimeType GetClockTime() noexcept { return 0; }
+
+void ClockDelay(ClockTimeType) noexcept {}
+
+} // namespace Sys
+} // namespace CCore
  

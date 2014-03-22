@@ -1,0 +1,23 @@
+# MakeCfg
+
+CONFIGURE = ../../gcc-4.8.2-cross/configure
+
+OPT = --program-prefix=arm-                                         \
+      --prefix=/opt/BeagleBoneBlack                                 \
+      --with-local-prefix=/opt/BeagleBoneBlack/arm-eabielf          \
+      --with-sysroot=/opt/BeagleBoneBlack/sysroot                   \
+      --with-arch=armv7-a                                           \
+      --with-fpu=vfpv3                                              \
+      --with-float-abi=hard                                         \
+      --enable-languages=c,c++                                      \
+      --enable-c99                                                  \
+      --enable-long-long                                            \
+      --disable-shared                                              \
+      --disable-libssp                                              \
+
+
+TARGET = arm-eabielf
+
+all:
+	$(CONFIGURE) $(OPT) --target=$(TARGET) 
+

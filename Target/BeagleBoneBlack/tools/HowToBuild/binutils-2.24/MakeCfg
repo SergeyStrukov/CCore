@@ -1,0 +1,14 @@
+# MakeCfg
+
+CONFIGURE = ../../binutils-2.24/configure
+
+OPT = --program-prefix=arm-                              \
+      --prefix=/opt/BeagleBoneBlack                      \
+      --with-sysroot=/opt/BeagleBoneBlack/sysroot        \
+
+
+TARGET = arm-eabielf
+
+all:
+	$(CONFIGURE) $(OPT) --target=$(TARGET)
+

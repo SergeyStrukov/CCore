@@ -119,6 +119,8 @@ void Init_CPU()
  
 #endif
 
+void Init_CPU() {}
+
 /* GetPlanInitNode_...() */ 
 
 namespace Private_DevPlanInit {

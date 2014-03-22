@@ -169,6 +169,7 @@ obj/ParaQuickSort.o \
 obj/Path.o \
 obj/Place.o \
 obj/PlanInit.o \
+obj/PlanInit_CCore.o \
 obj/PlatformBase.o \
 obj/PosSub.o \
 obj/Print.o \
@@ -234,6 +235,7 @@ obj/SysAbort.o \
 obj/SysAsyncFile.o \
 obj/SysAsyncFileSystem.o \
 obj/SysAtomic.o \
+obj/SysCon.o \
 obj/SysCon_general.o \
 obj/SysError.o \
 obj/SysLog.o \
@@ -243,6 +245,7 @@ obj/SysProp.o \
 obj/SysTime.o \
 obj/SysTlsSlot.o \
 obj/Task.o \
+obj/TaskContext.o \
 obj/TaskCore.o \
 obj/TaskEvent.o \
 obj/TaskInternal.o \
@@ -452,6 +455,7 @@ obj/ParaQuickSort.s \
 obj/Path.s \
 obj/Place.s \
 obj/PlanInit.s \
+obj/PlanInit_CCore.s \
 obj/PlatformBase.s \
 obj/PosSub.s \
 obj/Print.s \
@@ -517,6 +521,7 @@ obj/SysAbort.s \
 obj/SysAsyncFile.s \
 obj/SysAsyncFileSystem.s \
 obj/SysAtomic.s \
+obj/SysCon.s \
 obj/SysCon_general.s \
 obj/SysError.s \
 obj/SysLog.s \
@@ -526,6 +531,7 @@ obj/SysProp.s \
 obj/SysTime.s \
 obj/SysTlsSlot.s \
 obj/Task.s \
+obj/TaskContext.s \
 obj/TaskCore.s \
 obj/TaskEvent.s \
 obj/TaskInternal.s \
@@ -735,6 +741,7 @@ obj/ParaQuickSort.dep \
 obj/Path.dep \
 obj/Place.dep \
 obj/PlanInit.dep \
+obj/PlanInit_CCore.dep \
 obj/PlatformBase.dep \
 obj/PosSub.dep \
 obj/Print.dep \
@@ -800,6 +807,7 @@ obj/SysAbort.dep \
 obj/SysAsyncFile.dep \
 obj/SysAsyncFileSystem.dep \
 obj/SysAtomic.dep \
+obj/SysCon.dep \
 obj/SysCon_general.dep \
 obj/SysError.dep \
 obj/SysLog.dep \
@@ -809,6 +817,7 @@ obj/SysProp.dep \
 obj/SysTime.dep \
 obj/SysTlsSlot.dep \
 obj/Task.dep \
+obj/TaskContext.dep \
 obj/TaskCore.dep \
 obj/TaskEvent.dep \
 obj/TaskInternal.dep \
@@ -1367,6 +1376,9 @@ obj/Place.o : ../../CCore/src/gadget/Place.cpp
 obj/PlanInit.o : ../../CCore/src/PlanInit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/PlanInit_CCore.o : ../../Target/BeagleBoneBlack/CCore/src/PlanInit_CCore.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/PlatformBase.o : ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1562,6 +1574,9 @@ obj/SysAsyncFileSystem.o : ../../CCore/src/sys/SysAsyncFileSystem.cpp
 obj/SysAtomic.o : ../../Target/BeagleBoneBlack/CCore/src/sys/SysAtomic.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/SysCon.o : ../../Target/BeagleBoneBlack/CCore/src/sys/SysCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/SysCon_general.o : ../../XCore/CCore/src/sys/SysCon_general.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1587,6 +1602,9 @@ obj/SysTlsSlot.o : ../../XCore/CCore/src/sys/SysTlsSlot.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Task.o : ../../XCore/CCore/src/Task.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskContext.o : ../../Target/BeagleBoneBlack/CCore/src/task/TaskContext.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TaskCore.o : ../../XCore/CCore/src/task/TaskCore.cpp
@@ -2209,6 +2227,9 @@ obj/Place.s : ../../CCore/src/gadget/Place.cpp
 obj/PlanInit.s : ../../CCore/src/PlanInit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PlanInit_CCore.s : ../../Target/BeagleBoneBlack/CCore/src/PlanInit_CCore.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/PlatformBase.s : ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2404,6 +2425,9 @@ obj/SysAsyncFileSystem.s : ../../CCore/src/sys/SysAsyncFileSystem.cpp
 obj/SysAtomic.s : ../../Target/BeagleBoneBlack/CCore/src/sys/SysAtomic.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SysCon.s : ../../Target/BeagleBoneBlack/CCore/src/sys/SysCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SysCon_general.s : ../../XCore/CCore/src/sys/SysCon_general.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2429,6 +2453,9 @@ obj/SysTlsSlot.s : ../../XCore/CCore/src/sys/SysTlsSlot.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Task.s : ../../XCore/CCore/src/Task.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/TaskContext.s : ../../Target/BeagleBoneBlack/CCore/src/task/TaskContext.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/TaskCore.s : ../../XCore/CCore/src/task/TaskCore.cpp
@@ -3051,6 +3078,9 @@ obj/Place.dep : ../../CCore/src/gadget/Place.cpp
 obj/PlanInit.dep : ../../CCore/src/PlanInit.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlanInit.o $< -MF $@
 
+obj/PlanInit_CCore.dep : ../../Target/BeagleBoneBlack/CCore/src/PlanInit_CCore.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlanInit_CCore.o $< -MF $@
+
 obj/PlatformBase.dep : ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlatformBase.o $< -MF $@
 
@@ -3246,6 +3276,9 @@ obj/SysAsyncFileSystem.dep : ../../CCore/src/sys/SysAsyncFileSystem.cpp
 obj/SysAtomic.dep : ../../Target/BeagleBoneBlack/CCore/src/sys/SysAtomic.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysAtomic.o $< -MF $@
 
+obj/SysCon.dep : ../../Target/BeagleBoneBlack/CCore/src/sys/SysCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysCon.o $< -MF $@
+
 obj/SysCon_general.dep : ../../XCore/CCore/src/sys/SysCon_general.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SysCon_general.o $< -MF $@
 
@@ -3272,6 +3305,9 @@ obj/SysTlsSlot.dep : ../../XCore/CCore/src/sys/SysTlsSlot.cpp
 
 obj/Task.dep : ../../XCore/CCore/src/Task.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Task.o $< -MF $@
+
+obj/TaskContext.dep : ../../Target/BeagleBoneBlack/CCore/src/task/TaskContext.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskContext.o $< -MF $@
 
 obj/TaskCore.dep : ../../XCore/CCore/src/task/TaskCore.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskCore.o $< -MF $@
