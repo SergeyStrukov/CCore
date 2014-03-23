@@ -34,3 +34,8 @@ include $(CCORE_ROOT)/Target/Makefile.app
 	
 run: $(TARGET)
 	ELFtoUboot.exe $(TARGET) D:/Tools/TFTPD64/bootfile
+
+OBJDUMP = /opt/BeagleBoneBlack/bin/arm-objdump.exe
+
+txt: $(TARGET)
+	$(OBJDUMP) -xD $(TARGET) > main.exe.txt

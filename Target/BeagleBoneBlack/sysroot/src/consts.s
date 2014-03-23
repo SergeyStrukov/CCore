@@ -56,7 +56,7 @@
         .global __std_syslog_size
         
         .weak   __std_heap_size
-        .set    __std_heap_size , 0xCD00000        @  align 16 , 205M
+        .set    __std_heap_size , 0xCC00000        @  align 16 , 204M
         .global __std_heap_size
         
 @------------------------------------------------------------------------------

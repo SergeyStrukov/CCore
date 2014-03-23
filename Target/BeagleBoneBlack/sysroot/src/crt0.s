@@ -52,7 +52,7 @@ the_end_msg:  .ascii  "--- the end ---\000"
         
 @------------------------------------------------------------------------------
         
-        .bss
+        .data
         .align 2 
         
         .global __std_context_data_init
@@ -60,8 +60,6 @@ the_end_msg:  .ascii  "--- the end ---\000"
 cur_mem:                  .space 4
         
 __std_context_data_init:  .space 4
-        
-        .space  64
         
 @------------------------------------------------------------------------------
         
@@ -73,6 +71,30 @@ __std_context_data_init:  .space 4
 __std_start:  
 
         b       start
+        
+        .align  5
+
+ex_base:
+        
+        ldr     pc, .trap0
+        ldr     pc, .trap1
+        ldr     pc, .trap2
+        ldr     pc, .trap3
+        
+        ldr     pc, .trap4
+        ldr     pc, .trap5
+        ldr     pc, .IRQ_entry 
+        ldr     pc, .trap7
+                
+.trap0:                      .word  trap0                   
+.trap1:                      .word  trap1                   
+.trap2:                      .word  trap2                   
+.trap3:                      .word  trap3                   
+.trap4:                      .word  trap4                   
+.trap5:                      .word  trap5                   
+.trap7:                      .word  trap7                   
+
+.IRQ_entry:                  .word  IRQ_entry
                 
 @------------------------------------------------------------------------------
 
@@ -86,6 +108,60 @@ start:
         mrs     r0, CPSR
         orr     r0, r0, #128
         msr     CPSR_c, r0
+        
+     @ reset and stop WD   
+        
+        ldr     r0, .WDSC
+        ldr     r1, [r0]
+        orr     r1, #0x02
+        str     r1, [r0]
+1:        
+        ldr     r1, [r0]
+        tst     r1, #0x02
+        bne     1b
+        
+        ldr     r0, .WSPR
+        ldr     r2, .WWPS
+        
+        ldr     r1, .WStop1
+        str     r1, [r0]
+1:        
+        ldr     r1, [r2]
+        tst     r1, #0x10
+        bne     1b
+        
+        ldr     r1, .WStop2
+        str     r1, [r0]
+1:        
+        ldr     r1, [r2]
+        tst     r1, #0x10
+        bne     1b
+        
+     @ enable FPU and SIMD
+     
+        mov     r0, #0xF00000
+        mcr     p15, 0, r0, c1, c0, 2
+       
+        mov     r0, #0x40000000
+        vmsr    FPEXC, r0
+        
+     @ setup exception base address    
+        
+        ldr     r0, .ex_base
+        mcr     p15, 0, r0, c12, c0, 0   
+        
+     @ enable Lights
+     
+        ldr     r0, .GPIO1_OE
+        ldr     r1, [r0]
+        bic     r1, #0x1E00000 
+        str     r1, [r0]
+     
+     @ Lights off
+     
+        ldr     r0, .GPIO1_OUT
+        mov     r1, #0
+        str     r1, [r0]      
         
      @ cur_mem <- __std_mem   
         
@@ -143,25 +219,41 @@ start:
         
         .align 2
         
-.__bss_start__:           .word  __bss_start__
+.WDSC:                       .word  0x44E35000+0x010
+
+.WSPR:                       .word  0x44E35000+0x048
+
+.WWPS:                       .word  0x44E35000+0x034
+
+.WStop1:                     .word  0xAAAA
+
+.WStop2:                     .word  0x5555
+
+.ex_base:                    .word  ex_base
+
+.GPIO1_OE:                   .word  0x4804C000+0x134
+
+.GPIO1_OUT:                  .word  0x4804C000+0x13C
         
-.__bss_end__:             .word  __bss_end__
+.__std_mem:                  .word  __std_mem
         
-.__std_mem:               .word  __std_mem
+.cur_mem:                    .word  cur_mem
         
-.cur_mem:                 .word  cur_mem
+.__std_stack_size:           .word  __std_stack_size
         
-.__std_context_data:      .word  __std_context_data
+.__bss_start__:              .word  __bss_start__
         
-.__std_context_data_lim:  .word  __std_context_data_lim
+.__bss_end__:                .word  __bss_end__
         
-.__std_context_data_init: .word  __std_context_data_init
+.__std_context_data:         .word  __std_context_data
         
-.__std_context:           .word  __std_context
+.__std_context_data_lim:     .word  __std_context_data_lim
         
-.__std_stack_size:        .word  __std_stack_size
+.__std_context_data_init:    .word  __std_context_data_init
         
-.the_end_msg:             .word  the_end_msg
+.__std_context:              .word  __std_context
+        
+.the_end_msg:                .word  the_end_msg
         
 @------------------------------------------------------------------------------
         
@@ -196,12 +288,67 @@ __std_alloc:
         
         .align 2
         
-.1.cur_mem:        .word   cur_mem
+.nomem_msg:                  .word  nomem_msg
         
-.__std_mem_lim:    .word   __std_mem_lim
+.1.cur_mem:                  .word  cur_mem
+
+.__std_mem_lim:              .word  __std_mem_lim
         
-.nomem_msg:        .word   nomem_msg
+@------------------------------------------------------------------------------
         
+        .text
+        .align 2
+        
+trap:
+
+     @ svc + disable interrupts   
+        
+        mov     r0, #0x93
+        msr     CPSR_c, r0
+        
+     @ stop WD   
+        
+        ldr     r0, .1.WSPR
+        ldr     r2, .1.WWPS
+        
+        ldr     r1, .1.WStop1
+        str     r1, [r0]
+1:        
+        ldr     r1, [r2]
+        tst     r1, #0x10
+        bne     1b
+        
+        ldr     r1, .1.WStop2
+        str     r1, [r0]
+1:        
+        ldr     r1, [r2]
+        tst     r1, #0x10
+        bne     1b
+        
+     @ Lights on
+     
+        ldr     r0, .1.GPIO1_OUT
+        
+        orr     r3, r3, #8
+        mov     r3, r3, LSL #21
+        
+        str     r3, [r0]
+        
+     @ dead loop         
+        
+1:
+        b       1b        
+        
+.1.WSPR:                     .word  0x44E35000+0x048
+
+.1.WWPS:                     .word  0x44E35000+0x034
+
+.1.WStop1:                   .word  0xAAAA
+
+.1.WStop2:                   .word  0x5555
+
+.1.GPIO1_OUT:                .word  0x4804C000+0x13C
+
 @------------------------------------------------------------------------------
         
         .text
@@ -210,19 +357,105 @@ __std_alloc:
         .global __std_abort
         .global __std_abort2
         
-reset:
-        
-waitreset:        
-        
-        b       waitreset
-        
 __std_abort:
-        
-        b       reset
-        
 __std_abort2:
+
+trap0:
+        mov     r3, #0
+        b       trap        
         
-        b       reset
+trap1:
+        mov     r3, #1
+        b       trap
+                
+trap2:
+        mov     r3, #2
+        b       trap
+        
+trap3:
+        mov     r3, #3
+        b       trap
+        
+trap4:
+        mov     r3, #4
+        b       trap
+        
+trap5:
+        mov     r3, #5
+        b       trap
+        
+trap6:
+        mov     r3, #6
+        b       trap
+        
+trap7:
+        mov     r3, #7
+        b       trap
+        
+@------------------------------------------------------------------------------
+
+        .text
+        .align 2
+        
+        .global __std_get_shared_mem
+        .global __std_get_shared_mem_len
+        .global __std_get_video_mem
+        .global __std_get_video_mem_len
+        .global __std_get_heap_int_len
+        .global __std_get_heap_len
+        .global __std_get_syslog_len
+        
+__std_get_shared_mem:
+        
+        ldr     r0, .__std_shared_mem
+        
+        mov     pc, lr
+        
+__std_get_shared_mem_len:        
+        
+        ldr     r0, .__std_shared_mem_size
+        
+        mov     pc, lr
+        
+__std_get_video_mem:        
+
+        ldr     r0, .__std_video_mem
+        
+        mov     pc, lr
+        
+__std_get_video_mem_len:
+        
+        ldr     r0, .__std_video_mem_size
+        
+        mov     pc, lr
+        
+__std_get_heap_int_len:        
+        
+        ldr     r0, .__std_int_heap_size
+        
+        mov     pc, lr
+        
+__std_get_heap_len:        
+        
+        ldr     r0, .__std_heap_size
+        
+        mov     pc, lr
+        
+__std_get_syslog_len:        
+        
+        ldr     r0, .__std_syslog_size
+        
+        mov     pc, lr
+        
+        .align 2
+        
+.__std_shared_mem:           .word  __std_shared_mem
+.__std_shared_mem_size:      .word  __std_shared_mem_size
+.__std_video_mem:            .word  __std_video_mem
+.__std_video_mem_size:       .word  __std_video_mem_size
+.__std_int_heap_size:        .word  __std_int_heap_size
+.__std_heap_size:            .word  __std_heap_size
+.__std_syslog_size:          .word  __std_syslog_size
         
 @------------------------------------------------------------------------------
         
@@ -231,14 +464,7 @@ __std_abort2:
         
         .global __std_context
         
-old_int_sp:         .space  4
-old_vect:           .space  4
-old_flag:           .space  4
-irq_func:           .space  4
-int_context_data:   .space  4
 __std_context:      .space  4
-        
-        .space  64
         
 @------------------------------------------------------------------------------
         
@@ -246,21 +472,104 @@ __std_context:      .space  4
         .align 2
         
         .global __std_context_len
-        .global __std_intsetup
-        .global __std_intcleanup
+        .global __std_switch
         
 __std_context_len:
         
         ldr     r0, .1.__std_context_data
         ldr     r1, .1.__std_context_data_lim
         sub     r0, r1, r0
-        add     r0, #324
+        add     r0, #332
         
         mov     pc, lr
         
+__std_switch:        
+        
+        ldr     r1, .1.__std_context
+        ldr     r1, [r1]
+        stmia   r1, {r0-r14}
+        add     r1, r1, #60
+        
+        add     r3, lr, #4
+        mrs     r4, CPSR
+        stmia   r1!, {r3,r4}
+        
+        vmrs    r3, FPEXC
+        vmrs    r4, FPSCR
+        stmia   r1!, {r3,r4}  
+        vstmia  r1!, {D0-D15}  
+        vstmia  r1!, {D16-D31}
+        
+        ldr     r4, .1.__std_context_data
+        ldr     r5, .1.__std_context_data_lim
+        sub     r5, r5, r4
+        mov     r6, r0
+        
+        mov     r0, r1
+        mov     r1, r4
+        mov     r2, r5
+        bl      __std_memcpy
+       
+     @ context saved   
+        
+        ldr     r1, .1.__std_context
+        str     r6, [r1]
+        
+        mov     r0, r4
+        add     r1, r6, #332
+        mov     r2, r5
+        bl      __std_memcpy
+        
+        add     r0, r6, #68
+        ldmia   r0!, {r1,r2}
+        vmsr    FPEXC, r1
+        vmsr    FPSCR, r2
+        vldmia  r0!, {D0-D15}  
+        vldmia  r0!, {D16-D31}
+        
+        ldr     r13, [r6,#52]
+        ldr     r14, [r6,#56]
+        
+        mov     r1, #0x92
+        orr     r1, r1, #0x100
+        msr     CPSR_cxsf, r1
+        
+        ldr     r1, [r6, #64]
+        msr     SPSR_cxsf, r1
+        
+        mov     lr, r6
+        ldmia   lr!, {r0-r12}
+        ldr     lr, [lr, #8]
+        
+        subs    pc, lr, #4
+        
+        .align 2
+        
+.1.__std_context:            .word  __std_context
+        
+.1.__std_context_data:       .word  __std_context_data
+        
+.1.__std_context_data_lim:   .word  __std_context_data_lim
+        
+@------------------------------------------------------------------------------
+        
+        .bss
+        .align 2
+         
+irq_func:           .space  4
+int_context_data:   .space  4
+
+@------------------------------------------------------------------------------
+        
+        .text
+        .align 2
+        
+        .global __std_intsetup
+        .global __std_intcleanup
+        
 __std_intsetup:
         
-        stmfd   sp!, {r4,r5,lr}
+        push    {r4,r5,lr}
         
      @ store handler 
         
@@ -280,64 +589,26 @@ __std_intsetup:
         bic     r1, r1, #0x1F
         orr     r1, r1, #0x12
         msr     CPSR_c, r1
-        mov     r3, sp
         mov     sp, r0
         msr     CPSR_cxsf, r2
-        ldr     r0, .old_int_sp
-        str     r3, [r0]
-        
-     @ setup IRQ vector 
-        
-        ldr     r1, .INT_vect
-        ldr     r2, .old_vect
-        ldr     r0, [r1]
-        str     r0, [r2]
-        ldr     r0, .IRQ_entry
-        str     r0, [r1]
-        
-     @ set old_flag  
-        
-        mov     r0, #1
-        ldr     r1, .old_flag
-        str     r0, [r1]
         
      @ alloc and fill int_context_data  
         
-        ldr     r4, .1.__std_context_data
-        ldr     r5, .1.__std_context_data_lim
+        ldr     r4, .2.__std_context_data
+        ldr     r5, .2.__std_context_data_lim
         sub     r5, r5, r4
         mov     r0, r5
         bl      __std_alloc
         ldr     r1, .int_context_data
         str     r0, [r1]
-        ldr     r1, .1.__std_context_data_init
+        ldr     r1, .2.__std_context_data_init
         ldr     r1, [r1]
         mov     r2, r5
         bl      __std_memcpy
         
-        ldmfd   sp!, {r4,r5,pc}
+        pop     {r4,r5,pc}
         
 __std_intcleanup:
-        
-        ldr     r1, .old_flag
-        ldr     r0, [r1]
-        cmp     r0, #0
-        moveq   pc, lr
-        
-        ldr     r1, .INT_vect
-        ldr     r2, .old_vect
-        ldr     r0, [r2]
-        str     r0, [r1]
-        
-        ldr     r1, .old_int_sp
-        ldr     r0, [r1]
-        mrs     r1, CPSR
-        mov     r2, r1
-        bic     r1, r1, #0x1F
-        orr     r1, r1, #0x12
-        msr     CPSR_c, r1
-        mov     sp, r0
-        msr     CPSR_cxsf, r2
         
         mov     pc, lr
         
@@ -347,13 +618,13 @@ IRQ_entry:
         
         str     r12, [sp,#-4]
         
-        ldr     r12, .1.__std_context
+        ldr     r12, .2.__std_context
         ldr     r12, [r12]
         
         stmia   r12! , {r0-r11}
         
         ldr     r0, [sp,#-4]
-        
+
         mrs     r5, CPSR
         mov     r6, r5
         bic     r5, r5, #0x1F
@@ -369,14 +640,20 @@ IRQ_entry:
         
         stmia   r12! , {r0-r4}
         
+        vmrs    r3, FPEXC
+        vmrs    r4, FPSCR
+        stmia   r12!, {r3,r4}  
+        vstmia  r12!, {D0-D15}  
+        vstmia  r12!, {D16-D31}
+        
      @ switch context data 
         
         mov     r4, r12
         ldr     r5, .int_context_data
         ldr     r5, [r5]
         
-        ldr     r6, .1.__std_context_data
-        ldr     r7, .1.__std_context_data_lim
+        ldr     r6, .2.__std_context_data
+        ldr     r7, .2.__std_context_data_lim
         sub     r7, r7, r6
         
         mov     r0, r4
@@ -389,6 +666,9 @@ IRQ_entry:
         mov     r2, r7
         bl      __std_memcpy
         
+        mov     r0, #0x40000000
+        vmsr    FPEXC, r0   
+        
      @ call dispatcher
         
         ldr     r0, .irq_func
@@ -397,7 +677,7 @@ IRQ_entry:
         
      @ switch context data 
        
-        ldr     r4, .1.__std_context
+        ldr     r4, .2.__std_context
         ldr     r4, [r4]
        
         mov     r0, r5
@@ -406,7 +686,7 @@ IRQ_entry:
         bl      __std_memcpy
         
         mov     r0, r6
-        add     r1, r4, #68
+        add     r1, r4, #332
         mov     r2, r7
         bl      __std_memcpy
         
@@ -435,157 +715,20 @@ IRQ_entry:
         
         .align 2
         
-.1.__std_context_data:        .word  __std_context_data
+.2.__std_context:            .word  __std_context
         
-.1.__std_context_data_lim:    .word  __std_context_data_lim
+.2.__std_context_data:       .word  __std_context_data
         
-.irq_func:                    .word  irq_func
+.2.__std_context_data_lim:   .word  __std_context_data_lim
         
-.__std_int_stack_size:        .word  __std_int_stack_size
+.2.__std_context_data_init:  .word  __std_context_data_init
         
-.old_int_sp:                  .word  old_int_sp
+.int_context_data:           .word  int_context_data
         
-.INT_vect:                    .word  0x00000038
+.irq_func:                   .word  irq_func
         
-.old_vect:                    .word  old_vect
-        
-.IRQ_entry:                   .word  IRQ_entry
-        
-.old_flag:                    .word  old_flag
-        
-.int_context_data:            .word  int_context_data
-        
-.1.__std_context_data_init:   .word  __std_context_data_init
-        
-.1.__std_context:             .word  __std_context
+.__std_int_stack_size:       .word  __std_int_stack_size
         
 @------------------------------------------------------------------------------
         
-        .text
-        .align 2
-        
-        .global __std_switch
-        
-__std_switch:        
-        
-        ldr     r1, .2.__std_context
-        ldr     r1, [r1]
-        stmia   r1, {r0-r14}
-        add     r1, r1, #60
-        add     r3, lr, #4
-        mrs     r4, CPSR
-        stmia   r1!, {r3,r4}
-        
-        @ save Q0-Q15 and advance r1
-        
-        ldr     r4, .2.__std_context_data
-        ldr     r5, .2.__std_context_data_lim
-        sub     r5, r5, r4
-        mov     r6, r0
-        
-        mov     r0, r1
-        mov     r1, r4
-        mov     r2, r5
-        bl      __std_memcpy
-        
-        ldr     r1, .2.__std_context
-        str     r6, [r1]
-        
-        mov     r0, r4
-        add     r1, r6, #324
-        mov     r2, r5
-        bl      __std_memcpy
-        
-        @ load Q0-Q15 from r6+68
-        
-        ldr     r13, [r6,#52]
-        ldr     r14, [r6,#56]
-        
-        mov     r1, #0x92
-        orr     r1, r1, #0x100
-        msr     CPSR_cxsf, r1
-        
-        ldr     r1, [r6, #64]
-        msr     SPSR_cxsf, r1
-        
-        mov     lr, r6
-        ldmia   lr!, {r0-r12}
-        ldr     lr, [lr, #8]
-        
-        subs    pc, lr, #4
-        
-        .align 2
-        
-.2.__std_context:             .word  __std_context
-        
-.2.__std_context_data:        .word  __std_context_data
-        
-.2.__std_context_data_lim:    .word  __std_context_data_lim
-        
-@------------------------------------------------------------------------------
-        
-        .text
-        .align 2
-        
-        .global __std_get_shared_mem
-        .global __std_get_shared_mem_len
-        .global __std_get_video_mem
-        .global __std_get_video_mem_len
-        .global __std_get_heap_int_len
-        .global __std_get_heap_len
-        .global __std_get_syslog_len
-        
-__std_get_shared_mem:
-        
-        ldr     r0, .shared_mem
-        
-        mov     pc, lr
-        
-__std_get_shared_mem_len:        
-        
-        ldr     r0, .shared_mem_size
-        
-        mov     pc, lr
-        
-__std_get_video_mem:        
-
-        ldr     r0, .video_mem
-        
-        mov     pc, lr
-        
-__std_get_video_mem_len:
-        
-        ldr     r0, .video_mem_size
-        
-        mov     pc, lr
-        
-__std_get_heap_int_len:        
-        
-        ldr     r0, .__std_int_heap_size
-        
-        mov     pc, lr
-        
-__std_get_heap_len:        
-        
-        ldr     r0, .__std_heap_size
-        
-        mov     pc, lr
-        
-__std_get_syslog_len:        
-        
-        ldr     r0, .__std_syslog_size
-        
-        mov     pc, lr
-        
-        .align 2
-        
-.shared_mem:                  .word  __std_shared_mem
-.shared_mem_size:             .word  __std_shared_mem_size
-.video_mem:                   .word  __std_video_mem
-.video_mem_size:              .word  __std_video_mem_size
-.__std_int_heap_size:         .word  __std_int_heap_size
-.__std_heap_size:             .word  __std_heap_size
-.__std_syslog_size:           .word  __std_syslog_size
-        
-@------------------------------------------------------------------------------
         

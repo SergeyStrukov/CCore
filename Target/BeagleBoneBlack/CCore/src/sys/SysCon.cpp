@@ -26,14 +26,15 @@ namespace Sys {
 
 namespace Private_SysCon {
 
-/* class SerialBase */
+/* class ImpCon */
 
-class SerialBase : public ConBase
+class ImpCon : public ConBase
  {
   private:
    
    virtual void attachDefaultInput(ConInputFunction)
     {
+     // no input
     }
    
    virtual void detachDefaultInput()
@@ -42,6 +43,8 @@ class SerialBase : public ConBase
    
    virtual void defaultOutput(NanoPacket<char> packet)
     {
+     // no output
+     
      packet.free();
     }
    
@@ -59,19 +62,19 @@ class SerialBase : public ConBase
    
   public:
    
-   SerialBase(TextLabel name,void *mem,ulen max_data_len,ulen count)
+   ImpCon(TextLabel name,void *mem,ulen max_data_len,ulen count)
     : ConBase(name,mem,max_data_len,count)
     {
     }
    
-   ~SerialBase()
+   ~ImpCon()
     {
     }
  };
 
-/* class SerialCon */
+/* class DefaultCon */
 
-class SerialCon : NoCopy
+class DefaultCon : NoCopy
  {
    static const ulen MaxDataLen = 512 ;
    static const ulen Count   = 100 ;
@@ -81,21 +84,21 @@ class SerialCon : NoCopy
  
    InitStorage<MemLen> storage;
    
-   SerialBase base;
+   ImpCon dev;
    
   public:
   
-   SerialCon() : base("!SysCon",storage.getMem(),MaxDataLen,Count) {}
+   DefaultCon() : dev("!SysCon",storage.getMem(),MaxDataLen,Count) {}
    
-   ~SerialCon() {}
+   ~DefaultCon() {}
    
-   ConBase * getBase() { return &base; }
+   ConBase * getBase() { return &dev; }
    
    static const char * GetTag() { return "SysCon"; }
  };
  
-PlanInitObject<SerialCon,PlanInitReq<Dev::GetPlanInitNode_Dev>
-                        ,PlanInitReq<GetPlanInitNode_TaskCore> > Object CCORE_INITPRI_1 ;
+PlanInitObject<DefaultCon,PlanInitReq<Dev::GetPlanInitNode_Dev>
+                         ,PlanInitReq<GetPlanInitNode_TaskCore> > Object CCORE_INITPRI_1 ;
 
 } // namespace Private_SysCon
  

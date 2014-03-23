@@ -40,6 +40,7 @@ void __std_context_init(void *context_,
   unsigned PC=unsigned(entry)+4;
   unsigned SP=unsigned(static_cast<char *>(stack)+stack_off);
   unsigned R0=unsigned(arg);
+  unsigned FPEXC=0x40000000;
  
   unsigned *context=static_cast<unsigned *>(context_);
   
@@ -62,9 +63,11 @@ void __std_context_init(void *context_,
   context[15]=PC;
   context[16]=CPSR;
   
-  for(unsigned i=17; i<=80 ;i++) context[i]=0;
+  context[17]=FPEXC;
   
-  memcpy(context+81,__std_context_data_init,(__std_context_data_lim-__std_context_data));
+  for(unsigned i=18; i<83 ;i++) context[i]=0;
+  
+  memcpy(context+83,__std_context_data_init,(__std_context_data_lim-__std_context_data));
  }                      
  
 
