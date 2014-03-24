@@ -1,5 +1,6 @@
 OBJ_LIST = \
 obj/AES.o \
+obj/AM3359.o \
 obj/Abort.o \
 obj/AbortMsgFunc.o \
 obj/AntiSem.o \
@@ -286,6 +287,7 @@ obj/time.o \
 
 ASM_LIST = \
 obj/AES.s \
+obj/AM3359.s \
 obj/Abort.s \
 obj/AbortMsgFunc.s \
 obj/AntiSem.s \
@@ -572,6 +574,7 @@ obj/time.s \
 
 DEP_LIST = \
 obj/AES.dep \
+obj/AM3359.dep \
 obj/Abort.dep \
 obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
@@ -867,6 +870,9 @@ include $(RULES_FILE)
 
 
 obj/AES.o : ../../CCore/src/crypton/AES.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AM3359.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Abort.o : ../../XCore/CCore/src/Abort.cpp
@@ -1720,6 +1726,9 @@ obj/time.o : ../../XCore/CCore/src/libc/time.cpp
 obj/AES.s : ../../CCore/src/crypton/AES.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/AM3359.s : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Abort.s : ../../XCore/CCore/src/Abort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2570,6 +2579,9 @@ obj/time.s : ../../XCore/CCore/src/libc/time.cpp
 
 obj/AES.dep : ../../CCore/src/crypton/AES.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AES.o $< -MF $@
+
+obj/AM3359.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AM3359.o $< -MF $@
 
 obj/Abort.dep : ../../XCore/CCore/src/Abort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Abort.o $< -MF $@

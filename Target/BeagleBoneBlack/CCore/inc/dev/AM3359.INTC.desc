@@ -1,0 +1,92 @@
+/* AM3359.INTC.desc */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  Tag: Target/BeagleBoneBlack
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg SysConfig : 32
+ {
+  Idle  : .
+  Reset : .
+ }
+ 
+reg SysStatus : 32
+ {
+  ResetDone : .
+ }
+ 
+reg Protection : 32
+ {
+  Enable : .
+ } 
+ 
+reg Idle : 32
+ {
+  Func  : .
+  Turbo : .
+ }
+ 
+reg PriorityMask : 32
+ {
+  Threshold : .+8
+ } 
+ 
+reg ActiveIRQ : 32
+ {
+  Number : .+7
+ }
+ 
+reg TypePriorityCfg : 32
+ {
+  AsFIQ    : .
+  *        : .
+  Priority : .+6      
+ } 
+ 
+reg NextActive : 32
+ {
+  IRQ : .
+  FIQ : .
+ } 
+ 
+reg Mask : 32
+ {
+  
+ } 
+ 
+bar INTCBar : address
+ {
+  SysConfig = 10h
+  SysStatus = .
+  
+  Protection = 4Ch
+  Idle       = .
+  
+  PriorityMask = 68h
+  
+  ActiveIRQ = 40h
+  
+  TypePriorityCfg[128] = 100h
+  
+  NextActive = 48h
+  
+  SetMask0 = 08Ch as Mask 
+  SetMask1 = 0ACh as Mask 
+  SetMask2 = 0CCh as Mask 
+  SetMask3 = 0ECh as Mask
+   
+  ClearMask0 = 088h as Mask 
+  ClearMask1 = 0A8h as Mask 
+  ClearMask2 = 0C8h as Mask 
+  ClearMask3 = 0E8h as Mask 
+ }
+    

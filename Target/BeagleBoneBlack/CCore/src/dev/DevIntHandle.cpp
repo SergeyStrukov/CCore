@@ -22,7 +22,7 @@
 
 #include <__std_init.h>
 
-#if 0
+#include <CCore/inc/dev/AM3359.INTC.h>
 
 namespace CCore {
 namespace Dev {
@@ -31,118 +31,68 @@ namespace Dev {
 
 namespace Private_DevIntHandle {
 
-const INT::Int MapIntSource[Int_TableLen]=
- {
-  INT::Int_NPE_A,
-  INT::Int_NPE_B,
-  INT::Int_NPE_C,
-
-  INT::Int_QMLO,
-  INT::Int_QMHI,
-
-  INT::Int_T0,
-  INT::Int_T1,
-
-  INT::Int_I2C,
-
-  INT::Int_USBHost,
-  INT::Int_USBDev,
-
-  INT::Int_UART1,
-  INT::Int_UART0,
-  
-  INT::Int_PCI,
-  INT::Int_PCI_DMA1,
-  INT::Int_PCI_DMA2,
-  
-  INT::Int_GPIO11,
-  INT::Int_GPIO10,
-  INT::Int_GPIO9,
-  INT::Int_GPIO8
- };
-
-class IntTable
+class IntTable : NoCopy
  {
    Function<void (void)> table[Int_TableLen];
    
-   bool reg_select[Int_TableLen];
-   INT::IntBit bit[Int_TableLen];
-  
+   static uint32 Bank(uint32 int_source) { return int_source>>5; }
+   
+   static uint32 Bit(uint32 int_source) { return uint32(1)<<(int_source&31); }
+   
   public:
-
+ 
    IntTable()
     {
-     for(ulen i=0; i<Int_TableLen ;i++)
-       {
-        INT::Int num=MapIntSource[i];
+    }
+   
+   ~IntTable()
+    {
+    }
+   
+   void set(uint32 int_source,Function<void (void)> handle_int)
+    {
+     table[int_source]=handle_int;
+    }
+   
+   void clear(uint32 int_source)
+    {
+     table[int_source]=Nothing;
+    }
+   
+   void enable(uint32 int_source,unsigned priority)
+    {
+     AM3359::INTC::Bar intc;
      
-        reg_select[i]=bit[i].set(num);
+     intc.null_TypePriorityCfg().set_Priority(priority).set(intc.to_TypePriorityCfg(int_source));
+     
+     switch( Bank(int_source) )
+       {
+        case 0 : intc.set_ClearMask0(Bit(int_source)); break; 
+        case 1 : intc.set_ClearMask1(Bit(int_source)); break; 
+        case 2 : intc.set_ClearMask2(Bit(int_source)); break; 
+        case 3 : intc.set_ClearMask3(Bit(int_source)); break; 
        }
     }
    
-   ~IntTable() {}
- 
-   void set(IntSource intsrc,Function<void (void)> handle_int) { table[intsrc]=handle_int; }
-   
-   void clear(IntSource intsrc) { set(intsrc,Nothing); }
-   
-   void enable(IntSource intsrc)
+   void disable(uint32 int_source)
     {
-     INT::Bar bar;
+     AM3359::INTC::Bar intc;
      
-     if( reg_select[intsrc] )
+     switch( Bank(int_source) )
        {
-        bar.get_Enable2()
-           .setbit(bit[intsrc])
-           .set(bar.to_Enable2());
-       }
-     else
-       {
-        bar.get_Enable()
-           .setbit(bit[intsrc])
-           .set(bar.to_Enable()); 
+        case 0 : intc.set_SetMask0(Bit(int_source)); break; 
+        case 1 : intc.set_SetMask1(Bit(int_source)); break; 
+        case 2 : intc.set_SetMask2(Bit(int_source)); break; 
+        case 3 : intc.set_SetMask3(Bit(int_source)); break; 
        }
     }
-    
-   void disable(IntSource intsrc) 
+   
+   void dispatch(uint32 int_source)
     {
-     INT::Bar bar;
-     
-     if( reg_select[intsrc] )
-       {
-        bar.get_Enable2()
-           .clearbit(bit[intsrc])
-           .set(bar.to_Enable2());
-       }
-     else
-       {
-        bar.get_Enable()
-           .clearbit(bit[intsrc])
-           .set(bar.to_Enable());
-       }
-    }
-    
-   void dispatch()
-    {
-     INT::Bar bar;
-     
-     auto status=bar.get_IRQStatus();
-     auto status2=bar.get_IRQStatus2();
-     
-     for(ulen i=0; i<Int_TableLen ;i++)
-       {
-        if( reg_select[i] )
-          {
-           if( status2.maskbit(bit[i]) ) table[i]();
-          }
-        else
-          {
-           if( status.maskbit(bit[i]) ) table[i]();
-          }
-       }
+     table[int_source]();
     }
  };
- 
+
 class IntEngine : public IntTable
  {
   public:
@@ -163,8 +113,12 @@ void IRQ_main()
   TaskEventHost.add<TaskSwitchEvent>(TaskNumber::EnterInt);
   
   TaskMonitor::Internal::BeginInt();
+  
+  AM3359::INTC::Bar intc;
  
-  Object->dispatch();
+  Object->dispatch(intc.get_ActiveIRQ().get_Number());
+  
+  intc.null_NextActive().setbit(AM3359::INTC::NextActive_IRQ).setTo(intc);
   
   TaskMonitor::Internal::EndInt();
   
@@ -172,105 +126,83 @@ void IRQ_main()
  }
  
 } // extern "C"
- 
+
 IntEngine::IntEngine()
  {
-  INT::Bar bar;
-
-  bar.null_Status()
-     .set(bar.to_Enable())
-     .set(bar.to_Select());
+  AM3359::INTC::Bar intc;
   
-  bar.null_Status2()
-     .set(bar.to_Enable2())
-     .set(bar.to_Select2());
-     
+  intc.null_SysConfig().setbit(AM3359::INTC::SysConfig_Reset).setTo(intc);
+  
+  while( intc.get_SysStatus().maskbit(AM3359::INTC::SysStatus_ResetDone)==0 );
+  
+  intc.null_Protection().setbit(AM3359::INTC::Protection_Enable).setTo(intc);
+  
+  intc.null_Idle().setbit(AM3359::INTC::Idle_Func).setTo(intc);
+  
+  intc.null_PriorityMask().set_Threshold(0xFF).setTo(intc);
+  
+  intc.set_SetMask0(0xFFFFFFFF);
+  intc.set_SetMask1(0xFFFFFFFF);
+  intc.set_SetMask2(0xFFFFFFFF);
+  intc.set_SetMask3(0xFFFFFFFF);
+  
+  for(uint32 ind=0; ind<128 ;ind++)
+    intc.null_TypePriorityCfg().set(intc.to_TypePriorityCfg(ind));
+  
   __std_intsetup(IRQ_main);
  }
-    
+ 
 IntEngine::~IntEngine()
  {
-  INT::Bar bar;
+  AM3359::INTC::Bar intc;
   
-  bar.null_Status()
-     .set(bar.to_Enable());
-  
-  bar.null_Status2()
-     .set(bar.to_Enable2());
+  intc.set_SetMask0(0xFFFFFFFF);
+  intc.set_SetMask1(0xFFFFFFFF);
+  intc.set_SetMask2(0xFFFFFFFF);
+  intc.set_SetMask3(0xFFFFFFFF);
   
   __std_intcleanup();
  }
- 
-} // namespace Private_DevIntHandle
- 
-using namespace Private_DevIntHandle; 
- 
-PlanInitNode * GetPlanInitNode_DevIntHandle() { return &Object; }
- 
-/* functions */ 
-
-void SetupIntHandler(IntSource intsrc,Function<void (void)> handle_int)
- {
-  IntLock lock;
-
-  Object->set(intsrc,handle_int);
-  
-  Object->enable(intsrc);
- }
- 
-void CleanupIntHandler(IntSource intsrc)
- {
-  IntLock lock;
-
-  Object->disable(intsrc);
-  
-  Object->clear(intsrc);
- }
- 
-void EnableInt(IntSource intsrc)
- {
-  IntLock lock;
-
-  Object->enable(intsrc);
- }
- 
-void DisableInt(IntSource intsrc)
- {
-  IntLock lock;
-
-  Object->disable(intsrc);
- }
- 
-} // namespace Dev
-} // namespace CCore
- 
-#endif
-
-namespace CCore {
-namespace Dev {
-
-/* GetPlanInitNode_...() */ 
-
-namespace Private_DevIntHandle {
-
-class IntEngine : NoCopy
- {
-  public:
-  
-   IntEngine() {}
-    
-   ~IntEngine() {}
-   
-   static const char * GetTag() { return "DevIntHandle"; }
- };
- 
-PlanInitObject<IntEngine> Object CCORE_INITPRI_1 ;
 
 } // namespace Private_DevIntHandle
  
 using namespace Private_DevIntHandle;
 
 PlanInitNode * GetPlanInitNode_DevIntHandle() { return &Object; }
+
+/* functions */ 
+
+void SetupIntHandler(IntSource int_source,Function<void (void)> handle_int,unsigned priority)
+ {
+  IntLock lock;
+
+  Object->set(int_source,handle_int);
+  
+  Object->enable(int_source,priority);
+ }
+
+void CleanupIntHandler(IntSource int_source)
+ {
+  IntLock lock;
+
+  Object->disable(int_source);
+  
+  Object->clear(int_source);
+ }
+
+void EnableInt(IntSource int_source,unsigned priority)
+ {
+  IntLock lock;
+
+  Object->enable(int_source,priority);
+ }
+
+void DisableInt(IntSource int_source)
+ {
+  IntLock lock;
+
+  Object->disable(int_source);
+ }
 
 } // namespace Dev
 } // namespace CCore

@@ -29,19 +29,20 @@ PlanInitNode * GetPlanInitNode_DevIntHandle();
 
 enum IntSource
  {
-  
-  Int_TableLen
+  Int_TINT4 = 92, 
+ 
+  Int_TableLen = 128
  };
  
 /* functions */ 
 
-void SetupIntHandler(IntSource intsrc,Function<void (void)> handle_int); 
+void SetupIntHandler(IntSource int_source,Function<void (void)> handle_int,unsigned priority=0); // priority 0-0x3F 
 
-void CleanupIntHandler(IntSource intsrc); 
+void CleanupIntHandler(IntSource int_source); 
 
-void EnableInt(IntSource intsrc);
+void EnableInt(IntSource int_source,unsigned priority=0); 
 
-void DisableInt(IntSource intsrc);
+void DisableInt(IntSource int_source);
 
 } // namespace Dev
 } // namespace CCore
