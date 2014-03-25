@@ -29,18 +29,25 @@ PlanInitNode * GetPlanInitNode_DevIntHandle();
 
 enum IntSource
  {
-  Int_TINT4 = 92, 
+  Int_LCDCINT = 36,
+  Int_I2C0INT = 70,
+  Int_TINT4 = 92,
+  
+  Int_3PGSWRXTHR0 = 40,
+  Int_3PGSWRXINT0 = 41,
+  Int_3PGSWTXINT0 = 42,
+  Int_3PGSWMISC0  = 43,
  
   Int_TableLen = 128
  };
  
 /* functions */ 
 
-void SetupIntHandler(IntSource int_source,Function<void (void)> handle_int,unsigned priority=0); // priority 0-0x3F 
+void SetupIntHandler(IntSource int_source,Function<void (void)> handle_int,unsigned priority=0); // priority 0-63 
 
 void CleanupIntHandler(IntSource int_source); 
 
-void EnableInt(IntSource int_source,unsigned priority=0); 
+void EnableInt(IntSource int_source); 
 
 void DisableInt(IntSource int_source);
 

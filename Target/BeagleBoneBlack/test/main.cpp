@@ -155,6 +155,7 @@ int main()
   //Testit<2016>().run();
   
   //Testit<3001>().run();
+  Testit<3002>().run();
   
   Printf(Con,"\nPeak memory usage #;\n\n",MemPeak());  
     

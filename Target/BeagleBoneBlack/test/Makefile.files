@@ -52,6 +52,7 @@ OBJ_LIST = \
 ../test-obj/test0050.RBTree-speed.o \
 ../test-obj/test0051.RBTreeUp.o \
 ../test-obj/test0052.RBTreeUp-speed.o \
+../test-obj/test0053.Integer.o \
 ../test-obj/test0054.IntegerInverse.o \
 ../test-obj/test0055.IntegerSlowMul.o \
 ../test-obj/test0056.IntegerSlowAlgo.o \
@@ -110,6 +111,7 @@ OBJ_LIST = \
 ../test-obj/test2015.stdio.o \
 ../test-obj/test2016.TickCount.o \
 ../test-obj/test3001.RedirectPTPCon.o \
+../test-obj/test3002.Light.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -236,6 +238,7 @@ ASM_LIST = \
 ../test-obj/test2015.stdio.s \
 ../test-obj/test2016.TickCount.s \
 ../test-obj/test3001.RedirectPTPCon.s \
+../test-obj/test3002.Light.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -362,6 +365,7 @@ DEP_LIST = \
 ../test-obj/test2015.stdio.dep \
 ../test-obj/test2016.TickCount.dep \
 ../test-obj/test3001.RedirectPTPCon.dep \
+../test-obj/test3002.Light.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -715,6 +719,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3001.RedirectPTPCon.o : ../../../Target/BeagleBoneBlack/CCore/test/test3001.RedirectPTPCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3002.Light.o : ../../../Target/BeagleBoneBlack/CCore/test/test3002.Light.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1088,6 +1095,9 @@ include $(RULES_FILE)
 ../test-obj/test3001.RedirectPTPCon.s : ../../../Target/BeagleBoneBlack/CCore/test/test3001.RedirectPTPCon.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3002.Light.s : ../../../Target/BeagleBoneBlack/CCore/test/test3002.Light.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1458,6 +1468,9 @@ include $(RULES_FILE)
 
 ../test-obj/test3001.RedirectPTPCon.dep : ../../../Target/BeagleBoneBlack/CCore/test/test3001.RedirectPTPCon.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3001.RedirectPTPCon.o $< -MF $@
+
+../test-obj/test3002.Light.dep : ../../../Target/BeagleBoneBlack/CCore/test/test3002.Light.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3002.Light.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

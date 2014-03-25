@@ -26,6 +26,9 @@ namespace Sys {
 
 namespace Private_SysCon {
 
+extern "C"
+void __std_debug_console(const char *ptr,ulen len);
+
 /* class ImpCon */
 
 class ImpCon : public ConBase
@@ -43,7 +46,9 @@ class ImpCon : public ConBase
    
    virtual void defaultOutput(NanoPacket<char> packet)
     {
-     // no output
+     if( !packet ) return;
+
+     __std_debug_console(packet.getData(),packet.getDataLen());
      
      packet.free();
     }

@@ -18,13 +18,9 @@
 #include <CCore/inc/Task.h>
 
 #include <CCore/inc/dev/DevPlanInit.h>
-
-#if 0
-
 #include <CCore/inc/dev/DevTimer.h>
-#include <CCore/inc/dev/DevSignal.h>
 #include <CCore/inc/dev/DevIntHandle.h>
- 
+
 namespace CCore {
 namespace Sys {
 
@@ -36,13 +32,10 @@ namespace Private_SysTime {
 
 const unsigned SecCnt = 10000 ; // timer interrupt frequency 10 kHz
 
-const unsigned TimerDiv = Dev::MHz50/SecCnt ; // divider for timer
-
 const unsigned MSecCnt = SecCnt/1000 ;
 
 const unsigned TickCnt = SecCnt/TicksPerSec ;
 
-static_assert( Dev::MHz50%SecCnt==0  ,"CCore::Sys::SecCnt bad value");
 static_assert( SecCnt%1000==0        ,"CCore::Sys::SecCnt bad value");
 static_assert( SecCnt%TicksPerSec==0 ,"CCore::TicksPerSec bad value");
 
@@ -72,47 +65,32 @@ class StartStop : NoCopy
 
    static void Timer_int()
     {
-     using namespace Dev;
-  
-     ClearT1Int();
-  
-     SetSignal(Signal_0);
-     
-     Time_sec+=RoundInc(Sec_cnt,SecCnt);
-  
-     Time_msec+=RoundInc(MSec_cnt,MSecCnt);
-     
-     if( RoundInc(Tick_cnt,TickCnt) ) Task::Internal::Tick_int();
+     if( Dev::TimerIntClear() )
+       {
+        Time_sec+=RoundInc(Sec_cnt,SecCnt);
     
-     ClearSignal(Signal_0);
+        Time_msec+=RoundInc(MSec_cnt,MSecCnt);
+       
+        if( RoundInc(Tick_cnt,TickCnt) ) Task::Internal::Tick_int();
+       }
     }
  
   public:
   
    StartStop()
     {
-     using namespace Dev;
-  
-     EnableSignal(Signal_0);
-  
-     StartTimerTS();
+     Dev::TimerInit();
  
-     SetupIntHandler(Int_T1,Timer_int);
-  
-     StartTimerT1(TimerTx_MHz50,TimerDiv);
+     Dev::SetupIntHandler(Dev::Int_TINT4,Timer_int);
+
+     Dev::TimerIntEnable();
     }
     
    ~StartStop() 
     {
-     using namespace Dev;
- 
-     StopTimerT1();
+     Dev::TimerIntDisable();
   
-     CleanupIntHandler(Int_T1);  
-  
-     StopTimerTS();
-  
-     DisableSignal(Signal_0);
+     CleanupIntHandler(Dev::Int_TINT4);  
     }
     
    static MSecTimeType GetMSecTime() noexcept
@@ -161,7 +139,7 @@ SecTimeType GetSecTime() noexcept
  
 ClockTimeType GetClockTime() noexcept
  {
-  return Dev::TimerTS();
+  return Dev::TimerClock();
  }
 
 void ClockDelay(ClockTimeType clocks) noexcept
@@ -172,44 +150,3 @@ void ClockDelay(ClockTimeType clocks) noexcept
 } // namespace Sys
 } // namespace CCore
 
-#endif
-
-namespace CCore {
-namespace Sys {
-
-/* GetPlanInitNode_...() */ 
-
-namespace Private_SysTime {
-
-class StartStop : NoCopy
- {
-  public:
- 
-   StartStop() {}
-   
-   ~StartStop() {}
- 
-   static const char * GetTag() { return "SysTime"; } 
- };
-
-PlanInitObject<StartStop,PlanInitReq<Dev::GetPlanInitNode_Dev> > Object CCORE_INITPRI_1 ;
-
-} // namespace Private_SysTime
- 
-using namespace Private_SysTime; 
- 
-PlanInitNode * GetPlanInitNode_SysTime() { return &Object; }
-
-/* functions */
-
-MSecTimeType GetMSecTime() noexcept { return 0; }
-
-SecTimeType GetSecTime() noexcept { return 0; }
- 
-ClockTimeType GetClockTime() noexcept { return 0; }
-
-void ClockDelay(ClockTimeType) noexcept {}
-
-} // namespace Sys
-} // namespace CCore
- 

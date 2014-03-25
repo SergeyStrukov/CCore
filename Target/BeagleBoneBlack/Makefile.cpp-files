@@ -264,12 +264,14 @@
 ../../XCore/CCore/src/Task.cpp
 ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
 ../../Target/BeagleBoneBlack/CCore/src/base/Quick.cpp
+../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
+../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 ../../Target/BeagleBoneBlack/CCore/src/libc/atexit.cpp
 ../../Target/BeagleBoneBlack/CCore/src/libc/CBase.cpp
 ../../Target/BeagleBoneBlack/CCore/src/libc/__std_init.cpp

@@ -76,6 +76,7 @@ obj/DDLTypeDesc.o \
 obj/DDLTypedMap.o \
 obj/DDLTypes.o \
 obj/DDLValue.o \
+obj/DebugCon.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
 obj/DeferCall.o \
@@ -84,6 +85,7 @@ obj/DevIntHandle.o \
 obj/DevPlanInit.o \
 obj/DevRW.o \
 obj/DevTick.o \
+obj/DevTimer.o \
 obj/DynArray.o \
 obj/EchoDevice.o \
 obj/ElementPool.o \
@@ -363,6 +365,7 @@ obj/DDLTypeDesc.s \
 obj/DDLTypedMap.s \
 obj/DDLTypes.s \
 obj/DDLValue.s \
+obj/DebugCon.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
 obj/DeferCall.s \
@@ -371,6 +374,7 @@ obj/DevIntHandle.s \
 obj/DevPlanInit.s \
 obj/DevRW.s \
 obj/DevTick.s \
+obj/DevTimer.s \
 obj/DynArray.s \
 obj/EchoDevice.s \
 obj/ElementPool.s \
@@ -650,6 +654,7 @@ obj/DDLTypeDesc.dep \
 obj/DDLTypedMap.dep \
 obj/DDLTypes.dep \
 obj/DDLValue.dep \
+obj/DebugCon.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
 obj/DeferCall.dep \
@@ -658,6 +663,7 @@ obj/DevIntHandle.dep \
 obj/DevPlanInit.dep \
 obj/DevRW.dep \
 obj/DevTick.dep \
+obj/DevTimer.dep \
 obj/DynArray.dep \
 obj/EchoDevice.dep \
 obj/ElementPool.dep \
@@ -1100,6 +1106,9 @@ obj/DDLTypes.o : ../../CCore/src/ddl/DDLTypes.cpp
 obj/DDLValue.o : ../../CCore/src/ddl/DDLValue.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/DebugCon.o : ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/DefaultTimeout.o : ../../CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1122,6 +1131,9 @@ obj/DevRW.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevTick.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevTimer.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
@@ -1954,6 +1966,9 @@ obj/DDLTypes.s : ../../CCore/src/ddl/DDLTypes.cpp
 obj/DDLValue.s : ../../CCore/src/ddl/DDLValue.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DebugCon.s : ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DefaultTimeout.s : ../../CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1976,6 +1991,9 @@ obj/DevRW.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DevTick.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevTimer.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
@@ -2808,6 +2826,9 @@ obj/DDLTypes.dep : ../../CCore/src/ddl/DDLTypes.cpp
 obj/DDLValue.dep : ../../CCore/src/ddl/DDLValue.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLValue.o $< -MF $@
 
+obj/DebugCon.dep : ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DebugCon.o $< -MF $@
+
 obj/DefaultTimeout.dep : ../../CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DefaultTimeout.o $< -MF $@
 
@@ -2831,6 +2852,9 @@ obj/DevRW.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.cpp
 
 obj/DevTick.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTick.o $< -MF $@
+
+obj/DevTimer.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTimer.o $< -MF $@
 
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@

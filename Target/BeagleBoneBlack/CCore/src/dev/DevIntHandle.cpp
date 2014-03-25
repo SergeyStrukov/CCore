@@ -49,8 +49,12 @@ class IntTable : NoCopy
     {
     }
    
-   void set(uint32 int_source,Function<void (void)> handle_int)
+   void set(uint32 int_source,Function<void (void)> handle_int,unsigned priority)
     {
+     AM3359::INTC::Bar intc;
+     
+     intc.null_TypePriorityCfg().set_Priority(priority).set(intc.to_TypePriorityCfg(int_source));
+     
      table[int_source]=handle_int;
     }
    
@@ -59,11 +63,9 @@ class IntTable : NoCopy
      table[int_source]=Nothing;
     }
    
-   void enable(uint32 int_source,unsigned priority)
+   void enable(uint32 int_source)
     {
      AM3359::INTC::Bar intc;
-     
-     intc.null_TypePriorityCfg().set_Priority(priority).set(intc.to_TypePriorityCfg(int_source));
      
      switch( Bank(int_source) )
        {
@@ -176,9 +178,9 @@ void SetupIntHandler(IntSource int_source,Function<void (void)> handle_int,unsig
  {
   IntLock lock;
 
-  Object->set(int_source,handle_int);
+  Object->set(int_source,handle_int,priority);
   
-  Object->enable(int_source,priority);
+  Object->enable(int_source);
  }
 
 void CleanupIntHandler(IntSource int_source)
@@ -190,11 +192,11 @@ void CleanupIntHandler(IntSource int_source)
   Object->clear(int_source);
  }
 
-void EnableInt(IntSource int_source,unsigned priority)
+void EnableInt(IntSource int_source)
  {
   IntLock lock;
 
-  Object->enable(int_source,priority);
+  Object->enable(int_source);
  }
 
 void DisableInt(IntSource int_source)

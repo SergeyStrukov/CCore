@@ -1,0 +1,62 @@
+/* AM3359.PRCM.desc */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  Tag: Target/BeagleBoneBlack
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg ClockControl : 32
+ {
+  Mode : .+2
+   {
+    Disable = 0
+    Enable  = 2
+   }
+  
+  * : .+14
+  
+  IdleStatus : .+2
+   {
+    Running    = 0
+    Transition = 1
+    Idle       = 2
+    Disabled   = 3 
+   }
+ }
+ 
+bar CM_PERBar : address
+ {
+  ClockControl = hidden
+ 
+  Timer2 = 80h as ClockControl
+  Timer4 = 88h as ClockControl
+ }
+
+reg TimerClockSelect : 32
+ {
+  Source: .+2
+   {
+    TCLKIN    = 0
+    CLK_M_OSC = 1
+    CLK_32KHZ = 2
+   }
+ }
+ 
+bar CM_DPLLBar : address
+ {
+  TimerClockSelect = hidden
+ 
+  Timer2 =  8h as TimerClockSelect
+  Timer4 = 10h as TimerClockSelect
+ }
+ 
+  
+   

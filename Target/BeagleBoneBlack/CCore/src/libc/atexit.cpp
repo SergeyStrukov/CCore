@@ -212,7 +212,7 @@ int __cxa_atexit(__cxa_atexit_t func,void *arg,void *dso)
     
      return -1; 
     }
-    
+  
   Dev::IntLock lock;
   
   return FuncBlock::Push(Func::Create(func,arg,dso))?0:1 ;

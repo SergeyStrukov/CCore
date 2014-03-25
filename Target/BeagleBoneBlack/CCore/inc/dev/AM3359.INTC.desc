@@ -40,17 +40,17 @@ reg PriorityMask : 32
   Threshold : .+8
  } 
  
-reg ActiveIRQ : 32
- {
-  Number : .+7
- }
- 
 reg TypePriorityCfg : 32
  {
   AsFIQ    : .
   *        : .
   Priority : .+6      
  } 
+ 
+reg ActiveIRQ : 32
+ {
+  Number : .+7
+ }
  
 reg NextActive : 32
  {
@@ -66,16 +66,16 @@ reg Mask : 32
 bar INTCBar : address
  {
   SysConfig = 10h
-  SysStatus = .
+  SysStatus = 14h
   
   Protection = 4Ch
-  Idle       = .
+  Idle       = 50h
   
   PriorityMask = 68h
   
-  ActiveIRQ = 40h
-  
   TypePriorityCfg[128] = 100h
+  
+  ActiveIRQ = 40h
   
   NextActive = 48h
   

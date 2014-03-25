@@ -393,69 +393,6 @@ struct Type_PriorityMask
    }
  };
  
-/* struct Type_ActiveIRQ */ 
-
-struct Type_ActiveIRQ
- {
-  typedef uint32 Type;
-
-  Type value;
-
-
-  explicit Type_ActiveIRQ(Type value_=0) : value(value_) {}
- 
-
-  operator Type() const { return value; }
- 
-  void operator = (Type value_) { value=value_; }
- 
-  template <class Bar>
-  Type_ActiveIRQ & setTo(Bar &bar) { bar.set_ActiveIRQ(*this); return *this; }
- 
-
-  template <class Bar>
-  Type_ActiveIRQ & setTo(Bar &bar,uint32 ind) { bar.set_ActiveIRQ(*this,ind); return *this; }
- 
-
-  template <class T>
-  Type_ActiveIRQ & set(T to) { to(*this); return *this; }
- 
-
-  Type get_Number() const
-   {
-    return (value>>0)&0x7F;
-   }
- 
-  Type_ActiveIRQ & set_Number(Type field)
-   {
-    value=((field&0x7F)<<0)|(value&0xFFFFFF80);
-
-    return *this;
-   }
- 
-
-  template <class P>
-  void print(P &out) const
-   {
-    bool first=true;
-
-    if( first )
-      {
-       Printf(out,"Number(#;)",get_Number());
-
-       first=false;
-      }
-    else
-      {
-       out.put('|');
-
-       Printf(out,"Number(#;)",get_Number());
-      }
-
-    if( first ) out.put('0');
-   }
- };
- 
 /* struct Type_TypePriorityCfg */ 
 
 enum Bits_TypePriorityCfg : uint32
@@ -550,6 +487,69 @@ struct Type_TypePriorityCfg
        out.put('|');
 
        Printf(out,"Priority(#;)",get_Priority());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_ActiveIRQ */ 
+
+struct Type_ActiveIRQ
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_ActiveIRQ(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_ActiveIRQ & setTo(Bar &bar) { bar.set_ActiveIRQ(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_ActiveIRQ & setTo(Bar &bar,uint32 ind) { bar.set_ActiveIRQ(*this,ind); return *this; }
+ 
+
+  template <class T>
+  Type_ActiveIRQ & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_Number() const
+   {
+    return (value>>0)&0x7F;
+   }
+ 
+  Type_ActiveIRQ & set_Number(Type field)
+   {
+    value=((field&0x7F)<<0)|(value&0xFFFFFF80);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"Number(#;)",get_Number());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Number(#;)",get_Number());
       }
 
     if( first ) out.put('0');
@@ -732,18 +732,6 @@ struct INTCBar
  
   static Type_PriorityMask ones_PriorityMask() { return Type_PriorityMask(Type_PriorityMask::Type(-1)); }
  
-  //--- ActiveIRQ
-
-  Type_ActiveIRQ get_ActiveIRQ() { return Type_ActiveIRQ(rw.template get<uint32>(0x40)); }
- 
-  void set_ActiveIRQ(Type_ActiveIRQ value) { rw.set(0x40,value.value); }
- 
-  Setter<Type_ActiveIRQ> to_ActiveIRQ() { return Setter<Type_ActiveIRQ>(rw,0x40); }
- 
-  static Type_ActiveIRQ null_ActiveIRQ() { return Type_ActiveIRQ(0); }
- 
-  static Type_ActiveIRQ ones_ActiveIRQ() { return Type_ActiveIRQ(Type_ActiveIRQ::Type(-1)); }
- 
   //--- TypePriorityCfg
 
   Type_TypePriorityCfg get_TypePriorityCfg(uint32 ind) { return Type_TypePriorityCfg(rw.template get<uint32>(0x100 +ind*4)); }
@@ -755,6 +743,18 @@ struct INTCBar
   static Type_TypePriorityCfg null_TypePriorityCfg() { return Type_TypePriorityCfg(0); }
  
   static Type_TypePriorityCfg ones_TypePriorityCfg() { return Type_TypePriorityCfg(Type_TypePriorityCfg::Type(-1)); }
+ 
+  //--- ActiveIRQ
+
+  Type_ActiveIRQ get_ActiveIRQ() { return Type_ActiveIRQ(rw.template get<uint32>(0x40)); }
+ 
+  void set_ActiveIRQ(Type_ActiveIRQ value) { rw.set(0x40,value.value); }
+ 
+  Setter<Type_ActiveIRQ> to_ActiveIRQ() { return Setter<Type_ActiveIRQ>(rw,0x40); }
+ 
+  static Type_ActiveIRQ null_ActiveIRQ() { return Type_ActiveIRQ(0); }
+ 
+  static Type_ActiveIRQ ones_ActiveIRQ() { return Type_ActiveIRQ(Type_ActiveIRQ::Type(-1)); }
  
   //--- NextActive
 

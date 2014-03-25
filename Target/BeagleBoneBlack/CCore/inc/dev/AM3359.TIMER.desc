@@ -1,0 +1,81 @@
+/* AM3359.TIMER.desc */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  Tag: Target/BeagleBoneBlack
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg OCPConfig : 32
+ {
+  Reset    : .
+  EMUFree  : .
+  
+  IdleMode : .+2
+   {
+    ForceIdle       = 0
+    NoIdle          = 1
+    SmartIdle       = 2
+    SmartIdleWakeup = 3
+   }
+ }
+ 
+reg RegMode : 32
+ {
+  *        : .
+  NoReset  : .
+  PostMode : .
+ } 
+ 
+reg Counter : 32
+ {
+ } 
+ 
+reg Reload : 32
+ {
+ } 
+ 
+reg Control : 32
+ {
+  Start      : .
+  AutoReload : .
+ } 
+ 
+reg RegPost : 32
+ {
+  PendingControl : .
+  PendingCounter : .
+  PendingReload  : .
+ } 
+ 
+reg IntStatus : 32
+ {
+  Match    : .
+  Overflow : .
+  Capture  : .
+ } 
+ 
+bar DMBar : address
+ {
+  OCPConfig = 10h
+  RegMode   = 54h
+  
+  Counter = 3Ch
+  Reload  = 40h
+  Control = 38h
+  RegPost = 48h
+  
+  IntStatusRaw   = 24h as IntStatus
+  IntStatus      = 28h
+  IntEnableSet   = 2Ch as IntStatus
+  IntEnableClear = 30h as IntStatus
+ }
+
+   

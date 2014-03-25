@@ -121,3 +121,4 @@
 ../../../XCore/CCore/test/testPrint.cpp
 ../../../Target/BeagleBoneBlack/CCore/testip/testip.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3001.RedirectPTPCon.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3002.Light.cpp

@@ -39,3 +39,4 @@ OBJDUMP = /opt/BeagleBoneBlack/bin/arm-objdump.exe
 
 txt: $(TARGET)
 	$(OBJDUMP) -xD $(TARGET) > main.exe.txt
+

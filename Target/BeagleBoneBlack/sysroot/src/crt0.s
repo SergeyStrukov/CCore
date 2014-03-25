@@ -25,6 +25,11 @@
         .extern __bss_start__
         .extern __bss_end__
         
+        .extern __std_debug_init
+        .extern __std_debug
+        .extern __std_debug2
+        .extern __std_debug_trap
+        
         .extern __std_init
         .extern __std_main
         .extern __std_exit
@@ -60,6 +65,8 @@ the_end_msg:  .ascii  "--- the end ---\000"
 cur_mem:                  .space 4
         
 __std_context_data_init:  .space 4
+
+main_stack:               .space 4
         
 @------------------------------------------------------------------------------
         
@@ -177,6 +184,9 @@ start:
         add     r0, r0, r4
         sub     sp, r0, #16
         
+        ldr     r0, .main_stack
+        str     sp, [r0]
+        
      @ erase .bss  
         
         ldr     r0, .__bss_start__
@@ -206,6 +216,8 @@ start:
         str     r0, [r1]
         
      @ main
+     
+        bl      __std_debug_init
         
         bl      __std_init
         
@@ -238,6 +250,8 @@ start:
 .__std_mem:                  .word  __std_mem
         
 .cur_mem:                    .word  cur_mem
+
+.main_stack:                 .word  main_stack
         
 .__std_stack_size:           .word  __std_stack_size
         
@@ -303,6 +317,7 @@ trap:
 
      @ svc + disable interrupts   
         
+        mov     r4, lr
         mov     r0, #0x93
         msr     CPSR_c, r0
         
@@ -329,11 +344,22 @@ trap:
      
         ldr     r0, .1.GPIO1_OUT
         
+        mov     r1, r3
         orr     r3, r3, #8
         mov     r3, r3, LSL #21
         
         str     r3, [r0]
         
+     @ setup stack
+     
+        ldr     r0, .1.main_stack
+        ldr     sp, [r0]
+        
+     @ debug LR
+        
+        mov      r0, r4
+        bl       __std_debug_trap
+              
      @ dead loop         
         
 1:
@@ -349,6 +375,8 @@ trap:
 
 .1.GPIO1_OUT:                .word  0x4804C000+0x13C
 
+.1.main_stack:               .word  main_stack
+
 @------------------------------------------------------------------------------
         
         .text
@@ -358,8 +386,15 @@ trap:
         .global __std_abort2
         
 __std_abort:
+
+        bl      __std_debug
+        b       trap0
+
 __std_abort2:
 
+        bl      __std_debug2
+        b       trap0
+        
 trap0:
         mov     r3, #0
         b       trap        
@@ -569,7 +604,7 @@ int_context_data:   .space  4
         
 __std_intsetup:
         
-        push    {r4,r5,lr}
+        push    {r3,r4,r5,lr}
         
      @ store handler 
         
@@ -606,7 +641,7 @@ __std_intsetup:
         mov     r2, r5
         bl      __std_memcpy
         
-        pop     {r4,r5,pc}
+        pop     {r3,r4,r5,pc}
         
 __std_intcleanup:
         
