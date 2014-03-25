@@ -1,0 +1,10 @@
+/* Changes-1.08.txt */
+
+--- New features -----
+
+New XCore target BeagleBoneBlack
+
+--- Updates ---
+
+
+----------------------
