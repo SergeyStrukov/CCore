@@ -56,7 +56,7 @@ class TimerDev
      
      while( bar.get_RegPost().maskbit(RegPost_PendingCounter)!=0 );
      
-     bar.set_Counter(0xFFFFFFFF);
+     bar.set_Counter_ones();
      
      while( bar.get_RegPost().maskbit(RegPost_PendingReload)!=0 );
      

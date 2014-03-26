@@ -65,7 +65,7 @@ clean:
 
 install: all
 	cp -r -v ./lib /opt/BeagleBoneBlack/sysroot
-#	cp -r -v ./usr /opt/BeagleBoneBlack/sysroot
+	cp -r -v ./usr /opt/BeagleBoneBlack/sysroot
 
 lib/libc.a : $(OBJ_LIST)
 	$(RM) $@

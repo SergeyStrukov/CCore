@@ -20,12 +20,6 @@
   static __cxa_eh_globals eh_globals __attribute__((section(".context_data"))) = {} ;
 
 
-<SRC>/libgcc/config/arm/crti.S
-
-  label  _init <- __std_init_global
-  label  _fini <- __std_exit_global
-
-
 <SRC>/libstdc++-v3/libsupc++/pure.cc
 
   #include <stdio.h>

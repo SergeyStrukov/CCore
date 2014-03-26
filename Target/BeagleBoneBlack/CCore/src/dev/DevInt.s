@@ -29,7 +29,7 @@ _ZN5CCore3Dev12IsIntContextEv:                   @ CCore::Dev::IsIntContext
         movne   r0, #0
         moveq   r0, #1
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Dev7IntLock8Internal6EnableEv:         @ CCore::Dev::IntLock::Internal::Enable
         
@@ -37,21 +37,22 @@ _ZN5CCore3Dev7IntLock8Internal6EnableEv:         @ CCore::Dev::IntLock::Internal
         bic     r0, r0, #128
         msr     CPSR_c, r0
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Dev7IntLock8Internal7DisableEv:        @ CCore::Dev::IntLock::Internal::Disable
 
         mrs     r0, CPSR
         tst     r0, #128
+        
         movne   r0, #0
         
-        movne   pc, lr
+        bxne    lr
         
         orr     r0, r0, #128
         msr     CPSR_c, r0
         mov     r0, #1
         
-        mov     pc, lr
+        bx      lr
         
 @-----------------------------------------------------------------------------------------
 

@@ -31,7 +31,7 @@ enum IntSource
  {
   Int_LCDCINT = 36,
   Int_I2C0INT = 70,
-  Int_TINT4 = 92,
+  Int_TINT4   = 92,
   
   Int_3PGSWRXTHR0 = 40,
   Int_3PGSWRXINT0 = 41,

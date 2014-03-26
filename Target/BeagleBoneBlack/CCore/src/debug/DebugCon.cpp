@@ -4014,8 +4014,9 @@ class Instance
 
 using namespace Debug;
 
-extern "C"
-void __std_debug_init()
+#include <__std_init.h>
+
+void __std_debug_init(void)
  {
   // PRCM
   {
@@ -4072,7 +4073,6 @@ void __std_debug_init()
   }
  }
 
-extern "C"
 void __std_debug(const char *zstr)
  {
   StrLen str(zstr);
@@ -4081,23 +4081,20 @@ void __std_debug(const char *zstr)
   Video::ConsoleOut(str.ptr,str.len);
  }
 
-extern "C"
-void __std_debug2(const char *ptr,ulen len)
+void __std_debug2(const char *ptr,__std_len_t len)
  {
   Video::NewLine();
   Video::ConsoleOut(ptr,len);
  }
 
-extern "C"
-void __std_debug_console(const char *ptr,ulen len)
+void __std_debug_console(const char *ptr,__std_len_t len)
  {
   Video::ConsoleOut(ptr,len);
  }
 
 #include <CCore/inc/Print.h>
 
-extern "C"
-void __std_debug_trap(uint32 LR,uint32 trap)
+void __std_debug_trap(unsigned LR,unsigned trap)
  {
   char buf[TextBufLen];
   

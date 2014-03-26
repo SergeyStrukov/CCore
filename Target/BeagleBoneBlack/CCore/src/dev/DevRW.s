@@ -25,39 +25,39 @@
         
 _ZN5CCore3Dev6VarGetIhEET_PKv:                   @ CCore::Dev::VarGet<uint8>
         
-        ldrb    r0, [r0, #0]
+        ldrb    r0, [r0]
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Dev6VarSetIhEEvPvT_:                   @ CCore::Dev::VarSet<uint8>
         
-        strb    r1, [r0, #0]
+        strb    r1, [r0]
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Dev6VarGetItEET_PKv:                   @ CCore::Dev::VarGet<uint16>
         
-        ldrh    r0, [r0, #0]
+        ldrh    r0, [r0]
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Dev6VarSetItEEvPvT_:                   @ CCore::Dev::VarSet<uint16>
         
-        strh    r1, [r0, #0]
+        strh    r1, [r0]
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Dev6VarGetIjEET_PKv:                   @ CCore::Dev::VarGet<uint32>
         
-        ldr     r0, [r0, #0]
+        ldr     r0, [r0]
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Dev6VarSetIjEEvPvT_:                   @ CCore::Dev::VarSet<uint32>
         
-        str     r1, [r0, #0]
+        str     r1, [r0]
         
-        mov     pc, lr
+        bx      lr
         
 @-----------------------------------------------------------------------------------------          
 

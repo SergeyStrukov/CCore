@@ -20,11 +20,9 @@
 extern "C" {
 #endif
 
-/* constructors/destructors */ 
+/* types */
 
-extern void __std_init_global(void);  /* crti.o */ 
-
-extern void __std_exit_global(void);  /* crti.o */ 
+typedef unsigned __std_len_t;
 
 /* init */ 
 
@@ -36,25 +34,45 @@ extern void __std_main(void);
 
 /* exit */ 
 
-extern void __std_exit(void);           
+extern void __std_exit(void);
+
+/* debug */
+
+extern void __std_debug_init(void);
+
+extern void __std_debug(const char *zstr);
+
+extern void __std_debug2(const char *ptr,__std_len_t len);
+
+extern void __std_debug_console(const char *ptr,__std_len_t len);
+
+extern void __std_debug_trap(unsigned LR,unsigned trap);
+
+/* constructors/destructors */
+
+typedef void (*__std_init_t)(void);
+
+extern __std_init_t * __std_get_init_base(void);
+
+extern __std_init_t * __std_get_init_lim(void);
 
 /* abort */ 
 
-extern void __std_abort(const char *msg) __attribute__((noreturn)) ;
+extern void __std_abort(const char *zstr) __attribute__((noreturn)) ;
 
-extern void __std_abort2(const char *msg,unsigned len) __attribute__((noreturn)) ;
+extern void __std_abort2(const char *ptr,__std_len_t len) __attribute__((noreturn)) ;
 
 /* mem */ 
 
  /* all MaxAlign-ed */ 
 
-extern unsigned __std_get_heap_int_len(void);
+extern __std_len_t __std_get_heap_int_len(void);
 
-extern unsigned __std_get_heap_len(void);
+extern __std_len_t __std_get_heap_len(void);
 
-extern unsigned __std_get_syslog_len(void);
+extern __std_len_t __std_get_syslog_len(void);
 
-extern void * __std_alloc(unsigned len);
+extern void * __std_alloc(__std_len_t len);
 
 /* shared mem */ 
 
@@ -62,7 +80,7 @@ extern void * __std_alloc(unsigned len);
  
 extern void * __std_get_shared_mem(void);
 
-extern unsigned __std_get_shared_mem_len(void);
+extern __std_len_t __std_get_shared_mem_len(void);
 
 /* video mem */
 
@@ -70,7 +88,7 @@ extern unsigned __std_get_shared_mem_len(void);
 
 extern void * __std_get_video_mem(void);
 
-extern unsigned __std_get_video_mem_len(void);
+extern __std_len_t __std_get_video_mem_len(void);
 
 /* int */ 
 
@@ -86,13 +104,13 @@ extern void __std_intcleanup(void);
  
 extern void * __std_context;
 
-extern unsigned __std_context_len(void);
+extern __std_len_t __std_context_len(void);
 
 typedef void (*__std_entry_t)(void *arg);
 
 extern void __std_context_init(void *context,
                                void *stack,
-                               unsigned stack_len,
+                               __std_len_t stack_len,
                                __std_entry_t entry,
                                void *arg);
                                

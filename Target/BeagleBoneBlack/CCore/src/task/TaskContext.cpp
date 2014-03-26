@@ -21,14 +21,11 @@ namespace CCore {
 
 /* class Task::Internal */ 
 
-extern "C" {
-
-static void __std_Entry(void *task)
+extern "C"
+void __std_Entry(void *task)
  {
   Task::Internal::EntryTask(task);
  }
- 
-}
   
 void Task::Internal::ContextInit(void *context,void *stack,ulen stack_len,void *task)
  {

@@ -33,6 +33,8 @@ Space AllocHeapSpace_shared();
 
 Space AllocLogSpace();
 
+Space AllocVideoSpace();
+
 } // namespace Sys
 } // namespace CCore
  

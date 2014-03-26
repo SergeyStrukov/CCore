@@ -22,10 +22,10 @@
         
 _ZN5CCore3Sys6Atomic3SetEPVjj:                   @ CCore::Sys::Atomic::Set
         
-        swp     r3, r1, [r0]
-        mov     r0, r3
+        swp     r2, r1, [r0]
+        mov     r0, r2
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Sys6Atomic3AddEPVjj:                   @ CCore::Sys::Atomic::Add
         
@@ -40,7 +40,7 @@ _ZN5CCore3Sys6Atomic3AddEPVjj:                   @ CCore::Sys::Atomic::Add
         
         msr     CPSR_c, r3
         
-        mov     pc, lr
+        bx      lr
         
 _ZN5CCore3Sys6Atomic6TrySetEPVjjj:               @ CCore::Sys::Atomic::TrySet
         
@@ -55,7 +55,7 @@ _ZN5CCore3Sys6Atomic6TrySetEPVjjj:               @ CCore::Sys::Atomic::TrySet
         
         msr     CPSR_c, r3
         
-        mov     pc, lr
+        bx      lr
         
 @-----------------------------------------------------------------------------------------
 

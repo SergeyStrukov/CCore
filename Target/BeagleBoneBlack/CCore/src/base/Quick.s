@@ -26,35 +26,35 @@ _ZN5CCore5Quick9ScanLSBitEj:                     @ CCore::Quick::ScanLSBit
 
         rbit    r0, r0
         clz     r0, r0
-                
-        mov     pc, lr
+        
+        bx      lr        
         
 _ZN5CCore5Quick9ScanMSBitEj:                     @ CCore::Quick::ScanMSBit
         
         clz     r0, r0
         rsb     r0, r0, #31
         
-        mov     pc, lr
+        bx      lr        
         
 _ZN5CCore5Quick10ByteSwap16Et:                   @ CCore::Quick::ByteSwap16       
         
         rev16   r0, r0
         uxth    r0, r0
         
-        mov     pc, lr
+        bx      lr        
         
 _ZN5CCore5Quick10ByteSwap32Ej:                   @ CCore::Quick::ByteSwap32
 
         rev     r0, r0
 
-        mov     pc, lr
+        bx      lr        
         
 _ZN5CCore5Quick10ByteSwap64Ey:                   @ CCore::Quick::ByteSwap64
         
-        rev     r3, r0
+        rev     r2, r0
         rev     r0, r1
-        mov     r1, r3
+        mov     r1, r2
     
-        mov     pc, lr
+        bx      lr        
         
 @-----------------------------------------------------------------------------------------

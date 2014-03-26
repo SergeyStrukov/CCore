@@ -24,7 +24,7 @@ namespace Sys {
 
 Space AllocHeapSpace()
  {
-  unsigned len=__std_get_heap_len();
+  auto len=__std_get_heap_len();
   void *mem=__std_alloc(len);
  
   return Space(mem,len);
@@ -32,7 +32,7 @@ Space AllocHeapSpace()
  
 Space AllocHeapSpace_int()
  {
-  unsigned len=__std_get_heap_int_len();
+  auto len=__std_get_heap_int_len();
   void *mem=__std_alloc(len);
  
   return Space(mem,len);
@@ -45,10 +45,15 @@ Space AllocHeapSpace_shared()
  
 Space AllocLogSpace()
  {
-  unsigned len=__std_get_syslog_len();
+  auto len=__std_get_syslog_len();
   void *mem=__std_alloc(len);
 
   return Space(mem,len);
+ }
+
+Space AllocVideoSpace()
+ {
+  return Space(__std_get_video_mem(),__std_get_video_mem_len());
  }
  
 } // namespace Sys

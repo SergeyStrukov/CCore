@@ -112,15 +112,17 @@ extern "C" {
 
 void IRQ_main()
  {
+  using namespace AM3359::INTC;
+  
   TaskEventHost.add<TaskSwitchEvent>(TaskNumber::EnterInt);
   
   TaskMonitor::Internal::BeginInt();
   
-  AM3359::INTC::Bar intc;
+  Bar intc;
  
   Object->dispatch(intc.get_ActiveIRQ().get_Number());
   
-  intc.null_NextActive().setbit(AM3359::INTC::NextActive_IRQ).setTo(intc);
+  intc.null_NextActive().setbit(NextActive_IRQ).setTo(intc);
   
   TaskMonitor::Internal::EndInt();
   
@@ -131,22 +133,24 @@ void IRQ_main()
 
 IntEngine::IntEngine()
  {
-  AM3359::INTC::Bar intc;
+  using namespace AM3359::INTC;
   
-  intc.null_SysConfig().setbit(AM3359::INTC::SysConfig_Reset).setTo(intc);
+  Bar intc;
   
-  while( intc.get_SysStatus().maskbit(AM3359::INTC::SysStatus_ResetDone)==0 );
+  intc.null_SysConfig().setbit(SysConfig_Reset).setTo(intc);
   
-  intc.null_Protection().setbit(AM3359::INTC::Protection_Enable).setTo(intc);
+  while( intc.get_SysStatus().maskbit(SysStatus_ResetDone)==0 );
   
-  intc.null_Idle().setbit(AM3359::INTC::Idle_Func).setTo(intc);
+  intc.null_Protection().setbit(Protection_Enable).setTo(intc);
+  
+  intc.null_Idle().setbit(Idle_Func).setTo(intc);
   
   intc.null_PriorityMask().set_Threshold(0xFF).setTo(intc);
   
-  intc.set_SetMask0(0xFFFFFFFF);
-  intc.set_SetMask1(0xFFFFFFFF);
-  intc.set_SetMask2(0xFFFFFFFF);
-  intc.set_SetMask3(0xFFFFFFFF);
+  intc.set_SetMask0_ones();
+  intc.set_SetMask1_ones();
+  intc.set_SetMask2_ones();
+  intc.set_SetMask3_ones();
   
   for(uint32 ind=0; ind<128 ;ind++)
     intc.null_TypePriorityCfg().set(intc.to_TypePriorityCfg(ind));
@@ -158,10 +162,10 @@ IntEngine::~IntEngine()
  {
   AM3359::INTC::Bar intc;
   
-  intc.set_SetMask0(0xFFFFFFFF);
-  intc.set_SetMask1(0xFFFFFFFF);
-  intc.set_SetMask2(0xFFFFFFFF);
-  intc.set_SetMask3(0xFFFFFFFF);
+  intc.set_SetMask0_ones();
+  intc.set_SetMask1_ones();
+  intc.set_SetMask2_ones();
+  intc.set_SetMask3_ones();
   
   __std_intcleanup();
  }

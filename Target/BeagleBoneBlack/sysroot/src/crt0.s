@@ -25,6 +25,9 @@
         .extern __bss_start__
         .extern __bss_end__
         
+        .extern __init_array_start
+        .extern __init_array_end
+        
         .extern __std_debug_init
         .extern __std_debug
         .extern __std_debug2
@@ -427,6 +430,28 @@ trap7:
         mov     r3, #7
         b       trap
         
+@------------------------------------------------------------------------------
+
+        .text
+        .align 2
+        
+        .global __std_get_init_base
+        .global __std_get_init_lim
+
+__std_get_init_base:
+
+        movw     r0, #:lower16:__init_array_start
+        movt     r0, #:upper16:__init_array_start 
+
+        bx       lr
+        
+__std_get_init_lim:
+
+        movw     r0, #:lower16:__init_array_end
+        movt     r0, #:upper16:__init_array_end
+         
+        bx       lr
+
 @------------------------------------------------------------------------------
 
         .text

@@ -21,7 +21,7 @@ namespace LibC_Internal {
 
 /* functions */ 
 
-void Abort(const char *msg) { __std_abort(msg); }
+void Abort(const char *zstr) { __std_abort(zstr); }
  
 } // namespace LibC_Internal
  

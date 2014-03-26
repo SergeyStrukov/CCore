@@ -70,7 +70,7 @@ const Size FileBufSize = 4*(1<<10) ;
 
 /* functions */ 
 
-void Abort(const char *msg);
+void Abort(const char *zstr);
 
 /* char prop functions */
 

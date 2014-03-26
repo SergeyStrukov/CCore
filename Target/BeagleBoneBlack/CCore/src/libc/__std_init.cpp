@@ -26,11 +26,6 @@
 
 using namespace CCore;
 
-extern char __init_array_start[];
-extern char __init_array_end[];
-
-using init_func = void (*)() ;
-
 /* init/exit */
 
 void __std_init(void)
@@ -39,16 +34,14 @@ void __std_init(void)
   
   Init_SpecialMem();
   
-  __std_init_global(); // NOP  
+  // constructors are called here
   
-  // init CCore here
-  
-  init_func *ptr=(init_func *)__init_array_start;
-  init_func *lim=(init_func *)__init_array_end;
+  __std_init_t *ptr=__std_get_init_base();
+  __std_init_t *lim=__std_get_init_lim();
   
   for(; ptr<lim ;ptr++) 
     {
-     if( init_func func=*ptr ) func();
+     if( __std_init_t func=*ptr ) func();
     }
  }
  
@@ -71,9 +64,7 @@ void __std_main(void)
  
 void __std_exit(void)
  {
-  Exit_atexit(); // call atexit functions
-  
-  __std_exit_global(); // NOP
+  Exit_atexit(); // call atexit functions, destructors are called here
   
   Exit_SpecialMem();
   Dev::Exit_CPU();

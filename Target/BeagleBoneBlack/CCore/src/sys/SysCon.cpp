@@ -17,7 +17,7 @@
 
 #include <CCore/inc/dev/DevPlanInit.h>
 
-#include <CCore/inc/Print.h>
+#include <__std_init.h>
 
 namespace CCore {
 namespace Sys {
@@ -25,9 +25,6 @@ namespace Sys {
 /* GetPlanInitNode_...() */ 
 
 namespace Private_SysCon {
-
-extern "C"
-void __std_debug_console(const char *ptr,ulen len);
 
 /* class ImpCon */
 
