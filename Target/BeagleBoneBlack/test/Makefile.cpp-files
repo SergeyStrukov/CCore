@@ -122,3 +122,6 @@
 ../../../Target/BeagleBoneBlack/CCore/testip/testip.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3001.RedirectPTPCon.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3002.Light.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3003.gcc.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3004.Exception.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3005.Atomic.cpp

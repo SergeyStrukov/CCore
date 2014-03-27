@@ -1,15 +1,15 @@
 /* main.cpp */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.02
+//  Project: CCore 1.08
 //
-//  Tag: Target/IXDP465
+//  Tag: Target/BeagleBoneBlack
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ int main()
   //Testit<24>().run();
   //Testit<25>().run();
   //Testit<26>().run();
-  //Testit<27>().run();
+  Testit<27>().run();
   //Testit<28>().run();
   //Testit<29>().run();
   //Testit<30>().run();
@@ -155,7 +155,10 @@ int main()
   //Testit<2016>().run();
   
   //Testit<3001>().run();
-  Testit<3002>().run();
+  //Testit<3002>().run();
+  //Testit<3003>().run();
+  //Testit<3004>().run();
+  //Testit<3005>().run();
   
   Printf(Con,"\nPeak memory usage #;\n\n",MemPeak());  
     

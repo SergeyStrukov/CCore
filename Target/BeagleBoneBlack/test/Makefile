@@ -29,6 +29,10 @@ TARGET = main.exe
 
 include $(CCORE_ROOT)/Target/Makefile.app
 
+
+#- temp ---------------
+
+
 #run: $(TARGET)
 #	BeagleBoot.exe r 192.168.1.10 $(TARGET) && cd root && PTPServer.exe c
 	

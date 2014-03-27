@@ -47,7 +47,6 @@ RM = rm -f
 
 OBJ_LIST = obj/ctype.o       \
            obj/string_c.o    \
-           obj/__std_init.o  \
            obj/errno.o       \
            obj/locale.o      \
            obj/stdlib.o      \
@@ -61,7 +60,7 @@ OBJ_LIST = obj/ctype.o       \
 all: lib/libc.a lib/libm.a lib/crt0.o
 
 clean:
-	$(RM) $(OBJ_LIST) lib/libc.a lib/crt0.o
+	$(RM) $(OBJ_LIST) lib/libc.a lib/libm.a lib/crt0.o
 
 install: all
 	cp -r -v ./lib /opt/BeagleBoneBlack/sysroot

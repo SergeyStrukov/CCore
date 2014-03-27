@@ -50,27 +50,14 @@
         .extern  __std_video_mem_size
         
 @------------------------------------------------------------------------------
-        
-        .section .rodata
-        .align 2
-        
-nomem_msg:    .ascii  "__std_alloc() : out of memory\000"      
-        
-the_end_msg:  .ascii  "--- the end ---\000"
-        
-@------------------------------------------------------------------------------
-        
-        .data
-        .align 2 
-        
-        .global __std_context_data_init
-        
-cur_mem:                  .space 4
-        
-__std_context_data_init:  .space 4
 
-main_stack:               .space 4
+        .macro   SetReg  reg, val
         
+        movw    \reg, #:lower16:\val 
+        movt    \reg, #:upper16:\val
+        
+        .endm
+
 @------------------------------------------------------------------------------
         
         .section ".absstart","ax"
@@ -107,6 +94,43 @@ ex_base:
 .IRQ_entry:                  .word  IRQ_entry
                 
 @------------------------------------------------------------------------------
+        
+        .section .rodata
+        .align 2
+        
+nomem_msg:                   .ascii  "__std_alloc() : out of memory\000"      
+        
+the_end_msg:                 .ascii  "--- the end ---\000"
+
+exittrap_msg:                .ascii  "exittrap() is called -- trap\000"
+        
+@------------------------------------------------------------------------------
+        
+        .data
+        .align 2 
+        
+        .global __std_context
+        
+cur_mem:                     .word  0
+        
+main_stack:                  .word  0
+        
+__std_context:               .word  0
+        
+context_data_init:           .word  0
+
+@------------------------------------------------------------------------------
+
+        .set WDSC      , 0x44E35000+0x010 
+        .set WSPR      , 0x44E35000+0x048
+        .set WWPS      , 0x44E35000+0x034
+        .set WStop1    , 0xAAAA
+        .set WStop2    , 0x5555
+         
+        .set GPIO1_OE  , 0x4804C000+0x134
+        .set GPIO1_OUT , 0x4804C000+0x13C
+        
+@------------------------------------------------------------------------------
 
         .text
         .align 2
@@ -121,7 +145,7 @@ start:
         
      @ reset and stop WD   
         
-        ldr     r0, .WDSC
+        SetReg  r0, WDSC
         ldr     r1, [r0]
         orr     r1, #0x02
         str     r1, [r0]
@@ -130,17 +154,17 @@ start:
         tst     r1, #0x02
         bne     1b
         
-        ldr     r0, .WSPR
-        ldr     r2, .WWPS
+        SetReg  r0, WSPR
+        SetReg  r2, WWPS
         
-        ldr     r1, .WStop1
+        SetReg  r1, WStop1
         str     r1, [r0]
 1:        
         ldr     r1, [r2]
         tst     r1, #0x10
         bne     1b
         
-        ldr     r1, .WStop2
+        SetReg  r1, WStop2
         str     r1, [r0]
 1:        
         ldr     r1, [r2]
@@ -157,55 +181,55 @@ start:
         
      @ setup exception base address    
         
-        ldr     r0, .ex_base
+        SetReg  r0, ex_base
         mcr     p15, 0, r0, c12, c0, 0   
         
      @ enable Lights
      
-        ldr     r0, .GPIO1_OE
+        SetReg  r0, GPIO1_OE
         ldr     r1, [r0]
         bic     r1, #0x1E00000 
         str     r1, [r0]
      
      @ Lights off
      
-        ldr     r0, .GPIO1_OUT
+        SetReg  r0, GPIO1_OUT
         mov     r1, #0
         str     r1, [r0]      
         
      @ cur_mem <- __std_mem   
         
-        ldr     r0, .__std_mem
-        ldr     r1, .cur_mem
+        SetReg  r0, __std_mem
+        SetReg  r1, cur_mem
         str     r0, [r1]
         
      @ alloc and setup stack
         
-        ldr     r0, .__std_stack_size
+        SetReg  r0, __std_stack_size
         mov     r4, r0
         bl      __std_alloc
         add     r0, r0, r4
         sub     sp, r0, #16
         
-        ldr     r0, .main_stack
+        SetReg  r0, main_stack
         str     sp, [r0]
         
      @ erase .bss  
         
-        ldr     r0, .__bss_start__
-        ldr     r2, .__bss_end__
+        SetReg  r0, __bss_start__
+        SetReg  r2, __bss_end__
         sub     r2, r2, r0
         mov     r1, #0
         bl      __std_memset
         
-     @ alloc and fill __std_context_data_init
-        
-        ldr     r4, .__std_context_data
-        ldr     r5, .__std_context_data_lim
+     @ alloc and fill context_data_init
+
+        SetReg  r4, __std_context_data      
+        SetReg  r5, __std_context_data_lim
         sub     r5, r5, r4
         mov     r0, r5
         bl      __std_alloc
-        ldr     r6, .__std_context_data_init
+        SetReg  r6, context_data_init
         str     r0, [r6]
         mov     r1, r4
         mov     r2, r5
@@ -215,7 +239,7 @@ start:
         
         bl      __std_context_len
         bl      __std_alloc
-        ldr     r1, .__std_context
+        SetReg  r1, __std_context
         str     r0, [r1]
         
      @ main
@@ -228,50 +252,10 @@ start:
         
         bl      __std_exit
         
-        ldr     r0, .the_end_msg
+        SetReg  r0, the_end_msg
         
         b       __std_abort
-        
-        .align 2
-        
-.WDSC:                       .word  0x44E35000+0x010
 
-.WSPR:                       .word  0x44E35000+0x048
-
-.WWPS:                       .word  0x44E35000+0x034
-
-.WStop1:                     .word  0xAAAA
-
-.WStop2:                     .word  0x5555
-
-.ex_base:                    .word  ex_base
-
-.GPIO1_OE:                   .word  0x4804C000+0x134
-
-.GPIO1_OUT:                  .word  0x4804C000+0x13C
-        
-.__std_mem:                  .word  __std_mem
-        
-.cur_mem:                    .word  cur_mem
-
-.main_stack:                 .word  main_stack
-        
-.__std_stack_size:           .word  __std_stack_size
-        
-.__bss_start__:              .word  __bss_start__
-        
-.__bss_end__:                .word  __bss_end__
-        
-.__std_context_data:         .word  __std_context_data
-        
-.__std_context_data_lim:     .word  __std_context_data_lim
-        
-.__std_context_data_init:    .word  __std_context_data_init
-        
-.__std_context:              .word  __std_context
-        
-.the_end_msg:                .word  the_end_msg
-        
 @------------------------------------------------------------------------------
         
         .text
@@ -280,8 +264,8 @@ start:
         .global __std_alloc
         
 nomem:  
-        
-        ldr     r0, .nomem_msg
+
+        SetReg  r0, nomem_msg 
         
         b       __std_abort
         
@@ -291,25 +275,17 @@ __std_alloc:
         bcs     nomem
         bic     r0, r0, #15
         
-        ldr     r1, .1.cur_mem
+        SetReg  r1, cur_mem
         ldr     r2, [r1]
-        ldr     r3, .__std_mem_lim
+        SetReg  r3, __std_mem_lim
         sub     r3, r3, r2
         cmp     r3, r0
         bcc     nomem
         add     r3, r2, r0
         str     r3, [r1]
         mov     r0, r2
-        
-        mov     pc, lr
-        
-        .align 2
-        
-.nomem_msg:                  .word  nomem_msg
-        
-.1.cur_mem:                  .word  cur_mem
 
-.__std_mem_lim:              .word  __std_mem_lim
+        bx      lr        
         
 @------------------------------------------------------------------------------
         
@@ -326,17 +302,17 @@ trap:
         
      @ stop WD   
         
-        ldr     r0, .1.WSPR
-        ldr     r2, .1.WWPS
-        
-        ldr     r1, .1.WStop1
+        SetReg  r0, WSPR
+        SetReg  r2, WWPS
+
+        SetReg  r1, WStop1        
         str     r1, [r0]
 1:        
         ldr     r1, [r2]
         tst     r1, #0x10
         bne     1b
-        
-        ldr     r1, .1.WStop2
+
+        SetReg  r1, WStop2       
         str     r1, [r0]
 1:        
         ldr     r1, [r2]
@@ -345,7 +321,7 @@ trap:
         
      @ Lights on
      
-        ldr     r0, .1.GPIO1_OUT
+        SetReg  r0, GPIO1_OUT
         
         mov     r1, r3
         orr     r3, r3, #8
@@ -355,31 +331,19 @@ trap:
         
      @ setup stack
      
-        ldr     r0, .1.main_stack
+        SetReg  r0, main_stack
         ldr     sp, [r0]
         
      @ debug LR
         
-        mov      r0, r4
-        bl       __std_debug_trap
+        mov     r0, r4
+        bl      __std_debug_trap
               
      @ dead loop         
         
 1:
         b       1b        
         
-.1.WSPR:                     .word  0x44E35000+0x048
-
-.1.WWPS:                     .word  0x44E35000+0x034
-
-.1.WStop1:                   .word  0xAAAA
-
-.1.WStop2:                   .word  0x5555
-
-.1.GPIO1_OUT:                .word  0x4804C000+0x13C
-
-.1.main_stack:               .word  main_stack
-
 @------------------------------------------------------------------------------
         
         .text
@@ -440,17 +404,15 @@ trap7:
 
 __std_get_init_base:
 
-        movw     r0, #:lower16:__init_array_start
-        movt     r0, #:upper16:__init_array_start 
+        SetReg  r0, __init_array_start
 
-        bx       lr
+        bx      lr
         
 __std_get_init_lim:
 
-        movw     r0, #:lower16:__init_array_end
-        movt     r0, #:upper16:__init_array_end
+        SetReg  r0, __init_array_end
          
-        bx       lr
+        bx      lr
 
 @------------------------------------------------------------------------------
 
@@ -467,64 +429,45 @@ __std_get_init_lim:
         
 __std_get_shared_mem:
         
-        ldr     r0, .__std_shared_mem
+        SetReg  r0, __std_shared_mem
         
-        mov     pc, lr
+        bx      lr
         
 __std_get_shared_mem_len:        
+
+        SetReg  r0, __std_shared_mem_size        
         
-        ldr     r0, .__std_shared_mem_size
-        
-        mov     pc, lr
+        bx      lr
         
 __std_get_video_mem:        
 
-        ldr     r0, .__std_video_mem
+        SetReg  r0, __std_video_mem 
         
-        mov     pc, lr
+        bx      lr
         
 __std_get_video_mem_len:
         
-        ldr     r0, .__std_video_mem_size
+        SetReg  r0, __std_video_mem_size
         
-        mov     pc, lr
+        bx      lr
         
 __std_get_heap_int_len:        
         
-        ldr     r0, .__std_int_heap_size
+        SetReg  r0, __std_int_heap_size
         
-        mov     pc, lr
+        bx      lr
         
 __std_get_heap_len:        
         
-        ldr     r0, .__std_heap_size
+        SetReg  r0, __std_heap_size
         
-        mov     pc, lr
+        bx      lr
         
 __std_get_syslog_len:        
         
-        ldr     r0, .__std_syslog_size
+        SetReg  r0, __std_syslog_size
         
-        mov     pc, lr
-        
-        .align 2
-        
-.__std_shared_mem:           .word  __std_shared_mem
-.__std_shared_mem_size:      .word  __std_shared_mem_size
-.__std_video_mem:            .word  __std_video_mem
-.__std_video_mem_size:       .word  __std_video_mem_size
-.__std_int_heap_size:        .word  __std_int_heap_size
-.__std_heap_size:            .word  __std_heap_size
-.__std_syslog_size:          .word  __std_syslog_size
-        
-@------------------------------------------------------------------------------
-        
-        .bss
-        .align 2 
-        
-        .global __std_context
-        
-__std_context:      .space  4
+        bx      lr
         
 @------------------------------------------------------------------------------
         
@@ -532,20 +475,81 @@ __std_context:      .space  4
         .align 2
         
         .global __std_context_len
+        .global __std_context_init
         .global __std_switch
         
 __std_context_len:
         
-        ldr     r0, .1.__std_context_data
-        ldr     r1, .1.__std_context_data_lim
+        SetReg  r0, __std_context_data
+        SetReg  r1, __std_context_data_lim
         sub     r0, r1, r0
         add     r0, #332
         
-        mov     pc, lr
+        bx      lr
+        
+exittrap:    
+
+        SetReg  r0, exittrap_msg
+        
+        b       __std_abort      
+        
+__std_context_init:
+
+        push    {r0,r1,r2,r3,r4,lr}        
+        
+        add     r4, r0, #332
+        mov     r1, #0
+        mov     r2, #332
+        bl      __std_memset
+        
+        mov     r0, r4
+        SetReg  r1, context_data_init
+        ldr     r1, [r1]
+        SetReg  r2, __std_context_data
+        SetReg  r3, __std_context_data_lim
+        sub     r2, r3, r2 
+        bl      __std_memcpy
+        
+        pop     {r0,r1,r2,r3}
+        
+        ldr     r4, [sp, #8]
+        
+     @ R0    
+        
+        str     r4, [r0, #0]
+        
+     @ SP   
+
+        add     r1, r1, r2
+        sub     r1, r1, #16     
+        str     r1, [r0, #52]
+        
+     @ LR
+     
+        SetReg  r1, exittrap
+        str     r1, [r0, #56]
+        
+     @ PC
+     
+        add     r1, r3, #4
+        str     r1, [r0, #60]
+     
+     @ CPSR
+     
+        mov     r1, #0x13
+        orr     r1, r1, #0x100
+        str     r1, [r0, #64]
+     
+     @ FPEXC
+        
+        mov     r1, #0x40000000 
+        str     r1, [r0, #68]
+        
+        pop     {r4,pc}
         
 __std_switch:        
         
-        ldr     r1, .1.__std_context
+        SetReg  r1, __std_context
         ldr     r1, [r1]
         stmia   r1, {r0-r14}
         add     r1, r1, #60
@@ -560,8 +564,8 @@ __std_switch:
         vstmia  r1!, {D0-D15}  
         vstmia  r1!, {D16-D31}
         
-        ldr     r4, .1.__std_context_data
-        ldr     r5, .1.__std_context_data_lim
+        SetReg  r4, __std_context_data
+        SetReg  r5, __std_context_data_lim
         sub     r5, r5, r4
         mov     r6, r0
         
@@ -572,7 +576,7 @@ __std_switch:
        
      @ context saved   
         
-        ldr     r1, .1.__std_context
+        SetReg  r1, __std_context
         str     r6, [r1]
         
         mov     r0, r4
@@ -603,21 +607,13 @@ __std_switch:
         
         subs    pc, lr, #4
         
-        .align 2
-        
-.1.__std_context:            .word  __std_context
-        
-.1.__std_context_data:       .word  __std_context_data
-        
-.1.__std_context_data_lim:   .word  __std_context_data_lim
-        
 @------------------------------------------------------------------------------
         
-        .bss
+        .data
         .align 2
          
-irq_func:           .space  4
-int_context_data:   .space  4
+irq_func:                    .word  0
+int_context_data:            .word  0
 
 @------------------------------------------------------------------------------
         
@@ -633,12 +629,12 @@ __std_intsetup:
         
      @ store handler 
         
-        ldr     r1, .irq_func
+        SetReg  r1, irq_func
         str     r0, [r1]
         
      @ setup IRQ stack
         
-        ldr     r0, .__std_int_stack_size
+        SetReg  r0, __std_int_stack_size
         mov     r4, r0
         bl      __std_alloc
         add     r0, r0, r4
@@ -654,14 +650,14 @@ __std_intsetup:
         
      @ alloc and fill int_context_data  
         
-        ldr     r4, .2.__std_context_data
-        ldr     r5, .2.__std_context_data_lim
+        SetReg  r4, __std_context_data
+        SetReg  r5, __std_context_data_lim
         sub     r5, r5, r4
         mov     r0, r5
         bl      __std_alloc
-        ldr     r1, .int_context_data
+        SetReg  r1, int_context_data
         str     r0, [r1]
-        ldr     r1, .2.__std_context_data_init
+        SetReg  r1, context_data_init
         ldr     r1, [r1]
         mov     r2, r5
         bl      __std_memcpy
@@ -670,7 +666,11 @@ __std_intsetup:
         
 __std_intcleanup:
         
-        mov     pc, lr
+        mov     r0, #0
+        SetReg  r1, irq_func
+        str     r0, [r1]
+        
+        bx      lr
         
 IRQ_entry:   
         
@@ -678,7 +678,7 @@ IRQ_entry:
         
         str     r12, [sp,#-4]
         
-        ldr     r12, .2.__std_context
+        SetReg  r12, __std_context
         ldr     r12, [r12]
         
         stmia   r12! , {r0-r11}
@@ -709,11 +709,11 @@ IRQ_entry:
      @ switch context data 
         
         mov     r4, r12
-        ldr     r5, .int_context_data
+        SetReg  r5, int_context_data
         ldr     r5, [r5]
         
-        ldr     r6, .2.__std_context_data
-        ldr     r7, .2.__std_context_data_lim
+        SetReg  r6, __std_context_data
+        SetReg  r7, __std_context_data_lim
         sub     r7, r7, r6
         
         mov     r0, r4
@@ -731,13 +731,13 @@ IRQ_entry:
         
      @ call dispatcher
         
-        ldr     r0, .irq_func
+        SetReg  r0, irq_func
         ldr     r0, [r0]
         blx     r0
         
      @ switch context data 
        
-        ldr     r4, .2.__std_context
+        SetReg  r4, __std_context
         ldr     r4, [r4]
        
         mov     r0, r5
@@ -772,22 +772,6 @@ IRQ_entry:
         ldr     lr, [lr, #8]
         
         subs    pc, lr, #4
-        
-        .align 2
-        
-.2.__std_context:            .word  __std_context
-        
-.2.__std_context_data:       .word  __std_context_data
-        
-.2.__std_context_data_lim:   .word  __std_context_data_lim
-        
-.2.__std_context_data_init:  .word  __std_context_data_init
-        
-.int_context_data:           .word  int_context_data
-        
-.irq_func:                   .word  irq_func
-        
-.__std_int_stack_size:       .word  __std_int_stack_size
         
 @------------------------------------------------------------------------------
         

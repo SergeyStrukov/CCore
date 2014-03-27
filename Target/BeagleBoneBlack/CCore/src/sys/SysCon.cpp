@@ -30,6 +30,8 @@ namespace Private_SysCon {
 
 class ImpCon : public ConBase
  {
+   Mutex mutex;
+  
   private:
    
    virtual void attachDefaultInput(ConInputFunction)
@@ -44,6 +46,8 @@ class ImpCon : public ConBase
    virtual void defaultOutput(NanoPacket<char> packet)
     {
      if( !packet ) return;
+     
+     Mutex::Lock lock(mutex);
 
      __std_debug_console(packet.getData(),packet.getDataLen());
      
@@ -65,7 +69,8 @@ class ImpCon : public ConBase
   public:
    
    ImpCon(TextLabel name,void *mem,ulen max_data_len,ulen count)
-    : ConBase(name,mem,max_data_len,count)
+    : ConBase(name,mem,max_data_len,count),
+      mutex("!DebugCon")
     {
     }
    
