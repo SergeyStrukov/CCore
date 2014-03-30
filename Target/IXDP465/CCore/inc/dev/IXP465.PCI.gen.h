@@ -25,7 +25,7 @@ struct Type_CBE
  
 
   template <class Bar>
-  Type_CBE & setTo(Bar &bar,uint32 ind) { bar.set_CBE(*this,ind); return *this; }
+  Type_CBE & setTo(Bar &bar,uint32 ind) { bar.set_CBE(ind,*this); return *this; }
  
 
   template <class T>
@@ -152,7 +152,7 @@ struct Type_CfgAddressCBE
  
 
   template <class Bar>
-  Type_CfgAddressCBE & setTo(Bar &bar,uint32 ind) { bar.set_CfgAddressCBE(*this,ind); return *this; }
+  Type_CfgAddressCBE & setTo(Bar &bar,uint32 ind) { bar.set_CfgAddressCBE(ind,*this); return *this; }
  
 
   template <class T>
@@ -291,7 +291,7 @@ struct Type_ControlStatus
  
 
   template <class Bar>
-  Type_ControlStatus & setTo(Bar &bar,uint32 ind) { bar.set_ControlStatus(*this,ind); return *this; }
+  Type_ControlStatus & setTo(Bar &bar,uint32 ind) { bar.set_ControlStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -500,7 +500,7 @@ struct Type_IntStatus
  
 
   template <class Bar>
-  Type_IntStatus & setTo(Bar &bar,uint32 ind) { bar.set_IntStatus(*this,ind); return *this; }
+  Type_IntStatus & setTo(Bar &bar,uint32 ind) { bar.set_IntStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -693,7 +693,7 @@ struct Type_IntEnable
  
 
   template <class Bar>
-  Type_IntEnable & setTo(Bar &bar,uint32 ind) { bar.set_IntEnable(*this,ind); return *this; }
+  Type_IntEnable & setTo(Bar &bar,uint32 ind) { bar.set_IntEnable(ind,*this); return *this; }
  
 
   template <class T>
@@ -888,7 +888,7 @@ struct Type_DMAControl
  
 
   template <class Bar>
-  Type_DMAControl & setTo(Bar &bar,uint32 ind) { bar.set_DMAControl(*this,ind); return *this; }
+  Type_DMAControl & setTo(Bar &bar,uint32 ind) { bar.set_DMAControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -1098,7 +1098,7 @@ struct Type_AHBMemBase
  
 
   template <class Bar>
-  Type_AHBMemBase & setTo(Bar &bar,uint32 ind) { bar.set_AHBMemBase(*this,ind); return *this; }
+  Type_AHBMemBase & setTo(Bar &bar,uint32 ind) { bar.set_AHBMemBase(ind,*this); return *this; }
  
 
   template <class T>
@@ -1239,7 +1239,7 @@ struct Type_AHBIOBase
  
 
   template <class Bar>
-  Type_AHBIOBase & setTo(Bar &bar,uint32 ind) { bar.set_AHBIOBase(*this,ind); return *this; }
+  Type_AHBIOBase & setTo(Bar &bar,uint32 ind) { bar.set_AHBIOBase(ind,*this); return *this; }
  
 
   template <class T>
@@ -1302,7 +1302,7 @@ struct Type_PCIMemBase
  
 
   template <class Bar>
-  Type_PCIMemBase & setTo(Bar &bar,uint32 ind) { bar.set_PCIMemBase(*this,ind); return *this; }
+  Type_PCIMemBase & setTo(Bar &bar,uint32 ind) { bar.set_PCIMemBase(ind,*this); return *this; }
  
 
   template <class T>
@@ -1468,7 +1468,7 @@ struct Type_DMAWriteLen0
  
 
   template <class Bar>
-  Type_DMAWriteLen0 & setTo(Bar &bar,uint32 ind) { bar.set_DMAWriteLen0(*this,ind); return *this; }
+  Type_DMAWriteLen0 & setTo(Bar &bar,uint32 ind) { bar.set_DMAWriteLen0(ind,*this); return *this; }
  
 
   template <class T>
@@ -1593,7 +1593,7 @@ struct Type_DMAWriteLen1
  
 
   template <class Bar>
-  Type_DMAWriteLen1 & setTo(Bar &bar,uint32 ind) { bar.set_DMAWriteLen1(*this,ind); return *this; }
+  Type_DMAWriteLen1 & setTo(Bar &bar,uint32 ind) { bar.set_DMAWriteLen1(ind,*this); return *this; }
  
 
   template <class T>
@@ -1718,7 +1718,7 @@ struct Type_DMAReadLen0
  
 
   template <class Bar>
-  Type_DMAReadLen0 & setTo(Bar &bar,uint32 ind) { bar.set_DMAReadLen0(*this,ind); return *this; }
+  Type_DMAReadLen0 & setTo(Bar &bar,uint32 ind) { bar.set_DMAReadLen0(ind,*this); return *this; }
  
 
   template <class T>
@@ -1843,7 +1843,7 @@ struct Type_DMAReadLen1
  
 
   template <class Bar>
-  Type_DMAReadLen1 & setTo(Bar &bar,uint32 ind) { bar.set_DMAReadLen1(*this,ind); return *this; }
+  Type_DMAReadLen1 & setTo(Bar &bar,uint32 ind) { bar.set_DMAReadLen1(ind,*this); return *this; }
  
 
   template <class T>
@@ -1938,7 +1938,7 @@ struct PCIBar
   RW rw;
 
   template <class ... TT>
-  PCIBar(TT && ... tt) : rw(tt...) {}
+  PCIBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

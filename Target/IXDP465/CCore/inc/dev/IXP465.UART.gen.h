@@ -21,7 +21,7 @@ struct Type_Rx
  
 
   template <class Bar>
-  Type_Rx & setTo(Bar &bar,uint32 ind) { bar.set_Rx(*this,ind); return *this; }
+  Type_Rx & setTo(Bar &bar,uint32 ind) { bar.set_Rx(ind,*this); return *this; }
  
 
   template <class T>
@@ -84,7 +84,7 @@ struct Type_Tx
  
 
   template <class Bar>
-  Type_Tx & setTo(Bar &bar,uint32 ind) { bar.set_Tx(*this,ind); return *this; }
+  Type_Tx & setTo(Bar &bar,uint32 ind) { bar.set_Tx(ind,*this); return *this; }
  
 
   template <class T>
@@ -160,7 +160,7 @@ struct Type_IntEnable
  
 
   template <class Bar>
-  Type_IntEnable & setTo(Bar &bar,uint32 ind) { bar.set_IntEnable(*this,ind); return *this; }
+  Type_IntEnable & setTo(Bar &bar,uint32 ind) { bar.set_IntEnable(ind,*this); return *this; }
  
 
   template <class T>
@@ -306,7 +306,7 @@ struct Type_DivLo
  
 
   template <class Bar>
-  Type_DivLo & setTo(Bar &bar,uint32 ind) { bar.set_DivLo(*this,ind); return *this; }
+  Type_DivLo & setTo(Bar &bar,uint32 ind) { bar.set_DivLo(ind,*this); return *this; }
  
 
   template <class T>
@@ -369,7 +369,7 @@ struct Type_DivHi
  
 
   template <class Bar>
-  Type_DivHi & setTo(Bar &bar,uint32 ind) { bar.set_DivHi(*this,ind); return *this; }
+  Type_DivHi & setTo(Bar &bar,uint32 ind) { bar.set_DivHi(ind,*this); return *this; }
  
 
   template <class T>
@@ -506,7 +506,7 @@ struct Type_IntStatus
  
 
   template <class Bar>
-  Type_IntStatus & setTo(Bar &bar,uint32 ind) { bar.set_IntStatus(*this,ind); return *this; }
+  Type_IntStatus & setTo(Bar &bar,uint32 ind) { bar.set_IntStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -668,7 +668,7 @@ struct Type_FIFOControl
  
 
   template <class Bar>
-  Type_FIFOControl & setTo(Bar &bar,uint32 ind) { bar.set_FIFOControl(*this,ind); return *this; }
+  Type_FIFOControl & setTo(Bar &bar,uint32 ind) { bar.set_FIFOControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -926,7 +926,7 @@ struct Type_LineControl
  
 
   template <class Bar>
-  Type_LineControl & setTo(Bar &bar,uint32 ind) { bar.set_LineControl(*this,ind); return *this; }
+  Type_LineControl & setTo(Bar &bar,uint32 ind) { bar.set_LineControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -1140,7 +1140,7 @@ struct Type_ModemControl
  
 
   template <class Bar>
-  Type_ModemControl & setTo(Bar &bar,uint32 ind) { bar.set_ModemControl(*this,ind); return *this; }
+  Type_ModemControl & setTo(Bar &bar,uint32 ind) { bar.set_ModemControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -1285,7 +1285,7 @@ struct Type_LineStatus
  
 
   template <class Bar>
-  Type_LineStatus & setTo(Bar &bar,uint32 ind) { bar.set_LineStatus(*this,ind); return *this; }
+  Type_LineStatus & setTo(Bar &bar,uint32 ind) { bar.set_LineStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -1478,7 +1478,7 @@ struct Type_ModemStatus
  
 
   template <class Bar>
-  Type_ModemStatus & setTo(Bar &bar,uint32 ind) { bar.set_ModemStatus(*this,ind); return *this; }
+  Type_ModemStatus & setTo(Bar &bar,uint32 ind) { bar.set_ModemStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -1656,7 +1656,7 @@ struct Type_Scratch
  
 
   template <class Bar>
-  Type_Scratch & setTo(Bar &bar,uint32 ind) { bar.set_Scratch(*this,ind); return *this; }
+  Type_Scratch & setTo(Bar &bar,uint32 ind) { bar.set_Scratch(ind,*this); return *this; }
  
 
   template <class T>
@@ -1706,7 +1706,7 @@ struct UARTBar
   RW rw;
 
   template <class ... TT>
-  UARTBar(TT && ... tt) : rw(tt...) {}
+  UARTBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

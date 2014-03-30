@@ -32,7 +32,7 @@ struct Type_PCIMode2
  
 
   template <class Bar>
-  Type_PCIMode2 & setTo(Bar &bar,uint32 ind) { bar.set_PCIMode2(*this,ind); return *this; }
+  Type_PCIMode2 & setTo(Bar &bar,uint32 ind) { bar.set_PCIMode2(ind,*this); return *this; }
  
 
   template <class T>
@@ -159,7 +159,7 @@ struct Type_PCIMode3
  
 
   template <class Bar>
-  Type_PCIMode3 & setTo(Bar &bar,uint32 ind) { bar.set_PCIMode3(*this,ind); return *this; }
+  Type_PCIMode3 & setTo(Bar &bar,uint32 ind) { bar.set_PCIMode3(ind,*this); return *this; }
  
 
   template <class T>
@@ -320,7 +320,7 @@ struct Type_MIIBMCR
  
 
   template <class Bar>
-  Type_MIIBMCR & setTo(Bar &bar,uint32 ind) { bar.set_MIIBMCR(*this,ind); return *this; }
+  Type_MIIBMCR & setTo(Bar &bar,uint32 ind) { bar.set_MIIBMCR(ind,*this); return *this; }
  
 
   template <class T>
@@ -507,7 +507,7 @@ struct Type_MIIBMSR
  
 
   template <class Bar>
-  Type_MIIBMSR & setTo(Bar &bar,uint32 ind) { bar.set_MIIBMSR(*this,ind); return *this; }
+  Type_MIIBMSR & setTo(Bar &bar,uint32 ind) { bar.set_MIIBMSR(ind,*this); return *this; }
  
 
   template <class T>
@@ -603,7 +603,7 @@ struct Type_MIIANAR
  
 
   template <class Bar>
-  Type_MIIANAR & setTo(Bar &bar,uint32 ind) { bar.set_MIIANAR(*this,ind); return *this; }
+  Type_MIIANAR & setTo(Bar &bar,uint32 ind) { bar.set_MIIANAR(ind,*this); return *this; }
  
 
   template <class T>
@@ -787,7 +787,7 @@ struct Type_MIIANLPAR
  
 
   template <class Bar>
-  Type_MIIANLPAR & setTo(Bar &bar,uint32 ind) { bar.set_MIIANLPAR(*this,ind); return *this; }
+  Type_MIIANLPAR & setTo(Bar &bar,uint32 ind) { bar.set_MIIANLPAR(ind,*this); return *this; }
  
 
   template <class T>
@@ -957,7 +957,7 @@ struct Type_MIIModCfg
  
 
   template <class Bar>
-  Type_MIIModCfg & setTo(Bar &bar,uint32 ind) { bar.set_MIIModCfg(*this,ind); return *this; }
+  Type_MIIModCfg & setTo(Bar &bar,uint32 ind) { bar.set_MIIModCfg(ind,*this); return *this; }
  
 
   template <class T>
@@ -1085,7 +1085,7 @@ struct Type_RCR
  
 
   template <class Bar>
-  Type_RCR & setTo(Bar &bar,uint32 ind) { bar.set_RCR(*this,ind); return *this; }
+  Type_RCR & setTo(Bar &bar,uint32 ind) { bar.set_RCR(ind,*this); return *this; }
  
 
   template <class T>
@@ -1319,7 +1319,7 @@ struct Type_TCR
  
 
   template <class Bar>
-  Type_TCR & setTo(Bar &bar,uint32 ind) { bar.set_TCR(*this,ind); return *this; }
+  Type_TCR & setTo(Bar &bar,uint32 ind) { bar.set_TCR(ind,*this); return *this; }
  
 
   template <class T>
@@ -1491,7 +1491,7 @@ struct Type_CR
  
 
   template <class Bar>
-  Type_CR & setTo(Bar &bar,uint32 ind) { bar.set_CR(*this,ind); return *this; }
+  Type_CR & setTo(Bar &bar,uint32 ind) { bar.set_CR(ind,*this); return *this; }
  
 
   template <class T>
@@ -1832,7 +1832,7 @@ struct Type_BCR
  
 
   template <class Bar>
-  Type_BCR & setTo(Bar &bar,uint32 ind) { bar.set_BCR(*this,ind); return *this; }
+  Type_BCR & setTo(Bar &bar,uint32 ind) { bar.set_BCR(ind,*this); return *this; }
  
 
   template <class T>
@@ -2065,7 +2065,7 @@ struct Type_EECSR
  
 
   template <class Bar>
-  Type_EECSR & setTo(Bar &bar,uint32 ind) { bar.set_EECSR(*this,ind); return *this; }
+  Type_EECSR & setTo(Bar &bar,uint32 ind) { bar.set_EECSR(ind,*this); return *this; }
  
 
   template <class T>
@@ -2269,7 +2269,7 @@ struct Type_CFG
  
 
   template <class Bar>
-  Type_CFG & setTo(Bar &bar,uint32 ind) { bar.set_CFG(*this,ind); return *this; }
+  Type_CFG & setTo(Bar &bar,uint32 ind) { bar.set_CFG(ind,*this); return *this; }
  
 
   template <class T>
@@ -2640,7 +2640,7 @@ struct Type_MiscCR
  
 
   template <class Bar>
-  Type_MiscCR & setTo(Bar &bar,uint32 ind) { bar.set_MiscCR(*this,ind); return *this; }
+  Type_MiscCR & setTo(Bar &bar,uint32 ind) { bar.set_MiscCR(ind,*this); return *this; }
  
 
   template <class T>
@@ -2859,7 +2859,7 @@ struct Type_StickHW
  
 
   template <class Bar>
-  Type_StickHW & setTo(Bar &bar,uint32 ind) { bar.set_StickHW(*this,ind); return *this; }
+  Type_StickHW & setTo(Bar &bar,uint32 ind) { bar.set_StickHW(ind,*this); return *this; }
  
 
   template <class T>
@@ -2960,7 +2960,7 @@ struct Type_FLOWCR1
  
 
   template <class Bar>
-  Type_FLOWCR1 & setTo(Bar &bar,uint32 ind) { bar.set_FLOWCR1(*this,ind); return *this; }
+  Type_FLOWCR1 & setTo(Bar &bar,uint32 ind) { bar.set_FLOWCR1(ind,*this); return *this; }
  
 
   template <class T>
@@ -3149,7 +3149,7 @@ struct Type_WOLCFG
  
 
   template <class Bar>
-  Type_WOLCFG & setTo(Bar &bar,uint32 ind) { bar.set_WOLCFG(*this,ind); return *this; }
+  Type_WOLCFG & setTo(Bar &bar,uint32 ind) { bar.set_WOLCFG(ind,*this); return *this; }
  
 
   template <class T>
@@ -3278,7 +3278,7 @@ struct Type_WOLCR
  
 
   template <class Bar>
-  Type_WOLCR & setTo(Bar &bar,uint32 ind) { bar.set_WOLCR(*this,ind); return *this; }
+  Type_WOLCR & setTo(Bar &bar,uint32 ind) { bar.set_WOLCR(ind,*this); return *this; }
  
 
   template <class T>
@@ -3467,7 +3467,7 @@ struct Type_TEST
  
 
   template <class Bar>
-  Type_TEST & setTo(Bar &bar,uint32 ind) { bar.set_TEST(*this,ind); return *this; }
+  Type_TEST & setTo(Bar &bar,uint32 ind) { bar.set_TEST(ind,*this); return *this; }
  
 
   template <class T>
@@ -3608,7 +3608,7 @@ struct Type_ISR
  
 
   template <class Bar>
-  Type_ISR & setTo(Bar &bar,uint32 ind) { bar.set_ISR(*this,ind); return *this; }
+  Type_ISR & setTo(Bar &bar,uint32 ind) { bar.set_ISR(ind,*this); return *this; }
  
 
   template <class T>
@@ -3928,7 +3928,7 @@ struct Type_MISR
  
 
   template <class Bar>
-  Type_MISR & setTo(Bar &bar,uint32 ind) { bar.set_MISR(*this,ind); return *this; }
+  Type_MISR & setTo(Bar &bar,uint32 ind) { bar.set_MISR(ind,*this); return *this; }
  
 
   template <class T>
@@ -4099,7 +4099,7 @@ struct Type_MIMR
  
 
   template <class Bar>
-  Type_MIMR & setTo(Bar &bar,uint32 ind) { bar.set_MIMR(*this,ind); return *this; }
+  Type_MIMR & setTo(Bar &bar,uint32 ind) { bar.set_MIMR(ind,*this); return *this; }
  
 
   template <class T>
@@ -4211,7 +4211,7 @@ struct Type_MIISR
  
 
   template <class Bar>
-  Type_MIISR & setTo(Bar &bar,uint32 ind) { bar.set_MIISR(*this,ind); return *this; }
+  Type_MIISR & setTo(Bar &bar,uint32 ind) { bar.set_MIISR(ind,*this); return *this; }
  
 
   template <class T>
@@ -4324,7 +4324,7 @@ struct Type_MIICR
  
 
   template <class Bar>
-  Type_MIICR & setTo(Bar &bar,uint32 ind) { bar.set_MIICR(*this,ind); return *this; }
+  Type_MIICR & setTo(Bar &bar,uint32 ind) { bar.set_MIICR(ind,*this); return *this; }
  
 
   template <class T>
@@ -4513,7 +4513,7 @@ struct Type_MIIAD
  
 
   template <class Bar>
-  Type_MIIAD & setTo(Bar &bar,uint32 ind) { bar.set_MIIAD(*this,ind); return *this; }
+  Type_MIIAD & setTo(Bar &bar,uint32 ind) { bar.set_MIIAD(ind,*this); return *this; }
  
 
   template <class T>
@@ -4654,7 +4654,7 @@ struct Type_RxDescStatus
  
 
   template <class Bar>
-  Type_RxDescStatus & setTo(Bar &bar,uint32 ind) { bar.set_RxDescStatus(*this,ind); return *this; }
+  Type_RxDescStatus & setTo(Bar &bar,uint32 ind) { bar.set_RxDescStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -5020,7 +5020,7 @@ struct Type_RxDescControl
  
 
   template <class Bar>
-  Type_RxDescControl & setTo(Bar &bar,uint32 ind) { bar.set_RxDescControl(*this,ind); return *this; }
+  Type_RxDescControl & setTo(Bar &bar,uint32 ind) { bar.set_RxDescControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -5178,7 +5178,7 @@ struct Type_TxDescStatus
  
 
   template <class Bar>
-  Type_TxDescStatus & setTo(Bar &bar,uint32 ind) { bar.set_TxDescStatus(*this,ind); return *this; }
+  Type_TxDescStatus & setTo(Bar &bar,uint32 ind) { bar.set_TxDescStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -5383,7 +5383,7 @@ struct Type_TxDescControl
  
 
   template <class Bar>
-  Type_TxDescControl & setTo(Bar &bar,uint32 ind) { bar.set_TxDescControl(*this,ind); return *this; }
+  Type_TxDescControl & setTo(Bar &bar,uint32 ind) { bar.set_TxDescControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -5560,7 +5560,7 @@ struct PCIRegBar
   RW rw;
 
   template <class ... TT>
-  PCIRegBar(TT && ... tt) : rw(tt...) {}
+  PCIRegBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter
@@ -5607,7 +5607,7 @@ struct MIIRegBar
   RW rw;
 
   template <class ... TT>
-  MIIRegBar(TT && ... tt) : rw(tt...) {}
+  MIIRegBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter
@@ -5710,7 +5710,7 @@ struct DevRegBar
   RW rw;
 
   template <class ... TT>
-  DevRegBar(TT && ... tt) : rw(tt...) {}
+  DevRegBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter
@@ -6099,7 +6099,7 @@ struct RxDescBar
   RW rw;
 
   template <class ... TT>
-  RxDescBar(TT && ... tt) : rw(tt...) {}
+  RxDescBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter
@@ -6206,7 +6206,7 @@ struct TxDescBar
   RW rw;
 
   template <class ... TT>
-  TxDescBar(TT && ... tt) : rw(tt...) {}
+  TxDescBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

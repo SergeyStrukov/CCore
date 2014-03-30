@@ -234,7 +234,7 @@ The type is a wrapper over an unsigned integral type.
  
 
   template &lt;class Bar&gt;
-  Type_CTRL &amp; setTo(Bar &amp;bar,uint32 ind) { bar.set_CTRL(*this,ind); return *this; }
+  Type_CTRL &amp; setTo(Bar &amp;bar,uint32 ind) { bar.set_CTRL(ind,*this); return *this; }
  
 
   template &lt;class T&gt;
@@ -321,7 +321,7 @@ struct Test
   RW rw;
 
   template &lt;class ... TT&gt;
-  Test(TT &amp;&amp; ... tt) : rw(tt...) {}
+  Test(TT &amp;&amp; ... tt) : rw( std::forward&lt;TT&gt;(tt)... ) {}
 
 </pre>  
 

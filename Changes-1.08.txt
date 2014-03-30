@@ -2,9 +2,12 @@
 
 --- New features -----
 
-New XCore target BeagleBoneBlack
+New XCore target BeagleBoneBlack has been created.
 
 --- Updates ---
 
+Regen
+
+  Fixed generated bar constructor and the method setTo(Bar &bar,uint32 ind).
 
 ----------------------

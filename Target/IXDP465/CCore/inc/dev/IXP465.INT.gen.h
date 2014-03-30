@@ -60,7 +60,7 @@ struct Type_Status
  
 
   template <class Bar>
-  Type_Status & setTo(Bar &bar,uint32 ind) { bar.set_Status(*this,ind); return *this; }
+  Type_Status & setTo(Bar &bar,uint32 ind) { bar.set_Status(ind,*this); return *this; }
  
 
   template <class T>
@@ -647,7 +647,7 @@ struct Type_Status2
  
 
   template <class Bar>
-  Type_Status2 & setTo(Bar &bar,uint32 ind) { bar.set_Status2(*this,ind); return *this; }
+  Type_Status2 & setTo(Bar &bar,uint32 ind) { bar.set_Status2(ind,*this); return *this; }
  
 
   template <class T>
@@ -857,7 +857,7 @@ struct Type_Priority
  
 
   template <class Bar>
-  Type_Priority & setTo(Bar &bar,uint32 ind) { bar.set_Priority(*this,ind); return *this; }
+  Type_Priority & setTo(Bar &bar,uint32 ind) { bar.set_Priority(ind,*this); return *this; }
  
 
   template <class T>
@@ -1119,7 +1119,7 @@ struct Type_HiPriorityEnable
  
 
   template <class Bar>
-  Type_HiPriorityEnable & setTo(Bar &bar,uint32 ind) { bar.set_HiPriorityEnable(*this,ind); return *this; }
+  Type_HiPriorityEnable & setTo(Bar &bar,uint32 ind) { bar.set_HiPriorityEnable(ind,*this); return *this; }
  
 
   template <class T>
@@ -1316,7 +1316,7 @@ struct INTBar
   RW rw;
 
   template <class ... TT>
-  INTBar(TT && ... tt) : rw(tt...) {}
+  INTBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

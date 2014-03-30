@@ -44,7 +44,7 @@ struct Type_Out
  
 
   template <class Bar>
-  Type_Out & setTo(Bar &bar,uint32 ind) { bar.set_Out(*this,ind); return *this; }
+  Type_Out & setTo(Bar &bar,uint32 ind) { bar.set_Out(ind,*this); return *this; }
  
 
   template <class T>
@@ -370,7 +370,7 @@ struct Type_Int
  
 
   template <class Bar>
-  Type_Int & setTo(Bar &bar,uint32 ind) { bar.set_Int(*this,ind); return *this; }
+  Type_Int & setTo(Bar &bar,uint32 ind) { bar.set_Int(ind,*this); return *this; }
  
 
   template <class T>
@@ -931,7 +931,7 @@ struct Type_IntType1
  
 
   template <class Bar>
-  Type_IntType1 & setTo(Bar &bar,uint32 ind) { bar.set_IntType1(*this,ind); return *this; }
+  Type_IntType1 & setTo(Bar &bar,uint32 ind) { bar.set_IntType1(ind,*this); return *this; }
  
 
   template <class T>
@@ -1497,7 +1497,7 @@ struct Type_IntType2
  
 
   template <class Bar>
-  Type_IntType2 & setTo(Bar &bar,uint32 ind) { bar.set_IntType2(*this,ind); return *this; }
+  Type_IntType2 & setTo(Bar &bar,uint32 ind) { bar.set_IntType2(ind,*this); return *this; }
  
 
   template <class T>
@@ -1673,7 +1673,7 @@ struct Type_ClkType
  
 
   template <class Bar>
-  Type_ClkType & setTo(Bar &bar,uint32 ind) { bar.set_ClkType(*this,ind); return *this; }
+  Type_ClkType & setTo(Bar &bar,uint32 ind) { bar.set_ClkType(ind,*this); return *this; }
  
 
   template <class T>
@@ -1846,7 +1846,7 @@ struct GPIOBar
   RW rw;
 
   template <class ... TT>
-  GPIOBar(TT && ... tt) : rw(tt...) {}
+  GPIOBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

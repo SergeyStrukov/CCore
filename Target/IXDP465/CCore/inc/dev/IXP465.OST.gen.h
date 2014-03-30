@@ -33,7 +33,7 @@ struct Type_Status
  
 
   template <class Bar>
-  Type_Status & setTo(Bar &bar,uint32 ind) { bar.set_Status(*this,ind); return *this; }
+  Type_Status & setTo(Bar &bar,uint32 ind) { bar.set_Status(ind,*this); return *this; }
  
 
   template <class T>
@@ -180,7 +180,7 @@ struct Type_TSCfg
  
 
   template <class Bar>
-  Type_TSCfg & setTo(Bar &bar,uint32 ind) { bar.set_TSCfg(*this,ind); return *this; }
+  Type_TSCfg & setTo(Bar &bar,uint32 ind) { bar.set_TSCfg(ind,*this); return *this; }
  
 
   template <class T>
@@ -262,7 +262,7 @@ struct Type_TSPrescale
  
 
   template <class Bar>
-  Type_TSPrescale & setTo(Bar &bar,uint32 ind) { bar.set_TSPrescale(*this,ind); return *this; }
+  Type_TSPrescale & setTo(Bar &bar,uint32 ind) { bar.set_TSPrescale(ind,*this); return *this; }
  
 
   template <class T>
@@ -338,7 +338,7 @@ struct Type_T0Reload
  
 
   template <class Bar>
-  Type_T0Reload & setTo(Bar &bar,uint32 ind) { bar.set_T0Reload(*this,ind); return *this; }
+  Type_T0Reload & setTo(Bar &bar,uint32 ind) { bar.set_T0Reload(ind,*this); return *this; }
  
 
   template <class T>
@@ -455,7 +455,7 @@ struct Type_T0Cfg
  
 
   template <class Bar>
-  Type_T0Cfg & setTo(Bar &bar,uint32 ind) { bar.set_T0Cfg(*this,ind); return *this; }
+  Type_T0Cfg & setTo(Bar &bar,uint32 ind) { bar.set_T0Cfg(ind,*this); return *this; }
  
 
   template <class T>
@@ -563,7 +563,7 @@ struct Type_T0Prescale
  
 
   template <class Bar>
-  Type_T0Prescale & setTo(Bar &bar,uint32 ind) { bar.set_T0Prescale(*this,ind); return *this; }
+  Type_T0Prescale & setTo(Bar &bar,uint32 ind) { bar.set_T0Prescale(ind,*this); return *this; }
  
 
   template <class T>
@@ -639,7 +639,7 @@ struct Type_T1Reload
  
 
   template <class Bar>
-  Type_T1Reload & setTo(Bar &bar,uint32 ind) { bar.set_T1Reload(*this,ind); return *this; }
+  Type_T1Reload & setTo(Bar &bar,uint32 ind) { bar.set_T1Reload(ind,*this); return *this; }
  
 
   template <class T>
@@ -756,7 +756,7 @@ struct Type_T1Cfg
  
 
   template <class Bar>
-  Type_T1Cfg & setTo(Bar &bar,uint32 ind) { bar.set_T1Cfg(*this,ind); return *this; }
+  Type_T1Cfg & setTo(Bar &bar,uint32 ind) { bar.set_T1Cfg(ind,*this); return *this; }
  
 
   template <class T>
@@ -864,7 +864,7 @@ struct Type_T1Prescale
  
 
   template <class Bar>
-  Type_T1Prescale & setTo(Bar &bar,uint32 ind) { bar.set_T1Prescale(*this,ind); return *this; }
+  Type_T1Prescale & setTo(Bar &bar,uint32 ind) { bar.set_T1Prescale(ind,*this); return *this; }
  
 
   template <class T>
@@ -961,7 +961,7 @@ struct Type_WDKey
  
 
   template <class Bar>
-  Type_WDKey & setTo(Bar &bar,uint32 ind) { bar.set_WDKey(*this,ind); return *this; }
+  Type_WDKey & setTo(Bar &bar,uint32 ind) { bar.set_WDKey(ind,*this); return *this; }
  
 
   template <class T>
@@ -1034,7 +1034,7 @@ struct Type_WDControl
  
 
   template <class Bar>
-  Type_WDControl & setTo(Bar &bar,uint32 ind) { bar.set_WDControl(*this,ind); return *this; }
+  Type_WDControl & setTo(Bar &bar,uint32 ind) { bar.set_WDControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -1119,7 +1119,7 @@ struct OSTBar
   RW rw;
 
   template <class ... TT>
-  OSTBar(TT && ... tt) : rw(tt...) {}
+  OSTBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

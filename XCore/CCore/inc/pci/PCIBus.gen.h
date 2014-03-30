@@ -21,7 +21,7 @@ struct Type_ID
  
 
   template <class Bar>
-  Type_ID & setTo(Bar &bar,uint32 ind) { bar.set_ID(*this,ind); return *this; }
+  Type_ID & setTo(Bar &bar,uint32 ind) { bar.set_ID(ind,*this); return *this; }
  
 
   template <class T>
@@ -168,7 +168,7 @@ struct Type_StatusCommand
  
 
   template <class Bar>
-  Type_StatusCommand & setTo(Bar &bar,uint32 ind) { bar.set_StatusCommand(*this,ind); return *this; }
+  Type_StatusCommand & setTo(Bar &bar,uint32 ind) { bar.set_StatusCommand(ind,*this); return *this; }
  
 
   template <class T>
@@ -548,7 +548,7 @@ struct Type_ClassRevision
  
 
   template <class Bar>
-  Type_ClassRevision & setTo(Bar &bar,uint32 ind) { bar.set_ClassRevision(*this,ind); return *this; }
+  Type_ClassRevision & setTo(Bar &bar,uint32 ind) { bar.set_ClassRevision(ind,*this); return *this; }
  
 
   template <class T>
@@ -731,7 +731,7 @@ struct Type_Prop
  
 
   template <class Bar>
-  Type_Prop & setTo(Bar &bar,uint32 ind) { bar.set_Prop(*this,ind); return *this; }
+  Type_Prop & setTo(Bar &bar,uint32 ind) { bar.set_Prop(ind,*this); return *this; }
  
 
   template <class T>
@@ -937,7 +937,7 @@ struct Type_SubID
  
 
   template <class Bar>
-  Type_SubID & setTo(Bar &bar,uint32 ind) { bar.set_SubID(*this,ind); return *this; }
+  Type_SubID & setTo(Bar &bar,uint32 ind) { bar.set_SubID(ind,*this); return *this; }
  
 
   template <class T>
@@ -1026,7 +1026,7 @@ struct Type_Caps
  
 
   template <class Bar>
-  Type_Caps & setTo(Bar &bar,uint32 ind) { bar.set_Caps(*this,ind); return *this; }
+  Type_Caps & setTo(Bar &bar,uint32 ind) { bar.set_Caps(ind,*this); return *this; }
  
 
   template <class T>
@@ -1089,7 +1089,7 @@ struct Type_Prop2
  
 
   template <class Bar>
-  Type_Prop2 & setTo(Bar &bar,uint32 ind) { bar.set_Prop2(*this,ind); return *this; }
+  Type_Prop2 & setTo(Bar &bar,uint32 ind) { bar.set_Prop2(ind,*this); return *this; }
  
 
   template <class T>
@@ -1267,7 +1267,7 @@ struct Type_Cap
  
 
   template <class Bar>
-  Type_Cap & setTo(Bar &bar,uint32 ind) { bar.set_Cap(*this,ind); return *this; }
+  Type_Cap & setTo(Bar &bar,uint32 ind) { bar.set_Cap(ind,*this); return *this; }
  
 
   template <class T>
@@ -1440,7 +1440,7 @@ struct CfgBar
   RW rw;
 
   template <class ... TT>
-  CfgBar(TT && ... tt) : rw(tt...) {}
+  CfgBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

@@ -294,7 +294,7 @@ void GenerateReg(Reg reg,Out &out)
   Printf(out,"  Type_#; & setTo(Bar &bar) { bar.set_#;(*this); return *this; }\n \n\n",name,name);
 
   Printf(out,"  template <class Bar>\n");
-  Printf(out,"  Type_#; & setTo(Bar &bar,uint32 ind) { bar.set_#;(*this,ind); return *this; }\n \n\n",name,name);
+  Printf(out,"  Type_#; & setTo(Bar &bar,uint32 ind) { bar.set_#;(ind,*this); return *this; }\n \n\n",name,name);
   
   Printf(out,"  template <class T>\n");
   Printf(out,"  Type_#; & set(T to) { to(*this); return *this; }\n \n\n",name);
@@ -438,7 +438,7 @@ void GenerateBar(Bar bar,Out &out)
   Printf(out,"  RW rw;\n\n");
 
   Printf(out,"  template <class ... TT>\n");
-  Printf(out,"  #;(TT && ... tt) : rw(tt...) {}\n \n",name);
+  Printf(out,"  #;(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}\n \n",name);
   
   Printf(out,"  template <class T>\n");
   Printf(out,"  struct Setter\n");

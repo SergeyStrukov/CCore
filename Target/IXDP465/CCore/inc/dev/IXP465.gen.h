@@ -76,7 +76,7 @@ struct Type_CPUStatus
  
 
   template <class Bar>
-  Type_CPUStatus & setTo(Bar &bar,uint32 ind) { bar.set_CPUStatus(*this,ind); return *this; }
+  Type_CPUStatus & setTo(Bar &bar,uint32 ind) { bar.set_CPUStatus(ind,*this); return *this; }
  
 
   template <class T>

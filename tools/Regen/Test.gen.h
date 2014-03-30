@@ -32,7 +32,7 @@ struct Type_ISR
  
 
   template <class Bar>
-  Type_ISR & setTo(Bar &bar,uint32 ind) { bar.set_ISR(*this,ind); return *this; }
+  Type_ISR & setTo(Bar &bar,uint32 ind) { bar.set_ISR(ind,*this); return *this; }
  
 
   template <class T>
@@ -187,7 +187,7 @@ struct Type_CTRL
  
 
   template <class Bar>
-  Type_CTRL & setTo(Bar &bar,uint32 ind) { bar.set_CTRL(*this,ind); return *this; }
+  Type_CTRL & setTo(Bar &bar,uint32 ind) { bar.set_CTRL(ind,*this); return *this; }
  
 
   template <class T>
@@ -362,7 +362,7 @@ struct Type_STAT
  
 
   template <class Bar>
-  Type_STAT & setTo(Bar &bar,uint32 ind) { bar.set_STAT(*this,ind); return *this; }
+  Type_STAT & setTo(Bar &bar,uint32 ind) { bar.set_STAT(ind,*this); return *this; }
  
 
   template <class T>
@@ -495,7 +495,7 @@ struct Test
   RW rw;
 
   template <class ... TT>
-  Test(TT && ... tt) : rw(tt...) {}
+  Test(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

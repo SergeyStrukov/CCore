@@ -189,7 +189,7 @@ struct Type_ID
  
 
   template <class Bar>
-  Type_ID & setTo(Bar &bar,uint32 ind) { bar.set_ID(*this,ind); return *this; }
+  Type_ID & setTo(Bar &bar,uint32 ind) { bar.set_ID(ind,*this); return *this; }
  
 
   template <class T>
@@ -586,7 +586,7 @@ struct Type_CacheType
  
 
   template <class Bar>
-  Type_CacheType & setTo(Bar &bar,uint32 ind) { bar.set_CacheType(*this,ind); return *this; }
+  Type_CacheType & setTo(Bar &bar,uint32 ind) { bar.set_CacheType(ind,*this); return *this; }
  
 
   template <class T>
@@ -878,7 +878,7 @@ struct Type_Control
  
 
   template <class Bar>
-  Type_Control & setTo(Bar &bar,uint32 ind) { bar.set_Control(*this,ind); return *this; }
+  Type_Control & setTo(Bar &bar,uint32 ind) { bar.set_Control(ind,*this); return *this; }
  
 
   template <class T>
@@ -1139,7 +1139,7 @@ struct Type_AuxControl
  
 
   template <class Bar>
-  Type_AuxControl & setTo(Bar &bar,uint32 ind) { bar.set_AuxControl(*this,ind); return *this; }
+  Type_AuxControl & setTo(Bar &bar,uint32 ind) { bar.set_AuxControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -1763,7 +1763,7 @@ struct Type_DomainAC
  
 
   template <class Bar>
-  Type_DomainAC & setTo(Bar &bar,uint32 ind) { bar.set_DomainAC(*this,ind); return *this; }
+  Type_DomainAC & setTo(Bar &bar,uint32 ind) { bar.set_DomainAC(ind,*this); return *this; }
  
 
   template <class T>
