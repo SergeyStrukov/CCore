@@ -85,7 +85,7 @@ struct Type_ClockControl
  
 
   template <class Bar>
-  Type_ClockControl & setTo(Bar &bar,uint32 ind) { bar.set_ClockControl(*this,ind); return *this; }
+  Type_ClockControl & setTo(Bar &bar,uint32 ind) { bar.set_ClockControl(ind,*this); return *this; }
  
 
   template <class T>
@@ -206,7 +206,7 @@ struct Type_TimerClockSelect
  
 
   template <class Bar>
-  Type_TimerClockSelect & setTo(Bar &bar,uint32 ind) { bar.set_TimerClockSelect(*this,ind); return *this; }
+  Type_TimerClockSelect & setTo(Bar &bar,uint32 ind) { bar.set_TimerClockSelect(ind,*this); return *this; }
  
 
   template <class T>
@@ -256,7 +256,7 @@ struct CM_PERBar
   RW rw;
 
   template <class ... TT>
-  CM_PERBar(TT && ... tt) : rw(tt...) {}
+  CM_PERBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter
@@ -301,7 +301,7 @@ struct CM_DPLLBar
   RW rw;
 
   template <class ... TT>
-  CM_DPLLBar(TT && ... tt) : rw(tt...) {}
+  CM_DPLLBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

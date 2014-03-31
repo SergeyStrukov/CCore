@@ -30,7 +30,7 @@ struct Type_SysConfig
  
 
   template <class Bar>
-  Type_SysConfig & setTo(Bar &bar,uint32 ind) { bar.set_SysConfig(*this,ind); return *this; }
+  Type_SysConfig & setTo(Bar &bar,uint32 ind) { bar.set_SysConfig(ind,*this); return *this; }
  
 
   template <class T>
@@ -120,7 +120,7 @@ struct Type_SysStatus
  
 
   template <class Bar>
-  Type_SysStatus & setTo(Bar &bar,uint32 ind) { bar.set_SysStatus(*this,ind); return *this; }
+  Type_SysStatus & setTo(Bar &bar,uint32 ind) { bar.set_SysStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -194,7 +194,7 @@ struct Type_Protection
  
 
   template <class Bar>
-  Type_Protection & setTo(Bar &bar,uint32 ind) { bar.set_Protection(*this,ind); return *this; }
+  Type_Protection & setTo(Bar &bar,uint32 ind) { bar.set_Protection(ind,*this); return *this; }
  
 
   template <class T>
@@ -269,7 +269,7 @@ struct Type_Idle
  
 
   template <class Bar>
-  Type_Idle & setTo(Bar &bar,uint32 ind) { bar.set_Idle(*this,ind); return *this; }
+  Type_Idle & setTo(Bar &bar,uint32 ind) { bar.set_Idle(ind,*this); return *this; }
  
 
   template <class T>
@@ -351,7 +351,7 @@ struct Type_PriorityMask
  
 
   template <class Bar>
-  Type_PriorityMask & setTo(Bar &bar,uint32 ind) { bar.set_PriorityMask(*this,ind); return *this; }
+  Type_PriorityMask & setTo(Bar &bar,uint32 ind) { bar.set_PriorityMask(ind,*this); return *this; }
  
 
   template <class T>
@@ -422,7 +422,7 @@ struct Type_TypePriorityCfg
  
 
   template <class Bar>
-  Type_TypePriorityCfg & setTo(Bar &bar,uint32 ind) { bar.set_TypePriorityCfg(*this,ind); return *this; }
+  Type_TypePriorityCfg & setTo(Bar &bar,uint32 ind) { bar.set_TypePriorityCfg(ind,*this); return *this; }
  
 
   template <class T>
@@ -514,7 +514,7 @@ struct Type_ActiveIRQ
  
 
   template <class Bar>
-  Type_ActiveIRQ & setTo(Bar &bar,uint32 ind) { bar.set_ActiveIRQ(*this,ind); return *this; }
+  Type_ActiveIRQ & setTo(Bar &bar,uint32 ind) { bar.set_ActiveIRQ(ind,*this); return *this; }
  
 
   template <class T>
@@ -586,7 +586,7 @@ struct Type_NextActive
  
 
   template <class Bar>
-  Type_NextActive & setTo(Bar &bar,uint32 ind) { bar.set_NextActive(*this,ind); return *this; }
+  Type_NextActive & setTo(Bar &bar,uint32 ind) { bar.set_NextActive(ind,*this); return *this; }
  
 
   template <class T>
@@ -659,7 +659,7 @@ struct INTCBar
   RW rw;
 
   template <class ... TT>
-  INTCBar(TT && ... tt) : rw(tt...) {}
+  INTCBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

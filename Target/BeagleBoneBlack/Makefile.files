@@ -866,6 +866,7 @@ obj/time.dep \
 
 
 ASM_OBJ_LIST = \
+obj/AM3359.s.o \
 obj/DevInt.s.o \
 obj/DevRW.s.o \
 obj/Quick.s.o \
@@ -3454,6 +3455,9 @@ obj/time.dep : ../../XCore/CCore/src/libc/time.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/time.o $< -MF $@
 
 
+
+obj/AM3359.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.s
+	$(AS) $(ASOPT) $< -o $@
 
 obj/DevInt.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.s
 	$(AS) $(ASOPT) $< -o $@

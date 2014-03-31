@@ -175,6 +175,7 @@ start:
      
         mov     r0, #0xF00000
         mcr     p15, 0, r0, c1, c0, 2
+        isb
        
         mov     r0, #0x40000000
         vmsr    FPEXC, r0
@@ -770,6 +771,8 @@ IRQ_entry:
         mov     lr, r4
         ldmia   lr!, {r0-r12}
         ldr     lr, [lr, #8]
+        
+        clrex
         
         subs    pc, lr, #4
         

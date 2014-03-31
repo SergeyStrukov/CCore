@@ -1,0 +1,132 @@
+/* AM3359.CP15.desc */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  Tag: Target/BeagleBoneBlack
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg CPSR : 32
+ {
+  Mode : 0-4
+   {
+    User       = 10000b
+    FIQ        = 10001b
+    IRQ        = 10010b
+    Supervisor = 10011b
+    Monitor    = 10110b
+    Abort      = 10111b
+    Hypervisor = 11010b
+    Undefine   = 11011b
+    System     = 11111b 
+   }
+   
+  T : .
+  F : .
+  I : .
+  A : .
+  E : .
+  IThi : 10-15
+  GE : 16-19
+  *  : 20-23
+  J  : .
+  ITlo : 25-26
+  Q : .
+  V : .
+  C : .
+  N : .
+  Z : . 
+ }
+ 
+reg MainID : 32
+ {
+  Revision    : 0-3
+  PartNumber  : 4-15
+  Arch        : 16-19
+  Variant     : 20-23
+  Implementor : 24-31
+ }
+ 
+reg CacheType : 32
+ {
+  IMinLine  : 0-3
+  L1IPolicy : 14-15
+  DMinLine  : 16-19
+  WBGranule : 24-27
+ } 
+ 
+reg TCMType : 32
+ {
+ }
+ 
+reg TLBType : 32
+ {
+  U : .
+  DLSize : 8-15
+  ILSize : 16-23
+ }
+
+reg MultiprocessorID : 32
+ {
+ }
+ 
+reg ProcessorFeature0 : 32
+ {
+  ARM     : 0-3
+  Thumb   : 4-7
+  Jazelle : 8-11
+  ThumbEE : 12-15
+ } 
+ 
+reg ProcessorFeature1 : 32
+ {
+  ProgModel     : 0-3
+  SecurityExt   : 4-7
+  MCTLProgModel : 8-11
+ }
+  
+reg DebugFeature : 32
+ {
+  CoreCopr     : 0-3
+  SecureCopr   : 4-7
+  CoreMemMap   : 8-11
+  TraceCopr    : 12-15
+  TraceMemMap  : 16-19
+  MCTLMemMap   : 20-23
+ }  
+ 
+reg AuxFeature : 32
+ {
+ }
+ 
+reg MemoryFeature0 : 32
+ {
+  VMSA           : 0-3
+  PMSA           : 4-7
+  CacheCoherence : 8-11
+  OuterShareable : 12-15
+  TCM            : 16-19
+  AuxControl     : 20-23
+  FCSE           : 24-27
+ } 
+ 
+//----------------------------------------------------------------------------------------
+
+reg SecureConfig : 32
+ {
+  NS  : .
+  IRQ : .
+  FIQ : .
+  EA  : .
+  FW  : .
+  AW  : .
+ } 
+ 
+  

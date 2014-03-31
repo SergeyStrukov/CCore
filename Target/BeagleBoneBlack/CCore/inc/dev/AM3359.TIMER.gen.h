@@ -64,7 +64,7 @@ struct Type_OCPConfig
  
 
   template <class Bar>
-  Type_OCPConfig & setTo(Bar &bar,uint32 ind) { bar.set_OCPConfig(*this,ind); return *this; }
+  Type_OCPConfig & setTo(Bar &bar,uint32 ind) { bar.set_OCPConfig(ind,*this); return *this; }
  
 
   template <class T>
@@ -181,7 +181,7 @@ struct Type_RegMode
  
 
   template <class Bar>
-  Type_RegMode & setTo(Bar &bar,uint32 ind) { bar.set_RegMode(*this,ind); return *this; }
+  Type_RegMode & setTo(Bar &bar,uint32 ind) { bar.set_RegMode(ind,*this); return *this; }
  
 
   template <class T>
@@ -280,7 +280,7 @@ struct Type_Control
  
 
   template <class Bar>
-  Type_Control & setTo(Bar &bar,uint32 ind) { bar.set_Control(*this,ind); return *this; }
+  Type_Control & setTo(Bar &bar,uint32 ind) { bar.set_Control(ind,*this); return *this; }
  
 
   template <class T>
@@ -372,7 +372,7 @@ struct Type_RegPost
  
 
   template <class Bar>
-  Type_RegPost & setTo(Bar &bar,uint32 ind) { bar.set_RegPost(*this,ind); return *this; }
+  Type_RegPost & setTo(Bar &bar,uint32 ind) { bar.set_RegPost(ind,*this); return *this; }
  
 
   template <class T>
@@ -480,7 +480,7 @@ struct Type_IntStatus
  
 
   template <class Bar>
-  Type_IntStatus & setTo(Bar &bar,uint32 ind) { bar.set_IntStatus(*this,ind); return *this; }
+  Type_IntStatus & setTo(Bar &bar,uint32 ind) { bar.set_IntStatus(ind,*this); return *this; }
  
 
   template <class T>
@@ -565,7 +565,7 @@ struct DMBar
   RW rw;
 
   template <class ... TT>
-  DMBar(TT && ... tt) : rw(tt...) {}
+  DMBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

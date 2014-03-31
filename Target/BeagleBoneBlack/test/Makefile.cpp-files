@@ -125,3 +125,4 @@
 ../../../Target/BeagleBoneBlack/CCore/test/test3003.gcc.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3004.Exception.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3005.Atomic.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3006.CPU.cpp

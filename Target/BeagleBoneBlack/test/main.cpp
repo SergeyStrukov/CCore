@@ -65,7 +65,7 @@ int main()
   //Testit<24>().run();
   //Testit<25>().run();
   //Testit<26>().run();
-  Testit<27>().run();
+  //Testit<27>().run();
   //Testit<28>().run();
   //Testit<29>().run();
   //Testit<30>().run();
@@ -159,6 +159,7 @@ int main()
   //Testit<3003>().run();
   //Testit<3004>().run();
   //Testit<3005>().run();
+  Testit<3006>().run();
   
   Printf(Con,"\nPeak memory usage #;\n\n",MemPeak());  
     

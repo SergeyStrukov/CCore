@@ -14,19 +14,19 @@
 @-----------------------------------------------------------------------------------------
         
         .weak   __std_video_mem
-        .set    __std_video_mem , 0x80000000       @  align 16
+        .set    __std_video_mem , 0x80000000       @  align 1M
         .global __std_video_mem
         
         .weak   __std_video_mem_size
-        .set    __std_video_mem_size , 0x800000    @  align 16 , 8M
+        .set    __std_video_mem_size , 0x800000    @  align 1M , 8M
         .global __std_video_mem_size
         
         .weak   __std_shared_mem
-        .set    __std_shared_mem , 0x80800000      @  align 16
+        .set    __std_shared_mem , 0x80800000      @  align 1M
         .global __std_shared_mem
         
         .weak   __std_shared_mem_size
-        .set    __std_shared_mem_size , 0x800000   @  align 16 , 8M
+        .set    __std_shared_mem_size , 0x800000   @  align 1M , 8M
         .global __std_shared_mem_size
         
         .weak   __std_image_base
