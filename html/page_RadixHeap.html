@@ -38,8 +38,8 @@ This class is used to allocated large memory blocks, then <b>RadixHeap</b> split
 The part can be used or free. The space after the header in a free block is used to create a special control
 object, these objects are used to manage the free blocks set by the <b>RadixHeapStore</b>. 
 In used blocks this space is the allocated memory. <span class="Alert">There is no two free consecutive blocks</span>. 
-If such blocks appear in the <b>free()</b> operation, they are immediately merged into the single free block.
-When block is allocated, it is stamped by the "magic number". This stamp is used to detect incorrect block pointers.
+If such blocks appear during the <b>free()</b> operation, they are immediately merged into the single free block.
+When a block is allocated, it is stamped by the "magic number". This stamp is used to detect incorrect block pointers.
 It makes the heap protected from incorrect operations (not 100%).
 </p>
 
@@ -52,6 +52,7 @@ That is how we provides constant operation time limits.
 </p>
 
 <pre>
+
 template &lt;class Mem&gt;
 class <span class="Att">RadixHeap</span> : NoCopy
  {
@@ -78,6 +79,7 @@ class <span class="Att">RadixHeap</span> : NoCopy
 
    DeltaLen shrink(void *mem,ulen len); // mem!=0
  };
+
 </pre>
 
 <p>
@@ -89,7 +91,7 @@ Constructor forwards its arguments to the <b>Mem</b> object (<b>large_mem</b>).
 </p>
 
 <p>
-<b>alloc()</b> tries to allocate a memory. On failure it returns a null <b>Space</b> object. Otherwise
+<b>alloc()</b> tries to allocate a memory. On failure it returns a null <a href="page_Space.html"><b>Space</b></a> object. Otherwise
 the resulting <b>Space</b> object contains non-zero memory pointer and non-zero memory length, which is greater 
 or equal than the argument <b>len</b>.
 </p>
@@ -109,7 +111,7 @@ Other methods require a valid non-null pointer <b>mem</b>.
 <p>
 <b>extend()</b> extends the memory block up to the given <b>len</b>, if possible. If the <b>len</b> is
 not greater than the length of the memory block, the operation is successful, but change nothing.
-The resulting <b>DeltaLen</b> object has the field <b>ok</b>, which indicates success of the operation,
+The resulting <a href="page_Space.html"><b>DeltaLen</b></a> object has the field <b>ok</b>, which indicates success of the operation,
 and the field <b>delta</b>, equals the difference between the length of the new block and the old one.
 </p>
 
@@ -127,6 +129,7 @@ A primary memory provider is a class with the following "prototype":
 </p>
 
 <pre>
+
 class Mem
  {
    const ulen max_store_len; // aligned
@@ -148,6 +151,7 @@ class Mem
 
    ulen shrink(RadixHeapBlock *block,ulen blen); // block!=0, blen aligned, blen<=block->len , return delta
  };
+
 </pre>
 
 <p>
@@ -170,8 +174,8 @@ in <b>PageMem</b> it is set to <b>16*1024*Sys::MemPageLen</b>, by default.
 <p>
 The method <b>alloc()</b> is called to allocate a large memory block. The argument <b>blen</b> is 
 the total block length, it is an aligned value. The method must allocate a block of memory at least required length,
-create the <b>RadixHeapBlock</b> object at the begin of this block, and return the pointer to this object.
-If a memory cannot be allocated, the null pointer is returned. If the <b>blen</b> is not greater, than the
+create the <b>RadixHeapBlock</b> object at the beginning of this block, and return the pointer to this object.
+If the memory cannot be allocated, the null pointer is returned. If the <b>blen</b> is not greater, than the
 <b>max_store_len</b>, then the allocated block length also must not exceed this value. <b>RadixHeapBlock</b> must 
 be initialized by the method <b>init(total_block_length)</b>.
 </p>
@@ -191,6 +195,22 @@ greater than the block length. The method returns <b>true</b> on success. It mus
 <p>
 <b>shrink()</b> shrinks the large block. The <b>block</b> is always non-null and the <b>blen</b> is aligned and 
 not greater than the block length. The method returns delta length. It must reinitialize the <b>block</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">RadixHeapBlock</span>
+ {
+  ....
+  
+  void init(ulen total_len);
+ };
+
+</pre>
+
+<p>
+This POD structure has number of members, but you need only one: <b>init()</b>.
+The argument is the total length of the memory block, the <b>RadixHeapBlock</b> is created at the beginning of.
 </p>
 
 </body>

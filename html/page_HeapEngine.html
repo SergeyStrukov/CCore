@@ -37,6 +37,7 @@ usage limitation.
 </p>
 
 <pre>
+
 template &lt;class Heap&gt;
 class <span class="Att">HeapEngine</span> : NoCopy
  {
@@ -70,6 +71,7 @@ class <span class="Att">HeapEngine</span> : NoCopy
   
    void getPeak(MemStatData &amp;ret);
  };
+
 </pre>
 
 <p>
@@ -128,13 +130,14 @@ If the <b>mem</b> is null, it returns <b>false</b>. <b>shrink()</b> fails only i
 length of the memory block.
 </p>
 
-<h3>Heap</h3>
+<h4>Heap</h4>
 
 <p>
 The underlying class <b>Heap</b> must provide the following functionality:
 </p>
 
 <pre>
+
 class Heap
  {
   public:
@@ -155,6 +158,7 @@ class Heap
 
    DeltaLen shrink(void *mem,ulen len); // mem!=0
  };
+
 </pre>
 
 <p>
@@ -163,6 +167,38 @@ It may have several constructors with different arguments as necessary.
 
 <p>
 It is highly recommended that the destructor checks memory leaks and abort execution if there is unreleased memory.
+</p>
+
+<p>
+<b>alloc()</b> tries to allocate a memory. On failure it returns a null <a href="page_Space.html"><b>Space</b></a> object. Otherwise
+the resulting <b>Space</b> object contains non-zero memory pointer and non-zero memory length, which is greater 
+or equal than the argument <b>len</b>.
+</p>
+
+<p>
+Other methods require a valid non-null pointer <b>mem</b>.
+</p>
+
+<p>
+<b>getLen()</b> returns the length of the memory block.
+</p>
+
+<p>
+<b>free()</b> releases the memory block, this method returns the length of the memory block.
+</p>
+
+<p>
+<b>extend()</b> extends the memory block up to the given <b>len</b>, if possible. If the <b>len</b> is
+not greater than the length of the memory block, the operation is successful, but change nothing.
+The resulting <a href="page_Space.html"><b>DeltaLen</b></a> object has the field <b>ok</b>, which indicates success of the operation,
+and the field <b>delta</b>, equals the difference between the length of the new block and the old one.
+</p>
+
+<p>
+<b>shrink()</b> shrinks the memory block down to the given <b>len</b>. This operation is successful only if
+the <b>len</b> is not greater than the length of the memory block. The resulting <b>DeltaLen</b> object 
+has the field <b>ok</b>, which indicates success of the operation,
+and the field <b>delta</b>, equals the difference between the length of the old block and the new one.
 </p>
 
 </body>

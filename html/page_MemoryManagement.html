@@ -56,7 +56,7 @@ a primary memory management facility. The heap is maintained in the one or sever
 from the OS, or fixed in the memory. <b>RadixHeap</b> is a real-time heap. Its operations has a time execution limit, assuming
 there is no primary memory management functions calls. In practice, the cost of allocation and deallocation memory functions
 is a 100s CPU clocks. This heap is also best-fit and provides a protection from wrong memory block address arguments.
-If you try to free a memory at an arbitary address, then it's very likely the abort will be called.
+If you try to free a memory at an arbitrary address, then it's very likely the abort will be called.
 </p>
 
 <p>
@@ -164,6 +164,7 @@ if the argument has a greater <b>len_count</b>. It is used to accumulate the "pe
 </p>
 
 <pre>
+
 struct <span class="Att">MemStatData</span>
  {
   ulen block_count;
@@ -198,6 +199,7 @@ struct <span class="Att">MemStatData</span>
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>
@@ -235,6 +237,7 @@ match, a error message is printed using <b>Printf(NoException,...)</b>.
 </p>
 
 <pre>
+
 class <span class="Att">MemScope</span> : NoCopy
  {
    MemStat on_init;
@@ -245,6 +248,7 @@ class <span class="Att">MemScope</span> : NoCopy
    
    ~MemScope();
  };
+
 </pre>
 
 <p>
@@ -256,6 +260,7 @@ Another helpful <b>Property Type</b> class is the <b>MemBase</b>:
 </p>
 
 <pre>
+
 struct <a name="MemBase"><span class="Att">MemBase</span></a>
  {
   // placement new/delete
@@ -283,6 +288,7 @@ struct <a name="MemBase"><span class="Att">MemBase</span></a>
   
   void operator delete(void *mem,ulen,ulen) { MemFree(mem); }
  };
+
 </pre>
 
 <p>
@@ -293,10 +299,12 @@ It also defines a non-throwing variant of the <b>operator new</b> with <b>JustTr
 
 <p>
 You may also take some additional space after the object, using the overloaded <b>operator new</b>.
-<b>extra</b> is the number of parts of <b>size_of</b> length. To retrieve this space use the function <b>ExtraSpace</b>:
+<b>extra</b> is the number of parts of <b>size_of</b> length. 
+To retrieve this space use the function <b>ExtraSpace</b>. An example:
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct Header : MemBase_nocopy
  {
@@ -311,6 +319,7 @@ struct Header : MemBase_nocopy
     return new(object_count,sizeof (T)) Header(object_count);
    }
  };
+
 </pre>
 
 <p>
@@ -327,6 +336,7 @@ a single fixed memory buffer. The memory buffer is allocated from the main heap.
 </p>
 
 <pre>
+
 class <span class="Att">SpaceHeap</span> : NoCopy
  {
    ....
@@ -349,6 +359,7 @@ class <span class="Att">SpaceHeap</span> : NoCopy
   
    bool shrink(void *mem,ulen len); // mem!=0
  };
+
 </pre>
 
 <p>
@@ -381,6 +392,7 @@ There is no a <b>mutex</b> protection for methods of the <b>SpaceHeap</b>.
 </p>
 
 <pre>
+
 class <span class="Att">MemSpace</span> : NoCopy
  {
    ulen max_store_len;
@@ -403,6 +415,7 @@ class <span class="Att">MemSpace</span> : NoCopy
    
    ulen shrink(RadixHeapBlock *block,ulen blen);
  };
+
 </pre>
 
 <p>
@@ -420,6 +433,7 @@ provided by OS.
 </p>
 
 <pre>
+
 class <span class="Att">PageHeap</span> : NoCopy
  {
    ....
@@ -444,6 +458,7 @@ class <span class="Att">PageHeap</span> : NoCopy
   
    bool shrink(void *mem,ulen len); // mem!=0
  };
+
 </pre>
 
 <p>
@@ -451,7 +466,7 @@ The interface of the <b>PageHeap</b> is identical to the <b>SpaceHeap</b> interf
 </p>
 
 <p>
-<b>PageHeap</b> has two constructors. The argument <b>min_page_alloc_len</b> is a minimum large buffer length.
+<b>PageHeap</b> has two constructors. The argument <b>min_page_alloc_len</b> is the minimum large buffer length.
 Default constructor uses some default value for it.
 </p>
 
@@ -465,6 +480,7 @@ physical memory.
 </p>
 
 <pre>
+
 class <span class="Att">MemPage</span> : NoCopy
  {
   public:
@@ -485,11 +501,12 @@ class <span class="Att">MemPage</span> : NoCopy
    
    ulen shrink(RadixHeapBlock *block,ulen blen);
  };
+
 </pre>
 
 <p>
 The constructor argument <b>min_alloc_len</b> has the same meaning, as the <b>min_page_alloc_len</b> for
-<b>PageHeap</b> constructor.
+the <b>PageHeap</b> constructor.
 </p>
 
 <h3><b>XCore</b> SpecialMemBase</h3>
