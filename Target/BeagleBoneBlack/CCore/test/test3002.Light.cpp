@@ -76,7 +76,7 @@ bool Testit<3002>::Main()
   
   Delay(5);
   
-  for(unsigned cnt=100; cnt ;cnt--)
+  for(unsigned cnt=10; cnt ;cnt--)
     {
      Printf(Con,"cnt = #;\n",cnt);
     

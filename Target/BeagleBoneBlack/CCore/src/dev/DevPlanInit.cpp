@@ -16,110 +16,160 @@
 #include <CCore/inc/dev/DevPlanInit.h>
 
 #include <CCore/inc/dev/DevIntHandle.h>
+
+#include <CCore/inc/dev/AM3359.h>
+
+#include <__std_init.h>
  
 namespace CCore {
 namespace Dev {
 
-#if 0
+const ulen TTLen = 1<<12 ;
 
-/* init/exit functions */ 
+const unsigned TTableBaseBits = 14 ;
 
-static const uint32 TTBase = 0x4000 ;
-  
-static_assert( TTBase%MMU::TTAlign==0 ,"CCore::Dev::TTBase is not aligned");
+const unsigned SectionBaseBits = 20 ;
 
-static void ClearTT(MMU::TTEntry *base)
- {
-  using namespace MMU;
-  
-  for(unsigned i=0; i<TTLen ;i++) base[i].disable();
- }
- 
-static void FillTTRegion(MMU::TTEntry *base,unsigned off,unsigned len,unsigned flags)
- {
-  for(; len ;off++,len--) base[off].section(off,0,flags);
- }
- 
-static void BuildTT()
- {
-  using namespace MMU;
- 
-  TTEntry *base=(TTEntry *)TTBase;
-   
-  ClearTT(base);
-  
-  FillTTRegion(base,0x000,0x080,Section_AP_UNO|Section_Cache|Section_Buff); // RAM
-   
-  FillTTRegion(base,0x001,0x001,Section_AP_UNO); // RAM  No cache
-   
-  FillTTRegion(base,0x480,0x080,Section_AP_UNO); // PCI
-  FillTTRegion(base,0x500,0x020,Section_AP_UNO); // Flash
-  FillTTRegion(base,0x540,0x020,Section_AP_UNO); // FPGA
-  FillTTRegion(base,0x600,0x040,Section_AP_UNO); // QM
-  FillTTRegion(base,0x700,0x100,Section_AP_UNO); // Regs
-  FillTTRegion(base,0xC00,0x400,Section_AP_UNO); // Regs
- }
- 
-static void EnableMMUandCache()
- {
-  using namespace CP15;
-   
-  Type_DomainAC dac;
-   
-  dac.set_D0(DomainAC_D0_DescAccess)
-     .set_D1(DomainAC_D1_DescAccess)
-     .set_D2(DomainAC_D2_DescAccess)
-     .set_D3(DomainAC_D3_DescAccess)
-     .set_D4(DomainAC_D4_DescAccess)
-     .set_D5(DomainAC_D5_DescAccess)
-     .set_D6(DomainAC_D6_DescAccess)
-     .set_D7(DomainAC_D7_DescAccess)
-     .set_D8(DomainAC_D8_DescAccess)
-     .set_D9(DomainAC_D9_DescAccess)
-     .set_D10(DomainAC_D10_DescAccess)
-     .set_D11(DomainAC_D11_DescAccess)
-     .set_D12(DomainAC_D12_DescAccess)
-     .set_D13(DomainAC_D13_DescAccess)
-     .set_D14(DomainAC_D14_DescAccess)
-     .set_D15(DomainAC_D15_DescAccess);
-  
-  Set_DomainAC(dac);
-   
-  Type_AuxControl aux;
-   
-  aux.set_MD(AuxControl_MD_WB_RA);
-   
-  Set_AuxControl(aux);
-   
-  Set_PID(0);
-   
-  Set_TTBase(TTBase);
-   
-  Type_Control ctrl;
-   
-  ctrl.setbit(Control_I|
-              Control_Z|
-              Control_B|
-              Control_C|
-              Control_A|
-              Control_M)
-      .set_Ones(Control_Ones_Fill);        
-   
-  Set_Control(ctrl);
-   
-  Wait();
- }
- 
-void Init_CPU()
- {
-  BuildTT();
-  
-  EnableMMUandCache();
- }
- 
-#endif
+extern uint32 TTable[TTLen];
 
-void Init_CPU() {}
+static bool IsDEV(uint32 i)
+ {
+  uint32 address=i<<SectionBaseBits;
+  
+  return address>=0x40000000 && address<0x80000000 ;
+ }
+
+static bool IsRAM(uint32 i)
+ {
+  uint32 address=i<<SectionBaseBits;
+  
+  return address>=0x80000000 && address<0xA0000000 ;
+ }
+
+static bool TestAddress(uint32 address,uint32 base,uint32 len)
+ {
+  return address>=base && (address-base)<len ;
+ }
+
+static bool IsShared(uint32 i,uint32 sbase1,uint32 slen1,uint32 sbase2,uint32 slen2)
+ {
+  uint32 address=i<<SectionBaseBits;
+  
+  return TestAddress(address,sbase1,slen1) || TestAddress(address,sbase2,slen2) ;
+ }
+
+void Init_CPU() 
+ {
+  //return; 
+  
+  using namespace AM3359::CP15;
+  
+  // prepare TTable
+  {
+   for(uint32 i=0; i<TTLen ;i++) 
+     {
+      Type_SectionDesc desc_NUL;
+     
+      Type_SectionDesc desc_RAM;
+      
+      desc_RAM.setbit(SectionDesc_SBO|SectionDesc_NS|SectionDesc_AP0|SectionDesc_TEX2| SectionDesc_B|SectionDesc_C )
+              .set_Domain(0)
+              .set_Base(i);
+     
+      Type_SectionDesc desc_RAMS;
+      
+      desc_RAMS.setbit(SectionDesc_SBO|SectionDesc_NS|SectionDesc_AP0|SectionDesc_TEX0|SectionDesc_S)
+               .set_Domain(0)
+               .set_Base(i);
+      
+      Type_SectionDesc desc_DEV;
+      
+      desc_DEV.setbit(SectionDesc_SBO|SectionDesc_NS|SectionDesc_AP0|SectionDesc_TEX1)
+              .set_Domain(0)
+              .set_Base(i);
+      
+      uint32 sbase1=(uint32)__std_get_shared_mem();
+      uint32 slen1=__std_get_shared_mem_len();
+      
+      uint32 sbase2=(uint32)__std_get_video_mem();
+      uint32 slen2=__std_get_video_mem_len();
+      
+      if( IsDEV(i) )
+        {
+         TTable[i]=desc_DEV;
+        }
+      else
+        {
+         if( IsRAM(i) )
+           {
+            if( IsShared(i,sbase1,slen1,sbase2,slen2) )
+              {
+               TTable[i]=desc_RAMS;
+              }
+            else
+              {
+               TTable[i]=desc_RAM;
+              } 
+           }
+         else
+           {
+            TTable[i]=desc_NUL;
+           }
+        }
+     }
+  }
+  
+  // set TTControl
+  {
+   Type_TTControl val;
+   
+   SetTTControl(val);
+  }
+  
+  // set TTBase0
+  {
+   uint32 base=(uint32)(uint32 *)TTable;
+   
+   if( base<<(32-TTableBaseBits) ) __std_abort("Fatal error : TTable is not aligned");
+   
+   Type_TTBase0 val;
+   
+   val.setbit(TTBase0_C)
+      .set_Base(base>>TTableBaseBits);
+   
+   SetTTBase0(val);
+  }
+  
+  // set DomainAccessControl
+  {
+   Type_DomainAccessControl val;
+   
+   val.set_D0(DomainAccessControl_D0_Manager);
+   
+   SetDomainAccessControl(val);
+  }
+  
+  // set AuxControl
+  {
+   auto val=GetAuxControl();
+   
+   val.setbit(AuxControl_L2EN);
+   
+   SetAuxControl(val);
+  }
+  
+  return;
+  
+  // set Control
+  {
+   Type_Control val;
+   
+   val.setbit(Control_M|Control_A|Control_C|Control_Z|Control_I)
+      .set_SBO(Control_SBO_Ones);
+   
+   SetControl(val);
+  }
+ }
 
 /* GetPlanInitNode_...() */ 
 

@@ -868,6 +868,7 @@ obj/time.dep \
 ASM_OBJ_LIST = \
 obj/AM3359.s.o \
 obj/DevInt.s.o \
+obj/DevPlanInit.s.o \
 obj/DevRW.s.o \
 obj/Quick.s.o \
 obj/SysAtomic.s.o \
@@ -3460,6 +3461,9 @@ obj/AM3359.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/DevInt.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/DevPlanInit.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/DevRW.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.s

@@ -4094,13 +4094,41 @@ void __std_debug_console(const char *ptr,__std_len_t len)
 
 #include <CCore/inc/Print.h>
 
+#include <CCore/inc/dev/AM3359.h>
+
 void __std_debug_trap(unsigned LR,unsigned trap)
  {
+  using namespace AM3359::CP15;
+  
   char buf[TextBufLen];
   
   PrintBuf out(Range(buf));
   
-  Printf(out,"LR = #9.hi; trap = #;",LR,trap);
+  switch( trap )
+    {
+     case 1 : // Undefined
+      {
+       Printf(out,"Undefined PC = #9.hi;",LR-4);
+      }
+     break; 
+    
+     case 3 : // Prefetch
+      {
+       Printf(out,"Prefetch PC = #9.hi; #; #9.hi;",LR-4,GetInstructionFaultStatus(),GetInstructionFaultAddress());
+      }
+     break;
+     
+     case 4 : // Data
+      {
+       Printf(out,"Data PC = #9.hi; #; #9.hi;",LR-8,GetDataFaultStatus(),GetDataFaultAddress());
+      }
+     break;
+     
+     default:
+      {
+       Printf(out,"LR = #9.hi; trap = #;",LR,trap);
+      }
+    }
   
   __std_debug(out.closeZStr());
  }

@@ -40,6 +40,38 @@ Type_SecureConfig GetSecureConfig();
 
 void SetSecureConfig(Type_SecureConfig);
 
+Type_DataFaultStatus GetDataFaultStatus();
+
+Type_InstructionFaultStatus GetInstructionFaultStatus();
+
+Type_DataFaultAddress GetDataFaultAddress();
+
+Type_InstructionFaultAddress GetInstructionFaultAddress();
+
+Type_Control GetControl();
+
+void SetControl(Type_Control);
+
+Type_CacheSizeID GetCacheSizeID();
+
+void SetCacheSizeSel(Type_CacheSizeSel);
+
+Type_DomainAccessControl GetDomainAccessControl();
+
+void SetDomainAccessControl(Type_DomainAccessControl);
+
+Type_TTBase0 GetTTBase0();
+
+void SetTTBase0(Type_TTBase0);
+
+Type_TTControl GetTTControl();
+
+void SetTTControl(Type_TTControl);
+
+Type_AuxControl GetAuxControl();
+
+void SetAuxControl(Type_AuxControl);
+
 /* classes */
 
 class CPUFeatures;
@@ -73,6 +105,14 @@ class CPUFeatures
    Type_AuxFeature getAuxFeature() const { return Type_AuxFeature(regs[8]); }
    
    Type_MemoryFeature0 getMemoryFeature0() const { return Type_MemoryFeature0(regs[9]); }
+   
+   Type_MemoryFeature1 getMemoryFeature1() const { return Type_MemoryFeature1(regs[10]); }
+   
+   Type_MemoryFeature2 getMemoryFeature2() const { return Type_MemoryFeature2(regs[11]); }
+   
+   Type_MemoryFeature3 getMemoryFeature3() const { return Type_MemoryFeature3(regs[12]); }
+   
+   Type_CacheLevelID getCacheLevelID() const { return Type_CacheLevelID(regs[13]); }
  };
 
 } // namespace CP15

@@ -30,8 +30,7 @@ _ZN5CCore3Sys6Atomic3SetEPVjj:                   @ CCore::Sys::Atomic::Set
 _ZN5CCore3Sys6Atomic3AddEPVjj:                   @ CCore::Sys::Atomic::Add
         
         mrs     r3, CPSR
-        orr     r2, r3, #128
-        msr     CPSR_c, r2
+        cpsid   i
         
         ldr     r2, [r0]
         add     r1, r1, r2
@@ -45,8 +44,7 @@ _ZN5CCore3Sys6Atomic3AddEPVjj:                   @ CCore::Sys::Atomic::Add
 _ZN5CCore3Sys6Atomic6TrySetEPVjjj:               @ CCore::Sys::Atomic::TrySet
         
         mrs     r3, CPSR
-        orr     ip, r3, #128
-        msr     CPSR_c, ip
+        cpsid   i
         
         ldr     ip, [r0]
         cmp     ip, r1

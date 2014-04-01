@@ -47,13 +47,13 @@ NOWARN = -Wno-non-virtual-dtor \
 
 CCINC = -I$(CCORE_ROOT) -I$(CCORE_ROOT)/XCore -I$(CCORE_ROOT)/Target/$(CCORE_TARGET)
 
-CCOPT = -c -std=c++11 -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
+CCOPT = -c -std=c++11 -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -mno-unaligned-access -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
 
 ASOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard
 
 CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
 
-LDOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -fno-use-linker-plugin -Wl,-s $(LDOPT_EXTRA) $(CCORELIB)
+LDOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -fno-use-linker-plugin -mno-unaligned-access $(LDOPT_EXTRA) $(CCORELIB) # -Wl,-s 
 
 
 

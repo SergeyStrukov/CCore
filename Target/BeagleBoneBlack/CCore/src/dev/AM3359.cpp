@@ -42,6 +42,38 @@ Type_SecureConfig GetSecureConfig() { return Type_SecureConfig(0); }
 
 void SetSecureConfig(Type_SecureConfig) {}
 
+Type_DataFaultStatus GetDataFaultStatus() { return Type_DataFaultStatus(0); }
+
+Type_InstructionFaultStatus GetInstructionFaultStatus() { return Type_InstructionFaultStatus(0); }
+
+Type_DataFaultAddress GetDataFaultAddress() { return Type_DataFaultAddress(0); }
+
+Type_InstructionFaultAddress GetInstructionFaultAddress() { return Type_InstructionFaultAddress(0); }
+
+Type_Control GetControl() { return Type_Control(0); }
+
+void SetControl(Type_Control) {}
+
+Type_CacheSizeID GetCacheSizeID() { return Type_CacheSizeID(0); }
+
+void SetCacheSizeSel(Type_CacheSizeSel) {}
+
+Type_DomainAccessControl GetDomainAccessControl() { return Type_DomainAccessControl(0); }
+
+void SetDomainAccessControl(Type_DomainAccessControl) {}
+
+Type_TTBase0 GetTTBase0() { return Type_TTBase0(0); }
+
+void SetTTBase0(Type_TTBase0) {}
+
+Type_TTControl GetTTControl() { return Type_TTControl(0); }
+
+void SetTTControl(Type_TTControl) {}
+
+Type_AuxControl GetAuxControl() { return Type_AuxControl(0); }
+
+void SetAuxControl(Type_AuxControl) {}
+
 #endif
 
 } // namespace CP15

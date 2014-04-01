@@ -180,6 +180,12 @@ start:
         mov     r0, #0x40000000
         vmsr    FPEXC, r0
         
+     @ disable non-aligned memory access
+     
+        mrc     p15, 0, r0, c1, c0, 0
+        orr     r0, #2
+        mcr     p15, 0, r0, c1, c0, 0
+        
      @ setup exception base address    
         
         SetReg  r0, ex_base

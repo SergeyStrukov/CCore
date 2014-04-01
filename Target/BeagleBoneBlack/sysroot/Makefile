@@ -25,9 +25,9 @@ NOWARN = -Wno-non-virtual-dtor -Wno-switch
 
 CCINC = -I$(XCORE_ROOT)/Target/$(XCORE_TARGET)
 
-CCOPT = -c -std=c++11 -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -O3 -Wall -Wextra $(NOWARN) $(CCINC) -D__STDBUILD
+CCOPT = -c -std=c++11 -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -mno-unaligned-access -O3 -Wall -Wextra $(NOWARN) $(CCINC) -D__STDBUILD
 
-CCOPT_C = -c -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -O3 -Wall -Wextra $(CCINC) -D__STDBUILD
+CCOPT_C = -c -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -mno-unaligned-access -O3 -Wall -Wextra $(CCINC) -D__STDBUILD
 
 # AS tool
 

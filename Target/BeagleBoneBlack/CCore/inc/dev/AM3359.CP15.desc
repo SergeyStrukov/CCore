@@ -45,6 +45,8 @@ reg CPSR : 32
   Z : . 
  }
  
+//----------------------------------------------------------------------------------------
+
 reg MainID : 32
  {
   Revision    : 0-3
@@ -68,7 +70,7 @@ reg TCMType : 32
  
 reg TLBType : 32
  {
-  U : .
+  U      : 0
   DLSize : 8-15
   ILSize : 16-23
  }
@@ -117,16 +119,231 @@ reg MemoryFeature0 : 32
   FCSE           : 24-27
  } 
  
+reg MemoryFeature1 : 32
+ {
+  L1HMVA : 0-3
+  L1UMVA : 4-7
+  L1HSW  : 8-11
+  L1USW  : 12-15
+  L1H    : 16-19
+  L1U    : 20-23
+  L1Test : 24-27
+  BTB    : 28-31 
+ } 
+ 
+reg MemoryFeature2 : 32
+ {
+  L1HFP : 0-3
+  L1HBP : 4-7
+  L1H   : 8-11
+  TLBH  : 12-15
+  TLBU  : 16-19
+  MB    : 20-23
+  WFI   : 24-27
+  HAF   : 28-31
+ } 
+ 
+reg MemoryFeature3 : 32
+ {
+  HCMVA : 0-3
+  HCSW  : 4-7
+  BP    : 8-11
+  SS    : 28-31
+ }
+ 
+reg CacheLevelID : 32
+ {
+  CL1 : 0-2
+  CL2 : 3-5
+  CL3 : 6-8
+  CL4 : 9-11
+  CL5 : 12-14
+  CL6 : 15-17
+  CL7 : 18-20
+  CL8 : 21-23
+  LOC : 24-26
+  LOU : 27-29
+ } 
+ 
+reg CacheSizeID : 32
+ {
+  LineSize : 0-2
+  Ass      : 3-12
+  Sets     : 13-27
+  WA       : 28
+  RA       : 29
+  WB       : 30
+  WT       : 31
+ }
+ 
+reg CacheSizeSel : 32
+ {
+  InD   : 0
+  Level : 1-3
+ }  
+  
 //----------------------------------------------------------------------------------------
 
 reg SecureConfig : 32
  {
-  NS  : .
-  IRQ : .
-  FIQ : .
-  EA  : .
-  FW  : .
-  AW  : .
+  NS  : 0
+  IRQ : 1
+  FIQ : 2
+  EA  : 3
+  FW  : 4
+  AW  : 5
  } 
+ 
+//----------------------------------------------------------------------------------------
+
+reg DataFaultStatus : 32
+ {
+  Status : 0-3
+  Domain : 4-7
+  S      : 10
+  W      : 11
+  SD     : 12
+ }
+ 
+reg InstructionFaultStatus : 32
+ {
+  Status : 0-3
+  S      : 10
+  SD     : 12
+ } 
+ 
+reg DataFaultAddress : 32
+ {
+ }
+ 
+reg InstructionFaultAddress : 32
+ {
+ }
+   
+//----------------------------------------------------------------------------------------
+
+reg Control : 32
+ {
+  M    : 0
+  A    : 1
+  C    : 2
+  SBO  : 3-6
+   {
+    Ones = 1111b
+   }
+  Z    : 11
+  I    : 12
+  V    : 13
+  EE   : 25
+  NMFI : 27
+  TRE  : 28
+  AFE  : 29
+  TE   : 30
+ } 
+ 
+reg AuxControl : 32
+ {
+  L1Alias  : 0
+  L2EN     : 1
+  L1PE     : 3
+  ASA      : 4
+  L1NEON   : 5
+  IBE      : 6
+  DBSM     : 7
+  WFINOP   : 8
+  PLDNOP   : 9
+  FSI      : 10
+  FLSSI    : 11
+  FNEONSI  : 12
+  FMCLK    : 13
+  FNEONCLK : 14
+  FETMCLK  : 15
+  CPPF     : 16
+  CPWI     : 17
+  CPIS     : 18
+  CSRD     : 19
+  CMP      : 20
+  L1HRD    : 30
+  L2HRD    : 31
+ } 
+ 
+reg DomainAccessControl : 32
+ {
+  D0  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
+  D1  : .+2
+  D2  : .+2
+  D3  : .+2
+
+  D4  : .+2
+  D5  : .+2
+  D6  : .+2
+  D7  : .+2
+
+  D8  : .+2
+  D9  : .+2
+  D10 : .+2
+  D11 : .+2
+
+  D12 : .+2
+  D13 : .+2
+  D14 : .+2
+  D15 : .+2
+ } 
+
+reg TTControl : 32
+ {
+  N   : 0-3
+  PD0 : 4
+  PD1 : 5
+ }
+ 
+reg TTBase0 : 32
+ {
+  C   : 0
+  S   : 1
+  P   : 2
+  RGN : 3-4
+  Base: 14-31
+ } 
+ 
+//----------------------------------------------------------------------------------------
+ 
+reg SectionDesc : 32
+ {
+  PXN    : 0
+  SBO    : 1
+  B      : 2
+  C      : 3
+  XN     : 4
+  Domain : 5-8
+  Imp    : 9
+  AP0    : 10
+  AP1    : 11
+  TEX0   : 12
+  TEX1   : 13
+  TEX2   : 14
+  AP2    : 15
+  S      : 16
+  nG     : 17
+  SBZ    : 18 
+  NS     : 19
+  Base   : 20-31
+ } 
+ 
+//----------------------------------------------------------------------------------------
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
   
