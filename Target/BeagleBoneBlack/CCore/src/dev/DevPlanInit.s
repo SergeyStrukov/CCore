@@ -20,6 +20,6 @@
 
 _ZN5CCore3Dev6TTableE: 
   
-        .space 4096*4
+        .space 0x4000
          
          

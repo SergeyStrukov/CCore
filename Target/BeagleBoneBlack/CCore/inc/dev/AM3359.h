@@ -72,6 +72,26 @@ Type_AuxControl GetAuxControl();
 
 void SetAuxControl(Type_AuxControl);
 
+Type_FCSE GetFCSE();
+
+void SetFCSE(Type_FCSE);
+
+Type_ContextID GetContextID();
+
+void SetContextID(Type_ContextID);
+
+Type_NonsecureAccessControl GetNonsecureAccessControl();
+
+void InvalidateTLB();
+
+void InvalidateInstructionCaches();
+
+void InvalidateDataCacheL1(uint32 set,uint32 way); // way 2-bit, set 7-bit
+
+void InvalidateDataCacheL2(uint32 set,uint32 way); // way 3-bit, set 9-bit
+
+void InvalidateDataCaches();
+
 /* classes */
 
 class CPUFeatures;

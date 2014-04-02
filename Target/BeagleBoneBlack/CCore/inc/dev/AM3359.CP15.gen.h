@@ -2896,6 +2896,352 @@ struct Type_SecureConfig
    }
  };
  
+/* struct Type_NonsecureAccessControl */ 
+
+enum Bits_NonsecureAccessControl : uint32
+ {
+  NonsecureAccessControl_CP0  = 0x00000001,
+  NonsecureAccessControl_CP1  = 0x00000002,
+  NonsecureAccessControl_CP2  = 0x00000004,
+  NonsecureAccessControl_CP3  = 0x00000008,
+  NonsecureAccessControl_CP4  = 0x00000010,
+  NonsecureAccessControl_CP5  = 0x00000020,
+  NonsecureAccessControl_CP6  = 0x00000040,
+  NonsecureAccessControl_CP7  = 0x00000080,
+  NonsecureAccessControl_CP8  = 0x00000100,
+  NonsecureAccessControl_CP9  = 0x00000200,
+  NonsecureAccessControl_CP10 = 0x00000400,
+  NonsecureAccessControl_CP11 = 0x00000800,
+  NonsecureAccessControl_CP12 = 0x00001000,
+  NonsecureAccessControl_CP13 = 0x00002000,
+  NonsecureAccessControl_CL   = 0x00010000,
+  NonsecureAccessControl_TL   = 0x00020000,
+  NonsecureAccessControl_PLE  = 0x00040000
+ };
+ 
+inline Bits_NonsecureAccessControl operator | (Bits_NonsecureAccessControl a,Bits_NonsecureAccessControl b)
+ { return Bits_NonsecureAccessControl(uint32(a)|uint32(b)); }
+ 
+struct Type_NonsecureAccessControl
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_NonsecureAccessControl(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_NonsecureAccessControl & setTo(Bar &bar) { bar.set_NonsecureAccessControl(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_NonsecureAccessControl & setTo(Bar &bar,uint32 ind) { bar.set_NonsecureAccessControl(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_NonsecureAccessControl & set(T to) { to(*this); return *this; }
+ 
+
+  Type_NonsecureAccessControl & setbit(Bits_NonsecureAccessControl bits) { value|=Type(bits); return *this; }
+ 
+  Type_NonsecureAccessControl & setbitIf(bool cond,Bits_NonsecureAccessControl bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_NonsecureAccessControl & clearbit(Bits_NonsecureAccessControl bits) { value&=~Type(bits); return *this; }
+ 
+  Type_NonsecureAccessControl & clearbitIf(bool cond,Bits_NonsecureAccessControl bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_NonsecureAccessControl bits) const { return value&bits; }
+ 
+  bool testbit(Bits_NonsecureAccessControl bits) const { return (value&bits)==Type(bits); }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&NonsecureAccessControl_CP0 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP0");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP0");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP1 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP1");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP1");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP2 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP2");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP2");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP3 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP3");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP3");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP4 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP4");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP4");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP5 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP5");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP5");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP6 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP6");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP6");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP7 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP7");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP7");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP8 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP8");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP8");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP9 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP9");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP9");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP10 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP10");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP10");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP11 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP11");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP11");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP12 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP12");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP12");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CP13 )
+      {
+       if( first )
+         {
+          Putobj(out,"CP13");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CP13");
+         }
+      }
+
+    if( value&NonsecureAccessControl_CL )
+      {
+       if( first )
+         {
+          Putobj(out,"CL");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CL");
+         }
+      }
+
+    if( value&NonsecureAccessControl_TL )
+      {
+       if( first )
+         {
+          Putobj(out,"TL");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"TL");
+         }
+      }
+
+    if( value&NonsecureAccessControl_PLE )
+      {
+       if( first )
+         {
+          Putobj(out,"PLE");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"PLE");
+         }
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct Type_DataFaultStatus */ 
 
 enum Bits_DataFaultStatus : uint32
@@ -4666,6 +5012,158 @@ struct Type_TTBase0
        out.put('|');
 
        Printf(out,"Base(#;)",get_Base());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_FCSE */ 
+
+struct Type_FCSE
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_FCSE(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_FCSE & setTo(Bar &bar) { bar.set_FCSE(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_FCSE & setTo(Bar &bar,uint32 ind) { bar.set_FCSE(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_FCSE & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_PID() const
+   {
+    return (value>>25)&0x7F;
+   }
+ 
+  Type_FCSE & set_PID(Type field)
+   {
+    value=((field&0x7F)<<25)|(value&0x1FFFFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"PID(#;)",get_PID());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"PID(#;)",get_PID());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_ContextID */ 
+
+struct Type_ContextID
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_ContextID(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_ContextID & setTo(Bar &bar) { bar.set_ContextID(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_ContextID & setTo(Bar &bar,uint32 ind) { bar.set_ContextID(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_ContextID & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_ASID() const
+   {
+    return (value>>0)&0xFF;
+   }
+ 
+  Type_ContextID & set_ASID(Type field)
+   {
+    value=((field&0xFF)<<0)|(value&0xFFFFFF00);
+
+    return *this;
+   }
+ 
+
+  Type get_PROCID() const
+   {
+    return (value>>8)&0xFFFFFF;
+   }
+ 
+  Type_ContextID & set_PROCID(Type field)
+   {
+    value=((field&0xFFFFFF)<<8)|(value&0xFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"ASID(#;)",get_ASID());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"ASID(#;)",get_ASID());
+      }
+
+    if( first )
+      {
+       Printf(out,"PROCID(#;)",get_PROCID());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"PROCID(#;)",get_PROCID());
       }
 
     if( first ) out.put('0');

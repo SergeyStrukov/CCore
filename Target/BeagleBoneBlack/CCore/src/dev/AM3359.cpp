@@ -74,7 +74,36 @@ Type_AuxControl GetAuxControl() { return Type_AuxControl(0); }
 
 void SetAuxControl(Type_AuxControl) {}
 
+Type_FCSE GetFCSE() { return Type_FCSE(0); }
+
+void SetFCSE(Type_FCSE) {}
+
+Type_ContextID GetContextID() { return Type_ContextID(0); }
+
+void SetContextID(Type_ContextID) {}
+
+Type_NonsecureAccessControl GetNonsecureAccessControl() { return Type_NonsecureAccessControl(0); }
+
+void InvalidateTLB() {}
+
+void InvalidateInstructionCaches() {}
+
+void InvalidateDataCacheL1(uint32 set,uint32 way) {}
+
+void InvalidateDataCacheL2(uint32 set,uint32 way) {}
+
 #endif
+
+void InvalidateDataCaches()
+ {
+  for(uint32 way=0; way<4 ;way++) 
+    for(uint32 set=0; set<128 ;set++)
+      InvalidateDataCacheL1(set,way);
+  
+  for(uint32 way=0; way<8 ;way++) 
+    for(uint32 set=0; set<512 ;set++)
+      InvalidateDataCacheL2(set,way);
+ }
 
 } // namespace CP15
 } // namespace AM3359

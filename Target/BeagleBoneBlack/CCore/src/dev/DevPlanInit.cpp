@@ -60,43 +60,27 @@ static bool IsShared(uint32 i,uint32 sbase1,uint32 slen1,uint32 sbase2,uint32 sl
 
 void Init_CPU() 
  {
-  //return; 
-  
   using namespace AM3359::CP15;
   
   // prepare TTable
   {
+   uint32 sbase1=(uint32)__std_get_shared_mem();
+   uint32 slen1=__std_get_shared_mem_len();
+   
+   uint32 sbase2=(uint32)__std_get_video_mem();
+   uint32 slen2=__std_get_video_mem_len();
+   
    for(uint32 i=0; i<TTLen ;i++) 
      {
-      Type_SectionDesc desc_NUL;
-     
-      Type_SectionDesc desc_RAM;
-      
-      desc_RAM.setbit(SectionDesc_SBO|SectionDesc_NS|SectionDesc_AP0|SectionDesc_TEX2| SectionDesc_B|SectionDesc_C )
-              .set_Domain(0)
-              .set_Base(i);
-     
-      Type_SectionDesc desc_RAMS;
-      
-      desc_RAMS.setbit(SectionDesc_SBO|SectionDesc_NS|SectionDesc_AP0|SectionDesc_TEX0|SectionDesc_S)
-               .set_Domain(0)
-               .set_Base(i);
-      
-      Type_SectionDesc desc_DEV;
-      
-      desc_DEV.setbit(SectionDesc_SBO|SectionDesc_NS|SectionDesc_AP0|SectionDesc_TEX1)
-              .set_Domain(0)
-              .set_Base(i);
-      
-      uint32 sbase1=(uint32)__std_get_shared_mem();
-      uint32 slen1=__std_get_shared_mem_len();
-      
-      uint32 sbase2=(uint32)__std_get_video_mem();
-      uint32 slen2=__std_get_video_mem_len();
-      
       if( IsDEV(i) )
         {
-         TTable[i]=desc_DEV;
+         Type_SectionDesc desc;
+        
+         desc.setbit(SectionDesc_SBO|SectionDesc_AP0)
+             .set_Domain(0)
+             .set_Base(i);
+         
+         TTable[i]=desc;
         }
       else
         {
@@ -104,16 +88,30 @@ void Init_CPU()
            {
             if( IsShared(i,sbase1,slen1,sbase2,slen2) )
               {
-               TTable[i]=desc_RAMS;
+               Type_SectionDesc desc;
+              
+               desc.setbit(SectionDesc_SBO|SectionDesc_AP0|SectionDesc_TEX0|SectionDesc_S)
+                   .set_Domain(0)
+                   .set_Base(i);
+               
+               TTable[i]=desc;
               }
             else
               {
-               TTable[i]=desc_RAM;
+               Type_SectionDesc desc;
+              
+               desc.setbit(SectionDesc_SBO|SectionDesc_AP0|SectionDesc_TEX2|SectionDesc_B|SectionDesc_C)
+                   .set_Domain(0)
+                   .set_Base(i);
+               
+               TTable[i]=desc;
               } 
            }
          else
            {
-            TTable[i]=desc_NUL;
+            Type_SectionDesc desc;
+            
+            TTable[i]=desc;
            }
         }
      }
@@ -158,13 +156,34 @@ void Init_CPU()
    SetAuxControl(val);
   }
   
-  return;
+  // set FCSE
+  {
+   Type_FCSE val;
+   
+   SetFCSE(val);
+  }
+  
+  // set ContextID
+  {
+   Type_ContextID val;
+   
+   SetContextID(val);
+  }
+  
+  // invalidate
+  {
+   InvalidateTLB();
+   InvalidateInstructionCaches();
+   InvalidateDataCaches();
+  }
+  
+  //return;
   
   // set Control
   {
    Type_Control val;
    
-   val.setbit(Control_M|Control_A|Control_C|Control_Z|Control_I)
+   val.setbit(Control_AFE|Control_M|Control_A|Control_Z|Control_I|Control_C)  
       .set_SBO(Control_SBO_Ones);
    
    SetControl(val);

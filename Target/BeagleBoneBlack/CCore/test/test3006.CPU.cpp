@@ -17,10 +17,24 @@
 
 #include <CCore/inc/dev/AM3359.h>
 
+static const CCore::ulen TTLen = 1<<12 ;
+
+namespace CCore {
+namespace Dev {
+
+extern uint32 TTable[TTLen];
+
+} // namespace Dev
+} // namespace CCore
+
 namespace App {
 
 namespace Private_3006 {
 
+void PrintTT(uint32 i)
+ {
+  Printf(Con,"TTable[#3.16i;] = #8.16i;\n",i,CCore::Dev::TTable[i]);
+ }
 
 } // namespace Private_3006
  
@@ -38,7 +52,11 @@ bool Testit<3006>::Main()
   
   // CPSR
   
-  Printf(Con,"CPSR = #;\n\n",GetCPSR());
+  //Printf(Con,"CPSR = #;\n\n",GetCPSR());
+  
+  // NSAC
+  
+  Printf(Con,"NonsecureAccessControl = #;\n\n",GetNonsecureAccessControl());
   
   // Features
   
@@ -50,7 +68,7 @@ bool Testit<3006>::Main()
   
   //Printf(Con,"TCMType = #;\n\n",features.getTCMType());
   
-  //Printf(Con,"TLBType = #;\n\n",features.getTLBType());
+  Printf(Con,"TLBType = #;\n\n",features.getTLBType());
   
   //Printf(Con,"MultiprocessorID = #;\n\n",features.getMultiprocessorID());
   
@@ -84,7 +102,7 @@ bool Testit<3006>::Main()
   
   Type_CacheSizeSel().set_Level(1).set(SetCacheSizeSel);
   
-  Printf(Con,"L2D #;\n\n",GetCacheSizeID());
+  Printf(Con,"L2U #;\n\n",GetCacheSizeID());
   
   // GetControl
   
@@ -97,6 +115,18 @@ bool Testit<3006>::Main()
   Printf(Con,"TTBase0 = #;\n\n",GetTTBase0());
   
   Printf(Con,"DomainAccessControl = #;\n\n",GetDomainAccessControl());
+  
+  Printf(Con,"FCSE = #;\n\n",GetFCSE());
+  
+  Printf(Con,"ContextID = #;\n\n",GetContextID());
+
+  PrintTT(0x000);
+  PrintTT(0x400);
+  PrintTT(0x800);
+  PrintTT(0x808);
+  PrintTT(0x810);
+  PrintTT(0x900);
+  PrintTT(0xA00);
   
   return true;
  }

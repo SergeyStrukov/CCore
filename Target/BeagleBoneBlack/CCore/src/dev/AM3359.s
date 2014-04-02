@@ -107,6 +107,15 @@ _ZN6AM33594CP1515SetCacheSizeSelENS0_17Type_CacheSizeSelE:           @ AM3359::C
         .global _ZN6AM33594CP1512SetTTControlENS0_14Type_TTControlE
         .global _ZN6AM33594CP1513GetAuxControlEv
         .global _ZN6AM33594CP1513SetAuxControlENS0_15Type_AuxControlE
+        .global _ZN6AM33594CP157GetFCSEEv
+        .global _ZN6AM33594CP157SetFCSEENS0_9Type_FCSEE
+        .global _ZN6AM33594CP1512GetContextIDEv
+        .global _ZN6AM33594CP1512SetContextIDENS0_14Type_ContextIDE
+        .global _ZN6AM33594CP1525GetNonsecureAccessControlEv
+        .global _ZN6AM33594CP1513InvalidateTLBEv
+        .global _ZN6AM33594CP1527InvalidateInstructionCachesEv
+        .global _ZN6AM33594CP1521InvalidateDataCacheL1Ejj
+        .global _ZN6AM33594CP1521InvalidateDataCacheL2Ejj
         
 _ZN6AM33594CP1522GetDomainAccessControlEv:       @ AM3359::CP15::GetDomainAccessControl
 
@@ -153,6 +162,74 @@ _ZN6AM33594CP1513GetAuxControlEv:                @ AM3359::CP15::GetAuxControl
 _ZN6AM33594CP1513SetAuxControlENS0_15Type_AuxControlE:               @ AM3359::CP15::SetAuxControl
         
         mcr     p15, 0, r0, c1, c0, 1
+        
+        bx      lr
+        
+_ZN6AM33594CP157GetFCSEEv:                       @ AM3359::CP15::GetFCSE
+
+        mrc     p15, 0, r0, c13, c0, 0
+
+        bx      lr
+        
+_ZN6AM33594CP157SetFCSEENS0_9Type_FCSEE:         @ AM3359::CP15::SetFCSE
+
+        mcr     p15, 0, r0, c13, c0, 0
+        
+        bx      lr
+        
+_ZN6AM33594CP1512GetContextIDEv:                 @ AM3359::CP15::GetContextID
+
+        mrc     p15, 0, r0, c13, c0, 1
+
+        bx      lr
+        
+_ZN6AM33594CP1512SetContextIDENS0_14Type_ContextIDE:                 @ AM3359::CP15::SetContextID
+
+        mcr     p15, 0, r0, c13, c0, 1
+
+        bx      lr
+        
+_ZN6AM33594CP1525GetNonsecureAccessControlEv:    @ AM3359::CP15::GetNonsecureAccessControl
+
+        mrc     p15, 0, r0, c1, c1, 2
+        
+        bx      lr
+        
+_ZN6AM33594CP1513InvalidateTLBEv:                @ AM3359::CP15::InvalidateTLB
+        
+        mov     r0, #0
+        
+        mcr     p15, 0, r0, c8, c7, 0
+        
+        bx      lr
+        
+_ZN6AM33594CP1527InvalidateInstructionCachesEv:  @ AM3359::CP15::InvalidateInstructionCaches       
+        
+        mov     r0, #0
+        
+        mcr     p15, 0, r0, c7, c5, 0
+        
+        bx      lr
+        
+_ZN6AM33594CP1521InvalidateDataCacheL1Ejj:       @ AM3359::CP15::InvalidateDataCacheL1
+
+        mov     r0, r0, LSL #6
+
+        orr     r0, r0, r1, LSL #30
+        
+        mcr     p15, 0, r0, c7, c6, 2
+        
+        bx      lr
+        
+_ZN6AM33594CP1521InvalidateDataCacheL2Ejj:       @ AM3359::CP15::InvalidateDataCacheL2
+ 
+        mov     r0, r0, LSL #6
+        
+        orr     r0, r0, r1, LSL #29
+        
+        orr     r0, r0, #2
+        
+        mcr     p15, 0, r0, c7, c6, 2
         
         bx      lr
         

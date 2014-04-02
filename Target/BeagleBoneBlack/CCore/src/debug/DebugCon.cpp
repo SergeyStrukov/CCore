@@ -4098,6 +4098,8 @@ void __std_debug_console(const char *ptr,__std_len_t len)
 
 void __std_debug_trap(unsigned LR,unsigned trap)
  {
+  if( trap==0 ) return;
+  
   using namespace AM3359::CP15;
   
   char buf[TextBufLen];
