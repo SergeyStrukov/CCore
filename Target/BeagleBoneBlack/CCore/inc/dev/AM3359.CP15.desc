@@ -151,6 +151,62 @@ reg MemoryFeature3 : 32
   SS    : 28-31
  }
  
+reg InstructionSetAttributes0 : 32
+ {
+  Atomic   : 0-3
+  BitCnt   : 4-7
+  BitField : 8-11
+  CMPB     : 12-15
+  BKPT     : 20-23
+  DIV      : 24-27
+ } 
+ 
+reg InstructionSetAttributes1 : 32
+ {
+  SETEND  : 0-3
+  EXCEPT1 : 4-7
+  EXCEPT2 : 8-11
+  EXTEND  : 12-15
+  ITE     : 16-19
+  IMM     : 20-23
+  INW     : 24-27
+  J       : 28-31 
+ } 
+ 
+reg InstructionSetAttributes2 : 32
+ {
+  LDRD    : 0-3
+  MHINT   : 4-7
+  INTINST : 8-11
+  MPY     : 12-15
+  SMPY    : 16-19
+  UMPY    : 20-23
+  PSR     : 24-27
+  REV     : 28-31
+ } 
+ 
+reg InstructionSetAttributes3 : 32
+ {
+  SAT   : 0-3
+  SIMD  : 4-7
+  SVC   : 8-11
+  LSEX  : 12-15
+  TBI   : 16-19
+  TCPY  : 20-23
+  NOP   : 24-27
+  T2EEE : 28-31
+ } 
+ 
+reg InstructionSetAttributes4 : 32
+ {
+  LDRT  : 0-3
+  SHIFT : 4-7
+  WB    : 8-11
+  SMC   : 12-15
+  BARR  : 16-19
+  EX    : 20-23
+ } 
+ 
 reg CacheLevelID : 32
  {
   CL1 : 0-2
@@ -297,23 +353,98 @@ reg DomainAccessControl : 32
     Manager  = 11b
    }
   D1  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D2  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D3  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
 
   D4  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D5  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D6  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D7  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
 
   D8  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D9  : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D10 : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D11 : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
 
   D12 : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D13 : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D14 : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
   D15 : .+2
+   {
+    NoAccess = 00b
+    Client   = 01b
+    Manager  = 11b
+   }
  } 
 
 reg TTControl : 32
@@ -325,11 +456,11 @@ reg TTControl : 32
  
 reg TTBase0 : 32
  {
-  C   : 0
-  S   : 1
-  P   : 2
-  RGN : 3-4
-  Base: 14-31
+  C    : 0
+  S    : 1
+  P    : 2
+  RGN  : 3-4
+  Base : 14-31
  } 
  
 reg FCSE : 32
@@ -343,7 +474,54 @@ reg ContextID : 32
   PROCID : 8-31
  } 
  
+reg L2CacheAuxControl : 32
+ {
+  DLat    : 0-3
+  TLat    : 6-8
+  L2Inner : 16
+  ECCEN   : 21
+  NoWA    : 22
+  NoWAC   : 23
+  NoWAD   : 24
+  NoWC    : 25
+  NoLDF   : 27
+  ECC     : 28
+  MS1     : 29
+ } 
+ 
 //----------------------------------------------------------------------------------------
+
+reg PAROK : 32
+ {
+  NOK     : 0
+  SS      : 1
+  Outer   : 2-3
+   {
+    NC   = 00b
+    WBWA = 01b
+    WT   = 10b
+    WB   = 11b
+   }
+  Inner   : 4-6
+   {
+    NC   = 000b
+    SO   = 001b
+    DEV  = 011b
+    WBWA = 101b
+    WT   = 110b
+    WB   = 111b  
+   }
+  S       : 7
+  P       : 8
+  NS      : 9
+  Address : 12-31
+ }
+ 
+reg PARNOK : 32
+ {
+  NOK     : 0
+  FSR     : 1-6
+ } 
  
 reg SectionDesc : 32
  {

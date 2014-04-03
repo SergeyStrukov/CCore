@@ -32,17 +32,13 @@ const unsigned SectionBaseBits = 20 ;
 
 extern uint32 TTable[TTLen];
 
-static bool IsDEV(uint32 i)
+static bool IsDEV(uint32 address)
  {
-  uint32 address=i<<SectionBaseBits;
-  
   return address>=0x40000000 && address<0x80000000 ;
  }
 
-static bool IsRAM(uint32 i)
+static bool IsRAM(uint32 address)
  {
-  uint32 address=i<<SectionBaseBits;
-  
   return address>=0x80000000 && address<0xA0000000 ;
  }
 
@@ -51,11 +47,9 @@ static bool TestAddress(uint32 address,uint32 base,uint32 len)
   return address>=base && (address-base)<len ;
  }
 
-static bool IsShared(uint32 i,uint32 sbase1,uint32 slen1,uint32 sbase2,uint32 slen2)
+static bool IsShared(uint32 address,uint32 base1,uint32 len1,uint32 base2,uint32 len2)
  {
-  uint32 address=i<<SectionBaseBits;
-  
-  return TestAddress(address,sbase1,slen1) || TestAddress(address,sbase2,slen2) ;
+  return TestAddress(address,base1,len1) || TestAddress(address,base2,len2) ;
  }
 
 void Init_CPU() 
@@ -64,15 +58,21 @@ void Init_CPU()
   
   // prepare TTable
   {
-   uint32 sbase1=(uint32)__std_get_shared_mem();
-   uint32 slen1=__std_get_shared_mem_len();
+   uint32 base1=(uint32)__std_get_shared_mem();
+   uint32 len1=__std_get_shared_mem_len();
    
-   uint32 sbase2=(uint32)__std_get_video_mem();
-   uint32 slen2=__std_get_video_mem_len();
+   if( (base1&0xFFFFF) || (len1&0xFFFFF) ) __std_abort("Fatal error : shared mem is not aligned");
+   
+   uint32 base2=(uint32)__std_get_video_mem();
+   uint32 len2=__std_get_video_mem_len();
+   
+   if( (base2&0xFFFFF) || (len2&0xFFFFF) ) __std_abort("Fatal error : video mem is not aligned");
    
    for(uint32 i=0; i<TTLen ;i++) 
      {
-      if( IsDEV(i) )
+      uint32 address=i<<SectionBaseBits;
+      
+      if( IsDEV(address) )
         {
          Type_SectionDesc desc;
         
@@ -84,9 +84,9 @@ void Init_CPU()
         }
       else
         {
-         if( IsRAM(i) )
+         if( IsRAM(address) )
            {
-            if( IsShared(i,sbase1,slen1,sbase2,slen2) )
+            if( IsShared(address,base1,len1,base2,len2) )
               {
                Type_SectionDesc desc;
               
@@ -100,7 +100,7 @@ void Init_CPU()
               {
                Type_SectionDesc desc;
               
-               desc.setbit(SectionDesc_SBO|SectionDesc_AP0|SectionDesc_TEX2|SectionDesc_B|SectionDesc_C)
+               desc.setbit(SectionDesc_SBO|SectionDesc_AP0|SectionDesc_TEX2|SectionDesc_TEX1|SectionDesc_TEX0|SectionDesc_B|SectionDesc_C)
                    .set_Domain(0)
                    .set_Base(i);
                
@@ -176,8 +176,6 @@ void Init_CPU()
    InvalidateInstructionCaches();
    InvalidateDataCaches();
   }
-  
-  //return;
   
   // set Control
   {

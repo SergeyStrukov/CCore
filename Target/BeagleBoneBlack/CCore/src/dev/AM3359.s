@@ -116,6 +116,8 @@ _ZN6AM33594CP1515SetCacheSizeSelENS0_17Type_CacheSizeSelE:           @ AM3359::C
         .global _ZN6AM33594CP1527InvalidateInstructionCachesEv
         .global _ZN6AM33594CP1521InvalidateDataCacheL1Ejj
         .global _ZN6AM33594CP1521InvalidateDataCacheL2Ejj
+        .global _ZN6AM33594CP1520GetL2CacheAuxControlEv
+        .global _ZN6AM33594CP156VAtoPAEj
         
 _ZN6AM33594CP1522GetDomainAccessControlEv:       @ AM3359::CP15::GetDomainAccessControl
 
@@ -233,6 +235,19 @@ _ZN6AM33594CP1521InvalidateDataCacheL2Ejj:       @ AM3359::CP15::InvalidateDataC
         
         bx      lr
         
+_ZN6AM33594CP1520GetL2CacheAuxControlEv:         @ AM3359::CP15::GetL2CacheAuxControl       
+        
+        mrc     p15, 1, r0, c9, c0, 2
+
+        bx      lr
+        
+_ZN6AM33594CP156VAtoPAEj:                        @ AM3359::CP15::VAtoPA       
+
+        mcr     p15, 0, r0, c7, c8, 1
+        mrc     p15, 0, r0, c7, c4, 0
+        
+        bx      lr
+        
 @-----------------------------------------------------------------------------------------
           
         .text
@@ -287,7 +302,22 @@ _ZN6AM33594CP1511CPUFeaturesC2Ev:
         
         mrc     p15, 1, r1, c0, c0, 1
         str     r1, [r2], #4
+        
+        mrc     p15, 0, r1, c0, c2, 0
+        str     r1, [r2], #4
 
+        mrc     p15, 0, r1, c0, c2, 1
+        str     r1, [r2], #4
+        
+        mrc     p15, 0, r1, c0, c2, 2
+        str     r1, [r2], #4
+        
+        mrc     p15, 0, r1, c0, c2, 3
+        str     r1, [r2], #4
+        
+        mrc     p15, 0, r1, c0, c2, 4
+        str     r1, [r2], #4
+        
         bx      lr
         
 @-----------------------------------------------------------------------------------------          

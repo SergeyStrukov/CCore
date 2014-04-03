@@ -33,7 +33,26 @@ namespace Private_3006 {
 
 void PrintTT(uint32 i)
  {
-  Printf(Con,"TTable[#3.16i;] = #8.16i;\n",i,CCore::Dev::TTable[i]);
+  using namespace AM3359::CP15;
+  
+  Printf(Con,"TTable[#3.16i;] = #8.16i;",i,CCore::Dev::TTable[i]);
+  
+  uint32 address=i<<20;
+  
+  uint32 par=VAtoPA(address);
+  
+  Type_PAROK parok(par);
+  
+  if( parok.maskbit(PAROK_NOK) )
+    {
+     Type_PARNOK parnok(par);
+     
+     Printf(Con," #;\n",parnok);
+    }
+  else
+    {
+     Printf(Con," #;\n",parok);
+    }
  }
 
 } // namespace Private_3006
@@ -56,7 +75,7 @@ bool Testit<3006>::Main()
   
   // NSAC
   
-  Printf(Con,"NonsecureAccessControl = #;\n\n",GetNonsecureAccessControl());
+  //Printf(Con,"NonsecureAccessControl = #;\n\n",GetNonsecureAccessControl());
   
   // Features
   
@@ -68,7 +87,7 @@ bool Testit<3006>::Main()
   
   //Printf(Con,"TCMType = #;\n\n",features.getTCMType());
   
-  Printf(Con,"TLBType = #;\n\n",features.getTLBType());
+  //Printf(Con,"TLBType = #;\n\n",features.getTLBType());
   
   //Printf(Con,"MultiprocessorID = #;\n\n",features.getMultiprocessorID());
   
@@ -88,37 +107,49 @@ bool Testit<3006>::Main()
   
   //Printf(Con,"MemoryFeature3 = #;\n\n",features.getMemoryFeature3());
   
+  //Printf(Con,"Instruction0 = #;\n\n",features.getInstructionSetAttributes0());
+  
+  //Printf(Con,"Instruction1 = #;\n\n",features.getInstructionSetAttributes1());
+  
+  //Printf(Con,"Instruction2 = #;\n\n",features.getInstructionSetAttributes2());
+  
+  //Printf(Con,"Instruction3 = #;\n\n",features.getInstructionSetAttributes3());
+  
+  //Printf(Con,"Instruction4 = #;\n\n",features.getInstructionSetAttributes4());
+  
   //Printf(Con,"CacheLevelID = #;\n\n",features.getCacheLevelID());
   
   // Cache Size
   
   Type_CacheSizeSel().set_Level(0).set(SetCacheSizeSel);
   
-  Printf(Con,"L1D #;\n\n",GetCacheSizeID());
+  //Printf(Con,"L1D #;\n\n",GetCacheSizeID());
   
   Type_CacheSizeSel().set_Level(0).setbit(CacheSizeSel_InD).set(SetCacheSizeSel);
   
-  Printf(Con,"L1I #;\n\n",GetCacheSizeID());
+  //Printf(Con,"L1I #;\n\n",GetCacheSizeID());
   
   Type_CacheSizeSel().set_Level(1).set(SetCacheSizeSel);
   
-  Printf(Con,"L2U #;\n\n",GetCacheSizeID());
+  //Printf(Con,"L2U #;\n\n",GetCacheSizeID());
   
   // GetControl
   
-  Printf(Con,"Control = #;\n\n",GetControl());
+  //Printf(Con,"Control = #;\n\n",GetControl());
   
-  Printf(Con,"AuxControl = #;\n\n",GetAuxControl());
+  //Printf(Con,"AuxControl = #;\n\n",GetAuxControl());
   
-  Printf(Con,"TTControl = #;\n\n",GetTTControl());
+  //Printf(Con,"TTControl = #;\n\n",GetTTControl());
   
-  Printf(Con,"TTBase0 = #;\n\n",GetTTBase0());
+  //Printf(Con,"TTBase0 = #;\n\n",GetTTBase0());
   
-  Printf(Con,"DomainAccessControl = #;\n\n",GetDomainAccessControl());
+  //Printf(Con,"DomainAccessControl = #;\n\n",GetDomainAccessControl());
   
-  Printf(Con,"FCSE = #;\n\n",GetFCSE());
+  //Printf(Con,"FCSE = #;\n\n",GetFCSE());
   
-  Printf(Con,"ContextID = #;\n\n",GetContextID());
+  //Printf(Con,"ContextID = #;\n\n",GetContextID());
+  
+  //Printf(Con,"L2CacheAuxControl = #;\n\n",GetL2CacheAuxControl());
 
   PrintTT(0x000);
   PrintTT(0x400);

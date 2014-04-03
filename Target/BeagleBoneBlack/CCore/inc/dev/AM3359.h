@@ -92,6 +92,10 @@ void InvalidateDataCacheL2(uint32 set,uint32 way); // way 3-bit, set 9-bit
 
 void InvalidateDataCaches();
 
+Type_L2CacheAuxControl GetL2CacheAuxControl();
+
+uint32 VAtoPA(uint32 address);
+
 /* classes */
 
 class CPUFeatures;
@@ -100,7 +104,7 @@ class CPUFeatures;
 
 class CPUFeatures
  {
-   uint32 regs[21];
+   uint32 regs[19];
   
   public:
    
@@ -133,6 +137,16 @@ class CPUFeatures
    Type_MemoryFeature3 getMemoryFeature3() const { return Type_MemoryFeature3(regs[12]); }
    
    Type_CacheLevelID getCacheLevelID() const { return Type_CacheLevelID(regs[13]); }
+   
+   Type_InstructionSetAttributes0 getInstructionSetAttributes0() const { return Type_InstructionSetAttributes0(regs[14]); }
+   
+   Type_InstructionSetAttributes1 getInstructionSetAttributes1() const { return Type_InstructionSetAttributes1(regs[15]); }
+   
+   Type_InstructionSetAttributes2 getInstructionSetAttributes2() const { return Type_InstructionSetAttributes2(regs[16]); }
+   
+   Type_InstructionSetAttributes3 getInstructionSetAttributes3() const { return Type_InstructionSetAttributes3(regs[17]); }
+   
+   Type_InstructionSetAttributes4 getInstructionSetAttributes4() const { return Type_InstructionSetAttributes4(regs[18]); }
  };
 
 } // namespace CP15

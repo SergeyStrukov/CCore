@@ -2137,6 +2137,1127 @@ struct Type_MemoryFeature3
    }
  };
  
+/* struct Type_InstructionSetAttributes0 */ 
+
+struct Type_InstructionSetAttributes0
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_InstructionSetAttributes0(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_InstructionSetAttributes0 & setTo(Bar &bar) { bar.set_InstructionSetAttributes0(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_InstructionSetAttributes0 & setTo(Bar &bar,uint32 ind) { bar.set_InstructionSetAttributes0(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_InstructionSetAttributes0 & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_Atomic() const
+   {
+    return (value>>0)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes0 & set_Atomic(Type field)
+   {
+    value=((field&0xF)<<0)|(value&0xFFFFFFF0);
+
+    return *this;
+   }
+ 
+
+  Type get_BitCnt() const
+   {
+    return (value>>4)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes0 & set_BitCnt(Type field)
+   {
+    value=((field&0xF)<<4)|(value&0xFFFFFF0F);
+
+    return *this;
+   }
+ 
+
+  Type get_BitField() const
+   {
+    return (value>>8)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes0 & set_BitField(Type field)
+   {
+    value=((field&0xF)<<8)|(value&0xFFFFF0FF);
+
+    return *this;
+   }
+ 
+
+  Type get_CMPB() const
+   {
+    return (value>>12)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes0 & set_CMPB(Type field)
+   {
+    value=((field&0xF)<<12)|(value&0xFFFF0FFF);
+
+    return *this;
+   }
+ 
+
+  Type get_BKPT() const
+   {
+    return (value>>20)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes0 & set_BKPT(Type field)
+   {
+    value=((field&0xF)<<20)|(value&0xFF0FFFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_DIV() const
+   {
+    return (value>>24)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes0 & set_DIV(Type field)
+   {
+    value=((field&0xF)<<24)|(value&0xF0FFFFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"Atomic(#;)",get_Atomic());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Atomic(#;)",get_Atomic());
+      }
+
+    if( first )
+      {
+       Printf(out,"BitCnt(#;)",get_BitCnt());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"BitCnt(#;)",get_BitCnt());
+      }
+
+    if( first )
+      {
+       Printf(out,"BitField(#;)",get_BitField());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"BitField(#;)",get_BitField());
+      }
+
+    if( first )
+      {
+       Printf(out,"CMPB(#;)",get_CMPB());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"CMPB(#;)",get_CMPB());
+      }
+
+    if( first )
+      {
+       Printf(out,"BKPT(#;)",get_BKPT());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"BKPT(#;)",get_BKPT());
+      }
+
+    if( first )
+      {
+       Printf(out,"DIV(#;)",get_DIV());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"DIV(#;)",get_DIV());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_InstructionSetAttributes1 */ 
+
+struct Type_InstructionSetAttributes1
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_InstructionSetAttributes1(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_InstructionSetAttributes1 & setTo(Bar &bar) { bar.set_InstructionSetAttributes1(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_InstructionSetAttributes1 & setTo(Bar &bar,uint32 ind) { bar.set_InstructionSetAttributes1(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_InstructionSetAttributes1 & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_SETEND() const
+   {
+    return (value>>0)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes1 & set_SETEND(Type field)
+   {
+    value=((field&0xF)<<0)|(value&0xFFFFFFF0);
+
+    return *this;
+   }
+ 
+
+  Type get_EXCEPT1() const
+   {
+    return (value>>4)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes1 & set_EXCEPT1(Type field)
+   {
+    value=((field&0xF)<<4)|(value&0xFFFFFF0F);
+
+    return *this;
+   }
+ 
+
+  Type get_EXCEPT2() const
+   {
+    return (value>>8)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes1 & set_EXCEPT2(Type field)
+   {
+    value=((field&0xF)<<8)|(value&0xFFFFF0FF);
+
+    return *this;
+   }
+ 
+
+  Type get_EXTEND() const
+   {
+    return (value>>12)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes1 & set_EXTEND(Type field)
+   {
+    value=((field&0xF)<<12)|(value&0xFFFF0FFF);
+
+    return *this;
+   }
+ 
+
+  Type get_ITE() const
+   {
+    return (value>>16)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes1 & set_ITE(Type field)
+   {
+    value=((field&0xF)<<16)|(value&0xFFF0FFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_IMM() const
+   {
+    return (value>>20)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes1 & set_IMM(Type field)
+   {
+    value=((field&0xF)<<20)|(value&0xFF0FFFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_INW() const
+   {
+    return (value>>24)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes1 & set_INW(Type field)
+   {
+    value=((field&0xF)<<24)|(value&0xF0FFFFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_J() const
+   {
+    return (value>>28)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes1 & set_J(Type field)
+   {
+    value=((field&0xF)<<28)|(value&0xFFFFFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"SETEND(#;)",get_SETEND());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"SETEND(#;)",get_SETEND());
+      }
+
+    if( first )
+      {
+       Printf(out,"EXCEPT1(#;)",get_EXCEPT1());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"EXCEPT1(#;)",get_EXCEPT1());
+      }
+
+    if( first )
+      {
+       Printf(out,"EXCEPT2(#;)",get_EXCEPT2());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"EXCEPT2(#;)",get_EXCEPT2());
+      }
+
+    if( first )
+      {
+       Printf(out,"EXTEND(#;)",get_EXTEND());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"EXTEND(#;)",get_EXTEND());
+      }
+
+    if( first )
+      {
+       Printf(out,"ITE(#;)",get_ITE());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"ITE(#;)",get_ITE());
+      }
+
+    if( first )
+      {
+       Printf(out,"IMM(#;)",get_IMM());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"IMM(#;)",get_IMM());
+      }
+
+    if( first )
+      {
+       Printf(out,"INW(#;)",get_INW());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"INW(#;)",get_INW());
+      }
+
+    if( first )
+      {
+       Printf(out,"J(#;)",get_J());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"J(#;)",get_J());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_InstructionSetAttributes2 */ 
+
+struct Type_InstructionSetAttributes2
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_InstructionSetAttributes2(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_InstructionSetAttributes2 & setTo(Bar &bar) { bar.set_InstructionSetAttributes2(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_InstructionSetAttributes2 & setTo(Bar &bar,uint32 ind) { bar.set_InstructionSetAttributes2(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_InstructionSetAttributes2 & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_LDRD() const
+   {
+    return (value>>0)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes2 & set_LDRD(Type field)
+   {
+    value=((field&0xF)<<0)|(value&0xFFFFFFF0);
+
+    return *this;
+   }
+ 
+
+  Type get_MHINT() const
+   {
+    return (value>>4)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes2 & set_MHINT(Type field)
+   {
+    value=((field&0xF)<<4)|(value&0xFFFFFF0F);
+
+    return *this;
+   }
+ 
+
+  Type get_INTINST() const
+   {
+    return (value>>8)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes2 & set_INTINST(Type field)
+   {
+    value=((field&0xF)<<8)|(value&0xFFFFF0FF);
+
+    return *this;
+   }
+ 
+
+  Type get_MPY() const
+   {
+    return (value>>12)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes2 & set_MPY(Type field)
+   {
+    value=((field&0xF)<<12)|(value&0xFFFF0FFF);
+
+    return *this;
+   }
+ 
+
+  Type get_SMPY() const
+   {
+    return (value>>16)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes2 & set_SMPY(Type field)
+   {
+    value=((field&0xF)<<16)|(value&0xFFF0FFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_UMPY() const
+   {
+    return (value>>20)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes2 & set_UMPY(Type field)
+   {
+    value=((field&0xF)<<20)|(value&0xFF0FFFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_PSR() const
+   {
+    return (value>>24)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes2 & set_PSR(Type field)
+   {
+    value=((field&0xF)<<24)|(value&0xF0FFFFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_REV() const
+   {
+    return (value>>28)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes2 & set_REV(Type field)
+   {
+    value=((field&0xF)<<28)|(value&0xFFFFFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"LDRD(#;)",get_LDRD());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"LDRD(#;)",get_LDRD());
+      }
+
+    if( first )
+      {
+       Printf(out,"MHINT(#;)",get_MHINT());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"MHINT(#;)",get_MHINT());
+      }
+
+    if( first )
+      {
+       Printf(out,"INTINST(#;)",get_INTINST());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"INTINST(#;)",get_INTINST());
+      }
+
+    if( first )
+      {
+       Printf(out,"MPY(#;)",get_MPY());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"MPY(#;)",get_MPY());
+      }
+
+    if( first )
+      {
+       Printf(out,"SMPY(#;)",get_SMPY());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"SMPY(#;)",get_SMPY());
+      }
+
+    if( first )
+      {
+       Printf(out,"UMPY(#;)",get_UMPY());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"UMPY(#;)",get_UMPY());
+      }
+
+    if( first )
+      {
+       Printf(out,"PSR(#;)",get_PSR());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"PSR(#;)",get_PSR());
+      }
+
+    if( first )
+      {
+       Printf(out,"REV(#;)",get_REV());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"REV(#;)",get_REV());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_InstructionSetAttributes3 */ 
+
+struct Type_InstructionSetAttributes3
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_InstructionSetAttributes3(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_InstructionSetAttributes3 & setTo(Bar &bar) { bar.set_InstructionSetAttributes3(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_InstructionSetAttributes3 & setTo(Bar &bar,uint32 ind) { bar.set_InstructionSetAttributes3(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_InstructionSetAttributes3 & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_SAT() const
+   {
+    return (value>>0)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes3 & set_SAT(Type field)
+   {
+    value=((field&0xF)<<0)|(value&0xFFFFFFF0);
+
+    return *this;
+   }
+ 
+
+  Type get_SIMD() const
+   {
+    return (value>>4)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes3 & set_SIMD(Type field)
+   {
+    value=((field&0xF)<<4)|(value&0xFFFFFF0F);
+
+    return *this;
+   }
+ 
+
+  Type get_SVC() const
+   {
+    return (value>>8)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes3 & set_SVC(Type field)
+   {
+    value=((field&0xF)<<8)|(value&0xFFFFF0FF);
+
+    return *this;
+   }
+ 
+
+  Type get_LSEX() const
+   {
+    return (value>>12)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes3 & set_LSEX(Type field)
+   {
+    value=((field&0xF)<<12)|(value&0xFFFF0FFF);
+
+    return *this;
+   }
+ 
+
+  Type get_TBI() const
+   {
+    return (value>>16)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes3 & set_TBI(Type field)
+   {
+    value=((field&0xF)<<16)|(value&0xFFF0FFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_TCPY() const
+   {
+    return (value>>20)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes3 & set_TCPY(Type field)
+   {
+    value=((field&0xF)<<20)|(value&0xFF0FFFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_NOP() const
+   {
+    return (value>>24)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes3 & set_NOP(Type field)
+   {
+    value=((field&0xF)<<24)|(value&0xF0FFFFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_T2EEE() const
+   {
+    return (value>>28)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes3 & set_T2EEE(Type field)
+   {
+    value=((field&0xF)<<28)|(value&0xFFFFFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"SAT(#;)",get_SAT());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"SAT(#;)",get_SAT());
+      }
+
+    if( first )
+      {
+       Printf(out,"SIMD(#;)",get_SIMD());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"SIMD(#;)",get_SIMD());
+      }
+
+    if( first )
+      {
+       Printf(out,"SVC(#;)",get_SVC());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"SVC(#;)",get_SVC());
+      }
+
+    if( first )
+      {
+       Printf(out,"LSEX(#;)",get_LSEX());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"LSEX(#;)",get_LSEX());
+      }
+
+    if( first )
+      {
+       Printf(out,"TBI(#;)",get_TBI());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"TBI(#;)",get_TBI());
+      }
+
+    if( first )
+      {
+       Printf(out,"TCPY(#;)",get_TCPY());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"TCPY(#;)",get_TCPY());
+      }
+
+    if( first )
+      {
+       Printf(out,"NOP(#;)",get_NOP());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"NOP(#;)",get_NOP());
+      }
+
+    if( first )
+      {
+       Printf(out,"T2EEE(#;)",get_T2EEE());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"T2EEE(#;)",get_T2EEE());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_InstructionSetAttributes4 */ 
+
+struct Type_InstructionSetAttributes4
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_InstructionSetAttributes4(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_InstructionSetAttributes4 & setTo(Bar &bar) { bar.set_InstructionSetAttributes4(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_InstructionSetAttributes4 & setTo(Bar &bar,uint32 ind) { bar.set_InstructionSetAttributes4(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_InstructionSetAttributes4 & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_LDRT() const
+   {
+    return (value>>0)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes4 & set_LDRT(Type field)
+   {
+    value=((field&0xF)<<0)|(value&0xFFFFFFF0);
+
+    return *this;
+   }
+ 
+
+  Type get_SHIFT() const
+   {
+    return (value>>4)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes4 & set_SHIFT(Type field)
+   {
+    value=((field&0xF)<<4)|(value&0xFFFFFF0F);
+
+    return *this;
+   }
+ 
+
+  Type get_WB() const
+   {
+    return (value>>8)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes4 & set_WB(Type field)
+   {
+    value=((field&0xF)<<8)|(value&0xFFFFF0FF);
+
+    return *this;
+   }
+ 
+
+  Type get_SMC() const
+   {
+    return (value>>12)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes4 & set_SMC(Type field)
+   {
+    value=((field&0xF)<<12)|(value&0xFFFF0FFF);
+
+    return *this;
+   }
+ 
+
+  Type get_BARR() const
+   {
+    return (value>>16)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes4 & set_BARR(Type field)
+   {
+    value=((field&0xF)<<16)|(value&0xFFF0FFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_EX() const
+   {
+    return (value>>20)&0xF;
+   }
+ 
+  Type_InstructionSetAttributes4 & set_EX(Type field)
+   {
+    value=((field&0xF)<<20)|(value&0xFF0FFFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"LDRT(#;)",get_LDRT());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"LDRT(#;)",get_LDRT());
+      }
+
+    if( first )
+      {
+       Printf(out,"SHIFT(#;)",get_SHIFT());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"SHIFT(#;)",get_SHIFT());
+      }
+
+    if( first )
+      {
+       Printf(out,"WB(#;)",get_WB());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"WB(#;)",get_WB());
+      }
+
+    if( first )
+      {
+       Printf(out,"SMC(#;)",get_SMC());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"SMC(#;)",get_SMC());
+      }
+
+    if( first )
+      {
+       Printf(out,"BARR(#;)",get_BARR());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"BARR(#;)",get_BARR());
+      }
+
+    if( first )
+      {
+       Printf(out,"EX(#;)",get_EX());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"EX(#;)",get_EX());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct Type_CacheLevelID */ 
 
 struct Type_CacheLevelID
@@ -4290,6 +5411,486 @@ inline PrintField_DomainAccessControl_D0 GetTextDesc(Field_DomainAccessControl_D
   return PrintField_DomainAccessControl_D0(field);
  }
  
+enum Field_DomainAccessControl_D1 : uint32
+ {
+  DomainAccessControl_D1_NoAccess = 0x00,
+  DomainAccessControl_D1_Client   = 0x01,
+  DomainAccessControl_D1_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D1
+ {
+  Field_DomainAccessControl_D1 field;
+
+  explicit PrintField_DomainAccessControl_D1(Field_DomainAccessControl_D1 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D1 GetTextDesc(Field_DomainAccessControl_D1 field)
+ {
+  return PrintField_DomainAccessControl_D1(field);
+ }
+ 
+enum Field_DomainAccessControl_D2 : uint32
+ {
+  DomainAccessControl_D2_NoAccess = 0x00,
+  DomainAccessControl_D2_Client   = 0x01,
+  DomainAccessControl_D2_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D2
+ {
+  Field_DomainAccessControl_D2 field;
+
+  explicit PrintField_DomainAccessControl_D2(Field_DomainAccessControl_D2 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D2 GetTextDesc(Field_DomainAccessControl_D2 field)
+ {
+  return PrintField_DomainAccessControl_D2(field);
+ }
+ 
+enum Field_DomainAccessControl_D3 : uint32
+ {
+  DomainAccessControl_D3_NoAccess = 0x00,
+  DomainAccessControl_D3_Client   = 0x01,
+  DomainAccessControl_D3_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D3
+ {
+  Field_DomainAccessControl_D3 field;
+
+  explicit PrintField_DomainAccessControl_D3(Field_DomainAccessControl_D3 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D3 GetTextDesc(Field_DomainAccessControl_D3 field)
+ {
+  return PrintField_DomainAccessControl_D3(field);
+ }
+ 
+enum Field_DomainAccessControl_D4 : uint32
+ {
+  DomainAccessControl_D4_NoAccess = 0x00,
+  DomainAccessControl_D4_Client   = 0x01,
+  DomainAccessControl_D4_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D4
+ {
+  Field_DomainAccessControl_D4 field;
+
+  explicit PrintField_DomainAccessControl_D4(Field_DomainAccessControl_D4 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D4 GetTextDesc(Field_DomainAccessControl_D4 field)
+ {
+  return PrintField_DomainAccessControl_D4(field);
+ }
+ 
+enum Field_DomainAccessControl_D5 : uint32
+ {
+  DomainAccessControl_D5_NoAccess = 0x00,
+  DomainAccessControl_D5_Client   = 0x01,
+  DomainAccessControl_D5_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D5
+ {
+  Field_DomainAccessControl_D5 field;
+
+  explicit PrintField_DomainAccessControl_D5(Field_DomainAccessControl_D5 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D5 GetTextDesc(Field_DomainAccessControl_D5 field)
+ {
+  return PrintField_DomainAccessControl_D5(field);
+ }
+ 
+enum Field_DomainAccessControl_D6 : uint32
+ {
+  DomainAccessControl_D6_NoAccess = 0x00,
+  DomainAccessControl_D6_Client   = 0x01,
+  DomainAccessControl_D6_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D6
+ {
+  Field_DomainAccessControl_D6 field;
+
+  explicit PrintField_DomainAccessControl_D6(Field_DomainAccessControl_D6 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D6 GetTextDesc(Field_DomainAccessControl_D6 field)
+ {
+  return PrintField_DomainAccessControl_D6(field);
+ }
+ 
+enum Field_DomainAccessControl_D7 : uint32
+ {
+  DomainAccessControl_D7_NoAccess = 0x00,
+  DomainAccessControl_D7_Client   = 0x01,
+  DomainAccessControl_D7_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D7
+ {
+  Field_DomainAccessControl_D7 field;
+
+  explicit PrintField_DomainAccessControl_D7(Field_DomainAccessControl_D7 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D7 GetTextDesc(Field_DomainAccessControl_D7 field)
+ {
+  return PrintField_DomainAccessControl_D7(field);
+ }
+ 
+enum Field_DomainAccessControl_D8 : uint32
+ {
+  DomainAccessControl_D8_NoAccess = 0x00,
+  DomainAccessControl_D8_Client   = 0x01,
+  DomainAccessControl_D8_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D8
+ {
+  Field_DomainAccessControl_D8 field;
+
+  explicit PrintField_DomainAccessControl_D8(Field_DomainAccessControl_D8 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D8 GetTextDesc(Field_DomainAccessControl_D8 field)
+ {
+  return PrintField_DomainAccessControl_D8(field);
+ }
+ 
+enum Field_DomainAccessControl_D9 : uint32
+ {
+  DomainAccessControl_D9_NoAccess = 0x00,
+  DomainAccessControl_D9_Client   = 0x01,
+  DomainAccessControl_D9_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D9
+ {
+  Field_DomainAccessControl_D9 field;
+
+  explicit PrintField_DomainAccessControl_D9(Field_DomainAccessControl_D9 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D9 GetTextDesc(Field_DomainAccessControl_D9 field)
+ {
+  return PrintField_DomainAccessControl_D9(field);
+ }
+ 
+enum Field_DomainAccessControl_D10 : uint32
+ {
+  DomainAccessControl_D10_NoAccess = 0x00,
+  DomainAccessControl_D10_Client   = 0x01,
+  DomainAccessControl_D10_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D10
+ {
+  Field_DomainAccessControl_D10 field;
+
+  explicit PrintField_DomainAccessControl_D10(Field_DomainAccessControl_D10 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D10 GetTextDesc(Field_DomainAccessControl_D10 field)
+ {
+  return PrintField_DomainAccessControl_D10(field);
+ }
+ 
+enum Field_DomainAccessControl_D11 : uint32
+ {
+  DomainAccessControl_D11_NoAccess = 0x00,
+  DomainAccessControl_D11_Client   = 0x01,
+  DomainAccessControl_D11_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D11
+ {
+  Field_DomainAccessControl_D11 field;
+
+  explicit PrintField_DomainAccessControl_D11(Field_DomainAccessControl_D11 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D11 GetTextDesc(Field_DomainAccessControl_D11 field)
+ {
+  return PrintField_DomainAccessControl_D11(field);
+ }
+ 
+enum Field_DomainAccessControl_D12 : uint32
+ {
+  DomainAccessControl_D12_NoAccess = 0x00,
+  DomainAccessControl_D12_Client   = 0x01,
+  DomainAccessControl_D12_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D12
+ {
+  Field_DomainAccessControl_D12 field;
+
+  explicit PrintField_DomainAccessControl_D12(Field_DomainAccessControl_D12 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D12 GetTextDesc(Field_DomainAccessControl_D12 field)
+ {
+  return PrintField_DomainAccessControl_D12(field);
+ }
+ 
+enum Field_DomainAccessControl_D13 : uint32
+ {
+  DomainAccessControl_D13_NoAccess = 0x00,
+  DomainAccessControl_D13_Client   = 0x01,
+  DomainAccessControl_D13_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D13
+ {
+  Field_DomainAccessControl_D13 field;
+
+  explicit PrintField_DomainAccessControl_D13(Field_DomainAccessControl_D13 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D13 GetTextDesc(Field_DomainAccessControl_D13 field)
+ {
+  return PrintField_DomainAccessControl_D13(field);
+ }
+ 
+enum Field_DomainAccessControl_D14 : uint32
+ {
+  DomainAccessControl_D14_NoAccess = 0x00,
+  DomainAccessControl_D14_Client   = 0x01,
+  DomainAccessControl_D14_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D14
+ {
+  Field_DomainAccessControl_D14 field;
+
+  explicit PrintField_DomainAccessControl_D14(Field_DomainAccessControl_D14 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D14 GetTextDesc(Field_DomainAccessControl_D14 field)
+ {
+  return PrintField_DomainAccessControl_D14(field);
+ }
+ 
+enum Field_DomainAccessControl_D15 : uint32
+ {
+  DomainAccessControl_D15_NoAccess = 0x00,
+  DomainAccessControl_D15_Client   = 0x01,
+  DomainAccessControl_D15_Manager  = 0x03
+ };
+ 
+struct PrintField_DomainAccessControl_D15
+ {
+  Field_DomainAccessControl_D15 field;
+
+  explicit PrintField_DomainAccessControl_D15(Field_DomainAccessControl_D15 field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoAccess"); break;
+       case 0x01 : Putobj(out,"Client"); break;
+       case 0x03 : Putobj(out,"Manager"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_DomainAccessControl_D15 GetTextDesc(Field_DomainAccessControl_D15 field)
+ {
+  return PrintField_DomainAccessControl_D15(field);
+ }
+ 
 struct Type_DomainAccessControl
  {
   typedef uint32 Type;
@@ -4329,196 +5930,196 @@ struct Type_DomainAccessControl
    }
  
 
-  Type get_D1() const
+  Field_DomainAccessControl_D1 get_D1() const
    {
-    return (value>>2)&0x3;
+    return Field_DomainAccessControl_D1((value>>2)&0x3);
    }
  
-  Type_DomainAccessControl & set_D1(Type field)
+  Type_DomainAccessControl & set_D1(Field_DomainAccessControl_D1 field)
    {
-    value=((field&0x3)<<2)|(value&0xFFFFFFF3);
+    value=((Type(field)&0x3)<<2)|(value&0xFFFFFFF3);
 
     return *this;
    }
  
 
-  Type get_D2() const
+  Field_DomainAccessControl_D2 get_D2() const
    {
-    return (value>>4)&0x3;
+    return Field_DomainAccessControl_D2((value>>4)&0x3);
    }
  
-  Type_DomainAccessControl & set_D2(Type field)
+  Type_DomainAccessControl & set_D2(Field_DomainAccessControl_D2 field)
    {
-    value=((field&0x3)<<4)|(value&0xFFFFFFCF);
+    value=((Type(field)&0x3)<<4)|(value&0xFFFFFFCF);
 
     return *this;
    }
  
 
-  Type get_D3() const
+  Field_DomainAccessControl_D3 get_D3() const
    {
-    return (value>>6)&0x3;
+    return Field_DomainAccessControl_D3((value>>6)&0x3);
    }
  
-  Type_DomainAccessControl & set_D3(Type field)
+  Type_DomainAccessControl & set_D3(Field_DomainAccessControl_D3 field)
    {
-    value=((field&0x3)<<6)|(value&0xFFFFFF3F);
+    value=((Type(field)&0x3)<<6)|(value&0xFFFFFF3F);
 
     return *this;
    }
  
 
-  Type get_D4() const
+  Field_DomainAccessControl_D4 get_D4() const
    {
-    return (value>>8)&0x3;
+    return Field_DomainAccessControl_D4((value>>8)&0x3);
    }
  
-  Type_DomainAccessControl & set_D4(Type field)
+  Type_DomainAccessControl & set_D4(Field_DomainAccessControl_D4 field)
    {
-    value=((field&0x3)<<8)|(value&0xFFFFFCFF);
+    value=((Type(field)&0x3)<<8)|(value&0xFFFFFCFF);
 
     return *this;
    }
  
 
-  Type get_D5() const
+  Field_DomainAccessControl_D5 get_D5() const
    {
-    return (value>>10)&0x3;
+    return Field_DomainAccessControl_D5((value>>10)&0x3);
    }
  
-  Type_DomainAccessControl & set_D5(Type field)
+  Type_DomainAccessControl & set_D5(Field_DomainAccessControl_D5 field)
    {
-    value=((field&0x3)<<10)|(value&0xFFFFF3FF);
+    value=((Type(field)&0x3)<<10)|(value&0xFFFFF3FF);
 
     return *this;
    }
  
 
-  Type get_D6() const
+  Field_DomainAccessControl_D6 get_D6() const
    {
-    return (value>>12)&0x3;
+    return Field_DomainAccessControl_D6((value>>12)&0x3);
    }
  
-  Type_DomainAccessControl & set_D6(Type field)
+  Type_DomainAccessControl & set_D6(Field_DomainAccessControl_D6 field)
    {
-    value=((field&0x3)<<12)|(value&0xFFFFCFFF);
+    value=((Type(field)&0x3)<<12)|(value&0xFFFFCFFF);
 
     return *this;
    }
  
 
-  Type get_D7() const
+  Field_DomainAccessControl_D7 get_D7() const
    {
-    return (value>>14)&0x3;
+    return Field_DomainAccessControl_D7((value>>14)&0x3);
    }
  
-  Type_DomainAccessControl & set_D7(Type field)
+  Type_DomainAccessControl & set_D7(Field_DomainAccessControl_D7 field)
    {
-    value=((field&0x3)<<14)|(value&0xFFFF3FFF);
+    value=((Type(field)&0x3)<<14)|(value&0xFFFF3FFF);
 
     return *this;
    }
  
 
-  Type get_D8() const
+  Field_DomainAccessControl_D8 get_D8() const
    {
-    return (value>>16)&0x3;
+    return Field_DomainAccessControl_D8((value>>16)&0x3);
    }
  
-  Type_DomainAccessControl & set_D8(Type field)
+  Type_DomainAccessControl & set_D8(Field_DomainAccessControl_D8 field)
    {
-    value=((field&0x3)<<16)|(value&0xFFFCFFFF);
+    value=((Type(field)&0x3)<<16)|(value&0xFFFCFFFF);
 
     return *this;
    }
  
 
-  Type get_D9() const
+  Field_DomainAccessControl_D9 get_D9() const
    {
-    return (value>>18)&0x3;
+    return Field_DomainAccessControl_D9((value>>18)&0x3);
    }
  
-  Type_DomainAccessControl & set_D9(Type field)
+  Type_DomainAccessControl & set_D9(Field_DomainAccessControl_D9 field)
    {
-    value=((field&0x3)<<18)|(value&0xFFF3FFFF);
+    value=((Type(field)&0x3)<<18)|(value&0xFFF3FFFF);
 
     return *this;
    }
  
 
-  Type get_D10() const
+  Field_DomainAccessControl_D10 get_D10() const
    {
-    return (value>>20)&0x3;
+    return Field_DomainAccessControl_D10((value>>20)&0x3);
    }
  
-  Type_DomainAccessControl & set_D10(Type field)
+  Type_DomainAccessControl & set_D10(Field_DomainAccessControl_D10 field)
    {
-    value=((field&0x3)<<20)|(value&0xFFCFFFFF);
+    value=((Type(field)&0x3)<<20)|(value&0xFFCFFFFF);
 
     return *this;
    }
  
 
-  Type get_D11() const
+  Field_DomainAccessControl_D11 get_D11() const
    {
-    return (value>>22)&0x3;
+    return Field_DomainAccessControl_D11((value>>22)&0x3);
    }
  
-  Type_DomainAccessControl & set_D11(Type field)
+  Type_DomainAccessControl & set_D11(Field_DomainAccessControl_D11 field)
    {
-    value=((field&0x3)<<22)|(value&0xFF3FFFFF);
+    value=((Type(field)&0x3)<<22)|(value&0xFF3FFFFF);
 
     return *this;
    }
  
 
-  Type get_D12() const
+  Field_DomainAccessControl_D12 get_D12() const
    {
-    return (value>>24)&0x3;
+    return Field_DomainAccessControl_D12((value>>24)&0x3);
    }
  
-  Type_DomainAccessControl & set_D12(Type field)
+  Type_DomainAccessControl & set_D12(Field_DomainAccessControl_D12 field)
    {
-    value=((field&0x3)<<24)|(value&0xFCFFFFFF);
+    value=((Type(field)&0x3)<<24)|(value&0xFCFFFFFF);
 
     return *this;
    }
  
 
-  Type get_D13() const
+  Field_DomainAccessControl_D13 get_D13() const
    {
-    return (value>>26)&0x3;
+    return Field_DomainAccessControl_D13((value>>26)&0x3);
    }
  
-  Type_DomainAccessControl & set_D13(Type field)
+  Type_DomainAccessControl & set_D13(Field_DomainAccessControl_D13 field)
    {
-    value=((field&0x3)<<26)|(value&0xF3FFFFFF);
+    value=((Type(field)&0x3)<<26)|(value&0xF3FFFFFF);
 
     return *this;
    }
  
 
-  Type get_D14() const
+  Field_DomainAccessControl_D14 get_D14() const
    {
-    return (value>>28)&0x3;
+    return Field_DomainAccessControl_D14((value>>28)&0x3);
    }
  
-  Type_DomainAccessControl & set_D14(Type field)
+  Type_DomainAccessControl & set_D14(Field_DomainAccessControl_D14 field)
    {
-    value=((field&0x3)<<28)|(value&0xCFFFFFFF);
+    value=((Type(field)&0x3)<<28)|(value&0xCFFFFFFF);
 
     return *this;
    }
  
 
-  Type get_D15() const
+  Field_DomainAccessControl_D15 get_D15() const
    {
-    return (value>>30)&0x3;
+    return Field_DomainAccessControl_D15((value>>30)&0x3);
    }
  
-  Type_DomainAccessControl & set_D15(Type field)
+  Type_DomainAccessControl & set_D15(Field_DomainAccessControl_D15 field)
    {
-    value=((field&0x3)<<30)|(value&0x3FFFFFFF);
+    value=((Type(field)&0x3)<<30)|(value&0x3FFFFFFF);
 
     return *this;
    }
@@ -5164,6 +6765,660 @@ struct Type_ContextID
        out.put('|');
 
        Printf(out,"PROCID(#;)",get_PROCID());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_L2CacheAuxControl */ 
+
+enum Bits_L2CacheAuxControl : uint32
+ {
+  L2CacheAuxControl_L2Inner = 0x00010000,
+  L2CacheAuxControl_ECCEN   = 0x00200000,
+  L2CacheAuxControl_NoWA    = 0x00400000,
+  L2CacheAuxControl_NoWAC   = 0x00800000,
+  L2CacheAuxControl_NoWAD   = 0x01000000,
+  L2CacheAuxControl_NoWC    = 0x02000000,
+  L2CacheAuxControl_NoLDF   = 0x08000000,
+  L2CacheAuxControl_ECC     = 0x10000000,
+  L2CacheAuxControl_MS1     = 0x20000000
+ };
+ 
+inline Bits_L2CacheAuxControl operator | (Bits_L2CacheAuxControl a,Bits_L2CacheAuxControl b)
+ { return Bits_L2CacheAuxControl(uint32(a)|uint32(b)); }
+ 
+struct Type_L2CacheAuxControl
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_L2CacheAuxControl(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_L2CacheAuxControl & setTo(Bar &bar) { bar.set_L2CacheAuxControl(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_L2CacheAuxControl & setTo(Bar &bar,uint32 ind) { bar.set_L2CacheAuxControl(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_L2CacheAuxControl & set(T to) { to(*this); return *this; }
+ 
+
+  Type_L2CacheAuxControl & setbit(Bits_L2CacheAuxControl bits) { value|=Type(bits); return *this; }
+ 
+  Type_L2CacheAuxControl & setbitIf(bool cond,Bits_L2CacheAuxControl bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_L2CacheAuxControl & clearbit(Bits_L2CacheAuxControl bits) { value&=~Type(bits); return *this; }
+ 
+  Type_L2CacheAuxControl & clearbitIf(bool cond,Bits_L2CacheAuxControl bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_L2CacheAuxControl bits) const { return value&bits; }
+ 
+  bool testbit(Bits_L2CacheAuxControl bits) const { return (value&bits)==Type(bits); }
+ 
+
+  Type get_DLat() const
+   {
+    return (value>>0)&0xF;
+   }
+ 
+  Type_L2CacheAuxControl & set_DLat(Type field)
+   {
+    value=((field&0xF)<<0)|(value&0xFFFFFFF0);
+
+    return *this;
+   }
+ 
+
+  Type get_TLat() const
+   {
+    return (value>>6)&0x7;
+   }
+ 
+  Type_L2CacheAuxControl & set_TLat(Type field)
+   {
+    value=((field&0x7)<<6)|(value&0xFFFFFE3F);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&L2CacheAuxControl_L2Inner )
+      {
+       if( first )
+         {
+          Putobj(out,"L2Inner");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"L2Inner");
+         }
+      }
+
+    if( value&L2CacheAuxControl_ECCEN )
+      {
+       if( first )
+         {
+          Putobj(out,"ECCEN");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"ECCEN");
+         }
+      }
+
+    if( value&L2CacheAuxControl_NoWA )
+      {
+       if( first )
+         {
+          Putobj(out,"NoWA");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NoWA");
+         }
+      }
+
+    if( value&L2CacheAuxControl_NoWAC )
+      {
+       if( first )
+         {
+          Putobj(out,"NoWAC");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NoWAC");
+         }
+      }
+
+    if( value&L2CacheAuxControl_NoWAD )
+      {
+       if( first )
+         {
+          Putobj(out,"NoWAD");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NoWAD");
+         }
+      }
+
+    if( value&L2CacheAuxControl_NoWC )
+      {
+       if( first )
+         {
+          Putobj(out,"NoWC");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NoWC");
+         }
+      }
+
+    if( value&L2CacheAuxControl_NoLDF )
+      {
+       if( first )
+         {
+          Putobj(out,"NoLDF");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NoLDF");
+         }
+      }
+
+    if( value&L2CacheAuxControl_ECC )
+      {
+       if( first )
+         {
+          Putobj(out,"ECC");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"ECC");
+         }
+      }
+
+    if( value&L2CacheAuxControl_MS1 )
+      {
+       if( first )
+         {
+          Putobj(out,"MS1");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"MS1");
+         }
+      }
+
+    if( first )
+      {
+       Printf(out,"DLat(#;)",get_DLat());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"DLat(#;)",get_DLat());
+      }
+
+    if( first )
+      {
+       Printf(out,"TLat(#;)",get_TLat());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"TLat(#;)",get_TLat());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_PAROK */ 
+
+enum Bits_PAROK : uint32
+ {
+  PAROK_NOK = 0x00000001,
+  PAROK_SS  = 0x00000002,
+  PAROK_S   = 0x00000080,
+  PAROK_P   = 0x00000100,
+  PAROK_NS  = 0x00000200
+ };
+ 
+inline Bits_PAROK operator | (Bits_PAROK a,Bits_PAROK b)
+ { return Bits_PAROK(uint32(a)|uint32(b)); }
+ 
+enum Field_PAROK_Outer : uint32
+ {
+  PAROK_Outer_NC   = 0x00,
+  PAROK_Outer_WBWA = 0x01,
+  PAROK_Outer_WT   = 0x02,
+  PAROK_Outer_WB   = 0x03
+ };
+ 
+struct PrintField_PAROK_Outer
+ {
+  Field_PAROK_Outer field;
+
+  explicit PrintField_PAROK_Outer(Field_PAROK_Outer field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NC"); break;
+       case 0x01 : Putobj(out,"WBWA"); break;
+       case 0x02 : Putobj(out,"WT"); break;
+       case 0x03 : Putobj(out,"WB"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_PAROK_Outer GetTextDesc(Field_PAROK_Outer field)
+ {
+  return PrintField_PAROK_Outer(field);
+ }
+ 
+enum Field_PAROK_Inner : uint32
+ {
+  PAROK_Inner_NC   = 0x00,
+  PAROK_Inner_SO   = 0x01,
+  PAROK_Inner_DEV  = 0x03,
+  PAROK_Inner_WBWA = 0x05,
+  PAROK_Inner_WT   = 0x06,
+  PAROK_Inner_WB   = 0x07
+ };
+ 
+struct PrintField_PAROK_Inner
+ {
+  Field_PAROK_Inner field;
+
+  explicit PrintField_PAROK_Inner(Field_PAROK_Inner field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NC"); break;
+       case 0x01 : Putobj(out,"SO"); break;
+       case 0x03 : Putobj(out,"DEV"); break;
+       case 0x05 : Putobj(out,"WBWA"); break;
+       case 0x06 : Putobj(out,"WT"); break;
+       case 0x07 : Putobj(out,"WB"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_PAROK_Inner GetTextDesc(Field_PAROK_Inner field)
+ {
+  return PrintField_PAROK_Inner(field);
+ }
+ 
+struct Type_PAROK
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_PAROK(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_PAROK & setTo(Bar &bar) { bar.set_PAROK(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_PAROK & setTo(Bar &bar,uint32 ind) { bar.set_PAROK(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_PAROK & set(T to) { to(*this); return *this; }
+ 
+
+  Type_PAROK & setbit(Bits_PAROK bits) { value|=Type(bits); return *this; }
+ 
+  Type_PAROK & setbitIf(bool cond,Bits_PAROK bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_PAROK & clearbit(Bits_PAROK bits) { value&=~Type(bits); return *this; }
+ 
+  Type_PAROK & clearbitIf(bool cond,Bits_PAROK bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_PAROK bits) const { return value&bits; }
+ 
+  bool testbit(Bits_PAROK bits) const { return (value&bits)==Type(bits); }
+ 
+
+  Field_PAROK_Outer get_Outer() const
+   {
+    return Field_PAROK_Outer((value>>2)&0x3);
+   }
+ 
+  Type_PAROK & set_Outer(Field_PAROK_Outer field)
+   {
+    value=((Type(field)&0x3)<<2)|(value&0xFFFFFFF3);
+
+    return *this;
+   }
+ 
+
+  Field_PAROK_Inner get_Inner() const
+   {
+    return Field_PAROK_Inner((value>>4)&0x7);
+   }
+ 
+  Type_PAROK & set_Inner(Field_PAROK_Inner field)
+   {
+    value=((Type(field)&0x7)<<4)|(value&0xFFFFFF8F);
+
+    return *this;
+   }
+ 
+
+  Type get_Address() const
+   {
+    return (value>>12)&0xFFFFF;
+   }
+ 
+  Type_PAROK & set_Address(Type field)
+   {
+    value=((field&0xFFFFF)<<12)|(value&0xFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&PAROK_NOK )
+      {
+       if( first )
+         {
+          Putobj(out,"NOK");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NOK");
+         }
+      }
+
+    if( value&PAROK_SS )
+      {
+       if( first )
+         {
+          Putobj(out,"SS");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"SS");
+         }
+      }
+
+    if( value&PAROK_S )
+      {
+       if( first )
+         {
+          Putobj(out,"S");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"S");
+         }
+      }
+
+    if( value&PAROK_P )
+      {
+       if( first )
+         {
+          Putobj(out,"P");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"P");
+         }
+      }
+
+    if( value&PAROK_NS )
+      {
+       if( first )
+         {
+          Putobj(out,"NS");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NS");
+         }
+      }
+
+    if( first )
+      {
+       Printf(out,"Outer(#;)",get_Outer());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Outer(#;)",get_Outer());
+      }
+
+    if( first )
+      {
+       Printf(out,"Inner(#;)",get_Inner());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Inner(#;)",get_Inner());
+      }
+
+    if( first )
+      {
+       Printf(out,"Address(#;)",get_Address());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Address(#;)",get_Address());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_PARNOK */ 
+
+enum Bits_PARNOK : uint32
+ {
+  PARNOK_NOK = 0x00000001
+ };
+ 
+inline Bits_PARNOK operator | (Bits_PARNOK a,Bits_PARNOK b)
+ { return Bits_PARNOK(uint32(a)|uint32(b)); }
+ 
+struct Type_PARNOK
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_PARNOK(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_PARNOK & setTo(Bar &bar) { bar.set_PARNOK(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_PARNOK & setTo(Bar &bar,uint32 ind) { bar.set_PARNOK(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_PARNOK & set(T to) { to(*this); return *this; }
+ 
+
+  Type_PARNOK & setbit(Bits_PARNOK bits) { value|=Type(bits); return *this; }
+ 
+  Type_PARNOK & setbitIf(bool cond,Bits_PARNOK bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_PARNOK & clearbit(Bits_PARNOK bits) { value&=~Type(bits); return *this; }
+ 
+  Type_PARNOK & clearbitIf(bool cond,Bits_PARNOK bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_PARNOK bits) const { return value&bits; }
+ 
+  bool testbit(Bits_PARNOK bits) const { return (value&bits)==Type(bits); }
+ 
+
+  Type get_FSR() const
+   {
+    return (value>>1)&0x3F;
+   }
+ 
+  Type_PARNOK & set_FSR(Type field)
+   {
+    value=((field&0x3F)<<1)|(value&0xFFFFFF81);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&PARNOK_NOK )
+      {
+       if( first )
+         {
+          Putobj(out,"NOK");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NOK");
+         }
+      }
+
+    if( first )
+      {
+       Printf(out,"FSR(#;)",get_FSR());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"FSR(#;)",get_FSR());
       }
 
     if( first ) out.put('0');

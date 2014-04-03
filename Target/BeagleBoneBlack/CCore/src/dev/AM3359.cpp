@@ -92,6 +92,10 @@ void InvalidateDataCacheL1(uint32 set,uint32 way) {}
 
 void InvalidateDataCacheL2(uint32 set,uint32 way) {}
 
+Type_L2CacheAuxControl GetL2CacheAuxControl() { return Type_L2CacheAuxControl(0); }
+
+uint32 VAtoPA(uint32 address) { return address; }
+
 #endif
 
 void InvalidateDataCaches()

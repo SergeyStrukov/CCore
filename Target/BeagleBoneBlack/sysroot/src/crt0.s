@@ -139,9 +139,7 @@ start:
         
      @ disable interrupts   
         
-        mrs     r0, CPSR
-        orr     r0, r0, #128
-        msr     CPSR_c, r0
+        cpsid   i
         
      @ reset and stop WD   
         
@@ -180,10 +178,13 @@ start:
         mov     r0, #0x40000000
         vmsr    FPEXC, r0
         
+        mov     r0, #0
+        vmsr    FPSCR, r0
+        
      @ disable non-aligned memory access
      
         mrc     p15, 0, r0, c1, c0, 0
-        orr     r0, #2
+        orr     r0, #0x02
         mcr     p15, 0, r0, c1, c0, 0
         
      @ setup exception base address    
@@ -304,8 +305,8 @@ trap:
      @ svc + disable interrupts   
         
         mov     r4, lr
-        mov     r0, #0x93
-        msr     CPSR_c, r0
+        
+        cpsid   i, #0x13
         
      @ stop WD   
         
@@ -538,8 +539,7 @@ __std_context_init:
         
      @ PC
      
-        add     r1, r3, #4
-        str     r1, [r0, #60]
+        str     r3, [r0, #60]
      
      @ CPSR
      
@@ -561,15 +561,16 @@ __std_switch:
         stmia   r1, {r0-r14}
         add     r1, r1, #60
         
-        add     r3, lr, #4
+        mov     r3, lr
         mrs     r4, CPSR
         stmia   r1!, {r3,r4}
         
         vmrs    r3, FPEXC
         vmrs    r4, FPSCR
-        stmia   r1!, {r3,r4}  
+        str     r3, [r1], #4
         vstmia  r1!, {D0-D15}  
         vstmia  r1!, {D16-D31}
+        str     r4, [r1], #4
         
         SetReg  r4, __std_context_data
         SetReg  r5, __std_context_data_lim
@@ -592,18 +593,17 @@ __std_switch:
         bl      __std_memcpy
         
         add     r0, r6, #68
-        ldmia   r0!, {r1,r2}
+        ldr     r1, [r0], #4
         vmsr    FPEXC, r1
-        vmsr    FPSCR, r2
         vldmia  r0!, {D0-D15}  
         vldmia  r0!, {D16-D31}
+        ldr     r1, [r0]
+        vmsr    FPSCR, r1
         
         ldr     r13, [r6,#52]
         ldr     r14, [r6,#56]
         
-        mov     r1, #0x92
-        orr     r1, r1, #0x100
-        msr     CPSR_cxsf, r1
+        cpsid   i, #0x12
         
         ldr     r1, [r6, #64]
         msr     SPSR_cxsf, r1
@@ -612,7 +612,7 @@ __std_switch:
         ldmia   lr!, {r0-r12}
         ldr     lr, [lr, #8]
         
-        subs    pc, lr, #4
+        movs    pc, lr
         
 @------------------------------------------------------------------------------
         
@@ -648,12 +648,9 @@ __std_intsetup:
         sub     r0, r0, #16
         
         mrs     r1, CPSR
-        mov     r2, r1
-        bic     r1, r1, #0x1F
-        orr     r1, r1, #0x12
-        msr     CPSR_c, r1
+        cpsid   i, #0x12
         mov     sp, r0
-        msr     CPSR_cxsf, r2
+        msr     CPSR_cxsf, r1
         
      @ alloc and fill int_context_data  
         
@@ -692,16 +689,13 @@ IRQ_entry:
         
         ldr     r0, [sp,#-4]
 
-        mrs     r5, CPSR
-        mov     r6, r5
-        bic     r5, r5, #0x1F
-        orr     r5, r5, #0x13
-        msr     CPSR_c, r5
+        mrs     r6, CPSR
+        cps     #0x13
         mov     r1, r13
         mov     r2, r14
         msr     CPSR_cxsf, r6
         
-        mov     r3, lr
+        sub     r3, lr, #4
         
         mrs     r4, SPSR
         
@@ -709,9 +703,10 @@ IRQ_entry:
         
         vmrs    r3, FPEXC
         vmrs    r4, FPSCR
-        stmia   r12!, {r3,r4}  
+        str     r3, [r12], #4
         vstmia  r12!, {D0-D15}  
         vstmia  r12!, {D16-D31}
+        str     r4, [r12], #4
         
      @ switch context data 
         
@@ -759,14 +754,19 @@ IRQ_entry:
         
      @ restore task context
       
+        add     r0, r4, #68
+        ldr     r1, [r0], #4
+        vmsr    FPEXC, r1
+        vldmia  r0!, {D0-D15}  
+        vldmia  r0!, {D16-D31}
+        ldr     r1, [r0]
+        vmsr    FPSCR, r1
+        
         ldr     r0, [r4,#52]
         ldr     r1, [r4,#56]
        
-        mrs     r5, CPSR
-        mov     r6, r5
-        bic     r5, r5, #0x1F
-        orr     r5, r5, #0x13
-        msr     CPSR_c, r5
+        mrs     r6, CPSR
+        cps     #0x13
         mov     r13, r0
         mov     r14, r1
         msr     CPSR_cxsf, r6
@@ -780,7 +780,7 @@ IRQ_entry:
         
         clrex
         
-        subs    pc, lr, #4
+        movs    pc, lr
         
 @------------------------------------------------------------------------------
         
