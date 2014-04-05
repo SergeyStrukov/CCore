@@ -20,6 +20,7 @@
 #include <CCore/inc/dev/DevPlanInit.h>
 #include <CCore/inc/dev/DevTimer.h>
 #include <CCore/inc/dev/DevIntHandle.h>
+#include <CCore/inc/dev/DevLight.h>
 
 namespace CCore {
 namespace Sys {
@@ -67,11 +68,25 @@ class StartStop : NoCopy
     {
      if( Dev::TimerIntClear() )
        {
-        Time_sec+=RoundInc(Sec_cnt,SecCnt);
+        if( RoundInc(Sec_cnt,SecCnt) )
+          {
+           Time_sec++;
+          }
     
-        Time_msec+=RoundInc(MSec_cnt,MSecCnt);
+        if( RoundInc(MSec_cnt,MSecCnt) )
+          {
+           if( (Time_msec&511)<256 )
+             Dev::LightOn(1u<<3);
+           else
+             Dev::LightOff(1u<<3);
+          
+           Time_msec++;
+          }
        
-        if( RoundInc(Tick_cnt,TickCnt) ) Task::Internal::Tick_int();
+        if( RoundInc(Tick_cnt,TickCnt) ) 
+          {
+           Task::Internal::Tick_int();
+          }
        }
     }
  

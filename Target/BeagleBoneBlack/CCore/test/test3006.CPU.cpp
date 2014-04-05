@@ -71,11 +71,11 @@ bool Testit<3006>::Main()
   
   // CPSR
   
-  //Printf(Con,"CPSR = #;\n\n",GetCPSR());
+  Printf(Con,"CPSR = #;\n\n",GetCPSR());
   
   // NSAC
   
-  //Printf(Con,"NonsecureAccessControl = #;\n\n",GetNonsecureAccessControl());
+  Printf(Con,"NonsecureAccessControl = #;\n\n",GetNonsecureAccessControl());
   
   // Features
   
@@ -83,7 +83,7 @@ bool Testit<3006>::Main()
   
   //Printf(Con,"MainID = #;\n\n",features.getMainID());
   
-  //Printf(Con,"CacheType = #;\n\n",features.getCacheType());
+  Printf(Con,"CacheType = #;\n\n",features.getCacheType());
   
   //Printf(Con,"TCMType = #;\n\n",features.getTCMType());
   
@@ -117,27 +117,27 @@ bool Testit<3006>::Main()
   
   //Printf(Con,"Instruction4 = #;\n\n",features.getInstructionSetAttributes4());
   
-  //Printf(Con,"CacheLevelID = #;\n\n",features.getCacheLevelID());
+  Printf(Con,"CacheLevelID = #;\n\n",features.getCacheLevelID());
   
   // Cache Size
   
   Type_CacheSizeSel().set_Level(0).set(SetCacheSizeSel);
   
-  //Printf(Con,"L1D #;\n\n",GetCacheSizeID());
+  Printf(Con,"L1D #;\n\n",GetCacheSizeID());
   
   Type_CacheSizeSel().set_Level(0).setbit(CacheSizeSel_InD).set(SetCacheSizeSel);
   
-  //Printf(Con,"L1I #;\n\n",GetCacheSizeID());
+  Printf(Con,"L1I #;\n\n",GetCacheSizeID());
   
   Type_CacheSizeSel().set_Level(1).set(SetCacheSizeSel);
   
-  //Printf(Con,"L2U #;\n\n",GetCacheSizeID());
+  Printf(Con,"L2U #;\n\n",GetCacheSizeID());
   
   // GetControl
   
-  //Printf(Con,"Control = #;\n\n",GetControl());
+  Printf(Con,"Control = #;\n\n",GetControl());
   
-  //Printf(Con,"AuxControl = #;\n\n",GetAuxControl());
+  Printf(Con,"AuxControl = #;\n\n",GetAuxControl());
   
   //Printf(Con,"TTControl = #;\n\n",GetTTControl());
   
@@ -149,7 +149,7 @@ bool Testit<3006>::Main()
   
   //Printf(Con,"ContextID = #;\n\n",GetContextID());
   
-  //Printf(Con,"L2CacheAuxControl = #;\n\n",GetL2CacheAuxControl());
+  Printf(Con,"L2CacheAuxControl = #;\n\n",GetL2CacheAuxControl());
 
   PrintTT(0x000);
   PrintTT(0x400);

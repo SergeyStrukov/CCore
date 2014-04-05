@@ -17,43 +17,11 @@
 
 #include <CCore/inc/Timer.h>
 
-#include <CCore/inc/dev/DevRW.h>
+#include <CCore/inc/dev/DevLight.h>
 
 namespace App {
 
 namespace Private_3002 {
-
-const uint32 BaseAddress = 0x4804C000 ;
-
-const uint32 OUT    = 0x13C ;
-const uint32 CLROUT = 0x190 ;
-const uint32 SETOUT = 0x194 ;
-
-uint32 Mask(uint32 bits)
- {
-  return (bits&15)<<21;
- }
-
-void SetLight(uint32 bits)
- {
-  Dev::RegRW rw(BaseAddress);
-
-  rw.set<uint32>(OUT,Mask(bits));
- }
-
-void OnLight(uint32 bits)
- {
-  Dev::RegRW rw(BaseAddress);
-
-  rw.set<uint32>(SETOUT,Mask(bits));
- }
-
-void OffLight(uint32 bits)
- {
-  Dev::RegRW rw(BaseAddress);
-
-  rw.set<uint32>(CLROUT,Mask(bits));
- }
 
 void Delay(unsigned tsec)
  {
@@ -72,7 +40,7 @@ const char *const Testit<3002>::Name="Test3002 Light";
 template<>
 bool Testit<3002>::Main() 
  {
-  SetLight(15);
+  Dev::LightSet(15);
   
   Delay(5);
   
@@ -80,11 +48,11 @@ bool Testit<3002>::Main()
     {
      Printf(Con,"cnt = #;\n",cnt);
     
-     OffLight(5);
+     Dev::LightOff(5);
     
      Delay(5);
     
-     OnLight(5);
+     Dev::LightOn(5);
     
      Delay(5);
     }
