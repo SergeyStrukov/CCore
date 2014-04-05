@@ -126,3 +126,5 @@
 ../../../Target/BeagleBoneBlack/CCore/test/test3004.Exception.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3005.Atomic.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3006.CPU.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3007.FPU.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3008.PerfCount.cpp

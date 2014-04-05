@@ -18,11 +18,57 @@
 #include <CCore/inc/dev/DevIntHandle.h>
 
 #include <CCore/inc/dev/AM3359.h>
+#include <CCore/inc/dev/AM3359.PRCM.h>
 
 #include <__std_init.h>
  
 namespace CCore {
 namespace Dev {
+
+/* SetupCPUClock() */
+
+static void Delay(volatile unsigned cnt)
+ {
+  for(; cnt ;cnt--);
+ }
+
+static void SetupCPUClock(unsigned freq_MHz)
+ {
+  using namespace AM3359::PRCM;
+  
+  WKUPBar bar;
+  
+  {
+   bar.get_MPUClockMode()
+      .set_En(MPUClockMode_En_MNBypass)
+      .setTo(bar);
+   
+   while( bar.get_MPUIdleStatus().maskbit(MPUIdleStatus_Bypass|MPUIdleStatus_Locked)!=MPUIdleStatus_Bypass );
+  }
+  
+  {
+   bar.get_MPUClockSelect()
+      .set_Div(23)
+      .set_Mul(freq_MHz)
+      .setTo(bar);
+   
+   bar.get_MPUDivM2()
+      .set_M2(1)
+      .setTo(bar);
+   
+   Delay(1000);
+  }
+  
+  {
+   bar.get_MPUClockMode()
+      .set_En(MPUClockMode_En_Lock)
+      .setTo(bar);
+   
+   while( bar.get_MPUIdleStatus().maskbit(MPUIdleStatus_Bypass|MPUIdleStatus_Locked)!=MPUIdleStatus_Locked );
+  }
+ }
+
+/* SetupMMUandCache() */
 
 const ulen TTLen = 1<<12 ;
 
@@ -52,7 +98,7 @@ static bool IsShared(uint32 address,uint32 base1,uint32 len1,uint32 base2,uint32
   return TestAddress(address,base1,len1) || TestAddress(address,base2,len2) ;
  }
 
-void Init_CPU() 
+void SetupMMUandCache()
  {
   using namespace AM3359::CP15;
   
@@ -186,6 +232,15 @@ void Init_CPU()
    
    SetControl(val);
   }
+ }
+
+/* Init_CPU() */
+
+void Init_CPU() 
+ {
+  SetupCPUClock(600); // MHz
+  
+  SetupMMUandCache();
  }
 
 /* GetPlanInitNode_...() */ 

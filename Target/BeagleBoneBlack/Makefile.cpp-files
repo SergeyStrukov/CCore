@@ -265,9 +265,11 @@
 ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
 ../../Target/BeagleBoneBlack/CCore/src/base/Quick.cpp
 ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
+../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
+../../Target/BeagleBoneBlack/CCore/src/dev/DevPerfCount.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp

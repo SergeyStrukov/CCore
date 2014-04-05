@@ -1,6 +1,7 @@
 OBJ_LIST = \
 obj/AES.o \
 obj/AM3359.o \
+obj/AM3359.CP15CNT.o \
 obj/Abort.o \
 obj/AbortMsgFunc.o \
 obj/AntiSem.o \
@@ -82,6 +83,7 @@ obj/DefaultValue.o \
 obj/DeferCall.o \
 obj/DevInt.o \
 obj/DevIntHandle.o \
+obj/DevPerfCount.o \
 obj/DevPlanInit.o \
 obj/DevRW.o \
 obj/DevTick.o \
@@ -290,6 +292,7 @@ obj/time.o \
 ASM_LIST = \
 obj/AES.s \
 obj/AM3359.s \
+obj/AM3359.CP15CNT.s \
 obj/Abort.s \
 obj/AbortMsgFunc.s \
 obj/AntiSem.s \
@@ -371,6 +374,7 @@ obj/DefaultValue.s \
 obj/DeferCall.s \
 obj/DevInt.s \
 obj/DevIntHandle.s \
+obj/DevPerfCount.s \
 obj/DevPlanInit.s \
 obj/DevRW.s \
 obj/DevTick.s \
@@ -579,6 +583,7 @@ obj/time.s \
 DEP_LIST = \
 obj/AES.dep \
 obj/AM3359.dep \
+obj/AM3359.CP15CNT.dep \
 obj/Abort.dep \
 obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
@@ -660,6 +665,7 @@ obj/DefaultValue.dep \
 obj/DeferCall.dep \
 obj/DevInt.dep \
 obj/DevIntHandle.dep \
+obj/DevPerfCount.dep \
 obj/DevPlanInit.dep \
 obj/DevRW.dep \
 obj/DevTick.dep \
@@ -867,6 +873,7 @@ obj/time.dep \
 
 ASM_OBJ_LIST = \
 obj/AM3359.s.o \
+obj/AM3359.CP15CNT.s.o \
 obj/DevInt.s.o \
 obj/DevPlanInit.s.o \
 obj/DevRW.s.o \
@@ -881,6 +888,9 @@ obj/AES.o : ../../CCore/src/crypton/AES.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AM3359.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AM3359.CP15CNT.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Abort.o : ../../XCore/CCore/src/Abort.cpp
@@ -1124,6 +1134,9 @@ obj/DevInt.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevIntHandle.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevPerfCount.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevPerfCount.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevPlanInit.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.cpp
@@ -1743,6 +1756,9 @@ obj/AES.s : ../../CCore/src/crypton/AES.cpp
 obj/AM3359.s : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/AM3359.CP15CNT.s : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Abort.s : ../../XCore/CCore/src/Abort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1984,6 +2000,9 @@ obj/DevInt.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DevIntHandle.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevPerfCount.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevPerfCount.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DevPlanInit.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.cpp
@@ -2603,6 +2622,9 @@ obj/AES.dep : ../../CCore/src/crypton/AES.cpp
 obj/AM3359.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AM3359.o $< -MF $@
 
+obj/AM3359.CP15CNT.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AM3359.CP15CNT.o $< -MF $@
+
 obj/Abort.dep : ../../XCore/CCore/src/Abort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Abort.o $< -MF $@
 
@@ -2845,6 +2867,9 @@ obj/DevInt.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 
 obj/DevIntHandle.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevIntHandle.o $< -MF $@
+
+obj/DevPerfCount.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevPerfCount.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevPerfCount.o $< -MF $@
 
 obj/DevPlanInit.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevPlanInit.o $< -MF $@
@@ -3458,6 +3483,9 @@ obj/time.dep : ../../XCore/CCore/src/libc/time.cpp
 
 
 obj/AM3359.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/AM3359.CP15CNT.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/DevInt.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.s

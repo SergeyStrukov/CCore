@@ -1,0 +1,60 @@
+/* AM3359.CP15CNT.desc */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  Tag: Target/BeagleBoneBlack
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg Control : 32
+ {
+  E   : 0
+  P   : 1
+  C   : 2
+  D   : 3
+  X   : 4
+  DP  : 5
+  N   : 11-15
+  ID  : 16-23
+  IMP : 24-31
+ }
+ 
+reg CounterBits : 32 // CountEnableSet CountEnableClear CountOverflowStatus IntEnableSet IntEnableClear CountInc 
+ {
+  P : 0-30
+  C : 31
+ } 
+
+reg ClockCount : 32
+ {
+ }
+ 
+reg CounterSelect : 32
+ {
+  SEL : 0-4
+ }
+
+reg EventSelect : 32
+ {
+  SEL : 0-7
+ } 
+ 
+reg Count : 32
+ {
+ }
+ 
+reg UserCountEnable : 32
+ {
+  EN : 0
+ }  
+
+  
+ 
+   

@@ -18,6 +18,8 @@
 namespace AM3359 {
 namespace CP15 {
 
+/* functions */
+
 #if 0
 
  // Fake code
@@ -29,14 +31,6 @@ Type_MainID GetMainID() { return Type_MainID(0); }
 Type_CacheType GetCacheType() { return Type_CacheType(0); }
 
 Type_TLBType GetTLBType() { return Type_TLBType(0); }
-
-CPUFeatures::CPUFeatures()
- {
-  regs[0]=1;
-  regs[1]=2;
-  regs[2]=3;
-  regs[3]=4;
- }
 
 Type_SecureConfig GetSecureConfig() { return Type_SecureConfig(0); }
 
@@ -95,6 +89,14 @@ void InvalidateDataCacheL2(uint32 set,uint32 way) {}
 Type_L2CacheAuxControl GetL2CacheAuxControl() { return Type_L2CacheAuxControl(0); }
 
 uint32 VAtoPA(uint32 address) { return address; }
+
+CPUFeatures::CPUFeatures()
+ {
+  regs[0]=1;
+  regs[1]=2;
+  regs[2]=3;
+  regs[3]=4;
+ }
 
 #endif
 

@@ -672,7 +672,20 @@ UInt/* c */ IntegerSlowAlgo<UInt>::UNeg(Unit *a,ulen na)
   
   for(; na>0 ;a++,na--)
     {
+#if 0 // ICE workaround
+    
      c=RevSub(*a,0,c);
+     
+#else
+     
+     Unit d=(*a)+c;
+     Unit ret=( (d|c)!=0 );
+     
+     (*a)=-d;
+     
+     c=ret;
+     
+#endif     
     }
     
   return c;  

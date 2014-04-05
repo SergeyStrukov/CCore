@@ -40,6 +40,8 @@ bar CM_PERBar : address
   Timer4 = 88h as ClockControl
  }
 
+//----------------------------------------------------------------------------------------
+
 reg TimerClockSelect : 32
  {
   Source: .+2
@@ -58,5 +60,71 @@ bar CM_DPLLBar : address
   Timer4 = 10h as TimerClockSelect
  }
  
+//----------------------------------------------------------------------------------------
+
+reg MPUIdleStatus : 32
+ {
+  Locked : 0
+  Bypass : 8
+ }
+ 
+reg MPUClockSelect : 32
+ {
+  Div : 0-6
+  Mul : 8-18
+  BypassSelect : 23
+ }
+ 
+reg MPUDivM2 : 32
+ {
+  M2         : 0-4
+  M2Ack      : 5
+  NoAutoGate : 8
+  Running    : 9
+ }
+ 
+reg MPUClockMode : 32
+ {
+  En : 0-2
+   {
+    MNBypass = 4
+    LPBypass = 5
+    FRBypass = 6
+    Lock     = 7
+   }
+   
+  RampLevel : 3-4
+   {
+    No = 0
+    Lo = 1
+    Hi = 2
+   }
+   
+  RampRate : 5-7
+  
+  DriftGuard   : 8
+  RelockRamp   : 9
+  LPMode       : 10
+  REGM4X       : 11
+  SSC          : 12
+  SSCAck       : 13
+  SSCLowSpread : 14
+  SSCType      : 15 
+ }   
+
+bar CM_WKUPBar : address
+ {
+  MPUIdleStatus  = 020h RO
+  MPUClockSelect = 02Ch
+  MPUDivM2       = 0A8h
+  MPUClockMode   = 088h 
+ }
+ 
+//----------------------------------------------------------------------------------------
+ 
+ 
+
+
+
   
    

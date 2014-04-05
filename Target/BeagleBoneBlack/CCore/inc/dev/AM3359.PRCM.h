@@ -40,6 +40,13 @@ struct DPLLBar : CM_DPLLBar<CCore::Dev::RegRW>
   DPLLBar() : CM_DPLLBar<CCore::Dev::RegRW>(0x44E00500) {}
  };
 
+/* struct WKUPBar */
+
+struct WKUPBar : CM_WKUPBar<CCore::Dev::RegRW>
+ {
+  WKUPBar() : CM_WKUPBar<CCore::Dev::RegRW>(0x44E00400) {}
+ };
+
 } // namespace PRCM
 } // namespace AM3359
 
