@@ -1284,12 +1284,12 @@ struct ModeDesc
     hs_pix_e = geom.hsync_end   - geom.hdisplay ;
     
     de_pix_s = geom.htotal - geom.hdisplay ;
-    de_pix_e = de_pix_s + geom.hdisplay ;
+    de_pix_e = geom.htotal ;
     
-    ref_pix  = 3 + geom.hsync_start - geom.hdisplay ;
+    ref_pix  = 3 + geom.hsync_start - geom.hdisplay + (geom.hsync_end-geom.hsync_start) - 1 ;
     ref_line = 1 + geom.vsync_start - geom.vdisplay ;
     
-    vwin1_line_s = geom.vtotal - geom.vsync_start - 1 ;
+    vwin1_line_s = geom.vtotal - geom.vdisplay - 1 ;
     vwin1_line_e = vwin1_line_s + geom.vdisplay ;
     
     vs1_pix_s    = geom.hsync_start - geom.hdisplay ;
@@ -1584,7 +1584,7 @@ class Instance
      
      if( auto ret=setPage(0) ) return ret;
      
-     if( auto ret=write(TBG_CNTRL_0,TBG_CNTRL_0_SYNC_MTHD) ) return ret;
+     if( auto ret=bitclear(TBG_CNTRL_0,TBG_CNTRL_0_SYNC_MTHD) ) return ret;
      
      if( auto ret=write(VIP_CNTRL_3,0) ) return ret;
      
@@ -3994,11 +3994,11 @@ class Instance
      reg(RASTER_TIMING_2)=HSyncMSB.insert((geom.hsync-1)>>6)|
                           VLenMSB.insert((geom.vlen-1)>>10)|
                           HBackMSB.insert((geom.hback-1)>>8)|
-                          HFrontMSB.insert((geom.hfront-1)>>8)|SyncControl; 
+                          HFrontMSB.insert((geom.hfront-1)>>8)|SyncControl|HSyncActiveLow; 
      
      reg(IRQSTATUS)=IRQ_EOF0|IRQ_Underflow;
      
-     reg(RASTER_CTRL)=LCD_Enable|LCF_TFT|STN565|PalMode.insert(2);
+     reg(RASTER_CTRL)=LCD_Enable|LCF_TFT|STN565|PalMode.insert(0);
      
      return Video::FrameBuf(fb+16,geom.hlen,geom.vlen);
     }
@@ -4015,6 +4015,39 @@ class Instance
 using namespace Debug;
 
 #include <__std_init.h>
+
+static void test_video(Video::FrameBuf out)
+ {
+  using namespace Video;
+  
+  out.erase(Black);
+  
+  for(ulen x=0; x<100 ;x++)
+    {
+     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,White);
+    }
+  
+  for(ulen x=100; x<200 ;x++)
+    {
+     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Red);
+    }
+  
+  for(ulen x=200; x<300 ;x++)
+    {
+     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Green);
+    }
+  
+  for(ulen x=300; x<400 ;x++)
+    {
+     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Blue);
+    }
+
+  out.vLine(0,Green);
+  out.vLine(out.dx-1,White);
+  
+  out.hLine(0,Red);
+  out.hLine(out.dy-1,Blue);
+ }
 
 void __std_debug_init(void)
  {
@@ -4041,36 +4074,31 @@ void __std_debug_init(void)
   }
   
   EDID::Mode mode;
+  HDMI::Instance hdmi;
 
-  // Init HDMI
-  {
-   HDMI::Instance hdmi;
+  hdmi.init_I2C();
    
-   hdmi.init_I2C();
+  if( hdmi.init() ) Stop(15);
    
-   if( hdmi.init() ) Stop(15);
+  octet buf[EDID::Len];
    
-   octet buf[EDID::Len];
+  if( hdmi.readEDID(buf,0) ) Stop(15);
    
-   if( hdmi.readEDID(buf,0) ) Stop(15);
+  mode=EDID::Mode(buf);
+  
+  LCD::Instance lcd;
    
-   mode=EDID::Mode(buf);
+  lcd.first_reset();
    
-   if( hdmi.setMode(HDMI::ModeDesc(mode,mode)) ) Stop(15);
+  auto frame=lcd.init((uint16 *)0x80000000,mode);
    
-   if( hdmi.enableVIP() ) Stop(15);
-  }
-
-  // Init LCD
-  { 
-   LCD::Instance lcd;
+  //Video::ConsoleInit(frame);
+  
+  test_video(frame);
+  
+  if( hdmi.setMode(HDMI::ModeDesc(mode,mode)) ) Stop(15);
    
-   lcd.first_reset();
-   
-   auto frame=lcd.init((uint16 *)0x80000000,mode);
-   
-   Video::ConsoleInit(frame);
-  }
+  if( hdmi.enableVIP() ) Stop(15);
  }
 
 void __std_debug(const char *zstr)
