@@ -81,6 +81,7 @@ obj/DebugCon.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
 obj/DeferCall.o \
+obj/DevI2C.o \
 obj/DevInt.o \
 obj/DevIntHandle.o \
 obj/DevLight.o \
@@ -373,6 +374,7 @@ obj/DebugCon.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
 obj/DeferCall.s \
+obj/DevI2C.s \
 obj/DevInt.s \
 obj/DevIntHandle.s \
 obj/DevLight.s \
@@ -665,6 +667,7 @@ obj/DebugCon.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
 obj/DeferCall.dep \
+obj/DevI2C.dep \
 obj/DevInt.dep \
 obj/DevIntHandle.dep \
 obj/DevLight.dep \
@@ -1131,6 +1134,9 @@ obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DeferCall.o : ../../CCore/src/DeferCall.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevI2C.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevInt.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
@@ -2002,6 +2008,9 @@ obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.s : ../../CCore/src/DeferCall.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DevI2C.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DevInt.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2870,6 +2879,9 @@ obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
 
 obj/DeferCall.dep : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
+
+obj/DevI2C.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevI2C.o $< -MF $@
 
 obj/DevInt.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevInt.o $< -MF $@

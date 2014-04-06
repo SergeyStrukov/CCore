@@ -3806,6 +3806,39 @@ void ConsoleOut(const char *ptr,ulen len)
   for(; len ;ptr++,len--) ConsoleOut(*ptr);
  }
 
+/* Test() */
+
+void Test(FrameBuf out)
+ {
+  out.erase(Black);
+  
+  for(ulen x=0; x<100 ;x++)
+    {
+     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,White);
+    }
+  
+  for(ulen x=100; x<200 ;x++)
+    {
+     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Red);
+    }
+  
+  for(ulen x=200; x<300 ;x++)
+    {
+     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Green);
+    }
+  
+  for(ulen x=300; x<400 ;x++)
+    {
+     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Blue);
+    }
+
+  out.vLine(0,Green);
+  out.vLine(out.dx-1,White);
+  
+  out.hLine(0,Red);
+  out.hLine(out.dy-1,Blue);
+ }
+
 } // namespace Video 
 
 //- LCD ----------------------------------------------------------------------------------
@@ -4016,39 +4049,6 @@ using namespace Debug;
 
 #include <__std_init.h>
 
-static void test_video(Video::FrameBuf out)
- {
-  using namespace Video;
-  
-  out.erase(Black);
-  
-  for(ulen x=0; x<100 ;x++)
-    {
-     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,White);
-    }
-  
-  for(ulen x=100; x<200 ;x++)
-    {
-     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Red);
-    }
-  
-  for(ulen x=200; x<300 ;x++)
-    {
-     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Green);
-    }
-  
-  for(ulen x=300; x<400 ;x++)
-    {
-     for(ulen y=x; y<out.dy-x ;y++) out.pixel(x,y,Blue);
-    }
-
-  out.vLine(0,Green);
-  out.vLine(out.dx-1,White);
-  
-  out.hLine(0,Red);
-  out.hLine(out.dy-1,Blue);
- }
-
 void __std_debug_init(void)
  {
   // PRCM
@@ -4091,10 +4091,9 @@ void __std_debug_init(void)
   lcd.first_reset();
    
   auto frame=lcd.init((uint16 *)0x80000000,mode);
-   
-  //Video::ConsoleInit(frame);
   
-  test_video(frame);
+  //Video::Test(frame);
+  Video::ConsoleInit(frame);
   
   if( hdmi.setMode(HDMI::ModeDesc(mode,mode)) ) Stop(15);
    
