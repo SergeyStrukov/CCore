@@ -1,7 +1,7 @@
 /* PlatformBase.h */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.02
+//  Project: CCore 1.08
 //
 //  Tag: Target/WIN32
 //
@@ -9,7 +9,7 @@
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ template <class UInt> struct DoubleUInt;
 template <class T> 
 struct HasNoDtor
  {
-  enum RetType { Ret = std::has_trivial_destructor<T>::value }; 
+  enum RetType { Ret = std::is_trivially_destructible<T>::value }; 
  };
 
 /* struct HasNoThrowDefault<T> */

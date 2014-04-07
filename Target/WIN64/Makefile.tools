@@ -40,7 +40,8 @@ RM = @echo RM ; $(RM_)
 # options
 
 NOWARN = -Wno-non-virtual-dtor \
-         -Wno-switch -Wno-type-limits \
+         -Wno-switch \
+         -Wno-type-limits \
          -Wno-enum-compare \
          -Wno-missing-field-initializers \
          -Wno-delete-non-virtual-dtor \

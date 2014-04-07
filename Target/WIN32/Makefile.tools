@@ -1,7 +1,7 @@
 # Makefile.tools
 #----------------------------------------------------------------------------------------
 #
-#  Project: CCore 1.02
+#  Project: CCore 1.08
 #
 #  Tag: Target/WIN32
 #
@@ -9,7 +9,7 @@
 #
 #            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 #
-#  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+#  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 #
 #----------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ LDOPT_EXTRA ?=
 
 # tools
 
-CC_ = /opt/gcc-4.7.1/bin/g++-4.7.1
+CC_ = g++
 
 CC = @echo CC $< ; $(CC_)
 
@@ -39,8 +39,13 @@ RM = @echo RM ; $(RM_)
 
 # options
 
-NOWARN = -Wno-non-virtual-dtor -Wno-switch -Wno-type-limits -Wno-enum-compare -Wno-missing-field-initializers \
-         -Wno-delete-non-virtual-dtor
+NOWARN = -Wno-non-virtual-dtor \
+         -Wno-switch \
+         -Wno-type-limits \
+         -Wno-enum-compare \
+         -Wno-missing-field-initializers \
+         -Wno-delete-non-virtual-dtor \
+
 
 CCINC = -I$(CCORE_ROOT) -I$(CCORE_ROOT)/HCore -I$(CCORE_ROOT)/Target/$(CCORE_TARGET)
 
@@ -50,4 +55,5 @@ ASOPT =
 
 CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
 
-LDOPT = -Wl,-s $(LDOPT_EXTRA) $(CCORELIB) -lws2_32 
+LDOPT = -Wl,-s $(LDOPT_EXTRA) $(CCORELIB) -lws2_32 -lgmp 
+

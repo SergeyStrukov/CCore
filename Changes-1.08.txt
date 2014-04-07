@@ -4,10 +4,14 @@
 
 New XCore target BeagleBoneBlack has been created.
 
---- Updates ---
+--- Updates ----------
 
 Regen
 
   Fixed generated bar constructor and the method setTo(Bar &bar,uint32 ind).
+
+WIN32 
+
+  Target rebased on gcc-4.8.2 from the latest cygwin.
 
 ----------------------
