@@ -31,7 +31,7 @@ typedef uint64 MSecTimeType;  // unsigned integral type
 
 typedef uint32 SecTimeType;   // unsigned integral type
  
-typedef uint32 ClockTimeType; // unsigned integral type
+typedef uint64 ClockTimeType; // unsigned integral type
 
 /* consts */ 
 

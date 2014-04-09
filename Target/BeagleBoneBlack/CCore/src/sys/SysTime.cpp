@@ -51,6 +51,23 @@ class StartStop : NoCopy
    static SecTimeType Time_sec;
    static MSecTimeType Time_msec;
    
+   struct Rec
+    {
+     uint32 hi;
+     uint32 lo;
+     
+     uint64 update(uint32 value)
+      {
+       if( value<lo ) hi++;
+       
+       lo=value;
+       
+       return (uint64(hi)<<32)|value;
+      }
+    };
+
+   static Rec Time_clock;
+   
    template <class T,class S>
    static bool RoundInc(T &cnt,S Cnt)
     {
@@ -71,6 +88,8 @@ class StartStop : NoCopy
         if( RoundInc(Sec_cnt,SecCnt) )
           {
            Time_sec++;
+           
+           Time_clock.update(Dev::TimerClock());
           }
     
         if( RoundInc(MSec_cnt,MSecCnt) )
@@ -121,6 +140,13 @@ class StartStop : NoCopy
   
      return Time_sec;
     }
+   
+   static ClockTimeType GetClockTime() noexcept
+    {
+     Dev::IntLock lock;
+     
+     return Time_clock.update(Dev::TimerClock());
+    }
     
    static const char * GetTag() { return "SysTime"; } 
  };
@@ -132,6 +158,8 @@ unsigned StartStop::Tick_cnt=0;
 SecTimeType StartStop::Time_sec=0;
 MSecTimeType StartStop::Time_msec=0;
    
+StartStop::Rec StartStop::Time_clock={0,0};
+
 PlanInitObject<StartStop,PlanInitReq<Dev::GetPlanInitNode_Dev> > Object CCORE_INITPRI_1 ;
 
 } // namespace Private_SysTime
@@ -154,7 +182,7 @@ SecTimeType GetSecTime() noexcept
  
 ClockTimeType GetClockTime() noexcept
  {
-  return Dev::TimerClock();
+  return StartStop::GetClockTime();
  }
 
 void ClockDelay(ClockTimeType clocks) noexcept

@@ -118,6 +118,7 @@ OBJ_LIST = \
 ../test-obj/test3006.CPU.o \
 ../test-obj/test3007.FPU.o \
 ../test-obj/test3008.PerfCount.o \
+../test-obj/test3009.Timer.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -251,6 +252,7 @@ ASM_LIST = \
 ../test-obj/test3006.CPU.s \
 ../test-obj/test3007.FPU.s \
 ../test-obj/test3008.PerfCount.s \
+../test-obj/test3009.Timer.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -384,6 +386,7 @@ DEP_LIST = \
 ../test-obj/test3006.CPU.dep \
 ../test-obj/test3007.FPU.dep \
 ../test-obj/test3008.PerfCount.dep \
+../test-obj/test3009.Timer.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -758,6 +761,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3008.PerfCount.o : ../../../Target/BeagleBoneBlack/CCore/test/test3008.PerfCount.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3009.Timer.o : ../../../Target/BeagleBoneBlack/CCore/test/test3009.Timer.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1152,6 +1158,9 @@ include $(RULES_FILE)
 ../test-obj/test3008.PerfCount.s : ../../../Target/BeagleBoneBlack/CCore/test/test3008.PerfCount.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3009.Timer.s : ../../../Target/BeagleBoneBlack/CCore/test/test3009.Timer.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1543,6 +1552,9 @@ include $(RULES_FILE)
 
 ../test-obj/test3008.PerfCount.dep : ../../../Target/BeagleBoneBlack/CCore/test/test3008.PerfCount.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3008.PerfCount.o $< -MF $@
+
+../test-obj/test3009.Timer.dep : ../../../Target/BeagleBoneBlack/CCore/test/test3009.Timer.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3009.Timer.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

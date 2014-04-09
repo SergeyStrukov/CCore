@@ -30,7 +30,7 @@ extern "C" {
  
 #define CLOCKS_PER_SEC     24000000
 
-typedef unsigned clock_t;
+typedef unsigned long long clock_t;
 
 extern clock_t clock(void); 
 
