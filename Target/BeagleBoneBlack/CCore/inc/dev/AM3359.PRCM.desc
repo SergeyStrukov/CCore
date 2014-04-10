@@ -38,6 +38,9 @@ bar CM_PERBar : address
  
   Timer2 = 80h as ClockControl
   Timer4 = 88h as ClockControl
+  
+  I2C1 = 48h as ClockControl
+  I2C2 = 44h as ClockControl
  }
 
 //----------------------------------------------------------------------------------------
@@ -114,10 +117,14 @@ reg MPUClockMode : 32
 
 bar CM_WKUPBar : address
  {
+  ClockControl = hidden
+ 
   MPUIdleStatus  = 020h RO
   MPUClockSelect = 02Ch
   MPUDivM2       = 0A8h
-  MPUClockMode   = 088h 
+  MPUClockMode   = 088h
+  
+  I2C0 = 0B8h as ClockControl 
  }
  
 //----------------------------------------------------------------------------------------

@@ -979,6 +979,22 @@ struct CM_PERBar
  
   Setter<Type_ClockControl> to_Timer4() { return Setter<Type_ClockControl>(rw,0x88); }
  
+  //--- I2C1
+
+  Type_ClockControl get_I2C1() { return Type_ClockControl(rw.template get<uint32>(0x48)); }
+ 
+  void set_I2C1(Type_ClockControl value) { rw.set(0x48,value.value); }
+ 
+  Setter<Type_ClockControl> to_I2C1() { return Setter<Type_ClockControl>(rw,0x48); }
+ 
+  //--- I2C2
+
+  Type_ClockControl get_I2C2() { return Type_ClockControl(rw.template get<uint32>(0x44)); }
+ 
+  void set_I2C2(Type_ClockControl value) { rw.set(0x44,value.value); }
+ 
+  Setter<Type_ClockControl> to_I2C2() { return Setter<Type_ClockControl>(rw,0x44); }
+ 
  };
  
 /* struct CM_DPLLBar<RW> */ 
@@ -1047,6 +1063,12 @@ struct CM_WKUPBar
     void operator () (T value) { rw.set(address,value.value); }
    };
 
+  //--- ClockControl
+
+  static Type_ClockControl null_ClockControl() { return Type_ClockControl(0); }
+ 
+  static Type_ClockControl ones_ClockControl() { return Type_ClockControl(Type_ClockControl::Type(-1)); }
+ 
   //--- MPUIdleStatus
 
   Type_MPUIdleStatus get_MPUIdleStatus() { return Type_MPUIdleStatus(rw.template get<uint32>(0x20)); }
@@ -1090,6 +1112,14 @@ struct CM_WKUPBar
   static Type_MPUClockMode null_MPUClockMode() { return Type_MPUClockMode(0); }
  
   static Type_MPUClockMode ones_MPUClockMode() { return Type_MPUClockMode(Type_MPUClockMode::Type(-1)); }
+ 
+  //--- I2C0
+
+  Type_ClockControl get_I2C0() { return Type_ClockControl(rw.template get<uint32>(0xB8)); }
+ 
+  void set_I2C0(Type_ClockControl value) { rw.set(0xB8,value.value); }
+ 
+  Setter<Type_ClockControl> to_I2C0() { return Setter<Type_ClockControl>(rw,0xB8); }
  
  };
  

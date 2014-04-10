@@ -129,3 +129,4 @@
 ../../../Target/BeagleBoneBlack/CCore/test/test3007.FPU.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3008.PerfCount.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3009.Timer.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3010.I2C.cpp

@@ -13,7 +13,85 @@
 //
 //----------------------------------------------------------------------------------------
 
+reg SysConfig : 32
+ {
+  SoftReset : 1
+ }
+ 
+reg Config : 32
+ {
+  Start  : 0
+  Stop   : 1
+  TXMode : 9
+  Master : 10
+  Enable : 15
+ } 
+ 
+reg Prescale : 32
+ {
+  Div : 0-7
+ } 
+ 
+reg SCLLoTime : 32
+ {
+  Time : 0-7
+ } 
+
+reg SCLHiTime : 32
+ {
+  Time : 0-7
+ }
+ 
+reg BufStatus : 32
+ {
+  TXStat    : 0-5
+  RXStat    : 8-13
+  FIFODepth : 14-15
+ } 
+ 
+reg BufControl : 32
+ {
+  TXFIFOThreshold : 0-5
+  TXFIFOClear     : 6
+  RXFIFOThreshold : 8-13
+  RXFIFOClear     : 14
+ }
+ 
+reg SlaveAddress : 32
+ {
+  Address : 0-9
+ }   
+ 
+reg IRQStatus : 32
+ {
+  BusLost      : 0
+  NACK         : 1
+  RegReady     : 2
+  RXReady      : 3
+  TXReady      : 4
+  BusFree      : 8
+  TXUnderflow  : 10
+  RXOverflow   : 11
+  BusBusy      : 12
+  RXReadyShort : 13
+  TXReadyShort : 14
+ }
+ 
 bar I2CBar : address
  {
+  SysConfig    = 010h
+  Config       = 0A4h
+  Prescale     = 0B0h
+  SCLLoTime    = 0B4h
+  SCLHiTime    = 0B8h
+  BufStatus    = 0C0h
+  BufControl   = 094h
+  SlaveAddress = 0ACh
+  
+  IRQStatus      = 028h 
+  IRQStatusRaw   = 024h as IRQStatus
+  IRQEnableSet   = 02Ch as IRQStatus
+  IRQEnableClear = 030h as IRQStatus
  }
+
  
