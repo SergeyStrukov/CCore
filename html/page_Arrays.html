@@ -35,7 +35,7 @@
 <h3>Helpers</h3>
 
 <p>
-There are several type, which are used to specify the constructor behavior. 
+There are several types, which are used to specify the constructor behavior. 
 </p>
 
 <pre>
@@ -49,8 +49,8 @@ enum DoReserveType { <span class="Att">DoReserve</span> };
 </pre>
 
 <p>
-<b>DoBuild</b> and <b>DoReserve</b> are <b>word</b>s. They designate the build and the reserve variant of constructor
-respectively.
+<b>DoBuild</b> and <b>DoReserve</b> are <b>word</b>s. They designate the build and the reserve variant of 
+the constructor respectively.
 </p>
 
 <pre>
@@ -72,26 +72,26 @@ class DoSomething
    ulen getMaxLen() const { return maxlen; }
  };
  
-typedef DoSomething&lt;1&gt; DoRaw;
+typedef DoSomething&lt;1&gt; <span class="Att">DoRaw</span>;
 
-typedef DoSomething&lt;2&gt; DoFill; 
+typedef DoSomething&lt;2&gt; <span class="Att">DoFill</span>; 
 
-typedef DoSomething&lt;3&gt; DoCopy; 
+typedef DoSomething&lt;3&gt; <span class="Att">DoCopy</span>; 
 
-typedef DoSomething&lt;4&gt; DoCast; 
+typedef DoSomething&lt;4&gt; <span class="Att">DoCast</span>; 
 
-typedef DoSomething&lt;5&gt; DoSwap; 
+typedef DoSomething&lt;5&gt; <span class="Att">DoSwap</span>; 
 
-typedef DoSomething&lt;6&gt; DoCreate; 
+typedef DoSomething&lt;6&gt; <span class="Att">DoCreate</span>; 
 
 </pre>
 
 <p>
 <b>DoRaw</b>, <b>DoFill</b>, <b>DoCopy</b>, <b>DoCast</b>, <b>DoSwap</b>, <b>DoCreate</b> are not <b>word</b>s, but 
 <b>Small Data Type</b>s. They designate the correspondent variant of constructor and carry two parameters:
-the array length and the reserved length. When an array is being created, the reserved length determines
+the array length and the reserved length. When the array is being created, the reserved length determines
 the memory space to be allocated, and the length is the number of elements to be created. An exception is thrown,
-if the <b>len</b> is greater than <b>maxlen</b>.
+if <b>len</b> is greater than <b>maxlen</b>.
 </p>
 
 <h3>Arrays</h3>
@@ -121,14 +121,14 @@ Allocation errors and index check errors throw exceptions. Default constructors 
 <p>
 The method <b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
 If the array is constant, then element references are constant too.
-The variant <b>apply_const()</b> also enforces constantness.
+The variant <b>apply_const()</b> also enforces constness.
 </p>
 
 <p>
 The method <b>applyReverse()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements
 in the reverse order.
 If the array is constant, then element references are constant too.
-The variant <b>applyReverse_const()</b> also enforces constantness.
+The variant <b>applyReverse_const()</b> also enforces constness.
 </p>
 
 <p>
@@ -329,9 +329,9 @@ Unlike <b>TempArray</b>, <b>SimpleArray</b> is swappable and movable.
 
 <p>
 <b>DynArray</b> is the "main" of <b>Array</b>s. It stores elements in a memory space with some
-reserved memory behind. It allows extend the range of elements, if there is an extra memory. 
+reserved memory behind. It can extend the range of elements, if there is an extra memory. 
 If not and the type <b>T</b> supports <a href="page_Move.html">moving</a>, then the array extension can be performed
-with either the memory block extension (using <b>MemExtend()</b>) or the total reallocation with moving content.
+with either the memory block extension (using <b>MemExtend()</b>) or the total reallocation with the content moving.
 You can also release the extra memory. All details of the array functionality can be customized using the 
 second template argument, which is an <b>Algorithm Package</b> of array algorithms. You cannot
 change heap functions though.
@@ -397,7 +397,7 @@ Non-default constructors work the same way as the correspondent <b>extend...()</
 
 <p>
 <b>DynArray(std::initializer_list&lt;S&gt; il)</b> uses the initialization list to "cast" 
-new elements from the given.
+elements from the given.
 </p>
    
 <p>
@@ -407,7 +407,7 @@ new elements from the given.
 <p>
 <b>DynArray(ulen len,ulen maxlen)</b> also performs the default initialization of the <b>len</b> elements, 
 but reserves a space for the <b>maxlen</b> elements. An exception is thrown,
-if the <b>len</b> is greater than <b>maxlen</b>.
+if <b>len</b> is greater than <b>maxlen</b>.
 </p>
    
 <p>
@@ -436,7 +436,7 @@ is a range of length <b>dotype.getLen()</b>, its members are copied memberwise.
    
 <p>
 <b>DynArray(DoSwap dotype,T objs[])</b> creates new elements using the "swap move" approach. 
-I.g. new elements are created using the default constructor and swapped with members of the range <b>objs</b>.
+I.e. new elements are created using the default constructor and swapped with members of the range <b>objs</b>.
 </p>
    
 <p>
@@ -593,7 +593,7 @@ actual array length.
 <b>extend...()</b> is a family of methods, which extends the array with number elements. They differs in
 element construction ways. All of them, except the last, has the first argument <b>delta_len</b>, 
 which is the number of new elements. The return value is the range of these new elements.
-<b>extend...()</b> are transactional, i.g. if the method if failed, then the array remains
+<b>extend...()</b> are transactional, i.e. if the method has failed, then the array remains
 in the original state, an exception is thrown.
 </p>
 
@@ -716,8 +716,8 @@ uses the atomic reference counting to be viable in a multi-threaded environment.
 <p>
 <b>RefArray</b> has a simulated value semantic. It means, that you may consider different copies of an array
 as independent variables, despite they may share the state. That is because <b>RefArray</b> provides
-only a constant access to elements. So far you don't violate this constantness (using the const-cast, for example),
-you may safely assume that each copy is different. To modify an array you have to call
+only a constant access to elements. So far you don't violate this constness (using the const-cast, for example),
+you may safely assume that each copy is different. To modify the array you have to call
 the method <b>modify()</b> (or <b>modifyReverse()</b>). 
 This method "unshares" the array, if necessary, and gives a non-constant access to elements.
 <b>modifyReverse()</b> is doing the same thing as <b>modify()</b>, but gives a "reversed" range of elements.
@@ -991,7 +991,7 @@ constructor.
 <p>
 <b>flat()</b> rebuilds the internal data storage, making it continuous. It returns the range of elements.
 This range remains valid after extend or append operations (but may become invalid after any other
-modifying operation).
+modifying operations).
 </p>
 
 <pre>
@@ -1350,9 +1350,8 @@ class <span class="Att">CreateGuard_nothrow</span> : NoCopy
 </pre>
 
 <p>
-<b>CreateGuard_nothrow</b> is a "no-throw" variant of the <b>CreateGuard</b>. It is used for creation
-a range of objects with the given length, if we are sure there will be no exceptions during the objects 
-construction.  
+<b>CreateGuard_nothrow</b> is a "no-throw" variant of the <b>CreateGuard</b>. It is used for the creation of
+a range of objects with the given length, if there will be no exceptions during the objects construction.  
 </p>
 
 <pre>
@@ -1371,7 +1370,7 @@ class <span class="Att">CreateGuardNoThrow</span> : NoCopy
 
 <p>
 <b>CreateGuardNoThrow</b> is the one of the <b>CreateGuard</b> and <b>CreateGuard_nothrow</b>, depending
-on the <b>no_throw</b> template argument.
+on the <b>no_throw</b> template parameter.
 </p>
 
 <p>
