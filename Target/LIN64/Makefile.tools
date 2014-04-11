@@ -39,10 +39,15 @@ RM = @echo RM ; $(RM_)
 
 # options
 
-NOWARN = -Wno-non-virtual-dtor -Wno-switch -Wno-type-limits -Wno-enum-compare -Wno-missing-field-initializers \
-         -Wno-delete-non-virtual-dtor
+NOWARN = -Wno-non-virtual-dtor \
+         -Wno-switch \
+         -Wno-type-limits \
+         -Wno-enum-compare \
+         -Wno-missing-field-initializers \
+         -Wno-delete-non-virtual-dtor \
 
-CCINC = -I$(CCORE_ROOT) -I$(CCORE_ROOT)/HCore -I$(CCORE_ROOT)/Target/$(CCORE_TARGET)
+
+CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) -I$(CCORE_ROOT) -I$(CCORE_ROOT)/HCore 
 
 CCOPT = -c -pthread -std=c++11 -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
 

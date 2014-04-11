@@ -47,7 +47,7 @@ NOWARN = -Wno-non-virtual-dtor \
          -Wno-delete-non-virtual-dtor \
 
 
-CCINC = -I$(CCORE_ROOT) -I$(CCORE_ROOT)/HCore -I$(CCORE_ROOT)/Target/$(CCORE_TARGET)
+CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) -I$(CCORE_ROOT) -I$(CCORE_ROOT)/HCore 
 
 CCOPT = -c -std=c++11 -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
 

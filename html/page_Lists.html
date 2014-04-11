@@ -137,6 +137,7 @@ Linear list has a top element and terminated with a null pointer.
 </p>
 
 <pre>
+
 template &lt;SLink&lt;T&gt; T::* LinkMember&gt;
 struct <span class="Att">LinearAlgo</span>
  {
@@ -151,6 +152,7 @@ struct <span class="Att">LinearAlgo</span>
   static void InsNext(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
      
   static T * DelNext(T *place); // place!=0 linked, return obj
+
 </pre>
 
 <p>
@@ -175,6 +177,7 @@ There are three inner types: <b>Cur</b>, <b>Top</b> and <b>FirstLast</b>.
 </p>
 
 <pre>
+
   // ptr -> next -> ... -> null
     
   struct <span class="Att">Cur</span>
@@ -199,6 +202,7 @@ There are three inner types: <b>Cur</b>, <b>Top</b> and <b>FirstLast</b>.
       
     void operator ++ () { ptr=Link(ptr).next; }
    };
+
 </pre>
 
 <p>
@@ -207,6 +211,7 @@ In fact, it may be any element or null pointer.
 </p>
 
 <pre>
+
   // top -> next -> ... -> null
     
   struct <span class="Att">Top</span>
@@ -239,6 +244,7 @@ In fact, it may be any element or null pointer.
        
     T * del();
    };
+
 </pre>
 
 <p>
@@ -254,7 +260,7 @@ In fact, it may be any element or null pointer.
 </p>
 
 <p>
-<b>start()</b> returns a cursor on the list.
+<b>start()</b> returns a cursor on the full list.
 </p>
 
 <p>
@@ -272,6 +278,7 @@ In fact, it may be any element or null pointer.
 <img src="SList2.png" />
 
 <pre>
+
   // first -> next -> ... -> last -> null
     
   struct <span class="Att">FirstLast</span>
@@ -308,6 +315,7 @@ In fact, it may be any element or null pointer.
     T * del_first();
    };
  };
+
 </pre>
 
 <p>
@@ -324,7 +332,7 @@ and the second to the last. We call the top element first in this case.
 </p>
 
 <p>
-<b>start()</b> returns a cursor on the list.
+<b>start()</b> returns a cursor on the full list.
 </p>
 
 <p>
@@ -353,6 +361,7 @@ in this case.
 </p>
 
 <pre>
+
 template &lt;SLink&lt;T&gt; T::* LinkMember&gt;
 struct <span class="Att">CircularAlgo</span>
  {
@@ -367,6 +376,7 @@ struct <span class="Att">CircularAlgo</span>
   static void InsNext(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
      
   static T * DelNext(T *place); // place!=0 linked
+
 </pre>
 
 <p>
@@ -395,6 +405,7 @@ There are two inner types: <b>Cur</b> and <b>Top</b>.
 </p>
 
 <pre>
+
   // ptr -> next -> ... -> bottom
     
   struct <span class="Att">Cur</span>
@@ -420,6 +431,7 @@ There are two inner types: <b>Cur</b> and <b>Top</b>.
       
     void operator ++ ();
    };
+
 </pre>     
 
 <p>
@@ -427,6 +439,7 @@ There are two inner types: <b>Cur</b> and <b>Top</b>.
 </p>
 
 <pre>
+
   // bottom -> top -> next -> ... -> bottom
     
   struct <span class="Att">Top</span>
@@ -464,6 +477,7 @@ There are two inner types: <b>Cur</b> and <b>Top</b>.
     T * rotate() // return top element moved to bottom
    };
  };
+
 </pre>
 
 <p>
@@ -479,7 +493,7 @@ There are two inner types: <b>Cur</b> and <b>Top</b>.
 </p>
 
 <p>
-<b>start()</b> returns a cursor on the list.
+<b>start()</b> returns a cursor on the full list.
 </p>
 
 <p>
@@ -509,6 +523,7 @@ Linear list has a top element and terminated with null pointers. Double link all
 </p>
 
 <pre>
+
 template &lt;DLink&lt;T&gt; T::* LinkMember&gt;
 struct <span class="Att">LinearAlgo</span>
  {
@@ -565,6 +580,7 @@ struct <span class="Att">LinearAlgo</span>
   // null &lt;- ... &lt;- place -&gt; ... -&gt; null
     
   static void ReplaceNode(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
+
 </pre>
 
 <p>
@@ -617,6 +633,7 @@ There are four inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b> and <b>FirstLa
 </p>
 
 <pre>
+
   // ptr -> next -> ... -> null
     
   struct <span class="Att">Cur</span>
@@ -643,6 +660,7 @@ There are four inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b> and <b>FirstLa
       
     void operator -- () { ptr=Link(ptr).prev; }
    };
+
 </pre>
 
 <p>
@@ -651,6 +669,7 @@ In fact, it may be any element or null pointer.
 </p>
 
 <pre>
+
   // null &lt;- ... &lt;- prev &lt;- ptr
     
   struct <span class="Att">RevCur</span>
@@ -677,6 +696,7 @@ In fact, it may be any element or null pointer.
       
     void operator -- () { ptr=Link(ptr).next; }
    };
+
 </pre>
 
 <p>
@@ -685,6 +705,7 @@ In fact, it may be any element or null pointer.
 </p>
 
 <pre>
+
   // null &lt;- top -&gt; next -&gt; ... -&gt; null
     
   struct <span class="Att">Top</span>
@@ -729,6 +750,7 @@ In fact, it may be any element or null pointer.
        
     T * del_and_move(Cur &amp;cur); // +cur
    };
+
 </pre>
 
 <p>
@@ -744,7 +766,7 @@ In fact, it may be any element or null pointer.
 </p>
 
 <p>
-<b>start()</b> returns a forward cursor on the list.
+<b>start()</b> returns a forward cursor on the full list.
 </p>
 
 <p>
@@ -784,6 +806,7 @@ moves the cursor to the next element. The pointer to the object is returned.
 </p>
 
 <pre>
+
   // null &lt;- first -&gt; next -&gt; ... -&gt; last -&gt; null
     
   struct <span class="Att">FirstLast</span>
@@ -844,6 +867,7 @@ moves the cursor to the next element. The pointer to the object is returned.
     T * del_and_move(RevCur &amp;cur); // +cur
    };
  };
+
 </pre>
 
 <p>
@@ -860,11 +884,11 @@ and the second to the last. We call the top element first in this case.
 </p>
 
 <p>
-<b>start()</b> returns a forward cursor on the list.
+<b>start()</b> returns a forward cursor on the full list.
 </p>
 
 <p>
-<b>start_rev()</b> returns a backward cursor on the list.
+<b>start_rev()</b> returns a backward cursor on the full list (i.e. it points to the last element).
 </p>
 
 <p>
@@ -909,7 +933,7 @@ The object becomes a member of the list, the element becomes unlinked. Cursor is
 <p>
 <b>del_and_move()</b> deletes the element from the list at the current cursor position and
 moves the cursor. The pointer to the object is returned. If the cursor is forward, it moves to the 
-next element. If the cursor is backward, it moves to the previous element. I.g. each cursor type
+next element. If the cursor is backward, it moves to the previous element. I.e. each cursor type
 moves to the next position in respect to the cursor movement direction.
 </p>
 
@@ -922,6 +946,7 @@ Circular list has a top element, the last element is linked to the top. Double l
 </p>
 
 <pre>
+
 template &lt;DLink&lt;T&gt; T::* LinkMember&gt;
 struct <span class="Att">CircularAlgo</span>
  {
@@ -972,6 +997,7 @@ struct <span class="Att">CircularAlgo</span>
   // top &lt;- ... &lt;- place -&gt; ... -&gt; top
     
   static void ReplaceNode(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
+
 </pre>
 
 <p>
@@ -1027,6 +1053,7 @@ There are three inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b>.
 </p>
      
 <pre>
+
   // ptr -&gt; next -&gt; ... -&gt; last
     
   struct <span class="Att">Cur</span>
@@ -1058,6 +1085,7 @@ There are three inner types: <b>Cur</b>, <b>RevCur</b>, <b>Top</b>.
        
     void ins_after(T *obj); // +, obj!=0 unlinked
    };
+
 </pre>     
 
 <p>
@@ -1070,6 +1098,7 @@ after the current (non-null) position.
 </p>
 
 <pre>
+
   // first &lt;- ... &lt;- prev &lt;- ptr
     
   struct <span class="Att">RevCur</span>
@@ -1101,6 +1130,7 @@ after the current (non-null) position.
       
     void ins_after(T *obj); // +, obj!=0 unlinked
    };
+
 </pre>     
 
 <p>
@@ -1113,6 +1143,7 @@ after (before with respect to the cursor direction) the current (non-null) posit
 </p>
 
 <pre>
+
   // top -&gt; ... -&gt; obj -&gt; ... -&gt; last -&gt; top
     
   struct <span class="Att">Top</span>
@@ -1178,6 +1209,7 @@ after (before with respect to the cursor direction) the current (non-null) posit
     T * rotate_backward(); // return bottom element moved to top
    };
  };
+
 </pre>
 
 <p>
@@ -1193,11 +1225,11 @@ after (before with respect to the cursor direction) the current (non-null) posit
 </p>
 
 <p>
-<b>start()</b> returns a forward cursor on the list.
+<b>start()</b> returns a forward cursor on the full list.
 </p>
 
 <p>
-<b>start_rev()</b> returns a backward cursor on the list.
+<b>start_rev()</b> returns a backward cursor on the full list (i.e. it points to the last element).
 </p>
 
 <p>
