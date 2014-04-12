@@ -31,7 +31,8 @@
 <h2>Disclaimer</h2>
 
 <p>
-<b>CCore</b> is released without known bugs or defects. This code is made "as best as possible" and has 
+<b>CCore</b> is released without known bugs or defects  (but intermediate states of the repository between release tags 
+MAY be broken). This code is made "as best as possible" and has 
 a top quality both in design and implementation. It's a reliable piece of software. 
 So if you experience troubles, <b>CCore</b> code is the last place to look for bugs. This does not mean,
 naturally, that I do guarantee the code is completely bug-free and absolutely perfect. That is not
@@ -52,7 +53,7 @@ We use the term "host application" to designate an application, running on a hos
 the following targets:</p>
 <ul>
 <li><b>WIN32</b> &mdash; default host target,</li>
-<li><b>IXDP465</b> &mdash; stand-alone target for the Intel IXDP465 development board,</li>
+<li><b>IXDP465</b> &mdash; stand-alone target for the Intel IXDP465 development board (this target is obsolete),</li>
 <li><b>BeagleBoneBlack</b> &mdash; stand-alone target for the <a href="http://beagleboard.org/Products/BeagleBone%20Black">BeagleBone Black</a> device</li>
 <li><b>Vanilla-H</b> &mdash; host target template,</li>
 <li><b>Vanilla-X</b> &mdash; stand-alone target template,</li>
@@ -160,7 +161,7 @@ The packages you need are: <b>g++</b>, <b>libaio-dev</b>, <b>libgmp-dev</b> (dou
 Once you have installed required packages, place <b>CCore</b> at a desired directory. You need <b>/bin</b> subdirectory 
 in your home directory for tools, it must be included in the search path. You have to replace the <b>Makefile</b>
 in the <b>CCore</b> root by the <b>Makefile.LIN64</b>. You also have to edit the file <b>Makefile.host</b>:
-change from 
+change it from 
 </p>
 
 <pre>
@@ -195,7 +196,7 @@ To use <b>WIN64</b>, you need to install <b>cygwin64</b> with <b>gcc-4.8.1</b> (
 Once you have installed required packages, place <b>CCore</b> at a desired directory. You need <b>/bin</b> subdirectory 
 in your home directory for tools, it must be included in the search path. You have to replace the <b>Makefile</b>
 in the <b>CCore</b> root by the <b>Makefile.WIN64</b>. You also have to edit the file <b>Makefile.host</b>:
-change from 
+change it from 
 </p>
 
 <pre>

@@ -28,7 +28,7 @@
 
 <h1>CCore installation</h1>
 
-<h2>Cook book</h2>
+<h2>Cook book (updated according the latest cygwin and CCore-1.08 development)</h2>
 
 <p>
 
@@ -38,32 +38,13 @@ The following ingredients are required:</p>
 
 <ul>
 <li><a href="http://www.cygwin.com">Cygwin</a>,</li>
-<li>compiler set,</li>
 <li><a href="http://www.eclipse.org">Eclipse (optional)</a>,</li>
 <li><b>CCore</b> package (or repository).</li>
 </ul>
 
 <p>
-
-Install <b>Cygwin</b> first. Include <b>make</b> and <b>bash</b> in your installation.<br />
-If you are not familiar with this platform, spend some time to learn it.
-
-</p>
-<p>
-
-Unpack the compiler set (provided as the archive <b>opt.7z</b> located in the <u>git@github.com:SergeyStrukov/CCoreOpt.git</u>) in the <b>Cygwin root</b>.<br />
-You will need <a href="http://www.7-zip.org/">7-Zip</a> archive manager.
-You will get the <b>opt</b> directory with several <b>gcc</b> compilers.<br />
-You can also build compilers yourself. See <a href="#build-gcc">below</a> for instructions.
-
-</p>
-<p>
-
-Copy 4 <b>dll</b>s from the directory <b>/opt/gcc-4.7.1/bin</b> (or from another newer host compiler directory) to
-the <b>/bin</b> directory (all paths here are <b>Cygwin</b> paths, <b>dll</b>s are <b>cyggcc_s-1.dll,
-cygssp-0.dll, cygstdc++-6.dll, cygquadmath-0.dll</b>).<br />
-It is necessary to make host programs runnable.
-
+Install <b>Cygwin</b> first. Include <b>make</b>, <b>bash</b> and <b>g++</b> in your installation.<br />
+If you are not familiar with this platform, spend some time to learn it. <b>G++</b> version must be at least <b>4.8.2</b>.
 </p>
 <p>
 
@@ -87,11 +68,11 @@ Go to the <b>CCore root</b> directory. The following commands are used to prepar
 <li><span class="Cmd">make warn</span> &mdash; to build all and put errors/warnings into the file <b>warn.txt</b>,</li>
 <li><span class="Cmd">make clean</span> &mdash; to clean,</li>
 <li><span class="Cmd">make list</span> &mdash; to build source file lists; you will need this command if you alter source file set,
-<span class="Alert">before using it you have, however, build <b>CCore</b> tools</span>.</li>
+<span class="Alert">before using it you have, however, to build <b>CCore</b> tools</span>.</li>
 </ul>
 
 <p>
-Cooking for <b>cygwin64</b> is much simpler. See <a href="page_Introduction.html#WIN64">these notes</a> for details.
+Cooking for <b>cygwin64</b> is similar. See <a href="page_Introduction.html#WIN64">these notes</a> for details.
 </p>
 
 <h2>Post-install notes</h2>
@@ -108,10 +89,9 @@ and tests. You can use the following <a href="http://sourceforge.net/projects/co
 
 <p>
 You can use <b>Eclipse</b> as an <b>IDE</b> to work with <b>CCore</b> and <b>CCore</b>-based projects. <b>CCore</b> package includes
-the archive <b>eclipse-Indigo.7z</b> with the <b>Eclipse Indigo</b> workbench and 
-<b>eclipse-Juno.7z</b> with the <b>Eclipse Juno</b> workbench. 
+the archive <b>eclipse-Kepler.7z</b> with the <b>Eclipse Kepler</b> workbench. 
 You will need <a href="http://www.ms-studio.com/FontSales/anonymouspro.html">Anonymouse Pro</a> 
-font for text editor. Before using this workbench you have to adjust some settings.
+font for the text editor. Before using this workbench you have to adjust some settings.
 </p>
 
 <p>
@@ -135,131 +115,6 @@ Correct paths in the <b>Main</b> and <b>Arguments</b> tabs.
 <p>
 You likely would have to refresh linked resources, select each project and press <b>F5</b>.
 Finally, customize <b>Eclipse</b> as you like.
-</p>
-
-<h2><a id="build-gcc">Building compilers</a></h2>
-
-<p>
-Building compilers is a multi-step process. So be patient and accurate.
-</p>
-
-<p>
-Before all, you have to download, build and install some libraries and tools:
-</p>
-
-<ul>
-<li>m4-1.4.16</li>
-<li>gmp-5.0.1</li>
-<li>mpfr-3.0.0</li>
-<li>mpc-0.8.2</li>
-<li>ppl-0.11.2</li>
-</ul>
-
-<p>
-You may try a newer versions.
-</p>
-
-<p>
-Building these packages are similar. You have to download source code, unpack it. Then create an empty build folder.
-I am using directory <b>Download</b> to store the source and subdirectory <b>Build</b> for build directories. I.g.
-for the tool XXX the source is located in the <b>Download/XXX</b> and the build directory is <b>Download/Build/XXX</b>.
-Copy the file <b>MakeCfg</b> there. Then from the <b>Cygwin</b> console issue commands:
-</p>
-
-<ul>
-<li>make -f MakeCfg</li>
-<li>make [-j 8]</li>
-<li>make install</li>
-</ul>
-
-<p>
-You can find <b>MakeCfg</b> files for each tool in the repository <u>git@github.com:SergeyStrukov/CCoreOpt.git</u> alone with
-the <b>opt.7z</b> archive. You should check and adapt the configuration options in these files.
-</p>
-
-<p>
-The next step is the building the host compiler <b>gcc-4.7.1</b>. The same way. Once you've installed it you have the host compiler 
-for <b>CCore</b>.
-If you don't need a cross-compiler for stand-alone targets you are finished.
-</p>
-
-<p>
-The last step is the building the cross-compiler for the target <b>IXDP465</b>. The cross-compiler is specific for the target.
-</p>
-
-<p>
-First, <b>binutils-2.20</b> must be built. To do this you have to create the <b>sysroot</b> directory: 
-<b>/opt/gcc-4.7.1-cross/armeb/sysroot</b> (<b>Cygwin</b> path). For building you have to copy there include files. 
-Build <b>sysroot</b> directory is located at <b>&lt;CCore&gt;/Target/IXDP465/sysroot</b>. Include files are in the directory
-<b>usr/include</b>. Before doing standard steps you have to replace two source files in the source folders. The files are <b>elf.sc</b> 
-and <b>armelf.sh</b>, they are located in the <b>&lt;SRC&gt;/ld/scripttempl/elf.sc</b> and <b>&lt;SRC&gt;/ld/emulparams/armelf.sh</b>. Replacement files 
-are stored with the <b>MakeCfg</b> file. These files affect the target linker <b>ld</b>. We need a special default linker script for it.
-</p>
-
-<p>
-Once you have <b>binutils</b> built and installed, you may start building the cross-compiler itself. I am using a 
-separate source directory for this (<b>arm-gcc-4.7.1</b>), because we have to make some modifications in the source files.
-</p>
-
-<p>
-File <b>&lt;SRC&gt;/libgcc/config/libbid/bid_conf.h</b>. Ensure this:
-</p>
-
-<pre>
-#define DECIMAL_GLOBAL_EXCEPTION_FLAGS_ACCESS_FUNCTIONS <span class ="Alert">0</span>
-</pre>
-
-<p>
-File <b>&lt;SRC&gt;/libgcc/config/arm/crti.S</b>. Rename labels <b>_init</b> to <b>__std_init_global</b> and <b>_fini</b> to 
-<b>__std_exit_global</b> (each occurrence).
-</p>
-
-<p>
-File <b>&lt;SRC&gt;/libgcc/unwind-sjlj.c</b>. Change the correspondent lines to this:
-</p>
-
-<pre>
-/* Single threaded fallback chain.  */
-static struct SjLj_Function_Context *fc_static <span class ="Alert">__attribute__((section(".context_data"))) =0</span> ;
-</pre>
-
-<p>
-File <b>&lt;SRC&gt;/libstdc++-v3/libsupc++/eh_globals.cc</b>.
-</p>
-
-<pre>
-// Single-threaded fallback buffer.
-static __cxa_eh_globals eh_globals <span class ="Alert">__attribute__((section(".context_data"))) = {} </span>;
-</pre>
-
-<p>
-Replace files <b>&lt;SRC&gt;/libstdc++-v3/libsupc++/eh_alloc.cc</b>,
-<b>&lt;SRC&gt;/libstdc++-v3/libsupc++/pure.cc</b>, <b>&lt;SRC&gt;/libstdc++-v3/config/io/basic_file_stdio.cc</b>.
-</p>
-
-<p>
-Then fix configuration scripts. Find in <b>&lt;SRC&gt;/configure</b> the line <b>skipdirs=</b> and replace it with 
-<b>skipdirs="target-libiberty"</b>. Then correct <b>&lt;SRC&gt;/libstdc++-v3/configure</b>. This is a tricky part, you have to find
-a good location and place there the line <b>gcc_no_link=no</b>. In my version (<b>gcc-4.7.1</b>) it is at line number 10457 after the line
-<b>need_version=unknown</b>. You also have to comment out the line at "No support for this host/target combination" (line number 64104).
-
-</p>
-
-<p>
-Now run configuration using <b>make -f MakeCfg</b>. After completion fix the generated Makefile, find and 
-correct the following variables (append option -mbig-endian):
-</p>
-
-<pre>
-CFLAGS_FOR_TARGET = -g -O2 -mbig-endian
-CXXFLAGS_FOR_TARGET = -g -O2 -mbig-endian
-
-GOCFLAGS_FOR_TARGET = -O2 -g -mbig-endian
-</pre>
-
-<p>
-Make, install. After you have the cross-compiler, build library <b>libc.a</b> and <b>crt0.o</b>. 
-Go to the build <b>sysroot</b> directory and run makefile there. Then copy built files to the destination <b>sysroot</b>.
 </p>
 
 </body>
