@@ -80,6 +80,7 @@ enum Bits_Config : uint32
  {
   Config_Start  = 0x00000001,
   Config_Stop   = 0x00000002,
+  Config_A10    = 0x00000100,
   Config_TXMode = 0x00000200,
   Config_Master = 0x00000400,
   Config_Enable = 0x00008000
@@ -161,6 +162,22 @@ struct Type_Config
           out.put('|');
 
           Putobj(out,"Stop");
+         }
+      }
+
+    if( value&Config_A10 )
+      {
+       if( first )
+         {
+          Putobj(out,"A10");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"A10");
          }
       }
 
@@ -726,13 +743,139 @@ struct Type_SlaveAddress
    }
  };
  
+/* struct Type_Counter */ 
+
+struct Type_Counter
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_Counter(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_Counter & setTo(Bar &bar) { bar.set_Counter(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_Counter & setTo(Bar &bar,uint32 ind) { bar.set_Counter(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_Counter & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_Count() const
+   {
+    return (value>>0)&0xFFFF;
+   }
+ 
+  Type_Counter & set_Count(Type field)
+   {
+    value=((field&0xFFFF)<<0)|(value&0xFFFF0000);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"Count(#;)",get_Count());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Count(#;)",get_Count());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_Data */ 
+
+struct Type_Data
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_Data(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_Data & setTo(Bar &bar) { bar.set_Data(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_Data & setTo(Bar &bar,uint32 ind) { bar.set_Data(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_Data & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_Byte() const
+   {
+    return (value>>0)&0xFF;
+   }
+ 
+  Type_Data & set_Byte(Type field)
+   {
+    value=((field&0xFF)<<0)|(value&0xFFFFFF00);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"Byte(#;)",get_Byte());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Byte(#;)",get_Byte());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct Type_IRQStatus */ 
 
 enum Bits_IRQStatus : uint32
  {
   IRQStatus_BusLost      = 0x00000001,
   IRQStatus_NACK         = 0x00000002,
-  IRQStatus_RegReady     = 0x00000004,
+  IRQStatus_Complete     = 0x00000004,
   IRQStatus_RXReady      = 0x00000008,
   IRQStatus_TXReady      = 0x00000010,
   IRQStatus_BusFree      = 0x00000100,
@@ -822,11 +965,11 @@ struct Type_IRQStatus
          }
       }
 
-    if( value&IRQStatus_RegReady )
+    if( value&IRQStatus_Complete )
       {
        if( first )
          {
-          Putobj(out,"RegReady");
+          Putobj(out,"Complete");
 
           first=false;
          }
@@ -834,7 +977,7 @@ struct Type_IRQStatus
          {
           out.put('|');
 
-          Putobj(out,"RegReady");
+          Putobj(out,"Complete");
          }
       }
 
@@ -1086,6 +1229,30 @@ struct I2CBar
   static Type_SlaveAddress null_SlaveAddress() { return Type_SlaveAddress(0); }
  
   static Type_SlaveAddress ones_SlaveAddress() { return Type_SlaveAddress(Type_SlaveAddress::Type(-1)); }
+ 
+  //--- Counter
+
+  Type_Counter get_Counter() { return Type_Counter(rw.template get<uint32>(0x98)); }
+ 
+  void set_Counter(Type_Counter value) { rw.set(0x98,value.value); }
+ 
+  Setter<Type_Counter> to_Counter() { return Setter<Type_Counter>(rw,0x98); }
+ 
+  static Type_Counter null_Counter() { return Type_Counter(0); }
+ 
+  static Type_Counter ones_Counter() { return Type_Counter(Type_Counter::Type(-1)); }
+ 
+  //--- Data
+
+  Type_Data get_Data() { return Type_Data(rw.template get<uint32>(0x9C)); }
+ 
+  void set_Data(Type_Data value) { rw.set(0x9C,value.value); }
+ 
+  Setter<Type_Data> to_Data() { return Setter<Type_Data>(rw,0x9C); }
+ 
+  static Type_Data null_Data() { return Type_Data(0); }
+ 
+  static Type_Data ones_Data() { return Type_Data(Type_Data::Type(-1)); }
  
   //--- IRQStatus
 

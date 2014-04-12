@@ -4,4 +4,5 @@
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.s
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.s
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.s
+../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.s
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysAtomic.s

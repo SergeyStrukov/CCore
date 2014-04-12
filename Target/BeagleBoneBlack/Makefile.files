@@ -90,6 +90,7 @@ obj/DevPlanInit.o \
 obj/DevRW.o \
 obj/DevTick.o \
 obj/DevTimer.o \
+obj/DevWaitForInterrupt.o \
 obj/DynArray.o \
 obj/EchoDevice.o \
 obj/ElementPool.o \
@@ -383,6 +384,7 @@ obj/DevPlanInit.s \
 obj/DevRW.s \
 obj/DevTick.s \
 obj/DevTimer.s \
+obj/DevWaitForInterrupt.s \
 obj/DynArray.s \
 obj/EchoDevice.s \
 obj/ElementPool.s \
@@ -676,6 +678,7 @@ obj/DevPlanInit.dep \
 obj/DevRW.dep \
 obj/DevTick.dep \
 obj/DevTimer.dep \
+obj/DevWaitForInterrupt.dep \
 obj/DynArray.dep \
 obj/EchoDevice.dep \
 obj/ElementPool.dep \
@@ -883,6 +886,7 @@ obj/AM3359.CP15CNT.s.o \
 obj/DevInt.s.o \
 obj/DevPlanInit.s.o \
 obj/DevRW.s.o \
+obj/DevWaitForInterrupt.s.o \
 obj/Quick.s.o \
 obj/SysAtomic.s.o \
 
@@ -1161,6 +1165,9 @@ obj/DevTick.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevTimer.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevWaitForInterrupt.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
@@ -2035,6 +2042,9 @@ obj/DevTick.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 obj/DevTimer.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DevWaitForInterrupt.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2907,6 +2917,9 @@ obj/DevTick.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 obj/DevTimer.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTimer.o $< -MF $@
 
+obj/DevWaitForInterrupt.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevWaitForInterrupt.o $< -MF $@
+
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@
 
@@ -3519,6 +3532,9 @@ obj/DevPlanInit.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/DevRW.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/DevWaitForInterrupt.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/Quick.s.o : ../../Target/BeagleBoneBlack/CCore/src/base/Quick.s

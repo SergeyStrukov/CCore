@@ -18,7 +18,7 @@
 
 #include <CCore/inc/dev/DevIntHandle.h>
 
-#include <CCore/inc/sys/SysAtomic.h>
+#include <CCore/inc/Task.h>
  
 namespace CCore {
 namespace Dev {
@@ -57,17 +57,33 @@ class I2C : public Funchor_nocopy
     {
      StartRX,
      StartTX,
+     StartTXRX,
      DoRX,
      DoTX,
-     CompleteOk,
-     CompleteError
+     DoTXRX,
+     Complete,
+     ErrorRXLen,
+     ErrorTXLen,
+     ErrorBusLost,
+     ErrorNACK,
+     ErrorTimeout
     };
-   
+
+   MSec timeout = DefaultTimeout ;
+   uint32 threshold;
    State state;
    PtrLen<uint8> rx_buf;
    PtrLen<const uint8> tx_buf;
+   
+   Sem sem;
   
   private: 
+   
+   void cancel(State state);
+   
+   void pumpRX(ulen count);
+   
+   void pumpTX(ulen count);
    
    void handle_int();
    
@@ -91,11 +107,27 @@ class I2C : public Funchor_nocopy
    
    // methods
    
-   void setSlave(uint8 address);
+   void setSlave7(uint8 address); // 7 bit
    
-   bool read(uint8 *ptr,ulen len);
+   void setSlave10(uint16 address); // 10 bit
    
-   bool write(const uint8 *ptr,ulen len);
+   void setTimeout(MSec timeout_) { timeout=timeout_; }
+   
+   bool tryRead(PtrLen<uint8> buf);
+   
+   bool tryWrite(PtrLen<const uint8> buf);
+   
+   bool tryExchange(PtrLen<const uint8> out_buf,PtrLen<uint8> in_buf);
+
+   StrLen getStateDesc();
+   
+   // advanced
+   
+   void read(PtrLen<uint8> buf);
+   
+   void write(PtrLen<const uint8> buf);
+   
+   void exchange(PtrLen<const uint8> out_buf,PtrLen<uint8> in_buf);
  };
 
 } // namespace Dev

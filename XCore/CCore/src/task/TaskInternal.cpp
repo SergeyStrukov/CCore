@@ -26,6 +26,8 @@
 
 #include <CCore/inc/sys/SysLog.h>
 #include <CCore/inc/sys/SysCon.h>
+
+#include <CCore/inc/dev/DevWaitForInterrupt.h>
  
 namespace CCore {
 
@@ -162,7 +164,7 @@ class Task::Internal::IdleTask : public Task
    
    virtual void entry()
     {
-     while( run_flag );
+     while( run_flag ) Dev::WaitForInterrupt();
     }
     
    virtual void exit()
