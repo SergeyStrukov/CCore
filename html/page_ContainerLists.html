@@ -95,6 +95,7 @@ Constructor forwards its arguments to the node allocator. Destructor destroys th
 </p>
 
 <pre>
+
    // content
 
    <b>[For some Elem]</b>
@@ -180,7 +181,7 @@ List has a set of methods to access some specific list elements. They are follow
 <p>
 To access list elements a list cursor can be used. Any list always has a forward cursor.
 Methods <b>getStart...()</b> return a forward cursor, positioned on the first element, if any.
-For double linked lists the cursor type has the <b>operator --</b> to move back.
+For double linked lists the cursor type has the <b>operator --</b> to move backward.
 </p>
 
 <p>
@@ -250,6 +251,7 @@ methods <b>reverse...()</b> are provided.
 </p>
 
 <pre>
+
    // ins/del
 
    <b>[ins/del methods]</b>
@@ -266,6 +268,7 @@ destroys all elements, the number of destroyed elements is returned.
 </p>
 
 <pre>
+
    // apply
    
    template &lt;class FuncInit&gt;

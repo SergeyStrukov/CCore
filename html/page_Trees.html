@@ -37,17 +37,17 @@
 <h3>Tree's brief</h3>
 
 <p>
-Binary trees is an important class of data structures. Tree consists of the set of elements, each element
-has a unique key. Keys are comparable and form a linear ordered set. Non-empty tree has a root element and
-two subtrees: Lo and Hi. Elements in the Lo subtree have a lower keys than the root element. The same way,
-elements in the Hi subtree have a higher keys than the root element.
+Binary trees is an important class of data structures. A tree consists of a set of elements, each element
+has a unique key. Keys are comparable and form a linear ordered set. A non-empty tree has a root element and
+two subtrees: <b>Lo</b> and <b>Hi</b>. Elements in the <b>Lo</b> subtree have a lower keys than the root element. The same way,
+elements in the <b>Hi</b> subtree have a higher keys than the root element.
 </p>
 
 <img src="BinTree.png" />
 
 <p>
-Operations complexities are <b>O(tree height)</b>.
-To be efficient, tree must have a limited height. To achieve this there are different methods.
+Tree operation complexities are <b>O(tree height)</b>.
+To be efficient, a tree must have a limited height. To achieve this there are different methods.
 We use two most important of them: <b>Radix Tree</b> and <b>Red-Black Tree</b>. The first
 is applicable to the key types with the limited value range, like integral types.
 </p>
@@ -82,12 +82,14 @@ include one of this links in the class:
 </p>
 
 <pre>
+
 struct Node
  {
   TreeLink&lt;Node,unsigned&gt; link;
 
   ....
  };
+
 </pre>
 
 <p>
@@ -103,11 +105,12 @@ typedef TreeLink&lt;Node,unsigned&gt;::RadixAlgo<&amp;Node::link> Algo;
 <h4>TreeLink</h4>
 
 <p>
-The <b>TreeLink</b> is a simplest tree link. It has three members: pointers to the Lo and Hi subtrees and
+The <b>TreeLink</b> is a simplest tree link. It has three members: pointers to the <b>Lo</b> and <b>Hi</b> subtrees and
 the key. The key is unique across all tree.
 </p>
 
 <pre>
+
 template &lt;class T,class K&gt;
 struct <span class="Att">TreeLink</span> 
  {
@@ -121,6 +124,7 @@ struct <span class="Att">TreeLink</span>
    
   template &lt;TreeLink&lt;T,K&gt; T::* LinkMember&gt; struct RadixAlgo;
  };
+
 </pre>
 
 <p>
@@ -133,6 +137,7 @@ an unsigned integral type.
 </p>
 
 <pre>
+
 struct <span class="Att">BinAlgo</span>
  {
    // node!=0
@@ -147,6 +152,7 @@ struct <span class="Att">BinAlgo</span>
 </p>
 
 <pre>
+
   // Find
   
   static T * Find(T *root,KRef key); // == key
@@ -177,7 +183,7 @@ or null if the required element does not exist.
 </p>
 
 <p>
-<b>FindMin(,key)</b> is searching for the element with the minimum key in the tree, greater or equal the 
+<b>FindMin(,key)</b> is searching for the element with the minimum key in the tree, greater or equal than the 
 given <b>key</b>.
 </p>
 
@@ -186,11 +192,12 @@ given <b>key</b>.
 </p>
 
 <p>
-<b>FindMax(,key)</b> is searching for the element with the maximum key in the tree, less or equal the 
+<b>FindMax(,key)</b> is searching for the element with the maximum key in the tree, less or equal than the 
 given <b>key</b>.
 </p>
 
 <pre>
+
   // Locate
   
   static T ** Locate(T **root_ptr,KRef key);
@@ -217,6 +224,7 @@ These functions are required by the <b>Del...()</b> implementation, you probably
 </p>
 
 <pre>
+
   // Del 
    
   static T * DelRoot(T **root_ptr); // (*root_ptr)!=0
@@ -254,6 +262,7 @@ The remaining <b>Del...()</b> functions search the element like the <b>Find...()
 </p>
 
 <pre>
+
   // struct NodePtr
   
   struct <span class="Att">NodePtr</span>
@@ -277,6 +286,7 @@ return <b>locate...()</b> results.
 </p>
 
 <pre>
+
   // struct Root
   
   struct <span class="Att">Root</span>
@@ -334,14 +344,16 @@ return <b>locate...()</b> results.
     void del(T *node) { Del(&amp;root,node); }
    };
  };
+
 </pre>
 
 <p>
-<b>Root</b> encapsulates a root pointer and tree operations. The methods are direct calls of the
+<b>Root</b> encapsulates a root pointer and tree operations. Its methods are direct calls of the
 correspondent functions.
 </p>
 
 <pre>
+
 struct <span class="Att">RadixAlgo</span> : BinAlgo
  {
   // Med()
@@ -363,13 +375,13 @@ struct <span class="Att">RadixAlgo</span> : BinAlgo
     
      PrepareIns(T **root_ptr,K key);
      
-     PrepareIns(typename BinAlgo&lt;LinkMember,K&gt;::Root &amp;root,K key);
+     PrepareIns(Root &amp;root,K key);
      
      PrepareIns(T **root_ptr,K key,K kmin,K kmax);
      
-     PrepareIns(typename BinAlgo&lt;LinkMember,K&gt;::Root &amp;root,K key,K kmin,K kmax);
+     PrepareIns(Root &amp;root,K key,K kmin,K kmax);
      
-     void complete(T *node) { (this->*complete_func)(node); }
+     void complete(T *node);
    };
    
   // struct Check 
@@ -384,10 +396,11 @@ struct <span class="Att">RadixAlgo</span> : BinAlgo
     ....
    };
  };
+
 </pre>
 
 <p>
-<b>RadixAlgo</b> extends <b>BinAlgo</b> with <b>Radix Tree</b> functionality. The <b>K</b>
+<b>RadixAlgo</b> extends <b>BinAlgo</b> with a <b>Radix Tree</b> functionality. The <b>K</b>
 must be an unsigned integral type. Each <b>Radix Tree</b> has a value range. It may be the full value range
 of the given type <b>K</b>, or some shorter range. Anyway, you have to use the same range for all operations
 with a particular tree.
@@ -395,7 +408,7 @@ with a particular tree.
 
 <p>
 <b>Med()</b> is used to split a value range. If the tree value range is <b>[kmin,kmax]</b>, and 
-<b>Med(kmin,kmax) -> kmed</b>, then the Lo subtree has a value range <b>[kmin,kmed]</b> and the Hi  
+<b>kmed == Med(kmin,kmax)</b>, then the <b>Lo</b> subtree has a value range <b>[kmin,kmed]</b> and the <b>Hi</b>  
 subtree &mdash; <b>[kmed+1,kmax]</b>.
 </p>
 
@@ -414,7 +427,7 @@ with some tree structure modifications.
 <b>Check</b> performs the tree structure check. This type is for testing purpose mostly. Constructor
 takes the root pointer and the value range. If the tree is broken, an exception is thrown. Otherwise,
 <b>minval</b> and <b>maxval</b> members will be assigned with the minimum and maximum value of keys in the tree
-(or both 0 if the tree is empty).
+(or both <b>0</b> if the tree is empty).
 </p>
 
 <h4>TreeUpLink</h4>
@@ -424,10 +437,11 @@ The <b>TreeUpLink</b> is another tree link. It has the additional member <b>up</
 element. For the root node it is null. <span class="Alert">Keys are not unique.</span> 
 In fact, this kind of tree is a combination 
 of tree and list. There are two kind of links: normal tree links, and same-key links, where <b>lo==this</b>.
-And the Lo and Hi subtrees may have nodes with the same key as the root element.
+And the <b>Lo</b> and <b>Hi</b> subtrees may have nodes with the same key as the root element.
 </p>
 
 <pre>
+
 template &lt;class T,class K&gt;
 struct <span class="Att">TreeUpLink</span>
  {
@@ -442,6 +456,7 @@ struct <span class="Att">TreeUpLink</span>
    
   template &lt;TreeUpLink&lt;T,K&gt; T::* LinkMember&gt; struct RadixAlgo;
  };
+
 </pre>
 
 <p>
@@ -449,6 +464,7 @@ struct <span class="Att">TreeUpLink</span>
 </p>
 
 <pre>
+
 struct <span class="Att">BinAlgo</span>
  {
    // node!=0
@@ -471,10 +487,11 @@ struct <span class="Att">BinAlgo</span>
 </pre>
 
 <p>
-The family of <b>Find...()</b> functions are the same.
+The family of <b>Find...()</b> functions is the same.
 </p>
 
 <pre>
+
   // Del
   
   static T * DelRoot(T *root); // root!=0
@@ -494,10 +511,11 @@ The family of <b>Find...()</b> functions are the same.
 </pre> 
 
 <p>
-Again, the family of <b>Del...()</b> functions are the same.
+Again, the family of <b>Del...()</b> functions is the same.
 </p>
 
 <pre>
+
   // struct Root
   
   struct <span class="Att">Root</span>
@@ -547,6 +565,7 @@ Again, the family of <b>Del...()</b> functions are the same.
     void replace(T *place,T *obj); // place!=0 linked, obj!=0 unlinked   
    };
  };
+
 </pre>
 
 <p>
@@ -560,6 +579,7 @@ a member of the tree, the old one becomes unlinked. Keys are swapped.
 </p>
 
 <pre>
+
 struct <span class="Att">RadixAlgo</span> : BinAlgo
  {
   // Med()
@@ -625,6 +645,7 @@ struct <span class="Att">RadixAlgo</span> : BinAlgo
     ....
    };  
  };
+
 </pre>
 
 <p>
@@ -670,6 +691,7 @@ This flag determines arrows colors:
 </p>
 
 <pre>
+
 enum <span class="Att">RBFlag</span>
  {
   RBFlag_BlackBlack,
@@ -694,6 +716,7 @@ struct <span class="Att">RBTreeLink</span>
   
   template &lt;RBTreeLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct AltAlgo;
  };
+
 </pre>
 
 <p>
@@ -702,6 +725,7 @@ There are tree <b>Algorithm Package</b>s for this link: <b>BaseAlgo</b>, <b>Algo
 </p>
 
 <pre>
+
 struct <span class="Att">BaseAlgo</span>
  {
    // node!=0
@@ -734,6 +758,7 @@ struct <span class="Att">BaseAlgo</span>
     ....
    };
  };
+
 </pre>
 
 <p>
@@ -744,6 +769,7 @@ range variables. And it returns additional information: <b>height</b> is a black
 </p>
 
 <pre>
+
 struct <span class="Att">Algo</span> : BaseAlgo
  {
    // node!=0
@@ -770,6 +796,7 @@ There are four delete functions with the same semantic as <b>TreeLink</b> delete
 </p>
 
 <pre>
+
   // struct Root
   
   struct <span class="Att">Root</span>
@@ -819,6 +846,7 @@ correspondent functions.
 </p>
 
 <pre>
+
   // class PrepareIns
 
   class <span class="Att">PrepareIns</span> : NoCopy
@@ -836,6 +864,7 @@ correspondent functions.
      void complete(T *node);
    };
  };
+
 </pre>
 
 <p>
@@ -857,6 +886,7 @@ points to the parent tree element. For the root element it is null.
 </p>
 
 <pre>
+
 template &lt;class T,class K&gt;
 struct <span class="Att">RBTreeUpLink</span>
  {
@@ -872,6 +902,7 @@ struct <span class="Att">RBTreeUpLink</span>
   
   template &lt;RBTreeUpLink&lt;T,K&gt; T::* LinkMember,class KRef=K&gt; struct Algo;
  };
+
 </pre>
 
 <p>
@@ -881,10 +912,12 @@ has the additional method <b>replace()</b>.
 </p>
 
 <pre>
+
     // replace
     
     void replace(T *place,T *obj); // place!=0 linked, obj!=0 unlinked
    };
+
 </pre>
 
 <p>

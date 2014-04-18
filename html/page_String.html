@@ -37,6 +37,7 @@ The <b>String</b> is not zero-terminated.
 </p>
 
 <pre>
+
 class <span class="Att">String</span>
  {
    AtomicRefArray&lt;char&gt; data; 
@@ -75,6 +76,7 @@ class <span class="Att">String</span>
    
    String * objMove(Place&lt;void&gt; place); 
  };
+
 </pre>
 
 <p>
@@ -97,10 +99,11 @@ class <span class="Att">String</span>
 
 <p>
 <b>PrintString</b> can be used to print into "string". Printed characters are accumulated in
-some internal memory storage, once you finished, you can build a string using the method <b>close()</b>.
+some internal memory storage, once you have finished, you can build a string using the method <b>close()</b>.
 </p>
 
 <pre>
+
 class <span class="Att">PrintString</span> : public PrintBase
  {
    ....
@@ -117,6 +120,7 @@ class <span class="Att">PrintString</span> : public PrintBase
    
    void cleanup();
  };
+
 </pre>
 
 <p>

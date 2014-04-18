@@ -79,6 +79,7 @@ This class counts all cases "\r", "\n", "\r\n" as a line delimiters.
 </p>
 
 <pre>
+
 struct <span class="Att">TextPos</span>
  {
   ulen line;
@@ -97,6 +98,7 @@ struct <span class="Att">TextPos</span>
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>
@@ -120,7 +122,7 @@ Default constructor sets the initial text position: <b>line</b> is 1 and <b>col<
 </p>
 
 <p>
-The class is printable in the form "(line=&lt;line&gt;,col=&lt;col&gt;)".
+The class is printable in the form <b>"(line=&lt;line&gt;,col=&lt;col&gt;)"</b>.
 </p>
 
 <h4>CharPropTable</h4>
@@ -131,6 +133,7 @@ to each character. A derived class must initialize the table using protected met
 </p>
 
 <pre>
+
 template &lt;class CharClass,CharClass DefaultClass&gt;
 class <span class="Att">CharPropTable</span> : NoCopy
  {
@@ -151,6 +154,7 @@ class <span class="Att">CharPropTable</span> : NoCopy
 
    CharClass operator [] (char ch) const;
  };
+
 </pre>
 
 <p>

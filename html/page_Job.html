@@ -39,6 +39,7 @@ using the class <b>Job::Init</b>.
 </p>
 
 <pre>
+
 class <span class="Att">Job::Init</span> : NoCopy
  {
   public:
@@ -49,6 +50,7 @@ class <span class="Att">Job::Init</span> : NoCopy
    
    ~Init();
  };
+
 </pre>
 
 <p>
@@ -116,6 +118,7 @@ The <b>Job</b> is implemented using the class <b>Starter</b>.
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 class <span class="Att">Starter</span> : public Funchor_nocopy
  {
@@ -133,6 +136,7 @@ class <span class="Att">Starter</span> : public Funchor_nocopy
     
    class Run;
  };
+
 </pre>
 
 <p>
@@ -147,6 +151,7 @@ There are two control classes for the <b>Starter</b>: <b>Run</b> to commit worki
 </p>
 
 <pre>
+
 template &lt;class T&gt;   
 class <span class="Att">Starter&lt;T&gt;::Run</span> : NoCopy
  {
@@ -162,6 +167,7 @@ class <span class="Att">Starter&lt;T&gt;::Run</span> : NoCopy
  
    unsigned run(unsigned cnt);
  };
+
 </pre>
 
 <p>
@@ -181,6 +187,7 @@ Only single <b>Run</b> per <b>Starter</b> is allowed.
 </p>
 
 <pre>
+
 template &lt;class T&gt;   
 class <span class="Att">Starter&lt;T&gt;::Start</span> : NoCopy
  {
@@ -196,6 +203,7 @@ class <span class="Att">Starter&lt;T&gt;::Start</span> : NoCopy
     
    bool operator ! () const;
  };
+
 </pre>
 
 <p>

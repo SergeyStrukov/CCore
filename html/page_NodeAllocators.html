@@ -116,7 +116,7 @@ So you have to destroy all allocated nodes before the object destruction.
 <h4>NodePoolAllocator</h4>
 
 <p>
-This allocator uses a memory block pool to store nodes. This approach greatly amortize the cost of the memory
+This allocator uses a memory block pool to store nodes. This approach greatly amortizes the cost of the memory
 allocation, but it wastes memory if there are many destroyed nodes. To avoid this problem use
 compact variants of lists and maps.
 </p>
@@ -167,7 +167,7 @@ class <span class="Att">NodePoolAllocator</span> : NoCopy
 </pre>
 
 <p>
-Constructor takes the number of nodes in the single memory block as an argument, it is 100
+Constructor takes the number of nodes in the single memory block as an argument, it is <b>100</b>
 by default. Destructor calls abort, if not all nodes are destroyed.
 </p>
 

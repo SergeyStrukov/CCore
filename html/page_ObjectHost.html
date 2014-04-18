@@ -41,6 +41,7 @@
 </p>
 
 <pre>
+
 class <span class="Att">ObjBase</span> : public MemBase_nocopy
  {
    ....
@@ -57,6 +58,7 @@ class <span class="Att">ObjBase</span> : public MemBase_nocopy
    
    bool wait_released(TimeScope time_scope);
  };
+
 </pre>
 
 <p>
@@ -78,6 +80,7 @@ one of the <b>ObjMaster</b> class.
 </p>
 
 <pre>
+
 class <span class="Att">ObjHost</span> : NoCopy
  {
    ....
@@ -96,6 +99,7 @@ class <span class="Att">ObjHost</span> : NoCopy
    
    template &lt;class Info&gt; class List;
  };
+
 </pre>
 
 <p>
@@ -124,6 +128,7 @@ while the object is used and cannot be safely destroyed.
 </p>
 
 <pre>
+
 class <span class="Att">ObjHook</span> : NoCopy
  {
    ....
@@ -165,6 +170,7 @@ class <span class="Att">ObjHook</span> : NoCopy
    
    ObjHook(const ObjHook &amp;hook);
  };
+
 </pre>
 
 <p>
@@ -200,6 +206,7 @@ Copy constructor creates a copy of the hook, it points to the same object.
 </p>
 
 <pre>
+
 class <span class="Att">ObjMaster</span> : NoCopy
  {
    .... 
@@ -212,6 +219,7 @@ class <span class="Att">ObjMaster</span> : NoCopy
    
    ~ObjMaster(); 
  };
+
 </pre>
 
 <p>
@@ -233,6 +241,7 @@ not by a reference, and destructor deletes the object. So the object must be con
 </p>
 
 <pre>
+
 class <span class="Att">ObjMaster_delete</span> : NoCopy
  {
    ....
@@ -245,6 +254,7 @@ class <span class="Att">ObjMaster_delete</span> : NoCopy
    
    ~ObjMaster_delete(); 
  };
+
 </pre>
 
 <h4>ObjHost::List</h4>
@@ -254,6 +264,7 @@ This class can be used to build a list of records with information about objects
 </p>
 
 <pre>
+
 template &lt;class Info&gt;
 class <span class="Att">ObjHost::List</span> : NoCopy
  {
@@ -271,6 +282,7 @@ class <span class="Att">ObjHost::List</span> : NoCopy
    
    ulen getLen() const;
  };
+
 </pre>
 
 <p>
@@ -298,6 +310,7 @@ This info record contains only the name of object.
 </p>
 
 <pre>
+
 struct <span class="Att">ObjInfo</span>
  {
   ....
@@ -311,6 +324,7 @@ struct <span class="Att">ObjInfo</span>
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>
@@ -324,6 +338,7 @@ This info record contains the name of object and the pointer to the object.
 </p>
 
 <pre>
+
 struct <span class="Att">ObjInfo_obj</span>
  {
   ....
@@ -342,6 +357,7 @@ struct <span class="Att">ObjInfo_obj</span>
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>
@@ -352,10 +368,11 @@ struct <span class="Att">ObjInfo_obj</span>
 
 <p>
 This info record contains the name of the object and selects only objects, implementing the given
-interface (i.g. castable to the given type).
+interface (i.e. castable to the given type).
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct <span class="Att">ObjInfo_if</span>
  {
@@ -381,10 +398,11 @@ struct <span class="Att">ObjInfo_if</span>
 
 <p>
 This info record contains the name of object and the pointer to the object and selects only objects, 
-implementing the given interface (i.g. castable to the given type).
+implementing the given interface (i.e. castable to the given type).
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 struct <span class="Att">ObjInfo_obj_if</span>
  {
@@ -406,6 +424,7 @@ struct <span class="Att">ObjInfo_obj_if</span>
   template &lt;class P&gt;
   void print(P &amp;out) const;
  };
+
 </pre>
 
 <p>

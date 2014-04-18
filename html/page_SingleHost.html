@@ -44,6 +44,7 @@ an attached object of the type <b>T</b>. To attach and detach this object classe
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 class <span class="Att">SingleHost</span> : NoCopy
  {
@@ -55,6 +56,7 @@ class <span class="Att">SingleHost</span> : NoCopy
    
    ~SingleHost();
  };
+
 </pre>
 
 <p>
@@ -69,6 +71,7 @@ as used. The object life-time is extended until it gets out of use.
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 class <span class="Att">SingleHook</span> : NoCopy
  {
@@ -102,6 +105,7 @@ class <span class="Att">SingleHook</span> : NoCopy
    
    SingleHook(const SingleHook &amp;hook);
  };
+
 </pre>
 
 <p>
@@ -127,6 +131,7 @@ the <b>SingleMaster</b> destructor is finished.
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 class <span class="Att">SingleMaster</span> : NoCopy
  {
@@ -140,6 +145,7 @@ class <span class="Att">SingleMaster</span> : NoCopy
    
    void guard();
  };
+
 </pre>
 
 <p>
@@ -158,6 +164,7 @@ So the object must be created using the <b>operator new</b>.
 </p>
 
 <pre>
+
 template &lt;class T&gt;
 class <span class="Att">SingleMaster_delete</span> : NoCopy 
  {
@@ -171,6 +178,7 @@ class <span class="Att">SingleMaster_delete</span> : NoCopy
    
    void guard();
  };
+
 </pre>
 
 </body>

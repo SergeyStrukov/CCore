@@ -32,7 +32,7 @@
 
 <p>
 <b>CCore</b> uses an abstract concept of working with a file system. It includes a set of common constants
-and abstract operations to work with any file system, local or remote. The term <b>file</b> means a true file, i.g.
+and abstract operations to work with any file system, local or remote. The term <b>file</b> means a true file, i.e.
 a persistent sequence of octets, stored on some file device and identified by its name, which may include
 a device specifier, a path specifier and finally a file name. All constant standardize a name, a type, a meaning
 and a value. You may find these definitions in the <b>txt/GenFile.txt.cpp</b> also.
@@ -158,7 +158,7 @@ to be set.
 
 <p>
 <b>GetTextDesc(FileOpenFlags)</b> creates a temporary object to print a text description of the given flags.
-The output looks like "Read|Write|Create".
+The output looks like <b>"Read|Write|Create"</b>.
 </p>
 
 <pre>
@@ -199,7 +199,7 @@ enum <span class="Att">FileError</span> : uint32
   FileError_BadPosition      = 25, // "Bad file position"
   FileError_BadLen           = 26, // "Bad length"
   
-  FileError_Some             = 27 // last , "Some error"
+  FileError_Some             = 27  // last , "Some error"
  };
   
 const char * GetTextDesc(FileError fe);
@@ -372,7 +372,7 @@ The return value can be less than the given length, if the end-of-file is encoun
 
 <p>
 <b>write</b> transfers bytes from the user buffer to the file at the current file position and updates the file position.
-Write may extend the file. The return value should be equal to the given length, unless there is a good
+Write MAY extend the file. The return value should be equal to the given length, unless there is a good
 reason to implement another behavior. 
 </p>
 
@@ -385,7 +385,7 @@ And the alternative set is:
 <pre>
 
 FilePosType /* file_len */ 
- open(const byte *file_name,ulen len,FileOpenFlags open_flags); // Open_Pos Open_PosEnd are ignored
+ open(const byte *file_name,ulen len,FileOpenFlags open_flags); // Open_Pos, Open_PosEnd are ignored
 
 void close(bool preserve_file=false);                           // if( preserve_file ) ignore(Open_AutoDelete);
 
@@ -408,7 +408,7 @@ There is no the internal file position in this case.
 <p>
 <b>write</b> also uses the explicitly given file position. But the write range may be outside the file range.
 In this case the file is extended. The return length is the new file length. If there is a hole after the
-end-of-file and before the write position, the hole is filled by undefined values.
+end-of-file and before the write position, the hole is filled by unpredicted values.
 </p>
 
 <a name="FSO"><h3>File system operations</h3></a>

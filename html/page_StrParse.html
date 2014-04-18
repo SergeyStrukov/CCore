@@ -42,6 +42,7 @@ format strings.
 </p>
 
 <pre>
+
 struct <span class="Att">DecValue</span>
  {
   bool nok;
@@ -53,6 +54,7 @@ struct <span class="Att">DecValue</span>
      
   unsigned operator * () const { return value; }
  };
+
 </pre>
 
 <p>
@@ -79,6 +81,7 @@ requirements, so it can be used with them.
 </p>
 
 <pre>
+
 class <span class="Att">StrParse</span>
  {
    ....
@@ -109,6 +112,7 @@ class <span class="Att">StrParse</span>
    
    NegBool finish() { if( ptr&lt;lim ) nok=true; return nok; }
  };
+
 </pre>
 
 <p>
@@ -146,6 +150,7 @@ Parse functions work with some "character stream device":
 </p>
 
 <pre>
+
 class <span class="Att">Dev</span>
  {
    ....
@@ -167,6 +172,7 @@ class <span class="Att">Dev</span>
    
    void fail();
  };
+
 </pre>
 
 <p>

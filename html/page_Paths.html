@@ -186,7 +186,7 @@ The remaining classes are used to split the string at the found position.
 </p>
 
 <p>
-<b>ToPrefix</b> splits after the found position, i.g. the found character goes to the prefix. 
+<b>ToPrefix</b> splits after the found position, i.e. the found character goes to the prefix. 
 In case the required character is not found, the prefix is empty.
 </p>
 
@@ -195,7 +195,7 @@ In case the required character is not found, the prefix is empty.
 </p>
 
 <p>
-<b>ToSuffix</b> splits before the found position, i.g. the found character goes to the suffix.
+<b>ToSuffix</b> splits before the found position, i.e. the found character goes to the suffix.
 In case the required character is not found, the suffix is empty.
 </p>
 
@@ -485,7 +485,7 @@ struct <span class="Att">SplitPathName</span> : PathBase
 <p>
 The class <b>Path</b> is designed to manipulate with a path. The path inside <b>Path</b> is stored
 in the internal buffer. It has a non-mutable prefix. This prefix is determined by the constructor.
-The string after prefix is a normalized path. I.g. it may be empty or <b>"."</b> or
+The string after prefix is a normalized path. I.e. it may be empty or <b>"."</b> or
 <b>"dir1/dir2/.../dir_or_file"</b>, where <b>dir</b>s are normal names, <b>dir_of_file</b> may be <b>"."</b>.
 </p>
 
