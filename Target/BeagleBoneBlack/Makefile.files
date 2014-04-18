@@ -84,6 +84,7 @@ obj/DeferCall.o \
 obj/DevI2C.o \
 obj/DevInt.o \
 obj/DevIntHandle.o \
+obj/DevLCD.o \
 obj/DevLight.o \
 obj/DevPerfCount.o \
 obj/DevPlanInit.o \
@@ -378,6 +379,7 @@ obj/DeferCall.s \
 obj/DevI2C.s \
 obj/DevInt.s \
 obj/DevIntHandle.s \
+obj/DevLCD.s \
 obj/DevLight.s \
 obj/DevPerfCount.s \
 obj/DevPlanInit.s \
@@ -672,6 +674,7 @@ obj/DeferCall.dep \
 obj/DevI2C.dep \
 obj/DevInt.dep \
 obj/DevIntHandle.dep \
+obj/DevLCD.dep \
 obj/DevLight.dep \
 obj/DevPerfCount.dep \
 obj/DevPlanInit.dep \
@@ -1147,6 +1150,9 @@ obj/DevInt.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevIntHandle.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevLCD.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevLCD.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevLight.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevLight.cpp
@@ -2024,6 +2030,9 @@ obj/DevInt.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 obj/DevIntHandle.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DevLCD.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevLCD.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DevLight.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevLight.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2898,6 +2907,9 @@ obj/DevInt.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 
 obj/DevIntHandle.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevIntHandle.o $< -MF $@
+
+obj/DevLCD.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevLCD.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevLCD.o $< -MF $@
 
 obj/DevLight.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevLight.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevLight.o $< -MF $@

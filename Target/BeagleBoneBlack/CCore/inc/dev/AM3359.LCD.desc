@@ -1,0 +1,180 @@
+/* AM3359.LCD.desc */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  Tag: Target/BeagleBoneBlack
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg ClockEnable : 32
+ {
+  Core : 0
+  LIDD : 1
+  DMA  : 2
+ }
+ 
+reg Reset : 32
+ {
+  Core : 0
+  LIDD : 1
+  DMA  : 2
+  Main : 3
+ } 
+ 
+reg SysConfig : 32
+ {
+  IdleMode    : 2-3
+   {
+    ForceIdle = 0
+    NoIdle    = 1
+    SmartIdle = 2
+   }
+   
+  StandbyMode : 4-5
+   {
+    ForceStandby = 0
+    NoStandby    = 1
+    SmartStandby = 2
+   }
+ } 
+ 
+reg Control : 32
+ {
+  Raster           : 0
+  UnderflowRestart : 1
+  PCLKDiv          : 8-15 
+ } 
+ 
+reg LCDDMAControl : 32
+ {
+  TwoFB     : 0
+  BurstSize : 4-6
+  FIFOReady : 8-10
+  DMAPri    : 16-18
+ }
+ 
+reg LCDDMAFB0Base : 32
+ {
+ }  
+
+reg LCDDMAFB0Lim : 32
+ {
+ }
+   
+reg LCDDMAFB1Base : 32
+ {
+ }  
+
+reg LCDDMAFB1Lim : 32
+ {
+ }
+ 
+reg SplitHLen : 32
+ {
+  lsb : 4-9
+  msb : 10
+ } 
+ 
+reg SplitHSync : 32
+ {
+  lsb : 0-5
+  msb : 6-9
+ }
+ 
+reg SplitHFront : 32
+ {
+  lsb : 0-7
+  msb : 8-9 
+ }
+ 
+reg SplitHBack : 32
+ {
+  lsb : 0-7
+  msb : 8-9
+ }
+ 
+reg SplitVLen : 32
+ {
+  lsb : 0-9
+  msb : 10
+ }    
+ 
+reg RasterTiming0 : 32
+ {
+  HLen_msb   : 3
+  HLen_lsb   : 4-9
+  HSync_lsb  : 10-15
+  HFront_lsb : 16-23 
+  HBack_lsb  : 24-31
+ } 
+   
+reg RasterTiming1 : 32
+ {
+  VLen_lsb   : 0-9
+  VSync      : 10-15
+  VFront     : 16-23
+  VBack      : 24-31
+ }
+  
+reg RasterTiming2 : 32
+ {
+  HFront_msb : 0-1
+  HBack_msb  : 4-5
+  
+  InvVSync   : 20
+  InvHSync   : 21
+  InvPCLK    : 22
+  InvOE      : 23
+  FallEdge   : 24
+  SyncEdge   : 25
+  
+  VLen_msb   : 26
+  HSync_msb  : 27-30
+ }
+ 
+reg RasterControl : 32
+ {
+  LCDEn  : 0
+  LCDTFT : 7
+  
+  PalMode : 20-21
+   {
+    Both = 0
+    Pal  = 1
+    Data = 2
+   }
+  
+  STN565        : 24
+  TFT24         : 25
+  TFT24Unpacked : 26
+ } 
+ 
+bar LCDBar : address
+ {
+  SysConfig   = 054h
+  ClockEnable = 06Ch
+  Reset       = 070h
+  
+  Control = 004h
+  
+  LCDDMAControl = 040h
+  LCDDMAFB0Base = 044h
+  LCDDMAFB0Lim  = 048h
+  LCDDMAFB1Base = 04Ch
+  LCDDMAFB1Lim  = 050h
+  
+  RasterTiming0 = 02Ch
+  RasterTiming1 = 030h
+  RasterTiming2 = 034h
+  
+  RasterControl = 028h
+ }
+ 
+ 

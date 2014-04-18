@@ -4051,6 +4051,8 @@ using namespace Debug;
 
 void __std_debug_init(void)
  {
+#if 0
+  
   // PRCM
   {
    PRCM::CM_WKUP_Instance clk;
@@ -4072,6 +4074,8 @@ void __std_debug_init(void)
   {
    for(Address addr=0x8A0; addr<=0x8EC ;addr+=4) Reg(0x44E10000,addr)=Bit(3);
   }
+
+#endif  
   
   EDID::Mode mode;
   HDMI::Instance hdmi;
@@ -4085,6 +4089,8 @@ void __std_debug_init(void)
   if( hdmi.readEDID(buf,0) ) Stop(15);
    
   mode=EDID::Mode(buf);
+
+#if 0
   
   LCD::Instance lcd;
    
@@ -4094,6 +4100,8 @@ void __std_debug_init(void)
   
   //Video::Test(frame);
   Video::ConsoleInit(frame);
+  
+#endif  
   
   if( hdmi.setMode(HDMI::ModeDesc(mode,mode)) ) Stop(15);
    
@@ -4119,9 +4127,9 @@ void __std_debug_console(const char *ptr,__std_len_t len)
   Video::ConsoleOut(ptr,len);
  }
 
-#include <CCore/inc/Print.h>
-
 #include <CCore/inc/dev/AM3359.h>
+
+#include <CCore/inc/Print.h>
 
 void __std_debug_trap(unsigned LR,unsigned trap)
  {

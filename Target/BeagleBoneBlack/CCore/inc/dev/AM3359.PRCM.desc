@@ -32,22 +32,46 @@ reg ClockControl : 32
    }
  }
  
+reg ClockStandbyControl : 32
+ {
+  Mode : .+2
+   {
+    Disable = 0
+    Enable  = 2
+   }
+  
+  * : .+14
+  
+  IdleStatus : .+2
+   {
+    Running    = 0
+    Transition = 1
+    Idle       = 2
+    Disabled   = 3 
+   }
+   
+  StandbyStatus : 18 
+ }
+ 
 bar CM_PERBar : address
  {
   ClockControl = hidden
+  ClockStandbyControl = hidden
  
   Timer2 = 80h as ClockControl
   Timer4 = 88h as ClockControl
   
   I2C1 = 48h as ClockControl
   I2C2 = 44h as ClockControl
+  
+  LCD = 18h as ClockStandbyControl
  }
 
 //----------------------------------------------------------------------------------------
 
 reg TimerClockSelect : 32
  {
-  Source: .+2
+  Source : .+2
    {
     TCLKIN    = 0
     CLK_M_OSC = 1
@@ -55,30 +79,42 @@ reg TimerClockSelect : 32
    }
  }
  
+reg LCDClockSelect : 32
+ {
+  Source : .+2
+   {
+    DISP_PLL_CLKOUTM2 = 0
+    CORE_PLL_CLKOUTM5 = 1
+    PER_PLL_CLKOUTM2  = 2
+   }
+ } 
+ 
 bar CM_DPLLBar : address
  {
   TimerClockSelect = hidden
  
   Timer2 =  8h as TimerClockSelect
   Timer4 = 10h as TimerClockSelect
+  
+  LCDClockSelect = 34h
  }
  
 //----------------------------------------------------------------------------------------
 
-reg MPUIdleStatus : 32
+reg PLLIdleStatus : 32
  {
   Locked : 0
   Bypass : 8
  }
  
-reg MPUClockSelect : 32
+reg PLLClockSelect : 32
  {
   Div : 0-6
   Mul : 8-18
   BypassSelect : 23
  }
  
-reg MPUDivM2 : 32
+reg PLLDivM2 : 32
  {
   M2         : 0-4
   M2Ack      : 5
@@ -86,7 +122,7 @@ reg MPUDivM2 : 32
   Running    : 9
  }
  
-reg MPUClockMode : 32
+reg PLLClockMode : 32
  {
   En : 0-2
    {
@@ -113,18 +149,28 @@ reg MPUClockMode : 32
   SSCAck       : 13
   SSCLowSpread : 14
   SSCType      : 15 
- }   
+ } 
 
 bar CM_WKUPBar : address
  {
   ClockControl = hidden
- 
-  MPUIdleStatus  = 020h RO
-  MPUClockSelect = 02Ch
-  MPUDivM2       = 0A8h
-  MPUClockMode   = 088h
   
-  I2C0 = 0B8h as ClockControl 
+  I2C0 = 0B8h as ClockControl
+  
+  PLLIdleStatus  = hidden
+  PLLClockSelect = hidden
+  PLLDivM2       = hidden
+  PLLClockMode   = hidden
+ 
+  MPUIdleStatus  = 020h RO as PLLIdleStatus
+  MPUClockSelect = 02Ch as PLLClockSelect
+  MPUDivM2       = 0A8h as PLLDivM2
+  MPUClockMode   = 088h as PLLClockMode
+  
+  DISPIdleStatus  = 048h RO as PLLIdleStatus
+  DISPClockSelect = 054h as PLLClockSelect
+  DISPDivM2       = 0A4h as PLLDivM2
+  DISPClockMode   = 098h as PLLClockMode
  }
  
 //----------------------------------------------------------------------------------------

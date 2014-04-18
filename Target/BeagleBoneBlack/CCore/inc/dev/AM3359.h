@@ -26,6 +26,15 @@ using CCore::uint8;
 using CCore::uint16;
 using CCore::uint32;
 
+/* Delay() */
+
+inline void Delay(volatile unsigned cnt)
+ {
+  for(; cnt ;cnt--);
+ }
+
+/* namespace CP15 */
+
 namespace CP15 {
 
 /* AM3359.CP15.desc -> AM3359.CP15.gen.h */

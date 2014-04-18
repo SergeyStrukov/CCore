@@ -27,11 +27,6 @@ namespace Dev {
 
 /* SetupCPUClock() */
 
-static void Delay(volatile unsigned cnt)
- {
-  for(; cnt ;cnt--);
- }
-
 static void SetupCPUClock(unsigned freq_MHz)
  {
   using namespace AM3359::PRCM;
@@ -40,31 +35,31 @@ static void SetupCPUClock(unsigned freq_MHz)
   
   {
    bar.get_MPUClockMode()
-      .set_En(MPUClockMode_En_MNBypass)
-      .setTo(bar);
+      .set_En(PLLClockMode_En_MNBypass)
+      .set(bar.to_MPUClockMode());
    
-   while( bar.get_MPUIdleStatus().maskbit(MPUIdleStatus_Bypass|MPUIdleStatus_Locked)!=MPUIdleStatus_Bypass );
+   while( bar.get_MPUIdleStatus().maskbit(PLLIdleStatus_Bypass|PLLIdleStatus_Locked)!=PLLIdleStatus_Bypass );
   }
   
   {
    bar.get_MPUClockSelect()
-      .set_Div(23)
+      .set_Div(24-1) // assume OSC_M is 24 MHz
       .set_Mul(freq_MHz)
-      .setTo(bar);
+      .set(bar.to_MPUClockSelect());
    
    bar.get_MPUDivM2()
       .set_M2(1)
-      .setTo(bar);
+      .set(bar.to_MPUDivM2());
    
-   Delay(1000);
+   AM3359::Delay(1000);
   }
   
   {
    bar.get_MPUClockMode()
-      .set_En(MPUClockMode_En_Lock)
-      .setTo(bar);
+      .set_En(PLLClockMode_En_Lock)
+      .set(bar.to_MPUClockMode());
    
-   while( bar.get_MPUIdleStatus().maskbit(MPUIdleStatus_Bypass|MPUIdleStatus_Locked)!=MPUIdleStatus_Locked );
+   while( bar.get_MPUIdleStatus().maskbit(PLLIdleStatus_Bypass|PLLIdleStatus_Locked)!=PLLIdleStatus_Locked );
   }
  }
 

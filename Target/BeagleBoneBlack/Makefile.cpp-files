@@ -270,6 +270,7 @@
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp
+../../Target/BeagleBoneBlack/CCore/src/dev/DevLCD.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevLight.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevPerfCount.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevPlanInit.cpp

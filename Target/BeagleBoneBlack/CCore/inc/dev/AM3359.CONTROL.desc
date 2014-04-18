@@ -28,5 +28,32 @@ bar CONTROLBar : address
   
   Conf_I2C0_SDA = 988h as PadMux
   Conf_I2C0_SCL = 98Ch as PadMux
+  
+  Conf_LCD_DATA0  = 8A0h as PadMux
+  Conf_LCD_DATA1  = 8A4h as PadMux
+  Conf_LCD_DATA2  = 8A8h as PadMux
+  Conf_LCD_DATA3  = 8ACh as PadMux
+  
+  Conf_LCD_DATA4  = 8B0h as PadMux
+  Conf_LCD_DATA5  = 8B4h as PadMux
+  Conf_LCD_DATA6  = 8B8h as PadMux
+  Conf_LCD_DATA7  = 8BCh as PadMux
+  
+  Conf_LCD_DATA8  = 8C0h as PadMux
+  Conf_LCD_DATA9  = 8C4h as PadMux
+  Conf_LCD_DATA10 = 8C8h as PadMux
+  Conf_LCD_DATA11 = 8CCh as PadMux
+  
+  Conf_LCD_DATA12 = 8D0h as PadMux
+  Conf_LCD_DATA13 = 8D4h as PadMux
+  Conf_LCD_DATA14 = 8D8h as PadMux
+  Conf_LCD_DATA15 = 8DCh as PadMux
+  
+  Conf_LCD_VSYNC      = 8E0h as PadMux
+  Conf_LCD_HSYNC      = 8E4h as PadMux
+  Conf_LCD_PCLK       = 8E8h as PadMux
+  Conf_LCD_AC_BIAS_EN = 8ECh as PadMux
  }
+
+
  

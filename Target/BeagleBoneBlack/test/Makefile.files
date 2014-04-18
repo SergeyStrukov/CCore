@@ -120,6 +120,7 @@ OBJ_LIST = \
 ../test-obj/test3008.PerfCount.o \
 ../test-obj/test3009.Timer.o \
 ../test-obj/test3010.I2C.o \
+../test-obj/test3011.LCD.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -255,6 +256,7 @@ ASM_LIST = \
 ../test-obj/test3008.PerfCount.s \
 ../test-obj/test3009.Timer.s \
 ../test-obj/test3010.I2C.s \
+../test-obj/test3011.LCD.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -390,6 +392,7 @@ DEP_LIST = \
 ../test-obj/test3008.PerfCount.dep \
 ../test-obj/test3009.Timer.dep \
 ../test-obj/test3010.I2C.dep \
+../test-obj/test3011.LCD.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -770,6 +773,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3010.I2C.o : ../../../Target/BeagleBoneBlack/CCore/test/test3010.I2C.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3011.LCD.o : ../../../Target/BeagleBoneBlack/CCore/test/test3011.LCD.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1170,6 +1176,9 @@ include $(RULES_FILE)
 ../test-obj/test3010.I2C.s : ../../../Target/BeagleBoneBlack/CCore/test/test3010.I2C.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3011.LCD.s : ../../../Target/BeagleBoneBlack/CCore/test/test3011.LCD.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1567,6 +1576,9 @@ include $(RULES_FILE)
 
 ../test-obj/test3010.I2C.dep : ../../../Target/BeagleBoneBlack/CCore/test/test3010.I2C.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3010.I2C.o $< -MF $@
+
+../test-obj/test3011.LCD.dep : ../../../Target/BeagleBoneBlack/CCore/test/test3011.LCD.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3011.LCD.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@
