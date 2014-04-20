@@ -81,6 +81,7 @@ obj/DebugCon.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
 obj/DeferCall.o \
+obj/DevHDMI.o \
 obj/DevI2C.o \
 obj/DevInt.o \
 obj/DevIntHandle.o \
@@ -93,6 +94,7 @@ obj/DevTick.o \
 obj/DevTimer.o \
 obj/DevWaitForInterrupt.o \
 obj/DynArray.o \
+obj/EDID.o \
 obj/EchoDevice.o \
 obj/ElementPool.o \
 obj/Elf.o \
@@ -376,6 +378,7 @@ obj/DebugCon.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
 obj/DeferCall.s \
+obj/DevHDMI.s \
 obj/DevI2C.s \
 obj/DevInt.s \
 obj/DevIntHandle.s \
@@ -388,6 +391,7 @@ obj/DevTick.s \
 obj/DevTimer.s \
 obj/DevWaitForInterrupt.s \
 obj/DynArray.s \
+obj/EDID.s \
 obj/EchoDevice.s \
 obj/ElementPool.s \
 obj/Elf.s \
@@ -671,6 +675,7 @@ obj/DebugCon.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
 obj/DeferCall.dep \
+obj/DevHDMI.dep \
 obj/DevI2C.dep \
 obj/DevInt.dep \
 obj/DevIntHandle.dep \
@@ -683,6 +688,7 @@ obj/DevTick.dep \
 obj/DevTimer.dep \
 obj/DevWaitForInterrupt.dep \
 obj/DynArray.dep \
+obj/EDID.dep \
 obj/EchoDevice.dep \
 obj/ElementPool.dep \
 obj/Elf.dep \
@@ -1143,6 +1149,9 @@ obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.o : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/DevHDMI.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevHDMI.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/DevI2C.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1177,6 +1186,9 @@ obj/DevWaitForInterrupt.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitFo
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/EDID.o : ../../CCore/src/video/EDID.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/EchoDevice.o : ../../CCore/src/net/EchoDevice.cpp
@@ -2021,6 +2033,9 @@ obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.s : ../../CCore/src/DeferCall.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DevHDMI.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevHDMI.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DevI2C.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2055,6 +2070,9 @@ obj/DevWaitForInterrupt.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitFo
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/EDID.s : ../../CCore/src/video/EDID.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/EchoDevice.s : ../../CCore/src/net/EchoDevice.cpp
@@ -2899,6 +2917,9 @@ obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.dep : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
 
+obj/DevHDMI.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevHDMI.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevHDMI.o $< -MF $@
+
 obj/DevI2C.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevI2C.o $< -MF $@
 
@@ -2934,6 +2955,9 @@ obj/DevWaitForInterrupt.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWait
 
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@
+
+obj/EDID.dep : ../../CCore/src/video/EDID.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EDID.o $< -MF $@
 
 obj/EchoDevice.dep : ../../CCore/src/net/EchoDevice.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EchoDevice.o $< -MF $@

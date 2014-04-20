@@ -217,6 +217,7 @@
 ../../CCore/src/TreeMap.cpp
 ../../CCore/src/Tuple.cpp
 ../../CCore/src/UIntSplit.cpp
+../../CCore/src/video/EDID.cpp
 ../../XCore/CCore/src/Abort.cpp
 ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 ../../XCore/CCore/src/libc/assert.cpp
@@ -267,6 +268,7 @@
 ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
+../../Target/BeagleBoneBlack/CCore/src/dev/DevHDMI.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevIntHandle.cpp

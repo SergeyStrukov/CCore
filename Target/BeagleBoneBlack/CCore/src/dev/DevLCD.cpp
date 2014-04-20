@@ -26,6 +26,19 @@ namespace Dev {
 
 /* class LCD */
 
+LCD::Mode::Mode(const Video::EDIDMode &mode)
+ {
+  hback=mode.hblank-mode.hsync_off-mode.hsync_pulse;
+  hlen=mode.hlen;
+  hfront=mode.hsync_off;
+  hsync=mode.hsync_pulse;
+  
+  vback=mode.vblank-mode.vsync_off-mode.vsync_pulse;
+  vlen=mode.vlen;
+  vfront=mode.vsync_off;
+  vsync=mode.vsync_pulse;
+ }
+
 LCD::LCD()
  {
  }
@@ -93,7 +106,7 @@ void LCD::enable(uint32 clock)
   }
  }
 
-void LCD::first_reset()
+void LCD::reset_first()
  {
   using namespace AM3359::LCD;
   
@@ -149,9 +162,9 @@ void LCD::setClock(uint32 clock)
   } 
  }
 
-auto LCD::init(const Geometry &geom,Space video_space) -> MainFrame
+auto LCD::init_first(const Mode &mode,Space video_space) -> MainFrame
  {
-  ulen len=16+geom.hlen*geom.vlen;
+  ulen len=16+mode.hlen*mode.vlen;
   
   if( len>video_space.len/2 )
     {
@@ -166,8 +179,8 @@ auto LCD::init(const Geometry &geom,Space video_space) -> MainFrame
   MainFrame ret;
   
   ret.base=base+16;
-  ret.dx=geom.hlen;
-  ret.dy=geom.vlen;
+  ret.dx=mode.hlen;
+  ret.dy=mode.vlen;
   
   using namespace AM3359::LCD;
   
@@ -193,11 +206,11 @@ auto LCD::init(const Geometry &geom,Space video_space) -> MainFrame
   
   bar.set_LCDDMAFB0Lim((uint32)lim);
   
-  Type_SplitHLen split_HLen(geom.hlen-1);
-  Type_SplitHSync split_HSync(geom.hsync-1);
-  Type_SplitHFront split_HFront(geom.hfront-1);
-  Type_SplitHBack split_HBack(geom.hback-1);
-  Type_SplitVLen split_VLen(geom.vlen-1);
+  Type_SplitHLen split_HLen(mode.hlen-1);
+  Type_SplitHSync split_HSync(mode.hsync-1);
+  Type_SplitHFront split_HFront(mode.hfront-1);
+  Type_SplitHBack split_HBack(mode.hback-1);
+  Type_SplitVLen split_VLen(mode.vlen-1);
   
   bar.null_RasterTiming0()
      .set_HLen_lsb(split_HLen.get_lsb())
@@ -209,9 +222,9 @@ auto LCD::init(const Geometry &geom,Space video_space) -> MainFrame
   
   bar.null_RasterTiming1()
      .set_VLen_lsb(split_VLen.get_lsb())
-     .set_VSync(geom.vsync-1)
-     .set_VFront(geom.vfront)
-     .set_VBack(geom.vback)
+     .set_VSync(mode.vsync-1)
+     .set_VFront(mode.vfront)
+     .set_VBack(mode.vback)
      .setTo(bar);
   
   bar.null_RasterTiming2()

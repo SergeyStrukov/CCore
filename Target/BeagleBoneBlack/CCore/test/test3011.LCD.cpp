@@ -15,8 +15,11 @@
 
 #include <CCore/test/test.h>
 
+#include <CCore/inc/dev/DevHDMI.h>
 #include <CCore/inc/dev/DevLCD.h>
 #include <CCore/inc/sys/SysMemSpace.h>
+
+#include <CCore/inc/Task.h>
 
 namespace App {
 
@@ -134,29 +137,49 @@ const char *const Testit<3011>::Name="Test3011 LCD";
 template<>
 bool Testit<3011>::Main() 
  {
-  Dev::LCD lcd;
+  // 1
+  {
+   Dev::I2C i2c(Dev::I2C_0);
   
-  lcd.enable(200);
+   i2c.enable();
+   i2c.reset();
+  }
+
+  Video::EDIDMode mode;
   
-  lcd.first_reset();
+  // 2
+  {
+   Dev::HDMI hdmi;
+
+   hdmi.init();
+   
+   uint8 block[Video::EDIDLen];
+   
+   hdmi.readEDID(block);
+   
+   mode=Video::EDIDMode(block);
+   
+   mode.pixel_clock=100000;
+   
+   hdmi.setMode(mode);
+   
+   hdmi.enableVIP();
+  }
   
-  Dev::LCD::Geometry geom;
-  
-  geom.hlen=1280;
-  geom.hfront=48;
-  geom.hsync=112;
-  geom.hback=248;
-  
-  geom.vlen=1024;
-  geom.vfront=1;
-  geom.vsync=3;
-  geom.vback=38;
-  
-  Space space=Sys::AllocVideoSpace();
-  
-  auto fb=lcd.init(geom,space);
-  
-  Test(fb.base,fb.dx,fb.dy);
+  // 3
+  {
+   Dev::LCD lcd;
+   
+   lcd.enable(200);
+   
+   lcd.reset_first();
+   
+   Space space=Sys::AllocVideoSpace();
+   
+   auto fb=lcd.init_first(mode,space);
+   
+   Test(fb.base,fb.dx,fb.dy);
+  }
   
   return true;
  }

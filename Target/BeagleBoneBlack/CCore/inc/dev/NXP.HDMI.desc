@@ -1,0 +1,438 @@
+/* NXP.HDMI.desc */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  Tag: Target/BeagleBoneBlack
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+reg CECEnable : 8
+ {
+  EnCEC     : 0
+  EnHDMI    : 1
+  EnRxSense : 2
+  
+  DisCCLK   : 5
+  DisFRO    : 6
+ }
+ 
+reg CECStatus : 8
+ {
+  RxSense : 0
+  Plug    : 1
+ }
+ 
+reg CEC_FRO_IMCLK : 8
+ {
+  FRODiv   : 0
+  IMCLK    : 1
+  EnOTP    : 6
+  DisGhost : 7
+ }
+
+bar CECBar : address
+ {
+  CEC_FRO_IMCLK = 0FBh
+  CECStatus     = 0FEh RO
+  CECEnable     = 0FFh
+ }
+ 
+/*--------------------------------------------------------------------------------------*/
+
+reg VersionLSB : 8
+ {
+  NotS : 4
+  NotH : 5
+ }
+ 
+reg VersionMSB : 8
+ {
+ }  
+
+reg MainControl0 : 8
+ {
+  SoftReset : 0
+ } 
+
+reg SoftReset : 8
+ {
+  Audio : 0
+  I2C   : 1
+ }
+ 
+reg DDCDisable : 8
+ {
+  Dis : 0
+ }
+ 
+reg IntFlags2 : 8
+ {
+  EDID : 1
+ } 
+ 
+reg VP0Enable : 8
+ {
+ }
+ 
+reg VP1Enable : 8
+ {
+ }  
+
+reg VP2Enable : 8
+ {
+ }  
+ 
+reg VP0Control : 8
+ {
+  SwapB : 0-2
+  MirrB : 3
+  SwapA : 4-6
+  MirrA : 7
+ }
+ 
+reg VP1Control : 8
+ {
+  SwapD : 0-2
+  MirrD : 3
+  SwapC : 4-6
+  MirrC : 7
+ }
+ 
+reg VP2Control : 8
+ {
+  SwapF : 0-2
+  MirrF : 3
+  SwapE : 4-6
+  MirrE : 7
+ }   
+ 
+reg VP3Control : 8
+ {
+  XTgl   : 0
+  HTgl   : 1
+  VTgl   : 2
+  EMB    : 3
+  SpSync : 4-5
+  DEInt  : 6
+  Edge   : 7
+ }
+
+reg VP4Control : 8
+ {
+  BLC     : 0-1
+  BlankIt : 2-3
+  CCIR656 : 4
+  Alt656  : 5
+  Tst656  : 6
+  TstPat  : 7
+ }
+
+reg VP5Control : 8
+ { 
+  CKCase : 0
+  SPCnt  : 1-2
+ }
+
+reg MuxVPVIPOut : 8
+ {
+  Blue  : 0-1
+  Green : 2-3
+  Red   : 4-5
+ }
+
+reg MatControl : 8
+ {
+  SC : 0-1
+  BP : 2
+ }
+ 
+reg VIDFormat : 8
+ {
+  Format  : 0-4
+  D3NegVS : 6
+  D3      : 7
+ } 
+
+reg TBGControl0 : 8
+ {
+  DisFrame : 5
+  SyncMeth : 6
+  SyncOnce : 7
+ }
+
+reg TBGControl1 : 8
+ {
+  HTgl    : 0
+  VTgl    : 1
+  EnTgl   : 2
+  
+  VHXExt  : 3-5
+  
+  DisDWIN : 6
+ }  
+
+reg EnSpace : 8
+ {
+ }
+ 
+reg HVFControl0 : 8
+ {
+  IntPol : 0-1
+  Prefil : 2-3
+  RWB    : 6
+  SM     : 7
+ } 
+
+reg HVFControl1 : 8
+ {
+  FOR        : 0
+  YUV        : 1
+  VQR        : 2-3
+  PAD        : 4-5
+  SemiPlanar : 6
+ } 
+ 
+reg RepControl : 8
+ {
+ } 
+
+reg PLLSerial1 : 8
+ {
+  FDN   : 0
+  IZ    : 1-2
+  ManIZ : 6
+ }
+
+reg PLLSerial2 : 8
+ {
+  NOSC : 0-1
+  PR   : 4-7
+ }
+ 
+reg PLLSerial3 : 8
+ {
+  CCIR     : 0
+  DE       : 1
+  PXIN_SEL : 4
+ }
+ 
+reg Serializer : 8
+ {
+  Phase2 : 0-3
+  Phase3 : 4-7
+ } 
+ 
+reg BufferOut : 8
+ {
+  CLK   : 0-1
+  Force : 2-3
+ } 
+ 
+reg PLLSCG1 : 8
+ {
+  FDN : 0
+ } 
+ 
+reg PLLSCG2 : 8
+ {
+  NOSC     : 0-1
+  SelCLKIN : 4
+  Bypass   : 7
+ }
+ 
+reg PLLSCGN1 : 8
+ {
+ }  
+ 
+reg PLLSCGN2 : 8
+ {
+ }
+ 
+reg PLLSCGR1 : 8
+ {
+ }
+ 
+reg PLLSCGR2 : 8
+ {
+ }  
+ 
+reg AudioDiv : 8
+ {
+  Div : 0-2
+ }
+ 
+reg SelectCLK : 8
+ {
+  CLK1   : 0
+  VRFCLK : 1-2
+  EnSC   : 3
+ }
+ 
+reg ANAGeneral : 8
+ {
+ }
+
+reg EDIDBlock : 8
+ {
+ }
+ 
+reg DDCControl : 8
+ {
+  Read : 0
+ }
+ 
+reg DDCAddress : 8
+ {
+ }
+ 
+reg DDCOff : 8
+ {
+ }     
+ 
+reg DDCSegAddr : 8
+ {
+ }
+ 
+reg DDCSeg : 8
+ {
+ }
+ 
+reg AIPControl0 : 8
+ {
+  ResetFIFO : 0
+  Swap      : 1
+  Layout    : 2
+  AcrMan    : 5
+  ResetCTS  : 6
+ } 
+ 
+reg ENCControl : 8
+ {
+  ResetEnc : 0
+  ResetSel : 1
+  Code     : 2-3
+ } 
+ 
+reg TX3 : 8
+ {
+ }
+ 
+reg TX33 : 8
+ {
+  HDMI : 1
+ } 
+ 
+reg TX4 : 8
+ {
+  HDCP : 0
+  RAM  : 1
+  RG   : 2
+ } 
+ 
+reg Geom : 16
+ {
+ } 
+
+bar HDMIBar : address
+ {
+  VersionLSB   = 0000h RO
+  VersionMSB   = 0002h RO
+  
+  MainControl0 = 0001h
+  
+  SoftReset    = 000Ah WO
+  DDCDisable   = 000Bh
+  
+  IntFlags2    = 0011h
+  
+  VP0Enable    = 0018h
+  VP1Enable    = 0019h
+  VP2Enable    = 001Ah
+  
+  VP0Control   = 0020h WO
+  VP1Control   = 0021h WO
+  VP2Control   = 0022h WO
+  VP3Control   = 0023h WO
+  VP4Control   = 0024h WO
+  VP5Control   = 0025h WO
+  
+  MuxVPVIPOut  = 0027h
+  
+  MatControl   = 0080h WO
+  
+  VIDFormat    = 00A0h WO
+  
+  RefPix       = 00A1h WO as Geom
+  RefLine      = 00A3h WO as Geom
+  NumPix       = 00A5h WO as Geom
+  NumLine      = 00A7h WO as Geom
+  
+  VS1LineS     = 00A9h WO as Geom
+  VS1PixS      = 00ABh WO as Geom
+  VS1LineE     = 00ADh WO as Geom
+  VS1PixE      = 00AFh WO as Geom
+  
+  VS2LineS     = 00B1h WO as Geom
+  VS2PixS      = 00B3h WO as Geom
+  VS2LineE     = 00B5h WO as Geom
+  VS2PixE      = 00B7h WO as Geom
+  
+  HSPixS       = 00B9h WO as Geom
+  HSPixE       = 00BBh WO as Geom
+  
+  VWin1LineS   = 00BDh WO as Geom
+  VWin1LineE   = 00BFh WO as Geom
+  
+  VWin2LineS   = 00C1h WO as Geom
+  VWin2LineE   = 00C3h WO as Geom
+  
+  DEPixS       = 00C5h WO as Geom
+  DEPixE       = 00C7h WO as Geom
+  
+  TBGControl0  = 00CAh WO
+  TBGControl1  = 00CBh WO
+  EnSpace      = 00D6h WO
+  HVFControl0  = 00E4h WO
+  HVFControl1  = 00E5h WO
+  RepControl   = 00F0h WO 
+  
+  PLLSerial1   = 0200h
+  PLLSerial2   = 0201h
+  PLLSerial3   = 0202h
+  Serializer   = 0203h
+  BufferOut    = 0204h
+  PLLSCG1      = 0205h
+  PLLSCG2      = 0206h
+  PLLSCGN1     = 0207h
+  PLLSCGN2     = 0208h
+  PLLSCGR1     = 0209h
+  PLLSCGR2     = 020Ah
+  AudioDiv     = 020Eh
+  SelectCLK    = 0211h
+  ANAGeneral   = 0212h
+  
+  EDIDBlock[128] = 0900h
+  
+  DDCControl   = 09FAh
+  DDCAddress   = 09FBh
+  DDCOff       = 09FCh
+  DDCSegAddr   = 09FDh
+  DDCSeg       = 09FEh
+  
+  AIPControl0  = 1100h
+  
+  ENCControl   = 110Dh
+  
+  TX3          = 129Ah
+  TX4          = 129Bh
+  TX33         = 12B8h
+ }
+ 
+     

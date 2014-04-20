@@ -217,6 +217,7 @@
 ../../CCore/src/TreeMap.cpp
 ../../CCore/src/Tuple.cpp
 ../../CCore/src/UIntSplit.cpp
+../../CCore/src/video/EDID.cpp
 ../../HCore/CCore/src/Abort.cpp
 ../../HCore/CCore/src/AsyncFileDevice.cpp
 ../../HCore/CCore/src/DirTreeRun.cpp

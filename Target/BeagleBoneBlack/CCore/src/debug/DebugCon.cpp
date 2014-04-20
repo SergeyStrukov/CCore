@@ -4077,6 +4077,8 @@ void __std_debug_init(void)
 
 #endif  
   
+#if 0
+  
   EDID::Mode mode;
   HDMI::Instance hdmi;
 
@@ -4089,6 +4091,8 @@ void __std_debug_init(void)
   if( hdmi.readEDID(buf,0) ) Stop(15);
    
   mode=EDID::Mode(buf);
+  
+#endif  
 
 #if 0
   
@@ -4103,9 +4107,13 @@ void __std_debug_init(void)
   
 #endif  
   
+#if 0  
+  
   if( hdmi.setMode(HDMI::ModeDesc(mode,mode)) ) Stop(15);
    
   if( hdmi.enableVIP() ) Stop(15);
+  
+#endif  
  }
 
 void __std_debug(const char *zstr)

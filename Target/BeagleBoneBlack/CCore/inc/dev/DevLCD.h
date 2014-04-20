@@ -16,7 +16,7 @@
 #ifndef CCore_inc_dev_DevLCD_h
 #define CCore_inc_dev_DevLCD_h
 
-#include <CCore/inc/Gadget.h>
+#include <CCore/inc/video/EDID.h>
  
 namespace CCore {
 namespace Dev {
@@ -31,7 +31,7 @@ class LCD : NoCopy
  {
   public:
   
-   struct Geometry
+   struct Mode
     {
      uint32 hlen;   // 16-2048 multiple of 16
      uint32 hfront; // 1-1024
@@ -43,7 +43,9 @@ class LCD : NoCopy
      uint32 vsync;  // 1-64
      uint32 vback;  // 0-255
     
-     Geometry() {}
+     Mode() {}
+     
+     Mode(const Video::EDIDMode &mode);
     };
    
    struct MainFrame
@@ -61,11 +63,11 @@ class LCD : NoCopy
    
    void enable(uint32 clock); // MHz
    
-   void first_reset();
+   void reset_first();
    
    void setClock(uint32 clock); // MHz
    
-   MainFrame init(const Geometry &geom,Space video_space);
+   MainFrame init_first(const Mode &mode,Space video_space);
  };
 
 } // namespace Dev

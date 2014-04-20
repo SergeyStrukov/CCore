@@ -217,6 +217,7 @@
 ../../CCore/src/TreeMap.cpp
 ../../CCore/src/Tuple.cpp
 ../../CCore/src/UIntSplit.cpp
+../../CCore/src/video/EDID.cpp
 ../../XCore/CCore/src/Abort.cpp
 ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 ../../XCore/CCore/src/libc/assert.cpp
