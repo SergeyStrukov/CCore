@@ -17,6 +17,7 @@
 
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Task.h>
+#include <CCore/inc/Timer.h>
 
 namespace CCore {
 namespace Dev {
@@ -192,6 +193,16 @@ auto HDMI::detect() -> Detect
   auto status=barCEC.get_CECStatus();
   
   return Detect(status.maskbit(CECStatus_Plug),status.maskbit(CECStatus_RxSense));
+ }
+
+bool HDMI::waitForPower(MSec timeout)
+ {
+  for(MSecTimer timer; timer.less(+timeout) ;)
+    {
+     if( detect().power ) return true; 
+    }
+  
+  return false;
  }
 
 void HDMI::enableVIP()

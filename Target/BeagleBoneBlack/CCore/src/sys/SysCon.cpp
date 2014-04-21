@@ -17,6 +17,10 @@
 
 #include <CCore/inc/dev/DevPlanInit.h>
 
+#include <CCore/inc/dev/DevVideo.h>
+
+#include <CCore/inc/video/SimpleConsole.h>
+
 #include <__std_init.h>
 
 namespace CCore {
@@ -30,8 +34,10 @@ namespace Private_SysCon {
 
 class ImpCon : public ConBase
  {
+   Dev::VideoControl dev;
+ 
    Mutex mutex;
-  
+   
   private:
    
    virtual void attachDefaultInput(ConInputFunction)
@@ -56,6 +62,23 @@ class ImpCon : public ConBase
    
    virtual void enablePacket()
     {
+     // 1
+     {
+      Dev::I2C i2c(Dev::I2C_0);
+     
+      i2c.enable();
+      i2c.reset();
+     }
+     
+     // 2
+     {
+      if( dev.init() )
+        {
+        }
+      else
+        {
+        }
+     }
     }
    
    virtual void disablePacket()

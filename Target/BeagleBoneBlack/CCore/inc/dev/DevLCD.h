@@ -17,6 +17,7 @@
 #define CCore_inc_dev_DevLCD_h
 
 #include <CCore/inc/video/EDID.h>
+#include <CCore/inc/video/FrameBuf.h>
  
 namespace CCore {
 namespace Dev {
@@ -31,6 +32,16 @@ class LCD : NoCopy
  {
   public:
   
+   LCD();
+   
+   // init
+   
+   void enable(uint32 clock); // MHz
+   
+   void reset_first();
+   
+   void setClock(uint32 clock); // MHz
+   
    struct Mode
     {
      uint32 hlen;   // 16-2048 multiple of 16
@@ -48,26 +59,7 @@ class LCD : NoCopy
      Mode(const Video::EDIDMode &mode);
     };
    
-   struct MainFrame
-    {
-     using Color = uint16 ;
-     
-     Color *base;
-     ulen dx;
-     ulen dy;
-    };
-  
-   LCD();
-   
-   // init
-   
-   void enable(uint32 clock); // MHz
-   
-   void reset_first();
-   
-   void setClock(uint32 clock); // MHz
-   
-   MainFrame init_first(const Mode &mode,Space video_space);
+   Video::FrameBuf<Video::Color565> init_first(const Mode &mode,Space video_space);
  };
 
 } // namespace Dev

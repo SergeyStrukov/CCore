@@ -4075,10 +4075,6 @@ void __std_debug_init(void)
    for(Address addr=0x8A0; addr<=0x8EC ;addr+=4) Reg(0x44E10000,addr)=Bit(3);
   }
 
-#endif  
-  
-#if 0
-  
   EDID::Mode mode;
   HDMI::Instance hdmi;
 
@@ -4092,10 +4088,6 @@ void __std_debug_init(void)
    
   mode=EDID::Mode(buf);
   
-#endif  
-
-#if 0
-  
   LCD::Instance lcd;
    
   lcd.first_reset();
@@ -4104,10 +4096,6 @@ void __std_debug_init(void)
   
   //Video::Test(frame);
   Video::ConsoleInit(frame);
-  
-#endif  
-  
-#if 0  
   
   if( hdmi.setMode(HDMI::ModeDesc(mode,mode)) ) Stop(15);
    

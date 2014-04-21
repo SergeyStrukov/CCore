@@ -92,6 +92,7 @@ obj/DevPlanInit.o \
 obj/DevRW.o \
 obj/DevTick.o \
 obj/DevTimer.o \
+obj/DevVideo.o \
 obj/DevWaitForInterrupt.o \
 obj/DynArray.o \
 obj/EDID.o \
@@ -108,6 +109,7 @@ obj/FastMul.o \
 obj/FastMutex.o \
 obj/Fifo.o \
 obj/FileName.o \
+obj/FrameBuf.o \
 obj/FuncTask.o \
 obj/Function.o \
 obj/FunctorType.o \
@@ -227,6 +229,7 @@ obj/Sem.o \
 obj/ShortSort.o \
 obj/Signal.o \
 obj/SimpleArray.o \
+obj/SimpleConsole.o \
 obj/SingleHost.o \
 obj/Sort.o \
 obj/SortUnique.o \
@@ -389,6 +392,7 @@ obj/DevPlanInit.s \
 obj/DevRW.s \
 obj/DevTick.s \
 obj/DevTimer.s \
+obj/DevVideo.s \
 obj/DevWaitForInterrupt.s \
 obj/DynArray.s \
 obj/EDID.s \
@@ -405,6 +409,7 @@ obj/FastMul.s \
 obj/FastMutex.s \
 obj/Fifo.s \
 obj/FileName.s \
+obj/FrameBuf.s \
 obj/FuncTask.s \
 obj/Function.s \
 obj/FunctorType.s \
@@ -524,6 +529,7 @@ obj/Sem.s \
 obj/ShortSort.s \
 obj/Signal.s \
 obj/SimpleArray.s \
+obj/SimpleConsole.s \
 obj/SingleHost.s \
 obj/Sort.s \
 obj/SortUnique.s \
@@ -686,6 +692,7 @@ obj/DevPlanInit.dep \
 obj/DevRW.dep \
 obj/DevTick.dep \
 obj/DevTimer.dep \
+obj/DevVideo.dep \
 obj/DevWaitForInterrupt.dep \
 obj/DynArray.dep \
 obj/EDID.dep \
@@ -702,6 +709,7 @@ obj/FastMul.dep \
 obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FileName.dep \
+obj/FrameBuf.dep \
 obj/FuncTask.dep \
 obj/Function.dep \
 obj/FunctorType.dep \
@@ -821,6 +829,7 @@ obj/Sem.dep \
 obj/ShortSort.dep \
 obj/Signal.dep \
 obj/SimpleArray.dep \
+obj/SimpleConsole.dep \
 obj/SingleHost.dep \
 obj/Sort.dep \
 obj/SortUnique.dep \
@@ -1182,6 +1191,9 @@ obj/DevTick.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 obj/DevTimer.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/DevVideo.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevVideo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/DevWaitForInterrupt.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1228,6 +1240,9 @@ obj/Fifo.o : ../../CCore/src/Fifo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileName.o : ../../CCore/src/FileName.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FrameBuf.o : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FuncTask.o : ../../CCore/src/task/FuncTask.cpp
@@ -1585,6 +1600,9 @@ obj/Signal.o : ../../CCore/src/Signal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SimpleArray.o : ../../CCore/src/array/SimpleArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SimpleConsole.o : ../../CCore/src/video/SimpleConsole.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SingleHost.o : ../../CCore/src/SingleHost.cpp
@@ -2066,6 +2084,9 @@ obj/DevTick.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 obj/DevTimer.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DevVideo.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevVideo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DevWaitForInterrupt.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2112,6 +2133,9 @@ obj/Fifo.s : ../../CCore/src/Fifo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/FileName.s : ../../CCore/src/FileName.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/FrameBuf.s : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/FuncTask.s : ../../CCore/src/task/FuncTask.cpp
@@ -2469,6 +2493,9 @@ obj/Signal.s : ../../CCore/src/Signal.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/SimpleArray.s : ../../CCore/src/array/SimpleArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SimpleConsole.s : ../../CCore/src/video/SimpleConsole.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/SingleHost.s : ../../CCore/src/SingleHost.cpp
@@ -2950,6 +2977,9 @@ obj/DevTick.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 obj/DevTimer.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTimer.o $< -MF $@
 
+obj/DevVideo.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevVideo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevVideo.o $< -MF $@
+
 obj/DevWaitForInterrupt.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevWaitForInterrupt.o $< -MF $@
 
@@ -2997,6 +3027,9 @@ obj/Fifo.dep : ../../CCore/src/Fifo.cpp
 
 obj/FileName.dep : ../../CCore/src/FileName.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@
+
+obj/FrameBuf.dep : ../../CCore/src/video/FrameBuf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameBuf.o $< -MF $@
 
 obj/FuncTask.dep : ../../CCore/src/task/FuncTask.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FuncTask.o $< -MF $@
@@ -3354,6 +3387,9 @@ obj/Signal.dep : ../../CCore/src/Signal.cpp
 
 obj/SimpleArray.dep : ../../CCore/src/array/SimpleArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SimpleArray.o $< -MF $@
+
+obj/SimpleConsole.dep : ../../CCore/src/video/SimpleConsole.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SimpleConsole.o $< -MF $@
 
 obj/SingleHost.dep : ../../CCore/src/SingleHost.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleHost.o $< -MF $@

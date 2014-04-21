@@ -218,6 +218,8 @@
 ../../CCore/src/Tuple.cpp
 ../../CCore/src/UIntSplit.cpp
 ../../CCore/src/video/EDID.cpp
+../../CCore/src/video/FrameBuf.cpp
+../../CCore/src/video/SimpleConsole.cpp
 ../../HCore/CCore/src/Abort.cpp
 ../../HCore/CCore/src/AsyncFileDevice.cpp
 ../../HCore/CCore/src/DirTreeRun.cpp

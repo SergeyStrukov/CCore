@@ -163,6 +163,8 @@ class HDMI : NoCopy
    
    Detect detect();
    
+   bool waitForPower(MSec timeout);
+   
    void enableVIP();
    
    void disableVIP();
