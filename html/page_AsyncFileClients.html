@@ -57,6 +57,7 @@ An <b>AsyncFile</b> object has several parameters, affecting operations.
 </p>
 
 <pre>
+
 class <span class="Att">AsyncFile</span> : public Funchor_nocopy
  {
    ....
@@ -121,6 +122,7 @@ class <span class="Att">AsyncFile</span> : public Funchor_nocopy
    
    void read(FilePosType off,ulen len,PacketFunction complete_function); 
  };
+
 </pre>
 
 <p>
@@ -202,6 +204,7 @@ The data can be retrieved in the <b>complete_function</b>:
 </p>
 
 <pre>
+
 void complete_function(PacketHeader *packet_)
  {
   Packet&lt;uint8,Sys::AsyncFile::ReadBufExt&gt; packet=packet_;
@@ -216,6 +219,7 @@ void complete_function(PacketHeader *packet_)
    
   packet.popExt().complete();
  }
+
 </pre>
 
 <a name="AsyncFileSystem"><h4>AsyncFileSystem</h4></a>
@@ -226,6 +230,7 @@ operations on an async file system device.
 </p>
 
 <pre>
+
 class <span class="Att">AsyncFileSystem</span> : public Funchor_nocopy
  {
    ....
@@ -278,6 +283,7 @@ class <span class="Att">AsyncFileSystem</span> : public Funchor_nocopy
   
    static void Exec(StrLen dir,StrLen program,StrLen arg,MSec timeout=DefaultTimeout);
  };
+
 </pre>
 
 <p>
@@ -304,6 +310,7 @@ It is derived from the class <a href="page_ToMemBase.html"><b>ToMemBase</b></a>.
 </p>
 
 <pre>
+
 class <span class="Att">AsyncFileToMem</span> : public ToMemBase
  {
   public:
@@ -323,6 +330,7 @@ class <span class="Att">AsyncFileToMem</span> : public ToMemBase
    
    AsyncFileToMem * objMove(Place&lt;void&gt; place);
  };
+
 </pre>
 
 <p>
@@ -344,6 +352,7 @@ Then it can iterate through the list.
 </p>
 
 <pre>
+
 class <span class="Att">AsyncFileListToMem</span> : public ToMemBase
  {
    ....
@@ -369,6 +378,7 @@ class <span class="Att">AsyncFileListToMem</span> : public ToMemBase
    
    FileType getFileType() const;
  };
+
 </pre>
 
 <p>

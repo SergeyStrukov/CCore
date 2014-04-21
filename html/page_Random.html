@@ -30,6 +30,8 @@
 
 <p class="Files">Files <b>CCore/inc/Random.h</b> <b>CCore/src/Random.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/PlatformRandom.h</b></p>
+
 <p>
 Random numbers have many use in applications. <b>CCore</b> provides a quality random number generator
 implementation, based on the <a href="http://en.wikipedia.org/wiki/Mersenne_twister">Mersenne Twister algorithm</a>.
@@ -331,6 +333,20 @@ Second, use <b>messup()</b> method to "mess-up" the state and add to it some clo
 unprobably repeatable. You may also use the method <b>pure_init()</b> to skip this mess and start
 the generator as the pure Mersenne Twister generator. In such case to continue use the method <b>pure_next()</b>
 for the random number generation. These "pure" methods are included for the testing purpose mostly.
+</p>
+
+<h2>PlatformRandom</h2>
+
+<p>
+The header <b>PlatformRandom.h</b> is a stub header. It contains the definition of the type 
+<b>PlatformRandom</b>. The <b>CCore</b> header defines this type as <b>Random</b>.
+But target may define its own header file with the same name and override this stub.
+In such case the defined type must provide the same functionality as the type <b>Random</b>.
+</p>
+
+<p>
+For example, the target <b>WIN64</b> defines the type <b>PlatformRandom</b> as <b>IntelRandom</b> to utilize
+the Intel hardware RNG.
 </p>
 
 </body>

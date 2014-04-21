@@ -33,12 +33,12 @@
 <p class="Files">Files <b>CCore/inc/sys/SysAsyncFileSystem.h</b> <b>CCore/src/sys/SysAsyncFileSystem.cpp</b></p>
 
 <p>
-Async file and file system devices are a packet processing devices, that performs file and file system
+Async file and file system devices are packet processing devices, that performs file and file system
 operations in asynchronous manner. To be used, the device must be registered in the default 
 <a href="page_ObjectHost.html">Object Host</a>. The name of the object must be used as a device name
-in file names on that device. For example, if some object is registered under the name "host", 
-the file name "host:/file.txt" refers to the file "/file.txt" on that device or "host:c:/file.txt" refers
-to "c:/file.txt".
+in file names on that device. For example, if some object is registered under the name <b>"host"</b>, 
+the file name <b>"host:/file.txt"</b> refers to the file <b>"/file.txt"</b> 
+on that device or <b>"host:c:/file.txt"</b> refers to <b>"c:/file.txt"</b>.
 </p>
 
 <h4>Sys::AsyncFileDevice</h4>
@@ -49,10 +49,12 @@ must implement this interface.
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFileDevice</span>
  {
   virtual Sys::AsyncFileState * createState(const ObjHook &hook) noexcept(EnableNoExcept) =0;
  };
+
 </pre>
 
 <p>
@@ -65,6 +67,7 @@ its destruction while one of states is alive.
 </p>
 
 <pre>
+
 class <span class="Att">Sys::AsyncFileState</span> : public MemBase_nocopy
  {
    ObjHook hook;
@@ -94,6 +97,7 @@ class <span class="Att">Sys::AsyncFileState</span> : public MemBase_nocopy
    
    virtual void read(Packet&lt;uint8,Sys::AsyncFile::ReadBufExt&gt; packet)=0;
  };
+
 </pre>
 
 <p>
@@ -123,6 +127,7 @@ the operation result:
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFile::OpenExt</span>
  {
   PacketFormat write_format; // output
@@ -148,6 +153,7 @@ struct <span class="Att">Sys::AsyncFile::OpenExt</span>
     error=error_;
    }
  };
+
 </pre>
 
 <p>
@@ -165,6 +171,7 @@ The packet extension <b>Sys::AsyncFile::CloseExt</b> is used to return the opera
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFile::CloseExt</span>
  {
   FileError error;           // output
@@ -181,6 +188,7 @@ struct <span class="Att">Sys::AsyncFile::CloseExt</span>
     error=error_;
    }
  };
+
 </pre>
 
 <p>
@@ -192,6 +200,7 @@ the <b>file_len</b> result must be reported as if these operations execution is 
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFile::WriteExt</span>
  {
   FilePosType file_len;      // output
@@ -212,6 +221,7 @@ struct <span class="Att">Sys::AsyncFile::WriteExt</span>
     error=error_;
    }
  };
+
 </pre>
 
 <p>
@@ -226,6 +236,7 @@ Buffer must be red all, otherwise error must be reported. Packet data are not re
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFile::ReadExt</span>
  {
   FilePosType off;           // input, preserved
@@ -248,6 +259,7 @@ struct <span class="Att">Sys::AsyncFile::ReadExt</span>
     error=error_;
    }
  };
+
 </pre>
 
 <p>
@@ -259,6 +271,7 @@ reattached to store the required volume of data. The read length must not exceed
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFile::ReadBufExt</span>
  {
   FilePosType off;           // input, preserved
@@ -286,6 +299,7 @@ struct <span class="Att">Sys::AsyncFile::ReadBufExt</span>
     error=error_;
    }
  };
+
 </pre>
 
 <h4>Sys::AsyncFile</h4>
@@ -295,6 +309,7 @@ The class <b>Sys::AsyncFile</b> is to deal with a single file on some async file
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFile</span>
  {
   // public
@@ -346,6 +361,7 @@ struct <span class="Att">Sys::AsyncFile</span>
   
   void read(Packet&lt;uint8,ReadBufExt&gt; packet);
  };
+
 </pre>
 
 <p>
@@ -365,8 +381,8 @@ There are two <b>open()</b> operation. First is a simple initialization with the
 <p>
 The second <b>open()</b> splits the file name, searches for the async file device and opens the file
 on this device. It also fills <b>OpenExt</b> fields, <b>write_format</b> and <b>max_read_len</b> 
-to return these values with the packet. If the file name is "host:c:/file.txt", the the device with
-the name "host" is used and the file with the name "c:/file.txt" will be opened on this device.
+to return these values with the packet. If the file name is <b>"host:c:/file.txt"</b>, the the device with
+the name <b>"host"</b> is used and the file with the name <b>"c:/file.txt"</b> will be opened on this device.
 </p>
 
 <h4>Sys::AsyncFileSystemDevice</h4>
@@ -377,6 +393,7 @@ See <a href="page_Files.html#FSO">Files</a> for the generic file system operatio
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFileSystemDevice</span>
  {
   virtual void getFileType(Packet&lt;uint8,Sys::AsyncFileSystem::FileTypeExt&gt; packet,StrLen path)=0;
@@ -399,6 +416,7 @@ struct <span class="Att">Sys::AsyncFileSystemDevice</span>
   
   virtual void exec2(ObjHook &hook,Packet&lt;uint8,Sys::AsyncFileSystem::FileExt&gt; packet,StrLen dir,StrLen program)=0;
  };
+
 </pre>
 
 <p>
@@ -413,6 +431,7 @@ The packet extension <b>Sys::AsyncFileSystem::FileTypeExt</b> is used to return 
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFileSystem::FileTypeExt</span>
  {
   FileType file_type;         // output
@@ -433,6 +452,7 @@ struct <span class="Att">Sys::AsyncFileSystem::FileTypeExt</span>
     error=error_;
    }
  };
+
 </pre>
 
 <p>
@@ -441,6 +461,7 @@ The packet extension <b>Sys::AsyncFileSystem::ErrorExt</b> is used to return the
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFileSystem::ErrorExt</span>
  {
   FileError error;            // output
@@ -457,6 +478,7 @@ struct <span class="Att">Sys::AsyncFileSystem::ErrorExt</span>
     error=error_;
    }
  };
+
 </pre>
 
 <p>
@@ -500,6 +522,7 @@ The packet extension <b>Sys::AsyncFileSystem::FileExt</b> is used to return a re
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFileSystem::FileExt</span>
  {
   Sys::AsyncFileState *file_state; // output
@@ -523,6 +546,7 @@ struct <span class="Att">Sys::AsyncFileSystem::FileExt</span>
     error=error_;
    }
  };
+
 </pre>
 
 <p>
@@ -543,6 +567,7 @@ The class <b>Sys::AsyncFileSystem</b> is to work with some async file system dev
 </p>
 
 <pre>
+
 struct <span class="Att">Sys::AsyncFileSystem</span>
  {
   // public
@@ -583,6 +608,7 @@ struct <span class="Att">Sys::AsyncFileSystem</span>
   
   void exec2(Packet&lt;uint8,FileExt&gt; packet,StrLen dir,StrLen program);
  };
+
 </pre>
 
 <p>

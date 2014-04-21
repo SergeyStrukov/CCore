@@ -37,7 +37,7 @@
 <p>
 <b>Sem</b> has an internal semaphore counter. <b>give...()</b> methods increase this counter.
 <b>Abort()</b> is called in case of overflow.
-<b>take...()</b> decrement the counter if it is not zero. But if the counter is zero, the method
+<b>take...()</b> decrements the counter if it is not zero. But if the counter is zero, the method
 blocks the calling thread until the counter becomes non-zero. Then it decrements the counter.
 </p>
 

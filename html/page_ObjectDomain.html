@@ -150,13 +150,13 @@ class <span class="Att">ObjectDomain</span> : NoCopy
    
    // props
    
-   ulen getObjectCount() const { return list.getLen(); }
+   ulen getObjectCount() const;
    
-   ulen getTotalLen() const { return total_len; }
+   ulen getTotalLen() const;
    
-   ulen getMaxTotalLen() const { return max_total_len; }
+   ulen getMaxTotalLen() const;
    
-   ulen getAvail() const { return max_total_len-total_len; }
+   ulen getAvail() const;
  };
 
 </pre>

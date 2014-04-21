@@ -107,7 +107,7 @@ class <span class="Att">Task</span> : public MemBase_nocopy
 </pre>
 
 <p>
-<b>run_or_exit()</b> performs "run or exit" operation. I.g. it tries to start a task. If
+<b>run_or_exit()</b> performs "run or exit" operation. I.e. it tries to start a task. If
 the task is started, <b>true</b> is returned. Otherwise, the method <b>exit()</b> is called and <b>false</b> is returned.
 You cannot run the same task twice. So <b>exit()</b> is called either way: as the part of the <b>run_or_exit()</b> call
 or after the task is finished. This method can be used to destroy a dynamically allocated task object, 
@@ -231,7 +231,7 @@ It is not recommended to run a task with one of the special task priorities.
 
 <p>
 <b>XCore</b> performs tick task switch. The internal system tick is driven by a timer interrupt.
-This tick runs on a high frequency (like 10kHz). Tick switches ready-to-run tasks and performs
+This tick runs on a high frequency (like 10 kHz). Tick switches ready-to-run tasks and performs
 timed jobs, like timeout processing. Without the task priority relaxation only a task with the highest
 priority gains CPU time. If there are several such tasks they are switched in a round-robin order.
 </p>

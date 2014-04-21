@@ -91,7 +91,7 @@ modifications, made before the atomic operation has been performed by the thread
 On a single core CPU this is always true, because threads are not executed simultaneously and only a compiler 
 optimization may be an issue. But on multi-core CPU it is possible, that concurrent execution of CPU read/write
 commands changes the order of visible variable modifications. So special CPU commands must be used
-to prevent this.
+to prevent this. An example:
 </p>
 
 <pre>
@@ -108,7 +108,7 @@ a=1;
 
 while( a==0 );
 
-int c=b; // c may be zero
+int c=b; // <span class="Att">c may be zero</span>
 
 </pre>
 
@@ -134,7 +134,7 @@ int c=b; // c may be zero
 
 <p>
 <b>trySet()</b> is a more complex operation. It compares the current value with the <b>old_value</b>.
-If they are equal, then it assigns the <b>new_value</b>. Otherwise does nothing. You may learn what case
+If they are equal, then it assigns the <b>new_value</b>. Otherwise it does nothing. You may learn what case
 has happened by comparing the return value with the <b>old_value</b>.
 </p>
 
@@ -202,9 +202,9 @@ struct <span class="Att">Sys::Atomic</span>
   
   static Type Get(const volatile Type *atomic) { return *atomic; }
  
-  static Type Set(volatile Type *atomic,Type value) noexcept;
+  <span class="Att">static Type Set(volatile Type *atomic,Type value) noexcept;</span>
 
-  static Type Add(volatile Type *atomic,Type value) noexcept;
+  <span class="Att">static Type Add(volatile Type *atomic,Type value) noexcept;</span>
 
   static Type Sub(volatile Type *atomic,Type value) { return Add(atomic,-value); }
  
@@ -212,7 +212,7 @@ struct <span class="Att">Sys::Atomic</span>
  
   static Type Dec(volatile Type *atomic) { return Sub(atomic,1); }
  
-  static Type TrySet(volatile Type *atomic,Type old_value,Type new_value) noexcept;
+  <span class="Att">static Type TrySet(volatile Type *atomic,Type old_value,Type new_value) noexcept;</span>
   
   // public
   
@@ -238,6 +238,11 @@ struct <span class="Att">Sys::Atomic</span>
  };
 
 </pre>
+
+<p>
+Only three highlighted functions must be implemented, usually using an assembler to prevent compiler 
+optimizations across its calls.
+</p>
 
 </body>
 
