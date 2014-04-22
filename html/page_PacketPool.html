@@ -66,7 +66,7 @@ void <span class="Att">DetachPacketBufs</span>();
 
 <p>
 <b>TryAllocPacket_raw()</b> is a non-blocking allocation function. If the operation has failed,
-the return pointer is null. The packet is a "long" packet, i.g. has an attached data buffer.
+the return pointer is null. The packet is a "long" packet, i.e. has an attached data buffer.
 The length of the buffer is <b>PacketPool_PacketMaxDataLen</b>.
 </p>
 
@@ -84,7 +84,7 @@ timed variants of the <b>AllocPacket_raw()</b>. In case of timeout the null poin
 
 <p>
 There are "short" variants of four functions, mentioned above. They allocate a "short" packet,
-i.g. this packet does not necessary has an attached data buffer (but may have).
+i.e. this packet does not necessary has an attached data buffer (but may have).
 <b>AllocPacket_raw_short()</b> never returns null, because of this.
 </p>
 

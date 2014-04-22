@@ -82,10 +82,10 @@ Lets consider an example.
 <p>
 In this example we create the <b>ForcedTimeout</b> object.
 Then we take one of abort functions, provided by the object, and create and start a <b>Ticker</b>.
-The <b>ticker</b> will call this function after the 3 seconds delay. Abort function interrupts
+The <b>ticker</b> will call this function after the <b>3</b> seconds delay. Abort function interrupts
 any call of a timed blocking synchronization object method. In the example we are using the <b>Sem</b>.
 Without <b>ForcedTimeout</b> the call <b>sem.take(100_sec)</b> would block the execution
-for 100 seconds. Abort function is interrupting the wait after 3 seconds.
+for <b>100</b> seconds. Abort function is interrupting the wait after <b>3</b> seconds.
 </p>
 
 <p>
