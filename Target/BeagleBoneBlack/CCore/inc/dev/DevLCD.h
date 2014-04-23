@@ -59,7 +59,9 @@ class LCD : NoCopy
      Mode(const Video::EDIDMode &mode);
     };
    
-   Video::FrameBuf<Video::Color565> init_first(const Mode &mode,Space video_space);
+   using VideoBuf = Video::FrameBuf<Video::Color565> ;
+   
+   VideoBuf init_first(const Mode &mode,Space video_space);
  };
 
 } // namespace Dev

@@ -162,7 +162,7 @@ void LCD::setClock(uint32 clock)
   } 
  }
 
-Video::FrameBuf<Video::Color565> LCD::init_first(const Mode &mode,Space video_space)
+auto LCD::init_first(const Mode &mode,Space video_space) -> VideoBuf
  {
   ulen len=16+mode.hlen*mode.vlen;
   
@@ -176,7 +176,7 @@ Video::FrameBuf<Video::Color565> LCD::init_first(const Mode &mode,Space video_sp
   
   base[0]=(4<<12);
   
-  Video::FrameBuf<Video::Color565> ret(base+16,mode.hlen,mode.vlen);
+  VideoBuf ret(base+16,mode.hlen,mode.vlen);
   
   using namespace AM3359::LCD;
   

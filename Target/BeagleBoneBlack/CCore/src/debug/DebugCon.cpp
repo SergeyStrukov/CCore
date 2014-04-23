@@ -4047,12 +4047,12 @@ class Instance
 
 using namespace Debug;
 
+#if 0
+  
 #include <__std_init.h>
 
 void __std_debug_init(void)
  {
-#if 0
-  
   // PRCM
   {
    PRCM::CM_WKUP_Instance clk;
@@ -4100,8 +4100,6 @@ void __std_debug_init(void)
   if( hdmi.setMode(HDMI::ModeDesc(mode,mode)) ) Stop(15);
    
   if( hdmi.enableVIP() ) Stop(15);
-  
-#endif  
  }
 
 void __std_debug(const char *zstr)
@@ -4165,4 +4163,6 @@ void __std_debug_trap(unsigned LR,unsigned trap)
   
   __std_debug(out.closeZStr());
  }
+
+#endif
 

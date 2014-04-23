@@ -16,11 +16,14 @@
 #ifndef CCore_inc_dev_DevVideo_h
 #define CCore_inc_dev_DevVideo_h
 
-#include <CCore/inc/dev/DevHDMI.h>
-#include <CCore/inc/dev/DevLCD.h>
+#include <CCore/inc/video/FrameBuf.h>
  
 namespace CCore {
 namespace Dev {
+
+/* type */
+
+using VideoBuf = Video::FrameBuf<Video::Color565> ;
 
 /* classes */
 
@@ -31,7 +34,7 @@ class VideoControl;
 class VideoControl : NoCopy
  {
    Space video_space;
-   Video::FrameBuf<Video::Color565> frame_buf;
+   VideoBuf frame_buf;
    
   public:
   
@@ -41,7 +44,7 @@ class VideoControl : NoCopy
    
    bool init();
    
-   Video::FrameBuf<Video::Color565> getFrameBuf() const { return frame_buf; }
+   VideoBuf getFrameBuf() const { return frame_buf; }
  };
 
 } // namespace Dev 

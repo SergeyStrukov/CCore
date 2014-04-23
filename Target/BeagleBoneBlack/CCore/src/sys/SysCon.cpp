@@ -15,8 +15,10 @@
  
 #include <CCore/inc/sys/SysCon.h>
 
-#include <CCore/inc/dev/DevPlanInit.h>
+#include <CCore/inc/Exception.h>
 
+#include <CCore/inc/dev/DevPlanInit.h>
+#include <CCore/inc/dev/DevI2C.h>
 #include <CCore/inc/dev/DevVideo.h>
 
 #include <CCore/inc/video/SimpleConsole.h>
@@ -37,6 +39,9 @@ class ImpCon : public ConBase
    Dev::VideoControl dev;
  
    Mutex mutex;
+   ::CCore::Atomic flag;
+   
+   Video::SimpleConsole<Video::Color565> con;
    
   private:
    
@@ -53,9 +58,15 @@ class ImpCon : public ConBase
     {
      if( !packet ) return;
      
-     Mutex::Lock lock(mutex);
+     {
+      Mutex::Lock lock(mutex);
+      
+      flag=1;
 
-     __std_debug_console(packet.getData(),packet.getDataLen());
+      con.print(Range_const(packet.getRange()));
+      
+      flag=0;
+     }
      
      packet.free();
     }
@@ -74,9 +85,7 @@ class ImpCon : public ConBase
      {
       if( dev.init() )
         {
-        }
-      else
-        {
+         con.init(dev.getFrameBuf());
         }
      }
     }
@@ -99,6 +108,13 @@ class ImpCon : public ConBase
    
    ~ImpCon()
     {
+    }
+   
+   void debug_print(PtrLen<const char> str)
+    {
+     Dev::IntLock lock;
+     
+     if( !flag ) con.print(str);
     }
  };
 
@@ -124,11 +140,23 @@ class DefaultCon : NoCopy
    
    ConBase * getBase() { return &dev; }
    
+   void debug_print(PtrLen<const char> str)
+    {
+     dev.debug_print(str);
+    }
+   
    static const char * GetTag() { return "SysCon"; }
  };
  
 PlanInitObject<DefaultCon,PlanInitReq<Dev::GetPlanInitNode_Dev>
                          ,PlanInitReq<GetPlanInitNode_TaskCore> > Object CCORE_INITPRI_1 ;
+
+void DebugPrint(PtrLen<const char> str)
+ {
+  if( !Object ) return;
+  
+  Object->debug_print(str);
+ }
 
 } // namespace Private_SysCon
  
@@ -143,4 +171,70 @@ ConBase * ConBase::GetObject() { return Object->getBase(); }
 } // namespace Sys
 } // namespace CCore
  
+#if 1
+
+using namespace CCore;
+
+void __std_debug_init(void)
+ {
+ }
+
+void __std_debug(const char *zstr)
+ {
+  Sys::DebugPrint(StrLen(zstr));
+ }
+
+void __std_debug2(const char *ptr,__std_len_t len)
+ {
+  Sys::DebugPrint(Range(ptr,len));
+ }
+
+void __std_debug_console(const char *ptr,__std_len_t len)
+ {
+  Sys::DebugPrint(Range(ptr,len));
+ }
+
+#include <CCore/inc/dev/AM3359.h>
+
+void __std_debug_trap(unsigned LR,unsigned trap)
+ {
+  if( trap==0 ) return;
+  
+  using namespace AM3359::CP15;
+  
+  char buf[TextBufLen];
+  
+  PrintBuf out(Range(buf));
+  
+  switch( trap )
+    {
+     case 1 : // Undefined
+      {
+       Printf(out,"Undefined PC = #9.hi;",LR-4);
+      }
+     break; 
+    
+     case 3 : // Prefetch
+      {
+       Printf(out,"Prefetch PC = #9.hi; #; #9.hi;",LR-4,GetInstructionFaultStatus(),GetInstructionFaultAddress());
+      }
+     break;
+     
+     case 4 : // Data
+      {
+       Printf(out,"Data PC = #9.hi; #; #9.hi;",LR-8,GetDataFaultStatus(),GetDataFaultAddress());
+      }
+     break;
+     
+     default:
+      {
+       Printf(out,"LR = #9.hi; trap = #;",LR,trap);
+      }
+    }
+  
+  Sys::DebugPrint(out.close());
+ }
+
+#endif
+
 

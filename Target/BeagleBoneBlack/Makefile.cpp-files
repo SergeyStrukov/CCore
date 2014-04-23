@@ -129,7 +129,6 @@
 ../../CCore/src/net/HFSFileSystemDevice.cpp
 ../../CCore/src/net/NanoIPDevice.cpp
 ../../CCore/src/net/NetBase.cpp
-../../CCore/src/net/NetFork.cpp
 ../../CCore/src/net/PacketEndpointDevice.cpp
 ../../CCore/src/net/PTPBase.cpp
 ../../CCore/src/net/PTPBoot.cpp

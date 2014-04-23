@@ -28,21 +28,21 @@ namespace Dev {
 
 using namespace AM3359::I2C; 
 
-const uint32 I2C::AddressTable[]=
+const uint32 I2C::AddressTable[3]=
  {
   I2C0BaseAddress,
   I2C1BaseAddress,
   I2C2BaseAddress
  };
 
-const IntSource I2C::IntTable[]=
+const IntSource I2C::IntTable[3]=
  {
   Int_I2C0INT,
   Int_I2C1INT,
   Int_I2C2INT
  };
 
-Sys::Atomic I2C::LockTable[]={};
+Sys::Atomic I2C::LockTable[3]={};
 
 void I2C::cancel(State state_)
  {
