@@ -38,7 +38,7 @@ you use efficient types for log message arguments. To store log messages a fixed
 
 <p>
 A log message has an associated category and a time-stamp. You can use filters to control the
-message logging and the message selection from a log. Log also count messages. 
+message logging and the message selection from a log. Log also counts messages. 
 Log stores a message as a compact data structure, which includes message category, time-stamp,
 format string and format arguments. Format string must be a persistent string.
 Format arguments are copied, so they must have a value semantic. It is recommended, that format arguments
@@ -83,7 +83,7 @@ class <span class="Att">LogCategory_enum</span>
 <p>
 It stores internally two enum values: <b>Src</b> and <b>Type</b>. It is assumed that the <b>Src</b> describes
 the message source, and the <b>Type</b> describes the message type. <b>Src</b> and <b>Type</b> must
-be <b>"uint5"</b> enums, i.g. the usable value range should be representable by a 5-bits unsigned.
+be <b>"uint5"</b> enums, i.e. the usable value range should be representable by a 5-bits unsigned.
 </p>
 
 <h4>LogFilter_enum</h4>
@@ -152,7 +152,7 @@ This filter filters categories, whose source is disabled OR whose type is disabl
 <p>
 The class <b>LogStamp</b> is a default log time-stamp class implementation.
 It is a <b>Small Data Type</b>. It holds 3 values: the message number, the message second time-stamp
-and the message differential clock time-stamp (i.g. the clock time since the previous message).
+and the message differential clock time-stamp (i.e. the clock time since the previous message).
 The inner class <b>Host</b> is responsible for the time-stamp generation. An instance of this class
 is created as the part of a log object.
 </p>
@@ -589,7 +589,7 @@ The <b>overrun</b> is the overrun flag.
 
 <p>
 <b>setOverrun()</b> sets the overrun flag. If this flag is set, then new messages will overrun
-oldest messages in the log. Otherwise, log doesn't delete old messages and has therefor a limited capacity.
+oldest messages in the log. Otherwise, log doesn't delete old messages and therefor has a limited capacity.
 </p>
 
 <p>
