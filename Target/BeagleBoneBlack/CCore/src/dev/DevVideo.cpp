@@ -71,7 +71,7 @@ bool VideoControl::init()
       
      lcd.reset_first();
       
-     frame_buf=lcd.init_first(mode,video_space);
+     frame_buf=lcd.init_first16(mode,video_space);
      
      hdmi.enableVIP();
      

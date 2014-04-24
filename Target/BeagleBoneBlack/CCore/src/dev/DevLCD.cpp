@@ -39,6 +39,147 @@ LCD::Mode::Mode(const Video::EDIDMode &mode)
   vsync=mode.vsync_pulse;
  }
 
+LCD::FrameBuf16::FrameBuf16(uint32 hlen,uint32 vlen,Space video_space)
+ {
+  ulen len=16+hlen*vlen;
+  
+  if( len>video_space.len/2 )
+    {
+     Printf(Exception,"CCore::Dev::LCD::FrameBuf16::FrameBuf16(hlen=#;,vlen=#;,{...,#;}) : video space is too short",hlen,vlen,video_space.len);
+    }
+  
+  uint16 *base=static_cast<uint16 *>(video_space.mem);
+  uint16 *lim=base+len;
+  
+  base[0]=(1u<<14);
+  
+  Range(base+1,15).set_null();
+  
+  this->buf=Video::FrameBuf<Video::Color16>(base+16,hlen,vlen);
+  this->base=base;
+  this->lim=lim;
+ }
+
+LCD::FrameBuf24::FrameBuf24(uint32 hlen,uint32 vlen,Space video_space)
+ {
+  ulen len=32+3*hlen*vlen;
+  
+  if( len>video_space.len )
+    {
+     Printf(Exception,"CCore::Dev::LCD::FrameBuf24::FrameBuf24(hlen=#;,vlen=#;,{...,#;}) : video space is too short",hlen,vlen,video_space.len);
+    }
+  
+  uint8 *base=static_cast<uint8 *>(video_space.mem);
+  uint8 *lim=base+len;
+  
+  base[0]=0;
+  base[1]=(1u<<6);
+  
+  Range(base+2,30).set_null();
+
+  this->buf=Video::FrameBuf<Video::Color24>(base+32,hlen,vlen);
+  this->base=base;
+  this->lim=lim;
+ }
+
+LCD::FrameBuf32::FrameBuf32(uint32 hlen,uint32 vlen,Space video_space)
+ {
+  ulen len=8+hlen*vlen;
+  
+  if( len>video_space.len/4 )
+    {
+     Printf(Exception,"CCore::Dev::LCD::FrameBuf32::FrameBuf32(hlen=#;,vlen=#;,{...,#;}) : video space is too short",hlen,vlen,video_space.len);
+    }
+  
+  uint32 *base=static_cast<uint32 *>(video_space.mem);
+  uint32 *lim=base+len;
+  
+  base[0]=(1u<<14);
+  
+  Range(base+1,7).set_null();
+  
+  this->buf=Video::FrameBuf<Video::Color32>(base+8,hlen,vlen);
+  this->base=base;
+  this->lim=lim;
+ }
+
+void LCD::init_first()
+ {
+  using namespace AM3359::LCD;
+  
+  Bar bar;
+
+  bar.null_SysConfig()
+     .set_IdleMode(SysConfig_IdleMode_SmartIdle)
+     .set_StandbyMode(SysConfig_StandbyMode_SmartStandby)
+     .setTo(bar);
+  
+  bar.null_Control()
+     .setbit(Control_Raster|Control_UnderflowRestart)
+     .set_PCLKDiv(2)
+     .setTo(bar);
+  
+  bar.null_LCDDMAControl()
+     .set_BurstSize(2)
+     .set_FIFOReady(4)
+     .set_DMAPri(0)
+     .setTo(bar);
+ }
+
+void LCD::init(const Mode &mode,void *base,void *lim,ColorFormat fmt)
+ {
+  using namespace AM3359::LCD;
+  
+  Bar bar;
+
+  bar.set_LCDDMAFB0Base((uint32)base);
+  
+  bar.set_LCDDMAFB0Lim((uint32)lim);
+  
+  Type_SplitHLen split_HLen(mode.hlen-1);
+  Type_SplitHSync split_HSync(mode.hsync-1);
+  Type_SplitHFront split_HFront(mode.hfront-1);
+  Type_SplitHBack split_HBack(mode.hback-1);
+  Type_SplitVLen split_VLen(mode.vlen-1);
+  
+  bar.null_RasterTiming0()
+     .set_HLen_lsb(split_HLen.get_lsb())
+     .set_HSync_lsb(split_HSync.get_lsb())
+     .set_HFront_lsb(split_HFront.get_lsb())
+     .set_HBack_lsb(split_HBack.get_lsb())
+     .setbitIf(split_HLen.maskbit(SplitHLen_msb),RasterTiming0_HLen_msb)
+     .setTo(bar);
+  
+  bar.null_RasterTiming1()
+     .set_VLen_lsb(split_VLen.get_lsb())
+     .set_VSync(mode.vsync-1)
+     .set_VFront(mode.vfront)
+     .set_VBack(mode.vback)
+     .setTo(bar);
+  
+  bar.null_RasterTiming2()
+     .set_HFront_msb(split_HFront.get_msb())
+     .set_HBack_msb(split_HBack.get_msb())
+     .set_HSync_msb(split_HSync.get_msb())
+     .setbitIf(split_VLen.maskbit(SplitVLen_msb),RasterTiming2_VLen_msb)
+     .setbit(RasterTiming2_SyncEdge|RasterTiming2_InvHSync)
+     .setTo(bar);
+  
+  Bits_RasterControl flags=RasterControl_LCDEn|RasterControl_LCDTFT;
+  
+  switch( fmt )
+    {
+     case ColorFormat16 : flags=flags|RasterControl_STN565; break;
+     case ColorFormat24 : flags=flags|RasterControl_TFT24; break;
+     case ColorFormat32 : flags=flags|RasterControl_TFT24|RasterControl_TFT24Unpacked; break;
+    }
+  
+  bar.null_RasterControl()
+     .setbit(flags)
+     .set_PalMode(RasterControl_PalMode_Both)
+     .setTo(bar);
+ }
+
 LCD::LCD()
  {
  }
@@ -162,81 +303,69 @@ void LCD::setClock(uint32 clock)
   } 
  }
 
-auto LCD::init_first(const Mode &mode,Space video_space) -> VideoBuf
+Video::FrameBuf<Video::Color16> LCD::init_first16(const Mode &mode,Space video_space)
  {
-  ulen len=16+mode.hlen*mode.vlen;
+  FrameBuf16 frame(mode.hlen,mode.vlen,video_space);
   
-  if( len>video_space.len/2 )
-    {
-     Printf(Exception,"CCore::Dev::LCD::init(...) : video space is too short");
-    }
+  init_first();
   
-  uint16 *base=static_cast<uint16 *>(video_space.mem);
-  uint16 *lim=base+len;
+  init(mode,frame.base,frame.lim,ColorFormat16);
   
-  base[0]=(4<<12);
-  
-  VideoBuf ret(base+16,mode.hlen,mode.vlen);
-  
-  using namespace AM3359::LCD;
-  
-  Bar bar;
+  return frame.buf;
+ }
 
-  bar.null_SysConfig()
-     .set_IdleMode(SysConfig_IdleMode_SmartIdle)
-     .set_StandbyMode(SysConfig_StandbyMode_SmartStandby)
-     .setTo(bar);
+Video::FrameBuf<Video::Color24> LCD::init_first24(const Mode &mode,Space video_space)
+ {
+  FrameBuf24 frame(mode.hlen,mode.vlen,video_space);
+
+  init_first();
   
-  bar.null_Control()
-     .setbit(Control_Raster|Control_UnderflowRestart)
-     .set_PCLKDiv(2)
-     .setTo(bar);
+  init(mode,frame.base,frame.lim,ColorFormat24);
   
-  bar.null_LCDDMAControl()
-     .set_BurstSize(2)
-     .set_FIFOReady(4)
-     .set_DMAPri(0)
-     .setTo(bar);
+  return frame.buf;
+ }
+
+Video::FrameBuf<Video::Color32> LCD::init_first32(const Mode &mode,Space video_space)
+ {
+  FrameBuf32 frame(mode.hlen,mode.vlen,video_space);
   
-  bar.set_LCDDMAFB0Base((uint32)base);
+  init_first();
   
-  bar.set_LCDDMAFB0Lim((uint32)lim);
+  init(mode,frame.base,frame.lim,ColorFormat32);
   
-  Type_SplitHLen split_HLen(mode.hlen-1);
-  Type_SplitHSync split_HSync(mode.hsync-1);
-  Type_SplitHFront split_HFront(mode.hfront-1);
-  Type_SplitHBack split_HBack(mode.hback-1);
-  Type_SplitVLen split_VLen(mode.vlen-1);
+  return frame.buf;
+ }
+
+void LCD::stop()
+ {
+  // TODO
+ }
+
+Video::FrameBuf<Video::Color16> LCD::init16(const Mode &mode,Space video_space)
+ {
+  FrameBuf16 frame(mode.hlen,mode.vlen,video_space);
   
-  bar.null_RasterTiming0()
-     .set_HLen_lsb(split_HLen.get_lsb())
-     .set_HSync_lsb(split_HSync.get_lsb())
-     .set_HFront_lsb(split_HFront.get_lsb())
-     .set_HBack_lsb(split_HBack.get_lsb())
-     .setbitIf(split_HLen.maskbit(SplitHLen_msb),RasterTiming0_HLen_msb)
-     .setTo(bar);
+  init(mode,frame.base,frame.lim,ColorFormat16);
   
-  bar.null_RasterTiming1()
-     .set_VLen_lsb(split_VLen.get_lsb())
-     .set_VSync(mode.vsync-1)
-     .set_VFront(mode.vfront)
-     .set_VBack(mode.vback)
-     .setTo(bar);
+  return frame.buf;
+ }
+
+Video::FrameBuf<Video::Color24> LCD::init24(const Mode &mode,Space video_space)
+ {
+  FrameBuf24 frame(mode.hlen,mode.vlen,video_space);
   
-  bar.null_RasterTiming2()
-     .set_HFront_msb(split_HFront.get_msb())
-     .set_HBack_msb(split_HBack.get_msb())
-     .set_HSync_msb(split_HSync.get_msb())
-     .setbitIf(split_VLen.maskbit(SplitVLen_msb),RasterTiming2_VLen_msb)
-     .setbit(RasterTiming2_SyncEdge|RasterTiming2_InvHSync)
-     .setTo(bar);
+  init(mode,frame.base,frame.lim,ColorFormat24);
   
-  bar.null_RasterControl()
-     .setbit(RasterControl_LCDEn|RasterControl_LCDTFT|RasterControl_STN565)
-     .set_PalMode(RasterControl_PalMode_Both)
-     .setTo(bar);
+  return frame.buf;
+ }
+
+Video::FrameBuf<Video::Color32> LCD::init32(const Mode &mode,Space video_space)
+ {
+  FrameBuf32 frame(mode.hlen,mode.vlen,video_space);
   
-  return ret;
+  init(mode,frame.base,frame.lim,ColorFormat32);
+  
+  return frame.buf;
  }
 
 } // namespace Dev

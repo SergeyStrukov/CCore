@@ -23,7 +23,7 @@ namespace Dev {
 
 /* type */
 
-using VideoBuf = Video::FrameBuf<Video::Color565> ;
+using VideoBuf = Video::FrameBuf<Video::Color16> ;
 
 /* classes */
 

@@ -41,7 +41,7 @@ class ImpCon : public ConBase
    Mutex mutex;
    ::CCore::Atomic flag;
    
-   Video::SimpleConsole<Video::Color565> con;
+   Video::SimpleConsole<Video::Color16> con;
    
   private:
    

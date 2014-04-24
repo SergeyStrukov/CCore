@@ -32,16 +32,6 @@ class LCD : NoCopy
  {
   public:
   
-   LCD();
-   
-   // init
-   
-   void enable(uint32 clock); // MHz
-   
-   void reset_first();
-   
-   void setClock(uint32 clock); // MHz
-   
    struct Mode
     {
      uint32 hlen;   // 16-2048 multiple of 16
@@ -58,10 +48,72 @@ class LCD : NoCopy
      
      Mode(const Video::EDIDMode &mode);
     };
+  
+  private:
+
+   struct FrameBuf16
+    {
+     Video::FrameBuf<Video::Color16> buf;
+     void *base;
+     void *lim;
+     
+     FrameBuf16(uint32 hlen,uint32 vlen,Space video_space);
+    };
    
-   using VideoBuf = Video::FrameBuf<Video::Color565> ;
+   struct FrameBuf24
+    {
+     Video::FrameBuf<Video::Color24> buf;
+     void *base;
+     void *lim;
+     
+     FrameBuf24(uint32 hlen,uint32 vlen,Space video_space);
+    };
    
-   VideoBuf init_first(const Mode &mode,Space video_space);
+   struct FrameBuf32
+    {
+     Video::FrameBuf<Video::Color32> buf;
+     void *base;
+     void *lim;
+     
+     FrameBuf32(uint32 hlen,uint32 vlen,Space video_space);
+    };
+   
+   enum ColorFormat
+    {
+     ColorFormat16,
+     ColorFormat24,
+     ColorFormat32
+    };
+  
+   void init_first();
+  
+   void init(const Mode &mode,void *base,void *lim,ColorFormat fmt);
+   
+  public:
+  
+   LCD();
+   
+   // init
+   
+   void enable(uint32 clock); // MHz
+   
+   void reset_first();
+   
+   void setClock(uint32 clock); // MHz
+   
+   Video::FrameBuf<Video::Color16> init_first16(const Mode &mode,Space video_space);
+   
+   Video::FrameBuf<Video::Color24> init_first24(const Mode &mode,Space video_space);
+   
+   Video::FrameBuf<Video::Color32> init_first32(const Mode &mode,Space video_space);
+   
+   void stop();
+   
+   Video::FrameBuf<Video::Color16> init16(const Mode &mode,Space video_space);
+   
+   Video::FrameBuf<Video::Color24> init24(const Mode &mode,Space video_space);
+   
+   Video::FrameBuf<Video::Color32> init32(const Mode &mode,Space video_space);
  };
 
 } // namespace Dev
