@@ -32,10 +32,10 @@
 
 <p>
 <b>EchoTest</b> class is a simple <b>PTP::ServerDevice</b> processor class.
-It accepts <b>PTP</b> transactions with service id equals 10000 and function id equals 1.
+It accepts <b>PTP</b> transactions with service id equals <b>10000</b> and function id equals <b>1</b>.
 The client info payload must start with the data length, encoded as an <b>uint32</b> value in bigendian 
 byte order and continues with arbitrary data payload of this length.
-<b>EchoTest</b> sends the packet back with the error code equals 0 and the same data payload. 
+<b>EchoTest</b> sends the packet back with the error code equals <b>0</b> and the same data payload. 
 </p>
 
 <pre>
@@ -59,7 +59,7 @@ struct Output
 </pre>
 
 <p>
-I.g. the output packet content is almost the same as the input, except the <b>len</b> field is erased.
+I.e. the output packet content is almost the same as the input, except the <b>len</b> field is erased.
 </p>
 
 <p>

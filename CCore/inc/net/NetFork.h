@@ -20,6 +20,8 @@
  
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/Task.h>
+#include <CCore/inc/Fifo.h>
+#include <CCore/inc/Array.h>
 
 namespace CCore {
 namespace Net {
@@ -36,44 +38,75 @@ class EndpointNetFork : public ObjBase , public PacketEndpointDevice
  {
    ObjHook hook;
 
-   struct Item
+   struct Item : NoThrowFlagsBase
     {
      Packet<uint8> packet;
      PtrLen<const uint8> data;
+     
+     Item() {}
      
      Item(Packet<uint8> packet_,PtrLen<const uint8> data_) : packet(packet_),data(data_) {}
     };
    
    class Queue : NoCopy
     {
+      DynArray<Item> buf;
+      Fifo<Item> fifo;
+      
      public:
      
       explicit Queue(ulen queue_len);
       
       ~Queue();
       
-      bool operator + () const;
+      bool operator + () const { return !fifo.isEmpty(); }
       
-      bool operator ! () const;
+      bool operator ! () const { return fifo.isEmpty(); }
       
-      bool put(Packet<uint8> packet,PtrLen<const uint8> data);
+      bool put(Item item);
       
-      Item get();
+      Item get(); // non-empty
     };
    
    class Engine : NoCopy , public InboundProc
     {
       PacketEndpointDevice *ep;
+
+      Mutex proc_mutex;
       
       InboundProc *proc;
+      bool proc_enable;
+      
+      AntiSem proc_asem;
       
       Sem sem;
       Mutex mutex;
+      Atomic stop_flag;
       
       Queue queue;
       
+      AntiSem asem;
+      
      private: 
+      
+      class Hook : NoCopy
+       {
+         InboundProc *proc;
+         AntiSem *asem;
+         
+        public:
+         
+         explicit Hook(Engine &engine);
+         
+         ~Hook();
+         
+         bool operator ! () const { return !proc; }
+         
+         InboundProc * operator -> () const { return proc; }
+       };
      
+      void work(Item item);
+      
       void work();
       
      public:
@@ -89,9 +122,15 @@ class EndpointNetFork : public ObjBase , public PacketEndpointDevice
       void detach();
       
       template <class ... TT>
-      void run(ulen task_count,TT ... tt);
-      
-      void stop();
+      void run(ulen task_count,TT ... tt)
+       {
+        while( task_count-- )
+          {
+           asem.inc();
+           
+           RunFuncTask( [this] () { work(); } ,asem.function_dec(),tt...);
+          }
+       }
       
       // InboundProc
       
