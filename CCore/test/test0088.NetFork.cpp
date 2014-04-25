@@ -111,6 +111,112 @@ class Engine1 : NoCopy
     }; 
  };
 
+/* class Engine2 */  
+
+class Engine2 : NoCopy
+ {
+   Net::Bridge bridge;
+   
+   Net::MultipointNetFork fork; 
+   
+   ObjMaster fork_master;
+   
+   Net::PTP::ClientDevice client1;
+   Net::PTP::ClientDevice client2;
+   Net::PTP::ServerDevice server;
+   
+   ObjMaster server_master;
+   ObjMaster client1_master;
+   ObjMaster client2_master;
+   
+   Net::PTP::EchoTest echo;
+   
+   PTPEchoTest task1;
+   PTPEchoTest task2;
+   
+  public:
+  
+   Engine2()
+    : bridge(2),
+      
+      fork(Net::Bridge::ServerName(),4,100),
+      
+      fork_master(fork,"fork"),
+    
+      client1(Net::Bridge::ClientName(1).str),
+      client2(Net::Bridge::ClientName(2).str),
+      server("fork"),
+      
+      server_master(server,"PTPServer"),
+      client1_master(client1,"PTPClient[1]"),
+      client2_master(client2,"PTPClient[2]"),
+      
+      echo("PTPServer"),
+      
+      task1("PTPClient[1]"),
+      task2("PTPClient[2]")
+    {
+    }
+    
+   ~Engine2()
+    {
+    } 
+    
+   void showStat()
+    {
+     ShowStat(server,"PTP server");
+     
+     ShowStat(client1,"PTP client1");
+     
+     ShowStat(client2,"PTP client2");
+     
+     ShowStat(task1,"task1");
+     
+     ShowStat(task2,"task2");
+    } 
+    
+   class StartStop : NoCopy
+    {
+      Net::Bridge::StartStop bridge;
+      PTPEchoTest::StartStop task1;
+      PTPEchoTest::StartStop task2;
+    
+     public:
+     
+      explicit StartStop(Engine2 &engine) 
+       : bridge(engine.bridge),
+         task1(engine.task1),
+         task2(engine.task2)
+       {
+       }
+      
+      ~StartStop() {}
+    }; 
+ };
+
+/* Test() */
+
+template <class Engine>
+void Test(StrLen file_name)
+ {
+  Engine engine;
+  TaskEventRecorder recorder(100_MByte);
+  
+  {
+   TickTask tick_task; 
+   TaskEventHostType::StartStop event_start_stop(TaskEventHost,&recorder);
+   typename Engine::StartStop start_stop(engine);
+  
+   Task::Sleep(10_sec);
+  }
+  
+  engine.showStat(); 
+  
+  StreamFile dev(file_name);
+  
+  dev(recorder);
+ }
+
 } // namespace Private_0088
  
 using namespace Private_0088; 
@@ -123,22 +229,8 @@ const char *const Testit<88>::Name="Test0088 NetFork";
 template<>
 bool Testit<88>::Main() 
  {
-  Engine1 engine;
-  TaskEventRecorder recorder(100_MByte);
-  
-  {
-   TickTask tick_task; 
-   TaskEventHostType::StartStop event_start_stop(TaskEventHost,&recorder);
-   Engine1::StartStop start_stop(engine);
-  
-   Task::Sleep(10_sec);
-  }
-  
-  engine.showStat(); 
-  
-  StreamFile dev("test88.bin");
-  
-  dev(recorder);
+  Test<Engine1>("test88.1.bin");
+  Test<Engine2>("test88.2.bin");
   
   return true;
  }

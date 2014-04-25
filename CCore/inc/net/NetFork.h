@@ -28,9 +28,45 @@ namespace Net {
 
 /* classes */
 
+template <class T> class NetForkQueue;
+
 class EndpointNetFork;
 
 class MultipointNetFork;
+
+/* class NetForkQueue<T> */
+
+template <class T> 
+class NetForkQueue
+ {
+   DynArray<T> buf;
+   Fifo<T> fifo;
+   
+  public:
+  
+   explicit NetForkQueue(ulen queue_len)
+    : buf(queue_len),
+      fifo(buf.getPtr(),buf.getLen())
+    {
+    }
+   
+   ~NetForkQueue() {}
+   
+   bool operator + () const { return !fifo.isEmpty(); }
+   
+   bool operator ! () const { return fifo.isEmpty(); }
+   
+   bool put(const T &item) { return fifo.put(item); }
+   
+   T get() // non-empty
+    {
+     T ret;
+     
+     fifo.get_swap(ret);
+       
+     return ret; 
+    }
+ };
 
 /* class EndpointNetFork */
 
@@ -48,25 +84,7 @@ class EndpointNetFork : public ObjBase , public PacketEndpointDevice
      Item(Packet<uint8> packet_,PtrLen<const uint8> data_) : packet(packet_),data(data_) {}
     };
    
-   class Queue : NoCopy
-    {
-      DynArray<Item> buf;
-      Fifo<Item> fifo;
-      
-     public:
-     
-      explicit Queue(ulen queue_len);
-      
-      ~Queue();
-      
-      bool operator + () const { return !fifo.isEmpty(); }
-      
-      bool operator ! () const { return fifo.isEmpty(); }
-      
-      bool put(Item item);
-      
-      Item get(); // non-empty
-    };
+   using Queue = NetForkQueue<Item> ;
    
    class Engine : NoCopy , public InboundProc
     {
@@ -161,6 +179,128 @@ class EndpointNetFork : public ObjBase , public PacketEndpointDevice
    virtual PacketFormat getOutboundFormat();
     
    virtual void outbound(Packet<uint8> packet);
+    
+   virtual ulen getMaxInboundLen();
+    
+   virtual void attach(InboundProc *proc);
+    
+   virtual void detach();
+ };
+
+/* class MultipointNetFork */
+
+class MultipointNetFork : public ObjBase , public PacketMultipointDevice
+ {
+   ObjHook hook;
+
+   struct Item : NoThrowFlagsBase
+    {
+     XPoint point;
+     Packet<uint8> packet;
+     PtrLen<const uint8> data;
+     
+     Item() {}
+     
+     Item(XPoint point_,Packet<uint8> packet_,PtrLen<const uint8> data_) : point(point_),packet(packet_),data(data_) {}
+    };
+   
+   using Queue = NetForkQueue<Item> ;
+   
+   class Engine : NoCopy , public InboundProc
+    {
+      PacketMultipointDevice *mp;
+
+      Mutex proc_mutex;
+      
+      InboundProc *proc;
+      bool proc_enable;
+      
+      AntiSem proc_asem;
+      
+      Sem sem;
+      Mutex mutex;
+      Atomic stop_flag;
+      
+      Queue queue;
+      
+      AntiSem asem;
+      
+     private: 
+      
+      class Hook : NoCopy
+       {
+         InboundProc *proc;
+         AntiSem *asem;
+         
+        public:
+         
+         explicit Hook(Engine &engine);
+         
+         ~Hook();
+         
+         bool operator ! () const { return !proc; }
+         
+         InboundProc * operator -> () const { return proc; }
+       };
+     
+      void work(Item item);
+      
+      void work();
+      
+     public:
+     
+      Engine(PacketMultipointDevice *mp,ulen queue_len);
+      
+      ~Engine();
+      
+      PacketMultipointDevice * getMPDevice() { return mp; }
+      
+      void attach(InboundProc *proc);
+      
+      void detach();
+      
+      template <class ... TT>
+      void run(ulen task_count,TT ... tt)
+       {
+        while( task_count-- )
+          {
+           asem.inc();
+           
+           RunFuncTask( [this] () { work(); } ,asem.function_dec(),tt...);
+          }
+       }
+      
+      // InboundProc
+      
+      virtual void inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data);
+       
+      virtual void tick();
+    };
+   
+   Engine engine;
+   
+  private: 
+   
+   MultipointNetFork(StrLen mp_dev_name,ulen queue_len);
+   
+  public:
+  
+   template <class ... TT>
+   MultipointNetFork(StrLen mp_dev_name,ulen task_count,ulen queue_len,TT ... tt)
+    : MultipointNetFork(mp_dev_name,queue_len)
+    {
+     engine.run(task_count,tt...);
+    }
+   
+   virtual ~MultipointNetFork();
+   
+   // PacketMultipointDevice
+   
+   virtual StrLen toText(XPoint point,PtrLen<char> buf);
+   
+   virtual PacketFormat getOutboundFormat();
+    
+   virtual void outbound(XPoint point,Packet<uint8> packet);
     
    virtual ulen getMaxInboundLen();
     
