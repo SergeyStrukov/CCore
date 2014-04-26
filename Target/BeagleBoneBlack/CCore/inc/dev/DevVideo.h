@@ -42,6 +42,8 @@ class VideoControl : NoCopy
    
    ~VideoControl();
    
+   bool init_first();
+   
    bool init();
    
    VideoBuf getFrameBuf() const { return frame_buf; }

@@ -58,8 +58,23 @@ class DefaultFont
    unsigned dX() const { return DX; }
   
    unsigned dY() const { return DY; }
+   
+   class Pattern
+    {
+      const bool *pixel;
+      
+     public: 
+      
+      explicit Pattern(const bool *pixel_) : pixel(pixel_) {}
+     
+      // properties
+     
+      unsigned dX() const { return DX; }
+      
+      bool operator [] (unsigned x) const { return pixel[x]; }
+    };
   
-   bool operator () (unsigned x,unsigned y) const { return pixel[x+y*DX]; }
+   Pattern operator [] (unsigned y) const { return Pattern(pixel+(y*DX)); }
  };
 
 /* class CharPanel<Color> */
@@ -70,7 +85,7 @@ class CharPanel : NoCopy
    FrameBuf<Color> out;
    
    ColorName back = Black ;
-   ColorName fore = LightGray ;
+   ColorName fore = Silver ;
    ColorName line = Gray ;
    
    unsigned dx = 0 ;

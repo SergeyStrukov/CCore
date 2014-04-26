@@ -17,6 +17,8 @@
 
 #include <CCore/inc/Exception.h>
 
+#include <CCore/inc/dev/DevIntHandle.h>
+
 #include <CCore/inc/dev/AM3359.LCD.h>
 #include <CCore/inc/dev/AM3359.PRCM.h>
 #include <CCore/inc/dev/AM3359.CONTROL.h>
@@ -180,8 +182,54 @@ void LCD::init(const Mode &mode,void *base,void *lim,ColorFormat fmt)
      .setTo(bar);
  }
 
+void LCD::handle_int()
+ {
+  using namespace AM3359::LCD;
+  
+  Bar bar;
+  
+  auto status=bar.get_IRQStatus();
+  
+  status.setTo(bar);
+  
+  if( status.maskbit(IRQStatus_RasterFrameDone) )
+    {
+     switch( stop_flag )
+       {
+        case 0 :
+         {
+          stop_flag=1;
+         }
+        break;
+        
+        case 1 :
+         {
+          bar.get_RasterControl()
+             .clearbit(RasterControl_LCDEn)
+             .setTo(bar);
+          
+          stop_flag=2;
+         }
+        break;
+        
+        case 2 :
+         {
+          sem.give_int();
+          
+          stop_flag=3;
+         }
+        break; 
+       }
+    }
+ }
+
 LCD::LCD()
  {
+ }
+
+LCD::~LCD()
+ {
+  CleanupIntHandler(Int_LCDCINT);
  }
 
  // init
@@ -338,7 +386,36 @@ Video::FrameBuf<Video::Color32> LCD::init_first32(const Mode &mode,Space video_s
 
 void LCD::stop()
  {
-  // TODO
+  stop_flag=0;
+  
+  using namespace AM3359::LCD;
+  
+  Bar bar;
+  
+  bar.ones_IRQStatus()
+     .set(bar.to_IRQEnableClear());
+  
+  bar.null_IRQStatus()
+     .setbit(IRQStatus_RasterFrameDone)
+     .set(bar.to_IRQEnableSet());
+  
+  SetupIntHandler(Int_LCDCINT,function_handle_int(),15);
+  
+  sem.take();
+  
+  CleanupIntHandler(Int_LCDCINT);
+  
+  bar.ones_IRQStatus()
+     .set(bar.to_IRQEnableClear());
+  
+  bar.null_Reset()
+     .setbit(Reset_Core|Reset_DMA)
+     .setTo(bar);
+  
+  AM3359::Delay(16);
+  
+  bar.null_Reset()
+     .setTo(bar);
  }
 
 Video::FrameBuf<Video::Color16> LCD::init16(const Mode &mode,Space video_space)

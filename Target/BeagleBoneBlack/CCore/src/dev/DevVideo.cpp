@@ -37,7 +37,7 @@ VideoControl::~VideoControl()
  {
  }
    
-bool VideoControl::init()
+bool VideoControl::init_first()
  {
   try
     {
@@ -72,6 +72,50 @@ bool VideoControl::init()
      lcd.reset_first();
       
      frame_buf=lcd.init_first16(mode,video_space);
+     
+     hdmi.enableVIP();
+     
+     LightOff(1);
+     
+     return true;
+    }
+  catch(CatchType)
+    {
+     return false;
+    }
+ }
+
+bool VideoControl::init()
+ {
+  try
+    {
+     LightOn(1);
+    
+     Video::EDIDMode mode;
+     
+     HDMI hdmi;
+ 
+     auto detect=hdmi.detect();
+     
+     if( !detect.plug || !detect.power) return false;
+     
+     hdmi.disableVIP();
+     
+     uint8 block[Video::EDIDLen];
+      
+     hdmi.readEDID(block);
+      
+     mode=Video::EDIDMode(block);
+      
+     mode.pixel_clock=100000;
+      
+     hdmi.setMode(mode);
+      
+     LCD lcd;
+      
+     lcd.stop();
+     
+     frame_buf=lcd.init16(mode,video_space);
      
      hdmi.enableVIP();
      

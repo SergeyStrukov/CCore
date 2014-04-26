@@ -25,7 +25,11 @@ namespace Video {
 
 //enum ColorName;
 
-class Color565;
+class Color16;
+
+class Color24;
+
+class Color32;
 
 template <class Color> class FrameBuf;
 
@@ -34,12 +38,21 @@ template <class Color> class FrameBuf;
 enum ColorName
  {
   Black     = 0x000000 ,
+  Gray      = 0x808080 ,
+  Silver    = 0xC0C0C0 ,
+  White     = 0xFFFFFF ,
+  
   Red       = 0xFF0000 ,
   Green     = 0x00FF00 ,
   Blue      = 0x0000FF ,
-  Gray      = 0x808080 ,
-  LightGray = 0xC0C0C0 ,
-  White     = 0xFFFFFF
+
+  Cyan      = 0x00FFFF ,
+  Fuchsia   = 0xFF00FF ,
+  Yellow    = 0xFFFF00 ,
+  
+  Teal      = 0x008080 ,
+  Purple    = 0x800080 , 
+  Olive     = 0x808000
  };
 
 inline uint8 RedOf(ColorName cname) { return uint8(cname>>16); }
@@ -48,9 +61,9 @@ inline uint8 GreenOf(ColorName cname) { return uint8(cname>>8); }
 
 inline uint8 BlueOf(ColorName cname) { return uint8(cname); }
 
-/* class Color565 */
+/* class Color16 */
 
-class Color565
+class Color16
  {
   public:
   
@@ -68,13 +81,69 @@ class Color565
   
   public:
   
-   Color565(ColorName cname=Black) { set(cname); }
+   Color16(ColorName cname=Black) { set(cname); }
    
    // methods
    
    void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
    
    void set(uint8 red,uint8 green,uint8 blue) { color[0]=Pack565(red>>3,green>>2,blue>>3); }
+  
+   void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; }
+ };
+
+/* class Color24 */
+
+class Color24
+ {
+  public:
+  
+   using Raw = uint8 ;
+  
+   static const ulen RawCount = 3 ;
+  
+  private:
+  
+   Raw color[RawCount];
+  
+  public:
+  
+   Color24(ColorName cname=Black) { set(cname); }
+   
+   // methods
+   
+   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   
+   void set(uint8 red,uint8 green,uint8 blue) { color[0]=red; color[1]=green; color[2]=blue; }
+  
+   void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; dst[1]=color[1]; dst[2]=color[2]; }
+ };
+
+/* class Color32 */
+
+class Color32
+ {
+  public:
+  
+   using Raw = uint32 ;
+  
+   static const ulen RawCount = 1 ;
+  
+  private:
+  
+   Raw color[RawCount];
+   
+   static uint32 Pack888(uint32 red,uint32 green,uint32 blue) { return red|(green<<8)|(blue<<16); }
+  
+  public:
+  
+   Color32(ColorName cname=Black) { set(cname); }
+   
+   // methods
+   
+   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   
+   void set(uint8 red,uint8 green,uint8 blue) { color[0]=Pack888(red,green,blue); }
   
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; }
  };
@@ -96,10 +165,14 @@ class FrameBuf
    
    Raw * place(unsigned x,unsigned y) { return base+(x*Color::RawCount+y*dline); }
    
-   static void HLine(Raw *ptr,unsigned dx,Color color);
+   static Raw * NextX(Raw *ptr) { return ptr+Color::RawCount; }
    
-   template <class Glyph>
-   static void HLine(Raw *ptr,unsigned dx,Glyph glyph,unsigned by,Color back,Color fore);
+   Raw * nextY(Raw *ptr) { return ptr+dline; }
+   
+   static void HLine(Raw *ptr,unsigned bdx,Color color);
+   
+   template <class Pattern>
+   static void HLine(Raw *ptr,Pattern pat,Color back,Color fore);
    
   public: 
   
@@ -127,20 +200,24 @@ class FrameBuf
   
    template <class Glyph>
    void glyph(unsigned x,unsigned y,Glyph glyph,Color back,Color fore);
+   
+   void test();
  };
 
 template <class Color> 
-void FrameBuf<Color>::HLine(Raw *ptr,unsigned dx,Color color)
+void FrameBuf<Color>::HLine(Raw *ptr,unsigned bdx,Color color)
  {
-  for(; dx ;dx--,ptr+=Color::RawCount) color.copyTo(ptr);
+  for(; bdx ;bdx--,ptr=NextX(ptr)) color.copyTo(ptr);
  }
 
 template <class Color> 
-template <class Glyph>
-void FrameBuf<Color>::HLine(Raw *ptr,unsigned dx,Glyph glyph,unsigned by,Color back,Color fore)
+template <class Pattern>
+void FrameBuf<Color>::HLine(Raw *ptr,Pattern pat,Color back,Color fore)
  {
-  for(unsigned bx=0; bx<dx ;bx++,ptr+=Color::RawCount) 
-    if( glyph(bx,by) ) 
+  unsigned bdx=pat.dX();
+  
+  for(unsigned bx=0; bx<bdx ;bx++,ptr=NextX(ptr)) 
+    if( pat[bx] ) 
       fore.copyTo(ptr); 
     else 
       back.copyTo(ptr);
@@ -157,7 +234,7 @@ void FrameBuf<Color>::block(unsigned x,unsigned y,unsigned bdx,unsigned bdy,Colo
  {
   Raw *ptr=place(x,y);
   
-  for(; bdy ;bdy--,ptr+=dline)
+  for(; bdy ;bdy--,ptr=nextY(ptr))
     {
      HLine(ptr,bdx,color);
     }
@@ -167,15 +244,63 @@ template <class Color>
 template <class Glyph>
 void FrameBuf<Color>::glyph(unsigned x,unsigned y,Glyph glyph,Color back,Color fore)
  {
-  unsigned bdx=glyph.dX();
   unsigned bdy=glyph.dY();
   
   Raw *ptr=place(x,y);
   
-  for(unsigned by=0; by<bdy ;by++,ptr+=dline)
+  for(unsigned by=0; by<bdy ;by++,ptr=nextY(ptr))
     {
-     HLine(ptr,bdx,glyph,by,back,fore);
+     HLine(ptr,glyph[by],back,fore);
     }
+ }
+
+template <class Color> 
+void FrameBuf<Color>::test()
+ {
+  {
+   unsigned x1=(1*dx)/4;
+   unsigned x2=(2*dx)/4;
+   unsigned x3=(3*dx)/4;
+   
+   block(0,0,x1,dy,Black);
+   block(x1,0,x2-x1,dy,Gray);
+   block(x2,0,x3-x2,dy,Silver);
+   block(x3,0,dx-x3,dy,White);
+  }
+  
+  {
+   block(0,0,1,dy,Red);
+   block(dx-1,0,1,dy,Red);
+   block(0,0,dx,1,Red);
+   block(0,dy-1,dx,1,Red);
+  }
+  
+  {
+   unsigned bdy=(dy*10)/36;
+   unsigned bdx=bdy;
+   
+   unsigned gap=bdy/10;
+   
+   unsigned x1=(dx-3*bdx-2*gap)/2;
+   unsigned x2=x1+bdx+gap;
+   unsigned x3=x2+bdx+gap;
+   
+   unsigned y1=(dy-3*bdy-2*gap)/2;
+   unsigned y2=y1+bdy+gap;
+   unsigned y3=y2+bdy+gap;
+   
+   block(x1,y1,bdx,bdy,Red);
+   block(x2,y1,bdx,bdy,Green);
+   block(x3,y1,bdx,bdy,Blue);
+   
+   block(x1,y2,bdx,bdy,Cyan);
+   block(x2,y2,bdx,bdy,Fuchsia);
+   block(x3,y2,bdx,bdy,Yellow);
+   
+   block(x1,y3,bdx,bdy,Teal);
+   block(x2,y3,bdx,bdy,Purple);
+   block(x3,y3,bdx,bdy,Olive);
+  }
  }
 
 } // namespace Video

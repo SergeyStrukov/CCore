@@ -156,6 +156,14 @@ reg RasterControl : 32
   TFT24Unpacked : 26
  } 
  
+reg IRQStatus : 32
+ {
+  RasterFrameDone : 1
+  Underflow       : 5
+  EOF0            : 8
+  EOF1            : 9
+ } 
+ 
 bar LCDBar : address
  {
   SysConfig   = 054h
@@ -175,6 +183,11 @@ bar LCDBar : address
   RasterTiming2 = 034h
   
   RasterControl = 028h
+  
+  IRQStatus      = 05Ch 
+  IRQStatusRaw   = 058h as IRQStatus
+  IRQEnableSet   = 060h as IRQStatus
+  IRQEnableClear = 064h as IRQStatus
  }
  
  

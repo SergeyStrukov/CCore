@@ -18,6 +18,8 @@
 
 #include <CCore/inc/video/EDID.h>
 #include <CCore/inc/video/FrameBuf.h>
+
+#include <CCore/inc/Task.h>
  
 namespace CCore {
 namespace Dev {
@@ -28,7 +30,7 @@ class LCD;
 
 /* class LCD */
 
-class LCD : NoCopy
+class LCD : public Funchor_nocopy
  {
   public:
   
@@ -89,9 +91,23 @@ class LCD : NoCopy
   
    void init(const Mode &mode,void *base,void *lim,ColorFormat fmt);
    
+  private:
+   
+   int stop_flag = 0 ;
+   
+   Sem sem;
+   
+  private:
+   
+   void handle_int();
+   
+   Function<void (void)> function_handle_int() { return FunctionOf(this,&LCD::handle_int); }
+   
   public:
   
    LCD();
+   
+   ~LCD();
    
    // init
    

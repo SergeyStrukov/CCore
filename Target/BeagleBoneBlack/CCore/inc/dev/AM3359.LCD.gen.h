@@ -1911,6 +1911,131 @@ struct Type_RasterControl
    }
  };
  
+/* struct Type_IRQStatus */ 
+
+enum Bits_IRQStatus : uint32
+ {
+  IRQStatus_RasterFrameDone = 0x00000002,
+  IRQStatus_Underflow       = 0x00000020,
+  IRQStatus_EOF0            = 0x00000100,
+  IRQStatus_EOF1            = 0x00000200
+ };
+ 
+inline Bits_IRQStatus operator | (Bits_IRQStatus a,Bits_IRQStatus b)
+ { return Bits_IRQStatus(uint32(a)|uint32(b)); }
+ 
+struct Type_IRQStatus
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_IRQStatus(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_IRQStatus & setTo(Bar &bar) { bar.set_IRQStatus(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_IRQStatus & setTo(Bar &bar,uint32 ind) { bar.set_IRQStatus(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_IRQStatus & set(T to) { to(*this); return *this; }
+ 
+
+  Type_IRQStatus & setbit(Bits_IRQStatus bits) { value|=Type(bits); return *this; }
+ 
+  Type_IRQStatus & setbitIf(bool cond,Bits_IRQStatus bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_IRQStatus & clearbit(Bits_IRQStatus bits) { value&=~Type(bits); return *this; }
+ 
+  Type_IRQStatus & clearbitIf(bool cond,Bits_IRQStatus bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_IRQStatus bits) const { return value&bits; }
+ 
+  bool testbit(Bits_IRQStatus bits) const { return (value&bits)==Type(bits); }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&IRQStatus_RasterFrameDone )
+      {
+       if( first )
+         {
+          Putobj(out,"RasterFrameDone");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"RasterFrameDone");
+         }
+      }
+
+    if( value&IRQStatus_Underflow )
+      {
+       if( first )
+         {
+          Putobj(out,"Underflow");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"Underflow");
+         }
+      }
+
+    if( value&IRQStatus_EOF0 )
+      {
+       if( first )
+         {
+          Putobj(out,"EOF0");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"EOF0");
+         }
+      }
+
+    if( value&IRQStatus_EOF1 )
+      {
+       if( first )
+         {
+          Putobj(out,"EOF1");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"EOF1");
+         }
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct LCDBar<RW> */ 
 
 template <class RW>
@@ -2079,6 +2204,42 @@ struct LCDBar
   static Type_RasterControl null_RasterControl() { return Type_RasterControl(0); }
  
   static Type_RasterControl ones_RasterControl() { return Type_RasterControl(Type_RasterControl::Type(-1)); }
+ 
+  //--- IRQStatus
+
+  Type_IRQStatus get_IRQStatus() { return Type_IRQStatus(rw.template get<uint32>(0x5C)); }
+ 
+  void set_IRQStatus(Type_IRQStatus value) { rw.set(0x5C,value.value); }
+ 
+  Setter<Type_IRQStatus> to_IRQStatus() { return Setter<Type_IRQStatus>(rw,0x5C); }
+ 
+  static Type_IRQStatus null_IRQStatus() { return Type_IRQStatus(0); }
+ 
+  static Type_IRQStatus ones_IRQStatus() { return Type_IRQStatus(Type_IRQStatus::Type(-1)); }
+ 
+  //--- IRQStatusRaw
+
+  Type_IRQStatus get_IRQStatusRaw() { return Type_IRQStatus(rw.template get<uint32>(0x58)); }
+ 
+  void set_IRQStatusRaw(Type_IRQStatus value) { rw.set(0x58,value.value); }
+ 
+  Setter<Type_IRQStatus> to_IRQStatusRaw() { return Setter<Type_IRQStatus>(rw,0x58); }
+ 
+  //--- IRQEnableSet
+
+  Type_IRQStatus get_IRQEnableSet() { return Type_IRQStatus(rw.template get<uint32>(0x60)); }
+ 
+  void set_IRQEnableSet(Type_IRQStatus value) { rw.set(0x60,value.value); }
+ 
+  Setter<Type_IRQStatus> to_IRQEnableSet() { return Setter<Type_IRQStatus>(rw,0x60); }
+ 
+  //--- IRQEnableClear
+
+  Type_IRQStatus get_IRQEnableClear() { return Type_IRQStatus(rw.template get<uint32>(0x64)); }
+ 
+  void set_IRQEnableClear(Type_IRQStatus value) { rw.set(0x64,value.value); }
+ 
+  Setter<Type_IRQStatus> to_IRQEnableClear() { return Setter<Type_IRQStatus>(rw,0x64); }
  
  };
  

@@ -83,7 +83,7 @@ class ImpCon : public ConBase
      
      // 2
      {
-      if( dev.init() )
+      if( dev.init_first() )
         {
          con.init(dev.getFrameBuf());
         }
