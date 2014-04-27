@@ -169,7 +169,7 @@ class HDMI : NoCopy
    
    void disableVIP();
    
-   void readEDID(uint8 block[Video::EDIDLen],unsigned number=0);
+   bool readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned number=0);
 
    struct Mode
     {

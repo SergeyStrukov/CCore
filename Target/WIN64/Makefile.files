@@ -14,6 +14,7 @@ obj/AsyncFileToMem.o \
 obj/AsyncUDPDevice.o \
 obj/Atomic.o \
 obj/AtomicRefArray.o \
+obj/AttachmentHost.o \
 obj/BaseRangeAlgo.o \
 obj/BinarySearch.o \
 obj/BlockCipher.o \
@@ -273,6 +274,7 @@ obj/UIntMax.o \
 obj/UIntSat.o \
 obj/UIntSplit.o \
 obj/UtilFunc.o \
+obj/VideoDevice.o \
 obj/Win64.o \
 obj/XPoint.o \
 
@@ -293,6 +295,7 @@ obj/AsyncFileToMem.s \
 obj/AsyncUDPDevice.s \
 obj/Atomic.s \
 obj/AtomicRefArray.s \
+obj/AttachmentHost.s \
 obj/BaseRangeAlgo.s \
 obj/BinarySearch.s \
 obj/BlockCipher.s \
@@ -552,6 +555,7 @@ obj/UIntMax.s \
 obj/UIntSat.s \
 obj/UIntSplit.s \
 obj/UtilFunc.s \
+obj/VideoDevice.s \
 obj/Win64.s \
 obj/XPoint.s \
 
@@ -572,6 +576,7 @@ obj/AsyncFileToMem.dep \
 obj/AsyncUDPDevice.dep \
 obj/Atomic.dep \
 obj/AtomicRefArray.dep \
+obj/AttachmentHost.dep \
 obj/BaseRangeAlgo.dep \
 obj/BinarySearch.dep \
 obj/BlockCipher.dep \
@@ -831,6 +836,7 @@ obj/UIntMax.dep \
 obj/UIntSat.dep \
 obj/UIntSplit.dep \
 obj/UtilFunc.dep \
+obj/VideoDevice.dep \
 obj/Win64.dep \
 obj/XPoint.dep \
 
@@ -891,6 +897,9 @@ obj/Atomic.o : ../../CCore/src/task/Atomic.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AtomicRefArray.o : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AttachmentHost.o : ../../CCore/src/AttachmentHost.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/BaseRangeAlgo.o : ../../CCore/src/algon/BaseRangeAlgo.cpp
@@ -1670,6 +1679,9 @@ obj/UIntSplit.o : ../../CCore/src/UIntSplit.cpp
 obj/UtilFunc.o : ../../CCore/src/gadget/UtilFunc.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/VideoDevice.o : ../../CCore/src/video/VideoDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Win64.o : ../../Target/WIN64/CCore/src/win64/Win64.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1721,6 +1733,9 @@ obj/Atomic.s : ../../CCore/src/task/Atomic.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/AtomicRefArray.s : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/AttachmentHost.s : ../../CCore/src/AttachmentHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/BaseRangeAlgo.s : ../../CCore/src/algon/BaseRangeAlgo.cpp
@@ -2500,6 +2515,9 @@ obj/UIntSplit.s : ../../CCore/src/UIntSplit.cpp
 obj/UtilFunc.s : ../../CCore/src/gadget/UtilFunc.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/VideoDevice.s : ../../CCore/src/video/VideoDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Win64.s : ../../Target/WIN64/CCore/src/win64/Win64.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2552,6 +2570,9 @@ obj/Atomic.dep : ../../CCore/src/task/Atomic.cpp
 
 obj/AtomicRefArray.dep : ../../CCore/src/array/AtomicRefArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AtomicRefArray.o $< -MF $@
+
+obj/AttachmentHost.dep : ../../CCore/src/AttachmentHost.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AttachmentHost.o $< -MF $@
 
 obj/BaseRangeAlgo.dep : ../../CCore/src/algon/BaseRangeAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BaseRangeAlgo.o $< -MF $@
@@ -3329,6 +3350,9 @@ obj/UIntSplit.dep : ../../CCore/src/UIntSplit.cpp
 
 obj/UtilFunc.dep : ../../CCore/src/gadget/UtilFunc.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UtilFunc.o $< -MF $@
+
+obj/VideoDevice.dep : ../../CCore/src/video/VideoDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoDevice.o $< -MF $@
 
 obj/Win64.dep : ../../Target/WIN64/CCore/src/win64/Win64.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Win64.o $< -MF $@

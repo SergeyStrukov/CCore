@@ -4,6 +4,14 @@
 
 New XCore target BeagleBoneBlack has been created.
 
+AttachmentHost.h
+
+  Helper class for attachment/detachment implementation.
+
+net/NetFork.h
+
+  Support device for multitask network processing.
+
 --- Updates ----------
 
 Regen

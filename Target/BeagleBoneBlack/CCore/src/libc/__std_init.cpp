@@ -24,6 +24,8 @@
 #include <CCore/inc/dev/DevPlanInit.h>
 #include <CCore/inc/libc/atexit.h>
 
+#include <CCore/inc/video/VideoControl.h>
+
 using namespace CCore;
 
 /* init/exit */
@@ -51,13 +53,19 @@ void __std_main(void)
  {
   Task::Internal::Enable();
   
-  const char *argv[]={"main",0};
+  {
+   Video::VideoControl ctrl;
+   
+   ObjMaster ctrl_master(ctrl,"video");
+    
+   const char *argv[]={"main",0};
   
-  int ret=main(1,argv);
-  
-  fflush(stdout);
-  
-  Printf(Con,"\nmain() return #;\n\n",ret);
+   int ret=main(1,argv);
+   
+   fflush(stdout);
+   
+   Printf(Con,"\nmain() return #;\n\n",ret);
+  } 
   
   Task::Internal::Disable();
  }

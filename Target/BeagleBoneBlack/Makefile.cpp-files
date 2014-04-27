@@ -18,6 +18,7 @@
 ../../CCore/src/Array.cpp
 ../../CCore/src/AsyncFile.cpp
 ../../CCore/src/AsyncFileToMem.cpp
+../../CCore/src/AttachmentHost.cpp
 ../../CCore/src/base/CheckPlatformBase.cpp
 ../../CCore/src/CancelPacketList.cpp
 ../../CCore/src/CharProp.cpp
@@ -221,6 +222,7 @@
 ../../CCore/src/video/EDID.cpp
 ../../CCore/src/video/FrameBuf.cpp
 ../../CCore/src/video/SimpleConsole.cpp
+../../CCore/src/video/VideoDevice.cpp
 ../../XCore/CCore/src/Abort.cpp
 ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 ../../XCore/CCore/src/libc/assert.cpp
@@ -282,7 +284,6 @@
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevRW.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
-../../Target/BeagleBoneBlack/CCore/src/dev/DevVideo.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 ../../Target/BeagleBoneBlack/CCore/src/libc/atexit.cpp
 ../../Target/BeagleBoneBlack/CCore/src/libc/CBase.cpp
@@ -296,3 +297,4 @@
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysPlanInit.cpp
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysTime.cpp
 ../../Target/BeagleBoneBlack/CCore/src/task/TaskContext.cpp
+../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp

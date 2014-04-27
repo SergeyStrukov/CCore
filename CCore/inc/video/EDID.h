@@ -69,7 +69,17 @@ struct EDIDMode
   
   bool hsyncPos() const { return flags&0x02; } // Digital...
   
-  bool vsyncPos() const { return flags&0x04; } // DigitalSeparate 
+  bool vsyncPos() const { return flags&0x04; } // DigitalSeparate
+  
+  unsigned freq() const { return (pixel_clock*1000)/((hlen+hblank)*(vlen+vblank)); }
+  
+  // no-throw flags
+  
+  enum NoThrowFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true
+   };
  };
 
 } // namespace Video

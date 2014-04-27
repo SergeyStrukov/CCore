@@ -19,6 +19,7 @@
 #include <CCore/inc/net/PacketEndpointDevice.h>
  
 #include <CCore/inc/ObjHost.h>
+#include <CCore/inc/AttachmentHost.h>
 #include <CCore/inc/Task.h>
 #include <CCore/inc/Fifo.h>
 #include <CCore/inc/Array.h>
@@ -90,12 +91,7 @@ class EndpointNetFork : public ObjBase , public PacketEndpointDevice
     {
       PacketEndpointDevice *ep;
 
-      Mutex proc_mutex;
-      
-      InboundProc *proc;
-      bool proc_enable;
-      
-      AntiSem proc_asem;
+      AttachmentHost<InboundProc> host;
       
       Sem sem;
       Mutex mutex;
@@ -107,21 +103,7 @@ class EndpointNetFork : public ObjBase , public PacketEndpointDevice
       
      private: 
       
-      class Hook : NoCopy
-       {
-         InboundProc *proc;
-         AntiSem *asem;
-         
-        public:
-         
-         explicit Hook(Engine &engine);
-         
-         ~Hook();
-         
-         bool operator ! () const { return !proc; }
-         
-         InboundProc * operator -> () const { return proc; }
-       };
+      using Hook = AttachmentHost<InboundProc>::Hook ;
      
       void work(Item item);
       
@@ -210,12 +192,7 @@ class MultipointNetFork : public ObjBase , public PacketMultipointDevice
     {
       PacketMultipointDevice *mp;
 
-      Mutex proc_mutex;
-      
-      InboundProc *proc;
-      bool proc_enable;
-      
-      AntiSem proc_asem;
+      AttachmentHost<InboundProc> host;
       
       Sem sem;
       Mutex mutex;
@@ -227,21 +204,7 @@ class MultipointNetFork : public ObjBase , public PacketMultipointDevice
       
      private: 
       
-      class Hook : NoCopy
-       {
-         InboundProc *proc;
-         AntiSem *asem;
-         
-        public:
-         
-         explicit Hook(Engine &engine);
-         
-         ~Hook();
-         
-         bool operator ! () const { return !proc; }
-         
-         InboundProc * operator -> () const { return proc; }
-       };
+      using Hook = AttachmentHost<InboundProc>::Hook ;
      
       void work(Item item);
       

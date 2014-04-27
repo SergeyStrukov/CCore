@@ -234,7 +234,7 @@ void HDMI::disableVIP()
   barHDMI.set_VP2Enable(0);
  }
 
-void HDMI::readEDID(uint8 block[Video::EDIDLen],unsigned number)
+bool HDMI::readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned number)
  {
   using namespace NXP::HDMI;
   
@@ -262,7 +262,10 @@ void HDMI::readEDID(uint8 block[Video::EDIDLen],unsigned number)
          .clearbit(DDCControl_Read)
          .setTo(barHDMI);
   
-  while( barHDMI.get_IntFlags2().maskbit(IntFlags2_EDID)==0 );
+  while( barHDMI.get_IntFlags2().maskbit(IntFlags2_EDID)==0 )
+    {
+     if( !time_scope.get() ) return false;
+    }
   
   for(ulen i=0; i<Video::EDIDLen ;i++) block[i]=barHDMI.get_EDIDBlock(i);
   
@@ -273,6 +276,8 @@ void HDMI::readEDID(uint8 block[Video::EDIDLen],unsigned number)
   barHDMI.get_TX4()
          .setbit(TX4_RAM)
          .setTo(barHDMI);
+  
+  return true;
  }
 
 HDMI::Mode::Mode(const Video::EDIDMode &mode)

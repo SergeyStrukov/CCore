@@ -22,34 +22,9 @@ namespace Net {
 
 /* class EndpointNetFork */
 
-EndpointNetFork::Engine::Hook::Hook(Engine &engine)
- {
-  {
-   Mutex::Lock lock(engine.proc_mutex);
-  
-   if( engine.proc_enable )
-     {
-      proc=engine.proc;
-     
-      asem=&engine.proc_asem;
-     }
-   else
-     {
-      proc=0;
-     }
-  }
-  
-  if( proc ) asem->inc();
- }
-
-EndpointNetFork::Engine::Hook::~Hook()
- {
-  if( proc ) asem->dec();
- }
-
 void EndpointNetFork::Engine::work(Item item)
  {
-  Hook hook(*this);
+  Hook hook(host);
   
   if( !hook ) 
     {
@@ -88,10 +63,7 @@ void EndpointNetFork::Engine::work()
 
 EndpointNetFork::Engine::Engine(PacketEndpointDevice *ep_,ulen queue_len)
  : ep(ep_),
-   proc_mutex("EndpointNetFork.proc_mutex"),
-   proc(0),
-   proc_enable(false),
-   proc_asem("EndpointNetFork.proc_asem"),
+   host("Net::EndpointNetFork","EndpointNetFork.host"),
    sem("EndpointNetFork.sem"),
    mutex("EndpointNetFork.mutex"),
    queue(queue_len),
@@ -113,46 +85,14 @@ EndpointNetFork::Engine::~Engine()
   while( +queue ) work(queue.get());
  }
 
-void EndpointNetFork::Engine::attach(InboundProc *proc_)
+void EndpointNetFork::Engine::attach(InboundProc *proc)
  {
-  bool has_proc;
-  
-  {
-   Mutex::Lock lock(proc_mutex);
-   
-   if( proc )
-     {
-      has_proc=true;
-     }
-   else 
-     {
-      has_proc=false;
-      proc=proc_;
-      proc_enable=true;
-     }
-  }
-
-  if( has_proc )
-    {
-     Printf(Exception,"CCore::Net::EndpointNetFork(...) : already attached");
-    }
+  host.attach(proc);
  }
 
 void EndpointNetFork::Engine::detach()
  {
-  {
-   Mutex::Lock lock(proc_mutex);
-   
-   proc_enable=false;
-  }
-  
-  proc_asem.wait();
-  
-  {
-   Mutex::Lock lock(proc_mutex);
-   
-   proc=0;
-  }
+  host.detach();
  }
 
 void EndpointNetFork::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> data)
@@ -175,7 +115,7 @@ void EndpointNetFork::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> d
  
 void EndpointNetFork::Engine::tick()
  {
-  Hook hook(*this);
+  Hook hook(host);
   
   if( !hook ) return;
   
@@ -219,34 +159,9 @@ void EndpointNetFork::detach()
 
 /* class MultipointNetFork */
 
-MultipointNetFork::Engine::Hook::Hook(Engine &engine)
- {
-  {
-   Mutex::Lock lock(engine.proc_mutex);
-  
-   if( engine.proc_enable )
-     {
-      proc=engine.proc;
-     
-      asem=&engine.proc_asem;
-     }
-   else
-     {
-      proc=0;
-     }
-  }
-  
-  if( proc ) asem->inc();
- }
-
-MultipointNetFork::Engine::Hook::~Hook()
- {
-  if( proc ) asem->dec();
- }
-
 void MultipointNetFork::Engine::work(Item item)
  {
-  Hook hook(*this);
+  Hook hook(host);
   
   if( !hook ) 
     {
@@ -285,10 +200,7 @@ void MultipointNetFork::Engine::work()
 
 MultipointNetFork::Engine::Engine(PacketMultipointDevice *mp_,ulen queue_len)
  : mp(mp_),
-   proc_mutex("MultipointNetFork.proc_mutex"),
-   proc(0),
-   proc_enable(false),
-   proc_asem("MultipointNetFork.proc_asem"),
+   host("Net::MultipointNetFork","MultipointNetFork.host"),
    sem("MultipointNetFork.sem"),
    mutex("MultipointNetFork.mutex"),
    queue(queue_len),
@@ -310,46 +222,14 @@ MultipointNetFork::Engine::~Engine()
   while( +queue ) work(queue.get());
  }
 
-void MultipointNetFork::Engine::attach(InboundProc *proc_)
+void MultipointNetFork::Engine::attach(InboundProc *proc)
  {
-  bool has_proc;
-  
-  {
-   Mutex::Lock lock(proc_mutex);
-   
-   if( proc )
-     {
-      has_proc=true;
-     }
-   else 
-     {
-      has_proc=false;
-      proc=proc_;
-      proc_enable=true;
-     }
-  }
-
-  if( has_proc )
-    {
-     Printf(Exception,"CCore::Net::MultipointNetFork(...) : already attached");
-    }
+  host.attach(proc);
  }
 
 void MultipointNetFork::Engine::detach()
  {
-  {
-   Mutex::Lock lock(proc_mutex);
-   
-   proc_enable=false;
-  }
-  
-  proc_asem.wait();
-  
-  {
-   Mutex::Lock lock(proc_mutex);
-   
-   proc=0;
-  }
+  host.detach();
  }
 
 void MultipointNetFork::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data)
@@ -372,7 +252,7 @@ void MultipointNetFork::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen
  
 void MultipointNetFork::Engine::tick()
  {
-  Hook hook(*this);
+  Hook hook(host);
   
   if( !hook ) return;
   

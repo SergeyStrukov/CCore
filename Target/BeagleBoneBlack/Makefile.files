@@ -14,6 +14,7 @@ obj/AsyncFile.o \
 obj/AsyncFileToMem.o \
 obj/Atomic.o \
 obj/AtomicRefArray.o \
+obj/AttachmentHost.o \
 obj/AutoText.o \
 obj/BaseRangeAlgo.o \
 obj/BinarySearch.o \
@@ -92,7 +93,6 @@ obj/DevPlanInit.o \
 obj/DevRW.o \
 obj/DevTick.o \
 obj/DevTimer.o \
-obj/DevVideo.o \
 obj/DevWaitForInterrupt.o \
 obj/DynArray.o \
 obj/EDID.o \
@@ -290,6 +290,8 @@ obj/UIntSat.o \
 obj/UIntSplit.o \
 obj/UtilFunc.o \
 obj/VIA_Rhine_III.o \
+obj/VideoControl.o \
+obj/VideoDevice.o \
 obj/XPoint.o \
 obj/__std_init.o \
 obj/assert.o \
@@ -315,6 +317,7 @@ obj/AsyncFile.s \
 obj/AsyncFileToMem.s \
 obj/Atomic.s \
 obj/AtomicRefArray.s \
+obj/AttachmentHost.s \
 obj/AutoText.s \
 obj/BaseRangeAlgo.s \
 obj/BinarySearch.s \
@@ -393,7 +396,6 @@ obj/DevPlanInit.s \
 obj/DevRW.s \
 obj/DevTick.s \
 obj/DevTimer.s \
-obj/DevVideo.s \
 obj/DevWaitForInterrupt.s \
 obj/DynArray.s \
 obj/EDID.s \
@@ -591,6 +593,8 @@ obj/UIntSat.s \
 obj/UIntSplit.s \
 obj/UtilFunc.s \
 obj/VIA_Rhine_III.s \
+obj/VideoControl.s \
+obj/VideoDevice.s \
 obj/XPoint.s \
 obj/__std_init.s \
 obj/assert.s \
@@ -616,6 +620,7 @@ obj/AsyncFile.dep \
 obj/AsyncFileToMem.dep \
 obj/Atomic.dep \
 obj/AtomicRefArray.dep \
+obj/AttachmentHost.dep \
 obj/AutoText.dep \
 obj/BaseRangeAlgo.dep \
 obj/BinarySearch.dep \
@@ -694,7 +699,6 @@ obj/DevPlanInit.dep \
 obj/DevRW.dep \
 obj/DevTick.dep \
 obj/DevTimer.dep \
-obj/DevVideo.dep \
 obj/DevWaitForInterrupt.dep \
 obj/DynArray.dep \
 obj/EDID.dep \
@@ -892,6 +896,8 @@ obj/UIntSat.dep \
 obj/UIntSplit.dep \
 obj/UtilFunc.dep \
 obj/VIA_Rhine_III.dep \
+obj/VideoControl.dep \
+obj/VideoDevice.dep \
 obj/XPoint.dep \
 obj/__std_init.dep \
 obj/assert.dep \
@@ -958,6 +964,9 @@ obj/Atomic.o : ../../CCore/src/task/Atomic.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AtomicRefArray.o : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AttachmentHost.o : ../../CCore/src/AttachmentHost.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AutoText.o : ../../XCore/CCore/src/task/AutoText.cpp
@@ -1192,9 +1201,6 @@ obj/DevTick.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevTimer.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/DevVideo.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevVideo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevWaitForInterrupt.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
@@ -1788,6 +1794,12 @@ obj/UtilFunc.o : ../../CCore/src/gadget/UtilFunc.cpp
 obj/VIA_Rhine_III.o : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/VideoControl.o : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/VideoDevice.o : ../../CCore/src/video/VideoDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/XPoint.o : ../../CCore/src/net/XPoint.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1854,6 +1866,9 @@ obj/Atomic.s : ../../CCore/src/task/Atomic.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/AtomicRefArray.s : ../../CCore/src/array/AtomicRefArray.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/AttachmentHost.s : ../../CCore/src/AttachmentHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/AutoText.s : ../../XCore/CCore/src/task/AutoText.cpp
@@ -2088,9 +2103,6 @@ obj/DevTick.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DevTimer.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/DevVideo.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevVideo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DevWaitForInterrupt.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
@@ -2684,6 +2696,12 @@ obj/UtilFunc.s : ../../CCore/src/gadget/UtilFunc.cpp
 obj/VIA_Rhine_III.s : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/VideoControl.s : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/VideoDevice.s : ../../CCore/src/video/VideoDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/XPoint.s : ../../CCore/src/net/XPoint.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2751,6 +2769,9 @@ obj/Atomic.dep : ../../CCore/src/task/Atomic.cpp
 
 obj/AtomicRefArray.dep : ../../CCore/src/array/AtomicRefArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AtomicRefArray.o $< -MF $@
+
+obj/AttachmentHost.dep : ../../CCore/src/AttachmentHost.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AttachmentHost.o $< -MF $@
 
 obj/AutoText.dep : ../../XCore/CCore/src/task/AutoText.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AutoText.o $< -MF $@
@@ -2985,9 +3006,6 @@ obj/DevTick.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTick.cpp
 
 obj/DevTimer.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTimer.o $< -MF $@
-
-obj/DevVideo.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevVideo.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevVideo.o $< -MF $@
 
 obj/DevWaitForInterrupt.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevWaitForInterrupt.o $< -MF $@
@@ -3579,6 +3597,12 @@ obj/UtilFunc.dep : ../../CCore/src/gadget/UtilFunc.cpp
 
 obj/VIA_Rhine_III.dep : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VIA_Rhine_III.o $< -MF $@
+
+obj/VideoControl.dep : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoControl.o $< -MF $@
+
+obj/VideoDevice.dep : ../../CCore/src/video/VideoDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoDevice.o $< -MF $@
 
 obj/XPoint.dep : ../../CCore/src/net/XPoint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/XPoint.o $< -MF $@

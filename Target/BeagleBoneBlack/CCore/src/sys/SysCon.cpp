@@ -15,13 +15,7 @@
  
 #include <CCore/inc/sys/SysCon.h>
 
-#include <CCore/inc/Exception.h>
-
 #include <CCore/inc/dev/DevPlanInit.h>
-#include <CCore/inc/dev/DevI2C.h>
-#include <CCore/inc/dev/DevVideo.h>
-
-#include <CCore/inc/video/SimpleConsole.h>
 
 #include <__std_init.h>
 
@@ -36,14 +30,14 @@ namespace Private_SysCon {
 
 class ImpCon : public ConBase
  {
-   Dev::VideoControl dev;
- 
    Mutex mutex;
    ::CCore::Atomic flag;
    
-   Video::SimpleConsole<Video::Color16> con;
-   
   private:
+   
+   void print(StrLen str)
+    {
+    }
    
    virtual void attachDefaultInput(ConInputFunction)
     {
@@ -63,7 +57,7 @@ class ImpCon : public ConBase
       
       flag=1;
 
-      con.print(Range_const(packet.getRange()));
+      print(Range_const(packet.getRange()));
       
       flag=0;
      }
@@ -73,21 +67,6 @@ class ImpCon : public ConBase
    
    virtual void enablePacket()
     {
-     // 1
-     {
-      Dev::I2C i2c(Dev::I2C_0);
-     
-      i2c.enable();
-      i2c.reset();
-     }
-     
-     // 2
-     {
-      if( dev.init_first() )
-        {
-         con.init(dev.getFrameBuf());
-        }
-     }
     }
    
    virtual void disablePacket()
@@ -114,7 +93,7 @@ class ImpCon : public ConBase
     {
      Dev::IntLock lock;
      
-     if( !flag ) con.print(str);
+     if( !flag ) print(str);
     }
  };
 
