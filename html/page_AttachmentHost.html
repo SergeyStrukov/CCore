@@ -1,0 +1,119 @@
+<!--
+/* page_AttachmentHost.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.07
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> AttachmentHost</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>AttachmentHost</h2>
+
+<p class="Files">Files <b>CCore/inc/AttachmentHost.h</b> <b>CCore/src/AttachmentHost.cpp</b></p>
+
+<p>
+<b>AttachmentHost</b> is a helper class. It implements the attachment/detachment functionality.
+</p>
+
+<p>
+<b>AttachmentHost</b> stores the pointer of the type <b>T</b>. Any pointer of this type 
+can be attached to the host by the method <b>attach()</b>. If some pointer is attached, 
+it can be detached by the method <b>detach()</b>. To retrieve the attached pointer the inner class
+<b>Hook</b> is used. In the constructor it "locks" the pointer and releases it in the destructor.
+<b>Hook</b> implements the <b>Object Pointer Interface</b>. The method <b>detach()</b> is delayed while
+the pointer is locked.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">AttachmentHost</span> : NoCopy
+ {
+   ....
+      
+  public: 
+   
+   explicit AttachmentHost(StrLen class_name);
+   
+   AttachmentHost(StrLen class_name,TextLabel name);
+   
+   ~AttachmentHost();
+   
+   void attach(T *obj);
+   
+   void detach();
+   
+   class Hook : NoCopy
+    {
+      T *obj;
+      AntiSem *asem;
+      
+     public:
+      
+      explicit Hook(AttachmentHost&lt;T&gt; &amp;host);
+      
+      ~Hook();
+      
+      // object ptr
+      
+      T * operator + () const { return obj; }
+      
+      bool operator ! () const { return !obj; }
+     
+      T * getPtr() const { return obj; }
+      
+      T &amp; operator * () const { return *obj; }
+      
+      T * operator -> () const { return obj; }
+    };
+ };
+
+</pre>
+
+<p>
+<b>AttachmentHost</b> constructor accepts one or two arguments. The argument <b>class_name</b>
+is used in error messages and should be a name of owning class. The argument <b>name</b> is used to
+name internal synchronization objects.
+</p>
+
+<p>
+<b>attach()</b> attaches the pointer to the host. If there is an attached pointer an exception is thrown.
+The argument must not be null.
+</p>
+
+<p>
+<b>detach()</b> detaches the attached pointer, if any. 
+</p>
+
+<p>
+These two methods are typically used in pair in constructor/destructor manner. If the first method is failed, 
+the second must not be called.
+</p>
+
+<p>
+<b>Hook</b> constructor retrieves the attached pointer from the host.
+</p>
+
+</body>
+
+</html>
+

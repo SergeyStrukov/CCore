@@ -1,0 +1,154 @@
+<!--
+/* page_NetFork.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.07
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> NetFork</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>NetFork</h2>
+
+<p class="Files">Files <b>CCore/inc/net/NetFork.h</b> <b>CCore/src/net/NetFork.cpp</b></p>
+
+<p>
+<b>NetFork</b> is a simple device. It can be used to process a packet traffic using several tasks.
+In fact, there are two such classes: <b>EndpointNetFork</b> and <b>MultipointNetFork</b>. 
+First is working with the <a href="page_PacketEndpoint.html#PacketEndpointDevice"><b>PacketEndpointDevice</b></a> 
+and the second with the <a href="page_PacketEndpoint.html#PacketMultipointDevice"><b>PacketMultipointDevice</b></a>.
+Each of them implements the same packet endpoint interface. So <b>NetFork</b> is a transparent middle device,
+it enables the inbound packet processing using multiple tasks. Outbound packets go directly to the
+endpoint device. But the inbound traffic splits between several tasks to be processed.
+</p>
+
+<pre>
+
+class <span class="Att">EndpointNetFork</span> : public ObjBase , public PacketEndpointDevice
+ {
+   ....
+
+  public:
+  
+   template &lt;class ... TT&gt;
+   EndpointNetFork(StrLen ep_dev_name,ulen task_count,ulen queue_len,TT ... tt);
+   
+   virtual ~EndpointNetFork();
+   
+   // PacketEndpointDevice
+   
+   virtual PacketFormat getOutboundFormat();
+    
+   virtual void outbound(Packet&lt;uint8&gt; packet);
+    
+   virtual ulen getMaxInboundLen();
+    
+   virtual void attach(InboundProc *proc);
+    
+   virtual void detach();
+ };
+
+</pre>
+
+<p>
+<b>EndpointNetFork</b> constructor has the following arguments:
+</p> 
+
+<p>
+<b>ep_dev_name</b> is the name of some <b>PacketEndpointDevice</b>. 
+</p>
+
+<p>
+<b>task_count</b> is the number of working tasks to spawn.
+</p>
+
+<p>
+<b>queue_len</b> is the packet queue length. A typical value should be <b>100</b>.
+</p>
+
+<p>
+The rest of the argument list is used to spawn tasks. For the possible values see the
+<a href="page_Task.html">Task object constructor arguments</a>.
+</p>
+
+<p>
+Other methods is the implementation of the <b>PacketEndpointDevice</b> interface.
+</p>
+
+<pre>
+
+class <span class="Att">MultipointNetFork</span> : public ObjBase , public PacketMultipointDevice
+ {
+   ....
+
+  public:
+  
+   template &lt;class ... TT&gt;
+   MultipointNetFork(StrLen mp_dev_name,ulen task_count,ulen queue_len,TT ... tt);
+   
+   virtual ~MultipointNetFork();
+   
+   // PacketMultipointDevice
+   
+   virtual StrLen toText(XPoint point,PtrLen&lt;char&gt; buf);
+   
+   virtual PacketFormat getOutboundFormat();
+    
+   virtual void outbound(XPoint point,Packet&lt;uint8&gt; packet);
+    
+   virtual ulen getMaxInboundLen();
+    
+   virtual void attach(InboundProc *proc);
+    
+   virtual void detach();
+ };
+
+</pre>
+
+<p>
+<b>MultipointNetFork</b> constructor has the following arguments:
+</p> 
+
+<p>
+<b>mp_dev_name</b> is the name of some <b>PacketMultipointDevice</b>. 
+</p>
+
+<p>
+<b>task_count</b> is the number of working tasks to spawn.
+</p>
+
+<p>
+<b>queue_len</b> is the packet queue length. A typical value should be <b>100</b>.
+</p>
+
+<p>
+The rest of the argument list is used to spawn tasks. For the possible values see the
+<a href="page_Task.html">Task object constructor arguments</a>.
+</p>
+
+<p>
+Other methods is the implementation of the <b>PacketMultipointDevice</b> interface.
+</p>
+
+</body>
+
+</html>
+
