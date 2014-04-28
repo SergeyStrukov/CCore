@@ -134,7 +134,7 @@ void VideoControl::work()
     }
  }
 
-VideoControl::VideoControl()
+VideoControl::VideoControl(TaskPriority priority,ulen stack_len)
  : host("Video::VideoControl"),
    video_space(Sys::AllocVideoSpace())
  {
@@ -153,12 +153,14 @@ VideoControl::VideoControl()
   
   asem.inc();
   
-  RunFuncTask( [=] () { work(); } ,asem.function_dec());
+  RunFuncTask( [=] () { work(); } ,asem.function_dec(),"VideoTask",priority,stack_len);
  }
    
 VideoControl::~VideoControl()
  {
   stop_flag=1;
+  
+  event.trigger();
   
   asem.wait();
  }
@@ -202,6 +204,8 @@ bool VideoControl::updateVideoModeList(MSec timeout) // TODO
      if( !hdmi.readEDID(block,TimeScope(timeout)) ) return false;
      
      EDIDMode edid(block);
+     
+     if( !edid.hlen || !edid.vlen || edid.hlen>2048 || edid.vlen>2048 || (edid.hlen&15) ) return false;
      
      edid.pixel_clock=90000;
      

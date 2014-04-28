@@ -64,7 +64,7 @@ void __std_main(void)
    
    fflush(stdout);
    
-   Printf(Con,"\nmain() return #;\n\n",ret);
+   Used(ret);
   } 
   
   Task::Internal::Disable();

@@ -17,6 +17,10 @@
 
 #include <CCore/inc/dev/DevPlanInit.h>
 
+#include <CCore/inc/video/VideoConsole.h>
+
+#include <CCore/inc/SingleHost.h>
+
 #include <__std_init.h>
 
 namespace CCore {
@@ -30,14 +34,9 @@ namespace Private_SysCon {
 
 class ImpCon : public ConBase
  {
-   Mutex mutex;
-   ::CCore::Atomic flag;
-   
+   SingleHost<Video::VideoConsole> host;
+  
   private:
-   
-   void print(StrLen str)
-    {
-    }
    
    virtual void attachDefaultInput(ConInputFunction)
     {
@@ -53,13 +52,9 @@ class ImpCon : public ConBase
      if( !packet ) return;
      
      {
-      Mutex::Lock lock(mutex);
+      SingleHook<Video::VideoConsole> hook(host);
       
-      flag=1;
-
-      print(Range_const(packet.getRange()));
-      
-      flag=0;
+      if( +hook ) hook->print(Range_const(packet.getRange()));
      }
      
      packet.free();
@@ -81,7 +76,7 @@ class ImpCon : public ConBase
    
    ImpCon(TextLabel name,void *mem,ulen max_data_len,ulen count)
     : ConBase(name,mem,max_data_len,count),
-      mutex("!DebugCon")
+      host("!VideoConsole")
     {
     }
    
@@ -91,9 +86,12 @@ class ImpCon : public ConBase
    
    void debug_print(PtrLen<const char> str)
     {
-     Dev::IntLock lock;
-     
-     if( !flag ) print(str);
+     // TODO
+    }
+   
+   SingleHost<Video::VideoConsole> & getHost()
+    {
+     return host;
     }
  };
 
@@ -124,6 +122,11 @@ class DefaultCon : NoCopy
      dev.debug_print(str);
     }
    
+   SingleHost<Video::VideoConsole> & getHost()
+    {
+     return dev.getHost();
+    }
+   
    static const char * GetTag() { return "SysCon"; }
  };
  
@@ -148,6 +151,14 @@ PlanInitNode * GetPlanInitNode_SysCon() { return &Object; }
 ConBase * ConBase::GetObject() { return Object->getBase(); }
 
 } // namespace Sys
+
+/* class VideoConsole */
+
+SingleHost<Video::VideoConsole> & Video::VideoConsole::GetHost()
+ {
+  return Sys::Object->getHost(); 
+ }
+
 } // namespace CCore
  
 #if 1

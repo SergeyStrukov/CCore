@@ -65,7 +65,7 @@ class VideoControl : public ObjBase , public VideoDevice
   
   public:
   
-   VideoControl();
+   VideoControl(TaskPriority priority=DefaultTaskPriority,ulen stack_len=DefaultStackLen);
    
    virtual ~VideoControl();
    

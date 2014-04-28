@@ -290,6 +290,7 @@ obj/UIntSat.o \
 obj/UIntSplit.o \
 obj/UtilFunc.o \
 obj/VIA_Rhine_III.o \
+obj/VideoConsole.o \
 obj/VideoControl.o \
 obj/VideoDevice.o \
 obj/XPoint.o \
@@ -593,6 +594,7 @@ obj/UIntSat.s \
 obj/UIntSplit.s \
 obj/UtilFunc.s \
 obj/VIA_Rhine_III.s \
+obj/VideoConsole.s \
 obj/VideoControl.s \
 obj/VideoDevice.s \
 obj/XPoint.s \
@@ -896,6 +898,7 @@ obj/UIntSat.dep \
 obj/UIntSplit.dep \
 obj/UtilFunc.dep \
 obj/VIA_Rhine_III.dep \
+obj/VideoConsole.dep \
 obj/VideoControl.dep \
 obj/VideoDevice.dep \
 obj/XPoint.dep \
@@ -1792,6 +1795,9 @@ obj/UtilFunc.o : ../../CCore/src/gadget/UtilFunc.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/VIA_Rhine_III.o : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/VideoConsole.o : ../../Target/BeagleBoneBlack/CCore/src/video/VideoConsole.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/VideoControl.o : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp
@@ -2696,6 +2702,9 @@ obj/UtilFunc.s : ../../CCore/src/gadget/UtilFunc.cpp
 obj/VIA_Rhine_III.s : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/VideoConsole.s : ../../Target/BeagleBoneBlack/CCore/src/video/VideoConsole.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/VideoControl.s : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3597,6 +3606,9 @@ obj/UtilFunc.dep : ../../CCore/src/gadget/UtilFunc.cpp
 
 obj/VIA_Rhine_III.dep : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VIA_Rhine_III.o $< -MF $@
+
+obj/VideoConsole.dep : ../../Target/BeagleBoneBlack/CCore/src/video/VideoConsole.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoConsole.o $< -MF $@
 
 obj/VideoControl.dep : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoControl.o $< -MF $@

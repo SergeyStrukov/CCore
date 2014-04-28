@@ -206,7 +206,8 @@ const char *const Testit<3011>::Name="Test3011 LCD";
 template<>
 bool Testit<3011>::Main() 
  {
-  test2();
+  //test1();
+  //test2();
   //test3();
   
   return true;

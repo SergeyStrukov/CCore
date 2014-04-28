@@ -297,4 +297,5 @@
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysPlanInit.cpp
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysTime.cpp
 ../../Target/BeagleBoneBlack/CCore/src/task/TaskContext.cpp
+../../Target/BeagleBoneBlack/CCore/src/video/VideoConsole.cpp
 ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp
