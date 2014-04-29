@@ -31,10 +31,372 @@
 <p class="Files">Files <b>CCore/inc/net/NanoIPDevice.h</b> <b>CCore/src/net/NanoIPDevice.cpp</b></p>
 
 <p>
-<b>NanoIPDevice</b> is a set of classes implements a "reduced IP" protocol support.
+<b>NanoIPDevice</b> is a set of classes implementing a "reduced IP" protocol support.
 This implementation does not support IP options, IP fragmentation and there is no routing facility.
-This feature is intended to use in devices, connected by a local Ethernet network.
+This feature is intended to use in devices, connected by a local Ethernet network, to support distributed
+system implementation. Another use is an interaction between a device and a host computer to support
+boot, configuring or data exchange.
 </p>
+
+<p>
+<b>NanoIPDevice</b> and related stuff implement IP, ICMP ping, ARP and UDP protocols to some extent.
+PTP protocol can be attached atop UDP packet devices.
+</p>
+
+<h4>NanoIPDevice</h4>
+
+<pre>
+
+class <span class="Att">NanoIPDevice</span> : public ObjBase
+ {
+   ....
+
+  public:
+   
+   // constructors
+ 
+   NanoIPDevice(StrLen eth_dev_name,IPAddress address,IPAddress net_mask);
+   
+   virtual ~NanoIPDevice();
+   
+   // properties
+   
+   EthDevice * getEthDevice() const;
+   
+   IPAddress getAddress() const;
+   
+   IPAddress getNetMask() const;
+   
+   bool sameNet(IPAddress ip) const;
+   
+   PacketFormat getTxFormat() const;
+   
+   PacketFormat getUDPTxFormat() const;
+   
+   PacketFormat getRxFormat() const;
+   
+   PacketFormat getUDPRxFormat() const;
+   
+   // stat
+   
+   typedef IPStatInfo StatInfo;
+   
+   void getStat(IPStatInfo &amp;ret);
+   
+   void getStat_arp(ARPending::StatInfo &amp;ret);
+   
+   void getStat_prepare(TxPrepareList::StatInfo &amp;ret);
+   
+   void getStat_send(TxSendList::StatInfo &amp;ret);
+   
+   // send
+   
+   template &lt;class P&gt;
+   bool send_prepare(P packet,PacketFunction function); 
+    
+   template &lt;class P&gt;
+   void send_prepare_or_complete(P packet,PacketFunction function); 
+    
+   void send(Packet&lt;uint8,IPTxExt&gt; packet);
+   
+   void send_udp(Packet&lt;uint8,UDPTxExt&gt; packet);
+   
+   void send_icmp_echo(IPAddress dst,const ICMPEcho &amp;echo,PtrLen&lt;const uint8&gt; data);
+   
+   // attach/detach
+   
+   void attach(ICMPEchoEndpoint *endpoint);
+   
+   void detach(ICMPEchoEndpoint *endpoint);
+   
+   void attach(IPTickEndpoint *endpoint);
+   
+   void detach(IPTickEndpoint *endpoint);
+   
+   void attach(UDPEndpoint *endpoint);
+   
+   void detach(UDPEndpoint *endpoint);
+ };
+
+</pre>
+
+<p>
+The class <b>NanoIPDevice</b> is the main class of the set. It is an <a href="page_ObjectHost.html">ObjBased class</a>.
+It is working been attached to some <a href="page_EthDevice.html">EthDevice device</a>.
+The <b>NanoIPDevice</b> constructor first argument <b>eth_dev_name</b> is the name of the device 
+to be attached to. Other arguments are: <b>address</b> is the local IP address and <b>net_mask</b> 
+is the local network mask. Network mask is used to filter out incoming packets. An incoming IP packet is passed only 
+if it is destined to the local address and comes from the local network. Otherwise it is dropped.
+</p>
+
+<p>
+<b>NanoIPDevice</b> has various properties.
+</p>
+
+<p>
+<b>getEthDevice()</b> returnes the <b>EthDevice</b> the object is attached to.
+</p>
+
+<p>
+<b>getAddress()</b> returns the local IP address.
+</p>
+
+<p>
+<b>getNetMask()</b> returns the local network mask.
+</p>
+
+<p>
+<b>sameNet()</b> can be used to test if the given IP address belongs to the local network.
+</p>
+
+<p>
+<b>getTxFormat()</b> is the packet format for IP Tx operations.
+</p>
+
+<p>
+<b>getUDPTxFormat()</b> is the packet format for UDP Tx operations.
+</p>
+
+<p>
+<b>getRxFormat()</b> is the packet format of incoming IP packets.
+</p>
+
+<p>
+<b>getUDPRxFormat()</b> is the packet format of incoming UDP packets.
+</p>
+
+<p>
+<b>NanoIPDevice</b> counts statistics and generates <a href="page_NanoIPDeviceEvents.html">network events</a>.
+</p>
+
+<p>
+<b>getStat()</b> returns statistic counters of the type <b>StatInfo</b>. This info block counts 
+<a href="page_NanoIPDeviceEvents.html">network events</a>.
+</p>
+
+<p>
+The following methods can be used to send a packet to the network.
+</p>
+
+<p>
+<b>send_prepare()</b> tries to put the given packet into the prepare list. The given packet function is used
+to "prepare" the packet before sending out. If the method is successfull it consumes the packet and returns <b>true</b>.
+Otherwise it leaves the packet alone and returns <b>false</b>. The called must deal with the packet in the last case.
+</p>
+
+<p>
+<b>send_prepare_or_complete()</b> is similar to the <b>send_prepare()</b>, but in case of failure
+this method just completes the packet.
+</p>
+
+<p>
+<b>send()</b> sends an IP packet. The packet has an <b>IPTxExt</b> extension and must have an IP data payload
+fitting <b>getTxFormat()</b> format.
+</p>
+
+<p>
+<b>send_udp()</b> sends a UDP packet. The packet has an <b>UDPTxExt</b> extension and must have a UDP data payload
+fitting <b>getUDPTxFormat()</b> format.
+</p>
+
+<p>
+<b>send_icmp_echo()</b> sends an ICMP echo to the given IP address. Other arguments specify an ICMP header
+and ICMP data payload.
+</p>
+
+<p>
+There are three types of endpoints: <b>ICMPEchoEndpoint</b>, <b>IPTickEndpoint</b> and <b>UDPEndpoint</b>. 
+These endpoints can be attached to the <b>NanoIPDevice</b> object to process the incoming traffic. 
+Multiple endpoints can be attached the same times (with natural limitations).
+</p>
+
+<h4>IPTxExt</h4>
+
+<p>
+<b>IPTxExt</b> is used to send an IP packet. This structure specifies the destination IP address
+and the IP protocol type of the packet.
+</p>
+
+<pre>
+
+struct <span class="Att">IPTxExt</span>
+ {
+  IPAddress dst;
+  IProto proto;
+  
+  // constructors
+  
+  IPTxExt();
+  
+  IPTxExt(IPAddress dst,IProto proto);
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<h4>UDPTxExt</h4>
+
+<p>
+<b>UDPTxExt</b> is used to send an UDP packet. This structure specifies the destination IP address,
+source and destination port numbers and the checksum flag. If the checksum flag is set, then the 
+UDP packet is sent with checksum, otherwise without one.
+</p>
+
+<pre>
+
+struct <span class="Att">UDPTxExt</span> 
+ {
+  IPAddress dst;
+  UDPort dst_port;
+  UDPort src_port;
+  bool do_checksum;
+  
+  // constructors
+  
+  UDPTxExt();
+  
+  UDPTxExt(IPAddress dst,UDPort dst_port,UDPort src_port,bool do_checksum); 
+  
+  // print object
+  
+  template &lt;class P&gt;
+  void print(P &amp;out) const;
+ };
+
+</pre>
+
+<h4>ICMPEchoEndpoint</h4>
+
+<pre>
+
+typedef uint16 <span class="Att">ICMPEchoNumber</span>;
+
+typedef Function&lt;void (ICMPEchoNumber num)&gt; <span class="Att">ICMPReplyFunction</span>;
+
+class <span class="Att">ICMPEchoEndpoint</span> : NoCopy
+ {
+   enum { DataLen = 32 };
+
+   ....
+   
+  public:
+  
+   ICMPEchoEndpoint(StrLen ip_dev_name,IPAddress dst,ICMPReplyFunction reply_function);
+   
+   ~ICMPEchoEndpoint();
+   
+   ICMPEchoNumber send();
+ };
+
+</pre>
+
+<h4>IPTickEndpoint</h4>
+
+<pre>
+
+typedef Function&lt;void (void)&gt; <span class="Att">IPTickFunction</span>;
+
+class <span class="Att">IPTickEndpoint</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   IPTickEndpoint(StrLen ip_dev_name,IPTickFunction tick_function);
+   
+   ~IPTickEndpoint();
+ };
+
+</pre>
+
+<h4>UDPEndpoint</h4>
+
+<pre>
+
+typedef Function&lt;void (Packet&lt;uint8&gt; packet,PtrLen&lt;const uint8&gt; data,UDPoint udpoint)> <span class="Att">UDPFunction</span>;
+
+class <span class="Att">UDPEndpoint</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   UDPEndpoint(StrLen ip_dev_name,UDPort port,bool do_checksum,UDPFunction rx_function);
+   
+   ~UDPEndpoint();
+   
+   ulen getMaxInboundLen() const;
+   
+   PacketFormat getUDPTxFormat() const;
+   
+   void send(Packet&lt;uint8&gt; packet,UDPoint dst);
+ };
+
+</pre>
+
+<h4>NanoUDPEndpointDevice</h4>
+
+<pre>
+
+class <span class="Att">NanoUDPEndpointDevice</span> : public ObjBase , public PacketEndpointDevice
+ {
+   ....
+
+  public:
+  
+   NanoUDPEndpointDevice(StrLen ip_dev_name,UDPort udport,bool do_checksum,UDPoint dst);
+   
+   virtual ~NanoUDPEndpointDevice();
+   
+   // PacketEndpointDevice 
+   
+   virtual PacketFormat getOutboundFormat();
+   
+   virtual void outbound(Packet&lt;uint8&gt; packet);
+   
+   virtual ulen getMaxInboundLen();
+  
+   virtual void attach(InboundProc *proc);
+   
+   virtual void detach();
+ };
+
+</pre>
+
+<h4>NanoUDPMultipointDevice</h4>
+
+<pre>
+
+class <span class="Att">NanoUDPMultipointDevice</span> : public ObjBase , public PacketMultipointDevice
+ {
+   ....
+
+  public:
+  
+   NanoUDPMultipointDevice(StrLen ip_dev_name,UDPort udport,bool do_checksum);
+   
+   virtual ~NanoUDPMultipointDevice();
+   
+   // PacketMultipointDevice
+   
+   virtual StrLen toText(XPoint point,PtrLen&lt;char&gt; buf);
+   
+   virtual PacketFormat getOutboundFormat();
+   
+   virtual void outbound(XPoint point,Packet&lt;uint8&gt; packet);
+   
+   virtual ulen getMaxInboundLen();
+   
+   virtual void attach(InboundProc *proc);
+   
+   virtual void detach();
+ };
+
+</pre>
 
 </body>
 
