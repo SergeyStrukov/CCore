@@ -40,7 +40,7 @@ boot, configuring or data exchange.
 
 <p>
 <b>NanoIPDevice</b> and related stuff implement IP, ICMP ping, ARP and UDP protocols to some extent.
-PTP protocol can be attached atop UDP packet devices.
+<a href="page_PTP.html">PTP protocol</a> can be attached atop UDP packet devices.
 </p>
 
 <h4>NanoIPDevice</h4>
@@ -82,12 +82,6 @@ class <span class="Att">NanoIPDevice</span> : public ObjBase
    typedef IPStatInfo StatInfo;
    
    void getStat(IPStatInfo &amp;ret);
-   
-   void getStat_arp(ARPending::StatInfo &amp;ret);
-   
-   void getStat_prepare(TxPrepareList::StatInfo &amp;ret);
-   
-   void getStat_send(TxSendList::StatInfo &amp;ret);
    
    // send
    
@@ -134,7 +128,7 @@ if it is destined to the local address and comes from the local network. Otherwi
 </p>
 
 <p>
-<b>getEthDevice()</b> returnes the <b>EthDevice</b> the object is attached to.
+<b>getEthDevice()</b> returns the <b>EthDevice</b> the object is attached to.
 </p>
 
 <p>
@@ -180,7 +174,7 @@ The following methods can be used to send a packet to the network.
 
 <p>
 <b>send_prepare()</b> tries to put the given packet into the prepare list. The given packet function is used
-to "prepare" the packet before sending out. If the method is successfull it consumes the packet and returns <b>true</b>.
+to "prepare" the packet before sending out. If the method is successful it consumes the packet and returns <b>true</b>.
 Otherwise it leaves the packet alone and returns <b>false</b>. The called must deal with the packet in the last case.
 </p>
 
@@ -241,8 +235,8 @@ struct <span class="Att">IPTxExt</span>
 <h4>UDPTxExt</h4>
 
 <p>
-<b>UDPTxExt</b> is used to send an UDP packet. This structure specifies the destination IP address,
-source and destination port numbers and the checksum flag. If the checksum flag is set, then the 
+<b>UDPTxExt</b> is used to send a UDP packet. This structure specifies the destination IP address,
+the source and the destination port numbers and the checksum flag. If the checksum flag is set, then the 
 UDP packet is sent with checksum, otherwise without one.
 </p>
 
@@ -271,6 +265,10 @@ struct <span class="Att">UDPTxExt</span>
 
 <h4>ICMPEchoEndpoint</h4>
 
+<p>
+<b>ICMPEchoEndpoint</b> can be used to ping a particular IP address. 
+</p>
+
 <pre>
 
 typedef uint16 <span class="Att">ICMPEchoNumber</span>;
@@ -294,7 +292,38 @@ class <span class="Att">ICMPEchoEndpoint</span> : NoCopy
 
 </pre>
 
+<p>
+<b>ICMPEchoEndpoint</b> constructor has the following arguments:
+</p>
+
+<p>
+<b>ip_dev_name</b> is the name of some <b>NanoIPDevice</b>,
+</p>
+
+<p>
+<b>dst</b> is the destination IP address,
+</p>
+
+<p>
+<b>reply_function</b> is a replay function. This function is called in the "unknown task context" to process
+an ICMP ping reply. This function has the following arguments:
+</p>
+
+<p>
+<b>num</b> is an ICMP ping reply number.
+</p>
+
+<p>
+<b>send()</b> prepares ans sends an ICMP ping request to the destination IP address.
+The request number is returned. It is a <b>uint16</b> number, incremented with each request (the first value is <b>1</b>).
+</p>
+
 <h4>IPTickEndpoint</h4>
+
+<p>
+<b>IPTickEndpoint</b> is a "tick" endpoint. It receives the network tick. This event happens 10 times
+per second and is intended to be used for the protocol timeout processing.
+</p>
 
 <pre>
 
@@ -313,7 +342,25 @@ class <span class="Att">IPTickEndpoint</span> : NoCopy
 
 </pre>
 
+<p>
+<b>IPTickEndpoint</b> constructor has the following arguments:
+</p>
+
+<p>
+<b>ip_dev_name</b> is the name of some <b>NanoIPDevice</b>,
+</p>
+
+<p>
+<b>tick_function</b> is a tick processing function without arguments. It is called in the
+"unknown task context".
+</p>
+
 <h4>UDPEndpoint</h4>
+
+<p>
+<b>UDPEndpoint</b> can be attached to the <b>NanoIPDevice</b> to process incoming UDP 
+traffic on the particular port. Multiple objects can be attached, but only one on a particular port.
+</p>
 
 <pre>
 
@@ -325,7 +372,7 @@ class <span class="Att">UDPEndpoint</span> : NoCopy
 
   public:
   
-   UDPEndpoint(StrLen ip_dev_name,UDPort port,bool do_checksum,UDPFunction rx_function);
+   UDPEndpoint(StrLen ip_dev_name,UDPort udport,bool do_checksum,UDPFunction rx_function);
    
    ~UDPEndpoint();
    
@@ -338,7 +385,60 @@ class <span class="Att">UDPEndpoint</span> : NoCopy
 
 </pre>
 
+<p>
+<b>UDPEndpoint</b> constructor has the following arguments:
+</p>
+
+<p>
+<b>ip_dev_name</b> is the name of some <b>NanoIPDevice</b>,
+</p>
+
+<p>
+<b>udport</b> is the local UDP port,
+</p>
+
+<p>
+<b>do_checksum</b> is the UDP checksum flag. If it is <b>true</b>, the UDP checksum processing is enabled
+on this particular port.
+</p>
+
+<p>
+<b>rx_function</b> is the inbound processing function. This function is called to process incoming UDP
+packets in the "unknown task context". The function has the following arguments:
+</p>
+
+<p>
+<b>packet</b> is a packet with an attached data buffer.
+</p>
+
+<p>
+<b>data</b> is a UDP payload data range from the attached data buffer.
+</p>
+
+<p>
+<b>udpoint</b> designates the source of the packet.
+</p>
+
+<p>
+<b>getMaxInboundLen()</b> is the maximum inbound packet data length.
+</p>
+
+<p>
+<b>getUDPTxFormat()</b> is the Tx packet format. Use this format to prepare a packet to be sent 
+to the UDP communication peer.
+</p>
+
+<p>
+<b>send()</b> sends the given packet to the given UDP endpoint. The packet carries UDP
+data payload and must be prepared according the <b>getUDPTxFormat()</b> packet format.
+</p>
+
 <h4>NanoUDPEndpointDevice</h4>
+
+<p>
+<b>NanoUDPEndpointDevice</b> class implements the <a href="page_PacketEndpoint.html#PacketEndpointDevice"><b>PacketEndpointDevice</b></a> interface over
+a UDP port.
+</p>
 
 <pre>
 
@@ -367,7 +467,37 @@ class <span class="Att">NanoUDPEndpointDevice</span> : public ObjBase , public P
 
 </pre>
 
+<p>
+<b>NanoUDPEndpointDevice</b> constructor has the following arguments:
+</p>
+
+<p>
+<b>ip_dev_name</b> is the name of some <b>NanoIPDevice</b>,
+</p>
+
+<p>
+<b>udport</b> is the local UDP port,
+</p>
+
+<p>
+<b>do_checksum</b> is the UDP checksum flag. If it is <b>true</b>, the UDP checksum processing is enabled
+on this particular port.
+</p>
+
+<p>
+<b>dst</b> is the communication peer <a href="page_UDPoint.html">UDP address</a>.
+</p>
+
+<p>
+Other methods implement <b>PacketEndpointDevice</b> interface.
+</p>
+
 <h4>NanoUDPMultipointDevice</h4>
+
+<p>
+<b>NanoUDPMultipointDevice</b> class implements the <a href="page_PacketEndpoint.html#PacketMultipointDevice"><b>PacketMultipointDevice</b></a> interface over
+a UDP port.
+</p>
 
 <pre>
 
@@ -397,6 +527,27 @@ class <span class="Att">NanoUDPMultipointDevice</span> : public ObjBase , public
  };
 
 </pre>
+
+<p>
+<b>NanoUDPMultipointDevice</b> constructor has the following arguments:
+</p>
+
+<p>
+<b>ip_dev_name</b> is the name of some <b>NanoIPDevice</b>,
+</p>
+
+<p>
+<b>udport</b> is the local UDP port,
+</p>
+
+<p>
+<b>do_checksum</b> is the UDP checksum flag. If it is <b>true</b>, the UDP checksum processing is enabled
+on this particular port.
+</p>
+
+<p>
+Other methods implement <b>PacketMultipointDevice</b> interface.
+</p>
 
 </body>
 
