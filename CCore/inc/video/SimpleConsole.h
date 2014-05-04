@@ -35,6 +35,7 @@ class DefaultFont
  {
    static const bool Table[];
    static const bool NoCharTable[];
+   static const bool Marker[];
    
    const bool *pixel; // DX*DY
    
@@ -42,7 +43,12 @@ class DefaultFont
   
    static const unsigned DX = 10 ;
    static const unsigned DY = 18 ;
-  
+
+   DefaultFont()
+    {
+     pixel=Marker;
+    }
+   
    explicit DefaultFont(char ch)
     {
      unsigned index=(unsigned char)ch;
@@ -87,9 +93,12 @@ class CharPanel : NoCopy
    ColorName back = Black ;
    ColorName fore = Silver ;
    ColorName line = Gray ;
+   ColorName marker = Green ;
    
    unsigned dx = 0 ;
    unsigned dy = 0 ;
+   
+   Color backup[DefaultFont::DX*DefaultFont::DY];
    
   public:
  
@@ -116,6 +125,10 @@ class CharPanel : NoCopy
    void eraseLineLine(unsigned y);
    
    void operator () (unsigned x,unsigned y,char ch);
+   
+   void setMarker(unsigned x,unsigned y);
+   
+   void clearMarker(unsigned x,unsigned y);
  };
 
 template <class Color> 
@@ -149,6 +162,20 @@ void CharPanel<Color>::operator () (unsigned x,unsigned y,char ch)
   out.glyph(x*DefaultFont::DX,y*DefaultFont::DY,DefaultFont(ch),back,fore);
  }
 
+template <class Color> 
+void CharPanel<Color>::setMarker(unsigned x,unsigned y)
+ {
+  out.save(x*DefaultFont::DX,y*DefaultFont::DY,DefaultFont::DX,DefaultFont::DY,backup);
+  
+  out.glyph(x*DefaultFont::DX,y*DefaultFont::DY,DefaultFont(),marker);
+ }
+
+template <class Color> 
+void CharPanel<Color>::clearMarker(unsigned x,unsigned y)
+ {
+  out.load(x*DefaultFont::DX,y*DefaultFont::DY,DefaultFont::DX,DefaultFont::DY,backup);
+ }
+
 /* class SimpleConsole<Color> */
 
 template <class Color> 
@@ -158,6 +185,8 @@ class SimpleConsole : NoCopy
    
    unsigned x = 0 ;
    unsigned y = 0 ;
+   
+   bool marker = false ;
  
   private:
  
@@ -182,6 +211,8 @@ class SimpleConsole : NoCopy
    void init(FrameBuf<Color> out);
    
    void print(PtrLen<const char> str);
+   
+   void toggleMarker();
  };
 
 template <class Color> 
@@ -233,6 +264,7 @@ void SimpleConsole<Color>::init(FrameBuf<Color> out)
  {
   x=0;
   y=0;
+  marker=false;
   
   panel.init(out);
  }
@@ -242,7 +274,30 @@ void SimpleConsole<Color>::print(PtrLen<const char> str)
  {
   if( !panel ) return;
   
+  if( marker ) panel.clearMarker(x,y);
+  
   for(char ch : str ) printChar(ch);
+  
+  if( marker ) panel.setMarker(x,y);
+ }
+
+template <class Color> 
+void SimpleConsole<Color>::toggleMarker()
+ {
+  if( !panel ) return;
+  
+  if( marker )
+    {
+     marker=false;
+     
+     panel.clearMarker(x,y);
+    }
+  else
+    {
+     marker=true;
+     
+     panel.setMarker(x,y);
+    }
  }
 
 } // namespace Video

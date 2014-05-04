@@ -24,6 +24,9 @@
 #include <CCore/inc/Task.h>
 #include <CCore/inc/video/EDID.h>
 
+#include <CCore/inc/dev/DevHDMI.h>
+#include <CCore/inc/dev/DevLCD.h>
+
 namespace CCore {
 namespace Video {
 
@@ -35,7 +38,10 @@ class VideoControl;
 
 class VideoControl : public ObjBase , public VideoDevice
  {
-   AttachmentHost<PlugControl> host;
+   Dev::HDMI hdmi;
+   Dev::LCD lcd;
+  
+   AttachmentHost<Control> host;
    
    Space video_space;
    bool first = true ;
@@ -49,23 +55,33 @@ class VideoControl : public ObjBase , public VideoDevice
    DynArray<VideoMode> mode_list;
    DynArray<EDIDMode> edid_list;
    
-   Event event;
-   Atomic stop_flag;
+   enum Events
+    {
+     PlugEvent = 1,
+     TickEvent,
+     StopEvent
+    };
+   
+   MultiEvent<3> mevent;
+   Ticker ticker;
+   
    AntiSem asem;
    
   private:
    
-   using Hook = AttachmentHost<PlugControl>::Hook ;
+   using Hook = AttachmentHost<Control>::Hook ;
    
    void init_first(const EDIDMode &mode,ColorMode color_mode);
    
    void init(const EDIDMode &mode,ColorMode color_mode);
    
    void work();
+   
+   bool append(EDIDMode edid);
   
   public:
   
-   VideoControl(TaskPriority priority=DefaultTaskPriority,ulen stack_len=DefaultStackLen);
+   VideoControl(StrLen i2c_dev_name,TaskPriority priority=DefaultTaskPriority,ulen stack_len=DefaultStackLen);
    
    virtual ~VideoControl();
    
@@ -87,7 +103,9 @@ class VideoControl : public ObjBase , public VideoDevice
    
    virtual bool setVideoMode(ulen index);
    
-   virtual void attach(PlugControl *ctrl);
+   virtual void setTick(MSec period);
+   
+   virtual void attach(Control *ctrl);
    
    virtual void detach();
  };

@@ -39,6 +39,9 @@ enum IntSource
   Int_3PGSWRXINT0 = 41,
   Int_3PGSWTXINT0 = 42,
   Int_3PGSWMISC0  = 43,
+  
+  Int_GPIO1_0 = 98,
+  Int_GPIO1_1 = 99,
  
   Int_TableLen = 128
  };

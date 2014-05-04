@@ -15,16 +15,12 @@
 
 #include <__std_init.h>
 
-#include <stdio.h>
-
-#include <CCore/inc/Print.h>
+#include <CCore/inc/Abort.h>
 #include <CCore/inc/Task.h>
 #include <CCore/inc/SpecialMemBase.h>
-
 #include <CCore/inc/dev/DevPlanInit.h>
-#include <CCore/inc/libc/atexit.h>
 
-#include <CCore/inc/video/VideoControl.h>
+#include <CCore/inc/libc/atexit.h>
 
 using namespace CCore;
 
@@ -47,25 +43,20 @@ void __std_init(void)
     }
  }
  
-extern int main(int argc,const char *argv[]);
+extern void before_main();
  
 void __std_main(void)
  {
   Task::Internal::Enable();
-  
-  {
-   Video::VideoControl ctrl;
-   
-   ObjMaster ctrl_master(ctrl,"video");
-    
-   const char *argv[]={"main",0};
-  
-   int ret=main(1,argv);
-   
-   fflush(stdout);
-   
-   Used(ret);
-  } 
+
+  try
+    {
+     before_main();
+    }
+  catch(...)
+    {
+     Abort("Fatal error : exception from before_main()");
+    }
   
   Task::Internal::Disable();
  }
@@ -75,6 +66,7 @@ void __std_exit(void)
   Exit_atexit(); // call atexit functions, destructors are called here
   
   Exit_SpecialMem();
+  
   Dev::Exit_CPU();
  }
  

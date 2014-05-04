@@ -354,5 +354,13 @@ struct CONTROLBar
  
   Setter<Type_PadMux> to_Conf_LCD_AC_BIAS_EN() { return Setter<Type_PadMux>(rw,0x8EC); }
  
+  //--- Conf_GPMC_A9
+
+  Type_PadMux get_Conf_GPMC_A9() { return Type_PadMux(rw.template get<uint32>(0x864)); }
+ 
+  void set_Conf_GPMC_A9(Type_PadMux value) { rw.set(0x864,value.value); }
+ 
+  Setter<Type_PadMux> to_Conf_GPMC_A9() { return Setter<Type_PadMux>(rw,0x864); }
+ 
  };
  

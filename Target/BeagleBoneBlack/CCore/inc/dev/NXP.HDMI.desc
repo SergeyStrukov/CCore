@@ -29,6 +29,24 @@ reg CECStatus : 8
   Plug    : 1
  }
  
+reg CECIntStatus : 8
+ {
+  RxSense : 0
+  Plug    : 1
+ } 
+ 
+reg CECIntEnable : 8
+ {
+  RxSense : 0
+  Plug    : 1
+ }
+ 
+reg CECIntSource : 8
+ {
+  CEC  : 0
+  HDMI : 1
+ } 
+  
 reg CEC_FRO_IMCLK : 8
  {
   FRODiv   : 0
@@ -41,7 +59,10 @@ bar CECBar : address
  {
   CEC_FRO_IMCLK = 0FBh
   CECStatus     = 0FEh RO
+  CECIntStatus  = 0FDh RO
+  CECIntEnable  = 0FCh
   CECEnable     = 0FFh
+  CECIntSource  = 0EEh RO
  }
  
 /*--------------------------------------------------------------------------------------*/

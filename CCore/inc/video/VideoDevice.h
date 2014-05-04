@@ -82,14 +82,18 @@ struct VideoDevice
   
   virtual bool setVideoMode(ulen index)=0;
   
-  struct PlugControl
+  virtual void setTick(MSec period)=0;
+  
+  struct Control
    {
     // serialized
     
     virtual void change(bool plug,bool power)=0;
+    
+    virtual void tick()=0;
    };
   
-  virtual void attach(PlugControl *ctrl)=0;
+  virtual void attach(Control *ctrl)=0;
   
   virtual void detach()=0;
  };

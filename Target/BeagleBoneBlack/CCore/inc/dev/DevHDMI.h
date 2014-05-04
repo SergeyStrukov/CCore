@@ -17,7 +17,7 @@
 #define CCore_inc_dev_DevHDMI_h
 
 #include <CCore/inc/video/EDID.h>
-#include <CCore/inc/dev/DevI2C.h>
+#include <CCore/inc/I2CDevice.h>
 #include <CCore/inc/dev/NXP.HDMI.h>
 
 namespace CCore {
@@ -33,65 +33,27 @@ class HDMI : NoCopy
  {
    class RegRW : NoCopy
     {
-      I2C dev;
+      ObjHook hook;
       
-      uint8 slave;
-      
-     private:
-      
-      void setSlave(uint8 address)
-       {
-        if( address!=slave )
-          {
-           dev.setSlave7(address);
-          
-           slave=address;
-          }
-       }
+      I2CDevice *dev;
       
      public:
       
-      RegRW()
-       : dev(I2C_0),
-         slave(0)
-       {
-        dev.init_fast();
-       }
+      explicit RegRW(StrLen i2c_dev_name);
       
-      ~RegRW()
-       {
-       }
+      ~RegRW();
       
-      void setCEC() { setSlave(0x34); }
+      uint8 get(uint8 slave_address,uint8 address); 
       
-      void setHDMI() { setSlave(0x70); }
+      void set(uint8 slave_address,uint8 address,uint8 value); 
       
-      uint8 get(uint8 address) 
-       {
-        uint8 ret;
-        
-        dev.exchange(Range_const(&address,1),Range(&ret,1));
-        
-        return ret;
-       }
-      
-      void set(uint8 address,uint8 value) 
-       {
-        uint8 temp[]={address,value};
-        
-        dev.write(Range_const(temp));
-       }
-      
-      void set(uint8 address,uint8 value1,uint8 value2) 
-       {
-        uint8 temp[]={address,value1,value2};
-        
-        dev.write(Range_const(temp));
-       }
+      void set(uint8 slave_address,uint8 address,uint8 value1,uint8 value2); 
     };
    
    class CECRegRW : NoCopy
     {
+      static const uint8 SlaveAddress = 0x34 ; 
+     
       RegRW &dev;
       
      public:
@@ -109,25 +71,19 @@ class HDMI : NoCopy
    
    class HDMIRegRW : NoCopy
     {
+      static const uint8 SlaveAddress = 0x70 ;
+      
       RegRW &dev;
       
-      uint16 page;
+      uint16 page = 0xFFFF ;
       
      private:
       
-      void setPage(uint8 page_)
-       {
-        if( page!=page_ )
-          {
-           dev.set(0xFF,page_);
-          
-           page=page_;
-          }
-       }
+      void setPage(uint8 page_);
       
      public:
       
-      explicit HDMIRegRW(RegRW &dev_) : dev(dev_),page(0xFFFF) {}
+      explicit HDMIRegRW(RegRW &dev_) : dev(dev_) {}
 
       typedef uint16 AddressType; 
 
@@ -145,7 +101,7 @@ class HDMI : NoCopy
   
   public:
  
-   HDMI();
+   explicit HDMI(StrLen i2c_dev_name);
    
    ~HDMI();
    

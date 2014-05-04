@@ -90,6 +90,8 @@ class Color16
    void set(uint8 red,uint8 green,uint8 blue) { color[0]=Pack565(red>>3,green>>2,blue>>3); }
   
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; }
+   
+   void copyFrom(const Raw dst[RawCount]) { color[0]=dst[0]; }
  };
 
 /* class Color24 */
@@ -117,6 +119,8 @@ class Color24
    void set(uint8 red,uint8 green,uint8 blue) { color[0]=red; color[1]=green; color[2]=blue; }
   
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; dst[1]=color[1]; dst[2]=color[2]; }
+   
+   void copyFrom(const Raw dst[RawCount]) { color[0]=dst[0]; color[1]=dst[1]; color[2]=dst[2]; }
  };
 
 /* class Color32 */
@@ -146,6 +150,8 @@ class Color32
    void set(uint8 red,uint8 green,uint8 blue) { color[0]=Pack888(red,green,blue); }
   
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; }
+   
+   void copyFrom(const Raw dst[RawCount]) { color[0]=dst[0]; }
  };
 
 /* class FrameBuf<Color> */
@@ -174,6 +180,13 @@ class FrameBuf
    template <class Pattern>
    static void HLine(Raw *ptr,Pattern pat,Color back,Color fore);
    
+   template <class Pattern>
+   static void HLine(Raw *ptr,Pattern pat,Color fore);
+   
+   static void Save(Raw *ptr,unsigned bdx,Color buf[/* bdx */]);
+   
+   static void Load(Raw *ptr,unsigned bdx,const Color buf[/* bdx */]);
+   
   public: 
   
    FrameBuf() {}
@@ -197,9 +210,16 @@ class FrameBuf
    void erase(Color color);
   
    void block(unsigned x,unsigned y,unsigned bdx,unsigned bdy,Color color);
+   
+   void save(unsigned x,unsigned y,unsigned bdx,unsigned bdy,Color buf[/* bdx*bdy */]);
   
+   void load(unsigned x,unsigned y,unsigned bdx,unsigned bdy,const Color buf[/* bdx*bdy */]);
+   
    template <class Glyph>
    void glyph(unsigned x,unsigned y,Glyph glyph,Color back,Color fore);
+   
+   template <class Glyph>
+   void glyph(unsigned x,unsigned y,Glyph glyph,Color fore);
    
    void test();
  };
@@ -224,6 +244,29 @@ void FrameBuf<Color>::HLine(Raw *ptr,Pattern pat,Color back,Color fore)
  }
 
 template <class Color> 
+template <class Pattern>
+void FrameBuf<Color>::HLine(Raw *ptr,Pattern pat,Color fore)
+ {
+  unsigned bdx=pat.dX();
+  
+  for(unsigned bx=0; bx<bdx ;bx++,ptr=NextX(ptr)) 
+    if( pat[bx] ) 
+      fore.copyTo(ptr); 
+ }
+
+template <class Color> 
+void FrameBuf<Color>::Save(Raw *ptr,unsigned bdx,Color buf[/* bdx */])
+ {
+  for(; bdx ;bdx--,ptr=NextX(ptr),buf++) buf->copyFrom(ptr);
+ }
+
+template <class Color> 
+void FrameBuf<Color>::Load(Raw *ptr,unsigned bdx,const Color buf[/* bdx */])
+ {
+  for(; bdx ;bdx--,ptr=NextX(ptr),buf++) buf->copyTo(ptr);
+ }
+
+template <class Color> 
 void FrameBuf<Color>::erase(Color color)
  {
   block(0,0,dx,dy,color);
@@ -241,6 +284,28 @@ void FrameBuf<Color>::block(unsigned x,unsigned y,unsigned bdx,unsigned bdy,Colo
  }
 
 template <class Color> 
+void FrameBuf<Color>::save(unsigned x,unsigned y,unsigned bdx,unsigned bdy,Color buf[/* bdx*bdy */])
+ {
+  Raw *ptr=place(x,y);
+  
+  for(; bdy ;bdy--,ptr=nextY(ptr),buf+=bdx)
+    {
+     Save(ptr,bdx,buf);
+    }
+ }
+
+template <class Color> 
+void FrameBuf<Color>::load(unsigned x,unsigned y,unsigned bdx,unsigned bdy,const Color buf[/* bdx*bdy */])
+ {
+  Raw *ptr=place(x,y);
+  
+  for(; bdy ;bdy--,ptr=nextY(ptr),buf+=bdx)
+    {
+     Load(ptr,bdx,buf);
+    }
+ }
+
+template <class Color> 
 template <class Glyph>
 void FrameBuf<Color>::glyph(unsigned x,unsigned y,Glyph glyph,Color back,Color fore)
  {
@@ -251,6 +316,20 @@ void FrameBuf<Color>::glyph(unsigned x,unsigned y,Glyph glyph,Color back,Color f
   for(unsigned by=0; by<bdy ;by++,ptr=nextY(ptr))
     {
      HLine(ptr,glyph[by],back,fore);
+    }
+ }
+
+template <class Color> 
+template <class Glyph>
+void FrameBuf<Color>::glyph(unsigned x,unsigned y,Glyph glyph,Color fore)
+ {
+  unsigned bdy=glyph.dY();
+  
+  Raw *ptr=place(x,y);
+  
+  for(unsigned by=0; by<bdy ;by++,ptr=nextY(ptr))
+    {
+     HLine(ptr,glyph[by],fore);
     }
  }
 

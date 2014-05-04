@@ -24,54 +24,88 @@ namespace Dev {
 
 /* class HDMI */
 
+HDMI::RegRW::RegRW(StrLen i2c_dev_name)
+ : hook(i2c_dev_name),
+   dev(hook)
+ {
+ }
+
+HDMI::RegRW::~RegRW()
+ {
+ }
+
+uint8 HDMI::RegRW::get(uint8 slave_address,uint8 address) 
+ {
+  uint8 ret;
+  
+  dev->exchange(slave_address,Range_const(&address,1),Range(&ret,1));
+  
+  return ret;
+ }
+
+void HDMI::RegRW::set(uint8 slave_address,uint8 address,uint8 value) 
+ {
+  uint8 temp[]={address,value};
+  
+  dev->write(slave_address,Range_const(temp));
+ }
+
+void HDMI::RegRW::set(uint8 slave_address,uint8 address,uint8 value1,uint8 value2) 
+ {
+  uint8 temp[]={address,value1,value2};
+  
+  dev->write(slave_address,Range_const(temp));
+ }
+
 template <>
 uint8 HDMI::CECRegRW::get<uint8>(AddressType address)
  {
-  dev.setCEC();
-  
-  return dev.get(address);
+  return dev.get(SlaveAddress,address);
  }
 
 template <>
 void HDMI::CECRegRW::set<uint8>(AddressType address,uint8 value)
  {
-  dev.setCEC();
-  
-  dev.set(address,value);
+  dev.set(SlaveAddress,address,value);
+ }
+
+void HDMI::HDMIRegRW::setPage(uint8 page_)
+ {
+  if( page!=page_ )
+    {
+     dev.set(SlaveAddress,0xFF,page_);
+    
+     page=page_;
+    }
  }
 
 template <>
 uint8 HDMI::HDMIRegRW::get<uint8>(AddressType address)
  {
-  dev.setHDMI();
-  
   setPage(uint8(address>>8));
   
-  return dev.get(uint8(address));
+  return dev.get(SlaveAddress,uint8(address));
  }
 
 template <>
 void HDMI::HDMIRegRW::set<uint8>(AddressType address,uint8 value)
  {
-  dev.setHDMI();
-  
   setPage(uint8(address>>8));
   
-  dev.set(uint8(address),value);
+  dev.set(SlaveAddress,uint8(address),value);
  }
 
 template <>
 void HDMI::HDMIRegRW::set<uint16>(AddressType address,uint16 value)
  {
-  dev.setHDMI();
-  
   setPage(uint8(address>>8));
   
-  dev.set(uint8(address),uint8(value>>8),uint8(value));
+  dev.set(SlaveAddress,uint8(address),uint8(value>>8),uint8(value));
  }
 
-HDMI::HDMI()
- : barCEC(regRW),
+HDMI::HDMI(StrLen i2c_dev_name)
+ : regRW(i2c_dev_name),
+   barCEC(regRW),
    barHDMI(regRW)
  {
  }

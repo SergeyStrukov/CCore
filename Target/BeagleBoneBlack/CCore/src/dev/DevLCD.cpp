@@ -39,6 +39,19 @@ LCD::Mode::Mode(const Video::EDIDMode &mode)
   vlen=mode.vlen;
   vfront=mode.vsync_off;
   vsync=mode.vsync_pulse;
+  
+  if( hlen<16 || hlen>2048 || (hlen&15)!=0
+      || hfront<1 || hfront>1024
+      || hsync<1 || hsync>1024
+      || hback<1 || hback>1024
+      || vlen<1 || vlen>2048
+      || vfront>255
+      || vsync<1 || vsync>64
+      || vback>255
+    )
+    {
+     Printf(Exception,"CCore::Dev::LCD::Mode::Mode(...) : unsupported video geometry");
+    }
  }
 
 LCD::FrameBuf16::FrameBuf16(uint32 hlen,uint32 vlen,Space video_space)

@@ -233,6 +233,279 @@ struct Type_CECStatus
    }
  };
  
+/* struct Type_CECIntStatus */ 
+
+enum Bits_CECIntStatus : uint8
+ {
+  CECIntStatus_RxSense = 0x01,
+  CECIntStatus_Plug    = 0x02
+ };
+ 
+inline Bits_CECIntStatus operator | (Bits_CECIntStatus a,Bits_CECIntStatus b)
+ { return Bits_CECIntStatus(uint8(a)|uint8(b)); }
+ 
+struct Type_CECIntStatus
+ {
+  typedef uint8 Type;
+
+  Type value;
+
+
+  explicit Type_CECIntStatus(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_CECIntStatus & setTo(Bar &bar) { bar.set_CECIntStatus(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_CECIntStatus & setTo(Bar &bar,uint32 ind) { bar.set_CECIntStatus(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_CECIntStatus & set(T to) { to(*this); return *this; }
+ 
+
+  Type_CECIntStatus & setbit(Bits_CECIntStatus bits) { value|=Type(bits); return *this; }
+ 
+  Type_CECIntStatus & setbitIf(bool cond,Bits_CECIntStatus bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_CECIntStatus & clearbit(Bits_CECIntStatus bits) { value&=~Type(bits); return *this; }
+ 
+  Type_CECIntStatus & clearbitIf(bool cond,Bits_CECIntStatus bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_CECIntStatus bits) const { return value&bits; }
+ 
+  bool testbit(Bits_CECIntStatus bits) const { return (value&bits)==Type(bits); }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&CECIntStatus_RxSense )
+      {
+       if( first )
+         {
+          Putobj(out,"RxSense");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"RxSense");
+         }
+      }
+
+    if( value&CECIntStatus_Plug )
+      {
+       if( first )
+         {
+          Putobj(out,"Plug");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"Plug");
+         }
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_CECIntEnable */ 
+
+enum Bits_CECIntEnable : uint8
+ {
+  CECIntEnable_RxSense = 0x01,
+  CECIntEnable_Plug    = 0x02
+ };
+ 
+inline Bits_CECIntEnable operator | (Bits_CECIntEnable a,Bits_CECIntEnable b)
+ { return Bits_CECIntEnable(uint8(a)|uint8(b)); }
+ 
+struct Type_CECIntEnable
+ {
+  typedef uint8 Type;
+
+  Type value;
+
+
+  explicit Type_CECIntEnable(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_CECIntEnable & setTo(Bar &bar) { bar.set_CECIntEnable(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_CECIntEnable & setTo(Bar &bar,uint32 ind) { bar.set_CECIntEnable(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_CECIntEnable & set(T to) { to(*this); return *this; }
+ 
+
+  Type_CECIntEnable & setbit(Bits_CECIntEnable bits) { value|=Type(bits); return *this; }
+ 
+  Type_CECIntEnable & setbitIf(bool cond,Bits_CECIntEnable bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_CECIntEnable & clearbit(Bits_CECIntEnable bits) { value&=~Type(bits); return *this; }
+ 
+  Type_CECIntEnable & clearbitIf(bool cond,Bits_CECIntEnable bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_CECIntEnable bits) const { return value&bits; }
+ 
+  bool testbit(Bits_CECIntEnable bits) const { return (value&bits)==Type(bits); }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&CECIntEnable_RxSense )
+      {
+       if( first )
+         {
+          Putobj(out,"RxSense");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"RxSense");
+         }
+      }
+
+    if( value&CECIntEnable_Plug )
+      {
+       if( first )
+         {
+          Putobj(out,"Plug");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"Plug");
+         }
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_CECIntSource */ 
+
+enum Bits_CECIntSource : uint8
+ {
+  CECIntSource_CEC  = 0x01,
+  CECIntSource_HDMI = 0x02
+ };
+ 
+inline Bits_CECIntSource operator | (Bits_CECIntSource a,Bits_CECIntSource b)
+ { return Bits_CECIntSource(uint8(a)|uint8(b)); }
+ 
+struct Type_CECIntSource
+ {
+  typedef uint8 Type;
+
+  Type value;
+
+
+  explicit Type_CECIntSource(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_CECIntSource & setTo(Bar &bar) { bar.set_CECIntSource(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_CECIntSource & setTo(Bar &bar,uint32 ind) { bar.set_CECIntSource(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_CECIntSource & set(T to) { to(*this); return *this; }
+ 
+
+  Type_CECIntSource & setbit(Bits_CECIntSource bits) { value|=Type(bits); return *this; }
+ 
+  Type_CECIntSource & setbitIf(bool cond,Bits_CECIntSource bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_CECIntSource & clearbit(Bits_CECIntSource bits) { value&=~Type(bits); return *this; }
+ 
+  Type_CECIntSource & clearbitIf(bool cond,Bits_CECIntSource bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_CECIntSource bits) const { return value&bits; }
+ 
+  bool testbit(Bits_CECIntSource bits) const { return (value&bits)==Type(bits); }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&CECIntSource_CEC )
+      {
+       if( first )
+         {
+          Putobj(out,"CEC");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"CEC");
+         }
+      }
+
+    if( value&CECIntSource_HDMI )
+      {
+       if( first )
+         {
+          Putobj(out,"HDMI");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"HDMI");
+         }
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct Type_CEC_FRO_IMCLK */ 
 
 enum Bits_CEC_FRO_IMCLK : uint8
@@ -4038,6 +4311,26 @@ struct CECBar
  
   static Type_CECStatus ones_CECStatus() { return Type_CECStatus(Type_CECStatus::Type(-1)); }
  
+  //--- CECIntStatus
+
+  Type_CECIntStatus get_CECIntStatus() { return Type_CECIntStatus(rw.template get<uint8>(0xFD)); }
+ 
+  static Type_CECIntStatus null_CECIntStatus() { return Type_CECIntStatus(0); }
+ 
+  static Type_CECIntStatus ones_CECIntStatus() { return Type_CECIntStatus(Type_CECIntStatus::Type(-1)); }
+ 
+  //--- CECIntEnable
+
+  Type_CECIntEnable get_CECIntEnable() { return Type_CECIntEnable(rw.template get<uint8>(0xFC)); }
+ 
+  void set_CECIntEnable(Type_CECIntEnable value) { rw.set(0xFC,value.value); }
+ 
+  Setter<Type_CECIntEnable> to_CECIntEnable() { return Setter<Type_CECIntEnable>(rw,0xFC); }
+ 
+  static Type_CECIntEnable null_CECIntEnable() { return Type_CECIntEnable(0); }
+ 
+  static Type_CECIntEnable ones_CECIntEnable() { return Type_CECIntEnable(Type_CECIntEnable::Type(-1)); }
+ 
   //--- CECEnable
 
   Type_CECEnable get_CECEnable() { return Type_CECEnable(rw.template get<uint8>(0xFF)); }
@@ -4049,6 +4342,14 @@ struct CECBar
   static Type_CECEnable null_CECEnable() { return Type_CECEnable(0); }
  
   static Type_CECEnable ones_CECEnable() { return Type_CECEnable(Type_CECEnable::Type(-1)); }
+ 
+  //--- CECIntSource
+
+  Type_CECIntSource get_CECIntSource() { return Type_CECIntSource(rw.template get<uint8>(0xEE)); }
+ 
+  static Type_CECIntSource null_CECIntSource() { return Type_CECIntSource(0); }
+ 
+  static Type_CECIntSource ones_CECIntSource() { return Type_CECIntSource(Type_CECIntSource::Type(-1)); }
  
  };
  

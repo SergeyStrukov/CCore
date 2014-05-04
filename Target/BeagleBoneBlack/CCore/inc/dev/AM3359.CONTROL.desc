@@ -53,6 +53,8 @@ bar CONTROLBar : address
   Conf_LCD_HSYNC      = 8E4h as PadMux
   Conf_LCD_PCLK       = 8E8h as PadMux
   Conf_LCD_AC_BIAS_EN = 8ECh as PadMux
+  
+  Conf_GPMC_A9        = 864h as PadMux
  }
 
 

@@ -27,13 +27,9 @@ namespace Video {
 
 void VideoControl::init_first(const EDIDMode &mode,ColorMode color_mode)
  {
-  Dev::HDMI hdmi;
-
   hdmi.setMode(mode);
    
-  Dev::LCD lcd;
-   
-  lcd.enable(180);
+  lcd.enable(180); // 180 MHz clock, 90 MHz pixel_clock
    
   lcd.reset_first();
    
@@ -69,13 +65,9 @@ void VideoControl::init_first(const EDIDMode &mode,ColorMode color_mode)
 
 void VideoControl::init(const EDIDMode &mode,ColorMode color_mode)
  {
-  Dev::HDMI hdmi;
-
   hdmi.disableVIP();
   
   hdmi.setMode(mode);
-   
-  Dev::LCD lcd;
    
   lcd.stop();
   
@@ -113,43 +105,84 @@ void VideoControl::work()
  {
   for(;;)
     {
-     event.wait();
-     
-     if( stop_flag ) return;
-     
-     Hook hook(host);
-     
-     if( +hook )
+     switch( mevent.wait() )
        {
-        Dev::HDMI::Detect detect;
-       
-        {
-         Dev::HDMI hdmi;
- 
-         detect=hdmi.detect();
-        }
+        case StopEvent : return;
         
-        hook->change(detect.plug,detect.power);
+        case TickEvent :
+         {
+          Hook hook(host);
+          
+          if( +hook )
+            {
+             hook->tick();
+            }
+         }
+        break;
+        
+        case PlugEvent :
+         {
+          Hook hook(host);
+          
+          if( +hook )
+            {
+             auto detect=hdmi.detect();
+             
+             hook->change(detect.plug,detect.power);
+            }
+         }
+        break; 
        }
     }
  }
 
-VideoControl::VideoControl(TaskPriority priority,ulen stack_len)
- : host("Video::VideoControl"),
-   video_space(Sys::AllocVideoSpace())
+bool VideoControl::append(EDIDMode edid)
  {
-  {
-   Dev::I2C i2c(Dev::I2C_0);
-  
-   i2c.enable();
-   i2c.reset();
-  }
-  
-  {
-   Dev::HDMI hdmi;
+  try
+    {
+     Dev::LCD::Mode lcd_mode(edid);
+     Dev::HDMI::Mode hdmi_mode(edid);
+    
+     edid.pixel_clock=90000;
+     
+     edid_list.append_copy(edid);
+     edid_list.append_copy(edid);
+     edid_list.append_copy(edid);
+     
+     VideoMode mode;
+     
+     mode.dx=edid.hlen;
+     mode.dy=edid.vlen;
+     mode.freq=edid.freq();
+     
+     mode.mode=ColorMode16;
+     
+     mode_list.append_copy(mode);
+     
+     mode.mode=ColorMode24;
+     
+     mode_list.append_copy(mode);
+     
+     mode.mode=ColorMode32;
+     
+     mode_list.append_copy(mode);
+     
+     return true;
+    }
+  catch(CatchType)
+    {
+     return false;
+    }
+ }
 
-   hdmi.init();
-  }
+VideoControl::VideoControl(StrLen i2c_dev_name,TaskPriority priority,ulen stack_len)
+ : hdmi(i2c_dev_name),
+   host("VideoControl"),
+   video_space(Sys::AllocVideoSpace()),
+   mevent("VideoControl"),
+   ticker(mevent.function_trigger_int<TickEvent>())
+ {
+  hdmi.init();
   
   asem.inc();
   
@@ -158,9 +191,7 @@ VideoControl::VideoControl(TaskPriority priority,ulen stack_len)
    
 VideoControl::~VideoControl()
  {
-  stop_flag=1;
-  
-  event.trigger();
+  mevent.trigger(StopEvent);
   
   asem.wait();
  }
@@ -197,41 +228,13 @@ bool VideoControl::updateVideoModeList(MSec timeout) // TODO
  
   try
     {
-     Dev::HDMI hdmi;
-    
      uint8 block[EDIDLen];
      
      if( !hdmi.readEDID(block,TimeScope(timeout)) ) return false;
      
      EDIDMode edid(block);
      
-     if( !edid.hlen || !edid.vlen || edid.hlen>2048 || edid.vlen>2048 || (edid.hlen&15) ) return false;
-     
-     edid.pixel_clock=90000;
-     
-     edid_list.append_copy(edid);
-     edid_list.append_copy(edid);
-     edid_list.append_copy(edid);
-     
-     VideoMode mode;
-     
-     mode.dx=edid.hlen;
-     mode.dy=edid.vlen;
-     mode.freq=edid.freq();
-     
-     mode.mode=ColorMode16;
-     
-     mode_list.append_copy(mode);
-     
-     mode.mode=ColorMode24;
-     
-     mode_list.append_copy(mode);
-     
-     mode.mode=ColorMode32;
-     
-     mode_list.append_copy(mode);
-     
-     return true;
+     return append(edid);
     }
   catch(CatchType)
     {
@@ -271,16 +274,23 @@ bool VideoControl::setVideoMode(ulen index)
     }
  }
    
-void VideoControl::attach(PlugControl *ctrl)
+void VideoControl::setTick(MSec period)
+ {
+  ticker.start(1_msec,period);
+ }
+
+void VideoControl::attach(Control *ctrl)
  {
   host.attach(ctrl);
   
-  event.trigger();
+  mevent.trigger(PlugEvent);
  }
    
 void VideoControl::detach()
  {
   host.detach();
+  
+  ticker.stop();
  }
 
 } // namespace Video

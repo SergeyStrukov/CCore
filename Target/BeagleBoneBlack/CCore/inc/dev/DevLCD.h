@@ -111,7 +111,7 @@ class LCD : public Funchor_nocopy
    
    // init
    
-   void enable(uint32 clock); // MHz
+   void enable(uint32 clock); // MHz , clock <= 200 , pixel_clock == clock/2
    
    void reset_first();
    

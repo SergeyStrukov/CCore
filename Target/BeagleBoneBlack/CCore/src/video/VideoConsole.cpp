@@ -20,20 +20,6 @@ namespace Video {
 
 /* class VideoConsole */
 
-void VideoConsole::lock()
- {
-  mutex.lock();
-  
-  flag=1;
- }
-   
-void VideoConsole::unlock()
- {
-  flag=0;
-  
-  mutex.unlock();
- }
-   
 template <>
 void VideoConsole::open<Color16>(FrameBuf<Color16> buf)
  {
@@ -60,7 +46,7 @@ void VideoConsole::open<Color32>(FrameBuf<Color32> buf)
 
 void VideoConsole::open()
  {
-  Lock lock(*this);
+  Mutex::Lock lock(mutex);
   
   color_mode=ColorMode_none;
   
@@ -75,13 +61,18 @@ void VideoConsole::open()
         case ColorMode32 : open(dev->getBuf32()); break; 
        }
      
-     if( color_mode!=ColorMode_none ) sem.give();
+     if( color_mode!=ColorMode_none ) 
+       {
+        dev->setTick(500_msec);
+       
+        sem.give();
+       }
     }
  }
 
 void VideoConsole::close()
  {
-  Lock lock(*this);
+  Mutex::Lock lock(mutex);
   
   color_mode=ColorMode_none;
  }
@@ -93,6 +84,16 @@ void VideoConsole::do_print(StrLen str)
      case ColorMode16 : con16.print(str); break;
      case ColorMode24 : con24.print(str); break;
      case ColorMode32 : con32.print(str); break;
+    }
+ }
+
+void VideoConsole::do_tick()
+ {
+  switch( color_mode )
+    {
+     case ColorMode16 : con16.toggleMarker(); break;
+     case ColorMode24 : con24.toggleMarker(); break;
+     case ColorMode32 : con32.toggleMarker(); break;
     }
  }
 
@@ -116,6 +117,13 @@ void VideoConsole::change(bool plug,bool power)
     }
  }
 
+void VideoConsole::tick()
+ {
+  Mutex::Lock lock(mutex);
+  
+  do_tick();
+ }
+
 VideoConsole::VideoConsole(StrLen video_dev_name)
  : hook(video_dev_name),
    dev(hook),
@@ -137,16 +145,9 @@ bool VideoConsole::waitOpen(MSec timeout)
 
 void VideoConsole::print(StrLen str)
  {
-  Lock lock(*this);
+  Mutex::Lock lock(mutex);
   
   do_print(str);
- }
-
-void VideoConsole::debug_print(StrLen str)
- {
-  Dev::IntLock lock;
-  
-  if( !flag ) do_print(str);
  }
 
 } // namespace Video

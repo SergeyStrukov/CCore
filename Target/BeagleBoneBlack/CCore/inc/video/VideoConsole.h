@@ -32,7 +32,7 @@ class VideoConsole;
 
 /* class VideoConsole */
 
-class VideoConsole : NoCopy , VideoDevice::PlugControl
+class VideoConsole : NoCopy , VideoDevice::Control
  {
    ObjHook hook;
    
@@ -41,7 +41,6 @@ class VideoConsole : NoCopy , VideoDevice::PlugControl
    bool first = true ;
    
    Mutex mutex;
-   Atomic flag;
 
    ColorMode color_mode = ColorMode_none ;
    
@@ -53,14 +52,6 @@ class VideoConsole : NoCopy , VideoDevice::PlugControl
    
   private:
    
-   void lock();
-   
-   void unlock();
-   
-   using Lock = LockObject<VideoConsole> ;
-   
-   friend class LockObject<VideoConsole>;
-   
    template <class Color>
    void open(FrameBuf<Color> buf);
    
@@ -69,12 +60,16 @@ class VideoConsole : NoCopy , VideoDevice::PlugControl
    void close();
    
    void do_print(StrLen str);
- 
+   
+   void do_tick();
+   
   private: 
  
-   // VideoDevice::PlugControl
+   // VideoDevice::Control
  
    virtual void change(bool plug,bool power);
+   
+   virtual void tick();
    
   public:
  
@@ -85,8 +80,6 @@ class VideoConsole : NoCopy , VideoDevice::PlugControl
    bool waitOpen(MSec timeout=DefaultTimeout);
    
    void print(StrLen str);
-   
-   void debug_print(StrLen str);
    
    static SingleHost<VideoConsole> & GetHost();
  };

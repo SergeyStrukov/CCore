@@ -35,8 +35,132 @@ namespace Private_SysCon {
 class ImpCon : public ConBase
  {
    SingleHost<Video::VideoConsole> host;
+   
+   class Fifo : NoCopy
+    {
+      static const ulen Len = 4_KByte ;
+     
+      char buf[Len];
+      
+      ulen beg = 0 ; // <  Len
+      ulen len = 0 ; // <= Len
+      
+     private: 
+     
+      PtrLen<const char> get(char temp[Len])
+       {
+        Dev::IntLock lock;
+        
+        ulen rest=Len-beg;
+        
+        if( len<=rest )
+          {
+           Range(buf+beg,len).copyTo(temp);
+          }
+        else
+          {
+           Range(buf+beg,rest).copyTo(temp);
+           Range(buf,len-rest).copyTo(temp+rest);
+          }
+        
+        ulen ret=Replace_null(len);
+        
+        beg=0;
+        
+        return Range_const(temp,ret);
+       }
+      
+      void put_full(PtrLen<const char> str) // str.len <= Len
+       {
+        Dev::IntLock lock;
+        
+        str.copyTo(buf);
+        
+        beg=0;
+        len=str.len;
+       }
+      
+      void put_str(ulen off,PtrLen<const char> str)
+       {
+        if( off>=Len ) off-=Len;
+        
+        ulen rest=Len-off;
+        
+        if( str.len<=rest )
+          {
+           str.copyTo(buf+off);
+          }
+        else
+          {
+           str.prefix(rest).copyTo(buf+off);
+           str.part(rest).copyTo(buf);
+          }
+       }
+      
+      void put_short(PtrLen<const char> str) // str.len < Len
+       {
+        Dev::IntLock lock;
+
+        put_str(beg+len,str);
+        
+        len+=str.len;
+        
+        if( len>Len )
+          {
+           ulen delta=len-Len;
+           
+           len=Len;
+           
+           beg+=delta;
+           
+           if( beg>=Len ) beg-=Len;
+          }
+       }
+      
+     public:
+     
+      Fifo() {}
+      
+      void put(PtrLen<const char> str)
+       {
+        if( str.len>=Len )
+          {
+           put_full(str.suffix(Len));
+          }
+        else
+          {
+           put_short(str);
+          }
+       }
+      
+      template <class Dev>
+      void get(Dev &dev)
+       {
+        char temp[Len];
+        
+        dev.print(get(temp));
+       }
+    };
+   
+   Fifo fifo;
   
   private:
+   
+   void print(PtrLen<const char> str)
+    {
+     SingleHook<Video::VideoConsole> hook(host);
+    
+     if( +hook ) 
+       {
+        fifo.get(*hook);
+       
+        hook->print(str);
+       }
+     else
+       {
+        fifo.put(str);
+       }
+    }
    
    virtual void attachDefaultInput(ConInputFunction)
     {
@@ -50,12 +174,8 @@ class ImpCon : public ConBase
    virtual void defaultOutput(NanoPacket<char> packet)
     {
      if( !packet ) return;
-     
-     {
-      SingleHook<Video::VideoConsole> hook(host);
-      
-      if( +hook ) hook->print(Range_const(packet.getRange()));
-     }
+
+     print(Range_const(packet.getRange()));
      
      packet.free();
     }
@@ -86,7 +206,14 @@ class ImpCon : public ConBase
    
    void debug_print(PtrLen<const char> str)
     {
-     // TODO
+     if( Dev::IsIntContext() )
+       {
+        fifo.put(str);
+       }
+     else
+       {
+        print(str);
+       }
     }
    
    SingleHost<Video::VideoConsole> & getHost()

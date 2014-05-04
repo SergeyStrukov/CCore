@@ -13,6 +13,52 @@
 //
 //----------------------------------------------------------------------------------------
 
+reg SysConfig : 32
+ {
+  AutoIdle  : 0
+  SoftReset : 1
+  EnWakeup  : 2
+  
+  IdleMode  : 3-4
+   {
+    ForceIdle       = 0
+    NoIdle          = 1
+    SmartIdle       = 2
+    SmartIdleWakeup = 3
+   }
+ }
+ 
+reg SysStatus : 32
+ {
+  ResetDone : 0
+ } 
+ 
+reg Control : 32
+ {
+  Disable     : 0
+  GatingRatio : 1-2
+ }  
+
+reg DataIn : 32
+ {
+ }
+ 
+reg Level0Detect : 32
+ {
+ }
+ 
+reg Level1Detect : 32
+ {
+ }
+ 
+reg RaisingDetect : 32
+ {
+ }
+ 
+reg FallingDetect : 32
+ {
+ }    
+
 reg OutEnable : 32
  {
  }
@@ -27,14 +73,67 @@ reg ClearOut : 32
  
 reg SetOut : 32
  {
- }   
+ }
+ 
+reg IRQ0StatusRaw : 32
+ {
+ }    
+ 
+reg IRQ0Status : 32
+ {
+ } 
 
+reg IRQ0EnableSet : 32
+ {
+ }
+  
+reg IRQ0EnableClear : 32
+ {
+ }
+ 
+reg IRQ1StatusRaw : 32
+ {
+ }    
+ 
+reg IRQ1Status : 32
+ {
+ } 
+
+reg IRQ1EnableSet : 32
+ {
+ }
+  
+reg IRQ1EnableClear : 32
+ {
+ }
+ 
 bar GPIOBar : address
  {
+  SysConfig = 010h
+  SysStatus = 114h
+  Control   = 130h
+  
+  DataIn    = 138h
+  
+  Level0Detect  = 140h
+  Level1Detect  = 144h
+  RaisingDetect = 148h
+  FallingDetect = 14Ch
+  
   OutEnable = 134h
   Out       = 13Ch
   ClearOut  = 190h
   SetOut    = 194h
+  
+  IRQ0StatusRaw   = 024h
+  IRQ0Status      = 02Ch
+  IRQ0EnableSet   = 034h
+  IRQ0EnableClear = 03Ch
+  
+  IRQ1StatusRaw   = 028h
+  IRQ1Status      = 030h
+  IRQ1EnableSet   = 038h
+  IRQ1EnableClear = 040h
  }
  
  
