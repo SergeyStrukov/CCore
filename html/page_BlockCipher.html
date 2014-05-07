@@ -1,0 +1,166 @@
+<!--
+/* page_BlockCipher.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> BlockCipher</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>BlockCipher</h2>
+
+<p class="Files">Files <b>CCore/inc/crypton/BlockCipher.h</b> <b>CCore/src/crypton/BlockCipher.cpp</b></p>
+
+<p>
+<b>BlockCipher</b> is an abstract block cipher algorithm. It is built on the template argument base, 
+which provides all neccessary parts to implement the required functionality. An abstract block cipher 
+algorithm is an invertible function, which maps an input block of bytes of the predefined length 
+(the cipher block length) to another such block. The function has a parameter &mdash; the key.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">BlockCipher</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   // length in octets
+  
+   static const ulen BlockLen = T::BlockLen ;
+   static const ulen KeyLen = T::KeyLen ;
+   
+   static const char * GetName() { return T::GetName(); }
+   
+   // constructors
+  
+   BlockCipher();
+   
+   ~BlockCipher();
+   
+   explicit BlockCipher(const uint8 src[KeyLen]);
+   
+   // methods
+   
+   void key(const uint8 src[KeyLen]);
+   
+   void unkey();
+   
+   void apply(const uint8 src[BlockLen],uint8 *restrict dst/* [BlockLen] */) const;
+   
+   void apply(uint8 src_dst[BlockLen]) const;
+ };
+
+</pre>
+
+<p>
+<b>BlockLen</b> is the cipher block length.
+</p>
+
+<p>
+<b>KeyLen</b> is the key length.
+</p>
+
+<p>
+<b>GetName()</b> is the cipher common name, like <b>"AES128"</b>.
+</p>
+
+<p>
+Default constructor creates a null object. It cannot be used to cipher.
+</p>
+
+<p>
+The second constructor creates the object and assigns the given key to it. This object
+can be used to cipher data.
+</p>
+
+<p>
+Destructor performs the unkey cipher operation. This operation cleans all internal buffers with
+sensitive data. If the chipher uses some hardware support, the correspondent hardware entities also
+must be cleaned.
+</p>
+
+<p>
+<b>key()</b> assigns a key to the object. After call of this method the object can be used
+to cipher data with the given key.
+</p>
+
+<p>
+<b>unkey()</b> erases the key information from the object.
+</p>
+
+<p>
+<b>apply()</b> performs the cipher operation on the given block of data in-place or out-of-place.
+The first variant operates on two distinct data buffers. The second ciphers data in-place in the single data
+buffer.
+</p>
+
+<p>
+An attempt to use the method <b>apply()</b> without a previosly assigned key cause an exception.
+This exception is thrown with the following guard function:
+</p>
+
+<pre>
+
+void GuardNoCipherKey();
+
+</pre>
+
+<p>
+The real work is performed by the class <b>T</b>. This class must comply with the following pattern:
+</p>
+
+<pre>
+
+struct CipherAlgo
+ {
+  // global properties
+
+  static const ulen KeyLen = .... ;
+
+  static const ulen BlockLen = .... ;
+
+  static const char * GetName() { return "...."; }
+
+  // internal state
+
+  .... 
+
+  // methods
+
+  void key(const uint8 src[KeyLen]);
+
+  void unkey();
+
+  void apply(const uint8 src[BlockLen],uint8 *restrict dst/* [BlockLen] */);
+
+  void apply(uint8 src_dst[BlockLen]);
+ };
+
+</pre>
+
+</body>
+
+</html>
+
