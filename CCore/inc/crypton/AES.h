@@ -608,9 +608,9 @@ struct AES : AESBase
   
   // methods
   
-  void key(const uint8 src[KeyLen])
+  void key(const uint8 key_[KeyLen])
    {
-    Range(round_key,KeyLen).copy(src);
+    Range(round_key,KeyLen).copy(key_);
 
     KeyExpansion<KeyWordLen,RoundKeyWordLen>(round_key);
    }
@@ -656,9 +656,9 @@ struct AESInverse : AESBase
   
   // methods
   
-  void key(const uint8 src[KeyLen])
+  void key(const uint8 key_[KeyLen])
    {
-    Range(round_key,KeyLen).copy(src);
+    Range(round_key,KeyLen).copy(key_);
 
     KeyExpansion<KeyWordLen,RoundKeyWordLen>(round_key);
    }

@@ -31,10 +31,11 @@
 <p class="Files">Files <b>CCore/inc/crypton/BlockCipher.h</b> <b>CCore/src/crypton/BlockCipher.cpp</b></p>
 
 <p>
-<b>BlockCipher</b> is an abstract block cipher algorithm. It is built on the template argument base, 
-which provides all neccessary parts to implement the required functionality. An abstract block cipher 
-algorithm is an invertible function, which maps an input block of bytes of the predefined length 
-(the cipher block length) to another such block. The function has a parameter &mdash; the key.
+<b>BlockCipher</b> is an abstract block cipher algorithm. It is a template and the template parameter
+provides all neccessary parts to implement the required functionality. An abstract block cipher 
+algorithm is an invertible function, which maps an input block of bytes of the defined length 
+(the cipher block length) to another such block. The function has a parameter &mdash; the key, which is
+a block of bytes of the defined length (the cipher key length).
 </p>
 
 <pre>
@@ -49,6 +50,7 @@ class <span class="Att">BlockCipher</span> : NoCopy
    // length in octets
   
    static const ulen BlockLen = T::BlockLen ;
+
    static const ulen KeyLen = T::KeyLen ;
    
    static const char * GetName() { return T::GetName(); }
@@ -59,11 +61,11 @@ class <span class="Att">BlockCipher</span> : NoCopy
    
    ~BlockCipher();
    
-   explicit BlockCipher(const uint8 src[KeyLen]);
+   explicit BlockCipher(const uint8 key[KeyLen]);
    
    // methods
    
-   void key(const uint8 src[KeyLen]);
+   void key(const uint8 key[KeyLen]);
    
    void unkey();
    
@@ -97,8 +99,8 @@ can be used to cipher data.
 
 <p>
 Destructor performs the unkey cipher operation. This operation cleans all internal buffers with
-sensitive data. If the chipher uses some hardware support, the correspondent hardware entities also
-must be cleaned.
+sensitive data. If the chipher implementation uses some hardware support, 
+the correspondent hardware entities also must be cleaned.
 </p>
 
 <p>
@@ -123,12 +125,12 @@ This exception is thrown with the following guard function:
 
 <pre>
 
-void GuardNoCipherKey();
+void <span class="Att">GuardNoCipherKey</span>();
 
 </pre>
 
 <p>
-The real work is performed by the class <b>T</b>. This class must comply with the following pattern:
+The real job is performed by the class <b>T</b>. This class must comply with the following pattern:
 </p>
 
 <pre>

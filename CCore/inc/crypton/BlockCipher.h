@@ -39,6 +39,7 @@ class BlockCipher : NoCopy
    // length in octets
   
    static const ulen BlockLen = T::BlockLen ;
+   
    static const ulen KeyLen = T::KeyLen ;
    
    static const char * GetName() { return T::GetName(); }
@@ -63,11 +64,11 @@ class BlockCipher : NoCopy
    
    ~BlockCipher() { unkey(); }
    
-   explicit BlockCipher(const uint8 src[KeyLen]) : ok(false) { key(src); }
+   explicit BlockCipher(const uint8 key_[KeyLen]) : ok(false) { key(key_); }
    
    // methods
    
-   void key(const uint8 src[KeyLen]) { func.key(src); ok=true; }
+   void key(const uint8 key_[KeyLen]) { func.key(key_); ok=true; }
    
    void unkey() { func.unkey(); ok=false; }
    

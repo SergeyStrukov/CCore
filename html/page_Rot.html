@@ -1,0 +1,70 @@
+<!--
+/* page_Rot.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Rot</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Rot</h2>
+
+<p class="Files">Files <b>CCore/inc/crypton/Rot.h</b> <b>CCore/src/crypton/Rot.cpp</b></p>
+
+<p>
+This is a set of rotation functions.
+</p>
+
+<pre>
+
+/* Ror...() */ 
+
+template &lt;class UInt,unsigned UIntBits&gt;
+UInt <span class="Att">Ror_gen</span>(UInt a,unsigned n); // 0 < n < UIntBits 
+ 
+uint8 <span class="Att">Ror8</span>(uint8 a,unsigned n);
+ 
+uint16 <span class="Att">Ror16</span>(uint16 a,unsigned n);
+ 
+uint32 <span class="Att">Ror32</span>(uint32 a,unsigned n);
+ 
+uint64 <span class="Att">Ror64</span>(uint64 a,unsigned n);
+
+/* Rol...() */
+
+template &lt;class UInt,unsigned UIntBits&gt;
+UInt <span class="Att">Rol_gen</span>(UInt a,unsigned n); // 0 < n < UIntBits
+ 
+uint8 <span class="Att">Rol8</span>(uint8 a,unsigned n);
+ 
+uint16 <span class="Att">Rol16</span>(uint16 a,unsigned n);
+ 
+uint32 <span class="Att">Rol32</span>(uint32 a,unsigned n);
+
+uint64 <span class="Att">Rol64</span>(uint64 a,unsigned n);
+
+</pre>
+
+</body>
+
+</html>
+

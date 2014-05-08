@@ -1,0 +1,108 @@
+<!--
+/* page_AES.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> AES</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>AES</h2>
+
+<p class="Files">Files <b>CCore/inc/crypton/AES.h</b> <b>CCore/src/crypton/AES.cpp</b></p>
+
+<p class="Files">Files <b>CCore/inc/crypton/PlatformAES.h</b> <b>CCore/src/crypton/PlatformAES.cpp</b></p>
+
+<h4>Software AES implementation</h4>
+
+<p>
+There are six AES-related types. All of them are <a href="page_BlockCipher.html"><b>BlockCipher<....></b></a> and impement AES cipher
+algorithms.
+</p>
+
+<pre>
+
+typedef BlockCipher<....> <span class="Att">AES128</span>;
+
+typedef BlockCipher<....> <span class="Att">AES192</span>;
+
+typedef BlockCipher<....> <span class="Att">AES256</span>;
+
+typedef BlockCipher<....> <span class="Att">AESInverse128</span>;
+
+typedef BlockCipher<....> <span class="Att">AESInverse192</span>;
+
+typedef BlockCipher<....> <span class="Att">AESInverse256</span>;
+
+</pre>
+
+<p>
+<b>AES128</b> implements direct AES-128 cipher.
+</p>
+
+<p>
+<b>AES192</b> implements direct AES-192 cipher.
+</p>
+
+<p>
+<b>AES256</b> implements direct AES-256 cipher.
+</p>
+
+<p>
+<b>AESInverse128</b> implements inverse AES-128 cipher.
+</p>
+
+<p>
+<b>AESInverse192</b> implements inverse AES-192 cipher.
+</p>
+
+<p>
+<b>AESInverse256</b> implements inverse AES-256 cipher.
+</p>
+
+<h4>Platform AES</h4>
+
+<p>
+The file <b>PlatformAES.h</b> contains stub definitions for AES cipher types.
+</p>
+
+<pre>
+
+using <span class="Att">PlatformAES128</span> = AES128 ;
+using <span class="Att">PlatformAES192</span> = AES192 ;
+using <span class="Att">PlatformAES256</span> = AES256 ;
+
+using <span class="Att">PlatformAESInverse128</span> = AESInverse128 ;
+using <span class="Att">PlatformAESInverse192</span> = AESInverse192 ;
+using <span class="Att">PlatformAESInverse256</span> = AESInverse256 ; 
+
+</pre>
+
+<p>
+A target may override this header file and provide its own definitions with efficient platform-dependent
+AES implemenation.
+</p>
+
+</body>
+
+</html>
+
