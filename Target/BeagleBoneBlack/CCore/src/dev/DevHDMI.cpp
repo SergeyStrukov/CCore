@@ -218,6 +218,16 @@ void HDMI::init()
   barCEC.null_CEC_FRO_IMCLK()
         .setbit(CEC_FRO_IMCLK_IMCLK|CEC_FRO_IMCLK_DisGhost)
         .setTo(barCEC);
+  
+  barCEC.null_CECIntEnable()
+        .setbit(CECIntEnable_RxSense|CECIntEnable_Plug)
+        .setTo(barCEC);
+  
+  barHDMI.set_IntFlags0(0);
+  
+  barHDMI.set_IntFlags1(0);
+  
+  barHDMI.null_IntFlags2().setTo(barHDMI);
  }
 
 auto HDMI::detect() -> Detect
@@ -229,14 +239,21 @@ auto HDMI::detect() -> Detect
   return Detect(status.maskbit(CECStatus_Plug),status.maskbit(CECStatus_RxSense));
  }
 
-bool HDMI::waitForPower(MSec timeout)
+auto HDMI::getIntInfo() -> IntInfo
  {
-  for(MSecTimer timer; timer.less(+timeout) ;)
+  using namespace NXP::HDMI;
+  
+  auto int_status=barCEC.get_CECIntStatus();
+  auto int_source=barCEC.get_CECIntSource();
+
+  bool edid=false;
+  
+  if( int_source.maskbit(CECIntSource_HDMI) )
     {
-     if( detect().power ) return true; 
+     edid=barHDMI.get_IntFlags2().maskbit(IntFlags2_EDID);
     }
   
-  return false;
+  return IntInfo(int_status.maskbit(CECIntStatus_Plug),int_status.maskbit(CECIntStatus_RxSense),edid);
  }
 
 void HDMI::enableVIP()
@@ -268,7 +285,7 @@ void HDMI::disableVIP()
   barHDMI.set_VP2Enable(0);
  }
 
-bool HDMI::readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned number)
+void HDMI::startReadEDID(unsigned number)
  {
   using namespace NXP::HDMI;
   
@@ -295,13 +312,18 @@ bool HDMI::readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned nu
   barHDMI.get_DDCControl()
          .clearbit(DDCControl_Read)
          .setTo(barHDMI);
-  
-  while( barHDMI.get_IntFlags2().maskbit(IntFlags2_EDID)==0 )
-    {
-     if( !time_scope.get() ) return false;
-    }
+ }
+
+void HDMI::readEDID(uint8 block[Video::EDIDLen])
+ {
+  using namespace NXP::HDMI;
   
   for(ulen i=0; i<Video::EDIDLen ;i++) block[i]=barHDMI.get_EDIDBlock(i);
+ }
+
+void HDMI::finishReadEDID()
+ {
+  using namespace NXP::HDMI;
   
   barHDMI.get_IntFlags2()
          .clearbit(IntFlags2_EDID)
@@ -310,8 +332,6 @@ bool HDMI::readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned nu
   barHDMI.get_TX4()
          .setbit(TX4_RAM)
          .setTo(barHDMI);
-  
-  return true;
  }
 
 HDMI::Mode::Mode(const Video::EDIDMode &mode)

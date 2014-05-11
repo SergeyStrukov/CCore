@@ -20,6 +20,12 @@
 #include <CCore/inc/dev/DevHDMI.h>
 #include <CCore/inc/dev/DevLCD.h>
 
+#include <CCore/inc/dev/AM3359.GPIO.h>
+
+#include <CCore/inc/dev/DevIntHandle.h>
+
+#include <CCore/inc/Print.h>
+
 namespace CCore {
 namespace Video {
 
@@ -101,12 +107,28 @@ void VideoControl::init(const EDIDMode &mode,ColorMode color_mode)
   hdmi.enableVIP();
  }
 
+void VideoControl::process(Dev::HDMI::IntInfo info)
+ {
+  if( info.plug || info.power )
+    {
+     mevent.trigger(PlugEvent);
+    }
+ }
+
 void VideoControl::work()
  {
   for(;;)
     {
      switch( mevent.wait() )
        {
+        case IntEvent :
+         {
+          process(hdmi.getIntInfo());
+          
+          enableInt();
+         }
+        break; 
+      
         case StopEvent : return;
         
         case TickEvent :
@@ -132,6 +154,77 @@ void VideoControl::work()
             }
          }
         break; 
+       }
+    }
+ }
+
+void VideoControl::handle_int()
+ {
+  disableInt();
+  
+  mevent.trigger_int(IntEvent);
+ }
+
+void VideoControl::setupInt()
+ {
+  AM3359::GPIO::Bar1 bar;
+
+  bar.set_Level0Detect(bar.get_Level0Detect()|GPIOBit);
+  
+  bar.set_IRQ0EnableSet(GPIOBit);
+  
+  Dev::SetupIntHandler(Dev::Int_GPIO1_0,function_handle_int(),15);
+ }
+
+void VideoControl::cleanupInt()
+ {
+  Dev::CleanupIntHandler(Dev::Int_GPIO1_0);
+  
+  AM3359::GPIO::Bar1 bar;
+
+  bar.set_Level0Detect(bar.get_Level0Detect()&~GPIOBit);
+  
+  bar.set_IRQ0EnableClear(GPIOBit);
+ }
+
+void VideoControl::disableInt()
+ {
+  Dev::DisableInt(Dev::Int_GPIO1_0);
+ }
+
+void VideoControl::enableInt()
+ {
+  AM3359::GPIO::Bar1 bar;
+
+  bar.set_IRQ0Status(GPIOBit);
+ 
+  Dev::EnableInt(Dev::Int_GPIO1_0);
+ }
+
+bool VideoControl::readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned number)
+ {
+  Dev::HDMI::ReadEDID read(hdmi,number);
+  
+  for(;;)
+    {
+     switch( mevent.wait(time_scope) )
+       {
+        case 0 : return false;
+      
+        case IntEvent :
+         {
+          auto info=hdmi.getIntInfo();
+          
+          enableInt();
+          
+          if( info.edid )
+            {
+             read(block);
+             
+             return true;
+            }
+         }
+        break;
        }
     }
  }
@@ -187,10 +280,14 @@ VideoControl::VideoControl(StrLen i2c_dev_name,TaskPriority priority,ulen stack_
   asem.inc();
   
   RunFuncTask( [=] () { work(); } ,asem.function_dec(),"VideoTask",priority,stack_len);
+
+  setupInt();
  }
    
 VideoControl::~VideoControl()
  {
+  cleanupInt();
+  
   mevent.trigger(StopEvent);
   
   asem.wait();
@@ -230,7 +327,7 @@ bool VideoControl::updateVideoModeList(MSec timeout) // TODO
     {
      uint8 block[EDIDLen];
      
-     if( !hdmi.readEDID(block,TimeScope(timeout)) ) return false;
+     if( !readEDID(block,TimeScope(timeout)) ) return false;
      
      EDIDMode edid(block);
      

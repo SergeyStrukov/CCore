@@ -93,9 +93,18 @@ reg DDCDisable : 8
   Dis : 0
  }
  
+reg IntFlags0 : 8
+ {
+ } 
+ 
+reg IntFlags1 : 8
+ {
+ } 
+ 
 reg IntFlags2 : 8
  {
-  EDID : 1
+  RxSense : 0
+  EDID    : 1
  } 
  
 reg VP0Enable : 8
@@ -370,7 +379,9 @@ bar HDMIBar : address
   
   SoftReset    = 000Ah WO
   DDCDisable   = 000Bh
-  
+
+  IntFlags0    = 000Fh
+  IntFlags1    = 0010h
   IntFlags2    = 0011h
   
   VP0Enable    = 0018h

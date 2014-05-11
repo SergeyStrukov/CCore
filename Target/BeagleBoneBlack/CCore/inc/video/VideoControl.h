@@ -36,8 +36,10 @@ class VideoControl;
 
 /* class VideoControl */
 
-class VideoControl : public ObjBase , public VideoDevice
+class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
  {
+   static const uint32 GPIOBit = uint32(1)<<25 ;
+   
    Dev::HDMI hdmi;
    Dev::LCD lcd;
   
@@ -57,12 +59,13 @@ class VideoControl : public ObjBase , public VideoDevice
    
    enum Events
     {
-     PlugEvent = 1,
+     IntEvent = 1,
+     PlugEvent,
      TickEvent,
      StopEvent
     };
    
-   MultiEvent<3> mevent;
+   MultiEvent<4> mevent;
    Ticker ticker;
    
    AntiSem asem;
@@ -75,7 +78,23 @@ class VideoControl : public ObjBase , public VideoDevice
    
    void init(const EDIDMode &mode,ColorMode color_mode);
    
+   void process(Dev::HDMI::IntInfo info);
+   
    void work();
+   
+   void handle_int();
+   
+   Function<void (void)> function_handle_int() { return FunctionOf(this,&VideoControl::handle_int); }
+   
+   void setupInt();
+   
+   void cleanupInt();
+   
+   void disableInt();
+   
+   void enableInt();
+   
+   bool readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned number=0);
    
    bool append(EDIDMode edid);
   

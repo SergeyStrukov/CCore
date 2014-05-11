@@ -965,11 +965,20 @@ struct Type_DDCDisable
    }
  };
  
+/* type Type_IntFlags0 */ 
+
+typedef uint8 Type_IntFlags0;
+
+/* type Type_IntFlags1 */ 
+
+typedef uint8 Type_IntFlags1;
+
 /* struct Type_IntFlags2 */ 
 
 enum Bits_IntFlags2 : uint8
  {
-  IntFlags2_EDID = 0x02
+  IntFlags2_RxSense = 0x01,
+  IntFlags2_EDID    = 0x02
  };
  
 inline Bits_IntFlags2 operator | (Bits_IntFlags2 a,Bits_IntFlags2 b)
@@ -1018,6 +1027,22 @@ struct Type_IntFlags2
   void print(P &out) const
    {
     bool first=true;
+
+    if( value&IntFlags2_RxSense )
+      {
+       if( first )
+         {
+          Putobj(out,"RxSense");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"RxSense");
+         }
+      }
 
     if( value&IntFlags2_EDID )
       {
@@ -4419,6 +4444,26 @@ struct HDMIBar
   static Type_DDCDisable null_DDCDisable() { return Type_DDCDisable(0); }
  
   static Type_DDCDisable ones_DDCDisable() { return Type_DDCDisable(Type_DDCDisable::Type(-1)); }
+ 
+  //--- IntFlags0
+
+  Type_IntFlags0 get_IntFlags0() { return Type_IntFlags0(rw.template get<uint8>(0xF)); }
+ 
+  void set_IntFlags0(Type_IntFlags0 value) { rw.set(0xF,value); }
+ 
+  void set_IntFlags0_null() { rw.set(0xF,Type_IntFlags0(0)); }
+ 
+  void set_IntFlags0_ones() { rw.set(0xF,Type_IntFlags0(-1)); }
+ 
+  //--- IntFlags1
+
+  Type_IntFlags1 get_IntFlags1() { return Type_IntFlags1(rw.template get<uint8>(0x10)); }
+ 
+  void set_IntFlags1(Type_IntFlags1 value) { rw.set(0x10,value); }
+ 
+  void set_IntFlags1_null() { rw.set(0x10,Type_IntFlags1(0)); }
+ 
+  void set_IntFlags1_ones() { rw.set(0x10,Type_IntFlags1(-1)); }
  
   //--- IntFlags2
 

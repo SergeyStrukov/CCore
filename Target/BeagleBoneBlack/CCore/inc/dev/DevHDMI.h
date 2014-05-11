@@ -119,13 +119,41 @@ class HDMI : NoCopy
    
    Detect detect();
    
-   bool waitForPower(MSec timeout);
+   struct IntInfo
+    {
+     bool plug;
+     bool power;
+     bool edid;
+     
+     IntInfo() {}
+     
+     IntInfo(bool plug_,bool power_,bool edid_) : plug(plug_),power(power_),edid(edid_) {}
+    };
+   
+   IntInfo getIntInfo();
    
    void enableVIP();
    
    void disableVIP();
    
-   bool readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned number=0);
+   void startReadEDID(unsigned number);
+   
+   void readEDID(uint8 block[Video::EDIDLen]);
+   
+   void finishReadEDID();
+   
+   class ReadEDID : NoCopy
+    {
+      HDMI &hdmi;
+      
+     public:
+      
+      ReadEDID(HDMI &hdmi_,unsigned number) : hdmi(hdmi_) { hdmi_.startReadEDID(number); }
+      
+      ~ReadEDID() { hdmi.finishReadEDID(); }
+      
+      void operator () (uint8 block[Video::EDIDLen]) { hdmi.readEDID(block); }
+    };
 
    struct Mode
     {
