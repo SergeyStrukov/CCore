@@ -41,6 +41,7 @@ class HashFunction : NoCopy
    // length in octets
  
    static const ulen DigestLen = T::DigestLen ;
+   
    static const ulen BlockLen  = T::BlockLen ;
   
    static const char * GetName() { return T::GetName(); }
@@ -78,6 +79,7 @@ class KeyedHashFunction : NoCopy
    // length in octets
 
    static const ulen DigestLen = L ;
+   
    static const ulen BlockLen  = T::BlockLen ;
  
    static const char * GetName() { return T::GetName(); }

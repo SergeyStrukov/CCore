@@ -30,6 +30,178 @@
 
 <p class="Files">Files <b>CCore/inc/crypton/HashFunction.h</b> <b>CCore/src/crypton/HashFunction.cpp</b></p>
 
+<h4>HashFunction</h4>
+
+<p>
+<b>HashFunction</b> is an abstract hash function algorithm. It is a template and the template parameter
+provides all neccessary parts to implement the required functionality. An abstract hash function processes
+the given block of raw data (i.e. a sequence of bytes) into a "message digest", i.e. a short block of bytes
+of the defined length. A good hash function has a number of properties. For instance, it is difficult to
+construct an input with the given output. 
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">HashFunction</span> : NoCopy
+ {
+   ....
+
+  public:
+ 
+   // length in octets
+ 
+   static const ulen DigestLen = T::DigestLen ;
+
+   static const ulen BlockLen  = T::BlockLen ;
+  
+   static const char * GetName() { return T::GetName(); }
+
+   // constructors
+   
+   HashFunction();
+   
+   ~HashFunction();
+   
+   // methods
+   
+   void reset();
+   
+   void add(const uint8 *data,ulen len);
+   
+   void add(PtrLen&lt;const uint8&gt; data);
+   
+   void finish(uint8 digest[DigestLen]);
+ };
+
+</pre>
+
+<p>
+<b>DigestLen</b> is the length of the digest.
+</p>
+
+<p>
+<b>BlockLen</b> is the hash function "block length". It is some internal property of the hash algorithm.
+Usually an input data is sliced on blocks of the define length before the processing. 
+The tail is padded to make a whole number of blocks.
+</p>
+
+<p>
+<b>GetName()</b> is the hash function common name, like <b>"SHA1"</b>.
+</p>
+
+<p>
+The <b>HashFunction</b> is working incrementally. To calculate the output, the object must be reset first.
+It is performed by the constructor and can be performed also by the method <b>reset()</b>.
+Destructor also does reset to clean the internal state from any information accumulated during the hash
+calculation. 
+</p>
+
+<p>
+<b>add()</b> addes the next chunk of the input. Two variants are provided: with pointer and length arguments 
+and with the single <b>PtrLen&lt;const uint8&gt;</b> argument.
+</p>
+
+<p>
+<b>finish()</b> completes the hash calculation, copies the output to the given buffer and resets the object.
+</p>
+
+<p>
+The real job is performed by the class <b>T</b>. This class must comply with the following pattern:
+</p>
+
+<pre>
+
+struct HashAlgo
+ {
+  // global properties
+
+  static const ulen DigestLen = .... ;
+
+  static const ulen BlockLen = .... ;
+
+  static const char * GetName() { return "...."; }
+
+  // internal state
+
+  .... 
+
+  // methods
+
+  void reset();
+
+  void add(const uint8 *data,ulen len);
+
+  void finish(uint8 digest[DigestLen]);
+ };
+
+</pre>
+
+<h4>KeyedHashFunction</h4>
+
+<p>
+<b>KeyedHashFunction</b> calculates a keyed message digest according the 
+<a href="http://www.ietf.org/rfc/rfc2104.txt">RFC 2104</a>.
+It uses a template parameter of the same kind as the class <b>HashFunction</b>.
+This variant of the hash uses the additional argument &mdush; the key.
+</p>
+
+<pre>
+
+template &lt;class T,ulen L&gt;
+class <span class="Att">KeyedHashFunction</span> : NoCopy
+ {
+   ....
+
+  public:
+
+   // length in octets
+
+   static const ulen DigestLen = L ;
+
+   static const ulen BlockLen  = T::BlockLen ;
+ 
+   static const char * GetName() { return T::GetName(); }
+   
+   // constructors
+  
+   KeyedHashFunction();
+  
+   ~KeyedHashFunction();
+  
+   KeyedHashFunction(const uint8 *key,ulen key_len);
+   
+   explicit KeyedHashFunction(PtrLen&lt;const uint8&gt; key);
+   
+   // methods
+   
+   void key(const uint8 *key,ulen key_len); 
+   
+   void key(PtrLen&lt;const uint8&gt; key);
+   
+   void unkey();
+   
+   void reset(); 
+  
+   void add(const uint8 *data,ulen len); 
+  
+   void add(PtrLen&lt;const uint8&gt; data);
+  
+   void finish(uint8 digest[DigestLen]); 
+ };
+
+</pre>
+
+<p>
+This class is working the same way as the <b>HashFunction</b>. The main difference is: before the hash 
+calculation a key must assigned to the object. Otherwise any attempt to perform the hash caclulation
+will throw an exception. To assign a key the method <b>key()</b> can be used. Or the constructor
+with the key as the argument.
+</p>
+
+<p>
+The method <b>unkey()</b> cleans the key information form the object. It is called by destructor.
+</p>
 
 </body>
 

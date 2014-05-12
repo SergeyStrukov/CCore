@@ -32,7 +32,7 @@
 
 <p>
 <b>BlockCipher</b> is an abstract block cipher algorithm. It is a template and the template parameter
-provides all neccessary parts to implement the required functionality. An abstract block cipher 
+provides all necessary parts to implement the required functionality. An abstract block cipher 
 algorithm is an invertible function, which maps an input block of bytes of the defined length 
 (the cipher block length) to another such block. The function has a parameter &mdash; the key, which is
 a block of bytes of the defined length (the cipher key length).
@@ -99,7 +99,7 @@ can be used to cipher data.
 
 <p>
 Destructor performs the unkey cipher operation. This operation cleans all internal buffers with
-sensitive data. If the chipher implementation uses some hardware support, 
+sensitive data. If the cipher implementation uses some hardware support, 
 the correspondent hardware entities also must be cleaned.
 </p>
 
@@ -119,7 +119,7 @@ buffer.
 </p>
 
 <p>
-An attempt to use the method <b>apply()</b> without a previosly assigned key cause an exception.
+An attempt to use the method <b>apply()</b> without a previously assigned key cause an exception.
 This exception is thrown with the following guard function:
 </p>
 

@@ -64,6 +64,30 @@ uint64 <span class="Att">Rol64</span>(uint64 a,unsigned n);
 
 </pre>
 
+<p>
+<b>RorN()</b> performs the right rotation of the <b>N</b>-bit argument by the given number of bits.
+The number of bits is given by the second argument. This value must be greater than <b>0</b> 
+and less than <b>N</b>.
+</p>
+
+<p>
+<b>RolN()</b> performs the left rotation of the <b>N</b>-bit argument by the given number of bits.
+The number of bits is given by the second argument. This value must be greater than <b>0</b> 
+and less than <b>N</b>.
+</p>
+
+<p>
+<b>Ror_gen()</b> is a generic right rotation function. The first argument is an unsigned integral value.
+The second is the number of bits to rotate by. It must be greater than <b>0</b> and less than <b>UIntBits</b>.
+The second template parameter must be the number of bits of the type <b>UInt</b>.
+</p>
+
+<p>
+<b>Rol_gen()</b> is a generic left rotation function. The first argument is an unsigned integral value.
+The second is the number of bits to rotate by. It must be greater than <b>0</b> and less than <b>UIntBits</b>.
+The second template parameter must be the number of bits of the type <b>UInt</b>.
+</p>
+
 </body>
 
 </html>

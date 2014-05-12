@@ -471,6 +471,7 @@ struct SHA
   // consts
   
   static const ulen DigestLen = Param::DigestLen ;
+  
   static const ulen BlockLen  = Param::BlockLen ;
  
   static const char * GetName() { return Param::Name; }
