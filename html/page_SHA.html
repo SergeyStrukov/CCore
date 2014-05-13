@@ -32,9 +32,71 @@
 
 <p class="Files">Files <b>CCore/inc/crypton/PlatformSHA.h</b> <b>CCore/src/crypton/PlatformSHA.cpp</b></p>
 
-<h3>SHA</h3>
+<h3>Software SHA implementation</h3>
 
-<h3>PlatformSHA</h3>
+<p>
+The following <a href="page_HashFunction.html">HashFunction&lt;....&gt;</a> classes implement SHA hash algorithms:
+</p>
+
+<pre>
+
+typedef HashFunction&lt;....&gt; <span class="Att">SHA1</span>;
+typedef HashFunction&lt;....&gt; <span class="Att">SHA224</span>;
+typedef HashFunction&lt;....&gt; <span class="Att">SHA256</span>;
+typedef HashFunction&lt;....&gt; <span class="Att">SHA384</span>;
+typedef HashFunction&lt;....&gt; <span class="Att">SHA512</span>;
+
+</pre>
+
+<p>
+<b>SHAnnn</b> implements the correspondent SHA-nnn algorithm.
+</p>
+
+<p>
+The following <a href="page_HashFunction.html">KeyedHashFunction&lt;....&gt;</a> classes implement HMAC hash functions
+based on SHA algorithms.
+</p>
+
+<pre>
+
+typedef KeyedHashFunction&lt;....&gt; <span class="Att">KeyedSHA1</span>;
+typedef KeyedHashFunction&lt;....&gt; <span class="Att">KeyedSHA224</span>;
+typedef KeyedHashFunction&lt;....&gt; <span class="Att">KeyedSHA256</span>;
+typedef KeyedHashFunction&lt;....&gt; <span class="Att">KeyedSHA384</span>;
+typedef KeyedHashFunction&lt;....&gt; <span class="Att">KeyedSHA512</span>;
+
+</pre>
+
+<p>
+<b>KeyedSHAnnn</b> implements the HMAC based on the correspondent SHA-nnn algorithm.
+</p>
+
+<h3>Platform SHA</h3>
+
+<p>
+The file <b>PlatformSHA.h</b> contains stub definitions for SHA types.
+</p>
+
+<pre>
+
+using <span class="Att">PlatformSHA1</span> = SHA1 ;
+using <span class="Att">PlatformSHA224</span> = SHA224 ;
+using <span class="Att">PlatformSHA256</span> = SHA256 ;
+using <span class="Att">PlatformSHA384</span> = SHA384 ;
+using <span class="Att">PlatformSHA512</span> = SHA512 ;
+
+using <span class="Att">PlatformKeyedSHA1</span> = KeyedSHA1 ;
+using <span class="Att">PlatformKeyedSHA224</span> = KeyedSHA224 ;
+using <span class="Att">PlatformKeyedSHA256</span> = KeyedSHA256 ;
+using <span class="Att">PlatformKeyedSHA384</span> = KeyedSHA384 ;
+using <span class="Att">PlatformKeyedSHA512</span> = KeyedSHA512 ;
+
+</pre>
+
+<p>
+A target may override this header file and provide its own definitions with efficient platform-dependent
+SHA implementation.
+</p>
 
 </body>
 

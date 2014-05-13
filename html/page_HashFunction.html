@@ -34,7 +34,7 @@
 
 <p>
 <b>HashFunction</b> is an abstract hash function algorithm. It is a template and the template parameter
-provides all neccessary parts to implement the required functionality. An abstract hash function processes
+provides all necessary parts to implement the required functionality. An abstract hash function processes
 the given block of raw data (i.e. a sequence of bytes) into a "message digest", i.e. a short block of bytes
 of the defined length. A good hash function has a number of properties. For instance, it is difficult to
 construct an input with the given output. 
@@ -82,7 +82,7 @@ class <span class="Att">HashFunction</span> : NoCopy
 
 <p>
 <b>BlockLen</b> is the hash function "block length". It is some internal property of the hash algorithm.
-Usually an input data is sliced on blocks of the define length before the processing. 
+Usually an input data is sliced on blocks of the defined length before the processing. 
 The tail is padded to make a whole number of blocks.
 </p>
 
@@ -93,12 +93,12 @@ The tail is padded to make a whole number of blocks.
 <p>
 The <b>HashFunction</b> is working incrementally. To calculate the output, the object must be reset first.
 It is performed by the constructor and can be performed also by the method <b>reset()</b>.
-Destructor also does reset to clean the internal state from any information accumulated during the hash
+Destructor also does reset to clean the internal state from any information, accumulated during the hash
 calculation. 
 </p>
 
 <p>
-<b>add()</b> addes the next chunk of the input. Two variants are provided: with pointer and length arguments 
+<b>add()</b> adds the next chunk of the input. Two variants are provided: with pointer and length arguments 
 and with the single <b>PtrLen&lt;const uint8&gt;</b> argument.
 </p>
 
@@ -143,7 +143,7 @@ struct HashAlgo
 <b>KeyedHashFunction</b> calculates a keyed message digest according the 
 <a href="http://www.ietf.org/rfc/rfc2104.txt">RFC 2104</a>.
 It uses a template parameter of the same kind as the class <b>HashFunction</b>.
-This variant of the hash uses the additional argument &mdush; the key.
+This variant of the hash uses the additional argument &mdash; the key.
 </p>
 
 <pre>
@@ -194,13 +194,23 @@ class <span class="Att">KeyedHashFunction</span> : NoCopy
 
 <p>
 This class is working the same way as the <b>HashFunction</b>. The main difference is: before the hash 
-calculation a key must assigned to the object. Otherwise any attempt to perform the hash caclulation
+calculation a key must be assigned to the object. Otherwise any attempt to perform the hash calculation
 will throw an exception. To assign a key the method <b>key()</b> can be used. Or the constructor
 with the key as the argument.
 </p>
 
 <p>
-The method <b>unkey()</b> cleans the key information form the object. It is called by destructor.
+The following guard function is used to throw the "no-hash-key" exception:
+</p>
+
+<pre>
+
+void <span class="Att">GuardNoHashKey</span>();
+
+</pre>
+
+<p>
+The method <b>unkey()</b> cleans the key information from the object. It is called by the destructor.
 </p>
 
 </body>
