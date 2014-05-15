@@ -88,6 +88,7 @@
 ../../CCore/src/gadget/Init.cpp
 ../../CCore/src/gadget/Len.cpp
 ../../CCore/src/gadget/Lock.cpp
+../../CCore/src/gadget/Locked.cpp
 ../../CCore/src/gadget/Meta.cpp
 ../../CCore/src/gadget/MSec.cpp
 ../../CCore/src/gadget/NegBool.cpp

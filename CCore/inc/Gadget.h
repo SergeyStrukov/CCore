@@ -24,6 +24,7 @@
 #include <CCore/inc/gadget/Init.h>
 #include <CCore/inc/gadget/Len.h>
 #include <CCore/inc/gadget/Lock.h>
+#include <CCore/inc/gadget/Locked.h>
 #include <CCore/inc/gadget/Meta.h>
 #include <CCore/inc/gadget/MSec.h>
 #include <CCore/inc/gadget/NegBool.h>

@@ -133,6 +133,7 @@ obj/Len.o \
 obj/LineInput.o \
 obj/List.o \
 obj/Lock.o \
+obj/Locked.o \
 obj/Log.o \
 obj/MSec.o \
 obj/MemAllocGuard.o \
@@ -436,6 +437,7 @@ obj/Len.s \
 obj/LineInput.s \
 obj/List.s \
 obj/Lock.s \
+obj/Locked.s \
 obj/Log.s \
 obj/MSec.s \
 obj/MemAllocGuard.s \
@@ -739,6 +741,7 @@ obj/Len.dep \
 obj/LineInput.dep \
 obj/List.dep \
 obj/Lock.dep \
+obj/Locked.dep \
 obj/Log.dep \
 obj/MSec.dep \
 obj/MemAllocGuard.dep \
@@ -1322,6 +1325,9 @@ obj/List.o : ../../CCore/src/List.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Lock.o : ../../CCore/src/gadget/Lock.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Locked.o : ../../CCore/src/gadget/Locked.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Log.o : ../../CCore/src/Log.cpp
@@ -2226,6 +2232,9 @@ obj/List.s : ../../CCore/src/List.cpp
 obj/Lock.s : ../../CCore/src/gadget/Lock.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Locked.s : ../../CCore/src/gadget/Locked.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Log.s : ../../CCore/src/Log.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3127,6 +3136,9 @@ obj/List.dep : ../../CCore/src/List.cpp
 
 obj/Lock.dep : ../../CCore/src/gadget/Lock.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Lock.o $< -MF $@
+
+obj/Locked.dep : ../../CCore/src/gadget/Locked.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Locked.o $< -MF $@
 
 obj/Log.dep : ../../CCore/src/Log.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Log.o $< -MF $@

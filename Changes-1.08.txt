@@ -2,7 +2,7 @@
 
 --- New features -----
 
-New XCore target BeagleBoneBlack has been created.
+! New XCore target BeagleBoneBlack has been created.
 
 AttachmentHost.h
 
@@ -11,6 +11,10 @@ AttachmentHost.h
 net/NetFork.h
 
   Support device for multitask network processing.
+
+gadget/Locked.h
+
+  Helper class to apply a mutex on the object access.
 
 --- Updates ----------
 
