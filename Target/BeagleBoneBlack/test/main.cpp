@@ -196,12 +196,16 @@ void before_main()
   Video::VideoControl vctrl("i2c[0]");
   
   ObjMaster vctrl_master(vctrl,"video");
+  
+#if 1  
    
   Video::VideoConsole vcon("video");
   
   vcon.waitOpen();
   
   SingleMaster<Video::VideoConsole> vcon_master(Video::VideoConsole::GetHost(),"!VideoConsoleMaster",vcon);
+  
+#endif  
   
   const char *argv[]={"main",0};
  

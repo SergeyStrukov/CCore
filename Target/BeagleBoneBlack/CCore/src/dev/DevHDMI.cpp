@@ -334,22 +334,48 @@ void HDMI::finishReadEDID()
          .setTo(barHDMI);
  }
 
-HDMI::Mode::Mode(const Video::EDIDMode &mode)
+HDMI::Mode::Mode(const Video::EDIDTimingDesc &desc)
  {
-  htotal=mode.hlen+mode.hblank;
-  hdisplay=mode.hlen;
-  hsync_start=mode.hlen+mode.hsync_off;
-  hsync_end=mode.hlen+mode.hsync_off+mode.hsync_pulse;
+  if( desc.isInterlaced() )
+    {
+     Printf(Exception,"CCore::Dev::HDMI::Mode::Mode(...) : unsupported video mode");
+    }
   
-  vtotal=mode.vlen+mode.vblank;
-  vdisplay=mode.vlen;
-  vsync_start=mode.vlen+mode.vsync_off;
-  vsync_end=mode.vlen+mode.vsync_off+mode.vsync_pulse;
+  htotal=desc.hlen+desc.hblank;
+  hdisplay=desc.hlen;
+  hsync_start=desc.hlen+desc.hsync_off;
+  hsync_end=desc.hlen+desc.hsync_off+desc.hsync_pulse;
   
-  pixel_clock=mode.pixel_clock;
+  vtotal=desc.vlen+desc.vblank;
+  vdisplay=desc.vlen;
+  vsync_start=desc.vlen+desc.vsync_off;
+  vsync_end=desc.vlen+desc.vsync_off+desc.vsync_pulse;
   
-  hsync_neg=!mode.hsyncPos();
-  vsync_neg=!mode.vsyncPos();
+  pixel_clock=desc.pixel_clock;
+  
+  switch( desc.syncType() )
+    {
+     case Video::EDIDTimingDesc::AnalogComposite :
+     case Video::EDIDTimingDesc::BipolarAnalogComposite :
+      {
+       Printf(Exception,"CCore::Dev::HDMI::Mode::Mode(...) : unsupported video mode");
+      }
+     break;
+     
+     case Video::EDIDTimingDesc::DigitalComposite :
+      {
+       hsync_neg=!desc.hsyncPositive();
+       vsync_neg=hsync_neg;
+      }
+     break;
+     
+     case Video::EDIDTimingDesc::DigitalSeparate :
+      {
+       hsync_neg=!desc.hsyncPositive();
+       vsync_neg=!desc.vsyncPositive();
+      }
+     break; 
+    }
  }
 
 void HDMI::setMode(const Mode &mode)

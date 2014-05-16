@@ -174,7 +174,7 @@ class HDMI : NoCopy
      
      Mode() {}
      
-     Mode(const Video::EDIDMode &mode);
+     Mode(const Video::EDIDTimingDesc &desc);
     };
    
    void setMode(const Mode &mode);

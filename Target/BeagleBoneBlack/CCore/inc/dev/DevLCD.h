@@ -48,7 +48,7 @@ class LCD : public Funchor_nocopy
     
      Mode() {}
      
-     Mode(const Video::EDIDMode &mode);
+     Mode(const Video::EDIDTimingDesc &desc);
     };
   
   private:

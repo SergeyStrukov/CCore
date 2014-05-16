@@ -55,7 +55,9 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    VideoMode mode;
    
    DynArray<VideoMode> mode_list;
-   DynArray<EDIDMode> edid_list;
+   DynArray<EDIDTimingDesc> desc_list;
+   
+   VideoDim video_dim;
    
    enum Events
     {
@@ -74,9 +76,9 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    
    using Hook = AttachmentHost<Control>::Hook ;
    
-   void init_first(const EDIDMode &mode,ColorMode color_mode);
+   void init_first(const EDIDTimingDesc &desc,ColorMode color_mode);
    
-   void init(const EDIDMode &mode,ColorMode color_mode);
+   void init(const EDIDTimingDesc &desc,ColorMode color_mode);
    
    void process(Dev::HDMI::IntInfo info);
    
@@ -96,7 +98,9 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    
    bool readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,unsigned number=0);
    
-   bool append(EDIDMode edid);
+   bool append(EDIDTimingDesc desc);
+   
+   bool append(const EDIDBlockDesc &desc);
   
   public:
   
@@ -105,6 +109,8 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    virtual ~VideoControl();
    
    // VideoDevice
+   
+   virtual VideoDim getVideoDim();
    
    virtual ColorMode getColorMode();
    

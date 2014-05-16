@@ -31,9 +31,9 @@ namespace Video {
 
 /* class VideoControl */
 
-void VideoControl::init_first(const EDIDMode &mode,ColorMode color_mode)
+void VideoControl::init_first(const EDIDTimingDesc &desc,ColorMode color_mode)
  {
-  hdmi.setMode(mode);
+  hdmi.setMode(desc);
    
   lcd.enable(180); // 180 MHz clock, 90 MHz pixel_clock
    
@@ -43,7 +43,7 @@ void VideoControl::init_first(const EDIDMode &mode,ColorMode color_mode)
     {
      case ColorMode16 :
       {
-       buf16=lcd.init_first16(mode,video_space);
+       buf16=lcd.init_first16(desc,video_space);
        buf24=DefaultValue();
        buf32=DefaultValue();
       }
@@ -52,7 +52,7 @@ void VideoControl::init_first(const EDIDMode &mode,ColorMode color_mode)
      case ColorMode24 :
       {
        buf16=DefaultValue();
-       buf24=lcd.init_first24(mode,video_space);
+       buf24=lcd.init_first24(desc,video_space);
        buf32=DefaultValue();
       }
      break;
@@ -61,7 +61,7 @@ void VideoControl::init_first(const EDIDMode &mode,ColorMode color_mode)
       {
        buf16=DefaultValue();
        buf24=DefaultValue();
-       buf32=lcd.init_first32(mode,video_space);
+       buf32=lcd.init_first32(desc,video_space);
       }
      break; 
     }
@@ -69,11 +69,11 @@ void VideoControl::init_first(const EDIDMode &mode,ColorMode color_mode)
   hdmi.enableVIP();
  }
 
-void VideoControl::init(const EDIDMode &mode,ColorMode color_mode)
+void VideoControl::init(const EDIDTimingDesc &desc,ColorMode color_mode)
  {
   hdmi.disableVIP();
   
-  hdmi.setMode(mode);
+  hdmi.setMode(desc);
    
   lcd.stop();
   
@@ -81,7 +81,7 @@ void VideoControl::init(const EDIDMode &mode,ColorMode color_mode)
     {
      case ColorMode16 :
       {
-       buf16=lcd.init16(mode,video_space);
+       buf16=lcd.init16(desc,video_space);
        buf24=DefaultValue();
        buf32=DefaultValue();
       }
@@ -90,7 +90,7 @@ void VideoControl::init(const EDIDMode &mode,ColorMode color_mode)
      case ColorMode24 :
       {
        buf16=DefaultValue();
-       buf24=lcd.init24(mode,video_space);
+       buf24=lcd.init24(desc,video_space);
        buf32=DefaultValue();
       }
      break;
@@ -99,7 +99,7 @@ void VideoControl::init(const EDIDMode &mode,ColorMode color_mode)
       {
        buf16=DefaultValue();
        buf24=DefaultValue();
-       buf32=lcd.init32(mode,video_space);
+       buf32=lcd.init32(desc,video_space);
       }
      break; 
     }
@@ -229,24 +229,24 @@ bool VideoControl::readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,uns
     }
  }
 
-bool VideoControl::append(EDIDMode edid)
+bool VideoControl::append(EDIDTimingDesc desc)
  {
   try
     {
-     Dev::LCD::Mode lcd_mode(edid);
-     Dev::HDMI::Mode hdmi_mode(edid);
+     Dev::LCD::Mode lcd_mode(desc);
+     Dev::HDMI::Mode hdmi_mode(desc);
     
-     edid.pixel_clock=90000;
+     desc.pixel_clock=90000;
      
-     edid_list.append_copy(edid);
-     edid_list.append_copy(edid);
-     edid_list.append_copy(edid);
+     desc_list.append_copy(desc);
+     desc_list.append_copy(desc);
+     desc_list.append_copy(desc);
      
      VideoMode mode;
      
-     mode.dx=edid.hlen;
-     mode.dy=edid.vlen;
-     mode.freq=edid.freq();
+     mode.dx=desc.hlen;
+     mode.dy=desc.vlen;
+     mode.freq=desc.freq();
      
      mode.mode=ColorMode16;
      
@@ -266,6 +266,13 @@ bool VideoControl::append(EDIDMode edid)
     {
      return false;
     }
+ }
+
+bool VideoControl::append(const EDIDBlockDesc &desc)
+ {
+  if( desc.index!=EDIDBlockDesc::Desc_timing ) return false;
+  
+  return append(desc.desc.timing);
  }
 
 VideoControl::VideoControl(StrLen i2c_dev_name,TaskPriority priority,ulen stack_len)
@@ -293,6 +300,11 @@ VideoControl::~VideoControl()
   asem.wait();
  }
    
+VideoDim VideoControl::getVideoDim() 
+ { 
+  return video_dim; 
+ }
+
 ColorMode VideoControl::getColorMode()
  {
   return mode.mode;
@@ -318,20 +330,25 @@ FrameBuf<Color32> VideoControl::getBuf32()
   return buf32;
  }
    
-bool VideoControl::updateVideoModeList(MSec timeout) // TODO
+bool VideoControl::updateVideoModeList(MSec timeout)
  {
   mode_list.erase();
-  edid_list.erase();
+  desc_list.erase();
+  
+  video_dim=DefaultValue();
  
   try
     {
-     uint8 block[EDIDLen];
+     uint8 buf[EDIDLen];
      
-     if( !readEDID(block,TimeScope(timeout)) ) return false;
+     if( !readEDID(buf,TimeScope(timeout)) ) return false;
      
-     EDIDMode edid(block);
+     EDIDBlock edid(buf);
      
-     return append(edid);
+     video_dim.hlen=edid.hlen_cm*10u;
+     video_dim.vlen=edid.vlen_cm*10u;
+     
+     return append(edid.desc[0]);
     }
   catch(CatchType)
     {
@@ -354,13 +371,13 @@ bool VideoControl::setVideoMode(ulen index)
     {
      if( first )
        {
-        init_first(edid_list[index],mode.mode);
+        init_first(desc_list[index],mode.mode);
         
         first=false;
        }
      else
        {
-        init(edid_list[index],mode.mode);
+        init(desc_list[index],mode.mode);
        }
      
      return true;

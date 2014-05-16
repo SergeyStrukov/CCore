@@ -36,6 +36,8 @@ enum ColorMode
 
 struct VideoMode;
 
+struct VideoDim;
+
 struct VideoDevice;
 
 /* struct VideoMode */
@@ -62,10 +64,22 @@ struct VideoMode
    };
  };
 
+/* struct VideoDim */
+
+struct VideoDim
+ {
+  unsigned hlen; // mm
+  unsigned vlen; // mm
+  
+  VideoDim() : hlen(0),vlen(0) {}
+ };
+
 /* struct VideoDevice */
 
 struct VideoDevice
  {
+  virtual VideoDim getVideoDim()=0;
+  
   virtual ColorMode getColorMode()=0;
   
   virtual VideoMode getVideoMode()=0;
@@ -76,7 +90,7 @@ struct VideoDevice
   
   virtual FrameBuf<Color32> getBuf32()=0;
   
-  virtual bool updateVideoModeList(MSec timeout)=0;
+  virtual bool updateVideoModeList(MSec timeout=DefaultTimeout)=0;
   
   virtual PtrLen<const VideoMode> getVideoModeList()=0;
   

@@ -28,17 +28,17 @@ namespace Dev {
 
 /* class LCD */
 
-LCD::Mode::Mode(const Video::EDIDMode &mode)
+LCD::Mode::Mode(const Video::EDIDTimingDesc &desc)
  {
-  hback=mode.hblank-mode.hsync_off-mode.hsync_pulse;
-  hlen=mode.hlen;
-  hfront=mode.hsync_off;
-  hsync=mode.hsync_pulse;
+  hback=desc.hblank-desc.hsync_off-desc.hsync_pulse;
+  hlen=desc.hlen;
+  hfront=desc.hsync_off;
+  hsync=desc.hsync_pulse;
   
-  vback=mode.vblank-mode.vsync_off-mode.vsync_pulse;
-  vlen=mode.vlen;
-  vfront=mode.vsync_off;
-  vsync=mode.vsync_pulse;
+  vback=desc.vblank-desc.vsync_off-desc.vsync_pulse;
+  vlen=desc.vlen;
+  vfront=desc.vsync_off;
+  vsync=desc.vsync_pulse;
   
   if( hlen<16 || hlen>2048 || (hlen&15)!=0
       || hfront<1 || hfront>1024
