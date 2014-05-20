@@ -17,6 +17,8 @@
 
 #include <CCore/inc/video/VideoDevice.h>
 
+#include <CCore/inc/dev/AM3359.CONTROL.h>
+
 namespace App {
 
 namespace Private_3011 {
@@ -94,6 +96,17 @@ void test2()
   Task::Sleep(10_sec);
  }
 
+/* test3() */
+
+void test3()
+ {
+  using namespace AM3359::CONTROL;
+  
+  Bar bar;
+
+  Printf(Con,"#;\n",bar.get_Conf_GPMC_A9());
+ }
+
 } // namespace Private_3011
  
 using namespace Private_3011; 
@@ -106,8 +119,9 @@ const char *const Testit<3011>::Name="Test3011 LCD";
 template<>
 bool Testit<3011>::Main() 
  {
-  //test1();
+  test1();
   //test2();
+  //test3();
   
   return true;
  }

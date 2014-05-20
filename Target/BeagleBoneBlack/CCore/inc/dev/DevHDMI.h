@@ -98,7 +98,11 @@ class HDMI : NoCopy
    
    NXP::HDMI::CECBar<CECRegRW> barCEC;
    NXP::HDMI::HDMIBar<HDMIRegRW> barHDMI;
+   
+  private: 
   
+   void connect_int();
+   
   public:
  
    explicit HDMI(StrLen i2c_dev_name);

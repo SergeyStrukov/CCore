@@ -15,6 +15,8 @@
 
 #include <CCore/inc/dev/DevHDMI.h>
 
+#include <CCore/inc/dev/AM3359.CONTROL.h>
+
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Task.h>
 #include <CCore/inc/Timer.h>
@@ -103,6 +105,18 @@ void HDMI::HDMIRegRW::set<uint16>(AddressType address,uint16 value)
   dev.set(SlaveAddress,uint8(address),uint8(value>>8),uint8(value));
  }
 
+void HDMI::connect_int()
+ {
+  using namespace AM3359::CONTROL;
+  
+  Bar bar;
+  
+  bar.null_PadMux()
+     .set_MuxMode(7)
+     .setbit(PadMux_RXEn)
+     .set(bar.to_Conf_GPMC_A9());
+ }
+
 HDMI::HDMI(StrLen i2c_dev_name)
  : regRW(i2c_dev_name),
    barCEC(regRW),
@@ -116,6 +130,8 @@ HDMI::~HDMI()
 
 void HDMI::init()
  {
+  connect_int();
+  
   using namespace NXP::HDMI;
   
   // enable

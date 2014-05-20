@@ -1,0 +1,83 @@
+<!--
+/* page_Locked.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Locked</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Locked</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/Locked.h</b> <b>CCore/src/gadget/Locked.cpp</b></p>
+
+<p>
+This simple <b>Helper Class</b> is useful to implement a locked access to some object. 
+It is an object pointer. In constructor is locks the given mutex and in destructor it unlocks one. 
+</p>
+
+<pre>
+
+template &lt;class Mutex,class T&gt;
+class <span class="Att">Locked</span> : Mutex::Lock
+ {
+   T &amp;obj;
+ 
+  public:
+ 
+   Locked(Mutex &mutex,T &amp;obj_) : Mutex::Lock(mutex),obj(obj_) {}
+   
+   ~Locked() {}
+   
+   // object ptr
+   
+   T * getPtr() const { return &amp;obj; }
+   
+   T * operator -> () const { return &amp;obj; }
+   
+   T &amp; operator * () const { return obj; }
+ };
+
+</pre>
+
+<p>
+Here is an example:
+</p>
+
+<pre>
+
+Mutex mutex;
+
+Class obj;
+
+Locked&lt;Mutex,Class&gt;(mutex,obj)->method();
+
+</pre>
+
+<p>
+The method above is called under the mutex protection.
+</p>
+
+</body>
+
+</html>
+
