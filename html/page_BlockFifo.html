@@ -1,0 +1,149 @@
+<!--
+/* page_BlockFifo.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> BlockFifo</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>BlockFifo</h2>
+
+<p class="Files">Files <b>CCore/inc/BlockFifo.h</b> <b>CCore/src/BlockFifo.cpp</b></p>
+
+<h4>BlockFifo</h4>
+
+<p>
+The <b>Partial class BlockFifo</b> implements a buffer fifo upon a provided buffer. Unlike the 
+<a href="page_Fifo.html"><b>Fifo</b></a> class, it provides block put/get operations, i.e. these operations
+put/get multiple objects a time.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">BlockFifo</span> : NoCopy
+ {
+   T *const buf;
+   const ulen len;
+   
+   ulen off;
+   ulen count;
+   
+  public:
+   
+   BlockFifo(T *buf,ulen len);
+   
+   ulen getCount() const { return count; }
+   
+   bool isEmpty() const { return count==0; }
+   
+   bool isFull() const { return count==len; }
+   
+   void reset();
+   
+   // put
+   
+   template &lt;class Func&gt;
+   ulen put(ulen putlen,Func func); // func(T *ptr,ulen len)
+   
+   ulen put(PtrLen&lt;const T&gt; data);
+   
+   // get
+   
+   template &lt;class Func&gt;
+   ulen get(ulen getlen,Func func); // func([const] T *ptr,ulen len)
+ 
+   ulen get(PtrLen&lt;T&gt; data);
+ };
+
+</pre>
+
+<p>
+Constructor creates the fifo in the given buffer.
+</p>
+
+<p>
+<b>getCount()</b> returns the number of objects in the fifo.
+</p>
+
+<p>
+<b>isEmpty()</b> returns <b>true</b>, if the fifo is empty. 
+</p>
+
+<p>
+<b>isFull()</b> returns <b>true</b>, if the fifo is full.
+</p>
+
+<p>
+<b>reset()</b> resets the fifo. It becomes empty.
+</p>
+
+<p>
+<b>put(ulen,Func)</b> puts the number of objects in the fifo. This method is generic. The first argument is the
+number of objects, required to be put. The second is a functor. This functor is used to provide an actual data.
+It may be called up to two times to fill the range of objects with desired values. 
+The number of handled objects is returned.
+</p>
+
+<p>
+<b>put(PtrLen&lt;const T&gt;)</b> puts objects from the given range in the fifo. The number of objects have been copied is returned.
+It can be less, than the range length, if there is no enough room.
+</p>
+
+<p>
+<b>get(ulen,Func)</b> gets the number of objects from the fifo. This method is generic. The first argument is the
+number of objects, required to be get. The second is a functor. This functor is used to extract data.
+It may be called up to two times to copy the range of objects from the fifo.
+The number of handled objects is returned.
+</p>
+
+<p>
+<b>get()</b> gets objects from the fifo to the given range. The number of objects have been copied is returned.
+</p>
+
+<h4>BlockFifoBuf</h4>
+
+<p>
+The class <b>BlockFifoBuf</b> is an upgraded class <b>BlockFifo</b> with the embedded buffer: 
+</p>
+
+<pre>
+
+template &lt;class T,ulen Len&gt;
+class <span class="Att">BlockFifoBuf</span> : public BlockFifo&lt;T&gt;
+ {
+   T buf[Len];
+   
+  public:
+  
+   BlockFifoBuf() : BlockFifo&lt;T&gt;(buf,Len) {}
+  
+   ~BlockFifoBuf() {}
+ };
+
+</pre>
+
+</body>
+
+</html>
+

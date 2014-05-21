@@ -20,6 +20,7 @@
 ../../CCore/src/AsyncFileToMem.cpp
 ../../CCore/src/AttachmentHost.cpp
 ../../CCore/src/base/CheckPlatformBase.cpp
+../../CCore/src/BlockFifo.cpp
 ../../CCore/src/CancelPacketList.cpp
 ../../CCore/src/CharProp.cpp
 ../../CCore/src/CmdInput.cpp

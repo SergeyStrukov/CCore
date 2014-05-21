@@ -89,6 +89,7 @@ OBJ_LIST = \
 ../test2-obj/test0086.RandomSelect.o \
 ../test2-obj/test0087.StepEval.o \
 ../test2-obj/test0088.NetFork.o \
+../test2-obj/test0089.BlockFifo.o \
 ../test2-obj/test0100.Bridge.o \
 ../test2-obj/test0101.PTP.o \
 ../test2-obj/test0102.PrintFile.o \
@@ -220,6 +221,7 @@ ASM_LIST = \
 ../test2-obj/test0086.RandomSelect.s \
 ../test2-obj/test0087.StepEval.s \
 ../test2-obj/test0088.NetFork.s \
+../test2-obj/test0089.BlockFifo.s \
 ../test2-obj/test0100.Bridge.s \
 ../test2-obj/test0101.PTP.s \
 ../test2-obj/test0102.PrintFile.s \
@@ -351,6 +353,7 @@ DEP_LIST = \
 ../test2-obj/test0086.RandomSelect.dep \
 ../test2-obj/test0087.StepEval.dep \
 ../test2-obj/test0088.NetFork.dep \
+../test2-obj/test0089.BlockFifo.dep \
 ../test2-obj/test0100.Bridge.dep \
 ../test2-obj/test0101.PTP.dep \
 ../test2-obj/test0102.PrintFile.dep \
@@ -665,6 +668,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0088.NetFork.o : ../../../CCore/test/test0088.NetFork.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test2-obj/test0089.BlockFifo.o : ../../../CCore/test/test0089.BlockFifo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1053,6 +1059,9 @@ include $(RULES_FILE)
 ../test2-obj/test0088.NetFork.s : ../../../CCore/test/test0088.NetFork.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test2-obj/test0089.BlockFifo.s : ../../../CCore/test/test0089.BlockFifo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test2-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1438,6 +1447,9 @@ include $(RULES_FILE)
 
 ../test2-obj/test0088.NetFork.dep : ../../../CCore/test/test0088.NetFork.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0088.NetFork.o $< -MF $@
+
+../test2-obj/test0089.BlockFifo.dep : ../../../CCore/test/test0089.BlockFifo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0089.BlockFifo.o $< -MF $@
 
 ../test2-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

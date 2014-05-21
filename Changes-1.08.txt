@@ -16,6 +16,10 @@ gadget/Locked.h
 
   Helper class to apply a mutex on the object access.
 
+BlockFifo.h
+
+  Fifo class with block operations.
+
 --- Updates ----------
 
 Regen

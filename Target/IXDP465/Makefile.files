@@ -17,6 +17,7 @@ obj/AutoText.o \
 obj/BaseRangeAlgo.o \
 obj/BinarySearch.o \
 obj/BlockCipher.o \
+obj/BlockFifo.o \
 obj/Boot.o \
 obj/Bridge.o \
 obj/CBase.o \
@@ -321,6 +322,7 @@ obj/AutoText.s \
 obj/BaseRangeAlgo.s \
 obj/BinarySearch.s \
 obj/BlockCipher.s \
+obj/BlockFifo.s \
 obj/Boot.s \
 obj/Bridge.s \
 obj/CBase.s \
@@ -625,6 +627,7 @@ obj/AutoText.dep \
 obj/BaseRangeAlgo.dep \
 obj/BinarySearch.dep \
 obj/BlockCipher.dep \
+obj/BlockFifo.dep \
 obj/Boot.dep \
 obj/Bridge.dep \
 obj/CBase.dep \
@@ -977,6 +980,9 @@ obj/BinarySearch.o : ../../CCore/src/algon/BinarySearch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/BlockCipher.o : ../../CCore/src/crypton/BlockCipher.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/BlockFifo.o : ../../CCore/src/BlockFifo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Boot.o : ../../Target/IXDP465/CCore/src/Boot.cpp
@@ -1884,6 +1890,9 @@ obj/BinarySearch.s : ../../CCore/src/algon/BinarySearch.cpp
 obj/BlockCipher.s : ../../CCore/src/crypton/BlockCipher.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/BlockFifo.s : ../../CCore/src/BlockFifo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Boot.s : ../../Target/IXDP465/CCore/src/Boot.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2788,6 +2797,9 @@ obj/BinarySearch.dep : ../../CCore/src/algon/BinarySearch.cpp
 
 obj/BlockCipher.dep : ../../CCore/src/crypton/BlockCipher.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BlockCipher.o $< -MF $@
+
+obj/BlockFifo.dep : ../../CCore/src/BlockFifo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BlockFifo.o $< -MF $@
 
 obj/Boot.dep : ../../Target/IXDP465/CCore/src/Boot.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Boot.o $< -MF $@
