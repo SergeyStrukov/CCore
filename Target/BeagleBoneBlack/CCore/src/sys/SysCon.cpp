@@ -20,6 +20,7 @@
 #include <CCore/inc/video/VideoConsole.h>
 
 #include <CCore/inc/SingleHost.h>
+#include <CCore/inc/BlockFifo.h>
 
 #include <__std_init.h>
 
@@ -40,10 +41,7 @@ class ImpCon : public ConBase
     {
       static const ulen Len = 4_KByte ;
      
-      char buf[Len];
-      
-      ulen beg = 0 ; // <  Len
-      ulen len = 0 ; // <= Len
+      BlockFifoBuf<char,Len> fifo;
       
      private: 
      
@@ -51,21 +49,7 @@ class ImpCon : public ConBase
        {
         Dev::IntLock lock;
         
-        ulen rest=Len-beg;
-        
-        if( len<=rest )
-          {
-           Range(buf+beg,len).copyTo(temp);
-          }
-        else
-          {
-           Range(buf+beg,rest).copyTo(temp);
-           Range(buf,len-rest).copyTo(temp+rest);
-          }
-        
-        ulen ret=Replace_null(len);
-        
-        beg=0;
+        ulen ret=fifo.get(Range(temp,Len));
         
         return Range_const(temp,ret);
        }
@@ -73,48 +57,26 @@ class ImpCon : public ConBase
       void put_full(PtrLen<const char> str) // str.len <= Len
        {
         Dev::IntLock lock;
-        
-        str.copyTo(buf);
-        
-        beg=0;
-        len=str.len;
-       }
-      
-      void put_str(ulen off,PtrLen<const char> str)
-       {
-        if( off>=Len ) off-=Len;
-        
-        ulen rest=Len-off;
-        
-        if( str.len<=rest )
-          {
-           str.copyTo(buf+off);
-          }
-        else
-          {
-           str.prefix(rest).copyTo(buf+off);
-           str.part(rest).copyTo(buf);
-          }
+
+        fifo.reset();
+        fifo.put(str);
        }
       
       void put_short(PtrLen<const char> str) // str.len < Len
        {
         Dev::IntLock lock;
 
-        put_str(beg+len,str);
+        ulen len=Len-str.len;
+        ulen count=fifo.getCount();
         
-        len+=str.len;
-        
-        if( len>Len )
+        if( count>len )
           {
-           ulen delta=len-Len;
+           count-=len;
            
-           len=Len;
-           
-           beg+=delta;
-           
-           if( beg>=Len ) beg-=Len;
+           fifo.get(count, [] (char *,ulen) {} );
           }
+        
+        fifo.put(str);
        }
       
      public:
