@@ -61,13 +61,15 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    
    enum Events
     {
-     IntEvent = 1,
-     PlugEvent,
-     TickEvent,
-     StopEvent
+     Event_Int = 1,
+     Event_Plug,
+     Event_Tick,
+     Event_Stop,
+     
+     EventLim
     };
    
-   MultiEvent<4> mevent;
+   MultiEvent<EventLim-1> mevent;
    Ticker ticker;
    
    AntiSem asem;

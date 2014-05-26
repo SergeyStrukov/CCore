@@ -146,6 +146,8 @@ obj/ObjHost.o \
 obj/ObjectDomain.o \
 obj/Optional.o \
 obj/OwnPtr.o \
+obj/PSec.o \
+obj/PSecCore.o \
 obj/PTPBase.o \
 obj/PTPBoot.o \
 obj/PTPBootBase.o \
@@ -216,6 +218,7 @@ obj/ShortSort.o \
 obj/Signal.o \
 obj/SimpleArray.o \
 obj/SimpleConsole.o \
+obj/SingleBridge.o \
 obj/SingleHost.o \
 obj/SlowSem.o \
 obj/Sort.o \
@@ -422,6 +425,8 @@ obj/ObjHost.s \
 obj/ObjectDomain.s \
 obj/Optional.s \
 obj/OwnPtr.s \
+obj/PSec.s \
+obj/PSecCore.s \
 obj/PTPBase.s \
 obj/PTPBoot.s \
 obj/PTPBootBase.s \
@@ -492,6 +497,7 @@ obj/ShortSort.s \
 obj/Signal.s \
 obj/SimpleArray.s \
 obj/SimpleConsole.s \
+obj/SingleBridge.s \
 obj/SingleHost.s \
 obj/SlowSem.s \
 obj/Sort.s \
@@ -698,6 +704,8 @@ obj/ObjHost.dep \
 obj/ObjectDomain.dep \
 obj/Optional.dep \
 obj/OwnPtr.dep \
+obj/PSec.dep \
+obj/PSecCore.dep \
 obj/PTPBase.dep \
 obj/PTPBoot.dep \
 obj/PTPBootBase.dep \
@@ -768,6 +776,7 @@ obj/ShortSort.dep \
 obj/Signal.dep \
 obj/SimpleArray.dep \
 obj/SimpleConsole.dep \
+obj/SingleBridge.dep \
 obj/SingleHost.dep \
 obj/SlowSem.dep \
 obj/Sort.dep \
@@ -1273,6 +1282,12 @@ obj/Optional.o : ../../CCore/src/Optional.cpp
 obj/OwnPtr.o : ../../CCore/src/OwnPtr.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/PSec.o : ../../CCore/src/net/PSec.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PSecCore.o : ../../CCore/src/net/PSecCore.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/PTPBase.o : ../../CCore/src/net/PTPBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1481,6 +1496,9 @@ obj/SimpleArray.o : ../../CCore/src/array/SimpleArray.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SimpleConsole.o : ../../CCore/src/video/SimpleConsole.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SingleBridge.o : ../../CCore/src/net/SingleBridge.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SingleHost.o : ../../CCore/src/SingleHost.cpp
@@ -2094,6 +2112,12 @@ obj/Optional.s : ../../CCore/src/Optional.cpp
 obj/OwnPtr.s : ../../CCore/src/OwnPtr.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PSec.s : ../../CCore/src/net/PSec.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/PSecCore.s : ../../CCore/src/net/PSecCore.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/PTPBase.s : ../../CCore/src/net/PTPBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2302,6 +2326,9 @@ obj/SimpleArray.s : ../../CCore/src/array/SimpleArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/SimpleConsole.s : ../../CCore/src/video/SimpleConsole.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SingleBridge.s : ../../CCore/src/net/SingleBridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/SingleHost.s : ../../CCore/src/SingleHost.cpp
@@ -2915,6 +2942,12 @@ obj/Optional.dep : ../../CCore/src/Optional.cpp
 obj/OwnPtr.dep : ../../CCore/src/OwnPtr.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/OwnPtr.o $< -MF $@
 
+obj/PSec.dep : ../../CCore/src/net/PSec.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PSec.o $< -MF $@
+
+obj/PSecCore.dep : ../../CCore/src/net/PSecCore.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PSecCore.o $< -MF $@
+
 obj/PTPBase.dep : ../../CCore/src/net/PTPBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PTPBase.o $< -MF $@
 
@@ -3124,6 +3157,9 @@ obj/SimpleArray.dep : ../../CCore/src/array/SimpleArray.cpp
 
 obj/SimpleConsole.dep : ../../CCore/src/video/SimpleConsole.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SimpleConsole.o $< -MF $@
+
+obj/SingleBridge.dep : ../../CCore/src/net/SingleBridge.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleBridge.o $< -MF $@
 
 obj/SingleHost.dep : ../../CCore/src/SingleHost.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleHost.o $< -MF $@

@@ -20,6 +20,14 @@ BlockFifo.h
 
   Fifo class with block operations.
 
+net/SingleBridge.h
+
+  Same as Bridge, but connects two endpoint devices.
+
+net/PSec.h
+
+  PSec implementation.
+
 --- Updates ----------
 
 Regen

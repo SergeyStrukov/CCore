@@ -134,6 +134,8 @@
 ../../CCore/src/net/NetBase.cpp
 ../../CCore/src/net/NetFork.cpp
 ../../CCore/src/net/PacketEndpointDevice.cpp
+../../CCore/src/net/PSec.cpp
+../../CCore/src/net/PSecCore.cpp
 ../../CCore/src/net/PTPBase.cpp
 ../../CCore/src/net/PTPBoot.cpp
 ../../CCore/src/net/PTPBootBase.cpp
@@ -145,6 +147,7 @@
 ../../CCore/src/net/PTPServerDevice.cpp
 ../../CCore/src/net/PTPSupport.cpp
 ../../CCore/src/net/PTPSupportBase.cpp
+../../CCore/src/net/SingleBridge.cpp
 ../../CCore/src/net/UDPoint.cpp
 ../../CCore/src/net/XPoint.cpp
 ../../CCore/src/NewDelete.cpp

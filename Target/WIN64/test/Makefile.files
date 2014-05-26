@@ -94,6 +94,8 @@ OBJ_LIST = \
 ../test-obj/test0102.PrintFile.o \
 ../test-obj/test0103.EventRecorder.o \
 ../test-obj/test0104.ParaSort.o \
+../test-obj/test0105.SingleBridge.o \
+../test-obj/test0106.PSec.o \
 ../test-obj/test0200.Blank.o \
 ../test-obj/test0300.TaskList.o \
 ../test-obj/test1001.PageHeap.o \
@@ -242,6 +244,8 @@ ASM_LIST = \
 ../test-obj/test0102.PrintFile.s \
 ../test-obj/test0103.EventRecorder.s \
 ../test-obj/test0104.ParaSort.s \
+../test-obj/test0105.SingleBridge.s \
+../test-obj/test0106.PSec.s \
 ../test-obj/test0200.Blank.s \
 ../test-obj/test0300.TaskList.s \
 ../test-obj/test1001.PageHeap.s \
@@ -390,6 +394,8 @@ DEP_LIST = \
 ../test-obj/test0102.PrintFile.dep \
 ../test-obj/test0103.EventRecorder.dep \
 ../test-obj/test0104.ParaSort.dep \
+../test-obj/test0105.SingleBridge.dep \
+../test-obj/test0106.PSec.dep \
 ../test-obj/test0200.Blank.dep \
 ../test-obj/test0300.TaskList.dep \
 ../test-obj/test1001.PageHeap.dep \
@@ -731,6 +737,12 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0104.ParaSort.o : ../../../CCore/test/test0104.ParaSort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0105.SingleBridge.o : ../../../CCore/test/test0105.SingleBridge.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0106.PSec.o : ../../../CCore/test/test0106.PSec.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0200.Blank.o : ../../../CCore/test/test0200.Blank.cpp
@@ -1170,6 +1182,12 @@ include $(RULES_FILE)
 ../test-obj/test0104.ParaSort.s : ../../../CCore/test/test0104.ParaSort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0105.SingleBridge.s : ../../../CCore/test/test0105.SingleBridge.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../test-obj/test0106.PSec.s : ../../../CCore/test/test0106.PSec.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0200.Blank.s : ../../../CCore/test/test0200.Blank.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1606,6 +1624,12 @@ include $(RULES_FILE)
 
 ../test-obj/test0104.ParaSort.dep : ../../../CCore/test/test0104.ParaSort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0104.ParaSort.o $< -MF $@
+
+../test-obj/test0105.SingleBridge.dep : ../../../CCore/test/test0105.SingleBridge.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0105.SingleBridge.o $< -MF $@
+
+../test-obj/test0106.PSec.dep : ../../../CCore/test/test0106.PSec.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0106.PSec.o $< -MF $@
 
 ../test-obj/test0200.Blank.dep : ../../../CCore/test/test0200.Blank.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0200.Blank.o $< -MF $@

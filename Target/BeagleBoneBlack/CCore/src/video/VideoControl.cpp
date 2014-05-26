@@ -111,7 +111,7 @@ void VideoControl::process(Dev::HDMI::IntInfo info)
  {
   if( info.plug || info.power )
     {
-     mevent.trigger(PlugEvent);
+     mevent.trigger(Event_Plug);
     }
  }
 
@@ -121,7 +121,7 @@ void VideoControl::work()
     {
      switch( mevent.wait() )
        {
-        case IntEvent :
+        case Event_Int :
          {
           process(hdmi.getIntInfo());
           
@@ -129,9 +129,9 @@ void VideoControl::work()
          }
         break; 
       
-        case StopEvent : return;
+        case Event_Stop : return;
         
-        case TickEvent :
+        case Event_Tick :
          {
           Hook hook(host);
           
@@ -142,7 +142,7 @@ void VideoControl::work()
          }
         break;
         
-        case PlugEvent :
+        case Event_Plug :
          {
           Hook hook(host);
           
@@ -162,7 +162,7 @@ void VideoControl::handle_int()
  {
   disableInt();
   
-  mevent.trigger_int(IntEvent);
+  mevent.trigger_int(Event_Int);
  }
 
 void VideoControl::setupInt()
@@ -211,7 +211,7 @@ bool VideoControl::readEDID(uint8 block[Video::EDIDLen],TimeScope time_scope,uns
        {
         case 0 : return false;
       
-        case IntEvent :
+        case Event_Int :
          {
           auto info=hdmi.getIntInfo();
           
@@ -280,7 +280,7 @@ VideoControl::VideoControl(StrLen i2c_dev_name,TaskPriority priority,ulen stack_
    host("VideoControl"),
    video_space(Sys::AllocVideoSpace()),
    mevent("VideoControl"),
-   ticker(mevent.function_trigger_int<TickEvent>())
+   ticker(mevent.function_trigger_int<Event_Tick>())
  {
   hdmi.init();
   
@@ -295,7 +295,7 @@ VideoControl::~VideoControl()
  {
   cleanupInt();
   
-  mevent.trigger(StopEvent);
+  mevent.trigger(Event_Stop);
   
   asem.wait();
  }
@@ -397,7 +397,7 @@ void VideoControl::attach(Control *ctrl)
  {
   host.attach(ctrl);
   
-  mevent.trigger(PlugEvent);
+  mevent.trigger(Event_Plug);
  }
    
 void VideoControl::detach()

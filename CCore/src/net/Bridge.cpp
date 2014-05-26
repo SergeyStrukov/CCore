@@ -399,7 +399,13 @@ Bridge::ClientName::ClientName(ulen number)
   str=out.guardOverflow().close();
  }
  
-void Bridge::init(ulen num_clients)
+Bridge::Bridge(ulen num_clients)
+ : server(*this),
+   clients(DoReserve,num_clients),
+   masters(DoReserve,num_clients+1),
+   msem("Bridge"),
+   mutex("Bridge"),
+   running(false)
  {
   masters.append_fill(server,ServerName());
   
@@ -412,17 +418,6 @@ void Bridge::init(ulen num_clients)
     
   drop_rate=0;
   drop_den=1;  
- }
- 
-Bridge::Bridge(ulen num_clients)
- : server(*this),
-   clients(DoReserve,num_clients),
-   masters(DoReserve,num_clients+1),
-   msem("Bridge"),
-   mutex("Bridge"),
-   running(false)
- {
-  init(num_clients);
   
   to_server_format.prefix=11;
   to_server_format.max_data=1100;
@@ -434,15 +429,8 @@ Bridge::Bridge(ulen num_clients)
  }
    
 Bridge::Bridge(ulen num_clients,PacketFormat to_server_format_,PacketFormat to_client_format_)
- : server(*this),
-   clients(DoReserve,num_clients),
-   masters(DoReserve,num_clients+1),
-   msem("Bridge"),
-   mutex("Bridge"),
-   running(false)
+ : Bridge(num_clients)
  {
-  init(num_clients);
-  
   to_server_format=to_server_format_;
   to_client_format=to_client_format_;
  }

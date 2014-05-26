@@ -1,7 +1,7 @@
-/* Bridge.h */ 
+/* SingleBridge.h */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.02
+//  Project: CCore 1.08
 //
 //  Tag: General
 //
@@ -9,72 +9,68 @@
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_net_Bridge_h
-#define CCore_inc_net_Bridge_h
-
+#ifndef CCore_inc_net_SingleBridge_h
+#define CCore_inc_net_SingleBridge_h
+ 
 #include <CCore/inc/net/PacketEndpointDevice.h>
 
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/StartStop.h>
-#include <CCore/inc/Array.h>
 #include <CCore/inc/Random.h>
- 
+
 namespace CCore {
 namespace Net {
 
-/* classes */ 
+/* classes */
 
-class Bridge;
+class SingleBridge;
 
-/* class Bridge */ 
+/* class SingleBridge */
 
-class Bridge : NoCopy
+class SingleBridge : NoCopy 
  {
-   class Server : public ObjBase , public PacketMultipointDevice
+   class Server : public ObjBase , public PacketEndpointDevice
     {
-      Bridge &bridge;
+      SingleBridge &bridge;
       InboundProc *proc;
       
      public:
      
-      explicit Server(Bridge &bridge);
+      explicit Server(SingleBridge &bridge);
       
       virtual ~Server();
       
-      // PacketMultipointDevice
-      
-      virtual StrLen toText(XPoint point,PtrLen<char> buf);
+      // PacketEndpointDevice
       
       virtual PacketFormat getOutboundFormat();
    
-      virtual void outbound(XPoint point,Packet<uint8> packet);
+      virtual void outbound(Packet<uint8> packet);
    
       virtual ulen getMaxInboundLen();
-  
+      
       virtual void attach(InboundProc *proc);
    
       virtual void detach();
       
       // methods
       
-      void inbound(XPoint point,Packet<uint8> packet);
+      void inbound(Packet<uint8> packet);
       
       void tick();
     };
-    
+  
    class Client : public ObjBase , public PacketEndpointDevice
     {
-      Bridge &bridge;
-      XPoint point;
+      SingleBridge &bridge;
       InboundProc *proc;
       
      public:
      
-      Client(Bridge &bridge,XPoint point);
+      explicit Client(SingleBridge &bridge);
       
       virtual ~Client();
       
@@ -95,23 +91,13 @@ class Bridge : NoCopy
       void inbound(Packet<uint8> packet);
       
       void tick();
-      
-      // no-throw flags
-      
-      enum NoThrowFlagType
-       {
-        Default_no_throw = true,
-        Copy_no_throw = true
-       };
     };
-    
+  
    PacketFormat to_server_format;
    PacketFormat to_client_format;
    
    Server server;
-   DynArray<Client,ArrayAlgo_mini<Client> > clients;
-   
-   DynArray<ObjMaster,ArrayAlgo_mini<ObjMaster> > masters;
+   Client client;
    
    enum Events
     {
@@ -136,19 +122,22 @@ class Bridge : NoCopy
    PacketList to_client; 
    bool running;
    
+   ObjMaster server_master;
+   ObjMaster client_master;
+   
   private:
-  
+   
    bool drop();
   
    void set(bool running);
   
-   void put_to_server(XPoint point,Packet<uint8> packet);
+   void put_to_server(Packet<uint8> packet);
   
-   void put_to_client(XPoint point,Packet<uint8> packet);
+   void put_to_client(Packet<uint8> packet);
    
-   void send_to_client(XPoint point,Packet<uint8> packet);
+   void send_to_client(Packet<uint8> packet);
    
-   void send_to_server(XPoint point,Packet<uint8> packet);
+   void send_to_server(Packet<uint8> packet);
    
    void handle_to_server();
    
@@ -171,12 +160,12 @@ class Bridge : NoCopy
    void complete(PacketList &list);
    
   public:
-  
-   explicit Bridge(ulen num_clients);
    
-   Bridge(ulen num_clients,PacketFormat to_server_format,PacketFormat to_client_format);
+   SingleBridge();
    
-   ~Bridge();
+   SingleBridge(PacketFormat to_server_format,PacketFormat to_client_format);
+   
+   ~SingleBridge();
    
    // methods
    
@@ -188,21 +177,15 @@ class Bridge : NoCopy
    
    static StrLen ServerName() { return "BridgeServer"; }
    
-   struct ClientName
-    {
-     char buf[TextBufLen];
-     StrLen str;
-     
-     explicit ClientName(ulen number);
-    };
+   static StrLen ClientName() { return "BridgeClient"; }
    
    // start/stop
    
-   friend class StartStopObject<Bridge>;
+   friend class StartStopObject<SingleBridge>;
    
-   typedef class StartStopObject<Bridge> StartStop;
+   typedef class StartStopObject<SingleBridge> StartStop;
  };
- 
+
 } // namespace Net
 } // namespace CCore
  
