@@ -148,6 +148,7 @@
 ../../CCore/src/net/PTPSupport.cpp
 ../../CCore/src/net/PTPSupportBase.cpp
 ../../CCore/src/net/SingleBridge.cpp
+../../CCore/src/net/SingleEchoDevice.cpp
 ../../CCore/src/net/UDPoint.cpp
 ../../CCore/src/net/XPoint.cpp
 ../../CCore/src/NewDelete.cpp

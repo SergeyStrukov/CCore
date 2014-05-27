@@ -49,7 +49,19 @@ void ShowStat(T &dev,StrLen title)
   Printf(Con,"#;\n\n#15;\n\n",Title(title),info);
  }
  
+template <class R>
+void ShowRange(const char *title,R r)
+ {
+  Printf(Con,"#;\n\n",Title(title));
+  
+  for(; +r ;++r) Printf(Con,"#;\n",*r);
+  
+  Printf(Con,"\n");
+ }
+ 
 /* classes */  
+
+class PacketSource;
 
 class PacketEchoTest;
 
@@ -59,6 +71,116 @@ class PacketRead;
 
 class PTPServerTest;
 
+/* class PacketSource */  
+ 
+class PacketSource : public Funchor_nocopy
+ {
+  public:
+  
+   enum Event
+    {
+     Event_nofill,
+     Event_broken,
+    
+     EventLim
+    };
+   
+   friend const char * GetTextDesc(Event ev);
+   
+   typedef Counters<Event,EventLim> StatInfo;
+  
+  private:
+  
+   ulen max_len;
+   PacketSet<uint8> pset;
+   Atomic run_flag;
+   
+   Mutex mutex;
+   
+   Net::CheckedData cdata;
+   StatInfo stat;
+   
+  private: 
+   
+   void count(Event ev);
+    
+  public:
+  
+   PacketSource(ulen max_packets,ulen max_len);
+   
+   ~PacketSource();
+    
+   void getStat(StatInfo &ret); 
+   
+   bool getRunFlag() { return run_flag; }
+   
+   void stop() { run_flag=0; }
+   
+   Function<void (void)> function_stop() { return FunctionOf(this,&PacketSource::stop); }
+   
+   Packet<uint8> get(); 
+   
+   ulen getDataLen(); 
+   
+   void fill(PtrLen<uint8> data);
+    
+   void check(PtrLen<const uint8> data);
+ };
+ 
+/* class PacketTask */  
+ 
+class PacketTask : public Funchor_nocopy , Net::PacketEndpointDevice::InboundProc
+ {
+  public:
+  
+   enum Event
+    {
+     Event_nopacket,
+     Event_outbound,
+     Event_badformat,
+     Event_inbound,
+     Event_tick,
+    
+     EventLim
+    };
+   
+   friend const char * GetTextDesc(Event ev);
+   
+   typedef Counters<Event,EventLim> StatInfo;
+
+  private:
+  
+   PacketSource &src;
+   
+   ObjHook hook;
+   
+   Net::PacketEndpointDevice *ep;
+   
+   Mutex mutex;      
+   
+   StatInfo stat;
+   
+  private: 
+  
+   void count(Event ev);
+ 
+   virtual void inbound(Packet<uint8> packet,PtrLen<const uint8> data);
+     
+   virtual void tick();
+    
+   void run();
+    
+  public:
+  
+   PacketTask(PacketSource &src,StrLen ep_dev_name); 
+    
+   ~PacketTask();
+   
+   void getStat(StatInfo &ret); 
+    
+   Function<void (void)> function_run() { return FunctionOf(this,&PacketTask::run); } 
+ };
+ 
 /* class PacketEchoTest */ 
 
 class PacketEchoTest : NoCopy , Net::PacketEndpointDevice::InboundProc

@@ -19,6 +19,166 @@
  
 namespace App {
 
+/* class PacketSource */
+
+const char * GetTextDesc(PacketSource::Event ev)
+ {
+  static const char *const Table[]=
+   {
+    "nofill",
+    "broken",
+ 
+    ""
+   };
+
+  return Table[ev];
+ }
+
+void PacketSource::count(Event ev)
+ {
+  Mutex::Lock lock(mutex);
+  
+  stat.count(ev);
+ }
+ 
+PacketSource::PacketSource(ulen max_packets,ulen max_len_)
+ : max_len(max_len_),
+   pset(max_packets)
+ {
+  run_flag=1;
+ }
+
+PacketSource::~PacketSource()
+ {
+ }
+ 
+void PacketSource::getStat(StatInfo &ret) 
+ {
+  Mutex::Lock lock(mutex);
+  
+  ret=stat;
+ }
+
+Packet<uint8> PacketSource::get() 
+ { 
+  return pset.get(100_msec);
+ }
+
+ulen PacketSource::getDataLen() 
+ { 
+  Mutex::Lock lock(mutex);
+ 
+  return cdata.getLen(max_len); 
+ }
+
+void PacketSource::fill(PtrLen<uint8> data)
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( !cdata.fill(data) )
+    {
+     stat.count(Event_nofill);
+    }
+ }
+ 
+void PacketSource::check(PtrLen<const uint8> data)
+ {
+  if( !cdata.check(data) ) count(Event_broken);
+ }
+
+/* class PacketTask */
+
+const char * GetTextDesc(PacketTask::Event ev)
+ {
+  static const char *const Table[]=
+   {
+    "nopacket",
+    "outbound",
+    "badformat",
+    "inbound",
+    "tick",
+ 
+    ""
+   };
+
+  return Table[ev];
+ }
+
+void PacketTask::count(Event ev)
+ {
+  Mutex::Lock lock(mutex);
+  
+  stat.count(ev);
+ }
+
+void PacketTask::inbound(Packet<uint8> packet,PtrLen<const uint8> data)
+ {
+  count(Event_inbound);
+  
+  src.check(data);
+ 
+  packet.complete();
+ }
+  
+void PacketTask::tick()
+ {
+  count(Event_tick);
+ }
+ 
+void PacketTask::run()
+ {
+  PacketFormat format=ep->getOutboundFormat();
+    
+  while( src.getRunFlag() )
+    {
+     Packet<uint8> packet=src.get();
+     
+     if( !packet ) 
+       {
+        count(Event_nopacket);
+        
+        continue;
+       }
+        
+     ulen len=src.getDataLen();
+        
+     if( packet.checkDataLen(format,len) )
+       {
+        src.fill(packet.setDataLen(format,len));
+
+        ep->outbound(packet);
+        
+        count(Event_outbound);
+       }
+     else
+       {
+        packet.complete();
+        
+        count(Event_badformat);
+       }  
+    }
+ }
+ 
+PacketTask::PacketTask(PacketSource &src_,StrLen ep_dev_name) 
+ : src(src_),
+   hook(ep_dev_name),
+   ep(hook) 
+ {
+  ep->attach(this);  
+ }
+ 
+PacketTask::~PacketTask()
+ {
+  ep->detach();
+ }
+
+void PacketTask::getStat(StatInfo &ret) 
+ {
+  Mutex::Lock lock(mutex);
+  
+  ret=stat;
+ }
+
 /* class PacketEchoTest */ 
 
 const char * GetTextDesc(PacketEchoTest::Event ev)

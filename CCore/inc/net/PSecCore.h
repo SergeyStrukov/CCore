@@ -335,7 +335,7 @@ class RandomEngine : NoCopy
  
   public:
   
-   explicit RandomEngine(MasterKey &master_key);
+   explicit RandomEngine(const MasterKey &master_key);
    
    ~RandomEngine();
    
@@ -346,7 +346,7 @@ class RandomEngine : NoCopy
 
 /* class KeySet */
 
-class KeySet : NoCopy
+class KeySet : NoCopy // TODO
  {
    ulen klen;
    LifeLim life_lim;
@@ -362,15 +362,15 @@ class KeySet : NoCopy
    struct Key : NoCopy 
     {
      uint8 *key = 0 ;
-     KeyIndex serial = 0 ;
+     KeyIndex serial = 0 ; // 2 bits
      LifeLim life_lim;
      KeyState state = KeyDead ;
      
      Key() {}
      
-     bool testSerial(KeyIndex ser) const { return ((ser^serial)&3u)==0; }
+     bool testSerial(KeyIndex serial_) const { return serial_==serial; }
      
-     KeyIndex makeKeyIndex(ulen index) const { return KeyIndex( index|((serial&3u)<<14) ); }
+     KeyIndex makeKeyIndex(ulen index) const { return KeyIndex( index|(serial<<14) ); }
     };
    
    struct Rec : NoThrowFlagsBase
@@ -407,7 +407,7 @@ class KeySet : NoCopy
    
   public:
   
-   explicit KeySet(MasterKey &master_key);
+   explicit KeySet(const MasterKey &master_key);
    
    ~KeySet();
    
@@ -437,17 +437,24 @@ class Convolution : NoCopy
    template <ulen Len>
    static void Push(uint8 (&buf)[Len],uint8 x)
     {
-     auto r=Range(buf);
-     
-     for(; r.len>1 ;++r) r[0]=r[1];
-     
-     r[0]=x;
+     buf[Len-1]=x;
     }
   
    template <class K,ulen Len>
-   static void MulAdd(const K (&k)[Len],uint8 (&buf)[Len],uint8 x)
+   static uint8 MulAdd(const K (&k)[Len],uint8 (&buf)[Len],uint8 x)
     {
-     for(ulen i=0; i<Len ;i++) x^=k[i](buf[Len-1-i]);
+     x^=k[Len-1](buf[0]);
+     
+     for(ulen i=1; i<Len ;i++) 
+       {
+        uint8 t=buf[i];
+       
+        x^=k[Len-1-i](t);
+        
+        buf[i-1]=t;
+       }
+     
+     return x;
     }
    
   public:
@@ -466,8 +473,8 @@ class Convolution : NoCopy
     {
      uint8 y=x;
      
-     MulAdd(A::Mul,a,y);
-     MulAdd(B::Mul,b,y);
+     y=MulAdd(A::Mul,a,y);
+     y=MulAdd(B::Mul,b,y);
      
      Push(a,x);
      Push(b,y);
@@ -610,7 +617,7 @@ class ProcessorCore : NoCopy
    
   public:
   
-   explicit ProcessorCore(MasterKey &master_key);
+   explicit ProcessorCore(const MasterKey &master_key);
    
    ~ProcessorCore();
    

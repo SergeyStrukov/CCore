@@ -16,14 +16,14 @@
 #ifndef CCore_inc_net_PSec_h
 #define CCore_inc_net_PSec_h
 
+#include <CCore/inc/net/PacketEndpointDevice.h>
+
 #include <CCore/inc/net/PSecCore.h>
 
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/AttachmentHost.h>
 #include <CCore/inc/SaveLoad.h>
  
-#include <CCore/inc/net/PacketEndpointDevice.h>
-
 namespace CCore {
 namespace Net {
 namespace PSec {
@@ -111,7 +111,7 @@ class PacketProcessor : NoCopy
    
   public:
   
-   explicit PacketProcessor(MasterKey &master_key);
+   explicit PacketProcessor(const MasterKey &master_key);
    
    ~PacketProcessor();
    
@@ -143,7 +143,7 @@ class PacketProcessor : NoCopy
    
    OutboundResult outbound(PtrLen<uint8> data,ulen delta,PacketType type=Packet_Data);
    
-   void tick(PacketFormat fmt,PacketList &list);
+   void tick(PacketFormat format,PacketList &list);
  };
 
 /* class EndpointDevice */
@@ -178,7 +178,7 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice , PacketEndp
    
   public:
   
-   EndpointDevice(StrLen ep_dev_name,MasterKey &master_key);
+   EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key);
    
    virtual ~EndpointDevice();
    

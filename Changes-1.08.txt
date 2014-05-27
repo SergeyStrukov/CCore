@@ -22,7 +22,11 @@ BlockFifo.h
 
 net/SingleBridge.h
 
-  Same as Bridge, but connects two endpoint devices.
+  Same as the Bridge, but connects two endpoint devices.
+
+net/SingleEchoDevice.h
+
+  Same as the EchoDevice, but works as an endpoint device.
 
 net/PSec.h
 

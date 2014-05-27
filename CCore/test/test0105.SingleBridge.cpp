@@ -14,11 +14,65 @@
 //----------------------------------------------------------------------------------------
 
 #include <CCore/test/test.h>
+#include <CCore/test/testRun.h>
+#include <CCore/test/testNet.h>
+
+#include <CCore/inc/net/SingleBridge.h>
+#include <CCore/inc/net/SingleEchoDevice.h>
 
 namespace App {
 
 namespace Private_0105 {
 
+/* class Engine */ 
+
+class Engine : NoCopy
+ {
+   Net::SingleBridge bridge;
+   
+   Net::SingleEchoDevice echo;
+ 
+   PacketSource src;
+   PacketTask client;
+  
+  public:
+  
+   Engine()
+    : echo(Net::SingleBridge::ServerName()),
+      src(1000,1200),
+      client(src,Net::SingleBridge::ClientName())
+    {
+    }
+    
+   ~Engine()
+    {
+    } 
+    
+   void showStat()
+    {
+     ShowStat(src,"Src");
+     ShowStat(echo,"Echo");
+     ShowStat(client,"Client");
+    } 
+    
+   class StartStop : NoCopy
+    {
+      Net::SingleBridge::StartStop bridge;
+      
+      RunTasks run;
+    
+     public:
+     
+      explicit StartStop(Engine &engine)
+       : bridge(engine.bridge),
+         run(engine.src.function_stop())         
+       {
+        run(engine.client.function_run());
+       }
+       
+      ~StartStop() {} 
+    }; 
+ };
 
 } // namespace Private_0105
  
@@ -32,6 +86,16 @@ const char *const Testit<105>::Name="Test105 SingleBridge";
 template<>
 bool Testit<105>::Main() 
  {
+  Engine engine;
+  
+  {
+   Engine::StartStop start_stop(engine);
+   
+   Task::Sleep(10_sec);
+  }
+  
+  engine.showStat();
+  
   return true;
  }
  

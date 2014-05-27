@@ -223,6 +223,7 @@ obj/Signal.o \
 obj/SimpleArray.o \
 obj/SimpleConsole.o \
 obj/SingleBridge.o \
+obj/SingleEchoDevice.o \
 obj/SingleHost.o \
 obj/SlowSem.o \
 obj/Sort.o \
@@ -508,6 +509,7 @@ obj/Signal.s \
 obj/SimpleArray.s \
 obj/SimpleConsole.s \
 obj/SingleBridge.s \
+obj/SingleEchoDevice.s \
 obj/SingleHost.s \
 obj/SlowSem.s \
 obj/Sort.s \
@@ -793,6 +795,7 @@ obj/Signal.dep \
 obj/SimpleArray.dep \
 obj/SimpleConsole.dep \
 obj/SingleBridge.dep \
+obj/SingleEchoDevice.dep \
 obj/SingleHost.dep \
 obj/SlowSem.dep \
 obj/Sort.dep \
@@ -1536,6 +1539,9 @@ obj/SimpleConsole.o : ../../CCore/src/video/SimpleConsole.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SingleBridge.o : ../../CCore/src/net/SingleBridge.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SingleEchoDevice.o : ../../CCore/src/net/SingleEchoDevice.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SingleHost.o : ../../CCore/src/SingleHost.cpp
@@ -2386,6 +2392,9 @@ obj/SimpleConsole.s : ../../CCore/src/video/SimpleConsole.cpp
 obj/SingleBridge.s : ../../CCore/src/net/SingleBridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SingleEchoDevice.s : ../../CCore/src/net/SingleEchoDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SingleHost.s : ../../CCore/src/SingleHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3233,6 +3242,9 @@ obj/SimpleConsole.dep : ../../CCore/src/video/SimpleConsole.cpp
 
 obj/SingleBridge.dep : ../../CCore/src/net/SingleBridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleBridge.o $< -MF $@
+
+obj/SingleEchoDevice.dep : ../../CCore/src/net/SingleEchoDevice.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleEchoDevice.o $< -MF $@
 
 obj/SingleHost.dep : ../../CCore/src/SingleHost.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleHost.o $< -MF $@

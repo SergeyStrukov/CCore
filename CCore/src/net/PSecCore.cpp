@@ -26,9 +26,9 @@ namespace PSec {
 
 /* class TestMasterKey */
 
-using DefEncrypt = Crypton::AES256 ; // TODO Platform
+using DefEncrypt = Crypton::PlatformAES256 ;
 
-using DefDecrypt = Crypton::AESInverse256 ; // TODO Platform
+using DefDecrypt = Crypton::PlatformAESInverse256 ;
 
 static const ulen DefKeyCount = 100 ;
 
@@ -115,7 +115,7 @@ ulen RandomEngine::addFifo(ulen count)
   return fifo.get(count, [=] (const uint8 *ptr,ulen len) { hash->add(Range(ptr,len)); } );
  }
 
-RandomEngine::RandomEngine(MasterKey &master_key)
+RandomEngine::RandomEngine(const MasterKey &master_key)
  : random(master_key.createRandom()),
    hash(master_key.createHash())
  {
@@ -191,7 +191,7 @@ void KeySet::deactivate(ulen index)
     }
  }
 
-KeySet::KeySet(MasterKey &master_key)
+KeySet::KeySet(const MasterKey &master_key)
  : klen(master_key.getKLen()),
    life_lim(master_key.getLifeLim()),
    key_set(master_key.getKeySetLen()),
@@ -243,7 +243,7 @@ bool KeySet::setEncryptKey(KeyIndex key_index,ulen use_count)
     
   if( rec.next.state<KeyRed && rec.next.testSerial(serial) ) 
     {
-     encrypt_key=rec.base.key;
+     encrypt_key=rec.next.key;
     
      rec.next.life_lim.use(use_count);
      
@@ -272,7 +272,7 @@ bool KeySet::setDecryptKey(KeyIndex key_index)
     
   if( rec.next.state<KeyDead && rec.next.testSerial(serial) ) 
     {
-     decrypt_key=rec.base.key;
+     decrypt_key=rec.next.key;
     
      return true;
     }
@@ -291,7 +291,7 @@ ulen ProcessorCore::selectIndex(ulen len)
   return split.get()%len;
  }
 
-ProcessorCore::ProcessorCore(MasterKey &master_key)
+ProcessorCore::ProcessorCore(const MasterKey &master_key)
  : encrypt(master_key.createEncrypt()),
    decrypt(master_key.createDecrypt()),
    hash(master_key.createHash()),

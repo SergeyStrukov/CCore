@@ -31,7 +31,7 @@ void PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data) // TODO
   Used(data);
  }
 
-PacketProcessor::PacketProcessor(MasterKey &master_key)
+PacketProcessor::PacketProcessor(const MasterKey &master_key)
  : core(master_key)
  {
   header_len=RoundUp(2*HeaderLen,core.getBLen());
@@ -305,9 +305,9 @@ auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) ->
   return ret;
  }
 
-void PacketProcessor::tick(PacketFormat fmt,PacketList &list) // TODO
+void PacketProcessor::tick(PacketFormat format,PacketList &list) // TODO
  {
-  Used(fmt);
+  Used(format);
   Used(list);
  }
 
@@ -351,7 +351,7 @@ void EndpointDevice::tick()
   while( auto packet=list.get() ) dev->outbound(packet);
  }
 
-EndpointDevice::EndpointDevice(StrLen ep_dev_name,MasterKey &master_key)
+EndpointDevice::EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key)
  : hook(ep_dev_name),
    dev(hook),
    host("PSec::EndpointDevice","PSec::EndpointDevice.host"),
