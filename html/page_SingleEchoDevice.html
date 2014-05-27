@@ -1,14 +1,14 @@
 <!--
-/* page_EchoDevice.html */
+/* page_SingleEchoDevice.html */
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.04
+//  Project: CCore 1.08
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2013 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
 -->
@@ -18,7 +18,7 @@
 
 <head>
 
- <title>CCore -> EchoDevice</title>
+ <title>CCore -> SingleEchoDevice</title>
 
  <link href="CCore.css" rel="stylesheet" type="text/css">
 
@@ -26,18 +26,19 @@
 
 <body>
 
-<h2>EchoDevice</h2>
+<h2>SingleEchoDevice</h2>
 
-<p class="Files">Files <b>CCore/inc/net/EchoDevice.h</b> <b>CCore/src/net/EchoDevice.cpp</b></p>
+<p class="Files">Files <b>CCore/inc/net/SingleEchoDevice.h</b> <b>CCore/src/net/SingleEchoDevice.cpp</b></p>
 
 <p>
-The class <b>EchoDevice</b> implements echo service. It can be attached to a packet multi-point device.
-Been attached the service simply reflects incoming packets. This class is useful in a net testing.
+This class is similar to the <a href="page_EchoDevice.html"><b>EchoDevice</b></a>. But it is working
+with an endpoint device, not multipoint.
+Been attached this device simply reflects incoming packets. This class is useful in a net testing.
 </p>
 
 <pre>
 
-class <span class="Att">EchoDevice</span> : NoCopy
+class <span class="Att">SingleEchoDevice</span> : NoCopy , Net::PacketEndpointDevice::InboundProc
  {
    ....
 
@@ -61,11 +62,11 @@ class <span class="Att">EchoDevice</span> : NoCopy
   
    static const ulen DefaultMaxPackets = 200 ;
   
-   explicit EchoDevice(StrLen mp_dev_name,ulen max_packets=DefaultMaxPackets);
+   explicit SingleEchoDevice(StrLen ep_dev_name,ulen max_packets=DefaultMaxPackets);
    
-   ~EchoDevice();
+   ~SingleEchoDevice();
    
-   void getStat(StatInfo &ret);
+   void getStat(StatInfo &amp;ret);
    
    uint64 getTraffic();
  };
@@ -73,7 +74,7 @@ class <span class="Att">EchoDevice</span> : NoCopy
 </pre>
 
 <p>
-Constructor attaches the object to the packet multi-point device, registered under the given name.
+Constructor attaches the object to the packet endpoint device, registered under the given name.
 <b>max_packets</b> limits the packet usage.
 </p>
 
