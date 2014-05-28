@@ -23,6 +23,8 @@
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/AttachmentHost.h>
 #include <CCore/inc/SaveLoad.h>
+#include <CCore/inc/Counters.h>
+#include <CCore/inc/task/TaskEvent.h>
  
 namespace CCore {
 namespace Net {
@@ -30,9 +32,86 @@ namespace PSec {
 
 /* classes */
 
+//enum ProcessorEvent;
+
+struct EventRegType;
+
+struct ProtoEvent;
+
+class ProcessorStatInfo;
+
 class PacketProcessor;
 
 class EndpointDevice;
+
+/* enum ProcessorEvent */
+
+enum ProcessorEvent
+ {
+  ProcessorEvent_Rx,
+  ProcessorEvent_RxBadLen,
+  ProcessorEvent_RxBadPadLen,
+  ProcessorEvent_RxReplay,
+  ProcessorEvent_RxBadKeyIndex,
+  ProcessorEvent_RxBadHash,
+  ProcessorEvent_RxDone,
+  
+  ProcessorEvent_Tx,
+  ProcessorEvent_TxBadFormat,
+  ProcessorEvent_TxNoKey,
+  ProcessorEvent_TxDone,
+  
+  ProcessorEventLim
+ };
+
+const char * GetTextDesc(ProcessorEvent ev);
+
+/* struct EventRegType */
+
+struct EventRegType
+ {
+  static EventIdType Register(EventMetaInfo &info);  
+ };
+
+/* struct ProtoEvent */
+
+struct ProtoEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 ev;
+  
+  void init(EventTimeType time_,EventIdType id_,ProcessorEvent ev_)
+   {
+    time=time_; 
+    id=id_;
+    
+    ev=ev_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<ProtoEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<ProtoEvent *>(ptr)->id); }
+  
+  static void * Offset_ev(void *ptr) { return &(static_cast<ProtoEvent *>(ptr)->ev); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc);
+ };
+
+/* class ProcessorStatInfo */
+
+class ProcessorStatInfo : public Counters<ProcessorEvent,ProcessorEventLim>
+ {
+  public:
+  
+   void count(ProcessorEvent ev)
+    {
+     TaskEventHost.addProto<ProtoEvent>(ev);
+ 
+     Counters<ProcessorEvent,ProcessorEventLim>::count(ev);
+    }
+ };
 
 /* class PacketProcessor */
 
@@ -42,10 +121,13 @@ class PacketProcessor : NoCopy
    
    ulen header_len;
    ulen min_out_len;
+   ulen min_inp_len;
    
    SequenceNumber out_sequence_number = 0 ;
    
    AntiReplay anti_replay;
+   
+   ProcessorStatInfo stat;
    
   private: 
    
@@ -144,6 +226,10 @@ class PacketProcessor : NoCopy
    OutboundResult outbound(PtrLen<uint8> data,ulen delta,PacketType type=Packet_Data);
    
    void tick(PacketFormat format,PacketList &list);
+   
+   void count(ProcessorEvent ev) { stat.count(ev); }
+   
+   void getStat(ProcessorStatInfo &ret) { ret=stat; }
  };
 
 /* class EndpointDevice */
@@ -181,6 +267,12 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice , PacketEndp
    EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key);
    
    virtual ~EndpointDevice();
+   
+   // stat
+   
+   using StatInfo = ProcessorStatInfo ;
+   
+   void getStat(StatInfo &ret);
    
    // PacketEndpointDevice
    

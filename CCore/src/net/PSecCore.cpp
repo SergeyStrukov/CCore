@@ -146,6 +146,8 @@ uint8 RandomEngine::next()
      addRandom(2*ExtLen-count);
      
      buf=hash->finish();
+     
+     off=0;
     }
   
   return buf[off++];
@@ -317,6 +319,97 @@ auto ProcessorCore::selectEncryptKey(ulen use_count) -> SelectResult
   if( key_set.setEncryptKey(ret,use_count) ) return ret;
      
   return Nothing; 
+ }
+
+/* class AntiReplay */
+
+AntiReplay::BitFlags::BitFlags()
+ {
+  Range(bits).set_null();
+ }
+
+AntiReplay::BitFlags::~BitFlags()
+ {
+  Range(bits).set_null();
+ }
+
+AntiReplay::Unit AntiReplay::BitFlags::test(SequenceNumber num) const
+ {
+  return bits[Index(num)]&Mask(num);
+ }
+
+void AntiReplay::BitFlags::set(SequenceNumber num)
+ {
+  bits[Index(num)]|=Mask(num);
+ }
+
+void AntiReplay::BitFlags::shift(SequenceNumber shift)
+ {
+  if( shift>=WinLen )
+    {
+     Range(bits).set_null();
+    }
+  else
+    {
+     unsigned n=unsigned( shift/UnitBits );
+     unsigned s=unsigned( shift%UnitBits );
+    
+     if( s )
+       {
+        unsigned i=0;
+       
+        for(unsigned lim=WinUnits-n-1; i<lim ;i++) bits[i]=Shift(bits[i+n+1],bits[i+n],s); 
+       
+        bits[i]=Shift(0,bits[i+n],s);
+        
+        for(; i<WinUnits ;i++) bits[i]=0;
+       }
+     else
+       {
+        unsigned i=0;
+      
+        for(unsigned lim=WinUnits-n; i<lim ;i++) bits[i]=bits[i+n]; 
+      
+        for(; i<WinUnits ;i++) bits[i]=0;
+       }
+    }
+ }
+
+AntiReplay::AntiReplay()
+ {
+  base=0;
+ }
+
+AntiReplay::~AntiReplay()
+ {
+ }
+
+bool AntiReplay::testReplay(SequenceNumber num) const
+ {
+  num-=base;
+  
+  if( num<WinLen ) return flags.test(num);
+  
+  return num>=WinLen+ForeLen;
+ }
+
+void AntiReplay::add(SequenceNumber num)
+ {
+  num-=base;
+  
+  if( num<WinLen )
+    {
+     flags.set(num);
+    }
+  else
+    {
+     SequenceNumber shift=num-WinLen+1; 
+    
+     base+=shift;
+    
+     flags.shift(shift);
+     flags.set(WinLen-1);
+    }
  }
 
 } // namespace PSec 

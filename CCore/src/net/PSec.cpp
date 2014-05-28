@@ -16,13 +16,70 @@
 #include <CCore/inc/net/PSec.h>
 
 #include <CCore/inc/UIntSplit.h>
-
 #include <CCore/inc/Exception.h>
  
 namespace CCore {
 namespace Net {
 namespace PSec {
 
+/* enum ProcessorEvent */
+
+const char * GetTextDesc(ProcessorEvent ev)
+ {
+  static const char *const Table[]=
+   {
+    "PSec Rx",              // ProcessorEvent_Rx 
+    "PSec Rx Bad Len",      // ProcessorEvent_RxBadLen
+    "PSec Rx Bad Pad Len",  // ProcessorEvent_RxBadPadLen
+    "PSec Rx Replay",       // ProcessorEvent_RxReplay
+    "PSec Rx Bad KeyIndex", // ProcessorEvent_RxBadKeyIndex
+    "PSec Bad Hash",        // ProcessorEvent_RxBadHash
+    "PSec Rx Done",         // ProcessorEvent_RxDone
+    
+    "PSec Tx",              // ProcessorEvent_Tx
+    "PSec Tx Bad Format",   // ProcessorEvent_TxBadFormat
+    "PSec Tx No Key",       // ProcessorEvent_TxNoKey
+    "PSec Tx Done"          // ProcessorEvent_TxDone
+   };
+  
+  return Table[ev];
+ }
+
+/* struct EventRegType */
+
+EventIdType EventRegType::Register(EventMetaInfo &info)
+ {
+  return info.addEnum_uint8("PSecEventType")
+    
+             .addValueName(ProcessorEvent_Rx,"Rx",EventMarker_Up)
+             .addValueName(ProcessorEvent_RxBadLen,"Rx BadLen",EventMarker_DownBlock)
+             .addValueName(ProcessorEvent_RxBadPadLen,"Rx BadPadLen",EventMarker_DownBlock)
+             .addValueName(ProcessorEvent_RxReplay,"Rx Replay",EventMarker_DownBlock)
+             .addValueName(ProcessorEvent_RxBadKeyIndex,"Rx BadKeyIndex",EventMarker_DownBlock)
+             .addValueName(ProcessorEvent_RxBadHash,"Rx BadHash",EventMarker_DownBlock)
+             .addValueName(ProcessorEvent_RxDone,"Rx Done",EventMarker_Down)
+             
+             .addValueName(ProcessorEvent_Tx,"Tx",EventMarker_Up)
+             .addValueName(ProcessorEvent_TxBadFormat,"Tx BadFormat",EventMarker_DownBlock)
+             .addValueName(ProcessorEvent_TxNoKey,"Tx NoKey",EventMarker_DownBlock)
+             .addValueName(ProcessorEvent_TxDone,"Tx Done",EventMarker_Down)
+             
+             .getId();
+ }
+
+/* struct ProtoEvent */
+
+void ProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+ {
+  auto id=info.addStruct("PSecEvent")
+              .addField_uint32("time",Offset_time)
+              .addField_uint16("id",Offset_id)
+              .addField_enum_uint8(EventTypeId<EventRegType>::GetId(),"event",Offset_ev)
+              .getId();
+  
+  desc.setStructId(info,id);
+ }
+  
 /* class PacketProcessor */
 
 void PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data) // TODO
@@ -37,6 +94,7 @@ PacketProcessor::PacketProcessor(const MasterKey &master_key)
   header_len=RoundUp(2*HeaderLen,core.getBLen());
   
   min_out_len=outLen(64);
+  min_inp_len=outLen(0);
  }
 
 PacketProcessor::~PacketProcessor()
@@ -67,11 +125,18 @@ ulen PacketProcessor::getMaxInpLen(ulen len)
 
 auto PacketProcessor::inbound(PtrLen<uint8> data) -> InboundResult
  {
+  stat.count(ProcessorEvent_Rx);
+  
   // 1
   
   ulen blen=core.getBLen();
 
-  if( data.len%blen || data.len<=header_len ) return Nothing;
+  if( data.len%blen || data.len<min_inp_len ) 
+    {
+     stat.count(ProcessorEvent_RxBadLen);
+    
+     return Nothing;
+    }
   
   // 2
   
@@ -98,13 +163,28 @@ auto PacketProcessor::inbound(PtrLen<uint8> data) -> InboundResult
   {
    len=data.len-header_len;
    
-   if( header.pad_len>=len ) return Nothing;
+   if( header.pad_len>=len ) 
+     {
+      stat.count(ProcessorEvent_RxBadPadLen);
+     
+      return Nothing;
+     }
    
    len-=header.pad_len;
    
-   if( !anti_replay.test(header.sequence_number) ) return Nothing;
+   if( anti_replay.testReplay(header.sequence_number) ) 
+     {
+      stat.count(ProcessorEvent_RxReplay);
+     
+      return Nothing;
+     }
    
-   if( !core.setDecryptKey(header.key_index) ) return Nothing;
+   if( !core.setDecryptKey(header.key_index) ) 
+     {
+      stat.count(ProcessorEvent_RxBadKeyIndex);
+     
+      return Nothing;
+     }
    
    core.setDecryptKey();
    
@@ -143,7 +223,12 @@ auto PacketProcessor::inbound(PtrLen<uint8> data) -> InboundResult
   {
    ulen hlen=core.getHLen();
    
-   if( len<hlen ) return Nothing;
+   if( len<hlen ) 
+     {
+      stat.count(ProcessorEvent_RxBadLen);
+      
+      return Nothing;
+     }
 
    len-=hlen;
    
@@ -151,8 +236,17 @@ auto PacketProcessor::inbound(PtrLen<uint8> data) -> InboundResult
    
    const uint8 *hash=core.finish();
    
-   if( !Range_const(hash,hlen).equal(base+len) ) return Nothing;
+   if( !Range_const(hash,hlen).equal(base+len) ) 
+     {
+      stat.count(ProcessorEvent_RxBadHash);
+      
+      return Nothing;
+     }
+   
+   anti_replay.add(header.sequence_number);
   }
+  
+  stat.count(ProcessorEvent_RxDone);
   
   if( header.type!=Packet_Data )
     {
@@ -166,6 +260,8 @@ auto PacketProcessor::inbound(PtrLen<uint8> data) -> InboundResult
 
 auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) -> OutboundResult
  {
+  stat.count(ProcessorEvent_Tx);
+  
   // 1
   
   ulen blen=core.getBLen();
@@ -192,7 +288,12 @@ auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) ->
   {
    auto select=core.selectEncryptKey(use_count);
    
-   if( !select.ok ) return Nothing;
+   if( !select.ok ) 
+     {
+      stat.count(ProcessorEvent_TxNoKey);
+     
+      return Nothing;
+     }
    
    Header h;
    
@@ -302,6 +403,8 @@ auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) ->
    Range(out,ret).set_null();
   }
   
+  stat.count(ProcessorEvent_TxDone);
+  
   return ret;
  }
 
@@ -378,6 +481,13 @@ EndpointDevice::~EndpointDevice()
   dev->detach();
  }
 
+void EndpointDevice::getStat(StatInfo &ret)
+ {
+  Mutex::Lock lock(mutex);
+  
+  proc.getStat(ret);
+ }
+
 PacketFormat EndpointDevice::getOutboundFormat()
  {
   return outbound_format;
@@ -402,6 +512,8 @@ void EndpointDevice::outbound(Packet<uint8> packet)
     }
   else
     {
+     ProcLocked(mutex,proc)->count(ProcessorEvent_TxBadFormat);
+    
      packet.complete();
     }
  }

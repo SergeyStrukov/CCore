@@ -64,6 +64,8 @@ class Engine : NoCopy
      ShowStat(src,"Src");
      ShowStat(echo,"Echo");
      ShowStat(client,"Client");
+     ShowStat(server_psec,"Server PSec");
+     ShowStat(client_psec,"Client PSec");
     } 
     
    class StartStop : NoCopy
@@ -106,14 +108,21 @@ bool Testit<106>::Main()
   Net::PSec::TestMasterKey master_key;
   
   Engine engine(format,master_key);
+  TaskEventRecorder recorder(100_MByte);
   
   {
+   TickTask tick_task; 
+   TaskEventHostType::StartStop event_start_stop(TaskEventHost,&recorder);
    Engine::StartStop start_stop(engine);
    
    Task::Sleep(10_sec);
   }
   
   engine.showStat();
+  
+  StreamFile dev("test106.bin");
+  
+  dev(recorder);
   
   return true;
  }

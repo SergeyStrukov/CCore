@@ -688,15 +688,53 @@ class ProcessorCore : NoCopy
 
 /* class AntiReplay */
 
-class AntiReplay : NoCopy // TODO
+class AntiReplay : NoCopy
  {
+   using Unit = unsigned ;
+   
+   static const unsigned UnitBits = Meta::UIntBits<Unit>::Ret ;
+   static const unsigned WinUnits = 128 ;
+   static const SequenceNumber WinLen = UnitBits*WinUnits ;
+   static const SequenceNumber ForeLen = 1000000 ;
+   
+   SequenceNumber base;
+   
+   class BitFlags : NoCopy
+    {
+      Unit bits[WinUnits];
+     
+     private:
+      
+      static unsigned Index(SequenceNumber num) { return num/UnitBits; }
+      
+      static Unit Mask(SequenceNumber num) { return Unit(1)<<(num%UnitBits); }
+      
+      static Unit Shift(Unit hi,Unit lo,unsigned shift) { return (lo>>shift)|(hi<<(UnitBits-shift)); }
+      
+     public:
+     
+      BitFlags();
+      
+      ~BitFlags();
+      
+      Unit test(SequenceNumber num) const;
+      
+      void set(SequenceNumber num);
+      
+      void shift(SequenceNumber shift);
+    };
+   
+   BitFlags flags;
+  
   public:
   
-   AntiReplay() {}
+   AntiReplay();
    
-   ~AntiReplay() {}
+   ~AntiReplay();
    
-   bool test(SequenceNumber num) { Used(num); return true; }
+   bool testReplay(SequenceNumber num) const;
+   
+   void add(SequenceNumber num);
  };
 
 } // namespace PSec 
