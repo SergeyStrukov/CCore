@@ -82,10 +82,51 @@ void ProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
   
 /* class PacketProcessor */
 
-void PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data) // TODO
+KeySet::Response PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
  {
-  Used(type);
-  Used(data);
+  KeyIndex key_index=0;
+  const uint8 *gy=0;
+  
+  switch( type )
+    {
+     case Packet_Alert : 
+     case Packet_Ready :
+      {
+       if( data.len<SaveLenCounter<KeyIndex>::SaveLoadLen+core.getGLen() ) return Nothing;
+       
+       KeyIndex key_index;
+       
+       BufGetDev dev(data.ptr);
+       
+       dev.use<BeOrder>(key_index);
+       
+       gy=dev.getRest();
+      }
+     break; 
+      
+     case Packet_Ack :
+      {
+       if( data.len<SaveLenCounter<KeyIndex>::SaveLoadLen ) return Nothing;
+       
+       KeyIndex key_index;
+       
+       BufGetDev dev(data.ptr);
+       
+       dev.use<BeOrder>(key_index);
+      }
+     break; 
+    }
+  
+  switch( type )
+    {
+     case Packet_Alert : return core.alert(key_index,gy);
+     
+     case Packet_Ready : return core.ready(key_index,gy);
+      
+     case Packet_Ack : return core.ack(key_index);
+      
+     default: return Nothing; 
+    }
  }
 
 PacketProcessor::PacketProcessor(const MasterKey &master_key)
@@ -250,9 +291,7 @@ auto PacketProcessor::inbound(PtrLen<uint8> data) -> InboundResult
   
   if( header.type!=Packet_Data )
     {
-     inbound(header.type,Range_const(base,len));
-    
-     return Nothing;
+     return inbound(header.type,Range_const(base,len));
     }
   
   return Range_const(base,len);
@@ -408,13 +447,118 @@ auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) ->
   return ret;
  }
 
-void PacketProcessor::tick(PacketFormat format,PacketList &list) // TODO
+void PacketProcessor::random(uint8 *ptr,ulen len)
  {
-  Used(format);
-  Used(list);
+  for(uint8 &x : Range(ptr,len) ) x=core.random();
  }
 
 /* class EndpointDevice */
+
+void EndpointDevice::response(KeyIndex key_index,Packets type,PtrLen<const uint8> gx)
+ {
+  switch( type )
+    {
+     case Packet_Alert :
+     case Packet_Ready :
+      {
+       Packet<uint8> packet=pset.try_get();
+       
+       if( !packet ) 
+         {
+          return;
+         }
+       
+       ulen min_len=SaveLenCounter<KeyIndex>::SaveLoadLen+gx.len;
+       
+       ulen max_len=packet.getMaxDataLen(outbound_format).len;
+       
+       if( min_len>max_len )
+         {
+          packet.complete();
+          
+          return;
+         }
+       
+       ulen len=ProcLocked(mutex,proc)->selectLen(min_len,max_len);
+       
+       auto data=packet.setDataLen(outbound_format,len);
+          
+       BufPutDev dev(data.ptr);
+       
+       dev.use<BeOrder>(key_index);
+       
+       uint8 *ptr=dev.getRest();
+       
+       gx.copyTo(ptr);
+       
+       ProcLocked(mutex,proc)->random(ptr+gx.len,max_len-min_len);
+         
+       outbound(packet,type);
+      }
+     break; 
+      
+     case Packet_Ack :
+      {
+       Packet<uint8> packet=pset.try_get();
+       
+       if( !packet ) 
+         {
+          return;
+         }
+       
+       ulen min_len=SaveLenCounter<KeyIndex>::SaveLoadLen;
+       
+       ulen max_len=packet.getMaxDataLen(outbound_format).len;
+       
+       if( min_len>max_len )
+         {
+          packet.complete();
+          
+          return;
+         }
+       
+       ulen len=ProcLocked(mutex,proc)->selectLen(min_len,max_len);
+       
+       auto data=packet.setDataLen(outbound_format,len);
+          
+       BufPutDev dev(data.ptr);
+       
+       dev.use<BeOrder>(key_index);
+       
+       uint8 *ptr=dev.getRest();
+       
+       ProcLocked(mutex,proc)->random(ptr,max_len-min_len);
+         
+       outbound(packet,type);
+      }
+     break; 
+    }
+ }
+
+void EndpointDevice::outbound(Packet<uint8> packet,Packets type)
+ {
+  if( packet.checkRange(outbound_format) )
+    {
+     auto result=ProcLocked(mutex,proc)->outbound(packet.getRange(outbound_format),outbound_delta,type);
+     
+     if( result.ok )
+       {
+        packet.setDataLen(packet.getDataLen()-result.delta);       
+       
+        dev->outbound(packet);
+       }
+     else
+       {
+        packet.complete();
+       }
+    }
+  else
+    {
+     ProcLocked(mutex,proc)->count(ProcessorEvent_TxBadFormat);
+    
+     packet.complete();
+    }
+ }
 
 void EndpointDevice::inbound(Packet<uint8> packet,PtrLen<const uint8> data)
  {
@@ -422,6 +566,8 @@ void EndpointDevice::inbound(Packet<uint8> packet,PtrLen<const uint8> data)
   
   if( result.consumed )
     {
+     response(result.resp);
+     
      packet.complete();
     }
   else
@@ -447,18 +593,15 @@ void EndpointDevice::tick()
    if( +hook ) hook->tick();
   }
   
-  PacketList list;
-  
-  ProcLocked(mutex,proc)->tick(outbound_format,list);
-
-  while( auto packet=list.get() ) dev->outbound(packet);
+  response(ProcLocked(mutex,proc)->tick());
  }
 
 EndpointDevice::EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key)
  : hook(ep_dev_name),
    dev(hook),
    host("PSec::EndpointDevice","PSec::EndpointDevice.host"),
-   mutex("PSec::EndpointDevice"),
+   pset("PSec::EndpointDevice.pset"),
+   mutex("PSec::EndpointDevice.mutex"),
    proc(master_key)
  {
   PacketFormat fmt=dev->getOutboundFormat();
@@ -495,27 +638,7 @@ PacketFormat EndpointDevice::getOutboundFormat()
  
 void EndpointDevice::outbound(Packet<uint8> packet)
  {
-  if( packet.checkRange(outbound_format) )
-    {
-     auto result=ProcLocked(mutex,proc)->outbound(packet.getRange(outbound_format),outbound_delta);
-     
-     if( result.ok )
-       {
-        packet.setDataLen(packet.getDataLen()-result.delta);       
-       
-        dev->outbound(packet);
-       }
-     else
-       {
-        packet.complete();
-       }
-    }
-  else
-    {
-     ProcLocked(mutex,proc)->count(ProcessorEvent_TxBadFormat);
-    
-     packet.complete();
-    }
+  outbound(packet,Packet_Data);
  }
  
 ulen EndpointDevice::getMaxInboundLen()

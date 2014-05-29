@@ -26,9 +26,9 @@ namespace PSec {
 
 /* class TestMasterKey */
 
-using DefEncrypt = Crypton::PlatformAES256 ;
+using DefEncrypt = Crypton::AES256 ;
 
-using DefDecrypt = Crypton::PlatformAESInverse256 ;
+using DefDecrypt = Crypton::AESInverse256 ;
 
 static const ulen DefKeyCount = 100 ;
 
@@ -155,31 +155,77 @@ uint8 RandomEngine::next()
 
 /* class KeySet */
 
-void KeySet::activate_base(ulen index)
+void KeySet::Key::move(Key &obj)
+ {
+  serial=obj.serial;
+  life_lim=obj.life_lim;
+  state=Replace(obj.state,KeyDead);
+  active=Replace(obj.active,false);
+  
+  Swap(key,obj.key);
+ }
+
+bool KeySet::Key::updateState(LifeLim initial)
+ {
+  switch( state )
+    {
+     case KeyGreen :
+      {
+       if( life_lim.isYellow(initial) ) 
+         {
+          state=KeyYellow;
+          
+          return true;
+         }
+      }
+     return false;
+     
+     case KeyYellow :
+      {
+       if( life_lim.isRed(initial) ) state=KeyRed;
+      }
+     return false; 
+     
+     case KeyRed :
+      {
+       if( life_lim.isDead() ) state=KeyDead;
+      }
+     return false;
+     
+     default: return false;
+    }
+ }
+
+void KeySet::activate_base(ulen index) // not active
  {
   Rec &rec=key_set[index];
  
   KeyIndex key_index=rec.base.makeKeyIndex(index);
   
   rec.active_index=active_count;
+  rec.base.active=true;
   
   active_list[active_count++]=key_index;
  }
    
-void KeySet::activate_next(ulen index)
+void KeySet::activate_next(ulen index) // not active
  {
   Rec &rec=key_set[index];
  
   KeyIndex key_index=rec.next.makeKeyIndex(index);
   
   rec.active_index=active_count;
+  rec.next.active=true;
   
   active_list[active_count++]=key_index;
  }
  
-void KeySet::deactivate(ulen index)
+void KeySet::deactivate(ulen index) // active
  {
   Rec &rec=key_set[index];
+  
+  rec.base.active=false;
+  rec.next.active=false;
   
   ulen i=rec.active_index;
   
@@ -193,17 +239,45 @@ void KeySet::deactivate(ulen index)
     }
  }
 
+void KeySet::flip(ulen index) // base not active
+ {
+  Rec &rec=key_set[index];
+  
+  rec.base.move(rec.next);
+ }
+
+void KeySet::rekey_base(ulen index)
+ {
+  Rec &rec=key_set[index];
+  
+  if( !rec.base.active ) return;
+  
+  // TODO
+ }
+
+void KeySet::rekey_next(ulen index)
+ {
+  Rec &rec=key_set[index];
+  
+  if( !rec.next.active ) return;
+  
+  // TODO
+ }
+
 KeySet::KeySet(const MasterKey &master_key)
  : klen(master_key.getKLen()),
    life_lim(master_key.getLifeLim()),
    key_set(master_key.getKeySetLen()),
    key_buf(klen*(1+2*key_set.getLen())),
    active_list(key_set.getLen()),
-   active_count(0)
+   key_gen(master_key.createKeyGen()),
+   glen(key_gen->getGLen())
  {
   uint8 *ptr=key_buf.getPtr();
   
   key0=ptr; ptr+=klen;
+  
+  master_key.getKey0(key0);
   
   for(ulen index=0,len=key_set.getLen(); index<len ;index++) 
     {
@@ -211,6 +285,8 @@ KeySet::KeySet(const MasterKey &master_key)
     
      rec.base.key=ptr; ptr+=klen;
      rec.next.key=ptr; ptr+=klen;
+     
+     master_key.getKey(index,rec.base.key);
      
      rec.base.state=KeyGreen;
      rec.base.life_lim=life_lim;
@@ -232,24 +308,40 @@ bool KeySet::setEncryptKey(KeyIndex key_index,ulen use_count)
 
   Rec &rec=key_set[index];
   
-  KeyIndex serial=GetSerial(key_index);
-  
-  if( rec.base.state<KeyRed && rec.base.testSerial(serial) ) 
+  if( rec.base.active ) 
     {
-     encrypt_key=rec.base.key;
-     
-     rec.base.life_lim.use(use_count);
-    
-     return true;
+     if( rec.base.state<KeyRed )
+       {
+        encrypt_key=rec.base.key;
+       
+        rec.base.use(use_count);
+       
+        return true;
+       }
+     else
+       {
+        deactivate(index);
+       
+        return false;
+       }
     }
     
-  if( rec.next.state<KeyRed && rec.next.testSerial(serial) ) 
+  if( rec.next.active ) 
     {
-     encrypt_key=rec.next.key;
-    
-     rec.next.life_lim.use(use_count);
-     
-     return true;
+     if( rec.next.state<KeyRed )
+       {
+        encrypt_key=rec.next.key;
+      
+        rec.next.use(use_count);
+       
+        return true;
+       }
+     else
+       {
+        deactivate(index);
+        
+        return false;
+       }
     }
     
   return false;  
@@ -265,21 +357,63 @@ bool KeySet::setDecryptKey(KeyIndex key_index)
   
   KeyIndex serial=GetSerial(key_index);
   
-  if( rec.base.state<KeyDead && rec.base.testSerial(serial) ) 
+  if( rec.base.testSerial(serial) ) 
     {
      decrypt_key=rec.base.key;
-    
+      
      return true;
     }
     
-  if( rec.next.state<KeyDead && rec.next.testSerial(serial) ) 
+  if( rec.next.testSerial(serial) ) 
     {
      decrypt_key=rec.next.key;
-    
+      
      return true;
     }
     
   return false;  
+ }
+
+auto KeySet::tick() -> Response // TODO
+ {
+  ulen count=key_set.getLen();
+  
+  if( !count ) return Nothing;
+  
+  Rec &rec=key_set[tick_index];
+  
+  rec.tick();
+  
+  if( rec.base.updateState(life_lim) ) rekey_base(tick_index);
+  
+  if( rec.next.updateState(life_lim) ) rekey_next(tick_index);
+  
+  if( (++tick_index)>=count ) tick_index=0;
+  
+  return Nothing;
+ }
+
+auto KeySet::alert(KeyIndex key_index,const uint8 gy[]) -> Response // TODO
+ {
+  Used(key_index);
+  Used(gy);
+  
+  return Nothing;
+ }
+
+auto KeySet::ready(KeyIndex key_index,const uint8 gy[]) -> Response // TODO
+ {
+  Used(key_index);
+  Used(gy);
+  
+  return Nothing;
+ }
+
+auto KeySet::ack(KeyIndex key_index) -> Response // TODO
+ {
+  Used(key_index);
+  
+  return Nothing;
  }
 
 /* class ProcessorCore */
@@ -291,6 +425,13 @@ ulen ProcessorCore::selectIndex(ulen len)
   for(unsigned i=0; i<8 ;i++) split[i]=random();
   
   return split.get()%len;
+ }
+
+ulen ProcessorCore::selectLen(ulen min_len,ulen max_len)
+ {
+  if( min_len>=max_len ) return min_len;
+  
+  return min_len+selectIndex(max_len-min_len+1);
  }
 
 ProcessorCore::ProcessorCore(const MasterKey &master_key)

@@ -19,6 +19,7 @@
 #include <CCore/inc/OwnPtr.h>
 #include <CCore/inc/Array.h>
 #include <CCore/inc/BlockFifo.h>
+#include <CCore/inc/Timer.h>
 
 namespace CCore {
 namespace Net {
@@ -33,7 +34,9 @@ enum Packets
   Packet_Data,
   Packet_Alert,
   Packet_Ready,
-  Packet_Ack
+  Packet_Ack,
+  
+  Packet_None
  };
 
 /* types */
@@ -55,6 +58,8 @@ template <class Crypt> class CryptFunc;
 struct AbstractHashFunc;
 
 template <class Hash> class HashFunc;
+
+struct AbstractKeyGen;  
 
 struct AbstractRandomGen;
 
@@ -185,6 +190,21 @@ class HashFunc : public AbstractHashFunc
     }
  };
 
+/* struct AbstractKeyGen */
+
+struct AbstractKeyGen : MemBase_nocopy
+ {
+  virtual ~AbstractKeyGen() {}
+  
+  virtual ulen getGLen() const =0;
+  
+  virtual ulen getKLen() const =0;
+  
+  virtual void pow(const uint8 x[],uint8 gx[]) const =0;
+  
+  virtual void key(const uint8 x[],const uint8 gy[],uint8 key[]) const =0;
+ };
+
 /* struct AbstractRandomGen */
 
 struct AbstractRandomGen : MemBase_nocopy
@@ -226,12 +246,37 @@ struct LifeLim
   
   LifeLim(uint32 ttl_,uint32 utl_) : ttl(ttl_),utl(utl_) {}
   
-  void use(ulen use_count)
+  bool isYellow(LifeLim initial) const
+   {
+    return ttl<initial.ttl/2 || utl<initial.utl/2 ;
+   }
+  
+  bool isRed(LifeLim initial) const
+   {
+    return ttl<initial.ttl/4 || utl<initial.utl/4 ;
+   }
+  
+  bool isDead() const
+   {
+    return !ttl || !utl ;
+   }
+  
+  template <class UInt>
+  void use(UInt use_count)
    {
     if( use_count<=utl )
       utl-=(uint32)use_count;
     else
       utl=0;
+   }
+ 
+  template <class UInt>
+  void tick(UInt dtime)
+   {
+    if( dtime<=ttl )
+      ttl-=(uint32)dtime;
+    else
+      ttl=0;
    }
  };
 
@@ -248,6 +293,8 @@ struct MasterKey : MemBase_nocopy
   virtual AbstractCryptFunc * createDecrypt() const =0;
   
   virtual AbstractHashFunc * createHash() const =0;
+  
+  virtual AbstractKeyGen * createKeyGen() const =0;
   
   virtual AbstractRandomGen * createRandom() const =0;
   
@@ -283,6 +330,8 @@ class TestMasterKey : public MasterKey
    virtual AbstractCryptFunc * createDecrypt() const;
    
    virtual AbstractHashFunc * createHash() const;
+   
+   virtual AbstractKeyGen * createKeyGen() const;
    
    virtual AbstractRandomGen * createRandom() const;
    
@@ -365,12 +414,29 @@ class KeySet : NoCopy // TODO
      KeyIndex serial = 0 ; // 2 bits
      LifeLim life_lim;
      KeyState state = KeyDead ;
+     bool active = false ;
      
      Key() {}
      
-     bool testSerial(KeyIndex serial_) const { return serial_==serial; }
+     bool testSerial(KeyIndex serial_) const { return state<KeyDead && serial_==serial ; }
      
      KeyIndex makeKeyIndex(ulen index) const { return KeyIndex( index|(serial<<14) ); }
+     
+     void move(Key &obj);
+     
+     template <class UInt>
+     void use(UInt use_count)
+      {
+       if( state<KeyDead ) life_lim.use(use_count);
+      }
+     
+     template <class UInt>
+     void tick(UInt dtime)
+      {
+       if( state<KeyDead ) life_lim.tick(dtime);
+      }
+    
+     bool updateState(LifeLim initial);    
     };
    
    struct Rec : NoThrowFlagsBase
@@ -378,20 +444,32 @@ class KeySet : NoCopy // TODO
      Key base;
      Key next;
      
+     SecDiffTimer timer;
+     
      ulen active_index = 0 ;
      
      Rec() {}
+     
+     void tick() 
+      {
+       auto dtime=timer.get();
+       
+       base.tick(dtime);
+       next.tick(dtime);
+      }
     };
    
    DynArray<Rec> key_set;
    DynArray<uint8> key_buf;
    DynArray<KeyIndex> active_list;
    
-   ulen active_count;
+   ulen active_count = 0 ;
    
-   const uint8 *key0;
+   uint8 *key0 = 0 ;
    const uint8 *encrypt_key = 0 ;
    const uint8 *decrypt_key = 0 ;
+   
+   ulen tick_index = 0 ;
    
   private:
    
@@ -405,11 +483,25 @@ class KeySet : NoCopy // TODO
    
    void deactivate(ulen index);
    
+   void flip(ulen index);
+   
+   void rekey_base(ulen index);
+   
+   void rekey_next(ulen index);
+   
+  private: 
+   
+   OwnPtr<AbstractKeyGen> key_gen;
+   
+   ulen glen;
+   
   public:
   
    explicit KeySet(const MasterKey &master_key);
    
    ~KeySet();
+   
+   // keys
    
    const uint8 * getKey0() const { return key0; }
    
@@ -422,6 +514,27 @@ class KeySet : NoCopy // TODO
    bool setDecryptKey(KeyIndex key_index);
    
    const uint8 * getDecryptKey() const { return decrypt_key; }
+   
+   // key exchange
+   
+   ulen getGLen() const { return glen; }
+   
+   struct Response
+    {
+     Packets type;
+     KeyIndex key_index;
+     PtrLen<const uint8> gx;
+     
+     Response(NothingType) : type(Packet_None),key_index(0) {}
+    };
+   
+   Response tick();
+   
+   Response alert(KeyIndex key_index,const uint8 gy[]);
+   
+   Response ready(KeyIndex key_index,const uint8 gy[]);
+   
+   Response ack(KeyIndex key_index);
  };
 
 /* class Convolution<A,B> */
@@ -633,6 +746,8 @@ class ProcessorCore : NoCopy
    
    ulen selectIndex(ulen len);
    
+   ulen selectLen(ulen min_len,ulen max_len);
+   
    // encrypt
    
    struct SelectResult
@@ -684,6 +799,18 @@ class ProcessorCore : NoCopy
    void add(PtrLen<const uint8> data) { hash->add(data); }  
    
    const uint8 * finish() { return hash->finish(); }
+   
+   // key exchange
+   
+   ulen getGLen() const { return key_set.getGLen(); }
+   
+   KeySet::Response tick() { return key_set.tick(); }
+   
+   KeySet::Response alert(KeyIndex key_index,const uint8 gy[]) { return key_set.alert(key_index,gy); }
+   
+   KeySet::Response ready(KeyIndex key_index,const uint8 gy[]) { return key_set.ready(key_index,gy); }
+   
+   KeySet::Response ack(KeyIndex key_index) { return key_set.ack(key_index); }
  };
 
 /* class AntiReplay */

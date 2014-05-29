@@ -17,6 +17,7 @@
 #define CCore_inc_net_PSec_h
 
 #include <CCore/inc/net/PacketEndpointDevice.h>
+#include <CCore/inc/PacketSet.h>
 
 #include <CCore/inc/net/PSecCore.h>
 
@@ -189,7 +190,7 @@ class PacketProcessor : NoCopy
      return l-core.getHLen(); 
     }
    
-   void inbound(PacketType type,PtrLen<const uint8> data);
+   KeySet::Response inbound(PacketType type,PtrLen<const uint8> data);
    
   public:
   
@@ -205,10 +206,13 @@ class PacketProcessor : NoCopy
     {
      PtrLen<const uint8> data;
      bool consumed;
+     KeySet::Response resp;
 
-     InboundResult(NothingType) : consumed(true) {}
+     InboundResult(NothingType) : consumed(true),resp(Nothing) {}
      
-     InboundResult(PtrLen<const uint8> data_) : data(data_),consumed(false) {}
+     InboundResult(PtrLen<const uint8> data_) : data(data_),consumed(false),resp(Nothing) {}
+     
+     InboundResult(KeySet::Response resp_) : consumed(true),resp(resp_) {}
     };
    
    InboundResult inbound(PtrLen<uint8> data);
@@ -223,13 +227,17 @@ class PacketProcessor : NoCopy
      OutboundResult(ulen delta_) : delta(delta_),ok(true) {}
     };
    
-   OutboundResult outbound(PtrLen<uint8> data,ulen delta,PacketType type=Packet_Data);
+   OutboundResult outbound(PtrLen<uint8> data,ulen delta,PacketType type);
    
-   void tick(PacketFormat format,PacketList &list);
+   KeySet::Response tick() { return core.tick(); }
    
    void count(ProcessorEvent ev) { stat.count(ev); }
    
    void getStat(ProcessorStatInfo &ret) { ret=stat; }
+   
+   ulen selectLen(ulen min_len,ulen max_len) { return core.selectLen(min_len,max_len); }
+   
+   void random(uint8 *ptr,ulen len);
  };
 
 /* class EndpointDevice */
@@ -250,11 +258,19 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice , PacketEndp
    PacketFormat outbound_format;
    ulen max_inbound_len;
    
+   PacketSet<uint8> pset;
+   
    Mutex mutex;
    
    PacketProcessor proc;
    
   private: 
+   
+   void response(KeyIndex key_index,Packets type,PtrLen<const uint8> gx);
+   
+   void response(KeySet::Response resp) { response(resp.key_index,resp.type,resp.gx); }
+   
+   void outbound(Packet<uint8> packet,Packets type);
    
    // InboundProc
    
