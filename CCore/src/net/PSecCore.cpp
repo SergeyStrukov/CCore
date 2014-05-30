@@ -200,10 +200,9 @@ void KeySet::activate_base(ulen index) // not active
  {
   Rec &rec=key_set[index];
  
-  KeyIndex key_index=rec.base.makeKeyIndex(index);
+  KeyIndex key_index=rec.base.activate(index);
   
   rec.active_index=active_count;
-  rec.base.active=true;
   
   active_list[active_count++]=key_index;
  }
@@ -212,10 +211,9 @@ void KeySet::activate_next(ulen index) // not active
  {
   Rec &rec=key_set[index];
  
-  KeyIndex key_index=rec.next.makeKeyIndex(index);
+  KeyIndex key_index=rec.next.activate(index);
   
   rec.active_index=active_count;
-  rec.next.active=true;
   
   active_list[active_count++]=key_index;
  }
@@ -246,50 +244,107 @@ void KeySet::flip(ulen index) // base not active
   rec.base.move(rec.next);
  }
 
-void KeySet::rekey_base(ulen index)
+class KeySet::BufInit : NoCopy
  {
-  Rec &rec=key_set[index];
+   uint8 *ptr;
+   ulen len;
+   
+  public: 
+   
+   BufInit(uint8 *ptr_,ulen len_) : ptr(ptr_),len(len_) {}
+   
+   uint8 * get()
+    {
+     uint8 *ret=ptr;
+    
+     ptr=ret+len;
+    
+     return ret;
+    }
+ };
+
+class KeySet::KeyInit : BufInit
+ {
+  public: 
+   
+   KeyInit(uint8 *ptr,ulen klen) : BufInit(ptr,klen) {}
+   
+   uint8 * operator () () { return get(); }
+   
+   uint8 * operator () (const MasterKey &master_key)
+    {
+     uint8 *ret=get();
+     
+     master_key.getKey0(ret);
+     
+     return ret;
+    }
+   
+   uint8 * operator () (const MasterKey &master_key,ulen index)
+    {
+     uint8 *ret=get();
+     
+     master_key.getKey(index,ret);
+     
+     return ret;
+    }
+ };
+
+class KeySet::GenInit : BufInit
+ {
+  public:
+ 
+   GenInit(uint8 *ptr,ulen glen) : BufInit(ptr,glen) {}
+ 
+   uint8 * operator () () { return get(); }
+ };
+
+KeyResponse KeySet::alert(Rec &rec,KeyIndex key_index)
+ {
+  if( rec.type!=Packet_None )
+    {
+     // going to die
+    
+     return Nothing;
+    }
   
-  if( !rec.base.active ) return;
+  rec.type=Packet_Alert;
+  rec.key_index=key_index;
+  rec.repeat.reset();
   
-  // TODO
+  core.random(Range(rec.x,glen));
+  
+  key_gen->pow(rec.x,rec.gx);
+  
+  return KeyResponse(Packet_Alert,key_index,Range_const(rec.gx,glen));
  }
 
-void KeySet::rekey_next(ulen index)
- {
-  Rec &rec=key_set[index];
-  
-  if( !rec.next.active ) return;
-  
-  // TODO
- }
-
-KeySet::KeySet(const MasterKey &master_key)
+KeySet::KeySet(const MasterKey &master_key,ProcessorCore &core_)
  : klen(master_key.getKLen()),
    life_lim(master_key.getLifeLim()),
    key_set(master_key.getKeySetLen()),
    key_buf(klen*(1+2*key_set.getLen())),
    active_list(key_set.getLen()),
    key_gen(master_key.createKeyGen()),
-   glen(key_gen->getGLen())
+   glen(key_gen->getGLen()),
+   rekey_buf(glen*(2*key_set.getLen())),
+   core(core_)
  {
-  uint8 *ptr=key_buf.getPtr();
+  KeyInit kinit(key_buf.getPtr(),klen);
+  GenInit ginit(rekey_buf.getPtr(),glen);
   
-  key0=ptr; ptr+=klen;
-  
-  master_key.getKey0(key0);
+  key0=kinit(master_key);
   
   for(ulen index=0,len=key_set.getLen(); index<len ;index++) 
     {
      Rec &rec=key_set[index];
     
-     rec.base.key=ptr; ptr+=klen;
-     rec.next.key=ptr; ptr+=klen;
+     rec.base.init(kinit(master_key,index),life_lim);
      
-     master_key.getKey(index,rec.base.key);
+     rec.next.init(kinit());
      
-     rec.base.state=KeyGreen;
-     rec.base.life_lim=life_lim;
+     rec.x=ginit();
+     rec.gx=ginit();
      
      activate_base(index);
     }
@@ -374,26 +429,48 @@ bool KeySet::setDecryptKey(KeyIndex key_index)
   return false;  
  }
 
-auto KeySet::tick() -> Response // TODO
+KeyResponse KeySet::tick()
  {
   ulen count=key_set.getLen();
   
   if( !count ) return Nothing;
   
-  Rec &rec=key_set[tick_index];
+  ulen index=tick_index++;
+  
+  if( tick_index>=count ) tick_index=0;
+  
+  Rec &rec=key_set[index];
   
   rec.tick();
   
-  if( rec.base.updateState(life_lim) ) rekey_base(tick_index);
+  if( rec.base.updateState(life_lim) )
+    {
+     return alert(rec,rec.base.makeKeyIndex(index));
+    }
   
-  if( rec.next.updateState(life_lim) ) rekey_next(tick_index);
+  if( rec.next.updateState(life_lim) )
+    {
+     if( rec.next.active )
+       {
+        flip(index);
+        
+        return alert(rec,rec.base.makeKeyIndex(index));
+       }
+     else
+       {
+        // going to die
+       }
+    }
   
-  if( (++tick_index)>=count ) tick_index=0;
+  if( rec.type!=Packet_None && !rec.repeat )
+    {
+     return rec.makeResponse(glen);
+    }
   
   return Nothing;
  }
 
-auto KeySet::alert(KeyIndex key_index,const uint8 gy[]) -> Response // TODO
+KeyResponse KeySet::alert(KeyIndex key_index,const uint8 gy[])
  {
   Used(key_index);
   Used(gy);
@@ -401,7 +478,7 @@ auto KeySet::alert(KeyIndex key_index,const uint8 gy[]) -> Response // TODO
   return Nothing;
  }
 
-auto KeySet::ready(KeyIndex key_index,const uint8 gy[]) -> Response // TODO
+KeyResponse KeySet::ready(KeyIndex key_index,const uint8 gy[])
  {
   Used(key_index);
   Used(gy);
@@ -409,7 +486,7 @@ auto KeySet::ready(KeyIndex key_index,const uint8 gy[]) -> Response // TODO
   return Nothing;
  }
 
-auto KeySet::ack(KeyIndex key_index) -> Response // TODO
+KeyResponse KeySet::ack(KeyIndex key_index)
  {
   Used(key_index);
   
@@ -417,6 +494,11 @@ auto KeySet::ack(KeyIndex key_index) -> Response // TODO
  }
 
 /* class ProcessorCore */
+
+void ProcessorCore::random(PtrLen<uint8> data)
+ {
+  for(uint8 &x : data ) x=random();
+ }
 
 ulen ProcessorCore::selectIndex(ulen len)
  {
@@ -439,7 +521,7 @@ ProcessorCore::ProcessorCore(const MasterKey &master_key)
    decrypt(master_key.createDecrypt()),
    hash(master_key.createHash()),
    random_engine(master_key),
-   key_set(master_key)
+   key_set(master_key,*this)
  {
   blen=encrypt->getBLen();
   hlen=hash->getHLen();

@@ -47,7 +47,18 @@ using SequenceNumber = uint32 ;
 
 using PadLen = uint8 ;
 
-using PacketType = uint8 ; 
+using PacketType = uint8 ;
+
+/* functions */
+
+template <class UInt,class UInt1>
+void PosDec(UInt &var,UInt1 val)
+ {
+  if( val<=var )
+    var-=(UInt)val;
+  else
+    var=0;
+ }
 
 /* classes */
 
@@ -72,6 +83,8 @@ struct MasterKey;
 class TestMasterKey;
 
 class RandomEngine;
+
+struct KeyResponse;
 
 class KeySet;
 
@@ -262,22 +275,10 @@ struct LifeLim
    }
   
   template <class UInt>
-  void use(UInt use_count)
-   {
-    if( use_count<=utl )
-      utl-=(uint32)use_count;
-    else
-      utl=0;
-   }
+  void use(UInt use_count) { PosDec(utl,use_count); }
  
   template <class UInt>
-  void tick(UInt dtime)
-   {
-    if( dtime<=ttl )
-      ttl-=(uint32)dtime;
-    else
-      ttl=0;
-   }
+  void tick(UInt dtime) { PosDec(ttl,dtime); }
  };
 
 /* struct MasterKey */
@@ -393,6 +394,22 @@ class RandomEngine : NoCopy
    void feed(PtrLen<const uint8> block) { fifo.put(block); }
  };
 
+/* struct KeyResponse */
+
+struct KeyResponse
+ {
+  Packets type;
+  KeyIndex key_index;
+  PtrLen<const uint8> gx;
+  
+  KeyResponse(NothingType) : type(Packet_None),key_index(0) {}
+  
+  KeyResponse(Packets type_,KeyIndex key_index_,PtrLen<const uint8> gx_=Empty) 
+   : type(type_),key_index(key_index_),gx(gx_)
+   {
+   }
+ };
+
 /* class KeySet */
 
 class KeySet : NoCopy // TODO
@@ -418,9 +435,28 @@ class KeySet : NoCopy // TODO
      
      Key() {}
      
+     void init(uint8 *key_,LifeLim life_lim_)
+      {
+       key=key_;
+       life_lim=life_lim_;
+       state=KeyGreen;
+      }
+     
+     void init(uint8 *key_)
+      {
+       key=key_;
+      }
+     
      bool testSerial(KeyIndex serial_) const { return state<KeyDead && serial_==serial ; }
      
      KeyIndex makeKeyIndex(ulen index) const { return KeyIndex( index|(serial<<14) ); }
+     
+     KeyIndex activate(ulen index) 
+      { 
+       active=true;
+       
+       return makeKeyIndex(index); 
+      }
      
      void move(Key &obj);
      
@@ -439,6 +475,20 @@ class KeySet : NoCopy // TODO
      bool updateState(LifeLim initial);    
     };
    
+   struct Repeat
+    {
+     unsigned timeout; // sec
+     
+     Repeat() { reset(); }
+     
+     bool operator ! () const { return !timeout; }
+     
+     void reset() { timeout=20; }
+     
+     template <class UInt>
+     void tick(UInt dtime) { PosDec(timeout,dtime); }
+    };
+   
    struct Rec : NoThrowFlagsBase
     {
      Key base;
@@ -448,14 +498,32 @@ class KeySet : NoCopy // TODO
      
      ulen active_index = 0 ;
      
+     uint8 *x = 0 ;
+     uint8 *gx = 0 ;
+     Packets type = Packet_None ;
+     KeyIndex key_index = 0 ;
+     
+     Repeat repeat;
+     
      Rec() {}
      
-     void tick() 
+     void tick()
       {
        auto dtime=timer.get();
        
        base.tick(dtime);
        next.tick(dtime);
+       
+       if( type!=Packet_None ) repeat.tick(dtime);
+      }
+    
+     KeyResponse makeResponse(ulen glen)
+      { 
+       repeat.reset();
+       
+       if( type==Packet_Ack ) return KeyResponse(type,key_index);
+       
+       return KeyResponse(type,key_index,Range_const(gx,glen));
       }
     };
    
@@ -473,6 +541,10 @@ class KeySet : NoCopy // TODO
    
   private:
    
+   class BufInit;
+   class KeyInit;
+   class GenInit;
+   
    static ulen GetIndex(KeyIndex key_index) { return ulen( key_index&0x3FFF ); }
    
    static KeyIndex GetSerial(KeyIndex key_index) { return KeyIndex( key_index>>14 ); }
@@ -485,19 +557,23 @@ class KeySet : NoCopy // TODO
    
    void flip(ulen index);
    
-   void rekey_base(ulen index);
-   
-   void rekey_next(ulen index);
-   
   private: 
    
    OwnPtr<AbstractKeyGen> key_gen;
    
    ulen glen;
    
+   DynArray<uint8> rekey_buf;
+   
+   ProcessorCore &core;
+   
+  private: 
+   
+   KeyResponse alert(Rec &rec,KeyIndex key_index);
+   
   public:
   
-   explicit KeySet(const MasterKey &master_key);
+   KeySet(const MasterKey &master_key,ProcessorCore &core);
    
    ~KeySet();
    
@@ -519,22 +595,13 @@ class KeySet : NoCopy // TODO
    
    ulen getGLen() const { return glen; }
    
-   struct Response
-    {
-     Packets type;
-     KeyIndex key_index;
-     PtrLen<const uint8> gx;
-     
-     Response(NothingType) : type(Packet_None),key_index(0) {}
-    };
+   KeyResponse tick();
    
-   Response tick();
+   KeyResponse alert(KeyIndex key_index,const uint8 gy[]);
    
-   Response alert(KeyIndex key_index,const uint8 gy[]);
+   KeyResponse ready(KeyIndex key_index,const uint8 gy[]);
    
-   Response ready(KeyIndex key_index,const uint8 gy[]);
-   
-   Response ack(KeyIndex key_index);
+   KeyResponse ack(KeyIndex key_index);
  };
 
 /* class Convolution<A,B> */
@@ -744,6 +811,8 @@ class ProcessorCore : NoCopy
    
    uint8 random() { return random_engine.next(); }
    
+   void random(PtrLen<uint8> data);
+   
    ulen selectIndex(ulen len);
    
    ulen selectLen(ulen min_len,ulen max_len);
@@ -804,13 +873,13 @@ class ProcessorCore : NoCopy
    
    ulen getGLen() const { return key_set.getGLen(); }
    
-   KeySet::Response tick() { return key_set.tick(); }
+   KeyResponse tick() { return key_set.tick(); }
    
-   KeySet::Response alert(KeyIndex key_index,const uint8 gy[]) { return key_set.alert(key_index,gy); }
+   KeyResponse alert(KeyIndex key_index,const uint8 gy[]) { return key_set.alert(key_index,gy); }
    
-   KeySet::Response ready(KeyIndex key_index,const uint8 gy[]) { return key_set.ready(key_index,gy); }
+   KeyResponse ready(KeyIndex key_index,const uint8 gy[]) { return key_set.ready(key_index,gy); }
    
-   KeySet::Response ack(KeyIndex key_index) { return key_set.ack(key_index); }
+   KeyResponse ack(KeyIndex key_index) { return key_set.ack(key_index); }
  };
 
 /* class AntiReplay */

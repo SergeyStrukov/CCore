@@ -39,7 +39,10 @@ const char * GetTextDesc(ProcessorEvent ev)
     "PSec Tx",              // ProcessorEvent_Tx
     "PSec Tx Bad Format",   // ProcessorEvent_TxBadFormat
     "PSec Tx No Key",       // ProcessorEvent_TxNoKey
-    "PSec Tx Done"          // ProcessorEvent_TxDone
+    "PSec Tx Done",         // ProcessorEvent_TxDone
+    
+    "PSec Key No Packet",   // ProcessorEvent_KeyNoPacket
+    "PSec Key Bad Format"   // ProcessorEvent_KeyBadFormat
    };
   
   return Table[ev];
@@ -64,6 +67,9 @@ EventIdType EventRegType::Register(EventMetaInfo &info)
              .addValueName(ProcessorEvent_TxNoKey,"Tx NoKey",EventMarker_DownBlock)
              .addValueName(ProcessorEvent_TxDone,"Tx Done",EventMarker_Down)
              
+             .addValueName(ProcessorEvent_KeyNoPacket,"Key NoPacket",EventMarker_Error)
+             .addValueName(ProcessorEvent_KeyBadFormat,"Key BadFormat",EventMarker_Error)
+             
              .getId();
  }
 
@@ -82,7 +88,7 @@ void ProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
   
 /* class PacketProcessor */
 
-KeySet::Response PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
+KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
  {
   KeyIndex key_index=0;
   const uint8 *gy=0;
@@ -92,7 +98,7 @@ KeySet::Response PacketProcessor::inbound(PacketType type,PtrLen<const uint8> da
      case Packet_Alert : 
      case Packet_Ready :
       {
-       if( data.len<SaveLenCounter<KeyIndex>::SaveLoadLen+core.getGLen() ) return Nothing;
+       if( data.len<KeyIndexLen+core.getGLen() ) return Nothing;
        
        KeyIndex key_index;
        
@@ -106,7 +112,7 @@ KeySet::Response PacketProcessor::inbound(PacketType type,PtrLen<const uint8> da
       
      case Packet_Ack :
       {
-       if( data.len<SaveLenCounter<KeyIndex>::SaveLoadLen ) return Nothing;
+       if( data.len<KeyIndexLen ) return Nothing;
        
        KeyIndex key_index;
        
@@ -447,91 +453,63 @@ auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) ->
   return ret;
  }
 
-void PacketProcessor::random(uint8 *ptr,ulen len)
+bool PacketProcessor::response(KeyResponse resp,Packet<uint8> packet,PacketFormat format)
  {
-  for(uint8 &x : Range(ptr,len) ) x=core.random();
+  if( !packet ) 
+    {
+     stat.count(ProcessorEvent_KeyNoPacket);
+    
+     return false;
+    }
+  
+  ulen min_len=KeyIndexLen+resp.gx.len;
+  
+  ulen max_len=packet.getMaxDataLen(format).len;
+  
+  if( min_len>max_len )
+    {
+     stat.count(ProcessorEvent_KeyBadFormat);
+    
+     packet.complete();
+     
+     return false;
+    }
+  
+  ulen len=core.selectLen(min_len,max_len);
+  
+  auto data=packet.setDataLen(format,len);
+     
+  BufPutDev dev(data.ptr);
+  
+  dev.use<BeOrder>(resp.key_index);
+  
+  uint8 *ptr=dev.getRest();
+  
+  resp.gx.copyTo(ptr);
+  
+  core.random(Range(ptr+resp.gx.len,len-min_len));
+  
+  return true;
  }
 
 /* class EndpointDevice */
 
-void EndpointDevice::response(KeyIndex key_index,Packets type,PtrLen<const uint8> gx)
+void EndpointDevice::response(KeyResponse resp)
  {
-  switch( type )
+  switch( resp.type )
     {
      case Packet_Alert :
      case Packet_Ready :
-      {
-       Packet<uint8> packet=pset.try_get();
-       
-       if( !packet ) 
-         {
-          return;
-         }
-       
-       ulen min_len=SaveLenCounter<KeyIndex>::SaveLoadLen+gx.len;
-       
-       ulen max_len=packet.getMaxDataLen(outbound_format).len;
-       
-       if( min_len>max_len )
-         {
-          packet.complete();
-          
-          return;
-         }
-       
-       ulen len=ProcLocked(mutex,proc)->selectLen(min_len,max_len);
-       
-       auto data=packet.setDataLen(outbound_format,len);
-          
-       BufPutDev dev(data.ptr);
-       
-       dev.use<BeOrder>(key_index);
-       
-       uint8 *ptr=dev.getRest();
-       
-       gx.copyTo(ptr);
-       
-       ProcLocked(mutex,proc)->random(ptr+gx.len,max_len-min_len);
-         
-       outbound(packet,type);
-      }
-     break; 
-      
      case Packet_Ack :
       {
        Packet<uint8> packet=pset.try_get();
        
-       if( !packet ) 
+       if( ProcLocked(mutex,proc)->response(resp,packet,outbound_format) )
          {
-          return;
+          outbound(packet,resp.type);
          }
-       
-       ulen min_len=SaveLenCounter<KeyIndex>::SaveLoadLen;
-       
-       ulen max_len=packet.getMaxDataLen(outbound_format).len;
-       
-       if( min_len>max_len )
-         {
-          packet.complete();
-          
-          return;
-         }
-       
-       ulen len=ProcLocked(mutex,proc)->selectLen(min_len,max_len);
-       
-       auto data=packet.setDataLen(outbound_format,len);
-          
-       BufPutDev dev(data.ptr);
-       
-       dev.use<BeOrder>(key_index);
-       
-       uint8 *ptr=dev.getRest();
-       
-       ProcLocked(mutex,proc)->random(ptr,max_len-min_len);
-         
-       outbound(packet,type);
       }
-     break; 
+     break;
     }
  }
 
