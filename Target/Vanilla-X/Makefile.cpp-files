@@ -33,6 +33,7 @@
 ../../CCore/src/Crc.cpp
 ../../CCore/src/crypton/AES.cpp
 ../../CCore/src/crypton/BlockCipher.cpp
+../../CCore/src/crypton/DHExp.cpp
 ../../CCore/src/crypton/HashFunction.cpp
 ../../CCore/src/crypton/Rot.cpp
 ../../CCore/src/crypton/SHA.cpp

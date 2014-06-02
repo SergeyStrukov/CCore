@@ -71,6 +71,7 @@ obj/DDLTypeDesc.o \
 obj/DDLTypedMap.o \
 obj/DDLTypes.o \
 obj/DDLValue.o \
+obj/DHExp.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
 obj/DeferCall.o \
@@ -357,6 +358,7 @@ obj/DDLTypeDesc.s \
 obj/DDLTypedMap.s \
 obj/DDLTypes.s \
 obj/DDLValue.s \
+obj/DHExp.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
 obj/DeferCall.s \
@@ -643,6 +645,7 @@ obj/DDLTypeDesc.dep \
 obj/DDLTypedMap.dep \
 obj/DDLTypes.dep \
 obj/DDLValue.dep \
+obj/DHExp.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
 obj/DeferCall.dep \
@@ -1083,6 +1086,9 @@ obj/DDLTypes.o : ../../CCore/src/ddl/DDLTypes.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DDLValue.o : ../../CCore/src/ddl/DDLValue.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DHExp.o : ../../CCore/src/crypton/DHExp.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DefaultTimeout.o : ../../CCore/src/gadget/DefaultTimeout.cpp
@@ -1936,6 +1942,9 @@ obj/DDLTypes.s : ../../CCore/src/ddl/DDLTypes.cpp
 obj/DDLValue.s : ../../CCore/src/ddl/DDLValue.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DHExp.s : ../../CCore/src/crypton/DHExp.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DefaultTimeout.s : ../../CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2786,6 +2795,9 @@ obj/DDLTypes.dep : ../../CCore/src/ddl/DDLTypes.cpp
 
 obj/DDLValue.dep : ../../CCore/src/ddl/DDLValue.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDLValue.o $< -MF $@
+
+obj/DHExp.dep : ../../CCore/src/crypton/DHExp.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DHExp.o $< -MF $@
 
 obj/DefaultTimeout.dep : ../../CCore/src/gadget/DefaultTimeout.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DefaultTimeout.o $< -MF $@

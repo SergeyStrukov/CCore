@@ -70,7 +70,9 @@ struct AbstractHashFunc;
 
 template <class Hash> class HashFunc;
 
-struct AbstractKeyGen;  
+struct AbstractKeyGen;
+
+template <class Exp,class Hash,ulen KeyLen> class KeyGen;
 
 struct AbstractRandomGen;
 
@@ -213,9 +215,79 @@ struct AbstractKeyGen : MemBase_nocopy
   
   virtual ulen getKLen() const =0;
   
-  virtual void pow(const uint8 x[],uint8 gx[]) const =0;
+  virtual void pow(const uint8 x[],uint8 gx[]) =0;
   
-  virtual void key(const uint8 x[],const uint8 gy[],uint8 key[]) const =0;
+  virtual void key(const uint8 x[],const uint8 gy[],uint8 key[]) =0;
+ };
+
+/* class KeyGen<Exp,Hash,ulen KeyLen> */
+
+template <class Exp,class Hash,ulen KeyLen> 
+class KeyGen : public AbstractKeyGen
+ {
+  public:
+  
+   static const ulen GLen = Exp::GLen ;
+   static const ulen HLen = Hash::DigestLen ;
+   static const ulen SecretCount = 1 + (KeyLen+HLen-1)/HLen ;
+ 
+  private:
+  
+   Exp exp;
+   Hash hash;
+   
+   uint8 secret[SecretCount*GLen];
+   
+   uint8 gxy[GLen];
+   uint8 gxys[GLen];
+   uint8 digest[HLen];
+   
+  public:
+   
+   KeyGen() {}
+   
+   virtual ~KeyGen() 
+    { 
+     Range(secret).set_null(); 
+     
+     Range(gxy).set_null();
+     Range(gxys).set_null();
+     Range(digest).set_null();
+    }
+   
+   // common secret
+   
+   PtrLen<uint8> takeSecret(ulen index) { return Range(secret+index*GLen,GLen); }
+   
+   // AbstractKeyGen
+   
+   virtual ulen getGLen() const { return GLen; }
+   
+   virtual ulen getKLen() const { return KeyLen; }
+   
+   virtual void pow(const uint8 x[],uint8 gx[])
+    {
+     exp.pow(x,gx);
+    }
+   
+   virtual void key(const uint8 x[],const uint8 gy[],uint8 key[])
+    {
+     uint8 *ptr=secret;
+     
+     exp.pow(gy,x,gxy);
+     exp.pow(gxy,ptr,gxys); ptr+=GLen;
+     
+     PtrLen<uint8> out(key,KeyLen);
+     
+     for(; ulen delta=Min(HLen,out.len) ;ptr+=GLen)
+       {
+        hash.add(Range_const(gxys));
+        hash.add(Range_const(ptr,GLen));
+        hash.finish(digest);
+        
+        (out+=delta).copy(digest);
+       }
+    }
  };
 
 /* struct AbstractRandomGen */
@@ -412,7 +484,7 @@ struct KeyResponse
 
 /* class KeySet */
 
-class KeySet : NoCopy // TODO
+class KeySet : NoCopy
  {
    ulen klen;
    LifeLim life_lim;
@@ -517,6 +589,8 @@ class KeySet : NoCopy // TODO
        if( type!=Packet_None ) repeat.tick(dtime);
       }
     
+     bool resend() const { return type!=Packet_None && !repeat ; }
+     
      KeyResponse makeResponse(ulen glen)
       { 
        repeat.reset();
@@ -524,6 +598,11 @@ class KeySet : NoCopy // TODO
        if( type==Packet_Ack ) return KeyResponse(type,key_index);
        
        return KeyResponse(type,key_index,Range_const(gx,glen));
+      }
+     
+     void flip()
+      {
+       base.move(next);
       }
     };
    
@@ -549,6 +628,8 @@ class KeySet : NoCopy // TODO
    
    static KeyIndex GetSerial(KeyIndex key_index) { return KeyIndex( key_index>>14 ); }
    
+   static KeyIndex NextSerial(KeyIndex serial) { return KeyIndex( (serial+1)&3u ); }
+   
    void activate_base(ulen index);
    
    void activate_next(ulen index);
@@ -556,6 +637,10 @@ class KeySet : NoCopy // TODO
    void deactivate(ulen index);
    
    void flip(ulen index);
+   
+   void make_key(Rec &rec,const uint8 gy[]);
+   
+   void activate_key(Rec &rec,ulen index);
    
   private: 
    

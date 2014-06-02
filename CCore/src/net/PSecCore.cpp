@@ -30,7 +30,24 @@ using DefEncrypt = Crypton::AES256 ;
 
 using DefDecrypt = Crypton::AESInverse256 ;
 
+using DefHash = Crypton::PlatformSHA512 ;
+
 static const ulen DefKeyCount = 100 ;
+
+struct DefExp
+ {
+  static const ulen GLen = 100 ;
+  
+  void pow(const uint8 x[],uint8 gx[])
+   {
+    Range(gx,GLen).set_null();
+   }
+  
+  void pow(const uint8 a[],const uint8 x[],uint8 ax[])
+   {
+    Range(ax,GLen).set_null();
+   }
+ };
 
 TestMasterKey::TestMasterKey()
  {
@@ -52,7 +69,16 @@ AbstractCryptFunc * TestMasterKey::createDecrypt() const
 
 AbstractHashFunc * TestMasterKey::createHash() const
  {
-  return new HashFunc<Crypton::PlatformSHA512>();
+  return new HashFunc<DefHash>();
+ }
+
+AbstractKeyGen * TestMasterKey::createKeyGen() const
+ {
+  auto *ret=new KeyGen<DefExp,DefHash,DefEncrypt::KeyLen>;
+  
+  for(ulen i=0; i<ret->SecretCount ;i++) ret->takeSecret(i).set(uint8(i+1));
+  
+  return ret; 
  }
 
 AbstractRandomGen * TestMasterKey::createRandom() const
@@ -241,7 +267,23 @@ void KeySet::flip(ulen index) // base not active
  {
   Rec &rec=key_set[index];
   
-  rec.base.move(rec.next);
+  rec.flip();
+ }
+
+void KeySet::make_key(Rec &rec,const uint8 gy[])
+ {
+  key_gen->key(rec.x,gy,rec.next.key);
+  
+  rec.next.serial=NextSerial(rec.base.serial);
+  rec.next.life_lim=life_lim;
+  rec.next.state=KeyGreen;
+ }
+
+void KeySet::activate_key(Rec &rec,ulen index)
+ {
+  if( rec.base.active ) deactivate(index);
+  
+  activate_next(index);
  }
 
 class KeySet::BufInit : NoCopy
@@ -301,13 +343,6 @@ class KeySet::GenInit : BufInit
 
 KeyResponse KeySet::alert(Rec &rec,KeyIndex key_index)
  {
-  if( rec.type!=Packet_None )
-    {
-     // going to die
-    
-     return Nothing;
-    }
-  
   rec.type=Packet_Alert;
   rec.key_index=key_index;
   rec.repeat.reset();
@@ -445,12 +480,21 @@ KeyResponse KeySet::tick()
   
   if( rec.base.updateState(life_lim) )
     {
-     return alert(rec,rec.base.makeKeyIndex(index));
+     if( rec.type==Packet_None )
+       {
+        return alert(rec,rec.base.makeKeyIndex(index));
+       }
+     else
+       {
+        // going to die
+       
+        return Nothing; 
+       }
     }
   
   if( rec.next.updateState(life_lim) )
     {
-     if( rec.next.active )
+     if( rec.type==Packet_None )
        {
         flip(index);
         
@@ -459,10 +503,12 @@ KeyResponse KeySet::tick()
      else
        {
         // going to die
+       
+        return Nothing; 
        }
     }
   
-  if( rec.type!=Packet_None && !rec.repeat )
+  if( rec.resend() )
     {
      return rec.makeResponse(glen);
     }
@@ -472,25 +518,134 @@ KeyResponse KeySet::tick()
 
 KeyResponse KeySet::alert(KeyIndex key_index,const uint8 gy[])
  {
-  Used(key_index);
-  Used(gy);
+  ulen index=GetIndex(key_index);
+  
+  if( index>=key_set.getLen() ) return Nothing;
+  
+  Rec &rec=key_set[index];
+  
+  if( rec.type==Packet_None )
+    {
+     if( rec.base.active )
+       {
+        if( rec.base.makeKeyIndex(index)==key_index ) 
+          {
+           alert(rec,key_index);
+           
+           rec.type=Packet_Ready;
+          
+           make_key(rec,gy);
+          
+           return rec.makeResponse(glen);
+          }
+        else
+          {
+           return Nothing;
+          }
+       }
+    
+     if( rec.next.active )
+       {
+        if( rec.next.makeKeyIndex(index)==key_index ) 
+          {
+           flip(index);
+           
+           alert(rec,key_index);
+          
+           rec.type=Packet_Ready;
+         
+           make_key(rec,gy);
+         
+           return rec.makeResponse(glen);
+          }
+        else
+          {
+           return Nothing;
+          }
+       }
+    }
+  
+  if( rec.type==Packet_Alert )
+    {
+     if( rec.key_index!=key_index ) return Nothing;
+   
+     rec.type=Packet_Ready;
+    
+     make_key(rec,gy);
+    
+     return rec.makeResponse(glen);
+    }
   
   return Nothing;
  }
 
 KeyResponse KeySet::ready(KeyIndex key_index,const uint8 gy[])
  {
-  Used(key_index);
-  Used(gy);
+  ulen index=GetIndex(key_index);
+  
+  if( index>=key_set.getLen() ) return Nothing;
+  
+  Rec &rec=key_set[index];
+  
+  if( rec.type==Packet_Alert )
+    {
+     if( rec.key_index!=key_index ) return Nothing;
+    
+     rec.type=Packet_Ready;
+     
+     make_key(rec,gy);
+     
+     activate_key(rec,index);
+     
+     return rec.makeResponse(glen);
+    }
+  
+  if( rec.type==Packet_Ready )
+    {
+     if( rec.key_index!=key_index ) return Nothing;
+    
+     rec.type=Packet_Ack;
+     
+     activate_key(rec,index);
+     
+     return rec.makeResponse(glen);
+    }
   
   return Nothing;
  }
 
 KeyResponse KeySet::ack(KeyIndex key_index)
  {
-  Used(key_index);
+  ulen index=GetIndex(key_index);
   
-  return Nothing;
+  if( index>=key_set.getLen() ) return Nothing;
+  
+  Rec &rec=key_set[index];
+  
+  if( rec.type==Packet_Ready )
+    {
+     if( rec.key_index!=key_index ) return Nothing;
+   
+     rec.type=Packet_Ack;
+    
+     return rec.makeResponse(glen);
+    }
+  
+  if( rec.type==Packet_Ack )
+    {
+     if( rec.key_index!=key_index ) return Nothing;
+  
+     rec.type=Packet_None;
+     
+     return rec.makeResponse(glen);
+    }
+  
+  if( rec.type==Packet_None )
+    {
+     return KeyResponse(Packet_Ack,key_index);
+    }
+  
+  return Nothing; 
  }
 
 /* class ProcessorCore */
