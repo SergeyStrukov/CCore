@@ -35,7 +35,7 @@ template <class DHMod,class Algo> class DHExp;
 
 struct DHModI
  {
-  static const ulen GLen = 100 ;
+  static const ulen GLen = 96 ;
   
   static const uint8 G[GLen];
   
@@ -46,6 +46,11 @@ struct DHModI
 
 struct DHModII
  {
+  static const ulen GLen = 128 ;
+  
+  static const uint8 G[GLen];
+  
+  static const uint8 Mod[GLen];
  };
 
 /* class DHExp<DHMod,Algo> */
@@ -112,7 +117,7 @@ class DHExp : NoCopy
  };
 
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::load(const uint8 a[])
+void DHExp<DHMod,Algo>::load(const uint8 a[])
  {
   Unit *out=A;
   auto r=Range(a,GLen); 
@@ -123,42 +128,42 @@ void DHExp<DHMode,Algo>::load(const uint8 a[])
  }
    
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::prepare()
+void DHExp<DHMod,Algo>::prepare()
  {
  }
 
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::expand()
+void DHExp<DHMod,Algo>::expand()
  {
  }
 
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::mul(const Unit A[],const Unit B[],Unit C[])
+void DHExp<DHMod,Algo>::mul(const Unit A[],const Unit B[],Unit C[])
  {
  }
 
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::sq(const Unit A[],Unit C[])
+void DHExp<DHMod,Algo>::sq(const Unit A[],Unit C[])
  {
  }
 
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::pow(const uint8 x[])
+void DHExp<DHMod,Algo>::pow(const uint8 x[])
  {
  }
    
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::complete()
+void DHExp<DHMod,Algo>::complete()
  {
  }
 
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::save(uint8 ax[])
+void DHExp<DHMod,Algo>::save(uint8 ax[])
  {
  }
 
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::pow(const uint8 a[],const uint8 x[],uint8 ax[])
+void DHExp<DHMod,Algo>::pow(const uint8 a[],const uint8 x[],uint8 ax[])
  {
   load(a);
   
@@ -168,13 +173,13 @@ void DHExp<DHMode,Algo>::pow(const uint8 a[],const uint8 x[],uint8 ax[])
  }
 
 template <class DHMod,class Algo> 
-void DHExp<DHMode,Algo>::pow(const uint8 x[],uint8 gx[])
+void DHExp<DHMod,Algo>::pow(const uint8 x[],uint8 gx[])
  {
-  load(DHMode::G);
+  load(DHMod::G);
   
   pow(x);
     
-  save(ax);
+  save(gx);
  }
 
 } // namespace Crypton

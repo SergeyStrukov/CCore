@@ -158,6 +158,7 @@ obj/NetFork.o \
 obj/NewDelete.o \
 obj/NoCopy.o \
 obj/NoMutex.o \
+obj/NoPrimeTest.o \
 obj/NodeAllocator.o \
 obj/Nothing.o \
 obj/ObjHost.o \
@@ -240,6 +241,7 @@ obj/SimpleConsole.o \
 obj/SingleBridge.o \
 obj/SingleEchoDevice.o \
 obj/SingleHost.o \
+obj/SmallPrimes.o \
 obj/Sort.o \
 obj/SortUnique.o \
 obj/Space.o \
@@ -470,6 +472,7 @@ obj/NetFork.s \
 obj/NewDelete.s \
 obj/NoCopy.s \
 obj/NoMutex.s \
+obj/NoPrimeTest.s \
 obj/NodeAllocator.s \
 obj/Nothing.s \
 obj/ObjHost.s \
@@ -552,6 +555,7 @@ obj/SimpleConsole.s \
 obj/SingleBridge.s \
 obj/SingleEchoDevice.s \
 obj/SingleHost.s \
+obj/SmallPrimes.s \
 obj/Sort.s \
 obj/SortUnique.s \
 obj/Space.s \
@@ -782,6 +786,7 @@ obj/NetFork.dep \
 obj/NewDelete.dep \
 obj/NoCopy.dep \
 obj/NoMutex.dep \
+obj/NoPrimeTest.dep \
 obj/NodeAllocator.dep \
 obj/Nothing.dep \
 obj/ObjHost.dep \
@@ -864,6 +869,7 @@ obj/SimpleConsole.dep \
 obj/SingleBridge.dep \
 obj/SingleEchoDevice.dep \
 obj/SingleHost.dep \
+obj/SmallPrimes.dep \
 obj/Sort.dep \
 obj/SortUnique.dep \
 obj/Space.dep \
@@ -1425,6 +1431,9 @@ obj/NoCopy.o : ../../CCore/src/gadget/NoCopy.cpp
 obj/NoMutex.o : ../../CCore/src/task/NoMutex.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/NoPrimeTest.o : ../../CCore/src/math/NoPrimeTest.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/NodeAllocator.o : ../../CCore/src/NodeAllocator.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1669,6 +1678,9 @@ obj/SingleEchoDevice.o : ../../CCore/src/net/SingleEchoDevice.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SingleHost.o : ../../CCore/src/SingleHost.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SmallPrimes.o : ../../CCore/src/math/SmallPrimes.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Sort.o : ../../CCore/src/Sort.cpp
@@ -2354,6 +2366,9 @@ obj/NoCopy.s : ../../CCore/src/gadget/NoCopy.cpp
 obj/NoMutex.s : ../../CCore/src/task/NoMutex.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/NoPrimeTest.s : ../../CCore/src/math/NoPrimeTest.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/NodeAllocator.s : ../../CCore/src/NodeAllocator.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2598,6 +2613,9 @@ obj/SingleEchoDevice.s : ../../CCore/src/net/SingleEchoDevice.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/SingleHost.s : ../../CCore/src/SingleHost.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SmallPrimes.s : ../../CCore/src/math/SmallPrimes.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Sort.s : ../../CCore/src/Sort.cpp
@@ -3283,6 +3301,9 @@ obj/NoCopy.dep : ../../CCore/src/gadget/NoCopy.cpp
 obj/NoMutex.dep : ../../CCore/src/task/NoMutex.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NoMutex.o $< -MF $@
 
+obj/NoPrimeTest.dep : ../../CCore/src/math/NoPrimeTest.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NoPrimeTest.o $< -MF $@
+
 obj/NodeAllocator.dep : ../../CCore/src/NodeAllocator.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/NodeAllocator.o $< -MF $@
 
@@ -3528,6 +3549,9 @@ obj/SingleEchoDevice.dep : ../../CCore/src/net/SingleEchoDevice.cpp
 
 obj/SingleHost.dep : ../../CCore/src/SingleHost.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleHost.o $< -MF $@
+
+obj/SmallPrimes.dep : ../../CCore/src/math/SmallPrimes.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SmallPrimes.o $< -MF $@
 
 obj/Sort.dep : ../../CCore/src/Sort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sort.o $< -MF $@

@@ -117,6 +117,8 @@
 ../../CCore/src/math/FastMul.cpp
 ../../CCore/src/math/Integer.cpp
 ../../CCore/src/math/IntegerSlowAlgo.cpp
+../../CCore/src/math/NoPrimeTest.cpp
+../../CCore/src/math/SmallPrimes.cpp
 ../../CCore/src/MemAllocGuard.cpp
 ../../CCore/src/MemBase_general.cpp
 ../../CCore/src/MemSpaceHeap.cpp
