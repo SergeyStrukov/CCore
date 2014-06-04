@@ -112,6 +112,7 @@ obj/IntPrint.o \
 obj/IntScan.o \
 obj/Integer.o \
 obj/IntegerFastAlgo.o \
+obj/IntegerOctetBuilder.o \
 obj/IntegerSlowAlgo.o \
 obj/IntelAES.o \
 obj/IntelCPUID.o \
@@ -402,6 +403,7 @@ obj/IntPrint.s \
 obj/IntScan.s \
 obj/Integer.s \
 obj/IntegerFastAlgo.s \
+obj/IntegerOctetBuilder.s \
 obj/IntegerSlowAlgo.s \
 obj/IntelAES.s \
 obj/IntelCPUID.s \
@@ -692,6 +694,7 @@ obj/IntPrint.dep \
 obj/IntScan.dep \
 obj/Integer.dep \
 obj/IntegerFastAlgo.dep \
+obj/IntegerOctetBuilder.dep \
 obj/IntegerSlowAlgo.dep \
 obj/IntelAES.dep \
 obj/IntelCPUID.dep \
@@ -1218,6 +1221,9 @@ obj/Integer.o : ../../CCore/src/math/Integer.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntegerFastAlgo.o : ../../Target/WIN64/CCore/src/math/IntegerFastAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntegerOctetBuilder.o : ../../CCore/src/math/IntegerOctetBuilder.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntegerSlowAlgo.o : ../../CCore/src/math/IntegerSlowAlgo.cpp
@@ -2083,6 +2089,9 @@ obj/Integer.s : ../../CCore/src/math/Integer.cpp
 obj/IntegerFastAlgo.s : ../../Target/WIN64/CCore/src/math/IntegerFastAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/IntegerOctetBuilder.s : ../../CCore/src/math/IntegerOctetBuilder.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/IntegerSlowAlgo.s : ../../CCore/src/math/IntegerSlowAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2945,6 +2954,9 @@ obj/Integer.dep : ../../CCore/src/math/Integer.cpp
 
 obj/IntegerFastAlgo.dep : ../../Target/WIN64/CCore/src/math/IntegerFastAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntegerFastAlgo.o $< -MF $@
+
+obj/IntegerOctetBuilder.dep : ../../CCore/src/math/IntegerOctetBuilder.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntegerOctetBuilder.o $< -MF $@
 
 obj/IntegerSlowAlgo.dep : ../../CCore/src/math/IntegerSlowAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntegerSlowAlgo.o $< -MF $@

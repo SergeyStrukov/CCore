@@ -1,4 +1,4 @@
-/* SmallPrimes.h */ 
+/* IntegerOctetBuilder.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.08
@@ -12,26 +12,14 @@
 //  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
-
-#ifndef CCore_inc_math_SmallPrimes_h
-#define CCore_inc_math_SmallPrimes_h
-
-#include <CCore/inc/Gadget.h>
+ 
+#include <CCore/inc/math/IntegerOctetBuilder.h>
  
 namespace CCore {
-namespace Math { 
+namespace Math {
 
-/* global data */
-
- //
- // All primes < 1000000
- //
-
-extern const int SmallPrimes[78498];
 
 } // namespace Math
 } // namespace CCore
- 
-#endif
  
 

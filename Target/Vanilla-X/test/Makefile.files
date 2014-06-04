@@ -90,6 +90,7 @@ OBJ_LIST = \
 ../test-obj/test0088.NetFork.o \
 ../test-obj/test0089.BlockFifo.o \
 ../test-obj/test0090.DHExp.o \
+../test-obj/test0091.NoPrimeTest.o \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
@@ -219,6 +220,7 @@ ASM_LIST = \
 ../test-obj/test0088.NetFork.s \
 ../test-obj/test0089.BlockFifo.s \
 ../test-obj/test0090.DHExp.s \
+../test-obj/test0091.NoPrimeTest.s \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
@@ -348,6 +350,7 @@ DEP_LIST = \
 ../test-obj/test0088.NetFork.dep \
 ../test-obj/test0089.BlockFifo.dep \
 ../test-obj/test0090.DHExp.dep \
+../test-obj/test0091.NoPrimeTest.dep \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
@@ -662,6 +665,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0090.DHExp.o : ../../../CCore/test/test0090.DHExp.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0091.NoPrimeTest.o : ../../../CCore/test/test0091.NoPrimeTest.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1044,6 +1050,9 @@ include $(RULES_FILE)
 ../test-obj/test0090.DHExp.s : ../../../CCore/test/test0090.DHExp.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0091.NoPrimeTest.s : ../../../CCore/test/test0091.NoPrimeTest.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1423,6 +1432,9 @@ include $(RULES_FILE)
 
 ../test-obj/test0090.DHExp.dep : ../../../CCore/test/test0090.DHExp.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0090.DHExp.o $< -MF $@
+
+../test-obj/test0091.NoPrimeTest.dep : ../../../CCore/test/test0091.NoPrimeTest.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0091.NoPrimeTest.o $< -MF $@
 
 ../test-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

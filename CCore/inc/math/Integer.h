@@ -1646,6 +1646,10 @@ class Integer : public CmpComparable<Integer<Algo,ArrayType> >
    
    PtrLen<const Unit> getBody() const { return Range_const(body); }
    
+   bool isOdd() const { return body.getLen() && (body[0]&Unit(1)) ; }
+   
+   bool isEven() const { return !isOdd(); }
+   
    // cmp objects
    
    CmpResult objCmp(const Integer &b) const
