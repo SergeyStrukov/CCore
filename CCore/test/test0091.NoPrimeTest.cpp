@@ -37,7 +37,6 @@ using RandomInt = Math::RandomInteger<Math::IntegerFastAlgo> ;
 
 void test1()
  {
-  Math::NoPrimeTest<Int>::RandomTest test;
   PlatformRandom random;
   
   for(ulen cnt=100; cnt ;cnt--)
@@ -49,11 +48,15 @@ void test1()
 
      if( P<0 ) P=-P;
      
-     if( test.test(P,10) ) 
+     if( P.isEven() ) P=P+1;
+     
+     Math::NoPrimeTest<Int>::RandomTest test(P);
+     
+     if( test(10) ) 
        {
         Printf(Con,"Passed 10\n");
         
-        if( test.test(P,20) ) Printf(Con,"  Passed 30\n");
+        if( test(20) ) Printf(Con,"  Passed 30\n");
        }
     }
  }
@@ -62,19 +65,22 @@ void test1()
 
 void test2()
  {
-  Math::NoPrimeTest<Int>::RandomTest test;
   PlatformRandom random;
   SecTimer timer;
   
   for(ulen cnt=1;;cnt++)
     {
+     Printf(Con,"cnt = #;\r",cnt);
+    
      Int P=RandomInt(32,random);
      
      if( P<0 ) P=-P;
      
-     Printf(Con,"cnt = #;\r",cnt);
+     if( P.isEven() ) P=P+1;
      
-     if( test.test(P,30) ) 
+     Math::NoPrimeTest<Int>::RandomTest test(P);
+     
+     if( test(30) ) 
        {
         Printf(Con,"\ntime = #;\nP = #;\n",PrintTime(timer.get()),P);
         
@@ -100,7 +106,9 @@ void test3()
      
      a%=P;
      
-     if( Math::NoPrimeTest<Int>::ModExp(a,P)!=Math::NoPrimeTest<Int>::ModExp2(a,P) ) 
+     Math::NoPrimeTest<Int>::ExpEngine engine(P);
+     
+     if( Math::NoPrimeTest<Int>::ModExp(a,P)!=engine.exp(a) ) 
        {
         Printf(Exception,"failed");
        }

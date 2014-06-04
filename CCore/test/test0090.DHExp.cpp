@@ -39,14 +39,20 @@ void test1(StrLen title)
  {
   Printf(Con,"#;\n\n",Title(title));
   
-  Math::NoPrimeTest<Int>::RandomTest test; 
-  
   Int P(DoBuild,Builder(Range(DHMod::Mod)));
   Int Q=P>>1;
 
-  if( test.test(P,100) ) Printf(Con,"P is probably prime\n"); else Printf(Con,"P is not prime\n");
+  {
+   Math::NoPrimeTest<Int>::RandomTest test(P); 
+   
+   if( test(100) ) Printf(Con,"P is probably prime\n"); else Printf(Con,"P is not prime\n");
+  }
   
-  if( test.test(Q,100) ) Printf(Con,"Q is probably prime\n"); else Printf(Con,"Q is not prime\n");
+  {
+   Math::NoPrimeTest<Int>::RandomTest test(Q);
+   
+   if( test(100) ) Printf(Con,"Q is probably prime\n"); else Printf(Con,"Q is not prime\n");
+  }
   
   Printf(Con,"\n");
  }

@@ -24,6 +24,10 @@
 namespace CCore {
 namespace Math {
 
+/* functions */
+
+void GuardNoPrimeTestBadInput();
+
 /* classes */
 
 template <class Integer> struct NoPrimeTest;
@@ -95,7 +99,7 @@ struct NoPrimeTest
     return (a*b)%P;
    }
   
-  static Integer ModExp2(Integer a,Integer P) // a >= 0 , P > 1 , a ^ (P>>1) ( mod P )
+  static Integer ModExp(Integer a,Integer P) // a >= 0 , P > 1 , a ^ (P>>1) ( mod P )
    {
     Integer b=1;
     
@@ -149,7 +153,7 @@ struct NoPrimeTest
         }
      };
     
-    explicit ModEngine(Integer P_) // P > 0
+    explicit ModEngine(Integer P_) // P_ > 0
      : P(P_)
      {
       n=P.getBody().len;
@@ -181,114 +185,123 @@ struct NoPrimeTest
      }
    };
   
-  struct ExpEngine : ModEngine
+  class ExpEngine : ModEngine
    {
-    using ModEngine::mod;
+     using ModEngine::mod;
+     using ModEngine::P;
     
-    static const ulen Len = (ulen(1)<<Delta)-1 ;
+     static const ulen Len = (ulen(1)<<Delta)-1 ;
     
-    Integer pow[Len];
-    Integer result;
+     Integer pow[Len];
+     Integer result;
+     
+    private: 
     
-    Integer sq(Integer a)
-     {
-      return mod(a.sq());
-     }
+     Integer sq(Integer a)
+      {
+       return mod(a.sq());
+      }
+     
+     Integer mul(Integer a,Integer b)
+      {
+       return mod(a*b);
+      }
+     
+     void init(Integer a) // a >= 0
+      {
+       result=1;
+       
+       a%=P;
+       
+       pow[0]=a;
+       
+       for(ulen i=1; i<Len ;i++) pow[i]=mul(pow[i-1],a);
+      }
+     
+     void next(Unit bits)
+      {
+       for(unsigned cnt=Delta; cnt ;cnt--) result=sq(result);
+       
+       if( bits ) result=mul(result,pow[bits-1]);
+      }
+     
+     void last(Unit bits)
+      {
+       for(unsigned cnt=Delta-1; cnt ;cnt--) result=sq(result);
+       
+       bits>>=1;
+       
+       if( bits ) result=mul(result,pow[bits-1]);
+      }
     
-    Integer mul(Integer a,Integer b)
-     {
-      return mod(a*b);
-     }
+     void next_unit(Unit unit)
+      {
+       for(unsigned off=Integer::UnitBits-Delta; off ;off-=Delta) next( (unit>>off)&Mask );
+       
+       next( unit&Mask );
+      }
+     
+     void last_unit(Unit unit)
+      {
+       for(unsigned off=Integer::UnitBits-Delta; off ;off-=Delta) next( (unit>>off)&Mask );
+       
+       last( unit&Mask );
+      }
+     
+    public: 
     
-    ExpEngine(Integer a,Integer P) // a >= 0 , P > 1
-     : ModEngine(P),
-       result(1)
-     {
-      a%=P;
-      
-      pow[0]=a;
-      
-      for(ulen i=1; i<Len ;i++) pow[i]=mul(pow[i-1],a);
-     }
-    
-    void next(Unit bits)
-     {
-      for(unsigned cnt=Delta; cnt ;cnt--) result=sq(result);
-      
-      if( bits ) result=mul(result,pow[bits-1]);
-     }
-    
-    void last(Unit bits)
-     {
-      for(unsigned cnt=Delta-1; cnt ;cnt--) result=sq(result);
-      
-      bits>>=1;
-      
-      if( bits ) result=mul(result,pow[bits-1]);
-     }
-   
-    void next_unit(Unit unit)
-     {
-      for(unsigned off=Integer::UnitBits-Delta; off ;off-=Delta) next( (unit>>off)&Mask );
-      
-      next( unit&Mask );
-     }
-    
-    void last_unit(Unit unit)
-     {
-      for(unsigned off=Integer::UnitBits-Delta; off ;off-=Delta) next( (unit>>off)&Mask );
-      
-      last( unit&Mask );
-     }
-   };
+     explicit ExpEngine(Integer P) : ModEngine(P) {} // P > 1
+     
+     Integer exp(Integer a) // a >= 0 , a ^ (P>>1) ( mod P )
+      {
+       init(a);
+       
+       auto r=RangeReverse(P.getBody());
+       
+       for(; r.len>1 ;++r) next_unit(*r);
+       
+       last_unit(*r);
+       
+       return result;
+      }
   
-  static Integer ModExp(Integer a,Integer P) // a >= 0 , P > 1 , a ^ (P>>1) ( mod P )
-   {
-    ExpEngine engine(a,P);
-    
-    auto r=RangeReverse(P.getBody());
-    
-    for(; r.len>1 ;++r) engine.next_unit(*r);
-    
-    engine.last_unit(*r);
-    
-    return engine.result;
-   }
+     bool test(Integer a) // a > 0 , P > 1 , P is odd
+      {
+       Integer b=exp(a);
+       
+       if( b.cmp(1)==0 ) return QSym(a,P)==1;
 
-  static bool TestEvidence(Integer a,Integer P) // a > 0 , P > 1 , P is odd
-   {
-    Integer b=ModExp(a,P);
-    
-    if( b==1 ) return QSym(a,P)==1;
-
-    if( b+1==P ) return QSym(a,P)==-1;
-    
-    return false;
-   }
+       if( b+1==P ) return QSym(a,P)==-1;
+       
+       return false;
+      }
+   };
   
   class RandomTest : NoCopy
    {
      PlatformRandom random;
      
+     ExpEngine engine;
+     
     public:
    
-     RandomTest()
+     explicit RandomTest(Integer P) // P > 1 , P is odd
+      : engine(P) 
       {
-      }
+       if( P.cmp(1)<=0 || P.isEven() ) GuardNoPrimeTestBadInput();
+      } 
      
      ~RandomTest()
       {
       }
      
-     bool test(Integer P,ulen count)
+     bool operator () (ulen count)
       {
-       if( P.cmp(1)<=0 || P.isEven() ) return false;
-       
        for(; count ;count--)
          {
           ulen index=random.select_uint<ulen>(DimOf(SmallPrimes));
           
-          if( !TestEvidence(SmallPrimes[index],P) ) return false;
+          if( !engine.test(SmallPrimes[index]) ) return false;
          }
        
        return true;
