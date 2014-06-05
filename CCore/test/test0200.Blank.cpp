@@ -31,7 +31,7 @@ const char *const Testit<200>::Name="Test200 Blank";
 
 template<>
 bool Testit<200>::Main() 
- { 
+ {
   
   return true;
  }

@@ -1,32 +1,25 @@
-/* PlatformBase.cpp */ 
+/* Forget.cpp */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.02
+//  Project: CCore 1.08
 //
-//  Tag: Target/WIN32
+//  Tag: General
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
 //            see http://www.boost.org/LICENSE_1_0.txt or the local copy
 //
-//  Copyright (c) 2010 Sergey Strukov. All rights reserved.
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/base/PlatformBase.h>
+#include <CCore/inc/crypton/Forget.h>
  
 namespace CCore {
+namespace Crypton {
 
-/* functions */
 
-#if 0
-
-void OptimizeBarrier(void *,ulen)
- {
- }
-
-#endif
-
+} // namespace Crypton
 } // namespace CCore
  
 

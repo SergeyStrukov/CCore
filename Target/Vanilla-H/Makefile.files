@@ -93,6 +93,7 @@ obj/Fifo.o \
 obj/FileName.o \
 obj/FileSystem.o \
 obj/FileToMem.o \
+obj/Forget.o \
 obj/FrameBuf.o \
 obj/FuncTask.o \
 obj/Function.o \
@@ -377,6 +378,7 @@ obj/Fifo.s \
 obj/FileName.s \
 obj/FileSystem.s \
 obj/FileToMem.s \
+obj/Forget.s \
 obj/FrameBuf.s \
 obj/FuncTask.s \
 obj/Function.s \
@@ -661,6 +663,7 @@ obj/Fifo.dep \
 obj/FileName.dep \
 obj/FileSystem.dep \
 obj/FileToMem.dep \
+obj/Forget.dep \
 obj/FrameBuf.dep \
 obj/FuncTask.dep \
 obj/Function.dep \
@@ -1136,6 +1139,9 @@ obj/FileSystem.o : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileToMem.o : ../../HCore/CCore/src/FileToMem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Forget.o : ../../CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FrameBuf.o : ../../CCore/src/video/FrameBuf.cpp
@@ -1983,6 +1989,9 @@ obj/FileSystem.s : ../../HCore/CCore/src/FileSystem.cpp
 obj/FileToMem.s : ../../HCore/CCore/src/FileToMem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Forget.s : ../../CCore/src/crypton/Forget.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FrameBuf.s : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2827,6 +2836,9 @@ obj/FileSystem.dep : ../../HCore/CCore/src/FileSystem.cpp
 
 obj/FileToMem.dep : ../../HCore/CCore/src/FileToMem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileToMem.o $< -MF $@
+
+obj/Forget.dep : ../../CCore/src/crypton/Forget.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Forget.o $< -MF $@
 
 obj/FrameBuf.dep : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameBuf.o $< -MF $@

@@ -48,6 +48,10 @@ crypton/DHExp.h
 
   Diffie-Hellman common secret generation.
 
+crypton/Forget.h
+
+  Forget() is added to properly cleanup info.
+
 --- Updates ----------
 
 Regen
@@ -57,5 +61,9 @@ Regen
 WIN32 
 
   Target rebased on gcc-4.8.2 from the latest cygwin.
+
+base/PlatformBase.h
+
+  OptimizeBarrier() is added.
 
 ----------------------

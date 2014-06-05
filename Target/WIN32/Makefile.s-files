@@ -1,3 +1,4 @@
+../../Target/WIN32/CCore/src/base/PlatformBase.s
 ../../Target/WIN32/CCore/src/base/Quick.s
 ../../Target/WIN32/CCore/src/crypton/IntelAES.s
 ../../Target/WIN32/CCore/src/crypton/IntelCPUID.s

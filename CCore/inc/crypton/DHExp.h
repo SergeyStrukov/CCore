@@ -117,7 +117,7 @@ class DHExp : NoCopy
    
    class Core : NoCopy
     {
-      typename template Algo::MulOp<IntLen> mulop;
+      typename Algo::template MulOp<IntLen> mulop;
       
       Unit P[2*IntLen];
     
