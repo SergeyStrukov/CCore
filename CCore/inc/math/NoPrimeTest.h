@@ -265,7 +265,7 @@ struct NoPrimeTest
        return result;
       }
   
-     bool test(Integer a) // a > 0 , P > 1 , P is odd
+     bool test(Integer a) // a > 0 , (a,P)=1 , P > 1 , P is odd
       {
        Integer b=exp(a);
        

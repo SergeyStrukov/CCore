@@ -32,6 +32,22 @@ net/PSec.h
 
   PSec implementation.
 
+math/SmallPrimes.h
+
+  The list of all primes < 1000000 .
+
+math/IntegerOctetBuilder.h
+
+  Build an Integer from an octet array representation.
+
+math/NoPrimeTest.h
+
+  Quick "no-prime" test for integers.
+
+crypton/DHExp.h
+
+  Diffie-Hellman common secret generation.
+
 --- Updates ----------
 
 Regen

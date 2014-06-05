@@ -39,24 +39,28 @@ void test1()
  {
   PlatformRandom random;
   
-  for(ulen cnt=100; cnt ;cnt--)
+  for(ulen cnt=1000; cnt ;cnt--)
     {
-     RandomInt a(32,random);
-     RandomInt b(32,random);
+     Int P=RandomInt(16,random);
      
-     Int P=a*b;
-
      if( P<0 ) P=-P;
      
-     if( P.isEven() ) P=P+1;
+     Math::NoPrimeTest<Int>::ModEngine engine(P);
      
-     Math::NoPrimeTest<Int>::RandomTest test(P);
-     
-     if( test(10) ) 
+     Int P2=P.sq();
+
+     for(ulen cnt=1000; cnt ;cnt--)
        {
-        Printf(Con,"Passed 10\n");
+        Int a=RandomInt(32,random);
         
-        if( test(20) ) Printf(Con,"  Passed 30\n");
+        if( a<0 ) a=-a;
+        
+        a%=P2;
+        
+        if( engine.mod(a)!=(a%P) )
+          {
+           Printf(Exception,"failed");
+          }
        }
     }
  }
@@ -64,34 +68,6 @@ void test1()
 /* test2() */
 
 void test2()
- {
-  PlatformRandom random;
-  SecTimer timer;
-  
-  for(ulen cnt=1;;cnt++)
-    {
-     Printf(Con,"cnt = #;\r",cnt);
-    
-     Int P=RandomInt(32,random);
-     
-     if( P<0 ) P=-P;
-     
-     if( P.isEven() ) P=P+1;
-     
-     Math::NoPrimeTest<Int>::RandomTest test(P);
-     
-     if( test(30) ) 
-       {
-        Printf(Con,"\ntime = #;\nP = #;\n",PrintTime(timer.get()),P);
-        
-        return;
-       }
-    }
- }
-
-/* test3() */
-
-void test3()
  {
   PlatformRandom random;
   
@@ -115,34 +91,58 @@ void test3()
     }
  }
 
+/* test3() */
+
+void test3()
+ {
+  PlatformRandom random;
+  
+  for(ulen cnt=100; cnt ;cnt--)
+    {
+     RandomInt a(32,random);
+     RandomInt b(32,random);
+     
+     Int P=a*b;
+
+     if( P<0 ) P=-P;
+     
+     if( P.isEven() ) P=P+1;
+     
+     Math::NoPrimeTest<Int>::RandomTest test(P);
+     
+     if( test(10) ) 
+       {
+        Printf(Con,"Passed 10\n");
+        
+        if( test(20) ) Printf(Con,"  Passed 30\n");
+       }
+    }
+ }
+
 /* test4() */
 
 void test4()
  {
   PlatformRandom random;
+  SecTimer timer;
   
-  for(ulen cnt=1000; cnt ;cnt--)
+  for(ulen cnt=1;;cnt++)
     {
-     Int P=RandomInt(16,random);
+     Printf(Con,"cnt = #;\r",cnt);
+    
+     Int P=RandomInt(32,random);
      
      if( P<0 ) P=-P;
      
-     Math::NoPrimeTest<Int>::ModEngine engine(P);
+     if( P.isEven() ) P=P+1;
      
-     Int P2=P.sq();
-
-     for(ulen cnt=1000; cnt ;cnt--)
+     Math::NoPrimeTest<Int>::RandomTest test(P);
+     
+     if( test(30) ) 
        {
-        Int a=RandomInt(16,random);
+        Printf(Con,"\ntime = #;\nP = #;\n",PrintTime(timer.get()),P);
         
-        if( a<0 ) a=-a;
-        
-        a%=P2;
-        
-        if( engine.mod(a)!=(a%P) )
-          {
-           Printf(Exception,"failed");
-          }
+        return;
        }
     }
  }
