@@ -18,7 +18,7 @@
 
 #include <CCore/inc/math/IntegerFastAlgo.h>
 
-#include <CCore/inc/SaveLoad.h>
+#include <CCore/inc/crypton/Forget.h>
 
 namespace CCore {
 namespace Crypton {
@@ -29,7 +29,9 @@ struct DHModI;
 
 struct DHModII;
 
-template <class DHMod,class Algo> class DHExp;
+struct DefaultDHAlgo;
+
+template <class DHMod,class Algo=DefaultDHAlgo> class DHExp;
 
 /* struct DHModI */
 
@@ -40,6 +42,10 @@ struct DHModI
   static const uint8 G[GLen];
   
   static const uint8 Mod[GLen];
+  
+  static const uint8 InvMod[GLen];
+  
+  static const uint8 Lift[GLen];
  };
 
 /* struct DHModII */
@@ -51,6 +57,10 @@ struct DHModII
   static const uint8 G[GLen];
   
   static const uint8 Mod[GLen];
+  
+  static const uint8 InvMod[GLen];
+  
+  static const uint8 Lift[GLen];
  };
 
 /* struct Algo */
@@ -82,13 +92,104 @@ struct Algo
    };
 
   template <ulen Len>
-  static bool /* carry */ Add(const Unit A[Len],const Unit B[Len],Unit C[Len]); // no overlapp
-  
-  template <ulen Len>
-  static bool /* !borrow */ Sub(const Unit A[Len],const Unit B[Len],Unit C[Len]); // no overlapp
+  class AddOp : NoCopy
+   {
+    public:
+   
+     AddOp();
+     
+     ~AddOp();
+     
+     bool /* borrow */ sub(const Unit A[Len],const Unit B[Len],Unit C[Len]); // no overlapp
+     
+     bool /* carry */ add(const Unit A[Len],Unit B[Len]); // no overlap
+     
+     bool /* carry */ neg(Unit A[Len]);
+   };
  };
 
 #endif
+
+/* struct DefaultDHAlgo */
+
+struct DefaultDHAlgo
+ {
+  using Algo = Math::IntegerFastAlgo;
+  
+  using Unit = Algo::Unit ;
+  
+  static const unsigned UnitBits = Algo::UnitBits ;
+  
+  template <ulen Len>
+  class MulOp : NoCopy
+   {
+     Unit temp[2*Len];
+     
+    public:
+    
+     MulOp()
+      {
+      }
+     
+     ~MulOp()
+      {
+       Forget(temp);
+      }
+     
+     void mul(const Unit A[Len],const Unit B[Len],Unit C[2*Len])
+      {
+       Algo::UMul(C,A,Len,B,Len);
+      }
+     
+     void mulHi(const Unit A[Len],const Unit B[Len],Unit C[Len])
+      {
+       Algo::UMul(temp,A,Len,B,Len);
+       
+       Range(temp+Len,Len).copyTo(C);
+      }
+     
+     void mulLo(const Unit A[Len],const Unit B[Len],Unit C[Len])
+      {
+       Algo::UMulLo(C,Len,A,Len,B,Len);
+      }
+     
+     void sq(const Unit A[Len],Unit B[2*Len])
+      {
+       Algo::USq(B,A,Len);
+      }
+   };
+
+  template <ulen Len>
+  class AddOp : NoCopy
+   {
+    public:
+   
+     AddOp()
+      {
+      }
+     
+     ~AddOp()
+      {
+      }
+     
+     bool /* borrow */ sub(const Unit A[Len],const Unit B[Len],Unit C[Len])
+      {
+       Range(A,Len).copyTo(C);
+       
+       return Algo::USub(C,B,Len);
+      }
+     
+     bool /* carry */ add(const Unit A[Len],Unit B[Len])
+      {
+       return Algo::UAdd(B,A,Len);
+      }
+     
+     bool /* carry */ neg(Unit A[Len])
+      {
+       return Algo::UNeg(A,Len);
+      }
+   };
+ };
 
 /* class DHExp<DHMod,Algo> */
 
@@ -118,9 +219,19 @@ class DHExp : NoCopy
    class Core : NoCopy
     {
       typename Algo::template MulOp<IntLen> mulop;
+      typename Algo::template AddOp<IntLen> addop;
+      
+      Unit M[IntLen];
+      Unit K[IntLen];
+      Unit L[IntLen];
       
       Unit P[2*IntLen];
+      Unit Q[IntLen];
+      
+     private: 
     
+      void reduce(Unit R[IntLen]);
+      
      public:
     
       Core();
@@ -154,6 +265,12 @@ class DHExp : NoCopy
    
    static void Save(const Unit A[IntLen],uint8 a[GLen]);
    
+   static bool IsNull(const Unit A[IntLen]);
+   
+   static void SetNull(Unit A[IntLen]);
+   
+   static bool LSBit(Unit A[IntLen]) { return A[0]&Unit(1); }
+   
   private: 
  
    void load(const uint8 a[GLen]);
@@ -182,6 +299,94 @@ class DHExp : NoCopy
  };
 
 template <class DHMod,class Algo> 
+void DHExp<DHMod,Algo>::Core::reduce(Unit R[IntLen])
+ {
+  mulop.mulLo(P,K,Q);
+  mulop.mulHi(Q,M,P);
+  
+  if( addop.sub(P+IntLen,P,R) )
+    {
+     if( !addop.add(M,R) ) addop.add(M,R);
+    }
+ }
+
+template <class DHMod,class Algo> 
+DHExp<DHMod,Algo>::Core::Core()
+ {
+  Load(DHMod::Mod,M);
+  Load(DHMod::InvMod,K);
+  Load(DHMod::Lift,L);
+ }
+
+template <class DHMod,class Algo> 
+DHExp<DHMod,Algo>::Core::~Core()
+ {
+  Forget(P);
+  Forget(Q);
+ }
+
+template <class DHMod,class Algo> 
+void DHExp<DHMod,Algo>::Core::direct(const Unit A[IntLen],Unit B[IntLen])
+ {
+  mulop.mulLo(A,K,Q);
+  mulop.mulHi(Q,M,P);
+  
+  if( IsNull(P) )
+    {
+     SetNull(B);
+    
+     return;
+    }
+  
+  if( addop.sub(M,P,B) )
+    {
+     addop.add(M,B);
+    }
+ }
+
+template <class DHMod,class Algo> 
+void DHExp<DHMod,Algo>::Core::inverse(const Unit A[IntLen],Unit B[IntLen])
+ {
+  mulop.mulHi(A,L,Q);
+  
+  unsigned bitC=addop.add(A,Q);
+  
+  mulop.mul(Q,M,P);
+  
+  unsigned bitA=LSBit(A);
+  unsigned bitP=LSBit(P+IntLen);
+  
+  unsigned bitN=addop.neg(P);
+  
+  unsigned bit=bitA^bitC^bitP^bitN;
+  
+  if( bit )
+    {
+     addop.sub(P,M,B);
+    }
+  else
+    {
+     Range(P,IntLen).copyTo(B);
+    }
+ }
+
+template <class DHMod,class Algo> 
+void DHExp<DHMod,Algo>::Core::mul(const Unit A[IntLen],const Unit B[IntLen],Unit C[IntLen])
+ {
+  mulop.mul(A,B,P);
+  
+  reduce(C);
+ }
+
+template <class DHMod,class Algo> 
+void DHExp<DHMod,Algo>::Core::sq(const Unit A[IntLen],Unit B[IntLen])
+ {
+  mulop.sq(A,P);
+  
+  reduce(B);
+ }
+
+template <class DHMod,class Algo> 
 auto DHExp<DHMod,Algo>::Load(const uint8 a[UnitOctets]) -> Unit
  {
   Unit A=0;
@@ -207,6 +412,20 @@ template <class DHMod,class Algo>
 void DHExp<DHMod,Algo>::Save(const Unit A[IntLen],uint8 a[GLen])
  {
   for(ulen cnt=IntLen; cnt ;cnt--,A++,a+=UnitOctets) Save(*A,a);
+ }
+
+template <class DHMod,class Algo> 
+bool DHExp<DHMod,Algo>::IsNull(const Unit A[IntLen])
+ {
+  for(ulen cnt=IntLen; cnt ;cnt--,A++) if( *A ) return false;
+  
+  return true;
+ }
+
+template <class DHMod,class Algo> 
+void DHExp<DHMod,Algo>::SetNull(Unit A[IntLen])
+ {
+  for(ulen cnt=IntLen; cnt ;cnt--,A++) *A=0;
  }
 
 template <class DHMod,class Algo> 
@@ -310,8 +529,8 @@ DHExp<DHMod,Algo>::DHExp()
 template <class DHMod,class Algo> 
 DHExp<DHMod,Algo>::~DHExp()
  {
-  Range(A).set_null();
-  Range(P).set_null();
+  Forget(A);
+  Forget(P);
  }
 
 template <class DHMod,class Algo> 

@@ -17,6 +17,7 @@
 #define CCore_inc_crypton_AES_h
 
 #include <CCore/inc/crypton/BlockCipher.h>
+#include <CCore/inc/crypton/Forget.h>
 
 namespace CCore {
 namespace Crypton {
@@ -617,7 +618,7 @@ struct AES : AESBase
    
   void unkey()
    {
-    Range(round_key).set_null();
+    Forget(round_key);
    } 
   
   void apply(const uint8 src[BlockLen],uint8 *restrict dst/* [BlockLen] */) const
@@ -665,7 +666,7 @@ struct AESInverse : AESBase
    
   void unkey()
    {
-    Range(round_key).set_null();
+    Forget(round_key);
    } 
   
   void apply(const uint8 src[BlockLen],uint8 *restrict dst/* [BlockLen] */) const
