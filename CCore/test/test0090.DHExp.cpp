@@ -357,7 +357,7 @@ void test6(StrLen title)
   uint8 gxy[DHMod::GLen];
   uint8 gyx[DHMod::GLen];
   
-  for(ulen cnt=100; cnt ;cnt--)
+  for(ulen cnt=1000; cnt ;cnt--)
     {
      random.fill(Range(x));
      random.fill(Range(y));

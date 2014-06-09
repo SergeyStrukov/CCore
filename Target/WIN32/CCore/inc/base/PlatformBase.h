@@ -212,7 +212,7 @@ struct DoubleUInt<uint32>
 
 template <class T> void Used(T &) {}
 
-/* Optimize */
+/* OptimizeBarrier() */
  
 void OptimizeBarrier(void *ptr,ulen len);
 

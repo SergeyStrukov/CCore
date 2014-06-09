@@ -211,7 +211,11 @@ struct DoubleUInt<uint32>
 /* Used() */ 
 
 template <class T> void Used(T &) {}
+
+/* OptimizeBarrier() */
  
+void OptimizeBarrier(void *ptr,ulen len);
+
 } // namespace CCore
  
 #endif

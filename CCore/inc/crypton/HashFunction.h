@@ -16,7 +16,7 @@
 #ifndef CCore_inc_crypton_HashFunction_h
 #define CCore_inc_crypton_HashFunction_h
  
-#include <CCore/inc/Gadget.h>
+#include <CCore/inc/crypton/Forget.h>
 
 namespace CCore {
 namespace Crypton {
@@ -56,7 +56,7 @@ class HashFunction : NoCopy
    
    HashFunction() { reset(); }
    
-   ~HashFunction() { reset(); }
+   ~HashFunction() { func.forget(); }
    
    // methods
    
@@ -107,9 +107,9 @@ class KeyedHashFunction : NoCopy
    
    void clean()
     {
-     hash1start.reset();
-     hash2start.reset();
-     hash1.reset();
+     hash1start.forget();
+     hash2start.forget();
+     hash1.forget();
      
      ok=false;
     }
@@ -140,6 +140,9 @@ class KeyedHashFunction : NoCopy
      hash.finish(key0);
      
      Init(key1,key2,key0,DLen);
+     
+     Forget(key0);
+     hash.forget();
     }
    
   public:
@@ -156,7 +159,7 @@ class KeyedHashFunction : NoCopy
    
    // methods
    
-   void key(const uint8 *key,ulen key_len) 
+   void key(const uint8 *key,ulen key_len)
     {
      uint8 key1[BlockLen];
      uint8 key2[BlockLen];
@@ -192,7 +195,7 @@ class KeyedHashFunction : NoCopy
      hash1=hash1start;
     }
   
-   void add(const uint8 *data,ulen len) 
+   void add(const uint8 *data,ulen len)
     {
      guardKey();
 
@@ -201,7 +204,7 @@ class KeyedHashFunction : NoCopy
   
    void add(PtrLen<const uint8> data) { add(data.ptr,data.len); }
   
-   void finish(uint8 digest[DigestLen]) 
+   void finish(uint8 digest[DigestLen])
     {
      guardKey();
      
@@ -228,6 +231,10 @@ class KeyedHashFunction : NoCopy
      Range(digest,DigestLen).copy(digest2);
      
      hash1=hash1start;
+     
+     Forget(digest1);
+     Forget(digest2);
+     hash2.forget();
     }
  };
 

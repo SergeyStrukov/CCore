@@ -69,8 +69,10 @@ struct SHA64Word
   
   struct TotalType
    {
-    Word hi;
-    Word lo;
+    Word hi = 0 ;
+    Word lo = 0 ;
+    
+    TotalType() {}
     
     void operator = (Word lo_)
      {
@@ -106,11 +108,11 @@ struct SHA1Param : SHA32Word
    {
     // data
     
-    Word a;
-    Word b;
-    Word c;
-    Word d;
-    Word e;
+    Word a = 0 ;
+    Word b = 0 ;
+    Word c = 0 ;
+    Word d = 0 ;
+    Word e = 0 ;
     
     // private
     
@@ -173,6 +175,8 @@ struct SHA1Param : SHA32Word
     
     // public
     
+    State() {}
+    
     void reset()
      {
       a=0x67452301;
@@ -180,6 +184,11 @@ struct SHA1Param : SHA32Word
       c=0x98BADCFE;
       d=0x10325476;
       e=0xC3D2E1F0;
+     }
+    
+    void forget()
+     {
+      Forget(*this);
      }
     
     void add(const uint8 block[BlockLen]);
@@ -203,14 +212,14 @@ struct SHA256Param : SHA32Word
    {
     // data
     
-    Word a;
-    Word b;
-    Word c;
-    Word d;
-    Word e;
-    Word f;
-    Word g;
-    Word h;
+    Word a = 0 ;
+    Word b = 0 ;
+    Word c = 0 ;
+    Word d = 0 ;
+    Word e = 0 ;
+    Word f = 0 ;
+    Word g = 0 ;
+    Word h = 0 ;
     
     // private
     
@@ -236,6 +245,8 @@ struct SHA256Param : SHA32Word
     
     // public
     
+    State() {}
+    
     void reset()
      {
       a=0x6A09E667;
@@ -246,6 +257,11 @@ struct SHA256Param : SHA32Word
       f=0x9B05688C;
       g=0x1F83D9AB;
       h=0x5BE0CD19;
+     }
+    
+    void forget()
+     {
+      Forget(*this);
      }
     
     void add(const uint8 block[BlockLen]);
@@ -296,14 +312,14 @@ struct SHA512Param : SHA64Word
    {
     // data
     
-    Word a;
-    Word b;
-    Word c;
-    Word d;
-    Word e;
-    Word f;
-    Word g;
-    Word h;
+    Word a = 0 ;
+    Word b = 0 ;
+    Word c = 0 ;
+    Word d = 0 ;
+    Word e = 0 ;
+    Word f = 0 ;
+    Word g = 0 ;
+    Word h = 0 ;
     
     // private
     
@@ -329,6 +345,8 @@ struct SHA512Param : SHA64Word
     
     // public
     
+    State() {}
+    
     void reset()
      {
       a=0x6A09E667F3BCC908ull;
@@ -339,6 +357,11 @@ struct SHA512Param : SHA64Word
       f=0x9B05688C2B3E6C1Full;
       g=0x1F83D9ABFB41BD6Bull;
       h=0x5BE0CD19137E2179ull;
+     }
+    
+    void forget()
+     {
+      Forget(*this);
      }
     
     void add(const uint8 block[BlockLen]);
@@ -401,6 +424,13 @@ struct SHABlock
     
     len=0;
     total=0;
+   }
+  
+  void forget()
+   {
+    Forget(block);
+    Forget(len);
+    Forget(total);
    }
   
   ulen feed(const uint8 *data,ulen data_len)
@@ -487,6 +517,12 @@ struct SHA
    {
     block.reset();
     state.reset();
+   }
+  
+  void forget()
+   {
+    block.forget();
+    state.forget();
    }
   
   void add(const uint8 *data,ulen len)

@@ -22,7 +22,7 @@ namespace CCore {
 
 /* type PlatformRandom */
 
-using PlatformRandom = IntelRandom ;
+using PlatformRandom = Crypton::IntelRandom ;
 
 } // namespace CCore
  

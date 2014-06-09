@@ -879,6 +879,7 @@ obj/IntegerFastAlgo.s.o \
 obj/IntelAES.s.o \
 obj/IntelCPUID.s.o \
 obj/IntelRandom.s.o \
+obj/PlatformBase.s.o \
 obj/Quick.s.o \
 obj/SysAtomic.s.o \
 obj/SysTime.s.o \
@@ -3504,6 +3505,9 @@ obj/IntelCPUID.s.o : ../../Target/WIN64/CCore/src/crypton/IntelCPUID.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/IntelRandom.s.o : ../../Target/WIN64/CCore/src/crypton/IntelRandom.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/PlatformBase.s.o : ../../Target/WIN64/CCore/src/base/PlatformBase.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/Quick.s.o : ../../Target/WIN64/CCore/src/base/Quick.s

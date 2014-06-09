@@ -93,7 +93,10 @@ The tail is padded to make a whole number of blocks.
 <p>
 The <b>HashFunction</b> is working incrementally. To calculate the output, the object must be reset first.
 It is performed by the constructor and can be performed also by the method <b>reset()</b>.
-Destructor also does reset to clean the internal state from any information, accumulated during the hash
+</p>
+
+<p>
+Destructor does clean the internal state from any information, accumulated during the hash
 calculation. 
 </p>
 
@@ -130,12 +133,18 @@ struct HashAlgo
 
   void reset();
 
+  void forget();
+
   void add(const uint8 *data,ulen len);
 
   void finish(uint8 digest[DigestLen]);
  };
 
 </pre>
+
+<p>
+The method <b>forget()</b> is used to clean the state.
+</p>
 
 <h4>KeyedHashFunction</h4>
 
