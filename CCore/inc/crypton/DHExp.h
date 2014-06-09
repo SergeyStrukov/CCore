@@ -200,7 +200,7 @@ class DHExp : NoCopy
  
    static const ulen GLen = DHMod::GLen ;
 
-  private:
+  public:
    
    static const unsigned UnitBits = Algo::UnitBits ;
    
@@ -214,7 +214,7 @@ class DHExp : NoCopy
    
    using Unit = typename Algo::Unit ;
    
-  private: 
+  public:
    
    class Core : NoCopy
     {
@@ -247,9 +247,9 @@ class DHExp : NoCopy
       void sq(const Unit A[IntLen],Unit B[IntLen]); // may overlapp
     };
    
-   Core core;
-   
   private: 
+   
+   Core core;
    
    Unit G[15*IntLen];
    Unit A[15*IntLen];
@@ -269,7 +269,9 @@ class DHExp : NoCopy
    
    static void SetNull(Unit A[IntLen]);
    
-   static bool LSBit(Unit A[IntLen]) { return A[0]&Unit(1); }
+   static void SetOne(Unit A[IntLen]);
+   
+   static bool LSBit(const Unit A[IntLen]) { return A[0]&Unit(1); }
    
   private: 
  
@@ -334,13 +336,10 @@ void DHExp<DHMod,Algo>::Core::direct(const Unit A[IntLen],Unit B[IntLen])
   if( IsNull(P) )
     {
      SetNull(B);
-    
-     return;
     }
-  
-  if( addop.sub(M,P,B) )
+  else
     {
-     addop.add(M,B);
+     if( addop.sub(M,P,B) ) addop.add(M,B);
     }
  }
 
@@ -429,6 +428,14 @@ void DHExp<DHMod,Algo>::SetNull(Unit A[IntLen])
  }
 
 template <class DHMod,class Algo> 
+void DHExp<DHMod,Algo>::SetOne(Unit A[IntLen])
+ {
+  *(A++)=1;
+  
+  for(ulen cnt=IntLen-1; cnt ;cnt--,A++) *A=0;
+ }
+
+template <class DHMod,class Algo> 
 void DHExp<DHMod,Algo>::load(const uint8 a[GLen])
  {
   Load(a,A);
@@ -498,13 +505,11 @@ void DHExp<DHMod,Algo>::complete(bool one)
  {
   if( one )
     {
-     A[0]=1;
-     
-     Range(A+1,IntLen-1).set_null();
+     SetOne(P);
     }
   else
     {
-     core.direct(A,A);
+     core.direct(P,P);
     }
  }
 

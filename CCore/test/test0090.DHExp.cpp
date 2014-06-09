@@ -56,6 +56,30 @@ class DBuilder
     }
  };
 
+/* class UBuilder */
+
+class UBuilder
+ {
+   PtrLen<const Int::Unit> data;
+   
+  public: 
+   
+   explicit UBuilder(PtrLen<const Int::Unit> data_) : data(data_) {}
+   
+   ulen getLen() const { return LenAdd(data.len,1); }
+   
+   PtrLen<Int::Unit> operator () (Place<void> place) const
+    {
+     Int::Unit *base=place;
+     
+     data.copyTo(base);
+     
+     base[data.len]=0;
+     
+     return Range(base,data.len+1);
+    }
+ };
+
 /* PrintInt() */
 
 template <class P>
@@ -227,6 +251,130 @@ void test3(StrLen title)
   PrintInt(out,M*K);
  }
 
+/* test4() */
+
+template <class DHMod>
+void test4(StrLen title)
+ {
+  Printf(Con,"#;\n\n",Title(title));
+  
+  using Exp = Crypton::DHExp<DHMod> ;
+  using Unit = typename Exp::Unit ;
+  
+  typename Exp::Core core;
+  
+  PlatformRandom random;
+  
+  Unit A[Exp::IntLen];
+  Unit B[Exp::IntLen];
+  Unit C[Exp::IntLen];
+  
+  Int m(DoBuild,Builder(Range(DHMod::Mod)));
+  
+  for(ulen cnt=10000; cnt ;cnt--)
+    {
+     random.fill(Range(A));
+     random.fill(Range(B));
+    
+     core.mul(A,B,C);
+     
+     core.direct(A,A);
+     core.direct(B,B);
+     core.direct(C,C);
+    
+     Int a(DoBuild,UBuilder(Range_const(A)));
+     Int b(DoBuild,UBuilder(Range_const(B)));
+     Int c(DoBuild,UBuilder(Range_const(C)));
+     
+     if( ((a*b-c)%m).sign() )
+       {
+        Printf(Exception,"failed");
+       }
+    }
+ }
+
+/* test5() */
+
+template <class DHMod>
+void test5(StrLen title)
+ {
+  Printf(Con,"#;\n\n",Title(title));
+  
+  using Exp = Crypton::DHExp<DHMod> ;
+  using Unit = typename Exp::Unit ;
+  
+  typename Exp::Core core;
+  
+  PlatformRandom random;
+  
+  Unit A[Exp::IntLen];
+  Unit B[Exp::IntLen];
+  Unit C[Exp::IntLen];
+  
+  Int m(DoBuild,Builder(Range(DHMod::Mod)));
+  Int d(DoBuild,DBuilder(m.getBody().len-1));
+  
+  for(ulen cnt=10000; cnt ;cnt--)
+    {
+     random.fill(Range(A));
+    
+     core.inverse(A,B);
+     core.direct(B,C);
+    
+     Int a(DoBuild,UBuilder(Range_const(A)));
+     Int b(DoBuild,UBuilder(Range_const(B)));
+     Int c(DoBuild,UBuilder(Range_const(C)));
+     
+     if( c != a%m )
+       {
+        Printf(Exception,"failed");
+       }
+     
+     if( (a*d)%m != b%m )
+       {
+        Printf(Exception,"failed");
+       }
+    }
+ }
+
+/* test6() */
+
+template <class DHMod>
+void test6(StrLen title)
+ {
+  Printf(Con,"#;\n\n",Title(title));
+  
+  using Exp = Crypton::DHExp<DHMod> ;
+  
+  PlatformRandom random;
+  
+  Exp exp;
+  
+  uint8 x[DHMod::GLen];
+  uint8 y[DHMod::GLen];
+  uint8 gx[DHMod::GLen];
+  uint8 gy[DHMod::GLen];
+  uint8 gxy[DHMod::GLen];
+  uint8 gyx[DHMod::GLen];
+  
+  for(ulen cnt=100; cnt ;cnt--)
+    {
+     random.fill(Range(x));
+     random.fill(Range(y));
+     
+     exp.pow(x,gx);
+     exp.pow(gx,y,gxy);
+     
+     exp.pow(y,gy);
+     exp.pow(gy,x,gyx);
+     
+     if( !Range(gxy).equal(gyx) )
+       {
+        Printf(Exception,"failed");
+       }
+    }
+ }
+
 } // namespace Private_0090
  
 using namespace Private_0090; 
@@ -249,6 +397,15 @@ bool Testit<90>::Main()
   
   //test3<Crypton::DHModI>("DH Group I module");
   //test3<Crypton::DHModII>("DH Group II module");
+  
+  //test4<Crypton::DHModI>("DH Group I module");
+  //test4<Crypton::DHModII>("DH Group II module");
+  
+  //test5<Crypton::DHModI>("DH Group I module");
+  //test5<Crypton::DHModII>("DH Group II module");
+  
+  test6<Crypton::DHModI>("DH Group I module");
+  test6<Crypton::DHModII>("DH Group II module");
   
   return true;
  }
