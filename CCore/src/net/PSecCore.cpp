@@ -18,7 +18,10 @@
 #include <CCore/inc/PlatformRandom.h>
 #include <CCore/inc/crypton/PlatformSHA.h>
 #include <CCore/inc/crypton/PlatformAES.h>
+#include <CCore/inc/crypton/DHExp.h>
 #include <CCore/inc/UIntSplit.h>
+
+#include <CCore/inc/Print.h>
 
 namespace CCore {
 namespace Net {
@@ -32,22 +35,9 @@ using DefDecrypt = Crypton::AESInverse256 ;
 
 using DefHash = Crypton::PlatformSHA512 ;
 
-static const ulen DefKeyCount = 100 ;
+static const ulen DefKeyCount = 10 ;
 
-struct DefExp
- {
-  static const ulen GLen = 100 ;
-  
-  void pow(const uint8 x[],uint8 gx[])
-   {
-    Range(gx,GLen).set_null();
-   }
-  
-  void pow(const uint8 a[],const uint8 x[],uint8 ax[])
-   {
-    Range(ax,GLen).set_null();
-   }
- };
+using DefExp = Crypton::DHExp<Crypton::DHModII> ;
 
 TestMasterKey::TestMasterKey()
  {
@@ -93,7 +83,7 @@ ulen TestMasterKey::getKLen() const
 
 LifeLim TestMasterKey::getLifeLim() const
  {
-  return LifeLim(UIntMax(),UIntMax());
+  return LifeLim(100000,10000);
  }
 
 void TestMasterKey::getKey0(uint8 key[]) const
@@ -180,6 +170,48 @@ uint8 RandomEngine::next()
  }
 
 /* class KeySet */
+
+static unsigned SetIndex = 1 ;
+
+static Mutex mux;
+
+static PrintFile test("test.txt");
+
+void KeySet::capture()
+ {
+  Mutex::Lock lock(mux);
+  
+  Printf(test,"#;\n\n",set_index);
+  
+  for(ulen i=0,len=key_set.getLen(); i<len ;i++)
+    {
+     Rec &rec=key_set[i];
+    
+     Printf(test,"rec[#;]\n",i);
+     Printf(test,"  base serial = #; state = #; active = #;\n",rec.base.serial,rec.base.state,rec.base.active);
+     Printf(test,"  next serial = #; state = #; active = #;\n",rec.next.serial,rec.next.state,rec.next.active);
+     
+     if( rec.type!=Packet_None )
+       {
+        Printf(test,"  #; #;:#;\n\n",rec.type,GetIndex(rec.key_index),GetSerial(rec.key_index));
+       }
+     else
+       {
+        Printf(test,"\n");
+       }
+    }
+  
+  Printf(test,"----------\n\n");
+ }
+
+void KeySet::capture(StrLen type,KeyIndex key_index)
+ {
+  Mutex::Lock lock(mux);
+  
+  Printf(test,"#; #;:#;\n",type,GetIndex(key_index),GetSerial(key_index));
+  
+  capture();
+ }
 
 void KeySet::Key::move(Key &obj)
  {
@@ -355,7 +387,8 @@ KeyResponse KeySet::alert(Rec &rec,KeyIndex key_index)
  }
 
 KeySet::KeySet(const MasterKey &master_key,ProcessorCore &core_)
- : klen(master_key.getKLen()),
+ : set_index(SetIndex++),
+   klen(master_key.getKLen()),
    life_lim(master_key.getLifeLim()),
    key_set(master_key.getKeySetLen()),
    key_buf(klen*(1+2*key_set.getLen())),
@@ -466,6 +499,8 @@ bool KeySet::setDecryptKey(KeyIndex key_index)
 
 KeyResponse KeySet::tick()
  {
+  capture();
+  
   ulen count=key_set.getLen();
   
   if( !count ) return Nothing;
@@ -518,6 +553,8 @@ KeyResponse KeySet::tick()
 
 KeyResponse KeySet::alert(KeyIndex key_index,const uint8 gy[])
  {
+  capture("alert",key_index);
+  
   ulen index=GetIndex(key_index);
   
   if( index>=key_set.getLen() ) return Nothing;
@@ -581,6 +618,8 @@ KeyResponse KeySet::alert(KeyIndex key_index,const uint8 gy[])
 
 KeyResponse KeySet::ready(KeyIndex key_index,const uint8 gy[])
  {
+  capture("ready",key_index);
+  
   ulen index=GetIndex(key_index);
   
   if( index>=key_set.getLen() ) return Nothing;
@@ -616,6 +655,8 @@ KeyResponse KeySet::ready(KeyIndex key_index,const uint8 gy[])
 
 KeyResponse KeySet::ack(KeyIndex key_index)
  {
+  capture("ack",key_index);
+  
   ulen index=GetIndex(key_index);
   
   if( index>=key_set.getLen() ) return Nothing;

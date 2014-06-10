@@ -65,6 +65,10 @@ enum ProcessorEvent
   ProcessorEvent_KeyNoPacket,
   ProcessorEvent_KeyBadFormat,
   
+  ProcessorEvent_KeyAlert,
+  ProcessorEvent_KeyReady,
+  ProcessorEvent_KeyAck,
+  
   ProcessorEventLim
  };
 

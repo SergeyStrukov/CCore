@@ -317,6 +317,10 @@ void test5(StrLen title)
   for(ulen cnt=10000; cnt ;cnt--)
     {
      random.fill(Range(A));
+     
+     ulen len=random.select_uint<ulen>(Exp::IntLen);
+     
+     Range(A).suffix(len).set(Unit(-1));
     
      core.inverse(A,B);
      core.direct(B,C);
@@ -330,7 +334,7 @@ void test5(StrLen title)
         Printf(Exception,"failed");
        }
      
-     if( (a*d)%m != b%m )
+     if( (a*d-b)%m != 0 )
        {
         Printf(Exception,"failed");
        }
@@ -357,7 +361,7 @@ void test6(StrLen title)
   uint8 gxy[DHMod::GLen];
   uint8 gyx[DHMod::GLen];
   
-  for(ulen cnt=1000; cnt ;cnt--)
+  for(ulen cnt=100; cnt ;cnt--)
     {
      random.fill(Range(x));
      random.fill(Range(y));

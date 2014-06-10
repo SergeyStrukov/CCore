@@ -486,6 +486,12 @@ struct KeyResponse
 
 class KeySet : NoCopy
  {
+   unsigned set_index;
+   
+   void capture();
+   
+   void capture(StrLen type,KeyIndex key_index);
+  
    ulen klen;
    LifeLim life_lim;
   

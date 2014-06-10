@@ -88,6 +88,8 @@ struct Algo
      
      void mulLo(const Unit A[Len],const Unit B[Len],Unit C[Len]); // no overlapp
      
+     void mulLo1(const Unit A[Len],const Unit B[Len],Unit C[Len+1]); // no overlapp
+     
      void sq(const Unit A[Len],Unit B[2*Len]); // no overlapp
    };
 
@@ -104,7 +106,7 @@ struct Algo
      
      bool /* carry */ add(const Unit A[Len],Unit B[Len]); // no overlap
      
-     bool /* carry */ neg(Unit A[Len]);
+     bool /* borrow */ neg(Unit A[Len]);
    };
  };
 
@@ -153,6 +155,11 @@ struct DefaultDHAlgo
        Algo::UMulLo(C,Len,A,Len,B,Len);
       }
      
+     void mulLo1(const Unit A[Len],const Unit B[Len],Unit C[Len+1])
+      {
+       Algo::UMulLo(C,Len+1,A,Len,B,Len);
+      }
+     
      void sq(const Unit A[Len],Unit B[2*Len])
       {
        Algo::USq(B,A,Len);
@@ -184,7 +191,7 @@ struct DefaultDHAlgo
        return Algo::UAdd(B,A,Len);
       }
      
-     bool /* carry */ neg(Unit A[Len])
+     bool /* borrow */ neg(Unit A[Len])
       {
        return Algo::UNeg(A,Len);
       }
@@ -271,7 +278,7 @@ class DHExp : NoCopy
    
    static void SetOne(Unit A[IntLen]);
    
-   static bool LSBit(const Unit A[IntLen]) { return A[0]&Unit(1); }
+   static Unit LSBit(const Unit A[IntLen]) { return A[0]&Unit(1); }
    
   private: 
  
@@ -348,16 +355,16 @@ void DHExp<DHMod,Algo>::Core::inverse(const Unit A[IntLen],Unit B[IntLen])
  {
   mulop.mulHi(A,L,Q);
   
-  unsigned bitC=addop.add(A,Q);
+  Unit bitC=addop.add(A,Q);
   
-  mulop.mul(Q,M,P);
+  mulop.mulLo1(Q,M,P);
   
-  unsigned bitA=LSBit(A);
-  unsigned bitP=LSBit(P+IntLen);
+  Unit bitA=LSBit(A);
+  Unit bitP=LSBit(P+IntLen);
   
-  unsigned bitN=addop.neg(P);
+  Unit bitN=addop.neg(P);
   
-  unsigned bit=bitA^bitC^bitP^bitN;
+  Unit bit=bitA^bitC^bitP^bitN;
   
   if( bit )
     {

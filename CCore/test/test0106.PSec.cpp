@@ -115,7 +115,7 @@ bool Testit<106>::Main()
    TaskEventHostType::StartStop event_start_stop(TaskEventHost,&recorder);
    Engine::StartStop start_stop(engine);
    
-   Task::Sleep(10_sec);
+   Task::Sleep(100_sec);
   }
   
   engine.showStat();

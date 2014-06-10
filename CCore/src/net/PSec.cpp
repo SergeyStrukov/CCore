@@ -42,7 +42,11 @@ const char * GetTextDesc(ProcessorEvent ev)
     "PSec Tx Done",         // ProcessorEvent_TxDone
     
     "PSec Key No Packet",   // ProcessorEvent_KeyNoPacket
-    "PSec Key Bad Format"   // ProcessorEvent_KeyBadFormat
+    "PSec Key Bad Format",  // ProcessorEvent_KeyBadFormat
+    
+    "PSec Key Alert",       // ProcessorEvent_KeyAlert
+    "PSec Key Ready",       // ProcessorEvent_KeyReady
+    "PSec Key Ack"          // ProcessorEvent_KeyAck
    };
   
   return Table[ev];
@@ -69,6 +73,10 @@ EventIdType EventRegType::Register(EventMetaInfo &info)
              
              .addValueName(ProcessorEvent_KeyNoPacket,"Key NoPacket",EventMarker_Error)
              .addValueName(ProcessorEvent_KeyBadFormat,"Key BadFormat",EventMarker_Error)
+             
+             .addValueName(ProcessorEvent_KeyAlert,"Key KeyAlert")
+             .addValueName(ProcessorEvent_KeyReady,"Key Ready")
+             .addValueName(ProcessorEvent_KeyAck,"Key Ack")
              
              .getId();
  }
@@ -100,8 +108,6 @@ KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
       {
        if( data.len<KeyIndexLen+core.getGLen() ) return Nothing;
        
-       KeyIndex key_index;
-       
        BufGetDev dev(data.ptr);
        
        dev.use<BeOrder>(key_index);
@@ -113,8 +119,6 @@ KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
      case Packet_Ack :
       {
        if( data.len<KeyIndexLen ) return Nothing;
-       
-       KeyIndex key_index;
        
        BufGetDev dev(data.ptr);
        
@@ -488,6 +492,13 @@ bool PacketProcessor::response(KeyResponse resp,Packet<uint8> packet,PacketForma
   resp.gx.copyTo(ptr);
   
   core.random(Range(ptr+resp.gx.len,len-min_len));
+  
+  switch( resp.type )
+    {
+     case Packet_Alert : stat.count(ProcessorEvent_KeyAlert); break; 
+     case Packet_Ready : stat.count(ProcessorEvent_KeyReady); break;
+     case Packet_Ack   : stat.count(ProcessorEvent_KeyAck); break;
+    }
   
   return true;
  }
