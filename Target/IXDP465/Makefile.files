@@ -948,6 +948,7 @@ obj/DevRW.s.o \
 obj/IXP465.s.o \
 obj/IXP465.CP15.s.o \
 obj/IntegerFastAlgo.s.o \
+obj/PlatformBase.s.o \
 obj/Quick.s.o \
 obj/SysAtomic.s.o \
 
@@ -3779,6 +3780,9 @@ obj/IXP465.CP15.s.o : ../../Target/IXDP465/CCore/src/dev/IXP465.CP15.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/IntegerFastAlgo.s.o : ../../Target/IXDP465/CCore/src/math/IntegerFastAlgo.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/PlatformBase.s.o : ../../Target/IXDP465/CCore/src/base/PlatformBase.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/Quick.s.o : ../../Target/IXDP465/CCore/src/base/Quick.s

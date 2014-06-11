@@ -1,3 +1,4 @@
+../../Target/LIN64/CCore/src/base/PlatformBase.s
 ../../Target/LIN64/CCore/src/base/Quick.s
 ../../Target/LIN64/CCore/src/crypton/IntelAES.s
 ../../Target/LIN64/CCore/src/crypton/IntelCPUID.s
