@@ -35,6 +35,7 @@ enum Packets
   Packet_Alert,
   Packet_Ready,
   Packet_Ack,
+  Packet_Stop,
   
   Packet_None
  };
@@ -486,12 +487,6 @@ struct KeyResponse
 
 class KeySet : NoCopy
  {
-   unsigned set_index;
-   
-   void capture();
-   
-   void capture(StrLen type,KeyIndex key_index);
-  
    ulen klen;
    LifeLim life_lim;
   
@@ -693,6 +688,8 @@ class KeySet : NoCopy
    KeyResponse ready(KeyIndex key_index,const uint8 gy[]);
    
    KeyResponse ack(KeyIndex key_index);
+   
+   KeyResponse stop(KeyIndex key_index);
  };
 
 /* class Convolution<A,B> */
@@ -971,6 +968,8 @@ class ProcessorCore : NoCopy
    KeyResponse ready(KeyIndex key_index,const uint8 gy[]) { return key_set.ready(key_index,gy); }
    
    KeyResponse ack(KeyIndex key_index) { return key_set.ack(key_index); }
+   
+   KeyResponse stop(KeyIndex key_index) { return key_set.stop(key_index); }
  };
 
 /* class AntiReplay */

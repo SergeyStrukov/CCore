@@ -68,6 +68,7 @@ enum ProcessorEvent
   ProcessorEvent_KeyAlert,
   ProcessorEvent_KeyReady,
   ProcessorEvent_KeyAck,
+  ProcessorEvent_KeyStop,
   
   ProcessorEventLim
  };

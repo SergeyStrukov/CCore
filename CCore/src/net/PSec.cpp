@@ -46,7 +46,8 @@ const char * GetTextDesc(ProcessorEvent ev)
     
     "PSec Key Alert",       // ProcessorEvent_KeyAlert
     "PSec Key Ready",       // ProcessorEvent_KeyReady
-    "PSec Key Ack"          // ProcessorEvent_KeyAck
+    "PSec Key Ack",         // ProcessorEvent_KeyAck
+    "PSec Key Stop"         // ProcessorEvent_KeyStop
    };
   
   return Table[ev];
@@ -74,9 +75,10 @@ EventIdType EventRegType::Register(EventMetaInfo &info)
              .addValueName(ProcessorEvent_KeyNoPacket,"Key NoPacket",EventMarker_Error)
              .addValueName(ProcessorEvent_KeyBadFormat,"Key BadFormat",EventMarker_Error)
              
-             .addValueName(ProcessorEvent_KeyAlert,"Key KeyAlert")
+             .addValueName(ProcessorEvent_KeyAlert,"Key Alert")
              .addValueName(ProcessorEvent_KeyReady,"Key Ready")
              .addValueName(ProcessorEvent_KeyAck,"Key Ack")
+             .addValueName(ProcessorEvent_KeyStop,"Key Stop")
              
              .getId();
  }
@@ -117,6 +119,7 @@ KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
      break; 
       
      case Packet_Ack :
+     case Packet_Stop :
       {
        if( data.len<KeyIndexLen ) return Nothing;
        
@@ -134,6 +137,8 @@ KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
      case Packet_Ready : return core.ready(key_index,gy);
       
      case Packet_Ack : return core.ack(key_index);
+      
+     case Packet_Stop : return core.stop(key_index);
       
      default: return Nothing; 
     }
@@ -498,6 +503,7 @@ bool PacketProcessor::response(KeyResponse resp,Packet<uint8> packet,PacketForma
      case Packet_Alert : stat.count(ProcessorEvent_KeyAlert); break; 
      case Packet_Ready : stat.count(ProcessorEvent_KeyReady); break;
      case Packet_Ack   : stat.count(ProcessorEvent_KeyAck); break;
+     case Packet_Stop  : stat.count(ProcessorEvent_KeyStop); break;
     }
   
   return true;
@@ -512,6 +518,7 @@ void EndpointDevice::response(KeyResponse resp)
      case Packet_Alert :
      case Packet_Ready :
      case Packet_Ack :
+     case Packet_Stop :
       {
        Packet<uint8> packet=pset.try_get();
        

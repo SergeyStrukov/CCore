@@ -17,6 +17,15 @@
  
 namespace CCore {
 
+/* functions */
+
+#if 1
+
+void OptimizeBarrier(void *,ulen)
+ {
+ }
+
+#endif
 
 } // namespace CCore
  
