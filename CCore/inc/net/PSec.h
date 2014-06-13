@@ -200,7 +200,7 @@ class PacketProcessor : NoCopy
      return l-core.getHLen(); 
     }
    
-   KeyResponse inbound(PacketType type,PtrLen<const uint8> data);
+   void inbound(KeyResponse &resp,PacketType type,PtrLen<const uint8> data);
    
   public:
   
@@ -216,16 +216,13 @@ class PacketProcessor : NoCopy
     {
      PtrLen<const uint8> data;
      bool consumed;
-     KeyResponse resp;
 
-     InboundResult(NothingType) : consumed(true),resp(Nothing) {}
+     InboundResult(NothingType) : consumed(true) {}
      
-     InboundResult(PtrLen<const uint8> data_) : data(data_),consumed(false),resp(Nothing) {}
-     
-     InboundResult(KeyResponse resp_) : consumed(true),resp(resp_) {}
+     InboundResult(PtrLen<const uint8> data_) : data(data_),consumed(false) {}
     };
    
-   InboundResult inbound(PtrLen<uint8> data);
+   InboundResult inbound(KeyResponse &resp,PtrLen<uint8> data);
    
    struct OutboundResult
     {
@@ -239,13 +236,13 @@ class PacketProcessor : NoCopy
    
    OutboundResult outbound(PtrLen<uint8> data,ulen delta,PacketType type);
    
-   KeyResponse tick() { return core.tick(); }
+   void tick(KeyResponse &resp) { return core.tick(resp); }
    
    void count(ProcessorEvent ev) { stat.count(ev); }
    
    void getStat(ProcessorStatInfo &ret) { ret=stat; }
    
-   bool response(KeyResponse resp,Packet<uint8> packet,PacketFormat format);
+   bool response(const KeyResponse &resp,Packet<uint8> packet,PacketFormat format);
  };
 
 /* class EndpointDevice */
@@ -274,7 +271,7 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice , PacketEndp
    
   private: 
    
-   void response(KeyResponse resp);
+   void response(const KeyResponse &resp);
    
    void outbound(Packet<uint8> packet,Packets type);
    

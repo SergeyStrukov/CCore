@@ -21,6 +21,8 @@
 #include <CCore/inc/BlockFifo.h>
 #include <CCore/inc/Timer.h>
 
+#include <CCore/inc/crypton/Forget.h>
+
 namespace CCore {
 namespace Net {
 namespace PSec {
@@ -117,9 +119,9 @@ struct AbstractCryptFunc : MemBase_nocopy
   
   virtual ulen getKLen() const =0;
   
-  virtual void key(const uint8 key[])=0;
+  virtual void key(const uint8 key[ /* KLen */ ])=0;
   
-  virtual void apply(uint8 block[]) const =0;
+  virtual void apply(uint8 block[ /* BLen */ ]) const =0;
  };
 
 /* class CryptFunc<Crypt> */
@@ -168,7 +170,7 @@ struct AbstractHashFunc : MemBase_nocopy
   
   virtual void add(PtrLen<const uint8> data)=0;
   
-  virtual const uint8 * finish()=0;
+  virtual const uint8 * finish()=0; /* [HLen] */
  };
 
 /* class HashFunc<Hash> */
@@ -184,7 +186,7 @@ class HashFunc : public AbstractHashFunc
   
    HashFunc() {}
    
-   virtual ~HashFunc() { Range(digest).set_null(); }
+   virtual ~HashFunc() { Crypton::Forget(digest); }
    
    // AbstractHashFunc
    
@@ -216,9 +218,9 @@ struct AbstractKeyGen : MemBase_nocopy
   
   virtual ulen getKLen() const =0;
   
-  virtual void pow(const uint8 x[],uint8 gx[]) =0;
+  virtual void pow(const uint8 x[ /* GLen */ ],uint8 gx[ /* GLen */ ]) =0;
   
-  virtual void key(const uint8 x[],const uint8 gy[],uint8 key[]) =0;
+  virtual void key(const uint8 x[ /* GLen */ ],const uint8 gy[ /* GLen */ ],uint8 key[ /* KLen */ ]) =0;
  };
 
 /* class KeyGen<Exp,Hash,ulen KeyLen> */
@@ -247,13 +249,13 @@ class KeyGen : public AbstractKeyGen
    
    KeyGen() {}
    
-   virtual ~KeyGen() 
+   virtual ~KeyGen()
     { 
-     Range(secret).set_null(); 
+     Crypton::Forget(secret); 
      
-     Range(gxy).set_null();
-     Range(gxys).set_null();
-     Range(digest).set_null();
+     Crypton::Forget(gxy);
+     Crypton::Forget(gxys);
+     Crypton::Forget(digest);
     }
    
    // common secret
@@ -280,10 +282,10 @@ class KeyGen : public AbstractKeyGen
      
      PtrLen<uint8> out(key,KeyLen);
      
-     for(; ulen delta=Min(HLen,out.len) ;ptr+=GLen)
+     while( ulen delta=Min(HLen,out.len) )
        {
         hash.add(Range_const(gxys));
-        hash.add(Range_const(ptr,GLen));
+        hash.add(Range_const(ptr,GLen)); ptr+=GLen;
         hash.finish(digest);
         
         (out+=delta).copy(digest);
@@ -378,11 +380,11 @@ struct MasterKey : MemBase_nocopy
   
   virtual LifeLim getLifeLim() const =0;
   
-  virtual void getKey0(uint8 key[]) const =0;
+  virtual void getKey0(uint8 key[ /* KLen */ ]) const =0;
   
   virtual ulen getKeySetLen() const =0;
   
-  virtual void getKey(ulen index,uint8 key[]) const =0;
+  virtual void getKey(ulen index,uint8 key[ /* KLen */ ]) const =0;
  };
 
 /* class TestMasterKey */
@@ -438,7 +440,7 @@ class RandomEngine : NoCopy
      
       Fifo() : BlockFifo<uint8>(buf,Len) {}
       
-      ~Fifo() { Range(buf).set_null(); }
+      ~Fifo() { Crypton::Forget(buf); }
     };
    
    Fifo fifo;
@@ -449,6 +451,8 @@ class RandomEngine : NoCopy
    const uint8 *buf;
    ulen len;
    ulen off;
+   
+   uint8 temp[ExtLen];
    
   private:
   
@@ -469,18 +473,19 @@ class RandomEngine : NoCopy
 
 /* struct KeyResponse */
 
-struct KeyResponse
+struct KeyResponse : NoCopy
  {
   Packets type;
   KeyIndex key_index;
   PtrLen<const uint8> gx;
   
-  KeyResponse(NothingType) : type(Packet_None),key_index(0) {}
+  TempArray<uint8,512> temp;
   
-  KeyResponse(Packets type_,KeyIndex key_index_,PtrLen<const uint8> gx_=Empty) 
-   : type(type_),key_index(key_index_),gx(gx_)
-   {
-   }
+  KeyResponse() : type(Packet_None),key_index(0) {}
+  
+  ~KeyResponse() { Crypton::ForgetRange(Range(temp)); }
+  
+  void set(Packets type,KeyIndex key_index,PtrLen<const uint8> gx=Empty);
  };
 
 /* class KeySet */
@@ -592,13 +597,14 @@ class KeySet : NoCopy
     
      bool resend() const { return type!=Packet_None && !repeat ; }
      
-     KeyResponse makeResponse(ulen glen)
+     void makeResponse(KeyResponse &resp,ulen glen)
       { 
        repeat.reset();
        
-       if( type==Packet_Ack ) return KeyResponse(type,key_index);
-       
-       return KeyResponse(type,key_index,Range_const(gx,glen));
+       if( type==Packet_Ack ) 
+         resp.set(type,key_index);
+       else
+         resp.set(type,key_index,Range_const(gx,glen));
       }
      
      void flip()
@@ -655,7 +661,9 @@ class KeySet : NoCopy
    
   private: 
    
-   KeyResponse alert(Rec &rec,KeyIndex key_index);
+   void alert(Rec &rec,KeyIndex key_index);
+   
+   void alert(KeyResponse &resp,Rec &rec,KeyIndex key_index);
    
   public:
   
@@ -681,15 +689,15 @@ class KeySet : NoCopy
    
    ulen getGLen() const { return glen; }
    
-   KeyResponse tick();
+   void tick(KeyResponse &resp);
    
-   KeyResponse alert(KeyIndex key_index,const uint8 gy[]);
+   void alert(KeyResponse &resp,KeyIndex key_index,const uint8 gy[]);
    
-   KeyResponse ready(KeyIndex key_index,const uint8 gy[]);
+   void ready(KeyResponse &resp,KeyIndex key_index,const uint8 gy[]);
    
-   KeyResponse ack(KeyIndex key_index);
+   void ack(KeyResponse &resp,KeyIndex key_index);
    
-   KeyResponse stop(KeyIndex key_index);
+   void stop(KeyIndex key_index);
  };
 
 /* class Convolution<A,B> */
@@ -727,9 +735,16 @@ class Convolution : NoCopy
    
   public:
   
-   Convolution() { start(); }
+   Convolution()
+    { 
+     start(); 
+    }
    
-   ~Convolution() { start(); }
+   ~Convolution()
+    {
+     Crypton::Forget(a);
+     Crypton::Forget(b);
+    }
    
    void start()
     {
@@ -925,7 +940,7 @@ class ProcessorCore : NoCopy
    
    void startEncrypt() { direct_conv.start(); }
    
-   void applyEncrypt(uint8 block[])
+   void applyEncrypt(uint8 block[ /* BLen */ ])
     {
      direct_conv.apply(Range(block,blen));
      
@@ -944,7 +959,7 @@ class ProcessorCore : NoCopy
    
    void startDecrypt() { inverse_conv.start(); }
    
-   void applyDecrypt(uint8 block[])
+   void applyDecrypt(uint8 block[ /* BLen */ ])
     { 
      decrypt->apply(block);
      
@@ -961,15 +976,15 @@ class ProcessorCore : NoCopy
    
    ulen getGLen() const { return key_set.getGLen(); }
    
-   KeyResponse tick() { return key_set.tick(); }
+   void tick(KeyResponse &resp) { key_set.tick(resp); }
    
-   KeyResponse alert(KeyIndex key_index,const uint8 gy[]) { return key_set.alert(key_index,gy); }
+   void alert(KeyResponse &resp,KeyIndex key_index,const uint8 gy[]) { key_set.alert(resp,key_index,gy); }
    
-   KeyResponse ready(KeyIndex key_index,const uint8 gy[]) { return key_set.ready(key_index,gy); }
+   void ready(KeyResponse &resp,KeyIndex key_index,const uint8 gy[]) { key_set.ready(resp,key_index,gy); }
    
-   KeyResponse ack(KeyIndex key_index) { return key_set.ack(key_index); }
+   void ack(KeyResponse &resp,KeyIndex key_index) { key_set.ack(resp,key_index); }
    
-   KeyResponse stop(KeyIndex key_index) { return key_set.stop(key_index); }
+   void stop(KeyIndex key_index) { key_set.stop(key_index); }
  };
 
 /* class AntiReplay */

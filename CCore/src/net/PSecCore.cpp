@@ -81,7 +81,7 @@ ulen TestMasterKey::getKLen() const
 
 LifeLim TestMasterKey::getLifeLim() const
  {
-  return LifeLim(100000,200000);
+  return LifeLim(10,10000000);
  }
 
 void TestMasterKey::getKey0(uint8 key[]) const
@@ -103,8 +103,6 @@ void TestMasterKey::getKey(ulen index,uint8 key[]) const
 
 void RandomEngine::addRandom(ulen count)
  {
-  uint8 temp[ExtLen];
-  
   for(; count>=ExtLen ;count-=ExtLen)
     {
      auto r=Range(temp);
@@ -140,6 +138,7 @@ RandomEngine::RandomEngine(const MasterKey &master_key)
 
 RandomEngine::~RandomEngine()
  {
+  Crypton::Forget(temp);
  }
 
 uint8 RandomEngine::next()
@@ -165,6 +164,20 @@ uint8 RandomEngine::next()
     }
   
   return buf[off++];
+ }
+
+/* struct KeyResponse */
+
+void KeyResponse::set(Packets type_,KeyIndex key_index_,PtrLen<const uint8> gx_)
+ {
+  type=type_;
+  key_index=key_index_;
+  
+  temp.reset(gx_.len);
+  
+  Range(temp).copy(gx_.ptr);
+  
+  gx=Range_const(temp);
  }
 
 /* class KeySet */
@@ -329,7 +342,7 @@ class KeySet::GenInit : BufInit
    uint8 * operator () () { return get(); }
  };
 
-KeyResponse KeySet::alert(Rec &rec,KeyIndex key_index)
+void KeySet::alert(Rec &rec,KeyIndex key_index)
  {
   rec.type=Packet_Alert;
   rec.key_index=key_index;
@@ -338,8 +351,13 @@ KeyResponse KeySet::alert(Rec &rec,KeyIndex key_index)
   core.random(Range(rec.x,glen));
   
   key_gen->pow(rec.x,rec.gx);
+ }
+
+void KeySet::alert(KeyResponse &resp,Rec &rec,KeyIndex key_index)
+ {
+  alert(rec,key_index);
   
-  return KeyResponse(Packet_Alert,key_index,Range_const(rec.gx,glen));
+  resp.set(Packet_Alert,key_index,Range_const(rec.gx,glen));
  }
 
 KeySet::KeySet(const MasterKey &master_key,ProcessorCore &core_)
@@ -375,7 +393,8 @@ KeySet::KeySet(const MasterKey &master_key,ProcessorCore &core_)
 
 KeySet::~KeySet()
  {
-  Range(key_buf).set_null();
+  Crypton::ForgetRange(Range(key_buf));
+  Crypton::ForgetRange(Range(rekey_buf));
  }
 
 bool KeySet::setEncryptKey(KeyIndex key_index,ulen use_count)
@@ -452,11 +471,11 @@ bool KeySet::setDecryptKey(KeyIndex key_index)
   return false;  
  }
 
-KeyResponse KeySet::tick()
+void KeySet::tick(KeyResponse &resp)
  {
   ulen count=key_set.getLen();
   
-  if( !count ) return Nothing;
+  if( !count ) return;
   
   ulen index=tick_index++;
   
@@ -470,190 +489,179 @@ KeyResponse KeySet::tick()
     {
      if( rec.type==Packet_None )
        {
-        return alert(rec,rec.base.makeKeyIndex(index));
+        alert(resp,rec,rec.base.makeKeyIndex(index));
        }
      else
        {
         // going to die
-       
-        return Nothing; 
        }
     }
-  
-  if( rec.next.updateState(life_lim) )
+  else if( rec.next.updateState(life_lim) )
     {
      if( rec.type==Packet_None )
        {
         flip(index);
         
-        return alert(rec,rec.base.makeKeyIndex(index));
+        alert(resp,rec,rec.base.makeKeyIndex(index));
        }
      else
        {
         // going to die
+       }
+    }
+  else if( rec.resend() )
+    {
+     rec.makeResponse(resp,glen);
+    }
+ }
+
+void KeySet::alert(KeyResponse &resp,KeyIndex key_index,const uint8 gy[])
+ {
+  ulen index=GetIndex(key_index);
+  
+  if( index>=key_set.getLen() ) return;
+  
+  Rec &rec=key_set[index];
+  
+  switch( rec.type )
+    {
+     case Packet_None :
+      {
+       if( rec.base.active )
+         {
+          if( rec.base.makeKeyIndex(index)==key_index ) 
+            {
+             alert(rec,key_index);
+             
+             rec.type=Packet_Ready;
+            
+             make_key(rec,gy);
+            
+             rec.makeResponse(resp,glen);
+            }
+         }
+       else if( rec.next.active )
+         {
+          if( rec.next.makeKeyIndex(index)==key_index ) 
+            {
+             flip(index);
+             
+             alert(rec,key_index);
+            
+             rec.type=Packet_Ready;
+           
+             make_key(rec,gy);
+           
+             rec.makeResponse(resp,glen);
+            }
+         }
+      }
+     break;
+     
+     case Packet_Alert :
+      {
+       if( rec.key_index!=key_index ) return;
+     
+       rec.type=Packet_Ready;
+      
+       make_key(rec,gy);
+      
+       rec.makeResponse(resp,glen);
+      }
+     break; 
+    }
+ }
+
+void KeySet::ready(KeyResponse &resp,KeyIndex key_index,const uint8 gy[])
+ {
+  ulen index=GetIndex(key_index);
+  
+  if( index>=key_set.getLen() ) return;
+  
+  Rec &rec=key_set[index];
+  
+  switch( rec.type )
+    {
+     case Packet_Alert :
+      {
+       if( rec.key_index!=key_index ) return;
+      
+       rec.type=Packet_Ready;
        
-        return Nothing; 
-       }
+       make_key(rec,gy);
+       
+       activate_key(rec,index);
+       
+       rec.makeResponse(resp,glen);
+      }
+     break;
+     
+     case Packet_Ready :
+      {
+       if( rec.key_index!=key_index ) return;
+      
+       rec.type=Packet_Ack;
+       
+       activate_key(rec,index);
+       
+       rec.makeResponse(resp,glen);
+      }
+     break; 
     }
-  
-  if( rec.resend() )
-    {
-     return rec.makeResponse(glen);
-    }
-  
-  return Nothing;
  }
 
-KeyResponse KeySet::alert(KeyIndex key_index,const uint8 gy[])
+void KeySet::ack(KeyResponse &resp,KeyIndex key_index)
  {
   ulen index=GetIndex(key_index);
   
-  if( index>=key_set.getLen() ) return Nothing;
+  if( index>=key_set.getLen() ) return;
   
   Rec &rec=key_set[index];
   
-  if( rec.type==Packet_None )
+  switch( rec.type )
     {
-     if( rec.base.active )
-       {
-        if( rec.base.makeKeyIndex(index)==key_index ) 
-          {
-           alert(rec,key_index);
-           
-           rec.type=Packet_Ready;
-          
-           make_key(rec,gy);
-          
-           return rec.makeResponse(glen);
-          }
-        else
-          {
-           return Nothing;
-          }
-       }
+     case Packet_Ready :
+      {
+       if( rec.key_index!=key_index ) return;
+     
+       rec.type=Packet_Ack;
+      
+       rec.makeResponse(resp,glen);
+      }
+     break;
+     
+     case Packet_Ack :
+      {
+       if( rec.key_index!=key_index ) return;
     
-     if( rec.next.active )
-       {
-        if( rec.next.makeKeyIndex(index)==key_index ) 
-          {
-           flip(index);
-           
-           alert(rec,key_index);
-          
-           rec.type=Packet_Ready;
-         
-           make_key(rec,gy);
-         
-           return rec.makeResponse(glen);
-          }
-        else
-          {
-           return Nothing;
-          }
-       }
+       rec.type=Packet_None;
+       
+       resp.set(Packet_Ack,key_index);
+      }
+     break;
+     
+     case Packet_None :
+      {
+       resp.set(Packet_Stop,key_index);
+      }
+     break; 
     }
-  
-  if( rec.type==Packet_Alert )
-    {
-     if( rec.key_index!=key_index ) return Nothing;
-   
-     rec.type=Packet_Ready;
-    
-     make_key(rec,gy);
-    
-     return rec.makeResponse(glen);
-    }
-  
-  return Nothing;
  }
 
-KeyResponse KeySet::ready(KeyIndex key_index,const uint8 gy[])
+void KeySet::stop(KeyIndex key_index)
  {
   ulen index=GetIndex(key_index);
   
-  if( index>=key_set.getLen() ) return Nothing;
-  
-  Rec &rec=key_set[index];
-  
-  if( rec.type==Packet_Alert )
-    {
-     if( rec.key_index!=key_index ) return Nothing;
-    
-     rec.type=Packet_Ready;
-     
-     make_key(rec,gy);
-     
-     activate_key(rec,index);
-     
-     return rec.makeResponse(glen);
-    }
-  
-  if( rec.type==Packet_Ready )
-    {
-     if( rec.key_index!=key_index ) return Nothing;
-    
-     rec.type=Packet_Ack;
-     
-     activate_key(rec,index);
-     
-     return rec.makeResponse(glen);
-    }
-  
-  return Nothing;
- }
-
-KeyResponse KeySet::ack(KeyIndex key_index)
- {
-  ulen index=GetIndex(key_index);
-  
-  if( index>=key_set.getLen() ) return Nothing;
-  
-  Rec &rec=key_set[index];
-  
-  if( rec.type==Packet_Ready )
-    {
-     if( rec.key_index!=key_index ) return Nothing;
-   
-     rec.type=Packet_Ack;
-    
-     return rec.makeResponse(glen);
-    }
-  
-  if( rec.type==Packet_Ack )
-    {
-     if( rec.key_index!=key_index ) return Nothing;
-  
-     rec.type=Packet_None;
-     
-     return KeyResponse(Packet_Ack,key_index);
-    }
-  
-  if( rec.type==Packet_None )
-    {
-     return KeyResponse(Packet_Stop,key_index);
-    }
-  
-  return Nothing; 
- }
-
-KeyResponse KeySet::stop(KeyIndex key_index)
- {
-  ulen index=GetIndex(key_index);
-  
-  if( index>=key_set.getLen() ) return Nothing;
+  if( index>=key_set.getLen() ) return;
   
   Rec &rec=key_set[index];
   
   if( rec.type==Packet_Ack )
     {
-     if( rec.key_index!=key_index ) return Nothing;
+     if( rec.key_index!=key_index ) return;
   
      rec.type=Packet_None;
-     
-     return Nothing;
     }
-  
-  return Nothing; 
  }
 
 /* class ProcessorCore */
@@ -716,7 +724,7 @@ AntiReplay::BitFlags::BitFlags()
 
 AntiReplay::BitFlags::~BitFlags()
  {
-  Range(bits).set_null();
+  Crypton::Forget(bits);
  }
 
 AntiReplay::Unit AntiReplay::BitFlags::test(SequenceNumber num) const
@@ -748,7 +756,7 @@ void AntiReplay::BitFlags::shift(SequenceNumber shift)
        
         bits[i]=Shift(0,bits[i+n],s);
         
-        for(; i<WinUnits ;i++) bits[i]=0;
+        for(i++; i<WinUnits ;i++) bits[i]=0;
        }
      else
        {

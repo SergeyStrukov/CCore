@@ -15,7 +15,6 @@
  
 #include <CCore/inc/net/PSec.h>
 
-#include <CCore/inc/UIntSplit.h>
 #include <CCore/inc/Exception.h>
  
 namespace CCore {
@@ -98,7 +97,7 @@ void ProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
   
 /* class PacketProcessor */
 
-KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
+void PacketProcessor::inbound(KeyResponse &resp,PacketType type,PtrLen<const uint8> data)
  {
   KeyIndex key_index=0;
   const uint8 *gy=0;
@@ -108,7 +107,7 @@ KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
      case Packet_Alert : 
      case Packet_Ready :
       {
-       if( data.len<KeyIndexLen+core.getGLen() ) return Nothing;
+       if( data.len<KeyIndexLen+core.getGLen() ) return;
        
        BufGetDev dev(data.ptr);
        
@@ -121,7 +120,7 @@ KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
      case Packet_Ack :
      case Packet_Stop :
       {
-       if( data.len<KeyIndexLen ) return Nothing;
+       if( data.len<KeyIndexLen ) return;
        
        BufGetDev dev(data.ptr);
        
@@ -132,15 +131,13 @@ KeyResponse PacketProcessor::inbound(PacketType type,PtrLen<const uint8> data)
   
   switch( type )
     {
-     case Packet_Alert : return core.alert(key_index,gy);
+     case Packet_Alert : return core.alert(resp,key_index,gy);
      
-     case Packet_Ready : return core.ready(key_index,gy);
+     case Packet_Ready : return core.ready(resp,key_index,gy);
       
-     case Packet_Ack : return core.ack(key_index);
+     case Packet_Ack : return core.ack(resp,key_index);
       
      case Packet_Stop : return core.stop(key_index);
-      
-     default: return Nothing; 
     }
  }
 
@@ -179,7 +176,7 @@ ulen PacketProcessor::getMaxInpLen(ulen len)
   return inpLen(len);
  }
 
-auto PacketProcessor::inbound(PtrLen<uint8> data) -> InboundResult
+auto PacketProcessor::inbound(KeyResponse &resp,PtrLen<uint8> data) -> InboundResult
  {
   stat.count(ProcessorEvent_Rx);
   
@@ -306,7 +303,9 @@ auto PacketProcessor::inbound(PtrLen<uint8> data) -> InboundResult
   
   if( header.type!=Packet_Data )
     {
-     return inbound(header.type,Range_const(base,len));
+     inbound(resp,header.type,Range_const(base,len));
+     
+     return Nothing;
     }
   
   return Range_const(base,len);
@@ -349,16 +348,16 @@ auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) ->
       return Nothing;
      }
    
-   Header h;
+   Header obj;
    
-   h.sequence_number=out_sequence_number++;
-   h.key_index=select.key_index;
-   h.pad_len=PadLen(pad_len);
-   h.type=type;
+   obj.sequence_number=out_sequence_number++;
+   obj.key_index=select.key_index;
+   obj.pad_len=PadLen(pad_len);
+   obj.type=type;
    
    BufPutDev dev(header);
    
-   dev(h);
+   dev(obj);
   }
   
   // 3
@@ -462,7 +461,7 @@ auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) ->
   return ret;
  }
 
-bool PacketProcessor::response(KeyResponse resp,Packet<uint8> packet,PacketFormat format)
+bool PacketProcessor::response(const KeyResponse &resp,Packet<uint8> packet,PacketFormat format)
  {
   if( !packet ) 
     {
@@ -511,7 +510,7 @@ bool PacketProcessor::response(KeyResponse resp,Packet<uint8> packet,PacketForma
 
 /* class EndpointDevice */
 
-void EndpointDevice::response(KeyResponse resp)
+void EndpointDevice::response(const KeyResponse &resp)
  {
   switch( resp.type )
     {
@@ -558,11 +557,13 @@ void EndpointDevice::outbound(Packet<uint8> packet,Packets type)
 
 void EndpointDevice::inbound(Packet<uint8> packet,PtrLen<const uint8> data)
  {
-  auto result=ProcLocked(mutex,proc)->inbound(Range(const_cast<uint8 *>(data.ptr),data.len));
+  KeyResponse resp;
+  
+  auto result=ProcLocked(mutex,proc)->inbound(resp,Range(const_cast<uint8 *>(data.ptr),data.len));
   
   if( result.consumed )
     {
-     response(result.resp);
+     response(resp);
      
      packet.complete();
     }
@@ -589,7 +590,11 @@ void EndpointDevice::tick()
    if( +hook ) hook->tick();
   }
   
-  response(ProcLocked(mutex,proc)->tick());
+  KeyResponse resp;
+  
+  ProcLocked(mutex,proc)->tick(resp);
+  
+  response(resp);
  }
 
 EndpointDevice::EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key)

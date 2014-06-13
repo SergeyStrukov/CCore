@@ -43,6 +43,14 @@ void Forget(T &obj)
   OptimizeBarrier(&obj,sizeof obj);
  }
 
+template <class T>
+void ForgetRange(PtrLen<T> data)
+ {
+  data.set_null();
+  
+  OptimizeBarrier(data.ptr,data.len*sizeof (T));
+ }
+
 } // namespace Crypton
 } // namespace CCore
  
