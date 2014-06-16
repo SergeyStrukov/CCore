@@ -468,6 +468,8 @@ class RandomEngine : NoCopy
    
    uint8 next();
    
+   void fill(PtrLen<uint8> data);
+   
    void feed(PtrLen<const uint8> block) { fifo.put(block); }
  };
 
@@ -657,7 +659,7 @@ class KeySet : NoCopy
    
    DynArray<uint8> rekey_buf;
    
-   ProcessorCore &core;
+   RandomEngine &random;
    
   private: 
    
@@ -667,7 +669,7 @@ class KeySet : NoCopy
    
   public:
   
-   KeySet(const MasterKey &master_key,ProcessorCore &core);
+   KeySet(const MasterKey &master_key,RandomEngine &random);
    
    ~KeySet();
    
@@ -914,7 +916,7 @@ class ProcessorCore : NoCopy
    
    uint8 random() { return random_engine.next(); }
    
-   void random(PtrLen<uint8> data);
+   void random(PtrLen<uint8> data) { random_engine.fill(data); }
    
    ulen selectIndex(ulen len);
    

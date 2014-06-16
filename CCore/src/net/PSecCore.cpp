@@ -166,6 +166,11 @@ uint8 RandomEngine::next()
   return buf[off++];
  }
 
+void RandomEngine::fill(PtrLen<uint8> data)
+ {
+  for(uint8 &x : data ) x=next();
+ }
+
 /* struct KeyResponse */
 
 void KeyResponse::set(Packets type_,KeyIndex key_index_,PtrLen<const uint8> gx_)
@@ -348,7 +353,7 @@ void KeySet::alert(Rec &rec,KeyIndex key_index)
   rec.key_index=key_index;
   rec.repeat.reset();
   
-  core.random(Range(rec.x,glen));
+  random.fill(Range(rec.x,glen));
   
   key_gen->pow(rec.x,rec.gx);
  }
@@ -360,7 +365,7 @@ void KeySet::alert(KeyResponse &resp,Rec &rec,KeyIndex key_index)
   resp.set(Packet_Alert,key_index,Range_const(rec.gx,glen));
  }
 
-KeySet::KeySet(const MasterKey &master_key,ProcessorCore &core_)
+KeySet::KeySet(const MasterKey &master_key,RandomEngine &random_)
  : klen(master_key.getKLen()),
    life_lim(master_key.getLifeLim()),
    key_set(master_key.getKeySetLen()),
@@ -369,7 +374,7 @@ KeySet::KeySet(const MasterKey &master_key,ProcessorCore &core_)
    key_gen(master_key.createKeyGen()),
    glen(key_gen->getGLen()),
    rekey_buf(glen*(2*key_set.getLen())),
-   core(core_)
+   random(random_)
  {
   KeyInit kinit(key_buf.getPtr(),klen);
   GenInit ginit(rekey_buf.getPtr(),glen);
@@ -666,11 +671,6 @@ void KeySet::stop(KeyIndex key_index)
 
 /* class ProcessorCore */
 
-void ProcessorCore::random(PtrLen<uint8> data)
- {
-  for(uint8 &x : data ) x=random();
- }
-
 ulen ProcessorCore::selectIndex(ulen len)
  {
   UIntSplit<uint64,uint8> split;
@@ -692,7 +692,7 @@ ProcessorCore::ProcessorCore(const MasterKey &master_key)
    decrypt(master_key.createDecrypt()),
    hash(master_key.createHash()),
    random_engine(master_key),
-   key_set(master_key,*this)
+   key_set(master_key,random_engine)
  {
   blen=encrypt->getBLen();
   hlen=hash->getHLen();
