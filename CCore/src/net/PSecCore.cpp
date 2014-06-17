@@ -351,7 +351,6 @@ void KeySet::alert(Rec &rec,KeyIndex key_index)
  {
   rec.type=Packet_Alert;
   rec.key_index=key_index;
-  rec.repeat.reset();
   
   random.fill(Range(rec.x,glen));
   
@@ -362,7 +361,7 @@ void KeySet::alert(KeyResponse &resp,Rec &rec,KeyIndex key_index)
  {
   alert(rec,key_index);
   
-  resp.set(Packet_Alert,key_index,Range_const(rec.gx,glen));
+  rec.makeResponse(resp,glen);
  }
 
 KeySet::KeySet(const MasterKey &master_key,RandomEngine &random_)
@@ -490,33 +489,25 @@ void KeySet::tick(KeyResponse &resp)
   
   rec.tick();
   
-  if( rec.base.updateState(life_lim) )
+  if( rec.type==Packet_None )
     {
-     if( rec.type==Packet_None )
+     if( rec.base.updateState(life_lim) )
        {
         alert(resp,rec,rec.base.makeKeyIndex(index));
        }
-     else
-       {
-        // going to die
-       }
-    }
-  else if( rec.next.updateState(life_lim) )
-    {
-     if( rec.type==Packet_None )
+     else if( rec.next.updateState(life_lim) )
        {
         flip(index);
-        
+           
         alert(resp,rec,rec.base.makeKeyIndex(index));
        }
-     else
-       {
-        // going to die
-       }
     }
-  else if( rec.resend() )
+  else
     {
-     rec.makeResponse(resp,glen);
+     if( rec.resend() )
+       {
+        rec.makeResponse(resp,glen);
+       }
     }
  }
 

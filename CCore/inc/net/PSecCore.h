@@ -597,7 +597,7 @@ class KeySet : NoCopy
        if( type!=Packet_None ) repeat.tick(dtime);
       }
     
-     bool resend() const { return type!=Packet_None && !repeat ; }
+     bool resend() const { return !repeat ; }
      
      void makeResponse(KeyResponse &resp,ulen glen)
       { 
