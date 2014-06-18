@@ -287,6 +287,8 @@ void KeySet::make_key(Rec &rec,const uint8 gy[])
 
 void KeySet::activate_key(Rec &rec,ulen index)
  {
+  if( rec.next.active ) return;
+  
   if( rec.base.active ) deactivate(index);
   
   activate_next(index);
@@ -521,6 +523,7 @@ void KeySet::alert(KeyResponse &resp,KeyIndex key_index,const uint8 gy[])
   
   switch( rec.type )
     {
+     case Packet_Ack :
      case Packet_None :
       {
        if( rec.base.active )
@@ -622,6 +625,8 @@ void KeySet::ack(KeyResponse &resp,KeyIndex key_index)
      
        rec.type=Packet_Ack;
       
+       activate_key(rec,index);
+       
        rec.makeResponse(resp,glen);
       }
      break;
