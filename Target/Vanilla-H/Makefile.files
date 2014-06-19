@@ -150,6 +150,7 @@ obj/ObjHost.o \
 obj/ObjectDomain.o \
 obj/Optional.o \
 obj/OwnPtr.o \
+obj/PKE.o \
 obj/PSec.o \
 obj/PSecCore.o \
 obj/PTPBase.o \
@@ -435,6 +436,7 @@ obj/ObjHost.s \
 obj/ObjectDomain.s \
 obj/Optional.s \
 obj/OwnPtr.s \
+obj/PKE.s \
 obj/PSec.s \
 obj/PSecCore.s \
 obj/PTPBase.s \
@@ -720,6 +722,7 @@ obj/ObjHost.dep \
 obj/ObjectDomain.dep \
 obj/Optional.dep \
 obj/OwnPtr.dep \
+obj/PKE.dep \
 obj/PSec.dep \
 obj/PSecCore.dep \
 obj/PTPBase.dep \
@@ -1310,6 +1313,9 @@ obj/Optional.o : ../../CCore/src/Optional.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/OwnPtr.o : ../../CCore/src/OwnPtr.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PKE.o : ../../CCore/src/net/PKE.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PSec.o : ../../CCore/src/net/PSec.cpp
@@ -2160,6 +2166,9 @@ obj/Optional.s : ../../CCore/src/Optional.cpp
 obj/OwnPtr.s : ../../CCore/src/OwnPtr.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PKE.s : ../../CCore/src/net/PKE.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/PSec.s : ../../CCore/src/net/PSec.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3007,6 +3016,9 @@ obj/Optional.dep : ../../CCore/src/Optional.cpp
 
 obj/OwnPtr.dep : ../../CCore/src/OwnPtr.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/OwnPtr.o $< -MF $@
+
+obj/PKE.dep : ../../CCore/src/net/PKE.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PKE.o $< -MF $@
 
 obj/PSec.dep : ../../CCore/src/net/PSec.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PSec.o $< -MF $@

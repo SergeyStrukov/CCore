@@ -139,6 +139,7 @@
 ../../CCore/src/net/NetBase.cpp
 ../../CCore/src/net/NetFork.cpp
 ../../CCore/src/net/PacketEndpointDevice.cpp
+../../CCore/src/net/PKE.cpp
 ../../CCore/src/net/PSec.cpp
 ../../CCore/src/net/PSecCore.cpp
 ../../CCore/src/net/PTPBase.cpp

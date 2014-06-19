@@ -32,6 +32,10 @@ net/PSec.h
 
   PSec implementation.
 
+net/PKE.h
+
+  PKE implementation.
+
 math/SmallPrimes.h
 
   The list of all primes < 1000000 .

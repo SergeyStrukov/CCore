@@ -1,9 +1,9 @@
-/* SmallPrimes.h */ 
+/* test0107.PKE.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.08
 //
-//  Tag: General
+//  Tag: General 
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -13,27 +13,29 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_math_SmallPrimes_h
-#define CCore_inc_math_SmallPrimes_h
+#include <CCore/test/test.h>
 
-#include <CCore/inc/Gadget.h>
+namespace App {
+
+namespace Private_0107 {
+
+
+} // namespace Private_0107
  
-namespace CCore {
-namespace Math { 
-
-/* global data */
-
- //
- // All primes < 1000000
- //
-
-const int SmallPrimesCap = 1000000 ;
-
-extern const int SmallPrimes[78498];
-
-} // namespace Math
-} // namespace CCore
+using namespace Private_0107; 
  
-#endif
- 
+/* Testit<107> */ 
 
+template<>
+const char *const Testit<107>::Name="Test107 PKE";
+
+template<>
+bool Testit<107>::Main() 
+ {
+  
+  
+  return true;
+ }
+ 
+} // namespace App
+ 

@@ -1,4 +1,4 @@
-/* SmallPrimes.h */ 
+/* PKE.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.08
@@ -12,28 +12,16 @@
 //  Copyright (c) 2014 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
-
-#ifndef CCore_inc_math_SmallPrimes_h
-#define CCore_inc_math_SmallPrimes_h
-
-#include <CCore/inc/Gadget.h>
+ 
+#include <CCore/inc/net/PKE.h>
  
 namespace CCore {
-namespace Math { 
+namespace Net {
+namespace PSec {
 
-/* global data */
 
- //
- // All primes < 1000000
- //
-
-const int SmallPrimesCap = 1000000 ;
-
-extern const int SmallPrimes[78498];
-
-} // namespace Math
+} // namespace PSec 
+} // namespace Net
 } // namespace CCore
- 
-#endif
  
 
