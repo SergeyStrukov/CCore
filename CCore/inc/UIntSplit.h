@@ -31,7 +31,12 @@ class UIntSplit
  {
    static const unsigned BitLen    = Meta::UIntBits<UIntSmall>::Ret ;
    static const unsigned BigBitLen = Meta::UIntBits<UIntBig>::Ret ;
+   
+  public:
+   
    static const unsigned Len       = BigBitLen/BitLen ;
+   
+  private: 
   
    static_assert( BigBitLen%BitLen==0 ,"CCore::UIntSplit<UIntBig,UIntSmall> : bad bit lengths");
    static_assert( Len>=2 ,"CCore::UIntSplit<UIntBig,UIntSmall> : bad bit lengths"); 
@@ -47,6 +52,8 @@ class UIntSplit
    UIntSmall operator [] (unsigned index) const { return buf[index]; }
  
    UIntSmall & operator [] (unsigned index) { return buf[index]; }
+   
+   PtrLen<UIntSmall> take() { return Range(buf); }
    
    // get
   

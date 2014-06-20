@@ -40,6 +40,12 @@ of smaller ones and inverse.
 template &lt;class UIntBig,class UIntSmall&gt;
 class <span class="Att">UIntSplit</span>
  {
+  public:
+
+   static const unsigned Len = .... ;
+
+  private:
+
    UIntSmall buf[Len]; // big-endian order
   
   public:
@@ -50,6 +56,8 @@ class <span class="Att">UIntSplit</span>
  
    UIntSmall & operator [] (unsigned index) { return buf[index]; }
    
+   PtrLen&lt;UIntSmall&gt; take() { return Range(buf); }
+
    // get
   
    UIntBig get() const;
@@ -63,6 +71,11 @@ class <span class="Att">UIntSplit</span>
 
 <p>
 There is no default constructor, so the initial value of this class is indeterminate.
+</p>
+
+<p>
+The "big" integer length must be a multiple of the "small" one. Internally the value of the class is stored
+in the buffer of the length <b>Len</b>. You can access this buffer using the method <b>take()</b>.
 </p>
 
 <p>
