@@ -17,6 +17,7 @@
 #define CCore_inc_MersenneTwister_h
 
 #include <CCore/inc/Timer.h>
+#include <CCore/inc/UIntSplit.h>
  
 namespace CCore {
 namespace MersenneTwister {
@@ -105,6 +106,8 @@ class Gen : NoCopy
   public:
   
    UnitType next();
+   
+   void warp(PtrLen<const uint8> data);
  };
  
 template <class P> 
@@ -204,6 +207,25 @@ auto Gen<P>::next() -> UnitType
   return Output(state[ind++]);  
  }
    
+template <class P> 
+void Gen<P>::warp(PtrLen<const uint8> data)
+ {
+  for(auto dst=Range(state+1,(P::N-1)/2); +dst ;++dst)
+    {
+     UIntSplit<UnitType,uint8> split;
+     
+     auto buf=split.take();
+     
+     if( data.len<buf.len ) break;
+     
+     buf.copy(data.ptr);
+     
+     (*dst)^=split.get();
+     
+     data+=buf.len;
+    }
+ }
+
 } // namespace MersenneTwister 
 } // namespace CCore
  

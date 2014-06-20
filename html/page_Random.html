@@ -62,6 +62,8 @@ class <span class="Att">Random</span> : NoCopy
   
    Random();
    
+   void warp(PtrLen&lt;const uint8&gt; data);
+
    uint8  next8();
    
    uint16 next16();
@@ -95,6 +97,11 @@ class <span class="Att">Random</span> : NoCopy
 <p>
 There is not destructor, only default constructor. Multiple <b>Random</b> objects generates different 
 random numbers.
+</p>
+
+<p>
+<b>warp()</b> alters the internal state. You can use this method to improve the random seeding using some
+entropy source to produce a block of bytes and supply it as the argument.
 </p>
 
 <p>
@@ -183,6 +190,8 @@ class <span class="Att">CustomRandom</span> : public RandomBase&lt;CustomRandom&
 
    ....
 
+   void warp(PtrLen&lt;const uint8&gt; data);
+
    uint8  next8();
    
    uint16 next16();
@@ -195,7 +204,7 @@ class <span class="Att">CustomRandom</span> : public RandomBase&lt;CustomRandom&
 </pre>
 
 <p>
-You have to implement only four base methods. You may derive them from the one like this:
+You have to implement only four base methods and <b>warp()</b>. You may derive them from the one like this:
 </p>
 
 <pre>
@@ -206,9 +215,11 @@ class <span class="Att">CustomRandom</span> : public RandomBase&lt;CustomRandom&
 
    ....
 
-   <span class="Att">typedef UnitType uint32;</span>
+   <span class="Att">using UnitType = uint32;</span>
 
    <span class="Att">uint32 next();</span>
+
+   void warp(PtrLen&lt;const uint8&gt; data);
 
    uint8  next8()  { return uint8 (next()); }
    
@@ -309,6 +320,8 @@ class <span class="Att">Gen</span> : NoCopy
   public:
   
    UnitType next();
+
+   void warp(PtrLen&lt;const uint8&gt; data);
  };
 
 </pre>

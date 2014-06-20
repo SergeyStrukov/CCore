@@ -48,6 +48,8 @@ class IntelRandom : public RandomBase<IntelRandom>
    
    uint64 next();
    
+   void warp(PtrLen<const uint8>) { /* do nothing */ }
+   
    uint8  next8()  { return uint8 (next()); }
    
    uint16 next16() { return uint16(next()); }
