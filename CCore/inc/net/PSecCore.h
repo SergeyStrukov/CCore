@@ -75,7 +75,7 @@ template <class Hash> class HashFunc;
 
 struct AbstractKeyGen;
 
-template <class Exp,class Hash,ulen KeyLen> class KeyGen;
+template <class Exp> class KeyGen;
 
 struct AbstractRandomGen;
 
@@ -141,11 +141,15 @@ class CryptFunc : public AbstractCryptFunc
    
    virtual ulen getBLen() const
     {
+     static_assert( Crypt::BlockLen>=8 && Crypt::BlockLen<=64 ,"CCore::Net::PSec::CryptFunc<...> : bad BLen");
+     
      return Crypt::BlockLen;
     }
    
    virtual ulen getKLen() const
     {
+     static_assert( Crypt::KeyLen>=16 ,"CCore::Net::PSec::CryptFunc<...> : bad KLen");
+     
      return Crypt::KeyLen;
     }
    
@@ -192,6 +196,8 @@ class HashFunc : public AbstractHashFunc
    
    virtual ulen getHLen() const
     {
+     static_assert( Hash::DigestLen>=16 && Hash::DigestLen<=64 ,"CCore::Net::PSec::HashFunc<...> : bad HLen");
+     
      return Hash::DigestLen;
     }
    
@@ -223,50 +229,69 @@ struct AbstractKeyGen : MemBase_nocopy
   virtual void key(const uint8 x[ /* GLen */ ],const uint8 gy[ /* GLen */ ],uint8 key[ /* KLen */ ]) =0;
  };
 
-/* class KeyGen<Exp,Hash,ulen KeyLen> */
+/* class KeyGen<Exp> */
 
-template <class Exp,class Hash,ulen KeyLen> 
+template <class Exp> 
 class KeyGen : public AbstractKeyGen
  {
   public:
   
    static const ulen GLen = Exp::GLen ;
-   static const ulen HLen = Hash::DigestLen ;
-   static const ulen SecretCount = 1 + (KeyLen+HLen-1)/HLen ;
  
   private:
   
    Exp exp;
-   Hash hash;
    
-   uint8 secret[SecretCount*GLen];
+   OwnPtr<AbstractHashFunc> hash;
+   ulen klen;
+   ulen hlen;
+
+   DynArray<uint8> secret_buf;
    
    uint8 gxy[GLen];
    uint8 gxys[GLen];
-   uint8 digest[HLen];
    
   public:
    
-   KeyGen() {}
+   static ulen GetSecretLen(ulen klen,ulen hlen) { return GLen*(1+(klen+hlen-1)/hlen); }
+   
+   KeyGen(OwnPtr<AbstractHashFunc> &hash_,ulen klen_)
+    : hash(hash_.detach()),
+      klen(klen_),
+      hlen(hash->getHLen()),
+      secret_buf(GetSecretLen(klen,hlen))
+    {
+    }
    
    virtual ~KeyGen()
     { 
-     Crypton::Forget(secret); 
-     
      Crypton::Forget(gxy);
      Crypton::Forget(gxys);
-     Crypton::Forget(digest);
+     
+     Crypton::ForgetRange(Range(secret_buf)); 
     }
    
    // common secret
    
-   PtrLen<uint8> takeSecret(ulen index) { return Range(secret+index*GLen,GLen); }
+   ulen getSecretCount() const { return secret_buf.getLen()/GLen; }
+   
+   PtrLen<uint8> takeSecret(ulen index) { return Range(secret_buf.getPtr()+index*GLen,GLen); }
+   
+   PtrLen<uint8> takeSecret() { return Range(secret_buf); }
    
    // AbstractKeyGen
    
-   virtual ulen getGLen() const { return GLen; }
+   virtual ulen getGLen() const
+    { 
+     static_assert( GLen>=64 ,"CCore::Net::PSec::KeyGen<...> : bad GLen");
+     
+     return GLen; 
+    }
    
-   virtual ulen getKLen() const { return KeyLen; }
+   virtual ulen getKLen() const
+    { 
+     return klen; 
+    }
    
    virtual void pow(const uint8 x[],uint8 gx[])
     {
@@ -275,18 +300,19 @@ class KeyGen : public AbstractKeyGen
    
    virtual void key(const uint8 x[],const uint8 gy[],uint8 key[])
     {
-     uint8 *ptr=secret;
+     const uint8 *ptr=secret_buf.getPtr();
      
      exp.pow(gy,x,gxy);
      exp.pow(gxy,ptr,gxys); ptr+=GLen;
      
-     PtrLen<uint8> out(key,KeyLen);
+     PtrLen<uint8> out(key,klen);
      
-     while( ulen delta=Min(HLen,out.len) )
+     while( ulen delta=Min(hlen,out.len) )
        {
-        hash.add(Range_const(gxys));
-        hash.add(Range_const(ptr,GLen)); ptr+=GLen;
-        hash.finish(digest);
+        hash->add(Range_const(gxys));
+        hash->add(Range_const(ptr,GLen)); ptr+=GLen;
+        
+        const uint8 *digest=hash->finish();
         
         (out+=delta).copy(digest);
        }
@@ -311,7 +337,7 @@ class RandomGen : public AbstractRandomGen
   
   public:
    
-   RandomGen() {}
+   explicit RandomGen(PtrLen<const uint8> data=Empty) { rand.warp(data); }
    
    virtual ~RandomGen() {}
    
@@ -459,6 +485,8 @@ class RandomEngine : NoCopy
    void addRandom(ulen count);
    
    ulen addFifo(ulen count);
+   
+   void addTimeStamp();
  
   public:
   

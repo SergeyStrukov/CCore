@@ -62,9 +62,11 @@ AbstractHashFunc * TestMasterKey::createHash() const
 
 AbstractKeyGen * TestMasterKey::createKeyGen() const
  {
-  auto *ret=new KeyGen<DefExp,DefHash,DefEncrypt::KeyLen>;
+  OwnPtr<AbstractHashFunc> hash(createHash());
   
-  for(ulen i=0; i<ret->SecretCount ;i++) ret->takeSecret(i).set(uint8(i+1));
+  auto *ret=new KeyGen<DefExp>(hash,getKLen());
+  
+  for(ulen i=0,len=ret->getSecretCount(); i<len ;i++) ret->takeSecret(i).set(uint8(i+1));
   
   return ret; 
  }
@@ -127,6 +129,15 @@ ulen RandomEngine::addFifo(ulen count)
   return fifo.get(count, [=] (const uint8 *ptr,ulen len) { hash->add(Range(ptr,len)); } );
  }
 
+void RandomEngine::addTimeStamp()
+ {
+  UIntSplit<ClockTimer::ValueType,uint8> split;
+  
+  split.set(ClockTimer::Get());
+  
+  hash->add(Range_const(split.take()));
+ }
+
 RandomEngine::RandomEngine(const MasterKey &master_key)
  : random(master_key.createRandom()),
    hash(master_key.createHash())
@@ -146,6 +157,8 @@ uint8 RandomEngine::next()
   if( !buf )
     {
      addRandom(2*ExtLen+len);
+     
+     addTimeStamp();
     
      buf=hash->finish();
     }
@@ -157,6 +170,8 @@ uint8 RandomEngine::next()
      ulen count=addFifo(ExtLen);
      
      addRandom(2*ExtLen-count);
+     
+     addTimeStamp();
      
      buf=hash->finish();
      
@@ -671,7 +686,7 @@ ulen ProcessorCore::selectIndex(ulen len)
  {
   UIntSplit<uint64,uint8> split;
   
-  for(unsigned i=0; i<8 ;i++) split[i]=random();
+  random(split.take());
   
   return split.get()%len;
  }

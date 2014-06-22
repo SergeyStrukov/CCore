@@ -296,6 +296,7 @@ obj/TreeLink.o \
 obj/TreeMap.o \
 obj/TreeUpLink.o \
 obj/Tuple.o \
+obj/TypeSwitch.o \
 obj/UDPoint.o \
 obj/UIntFunc.o \
 obj/UIntMax.o \
@@ -613,6 +614,7 @@ obj/TreeLink.s \
 obj/TreeMap.s \
 obj/TreeUpLink.s \
 obj/Tuple.s \
+obj/TypeSwitch.s \
 obj/UDPoint.s \
 obj/UIntFunc.s \
 obj/UIntMax.s \
@@ -930,6 +932,7 @@ obj/TreeLink.dep \
 obj/TreeMap.dep \
 obj/TreeUpLink.dep \
 obj/Tuple.dep \
+obj/TypeSwitch.dep \
 obj/UDPoint.dep \
 obj/UIntFunc.dep \
 obj/UIntMax.dep \
@@ -1853,6 +1856,9 @@ obj/TreeUpLink.o : ../../CCore/src/tree/TreeUpLink.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Tuple.o : ../../CCore/src/Tuple.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TypeSwitch.o : ../../CCore/src/TypeSwitch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/UDPoint.o : ../../CCore/src/net/UDPoint.cpp
@@ -2799,6 +2805,9 @@ obj/TreeUpLink.s : ../../CCore/src/tree/TreeUpLink.cpp
 obj/Tuple.s : ../../CCore/src/Tuple.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/TypeSwitch.s : ../../CCore/src/TypeSwitch.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/UDPoint.s : ../../CCore/src/net/UDPoint.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3742,6 +3751,9 @@ obj/TreeUpLink.dep : ../../CCore/src/tree/TreeUpLink.cpp
 
 obj/Tuple.dep : ../../CCore/src/Tuple.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tuple.o $< -MF $@
+
+obj/TypeSwitch.dep : ../../CCore/src/TypeSwitch.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TypeSwitch.o $< -MF $@
 
 obj/UDPoint.dep : ../../CCore/src/net/UDPoint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UDPoint.o $< -MF $@

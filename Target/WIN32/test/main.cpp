@@ -130,6 +130,7 @@ int main()
   //Testit<89>().run();
   //Testit<90>().run();
   //Testit<91>().run();
+  Testit<92>().run();
   
   //Testit<100>().run();
   //Testit<101>().run();

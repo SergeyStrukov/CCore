@@ -56,6 +56,10 @@ crypton/Forget.h
 
   Forget() is added to properly cleanup info.
 
+TypeSwitch.h
+
+  Switch implementation based on int to type mapping.
+
 --- Updates ----------
 
 Regen
@@ -69,5 +73,14 @@ WIN32
 base/PlatformBase.h
 
   OptimizeBarrier() is added.
+
+UIntSplit.h
+
+  Len has made public.
+  The method take() is added.
+
+Random.h MersenneTwister.h
+
+  warp() is added.
 
 ----------------------
