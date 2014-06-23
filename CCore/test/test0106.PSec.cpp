@@ -20,6 +20,7 @@
 #include <CCore/inc/net/SingleBridge.h>
 #include <CCore/inc/net/SingleEchoDevice.h>
 #include <CCore/inc/net/PSec.h>
+#include <CCore/inc/net/PKE.h>
 
 namespace App {
 
@@ -104,8 +105,26 @@ bool Testit<106>::Main()
   format.prefix=0;
   format.suffix=0;
   format.max_data=1472;
+
+  Net::PSec::CryptAlgoSelect algo_select;
   
-  Net::PSec::TestMasterKey master_key;
+  algo_select.crypt_id=Net::PSec::CryptID_AES128;
+  algo_select.hash_id=Net::PSec::HashID_SHA224;
+  algo_select.dhg_id=Net::PSec::DHGroupID_I;
+  
+  Net::PSec::SessionKeyParam param;
+  
+  param.keyset_len=20;
+  param.ttl=10;
+  param.utl=100000;
+  
+  Net::PSec::SessionKey master_key(algo_select,param);
+  
+  {
+   Random random;
+   
+   random.fill(master_key.takeKeyBuf());
+  }
   
   Engine engine(format,master_key);
   TaskEventRecorder recorder(100_MByte);
