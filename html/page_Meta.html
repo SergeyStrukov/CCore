@@ -55,6 +55,27 @@ In some cases <b>Meta-function</b> is a template typedef, which produces a singl
 Inheritance is used to include a result in a <b>Meta-function</b>.
 </p>
 
+<h3>CommonType</h3>
+
+<pre>
+
+template &lt;class S,class T&gt; struct <span class="Att">CommonType</span>;
+
+</pre>
+
+<p>
+<b>CommonType</b> is a <b>Meta-function</b>. It is empty if the input types are distinct. But if they are the same, it returns
+the common type. 
+</p>
+
+<pre>
+
+//
+// typename CommonType&lt;T,T&gt;::Ret == T
+//
+
+</pre>
+
 <h3>Empty</h3>
 
 <p>
