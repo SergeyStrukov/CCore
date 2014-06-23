@@ -60,6 +60,10 @@ TypeSwitch.h
 
   Switch implementation based on int to type mapping.
 
+gadget/Meta.h
+
+  CommonType is added.
+
 --- Updates ----------
 
 Regen

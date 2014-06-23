@@ -152,20 +152,15 @@ class SessionKey : public MasterKey
    struct GetKLenCtx;
    struct GetHLenCtx;
    struct GetSecretLenCtx;
+   struct CreateCryptCtx;
+   struct CreateHashCtx;
+   struct CreateKeyGenCtx;
    
    static ulen GetKLen(CryptAlgoSelect algo_select);
    
    static ulen GetHLen(CryptAlgoSelect algo_select);
    
    static ulen GetSecretLen(CryptAlgoSelect algo_select,ulen klen);
-   
-  private: 
-   
-   template <class T>
-   static AbstractCryptFunc * CreateCrypt() { return new CryptFunc<T>(); } 
-   
-   template <class T>
-   static AbstractHashFunc * CreateHash() { return new HashFunc<T>(); }
    
    template <class T>
    AbstractKeyGen * createKeyGen(OwnPtr<AbstractHashFunc> &hash) const

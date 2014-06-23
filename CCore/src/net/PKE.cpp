@@ -30,17 +30,21 @@ namespace PSec {
 
 /* case lists */
 
-using CryptCaseList = Meta::CaseList<Meta::Case<uint8,CryptID_AES128,Crypton::PlatformAES128>,
-                                     Meta::Case<uint8,CryptID_AES192,Crypton::PlatformAES192>,
-                                     Meta::Case<uint8,CryptID_AES256,Crypton::PlatformAES256> > ;
+using EncryptCaseList = Meta::CaseList<Meta::Case<uint8,CryptID_AES128,Crypton::PlatformAES128>,
+                                       Meta::Case<uint8,CryptID_AES192,Crypton::PlatformAES192>,
+                                       Meta::Case<uint8,CryptID_AES256,Crypton::PlatformAES256> > ;
 
-using HashCaseList = Meta::CaseList<Meta::Case<uint8,HashID_SHA1,Crypton::PlatformSHA1>,
+using DecryptCaseList = Meta::CaseList<Meta::Case<uint8,CryptID_AES128,Crypton::PlatformAESInverse128>,
+                                       Meta::Case<uint8,CryptID_AES192,Crypton::PlatformAESInverse192>,
+                                       Meta::Case<uint8,CryptID_AES256,Crypton::PlatformAESInverse256> > ;
+
+using HashCaseList = Meta::CaseList<Meta::Case<uint8,HashID_SHA1  ,Crypton::PlatformSHA1  >,
                                     Meta::Case<uint8,HashID_SHA224,Crypton::PlatformSHA224>,
                                     Meta::Case<uint8,HashID_SHA256,Crypton::PlatformSHA256>,
                                     Meta::Case<uint8,HashID_SHA384,Crypton::PlatformSHA384>,
                                     Meta::Case<uint8,HashID_SHA512,Crypton::PlatformSHA512> > ;
 
-using DHGCaseList = Meta::CaseList<Meta::Case<uint8,DHGroupID_I,Crypton::DHExp<Crypton::DHModI> >,
+using DHGCaseList = Meta::CaseList<Meta::Case<uint8,DHGroupID_I ,Crypton::DHExp<Crypton::DHModI > >,
                                    Meta::Case<uint8,DHGroupID_II,Crypton::DHExp<Crypton::DHModII> > > ;
 
 /* class SessionKey */
@@ -104,9 +108,59 @@ struct SessionKey::GetSecretLenCtx
    }
  };
 
+struct SessionKey::CreateCryptCtx
+ {
+  using RetType = AbstractCryptFunc * ;
+  
+  template <class T>
+  static RetType call() { return new CryptFunc<T>(); }
+  
+  static RetType defcall(uint8 crypt_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::SessionKey::create(En/De)crypt() : unknown crypt_id #;",crypt_id);
+    
+    return 0;
+   }
+ };
+
+struct SessionKey::CreateHashCtx
+ {
+  using RetType = AbstractHashFunc * ;
+  
+  template <class T>
+  static RetType call() { return new HashFunc<T>(); }
+  
+  static RetType defcall(uint8 hash_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::SessionKey::createHash() : unknown hash_id #;",hash_id);
+    
+    return 0;
+   }
+ };
+
+struct SessionKey::CreateKeyGenCtx
+ {
+  using RetType = AbstractKeyGen * ;
+  
+  const SessionKey *obj;
+  OwnPtr<AbstractHashFunc> &hash;
+  
+  CreateKeyGenCtx(const SessionKey *obj_,OwnPtr<AbstractHashFunc> &hash_) : obj(obj_),hash(hash_) {}
+  
+  template <class T>
+  RetType call() { return obj->createKeyGen<T>(hash); }
+  
+  static RetType defcall(uint8 dhg_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::SessionKey::createKeyGen() : unknown dhg_id #;",dhg_id);
+    
+    return 0;
+   }
+ };
+
 ulen SessionKey::GetKLen(CryptAlgoSelect algo_select)
  {
-  return Meta::TypeSwitch<CryptCaseList>::Switch(algo_select.crypt_id,GetKLenCtx());
+  return Meta::TypeSwitch<EncryptCaseList>::Switch(algo_select.crypt_id,GetKLenCtx());
  }
 
 ulen SessionKey::GetHLen(CryptAlgoSelect algo_select)
@@ -139,76 +193,26 @@ SessionKey::~SessionKey()
   Crypton::ForgetRange(Range(key_buf));
  }
    
-AbstractCryptFunc * SessionKey::createEncrypt() const // switch
+AbstractCryptFunc * SessionKey::createEncrypt() const
  {
-  switch( algo_select.crypt_id )
-    {
-     case CryptID_AES128 : return CreateCrypt<Crypton::PlatformAES128>();
-     case CryptID_AES192 : return CreateCrypt<Crypton::PlatformAES192>();
-     case CryptID_AES256 : return CreateCrypt<Crypton::PlatformAES256>();
-     
-     default:
-      {
-       Printf(Exception,"CCore::Net::PSec::SessionKey::createEncrypt() : unknown crypt_id #;",algo_select.crypt_id);
-       
-       return 0;
-      }
-    }
+  return Meta::TypeSwitch<EncryptCaseList>::Switch(algo_select.crypt_id,CreateCryptCtx());
  }
    
-AbstractCryptFunc * SessionKey::createDecrypt() const // switch
+AbstractCryptFunc * SessionKey::createDecrypt() const
  {
-  switch( algo_select.crypt_id )
-    {
-     case CryptID_AES128 : return CreateCrypt<Crypton::PlatformAESInverse128>();
-     case CryptID_AES192 : return CreateCrypt<Crypton::PlatformAESInverse192>();
-     case CryptID_AES256 : return CreateCrypt<Crypton::PlatformAESInverse256>();
-     
-     default:
-      {
-       Printf(Exception,"CCore::Net::PSec::SessionKey::createDecrypt() : unknown crypt_id #;",algo_select.crypt_id);
-       
-       return 0;
-      }
-    }
+  return Meta::TypeSwitch<DecryptCaseList>::Switch(algo_select.crypt_id,CreateCryptCtx());
  }
    
-AbstractHashFunc * SessionKey::createHash() const // switch
+AbstractHashFunc * SessionKey::createHash() const
  {
-  switch( algo_select.hash_id )
-    {
-     case HashID_SHA1   : return CreateHash<Crypton::PlatformSHA1>();
-     case HashID_SHA224 : return CreateHash<Crypton::PlatformSHA224>();
-     case HashID_SHA256 : return CreateHash<Crypton::PlatformSHA256>();
-     case HashID_SHA384 : return CreateHash<Crypton::PlatformSHA384>();
-     case HashID_SHA512 : return CreateHash<Crypton::PlatformSHA512>();
-     
-     default:
-      {
-       Printf(Exception,"CCore::Net::PSec::SessionKey::createHash() : unknown hash_id #;",algo_select.hash_id);
-       
-       return 0;
-      }
-    }
+  return Meta::TypeSwitch<HashCaseList>::Switch(algo_select.hash_id,CreateHashCtx());
  }
    
-AbstractKeyGen * SessionKey::createKeyGen() const // switch
+AbstractKeyGen * SessionKey::createKeyGen() const
  {
   OwnPtr<AbstractHashFunc> hash(createHash());
   
-  switch( algo_select.dhg_id )
-    {
-     case DHGroupID_I : return createKeyGen<Crypton::DHExp<Crypton::DHModI> >(hash); 
-     
-     case DHGroupID_II : return createKeyGen<Crypton::DHExp<Crypton::DHModII> >(hash); 
-     
-     default:
-      {
-       Printf(Exception,"CCore::Net::PSec::SessionKey::createKeyGen() : unknown dhg_id #;",algo_select.dhg_id);
-       
-       return 0;
-      }
-    }
+  return Meta::TypeSwitch<DHGCaseList>::Switch(algo_select.dhg_id,CreateKeyGenCtx(this,hash));
  }
    
 AbstractRandomGen * SessionKey::createRandom() const
