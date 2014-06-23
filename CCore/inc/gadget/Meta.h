@@ -23,6 +23,8 @@ namespace Meta {
 
 /* classes */
 
+template <class S,class T> struct CommonType;
+
 template <class T,bool enable> struct Warning;
 
 struct Empty;
@@ -78,6 +80,14 @@ template <class T> struct UIntBits_extra;
 template <class UInt> struct UIntBits;
 
 template <class UInt> struct HexWidth;
+
+/* struct CommonType<S,T> */
+
+template <class T> 
+struct CommonType<T,T>
+ {
+  using Ret = T ;
+ };
 
 /* struct Warning<T,bool enable> */
 
