@@ -23,9 +23,7 @@ namespace Meta {
 
 /* classes */
 
-template <class SUInt,SUInt val,class T> struct Case;
-
-template <class ... CC> struct SwTypeOf;
+template <class SUInt,SUInt Val,class T> struct Case;
 
 template <class ... CC> struct CaseList;
 
@@ -51,24 +49,16 @@ template <unsigned Off,class ... CC> struct SplitCaseList;
 
 template <class CaseList> struct TypeSwitch;
 
-/* struct Case<SUInt,SUInt val,class T> */
+/* struct Case<SUInt,SUInt Val,class T> */
 
-template <class SUInt,SUInt val,class T> 
+template <class SUInt,SUInt Val_,class T> 
 struct Case
  {
   using SwType = SUInt ;
   
-  static const SUInt Val = val ;
+  static const SwType Val = Val_ ;
   
   using Type = T ;
- };
-
-/* struct SwTypeOf<CC> */
-
-template <class C,class ... CC>
-struct SwTypeOf<C,CC...>
- {
-  using Ret = typename C::SwType ;
  };
 
 /* struct CaseList<CC> */
@@ -76,14 +66,39 @@ struct SwTypeOf<C,CC...>
 template <class ... CC> 
 struct CaseList
  {
-  using SwType = typename SwTypeOf<CC...>::Ret ;
-  
   static const unsigned Len = sizeof ... (CC) ;
   
   using Split = SplitCaseList<Len/2,CC...> ;
   
   using First = typename Split::First ;
   using Last  = typename Split::Last ;
+  
+  using SwType = typename CommonType<typename First::SwType,typename Last::SwType>::Ret ;
+ };
+
+template <> 
+struct CaseList<>
+ {
+  static const unsigned Len = 0 ;
+ };
+
+template <class C1> 
+struct CaseList<C1>
+ {
+  static const unsigned Len = 1 ;
+  
+  using SwType = typename C1::SwType ;
+ };
+
+template <class C1,class C2> 
+struct CaseList<C1,C2>
+ {
+  static const unsigned Len = 2 ;
+  
+  using First = CaseList<C1> ;
+  using Last  = CaseList<C2> ;
+  
+  using SwType = typename CommonType<typename First::SwType,typename Last::SwType>::Ret ;
  };
 
 /* struct SplitCaseList0<CC> */
@@ -210,13 +225,13 @@ struct TypeSwitch
   using Last = typename CaseList::Last ;
   
   template <class Ctx,class RetType_>
-  struct ContCtx
+  struct Tail
    {
     using RetType = RetType_ ;
     
     Ctx &ctx;
     
-    explicit ContCtx(Ctx &ctx_) : ctx(ctx_) {}
+    explicit Tail(Ctx &ctx_) : ctx(ctx_) {}
     
     template <class T>
     RetType call() { return ctx.template call<T>(); }
@@ -230,109 +245,252 @@ struct TypeSwitch
   template <class Ctx,class RetType=typename Ctx::RetType>
   static RetType Switch(SwType val,Ctx ctx)
    {
-    return TypeSwitch<First>::Switch(val,ContCtx<Ctx,RetType>(ctx));
+    return TypeSwitch<First>::Switch(val,Tail<Ctx,RetType>(ctx));
    }
  };
 
-template <class SUInt,SUInt val1,class T1>
-struct TypeSwitch<CaseList<Case<SUInt,val1,T1> > >
+template <>
+struct TypeSwitch<CaseList<> >
+ {
+ };
+
+template <class SUInt,SUInt Val1,class T1>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1> > >
  {
   template <class Ctx,class RetType=typename Ctx::RetType>
   static RetType Switch(SUInt val,Ctx ctx)
    {
     switch( val )
       {
-       case val1 : return ctx.template call<T1>();
+       case Val1 : return ctx.template call<T1>();
        
        default: return ctx.defcall(val);
       }
    }
  };
 
-template <class SUInt,SUInt val1,class T1,
-                      SUInt val2,class T2>
-struct TypeSwitch<CaseList<Case<SUInt,val1,T1>,
-                           Case<SUInt,val2,T2> > >
+template <class SUInt,SUInt Val1,class T1,
+                      SUInt Val2,class T2>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
+                           Case<SUInt,Val2,T2> > >
  {
   template <class Ctx,class RetType=typename Ctx::RetType>
   static RetType Switch(SUInt val,Ctx ctx)
    {
     switch( val )
       {
-       case val1 : return ctx.template call<T1>(); 
-       case val2 : return ctx.template call<T2>(); 
+       case Val1 : return ctx.template call<T1>(); 
+       case Val2 : return ctx.template call<T2>(); 
        
        default: return ctx.defcall(val);
       }
    }
  };
 
-template <class SUInt,SUInt val1,class T1,
-                      SUInt val2,class T2,
-                      SUInt val3,class T3>
-struct TypeSwitch<CaseList<Case<SUInt,val1,T1>,
-                           Case<SUInt,val2,T2>,
-                           Case<SUInt,val3,T3> > >
+template <class SUInt,SUInt Val1,class T1,
+                      SUInt Val2,class T2,
+                      SUInt Val3,class T3>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
+                           Case<SUInt,Val2,T2>,
+                           Case<SUInt,Val3,T3> > >
  {
   template <class Ctx,class RetType=typename Ctx::RetType>
   static RetType Switch(SUInt val,Ctx ctx)
    {
     switch( val )
       {
-       case val1 : return ctx.template call<T1>(); 
-       case val2 : return ctx.template call<T2>(); 
-       case val3 : return ctx.template call<T3>(); 
+       case Val1 : return ctx.template call<T1>(); 
+       case Val2 : return ctx.template call<T2>(); 
+       case Val3 : return ctx.template call<T3>(); 
        
        default: return ctx.defcall(val);
       }
    }
  };
 
-template <class SUInt,SUInt val1,class T1,
-                      SUInt val2,class T2,
-                      SUInt val3,class T3,
-                      SUInt val4,class T4>
-struct TypeSwitch<CaseList<Case<SUInt,val1,T1>,
-                           Case<SUInt,val2,T2>,
-                           Case<SUInt,val3,T3>,
-                           Case<SUInt,val4,T4> > >
+template <class SUInt,SUInt Val1,class T1,
+                      SUInt Val2,class T2,
+                      SUInt Val3,class T3,
+                      SUInt Val4,class T4>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
+                           Case<SUInt,Val2,T2>,
+                           Case<SUInt,Val3,T3>,
+                           Case<SUInt,Val4,T4> > >
  {
   template <class Ctx,class RetType=typename Ctx::RetType>
   static RetType Switch(SUInt val,Ctx ctx)
    {
     switch( val )
       {
-       case val1 : return ctx.template call<T1>(); 
-       case val2 : return ctx.template call<T2>(); 
-       case val3 : return ctx.template call<T3>(); 
-       case val4 : return ctx.template call<T4>(); 
+       case Val1 : return ctx.template call<T1>(); 
+       case Val2 : return ctx.template call<T2>(); 
+       case Val3 : return ctx.template call<T3>(); 
+       case Val4 : return ctx.template call<T4>(); 
        
        default: return ctx.defcall(val);
       }
    }
  };
 
-template <class SUInt,SUInt val1,class T1,
-                      SUInt val2,class T2,
-                      SUInt val3,class T3,
-                      SUInt val4,class T4,
-                      SUInt val5,class T5>
-struct TypeSwitch<CaseList<Case<SUInt,val1,T1>,
-                           Case<SUInt,val2,T2>,
-                           Case<SUInt,val3,T3>,
-                           Case<SUInt,val4,T4>,
-                           Case<SUInt,val5,T5> > >
+template <class SUInt,SUInt Val1,class T1,
+                      SUInt Val2,class T2,
+                      SUInt Val3,class T3,
+                      SUInt Val4,class T4,
+                      SUInt Val5,class T5>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
+                           Case<SUInt,Val2,T2>,
+                           Case<SUInt,Val3,T3>,
+                           Case<SUInt,Val4,T4>,
+                           Case<SUInt,Val5,T5> > >
  {
   template <class Ctx,class RetType=typename Ctx::RetType>
   static RetType Switch(SUInt val,Ctx ctx)
    {
     switch( val )
       {
-       case val1 : return ctx.template call<T1>(); 
-       case val2 : return ctx.template call<T2>(); 
-       case val3 : return ctx.template call<T3>(); 
-       case val4 : return ctx.template call<T4>(); 
-       case val5 : return ctx.template call<T5>(); 
+       case Val1 : return ctx.template call<T1>(); 
+       case Val2 : return ctx.template call<T2>(); 
+       case Val3 : return ctx.template call<T3>(); 
+       case Val4 : return ctx.template call<T4>(); 
+       case Val5 : return ctx.template call<T5>(); 
+       
+       default: return ctx.defcall(val);
+      }
+   }
+ };
+
+template <class SUInt,SUInt Val1,class T1,
+                      SUInt Val2,class T2,
+                      SUInt Val3,class T3,
+                      SUInt Val4,class T4,
+                      SUInt Val5,class T5,
+                      SUInt Val6,class T6>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
+                           Case<SUInt,Val2,T2>,
+                           Case<SUInt,Val3,T3>,
+                           Case<SUInt,Val4,T4>,
+                           Case<SUInt,Val5,T5>,
+                           Case<SUInt,Val6,T6> > >
+ {
+  template <class Ctx,class RetType=typename Ctx::RetType>
+  static RetType Switch(SUInt val,Ctx ctx)
+   {
+    switch( val )
+      {
+       case Val1 : return ctx.template call<T1>(); 
+       case Val2 : return ctx.template call<T2>(); 
+       case Val3 : return ctx.template call<T3>(); 
+       case Val4 : return ctx.template call<T4>(); 
+       case Val5 : return ctx.template call<T5>(); 
+       case Val6 : return ctx.template call<T6>(); 
+       
+       default: return ctx.defcall(val);
+      }
+   }
+ };
+
+template <class SUInt,SUInt Val1,class T1,
+                      SUInt Val2,class T2,
+                      SUInt Val3,class T3,
+                      SUInt Val4,class T4,
+                      SUInt Val5,class T5,
+                      SUInt Val6,class T6,
+                      SUInt Val7,class T7>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
+                           Case<SUInt,Val2,T2>,
+                           Case<SUInt,Val3,T3>,
+                           Case<SUInt,Val4,T4>,
+                           Case<SUInt,Val5,T5>,
+                           Case<SUInt,Val6,T6>,
+                           Case<SUInt,Val7,T7> > >
+ {
+  template <class Ctx,class RetType=typename Ctx::RetType>
+  static RetType Switch(SUInt val,Ctx ctx)
+   {
+    switch( val )
+      {
+       case Val1 : return ctx.template call<T1>(); 
+       case Val2 : return ctx.template call<T2>(); 
+       case Val3 : return ctx.template call<T3>(); 
+       case Val4 : return ctx.template call<T4>(); 
+       case Val5 : return ctx.template call<T5>(); 
+       case Val6 : return ctx.template call<T6>(); 
+       case Val7 : return ctx.template call<T7>(); 
+       
+       default: return ctx.defcall(val);
+      }
+   }
+ };
+
+template <class SUInt,SUInt Val1,class T1,
+                      SUInt Val2,class T2,
+                      SUInt Val3,class T3,
+                      SUInt Val4,class T4,
+                      SUInt Val5,class T5,
+                      SUInt Val6,class T6,
+                      SUInt Val7,class T7,
+                      SUInt Val8,class T8>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
+                           Case<SUInt,Val2,T2>,
+                           Case<SUInt,Val3,T3>,
+                           Case<SUInt,Val4,T4>,
+                           Case<SUInt,Val5,T5>,
+                           Case<SUInt,Val6,T6>,
+                           Case<SUInt,Val7,T7>,
+                           Case<SUInt,Val8,T8> > >
+ {
+  template <class Ctx,class RetType=typename Ctx::RetType>
+  static RetType Switch(SUInt val,Ctx ctx)
+   {
+    switch( val )
+      {
+       case Val1 : return ctx.template call<T1>(); 
+       case Val2 : return ctx.template call<T2>(); 
+       case Val3 : return ctx.template call<T3>(); 
+       case Val4 : return ctx.template call<T4>(); 
+       case Val5 : return ctx.template call<T5>(); 
+       case Val6 : return ctx.template call<T6>(); 
+       case Val7 : return ctx.template call<T7>(); 
+       case Val8 : return ctx.template call<T8>(); 
+       
+       default: return ctx.defcall(val);
+      }
+   }
+ };
+
+template <class SUInt,SUInt Val1,class T1,
+                      SUInt Val2,class T2,
+                      SUInt Val3,class T3,
+                      SUInt Val4,class T4,
+                      SUInt Val5,class T5,
+                      SUInt Val6,class T6,
+                      SUInt Val7,class T7,
+                      SUInt Val8,class T8,
+                      SUInt Val9,class T9>
+struct TypeSwitch<CaseList<Case<SUInt,Val1,T1>,
+                           Case<SUInt,Val2,T2>,
+                           Case<SUInt,Val3,T3>,
+                           Case<SUInt,Val4,T4>,
+                           Case<SUInt,Val5,T5>,
+                           Case<SUInt,Val6,T6>,
+                           Case<SUInt,Val7,T7>,
+                           Case<SUInt,Val8,T8>,
+                           Case<SUInt,Val9,T9> > >
+ {
+  template <class Ctx,class RetType=typename Ctx::RetType>
+  static RetType Switch(SUInt val,Ctx ctx)
+   {
+    switch( val )
+      {
+       case Val1 : return ctx.template call<T1>(); 
+       case Val2 : return ctx.template call<T2>(); 
+       case Val3 : return ctx.template call<T3>(); 
+       case Val4 : return ctx.template call<T4>(); 
+       case Val5 : return ctx.template call<T5>(); 
+       case Val6 : return ctx.template call<T6>(); 
+       case Val7 : return ctx.template call<T7>(); 
+       case Val8 : return ctx.template call<T8>(); 
+       case Val9 : return ctx.template call<T9>(); 
        
        default: return ctx.defcall(val);
       }

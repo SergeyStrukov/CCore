@@ -1,0 +1,150 @@
+<!--
+/* page_TypeSwitch.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> TypeSwitch</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>TypeSwitch</h2>
+
+<p class="Files">Files <b>CCore/inc/TypeSwitch.h</b> <b>CCore/src/TypeSwitch.cpp</b></p>
+
+<p>
+<b>TypeSwitch</b> lives in the namespace <b>Meta</b>. It is an advanced meta-tool to build switches based on
+a given integer-to-type mapping.
+</p>
+
+<p>
+To specify a single map the type <b>Meta::Case</b> is used.
+</p>
+
+<pre>
+
+template &lt;class SUInt,SUInt Val,class T&gt; struct <span class="Att">Meta::Case</span>;
+
+</pre>
+
+<p>
+To define a mapping the type <b>Meta::CaseList</b> is used.
+</p>
+
+<pre>
+
+template &lt;class ... CC&gt; struct <span class="Att">Meta::CaseList</span>.
+
+</pre>
+
+<p>
+It is assumed that template parameters here are some <b>Meta::Case</b>s with the same type <b>SUInt</b> and distinct values <b>Val</b>.
+For example:
+</p>
+
+<pre>
+
+using MyCaseList = Meta::CaseList&lt; Meta::Case&lt;int,1,T1&gt; , Meta::Case&lt;int,2,T2&gt; , Meta::Case&lt;int,3,T3&gt; &gt; ;
+
+//
+//  1 -> T1
+//  2 -> T2
+//  3 -> T3
+//
+
+</pre>
+
+<p>
+Once you have some case list you may generate a switch, using the type <b>Meta::TypeSwitch</b>:
+</p>
+
+<pre>
+
+template &lt;class CaseList&gt; struct <span class="Att">Meta::TypeSwitch</span>;
+
+</pre>
+
+<p>
+Namely:
+</p>
+
+<pre>
+
+template &lt;class CaseList&gt; 
+struct <span class="Att">Meta::TypeSwitch</span>
+ {
+  using SwType = .... ;
+
+  template &lt;class Ctx,class RetType=typename Ctx::RetType&gt;
+  static RetType Switch(SwType val,Ctx ctx);
+ };
+
+</pre>
+
+<p>
+<b>SwType</b> here is the common <b>SUInt</b> type from the <b>Meta::Case</b>s.
+</p>
+
+<p>
+The template parameter <b>Ctx</b> must comply with the following pattern:
+</p>
+
+<pre>
+
+struct Ctx
+ {
+  ....
+
+  using RetType = .... ;
+
+  template &lt;class T&gt;
+  RetType call();
+
+  RetType defcall(SwType val);
+ };
+
+</pre>
+
+<p>
+Assume, the input case list is <b>Meta::CaseList&lt; Meta::Case&lt;int,1,T1&gt; , Meta::Case&lt;int,2,T2&gt; , Meta::Case&lt;int,3,T3&gt; &gt;</b>.
+The generated method <b>Switch</b> does the following:
+</p>
+
+<pre>
+
+RetType Switch(SwType val,Ctx ctx)
+ {
+  switch( val )
+    {
+     case 1 : return ctx.template call&lt;T1&gt;(); 
+     case 2 : return ctx.template call&lt;T2&gt;(); 
+     case 3 : return ctx.template call&lt;T3&gt;(); 
+
+     default: return ctx.defcall(val);
+    }
+ }
+
+</pre>
+
+</body>
+
+</html>
+

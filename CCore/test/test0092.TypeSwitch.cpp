@@ -159,7 +159,7 @@ void test1()
 
 void test2()
  {
-  MakeCaseList<10>::test2();  
+  MakeCaseList<20>::test2();  
  }
 
 void test3()
@@ -181,7 +181,7 @@ bool Testit<92>::Main()
  {
   //test1();
   //test2();
-  test3();
+  //test3();
   
   return true;
  }
