@@ -21,6 +21,9 @@
 
 #include <CCore/inc/PlatformRandom.h>
  
+#include <CCore/inc/Fifo.h>
+#include <CCore/inc/Job.h>
+
 namespace CCore {
 namespace Math {
 
@@ -125,7 +128,7 @@ struct NoPrimeTest
   
   static const Unit Mask = (Unit(1)<<Delta)-1 ;
   
-  struct ModEngine : NoCopy
+  struct ModEngine
    {
     Integer P;
     Integer Q;
@@ -252,6 +255,8 @@ struct NoPrimeTest
     
      explicit ExpEngine(Integer P) : ModEngine(P) {} // P > 1
      
+     explicit ExpEngine(const ModEngine &obj) : ModEngine(obj) {}
+     
      Integer exp(Integer a) // a >= 0 , a ^ (P>>1) ( mod P )
       {
        init(a);
@@ -305,6 +310,82 @@ struct NoPrimeTest
          }
        
        return true;
+      }
+   };
+  
+  class ParaRandomTest : public Funchor_nocopy // Integer must be multi-thread safe
+   {
+     ModEngine engine_init;
+     
+     Mutex mutex;
+     
+     PlatformRandom random;
+     ulen count;
+     bool result;
+     
+    private:
+     
+     bool take(int &prime,bool ok)
+      {
+       Mutex::Lock lock(mutex);
+       
+       if( ok )
+         {
+          if( !count || !result ) return false;
+          
+          count--;
+           
+          ulen index=random.select_uint<ulen>(DimOf(SmallPrimes));
+         
+          prime=SmallPrimes[index];
+          
+          return true;
+         }
+       else
+         {
+          result=false;
+          
+          return false;
+         }
+      }
+     
+     void job()
+      {
+       ExpEngine engine(engine_init);
+       
+       bool ok=true;
+       int prime;
+       
+       while( take(prime,ok) )
+         {
+          ok=engine.test(prime);
+         }
+      }
+     
+     Function<void (void)> function_job() { return FunctionOf(this,&ParaRandomTest::job); }
+     
+    public:
+     
+     explicit ParaRandomTest(Integer P) // P > 1 , P is odd
+      : engine_init(P)
+      {
+       if( P.cmp(1)<=0 || P.isEven() ) GuardNoPrimeTestBadInput();
+      }
+     
+     ~ParaRandomTest()
+      {
+      }
+     
+     bool operator () (ulen count_)
+      {
+       count=count_;
+       result=true;
+       
+       {
+        Job job(function_job());
+       } 
+       
+       return result;
       }
    };
  };

@@ -33,6 +33,10 @@ using Int = Math::Integer<Math::IntegerFastAlgo> ;
 
 using RandomInt = Math::RandomInteger<Math::IntegerFastAlgo> ;
 
+using PInt = Math::Integer<Math::IntegerFastAlgo,AtomicRefArray> ;
+
+using RandomPInt = Math::RandomInteger<Math::IntegerFastAlgo,AtomicRefArray> ;
+
 /* test1() */
 
 void test1()
@@ -147,6 +151,36 @@ void test4()
     }
  }
 
+/* test5() */
+
+void test5()
+ {
+  Job::Init job_init;
+  
+  PlatformRandom random;
+  SecTimer timer;
+  
+  for(ulen cnt=1;;cnt++)
+    {
+     Printf(Con,"cnt = #;\r",cnt);
+    
+     PInt P=RandomPInt(32,random);
+     
+     if( P<0 ) P=-P;
+     
+     if( P.isEven() ) P=P+1;
+     
+     Math::NoPrimeTest<PInt>::ParaRandomTest test(P);
+     
+     if( test(300) ) 
+       {
+        Printf(Con,"\ntime = #;\nP = #;\n",PrintTime(timer.get()),P);
+        
+        return;
+       }
+    }
+ }
+
 } // namespace Private_0091
  
 using namespace Private_0091; 
@@ -162,7 +196,8 @@ bool Testit<91>::Main()
   //test1();
   //test2();
   //test3();
-  //test4();
+  test4();
+  test5();
   
   return true;
  }
