@@ -1650,6 +1650,26 @@ class Integer : public CmpComparable<Integer<Algo,ArrayType> >
    
    bool isEven() const { return !isOdd(); }
    
+   // cast
+   
+   template <class UInt>
+   Meta::EnableIf<Meta::IsUInt<UInt>::Ret,UInt> cast() const
+    {
+     UInt ret=0;
+     unsigned shift=0;
+     
+     for(Unit a : body ) 
+       {
+        if( shift>=Meta::UIntBits<UInt>::Ret ) break;
+       
+        ret|=(UInt(a)<<shift);
+        
+        shift+=UnitBits;
+       }
+     
+     return ret;
+    }
+   
    // cmp objects
    
    CmpResult objCmp(const Integer &b) const

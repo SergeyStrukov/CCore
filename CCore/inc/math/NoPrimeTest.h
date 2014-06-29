@@ -16,7 +16,7 @@
 #ifndef CCore_inc_math_NoPrimeTest_h
 #define CCore_inc_math_NoPrimeTest_h
 
-#include <CCore/inc/math/Integer.h>
+#include <CCore/inc/math/ModEngine.h>
 #include <CCore/inc/math/SmallPrimes.h>
 
 #include <CCore/inc/PlatformRandom.h>
@@ -41,7 +41,7 @@ struct NoPrimeTest
   
   // simple
   
-  class BitScaner : NoCopy
+  class BitScanner : NoCopy
    {
      Integer a;
      
@@ -62,7 +62,7 @@ struct NoPrimeTest
      
     public: 
     
-     explicit BitScaner(const Integer &a_) // a >= 0
+     explicit BitScanner(const Integer &a_) // a >= 0
       : a(a_) 
       {
        cur=a.getBody();
@@ -78,7 +78,7 @@ struct NoPrimeTest
          }
       }
      
-     ~BitScaner() {}
+     ~BitScanner() {}
      
      bool operator + () const { return cur.len || ( bit<=cur_unit ) ; }
      
@@ -99,17 +99,17 @@ struct NoPrimeTest
     return (a*b)%P;
    }
   
-  static Integer ModExp(Integer a,Integer P) // a >= 0 , P > 1 , a ^ (P>>1) ( mod P )
+  static Integer ModExp(Integer a,Integer P) // a >= 0 , P > 1 , return a ^ (P>>1) ( mod P )
    {
     Integer b=1;
     
-    BitScaner scaner(P);
+    BitScanner scanner(P);
     
-    ++scaner;
+    ++scanner;
     
-    for(; +scaner ;++scaner)
+    for(; +scanner ;++scanner)
       {
-       if( *scaner ) b=ModMul(b,a,P);
+       if( *scanner ) b=ModMul(b,a,P);
         
        a=ModMul(a,a,P); 
       }
@@ -125,97 +125,37 @@ struct NoPrimeTest
   
   static const Unit Mask = (Unit(1)<<Delta)-1 ;
   
-  struct ModEngine : NoCopy
+  class ExpEngine : NoCopy
    {
-    Integer P;
-    Integer Q;
-    ulen n;
-    
-    class Builder
-     {
-       ulen n;
-       
-      public:
-      
-       explicit Builder(ulen n_) : n(n_) {}
-       
-       ulen getLen() const { return LenAdd(n,1); }
-       
-       PtrLen<Unit> operator () (Place<void> place) const
-        {
-         Unit *base=place;
-         
-         Range(base,n).set_null();
-         
-         base[n]=1;
-         
-         return Range(base,n+1);
-        }
-     };
-    
-    explicit ModEngine(Integer P_) // P_ > 0
-     : P(P_)
-     {
-      n=P.getBody().len;
-      
-      n=LenAdd(n,n);
-      
-      Q=Integer(DoBuild,Builder(n))/P;
-     }
-    
-    Integer mod(Integer a) // a >= 0 , a < P^2
-     {
-      Integer b=a*Q;
-      Integer c;
-      
-      auto body=b.getBody();
-      
-      if( body.len>n )
-        {
-         body+=n;
-         
-         c=Integer::Mul(P.getBody(),body);
-        }
-      
-      a-=c;
-      
-      if( a>=P ) a-=P;
-      
-      return a;
-     }
-   };
-  
-  class ExpEngine : ModEngine
-   {
-     using ModEngine::mod;
-     using ModEngine::P;
-    
+     ModEngine<Integer> engine;
+     
      static const ulen Len = (ulen(1)<<Delta)-1 ;
     
      Integer pow[Len];
      Integer result;
      
+     Integer P1; // P-1
+     
     private: 
     
      Integer sq(Integer a)
       {
-       return mod(a.sq());
+       return engine.mod(a.sq());
       }
      
      Integer mul(Integer a,Integer b)
       {
-       return mod(a*b);
+       return engine.mod(a*b);
       }
      
-     void init(Integer a) // a >= 0
+     void init(Integer a) // a >= 0 , a < P
       {
        result=1;
        
-       a%=P;
-       
        pow[0]=a;
+       pow[1]=sq(a);
        
-       for(ulen i=1; i<Len ;i++) pow[i]=mul(pow[i-1],a);
+       for(ulen i=2; i<Len ;i++) pow[i]=mul(pow[i-1],a);
       }
      
      void next(Unit bits)
@@ -250,13 +190,15 @@ struct NoPrimeTest
      
     public: 
     
-     explicit ExpEngine(Integer P) : ModEngine(P) {} // P > 1
+     explicit ExpEngine(const Integer &P) : engine(P) { P1=P-1; } // P > 1
      
-     Integer exp(Integer a) // a >= 0 , a ^ (P>>1) ( mod P )
+     const Integer & getModule() const { return engine.getModule(); }
+     
+     Integer exp(Integer a) // a >= 0 , a < P , return a ^ (P>>1) ( mod P )
       {
        init(a);
        
-       auto r=RangeReverse(P.getBody());
+       auto r=RangeReverse(getModule().getBody());
        
        for(; r.len>1 ;++r) next_unit(*r);
        
@@ -265,13 +207,13 @@ struct NoPrimeTest
        return result;
       }
   
-     bool test(Integer a) // a > 0 , (a,P)=1 , P > 1 , P is odd
+     bool test(Integer a) // a > 0 , a < P , P > 1 , P is odd
       {
        Integer b=exp(a);
        
-       if( b.cmp(1)==0 ) return QSym(a,P)==1;
+       if( b.cmp(1)==0 ) return QSym(a,getModule())==1;
 
-       if( b+1==P ) return QSym(a,P)==-1;
+       if( b==P1 ) return QSym(a,getModule())==-1;
        
        return false;
       }
@@ -285,7 +227,7 @@ struct NoPrimeTest
      
     public:
    
-     explicit RandomTest(Integer P) // P > 1 , P is odd
+     explicit RandomTest(const Integer &P) // P > 1 , P is odd
       : engine(P) 
       {
        if( P.cmp(1)<=0 || P.isEven() ) GuardNoPrimeTestBadInput();
@@ -301,7 +243,12 @@ struct NoPrimeTest
          {
           ulen index=random.select_uint<ulen>(DimOf(SmallPrimes));
           
-          if( !engine.test(SmallPrimes[index]) ) return false;
+          unsigned a=SmallPrimes[index];
+          
+          if( engine.getModule().cmp(a)>0 )
+            {
+             if( !engine.test(a) ) return false;
+            }
          }
        
        return true;

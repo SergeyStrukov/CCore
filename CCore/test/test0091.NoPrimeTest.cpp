@@ -45,7 +45,7 @@ void test1()
      
      if( P<0 ) P=-P;
      
-     Math::NoPrimeTest<Int>::ModEngine engine(P);
+     Math::ModEngine<Int> engine(P);
      
      Int P2=P.sq();
 
@@ -97,7 +97,7 @@ void test3()
  {
   PlatformRandom random;
   
-  for(ulen cnt=100; cnt ;cnt--)
+  for(ulen cnt=1000; cnt ;cnt--)
     {
      RandomInt a(32,random);
      RandomInt b(32,random);
@@ -106,7 +106,7 @@ void test3()
 
      if( P<0 ) P=-P;
      
-     if( P.isEven() ) P=P+1;
+     if( P.isEven() ) continue;
      
      Math::NoPrimeTest<Int>::RandomTest test(P);
      
@@ -130,7 +130,7 @@ void test4()
     {
      Printf(Con,"cnt = #;\r",cnt);
     
-     Int P=RandomInt(32,random);
+     Int P=RandomInt(48,random);
      
      if( P<0 ) P=-P;
      
@@ -140,7 +140,7 @@ void test4()
      
      if( test(30) ) 
        {
-        Printf(Con,"\ntime = #;\nP = #;\n",PrintTime(timer.get()),P);
+        Printf(Con,"\ntime = #;\nP = #;\nbits = #;\n",PrintTime(timer.get()),P,P.bitsOf().total());
         
         return;
        }

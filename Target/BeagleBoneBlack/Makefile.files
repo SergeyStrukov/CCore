@@ -147,6 +147,7 @@ obj/MemBase_general.o \
 obj/MemSpaceHeap.o \
 obj/MersenneTwister.o \
 obj/Meta.o \
+obj/ModEngine.o \
 obj/Move.o \
 obj/MultiEvent.o \
 obj/MultiSem.o \
@@ -465,6 +466,7 @@ obj/MemBase_general.s \
 obj/MemSpaceHeap.s \
 obj/MersenneTwister.s \
 obj/Meta.s \
+obj/ModEngine.s \
 obj/Move.s \
 obj/MultiEvent.s \
 obj/MultiSem.s \
@@ -783,6 +785,7 @@ obj/MemBase_general.dep \
 obj/MemSpaceHeap.dep \
 obj/MersenneTwister.dep \
 obj/Meta.dep \
+obj/ModEngine.dep \
 obj/Move.dep \
 obj/MultiEvent.dep \
 obj/MultiSem.dep \
@@ -1409,6 +1412,9 @@ obj/MersenneTwister.o : ../../CCore/src/MersenneTwister.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Meta.o : ../../CCore/src/gadget/Meta.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ModEngine.o : ../../CCore/src/math/ModEngine.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Move.o : ../../CCore/src/Move.cpp
@@ -2358,6 +2364,9 @@ obj/MersenneTwister.s : ../../CCore/src/MersenneTwister.cpp
 obj/Meta.s : ../../CCore/src/gadget/Meta.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ModEngine.s : ../../CCore/src/math/ModEngine.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Move.s : ../../CCore/src/Move.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3304,6 +3313,9 @@ obj/MersenneTwister.dep : ../../CCore/src/MersenneTwister.cpp
 
 obj/Meta.dep : ../../CCore/src/gadget/Meta.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Meta.o $< -MF $@
+
+obj/ModEngine.dep : ../../CCore/src/math/ModEngine.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ModEngine.o $< -MF $@
 
 obj/Move.dep : ../../CCore/src/Move.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Move.o $< -MF $@
