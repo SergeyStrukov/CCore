@@ -20,7 +20,7 @@ namespace Math {
 
 /* global data */
 
-const int SmallPrimes[78498]=
+const unsigned SmallPrimes[78498]=
  {
   2,
   3,

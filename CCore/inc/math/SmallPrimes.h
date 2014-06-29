@@ -27,9 +27,9 @@ namespace Math {
  // All primes < 1000000
  //
 
-const int SmallPrimesCap = 1000000 ;
+const unsigned SmallPrimesCap = 1000000 ;
 
-extern const int SmallPrimes[78498];
+extern const unsigned SmallPrimes[78498];
 
 } // namespace Math
 } // namespace CCore
