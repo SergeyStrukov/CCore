@@ -138,40 +138,30 @@ struct NoPrimeTest
      
     private: 
     
-     Integer sq(Integer a)
-      {
-       return engine.mod(a.sq());
-      }
-     
-     Integer mul(Integer a,Integer b)
-      {
-       return engine.mod(a*b);
-      }
-     
      void init(Integer a) // a >= 0 , a < P
       {
        result=1;
        
        pow[0]=a;
-       pow[1]=sq(a);
+       pow[1]=engine.sq(a);
        
-       for(ulen i=2; i<Len ;i++) pow[i]=mul(pow[i-1],a);
+       for(ulen i=2; i<Len ;i++) pow[i]=engine.mul(pow[i-1],a);
       }
      
      void next(Unit bits)
       {
-       for(unsigned cnt=Delta; cnt ;cnt--) result=sq(result);
+       for(unsigned cnt=Delta; cnt ;cnt--) result=engine.sq(result);
        
-       if( bits ) result=mul(result,pow[bits-1]);
+       if( bits ) result=engine.mul(result,pow[bits-1]);
       }
      
      void last(Unit bits)
       {
-       for(unsigned cnt=Delta-1; cnt ;cnt--) result=sq(result);
+       for(unsigned cnt=Delta-1; cnt ;cnt--) result=engine.sq(result);
        
        bits>>=1;
        
-       if( bits ) result=mul(result,pow[bits-1]);
+       if( bits ) result=engine.mul(result,pow[bits-1]);
       }
     
      void next_unit(Unit unit)

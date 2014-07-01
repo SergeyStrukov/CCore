@@ -44,6 +44,10 @@ math/IntegerOctetBuilder.h
 
   Build an Integer from an octet array representation.
 
+math/ModEngine.h
+
+  Support for modular operations.
+
 math/NoPrimeTest.h
 
   Quick "no-prime" test for integers.

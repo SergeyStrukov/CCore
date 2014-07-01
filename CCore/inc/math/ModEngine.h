@@ -23,9 +23,30 @@ namespace Math {
 
 /* classes */
 
+template <class UInt> class BitScanner;
+
 template <class Integer> class UnitsPowInteger;
 
 template <class Integer> class ModEngine;
+
+/* class BitScanner<UInt> */
+
+template <class UInt>
+class BitScanner : NoCopy
+ {
+   UInt d;
+   UInt mask;
+   
+  public:
+ 
+   explicit BitScanner(UInt d_) : d(d_),mask(UIntFunc<UInt>::MSBit) {}
+   
+   UInt operator + () const { return mask; }
+   
+   UInt operator * () const { return d&mask; }
+   
+   void operator ++ () { mask>>=1; }
+ };
 
 /* class UnitsPowInteger<Integer> */
 
@@ -87,7 +108,9 @@ class ModEngine : NoCopy
    
    const Integer & getModule() const { return P; }
    
-   Integer mod(Integer a) // a >= 0 , a < P^2
+   Integer prepare(Integer a) const { return a%P; } // a >= 0
+   
+   Integer mod(Integer a) const // a >= 0 , a < P^2
     {
      Integer b=a*Q;
      Integer c;
@@ -106,6 +129,25 @@ class ModEngine : NoCopy
      if( a>=P ) a-=P;
      
      return a;
+    }
+
+   Integer mul(Integer a,Integer b) const { return mod(a*b); } // a,b >= 0 , a,b < P
+   
+   Integer sq(Integer a) const { return mod(a.sq()); } // a >= 0 , a < P
+   
+   template <class UInt>
+   Integer exp(Integer a,UInt d) const // a >=0 , a < P
+    {
+     Integer ret=1;
+     
+     for(BitScanner<UInt> scanner(d); +scanner ;++scanner)
+       {
+        ret=sq(ret);
+        
+        if( *scanner ) ret=mul(ret,a);
+       }
+     
+     return ret;
     }
  };
 

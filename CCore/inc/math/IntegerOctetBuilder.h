@@ -16,14 +16,72 @@
 #ifndef CCore_inc_math_IntegerOctetBuilder_h
 #define CCore_inc_math_IntegerOctetBuilder_h
 
-#include <CCore/inc/Gadget.h>
+#include <CCore/inc/Printf.h>
  
 namespace CCore {
 namespace Math {
 
 /* classes */
 
+template <class Integer> class PrintIntegerOctets;
+
 template <class Integer> class IntegerOctetBuilder;
+
+/* class PrintIntegerOctets<Integer> */
+
+template <class Integer> 
+class PrintIntegerOctets
+ {
+   using Unit = typename Integer::Unit ;
+  
+   static const ulen Count = Integer::UnitBits/8 ;
+   
+   static_assert( (Integer::UnitBits%8)==0 ,"CCore::Math::PrintIntegerOctets<Integer> : bad Integer::UnitBits");
+   
+   Integer a;
+  
+  public:
+   
+   explicit PrintIntegerOctets(const Integer &a_) : a(a_) {}
+  
+   ~PrintIntegerOctets() {}
+
+   template <class P>
+   void print(P &out) const
+    {
+     auto body=a.getBody();
+     
+     Printf(out,"\n {\n");
+     
+     ulen ind=0;
+     
+     for(Unit unit : body )
+       {
+        for(unsigned cnt=Count; cnt ;cnt--,unit>>=8,ind++)
+          {
+           uint8 octet=uint8(unit);
+
+           if( ind&15 )
+             {
+              Putobj(out,", ");
+              
+              if( (ind&3)==0 ) Putch(out,' ');
+             }
+           else
+             {
+              if( ind==0 )
+                Putobj(out,"  ");
+              else
+                Putobj(out,",\n  ");
+             }
+           
+           Printf(out,"#4.xi;",octet);
+          }
+       }
+     
+     Printf(out,"\n }");
+    }
+ };
 
 /* class IntegerOctetBuilder<Integer> */
 

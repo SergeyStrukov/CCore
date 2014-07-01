@@ -130,7 +130,7 @@ void test4()
     {
      Printf(Con,"cnt = #;\r",cnt);
     
-     Int P=RandomInt(48,random);
+     Int P=RandomInt(32,random);
      
      if( P<0 ) P=-P;
      

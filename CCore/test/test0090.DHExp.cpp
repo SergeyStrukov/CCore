@@ -408,8 +408,8 @@ bool Testit<90>::Main()
   //test5<Crypton::DHModI>("DH Group I module");
   //test5<Crypton::DHModII>("DH Group II module");
   
-  test6<Crypton::DHModI>("DH Group I module");
-  test6<Crypton::DHModII>("DH Group II module");
+  //test6<Crypton::DHModI>("DH Group I module");
+  //test6<Crypton::DHModII>("DH Group II module");
   
   return true;
  }
