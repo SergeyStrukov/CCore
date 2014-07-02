@@ -1,5 +1,7 @@
 OBJ_LIST = \
 obj/AES.o \
+obj/APRTest.o \
+obj/APRTestData.gen.o \
 obj/Abort.o \
 obj/AbortMsgFunc.o \
 obj/AntiSem.o \
@@ -295,6 +297,8 @@ obj/XPoint.o \
 
 ASM_LIST = \
 obj/AES.s \
+obj/APRTest.s \
+obj/APRTestData.gen.s \
 obj/Abort.s \
 obj/AbortMsgFunc.s \
 obj/AntiSem.s \
@@ -590,6 +594,8 @@ obj/XPoint.s \
 
 DEP_LIST = \
 obj/AES.dep \
+obj/APRTest.dep \
+obj/APRTestData.gen.dep \
 obj/Abort.dep \
 obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
@@ -898,6 +904,12 @@ include $(RULES_FILE)
 
 
 obj/AES.o : ../../CCore/src/crypton/AES.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/APRTest.o : ../../CCore/src/math/APRTest.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/APRTestData.gen.o : ../../CCore/src/math/APRTestData.gen.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Abort.o : ../../HCore/CCore/src/Abort.cpp
@@ -1778,6 +1790,12 @@ obj/XPoint.o : ../../CCore/src/net/XPoint.cpp
 obj/AES.s : ../../CCore/src/crypton/AES.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/APRTest.s : ../../CCore/src/math/APRTest.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/APRTestData.gen.s : ../../CCore/src/math/APRTestData.gen.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Abort.s : ../../HCore/CCore/src/Abort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2655,6 +2673,12 @@ obj/XPoint.s : ../../CCore/src/net/XPoint.cpp
 
 obj/AES.dep : ../../CCore/src/crypton/AES.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AES.o $< -MF $@
+
+obj/APRTest.dep : ../../CCore/src/math/APRTest.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/APRTest.o $< -MF $@
+
+obj/APRTestData.gen.dep : ../../CCore/src/math/APRTestData.gen.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/APRTestData.gen.o $< -MF $@
 
 obj/Abort.dep : ../../HCore/CCore/src/Abort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Abort.o $< -MF $@

@@ -2,6 +2,8 @@ OBJ_LIST = \
 obj/AES.o \
 obj/AM3359.o \
 obj/AM3359.CP15CNT.o \
+obj/APRTest.o \
+obj/APRTestData.gen.o \
 obj/Abort.o \
 obj/AbortMsgFunc.o \
 obj/AntiSem.o \
@@ -321,6 +323,8 @@ ASM_LIST = \
 obj/AES.s \
 obj/AM3359.s \
 obj/AM3359.CP15CNT.s \
+obj/APRTest.s \
+obj/APRTestData.gen.s \
 obj/Abort.s \
 obj/AbortMsgFunc.s \
 obj/AntiSem.s \
@@ -640,6 +644,8 @@ DEP_LIST = \
 obj/AES.dep \
 obj/AM3359.dep \
 obj/AM3359.CP15CNT.dep \
+obj/APRTest.dep \
+obj/APRTestData.gen.dep \
 obj/Abort.dep \
 obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
@@ -977,6 +983,12 @@ obj/AM3359.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AM3359.CP15CNT.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/APRTest.o : ../../CCore/src/math/APRTest.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/APRTestData.gen.o : ../../CCore/src/math/APRTestData.gen.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Abort.o : ../../XCore/CCore/src/Abort.cpp
@@ -1929,6 +1941,12 @@ obj/AM3359.s : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
 obj/AM3359.CP15CNT.s : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/APRTest.s : ../../CCore/src/math/APRTest.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/APRTestData.gen.s : ../../CCore/src/math/APRTestData.gen.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Abort.s : ../../XCore/CCore/src/Abort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2878,6 +2896,12 @@ obj/AM3359.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
 
 obj/AM3359.CP15CNT.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AM3359.CP15CNT.o $< -MF $@
+
+obj/APRTest.dep : ../../CCore/src/math/APRTest.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/APRTest.o $< -MF $@
+
+obj/APRTestData.gen.dep : ../../CCore/src/math/APRTestData.gen.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/APRTestData.gen.o $< -MF $@
 
 obj/Abort.dep : ../../XCore/CCore/src/Abort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Abort.o $< -MF $@

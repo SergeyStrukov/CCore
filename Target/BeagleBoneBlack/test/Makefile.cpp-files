@@ -99,6 +99,7 @@
 ../../../CCore/test/test0105.SingleBridge.cpp
 ../../../CCore/test/test0106.PSec.cpp
 ../../../CCore/test/test0107.PKE.cpp
+../../../CCore/test/test0108.APRTest.cpp
 ../../../CCore/test/test0200.Blank.cpp
 ../../../CCore/test/test0300.TaskList.cpp
 ../../../CCore/test/testArray.cpp

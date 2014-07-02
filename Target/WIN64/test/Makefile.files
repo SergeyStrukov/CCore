@@ -100,6 +100,7 @@ OBJ_LIST = \
 ../test-obj/test0105.SingleBridge.o \
 ../test-obj/test0106.PSec.o \
 ../test-obj/test0107.PKE.o \
+../test-obj/test0108.APRTest.o \
 ../test-obj/test0200.Blank.o \
 ../test-obj/test0300.TaskList.o \
 ../test-obj/test1001.PageHeap.o \
@@ -254,6 +255,7 @@ ASM_LIST = \
 ../test-obj/test0105.SingleBridge.s \
 ../test-obj/test0106.PSec.s \
 ../test-obj/test0107.PKE.s \
+../test-obj/test0108.APRTest.s \
 ../test-obj/test0200.Blank.s \
 ../test-obj/test0300.TaskList.s \
 ../test-obj/test1001.PageHeap.s \
@@ -408,6 +410,7 @@ DEP_LIST = \
 ../test-obj/test0105.SingleBridge.dep \
 ../test-obj/test0106.PSec.dep \
 ../test-obj/test0107.PKE.dep \
+../test-obj/test0108.APRTest.dep \
 ../test-obj/test0200.Blank.dep \
 ../test-obj/test0300.TaskList.dep \
 ../test-obj/test1001.PageHeap.dep \
@@ -767,6 +770,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0107.PKE.o : ../../../CCore/test/test0107.PKE.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0108.APRTest.o : ../../../CCore/test/test0108.APRTest.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0200.Blank.o : ../../../CCore/test/test0200.Blank.cpp
@@ -1224,6 +1230,9 @@ include $(RULES_FILE)
 ../test-obj/test0107.PKE.s : ../../../CCore/test/test0107.PKE.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0108.APRTest.s : ../../../CCore/test/test0108.APRTest.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0200.Blank.s : ../../../CCore/test/test0200.Blank.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1678,6 +1687,9 @@ include $(RULES_FILE)
 
 ../test-obj/test0107.PKE.dep : ../../../CCore/test/test0107.PKE.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0107.PKE.o $< -MF $@
+
+../test-obj/test0108.APRTest.dep : ../../../CCore/test/test0108.APRTest.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0108.APRTest.o $< -MF $@
 
 ../test-obj/test0200.Blank.dep : ../../../CCore/test/test0200.Blank.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0200.Blank.o $< -MF $@

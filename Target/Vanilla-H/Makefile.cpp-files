@@ -115,6 +115,8 @@
 ../../CCore/src/LineInput.cpp
 ../../CCore/src/List.cpp
 ../../CCore/src/Log.cpp
+../../CCore/src/math/APRTest.cpp
+../../CCore/src/math/APRTestData.gen.cpp
 ../../CCore/src/math/FastMul.cpp
 ../../CCore/src/math/Integer.cpp
 ../../CCore/src/math/IntegerOctetBuilder.cpp
