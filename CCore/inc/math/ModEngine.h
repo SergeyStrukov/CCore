@@ -133,6 +133,10 @@ class ModEngine : NoCopy
 
    Integer mul(Integer a,Integer b) const { return mod(a*b); } // a,b >= 0 , a,b < P
    
+   Integer mac(Integer s,Integer a,Integer b) const { return mod(s+a*b); } // s,a,b >= 0 , s,a,b < P
+   
+   Integer squac(Integer s,Integer a) const { return mod(s+a.sq()); } // s,a >= 0 , s,a < P
+   
    Integer sq(Integer a) const { return mod(a.sq()); } // a >= 0 , a < P
    
    template <class UInt>
