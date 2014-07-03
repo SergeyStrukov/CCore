@@ -24,6 +24,8 @@
 #include <CCore/inc/math/APRTest.h>
 #include <CCore/inc/math/IntegerFastAlgo.h>
 
+#include <CCore/inc/crypton/DHExp.h>
+
 namespace App {
 
 namespace Private_0108 {
@@ -52,7 +54,7 @@ class Report
    
   public:
    
-   Report() : out("report.txt") {}
+   explicit Report(StrLen file_name) : out(file_name) {}
   
    template <class ... TT>
    void operator () (const char *format,TT && ... tt)
@@ -64,7 +66,7 @@ class Report
 void test2()
  {
   Math::APRTest::TestEngine<Int> test(5);
-  Report report;
+  Report report("report.txt");
   
   Printf(Con,"cap = #;\n",test.getCap());
   
@@ -188,6 +190,49 @@ void test4()
     }
  }
 
+/* test5() */
+
+void test5()
+ {
+  // 1
+  {
+   Int P(DoBuild,Math::IntegerOctetBuilder<Int>(Range(Crypton::DHModI::Mod)));
+   
+   Math::APRTest::TestEngine<Int> test(7);
+   
+   {
+    Report report("ModI_P.txt");
+     
+    Printf(Con,"ModI Prime = #;\n",test(P,report));
+   }
+   
+   {
+    Report report("ModI_P2.txt");
+     
+    Printf(Con,"ModI Prime/2 = #;\n",test(P>>1,report));
+   }
+  }
+  
+  // 2
+  {
+   Int P(DoBuild,Math::IntegerOctetBuilder<Int>(Range(Crypton::DHModII::Mod)));
+   
+   Math::APRTest::TestEngine<Int> test(8);
+   
+   {
+    Report report("ModII_P.txt");
+     
+    Printf(Con,"ModII Prime = #;\n",test(P,report));
+   }
+   
+   {
+    Report report("ModII_P2.txt");
+     
+    Printf(Con,"ModII Prime/2 = #;\n",test(P>>1,report));
+   }
+  }
+ }
+
 } // namespace Private_0108
  
 using namespace Private_0108; 
@@ -203,7 +248,8 @@ bool Testit<108>::Main()
   //test1();
   //test2();
   //test3();
-  test4();
+  //test4();
+  test5();
   
   return true;
  }
