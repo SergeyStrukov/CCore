@@ -21,6 +21,7 @@
 #include <CCore/inc/math/IntegerFastAlgo.h>
 #include <CCore/inc/math/IntegerOctetBuilder.h>
 #include <CCore/inc/math/NoPrimeTest.h>
+#include <CCore/inc/PlatformRandom.h>
 
 namespace App {
 
@@ -29,32 +30,6 @@ namespace Private_0090 {
 /* types */
 
 using Int = Math::Integer<Math::IntegerFastAlgo> ;
-
-using Builder = Math::IntegerOctetBuilder<Int> ;
-
-/* class DBuilder */
-
-class DBuilder
- {
-   ulen n;
-   
-  public:
-  
-   explicit DBuilder(ulen n_) : n(n_) {}
-   
-   ulen getLen() const { return LenAdd(n,1); }
-   
-   PtrLen<Int::Unit> operator () (Place<void> place) const
-    {
-     Int::Unit *base=place;
-     
-     Range(base,n).set_null();
-     
-     base[n]=1;
-     
-     return Range(base,n+1);
-    }
- };
 
 /* class UBuilder */
 
@@ -80,67 +55,26 @@ class UBuilder
     }
  };
 
-/* PrintInt() */
-
-template <class P>
-void PrintInt(P &out,Int a)
- {
-  Printf(out," {\n");
-  
-  ulen ind=0;
-  
-  for(Int::Unit d : a.getBody() )
-    {
-     for(unsigned off=0; off<Int::UnitBits ;off+=8)
-       {
-        uint8 b=uint8(d>>off);
-        
-        if( (ind&15)==0 ) 
-          {
-           if( ind )
-             {
-              Putobj(out,",\n  ");
-             }
-           else
-             {
-              Putobj(out,"  ");
-             }
-          }
-        else
-          {
-           Putobj(out,", ");
-          }
-          
-        Printf(out,"#4.xi;",b);
-        
-        ind++;
-       }
-    }
-  
-  Printf(out,"\n };\n\n");
- }
-
 /* test1() */
 
 template <class DHMod>
 void test1(StrLen title)
  {
+  PlatformRandom random;
   Printf(Con,"#;\n\n",Title(title));
   
-  Int P(DoBuild,Builder(Range(DHMod::Mod)));
+  Math::OctetInteger<Int> P(Range(DHMod::Mod));
   Int Q=P>>1;
 
-  {
-   Math::NoPrimeTest<Int>::RandomTest test(P); 
-   
-   if( test(100) ) Printf(Con,"P is probably prime\n"); else Printf(Con,"P is not prime\n");
-  }
-  
-  {
-   Math::NoPrimeTest<Int>::RandomTest test(Q);
-   
-   if( test(100) ) Printf(Con,"Q is probably prime\n"); else Printf(Con,"Q is not prime\n");
-  }
+  if( Math::NoPrimeTest<Int>::RandomTest(P,100,random) ) 
+    Printf(Con,"P is probably prime\n"); 
+  else 
+    Printf(Con,"P is not prime\n");
+ 
+  if( Math::NoPrimeTest<Int>::RandomTest(Q,100,random) ) 
+    Printf(Con,"Q is probably prime\n"); 
+  else 
+    Printf(Con,"Q is not prime\n");
   
   Printf(Con,"\n");
  }
@@ -203,8 +137,8 @@ void test2(P &out,StrLen title)
  {
   Printf(out,"#;\n\n",Title(title));
   
-  Int M(DoBuild,Builder(Range(DHMod::Mod)));
-  Int D(DoBuild,DBuilder(M.getBody().len-1));
+  Math::OctetInteger<Int> M(Range(DHMod::Mod));
+  Math::UnitsPowInteger<Int> D(M.getBody().len-1);
   
   Int d;
   
@@ -214,13 +148,13 @@ void test2(P &out,StrLen title)
   
   Int K=xy.x%D;
   
-  PrintInt(out,M);
-  PrintInt(out,D);
-  PrintInt(out,K);
+  Printf(out,"#;;\n\n",Math::PrintIntegerOctets(M));
+  Printf(out,"#;;\n\n",Math::PrintIntegerOctets(D));
+  Printf(out,"#;;\n\n",Math::PrintIntegerOctets(K));
   
   Int L=((D-M)*D)/M;
   
-  PrintInt(out,L);
+  Printf(out,"#;;\n\n",Math::PrintIntegerOctets(L));
  }
 
 /* test3() */
@@ -230,11 +164,11 @@ void test3(StrLen title)
  {
   Printf(Con,"#;\n\n",Title(title));
   
-  Int M(DoBuild,Builder(Range(DHMod::Mod)));
-  Int K(DoBuild,Builder(Range(DHMod::InvMod)));
-  Int L(DoBuild,Builder(Range(DHMod::Lift)));
+  Math::OctetInteger<Int> M(Range(DHMod::Mod));
+  Math::OctetInteger<Int> K(Range(DHMod::InvMod));
+  Math::OctetInteger<Int> L(Range(DHMod::Lift));
   
-  Int D(DoBuild,DBuilder(M.getBody().len-1));
+  Math::UnitsPowInteger<Int> D(M.getBody().len-1);
   
   if( ((M*K-1)%D).sign() )
     {
@@ -246,9 +180,7 @@ void test3(StrLen title)
      Printf(Exception,"failed");
     }
   
-  PrintCon out(Con);
-  
-  PrintInt(out,M*K);
+  Printf(Con,"#;\n\n",Math::PrintIntegerOctets(M*K));
  }
 
 /* test4() */
@@ -269,7 +201,7 @@ void test4(StrLen title)
   Unit B[Exp::IntLen];
   Unit C[Exp::IntLen];
   
-  Int m(DoBuild,Builder(Range(DHMod::Mod)));
+  Math::OctetInteger<Int> m(Range(DHMod::Mod));
   
   for(ulen cnt=10000; cnt ;cnt--)
     {
@@ -286,7 +218,7 @@ void test4(StrLen title)
      Int b(DoBuild,UBuilder(Range_const(B)));
      Int c(DoBuild,UBuilder(Range_const(C)));
      
-     if( ((a*b-c)%m).sign() )
+     if( (a*b-c)%m != 0 )
        {
         Printf(Exception,"failed");
        }
@@ -303,16 +235,16 @@ void test5(StrLen title)
   using Exp = Crypton::DHExp<DHMod> ;
   using Unit = typename Exp::Unit ;
   
-  typename Exp::Core core;
-  
   PlatformRandom random;
+  
+  typename Exp::Core core;
   
   Unit A[Exp::IntLen];
   Unit B[Exp::IntLen];
   Unit C[Exp::IntLen];
   
-  Int m(DoBuild,Builder(Range(DHMod::Mod)));
-  Int d(DoBuild,DBuilder(m.getBody().len-1));
+  Math::OctetInteger<Int> m(Range(DHMod::Mod));
+  Math::UnitsPowInteger<Int> d(m.getBody().len-1);
   
   for(ulen cnt=10000; cnt ;cnt--)
     {

@@ -110,21 +110,21 @@ template <class Algo> class IntegerRShiftBuilder;
 
 template <class Algo> class IntegerDivider;
 
-template <class Int> class IntegerFromString;
+template <class Integer> class IntegerFromString;
 
 struct IntegerPrintOpt;
 
-template <class Int> class PrintInteger;
+template <class Integer> class PrintInteger;
 
 template <class Algo, template <class T,class A=ArrayAlgo<T> > class ArrayType = RefArray > class Integer;
 
-template <class Algo, template <class T,class A=ArrayAlgo<T> > class ArrayType = RefArray > class RandomInteger;
+template <class Integer> class RandomInteger;
 
 template <class Algo> struct GCDAlgo;
 
 template <class Algo> class GCDivBuilder;
 
-template <class Int> class GCDivType;
+template <class Integer> class GCDivType;
 
 /* struct Algo */
 
@@ -1132,19 +1132,19 @@ IntegerDivider<Algo>::IntegerDivider(PtrLen<const Unit> a,PtrLen<const Unit> b,b
     }
  }
  
-/* class IntegerFromString<Int> */
+/* class IntegerFromString<Integer> */
 
-template <class Int> 
+template <class Integer> 
 class IntegerFromString 
  {
    static const ulen LoLen = (3*Meta::UIntBits<unsigned>::Ret)/10 ; // 10^LoLen-1 <= unsigned::MaxVal
                                                                     // 0.3 < log10(2) 
    
-   static_assert( LoLen>=2 ,"CCore::Math::IntegerFromString<Int> : bad LoLen");
+   static_assert( LoLen>=2 ,"CCore::Math::IntegerFromString<Integer> : bad LoLen");
   
   private:
    
-   Int pow10[Meta::UIntBits<ulen>::Ret]; // 10^(2^index) , [K+1]
+   Integer pow10[Meta::UIntBits<ulen>::Ret]; // 10^(2^index) , [K+1]
    ulen K;
    
   private: 
@@ -1153,7 +1153,7 @@ class IntegerFromString
    // str.len <= 2^(k+1) , k<=K
    //
 
-   Int convert(StrLen str,ulen k) const;
+   Integer convert(StrLen str,ulen k) const;
    
   public:
   
@@ -1161,11 +1161,11 @@ class IntegerFromString
    
    ~IntegerFromString() {}
 
-   Int operator () (StrLen str) const;
+   Integer operator () (StrLen str) const;
  };
  
-template <class Int> 
-Int IntegerFromString<Int>::convert(StrLen str,ulen k) const
+template <class Integer> 
+Integer IntegerFromString<Integer>::convert(StrLen str,ulen k) const
  {
   ulen n=str.len;
   
@@ -1193,8 +1193,8 @@ Int IntegerFromString<Int>::convert(StrLen str,ulen k) const
     {
      StrLen str_hi=(str+=(n-m));
      
-     Int lo=convert(str,k-1);
-     Int hi=convert(str_hi,k-1);
+     Integer lo=convert(str,k-1);
+     Integer hi=convert(str_hi,k-1);
   
      return lo+hi*pow10[k];
     }
@@ -1204,8 +1204,8 @@ Int IntegerFromString<Int>::convert(StrLen str,ulen k) const
     }
  }
  
-template <class Int> 
-IntegerFromString<Int>::IntegerFromString(ulen max_len)
+template <class Integer> 
+IntegerFromString<Integer>::IntegerFromString(ulen max_len)
  {
   if( !max_len ) GuardIntegerBadString();
  
@@ -1218,8 +1218,8 @@ IntegerFromString<Int>::IntegerFromString(ulen max_len)
   K=k;  
  }
  
-template <class Int> 
-Int IntegerFromString<Int>::operator () (StrLen str) const 
+template <class Integer> 
+Integer IntegerFromString<Integer>::operator () (StrLen str) const 
  {
   if( !str ) GuardIntegerBadString();
   
@@ -1255,16 +1255,16 @@ struct IntegerPrintOpt
   //
  };
 
-/* class PrintInteger<Int> */
+/* class PrintInteger<Integer> */
 
-template <class Int> 
+template <class Integer> 
 class PrintInteger : NoCopy
  {
-   typedef typename Int::Unit Unit;
+   typedef typename Integer::Unit Unit;
   
   private:
   
-   Int pow10[Int::UnitBits+Meta::UIntBits<ulen>::Ret]; // 10^(2^index) , [K+1]
+   Integer pow10[Integer::UnitBits+Meta::UIntBits<ulen>::Ret]; // 10^(2^index) , [K+1]
    ulen K;
    
   private:
@@ -1279,7 +1279,7 @@ class PrintInteger : NoCopy
      static bool Do(PtrLen<const Unit>,unsigned &) { return false; }
     };
    
-   typedef Meta::Select<( Int::UnitBits<Meta::UIntBits<unsigned>::Ret ), Get_combine , Get_never > Get;
+   typedef Meta::Select<( Integer::UnitBits<Meta::UIntBits<unsigned>::Ret ), Get_combine , Get_never > Get;
    
    static bool GetUnsigned(PtrLen<const Unit> body,unsigned &ret);
   
@@ -1293,14 +1293,14 @@ class PrintInteger : NoCopy
    void print_lo(P &out,ulen k) const;
     
    template <class P>
-   void print_lo(P &out,Int a,ulen k) const;
+   void print_lo(P &out,Integer a,ulen k) const;
     
    //
    // a < 10^(2^(k+1)) , k <= K
    //
    
    template <class P>
-   void print(P &out,ulen width,Int a,ulen k) const;
+   void print(P &out,ulen width,Integer a,ulen k) const;
    
   public:
   
@@ -1309,19 +1309,19 @@ class PrintInteger : NoCopy
    ~PrintInteger() {}
    
    template <class P>
-   void operator () (P &out,IntegerPrintOpt opt,Int a) const;
+   void operator () (P &out,IntegerPrintOpt opt,Integer a) const;
  };
  
-template <class Int>
-bool PrintInteger<Int>::Get_combine::Do(PtrLen<const Unit> body,unsigned &ret)
+template <class Integer>
+bool PrintInteger<Integer>::Get_combine::Do(PtrLen<const Unit> body,unsigned &ret)
  {
-  if( body.len>Meta::UIntBits<unsigned>::Ret/Int::UnitBits ) return false;
+  if( body.len>Meta::UIntBits<unsigned>::Ret/Integer::UnitBits ) return false;
   
   unsigned temp=0;
   
   for(auto fin=body.getFin(); fin.next() ;)
     {
-     temp<<=Int::UnitBits;
+     temp<<=Integer::UnitBits;
      temp|=unsigned(*fin);
     }
 
@@ -1330,8 +1330,8 @@ bool PrintInteger<Int>::Get_combine::Do(PtrLen<const Unit> body,unsigned &ret)
   return true;
  }
 
-template <class Int> 
-bool PrintInteger<Int>::GetUnsigned(PtrLen<const Unit> body,unsigned &ret)
+template <class Integer> 
+bool PrintInteger<Integer>::GetUnsigned(PtrLen<const Unit> body,unsigned &ret)
  {
   if( body.len && body.back(1)==0 ) body.len--;
   
@@ -1359,9 +1359,9 @@ bool PrintInteger<Int>::GetUnsigned(PtrLen<const Unit> body,unsigned &ret)
   return Get::Do(body,ret);
  }
 
-template <class Int> 
+template <class Integer> 
 template <class P>
-bool PrintInteger<Int>::print_lo_short(P &out,PtrLen<const Unit> body,ulen k) const
+bool PrintInteger<Integer>::print_lo_short(P &out,PtrLen<const Unit> body,ulen k) const
  {
   unsigned value;
   
@@ -1380,9 +1380,9 @@ bool PrintInteger<Int>::print_lo_short(P &out,PtrLen<const Unit> body,ulen k) co
   return false;
  }
 
-template <class Int> 
+template <class Integer> 
 template <class P>
-bool PrintInteger<Int>::print_short(P &out,ulen width,PtrLen<const Unit> body) const
+bool PrintInteger<Integer>::print_short(P &out,ulen width,PtrLen<const Unit> body) const
  {
   unsigned value;
   
@@ -1401,9 +1401,9 @@ bool PrintInteger<Int>::print_short(P &out,ulen width,PtrLen<const Unit> body) c
   return false;
  }
 
-template <class Int> 
+template <class Integer> 
 template <class P>
-void PrintInteger<Int>::print_lo(P &out,ulen k) const
+void PrintInteger<Integer>::print_lo(P &out,ulen k) const
  {
   if( k+1>=Meta::UIntBits<ulen>::Ret )
     { // huge output
@@ -1416,9 +1416,9 @@ void PrintInteger<Int>::print_lo(P &out,ulen k) const
     }  
  }
     
-template <class Int> 
+template <class Integer> 
 template <class P>
-void PrintInteger<Int>::print_lo(P &out,Int a,ulen k) const
+void PrintInteger<Integer>::print_lo(P &out,Integer a,ulen k) const
  {
   if( print_lo_short(out,a.getBody(),k) ) return;
     
@@ -1436,9 +1436,9 @@ void PrintInteger<Int>::print_lo(P &out,Int a,ulen k) const
     }
  }
     
-template <class Int> 
+template <class Integer> 
 template <class P>
-void PrintInteger<Int>::print(P &out,ulen width,Int a,ulen k) const
+void PrintInteger<Integer>::print(P &out,ulen width,Integer a,ulen k) const
  {
   if( print_short(out,width,a.getBody()) ) return;
   
@@ -1464,8 +1464,8 @@ void PrintInteger<Int>::print(P &out,ulen width,Int a,ulen k) const
     }
  }
   
-template <class Int> 
-PrintInteger<Int>::PrintInteger(ulen max_body_len)
+template <class Integer> 
+PrintInteger<Integer>::PrintInteger(ulen max_body_len)
  {
   pow10[0]=10;
      
@@ -1473,7 +1473,7 @@ PrintInteger<Int>::PrintInteger(ulen max_body_len)
      
   for(;;) 
     {
-     Int p2=pow10[k].sq();
+     Integer p2=pow10[k].sq();
         
      if( p2.getBody().len>max_body_len ) break; // 10^(2^(k+1)) > 2^(max_body_len*UnitBits-1)
        
@@ -1483,9 +1483,9 @@ PrintInteger<Int>::PrintInteger(ulen max_body_len)
   K=k;
  }
 
-template <class Int> 
+template <class Integer> 
 template <class P>
-void PrintInteger<Int>::operator () (P &out,IntegerPrintOpt opt,Int a) const 
+void PrintInteger<Integer>::operator () (P &out,IntegerPrintOpt opt,Integer a) const 
  {
   switch( a.sign() )
     {
@@ -1530,7 +1530,7 @@ void PrintInteger<Int>::operator () (P &out,IntegerPrintOpt opt,Int a) const
 /* class Integer<Algo,ArrayType> */ 
 
 template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-class Integer : public CmpComparable<Integer<Algo,ArrayType> >
+class Integer
  {
   public:
    
@@ -1645,6 +1645,8 @@ class Integer : public CmpComparable<Integer<Algo,ArrayType> >
    Integer & set_null() { body.erase(); return *this; }
    
    PtrLen<const Unit> getBody() const { return Range_const(body); }
+   
+   PtrLenReverse<const Unit> getBodyReverse() const { return RangeReverse_const(body); }
    
    bool isOdd() const { return body.getLen() && (body[0]&Unit(1)) ; }
    
@@ -1774,6 +1776,18 @@ class Integer : public CmpComparable<Integer<Algo,ArrayType> >
     }
    
    DivMod divmod(const Integer &b) const { return DivMod(getBody(),b.getBody()); }
+   
+   friend bool operator == (const Integer &a,const Integer &b) { return a.objCmp(b)==0; }
+   
+   friend bool operator != (const Integer &a,const Integer &b) { return a.objCmp(b)!=0; }
+   
+   friend bool operator < (const Integer &a,const Integer &b) { return a.objCmp(b)<0; }
+   
+   friend bool operator > (const Integer &a,const Integer &b) { return a.objCmp(b)>0; }
+   
+   friend bool operator <= (const Integer &a,const Integer &b) { return a.objCmp(b)<=0; }
+   
+   friend bool operator >= (const Integer &a,const Integer &b) { return a.objCmp(b)>=0; }
    
    // operators
    
@@ -1923,6 +1937,42 @@ class Integer : public CmpComparable<Integer<Algo,ArrayType> >
      
      return Algo::Cmp(body.getPtr(),body.getLen(),cast.getPtr(),cast.getLen());
     }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator == (const Integer &a,SUInt b) { return a.cmp(b)==0; } 
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator == (SUInt a,const Integer &b) { return b.cmp(a)==0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator != (const Integer &a,SUInt b) { return a.cmp(b)!=0; } 
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator != (SUInt a,const Integer &b) { return b.cmp(a)!=0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator < (const Integer &a,SUInt b) { return a.cmp(b)<0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator < (SUInt a,const Integer &b) { return b.cmp(a)>0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator > (const Integer &a,SUInt b) { return a.cmp(b)>0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator > (SUInt a,const Integer &b) { return b.cmp(a)<0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator <= (const Integer &a,SUInt b) { return a.cmp(b)<=0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator <= (SUInt a,const Integer &b) { return b.cmp(a)>=0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator >= (const Integer &a,SUInt b) { return a.cmp(b)>=0; }
+   
+   template <class SUInt>
+   friend EnableIfSUInt<SUInt,bool> operator >= (SUInt a,const Integer &b) { return b.cmp(a)<=0; }
    
    // print object
 
@@ -2395,22 +2445,22 @@ void Integer<Algo,ArrayType>::print(P &out,PrintOptType opt) const
   print(out,opt,*this);
  }
  
-/* class RandomInteger<Algo,ArrayType> */ 
+/* class RandomInteger<Integer> */ 
   
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType> 
-class RandomInteger : public Integer<Algo,ArrayType>
+template <class Integer> 
+class RandomInteger : public Integer
  {
-   typedef typename Algo::Unit Unit;
+   using Unit = typename Integer::Unit ; 
  
-   template <class RandGen>
+   template <class Random>
    class Builder
     {
       ulen n;
-      RandGen &gen;
+      Random &random;
     
      public:
      
-      Builder(ulen n_,RandGen &gen_) : n(n_),gen(gen_) {}
+      Builder(ulen n_,Random &random_) : n(n_),random(random_) {}
       
       ulen getLen() const { return n; }
       
@@ -2418,7 +2468,7 @@ class RandomInteger : public Integer<Algo,ArrayType>
        {
         PtrLen<Unit> ret(place,n);
         
-        gen.fill(ret);
+        random.fill(ret);
         
         return ret;
        }
@@ -2426,8 +2476,10 @@ class RandomInteger : public Integer<Algo,ArrayType>
      
   public:
   
-   template <class RandGen>
-   RandomInteger(ulen n,RandGen &gen) : Integer<Algo,ArrayType>(DoBuild,Builder<RandGen>(n,gen)) {}
+   template <class Random>
+   RandomInteger(ulen n,Random &random) : Integer(DoBuild,Builder<Random>(n,random)) {}
+   
+   ~RandomInteger() {}
  };
 
 /* struct GCDAlgo<Algo> */
@@ -2751,30 +2803,30 @@ class GCDivBuilder
     }
  };
 
-/* class GCDivType<Int> */
+/* class GCDivType<Integer> */
 
-template <class Int>
-class GCDivType : public Int
+template <class Integer>
+class GCDivType : public Integer
  {
   public:
    
-   GCDivType(const Int &a,const Int &b) 
-    : Int(DoBuild,GCDivBuilder<typename Int::AlgoType>(a.getBody(),b.getBody())) 
+   GCDivType(const Integer &a,const Integer &b) 
+    : Integer(DoBuild,GCDivBuilder<typename Integer::AlgoType>(a.getBody(),b.getBody())) 
     {
     }
  };
 
 /* GCDiv() */
 
-template <class Int>
-Int GCDiv(const Int &a,const Int &b) { return GCDivType<Int>(a,b); }
+template <class Integer>
+Integer GCDiv(const Integer &a,const Integer &b) { return GCDivType<Integer>(a,b); }
 
 /* QSym() */
 
-template <class Int>
-int QSym(const Int &a,const Int &b)
+template <class Integer>
+int QSym(const Integer &a,const Integer &b)
  {
-  return GCDAlgo<typename Int::AlgoType>::QSym(a.getBody(),b.getBody());
+  return GCDAlgo<typename Integer::AlgoType>::QSym(a.getBody(),b.getBody());
  }
 
 } // namespace Math

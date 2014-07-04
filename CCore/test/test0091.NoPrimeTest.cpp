@@ -31,7 +31,7 @@ namespace Private_0091 {
 
 using Int = Math::Integer<Math::IntegerFastAlgo> ;
 
-using RandomInt = Math::RandomInteger<Math::IntegerFastAlgo> ;
+using RandomInt = Math::RandomInteger<Int> ;
 
 /* test1() */
 
@@ -84,7 +84,9 @@ void test2()
      
      Math::NoPrimeTest<Int>::ExpEngine engine(P);
      
-     if( Math::NoPrimeTest<Int>::ModExp(a,P)!=engine.exp(a) ) 
+     Math::ModEngine<Int> mod_engine(P);
+     
+     if( engine.exp(a)!=mod_engine.exp(a,P>>1) ) 
        {
         Printf(Exception,"failed");
        }
@@ -97,8 +99,10 @@ void test3()
  {
   PlatformRandom random;
   
-  for(ulen cnt=1000; cnt ;cnt--)
+  for(ulen cnt=10000; cnt ;cnt--)
     {
+     Printf(Con,"cnt = #;   \r",cnt);
+     
      RandomInt a(32,random);
      RandomInt b(32,random);
      
@@ -106,17 +110,15 @@ void test3()
 
      if( P<0 ) P=-P;
      
-     if( P.isEven() ) continue;
-     
-     Math::NoPrimeTest<Int>::RandomTest test(P);
-     
-     if( test(10) ) 
+     if( Math::NoPrimeTest<Int>::RandomTest(P,10,random) ) 
        {
-        Printf(Con,"Passed 10\n");
+        Printf(Con,"\nPassed 10\n");
         
-        if( test(20) ) Printf(Con,"  Passed 30\n");
+        if( Math::NoPrimeTest<Int>::RandomTest(P,20,random) ) Printf(Con,"  Passed 30\n");
        }
     }
+  
+  Putch(Con,'\n');
  }
 
 /* test4() */
@@ -136,9 +138,7 @@ void test4()
      
      if( P.isEven() ) P=P+1;
      
-     Math::NoPrimeTest<Int>::RandomTest test(P);
-     
-     if( test(30) ) 
+     if( Math::NoPrimeTest<Int>::RandomTest(P,30,random) ) 
        {
         Printf(Con,"\ntime = #;\nP = #;\nbits = #;\n",PrintTime(timer.get()),P,P.bitsOf().total());
         

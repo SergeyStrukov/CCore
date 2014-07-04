@@ -512,9 +512,9 @@ class DataGen : DataGenBase
     {
      DataGenBase::print(out);
      
-     Printf(out,"static const uint8 P#;[]=#;;\n\n",number,PrintIntegerOctets<Integer>(this->P));
+     Printf(out,"static const uint8 P#;[]=#;;\n\n",number,PrintIntegerOctets(this->P));
      
-     Printf(out,"static const uint8 Q#;[]=#;;\n\n",number,PrintIntegerOctets<Integer>(Q));
+     Printf(out,"static const uint8 Q#;[]=#;;\n\n",number,PrintIntegerOctets(Q));
     }
  };
 
@@ -997,8 +997,8 @@ class TestEngine : TestData
    explicit TestEngine(ulen n)
     : TestData(n) 
     {
-     P=Integer(DoBuild,IntegerOctetBuilder<Integer>(octP));
-     Q=Integer(DoBuild,IntegerOctetBuilder<Integer>(octQ));
+     P=OctetInteger<Integer>(octP);
+     Q=OctetInteger<Integer>(octQ);
     }
    
    Integer getCap() const { return Q*Q; }

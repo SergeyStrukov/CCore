@@ -33,7 +33,7 @@ namespace Private_0108 {
 /* type Int */
 
 using Int       = Math::Integer<Math::IntegerFastAlgo> ;
-using RandomInt = Math::RandomInteger<Math::IntegerFastAlgo> ;
+using RandomInt = Math::RandomInteger<Int> ;
 
 /* test1() */
 
@@ -111,9 +111,7 @@ void test3()
      
      if( N.isEven() ) N+=1;
      
-     CCore::Math::NoPrimeTest<Int>::RandomTest test2(N);
-     
-     if( test2(30) )
+     if( Math::NoPrimeTest<Int>::RandomTest(N,30,random) )
        Printf(out,"ProbablePrime");
      else
        Printf(out,"NoPrime");
@@ -170,9 +168,7 @@ void test4()
      
      if( N.isEven() ) N+=1;
      
-     CCore::Math::NoPrimeTest<Int>::RandomTest test1(N);
-     
-     if( test1(30) )
+     if( Math::NoPrimeTest<Int>::RandomTest(N,30,random) )
        {
         Printf(Con,"\nProbablePrime\n");
         
@@ -196,7 +192,7 @@ void test5()
  {
   // 1
   {
-   Int P(DoBuild,Math::IntegerOctetBuilder<Int>(Range(Crypton::DHModI::Mod)));
+   Math::OctetInteger<Int> P(Range(Crypton::DHModI::Mod));
    
    Math::APRTest::TestEngine<Int> test(7);
    
@@ -215,7 +211,7 @@ void test5()
   
   // 2
   {
-   Int P(DoBuild,Math::IntegerOctetBuilder<Int>(Range(Crypton::DHModII::Mod)));
+   Math::OctetInteger<Int> P(Range(Crypton::DHModII::Mod));
    
    Math::APRTest::TestEngine<Int> test(8);
    

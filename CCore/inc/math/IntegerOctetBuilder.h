@@ -16,21 +16,23 @@
 #ifndef CCore_inc_math_IntegerOctetBuilder_h
 #define CCore_inc_math_IntegerOctetBuilder_h
 
-#include <CCore/inc/Printf.h>
+#include <CCore/inc/math/Integer.h>
  
 namespace CCore {
 namespace Math {
 
 /* classes */
 
-template <class Integer> class PrintIntegerOctets;
+template <class Integer> class PrintIntegerOctetsType;
 
 template <class Integer> class IntegerOctetBuilder;
 
-/* class PrintIntegerOctets<Integer> */
+template <class Integer> class OctetInteger;
+
+/* class PrintIntegerOctetsType<Integer> */
 
 template <class Integer> 
-class PrintIntegerOctets
+class PrintIntegerOctetsType
  {
    using Unit = typename Integer::Unit ;
   
@@ -42,9 +44,9 @@ class PrintIntegerOctets
   
   public:
    
-   explicit PrintIntegerOctets(const Integer &a_) : a(a_) {}
+   explicit PrintIntegerOctetsType(const Integer &a_) : a(a_) {}
   
-   ~PrintIntegerOctets() {}
+   ~PrintIntegerOctetsType() {}
 
    template <class P>
    void print(P &out) const
@@ -82,6 +84,11 @@ class PrintIntegerOctets
      Printf(out,"\n }");
     }
  };
+
+/* PrintIntegerOctets() */
+
+template <class Integer> 
+PrintIntegerOctetsType<Integer> PrintIntegerOctets(const Integer &a) { return PrintIntegerOctetsType<Integer>(a); }
 
 /* class IntegerOctetBuilder<Integer> */
 
@@ -141,6 +148,18 @@ class IntegerOctetBuilder
      
      return Range(base,result);
     }
+ };
+
+/* class OctetInteger<Integer> */
+
+template <class Integer> 
+class OctetInteger : public Integer
+ {
+  public:
+  
+   explicit OctetInteger(PtrLen<const uint8> data) : Integer(DoBuild,IntegerOctetBuilder<Integer>(data)) {}
+   
+   ~OctetInteger() {}
  };
 
 } // namespace Math

@@ -34,7 +34,7 @@ template <class Algo>
 class TestInteger : TestIntBase
  {
    typedef Math::Integer<Algo> Int;
-   typedef Math::RandomInteger<Algo> RandomInt;
+   typedef Math::RandomInteger<Int> RandomInt;
   
    static const unsigned SLen = 10 ;
    static const unsigned MLen = 100 ;

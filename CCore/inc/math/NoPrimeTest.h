@@ -24,10 +24,6 @@
 namespace CCore {
 namespace Math {
 
-/* functions */
-
-void GuardNoPrimeTestBadInput();
-
 /* classes */
 
 template <class Integer> struct NoPrimeTest;
@@ -38,86 +34,6 @@ template <class Integer>
 struct NoPrimeTest
  {
   using Unit = typename Integer::Unit ;
-  
-  // simple
-  
-  class BitScanner : NoCopy
-   {
-     Integer a;
-     
-     PtrLen<const Unit> cur;
-     Unit cur_unit;
-     Unit bit;
-     
-    private:
-     
-     void next_unit()
-      {
-       cur_unit=*cur;
-      
-       ++cur;
-     
-       bit=1;
-      }
-     
-    public: 
-    
-     explicit BitScanner(const Integer &a_) // a >= 0
-      : a(a_) 
-      {
-       cur=a.getBody();
-
-       if( cur.len )
-         {
-          next_unit();
-         }
-       else
-         {
-          cur_unit=0;
-          bit=1;
-         }
-      }
-     
-     ~BitScanner() {}
-     
-     bool operator + () const { return cur.len || ( bit<=cur_unit ) ; }
-     
-     bool operator ! () const { return !+(*this); }
-     
-     Unit operator * () const { return cur_unit&bit; }
-     
-     void operator ++ ()
-      {
-       bit<<=1;
-       
-       if( !bit ) next_unit();
-      }
-   };
-  
-  static Integer ModMul(Integer a,Integer b,Integer P) // a,b >= 0 , P > 0
-   {
-    return (a*b)%P;
-   }
-  
-  static Integer ModExp(Integer a,Integer P) // a >= 0 , P > 1 , return a ^ (P>>1) ( mod P )
-   {
-    Integer b=1;
-    
-    BitScanner scanner(P);
-    
-    ++scanner;
-    
-    for(; +scanner ;++scanner)
-      {
-       if( *scanner ) b=ModMul(b,a,P);
-        
-       a=ModMul(a,a,P); 
-      }
-    
-    return b;
-   }
-  
-  // advanced
   
   static const unsigned Delta = 4 ; 
   
@@ -131,51 +47,80 @@ struct NoPrimeTest
      
      static const ulen Len = (ulen(1)<<Delta)-1 ;
     
-     Integer pow[Len];
-     Integer result;
-     
      Integer P1; // P-1
      
     private: 
     
-     void init(Integer a) // a >= 0 , a < P
+     struct Ctx
       {
-       result=1;
+       Integer pow[Len];
+       Integer result;
+       bool one = true ;
        
-       pow[0]=a;
-       pow[1]=engine.sq(a);
+       Ctx() {}
+      };
+     
+     void init(Ctx &ctx,Integer a) const // a >= 0 , a < P
+      {
+       ctx.pow[0]=a;
+       ctx.pow[1]=engine.sq(a);
        
-       for(ulen i=2; i<Len ;i++) pow[i]=engine.mul(pow[i-1],a);
+       for(ulen i=2; i<Len ;i++) ctx.pow[i]=engine.mul(ctx.pow[i-1],a);
       }
      
-     void next(Unit bits)
+     void next(Ctx &ctx,Unit bits) const
       {
-       for(unsigned cnt=Delta; cnt ;cnt--) result=engine.sq(result);
-       
-       if( bits ) result=engine.mul(result,pow[bits-1]);
+       if( ctx.one )
+         {
+          if( bits )
+            {
+             ctx.result=ctx.pow[bits-1];
+             ctx.one=false;
+            }
+         }
+       else
+         {
+          for(unsigned cnt=Delta; cnt ;cnt--) ctx.result=engine.sq(ctx.result);
+         
+          if( bits ) ctx.result=engine.mul(ctx.result,ctx.pow[bits-1]);
+         }
       }
      
-     void last(Unit bits)
+     void last(Ctx &ctx,Unit bits) const
       {
-       for(unsigned cnt=Delta-1; cnt ;cnt--) result=engine.sq(result);
-       
        bits>>=1;
-       
-       if( bits ) result=engine.mul(result,pow[bits-1]);
+      
+       if( ctx.one )
+         {
+          if( bits ) 
+            {
+             ctx.result=ctx.pow[bits-1];
+            }
+          else
+            {
+             ctx.result=1;
+            }
+         }
+       else
+         {
+          for(unsigned cnt=Delta-1; cnt ;cnt--) ctx.result=engine.sq(ctx.result);
+         
+          if( bits ) ctx.result=engine.mul(ctx.result,ctx.pow[bits-1]);
+         }
       }
     
-     void next_unit(Unit unit)
+     void next_unit(Ctx &ctx,Unit unit) const
       {
-       for(unsigned off=Integer::UnitBits-Delta; off ;off-=Delta) next( (unit>>off)&Mask );
+       for(unsigned off=Integer::UnitBits-Delta; off ;off-=Delta) next(ctx, (unit>>off)&Mask );
        
-       next( unit&Mask );
+       next(ctx, unit&Mask );
       }
      
-     void last_unit(Unit unit)
+     void last_unit(Ctx &ctx,Unit unit) const
       {
-       for(unsigned off=Integer::UnitBits-Delta; off ;off-=Delta) next( (unit>>off)&Mask );
+       for(unsigned off=Integer::UnitBits-Delta; off ;off-=Delta) next(ctx, (unit>>off)&Mask );
        
-       last( unit&Mask );
+       last(ctx, unit&Mask );
       }
      
     public: 
@@ -184,24 +129,26 @@ struct NoPrimeTest
      
      const Integer & getModule() const { return engine.getModule(); }
      
-     Integer exp(Integer a) // a >= 0 , a < P , return a ^ (P>>1) ( mod P )
+     Integer exp(Integer a) const // a >= 0 , a < P , return a ^ (P>>1) ( mod P )
       {
-       init(a);
+       Ctx ctx;
        
-       auto r=RangeReverse(getModule().getBody());
+       init(ctx,a);
        
-       for(; r.len>1 ;++r) next_unit(*r);
+       auto r=getModule().getBodyReverse();
        
-       last_unit(*r);
+       for(; r.len>1 ;++r) next_unit(ctx,*r);
        
-       return result;
+       last_unit(ctx,*r);
+       
+       return ctx.result;
       }
   
-     bool test(Integer a) // a > 0 , a < P , P > 1 , P is odd
+     bool test(Integer a) const // a > 0 , a < P , P > 1 , P is odd
       {
        Integer b=exp(a);
        
-       if( b.cmp(1)==0 ) return QSym(a,getModule())==1;
+       if( b==1 ) return QSym(a,getModule())==1;
 
        if( b==P1 ) return QSym(a,getModule())==-1;
        
@@ -209,41 +156,35 @@ struct NoPrimeTest
       }
    };
   
-  class RandomTest : NoCopy
+  template <class Random>
+  static bool RandomTest(Integer P,ulen count,Random &random)
    {
-     PlatformRandom random;
-     
-     ExpEngine engine;
-     
-    public:
-   
-     explicit RandomTest(const Integer &P) // P > 1 , P is odd
-      : engine(P) 
+    if( P==2 ) return true;
+    
+    if( P<2 || P.isEven() ) return false;
+    
+    ExpEngine engine(P);
+    
+    for(; count ;count--)
       {
-       if( P.cmp(1)<=0 || P.isEven() ) GuardNoPrimeTestBadInput();
-      } 
-     
-     ~RandomTest()
-      {
-      }
-     
-     bool operator () (ulen count)
-      {
-       for(; count ;count--)
-         {
-          ulen index=random.select_uint<ulen>(DimOf(SmallPrimes));
-          
-          unsigned a=SmallPrimes[index];
-          
-          if( engine.getModule().cmp(a)>0 )
-            {
-             if( !engine.test(a) ) return false;
-            }
-         }
+       ulen index=random.template select_uint<ulen>(DimOf(SmallPrimes));
        
-       return true;
+       unsigned a=SmallPrimes[index];
+       
+       if( a<P )
+         {
+          if( !engine.test(a) ) return false;
+         }
+       else 
+         {
+          if( a==P ) return true;
+          
+          if( !engine.test(a%P) ) return false;
+         }
       }
-   };
+    
+    return true;
+   }
  };
 
 } // namespace Math

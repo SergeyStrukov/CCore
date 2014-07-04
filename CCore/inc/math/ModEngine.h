@@ -25,6 +25,8 @@ namespace Math {
 
 template <class UInt> class BitScanner;
 
+template <class Integer> class IntegerBitScanner;
+
 template <class Integer> class UnitsPowInteger;
 
 template <class Integer> class ModEngine;
@@ -34,6 +36,8 @@ template <class Integer> class ModEngine;
 template <class UInt>
 class BitScanner : NoCopy
  {
+   static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::Math::BitScanner<UInt> : UInt must be an unsigned integral type");
+ 
    UInt d;
    UInt mask;
    
@@ -46,6 +50,50 @@ class BitScanner : NoCopy
    UInt operator * () const { return d&mask; }
    
    void operator ++ () { mask>>=1; }
+ };
+
+/* class IntegerBitScanner<Integer> */
+
+template <class Integer>
+class IntegerBitScanner : NoCopy
+ {
+   using Unit = typename Integer::Unit ;
+ 
+   Integer d;
+   
+   PtrLenReverse<const Unit> body;
+   Unit mask;
+   
+  public:
+ 
+   explicit IntegerBitScanner(const Integer &d_) // d_ >= 0
+    : d(d_) 
+    {
+     body=d.getBodyReverse();
+     
+     if( +body )
+       mask=UIntFunc<Unit>::MSBit;
+     else
+       mask=0;
+    }
+   
+   ~IntegerBitScanner() {}
+   
+   Unit operator + () const { return mask; }
+   
+   Unit operator * () const { return (*body)&mask; }
+   
+   void operator ++ ()
+    {
+     mask>>=1;
+     
+     if( !mask ) 
+       {
+        ++body;
+        
+        if( +body ) mask=UIntFunc<Unit>::MSBit;
+       }
+    }
  };
 
 /* class UnitsPowInteger<Integer> */
@@ -90,30 +138,29 @@ class UnitsPowInteger : public Integer
 template <class Integer> 
 class ModEngine : NoCopy
  {
-   Integer P;
-   Integer Q;
+   Integer M;
+   Integer A;
    ulen n;
 
   public: 
    
-   explicit ModEngine(const Integer &P_) // P_ > 0
-    : P(P_)
+   explicit ModEngine(const Integer &M_) // M_ > 0
+    : M(M_)
     {
-     n=P.getBody().len;
+     n=M.getBody().len;
      
      n=LenAdd(n,n);
      
-     Q=UnitsPowInteger<Integer>(n)/P;
+     A=UnitsPowInteger<Integer>(n)/M;
     }
    
-   const Integer & getModule() const { return P; }
+   const Integer & getModule() const { return M; }
    
-   Integer prepare(Integer a) const { return a%P; } // a >= 0
+   Integer prepare(Integer a) const { return a%M; } // a >= 0
    
-   Integer mod(Integer a) const // a >= 0 , a < P^2
+   Integer mod(Integer a) const // a >= 0 , a < M^2
     {
-     Integer b=a*Q;
-     Integer c;
+     Integer b=a*A;
      
      auto body=b.getBody();
      
@@ -121,37 +168,65 @@ class ModEngine : NoCopy
        {
         body+=n;
         
-        c=Integer::Mul(P.getBody(),body);
+        a-=Integer::Mul(M.getBody(),body);
        }
      
-     a-=c;
-     
-     if( a>=P ) a-=P;
+     if( a>=M ) a-=M;
      
      return a;
     }
 
-   Integer mul(Integer a,Integer b) const { return mod(a*b); } // a,b >= 0 , a,b < P
+   Integer mul(Integer a,Integer b) const { return mod(a*b); } // a,b >= 0 , a,b < M
    
-   Integer mac(Integer s,Integer a,Integer b) const { return mod(s+a*b); } // s,a,b >= 0 , s,a,b < P
+   Integer sq(Integer a) const { return mod(a.sq()); } // a >= 0 , a < M
    
-   Integer squac(Integer s,Integer a) const { return mod(s+a.sq()); } // s,a >= 0 , s,a < P
+   Integer mac(Integer s,Integer a,Integer b) const { return mod(s+a*b); } // s,a,b >= 0 , s,a,b < M
    
-   Integer sq(Integer a) const { return mod(a.sq()); } // a >= 0 , a < P
+   Integer squac(Integer s,Integer a) const { return mod(s+a.sq()); } // s,a >= 0 , s,a < M
    
    template <class UInt>
-   Integer exp(Integer a,UInt d) const // a >=0 , a < P
+   Meta::EnableIf<Meta::IsUInt<UInt>::Ret,Integer> exp(Integer a,UInt d) const // a >=0 , a < M , M > 1
     {
-     Integer ret=1;
-     
      for(BitScanner<UInt> scanner(d); +scanner ;++scanner)
        {
-        ret=sq(ret);
-        
-        if( *scanner ) ret=mul(ret,a);
+        if( *scanner )
+          {
+           Integer ret=a;
+           
+           for(++scanner; +scanner ;++scanner)
+             {
+              ret=sq(ret);
+              
+              if( *scanner ) ret=mul(ret,a);
+             }
+           
+           return ret;
+          }
        }
      
-     return ret;
+     return 1u;
+    }
+   
+   Integer exp(Integer a,Integer d) const // a,d >=0 , a < M , M > 1
+    {
+     for(IntegerBitScanner<Integer> scanner(d); +scanner ;++scanner)
+       {
+        if( *scanner )
+          {
+           Integer ret=a;
+           
+           for(++scanner; +scanner ;++scanner)
+             {
+              ret=sq(ret);
+              
+              if( *scanner ) ret=mul(ret,a);
+             }
+           
+           return ret;
+          }
+       }
+     
+     return 1u;
     }
  };
 
