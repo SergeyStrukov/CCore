@@ -47,7 +47,7 @@ struct NoPrimeTest
      
      static const ulen Len = (ulen(1)<<Delta)-1 ;
     
-     Integer P1; // P-1
+     Integer Pminus1;
      
     private: 
     
@@ -125,11 +125,11 @@ struct NoPrimeTest
      
     public: 
     
-     explicit ExpEngine(const Integer &P) : engine(P) { P1=P-1; } // P > 1
+     explicit ExpEngine(const Integer &P) : engine(P),Pminus1(P-1) {} // P > 1
      
      const Integer & getModule() const { return engine.getModule(); }
      
-     Integer exp(Integer a) const // a >= 0 , a < P , return a ^ (P>>1) ( mod P )
+     Integer pow(Integer a) const // a >= 0 , a < P , return a ^ (P>>1) ( mod P )
       {
        Ctx ctx;
        
@@ -146,11 +146,11 @@ struct NoPrimeTest
   
      bool test(Integer a) const // a > 0 , a < P , P > 1 , P is odd
       {
-       Integer b=exp(a);
+       Integer b=pow(a);
        
        if( b==1 ) return QSym(a,getModule())==1;
 
-       if( b==P1 ) return QSym(a,getModule())==-1;
+       if( b==Pminus1 ) return QSym(a,getModule())==-1;
        
        return false;
       }

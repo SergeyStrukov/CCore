@@ -86,7 +86,7 @@ void test2()
      
      Math::ModEngine<Int> mod_engine(P);
      
-     if( engine.exp(a)!=mod_engine.exp(a,P>>1) ) 
+     if( engine.pow(a)!=mod_engine.pow(a,P>>1) ) 
        {
         Printf(Exception,"failed");
        }

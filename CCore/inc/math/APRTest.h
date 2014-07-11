@@ -19,12 +19,15 @@
 #include <CCore/inc/math/ModEngine.h>
 #include <CCore/inc/math/SmallPrimes.h>
 
+#include <CCore/inc/Cmp.h>
 #include <CCore/inc/FunctorType.h>
-#include <CCore/inc/math/IntegerOctetBuilder.h>
+#include <CCore/inc/PrintSet.h>
 
 namespace CCore {
 namespace Math {
 namespace APRTest {
+
+#if 0
 
 /* types */
 
@@ -1037,6 +1040,920 @@ class TestEngine : TestData
        }
      
      return finish(N,func);
+    }
+ };
+
+#endif
+
+/* types */
+
+using QType = uint64 ;
+
+/* functions */
+
+QType MulGuarded(QType a,QType b);
+
+QType AddGuarded(QType a,QType b);
+
+/* classes */
+
+//enum TestResult;
+
+class SmallPrimesSet;
+
+class QModEngine;
+
+class PrimeQ;
+
+class Jacobi;
+
+class JacobiSumTable;
+
+class PrimeP;
+
+class DataGen;
+
+struct TestSet;
+
+class TestData;
+
+class NoReport;
+
+template <class Integer> class TestEngine;
+
+/* enum TestResult */
+
+enum TestResult
+ {
+  IsPrime = 0,
+  
+  NoPrime,
+  HasDivisor,
+  HardCase,
+  TooLarge
+ };
+
+const char * GetTextDesc(TestResult res);
+
+/* class SmallPrimesSet */
+
+class SmallPrimesSet // odd subsequent SmallPrimes 3, 5, 7, ... 
+ {
+   RefArray<bool> flags;
+   
+  private:
+   
+   template <class Func>
+   void forPrimes(Func &func) const
+    {
+     auto r=Range(flags);
+     
+     for(ulen i=0,len=r.len; i<len ;i++) if( r[i] ) func( SmallPrimes[i+1] );
+    }
+   
+  public:
+   
+   explicit SmallPrimesSet(unsigned n) : flags(n) {}
+
+   ~SmallPrimesSet() {}
+   
+   bool operator [] (unsigned ind) const { return flags[ind]; }
+   
+   unsigned getSetNumber() const;
+   
+   bool next();
+ 
+   template <class FuncInit>
+   void forOddPrimes(FuncInit func_init) const
+    {
+     FunctorTypeOf<FuncInit> func(func_init);
+     
+     forPrimes(func);
+    }
+   
+   template <class FuncInit>
+   void forAllPrimes(FuncInit func_init) const
+    {
+     FunctorTypeOf<FuncInit> func(func_init);
+     
+     func(2);
+     
+     forPrimes(func);
+    }
+ 
+   QType getPrimeQ() const;
+ };
+
+/* class QModEngine */
+
+class QModEngine : NoCopy
+ {
+   QType mod;
+   
+  public:
+   
+   explicit QModEngine(QType mod_) : mod(mod_) {}
+   
+   QType mul(QType a,QType b) const;
+   
+   QType sq(QType a) const { return mul(a,a); }
+   
+   QType pow(QType a,QType d) const;
+ };
+
+/* class PrimeQ */
+
+class PrimeQ : public NoThrowFlagsBase , public CmpComparable<PrimeQ>
+ {
+   SmallPrimesSet spset;
+
+   QType prime; // 1+2*(odd p from spset)
+   unsigned set_number;
+   QType gen;
+  
+  public:
+  
+   explicit PrimeQ(const SmallPrimesSet &spset);
+
+   ~PrimeQ() {}
+   
+   // props
+  
+   bool hasP(unsigned ind) const { return spset[ind]; }
+   
+   QType getPrime() const { return prime; }
+   
+   unsigned getSetNumber() const { return set_number; }
+   
+   QType getGen() const { return gen; }
+   
+   // cmp objects
+  
+   CmpResult objCmp(const PrimeQ &obj) const
+    {
+     return AlphaCmp(set_number,obj.set_number,prime,obj.prime);
+    }
+   
+   // methods
+   
+   bool test();
+   
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     Printf(out,"prime = #; : 1 + 2",prime);
+     
+     spset.forOddPrimes( [&] (unsigned p) { Printf(out," * #;",p); } );
+     
+     Printf(out,"\nset_number = #;\ngen = #;\n",set_number,gen);
+    }
+ };
+
+/* class Jacobi */
+
+class Jacobi : QModEngine
+ {
+   QType prime;
+   unsigned set_number;
+   QType gen;
+   
+   DynArray<ulen> table;
+
+  private:
+   
+   unsigned log_table(QType x,unsigned p) const // 0 < x < prime
+    {
+     return unsigned( table[ (ulen)x-1 ]%p ); 
+    }
+   
+   class LogPow : NoCopy
+    {
+      const QModEngine &engine;
+      QType d;
+     
+      struct Rec : NoThrowFlagsBase
+       {
+        unsigned ind = 0 ;
+        QType a = 0 ;
+        
+        Rec() {}
+        
+        void set(unsigned ind_,QType a_)
+         {
+          ind=ind_;
+          a=a_; 
+         }
+        
+        bool operator < (const Rec &obj) const { return a<obj.a; }
+        
+        bool operator >= (QType b) const { return a>=b; }
+       };
+      
+      DynArray<Rec> table;
+      
+     public:
+     
+      LogPow(const Jacobi &jac,unsigned p);
+      
+      ~LogPow() {}
+      
+      unsigned operator () (QType x) const; // 0 < x < prime
+    };
+   
+   static void GuardLog();
+   
+   template <class Func>
+   void addLog(unsigned p,Func func) const
+    {
+     if( table.getLen() )
+       {
+#if 1
+       
+        QType x=2,y=prime-1;
+        
+        for(; x<y ;x++,y--) 
+          {
+           unsigned a=log_table(x,p);
+           unsigned b=log_table(y,p);
+           
+           func(a,b);
+           func(b,a);
+          }
+        
+        {
+         unsigned c=log_table(x,p);
+         
+         func(c,c);
+        }
+        
+#else
+        
+        LogPow log(*this,p);
+        
+        QType x=2,y=prime-1;
+        
+        for(; x<y ;x++,y--) 
+          {
+           unsigned a=log(x);
+           unsigned b=log(y);
+           
+           if( a!=log_table(x,p) || b!=log_table(y,p) ) GuardLog();
+           
+           func(a,b);
+           func(b,a);
+          }
+        
+        {
+         unsigned c=log(x);
+         
+         if( c!=log_table(x,p) ) GuardLog();
+         
+         func(c,c);
+        }
+        
+#endif        
+       }
+     else
+       {
+        LogPow log(*this,p);
+        
+        QType x=2,y=prime-1;
+        
+        for(; x<y ;x++,y--) 
+          {
+           unsigned a=log(x);
+           unsigned b=log(y);
+           
+           func(a,b);
+           func(b,a);
+          }
+        
+        {
+         unsigned c=log(x);
+         
+         func(c,c);
+        }
+       }
+    }
+   
+   class LogCountTable : NoCopy
+    {
+      unsigned p;
+      DynArray<QType> table; // [p*p]
+
+     private: 
+      
+      void add(unsigned a,unsigned b) { table[a*p+b]++; }
+      
+      QType count(unsigned a,unsigned b) const { return table[a*p+b]; }
+      
+     public:
+      
+      LogCountTable(const Jacobi &jac,unsigned p);
+      
+      ~LogCountTable() {}
+      
+      void operator () (unsigned k,QType result[ /* p */ ]) const; // result is erased
+    };
+   
+  public:
+   
+   Jacobi(QType prime,unsigned set_number,QType gen);
+   
+   Jacobi(const PrimeQ &q) : Jacobi(q.getPrime(),q.getSetNumber(),q.getGen()) {}
+   
+   ~Jacobi() {}
+   
+   QType getPrime() const { return prime; }
+   
+   unsigned getSetNumber() const { return set_number; }
+   
+   void operator () (unsigned p,QType result[ /* (p-2)*p */ ]) const; // p > 2
+ };
+
+/* class JacobiSumTable */
+
+class JacobiSumTable : public NoThrowFlagsBase
+ {
+   QType prime_q;
+   unsigned set_number;
+   
+   unsigned prime_p;
+   RefArray<QType> table;
+   
+  public:
+  
+   JacobiSumTable(const Jacobi &jac,unsigned prime_p);
+  
+   ~JacobiSumTable() {}
+   
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     Printf(out,"  q = #;\n  set_number = #;\n",prime_q,set_number);
+     
+     if( prime_p>2 )
+       {
+        auto r=Range(table);
+        
+        while( +r )
+          {
+           auto j=(r+=prime_p);
+           
+           Printf(out,"  #;\n",PrintSet(j));
+          }
+       }
+    }
+ };
+
+/* class PrimeP */
+
+class PrimeP : public NoThrowFlagsBase
+ {
+   unsigned prime;
+  
+   RefArray<ulen> qlist;
+  
+   RefArray<JacobiSumTable> jset;
+
+  public:
+  
+   explicit PrimeP(PtrLen<const PrimeQ> qset);
+  
+   PrimeP(PtrLen<const PrimeQ> qset,unsigned ind);
+  
+   ~PrimeP() {}
+   
+   // props
+   
+   unsigned getPrime() const { return prime; }
+   
+   // methods
+   
+   template <class FuncInit>
+   void forQInd(FuncInit func_init) const
+    {
+     qlist.apply(func_init);
+    }
+   
+   void update(const Jacobi &jac) { jset.append_fill(jac,prime); }
+ 
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     Printf(out,"p = #;\n\n",prime);
+     
+     for(const JacobiSumTable &jtable : jset ) Printf(out,"#;\n-----\n\n",jtable);
+    }
+ };
+
+/* class DataGen */
+
+class DataGen : NoCopy
+ {
+   DynArray<PrimeQ> qset; // odd
+   DynArray<PrimeP> pset;
+   
+  public: 
+   
+   explicit DataGen(unsigned n);
+   
+   ~DataGen();
+   
+   // print object
+   
+   template <class P>
+   void print(P &out) const
+    {
+     for(const PrimeQ &q : qset ) Printf(out,"#;\n------------\n\n",q);
+     
+     for(const PrimeP &p : pset ) Printf(out,"#;\n------------\n\n",p);
+    }
+ };
+
+/* struct TestSet */
+
+struct TestSet
+ {
+  unsigned prime_p;
+  
+  struct PrimeQ
+   {
+    QType prime_q;
+    unsigned set_number;
+   };
+  
+  struct JTable : PrimeQ
+   {
+    const QType *table; // [ (prime_p-2)*prime_p ]
+   };
+  
+  PtrLen<const JTable> jset;
+ };
+
+/* class TestData */
+
+class TestData : NoCopy
+ {
+  protected:
+  
+   const TestSet *pset;                // MaxN+1
+   PtrLen<const TestSet::PrimeQ> qset; // odd
+   
+  public:
+
+   static const unsigned MaxN = 8 ;
+   
+   TestData() : pset(0) {}
+ };
+
+/* class NoReport */
+
+class NoReport
+ {
+  public:
+   
+   NoReport() {}
+  
+   template <class Integer>
+   void start(Integer N) { Used(N); }
+   
+   void sanity(const char *msg) { Used(msg); }
+   
+   void test(unsigned prime_p) { Used(prime_p); }
+   
+   void startProbe() {}
+   
+   template <class Integer>
+   void probe(Integer D) { Used(D); }
+   
+   template <class Integer>
+   void div(Integer D) { Used(D); }
+   
+   void hard() {}
+   
+   void isPrime() {}
+   
+   void noPrime() {}
+ };
+
+/* class TestEngine<Integer> */
+
+template <class Integer> 
+class TestEngine : TestData
+ {
+   Integer P[MaxN];
+   Integer Q[MaxN];
+   Integer Q2[MaxN];
+ 
+  private:
+   
+   using Ring = RefArray<Integer> ;
+   
+   class Engine : NoCopy
+    {
+      ModEngine<Integer> engine;
+      
+      Integer Nminus1;
+      
+     private:
+      
+      Ring prepare(const QType *table,unsigned prime,unsigned k) const
+       {
+        table+=k*prime;
+       
+        Ring ret=Ring(prime);
+
+        auto r=ret.modify();
+        
+        for(; +r ;++r,++table) *r=engine.prepare(*table); 
+        
+        return ret;
+       }
+      
+      Ring mul(Ring a,Ring b) const
+       {
+        auto ra=Range(a);
+        auto rb=Range(b);
+        
+        ulen len=ra.len;
+        Ring ret(len);
+        
+        auto res=ret.modify();
+        
+        for(ulen i=0; i<len ;i++)
+          for(ulen j=0; j<len ;j++)
+            {
+             ulen k=i+j;
+             
+             if( k>=len ) k-=len;
+             
+             res[k]=engine.mac(res[k],ra[i],rb[j]);
+            }
+        
+        return ret;
+       }
+      
+      Ring mul(Ring a,QType b) const
+       {
+        auto r=a.modify();
+        auto b_=engine.prepare(b);
+        
+        for(; +r ;++r) *r=engine.mul(*r,b_);
+        
+        return a;
+       }
+
+      Ring one(ulen len) const
+       {
+        Ring ret=Ring(len);
+        
+        ret.modify()[0]=1;
+        
+        return ret;
+       }
+      
+      Ring pow(Ring a,Integer d) const
+       {
+        for(IntegerBitScanner<Integer> scanner(d); +scanner ;++scanner)
+          if( *scanner ) 
+            {
+             Ring ret=a;
+             
+             for(++scanner; +scanner ;++scanner)
+               {
+                ret=mul(ret,ret);
+                
+                if( *scanner ) ret=mul(ret,a);
+               }
+             
+             return ret;
+            }
+
+        return one(a.getLen());
+       }
+      
+      int test(Integer a,Integer b) const // 0, 1, other=2 : a-b mod N
+       {
+        switch( Cmp(a,b) )
+          {
+           case CmpLess :
+            {
+             if( !a && b==Nminus1 ) return 1;
+             
+             return 2;
+            }
+           break;
+         
+           case CmpGreater :
+            {
+             if( a-b==1 ) return 1;
+             
+             return 2;
+            }
+           break;
+         
+           default: return 0;
+          }
+       }
+      
+      TestResult test(Ring cappa) const
+       {
+        auto r=Range(cappa);
+        
+        Integer a=r[0];
+        Integer b=r[1];
+   
+        if( test(a,b)==1 )
+          {
+           for(r+=2; +r ;++r) if( *r!=b ) return NoPrime;
+           
+           return HardCase;
+          }
+        else
+          {
+           bool flag=true;
+           
+           for(++r; +r ;++r)
+             {
+              if( flag )
+                {
+                 switch( test(*r,a) )
+                   {
+                    case 0 : break;
+                     
+                    case 1 : flag=false; break;
+                     
+                    case 2 : return NoPrime;
+                   }
+                }
+              else
+                {
+                 if( *r!=a ) return NoPrime;
+                }
+             }
+           
+           return flag?NoPrime:IsPrime;
+          }
+       }
+      
+      static TestResult Test(int cappa,int sign)
+       {
+        if( cappa==sign ) return HardCase;
+        
+        if( cappa==-sign ) return IsPrime;
+        
+        return NoPrime;
+       }
+      
+      TestResult test(Integer cappa,int sign) const
+       {
+        if( cappa==1 ) return Test(1,sign);
+        
+        if( cappa==Nminus1 ) return Test(-1,sign);
+        
+        return NoPrime;
+       }
+      
+     public:
+      
+      explicit Engine(Integer N) : engine(N),Nminus1(N-1) {}
+      
+      ~Engine() {}
+      
+      TestResult test(unsigned prime,const TestSet::JTable &jtable) const
+       {
+        if( prime>2 )
+          {
+           DynArray<Ring> theta(prime-2);
+           
+           theta[0]=prepare(jtable.table,prime,0);
+           
+           for(unsigned k=1; k<prime-2 ;k++) theta[k]=mul(theta[k-1],prepare(jtable.table,prime,k));
+           
+           Ring omega=mul(theta[prime-3],jtable.prime_q);
+           
+           auto res=engine.getModule().divmod(prime);
+           
+           unsigned mod=res.mod.template cast<unsigned>();
+           
+           Ring cappa=pow(omega,res.div);
+           
+           if( mod>1 ) cappa=mul(cappa,theta[mod-2]);
+           
+           return test(cappa);
+          }
+        else
+          {
+           Integer omega=engine.prepare(jtable.prime_q);
+           Integer d=Nminus1>>1;
+           
+           Integer cappa=engine.pow(omega,d);
+           
+           if( d.isEven() )
+             {
+              return test(cappa,1);
+             }
+           else
+             {
+              return test(cappa,-1);
+             }
+          }
+       }
+    };
+   
+  private:
+   
+   template <class Report>
+   TestResult sanity(Integer N,unsigned &set_number,Report &report) const
+    {
+     if( N<=1 ) 
+       {
+        report.sanity("N <= 1 NoPrime");
+       
+        return NoPrime;
+       }
+     
+     unsigned n=MaxN-1;
+     
+     if( N>=Q2[n] ) 
+       {
+        report.sanity("N >= Q*Q TooLarge");       
+       
+        return TooLarge;
+       }
+     
+     while( n>0 && N<Q2[n-1] ) n--;
+     
+     set_number=n;
+     
+     Integer D=GCDiv(N,P[n]*Q[n]);
+     
+     if( D>1 )
+       {
+        for(unsigned i=0; i<n+2 ;i++)
+          {
+           if( N==pset[i].prime_p )
+             {
+              report.isPrime();
+             
+              return IsPrime;
+             } 
+          }
+        
+        for(auto r=qset; +r && r->set_number<=n ;++r)
+          {
+           if( N==r->prime_q ) 
+             {
+              report.isPrime();
+              
+              return IsPrime;
+             }
+          }
+       
+        report.sanity("HasDivisor from P or Q");
+        
+        return HasDivisor;
+       }
+     
+     return HardCase;
+    }
+   
+   template <class Report>
+   TestResult test(Integer N,unsigned set_number,const TestSet &tset,Report &report) const
+    {
+     if( tset.jset.len==0 || tset.jset[0].set_number>set_number ) return IsPrime;
+     
+     Engine engine(N);
+     TestResult ret=HardCase;
+     
+     report.test(tset.prime_p);
+     
+     for(ulen k=0; k<tset.jset.len && tset.jset[k].set_number<=set_number ;k++)
+       {
+        switch( engine.test(tset.prime_p,tset.jset[k]) )
+          {
+           case IsPrime : ret=IsPrime; break;
+           
+           case NoPrime : report.noPrime(); return NoPrime;
+          }
+       }
+     
+     return ret;
+    }
+   
+   static bool TestOrder(unsigned p,Integer N)
+    {
+     Integer M=p;
+     
+     ModEngine<Integer> engine(M.sq());
+     
+     N=engine.prepare(N);
+
+     return engine.template pow<unsigned>(N,p-1)!=1;
+    }
+   
+   template <class Report>
+   TestResult finish(Integer N,unsigned set_number,Report &report) const
+    {
+     report.startProbe();
+     
+     ModEngine<Integer> engine(Q[set_number]);
+     
+     Integer D1=engine.prepare(N);
+     Integer D=D1;
+     
+     for(Integer cnt=P[set_number]-1; cnt>0 ;cnt-=1,D=engine.mul(D,D1))
+       {
+        report.probe(cnt);
+        
+        if( D>1 && D<N && !(N%D) )
+          {
+           report.div(D);
+          
+           return HasDivisor;
+          }
+       }
+     
+     report.isPrime();
+     
+     return IsPrime;
+    }
+   
+  public:
+ 
+   TestEngine()
+    {
+     // 1
+     {
+      Integer prod=pset[0].prime_p;
+      
+      for(unsigned n=0; n<MaxN ;n++) 
+        {
+         prod*=pset[n+1].prime_p;
+         
+         P[n]=prod;
+        }
+     }
+     
+     // 2
+     {
+      Integer prod=2;
+      auto r=qset;
+      
+      for(unsigned n=0; n<MaxN ;n++)
+        {
+         while( +r && r->set_number<=n ) prod*=r->prime_q; 
+        
+         Q[n]=prod;
+         Q2[n]=prod.sq();
+        }
+     }
+    }
+   
+   ~TestEngine() {}
+   
+   template <class Report>
+   TestResult operator () (Integer N,Report &report) const
+    {
+     report.start(N);
+     
+     TestResult ret;
+     unsigned set_number;
+     
+     if( (ret=sanity(N,set_number,report))!=HardCase ) return ret;
+     
+     DynArray<bool> flags(set_number+2);
+
+     for(unsigned i=0; i<set_number+2 ;i++)
+       {
+        ret=test(N,set_number,pset[i],report);
+        
+        if( ret==NoPrime ) return NoPrime;
+        
+        if( ret==IsPrime ) flags[i]=true;
+       }
+     
+     for(unsigned i=0; i<set_number+2 ;i++)
+       {
+        if( !flags[i] )
+          {
+           if( !TestOrder(pset[i].prime_p,N) ) 
+             {
+              report.hard();
+              
+              return HardCase;
+             }
+          }
+       }
+     
+     return finish(N,set_number,report);
     }
  };
 

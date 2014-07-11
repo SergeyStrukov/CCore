@@ -23,6 +23,7 @@
 #include <CCore/inc/math/NoPrimeTest.h>
 #include <CCore/inc/math/APRTest.h>
 #include <CCore/inc/math/IntegerFastAlgo.h>
+#include <CCore/inc/math/IntegerOctetBuilder.h>
 
 #include <CCore/inc/crypton/DHExp.h>
 
@@ -39,11 +40,21 @@ using RandomInt = Math::RandomInteger<Int> ;
 
 void test1()
  {
+  PrintFile out("APRTest.txt");
+  
+  Math::APRTest::DataGen gen(6);
+  
+  Putobj(out,gen);
+  
+#if 0
+  
   const ulen MaxN = Math::APRTest::TestData::MaxN ;
   
   PrintFile out("APRTestData.gen.cpp");
   
   Math::APRTest::PrepareData<Int>(out,MaxN, [] (ulen n) { Printf(Con,"Data #;\n",n); } );
+  
+#endif  
  }
 
 /* test2() */
@@ -55,20 +66,33 @@ class Report
   public:
    
    explicit Report(StrLen file_name) : out(file_name) {}
-  
-   template <class ... TT>
-   void operator () (const char *format,TT && ... tt)
-    {
-     Printf(out,format, std::forward<TT>(tt)... );
-    }
+
+   template <class Integer>
+   void start(Integer N) { Used(N); }
+   
+   void sanity(const char *msg) { Used(msg); }
+   
+   void test(unsigned p) { Used(p); }
+   
+   void startProbe() {}
+   
+   template <class Integer>
+   void probe(Integer cnt) { Used(cnt); }
+   
+   template <class Integer>
+   void div(Integer N) { Used(N); }
+   
+   void hard() {}
+   
+   void isPrime() {};
+   
+   void noPrime() {}
  };
 
 void test2()
  {
-  Math::APRTest::TestEngine<Int> test(5);
+  Math::APRTest::TestEngine<Int> test;
   Report report("report.txt");
-  
-  Printf(Con,"cap = #;\n",test.getCap());
   
   Int a=Int(999983)*999979;
   
@@ -77,27 +101,11 @@ void test2()
 
 /* test3() */
 
-class NoReport
- {
-  public:
-   
-   NoReport() {}
-  
-   template <class ... TT>
-   void operator () (const char *,TT && ...)
-    {
-    }
- };
-
 void test3()
  {
   PlatformRandom random;
-  Math::APRTest::TestEngine<Int> test1(7);
-  NoReport report;
-  
-  Int cap=test1.getCap();
-  
-  Printf(Con,"cap = #;\ncap bits = #;\n",cap,cap.bitsOf().total());
+  Math::APRTest::TestEngine<Int> test1;
+  Math::APRTest::NoReport report;
   
   PrintFile out("report.txt");
 
@@ -139,24 +147,35 @@ class ConReport
    
    ConReport() {}
   
-   template <class ... TT>
-   void operator () (const char *format,TT && ... tt)
-    {
-     Printf(Con,format, std::forward<TT>(tt)... );
-    }
+   template <class Integer>
+   void start(Integer N) { Used(N); }
+   
+   void sanity(const char *msg) { Used(msg); }
+   
+   void test(unsigned p) { Used(p); }
+   
+   void startProbe() {}
+   
+   template <class Integer>
+   void probe(Integer cnt) { Used(cnt); }
+   
+   template <class Integer>
+   void div(Integer N) { Used(N); }
+   
+   void hard() {}
+   
+   void isPrime() {}
+   
+   void noPrime() {}
  };
 
 void test4()
  {
   PlatformRandom random;
-  Math::APRTest::TestEngine<Int> test2(7);
+  Math::APRTest::TestEngine<Int> test2;
   ConReport report;
   
-  Int cap=test2.getCap();
-  
-  ulen bits=cap.bitsOf().total();
-  
-  Printf(Con,"cap bits = #;\n",bits);
+  ulen bits=1024;
   
   for(ulen cnt=1;;cnt++)
     {
@@ -194,7 +213,7 @@ void test5()
   {
    Math::OctetInteger<Int> P(Range(Crypton::DHModI::Mod));
    
-   Math::APRTest::TestEngine<Int> test(7);
+   Math::APRTest::TestEngine<Int> test;
    
    {
     Report report("ModI_P.txt");
@@ -213,7 +232,7 @@ void test5()
   {
    Math::OctetInteger<Int> P(Range(Crypton::DHModII::Mod));
    
-   Math::APRTest::TestEngine<Int> test(8);
+   Math::APRTest::TestEngine<Int> test;
    
    {
     Report report("ModII_P.txt");
@@ -241,11 +260,11 @@ const char *const Testit<108>::Name="Test108 APRTest";
 template<>
 bool Testit<108>::Main() 
  {
-  //test1();
+  test1();
   //test2();
   //test3();
   //test4();
-  test5();
+  //test5();
   
   return true;
  }

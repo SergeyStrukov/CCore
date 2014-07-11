@@ -185,7 +185,7 @@ class ModEngine : NoCopy
    Integer squac(Integer s,Integer a) const { return mod(s+a.sq()); } // s,a >= 0 , s,a < M
    
    template <class UInt>
-   Meta::EnableIf<Meta::IsUInt<UInt>::Ret,Integer> exp(Integer a,UInt d) const // a >=0 , a < M , M > 1
+   Meta::EnableIf<Meta::IsUInt<UInt>::Ret,Integer> pow(Integer a,UInt d) const // a >=0 , a < M , M > 1
     {
      for(BitScanner<UInt> scanner(d); +scanner ;++scanner)
        {
@@ -207,7 +207,7 @@ class ModEngine : NoCopy
      return 1u;
     }
    
-   Integer exp(Integer a,Integer d) const // a,d >=0 , a < M , M > 1
+   Integer pow(Integer a,Integer d) const // a,d >=0 , a < M , M > 1
     {
      for(IntegerBitScanner<Integer> scanner(d); +scanner ;++scanner)
        {
