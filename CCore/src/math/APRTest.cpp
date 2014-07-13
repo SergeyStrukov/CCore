@@ -16,7 +16,6 @@
 #include <CCore/inc/math/APRTest.h>
 
 #include <CCore/inc/math/IntegerSlowAlgo.h>
-#include <CCore/inc/math/IntegerFastAlgo.h>
 
 #include <CCore/inc/Sort.h>
 #include <CCore/inc/algon/BinarySearch.h>
@@ -29,7 +28,7 @@ namespace APRTest {
 
 /* functions */
 
-using Algo = Meta::Select<( QType(-1)==IntegerFastAlgo::Unit(-1) ),IntegerFastAlgo,IntegerSlowAlgo<QType> > ;
+using Algo = IntegerSlowMulAlgo<QType> ;
 
 QType MulGuarded(QType a,QType b)
  {
