@@ -42,57 +42,61 @@ void test1()
  {
   PrintFile out("APRTest.txt");
   
-  Math::APRTest::DataGen gen(6);
+  SecTimer timer;
+  
+  Math::APRTest::DataGen gen(Math::APRTest::TestData::MaxN);
+  
+  auto t=timer.get();
   
   Putobj(out,gen);
   
-#if 0
+  Int cap;
   
-  const ulen MaxN = Math::APRTest::TestData::MaxN ;
+  gen.getCap(cap);
   
-  PrintFile out("APRTestData.gen.cpp");
+  Printf(out,"cap = #;\n\nbits= #;\n\ntime = #;\n\n",cap,cap.bitsOf().total(),PrintTime(t));
   
-  Math::APRTest::PrepareData<Int>(out,MaxN, [] (ulen n) { Printf(Con,"Data #;\n",n); } );
+  PrintFile cpp("APRTestData.gen.cpp");
   
-#endif  
+  gen.printCpp(cpp);
  }
 
-/* test2() */
+/* class ConReport */
 
-class Report
+class ConReport
  {
-   PrintFile out;
-   
   public:
    
-   explicit Report(StrLen file_name) : out(file_name) {}
-
+   ConReport() {}
+  
    template <class Integer>
-   void start(Integer N) { Used(N); }
+   void start(Integer N) { Printf(Con,"N = #;\n",N); }
    
-   void sanity(const char *msg) { Used(msg); }
+   void sanity(const char *msg) { Printf(Con,"#;\n",msg); }
    
-   void test(unsigned p) { Used(p); }
+   void test(unsigned p) { Printf(Con,"p = #;\n",p); }
    
-   void startProbe() {}
-   
-   template <class Integer>
-   void probe(Integer cnt) { Used(cnt); }
+   void startProbe() { Printf(Con,"Probe\n"); }
    
    template <class Integer>
-   void div(Integer N) { Used(N); }
+   void probe(Integer cnt) { Printf(Con,"#;          \r",cnt); }
    
-   void hard() {}
+   template <class Integer>
+   void div(Integer D) { Printf(Con,"\nHas divisor #;\n",D); }
    
-   void isPrime() {};
+   void hard() { Printf(Con,"\nHardCase\n"); }
    
-   void noPrime() {}
+   void isPrime() { Printf(Con,"\nPrime\n"); }
+   
+   void noPrime() { Printf(Con,"\nNo Prime\n"); }
  };
+
+/* test2() */
 
 void test2()
  {
   Math::APRTest::TestEngine<Int> test;
-  Report report("report.txt");
+  ConReport report;
   
   Int a=Int(999983)*999979;
   
@@ -104,14 +108,14 @@ void test2()
 void test3()
  {
   PlatformRandom random;
-  Math::APRTest::TestEngine<Int> test1;
-  Math::APRTest::NoReport report;
+  Math::APRTest::TestEngine<Int> test;
+  ConReport report;
   
   PrintFile out("report.txt");
 
   for(ulen cnt=1;;cnt++)
     {
-     Printf(Con,"cnt = #;\r",cnt);
+     Printf(Con,"cnt = #;\n",cnt);
      
      RandomInt N(32,random);
      
@@ -124,7 +128,7 @@ void test3()
      else
        Printf(out,"NoPrime");
      
-     auto result=test1(N,report);
+     auto result=test(N,report);
      
      Printf(out," #;\n",result);
      
@@ -140,34 +144,6 @@ void test3()
  }
 
 /* test4() */
-
-class ConReport
- {
-  public:
-   
-   ConReport() {}
-  
-   template <class Integer>
-   void start(Integer N) { Used(N); }
-   
-   void sanity(const char *msg) { Used(msg); }
-   
-   void test(unsigned p) { Used(p); }
-   
-   void startProbe() {}
-   
-   template <class Integer>
-   void probe(Integer cnt) { Used(cnt); }
-   
-   template <class Integer>
-   void div(Integer N) { Used(N); }
-   
-   void hard() {}
-   
-   void isPrime() {}
-   
-   void noPrime() {}
- };
 
 void test4()
  {
@@ -216,13 +192,13 @@ void test5()
    Math::APRTest::TestEngine<Int> test;
    
    {
-    Report report("ModI_P.txt");
+    ConReport report;
      
     Printf(Con,"ModI Prime = #;\n",test(P,report));
    }
    
    {
-    Report report("ModI_P2.txt");
+    ConReport report;
      
     Printf(Con,"ModI Prime/2 = #;\n",test(P>>1,report));
    }
@@ -235,13 +211,13 @@ void test5()
    Math::APRTest::TestEngine<Int> test;
    
    {
-    Report report("ModII_P.txt");
+    ConReport report;
      
     Printf(Con,"ModII Prime = #;\n",test(P,report));
    }
    
    {
-    Report report("ModII_P2.txt");
+    ConReport report;
      
     Printf(Con,"ModII Prime/2 = #;\n",test(P>>1,report));
    }
@@ -260,7 +236,7 @@ const char *const Testit<108>::Name="Test108 APRTest";
 template<>
 bool Testit<108>::Main() 
  {
-  test1();
+  //test1();
   //test2();
   //test3();
   //test4();
