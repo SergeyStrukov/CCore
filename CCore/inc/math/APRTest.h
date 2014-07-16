@@ -90,18 +90,18 @@ class SmallPrimesSet // odd subsequent SmallPrimes 3, 5, 7, ...
     {
      auto r=Range(flags);
      
-     for(ulen i=0,len=r.len; i<len ;i++) if( r[i] ) func( SmallPrimes[i+1] );
+     for(ulen i=0; i<r.len ;i++) if( r[i] ) func( SmallPrimes[i+1] );
     }
    
   public:
    
-   explicit SmallPrimesSet(unsigned n) : flags(n) {}
+   explicit SmallPrimesSet(ulen n) : flags(n) {}
 
    ~SmallPrimesSet() {}
    
-   bool operator [] (unsigned ind) const { return flags[ind]; }
+   bool operator [] (ulen ind) const { return flags[ind]; }
    
-   unsigned getSetNumber() const;
+   ulen getSetNumber() const;
    
    bool next();
  
@@ -128,7 +128,7 @@ class SmallPrimesSet // odd subsequent SmallPrimes 3, 5, 7, ...
 
 /* class QModEngine */
 
-class QModEngine : NoCopy
+class QModEngine // para-usable
  {
    QType mod;
    
@@ -150,7 +150,7 @@ class PrimeQ : public NoThrowFlagsBase , public CmpComparable<PrimeQ>
    SmallPrimesSet spset;
 
    QType prime; // 1+2*(odd p from spset)
-   unsigned set_number;
+   ulen set_number;
    QType gen;
   
   public:
@@ -161,11 +161,11 @@ class PrimeQ : public NoThrowFlagsBase , public CmpComparable<PrimeQ>
    
    // props
   
-   bool hasP(unsigned ind) const { return spset[ind]; }
+   bool hasP(ulen ind) const { return ind==0 || spset[ind-1]; }
    
    QType getPrime() const { return prime; }
    
-   unsigned getSetNumber() const { return set_number; }
+   ulen getSetNumber() const { return set_number; }
    
    QType getGen() const { return gen; }
    
@@ -185,7 +185,7 @@ class PrimeQ : public NoThrowFlagsBase , public CmpComparable<PrimeQ>
    template <class P>
    void print(P &out) const
     {
-     Printf(out,"prime = #; : 1 + 2",prime);
+     Printf(out,"q = #; : 1 + 2",prime);
      
      spset.forOddPrimes( [&] (unsigned p) { Printf(out," * #;",p); } );
      
@@ -206,151 +206,32 @@ class PrimeQ : public NoThrowFlagsBase , public CmpComparable<PrimeQ>
 class Jacobi : QModEngine
  {
    QType prime;
-   unsigned set_number;
+   ulen set_number;
    QType gen;
    
    DynArray<ulen> table;
 
   private:
    
-   unsigned log_table(QType x,unsigned p) const // 0 < x < prime
+   unsigned log_table(QType x,unsigned p) const // 0 < x < prime , para-usable
     {
      return unsigned( table[ (ulen)x-1 ]%p ); 
     }
    
-   class LogPow : NoCopy
-    {
-      const QModEngine &engine;
-      QType d;
-     
-      struct Rec : NoThrowFlagsBase
-       {
-        unsigned ind = 0 ;
-        QType a = 0 ;
-        
-        Rec() {}
-        
-        void set(unsigned ind_,QType a_)
-         {
-          ind=ind_;
-          a=a_; 
-         }
-        
-        bool operator < (const Rec &obj) const { return a<obj.a; }
-        
-        bool operator >= (QType b) const { return a>=b; }
-       };
-      
-      DynArray<Rec> table;
-      
-     public:
-     
-      LogPow(const Jacobi &jac,unsigned p);
-      
-      ~LogPow() {}
-      
-      unsigned operator () (QType x) const; // 0 < x < prime
-    };
+   class LogPow;
+   
+   class AddLogReport;
    
    static void GuardLog();
    
    template <class Func>
-   void addLog(unsigned p,Func func) const
-    {
-     if( table.getLen() )
-       {
-#if 1
-       
-        QType x=2,y=prime-1;
-        
-        for(; x<y ;x++,y--) 
-          {
-           unsigned a=log_table(x,p);
-           unsigned b=log_table(y,p);
-           
-           func(a,b);
-           func(b,a);
-          }
-        
-        {
-         unsigned c=log_table(x,p);
-         
-         func(c,c);
-        }
-        
-#else
-        
-        LogPow log(*this,p);
-        
-        QType x=2,y=prime-1;
-        
-        for(; x<y ;x++,y--) 
-          {
-           unsigned a=log(x);
-           unsigned b=log(y);
-           
-           if( a!=log_table(x,p) || b!=log_table(y,p) ) GuardLog();
-           
-           func(a,b);
-           func(b,a);
-          }
-        
-        {
-         unsigned c=log(x);
-         
-         if( c!=log_table(x,p) ) GuardLog();
-         
-         func(c,c);
-        }
-        
-#endif        
-       }
-     else
-       {
-        LogPow log(*this,p);
-        
-        QType x=2,y=prime-1;
-        
-        for(; x<y ;x++,y--) 
-          {
-           unsigned a=log(x);
-           unsigned b=log(y);
-           
-           func(a,b);
-           func(b,a);
-          }
-        
-        {
-         unsigned c=log(x);
-         
-         func(c,c);
-        }
-       }
-    }
+   void addLog(unsigned p,Func func) const; // para-usable
    
-   class LogCountTable : NoCopy
-    {
-      unsigned p;
-      DynArray<QType> table; // [p*p]
-
-     private: 
-      
-      void add(unsigned a,unsigned b) { table[a*p+b]++; }
-      
-      QType count(unsigned a,unsigned b) const { return table[a*p+b]; }
-      
-     public:
-      
-      LogCountTable(const Jacobi &jac,unsigned p);
-      
-      ~LogCountTable() {}
-      
-      void operator () (unsigned k,QType result[ /* p */ ]) const; // result is erased
-    };
+   class LogCountTable;
    
   public:
    
-   Jacobi(QType prime,unsigned set_number,QType gen);
+   Jacobi(QType prime,ulen set_number,QType gen);
    
    Jacobi(const PrimeQ &q) : Jacobi(q.getPrime(),q.getSetNumber(),q.getGen()) {}
    
@@ -358,9 +239,9 @@ class Jacobi : QModEngine
    
    QType getPrime() const { return prime; }
    
-   unsigned getSetNumber() const { return set_number; }
+   ulen getSetNumber() const { return set_number; }
    
-   void operator () (unsigned p,QType result[ /* (p-2)*p */ ]) const; // p > 2
+   void operator () (unsigned p,QType result[ /* (p-2)*p */ ]) const; // p > 2 , result is erased , para-usable
  };
 
 /* class JacobiSumTable */
@@ -368,7 +249,7 @@ class Jacobi : QModEngine
 class JacobiSumTable : public NoThrowFlagsBase
  {
    QType prime_q;
-   unsigned set_number;
+   ulen set_number;
    
    unsigned prime_p;
    RefArray<QType> table;
@@ -378,6 +259,8 @@ class JacobiSumTable : public NoThrowFlagsBase
    JacobiSumTable(const Jacobi &jac,unsigned prime_p);
   
    ~JacobiSumTable() {}
+   
+   ulen getSetNumber() const { return set_number; }
    
    // print object
    
@@ -456,17 +339,14 @@ class JacobiSumTable : public NoThrowFlagsBase
 
 class PrimeP : public NoThrowFlagsBase
  {
+   ulen ind;
    unsigned prime;
-  
-   RefArray<ulen> qlist;
   
    RefArray<JacobiSumTable> jset;
 
   public:
   
-   explicit PrimeP(PtrLen<const PrimeQ> qset);
-  
-   PrimeP(PtrLen<const PrimeQ> qset,unsigned ind);
+   explicit PrimeP(ulen ind);
   
    ~PrimeP() {}
    
@@ -474,15 +354,11 @@ class PrimeP : public NoThrowFlagsBase
    
    unsigned getPrime() const { return prime; }
    
+   bool testSet() const;
+   
    // methods
    
-   template <class FuncInit>
-   void forQInd(FuncInit func_init) const
-    {
-     qlist.apply(func_init);
-    }
-   
-   void update(const Jacobi &jac) { jset.append_fill(jac,prime); }
+   void append(const Jacobi &jac) { jset.append_fill(jac,prime); }
  
    // print object
    
@@ -543,9 +419,13 @@ class DataGen : NoCopy
    DynArray<PrimeQ> qset; // odd
    DynArray<PrimeP> pset;
    
+  private:
+   
+   class JobControl;
+   
   public: 
    
-   explicit DataGen(unsigned n);
+   explicit DataGen(ulen n);
    
    ~DataGen();
    
@@ -558,6 +438,8 @@ class DataGen : NoCopy
      
      ret=ret.sq();
     }
+   
+   bool testSet() const;
    
    // print object
    
@@ -714,7 +596,17 @@ class NoReport
    
    void sanity(const char *msg) { Used(msg); }
    
-   void test(unsigned prime_p) { Used(prime_p); }
+   void isSmallPrime() {}
+   
+   void testP(unsigned prime_p) { Used(prime_p); }
+   
+   void testQ(QType prime_q) { Used(prime_q); }
+   
+   template <class Integer>
+   void cappa(PtrLen<const Integer> cappa,Integer Nminus1) { Used(cappa); Used(Nminus1); }
+   
+   template <class Integer>
+   void cappa2(Integer cappa,Integer Nminus1) { Used(cappa); Used(Nminus1); }
    
    void startProbe() {}
    
@@ -915,7 +807,8 @@ class TestEngine : TestData
       
       ~Engine() {}
       
-      TestResult test(unsigned prime,const TestSet::JTable &jtable) const
+      template <class Report>
+      TestResult test(unsigned prime,const TestSet::JTable &jtable,Report &report) const
        {
         if( prime>2 )
           {
@@ -935,6 +828,8 @@ class TestEngine : TestData
            
            if( mod>1 ) cappa=mul(cappa,theta[mod-2]);
            
+           report.cappa(Range(cappa),Nminus1);
+           
            return test(cappa);
           }
         else
@@ -943,6 +838,8 @@ class TestEngine : TestData
            Integer d=Nminus1>>1;
            
            Integer cappa=engine.pow(omega,d);
+           
+           report.cappa2(cappa,Nminus1);
            
            if( d.isEven() )
              {
@@ -953,6 +850,30 @@ class TestEngine : TestData
               return test(cappa,-1);
              }
           }
+       }
+    
+      template <class Report>
+      TestResult test(unsigned set_number,const TestSet &tset,Report &report) const
+       {
+        if( tset.jset.len==0 || tset.jset[0].set_number>set_number ) return IsPrime;
+        
+        TestResult ret=HardCase;
+        
+        report.testP(tset.prime_p);
+        
+        for(ulen k=0; k<tset.jset.len && tset.jset[k].set_number<=set_number ;k++)
+          {
+           report.testQ(tset.jset[k].prime_q);
+           
+           switch( test(tset.prime_p,tset.jset[k],report) )
+             {
+              case IsPrime : ret=IsPrime; break;
+              
+              case NoPrime : report.noPrime(); return NoPrime;
+             }
+          }
+        
+        return ret;
        }
     };
    
@@ -989,7 +910,7 @@ class TestEngine : TestData
           {
            if( N==pset[i].prime_p )
              {
-              report.isPrime();
+              report.isSmallPrime();
              
               return IsPrime;
              } 
@@ -999,7 +920,7 @@ class TestEngine : TestData
           {
            if( N==r->prime_q ) 
              {
-              report.isPrime();
+              report.isSmallPrime();
               
               return IsPrime;
              }
@@ -1011,29 +932,6 @@ class TestEngine : TestData
        }
      
      return HardCase;
-    }
-   
-   template <class Report>
-   TestResult test(Integer N,unsigned set_number,const TestSet &tset,Report &report) const
-    {
-     if( tset.jset.len==0 || tset.jset[0].set_number>set_number ) return IsPrime;
-     
-     Engine engine(N);
-     TestResult ret=HardCase;
-     
-     report.test(tset.prime_p);
-     
-     for(ulen k=0; k<tset.jset.len && tset.jset[k].set_number<=set_number ;k++)
-       {
-        switch( engine.test(tset.prime_p,tset.jset[k]) )
-          {
-           case IsPrime : ret=IsPrime; break;
-           
-           case NoPrime : report.noPrime(); return NoPrime;
-          }
-       }
-     
-     return ret;
     }
    
    static bool TestOrder(unsigned p,Integer N)
@@ -1112,16 +1010,20 @@ class TestEngine : TestData
     {
      report.start(N);
      
-     TestResult ret;
      unsigned set_number;
-     
-     if( (ret=sanity(N,set_number,report))!=HardCase ) return ret;
+
+     {
+      TestResult ret=sanity(N,set_number,report);
+      
+      if( ret!=HardCase ) return ret;
+     }
      
      DynArray<bool> flags(set_number+2);
+     Engine engine(N);
 
      for(unsigned i=0; i<set_number+2 ;i++)
        {
-        ret=test(N,set_number,pset[i],report);
+        TestResult ret=engine.test(set_number,pset[i],report);
         
         if( ret==NoPrime ) return NoPrime;
         

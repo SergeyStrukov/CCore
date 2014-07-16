@@ -19,6 +19,8 @@
 #include <CCore/inc/PlatformRandom.h>
 #include <CCore/inc/Timer.h>
 #include <CCore/inc/PrintTime.h>
+#include <CCore/inc/Job.h>
+#include <CCore/inc/Counters.h>
 
 #include <CCore/inc/math/NoPrimeTest.h>
 #include <CCore/inc/math/APRTest.h>
@@ -44,11 +46,13 @@ void test1()
   
   SecTimer timer;
   
-  Math::APRTest::DataGen gen(Math::APRTest::TestData::MaxN);
+  Math::APRTest::DataGen gen(9);
   
   auto t=timer.get();
   
   Putobj(out,gen);
+  
+  Printf(Con,"testSet = #;\n",(gen.testSet()?"Ok":"Failed"));
   
   Int cap;
   
@@ -74,21 +78,213 @@ class ConReport
    
    void sanity(const char *msg) { Printf(Con,"#;\n",msg); }
    
-   void test(unsigned p) { Printf(Con,"p = #;\n",p); }
+   void isSmallPrime() { Printf(Con,"Prime from P or Q\n"); }
+   
+   void testP(unsigned p) { Printf(Con,"p = #;\n",p); }
+   
+   void testQ(Math::APRTest::QType q) { Printf(Con,"  q = #;\n",q); }
+   
+   template <class Integer>
+   static Integer Fix(Integer a,Integer Nminus1)
+    {
+     if( a==Nminus1 ) return -1;
+     
+     return a;
+    }
+   
+   template <class Integer>
+   void cappa(PtrLen<const Integer> cappa,Integer Nminus1)
+    { 
+     Integer minval;
+     
+     {
+      auto r=cappa;
+      
+      minval=*r;
+      
+      for(++r; +r ;++r) Replace_min(minval,*r);
+     }
+     
+     Printf(Con,"    cappa = {");
+     
+     {
+      auto r=cappa;
+      
+      Printf(Con," #;",Fix(*r-minval,Nminus1));
+      
+      for(++r; +r ;++r) Printf(Con," , #;",Fix(*r-minval,Nminus1));
+     }
+     
+     Printf(Con," }\n");
+    }
+   
+   template <class Integer>
+   void cappa2(Integer cappa,Integer Nminus1)
+    {
+     Printf(Con,"    cappa = #;\n",Fix(cappa,Nminus1)); 
+    }
    
    void startProbe() { Printf(Con,"Probe\n"); }
    
    template <class Integer>
-   void probe(Integer cnt) { Printf(Con,"#;          \r",cnt); }
+   void probe(Integer cnt) { Printf(Con,"#; \r",cnt); }
    
    template <class Integer>
    void div(Integer D) { Printf(Con,"\nHas divisor #;\n",D); }
    
-   void hard() { Printf(Con,"\nHardCase\n"); }
+   void hard() { Printf(Con,"HardCase\n"); }
    
    void isPrime() { Printf(Con,"\nPrime\n"); }
    
-   void noPrime() { Printf(Con,"\nNo Prime\n"); }
+   void noPrime() { Printf(Con,"No Prime\n"); }
+ };
+
+/* class FileReport */
+
+enum PrimeCase
+ {
+  PrimeCase_Prime,
+  PrimeCase_Hard,
+  PrimeCase_2_3,
+  PrimeCase_0_0,
+  PrimeCase_Other,
+  
+  PrimeCaseLim
+ };
+
+const char * GetTextDesc(PrimeCase pcase)
+ {
+  switch( pcase )
+    {
+     case PrimeCase_Prime : return "Prime";
+     case PrimeCase_Hard  : return "Hard";
+     case PrimeCase_2_3   : return "2_3";
+     case PrimeCase_0_0   : return "0-0";
+     case PrimeCase_Other : return "Other";
+   
+     default: return "???";
+    }
+ }
+
+using CaseCounters = Counters<PrimeCase,PrimeCaseLim> ;
+
+class FileReport
+ {
+   PrintFile out;
+   
+   unsigned last_p;
+   Math::APRTest::QType last_q;
+  
+   CaseCounters stat;
+   
+  private:
+   
+   void countPrime()
+    {
+     stat.count(PrimeCase_Prime);
+    }
+   
+   void countHard()
+    {
+     stat.count(PrimeCase_Hard);
+    }
+   
+   void countNoPrime(unsigned p,Math::APRTest::QType q)
+    {
+     if( p==0 && q==0 )
+       {
+        stat.count(PrimeCase_0_0);
+       }
+     else if( p==2 && q==3 )
+       {
+        stat.count(PrimeCase_2_3);
+       }
+     else
+       {
+        stat.count(PrimeCase_Other);
+       }
+    }
+   
+  public:
+   
+   explicit FileReport(StrLen file_name) : out(file_name) {}
+   
+   ~FileReport() { Printf(out,"\n#;\n\n#;\n\n",TextDivider(),stat); }
+   
+   CaseCounters getStat() const { return stat; }
+  
+   template <class Integer>
+   void start(Integer N)
+    { 
+     out.flush(); 
+     
+     Printf(out,"\n#;\n\nN = #;\n",TextDivider(),N);
+     
+     last_p=0;
+     last_q=0;
+    }
+   
+   void sanity(const char *msg) { Printf(out,"#;\n",msg); }
+   
+   void isSmallPrime() { Printf(out,"Prime from P or Q\n"); }
+   
+   void testP(unsigned p) { Printf(out,"p = #;\n",p); last_p=p; }
+   
+   void testQ(Math::APRTest::QType q) { Printf(out,"  q = #;\n",q); last_q=q; }
+   
+   template <class Integer>
+   static Integer Fix(Integer a,Integer Nminus1)
+    {
+     if( a==Nminus1 ) return -1;
+     
+     return a;
+    }
+   
+   template <class Integer>
+   void cappa(PtrLen<const Integer> cappa,Integer Nminus1)
+    { 
+     Integer minval;
+     
+     {
+      auto r=cappa;
+      
+      minval=*r;
+      
+      for(++r; +r ;++r) Replace_min(minval,*r);
+     }
+     
+     Printf(out,"    cappa = {");
+     
+     {
+      auto r=cappa;
+      
+      Printf(out," #;",Fix(*r-minval,Nminus1));
+      
+      for(++r; +r ;++r) Printf(out," , #;",Fix(*r-minval,Nminus1));
+     }
+     
+     Printf(out," }\n");
+    }
+   
+   template <class Integer>
+   void cappa2(Integer cappa,Integer Nminus1)
+    {
+     Printf(out,"    cappa = #;\n",Fix(cappa,Nminus1)); 
+    }
+   
+   void startProbe() { Printf(out,"Probe\n"); }
+   
+   template <class Integer>
+   void probe(Integer cnt) { Used(cnt); }
+   
+   template <class Integer>
+   void div(Integer D) { Printf(out,"Has divisor #;\n",D); }
+   
+   void hard() { Printf(out,"HardCase\n"); countHard(); }
+   
+   void isPrime() { Printf(out,"Prime\n"); countPrime(); }
+   
+   void noPrime() { Printf(out,"No Prime\n"); countNoPrime(last_p,last_q); }
  };
 
 /* test2() */
@@ -117,9 +313,9 @@ void test3()
     {
      Printf(Con,"cnt = #;\n",cnt);
      
-     RandomInt N(32,random);
+     RandomInt N(16,random);
      
-     if( N.sign()<0) N.neg();
+     if( N<0) N.neg();
      
      if( N.isEven() ) N+=1;
      
@@ -224,6 +420,21 @@ void test5()
   }
  }
 
+/* test6() */
+
+void test6()
+ {
+  Math::APRTest::TestEngine<Int> test;
+  FileReport report("report.txt");
+  
+  uint64 N=1000000000001;
+  
+  for(ulen cnt=10000000; cnt ;cnt--,N+=2)
+    {
+     test(N,report);
+    }
+ }
+
 } // namespace Private_0108
  
 using namespace Private_0108; 
@@ -236,11 +447,14 @@ const char *const Testit<108>::Name="Test108 APRTest";
 template<>
 bool Testit<108>::Main() 
  {
-  //test1();
+  Job::Init init;
+  
+  test1();
   //test2();
   //test3();
   //test4();
   //test5();
+  //test6();
   
   return true;
  }
