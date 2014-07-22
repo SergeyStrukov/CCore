@@ -42,6 +42,110 @@ uint32 ByteSwap32(uint32 value) noexcept;
  
 uint64 ByteSwap64(uint64 value) noexcept;
 
+/* classes */
+
+template <unsigned UIntBits> struct UIntMulSelect;
+
+template <class UInt> struct UIntMulFunc;
+
+/* struct UIntMulSelect<unsigned UIntBits> */
+
+template <>
+struct UIntMulSelect<8>
+ {
+  using ExtType = uint16 ;
+  
+  enum { IsDoubleType = true };
+ };
+
+template <>
+struct UIntMulSelect<16>
+ {
+  using ExtType = uint32 ;
+  
+  enum { IsDoubleType = true };
+ };
+
+template <>
+struct UIntMulSelect<32>
+ {
+  using ExtType = uint32 ;
+  
+  enum { IsDoubleType = false };
+ };
+
+template <>
+struct UIntMulSelect<64>
+ {
+  using ExtType = uint64 ;
+  
+  enum { IsDoubleType = false };
+ };
+
+/* struct UIntMulFunc<uint32> */
+
+template <> 
+struct UIntMulFunc<uint32>
+ {
+  using UInt = uint32 ;
+
+  struct Mul
+   {
+    UInt hi;
+    UInt lo;
+    
+    Mul(UInt a,UInt b);
+   };
+  
+  static UInt Div(UInt hi,UInt lo,UInt den); // hi<den
+  
+  static UInt Mod(UInt hi,UInt lo,UInt den); // hi<den
+  
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den); // hi<den
+   };
+  
+  static UInt ModMul(UInt a,UInt b,UInt mod); // a,b < mod
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod); // s,a,b < mod
+ };
+
+/* struct UIntMulFunc<uint64> */
+
+template <> 
+struct UIntMulFunc<uint64>
+ {
+  using UInt = uint64 ;
+  
+  struct Mul
+   {
+    UInt hi;
+    UInt lo;
+    
+    Mul(UInt a,UInt b);
+   };
+  
+  static UInt Div(UInt hi,UInt lo,UInt den); // hi<den
+  
+  static UInt Mod(UInt hi,UInt lo,UInt den); // hi<den
+  
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den); // hi<den
+   };
+  
+  static UInt ModMul(UInt a,UInt b,UInt mod); // a,b < mod
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod); // s,a,b < mod
+ };
+
 } // namespace Quick
 } // namespace CCore
  

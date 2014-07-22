@@ -86,3 +86,98 @@ __ZN5CCore5Quick10ByteSwap64Ey:  #  CCore::Quick::ByteSwap64
         popl    %ebp
         ret
         
+#-----------------------------------------------------------------------------------------
+        
+        .global __ZN5CCore5Quick11UIntMulFuncIjE3MulC1Ejj
+        .global __ZN5CCore5Quick11UIntMulFuncIjE3DivEjjj
+        .global __ZN5CCore5Quick11UIntMulFuncIjE3ModEjjj
+        .global __ZN5CCore5Quick11UIntMulFuncIjE6DivModC1Ejjj
+        .global __ZN5CCore5Quick11UIntMulFuncIjE6ModMulEjjj
+        .global __ZN5CCore5Quick11UIntMulFuncIjE6ModMacEjjjj
+
+        .p2align 4,,15
+        
+__ZN5CCore5Quick11UIntMulFuncIjE3MulC1Ejj:       # CCore::Quick::UIntMulFunc<uint32>::Mul       
+
+        movl    12(%esp), %eax
+        movl    4(%esp), %ecx
+        mull    8(%esp)
+        
+        movl    %edx, (%ecx)
+        movl    %eax, 4(%ecx)
+        
+        ret
+
+
+        .p2align 4,,15
+        
+__ZN5CCore5Quick11UIntMulFuncIjE3DivEjjj:        # CCore::Quick::UIntMulFunc<uint32>::Div       
+
+        movl    4(%esp), %edx
+        movl    8(%esp), %eax
+        divl    12(%esp)
+
+        ret
+        
+        
+        .p2align 4,,15
+        
+__ZN5CCore5Quick11UIntMulFuncIjE3ModEjjj:        # CCore::Quick::UIntMulFunc<uint32>::Mod       
+
+        movl    4(%esp), %edx
+        movl    8(%esp), %eax
+        divl    12(%esp)
+        
+        movl    %edx, %eax
+        
+        ret
+        
+        
+        .p2align 4,,15
+        
+__ZN5CCore5Quick11UIntMulFuncIjE6DivModC1Ejjj:   # CCore::Quick::UIntMulFunc<uint32>::DivMod::DivMod       
+
+        movl    8(%esp), %edx
+        movl    4(%esp), %ecx
+        movl    12(%esp), %eax
+        divl    16(%esp)
+        
+        movl    %edx, 4(%ecx)
+        movl    %eax, (%ecx)
+        
+        ret
+        
+        
+        .p2align 4,,15
+        
+__ZN5CCore5Quick11UIntMulFuncIjE6ModMulEjjj:     # CCore::Quick::UIntMulFunc<uint32>::ModMul        
+        
+        movl    4(%esp), %eax
+        mull    8(%esp)
+        divl    12(%esp)
+        
+        movl    %edx, %eax
+        
+        ret
+        
+        
+        .p2align 4,,15
+        
+__ZN5CCore5Quick11UIntMulFuncIjE6ModMacEjjjj:    # CCore::Quick::UIntMulFunc<uint32>::ModMac
+        
+        movl    8(%esp), %eax
+        mull    12(%esp)
+        
+        addl    4(%esp), %eax
+        adcl    $0, %edx 
+        
+        divl    16(%esp)
+        
+        movl    %edx, %eax
+        
+        ret
+        
+#-----------------------------------------------------------------------------------------
+
+
+        

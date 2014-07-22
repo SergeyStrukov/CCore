@@ -17,17 +17,157 @@
 #define CCore_inc_gadget_UIntFunc_h
 
 #include <CCore/inc/gadget/Meta.h>
+
+#include <CCore/inc/base/Quick.h>
  
 namespace CCore {
 
 /* classes */ 
 
+template <class UInt,class ExtUInt> struct UIntMulFunc_double; 
+
+template <class UInt,class ExtUInt> struct UIntMulFunc_exact;
+
 template <class UInt> struct UIntFunc;
+
+/* struct UIntMulFunc_double<UInt,ExtUInt> */
+
+template <class UInt,class ExtUInt> 
+struct UIntMulFunc_double
+ {
+  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : UInt must be an unsigned integral type");
+  static_assert( Meta::IsUInt<ExtUInt>::Ret ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : ExtUInt must be an unsigned integral type");
+  
+  static const unsigned Bits = Meta::UIntBits<UInt>::Ret ;
+  
+  static_assert( 2*Bits <= Meta::UIntBits<ExtUInt>::Ret ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : ExtUInt must be double larger than UInt");
+  
+  
+  static ExtUInt Combine(UInt hi,UInt lo)
+   {
+    return (ExtUInt(hi)<<Bits)|lo;
+   }
+  
+  struct Mul
+   {
+    UInt hi;
+    UInt lo;
+    
+    Mul(UInt a,UInt b)
+     {
+      ExtUInt p=(ExtUInt)a*b;
+      
+      lo=UInt(p);
+      hi=UInt(p>>Bits);
+     }
+   };
+  
+  static UInt Div(UInt hi,UInt lo,UInt den)
+   {
+    return UInt(Combine(hi,lo)/den);
+   }
+  
+  static UInt Mod(UInt hi,UInt lo,UInt den)
+   {
+    return UInt(Combine(hi,lo)%den);
+   }
+  
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den)
+     {
+      ExtUInt p=Combine(hi,lo);
+      
+      div=UInt(p/den);
+      mod=UInt(p%den);
+     }
+   };
+  
+  static UInt ModMul(UInt a,UInt b,UInt mod)
+   {
+    ExtUInt p=(ExtUInt)a*b;
+    
+    return UInt(p%mod);
+   }
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod)
+   {
+    ExtUInt p=(ExtUInt)a*b+s;
+    
+    return UInt(p%mod);
+   }
+ };
+
+/* struct UIntMulFunc_exact<UInt,ExtUInt> */
+
+template <class UInt,class ExtUInt> 
+struct UIntMulFunc_exact
+ {
+  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : UInt must be an unsigned integral type");
+  static_assert( Meta::IsUInt<ExtUInt>::Ret ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : ExtUInt must be an unsigned integral type");
+  
+  static_assert( Meta::UIntBits<UInt>::Ret == Meta::UIntBits<ExtUInt>::Ret ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : ExtUInt must have the same bitsize as UInt");
+  
+  
+  using Algo = Quick::UIntMulFunc<ExtUInt> ;
+  
+  struct Mul
+   {
+    UInt hi;
+    UInt lo;
+    
+    Mul(UInt a,UInt b)
+     {
+      typename Algo::Mul res(a,b);
+      
+      hi=res.hi;
+      lo=res.lo;
+     }
+   };
+  
+  static UInt Div(UInt hi,UInt lo,UInt den)
+   {
+    return Algo::Div(hi,lo,den);
+   }
+  
+  static UInt Mod(UInt hi,UInt lo,UInt den)
+   {
+    return Algo::Mod(hi,lo,den);
+   }
+  
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den)
+     {
+      typename Algo::DivMod res(hi,lo,den);
+      
+      div=res.div;
+      mod=res.mod;
+     }
+   };
+  
+  static UInt ModMul(UInt a,UInt b,UInt mod)
+   {
+    return Algo::ModMul(a,b,mod);
+   }
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod)
+   {
+    return Algo::ModMac(s,a,b,mod);
+   }
+ };
 
 /* struct UIntFunc<UInt> */ 
 
 template <class UInt> 
-struct UIntFunc
+struct UIntFunc : Meta::Select< Quick::UIntMulSelect<Meta::UIntBits<UInt>::Ret>::IsDoubleType ,UIntMulFunc_double<UInt,typename Quick::UIntMulSelect<Meta::UIntBits<UInt>::Ret>::ExtType>,
+                                                                                               UIntMulFunc_exact<UInt,typename Quick::UIntMulSelect<Meta::UIntBits<UInt>::Ret>::ExtType> >
  {
   static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::UIntFunc<UInt> : UInt must be an unsigned integral type");
   
@@ -146,6 +286,30 @@ bool UIntDec(UInt &a)
   return dec.borrow;
  }
  
+template <class UInt>
+UInt UIntDiv(UInt hi,UInt lo,UInt den)
+ {
+  return UIntFunc<UInt>::Div(hi,lo,den);
+ }
+
+template <class UInt>
+UInt UIntMod(UInt hi,UInt lo,UInt den)
+ {
+  return UIntFunc<UInt>::Mod(hi,lo,den);
+ }
+
+template <class UInt>
+UInt UIntModMul(UInt a,UInt b,UInt mod)
+ {
+  return UIntFunc<UInt>::ModMul(a,b,mod);
+ }
+
+template <class UInt>
+UInt UIntModMac(UInt s,UInt a,UInt b,UInt mod)
+ {
+  return UIntFunc<UInt>::ModMac(s,a,b,mod);
+ }
+
 } // namespace CCore
  
 #endif
