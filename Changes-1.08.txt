@@ -91,4 +91,8 @@ Random.h MersenneTwister.h
 
   warp() is added.
 
+gadget/UIntFunc.h
+
+  Multiplicative operations are added.
+
 ----------------------

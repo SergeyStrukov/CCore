@@ -93,6 +93,7 @@ OBJ_LIST = \
 ../test2-obj/test0090.DHExp.o \
 ../test2-obj/test0091.NoPrimeTest.o \
 ../test2-obj/test0092.TypeSwitch.o \
+../test2-obj/test0093.Quick.o \
 ../test2-obj/test0100.Bridge.o \
 ../test2-obj/test0101.PTP.o \
 ../test2-obj/test0102.PrintFile.o \
@@ -232,6 +233,7 @@ ASM_LIST = \
 ../test2-obj/test0090.DHExp.s \
 ../test2-obj/test0091.NoPrimeTest.s \
 ../test2-obj/test0092.TypeSwitch.s \
+../test2-obj/test0093.Quick.s \
 ../test2-obj/test0100.Bridge.s \
 ../test2-obj/test0101.PTP.s \
 ../test2-obj/test0102.PrintFile.s \
@@ -371,6 +373,7 @@ DEP_LIST = \
 ../test2-obj/test0090.DHExp.dep \
 ../test2-obj/test0091.NoPrimeTest.dep \
 ../test2-obj/test0092.TypeSwitch.dep \
+../test2-obj/test0093.Quick.dep \
 ../test2-obj/test0100.Bridge.dep \
 ../test2-obj/test0101.PTP.dep \
 ../test2-obj/test0102.PrintFile.dep \
@@ -701,6 +704,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0092.TypeSwitch.o : ../../../CCore/test/test0092.TypeSwitch.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test2-obj/test0093.Quick.o : ../../../CCore/test/test0093.Quick.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1113,6 +1119,9 @@ include $(RULES_FILE)
 ../test2-obj/test0092.TypeSwitch.s : ../../../CCore/test/test0092.TypeSwitch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test2-obj/test0093.Quick.s : ../../../CCore/test/test0093.Quick.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test2-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1522,6 +1531,9 @@ include $(RULES_FILE)
 
 ../test2-obj/test0092.TypeSwitch.dep : ../../../CCore/test/test0092.TypeSwitch.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0092.TypeSwitch.o $< -MF $@
+
+../test2-obj/test0093.Quick.dep : ../../../CCore/test/test0093.Quick.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0093.Quick.o $< -MF $@
 
 ../test2-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@
