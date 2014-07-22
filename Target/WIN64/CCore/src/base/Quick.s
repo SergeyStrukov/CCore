@@ -76,3 +76,96 @@ _ZN5CCore5Quick10ByteSwap64Em:   #  CCore::Quick::ByteSwap64
         
 #-----------------------------------------------------------------------------------------
         
+        .global _ZN5CCore5Quick11UIntMulFuncImE3MulC1Emm
+        .global _ZN5CCore5Quick11UIntMulFuncImE3DivEmmm
+        .global _ZN5CCore5Quick11UIntMulFuncImE3ModEmmm
+        .global _ZN5CCore5Quick11UIntMulFuncImE6DivModC1Emmm
+        .global _ZN5CCore5Quick11UIntMulFuncImE6ModMulEmmm
+        .global _ZN5CCore5Quick11UIntMulFuncImE6ModMacEmmmm
+        
+        .p2align 4,,15
+        
+_ZN5CCore5Quick11UIntMulFuncImE3MulC1Emm:
+
+        movq    %rdx, %rax
+        mulq    %r8
+        
+        movq    %rdx, (%rcx)
+        movq    %rax, 8(%rcx)
+        
+        ret     
+        
+#-----------------------------------------------------------------------------------------
+        
+        .p2align 4,,15
+        
+_ZN5CCore5Quick11UIntMulFuncImE3DivEmmm:
+
+        movq    %rdx, %rax
+        movq    %rcx, %rdx
+        divq    %r8
+        
+        ret        
+        
+#-----------------------------------------------------------------------------------------
+
+        .p2align 4,,15
+        
+_ZN5CCore5Quick11UIntMulFuncImE3ModEmmm:        
+        
+        movq    %rdx, %rax
+        movq    %rcx, %rdx
+        divq    %r8
+        
+        movq    %rdx, %rax
+        
+        ret
+                
+#-----------------------------------------------------------------------------------------
+
+        .p2align 4,,15
+        
+_ZN5CCore5Quick11UIntMulFuncImE6DivModC1Emmm:        
+        
+        movq    %r8, %rax
+        divq    %r9
+        
+        movq    %rax, (%rcx)
+        movq    %rdx, 8(%rcx)
+        
+        ret
+                
+#-----------------------------------------------------------------------------------------
+
+        .p2align 4,,15
+        
+_ZN5CCore5Quick11UIntMulFuncImE6ModMulEmmm:
+        
+        movq    %rdx, %rax
+        mulq    %rcx
+        divq    %r8
+        
+        movq    %rdx, %rax
+        
+        ret
+        
+#-----------------------------------------------------------------------------------------
+
+        .p2align 4,,15
+        
+_ZN5CCore5Quick11UIntMulFuncImE6ModMacEmmmm:
+        
+        movq    %rdx, %rax
+        mulq    %r8
+        
+        addq    %rcx, %rax
+        adcq    $0, %rdx
+        
+        divq    %r9
+        
+        movq    %rdx, %rax
+        
+        ret
+        
+#-----------------------------------------------------------------------------------------
+        

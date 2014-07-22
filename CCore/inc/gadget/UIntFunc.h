@@ -112,7 +112,7 @@ struct UIntMulFunc_exact
   static_assert( Meta::UIntBits<UInt>::Ret == Meta::UIntBits<ExtUInt>::Ret ,"CCore::UIntMulFunc_double<UInt,ExtUInt> : ExtUInt must have the same bitsize as UInt");
   
   
-  using Algo = Quick::UIntMulFunc<ExtUInt> ;
+  using Algo = typename Quick::UIntMulFunc<ExtUInt> ;
   
   struct Mul
    {
