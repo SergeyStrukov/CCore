@@ -49,6 +49,8 @@ class PrimeQ;
 
 class Jacobi;
 
+class AltJacobi;
+
 class JacobiSumTable;
 
 class PrimeP;
@@ -141,6 +143,14 @@ class QModEngine // para-usable
    QType sq(QType a) const { return mul(a,a); }
    
    QType pow(QType a,QType d) const;
+   
+   QType mac(QType s,QType a,QType b) const;
+   
+   QType add(QType a,QType b) const;
+   
+   QType sub(QType a,QType b) const;
+   
+   QType inv(QType a) const;
  };
 
 /* class PrimeQ */
@@ -241,6 +251,37 @@ class Jacobi : QModEngine
    
    ulen getSetNumber() const { return set_number; }
    
+   QType getGen() const { return gen; }
+   
+   void operator () (unsigned p,QType result[ /* (p-2)*p */ ]) const; // p > 2 , result is erased , para-usable
+ };
+
+/* class AltJacobi */
+
+class AltJacobi : NoCopy
+ {
+   QType prime;
+   ulen set_number;
+   QType gen;
+   
+  private:
+   
+   class Table;
+   
+  public:
+  
+   AltJacobi(QType prime,ulen set_number,QType gen);
+   
+   AltJacobi(const PrimeQ &q) : AltJacobi(q.getPrime(),q.getSetNumber(),q.getGen()) {}
+   
+   ~AltJacobi() {}
+   
+   QType getPrime() const { return prime; }
+   
+   ulen getSetNumber() const { return set_number; }
+   
+   QType getGen() const { return gen; }
+   
    void operator () (unsigned p,QType result[ /* (p-2)*p */ ]) const; // p > 2 , result is erased , para-usable
  };
 
@@ -256,7 +297,7 @@ class JacobiSumTable : public NoThrowFlagsBase
    
   public:
   
-   JacobiSumTable(const Jacobi &jac,unsigned prime_p);
+   JacobiSumTable(const AltJacobi &jac,unsigned prime_p);
   
    ~JacobiSumTable() {}
    
@@ -358,7 +399,7 @@ class PrimeP : public NoThrowFlagsBase
    
    // methods
    
-   void append(const Jacobi &jac) { jset.append_fill(jac,prime); }
+   void append(const AltJacobi &jac) { jset.append_fill(jac,prime); }
  
    // print object
    

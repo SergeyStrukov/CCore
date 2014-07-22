@@ -46,7 +46,7 @@ void test1()
   
   SecTimer timer;
   
-  Math::APRTest::DataGen gen(9);
+  Math::APRTest::DataGen gen(10);
   
   auto t=timer.get();
   
@@ -435,6 +435,29 @@ void test6()
     }
  }
 
+/* test7() */
+
+void test7()
+ {
+  Math::APRTest::QType q=2311;
+  Math::APRTest::QType gen=3;
+  unsigned p=11;
+  
+  Math::APRTest::Jacobi jacobi(q,0,gen);
+  Math::APRTest::AltJacobi alt_jacobi(q,0,gen);
+  
+  DynArray<Math::APRTest::QType> table(p*(p-2));
+  DynArray<Math::APRTest::QType> alt_table(p*(p-2));
+  
+  jacobi(p,table.getPtr());
+  alt_jacobi(p,alt_table.getPtr());
+  
+  if( Range(table).equal(Range(alt_table)) )
+    Printf(Con,"Ok\n");
+  else
+    Printf(Con,"Failed\n");
+ }
+
 } // namespace Private_0108
  
 using namespace Private_0108; 
@@ -455,6 +478,7 @@ bool Testit<108>::Main()
   //test4();
   //test5();
   //test6();
+  //test7();
   
   return true;
  }

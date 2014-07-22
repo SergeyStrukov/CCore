@@ -149,6 +149,54 @@ QType QModEngine::pow(QType a,QType d) const
   return 1u;
  }
 
+QType QModEngine::mac(QType s,QType a,QType b) const // TODO
+ {
+  Algo::DoubleMul mul(a,b);
+  
+  mul.hi+=UIntAdd(mul.lo,s);
+  
+  QType div=Algo::DoubleUDiv(mul.hi,mul.lo,mod);
+  
+  return mul.lo-QType(div*mod);
+ }
+
+QType QModEngine::add(QType a,QType b) const
+ {
+  QType c=mod-b;
+  
+  if( a>=c ) return a-c;
+  
+  return a+b;
+ }
+
+QType QModEngine::sub(QType a,QType b) const
+ {
+  if( a>=b ) return a-b;
+  
+  return mod-(b-a);
+ }
+
+QType QModEngine::inv(QType a) const
+ {
+  QType b=mod;
+  QType y=0;
+  QType x=1;
+  
+  while( a>1 )
+    {
+     QType c=b%a;
+     QType z=sub(y,mul(x,b/a));
+     
+     b=a;
+     y=x;
+     
+     a=c;
+     x=z;
+    }
+  
+  return x; 
+ }
+
 /* struct PrimeQ */
 
 PrimeQ::PrimeQ(const SmallPrimesSet &spset_)
@@ -487,9 +535,188 @@ void Jacobi::operator () (unsigned p,QType result[]) const
   for(unsigned k=1; k<p-1 ;k++,result+=p) table(k,result);
  }
 
+/* class AltJacobi::Table */
+
+class AltJacobi::Table : QModEngine
+ {
+   unsigned p;
+   QType m;
+ 
+   DynArray<QType> tableG;
+   DynArray<QType> tableC;
+   
+  private:
+ 
+   QType G(unsigned a) const { return tableG[a]; }
+   
+   QType C(unsigned a,unsigned b,unsigned p) const { return tableC[a+b*p]; }
+   
+   QType coeff(unsigned k,unsigned i,unsigned p) const;
+ 
+   static void Normalize(QType result[ /* p */ ],unsigned p);
+   
+  public:
+ 
+   Table(QType q,QType gen,unsigned p);
+   
+   ~Table() {}
+   
+   void operator () (unsigned k,QType result[ /* p */ ]) const; // result is erased
+ };
+
+QType AltJacobi::Table::coeff(unsigned k,unsigned i,unsigned p) const
+ {
+  QType ret=2;
+  
+  if( i )
+    {
+     i=p-i;
+     
+     for(unsigned l=1; l<p ;l++)
+       {
+        unsigned s=((p-k)*l)%p;
+        
+        if( s<l ) 
+          {
+           ret=mac(ret,C(s,l,p),G( (l*i)%p ));
+          }
+       }
+    }
+  else
+    {
+     for(unsigned l=1; l<p ;l++)
+       {
+        unsigned s=((p-k)*l)%p;
+        
+        if( s<l ) ret=add(ret,C(s,l,p));
+       }
+    }
+  
+  return mul(ret,m);
+ }
+
+void AltJacobi::Table::Normalize(QType result[ /* p */ ],unsigned p)
+ {
+  QType minval;
+  
+  // 1
+  {
+   auto r=Range(result,p);
+   
+   minval=*r;
+   
+   for(++r; +r ;++r) Replace_min(minval,*r);
+  }
+  
+  // 2
+  {
+   for(auto r=Range(result,p); +r ;++r) (*r)-=minval;
+  }
+ }
+
+AltJacobi::Table::Table(QType q,QType gen,unsigned p_)
+ : QModEngine(q),
+   p(p_),
+   m((q-1)/p_),
+   tableG(p_),
+   tableC(p_*p_)
+ {
+  // 1
+  {
+   QType g=pow(gen,m);
+   QType cur=1;
+   
+   for(unsigned i=0; i<p_ ;i++) 
+     {
+      tableG[i]=cur;
+      
+      cur=mul(cur,g);
+     }
+  }
+
+  // 2
+  {
+   DynArray<QType> A(p_);
+   DynArray<QType> B(p_);
+   
+   {
+    QType t=1;
+    QType P=1;
+     
+    unsigned k=0;
+    
+    for(unsigned lim=(p_-1)/2; k<lim ;k++)
+      {
+       QType F=1;
+       
+       for(QType cnt=m; cnt ;cnt--,t++) F=mul(F,t);
+       
+       A[p_-1-k]=A[k]=F;
+       B[p_-1-k]=B[k]=inv(F);
+       
+       P=mul(P,sq(F));
+      }
+
+    P=q-P;
+    
+    A[k]=inv(P);
+    B[k]=P;
+   }
+   
+   for(unsigned b=2; b<p_ ;b++)
+     {
+      QType C=1;
+      
+      unsigned a=1;
+      
+      for(unsigned end=b/2; a<=end ;a++)
+        {
+         C=mul(C,A[b-a]);
+         C=mul(C,B[a-1]);
+        
+         tableC[a+b*p_]=C;
+        }
+      
+      for(; a<b ;a++)
+        {
+         tableC[a+b*p_]=tableC[(b-a)+b*p_];
+        }
+     }
+  }
+ }
+
+void AltJacobi::Table::operator () (unsigned k,QType result[ /* p */ ]) const
+ {
+  for(unsigned i=0,p=this->p; i<p ;i++) result[i]=coeff(k,i,p);
+  
+  Normalize(result,p);
+ }
+
+/* class AltJacobi */
+
+AltJacobi::AltJacobi(QType prime_,ulen set_number_,QType gen_)
+ : prime(prime_),
+   set_number(set_number_),
+   gen(gen_)
+ {
+ }
+   
+void AltJacobi::operator () (unsigned p,QType result[ /* (p-2)*p */ ]) const
+ {
+  Printf(Con,"Jacobi #; #;\n",prime,p);
+  
+  SecTimer timer;
+  
+  Table table(prime,gen,p);
+  
+  Printf(Con,"time = #;\n",PrintTime(timer.get()));
+  
+  for(unsigned k=1; k<p-1 ;k++,result+=p) table(k,result);
+ }
+   
 /* class JacobiSumTable */
 
-JacobiSumTable::JacobiSumTable(const Jacobi &jac,unsigned prime_p_)
+JacobiSumTable::JacobiSumTable(const AltJacobi &jac,unsigned prime_p_)
  : prime_q(jac.getPrime()),
    set_number(jac.getSetNumber()),
    prime_p(prime_p_)
@@ -497,6 +724,21 @@ JacobiSumTable::JacobiSumTable(const Jacobi &jac,unsigned prime_p_)
   if( prime_p_>2 )
     {
      jac(prime_p_,table.extend_default((prime_p_-2)*prime_p_).ptr);
+     
+#if 0
+     
+     Jacobi alt(jac.getPrime(),jac.getSetNumber(),jac.getGen());
+     
+     DynArray<QType> temp((prime_p_-2)*prime_p_);
+     
+     alt(prime_p_,temp.getPtr());
+     
+     if( Range(table).equal(Range(temp)) ) 
+       Printf(Con,"Ok\n"); 
+     else
+       Printf(Exception,"Fail");
+     
+#endif     
     }
  }
   
@@ -520,7 +762,7 @@ bool PrimeP::testSet() const
 
 class DataGen::JobControl : public Funchor_nocopy
  {
-   Jacobi jac;
+   AltJacobi jac;
    PtrLen<PrimeP> pset;
    
    DynArray<ulen> list;
