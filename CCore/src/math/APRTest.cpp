@@ -15,8 +15,6 @@
  
 #include <CCore/inc/math/APRTest.h>
 
-#include <CCore/inc/math/IntegerSlowAlgo.h>
-
 #include <CCore/inc/Sort.h>
 #include <CCore/inc/algon/BinarySearch.h>
 
@@ -31,11 +29,9 @@ namespace APRTest {
 
 /* functions */
 
-using Algo = IntegerSlowMulAlgo<QType> ;
-
-QType MulGuarded(QType a,QType b) // TODO
+QType MulGuarded(QType a,QType b)
  {
-  Algo::DoubleMul mul(a,b);
+  UIntFunc<QType>::Mul mul(a,b);
   
   if( mul.hi )
     {
@@ -118,13 +114,9 @@ QType SmallPrimesSet::getPrimeQ() const
 
 /* class QModEngine */
 
-QType QModEngine::mul(QType a,QType b) const // TODO
+QType QModEngine::mul(QType a,QType b) const
  {
-  Algo::DoubleMul mul(a,b);
-  
-  QType div=Algo::DoubleUDiv(mul.hi,mul.lo,mod);
-  
-  return mul.lo-QType(div*mod);
+  return UIntModMul(a,b,mod);
  }
    
 QType QModEngine::pow(QType a,QType d) const
@@ -149,15 +141,9 @@ QType QModEngine::pow(QType a,QType d) const
   return 1u;
  }
 
-QType QModEngine::mac(QType s,QType a,QType b) const // TODO
+QType QModEngine::mac(QType s,QType a,QType b) const
  {
-  Algo::DoubleMul mul(a,b);
-  
-  mul.hi+=UIntAdd(mul.lo,s);
-  
-  QType div=Algo::DoubleUDiv(mul.hi,mul.lo,mod);
-  
-  return mul.lo-QType(div*mod);
+  return UIntModMac(s,a,b,mod);
  }
 
 QType QModEngine::add(QType a,QType b) const

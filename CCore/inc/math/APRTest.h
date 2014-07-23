@@ -619,7 +619,7 @@ class TestData : NoCopy
    
   public:
 
-   static const unsigned MaxN = 8 ;
+   static const unsigned MaxN = 10 ;
    
    TestData();
  };
