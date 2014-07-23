@@ -46,7 +46,7 @@ void test1()
   
   SecTimer timer;
   
-  Math::APRTest::DataGen gen(10);
+  Math::APRTest::DataGen gen(Math::APRTest::TestData::MaxN);
   
   auto t=timer.get();
   
@@ -472,7 +472,7 @@ bool Testit<108>::Main()
  {
   Job::Init init;
   
-  test1();
+  //test1();
   //test2();
   //test3();
   //test4();
