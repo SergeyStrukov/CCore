@@ -267,6 +267,7 @@
 ../../HCore/CCore/src/task/TaskCore.cpp
 ../../HCore/CCore/src/task/TaskEvent.cpp
 ../../HCore/CCore/src/Task.cpp
+../../HCore/CCore/src/TaskHeap.cpp
 ../../Target/WIN64/CCore/src/base/PlatformBase.cpp
 ../../Target/WIN64/CCore/src/base/Quick.cpp
 ../../Target/WIN64/CCore/src/crypton/IntelAES.cpp

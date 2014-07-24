@@ -18,8 +18,6 @@
 
 #include <CCore/inc/array/ArrayAlgo.h>
 
-#include <CCore/inc/MemBase.h>
- 
 namespace CCore {
 
 /* words */ 
@@ -93,7 +91,7 @@ struct ArrayBase
   
   static H * Alloc(ulen maxlen,ulen mem_len)
    {
-    H *ret=PlaceAt(MemAlloc(mem_len)); // POD
+    H *ret=PlaceAt(Algo::MemAlloc(mem_len)); // POD
     
     ret->init(maxlen);
     
@@ -111,7 +109,7 @@ struct ArrayBase
    {
     ptr->exit();
    
-    MemFree(ptr); // POD
+    Algo::MemFree(ptr); // POD
    }
  
   static H * Create(ulen maxlen)
@@ -155,7 +153,7 @@ struct ArrayBase
     
       ulen mem_len=LenOf(maxlen,sizeof (T),Delta);
     
-      if( MemExtend(ptr,mem_len) ) 
+      if( Algo::MemExtend(ptr,mem_len) ) 
         {
          ptr->maxlen=maxlen;
       
@@ -266,7 +264,7 @@ struct ArrayBase
       {
        ptr->maxlen=maxlen;
       
-       MemShrink(ptr,Delta+maxlen*sizeof (T));
+       Algo::MemShrink(ptr,Delta+maxlen*sizeof (T));
       }
    }
   
@@ -278,7 +276,7 @@ struct ArrayBase
       {
        ptr->maxlen=maxlen;
         
-       MemShrink(ptr,Delta+maxlen*sizeof (T));
+       Algo::MemShrink(ptr,Delta+maxlen*sizeof (T));
       }
    }
   

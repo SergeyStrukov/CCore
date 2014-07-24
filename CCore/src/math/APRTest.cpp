@@ -21,7 +21,6 @@
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Print.h>
 #include <CCore/inc/PrintTime.h>
-#include <CCore/inc/Job.h>
 
 namespace CCore {
 namespace Math {

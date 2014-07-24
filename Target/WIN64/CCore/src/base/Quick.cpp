@@ -128,9 +128,9 @@ uint64 ByteSwap64(uint64 value) noexcept
  
 #endif  
 
-/* struct Private::DefAlgo<UInt> */
+/* struct DefAlgo<UInt> */
 
-namespace Private {
+namespace Private_Quick {
 
 template <class UInt> 
 struct DefAlgo
@@ -180,9 +180,9 @@ struct DefAlgo
    }
  };
 
-} // namespace Private
+} // namespace Private_Quick
 
-using namespace Private;
+using namespace Private_Quick;
 
 /* struct UIntMulFunc<uint64> */
 

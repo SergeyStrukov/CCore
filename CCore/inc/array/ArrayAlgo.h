@@ -18,6 +18,7 @@
  
 #include <CCore/inc/Move.h>
 #include <CCore/inc/Tuple.h>
+#include <CCore/inc/MemBase.h>
 
 namespace CCore {
 
@@ -44,6 +45,8 @@ template <class T,bool no_throw> struct Creator_copy;
 template <class T,class S> struct Creator_cast;
 
 template <class T,class Algo> struct Creator_swap;
+
+struct ArrayAlgoMemBase;
 
 template <class T> struct ArrayAlgoBase;
 
@@ -212,10 +215,23 @@ struct Creator_swap
    }
  };
 
+/* struct ArrayAlgoMemBase */
+
+struct ArrayAlgoMemBase
+ {
+  static void * MemAlloc(ulen len) { return ::CCore::MemAlloc(len); }
+
+  static bool MemExtend(void *mem,ulen len) { return ::CCore::MemExtend(mem,len); }
+
+  static bool MemShrink(void *mem,ulen len) { return ::CCore::MemShrink(mem,len); }
+   
+  static void MemFree(void *mem) { ::CCore::MemFree(mem); }
+ };
+
 /* struct ArrayAlgoBase<T> */
 
 template <class T> 
-struct ArrayAlgoBase
+struct ArrayAlgoBase : ArrayAlgoMemBase
  {
   //
   //  assume ~T() no-throw
@@ -314,7 +330,7 @@ struct ArrayAlgoBase
 /* struct ArrayAlgoBase_nodtor<T> */
 
 template <class T> 
-struct ArrayAlgoBase_nodtor
+struct ArrayAlgoBase_nodtor : ArrayAlgoMemBase
  {
   //
   //  assume ~T() is trivial

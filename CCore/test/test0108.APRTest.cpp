@@ -36,6 +36,7 @@ namespace Private_0108 {
 /* type Int */
 
 using Int       = Math::Integer<Math::IntegerFastAlgo> ;
+using ParaInt   = Math::Integer<Math::IntegerFastAlgo,AtomicRefArray> ;
 using RandomInt = Math::RandomInteger<Int> ;
 
 /* test1() */
@@ -69,20 +70,29 @@ void test1()
 
 class ConReport
  {
+   bool full;
+   SecTimer timer;
+   
+  private:
+   
+   void time() const { Printf(Con,"time = #;\n",PrintTime(timer.get())); }
+   
   public:
    
-   ConReport() {}
+   explicit ConReport(bool full_=false) : full(full_) {}
+   
+   ~ConReport() { time(); }
   
    template <class Integer>
-   void start(Integer N) { Printf(Con,"N = #;\n",N); }
+   void start(Integer N) const { Printf(Con,"N = #;\n",N); }
    
-   void sanity(const char *msg) { Printf(Con,"#;\n",msg); }
+   void sanity(const char *msg) const { Printf(Con,"#;\n",msg); }
    
-   void isSmallPrime() { Printf(Con,"Prime from P or Q\n"); }
+   void isSmallPrime() const { Printf(Con,"Prime from P or Q\n"); }
    
-   void testP(unsigned p) { Printf(Con,"p = #;\n",p); }
+   void testP(unsigned p) const { Printf(Con,"p = #;\n",p); }
    
-   void testQ(Math::APRTest::QType q) { Printf(Con,"  q = #;\n",q); }
+   void testQ(Math::APRTest::QType q) const{ /*if( full )*/ Printf(Con,"  q = #;\n",q); }
    
    template <class Integer>
    static Integer Fix(Integer a,Integer Nminus1)
@@ -93,8 +103,10 @@ class ConReport
     }
    
    template <class Integer>
-   void cappa(PtrLen<const Integer> cappa,Integer Nminus1)
+   void cappa(PtrLen<const Integer> cappa,Integer Nminus1) const
     { 
+     if( !full ) return;
+     
      Integer minval;
      
      {
@@ -119,24 +131,26 @@ class ConReport
     }
    
    template <class Integer>
-   void cappa2(Integer cappa,Integer Nminus1)
+   void cappa2(Integer cappa,Integer Nminus1) const
     {
+     if( !full ) return;
+     
      Printf(Con,"    cappa = #;\n",Fix(cappa,Nminus1)); 
     }
    
-   void startProbe() { Printf(Con,"Probe\n"); }
+   void startProbe() const { time(); Printf(Con,"Probe\n"); }
    
    template <class Integer>
-   void probe(Integer cnt) { Printf(Con,"#; \r",cnt); }
+   void probe(Integer cnt) const { Printf(Con,"#; \r",cnt); }
    
    template <class Integer>
-   void div(Integer D) { Printf(Con,"\nHas divisor #;\n",D); }
+   void div(Integer D) const { Printf(Con,"\nHas divisor #;\n",D); }
    
-   void hard() { Printf(Con,"HardCase\n"); }
+   void hard() const { Printf(Con,"HardCase\n"); }
    
-   void isPrime() { Printf(Con,"\nPrime\n"); }
+   void isPrime() const { Printf(Con,"\nPrime\n"); }
    
-   void noPrime() { Printf(Con,"No Prime\n"); }
+   void noPrime() const { Printf(Con,"No Prime\n"); }
  };
 
 /* class FileReport */
@@ -458,6 +472,49 @@ void test7()
     Printf(Con,"Failed\n");
  }
 
+/* test8() */
+
+void test8()
+ {
+  // 1
+  {
+   Math::OctetInteger<ParaInt> P(Range(Crypton::DHModI::Mod));
+   
+   Math::APRTest::ParaTestEngine<ParaInt> test;
+   
+   {
+    ConReport report;
+     
+    Printf(Con,"ModI Prime = #;\n",test(P,report));
+   }
+   
+   {
+    ConReport report;
+     
+    Printf(Con,"ModI Prime/2 = #;\n",test(P>>1,report));
+   }
+  }
+  
+  // 2
+  {
+   Math::OctetInteger<ParaInt> P(Range(Crypton::DHModII::Mod));
+   
+   Math::APRTest::TestEngine<ParaInt> test;
+   
+   {
+    ConReport report;
+     
+    Printf(Con,"ModII Prime = #;\n",test(P,report));
+   }
+   
+   {
+    ConReport report;
+     
+    Printf(Con,"ModII Prime/2 = #;\n",test(P>>1,report));
+   }
+  }
+ }
+
 } // namespace Private_0108
  
 using namespace Private_0108; 
@@ -479,6 +536,7 @@ bool Testit<108>::Main()
   //test5();
   //test6();
   //test7();
+  test8();
   
   return true;
  }
