@@ -46,34 +46,61 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
    
    PageHeap heap;
    
-   Mutex mutex;
-   
-   void *list = 0 ;
-   
   private: 
    
-   struct Prefix
+   union Prefix
     {
-     void *ptr;
+     LocalHeap *heap;
+     Prefix *next;
      
-     Prefix(void *ptr_) : ptr(ptr_) {}
+     Prefix(LocalHeap *heap_) : heap(heap_) {}
+     
+     LocalHeap * getHeap() const
+      {
+       void *obj=heap;
+       void *cur=Object.get();
+       
+       if( obj==cur ) return heap;
+       
+       return 0;
+      }
+     
+     LocalHeap * getForeignHeap() const
+      {
+       return heap;
+      }
     };
    
    static const ulen Delta = Align(sizeof (Prefix)) ;
+   static const ulen MaxAllocLen = MaxULen-Delta ;
+   
+   static Prefix * GetPrefix(void *mem) { return static_cast<Prefix *>(PtrSub(mem,Delta)); }
+   
+  private: 
+
+   Mutex mutex;
+   
+   Prefix *list = 0 ;
+   
+   Atomic flag;
+   
+  private: 
    
    void freeList()
     {
-     void *ptr;
+     Prefix *ptr;
      
      {
       Mutex::Lock lock(mutex);
       
       ptr=Replace_null(list);
+      
+      flag=0;
      }
      
      while( ptr )
        {
-        void *next=static_cast<Prefix *>(ptr)->ptr;
+        Prefix *next=ptr->next;
         
         heap.free(ptr);
         
@@ -87,7 +114,7 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
    
    LocalHeap(LocalHeap *next_,ulen min_page_alloc_len) : next(next_),heap(min_page_alloc_len) {}
    
-   ~LocalHeap() 
+   ~LocalHeap()
     {
      freeList();
     }
@@ -105,9 +132,9 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
    
    void * alloc(ulen len)
     {
-     if( len>MaxULen-Delta ) return 0;
+     if( len>MaxAllocLen ) return 0;
      
-     freeList();
+     if( flag ) freeList();
      
      if( void *mem=heap.alloc(len+Delta) ) 
        {
@@ -119,72 +146,62 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
      return 0; 
     }
    
-   bool extend(void *mem,ulen len)
+   bool extend(Prefix *prefix,ulen len)
     {
-     return heap.extend(mem,len);
+     return heap.extend(prefix,len);
     }
    
-   bool shrink(void *mem,ulen len)
+   bool shrink(Prefix *prefix,ulen len)
     {
-     return heap.shrink(mem,len);
+     return heap.shrink(prefix,len);
     }
    
-   void free(void *mem)
+   void free(Prefix *prefix)
     {
-     heap.free(mem);
+     heap.free(prefix);
     }
    
-   void foreign_free(void *mem)
+   void foreign_free(Prefix *prefix)
     {
      Mutex::Lock lock(mutex);
      
-     static_cast<Prefix *>(mem)->ptr=list;
+     prefix->next=list;
      
-     list=mem;
+     list=prefix;
+     
+     flag=1;
     }
 
    // global
    
    static bool MemExtend(void *mem,ulen len)
     {
-     if( !mem || len>MaxULen-Delta ) return false;
+     if( !mem || len>MaxAllocLen ) return false;
      
-     mem=PtrSub(mem,Delta);
+     Prefix *prefix=GetPrefix(mem);
      
-     void *obj=static_cast<Prefix *>(mem)->ptr;
-     
-     void *cur=Object.get();
-     
-     if( obj==cur )
+     if( LocalHeap *heap=prefix->getHeap() )
        {
-        return static_cast<LocalHeap *>(obj)->extend(mem,len+Delta);
+        return heap->extend(prefix,len+Delta);
        }
      else
        {
-        // TODO
-       
         return false;
        }
     }
 
    static bool MemShrink(void *mem,ulen len)
     {
-     if( !mem || len>MaxULen-Delta ) return false;
+     if( !mem || len>MaxAllocLen ) return false;
      
-     mem=PtrSub(mem,Delta);
+     Prefix *prefix=GetPrefix(mem);
      
-     void *obj=static_cast<Prefix *>(mem)->ptr;
-     
-     void *cur=Object.get();
-     
-     if( obj==cur )
+     if( LocalHeap *heap=prefix->getHeap() )
        {
-        return static_cast<LocalHeap *>(obj)->shrink(mem,len+Delta);
+        return heap->shrink(prefix,len+Delta);
        }
      else
        {
-        // TODO
-       
         return false;
        }
     }
@@ -193,19 +210,15 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
     {
      if( !mem ) return;
      
-     mem=PtrSub(mem,Delta);
+     Prefix *prefix=GetPrefix(mem);
      
-     void *obj=static_cast<Prefix *>(mem)->ptr;
-     
-     void *cur=Object.get();
-     
-     if( obj==cur )
+     if( LocalHeap *heap=prefix->getHeap() )
        {
-        static_cast<LocalHeap *>(obj)->free(mem);
+        heap->free(prefix);
        }
      else
        {
-        static_cast<LocalHeap *>(obj)->foreign_free(mem);
+        prefix->heap->foreign_free(prefix);
        }
     }
  };

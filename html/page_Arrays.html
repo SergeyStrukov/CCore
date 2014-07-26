@@ -121,14 +121,14 @@ Allocation errors and index check errors throw exceptions. Default constructors 
 <p>
 The method <b>apply()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements.
 If the array is constant, then element references are constant too.
-The variant <b>apply_const()</b> also enforces constness.
+The variant <b>apply_const()</b> also enforces constantness.
 </p>
 
 <p>
 The method <b>applyReverse()</b> applies the functor, given by a <a href="page_FunctorType.html"><b>Functor Init</b></a>, to array elements
 in the reverse order.
 If the array is constant, then element references are constant too.
-The variant <b>applyReverse_const()</b> also enforces constness.
+The variant <b>applyReverse_const()</b> also enforces constantness.
 </p>
 
 <p>
@@ -333,8 +333,7 @@ reserved memory behind. It can extend the range of elements, if there is an extr
 If not and the type <b>T</b> supports <a href="page_Move.html">moving</a>, then the array extension can be performed
 with either the memory block extension (using <b>MemExtend()</b>) or the total reallocation with the content moving.
 You can also release the extra memory. All details of the array functionality can be customized using the 
-second template argument, which is an <b>Algorithm Package</b> of array algorithms. You cannot
-change heap functions though.
+second template argument, which is an <b>Algorithm Package</b> of array algorithms. 
 </p>
 
 <p>
@@ -716,7 +715,7 @@ uses the atomic reference counting to be viable in a multi-threaded environment.
 <p>
 <b>RefArray</b> has a simulated value semantic. It means, that you may consider different copies of an array
 as independent variables, despite they may share the state. That is because <b>RefArray</b> provides
-only a constant access to elements. So far you don't violate this constness (using the const-cast, for example),
+only a constant access to elements. So far you don't violate this constantness (using the const-cast, for example),
 you may safely assume that each copy is different. To modify the array you have to call
 the method <b>modify()</b> (or <b>modifyReverse()</b>). 
 This method "unshares" the array, if necessary, and gives a non-constant access to elements.
@@ -1104,7 +1103,7 @@ It's an obligation of the class.
 <pre>
 
 template &lt;class T,class Flags&gt;
-struct <span class="Att">ArrayAlgo_class</span>
+struct <span class="Att">ArrayAlgo_class</span> : ArrayAlgoMemBase
  {
   //
   //  assume ~T() , Move(T *,Place&lt;void&gt;) , Swap(T &amp;,T &amp;) no-throw
@@ -1402,7 +1401,7 @@ static PtrLen&lt;T&gt; <span class="Att">Create</span>(Place&lt;void&gt; place,u
 <pre>
 
 template &lt;class T&gt;
-struct <span class="Att">ArrayAlgo_pod</span>
+struct <span class="Att">ArrayAlgo_pod</span> : ArrayAlgoMemBase
  {
   //
   //  Create...() : clean on throw
@@ -1501,7 +1500,7 @@ It is assumed only, that the destructor <b>~T()</b> is <b>no-throw</b>. Swap and
 <pre>
 
 template &lt;class T,class Flags&gt;
-struct <span class="Att">ArrayAlgo_mini</span>
+struct <span class="Att">ArrayAlgo_mini</span> : ArrayAlgoMemBase
  {
   //
   //  assume ~T() no-throw
@@ -1785,6 +1784,53 @@ struct <span class="Att">Creator_swap</span>
  };
 
 </pre>
+
+<h4>Memory management</h4>
+
+<p>
+All default algorithm packages inherit the base class <b>ArrayAlgoMemBase</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">ArrayAlgoMemBase</span>
+ {
+  static void * MemAlloc(ulen len) { return ::CCore::MemAlloc(len); }
+
+  static bool MemExtend(void *mem,ulen len) { return ::CCore::MemExtend(mem,len); }
+
+  static bool MemShrink(void *mem,ulen len) { return ::CCore::MemShrink(mem,len); }
+   
+  static void MemFree(void *mem) { ::CCore::MemFree(mem); }
+ };
+
+</pre>
+
+<p>
+This class defines default memory-management functions, used by arrays to allocate, extend, shrink and release
+memory blocks. If you define a custom algorithm package for your purpose, you may define custom memory
+allocation functions with the following semantic.
+</p>
+
+<p>
+<b>MemAlloc()</b> allocates a memory block of the required length. The block is aligned.
+An exception is thrown in case of error.
+</p>
+
+<p>
+<b>MemFree()</b> releases the previously allocated memory block. The function is never called with
+the null argument.
+</p>
+
+<p>
+<b>MemExtend()</b> tries to extend the previously allocated memory block length to be at least the given argument.
+If the return value is <b>true</b>, then the attempt was successful.
+</p>
+
+<p>
+<b>MemShrink()</b> shrinks the memory block length to be at least the given argument. 
+The return value is never used.
+</p>
 
 <h4>NoThrowFlags</h4>
 

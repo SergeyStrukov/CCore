@@ -132,6 +132,31 @@ as a signed in 2'd complementary representation and return its signed properties
     explicit Dec(UInt a);
    };
 
+  // multiplicative
+
+  struct <span class="Att">Mul</span>
+   {
+    UInt hi;
+    UInt lo;
+    
+    Mul(UInt a,UInt b);
+   };
+  
+  static UInt <span class="Att">Div</span>(UInt hi,UInt lo,UInt den); // hi &lt; den
+  
+  static UInt <span class="Att">Mod</span>(UInt hi,UInt lo,UInt den); // hi &lt; den
+  
+  struct <span class="Att">DivMod</span>
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den); // hi &lt; den
+   };
+  
+  static UInt <span class="Att">ModMul</span>(UInt a,UInt b,UInt mod); // a,b &lt; mod 
+
+  static UInt <span class="Att">ModMac</span>(UInt s,UInt a,UInt b,UInt mod); // s,a,b &lt; mod
  };
 
 </pre>
@@ -152,10 +177,45 @@ as a signed in 2'd complementary representation and return its signed properties
 <b>Dec</b> is a <b>Class-function</b> performing the decrement of the argument with borrow.
 </p>
 
+<p>
+<b>Mul</b> is a <b>Class-function</b> performing the multiplication of the arguments. The result has double
+length and represented by two fields <b>hi</b> and <b>lo</b> for high part and low part 
+of the result respectively.
+</p>
+
+<p>
+<b>Div()</b> performs the division of the double length value by the single length divisor. The value is 
+represented by two arguments <b>hi</b> and <b>lo</b>, <b>den</b> is a divisor. The <b>hi</b> must be less
+than <b>den</b>, it implies that the result has the single length.
+</p>
+
+<p>
+<b>Mod()</b> calculates the reminder of the division of the double length value by the single length divisor. The value is 
+represented by two arguments <b>hi</b> and <b>lo</b>, <b>den</b> is a divisor. The <b>hi</b> must be less
+than <b>den</b>.
+</p>
+
+<p>
+<b>DivMod</b> is a <b>Class-function</b>, it performs the division of the double length value by the single length divisor. The value is 
+represented by two arguments <b>hi</b> and <b>lo</b>, <b>den</b> is a divisor. The <b>div</b> field is
+the quotient and the <b>mod</b> is the reminder.
+</p>
+
+<p>
+<b>ModMul()</b> performs the modular multiplication. It calculates the reminder of the product of 
+<b>a</b> and <b>b</b> by the module <b>mod</b>. It is assumed, that <b>a</b> and <b>b</b> are less than <b>mod</b>.
+</p>
+
+<p>
+<b>ModMac()</b> performs the modular multiplication-and-accumulation. It calculates the reminder of the 
+<b>s</b>+<b>a</b>*<b>b</b> by the module <b>mod</b>. It is assumed, that <b>s</b>, <b>a</b> and <b>b</b> are less than <b>mod</b>.
+</p>
+
 <h3>UInt...()</h3>
 
 <p>
-<b>UInt...()</b> are four functions performing additive operations.
+<b>UInt...()</b> are four functions performing additive operations and 
+four functions performing multiplicative operations.
 </p>
 
 <pre>
@@ -171,6 +231,18 @@ bool <span class="Att">UIntInc</span>(UInt &amp;a);
 
 template &lt;class UInt&gt; 
 bool <span class="Att">UIntDec</span>(UInt &amp;a);
+
+template &lt;class UInt&gt;
+UInt <span class="Att">UIntDiv</span>(UInt hi,UInt lo,UInt den); // hi &lt; den
+
+template &lt;class UInt&gt;
+UInt <span class="Att">UIntMod</span>(UInt hi,UInt lo,UInt den); // hi &lt; den
+
+template &lt;class UInt&gt;
+UInt <span class="Att">UIntModMul</span>(UInt a,UInt b,UInt mod); // a,b &lt; mod 
+
+template &lt;class UInt&gt;
+UInt <span class="Att">UIntModMac</span>(UInt s,UInt a,UInt b,UInt mod); // s,a,b &lt; mod
 
 </pre>
 
@@ -192,6 +264,22 @@ bool <span class="Att">UIntDec</span>(UInt &amp;a);
 
 <p>
 Each function returns the carry/borrow condition flag. 
+</p>
+
+<p>
+<b>UIntDiv()</b> performs the division of the double length value by the single length divisor.
+</p>
+
+<p>
+<b>UIntMod()</b> calculates the reminder of the division of the double length value by the single length divisor.
+</p>
+
+<p>
+<b>UIntModMul()</b> performs the modular multiplication.
+</p>
+
+<p>
+<b>UIntModMac()</b> performs the modular multiplication-and-accumulation.
 </p>
 
 </body>
