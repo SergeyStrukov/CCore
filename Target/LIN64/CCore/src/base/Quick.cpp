@@ -14,6 +14,8 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/base/Quick.h>
+
+#include <CCore/inc/math/IntegerSlowAlgo.h>
  
 namespace CCore {
 namespace Quick {
@@ -125,6 +127,104 @@ uint64 ByteSwap64(uint64 value) noexcept
  }
  
 #endif  
+
+/* struct DefAlgo<UInt> */
+
+namespace Private_Quick {
+
+template <class UInt> 
+struct DefAlgo
+ {
+  using Algo = Math::IntegerSlowMulAlgo<UInt> ;
+  
+  using Mul = typename Algo::DoubleMul ;
+  
+  static UInt Div(UInt hi,UInt lo,UInt den)
+   {
+    return Algo::DoubleUDiv(hi,lo,den);
+   }
+  
+  static UInt Mod(UInt hi,UInt lo,UInt den)
+   {
+    UInt div=Div(hi,lo,den);
+    
+    return lo-UInt(div*den);
+   }
+  
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den)
+     {
+      div=Div(hi,lo,den);
+      mod=lo-UInt(div*den);
+     }
+   };
+  
+  static UInt ModMul(UInt a,UInt b,UInt mod)
+   {
+    Mul mul(a,b);
+    
+    return Mod(mul.hi,mul.lo,mod);
+   }
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod)
+   {
+    Mul mul(a,b);
+    
+    mul.hi+=UIntAdd(mul.lo,s);
+    
+    return Mod(mul.hi,mul.lo,mod);
+   }
+ };
+
+} // namespace Private_Quick
+
+using namespace Private_Quick;
+
+/* struct UIntMulFunc<uint64> */
+
+#if 0
+
+UIntMulFunc<uint64>::Mul::Mul(UInt a,UInt b)
+ {
+  DefAlgo<uint64>::Mul res(a,b);
+  
+  hi=res.hi;
+  lo=res.lo;
+ }
+  
+auto UIntMulFunc<uint64>::Div(UInt hi,UInt lo,UInt den) -> UInt
+ {
+  return DefAlgo<uint64>::Div(hi,lo,den);
+ }
+  
+auto UIntMulFunc<uint64>::Mod(UInt hi,UInt lo,UInt den) -> UInt
+ {
+  return DefAlgo<uint64>::Mod(hi,lo,den);
+ }
+  
+UIntMulFunc<uint64>::DivMod::DivMod(UInt hi,UInt lo,UInt den)
+ {
+  DefAlgo<uint64>::DivMod res(hi,lo,den);
+  
+  div=res.div;
+  mod=res.mod;
+ }
+  
+auto UIntMulFunc<uint64>::ModMul(UInt a,UInt b,UInt mod) -> UInt
+ {
+  return DefAlgo<uint64>::ModMul(a,b,mod);
+ }
+
+auto UIntMulFunc<uint64>::ModMac(UInt s,UInt a,UInt b,UInt mod) -> UInt
+ {
+  return DefAlgo<uint64>::ModMac(s,a,b,mod);
+ }
+
+#endif
 
 } // namespace Quick
 } // namespace CCore
