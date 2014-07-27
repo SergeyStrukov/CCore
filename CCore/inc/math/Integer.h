@@ -116,7 +116,8 @@ struct IntegerPrintOpt;
 
 template <class Integer> class PrintInteger;
 
-template <class Algo, template <class T,class A=ArrayAlgo<T> > class ArrayType = RefArray > class Integer;
+template <class Algo, template <class T,class A> class ArrayType = RefArray , 
+                      template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType = ArrayAlgo > class Integer;
 
 template <class Integer> class RandomInteger;
 
@@ -1527,9 +1528,9 @@ void PrintInteger<Integer>::operator () (P &out,IntegerPrintOpt opt,Integer a) c
     }
  }
 
-/* class Integer<Algo,ArrayType> */ 
+/* class Integer<Algo,ArrayType,ArrayAlgoType> */ 
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 class Integer
  {
   public:
@@ -1542,7 +1543,7 @@ class Integer
    
   private: 
    
-   ArrayType<Unit> body;
+   ArrayType<Unit,ArrayAlgoType<Unit> > body;
    
   private: 
    
@@ -1641,6 +1642,8 @@ class Integer
    Integer pow(unsigned deg) const;
    
    void modify() { body.modify(); }
+   
+   void cloneTo(Integer &ret) const { body.cloneTo(ret.body); }
    
    Integer & set_null() { body.erase(); return *this; }
    
@@ -2006,8 +2009,8 @@ class Integer
  
  // normalization
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-void Integer<Algo,ArrayType>::normalize()
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+void Integer<Algo,ArrayType,ArrayAlgoType>::normalize()
  {
   ulen len=body.getLen();
   ulen new_len=Algo::Normalize(body.getPtr(),len);
@@ -2019,8 +2022,8 @@ void Integer<Algo,ArrayType>::normalize()
  
  // operators
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::add(const Unit *b,ulen nb)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::add(const Unit *b,ulen nb)
  {
   ulen na=body.getLen();
   
@@ -2032,7 +2035,7 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::add(const Unit *b,ulen nb)
     }
   else
     {
-     ArrayType<Unit> result(DoBuild,AddBuilder(getBody(),Range(b,nb)));
+     ArrayType<Unit,ArrayAlgoType<Unit> > result(DoBuild,AddBuilder(getBody(),Range(b,nb)));
      
      Swap(body,result);
     }  
@@ -2042,8 +2045,8 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::add(const Unit *b,ulen nb)
   return *this;
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::sub(const Unit *b,ulen nb)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::sub(const Unit *b,ulen nb)
  {
   ulen na=body.getLen();
   
@@ -2055,7 +2058,7 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::sub(const Unit *b,ulen nb)
     }
   else
     {
-     ArrayType<Unit> result(DoBuild,SubBuilder(getBody(),Range(b,nb)));
+     ArrayType<Unit,ArrayAlgoType<Unit> > result(DoBuild,SubBuilder(getBody(),Range(b,nb)));
      
      Swap(body,result);
     }  
@@ -2065,8 +2068,8 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::sub(const Unit *b,ulen nb)
   return *this;
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::revsub(const Unit *b,ulen nb)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::revsub(const Unit *b,ulen nb)
  {
   ulen na=body.getLen();
   
@@ -2078,7 +2081,7 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::revsub(const Unit *b,ulen nb)
     }
   else
     {
-     ArrayType<Unit> result(DoBuild,SubBuilder(Range(b,nb),getBody()));
+     ArrayType<Unit,ArrayAlgoType<Unit> > result(DoBuild,SubBuilder(Range(b,nb),getBody()));
      
      Swap(body,result);
     }  
@@ -2088,10 +2091,10 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::revsub(const Unit *b,ulen nb)
   return *this;
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::mul(const Unit *b,ulen nb)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::mul(const Unit *b,ulen nb)
  {
-  ArrayType<Unit> result(DoBuild,MulBuilder(getBody(),Range(b,nb)));
+  ArrayType<Unit,ArrayAlgoType<Unit> > result(DoBuild,MulBuilder(getBody(),Range(b,nb)));
   
   Swap(body,result);
   
@@ -2100,24 +2103,24 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::mul(const Unit *b,ulen nb)
   return *this;
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::div(const Unit *b,ulen nb)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::div(const Unit *b,ulen nb)
  {
   IntegerDivider<Algo> divider(getBody(),Range(b,nb));
   
-  ArrayType<Unit> result(DoCopy(divider.getResult().len),divider.getResult().ptr);
+  ArrayType<Unit,ArrayAlgoType<Unit> > result(DoCopy(divider.getResult().len),divider.getResult().ptr);
   
   Swap(body,result);
   
   return *this;
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::mod(const Unit *b,ulen nb)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::mod(const Unit *b,ulen nb)
  {
   IntegerDivider<Algo> divider(getBody(),Range(b,nb),true); 
   
-  ArrayType<Unit> result(DoCopy(divider.getMod().len),divider.getMod().ptr);
+  ArrayType<Unit,ArrayAlgoType<Unit> > result(DoCopy(divider.getMod().len),divider.getMod().ptr);
   
   Swap(body,result);
   
@@ -2126,25 +2129,25 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::mod(const Unit *b,ulen nb)
 
  // constructors 
   
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType>::Integer(StrLen str)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType>::Integer(StrLen str)
  {
   IntegerFromString<Integer> conv(str.len);
   
   *this=conv(str);
  }
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 template <class UInt>
-Integer<Algo,ArrayType>::Integer(UInt val,Meta::EnableIf<Meta::IsUInt<UInt>::Ret>)
+Integer<Algo,ArrayType,ArrayAlgoType>::Integer(UInt val,Meta::EnableIf<Meta::IsUInt<UInt>::Ret>)
  : body(DoBuild,IntegerUIntBuilder<Algo,UInt>(val))
  {
   normalize();
  }
    
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 template <class SInt>
-Integer<Algo,ArrayType>::Integer(SInt val,Meta::EnableIf<Meta::IsSInt<SInt>::Ret>)
+Integer<Algo,ArrayType,ArrayAlgoType>::Integer(SInt val,Meta::EnableIf<Meta::IsSInt<SInt>::Ret>)
  : body(DoBuild,IntegerSIntBuilder<Algo,SInt>(val))
  {
   normalize();
@@ -2152,14 +2155,14 @@ Integer<Algo,ArrayType>::Integer(SInt val,Meta::EnableIf<Meta::IsSInt<SInt>::Ret
    
  // methods
    
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-CmpResult Integer<Algo,ArrayType>::sign() const
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+CmpResult Integer<Algo,ArrayType,ArrayAlgoType>::sign() const
  {
   return Algo::Sign(body.getPtr(),body.getLen());
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-auto Integer<Algo,ArrayType>::bitsOf() const -> BitsOf
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+auto Integer<Algo,ArrayType,ArrayAlgoType>::bitsOf() const -> BitsOf
  {
   ulen len=body.getLen();
   
@@ -2186,14 +2189,14 @@ auto Integer<Algo,ArrayType>::bitsOf() const -> BitsOf
     }
  }
    
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::sq() const
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::sq() const
  {
   return Sq(getBody());
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::pow(unsigned deg) const
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::pow(unsigned deg) const
  {
   if( deg==0 ) return 1;
   
@@ -2214,66 +2217,66 @@ Integer<Algo,ArrayType> Integer<Algo,ArrayType>::pow(unsigned deg) const
  
  // operators
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::Neg(PtrLen<const Unit> a)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Neg(PtrLen<const Unit> a)
  {
   return Integer(DoBuild,NegBuilder(a));
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::Add(PtrLen<const Unit> a,PtrLen<const Unit> b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Add(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
   return Integer(DoBuild,AddBuilder(a,b));
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::Sub(PtrLen<const Unit> a,PtrLen<const Unit> b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Sub(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
   return Integer(DoBuild,SubBuilder(a,b));
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::Mul(PtrLen<const Unit> a,PtrLen<const Unit> b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Mul(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
   return Integer(DoBuild,MulBuilder(a,b));
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::Sq(PtrLen<const Unit> a)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Sq(PtrLen<const Unit> a)
  {
   return Integer(DoBuild,SqBuilder(a));
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::Div(PtrLen<const Unit> a,PtrLen<const Unit> b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Div(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
   IntegerDivider<Algo> divider(a,b);
   
   return Integer(CopyFrom,divider.getResult());
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::Mod(PtrLen<const Unit> a,PtrLen<const Unit> b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Mod(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
   IntegerDivider<Algo> divider(a,b,true);
   
   return Integer(CopyFrom,divider.getMod());
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::LShift(PtrLen<const Unit> a,unsigned shift)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::LShift(PtrLen<const Unit> a,unsigned shift)
  {
   return Integer(DoBuild,LShiftBuilder(a,shift));
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> Integer<Algo,ArrayType>::RShift(PtrLen<const Unit> a,unsigned shift)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::RShift(PtrLen<const Unit> a,unsigned shift)
  {
   return Integer(DoBuild,RShiftBuilder(a,shift));
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType>::DivMod::DivMod(PtrLen<const Unit> a,PtrLen<const Unit> b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType>::DivMod::DivMod(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
   IntegerDivider<Algo> divider(a,b,true);
   
@@ -2286,8 +2289,8 @@ Integer<Algo,ArrayType>::DivMod::DivMod(PtrLen<const Unit> a,PtrLen<const Unit> 
 
  // operators
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::neg()
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::neg()
  {
   ulen na=body.getLen();
   
@@ -2300,8 +2303,8 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::neg()
   return *this;
  }
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::revsub(const Integer<Algo,ArrayType> &b_)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::revsub(const Integer<Algo,ArrayType,ArrayAlgoType> &b_)
  {
   const Unit *b=b_.body.getPtr();
   
@@ -2312,8 +2315,8 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::revsub(const Integer<Algo,Arr
   return revsub(b,nb);
  }
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator += (const Integer<Algo,ArrayType> &b_)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::operator += (const Integer<Algo,ArrayType,ArrayAlgoType> &b_)
  {
   const Unit *b=b_.body.getPtr();
   
@@ -2324,8 +2327,8 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator += (const Integer<Al
   return add(b,nb);
  }
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator -= (const Integer<Algo,ArrayType> &b_)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::operator -= (const Integer<Algo,ArrayType,ArrayAlgoType> &b_)
  {
   const Unit *b=b_.body.getPtr();
   
@@ -2336,26 +2339,26 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator -= (const Integer<Al
   return sub(b,nb);
  }
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator *= (const Integer<Algo,ArrayType> &b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::operator *= (const Integer<Algo,ArrayType,ArrayAlgoType> &b)
  {
   return mul(b.body.getPtr(),b.body.getLen());
  }
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator /= (const Integer<Algo,ArrayType> &b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::operator /= (const Integer<Algo,ArrayType,ArrayAlgoType> &b)
  {
   return div(b.body.getPtr(),b.body.getLen());
  }
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator %= (const Integer<Algo,ArrayType> &b)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::operator %= (const Integer<Algo,ArrayType,ArrayAlgoType> &b)
  {
   return mod(b.body.getPtr(),b.body.getLen());
  }
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator <<= (unsigned shift_)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::operator <<= (unsigned shift_)
  {
   if( !shift_ ) return *this;
   
@@ -2390,8 +2393,8 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator <<= (unsigned shift_
   return *this;
  }
  
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
-Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator >>= (unsigned shift_)
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
+Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::operator >>= (unsigned shift_)
  {
   if( !shift_ || body.getLen()==0 ) return *this;
   
@@ -2436,9 +2439,9 @@ Integer<Algo,ArrayType> & Integer<Algo,ArrayType>::operator >>= (unsigned shift_
  
  // print object
 
-template <class Algo,template <class T,class A=ArrayAlgo<T> > class ArrayType>
+template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 template <class P>   
-void Integer<Algo,ArrayType>::print(P &out,PrintOptType opt) const
+void Integer<Algo,ArrayType,ArrayAlgoType>::print(P &out,PrintOptType opt) const
  {
   PrintInteger<Integer> print(body.getLen());
   

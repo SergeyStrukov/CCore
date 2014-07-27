@@ -21,6 +21,7 @@
 #include <CCore/inc/PrintTime.h>
 #include <CCore/inc/Job.h>
 #include <CCore/inc/Counters.h>
+#include <CCore/inc/TaskHeap.h>
 
 #include <CCore/inc/math/NoPrimeTest.h>
 #include <CCore/inc/math/APRTest.h>
@@ -36,7 +37,6 @@ namespace Private_0108 {
 /* type Int */
 
 using Int       = Math::Integer<Math::IntegerFastAlgo> ;
-using ParaInt   = Math::Integer<Math::IntegerFastAlgo,AtomicRefArray> ;
 using RandomInt = Math::RandomInteger<Int> ;
 
 /* test1() */
@@ -92,7 +92,7 @@ class ConReport
    
    void testP(unsigned p) const { Printf(Con,"p = #;\n",p); }
    
-   void testQ(Math::APRTest::QType q) const{ /*if( full )*/ Printf(Con,"  q = #;\n",q); }
+   void testQ(Math::APRTest::QType q) const{ if( full ) Printf(Con,"  q = #;\n",q); }
    
    template <class Integer>
    static Integer Fix(Integer a,Integer Nminus1)
@@ -474,18 +474,25 @@ void test7()
 
 /* test8() */
 
+template <class T,class F>
+struct ParaArrayAlgo : TaskHeapMemAlgo<ArrayAlgo<T,F> > {};
+
+using ParaInt = Math::Integer<Math::IntegerFastAlgo,RefArray,ParaArrayAlgo> ;
+
 void test8()
  {
+  TaskHeap task_heap;
+  
   // 1
   {
    Math::OctetInteger<ParaInt> P(Range(Crypton::DHModI::Mod));
    
-   Math::APRTest::ParaTestEngine<ParaInt> test;
+   Math::APRTest::ParaTestEngine<ParaInt,ParaArrayAlgo> test;
    
    {
     ConReport report;
      
-    Printf(Con,"ModI Prime = #;\n",test(P,report));
+    Printf(Con,"ModI Prime = #;\n",test((ParaInt)P,report));
    }
    
    {
@@ -499,7 +506,7 @@ void test8()
   {
    Math::OctetInteger<ParaInt> P(Range(Crypton::DHModII::Mod));
    
-   Math::APRTest::TestEngine<ParaInt> test;
+   Math::APRTest::ParaTestEngine<ParaInt,ParaArrayAlgo> test;
    
    {
     ConReport report;
@@ -536,7 +543,7 @@ bool Testit<108>::Main()
   //test5();
   //test6();
   //test7();
-  //test8();
+  test8();
   
   return true;
  }

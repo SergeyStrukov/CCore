@@ -66,7 +66,7 @@ class NoReport;
 
 template <class Integer> class TestEngine;
 
-template <class Integer> class ParaTestEngine;
+template <class Integer,template <class T,class F=NoThrowFlags<T> > class ArrayAlgo> class ParaTestEngine;
 
 /* enum TestResult */
 
@@ -1091,9 +1091,9 @@ class TestEngine : TestData
     }
  };
 
-/* class ParaTestEngine<Integer> */
+/* class ParaTestEngine<Integer,ArrayAlgo> */
 
-template <class Integer> // Atomic
+template <class Integer,template <class T,class F=NoThrowFlags<T> > class ArrayAlgo>
 class ParaTestEngine : TestData
  {
    Integer P[MaxN];
@@ -1102,7 +1102,7 @@ class ParaTestEngine : TestData
  
   private:
    
-   using Ring = RefArray<Integer> ;
+   using Ring = RefArray<Integer,ArrayAlgo<Integer> > ;
    
    class Engine : NoCopy
     {
@@ -1446,7 +1446,7 @@ class ParaTestEngine : TestData
    class JobControl : public Funchor_nocopy
     {
       const TestSet *pset;
-      Engine &engine;
+      Integer N;
       bool *flags;
       unsigned set_number;
       Report &report;
@@ -1460,6 +1460,12 @@ class ParaTestEngine : TestData
       
       void job()
        {
+        Integer temp;
+        
+        N.cloneTo(temp);
+        
+        Engine engine(temp);
+        
         for(unsigned i;;)
           {
            {
@@ -1487,9 +1493,9 @@ class ParaTestEngine : TestData
       
      public:
     
-      JobControl(const TestSet *pset_,Engine &engine_,bool *flags_,unsigned set_number_,Report &report_)
+      JobControl(const TestSet *pset_,Integer N_,bool *flags_,unsigned set_number_,Report &report_)
        : pset(pset_),
-         engine(engine_),
+         N(N_),
          flags(flags_),
          set_number(set_number_),
          report(report_)
@@ -1561,7 +1567,7 @@ class ParaTestEngine : TestData
      }
 
      {
-      JobControl<Report> control(pset,engine,flags.getPtr(),set_number,report);
+      JobControl<Report> control(pset,N,flags.getPtr(),set_number,report);
       
       {
        Job run_job(control.function_job());
