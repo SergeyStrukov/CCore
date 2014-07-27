@@ -48,7 +48,7 @@ NOWARN = -Wno-non-virtual-dtor \
 
 CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) -I$(CCORE_ROOT) -I$(CCORE_ROOT)/XCore 
 
-CCOPT = -c -std=c++11 -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -mno-unaligned-access -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
+CCOPT = -c -std=c++11 -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -mno-unaligned-access -O3 -fwrapv -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
 
 ASOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard
 

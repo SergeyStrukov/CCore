@@ -49,7 +49,7 @@ NOWARN = -Wno-non-virtual-dtor \
 
 CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) -I$(CCORE_ROOT) -I$(CCORE_ROOT)/HCore 
 
-CCOPT = -c -std=c++11 -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
+CCOPT = -c -std=c++11 -fwrapv -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
 
 ASOPT =
 
