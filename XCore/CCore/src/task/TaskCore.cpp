@@ -18,6 +18,7 @@
 #include <CCore/inc/Abort.h>
 
 #include <CCore/inc/sys/SysLog.h>
+#include <CCore/inc/PerTask.h>
  
 namespace CCore {
 
@@ -197,6 +198,8 @@ void Task::Entry(Task *task)
  {
   try
     {
+     DestroyPerTask dpt;
+   
      task->entry();
     }
   catch(...)

@@ -18,7 +18,7 @@
 #include <CCore/inc/PacketPool.h>
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/Job.h>
-#include <CCore/inc/TaskHeap.h>
+#include <CCore/inc/PerTask.h>
 
 namespace CCore {
 
@@ -34,7 +34,7 @@ struct Empty
 PlanInitObject<Empty,PlanInitReq<GetPlanInitNode_PacketPool>
                     ,PlanInitReq<GetPlanInitNode_ObjHost>
                     ,PlanInitReq<GetPlanInitNode_JobHost>
-                    ,PlanInitReq<GetPlanInitNode_TaskHeap>
+                    ,PlanInitReq<GetPlanInitNode_PerTask>
                     > Object CCORE_INITPRI_1 ;
 
 } // namespace Private_PlanInit

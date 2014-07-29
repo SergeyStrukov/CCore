@@ -17,6 +17,7 @@
  
 #include <CCore/inc/Abort.h>
 #include <CCore/inc/TlsSlot.h>
+#include <CCore/inc/PerTask.h>
  
 namespace CCore {
 
@@ -47,6 +48,8 @@ void Task::EntryFunc(Sys::TaskEntry *obj)
   
   try
     {
+     DestroyPerTask dpt;
+    
      task->entry();
     }
   catch(...)  
