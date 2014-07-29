@@ -3,7 +3,7 @@
 //
 //  Project: CCore 1.08
 //
-//  Tag: Target/BeagleBoneBlack
+//  Tag: Target/Vanilla-X
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //

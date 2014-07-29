@@ -18,6 +18,7 @@
 #include <CCore/inc/Task.h>
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/Job.h>
+#include <CCore/inc/PerTask.h>
 
 #include <CCore/inc/libc/stdioPlanInit.h>
 
@@ -36,6 +37,7 @@ PlanInitObject<Empty,PlanInitReq<GetPlanInitNode_TaskCoreExt>
                     ,PlanInitReq<GetPlanInitNode_stdio>
                     ,PlanInitReq<GetPlanInitNode_ObjHost>
                     ,PlanInitReq<GetPlanInitNode_JobHost>
+                    ,PlanInitReq<GetPlanInitNode_PerTask>
                     > Object CCORE_INITPRI_1 ;
 
 } // namespace Private_PlanInit
