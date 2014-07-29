@@ -172,6 +172,7 @@
 ../../CCore/src/PacketPool_PacketMaxDataLen.cpp
 ../../CCore/src/PacketSet.cpp
 ../../CCore/src/Path.cpp
+../../CCore/src/PerTask.cpp
 ../../CCore/src/PlanInit.cpp
 ../../CCore/src/print/PrintAsyncFile.cpp
 ../../CCore/src/print/PrintPTPCon.cpp

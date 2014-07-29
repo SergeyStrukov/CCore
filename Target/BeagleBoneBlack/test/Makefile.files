@@ -93,6 +93,7 @@ OBJ_LIST = \
 ../test-obj/test0091.NoPrimeTest.o \
 ../test-obj/test0092.TypeSwitch.o \
 ../test-obj/test0093.Quick.o \
+../test-obj/test0094.PerTask.o \
 ../test-obj/test0100.Bridge.o \
 ../test-obj/test0101.PTP.o \
 ../test-obj/test0102.PrintFile.o \
@@ -239,6 +240,7 @@ ASM_LIST = \
 ../test-obj/test0091.NoPrimeTest.s \
 ../test-obj/test0092.TypeSwitch.s \
 ../test-obj/test0093.Quick.s \
+../test-obj/test0094.PerTask.s \
 ../test-obj/test0100.Bridge.s \
 ../test-obj/test0101.PTP.s \
 ../test-obj/test0102.PrintFile.s \
@@ -385,6 +387,7 @@ DEP_LIST = \
 ../test-obj/test0091.NoPrimeTest.dep \
 ../test-obj/test0092.TypeSwitch.dep \
 ../test-obj/test0093.Quick.dep \
+../test-obj/test0094.PerTask.dep \
 ../test-obj/test0100.Bridge.dep \
 ../test-obj/test0101.PTP.dep \
 ../test-obj/test0102.PrintFile.dep \
@@ -722,6 +725,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0093.Quick.o : ../../../CCore/test/test0093.Quick.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test0094.PerTask.o : ../../../CCore/test/test0094.PerTask.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1155,6 +1161,9 @@ include $(RULES_FILE)
 ../test-obj/test0093.Quick.s : ../../../CCore/test/test0093.Quick.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test0094.PerTask.s : ../../../CCore/test/test0094.PerTask.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1585,6 +1594,9 @@ include $(RULES_FILE)
 
 ../test-obj/test0093.Quick.dep : ../../../CCore/test/test0093.Quick.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0093.Quick.o $< -MF $@
+
+../test-obj/test0094.PerTask.dep : ../../../CCore/test/test0094.PerTask.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0094.PerTask.o $< -MF $@
 
 ../test-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@

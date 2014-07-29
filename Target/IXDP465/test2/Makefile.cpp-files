@@ -93,6 +93,7 @@
 ../../../CCore/test/test0091.NoPrimeTest.cpp
 ../../../CCore/test/test0092.TypeSwitch.cpp
 ../../../CCore/test/test0093.Quick.cpp
+../../../CCore/test/test0094.PerTask.cpp
 ../../../CCore/test/test0100.Bridge.cpp
 ../../../CCore/test/test0101.PTP.cpp
 ../../../CCore/test/test0102.PrintFile.cpp

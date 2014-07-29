@@ -179,6 +179,7 @@ obj/PacketPool_PacketMaxDataLen.o \
 obj/PacketSet.o \
 obj/ParaQuickSort.o \
 obj/Path.o \
+obj/PerTask.o \
 obj/Place.o \
 obj/PlanInit.o \
 obj/PlanInit_CCore.o \
@@ -477,6 +478,7 @@ obj/PacketPool_PacketMaxDataLen.s \
 obj/PacketSet.s \
 obj/ParaQuickSort.s \
 obj/Path.s \
+obj/PerTask.s \
 obj/Place.s \
 obj/PlanInit.s \
 obj/PlanInit_CCore.s \
@@ -775,6 +777,7 @@ obj/PacketPool_PacketMaxDataLen.dep \
 obj/PacketSet.dep \
 obj/ParaQuickSort.dep \
 obj/Path.dep \
+obj/PerTask.dep \
 obj/Place.dep \
 obj/PlanInit.dep \
 obj/PlanInit_CCore.dep \
@@ -1444,6 +1447,9 @@ obj/ParaQuickSort.o : ../../CCore/src/sort/ParaQuickSort.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Path.o : ../../CCore/src/Path.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PerTask.o : ../../CCore/src/PerTask.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Place.o : ../../CCore/src/gadget/Place.cpp
@@ -2333,6 +2339,9 @@ obj/ParaQuickSort.s : ../../CCore/src/sort/ParaQuickSort.cpp
 obj/Path.s : ../../CCore/src/Path.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PerTask.s : ../../CCore/src/PerTask.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Place.s : ../../CCore/src/gadget/Place.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3219,6 +3228,9 @@ obj/ParaQuickSort.dep : ../../CCore/src/sort/ParaQuickSort.cpp
 
 obj/Path.dep : ../../CCore/src/Path.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Path.o $< -MF $@
+
+obj/PerTask.dep : ../../CCore/src/PerTask.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PerTask.o $< -MF $@
 
 obj/Place.dep : ../../CCore/src/gadget/Place.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Place.o $< -MF $@

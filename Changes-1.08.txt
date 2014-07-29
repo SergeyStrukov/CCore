@@ -68,6 +68,14 @@ gadget/Meta.h
 
   CommonType is added.
 
+PerTask.h
+
+  Advanced per-task object support.
+
+TaskHeap.h
+
+  Per-task heap.
+
 --- Updates ----------
 
 Regen
