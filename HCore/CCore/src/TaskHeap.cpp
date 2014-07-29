@@ -15,57 +15,36 @@
  
 #include <CCore/inc/TaskHeap.h>
 
-#include <CCore/inc/TlsSlot.h>
-#include <CCore/inc/MemBase.h>
-#include <CCore/inc/Exception.h>
+#include <CCore/inc/MemPageHeap.h>
  
 namespace CCore {
 
-/* GetPlanInitNode_...() */ 
+/* struct TaskHeapControl */
 
-namespace Private_TaskHeap {
-
-struct Slot : TlsSlot
+class TaskHeapControl::ObjectType : public MemBase_nocopy   
  {
-  Slot() : TlsSlot("TaskHeap") {}
- };
- 
-Slot Object CCORE_INITPRI_1 ;
-
-} // namespace Private_TaskHeap
- 
-using namespace Private_TaskHeap;
- 
-PlanInitNode * GetPlanInitNode_TaskHeap() { return &Object; }
- 
-/* class TaskHeap::LocalHeap */
-
-class TaskHeap::LocalHeap : public MemBase_nocopy   
- {
-   LocalHeap *next;
-   
    PageHeap heap;
    
   private: 
    
    union Prefix
     {
-     LocalHeap *heap;
+     ObjectType *heap;
      Prefix *next;
      
-     Prefix(LocalHeap *heap_) : heap(heap_) {}
+     Prefix(ObjectType *heap_) : heap(heap_) {}
      
-     LocalHeap * getHeap() const
+     ObjectType * getHeap() const
       {
        void *obj=heap;
-       void *cur=Object.get();
+       void *cur=TryGetTaskObject<TaskHeapControl>();
        
        if( obj==cur ) return heap;
        
        return 0;
       }
      
-     LocalHeap * getForeignHeap() const
+     ObjectType * getForeignHeap() const
       {
        return heap;
       }
@@ -110,27 +89,20 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
    
   public:
   
-   explicit LocalHeap(LocalHeap *next_) : next(next_) {}
+   ObjectType() {}
    
-   LocalHeap(LocalHeap *next_,ulen min_page_alloc_len) : next(next_),heap(min_page_alloc_len) {}
+   explicit ObjectType(ulen min_page_alloc_len) : heap(min_page_alloc_len) {}
    
-   ~LocalHeap()
+   ~ObjectType()
     {
      freeList();
     }
    
-   LocalHeap * destroy()
-    {
-     LocalHeap *ret=next;
-     
-     delete this;
-     
-     return ret;
-    }
+   void destroy() { delete this; }
  
    // methods
    
-   void * alloc(ulen len)
+   void * alloc(ulen len) noexcept
     {
      if( len>MaxAllocLen ) return 0;
      
@@ -180,7 +152,7 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
      
      Prefix *prefix=GetPrefix(mem);
      
-     if( LocalHeap *heap=prefix->getHeap() )
+     if( ObjectType *heap=prefix->getHeap() )
        {
         return heap->extend(prefix,len+Delta);
        }
@@ -196,7 +168,7 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
      
      Prefix *prefix=GetPrefix(mem);
      
-     if( LocalHeap *heap=prefix->getHeap() )
+     if( ObjectType *heap=prefix->getHeap() )
        {
         return heap->shrink(prefix,len+Delta);
        }
@@ -212,7 +184,7 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
      
      Prefix *prefix=GetPrefix(mem);
      
-     if( LocalHeap *heap=prefix->getHeap() )
+     if( ObjectType *heap=prefix->getHeap() )
        {
         heap->free(prefix);
        }
@@ -223,69 +195,27 @@ class TaskHeap::LocalHeap : public MemBase_nocopy
     }
  };
 
+auto TaskHeapControl::BuilderType::create() -> ObjectType *
+ {
+  if( min_page_alloc_len ) return new ObjectType(min_page_alloc_len);
+  
+  return new ObjectType();
+ }
+     
 /* class TaskHeap */
-
-TaskHeap * TaskHeap::Active = 0 ;
-
-auto TaskHeap::GetLocalHeap() -> LocalHeap *
- {
-  void *ptr=Object.get();
-  
-  if( ptr ) return static_cast<LocalHeap *>(ptr);
-
-  if( !Active ) return 0; 
-  
-  LocalHeap *ret=Active->create();
-  
-  Object.set(ret);
-  
-  return ret;
- }
-
-auto TaskHeap::create() -> LocalHeap *
- {
-  Mutex::Lock lock(mutex);
-
-  if( min_page_alloc_len )
-    {
-     LocalHeap *ret=new LocalHeap(list,min_page_alloc_len);
-     
-     list=ret;
-     
-     return ret;
-    }
-  else
-    {
-     LocalHeap *ret=new LocalHeap(list);
-     
-     list=ret;
-     
-     return ret;
-    }
- }
    
-TaskHeap::TaskHeap(ulen min_page_alloc_len_)
- : min_page_alloc_len(min_page_alloc_len_),
-   list(0)
+TaskHeap::TaskHeap(ulen min_page_alloc_len)
+ : TaskObjectBuild<TaskHeapControl>(TaskObjectHard,min_page_alloc_len)
  {
-  if( Active )
-    {
-     Printf(Exception,"CCore::TaskHeap::TaskHeap(...) : already active");
-    }
-   
-  Active=this;
  }
    
 TaskHeap::~TaskHeap()
  {
-  for(LocalHeap *obj=list; obj ;) obj=obj->destroy();
-  
-  Active=0;
  }
    
 void * TaskHeap::TryMemAlloc(ulen len) noexcept
  {
-  LocalHeap *obj=GetLocalHeap();
+  TaskHeapControl::ObjectType *obj=TryGetTaskObject<TaskHeapControl>();
   
   if( !obj ) return 0;
   
@@ -303,17 +233,17 @@ void * TaskHeap::MemAlloc(ulen len)
    
 bool TaskHeap::MemExtend(void *mem,ulen len)
  {
-  return LocalHeap::MemExtend(mem,len);
+  return TaskHeapControl::ObjectType::MemExtend(mem,len);
  }
 
 bool TaskHeap::MemShrink(void *mem,ulen len)
  {
-  return LocalHeap::MemShrink(mem,len);
+  return TaskHeapControl::ObjectType::MemShrink(mem,len);
  }
     
 void TaskHeap::MemFree(void *mem)
  {
-  LocalHeap::Free(mem);
+  TaskHeapControl::ObjectType::Free(mem);
  }
 
 } // namespace CCore

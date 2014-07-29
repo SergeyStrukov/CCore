@@ -16,46 +16,43 @@
 #ifndef CCore_inc_TaskHeap_h
 #define CCore_inc_TaskHeap_h
 
-#include <CCore/inc/MemPageHeap.h>
-#include <CCore/inc/PlanInit.h>
-#include <CCore/inc/Task.h>
+#include <CCore/inc/PerTask.h>
+#include <CCore/inc/Array.h>
  
 namespace CCore {
 
-/* GetPlanInitNode_...() */ 
-
-PlanInitNode * GetPlanInitNode_TaskHeap();
-
 /* classes */
+
+struct TaskHeapControl;
 
 class TaskHeap;
 
 template <class Algo> struct TaskHeapMemAlgo;
 
+template <class T,class Flags=NoThrowFlags<T> > struct TaskHeapArrayAlgo;
+
+/* struct TaskHeapControl */
+
+struct TaskHeapControl
+ {
+  class ObjectType;
+
+  class BuilderType
+   {
+     ulen min_page_alloc_len;
+    
+    public:
+    
+     explicit BuilderType(ulen min_page_alloc_len_) : min_page_alloc_len(min_page_alloc_len_) {}
+     
+     ObjectType * create();
+   };
+ };
+
 /* class TaskHeap */
 
-class TaskHeap : NoCopy
+class TaskHeap : TaskObjectBuild<TaskHeapControl>
  {
-  private:
-  
-   class LocalHeap;
-   
-   static TaskHeap * Active;
-  
-   static LocalHeap * GetLocalHeap(); 
-
-  private:
-   
-   ulen min_page_alloc_len;
-   
-   Mutex mutex;
-   
-   LocalHeap *list;
-   
-  private: 
-   
-   LocalHeap * create();
-   
   public:
   
    explicit TaskHeap(ulen min_page_alloc_len=0);
@@ -86,6 +83,11 @@ struct TaskHeapMemAlgo : Algo
   
   static void MemFree(void *mem) { TaskHeap::MemFree(mem); }
  };
+
+/* struct TaskHeapArrayAlgo<T,Flags> */
+
+template <class T,class Flags>
+struct TaskHeapArrayAlgo : TaskHeapMemAlgo<ArrayAlgo<T,Flags> > {};
 
 } // namespace CCore
  
