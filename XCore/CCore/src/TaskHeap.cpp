@@ -3,7 +3,7 @@
 //
 //  Project: CCore 1.08
 //
-//  Tag: HCore
+//  Tag: XCore
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -15,7 +15,7 @@
  
 #include <CCore/inc/TaskHeap.h>
 
-#include <CCore/inc/MemPageHeap.h>
+#include <CCore/inc/MemSpaceHeap.h>
  
 namespace CCore {
 
@@ -23,7 +23,7 @@ namespace CCore {
 
 class TaskHeapControl::ObjectType : public MemBase_nocopy   
  {
-   PageHeap heap;
+   SpaceHeap heap;
    
   private: 
    
@@ -83,9 +83,7 @@ class TaskHeapControl::ObjectType : public MemBase_nocopy
    
   public:
   
-   ObjectType() {}
-   
-   explicit ObjectType(ulen min_page_alloc_len) : heap(min_page_alloc_len) {}
+   explicit ObjectType(ulen mem_len) : heap(mem_len) {}
    
    ~ObjectType()
     {
@@ -191,15 +189,13 @@ class TaskHeapControl::ObjectType : public MemBase_nocopy
 
 auto TaskHeapControl::BuilderType::create() -> ObjectType *
  {
-  if( min_page_alloc_len ) return new ObjectType(min_page_alloc_len);
-  
-  return new ObjectType();
+  return new ObjectType(mem_len);
  }
      
 /* class TaskHeap */
    
-TaskHeap::TaskHeap(ulen min_page_alloc_len)
- : TaskObjectBuild<TaskHeapControl>(TaskObjectHard,min_page_alloc_len)
+TaskHeap::TaskHeap(ulen mem_len)
+ : TaskObjectBuild<TaskHeapControl>(TaskObjectHard,mem_len)
  {
  }
    

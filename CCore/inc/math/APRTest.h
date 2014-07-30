@@ -1413,31 +1413,146 @@ class ParaTestEngine : TestData
      return engine.template pow<unsigned>(N,p-1)!=1;
     }
    
+  private: 
+   
+   template <class Report>
+   class FinishJobControl : public Funchor_nocopy
+    {
+      Integer N;
+      Integer Q;
+      Integer D1;
+      Integer DStep;
+      Report &report;
+      
+      Mutex mutex;
+      
+      Integer D;
+      Integer cnt;
+      
+      TestResult result = IsPrime ;
+     
+     private: 
+      
+      static const ulen Delta = 100000 ;
+      
+      void job()
+       {
+        Integer N_;
+        Integer Q_;
+        Integer D1_;
+        Integer DStep_;
+        
+        N.cloneTo(N_);
+        Q.cloneTo(Q_);
+        D1.cloneTo(D1_);
+        DStep.cloneTo(DStep_);
+        
+        ModEngine<Integer> engine(Q_);
+        
+        for(;;)
+          {
+           Integer D_;
+           ulen count;
+          
+           {
+            Mutex::Lock lock(mutex);
+            
+            if( result!=IsPrime ) return;
+            
+            Integer cnt_;
+            
+            cnt.cloneTo(cnt_);
+            
+            report.probe(cnt_);
+            
+            if( cnt_>Delta )
+              {
+               D.cloneTo(D_);
+               count=Delta;
+               
+               cnt_-=Delta;
+               D_=engine.mul(D_,DStep);
+               
+               D_.modify();
+               cnt_.modify();
+               
+               Swap(D,D_);
+               Swap(cnt,cnt_);
+              }
+            else
+              {
+               count=cnt_.template cast<ulen>();
+               
+               if( !count ) return;
+               
+               D.cloneTo(D_);
+               
+               cnt_=0;
+               
+               cnt_.modify();
+               
+               Swap(cnt,cnt_);
+              }
+           }
+           
+           for(; count ;count--,D_=engine.mul(D_,D1_))
+             {
+              if( D_>1 && D_<N_ && !(N_%D_) )
+                {
+                 report.div(D_);
+                
+                 Mutex::Lock lock(mutex);
+                 
+                 result=HasDivisor;
+                 
+                 return; 
+                }
+             }
+          }
+       }
+      
+     public:
+    
+      FinishJobControl(Integer N_,Integer P_,Integer Q_,Report &report_)
+       : N(N_),
+         Q(Q_),
+         D1(N_%Q_),
+         report(report_)
+       {
+        D=D1;
+        cnt=P_-1;
+        
+        D.modify();
+        cnt.modify();
+        
+        ModEngine<Integer> engine(Q_);
+        
+        DStep=engine.pow(D1,Delta);
+       }
+      
+      ~FinishJobControl() {}
+      
+      Function<void (void)> function_job() { return FunctionOf(this,&FinishJobControl::job); }
+      
+      TestResult getResult() const { return result; }
+    };
+   
    template <class Report>
    TestResult finish(Integer N,unsigned set_number,Report &report) const
     {
      report.startProbe();
      
-     ModEngine<Integer> engine(Q[set_number]);
+     FinishJobControl<Report> control(N,P[set_number],Q[set_number],report);
+      
+     {
+      Job run_job(control.function_job());
+     }
      
-     Integer D1=engine.prepare(N);
-     Integer D=D1;
+     TestResult ret=control.getResult();
      
-     for(Integer cnt=P[set_number]-1; cnt>0 ;cnt-=1,D=engine.mul(D,D1))
-       {
-        report.probe(cnt);
-        
-        if( D>1 && D<N && !(N%D) )
-          {
-           report.div(D);
-          
-           return HasDivisor;
-          }
-       }
+     if( ret==IsPrime ) report.isPrime();
      
-     report.isPrime();
-     
-     return IsPrime;
+     return ret;
     }
    
   private: 
@@ -1460,11 +1575,11 @@ class ParaTestEngine : TestData
       
       void job()
        {
-        Integer temp;
+        Integer N_;
         
-        N.cloneTo(temp);
+        N.cloneTo(N_);
         
-        Engine engine(temp);
+        Engine engine(N_);
         
         for(unsigned i;;)
           {
@@ -1589,8 +1704,7 @@ class ParaTestEngine : TestData
           }
        }
      
-     return IsPrime;
-     //return finish(N,set_number,report);
+     return finish(N,set_number,report);
     }
  };
 

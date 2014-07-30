@@ -203,7 +203,7 @@ class PerTask : public MemBase_nocopy
           }
        }    
       
-      void destroy(void *obj) const
+      void destroy(void *obj) const noexcept
        {
         destroy_func(obj);
        }

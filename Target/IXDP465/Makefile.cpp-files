@@ -285,6 +285,7 @@
 ../../XCore/CCore/src/task/Ticker.cpp
 ../../XCore/CCore/src/task/TlsBuf.cpp
 ../../XCore/CCore/src/Task.cpp
+../../XCore/CCore/src/TaskHeap.cpp
 ../../Target/IXDP465/CCore/src/base/PlatformBase.cpp
 ../../Target/IXDP465/CCore/src/base/Quick.cpp
 ../../Target/IXDP465/CCore/src/Boot.cpp

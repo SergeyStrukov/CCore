@@ -280,6 +280,7 @@ obj/Task.o \
 obj/TaskContext.o \
 obj/TaskCore.o \
 obj/TaskEvent.o \
+obj/TaskHeap.o \
 obj/TaskInternal.o \
 obj/TaskList.o \
 obj/TaskMonitor.o \
@@ -602,6 +603,7 @@ obj/Task.s \
 obj/TaskContext.s \
 obj/TaskCore.s \
 obj/TaskEvent.s \
+obj/TaskHeap.s \
 obj/TaskInternal.s \
 obj/TaskList.s \
 obj/TaskMonitor.s \
@@ -924,6 +926,7 @@ obj/Task.dep \
 obj/TaskContext.dep \
 obj/TaskCore.dep \
 obj/TaskEvent.dep \
+obj/TaskHeap.dep \
 obj/TaskInternal.dep \
 obj/TaskList.dep \
 obj/TaskMonitor.dep \
@@ -1820,6 +1823,9 @@ obj/TaskCore.o : ../../XCore/CCore/src/task/TaskCore.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TaskEvent.o : ../../XCore/CCore/src/task/TaskEvent.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskHeap.o : ../../XCore/CCore/src/TaskHeap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TaskInternal.o : ../../XCore/CCore/src/task/TaskInternal.cpp
@@ -2781,6 +2787,9 @@ obj/TaskCore.s : ../../XCore/CCore/src/task/TaskCore.cpp
 obj/TaskEvent.s : ../../XCore/CCore/src/task/TaskEvent.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/TaskHeap.s : ../../XCore/CCore/src/TaskHeap.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/TaskInternal.s : ../../XCore/CCore/src/task/TaskInternal.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3739,6 +3748,9 @@ obj/TaskCore.dep : ../../XCore/CCore/src/task/TaskCore.cpp
 
 obj/TaskEvent.dep : ../../XCore/CCore/src/task/TaskEvent.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskEvent.o $< -MF $@
+
+obj/TaskHeap.dep : ../../XCore/CCore/src/TaskHeap.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskHeap.o $< -MF $@
 
 obj/TaskInternal.dep : ../../XCore/CCore/src/task/TaskInternal.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskInternal.o $< -MF $@

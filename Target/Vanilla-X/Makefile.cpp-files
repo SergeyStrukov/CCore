@@ -285,6 +285,7 @@
 ../../XCore/CCore/src/task/Ticker.cpp
 ../../XCore/CCore/src/task/TlsBuf.cpp
 ../../XCore/CCore/src/Task.cpp
+../../XCore/CCore/src/TaskHeap.cpp
 ../../Target/Vanilla-X/CCore/src/base/PlatformBase.cpp
 ../../Target/Vanilla-X/CCore/src/base/Quick.cpp
 ../../Target/Vanilla-X/CCore/src/dev/DevInt.cpp

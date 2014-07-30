@@ -474,10 +474,7 @@ void test7()
 
 /* test8() */
 
-template <class T,class F>
-struct ParaArrayAlgo : TaskHeapMemAlgo<ArrayAlgo<T,F> > {};
-
-using ParaInt = Math::Integer<Math::IntegerFastAlgo,RefArray,ParaArrayAlgo> ;
+using ParaInt = Math::Integer<Math::IntegerFastAlgo,RefArray,TaskHeapArrayAlgo> ;
 
 void test8()
  {
@@ -487,7 +484,7 @@ void test8()
   {
    Math::OctetInteger<ParaInt> P(Range(Crypton::DHModI::Mod));
    
-   Math::APRTest::ParaTestEngine<ParaInt,ParaArrayAlgo> test;
+   Math::APRTest::ParaTestEngine<ParaInt,TaskHeapArrayAlgo> test;
    
    {
     ConReport report;
@@ -506,7 +503,7 @@ void test8()
   {
    Math::OctetInteger<ParaInt> P(Range(Crypton::DHModII::Mod));
    
-   Math::APRTest::ParaTestEngine<ParaInt,ParaArrayAlgo> test;
+   Math::APRTest::ParaTestEngine<ParaInt,TaskHeapArrayAlgo> test;
    
    {
     ConReport report;
@@ -534,6 +531,7 @@ const char *const Testit<108>::Name="Test108 APRTest";
 template<>
 bool Testit<108>::Main() 
  {
+  DestroyPerTask dpt;
   Job::Init init;
   
   //test1();
@@ -543,7 +541,7 @@ bool Testit<108>::Main()
   //test5();
   //test6();
   //test7();
-  test8();
+  //test8();
   
   return true;
  }

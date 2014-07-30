@@ -285,6 +285,7 @@
 ../../XCore/CCore/src/task/Ticker.cpp
 ../../XCore/CCore/src/task/TlsBuf.cpp
 ../../XCore/CCore/src/Task.cpp
+../../XCore/CCore/src/TaskHeap.cpp
 ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
 ../../Target/BeagleBoneBlack/CCore/src/base/Quick.cpp
 ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp

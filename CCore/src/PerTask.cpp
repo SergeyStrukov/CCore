@@ -151,9 +151,9 @@ class PerTaskHost : public PerTask::List
      slot.exit(); 
     }
    
-   void set(void *value) { slot.set(value); }
+   void set(PerTask *obj) { slot.set(obj); }
   
-   void * get() { return slot.get(); }
+   PerTask * get() { return static_cast<PerTask *>(slot.get()); }
    
    static const char * GetTag() { return "PerTask"; }
  };
@@ -215,7 +215,7 @@ void PerTask::Destroy(ulen slot_id,void *obj) noexcept
 
 PerTask * PerTask::Get()
  {
-  if( void *obj=Object->get() ) return static_cast<PerTask *>(obj);
+  if( PerTask *obj=Object->get() ) return obj;
   
   PerTask *ret=new PerTask();
   
@@ -226,15 +226,9 @@ PerTask * PerTask::Get()
 
 PerTask * PerTask::TryGet() noexcept
  {
-  if( void *obj=Object->get() ) return static_cast<PerTask *>(obj);
-  
   try
     {
-     PerTask *ret=new PerTask();
-    
-     Object->set(ret);
-    
-     return ret;
+     return Get();
     }
   catch(...)
     {
@@ -248,9 +242,9 @@ static DestroyPerTask ForMainTask;
 
 DestroyPerTask::~DestroyPerTask()
  {
-  if( void *obj=Object->get() ) 
+  if( PerTask *obj=Object->get() ) 
     {
-     delete static_cast<PerTask *>(obj);
+     delete obj;
      
      Object->set(0);
     }
