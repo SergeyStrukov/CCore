@@ -1,0 +1,306 @@
+<!--
+/* page_DHExp.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> DHExp</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>DHExp</h2>
+
+<p class="Files">Files <b>CCore/inc/crypton/DHExp.h</b> <b>CCore/src/crypton/DHExp.cpp</b></p>
+
+<p>
+This tool is designed to perform the Diffie-Hellman key exchange protocol.
+</p>
+
+<p>
+The abstract Diffie-Hellman protocol uses some finite group <b>G</b> with efficient octet representation.
+"Efficient" means that group operations can be performed efficiently from the octet representation of 
+elements. Some group element <b>g</b> with large order is chosen also. Two peers <b>A</b> and <b>B</b> 
+generate secret data <b>x</b> and <b>y</b>, which are long integer numbers. 
+Then <b>A</b> sends <b>g<sup>x</sup></b> to <b>B</b> and <b>B</b> sends <b>g<sup>y</sup></b> to <b>A</b>. 
+Each side can calculate <b>g<sup>xy</sup></b>. This is a common secret.
+It cannot be figured out from intercepted data, if the task of calculation <b>x</b> from <b>g<sup>x</sup></b> 
+is difficult. 
+</p>
+
+<p>
+The simplest example of <b>G</b> is a multiplicative group of invertible elements of the ring <b>Z/(p)</b>, 
+where p is a large prime number. Two particular such numbers are well known as Diffie-Hellman Group I and
+Diffie-Hellman Group II primes. In both cases <b>g</b> is the class of <b>2</b>.
+</p>
+
+<pre>
+
+template &lt;class DHMod,class Algo=DefaultDHAlgo&gt;
+class <span class="Att">DHExp</span> : NoCopy 
+ {
+  public: 
+ 
+   static const ulen GLen = DHMod::GLen ;
+
+   DHExp();
+   
+   ~DHExp();
+   
+   void pow(const uint8 a[GLen],const uint8 x[GLen],uint8 ax[GLen]);
+   
+   void pow(const uint8 x[GLen],uint8 gx[GLen]);
+ };
+
+</pre>
+
+<p>
+This class implements required functionality to use the Diffie-Hellman protocol.
+The first template parameter gives the group related data. The second is an <b>Algorithm Package</b>
+with required long integer algorithms.
+</p>
+
+<p>
+<b>GLen</b> is the length of group element octet representation.
+</p>
+
+<p>
+<b>pow(a,x,ax)</b> calculates the power of the element <b>a</b> in degree <b>x</b> 
+and returns the result in <b>ax</b>.
+</p>
+
+<p>
+<b>pow(x,gx)</b> calculates the power of the <b>g</b> in degree <b>x</b> 
+and returns the result in <b>gx</b>.
+</p>
+
+<p>
+In both methods <b>x</b> represents the number in the lendian byte order.
+</p>
+
+<pre>
+
+struct <span class="Att">DHModI</span>
+ {
+  static const ulen GLen = 96 ;
+  
+  static const uint8 G[GLen];
+  
+  static const uint8 Mod[GLen];
+  
+  static const uint8 InvMod[GLen];
+  
+  static const uint8 Lift[GLen];
+ };
+
+/* struct DHModII */
+
+struct <span class="Att">DHModII</span>
+ {
+  static const ulen GLen = 128 ;
+  
+  static const uint8 G[GLen];
+  
+  static const uint8 Mod[GLen];
+  
+  static const uint8 InvMod[GLen];
+  
+  static const uint8 Lift[GLen];
+ };
+
+</pre>
+
+<p>
+These two types can be used as the template parameter <b>DHMod</b> and contains all required
+precalculated data for Diffie-Hellman Groups I and II.
+</p>
+
+<pre>
+
+struct <span class="Att">Algo</span>
+ {
+  using Unit = ??? ;
+  
+  static const unsigned UnitBits = ??? ;
+  
+  template &lt;ulen Len&gt;
+  class MulOp : NoCopy
+   {
+    public:
+    
+     MulOp();
+     
+     ~MulOp();
+     
+     void mul(const Unit A[Len],const Unit B[Len],Unit C[2*Len]); // no overlapp
+     
+     void mulHi(const Unit A[Len],const Unit B[Len],Unit C[Len]); // no overlapp
+     
+     void mulLo(const Unit A[Len],const Unit B[Len],Unit C[Len]); // no overlapp
+     
+     void mulLo1(const Unit A[Len],const Unit B[Len],Unit C[Len+1]); // no overlapp
+     
+     void sq(const Unit A[Len],Unit B[2*Len]); // no overlapp
+   };
+
+  template &lt;ulen Len&gt;
+  class AddOp : NoCopy
+   {
+    public:
+   
+     AddOp();
+     
+     ~AddOp();
+     
+     bool /* borrow */ sub(const Unit A[Len],const Unit B[Len],Unit C[Len]); // no overlapp
+     
+     bool /* carry */ add(const Unit A[Len],Unit B[Len]); // no overlap
+     
+     bool /* borrow */ neg(Unit A[Len]);
+   };
+ };
+
+</pre>
+
+<p>
+Here is the pattern for the template parameter <b>Algo</b>.
+</p>
+
+<p>
+<b>Unit</b> is the unsigned integral type, used as the long integer unit. Long integers are
+represented using the lendian unit order.
+</p>
+
+<p>
+<b>UnitBits</b> is the number of bits in the <b>Unit</b>.
+</p>
+
+<p>
+Two inner classes <b>MulOp</b> and <b>AddOp</b> are used to perform the required long integer operations.
+They are parametrized by the long integer length <b>Len</b>.
+</p>
+
+<p>
+<b>MulOp</b> operations are:
+</p>
+
+<p>
+<b>mul()</b> multiplies <b>A</b> and <b>B</b> and returns the result of the double length in <b>C</b>.
+No overlap <b>C</b> with <b>A</b> or <b>B</b> is assumed.
+</p>
+
+<p>
+<b>mulHi()</b> multiplies <b>A</b> and <b>B</b> and returns the high part of the result in <b>C</b>.
+No overlap <b>C</b> with <b>A</b> or <b>B</b> is assumed.
+</p>
+
+<p>
+<b>mulLo()</b> multiplies <b>A</b> and <b>B</b> and returns the lower part of the result in <b>C</b>.
+No overlap <b>C</b> with <b>A</b> or <b>B</b> is assumed.
+</p>
+
+<p>
+<b>mulLo1()</b> multiplies <b>A</b> and <b>B</b> and returns the lower part of the result 
+of the length <b>Len+1</b> in <b>C</b>.
+No overlap <b>C</b> with <b>A</b> or <b>B</b> is assumed.
+</p>
+
+<p>
+<b>sq()</b> squares <b>A</b> and returns the result of the double length in <b>B</b>.
+No overlap <b>B</b> with <b>A</b> is assumed.
+</p>
+
+<p>
+<b>AddOp</b> operations are:
+</p>
+
+<p>
+<b>sub()</b> subtracts <b>B</b> from <b>A</b> and returns the result in <b>C</b>. Borrow is returned.
+No overlap <b>C</b> with <b>A</b> or <b>B</b> is assumed.
+</p>
+
+<p>
+<b>add()</b> adds <b>A</b> to <b>B</b> and returns the carry.
+No overlap <b>B</b> with <b>A</b> is assumed.
+</p>
+
+<p>
+<b>neg()</b> negates <b>A</b>. Borrow is returned.
+</p>
+
+<pre>
+
+struct <span class="Att">DefaultDHAlgo</span>
+ {
+  using Algo = Math::IntegerFastAlgo;
+  
+  using Unit = Algo::Unit ;
+  
+  static const unsigned UnitBits = Algo::UnitBits ;
+  
+  template &lt;ulen Len&gt;
+  class MulOp : NoCopy
+   {
+     Unit temp[2*Len];
+     
+    public:
+    
+     MulOp();
+     
+     ~MulOp();
+     
+     void mul(const Unit A[Len],const Unit B[Len],Unit C[2*Len]);
+     
+     void mulHi(const Unit A[Len],const Unit B[Len],Unit C[Len]);
+     
+     void mulLo(const Unit A[Len],const Unit B[Len],Unit C[Len]);
+     
+     void mulLo1(const Unit A[Len],const Unit B[Len],Unit C[Len+1]);
+     
+     void sq(const Unit A[Len],Unit B[2*Len]);
+   };
+
+  template &lt;ulen Len&gt;
+  class AddOp : NoCopy
+   {
+    public:
+   
+     AddOp();
+     
+     ~AddOp();
+     
+     bool /* borrow */ sub(const Unit A[Len],const Unit B[Len],Unit C[Len]);
+     
+     bool /* carry */ add(const Unit A[Len],Unit B[Len]);
+     
+     bool /* borrow */ neg(Unit A[Len]);
+   };
+ };
+
+</pre>
+
+<p>
+This is the default implementation of the <b>Algo</b>, based on the <b>Math::IntegerFastAlgo</b> package.
+</p>
+
+</body>
+
+</html>
+

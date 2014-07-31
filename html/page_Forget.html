@@ -1,0 +1,84 @@
+<!--
+/* page_Forget.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Forget</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Forget</h2>
+
+<p class="Files">Files <b>CCore/inc/crypton/Forget.h</b> <b>CCore/src/crypton/Forget.cpp</b></p>
+
+<p>
+"Forget" is a family of functions, designed to clean sensitive data. Usually these functions are called
+in class destructors to cleanup such data.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+void <span class="Att">PrepareForget</span>(T &amp;obj);
+
+template &lt;class T,ulen Len&gt;
+void <span class="Att">PrepareForget</span>(T (&amp;obj)[Len]);
+
+template &lt;class T&gt;
+void <span class="Att">Forget</span>(T &amp;obj);
+
+template &lt;class T&gt;
+void <span class="Att">ForgetRange</span>(PtrLen&lt;T&gt; data);
+
+</pre>
+
+<p>
+<b>PrepareForget()</b> cleans the given object or the given array.
+</p>
+
+<p>
+<b>Forget()</b> performs cleanup of the given object. It calls <b>PrepareForget()</b> first and 
+<b>OptimizeBarrier()</b> next to ensure the memory changes are really made.
+</p>
+
+<p>
+<b>ForgetRange()</b> forgets the given range.
+</p>
+
+<h2>OptimizeBarrier</h2>
+
+<pre>
+
+void <span class="Att">OptimizeBarrier</span>(void *ptr,ulen len);
+
+</pre>
+
+<p>
+<b>OptimizeBarrier()</b> is declared in the file <b>PlatformBase.h</b>, provided by the target.
+It ensures that memory modifications inside the given block are really made. The best way to implement
+this function is to hide the code in an assemble file to prevent the compiler from unwanted optimizations.
+</p>
+
+</body>
+
+</html>
+
