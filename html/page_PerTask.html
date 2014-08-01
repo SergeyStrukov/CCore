@@ -1,0 +1,204 @@
+<!--
+/* page_PerTask.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> PerTask</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>PerTask</h2>
+
+<p class="Files">Files <b>CCore/inc/PerTask.h</b> <b>CCore/src/PerTask.cpp</b></p>
+
+<p>
+<b>PerTask</b> is an advanced tool to work with per-task objects. The class <b>PerTask</b> itself
+is not required to work directly with, but it is used indirectly once you deal with a particular 
+per-task object.
+</p>
+
+<pre>
+
+class <span class="Att">PerTask</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   static PerTask * Get();
+   
+   static PerTask * TryGet() noexcept;
+   
+   template &lt;class TOC&gt;
+   typename TOC::ObjectType * getTaskObject();
+   
+   template &lt;class TOC&gt;
+   typename TOC::ObjectType * tryGetTaskObject() noexcept;
+   
+   template &lt;class TOC&gt;
+   static void SetBuilder(TaskObjectFlag flag,typename TOC::BuilderType *builder);
+   
+   template &lt;class TOC&gt;
+   static void ClearBuilder(TaskObjectFlag flag);
+ };
+
+</pre>
+
+<p>
+Each task may have an associated <b>PerTask</b> object. To retreive the pointer to this object
+use the method <b>PerTask::Get()</b> (or <b>PerTask::TryGet()</b>). If there is no such object yet, 
+it is created. An exception is thrown in case of error (null pointer is returned).
+</p>
+
+<p>
+A <b>PerTask</b> object is destroyed, once the host task is finished. It is guaranteed for tasks, created with
+the <b>Task</b> class help, so it is always true for <b>XCore</b> platforms. 
+For <b>HCore</b> platform you may, however, create a task not using the <b>Task</b> class. If such task
+is using <b>PerTask</b> feature, you must use the class <b>DestroyPerTask</b> to cleanup the correspondent
+<b>PerTask</b> object. The main task destroys its <b>PerTask</b> object after the function <b>main()</b> 
+is finished. Sometime it is too late. You may use the class <b>DestroyPerTask</b> to earliar termination.
+</p>
+
+<pre>
+
+class <span class="Att">DestroyPerTask</span> : NoCopy
+ {
+  public:
+  
+   ~DestroyPerTask();
+ };
+
+</pre>
+
+<p>
+<b>DestroyPerTask</b> destructor destroys <b>PerTask</b> object for the current task.
+</p>
+
+<p>
+A <b>PerTask</b> object should not be used directly. It serves as a container for particular per-task 
+objects. Each particular per-task object is described by its <b>Task-Object-Control</b> class.
+Such class must comply with the following pattern:
+</p>
+
+<pre>
+
+struct <span class="Att">TaskObjectControl</span>
+ {
+  class ObjectType
+   {
+    public:
+    
+     void destroy();
+   };
+
+  class BuilderType
+   {
+    public:
+    
+     ObjectType * create();
+   };
+ };
+
+</pre>
+
+<p>
+It is a structure with two inner types: <b>ObjectType</b> and <b>BuilderType</b>.
+<b>ObjectType</b> is the type of the per-task object.
+<b>BuilderType</b> is the type of class which is used to build a per-task object.
+Its method <b>create()</b> is used to create an object. To destroy an object the method
+<b>destroy()</b> is used.
+</p>
+
+<pre>
+
+template &lt;class TOC&gt;
+typename TOC::ObjectType * <span class="Att">GetTaskObject</span>() 
+ { 
+  return PerTask::Get()->getTaskObject&lt;TOC&gt;(); 
+ }
+
+template &lt;class TOC&gt;
+typename TOC::ObjectType * <span class="Att">TryGetTaskObject</span>() noexcept 
+ { 
+  if( PerTask *obj=PerTask::TryGet() ) return obj->tryGetTaskObject&lt;TOC&gt;();
+  
+  return 0;
+ }
+
+</pre>
+
+<p>
+Two global functions can be used to get a particular per-task object: <b>GetTaskObject&lt;TOC&gt;()</b>
+and <b>TryGetTaskObject&lt;TOC&gt;()</b>. If the object is not created yet, it is constructed using 
+the assigned builder object. An exception is thrown in case of error (null pointer is returned).
+But before you must assign an object builder. This is what the class <b>TaskObjectBuild&lt;TOC&gt;</b> 
+is designed for.
+</p>
+
+<pre>
+
+template &lt;class TOC&gt;
+class <span class="Att">TaskObjectBuild</span> : NoCopy
+ {
+   using BuilderType = typename TOC::BuilderType ;
+   
+   TaskObjectFlag flag;
+   BuilderType builder;
+ 
+  public:
+ 
+   template &lt;class ... SS&gt;
+   explicit TaskObjectBuild(TaskObjectFlag flag_,SS &amp;&amp; ... ss)
+    : flag(flag_),
+      builder( std::forward&lt;SS&gt;(ss)... )
+    {
+     PerTask::SetBuilder&lt;TOC&gt;(flag_,&amp;builder);
+    }
+   
+   ~TaskObjectBuild()
+    {
+     PerTask::ClearBuilder&lt;TOC&gt;(flag);
+    }
+ };
+
+</pre>
+
+<p>
+In constructor of this class the builder object is created and made active. If some builder is already
+active an exception is thrown. In desctructor the builder is deactivated. After the builder is activated,
+all per-task object of this kind in all tasks are created using this builder. You must use 
+some synchronization between the "control" task and "working" tasks. 
+</p>
+
+<p>
+The enumeration <b>TaskObjectFlag</b> with two values: <b>TaskObjectSoft</b> and 
+<b>TaskObjectHard</b>, is used to specify the task-object destruction mode.
+During the builder activation or deactivation all existing per-task objects of this kind are destroyed.
+If the mode is hard, they are destroyed immediately. Otherwise, the kill flag is set. This flag cause
+the object to be recreated when it is accessed using one of the methods <b>GetTaskObject&lt;TOC&gt;()</b>
+and <b>TryGetTaskObject&lt;TOC&gt;()</b>.
+</p>
+
+</body>
+
+</html>
+
