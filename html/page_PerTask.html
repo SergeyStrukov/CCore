@@ -64,18 +64,18 @@ class <span class="Att">PerTask</span> : NoCopy
 </pre>
 
 <p>
-Each task may have an associated <b>PerTask</b> object. To retreive the pointer to this object
+Each task may have an associated <b>PerTask</b> object. To retrieve the pointer to this object
 use the method <b>PerTask::Get()</b> (or <b>PerTask::TryGet()</b>). If there is no such object yet, 
 it is created. An exception is thrown in case of error (null pointer is returned).
 </p>
 
 <p>
 A <b>PerTask</b> object is destroyed, once the host task is finished. It is guaranteed for tasks, created with
-the <b>Task</b> class help, so it is always true for <b>XCore</b> platforms. 
+the <a href="page_Task.html"><b>Task</b></a> class help, so it is always true for <b>XCore</b> platforms. 
 For <b>HCore</b> platform you may, however, create a task not using the <b>Task</b> class. If such task
 is using <b>PerTask</b> feature, you must use the class <b>DestroyPerTask</b> to cleanup the correspondent
 <b>PerTask</b> object. The main task destroys its <b>PerTask</b> object after the function <b>main()</b> 
-is finished. Sometime it is too late. You may use the class <b>DestroyPerTask</b> to earliar termination.
+is finished. Sometime it is too late. You may use the class <b>DestroyPerTask</b> for the earlier termination.
 </p>
 
 <pre>
@@ -90,7 +90,7 @@ class <span class="Att">DestroyPerTask</span> : NoCopy
 </pre>
 
 <p>
-<b>DestroyPerTask</b> destructor destroys <b>PerTask</b> object for the current task.
+<b>DestroyPerTask</b> destructor destroys <b>PerTask</b> object of the current task.
 </p>
 
 <p>
@@ -183,8 +183,8 @@ class <span class="Att">TaskObjectBuild</span> : NoCopy
 </pre>
 
 <p>
-In constructor of this class the builder object is created and made active. If some builder is already
-active an exception is thrown. In desctructor the builder is deactivated. After the builder is activated,
+In the constructor of this class the builder object is created and made active. If some builder is already
+active an exception is thrown. In destructor the builder is deactivated. After the builder is activated,
 all per-task object of this kind in all tasks are created using this builder. You must use 
 some synchronization between the "control" task and "working" tasks. 
 </p>

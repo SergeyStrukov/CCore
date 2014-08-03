@@ -82,17 +82,17 @@ with required long integer algorithms.
 </p>
 
 <p>
-<b>pow(a,x,ax)</b> calculates the power of the element <b>a</b> in degree <b>x</b> 
+<b>pow(a,x,ax)</b> calculates the power of the element <b>a</b> in <b>x</b> 
 and returns the result in <b>ax</b>.
 </p>
 
 <p>
-<b>pow(x,gx)</b> calculates the power of the <b>g</b> in degree <b>x</b> 
+<b>pow(x,gx)</b> calculates the power of the <b>g</b> in <b>x</b> 
 and returns the result in <b>gx</b>.
 </p>
 
 <p>
-In both methods <b>x</b> represents the number in the lendian byte order.
+In both methods <b>x</b> represents the unsigned number in the lendian byte order.
 </p>
 
 <pre>
@@ -109,8 +109,6 @@ struct <span class="Att">DHModI</span>
   
   static const uint8 Lift[GLen];
  };
-
-/* struct DHModII */
 
 struct <span class="Att">DHModII</span>
  {
@@ -130,6 +128,28 @@ struct <span class="Att">DHModII</span>
 <p>
 These two types can be used as the template parameter <b>DHMod</b> and contains all required
 precalculated data for Diffie-Hellman Groups I and II.
+</p>
+
+<p>
+<b>GLen</b> is the length of the octet reprsentation of group elements. A group element is represented 
+by the long unsigned number, using the lendian representation. 
+</p>
+
+<p>
+<b>Mod</b> is a prime module. This number is normalized, i.e. the most significant bit equals <b>1</b>.
+<b>D</b> below is the power of <b>2</b>, <b>D = 2<sup>8*GLen</sup></b>. 
+</p>
+
+<p>
+<b>G</b> is a generator.
+</p>
+
+<p>
+<b>InvMod</b> is an inversion of <b>Mod</b> by module <b>D</b>, i.e. <b>InvMod*Mod = 1 (mod D)</b>.
+</p>
+
+<p>
+<b>Lift</b> is <b>((D-Mod)*D)/Mod</b>.
 </p>
 
 <pre>
