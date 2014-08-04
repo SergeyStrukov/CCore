@@ -30,6 +30,102 @@
 
 <p class="Files">Files <b>CCore/inc/TaskHeap.h</b> <b>CCore/src/TaskHeap.cpp</b></p>
 
+<p>
+<b>TaskHeap</b> provides per-task heap feature. This feature is based on 
+<a href="page_PerTask.html"><b>PerTask</b></a>.
+</p>
+
+<pre>
+
+class <span class="Att">TaskHeap</span> : TaskObjectBuild&lt;TaskHeapControl&gt;
+ {
+  public:
+  
+   explicit TaskHeap(ulen min_page_alloc_len=0);
+   
+   ~TaskHeap();
+   
+   static void * TryMemAlloc(ulen len) noexcept;
+   
+   static void * MemAlloc(ulen len);
+   
+   static bool MemExtend(void *mem,ulen len);
+
+   static bool MemShrink(void *mem,ulen len);
+    
+   static void MemFree(void *mem);
+ };
+
+</pre>
+
+<p>
+This class is a control class. It assigns per-task object builder. The <b>TaskObjectHard</b> mode is used.
+The constructor argument for the <b>HCore</b> <b>TaskHeap</b> specifies the minimum page allocation length value.
+</p>
+
+<p>
+You may use static methods of this class to access the per-task heap service, once a builder is active.
+Semantic of methods is similar to semantic of the <a href="page_MemoryManagement.html">global heap functions</a>.
+</p>
+
+<p>
+<b>MemAlloc()</b> allocates a memory block of required length and returns its address. The block is always <b>MaxAlign</b>ed,
+the actual length can be a slightly greater than the required and always non-null. If the operation is failed, then an exception 
+is thrown, using the <b>GuardNoMem()</b> function. 
+</p>
+
+<p>
+<b>TryMemAlloc()</b> is similar, but in case of failure it just returns null.
+</p>
+
+<p>
+In the remaining functions the argument <b>mem</b> must be either an address of the allocated memory block or null.
+Otherwise, the memory heap protection abort is called (with high probability, the detection is not 100%).
+</p>
+
+<p>
+<b>MemFree()</b> releases the allocated memory block, even if the block was allocated by another task.
+</p>
+
+<p>
+<b>MemExtend()</b> tries to extend the allocated memory block. If the block was allocated by another task, 
+the method returns <b>false</b>. Otherwise, if successful, it returns <b>true</b> and the new length 
+of the block is at least <b>len</b>. If the <b>mem</b> is null, the function does nothing and returns <b>false</b>.
+</p>
+
+<p>
+<b>MemShrink()</b> shrinks the allocated memory block. If the block was allocated by another task, 
+the method returns <b>false</b>. Otherwise, if successful, it returns <b>true</b> and the new length 
+of the block is at least <b>len</b>. If the <b>mem</b> is null, the function does nothing and returns <b>false</b>.
+</p>
+
+<p>
+<b>XCore</b> variant is slightly different. The constructor argument is the per-task heap space length,
+defaulted to 1 MBytes.
+</p>
+
+<pre>
+
+class <span class="Att">TaskHeap</span> : TaskObjectBuild&lt;TaskHeapControl&gt;
+ {
+  public:
+  
+   explicit TaskHeap(ulen mem_len=1_MByte);
+   
+   ~TaskHeap();
+   
+   static void * TryMemAlloc(ulen len) noexcept;
+   
+   static void * MemAlloc(ulen len);
+   
+   static bool MemExtend(void *mem,ulen len);
+
+   static bool MemShrink(void *mem,ulen len);
+    
+   static void MemFree(void *mem);
+ };
+
+</pre>
 
 </body>
 
