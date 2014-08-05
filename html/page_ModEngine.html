@@ -1,0 +1,161 @@
+<!--
+/* page_ModEngine.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> ModEngine</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>ModEngine</h2>
+
+<p class="Files">Files <b>CCore/inc/math/ModEngine.h</b> <b>CCore/src/math/ModEngine.cpp</b></p>
+
+<p>
+<b>ModEngine</b> and related classes support modular arithmetic.
+</p>
+
+<h4>BitScanner</h4>
+
+<p>
+<b>BitScanner</b> performs the bit scanning of an unsigned integer from MSB to LSB. 
+</p>
+
+<pre>
+
+template &lt;class UInt&gt;
+class <span class="Att">BitScanner</span> : NoCopy
+ {
+   ....
+
+  public:
+ 
+   explicit BitScanner(UInt d);
+   
+   boolable operator + () const;
+   
+   boolable operator * () const;
+   
+   void operator ++ ();
+ };
+
+</pre>
+
+<p>
+Constructor takes the unsigned integer value to be scanned as the argument. The type is determined by the
+template parameter. 
+</p>
+
+<p>
+<b>operator +</b> returns <b>true</b>, if the scanner is at some bit position.
+</p>
+
+<p>
+<b>operator *</b> returns the current bit. Scanner must be at a bit position.
+</p>
+
+<p>
+<b>operator ++</b> moves to the next bit position. Scanner must be at a bit position. If the current bit
+is the LSB, the scanner is moved to the past-the-last bit position.
+</p>
+
+<h4>IntegerBitScanner</h4>
+
+<pre>
+
+template &lt;class Integer&gt;
+class IntegerBitScanner : NoCopy
+ {
+   ....
+
+  public:
+ 
+   explicit IntegerBitScanner(const Integer &amp;d); // d >= 0
+   
+   ~IntegerBitScanner() {}
+   
+   Unit operator + () const;
+   
+   Unit operator * () const;
+   
+   void operator ++ ();
+ };
+
+</pre>
+
+<h4>UnitsPowInteger</h4>
+
+<pre>
+
+template &lt;class Integer&gt;
+class UnitsPowInteger : public Integer
+ {
+   ....
+
+  public:
+  
+   explicit UnitsPowInteger(ulen n); // creates B^n , B = 2^UnitBits
+ };
+
+</pre>
+
+<h4>ModEngine</h4>
+
+<pre>
+
+template <class Integer> 
+class ModEngine : NoCopy
+ {
+   Integer M;
+   Integer A;
+   ulen n;
+
+  public: 
+   
+   explicit ModEngine(const Integer &amp;M); // M > 0
+   
+   const Integer &amp; getModule() const { return M; }
+   
+   Integer prepare(Integer a) const; // a >= 0
+   
+   Integer mod(Integer a) const; // a >= 0 , a < M^2
+
+   Integer mul(Integer a,Integer b) const; // a,b >= 0 , a,b < M
+   
+   Integer sq(Integer a) const; // a >= 0 , a < M
+   
+   Integer mac(Integer s,Integer a,Integer b) const; // s,a,b >= 0 , s,a,b < M
+   
+   Integer squac(Integer s,Integer a) const; // s,a >= 0 , s,a < M
+   
+   template &lt;class UInt&gt;
+   Meta::EnableIf&lt;Meta::IsUInt&lt;UInt&gt;::Ret,Integer&gt; pow(Integer a,UInt d) const; // a >=0 , a < M , M > 1
+   
+   Integer pow(Integer a,Integer d) const; // a,d >=0 , a < M , M > 1
+ };
+
+</pre>
+
+</body>
+
+</html>
+
