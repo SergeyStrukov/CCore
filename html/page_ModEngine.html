@@ -61,8 +61,9 @@ class <span class="Att">BitScanner</span> : NoCopy
 </pre>
 
 <p>
-Constructor takes the unsigned integer value to be scanned as the argument. The type is determined by the
-template parameter. 
+Constructor takes an unsigned integer value to be scanned as the argument. The type is determined by the
+template parameter. In each moment scanner "observes" some bit position or the past-the-last bit position.
+Initially it observes the MSB position.
 </p>
 
 <p>
@@ -80,10 +81,15 @@ is the LSB, the scanner is moved to the past-the-last bit position.
 
 <h4>IntegerBitScanner</h4>
 
+<p>
+<b>IntegerBitScanner</b> performs the bit scanning of the Integer from MSB to LSB. It works the same
+way as the <b>BitScanner</b>. The template parameter is the <a href="page_Integer.html">Integer</a> type.
+</p>
+
 <pre>
 
 template &lt;class Integer&gt;
-class IntegerBitScanner : NoCopy
+class <span class="Att">IntegerBitScanner</span> : NoCopy
  {
    ....
 
@@ -93,67 +99,119 @@ class IntegerBitScanner : NoCopy
    
    ~IntegerBitScanner() {}
    
-   Unit operator + () const;
+   boolable operator + () const;
    
-   Unit operator * () const;
+   boolable operator * () const;
    
    void operator ++ ();
  };
 
 </pre>
 
+<p>
+Constructor takes an Integer to be scanned as the argument. The value must be <b>&gt;= 0</b>. Other methods
+works the same way as the corespondent <b>BitScanner</b> methods.
+</p>
+
 <h4>UnitsPowInteger</h4>
+
+<p>
+This class builds an Integer with the unit representation <b>{0,0,...,0,1}</b>. In other words, with the value
+<b>B<sup>n</sup></b>, where <b>B</b> is <b>2<sup>UnitBits</sup></b>.
+</p>
 
 <pre>
 
 template &lt;class Integer&gt;
-class UnitsPowInteger : public Integer
+class <span class="Att">UnitsPowInteger</span> : public Integer
  {
    ....
 
   public:
   
    explicit UnitsPowInteger(ulen n); // creates B^n , B = 2^UnitBits
+
+   ~UnitsPowInteger() {}
  };
 
 </pre>
 
 <h4>ModEngine</h4>
 
+<p>
+<b>ModEngine</b> performs modular operations by the given module. Operation arguments and results
+lay in the range <b>[0,M)</b>, where <b>M</b> is the module.
+</p>
+
 <pre>
 
-template <class Integer> 
-class ModEngine : NoCopy
+template &lt;class Integer&gt;
+class <span class="Att">ModEngine</span> : NoCopy
  {
-   Integer M;
-   Integer A;
-   ulen n;
+   ....
 
   public: 
    
-   explicit ModEngine(const Integer &amp;M); // M > 0
+   explicit ModEngine(const Integer &amp;M); // M &gt; 0
    
+   ~ModEngine() {}
+
    const Integer &amp; getModule() const { return M; }
    
-   Integer prepare(Integer a) const; // a >= 0
+   Integer prepare(Integer a) const; // a &gt;= 0
    
-   Integer mod(Integer a) const; // a >= 0 , a < M^2
+   Integer mod(Integer a) const; // a &gt;= 0 , a &lt; M^2
 
-   Integer mul(Integer a,Integer b) const; // a,b >= 0 , a,b < M
+   Integer mul(Integer a,Integer b) const; // a,b &gt;= 0 , a,b &lt; M
    
-   Integer sq(Integer a) const; // a >= 0 , a < M
+   Integer sq(Integer a) const; // a &gt;= 0 , a &lt; M
    
-   Integer mac(Integer s,Integer a,Integer b) const; // s,a,b >= 0 , s,a,b < M
+   Integer mac(Integer s,Integer a,Integer b) const; // s,a,b &gt;= 0 , s,a,b &lt; M
    
-   Integer squac(Integer s,Integer a) const; // s,a >= 0 , s,a < M
+   Integer squac(Integer s,Integer a) const; // s,a &gt;= 0 , s,a &lt; M
    
    template &lt;class UInt&gt;
-   Meta::EnableIf&lt;Meta::IsUInt&lt;UInt&gt;::Ret,Integer&gt; pow(Integer a,UInt d) const; // a >=0 , a < M , M > 1
+   Meta::EnableIf&lt;Meta::IsUInt&lt;UInt&gt;::Ret,Integer&gt; pow(Integer a,UInt d) const; // a &gt;=0 , a &lt; M , M &gt; 1
    
-   Integer pow(Integer a,Integer d) const; // a,d >=0 , a < M , M > 1
+   Integer pow(Integer a,Integer d) const; // a,d &gt;=0 , a &lt; M , M &gt; 1
  };
 
 </pre>
+
+<p>
+The only constructor argument is the module, which must be positive. 
+The module can be retrieved by the method <b>getModule()</b>.
+</p>
+
+<p>
+<b>prepare()</b> returns the remainder of the division by the module. The argument must be <b>&gt;= 0</b>.
+</p>
+
+<p>
+<b>mod()</b> returns the remainder of the division by the module. The argument must be <b>&gt;= 0</b> 
+and <b>&lt;M<sup>2</sup></b>. This method is more efficient, than <b>prepare()</b>. It is used
+to implement other operations.
+</p>
+
+<p>
+<b>mul()</b> calculates the modular multiplication of the arguments.
+</p>
+
+<p>
+<b>sq()</b> calculates the modular square of the argument (<b>sq(a) == mul(a,a)</b>).
+</p>
+
+<p>
+<b>mac()</b> calculates the MAC, i.e. the expression <b>s+a*b</b>, by the module.
+</p>
+
+<p>
+<b>squac()</b> calculates the "square and accumulate", i.e. the expression <b>s+a*a</b>, by the module.
+</p>
+
+<p>
+<b>pow()</b> calculates the modular power. It is assumed, that the module is <b>&gt;1</b>.
+</p>
 
 </body>
 

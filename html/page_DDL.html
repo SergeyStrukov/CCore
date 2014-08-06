@@ -31,7 +31,7 @@
 <p>
 <b>DDL</b> is the <b>Data Definition Language</b>. This language is to record a general-kind data
 in a textual form similar to the C language. But there are important differences between how 
-<b>DDL</b> interprets data and expressions and <b>C</b>. <b>DDL</b> is a "bye-bye <b>XML</b>" language.
+<b>DDL</b> and <b>C</b> interprets data and expressions. <b>DDL</b> is a "bye-bye <b>XML</b>" language.
 </p>
 
 <h2>Brief introduction</h2>
@@ -159,7 +159,7 @@ int i1 = 1 ;
 </pre>
 
 <p>
-The language is commutative, i.g. the order of declarations is not important:
+The language is commutative, i.e. the order of declarations is not important:
 </p>
 
 <pre>
@@ -236,7 +236,7 @@ a type alias or a constant. Literals and expressions are used to define a consta
 
 <p>
 Scope is a "definition directory". Scopes can be nested or split. Each named language element
-belongs to some scope. The full element name is <b># Scope1name # Scope2Name # ... # ElementName</b>.
+belongs to some scope. The full element name is <b># Scope1Name # Scope2Name # ... # ElementName</b>.
 </p>
 
 <pre>
@@ -268,7 +268,7 @@ scope A { // open again scope #A
 </pre>
 
 <p>
-When a name is used to refer to a language element, it may be relative or absolute.
+When a name is used to refer to a language element, it may be either relative or absolute.
 A relative name starts from a name, an absolute name starts from the <b>#</b> or one or more dots. 
 One dot means the current scope, 2 dots means the parent scope and so on.
 A relative name is looked in all scopes down from the current.
