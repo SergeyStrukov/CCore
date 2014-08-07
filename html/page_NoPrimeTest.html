@@ -1,0 +1,67 @@
+<!--
+/* page_NoPrimeTest.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> NoPrimeTest</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>NoPrimeTest</h2>
+
+<p class="Files">Files <b>CCore/inc/math/NoPrimeTest.h</b> <b>CCore/src/math/NoPrimeTest.cpp</b></p>
+
+<p>
+<b>NoPrimeTest</b> is a fast test for non-primality.
+</p>
+
+<pre>
+
+template &lt;class Integer&gt;
+struct <span class="Att">NoPrimeTest</span>
+ {
+  ....
+
+  template &lt;class Random&gt;
+  static bool RandomTest(Integer P,ulen count,Random &amp;random);
+ };
+
+</pre>
+
+<p>
+The template parameter is an Integer type.
+</p>
+
+<p>
+<b>RandomTest()</b> tests the given integer <b>P</b>. It returns <b>true</b>, if <b>P</b> is probably prime.
+If the return value is <b>false</b>, then <b>P</b> is not prime. <b>RandomTest()</b> does <b>count</b> 
+of randomly chosen subtests to find out, that <b>P</b> is not prime. Each subtest has a chance above 50%
+to fail, if <b>P</b> is not prime.
+The more <b>count</b>, the more chances to break a non-prime number. 
+The practical range for <b>count</b> is 30-100.
+<b>random</b> is a <a href="page_Random.html"><b>Random</b></a> class.
+</p>
+
+</body>
+
+</html>
+

@@ -296,6 +296,7 @@
 ../../Target/Vanilla-X/CCore/src/libc/CBase.cpp
 ../../Target/Vanilla-X/CCore/src/libc/__std_init.cpp
 ../../Target/Vanilla-X/CCore/src/pci/PCIBusRW.cpp
+../../Target/Vanilla-X/CCore/src/PlanInit_CCore.cpp
 ../../Target/Vanilla-X/CCore/src/sys/SysAbort.cpp
 ../../Target/Vanilla-X/CCore/src/sys/SysAtomic.cpp
 ../../Target/Vanilla-X/CCore/src/sys/SysCon.cpp

@@ -701,7 +701,7 @@ class TestEngine : TestData
         return ret;
        }
       
-      Ring mul(Ring a,Ring b) const
+      Ring mul(const Ring &a,const Ring &b) const
        {
         auto ra=Range(a);
         auto rb=Range(b);
@@ -743,7 +743,7 @@ class TestEngine : TestData
         return ret;
        }
       
-      Ring pow(Ring a,Integer d) const
+      Ring pow(const Ring &a,const Integer &d) const
        {
         for(IntegerBitScanner<Integer> scanner(d); +scanner ;++scanner)
           if( *scanner ) 
@@ -763,7 +763,7 @@ class TestEngine : TestData
         return one(a.getLen());
        }
       
-      int test(Integer a,Integer b) const // 0, 1, other=2 : a-b mod N
+      int test(const Integer &a,const Integer &b) const // 0, 1, other=2 : a-b mod N
        {
         switch( Cmp(a,b) )
           {
@@ -787,7 +787,7 @@ class TestEngine : TestData
           }
        }
       
-      TestResult test(Ring cappa) const
+      TestResult test(const Ring &cappa) const
        {
         auto r=Range(cappa);
         
@@ -836,7 +836,7 @@ class TestEngine : TestData
         return NoPrime;
        }
       
-      TestResult test(Integer cappa,int sign) const
+      TestResult test(const Integer &cappa,int sign) const
        {
         if( cappa==1 ) return Test(1,sign);
         
@@ -847,7 +847,7 @@ class TestEngine : TestData
       
      public:
       
-      explicit Engine(Integer N) : engine(N),Nminus1(N-1) {}
+      explicit Engine(const Integer &N) : engine(N),Nminus1(N-1) {}
       
       ~Engine() {}
       
@@ -924,7 +924,7 @@ class TestEngine : TestData
   private:
    
    template <class Report>
-   TestResult sanity(Integer N,unsigned &set_number,Report &report) const
+   TestResult sanity(const Integer &N,unsigned &set_number,Report &report) const
     {
      if( N<=1 ) 
        {
@@ -978,19 +978,17 @@ class TestEngine : TestData
      return HardCase;
     }
    
-   static bool TestOrder(unsigned p,Integer N)
+   static bool TestOrder(unsigned p,const Integer &N)
     {
      Integer M=p;
      
      ModEngine<Integer> engine(M.sq());
      
-     N=engine.prepare(N);
-
-     return engine.template pow<unsigned>(N,p-1)!=1;
+     return engine.template pow<unsigned>(engine.prepare(N),p-1)!=1;
     }
    
    template <class Report>
-   TestResult finish(Integer N,unsigned set_number,Report &report) const
+   TestResult finish(const Integer &N,unsigned set_number,Report &report) const
     {
      report.startProbe();
      
@@ -1054,7 +1052,7 @@ class TestEngine : TestData
     {
      report.start(N);
      
-     unsigned set_number;
+     unsigned set_number=0;
 
      {
       TestResult ret=sanity(N,set_number,report);

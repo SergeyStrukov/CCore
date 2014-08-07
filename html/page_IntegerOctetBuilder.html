@@ -1,0 +1,109 @@
+<!--
+/* page_IntegerOctetBuilder.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> IntegerOctetBuilder</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>IntegerOctetBuilder</h2>
+
+<p class="Files">Files <b>CCore/inc/math/IntegerOctetBuilder.h</b> <b>CCore/src/math/IntegerOctetBuilder.cpp</b></p>
+
+<p>
+A collection of tools to work with integer octet representations.
+</p>
+
+<h4>PrintIntegerOctets</h4>
+
+<pre>
+
+template &lt;class Integer&gt;
+PrintIntegerOctetsType&lt;Integer&gt; <span class="Att">PrintIntegerOctets</span>(const Integer &amp;a) { return PrintIntegerOctetsType&lt;Integer&gt;(a); }
+
+</pre>
+
+<p>
+This is a <b>Creator Function</b>, it creates a printable object to print an octet representation
+of the given <a href="page_Integer.html">Integer</a>. The type of the object is <b>PrintIntegerOctetsType&lt;Integer&gt;</b>.
+</p>
+
+<pre>
+
+template &lt;class Integer&gt;
+class <span class="Att">PrintIntegerOctetsType</span>
+ {
+   ....
+
+  public:
+   
+   explicit PrintIntegerOctetsType(const Integer &amp;a);
+  
+   ~PrintIntegerOctetsType() {}
+
+   template &lt;class P&gt;
+   void print(P &amp;out) const;
+ };
+
+</pre>
+
+<p>
+Below is an example of the print output. It starts from the <b>"\n {\n"</b> and ends with <b>"\n }"</b>.
+</p>
+
+<pre>
+ {
+  0xCA, 0x45, 0xB6, 0x3B,  0x2D, 0xDE, 0xC4, 0x92,  0x06, 0x53, 0x02, 0x68,  0xD1, 0x13, 0x0E, 0x5C,
+  0xBB, 0x83, 0x7B, 0xDB,  0x33, 0xDB, 0x75, 0x54,  0x9A, 0xCE, 0xEE, 0x22,  0xD9, 0xD3, 0xC9, 0xC8,
+  0x0D, 0x55, 0x29, 0xD3,  0xB8, 0x2F, 0x80, 0xD4,  0xE3, 0x01, 0xA8, 0x03,  0x09, 0xFC, 0x89, 0x96,
+  0xE7, 0xFB, 0x16, 0xBF,  0xB5, 0xFB, 0xF9, 0xB1,  0x51, 0x2E, 0x87, 0xF1,  0xC5, 0xCA, 0xCF, 0x64,
+  0x11, 0xB6, 0x48, 0x84,  0x58, 0x0F, 0xDB, 0xA6,  0x97, 0x51, 0x81, 0x2E,  0x7E, 0xCE, 0x03, 0x47,
+  0xCB, 0x3D, 0x97, 0xDE,  0x5D, 0x25, 0xF0, 0x36
+ }
+</pre>
+
+<h4>OctetInteger</h4>
+
+<pre>
+
+template &lt;class Integer&gt;
+class <span class="Att">OctetInteger</span> : public Integer
+ {
+  public:
+  
+   explicit OctetInteger(PtrLen&lt;const uint8&gt; data);
+   
+   ~OctetInteger() {}
+ };
+
+</pre>
+
+<p>
+Builds an Integer from the octet representation. The constructor argument is an octet range, this range
+is the unsigned lendian representation of some integer. 
+</p>
+
+</body>
+
+</html>
+

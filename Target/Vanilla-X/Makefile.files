@@ -185,6 +185,7 @@ obj/Path.o \
 obj/PerTask.o \
 obj/Place.o \
 obj/PlanInit.o \
+obj/PlanInit_CCore.o \
 obj/PlatformBase.o \
 obj/PosSub.o \
 obj/Print.o \
@@ -493,6 +494,7 @@ obj/Path.s \
 obj/PerTask.s \
 obj/Place.s \
 obj/PlanInit.s \
+obj/PlanInit_CCore.s \
 obj/PlatformBase.s \
 obj/PosSub.s \
 obj/Print.s \
@@ -801,6 +803,7 @@ obj/Path.dep \
 obj/PerTask.dep \
 obj/Place.dep \
 obj/PlanInit.dep \
+obj/PlanInit_CCore.dep \
 obj/PlatformBase.dep \
 obj/PosSub.dep \
 obj/Print.dep \
@@ -1484,6 +1487,9 @@ obj/Place.o : ../../CCore/src/gadget/Place.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PlanInit.o : ../../CCore/src/PlanInit.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PlanInit_CCore.o : ../../Target/Vanilla-X/CCore/src/PlanInit_CCore.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PlatformBase.o : ../../Target/Vanilla-X/CCore/src/base/PlatformBase.cpp
@@ -2403,6 +2409,9 @@ obj/Place.s : ../../CCore/src/gadget/Place.cpp
 obj/PlanInit.s : ../../CCore/src/PlanInit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PlanInit_CCore.s : ../../Target/Vanilla-X/CCore/src/PlanInit_CCore.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/PlatformBase.s : ../../Target/Vanilla-X/CCore/src/base/PlatformBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3319,6 +3328,9 @@ obj/Place.dep : ../../CCore/src/gadget/Place.cpp
 
 obj/PlanInit.dep : ../../CCore/src/PlanInit.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlanInit.o $< -MF $@
+
+obj/PlanInit_CCore.dep : ../../Target/Vanilla-X/CCore/src/PlanInit_CCore.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlanInit_CCore.o $< -MF $@
 
 obj/PlatformBase.dep : ../../Target/Vanilla-X/CCore/src/base/PlatformBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlatformBase.o $< -MF $@

@@ -60,7 +60,7 @@ struct NoPrimeTest
        Ctx() {}
       };
      
-     void init(Ctx &ctx,Integer a) const // a >= 0 , a < P
+     void init(Ctx &ctx,const Integer &a) const // a >= 0 , a < P
       {
        ctx.pow[0]=a;
        ctx.pow[1]=engine.sq(a);
@@ -129,7 +129,7 @@ struct NoPrimeTest
      
      const Integer & getModule() const { return engine.getModule(); }
      
-     Integer pow(Integer a) const // a >= 0 , a < P , return a ^ (P>>1) ( mod P )
+     Integer pow(const Integer &a) const // a >= 0 , a < P , return a ^ (P>>1) ( mod P )
       {
        Ctx ctx;
        
@@ -144,7 +144,7 @@ struct NoPrimeTest
        return ctx.result;
       }
   
-     bool test(Integer a) const // a > 0 , a < P , P > 1 , P is odd
+     bool test(const Integer &a) const // a > 0 , a < P , P > 1 , P is odd
       {
        Integer b=pow(a);
        

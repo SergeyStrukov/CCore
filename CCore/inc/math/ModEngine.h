@@ -131,6 +131,8 @@ class UnitsPowInteger : public Integer
     : Integer(DoBuild,Builder(n))
     {
     }
+ 
+   ~UnitsPowInteger() {}
  };
 
 /* class ModEngine<Integer> */
@@ -154,9 +156,11 @@ class ModEngine : NoCopy
      A=UnitsPowInteger<Integer>(n)/M;
     }
    
+   ~ModEngine() {}
+   
    const Integer & getModule() const { return M; }
    
-   Integer prepare(Integer a) const { return a%M; } // a >= 0
+   Integer prepare(const Integer &a) const { return a%M; } // a >= 0
    
    Integer mod(Integer a) const // a >= 0 , a < M^2
     {
@@ -176,16 +180,16 @@ class ModEngine : NoCopy
      return a;
     }
 
-   Integer mul(Integer a,Integer b) const { return mod(a*b); } // a,b >= 0 , a,b < M
+   Integer mul(const Integer &a,const Integer &b) const { return mod(a*b); } // a,b >= 0 , a,b < M
    
-   Integer sq(Integer a) const { return mod(a.sq()); } // a >= 0 , a < M
+   Integer sq(const Integer &a) const { return mod(a.sq()); } // a >= 0 , a < M
    
-   Integer mac(Integer s,Integer a,Integer b) const { return mod(s+a*b); } // s,a,b >= 0 , s,a,b < M
+   Integer mac(const Integer &s,const Integer &a,const Integer &b) const { return mod(s+a*b); } // s,a,b >= 0 , s,a,b < M
    
-   Integer squac(Integer s,Integer a) const { return mod(s+a.sq()); } // s,a >= 0 , s,a < M
+   Integer squac(const Integer &s,const Integer &a) const { return mod(s+a.sq()); } // s,a >= 0 , s,a < M
    
    template <class UInt>
-   Meta::EnableIf<Meta::IsUInt<UInt>::Ret,Integer> pow(Integer a,UInt d) const // a >=0 , a < M , M > 1
+   Meta::EnableIf<Meta::IsUInt<UInt>::Ret,Integer> pow(const Integer &a,UInt d) const // a >=0 , a < M , M > 1
     {
      for(BitScanner<UInt> scanner(d); +scanner ;++scanner)
        {
@@ -207,7 +211,7 @@ class ModEngine : NoCopy
      return 1u;
     }
    
-   Integer pow(Integer a,Integer d) const // a,d >=0 , a < M , M > 1
+   Integer pow(const Integer &a,const Integer &d) const // a,d >=0 , a < M , M > 1
     {
      for(IntegerBitScanner<Integer> scanner(d); +scanner ;++scanner)
        {

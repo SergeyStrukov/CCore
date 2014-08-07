@@ -158,22 +158,22 @@ class <span class="Att">ModEngine</span> : NoCopy
 
    const Integer &amp; getModule() const { return M; }
    
-   Integer prepare(Integer a) const; // a &gt;= 0
+   Integer prepare(const Integer &a) const; // a &gt;= 0
    
    Integer mod(Integer a) const; // a &gt;= 0 , a &lt; M^2
 
-   Integer mul(Integer a,Integer b) const; // a,b &gt;= 0 , a,b &lt; M
+   Integer mul(const Integer &a,const Integer &b) const; // a,b &gt;= 0 , a,b &lt; M
    
-   Integer sq(Integer a) const; // a &gt;= 0 , a &lt; M
+   Integer sq(const Integer &a) const; // a &gt;= 0 , a &lt; M
    
-   Integer mac(Integer s,Integer a,Integer b) const; // s,a,b &gt;= 0 , s,a,b &lt; M
+   Integer mac(const Integer &s,const Integer &a,const Integer &b) const; // s,a,b &gt;= 0 , s,a,b &lt; M
    
-   Integer squac(Integer s,Integer a) const; // s,a &gt;= 0 , s,a &lt; M
+   Integer squac(const Integer &s,const Integer &a) const; // s,a &gt;= 0 , s,a &lt; M
    
    template &lt;class UInt&gt;
-   Meta::EnableIf&lt;Meta::IsUInt&lt;UInt&gt;::Ret,Integer&gt; pow(Integer a,UInt d) const; // a &gt;=0 , a &lt; M , M &gt; 1
+   Meta::EnableIf&lt;Meta::IsUInt&lt;UInt&gt;::Ret,Integer&gt; pow(const Integer &a,UInt d) const; // a &gt;=0 , a &lt; M , M &gt; 1
    
-   Integer pow(Integer a,Integer d) const; // a,d &gt;=0 , a &lt; M , M &gt; 1
+   Integer pow(const Integer &a,const Integer &d) const; // a,d &gt;=0 , a &lt; M , M &gt; 1
  };
 
 </pre>
