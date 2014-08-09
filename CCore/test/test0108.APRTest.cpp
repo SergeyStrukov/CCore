@@ -84,7 +84,7 @@ class ConReport
    ~ConReport() { time(); }
   
    template <class Integer>
-   void start(Integer N) const { Printf(Con,"N = #;\n",N); }
+   void start(const Integer &N) const { Printf(Con,"N = #;\n",N); }
    
    void sanity(const char *msg) const { Printf(Con,"#;\n",msg); }
    
@@ -95,7 +95,7 @@ class ConReport
    void testQ(Math::APRTest::QType q) const{ if( full ) Printf(Con,"  q = #;\n",q); }
    
    template <class Integer>
-   static Integer Fix(Integer a,Integer Nminus1)
+   static Integer Fix(const Integer &a,const Integer &Nminus1)
     {
      if( a==Nminus1 ) return -1;
      
@@ -103,7 +103,7 @@ class ConReport
     }
    
    template <class Integer>
-   void cappa(PtrLen<const Integer> cappa,Integer Nminus1) const
+   void cappa(PtrLen<const Integer> cappa,const Integer &Nminus1) const
     { 
      if( !full ) return;
      
@@ -131,7 +131,7 @@ class ConReport
     }
    
    template <class Integer>
-   void cappa2(Integer cappa,Integer Nminus1) const
+   void cappa2(const Integer &cappa,const Integer &Nminus1) const
     {
      if( !full ) return;
      
@@ -141,10 +141,13 @@ class ConReport
    void startProbe() const { time(); Printf(Con,"Probe\n"); }
    
    template <class Integer>
-   void probe(Integer cnt) const { Printf(Con,"#; \r",cnt); }
+   void probe(const Integer &cnt) const 
+    { 
+     Used(cnt); 
+    }
    
    template <class Integer>
-   void div(Integer D) const { Printf(Con,"\nHas divisor #;\n",D); }
+   void div(const Integer &D) const { Printf(Con,"\nHas divisor #;\n",D); }
    
    void hard() const { Printf(Con,"HardCase\n"); }
    
@@ -228,7 +231,7 @@ class FileReport
    CaseCounters getStat() const { return stat; }
   
    template <class Integer>
-   void start(Integer N)
+   void start(const Integer &N)
     { 
      out.flush(); 
      
@@ -247,7 +250,7 @@ class FileReport
    void testQ(Math::APRTest::QType q) { Printf(out,"  q = #;\n",q); last_q=q; }
    
    template <class Integer>
-   static Integer Fix(Integer a,Integer Nminus1)
+   static Integer Fix(const Integer &a,const Integer &Nminus1)
     {
      if( a==Nminus1 ) return -1;
      
@@ -255,7 +258,7 @@ class FileReport
     }
    
    template <class Integer>
-   void cappa(PtrLen<const Integer> cappa,Integer Nminus1)
+   void cappa(PtrLen<const Integer> cappa,const Integer &Nminus1)
     { 
      Integer minval;
      
@@ -281,7 +284,7 @@ class FileReport
     }
    
    template <class Integer>
-   void cappa2(Integer cappa,Integer Nminus1)
+   void cappa2(const Integer &cappa,const Integer &Nminus1)
     {
      Printf(out,"    cappa = #;\n",Fix(cappa,Nminus1)); 
     }
@@ -289,10 +292,10 @@ class FileReport
    void startProbe() { Printf(out,"Probe\n"); }
    
    template <class Integer>
-   void probe(Integer cnt) { Used(cnt); }
+   void probe(const Integer &cnt) { Used(cnt); }
    
    template <class Integer>
-   void div(Integer D) { Printf(out,"Has divisor #;\n",D); }
+   void div(const Integer &D) { Printf(out,"Has divisor #;\n",D); }
    
    void hard() { Printf(out,"HardCase\n"); countHard(); }
    
@@ -476,15 +479,16 @@ void test7()
 
 using ParaInt = Math::Integer<Math::IntegerFastAlgo,RefArray,TaskHeapArrayAlgo> ;
 
+using ParaTestEngine = Math::APRTest::ParaTestEngine<ParaInt,TaskHeapArrayAlgo> ;
+
 void test8()
  {
   TaskHeap task_heap;
+  ParaTestEngine test;
   
   // 1
   {
    Math::OctetInteger<ParaInt> P(Range(Crypton::DHModI::Mod));
-   
-   Math::APRTest::ParaTestEngine<ParaInt,TaskHeapArrayAlgo> test;
    
    {
     ConReport report;
@@ -503,8 +507,6 @@ void test8()
   {
    Math::OctetInteger<ParaInt> P(Range(Crypton::DHModII::Mod));
    
-   Math::APRTest::ParaTestEngine<ParaInt,TaskHeapArrayAlgo> test;
-   
    {
     ConReport report;
      
@@ -517,6 +519,62 @@ void test8()
     Printf(Con,"ModII Prime/2 = #;\n",test(P>>1,report));
    }
   }
+ }
+
+/* test9() */
+
+void test9(ulen nbits)
+ {
+  Printf(Con,"nbits = #;\n\n",nbits);
+  
+  TaskHeap task_heap;
+  ParaTestEngine test;
+  
+  ulen noctets=nbits/8;
+  
+  DynArray<uint8> buf(noctets);
+  auto data=Range(buf);
+  PlatformRandom random;
+  
+  data.prefix(4).set(0xFF);
+  data.suffix(4).set(0xFF);
+  
+  for(ulen cnt=1;;cnt++)
+    {
+     random.fill(data.inner(4,4));
+     
+     Int N=Math::OctetInteger<Int>(Range_const(data));
+     
+     if( Math::NoPrimeTest<Int>::RandomTest(N,30,random) )
+       {
+        Printf(Con,"#; Probable Prime\n",cnt);
+        
+        Math::APRTest::TestResult result;
+        
+        {
+         ConReport report;
+         
+         result=test(Math::OctetInteger<ParaInt>(Range_const(data)),report);
+        }
+        
+        Printf(Con,"\n\n");
+        
+        if( !result ) return;
+       }
+     else
+       {
+        Printf(Con,"#;\r",cnt);
+       }
+    }
+ }
+
+void test9()
+ {
+  test9(1u<<10);
+  test9(1u<<11);
+  test9(1u<<12);
+  test9(1u<<13);
+  test9(1u<<14);
  }
 
 } // namespace Private_0108
@@ -542,6 +600,7 @@ bool Testit<108>::Main()
   //test6();
   //test7();
   //test8();
+  test9();
   
   return true;
  }

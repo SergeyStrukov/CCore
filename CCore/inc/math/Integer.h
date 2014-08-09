@@ -74,7 +74,7 @@ unsigned CountBits(unsigned n);
 
 /* classes */
 
-template <class Algo> class IntegerInverse;
+template <class Algo, template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType = ArrayAlgo > class IntegerInverse;
 
 template <class Unit,class UInt,unsigned UnitBits,unsigned UIntBits> struct IntegerFillUInt_ext;
 
@@ -108,7 +108,7 @@ template <class Algo> class IntegerLShiftBuilder;
 
 template <class Algo> class IntegerRShiftBuilder;
 
-template <class Algo> class IntegerDivider;
+template <class Algo, template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType = ArrayAlgo > class IntegerDivider;
 
 template <class Integer> class IntegerFromString;
 
@@ -121,9 +121,9 @@ template <class Algo, template <class T,class A> class ArrayType = RefArray ,
 
 template <class Integer> class RandomInteger;
 
-template <class Algo> struct GCDAlgo;
+template <class Algo,class TempArrayType> struct GCDAlgo;
 
-template <class Algo> class GCDivBuilder;
+template <class Algo,class TempArrayType> class GCDivBuilder;
 
 template <class Integer> class GCDivType;
 
@@ -248,14 +248,14 @@ struct Algo
 
 #endif
 
-/* class IntegerInverse<Algo> */
+/* class IntegerInverse<Algo,ArrayAlgoType> */
 
-template <class Algo> 
+template <class Algo, template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType > 
 class IntegerInverse : NoCopy
  {
    typedef typename Algo::Unit Unit;
    
-   DynArray<Unit> buf; 
+   DynArray<Unit,ArrayAlgoType<Unit> > buf; 
    
   private:
   
@@ -279,8 +279,8 @@ class IntegerInverse : NoCopy
    ulen getLen() const { return buf.getLen(); }
  };
  
-template <class Algo> 
-IntegerInverse<Algo>::IntegerInverse(const Unit *a,ulen na,ulen K)
+template <class Algo, template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType > 
+IntegerInverse<Algo,ArrayAlgoType>::IntegerInverse(const Unit *a,ulen na,ulen K)
  {
   if( na==0 ) GuardIntegerInverseNotNormalized();
   
@@ -951,19 +951,19 @@ class IntegerRShiftBuilder
     }
  };
  
-/* class IntegerDivider<Algo> */
+/* class IntegerDivider<Algo,ArrayAlgoType> */
 
-template <class Algo> 
+template <class Algo, template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType > 
 class IntegerDivider : NoCopy
  {
    typedef typename Algo::Unit Unit;
    
    struct Normalize;
 
-   DynArray<Unit> buf;
+   DynArray<Unit,ArrayAlgoType<Unit> > buf;
    Unit minus_one;
    PtrLen<const Unit> result;
-   DynArray<Unit> mod_buf;
+   DynArray<Unit,ArrayAlgoType<Unit> > mod_buf;
    PtrLen<const Unit> mod;
    
   public:
@@ -975,8 +975,8 @@ class IntegerDivider : NoCopy
    PtrLen<const Unit> getMod() const { return mod; }
  };
  
-template <class Algo> 
-struct IntegerDivider<Algo>::Normalize
+template <class Algo, template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType > 
+struct IntegerDivider<Algo,ArrayAlgoType>::Normalize
  {
   PtrLen<Unit> result_a;
   PtrLen<Unit> result_b;
@@ -1041,12 +1041,12 @@ struct IntegerDivider<Algo>::Normalize
    };
  };
 
-template <class Algo> 
-IntegerDivider<Algo>::IntegerDivider(PtrLen<const Unit> a,PtrLen<const Unit> b,bool do_mod)
+template <class Algo, template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType > 
+IntegerDivider<Algo,ArrayAlgoType>::IntegerDivider(PtrLen<const Unit> a,PtrLen<const Unit> b,bool do_mod)
  {
   ulen len=AddLen(a.len,b.len,2);
   
-  DynArray<Unit> temp(DoRaw{len});
+  DynArray<Unit,ArrayAlgoType<Unit> > temp(DoRaw{len});
   
   Normalize norm(a,b,temp.getPtr());
   
@@ -1087,9 +1087,9 @@ IntegerDivider<Algo>::IntegerDivider(PtrLen<const Unit> a,PtrLen<const Unit> b,b
     }
   else
     {
-     IntegerInverse<Algo> c(norm.result_b.ptr,nb,na-nb); // c = [ (M^na)/norm_b ]
+     IntegerInverse<Algo,ArrayAlgoType> c(norm.result_b.ptr,nb,na-nb); // c = [ (M^na)/norm_b ]
      
-     DynArray<Unit> ac(DoBuild,IntegerMulBuilder<Algo>(Range_const(norm.result_a),Range_const(c)));
+     DynArray<Unit,ArrayAlgoType<Unit> > ac(DoBuild,IntegerMulBuilder<Algo>(Range_const(norm.result_a),Range_const(c)));
      
      PtrLen<Unit> p(ac.getPtr()+na,ac.getLen()-na); // p = [ (norm_a*c)/(M^na) ]
 
@@ -1098,7 +1098,7 @@ IntegerDivider<Algo>::IntegerDivider(PtrLen<const Unit> a,PtrLen<const Unit> b,b
         Algo::UAddUnit(p.ptr,p.len,1);
        }
 
-     DynArray<Unit> bp(DoBuild,IntegerMulBuilder<Algo>(Range_const(norm.result_b),Range_const(p)));
+     DynArray<Unit,ArrayAlgoType<Unit> > bp(DoBuild,IntegerMulBuilder<Algo>(Range_const(norm.result_b),Range_const(p)));
         
      if( Algo::Cmp(bp.getPtr(),bp.getLen(),norm.result_a.ptr,na)>0 ) 
        {
@@ -1540,6 +1540,8 @@ class Integer
    typedef typename Algo::Unit Unit;
    
    static const unsigned UnitBits = Algo::UnitBits ;
+   
+   using TempArrayType = DynArray<Unit,ArrayAlgoType<Unit> > ;
    
   private: 
    
@@ -2106,7 +2108,7 @@ Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::m
 template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::div(const Unit *b,ulen nb)
  {
-  IntegerDivider<Algo> divider(getBody(),Range(b,nb));
+  IntegerDivider<Algo,ArrayAlgoType> divider(getBody(),Range(b,nb));
   
   ArrayType<Unit,ArrayAlgoType<Unit> > result(DoCopy(divider.getResult().len),divider.getResult().ptr);
   
@@ -2118,7 +2120,7 @@ Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::d
 template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 Integer<Algo,ArrayType,ArrayAlgoType> & Integer<Algo,ArrayType,ArrayAlgoType>::mod(const Unit *b,ulen nb)
  {
-  IntegerDivider<Algo> divider(getBody(),Range(b,nb),true); 
+  IntegerDivider<Algo,ArrayAlgoType> divider(getBody(),Range(b,nb),true); 
   
   ArrayType<Unit,ArrayAlgoType<Unit> > result(DoCopy(divider.getMod().len),divider.getMod().ptr);
   
@@ -2250,7 +2252,7 @@ Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Sq(
 template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Div(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
-  IntegerDivider<Algo> divider(a,b);
+  IntegerDivider<Algo,ArrayAlgoType> divider(a,b);
   
   return Integer(CopyFrom,divider.getResult());
  }
@@ -2258,7 +2260,7 @@ Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Div
 template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::Mod(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
-  IntegerDivider<Algo> divider(a,b,true);
+  IntegerDivider<Algo,ArrayAlgoType> divider(a,b,true);
   
   return Integer(CopyFrom,divider.getMod());
  }
@@ -2278,7 +2280,7 @@ Integer<Algo,ArrayType,ArrayAlgoType> Integer<Algo,ArrayType,ArrayAlgoType>::RSh
 template <class Algo,template <class T,class A> class ArrayType,template <class T,class F=NoThrowFlags<T> > class ArrayAlgoType>
 Integer<Algo,ArrayType,ArrayAlgoType>::DivMod::DivMod(PtrLen<const Unit> a,PtrLen<const Unit> b)
  {
-  IntegerDivider<Algo> divider(a,b,true);
+  IntegerDivider<Algo,ArrayAlgoType> divider(a,b,true);
   
   Integer div_(CopyFrom,divider.getResult());
   Integer mod_(CopyFrom,divider.getMod());
@@ -2485,9 +2487,9 @@ class RandomInteger : public Integer
    ~RandomInteger() {}
  };
 
-/* struct GCDAlgo<Algo> */
+/* struct GCDAlgo<Algo,TempArrayType> */
 
-template <class Algo>
+template <class Algo,class TempArrayType>
 struct GCDAlgo
  {
   typedef typename Algo::Unit Unit;
@@ -2759,7 +2761,7 @@ struct GCDAlgo
   
   static int QSym(PtrLen<const Unit> a,PtrLen<const Unit> b)
    {
-    DynArray<Unit> buf(DoRaw( AddLen(a.len,b.len) ));
+    TempArrayType buf(DoRaw( AddLen(a.len,b.len) ));
     
     Unit *a1=buf.getPtr();
     Unit *b1=a1+a.len;
@@ -2771,9 +2773,9 @@ struct GCDAlgo
    }
  };
 
-/* class GCDivBuilder<Algo> */
+/* class GCDivBuilder<Algo,TempArrayType> */
 
-template <class Algo>
+template <class Algo,class TempArrayType>
 class GCDivBuilder
  {
    typedef typename Algo::Unit Unit;
@@ -2789,7 +2791,7 @@ class GCDivBuilder
    
    PtrLen<Unit> operator () (Place<void> place) const
     {
-     DynArray<Unit> buf(DoRaw( AddLen(a.len,b.len) ));
+     TempArrayType buf(DoRaw( AddLen(a.len,b.len) ));
      
      Unit *a1=buf.getPtr();
      Unit *b1=a1+a.len;
@@ -2797,7 +2799,7 @@ class GCDivBuilder
      a.copyTo(a1);
      b.copyTo(b1);
      
-     auto result=GCDAlgo<Algo>::SignedGCD(Range(a1,a.len),Range(b1,b.len));
+     auto result=GCDAlgo<Algo,TempArrayType>::SignedGCD(Range(a1,a.len),Range(b1,b.len));
      
      Unit *c=place;
      ulen len=result.copyTo(c);
@@ -2814,7 +2816,7 @@ class GCDivType : public Integer
   public:
    
    GCDivType(const Integer &a,const Integer &b) 
-    : Integer(DoBuild,GCDivBuilder<typename Integer::AlgoType>(a.getBody(),b.getBody())) 
+    : Integer(DoBuild,GCDivBuilder<typename Integer::AlgoType,typename Integer::TempArrayType>(a.getBody(),b.getBody())) 
     {
     }
  };
@@ -2829,7 +2831,7 @@ Integer GCDiv(const Integer &a,const Integer &b) { return GCDivType<Integer>(a,b
 template <class Integer>
 int QSym(const Integer &a,const Integer &b)
  {
-  return GCDAlgo<typename Integer::AlgoType>::QSym(a.getBody(),b.getBody());
+  return GCDAlgo<typename Integer::AlgoType,typename Integer::TempArrayType>::QSym(a.getBody(),b.getBody());
  }
 
 } // namespace Math

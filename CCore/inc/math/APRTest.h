@@ -38,6 +38,8 @@ QType MulGuarded(QType a,QType b);
 
 QType AddGuarded(QType a,QType b);
 
+void GuardNoMemory();
+
 /* classes */
 
 //enum TestResult;
@@ -636,7 +638,7 @@ class NoReport
    NoReport() {}
   
    template <class Integer>
-   void start(Integer N) { Used(N); }
+   void start(const Integer &N) { Used(N); }
    
    void sanity(const char *msg) { Used(msg); }
    
@@ -647,18 +649,18 @@ class NoReport
    void testQ(QType prime_q) { Used(prime_q); }
    
    template <class Integer>
-   void cappa(PtrLen<const Integer> cappa,Integer Nminus1) { Used(cappa); Used(Nminus1); }
+   void cappa(PtrLen<const Integer> cappa,const Integer &Nminus1) { Used(cappa); Used(Nminus1); }
    
    template <class Integer>
-   void cappa2(Integer cappa,Integer Nminus1) { Used(cappa); Used(Nminus1); }
+   void cappa2(const Integer &cappa,const Integer &Nminus1) { Used(cappa); Used(Nminus1); }
    
    void startProbe() {}
    
    template <class Integer>
-   void probe(Integer cnt) { Used(cnt); }
+   void probe(const Integer &cnt) { Used(cnt); }
    
    template <class Integer>
-   void div(Integer D) { Used(D); }
+   void div(const Integer &D) { Used(D); }
    
    void hard() {}
    
@@ -1123,7 +1125,7 @@ class ParaTestEngine : TestData
         return ret;
        }
       
-      Ring mul(Ring a,Ring b) const
+      Ring mul(const Ring &a,const Ring &b) const
        {
         auto ra=Range(a);
         auto rb=Range(b);
@@ -1165,7 +1167,7 @@ class ParaTestEngine : TestData
         return ret;
        }
       
-      Ring pow(Ring a,Integer d) const
+      Ring pow(const Ring &a,const Integer &d) const
        {
         for(IntegerBitScanner<Integer> scanner(d); +scanner ;++scanner)
           if( *scanner ) 
@@ -1185,7 +1187,7 @@ class ParaTestEngine : TestData
         return one(a.getLen());
        }
       
-      int test(Integer a,Integer b) const // 0, 1, other=2 : a-b mod N
+      int test(const Integer &a,const Integer &b) const // 0, 1, other=2 : a-b mod N
        {
         switch( Cmp(a,b) )
           {
@@ -1209,7 +1211,7 @@ class ParaTestEngine : TestData
           }
        }
       
-      TestResult test(Ring cappa) const
+      TestResult test(const Ring &cappa) const
        {
         auto r=Range(cappa);
         
@@ -1258,7 +1260,7 @@ class ParaTestEngine : TestData
         return NoPrime;
        }
       
-      TestResult test(Integer cappa,int sign) const
+      TestResult test(const Integer &cappa,int sign) const
        {
         if( cappa==1 ) return Test(1,sign);
         
@@ -1269,7 +1271,7 @@ class ParaTestEngine : TestData
       
      public:
       
-      explicit Engine(Integer N) : engine(N),Nminus1(N-1) {}
+      explicit Engine(const Integer &N) : engine(N),Nminus1(N-1) {}
       
       ~Engine() {}
       
@@ -1346,7 +1348,7 @@ class ParaTestEngine : TestData
   private:
    
    template <class Report>
-   TestResult sanity(Integer N,unsigned &set_number,Report &report) const
+   TestResult sanity(const Integer &N,unsigned &set_number,Report &report) const
     {
      if( N<=1 ) 
        {
@@ -1400,15 +1402,13 @@ class ParaTestEngine : TestData
      return HardCase;
     }
    
-   static bool TestOrder(unsigned p,Integer N)
+   static bool TestOrder(unsigned p,const Integer &N)
     {
      Integer M=p;
      
      ModEngine<Integer> engine(M.sq());
      
-     N=engine.prepare(N);
-
-     return engine.template pow<unsigned>(N,p-1)!=1;
+     return engine.template pow<unsigned>(engine.prepare(N),p-1)!=1;
     }
    
   private: 
@@ -1419,113 +1419,119 @@ class ParaTestEngine : TestData
       Integer N;
       Integer Q;
       Integer D1;
-      Integer DStep;
       Report &report;
+      
+      struct Rec : NoThrowFlagsBase
+       {
+        Integer D;
+        Integer cnt;
+        
+        void set(const Integer &D_,const Integer &cnt_)
+         {
+          D=D_;
+          cnt=cnt_;
+         }
+       
+        void cloneTo(Integer &D_,Integer &cnt_) const
+         {
+          D.cloneTo(D_);
+          cnt.cloneTo(cnt_);
+         }
+       };
+      
+      DynArray<Rec> list;
       
       Mutex mutex;
       
-      Integer D;
-      Integer cnt;
+      ulen cur = 0 ;
       
       TestResult result = IsPrime ;
+      bool no_memory = false ;
      
      private: 
       
-      static const ulen Delta = 100000 ;
+      static const ulen ListLen = 1000 ;
       
       void job()
        {
-        Integer N_;
-        Integer Q_;
-        Integer D1_;
-        Integer DStep_;
-        
-        N.cloneTo(N_);
-        Q.cloneTo(Q_);
-        D1.cloneTo(D1_);
-        DStep.cloneTo(DStep_);
-        
-        ModEngine<Integer> engine(Q_);
-        
-        for(;;)
+        try
           {
-           Integer D_;
-           ulen count;
-          
-           {
-            Mutex::Lock lock(mutex);
-            
-            if( result!=IsPrime ) return;
-            
-            Integer cnt_;
-            
-            cnt.cloneTo(cnt_);
-            
-            report.probe(cnt_);
-            
-            if( cnt_>Delta )
-              {
-               D.cloneTo(D_);
-               count=Delta;
-               
-               cnt_-=Delta;
-               D_=engine.mul(D_,DStep);
-               
-               D_.modify();
-               cnt_.modify();
-               
-               Swap(D,D_);
-               Swap(cnt,cnt_);
-              }
-            else
-              {
-               count=cnt_.template cast<ulen>();
-               
-               if( !count ) return;
-               
-               D.cloneTo(D_);
-               
-               cnt_=0;
-               
-               cnt_.modify();
-               
-               Swap(cnt,cnt_);
-              }
-           }
+           Integer N_;
+           Integer Q_;
+           Integer D1_;
            
-           for(; count ;count--,D_=engine.mul(D_,D1_))
+           N.cloneTo(N_);
+           Q.cloneTo(Q_);
+           D1.cloneTo(D1_);
+           
+           ModEngine<Integer> engine(Q_);
+           
+           for(ulen i;;)
              {
-              if( D_>1 && D_<N_ && !(N_%D_) )
+              { 
+               Mutex::Lock lock(mutex);
+               
+               if( no_memory || result!=IsPrime || cur>=ListLen ) return;
+               
+               i=cur++;
+              }
+              
+              Integer D;
+              Integer cnt;
+              
+              list[i].cloneTo(D,cnt);
+              
+              for(; cnt>0 ;cnt-=1,D=engine.mul(D,D1_))
                 {
-                 report.div(D_);
+                 report.probe(cnt);
                 
-                 Mutex::Lock lock(mutex);
-                 
-                 result=HasDivisor;
-                 
-                 return; 
+                 if( D>1 && D<N_ && !(N_%D) )
+                   {
+                    report.div(D);
+                    
+                    Mutex::Lock lock(mutex);
+                    
+                    result=HasDivisor;
+                   
+                    return;
+                   }
                 }
              }
+          }
+        catch(...)
+          {
+           Mutex::Lock lock(mutex);
+          
+           no_memory=true;
           }
        }
       
      public:
     
-      FinishJobControl(Integer N_,Integer P_,Integer Q_,Report &report_)
+      FinishJobControl(const Integer &N_,const Integer &P_,const Integer &Q_,Report &report_)
        : N(N_),
          Q(Q_),
          D1(N_%Q_),
-         report(report_)
+         report(report_),
+         list(ListLen)
        {
-        D=D1;
-        cnt=P_-1;
-        
-        D.modify();
-        cnt.modify();
-        
         ModEngine<Integer> engine(Q_);
         
-        DStep=engine.pow(D1,Delta);
+        Integer D=D1;
+        Integer cnt=P_-1;
+        
+        Integer delta=cnt/ListLen;
+        
+        Integer E=engine.pow(D1,delta);
+        
+        for(ulen i=0; i<ListLen-1 ;i++)
+          {
+           list[i].set(D,delta);
+           
+           D=engine.mul(D,E);
+          }
+        
+        list[ListLen-1].set(D,cnt-(ListLen-1)*delta);
        }
       
       ~FinishJobControl() {}
@@ -1533,10 +1539,12 @@ class ParaTestEngine : TestData
       Function<void (void)> function_job() { return FunctionOf(this,&FinishJobControl::job); }
       
       TestResult getResult() const { return result; }
+      
+      bool getNoMemory() const { return no_memory; }
     };
    
    template <class Report>
-   TestResult finish(Integer N,unsigned set_number,Report &report) const
+   TestResult finish(const Integer &N,unsigned set_number,Report &report) const
     {
      report.startProbe();
      
@@ -1545,6 +1553,8 @@ class ParaTestEngine : TestData
      {
       Job run_job(control.function_job());
      }
+     
+     if( control.getNoMemory() ) GuardNoMemory();
      
      TestResult ret=control.getResult();
      
@@ -1568,45 +1578,55 @@ class ParaTestEngine : TestData
       
       unsigned cur = 1 ;
       bool no_prime = false ;
+      bool no_memory = false ;
       
      private: 
       
       void job()
        {
-        Integer N_;
-        
-        N.cloneTo(N_);
-        
-        Engine engine(N_);
-        
-        for(unsigned i;;)
+        try
           {
-           {
-            Mutex::Lock lock(mutex);
-            
-            if( no_prime || cur>=set_number+2 ) return;
-            
-            i=cur++;
-           }
-         
-           TestResult ret=engine.test(set_number,pset[i],report);
+           Integer N_;
            
-           if( ret==NoPrime ) 
+           N.cloneTo(N_);
+           
+           Engine engine(N_);
+           
+           for(unsigned i;;)
              {
-              Mutex::Lock lock(mutex);
+              {
+               Mutex::Lock lock(mutex);
+               
+               if( no_prime || no_memory || cur>=set_number+2 ) return;
+               
+               i=cur++;
+              }
+            
+              TestResult ret=engine.test(set_number,pset[i],report);
               
-              no_prime=true;
- 
-              return;
+              if( ret==NoPrime ) 
+                {
+                 Mutex::Lock lock(mutex);
+                 
+                 no_prime=true;
+    
+                 return;
+                }
+              
+              if( ret==IsPrime ) flags[i]=true;
              }
+          }
+        catch(...)
+          {
+           Mutex::Lock lock(mutex);
            
-           if( ret==IsPrime ) flags[i]=true;
+           no_memory=true;
           }
        }
       
      public:
     
-      JobControl(const TestSet *pset_,Integer N_,bool *flags_,unsigned set_number_,Report &report_)
+      JobControl(const TestSet *pset_,const Integer &N_,bool *flags_,unsigned set_number_,Report &report_)
        : pset(pset_),
          N(N_),
          flags(flags_),
@@ -1620,6 +1640,8 @@ class ParaTestEngine : TestData
       Function<void (void)> function_job() { return FunctionOf(this,&JobControl::job); }
       
       bool getNoPrime() const { return no_prime; }
+      
+      bool getNoMemory() const { return no_memory; }
     };
    
   public:
@@ -1660,7 +1682,7 @@ class ParaTestEngine : TestData
     {
      report.start(N);
      
-     unsigned set_number;
+     unsigned set_number=0;
 
      {
       TestResult ret=sanity(N,set_number,report);
@@ -1685,6 +1707,8 @@ class ParaTestEngine : TestData
       {
        Job run_job(control.function_job());
       }
+      
+      if( control.getNoMemory() ) GuardNoMemory();
       
       if( control.getNoPrime() ) return NoPrime;
      }

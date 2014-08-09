@@ -52,6 +52,11 @@ QType AddGuarded(QType a,QType b)
   return add.result;
  }
 
+void GuardNoMemory()
+ {
+  Printf(Exception,"CCore::Math::APRTest::ParaTestEngine<...>::operator () : no memory");
+ }
+
 /* enum TestResult */
 
 const char * GetTextDesc(TestResult res)
