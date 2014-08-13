@@ -16,10 +16,14 @@
 #ifndef CCore_inc_net_PKE_h
 #define CCore_inc_net_PKE_h
 
+#include <CCore/inc/net/PacketEndpointDevice.h>
+#include <CCore/inc/PacketSet.h>
+
 #include <CCore/inc/net/PSecCore.h>
 
 #include <CCore/inc/SaveLoad.h>
- 
+#include <CCore/inc/ObjHost.h>
+
 namespace CCore {
 namespace Net {
 namespace PSec {
@@ -30,7 +34,13 @@ const ulen DefaultKeySetLen = 10 ;
 
 const uint32 DefaultTTL = 3600 ; // 1 hour
 
-const uint32 DefaultUTL = 100000000 ; 
+const uint32 DefaultUTL = 100000000 ;
+
+const ulen NonceLen = 128 ;
+
+constexpr MSec RetryTimeout = 1_sec ;
+
+const unsigned MaxRetry = 100 ;
 
 /* enum CryptID */
 
@@ -74,6 +84,18 @@ struct SessionKeyParam;
 
 class SessionKey;
 
+struct AbstractClientId;
+
+class ClientNegotiant;
+
+struct AbstractClientProfile;
+
+struct AbstractClientDataBase;
+
+struct AbstractEndpointManager;
+
+class ServerNegotiant;
+
 /* struct CryptAlgoSelect */
 
 struct CryptAlgoSelect
@@ -85,6 +107,9 @@ struct CryptAlgoSelect
   // constructors
   
   CryptAlgoSelect() {}
+  
+  CryptAlgoSelect(CryptID crypt_id_,HashID hash_id_,DHGroupID dhg_id_) 
+   : crypt_id(crypt_id_),hash_id(hash_id_),dhg_id(dhg_id_) {}
   
   // save/load object
   
@@ -205,6 +230,181 @@ class SessionKey : public MasterKey
    virtual ulen getKeySetLen() const;
    
    virtual void getKey(ulen index,uint8 key[ /* KLen */ ]) const;
+ };
+
+/* struct AbstractClientId */
+
+struct AbstractClientId : MemBase_nocopy
+ {
+  virtual ~AbstractClientId() {}
+  
+  virtual uint8 getLen() const =0;
+  
+  virtual void getId(uint8 buf[ /* Len */ ]) const =0;
+ };
+
+/* type PrimeKey */
+
+using PrimeKey = OwnPtr<AbstractHashFunc> ;
+
+/* type ClientId */
+
+using ClientId = OwnPtr<AbstractClientId> ;
+
+/* type */
+
+using SKey = OwnPtr<MasterKey> ;
+
+/* class ClientNegotiant */
+
+class ClientNegotiant : NoCopy
+ {
+  public:
+  
+   enum State
+    {
+     State_Ready,
+     State_Started,
+     State_Done
+    };
+  
+  private:
+  
+   class Proc : NoCopy
+    {
+     public: 
+    
+      Proc(ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key);
+      
+      ~Proc();
+      
+      void start(PtrLen<const CryptAlgoSelect> algo_list);
+      
+      bool inbound(PtrLen<const uint8> data);
+      
+      PtrLen<const uint8> getSendData() const;
+    };
+  
+   class Engine : NoCopy , PacketEndpointDevice::InboundProc
+    {
+      PacketEndpointDevice *dev;
+      
+      Mutex mutex;
+      
+      Proc proc;
+      SecTimer timer;
+      unsigned retry_count;
+      
+     private:
+      
+      // InboundProc
+    
+      virtual void inbound(Packet<uint8> packet,PtrLen<const uint8> data);
+     
+      virtual void tick();
+    
+     public:
+    
+      Engine(PacketEndpointDevice *dev,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key);
+      
+      ~Engine();
+      
+      void start(PtrLen<const CryptAlgoSelect> algo_list);
+      
+      State getState() const;
+      
+      State wait(MSec timeout);
+      
+      State wait(TimeScope time_scope);
+      
+      void getSessionKey(SKey &skey);
+    };
+  
+  private:
+  
+   ObjHook hook;
+   
+   Engine engine;
+  
+  public:
+  
+   ClientNegotiant(StrLen ep_dev_name,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key);
+   
+   ~ClientNegotiant();
+   
+   void start(PtrLen<const CryptAlgoSelect> algo_list) { engine.start(algo_list); }
+   
+   template <class ... TT>
+   void start(TT ... tt)
+    {
+     CryptAlgoSelect algo_list[]={tt...};
+     
+     start(Range_const(algo_list));
+    }
+   
+   State getState() const { return engine.getState(); }
+   
+   State wait(MSec timeout) { return engine.wait(timeout); }
+   
+   State wait(TimeScope time_scope) { return engine.wait(time_scope); }
+   
+   void getSessionKey(SKey &skey) { return engine.getSessionKey(skey); }
+ };
+
+/* struct AbstractClientProfile */
+
+struct AbstractClientProfile : MemBase_nocopy
+ {
+  virtual ~AbstractClientProfile() {}
+ };
+
+/* type ClientProfile */
+
+using ClientProfile = OwnPtr<AbstractClientProfile> ; 
+
+/* struct AbstractClientDataBase */
+
+struct AbstractClientDataBase : MemBase_nocopy
+ {
+  virtual ~AbstractClientDataBase() {}
+  
+  virtual bool findClient(PtrLen<const uint8> client_id,PrimeKey &client_key,ClientProfile &client_profile) =0;
+ };
+
+/* struct AbstractEndpointManager */
+
+struct AbstractEndpointManager : MemBase_nocopy
+ {
+  virtual ~AbstractEndpointManager() {}
+
+  virtual ulen getBufLen() const =0; 
+  
+  virtual StrLen createName(char buf[ /* BufLen */ ]) =0;
+  
+  virtual void open(StrLen ep_dev_name,SKey &skey,ClientProfile &client_profile) =0;
+ };
+
+/* class ServerNegotiant */
+
+class ServerNegotiant : NoCopy
+ {
+  public:
+  
+   ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,PrimeKey &server_key,AbstractEndpointManager &epman,MSec final_timeout=5_sec);
+   
+   ~ServerNegotiant();
+   
+   void start();
+   
+   void start(PtrLen<const CryptAlgoSelect> algo_list);
+   
+   template <class ... TT>
+   void start(TT ... tt)
+    {
+     CryptAlgoSelect algo_list[]={tt...};
+     
+     start(Range_const(algo_list));
+    }
  };
 
 } // namespace PSec 

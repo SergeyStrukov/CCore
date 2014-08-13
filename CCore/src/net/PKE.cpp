@@ -250,6 +250,61 @@ void SessionKey::getKey(ulen index,uint8 key[]) const
   Range(key_buf.getPtr()+klen*(index+1),klen).copyTo(key);
  }
 
+/* class ClientNegotiant::Engine */
+
+void ClientNegotiant::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> data)
+ {
+ }
+
+void ClientNegotiant::Engine::tick()
+ {
+ }
+
+ClientNegotiant::Engine::Engine(PacketEndpointDevice *dev_,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key)
+ : dev(dev_),
+   proc(client_id,client_key,server_key)
+ {
+ }
+
+ClientNegotiant::Engine::~Engine()
+ {
+ }
+
+void ClientNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list)
+ {
+  Mutex::Lock lock(mutex);
+  
+  proc.start(algo_list);
+ }
+
+auto ClientNegotiant::Engine::getState() const -> State
+ {
+ }
+
+auto ClientNegotiant::Engine::wait(MSec timeout) -> State
+ {
+ }
+
+auto ClientNegotiant::Engine::wait(TimeScope time_scope) -> State
+ {
+ }
+
+void ClientNegotiant::Engine::getSessionKey(SKey &skey)
+ {
+ }
+
+/* class ClientNegotiant */
+
+ClientNegotiant::ClientNegotiant(StrLen ep_dev_name,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key)
+ : hook(ep_dev_name),
+   engine(hook,client_id,client_key,server_key)
+ {
+ }
+
+ClientNegotiant::~ClientNegotiant()
+ {
+ }
+
 } // namespace PSec 
 } // namespace Net
 } // namespace CCore
