@@ -250,20 +250,167 @@ void SessionKey::getKey(ulen index,uint8 key[]) const
   Range(key_buf.getPtr()+klen*(index+1),klen).copyTo(key);
  }
 
+/* class ClientNegotiant::Proc */
+
+void ClientNegotiant::Proc::build1()
+ {
+  BufPutDev dev(send_buf);
+  
+  dev(*client_id);
+  
+  SaveRange(algo_list,algo_count,dev);
+  
+  send_len=Dist(send_buf,dev.getRest());
+ }
+
+bool ClientNegotiant::Proc::process2(PtrLen<const uint8> data)
+ {
+ }
+
+ClientNegotiant::Proc::Proc(ClientId &client_id_,PrimeKey &client_key_,PrimeKey &server_key_)
+ {
+  Swap(client_id,client_id_);
+  Swap(client_key,client_key_);
+  Swap(server_key,server_key_);
+  
+  if( !client_id )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::ClientNegotiant(...) : no client id");
+    }
+  
+  if( !client_key )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::ClientNegotiant(...) : no client key");
+    }
+  
+  if( !server_key )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::ClientNegotiant(...) : no server key");
+    }
+ }
+
+ClientNegotiant::Proc::~Proc()
+ {
+ }
+
+void ClientNegotiant::Proc::start(PtrLen<const CryptAlgoSelect> algo_list_)
+ {
+  if( algo_list_.len>MaxAlgos )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::start(...) : too many algos");
+    }
+  
+  algo_list_.copyTo(algo_list);
+  
+  algo_count=algo_list_.len;
+  
+  skey.set(0);
+  
+  state=State_Started;
+  
+  build1();
+  
+  inbound_func=&Proc::process2;
+ }
+
+bool ClientNegotiant::Proc::inbound(PtrLen<const uint8> data)
+ {
+  if( state==State_Started ) return (this->*inbound_func)(data);
+
+  return false;
+ }
+
 /* class ClientNegotiant::Engine */
+
+Packet<uint8> ClientNegotiant::Engine::prepare_send()
+ {
+  tick_count=StartTickCount;
+  retry_count=MaxRetry;
+  
+  Packet<uint8> ret=pset.try_get();
+  
+  if( !ret ) return Nothing;
+  
+  PtrLen<const uint8> data=proc.getSendData();
+  
+  if( ret.checkDataLen(outbound_format,data.len) )
+    {
+     ret.setDataLen(outbound_format,data.len).copy(data.ptr);
+     
+     return ret;
+    }
+  else
+    {
+     ret.complete();
+     
+     return Nothing;
+    }
+ }
 
 void ClientNegotiant::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> data)
  {
+  Packet<uint8> send;
+  bool done=false;
+  
+  {
+   Mutex::Lock lock(mutex);
+   
+   if( proc.inbound(data) ) 
+     {
+      if( proc.getState()==State_Started )
+        {
+         send=prepare_send();
+        }
+      else
+        {
+         tick_count=0;
+         retry_count=0;
+         done=true;
+        }
+     }
+  } 
+  
+  packet.complete();
+  
+  if( +send ) dev->outbound(send);
+  
+  if( done ) done_func();
  }
 
 void ClientNegotiant::Engine::tick()
  {
+  Packet<uint8> send;
+  
+  {
+   Mutex::Lock lock(mutex);
+   
+   if( retry_count )
+     {
+      if( tick_count )
+        {
+         tick_count--;
+        }
+      else
+        {
+         retry_count--;
+         tick_count=StartTickCount;
+         
+         send=prepare_send();
+        }
+     }
+  }
+  
+  if( +send ) dev->outbound(send);
  }
 
-ClientNegotiant::Engine::Engine(PacketEndpointDevice *dev_,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key)
+ClientNegotiant::Engine::Engine(PacketEndpointDevice *dev_,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func_)
  : dev(dev_),
+   done_func(done_func_),
+   pset("PSec::ClientNegotiant.pset"),
+   mutex("PSec::ClientNegotiant.mutex"),
    proc(client_id,client_key,server_key)
  {
+  outbound_format=dev->getOutboundFormat();
  }
 
 ClientNegotiant::Engine::~Engine()
@@ -272,32 +419,38 @@ ClientNegotiant::Engine::~Engine()
 
 void ClientNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list)
  {
-  Mutex::Lock lock(mutex);
+  Packet<uint8> send;
   
-  proc.start(algo_list);
+  {
+   Mutex::Lock lock(mutex);
+  
+   proc.start(algo_list);
+   
+   send=prepare_send();
+  } 
+  
+  if( +send ) dev->outbound(send);
  }
 
 auto ClientNegotiant::Engine::getState() const -> State
  {
- }
-
-auto ClientNegotiant::Engine::wait(MSec timeout) -> State
- {
- }
-
-auto ClientNegotiant::Engine::wait(TimeScope time_scope) -> State
- {
+  Mutex::Lock lock(mutex);
+  
+  return proc.getState();
  }
 
 void ClientNegotiant::Engine::getSessionKey(SKey &skey)
  {
+  Mutex::Lock lock(mutex);
+  
+  proc.getSessionKey(skey);
  }
 
 /* class ClientNegotiant */
 
-ClientNegotiant::ClientNegotiant(StrLen ep_dev_name,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key)
+ClientNegotiant::ClientNegotiant(StrLen ep_dev_name,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func)
  : hook(ep_dev_name),
-   engine(hook,client_id,client_key,server_key)
+   engine(hook,client_id,client_key,server_key,done_func)
  {
  }
 

@@ -38,9 +38,13 @@ const uint32 DefaultUTL = 100000000 ;
 
 const ulen NonceLen = 128 ;
 
-constexpr MSec RetryTimeout = 1_sec ;
+const unsigned StartTickCount = InboundTicksPerSec*1 ; // 1 sec 
 
 const unsigned MaxRetry = 100 ;
+
+const ulen MaxAlgos = 16 ;
+
+const ulen MaxPKETransLen = 1200 ;
 
 /* enum CryptID */
 
@@ -241,6 +245,18 @@ struct AbstractClientId : MemBase_nocopy
   virtual uint8 getLen() const =0;
   
   virtual void getId(uint8 buf[ /* Len */ ]) const =0;
+  
+  // save object
+  
+  template <class Dev>
+  void save(Dev &dev) const
+   {
+    uint8 len=getLen();
+    
+    dev.put(len);
+    
+    getId(dev.putRange(len).ptr);
+   }
  };
 
 /* type PrimeKey */
@@ -272,30 +288,67 @@ class ClientNegotiant : NoCopy
   
    class Proc : NoCopy
     {
+      State state = State_Ready ;
+    
+      ClientId client_id;
+      PrimeKey client_key;
+      PrimeKey server_key;
+      
+      CryptAlgoSelect algo_list[MaxAlgos];
+      ulen algo_count = 0 ;
+      
+      SKey skey;
+      
+      uint8 send_buf[MaxPKETransLen];
+      ulen send_len = 0 ;
+      
+      typedef bool (Proc::* InboundFunc)(PtrLen<const uint8> data);
+      
+      InboundFunc inbound_func;
+      
+     private: 
+      
+      void build1();
+      
+      bool process2(PtrLen<const uint8> data);
+      
      public: 
     
       Proc(ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key);
       
       ~Proc();
       
+      State getState() const { return state; }
+      
       void start(PtrLen<const CryptAlgoSelect> algo_list);
       
       bool inbound(PtrLen<const uint8> data);
       
-      PtrLen<const uint8> getSendData() const;
+      PtrLen<const uint8> getSendData() const { return Range(send_buf,send_len); }
+      
+      void getSessionKey(SKey &skey_) { Swap(skey,skey_); }
     };
   
    class Engine : NoCopy , PacketEndpointDevice::InboundProc
     {
       PacketEndpointDevice *dev;
       
-      Mutex mutex;
+      PacketFormat outbound_format;
+      
+      Function<void (void)> done_func;
+      
+      PacketSet<uint8> pset;
+      
+      mutable Mutex mutex;
       
       Proc proc;
-      SecTimer timer;
-      unsigned retry_count;
+      
+      unsigned tick_count = 0 ;
+      unsigned retry_count = 0 ;
       
      private:
+      
+      Packet<uint8> prepare_send();
       
       // InboundProc
     
@@ -305,17 +358,13 @@ class ClientNegotiant : NoCopy
     
      public:
     
-      Engine(PacketEndpointDevice *dev,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key);
+      Engine(PacketEndpointDevice *dev,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func);
       
       ~Engine();
       
-      void start(PtrLen<const CryptAlgoSelect> algo_list);
-      
       State getState() const;
       
-      State wait(MSec timeout);
-      
-      State wait(TimeScope time_scope);
+      void start(PtrLen<const CryptAlgoSelect> algo_list);
       
       void getSessionKey(SKey &skey);
     };
@@ -328,9 +377,11 @@ class ClientNegotiant : NoCopy
   
   public:
   
-   ClientNegotiant(StrLen ep_dev_name,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key);
+   ClientNegotiant(StrLen ep_dev_name,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func);
    
    ~ClientNegotiant();
+   
+   State getState() const { return engine.getState(); }
    
    void start(PtrLen<const CryptAlgoSelect> algo_list) { engine.start(algo_list); }
    
@@ -341,12 +392,6 @@ class ClientNegotiant : NoCopy
      
      start(Range_const(algo_list));
     }
-   
-   State getState() const { return engine.getState(); }
-   
-   State wait(MSec timeout) { return engine.wait(timeout); }
-   
-   State wait(TimeScope time_scope) { return engine.wait(time_scope); }
    
    void getSessionKey(SKey &skey) { return engine.getSessionKey(skey); }
  };
