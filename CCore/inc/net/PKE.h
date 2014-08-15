@@ -23,6 +23,7 @@
 
 #include <CCore/inc/SaveLoad.h>
 #include <CCore/inc/ObjHost.h>
+#include <CCore/inc/PlatformRandom.h>
 
 namespace CCore {
 namespace Net {
@@ -80,6 +81,16 @@ enum DHGroupID : uint8
   // may be continued
  };
 
+/* functions */
+
+AbstractCryptFunc * CreateEncrypt(CryptID crypt_id);
+
+AbstractCryptFunc * CreateDecrypt(CryptID crypt_id);
+
+AbstractHashFunc * CreateHash(HashID hash_id);
+
+AbstractDHGroup * CreateDHGroup(DHGroupID dhg_id);
+
 /* classes */
 
 struct CryptAlgoSelect;
@@ -88,7 +99,9 @@ struct SessionKeyParam;
 
 class SessionKey;
 
-struct AbstractClientId;
+struct AbstractClientID;
+
+struct NegData;
 
 class ClientNegotiant;
 
@@ -114,6 +127,13 @@ struct CryptAlgoSelect
   
   CryptAlgoSelect(CryptID crypt_id_,HashID hash_id_,DHGroupID dhg_id_) 
    : crypt_id(crypt_id_),hash_id(hash_id_),dhg_id(dhg_id_) {}
+  
+  // methods
+  
+  bool operator == (const CryptAlgoSelect &obj) const
+   {
+    return crypt_id==obj.crypt_id && hash_id==obj.hash_id && dhg_id==obj.dhg_id ;
+   }
   
   // save/load object
   
@@ -181,8 +201,6 @@ class SessionKey : public MasterKey
    struct GetKLenCtx;
    struct GetHLenCtx;
    struct GetSecretLenCtx;
-   struct CreateCryptCtx;
-   struct CreateHashCtx;
    struct CreateKeyGenCtx;
    
    static ulen GetKLen(CryptAlgoSelect algo_select);
@@ -236,15 +254,15 @@ class SessionKey : public MasterKey
    virtual void getKey(ulen index,uint8 key[ /* KLen */ ]) const;
  };
 
-/* struct AbstractClientId */
+/* struct AbstractClientID */
 
-struct AbstractClientId : MemBase_nocopy
+struct AbstractClientID : MemBase_nocopy
  {
-  virtual ~AbstractClientId() {}
+  virtual ~AbstractClientID() {}
   
   virtual uint8 getLen() const =0;
   
-  virtual void getId(uint8 buf[ /* Len */ ]) const =0;
+  virtual void getID(uint8 buf[ /* Len */ ]) const =0;
   
   // save object
   
@@ -255,7 +273,7 @@ struct AbstractClientId : MemBase_nocopy
     
     dev.put(len);
     
-    getId(dev.putRange(len).ptr);
+    getID(dev.putRange(len).ptr);
    }
  };
 
@@ -263,13 +281,49 @@ struct AbstractClientId : MemBase_nocopy
 
 using PrimeKey = OwnPtr<AbstractHashFunc> ;
 
-/* type ClientId */
+/* type ClientID */
 
-using ClientId = OwnPtr<AbstractClientId> ;
+using ClientID = OwnPtr<AbstractClientID> ;
 
 /* type */
 
 using SKey = OwnPtr<MasterKey> ;
+
+/* struct NegData */
+
+struct NegData : NoCopy
+ {
+  PlatformRandom random;
+
+  XPoint point;
+  uint8 server_nonce[NonceLen];
+  uint8 client_nonce[NonceLen];
+  CryptAlgoSelect algo;
+  
+  OwnPtr<AbstractCryptFunc> encrypt;
+  OwnPtr<AbstractCryptFunc> decrypt;
+  OwnPtr<AbstractHashFunc> hash;
+  OwnPtr<AbstractDHGroup> dhg;
+  
+  ulen glen;
+  
+  uint8 gy[MaxGLen];
+  uint8 x[MaxGLen];
+  uint8 gx[MaxGLen];
+  uint8 gxy[MaxGLen];
+  
+  uint8 key[MaxKLen];
+  
+  NegData();
+  
+  ~NegData();
+  
+  bool create();
+  
+  void keyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  
+  void clientGen();
+ };
 
 /* class ClientNegotiant */
 
@@ -290,7 +344,7 @@ class ClientNegotiant : NoCopy
     {
       State state = State_Ready ;
     
-      ClientId client_id;
+      ClientID client_id;
       PrimeKey client_key;
       PrimeKey server_key;
       
@@ -306,15 +360,23 @@ class ClientNegotiant : NoCopy
       
       InboundFunc inbound_func;
       
+      NegData neg_data;
+      
      private: 
       
       void build1();
       
+      bool test_algo() const;
+      
       bool process2(PtrLen<const uint8> data);
+      
+      void build3();
+      
+      bool process4(PtrLen<const uint8> data);
       
      public: 
     
-      Proc(ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key);
+      Proc(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key);
       
       ~Proc();
       
@@ -358,7 +420,7 @@ class ClientNegotiant : NoCopy
     
      public:
     
-      Engine(PacketEndpointDevice *dev,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func);
+      Engine(PacketEndpointDevice *dev,ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func);
       
       ~Engine();
       
@@ -377,7 +439,7 @@ class ClientNegotiant : NoCopy
   
   public:
   
-   ClientNegotiant(StrLen ep_dev_name,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func);
+   ClientNegotiant(StrLen ep_dev_name,ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func);
    
    ~ClientNegotiant();
    

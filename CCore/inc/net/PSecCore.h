@@ -29,6 +29,10 @@ namespace PSec {
 
 /* consts */
 
+const ulen MaxGLen = 512 ;
+
+const ulen MaxKLen = 512 ;
+
 const ulen DLen = 15 ;
 
 enum Packets
@@ -75,7 +79,11 @@ template <class Hash> class HashFunc;
 
 struct AbstractKeyGen;
 
+struct AbstractDHGroup;
+
 template <class Exp> class KeyGen;
+
+template <class Exp> class DHGroup;
 
 struct AbstractRandomGen;
 
@@ -148,7 +156,7 @@ class CryptFunc : public AbstractCryptFunc
    
    virtual ulen getKLen() const
     {
-     static_assert( Crypt::KeyLen>=16 ,"CCore::Net::PSec::CryptFunc<...> : bad KLen");
+     static_assert( Crypt::KeyLen>=16 && Crypt::KeyLen<=MaxKLen ,"CCore::Net::PSec::CryptFunc<...> : bad KLen");
      
      return Crypt::KeyLen;
     }
@@ -227,6 +235,19 @@ struct AbstractKeyGen : MemBase_nocopy
   virtual void pow(const uint8 x[ /* GLen */ ],uint8 gx[ /* GLen */ ]) =0;
   
   virtual void key(const uint8 x[ /* GLen */ ],const uint8 gy[ /* GLen */ ],uint8 key[ /* KLen */ ]) =0;
+ };
+
+/* struct AbstractDHGroup */
+
+struct AbstractDHGroup : MemBase_nocopy
+ {
+  virtual ~AbstractDHGroup() {}
+  
+  virtual ulen getGLen() const =0;
+
+  virtual void pow(const uint8 a[ /* GLen */ ],const uint8 x[ /* GLen */ ],uint8 ax[ /* GLen */ ]) =0;
+  
+  virtual void pow(const uint8 x[ /* GLen */ ],uint8 gx[ /* GLen */ ]) =0;
  };
 
 /* class KeyGen<Exp> */
@@ -316,6 +337,43 @@ class KeyGen : public AbstractKeyGen
         
         (out+=delta).copy(digest);
        }
+    }
+ };
+
+/* class DHGroup<Exp> */
+
+template <class Exp> 
+class DHGroup : public AbstractDHGroup 
+ {
+  public:
+  
+   static const ulen GLen = Exp::GLen ;
+ 
+  private:
+  
+   Exp exp;
+   
+  public: 
+   
+   DHGroup() {}
+   
+   virtual ~DHGroup() {}
+   
+   virtual ulen getGLen() const
+    { 
+     static_assert( GLen>=64 && GLen<=MaxGLen ,"CCore::Net::PSec::DHGroup<...> : bad GLen");
+     
+     return GLen; 
+    }
+   
+   virtual void pow(const uint8 a[],const uint8 x[],uint8 ax[])
+    {
+     exp.pow(a,x,ax);
+    }
+   
+   virtual void pow(const uint8 x[],uint8 gx[])
+    {
+     exp.pow(x,gx);
     }
  };
 

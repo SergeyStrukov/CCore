@@ -47,6 +47,79 @@ using HashCaseList = Meta::CaseList<Meta::Case<uint8,HashID_SHA1  ,Crypton::Plat
 using DHGCaseList = Meta::CaseList<Meta::Case<uint8,DHGroupID_I ,Crypton::DHExp<Crypton::DHModI > >,
                                    Meta::Case<uint8,DHGroupID_II,Crypton::DHExp<Crypton::DHModII> > > ;
 
+/* functions */
+
+namespace Private_PKE {
+
+struct CreateCryptCtx
+ {
+  using RetType = AbstractCryptFunc * ;
+  
+  template <class T>
+  static RetType call() { return new CryptFunc<T>(); }
+  
+  static RetType defcall(uint8 crypt_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::Create(En/De)crypt(#;) : unknown crypt_id",crypt_id);
+    
+    return 0;
+   }
+ };
+
+struct CreateHashCtx
+ {
+  using RetType = AbstractHashFunc * ;
+  
+  template <class T>
+  static RetType call() { return new HashFunc<T>(); }
+  
+  static RetType defcall(uint8 hash_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::CreateHash(#;) : unknown hash_id",hash_id);
+    
+    return 0;
+   }
+ };
+
+struct CreateDHGroupCtx
+ {
+  using RetType = AbstractDHGroup * ;
+  
+  template <class T>
+  static RetType call() { return new DHGroup<T>(); }
+
+  static RetType defcall(uint8 dhg_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::CreateDHGroup(#;) : unknown dhg_id",dhg_id);
+    
+    return 0;
+   }
+ };
+
+} // namespace Private_PKE
+
+using namespace Private_PKE;
+
+AbstractCryptFunc * CreateEncrypt(CryptID crypt_id)
+ {
+  return Meta::TypeSwitch<EncryptCaseList>::Switch(crypt_id,CreateCryptCtx());
+ }
+
+AbstractCryptFunc * CreateDecrypt(CryptID crypt_id)
+ {
+  return Meta::TypeSwitch<DecryptCaseList>::Switch(crypt_id,CreateCryptCtx());
+ }
+
+AbstractHashFunc * CreateHash(HashID hash_id)
+ {
+  return Meta::TypeSwitch<HashCaseList>::Switch(hash_id,CreateHashCtx());
+ }
+
+AbstractDHGroup * CreateDHGroup(DHGroupID dhg_id)
+ {
+  return Meta::TypeSwitch<DHGCaseList>::Switch(dhg_id,CreateDHGroupCtx());
+ }
+
 /* class SessionKey */
 
 struct SessionKey::GetKLenCtx
@@ -103,36 +176,6 @@ struct SessionKey::GetSecretLenCtx
   static RetType defcall(uint8 dhg_id)
    {
     Printf(Exception,"CCore::Net::PSec::SessionKey::GetSecretLen() : unknown dhg_id #;",dhg_id);
-    
-    return 0;
-   }
- };
-
-struct SessionKey::CreateCryptCtx
- {
-  using RetType = AbstractCryptFunc * ;
-  
-  template <class T>
-  static RetType call() { return new CryptFunc<T>(); }
-  
-  static RetType defcall(uint8 crypt_id)
-   {
-    Printf(Exception,"CCore::Net::PSec::SessionKey::create(En/De)crypt() : unknown crypt_id #;",crypt_id);
-    
-    return 0;
-   }
- };
-
-struct SessionKey::CreateHashCtx
- {
-  using RetType = AbstractHashFunc * ;
-  
-  template <class T>
-  static RetType call() { return new HashFunc<T>(); }
-  
-  static RetType defcall(uint8 hash_id)
-   {
-    Printf(Exception,"CCore::Net::PSec::SessionKey::createHash() : unknown hash_id #;",hash_id);
     
     return 0;
    }
@@ -195,17 +238,17 @@ SessionKey::~SessionKey()
    
 AbstractCryptFunc * SessionKey::createEncrypt() const
  {
-  return Meta::TypeSwitch<EncryptCaseList>::Switch(algo_select.crypt_id,CreateCryptCtx());
+  return CreateEncrypt(CryptID(algo_select.crypt_id));
  }
    
 AbstractCryptFunc * SessionKey::createDecrypt() const
  {
-  return Meta::TypeSwitch<DecryptCaseList>::Switch(algo_select.crypt_id,CreateCryptCtx());
+  return CreateDecrypt(CryptID(algo_select.crypt_id));
  }
    
 AbstractHashFunc * SessionKey::createHash() const
  {
-  return Meta::TypeSwitch<HashCaseList>::Switch(algo_select.hash_id,CreateHashCtx());
+  return CreateHash(HashID(algo_select.hash_id));
  }
    
 AbstractKeyGen * SessionKey::createKeyGen() const
@@ -250,6 +293,103 @@ void SessionKey::getKey(ulen index,uint8 key[]) const
   Range(key_buf.getPtr()+klen*(index+1),klen).copyTo(key);
  }
 
+/* struct NegData */
+
+NegData::NegData() 
+ {
+ }
+
+NegData::~NegData() 
+ {
+  Crypton::ForgetRange(Range(x));
+  Crypton::ForgetRange(Range(gxy));
+  Crypton::ForgetRange(Range(key));
+ }
+
+bool NegData::create()
+ {
+  SilentReportException report;
+  
+  try
+    {
+     encrypt.set(CreateEncrypt(CryptID(algo.crypt_id)));
+     decrypt.set(CreateDecrypt(CryptID(algo.crypt_id)));
+     hash.set(CreateHash(HashID(algo.hash_id)));
+     dhg.set(CreateDHGroup(DHGroupID(algo.dhg_id)));
+     
+     glen=dhg->getGLen();
+     
+     return true;
+    }
+  catch(...)
+    {
+     return false;
+    }
+ }
+
+void NegData::keyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+ {
+  uint8 temp[SaveLenCounter<XPoint>::SaveLoadLen+255];
+  ulen len;
+  
+  {
+   BufPutDev dev(temp);
+   
+   dev.use<BeOrder>(point);
+   
+   client_id->getID(dev.putRange(client_id->getLen()).ptr);
+   
+   len=Dist(temp,dev.getRest());
+  }
+  
+  ulen client_hlen=client_key->getHLen();
+  ulen server_hlen=server_key->getHLen();
+  
+  PtrLen<uint8> dst(key,encrypt->getKLen());
+  
+  for(;;)
+    {
+     client_key->add(Range_const(temp,len));
+     client_key->add(Range_const(client_nonce));
+     client_key->add(Range_const(server_nonce));
+     client_key->add(Range_const(gxy,glen));
+     
+     const uint8 *client_digest=client_key->finish();
+     
+     server_key->add(Range_const(client_digest,client_hlen));
+     server_key->add(Range_const(temp,len));
+     server_key->add(Range_const(client_nonce));
+     server_key->add(Range_const(server_nonce));
+     server_key->add(Range_const(gxy,glen));
+     
+     const uint8 *server_digest=server_key->finish();
+     
+     if( server_hlen<dst.len )
+       {
+        (dst+=server_hlen).copy(server_digest);
+        
+        client_key->add(Range_const(server_digest,server_hlen));
+       }
+     else
+       {
+        dst.copy(server_digest);
+        
+        return;
+       }
+    }
+ }
+
+void NegData::clientGen()
+ {
+  random.fill(Range(client_nonce));
+  
+  random.fill(Range(x,glen));
+  
+  dhg->pow(x,gx);
+  
+  dhg->pow(gy,x,gxy);
+ }
+
 /* class ClientNegotiant::Proc */
 
 void ClientNegotiant::Proc::build1()
@@ -263,11 +403,61 @@ void ClientNegotiant::Proc::build1()
   send_len=Dist(send_buf,dev.getRest());
  }
 
-bool ClientNegotiant::Proc::process2(PtrLen<const uint8> data)
+bool ClientNegotiant::Proc::test_algo() const
  {
+  for(const CryptAlgoSelect &algo : Range(algo_list,algo_count) ) if( algo==neg_data.algo ) return true;
+  
+  return false;
  }
 
-ClientNegotiant::Proc::Proc(ClientId &client_id_,PrimeKey &client_key_,PrimeKey &server_key_)
+bool ClientNegotiant::Proc::process2(PtrLen<const uint8> data)
+ {
+  RangeGetDev dev(data);
+  
+  dev.use<BeOrder>(neg_data.point);
+  
+  LoadRange(Range(neg_data.server_nonce),dev);
+  
+  dev(neg_data.algo);
+  
+  if( !dev || !test_algo() ) return false;
+  
+  if( !neg_data.create() ) return false;
+  
+  dev.get(neg_data.gy,neg_data.glen);
+  
+  if( !dev.finish() ) return false;
+  
+  neg_data.clientGen();
+  
+  neg_data.keyGen(client_id.getPtr(),client_key.getPtr(),server_key.getPtr());
+  
+  build3();
+  
+  inbound_func=&Proc::process4;
+  
+  return true;
+ }
+
+void ClientNegotiant::Proc::build3()
+ {
+  BufPutDev dev(send_buf);
+  
+  dev.use<BeOrder>(neg_data.point);
+  
+  SaveRange(Range(neg_data.client_nonce),dev);
+  
+  SaveRange(Range(neg_data.gx,neg_data.glen),dev);
+  
+  send_len=Dist(send_buf,dev.getRest());
+ }
+
+bool ClientNegotiant::Proc::process4(PtrLen<const uint8> data)
+ {
+  // TODO
+ }
+
+ClientNegotiant::Proc::Proc(ClientID &client_id_,PrimeKey &client_key_,PrimeKey &server_key_)
  {
   Swap(client_id,client_id_);
   Swap(client_key,client_key_);
@@ -403,7 +593,7 @@ void ClientNegotiant::Engine::tick()
   if( +send ) dev->outbound(send);
  }
 
-ClientNegotiant::Engine::Engine(PacketEndpointDevice *dev_,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func_)
+ClientNegotiant::Engine::Engine(PacketEndpointDevice *dev_,ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func_)
  : dev(dev_),
    done_func(done_func_),
    pset("PSec::ClientNegotiant.pset"),
@@ -448,7 +638,7 @@ void ClientNegotiant::Engine::getSessionKey(SKey &skey)
 
 /* class ClientNegotiant */
 
-ClientNegotiant::ClientNegotiant(StrLen ep_dev_name,ClientId &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func)
+ClientNegotiant::ClientNegotiant(StrLen ep_dev_name,ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func)
  : hook(ep_dev_name),
    engine(hook,client_id,client_key,server_key,done_func)
  {
