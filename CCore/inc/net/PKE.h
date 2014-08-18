@@ -21,6 +21,7 @@
 
 #include <CCore/inc/net/PSecCore.h>
 
+#include <CCore/inc/TreeMap.h>
 #include <CCore/inc/SaveLoad.h>
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/PlatformRandom.h>
@@ -115,7 +116,7 @@ class ServerNegotiant;
 
 /* struct CryptAlgoSelect */
 
-struct CryptAlgoSelect
+struct CryptAlgoSelect : NoThrowFlagsBase
  {
   uint8 crypt_id = CryptID_AES256 ;
   uint8 hash_id = HashID_SHA512 ;
@@ -495,15 +496,120 @@ struct AbstractEndpointManager : MemBase_nocopy
 
 class ServerNegotiant : NoCopy
  {
-  public:
+   class Engine;
   
-   ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,PrimeKey &server_key,AbstractEndpointManager &epman,MSec final_timeout=5_sec);
+   class Proc : NoCopy
+    {
+      Engine *engine;
+      
+      uint8 send_buf[MaxPKETransLen];
+      ulen send_len = 0 ;
+      
+      unsigned tick_count = 0 ;
+      unsigned retry_count = 0 ;
+      
+      enum InboundResult
+       {
+        InboundDrop,
+        InboundOk,
+        InboundLast,
+        InboundFinal
+       };
+      
+      typedef InboundResult (Proc::* InboundFunc)(PtrLen<const uint8> data);
+      
+      InboundFunc inbound_func;
+      
+      NegData neg_data;
+      
+     private:
+      
+      bool process1(PtrLen<const uint8> data);
+      
+      void build2();
+      
+      InboundResult process3(PtrLen<const uint8> data);
+      
+      InboundResult process_final(PtrLen<const uint8> data);
+      
+     public:
+    
+      explicit Proc(Engine *engine);
+      
+      ~Proc();
+      
+      bool inbound_first(XPoint point,PtrLen<const uint8> data,PacketList &list); // true to del
+      
+      void inbound(XPoint point,PtrLen<const uint8> data,PacketList &list);
+      
+      bool tick(XPoint point,PacketList &list); // true to del
+    };
+  
+   class Engine : NoCopy , PacketMultipointDevice::InboundProc
+    {
+      PacketMultipointDevice *dev;
+      
+      PacketFormat outbound_format;
+      
+      AbstractClientDataBase &client_db;
+      PrimeKey server_key;
+      AbstractEndpointManager &epman;
+      ulen max_clients;
+      unsigned final_tick_count;
+      
+      PacketSet<uint8> pset;
+      
+      Mutex mutex;
+      
+      bool enable = false ;
+      
+      DynArray<CryptAlgoSelect> algo_list;
+      bool algo_filter = false ;
+      
+      RadixTreeMap<XPoint,Proc> map;
+      
+      friend class Proc;
+      
+     private:
+      
+      void prepare_send(XPoint point,PtrLen<const uint8> send_data,PacketList &list);
+      
+      void send(PacketList &list);
+      
+      // InboundProc
+    
+      virtual void inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data);
+     
+      virtual void tick();
+    
+     public:
+    
+      Engine(PacketMultipointDevice *dev,AbstractClientDataBase &client_db,PrimeKey &server_key,AbstractEndpointManager &epman,ulen max_clients,MSec final_timeout);
+      
+      ~Engine();
+      
+      void start();
+      
+      void start(PtrLen<const CryptAlgoSelect> algo_list);
+    };
+  
+  private:
+  
+   ObjHook hook;
+   
+   Engine engine;
+  
+  public:
+
+   static const ulen DefaultMaxClients = 10000 ;
+
+   ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,PrimeKey &server_key,AbstractEndpointManager &epman,ulen max_clients=DefaultMaxClients,MSec final_timeout=5_sec);
    
    ~ServerNegotiant();
    
-   void start();
+   void start() { engine.start(); }
    
-   void start(PtrLen<const CryptAlgoSelect> algo_list);
+   void start(PtrLen<const CryptAlgoSelect> algo_list) { engine.start(algo_list); }
    
    template <class ... TT>
    void start(TT ... tt)

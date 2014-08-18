@@ -648,6 +648,277 @@ ClientNegotiant::~ClientNegotiant()
  {
  }
 
+/* class ServerNegotiant::Proc */
+
+bool ServerNegotiant::Proc::process1(PtrLen<const uint8> data)
+ {
+  // TODO
+ }
+
+void ServerNegotiant::Proc::build2()
+ {
+  // TODO
+ }
+
+auto ServerNegotiant::Proc::process3(PtrLen<const uint8> data) -> InboundResult
+ {
+  // TODO
+ }
+
+auto ServerNegotiant::Proc::process_final(PtrLen<const uint8> data) -> InboundResult
+ {
+  if( process1(data) )
+    {
+     return InboundOk;
+    }
+  else
+    {
+     return InboundFinal;
+    }
+ }
+
+ServerNegotiant::Proc::Proc(Engine *engine_)
+ : engine(engine_)
+ {
+ }
+
+ServerNegotiant::Proc::~Proc()
+ {
+ }
+
+bool ServerNegotiant::Proc::inbound_first(XPoint point,PtrLen<const uint8> data,PacketList &list)
+ {
+  if( process1(data) )
+    {
+     tick_count=StartTickCount;
+     retry_count=MaxRetry;
+    
+     engine->prepare_send(point,Range_const(send_buf,send_len),list);
+     
+     return false;
+    }
+  
+  return true;
+ }
+
+void ServerNegotiant::Proc::inbound(XPoint point,PtrLen<const uint8> data,PacketList &list)
+ {
+  switch( (this->*inbound_func)(data) ) 
+    {
+     case InboundOk :
+      {
+       tick_count=StartTickCount;
+       retry_count=MaxRetry;
+       
+       engine->prepare_send(point,Range_const(send_buf,send_len),list);
+      }
+     break;
+     
+     case InboundLast :
+      {
+       tick_count=engine->final_tick_count;
+       retry_count=1;
+       
+       engine->prepare_send(point,Range_const(send_buf,send_len),list);
+      }
+     break;
+     
+     case InboundFinal :
+      {
+       engine->prepare_send(point,Range_const(send_buf,send_len),list);
+      }
+     break; 
+    }
+ }
+
+bool ServerNegotiant::Proc::tick(XPoint point,PacketList &list)
+ {
+  if( retry_count )
+    {
+     if( tick_count )
+       {
+        tick_count--;
+       }
+     else
+       {
+        if( --retry_count )
+          {
+           tick_count=StartTickCount;
+          
+           engine->prepare_send(point,Range_const(send_buf,send_len),list);
+          }
+        else
+          {
+           retry_count=1;
+           
+           return true;
+          }
+       }
+    }
+  
+  return false;
+ }
+
+/* class ServerNegotiant::Engine */
+
+void ServerNegotiant::Engine::prepare_send(XPoint point,PtrLen<const uint8> send_data,PacketList &list)
+ {
+  Packet<uint8> packet=pset.try_get();
+  
+  if( !packet ) return;
+  
+  if( packet.checkDataLen(outbound_format,send_data.len) )
+    {
+     packet.setDataLen(outbound_format,send_data.len).copy(send_data.ptr);
+     
+     list.put(packet.pushExt<XPoint>(point));
+    }
+  else
+    {
+     packet.complete();
+    }
+ }
+
+void ServerNegotiant::Engine::send(PacketList &list)
+ {
+  while( PacketHeader *packet_=list.get() ) 
+    {
+     Packet<uint8,XPoint> packet=packet_;
+     XPoint point=*packet.getExt();
+     
+     dev->outbound(point,packet.popExt());
+    }
+ }
+
+void ServerNegotiant::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data)
+ {
+  PacketList list;
+  
+  {
+   Mutex::Lock lock(mutex);
+   
+   if( enable )
+     {
+      if( map.getCount()<max_clients )
+        {
+         try
+           {
+            auto result=map.find_or_add(point,this);
+            
+            if( result.new_flag )
+              {
+               if( result.obj->inbound_first(point,data,list) )
+                 {
+                  map.del(point);
+                 }
+              }
+            else
+              {
+               result.obj->inbound(point,data,list);
+              } 
+           }
+         catch(...)
+           {
+           }
+        }
+      else
+        {
+         if( auto *obj=map.find(point) ) obj->inbound(point,data,list);
+        }
+     }
+  }
+  
+  packet.complete();
+
+  send(list);
+ }
+
+void ServerNegotiant::Engine::tick()
+ {
+  PacketList list;
+
+  {
+   Mutex::Lock lock(mutex);
+   
+   if( enable )
+     {
+      const ulen Len = 100 ;
+     
+      XPoint todel[Len];
+      ulen count=0;
+     
+      map.applyIncr( [&] (XPoint point,Proc &proc) { if( proc.tick(point,list) && count<Len ) todel[count++]=point; } );
+      
+      for(XPoint point : Range(todel,count) ) map.del(point);
+     }
+  }
+  
+  send(list);
+ }
+
+ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,AbstractClientDataBase &client_db_,PrimeKey &server_key_,AbstractEndpointManager &epman_,ulen max_clients_,MSec final_timeout)
+ : dev(dev_),
+   client_db(client_db_),
+   epman(epman_),
+   max_clients(max_clients_),
+   pset("PSec::ServerNegotiant.pset"),
+   mutex("PSec::ServerNegotiant.mutex")
+ {
+  Swap(server_key,server_key_);
+  
+  if( !server_key )
+    {
+     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::ServerNegotiant(...) : no server key");
+    }
+  
+  outbound_format=dev->getOutboundFormat();
+  
+  final_tick_count=((+final_timeout)*InboundTicksPerSec)/1000+1;
+ }
+
+ServerNegotiant::Engine::~Engine()
+ {
+ }
+
+void ServerNegotiant::Engine::start()
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( enable )
+    {
+     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::start(...) : already started");
+    }
+  
+  enable=true;
+ }
+
+void ServerNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list_)
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( enable )
+    {
+     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::start(...) : already started");
+    }
+
+  algo_list.extend_copy(algo_list_.len,algo_list_.ptr);
+  
+  algo_filter=true;
+  enable=true;
+ }
+
+/* class ServerNegotiant */
+
+ServerNegotiant::ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,PrimeKey &server_key,AbstractEndpointManager &epman,ulen max_clients,MSec final_timeout)
+ : hook(mp_dev_name),
+   engine(hook,client_db,server_key,epman,max_clients,final_timeout)
+ {
+ }
+
+ServerNegotiant::~ServerNegotiant() 
+ {
+ }
+
 } // namespace PSec 
 } // namespace Net
 } // namespace CCore
