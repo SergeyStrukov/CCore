@@ -321,9 +321,15 @@ struct NegData : NoCopy
   
   bool create();
   
-  void keyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  void keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  
+  void clientKeyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  
+  void serverKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
   
   void clientGen();
+  
+  void serverGen();
  };
 
 /* class ClientNegotiant */
@@ -334,6 +340,7 @@ class ClientNegotiant : NoCopy
   
    enum State
     {
+     State_Null,
      State_Ready,
      State_Started,
      State_Done
@@ -343,7 +350,7 @@ class ClientNegotiant : NoCopy
   
    class Proc : NoCopy
     {
-      State state = State_Ready ;
+      State state = State_Null ;
     
       ClientID client_id;
       PrimeKey client_key;
@@ -377,9 +384,11 @@ class ClientNegotiant : NoCopy
       
      public: 
     
-      Proc(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key);
+      Proc();
       
       ~Proc();
+      
+      void prepare(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key);
       
       State getState() const { return state; }
       
@@ -421,9 +430,11 @@ class ClientNegotiant : NoCopy
     
      public:
     
-      Engine(PacketEndpointDevice *dev,ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func);
+      Engine(PacketEndpointDevice *dev,Function<void (void)> done_func);
       
       ~Engine();
+      
+      void prepare(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key);
       
       State getState() const;
       
@@ -440,9 +451,11 @@ class ClientNegotiant : NoCopy
   
   public:
   
-   ClientNegotiant(StrLen ep_dev_name,ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func);
+   ClientNegotiant(StrLen ep_dev_name,Function<void (void)> done_func);
    
    ~ClientNegotiant();
+   
+   void prepare(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key) { engine.prepare(client_id,client_key,server_key); }
    
    State getState() const { return engine.getState(); }
    
@@ -520,15 +533,25 @@ class ServerNegotiant : NoCopy
       
       InboundFunc inbound_func;
       
+      uint8 client_id_len = 0 ;
+      uint8 client_id[255];
+      
+      PrimeKey client_key;
+      ClientProfile client_profile;
+      
       NegData neg_data;
       
      private:
       
-      bool process1(PtrLen<const uint8> data);
+      bool process1(XPoint point,PtrLen<const uint8> data);
       
       void build2();
       
       InboundResult process3(PtrLen<const uint8> data);
+      
+      void build4();
+      
+      InboundResult process5(PtrLen<const uint8> data);
       
       InboundResult process_final(PtrLen<const uint8> data);
       
@@ -540,9 +563,9 @@ class ServerNegotiant : NoCopy
       
       bool inbound_first(XPoint point,PtrLen<const uint8> data,PacketList &list); // true to del
       
-      void inbound(XPoint point,PtrLen<const uint8> data,PacketList &list);
+      void inbound(PtrLen<const uint8> data,PacketList &list);
       
-      bool tick(XPoint point,PacketList &list); // true to del
+      bool tick(PacketList &list); // true to del
     };
   
    class Engine : NoCopy , PacketMultipointDevice::InboundProc
@@ -572,6 +595,8 @@ class ServerNegotiant : NoCopy
       
      private:
       
+      bool filter(const CryptAlgoSelect &algo) const;
+      
       void prepare_send(XPoint point,PtrLen<const uint8> send_data,PacketList &list);
       
       void send(PacketList &list);
@@ -584,9 +609,11 @@ class ServerNegotiant : NoCopy
     
      public:
     
-      Engine(PacketMultipointDevice *dev,AbstractClientDataBase &client_db,PrimeKey &server_key,AbstractEndpointManager &epman,ulen max_clients,MSec final_timeout);
+      Engine(PacketMultipointDevice *dev,AbstractClientDataBase &client_db,AbstractEndpointManager &epman,ulen max_clients,MSec final_timeout);
       
       ~Engine();
+      
+      void prepare(PrimeKey &server_key);
       
       void start();
       
@@ -603,9 +630,11 @@ class ServerNegotiant : NoCopy
 
    static const ulen DefaultMaxClients = 10000 ;
 
-   ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,PrimeKey &server_key,AbstractEndpointManager &epman,ulen max_clients=DefaultMaxClients,MSec final_timeout=5_sec);
+   ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,AbstractEndpointManager &epman,ulen max_clients=DefaultMaxClients,MSec final_timeout=5_sec);
    
    ~ServerNegotiant();
+   
+   void prepare(PrimeKey &server_key) { engine.prepare(server_key); }
    
    void start() { engine.start(); }
    

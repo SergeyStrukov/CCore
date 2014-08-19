@@ -24,6 +24,8 @@
 
 #include <CCore/inc/Exception.h>
 
+#include <CCore/inc/Print.h>
+
 namespace CCore {
 namespace Net {
 namespace PSec {
@@ -295,11 +297,11 @@ void SessionKey::getKey(ulen index,uint8 key[]) const
 
 /* struct NegData */
 
-NegData::NegData() 
+NegData::NegData()
  {
  }
 
-NegData::~NegData() 
+NegData::~NegData()
  {
   Crypton::ForgetRange(Range(x));
   Crypton::ForgetRange(Range(gxy));
@@ -327,19 +329,14 @@ bool NegData::create()
     }
  }
 
-void NegData::keyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+void NegData::keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
  {
-  uint8 temp[SaveLenCounter<XPoint>::SaveLoadLen+255];
-  ulen len;
+  uint8 temp[SaveLenCounter<XPoint>::SaveLoadLen];
   
   {
    BufPutDev dev(temp);
    
    dev.use<BeOrder>(point);
-   
-   client_id->getID(dev.putRange(client_id->getLen()).ptr);
-   
-   len=Dist(temp,dev.getRest());
   }
   
   ulen client_hlen=client_key->getHLen();
@@ -349,7 +346,8 @@ void NegData::keyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,Ab
   
   for(;;)
     {
-     client_key->add(Range_const(temp,len));
+     client_key->add(Range_const(temp));
+     client_key->add(client_id);
      client_key->add(Range_const(client_nonce));
      client_key->add(Range_const(server_nonce));
      client_key->add(Range_const(gxy,glen));
@@ -357,7 +355,8 @@ void NegData::keyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,Ab
      const uint8 *client_digest=client_key->finish();
      
      server_key->add(Range_const(client_digest,client_hlen));
-     server_key->add(Range_const(temp,len));
+     server_key->add(Range_const(temp));
+     client_key->add(client_id);
      server_key->add(Range_const(client_nonce));
      server_key->add(Range_const(server_nonce));
      server_key->add(Range_const(gxy,glen));
@@ -374,9 +373,28 @@ void NegData::keyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,Ab
        {
         dst.copy(server_digest);
         
+        Printf(Con,"key =\n#;\n\n",PrintDump(Range_const(key,encrypt->getKLen())));
+        
         return;
        }
     }
+ }
+
+void NegData::clientKeyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+ {
+  uint8 len=client_id->getLen();
+  uint8 temp[255];
+  
+  client_id->getID(temp);
+  
+  keyGen(Range_const(temp,len),client_key,server_key);
+ }
+
+void NegData::serverKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+ {
+  dhg->pow(gy,x,gxy);
+  
+  keyGen(client_id,client_key,server_key);
  }
 
 void NegData::clientGen()
@@ -388,6 +406,15 @@ void NegData::clientGen()
   dhg->pow(x,gx);
   
   dhg->pow(gy,x,gxy);
+ }
+
+void NegData::serverGen()
+ {
+  random.fill(Range(server_nonce));
+  
+  random.fill(Range(x,glen));
+  
+  dhg->pow(x,gx);
  }
 
 /* class ClientNegotiant::Proc */
@@ -430,7 +457,7 @@ bool ClientNegotiant::Proc::process2(PtrLen<const uint8> data)
   
   neg_data.clientGen();
   
-  neg_data.keyGen(client_id.getPtr(),client_key.getPtr(),server_key.getPtr());
+  neg_data.clientKeyGen(client_id.getPtr(),client_key.getPtr(),server_key.getPtr());
   
   build3();
   
@@ -445,9 +472,9 @@ void ClientNegotiant::Proc::build3()
   
   dev.use<BeOrder>(neg_data.point);
   
-  SaveRange(Range(neg_data.client_nonce),dev);
-  
-  SaveRange(Range(neg_data.gx,neg_data.glen),dev);
+  dev.put(Range_const(neg_data.client_nonce));
+
+  dev.put(Range_const(neg_data.gx,neg_data.glen));
   
   send_len=Dist(send_buf,dev.getRest());
  }
@@ -455,36 +482,52 @@ void ClientNegotiant::Proc::build3()
 bool ClientNegotiant::Proc::process4(PtrLen<const uint8> data)
  {
   // TODO
+  
+  return false;
  }
 
-ClientNegotiant::Proc::Proc(ClientID &client_id_,PrimeKey &client_key_,PrimeKey &server_key_)
+ClientNegotiant::Proc::Proc()
  {
-  Swap(client_id,client_id_);
-  Swap(client_key,client_key_);
-  Swap(server_key,server_key_);
-  
-  if( !client_id )
-    {
-     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::ClientNegotiant(...) : no client id");
-    }
-  
-  if( !client_key )
-    {
-     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::ClientNegotiant(...) : no client key");
-    }
-  
-  if( !server_key )
-    {
-     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::ClientNegotiant(...) : no server key");
-    }
  }
 
 ClientNegotiant::Proc::~Proc()
  {
  }
 
+void ClientNegotiant::Proc::prepare(ClientID &client_id_,PrimeKey &client_key_,PrimeKey &server_key_)
+ {
+  if( state!=State_Null )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : not null");
+    }
+  
+  Swap(client_id,client_id_);
+  Swap(client_key,client_key_);
+  Swap(server_key,server_key_);
+  
+  if( !client_id )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : no client id");
+    }
+  
+  if( !client_key )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : no client key");
+    }
+  
+  if( !server_key )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : no server key");
+    }
+ }
+
 void ClientNegotiant::Proc::start(PtrLen<const CryptAlgoSelect> algo_list_)
  {
+  if( state!=State_Ready )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientNegotiant::start(...) : not prepared");
+    }
+  
   if( algo_list_.len>MaxAlgos )
     {
      Printf(Exception,"CCore::Net::PSec::ClientNegotiant::start(...) : too many algos");
@@ -593,18 +636,24 @@ void ClientNegotiant::Engine::tick()
   if( +send ) dev->outbound(send);
  }
 
-ClientNegotiant::Engine::Engine(PacketEndpointDevice *dev_,ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func_)
+ClientNegotiant::Engine::Engine(PacketEndpointDevice *dev_,Function<void (void)> done_func_)
  : dev(dev_),
    done_func(done_func_),
    pset("PSec::ClientNegotiant.pset"),
-   mutex("PSec::ClientNegotiant.mutex"),
-   proc(client_id,client_key,server_key)
+   mutex("PSec::ClientNegotiant.mutex")
  {
   outbound_format=dev->getOutboundFormat();
  }
 
 ClientNegotiant::Engine::~Engine()
  {
+ }
+
+void ClientNegotiant::Engine::prepare(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key)
+ {
+  Mutex::Lock lock(mutex);
+  
+  proc.prepare(client_id,client_key,server_key);
  }
 
 void ClientNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list)
@@ -638,9 +687,9 @@ void ClientNegotiant::Engine::getSessionKey(SKey &skey)
 
 /* class ClientNegotiant */
 
-ClientNegotiant::ClientNegotiant(StrLen ep_dev_name,ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key,Function<void (void)> done_func)
+ClientNegotiant::ClientNegotiant(StrLen ep_dev_name,Function<void (void)> done_func)
  : hook(ep_dev_name),
-   engine(hook,client_id,client_key,server_key,done_func)
+   engine(hook,done_func)
  {
  }
 
@@ -650,24 +699,107 @@ ClientNegotiant::~ClientNegotiant()
 
 /* class ServerNegotiant::Proc */
 
-bool ServerNegotiant::Proc::process1(PtrLen<const uint8> data)
+bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
  {
-  // TODO
+  RangeGetDev dev(data);
+  
+  dev(client_id_len);
+  
+  dev.get(client_id,client_id_len);
+    
+  if( !dev ) return false;
+  
+  CryptAlgoSelect selected_algo;
+  bool flag=false;
+  
+  while( dev.getRest().len )
+    {
+     CryptAlgoSelect algo;
+     
+     dev(algo);
+     
+     if( !dev ) return false;
+     
+     if( !flag && engine->filter(algo) )
+       {
+        selected_algo=algo;
+        flag=true;
+       }
+    }
+  
+  if( !flag ) return false;
+  
+  if( !engine->client_db.findClient(Range_const(client_id,client_id_len),client_key,client_profile) ) return false;
+  
+  neg_data.point=point;
+  neg_data.algo=selected_algo;
+  
+  if( !neg_data.create() ) return false;
+  
+  neg_data.serverGen();
+  
+  build2();
+  
+  inbound_func=&Proc::process3;
+  
+  return true;
  }
 
 void ServerNegotiant::Proc::build2()
  {
-  // TODO
+  BufPutDev dev(send_buf);
+  
+  dev.use<BeOrder>(neg_data.point);
+  
+  dev.put(Range_const(neg_data.server_nonce));
+  
+  dev(neg_data.algo);
+  
+  dev.put(Range_const(neg_data.gx,neg_data.glen));
+  
+  send_len=Dist(send_buf,dev.getRest());
  }
 
 auto ServerNegotiant::Proc::process3(PtrLen<const uint8> data) -> InboundResult
  {
+  RangeGetDev dev(data);
+  
+  XPoint point;
+  
+  dev.use<BeOrder>(point);
+  
+  dev.get(Range(neg_data.client_nonce));
+  
+  dev.get(Range(neg_data.gy,neg_data.glen));
+  
+  if( !dev.finish() || point!=neg_data.point ) return InboundDrop;
+  
+  neg_data.serverKeyGen(Range_const(client_id,client_id_len),client_key.getPtr(),engine->server_key.getPtr());
+  
+  build4();
+  
+  inbound_func=&Proc::process5;
+  
+  return InboundOk;
+ }
+
+void ServerNegotiant::Proc::build4()
+ {
   // TODO
+  
+  send_len=0;
+ }
+
+auto ServerNegotiant::Proc::process5(PtrLen<const uint8> data) -> InboundResult
+ {
+  // TODO
+  
+  return InboundDrop;
  }
 
 auto ServerNegotiant::Proc::process_final(PtrLen<const uint8> data) -> InboundResult
  {
-  if( process1(data) )
+  if( process1(neg_data.point,data) )
     {
      return InboundOk;
     }
@@ -688,7 +820,7 @@ ServerNegotiant::Proc::~Proc()
 
 bool ServerNegotiant::Proc::inbound_first(XPoint point,PtrLen<const uint8> data,PacketList &list)
  {
-  if( process1(data) )
+  if( process1(point,data) )
     {
      tick_count=StartTickCount;
      retry_count=MaxRetry;
@@ -701,7 +833,7 @@ bool ServerNegotiant::Proc::inbound_first(XPoint point,PtrLen<const uint8> data,
   return true;
  }
 
-void ServerNegotiant::Proc::inbound(XPoint point,PtrLen<const uint8> data,PacketList &list)
+void ServerNegotiant::Proc::inbound(PtrLen<const uint8> data,PacketList &list)
  {
   switch( (this->*inbound_func)(data) ) 
     {
@@ -710,7 +842,7 @@ void ServerNegotiant::Proc::inbound(XPoint point,PtrLen<const uint8> data,Packet
        tick_count=StartTickCount;
        retry_count=MaxRetry;
        
-       engine->prepare_send(point,Range_const(send_buf,send_len),list);
+       engine->prepare_send(neg_data.point,Range_const(send_buf,send_len),list);
       }
      break;
      
@@ -719,19 +851,19 @@ void ServerNegotiant::Proc::inbound(XPoint point,PtrLen<const uint8> data,Packet
        tick_count=engine->final_tick_count;
        retry_count=1;
        
-       engine->prepare_send(point,Range_const(send_buf,send_len),list);
+       engine->prepare_send(neg_data.point,Range_const(send_buf,send_len),list);
       }
      break;
      
      case InboundFinal :
       {
-       engine->prepare_send(point,Range_const(send_buf,send_len),list);
+       engine->prepare_send(neg_data.point,Range_const(send_buf,send_len),list);
       }
      break; 
     }
  }
 
-bool ServerNegotiant::Proc::tick(XPoint point,PacketList &list)
+bool ServerNegotiant::Proc::tick(PacketList &list)
  {
   if( retry_count )
     {
@@ -745,7 +877,7 @@ bool ServerNegotiant::Proc::tick(XPoint point,PacketList &list)
           {
            tick_count=StartTickCount;
           
-           engine->prepare_send(point,Range_const(send_buf,send_len),list);
+           engine->prepare_send(neg_data.point,Range_const(send_buf,send_len),list);
           }
         else
           {
@@ -760,6 +892,18 @@ bool ServerNegotiant::Proc::tick(XPoint point,PacketList &list)
  }
 
 /* class ServerNegotiant::Engine */
+
+bool ServerNegotiant::Engine::filter(const CryptAlgoSelect &algo) const
+ {
+  if( algo_filter )
+    {
+     for(const CryptAlgoSelect &obj : algo_list ) if( algo==obj ) return true;
+     
+     return false;
+    }
+  
+  return true;
+ }
 
 void ServerNegotiant::Engine::prepare_send(XPoint point,PtrLen<const uint8> send_data,PacketList &list)
  {
@@ -801,6 +945,8 @@ void ServerNegotiant::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<c
      {
       if( map.getCount()<max_clients )
         {
+         SilentReportException report;
+        
          try
            {
             auto result=map.find_or_add(point,this);
@@ -814,7 +960,7 @@ void ServerNegotiant::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<c
               }
             else
               {
-               result.obj->inbound(point,data,list);
+               result.obj->inbound(data,list);
               } 
            }
          catch(...)
@@ -823,7 +969,7 @@ void ServerNegotiant::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<c
         }
       else
         {
-         if( auto *obj=map.find(point) ) obj->inbound(point,data,list);
+         if( auto *obj=map.find(point) ) obj->inbound(data,list);
         }
      }
   }
@@ -847,7 +993,7 @@ void ServerNegotiant::Engine::tick()
       XPoint todel[Len];
       ulen count=0;
      
-      map.applyIncr( [&] (XPoint point,Proc &proc) { if( proc.tick(point,list) && count<Len ) todel[count++]=point; } );
+      map.applyIncr( [&] (XPoint point,Proc &proc) { if( proc.tick(list) && count<Len ) todel[count++]=point; } );
       
       for(XPoint point : Range(todel,count) ) map.del(point);
      }
@@ -856,7 +1002,7 @@ void ServerNegotiant::Engine::tick()
   send(list);
  }
 
-ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,AbstractClientDataBase &client_db_,PrimeKey &server_key_,AbstractEndpointManager &epman_,ulen max_clients_,MSec final_timeout)
+ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,AbstractClientDataBase &client_db_,AbstractEndpointManager &epman_,ulen max_clients_,MSec final_timeout)
  : dev(dev_),
    client_db(client_db_),
    epman(epman_),
@@ -864,13 +1010,6 @@ ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,AbstractClientDataB
    pset("PSec::ServerNegotiant.pset"),
    mutex("PSec::ServerNegotiant.mutex")
  {
-  Swap(server_key,server_key_);
-  
-  if( !server_key )
-    {
-     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::ServerNegotiant(...) : no server key");
-    }
-  
   outbound_format=dev->getOutboundFormat();
   
   final_tick_count=((+final_timeout)*InboundTicksPerSec)/1000+1;
@@ -880,6 +1019,23 @@ ServerNegotiant::Engine::~Engine()
  {
  }
 
+void ServerNegotiant::Engine::prepare(PrimeKey &server_key_)
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( enable )
+    {
+     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::prepare(...) : already started");
+    }
+  
+  Swap(server_key,server_key_);
+  
+  if( !server_key )
+    {
+     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::prepare(...) : no server key");
+    }
+ }
+
 void ServerNegotiant::Engine::start()
  {
   Mutex::Lock lock(mutex);
@@ -887,6 +1043,11 @@ void ServerNegotiant::Engine::start()
   if( enable )
     {
      Printf(Exception,"CCore::Net::PSec::ServerNegotiant::start(...) : already started");
+    }
+  
+  if( !server_key )
+    {
+     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::start(...) : not prepared");
     }
   
   enable=true;
@@ -901,6 +1062,11 @@ void ServerNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list_)
      Printf(Exception,"CCore::Net::PSec::ServerNegotiant::start(...) : already started");
     }
 
+  if( !server_key )
+    {
+     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::start(...) : not prepared");
+    }
+  
   algo_list.extend_copy(algo_list_.len,algo_list_.ptr);
   
   algo_filter=true;
@@ -909,9 +1075,9 @@ void ServerNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list_)
 
 /* class ServerNegotiant */
 
-ServerNegotiant::ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,PrimeKey &server_key,AbstractEndpointManager &epman,ulen max_clients,MSec final_timeout)
+ServerNegotiant::ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,AbstractEndpointManager &epman,ulen max_clients,MSec final_timeout)
  : hook(mp_dev_name),
-   engine(hook,client_db,server_key,epman,max_clients,final_timeout)
+   engine(hook,client_db,epman,max_clients,final_timeout)
  {
  }
 
