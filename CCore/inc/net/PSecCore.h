@@ -29,9 +29,21 @@ namespace PSec {
 
 /* consts */
 
-const ulen MaxGLen = 512 ;
+const ulen MinBLen = 8 ;
+
+const ulen MaxBLen = 64 ;
+
+const ulen MinKLen = 16 ;
 
 const ulen MaxKLen = 512 ;
+
+const ulen MinHLen = 16 ;
+
+const ulen MaxHLen = 64 ;
+
+const ulen MinGLen = 64 ;
+
+const ulen MaxGLen = 512 ;
 
 const ulen DLen = 15 ;
 
@@ -149,14 +161,14 @@ class CryptFunc : public AbstractCryptFunc
    
    virtual ulen getBLen() const
     {
-     static_assert( Crypt::BlockLen>=8 && Crypt::BlockLen<=64 ,"CCore::Net::PSec::CryptFunc<...> : bad BLen");
+     static_assert( Crypt::BlockLen>=MinBLen && Crypt::BlockLen<=MaxBLen ,"CCore::Net::PSec::CryptFunc<...> : bad BLen");
      
      return Crypt::BlockLen;
     }
    
    virtual ulen getKLen() const
     {
-     static_assert( Crypt::KeyLen>=16 && Crypt::KeyLen<=MaxKLen ,"CCore::Net::PSec::CryptFunc<...> : bad KLen");
+     static_assert( Crypt::KeyLen>=MinKLen && Crypt::KeyLen<=MaxKLen ,"CCore::Net::PSec::CryptFunc<...> : bad KLen");
      
      return Crypt::KeyLen;
     }
@@ -204,7 +216,7 @@ class HashFunc : public AbstractHashFunc
    
    virtual ulen getHLen() const
     {
-     static_assert( Hash::DigestLen>=16 && Hash::DigestLen<=64 ,"CCore::Net::PSec::HashFunc<...> : bad HLen");
+     static_assert( Hash::DigestLen>=MinHLen && Hash::DigestLen<=MaxHLen ,"CCore::Net::PSec::HashFunc<...> : bad HLen");
      
      return Hash::DigestLen;
     }
@@ -304,7 +316,7 @@ class KeyGen : public AbstractKeyGen
    
    virtual ulen getGLen() const
     { 
-     static_assert( GLen>=64 ,"CCore::Net::PSec::KeyGen<...> : bad GLen");
+     static_assert( GLen>=MinGLen && GLen<=MaxGLen ,"CCore::Net::PSec::KeyGen<...> : bad GLen");
      
      return GLen; 
     }
@@ -359,9 +371,11 @@ class DHGroup : public AbstractDHGroup
    
    virtual ~DHGroup() {}
    
+   // AbstractDHGroup
+   
    virtual ulen getGLen() const
     { 
-     static_assert( GLen>=64 && GLen<=MaxGLen ,"CCore::Net::PSec::DHGroup<...> : bad GLen");
+     static_assert( GLen>=MinGLen && GLen<=MaxGLen ,"CCore::Net::PSec::DHGroup<...> : bad GLen");
      
      return GLen; 
     }

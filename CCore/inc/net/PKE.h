@@ -46,7 +46,7 @@ const unsigned MaxRetry = 100 ;
 
 const ulen MaxAlgos = 16 ;
 
-const ulen MaxPKETransLen = 1200 ;
+const ulen MaxPKETransLen = 1100 ;
 
 /* enum CryptID */
 
@@ -101,6 +101,10 @@ struct SessionKeyParam;
 class SessionKey;
 
 struct AbstractClientID;
+
+class ClientID;
+
+class HashPrimeKey;
 
 struct NegData;
 
@@ -278,17 +282,67 @@ struct AbstractClientID : MemBase_nocopy
    }
  };
 
-/* type PrimeKey */
+/* class ClientID */
 
-using PrimeKey = OwnPtr<AbstractHashFunc> ;
+class ClientID : public AbstractClientID
+ {
+   uint8 name[255];
+   uint8 len;
+   
+  private: 
 
-/* type ClientID */
+   template <class T>
+   void init(PtrLen<T> name);
+   
+  public:
+  
+   explicit ClientID(StrLen name);
+   
+   explicit ClientID(PtrLen<const uint8> name);
+   
+   virtual ~ClientID();
+   
+   // AbstractClientID
+   
+   virtual uint8 getLen() const;
+   
+   virtual void getID(uint8 buf[ /* Len */ ]) const;
+ };
 
-using ClientID = OwnPtr<AbstractClientID> ;
+/* class HashPrimeKey */
 
-/* type */
+class HashPrimeKey : public AbstractHashFunc
+ {
+   template <class Hash> class HashFunc;
+  
+   OwnPtr<AbstractHashFunc> hash;
+   
+  public:
+  
+   HashPrimeKey(HashID hash_id,PtrLen<const uint8> key);
+   
+   virtual ~HashPrimeKey();
+   
+   // AbstractHashFunc
+   
+   virtual ulen getHLen() const;
+   
+   virtual void add(PtrLen<const uint8> data);
+   
+   virtual const uint8 * finish();
+ };
 
-using SKey = OwnPtr<MasterKey> ;
+/* type PrimeKeyPtr */
+
+using PrimeKeyPtr = OwnPtr<AbstractHashFunc> ;
+
+/* type ClientIDPtr */
+
+using ClientIDPtr = OwnPtr<AbstractClientID> ;
+
+/* type SKeyPtr */
+
+using SKeyPtr = OwnPtr<MasterKey> ;
 
 /* struct NegData */
 
@@ -352,14 +406,14 @@ class ClientNegotiant : NoCopy
     {
       State state = State_Null ;
     
-      ClientID client_id;
-      PrimeKey client_key;
-      PrimeKey server_key;
+      ClientIDPtr client_id;
+      PrimeKeyPtr client_key;
+      PrimeKeyPtr server_key;
       
       CryptAlgoSelect algo_list[MaxAlgos];
       ulen algo_count = 0 ;
       
-      SKey skey;
+      SKeyPtr skey;
       
       uint8 send_buf[MaxPKETransLen];
       ulen send_len = 0 ;
@@ -388,7 +442,7 @@ class ClientNegotiant : NoCopy
       
       ~Proc();
       
-      void prepare(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key);
+      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key);
       
       State getState() const { return state; }
       
@@ -398,7 +452,7 @@ class ClientNegotiant : NoCopy
       
       PtrLen<const uint8> getSendData() const { return Range(send_buf,send_len); }
       
-      void getSessionKey(SKey &skey_) { Swap(skey,skey_); }
+      void getSessionKey(SKeyPtr &skey_) { Swap(skey,skey_); }
     };
   
    class Engine : NoCopy , PacketEndpointDevice::InboundProc
@@ -434,13 +488,13 @@ class ClientNegotiant : NoCopy
       
       ~Engine();
       
-      void prepare(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key);
+      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key);
       
       State getState() const;
       
       void start(PtrLen<const CryptAlgoSelect> algo_list);
       
-      void getSessionKey(SKey &skey);
+      void getSessionKey(SKeyPtr &skey);
     };
   
   private:
@@ -455,7 +509,7 @@ class ClientNegotiant : NoCopy
    
    ~ClientNegotiant();
    
-   void prepare(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key) { engine.prepare(client_id,client_key,server_key); }
+   void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key) { engine.prepare(client_id,client_key,server_key); }
    
    State getState() const { return engine.getState(); }
    
@@ -469,7 +523,7 @@ class ClientNegotiant : NoCopy
      start(Range_const(algo_list));
     }
    
-   void getSessionKey(SKey &skey) { return engine.getSessionKey(skey); }
+   void getSessionKey(SKeyPtr &skey) { return engine.getSessionKey(skey); }
  };
 
 /* struct AbstractClientProfile */
@@ -479,9 +533,9 @@ struct AbstractClientProfile : MemBase_nocopy
   virtual ~AbstractClientProfile() {}
  };
 
-/* type ClientProfile */
+/* type ClientProfilePtr */
 
-using ClientProfile = OwnPtr<AbstractClientProfile> ; 
+using ClientProfilePtr = OwnPtr<AbstractClientProfile> ; 
 
 /* struct AbstractClientDataBase */
 
@@ -489,7 +543,7 @@ struct AbstractClientDataBase : MemBase_nocopy
  {
   virtual ~AbstractClientDataBase() {}
   
-  virtual bool findClient(PtrLen<const uint8> client_id,PrimeKey &client_key,ClientProfile &client_profile) =0;
+  virtual bool findClient(PtrLen<const uint8> client_id,PrimeKeyPtr &client_key,ClientProfilePtr &client_profile) =0;
  };
 
 /* struct AbstractEndpointManager */
@@ -502,7 +556,7 @@ struct AbstractEndpointManager : MemBase_nocopy
   
   virtual StrLen createName(char buf[ /* BufLen */ ]) =0;
   
-  virtual void open(StrLen ep_dev_name,SKey &skey,ClientProfile &client_profile) =0;
+  virtual void open(StrLen ep_dev_name,SKeyPtr &skey,ClientProfilePtr &client_profile) =0;
  };
 
 /* class ServerNegotiant */
@@ -536,8 +590,8 @@ class ServerNegotiant : NoCopy
       uint8 client_id_len = 0 ;
       uint8 client_id[255];
       
-      PrimeKey client_key;
-      ClientProfile client_profile;
+      PrimeKeyPtr client_key;
+      ClientProfilePtr client_profile;
       
       NegData neg_data;
       
@@ -575,7 +629,7 @@ class ServerNegotiant : NoCopy
       PacketFormat outbound_format;
       
       AbstractClientDataBase &client_db;
-      PrimeKey server_key;
+      PrimeKeyPtr server_key;
       AbstractEndpointManager &epman;
       ulen max_clients;
       unsigned final_tick_count;
@@ -613,7 +667,7 @@ class ServerNegotiant : NoCopy
       
       ~Engine();
       
-      void prepare(PrimeKey &server_key);
+      void prepare(PrimeKeyPtr &server_key);
       
       void start();
       
@@ -634,7 +688,7 @@ class ServerNegotiant : NoCopy
    
    ~ServerNegotiant();
    
-   void prepare(PrimeKey &server_key) { engine.prepare(server_key); }
+   void prepare(PrimeKeyPtr &server_key) { engine.prepare(server_key); }
    
    void start() { engine.start(); }
    

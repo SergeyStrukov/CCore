@@ -18,6 +18,7 @@
 
 #include <CCore/inc/net/Bridge.h>
 #include <CCore/inc/net/PKE.h>
+#include <CCore/inc/crypton/SHA.h>
 
 namespace App {
 
@@ -31,33 +32,71 @@ class Engine : public Funchor_nocopy
    
    class ClientDataBase : NoCopy , public Net::PSec::AbstractClientDataBase
     {
+      Engine *engine;
+    
+      DynArray<uint8> name;
+      
      public:
     
-      ClientDataBase()
+      ClientDataBase(Engine *engine_,StrLen name_)
+       : engine(engine_),name(DoCast(name_.len),name_.ptr)
        {
        }
       
-      ~ClientDataBase()
+      virtual ~ClientDataBase()
        {
        }
       
       // Net::PSec::AbstractClientDataBase
       
-      virtual bool findClient(PtrLen<const uint8> client_id,Net::PSec::PrimeKey &client_key,Net::PSec::ClientProfile &client_profile)
+      virtual bool findClient(PtrLen<const uint8> client_id,Net::PSec::PrimeKeyPtr &client_key,Net::PSec::ClientProfilePtr &client_profile)
        {
-        return true;
+        if( client_id.equal(Range(name)) )
+          {
+           SilentReportException report;
+          
+           try
+             {
+              client_key.set(engine->createClientKey());
+              
+              client_profile.set(new Net::PSec::AbstractClientProfile());
+             
+              return true;
+             }
+           catch(...)
+             {
+              return false;
+             }
+          }
+        
+        return false;
        }
     };
    
    class EndpointManager : NoCopy , public Net::PSec::AbstractEndpointManager
     {
+      static const ulen BufLen = 64 ;
+    
+      Mutex mutex;
+      
+      ulen index = 0 ;
+      
+     private: 
+      
+      ulen getIndex()
+       {
+        Mutex::Lock lock(mutex);
+        
+        return index++;
+       }
+      
      public:
     
       EndpointManager()
        {
        }
       
-      ~EndpointManager()
+      virtual ~EndpointManager()
        {
        }
       
@@ -65,14 +104,24 @@ class Engine : public Funchor_nocopy
       
       virtual ulen getBufLen() const
        {
+        return BufLen;
        }
       
       virtual StrLen createName(char buf[ /* BufLen */ ])
        {
+        PrintBuf out(Range(buf,BufLen));
+        
+        Printf(out,"psec[#;]",getIndex());
+        
+        return out.close();
        }
       
-      virtual void open(StrLen ep_dev_name,Net::PSec::SKey &skey,Net::PSec::ClientProfile &client_profile)
+      virtual void open(StrLen ep_dev_name,Net::PSec::SKeyPtr &skey,Net::PSec::ClientProfilePtr &client_profile)
        {
+        Used(skey);
+        Used(client_profile);
+        
+        Printf(Con,"open(#;)\n",ep_dev_name);
        }
     };
    
@@ -94,11 +143,30 @@ class Engine : public Funchor_nocopy
    
    Function<void (void)> function_done() { return FunctionOf(this,&Engine::client_done); }
 
+   Net::PSec::AbstractHashFunc * createClientKey() const
+    {
+     using namespace Net::PSec;
+     
+     uint8 buf[]={1,2,3,4,5};
+     
+     return new HashPrimeKey(HashID_SHA256,Range_const(buf));
+    }
+   
+   Net::PSec::AbstractHashFunc * createServerKey() const
+    {
+     using namespace Net::PSec;
+     
+     uint8 buf[]={6,7,8,9,0};
+     
+     return new HashPrimeKey(HashID_SHA256,Range_const(buf));
+    }
+   
   public:
    
    Engine()
     : bridge(10),
       client(Net::Bridge::ClientName(1).str,function_done()),
+      client_db(this,"client"),
       server(Net::Bridge::ServerName(),client_db,epman)
     {
     }
@@ -109,16 +177,18 @@ class Engine : public Funchor_nocopy
 
    void prepare()
     {
+     using namespace Net::PSec;
+     
      {
-      Net::PSec::ClientID client_id;
-      Net::PSec::PrimeKey client_key;
-      Net::PSec::PrimeKey server_key;
+      ClientIDPtr client_id(new ClientID("client"));
+      PrimeKeyPtr client_key(createClientKey());
+      PrimeKeyPtr server_key(createServerKey());
      
       client.prepare(client_id,client_key,server_key);
      }
      
      {
-      Net::PSec::PrimeKey server_key;
+      PrimeKeyPtr server_key(createServerKey());
       
       server.prepare(server_key);
      }
@@ -126,9 +196,11 @@ class Engine : public Funchor_nocopy
    
    void start()
     {
+     using namespace Net::PSec;
+     
      server.start();
      
-     client.start(Net::PSec::CryptAlgoSelect(Net::PSec::CryptID_AES128,Net::PSec::HashID_SHA256,Net::PSec::DHGroupID_I));
+     client.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
     }
    
    void wait(MSec timeout)
@@ -174,7 +246,7 @@ bool Testit<107>::Main()
    
    engine.start();
    
-   engine.wait(200_sec);
+   engine.wait(10_sec);
   }
   
   return true;

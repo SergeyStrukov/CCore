@@ -295,6 +295,118 @@ void SessionKey::getKey(ulen index,uint8 key[]) const
   Range(key_buf.getPtr()+klen*(index+1),klen).copyTo(key);
  }
 
+/* class ClientID */
+
+template <class T>
+void ClientID::init(PtrLen<T> name_)
+ {
+  if( name_.len>255 )
+    {
+     Printf(Exception,"CCore::Net::PSec::ClientID::ClientID(...) : name is too long");
+    }
+  
+  len=(uint8)name_.len;
+  
+  name_.copyTo(name);
+ }
+
+ClientID::ClientID(StrLen name)
+ {
+  init(name);
+ }
+   
+ClientID::ClientID(PtrLen<const uint8> name)
+ {
+  init(name);
+ }
+
+ClientID::~ClientID()
+ {
+ }
+
+uint8 ClientID::getLen() const
+ {
+  return len;
+ }
+
+void ClientID::getID(uint8 buf[ /* Len */ ]) const
+ {
+  Range(name,len).copyTo(buf);
+ }
+
+/* class HashPrimeKey */
+
+template <class Hash> 
+class HashPrimeKey::HashFunc : public AbstractHashFunc 
+ {
+   Hash hash;
+   
+   uint8 digest[Hash::DigestLen];
+   
+  public:
+  
+   explicit HashFunc(PtrLen<const uint8> key) { hash.key(key); }
+   
+   virtual ~HashFunc() { Crypton::Forget(digest); }
+   
+   // AbstractHashFunc
+   
+   virtual ulen getHLen() const
+    {
+     static_assert( Hash::DigestLen>=MinHLen && Hash::DigestLen<=MaxHLen ,"CCore::Net::PSec::HashPrimeKey::HashFunc<...> : bad HLen");
+     
+     return Hash::DigestLen;
+    }
+   
+   virtual void add(PtrLen<const uint8> data)
+    {
+     hash.add(data);
+    }
+   
+   virtual const uint8 * finish()
+    {
+     hash.finish(digest);
+     
+     return digest;
+    }
+ };
+
+HashPrimeKey::HashPrimeKey(HashID hash_id,PtrLen<const uint8> key)
+ {
+  switch( hash_id )
+    {
+     case HashID_SHA1   : hash.set(new HashFunc<Crypton::PlatformKeyedSHA1>(key)); break;
+     case HashID_SHA224 : hash.set(new HashFunc<Crypton::PlatformKeyedSHA224>(key)); break;
+     case HashID_SHA256 : hash.set(new HashFunc<Crypton::PlatformKeyedSHA256>(key)); break;
+     case HashID_SHA384 : hash.set(new HashFunc<Crypton::PlatformKeyedSHA384>(key)); break;
+     case HashID_SHA512 : hash.set(new HashFunc<Crypton::PlatformKeyedSHA512>(key)); break;
+     
+     default:
+      {
+       Printf(Exception,"CCore::Net::PSec::HashPrimeKey::HashPrimeKey(hash_id=#;,...) : unknown hash id",hash_id);
+      }
+    }
+ }
+   
+HashPrimeKey::~HashPrimeKey()
+ {
+ }
+   
+ulen HashPrimeKey::getHLen() const
+ {
+  return hash->getHLen();
+ }
+   
+void HashPrimeKey::add(PtrLen<const uint8> data)
+ {
+  hash->add(data);
+ }
+   
+const uint8 * HashPrimeKey::finish()
+ {
+  return hash->finish();
+ }
+   
 /* struct NegData */
 
 NegData::NegData()
@@ -373,7 +485,7 @@ void NegData::keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,
        {
         dst.copy(server_digest);
         
-        Printf(Con,"key =\n#;\n\n",PrintDump(Range_const(key,encrypt->getKLen())));
+        Printf(Con,"key\n#;\n\n",PrintDump(Range_const(key,encrypt->getKLen())));
         
         return;
        }
@@ -494,7 +606,7 @@ ClientNegotiant::Proc::~Proc()
  {
  }
 
-void ClientNegotiant::Proc::prepare(ClientID &client_id_,PrimeKey &client_key_,PrimeKey &server_key_)
+void ClientNegotiant::Proc::prepare(ClientIDPtr &client_id_,PrimeKeyPtr &client_key_,PrimeKeyPtr &server_key_)
  {
   if( state!=State_Null )
     {
@@ -519,6 +631,8 @@ void ClientNegotiant::Proc::prepare(ClientID &client_id_,PrimeKey &client_key_,P
     {
      Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : no server key");
     }
+  
+  state=State_Ready;
  }
 
 void ClientNegotiant::Proc::start(PtrLen<const CryptAlgoSelect> algo_list_)
@@ -643,13 +757,16 @@ ClientNegotiant::Engine::Engine(PacketEndpointDevice *dev_,Function<void (void)>
    mutex("PSec::ClientNegotiant.mutex")
  {
   outbound_format=dev->getOutboundFormat();
+  
+  dev->attach(this);
  }
 
 ClientNegotiant::Engine::~Engine()
  {
+  dev->detach();
  }
 
-void ClientNegotiant::Engine::prepare(ClientID &client_id,PrimeKey &client_key,PrimeKey &server_key)
+void ClientNegotiant::Engine::prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key)
  {
   Mutex::Lock lock(mutex);
   
@@ -678,7 +795,7 @@ auto ClientNegotiant::Engine::getState() const -> State
   return proc.getState();
  }
 
-void ClientNegotiant::Engine::getSessionKey(SKey &skey)
+void ClientNegotiant::Engine::getSessionKey(SKeyPtr &skey)
  {
   Mutex::Lock lock(mutex);
   
@@ -1013,13 +1130,16 @@ ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,AbstractClientDataB
   outbound_format=dev->getOutboundFormat();
   
   final_tick_count=((+final_timeout)*InboundTicksPerSec)/1000+1;
+  
+  dev->attach(this);
  }
 
 ServerNegotiant::Engine::~Engine()
  {
+  dev->detach();
  }
 
-void ServerNegotiant::Engine::prepare(PrimeKey &server_key_)
+void ServerNegotiant::Engine::prepare(PrimeKeyPtr &server_key_)
  {
   Mutex::Lock lock(mutex);
   
