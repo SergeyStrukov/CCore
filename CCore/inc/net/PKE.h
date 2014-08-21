@@ -32,11 +32,17 @@ namespace PSec {
 
 /* consts */
 
-const ulen DefaultKeySetLen = 10 ;
+const uint16 MinKeySetLen     = 5 ;
+const uint16 DefaultKeySetLen = 10 ;
+const uint16 MaxKeySetLen     = 100 ;
 
-const uint32 DefaultTTL = 3600 ; // 1 hour
+const uint32 MinTTL     = 360 ;   // 6 min 
+const uint32 DefaultTTL = 3600 ;  // 1 hour
+const uint32 MaxTTL     = 36000 ; // 10 hour
 
+const uint32 MinUTL     = 1000000 ;
 const uint32 DefaultUTL = 100000000 ;
+const uint32 MaxUTL     = 1000000000 ;
 
 const ulen NonceLen = 128 ;
 
@@ -80,6 +86,21 @@ enum DHGroupID : uint8
   DHGroupID_II
   
   // may be continued
+ };
+
+/* enum PKEType */
+
+enum PKEType : uint16
+ {
+  PKE_None      = 0,
+  PKE_ServerAck = 1,
+  PKE_ClientAck,
+  PKE_ServerParam,
+  PKE_ClientParam,
+  PKE_FirstServerSKey,
+  PKE_ClientSKey,
+  PKE_ServerSKey,
+  PKE_Done
  };
 
 /* functions */
@@ -140,6 +161,11 @@ struct CryptAlgoSelect : NoThrowFlagsBase
     return crypt_id==obj.crypt_id && hash_id==obj.hash_id && dhg_id==obj.dhg_id ;
    }
   
+  bool operator != (const CryptAlgoSelect &obj) const
+   {
+    return !(*this==obj);
+   }
+  
   // save/load object
   
   enum { SaveLoadLen = SaveLenCounter<uint8,uint8,uint8>::SaveLoadLen };
@@ -168,6 +194,33 @@ struct SessionKeyParam
   // constructors
   
   SessionKeyParam() {}
+  
+  SessionKeyParam(uint16 keyset_len_,uint32 ttl_,uint32 utl_) : keyset_len(keyset_len_),ttl(ttl_),utl(utl_) {}
+  
+  // methods
+
+  bool test() const
+   {
+    return keyset_len>=MinKeySetLen && keyset_len<=MaxKeySetLen &&
+           ttl>=MinTTL && ttl<=MaxTTL &&
+           utl>=MinUTL && utl<=MaxUTL ;
+   }
+  
+  void cap()
+   {
+    keyset_len=Min(MaxKeySetLen,Max(MinKeySetLen,keyset_len));
+    ttl=Min(MaxTTL,Max(MinTTL,ttl));
+    utl=Min(MaxUTL,Max(MinUTL,utl));
+   }
+  
+  void select(const SessionKeyParam &obj)
+   {
+    Replace_min(keyset_len,obj.keyset_len);
+    Replace_min(ttl,obj.ttl);
+    Replace_min(utl,obj.utl);
+    
+    cap();
+   }
   
   // save/load object
   
@@ -268,18 +321,6 @@ struct AbstractClientID : MemBase_nocopy
   virtual uint8 getLen() const =0;
   
   virtual void getID(uint8 buf[ /* Len */ ]) const =0;
-  
-  // save object
-  
-  template <class Dev>
-  void save(Dev &dev) const
-   {
-    uint8 len=getLen();
-    
-    dev.put(len);
-    
-    getID(dev.putRange(len).ptr);
-   }
  };
 
 /* class ClientID */
@@ -348,6 +389,8 @@ using SKeyPtr = OwnPtr<MasterKey> ;
 
 struct NegData : NoCopy
  {
+  // key part
+  
   PlatformRandom random;
 
   XPoint point;
@@ -360,14 +403,17 @@ struct NegData : NoCopy
   OwnPtr<AbstractHashFunc> hash;
   OwnPtr<AbstractDHGroup> dhg;
   
+  DirectConvolution direct_conv;
+  InverseConvolution inverse_conv;
+  
+  ulen hlen;
+  ulen blen;
   ulen glen;
   
   uint8 gy[MaxGLen];
   uint8 x[MaxGLen];
   uint8 gx[MaxGLen];
   uint8 gxy[MaxGLen];
-  
-  uint8 key[MaxKLen];
   
   NegData();
   
@@ -377,13 +423,27 @@ struct NegData : NoCopy
   
   void keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
   
-  void clientKeyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  void clientKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
   
   void serverKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
   
   void clientGen();
   
   void serverGen();
+  
+  BufPutDev start(uint8 *buf,uint16 type);
+  
+  ulen finish(uint8 *buf,BufPutDev dev);
+  
+  PKEType process(PtrLen<const uint8> &data);
+  
+  // skey part
+  
+  SessionKeyParam param;
+  SKeyPtr skey;
+  PtrLen<uint8> key_buf;
+  
+  bool createSKey();
  };
 
 /* class ClientNegotiant */
@@ -406,7 +466,9 @@ class ClientNegotiant : NoCopy
     {
       State state = State_Null ;
     
-      ClientIDPtr client_id;
+      uint8 client_id_len = 0 ;
+      uint8 client_id[255];
+      
       PrimeKeyPtr client_key;
       PrimeKeyPtr server_key;
       
@@ -436,13 +498,21 @@ class ClientNegotiant : NoCopy
       
       bool process4(PtrLen<const uint8> data);
       
+      void build5();
+      
+      bool process6(PtrLen<const uint8> data);
+      
+      void build7();
+      
+      bool process8(PtrLen<const uint8> data);
+      
      public: 
     
       Proc();
       
       ~Proc();
       
-      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key);
+      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
       
       State getState() const { return state; }
       
@@ -488,7 +558,7 @@ class ClientNegotiant : NoCopy
       
       ~Engine();
       
-      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key);
+      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
       
       State getState() const;
       
@@ -509,7 +579,7 @@ class ClientNegotiant : NoCopy
    
    ~ClientNegotiant();
    
-   void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key) { engine.prepare(client_id,client_key,server_key); }
+   void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param={}) { engine.prepare(client_id,client_key,server_key,param); }
    
    State getState() const { return engine.getState(); }
    
@@ -595,6 +665,10 @@ class ServerNegotiant : NoCopy
       
       NegData neg_data;
       
+      SessionKeyParam param;
+      SKeyPtr skey;
+      PtrLen<uint8> key_buf;
+      
      private:
       
       bool process1(XPoint point,PtrLen<const uint8> data);
@@ -606,6 +680,14 @@ class ServerNegotiant : NoCopy
       void build4();
       
       InboundResult process5(PtrLen<const uint8> data);
+      
+      void build6();
+      
+      InboundResult process7(PtrLen<const uint8> data);
+      
+      void build8();
+      
+      InboundResult process9(PtrLen<const uint8> data);
       
       InboundResult process_final(PtrLen<const uint8> data);
       
@@ -633,6 +715,8 @@ class ServerNegotiant : NoCopy
       AbstractEndpointManager &epman;
       ulen max_clients;
       unsigned final_tick_count;
+      
+      SessionKeyParam param;
       
       PacketSet<uint8> pset;
       
@@ -667,7 +751,7 @@ class ServerNegotiant : NoCopy
       
       ~Engine();
       
-      void prepare(PrimeKeyPtr &server_key);
+      void prepare(PrimeKeyPtr &server_key,SessionKeyParam param);
       
       void start();
       
@@ -688,7 +772,7 @@ class ServerNegotiant : NoCopy
    
    ~ServerNegotiant();
    
-   void prepare(PrimeKeyPtr &server_key) { engine.prepare(server_key); }
+   void prepare(PrimeKeyPtr &server_key,SessionKeyParam param={}) { engine.prepare(server_key,param); }
    
    void start() { engine.start(); }
    

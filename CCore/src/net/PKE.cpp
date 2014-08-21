@@ -417,7 +417,6 @@ NegData::~NegData()
  {
   Crypton::ForgetRange(Range(x));
   Crypton::ForgetRange(Range(gxy));
-  Crypton::ForgetRange(Range(key));
  }
 
 bool NegData::create()
@@ -431,6 +430,8 @@ bool NegData::create()
      hash.set(CreateHash(HashID(algo.hash_id)));
      dhg.set(CreateDHGroup(DHGroupID(algo.dhg_id)));
      
+     hlen=hash->getHLen();
+     blen=encrypt->getBLen();
      glen=dhg->getGLen();
      
      return true;
@@ -453,6 +454,8 @@ void NegData::keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,
   
   ulen client_hlen=client_key->getHLen();
   ulen server_hlen=server_key->getHLen();
+  
+  uint8 key[MaxKLen];
   
   PtrLen<uint8> dst(key,encrypt->getKLen());
   
@@ -485,21 +488,19 @@ void NegData::keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,
        {
         dst.copy(server_digest);
         
-        Printf(Con,"key\n#;\n\n",PrintDump(Range_const(key,encrypt->getKLen())));
+        encrypt->key(key);
+        decrypt->key(key);
+        
+        Crypton::ForgetRange(Range(key));
         
         return;
        }
     }
  }
 
-void NegData::clientKeyGen(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+void NegData::clientKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
  {
-  uint8 len=client_id->getLen();
-  uint8 temp[255];
-  
-  client_id->getID(temp);
-  
-  keyGen(Range_const(temp,len),client_key,server_key);
+  keyGen(client_id,client_key,server_key);
  }
 
 void NegData::serverKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
@@ -529,13 +530,125 @@ void NegData::serverGen()
   dhg->pow(x,gx);
  }
 
+BufPutDev NegData::start(uint8 *buf,uint16 type)
+ {
+  BufPutDev dev(buf);
+  
+  uint8 len=random.next8();
+  
+  dev(len);
+  
+  random.fill(dev.putRange(len));
+  
+  dev.putRange(2u);
+  
+  dev.use<BeOrder>(type);  
+  
+  return dev;
+ }
+
+ulen NegData::finish(uint8 *buf,BufPutDev dev)
+ {
+  ulen len=Dist(buf,dev.getRest());
+  
+  ulen rlen=buf[0];
+  uint16 plen=uint16( len-(rlen+5u) );
+  
+  {
+   BufPutDev temp(buf+(rlen+1u));
+   
+   temp.use<BeOrder>(plen);
+  }   
+  
+  hash->add(Range_const(buf,len));
+  
+  dev.put(Range(hash->finish(),hlen));
+
+  len+=hlen;
+  
+  ulen count=(len+(blen-1u))/blen;
+  ulen total=count*blen;
+  
+  random.fill(dev.putRange(total-len));
+  
+  direct_conv.start();
+  
+  direct_conv.apply(Range(buf,total));
+  
+  for(; count ;count--,buf+=blen) encrypt->apply(buf);
+  
+  return total;
+ }
+
+PKEType NegData::process(PtrLen<const uint8> &data)
+ {
+  uint8 *buf=const_cast<uint8 *>(data.ptr);
+  ulen len=data.len;
+  
+  if( !len || len%blen ) return PKE_None;
+  
+  ulen count=len/blen;
+  
+  for(uint8 *ptr=buf; count ;count--,ptr+=blen) decrypt->apply(ptr);
+  
+  inverse_conv.start();
+  
+  inverse_conv.apply(Range(buf,len));
+  
+  ulen rlen=buf[0];
+  
+  if( len<(rlen+5u) ) return PKE_None;
+  
+  BufGetDev dev(buf+(rlen+1u));
+  
+  uint16 plen;
+  uint16 type;
+  
+  dev.use<BeOrder>(plen,type);
+  
+  ulen dlen=rlen+5u+plen;
+  
+  if( len<dlen+hlen ) return PKE_None;
+  
+  hash->add(Range_const(buf,dlen));
+  
+  if( !Range(hash->finish(),hlen).equal(buf+dlen) ) return PKE_None; 
+  
+  data.ptr=buf+(rlen+5u);
+  data.len=plen;
+  
+  return PKEType(type);
+ }
+
+bool NegData::createSKey()
+ {
+  SilentReportException report;
+  
+  try
+    {
+     SessionKey *session_key=new SessionKey(algo,param);
+    
+     skey.set(session_key);
+     
+     key_buf=session_key->takeKeyBuf();
+     
+     return true;
+    }
+  catch(...)
+    {
+     return false;
+    }
+ }
+
 /* class ClientNegotiant::Proc */
 
 void ClientNegotiant::Proc::build1()
  {
   BufPutDev dev(send_buf);
   
-  dev(*client_id);
+  dev(client_id_len);
+  
+  dev.put(Range_const(client_id,client_id_len));
   
   SaveRange(algo_list,algo_count,dev);
   
@@ -569,7 +682,7 @@ bool ClientNegotiant::Proc::process2(PtrLen<const uint8> data)
   
   neg_data.clientGen();
   
-  neg_data.clientKeyGen(client_id.getPtr(),client_key.getPtr(),server_key.getPtr());
+  neg_data.clientKeyGen(Range_const(client_id,client_id_len),client_key.getPtr(),server_key.getPtr());
   
   build3();
   
@@ -593,6 +706,72 @@ void ClientNegotiant::Proc::build3()
 
 bool ClientNegotiant::Proc::process4(PtrLen<const uint8> data)
  {
+  if( neg_data.process(data)!=PKE_ServerAck ) return false;
+  
+  RangeGetDev dev(data);
+  
+  CryptAlgoSelect algo;
+  XPoint point=0;
+  uint8 len=0;
+  
+  dev.use<BeOrder>(algo,point,len);
+  
+  PtrLen<const uint8> id=dev.getRange(len);
+  
+  if( !dev.finish() ) return false;
+  
+  if( algo!=neg_data.algo || point!=neg_data.point || !id.equal(Range_const(client_id,client_id_len)) ) return false;
+  
+  build5();
+  
+  inbound_func=&Proc::process6;
+  
+  return true;
+ }
+
+void ClientNegotiant::Proc::build5()
+ {
+  BufPutDev dev=neg_data.start(send_buf,PKE_ClientAck);
+  
+  dev.use<BeOrder>(neg_data.algo,neg_data.point,client_id_len);
+  
+  dev.put(Range_const(client_id,client_id_len));
+  
+  send_len=neg_data.finish(send_buf,dev);
+ }
+
+bool ClientNegotiant::Proc::process6(PtrLen<const uint8> data)
+ {
+  if( neg_data.process(data)!=PKE_ServerParam ) return false;
+  
+  RangeGetDev dev(data);
+  
+  SessionKeyParam temp;
+  
+  dev(temp);
+  
+  if( !dev.finish() ) return false;
+  
+  neg_data.param.select(temp);
+  
+  build7();
+  
+  inbound_func=&Proc::process8;
+  
+  return true;
+ }
+
+void ClientNegotiant::Proc::build7()
+ {
+  BufPutDev dev=neg_data.start(send_buf,PKE_ClientParam);
+  
+  dev(neg_data.param);
+  
+  send_len=neg_data.finish(send_buf,dev);
+ }
+
+bool ClientNegotiant::Proc::process8(PtrLen<const uint8> data)
+ {
   // TODO
   
   return false;
@@ -606,21 +785,26 @@ ClientNegotiant::Proc::~Proc()
  {
  }
 
-void ClientNegotiant::Proc::prepare(ClientIDPtr &client_id_,PrimeKeyPtr &client_key_,PrimeKeyPtr &server_key_)
+void ClientNegotiant::Proc::prepare(ClientIDPtr &client_id_,PrimeKeyPtr &client_key_,PrimeKeyPtr &server_key_,SessionKeyParam param_)
  {
   if( state!=State_Null )
     {
      Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : not null");
     }
   
-  Swap(client_id,client_id_);
+  neg_data.param=param_;
+  
   Swap(client_key,client_key_);
   Swap(server_key,server_key_);
   
-  if( !client_id )
+  if( !client_id_ )
     {
      Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : no client id");
     }
+  
+  client_id_len=client_id_->getLen();
+  
+  client_id_->getID(client_id);
   
   if( !client_key )
     {
@@ -766,11 +950,11 @@ ClientNegotiant::Engine::~Engine()
   dev->detach();
  }
 
-void ClientNegotiant::Engine::prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key)
+void ClientNegotiant::Engine::prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param)
  {
   Mutex::Lock lock(mutex);
   
-  proc.prepare(client_id,client_key,server_key);
+  proc.prepare(client_id,client_key,server_key,param);
  }
 
 void ClientNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list)
@@ -815,6 +999,7 @@ ClientNegotiant::~ClientNegotiant()
  }
 
 /* class ServerNegotiant::Proc */
+
 
 bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
  {
@@ -902,12 +1087,80 @@ auto ServerNegotiant::Proc::process3(PtrLen<const uint8> data) -> InboundResult
 
 void ServerNegotiant::Proc::build4()
  {
+  BufPutDev dev=neg_data.start(send_buf,PKE_ServerAck);
+  
+  dev.use<BeOrder>(neg_data.algo,neg_data.point,client_id_len);
+  
+  dev.put(Range_const(client_id,client_id_len));
+  
+  send_len=neg_data.finish(send_buf,dev);
+ }
+
+auto ServerNegotiant::Proc::process5(PtrLen<const uint8> data) -> InboundResult
+ {
+  if( neg_data.process(data)!=PKE_ClientAck ) return InboundDrop;
+  
+  RangeGetDev dev(data);
+  
+  CryptAlgoSelect algo;
+  XPoint point=0;
+  uint8 len=0;
+  
+  dev.use<BeOrder>(algo,point,len);
+  
+  PtrLen<const uint8> id=dev.getRange(len);
+  
+  if( !dev.finish() ) return InboundDrop;
+  
+  if( algo!=neg_data.algo || point!=neg_data.point || !id.equal(Range_const(client_id,client_id_len)) ) return InboundDrop;
+  
+  build6();
+  
+  inbound_func=&Proc::process7;
+  
+  return InboundOk;
+ }
+
+void ServerNegotiant::Proc::build6()
+ {
+  BufPutDev dev=neg_data.start(send_buf,PKE_ServerParam);
+  
+  dev(engine->param);
+  
+  send_len=neg_data.finish(send_buf,dev);
+ }
+
+auto ServerNegotiant::Proc::process7(PtrLen<const uint8> data) -> InboundResult
+ {
+  if( neg_data.process(data)!=PKE_ClientParam ) return InboundDrop;
+  
+  RangeGetDev dev(data);
+  
+  dev(neg_data.param);
+  
+  if( !dev.finish() ) return InboundDrop;
+  
+  if( !neg_data.param.test() ) return InboundDrop;
+  
+  if( !neg_data.createSKey() ) return InboundDrop;
+  
+  build8();
+  
+  inbound_func=&Proc::process9;
+  
+  return InboundOk;
+ }
+
+void ServerNegotiant::Proc::build8()
+ {
+  Printf(Con,"Server build8\n");
+  
   // TODO
   
   send_len=0;
  }
 
-auto ServerNegotiant::Proc::process5(PtrLen<const uint8> data) -> InboundResult
+auto ServerNegotiant::Proc::process9(PtrLen<const uint8> data) -> InboundResult
  {
   // TODO
   
@@ -1139,7 +1392,7 @@ ServerNegotiant::Engine::~Engine()
   dev->detach();
  }
 
-void ServerNegotiant::Engine::prepare(PrimeKeyPtr &server_key_)
+void ServerNegotiant::Engine::prepare(PrimeKeyPtr &server_key_,SessionKeyParam param_)
  {
   Mutex::Lock lock(mutex);
   
@@ -1147,6 +1400,8 @@ void ServerNegotiant::Engine::prepare(PrimeKeyPtr &server_key_)
     {
      Printf(Exception,"CCore::Net::PSec::ServerNegotiant::prepare(...) : already started");
     }
+
+  param=param_;
   
   Swap(server_key,server_key_);
   
