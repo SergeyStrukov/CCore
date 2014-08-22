@@ -443,7 +443,21 @@ struct NegData : NoCopy
   SKeyPtr skey;
   PtrLen<uint8> key_buf;
   
+  uint32 rep_count;
+  uint32 max_count;
+  uint32 cur_count;
+  
   bool createSKey();
+  
+  void setCounts(AbstractHashFunc *server_key);
+  
+  bool testCounts(AbstractHashFunc *server_key);
+  
+  void keyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  
+  void clientKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  
+  void serverKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key);
  };
 
 /* class ClientNegotiant */
@@ -505,6 +519,12 @@ class ClientNegotiant : NoCopy
       void build7();
       
       bool process8(PtrLen<const uint8> data);
+      
+      void build9();
+      
+      bool process10(PtrLen<const uint8> data);
+      
+      bool process11(PtrLen<const uint8> data);
       
      public: 
     
@@ -622,11 +642,7 @@ struct AbstractEndpointManager : MemBase_nocopy
  {
   virtual ~AbstractEndpointManager() {}
 
-  virtual ulen getBufLen() const =0; 
-  
-  virtual StrLen createName(char buf[ /* BufLen */ ]) =0;
-  
-  virtual void open(StrLen ep_dev_name,SKeyPtr &skey,ClientProfilePtr &client_profile) =0;
+  virtual void open(XPoint point,SKeyPtr &skey,ClientProfilePtr &client_profile) =0;
  };
 
 /* class ServerNegotiant */
@@ -641,6 +657,9 @@ class ServerNegotiant : NoCopy
       
       uint8 send_buf[MaxPKETransLen];
       ulen send_len = 0 ;
+      
+      uint8 final_send_buf[MaxPKETransLen];
+      ulen final_send_len = 0 ;
       
       unsigned tick_count = 0 ;
       unsigned retry_count = 0 ;
@@ -688,6 +707,10 @@ class ServerNegotiant : NoCopy
       void build8();
       
       InboundResult process9(PtrLen<const uint8> data);
+      
+      void build10();
+      
+      void build11();
       
       InboundResult process_final(PtrLen<const uint8> data);
       

@@ -640,6 +640,102 @@ bool NegData::createSKey()
     }
  }
 
+void NegData::setCounts(AbstractHashFunc *server_key)
+ {
+  ulen len=key_buf.len;
+  ulen server_hlen=server_key->getHLen();
+  
+  ulen count=(len+server_hlen-1)/server_hlen;
+  
+  if( count<=10 )
+    {
+     rep_count=1;
+     max_count=count;
+    }
+  else
+    {
+     if( count<=20 )
+       rep_count=2;
+     else if( count<=30 )
+       rep_count=3;
+     else if( count<=40 )
+       rep_count=4;
+     else if( count<=50 )
+       rep_count=5;
+     else if( count<=60 )
+       rep_count=6;
+     else if( count<=70 )
+       rep_count=7;
+     else if( count<=80 )
+       rep_count=8;
+     else if( count<=90 )
+       rep_count=9;
+     else
+       rep_count=10;
+     
+     max_count=(count+rep_count-1)/rep_count;
+    }
+  
+  cur_count=max_count;
+ }
+
+bool NegData::testCounts(AbstractHashFunc *server_key)
+ {
+  ulen len=key_buf.len;
+  ulen server_hlen=server_key->getHLen();
+  
+  return len<=server_hlen*rep_count*max_count;
+ }
+
+void NegData::keyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+ {
+  ulen client_hlen=client_key->getHLen();
+  ulen server_hlen=server_key->getHLen();
+  
+  for(ulen cnt=rep_count; cnt ;cnt--)
+    {
+     client_key->add(Range_const(client_nonce));
+     client_key->add(Range_const(server_nonce));
+     client_key->add(Range_const(gxy,glen));
+     
+     const uint8 *client_digest=client_key->finish();
+     
+     server_key->add(Range_const(client_digest,client_hlen));
+     server_key->add(Range_const(client_nonce));
+     server_key->add(Range_const(server_nonce));
+     server_key->add(Range_const(gxy,glen));
+     
+     const uint8 *server_digest=server_key->finish();
+     
+     if( server_hlen<key_buf.len )
+       {
+        (key_buf+=server_hlen).copy(server_digest);
+        
+        client_key->add(Range_const(server_digest,server_hlen));
+       }
+     else
+       {
+        key_buf.copy(server_digest);
+        
+        key_buf=Empty;
+        
+        return;
+       }
+    }
+ }
+
+void NegData::clientKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+ {
+  keyBufGen(client_key,server_key);
+ }
+
+void NegData::serverKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+ {
+  dhg->pow(gy,x,gxy);
+  
+  keyBufGen(client_key,server_key);
+ }
+
 /* class ClientNegotiant::Proc */
 
 void ClientNegotiant::Proc::build1()
@@ -772,9 +868,96 @@ void ClientNegotiant::Proc::build7()
 
 bool ClientNegotiant::Proc::process8(PtrLen<const uint8> data)
  {
-  // TODO
+  if( neg_data.process(data)!=PKE_FirstServerSKey ) return false;
   
-  return false;
+  RangeGetDev dev(data);
+
+  dev.use<BeOrder>(neg_data.rep_count,neg_data.max_count);
+  
+  neg_data.cur_count=neg_data.max_count;
+  
+  dev.get(Range(neg_data.server_nonce));
+  
+  dev.get(Range(neg_data.gy,neg_data.glen));
+  
+  if( !dev.finish() ) return false;
+  
+  if( !neg_data.createSKey() ) return false;
+
+  if( !neg_data.testCounts(server_key.getPtr()) ) return false;
+  
+  neg_data.clientGen();
+  
+  neg_data.clientKeyBufGen(client_key.getPtr(),server_key.getPtr());
+  
+  build9();
+  
+  if( !--neg_data.cur_count )
+    {
+     inbound_func=&Proc::process11;
+    }
+  else
+    {
+     inbound_func=&Proc::process10;
+    }
+  
+  return true;
+ }
+
+void ClientNegotiant::Proc::build9()
+ {
+  BufPutDev dev=neg_data.start(send_buf,PKE_ClientSKey);
+  
+  dev.use<BeOrder>(neg_data.cur_count);
+  
+  dev.put(Range_const(neg_data.client_nonce));
+  
+  dev.put(Range_const(neg_data.gx,neg_data.glen));
+  
+  send_len=neg_data.finish(send_buf,dev);
+ }
+
+bool ClientNegotiant::Proc::process10(PtrLen<const uint8> data)
+ {
+  if( neg_data.process(data)!=PKE_ServerSKey ) return false;
+  
+  RangeGetDev dev(data);
+
+  uint32 count=0;
+  
+  dev.use<BeOrder>(count);
+  
+  dev.get(Range(neg_data.server_nonce));
+  
+  dev.get(Range(neg_data.gy,neg_data.glen));
+  
+  if( !dev.finish() ) return false;
+  
+  if( count!=neg_data.cur_count ) return false;
+
+  neg_data.clientGen();
+  
+  neg_data.clientKeyBufGen(client_key.getPtr(),server_key.getPtr());
+  
+  build9();
+  
+  if( !--neg_data.cur_count )
+    {
+     inbound_func=&Proc::process11;
+    }
+  
+  return true;
+ }
+
+bool ClientNegotiant::Proc::process11(PtrLen<const uint8> data)
+ {
+  if( neg_data.process(data)!=PKE_Done ) return false;
+
+  if( +data ) return false;
+  
+  state=State_Done;
+  
+  return true;
  }
 
 ClientNegotiant::Proc::Proc()
@@ -1000,7 +1183,6 @@ ClientNegotiant::~ClientNegotiant()
 
 /* class ServerNegotiant::Proc */
 
-
 bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
  {
   RangeGetDev dev(data);
@@ -1118,6 +1300,8 @@ auto ServerNegotiant::Proc::process5(PtrLen<const uint8> data) -> InboundResult
   
   inbound_func=&Proc::process7;
   
+  final_send_len=0;
+  
   return InboundOk;
  }
 
@@ -1153,18 +1337,77 @@ auto ServerNegotiant::Proc::process7(PtrLen<const uint8> data) -> InboundResult
 
 void ServerNegotiant::Proc::build8()
  {
-  Printf(Con,"Server build8\n");
+  neg_data.setCounts(engine->server_key.getPtr());
   
-  // TODO
+  neg_data.serverGen();
+
+  BufPutDev dev=neg_data.start(send_buf,PKE_FirstServerSKey);
   
-  send_len=0;
+  dev.use<BeOrder>(neg_data.rep_count,neg_data.max_count);
+  
+  dev.put(Range_const(neg_data.server_nonce));
+  
+  dev.put(Range_const(neg_data.gx,neg_data.glen));
+  
+  send_len=neg_data.finish(send_buf,dev);
  }
 
 auto ServerNegotiant::Proc::process9(PtrLen<const uint8> data) -> InboundResult
  {
-  // TODO
+  if( neg_data.process(data)!=PKE_ClientSKey ) return InboundDrop;
   
-  return InboundDrop;
+  RangeGetDev dev(data);
+
+  uint32 count=0;
+  
+  dev.use<BeOrder>(count);
+  
+  dev.get(Range(neg_data.client_nonce));
+  
+  dev.get(Range(neg_data.gy,neg_data.glen));
+  
+  if( !dev.finish() ) return InboundDrop;
+  
+  if( count!=neg_data.cur_count ) return InboundDrop;
+
+  neg_data.serverKeyBufGen(client_key.getPtr(),engine->server_key.getPtr());
+  
+  if( !--neg_data.cur_count )
+    {
+     build11();
+     
+     inbound_func=&Proc::process_final;
+     
+     return InboundLast;
+    }
+  else
+    {
+     build10();
+     
+     return InboundOk;
+    }
+ }
+
+void ServerNegotiant::Proc::build10()
+ {
+  neg_data.serverGen();
+
+  BufPutDev dev=neg_data.start(send_buf,PKE_ServerSKey);
+  
+  dev.use<BeOrder>(neg_data.cur_count);
+  
+  dev.put(Range_const(neg_data.server_nonce));
+  
+  dev.put(Range_const(neg_data.gx,neg_data.glen));
+  
+  send_len=neg_data.finish(send_buf,dev);
+ }
+
+void ServerNegotiant::Proc::build11()
+ {
+  BufPutDev dev=neg_data.start(final_send_buf,PKE_Done);
+  
+  final_send_len=neg_data.finish(final_send_buf,dev);
  }
 
 auto ServerNegotiant::Proc::process_final(PtrLen<const uint8> data) -> InboundResult
@@ -1221,13 +1464,24 @@ void ServerNegotiant::Proc::inbound(PtrLen<const uint8> data,PacketList &list)
        tick_count=engine->final_tick_count;
        retry_count=1;
        
-       engine->prepare_send(neg_data.point,Range_const(send_buf,send_len),list);
+       engine->epman.open(neg_data.point,neg_data.skey,client_profile);
+       
+       engine->prepare_send(neg_data.point,Range_const(final_send_buf,final_send_len),list);
       }
      break;
      
      case InboundFinal :
       {
-       engine->prepare_send(neg_data.point,Range_const(send_buf,send_len),list);
+       engine->prepare_send(neg_data.point,Range_const(final_send_buf,final_send_len),list);
+      }
+     break; 
+     
+     case InboundDrop :
+      {
+       if( final_send_len )
+         {
+          engine->prepare_send(neg_data.point,Range_const(final_send_buf,final_send_len),list);
+         }
       }
      break; 
     }
