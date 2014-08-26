@@ -24,16 +24,6 @@ namespace App {
 
 namespace Private_1030 {
 
-/* ports */ // -> UDPoint.h
-
-const Net::UDPort PKEClientUDPort  = 52100 ;
-
-const Net::UDPort PSecClientUDPort = 52101 ;
-
-const Net::UDPort PKEServerUDPort  = 52102 ;
-
-const Net::UDPort PSecServerUDPort = 52103 ;
-
 /* class Engine */
 
 class Engine : public Funchor_nocopy
@@ -160,14 +150,14 @@ class Engine : public Funchor_nocopy
   public:
     
    Engine()
-    : client_pke_ep(PKEClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),PKEServerUDPort)),
-      client_psec_ep(PSecClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),PSecServerUDPort)),
+    : client_pke_ep(Net::PKEClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),Net::PKEServerUDPort)),
+      client_psec_ep(Net::PSecClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),Net::PSecServerUDPort)),
       master_client_pke(client_pke_ep,"ClientPKE"),
       master_client_psec(client_psec_ep,"ClientPSec"),
       client("ClientPKE",function_done()),
       
-      server_pke_mp(PKEServerUDPort),
-      server_psec_mp(PSecServerUDPort),
+      server_pke_mp(Net::PKEServerUDPort),
+      server_psec_mp(Net::PSecServerUDPort),
       master_server_pke(server_pke_mp,"ServerPKE"),
       master_server_psec(server_psec_mp,"ServerPSec"),       
       

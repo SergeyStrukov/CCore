@@ -23,11 +23,19 @@ namespace Net {
 
 /* ports */ 
 
-const UDPort EchoUDPort      =     7 ;
+const UDPort EchoUDPort       =     7 ;
 
-const UDPort PTPServerUDPort = 52000 ;
+const UDPort PTPServerUDPort  = 52000 ;
 
-const UDPort PTPClientUDPort = 52001 ;
+const UDPort PTPClientUDPort  = 52001 ;
+
+const UDPort PKEClientUDPort  = 52100 ;
+
+const UDPort PSecClientUDPort = 52101 ;
+
+const UDPort PKEServerUDPort  = 52102 ;
+
+const UDPort PSecServerUDPort = 52103 ;
 
 /* classes */ 
 
