@@ -142,6 +142,7 @@
 ../../../HCore/CCore/test/test1027.Time.cpp
 ../../../HCore/CCore/test/test1028.ScanFile.cpp
 ../../../HCore/CCore/test/test1029.ScanAsyncFile.cpp
+../../../HCore/CCore/test/test1030.PKE.cpp
 ../../../HCore/CCore/test/testPrint.cpp
 ../../../Target/WIN64/CCore/test/test3001.Atomic.cpp
 ../../../Target/WIN64/CCore/test/test3002.WIN64.cpp

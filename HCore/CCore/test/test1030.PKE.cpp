@@ -1,9 +1,9 @@
-/* test0107.PKE.cpp */ 
+/* test1030.PKE.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.08
 //
-//  Tag: General 
+//  Tag: HCore 
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -16,20 +16,42 @@
 #include <CCore/test/test.h>
 #include <CCore/test/testRun.h>
 
-#include <CCore/inc/net/Bridge.h>
+#include <CCore/inc/net/AsyncUDPDevice.h>
 #include <CCore/inc/net/PKE.h>
 #include <CCore/inc/crypton/SHA.h>
 
 namespace App {
 
-namespace Private_0107 {
+namespace Private_1030 {
+
+/* ports */ // -> UDPoint.h
+
+const Net::UDPort PKEClientUDPort  = 52100 ;
+
+const Net::UDPort PSecClientUDPort = 52101 ;
+
+const Net::UDPort PKEServerUDPort  = 52102 ;
+
+const Net::UDPort PSecServerUDPort = 52103 ;
 
 /* class Engine */
 
 class Engine : public Funchor_nocopy
  {
-   Net::Bridge bridge;
+   Net::AsyncUDPEndpointDevice client_pke_ep;
+   Net::AsyncUDPEndpointDevice client_psec_ep;
    
+   ObjMaster master_client_pke;
+   ObjMaster master_client_psec;
+  
+   Net::PSec::ClientNegotiant client;
+   
+   Net::AsyncUDPMultipointDevice server_pke_mp;
+   Net::AsyncUDPMultipointDevice server_psec_mp;
+   
+   ObjMaster master_server_pke;
+   ObjMaster master_server_psec;
+  
    class ClientDataBase : NoCopy , public Net::PSec::AbstractClientDataBase
     {
       Engine *engine;
@@ -75,10 +97,13 @@ class Engine : public Funchor_nocopy
    
    class EndpointManager : NoCopy , public Net::PSec::AbstractEndpointManager
     {
+      Net::PacketMultipointDevice *dev;
+
      public:
     
-      EndpointManager()
+      EndpointManager(Engine *engine)
        {
+        dev=&engine->server_pke_mp;
        }
       
       virtual ~EndpointManager()
@@ -89,31 +114,31 @@ class Engine : public Funchor_nocopy
       
       virtual void open(Net::XPoint point,Net::PSec::SKeyPtr &skey,Net::PSec::ClientProfilePtr &client_profile)
        {
+        // TODO
+        
         Used(skey);
         Used(client_profile);
         
-        Printf(Con,"open(#;)\n",point);
+        Printf(Con,"open(#;)\n",Net::PointDesc(dev,point));
        }
     };
    
-   Net::PSec::ClientNegotiant client;
-   
    ClientDataBase client_db;
    EndpointManager epman;
-   
+  
    Net::PSec::ServerNegotiant server;
-   
+  
    Sem sem;
    
   private:
-   
+    
    void client_done()
     {
      sem.give();
     }
    
    Function<void (void)> function_done() { return FunctionOf(this,&Engine::client_done); }
-
+ 
    Net::PSec::AbstractHashFunc * createClientKey() const
     {
      using namespace Net::PSec;
@@ -133,15 +158,25 @@ class Engine : public Funchor_nocopy
     }
    
   public:
-   
+    
    Engine()
-    : bridge(10),
-      client(Net::Bridge::ClientName(1).str,function_done()),
+    : client_pke_ep(PKEClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),PKEServerUDPort)),
+      client_psec_ep(PSecClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),PSecServerUDPort)),
+      master_client_pke(client_pke_ep,"ClientPKE"),
+      master_client_psec(client_psec_ep,"ClientPSec"),
+      client("ClientPKE",function_done()),
+      
+      server_pke_mp(PKEServerUDPort),
+      server_psec_mp(PSecServerUDPort),
+      master_server_pke(server_pke_mp,"ServerPKE"),
+      master_server_psec(server_psec_mp,"ServerPSec"),       
+      
       client_db(this,"client"),
-      server(Net::Bridge::ServerName(),client_db,epman)
+      epman(this),
+      server("ServerPKE",client_db,epman)
     {
     }
-   
+    
    ~Engine()
     {
     }
@@ -174,39 +209,46 @@ class Engine : public Funchor_nocopy
      client.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
     }
    
-   void wait(MSec timeout)
+   bool wait(MSec timeout)
     {
-     sem.take(timeout);
+     return sem.take(timeout);
     }
    
    class StartStop : NoCopy
     {
-      Net::Bridge::StartStop bridge;
+      Net::AsyncUDPEndpointDevice::StartStop client_pke_ep;
+      Net::AsyncUDPEndpointDevice::StartStop client_psec_ep;
     
+      Net::AsyncUDPMultipointDevice::StartStop server_pke_mp;
+      Net::AsyncUDPMultipointDevice::StartStop server_psec_mp;
+      
      public:
      
       explicit StartStop(Engine &engine)
-       : bridge(engine.bridge)
+       : client_pke_ep(engine.client_pke_ep),
+         client_psec_ep(engine.client_psec_ep),
+         server_pke_mp(engine.server_pke_mp),
+         server_psec_mp(engine.server_psec_mp)
        {
        }
        
-      ~StartStop() 
+      ~StartStop()
        {
        } 
     }; 
  };
 
-} // namespace Private_0107
+} // namespace Private_1030
  
-using namespace Private_0107; 
+using namespace Private_1030; 
  
-/* Testit<107> */ 
+/* Testit<1030> */ 
 
 template<>
-const char *const Testit<107>::Name="Test107 PKE";
+const char *const Testit<1030>::Name="Test1030 PKE";
 
 template<>
-bool Testit<107>::Main()
+bool Testit<1030>::Main() 
  {
   Engine engine;
   
@@ -217,7 +259,10 @@ bool Testit<107>::Main()
    
    engine.start();
    
-   engine.wait(10_sec);
+   if( engine.wait(10_sec) )
+     {
+      // TODO
+     }
   }
   
   return true;
