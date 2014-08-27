@@ -21,6 +21,7 @@
 
 #include <CCore/inc/net/PSecCore.h>
 
+#include <CCore/inc/TreeMap.h>
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/AttachmentHost.h>
 #include <CCore/inc/SaveLoad.h>
@@ -44,6 +45,8 @@ class ProcessorStatInfo;
 class PacketProcessor;
 
 class EndpointDevice;
+
+class MultipointDevice;
 
 /* enum ProcessorEvent */
 
@@ -208,6 +211,8 @@ class PacketProcessor : NoCopy
    
    ~PacketProcessor();
    
+   void replace(const MasterKey &master_key);
+   
    ulen getOutDelta(ulen len);
    
    ulen getMaxInpLen(ulen len);
@@ -304,6 +309,107 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice , PacketEndp
    virtual void attach(PacketEndpointDevice::InboundProc *proc);
     
    virtual void detach();
+ };
+
+/* class MultipointDevice */
+
+class MultipointDevice : public ObjBase , public PacketMultipointDevice , public AbstractEndpointManager , PacketMultipointDevice::InboundProc
+ {
+   ObjHook hook;
+   
+   PacketMultipointDevice *dev;
+   
+   AttachmentHost<PacketMultipointDevice::InboundProc> host;
+   
+   using Hook = AttachmentHost<PacketMultipointDevice::InboundProc>::Hook ;
+   
+   ulen outbound_delta;
+   PacketFormat outbound_format;
+   ulen max_inbound_len;
+   
+   PacketSet<uint8> pset;
+   
+   Mutex mutex;
+   
+   struct Proc : NoCopy
+    {
+     ulen use_count = 0 ;
+     bool opened = true ;
+     
+     MasterKeyPtr replace_skey;
+     ClientProfilePtr replace_client_profile;
+     
+     using ProcLocked = Locked<Mutex,PacketProcessor> ;
+     
+     Mutex mutex;
+     
+     PacketProcessor proc;
+     
+     ClientProfilePtr client_profile;
+     
+     void do_replace(MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+     
+     void response(XPoint point,const KeyResponse &resp,MultipointDevice *host_dev);
+     
+     Proc(const MasterKey &master_key,ClientProfilePtr &client_profile_)
+      : mutex("PSec::MultipointDevice::Proc"),
+        proc(master_key)
+      {
+       Swap(client_profile,client_profile_);
+      }
+     
+     void incUse() { use_count++; }
+     
+     bool decUse();
+     
+     bool close();
+     
+     void replace(MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+     
+     void inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data,MultipointDevice *host_dev);
+     
+     void outbound(XPoint point,Packet<uint8> packet,Packets type,MultipointDevice *host_dev);
+     
+     void tick(XPoint point,MultipointDevice *host_dev);
+    };
+   
+   RadixTreeMap<XPoint,Proc> map;
+   
+  private: 
+
+   // InboundProc
+   
+   virtual void inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data);
+    
+   virtual void tick();
+   
+  public:
+  
+   MultipointDevice(StrLen mp_dev_name);
+   
+   virtual ~MultipointDevice();
+   
+   // stat TODO
+   
+   // PacketMultipointDevice
+   
+   virtual StrLen toText(XPoint point,PtrLen<char> buf);
+    
+   virtual PacketFormat getOutboundFormat();
+    
+   virtual void outbound(XPoint point,Packet<uint8> packet);
+    
+   virtual ulen getMaxInboundLen();
+    
+   virtual void attach(PacketMultipointDevice::InboundProc *proc);
+    
+   virtual void detach();
+   
+   // AbstractEndpointManager
+   
+   virtual void open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+   
+   void close(XPoint point);
  };
 
 } // namespace PSec 

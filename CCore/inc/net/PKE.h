@@ -125,17 +125,13 @@ struct AbstractClientID;
 
 class ClientID;
 
+struct AbstractClientDataBase;
+
 class HashPrimeKey;
 
 struct NegData;
 
 class ClientNegotiant;
-
-struct AbstractClientProfile;
-
-struct AbstractClientDataBase;
-
-struct AbstractEndpointManager;
 
 class ServerNegotiant;
 
@@ -241,7 +237,7 @@ struct SessionKeyParam
 
 /* class SessionKey */
 
-class SessionKey : public MasterKey
+class SessionKey : public MasterKey , public MemBase_nocopy
  {
    static const ulen RandomWarpLen = 128 ;
   
@@ -314,7 +310,7 @@ class SessionKey : public MasterKey
 
 /* struct AbstractClientID */
 
-struct AbstractClientID : MemBase_nocopy
+struct AbstractClientID
  {
   virtual ~AbstractClientID() {}
   
@@ -323,9 +319,13 @@ struct AbstractClientID : MemBase_nocopy
   virtual void getID(uint8 buf[ /* Len */ ]) const =0;
  };
 
+/* type ClientIDPtr */
+
+using ClientIDPtr = OwnPtr<AbstractClientID> ;
+
 /* class ClientID */
 
-class ClientID : public AbstractClientID
+class ClientID : public AbstractClientID , public MemBase_nocopy
  {
    uint8 name[255];
    uint8 len;
@@ -350,9 +350,22 @@ class ClientID : public AbstractClientID
    virtual void getID(uint8 buf[ /* Len */ ]) const;
  };
 
+/* type PrimeKeyPtr */
+
+using PrimeKeyPtr = OwnPtr<AbstractHashFunc> ;
+
+/* struct AbstractClientDataBase */
+
+struct AbstractClientDataBase
+ {
+  virtual ~AbstractClientDataBase() {}
+  
+  virtual bool findClient(PtrLen<const uint8> client_id,PrimeKeyPtr &client_key,ClientProfilePtr &client_profile)=0;
+ };
+
 /* class HashPrimeKey */
 
-class HashPrimeKey : public AbstractHashFunc
+class HashPrimeKey : public AbstractHashFunc , public MemBase_nocopy
  {
    template <class Hash> class HashFunc;
   
@@ -372,18 +385,6 @@ class HashPrimeKey : public AbstractHashFunc
    
    virtual const uint8 * finish();
  };
-
-/* type PrimeKeyPtr */
-
-using PrimeKeyPtr = OwnPtr<AbstractHashFunc> ;
-
-/* type ClientIDPtr */
-
-using ClientIDPtr = OwnPtr<AbstractClientID> ;
-
-/* type SKeyPtr */
-
-using SKeyPtr = OwnPtr<MasterKey> ;
 
 /* struct NegData */
 
@@ -440,7 +441,7 @@ struct NegData : NoCopy
   // skey part
   
   SessionKeyParam param;
-  SKeyPtr skey;
+  MasterKeyPtr skey;
   PtrLen<uint8> key_buf;
   
   uint32 rep_count;
@@ -489,7 +490,7 @@ class ClientNegotiant : NoCopy
       CryptAlgoSelect algo_list[MaxAlgos];
       ulen algo_count = 0 ;
       
-      SKeyPtr skey;
+      MasterKeyPtr skey;
       
       uint8 send_buf[MaxPKETransLen];
       ulen send_len = 0 ;
@@ -542,7 +543,7 @@ class ClientNegotiant : NoCopy
       
       PtrLen<const uint8> getSendData() const { return Range(send_buf,send_len); }
       
-      void getSessionKey(SKeyPtr &skey_) { Swap(skey,skey_); }
+      void getSessionKey(MasterKeyPtr &skey_) { Swap(skey,skey_); }
     };
   
    class Engine : NoCopy , PacketEndpointDevice::InboundProc
@@ -584,7 +585,7 @@ class ClientNegotiant : NoCopy
       
       void start(PtrLen<const CryptAlgoSelect> algo_list);
       
-      void getSessionKey(SKeyPtr &skey);
+      void getSessionKey(MasterKeyPtr &skey);
     };
   
   private:
@@ -613,36 +614,7 @@ class ClientNegotiant : NoCopy
      start(Range_const(algo_list));
     }
    
-   void getSessionKey(SKeyPtr &skey) { return engine.getSessionKey(skey); }
- };
-
-/* struct AbstractClientProfile */
-
-struct AbstractClientProfile : MemBase_nocopy
- {
-  virtual ~AbstractClientProfile() {}
- };
-
-/* type ClientProfilePtr */
-
-using ClientProfilePtr = OwnPtr<AbstractClientProfile> ; 
-
-/* struct AbstractClientDataBase */
-
-struct AbstractClientDataBase : MemBase_nocopy
- {
-  virtual ~AbstractClientDataBase() {}
-  
-  virtual bool findClient(PtrLen<const uint8> client_id,PrimeKeyPtr &client_key,ClientProfilePtr &client_profile) =0;
- };
-
-/* struct AbstractEndpointManager */
-
-struct AbstractEndpointManager : MemBase_nocopy
- {
-  virtual ~AbstractEndpointManager() {}
-
-  virtual void open(XPoint point,SKeyPtr &skey,ClientProfilePtr &client_profile) =0;
+   void getSessionKey(MasterKeyPtr &skey) { return engine.getSessionKey(skey); }
  };
 
 /* class ServerNegotiant */
@@ -685,7 +657,7 @@ class ServerNegotiant : NoCopy
       NegData neg_data;
       
       SessionKeyParam param;
-      SKeyPtr skey;
+      MasterKeyPtr skey;
       PtrLen<uint8> key_buf;
       
      private:

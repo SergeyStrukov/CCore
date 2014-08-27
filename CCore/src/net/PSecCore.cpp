@@ -152,6 +152,11 @@ RandomEngine::~RandomEngine()
   Crypton::Forget(temp);
  }
 
+void RandomEngine::reset(const MasterKey &master_key)
+ {
+  // TODO
+ }
+
 uint8 RandomEngine::next()
  {
   if( !buf )
@@ -416,6 +421,11 @@ KeySet::~KeySet()
  {
   Crypton::ForgetRange(Range(key_buf));
   Crypton::ForgetRange(Range(rekey_buf));
+ }
+
+void KeySet::reset(const MasterKey &master_key,RandomEngine &random)
+ {
+  // TODO
  }
 
 bool KeySet::setEncryptKey(KeyIndex key_index,ulen use_count)
@@ -713,6 +723,23 @@ ProcessorCore::~ProcessorCore()
  {
  }
 
+void ProcessorCore::replace(const MasterKey &master_key)
+ {
+  encrypt.set(master_key.createEncrypt());
+  decrypt.set(master_key.createDecrypt());
+  hash.set(master_key.createHash());
+  
+  blen=encrypt->getBLen();
+  hlen=hash->getHLen();
+  
+  random_engine.reset(master_key);
+  
+  key_set.reset(master_key,random_engine);
+  
+  direct_conv.start();
+  inverse_conv.start();
+ }
+
 auto ProcessorCore::selectEncryptKey(ulen use_count) -> SelectResult
  {
   auto list=key_set.getActiveList();
@@ -729,6 +756,11 @@ auto ProcessorCore::selectEncryptKey(ulen use_count) -> SelectResult
 /* class AntiReplay */
 
 AntiReplay::BitFlags::BitFlags()
+ {
+  reset();
+ }
+
+void AntiReplay::BitFlags::reset()
  {
   Range(bits).set_null();
  }
@@ -787,6 +819,13 @@ AntiReplay::AntiReplay()
 
 AntiReplay::~AntiReplay()
  {
+ }
+
+void AntiReplay::reset()
+ {
+  base=0;
+  
+  flags.reset();
  }
 
 bool AntiReplay::testReplay(SequenceNumber num) const

@@ -87,7 +87,7 @@ class Engine : public Funchor_nocopy
       
       // Net::PSec::AbstractEndpointManager
       
-      virtual void open(Net::XPoint point,Net::PSec::SKeyPtr &skey,Net::PSec::ClientProfilePtr &client_profile)
+      virtual void open(Net::XPoint point,Net::PSec::MasterKeyPtr &skey,Net::PSec::ClientProfilePtr &client_profile)
        {
         Used(skey);
         Used(client_profile);

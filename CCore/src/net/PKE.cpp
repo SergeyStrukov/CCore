@@ -337,7 +337,7 @@ void ClientID::getID(uint8 buf[ /* Len */ ]) const
 /* class HashPrimeKey */
 
 template <class Hash> 
-class HashPrimeKey::HashFunc : public AbstractHashFunc 
+class HashPrimeKey::HashFunc : public AbstractHashFunc , public MemBase_nocopy 
  {
    Hash hash;
    
@@ -1162,7 +1162,7 @@ auto ClientNegotiant::Engine::getState() const -> State
   return proc.getState();
  }
 
-void ClientNegotiant::Engine::getSessionKey(SKeyPtr &skey)
+void ClientNegotiant::Engine::getSessionKey(MasterKeyPtr &skey)
  {
   Mutex::Lock lock(mutex);
   

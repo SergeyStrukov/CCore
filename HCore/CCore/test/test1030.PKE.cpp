@@ -18,6 +18,7 @@
 
 #include <CCore/inc/net/AsyncUDPDevice.h>
 #include <CCore/inc/net/PKE.h>
+#include <CCore/inc/net/PSec.h>
 #include <CCore/inc/crypton/SHA.h>
 
 namespace App {
@@ -85,36 +86,9 @@ class Engine : public Funchor_nocopy
        }
     };
    
-   class EndpointManager : NoCopy , public Net::PSec::AbstractEndpointManager
-    {
-      Net::PacketMultipointDevice *dev;
-
-     public:
-    
-      EndpointManager(Engine *engine)
-       {
-        dev=&engine->server_pke_mp;
-       }
-      
-      virtual ~EndpointManager()
-       {
-       }
-      
-      // Net::PSec::AbstractEndpointManager
-      
-      virtual void open(Net::XPoint point,Net::PSec::SKeyPtr &skey,Net::PSec::ClientProfilePtr &client_profile)
-       {
-        // TODO
-        
-        Used(skey);
-        Used(client_profile);
-        
-        Printf(Con,"open(#;)\n",Net::PointDesc(dev,point));
-       }
-    };
-   
    ClientDataBase client_db;
-   EndpointManager epman;
+   
+   Net::PSec::MultipointDevice server_psec;
   
    Net::PSec::ServerNegotiant server;
   
@@ -162,8 +136,8 @@ class Engine : public Funchor_nocopy
       master_server_psec(server_psec_mp,"ServerPSec"),       
       
       client_db(this,"client"),
-      epman(this),
-      server("ServerPKE",client_db,epman)
+      server_psec("ServerPSec"),
+      server("ServerPKE",client_db,server_psec)
     {
     }
     

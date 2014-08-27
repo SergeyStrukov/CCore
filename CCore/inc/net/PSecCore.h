@@ -23,6 +23,8 @@
 
 #include <CCore/inc/crypton/Forget.h>
 
+#include <CCore/inc/net/XPoint.h>
+
 namespace CCore {
 namespace Net {
 namespace PSec {
@@ -105,6 +107,10 @@ struct LifeLim;
 
 struct MasterKey;
 
+struct AbstractClientProfile;
+
+struct AbstractEndpointManager;
+
 class TestMasterKey;
 
 class RandomEngine;
@@ -131,7 +137,7 @@ class AntiReplay;
 
 /* struct AbstractCryptFunc */
 
-struct AbstractCryptFunc : MemBase_nocopy
+struct AbstractCryptFunc
  {
   virtual ~AbstractCryptFunc() {}
   
@@ -147,7 +153,7 @@ struct AbstractCryptFunc : MemBase_nocopy
 /* class CryptFunc<Crypt> */
 
 template <class Crypt> 
-class CryptFunc : public AbstractCryptFunc 
+class CryptFunc : public AbstractCryptFunc , public MemBase_nocopy 
  {
    Crypt crypt;
    
@@ -186,7 +192,7 @@ class CryptFunc : public AbstractCryptFunc
 
 /* struct AbstractHashFunc */
 
-struct AbstractHashFunc : MemBase_nocopy
+struct AbstractHashFunc 
  {
   virtual ~AbstractHashFunc() {}
   
@@ -200,7 +206,7 @@ struct AbstractHashFunc : MemBase_nocopy
 /* class HashFunc<Hash> */
 
 template <class Hash> 
-class HashFunc : public AbstractHashFunc  
+class HashFunc : public AbstractHashFunc , public MemBase_nocopy 
  {
    Hash hash;
    
@@ -236,7 +242,7 @@ class HashFunc : public AbstractHashFunc
 
 /* struct AbstractKeyGen */
 
-struct AbstractKeyGen : MemBase_nocopy
+struct AbstractKeyGen
  {
   virtual ~AbstractKeyGen() {}
   
@@ -251,7 +257,7 @@ struct AbstractKeyGen : MemBase_nocopy
 
 /* struct AbstractDHGroup */
 
-struct AbstractDHGroup : MemBase_nocopy
+struct AbstractDHGroup
  {
   virtual ~AbstractDHGroup() {}
   
@@ -265,7 +271,7 @@ struct AbstractDHGroup : MemBase_nocopy
 /* class KeyGen<Exp> */
 
 template <class Exp> 
-class KeyGen : public AbstractKeyGen
+class KeyGen : public AbstractKeyGen , public MemBase_nocopy
  {
   public:
   
@@ -355,7 +361,7 @@ class KeyGen : public AbstractKeyGen
 /* class DHGroup<Exp> */
 
 template <class Exp> 
-class DHGroup : public AbstractDHGroup 
+class DHGroup : public AbstractDHGroup , public MemBase_nocopy
  {
   public:
   
@@ -393,7 +399,7 @@ class DHGroup : public AbstractDHGroup
 
 /* struct AbstractRandomGen */
 
-struct AbstractRandomGen : MemBase_nocopy
+struct AbstractRandomGen 
  {
   virtual ~AbstractRandomGen() {}
   
@@ -403,7 +409,7 @@ struct AbstractRandomGen : MemBase_nocopy
 /* class RandomGen<Rand> */
 
 template <class Rand> 
-class RandomGen : public AbstractRandomGen
+class RandomGen : public AbstractRandomGen , public MemBase_nocopy
  {
    Rand rand;
   
@@ -456,7 +462,7 @@ struct LifeLim
 
 /* struct MasterKey */
 
-struct MasterKey : MemBase_nocopy
+struct MasterKey
  {
   virtual ~MasterKey() {}
   
@@ -485,9 +491,33 @@ struct MasterKey : MemBase_nocopy
   virtual void getKey(ulen index,uint8 key[ /* KLen */ ]) const =0;
  };
 
+/* type MasterKeyPtr */
+
+using MasterKeyPtr = OwnPtr<MasterKey> ;
+
+/* struct AbstractClientProfile */
+
+struct AbstractClientProfile
+ {
+  virtual ~AbstractClientProfile() {}
+ };
+
+/* type ClientProfilePtr */
+
+using ClientProfilePtr = OwnPtr<AbstractClientProfile> ; 
+
+/* struct AbstractEndpointManager */
+
+struct AbstractEndpointManager
+ {
+  virtual ~AbstractEndpointManager() {}
+
+  virtual void open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile)=0;
+ };
+
 /* class TestMasterKey */
 
-class TestMasterKey : public MasterKey
+class TestMasterKey : public MasterKey , public MemBase_nocopy
  {
   public:
   
@@ -565,6 +595,8 @@ class RandomEngine : NoCopy
    explicit RandomEngine(const MasterKey &master_key);
    
    ~RandomEngine();
+   
+   void reset(const MasterKey &master_key);
    
    uint8 next();
    
@@ -772,6 +804,8 @@ class KeySet : NoCopy
    KeySet(const MasterKey &master_key,RandomEngine &random);
    
    ~KeySet();
+   
+   void reset(const MasterKey &master_key,RandomEngine &random);
    
    // keys
    
@@ -1006,6 +1040,8 @@ class ProcessorCore : NoCopy
    
    ~ProcessorCore();
    
+   void replace(const MasterKey &master_key);
+   
    // properties
    
    ulen getBLen() const { return blen; }
@@ -1120,6 +1156,8 @@ class AntiReplay : NoCopy
       
       ~BitFlags();
       
+      void reset();
+      
       Unit test(SequenceNumber num) const;
       
       void set(SequenceNumber num);
@@ -1134,6 +1172,8 @@ class AntiReplay : NoCopy
    AntiReplay();
    
    ~AntiReplay();
+   
+   void reset();
    
    bool testReplay(SequenceNumber num) const;
    
