@@ -927,6 +927,24 @@ void MultipointDevice::close(XPoint point)
   if( obj && obj->close() ) map.del(point);
  }
 
+void MultipointDevice::closeAll()
+ {
+  Mutex::Lock lock(mutex);
+
+  // TODO
+ }
+
+AbstractClientProfile * MultipointDevice::getClientProfile(XPoint point)
+ {
+  Mutex::Lock lock(mutex);
+ 
+  Proc *obj=map.find(point);
+  
+  if( obj ) return obj->client_profile.getPtr();
+  
+  return 0;
+ }
+
 } // namespace PSec 
 } // namespace Net
 } // namespace CCore

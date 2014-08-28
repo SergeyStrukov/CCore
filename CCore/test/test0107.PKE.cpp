@@ -85,7 +85,7 @@ class Engine : public Funchor_nocopy
        {
        }
       
-      // Net::PSec::AbstractEndpointManager
+      // Net::PSec::EndpointManager
       
       virtual void open(Net::XPoint point,Net::PSec::MasterKeyPtr &skey,Net::PSec::ClientProfilePtr &client_profile)
        {
@@ -98,6 +98,17 @@ class Engine : public Funchor_nocopy
       virtual void close(Net::XPoint point)
        {
         Used(point);
+       }
+
+      virtual void closeAll()
+       {
+       }
+      
+      virtual Net::PSec::AbstractClientProfile * getClientProfile(Net::XPoint point)
+       {
+        Used(point);
+        
+        return 0;
        }
     };
    

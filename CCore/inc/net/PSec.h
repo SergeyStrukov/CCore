@@ -403,11 +403,15 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
     
    virtual void detach();
    
-   // AbstractEndpointManager
+   // EndpointManager
    
    virtual void open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
    
-   void close(XPoint point);
+   virtual void close(XPoint point);
+   
+   virtual void closeAll();
+   
+   virtual AbstractClientProfile * getClientProfile(XPoint point); // only inside inbound processing
  };
 
 } // namespace PSec 
