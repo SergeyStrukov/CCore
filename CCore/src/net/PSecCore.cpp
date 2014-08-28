@@ -15,10 +15,12 @@
  
 #include <CCore/inc/net/PSecCore.h>
  
-#include <CCore/inc/PlatformRandom.h>
-#include <CCore/inc/crypton/PlatformSHA.h>
 #include <CCore/inc/crypton/PlatformAES.h>
+#include <CCore/inc/crypton/PlatformSHA.h>
 #include <CCore/inc/crypton/DHExp.h>
+
+#include <CCore/inc/PlatformRandom.h>
+
 #include <CCore/inc/UIntSplit.h>
 
 namespace CCore {
@@ -27,15 +29,19 @@ namespace PSec {
 
 /* class TestMasterKey */
 
-using DefEncrypt = Crypton::PlatformAES256 ;
+using TestEncrypt = Crypton::PlatformAES256 ;
 
-using DefDecrypt = Crypton::PlatformAESInverse256 ;
+using TestDecrypt = Crypton::PlatformAESInverse256 ;
 
-using DefHash = Crypton::PlatformSHA512 ;
+using TestHash = Crypton::PlatformSHA512 ;
 
-static const ulen DefKeyCount = 10 ;
+static const uint32 TestTTL = 10 ; // sec
 
-using DefExp = Crypton::DHExp<Crypton::DHModII> ;
+static const uint32 TestUTL = 10000000 ;
+
+static const ulen TestKeyCount = 10 ;
+
+using TestExp = Crypton::DHExp<Crypton::DHModII> ;
 
 TestMasterKey::TestMasterKey()
  {
@@ -47,24 +53,24 @@ TestMasterKey::~TestMasterKey()
 
 AbstractCryptFunc * TestMasterKey::createEncrypt() const
  {
-  return new CryptFunc<DefEncrypt>();
+  return new CryptFunc<TestEncrypt>();
  }
 
 AbstractCryptFunc * TestMasterKey::createDecrypt() const
  {
-  return new CryptFunc<DefDecrypt>();
+  return new CryptFunc<TestDecrypt>();
  }
 
 AbstractHashFunc * TestMasterKey::createHash() const
  {
-  return new HashFunc<DefHash>();
+  return new HashFunc<TestHash>();
  }
 
 AbstractKeyGen * TestMasterKey::createKeyGen() const
  {
   OwnPtr<AbstractHashFunc> hash(createHash());
   
-  auto *ret=new KeyGen<DefExp>(hash,getKLen());
+  auto *ret=new KeyGen<TestExp>(hash,getKLen());
   
   for(ulen i=0,len=ret->getSecretCount(); i<len ;i++) ret->takeSecret(i).set(uint8(i+1));
   
@@ -78,27 +84,27 @@ AbstractRandomGen * TestMasterKey::createRandom() const
 
 ulen TestMasterKey::getKLen() const
  {
-  return DefEncrypt::KeyLen;
+  return TestEncrypt::KeyLen;
  }
 
 LifeLim TestMasterKey::getLifeLim() const
  {
-  return LifeLim(10,10000000);
+  return LifeLim(TestTTL,TestUTL);
  }
 
 void TestMasterKey::getKey0(uint8 key[]) const
  {
-  Range(key,DefEncrypt::KeyLen).set((uint8)DefKeyCount);
+  Range(key,TestEncrypt::KeyLen).set((uint8)TestKeyCount);
  }
 
 ulen TestMasterKey::getKeySetLen() const
  {
-  return DefKeyCount;
+  return TestKeyCount;
  }
 
 void TestMasterKey::getKey(ulen index,uint8 key[]) const
  {
-  Range(key,DefEncrypt::KeyLen).set((uint8)index);
+  Range(key,TestEncrypt::KeyLen).set((uint8)index);
  }
 
 /* class RandomEngine */
@@ -152,11 +158,6 @@ RandomEngine::~RandomEngine()
   Crypton::Forget(temp);
  }
 
-void RandomEngine::reset(const MasterKey &master_key)
- {
-  // TODO
- }
-
 uint8 RandomEngine::next()
  {
   if( !buf )
@@ -197,12 +198,10 @@ void KeyResponse::set(Packets type_,KeyIndex key_index_,PtrLen<const uint8> gx_)
  {
   type=type_;
   key_index=key_index_;
+
+  gx_.copyTo(temp);
   
-  temp.reset(gx_.len);
-  
-  Range(temp).copy(gx_.ptr);
-  
-  gx=Range_const(temp);
+  gx=Range_const(temp,gx_.len);
  }
 
 /* class KeySet */
@@ -423,12 +422,7 @@ KeySet::~KeySet()
   Crypton::ForgetRange(Range(rekey_buf));
  }
 
-void KeySet::reset(const MasterKey &master_key,RandomEngine &random)
- {
-  // TODO
- }
-
-bool KeySet::setEncryptKey(KeyIndex key_index,ulen use_count)
+bool KeySet::selectEncryptKey(KeyIndex key_index,ulen use_count)
  {
   ulen index=GetIndex(key_index);
   
@@ -475,7 +469,7 @@ bool KeySet::setEncryptKey(KeyIndex key_index,ulen use_count)
   return false;  
  }
 
-bool KeySet::setDecryptKey(KeyIndex key_index)
+bool KeySet::selectDecryptKey(KeyIndex key_index)
  {
   ulen index=GetIndex(key_index);
   
@@ -692,22 +686,6 @@ void KeySet::stop(KeyIndex key_index)
 
 /* class ProcessorCore */
 
-ulen ProcessorCore::selectIndex(ulen len)
- {
-  UIntSplit<uint64,uint8> split;
-  
-  random(split.take());
-  
-  return split.get()%len;
- }
-
-ulen ProcessorCore::selectLen(ulen min_len,ulen max_len)
- {
-  if( min_len>=max_len ) return min_len;
-  
-  return min_len+selectIndex(max_len-min_len+1);
- }
-
 ProcessorCore::ProcessorCore(const MasterKey &master_key)
  : encrypt(master_key.createEncrypt()),
    decrypt(master_key.createDecrypt()),
@@ -723,21 +701,20 @@ ProcessorCore::~ProcessorCore()
  {
  }
 
-void ProcessorCore::replace(const MasterKey &master_key)
+ulen ProcessorCore::selectIndex(ulen len)
  {
-  encrypt.set(master_key.createEncrypt());
-  decrypt.set(master_key.createDecrypt());
-  hash.set(master_key.createHash());
+  UIntSplit<uint64,uint8> split;
   
-  blen=encrypt->getBLen();
-  hlen=hash->getHLen();
+  random(split.take());
   
-  random_engine.reset(master_key);
+  return ulen( split.get()%len );
+ }
+
+ulen ProcessorCore::selectLen(ulen min_len,ulen max_len)
+ {
+  if( min_len>=max_len ) return min_len;
   
-  key_set.reset(master_key,random_engine);
-  
-  direct_conv.start();
-  inverse_conv.start();
+  return min_len+selectIndex(max_len-min_len+1);
  }
 
 auto ProcessorCore::selectEncryptKey(ulen use_count) -> SelectResult
@@ -748,7 +725,7 @@ auto ProcessorCore::selectEncryptKey(ulen use_count) -> SelectResult
   
   KeyIndex ret=list[selectIndex(list.len)];
   
-  if( key_set.setEncryptKey(ret,use_count) ) return ret;
+  if( key_set.selectEncryptKey(ret,use_count) ) return ret;
      
   return Nothing; 
  }
@@ -756,11 +733,6 @@ auto ProcessorCore::selectEncryptKey(ulen use_count) -> SelectResult
 /* class AntiReplay */
 
 AntiReplay::BitFlags::BitFlags()
- {
-  reset();
- }
-
-void AntiReplay::BitFlags::reset()
  {
   Range(bits).set_null();
  }
@@ -770,7 +742,7 @@ AntiReplay::BitFlags::~BitFlags()
   Crypton::Forget(bits);
  }
 
-AntiReplay::Unit AntiReplay::BitFlags::test(SequenceNumber num) const
+auto AntiReplay::BitFlags::test(SequenceNumber num) const -> Unit
  {
   return bits[Index(num)]&Mask(num);
  }
@@ -819,13 +791,7 @@ AntiReplay::AntiReplay()
 
 AntiReplay::~AntiReplay()
  {
- }
-
-void AntiReplay::reset()
- {
-  base=0;
-  
-  flags.reset();
+  Crypton::Forget(base);
  }
 
 bool AntiReplay::testReplay(SequenceNumber num) const

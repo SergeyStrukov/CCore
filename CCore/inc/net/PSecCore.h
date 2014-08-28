@@ -49,6 +49,8 @@ const ulen MaxGLen = 512 ;
 
 const ulen DLen = 15 ;
 
+const unsigned RepeatTimeout = 20 ; // sec
+
 enum Packets
  {
   Packet_Data,
@@ -75,6 +77,9 @@ using PacketType = uint8 ;
 template <class UInt,class UInt1>
 void PosDec(UInt &var,UInt1 val)
  {
+  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::Net::PSec::PosDec<UInt,UInt1> : UInt must be an unsigned integral type");
+  static_assert( Meta::IsUInt<UInt1>::Ret ,"CCore::Net::PSec::PosDec<UInt,UInt1> : UInt1 must be an unsigned integral type");
+  
   if( val<=var )
     var-=(UInt)val;
   else
@@ -93,9 +98,9 @@ template <class Hash> class HashFunc;
 
 struct AbstractKeyGen;
 
-struct AbstractDHGroup;
-
 template <class Exp> class KeyGen;
+
+struct AbstractDHGroup;
 
 template <class Exp> class DHGroup;
 
@@ -109,7 +114,7 @@ struct MasterKey;
 
 struct AbstractClientProfile;
 
-struct AbstractEndpointManager;
+struct EndpointManager;
 
 class TestMasterKey;
 
@@ -137,7 +142,7 @@ class AntiReplay;
 
 /* struct AbstractCryptFunc */
 
-struct AbstractCryptFunc
+struct AbstractCryptFunc : MemBase_nocopy
  {
   virtual ~AbstractCryptFunc() {}
   
@@ -153,7 +158,7 @@ struct AbstractCryptFunc
 /* class CryptFunc<Crypt> */
 
 template <class Crypt> 
-class CryptFunc : public AbstractCryptFunc , public MemBase_nocopy 
+class CryptFunc : public AbstractCryptFunc  
  {
    Crypt crypt;
    
@@ -192,7 +197,7 @@ class CryptFunc : public AbstractCryptFunc , public MemBase_nocopy
 
 /* struct AbstractHashFunc */
 
-struct AbstractHashFunc 
+struct AbstractHashFunc : MemBase_nocopy
  {
   virtual ~AbstractHashFunc() {}
   
@@ -206,7 +211,7 @@ struct AbstractHashFunc
 /* class HashFunc<Hash> */
 
 template <class Hash> 
-class HashFunc : public AbstractHashFunc , public MemBase_nocopy 
+class HashFunc : public AbstractHashFunc  
  {
    Hash hash;
    
@@ -215,6 +220,8 @@ class HashFunc : public AbstractHashFunc , public MemBase_nocopy
   public:
   
    HashFunc() {}
+   
+   explicit HashFunc(PtrLen<const uint8> key) { hash.key(key); }
    
    virtual ~HashFunc() { Crypton::Forget(digest); }
    
@@ -242,7 +249,7 @@ class HashFunc : public AbstractHashFunc , public MemBase_nocopy
 
 /* struct AbstractKeyGen */
 
-struct AbstractKeyGen
+struct AbstractKeyGen : MemBase_nocopy
  {
   virtual ~AbstractKeyGen() {}
   
@@ -250,35 +257,18 @@ struct AbstractKeyGen
   
   virtual ulen getKLen() const =0;
   
-  virtual void pow(const uint8 x[ /* GLen */ ],uint8 gx[ /* GLen */ ]) =0;
+  virtual void pow(const uint8 x[ /* GLen */ ],uint8 gx[ /* GLen */ ])=0;
   
-  virtual void key(const uint8 x[ /* GLen */ ],const uint8 gy[ /* GLen */ ],uint8 key[ /* KLen */ ]) =0;
- };
-
-/* struct AbstractDHGroup */
-
-struct AbstractDHGroup
- {
-  virtual ~AbstractDHGroup() {}
-  
-  virtual ulen getGLen() const =0;
-
-  virtual void pow(const uint8 a[ /* GLen */ ],const uint8 x[ /* GLen */ ],uint8 ax[ /* GLen */ ]) =0;
-  
-  virtual void pow(const uint8 x[ /* GLen */ ],uint8 gx[ /* GLen */ ]) =0;
+  virtual void key(const uint8 x[ /* GLen */ ],const uint8 gy[ /* GLen */ ],uint8 key[ /* KLen */ ])=0;
  };
 
 /* class KeyGen<Exp> */
 
 template <class Exp> 
-class KeyGen : public AbstractKeyGen , public MemBase_nocopy
+class KeyGen : public AbstractKeyGen 
  {
-  public:
-  
    static const ulen GLen = Exp::GLen ;
- 
-  private:
-  
+
    Exp exp;
    
    OwnPtr<AbstractHashFunc> hash;
@@ -358,17 +348,24 @@ class KeyGen : public AbstractKeyGen , public MemBase_nocopy
     }
  };
 
+/* struct AbstractDHGroup */
+
+struct AbstractDHGroup : MemBase_nocopy
+ {
+  virtual ~AbstractDHGroup() {}
+  
+  virtual ulen getGLen() const =0;
+
+  virtual void pow(const uint8 a[ /* GLen */ ],const uint8 x[ /* GLen */ ],uint8 ax[ /* GLen */ ])=0;
+  
+  virtual void pow(const uint8 x[ /* GLen */ ],uint8 gx[ /* GLen */ ])=0;
+ };
+
 /* class DHGroup<Exp> */
 
 template <class Exp> 
-class DHGroup : public AbstractDHGroup , public MemBase_nocopy
+class DHGroup : public AbstractDHGroup 
  {
-  public:
-  
-   static const ulen GLen = Exp::GLen ;
- 
-  private:
-  
    Exp exp;
    
   public: 
@@ -381,9 +378,9 @@ class DHGroup : public AbstractDHGroup , public MemBase_nocopy
    
    virtual ulen getGLen() const
     { 
-     static_assert( GLen>=MinGLen && GLen<=MaxGLen ,"CCore::Net::PSec::DHGroup<...> : bad GLen");
+     static_assert( Exp::GLen>=MinGLen && Exp::GLen<=MaxGLen ,"CCore::Net::PSec::DHGroup<...> : bad GLen");
      
-     return GLen; 
+     return Exp::GLen; 
     }
    
    virtual void pow(const uint8 a[],const uint8 x[],uint8 ax[])
@@ -399,7 +396,7 @@ class DHGroup : public AbstractDHGroup , public MemBase_nocopy
 
 /* struct AbstractRandomGen */
 
-struct AbstractRandomGen 
+struct AbstractRandomGen : MemBase_nocopy
  {
   virtual ~AbstractRandomGen() {}
   
@@ -409,13 +406,15 @@ struct AbstractRandomGen
 /* class RandomGen<Rand> */
 
 template <class Rand> 
-class RandomGen : public AbstractRandomGen , public MemBase_nocopy
+class RandomGen : public AbstractRandomGen 
  {
    Rand rand;
   
   public:
    
-   explicit RandomGen(PtrLen<const uint8> data=Empty) { rand.warp(data); }
+   RandomGen() {}
+   
+   explicit RandomGen(PtrLen<const uint8> data) { rand.warp(data); }
    
    virtual ~RandomGen() {}
    
@@ -462,7 +461,7 @@ struct LifeLim
 
 /* struct MasterKey */
 
-struct MasterKey
+struct MasterKey : MemBase_nocopy
  {
   virtual ~MasterKey() {}
   
@@ -497,7 +496,7 @@ using MasterKeyPtr = OwnPtr<MasterKey> ;
 
 /* struct AbstractClientProfile */
 
-struct AbstractClientProfile
+struct AbstractClientProfile : MemBase_nocopy
  {
   virtual ~AbstractClientProfile() {}
  };
@@ -506,18 +505,18 @@ struct AbstractClientProfile
 
 using ClientProfilePtr = OwnPtr<AbstractClientProfile> ; 
 
-/* struct AbstractEndpointManager */
+/* struct EndpointManager */
 
-struct AbstractEndpointManager
+struct EndpointManager
  {
-  virtual ~AbstractEndpointManager() {}
-
   virtual void open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile)=0;
+  
+  virtual void close(XPoint point)=0;
  };
 
 /* class TestMasterKey */
 
-class TestMasterKey : public MasterKey , public MemBase_nocopy
+class TestMasterKey : public MasterKey
  {
   public:
   
@@ -596,8 +595,6 @@ class RandomEngine : NoCopy
    
    ~RandomEngine();
    
-   void reset(const MasterKey &master_key);
-   
    uint8 next();
    
    void fill(PtrLen<uint8> data);
@@ -613,11 +610,11 @@ struct KeyResponse : NoCopy
   KeyIndex key_index;
   PtrLen<const uint8> gx;
   
-  TempArray<uint8,512> temp;
+  uint8 temp[MaxGLen];
   
   KeyResponse() : type(Packet_None),key_index(0) {}
   
-  ~KeyResponse() { Crypton::ForgetRange(Range(temp)); }
+  ~KeyResponse() { Crypton::ForgetRange(Range(temp,gx.len)); }
   
   void set(Packets type,KeyIndex key_index,PtrLen<const uint8> gx=Empty);
  };
@@ -695,7 +692,7 @@ class KeySet : NoCopy
      
      bool operator ! () const { return !timeout; }
      
-     void reset() { timeout=20; }
+     void reset() { timeout=RepeatTimeout; }
      
      template <class UInt>
      void tick(UInt dtime) { PosDec(timeout,dtime); }
@@ -805,19 +802,17 @@ class KeySet : NoCopy
    
    ~KeySet();
    
-   void reset(const MasterKey &master_key,RandomEngine &random);
-   
    // keys
    
    const uint8 * getKey0() const { return key0; }
    
    PtrLen<const KeyIndex> getActiveList() const { return Range(active_list).prefix(active_count); }
    
-   bool setEncryptKey(KeyIndex key_index,ulen use_count);
+   bool selectEncryptKey(KeyIndex key_index,ulen use_count);
    
    const uint8 * getEncryptKey() const { return encrypt_key; }
    
-   bool setDecryptKey(KeyIndex key_index);
+   bool selectDecryptKey(KeyIndex key_index);
    
    const uint8 * getDecryptKey() const { return decrypt_key; }
    
@@ -978,7 +973,7 @@ const ConvolutionMul ConvolutionParam<KK...>::Mul[Len]={ ConvolutionMulConst<KK>
 
 using ConvolutionParamA = ConvolutionParam<1,2,3> ;
 
-using ConvolutionParamB = ConvolutionParam<4,5,6> ;
+using ConvolutionParamB = ConvolutionParam<4,5,6,7> ;
 
 class DirectConvolution : NoCopy
  {
@@ -1040,8 +1035,6 @@ class ProcessorCore : NoCopy
    
    ~ProcessorCore();
    
-   void replace(const MasterKey &master_key);
-   
    // properties
    
    ulen getBLen() const { return blen; }
@@ -1089,7 +1082,7 @@ class ProcessorCore : NoCopy
    
    // decrypt
    
-   bool setDecryptKey(KeyIndex key_index) { return key_set.setDecryptKey(key_index); }
+   bool selectDecryptKey(KeyIndex key_index) { return key_set.selectDecryptKey(key_index); }
    
    void setDecryptKey0() { decrypt->key(key_set.getKey0()); }
    
@@ -1156,8 +1149,6 @@ class AntiReplay : NoCopy
       
       ~BitFlags();
       
-      void reset();
-      
       Unit test(SequenceNumber num) const;
       
       void set(SequenceNumber num);
@@ -1172,8 +1163,6 @@ class AntiReplay : NoCopy
    AntiReplay();
    
    ~AntiReplay();
-   
-   void reset();
    
    bool testReplay(SequenceNumber num) const;
    

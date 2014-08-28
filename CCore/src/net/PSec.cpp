@@ -154,22 +154,6 @@ PacketProcessor::~PacketProcessor()
  {
  }
 
-void PacketProcessor::replace(const MasterKey &master_key)
- {
-  core.replace(master_key);
-  
-  header_len=RoundUp(2*HeaderLen,core.getBLen());
-  
-  min_out_len=outLen(64);
-  min_inp_len=outLen(0);
-  
-  out_sequence_number=0;
-  
-  anti_replay.reset();
-  
-  stat.reset();
- }
-
 ulen PacketProcessor::getOutDelta(ulen len)
  {
   ulen delta=0; 
@@ -248,7 +232,7 @@ auto PacketProcessor::inbound(KeyResponse &resp,PtrLen<uint8> data) -> InboundRe
       return Nothing;
      }
    
-   if( !core.setDecryptKey(header.key_index) ) 
+   if( !core.selectDecryptKey(header.key_index) ) 
      {
       stat.count(ProcessorEvent_RxBadKeyIndex);
      
@@ -679,7 +663,7 @@ void MultipointDevice::Proc::do_replace(MasterKeyPtr &skey,ClientProfilePtr &cli
  {
   opened=true;
   
-  proc.replace(*skey);
+  //proc.replace(*skey);
   
   Swap(client_profile,client_profile_);
  }

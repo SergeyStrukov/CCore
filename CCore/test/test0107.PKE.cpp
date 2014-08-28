@@ -73,7 +73,7 @@ class Engine : public Funchor_nocopy
        }
     };
    
-   class EndpointManager : NoCopy , public Net::PSec::AbstractEndpointManager
+   class EndpointManager : NoCopy , public Net::PSec::EndpointManager
     {
      public:
     
@@ -93,6 +93,11 @@ class Engine : public Funchor_nocopy
         Used(client_profile);
         
         Printf(Con,"open(#;)\n",point);
+       }
+      
+      virtual void close(Net::XPoint point)
+       {
+        Used(point);
        }
     };
    

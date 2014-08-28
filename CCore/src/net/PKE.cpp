@@ -336,41 +336,6 @@ void ClientID::getID(uint8 buf[ /* Len */ ]) const
 
 /* class HashPrimeKey */
 
-template <class Hash> 
-class HashPrimeKey::HashFunc : public AbstractHashFunc , public MemBase_nocopy 
- {
-   Hash hash;
-   
-   uint8 digest[Hash::DigestLen];
-   
-  public:
-  
-   explicit HashFunc(PtrLen<const uint8> key) { hash.key(key); }
-   
-   virtual ~HashFunc() { Crypton::Forget(digest); }
-   
-   // AbstractHashFunc
-   
-   virtual ulen getHLen() const
-    {
-     static_assert( Hash::DigestLen>=MinHLen && Hash::DigestLen<=MaxHLen ,"CCore::Net::PSec::HashPrimeKey::HashFunc<...> : bad HLen");
-     
-     return Hash::DigestLen;
-    }
-   
-   virtual void add(PtrLen<const uint8> data)
-    {
-     hash.add(data);
-    }
-   
-   virtual const uint8 * finish()
-    {
-     hash.finish(digest);
-     
-     return digest;
-    }
- };
-
 HashPrimeKey::HashPrimeKey(HashID hash_id,PtrLen<const uint8> key)
  {
   switch( hash_id )
@@ -1626,7 +1591,7 @@ void ServerNegotiant::Engine::tick()
   send(list);
  }
 
-ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,AbstractClientDataBase &client_db_,AbstractEndpointManager &epman_,ulen max_clients_,MSec final_timeout)
+ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,AbstractClientDataBase &client_db_,EndpointManager &epman_,ulen max_clients_,MSec final_timeout)
  : dev(dev_),
    client_db(client_db_),
    epman(epman_),
@@ -1704,7 +1669,7 @@ void ServerNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list_)
 
 /* class ServerNegotiant */
 
-ServerNegotiant::ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,AbstractEndpointManager &epman,ulen max_clients,MSec final_timeout)
+ServerNegotiant::ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout)
  : hook(mp_dev_name),
    engine(hook,client_db,epman,max_clients,final_timeout)
  {

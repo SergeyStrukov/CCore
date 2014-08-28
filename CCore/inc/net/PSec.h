@@ -211,8 +211,6 @@ class PacketProcessor : NoCopy
    
    ~PacketProcessor();
    
-   void replace(const MasterKey &master_key);
-   
    ulen getOutDelta(ulen len);
    
    ulen getMaxInpLen(ulen len);
@@ -313,7 +311,7 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice , PacketEndp
 
 /* class MultipointDevice */
 
-class MultipointDevice : public ObjBase , public PacketMultipointDevice , public AbstractEndpointManager , PacketMultipointDevice::InboundProc
+class MultipointDevice : public ObjBase , public PacketMultipointDevice , public EndpointManager , PacketMultipointDevice::InboundProc
  {
    ObjHook hook;
    

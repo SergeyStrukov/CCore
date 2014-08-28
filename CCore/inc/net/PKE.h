@@ -237,7 +237,7 @@ struct SessionKeyParam
 
 /* class SessionKey */
 
-class SessionKey : public MasterKey , public MemBase_nocopy
+class SessionKey : public MasterKey
  {
    static const ulen RandomWarpLen = 128 ;
   
@@ -365,10 +365,8 @@ struct AbstractClientDataBase
 
 /* class HashPrimeKey */
 
-class HashPrimeKey : public AbstractHashFunc , public MemBase_nocopy
+class HashPrimeKey : public AbstractHashFunc
  {
-   template <class Hash> class HashFunc;
-  
    OwnPtr<AbstractHashFunc> hash;
    
   public:
@@ -707,7 +705,7 @@ class ServerNegotiant : NoCopy
       
       AbstractClientDataBase &client_db;
       PrimeKeyPtr server_key;
-      AbstractEndpointManager &epman;
+      EndpointManager &epman;
       ulen max_clients;
       unsigned final_tick_count;
       
@@ -742,7 +740,7 @@ class ServerNegotiant : NoCopy
     
      public:
     
-      Engine(PacketMultipointDevice *dev,AbstractClientDataBase &client_db,AbstractEndpointManager &epman,ulen max_clients,MSec final_timeout);
+      Engine(PacketMultipointDevice *dev,AbstractClientDataBase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout);
       
       ~Engine();
       
@@ -763,7 +761,7 @@ class ServerNegotiant : NoCopy
 
    static const ulen DefaultMaxClients = 10000 ;
 
-   ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,AbstractEndpointManager &epman,ulen max_clients=DefaultMaxClients,MSec final_timeout=5_sec);
+   ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,EndpointManager &epman,ulen max_clients=DefaultMaxClients,MSec final_timeout=5_sec);
    
    ~ServerNegotiant();
    
