@@ -24,8 +24,6 @@
 
 #include <CCore/inc/Exception.h>
 
-#include <CCore/inc/Print.h>
-
 namespace CCore {
 namespace Net {
 namespace PSec {
@@ -46,12 +44,29 @@ using HashCaseList = Meta::CaseList<Meta::Case<uint8,HashID_SHA1  ,Crypton::Plat
                                     Meta::Case<uint8,HashID_SHA384,Crypton::PlatformSHA384>,
                                     Meta::Case<uint8,HashID_SHA512,Crypton::PlatformSHA512> > ;
 
+using KeyedHashCaseList = Meta::CaseList<Meta::Case<uint8,HashID_SHA1  ,Crypton::PlatformKeyedSHA1  >,
+                                         Meta::Case<uint8,HashID_SHA224,Crypton::PlatformKeyedSHA224>,
+                                         Meta::Case<uint8,HashID_SHA256,Crypton::PlatformKeyedSHA256>,
+                                         Meta::Case<uint8,HashID_SHA384,Crypton::PlatformKeyedSHA384>,
+                                         Meta::Case<uint8,HashID_SHA512,Crypton::PlatformKeyedSHA512> > ;
+
 using DHGCaseList = Meta::CaseList<Meta::Case<uint8,DHGroupID_I ,Crypton::DHExp<Crypton::DHModI > >,
                                    Meta::Case<uint8,DHGroupID_II,Crypton::DHExp<Crypton::DHModII> > > ;
 
 /* functions */
 
 namespace Private_PKE {
+
+struct IsValidCtx
+ {
+  using RetType = bool ;
+  
+  template <class T>
+  static RetType call() { return true; }
+  
+  template <class T>
+  static RetType defcall(T) { return false; }
+ };
 
 struct CreateCryptCtx
  {
@@ -83,6 +98,25 @@ struct CreateHashCtx
    }
  };
 
+struct CreateKeyedHashCtx
+ {
+  using RetType = AbstractHashFunc * ;
+  
+  PtrLen<const uint8> key;
+  
+  explicit CreateKeyedHashCtx(PtrLen<const uint8> key_) : key(key_) {}
+  
+  template <class T>
+  RetType call() { return new HashFunc<T>(key); }
+  
+  static RetType defcall(uint8 hash_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::CreateKeyedHash(#;) : unknown hash_id",hash_id);
+    
+    return 0;
+   }
+ };
+
 struct CreateDHGroupCtx
  {
   using RetType = AbstractDHGroup * ;
@@ -98,9 +132,78 @@ struct CreateDHGroupCtx
    }
  };
 
+struct GetKLenCtx
+ {
+  using RetType = ulen ;
+  
+  template <class T>
+  static RetType call()
+   {
+    return T::KeyLen;
+   }
+  
+  static RetType defcall(uint8 crypt_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::GetKLen(#;) : unknown crypt_id",crypt_id);
+    
+    return 0;
+   }
+ };
+
+struct GetHLenCtx
+ {
+  using RetType = ulen ;
+  
+  template <class T>
+  static RetType call()
+   {
+    return T::DigestLen;
+   }
+  
+  static RetType defcall(uint8 hash_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::GetHLen(#;) : unknown hash_id",hash_id);
+    
+    return 0;
+   }
+ };
+
+struct GetGLenCtx
+ {
+  using RetType = ulen ;
+  
+  template <class T>
+  static RetType call()
+   {
+    return T::GLen;
+   }
+  
+  static RetType defcall(uint8 dhg_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::GetGLen(#;) : unknown dhg_id",dhg_id);
+    
+    return 0;
+   }
+ };
+
 } // namespace Private_PKE
 
 using namespace Private_PKE;
+
+bool IsValid(CryptID crypt_id)
+ {
+  return Meta::TypeSwitch<EncryptCaseList>::Switch(crypt_id,IsValidCtx());
+ }
+
+bool IsValid(HashID hash_id)
+ {
+  return Meta::TypeSwitch<HashCaseList>::Switch(hash_id,IsValidCtx());
+ }
+
+bool IsValid(DHGroupID dhg_id)
+ {
+  return Meta::TypeSwitch<DHGCaseList>::Switch(dhg_id,IsValidCtx());
+ }
 
 AbstractCryptFunc * CreateEncrypt(CryptID crypt_id)
  {
@@ -117,48 +220,32 @@ AbstractHashFunc * CreateHash(HashID hash_id)
   return Meta::TypeSwitch<HashCaseList>::Switch(hash_id,CreateHashCtx());
  }
 
+AbstractHashFunc * CreateKeyedHash(HashID hash_id,PtrLen<const uint8> key)
+ {
+  return Meta::TypeSwitch<KeyedHashCaseList>::Switch(hash_id,CreateKeyedHashCtx(key));
+ }
+
 AbstractDHGroup * CreateDHGroup(DHGroupID dhg_id)
  {
   return Meta::TypeSwitch<DHGCaseList>::Switch(dhg_id,CreateDHGroupCtx());
  }
 
+ulen GetKLen(CryptID crypt_id)
+ {
+  return Meta::TypeSwitch<EncryptCaseList>::Switch(crypt_id,GetKLenCtx());
+ }
+
+ulen GetHLen(HashID hash_id)
+ {
+  return Meta::TypeSwitch<HashCaseList>::Switch(hash_id,GetHLenCtx());
+ }
+
+ulen GetGLen(DHGroupID dhg_id)
+ {
+  return Meta::TypeSwitch<DHGCaseList>::Switch(dhg_id,GetGLenCtx());
+ }
+
 /* class SessionKey */
-
-struct SessionKey::GetKLenCtx
- {
-  using RetType = ulen ;
-  
-  template <class T>
-  static RetType call()
-   {
-    return T::KeyLen;
-   }
-  
-  static RetType defcall(uint8 crypt_id)
-   {
-    Printf(Exception,"CCore::Net::PSec::SessionKey::GetKLen(...) : unknown crypt_id #;",crypt_id);
-    
-    return 0;
-   }
- };
-
-struct SessionKey::GetHLenCtx
- {
-  using RetType = ulen ;
-  
-  template <class T>
-  static RetType call()
-   {
-    return T::DigestLen;
-   }
-  
-  static RetType defcall(uint8 hash_id)
-   {
-    Printf(Exception,"CCore::Net::PSec::SessionKey::GetHLen() : unknown hash_id #;",hash_id);
-    
-    return 0;
-   }
- };
 
 struct SessionKey::GetSecretLenCtx
  {
@@ -203,19 +290,9 @@ struct SessionKey::CreateKeyGenCtx
    }
  };
 
-ulen SessionKey::GetKLen(CryptAlgoSelect algo_select)
- {
-  return Meta::TypeSwitch<EncryptCaseList>::Switch(algo_select.crypt_id,GetKLenCtx());
- }
-
-ulen SessionKey::GetHLen(CryptAlgoSelect algo_select)
- {
-  return Meta::TypeSwitch<HashCaseList>::Switch(algo_select.hash_id,GetHLenCtx());
- }
-
 ulen SessionKey::GetSecretLen(CryptAlgoSelect algo_select,ulen klen)
  {
-  ulen hlen=GetHLen(algo_select);
+  ulen hlen=algo_select.getHLen();
   
   return Meta::TypeSwitch<DHGCaseList>::Switch(algo_select.dhg_id,GetSecretLenCtx(klen,hlen));
  }
@@ -223,11 +300,15 @@ ulen SessionKey::GetSecretLen(CryptAlgoSelect algo_select,ulen klen)
 SessionKey::SessionKey(CryptAlgoSelect algo_select_,SessionKeyParam param_)
  : algo_select(algo_select_),
    param(param_),
-   klen(GetKLen(algo_select_)),
-   ktotal( LenOf(ulen(1)+param_.keyset_len,klen) ),
-   secret_len( GetSecretLen(algo_select_,klen) ),
-   key_buf( LenAdd(ktotal,secret_len,RandomWarpLen) )
+   klen(algo_select_.getKLen()),
+   ktotal(LenOf(ulen(1)+param_.keyset_len,klen)),
+   secret_len(GetSecretLen(algo_select_,klen)),
+   key_buf(LenAdd(ktotal,secret_len,RandomWarpLen))
  {
+  if( !Fit(MinKeySetLen,param.keyset_len,MaxKeySetLen) )
+    {
+     Printf(Exception,"CCore::Net::PSec::SessionKey::SessionKey(...,{keyset_len=#;}) : bad keyset length",param.keyset_len);
+    }
  }
    
 SessionKey::~SessionKey()
@@ -240,17 +321,17 @@ SessionKey::~SessionKey()
    
 AbstractCryptFunc * SessionKey::createEncrypt() const
  {
-  return CreateEncrypt(CryptID(algo_select.crypt_id));
+  return algo_select.createEncrypt();
  }
    
 AbstractCryptFunc * SessionKey::createDecrypt() const
  {
-  return CreateDecrypt(CryptID(algo_select.crypt_id));
+  return algo_select.createDecrypt();
  }
    
 AbstractHashFunc * SessionKey::createHash() const
  {
-  return CreateHash(HashID(algo_select.hash_id));
+  return algo_select.createHash();
  }
    
 AbstractKeyGen * SessionKey::createKeyGen() const
@@ -282,11 +363,6 @@ void SessionKey::getKey0(uint8 key[]) const
    
 ulen SessionKey::getKeySetLen() const
  {
-  if( param.keyset_len==0 || param.keyset_len>0x4000 )
-    {
-     Printf(Exception,"CCore::Net::PSec::SessionKey::getKeySetLen() : bad keyset length #;",param.keyset_len);
-    }
-  
   return param.keyset_len;
  }
    
@@ -300,9 +376,9 @@ void SessionKey::getKey(ulen index,uint8 key[]) const
 template <class T>
 void ClientID::init(PtrLen<T> name_)
  {
-  if( name_.len>255 )
+  if( name_.len>MaxClientIDLen )
     {
-     Printf(Exception,"CCore::Net::PSec::ClientID::ClientID(...) : name is too long");
+     Printf(Exception,"CCore::Net::PSec::ClientID::ClientID({len=#;}) : name is too long",name_.len);
     }
   
   len=(uint8)name_.len;
@@ -334,69 +410,31 @@ void ClientID::getID(uint8 buf[ /* Len */ ]) const
   Range(name,len).copyTo(buf);
  }
 
-/* class HashPrimeKey */
+/* struct NegotiantData */
 
-HashPrimeKey::HashPrimeKey(HashID hash_id,PtrLen<const uint8> key)
- {
-  switch( hash_id )
-    {
-     case HashID_SHA1   : hash.set(new HashFunc<Crypton::PlatformKeyedSHA1>(key)); break;
-     case HashID_SHA224 : hash.set(new HashFunc<Crypton::PlatformKeyedSHA224>(key)); break;
-     case HashID_SHA256 : hash.set(new HashFunc<Crypton::PlatformKeyedSHA256>(key)); break;
-     case HashID_SHA384 : hash.set(new HashFunc<Crypton::PlatformKeyedSHA384>(key)); break;
-     case HashID_SHA512 : hash.set(new HashFunc<Crypton::PlatformKeyedSHA512>(key)); break;
-     
-     default:
-      {
-       Printf(Exception,"CCore::Net::PSec::HashPrimeKey::HashPrimeKey(hash_id=#;,...) : unknown hash id",hash_id);
-      }
-    }
- }
-   
-HashPrimeKey::~HashPrimeKey()
- {
- }
-   
-ulen HashPrimeKey::getHLen() const
- {
-  return hash->getHLen();
- }
-   
-void HashPrimeKey::add(PtrLen<const uint8> data)
- {
-  hash->add(data);
- }
-   
-const uint8 * HashPrimeKey::finish()
- {
-  return hash->finish();
- }
-   
-/* struct NegData */
-
-NegData::NegData()
+NegotiantData::NegotiantData()
  {
  }
 
-NegData::~NegData()
+NegotiantData::~NegotiantData()
  {
   Crypton::ForgetRange(Range(x));
   Crypton::ForgetRange(Range(gxy));
  }
 
-bool NegData::create()
+bool NegotiantData::create()
  {
   SilentReportException report;
   
   try
     {
-     encrypt.set(CreateEncrypt(CryptID(algo.crypt_id)));
-     decrypt.set(CreateDecrypt(CryptID(algo.crypt_id)));
-     hash.set(CreateHash(HashID(algo.hash_id)));
-     dhg.set(CreateDHGroup(DHGroupID(algo.dhg_id)));
+     encrypt.set(algo.createEncrypt());
+     decrypt.set(algo.createDecrypt());
+     hash.set(algo.createHash());
+     dhg.set(algo.createDHGroup());
      
-     hlen=hash->getHLen();
      blen=encrypt->getBLen();
+     hlen=hash->getHLen();
      glen=dhg->getGLen();
      
      return true;
@@ -407,7 +445,7 @@ bool NegData::create()
     }
  }
 
-void NegData::keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+void NegotiantData::keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
  {
   uint8 temp[SaveLenCounter<XPoint>::SaveLoadLen];
   
@@ -463,19 +501,19 @@ void NegData::keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,
     }
  }
 
-void NegData::clientKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+void NegotiantData::clientKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
  {
   keyGen(client_id,client_key,server_key);
  }
 
-void NegData::serverKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+void NegotiantData::serverKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key)
  {
   dhg->pow(gy,x,gxy);
   
   keyGen(client_id,client_key,server_key);
  }
 
-void NegData::clientGen()
+void NegotiantData::clientGen()
  {
   random.fill(Range(client_nonce));
   
@@ -486,7 +524,7 @@ void NegData::clientGen()
   dhg->pow(gy,x,gxy);
  }
 
-void NegData::serverGen()
+void NegotiantData::serverGen()
  {
   random.fill(Range(server_nonce));
   
@@ -495,7 +533,7 @@ void NegData::serverGen()
   dhg->pow(x,gx);
  }
 
-BufPutDev NegData::start(uint8 *buf,uint16 type)
+BufPutDev NegotiantData::start(uint8 *buf,uint16 type)
  {
   BufPutDev dev(buf);
   
@@ -512,7 +550,7 @@ BufPutDev NegData::start(uint8 *buf,uint16 type)
   return dev;
  }
 
-ulen NegData::finish(uint8 *buf,BufPutDev dev)
+ulen NegotiantData::finish(uint8 *buf,BufPutDev dev)
  {
   ulen len=Dist(buf,dev.getRest());
   
@@ -545,7 +583,7 @@ ulen NegData::finish(uint8 *buf,BufPutDev dev)
   return total;
  }
 
-PKEType NegData::process(PtrLen<const uint8> &data)
+PKEType NegotiantData::process(PtrLen<const uint8> &data)
  {
   uint8 *buf=const_cast<uint8 *>(data.ptr);
   ulen len=data.len;
@@ -585,7 +623,7 @@ PKEType NegData::process(PtrLen<const uint8> &data)
   return PKEType(type);
  }
 
-bool NegData::createSKey()
+bool NegotiantData::createSKey()
  {
   SilentReportException report;
   
@@ -605,7 +643,7 @@ bool NegData::createSKey()
     }
  }
 
-void NegData::setCounts(AbstractHashFunc *server_key)
+void NegotiantData::setCounts(AbstractHashFunc *server_key)
  {
   ulen len=key_buf.len;
   ulen server_hlen=server_key->getHLen();
@@ -644,7 +682,7 @@ void NegData::setCounts(AbstractHashFunc *server_key)
   cur_count=max_count;
  }
 
-bool NegData::testCounts(AbstractHashFunc *server_key)
+bool NegotiantData::testCounts(AbstractHashFunc *server_key)
  {
   ulen len=key_buf.len;
   ulen server_hlen=server_key->getHLen();
@@ -652,7 +690,7 @@ bool NegData::testCounts(AbstractHashFunc *server_key)
   return len<=server_hlen*rep_count*max_count;
  }
 
-void NegData::keyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+void NegotiantData::keyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
  {
   ulen client_hlen=client_key->getHLen();
   ulen server_hlen=server_key->getHLen();
@@ -689,12 +727,12 @@ void NegData::keyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_ke
     }
  }
 
-void NegData::clientKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+void NegotiantData::clientKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
  {
   keyBufGen(client_key,server_key);
  }
 
-void NegData::serverKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
+void NegotiantData::serverKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key)
  {
   dhg->pow(gy,x,gxy);
   
@@ -1178,7 +1216,7 @@ bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
   
   if( !flag ) return false;
   
-  if( !engine->client_db.findClient(Range_const(client_id,client_id_len),client_key,client_profile) ) return false;
+  if( engine->client_db.findClient(Range_const(client_id,client_id_len),client_key,client_profile) ) return false;
   
   neg_data.point=point;
   neg_data.algo=selected_algo;
@@ -1289,7 +1327,7 @@ auto ServerNegotiant::Proc::process7(PtrLen<const uint8> data) -> InboundResult
   
   if( !dev.finish() ) return InboundDrop;
   
-  if( !neg_data.param.test() ) return InboundDrop;
+  if( !neg_data.param.fit() ) return InboundDrop;
   
   if( !neg_data.createSKey() ) return InboundDrop;
   
@@ -1591,7 +1629,7 @@ void ServerNegotiant::Engine::tick()
   send(list);
  }
 
-ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,AbstractClientDataBase &client_db_,EndpointManager &epman_,ulen max_clients_,MSec final_timeout)
+ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,const ClientDatabase &client_db_,EndpointManager &epman_,ulen max_clients_,MSec final_timeout)
  : dev(dev_),
    client_db(client_db_),
    epman(epman_),
@@ -1669,7 +1707,7 @@ void ServerNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list_)
 
 /* class ServerNegotiant */
 
-ServerNegotiant::ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout)
+ServerNegotiant::ServerNegotiant(StrLen mp_dev_name,const ClientDatabase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout)
  : hook(mp_dev_name),
    engine(hook,client_db,epman,max_clients,final_timeout)
  {

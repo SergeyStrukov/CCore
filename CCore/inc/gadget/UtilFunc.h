@@ -30,7 +30,13 @@ constexpr T Min(T a,T b) { return (a<b)?a:b; }
  
 template <class T>
 constexpr T Max(T a,T b) { return (a<b)?b:a; }
- 
+
+template <class T>
+constexpr T Cap(T a,T x,T b) { return (x<a)?a:( (b<x)?b:x ); }
+
+template <class T>
+constexpr bool Fit(T a,T x,T b) { return a<=x && x<=b; }
+
 template <class T>
 T Diff(T &t,T a) { T ret(a-t); t=a; return ret; }
  

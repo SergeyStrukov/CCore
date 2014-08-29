@@ -405,7 +405,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    
    // EndpointManager
    
-   virtual void open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+   virtual OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
    
    virtual void close(XPoint point);
    

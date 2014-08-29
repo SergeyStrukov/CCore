@@ -898,7 +898,7 @@ void MultipointDevice::detach()
   host.detach();
  }
 
-void MultipointDevice::open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile)
+auto MultipointDevice::open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile) -> OpenErrorCode
  {
   SilentReportException report;
   
@@ -912,9 +912,12 @@ void MultipointDevice::open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &cl
        {
         result.obj->replace(skey,client_profile);
        }
+     
+     return Open_Ok;
     }
   catch(...)
     {
+     return OpenError_NoMemory;
     }
  }
 

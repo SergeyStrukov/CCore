@@ -43,7 +43,7 @@ class Engine : public Funchor_nocopy
    ObjMaster master_server_pke;
    ObjMaster master_server_psec;
   
-   class ClientDataBase : NoCopy , public Net::PSec::AbstractClientDataBase
+   class ClientDatabase : NoCopy , public Net::PSec::ClientDatabase
     {
       Engine *engine;
     
@@ -51,18 +51,19 @@ class Engine : public Funchor_nocopy
       
      public:
     
-      ClientDataBase(Engine *engine_,StrLen name_)
-       : engine(engine_),name(DoCast(name_.len),name_.ptr)
+      ClientDatabase(Engine *engine_,StrLen name_)
+       : engine(engine_),
+         name(DoCast(name_.len),name_.ptr)
        {
        }
       
-      virtual ~ClientDataBase()
+      ~ClientDatabase()
        {
        }
       
-      // Net::PSec::AbstractClientDataBase
+      // Net::PSec::ClientDatabase
       
-      virtual bool findClient(PtrLen<const uint8> client_id,Net::PSec::PrimeKeyPtr &client_key,Net::PSec::ClientProfilePtr &client_profile)
+      virtual FindErrorCode findClient(PtrLen<const uint8> client_id,Net::PSec::PrimeKeyPtr &client_key,Net::PSec::ClientProfilePtr &client_profile) const
        {
         if( client_id.equal(Range(name)) )
           {
@@ -74,19 +75,19 @@ class Engine : public Funchor_nocopy
               
               client_profile.set(new Net::PSec::AbstractClientProfile());
              
-              return true;
+              return Find_Ok;
              }
            catch(...)
              {
-              return false;
+              return FindError_NoMemory;
              }
           }
         
-        return false;
+        return FindError_NoClientID;
        }
     };
    
-   ClientDataBase client_db;
+   ClientDatabase client_db;
    
    Net::PSec::MultipointDevice server_psec;
   
@@ -109,7 +110,7 @@ class Engine : public Funchor_nocopy
      
      uint8 buf[]={1,2,3,4,5};
      
-     return new HashPrimeKey(HashID_SHA256,Range_const(buf));
+     return Net::PSec::CreateKeyedHash(HashID_SHA256,Range_const(buf));
     }
    
    Net::PSec::AbstractHashFunc * createServerKey() const
@@ -118,7 +119,7 @@ class Engine : public Funchor_nocopy
      
      uint8 buf[]={6,7,8,9,0};
      
-     return new HashPrimeKey(HashID_SHA256,Range_const(buf));
+     return Net::PSec::CreateKeyedHash(HashID_SHA256,Range_const(buf));
     }
    
   public:

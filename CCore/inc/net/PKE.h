@@ -44,6 +44,8 @@ const uint32 MinUTL     = 1000000 ;
 const uint32 DefaultUTL = 100000000 ;
 const uint32 MaxUTL     = 1000000000 ;
 
+const ulen MaxClientIDLen = 255 ;
+
 const ulen NonceLen = 128 ;
 
 const unsigned StartTickCount = InboundTicksPerSec*1 ; // 1 sec 
@@ -93,6 +95,7 @@ enum DHGroupID : uint8
 enum PKEType : uint16
  {
   PKE_None      = 0,
+    
   PKE_ServerAck = 1,
   PKE_ClientAck,
   PKE_ServerParam,
@@ -105,13 +108,27 @@ enum PKEType : uint16
 
 /* functions */
 
+bool IsValid(CryptID crypt_id);
+
+bool IsValid(HashID hash_id);
+
+bool IsValid(DHGroupID dhg_id);
+
 AbstractCryptFunc * CreateEncrypt(CryptID crypt_id);
 
 AbstractCryptFunc * CreateDecrypt(CryptID crypt_id);
 
 AbstractHashFunc * CreateHash(HashID hash_id);
 
+AbstractHashFunc * CreateKeyedHash(HashID hash_id,PtrLen<const uint8> key);
+
 AbstractDHGroup * CreateDHGroup(DHGroupID dhg_id);
+
+ulen GetKLen(CryptID crypt_id);
+
+ulen GetHLen(HashID hash_id);
+
+ulen GetGLen(DHGroupID dhg_id);
 
 /* classes */
 
@@ -125,11 +142,9 @@ struct AbstractClientID;
 
 class ClientID;
 
-struct AbstractClientDataBase;
+struct ClientDatabase;
 
-class HashPrimeKey;
-
-struct NegData;
+struct NegotiantData;
 
 class ClientNegotiant;
 
@@ -140,15 +155,14 @@ class ServerNegotiant;
 struct CryptAlgoSelect : NoThrowFlagsBase
  {
   uint8 crypt_id = CryptID_AES256 ;
-  uint8 hash_id = HashID_SHA512 ;
+  uint8 hash_id = HashID_SHA256 ;
   uint8 dhg_id = DHGroupID_II ;
   
   // constructors
   
   CryptAlgoSelect() {}
   
-  CryptAlgoSelect(CryptID crypt_id_,HashID hash_id_,DHGroupID dhg_id_) 
-   : crypt_id(crypt_id_),hash_id(hash_id_),dhg_id(dhg_id_) {}
+  CryptAlgoSelect(CryptID crypt_id_,HashID hash_id_,DHGroupID dhg_id_) : crypt_id(crypt_id_),hash_id(hash_id_),dhg_id(dhg_id_) {}
   
   // methods
   
@@ -161,6 +175,24 @@ struct CryptAlgoSelect : NoThrowFlagsBase
    {
     return !(*this==obj);
    }
+  
+  // methods
+  
+  bool isValid() const { return IsValid(CryptID(crypt_id)) && IsValid(HashID(hash_id)) && IsValid(DHGroupID(dhg_id)) ; }
+  
+  AbstractCryptFunc * createEncrypt() const { return CreateEncrypt(CryptID(crypt_id)); }
+
+  AbstractCryptFunc * createDecrypt() const { return CreateDecrypt(CryptID(crypt_id)); }
+
+  AbstractHashFunc * createHash() const { return CreateHash(HashID(hash_id)); }
+
+  AbstractDHGroup * createDHGroup() const { return CreateDHGroup(DHGroupID(dhg_id)); }
+  
+  ulen getKLen() const { return GetKLen(CryptID(crypt_id)); }
+
+  ulen getHLen() const { return GetHLen(HashID(hash_id)); }
+
+  ulen getGLen() const { return GetGLen(DHGroupID(dhg_id)); }
   
   // save/load object
   
@@ -195,18 +227,16 @@ struct SessionKeyParam
   
   // methods
 
-  bool test() const
+  bool fit() const
    {
-    return keyset_len>=MinKeySetLen && keyset_len<=MaxKeySetLen &&
-           ttl>=MinTTL && ttl<=MaxTTL &&
-           utl>=MinUTL && utl<=MaxUTL ;
+    return Fit(MinKeySetLen,keyset_len,MaxKeySetLen) && Fit(MinTTL,ttl,MaxTTL) && Fit(MinUTL,utl,MaxUTL) ;
    }
   
   void cap()
    {
-    keyset_len=Min(MaxKeySetLen,Max(MinKeySetLen,keyset_len));
-    ttl=Min(MaxTTL,Max(MinTTL,ttl));
-    utl=Min(MaxUTL,Max(MinUTL,utl));
+    keyset_len=Cap(MinKeySetLen,keyset_len,MaxKeySetLen);
+    ttl=Cap(MinTTL,ttl,MaxTTL);
+    utl=Cap(MinUTL,utl,MaxUTL);
    }
   
   void select(const SessionKeyParam &obj)
@@ -252,14 +282,8 @@ class SessionKey : public MasterKey
 
   private:
 
-   struct GetKLenCtx;
-   struct GetHLenCtx;
    struct GetSecretLenCtx;
    struct CreateKeyGenCtx;
-   
-   static ulen GetKLen(CryptAlgoSelect algo_select);
-   
-   static ulen GetHLen(CryptAlgoSelect algo_select);
    
    static ulen GetSecretLen(CryptAlgoSelect algo_select,ulen klen);
    
@@ -310,7 +334,7 @@ class SessionKey : public MasterKey
 
 /* struct AbstractClientID */
 
-struct AbstractClientID
+struct AbstractClientID : MemBase_nocopy
  {
   virtual ~AbstractClientID() {}
   
@@ -325,9 +349,9 @@ using ClientIDPtr = OwnPtr<AbstractClientID> ;
 
 /* class ClientID */
 
-class ClientID : public AbstractClientID , public MemBase_nocopy
+class ClientID : public AbstractClientID 
  {
-   uint8 name[255];
+   uint8 name[MaxClientIDLen];
    uint8 len;
    
   private: 
@@ -354,69 +378,54 @@ class ClientID : public AbstractClientID , public MemBase_nocopy
 
 using PrimeKeyPtr = OwnPtr<AbstractHashFunc> ;
 
-/* struct AbstractClientDataBase */
+/* struct ClientDatabase */
 
-struct AbstractClientDataBase
+struct ClientDatabase
  {
-  virtual ~AbstractClientDataBase() {}
+  enum FindErrorCode : uint32
+   {
+    Find_Ok = 0,
+    
+    FindError_NoMemory,
+    FindError_NoClientID
+   };
   
-  virtual bool findClient(PtrLen<const uint8> client_id,PrimeKeyPtr &client_key,ClientProfilePtr &client_profile)=0;
+  virtual FindErrorCode findClient(PtrLen<const uint8> client_id,PrimeKeyPtr &client_key,ClientProfilePtr &client_profile) const =0;
  };
 
-/* class HashPrimeKey */
+/* struct NegotiantData */
 
-class HashPrimeKey : public AbstractHashFunc
- {
-   OwnPtr<AbstractHashFunc> hash;
-   
-  public:
-  
-   HashPrimeKey(HashID hash_id,PtrLen<const uint8> key);
-   
-   virtual ~HashPrimeKey();
-   
-   // AbstractHashFunc
-   
-   virtual ulen getHLen() const;
-   
-   virtual void add(PtrLen<const uint8> data);
-   
-   virtual const uint8 * finish();
- };
-
-/* struct NegData */
-
-struct NegData : NoCopy
+struct NegotiantData : NoCopy
  {
   // key part
   
   PlatformRandom random;
 
-  XPoint point;
-  uint8 server_nonce[NonceLen];
-  uint8 client_nonce[NonceLen];
-  CryptAlgoSelect algo;
-  
   OwnPtr<AbstractCryptFunc> encrypt;
   OwnPtr<AbstractCryptFunc> decrypt;
   OwnPtr<AbstractHashFunc> hash;
   OwnPtr<AbstractDHGroup> dhg;
   
+  XPoint point;
+  CryptAlgoSelect algo;
+  uint8 server_nonce[NonceLen];
+  uint8 client_nonce[NonceLen];
+  
   DirectConvolution direct_conv;
   InverseConvolution inverse_conv;
   
-  ulen hlen;
   ulen blen;
+  ulen hlen;
   ulen glen;
   
-  uint8 gy[MaxGLen];
   uint8 x[MaxGLen];
   uint8 gx[MaxGLen];
+  uint8 gy[MaxGLen];
   uint8 gxy[MaxGLen];
   
-  NegData();
+  NegotiantData();
   
-  ~NegData();
+  ~NegotiantData();
   
   bool create();
   
@@ -497,7 +506,7 @@ class ClientNegotiant : NoCopy
       
       InboundFunc inbound_func;
       
-      NegData neg_data;
+      NegotiantData neg_data;
       
      private: 
       
@@ -652,7 +661,7 @@ class ServerNegotiant : NoCopy
       PrimeKeyPtr client_key;
       ClientProfilePtr client_profile;
       
-      NegData neg_data;
+      NegotiantData neg_data;
       
       SessionKeyParam param;
       MasterKeyPtr skey;
@@ -703,7 +712,7 @@ class ServerNegotiant : NoCopy
       
       PacketFormat outbound_format;
       
-      AbstractClientDataBase &client_db;
+      const ClientDatabase &client_db;
       PrimeKeyPtr server_key;
       EndpointManager &epman;
       ulen max_clients;
@@ -740,7 +749,7 @@ class ServerNegotiant : NoCopy
     
      public:
     
-      Engine(PacketMultipointDevice *dev,AbstractClientDataBase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout);
+      Engine(PacketMultipointDevice *dev,const ClientDatabase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout);
       
       ~Engine();
       
@@ -761,7 +770,7 @@ class ServerNegotiant : NoCopy
 
    static const ulen DefaultMaxClients = 10000 ;
 
-   ServerNegotiant(StrLen mp_dev_name,AbstractClientDataBase &client_db,EndpointManager &epman,ulen max_clients=DefaultMaxClients,MSec final_timeout=5_sec);
+   ServerNegotiant(StrLen mp_dev_name,const ClientDatabase &client_db,EndpointManager &epman,ulen max_clients=DefaultMaxClients,MSec final_timeout=5_sec);
    
    ~ServerNegotiant();
    

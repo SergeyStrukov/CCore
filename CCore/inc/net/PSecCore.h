@@ -509,7 +509,16 @@ using ClientProfilePtr = OwnPtr<AbstractClientProfile> ;
 
 struct EndpointManager
  {
-  virtual void open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile)=0;
+  enum OpenErrorCode : uint32
+   {
+    Open_Ok = 0,
+    
+    OpenError_NoMemory,
+    OpenError_OpenLimit,
+    OpenError_NoAccess
+   };
+  
+  virtual OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile)=0;
   
   virtual void close(XPoint point)=0;
   
