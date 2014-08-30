@@ -474,7 +474,7 @@ void NegotiantData::keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *clien
      
      server_key->add(Range_const(client_digest,client_hlen));
      server_key->add(Range_const(temp));
-     client_key->add(client_id);
+     server_key->add(client_id);
      server_key->add(Range_const(client_nonce));
      server_key->add(Range_const(server_nonce));
      server_key->add(Range_const(gxy,glen));

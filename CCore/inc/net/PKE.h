@@ -439,6 +439,8 @@ struct NegotiantData : NoCopy
   
   void serverGen();
   
+  // encrypt/decrypt packets
+  
   BufPutDev start(uint8 *buf,uint16 type);
   
   ulen finish(uint8 *buf,BufPutDev dev);
