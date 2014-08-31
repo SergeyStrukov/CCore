@@ -397,7 +397,7 @@ struct ClientDatabase
 
 struct NegotiantData : NoCopy
  {
-  // key part
+  // machines
   
   PlatformRandom random;
 
@@ -406,13 +406,23 @@ struct NegotiantData : NoCopy
   OwnPtr<AbstractHashFunc> hash;
   OwnPtr<AbstractDHGroup> dhg;
   
+  DirectConvolution direct_conv;
+  InverseConvolution inverse_conv;
+
+  // id part
+  
+  uint8 client_id[MaxClientIDLen];
+  uint8 client_id_len;
+  
+  AbstractHashFunc *client_key;
+  AbstractHashFunc *server_key;
+  
+  // key part
+  
   XPoint point;
   CryptAlgoSelect algo;
   uint8 server_nonce[NonceLen];
   uint8 client_nonce[NonceLen];
-  
-  DirectConvolution direct_conv;
-  InverseConvolution inverse_conv;
   
   ulen blen;
   ulen hlen;
@@ -427,13 +437,19 @@ struct NegotiantData : NoCopy
   
   ~NegotiantData();
   
+  PtrLen<const uint8> getClientID() const { return Range(client_id,client_id_len); }
+  
+  void prepare(AbstractClientID *client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  
+  void prepare(AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  
   bool create();
   
-  void keyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  void keyGen();
   
-  void clientKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  void clientKeyGen();
   
-  void serverKeyGen(PtrLen<const uint8> client_id,AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  void serverKeyGen();
   
   void clientGen();
   
@@ -459,15 +475,15 @@ struct NegotiantData : NoCopy
   
   bool createSKey();
   
-  void setCounts(AbstractHashFunc *server_key);
+  void setCounts();
   
-  bool testCounts(AbstractHashFunc *server_key);
+  bool testCounts();
   
-  void keyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  void keyBufGen();
   
-  void clientKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  void clientKeyBufGen();
   
-  void serverKeyBufGen(AbstractHashFunc *client_key,AbstractHashFunc *server_key);
+  void serverKeyBufGen();
  };
 
 /* class ClientNegotiant */
@@ -490,9 +506,6 @@ class ClientNegotiant : NoCopy
     {
       State state = State_Null ;
     
-      uint8 client_id_len = 0 ;
-      uint8 client_id[255];
-      
       PrimeKeyPtr client_key;
       PrimeKeyPtr server_key;
       
@@ -504,7 +517,7 @@ class ClientNegotiant : NoCopy
       uint8 send_buf[MaxPKETransLen];
       ulen send_len = 0 ;
       
-      typedef bool (Proc::* InboundFunc)(PtrLen<const uint8> data);
+      using InboundFunc = bool (Proc::*)(PtrLen<const uint8> data) ;
       
       InboundFunc inbound_func;
       
@@ -542,11 +555,13 @@ class ClientNegotiant : NoCopy
       
       ~Proc();
       
-      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
-      
       State getState() const { return state; }
       
+      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
+      
       void start(PtrLen<const CryptAlgoSelect> algo_list);
+      
+      void stop() { state=State_Done; }
       
       bool inbound(PtrLen<const uint8> data);
       
@@ -588,9 +603,9 @@ class ClientNegotiant : NoCopy
       
       ~Engine();
       
-      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
-      
       State getState() const;
+      
+      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
       
       void start(PtrLen<const CryptAlgoSelect> algo_list);
       
@@ -609,9 +624,9 @@ class ClientNegotiant : NoCopy
    
    ~ClientNegotiant();
    
-   void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param={}) { engine.prepare(client_id,client_key,server_key,param); }
-   
    State getState() const { return engine.getState(); }
+   
+   void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param={}) { engine.prepare(client_id,client_key,server_key,param); }
    
    void start(PtrLen<const CryptAlgoSelect> algo_list) { engine.start(algo_list); }
    
@@ -653,21 +668,14 @@ class ServerNegotiant : NoCopy
         InboundFinal
        };
       
-      typedef InboundResult (Proc::* InboundFunc)(PtrLen<const uint8> data);
+      using InboundFunc = InboundResult (Proc::*)(PtrLen<const uint8> data);
       
       InboundFunc inbound_func;
-      
-      uint8 client_id_len = 0 ;
-      uint8 client_id[255];
       
       PrimeKeyPtr client_key;
       ClientProfilePtr client_profile;
       
       NegotiantData neg_data;
-      
-      SessionKeyParam param;
-      MasterKeyPtr skey;
-      PtrLen<uint8> key_buf;
       
      private:
       
