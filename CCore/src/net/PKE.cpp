@@ -245,6 +245,24 @@ ulen GetGLen(DHGroupID dhg_id)
   return Meta::TypeSwitch<DHGCaseList>::Switch(dhg_id,GetGLenCtx());
  }
 
+/* enum PKError */
+
+const char * GetTextDesc(PKError error)
+ {
+  switch( error )
+    {
+     case PKENoError         : return "Ok";
+     
+     case PKError_NoClientID : return "No Client ID";
+     case PKError_Exhausted  : return "Exhausted";
+     case PKError_NoAlgo     : return "No algo";
+     case PKError_NoAccess   : return "Access denied";
+     case PKError_NoLimit    : return "Too many clients";
+     
+     default: return "???";
+    }
+ }
+
 /* class SessionKey */
 
 struct SessionKey::GetSecretLenCtx
@@ -779,6 +797,8 @@ bool ClientNegotiant::Proc::test_algo() const
 
 bool ClientNegotiant::Proc::process2(PtrLen<const uint8> data)
  {
+  if( data.len==SaveLenCounter<uint32>::SaveLoadLen ) return process_error(data);
+  
   RangeGetDev dev(data);
   
   dev.use<BeOrder>(neg_data.point);
@@ -789,7 +809,15 @@ bool ClientNegotiant::Proc::process2(PtrLen<const uint8> data)
   
   if( !dev || !test_algo() ) return false;
   
-  if( !neg_data.create() ) return false;
+  if( !neg_data.create() ) 
+    {
+     state=State_ClientError;
+     error=PKError_Exhausted;
+    
+     build_error();
+    
+     return true;
+    }
   
   dev.get(neg_data.gy,neg_data.glen);
   
@@ -887,7 +915,14 @@ void ClientNegotiant::Proc::build7()
 
 bool ClientNegotiant::Proc::process8(PtrLen<const uint8> data)
  {
-  if( neg_data.process(data)!=PKE_FirstServerSKey ) return false;
+  switch( neg_data.process(data) )
+    {
+     default: return false;
+     
+     case PKE_ServerError : return process_error(data);
+     
+     case PKE_FirstServerSKey : break;
+    }
   
   RangeGetDev dev(data);
 
@@ -901,7 +936,15 @@ bool ClientNegotiant::Proc::process8(PtrLen<const uint8> data)
   
   if( !dev.finish() ) return false;
   
-  if( !neg_data.createSKey() ) return false;
+  if( !neg_data.createSKey() ) 
+    {
+     state=State_ClientError;
+     error=PKError_Exhausted;
+     
+     build_encrypted_error();
+    
+     return true;
+    }
 
   if( !neg_data.testCounts() ) return false;
   
@@ -970,11 +1013,56 @@ bool ClientNegotiant::Proc::process10(PtrLen<const uint8> data)
 
 bool ClientNegotiant::Proc::process11(PtrLen<const uint8> data)
  {
-  if( neg_data.process(data)!=PKE_Done ) return false;
+  switch( neg_data.process(data) )
+    {
+     default: return false;
+     
+     case PKE_ServerError : return process_error(data);
+     
+     case PKE_Done : break;
+    }
 
   if( +data ) return false;
   
   state=State_Done;
+  
+  return true;
+ }
+
+void ClientNegotiant::Proc::build_error()
+ {
+  uint32 code=error;
+  
+  BufPutDev dev(send_buf);
+  
+  dev.use<BeOrder>(code);
+  
+  send_len=Dist(send_buf,dev.getRest());
+ }
+
+void ClientNegotiant::Proc::build_encrypted_error()
+ {
+  uint32 code=error;
+  
+  BufPutDev dev=neg_data.start(send_buf,PKE_ClientError);
+  
+  dev.use<BeOrder>(code);
+  
+  send_len=neg_data.finish(send_buf,dev);
+ }
+
+bool ClientNegotiant::Proc::process_error(PtrLen<const uint8> data)
+ {
+  RangeGetDev dev(data);
+  
+  uint32 code=0;
+  
+  dev.use<BeOrder>(code);
+  
+  if( !dev.finish() ) return false;
+  
+  state=State_ServerError;
+  error=PKError(code);
   
   return true;
  }
@@ -1086,15 +1174,28 @@ void ClientNegotiant::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> d
    
    if( proc.inbound(data) ) 
      {
-      if( proc.getState()==State_Started )
+      switch( proc.getState() )
         {
-         send=prepare_send();
-        }
-      else
-        {
-         tick_count=0;
-         retry_count=0;
-         done=true;
+         case State_Started :
+          {
+           send=prepare_send();
+          }
+         break; 
+         
+         case State_ClientError :
+          {
+           send=prepare_send();
+          }
+         // falldown;
+         
+         case State_ServerError :
+         case State_Done :
+          {
+           tick_count=0;
+           retry_count=0;
+           done=true;
+          }
+         break; 
         }
      }
   } 
@@ -1167,6 +1268,13 @@ auto ClientNegotiant::Engine::getState() const -> State
   return proc.getState();
  }
 
+auto ClientNegotiant::Engine::getError() const -> PKError
+ {
+  Mutex::Lock lock(mutex);
+  
+  return proc.getError();
+ }
+
 void ClientNegotiant::Engine::prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param)
  {
   Mutex::Lock lock(mutex);
@@ -1210,7 +1318,7 @@ ClientNegotiant::~ClientNegotiant()
 
 /* class ServerNegotiant::Proc */
 
-bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
+auto ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data) -> InboundResult
  {
   RangeGetDev dev(data);
   
@@ -1218,7 +1326,7 @@ bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
   
   dev.get(neg_data.client_id,neg_data.client_id_len);
     
-  if( !dev ) return false;
+  if( !dev ) return InboundDrop;
   
   CryptAlgoSelect selected_algo;
   bool flag=false;
@@ -1229,7 +1337,7 @@ bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
      
      dev(algo);
      
-     if( !dev ) return false;
+     if( !dev ) return InboundDrop;
      
      if( !flag && engine->filter(algo) )
        {
@@ -1238,14 +1346,40 @@ bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
        }
     }
   
-  if( !flag ) return false;
+  if( !flag ) 
+    {
+     build_error(PKError_NoAlgo);
+     
+     return InboundServerError;
+    }
   
-  if( engine->client_db.findClient(neg_data.getClientID(),client_key,client_profile) ) return false;
+  switch( engine->client_db.findClient(neg_data.getClientID(),client_key,client_profile) ) 
+    {
+     default:
+     case ClientDatabase::FindError_NoMemory :
+      {
+       build_error(PKError_Exhausted);
+      }
+     return InboundServerError;
+      
+     case ClientDatabase::FindError_NoClientID :
+      {
+       build_error(PKError_NoClientID);
+      }
+     return InboundServerError;
+     
+     case ClientDatabase::Find_Ok : break;
+    }
   
   neg_data.point=point;
   neg_data.algo=selected_algo;
   
-  if( !neg_data.create() ) return false;
+  if( !neg_data.create() ) 
+    {
+     build_error(PKError_Exhausted);
+   
+     return InboundServerError;
+    }
   
   neg_data.prepare(client_key.getPtr(),engine->server_key.getPtr());
   
@@ -1255,7 +1389,7 @@ bool ServerNegotiant::Proc::process1(XPoint point,PtrLen<const uint8> data)
   
   inbound_func=&Proc::process3;
   
-  return true;
+  return InboundOk;
  }
 
 void ServerNegotiant::Proc::build2()
@@ -1275,6 +1409,8 @@ void ServerNegotiant::Proc::build2()
 
 auto ServerNegotiant::Proc::process3(PtrLen<const uint8> data) -> InboundResult
  {
+  if( data.len==SaveLenCounter<uint32>::SaveLoadLen ) return process_error(data);
+  
   RangeGetDev dev(data);
   
   XPoint point=0;
@@ -1355,7 +1491,12 @@ auto ServerNegotiant::Proc::process7(PtrLen<const uint8> data) -> InboundResult
   
   if( !neg_data.param.fit() ) return InboundDrop;
   
-  if( !neg_data.createSKey() ) return InboundDrop;
+  if( !neg_data.createSKey() ) 
+    {
+     build_encrypted_error(PKError_Exhausted);
+    
+     return InboundServerError;
+    }
   
   build8();
   
@@ -1383,7 +1524,14 @@ void ServerNegotiant::Proc::build8()
 
 auto ServerNegotiant::Proc::process9(PtrLen<const uint8> data) -> InboundResult
  {
-  if( neg_data.process(data)!=PKE_ClientSKey ) return InboundDrop;
+  switch( neg_data.process(data) )
+    {
+     default: return InboundDrop;
+     
+     case PKE_ClientError : return process_error(data);
+     
+     case PKE_ClientSKey : break;
+    }
   
   RangeGetDev dev(data);
 
@@ -1403,6 +1551,30 @@ auto ServerNegotiant::Proc::process9(PtrLen<const uint8> data) -> InboundResult
   
   if( !--neg_data.cur_count )
     {
+     switch( engine->epman.open(neg_data.point,neg_data.skey,client_profile) )
+       {
+        default:
+        case EndpointManager::OpenError_NoMemory :
+         {
+          build_encrypted_error(PKError_Exhausted);
+         }
+        return InboundServerError; 
+         
+        case EndpointManager::OpenError_OpenLimit :
+         {
+          build_encrypted_error(PKError_NoLimit);
+         }
+        return InboundServerError; 
+         
+        case EndpointManager::OpenError_NoAccess :
+         {
+          build_encrypted_error(PKError_NoAccess);
+         }
+        return InboundServerError; 
+         
+        case EndpointManager::Open_Ok : break;
+       }
+    
      build11();
      
      inbound_func=&Proc::process_final;
@@ -1441,14 +1613,51 @@ void ServerNegotiant::Proc::build11()
 
 auto ServerNegotiant::Proc::process_final(PtrLen<const uint8> data) -> InboundResult
  {
-  if( process1(neg_data.point,data) )
+  switch( process1(neg_data.point,data) )
     {
-     return InboundOk;
+     case InboundOk : return InboundOk;
+     
+     case InboundServerError : return InboundServerError;
+     
+     default: return InboundFinal;
     }
-  else
-    {
-     return InboundFinal;
-    }
+ }
+
+void ServerNegotiant::Proc::build_error(PKError error)
+ {
+  uint32 code=error;
+  
+  BufPutDev dev(send_buf);
+  
+  dev.use<BeOrder>(code);
+  
+  send_len=Dist(send_buf,dev.getRest());
+ }
+
+void ServerNegotiant::Proc::build_encrypted_error(PKError error)
+ {
+  uint32 code=error;
+  
+  BufPutDev dev=neg_data.start(send_buf,PKE_ServerError);
+  
+  dev.use<BeOrder>(code);
+  
+  send_len=neg_data.finish(send_buf,dev);
+ }
+
+auto ServerNegotiant::Proc::process_error(PtrLen<const uint8> data) -> InboundResult
+ {
+  RangeGetDev dev(data);
+  
+  uint32 code=0;
+  
+  dev.use<BeOrder>(code);
+  
+  if( !dev.finish() ) return InboundDrop;
+  
+  // code
+  
+  return InboundClientError; 
  }
 
 ServerNegotiant::Proc::Proc(Engine *engine_)
@@ -1462,20 +1671,28 @@ ServerNegotiant::Proc::~Proc()
 
 bool ServerNegotiant::Proc::inbound_first(XPoint point,PtrLen<const uint8> data,PacketList &list)
  {
-  if( process1(point,data) )
+  switch( process1(point,data) )
     {
-     tick_count=StartTickCount;
-     retry_count=MaxRetry;
-    
-     engine->prepare_send(point,Range_const(send_buf,send_len),list);
-     
+     case InboundOk :
+      {
+       tick_count=StartTickCount;
+       retry_count=MaxRetry;
+      
+       engine->prepare_send(point,Range_const(send_buf,send_len),list);
+      }
      return false;
+     
+     case InboundServerError :
+      {
+       engine->prepare_send(point,Range_const(send_buf,send_len),list);
+      }
+     return true; 
+     
+     default: return true;
     }
-  
-  return true;
  }
 
-void ServerNegotiant::Proc::inbound(PtrLen<const uint8> data,PacketList &list)
+bool ServerNegotiant::Proc::inbound(PtrLen<const uint8> data,PacketList &list)
  {
   switch( (this->*inbound_func)(data) ) 
     {
@@ -1492,8 +1709,6 @@ void ServerNegotiant::Proc::inbound(PtrLen<const uint8> data,PacketList &list)
       {
        tick_count=engine->final_tick_count;
        retry_count=1;
-       
-       engine->epman.open(neg_data.point,neg_data.skey,client_profile);
        
        engine->prepare_send(neg_data.point,Range_const(final_send_buf,final_send_len),list);
       }
@@ -1513,7 +1728,17 @@ void ServerNegotiant::Proc::inbound(PtrLen<const uint8> data,PacketList &list)
          }
       }
      break; 
+     
+     case InboundServerError :
+      {
+       engine->prepare_send(neg_data.point,Range_const(send_buf,send_len),list);
+      }
+     return true;
+     
+     case InboundClientError : return true;
     }
+  
+  return false;
  }
 
 bool ServerNegotiant::Proc::tick(PacketList &list)
@@ -1589,6 +1814,19 @@ void ServerNegotiant::Engine::send(PacketList &list)
     }
  }
 
+void ServerNegotiant::Engine::prepare_error(XPoint point,PKError error,PacketList &list)
+ {
+  uint32 code=error;
+  
+  uint8 temp[SaveLenCounter<uint32>::SaveLoadLen];
+  
+  BufPutDev dev(temp);
+  
+  dev.use<BeOrder>(code);
+  
+  prepare_send(point,Range_const(temp),list);
+ }
+
 void ServerNegotiant::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data)
  {
   PacketList list;
@@ -1615,23 +1853,29 @@ void ServerNegotiant::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<c
               }
             else
               {
-               result.obj->inbound(data,list);
+               if( result.obj->inbound(data,list) )
+                 {
+                  map.del(point);
+                 }
               } 
            }
          catch(...)
            {
-            // TODO
+            prepare_error(point,PKError_Exhausted,list);
            }
         }
       else
         {
          if( auto *obj=map.find(point) ) 
            {
-            obj->inbound(data,list);
+            if( obj->inbound(data,list) )
+              {
+               map.del(point);
+              }
            }
          else
            {
-            // TODO
+            prepare_error(point,PKError_Exhausted,list);
            }
         }
      }

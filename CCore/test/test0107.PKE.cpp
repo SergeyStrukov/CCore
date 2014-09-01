@@ -82,7 +82,7 @@ class Engine : public Funchor_nocopy
        {
        }
       
-      virtual ~EndpointManager()
+      ~EndpointManager()
        {
        }
       
@@ -157,7 +157,7 @@ class Engine : public Funchor_nocopy
     : bridge(10),
       client(Net::Bridge::ClientName(1).str,function_done()),
       client_db(this,"client"),
-      server(Net::Bridge::ServerName(),client_db,epman)
+      server(Net::Bridge::ServerName(),client_db,epman,10)
     {
     }
    
@@ -188,14 +188,19 @@ class Engine : public Funchor_nocopy
     {
      using namespace Net::PSec;
      
-     server.start();
+     server.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
      
      client.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
     }
    
-   void wait(MSec timeout)
+   bool wait(MSec timeout)
     {
-     sem.take(timeout);
+     return sem.take(timeout);
+    }
+   
+   void show()
+    {
+     Printf(Con,"#;\n#;\n",client.getState(),client.getError());
     }
    
    class StartStop : NoCopy
@@ -236,7 +241,16 @@ bool Testit<107>::Main()
    
    engine.start();
    
-   engine.wait(10_sec);
+   if( engine.wait(10_sec) )
+     {
+      Task::Sleep(10_msec);
+     
+      engine.show();
+     }
+   else
+     {
+      Printf(Con,"timeout\n");
+     }
   }
   
   return true;

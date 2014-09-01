@@ -103,7 +103,10 @@ enum PKEType : uint16
   PKE_FirstServerSKey,
   PKE_ClientSKey,
   PKE_ServerSKey,
-  PKE_Done
+  PKE_Done,
+  
+  PKE_ServerError = 100,
+  PKE_ClientError = 101
  };
 
 /* functions */
@@ -132,6 +135,8 @@ ulen GetGLen(DHGroupID dhg_id);
 
 /* classes */
 
+//enum PKError;
+
 struct CryptAlgoSelect;
 
 struct SessionKeyParam;
@@ -149,6 +154,20 @@ struct NegotiantData;
 class ClientNegotiant;
 
 class ServerNegotiant;
+
+/* enum PKError */
+
+enum PKError : uint32
+ {
+  PKENoError = 0 ,
+  PKError_NoClientID,
+  PKError_Exhausted,
+  PKError_NoAlgo,
+  PKError_NoAccess,
+  PKError_NoLimit
+ };
+
+const char * GetTextDesc(PKError error);
 
 /* struct CryptAlgoSelect */
 
@@ -497,7 +516,10 @@ class ClientNegotiant : NoCopy
      State_Null,
      State_Ready,
      State_Started,
-     State_Done
+     State_Done,
+     State_ClientError,
+     State_ServerError,
+     State_Timeout
     };
   
   private:
@@ -505,6 +527,7 @@ class ClientNegotiant : NoCopy
    class Proc : NoCopy
     {
       State state = State_Null ;
+      PKError error = PKENoError ;
     
       PrimeKeyPtr client_key;
       PrimeKeyPtr server_key;
@@ -549,6 +572,12 @@ class ClientNegotiant : NoCopy
       
       bool process11(PtrLen<const uint8> data);
       
+      void build_error();
+      
+      void build_encrypted_error();
+      
+      bool process_error(PtrLen<const uint8> data);
+      
      public: 
     
       Proc();
@@ -557,11 +586,13 @@ class ClientNegotiant : NoCopy
       
       State getState() const { return state; }
       
+      PKError getError() const { return error; }
+      
       void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
       
       void start(PtrLen<const CryptAlgoSelect> algo_list);
       
-      void stop() { state=State_Done; }
+      void stop() { state=State_Timeout; }
       
       bool inbound(PtrLen<const uint8> data);
       
@@ -605,6 +636,8 @@ class ClientNegotiant : NoCopy
       
       State getState() const;
       
+      PKError getError() const;
+      
       void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
       
       void start(PtrLen<const CryptAlgoSelect> algo_list);
@@ -625,6 +658,8 @@ class ClientNegotiant : NoCopy
    ~ClientNegotiant();
    
    State getState() const { return engine.getState(); }
+   
+   PKError getError() const { return engine.getError(); }
    
    void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param={}) { engine.prepare(client_id,client_key,server_key,param); }
    
@@ -665,7 +700,9 @@ class ServerNegotiant : NoCopy
         InboundDrop,
         InboundOk,
         InboundLast,
-        InboundFinal
+        InboundFinal,
+        InboundServerError,
+        InboundClientError
        };
       
       using InboundFunc = InboundResult (Proc::*)(PtrLen<const uint8> data);
@@ -679,7 +716,7 @@ class ServerNegotiant : NoCopy
       
      private:
       
-      bool process1(XPoint point,PtrLen<const uint8> data);
+      InboundResult process1(XPoint point,PtrLen<const uint8> data);
       
       void build2();
       
@@ -703,6 +740,12 @@ class ServerNegotiant : NoCopy
       
       InboundResult process_final(PtrLen<const uint8> data);
       
+      void build_error(PKError error);
+      
+      void build_encrypted_error(PKError error);
+      
+      InboundResult process_error(PtrLen<const uint8> data);
+      
      public:
     
       explicit Proc(Engine *engine);
@@ -711,7 +754,7 @@ class ServerNegotiant : NoCopy
       
       bool inbound_first(XPoint point,PtrLen<const uint8> data,PacketList &list); // true to del
       
-      void inbound(PtrLen<const uint8> data,PacketList &list);
+      bool inbound(PtrLen<const uint8> data,PacketList &list); // true to del
       
       bool tick(PacketList &list); // true to del
     };
@@ -750,6 +793,8 @@ class ServerNegotiant : NoCopy
       void prepare_send(XPoint point,PtrLen<const uint8> send_data,PacketList &list);
       
       void send(PacketList &list);
+      
+      void prepare_error(XPoint point,PKError error,PacketList &list);
       
       // InboundProc
     
