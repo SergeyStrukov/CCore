@@ -668,6 +668,11 @@ class RadixTreeMap : NoCopy
    template <class FuncInit>
    void applyDecr_const(FuncInit func_init) const { applyDecr(func_init); }
    
+   // delIf
+   
+   template <class FuncInit>
+   void delIf(FuncInit func_init);
+   
    // swap/move objects
    
    void objSwap(RadixTreeMap<K,T,Allocator> &obj)
@@ -873,6 +878,15 @@ void RadixTreeMap<K,T,Allocator>::applyDecr(FuncInit func_init) const
   Node *node=root.root;
   
   ApplyDecr_const(node,func);
+ }
+
+template <class K,class T,template <class Node> class Allocator> 
+template <class FuncInit>
+void RadixTreeMap<K,T,Allocator>::delIf(FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+
+  root.delIf( [&] (Node *node) { return func(GetKey(node),node->obj); } , [this] (Node *node) { allocator.free_nonnull(node); } );
  }
 
 } // namespace CCore

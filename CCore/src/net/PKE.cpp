@@ -1895,14 +1895,7 @@ void ServerNegotiant::Engine::tick()
    
    if( enable )
      {
-      const ulen Len = 100 ;
-     
-      XPoint todel[Len];
-      ulen count=0;
-     
-      map.applyIncr( [&] (XPoint point,Proc &proc) { if( proc.tick(list) && count<Len ) todel[count++]=point; } ); // TODO delIf()
-      
-      for(XPoint point : Range(todel,count) ) map.del(point);
+      map.delIf( [&] (XPoint,Proc &proc) { return proc.tick(list); } );
      }
   }
   

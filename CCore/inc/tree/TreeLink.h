@@ -327,6 +327,44 @@ struct TreeLink<T,K>::BinAlgo
     DelRoot(Locate(root_ptr,Link(node).key)); 
    }
    
+  template <class TestFunc,class DelFunc>
+  static void DelIf(T **root_ptr,TestFunc test_func,DelFunc del_func) // root_ptr!=0
+   {
+    if( T *root=*root_ptr )
+      {
+       Node &link=Link(root);
+       
+       DelIf(&link.lo,test_func,del_func);
+       DelIf(&link.hi,test_func,del_func);
+       
+       if( test_func(root) )
+         {
+          if( link.lo )
+            {
+             T *node=DelRoot(LocateMax(&link.lo));
+             
+             Link(node,link.lo,link.hi);
+             
+             *root_ptr=node;
+            }
+          else if( link.hi )
+            {
+             T *node=DelRoot(LocateMin(&link.hi));
+             
+             Link(node,link.lo,link.hi);
+             
+             *root_ptr=node;
+            }
+          else
+            {
+             *root_ptr=0;
+            }
+         
+          del_func(root);
+         }
+      }
+   }
+  
   // struct NodePtr
   
   struct NodePtr
@@ -397,6 +435,9 @@ struct TreeLink<T,K>::BinAlgo
     T * delMax(KRef key) { return DelMax(&root,key); }
     
     void del(T *node) { Del(&root,node); }
+    
+    template <class TestFunc,class DelFunc>
+    void delIf(TestFunc test_func,DelFunc del_func) { DelIf(&root,test_func,del_func); }
    };
  };
  
