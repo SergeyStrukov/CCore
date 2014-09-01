@@ -61,7 +61,34 @@ constexpr T <span class="Att">Max</span>(T a,T b) { return (a&lt;b)?b:a; }
 </pre>
 
 <p>
-<b>Diff()</b> performs differentiation, i.g. subtracts a value from the previous one and records
+<b>Cap()</b> adjusts the given value <b>x</b> to fit it into the given interval <b>[a,b]</b>.
+To work properly, make sure that <b>a &lt;= b</b>. If <b>x</b> is too low, <b>a</b> is returned, 
+if <b>x</b> is too large, <b>b</b> is returned. Otherwise, <b>x</b> is returned.
+Pay attention, that <b>x</b> is a middle argument!
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+constexpr T <span class="Att">Cap</span>(T a,T x,T b) { return (x&lt;a)?a:( (b&lt;x)?b:x ); }
+
+</pre>
+
+<p>
+<b>Fit()</b> checks that the given value <b>x</b> belongs to the interval <b>[a,b]</b>. 
+To work properly, make sure that <b>a &lt;= b</b>.
+Pay attention, that <b>x</b> is a middle argument!
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+constexpr bool <span class="Att">Fit</span>(T a,T x,T b) { return a&lt;=x && x&lt;=b; }
+
+</pre>
+
+<p>
+<b>Diff()</b> performs differentiation, i.e. subtracts a value from the previous one and records
 the new value.
 </p>
 

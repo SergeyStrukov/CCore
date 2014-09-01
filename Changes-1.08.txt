@@ -76,6 +76,10 @@ TaskHeap.h
 
   Per-task heap.
 
+gadget/UtilFunc.h
+
+  Cap() and Fit() are added.
+
 --- Updates ----------
 
 Regen
