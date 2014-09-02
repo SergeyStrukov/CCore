@@ -51,6 +51,8 @@ const ulen DLen = 15 ;
 
 const unsigned RepeatTimeout = 20 ; // sec
 
+const unsigned PingRepeatTimeout = 5 ; // sec
+
 enum Packets
  {
   Packet_Data,
@@ -58,6 +60,10 @@ enum Packets
   Packet_Ready,
   Packet_Ack,
   Packet_Stop,
+  
+  Packet_Ping,
+  Packet_Pong,
+  Packet_Close,
   
   Packet_None
  };
