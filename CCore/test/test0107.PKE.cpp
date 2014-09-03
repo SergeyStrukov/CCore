@@ -139,7 +139,7 @@ class Engine : public Funchor_nocopy
      
      uint8 buf[]={1,2,3,4,5};
      
-     return Net::PSec::CreateKeyedHash(HashID_SHA256,Range_const(buf));
+     return CreateKeyedHash(HashID_SHA256,Range_const(buf));
     }
    
    Net::PSec::AbstractHashFunc * createServerKey() const
@@ -148,7 +148,7 @@ class Engine : public Funchor_nocopy
      
      uint8 buf[]={6,7,8,9,0};
      
-     return Net::PSec::CreateKeyedHash(HashID_SHA256,Range_const(buf));
+     return CreateKeyedHash(HashID_SHA256,Range_const(buf));
     }
    
   public:

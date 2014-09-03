@@ -146,6 +146,16 @@ class ProcessorCore;
 
 class AntiReplay;
 
+/* struct AlgoLen */
+
+struct AlgoLen : NoThrowFlagsBase
+ {
+  ulen blen;
+  ulen hlen;
+  
+  AlgoLen(ulen blen_,ulen hlen_) : blen(blen_),hlen(hlen_) {}
+ };
+
 /* struct AbstractCryptFunc */
 
 struct AbstractCryptFunc : MemBase_nocopy

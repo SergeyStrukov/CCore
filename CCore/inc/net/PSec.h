@@ -127,7 +127,7 @@ class ProcessorStatInfo : public Counters<ProcessorEvent,ProcessorEventLim>
 
 /* class PacketProcessor */
 
-class PacketProcessor : NoCopy
+class PacketProcessor : public MemBase_nocopy
  {
    ProcessorCore core;
    
@@ -211,9 +211,9 @@ class PacketProcessor : NoCopy
    
    ~PacketProcessor();
    
-   ulen getOutDelta(ulen len);
+   ulen getOutDelta(ulen len) const;
    
-   ulen getMaxInpLen(ulen len);
+   ulen getMaxInpLen(ulen len) const;
    
    struct InboundResult
     {
@@ -246,6 +246,43 @@ class PacketProcessor : NoCopy
    void getStat(ProcessorStatInfo &ret) const { ret=stat; }
    
    bool response(const KeyResponse &resp,Packet<uint8> packet,PacketFormat format);
+   
+   class IOLen : NoCopy
+    {
+      ulen blen;
+      ulen hlen;
+      
+      ulen header_len;
+      ulen min_out_len;
+      
+     private: 
+      
+      ulen outLen(ulen len) const
+       { 
+        ulen l=len+hlen;
+        
+        ulen s=RoundUpCount(l,DLen)+l;
+        
+        return header_len+RoundUp(s,blen); 
+       }
+
+      ulen inpLen(ulen len) const
+       { 
+        ulen s=RoundDown(len-header_len,blen);
+        
+        ulen l=s-RoundUpCount(s,DLen+1);
+        
+        return l-hlen; 
+       }
+      
+     public:
+      
+      explicit IOLen(AlgoLen algo_len);
+      
+      ulen getOutDelta(ulen len) const;
+      
+      ulen getMaxInpLen(ulen len) const;
+    };
  };
 
 /* class EndpointDevice */
@@ -341,54 +378,52 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       ulen use_count = 0 ;
       bool opened = true ;
      
-      MasterKeyPtr replace_skey;
-      ClientProfilePtr replace_client_profile;
-     
       using ProcLocked = Locked<Mutex,PacketProcessor> ;
      
       Mutex mutex;
      
-      PacketProcessor proc;
-     
+      OwnPtr<PacketProcessor> proc;
       ClientProfilePtr client_profile;
      
-      void do_replace(MasterKeyPtr &skey,ClientProfilePtr &client_profile);
-     
+      OwnPtr<PacketProcessor> replace_proc;
+      ClientProfilePtr replace_client_profile;
+      
+     private: 
+      
       void response(XPoint point,const KeyResponse &resp,Engine *engine);
+      
+      void response(XPoint point,const KeyResponse &resp,Engine *engine,PacketList &list);
       
      public: 
      
-      Proc(const MasterKey &master_key,ClientProfilePtr &client_profile_)
-       : mutex("PSec::MultipointDevice::Proc"),
-         proc(master_key)
-       {
-        client_profile.set(client_profile_.detach());
-       }
+      Proc(const MasterKey &master_key,ClientProfilePtr &client_profile);
+      
+      void replace(const MasterKey &master_key,ClientProfilePtr &client_profile);
       
       AbstractClientProfile * getClientProfile() const { return client_profile.getPtr(); }
       
-      void incUse() { use_count++; }
+      bool incUse(); // true to use
       
       bool decUse(); // true to del
       
-      bool close(); // true to del
+      bool close(Engine *engine); // true to del
       
-      void replace(MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+      bool tick(XPoint point,Engine *engine,PacketList &list); // true to del
       
       void inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data,Engine *engine);
       
       void outbound(XPoint point,Packet<uint8> packet,Packets type,Engine *engine);
       
-      bool tick(XPoint point,Engine *engine); // true to del
+      void outbound(XPoint point,Packet<uint8> packet,Packets type,Engine *engine,PacketList &list);
     };
   
    class Engine : NoCopy , InboundProc
     {
       PacketMultipointDevice *dev;
       
-      AttachmentHost<InboundProc> host;
+      ulen max_clients;
       
-      using Hook = AttachmentHost<InboundProc>::Hook ;
+      AttachmentHost<InboundProc> host;
       
       ulen outbound_delta;
       PacketFormat outbound_format;
@@ -400,8 +435,14 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       
       RadixTreeMap<XPoint,Proc> map;
       
+      friend class Proc;
+      
      private: 
  
+      static ulen GetMaxInpLen(PtrLen<const AlgoLen> algo_lens,ulen len);
+      
+      static ulen GetOutDelta(PtrLen<const AlgoLen> algo_lens,ulen len);
+      
       // InboundProc
       
       virtual void inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data);
@@ -410,7 +451,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
 
      public:
       
-      explicit Engine(PacketMultipointDevice *dev);
+      Engine(PacketMultipointDevice *dev,PtrLen<const AlgoLen> algo_lens,ulen max_clients);
       
       ~Engine();
       
@@ -435,13 +476,15 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       AbstractClientProfile * getClientProfile(XPoint point) const;
     };
    
+   using Hook = AttachmentHost<InboundProc>::Hook ;
+   
    ObjHook hook;
    
    Engine engine;
    
   public:
   
-   MultipointDevice(StrLen mp_dev_name);
+   MultipointDevice(StrLen mp_dev_name,PtrLen<const AlgoLen> algo_lens,ulen max_clients);
    
    virtual ~MultipointDevice();
    

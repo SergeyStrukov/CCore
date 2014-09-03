@@ -32,16 +32,16 @@ class Engine : public Funchor_nocopy
    Net::AsyncUDPEndpointDevice client_pke_ep;
    Net::AsyncUDPEndpointDevice client_psec_ep;
    
-   ObjMaster master_client_pke;
-   ObjMaster master_client_psec;
+   ObjMaster client_pke_master;
+   ObjMaster client_psec_master;
   
-   Net::PSec::ClientNegotiant client;
+   Net::PSec::ClientNegotiant client_negotiant;
    
    Net::AsyncUDPMultipointDevice server_pke_mp;
    Net::AsyncUDPMultipointDevice server_psec_mp;
    
-   ObjMaster master_server_pke;
-   ObjMaster master_server_psec;
+   ObjMaster server_pke_master;
+   ObjMaster server_psec_master;
   
    class ClientDatabase : NoCopy , public Net::PSec::ClientDatabase
     {
@@ -91,7 +91,7 @@ class Engine : public Funchor_nocopy
    
    Net::PSec::MultipointDevice server_psec;
   
-   Net::PSec::ServerNegotiant server;
+   Net::PSec::ServerNegotiant server_negotiant;
   
    Sem sem;
    
@@ -110,7 +110,7 @@ class Engine : public Funchor_nocopy
      
      uint8 buf[]={1,2,3,4,5};
      
-     return Net::PSec::CreateKeyedHash(HashID_SHA256,Range_const(buf));
+     return CreateKeyedHash(HashID_SHA256,Range_const(buf));
     }
    
    Net::PSec::AbstractHashFunc * createServerKey() const
@@ -119,7 +119,7 @@ class Engine : public Funchor_nocopy
      
      uint8 buf[]={6,7,8,9,0};
      
-     return Net::PSec::CreateKeyedHash(HashID_SHA256,Range_const(buf));
+     return CreateKeyedHash(HashID_SHA256,Range_const(buf));
     }
    
   public:
@@ -127,18 +127,18 @@ class Engine : public Funchor_nocopy
    Engine()
     : client_pke_ep(Net::PKEClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),Net::PKEServerUDPort)),
       client_psec_ep(Net::PSecClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),Net::PSecServerUDPort)),
-      master_client_pke(client_pke_ep,"ClientPKE"),
-      master_client_psec(client_psec_ep,"ClientPSec"),
-      client("ClientPKE",function_done()),
+      client_pke_master(client_pke_ep,"ClientPKE"),
+      client_psec_master(client_psec_ep,"ClientPSec"),
+      client_negotiant("ClientPKE",function_done()),
       
       server_pke_mp(Net::PKEServerUDPort),
       server_psec_mp(Net::PSecServerUDPort),
-      master_server_pke(server_pke_mp,"ServerPKE"),
-      master_server_psec(server_psec_mp,"ServerPSec"),       
+      server_pke_master(server_pke_mp,"ServerPKE"),
+      server_psec_master(server_psec_mp,"ServerPSec"),       
       
       client_db(this,"client"),
-      server_psec("ServerPSec"),
-      server("ServerPKE",client_db,server_psec)
+      server_psec("ServerPSec",Empty,10),
+      server_negotiant("ServerPKE",client_db,server_psec)
     {
     }
     
@@ -155,13 +155,13 @@ class Engine : public Funchor_nocopy
       PrimeKeyPtr client_key(createClientKey());
       PrimeKeyPtr server_key(createServerKey());
      
-      client.prepare(client_id,client_key,server_key);
+      client_negotiant.prepare(client_id,client_key,server_key);
      }
      
      {
       PrimeKeyPtr server_key(createServerKey());
       
-      server.prepare(server_key);
+      server_negotiant.prepare(server_key);
      }
     }
    
@@ -169,9 +169,9 @@ class Engine : public Funchor_nocopy
     {
      using namespace Net::PSec;
      
-     server.start();
+     server_negotiant.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
      
-     client.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
+     client_negotiant.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
     }
    
    bool wait(MSec timeout)
@@ -226,6 +226,8 @@ bool Testit<1030>::Main()
    
    if( engine.wait(10_sec) )
      {
+      Printf(Con,"client done\n");
+      
       // TODO
      }
   }

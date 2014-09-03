@@ -106,17 +106,9 @@ bool Testit<106>::Main()
   format.suffix=0;
   format.max_data=1472;
 
-  Net::PSec::CryptAlgoSelect algo_select;
+  Net::PSec::CryptAlgoSelect algo_select(Net::PSec::CryptID_AES128,Net::PSec::HashID_SHA224,Net::PSec::DHGroupID_I);
   
-  algo_select.crypt_id=Net::PSec::CryptID_AES128;
-  algo_select.hash_id=Net::PSec::HashID_SHA224;
-  algo_select.dhg_id=Net::PSec::DHGroupID_I;
-  
-  Net::PSec::SessionKeyParam param;
-  
-  param.keyset_len=20;
-  param.ttl=10;
-  param.utl=100000;
+  Net::PSec::SessionKeyParam param(20,10,100000);
   
   Net::PSec::SessionKey master_key(algo_select,param);
   

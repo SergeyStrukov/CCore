@@ -154,7 +154,7 @@ PacketProcessor::~PacketProcessor()
  {
  }
 
-ulen PacketProcessor::getOutDelta(ulen len)
+ulen PacketProcessor::getOutDelta(ulen len) const
  {
   ulen delta=0; 
   
@@ -166,7 +166,7 @@ ulen PacketProcessor::getOutDelta(ulen len)
   return delta;
  }
 
-ulen PacketProcessor::getMaxInpLen(ulen len)
+ulen PacketProcessor::getMaxInpLen(ulen len) const
  {
   if( len<min_out_len )
     {
@@ -506,6 +506,39 @@ bool PacketProcessor::response(const KeyResponse &resp,Packet<uint8> packet,Pack
   return true;
  }
 
+/* class PacketProcessor::IOLen */
+
+PacketProcessor::IOLen::IOLen(AlgoLen algo_len) 
+ : blen(algo_len.blen),
+   hlen(algo_len.hlen) 
+ {
+  header_len=RoundUp(2*HeaderLen,blen);
+  
+  min_out_len=outLen(64);
+ }
+
+ulen PacketProcessor::IOLen::getOutDelta(ulen len) const
+ {
+  ulen delta=0; 
+  
+  for(ulen cnt=Min<ulen>(DLen*blen,len+1); cnt ;cnt--,len--)
+    {
+     Replace_max(delta,outLen(len)-len);
+    }
+  
+  return delta;
+ }
+
+ulen PacketProcessor::IOLen::getMaxInpLen(ulen len) const
+ {
+  if( len<min_out_len )
+    {
+     Printf(Exception,"CCore::Net::PSec::PacketProcessor::IOLen::getMaxInpLen(#;) : too short",len);
+    }
+  
+  return inpLen(len);
+ }
+
 /* class EndpointDevice::Engine */
 
 void EndpointDevice::Engine::response(const KeyResponse &resp)
@@ -688,18 +721,7 @@ void EndpointDevice::detach()
 
 /* class MultipointDevice::Proc */
 
-#if 0
-
-void MultipointDevice::Proc::do_replace(MasterKeyPtr &skey,ClientProfilePtr &client_profile_)
- {
-  opened=true;
-  
-  //proc.replace(*skey);
-  
-  Swap(client_profile,client_profile_);
- }
-
-void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,MultipointDevice *host_dev)
+void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engine *engine)
  {
   switch( resp.type )
     {
@@ -708,70 +730,134 @@ void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Multi
      case Packet_Ack :
      case Packet_Stop :
       {
-       Packet<uint8> packet=host_dev->pset.try_get();
+       Packet<uint8> packet=engine->pset.try_get();
        
-       if( ProcLocked(mutex,proc)->response(resp,packet,host_dev->outbound_format) )
+       if( ProcLocked(mutex,*proc)->response(resp,packet,engine->outbound_format) )
          {
-          outbound(point,packet,resp.type,host_dev);
+          outbound(point,packet,resp.type,engine);
          }
       }
      break;
     }
  }
 
+void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engine *engine,PacketList &list)
+ {
+  switch( resp.type )
+    {
+     case Packet_Alert :
+     case Packet_Ready :
+     case Packet_Ack :
+     case Packet_Stop :
+      {
+       Packet<uint8> packet=engine->pset.try_get();
+       
+       if( ProcLocked(mutex,*proc)->response(resp,packet,engine->outbound_format) )
+         {
+          outbound(point,packet,resp.type,engine,list);
+         }
+      }
+     break;
+    }
+ }
+
+MultipointDevice::Proc::Proc(const MasterKey &master_key,ClientProfilePtr &client_profile_)
+ : mutex("PSec::MultipointDevice::Proc"),
+   proc(new PacketProcessor(master_key))
+ {
+  client_profile.set(client_profile_.detach());
+ }
+
+void MultipointDevice::Proc::replace(const MasterKey &master_key,ClientProfilePtr &client_profile_)
+ {
+  PacketProcessor *ptr=new PacketProcessor(master_key);
+  
+  if( use_count )
+    {
+     replace_proc.set(ptr);
+     replace_client_profile.set(client_profile_.detach());
+     
+     opened=false;
+    }
+  else
+    {
+     replace_proc.set(0);
+     replace_client_profile.set(0);
+     
+     proc.set(ptr);
+     client_profile.set(client_profile_.detach());
+     
+     opened=true;
+    }
+ }
+
+bool MultipointDevice::Proc::incUse()
+ {
+  if( opened )
+    {
+     use_count++;
+     
+     return true;
+    }
+  
+  return false;
+ }
+
 bool MultipointDevice::Proc::decUse()
  {
   use_count--;
   
-  if( !use_count && +replace_skey )
+  if( !use_count )
     {
-     do_replace(replace_skey,replace_client_profile);
+     if( +replace_proc )
+       {
+        proc.set(replace_proc.detach());
+        client_profile.set(replace_client_profile.detach());
+        
+        opened=true;
+       }
      
-     replace_skey.set(0);
-     replace_client_profile.set(0);
+     return !opened;
     }
-  
-  return !use_count && !opened ;
+  else
+    {
+     return false;
+    }
  }
 
-bool MultipointDevice::Proc::close()
+bool MultipointDevice::Proc::close(Engine *)
  {
   opened=false;
   
   return !use_count;
  }
 
-void MultipointDevice::Proc::replace(MasterKeyPtr &skey_,ClientProfilePtr &client_profile_)
- {
-  replace_skey.set(0);
-  replace_client_profile.set(0);
- 
-  if( use_count )
-    {
-     Swap(replace_skey,skey_);
-     Swap(replace_client_profile,client_profile_);
-    }
-  else
-    {
-     do_replace(skey_,client_profile_);
-    }
- }
-
-void MultipointDevice::Proc::inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data,MultipointDevice *host_dev)
+bool MultipointDevice::Proc::tick(XPoint point,Engine *engine,PacketList &list)
  {
   KeyResponse resp;
   
-  auto result=ProcLocked(mutex,proc)->inbound(resp,Range(const_cast<uint8 *>(data.ptr),data.len));
+  ProcLocked(mutex,*proc)->tick(resp);
+  
+  response(point,resp,engine,list);
+  
+  return false;
+ }
+
+void MultipointDevice::Proc::inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data,Engine *engine)
+ {
+  KeyResponse resp;
+  
+  auto result=ProcLocked(mutex,*proc)->inbound(resp,Range(const_cast<uint8 *>(data.ptr),data.len));
   
   if( result.consumed )
     {
-     response(point,resp,host_dev);
+     response(point,resp,engine);
      
      packet.complete();
     }
   else
     {
-     Hook hook(host_dev->host);
+     Hook hook(engine->host);
     
      if( +hook ) 
        {
@@ -784,17 +870,17 @@ void MultipointDevice::Proc::inbound(XPoint point,Packet<uint8> packet,PtrLen<co
     }
  }
 
-void MultipointDevice::Proc::outbound(XPoint point,Packet<uint8> packet,Packets type,MultipointDevice *host_dev)
+void MultipointDevice::Proc::outbound(XPoint point,Packet<uint8> packet,Packets type,Engine *engine)
  {
-  if( packet.checkRange(host_dev->outbound_format) )
+  if( packet.checkRange(engine->outbound_format) )
     {
-     auto result=ProcLocked(mutex,proc)->outbound(packet.getRange(host_dev->outbound_format),host_dev->outbound_delta,type);
+     auto result=ProcLocked(mutex,*proc)->outbound(packet.getRange(engine->outbound_format),engine->outbound_delta,type);
      
      if( result.ok )
        {
         packet.setDataLen(packet.getDataLen()-result.delta);       
        
-        host_dev->dev->outbound(point,packet);
+        engine->dev->outbound(point,packet);
        }
      else
        {
@@ -803,24 +889,66 @@ void MultipointDevice::Proc::outbound(XPoint point,Packet<uint8> packet,Packets 
     }
   else
     {
-     ProcLocked(mutex,proc)->count(ProcessorEvent_TxBadFormat);
+     ProcLocked(mutex,*proc)->count(ProcessorEvent_TxBadFormat);
     
      packet.complete();
     }
  }
 
-void MultipointDevice::Proc::tick(XPoint point,MultipointDevice *host_dev)
+void MultipointDevice::Proc::outbound(XPoint point,Packet<uint8> packet,Packets type,Engine *engine,PacketList &list)
  {
-  KeyResponse resp;
-  
-  ProcLocked(mutex,proc)->tick(resp);
-  
-  response(point,resp,host_dev);
+  if( packet.checkRange(engine->outbound_format) )
+    {
+     auto result=ProcLocked(mutex,*proc)->outbound(packet.getRange(engine->outbound_format),engine->outbound_delta,type);
+     
+     if( result.ok )
+       {
+        packet.setDataLen(packet.getDataLen()-result.delta);       
+       
+        list.put(packet.pushExt<XPoint>(point));  
+       }
+     else
+       {
+        packet.complete();
+       }
+    }
+  else
+    {
+     ProcLocked(mutex,*proc)->count(ProcessorEvent_TxBadFormat);
+    
+     packet.complete();
+    }
  }
 
-#endif
-
 /* class MultipointDevice::Engine */
+
+ulen MultipointDevice::Engine::GetMaxInpLen(PtrLen<const AlgoLen> algo_lens,ulen len)
+ {
+  ulen ret=MaxULen;
+  
+  for(AlgoLen algo_len : algo_lens )
+    {
+     PacketProcessor::IOLen iolen(algo_len);
+     
+     Replace_min(ret,iolen.getMaxInpLen(len));
+    }
+  
+  return ret;
+ }
+
+ulen MultipointDevice::Engine::GetOutDelta(PtrLen<const AlgoLen> algo_lens,ulen len)
+ {
+  ulen ret=0;
+  
+  for(AlgoLen algo_len : algo_lens )
+    {
+     PacketProcessor::IOLen iolen(algo_len);
+     
+     Replace_max(ret,iolen.getOutDelta(len));
+    }
+  
+  return ret;
+ }
 
 void MultipointDevice::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data)
  {
@@ -831,7 +959,7 @@ void MultipointDevice::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<
   
    obj=map.find(point);
    
-   if( obj ) obj->incUse();
+   if( obj && !obj->incUse() ) obj=0;
   }
   
   if( obj )
@@ -858,18 +986,42 @@ void MultipointDevice::Engine::tick()
    if( +hook ) hook->tick();
   }
   
-  Mutex::Lock lock(mutex);
+  PacketList list;
+  
+  {
+   Mutex::Lock lock(mutex);
 
-  map.delIf( [this] (XPoint point,Proc &obj) { return obj.tick(point,this); } );
+   map.delIf( [this,&list] (XPoint point,Proc &obj) { return obj.tick(point,this,list); } );
+  } 
+  
+  while( PacketHeader *packet_=list.get() )
+    {
+     Packet<uint8,XPoint> packet=packet_;
+     
+     XPoint point=*packet.getExt();
+     
+     dev->outbound(point,packet.popExt());
+    }
  }
 
-MultipointDevice::Engine::Engine(PacketMultipointDevice *dev_)
+MultipointDevice::Engine::Engine(PacketMultipointDevice *dev_,PtrLen<const AlgoLen> algo_lens,ulen max_clients_)
  : dev(dev_),
+   max_clients(max_clients_),
    host("PSec::MultipointDevice","PSec::MultipointDevice.host"),
    pset("PSec::MultipointDevice.pset"),
    mutex("PSec::MultipointDevice.mutex")
  {
-  // TODO
+  PacketFormat fmt=dev->getOutboundFormat();
+
+  ulen len=GetMaxInpLen(algo_lens,fmt.max_data);
+  
+  outbound_delta=GetOutDelta(algo_lens,len);
+  
+  outbound_format.prefix=fmt.prefix+outbound_delta;
+  outbound_format.max_data=len;
+  outbound_format.suffix=fmt.suffix;
+  
+  max_inbound_len=GetMaxInpLen(algo_lens,dev->getMaxInboundLen());
   
   dev->attach(this);
  }
@@ -898,7 +1050,7 @@ void MultipointDevice::Engine::outbound(XPoint point,Packet<uint8> packet)
   
    obj=map.find(point);
    
-   if( obj ) obj->incUse();
+   if( obj && !obj->incUse() ) obj=0;
   }
   
   if( obj )
@@ -934,19 +1086,19 @@ void MultipointDevice::Engine::detach()
 
 auto MultipointDevice::Engine::open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile) -> OpenErrorCode
  {
-  // TODO client number limit
-  
   SilentReportException report;
   
   try
     {
      Mutex::Lock lock(mutex);
      
+     if( map.getCount()>=max_clients ) return OpenError_OpenLimit;
+     
      auto result=map.find_or_add(point,*skey,client_profile);
      
      if( !result.new_flag )
        {
-        result.obj->replace(skey,client_profile);
+        result.obj->replace(*skey,client_profile);
        }
      
      return Open_Ok;
@@ -963,14 +1115,14 @@ void MultipointDevice::Engine::close(XPoint point)
  
   Proc *obj=map.find(point);
   
-  if( obj && obj->close() ) map.del(point);
+  if( obj && obj->close(this) ) map.del(point);
  }
 
 void MultipointDevice::Engine::closeAll()
  {
   Mutex::Lock lock(mutex);
 
-  // TODO
+  map.delIf( [this] (XPoint,Proc &obj) { return obj.close(this); } );
  }
 
 AbstractClientProfile * MultipointDevice::Engine::getClientProfile(XPoint point) const
@@ -986,9 +1138,9 @@ AbstractClientProfile * MultipointDevice::Engine::getClientProfile(XPoint point)
 
 /* class MultipointDevice */
 
-MultipointDevice::MultipointDevice(StrLen mp_dev_name)
+MultipointDevice::MultipointDevice(StrLen mp_dev_name,PtrLen<const AlgoLen> algo_lens,ulen max_clients)
  : hook(mp_dev_name),
-   engine(hook)
+   engine(hook,algo_lens,max_clients)
  {
  }
 
