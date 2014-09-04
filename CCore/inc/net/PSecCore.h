@@ -94,6 +94,8 @@ void PosDec(UInt &var,UInt1 val)
 
 /* classes */
 
+struct AlgoLen;
+
 struct AbstractCryptFunc;
 
 template <class Crypt> class CryptFunc;

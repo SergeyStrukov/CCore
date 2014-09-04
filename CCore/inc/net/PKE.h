@@ -127,6 +127,8 @@ AbstractHashFunc * CreateKeyedHash(HashID hash_id,PtrLen<const uint8> key);
 
 AbstractDHGroup * CreateDHGroup(DHGroupID dhg_id);
 
+ulen GetBLen(CryptID crypt_id);
+
 ulen GetKLen(CryptID crypt_id);
 
 ulen GetHLen(HashID hash_id);
@@ -148,6 +150,8 @@ struct AbstractClientID;
 class ClientID;
 
 struct ClientDatabase;
+
+class AlgoSet;
 
 struct NegotiantData;
 
@@ -412,6 +416,28 @@ struct ClientDatabase
   virtual FindErrorCode findClient(PtrLen<const uint8> client_id,PrimeKeyPtr &client_key,ClientProfilePtr &client_profile) const =0;
  };
 
+/* class AlgoSet */
+
+class AlgoSet : NoCopy
+ {
+   DynArray<CryptAlgoSelect> algo_list;
+   DynArray<AlgoLen> algo_lens;
+  
+  public:
+  
+   AlgoSet();
+   
+   ~AlgoSet();
+   
+   void add(CryptID crypt_id,HashID hash_id,DHGroupID dhg_id);
+   
+   void addDefault();
+   
+   PtrLen<const CryptAlgoSelect> getAlgoList() const { return Range(algo_list); }
+   
+   PtrLen<const AlgoLen> getAlgoLens() const { return Range(algo_lens); }
+ };
+
 /* struct NegotiantData */
 
 struct NegotiantData : NoCopy
@@ -535,8 +561,6 @@ class ClientNegotiant : NoCopy
       CryptAlgoSelect algo_list[MaxAlgos];
       ulen algo_count = 0 ;
       
-      MasterKeyPtr skey;
-      
       uint8 send_buf[MaxPKETransLen];
       ulen send_len = 0 ;
       
@@ -598,7 +622,7 @@ class ClientNegotiant : NoCopy
       
       PtrLen<const uint8> getSendData() const { return Range(send_buf,send_len); }
       
-      void getSessionKey(MasterKeyPtr &skey_) { Swap(skey,skey_); }
+      void getSessionKey(MasterKeyPtr &skey_) { Swap(neg_data.skey,skey_); }
     };
   
    class Engine : NoCopy , PacketEndpointDevice::InboundProc

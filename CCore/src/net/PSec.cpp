@@ -16,6 +16,8 @@
 #include <CCore/inc/net/PSec.h>
 
 #include <CCore/inc/Exception.h>
+
+#include <CCore/inc/Print.h>
  
 namespace CCore {
 namespace Net {

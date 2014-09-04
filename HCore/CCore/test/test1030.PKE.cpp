@@ -15,10 +15,12 @@
 
 #include <CCore/test/test.h>
 #include <CCore/test/testRun.h>
+#include <CCore/test/testNet.h>
 
 #include <CCore/inc/net/AsyncUDPDevice.h>
 #include <CCore/inc/net/PKE.h>
 #include <CCore/inc/net/PSec.h>
+#include <CCore/inc/net/EchoDevice.h>
 #include <CCore/inc/crypton/SHA.h>
 
 namespace App {
@@ -29,19 +31,28 @@ namespace Private_1030 {
 
 class Engine : public Funchor_nocopy
  {
+   class AlgoSet : public Net::PSec::AlgoSet
+    {
+     public:
+     
+      AlgoSet() { addDefault(); }
+    };
+  
+   AlgoSet algo_set;
+  
    Net::AsyncUDPEndpointDevice client_pke_ep;
    Net::AsyncUDPEndpointDevice client_psec_ep;
    
-   ObjMaster client_pke_master;
-   ObjMaster client_psec_master;
+   ObjMaster client_pke_ep_master;
+   ObjMaster client_psec_ep_master;
   
    Net::PSec::ClientNegotiant client_negotiant;
    
    Net::AsyncUDPMultipointDevice server_pke_mp;
    Net::AsyncUDPMultipointDevice server_psec_mp;
    
-   ObjMaster server_pke_master;
-   ObjMaster server_psec_master;
+   ObjMaster server_pke_mp_master;
+   ObjMaster server_psec_mp_master;
   
    class ClientDatabase : NoCopy , public Net::PSec::ClientDatabase
     {
@@ -90,8 +101,12 @@ class Engine : public Funchor_nocopy
    ClientDatabase client_db;
    
    Net::PSec::MultipointDevice server_psec;
+   
+   ObjMaster server_psec_master;
   
    Net::PSec::ServerNegotiant server_negotiant;
+   
+   Net::EchoDevice echo;
   
    Sem sem;
    
@@ -122,23 +137,42 @@ class Engine : public Funchor_nocopy
      return CreateKeyedHash(HashID_SHA256,Range_const(buf));
     }
    
+   void echo_test(MSec time)
+    {
+     PacketSource src(1000,1200);
+     PacketTask client(src,"client");
+     
+     RunTasks run(src.function_stop());
+
+     run(client.function_run());
+     
+     Task::Sleep(time);
+     
+     ShowStat(src,"Src");
+     ShowStat(echo,"Echo");
+     ShowStat(client,"Client");
+    }
+   
   public:
     
    Engine()
     : client_pke_ep(Net::PKEClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),Net::PKEServerUDPort)),
       client_psec_ep(Net::PSecClientUDPort,Net::UDPoint(Net::IPAddress(127,0,0,1),Net::PSecServerUDPort)),
-      client_pke_master(client_pke_ep,"ClientPKE"),
-      client_psec_master(client_psec_ep,"ClientPSec"),
-      client_negotiant("ClientPKE",function_done()),
+      client_pke_ep_master(client_pke_ep,"client_pke_ep"),
+      client_psec_ep_master(client_psec_ep,"client_psec_ep"),
+      client_negotiant("client_pke_ep",function_done()),
       
       server_pke_mp(Net::PKEServerUDPort),
       server_psec_mp(Net::PSecServerUDPort),
-      server_pke_master(server_pke_mp,"ServerPKE"),
-      server_psec_master(server_psec_mp,"ServerPSec"),       
+      server_pke_mp_master(server_pke_mp,"server_pke_mp"),
+      server_psec_mp_master(server_psec_mp,"server_psec_mp"),       
       
       client_db(this,"client"),
-      server_psec("ServerPSec",Empty,10),
-      server_negotiant("ServerPKE",client_db,server_psec)
+      server_psec("server_psec_mp",algo_set.getAlgoLens(),10),
+      server_psec_master(server_psec,"server_psec"),
+      server_negotiant("server_pke_mp",client_db,server_psec),
+      
+      echo("server_psec")
     {
     }
     
@@ -169,9 +203,9 @@ class Engine : public Funchor_nocopy
     {
      using namespace Net::PSec;
      
-     server_negotiant.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
+     server_negotiant.start(algo_set.getAlgoList());
      
-     client_negotiant.start(CryptAlgoSelect(CryptID_AES128,HashID_SHA256,DHGroupID_I));
+     client_negotiant.start(algo_set.getAlgoList());
     }
    
    bool wait(MSec timeout)
@@ -179,11 +213,24 @@ class Engine : public Funchor_nocopy
      return sem.take(timeout);
     }
    
+   void test(MSec time)
+    {
+     Net::PSec::MasterKeyPtr skey;
+     
+     client_negotiant.getSessionKey(skey);
+     
+     Net::PSec::EndpointDevice dev("client_psec_ep",*skey);
+     
+     Net::AsyncUDPEndpointDevice::StartStop start_stop(client_psec_ep);
+     
+     ObjMaster dev_master(dev,"client");
+     
+     echo_test(time);
+    }
+   
    class StartStop : NoCopy
     {
       Net::AsyncUDPEndpointDevice::StartStop client_pke_ep;
-      Net::AsyncUDPEndpointDevice::StartStop client_psec_ep;
-    
       Net::AsyncUDPMultipointDevice::StartStop server_pke_mp;
       Net::AsyncUDPMultipointDevice::StartStop server_psec_mp;
       
@@ -191,7 +238,6 @@ class Engine : public Funchor_nocopy
      
       explicit StartStop(Engine &engine)
        : client_pke_ep(engine.client_pke_ep),
-         client_psec_ep(engine.client_psec_ep),
          server_pke_mp(engine.server_pke_mp),
          server_psec_mp(engine.server_psec_mp)
        {
@@ -228,7 +274,7 @@ bool Testit<1030>::Main()
      {
       Printf(Con,"client done\n");
       
-      // TODO
+      engine.test(10_sec);
      }
   }
   

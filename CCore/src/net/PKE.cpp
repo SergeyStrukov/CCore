@@ -132,6 +132,24 @@ struct CreateDHGroupCtx
    }
  };
 
+struct GetBLenCtx
+ {
+  using RetType = ulen ;
+  
+  template <class T>
+  static RetType call()
+   {
+    return T::BlockLen;
+   }
+  
+  static RetType defcall(uint8 crypt_id)
+   {
+    Printf(Exception,"CCore::Net::PSec::GetBLen(#;) : unknown crypt_id",crypt_id);
+    
+    return 0;
+   }
+ };
+
 struct GetKLenCtx
  {
   using RetType = ulen ;
@@ -228,6 +246,11 @@ AbstractHashFunc * CreateKeyedHash(HashID hash_id,PtrLen<const uint8> key)
 AbstractDHGroup * CreateDHGroup(DHGroupID dhg_id)
  {
   return Meta::TypeSwitch<DHGCaseList>::Switch(dhg_id,CreateDHGroupCtx());
+ }
+
+ulen GetBLen(CryptID crypt_id)
+ {
+  return Meta::TypeSwitch<EncryptCaseList>::Switch(crypt_id,GetBLenCtx());
  }
 
 ulen GetKLen(CryptID crypt_id)
@@ -426,6 +449,38 @@ uint8 ClientID::getLen() const
 void ClientID::getID(uint8 buf[ /* Len */ ]) const
  {
   Range(name,len).copyTo(buf);
+ }
+
+/* class AlgoSet */
+
+AlgoSet::AlgoSet()
+ {
+ }
+
+AlgoSet::~AlgoSet()
+ {
+ }
+
+void AlgoSet::add(CryptID crypt_id,HashID hash_id,DHGroupID dhg_id)
+ {
+  algo_list.reserve(1);
+  algo_lens.reserve(1);
+  
+  algo_list.append_fill(crypt_id,hash_id,dhg_id);
+  algo_lens.append_fill(GetBLen(crypt_id),GetHLen(hash_id));
+ }
+
+void AlgoSet::addDefault()
+ {
+  add(CryptID_AES256,HashID_SHA256,DHGroupID_II);
+  add(CryptID_AES256,HashID_SHA224,DHGroupID_II);
+  add(CryptID_AES192,HashID_SHA256,DHGroupID_II);
+  add(CryptID_AES192,HashID_SHA224,DHGroupID_II);
+  
+  add(CryptID_AES256,HashID_SHA256,DHGroupID_I);
+  add(CryptID_AES256,HashID_SHA224,DHGroupID_I);
+  add(CryptID_AES192,HashID_SHA256,DHGroupID_I);
+  add(CryptID_AES192,HashID_SHA224,DHGroupID_I);
  }
 
 /* struct NegotiantData */
