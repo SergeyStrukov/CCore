@@ -622,7 +622,7 @@ class ClientNegotiant : NoCopy
       
       PtrLen<const uint8> getSendData() const { return Range(send_buf,send_len); }
       
-      void getSessionKey(MasterKeyPtr &skey_) { Swap(neg_data.skey,skey_); }
+      void getSessionKey(MasterKeyPtr &ret) { MoveBySwap(ret,neg_data.skey); }
     };
   
    class Engine : NoCopy , PacketEndpointDevice::InboundProc
@@ -697,7 +697,7 @@ class ClientNegotiant : NoCopy
      start(Range_const(algo_list));
     }
    
-   void getSessionKey(MasterKeyPtr &skey) { return engine.getSessionKey(skey); }
+   void getSessionKey(MasterKeyPtr &ret) { return engine.getSessionKey(ret); }
  };
 
 /* class ServerNegotiant */
@@ -804,7 +804,6 @@ class ServerNegotiant : NoCopy
       bool enable = false ;
       
       DynArray<CryptAlgoSelect> algo_list;
-      bool algo_filter = false ;
       
       RadixTreeMap<XPoint,Proc> map;
       
@@ -834,8 +833,6 @@ class ServerNegotiant : NoCopy
       
       void prepare(PrimeKeyPtr &server_key,SessionKeyParam param);
       
-      void start();
-      
       void start(PtrLen<const CryptAlgoSelect> algo_list);
     };
   
@@ -854,8 +851,6 @@ class ServerNegotiant : NoCopy
    ~ServerNegotiant();
    
    void prepare(PrimeKeyPtr &server_key,SessionKeyParam param={}) { engine.prepare(server_key,param); }
-   
-   void start() { engine.start(); }
    
    void start(PtrLen<const CryptAlgoSelect> algo_list) { engine.start(algo_list); }
    

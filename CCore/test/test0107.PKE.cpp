@@ -88,28 +88,28 @@ class Engine : public Funchor_nocopy
       
       // Net::PSec::EndpointManager
       
-      virtual OpenErrorCode open(Net::XPoint point,Net::PSec::MasterKeyPtr &skey,Net::PSec::ClientProfilePtr &client_profile)
+      virtual OpenErrorCode open(Net::XPoint pke_point,Net::PSec::MasterKeyPtr &skey,Net::PSec::ClientProfilePtr &client_profile)
        {
         Used(skey);
         Used(client_profile);
         
-        Printf(Con,"open(#;)\n",point);
+        Printf(Con,"open(#;)\n",pke_point);
         
         return Open_Ok;
        }
       
-      virtual void close(Net::XPoint point)
+      virtual void close(Net::XPoint psec_point)
        {
-        Used(point);
+        Used(psec_point);
        }
 
       virtual void closeAll()
        {
        }
       
-      virtual Net::PSec::AbstractClientProfile * getClientProfile(Net::XPoint point)
+      virtual Net::PSec::AbstractClientProfile * getClientProfile(Net::XPoint psec_point)
        {
-        Used(point);
+        Used(psec_point);
         
         return 0;
        }

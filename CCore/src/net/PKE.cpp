@@ -1137,8 +1137,8 @@ void ClientNegotiant::Proc::prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_k
      Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : not null");
     }
 
-  client_key.set(client_key_.detach());
-  server_key.set(server_key_.detach());
+  MoveBySwap(client_key,client_key_);
+  MoveBySwap(server_key,server_key_);
   
   if( !client_id )
     {
@@ -1828,16 +1828,9 @@ bool ServerNegotiant::Proc::tick(PacketList &list)
 
 bool ServerNegotiant::Engine::filter(const CryptAlgoSelect &algo) const
  {
-  if( algo_filter )
-    {
-     for(const CryptAlgoSelect &obj : algo_list ) if( algo==obj ) return true;
+  for(const CryptAlgoSelect &obj : algo_list ) if( algo==obj ) return true;
      
-     return false;
-    }
-  else
-    {
-     return algo.isValid();
-    } 
+  return false;
  }
 
 void ServerNegotiant::Engine::prepare_send(XPoint point,PtrLen<const uint8> send_data,PacketList &list)
@@ -1988,29 +1981,12 @@ void ServerNegotiant::Engine::prepare(PrimeKeyPtr &server_key_,SessionKeyParam p
 
   param=param_;
   
-  server_key.set(server_key_.detach());
+  MoveBySwap(server_key,server_key_);
   
   if( !server_key )
     {
      Printf(Exception,"CCore::Net::PSec::ServerNegotiant::prepare(...) : no server key");
     }
- }
-
-void ServerNegotiant::Engine::start()
- {
-  Mutex::Lock lock(mutex);
-  
-  if( enable )
-    {
-     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::start(...) : already started");
-    }
-  
-  if( !server_key )
-    {
-     Printf(Exception,"CCore::Net::PSec::ServerNegotiant::start(...) : not prepared");
-    }
-  
-  enable=true;
  }
 
 void ServerNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list_)
@@ -2029,7 +2005,6 @@ void ServerNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list_)
   
   algo_list.extend_copy(algo_list_.len,algo_list_.ptr);
   
-  algo_filter=true;
   enable=true;
  }
 
