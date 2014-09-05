@@ -184,6 +184,39 @@ members of the class, so it may be impossible to implement <b>Swap()</b> without
 an intervening in the class definition. 
 </p>
 
+<h2>Utilities</h2>
+
+<pre>
+
+/* NullBySwap() */
+
+template &lt;class T&gt;
+void <span class="Att">NullBySwap</span>(T &amp;obj)
+ {
+  T temp{};
+
+  Swap(temp,obj);
+ }
+
+/* MoveBySwap() */
+
+template &lt;class T&gt;
+void <span class="Att">MoveBySwap</span>(T &amp;dst,T &amp;src)
+ {
+  Swap(dst,src);
+  
+  NullBySwap(src);
+ }
+
+</pre>
+
+<p>
+
+These two helper functions uses <b>Swap()</b> to nullify and move objects. The object must be swappable and admit
+the default constructor.
+
+</p>
+
 </body>
 
 </html>

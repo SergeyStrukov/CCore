@@ -76,7 +76,27 @@ struct SwapAdapters<false,T>
 
 template <class T>
 void Swap(T &a,T &b) noexcept(EnableNoExcept) { SwapAdapters<Has_objSwap<T>::Ret,T>::Swap(a,b); }
- 
+
+/* NullBySwap() */
+
+template <class T>
+void NullBySwap(T &obj)
+ {
+  T temp{};
+
+  Swap(temp,obj);
+ }
+
+/* MoveBySwap() */
+
+template <class T>
+void MoveBySwap(T &dst,T &src)
+ {
+  Swap(dst,src);
+  
+  NullBySwap(src);
+ }
+
 } // namespace CCore
  
 #endif

@@ -80,6 +80,10 @@ gadget/UtilFunc.h
 
   Cap() and Fit() are added.
 
+Swap.h
+
+  NullBySwap() and MoveBySwap() are added.
+
 --- Updates ----------
 
 Regen
