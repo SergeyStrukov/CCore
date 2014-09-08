@@ -721,6 +721,25 @@ void EndpointDevice::detach()
   engine.detach();
  }
 
+/* class UDPointMapper */
+
+UDPointMapper::UDPointMapper()
+ {
+ }
+   
+UDPointMapper::~UDPointMapper()
+ {
+ }
+ 
+XPoint UDPointMapper::map(XPoint point) const
+ {
+  UDPoint udpoint(point);
+     
+  udpoint.port=PSecClientUDPort;
+     
+  return udpoint.get();
+ }
+   
 /* class MultipointDevice::Proc */
 
 void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engine *engine)
@@ -767,27 +786,31 @@ MultipointDevice::Proc::Proc(const MasterKey &master_key,ClientProfilePtr &clien
  : mutex("PSec::MultipointDevice::Proc"),
    proc(new PacketProcessor(master_key))
  {
-  client_profile.set(client_profile_.detach());
+  MoveBySwap(client_profile,client_profile_);
+ }
+
+MultipointDevice::Proc::~Proc()
+ {
  }
 
 void MultipointDevice::Proc::replace(const MasterKey &master_key,ClientProfilePtr &client_profile_)
  {
-  PacketProcessor *ptr=new PacketProcessor(master_key);
+  OwnPtr<PacketProcessor> proc_(new PacketProcessor(master_key));
   
   if( use_count )
     {
-     replace_proc.set(ptr);
-     replace_client_profile.set(client_profile_.detach());
+     MoveBySwap(replace_proc,proc_);
+     MoveBySwap(replace_client_profile,client_profile_);
      
      opened=false;
     }
   else
     {
-     replace_proc.set(0);
-     replace_client_profile.set(0);
-     
-     proc.set(ptr);
-     client_profile.set(client_profile_.detach());
+     NullBySwap(replace_proc);
+     NullBySwap(replace_client_profile);
+
+     MoveBySwap(proc,proc_);
+     MoveBySwap(client_profile,client_profile_);
      
      opened=true;
     }
@@ -813,8 +836,8 @@ bool MultipointDevice::Proc::decUse()
     {
      if( +replace_proc )
        {
-        proc.set(replace_proc.detach());
-        client_profile.set(replace_client_profile.detach());
+        MoveBySwap(proc,replace_proc);
+        MoveBySwap(client_profile,replace_client_profile);
         
         opened=true;
        }
@@ -1006,8 +1029,9 @@ void MultipointDevice::Engine::tick()
     }
  }
 
-MultipointDevice::Engine::Engine(PacketMultipointDevice *dev_,PtrLen<const AlgoLen> algo_lens,ulen max_clients_)
+MultipointDevice::Engine::Engine(PacketMultipointDevice *dev_,XPointMapper &mapper_,PtrLen<const AlgoLen> algo_lens,ulen max_clients_)
  : dev(dev_),
+   mapper(mapper_),
    max_clients(max_clients_),
    host("PSec::MultipointDevice","PSec::MultipointDevice.host"),
    pset("PSec::MultipointDevice.pset"),
@@ -1031,6 +1055,29 @@ MultipointDevice::Engine::Engine(PacketMultipointDevice *dev_,PtrLen<const AlgoL
 MultipointDevice::Engine::~Engine()
  {
   dev->detach();
+ }
+
+void MultipointDevice::Engine::getStat(ProcessorStatInfo &ret) const
+ {
+  ret.reset();
+  
+  Mutex::Lock lock(mutex);
+  
+  map.applyIncr( [&ret] (XPoint,const Proc &obj) { ProcessorStatInfo temp; obj.getStat(temp); ret+=temp; } );
+ }
+
+void MultipointDevice::Engine::getStat(XPoint point,ProcessorStatInfo &ret) const
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( const Proc *obj=map.find(point) )
+    {
+     obj->getStat(ret);
+    }
+  else
+    {
+     ret.reset();
+    }
  }
 
 StrLen MultipointDevice::Engine::toText(XPoint point,PtrLen<char> buf) const
@@ -1086,8 +1133,10 @@ void MultipointDevice::Engine::detach()
   host.detach();
  }
 
-auto MultipointDevice::Engine::open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile) -> OpenErrorCode
+auto MultipointDevice::Engine::open(XPoint pke_point,MasterKeyPtr &skey,ClientProfilePtr &client_profile) -> OpenErrorCode
  {
+  XPoint psec_point=mapper.map(pke_point);
+  
   SilentReportException report;
   
   try
@@ -1096,7 +1145,7 @@ auto MultipointDevice::Engine::open(XPoint point,MasterKeyPtr &skey,ClientProfil
      
      if( map.getCount()>=max_clients ) return OpenError_OpenLimit;
      
-     auto result=map.find_or_add(point,*skey,client_profile);
+     auto result=map.find_or_add(psec_point,*skey,client_profile);
      
      if( !result.new_flag )
        {
@@ -1111,13 +1160,13 @@ auto MultipointDevice::Engine::open(XPoint point,MasterKeyPtr &skey,ClientProfil
     }
  }
 
-void MultipointDevice::Engine::close(XPoint point)
+void MultipointDevice::Engine::close(XPoint psec_point)
  {
   Mutex::Lock lock(mutex);
  
-  Proc *obj=map.find(point);
+  Proc *obj=map.find(psec_point);
   
-  if( obj && obj->close(this) ) map.del(point);
+  if( obj && obj->close(this) ) map.del(psec_point);
  }
 
 void MultipointDevice::Engine::closeAll()
@@ -1127,11 +1176,11 @@ void MultipointDevice::Engine::closeAll()
   map.delIf( [this] (XPoint,Proc &obj) { return obj.close(this); } );
  }
 
-AbstractClientProfile * MultipointDevice::Engine::getClientProfile(XPoint point) const
+AbstractClientProfile * MultipointDevice::Engine::getClientProfile(XPoint psec_point) const
  {
   Mutex::Lock lock(mutex);
  
-  const Proc *obj=map.find(point);
+  const Proc *obj=map.find(psec_point);
   
   if( obj ) return obj->getClientProfile();
   
@@ -1140,9 +1189,9 @@ AbstractClientProfile * MultipointDevice::Engine::getClientProfile(XPoint point)
 
 /* class MultipointDevice */
 
-MultipointDevice::MultipointDevice(StrLen mp_dev_name,PtrLen<const AlgoLen> algo_lens,ulen max_clients)
+MultipointDevice::MultipointDevice(StrLen mp_dev_name,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients)
  : hook(mp_dev_name),
-   engine(hook,algo_lens,max_clients)
+   engine(hook,mapper,algo_lens,max_clients)
  {
  }
 
@@ -1180,14 +1229,14 @@ void MultipointDevice::detach()
   engine.detach();
  }
 
-auto MultipointDevice::open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile) -> OpenErrorCode
+auto MultipointDevice::open(XPoint pke_point,MasterKeyPtr &skey,ClientProfilePtr &client_profile) -> OpenErrorCode
  {
-  return engine.open(point,skey,client_profile);
+  return engine.open(pke_point,skey,client_profile);
  }
 
-void MultipointDevice::close(XPoint point)
+void MultipointDevice::close(XPoint psec_point)
  {
-  engine.close(point);
+  engine.close(psec_point);
  }
 
 void MultipointDevice::closeAll()
@@ -1195,9 +1244,9 @@ void MultipointDevice::closeAll()
   engine.closeAll();
  }
 
-AbstractClientProfile * MultipointDevice::getClientProfile(XPoint point)
+AbstractClientProfile * MultipointDevice::getClientProfile(XPoint psec_point)
  {
-  return engine.getClientProfile(point);
+  return engine.getClientProfile(psec_point);
  }
 
 } // namespace PSec 

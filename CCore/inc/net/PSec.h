@@ -27,6 +27,7 @@
 #include <CCore/inc/SaveLoad.h>
 #include <CCore/inc/Counters.h>
 #include <CCore/inc/task/TaskEvent.h>
+#include <CCore/inc/net/UDPoint.h>
  
 namespace CCore {
 namespace Net {
@@ -45,6 +46,10 @@ class ProcessorStatInfo;
 class PacketProcessor;
 
 class EndpointDevice;
+
+struct XPointMapper;
+
+class UDPointMapper;
 
 class MultipointDevice;
 
@@ -367,6 +372,28 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice
    virtual void detach();
  };
 
+/* struct XPointMapper */
+
+struct XPointMapper
+ {
+  virtual XPoint map(XPoint point) const =0;
+ };
+
+/* class UDPointMapper */
+
+class UDPointMapper : NoCopy , public XPointMapper
+ {
+  public:
+ 
+   UDPointMapper();
+   
+   ~UDPointMapper();
+
+   // XPointMapper
+   
+   virtual XPoint map(XPoint point) const;
+ };
+
 /* class MultipointDevice */
 
 class MultipointDevice : public ObjBase , public PacketMultipointDevice , public EndpointManager
@@ -398,6 +425,10 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
      
       Proc(const MasterKey &master_key,ClientProfilePtr &client_profile);
       
+      ~Proc();
+      
+      void getStat(ProcessorStatInfo &ret) const { proc->getStat(ret); }
+      
       void replace(const MasterKey &master_key,ClientProfilePtr &client_profile);
       
       AbstractClientProfile * getClientProfile() const { return client_profile.getPtr(); }
@@ -420,6 +451,8 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    class Engine : NoCopy , InboundProc
     {
       PacketMultipointDevice *dev;
+      
+      XPointMapper &mapper;
       
       ulen max_clients;
       
@@ -451,9 +484,13 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
 
      public:
       
-      Engine(PacketMultipointDevice *dev,PtrLen<const AlgoLen> algo_lens,ulen max_clients);
+      Engine(PacketMultipointDevice *dev,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients);
       
       ~Engine();
+      
+      void getStat(ProcessorStatInfo &ret) const;
+      
+      void getStat(XPoint point,ProcessorStatInfo &ret) const;
       
       StrLen toText(XPoint point,PtrLen<char> buf) const;
        
@@ -467,13 +504,13 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
        
       void detach();
       
-      OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+      OpenErrorCode open(XPoint pke_point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
       
-      void close(XPoint point);
+      void close(XPoint psec_point);
       
       void closeAll();
       
-      AbstractClientProfile * getClientProfile(XPoint point) const;
+      AbstractClientProfile * getClientProfile(XPoint psec_point) const;
     };
    
    using Hook = AttachmentHost<InboundProc>::Hook ;
@@ -484,11 +521,17 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    
   public:
   
-   MultipointDevice(StrLen mp_dev_name,PtrLen<const AlgoLen> algo_lens,ulen max_clients);
+   MultipointDevice(StrLen mp_dev_name,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients);
    
    virtual ~MultipointDevice();
    
-   // stat TODO
+   // stat
+   
+   using StatInfo = ProcessorStatInfo ;
+   
+   void getStat(StatInfo &ret) const { engine.getStat(ret); }
+   
+   void getStat(XPoint point,StatInfo &ret) const { engine.getStat(point,ret); }
    
    // PacketMultipointDevice
    
@@ -506,13 +549,13 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    
    // EndpointManager
    
-   virtual OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+   virtual OpenErrorCode open(XPoint pke_point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
    
-   virtual void close(XPoint point);
+   virtual void close(XPoint psec_point);
    
    virtual void closeAll();
    
-   virtual AbstractClientProfile * getClientProfile(XPoint point); // only inside inbound processing
+   virtual AbstractClientProfile * getClientProfile(XPoint psec_point); // only inside inbound processing
  };
 
 } // namespace PSec 
