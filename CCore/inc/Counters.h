@@ -54,6 +54,11 @@ class Counters : public PrintOptAdapter<Enum>
      for(ulen i=0; i<DimOf(counter) ;i++) DiffCnt(counter[i],next.counter[i]);
     }
     
+   void operator += (const Counters<Enum,Lim> &obj) 
+    {
+     for(ulen i=0; i<DimOf(counter) ;i++) counter[i]+=obj.counter[i];
+    }
+   
    void operator -= (const Counters<Enum,Lim> &base) 
     {
      for(ulen i=0; i<DimOf(counter) ;i++) counter[i]-=base.counter[i];

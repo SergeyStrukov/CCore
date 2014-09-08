@@ -56,6 +56,8 @@ class <span class="Att">Counters</span> : public PrintOptAdapter&lt;Enum&gt;
    
    void diff(Counters&lt;Enum,Lim&gt; &amp;next);
     
+   void operator += (const Counters&lt;Enum,Lim&gt; &obj); 
+
    void operator -= (const Counters&lt;Enum,Lim&gt; &base); 
    
    // print object
@@ -98,6 +100,10 @@ The method <b>count()</b> increments or increments by some value the counter wit
 
 <p>
 The overloaded <b>operator []</b> reads the specific counter.
+</p>
+
+<p>
+The overloaded <b>operator +=</b> adds counters from another counter set.
 </p>
 
 <p>
