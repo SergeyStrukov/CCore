@@ -48,7 +48,11 @@ const char * GetTextDesc(ProcessorEvent ev)
     "PSec Key Alert",       // ProcessorEvent_KeyAlert
     "PSec Key Ready",       // ProcessorEvent_KeyReady
     "PSec Key Ack",         // ProcessorEvent_KeyAck
-    "PSec Key Stop"         // ProcessorEvent_KeyStop
+    "PSec Key Stop",        // ProcessorEvent_KeyStop
+    
+    "PSec Ping",            // ProcessorEvent_Ping
+    "PSec Pong",            // ProcessorEvent_Pong
+    "PSec Close"            // ProcessorEvent_Close
    };
   
   return Table[ev];
@@ -81,6 +85,10 @@ EventIdType EventRegType::Register(EventMetaInfo &info)
              .addValueName(ProcessorEvent_KeyAck,"Key Ack")
              .addValueName(ProcessorEvent_KeyStop,"Key Stop")
              
+             .addValueName(ProcessorEvent_Ping,"Ping")
+             .addValueName(ProcessorEvent_Pong,"Pong")
+             .addValueName(ProcessorEvent_Close,"Close")
+             
              .getId();
  }
 
@@ -99,7 +107,7 @@ void ProtoEvent::Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
   
 /* class PacketProcessor */
 
-void PacketProcessor::consume(KeyResponse &resp,PacketType type,PtrLen<const uint8> data)
+void PacketProcessor::consume(ControlResponse &resp,PacketType type,PtrLen<const uint8> data)
  {
   KeyIndex key_index=0;
   const uint8 *gy=0;
@@ -140,11 +148,14 @@ void PacketProcessor::consume(KeyResponse &resp,PacketType type,PtrLen<const uin
      case Packet_Ack : return core.ack(resp,key_index);
       
      case Packet_Stop : return core.stop(key_index);
+     
+     case Packet_Ping : return resp.set(Packet_Pong);
     }
  }
 
-PacketProcessor::PacketProcessor(const MasterKey &master_key)
- : core(master_key)
+PacketProcessor::PacketProcessor(const MasterKey &master_key,MSec keep_alive_timeout)
+ : core(master_key),
+   keep_alive(keep_alive_timeout)
  {
   header_len=RoundUp(2*HeaderLen,core.getBLen());
   
@@ -178,7 +189,7 @@ ulen PacketProcessor::getMaxInpLen(ulen len) const
   return inpLen(len);
  }
 
-auto PacketProcessor::inbound(KeyResponse &resp,PtrLen<uint8> data) -> InboundResult
+auto PacketProcessor::inbound(ControlResponse &resp,PtrLen<uint8> data) -> InboundResult
  {
   stat.count(ProcessorEvent_Rx);
   
@@ -302,6 +313,8 @@ auto PacketProcessor::inbound(KeyResponse &resp,PtrLen<uint8> data) -> InboundRe
   }
   
   stat.count(ProcessorEvent_RxDone);
+  
+  keep_alive.reset();
   
   if( header.type!=Packet_Data )
     {
@@ -463,7 +476,14 @@ auto PacketProcessor::outbound(PtrLen<uint8> data,ulen delta,PacketType type) ->
   return ret;
  }
 
-bool PacketProcessor::response(const KeyResponse &resp,Packet<uint8> packet,PacketFormat format)
+void PacketProcessor::tick(ControlResponse &resp) 
+ { 
+  core.tick(resp);
+  
+  if( resp.type==Packet_None ) keep_alive.tick(resp); 
+ }
+
+bool PacketProcessor::response(const ControlResponse &resp,Packet<uint8> packet,PacketFormat format)
  {
   if( !packet ) 
     {
@@ -471,31 +491,44 @@ bool PacketProcessor::response(const KeyResponse &resp,Packet<uint8> packet,Pack
     
      return false;
     }
-  
-  ulen min_len=KeyIndexLen+resp.gx.len;
-  
-  ulen max_len=packet.getMaxDataLen(format).len;
-  
-  if( min_len>max_len )
+
+  if( IsLifetimePacket(resp.type) )
     {
-     stat.count(ProcessorEvent_KeyBadFormat);
+     ulen max_len=packet.getMaxDataLen(format).len;
     
-     packet.complete();
+     ulen len=core.selectLen(0,max_len);
+    
+     auto data=packet.setDataLen(format,len);
      
-     return false;
+     core.random(data);
     }
-  
-  ulen len=core.selectLen(min_len,max_len);
-  
-  auto data=packet.setDataLen(format,len);
+  else
+    {
+     ulen min_len=KeyIndexLen+resp.gx.len;
      
-  BufPutDev dev(data.ptr);
-  
-  dev.use<BeOrder>(resp.key_index);
-  
-  dev.put(resp.gx);
-  
-  core.random(dev.putRange(len-min_len));
+     ulen max_len=packet.getMaxDataLen(format).len;
+     
+     if( min_len>max_len )
+       {
+        stat.count(ProcessorEvent_KeyBadFormat);
+       
+        packet.complete();
+        
+        return false;
+       }
+     
+     ulen len=core.selectLen(min_len,max_len);
+     
+     auto data=packet.setDataLen(format,len);
+        
+     BufPutDev dev(data.ptr);
+     
+     dev.use<BeOrder>(resp.key_index);
+     
+     dev.put(resp.gx);
+     
+     core.random(dev.putRange(len-min_len));
+    }
   
   switch( resp.type )
     {
@@ -503,6 +536,9 @@ bool PacketProcessor::response(const KeyResponse &resp,Packet<uint8> packet,Pack
      case Packet_Ready : stat.count(ProcessorEvent_KeyReady); break;
      case Packet_Ack   : stat.count(ProcessorEvent_KeyAck); break;
      case Packet_Stop  : stat.count(ProcessorEvent_KeyStop); break;
+     case Packet_Ping  : stat.count(ProcessorEvent_Ping); break;
+     case Packet_Pong  : stat.count(ProcessorEvent_Pong); break;
+     case Packet_Close : stat.count(ProcessorEvent_Close); break;
     }
   
   return true;
@@ -543,7 +579,19 @@ ulen PacketProcessor::IOLen::getMaxInpLen(ulen len) const
 
 /* class EndpointDevice::Engine */
 
-void EndpointDevice::Engine::response(const KeyResponse &resp)
+void EndpointDevice::Engine::connection_lost()
+ {
+  Hook hook(host);
+ 
+  if( +hook ) 
+    {
+     ConnectionProc *proc=dynamic_cast<ConnectionProc *>(hook.getPtr());
+    
+     if( proc ) proc->connection_lost();
+    }
+ }
+
+void EndpointDevice::Engine::response(const ControlResponse &resp)
  {
   switch( resp.type )
     {
@@ -551,6 +599,9 @@ void EndpointDevice::Engine::response(const KeyResponse &resp)
      case Packet_Ready :
      case Packet_Ack :
      case Packet_Stop :
+     case Packet_Ping :
+     case Packet_Pong :
+     case Packet_Close :
       {
        Packet<uint8> packet=pset.try_get();
        
@@ -561,11 +612,13 @@ void EndpointDevice::Engine::response(const KeyResponse &resp)
       }
      break;
     }
+  
+  if( resp.type==Packet_Close ) connection_lost();
  }
 
 void EndpointDevice::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> data)
  {
-  KeyResponse resp;
+  ControlResponse resp;
   
   auto result=ProcLocked(mutex,proc)->inbound(resp,Range(const_cast<uint8 *>(data.ptr),data.len));
   
@@ -598,19 +651,19 @@ void EndpointDevice::Engine::tick()
    if( +hook ) hook->tick();
   }
   
-  KeyResponse resp;
+  ControlResponse resp;
   
   ProcLocked(mutex,proc)->tick(resp);
   
   response(resp);
  }
 
-EndpointDevice::Engine::Engine(PacketEndpointDevice *dev_,const MasterKey &master_key)
+EndpointDevice::Engine::Engine(PacketEndpointDevice *dev_,const MasterKey &master_key,MSec keep_alive_timeout)
  : dev(dev_),
    host("PSec::EndpointDevice","PSec::EndpointDevice.host"),
    pset("PSec::EndpointDevice.pset"),
    mutex("PSec::EndpointDevice.mutex"),
-   proc(master_key)
+   proc(master_key,keep_alive_timeout)
  {
   PacketFormat fmt=dev->getOutboundFormat();
 
@@ -686,9 +739,9 @@ void EndpointDevice::Engine::detach()
 
 /* class EndpointDevice */
 
-EndpointDevice::EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key)
+EndpointDevice::EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key,MSec keep_alive_timeout)
  : hook(ep_dev_name),
-   engine(hook,master_key)
+   engine(hook,master_key,keep_alive_timeout)
  {
  }
 
@@ -742,7 +795,21 @@ XPoint UDPointMapper::map(XPoint point) const
    
 /* class MultipointDevice::Proc */
 
-void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engine *engine)
+void MultipointDevice::Proc::connection_lost(XPoint point,Engine *engine)
+ {
+  opened=false;
+  
+  Hook hook(engine->host);
+ 
+  if( +hook ) 
+    {
+     ConnectionProc *proc=dynamic_cast<ConnectionProc *>(hook.getPtr());
+    
+     if( proc ) proc->connection_lost(point);
+    }
+ }
+
+void MultipointDevice::Proc::response(XPoint point,const ControlResponse &resp,Engine *engine)
  {
   switch( resp.type )
     {
@@ -750,6 +817,9 @@ void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engin
      case Packet_Ready :
      case Packet_Ack :
      case Packet_Stop :
+     case Packet_Ping :
+     case Packet_Pong :
+     case Packet_Close :
       {
        Packet<uint8> packet=engine->pset.try_get();
        
@@ -760,9 +830,11 @@ void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engin
       }
      break;
     }
+  
+  if( resp.type==Packet_Close ) connection_lost(point,engine);
  }
 
-void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engine *engine,PacketList &list)
+void MultipointDevice::Proc::response(XPoint point,const ControlResponse &resp,Engine *engine,PacketList &list)
  {
   switch( resp.type )
     {
@@ -770,6 +842,9 @@ void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engin
      case Packet_Ready :
      case Packet_Ack :
      case Packet_Stop :
+     case Packet_Ping :
+     case Packet_Pong :
+     case Packet_Close :
       {
        Packet<uint8> packet=engine->pset.try_get();
        
@@ -780,11 +855,13 @@ void MultipointDevice::Proc::response(XPoint point,const KeyResponse &resp,Engin
       }
      break;
     }
+  
+  if( resp.type==Packet_Close ) connection_lost(point,engine);
  }
 
-MultipointDevice::Proc::Proc(const MasterKey &master_key,ClientProfilePtr &client_profile_)
+MultipointDevice::Proc::Proc(const MasterKey &master_key,MSec keep_alive_timeout,ClientProfilePtr &client_profile_)
  : mutex("PSec::MultipointDevice::Proc"),
-   proc(new PacketProcessor(master_key))
+   proc(new PacketProcessor(master_key,keep_alive_timeout))
  {
   MoveBySwap(client_profile,client_profile_);
  }
@@ -793,9 +870,9 @@ MultipointDevice::Proc::~Proc()
  {
  }
 
-void MultipointDevice::Proc::replace(const MasterKey &master_key,ClientProfilePtr &client_profile_)
+void MultipointDevice::Proc::replace(const MasterKey &master_key,MSec keep_alive_timeout,ClientProfilePtr &client_profile_)
  {
-  OwnPtr<PacketProcessor> proc_(new PacketProcessor(master_key));
+  OwnPtr<PacketProcessor> proc_(new PacketProcessor(master_key,keep_alive_timeout));
   
   if( use_count )
     {
@@ -859,18 +936,18 @@ bool MultipointDevice::Proc::close(Engine *)
 
 bool MultipointDevice::Proc::tick(XPoint point,Engine *engine,PacketList &list)
  {
-  KeyResponse resp;
+  ControlResponse resp;
   
   ProcLocked(mutex,*proc)->tick(resp);
   
   response(point,resp,engine,list);
   
-  return false;
+  return !opened && !use_count ;
  }
 
 void MultipointDevice::Proc::inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data,Engine *engine)
  {
-  KeyResponse resp;
+  ControlResponse resp;
   
   auto result=ProcLocked(mutex,*proc)->inbound(resp,Range(const_cast<uint8 *>(data.ptr),data.len));
   
@@ -1029,10 +1106,11 @@ void MultipointDevice::Engine::tick()
     }
  }
 
-MultipointDevice::Engine::Engine(PacketMultipointDevice *dev_,XPointMapper &mapper_,PtrLen<const AlgoLen> algo_lens,ulen max_clients_)
+MultipointDevice::Engine::Engine(PacketMultipointDevice *dev_,XPointMapper &mapper_,PtrLen<const AlgoLen> algo_lens,ulen max_clients_,MSec keep_alive_timeout_)
  : dev(dev_),
    mapper(mapper_),
    max_clients(max_clients_),
+   keep_alive_timeout(keep_alive_timeout_),
    host("PSec::MultipointDevice","PSec::MultipointDevice.host"),
    pset("PSec::MultipointDevice.pset"),
    mutex("PSec::MultipointDevice.mutex")
@@ -1145,11 +1223,11 @@ auto MultipointDevice::Engine::open(XPoint pke_point,MasterKeyPtr &skey,ClientPr
      
      if( map.getCount()>=max_clients ) return OpenError_OpenLimit;
      
-     auto result=map.find_or_add(psec_point,*skey,client_profile);
+     auto result=map.find_or_add(psec_point,*skey,keep_alive_timeout,client_profile);
      
      if( !result.new_flag )
        {
-        result.obj->replace(*skey,client_profile);
+        result.obj->replace(*skey,keep_alive_timeout,client_profile);
        }
      
      return Open_Ok;
@@ -1189,9 +1267,9 @@ AbstractClientProfile * MultipointDevice::Engine::getClientProfile(XPoint psec_p
 
 /* class MultipointDevice */
 
-MultipointDevice::MultipointDevice(StrLen mp_dev_name,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients)
+MultipointDevice::MultipointDevice(StrLen mp_dev_name,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients,MSec keep_alive_timeout)
  : hook(mp_dev_name),
-   engine(hook,mapper,algo_lens,max_clients)
+   engine(hook,mapper,algo_lens,max_clients,keep_alive_timeout)
  {
  }
 

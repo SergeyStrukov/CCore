@@ -16,10 +16,9 @@
 #ifndef CCore_inc_net_PKE_h
 #define CCore_inc_net_PKE_h
 
-#include <CCore/inc/net/PacketEndpointDevice.h>
-#include <CCore/inc/PacketSet.h>
-
 #include <CCore/inc/net/PSecCore.h>
+
+#include <CCore/inc/PacketSet.h>
 
 #include <CCore/inc/TreeMap.h>
 #include <CCore/inc/SaveLoad.h>

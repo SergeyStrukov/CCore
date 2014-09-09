@@ -16,18 +16,18 @@
 #ifndef CCore_inc_net_PSec_h
 #define CCore_inc_net_PSec_h
 
-#include <CCore/inc/net/PacketEndpointDevice.h>
-#include <CCore/inc/PacketSet.h>
-
 #include <CCore/inc/net/PSecCore.h>
+#include <CCore/inc/net/UDPoint.h>
+
+#include <CCore/inc/PacketSet.h>
 
 #include <CCore/inc/TreeMap.h>
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/AttachmentHost.h>
 #include <CCore/inc/SaveLoad.h>
 #include <CCore/inc/Counters.h>
+
 #include <CCore/inc/task/TaskEvent.h>
-#include <CCore/inc/net/UDPoint.h>
  
 namespace CCore {
 namespace Net {
@@ -77,6 +77,10 @@ enum ProcessorEvent
   ProcessorEvent_KeyReady,
   ProcessorEvent_KeyAck,
   ProcessorEvent_KeyStop,
+  
+  ProcessorEvent_Ping,
+  ProcessorEvent_Pong,
+  ProcessorEvent_Close,
   
   ProcessorEventLim
  };
@@ -144,6 +148,8 @@ class PacketProcessor : public MemBase_nocopy
    
    AntiReplay anti_replay;
    
+   KeepAlive keep_alive;
+   
    ProcessorStatInfo stat;
    
   private: 
@@ -208,11 +214,11 @@ class PacketProcessor : public MemBase_nocopy
      return l-core.getHLen(); 
     }
    
-   void consume(KeyResponse &resp,PacketType type,PtrLen<const uint8> data);
+   void consume(ControlResponse &resp,PacketType type,PtrLen<const uint8> data);
    
   public:
   
-   explicit PacketProcessor(const MasterKey &master_key);
+   PacketProcessor(const MasterKey &master_key,MSec keep_alive_timeout);
    
    ~PacketProcessor();
    
@@ -230,7 +236,7 @@ class PacketProcessor : public MemBase_nocopy
      InboundResult(PtrLen<const uint8> data_) : data(data_),consumed(false) {}
     };
    
-   InboundResult inbound(KeyResponse &resp,PtrLen<uint8> data);
+   InboundResult inbound(ControlResponse &resp,PtrLen<uint8> data);
    
    struct OutboundResult
     {
@@ -244,13 +250,13 @@ class PacketProcessor : public MemBase_nocopy
    
    OutboundResult outbound(PtrLen<uint8> data,ulen delta,PacketType type);
    
-   void tick(KeyResponse &resp) { return core.tick(resp); }
+   void tick(ControlResponse &resp);
    
    void count(ProcessorEvent ev) { stat.count(ev); }
    
    void getStat(ProcessorStatInfo &ret) const { ret=stat; }
    
-   bool response(const KeyResponse &resp,Packet<uint8> packet,PacketFormat format);
+   bool response(const ControlResponse &resp,Packet<uint8> packet,PacketFormat format);
    
    class IOLen : NoCopy
     {
@@ -316,7 +322,9 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice
       
      private: 
       
-      void response(const KeyResponse &resp);
+      void connection_lost();
+      
+      void response(const ControlResponse &resp);
       
       // InboundProc
       
@@ -326,7 +334,7 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice
       
      public: 
       
-      Engine(PacketEndpointDevice *dev,const MasterKey &master_key);
+      Engine(PacketEndpointDevice *dev,const MasterKey &master_key,MSec keep_alive_timeout);
       
       ~Engine();
       
@@ -349,7 +357,7 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice
    
   public:
   
-   EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key);
+   EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key,MSec keep_alive_timeout=Null);
    
    virtual ~EndpointDevice();
    
@@ -417,19 +425,21 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       
      private: 
       
-      void response(XPoint point,const KeyResponse &resp,Engine *engine);
+      void connection_lost(XPoint point,Engine *engine);
       
-      void response(XPoint point,const KeyResponse &resp,Engine *engine,PacketList &list);
+      void response(XPoint point,const ControlResponse &resp,Engine *engine);
+      
+      void response(XPoint point,const ControlResponse &resp,Engine *engine,PacketList &list);
       
      public: 
      
-      Proc(const MasterKey &master_key,ClientProfilePtr &client_profile);
+      Proc(const MasterKey &master_key,MSec keep_alive_timeout,ClientProfilePtr &client_profile);
       
       ~Proc();
       
       void getStat(ProcessorStatInfo &ret) const { proc->getStat(ret); }
       
-      void replace(const MasterKey &master_key,ClientProfilePtr &client_profile);
+      void replace(const MasterKey &master_key,MSec keep_alive_timeout,ClientProfilePtr &client_profile);
       
       AbstractClientProfile * getClientProfile() const { return client_profile.getPtr(); }
       
@@ -455,6 +465,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       XPointMapper &mapper;
       
       ulen max_clients;
+      MSec keep_alive_timeout;
       
       AttachmentHost<InboundProc> host;
       
@@ -484,7 +495,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
 
      public:
       
-      Engine(PacketMultipointDevice *dev,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients);
+      Engine(PacketMultipointDevice *dev,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients,MSec keep_alive_timeout);
       
       ~Engine();
       
@@ -521,7 +532,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    
   public:
   
-   MultipointDevice(StrLen mp_dev_name,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients);
+   MultipointDevice(StrLen mp_dev_name,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients,MSec keep_alive_timeout);
    
    virtual ~MultipointDevice();
    

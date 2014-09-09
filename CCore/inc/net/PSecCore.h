@@ -23,7 +23,7 @@
 
 #include <CCore/inc/crypton/Forget.h>
 
-#include <CCore/inc/net/XPoint.h>
+#include <CCore/inc/net/PacketEndpointDevice.h>
 
 namespace CCore {
 namespace Net {
@@ -56,6 +56,7 @@ const unsigned PingRepeatTimeout = 5 ; // sec
 enum Packets
  {
   Packet_Data,
+  
   Packet_Alert,
   Packet_Ready,
   Packet_Ack,
@@ -90,6 +91,18 @@ void PosDec(UInt &var,UInt1 val)
     var-=(UInt)val;
   else
     var=0;
+ }
+
+inline bool IsLifetimePacket(Packets type)
+ {
+  switch( type )
+    {
+     case Packet_Ping :
+     case Packet_Pong :
+     case Packet_Close : return true;
+     
+     default: return false;
+    }
  }
 
 /* classes */
@@ -128,7 +141,7 @@ class TestMasterKey;
 
 class RandomEngine;
 
-struct KeyResponse;
+struct ControlResponse;
 
 class KeySet;
 
@@ -147,6 +160,8 @@ class InverseConvolution;
 class ProcessorCore;
 
 class AntiReplay;
+
+class KeepAlive;
 
 /* struct AlgoLen */
 
@@ -633,9 +648,9 @@ class RandomEngine : NoCopy
    void feed(PtrLen<const uint8> block) { fifo.put(block); }
  };
 
-/* struct KeyResponse */
+/* struct ControlResponse */
 
-struct KeyResponse : NoCopy
+struct ControlResponse : NoCopy
  {
   Packets type;
   KeyIndex key_index;
@@ -643,11 +658,15 @@ struct KeyResponse : NoCopy
   
   uint8 temp[MaxGLen];
   
-  KeyResponse() : type(Packet_None),key_index(0) {}
+  ControlResponse() : type(Packet_None),key_index(0) {}
   
-  ~KeyResponse() { Crypton::ForgetRange(Range(temp,gx.len)); }
+  ~ControlResponse() { Crypton::ForgetRange(Range(temp,gx.len)); }
   
-  void set(Packets type,KeyIndex key_index,PtrLen<const uint8> gx=Empty);
+  void set(Packets type_) { type=type_; }
+  
+  void set(Packets type_,KeyIndex key_index_) { type=type_; key_index=key_index_; }
+  
+  void set(Packets type,KeyIndex key_index,PtrLen<const uint8> gx);
  };
 
 /* class KeySet */
@@ -759,7 +778,7 @@ class KeySet : NoCopy
     
      bool resend() const { return !repeat ; }
      
-     void makeResponse(KeyResponse &resp,ulen glen)
+     void makeResponse(ControlResponse &resp,ulen glen)
       { 
        repeat.reset();
        
@@ -825,7 +844,7 @@ class KeySet : NoCopy
    
    void alert(Rec &rec,KeyIndex key_index);
    
-   void alert(KeyResponse &resp,Rec &rec,KeyIndex key_index);
+   void alert(ControlResponse &resp,Rec &rec,KeyIndex key_index);
    
   public:
   
@@ -851,13 +870,13 @@ class KeySet : NoCopy
    
    ulen getGLen() const { return glen; }
    
-   void tick(KeyResponse &resp);
+   void tick(ControlResponse &resp);
    
-   void alert(KeyResponse &resp,KeyIndex key_index,const uint8 gy[]);
+   void alert(ControlResponse &resp,KeyIndex key_index,const uint8 gy[]);
    
-   void ready(KeyResponse &resp,KeyIndex key_index,const uint8 gy[]);
+   void ready(ControlResponse &resp,KeyIndex key_index,const uint8 gy[]);
    
-   void ack(KeyResponse &resp,KeyIndex key_index);
+   void ack(ControlResponse &resp,KeyIndex key_index);
    
    void stop(KeyIndex key_index);
  };
@@ -1138,13 +1157,13 @@ class ProcessorCore : NoCopy
    
    ulen getGLen() const { return key_set.getGLen(); }
    
-   void tick(KeyResponse &resp) { key_set.tick(resp); }
+   void tick(ControlResponse &resp) { key_set.tick(resp); }
    
-   void alert(KeyResponse &resp,KeyIndex key_index,const uint8 gy[]) { key_set.alert(resp,key_index,gy); }
+   void alert(ControlResponse &resp,KeyIndex key_index,const uint8 gy[]) { key_set.alert(resp,key_index,gy); }
    
-   void ready(KeyResponse &resp,KeyIndex key_index,const uint8 gy[]) { key_set.ready(resp,key_index,gy); }
+   void ready(ControlResponse &resp,KeyIndex key_index,const uint8 gy[]) { key_set.ready(resp,key_index,gy); }
    
-   void ack(KeyResponse &resp,KeyIndex key_index) { key_set.ack(resp,key_index); }
+   void ack(ControlResponse &resp,KeyIndex key_index) { key_set.ack(resp,key_index); }
    
    void stop(KeyIndex key_index) { key_set.stop(key_index); }
  };
@@ -1198,6 +1217,22 @@ class AntiReplay : NoCopy
    bool testReplay(SequenceNumber num) const;
    
    void add(SequenceNumber num);
+ };
+
+/* class KeepAlive */
+
+class KeepAlive : NoCopy
+ {
+   unsigned start_tick_count;
+   unsigned tick_count;
+  
+  public:
+  
+   explicit KeepAlive(MSec keep_alive_timeout=Null);
+   
+   void reset() { tick_count=start_tick_count; }
+   
+   void tick(ControlResponse &resp);
  };
 
 } // namespace PSec 

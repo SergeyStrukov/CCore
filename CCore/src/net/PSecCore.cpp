@@ -192,9 +192,9 @@ void RandomEngine::fill(PtrLen<uint8> data)
   for(uint8 &x : data ) x=next();
  }
 
-/* struct KeyResponse */
+/* struct ControlResponse */
 
-void KeyResponse::set(Packets type_,KeyIndex key_index_,PtrLen<const uint8> gx_)
+void ControlResponse::set(Packets type_,KeyIndex key_index_,PtrLen<const uint8> gx_)
  {
   type=type_;
   key_index=key_index_;
@@ -378,7 +378,7 @@ void KeySet::alert(Rec &rec,KeyIndex key_index)
   key_gen->pow(rec.x,rec.gx);
  }
 
-void KeySet::alert(KeyResponse &resp,Rec &rec,KeyIndex key_index)
+void KeySet::alert(ControlResponse &resp,Rec &rec,KeyIndex key_index)
  {
   alert(rec,key_index);
   
@@ -496,7 +496,7 @@ bool KeySet::selectDecryptKey(KeyIndex key_index)
   return false;  
  }
 
-void KeySet::tick(KeyResponse &resp)
+void KeySet::tick(ControlResponse &resp)
  {
   ulen count=key_set.getLen();
   
@@ -532,7 +532,7 @@ void KeySet::tick(KeyResponse &resp)
     }
  }
 
-void KeySet::alert(KeyResponse &resp,KeyIndex key_index,const uint8 gy[])
+void KeySet::alert(ControlResponse &resp,KeyIndex key_index,const uint8 gy[])
  {
   ulen index=GetIndex(key_index);
   
@@ -590,7 +590,7 @@ void KeySet::alert(KeyResponse &resp,KeyIndex key_index,const uint8 gy[])
     }
  }
 
-void KeySet::ready(KeyResponse &resp,KeyIndex key_index,const uint8 gy[])
+void KeySet::ready(ControlResponse &resp,KeyIndex key_index,const uint8 gy[])
  {
   ulen index=GetIndex(key_index);
   
@@ -628,7 +628,7 @@ void KeySet::ready(KeyResponse &resp,KeyIndex key_index,const uint8 gy[])
     }
  }
 
-void KeySet::ack(KeyResponse &resp,KeyIndex key_index)
+void KeySet::ack(ControlResponse &resp,KeyIndex key_index)
  {
   ulen index=GetIndex(key_index);
   
@@ -822,6 +822,45 @@ void AntiReplay::add(SequenceNumber num)
     }
  }
 
+/* class KeepAlive */
+
+KeepAlive::KeepAlive(MSec keep_alive_timeout)
+ {
+  if( +keep_alive_timeout )
+    start_tick_count=ToTickCount(keep_alive_timeout); 
+  else
+    start_tick_count=0;
+  
+  reset();
+ }
+
+void KeepAlive::tick(ControlResponse &resp)
+ {
+  if( start_tick_count )
+    {
+     if( tick_count )
+       {
+        tick_count--;
+        
+        if( tick_count )
+          {
+           if( tick_count<=start_tick_count/2 )
+             {
+              unsigned t=start_tick_count/2-tick_count;
+              
+              const unsigned Period=InboundTicksPerSec*PingRepeatTimeout;
+              
+              if( t%Period==0 ) resp.set(Packet_Ping);
+             }
+          }
+        else
+          {
+           resp.set(Packet_Close);
+          }
+       }
+    }
+ }
+   
 } // namespace PSec 
 } // namespace Net
 } // namespace CCore

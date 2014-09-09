@@ -88,6 +88,10 @@ Counters.h
 
   operator += is added.
 
+net/PacketEndpointDevice.h
+
+  Optional interfaces ConnectionProc are added.
+
 --- Updates ----------
 
 Regen

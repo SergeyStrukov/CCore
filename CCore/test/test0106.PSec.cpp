@@ -46,8 +46,8 @@ class Engine : NoCopy
   
    Engine(PacketFormat format,const Net::PSec::MasterKey &master_key)
     : bridge(format,format),
-      server_psec(Net::SingleBridge::ServerName(),master_key),
-      client_psec(Net::SingleBridge::ClientName(),master_key),
+      server_psec(Net::SingleBridge::ServerName(),master_key,10_sec),
+      client_psec(Net::SingleBridge::ClientName(),master_key,10_sec),
       server_psec_master(server_psec,"server_psec"),
       client_psec_master(client_psec,"client_psec"),
       echo("server_psec",200),
@@ -126,7 +126,7 @@ bool Testit<106>::Main()
    TaskEventHostType::StartStop event_start_stop(TaskEventHost,&recorder);
    Engine::StartStop start_stop(engine);
    
-   Task::Sleep(1000_sec);
+   Task::Sleep(100_sec);
   }
   
   engine.showStat();

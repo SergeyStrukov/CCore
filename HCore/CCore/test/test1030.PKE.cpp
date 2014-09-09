@@ -172,7 +172,7 @@ class Engine : public Funchor_nocopy
       server_psec_mp_master(server_psec_mp,"server_psec_mp"),       
       
       client_db(this,"client"),
-      server_psec("server_psec_mp",mapper,algo_set.getAlgoLens(),10),
+      server_psec("server_psec_mp",mapper,algo_set.getAlgoLens(),10,10_sec),
       server_psec_master(server_psec,"server_psec"),
       server_negotiant("server_pke_mp",client_db,server_psec),
       
@@ -278,7 +278,7 @@ bool Testit<1030>::Main()
      {
       Printf(Con,"client done\n\n");
       
-      engine.test(10_sec);
+      engine.test(100_sec);
      }
   }
   

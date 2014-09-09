@@ -1960,7 +1960,7 @@ ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,const ClientDatabas
  {
   outbound_format=dev->getOutboundFormat();
   
-  final_tick_count=((+final_timeout)*InboundTicksPerSec)/1000+1;
+  final_tick_count=ToTickCount(final_timeout);
   
   dev->attach(this);
  }
