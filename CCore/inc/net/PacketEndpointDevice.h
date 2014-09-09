@@ -28,6 +28,13 @@ namespace Net {
 
 const unsigned InboundTicksPerSec = 10 ;
 
+/* functions */
+
+inline constexpr unsigned ToTickCount(MSec timeout)
+ {
+  return ((+timeout)*InboundTicksPerSec)/1000+1;
+ }
+
 /* classes */ 
 
 struct PacketEndpointDevice;
@@ -51,6 +58,13 @@ struct PacketEndpointDevice
     virtual void inbound(Packet<uint8> packet,PtrLen<const uint8> data)=0;
      
     virtual void tick()=0;
+   };
+  
+  struct ConnectionProc // optional for InboundProc
+   {
+    virtual void connection_lost()=0;
+    
+    virtual void connection_close()=0;
    };
    
   virtual void attach(InboundProc *proc)=0;
@@ -77,6 +91,13 @@ struct PacketMultipointDevice
     virtual void tick()=0;
    };
    
+  struct ConnectionProc // optional for InboundProc
+   {
+    virtual void connection_lost(XPoint point)=0;
+    
+    virtual void connection_close(XPoint point)=0;
+   };
+  
   virtual void attach(InboundProc *proc)=0;
    
   virtual void detach()=0;

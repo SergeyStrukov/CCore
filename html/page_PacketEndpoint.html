@@ -62,6 +62,13 @@ struct <span class="Att">PacketEndpointDevice</span>
     virtual void tick()=0;
    };
    
+  struct ConnectionProc // optional for InboundProc
+   {
+    virtual void connection_lost()=0;
+    
+    virtual void connection_close()=0;
+   };
+
   virtual void attach(InboundProc *proc)=0;
    
   virtual void detach()=0;
@@ -109,6 +116,18 @@ packet data buffer.
 processing.
 </p>
 
+<p>
+<b>InboundProc</b> interface may have the optional co-interface <b>ConnectionProc</b> to handle disconnection events.
+</p>
+
+<p>
+<b>connection_lost()</b> is called in the case of a connection lost situation.
+</p>
+
+<p>
+<b>connection_close()</b> is called if the peer has requested to close the connection. 
+</p>
+
 <a name="PacketMultipointDevice"><h4>PacketMultipointDevice</h4></a>
 
 <p>
@@ -126,7 +145,7 @@ typedef uint64 <span class="Att">XPoint</span>;
 <p>
 <b>PacketMultipointDevice</b> is similar to the <b>PacketEndpointDevice</b>. The difference is
 the address argument in <b>inbound()</b> and <b>outbound()</b> methods. This argument is the address
-the packet should be sent to or is received from.
+the packet should be sent to or is received from. <b>ConnectionProc</b> methods also have the address argument.
 </p>
 
 <pre>
@@ -148,6 +167,13 @@ struct <span class="Att">PacketMultipointDevice</span>
     virtual void tick()=0;
    };
    
+  struct ConnectionProc // optional for InboundProc
+   {
+    virtual void connection_lost(<span class="Att">XPoint point</span>)=0;
+    
+    virtual void connection_close(<span class="Att">XPoint point</span>)=0;
+   };
+
   virtual void attach(InboundProc *proc)=0;
    
   virtual void detach()=0;
@@ -175,6 +201,19 @@ const unsigned <span class="Att">InboundTicksPerSec</span> = 10 ;
 
 <p>
 This constant is the net tick frequency.
+</p>
+
+<pre>
+
+inline constexpr unsigned <span class="Att">ToTickCount</span>(MSec timeout)
+ {
+  return ((+timeout)*InboundTicksPerSec)/1000+1;
+ }
+
+</pre>
+
+<p>
+This function converts the time, given as <b>MSec</b>, to the net tick count.
 </p>
 
 <pre>
