@@ -31,7 +31,7 @@ class SingleEchoDevice;
 
 /* class SingleEchoDevice */
 
-class SingleEchoDevice : NoCopy , Net::PacketEndpointDevice::InboundProc
+class SingleEchoDevice : NoCopy , public PacketEndpointDevice::InboundProc , public PacketEndpointDevice::ConnectionProc
  {
   public:
   
@@ -41,6 +41,9 @@ class SingleEchoDevice : NoCopy , Net::PacketEndpointDevice::InboundProc
      
      Event_nopacket,
      Event_badformat,
+     
+     Event_lost,
+     Event_close,
     
      EventLim
     };
@@ -73,6 +76,10 @@ class SingleEchoDevice : NoCopy , Net::PacketEndpointDevice::InboundProc
      
    virtual void tick();
     
+   virtual void connection_lost();
+   
+   virtual void connection_close();
+   
   public: 
   
    static const ulen DefaultMaxPackets = 200 ;

@@ -28,6 +28,9 @@ const char * GetTextDesc(SingleEchoDevice::Event ev)
     
     "No packet",
     "Bad packet format",
+    
+    "Connection lost",
+    "Connection close",
    
     ""
    };
@@ -82,7 +85,17 @@ void SingleEchoDevice::tick()
  {
   // do nothing
  }
-    
+
+void SingleEchoDevice::connection_lost()
+ {
+  count(Event_lost);
+ }
+
+void SingleEchoDevice::connection_close()
+ {
+  count(Event_close);
+ }
+
 SingleEchoDevice::SingleEchoDevice(StrLen ep_dev_name,ulen max_packets)
  : hook(ep_dev_name),
    ep(hook),

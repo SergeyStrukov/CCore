@@ -32,13 +32,13 @@
 
 <p>
 This class is similar to the <a href="page_EchoDevice.html"><b>EchoDevice</b></a>. But it is working
-with an endpoint device, not multipoint.
+with an endpoint device, not multipoint. It also implements the <b>ConnectionProc</b> interface to count connection lost events.
 Been attached this device simply reflects incoming packets. This class is useful in a net testing.
 </p>
 
 <pre>
 
-class <span class="Att">SingleEchoDevice</span> : NoCopy , Net::PacketEndpointDevice::InboundProc
+class <span class="Att">SingleEchoDevice</span> : NoCopy , public PacketEndpointDevice::InboundProc , public PacketEndpointDevice::ConnectionProc
  {
    ....
 
@@ -51,6 +51,9 @@ class <span class="Att">SingleEchoDevice</span> : NoCopy , Net::PacketEndpointDe
      Event_nopacket,
      Event_badformat,
     
+     Event_lost,
+     Event_close,
+
      EventLim
     };
     
