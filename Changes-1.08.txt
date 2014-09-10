@@ -92,6 +92,10 @@ net/PacketEndpointDevice.h
 
   Optional interfaces ConnectionProc are added.
 
+net/SingleEchoDevice.h
+
+  ConnectionProc interface implementation is added.
+
 --- Updates ----------
 
 Regen

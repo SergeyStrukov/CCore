@@ -17,8 +17,6 @@
 
 #include <CCore/inc/Exception.h>
 
-#include <CCore/inc/Print.h>
- 
 namespace CCore {
 namespace Net {
 namespace PSec {
@@ -318,6 +316,8 @@ auto PacketProcessor::inbound(ControlResponse &resp,PtrLen<uint8> data) -> Inbou
   
   if( header.type!=Packet_Data )
     {
+     if( header.type==Packet_Close ) return InboundResult::Close;
+    
      consume(resp,header.type,Range_const(base,len));
      
      return Nothing;
@@ -591,6 +591,18 @@ void EndpointDevice::Engine::connection_lost()
     }
  }
 
+void EndpointDevice::Engine::connection_close()
+ {
+  Hook hook(host);
+ 
+  if( +hook ) 
+    {
+     ConnectionProc *proc=dynamic_cast<ConnectionProc *>(hook.getPtr());
+    
+     if( proc ) proc->connection_close();
+    }
+ }
+
 void EndpointDevice::Engine::response(const ControlResponse &resp)
  {
   switch( resp.type )
@@ -624,7 +636,10 @@ void EndpointDevice::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> da
   
   if( result.consumed )
     {
-     response(resp);
+     if( result.close )
+       connection_close();
+     else
+       response(resp);
      
      packet.complete();
     }
@@ -683,6 +698,15 @@ EndpointDevice::Engine::Engine(PacketEndpointDevice *dev_,const MasterKey &maste
 EndpointDevice::Engine::~Engine()
  {
   dev->detach();
+ }
+
+void EndpointDevice::Engine::close()
+ {
+  ControlResponse resp;
+  
+  resp.set(Packet_Close);
+  
+  response(resp);
  }
 
 void EndpointDevice::Engine::getStat(ProcessorStatInfo &ret) const

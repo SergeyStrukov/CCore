@@ -230,10 +230,15 @@ class PacketProcessor : public MemBase_nocopy
     {
      PtrLen<const uint8> data;
      bool consumed;
+     bool close;
 
-     InboundResult(NothingType) : consumed(true) {}
+     InboundResult(NothingType) : consumed(true),close(false) {}
      
-     InboundResult(PtrLen<const uint8> data_) : data(data_),consumed(false) {}
+     InboundResult(PtrLen<const uint8> data_) : data(data_),consumed(false),close(false) {}
+     
+     enum CloseType { Close };
+     
+     InboundResult(CloseType) : consumed(true),close(true) {} 
     };
    
    InboundResult inbound(ControlResponse &resp,PtrLen<uint8> data);
@@ -324,6 +329,8 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice
       
       void connection_lost();
       
+      void connection_close();
+      
       void response(const ControlResponse &resp);
       
       // InboundProc
@@ -337,6 +344,8 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice
       Engine(PacketEndpointDevice *dev,const MasterKey &master_key,MSec keep_alive_timeout);
       
       ~Engine();
+      
+      void close();
       
       void getStat(ProcessorStatInfo &ret) const;
       
@@ -360,6 +369,8 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice
    EndpointDevice(StrLen ep_dev_name,const MasterKey &master_key,MSec keep_alive_timeout=Null);
    
    virtual ~EndpointDevice();
+   
+   void close() { engine.close(); }
    
    // stat
    

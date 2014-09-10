@@ -60,6 +60,8 @@ class Engine : NoCopy
     {
     } 
     
+   void close() { client_psec.close(); }
+   
    void showStat()
     {
      ShowStat(src,"Src");
@@ -127,6 +129,10 @@ bool Testit<106>::Main()
    Engine::StartStop start_stop(engine);
    
    Task::Sleep(100_sec);
+   
+   engine.close();
+   
+   Task::Sleep(10_sec);
   }
   
   engine.showStat();
