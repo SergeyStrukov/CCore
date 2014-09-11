@@ -31,7 +31,7 @@ class EchoDevice;
 
 /* class EchoDevice */ 
 
-class EchoDevice : NoCopy , PacketMultipointDevice::InboundProc
+class EchoDevice : NoCopy , public PacketMultipointDevice::InboundProc , public PacketMultipointDevice::ConnectionProc 
  {
   public:
   
@@ -41,6 +41,10 @@ class EchoDevice : NoCopy , PacketMultipointDevice::InboundProc
      
      Event_nopacket,
      Event_badformat,
+     
+     Event_open,
+     Event_lost,
+     Event_close,
     
      EventLim
     };
@@ -55,6 +59,7 @@ class EchoDevice : NoCopy , PacketMultipointDevice::InboundProc
    
    PacketMultipointDevice *mp;
    PacketFormat format;
+   bool show_flag;
    
    PacketSet<uint8> pset;
    
@@ -73,11 +78,17 @@ class EchoDevice : NoCopy , PacketMultipointDevice::InboundProc
      
    virtual void tick();
     
+   virtual void connection_open(XPoint point);
+   
+   virtual void connection_lost(XPoint point);
+   
+   virtual void connection_close(XPoint point);
+   
   public: 
   
    static const ulen DefaultMaxPackets = 200 ;
   
-   explicit EchoDevice(StrLen mp_dev_name,ulen max_packets=DefaultMaxPackets);
+   explicit EchoDevice(StrLen mp_dev_name,ulen max_packets=DefaultMaxPackets,bool show_flag=false);
    
    ~EchoDevice();
    

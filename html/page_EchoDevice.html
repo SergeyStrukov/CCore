@@ -37,7 +37,7 @@ Been attached the service simply reflects incoming packets. This class is useful
 
 <pre>
 
-class <span class="Att">EchoDevice</span> : NoCopy
+class <span class="Att">EchoDevice</span> : NoCopy , public PacketMultipointDevice::InboundProc , public PacketMultipointDevice::ConnectionProc
  {
    ....
 
@@ -50,6 +50,10 @@ class <span class="Att">EchoDevice</span> : NoCopy
      Event_nopacket,
      Event_badformat,
     
+     Event_open,
+     Event_lost,
+     Event_close,
+
      EventLim
     };
     
@@ -61,7 +65,7 @@ class <span class="Att">EchoDevice</span> : NoCopy
   
    static const ulen DefaultMaxPackets = 200 ;
   
-   explicit EchoDevice(StrLen mp_dev_name,ulen max_packets=DefaultMaxPackets);
+   explicit EchoDevice(StrLen mp_dev_name,ulen max_packets=DefaultMaxPackets,bool show_flag=false);
    
    ~EchoDevice();
    
@@ -74,7 +78,8 @@ class <span class="Att">EchoDevice</span> : NoCopy
 
 <p>
 Constructor attaches the object to the packet multi-point device, registered under the given name.
-<b>max_packets</b> limits the packet usage.
+<b>max_packets</b> limits the packet usage. 
+If the <b>show_flag</b> is <b>true</b>, object will print messages about connection events to the console.
 </p>
 
 <p>
