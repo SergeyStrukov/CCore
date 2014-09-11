@@ -821,7 +821,22 @@ XPoint UDPointMapper::map(XPoint point) const
 
 void MultipointDevice::Proc::connection_lost(XPoint point,Engine *engine)
  {
-  opened=false;
+  {
+   Mutex::Lock lock(engine->mutex);
+   
+   opened=false;
+  }
+  
+  engine->connection_lost(point);
+ }
+
+void MultipointDevice::Proc::connection_close(XPoint point,Engine *engine)
+ {
+  {
+   Mutex::Lock lock(engine->mutex);
+   
+   opened=false;
+  }
   
   Hook hook(engine->host);
  
@@ -829,7 +844,7 @@ void MultipointDevice::Proc::connection_lost(XPoint point,Engine *engine)
     {
      ConnectionProc *proc=dynamic_cast<ConnectionProc *>(hook.getPtr());
     
-     if( proc ) proc->connection_lost(point);
+     if( proc ) proc->connection_close(point);
     }
  }
 
@@ -858,7 +873,7 @@ void MultipointDevice::Proc::response(XPoint point,const ControlResponse &resp,E
   if( resp.type==Packet_Close ) connection_lost(point,engine);
  }
 
-void MultipointDevice::Proc::response(XPoint point,const ControlResponse &resp,Engine *engine,PacketList &list)
+bool MultipointDevice::Proc::response(XPoint point,const ControlResponse &resp,Engine *engine,PacketList &list)
  {
   switch( resp.type )
     {
@@ -879,8 +894,8 @@ void MultipointDevice::Proc::response(XPoint point,const ControlResponse &resp,E
       }
      break;
     }
-  
-  if( resp.type==Packet_Close ) connection_lost(point,engine);
+
+  return resp.type==Packet_Close ;
  }
 
 MultipointDevice::Proc::Proc(const MasterKey &master_key,MSec keep_alive_timeout,ClientProfilePtr &client_profile_)
@@ -892,6 +907,13 @@ MultipointDevice::Proc::Proc(const MasterKey &master_key,MSec keep_alive_timeout
 
 MultipointDevice::Proc::~Proc()
  {
+ }
+
+void MultipointDevice::Proc::getStat(ProcessorStatInfo &ret) const
+ { 
+  Mutex::Lock lock(mutex);
+  
+  proc->getStat(ret); 
  }
 
 void MultipointDevice::Proc::replace(const MasterKey &master_key,MSec keep_alive_timeout,ClientProfilePtr &client_profile_)
@@ -951,10 +973,18 @@ bool MultipointDevice::Proc::decUse()
     }
  }
 
-bool MultipointDevice::Proc::close(Engine *)
+bool MultipointDevice::Proc::close(XPoint point,Engine *engine,PacketList &list)
  {
+  ControlResponse resp;
+  
+  resp.set(Packet_Close);
+  
+  response(point,resp,engine,list);
+  
   opened=false;
   
+  engine->connection_lost(point); // TODO
+   
   return !use_count;
  }
 
@@ -964,7 +994,12 @@ bool MultipointDevice::Proc::tick(XPoint point,Engine *engine,PacketList &list)
   
   ProcLocked(mutex,*proc)->tick(resp);
   
-  response(point,resp,engine,list);
+  if( response(point,resp,engine,list) )
+    {
+     opened=false;
+     
+     engine->connection_lost(point); // TODO
+    }
   
   return !opened && !use_count ;
  }
@@ -977,7 +1012,10 @@ void MultipointDevice::Proc::inbound(XPoint point,Packet<uint8> packet,PtrLen<co
   
   if( result.consumed )
     {
-     response(point,resp,engine);
+     if( result.close )
+       connection_close(point,engine);
+     else
+       response(point,resp,engine);
      
      packet.complete();
     }
@@ -1050,7 +1088,7 @@ void MultipointDevice::Proc::outbound(XPoint point,Packet<uint8> packet,Packets 
 
 ulen MultipointDevice::Engine::GetMaxInpLen(PtrLen<const AlgoLen> algo_lens,ulen len)
  {
-  ulen ret=MaxULen;
+  ulen ret=len;
   
   for(AlgoLen algo_len : algo_lens )
     {
@@ -1074,6 +1112,30 @@ ulen MultipointDevice::Engine::GetOutDelta(PtrLen<const AlgoLen> algo_lens,ulen 
     }
   
   return ret;
+ }
+
+void MultipointDevice::Engine::connection_lost(XPoint point)
+ {
+  Hook hook(host);
+ 
+  if( +hook ) 
+    {
+     ConnectionProc *proc=dynamic_cast<ConnectionProc *>(hook.getPtr());
+    
+     if( proc ) proc->connection_lost(point);
+    }
+ }
+
+void MultipointDevice::Engine::send(PacketList &list)
+ {
+  while( PacketHeader *packet_=list.get() )
+    {
+     Packet<uint8,XPoint> packet=packet_;
+     
+     XPoint point=*packet.getExt();
+     
+     dev->outbound(point,packet.popExt());
+    }
  }
 
 void MultipointDevice::Engine::inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data)
@@ -1119,15 +1181,8 @@ void MultipointDevice::Engine::tick()
 
    map.delIf( [this,&list] (XPoint point,Proc &obj) { return obj.tick(point,this,list); } );
   } 
-  
-  while( PacketHeader *packet_=list.get() )
-    {
-     Packet<uint8,XPoint> packet=packet_;
-     
-     XPoint point=*packet.getExt();
-     
-     dev->outbound(point,packet.popExt());
-    }
+
+  send(list);
  }
 
 MultipointDevice::Engine::Engine(PacketMultipointDevice *dev_,XPointMapper &mapper_,PtrLen<const AlgoLen> algo_lens,ulen max_clients_,MSec keep_alive_timeout_)
@@ -1243,15 +1298,26 @@ auto MultipointDevice::Engine::open(XPoint pke_point,MasterKeyPtr &skey,ClientPr
   
   try
     {
-     Mutex::Lock lock(mutex);
+     {
+      Mutex::Lock lock(mutex);
+      
+      if( map.getCount()>=max_clients ) return OpenError_OpenLimit;
+      
+      auto result=map.find_or_add(psec_point,*skey,keep_alive_timeout,client_profile);
+      
+      if( !result.new_flag )
+        {
+         result.obj->replace(*skey,keep_alive_timeout,client_profile);
+        }
+     }
      
-     if( map.getCount()>=max_clients ) return OpenError_OpenLimit;
-     
-     auto result=map.find_or_add(psec_point,*skey,keep_alive_timeout,client_profile);
-     
-     if( !result.new_flag )
+     Hook hook(host);
+    
+     if( +hook ) 
        {
-        result.obj->replace(*skey,keep_alive_timeout,client_profile);
+        ConnectionProc *proc=dynamic_cast<ConnectionProc *>(hook.getPtr());
+       
+        if( proc ) proc->connection_open(psec_point);
        }
      
      return Open_Ok;
@@ -1264,18 +1330,30 @@ auto MultipointDevice::Engine::open(XPoint pke_point,MasterKeyPtr &skey,ClientPr
 
 void MultipointDevice::Engine::close(XPoint psec_point)
  {
-  Mutex::Lock lock(mutex);
- 
-  Proc *obj=map.find(psec_point);
+  PacketList list;
   
-  if( obj && obj->close(this) ) map.del(psec_point);
+  {
+   Mutex::Lock lock(mutex);
+  
+   Proc *obj=map.find(psec_point);
+   
+   if( obj && obj->close(psec_point,this,list) ) map.del(psec_point);
+  }
+  
+  send(list);
  }
 
 void MultipointDevice::Engine::closeAll()
  {
-  Mutex::Lock lock(mutex);
+  PacketList list;
+  
+  {
+   Mutex::Lock lock(mutex);
 
-  map.delIf( [this] (XPoint,Proc &obj) { return obj.close(this); } );
+   map.delIf( [this,&list] (XPoint point,Proc &obj) { return obj.close(point,this,list); } );
+  }
+  
+  send(list);
  }
 
 AbstractClientProfile * MultipointDevice::Engine::getClientProfile(XPoint psec_point) const

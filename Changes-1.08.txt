@@ -92,7 +92,7 @@ net/PacketEndpointDevice.h
 
   Optional interfaces ConnectionProc are added.
 
-net/SingleEchoDevice.h
+net/SingleEchoDevice.h net/EchoDevice.h
 
   ConnectionProc interface implementation is added.
 

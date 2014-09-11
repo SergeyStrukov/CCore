@@ -150,6 +150,10 @@ class Engine : public Funchor_nocopy
      
      Task::Sleep(time);
      
+     dev.close();
+     
+     Task::Sleep(10_sec);
+     
      ShowStat(src,"Src");
      ShowStat(echo,"Echo");
      ShowStat(client,"Client");
@@ -176,7 +180,7 @@ class Engine : public Funchor_nocopy
       server_psec_master(server_psec,"server_psec"),
       server_negotiant("server_pke_mp",client_db,server_psec),
       
-      echo("server_psec")
+      echo("server_psec",Net::EchoDevice::DefaultMaxPackets,true)
     {
     }
     

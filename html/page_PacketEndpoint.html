@@ -146,6 +146,8 @@ typedef uint64 <span class="Att">XPoint</span>;
 <b>PacketMultipointDevice</b> is similar to the <b>PacketEndpointDevice</b>. The difference is
 the address argument in <b>inbound()</b> and <b>outbound()</b> methods. This argument is the address
 the packet should be sent to or is received from. <b>ConnectionProc</b> methods also have the address argument.
+It also has one additional method: <b>connection_open()</b> is called to signal about connection opening with a
+peer.
 </p>
 
 <pre>
@@ -169,6 +171,8 @@ struct <span class="Att">PacketMultipointDevice</span>
    
   struct ConnectionProc // optional for InboundProc
    {
+    virtual void connection_open(<span class="Att">XPoint point</span>)=0;
+    
     virtual void connection_lost(<span class="Att">XPoint point</span>)=0;
     
     virtual void connection_close(<span class="Att">XPoint point</span>)=0;

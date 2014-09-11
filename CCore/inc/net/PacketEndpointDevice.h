@@ -93,6 +93,8 @@ struct PacketMultipointDevice
    
   struct ConnectionProc // optional for InboundProc
    {
+    virtual void connection_open(XPoint point)=0;
+    
     virtual void connection_lost(XPoint point)=0;
     
     virtual void connection_close(XPoint point)=0;

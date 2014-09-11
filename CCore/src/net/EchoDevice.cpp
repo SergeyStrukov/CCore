@@ -14,6 +14,8 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/net/EchoDevice.h>
+
+#include <CCore/inc/Print.h>
  
 namespace CCore {
 namespace Net {
@@ -28,6 +30,10 @@ const char * GetTextDesc(EchoDevice::Event ev)
     
     "No packet",
     "Bad packet format",
+    
+    "Connection open",
+    "Connection lost",
+    "Connection close",
    
     ""
    };
@@ -82,10 +88,32 @@ void EchoDevice::tick()
  {
   // do nothing
  }
+
+void EchoDevice::connection_open(XPoint point)
+ {
+  if( show_flag ) Printf(Con,"Connection open #;\n",PointDesc(mp,point));
+   
+  count(Event_open);
+ }
+
+void EchoDevice::connection_lost(XPoint point)
+ {
+  if( show_flag ) Printf(Con,"Connection lost #;\n",PointDesc(mp,point));
+   
+  count(Event_lost);
+ }
+
+void EchoDevice::connection_close(XPoint point)
+ {
+  if( show_flag ) Printf(Con,"Connection close #;\n",PointDesc(mp,point));
+   
+  count(Event_close);
+ }
     
-EchoDevice::EchoDevice(StrLen mp_dev_name,ulen max_packets)
+EchoDevice::EchoDevice(StrLen mp_dev_name,ulen max_packets,bool show_flag_)
  : hook(mp_dev_name),
    mp(hook),
+   show_flag(show_flag_),
    pset("EchoDevice.pset",max_packets),
    mutex("EchoDevice"),
    traffic(0)

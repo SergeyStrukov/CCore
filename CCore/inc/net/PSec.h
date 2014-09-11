@@ -426,7 +426,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
      
       using ProcLocked = Locked<Mutex,PacketProcessor> ;
      
-      Mutex mutex;
+      mutable Mutex mutex;
      
       OwnPtr<PacketProcessor> proc;
       ClientProfilePtr client_profile;
@@ -438,9 +438,11 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       
       void connection_lost(XPoint point,Engine *engine);
       
+      void connection_close(XPoint point,Engine *engine);
+      
       void response(XPoint point,const ControlResponse &resp,Engine *engine);
       
-      void response(XPoint point,const ControlResponse &resp,Engine *engine,PacketList &list);
+      bool response(XPoint point,const ControlResponse &resp,Engine *engine,PacketList &list); // true to close
       
      public: 
      
@@ -448,7 +450,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       
       ~Proc();
       
-      void getStat(ProcessorStatInfo &ret) const { proc->getStat(ret); }
+      void getStat(ProcessorStatInfo &ret) const;
       
       void replace(const MasterKey &master_key,MSec keep_alive_timeout,ClientProfilePtr &client_profile);
       
@@ -458,9 +460,11 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       
       bool decUse(); // true to del
       
-      bool close(Engine *engine); // true to del
+      bool close(XPoint point,Engine *engine,PacketList &list); // true to del
       
       bool tick(XPoint point,Engine *engine,PacketList &list); // true to del
+      
+      // async
       
       void inbound(XPoint point,Packet<uint8> packet,PtrLen<const uint8> data,Engine *engine);
       
@@ -497,6 +501,10 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       static ulen GetMaxInpLen(PtrLen<const AlgoLen> algo_lens,ulen len);
       
       static ulen GetOutDelta(PtrLen<const AlgoLen> algo_lens,ulen len);
+      
+      void connection_lost(XPoint point);
+      
+      void send(PacketList &list);
       
       // InboundProc
       
