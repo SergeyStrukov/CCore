@@ -96,6 +96,10 @@ net/SingleEchoDevice.h net/EchoDevice.h
 
   ConnectionProc interface implementation is added.
 
+net/PacketEndpointDevice.h and related classes
+
+  PortManager is added.
+
 --- Updates ----------
 
 Regen
