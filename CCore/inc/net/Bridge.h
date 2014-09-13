@@ -34,7 +34,7 @@ class Bridge;
 
 class Bridge : NoCopy
  {
-   class Server : public ObjBase , public PacketMultipointDevice
+   class Server : NoCopy , public ObjBase , public PacketMultipointDevice , public PortManager
     {
       Bridge &bridge;
       InboundProc *proc;
@@ -59,6 +59,14 @@ class Bridge : NoCopy
    
       virtual void detach();
       
+      // PortManager
+      
+      virtual XPoint getDevicePort() const;
+      
+      virtual XPoint getPort(XPoint point) const;
+      
+      virtual XPoint changePort(XPoint point,XPoint port) const;
+      
       // methods
       
       void inbound(XPoint point,Packet<uint8> packet);
@@ -66,7 +74,7 @@ class Bridge : NoCopy
       void tick();
     };
     
-   class Client : public ObjBase , public PacketEndpointDevice
+   class Client : NoCopy , public ObjBase , public PacketEndpointDevice , public PortManager
     {
       Bridge &bridge;
       XPoint point;
@@ -89,6 +97,14 @@ class Bridge : NoCopy
       virtual void attach(InboundProc *proc);
    
       virtual void detach();
+      
+      // PortManager
+      
+      virtual XPoint getDevicePort() const;
+      
+      virtual XPoint getPort(XPoint point) const;
+      
+      virtual XPoint changePort(XPoint point,XPoint port) const;
       
       // methods
       

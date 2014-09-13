@@ -106,7 +106,22 @@ void Bridge::Server::detach()
      Abort("Fatal error : CCore::Net::Bridge is running on detach");
     }
  }
-      
+
+XPoint Bridge::Server::getDevicePort() const
+ {
+  return 0;
+ }
+
+XPoint Bridge::Server::getPort(XPoint) const
+ {
+  return 0;
+ }
+
+XPoint Bridge::Server::changePort(XPoint point,XPoint) const
+ {
+  return point;
+ }
+
 void Bridge::Server::inbound(XPoint point,Packet<uint8> packet)
  {
   if( proc )
@@ -210,7 +225,22 @@ void Bridge::Client::detach()
      Abort("Fatal error : CCore::Net::Bridge is running on detach");
     }
  }
-      
+
+XPoint Bridge::Client::getDevicePort() const
+ {
+  return 0;
+ }
+
+XPoint Bridge::Client::getPort(XPoint) const
+ {
+  return 0;
+ }
+
+XPoint Bridge::Client::changePort(XPoint point,XPoint) const
+ {
+  return point;
+ }
+
 void Bridge::Client::inbound(Packet<uint8> packet)
  {
   if( proc )

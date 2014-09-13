@@ -889,7 +889,7 @@ struct AsyncUDPEndpointDeviceBase
 
 /* class AsyncUDPEndpointDevice */ 
 
-class AsyncUDPEndpointDevice : public ObjBase , public PacketEndpointDevice , public AsyncUDPEndpointDeviceBase 
+class AsyncUDPEndpointDevice : public ObjBase , public PacketEndpointDevice , public AsyncUDPEndpointDeviceBase , public PortManager 
  {
    AsyncUDPDevice<AsyncUDPEndpointDeviceBase> dev;
    
@@ -924,6 +924,14 @@ class AsyncUDPEndpointDevice : public ObjBase , public PacketEndpointDevice , pu
    virtual void attach(InboundProc *proc);
    
    virtual void detach();
+   
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
    
    // start/stop
    
@@ -986,7 +994,7 @@ struct AsyncUDPMultipointDeviceBase
 
 /* class AsyncUDPMultipointDevice */
 
-class AsyncUDPMultipointDevice : public ObjBase , public PacketMultipointDevice , public AsyncUDPMultipointDeviceBase
+class AsyncUDPMultipointDevice : public ObjBase , public PacketMultipointDevice , public AsyncUDPMultipointDeviceBase , public PortManager
  {
    AsyncUDPDevice<AsyncUDPMultipointDeviceBase> dev;
   
@@ -1021,6 +1029,14 @@ class AsyncUDPMultipointDevice : public ObjBase , public PacketMultipointDevice 
    virtual void attach(InboundProc *proc);
    
    virtual void detach();
+   
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
    
    // start/stop
    

@@ -396,7 +396,7 @@ struct UDPEndpointDeviceBase
 
 /* class UDPEndpointDevice */ 
 
-class UDPEndpointDevice : public ObjBase , public PacketEndpointDevice , public UDPEndpointDeviceBase
+class UDPEndpointDevice : public ObjBase , public PacketEndpointDevice , public UDPEndpointDeviceBase , public PortManager
  {
   private:
    
@@ -433,6 +433,14 @@ class UDPEndpointDevice : public ObjBase , public PacketEndpointDevice , public 
    virtual void attach(InboundProc *proc);
    
    virtual void detach();
+   
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
    
    // start/stop
    
@@ -489,7 +497,7 @@ struct UDPMultipointDeviceBase
 
 /* class UDPMultipointDevice */ 
 
-class UDPMultipointDevice : public ObjBase , public PacketMultipointDevice , public UDPMultipointDeviceBase
+class UDPMultipointDevice : public ObjBase , public PacketMultipointDevice , public UDPMultipointDeviceBase , public PortManager
  {
    UDPDevice<UDPMultipointDeviceBase> dev;
   
@@ -524,6 +532,14 @@ class UDPMultipointDevice : public ObjBase , public PacketMultipointDevice , pub
    virtual void attach(InboundProc *proc);
    
    virtual void detach();
+   
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
    
    // start/stop
    

@@ -75,8 +75,10 @@ class <span class="Att">Bridge</span> : NoCopy
 Once a <b>Bridge</b> object is created, it creates and registers a server device and number of client devices.
 The server device has the name <b>ServerName()</b>. To build a client device name use the inner class
 <b>ClientName</b>. Numbers of client devices are <b>1 .. num_clients</b>. The fields <b>str</b> is the built client
-device name. Server implements the <b>PacketMultipointDevice</b> interface. Clients implement
-the <b>PacketEndpointDevice</b> interface. So you can attach to these devices another protocol devices.
+device name. Server implements the <b>PacketMultipointDevice</b> interface and the <b>PortManager</b> co-interface. 
+Clients implement the <b>PacketEndpointDevice</b> interface and the <b>PortManager</b> co-interface. 
+The port numbering is trivial: all addresses ports are zero.
+So you can attach to these devices another protocol devices.
 </p>
 
 <p>

@@ -41,6 +41,8 @@ struct PacketEndpointDevice;
 
 struct PacketMultipointDevice;
 
+struct PortManager;
+
 class PointDesc;
 
 /* struct PacketEndpointDevice */ 
@@ -71,7 +73,7 @@ struct PacketEndpointDevice
    
   virtual void detach()=0;
  };
- 
+
 /* struct PacketMultipointDevice */ 
 
 struct PacketMultipointDevice
@@ -105,6 +107,17 @@ struct PacketMultipointDevice
   virtual void detach()=0;
  };
  
+/* struct PortManager */
+
+struct PortManager
+ {
+  virtual XPoint getDevicePort() const =0;
+  
+  virtual XPoint getPort(XPoint point) const =0;
+  
+  virtual XPoint changePort(XPoint point,XPoint port) const =0;
+ };
+
 /* class PointDesc */  
 
 class PointDesc : NoCopy

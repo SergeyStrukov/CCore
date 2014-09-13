@@ -610,6 +610,8 @@ class UDPEndpoint : NoCopy
    
    ~UDPEndpoint();
    
+   UDPort getPort() const { return port; }
+   
    ulen getMaxInboundLen() const;
    
    PacketFormat getUDPTxFormat() const;
@@ -860,7 +862,7 @@ class NanoIPDevice : public ObjBase , public Funchor , EthProc
  
 /* class NanoUDPEndpointDevice */  
  
-class NanoUDPEndpointDevice : public ObjBase , public PacketEndpointDevice
+class NanoUDPEndpointDevice : public ObjBase , public PacketEndpointDevice , public PortManager
  {
    class Engine : public Funchor_nocopy
     {
@@ -907,6 +909,12 @@ class NanoUDPEndpointDevice : public ObjBase , public PacketEndpointDevice
    
    virtual ~NanoUDPEndpointDevice();
    
+   // methods
+   
+   UDPort getPort() const { return udp_endpoint.getPort(); }
+   
+   UDPoint getDst() const { return engine.getDst(); }
+   
    // PacketEndpointDevice 
    
    virtual PacketFormat getOutboundFormat();
@@ -918,11 +926,19 @@ class NanoUDPEndpointDevice : public ObjBase , public PacketEndpointDevice
    virtual void attach(InboundProc *proc);
    
    virtual void detach();
+
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
  };
  
 /* class NanoUDPMultipointDevice */ 
 
-class NanoUDPMultipointDevice : public ObjBase , public PacketMultipointDevice
+class NanoUDPMultipointDevice : public ObjBase , public PacketMultipointDevice , public PortManager
  {
    class Engine : public Funchor_nocopy
     {
@@ -965,6 +981,10 @@ class NanoUDPMultipointDevice : public ObjBase , public PacketMultipointDevice
    
    virtual ~NanoUDPMultipointDevice();
    
+   // methods
+   
+   UDPort getPort() const { return udp_endpoint.getPort(); }
+   
    // PacketMultipointDevice
    
    virtual StrLen toText(XPoint point,PtrLen<char> buf);
@@ -978,6 +998,14 @@ class NanoUDPMultipointDevice : public ObjBase , public PacketMultipointDevice
    virtual void attach(InboundProc *proc);
    
    virtual void detach();
+   
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
  };
  
 } // namespace Net

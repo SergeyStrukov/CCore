@@ -437,12 +437,12 @@ data payload and must be prepared according the <b>getUDPTxFormat()</b> packet f
 
 <p>
 <b>NanoUDPEndpointDevice</b> class implements the <a href="page_PacketEndpoint.html#PacketEndpointDevice"><b>PacketEndpointDevice</b></a> interface over
-a UDP port.
+a <b>UDP</b> port.
 </p>
 
 <pre>
 
-class <span class="Att">NanoUDPEndpointDevice</span> : public ObjBase , public PacketEndpointDevice
+class <span class="Att">NanoUDPEndpointDevice</span> : public ObjBase , public PacketEndpointDevice , public PortManager
  {
    ....
 
@@ -451,6 +451,12 @@ class <span class="Att">NanoUDPEndpointDevice</span> : public ObjBase , public P
    NanoUDPEndpointDevice(StrLen ip_dev_name,UDPort udport,bool do_checksum,UDPoint dst);
    
    virtual ~NanoUDPEndpointDevice();
+   
+   // methods
+   
+   UDPort getPort() const;
+   
+   UDPoint getDst() const;
    
    // PacketEndpointDevice 
    
@@ -463,6 +469,14 @@ class <span class="Att">NanoUDPEndpointDevice</span> : public ObjBase , public P
    virtual void attach(InboundProc *proc);
    
    virtual void detach();
+
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
  };
 
 </pre>
@@ -476,11 +490,11 @@ class <span class="Att">NanoUDPEndpointDevice</span> : public ObjBase , public P
 </p>
 
 <p>
-<b>udport</b> is the local UDP port,
+<b>udport</b> is the local <b>UDP</b> port,
 </p>
 
 <p>
-<b>do_checksum</b> is the UDP checksum flag. If it is <b>true</b>, the UDP checksum processing is enabled
+<b>do_checksum</b> is the <b>UDP</b> checksum flag. If it is <b>true</b>, the <b>UDP</b> checksum processing is enabled
 on this particular port.
 </p>
 
@@ -489,19 +503,27 @@ on this particular port.
 </p>
 
 <p>
-Other methods implement <b>PacketEndpointDevice</b> interface.
+<b>getPort()</b> returns the assigned <b>UDP</b> port number.
+</p>
+
+<p>
+<b>getDst()</b> returns the assigned <b>UDP</b> peer address.
+</p>
+
+<p>
+Other methods implement <b>PacketEndpointDevice</b> interface and <b>PortManager</b> interface.
 </p>
 
 <h4>NanoUDPMultipointDevice</h4>
 
 <p>
 <b>NanoUDPMultipointDevice</b> class implements the <a href="page_PacketEndpoint.html#PacketMultipointDevice"><b>PacketMultipointDevice</b></a> interface over
-a UDP port.
+a <b>UDP</b> port.
 </p>
 
 <pre>
 
-class <span class="Att">NanoUDPMultipointDevice</span> : public ObjBase , public PacketMultipointDevice
+class <span class="Att">NanoUDPMultipointDevice</span> : public ObjBase , public PacketMultipointDevice , public PortManager
  {
    ....
 
@@ -510,6 +532,10 @@ class <span class="Att">NanoUDPMultipointDevice</span> : public ObjBase , public
    NanoUDPMultipointDevice(StrLen ip_dev_name,UDPort udport,bool do_checksum);
    
    virtual ~NanoUDPMultipointDevice();
+   
+   // methods
+   
+   UDPort getPort() const;
    
    // PacketMultipointDevice
    
@@ -524,6 +550,14 @@ class <span class="Att">NanoUDPMultipointDevice</span> : public ObjBase , public
    virtual void attach(InboundProc *proc);
    
    virtual void detach();
+   
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
  };
 
 </pre>
@@ -537,16 +571,20 @@ class <span class="Att">NanoUDPMultipointDevice</span> : public ObjBase , public
 </p>
 
 <p>
-<b>udport</b> is the local UDP port,
+<b>udport</b> is the local <b>UDP</b> port,
 </p>
 
 <p>
-<b>do_checksum</b> is the UDP checksum flag. If it is <b>true</b>, the UDP checksum processing is enabled
+<b>do_checksum</b> is the <b>UDP</b> checksum flag. If it is <b>true</b>, the <b>UDP</b> checksum processing is enabled
 on this particular port.
 </p>
 
 <p>
-Other methods implement <b>PacketMultipointDevice</b> interface.
+<b>getPort()</b> returns the assigned <b>UDP</b> port number.
+</p>
+
+<p>
+Other methods implement <b>PacketMultipointDevice</b> interface and <b>PortManager</b> interface.
 </p>
 
 </body>

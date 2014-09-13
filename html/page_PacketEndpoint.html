@@ -195,6 +195,39 @@ Multipoint device can store a native address in the type <b>XPoint</b>, if it is
 It also can perform an address mapping from the native address to the type <b>XPoint</b>.
 </p>
 
+<h4>PortManager</h4>
+
+<p>
+This optional co-interface for <b>PacketEndpointDevice</b> and <b>PacketMultipointDevice</b> interfaces implements 
+the "port" abstraction. Some address schemes (like <b>UDP</b>) uses the concept of port.
+Port is a part of the address. 
+</p>
+
+<pre>
+
+struct <span class="Att">PortManager</span>
+ {
+  virtual XPoint getDevicePort() const =0;
+  
+  virtual XPoint getPort(XPoint point) const =0;
+  
+  virtual XPoint changePort(XPoint point,XPoint port) const =0;
+ };
+
+</pre>
+
+<p>
+<b>getDevicePort()</b> returns the port of the device object in the form of the <b>XPoint</b> value.
+</p>
+
+<p>
+<b>getPort()</b> extracts the port from the given address. Both port and address are represented by the <b>XPoint</b> value.
+</p>
+
+<p>
+<b>changePort()</b> changes the port of the given address and returns the resulting address.
+</p>
+
 <h4>Utilities</h4>
 
 <pre>

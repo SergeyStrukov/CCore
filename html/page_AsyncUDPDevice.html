@@ -39,12 +39,13 @@ These devices implement packet communication using UDP protocol. They are simila
 <h4>AsyncUDPEndpointDevice</h4>
 
 <p>
-The class <b>AsyncUDPEndpointDevice</b> implements the <b>PacketEndpointDevice</b> interface.
+The class <b>AsyncUDPEndpointDevice</b> implements the <b>PacketEndpointDevice</b> interface and
+the <b>PortManager</b> interface.
 </p>
 
 <pre>
 
-class <span class="Att">AsyncUDPEndpointDevice</span> : public ObjBase , public PacketEndpointDevice
+class <span class="Att">AsyncUDPEndpointDevice</span> : public ObjBase , public PacketEndpointDevice , public PortManager
  {
    ....
 
@@ -101,6 +102,14 @@ class <span class="Att">AsyncUDPEndpointDevice</span> : public ObjBase , public 
    
    virtual void detach();
    
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
+   
    // start/stop
    
    class StartStop : NoCopy
@@ -134,7 +143,8 @@ communication peer. <b>max_packets</b> limits the packet usage for the inbound p
 </p>
 
 <p>
-Other methods are the <b>PacketEndpointDevice</b> interface implementation.
+Other methods are the <b>PacketEndpointDevice</b> interface implementation and 
+the <b>PortManager</b> interface implementation.
 </p>
 
 <p>
@@ -146,12 +156,13 @@ So attach first, then start. Additional constructor arguments are not used.
 <h4>AsyncUDPMultipointDevice</h4>
 
 <p>
-The class <b>AsyncUDPMultipointDevice</b> implements the <b>PacketMultipointDevice</b> interface.
+The class <b>AsyncUDPMultipointDevice</b> implements the <b>PacketMultipointDevice</b> interface and
+the <b>PortManager</b> interface.
 </p>
 
 <pre>
 
-class <span class="Att">AsyncUDPMultipointDevice</span> : public ObjBase , public PacketMultipointDevice
+class <span class="Att">AsyncUDPMultipointDevice</span> : public ObjBase , public PacketMultipointDevice , public PortManager
  {
    ....
 
@@ -207,6 +218,14 @@ class <span class="Att">AsyncUDPMultipointDevice</span> : public ObjBase , publi
    
    virtual void detach();
    
+   // PortManager
+   
+   virtual XPoint getDevicePort() const;
+   
+   virtual XPoint getPort(XPoint point) const;
+   
+   virtual XPoint changePort(XPoint point,XPoint port) const;
+   
    // start/stop
    
    class StartStop : NoCopy
@@ -236,7 +255,8 @@ The first constructor argument is the local UDP port.
 </p>
 
 <p>
-Other methods are the <b>PacketEndpointDevice</b> interface implementation.
+Other methods are the <b>PacketEndpointDevice</b> interface implementation and
+the <b>PortManager</b> interface implementation.
 </p>
 
 <p>

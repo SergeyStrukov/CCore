@@ -155,7 +155,28 @@ void UDPEndpointDevice::detach()
  {
   dev.detach();
  }
- 
+
+XPoint UDPEndpointDevice::getDevicePort() const
+ {
+  return dev.getPort();
+ }
+
+XPoint UDPEndpointDevice::getPort(XPoint point) const
+ {
+  UDPoint udpoint(point);
+
+  return udpoint.port;
+ }
+
+XPoint UDPEndpointDevice::changePort(XPoint point,XPoint port) const
+ {
+  UDPoint udpoint(point);
+  
+  udpoint.port=(UDPort)port;
+  
+  return udpoint.get();
+ }
+
 /* struct UDPMultipointDeviceBase */
 
 const char * GetTextDesc(UDPMultipointDeviceBase::Event ev)
@@ -227,6 +248,27 @@ void UDPMultipointDevice::detach()
   dev.detach();
  }
  
+XPoint UDPMultipointDevice::getDevicePort() const
+ {
+  return dev.getPort();
+ }
+
+XPoint UDPMultipointDevice::getPort(XPoint point) const
+ {
+  UDPoint udpoint(point);
+
+  return udpoint.port;
+ }
+
+XPoint UDPMultipointDevice::changePort(XPoint point,XPoint port) const
+ {
+  UDPoint udpoint(point);
+  
+  udpoint.port=(UDPort)port;
+  
+  return udpoint.get();
+ }
+
 } // namespace Net
 } // namespace CCore
  

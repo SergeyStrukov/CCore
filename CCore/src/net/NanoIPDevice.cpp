@@ -1418,6 +1418,27 @@ void NanoUDPEndpointDevice::detach()
   engine.detach();
  }
  
+XPoint NanoUDPEndpointDevice::getDevicePort() const
+ {
+  return getPort();
+ }
+
+XPoint NanoUDPEndpointDevice::getPort(XPoint point) const
+ {
+  UDPoint udpoint(point);
+
+  return udpoint.port;
+ }
+
+XPoint NanoUDPEndpointDevice::changePort(XPoint point,XPoint port) const
+ {
+  UDPoint udpoint(point);
+  
+  udpoint.port=(UDPort)port;
+  
+  return udpoint.get();
+ }
+
 /* class NanoUDPMultipointDevice */ 
 
 PacketMultipointDevice::InboundProc * NanoUDPMultipointDevice::Engine::getProc()
@@ -1542,6 +1563,27 @@ void NanoUDPMultipointDevice::detach()
   engine.detach();
  }
  
+XPoint NanoUDPMultipointDevice::getDevicePort() const
+ {
+  return getPort();
+ }
+
+XPoint NanoUDPMultipointDevice::getPort(XPoint point) const
+ {
+  UDPoint udpoint(point);
+
+  return udpoint.port;
+ }
+
+XPoint NanoUDPMultipointDevice::changePort(XPoint point,XPoint port) const
+ {
+  UDPoint udpoint(point);
+  
+  udpoint.port=(UDPort)port;
+  
+  return udpoint.get();
+ }
+
 } // namespace Net
 } // namespace CCore
  

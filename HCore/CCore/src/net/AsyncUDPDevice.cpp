@@ -169,6 +169,27 @@ void AsyncUDPEndpointDevice::detach()
   dev.detach();
  }
 
+XPoint AsyncUDPEndpointDevice::getDevicePort() const
+ {
+  return dev.getPort();
+ }
+
+XPoint AsyncUDPEndpointDevice::getPort(XPoint point) const
+ {
+  UDPoint udpoint(point);
+
+  return udpoint.port;
+ }
+
+XPoint AsyncUDPEndpointDevice::changePort(XPoint point,XPoint port) const
+ {
+  UDPoint udpoint(point);
+  
+  udpoint.port=(UDPort)port;
+  
+  return udpoint.get();
+ }
+
 /* struct AsyncUDPMultipointDeviceBase */
 
 const char * GetTextDesc(AsyncUDPMultipointDeviceBase::Event ev)
@@ -241,6 +262,27 @@ void AsyncUDPMultipointDevice::attach(InboundProc *proc)
 void AsyncUDPMultipointDevice::detach()
  {
   dev.detach();
+ }
+
+XPoint AsyncUDPMultipointDevice::getDevicePort() const
+ {
+  return dev.getPort();
+ }
+
+XPoint AsyncUDPMultipointDevice::getPort(XPoint point) const
+ {
+  UDPoint udpoint(point);
+
+  return udpoint.port;
+ }
+
+XPoint AsyncUDPMultipointDevice::changePort(XPoint point,XPoint port) const
+ {
+  UDPoint udpoint(point);
+  
+  udpoint.port=(UDPort)port;
+  
+  return udpoint.get();
  }
 
 } // namespace Net
