@@ -14,6 +14,7 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/net/PSecCore.h>
+#include <CCore/inc/net/PacketEndpointDevice.h>
  
 #include <CCore/inc/crypton/PlatformAES.h>
 #include <CCore/inc/crypton/PlatformSHA.h>

@@ -23,7 +23,7 @@
 
 #include <CCore/inc/crypton/Forget.h>
 
-#include <CCore/inc/net/PacketEndpointDevice.h>
+#include <CCore/inc/net/XPoint.h>
 
 namespace CCore {
 namespace Net {
@@ -551,13 +551,13 @@ struct EndpointManager
     OpenError_NoAccess
    };
   
-  virtual OpenErrorCode open(XPoint pke_point,MasterKeyPtr &skey,ClientProfilePtr &client_profile)=0;
+  virtual OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile)=0;
   
-  virtual void close(XPoint psec_point)=0;
+  virtual void close(XPoint point)=0;
   
   virtual void closeAll()=0;
   
-  virtual AbstractClientProfile * getClientProfile(XPoint psec_point)=0; // only inside inbound processing
+  virtual AbstractClientProfile * getClientProfile(XPoint point)=0; // only inside inbound processing
  };
 
 /* class TestMasterKey */

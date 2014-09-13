@@ -100,8 +100,6 @@ class Engine : public Funchor_nocopy
    
    ClientDatabase client_db;
    
-   Net::PSec::UDPointMapper mapper;
-   
    Net::PSec::MultipointDevice server_psec;
    
    ObjMaster server_psec_master;
@@ -176,7 +174,7 @@ class Engine : public Funchor_nocopy
       server_psec_mp_master(server_psec_mp,"server_psec_mp"),       
       
       client_db(this,"client"),
-      server_psec("server_psec_mp",mapper,algo_set.getAlgoLens(),10,10_sec),
+      server_psec("server_psec_mp",algo_set.getAlgoLens(),10,10_sec),
       server_psec_master(server_psec,"server_psec"),
       server_negotiant("server_pke_mp",client_db,server_psec),
       
@@ -197,7 +195,7 @@ class Engine : public Funchor_nocopy
       PrimeKeyPtr client_key(createClientKey());
       PrimeKeyPtr server_key(createServerKey());
      
-      client_negotiant.prepare(client_id,client_key,server_key);
+      client_negotiant.prepare(client_psec_ep.getDevicePort(),client_id,client_key,server_key);
      }
      
      {

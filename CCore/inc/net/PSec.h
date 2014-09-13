@@ -17,7 +17,7 @@
 #define CCore_inc_net_PSec_h
 
 #include <CCore/inc/net/PSecCore.h>
-#include <CCore/inc/net/UDPoint.h>
+#include <CCore/inc/net/PacketEndpointDevice.h>
 
 #include <CCore/inc/PacketSet.h>
 
@@ -46,10 +46,6 @@ class ProcessorStatInfo;
 class PacketProcessor;
 
 class EndpointDevice;
-
-struct XPointMapper;
-
-class UDPointMapper;
 
 class MultipointDevice;
 
@@ -391,28 +387,6 @@ class EndpointDevice : public ObjBase , public PacketEndpointDevice
    virtual void detach();
  };
 
-/* struct XPointMapper */
-
-struct XPointMapper
- {
-  virtual XPoint map(XPoint point) const =0;
- };
-
-/* class UDPointMapper */
-
-class UDPointMapper : NoCopy , public XPointMapper
- {
-  public:
- 
-   UDPointMapper();
-   
-   ~UDPointMapper();
-
-   // XPointMapper
-   
-   virtual XPoint map(XPoint point) const;
- };
-
 /* class MultipointDevice */
 
 class MultipointDevice : public ObjBase , public PacketMultipointDevice , public EndpointManager
@@ -477,8 +451,6 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
     {
       PacketMultipointDevice *dev;
       
-      XPointMapper &mapper;
-      
       ulen max_clients;
       MSec keep_alive_timeout;
       
@@ -514,7 +486,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
 
      public:
       
-      Engine(PacketMultipointDevice *dev,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients,MSec keep_alive_timeout);
+      Engine(PacketMultipointDevice *dev,PtrLen<const AlgoLen> algo_lens,ulen max_clients,MSec keep_alive_timeout);
       
       ~Engine();
       
@@ -534,13 +506,13 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
        
       void detach();
       
-      OpenErrorCode open(XPoint pke_point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+      OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
       
-      void close(XPoint psec_point);
+      void close(XPoint point);
       
       void closeAll();
       
-      AbstractClientProfile * getClientProfile(XPoint psec_point) const;
+      AbstractClientProfile * getClientProfile(XPoint point) const;
     };
    
    using Hook = AttachmentHost<InboundProc>::Hook ;
@@ -551,7 +523,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    
   public:
   
-   MultipointDevice(StrLen mp_dev_name,XPointMapper &mapper,PtrLen<const AlgoLen> algo_lens,ulen max_clients,MSec keep_alive_timeout);
+   MultipointDevice(StrLen mp_dev_name,PtrLen<const AlgoLen> algo_lens,ulen max_clients,MSec keep_alive_timeout);
    
    virtual ~MultipointDevice();
    
@@ -579,13 +551,13 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    
    // EndpointManager
    
-   virtual OpenErrorCode open(XPoint pke_point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
+   virtual OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
    
-   virtual void close(XPoint psec_point);
+   virtual void close(XPoint point);
    
    virtual void closeAll();
    
-   virtual AbstractClientProfile * getClientProfile(XPoint psec_point); // only inside inbound processing
+   virtual AbstractClientProfile * getClientProfile(XPoint point); // only inside inbound processing
  };
 
 } // namespace PSec 

@@ -17,6 +17,7 @@
 #define CCore_inc_net_PKE_h
 
 #include <CCore/inc/net/PSecCore.h>
+#include <CCore/inc/net/PacketEndpointDevice.h>
 
 #include <CCore/inc/PacketSet.h>
 
@@ -509,6 +510,7 @@ struct NegotiantData : NoCopy
   
   // skey part
   
+  XPoint psec_port;
   SessionKeyParam param;
   MasterKeyPtr skey;
   PtrLen<uint8> key_buf;
@@ -611,7 +613,7 @@ class ClientNegotiant : NoCopy
       
       PKError getError() const { return error; }
       
-      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
+      void prepare(XPoint psec_port,ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
       
       void start(PtrLen<const CryptAlgoSelect> algo_list);
       
@@ -661,7 +663,7 @@ class ClientNegotiant : NoCopy
       
       PKError getError() const;
       
-      void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
+      void prepare(XPoint psec_port,ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param);
       
       void start(PtrLen<const CryptAlgoSelect> algo_list);
       
@@ -684,7 +686,7 @@ class ClientNegotiant : NoCopy
    
    PKError getError() const { return engine.getError(); }
    
-   void prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param={}) { engine.prepare(client_id,client_key,server_key,param); }
+   void prepare(XPoint psec_port,ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param={}) { engine.prepare(psec_port,client_id,client_key,server_key,param); }
    
    void start(PtrLen<const CryptAlgoSelect> algo_list) { engine.start(algo_list); }
    
@@ -785,6 +787,7 @@ class ServerNegotiant : NoCopy
    class Engine : NoCopy , PacketMultipointDevice::InboundProc
     {
       PacketMultipointDevice *dev;
+      PortManager *port_manager;
       
       PacketFormat outbound_format;
       
@@ -826,7 +829,7 @@ class ServerNegotiant : NoCopy
     
      public:
     
-      Engine(PacketMultipointDevice *dev,const ClientDatabase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout);
+      Engine(PacketMultipointDevice *dev,PortManager *port_manager,const ClientDatabase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout);
       
       ~Engine();
       

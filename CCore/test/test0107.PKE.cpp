@@ -174,7 +174,7 @@ class Engine : public Funchor_nocopy
       PrimeKeyPtr client_key(createClientKey());
       PrimeKeyPtr server_key(createServerKey());
      
-      client.prepare(client_id,client_key,server_key);
+      client.prepare(0,client_id,client_key,server_key);
      }
      
      {

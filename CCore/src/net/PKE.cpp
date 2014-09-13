@@ -963,7 +963,7 @@ void ClientNegotiant::Proc::build7()
  {
   BufPutDev dev=neg_data.start(send_buf,PKE_ClientParam);
   
-  dev(neg_data.param);
+  dev.use<BeOrder>(neg_data.psec_port,neg_data.param);
   
   send_len=neg_data.finish(send_buf,dev);
  }
@@ -1130,7 +1130,7 @@ ClientNegotiant::Proc::~Proc()
  {
  }
 
-void ClientNegotiant::Proc::prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key_,PrimeKeyPtr &server_key_,SessionKeyParam param)
+void ClientNegotiant::Proc::prepare(XPoint psec_port,ClientIDPtr &client_id,PrimeKeyPtr &client_key_,PrimeKeyPtr &server_key_,SessionKeyParam param)
  {
   if( state!=State_Null )
     {
@@ -1155,9 +1155,10 @@ void ClientNegotiant::Proc::prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_k
      Printf(Exception,"CCore::Net::PSec::ClientNegotiant::prepare(...) : no server key");
     }
   
-  neg_data.param=param;
-  
   neg_data.prepare(client_id.getPtr(),client_key.getPtr(),server_key.getPtr());
+  
+  neg_data.psec_port=psec_port;
+  neg_data.param=param;
   
   state=State_Ready;
  }
@@ -1330,11 +1331,11 @@ auto ClientNegotiant::Engine::getError() const -> PKError
   return proc.getError();
  }
 
-void ClientNegotiant::Engine::prepare(ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param)
+void ClientNegotiant::Engine::prepare(XPoint psec_port,ClientIDPtr &client_id,PrimeKeyPtr &client_key,PrimeKeyPtr &server_key,SessionKeyParam param)
  {
   Mutex::Lock lock(mutex);
   
-  proc.prepare(client_id,client_key,server_key,param);
+  proc.prepare(psec_port,client_id,client_key,server_key,param);
  }
 
 void ClientNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list)
@@ -1540,7 +1541,7 @@ auto ServerNegotiant::Proc::process7(PtrLen<const uint8> data) -> InboundResult
   
   RangeGetDev dev(data);
   
-  dev(neg_data.param);
+  dev.use<BeOrder>(neg_data.psec_port,neg_data.param);
   
   if( !dev.finish() ) return InboundDrop;
   
@@ -1606,7 +1607,9 @@ auto ServerNegotiant::Proc::process9(PtrLen<const uint8> data) -> InboundResult
   
   if( !--neg_data.cur_count )
     {
-     switch( engine->epman.open(neg_data.point,neg_data.skey,client_profile) )
+     XPoint psec_point=engine->port_manager->changePort(neg_data.point,neg_data.psec_port);
+    
+     switch( engine->epman.open(psec_point,neg_data.skey,client_profile) )
        {
         default:
         case EndpointManager::OpenError_NoMemory :
@@ -1950,8 +1953,9 @@ void ServerNegotiant::Engine::tick()
   send(list);
  }
 
-ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,const ClientDatabase &client_db_,EndpointManager &epman_,ulen max_clients_,MSec final_timeout)
+ServerNegotiant::Engine::Engine(PacketMultipointDevice *dev_,PortManager *port_manager_,const ClientDatabase &client_db_,EndpointManager &epman_,ulen max_clients_,MSec final_timeout)
  : dev(dev_),
+   port_manager(port_manager_),
    client_db(client_db_),
    epman(epman_),
    max_clients(max_clients_),
@@ -2012,7 +2016,7 @@ void ServerNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list_)
 
 ServerNegotiant::ServerNegotiant(StrLen mp_dev_name,const ClientDatabase &client_db,EndpointManager &epman,ulen max_clients,MSec final_timeout)
  : hook(mp_dev_name),
-   engine(hook,client_db,epman,max_clients,final_timeout)
+   engine(hook,hook,client_db,epman,max_clients,final_timeout)
  {
  }
 
