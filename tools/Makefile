@@ -31,6 +31,7 @@ all:
 	make $(OPT) -C Keywords
 	make $(OPT) -C DDL2TypeSet
 	make $(OPT) -C CondLangLR1/Main
+	make $(OPT) -C PSecEchoTest
 
 clean:
 	make -C EchoServer   clean
@@ -52,6 +53,7 @@ clean:
 	make -C Keywords     clean
 	make -C DDL2TypeSet  clean
 	make -C CondLangLR1/Main clean
+	make -C PSecEchoTest clean
 
 list:
 	make -C EchoServer   list
@@ -73,4 +75,5 @@ list:
 	make -C Keywords     list
 	make -C DDL2TypeSet  list
 	make -C CondLangLR1/Main list
+	make -C PSecEchoTest list
 

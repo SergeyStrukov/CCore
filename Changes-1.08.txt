@@ -100,6 +100,8 @@ net/PacketEndpointDevice.h and related classes
 
   PortManager is added.
 
+tools/PSecEchoTest is added
+
 --- Updates ----------
 
 Regen
