@@ -494,6 +494,14 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       
       void getStat(XPoint point,ProcessorStatInfo &ret) const;
       
+      template <class Func>
+      void processStat(Func &func) const
+       {
+        Mutex::Lock lock(mutex);
+        
+        map.applyIncr( [&func] (XPoint point,const Proc &proc) { ProcessorStatInfo stat; proc.getStat(stat); func(point,stat); } );
+       }
+      
       StrLen toText(XPoint point,PtrLen<char> buf) const;
        
       PacketFormat getOutboundFormat() const;
@@ -534,6 +542,14 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    void getStat(StatInfo &ret) const { engine.getStat(ret); }
    
    void getStat(XPoint point,StatInfo &ret) const { engine.getStat(point,ret); }
+   
+   template <class FuncInit>
+   void processStat(FuncInit func_init) const
+    {
+     FunctorTypeOf<FuncInit> func(func_init);
+     
+     engine.processStat(func);
+    }
    
    // PacketMultipointDevice
    
