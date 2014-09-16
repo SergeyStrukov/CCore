@@ -135,6 +135,7 @@ OBJ_LIST = \
 ../test-obj/test1028.ScanFile.o \
 ../test-obj/test1029.ScanAsyncFile.o \
 ../test-obj/test1030.PKE.o \
+../test-obj/test1031.PSec.o \
 ../test-obj/test3001.SysError.o \
 ../test-obj/test3002.IntegerFastAlgo.o \
 ../test-obj/test3003.IntegerSpeed.o \
@@ -291,6 +292,7 @@ ASM_LIST = \
 ../test-obj/test1028.ScanFile.s \
 ../test-obj/test1029.ScanAsyncFile.s \
 ../test-obj/test1030.PKE.s \
+../test-obj/test1031.PSec.s \
 ../test-obj/test3001.SysError.s \
 ../test-obj/test3002.IntegerFastAlgo.s \
 ../test-obj/test3003.IntegerSpeed.s \
@@ -447,6 +449,7 @@ DEP_LIST = \
 ../test-obj/test1028.ScanFile.dep \
 ../test-obj/test1029.ScanAsyncFile.dep \
 ../test-obj/test1030.PKE.dep \
+../test-obj/test1031.PSec.dep \
 ../test-obj/test3001.SysError.dep \
 ../test-obj/test3002.IntegerFastAlgo.dep \
 ../test-obj/test3003.IntegerSpeed.dep \
@@ -878,6 +881,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test1030.PKE.o : ../../../HCore/CCore/test/test1030.PKE.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test1031.PSec.o : ../../../HCore/CCore/test/test1031.PSec.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3001.SysError.o : ../../../Target/WIN32/CCore/test/test3001.SysError.cpp
@@ -1341,6 +1347,9 @@ include $(RULES_FILE)
 ../test-obj/test1030.PKE.s : ../../../HCore/CCore/test/test1030.PKE.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test1031.PSec.s : ../../../HCore/CCore/test/test1031.PSec.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/test3001.SysError.s : ../../../Target/WIN32/CCore/test/test3001.SysError.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1801,6 +1810,9 @@ include $(RULES_FILE)
 
 ../test-obj/test1030.PKE.dep : ../../../HCore/CCore/test/test1030.PKE.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1030.PKE.o $< -MF $@
+
+../test-obj/test1031.PSec.dep : ../../../HCore/CCore/test/test1031.PSec.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1031.PSec.o $< -MF $@
 
 ../test-obj/test3001.SysError.dep : ../../../Target/WIN32/CCore/test/test3001.SysError.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3001.SysError.o $< -MF $@

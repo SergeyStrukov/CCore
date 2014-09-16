@@ -553,9 +553,9 @@ struct EndpointManager
   
   virtual OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile)=0;
   
-  virtual void close(XPoint point)=0;
+  virtual bool close(XPoint point)=0;
   
-  virtual void closeAll()=0;
+  virtual ulen closeAll()=0;
   
   virtual AbstractClientProfile * getClientProfile(XPoint point)=0; // only inside inbound processing
  };

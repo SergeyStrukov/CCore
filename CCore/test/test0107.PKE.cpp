@@ -98,13 +98,16 @@ class Engine : public Funchor_nocopy
         return Open_Ok;
        }
       
-      virtual void close(Net::XPoint psec_point)
+      virtual bool close(Net::XPoint psec_point)
        {
         Used(psec_point);
+        
+        return false;
        }
 
-      virtual void closeAll()
+      virtual ulen closeAll()
        {
+        return 0;
        }
       
       virtual Net::PSec::AbstractClientProfile * getClientProfile(Net::XPoint psec_point)

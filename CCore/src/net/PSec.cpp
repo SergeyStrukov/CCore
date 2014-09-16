@@ -1203,17 +1203,21 @@ void MultipointDevice::Engine::getStat(ProcessorStatInfo &ret) const
   map.applyIncr( [&ret] (XPoint,const Proc &obj) { ProcessorStatInfo temp; obj.getStat(temp); ret+=temp; } );
  }
 
-void MultipointDevice::Engine::getStat(XPoint point,ProcessorStatInfo &ret) const
+bool MultipointDevice::Engine::getStat(XPoint point,ProcessorStatInfo &ret) const
  {
   Mutex::Lock lock(mutex);
   
   if( const Proc *obj=map.find(point) )
     {
      obj->getStat(ret);
+     
+     return true;
     }
   else
     {
      ret.reset();
+     
+     return false;
     }
  }
 
@@ -1306,32 +1310,47 @@ auto MultipointDevice::Engine::open(XPoint point,MasterKeyPtr &skey,ClientProfil
     }
  }
 
-void MultipointDevice::Engine::close(XPoint point)
+bool MultipointDevice::Engine::close(XPoint point)
  {
   PacketList list;
+  bool ret;
   
   {
    Mutex::Lock lock(mutex);
   
-   Proc *obj=map.find(point);
-   
-   if( obj && obj->close(point,this,list) ) map.del(point);
+   if( Proc *obj=map.find(point) )
+     { 
+      if( obj->close(point,this,list) ) map.del(point);
+      
+      ret=true;
+     }
+   else
+     {
+      ret=false;
+     }
   }
   
   send(list);
+  
+  return ret;
  }
 
-void MultipointDevice::Engine::closeAll()
+ulen MultipointDevice::Engine::closeAll()
  {
   PacketList list;
+  ulen ret;
   
   {
    Mutex::Lock lock(mutex);
+   
+   ret=map.getCount();
 
    map.delIf( [this,&list] (XPoint point,Proc &obj) { return obj.close(point,this,list); } );
   }
   
   send(list);
+  
+  return ret;
  }
 
 AbstractClientProfile * MultipointDevice::Engine::getClientProfile(XPoint point) const
@@ -1392,14 +1411,14 @@ auto MultipointDevice::open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &cl
   return engine.open(point,skey,client_profile);
  }
 
-void MultipointDevice::close(XPoint point)
+bool MultipointDevice::close(XPoint point)
  {
-  engine.close(point);
+  return engine.close(point);
  }
 
-void MultipointDevice::closeAll()
+ulen MultipointDevice::closeAll()
  {
-  engine.closeAll();
+  return engine.closeAll();
  }
 
 AbstractClientProfile * MultipointDevice::getClientProfile(XPoint point)

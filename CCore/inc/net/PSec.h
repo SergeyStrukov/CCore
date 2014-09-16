@@ -492,7 +492,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       
       void getStat(ProcessorStatInfo &ret) const;
       
-      void getStat(XPoint point,ProcessorStatInfo &ret) const;
+      bool getStat(XPoint point,ProcessorStatInfo &ret) const;
       
       template <class Func>
       void processStat(Func &func) const
@@ -516,9 +516,9 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
       
       OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
       
-      void close(XPoint point);
+      bool close(XPoint point);
       
-      void closeAll();
+      ulen closeAll();
       
       AbstractClientProfile * getClientProfile(XPoint point) const;
     };
@@ -541,7 +541,7 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    
    void getStat(StatInfo &ret) const { engine.getStat(ret); }
    
-   void getStat(XPoint point,StatInfo &ret) const { engine.getStat(point,ret); }
+   bool getStat(XPoint point,StatInfo &ret) const { return engine.getStat(point,ret); }
    
    template <class FuncInit>
    void processStat(FuncInit func_init) const
@@ -569,9 +569,9 @@ class MultipointDevice : public ObjBase , public PacketMultipointDevice , public
    
    virtual OpenErrorCode open(XPoint point,MasterKeyPtr &skey,ClientProfilePtr &client_profile);
    
-   virtual void close(XPoint point);
+   virtual bool close(XPoint point);
    
-   virtual void closeAll();
+   virtual ulen closeAll();
    
    virtual AbstractClientProfile * getClientProfile(XPoint point); // only inside inbound processing
  };

@@ -143,4 +143,5 @@
 ../../../HCore/CCore/test/test1028.ScanFile.cpp
 ../../../HCore/CCore/test/test1029.ScanAsyncFile.cpp
 ../../../HCore/CCore/test/test1030.PKE.cpp
+../../../HCore/CCore/test/test1031.PSec.cpp
 ../../../HCore/CCore/test/testPrint.cpp

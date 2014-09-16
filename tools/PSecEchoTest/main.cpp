@@ -14,6 +14,7 @@
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
 
+#include <CCore/inc/CharProp.h>
 #include <CCore/inc/CmdInput.h>
 #include <CCore/inc/ReadCon.h>
 
@@ -27,6 +28,34 @@ namespace App {
 /* using */ 
 
 using namespace CCore;
+
+/* functions */
+
+template <class Dev>
+void ParseSpace(Dev &dev)
+ {
+  for(;;++dev)
+    {
+     typename Dev::Peek peek(dev);
+
+     if( !peek || !CharIsSpace(*peek) ) break; 
+    }
+ }
+
+template <class Dev>
+void ParseUDPoint(Dev &dev,Net::UDPoint &ret)
+ {
+  Net::UDPoint temp;
+  
+  Net::ParseIPAddress(dev,temp.address);
+  
+  ParseChar(dev,':');
+  ParseUInt(dev,temp.port);
+  
+  if( !dev ) return;
+  
+  ret=temp;
+ }
 
 /* classes */
 
@@ -108,6 +137,15 @@ class Engine : public CmdInput::Target
    
    ClientDatabase client_db;
    
+   Net::PSec::AbstractHashFunc * createServerKey() const
+    {
+     using namespace Net::PSec;
+     
+     uint8 buf[]={6,7,8,9,0};
+     
+     return CreateKeyedHash(HashID_SHA256,Range_const(buf));
+    }
+
    // devices  
   
    Net::AsyncUDPMultipointDevice psec_udp;
@@ -210,23 +248,71 @@ void Engine::cmd_clear(StrLen)
 
 void Engine::cmd_psecstat(StrLen arg)
  {
-  Used(arg);
-  
-  // TODO
-  
-  Putch(Con,'\n');
-  
-  psec.processStat( [this] (Net::XPoint point,const Net::PSec::MultipointDevice::StatInfo &info) 
-                           {
-                            Printf(Con,"#;\n#;\n\n",Net::PointDesc(&psec,point),info); 
-                           } );
+  if( !arg )
+    {
+     Putch(Con,'\n');
+     
+     psec.processStat( [this] (Net::XPoint point,const Net::PSec::MultipointDevice::StatInfo &info) 
+                              {
+                               Printf(Con,"#;\n#;\n\n",Net::PointDesc(&psec,point),info); 
+                              } );
+    }
+  else
+    {
+     StrParse dev(arg);
+     
+     Net::UDPoint udpoint;
+     
+     ParseSpace(dev);
+     ParseUDPoint(dev,udpoint);
+     ParseSpace(dev);
+     
+     if( !dev.finish() )
+       {
+        Printf(Con,"invalid argument\n");
+       }
+     else
+       {
+        Net::PSec::MultipointDevice::StatInfo info;
+       
+        if( psec.getStat(udpoint.get(),info) )
+          Printf(Con,"\n#;\n\n",info);
+        else
+          Printf(Con,"no such connection\n");
+       }
+    }
  }
 
 void Engine::cmd_close(StrLen arg)
  {
-  Used(arg);
-  
-  // TODO
+  if( !arg )
+    {
+     ulen count=psec.closeAll();
+     
+     Printf(Con,"#; connections are closed\n",count);
+    }
+  else
+    {
+     StrParse dev(arg);
+     
+     Net::UDPoint udpoint;
+     
+     ParseSpace(dev);
+     ParseUDPoint(dev,udpoint);
+     ParseSpace(dev);
+     
+     if( !dev.finish() )
+       {
+        Printf(Con,"invalid argument\n");
+       }
+     else
+       {
+        if( psec.close(udpoint.get()) )
+          Printf(Con,"connecton is closed\n");
+        else
+          Printf(Con,"no such connection\n");
+       }
+    }
  }
 
 void Engine::cmd_help(StrLen)
@@ -259,6 +345,11 @@ Engine::Engine()
    echo("ptp"),
    cmd_input(*this,"PTP-ECHO> ")
  {
+  Net::PSec::PrimeKeyPtr server_key(createServerKey());
+
+  pke.prepare(server_key);
+
+  pke.start(algo_set.getAlgoList());
  }
  
 Engine::~Engine()
