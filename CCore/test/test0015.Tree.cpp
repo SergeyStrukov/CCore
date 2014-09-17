@@ -106,6 +106,23 @@ class Engine : public MemBase_nocopy
         delete node;
        }
     }
+   
+   void delOdd()
+    {
+     root.delIf( [] (Node *node) { return Algo::Link(node).key&1; } , [this] (Node *node) 
+                                                                             {
+                                                                              count--;
+                                                                              
+                                                                              if( !flags[Algo::Link(node).key] ) fail(70);
+                                                                              
+                                                                              flags[Algo::Link(node).key]=false;
+      
+                                                                              delete node; 
+                                                                              
+                                                                             } );
+     
+     check();
+    }
     
    void test_find()
     {
@@ -283,6 +300,8 @@ class Engine : public MemBase_nocopy
        }
      
      while( count>100 ) del();
+     
+     delOdd();
     }
  };
  

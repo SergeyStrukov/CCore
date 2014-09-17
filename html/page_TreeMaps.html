@@ -208,6 +208,11 @@ class <span class="Att">RBTreeMap</span> : NoCopy
    template &lt;class FuncInit&gt;
    void applyDecr_const(FuncInit func_init) const;
    
+   // delIf
+   
+   template &lt;class FuncInit&gt;
+   void delIf(FuncInit func_init);
+
    // swap/move objects
    
    void objSwap(RBTreeMap&lt;K,T,KRef,Allocator&gt; &amp;obj);
@@ -297,8 +302,8 @@ Extra arguments are forwarded to the object constructor. Exception is thrown in 
 </p>
 
 <p>
-<b>apply...()</b> methods apply the functor to map elements. Functor is called with two 
-arguments: key and object.
+<b>apply...()</b> methods apply the functor to map elements. The functor signature 
+is <b>void (K key,T &obj)</b> for non-constant operations and <b>void (K key,const T &obj)</b> for constant ones.
 </p>
 
 <p>
@@ -533,6 +538,11 @@ class <span class="Att">RadixTreeMap</span> : NoCopy
    template &lt;class FuncInit&gt;
    void applyDecr_const(FuncInit func_init) const;
    
+   // delIf
+   
+   template &lt;class FuncInit&gt;
+   void delIf(FuncInit func_init);
+
    // swap/move objects
    
    void objSwap(RadixTreeMap&lt;K,T,Allocator&gt; &amp;obj);
@@ -543,6 +553,11 @@ class <span class="Att">RadixTreeMap</span> : NoCopy
  };
 
 </pre>
+
+<p>
+<b>delIf()</b> performs the massive delete operation. 
+The functor signature is <b>boolable (K key,T &obj)</b>. If it returns <b>true</b>, the object will be deleted.
+</p>
 
 </body>
 

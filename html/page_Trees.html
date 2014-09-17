@@ -241,6 +241,9 @@ These functions are required by the <b>Del...()</b> implementation, you probably
    
   static void Del(T **root_ptr,T *node); // node!=0
 
+  template &lt;class TestFunc,class DelFunc&gt;
+  static void DelIf(T **root_ptr,TestFunc test_func,DelFunc del_func); // root_ptr!=0
+
 </pre>   
 
 <p>
@@ -259,6 +262,13 @@ is changed during the operation.
 
 <p>
 The remaining <b>Del...()</b> functions search the element like the <b>Find...()</b> do and delete it.
+</p>
+
+<p>
+<b>DelIf()</b> performs the massive delete operation. The first argument is a (non-null) root double point.
+The second argument is a functor. This functor checks the tree node and determines if it should be deleted.
+The signature of this functor is <b>boolable (T *node)</b>. If it returns <b>true</b>, the node will be deleted.
+The third argument is a delete functor. It has the signature <b>void (T *node)</b> and is called to delete the node.
 </p>
 
 <pre>
@@ -342,6 +352,9 @@ return <b>locate...()</b> results.
     T * delMax(KRef key) { return DelMax(&amp;root,key); }
     
     void del(T *node) { Del(&amp;root,node); }
+
+    template &lt;class TestFunc,class DelFunc&gt;
+    void delIf(TestFunc test_func,DelFunc del_func) { DelIf(&root,test_func,del_func); }
    };
  };
 
