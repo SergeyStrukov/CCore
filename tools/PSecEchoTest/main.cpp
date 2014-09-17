@@ -15,6 +15,7 @@
 #include <CCore/inc/Exception.h>
 
 #include <CCore/inc/CharProp.h>
+#include <CCore/inc/PrintTitle.h>
 #include <CCore/inc/CmdInput.h>
 #include <CCore/inc/ReadCon.h>
 
@@ -59,7 +60,130 @@ void ParseUDPoint(Dev &dev,Net::UDPoint &ret)
 
 /* classes */
 
+class Proxy;
+
 class Engine;
+
+/* class Proxy */
+
+class Proxy : public ObjBase , public Net::PacketMultipointDevice
+ {
+   class Engine : NoCopy , public InboundProc , public ConnectionProc 
+    {
+      Net::PacketMultipointDevice *dev;
+      
+      AttachmentHost<InboundProc> host;
+      
+      using Hook = AttachmentHost<InboundProc>::Hook ;
+      
+     public:
+    
+      explicit Engine(Net::PacketMultipointDevice *dev_)
+       : dev(dev_),
+         host("Proxy","Proxy.host")
+       {
+        dev->attach(this);
+       }
+      
+      ~Engine()
+       {
+        dev->detach();
+       }
+      
+      StrLen toText(Net::XPoint point,PtrLen<char> buf)
+       {
+        return dev->toText(point,buf);
+       }
+       
+      PacketFormat getOutboundFormat()
+       {
+        return dev->getOutboundFormat();
+       }
+       
+      void outbound(Net::XPoint point,Packet<uint8> packet)
+       {
+        return dev->outbound(point,packet);
+       }
+       
+      ulen getMaxInboundLen()
+       {
+        return dev->getMaxInboundLen();
+       }
+      
+      void attach(InboundProc *proc) 
+       {
+        host.attach(proc);
+       }
+       
+      void detach()
+       {
+        host.detach();
+       }
+      
+      // InboundProc
+      
+      virtual void inbound(Net::XPoint point,Packet<uint8> packet,PtrLen<const uint8> data)
+       {
+        Hook hook(host);
+        
+        if( +hook ) hook->inbound(point,packet,data);
+       }
+       
+      virtual void tick()
+       {
+        Hook hook(host);
+        
+        if( +hook ) hook->tick();
+       }
+
+      // ConnectionProc
+      
+      virtual void connection_open(Net::XPoint point)
+       {
+        Printf(Con,"\n !connect #;\n",Net::PointDesc(dev,point));
+       }
+        
+      virtual void connection_lost(Net::XPoint point)
+       {
+        Printf(Con,"\n !lost connection #;\n",Net::PointDesc(dev,point));
+       }
+        
+      virtual void connection_close(Net::XPoint point)
+       {
+        Printf(Con,"\n !close connection #;\n",Net::PointDesc(dev,point));
+       }
+    };
+  
+   ObjHook hook;
+   
+   Engine engine;
+  
+  public:
+ 
+   explicit Proxy(StrLen mp_dev_name)
+    : hook(mp_dev_name),
+      engine(hook)
+    {
+    }
+   
+   virtual ~Proxy()
+    {
+    }
+   
+   // PacketMultipointDevice
+   
+   virtual StrLen toText(Net::XPoint point,PtrLen<char> buf) { return engine.toText(point,buf); }
+    
+   virtual PacketFormat getOutboundFormat() { return engine.getOutboundFormat(); }
+    
+   virtual void outbound(Net::XPoint point,Packet<uint8> packet) { engine.outbound(point,packet); }
+    
+   virtual ulen getMaxInboundLen() { return engine.getMaxInboundLen(); }
+   
+   virtual void attach(InboundProc *proc) { engine.attach(proc); }
+    
+   virtual void detach() { engine.detach(); }
+ };
 
 /* class Engine */ 
 
@@ -162,6 +286,10 @@ class Engine : public CmdInput::Target
    
    Net::PSec::ServerNegotiant pke;
    
+   Proxy proxy;
+   
+   ObjMaster proxy_master;
+   
    Net::PTP::ServerDevice ptp;
    
    ObjMaster ptp_master;
@@ -254,7 +382,7 @@ void Engine::cmd_psecstat(StrLen arg)
      
      psec.processStat( [this] (Net::XPoint point,const Net::PSec::MultipointDevice::StatInfo &info) 
                               {
-                               Printf(Con,"#;\n#;\n\n",Net::PointDesc(&psec,point),info); 
+                               Printf(Con,"#;\n\n#;\n",PrintTitle(Net::PointDesc(&psec,point)),info); 
                               } );
     }
   else
@@ -276,7 +404,7 @@ void Engine::cmd_psecstat(StrLen arg)
         Net::PSec::MultipointDevice::StatInfo info;
        
         if( psec.getStat(udpoint.get(),info) )
-          Printf(Con,"\n#;\n\n",info);
+          Printf(Con,"\n#;\n",info);
         else
           Printf(Con,"no such connection\n");
        }
@@ -340,10 +468,12 @@ Engine::Engine()
    psec("psec_udp",algo_set.getAlgoLens(),1000,60_sec),
    psec_master(psec,"psec"),
    pke("pke_udp",client_db,psec,100,30_sec),
-   ptp("psec"),
+   proxy("psec"),
+   proxy_master(proxy,"proxy-psec"),
+   ptp("proxy-psec"),
    ptp_master(ptp,"ptp"),
    echo("ptp"),
-   cmd_input(*this,"PTP-ECHO> ")
+   cmd_input(*this,"PSecEcho> ")
  {
   Net::PSec::PrimeKeyPtr server_key(createServerKey());
 
