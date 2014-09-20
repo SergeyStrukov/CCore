@@ -84,10 +84,6 @@ Swap.h
 
   NullBySwap() and MoveBySwap() are added.
 
-Counters.h
-
-  operator += is added.
-
 net/PacketEndpointDevice.h
 
   Optional interfaces ConnectionProc are added.
@@ -101,6 +97,14 @@ net/PacketEndpointDevice.h and related classes
   PortManager is added.
 
 tools/PSecEchoTest is added
+
+Scanf.h 
+
+  Word EndOfScan is added.
+
+scanf/ScanProxy.h
+
+  ScanProxySet is added.
 
 --- Updates ----------
 
@@ -124,6 +128,10 @@ UIntSplit.h
 Random.h MersenneTwister.h
 
   warp() is added.
+
+Counters.h
+
+  operator += is added.
 
 gadget/UIntFunc.h
 

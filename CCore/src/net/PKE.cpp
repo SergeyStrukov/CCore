@@ -28,6 +28,95 @@ namespace CCore {
 namespace Net {
 namespace PSec {
 
+/* enum CryptID */
+
+const char * GetTextDesc(CryptID crypt_id)
+ {
+  switch( crypt_id )
+    {
+     case CryptID_AES128 : return "AES128";
+     case CryptID_AES192 : return "AES192";
+     case CryptID_AES256 : return "AES256";
+     
+     default: return "???";
+    }
+ }
+
+ProxySet_CryptID::ProxySet_CryptID()
+ : StringSetScan{"AES128","AES192","AES256"}
+ {
+ }
+
+void ProxySet_CryptID::map(CryptID &ret) const
+ {
+  switch( *this )
+    {
+     case 1 : ret=CryptID_AES128; break;
+     case 2 : ret=CryptID_AES192; break;
+     case 3 : ret=CryptID_AES256; break;
+    }
+ }
+
+/* enum HashID */
+
+const char * GetTextDesc(HashID hash_id)
+ {
+  switch( hash_id )
+    {
+     case HashID_SHA1   : return "SHA1";
+     case HashID_SHA224 : return "SHA224";
+     case HashID_SHA256 : return "SHA256";
+     case HashID_SHA384 : return "SHA384";
+     case HashID_SHA512 : return "SHA512";
+     
+     default: return "???";
+    }
+ }
+
+ProxySet_HashID::ProxySet_HashID()
+ : StringSetScan{"SHA1","SHA224","SHA256","SHA384","SHA512"}
+ {
+ }
+   
+void ProxySet_HashID::map(HashID &ret) const
+ {
+  switch( *this )
+    {
+     case 1 : ret=HashID_SHA1;   break;
+     case 2 : ret=HashID_SHA224; break;
+     case 3 : ret=HashID_SHA256; break;
+     case 4 : ret=HashID_SHA384; break;
+     case 5 : ret=HashID_SHA512; break;
+    }
+ }
+   
+/* enum DHGroupID */
+
+const char * GetTextDesc(DHGroupID dhg_id)
+ {
+  switch( dhg_id )
+    {
+     case DHGroupID_I  : return "DHG_I";
+     case DHGroupID_II : return "DHG_II";
+     
+     default: return "???";
+    }
+ }
+
+ProxySet_DHGroupID::ProxySet_DHGroupID()
+ : StringSetScan{"DHG_I","DHG_II"}
+ {
+ }
+   
+void ProxySet_DHGroupID::map(DHGroupID &ret) const
+ {
+  switch( *this )
+    {
+     case 1 : ret=DHGroupID_I;  break;
+     case 2 : ret=DHGroupID_II; break;
+    }
+ }
+
 /* case lists */
 
 using EncryptCaseList = Meta::CaseList<Meta::Case<uint8,CryptID_AES128,Crypton::PlatformAES128>,
@@ -1197,9 +1286,6 @@ bool ClientNegotiant::Proc::inbound(PtrLen<const uint8> data)
 
 Packet<uint8> ClientNegotiant::Engine::prepare_send()
  {
-  tick_count=StartTickCount;
-  retry_count=MaxRetry;
-  
   Packet<uint8> ret=pset.try_get();
   
   if( !ret ) return Nothing;
@@ -1234,12 +1320,18 @@ void ClientNegotiant::Engine::inbound(Packet<uint8> packet,PtrLen<const uint8> d
         {
          case State_Started :
           {
+           tick_count=StartTickCount;
+           retry_count=MaxRetry;
+           
            send=prepare_send();
           }
          break; 
          
          case State_ClientError :
           {
+           tick_count=StartTickCount;
+           retry_count=MaxRetry;
+           
            send=prepare_send();
           }
          // falldown;
@@ -1346,6 +1438,9 @@ void ClientNegotiant::Engine::start(PtrLen<const CryptAlgoSelect> algo_list)
    Mutex::Lock lock(mutex);
   
    proc.start(algo_list);
+   
+   tick_count=StartTickCount;
+   retry_count=MaxRetry;
    
    send=prepare_send();
   } 

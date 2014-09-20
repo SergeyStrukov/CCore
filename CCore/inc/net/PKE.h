@@ -21,6 +21,7 @@
 
 #include <CCore/inc/PacketSet.h>
 
+#include <CCore/inc/Scanf.h>
 #include <CCore/inc/TreeMap.h>
 #include <CCore/inc/SaveLoad.h>
 #include <CCore/inc/ObjHost.h>
@@ -67,6 +68,17 @@ enum CryptID : uint8
   // may be continued
  };
 
+const char * GetTextDesc(CryptID crypt_id);
+
+class ProxySet_CryptID : public StringSetScan
+ {
+  public:
+  
+   ProxySet_CryptID();
+   
+   void map(CryptID &ret) const;
+ };
+
 /* enum HashID */
 
 enum HashID : uint8
@@ -80,6 +92,17 @@ enum HashID : uint8
   // may be continued
  };
 
+const char * GetTextDesc(HashID hash_id);
+
+class ProxySet_HashID : public StringSetScan
+ {
+  public:
+  
+   ProxySet_HashID();
+   
+   void map(HashID &ret) const;
+ };
+
 /* enum DHGroupID */
 
 enum DHGroupID : uint8
@@ -89,6 +112,38 @@ enum DHGroupID : uint8
   
   // may be continued
  };
+
+const char * GetTextDesc(DHGroupID dhg_id);
+
+class ProxySet_DHGroupID : public StringSetScan
+ {
+  public:
+  
+   ProxySet_DHGroupID();
+   
+   void map(DHGroupID &ret) const;
+ };
+   
+} // namespace PSec 
+} // namespace Net
+
+/* enum CryptID */
+
+template <>
+struct ScanProxy<Net::PSec::CryptID> : ScanProxySet<Net::PSec::CryptID,Net::PSec::ProxySet_CryptID> {};
+
+/* enum HashID */
+
+template <>
+struct ScanProxy<Net::PSec::HashID> : ScanProxySet<Net::PSec::HashID,Net::PSec::ProxySet_HashID> {};
+
+/* enum DHGroupID */
+
+template <>
+struct ScanProxy<Net::PSec::DHGroupID> : ScanProxySet<Net::PSec::DHGroupID,Net::PSec::ProxySet_DHGroupID> {};
+
+namespace Net {
+namespace PSec {
 
 /* enum PKEType */
 
