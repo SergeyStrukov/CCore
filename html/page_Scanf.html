@@ -646,8 +646,91 @@ enum EndOfScanType
 </pre>
 
 <p>
-This word cna be scanned. It fails the scanner if it is not empty.
+This word can be scanned. It fails the scanner if it is not empty.
 </p>
+
+<pre>
+
+template &lt;class T,class ProxySet&gt;
+struct <span class="Att">ScanProxySet</span> : ScanOptAdapter&ltProxySet&gt;
+ {
+  struct ProxyType
+   {
+    T &amp;ret;
+    
+    explicit ProxyType(T &amp;ret_) : ret(ret_) {}
+    
+    template &lt;class S&gt;
+    void scan(S &amp;inp)
+     {
+      ProxySet set;
+      
+      Scanobj(inp,set);
+      
+      set.map(ret);
+     }
+    
+    template &lt;class S,class OptType&gt;
+    void scan(S &amp;inp,const OptType &amp;opt)
+     {
+      ProxySet set;
+      
+      Scanobj(inp,BindScanOpt(opt,set));
+      
+      set.map(ret);
+     }
+   };
+ };
+
+</pre>
+
+<p>
+This class can be used to specialize the template <b>ScanProxy&lt;T&gt;</b> . 
+</p>
+
+<pre>
+
+template &lt;&gt;
+struct ScanProxy&lt;SomeType&gt; : ScanProxySet&lt;SomeType,SetType&gt; {};
+
+</pre>
+
+<p>
+The class <b>SetType</b> will be used to scan instead the type <b>SomeType</b>. 
+Then the result is returned using the method <b>map()</b>.
+</p>
+
+<pre>
+
+class SetType
+ {
+  public:
+
+   SetType();
+
+   void map(SomeType &amp;ret) const;
+
+   template &lt;class S&gt;
+   void scan(S &amp;inp);
+ };
+
+OR
+
+class SetType
+ {
+  public:
+
+   SetType();
+
+   void map(SomeType &amp;ret) const;
+
+   using ScanOptType = .... ;
+
+   template &lt;class S&gt;
+   void scan(S &amp;inp,ScanOptType opt);
+ };
+
+</pre>
 
 </body>
 

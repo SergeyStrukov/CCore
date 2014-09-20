@@ -66,6 +66,8 @@ template <class S> class ScanobjDev;
 
 template <class OptType,class T> struct BindScanOptType;
 
+template <class T,class ProxySet> struct ScanProxySet;
+
 /* struct ProbeSet_ScanSwitch */
 
 struct ProbeSet_ScanSwitch
@@ -95,7 +97,7 @@ struct ScanSwitch
 template <class T> 
 struct ScanOptAdapters<2,T>
  {
-  typedef typename ScanProxy<T>::OptType ScanOptType;
+  typedef typename ScanProxy<T>::OptType OptType;
  }; 
  
 template <class T> 
@@ -499,6 +501,39 @@ struct BindScanOptType
 template <class OptType,class T> 
 BindScanOptType<OptType,T> BindScanOpt(const OptType &opt,T &t) { return BindScanOptType<OptType,T>(opt,t); }
  
+/* struct ScanProxySet<T,ProxySet> */
+
+template <class T,class ProxySet>
+struct ScanProxySet : ScanOptAdapter<ProxySet>
+ {
+  struct ProxyType
+   {
+    T &ret;
+    
+    explicit ProxyType(T &ret_) : ret(ret_) {}
+    
+    template <class S>
+    void scan(S &inp)
+     {
+      ProxySet set;
+      
+      Scanobj(inp,set);
+      
+      set.map(ret);
+     }
+    
+    template <class S,class OptType>
+    void scan(S &inp,const OptType &opt)
+     {
+      ProxySet set;
+      
+      Scanobj(inp,BindScanOpt(opt,set));
+      
+      set.map(ret);
+     }
+   };
+ };
+
 /* Scanf() */
 
 template <class S,class ... TT>
