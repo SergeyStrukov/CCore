@@ -111,6 +111,7 @@
 ../../CCore/src/Gadget.cpp
 ../../CCore/src/GenFile.cpp
 ../../CCore/src/HeapEngine.cpp
+../../CCore/src/InterfaceHost.cpp
 ../../CCore/src/Job.cpp
 ../../CCore/src/LineInput.cpp
 ../../CCore/src/List.cpp
@@ -234,6 +235,7 @@
 ../../CCore/src/Tree.cpp
 ../../CCore/src/TreeMap.cpp
 ../../CCore/src/Tuple.cpp
+../../CCore/src/TypeNumber.cpp
 ../../CCore/src/TypeSwitch.cpp
 ../../CCore/src/UIntSplit.cpp
 ../../CCore/src/video/EDID.cpp

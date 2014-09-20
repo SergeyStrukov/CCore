@@ -106,6 +106,10 @@ Scanf.h
 
   ScanProxySet is added.
 
+TypeNumber.h is added
+
+InterfaceHost.h is added
+
 --- Updates ----------
 
 Regen

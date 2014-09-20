@@ -120,6 +120,7 @@ obj/IntegerSlowAlgo.o \
 obj/IntelAES.o \
 obj/IntelCPUID.o \
 obj/IntelRandom.o \
+obj/InterfaceHost.o \
 obj/Job.o \
 obj/Len.o \
 obj/LineInput.o \
@@ -284,6 +285,7 @@ obj/TreeLink.o \
 obj/TreeMap.o \
 obj/TreeUpLink.o \
 obj/Tuple.o \
+obj/TypeNumber.o \
 obj/TypeSwitch.o \
 obj/UDPDevice.o \
 obj/UDPoint.o \
@@ -418,6 +420,7 @@ obj/IntegerSlowAlgo.s \
 obj/IntelAES.s \
 obj/IntelCPUID.s \
 obj/IntelRandom.s \
+obj/InterfaceHost.s \
 obj/Job.s \
 obj/Len.s \
 obj/LineInput.s \
@@ -582,6 +585,7 @@ obj/TreeLink.s \
 obj/TreeMap.s \
 obj/TreeUpLink.s \
 obj/Tuple.s \
+obj/TypeNumber.s \
 obj/TypeSwitch.s \
 obj/UDPDevice.s \
 obj/UDPoint.s \
@@ -716,6 +720,7 @@ obj/IntegerSlowAlgo.dep \
 obj/IntelAES.dep \
 obj/IntelCPUID.dep \
 obj/IntelRandom.dep \
+obj/InterfaceHost.dep \
 obj/Job.dep \
 obj/Len.dep \
 obj/LineInput.dep \
@@ -880,6 +885,7 @@ obj/TreeLink.dep \
 obj/TreeMap.dep \
 obj/TreeUpLink.dep \
 obj/Tuple.dep \
+obj/TypeNumber.dep \
 obj/TypeSwitch.dep \
 obj/UDPDevice.dep \
 obj/UDPoint.dep \
@@ -1267,6 +1273,9 @@ obj/IntelCPUID.o : ../../Target/WIN32/CCore/src/crypton/IntelCPUID.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntelRandom.o : ../../Target/WIN32/CCore/src/crypton/IntelRandom.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/InterfaceHost.o : ../../CCore/src/InterfaceHost.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Job.o : ../../CCore/src/Job.cpp
@@ -1761,6 +1770,9 @@ obj/TreeUpLink.o : ../../CCore/src/tree/TreeUpLink.cpp
 obj/Tuple.o : ../../CCore/src/Tuple.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/TypeNumber.o : ../../CCore/src/TypeNumber.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/TypeSwitch.o : ../../CCore/src/TypeSwitch.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2154,6 +2166,9 @@ obj/IntelCPUID.s : ../../Target/WIN32/CCore/src/crypton/IntelCPUID.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/IntelRandom.s : ../../Target/WIN32/CCore/src/crypton/IntelRandom.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/InterfaceHost.s : ../../CCore/src/InterfaceHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Job.s : ../../CCore/src/Job.cpp
@@ -2648,6 +2663,9 @@ obj/TreeUpLink.s : ../../CCore/src/tree/TreeUpLink.cpp
 obj/Tuple.s : ../../CCore/src/Tuple.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/TypeNumber.s : ../../CCore/src/TypeNumber.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/TypeSwitch.s : ../../CCore/src/TypeSwitch.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3042,6 +3060,9 @@ obj/IntelCPUID.dep : ../../Target/WIN32/CCore/src/crypton/IntelCPUID.cpp
 
 obj/IntelRandom.dep : ../../Target/WIN32/CCore/src/crypton/IntelRandom.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntelRandom.o $< -MF $@
+
+obj/InterfaceHost.dep : ../../CCore/src/InterfaceHost.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/InterfaceHost.o $< -MF $@
 
 obj/Job.dep : ../../CCore/src/Job.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Job.o $< -MF $@
@@ -3534,6 +3555,9 @@ obj/TreeUpLink.dep : ../../CCore/src/tree/TreeUpLink.cpp
 
 obj/Tuple.dep : ../../CCore/src/Tuple.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tuple.o $< -MF $@
+
+obj/TypeNumber.dep : ../../CCore/src/TypeNumber.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TypeNumber.o $< -MF $@
 
 obj/TypeSwitch.dep : ../../CCore/src/TypeSwitch.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TypeSwitch.o $< -MF $@
