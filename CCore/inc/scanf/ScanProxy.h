@@ -49,6 +49,8 @@ template <bool is_class,class T> struct ScanProxies;
 
 template <class T> struct ScanProxy;
 
+template <class T,class ProxySet> struct ScanProxySet;
+
 /* struct UIntScanProxy<UInt> */  
 
 template <class UInt>
@@ -168,6 +170,29 @@ struct ScanProxy<String>
  {
   typedef StringScanOpt OptType;
   typedef StringScan ProxyType;
+ };
+
+/* struct ScanProxySet<T,ProxySet> */
+
+template <class T,class ProxySet>
+struct ScanProxySet
+ {
+  struct ProxyType
+   {
+    T &ret;
+    
+    explicit ProxyType(T &ret_) : ret(ret_) {}
+    
+    template <class S>
+    void scan(S &inp)
+     {
+      ProxySet set;
+      
+      Scanobj(inp,set);
+      
+      set.map(ret);
+     }
+   };
  };
 
 } // namespace CCore
