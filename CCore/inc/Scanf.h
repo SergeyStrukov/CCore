@@ -22,6 +22,28 @@
  
 namespace CCore {
 
+/* word EndOfScan */
+
+enum EndOfScanType
+ {
+  EndOfScan
+ };
+
+template <>
+struct ScanProxy<EndOfScanType>
+ {
+  struct ProxyType
+   {
+    explicit ProxyType(EndOfScanType &) {}
+    
+    template <class S>
+    void scan(S &inp)
+     {
+      if( +inp ) inp.fail();
+     }
+   };
+ };
+
 /* classes */
 
 struct ProbeSet_ScanSwitch;
