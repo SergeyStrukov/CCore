@@ -88,6 +88,7 @@ obj/DevPlanInit.o \
 obj/DevRW.o \
 obj/DevTick.o \
 obj/DynArray.o \
+obj/DynObject.o \
 obj/EDID.o \
 obj/EchoDevice.o \
 obj/ElementPool.o \
@@ -399,6 +400,7 @@ obj/DevPlanInit.s \
 obj/DevRW.s \
 obj/DevTick.s \
 obj/DynArray.s \
+obj/DynObject.s \
 obj/EDID.s \
 obj/EchoDevice.s \
 obj/ElementPool.s \
@@ -710,6 +712,7 @@ obj/DevPlanInit.dep \
 obj/DevRW.dep \
 obj/DevTick.dep \
 obj/DynArray.dep \
+obj/DynObject.dep \
 obj/EDID.dep \
 obj/EchoDevice.dep \
 obj/ElementPool.dep \
@@ -1202,6 +1205,9 @@ obj/DevTick.o : ../../Target/Vanilla-X/CCore/src/dev/DevTick.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DynObject.o : ../../CCore/src/DynObject.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/EDID.o : ../../CCore/src/video/EDID.cpp
@@ -2130,6 +2136,9 @@ obj/DevTick.s : ../../Target/Vanilla-X/CCore/src/dev/DevTick.cpp
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DynObject.s : ../../CCore/src/DynObject.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/EDID.s : ../../CCore/src/video/EDID.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3055,6 +3064,9 @@ obj/DevTick.dep : ../../Target/Vanilla-X/CCore/src/dev/DevTick.cpp
 
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@
+
+obj/DynObject.dep : ../../CCore/src/DynObject.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynObject.o $< -MF $@
 
 obj/EDID.dep : ../../CCore/src/video/EDID.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EDID.o $< -MF $@

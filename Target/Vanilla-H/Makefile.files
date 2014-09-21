@@ -79,6 +79,7 @@ obj/DefaultValue.o \
 obj/DeferCall.o \
 obj/DirTreeRun.o \
 obj/DynArray.o \
+obj/DynObject.o \
 obj/EDID.o \
 obj/EchoDevice.o \
 obj/ElementPool.o \
@@ -373,6 +374,7 @@ obj/DefaultValue.s \
 obj/DeferCall.s \
 obj/DirTreeRun.s \
 obj/DynArray.s \
+obj/DynObject.s \
 obj/EDID.s \
 obj/EchoDevice.s \
 obj/ElementPool.s \
@@ -667,6 +669,7 @@ obj/DefaultValue.dep \
 obj/DeferCall.dep \
 obj/DirTreeRun.dep \
 obj/DynArray.dep \
+obj/DynObject.dep \
 obj/EDID.dep \
 obj/EchoDevice.dep \
 obj/ElementPool.dep \
@@ -1124,6 +1127,9 @@ obj/DirTreeRun.o : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DynObject.o : ../../CCore/src/DynObject.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/EDID.o : ../../CCore/src/video/EDID.cpp
@@ -2001,6 +2007,9 @@ obj/DirTreeRun.s : ../../HCore/CCore/src/DirTreeRun.cpp
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DynObject.s : ../../CCore/src/DynObject.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/EDID.s : ../../CCore/src/video/EDID.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2875,6 +2884,9 @@ obj/DirTreeRun.dep : ../../HCore/CCore/src/DirTreeRun.cpp
 
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@
+
+obj/DynObject.dep : ../../CCore/src/DynObject.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynObject.o $< -MF $@
 
 obj/EDID.dep : ../../CCore/src/video/EDID.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/EDID.o $< -MF $@

@@ -76,6 +76,7 @@
 ../../CCore/src/ddl2/DDL2TypeSet.cpp
 ../../CCore/src/ddl2/DDL2Value.cpp
 ../../CCore/src/DeferCall.cpp
+../../CCore/src/DynObject.cpp
 ../../CCore/src/ElementPool.cpp
 ../../CCore/src/Elf.cpp
 ../../CCore/src/EventRecorder.cpp

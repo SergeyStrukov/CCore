@@ -134,6 +134,7 @@ int main()
   //Testit<93>().run();
   //Testit<94>().run();
   //Testit<95>().run();
+  Testit<96>().run();
   
   //Testit<100>().run();
   //Testit<101>().run();
