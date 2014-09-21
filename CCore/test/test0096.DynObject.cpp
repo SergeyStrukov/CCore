@@ -15,6 +15,8 @@
 
 #include <CCore/test/test.h>
 
+#include <CCore/inc/DynObject.h>
+
 namespace App {
 
 namespace Private_0096 {
@@ -32,7 +34,27 @@ const char *const Testit<96>::Name="Test96 DynObject";
 template<>
 bool Testit<96>::Main() 
  {
+  DynObject<int> a;  
+  DynObject<int> b(Null);
+  DynObject<int> c(12345);
   
+  DynObject<int> d( std::move(c) );
+  
+  Printf(Con,"#; #;\n",*b,*d);
+  
+  b=std::move(d);
+  
+  Printf(Con,"#;\n",*b);
+  
+  b.create(Null);
+  
+  Printf(Con,"#;\n",*b);
+  
+  b.create(6789);
+  
+  Printf(Con,"#;\n",*b);
+  
+  b.destroy();
   
   return true;
  }

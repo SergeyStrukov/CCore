@@ -58,6 +58,12 @@ class DynObject
    
    ~DynObject() { Destroy(ptr); }
    
+   // no copy
+   
+   DynObject(const DynObject<T> &obj) = delete ;
+   
+   DynObject<T> & operator = (const DynObject<T> &obj) = delete ;
+   
    // moving
    
    DynObject(DynObject<T> &&obj) : ptr(Replace_null(obj.ptr)) {}
@@ -74,20 +80,20 @@ class DynObject
    
    // methods
    
-   void create(NothingType nothing)
+   void create(NothingType)
     {
-     *this=DynObject<T>(nothing);
+     Destroy(Replace(ptr, New<T>(DefaultHeapAlloc()) ));
     }
    
    template <class ... SS>
    void create(SS && ... ss)
     {
-     *this=DynObject<T>( std::forward<SS>(ss)... );
+     Destroy(Replace(ptr, New<T>(DefaultHeapAlloc(), std::forward<SS>(ss)... ) ));
     }
    
    void destroy()
     {
-     *this=DynObject<T>();
+     Destroy(Replace_null(ptr));
     }
    
    // object pointer, const enforcement
