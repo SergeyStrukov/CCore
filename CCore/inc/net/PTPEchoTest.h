@@ -18,6 +18,8 @@
 
 #include <CCore/inc/net/PTPClientDevice.h>
 #include <CCore/inc/net/PTPServerDevice.h>
+
+#include <CCore/inc/PlatformRandom.h>
  
 namespace CCore {
 namespace Net {
@@ -34,10 +36,15 @@ class EchoTest : NoCopy , ServerProc
    ObjHook hook;
    
    ServerDevice *ptp;
+   
+   PlatformRandom random;
  
   private:
   
    void cancel(TransIndex idx,Packet<uint8> packet);
+   
+   template <class T>
+   void result(TransIndex idx,Packet<uint8> packet,ServiceFunction serv_func,const T &output);
   
    virtual void inbound(XPoint point,TransIndex idx,Packet<uint8> packet,PtrLen<const uint8> client_info);
     
