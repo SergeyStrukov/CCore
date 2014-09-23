@@ -22,6 +22,8 @@
 #include <CCore/inc/net/PKE.h>
 #include <CCore/inc/net/PSec.h>
 #include <CCore/inc/net/PTPClientDevice.h>
+#include <CCore/inc/net/PTPEchoTest.h>
+#include <CCore/inc/net/CheckedData.h>
 
 #include <CCore/inc/OwnPtr.h>
 
@@ -33,8 +35,43 @@ namespace Private_1031 {
 
 /* class DataEngine */
 
-class DataEngine : public MemBase_nocopy
+class DataEngine : public MemBase_nocopy , public Funchor
  {
+  public:
+  
+   enum DataEvent
+    {
+     DataBadLen,
+     
+     DataOk,
+     DataFail,
+     DataTransFail,
+     
+     DataEventLim
+    };
+   
+   friend const char * GetTextDesc(DataEvent ev);
+   
+   using StatInfo = Counters<DataEvent,DataEventLim> ;
+   
+  private: 
+  
+   // data
+  
+   Atomic support_count;
+   
+   PacketFormat format;
+   
+   Mutex mutex;
+   
+   Net::CheckedData data;
+   
+   unsigned test_count;
+   
+   StatInfo info;
+   
+   // devices 
+  
    Net::PSec::EndpointDevice psec;
    
    ObjMaster psec_master;
@@ -45,6 +82,34 @@ class DataEngine : public MemBase_nocopy
   
    Net::AsyncUDPEndpointDevice::StartStop psec_start_stop;
    
+  private: 
+   
+   bool isEnabled() const { return support_count>=3; }
+   
+   void addTestCount(unsigned count);
+   
+   bool decTestCount();
+   
+   void eraseTestCount();
+   
+   ulen prepare(Packet<uint8,Net::PTP::EchoTest::Ext> packet);
+   
+   void count(DataEvent ev);
+   
+   void getStat(StatInfo &ret);
+   
+  private:
+   
+   void complete_Session(PacketHeader *packet);
+   
+   void complete_Seed(PacketHeader *packet);
+   
+   void complete_Len(PacketHeader *packet);
+   
+   void complete_test(PacketHeader *packet);
+   
+   void start_test(Packet<uint8,Net::PTP::EchoTest::Ext> packet);
+   
   public:
   
    DataEngine(Net::AsyncUDPEndpointDevice &psec_udp,const Net::PSec::MasterKey &key);
@@ -53,10 +118,226 @@ class DataEngine : public MemBase_nocopy
    
    void close();
    
-   void test();
+   void test(unsigned count);
    
    void stat();
  };
+
+const char * GetTextDesc(DataEngine::DataEvent ev)
+ {
+  switch( ev )
+    {
+     case DataEngine::DataBadLen    : return "BadLen";
+     case DataEngine::DataOk        : return "Ok";
+     case DataEngine::DataFail      : return "Fail";
+     case DataEngine::DataTransFail : return "TransFail";
+     
+     default: return "???";
+    }
+ }
+
+void DataEngine::addTestCount(unsigned count)
+ {
+  Mutex::Lock lock(mutex);
+  
+  test_count+=count;
+ }
+
+bool DataEngine::decTestCount()
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( test_count )
+    {
+     test_count--;
+     
+     return true;
+    }
+  else
+    {
+     return false;
+    }
+ }
+
+void DataEngine::eraseTestCount()
+ {
+  Mutex::Lock lock(mutex);
+  
+  test_count=0;
+ }
+
+ulen DataEngine::prepare(Packet<uint8,Net::PTP::EchoTest::Ext> packet)
+ {
+  Mutex::Lock lock(mutex);
+  
+  ulen len=data.getLen(format.max_data);
+  
+  if( packet.checkDataLen(format,len) )
+    {
+     data.fill(packet.setDataLen(format,len));
+     
+     return len;
+    }
+  else
+    {
+     return 0;
+    }
+ }
+
+void DataEngine::count(DataEvent ev)
+ {
+  Mutex::Lock lock(mutex);
+  
+  info.count(ev);
+ }
+
+void DataEngine::getStat(StatInfo &ret)
+ {
+  Mutex::Lock lock(mutex);
+
+  ret=info;
+ }
+
+void DataEngine::complete_Session(PacketHeader *packet_)
+ {
+  Packet<uint8,Net::PTPSupport::SessionExt> packet=packet_;
+  
+  auto *ext=packet.getExt();
+  
+  if( ext->isOk() )
+    {
+     Printf(Con,"\n !session function is Ok\n");
+     
+     support_count++;
+    }
+  else
+    {
+     if( ext->result )
+       Printf(Con,"\n !session transaction has failed #;\n",ext->result);
+     else
+       Printf(Con,"\n !session function has failed #;\n",ext->error_id);
+    }
+  
+  packet.popExt().complete();
+ }
+
+void DataEngine::complete_Seed(PacketHeader *packet_)
+ {
+  Packet<uint8,Net::PTPSupport::SeedExt> packet=packet_;
+  
+  auto *ext=packet.getExt();
+  
+  if( ext->isOk() )
+    {
+     Printf(Con,"\n !seed function is Ok\n");
+     
+     ptp.setSeed(ext);
+     
+     support_count++;
+    }
+  else
+    {
+     if( ext->result )
+       Printf(Con,"\n !seed transaction has failed #;\n",ext->result);
+     else
+       Printf(Con,"\n !seed function has failed #;\n",ext->error_id);
+    }
+  
+  packet.popExt().complete();
+ }
+
+void DataEngine::complete_Len(PacketHeader *packet_)
+ {
+  Packet<uint8,Net::PTPSupport::LenExt> packet=packet_;
+  
+  auto *ext=packet.getExt();
+  
+  if( ext->isOk() )
+    {
+     if( ptp.setLengths(ext) )
+       {
+        Printf(Con,"\n !len function is Ok, out_len = #; , in_len = #;\n",ext->max_outbound_info_len,ext->max_inbound_info_len);
+       
+        auto result=ptp.getFormat<Net::PTP::EchoTest::Ext>();
+        
+        if( result.format.max_data<=2 )
+          {
+           Printf(Con," !too short\n");
+          }
+        else
+          {
+           format=result.format;
+          
+           support_count++;
+          }
+       }
+     else
+       {
+        Printf(Con,"\n !len function is Bad, out_len = #; , in_len = #;\n",ext->max_outbound_info_len,ext->max_inbound_info_len);
+       }
+    }
+  else
+    {
+     if( ext->result )
+       Printf(Con,"\n !len transaction has failed #;\n",ext->result);
+     else
+       Printf(Con,"\n !len function has failed #;\n",ext->error_id);
+    }
+  
+  packet.popExt().complete();
+ }
+
+void DataEngine::complete_test(PacketHeader *packet_)
+ {
+  Packet<uint8,Net::PTP::EchoTest::Ext> packet=packet_;
+  
+  auto *ext=packet.getExt();
+  
+  if( ext->isOk() )
+    {
+     if( data.check(ext->info) )
+       {
+        count(DataOk);
+       }
+     else
+       {
+        count(DataFail);
+       }
+    }
+  else
+    {
+     count(DataTransFail);
+    }
+  
+  if( decTestCount() )
+    {
+     start_test(packet);
+    }
+  else
+    {
+     packet.popExt().complete();
+    }
+ }
+
+void DataEngine::start_test(Packet<uint8,Net::PTP::EchoTest::Ext> packet)
+ {
+  ulen len=prepare(packet);
+  
+  if( len )
+    {
+     packet.pushCompleteFunction(FunctionOf(this,&DataEngine::complete_test));
+     
+     Net::PTP::EchoTest::Ext::InputType input(len);
+     
+     ptp.start_format(packet,input);
+    }
+  else
+    {
+     count(DataBadLen);
+    
+     packet.popExt().complete();
+    }
+ }
 
 DataEngine::DataEngine(Net::AsyncUDPEndpointDevice &psec_udp,const Net::PSec::MasterKey &key)
  : psec("psec_udp",key,60_sec),
@@ -64,14 +345,56 @@ DataEngine::DataEngine(Net::AsyncUDPEndpointDevice &psec_udp,const Net::PSec::Ma
    ptp("psec"),
    psec_start_stop(psec_udp)
  {
-  if( ptp.support(pset) )
-    Printf(Con,"PTP support exchange is OK\n");
-  else
-    Printf(Con,"PTP support exchange has failed\n");
+  // session
+  {
+   Packet<uint8> packet=pset.try_get();
+   
+   if( +packet )
+     {
+      Packet<uint8,Net::PTPSupport::SessionExt> packet2=packet.pushExt<Net::PTPSupport::SessionExt>();
+        
+      packet2.pushCompleteFunction(FunctionOf(this,&DataEngine::complete_Session));
+     
+      ptp.support(packet2);
+     }
+  }
+  
+  // seed
+  {
+   Packet<uint8> packet=pset.try_get();
+   
+   if( +packet )
+     {
+      Packet<uint8,Net::PTPSupport::SeedExt> packet2=packet.pushExt<Net::PTPSupport::SeedExt>();
+     
+      packet2.pushCompleteFunction(FunctionOf(this,&DataEngine::complete_Seed));
+
+      ptp.support(packet2);
+     }
+  }
+  
+  // lengths
+  {
+   Printf(Con,"\n !out_len = #; in_len = #;\n",ptp.getMaxOutboundInfoLen(),ptp.getMaxInboundInfoLen());
+   
+   Packet<uint8> packet=pset.try_get();
+   
+   if( +packet )
+     {
+      Packet<uint8,Net::PTPSupport::LenExt> packet2=packet.pushExt<Net::PTPSupport::LenExt>();
+     
+      packet2.pushCompleteFunction(FunctionOf(this,&DataEngine::complete_Len));
+
+      ptp.support(packet2);
+     }
+  }
  }
 
 DataEngine::~DataEngine()
  {
+  eraseTestCount();
+  
+  pset.cancel_and_wait();
  }
 
 void DataEngine::close()
@@ -79,8 +402,32 @@ void DataEngine::close()
   psec.close();
  }
 
-void DataEngine::test()
+void DataEngine::test(unsigned count)
  {
+  if( !isEnabled() )
+    {
+     Printf(Con,"not enabled\n");
+    
+     return;
+    }
+
+  addTestCount(count);
+
+  for(; count ;count--)
+    {
+     Packet<uint8> packet=pset.try_get();  
+ 
+     if( !packet ) break;
+     
+     if( decTestCount() )
+       {
+        start_test(packet.pushExt<Net::PTP::EchoTest::Ext>());
+       }
+     else
+       {
+        packet.complete();
+       }
+    }
  }
 
 void DataEngine::stat()
@@ -90,7 +437,7 @@ void DataEngine::stat()
    
    psec.getStat(info);
    
-   Printf(Con,"#;\n\n#;\n",Title("PSec"),info);
+   Printf(Con,"#;\n\n#16;\n",Title("PSec"),info);
   }
   
   {
@@ -98,8 +445,16 @@ void DataEngine::stat()
    
    ptp.getStat(info);
    
-   Printf(Con,"#;\n\n#;\n",Title("PTP"),info);
+   Printf(Con,"#;\n\n#16;\n",Title("PTP"),info);
   } 
+  
+  {
+   StatInfo info;
+   
+   getStat(info);
+   
+   Printf(Con,"#;\n\n#16;\n",Title("Data"),info);
+  }
  }
 
 /* struct ConnectParam */
@@ -125,18 +480,8 @@ struct ConnectParam
 
 class ConnectEngine : public Funchor_nocopy , public MemBase
  {
-   Net::AsyncUDPEndpointDevice pke_udp;
-  
-   ObjMaster pke_udp_master;
- 
-   Net::AsyncUDPEndpointDevice psec_udp;
-  
-   ObjMaster psec_udp_master;
-   
-   Net::PSec::ClientNegotiant pke;
-   
-   Net::AsyncUDPEndpointDevice::StartStop pke_start_stop;
-   
+   // data
+
    Sem stop_sem;
    
    enum EventId
@@ -152,6 +497,20 @@ class ConnectEngine : public Funchor_nocopy , public MemBase
    Mutex mutex;
    
    OwnPtr<DataEngine> engine;
+  
+   // devices 
+  
+   Net::AsyncUDPEndpointDevice pke_udp;
+  
+   ObjMaster pke_udp_master;
+ 
+   Net::AsyncUDPEndpointDevice psec_udp;
+  
+   ObjMaster psec_udp_master;
+   
+   Net::PSec::ClientNegotiant pke;
+   
+   Net::AsyncUDPEndpointDevice::StartStop pke_start_stop;
    
   private: 
    
@@ -192,15 +551,7 @@ class ConnectEngine : public Funchor_nocopy , public MemBase
    void close();
    
    template <class Func>
-   void cmd(Func func)
-    {
-     Mutex::Lock lock(mutex);
-     
-     if( +engine )
-       func(*engine);
-     else
-       Printf(Con,"no connection\n");
-    }
+   void cmd(Func func);
  };
 
 void ConnectEngine::handle_done()
@@ -302,8 +653,25 @@ void ConnectEngine::close()
  {
   Mutex::Lock lock(mutex);
   
-  if( +engine ) 
-    engine->close();
+  if( +engine )
+    {
+     engine->close();
+     
+     engine.set(0);
+    } 
+  else
+    {
+     Printf(Con,"no connection\n");
+    } 
+ }
+
+template <class Func>
+void ConnectEngine::cmd(Func func)
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( +engine )
+    func(*engine);
   else
     Printf(Con,"no connection\n");
  }
@@ -399,9 +767,29 @@ void CommandEngine::cmd_close(StrLen)
     }
  }
 
-void CommandEngine::cmd_test(StrLen)
+void CommandEngine::cmd_test(StrLen arg)
  {
-  cmd( [] (DataEngine &data) { data.test(); } );
+  unsigned count;
+  
+  if( +arg )
+    {
+     ScanString inp(arg);
+   
+     Scanf(inp," #; #;",count,EndOfScan);
+    
+     if( inp.isFailed() )
+       {
+        Printf(Con,"invalid arguments\n");
+       
+        return;
+       }
+    }
+  else
+    {
+     count=1000;
+    }
+  
+  cmd( [=] (DataEngine &data) { data.test(count); } );
  }
 
 void CommandEngine::cmd_stat(StrLen)
@@ -411,7 +799,12 @@ void CommandEngine::cmd_stat(StrLen)
 
 void CommandEngine::cmd_exit(StrLen)
  {
-  cmd_close({});
+  if( +engine ) 
+    {
+     engine->close();
+  
+     engine.set(0);
+    } 
   
   run_flag=false;
  }
