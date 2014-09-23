@@ -516,7 +516,7 @@ class ClientEngine : public Funchor_nocopy , PacketEndpointDevice::InboundProc
    
    void setSeed(uint64 seed1,uint64 seed2);
    
-   void setLengths(ulen max_outbound_info_len,ulen max_inbound_info_len);
+   bool setLengths(ulen max_outbound_info_len,ulen max_inbound_info_len);
  };
 
 /* struct ExtMoveBase<MoveFlagType MoveFlag> */
@@ -816,6 +816,10 @@ class ClientDevice : public ObjBase , public Funchor
     }
    
    // support service
+   
+   void setSeed(PTPSupport::SeedExt *ext) { engine.setSeed(ext->seed1,ext->seed2); }
+   
+   bool setLengths(PTPSupport::LenExt *ext) { return engine.setLengths(ext->max_outbound_info_len,ext->max_inbound_info_len); }
    
    void support(Packet<uint8,PTPSupport::LenExt> packet);
    

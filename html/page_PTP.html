@@ -470,6 +470,10 @@ class <span class="Att">ClientDevice</span> : public ObjBase
    
    // support service
    
+   void setSeed(PTPSupport::SeedExt *ext);
+   
+   bool setLengths(PTPSupport::LenExt *ext);
+
    void support(Packet&lt;uint8,PTPSupport::LenExt&gt; packet);
    
    void support(Packet&lt;uint8,PTPSupport::SeedExt&gt; packet);
@@ -746,6 +750,16 @@ packet set for this function.
 
 <p>
 <b>support_guarded()</b> throws an exception in case of failure.
+</p>
+
+<p>
+<b>setSeed()</b> can be used to seed the client from the <b>PTPSupport::SeedExt</b> fields. 
+
+</p>
+
+<p>
+<b>setLengths()</b> can be used to reduce inbound/outbound lengths from the <b>PTPSupport::LenExt</b> fields.
+It returns <b>true</b>, if both lengths are non-null. Otherwise it returns <b>false</b> and does nothing.
 </p>
 
 <a name="ServerDevice"><h3>PTPServerDevice</h3></a>

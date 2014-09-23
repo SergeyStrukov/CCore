@@ -143,4 +143,8 @@ gadget/UIntFunc.h
 
   Multiplicative operations are added.
 
+net/PTPClientDevice.h
+
+  setSeed() and setLengths() are added.
+
 ----------------------

@@ -799,12 +799,16 @@ void ClientEngine::setSeed(uint64 seed1_,uint64 seed2_)
   seed2=seed2_;
  }
    
-void ClientEngine::setLengths(ulen max_outbound_info_len_,ulen max_inbound_info_len_)
+bool ClientEngine::setLengths(ulen max_outbound_info_len_,ulen max_inbound_info_len_)
  {
+  if( max_outbound_info_len_==0 || max_inbound_info_len_==0 ) return false;
+  
   Mutex::Lock lock(mutex);
   
   Replace_min(max_outbound_info_len,max_outbound_info_len_);
   Replace_min(max_inbound_info_len,max_inbound_info_len_);
+  
+  return true;
  }
  
 /* class ClientDevice */ 
@@ -833,7 +837,7 @@ void ClientDevice::complete_Seed(PacketHeader *packet_)
   
   if( ext->isOk() )
     {
-     engine.setSeed(ext->seed1,ext->seed2);
+     setSeed(ext);
      
      Atomic *success=*packet.getDeepExt<1>();
      
@@ -849,13 +853,14 @@ void ClientDevice::complete_Len(PacketHeader *packet_)
   
   PTPSupport::LenExt *ext=packet.getExt();
   
-  if( ext->isOk() && ext->max_outbound_info_len && ext->max_inbound_info_len )
+  if( ext->isOk() )
     {
-     engine.setLengths(ext->max_outbound_info_len,ext->max_inbound_info_len);
-     
-     Atomic *success=*packet.getDeepExt<1>();
-     
-     (*success)++;
+     if( setLengths(ext) )
+       {
+        Atomic *success=*packet.getDeepExt<1>();
+       
+        (*success)++;
+       }
     }
   
   packet.popExt().popExt().complete();
