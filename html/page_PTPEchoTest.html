@@ -33,6 +33,29 @@
 <p>
 <b>EchoTest</b> class is a simple <b>PTP::ServerDevice</b> processor class.
 It accepts <b>PTP</b> transactions with service id equals <b>10000</b> and function id equals <b>1</b>.
+</p>
+
+<pre>
+
+class <span class="Att">EchoTest</span> : NoCopy
+ {
+   ....
+
+  public: 
+  
+   static const ServiceIdType ServiceId = 10000 ;
+   static const FunctionIdType FunctionId = 1 ;
+   
+   struct Ext;
+  
+   explicit EchoTest(StrLen ptp_server_name);
+   
+   ~EchoTest();
+ };
+
+</pre>
+
+<p>
 The client info payload must start with the data length, encoded as an <b>uint32</b> value in bigendian 
 byte order and continues with arbitrary data payload of this length.
 <b>EchoTest</b> sends the packet back with the error code equals <b>0</b> and the same data payload. 
@@ -70,6 +93,43 @@ This class is designed for the testing purpose.
 The inner class <b>EchoTest::Ext</b> can be used to perform transactions from the <b>PTP::ClientDevice</b>, 
 using <a href="page_PTP.html#Ext"><b>Ext</b> extension</a>.
 </p>
+
+<pre>
+
+struct <span class="Att">EchoTest::Ext</span> : ExtBase&lt;EchoTest::ServiceId,EchoTest::FunctionId,MovePacketBuf&gt;
+ {
+  struct InputType // + uint8 info[len];
+   {
+    static const uint32 MaxLen = MaxInfoLen ;
+   
+    uint32 len;
+    
+    explicit InputType(ulen len_) : len(len_) {}
+    
+    // save object
+    
+    enum { SaveLoadLen = SaveLenCounter&lt;uint32&gt;::SaveLoadLen };
+  
+    template &lt;class Dev&gt;
+    void save(Dev &amp;dev) const;
+   };
+   
+  struct OutputType
+   {
+    PtrLen&lt;const uint8&gt; info;
+    
+    // load object
+    
+    template &lt;class Dev&gt;
+    void load(Dev &amp;dev);
+   };
+   
+  PtrLen&lt;const uint8&gt; info; 
+  
+  void done(const OutputType &amp;output);
+ };
+
+</pre>
 
 </body>
 
