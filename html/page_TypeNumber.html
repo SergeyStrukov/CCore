@@ -30,7 +30,73 @@
 
 <p class="Files">Files <b>CCore/inc/TypeNumber.h</b> <b>CCore/src/TypeNumber.cpp</b></p>
 
+<p>
+<b>TypeNumber</b> is a tool to convert a type into a number. Different types have different associated
+numbers. This feature can be used for the quick type comparison and the type reporting.
+</p>
 
+<pre>
+
+class <span class="Att">TypeNumber</span>
+ {
+   unsigned number;
+
+   ....
+
+  public:
+   
+   unsigned get() const { return number; }
+   
+   bool operator == (TypeNumber obj) const { return number==obj.number; }
+   
+   bool operator != (TypeNumber obj) const { return number!=obj.number; }
+   
+   template &lt;class ... TT&gt;
+   bool oneOf() const;
+ };
+
+</pre>
+
+<p>
+<b>TypeNumber</b> is a lightweight type number class. It folds the type number.
+</p>
+
+<p>
+<b>get()</b> returns the type number itself.
+</p>
+
+<p>
+<b>==</b> and <b>!=</b> operators can be used to compare objects.
+</p>
+
+<p>
+<b>oneOf()</b> returns <b>true</b>, if the number is a number of one of types from the given type list.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">TypeNumberOf</span> : public TypeNumber
+ {
+   ....
+   
+  public:
+  
+   TypeNumberOf();
+ };
+
+</pre>
+
+<p>
+And this derived class is a type number constructor for the given type.
+</p>
+
+<pre>
+
+TypeNumber&lt;T&gt;()==TypeNumber&lt;S&gt;() iff T==S
+
+</pre>
+ 
 </body>
 
 </html>
