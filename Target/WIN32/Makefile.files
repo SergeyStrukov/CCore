@@ -129,6 +129,7 @@ obj/List.o \
 obj/Lock.o \
 obj/Locked.o \
 obj/Log.o \
+obj/MD5.o \
 obj/MSec.o \
 obj/MemAllocGuard.o \
 obj/MemBase.o \
@@ -430,6 +431,7 @@ obj/List.s \
 obj/Lock.s \
 obj/Locked.s \
 obj/Log.s \
+obj/MD5.s \
 obj/MSec.s \
 obj/MemAllocGuard.s \
 obj/MemBase.s \
@@ -731,6 +733,7 @@ obj/List.dep \
 obj/Lock.dep \
 obj/Locked.dep \
 obj/Log.dep \
+obj/MD5.dep \
 obj/MSec.dep \
 obj/MemAllocGuard.dep \
 obj/MemBase.dep \
@@ -1303,6 +1306,9 @@ obj/Locked.o : ../../CCore/src/gadget/Locked.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Log.o : ../../CCore/src/Log.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MD5.o : ../../CCore/src/crypton/MD5.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MSec.o : ../../CCore/src/gadget/MSec.cpp
@@ -2201,6 +2207,9 @@ obj/Locked.s : ../../CCore/src/gadget/Locked.cpp
 obj/Log.s : ../../CCore/src/Log.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/MD5.s : ../../CCore/src/crypton/MD5.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/MSec.s : ../../CCore/src/gadget/MSec.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3096,6 +3105,9 @@ obj/Locked.dep : ../../CCore/src/gadget/Locked.cpp
 
 obj/Log.dep : ../../CCore/src/Log.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Log.o $< -MF $@
+
+obj/MD5.dep : ../../CCore/src/crypton/MD5.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MD5.o $< -MF $@
 
 obj/MSec.dep : ../../CCore/src/gadget/MSec.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MSec.o $< -MF $@

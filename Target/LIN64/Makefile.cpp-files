@@ -36,6 +36,7 @@
 ../../CCore/src/crypton/DHExp.cpp
 ../../CCore/src/crypton/Forget.cpp
 ../../CCore/src/crypton/HashFunction.cpp
+../../CCore/src/crypton/MD5.cpp
 ../../CCore/src/crypton/Rot.cpp
 ../../CCore/src/crypton/SHA.cpp
 ../../CCore/src/ddl/DDLChar.cpp

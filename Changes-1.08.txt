@@ -112,6 +112,10 @@ InterfaceHost.h is added
 
 DynObject.h is added
 
+crypton/MD5.h
+
+  MD5 hash algorithm implementation is added.
+
 --- Updates ----------
 
 Regen

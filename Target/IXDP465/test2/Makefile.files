@@ -97,6 +97,7 @@ OBJ_LIST = \
 ../test2-obj/test0094.PerTask.o \
 ../test2-obj/test0095.InterfaceHost.o \
 ../test2-obj/test0096.DynObject.o \
+../test2-obj/test0097.MD5.o \
 ../test2-obj/test0100.Bridge.o \
 ../test2-obj/test0101.PTP.o \
 ../test2-obj/test0102.PrintFile.o \
@@ -240,6 +241,7 @@ ASM_LIST = \
 ../test2-obj/test0094.PerTask.s \
 ../test2-obj/test0095.InterfaceHost.s \
 ../test2-obj/test0096.DynObject.s \
+../test2-obj/test0097.MD5.s \
 ../test2-obj/test0100.Bridge.s \
 ../test2-obj/test0101.PTP.s \
 ../test2-obj/test0102.PrintFile.s \
@@ -383,6 +385,7 @@ DEP_LIST = \
 ../test2-obj/test0094.PerTask.dep \
 ../test2-obj/test0095.InterfaceHost.dep \
 ../test2-obj/test0096.DynObject.dep \
+../test2-obj/test0097.MD5.dep \
 ../test2-obj/test0100.Bridge.dep \
 ../test2-obj/test0101.PTP.dep \
 ../test2-obj/test0102.PrintFile.dep \
@@ -725,6 +728,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0096.DynObject.o : ../../../CCore/test/test0096.DynObject.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test2-obj/test0097.MD5.o : ../../../CCore/test/test0097.MD5.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test2-obj/test0100.Bridge.o : ../../../CCore/test/test0100.Bridge.cpp
@@ -1149,6 +1155,9 @@ include $(RULES_FILE)
 ../test2-obj/test0096.DynObject.s : ../../../CCore/test/test0096.DynObject.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test2-obj/test0097.MD5.s : ../../../CCore/test/test0097.MD5.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test2-obj/test0100.Bridge.s : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1570,6 +1579,9 @@ include $(RULES_FILE)
 
 ../test2-obj/test0096.DynObject.dep : ../../../CCore/test/test0096.DynObject.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0096.DynObject.o $< -MF $@
+
+../test2-obj/test0097.MD5.dep : ../../../CCore/test/test0097.MD5.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0097.MD5.o $< -MF $@
 
 ../test2-obj/test0100.Bridge.dep : ../../../CCore/test/test0100.Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test0100.Bridge.o $< -MF $@
