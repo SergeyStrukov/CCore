@@ -30,6 +30,49 @@
 
 <p class="Files">Files <b>CCore/inc/crypton/MD5.h</b> <b>CCore/src/crypton/MD5.cpp</b></p>
 
+<p class="Files">Files <b>CCore/inc/crypton/PlatformMD5.h</b></p>
+
+<h3>Software MD5 implementation</h3>
+
+<p>
+The following <a href="page_HashFunction.html">HashFunction&lt;....&gt;</a> class implements the MD5 hash algorithm:
+</p>
+
+<pre>
+
+using <span class="Att">MD5</span> = HashFunction&lt;....&gt; ;
+
+</pre>
+
+<p>
+The following <a href="page_HashFunction.html">KeyedHashFunction&lt;....&gt;</a> class implements the HMAC hash function
+based on MD5 algorithm:
+</p>
+
+<pre>
+
+using <span class="Att">KeyedMD5</span> = KeyedHashFunction&lt;....&gt; ;
+
+</pre>
+
+<h3>Platform MD5</h3>
+
+<p>
+The file <b>PlatformMD5.h</b> contains a stub definition for the PlatformMD5 type:
+</p>
+
+<pre>
+
+using <span class="Att">PlatformMD5</span> = MD5 ;
+
+using <span class="Att">PlatformKeyedMD5</span> = KeyedMD5 ;
+
+</pre>
+
+<p>
+A target may override this header file and provide its own definitions with efficient platform-dependent
+MD5 implementation.
+</p>
 
 </body>
 

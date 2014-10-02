@@ -30,6 +30,222 @@
 
 <p class="Files">Files <b>CCore/inc/InterfaceHost.h</b> <b>CCore/src/InterfaceHost.cpp</b></p>
 
+<p>
+In C++ by tradition we implement interfaces using an abstract classes.
+</p>
+
+<pre>
+
+struct SomeInterface
+ {
+  virtual void some_method()=0;
+ };
+
+</pre>
+
+<p>
+Then we implement this interface in some derived class.
+</p>
+
+<pre>
+
+class SomeClass : public SomeInterface , public SomeBase
+ {
+  public:
+
+   virtual void some_method();
+ };
+
+</pre>
+
+<p>
+Once we have a base object pointer we can retrieve the interface using the <b>dynamic_cast</b>.
+</p>
+
+<pre>
+
+SomeBase *pbase=....;
+
+SomeInterface *pif=dynamic_cast&lt;SomeInterface *&gt;(pbase);
+
+</pre>
+
+<p>
+This approach is simple, but have one big disadvantage. You have to implement interface in the object.
+You cannot borrow the interface from another object.
+</p>
+
+<pre>
+
+class SomeClass : public SomeBase
+ {
+   class InnerClass : public SomeInterface // no way to get this interface from SomeBase pointer
+    {
+     ....
+    };
+
+   InnerClass inner;
+
+  public:
+ };
+
+</pre>
+
+<p>
+<b>InterfaceHost</b> is a tool to solve this problem.
+</p>
+
+<pre>
+
+struct <span class="Att">InterfaceHost</span>
+ {
+  virtual void requestInterface(InterfaceCaster &caster) { caster.cast(this); }
+  
+  template &lt;class T&gt;
+  T * pickInterface()
+   {
+    InterfaceCasterTo&lt;T&gt; caster;
+    
+    requestInterface(caster);
+    
+    return caster;
+   }
+  
+  template &lt;class T&gt;
+  T * takeInterface(StrLen from)
+   {
+    T *ret=pickInterface&lt;T&gt;();
+    
+    if( !ret ) GuardNoInterface(from,GetInterfaceName&lt;T&gt;());
+    
+    return ret;
+   }
+ };
+
+</pre>
+
+<p>
+It is a class with one virtual method <b>requestInterface()</b> and two helper methods
+<b>pickInterface()</b> and <b>takeInterface()</b>.
+</p>
+
+<p>
+The method <b>requestInterface()</b> has default implementation, this variant takes the required interface
+from the host class. But you can override this behavior in a derived class to take interfaces from another sources:
+</p>
+
+<pre>
+
+//
+// interface is retrieved from the host class
+//
+
+class SimpleClass : public InterfaceHost , public SomeInterface
+ {
+  public:
+
+   virtual void some_method();
+ };
+
+//
+// interface is retrieved from the inner class
+//
+
+class AdvancedClass : public InterfaceHost
+ {
+   class InnerClass : public SomeInterface , public InterfaceHost
+    {
+     public:
+
+      virtual void some_method();
+    };
+
+  public:
+
+   virtual void requestInterface(InterfaceCaster &caster) { caster.cast(&inner); }
+ };
+
+//
+// interface is retrieved from multiple sources
+//
+
+class MultiClass : public InterfaceHost
+ {
+   class InnerClass : public SomeInterface , public InterfaceHost
+    {
+     public:
+
+      virtual void some_method();
+    };
+
+   OuterClass *outer;
+
+  public:
+
+   virtual void requestInterface(InterfaceCaster &caster) 
+    {
+     if( caster.getTypeNumber().oneOf&lt;SomeInterface&gt;() )
+       {
+        caster.cast(&inner); 
+       }
+     else
+       {
+        outer->requestInterface(caster);
+       }
+    }
+ };
+
+</pre>
+
+<p>
+The "caster" interface <b>InterfaceCaster</b> has two methods. 
+</p>
+
+<pre>
+
+struct <span class="Att">InterfaceCaster</span>
+ {
+  virtual void cast(InterfaceHost *obj)=0;
+  
+  virtual TypeNumber getTypeNumber()=0;  
+ };
+
+</pre>
+
+<p>
+<b>cast()</b> performs the <b>dynamic_cast</b> from the given pointer to the requested interface.
+</p>
+
+<p>
+<b>getTypeNumber()</b> returns the <a href="page_TypeNumber.html">type number</a> of the requested interface. 
+You can use one to dispatch the cast operation between multiple sources. 
+</p>
+
+<p>
+<b>T * pickInterface&lt;T&gt;()</b> requests the specific interface, given by the template parameter.
+If the interface is not supported null is returned.
+</p>
+
+<p>
+<b>T * takeInterface&lt;T&gt;(StrLen from)</b> does the same, but throw an exception if the interface is not supported.
+The argument <b>from</b> is used to report the requester. To throw the exception the function
+<b>GuardNoInterface()</b> is used, the argument <b>name</b> is created using the class <b>GetInterfaceName&lt;T&gt;</b>.
+This class takes the inner constant <b>T::InterfaceName</b> or the name <b>"&lt;Unknown interface&gt;"</b>, if such
+constant does not exist.
+</p>
+
+<pre>
+
+/* functions */
+
+void <span class="Att">GuardNoInterface</span>(StrLen from,StrLen name);
+
+/* struct GetInterfaceName&lt;T&gt; */
+
+template &lt;class T&gt;
+struct <span class="Att">GetInterfaceName</span> : StrLen { GetInterfaceName(); };
+
+</pre>
 
 </body>
 
