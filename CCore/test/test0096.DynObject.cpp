@@ -16,6 +16,7 @@
 #include <CCore/test/test.h>
 
 #include <CCore/inc/DynObject.h>
+#include <CCore/inc/Array.h>
 
 namespace App {
 
@@ -55,6 +56,10 @@ bool Testit<96>::Main()
   Printf(Con,"#;\n",*b);
   
   b.destroy();
+  
+  DynArray<DynObject<int> > temp(100);
+  
+  temp.extend_default(100);
   
   return true;
  }

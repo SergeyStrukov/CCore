@@ -30,6 +30,142 @@
 
 <p class="Files">Files <b>CCore/inc/DynObject.h</b> <b>CCore/src/DynObject.cpp</b></p>
 
+<p>
+<b>DynObject</b> is a smart pointer with exclusive ownership and constant propagation.
+It can be used to create an object dynamically. The object is destroyed when the pointer gets out of the scope.
+</p>
+
+<p>
+<a href="page_NewDelete.html">New()/Delete()</a> with the <b>DefaultHeapAlloc</b> are used to create and
+destroy the object. So you don't have to derive the object type from the <a href="page_MemoryManagement.html">MemBase</a>. 
+Any type can be used, the only assumption is that the object destructor is nothrow.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">DynObject</span>
+ {
+   T *ptr;
+   
+  public: 
+   
+   // constructors
+   
+   DynObject() : ptr(0) {}
+   
+   DynObject(NothingType) : ptr(New&lt;T&gt;(DefaultHeapAlloc())) {}
+   
+   template &lt;class ... SS&gt;
+   DynObject(SS &amp;&amp; ... ss) : ptr(New&lt;T&gt;(DefaultHeapAlloc(), std::forward&lt;SS&gt;(ss)... )) {}
+   
+   ~DynObject();
+
+</pre>
+
+<p>
+Default constructor creates the null pointer. It points to no object.
+</p>
+
+<p>
+<a href="page_Nothing.html">NothingType-constructor</a> creates the pointer to the object, 
+constructed using it's default constructor.
+</p>
+
+<pre>
+   
+   // no copy
+   
+   DynObject(const DynObject&lt;T&gt; &obj) = delete ;
+   
+   DynObject&lt;T&gt; & operator = (const DynObject&lt;T&gt; &amp;obj) = delete ;
+   
+   // moving
+   
+   DynObject(DynObject&lt;T&gt; &amp;&amp;obj);
+   
+   DynObject&lt;T&gt; &amp; operator = (DynObject&lt;T&gt; &amp;&amp;obj);
+
+</pre>
+
+<p>
+<b>DynObject</b> is not copyable, but movable using the C++ move.
+</p>
+
+<pre>
+   
+   // methods
+   
+   void create(NothingType);
+   
+   template &lt;class ... SS&gt;
+   void create(SS &amp;&amp; ... ss);
+   
+   void destroy();
+
+</pre>
+
+<p>
+For an existing pointer you can recreate the object using the method <b>create()</b> 
+(the previous object, if any, is destroyed) or destroy it using the method <b>destroy()</b>.
+The method <b>destroy()</b> sets the pointer to the null state. The method <b>create()</b> preserves
+the pointer state, if the object creation ends with the throwing of an exception.
+</p>
+
+<pre>
+   
+   // object pointer, const enforcement
+   
+   const T * operator + () const { return ptr; }
+   
+   bool operator ! () const { return !ptr; }
+   
+   T * getPtr() { return ptr; }
+   
+   const T * getPtr() const { return ptr; }
+   
+   const T * getPtr_const() const { return ptr; }
+   
+   T &amp; operator * () { return *ptr; }
+   
+   const T &amp; operator * () const { return *ptr; }
+   
+   T * operator -> () { return ptr; }
+   
+   const T * operator -> () const { return ptr; }
+
+</pre>
+
+<p>
+The usual set of methods can be used to access the object. 
+The difference with the <a href="page_Taxonomy.html#ObjectPointerInterface">Object Pointer Interface</a> is 
+that the constantness is propagated from the pointer to the object.
+</p>
+
+<pre>
+   
+   // object swap/move
+   
+   void objSwap(DynObject&lt;T&gt; &amp;obj);
+   
+   explicit DynObject(ToMoveCtor&lt;DynObject&lt;T&gt; &gt; obj);
+   
+   DynObject&lt;T&gt; * objMove(Place&lt;void&gt; place);
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = true,
+     Copy_no_throw = true
+    };
+ };
+
+</pre>
+
+<p>
+<b>DynObject</b> is swappable and <b>CCore</b>-movable.
+</p>
 
 </body>
 

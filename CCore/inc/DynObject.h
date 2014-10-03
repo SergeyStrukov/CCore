@@ -98,7 +98,7 @@ class DynObject
    
    // object pointer, const enforcement
    
-   T * operator + () const { return ptr; }
+   const T * operator + () const { return ptr; }
    
    bool operator ! () const { return !ptr; }
    
