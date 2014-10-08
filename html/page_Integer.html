@@ -35,6 +35,393 @@
 huge value range. This range is limited only by the available memory.
 </p>
 
+<p>
+Internally an <b>Integer</b> value is represented using the array of units. A unit has an unsigned integral type.
+The 2'c lendian reprsentation is used. I.e. if the array is <b>(U<sub>0</sub>,...,U<sub>n</sub>)</b>, then the 
+value is <b>U<sub>0</sub>+U<sub>1</sub>*B+...+U<sub>n-1</sub>*B<sup>n-1</sup>+2c-signed(U<sub>n</sub>)*B<sup>n</sup></b>,
+where <b>B</b> is <b>2<sup>number of unit bits</sup></b>. In other words, the binary representation of the value
+is the concatenation of the binary representations of units and the <b>MSB</b> is a signed bit. You may also 
+consider units as digits in the base-<b>B</b> positional integer representation. 
+All units except the most significant (which is the last in the array) have values from the interval <b>[0,B)</b>,
+and the <b>MSU</b> is regarded as a value from the interval <b>[-B/2,B/2)</b>.
+</p>
+<p>
+An <b>Integer</b> value is stored in the normalized form, i.e. you cannot represent it with a less number of units.
+It means that the <b>MSU</b> is not a signed extension of the previous unit. 
+The null value is represented by the empty array.
+</p>
+
+<pre>
+
+template &lt;class Algo,
+          template &lt;class T,class A&gt; class ArrayType = RefArray ,
+          template &lt;class T,class F=NoThrowFlags&lt;T&gt; &gt; class ArrayAlgoType = ArrayAlgo &gt;
+class <span class="Att">Integer</span>
+ {
+  public:
+   
+   typedef Algo AlgoType;
+   
+   typedef typename Algo::Unit Unit;
+   
+   static const unsigned UnitBits = Algo::UnitBits ;
+   
+   using TempArrayType = <span class="Att">DynArray&lt;Unit,ArrayAlgoType&lt;Unit&gt; &gt;</span> ;
+   
+  private: 
+   
+   <span class="Att">ArrayType&lt;Unit,ArrayAlgoType&lt;Unit&gt; &gt;</span> body;
+
+</pre>
+
+<p>
+<b>Integer</b> is a template. The first and most important template parameter is an <b>Algorithm package</b>.
+This parameter determines the unit type and the set of low-level functions to perform the integer operations. 
+These functions cannot be implemented efficiently in general, so you should use some "fast" implementation
+for your particular target CPU. You can use the <a href="https://gmplib.org">GMP library</a> for that purpose.
+</p>
+
+<p>
+The second and third template parameters define the array to be used to store an integer body. The second
+must be either the <b>RefArray</b>(default) or the <b>AtomicRefArray</b>. The third is almost never be used
+with non-default value. You can use a non-default value here to use, for example, custom memory allocation 
+functions. See the <a href="page_Arrays.html">Array page</a> for more information about arrays and array algorithms.
+</p>
+
+<p>
+<b>AlgoType</b> is the inner type, an alias of the first template parameter.
+</p>
+
+<p>
+<b>Unit</b> is the unit type.
+</p>
+
+<p>
+<b>UnitBits</b> is the number of unit bits.
+</p>
+
+<p>
+<b>TempArrayType</b> is a <b>Unit</b> <b>DynArray</b> with the provided array algorithm package. This type
+is intended to be used as the temporary storage type.
+</p>
+
+<p>
+The body of the <b>Integer</b> is stored in the private field <b>body</b>.
+</p>
+
+<pre>
+
+  public:
+   
+   // generic constructor 
+
+   template &lt;class Builder&gt;
+   Integer(DoBuildType,Builder builder) : body(DoBuild,builder) { normalize(); }
+   
+   // constructors 
+  
+   Integer() {}
+   
+   Integer(StrLen str);
+   
+   template &lt;class UInt&gt;
+   Integer(UInt val);
+   
+   template &lt;class SInt&gt;
+   Integer(SInt val);
+   
+   ~Integer() {}
+
+</pre>
+
+<p>
+You can create an <b>Integer</b> using the generic constructor or using special constructors.
+The generic constructor uses the provided builder to fill the integer body 
+and then performs the normalization. 
+</p>
+
+<p>
+The default constructor creates the null value. It doesn't throw.
+</p>
+
+<p>
+You can create an <b>Integer</b> from a string (the usual decimal representation is assumed) or from
+any "short" integer, signed or unsigned. These constructors are implicit, so you can use them to 
+silently cast operation arguments.
+</p>
+
+<pre>
+
+   // methods
+   
+   CmpResult sign() const;
+   
+   bool operator ! () const { return !sign(); }
+   
+   struct BitsOf
+    {
+     ulen units;
+     unsigned msbits;
+     
+     BitsOf(ulen units_,unsigned msbits_) : units(units_),msbits(msbits_) {}
+     
+     template &lt;class UInt&gt;
+     void total(UInt &amp;ret) const;
+     
+     unsigned total() const;
+    };
+   
+   BitsOf bitsOf() const;
+   
+   Integer sq() const;
+   
+   Integer pow(unsigned deg) const;
+   
+   void modify() { body.modify(); }
+   
+   void cloneTo(Integer &amp;ret) const;
+   
+   Integer &amp; set_null();
+   
+   PtrLen&lt;const Unit&gt; getBody() const;
+   
+   PtrLenReverse&lt;const Unit&gt; getBodyReverse() const;
+   
+   bool isOdd() const;
+   
+   bool isEven() const;
+
+</pre>
+
+<pre>
+
+   // cast
+   
+   template &lt;class UInt&gt;
+   UInt cast() const;
+
+</pre>
+
+<pre>
+
+   CmpResult objCmp(const Integer &amp;b) const;
+
+</pre>
+
+<pre>
+
+   // operators
+   
+   static Integer Neg(PtrLen&lt;const Unit&gt; a);
+   
+   static Integer Add(PtrLen&lt;const Unit&gt; a,PtrLen&lt;const Unit&gt; b);
+   
+   static Integer Sub(PtrLen&lt;const Unit&gt; a,PtrLen&lt;const Unit&gt; b);
+   
+   static Integer Mul(PtrLen&lt;const Unit&gt; a,PtrLen&lt;const Unit&gt; b);
+   
+   static Integer Sq(PtrLen&lt;const Unit&gt; a);
+   
+   static Integer Div(PtrLen&lt;const Unit&gt; a,PtrLen&lt;const Unit&gt; b);
+   
+   static Integer Mod(PtrLen&lt;const Unit&gt; a,PtrLen&lt;const Unit&gt; b);
+   
+   static Integer LShift(PtrLen&lt;const Unit&gt; a,unsigned shift);
+   
+   static Integer RShift(PtrLen&lt;const Unit&gt; a,unsigned shift);
+   
+   struct DivMod
+    {
+     Integer div;
+     Integer mod;
+     
+     DivMod(PtrLen&lt;const Unit&gt; a,PtrLen&lt;const Unit&gt; b);
+    };
+
+</pre>
+
+<pre>
+
+   // operators
+   
+   Integer &amp; neg();
+   
+   Integer &amp; revsub(const Integer &amp;b);
+   
+   Integer &amp; operator += (const Integer &amp;b);
+   
+   Integer &amp; operator -= (const Integer &amp;b);
+   
+   Integer &amp; operator *= (const Integer &amp;b);
+   
+   Integer &amp; operator /= (const Integer &amp;b);
+   
+   Integer &amp; operator %= (const Integer &amp;b);
+   
+   Integer &amp; operator &lt;&lt;= (unsigned shift);
+   
+   Integer &amp; operator &gt;&gt;= (unsigned shift);
+
+</pre>
+
+<pre>
+
+   // operators
+   
+   Integer operator - () const; 
+   
+   friend Integer operator + (const Integer &amp;a,const Integer &amp;b);
+    
+   friend Integer operator - (const Integer &amp;a,const Integer &amp;b);
+   
+   friend Integer operator * (const Integer &amp;a,const Integer &amp;b);
+   
+   friend Integer operator / (const Integer &amp;a,const Integer &amp;b);
+   
+   friend Integer operator % (const Integer &amp;a,const Integer &amp;b);
+   
+   Integer operator &lt;&lt; (unsigned shift) const;
+   
+   Integer operator &gt;&gt; (unsigned shift) const;
+   
+   DivMod divmod(const Integer &amp;b) const;
+   
+   friend bool operator == (const Integer &amp;a,const Integer &amp;b);
+   
+   friend bool operator != (const Integer &amp;a,const Integer &amp;b);
+   
+   friend bool operator &lt; (const Integer &amp;a,const Integer &amp;b);
+   
+   friend bool operator &gt; (const Integer &amp;a,const Integer &amp;b);
+   
+   friend bool operator &lt;= (const Integer &amp;a,const Integer &amp;b);
+   
+   friend bool operator &gt;= (const Integer &amp;a,const Integer &amp;b);
+
+</pre>
+
+<pre>
+
+   template &lt;class SUInt&gt;
+   EnableIfSUInt&lt;SUInt&gt; &amp; revsub(SUInt val);
+   
+   template &lt;class SUInt&gt;
+   EnableIfSUInt&lt;SUInt&gt; &amp; operator += (SUInt val);
+   
+   template &lt;class SUInt&gt;
+   EnableIfSUInt&lt;SUInt&gt; &amp; operator -= (SUInt val);
+   
+   template &lt;class SUInt&gt;
+   EnableIfSUInt&lt;SUInt&gt; &amp; operator *= (SUInt val);
+   
+   template &lt;class SUInt&gt;
+   EnableIfSUInt&lt;SUInt&gt; &amp; operator /= (SUInt val);
+   
+   template &lt;class SUInt&gt;
+   EnableIfSUInt&lt;SUInt&gt; &amp; operator %= (SUInt val);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator + (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator + (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator - (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator - (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator * (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator * (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator / (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator / (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator % (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt&gt; operator % (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   EnableIfSUInt&lt;SUInt,DivMod&gt; divmod(SUInt b) const;
+   
+   template &lt;class SUInt&gt;
+   EnableIfSUInt&lt;SUInt,CmpResult&gt; cmp(SUInt b) const;
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator == (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator == (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator != (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator != (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &lt; (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &lt; (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &gt; (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &gt; (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &lt;= (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &lt;= (SUInt a,const Integer &amp;b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &gt;= (const Integer &amp;a,SUInt b);
+   
+   template &lt;class SUInt&gt;
+   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &gt;= (SUInt a,const Integer &amp;b);
+
+</pre>
+
+<pre>
+
+   // print object
+
+   typedef IntegerPrintOpt PrintOptType; 
+   
+   template &lt;class P&gt;   
+   void print(P &amp;out,PrintOptType opt) const;
+   
+   // swap/move objects
+   
+   void objSwap(Integer &amp;obj); 
+   
+   explicit Integer(ToMoveCtor&lt;Integer&gt; obj);
+   
+   Integer * objMove(Place&lt;void&gt; place);
+   
+   // no-throw flags
+   
+   enum NoThrowFlagType
+    {
+     Default_no_throw = true,
+     Copy_no_throw = true
+    };
+ };
+
+</pre>
+
 </body>
 
 </html>
