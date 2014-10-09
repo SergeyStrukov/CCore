@@ -78,13 +78,13 @@ class <span class="Att">Integer</span>
 <b>Integer</b> is a template. The first and most important template parameter is an <b>Algorithm package</b>.
 This parameter determines the unit type and the set of low-level functions to perform the integer operations. 
 These functions cannot be implemented efficiently in general, so you should use some "fast" implementation
-for your particular target CPU. You can use the <a href="https://gmplib.org">GMP library</a> for that purpose.
+for your particular target CPU. For example, you can use the <a href="https://gmplib.org">GMP library</a> for that purpose.
 </p>
 
 <p>
 The second and third template parameters define the array to be used to store an integer body. The second
-must be either the <b>RefArray</b>(default) or the <b>AtomicRefArray</b>. The third is almost never be used
-with non-default value. You can use a non-default value here to use, for example, custom memory allocation 
+must be either the <b>RefArray</b>(default) or the <b>AtomicRefArray</b>. The third should almost never be used
+with non-default value. You can use a non-default value for this parameter to employ, for example, custom memory allocation 
 functions. See the <a href="page_Arrays.html">Array page</a> for more information about arrays and array algorithms.
 </p>
 
@@ -193,6 +193,62 @@ silently cast operation arguments.
 
 </pre>
 
+<p>
+<b>sign()</b> returns the sign of the number, represented using the <a href="page_Cmp.html"><b>CmpResult</b></a>.
+</p>
+
+<p>
+<b>operator !</b> returns <b>true</b>, if the number is zero.
+</p>
+
+<p>
+<b>bitsOf()</b> returns the number of bits of the number. The value is returned as a structure with two fields.
+The fields <b>units</b> is the number of full unit bits. The field <b>msbits</b> is the number of bits of the <b>MSU</b>.
+You can convert this result into a usual unsigned value using the method <b>total()</b>.
+The <b>total()</b> without arguments returns the unsigned value. The <b>total()</b> with argument
+returns the value of a desired type in the given argument. An exception is thrown in case of overflow.
+For negative numbers the leading 1 is not counted. I.e. is the number <b>N</b> is non-negative, 
+then <b>NBits</b> is the minimum such that <b>N&lt;2<sup>NBits</sup></b>. But if the <b>N</b> is negative, 
+then <b>NBits</b> is the minimum such that <b>N&gt;=-2<sup>NBits</sup></b>.
+</p>
+
+<p>
+<b>sq()</b> returns the square of the number.
+</p>
+
+<p>
+<b>pow()</b> returns the power of the number.
+</p>
+
+<p>
+<b>modify()</b> "unshares" the body. After this method the number will have the separate body.
+</p>
+
+<p>
+<b>cloneTo()</b> makes clone of the number at the given argument. The argument will have the separate
+body. This method is usefull in multi-task situations.
+</p>
+
+<p>
+<b>set_null()</b> sets the number to zero and returns the reference to self.
+</p>
+
+<p>
+<b>getBody()</b> returns the range over the number body.
+</p>
+
+<p>
+<b>getBodyReverse()</b> returns the reverse range over the number body.
+</p>
+
+<p>
+<b>isOdd()</b> returns <b>true</b>, if the number is odd.
+</p>
+
+<p>
+<b>isEven()</b> returns <b>true</b>, if the number is even.
+</p>
+
 <pre>
 
    // cast
@@ -202,11 +258,20 @@ silently cast operation arguments.
 
 </pre>
 
+<p>
+<b>cast()</b> does the cast to the given unsigned integral type. The reduction by module is performed 
+to get the value. On bit patterns: extra bits are skipped.
+</p>
+
 <pre>
 
    CmpResult objCmp(const Integer &amp;b) const;
 
 </pre>
+
+<p>
+<b>objCmp()</b> performs <a href="page_Cmp.html">the 3-way comparision</a> with the argument. 
+</p>
 
 <pre>
 
@@ -240,6 +305,51 @@ silently cast operation arguments.
 
 </pre>
 
+<p>
+This set of static functions makes the result of operation on numbers. The argument(s) is given not 
+as an <b>Integer</b> value, but as the range of a number body.
+</p>
+
+<p>
+<b>Neg()</b> calculates <b>-a</b>.
+</p>
+
+<p>
+<b>Add()</b> calculates <b>a+b</b>.
+</p>
+
+<p>
+<b>Sub()</b> calculates <b>a-b</b>.
+</p>
+
+<p>
+<b>Mul()</b> calculates <b>a*b</b>.
+</p>
+
+<p>
+<b>Div()</b> calculates <b>a/b</b>. More precisely, the result is <b>[a/b]</b>.
+</p>
+
+<p>
+<b>Mod()</b> calculates <b>a%b</b>. Both division operations throw an exception if the divisor is zero.
+The following is true: <b>a == (a/b)*b + (a%b)</b>. If the <b>b</b> is positive, the remainder is non-negative. 
+Otherwise it is non-positive. 
+</p>
+
+<p>
+<b>LShift()</b> calculates <b>a&lt;&lt;shift</b>. In other words, it calculates <b>a*2<sup>shift</sup></b>.
+</p>
+
+<p>
+<b>RShift()</b> calculates the arithmetic <b>a&gt;&gt;shift</b>, i.e. the leading bit is propagated.
+In other words, it calculates <b>a/2<sup>shift</sup></b>.
+</p>
+
+<p>
+<b>DivMod</b> is a <b>Class-function</b>, it calcualtes the qoutient (in the field <b>div</b>) 
+and the remainder (in the field <b>mod</b>) simultaneously.
+</p>                                    
+
 <pre>
 
    // operators
@@ -263,6 +373,22 @@ silently cast operation arguments.
    Integer &amp; operator &gt;&gt;= (unsigned shift);
 
 </pre>
+
+<p>
+This set of methods and operators perform self-modifying operations. They return the reference to self.
+</p>
+
+<p>
+<b>neg()</b> negates the number: <b>obj = - obj</b>.
+</p>
+
+<p>
+<b>revsub()</b> does the "reversed subtraction", i.e. <b>obj = b - obj</b>. 
+</p>
+
+<p>
+<b>operator X=</b> does the usual <b>obj = obj X b</b> operation.
+</p>
 
 <pre>
 
@@ -300,99 +426,133 @@ silently cast operation arguments.
 
 </pre>
 
+<p>
+The unary <b>operator -</b> returns the negated number: <b>-obj</b>.
+</p>
+
+<p>
+The family of binary operators: <b>+, -, *, /, %</b>, perform the usual integer arithmetic operations. 
+</p>
+
+<p>
+The family of binary comparision operators: <b>==, !=, &lt;, &gt;, &lt;=, &gt;=</b>, perform 
+the usual integer comparision operations.
+</p>
+
+<p>
+<b>operator &lt;&lt;</b> returns the <b>obj &lt;&lt; shift</b>.
+</p>
+
+<p>
+<b>operator &gt;&gt;</b> returns the <b>obj &gt;&gt; shift</b>.
+</p>
+
+<p>
+<b>divmod()</b> returns the the qoutient and the remainder using the <b>DivMod</b> structure.
+</p>
+
 <pre>
 
    template &lt;class SUInt&gt;
-   EnableIfSUInt&lt;SUInt&gt; &amp; revsub(SUInt val);
+   Integer &amp; revsub(SUInt val);
    
    template &lt;class SUInt&gt;
-   EnableIfSUInt&lt;SUInt&gt; &amp; operator += (SUInt val);
+   Integer &amp; operator += (SUInt val);
    
    template &lt;class SUInt&gt;
-   EnableIfSUInt&lt;SUInt&gt; &amp; operator -= (SUInt val);
+   Integer &amp; operator -= (SUInt val);
    
    template &lt;class SUInt&gt;
-   EnableIfSUInt&lt;SUInt&gt; &amp; operator *= (SUInt val);
+   Integer &amp; operator *= (SUInt val);
    
    template &lt;class SUInt&gt;
-   EnableIfSUInt&lt;SUInt&gt; &amp; operator /= (SUInt val);
+   Integer &amp; operator /= (SUInt val);
    
    template &lt;class SUInt&gt;
-   EnableIfSUInt&lt;SUInt&gt; &amp; operator %= (SUInt val);
+   Integer &amp; operator %= (SUInt val);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator + (const Integer &amp;a,SUInt b);
+   friend Integer operator + (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator + (SUInt a,const Integer &amp;b);
+   friend Integer operator + (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator - (const Integer &amp;a,SUInt b);
+   friend Integer operator - (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator - (SUInt a,const Integer &amp;b);
+   friend Integer operator - (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator * (const Integer &amp;a,SUInt b);
+   friend Integer operator * (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator * (SUInt a,const Integer &amp;b);
+   friend Integer operator * (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator / (const Integer &amp;a,SUInt b);
+   friend Integer operator / (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator / (SUInt a,const Integer &amp;b);
+   friend Integer operator / (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator % (const Integer &amp;a,SUInt b);
+   friend Integer operator % (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt&gt; operator % (SUInt a,const Integer &amp;b);
+   friend Integer operator % (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   EnableIfSUInt&lt;SUInt,DivMod&gt; divmod(SUInt b) const;
+   DivMod divmod(SUInt b) const;
    
    template &lt;class SUInt&gt;
-   EnableIfSUInt&lt;SUInt,CmpResult&gt; cmp(SUInt b) const;
+   CmpResult cmp(SUInt b) const;
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator == (const Integer &amp;a,SUInt b);
+   friend bool operator == (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator == (SUInt a,const Integer &amp;b);
+   friend bool operator == (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator != (const Integer &amp;a,SUInt b);
+   friend bool operator != (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator != (SUInt a,const Integer &amp;b);
+   friend bool operator != (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &lt; (const Integer &amp;a,SUInt b);
+   friend bool operator &lt; (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &lt; (SUInt a,const Integer &amp;b);
+   friend bool operator &lt; (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &gt; (const Integer &amp;a,SUInt b);
+   friend bool operator &gt; (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &gt; (SUInt a,const Integer &amp;b);
+   friend bool operator &gt; (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &lt;= (const Integer &amp;a,SUInt b);
+   friend bool operator &lt;= (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &lt;= (SUInt a,const Integer &amp;b);
+   friend bool operator &lt;= (SUInt a,const Integer &amp;b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &gt;= (const Integer &amp;a,SUInt b);
+   friend bool operator &gt;= (const Integer &amp;a,SUInt b);
    
    template &lt;class SUInt&gt;
-   friend EnableIfSUInt&lt;SUInt,bool&gt; operator &gt;= (SUInt a,const Integer &amp;b);
+   friend bool operator &gt;= (SUInt a,const Integer &amp;b);
 
 </pre>
+
+<p>
+This set of operators and methods handles the mixed-type cases, when one of the argument is a simple 
+signed or unsigned integral type. They are introduced for efficiency reason.
+</p>
+
+<p>
+<b>cmp()</b> performs the comparison with one of simple signed or unsigned integral type.
+</p>
 
 <pre>
 
@@ -421,6 +581,37 @@ silently cast operation arguments.
  };
 
 </pre>
+
+<p>
+<b>Integer</b> is printable, swappable and movable type. <b>Integer</b> print options are: output width
+and show-sign option. The output is always decimal.
+</p>
+
+<pre>
+
+struct <span class="Att">IntegerPrintOpt</span>
+ {
+  ulen width;
+  IntShowSign show_sign;
+  
+  void setDefault();
+  
+  IntegerPrintOpt() { setDefault(); }
+  
+  IntegerPrintOpt(const char *ptr,const char *lim);
+  
+  //
+  // [+][width=0]
+  //
+ };
+
+</pre>
+
+<h3>RandomInteger</h3>
+
+<h3>GCDAlgo</h3>
+
+<h3>Algo</h3>
 
 </body>
 
