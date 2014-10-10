@@ -120,7 +120,7 @@ The body of the <b>Integer</b> is stored in the private field <b>body</b>.
    
    // constructors 
   
-   Integer() {}
+   Integer();
    
    Integer(StrLen str);
    
@@ -130,7 +130,7 @@ The body of the <b>Integer</b> is stored in the private field <b>body</b>.
    template &lt;class SInt&gt;
    Integer(SInt val);
    
-   ~Integer() {}
+   ~Integer();
 
 </pre>
 
@@ -156,7 +156,7 @@ silently cast operation arguments.
    
    CmpResult sign() const;
    
-   bool operator ! () const { return !sign(); }
+   bool operator ! () const;
    
    struct BitsOf
     {
@@ -609,9 +609,421 @@ struct <span class="Att">IntegerPrintOpt</span>
 
 <h3>RandomInteger</h3>
 
-<h3>GCDAlgo</h3>
+<p>
+<b>RandomInteger</b> is a random <b>Integer</b>.
+</p>
 
-<h3>Algo</h3>
+<pre>
+
+template &lt;class Integer&gt;
+class <span class="Att">RandomInteger</span> : public Integer
+ {
+   ....
+     
+  public:
+  
+   template &lt;class Random&gt;
+   RandomInteger(ulen n,Random &random);
+   
+   ~RandomInteger();
+ };
+
+</pre>
+
+<p>
+Constructor takes two arguments. The first argument is the body length in units. The second is some
+<a href="page_Random.html">Random</a> object. An <b>Integer</b> is created with the given body length and
+randomly filled body units. So the value is uniformly distributed in the range 
+<b>[-B<sup>n</sup>/2,B<sup>n</sup>/2)</b>.
+</p>
+
+<h3>GCDiv and QSym</h3>
+
+<pre>
+
+template &lt;class Integer&gt;
+Integer <span class="Att">GCDiv</span>(const Integer &amp;a,const Integer &amp;b);
+
+template &lt;class Integer&gt;
+int <span class="Att">QSym</span>(const Integer &amp;a,const Integer &amp;b);
+
+</pre>
+
+<p>
+<b>GCDiv()</b> calculates the GCD of the given arguments. The return value is non-negative.
+</p>
+
+<p>
+<b>QSym()</b> calcualtes the quadratic symbol (aka Jacobi symbol) of the given arguments. 
+<b>a</b> and <b>b</b> must be coprime and <b>b</b> must be odd, otherwise an exception is thrown.
+</p>
+
+<a name="Algo"><h3>Algo</h3></a>
+
+<p>
+The algorithm package <b>Algo</b> must comply with the following pattern. Functions, operating on
+long numbers expects the arguments in the form <b>(const Unit *a,ulen na)</b>, where <b>a</b> is a 
+number body and <b>na</b> is the body length. An argument can be regarded as a signed number or as 
+an unsigned number. In the last case the function name starts from the <b>U</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">Algo</span>
+ {
+  // types and consts
+  
+  typedef ??? Unit; // unsigned integral type
+  
+  static const unsigned UnitBits = ??? ; 
+
+  static const Unit MaxUnit = ??? ;
+  
+  static const Unit MSBit = ??? ;
+
+</pre>
+
+<p>
+<b>Unit</b> is a unit type. It must be an unsigned integral type.
+</p>
+
+<p>
+<b>UnitBits</b> is the number of bits of <b>Unit</b>.
+</p>
+
+<p>
+<b>MaxUnit</b> is the maximum unit, all bits are set.
+</p>
+
+<p>
+<b>MSBit</b> is the most significant bit.
+</p>
+
+<pre>
+  
+  // functions
+  
+  static Unit SignExt(const Unit *a,ulen na);
+  
+  static unsigned CountZeroMSB(Unit a);
+
+  static Unit DoubleUDiv(Unit hi,Unit lo,Unit den); // hi&lt;den
+
+</pre>
+
+<p>
+<b>SignExt()</b> returns the sign extension unit for the given argument. I.e. it is the most significant bit
+of the argument, propagated to the unit.
+</p>
+
+<p>
+<b>CountZeroMSB()</b> count the number of zero most significant bits of the given unit.
+</p>
+
+<p>
+<b>DoubleUDiv()</b> performs the long unsigned division. It divides the double-size number with the
+high part <b>hi</b> and the low part <b>lo</b> by the divisor <b>den</b>. It is assumed, that
+<b>hi &lt; den</b>. The result is returned (it is representable by the unit).
+</p>
+
+<pre>
+  
+  // const operators 
+ 
+  static CmpResult USign(const Unit *a,ulen na);
+  
+  static CmpResult Sign(const Unit *a,ulen na); 
+  
+  static CmpResult UCmp(const Unit *a,const Unit *b,ulen nab);
+  
+  static CmpResult UCmp(const Unit *a,ulen na,const Unit *b,ulen nb);
+  
+  static CmpResult Cmp(const Unit *a,ulen na,const Unit *b,ulen nb);
+
+  static ulen UNormalize(const Unit *a,ulen na);
+  
+  static ulen Normalize(const Unit *a,ulen na);
+
+</pre>
+
+<p>
+<b>USign()</b> returns the sign of the argument. It always >=0.
+</p>
+
+<p>
+<b>Sign()</b> returns the sign of the argument.
+</p>
+
+<p>
+<b>UCmp()</b> compares arguments of the same length.
+</p>
+
+<p>
+<b>UCmp()</b> compares arguments.
+</p>
+
+<p>
+<b>Cmp()</b> compares arguments.
+</p>
+
+<p>
+<b>UNormalize()</b> does normalization of the argument. It returns the normalized length. 
+It drop the most significant units, equals zero.
+</p>
+
+<p>
+<b>Normalize()</b> does normalization of the argument. It returns the normalized length.
+It drop the most significant units, equals propagated MSB of the previous unit.
+</p>
+
+<pre>
+  
+  // additive operators 
+
+  static Unit/* c */ UNeg(Unit *a,ulen na);
+  
+  static Unit/* msu */ Neg(Unit *a,ulen na);
+  
+  static Unit/* c */ UAddUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* c */ USubUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* c */ UAdd(Unit *restrict b,const Unit *a,ulen nab);
+  
+  static Unit/* msu */ Add(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb>=na
+
+  static Unit/* c */ USub(Unit *restrict b,const Unit *a,ulen nab);
+  
+  static Unit/* msu */ Sub(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb>=na
+  
+  static Unit/* msu */ RevSub(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb>=na
+
+</pre>
+
+<p>
+<b>UNeg()</b>
+</p>
+
+<p>
+<b>Neg()</b>
+</p>
+
+<p>
+<b>UAddUnit()</b>
+</p>
+
+<p>
+<b>USubUnit()</b>
+</p>
+
+<p>
+<b>UAdd()</b>
+</p>
+
+<p>
+<b>Add()</b>
+</p>
+
+<p>
+<b>USub()</b>
+</p>
+
+<p>
+<b>Sub()</b>
+</p>
+
+<p>
+<b>RevSub()</b>
+</p>
+
+<pre>
+
+  // shift operators
+  
+  static Unit/* msu */ ULShift(Unit *a,ulen na,unsigned shift); // 0&lt;shift&lt;UnitBits
+  
+  static Unit/* msu */ LShift(Unit *restrict b,const Unit *a,ulen nab,unsigned shift); // 0&lt;shift&lt;UnitBits 
+
+  static Unit/* msu */ ShiftUp(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0&lt;shift&lt;UnitBits
+  
+  static void RShift(Unit *restrict b,const Unit *a,ulen nab,unsigned shift); // 0&lt;shift&lt;UnitBits
+
+  static void ShiftDown(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0&lt;shift&ltUnitBits
+
+</pre>
+
+<p>
+<b>ULShift()</b>
+</p>
+
+<p>
+<b>LShift()</b>
+</p>
+
+<p>
+<b>ShiftUp()</b>
+</p>
+
+<p>
+<b>RShift()</b>
+</p>
+
+<p>
+<b>ShiftDown()</b>
+</p>
+
+<pre>
+
+  // multiplicative operators
+
+  static void UMul(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb); // nc==na+nb
+  
+  static void UMulLo(Unit *restrict c,ulen nc,const Unit *a,ulen na,const Unit *b,ulen nb); // nc&lt;=na+nb
+  
+  static void Mul(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb); // nc==na+nb
+
+  static void Sq(Unit *restrict c,const Unit *a,ulen na); // nc==2*na
+
+</pre>
+
+<p>
+<b>UMul()</b> calculates the product of the arguments and places the result into the <b>c</b>.
+The length of the <b>c</b> must be <b>na+nb</b>. 
+The input and output bodies are assumed not overlapping.
+</p>
+
+<p>
+<b>UMulLo()</b> calculates the product of the arguments and places the lower part of the result into the <b>c</b>.
+The length of the <b>c</b> must not exceed <b>na+nb</b>. 
+The input and output bodies are assumed not overlapping.
+</p>
+
+<p>
+<b>Mul()</b> calculates the product of the arguments and places the result into the <b>c</b>.
+The length of the <b>c</b> must be <b>na+nb</b>. 
+The input and output bodies are assumed not overlapping.
+</p>
+
+<p>
+<b>Sq()</b> calcualtes the square of the argument <b>a</b> and places the result into the <b>c</b>. 
+The length of the <b>c</b> must be <b>2*na</b>. 
+The input and output bodies are assumed not overlapping.
+</p>
+
+<pre>
+
+  // data functions  
+
+  static void Null(Unit *a,ulen na);
+
+  static void MoveUp(Unit *a,ulen na,ulen delta); // a[na+delta]
+
+  static void MoveDown(Unit *a,ulen na,ulen delta); // a[na+delta]
+ };
+
+</pre>
+
+<p>
+<b>Null()</b> nullifies the result. 
+</p>
+
+<p>
+<b>MoveUp()</b> moves up the body inside the larger buffer by the <b>delta</b> units. 
+I.e. <b>a[i+delta] = a[i]</b>.
+</p>
+
+<p>
+<b>MoveDown()</b> moves down the body inside the larger buffer by the <b>delta</b> units. 
+I.e. <b>a[i] = a[i+delta]</b>.
+</p>
+
+<p>
+The following content is not requred by the <b>Integer</b>, but should also be included
+in a proper implementation.
+</p>
+
+<pre>
+
+struct <span class="Att">Algo</span>
+ {
+  ....
+
+  // functions
+  
+  static Unit SignExt(Unit a);
+   
+  static CmpResult SignCmp(Unit a,Unit b);
+  
+  static unsigned CountZeroLSB(Unit a);
+
+</pre>
+
+<p>
+<b></b>
+</p>
+
+<pre>
+   
+  // const operators 
+ 
+  static CmpResult Cmp(const Unit *a,const Unit *b,ulen nab);
+
+</pre>
+
+<p>
+<b></b>
+</p>
+
+<pre>
+  
+  // additive operators 
+
+  static Unit/* msu */ AddUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* msu */ SubUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* c */ UNegAddUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* msu */ NegAddUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* c */ URevSub(Unit *restrict b,const Unit *a,ulen nab);
+
+</pre>
+
+<p>
+<b></b>
+</p>
+
+<pre>
+  
+  // shift operators
+  
+  static Unit/* msu */ UShiftUp(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0&lt;shift&lt;UnitBits
+  
+  static void URShift(Unit *a,ulen na,unsigned shift); // 0&lt;shift&lt;UnitBits
+
+  static void UShiftDown(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0&lt;shift&lt;UnitBits
+
+</pre>
+
+<p>
+<b></b>
+</p>
+
+<pre>
+  
+  // multiplicative operators
+
+  static Unit/* c */ UMac(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb,Unit carry); // nc==na+nb , carry = 0,1
+
+  static void USq(Unit *restrict c,const Unit *a,ulen na); // nc==2*na
+ };
+
+</pre>
+
+<p>
+<b></b>
+</p>
 
 </body>
 
