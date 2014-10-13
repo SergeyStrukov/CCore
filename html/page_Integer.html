@@ -102,11 +102,13 @@ functions. See the <a href="page_Arrays.html">Array page</a> for more informatio
 
 <p>
 <b>TempArrayType</b> is a <b>Unit</b> <b>DynArray</b> with the provided array algorithm package. This type
-is intended to be used as the temporary storage type.
+is intended to be used as the temporary storage type. This type is used to implement some operations
+and can be used for similar purposes.
 </p>
 
 <p>
-The body of the <b>Integer</b> is stored in the private field <b>body</b>.
+The body of the <b>Integer</b> is stored in the private field <b>body</b>. This field has the type <b>RefArray</b>
+or <b>AtomicRefArray</b>. It means it is efficiently copyable and multiple objects can share the same body.
 </p>
 
 <pre>
@@ -136,7 +138,7 @@ The body of the <b>Integer</b> is stored in the private field <b>body</b>.
 
 <p>
 You can create an <b>Integer</b> using the generic constructor or using special constructors.
-The generic constructor uses the provided builder to fill the integer body 
+The generic constructor uses the provided <a href="page_Arrays.html#Builder">builder</a> to fill the integer body 
 and then performs the normalization. 
 </p>
 
@@ -194,7 +196,7 @@ silently cast operation arguments.
 </pre>
 
 <p>
-<b>sign()</b> returns the sign of the number, represented using the <a href="page_Cmp.html"><b>CmpResult</b></a>.
+<b>sign()</b> returns the sign of the number as the <a href="page_Cmp.html"><b>CmpResult</b></a>.
 </p>
 
 <p>
@@ -203,9 +205,10 @@ silently cast operation arguments.
 
 <p>
 <b>bitsOf()</b> returns the number of bits of the number. The value is returned as a structure with two fields.
-The fields <b>units</b> is the number of full unit bits. The field <b>msbits</b> is the number of bits of the <b>MSU</b>.
+The fields <b>units</b> is the number of full unit bits. The field <b>msbits</b> is the number of bits of the <b>MSU</b>,
+the total bit count therefore is <b>units*UnitBits + msbits</b>.
 You can convert this result into a usual unsigned value using the method <b>total()</b>.
-The <b>total()</b> without arguments returns the unsigned value. The <b>total()</b> with argument
+The <b>total()</b> without arguments returns the <b>unsigned</b> value. The <b>total()</b> with argument
 returns the value of a desired type in the given argument. An exception is thrown in case of overflow.
 For negative numbers the leading 1 is not counted. I.e. is the number <b>N</b> is non-negative, 
 then <b>NBits</b> is the minimum such that <b>N&lt;2<sup>NBits</sup></b>. But if the <b>N</b> is negative, 
@@ -307,7 +310,7 @@ to get the value. On bit patterns: extra bits are skipped.
 
 <p>
 This set of static functions makes the result of operation on numbers. The argument(s) is given not 
-as an <b>Integer</b> value, but as the range of a number body.
+as an <b>Integer</b> value, but as the range over a number body.
 </p>
 
 <p>
@@ -327,6 +330,10 @@ as an <b>Integer</b> value, but as the range of a number body.
 </p>
 
 <p>
+<b>Sq()</b> calcualtes <b>a<sup>2</sup></b>.
+</p>
+
+<p>
 <b>Div()</b> calculates <b>a/b</b>. More precisely, the result is <b>[a/b]</b>.
 </p>
 
@@ -341,7 +348,7 @@ Otherwise it is non-positive.
 </p>
 
 <p>
-<b>RShift()</b> calculates the arithmetic <b>a&gt;&gt;shift</b>, i.e. the leading bit is propagated.
+<b>RShift()</b> calculates the arithmetic <b>a&gt;&gt;shift</b>, i.e. the leading bit is preserved.
 In other words, it calculates <b>a/2<sup>shift</sup></b>.
 </p>
 
@@ -583,8 +590,8 @@ signed or unsigned integral type. They are introduced for efficiency reason.
 </pre>
 
 <p>
-<b>Integer</b> is printable, swappable and movable type. <b>Integer</b> print options are: output width
-and show-sign option. The output is always decimal.
+<b>Integer</b> is printable, swappable and movable type. <b>Integer</b> print options are: the output width
+and the show-sign flag. The output is always decimal.
 </p>
 
 <pre>
@@ -717,7 +724,7 @@ of the argument, propagated to the unit.
 </p>
 
 <p>
-<b>CountZeroMSB()</b> count the number of zero most significant bits of the given unit.
+<b>CountZeroMSB()</b> counts the number of zero most significant bits of the given unit.
 </p>
 
 <p>
@@ -801,39 +808,64 @@ It drop the most significant units, equals propagated MSB of the previous unit.
 </pre>
 
 <p>
-<b>UNeg()</b>
+The bit <b>C</b> is a carry from or a borrow to the <b>MSU</b> when doing unsigned operations.
 </p>
 
 <p>
-<b>Neg()</b>
+<b>UNeg()</b> negates the argument in-place. The bit <b>C</b> is returned.
 </p>
 
 <p>
-<b>UAddUnit()</b>
+<b>Neg()</b> negates the argument in-place. 
+The result representation requires one additional unit, this unit is returned.
+I.e. the result length is <b>na+1</b> and the resulting <b>MSU</b> is not stored in the original body, 
+but returned by the function.
 </p>
 
 <p>
-<b>USubUnit()</b>
+<b>UAddUnit()</b> adds the unit <b>b</b> to the <b>a</b> in-place. The bit <b>C</b> is returned.
+If <b>na==0</b>, <b>b</b> is returned.
 </p>
 
 <p>
-<b>UAdd()</b>
+<b>USubUnit()</b> subtracts the unit <b>b</b> from the <b>a</b> in-place. The bit <b>C</b> is returned.
+If <b>na==0</b>, <b>b</b> is returned.
 </p>
 
 <p>
-<b>Add()</b>
+<b>UAdd()</b> adds <b>a</b> to <b>b</b> in-place. The bit <b>C</b> is returned. 
+<b>a</b> and <b>b</b> have the same length <b>nab</b> and do not overlapp.
 </p>
 
 <p>
-<b>USub()</b>
+<b>Add()</b> adds <b>a</b> to <b>b</b> in-place.
+The length of <b>b</b> must be greater or equal than the lengtn of <b>a</b>,
+<b>a</b> and <b>b</b> do not overlapp.
+The result representation requires one additional unit, this unit is returned.
+I.e. the result length is <b>nb+1</b> and the resulting <b>MSU</b> is not stored in the <b>b</b> body, 
+but returned by the function.
 </p>
 
 <p>
-<b>Sub()</b>
+<b>USub()</b> subtracts <b>a</b> from <b>b</b> in-place. The bit <b>C</b> is returned. 
+<b>a</b> and <b>b</b> have the same length <b>nab</b> and does not overlapp.
 </p>
 
 <p>
-<b>RevSub()</b>
+<b>Sub()</b> subtracts <b>a</b> from <b>b</b> in-place.
+The length of <b>b</b> must be greater or equal than the lengtn of <b>a</b>,
+<b>a</b> and <b>b</b> do not overlapp.
+The result representation requires one additional unit, this unit is returned.
+I.e. the result length is <b>nb+1</b> and the resulting <b>MSU</b> is not stored in the <b>b</b> body, 
+but returned by the function.</p>
+
+<p>
+<b>RevSub()</b> subtracts <b>b</b> from <b>a</b> in-place (reversed subtraction).
+The length of <b>b</b> must be greater or equal than the lengtn of <b>a</b>,
+<b>a</b> and <b>b</b> do not overlapp.
+The result representation requires one additional unit, this unit is returned.
+I.e. the result length is <b>nb+1</b> and the resulting <b>MSU</b> is not stored in the <b>b</b> body, 
+but returned by the function.</p>
 </p>
 
 <pre>
@@ -853,23 +885,41 @@ It drop the most significant units, equals propagated MSB of the previous unit.
 </pre>
 
 <p>
-<b>ULShift()</b>
+In the following shift operations the shift length <b>shift</b> must be greater 0
+and less than <b>UnitBits</b>.
 </p>
 
 <p>
-<b>LShift()</b>
+<b>ULShift()</b> shifts left in-place and returns the <b>MSU</b>.  
+The result representation requires one additional unit, this unit is returned.
+I.e. the result length is <b>na+1</b> and the resulting <b>MSU</b> is not stored in the <b>a</b> body, 
+but returned by the function.
 </p>
 
 <p>
-<b>ShiftUp()</b>
+<b>LShift()</b> shifts left out-of-place and returns the <b>MSU</b>. <b>a</b> is the argument and
+<b>b</b> is to store the result.
+<b>a</b> and <b>b</b> do not overlapp.
+The result representation requires one additional unit, this unit is returned.
+I.e. the result length is <b>nab+1</b> and the resulting <b>MSU</b> is not stored in the <b>b</b> body, 
+but returned by the function.
 </p>
 
 <p>
-<b>RShift()</b>
+<b>ShiftUp()</b> combines the left shift and the move up. It shifts the <b>na</b> units starting
+from the <b>a</b> and moves the result up by the <b>delta</b> units. The <b>MSU</b> is not placed
+in the buffer but returned.
 </p>
 
 <p>
-<b>ShiftDown()</b>
+<b>RShift()</b> shifts right out-of-place.
+<b>a</b> is the argument and <b>b</b> is to store the result.
+<b>a</b> and <b>b</b> do not overlapp.
+</p>
+
+<p>
+<b>ShiftDown()</b> combines the right shift and the move down. It shifts the <b>na</b> units
+starting from the <b>a+delta</b> and moves the result down by the <b>delta</b> units.
 </p>
 
 <pre>
@@ -889,25 +939,25 @@ It drop the most significant units, equals propagated MSB of the previous unit.
 <p>
 <b>UMul()</b> calculates the product of the arguments and places the result into the <b>c</b>.
 The length of the <b>c</b> must be <b>na+nb</b>. 
-The input and output bodies are assumed not overlapping.
+The input and output bodies do not overlapp.
 </p>
 
 <p>
 <b>UMulLo()</b> calculates the product of the arguments and places the lower part of the result into the <b>c</b>.
 The length of the <b>c</b> must not exceed <b>na+nb</b>. 
-The input and output bodies are assumed not overlapping.
+The input and output bodies do not overlapp.
 </p>
 
 <p>
 <b>Mul()</b> calculates the product of the arguments and places the result into the <b>c</b>.
 The length of the <b>c</b> must be <b>na+nb</b>. 
-The input and output bodies are assumed not overlapping.
+The input and output bodies do not overlapp.
 </p>
 
 <p>
 <b>Sq()</b> calcualtes the square of the argument <b>a</b> and places the result into the <b>c</b>. 
 The length of the <b>c</b> must be <b>2*na</b>. 
-The input and output bodies are assumed not overlapping.
+The input and output bodies do not overlapp.
 </p>
 
 <pre>
@@ -959,7 +1009,16 @@ struct <span class="Att">Algo</span>
 </pre>
 
 <p>
-<b></b>
+<b>SignExt()</b> returns the sign extension of the given unit. I.e. it propagates the sign bit of
+the <b>a</b>.
+</p>
+
+<p>
+<b>SignCmp()</b> performs the signed comparison of the given units.
+</p>
+
+<p>
+<b>CountZeroLSB()</b> counts the number of zero least significant bits of the given unit.
 </p>
 
 <pre>
@@ -971,7 +1030,7 @@ struct <span class="Att">Algo</span>
 </pre>
 
 <p>
-<b></b>
+<b>Cmp()</b> compares arguments of the same length.
 </p>
 
 <pre>
@@ -991,7 +1050,23 @@ struct <span class="Att">Algo</span>
 </pre>
 
 <p>
-<b></b>
+<b>AddUnit()</b>
+</p>
+
+<p>
+<b>SubUnit()</b>
+</p>
+
+<p>
+<b>UNegAddUnit()</b>
+</p>
+
+<p>
+<b>NegAddUnit()</b>
+</p>
+
+<p>
+<b>URevSub()</b>
 </p>
 
 <pre>
@@ -1007,7 +1082,18 @@ struct <span class="Att">Algo</span>
 </pre>
 
 <p>
-<b></b>
+<b>UShiftUp()</b> combines the left shift and the move up. It shifts the <b>na</b> units starting
+from the <b>a</b> and moves the result up by the <b>delta</b> units. The <b>MSU</b> is not placed
+in the buffer but returned.
+</p>
+
+<p>
+<b>URShift()</b> shifts right in-place.
+</p>
+
+<p>
+<b>UShiftDown()</b> combines the right shift and the move down. It shifts the <b>na</b> units
+starting from the <b>a+delta</b> and moves the result down by the <b>delta</b> units.
 </p>
 
 <pre>
@@ -1022,7 +1108,29 @@ struct <span class="Att">Algo</span>
 </pre>
 
 <p>
-<b></b>
+<b>UMac()</b> performs the "multiplication and addition with carry" operation. 
+I.e. <b>a</b> and <b>b</b> are multiplied and added to the <b>c</b> with the <b>carry</b>.
+<b>carry</b> is 0 or 1.
+The length of the <b>c</b> must be <b>na+nb</b>. 
+The input and output bodies do not overlapp.
+The bit <b>C</b> is returned.
+</p>
+
+<p>
+<b>USq()</b> calcualtes the square of the argument <b>a</b> and places the result into the <b>c</b>. 
+The length of the <b>c</b> must be <b>2*na</b>. 
+The input and output bodies do not overlapp.
+</p>
+
+<p>
+There is a <a href="page_IntegerSlowAlgo.html">default slow implementaton</a> of this argorithm
+package for all unsigned integral units. This implementation is slow, for example, it has quadratic
+complexity of the multiplication operations. But it is generic, it does not require any CPU-specific 
+assembler code. This package can be used as an algorithmic reference and for the comparative testing.
+</p>
+
+<p>
+Any target must provide the <a href="page_IntegerFastAlgo.html">fast implementation</a>.
 </p>
 
 </body>
