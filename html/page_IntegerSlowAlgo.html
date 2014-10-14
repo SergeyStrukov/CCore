@@ -30,6 +30,176 @@
 
 <p class="Files">Files <b>CCore/inc/math/IntegerSlowAlgo.h</b> <b>CCore/src/math/IntegerSlowAlgo.cpp</b></p>
 
+<p>
+<b>IntegerSlowAlgo</b> is a reference implementation of the proper <a href="page_Integer.html#Algo">integer algorithm package</a>.
+You can use this package for algorithm definitions and for comparative testing.
+<b>IntegerSlowAlgo</b> is a template, its template parameter is the unit type.
+</p>
+
+<pre>
+
+template &lt;class UInt&gt;
+struct <span class="Att">IntegerSlowAlgo</span>
+ {
+  // types and consts
+  
+  typedef UInt Unit;
+  
+  static const unsigned UnitBits = Meta::UIntBits&lt;Unit&gt;::Ret ;
+
+  static const Unit MaxUnit = Unit(-1) ;
+  
+  static const Unit MSBit = Unit( MaxUnit^(MaxUnit&gt;&gt;1) );
+  
+  // functions
+  
+  static Unit SignExt(Unit a);
+   
+  static Unit SignExt(const Unit *a,ulen na);
+  
+  static CmpResult SignCmp(Unit a,Unit b);
+  
+  static unsigned CountZeroMSB(Unit a);
+  
+  static unsigned CountZeroLSB(Unit a);
+   
+  static UInt DoubleUDiv(UInt hi,UInt lo,UInt den); // hi&lt;den 
+
+  // private functions
+  
+  static Unit/* c */ Add(Unit &b,Unit a,Unit carry); // carry = 0,1 
+   
+  static Unit/* c */ Sub(Unit &b,Unit a,Unit carry); // carry = 0,1 
+  
+  static Unit/* c */ RevSub(Unit &b,Unit a,Unit carry); // carry = 0,1
+   
+  static Unit LShift(Unit hi,Unit lo,unsigned shift); // 0&lt;shift&lt;UnitBits
+ 
+  static Unit RShift(Unit hi,Unit lo,unsigned shift); // 0&lt;shift&lt;UnitBits
+  
+  // private operators
+  
+  static CmpResult UCmp(Unit a,Unit b);
+  
+  static CmpResult UCmp_(const Unit *a,ulen na,const Unit *b,ulen nb); // na&gt;=nb
+  
+  static CmpResult Cmp_(const Unit *a,ulen na,const Unit *b,ulen nb); // na&gt;=nb
+  
+  // const operators
+  
+  static CmpResult USign(const Unit *a,ulen na);
+  
+  static CmpResult Sign(const Unit *a,ulen na);
+  
+  static CmpResult UCmp(const Unit *a,const Unit *b,ulen nab);
+  
+  static CmpResult UCmp(const Unit *a,ulen na,const Unit *b,ulen nb);
+  
+  static CmpResult Cmp(const Unit *a,const Unit *b,ulen nab);
+  
+  static CmpResult Cmp(const Unit *a,ulen na,const Unit *b,ulen nb);
+  
+  static ulen UNormalize(const Unit *a,ulen na);
+  
+  static ulen Normalize(const Unit *a,ulen na);
+  
+  // additive operators
+  
+  static Unit/* c */ UNeg(Unit *a,ulen na);
+  
+  static Unit/* msu */ Neg(Unit *a,ulen na);
+  
+  static Unit/* c */ UAddUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* msu */ AddUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* c */ USubUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* msu */ SubUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* c */ UNegAddUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* msu */ NegAddUnit(Unit *a,ulen na,Unit b);
+  
+  static Unit/* c */ UAdd(Unit *restrict b,const Unit *a,ulen nab);
+  
+  static Unit/* msu */ Add(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb&gt;=na
+
+  static Unit/* c */ USub(Unit *restrict b,const Unit *a,ulen nab);
+  
+  static Unit/* msu */ Sub(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb&gt;=na
+  
+  static Unit/* c */ URevSub(Unit *restrict b,const Unit *a,ulen nab);
+  
+  static Unit/* msu */ RevSub(Unit *restrict b,ulen nb,const Unit *a,ulen na); // nb&gt;=na
+  
+  // shift operators
+  
+  static Unit/* msu */ ULShift(Unit *a,ulen na,unsigned shift); // 0&lt;shift&lt;UnitBits
+  
+  static Unit/* msu */ LShift(Unit *restrict b,const Unit *a,ulen nab,unsigned shift); // 0&lt;shift&lt;UnitBits
+  
+  static Unit/* msu */ UShiftUp(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0&lt;shift&lt;UnitBits
+  
+  static Unit/* msu */ ShiftUp(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0&lt;shift&lt;UnitBits
+  
+  static void URShift(Unit *a,ulen na,unsigned shift); // 0&lt;shift&lt;UnitBits
+  
+  static void RShift(Unit *restrict b,const Unit *a,ulen nab,unsigned shift); // 0&lt;shift&lt;UnitBits
+  
+  static void UShiftDown(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0&lt;shift&lt;UnitBits
+  
+  static void ShiftDown(Unit *a,ulen na,ulen delta,unsigned shift); // a[na+delta] , 0&lt;shift&lt;UnitBits
+  
+  // private multiplicative functions
+  
+  struct DoubleMul
+   {
+    UInt lo;
+    UInt hi;
+    
+    DoubleMul(UInt a,UInt b);
+   };
+  
+  struct MulAcc
+   {
+    Unit lo;
+    Unit hi;
+    ulen hi2;
+  
+    MulAcc(Unit a,Unit b);
+  
+    void mac(Unit a,Unit b);
+  
+    void mac2(Unit a,Unit b);
+  
+    Unit shift();
+   };
+  
+  // multiplicative operators
+
+  static void UMul(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb); // nc==na+nb
+  
+  static Unit/* c */ UMac(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb); // nc==na+nb
+  
+  static void UMulLo(Unit *restrict c,ulen nc,const Unit *a,ulen na,const Unit *b,ulen nb); // nc&lt;=na+nb
+  
+  static void USq(Unit *restrict c,const Unit *a,ulen na); // nc==2*na
+  
+  static void Mul(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb); // nc==na+nb
+  
+  static void Sq(Unit *restrict c,const Unit *a,ulen na); // nc==2*na
+  
+  // data functions  
+
+  static void Null(Unit *a,ulen na);
+
+  static void MoveUp(Unit *a,ulen na,ulen delta); // a[na+delta]
+  
+  static void MoveDown(Unit *a,ulen na,ulen delta); // a[na+delta]
+ };
+
+</pre>
 
 </body>
 

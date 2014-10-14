@@ -30,6 +30,21 @@
 
 <p class="Files">Files <b>CCore/inc/math/IntegerFastAlgo.h</b> <b>CCore/src/math/IntegerFastAlgo.cpp</b></p>
 
+<p>
+<b>CCore</b> provides a stub implementation of the <a href="page_Integer.html#Algo">integer fast algorithm package</a>.
+</p>
+
+<pre>
+
+using <span class="Att">IntegerFastAlgo</span> = IntegerSlowAlgo&lt;unsigned&gt; ;
+
+</pre>
+
+<p>
+But any target should supply a proper implementation, specific to the target CPU.
+You may implement such package using the <a href="https://gmplib.org">GMP library</a>.
+You can find an example of it in the target <b>WIN64</b>.
+</p>
 
 </body>
 

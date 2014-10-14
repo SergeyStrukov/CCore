@@ -36,15 +36,23 @@ huge value range. This range is limited only by the available memory.
 </p>
 
 <p>
-Internally an <b>Integer</b> value is represented using the array of units. A unit has an unsigned integral type.
-The 2'c lendian reprsentation is used. I.e. if the array is <b>(U<sub>0</sub>,...,U<sub>n</sub>)</b>, then the 
-value is <b>U<sub>0</sub>+U<sub>1</sub>*B+...+U<sub>n-1</sub>*B<sup>n-1</sup>+2c-signed(U<sub>n</sub>)*B<sup>n</sup></b>,
-where <b>B</b> is <b>2<sup>number of unit bits</sup></b>. In other words, the binary representation of the value
-is the concatenation of the binary representations of units and the <b>MSB</b> is a signed bit. You may also 
-consider units as digits in the base-<b>B</b> positional integer representation. 
-All units except the most significant (which is the last in the array) have values from the interval <b>[0,B)</b>,
+Internally an <b>Integer</b> value is represented using the array of units. 
+A unit has an unsigned integral type &mdash; the unit type.
+The range of units is called the body. 
+Any range of units can be regarded as a number. 
+Let's <b>N</b> be the number of bits of the unit type and <b>B</b> be <b>2<sup>N</sup></b>. 
+Then the range of units <b>(U<sub>0</sub>,...,U<sub>n</sub>)</b> can be regarded
+as an unsigned integer using the base-<b>B</b> positional integer representation, i.e.
+it has the value <b>U<sub>0</sub>+U<sub>1</sub>*B+...+U<sub>n-1</sub>*B<sup>n-1</sup>+U<sub>n</sub>*B<sup>n</sup></b>.
+It also can be regarded as a signed integer, in this case the most significant unit (<b>MSU</b>) is
+treated especially. It regarded as a signed number with the value from the interval <b>[-B/2,B/2)</b>.
+The value of the range then equals <b>U<sub>0</sub>+U<sub>1</sub>*B+...+U<sub>n-1</sub>*B<sup>n-1</sup>+signed(U<sub>n</sub>)*B<sup>n</sup></b>.
+All units except the most significant (which is the last in the range) have values from the interval <b>[0,B)</b>,
 and the <b>MSU</b> is regarded as a value from the interval <b>[-B/2,B/2)</b>.
+The <b>Integer</b> itself uses the signed interpretation. But some low-level algorithms are working with the unsigned
+numbers.
 </p>
+
 <p>
 An <b>Integer</b> value is stored in the normalized form, i.e. you cannot represent it with a less number of units.
 It means that the <b>MSU</b> is not a signed extension of the previous unit. 
@@ -229,7 +237,7 @@ then <b>NBits</b> is the minimum such that <b>N&gt;=-2<sup>NBits</sup></b>.
 
 <p>
 <b>cloneTo()</b> makes clone of the number at the given argument. The argument will have the separate
-body. This method is usefull in multi-task situations.
+body. This method is useful in multi-task situations.
 </p>
 
 <p>
@@ -330,7 +338,7 @@ as an <b>Integer</b> value, but as the range over a number body.
 </p>
 
 <p>
-<b>Sq()</b> calcualtes <b>a<sup>2</sup></b>.
+<b>Sq()</b> calculates <b>a<sup>2</sup></b>.
 </p>
 
 <p>
@@ -353,7 +361,7 @@ In other words, it calculates <b>a/2<sup>shift</sup></b>.
 </p>
 
 <p>
-<b>DivMod</b> is a <b>Class-function</b>, it calcualtes the qoutient (in the field <b>div</b>) 
+<b>DivMod</b> is a <b>Class-function</b>, it calculates the quotient (in the field <b>div</b>) 
 and the remainder (in the field <b>mod</b>) simultaneously.
 </p>                                    
 
@@ -442,8 +450,8 @@ The family of binary operators: <b>+, -, *, /, %</b>, perform the usual integer 
 </p>
 
 <p>
-The family of binary comparision operators: <b>==, !=, &lt;, &gt;, &lt;=, &gt;=</b>, perform 
-the usual integer comparision operations.
+The family of binary comparison operators: <b>==, !=, &lt;, &gt;, &lt;=, &gt;=</b>, perform 
+the usual integer comparison operations.
 </p>
 
 <p>
@@ -455,7 +463,7 @@ the usual integer comparision operations.
 </p>
 
 <p>
-<b>divmod()</b> returns the the qoutient and the remainder using the <b>DivMod</b> structure.
+<b>divmod()</b> returns the the quotient and the remainder using the <b>DivMod</b> structure.
 </p>
 
 <pre>
@@ -661,7 +669,7 @@ int <span class="Att">QSym</span>(const Integer &amp;a,const Integer &amp;b);
 </p>
 
 <p>
-<b>QSym()</b> calcualtes the quadratic symbol (aka Jacobi symbol) of the given arguments. 
+<b>QSym()</b> calculates the quadratic symbol (aka Jacobi symbol) of the given arguments. 
 <b>a</b> and <b>b</b> must be coprime and <b>b</b> must be odd, otherwise an exception is thrown.
 </p>
 
@@ -780,7 +788,7 @@ It drop the most significant units, equals zero.
 
 <p>
 <b>Normalize()</b> does normalization of the argument. It returns the normalized length.
-It drop the most significant units, equals propagated MSB of the previous unit.
+It drop the most significant units, equals propagated <b>MSB</b> of the previous unit.
 </p>
 
 <pre>
@@ -834,13 +842,13 @@ If <b>na==0</b>, <b>b</b> is returned.
 
 <p>
 <b>UAdd()</b> adds <b>a</b> to <b>b</b> in-place. The bit <b>C</b> is returned. 
-<b>a</b> and <b>b</b> have the same length <b>nab</b> and do not overlapp.
+<b>a</b> and <b>b</b> have the same length <b>nab</b> and do not overlap.
 </p>
 
 <p>
 <b>Add()</b> adds <b>a</b> to <b>b</b> in-place.
-The length of <b>b</b> must be greater or equal than the lengtn of <b>a</b>,
-<b>a</b> and <b>b</b> do not overlapp.
+The length of <b>b</b> must be greater or equal than the length of <b>a</b>,
+<b>a</b> and <b>b</b> do not overlap.
 The result representation requires one additional unit, this unit is returned.
 I.e. the result length is <b>nb+1</b> and the resulting <b>MSU</b> is not stored in the <b>b</b> body, 
 but returned by the function.
@@ -848,21 +856,21 @@ but returned by the function.
 
 <p>
 <b>USub()</b> subtracts <b>a</b> from <b>b</b> in-place. The bit <b>C</b> is returned. 
-<b>a</b> and <b>b</b> have the same length <b>nab</b> and does not overlapp.
+<b>a</b> and <b>b</b> have the same length <b>nab</b> and does not overlap.
 </p>
 
 <p>
 <b>Sub()</b> subtracts <b>a</b> from <b>b</b> in-place.
-The length of <b>b</b> must be greater or equal than the lengtn of <b>a</b>,
-<b>a</b> and <b>b</b> do not overlapp.
+The length of <b>b</b> must be greater or equal than the length of <b>a</b>,
+<b>a</b> and <b>b</b> do not overlap.
 The result representation requires one additional unit, this unit is returned.
 I.e. the result length is <b>nb+1</b> and the resulting <b>MSU</b> is not stored in the <b>b</b> body, 
 but returned by the function.</p>
 
 <p>
 <b>RevSub()</b> subtracts <b>b</b> from <b>a</b> in-place (reversed subtraction).
-The length of <b>b</b> must be greater or equal than the lengtn of <b>a</b>,
-<b>a</b> and <b>b</b> do not overlapp.
+The length of <b>b</b> must be greater or equal than the length of <b>a</b>,
+<b>a</b> and <b>b</b> do not overlap.
 The result representation requires one additional unit, this unit is returned.
 I.e. the result length is <b>nb+1</b> and the resulting <b>MSU</b> is not stored in the <b>b</b> body, 
 but returned by the function.</p>
@@ -899,7 +907,7 @@ but returned by the function.
 <p>
 <b>LShift()</b> shifts left out-of-place and returns the <b>MSU</b>. <b>a</b> is the argument and
 <b>b</b> is to store the result.
-<b>a</b> and <b>b</b> do not overlapp.
+<b>a</b> and <b>b</b> do not overlap.
 The result representation requires one additional unit, this unit is returned.
 I.e. the result length is <b>nab+1</b> and the resulting <b>MSU</b> is not stored in the <b>b</b> body, 
 but returned by the function.
@@ -914,7 +922,7 @@ in the buffer but returned.
 <p>
 <b>RShift()</b> shifts right out-of-place.
 <b>a</b> is the argument and <b>b</b> is to store the result.
-<b>a</b> and <b>b</b> do not overlapp.
+<b>a</b> and <b>b</b> do not overlap.
 </p>
 
 <p>
@@ -939,25 +947,25 @@ starting from the <b>a+delta</b> and moves the result down by the <b>delta</b> u
 <p>
 <b>UMul()</b> calculates the product of the arguments and places the result into the <b>c</b>.
 The length of the <b>c</b> must be <b>na+nb</b>. 
-The input and output bodies do not overlapp.
+The input and output bodies do not overlap.
 </p>
 
 <p>
 <b>UMulLo()</b> calculates the product of the arguments and places the lower part of the result into the <b>c</b>.
 The length of the <b>c</b> must not exceed <b>na+nb</b>. 
-The input and output bodies do not overlapp.
+The input and output bodies do not overlap.
 </p>
 
 <p>
 <b>Mul()</b> calculates the product of the arguments and places the result into the <b>c</b>.
 The length of the <b>c</b> must be <b>na+nb</b>. 
-The input and output bodies do not overlapp.
+The input and output bodies do not overlap.
 </p>
 
 <p>
-<b>Sq()</b> calcualtes the square of the argument <b>a</b> and places the result into the <b>c</b>. 
+<b>Sq()</b> calculates the square of the argument <b>a</b> and places the result into the <b>c</b>. 
 The length of the <b>c</b> must be <b>2*na</b>. 
-The input and output bodies do not overlapp.
+The input and output bodies do not overlap.
 </p>
 
 <pre>
@@ -988,7 +996,7 @@ I.e. <b>a[i] = a[i+delta]</b>.
 </p>
 
 <p>
-The following content is not requred by the <b>Integer</b>, but should also be included
+The following content is not required by the <b>Integer</b>, but should also be included
 in a proper implementation.
 </p>
 
@@ -1050,23 +1058,33 @@ the <b>a</b>.
 </pre>
 
 <p>
-<b>AddUnit()</b>
+<b>AddUnit()</b> adds the unit <b>b</b> (regarded as an unsigned number) to <b>a</b> in-place.
+The result representation requires one additional unit, this unit is returned.
+If <b>na==0</b>, <b>b</b> is returned.
 </p>
 
 <p>
-<b>SubUnit()</b>
+<b>SubUnit()</b> subtracts the unit <b>b</b> (regarded as an unsigned number) from <b>a</b> in-place.
+The result representation requires one additional unit, this unit is returned.
+If <b>na==0</b>, <b>-b</b> is returned.
 </p>
 
 <p>
-<b>UNegAddUnit()</b>
+<b>UNegAddUnit()</b> subtracts <b>a</b> from <b>b</b> (regarded as an unsigned number) in-place (reversed subtraction).
+The bit <b>C</b> is returned. 
+If <b>na==0</b>, <b>-b</b> is returned.
 </p>
 
 <p>
-<b>NegAddUnit()</b>
+<b>NegAddUnit()</b> subtracts <b>a</b> from <b>b</b> (regarded as an unsigned number) in-place (reversed subtraction).
+The result representation requires one additional unit, this unit is returned.
+If <b>na==0</b>, <b>b</b> is returned.
 </p>
 
 <p>
-<b>URevSub()</b>
+<b>URevSub()</b> subtracts <b>b</b> from <b>a</b> in-place (reversed subtraction). 
+The bit <b>C</b> is returned. 
+<b>a</b> and <b>b</b> have the same length <b>nab</b> and does not overlap.
 </p>
 
 <pre>
@@ -1100,7 +1118,7 @@ starting from the <b>a+delta</b> and moves the result down by the <b>delta</b> u
   
   // multiplicative operators
 
-  static Unit/* c */ UMac(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb,Unit carry); // nc==na+nb , carry = 0,1
+  static Unit/* c */ UMac(Unit *restrict c,const Unit *a,ulen na,const Unit *b,ulen nb); // nc==na+nb 
 
   static void USq(Unit *restrict c,const Unit *a,ulen na); // nc==2*na
  };
@@ -1108,22 +1126,21 @@ starting from the <b>a+delta</b> and moves the result down by the <b>delta</b> u
 </pre>
 
 <p>
-<b>UMac()</b> performs the "multiplication and addition with carry" operation. 
-I.e. <b>a</b> and <b>b</b> are multiplied and added to the <b>c</b> with the <b>carry</b>.
-<b>carry</b> is 0 or 1.
+<b>UMac()</b> performs the "multiplication and addition" operation. 
+I.e. <b>a</b> and <b>b</b> are multiplied and added to <b>c</b>.
 The length of the <b>c</b> must be <b>na+nb</b>. 
-The input and output bodies do not overlapp.
+The input and output bodies do not overlap.
 The bit <b>C</b> is returned.
 </p>
 
 <p>
-<b>USq()</b> calcualtes the square of the argument <b>a</b> and places the result into the <b>c</b>. 
+<b>USq()</b> calculates the square of the argument <b>a</b> and places the result into the <b>c</b>. 
 The length of the <b>c</b> must be <b>2*na</b>. 
-The input and output bodies do not overlapp.
+The input and output bodies do not overlap.
 </p>
 
 <p>
-There is a <a href="page_IntegerSlowAlgo.html">default slow implementaton</a> of this argorithm
+There is a <a href="page_IntegerSlowAlgo.html">default slow implementaton</a> of this algorithm
 package for all unsigned integral units. This implementation is slow, for example, it has quadratic
 complexity of the multiplication operations. But it is generic, it does not require any CPU-specific 
 assembler code. This package can be used as an algorithmic reference and for the comparative testing.
