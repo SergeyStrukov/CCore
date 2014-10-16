@@ -1021,9 +1021,9 @@ const ConvolutionMul ConvolutionParam<KK...>::Mul[Len]={ ConvolutionMulConst<KK>
 
 /* class DirectConvolution */
 
-using ConvolutionParamA = ConvolutionParam<1,2,3> ;
+using ConvolutionParamA = ConvolutionParam<0,0,0,0,0,151> ;
 
-using ConvolutionParamB = ConvolutionParam<4,5,6,7> ;
+using ConvolutionParamB = ConvolutionParam<2,0,0,0,0,0,53,0,0,109,0,0,0,0,0,3> ;
 
 class DirectConvolution : NoCopy
  {
