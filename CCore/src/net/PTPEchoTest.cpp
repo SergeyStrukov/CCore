@@ -107,8 +107,8 @@ void EchoTest::inbound(XPoint,TransIndex idx,Packet<uint8> packet,PtrLen<const u
             
             PTPSupport::LenOutput output;
             
-            output.to_server_info_len=Min(input.to_server_info_len,ptp->getMaxInboundInfoLen());
-            output.to_client_info_len=Min(input.to_client_info_len,ptp->getMaxOutboundInfoLen());
+            output.to_server_info_len=Min(input.to_server_info_len,(LenType)ptp->getMaxInboundInfoLen());
+            output.to_client_info_len=Min(input.to_client_info_len,(LenType)ptp->getMaxOutboundInfoLen());
             
             result(idx,packet,serv_func,output);
            }
