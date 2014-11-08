@@ -343,6 +343,138 @@ struct Type_ClockStandbyControl
    }
  };
  
+/* struct Type_EthClockControl */ 
+
+enum Bits_EthClockControl : uint32
+ {
+  EthClockControl_Active = 0x00000010
+ };
+ 
+inline Bits_EthClockControl operator | (Bits_EthClockControl a,Bits_EthClockControl b)
+ { return Bits_EthClockControl(uint32(a)|uint32(b)); }
+ 
+enum Field_EthClockControl_Control : uint32
+ {
+  EthClockControl_Control_NoSleep     = 0x00,
+  EthClockControl_Control_ForceSleep  = 0x01,
+  EthClockControl_Control_ForceWakeup = 0x02
+ };
+ 
+struct PrintField_EthClockControl_Control
+ {
+  Field_EthClockControl_Control field;
+
+  explicit PrintField_EthClockControl_Control(Field_EthClockControl_Control field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"NoSleep"); break;
+       case 0x01 : Putobj(out,"ForceSleep"); break;
+       case 0x02 : Putobj(out,"ForceWakeup"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_EthClockControl_Control GetTextDesc(Field_EthClockControl_Control field)
+ {
+  return PrintField_EthClockControl_Control(field);
+ }
+ 
+struct Type_EthClockControl
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_EthClockControl(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_EthClockControl & setTo(Bar &bar) { bar.set_EthClockControl(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_EthClockControl & setTo(Bar &bar,uint32 ind) { bar.set_EthClockControl(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_EthClockControl & set(T to) { to(*this); return *this; }
+ 
+
+  Type_EthClockControl & setbit(Bits_EthClockControl bits) { value|=Type(bits); return *this; }
+ 
+  Type_EthClockControl & setbitIf(bool cond,Bits_EthClockControl bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_EthClockControl & clearbit(Bits_EthClockControl bits) { value&=~Type(bits); return *this; }
+ 
+  Type_EthClockControl & clearbitIf(bool cond,Bits_EthClockControl bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_EthClockControl bits) const { return value&bits; }
+ 
+  bool testbit(Bits_EthClockControl bits) const { return (value&bits)==Type(bits); }
+ 
+
+  Field_EthClockControl_Control get_Control() const
+   {
+    return Field_EthClockControl_Control((value>>0)&0x3);
+   }
+ 
+  Type_EthClockControl & set_Control(Field_EthClockControl_Control field)
+   {
+    value=((Type(field)&0x3)<<0)|(value&0xFFFFFFFC);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&EthClockControl_Active )
+      {
+       if( first )
+         {
+          Putobj(out,"Active");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"Active");
+         }
+      }
+
+    if( first )
+      {
+       Printf(out,"Control(#;)",get_Control());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Control(#;)",get_Control());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct Type_TimerClockSelect */ 
 
 enum Field_TimerClockSelect_Source : uint32
@@ -1221,15 +1353,15 @@ struct Type_PLLClockMode
    }
  };
  
-/* struct CM_PERBar<RW> */ 
+/* struct PERBar<RW> */ 
 
 template <class RW>
-struct CM_PERBar
+struct PERBar
  {
   RW rw;
 
   template <class ... TT>
-  CM_PERBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
+  PERBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter
@@ -1253,6 +1385,26 @@ struct CM_PERBar
   static Type_ClockStandbyControl null_ClockStandbyControl() { return Type_ClockStandbyControl(0); }
  
   static Type_ClockStandbyControl ones_ClockStandbyControl() { return Type_ClockStandbyControl(Type_ClockStandbyControl::Type(-1)); }
+ 
+  //--- Eth
+
+  Type_ClockStandbyControl get_Eth() { return Type_ClockStandbyControl(rw.template get<uint32>(0x14)); }
+ 
+  void set_Eth(Type_ClockStandbyControl value) { rw.set(0x14,value.value); }
+ 
+  Setter<Type_ClockStandbyControl> to_Eth() { return Setter<Type_ClockStandbyControl>(rw,0x14); }
+ 
+  //--- EthClockControl
+
+  Type_EthClockControl get_EthClockControl() { return Type_EthClockControl(rw.template get<uint32>(0x144)); }
+ 
+  void set_EthClockControl(Type_EthClockControl value) { rw.set(0x144,value.value); }
+ 
+  Setter<Type_EthClockControl> to_EthClockControl() { return Setter<Type_EthClockControl>(rw,0x144); }
+ 
+  static Type_EthClockControl null_EthClockControl() { return Type_EthClockControl(0); }
+ 
+  static Type_EthClockControl ones_EthClockControl() { return Type_EthClockControl(Type_EthClockControl::Type(-1)); }
  
   //--- Timer2
 
@@ -1296,15 +1448,15 @@ struct CM_PERBar
  
  };
  
-/* struct CM_DPLLBar<RW> */ 
+/* struct DPLLBar<RW> */ 
 
 template <class RW>
-struct CM_DPLLBar
+struct DPLLBar
  {
   RW rw;
 
   template <class ... TT>
-  CM_DPLLBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
+  DPLLBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter
@@ -1353,15 +1505,15 @@ struct CM_DPLLBar
  
  };
  
-/* struct CM_WKUPBar<RW> */ 
+/* struct WKUPBar<RW> */ 
 
 template <class RW>
-struct CM_WKUPBar
+struct WKUPBar
  {
   RW rw;
 
   template <class ... TT>
-  CM_WKUPBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
+  WKUPBar(TT && ... tt) : rw( std::forward<TT>(tt)... ) {}
  
   template <class T>
   struct Setter

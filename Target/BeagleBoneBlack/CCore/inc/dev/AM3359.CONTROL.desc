@@ -21,9 +21,52 @@ reg PadMux : 32
   RXEn         : 5
   SlowSlew     : 6
  }
+ 
+reg EthResetIsolation : 32
+ {
+  Enable : 0
+ }
+ 
+reg GMIISelect : 32
+ {
+  Port1               : 0-1
+   {
+    GMII  = 0
+    RMII  = 1
+    RGMII = 2
+   }
+   
+  Port2               : 2-3
+   {
+    GMII  = 0
+    RMII  = 1
+    RGMII = 2
+   }
+  
+  Port1RMIIClockInput : 6
+  Port2RMIIClockInput : 7
+ }  
+ 
+reg MAC0Hi : 32 {}
+
+reg MAC0Lo : 32 {}
+
+reg MAC1Hi : 32 {}
+
+reg MAC1Lo : 32 {}
 
 bar CONTROLBar : address
  {
+  EthResetIsolation = 1000h
+ 
+  GMIISelect = 650h
+  
+  MAC0Hi = 630h RO
+  MAC0Lo = 634h RO
+  
+  MAC1Hi = 638h RO
+  MAC1Lo = 63Ch RO
+ 
   PadMux = hidden
   
   Conf_I2C0_SDA = 988h as PadMux
@@ -55,7 +98,28 @@ bar CONTROLBar : address
   Conf_LCD_AC_BIAS_EN = 8ECh as PadMux
   
   Conf_GPMC_A9        = 864h as PadMux
+  
+  Conf_MII1_COL       = 908h as PadMux
+  Conf_MII1_CRS       = 90Ch as PadMux
+  Conf_MII1_RX_ER     = 910h as PadMux
+  Conf_MII1_TX_EN     = 914h as PadMux
+  Conf_MII1_RX_DV     = 918h as PadMux
+  Conf_MII1_TXD3      = 91Ch as PadMux
+  Conf_MII1_TXD2      = 920h as PadMux
+  Conf_MII1_TXD1      = 924h as PadMux
+  Conf_MII1_TXD0      = 928h as PadMux
+  Conf_MII1_TX_CLK    = 92Ch as PadMux
+  Conf_MII1_RX_CLK    = 930h as PadMux
+  Conf_MII1_RXD3      = 934h as PadMux
+  Conf_MII1_RXD2      = 938h as PadMux
+  Conf_MII1_RXD1      = 93Ch as PadMux
+  Conf_MII1_RXD0      = 940h as PadMux
+  
+  Conf_RMII1_REF_CLK  = 944h as PadMux
+  Conf_MDIO           = 948h as PadMux
+  Conf_MDC            = 94Ch as PadMux
  }
 
+//----------------------------------------------------------------------------------------
 
  

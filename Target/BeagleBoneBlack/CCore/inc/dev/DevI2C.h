@@ -19,6 +19,7 @@
 #include <CCore/inc/dev/DevIntHandle.h>
 
 #include <CCore/inc/Task.h>
+#include <CCore/inc/InstanceLock.h>
  
 namespace CCore {
 namespace Dev {
@@ -29,7 +30,9 @@ enum I2CInstance
  {
   I2C_0,
   I2C_1,
-  I2C_2
+  I2C_2,
+  
+  I2C_InstanceCount
  };
 
 /* classes */
@@ -38,18 +41,15 @@ class I2C;
 
 /* class I2C */
 
-class I2C : public Funchor_nocopy
+class I2C : InstanceLock<I2C,I2C_InstanceCount> , public Funchor
  {
-   I2CInstance instance;
-   uint32 base_address;
+   uint32 dev_instance;
    IntSource int_source;
    
   private:
    
-   static const uint32 AddressTable[];
-   static const IntSource IntTable[];
-   
-   static Sys::Atomic LockTable[];
+   static const uint32 DevInstanceTable[I2C_InstanceCount];
+   static const IntSource IntTable[I2C_InstanceCount];
    
   private:
    

@@ -167,7 +167,7 @@ void VideoControl::handle_int()
 
 void VideoControl::setupInt()
  {
-  AM3359::GPIO::Bar1 bar;
+  AM3359::GPIO::Bar bar(AM3359::GPIO::GPIO1);
 
   bar.set_Level0Detect(bar.get_Level0Detect()|GPIOBit);
   
@@ -180,7 +180,7 @@ void VideoControl::cleanupInt()
  {
   Dev::CleanupIntHandler(Dev::Int_GPIO1_0);
   
-  AM3359::GPIO::Bar1 bar;
+  AM3359::GPIO::Bar bar(AM3359::GPIO::GPIO1);
 
   bar.set_Level0Detect(bar.get_Level0Detect()&~GPIOBit);
   
@@ -194,7 +194,7 @@ void VideoControl::disableInt()
 
 void VideoControl::enableInt()
  {
-  AM3359::GPIO::Bar1 bar;
+  AM3359::GPIO::Bar bar(AM3359::GPIO::GPIO1);
 
   bar.set_IRQ0Status(GPIOBit);
  

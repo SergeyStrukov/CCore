@@ -86,6 +86,8 @@ obj/DebugCon.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
 obj/DeferCall.o \
+obj/DevControlMutex.o \
+obj/DevEth.o \
 obj/DevHDMI.o \
 obj/DevI2C.o \
 obj/DevInt.o \
@@ -131,6 +133,7 @@ obj/HeapEngine.o \
 obj/HeapSort.o \
 obj/I2CDevice.o \
 obj/Init.o \
+obj/InstanceLock.o \
 obj/IntPrint.o \
 obj/IntScan.o \
 obj/Integer.o \
@@ -413,6 +416,8 @@ obj/DebugCon.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
 obj/DeferCall.s \
+obj/DevControlMutex.s \
+obj/DevEth.s \
 obj/DevHDMI.s \
 obj/DevI2C.s \
 obj/DevInt.s \
@@ -458,6 +463,7 @@ obj/HeapEngine.s \
 obj/HeapSort.s \
 obj/I2CDevice.s \
 obj/Init.s \
+obj/InstanceLock.s \
 obj/IntPrint.s \
 obj/IntScan.s \
 obj/Integer.s \
@@ -740,6 +746,8 @@ obj/DebugCon.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
 obj/DeferCall.dep \
+obj/DevControlMutex.dep \
+obj/DevEth.dep \
 obj/DevHDMI.dep \
 obj/DevI2C.dep \
 obj/DevInt.dep \
@@ -785,6 +793,7 @@ obj/HeapEngine.dep \
 obj/HeapSort.dep \
 obj/I2CDevice.dep \
 obj/Init.dep \
+obj/InstanceLock.dep \
 obj/IntPrint.dep \
 obj/IntScan.dep \
 obj/Integer.dep \
@@ -1255,6 +1264,12 @@ obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.o : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/DevControlMutex.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevControlMutex.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevEth.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevEth.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/DevHDMI.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevHDMI.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1388,6 +1403,9 @@ obj/I2CDevice.o : ../../Target/BeagleBoneBlack/CCore/src/I2CDevice.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Init.o : ../../CCore/src/gadget/Init.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/InstanceLock.o : ../../CCore/src/InstanceLock.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntPrint.o : ../../CCore/src/printf/IntPrint.cpp
@@ -2229,6 +2247,12 @@ obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.s : ../../CCore/src/DeferCall.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DevControlMutex.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevControlMutex.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DevEth.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevEth.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DevHDMI.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevHDMI.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2362,6 +2386,9 @@ obj/I2CDevice.s : ../../Target/BeagleBoneBlack/CCore/src/I2CDevice.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Init.s : ../../CCore/src/gadget/Init.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/InstanceLock.s : ../../CCore/src/InstanceLock.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/IntPrint.s : ../../CCore/src/printf/IntPrint.cpp
@@ -3203,6 +3230,12 @@ obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.dep : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
 
+obj/DevControlMutex.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevControlMutex.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevControlMutex.o $< -MF $@
+
+obj/DevEth.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevEth.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevEth.o $< -MF $@
+
 obj/DevHDMI.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevHDMI.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevHDMI.o $< -MF $@
 
@@ -3337,6 +3370,9 @@ obj/I2CDevice.dep : ../../Target/BeagleBoneBlack/CCore/src/I2CDevice.cpp
 
 obj/Init.dep : ../../CCore/src/gadget/Init.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Init.o $< -MF $@
+
+obj/InstanceLock.dep : ../../CCore/src/InstanceLock.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/InstanceLock.o $< -MF $@
 
 obj/IntPrint.dep : ../../CCore/src/printf/IntPrint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntPrint.o $< -MF $@

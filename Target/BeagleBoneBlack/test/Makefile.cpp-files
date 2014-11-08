@@ -145,3 +145,4 @@
 ../../../Target/BeagleBoneBlack/CCore/test/test3009.Timer.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3010.I2C.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3011.LCD.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3012.Eth.cpp

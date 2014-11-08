@@ -28,25 +28,23 @@ namespace Dev {
 
 using namespace AM3359::I2C; 
 
-const uint32 I2C::AddressTable[3]=
+const uint32 I2C::DevInstanceTable[I2C_InstanceCount]=
  {
-  I2C0BaseAddress,
-  I2C1BaseAddress,
-  I2C2BaseAddress
+  AM3359::I2C::I2C_0,
+  AM3359::I2C::I2C_1,
+  AM3359::I2C::I2C_2
  };
 
-const IntSource I2C::IntTable[3]=
+const IntSource I2C::IntTable[I2C_InstanceCount]=
  {
   Int_I2C0INT,
   Int_I2C1INT,
   Int_I2C2INT
  };
 
-Sys::Atomic I2C::LockTable[3]={};
-
 void I2C::cancel(State state_)
  {
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   bar.ones_IRQStatus().set(bar.to_IRQEnableClear());
   
@@ -61,7 +59,7 @@ void I2C::cancel(State state_)
 
 void I2C::pumpRX(ulen count)
  {
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   if( count>rx_buf.len ) 
     {
@@ -77,7 +75,7 @@ void I2C::pumpRX(ulen count)
 
 void I2C::pumpTX(ulen count)
  {
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   if( count>tx_buf.len )
     {
@@ -93,7 +91,7 @@ void I2C::pumpTX(ulen count)
 
 void I2C::handle_int()
  {
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   auto status=bar.get_IRQStatus();
   
@@ -195,40 +193,32 @@ void I2C::handle_int()
   status.setTo(bar);
  }
 
-I2C::I2C(I2CInstance instance_)
- : instance(instance_),
-   base_address(AddressTable[instance_]),
-   int_source(IntTable[instance_])
+I2C::I2C(I2CInstance instance)
+ : InstanceLock<I2C,I2C_InstanceCount>("I2C",instance),
+   dev_instance(DevInstanceTable[instance]),
+   int_source(IntTable[instance])
  {
-  auto locked=LockTable[instance_]++;
-  
-  if( locked )
-    {
-     LockTable[instance_]--;
-     
-     Printf(Exception,"CCore::Dev::I2C::I2C(#;) : instance is locked",instance_);
-    }
  }
 
 I2C::~I2C()
  {
   CleanupIntHandler(int_source);
-  
-  LockTable[instance]--;
  }
 
  // init
 
 void I2C::enable()
  {
+  Mutex::Lock lock(ControlMutex);
+  
   {
    using namespace AM3359::PRCM;
    
-   switch( instance )
+   switch( getInstanceIndex() )
      {
       case I2C_0 :
        {
-        WKUPBar bar;
+        BarWKUP bar;
         
         bar.null_ClockControl().set_Mode(ClockControl_Mode_Enable).set(bar.to_I2C0());
        
@@ -238,7 +228,7 @@ void I2C::enable()
       
       case I2C_1 :
        {
-        PERBar bar;
+        BarPER bar;
         
         bar.null_ClockControl().set_Mode(ClockControl_Mode_Enable).set(bar.to_I2C1());
        
@@ -248,7 +238,7 @@ void I2C::enable()
       
       case I2C_2 :
        {
-        PERBar bar;
+        BarPER bar;
         
         bar.null_ClockControl().set_Mode(ClockControl_Mode_Enable).set(bar.to_I2C2());
        
@@ -261,7 +251,7 @@ void I2C::enable()
   {
    using namespace AM3359::CONTROL;
    
-   switch( instance )
+   switch( getInstanceIndex() )
      {
       case I2C_0 :
        {
@@ -289,7 +279,7 @@ void I2C::enable()
 
 void I2C::reset()
  {
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   bar.get_SysConfig().setbit(SysConfig_SoftReset).setTo(bar);
   
@@ -298,7 +288,7 @@ void I2C::reset()
 
 void I2C::init(bool fast)
  {
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   bar.null_Config().setTo(bar);
   
@@ -335,7 +325,7 @@ void I2C::init(bool fast)
 
 void I2C::setSlave7(uint8 address)
  {
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   bar.get_Config().clearbit(Config_A10).setTo(bar);
 
@@ -344,7 +334,7 @@ void I2C::setSlave7(uint8 address)
 
 void I2C::setSlave10(uint16 address)
  {
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
 
   bar.get_Config().setbit(Config_A10).setTo(bar);
   
@@ -366,7 +356,7 @@ bool I2C::tryRead(PtrLen<uint8> buf)
   state=StartRX;
   rx_buf=buf;
   
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   bar.null_Counter().set_Count(buf.len).setTo(bar);
   
@@ -401,7 +391,7 @@ bool I2C::tryWrite(PtrLen<const uint8> buf)
   state=StartTX;
   tx_buf=buf;
   
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   bar.null_Counter().set_Count(buf.len).setTo(bar);
   
@@ -447,7 +437,7 @@ bool I2C::tryExchange(PtrLen<const uint8> out_buf,PtrLen<uint8> in_buf)
   tx_buf=out_buf;
   rx_buf=in_buf;
   
-  Bar bar(base_address);
+  Bar bar((AM3359::I2C::Instance)dev_instance);
   
   bar.null_Counter().set_Count(out_buf.len).setTo(bar);
   

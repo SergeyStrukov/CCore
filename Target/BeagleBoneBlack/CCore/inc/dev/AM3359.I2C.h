@@ -26,17 +26,20 @@ namespace I2C {
 
 #include <CCore/inc/dev/AM3359.I2C.gen.h>
 
-/* base addresses */
+/* Instances */
 
-const uint32 I2C0BaseAddress = 0x44E0B000 ;
-const uint32 I2C1BaseAddress = 0x4802A000 ;
-const uint32 I2C2BaseAddress = 0x4819C000 ;
+enum Instance : uint32
+ {
+  I2C_0 = 0x44E0B000,
+  I2C_1 = 0x4802A000,
+  I2C_2 = 0x4819C000 
+ };
 
 /* struct Bar */
 
 struct Bar : I2CBar<CCore::Dev::RegRW>
  {
-  explicit Bar(uint32 base_address) : I2CBar<CCore::Dev::RegRW>(base_address) {}
+  explicit Bar(Instance instance) : I2CBar<CCore::Dev::RegRW>(instance) {}
  };
 
 } // namespace I2C

@@ -113,6 +113,7 @@
 ../../CCore/src/Gadget.cpp
 ../../CCore/src/GenFile.cpp
 ../../CCore/src/HeapEngine.cpp
+../../CCore/src/InstanceLock.cpp
 ../../CCore/src/InterfaceHost.cpp
 ../../CCore/src/Job.cpp
 ../../CCore/src/LineInput.cpp

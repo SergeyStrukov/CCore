@@ -116,7 +116,7 @@ void TimerInit()
    using namespace AM3359::PRCM;
 
    {
-    PERBar per;
+    BarPER per;
    
     per.null_ClockControl().set_Mode(ClockControl_Mode_Enable).set(per.to_Timer2());
    
@@ -128,7 +128,7 @@ void TimerInit()
    } 
    
    {
-    DPLLBar dpll;
+    BarDPLL dpll;
    
     dpll.null_TimerClockSelect().set_Source(TimerClockSelect_Source_CLK_M_OSC).set(dpll.to_Timer2());
    

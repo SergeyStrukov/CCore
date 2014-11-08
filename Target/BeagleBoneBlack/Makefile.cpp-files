@@ -113,6 +113,7 @@
 ../../CCore/src/Gadget.cpp
 ../../CCore/src/GenFile.cpp
 ../../CCore/src/HeapEngine.cpp
+../../CCore/src/InstanceLock.cpp
 ../../CCore/src/InterfaceHost.cpp
 ../../CCore/src/Job.cpp
 ../../CCore/src/LineInput.cpp
@@ -295,6 +296,8 @@
 ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp
+../../Target/BeagleBoneBlack/CCore/src/dev/DevControlMutex.cpp
+../../Target/BeagleBoneBlack/CCore/src/dev/DevEth.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevHDMI.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevI2C.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.cpp

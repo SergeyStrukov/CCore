@@ -26,11 +26,22 @@ namespace GPIO {
 
 #include <CCore/inc/dev/AM3359.GPIO.gen.h>
 
-/* struct Bar1 */
+/* Instances */
 
-struct Bar1 : GPIOBar<CCore::Dev::RegRW>
+enum Instance : uint32
  {
-  Bar1() : GPIOBar<CCore::Dev::RegRW>(0x4804C000) {}
+  GPIO1 = 0x4804C000  // 
+                      // Out, SetOut and ClearOut are used by DevLight
+                      //
+                      // Level0Detect, IRQ0EnableSet, IRQ0EnableClear and IRQ0Status are used by VideoControl
+                      //
+ };
+
+/* struct Bar */
+
+struct Bar : GPIOBar<CCore::Dev::RegRW>
+ {
+  explicit Bar(Instance instance) : GPIOBar<CCore::Dev::RegRW>(instance) {}
  };
 
 } // namespace GPIO

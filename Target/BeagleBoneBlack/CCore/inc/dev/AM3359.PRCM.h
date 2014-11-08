@@ -18,33 +18,38 @@
 
 #include <CCore/inc/dev/AM3359.h>
 #include <CCore/inc/dev/DevRW.h>
+#include <CCore/inc/dev/DevControlMutex.h>
 
 namespace AM3359 {
 namespace PRCM {
+
+//
+// Use Dev::ControlMutex to protect against race-condition.
+// 
 
 /* AM3359.PRCM.desc -> AM3359.PRCM.gen.h */
 
 #include <CCore/inc/dev/AM3359.PRCM.gen.h>
 
-/* struct PERBar */
+/* struct BarPER */
 
-struct PERBar : CM_PERBar<CCore::Dev::RegRW>
+struct BarPER : PERBar<CCore::Dev::RegRW>
  {
-  PERBar() : CM_PERBar<CCore::Dev::RegRW>(0x44E00000) {}
+  BarPER() : PERBar<CCore::Dev::RegRW>(0x44E00000) {}
  };
 
-/* struct DPLLBar */
+/* struct BarDPLL */
 
-struct DPLLBar : CM_DPLLBar<CCore::Dev::RegRW>
+struct BarDPLL : DPLLBar<CCore::Dev::RegRW>
  {
-  DPLLBar() : CM_DPLLBar<CCore::Dev::RegRW>(0x44E00500) {}
+  BarDPLL() : DPLLBar<CCore::Dev::RegRW>(0x44E00500) {}
  };
 
-/* struct WKUPBar */
+/* struct BarWKUP */
 
-struct WKUPBar : CM_WKUPBar<CCore::Dev::RegRW>
+struct BarWKUP : WKUPBar<CCore::Dev::RegRW>
  {
-  WKUPBar() : CM_WKUPBar<CCore::Dev::RegRW>(0x44E00400) {}
+  BarWKUP() : WKUPBar<CCore::Dev::RegRW>(0x44E00400) {}
  };
 
 } // namespace PRCM

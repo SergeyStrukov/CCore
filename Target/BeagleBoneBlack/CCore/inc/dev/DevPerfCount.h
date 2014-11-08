@@ -18,6 +18,8 @@
  
 #include <CCore/inc/task/Ticker.h>
 
+#include <CCore/inc/InstanceLock.h>
+
 namespace CCore {
 namespace Dev {
 
@@ -41,7 +43,7 @@ class PerfCount;
 
 /* class PerfCount */
 
-class PerfCount : public Funchor_nocopy
+class PerfCount : InstanceLock<PerfCount> , public Funchor
  {
    unsigned number;
    

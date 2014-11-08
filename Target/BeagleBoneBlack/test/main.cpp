@@ -182,6 +182,7 @@ int main(int argc,const char *argv[])
   //Testit<3009>().run();
   //Testit<3010>().run();
   //Testit<3011>().run();
+  Testit<3012>().run();
   
   Printf(Con,"\nPeak memory usage #;\n\n",MemPeak());  
     

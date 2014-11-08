@@ -18,9 +18,14 @@
 
 #include <CCore/inc/dev/AM3359.h>
 #include <CCore/inc/dev/DevRW.h>
+#include <CCore/inc/dev/DevControlMutex.h>
 
 namespace AM3359 {
 namespace CONTROL {
+
+//
+// Use Dev::ControlMutex to protect against race-condition.
+// 
 
 /* AM3359.CONTROL.desc -> AM3359.CONTROL.gen.h */
 

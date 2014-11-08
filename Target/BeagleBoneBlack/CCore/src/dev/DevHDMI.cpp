@@ -107,6 +107,8 @@ void HDMI::HDMIRegRW::set<uint16>(AddressType address,uint16 value)
 
 void HDMI::connect_int()
  {
+  Mutex::Lock lock(ControlMutex);
+  
   using namespace AM3359::CONTROL;
   
   Bar bar;
@@ -118,7 +120,8 @@ void HDMI::connect_int()
  }
 
 HDMI::HDMI(StrLen i2c_dev_name)
- : regRW(i2c_dev_name),
+ : InstanceLock<HDMI>("HDMI"),
+   regRW(i2c_dev_name),
    barCEC(regRW),
    barHDMI(regRW)
  {

@@ -20,6 +20,7 @@
 #include <CCore/inc/video/FrameBuf.h>
 
 #include <CCore/inc/Task.h>
+#include <CCore/inc/InstanceLock.h>
  
 namespace CCore {
 namespace Dev {
@@ -30,7 +31,7 @@ class LCD;
 
 /* class LCD */
 
-class LCD : public Funchor_nocopy
+class LCD : InstanceLock<LCD> , public Funchor 
  {
   public:
   

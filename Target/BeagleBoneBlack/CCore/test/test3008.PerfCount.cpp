@@ -28,7 +28,7 @@ void CPUClock()
  {
   using namespace AM3359::PRCM;
   
-  WKUPBar bar;
+  BarWKUP bar;
   
   Printf(Con,"idle = #;\n",bar.get_MPUIdleStatus());
   Printf(Con,"clk = #;\n",bar.get_MPUClockSelect());

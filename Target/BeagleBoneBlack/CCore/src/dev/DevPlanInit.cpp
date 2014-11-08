@@ -31,7 +31,7 @@ static void SetupCPUClock(unsigned freq_MHz)
  {
   using namespace AM3359::PRCM;
   
-  WKUPBar bar;
+  BarWKUP bar;
   
   {
    bar.get_MPUClockMode()

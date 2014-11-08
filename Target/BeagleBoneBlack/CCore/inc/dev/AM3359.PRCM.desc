@@ -53,10 +53,26 @@ reg ClockStandbyControl : 32
   StandbyStatus : 18 
  }
  
-bar CM_PERBar : address
+reg EthClockControl : 32
+ {
+  Control : 0-1
+   {
+    NoSleep     = 0
+    ForceSleep  = 1
+    ForceWakeup = 2
+   }
+   
+  Active : 4
+ } 
+ 
+bar PERBar : address
  {
   ClockControl = hidden
   ClockStandbyControl = hidden
+  
+  Eth = 14h as ClockStandbyControl
+  
+  EthClockControl = 144h 
  
   Timer2 = 80h as ClockControl
   Timer4 = 88h as ClockControl
@@ -89,7 +105,7 @@ reg LCDClockSelect : 32
    }
  } 
  
-bar CM_DPLLBar : address
+bar DPLLBar : address
  {
   TimerClockSelect = hidden
  
@@ -151,7 +167,7 @@ reg PLLClockMode : 32
   SSCType      : 15 
  } 
 
-bar CM_WKUPBar : address
+bar WKUPBar : address
  {
   ClockControl = hidden
   

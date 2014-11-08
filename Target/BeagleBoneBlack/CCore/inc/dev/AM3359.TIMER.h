@@ -30,11 +30,12 @@ namespace TIMER {
 
 enum Instance : uint32
  {
-  Timer2 = 0x48040000,
-  Timer4 = 0x48044000
+  Timer2 = 0x48040000, //
+  Timer4 = 0x48044000  // Used by timer interrupt and clock
+                       //
  };
 
-/* struct DMBar */
+/* struct Bar */
 
 struct Bar : DMBar<CCore::Dev::RegRW>
  {

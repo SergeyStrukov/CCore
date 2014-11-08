@@ -237,6 +237,7 @@ void LCD::handle_int()
  }
 
 LCD::LCD()
+ : InstanceLock<LCD>("LCD")
  {
  }
 
@@ -249,6 +250,8 @@ LCD::~LCD()
 
 void LCD::enable(uint32 clock)
  {
+  Mutex::Lock lock(ControlMutex);
+  
   // enable LCD
   {
    using namespace AM3359::PRCM;
@@ -257,7 +260,7 @@ void LCD::enable(uint32 clock)
    
    // connect clock
    {
-    DPLLBar dpll_bar;
+    BarDPLL dpll_bar;
     
     dpll_bar.null_LCDClockSelect()
             .set_Source(LCDClockSelect_Source_DISP_PLL_CLKOUTM2)
@@ -266,7 +269,7 @@ void LCD::enable(uint32 clock)
    
    // enable LCD
    {
-    PERBar per_bar;
+    BarPER per_bar;
     
     per_bar.null_ClockStandbyControl()
            .set_Mode(ClockStandbyControl_Mode_Enable)
@@ -330,9 +333,11 @@ void LCD::reset_first()
 
 void LCD::setClock(uint32 clock)
  {
+  Mutex::Lock lock(ControlMutex);
+  
   using namespace AM3359::PRCM;
   
-  WKUPBar wkup_bar;
+  BarWKUP wkup_bar;
    
   {
    wkup_bar.get_DISPClockMode()

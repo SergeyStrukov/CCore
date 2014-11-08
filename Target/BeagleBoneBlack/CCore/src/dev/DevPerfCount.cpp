@@ -50,7 +50,8 @@ void PerfCount::tick_int()
  }
 
 PerfCount::PerfCount()
- : ticker(function_tick_int())
+ : InstanceLock<PerfCount>("PerfCount"),
+   ticker(function_tick_int())
  {
   Type_Control ctrl=GetControl();
   

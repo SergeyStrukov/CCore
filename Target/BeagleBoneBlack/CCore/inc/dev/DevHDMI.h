@@ -20,6 +20,8 @@
 #include <CCore/inc/I2CDevice.h>
 #include <CCore/inc/dev/NXP.HDMI.h>
 
+#include <CCore/inc/InstanceLock.h>
+
 namespace CCore {
 namespace Dev {
 
@@ -29,7 +31,7 @@ class HDMI;
 
 /* class HDMI */
 
-class HDMI : NoCopy
+class HDMI : InstanceLock<HDMI>
  {
    class RegRW : NoCopy
     {

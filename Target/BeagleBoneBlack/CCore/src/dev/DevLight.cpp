@@ -33,21 +33,23 @@ static uint32 Mask(uint32 mask)
 
 void LightSet(unsigned mask)
  {
-  Bar1 bar;
+  IntLock lock;
+  
+  Bar bar(GPIO1);
   
   bar.set_Out(Mask(mask));
  }
 
 void LightOn(unsigned mask)
  {
-  Bar1 bar;
+  Bar bar(GPIO1);
   
   bar.set_SetOut(Mask(mask));
  }
 
 void LightOff(unsigned mask)
  {
-  Bar1 bar;
+  Bar bar(GPIO1);
   
   bar.set_ClearOut(Mask(mask));
  }
@@ -56,7 +58,7 @@ void LightToggle(unsigned mask)
  {
   IntLock lock;
   
-  Bar1 bar;
+  Bar bar(GPIO1);
   
   bar.set_Out( bar.get_Out()^Mask(mask) );
  }
