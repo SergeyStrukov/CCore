@@ -27,7 +27,7 @@ void test1()
  {
   Dev::EthControl dev;
   
-  
+  Printf(Con,"address1 = #;\naddress2 = #;\n",dev.getAddress1(),dev.getAddress2());
  }
 
 } // namespace Private_3012

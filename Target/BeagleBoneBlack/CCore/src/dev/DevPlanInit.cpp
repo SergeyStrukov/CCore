@@ -63,6 +63,53 @@ static void SetupCPUClock(unsigned freq_MHz)
   }
  }
 
+/* SetupCoreClocks() */
+
+static void SetupCoreClocks(unsigned freq_MHz)
+ {
+  using namespace AM3359::PRCM;
+  
+  BarWKUP bar;
+  
+  bar.get_COREClockMode()
+     .set_En(PLLClockMode_En_MNBypass)
+     .set(bar.to_COREClockMode());
+  
+  while( bar.get_COREIdleStatus().maskbit(PLLIdleStatus_Bypass)==0 );
+  
+  bar.get_COREClockSelect() 
+     .set_Div(23)
+     .set_Mul(freq_MHz)
+     .set(bar.to_COREClockSelect());
+  
+  bar.null_COREDivControl()
+     .set_Div(10)
+     .setbit(COREDivControl_NoAutoGate)
+     .set(bar.to_CORE_M4Div());
+  
+  bar.null_COREDivControl()
+     .set_Div(8)
+     .setbit(COREDivControl_NoAutoGate)
+     .set(bar.to_CORE_M5Div());
+  
+  bar.null_COREDivControl()
+     .set_Div(4)
+     .setbit(COREDivControl_NoAutoGate)
+     .set(bar.to_CORE_M6Div());
+  
+  bar.get_COREClockMode()
+     .set_En(PLLClockMode_En_Lock)
+     .set(bar.to_COREClockMode());
+  
+  while( bar.get_COREIdleStatus().maskbit(PLLIdleStatus_Locked)==0 );
+  
+  BarDPLL bar_DPLL;
+   
+  bar_DPLL.get_CPTSClockSelect()
+          .clearbit(CPTSClockSelect_M4)
+          .setTo(bar_DPLL);
+ }
+
 /* SetupMMUandCache() */
 
 const ulen TTLen = 1<<12 ;
@@ -234,6 +281,8 @@ void SetupMMUandCache()
 void Init_CPU() 
  {
   SetupCPUClock(600); // MHz
+  
+  SetupCoreClocks(1000); // MHz
   
   SetupMMUandCache();
  }

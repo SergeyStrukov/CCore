@@ -105,6 +105,11 @@ reg LCDClockSelect : 32
    }
  } 
  
+reg CPTSClockSelect : 32
+ {
+  M4 : 0
+ } 
+ 
 bar DPLLBar : address
  {
   TimerClockSelect = hidden
@@ -113,6 +118,8 @@ bar DPLLBar : address
   Timer4 = 10h as TimerClockSelect
   
   LCDClockSelect = 34h
+  
+  CPTSClockSelect = 20h
  }
  
 //----------------------------------------------------------------------------------------
@@ -166,6 +173,15 @@ reg PLLClockMode : 32
   SSCLowSpread : 14
   SSCType      : 15 
  } 
+ 
+reg COREDivControl : 32
+ {
+  Div        : 0-4
+  Ack        : 5
+  NoAutoGate : 8
+  Gated      : 9
+  AutoOff    : 12
+ } 
 
 bar WKUPBar : address
  {
@@ -177,6 +193,8 @@ bar WKUPBar : address
   PLLClockSelect = hidden
   PLLDivM2       = hidden
   PLLClockMode   = hidden
+  
+  COREDivControl = hidden
  
   MPUIdleStatus  = 020h RO as PLLIdleStatus
   MPUClockSelect = 02Ch as PLLClockSelect
@@ -187,6 +205,14 @@ bar WKUPBar : address
   DISPClockSelect = 054h as PLLClockSelect
   DISPDivM2       = 0A4h as PLLDivM2
   DISPClockMode   = 098h as PLLClockMode
+  
+  COREIdleStatus  = 05Ch RO as PLLIdleStatus
+  COREClockSelect = 068h as PLLClockSelect
+  COREClockMode   = 090h as PLLClockMode
+  
+  CORE_M4Div      = 080h as COREDivControl
+  CORE_M5Div      = 084h as COREDivControl
+  CORE_M6Div      = 0D8h as COREDivControl
  }
  
 //----------------------------------------------------------------------------------------

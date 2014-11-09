@@ -19,6 +19,8 @@
 #include <CCore/inc/dev/DevIntHandle.h>
 
 #include <CCore/inc/Task.h>
+#include <CCore/inc/net/NetBase.h>
+#include <CCore/inc/InstanceLock.h>
  
 namespace CCore {
 namespace Dev {
@@ -29,21 +31,32 @@ class EthControl;
 
 /* class EthControl */
 
-class EthControl : NoCopy
+class EthControl : InstanceLock<EthControl>
  {
+   Net::MACAddress address1;
+   Net::MACAddress address2;
+ 
   private:
-  
-   static void InitControl();
    
-   static void InitPRMC();
-   
-   static void InitEth();
+   static Net::MACAddress MakeAddress(uint32 hi,uint32 lo);
   
+   void connect();
+   
+   void enable();
+   
+   void reset();
+   
+   void disable();
+   
   public:
   
    EthControl();
    
    ~EthControl();
+   
+   const Net::MACAddress & getAddress1() const { return address1; }
+   
+   const Net::MACAddress & getAddress2() const { return address2; }
  };
 
 } // namespace Dev

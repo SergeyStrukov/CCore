@@ -665,6 +665,80 @@ struct Type_LCDClockSelect
    }
  };
  
+/* struct Type_CPTSClockSelect */ 
+
+enum Bits_CPTSClockSelect : uint32
+ {
+  CPTSClockSelect_M4 = 0x00000001
+ };
+ 
+inline Bits_CPTSClockSelect operator | (Bits_CPTSClockSelect a,Bits_CPTSClockSelect b)
+ { return Bits_CPTSClockSelect(uint32(a)|uint32(b)); }
+ 
+struct Type_CPTSClockSelect
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_CPTSClockSelect(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_CPTSClockSelect & setTo(Bar &bar) { bar.set_CPTSClockSelect(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_CPTSClockSelect & setTo(Bar &bar,uint32 ind) { bar.set_CPTSClockSelect(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_CPTSClockSelect & set(T to) { to(*this); return *this; }
+ 
+
+  Type_CPTSClockSelect & setbit(Bits_CPTSClockSelect bits) { value|=Type(bits); return *this; }
+ 
+  Type_CPTSClockSelect & setbitIf(bool cond,Bits_CPTSClockSelect bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_CPTSClockSelect & clearbit(Bits_CPTSClockSelect bits) { value&=~Type(bits); return *this; }
+ 
+  Type_CPTSClockSelect & clearbitIf(bool cond,Bits_CPTSClockSelect bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_CPTSClockSelect bits) const { return value&bits; }
+ 
+  bool testbit(Bits_CPTSClockSelect bits) const { return (value&bits)==Type(bits); }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&CPTSClockSelect_M4 )
+      {
+       if( first )
+         {
+          Putobj(out,"M4");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"M4");
+         }
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct Type_PLLIdleStatus */ 
 
 enum Bits_PLLIdleStatus : uint32
@@ -1353,6 +1427,157 @@ struct Type_PLLClockMode
    }
  };
  
+/* struct Type_COREDivControl */ 
+
+enum Bits_COREDivControl : uint32
+ {
+  COREDivControl_Ack        = 0x00000020,
+  COREDivControl_NoAutoGate = 0x00000100,
+  COREDivControl_Gated      = 0x00000200,
+  COREDivControl_AutoOff    = 0x00001000
+ };
+ 
+inline Bits_COREDivControl operator | (Bits_COREDivControl a,Bits_COREDivControl b)
+ { return Bits_COREDivControl(uint32(a)|uint32(b)); }
+ 
+struct Type_COREDivControl
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_COREDivControl(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_COREDivControl & setTo(Bar &bar) { bar.set_COREDivControl(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_COREDivControl & setTo(Bar &bar,uint32 ind) { bar.set_COREDivControl(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_COREDivControl & set(T to) { to(*this); return *this; }
+ 
+
+  Type_COREDivControl & setbit(Bits_COREDivControl bits) { value|=Type(bits); return *this; }
+ 
+  Type_COREDivControl & setbitIf(bool cond,Bits_COREDivControl bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_COREDivControl & clearbit(Bits_COREDivControl bits) { value&=~Type(bits); return *this; }
+ 
+  Type_COREDivControl & clearbitIf(bool cond,Bits_COREDivControl bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_COREDivControl bits) const { return value&bits; }
+ 
+  bool testbit(Bits_COREDivControl bits) const { return (value&bits)==Type(bits); }
+ 
+
+  Type get_Div() const
+   {
+    return (value>>0)&0x1F;
+   }
+ 
+  Type_COREDivControl & set_Div(Type field)
+   {
+    value=((field&0x1F)<<0)|(value&0xFFFFFFE0);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&COREDivControl_Ack )
+      {
+       if( first )
+         {
+          Putobj(out,"Ack");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"Ack");
+         }
+      }
+
+    if( value&COREDivControl_NoAutoGate )
+      {
+       if( first )
+         {
+          Putobj(out,"NoAutoGate");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"NoAutoGate");
+         }
+      }
+
+    if( value&COREDivControl_Gated )
+      {
+       if( first )
+         {
+          Putobj(out,"Gated");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"Gated");
+         }
+      }
+
+    if( value&COREDivControl_AutoOff )
+      {
+       if( first )
+         {
+          Putobj(out,"AutoOff");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"AutoOff");
+         }
+      }
+
+    if( first )
+      {
+       Printf(out,"Div(#;)",get_Div());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Div(#;)",get_Div());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct PERBar<RW> */ 
 
 template <class RW>
@@ -1503,6 +1728,18 @@ struct DPLLBar
  
   static Type_LCDClockSelect ones_LCDClockSelect() { return Type_LCDClockSelect(Type_LCDClockSelect::Type(-1)); }
  
+  //--- CPTSClockSelect
+
+  Type_CPTSClockSelect get_CPTSClockSelect() { return Type_CPTSClockSelect(rw.template get<uint32>(0x20)); }
+ 
+  void set_CPTSClockSelect(Type_CPTSClockSelect value) { rw.set(0x20,value.value); }
+ 
+  Setter<Type_CPTSClockSelect> to_CPTSClockSelect() { return Setter<Type_CPTSClockSelect>(rw,0x20); }
+ 
+  static Type_CPTSClockSelect null_CPTSClockSelect() { return Type_CPTSClockSelect(0); }
+ 
+  static Type_CPTSClockSelect ones_CPTSClockSelect() { return Type_CPTSClockSelect(Type_CPTSClockSelect::Type(-1)); }
+ 
  };
  
 /* struct WKUPBar<RW> */ 
@@ -1564,6 +1801,12 @@ struct WKUPBar
  
   static Type_PLLClockMode ones_PLLClockMode() { return Type_PLLClockMode(Type_PLLClockMode::Type(-1)); }
  
+  //--- COREDivControl
+
+  static Type_COREDivControl null_COREDivControl() { return Type_COREDivControl(0); }
+ 
+  static Type_COREDivControl ones_COREDivControl() { return Type_COREDivControl(Type_COREDivControl::Type(-1)); }
+ 
   //--- MPUIdleStatus
 
   Type_PLLIdleStatus get_MPUIdleStatus() { return Type_PLLIdleStatus(rw.template get<uint32>(0x20)); }
@@ -1619,6 +1862,50 @@ struct WKUPBar
   void set_DISPClockMode(Type_PLLClockMode value) { rw.set(0x98,value.value); }
  
   Setter<Type_PLLClockMode> to_DISPClockMode() { return Setter<Type_PLLClockMode>(rw,0x98); }
+ 
+  //--- COREIdleStatus
+
+  Type_PLLIdleStatus get_COREIdleStatus() { return Type_PLLIdleStatus(rw.template get<uint32>(0x5C)); }
+ 
+  //--- COREClockSelect
+
+  Type_PLLClockSelect get_COREClockSelect() { return Type_PLLClockSelect(rw.template get<uint32>(0x68)); }
+ 
+  void set_COREClockSelect(Type_PLLClockSelect value) { rw.set(0x68,value.value); }
+ 
+  Setter<Type_PLLClockSelect> to_COREClockSelect() { return Setter<Type_PLLClockSelect>(rw,0x68); }
+ 
+  //--- COREClockMode
+
+  Type_PLLClockMode get_COREClockMode() { return Type_PLLClockMode(rw.template get<uint32>(0x90)); }
+ 
+  void set_COREClockMode(Type_PLLClockMode value) { rw.set(0x90,value.value); }
+ 
+  Setter<Type_PLLClockMode> to_COREClockMode() { return Setter<Type_PLLClockMode>(rw,0x90); }
+ 
+  //--- CORE_M4Div
+
+  Type_COREDivControl get_CORE_M4Div() { return Type_COREDivControl(rw.template get<uint32>(0x80)); }
+ 
+  void set_CORE_M4Div(Type_COREDivControl value) { rw.set(0x80,value.value); }
+ 
+  Setter<Type_COREDivControl> to_CORE_M4Div() { return Setter<Type_COREDivControl>(rw,0x80); }
+ 
+  //--- CORE_M5Div
+
+  Type_COREDivControl get_CORE_M5Div() { return Type_COREDivControl(rw.template get<uint32>(0x84)); }
+ 
+  void set_CORE_M5Div(Type_COREDivControl value) { rw.set(0x84,value.value); }
+ 
+  Setter<Type_COREDivControl> to_CORE_M5Div() { return Setter<Type_COREDivControl>(rw,0x84); }
+ 
+  //--- CORE_M6Div
+
+  Type_COREDivControl get_CORE_M6Div() { return Type_COREDivControl(rw.template get<uint32>(0xD8)); }
+ 
+  void set_CORE_M6Div(Type_COREDivControl value) { rw.set(0xD8,value.value); }
+ 
+  Setter<Type_COREDivControl> to_CORE_M6Div() { return Setter<Type_COREDivControl>(rw,0xD8); }
  
  };
  
