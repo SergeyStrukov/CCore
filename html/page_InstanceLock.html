@@ -30,6 +30,11 @@
 
 <p class="Files">Files <b>CCore/inc/InstanceLock.h</b> <b>CCore/src/InstanceLock.cpp</b></p>
 
+<p>
+This class can be used to prevent a creation of multiple objects of the given class.
+The class is thread-safe.
+</p>
+
 <pre>
 
 template &lt;class T,ulen Count=1&gt;
@@ -39,7 +44,7 @@ class <span class="Att">InstanceLock</span> : NoCopy
    
   public:
  
-   explicit InstanceLock(StrLen name,ulen index_=0); // index&lt;Count
+   explicit InstanceLock(StrLen name,ulen index=0); // index&lt;Count
    
    ~InstanceLock();
    
@@ -47,6 +52,34 @@ class <span class="Att">InstanceLock</span> : NoCopy
  };
 
 </pre>
+
+<p>
+The class constructor will throw an exception if an object with the same index has already being created.
+So up to the <b>Count</b> objects of this type can exist simultaneously each with a unique instance index. 
+The argument <b>name</b> is used in the exception message. It should name the class. 
+</p>
+
+<p>
+<b>getInstanceIndex()</b> returns the instance index. 
+</p>
+
+<p>
+Here is a typical usage example:
+</p>
+
+<pre>
+
+class SomeClass : InstanceLock&lt;SomeClass&gt;
+ {
+  ....
+
+ };
+
+</pre>
+
+<p>
+This will prevent the creation of multiple objects of the class <b>SomeClass</b>.
+</p>
 
 </body>
 

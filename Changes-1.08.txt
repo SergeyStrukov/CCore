@@ -116,6 +116,10 @@ crypton/MD5.h
 
   MD5 hash algorithm implementation is added.
 
+InstanceLock.h
+
+  InstanceLock is added.
+
 --- Updates ----------
 
 Regen

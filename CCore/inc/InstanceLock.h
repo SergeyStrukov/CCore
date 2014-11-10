@@ -41,7 +41,7 @@ class InstanceLock : NoCopy
    
   public:
  
-   explicit InstanceLock(StrLen name,ulen index_=0) // index<Count
+   explicit InstanceLock(StrLen name,ulen index_=0) // index_<Count
     : index(index_)
     {
      GuardIndex(index_,Count);
