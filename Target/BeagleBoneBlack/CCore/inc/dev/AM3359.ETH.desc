@@ -13,14 +13,199 @@
 //
 //----------------------------------------------------------------------------------------
 
+reg SwitchControl : 32
+ {
+  FIFOLoopback : .
+  VLANAware    : .
+  Port2VLAN    : .
+  DLREnable    : .
+ }
+
+reg SwitchSoftReset : 32
+ {
+  Reset : .
+ }
+
+reg SwitchStatPort : 32
+ {
+  Port0Enable : .
+  Port1Enable : .
+  Port2Enable : .
+ }
+
+reg SwitchTxPriType : 32
+ {
+  EscalateCount : 0-4
+  
+  Port0Escalate : 8
+  Port1Escalate : .
+  Port2Escalate : .
+ 
+  Port1Pri1Shape : 16
+  Port1Pri2Shape : .
+  Port1Pri3Shape : .
+  Port2Pri1Shape : .
+  Port2Pri2Shape : .
+  Port2Pri3Shape : .
+ }
+
+reg SwitchCmdIdle : 32
+ {
+  CmdIdle : .
+ }
+
+reg SwitchRate : 32
+ {
+  Host   : 0-3
+  Sliver : 12-15
+ }
+
+reg SwitchTxShortGap : 32
+ {
+  Thresh : 0-4
+ }
+ 
+reg SwitchTxStart : 32
+ {
+  Len : 0-10
+ } 
+
+reg SwitchRxFlowControl : 32
+ {
+  Port0Enable : .
+  Port1Enable : .
+  Port2Enable : .
+ }
+
+reg SwitchVLANLType : 32
+ {
+  LType1 : 0-15
+  LType2 : 16-31
+ }
+
+reg SwitchTSVLANLType : 32
+ {
+  LType1 : 0-15
+  LType2 : 16-21
+ }
+
+reg SwitchDLRLType : 32
+ {
+  LType : 0-15
+ }
+
 bar SwitchBar : address
  {
+  SwitchControl       = 4
+  SwitchSoftReset     = .
+  SwitchStatPort      = .
+  SwitchTxPriType     = .
+  SwitchCmdIdle       = .
+  SwitchRate          = .
+  SwitchTxShortGap    = .
+  SwitchTxStart       = .
+  SwitchRxFlowControl = .
+  SwitchVLANLType     = .
+  SwitchTSVLANLType   = .
+  SwitchDLRLType      = .
  }
  
 //----------------------------------------------------------------------------------------
 
-bar PortBar : address
+reg PortControl : 32
  {
+  // Port1,2
+  
+  RxTimeSyncEnable     : 0
+  TxTimeSyncEnable     : 1
+  LType1TimeSyncEnable : 2
+  LType2TimeSyncEnable : 3
+  AnnexDTimeSyncEnable : 4
+  TTLTimeSyncEnable    : 8
+  
+  UDP129TimeSyncEnable : 9
+  UDP130TimeSyncEnable : 10
+  UDP131TimeSyncEnable : 11
+  UDP132TimeSyncEnable : 12
+  UDP319TimeSyncEnable : 13
+  UDP320TimeSyncEnable : 14
+  
+  // All
+ 
+  IPv4PriEnable        : 16
+  VLAN_LType1Enable    : 20
+  VLAN_LType2Enable    : 21
+  VLAN_PassPri         : 24
+  
+  // Port0
+  
+  DLRChan              : 28-30 
+ }
+
+reg PortFIFOLen : 32
+ {
+  RxLen : 0-3
+   {
+    Default0 = 4
+    Default  = 3
+   }
+   
+  TxLen : 4-8
+   {
+    Default0 = 10h
+    Default  = 11h
+   }
+ }
+
+reg PortFIFOUse : 32
+ {
+  RxUse : 0-3
+  TxUse : 4-8
+ }
+
+reg PortTxFIFOControl : 32
+ {
+  // All
+  
+  WordLen : 0-9
+  Rem     : 12-15
+  
+  Mode    : 16-17
+   {
+    Normal  = 0
+    DualMAC = 1 // for Port0
+    RateLim = 2 
+   }
+  
+  Rate    : 20-23
+  
+  // Port1,2
+  
+  HostRem : 24-27
+ }
+
+bar Port0Bar : address
+ {
+  PortControl       = 0
+  PortFIFOLen       = 8
+  PortFIFOUse       = . RO
+  PortTxFIFOControl = . 
+ }
+ 
+bar Port1Bar : address
+ {
+  PortControl = 0
+  PortFIFOLen = 8
+  PortFIFOUse = . RO
+  PortTxFIFOControl = . 
+ }
+ 
+bar Port2Bar : address
+ {
+  PortControl = 0
+  PortFIFOLen = 8
+  PortFIFOUse = . RO
+  PortTxFIFOControl = . 
  }
  
 //----------------------------------------------------------------------------------------
@@ -37,8 +222,17 @@ bar StatBar : address
  
 //----------------------------------------------------------------------------------------
 
-bar RAMStateBar : address
+reg DescPtr : 32 {}
+
+bar DescBar : address
  {
+  HeadTx[8]     = . as DescPtr
+  HeadRx[8]     = . as DescPtr
+  
+  CompleteTx[8] = . as DescPtr
+  CompleteRx[8] = . as DescPtr
+ 
+  DescPtr = hidden
  }
  
 //----------------------------------------------------------------------------------------
@@ -55,7 +249,111 @@ bar ALEBar : address
  
 //----------------------------------------------------------------------------------------
 
+reg SliverControl : 32
+ {
+  FullDuplex          : .
+  Loopback            : .
+  MTest               : .
+  
+  RxFlowControlEnable : .
+  TxFlowControlEnable : .
+  GMIIEnable          : .
+  TxPaceEnable        : .
+  GigMode             : .
+  
+  TxShortGapEnable    : 10
+  CmdIdle             : .
+  
+  CtrlA               : 15
+  CtrlB               : .
+  ForceGig            : .
+  ExtEnable           : .
+  
+  LimitTxShortGap     : 21
+  RxErrorPassEnable   : .
+  RxShortPassEnable   : .
+  RxCtrlPassEnable    : .
+ }
+
+reg SliverStatus : 32
+ {
+  TxFlowControlActive : .
+  RxFlowControlActive : .
+  
+  ExtFullDuplex       : 3
+  ExtGig              : .
+  
+  Idle                : 31
+ }  
+
+reg SliverSoftReset : 32
+ {
+  Reset : .
+ }
+ 
+reg SliverRxMaxLen : 32
+ {
+  Len : .+14
+ }
+ 
+reg SliverBOFFTest : 32
+ {
+  Backoff        : 0-9
+  CollisionCount : 12-15
+  Random         : 16-25
+  Pace           : 26-30
+ }
+ 
+reg SliverRxPause : 32
+ {
+  Timer : 16-31
+ }
+ 
+reg SliverTxPause : 32
+ {
+  Timer : 16-31
+ }
+ 
+reg SliverEMControl : 32
+ {
+  Free : .
+  Soft : .
+ }
+ 
+reg SliverRxPriMap : 32
+ {
+  Pri0 : 0-2
+  Pri1 : 4-6
+  Pri2 : 8-10
+  Pri3 : 12-14
+  Pri4 : 16-18
+  Pri5 : 20-22
+  Pri6 : 24-26
+  Pri7 : 28-30
+ }     
+ 
+reg SliverTxGap : 32
+ {
+  Gap : .+9
+ } 
+
 bar SliverBar : address
+ {
+  SliverControl   = 4
+  SliverStatus    = . RO
+  SliverSoftReset = .
+  SliverRxMaxLen  = .
+  SliverBOFFTest  = .
+  SliverRxPause   = .
+  SliverTxPause   = .
+  SliverEMControl = .
+  SliverRxPriMap  = .
+  SliverTxGap     = .
+ }
+ 
+//----------------------------------------------------------------------------------------
+
+bar WRBar : address
  {
  }
  
@@ -66,6 +364,8 @@ bar MDIOBar : address
  } 
  
 //----------------------------------------------------------------------------------------
+
+ 
  
    
  

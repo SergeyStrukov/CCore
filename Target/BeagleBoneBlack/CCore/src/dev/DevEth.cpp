@@ -187,6 +187,38 @@ void EthControl::enable()
   
 void EthControl::reset()
  {
+  using namespace AM3359::ETH;
+  
+  {
+   BarSliver1 bar;
+   
+   Printf(Con,"SliverControl = #;\n",bar.get_SliverControl());     // FullDuplex CtrlA
+   Printf(Con,"SliverStatus = #;\n",bar.get_SliverStatus());
+   Printf(Con,"SliverSoftReset = #;\n",bar.get_SliverSoftReset());
+   Printf(Con,"SliverRxMaxLen = #;\n",bar.get_SliverRxMaxLen());   // 1522
+   Printf(Con,"SliverBOFFTest = #;\n",bar.get_SliverBOFFTest());
+   Printf(Con,"SliverRxPause = #;\n",bar.get_SliverRxPause());
+   Printf(Con,"SliverTxPause = #;\n",bar.get_SliverTxPause());
+   Printf(Con,"SliverEMControl = #;\n",bar.get_SliverEMControl());
+   Printf(Con,"SliverRxPriMap = #;\n",bar.get_SliverRxPriMap());
+   Printf(Con,"SliverTxGap = #;\n\n",bar.get_SliverTxGap());
+  }
+  
+  {
+   BarSliver2 bar;
+   
+   Printf(Con,"SliverControl = #;\n",bar.get_SliverControl());
+   Printf(Con,"SliverStatus = #;\n",bar.get_SliverStatus());
+   Printf(Con,"SliverSoftReset = #;\n",bar.get_SliverSoftReset());
+   Printf(Con,"SliverRxMaxLen = #;\n",bar.get_SliverRxMaxLen());
+   Printf(Con,"SliverBOFFTest = #;\n",bar.get_SliverBOFFTest());
+   Printf(Con,"SliverRxPause = #;\n",bar.get_SliverRxPause());
+   Printf(Con,"SliverTxPause = #;\n",bar.get_SliverTxPause());
+   Printf(Con,"SliverEMControl = #;\n",bar.get_SliverEMControl());
+   Printf(Con,"SliverRxPriMap = #;\n",bar.get_SliverRxPriMap());
+   Printf(Con,"SliverTxGap = #;\n",bar.get_SliverTxGap());
+  }
+  
   // TODO
  }
 
@@ -217,7 +249,7 @@ EthControl::EthControl()
    
 EthControl::~EthControl()
  {
-  reset();
+  //reset();
   disable();
  }
 

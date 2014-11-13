@@ -33,11 +33,25 @@ struct BarSwitch : SwitchBar<CCore::Dev::RegRW>
   BarSwitch() : SwitchBar<CCore::Dev::RegRW>(0x4A100000) {}
  };
 
-/* struct BarPort */
+/* struct BarPort0 */
 
-struct BarPort : PortBar<CCore::Dev::RegRW>
+struct BarPort0 : Port0Bar<CCore::Dev::RegRW>
  {
-  BarPort() : PortBar<CCore::Dev::RegRW>(0x4A100100) {}
+  BarPort0() : Port0Bar<CCore::Dev::RegRW>(0x4A100100) {}
+ };
+
+/* struct BarPort1 */
+
+struct BarPort1 : Port1Bar<CCore::Dev::RegRW>
+ {
+  BarPort1() : Port1Bar<CCore::Dev::RegRW>(0x4A100200) {}
+ };
+
+/* struct BarPort2 */
+
+struct BarPort2 : Port2Bar<CCore::Dev::RegRW>
+ {
+  BarPort2() : Port2Bar<CCore::Dev::RegRW>(0x4A100300) {}
  };
 
 /* struct BarDMA */
@@ -54,11 +68,11 @@ struct BarStat : StatBar<CCore::Dev::RegRW>
   BarStat() : StatBar<CCore::Dev::RegRW>(0x4A100900) {}
  };
 
-/* struct BarRAMState */
+/* struct BarDesc */
 
-struct BarRAMState : RAMStateBar<CCore::Dev::RegRW>
+struct BarDesc : DescBar<CCore::Dev::RegRW>
  {
-  BarRAMState() : RAMStateBar<CCore::Dev::RegRW>(0x4A100A00) {}
+  BarDesc() : DescBar<CCore::Dev::RegRW>(0x4A100A00) {}
  };
 
 /* struct BarTimeSync */
@@ -87,6 +101,13 @@ struct BarSliver1 : SliverBar<CCore::Dev::RegRW>
 struct BarSliver2 : SliverBar<CCore::Dev::RegRW>
  {
   BarSliver2() : SliverBar<CCore::Dev::RegRW>(0x4A100DC0) {}
+ };
+
+/* struct BarWR */
+
+struct BarWR : WRBar<CCore::Dev::RegRW>
+ {
+  BarWR() : WRBar<CCore::Dev::RegRW>(0x4A101200) {}
  };
 
 /* struct BarMDIO */
