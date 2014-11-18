@@ -35,15 +35,16 @@ reg SwitchStatPort : 32
 
 reg SwitchTxPriType : 32
  {
-  EscalateCount : 0-4
+  EscalateCount  : 0-4
   
-  Port0Escalate : 8
-  Port1Escalate : .
-  Port2Escalate : .
+  Port0Escalate  : 8
+  Port1Escalate  : .
+  Port2Escalate  : .
  
   Port1Pri1Shape : 16
   Port1Pri2Shape : .
   Port1Pri3Shape : .
+  
   Port2Pri1Shape : .
   Port2Pri2Shape : .
   Port2Pri3Shape : .
@@ -132,7 +133,7 @@ reg PortControl : 32
   
   // All
  
-  IPv4PriEnable        : 16
+  TOSPriEnable         : 16
   VLAN_LType1Enable    : 20
   VLAN_LType2Enable    : 21
   VLAN_PassPri         : 24
@@ -184,40 +185,473 @@ reg PortTxFIFOControl : 32
   HostRem : 24-27
  }
 
+reg PortVLANControl : 32
+ {
+  VID : 0-11
+  CFI : 12
+  Pri : 13-15
+ }
+
+reg PortTxPriMap : 32 // DMA Pri -> Switch Pri
+ {
+  Pri0 : 0-1
+  Pri1 : 4-5
+  Pri2 : 8-9
+  Pri3 : 12-13
+  Pri4 : 16-17
+  Pri5 : 20-21
+  Pri6 : 24-25
+  Pri7 : 28-29 
+ }
+
+reg PortTxDMAPriMap : 32 // DMA Channel number -> DMA Pri 
+ {
+  Pri0 : 0-2
+  Pri1 : 4-6
+  Pri2 : 8-10
+  Pri3 : 12-14
+  Pri4 : 16-18
+  Pri5 : 20-22
+  Pri6 : 24-26
+  Pri7 : 28-30
+ }
+
+reg PortRxDMAPriMap : 32 // DMA Channel number
+ {
+  P1Pri0 : 0-2
+  P1Pri1 : 4-6
+  P1Pri2 : 8-10
+  P1Pri3 : 12-14
+  
+  P2Pri0 : 16-18
+  P2Pri1 : 20-22
+  P2Pri2 : 24-26
+  P2Pri3 : 28-30 
+ }
+
+reg PortTOSPriMap0 : 32
+ {
+  Pri0 : 0-2
+  Pri1 : 4-6
+  Pri2 : 8-10
+  Pri3 : 12-14
+  Pri4 : 16-18
+  Pri5 : 20-22
+  Pri6 : 24-26
+  Pri7 : 28-30
+ }
+
+reg PortTOSPriMap1 : 32
+ {
+  Pri8  : 0-2
+  Pri9  : 4-6
+  Pri10 : 8-10
+  Pri11 : 12-14
+  Pri12 : 16-18
+  Pri13 : 20-22
+  Pri14 : 24-26
+  Pri15 : 28-30
+ }
+
+reg PortTOSPriMap2 : 32
+ {
+  Pri16 : 0-2
+  Pri17 : 4-6
+  Pri18 : 8-10
+  Pri19 : 12-14
+  Pri20 : 16-18
+  Pri21 : 20-22
+  Pri22 : 24-26
+  Pri23 : 28-30
+ }
+ 
+reg PortTOSPriMap3 : 32
+ {
+  Pri24 : 0-2
+  Pri25 : 4-6
+  Pri26 : 8-10
+  Pri27 : 12-14
+  Pri28 : 16-18
+  Pri29 : 20-22
+  Pri30 : 24-26
+  Pri31 : 28-30
+ }
+ 
+reg PortTOSPriMap4 : 32
+ {
+  Pri32 : 0-2
+  Pri33 : 4-6
+  Pri34 : 8-10
+  Pri35 : 12-14
+  Pri36 : 16-18
+  Pri37 : 20-22
+  Pri38 : 24-26
+  Pri39 : 28-30
+ }
+ 
+reg PortTOSPriMap5 : 32
+ {
+  Pri40 : 0-2
+  Pri41 : 4-6
+  Pri42 : 8-10
+  Pri43 : 12-14
+  Pri44 : 16-18
+  Pri45 : 20-22
+  Pri46 : 24-26
+  Pri47 : 28-30
+ }
+ 
+reg PortTOSPriMap6 : 32
+ {
+  Pri48 : 0-2
+  Pri49 : 4-6
+  Pri50 : 8-10
+  Pri51 : 12-14
+  Pri52 : 16-18
+  Pri53 : 20-22
+  Pri54 : 24-26
+  Pri55 : 28-30
+ }
+ 
+reg PortTOSPriMap7 : 32
+ {
+  Pri56 : 0-2
+  Pri57 : 4-6
+  Pri58 : 8-10
+  Pri59 : 12-14
+  Pri60 : 16-18
+  Pri61 : 20-22
+  Pri62 : 24-26
+  Pri63 : 28-30
+ }
+ 
 bar Port0Bar : address
  {
   PortControl       = 0
   PortFIFOLen       = 8
   PortFIFOUse       = . RO
-  PortTxFIFOControl = . 
+  PortTxFIFOControl = .
+  PortVLANControl   = .
+  
+  PortTxPriMap      = .
+  PortTxDMAPriMap   = .
+  PortRxDMAPriMap   = .
+  
+  PortTOSPriMap0    = .
+  PortTOSPriMap1    = . 
+  PortTOSPriMap2    = . 
+  PortTOSPriMap3    = . 
+  PortTOSPriMap4    = . 
+  PortTOSPriMap5    = . 
+  PortTOSPriMap6    = . 
+  PortTOSPriMap7    = . 
  }
+ 
+reg PortTimeSync : 32
+ {
+  MsgTypeMask     : 0-15
+  SyncFieldOffset : 16-21
+ } 
+ 
+reg PortMACHi : 32
+ {
+  Byte1 : 0-7
+  Byte0 : 8-15
+ } 
+ 
+reg PortMACLo : 32
+ {
+  Byte5 : 0-7
+  Byte4 : 8-15
+  Byte3 : 16-23
+  Byte2 : 24-31 
+ } 
+ 
+reg PortSendPercent : 32
+ {
+  Pri1 : 0-6
+  Pri2 : 8-14
+  Pri3 : 16-22
+ } 
  
 bar Port1Bar : address
  {
-  PortControl = 0
-  PortFIFOLen = 8
-  PortFIFOUse = . RO
+  PortControl       = 0
+  PortFIFOLen       = 8
+  PortFIFOUse       = . RO
   PortTxFIFOControl = . 
+  PortVLANControl   = . 
+  PortTxPriMap      = .
+  
+  PortTimeSync      = .
+  PortMACHi         = .
+  PortMACLo         = .
+  PortSendPercent   = .
+   
+  PortTOSPriMap0    = .
+  PortTOSPriMap1    = . 
+  PortTOSPriMap2    = . 
+  PortTOSPriMap3    = . 
+  PortTOSPriMap4    = . 
+  PortTOSPriMap5    = . 
+  PortTOSPriMap6    = . 
+  PortTOSPriMap7    = . 
  }
  
 bar Port2Bar : address
  {
-  PortControl = 0
-  PortFIFOLen = 8
-  PortFIFOUse = . RO
+  PortControl       = 0
+  PortFIFOLen       = 8
+  PortFIFOUse       = . RO
   PortTxFIFOControl = . 
+  PortVLANControl   = . 
+  PortTxPriMap      = . 
+  
+  PortTimeSync      = .
+  PortMACHi         = .
+  PortMACLo         = .
+  PortSendPercent   = .
+   
+  PortTOSPriMap0    = .
+  PortTOSPriMap1    = . 
+  PortTOSPriMap2    = . 
+  PortTOSPriMap3    = . 
+  PortTOSPriMap4    = . 
+  PortTOSPriMap5    = . 
+  PortTOSPriMap6    = . 
+  PortTOSPriMap7    = . 
  }
  
 //----------------------------------------------------------------------------------------
+
+reg DMATxControl : 32
+ {
+  Enable : 0
+ }
+
+reg DMATxTeardown : 32
+ {
+  Chan : 0-2
+ }
+ 
+reg DMARxControl : 32
+ {
+  Enable : 0
+ } 
+
+reg DMARxTeardown : 32
+ {
+  Chan : 0-2
+ }
+
+reg DMASoftReset : 32
+ {
+  Reset : 0
+ } 
+
+reg DMAControl : 32
+ {
+  UsePri        : 0
+  RxSetOwnBit   : 1
+  RxOfflenBlock : 2
+  CmdIdle       : 3
+  RxCopyOverrun : 4
+  
+  Tx0RateLim    : 8 
+  Tx1RateLim    : . 
+  Tx2RateLim    : . 
+  Tx3RateLim    : . 
+  Tx4RateLim    : . 
+  Tx5RateLim    : . 
+  Tx6RateLim    : . 
+  Tx7RateLim    : . 
+ }
+
+reg DMAStatus : 32
+ {
+  RxErrorChan : 8-10
+  
+  RxErrorCode : 12-15
+   {
+    NoError    = 0
+    NoOwnBit   = 2
+    NullBuf    = 4
+    NullBufLen = 5
+    BadOffset  = 6
+   }
+   
+  TxErrorChan : 16-18
+  
+  TxErrorCode : 20-23
+   {
+    NoError      = 0
+    SOPError     = 1
+    NoOwnBit     = 2
+    NullNextBuf  = 3
+    NullBuf      = 4
+    NullBufLen   = 5
+    BadPacketLen = 6
+   }
+   
+  Idle : 31  
+ }
+
+reg DMARxOffset : 32
+ {
+  Offset : 0-15
+ }
+
+reg DMAEMControl : 32
+ {
+  Free : 0
+  Soft : 1
+ }
+
+reg DMARateControl : 32
+ {
+  SendCount : 0-13
+  IdleCount : 16-29
+ }
+
+reg DMATxIntStatus : 32
+ {
+  // bit per channel
+ }
+
+reg DMAInVector : 32 {}
+
+reg DMAEOIVector : 32 {}
+
+reg DMARxIntStatus : 32
+ {
+  RxDone   : 0-7  // bit per channel
+  RxThresh : 8-15 // bit per channel
+ }
+
+reg DMAIntStatus : 32
+ {
+  StatCounter : 0
+  Host        : 1
+ }
+
+reg DMARxThresh : 32
+ {
+  Thresh : 0-7
+ }
+
+reg DMARxFree : 32
+ {
+  Count : 0-15
+ }
 
 bar DMABar : address
  {
+  DMATxControl        = 004h
+  DMATxTeardown       = 008h
+  DMARxControl        = 014h
+  DMARxTeardown       = 018h
+  
+  DMASoftReset        = 01Ch
+  DMAControl          = 020h
+  DMAStatus           = 024h RO
+  
+  DMARxOffset         = 028h
+  DMAEMControl        = 02Ch
+  
+  DMARateControl      = hidden
+  
+  DMATx0RateControl   = 030h as DMARateControl
+  DMATx1RateControl   = .    as DMARateControl
+  DMATx2RateControl   = .    as DMARateControl
+  DMATx3RateControl   = .    as DMARateControl
+  DMATx4RateControl   = .    as DMARateControl
+  DMATx5RateControl   = .    as DMARateControl
+  DMATx6RateControl   = .    as DMARateControl
+  DMATx7RateControl   = .    as DMARateControl
+  
+  DMATxIntStatusRaw   = 080h as DMATxIntStatus
+  DMATxIntStatus      = .    as DMATxIntStatus
+  DMATxIntEnableSet   = .    as DMATxIntStatus
+  DMATxIntEnableClear = .    as DMATxIntStatus
+  
+  DMAInVector         = 090h RO
+  DMAEOIVector        = 094h
+  
+  DMARxIntStatusRaw   = 0A0h as DMARxIntStatus
+  DMARxIntStatus      = .    as DMARxIntStatus
+  DMARxIntEnableSet   = .    as DMARxIntStatus
+  DMARxIntEnableClear = .    as DMARxIntStatus
+  
+  DMAIntStatusRaw     = 0B0h as DMAIntStatus
+  DMAIntStatus        = .    as DMAIntStatus
+  DMAIntEnableSet     = .    as DMAIntStatus
+  DMAIntEnableClear   = .    as DMAIntStatus
+  
+  DMARxThresh         = hidden
+  
+  DMARx0Thresh        = 0C0h as DMARxThresh
+  DMARx1Thresh        = .    as DMARxThresh
+  DMARx2Thresh        = .    as DMARxThresh
+  DMARx3Thresh        = .    as DMARxThresh
+  DMARx4Thresh        = .    as DMARxThresh
+  DMARx5Thresh        = .    as DMARxThresh
+  DMARx6Thresh        = .    as DMARxThresh
+  DMARx7Thresh        = .    as DMARxThresh
+  
+  DMARxFree           = hidden
+  
+  DMARx0Free          = 0E0h as DMARxFree 
+  DMARx1Free          = .    as DMARxFree 
+  DMARx2Free          = .    as DMARxFree 
+  DMARx3Free          = .    as DMARxFree 
+  DMARx4Free          = .    as DMARxFree 
+  DMARx5Free          = .    as DMARxFree 
+  DMARx6Free          = .    as DMARxFree 
+  DMARx7Free          = .    as DMARxFree 
  }
  
 //----------------------------------------------------------------------------------------
 
+reg StatCounter : 32 {}
+
 bar StatBar : address
  {
+  GoodRxFrames              = . as StatCounter
+  BroadcastRxFrames         = . as StatCounter
+  MulticastRxFrames         = . as StatCounter
+  PauseRxFrames             = . as StatCounter
+  RxCRCErrors               = . as StatCounter
+  RxAlignCodeErrors         = . as StatCounter
+  OversizeRxFrames          = . as StatCounter
+  RxJabbers                 = . as StatCounter
+  ShortRxFrames             = . as StatCounter
+  RxFragments               = . as StatCounter
+  RxOctets                  = . as StatCounter
+  
+  GoodTxFrames              = . as StatCounter
+  BroadcastTxFrames         = . as StatCounter
+  MulticastTxFrames         = . as StatCounter
+  PauseTxFrames             = . as StatCounter
+  DeferredTxFrames          = . as StatCounter
+  Collisions                = . as StatCounter
+  SingleCollisionTxFrames   = . as StatCounter
+  MultipleCollisionTxFrames = . as StatCounter
+  ExcessiveCollisions       = . as StatCounter
+  LateCollisions            = . as StatCounter
+  TxUnderrun                = . as StatCounter
+  CarrierSenseErrors        = . as StatCounter
+  TxOctets                  = . as StatCounter
+  
+  Frame64RxTx               = . as StatCounter
+  Frame128RxTx              = . as StatCounter
+  Frame256RxTx              = . as StatCounter
+  Frame512RxTx              = . as StatCounter
+  Frame1024RxTx             = . as StatCounter
+  
+  NetOctets                 = . as StatCounter
+  RxStartOfFrameOverruns    = . as StatCounter
+  RxMiddleOfFrameOverruns   = . as StatCounter
+  RxDMAOverruns             = . as StatCounter
  }
  
 //----------------------------------------------------------------------------------------
@@ -237,14 +671,154 @@ bar DescBar : address
  
 //----------------------------------------------------------------------------------------
 
+reg TimeSyncControl : 32
+ {
+  Enable      : 0
+  IntTest     : 1
+  
+  Push1Enable : 8
+  Push2Enable : 9
+  Push3Enable : 10
+  Push4Enable : 11
+ }
+
+reg TimeSyncTSPush : 32
+ {
+  CmdPush : 0
+ }
+
+reg TimeSyncTSValue : 32 {}
+
+reg TimeSyncTSLoad : 32
+ {
+  Enable : 0
+ }
+
+reg TimeSyncIntStatus : 32
+ {
+  Event : 0
+ }
+
+reg TimeSyncEventPop : 32
+ {
+  CmdPop : 0
+ }
+ 
+reg TimeSyncEventTS : 32 {}
+ 
+reg TimeSyncEvent : 32
+ {
+  EthSeq : 0-15
+  
+  MsgType : 16-19
+  
+  EventType : 20-23
+   {
+    TSPush         = 0
+    TSRollover     = 1
+    TSHalfRollover = 2
+    HWTSPush       = 3
+    EthRx          = 4
+    EthTx          = 5
+   }
+  
+  Port : 24-28
+ }  
+
 bar TimeSyncBar : address
  {
+  TimeSyncControl      = 004h
+  TimeSyncTSPush       = 00Ch
+  TimeSyncTSValue      = 010h
+  TimeSyncTSLoad       = 014h
+  
+  TimeSyncIntStatusRaw = 020h as TimeSyncIntStatus
+  TimeSyncIntStatus    = 024h RO
+  TimeSyncIntEnable    = 028h as TimeSyncIntStatus
+  
+  TimeSyncEventPop     = 030h
+  TimeSyncEventTS      = 034h RO
+  TimeSyncEvent        = 038h RO
  }
  
 //----------------------------------------------------------------------------------------
 
+reg ALEControl : 32
+ {
+  EnableRateLimit        : 0
+  EnableAuthMode         : 1
+  VLANAware              : 2
+  TxRateLimit            : 3
+  Bypass                 : 4
+  EnableOUIDeny          : 5
+  EnableVID0Mode         : 6
+  LeanNoVID              : 7
+  EnableHostUnicastFlood : 8
+  AgeOutNow              : 29
+  ClearTable             : 30
+  EnableALE              : 31
+ }
+
+reg ALEPrescale : 32
+ {
+  Div : 0-19
+ }
+
+reg ALEUnknownVLAN : 32
+ {
+  MemberList           : 0-5
+  MuticastFloodMask    : 8-13
+  RegMuticastFloodMask : 16-21
+  ForceUntaggedEgress  : 24-29
+ }
+
+reg ALETableControl : 32
+ {
+  Pointer : 0-9
+  Write   : 31
+ }
+
+reg ALETableWord : 32 {}
+
+reg ALEPortControl : 32
+ {
+  State : 0-1
+   {
+    Disabled = 0
+    Blocked  = 1
+    Learn    = 2
+    Forward  = 3
+   }
+   
+  DropUntagged    : 2
+  VIDIngressCheck : 3
+  NoLearn         : 4
+  NoSAUpdate      : 5
+  MulticastLimit  : 16-23
+  BroadcastLimit  : 24-31 
+ }
+
 bar ALEBar : address
  {
+  ALEControl      = 008h
+  ALEPrescale     = 010h
+  ALEUnknownVLAN  = 018h
+  ALETableControl = 020h
+  
+  ALETableWord = hidden
+  
+  ALETableW2 = 034h as ALETableWord
+  ALETableW1 = 038h as ALETableWord
+  ALETableW0 = 03Ch as ALETableWord
+  
+  ALEPortControl = hidden
+  
+  ALEPort0Control = 040h as ALEPortControl
+  ALEPort1Control = 044h as ALEPortControl
+  ALEPort2Control = 048h as ALEPortControl
+  ALEPort3Control = 04Ch as ALEPortControl
+  ALEPort4Control = 050h as ALEPortControl
+  ALEPort5Control = 054h as ALEPortControl
  }
  
 //----------------------------------------------------------------------------------------
@@ -353,14 +927,225 @@ bar SliverBar : address
  
 //----------------------------------------------------------------------------------------
 
+reg WRSoftReset : 32
+ {
+  Reset : .
+ }
+
+reg WRControl : 32
+ {
+  IdleMode : 0-1
+   {
+    ForceIdle = 0
+    NoIdle    = 1
+   }
+   
+  StandbyMode : 2-3
+   {
+    ForceStandby = 0
+    NoStandby    = 1
+   } 
+ }
+
+reg WRIntControl : 32
+ {
+  Prescale : 0-11
+  
+  C0RxPace : 16
+  C0TxPace : .
+  C1RxPace : .
+  C1TxPace : .
+  C2RxPace : .
+  C2Txpace : .
+  
+  IntTest  : 31
+ }
+
+reg WRC0RxThreshEnable : 32
+ {
+  // bit per Rx Thresh Int
+ }
+
+reg WRC0RxEnable : 32
+ {
+  // bit per Rx Int
+ }
+
+reg WRC0TxEnable : 32
+ {
+  // bit per Tx Int
+ }
+
+reg WRC0MiscEnable : 32
+ {
+  // bit per Misc Int
+ }
+
+reg WRC0RxThreshStatus : 32
+ {
+  // bit per Rx Thresh Int
+ }
+
+reg WRC0RxStatus : 32
+ {
+  // bit per Rx Int
+ }
+ 
+reg WRC0TxStatus : 32
+ {
+  // bit per Tx Int
+ }
+ 
+reg WRC0MiscStatus : 32
+ {
+  // bit per Misc Int
+ } 
+
+reg WRC0RxIntLim : 32
+ {
+  Lim : 0-5 // number per 1 ms
+ }
+
+reg WRC0TxIntLim : 32
+ {
+  Lim : 0-5 // number per 1 ms
+ }
+
+reg WRRGMIIStatus : 32
+ {
+  Link1       : 0
+  Speed1      : 1-2
+  FullDuplex1 : 3
+  
+  Link2       : 4
+  Speed2      : 5-6
+  FullDuplex2 : 7
+ }
+
 bar WRBar : address
  {
+  WRSoftReset        = 4
+  WRControl          = .
+  WRIntControl       = .
+  
+  WRC0RxThreshEnable = .
+  WRC0RxEnable       = .
+  WRC0TxEnable       = .
+  WRC0MiscEnable     = .
+  
+  WRC1RxThreshEnable = . as WRC0RxThreshEnable
+  WRC1RxEnable       = . as WRC0RxEnable
+  WRC1TxEnable       = . as WRC0TxEnable
+  WRC1MiscEnable     = . as WRC0MiscEnable
+  
+  WRC2RxThreshEnable = . as WRC0RxThreshEnable
+  WRC2RxEnable       = . as WRC0RxEnable
+  WRC2TxEnable       = . as WRC0TxEnable
+  WRC2MiscEnable     = . as WRC0MiscEnable
+  
+  WRC0RxThreshStatus = .
+  WRC0RxStatus       = .
+  WRC0TxStatus       = .
+  WRC0MiscStatus     = .
+  
+  WRC1RxThreshStatus = . as WRC0RxThreshStatus
+  WRC1RxStatus       = . as WRC0RxStatus
+  WRC1TxStatus       = . as WRC0TxStatus
+  WRC1MiscStatus     = . as WRC0MiscStatus
+  
+  WRC2RxThreshStatus = . as WRC0RxThreshStatus
+  WRC2RxStatus       = . as WRC0RxStatus
+  WRC2TxStatus       = . as WRC0TxStatus
+  WRC2MiscStatus     = . as WRC0MiscStatus
+  
+  WRC0RxIntLim       = .
+  WRC0TxIntLim       = .
+  
+  WRC1RxIntLim       = . as WRC0RxIntLim
+  WRC1TxIntLim       = . as WRC0TxIntLim
+  
+  WRC2RxIntLim       = . as WRC0RxIntLim
+  WRC2TxIntLim       = . as WRC0TxIntLim
+  
+  WRRGMIIStatus      = 088h RO 
  }
  
 //----------------------------------------------------------------------------------------
 
+reg MDIOControl : 32
+ {
+  ClockDiv        : 0-15
+  
+  IntTestEnable   : 17
+  FaultEnable     : 18
+  FaultState      : 19
+  PreambleDisable : 20
+  
+  LastChannel     : 24-28
+  
+  Enable          : 30
+  Idle            : 31
+ }
+
+reg MDIOAlive : 32
+ {
+  // bit per address
+ }
+
+reg MDIOLink : 32
+ {
+  // bit per address
+ }
+
+reg MDIOLinkIntStatus : 32
+ {
+  // bit per channel
+ }
+
+reg MDIOUserIntStatus : 32
+ {
+  // bit per channel
+ }
+
+reg MDIOUserAccess : 32
+ {
+  Data  : 0-15
+  Phy   : 16-20
+  Reg   : 21-25
+  Ack   : 29
+  Write : 30
+  Go    : 31
+ }
+
+reg MDIOUserPhySel : 32
+ {
+  Phy       : 0-4
+  IntEnable : 6
+  ExtSource : 7
+ }
+
 bar MDIOBar : address
  {
+  MDIOControl            = 4
+  MDIOAlive              = .
+  MDIOLink               = .
+  
+  MDIOLinkIntStatusRaw   = . as MDIOLinkIntStatus
+  MDIOLinkIntStatus      = .
+  
+  MDIOUserIntStatusRaw   = . as MDIOUserIntStatus
+  MDIOUserIntStatus      = .
+  MDIOUserIntEnableSet   = . as MDIOUserIntStatus
+  MDIOUserIntEnableClear = . as MDIOUserIntStatus
+
+  MDIOUserAccess         = hidden
+  MDIOUserPhySel         = hidden
+  
+  MDIOUserAccess0        = 080h as MDIOUserAccess
+  MDIOUserPhySel0        = .    as MDIOUserPhySel
+  
+  MDIOUserAccess1        = .    as MDIOUserAccess
+  MDIOUserPhySel1        = .    as MDIOUserPhySel
  } 
  
 //----------------------------------------------------------------------------------------

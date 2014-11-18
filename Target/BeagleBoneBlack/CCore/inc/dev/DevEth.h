@@ -46,7 +46,11 @@ class EthControl : InstanceLock<EthControl>
    
    void reset();
    
+   void prepare();
+   
    void disable();
+   
+   void show();
    
   public:
   

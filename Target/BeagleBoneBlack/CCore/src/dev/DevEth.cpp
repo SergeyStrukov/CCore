@@ -187,7 +187,36 @@ void EthControl::enable()
   
 void EthControl::reset()
  {
+  // TODO
+ }
+
+void EthControl::prepare()
+ {
+  // TODO
+ }
+
+void EthControl::disable()
+ {
+  Mutex::Lock lock(Dev::ControlMutex);
+  
+  using namespace AM3359::PRCM;
+  
+  {
+   BarPER bar;
+   
+   bar.get_Eth()
+      .set_Mode(ClockStandbyControl_Mode_Disable)
+      .set(bar.to_Eth());
+   
+   while( bar.get_Eth().get_IdleStatus()!=ClockStandbyControl_IdleStatus_Disabled );
+  }
+ }
+
+void EthControl::show()
+ {
   using namespace AM3359::ETH;
+  
+#if 1  
   
   {
    BarSliver1 bar;
@@ -219,24 +248,7 @@ void EthControl::reset()
    Printf(Con,"SliverTxGap = #;\n",bar.get_SliverTxGap());
   }
   
-  // TODO
- }
-
-void EthControl::disable()
- {
-  Mutex::Lock lock(Dev::ControlMutex);
-  
-  using namespace AM3359::PRCM;
-  
-  {
-   BarPER bar;
-   
-   bar.get_Eth()
-      .set_Mode(ClockStandbyControl_Mode_Disable)
-      .set(bar.to_Eth());
-   
-   while( bar.get_Eth().get_IdleStatus()!=ClockStandbyControl_IdleStatus_Disabled );
-  }
+#endif  
  }
 
 EthControl::EthControl()
@@ -244,12 +256,16 @@ EthControl::EthControl()
  {
   connect();
   enable();
+  
+  show();
+  
   reset();
+  prepare();
  }
    
 EthControl::~EthControl()
  {
-  //reset();
+  reset();
   disable();
  }
 
