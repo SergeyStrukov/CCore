@@ -940,16 +940,16 @@ struct Type_SwitchRxFlowControl
    }
  };
  
-/* struct Type_SwitchVLANLType */ 
+/* struct Type_SwitchLType */ 
 
-struct Type_SwitchVLANLType
+struct Type_SwitchLType
  {
   typedef uint32 Type;
 
   Type value;
 
 
-  explicit Type_SwitchVLANLType(Type value_=0) : value(value_) {}
+  explicit Type_SwitchLType(Type value_=0) : value(value_) {}
  
 
   operator Type() const { return value; }
@@ -957,15 +957,15 @@ struct Type_SwitchVLANLType
   void operator = (Type value_) { value=value_; }
  
   template <class Bar>
-  Type_SwitchVLANLType & setTo(Bar &bar) { bar.set_SwitchVLANLType(*this); return *this; }
+  Type_SwitchLType & setTo(Bar &bar) { bar.set_SwitchLType(*this); return *this; }
  
 
   template <class Bar>
-  Type_SwitchVLANLType & setTo(Bar &bar,uint32 ind) { bar.set_SwitchVLANLType(ind,*this); return *this; }
+  Type_SwitchLType & setTo(Bar &bar,uint32 ind) { bar.set_SwitchLType(ind,*this); return *this; }
  
 
   template <class T>
-  Type_SwitchVLANLType & set(T to) { to(*this); return *this; }
+  Type_SwitchLType & set(T to) { to(*this); return *this; }
  
 
   Type get_LType1() const
@@ -973,7 +973,7 @@ struct Type_SwitchVLANLType
     return (value>>0)&0xFFFF;
    }
  
-  Type_SwitchVLANLType & set_LType1(Type field)
+  Type_SwitchLType & set_LType1(Type field)
    {
     value=((field&0xFFFF)<<0)|(value&0xFFFF0000);
 
@@ -986,7 +986,7 @@ struct Type_SwitchVLANLType
     return (value>>16)&0xFFFF;
    }
  
-  Type_SwitchVLANLType & set_LType2(Type field)
+  Type_SwitchLType & set_LType2(Type field)
    {
     value=((field&0xFFFF)<<16)|(value&0xFFFF);
 
@@ -1029,16 +1029,16 @@ struct Type_SwitchVLANLType
    }
  };
  
-/* struct Type_SwitchTSVLANLType */ 
+/* struct Type_SwitchTSLType */ 
 
-struct Type_SwitchTSVLANLType
+struct Type_SwitchTSLType
  {
   typedef uint32 Type;
 
   Type value;
 
 
-  explicit Type_SwitchTSVLANLType(Type value_=0) : value(value_) {}
+  explicit Type_SwitchTSLType(Type value_=0) : value(value_) {}
  
 
   operator Type() const { return value; }
@@ -1046,15 +1046,15 @@ struct Type_SwitchTSVLANLType
   void operator = (Type value_) { value=value_; }
  
   template <class Bar>
-  Type_SwitchTSVLANLType & setTo(Bar &bar) { bar.set_SwitchTSVLANLType(*this); return *this; }
+  Type_SwitchTSLType & setTo(Bar &bar) { bar.set_SwitchTSLType(*this); return *this; }
  
 
   template <class Bar>
-  Type_SwitchTSVLANLType & setTo(Bar &bar,uint32 ind) { bar.set_SwitchTSVLANLType(ind,*this); return *this; }
+  Type_SwitchTSLType & setTo(Bar &bar,uint32 ind) { bar.set_SwitchTSLType(ind,*this); return *this; }
  
 
   template <class T>
-  Type_SwitchTSVLANLType & set(T to) { to(*this); return *this; }
+  Type_SwitchTSLType & set(T to) { to(*this); return *this; }
  
 
   Type get_LType1() const
@@ -1062,7 +1062,7 @@ struct Type_SwitchTSVLANLType
     return (value>>0)&0xFFFF;
    }
  
-  Type_SwitchTSVLANLType & set_LType1(Type field)
+  Type_SwitchTSLType & set_LType1(Type field)
    {
     value=((field&0xFFFF)<<0)|(value&0xFFFF0000);
 
@@ -1075,7 +1075,7 @@ struct Type_SwitchTSVLANLType
     return (value>>16)&0x3F;
    }
  
-  Type_SwitchTSVLANLType & set_LType2(Type field)
+  Type_SwitchTSLType & set_LType2(Type field)
    {
     value=((field&0x3F)<<16)|(value&0xFFC0FFFF);
 
@@ -10852,29 +10852,29 @@ struct SwitchBar
  
   static Type_SwitchRxFlowControl ones_SwitchRxFlowControl() { return Type_SwitchRxFlowControl(Type_SwitchRxFlowControl::Type(-1)); }
  
-  //--- SwitchVLANLType
+  //--- SwitchLType
 
-  Type_SwitchVLANLType get_SwitchVLANLType() { return Type_SwitchVLANLType(rw.template get<uint32>(0x28)); }
+  Type_SwitchLType get_SwitchLType() { return Type_SwitchLType(rw.template get<uint32>(0x28)); }
  
-  void set_SwitchVLANLType(Type_SwitchVLANLType value) { rw.set(0x28,value.value); }
+  void set_SwitchLType(Type_SwitchLType value) { rw.set(0x28,value.value); }
  
-  Setter<Type_SwitchVLANLType> to_SwitchVLANLType() { return Setter<Type_SwitchVLANLType>(rw,0x28); }
+  Setter<Type_SwitchLType> to_SwitchLType() { return Setter<Type_SwitchLType>(rw,0x28); }
  
-  static Type_SwitchVLANLType null_SwitchVLANLType() { return Type_SwitchVLANLType(0); }
+  static Type_SwitchLType null_SwitchLType() { return Type_SwitchLType(0); }
  
-  static Type_SwitchVLANLType ones_SwitchVLANLType() { return Type_SwitchVLANLType(Type_SwitchVLANLType::Type(-1)); }
+  static Type_SwitchLType ones_SwitchLType() { return Type_SwitchLType(Type_SwitchLType::Type(-1)); }
  
-  //--- SwitchTSVLANLType
+  //--- SwitchTSLType
 
-  Type_SwitchTSVLANLType get_SwitchTSVLANLType() { return Type_SwitchTSVLANLType(rw.template get<uint32>(0x2C)); }
+  Type_SwitchTSLType get_SwitchTSLType() { return Type_SwitchTSLType(rw.template get<uint32>(0x2C)); }
  
-  void set_SwitchTSVLANLType(Type_SwitchTSVLANLType value) { rw.set(0x2C,value.value); }
+  void set_SwitchTSLType(Type_SwitchTSLType value) { rw.set(0x2C,value.value); }
  
-  Setter<Type_SwitchTSVLANLType> to_SwitchTSVLANLType() { return Setter<Type_SwitchTSVLANLType>(rw,0x2C); }
+  Setter<Type_SwitchTSLType> to_SwitchTSLType() { return Setter<Type_SwitchTSLType>(rw,0x2C); }
  
-  static Type_SwitchTSVLANLType null_SwitchTSVLANLType() { return Type_SwitchTSVLANLType(0); }
+  static Type_SwitchTSLType null_SwitchTSLType() { return Type_SwitchTSLType(0); }
  
-  static Type_SwitchTSVLANLType ones_SwitchTSVLANLType() { return Type_SwitchTSVLANLType(Type_SwitchTSVLANLType::Type(-1)); }
+  static Type_SwitchTSLType ones_SwitchTSLType() { return Type_SwitchTSLType(Type_SwitchTSLType::Type(-1)); }
  
   //--- SwitchDLRLType
 

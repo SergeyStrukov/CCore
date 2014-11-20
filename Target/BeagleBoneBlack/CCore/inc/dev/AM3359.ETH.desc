@@ -78,13 +78,13 @@ reg SwitchRxFlowControl : 32
   Port2Enable : .
  }
 
-reg SwitchVLANLType : 32
+reg SwitchLType : 32
  {
   LType1 : 0-15
   LType2 : 16-31
  }
 
-reg SwitchTSVLANLType : 32
+reg SwitchTSLType : 32
  {
   LType1 : 0-15
   LType2 : 16-21
@@ -106,8 +106,8 @@ bar SwitchBar : address
   SwitchTxShortGap    = .
   SwitchTxStart       = .
   SwitchRxFlowControl = .
-  SwitchVLANLType     = .
-  SwitchTSVLANLType   = .
+  SwitchLType         = .
+  SwitchTSLType       = .
   SwitchDLRLType      = .
  }
  

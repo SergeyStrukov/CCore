@@ -187,12 +187,190 @@ void EthControl::enable()
   
 void EthControl::reset()
  {
-  // TODO
+  using namespace AM3359::ETH;
+  
+  {
+   BarWR bar;
+   
+   bar.null_WRSoftReset()
+      .setbit(WRSoftReset_Reset)
+      .setTo(bar);
+   
+   while( bar.get_WRSoftReset().maskbit(WRSoftReset_Reset)!=0 );
+  }
+  
+  {
+   BarSwitch bar;
+   
+   bar.null_SwitchSoftReset()
+      .setbit(SwitchSoftReset_Reset)
+      .setTo(bar);
+   
+   while( bar.get_SwitchSoftReset().maskbit(SwitchSoftReset_Reset)!=0 );
+  }
+  
+  {
+   BarSliver1 bar;
+   
+   bar.null_SliverSoftReset()
+      .setbit(SliverSoftReset_Reset)
+      .setTo(bar);
+   
+   while( bar.get_SliverSoftReset().maskbit(SliverSoftReset_Reset)!=0 );
+  }
+  
+  {
+   BarSliver2 bar;
+   
+   bar.null_SliverSoftReset()
+      .setbit(SliverSoftReset_Reset)
+      .setTo(bar);
+   
+   while( bar.get_SliverSoftReset().maskbit(SliverSoftReset_Reset)!=0 );
+  }
+  
+  {
+   BarDMA bar;
+   
+   bar.null_DMASoftReset()
+      .setbit(DMASoftReset_Reset)
+      .setTo(bar);
+   
+   while( bar.get_DMASoftReset().maskbit(DMASoftReset_Reset)!=0 );
+  }
+
+  {
+   BarDesc bar;
+   
+   for(uint32 ind=0; ind<8 ;ind++) bar.set_HeadTx_null(ind);
+   
+   for(uint32 ind=0; ind<8 ;ind++) bar.set_HeadRx_null(ind);
+   
+   for(uint32 ind=0; ind<8 ;ind++) bar.set_CompleteTx_null(ind);
+   
+   for(uint32 ind=0; ind<8 ;ind++) bar.set_CompleteRx_null(ind);
+  }
  }
 
 void EthControl::prepare()
  {
-  // TODO
+  using namespace AM3359::ETH;
+  
+  {
+   BarWR bar;
+   
+   bar.null_WRControl()
+      .set_IdleMode(WRControl_IdleMode_NoIdle)
+      .set_StandbyMode(WRControl_StandbyMode_NoStandby)
+      .setTo(bar);
+   
+   bar.null_WRIntControl()
+      .setbit(WRIntControl_C0RxPace|WRIntControl_C0TxPace)
+      .setTo(bar);
+   
+   bar.set_WRC0RxThreshEnable(0xFF);
+   bar.set_WRC0RxEnable(0xFF);
+   bar.set_WRC0TxEnable(0xFF);
+   bar.set_WRC0MiscEnable(0x1F);
+   
+   bar.null_WRC0RxIntLim().set_Lim(10).setTo(bar);
+   bar.null_WRC0TxIntLim().set_Lim(10).setTo(bar);
+  } 
+  
+  {
+   BarSwitch bar;
+
+   bar.null_SwitchControl()
+      .setTo(bar);
+
+   bar.null_SwitchStatPort()
+      .setbit(SwitchStatPort_Port0Enable|SwitchStatPort_Port1Enable)
+      .setTo(bar);
+
+   bar.null_SwitchTxPriType()
+      .setTo(bar);
+
+   bar.null_SwitchRate()
+      .set_Host(3)
+      .set_Sliver(3)
+      .setTo(bar);
+
+   bar.null_SwitchTxShortGap()
+      .set_Thresh(11)
+      .setTo(bar);
+   
+   bar.null_SwitchTxStart()
+      .set_Len(32)
+      .setTo(bar);
+   
+   bar.null_SwitchRxFlowControl() // TODO
+      .setbit(SwitchRxFlowControl_Port0Enable|SwitchRxFlowControl_Port1Enable)
+      .setTo(bar);
+  }
+  
+  {
+   BarPort0 bar;
+   
+   // TODO
+   
+  }
+  
+  {
+   BarPort1 bar;
+   
+   // TODO
+   
+  }
+  
+  {
+   BarPort2 bar;
+   
+   // TODO
+   
+  }
+
+  {
+   BarALE bar;
+   
+   // TODO
+   
+  } 
+  
+  
+  {
+   BarTimeSync bar;
+
+   // TODO
+  
+  }
+  
+  {
+   BarSliver1 bar;
+   
+   // TODO
+   
+  }
+  
+  {
+   BarSliver2 bar;
+   
+   // TODO
+   
+  }
+  
+  {
+   BarDMA bar;
+
+   // TODO
+   
+  }
+  
+  {
+   BarMDIO bar;
+   
+   // TODO
+   
+  }
  }
 
 void EthControl::disable()
@@ -215,8 +393,147 @@ void EthControl::disable()
 void EthControl::show()
  {
   using namespace AM3359::ETH;
+
+#if 0
   
-#if 1  
+  {
+   BarWR bar;
+   
+   Printf(Con,"WRControl = #;\n",bar.get_WRControl());
+   Printf(Con,"WRIntControl = #;\n",bar.get_WRIntControl());
+   
+   Printf(Con,"WRC0RxThreshEnable = #;\n",bar.get_WRC0RxThreshEnable());
+   Printf(Con,"WRC0RxEnable = #;\n",bar.get_WRC0RxEnable());
+   Printf(Con,"WRC0TxEnable = #;\n",bar.get_WRC0TxEnable());
+   Printf(Con,"WRC0MiscEnable = #;\n",bar.get_WRC0MiscEnable());
+   
+   Printf(Con,"WRC0RxIntLim = #;\n",bar.get_WRC0RxIntLim());
+   Printf(Con,"WRC0TxIntLim = #;\n",bar.get_WRC0TxIntLim());
+   
+#if 0   
+   
+   Printf(Con,"WRC1RxThreshEnable = #;\n",bar.get_WRC1RxThreshEnable());
+   Printf(Con,"WRC1RxEnable = #;\n",bar.get_WRC1RxEnable());
+   Printf(Con,"WRC1TxEnable = #;\n",bar.get_WRC1TxEnable());
+   Printf(Con,"WRC1MiscEnable = #;\n",bar.get_WRC1MiscEnable());
+   
+   Printf(Con,"WRC1RxIntLim = #;\n",bar.get_WRC1RxIntLim());
+   Printf(Con,"WRC1TxIntLim = #;\n",bar.get_WRC1TxIntLim());
+   
+   Printf(Con,"WRC2RxThreshEnable = #;\n",bar.get_WRC2RxThreshEnable());
+   Printf(Con,"WRC2RxEnable = #;\n",bar.get_WRC2RxEnable());
+   Printf(Con,"WRC2TxEnable = #;\n",bar.get_WRC2TxEnable());
+   Printf(Con,"WRC2MiscEnable = #;\n",bar.get_WRC2MiscEnable());
+   
+   Printf(Con,"WRC2RxIntLim = #;\n",bar.get_WRC2RxIntLim());
+   Printf(Con,"WRC2TxIntLim = #;\n",bar.get_WRC2TxIntLim());
+   
+#endif   
+   
+   Printf(Con,"WRRGMIIStatus = #;\n",bar.get_WRRGMIIStatus());
+  }
+  
+#endif  
+  
+#if 0
+  
+  {
+   BarSwitch bar;
+   
+   Printf(Con,"SwitchControl = #;\n",bar.get_SwitchControl());
+   Printf(Con,"SwitchStatPort = #;\n",bar.get_SwitchStatPort());
+   Printf(Con,"SwitchTxPriType = #;\n",bar.get_SwitchTxPriType());
+   Printf(Con,"SwitchRate = #;\n",bar.get_SwitchRate());
+   Printf(Con,"SwitchTxShortGap = #;\n",bar.get_SwitchTxShortGap());
+   Printf(Con,"SwitchTxStart = #;\n",bar.get_SwitchTxStart());
+   Printf(Con,"SwitchRxFlowControl = #;\n",bar.get_SwitchRxFlowControl()); // Port0Enable
+   Printf(Con,"SwitchVLANLType = #;\n",bar.get_SwitchLType());             
+   Printf(Con,"SwitchTSVLANLType = #;\n",bar.get_SwitchTSLType());          
+   Printf(Con,"SwitchDLRLType = #;\n\n",bar.get_SwitchDLRLType());         
+  }
+  
+#endif  
+  
+#if 1
+  
+  {
+   BarPort0 bar;
+   
+   Printf(Con,"PortControl = #;\n",bar.get_PortControl());
+   Printf(Con,"PortFIFOLen = #;\n",bar.get_PortFIFOLen());
+   Printf(Con,"PortFIFOUse = #;\n",bar.get_PortFIFOUse());
+   Printf(Con,"PortTxFIFOControl = #;\n",bar.get_PortTxFIFOControl());
+   Printf(Con,"PortVLANControl = #;\n",bar.get_PortVLANControl());
+   Printf(Con,"PortTxPriMap = #;\n",bar.get_PortTxPriMap());
+   Printf(Con,"PortTxDMAPriMap = #;\n",bar.get_PortTxDMAPriMap());
+   Printf(Con,"PortRxDMAPriMap = #;\n",bar.get_PortRxDMAPriMap());
+   Printf(Con,"PortTOSPriMap0 = #;\n",bar.get_PortTOSPriMap0());
+   Printf(Con,"PortTOSPriMap1 = #;\n",bar.get_PortTOSPriMap1());
+   Printf(Con,"PortTOSPriMap2 = #;\n",bar.get_PortTOSPriMap2());
+   Printf(Con,"PortTOSPriMap3 = #;\n",bar.get_PortTOSPriMap3());
+   Printf(Con,"PortTOSPriMap4 = #;\n",bar.get_PortTOSPriMap4());
+   Printf(Con,"PortTOSPriMap5 = #;\n",bar.get_PortTOSPriMap5());
+   Printf(Con,"PortTOSPriMap6 = #;\n",bar.get_PortTOSPriMap6());
+   Printf(Con,"PortTOSPriMap7 = #;\n\n",bar.get_PortTOSPriMap7());
+  }
+  
+#endif
+  
+#if 0
+  
+  {
+   BarPort1 bar;
+   
+   Printf(Con,"PortControl = #;\n",bar.get_PortControl());
+   Printf(Con,"PortFIFOLen = #;\n",bar.get_PortFIFOLen());
+   Printf(Con,"PortFIFOUse = #;\n",bar.get_PortFIFOUse());
+   Printf(Con,"PortTxFIFOControl = #;\n",bar.get_PortTxFIFOControl());
+   Printf(Con,"PortVLANControl = #;\n",bar.get_PortVLANControl());
+   Printf(Con,"PortTxPriMap = #;\n",bar.get_PortTxPriMap());
+   Printf(Con,"PortTimeSync = #;\n",bar.get_PortTimeSync());
+   Printf(Con,"PortMACHi = #;\n",bar.get_PortMACHi());
+   Printf(Con,"PortMACLo = #;\n",bar.get_PortMACLo());
+   Printf(Con,"PortSendPercent = #;\n",bar.get_PortSendPercent());
+   Printf(Con,"PortTOSPriMap0 = #;\n",bar.get_PortTOSPriMap0());
+   Printf(Con,"PortTOSPriMap1 = #;\n",bar.get_PortTOSPriMap1());
+   Printf(Con,"PortTOSPriMap2 = #;\n",bar.get_PortTOSPriMap2());
+   Printf(Con,"PortTOSPriMap3 = #;\n",bar.get_PortTOSPriMap3());
+   Printf(Con,"PortTOSPriMap4 = #;\n",bar.get_PortTOSPriMap4());
+   Printf(Con,"PortTOSPriMap5 = #;\n",bar.get_PortTOSPriMap5());
+   Printf(Con,"PortTOSPriMap6 = #;\n",bar.get_PortTOSPriMap6());
+   Printf(Con,"PortTOSPriMap7 = #;\n\n",bar.get_PortTOSPriMap7());
+  }
+  
+#endif  
+  
+#if 0
+  
+  {
+   BarPort2 bar;
+   
+   Printf(Con,"PortControl = #;\n",bar.get_PortControl());
+   Printf(Con,"PortFIFOLen = #;\n",bar.get_PortFIFOLen());
+   Printf(Con,"PortFIFOUse = #;\n",bar.get_PortFIFOUse());
+   Printf(Con,"PortTxFIFOControl = #;\n",bar.get_PortTxFIFOControl());
+   Printf(Con,"PortVLANControl = #;\n",bar.get_PortVLANControl());
+   Printf(Con,"PortTxPriMap = #;\n",bar.get_PortTxPriMap());
+   Printf(Con,"PortTimeSync = #;\n",bar.get_PortTimeSync());
+   Printf(Con,"PortMACHi = #;\n",bar.get_PortMACHi());
+   Printf(Con,"PortMACLo = #;\n",bar.get_PortMACLo());
+   Printf(Con,"PortSendPercent = #;\n",bar.get_PortSendPercent());
+   Printf(Con,"PortTOSPriMap0 = #;\n",bar.get_PortTOSPriMap0());
+   Printf(Con,"PortTOSPriMap1 = #;\n",bar.get_PortTOSPriMap1());
+   Printf(Con,"PortTOSPriMap2 = #;\n",bar.get_PortTOSPriMap2());
+   Printf(Con,"PortTOSPriMap3 = #;\n",bar.get_PortTOSPriMap3());
+   Printf(Con,"PortTOSPriMap4 = #;\n",bar.get_PortTOSPriMap4());
+   Printf(Con,"PortTOSPriMap5 = #;\n",bar.get_PortTOSPriMap5());
+   Printf(Con,"PortTOSPriMap6 = #;\n",bar.get_PortTOSPriMap6());
+   Printf(Con,"PortTOSPriMap7 = #;\n\n",bar.get_PortTOSPriMap7());
+  }
+  
+#endif
+  
+#if 0
   
   {
    BarSliver1 bar;
@@ -233,6 +550,10 @@ void EthControl::show()
    Printf(Con,"SliverTxGap = #;\n\n",bar.get_SliverTxGap());
   }
   
+#endif
+  
+#if 0
+  
   {
    BarSliver2 bar;
    
@@ -245,7 +566,47 @@ void EthControl::show()
    Printf(Con,"SliverTxPause = #;\n",bar.get_SliverTxPause());
    Printf(Con,"SliverEMControl = #;\n",bar.get_SliverEMControl());
    Printf(Con,"SliverRxPriMap = #;\n",bar.get_SliverRxPriMap());
-   Printf(Con,"SliverTxGap = #;\n",bar.get_SliverTxGap());
+   Printf(Con,"SliverTxGap = #;\n\n",bar.get_SliverTxGap());
+  }
+  
+#endif  
+  
+#if 0
+  
+  {
+   BarTimeSync bar;
+   
+   Printf(Con,"TimeSyncControl = #;\n",bar.get_TimeSyncControl());
+   Printf(Con,"TimeSyncTSPush = #;\n",bar.get_TimeSyncTSPush());
+   Printf(Con,"TimeSyncTSValue = #;\n",bar.get_TimeSyncTSValue());
+   Printf(Con,"TimeSyncTSLoad = #;\n",bar.get_TimeSyncTSLoad());
+  }
+  
+#endif  
+
+#if 0
+  
+  {
+   BarALE bar;
+   
+   Printf(Con,"ALEControl = #;\n",bar.get_ALEControl());
+   Printf(Con,"ALEPrescale = #;\n",bar.get_ALEPrescale());
+   Printf(Con,"ALEUnknownVLAN = #;\n",bar.get_ALEUnknownVLAN());
+   Printf(Con,"ALETableControl = #;\n",bar.get_ALETableControl());
+   Printf(Con,"ALEPort0Control = #;\n",bar.get_ALEPort0Control());
+   Printf(Con,"ALEPort1Control = #;\n",bar.get_ALEPort1Control());
+   Printf(Con,"ALEPort2Control = #;\n",bar.get_ALEPort2Control());
+   Printf(Con,"ALEPort3Control = #;\n",bar.get_ALEPort3Control());
+   Printf(Con,"ALEPort4Control = #;\n",bar.get_ALEPort4Control());
+   Printf(Con,"ALEPort5Control = #;\n",bar.get_ALEPort5Control());
+  }
+  
+#endif  
+
+#if 0
+  
+  {
+   Printf(Con," = #;\n",bar.get_());
   }
   
 #endif  
@@ -260,7 +621,12 @@ EthControl::EthControl()
   show();
   
   reset();
+  
+  //show();
+  
   prepare();
+  
+  //show();
  }
    
 EthControl::~EthControl()
