@@ -109,7 +109,11 @@ class HashMap : NoCopy , HashBase
      template <class Func> 
      bool complete(Rec *base,Func func) 
       {
+       if( !count ) return true;
+       
        off-=count;
+       
+       if( count==1 ) return true;
        
        base+=off;
        
@@ -117,16 +121,13 @@ class HashMap : NoCopy , HashBase
        
        bool ret=true;
        
-       if( count>=2 )
-         {
-          for(count--; count ;count--,base++)
-            if( !( base[0] < base[1] ) )
-              {
-               func(base[0].str,base[0].obj,base[1].obj);
-               
-               ret=false;
-              }
-         }
+       for(ulen cnt=count-1; cnt ;cnt--,base++)
+         if( !( base[0] < base[1] ) )
+           {
+            func(base[0].str,base[0].obj,base[1].obj);
+            
+            ret=false;
+           }
        
        return ret;
       }

@@ -125,6 +125,7 @@ InstanceLock.h
 Regen
 
   Fixed generated bar constructor and the method setTo(Bar &bar,uint32 ind).
+  Fixed name binding bug.
 
 WIN32 
 
