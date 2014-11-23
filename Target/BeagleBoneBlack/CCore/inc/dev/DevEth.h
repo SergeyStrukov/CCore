@@ -61,6 +61,10 @@ class EthControl : InstanceLock<EthControl>
    const Net::MACAddress & getAddress1() const { return address1; }
    
    const Net::MACAddress & getAddress2() const { return address2; }
+   
+   void enablePort1(bool full_duplex);
+   
+   void setPort1(bool full_duplex);
  };
 
 } // namespace Dev

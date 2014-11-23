@@ -6,7 +6,7 @@ enum Bits_SwitchControl : uint32
  {
   SwitchControl_FIFOLoopback = 0x00000001,
   SwitchControl_VLANAware    = 0x00000002,
-  SwitchControl_Port2VLAN    = 0x00000004,
+  SwitchControl_Port0VLAN    = 0x00000004,
   SwitchControl_DLREnable    = 0x00000008
  };
  
@@ -89,11 +89,11 @@ struct Type_SwitchControl
          }
       }
 
-    if( value&SwitchControl_Port2VLAN )
+    if( value&SwitchControl_Port0VLAN )
       {
        if( first )
          {
-          Putobj(out,"Port2VLAN");
+          Putobj(out,"Port0VLAN");
 
           first=false;
          }
@@ -101,7 +101,7 @@ struct Type_SwitchControl
          {
           out.put('|');
 
-          Putobj(out,"Port2VLAN");
+          Putobj(out,"Port0VLAN");
          }
       }
 

@@ -303,60 +303,118 @@ void EthControl::prepare()
       .set_Len(32)
       .setTo(bar);
    
-   bar.null_SwitchRxFlowControl() // TODO
+   bar.null_SwitchRxFlowControl()
       .setbit(SwitchRxFlowControl_Port0Enable|SwitchRxFlowControl_Port1Enable)
       .setTo(bar);
   }
   
   {
    BarPort0 bar;
+
+   bar.null_PortControl()
+      .setTo(bar);
    
-   // TODO
+   bar.null_PortFIFOLen()
+      .set_RxLen(PortFIFOLen_RxLen_Default0)
+      .set_TxLen(PortFIFOLen_TxLen_Default0)
+      .setTo(bar);
    
+   bar.null_PortTxFIFOControl()
+      .set_WordLen(0xC0)
+      .set_Rem(4)
+      .set_Mode(PortTxFIFOControl_Mode_Normal)
+      .setTo(bar); 
+   
+   bar.null_PortVLANControl()
+      .setTo(bar);
+   
+   bar.null_PortTxPriMap()
+      .set_Pri0(0)
+      .set_Pri1(0)
+      .set_Pri2(0)
+      .set_Pri3(0)
+      .set_Pri4(0)
+      .set_Pri5(0)
+      .set_Pri6(0)
+      .set_Pri7(0)
+      .setTo(bar);
+   
+   bar.null_PortRxDMAPriMap()
+      .set_P1Pri0(0)
+      .set_P1Pri1(0)
+      .set_P1Pri2(0)
+      .set_P1Pri3(0)
+      .set_P2Pri0(0)
+      .set_P2Pri1(0)
+      .set_P2Pri2(0)
+      .set_P2Pri3(0)
+      .setTo(bar);
   }
   
   {
    BarPort1 bar;
    
-   // TODO
+   bar.null_PortControl()
+      .setTo(bar);
    
+   bar.null_PortFIFOLen()
+      .set_RxLen((Field_PortFIFOLen_RxLen)(PortFIFOLen_RxLen_Default+3))
+      .set_TxLen((Field_PortFIFOLen_TxLen)(PortFIFOLen_TxLen_Default-3))
+      .setTo(bar);
+   
+   bar.null_PortTxFIFOControl()
+      .set_WordLen(0xC0)
+      .set_Rem(4)
+      .set_Mode(PortTxFIFOControl_Mode_Normal)
+      .set_HostRem(8)
+      .setTo(bar);
+   
+   bar.null_PortVLANControl()
+      .setTo(bar);
+   
+   bar.null_PortTxPriMap()
+      .set_Pri0(0)
+      .set_Pri1(0)
+      .set_Pri2(0)
+      .set_Pri3(0)
+      .set_Pri4(0)
+      .set_Pri5(0)
+      .set_Pri6(0)
+      .set_Pri7(0)
+      .setTo(bar);
+
+   bar.null_PortMACHi()
+      .set_Byte0(address1.address[0])
+      .set_Byte1(address1.address[1])
+      .setTo(bar);
+   
+   bar.null_PortMACLo()
+      .set_Byte2(address1.address[2])
+      .set_Byte3(address1.address[3])
+      .set_Byte4(address1.address[4])
+      .set_Byte5(address1.address[5])
+      .setTo(bar);
   }
   
-  {
-   BarPort2 bar;
-   
-   // TODO
-   
-  }
-
   {
    BarALE bar;
-   
-   // TODO
-   
-  } 
-  
-  
-  {
-   BarTimeSync bar;
 
-   // TODO
-  
-  }
-  
-  {
-   BarSliver1 bar;
+   bar.null_ALEControl()
+      .setbit(ALEControl_ClearTable)
+      .setTo(bar);
    
-   // TODO
+   bar.null_ALEControl()
+      .setbit(ALEControl_EnableALE)
+      .setTo(bar);
    
-  }
-  
-  {
-   BarSliver2 bar;
+   bar.null_ALEPortControl()
+      .set_State(ALEPortControl_State_Forward)
+      .set(bar.to_ALEPort0Control());
    
-   // TODO
-   
-  }
+   bar.null_ALEPortControl()
+      .set_State(ALEPortControl_State_Forward)
+      .set(bar.to_ALEPort1Control());
+  } 
   
   {
    BarDMA bar;
@@ -454,7 +512,7 @@ void EthControl::show()
   
 #endif  
   
-#if 1
+#if 0
   
   {
    BarPort0 bar;
@@ -584,7 +642,7 @@ void EthControl::show()
   
 #endif  
 
-#if 0
+#if 1
   
   {
    BarALE bar;
@@ -633,6 +691,31 @@ EthControl::~EthControl()
  {
   reset();
   disable();
+ }
+
+void EthControl::enablePort1(bool full_duplex)
+ {
+  using namespace AM3359::ETH;
+  
+  BarSliver1 bar;
+
+  bar.null_SliverControl()
+     .setbit(SliverControl_RxFlowControlEnable|SliverControl_TxFlowControlEnable
+             |SliverControl_GMIIEnable|SliverControl_TxPaceEnable)
+     .setbitIf(full_duplex,SliverControl_FullDuplex)         
+     .setTo(bar);
+ }
+
+void EthControl::setPort1(bool full_duplex)
+ {
+  using namespace AM3359::ETH;
+  
+  BarSliver1 bar;
+
+  bar.get_SliverControl()
+     .clearbit(SliverControl_FullDuplex)
+     .setbitIf(full_duplex,SliverControl_FullDuplex)         
+     .setTo(bar);
  }
 
 } // namespace Dev

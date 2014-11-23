@@ -17,7 +17,7 @@ reg SwitchControl : 32
  {
   FIFOLoopback : .
   VLANAware    : .
-  Port2VLAN    : .
+  Port0VLAN    : .
   DLREnable    : .
  }
 
@@ -381,6 +381,7 @@ bar Port1Bar : address
   PortFIFOUse       = . RO
   PortTxFIFOControl = . 
   PortVLANControl   = . 
+  
   PortTxPriMap      = .
   
   PortTimeSync      = .
@@ -963,42 +964,42 @@ reg WRIntControl : 32
 
 reg WRC0RxThreshEnable : 32
  {
-  // bit per Rx Thresh Int
+  // bit per Rx Thresh Int , 0-7
  }
 
 reg WRC0RxEnable : 32
  {
-  // bit per Rx Int
+  // bit per Rx Int , 0-7
  }
 
 reg WRC0TxEnable : 32
  {
-  // bit per Tx Int
+  // bit per Tx Int , 0-7
  }
 
 reg WRC0MiscEnable : 32
  {
-  // bit per Misc Int
+  // bit per Misc Int , 0-4
  }
 
 reg WRC0RxThreshStatus : 32
  {
-  // bit per Rx Thresh Int
+  // bit per Rx Thresh Int , 0-7
  }
 
 reg WRC0RxStatus : 32
  {
-  // bit per Rx Int
+  // bit per Rx Int , 0-7
  }
  
 reg WRC0TxStatus : 32
  {
-  // bit per Tx Int
+  // bit per Tx Int , 0-7
  }
  
 reg WRC0MiscStatus : 32
  {
-  // bit per Misc Int
+  // bit per Misc Int , 0-4
  } 
 
 reg WRC0RxIntLim : 32
