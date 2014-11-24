@@ -19,6 +19,9 @@
 #include <CCore/inc/dev/AM3359.CONTROL.h>
 #include <CCore/inc/dev/AM3359.PRCM.h>
 
+#include <CCore/inc/Exception.h>
+#include <CCore/inc/Abort.h>
+
 #include <CCore/inc/Print.h>
 
 namespace CCore {
@@ -268,10 +271,10 @@ void EthControl::prepare()
       .setbit(WRIntControl_C0RxPace|WRIntControl_C0TxPace)
       .setTo(bar);
    
-   bar.set_WRC0RxThreshEnable(0xFF);
+   bar.set_WRC0RxThreshEnable(0);
    bar.set_WRC0RxEnable(0xFF);
    bar.set_WRC0TxEnable(0xFF);
-   bar.set_WRC0MiscEnable(0x1F);
+   bar.set_WRC0MiscEnable(0);
    
    bar.null_WRC0RxIntLim().set_Lim(10).setTo(bar);
    bar.null_WRC0TxIntLim().set_Lim(10).setTo(bar);
@@ -404,30 +407,49 @@ void EthControl::prepare()
       .setTo(bar);
    
    bar.null_ALEControl()
-      .setbit(ALEControl_EnableALE)
+      .setbit(ALEControl_EnableALE|ALEControl_Bypass)  
       .setTo(bar);
    
    bar.null_ALEPortControl()
       .set_State(ALEPortControl_State_Forward)
+      .setbit(ALEPortControl_NoLearn|ALEPortControl_NoSAUpdate)
       .set(bar.to_ALEPort0Control());
    
    bar.null_ALEPortControl()
       .set_State(ALEPortControl_State_Forward)
+      .setbit(ALEPortControl_NoLearn|ALEPortControl_NoSAUpdate)
       .set(bar.to_ALEPort1Control());
   } 
   
   {
    BarDMA bar;
 
-   // TODO
+   bar.null_DMAControl()
+      .setTo(bar);
    
+   bar.null_DMARxOffset()
+      .setTo(bar);
+   
+   bar.null_DMAIntStatus()
+      .setbit(DMAIntStatus_StatCounter|DMAIntStatus_Host)
+      .set(bar.to_DMAIntEnableClear());
+   
+   bar.null_DMATxIntStatus()
+      .set_TxDone(1)
+      .set(bar.to_DMATxIntEnableSet());
+   
+   bar.null_DMARxIntStatus()
+      .set_RxDone(1)
+      .set(bar.to_DMARxIntEnableSet());
   }
   
   {
    BarMDIO bar;
-   
-   // TODO
-   
+
+   bar.null_MDIOControl()
+      .setbit(MDIOControl_Enable)
+      .set_ClockDiv(109)
+      .setTo(bar);
   }
  }
 
@@ -642,7 +664,7 @@ void EthControl::show()
   
 #endif  
 
-#if 1
+#if 0
   
   {
    BarALE bar;
@@ -693,7 +715,7 @@ EthControl::~EthControl()
   disable();
  }
 
-void EthControl::enablePort1(bool full_duplex)
+void EthControl::enablePort(EthPortMode mode)
  {
   using namespace AM3359::ETH;
   
@@ -702,20 +724,381 @@ void EthControl::enablePort1(bool full_duplex)
   bar.null_SliverControl()
      .setbit(SliverControl_RxFlowControlEnable|SliverControl_TxFlowControlEnable
              |SliverControl_GMIIEnable|SliverControl_TxPaceEnable)
-     .setbitIf(full_duplex,SliverControl_FullDuplex)         
+     .setbitIf(mode&EthFullDuplex,SliverControl_FullDuplex)
+     .setbitIf(mode&EthGig,SliverControl_GigMode)
      .setTo(bar);
  }
 
-void EthControl::setPort1(bool full_duplex)
+void EthControl::setPort(EthPortMode mode)
  {
   using namespace AM3359::ETH;
   
   BarSliver1 bar;
 
   bar.get_SliverControl()
-     .clearbit(SliverControl_FullDuplex)
-     .setbitIf(full_duplex,SliverControl_FullDuplex)         
+     .clearbit(SliverControl_FullDuplex|SliverControl_GigMode)
+     .setbitIf(mode&EthFullDuplex,SliverControl_FullDuplex)
+     .setbitIf(mode&EthGig,SliverControl_GigMode)
      .setTo(bar);
+ }
+
+bool EthControl::MDIOReady()
+ {
+  using namespace AM3359::ETH;
+  
+  BarMDIO bar;
+  
+  return bar.get_MDIOUserAccess0().maskbit(MDIOUserAccess_Go);
+ }
+
+void EthControl::startMDIOWrite(uint16 phy,uint16 reg,uint16 data)
+ {
+  using namespace AM3359::ETH;
+  
+  BarMDIO bar;
+  
+  bar.null_MDIOUserAccess()
+     .set_Data(data)
+     .set_Phy(phy)
+     .set_Reg(reg)
+     .setbit(MDIOUserAccess_Write|MDIOUserAccess_Go)
+     .set(bar.to_MDIOUserAccess0());
+ }
+
+void EthControl::startMDIORead(uint16 phy,uint16 reg)
+ {
+  using namespace AM3359::ETH;
+  
+  BarMDIO bar;
+  
+  bar.null_MDIOUserAccess()
+     .set_Phy(phy)
+     .set_Reg(reg)
+     .setbit(MDIOUserAccess_Go)
+     .set(bar.to_MDIOUserAccess0());
+ }
+
+auto EthControl::MDIOReadData() -> MDIODataAck
+ {
+  using namespace AM3359::ETH;
+  
+  BarMDIO bar;
+  
+  auto val=bar.get_MDIOUserAccess0();
+  
+  return MDIODataAck((uint16)val.get_Data(),val.maskbit(MDIOUserAccess_Ack));
+ }
+
+void EthControl::startTx()
+ {
+  using namespace AM3359::ETH;
+  
+  BarDMA bar;
+
+  bar.null_DMATxControl()
+     .setbit(DMATxControl_Enable)
+     .setTo(bar);
+ }
+
+void EthControl::startRx()
+ {
+  using namespace AM3359::ETH;
+  
+  BarDMA bar;
+
+  bar.null_DMARxControl()
+     .setbit(DMARxControl_Enable)
+     .setTo(bar);
+ }
+
+void EthControl::setTx(void *desc)
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  bar.set_HeadTx(0,(uint32)desc);
+ }
+
+void EthControl::setRx(void *desc)
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  bar.set_HeadRx(0,(uint32)desc);
+ }
+
+void EthControl::ackTx(void *desc)
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  bar.set_CompleteTx(0,(uint32)desc);
+  
+  BarDMA dma;
+  
+  dma.set_DMAEOIVector(2);
+ }
+
+void EthControl::ackRx(void *desc)
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  bar.set_CompleteRx(0,(uint32)desc);
+  
+  BarDMA dma;
+  
+  dma.set_DMAEOIVector(1);
+ }
+
+/* class EthDevice */
+
+void EthDevice::tick_int()
+ {
+  mevent.trigger_int(EventTick);
+ }
+
+void EthDevice::eth_int()
+ {
+  // TODO
+ }
+
+void EthDevice::processTick()
+ {
+  {
+   Mutex::Lock lock(mutex);
+   
+   stat_shared=stat;
+  }
+  
+  proc->tick();
+  
+  // TODO
+ }
+
+void EthDevice::processTx()
+ {
+  // TODO
+ }
+
+void EthDevice::processRx()
+ {
+  // TODO
+ }
+
+void EthDevice::processPushTx()
+ {
+  // TODO
+ }
+
+void EthDevice::work()
+ {
+  buf.start();
+  
+  proc->start();
+  
+  // TODO
+  
+  switch( mevent.wait() )
+    {
+     case EventTick : processTick(); break;
+     
+     case EventTx : processTx(); break;
+     
+     case EventRx : processRx(); break;
+     
+     case EventPushTx : processPushTx(); break;
+     
+     case EventStop : 
+      {
+       proc->stop();
+       
+       control.stopTx();
+       
+       control.stopRx();
+       
+       buf.stop();
+      }
+     return;
+    }
+ }
+
+EthDevice::EthDevice()
+ : mevent("!Eth"),
+   ticker(function_tick_int()),
+   mutex("!Eth")
+ {
+ }
+
+EthDevice::~EthDevice()
+ {
+  Mutex::Lock lock(mutex);
+  
+  if( task_flag!=TaskStopped ) Abort("Fatal error : CCore::Dev::EthDevice is running on exit");
+  
+  if( proc ) Abort("Fatal error : CCore::Dev::EthDevice is attached on exit");
+ }
+
+Net::MACAddress EthDevice::getAddress()
+ {
+  return control.getAddress1();
+ }
+
+PacketFormat EthDevice::getTxFormat()
+ {
+  PacketFormat ret;
+  
+  ret.prefix=Net::EthHeaderLen;
+  ret.max_data=Net::MaxEthDataLen;
+  ret.suffix=0;
+  
+  return ret;
+ }
+
+PacketFormat EthDevice::getRxFormat()
+ {
+  PacketFormat ret;
+ 
+  ret.prefix=0;
+  ret.max_data=Net::MaxEthDataLen;
+  ret.suffix=0;
+  
+  return ret;
+ }
+
+void EthDevice::attach(Net::EthProc *proc_)
+ {
+  bool running;
+  bool has_proc;
+  
+  {
+   Mutex::Lock lock(mutex);
+   
+   running=(task_flag!=TaskStopped);
+   has_proc=(proc!=0);
+   
+   if( !running && !has_proc ) proc=proc_;
+  }
+  
+  if( running )
+    {
+     Printf(Exception,"CCore::Dev::EthDevice::attach(...) : device is running");
+    }
+    
+  if( has_proc )  
+    {
+     Printf(Exception,"CCore::Dev::EthDevice::attach(...) : already attached");
+    }
+ }
+
+void EthDevice::detach()
+ {
+  bool running;
+  
+  {
+   Mutex::Lock lock(mutex);
+   
+   running=(task_flag!=TaskStopped);
+   
+   if( !running ) proc=0;
+  }
+  
+  if( running )
+    {
+     Printf(NoException,"CCore::Dev::EthDevice::detach() : device is running");
+     
+     Abort("Fatal error : CCore::Dev::EthDevice is running on detach");
+    }
+ }
+
+void EthDevice::getStat(StatInfo &ret)
+ {
+  Mutex::Lock lock(mutex);
+  
+  ret=stat_shared;
+ }
+
+bool EthDevice::getPromiscMode()
+ {
+  return promisc_mode;
+ }
+
+void EthDevice::setPromiscMode(bool enable)
+ {
+  promisc_mode=enable;
+ }
+
+void EthDevice::signalOutbound()
+ {
+  mevent.trigger(EventPushTx);
+ }
+
+void EthDevice::startTask(TaskPriority priority,ulen stack_len)
+ {
+  bool running;
+  bool has_proc;
+  
+  {
+   Mutex::Lock lock(mutex);
+   
+   running=(task_flag!=TaskStopped);
+   has_proc=(proc!=0);
+   
+   if( !running && has_proc )
+     {
+      RunFuncTask( [this] () { work(); } ,stop_sem.function_give(),"EthTask",priority,stack_len);
+     
+      ticker.start(10_msec,100_msec);
+      
+      task_flag=TaskRunning;
+     }
+  }
+  
+  if( running )
+    {
+     Printf(Exception,"CCore::Dev::EthDevice::startTask() : already running");
+    }
+     
+  if( !has_proc )  
+    {
+     Printf(Exception,"CCore::Dev::EthDevice::startTask() : not attached");
+    }
+ }
+
+void EthDevice::stopTask()
+ {
+  bool running;
+  
+  {
+   Mutex::Lock lock(mutex);
+   
+   running=(task_flag==TaskRunning);
+
+   if( running ) task_flag=TaskStopping;
+  }
+  
+  if( !running )
+    {
+     Printf(NoException,"CCore::Dev::EthDevice::stopTask() : not running");
+     
+     return;
+    }
+  
+  ticker.stop();
+  
+  mevent.trigger(EventStop);
+  
+  stop_sem.take();
+  
+  {
+   Mutex::Lock lock(mutex);
+
+   task_flag=TaskStopped;
+  } 
  }
 
 } // namespace Dev

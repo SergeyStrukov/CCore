@@ -516,7 +516,7 @@ reg DMARateControl : 32
 
 reg DMATxIntStatus : 32
  {
-  // bit per channel
+  TxDone : 0-7 // bit per channel
  }
 
 reg DMAInVector : 32 {}
@@ -571,7 +571,7 @@ bar DMABar : address
   DMATx7RateControl   = .    as DMARateControl
   
   DMATxIntStatusRaw   = 080h as DMATxIntStatus
-  DMATxIntStatus      = .    as DMATxIntStatus
+  DMATxIntStatus      = .    
   DMATxIntEnableSet   = .    as DMATxIntStatus
   DMATxIntEnableClear = .    as DMATxIntStatus
   
@@ -579,12 +579,12 @@ bar DMABar : address
   DMAEOIVector        = 094h
   
   DMARxIntStatusRaw   = 0A0h as DMARxIntStatus
-  DMARxIntStatus      = .    as DMARxIntStatus
+  DMARxIntStatus      = .    
   DMARxIntEnableSet   = .    as DMARxIntStatus
   DMARxIntEnableClear = .    as DMARxIntStatus
   
   DMAIntStatusRaw     = 0B0h as DMAIntStatus
-  DMAIntStatus        = .    as DMAIntStatus
+  DMAIntStatus        = .    
   DMAIntEnableSet     = .    as DMAIntStatus
   DMAIntEnableClear   = .    as DMAIntStatus
   
@@ -804,6 +804,7 @@ bar ALEBar : address
   ALEControl      = 008h
   ALEPrescale     = 010h
   ALEUnknownVLAN  = 018h
+  
   ALETableControl = 020h
   
   ALETableWord = hidden
