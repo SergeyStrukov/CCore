@@ -17,10 +17,12 @@
 #define CCore_inc_dev_DevEth_h
 
 #include <CCore/inc/dev/DevIntHandle.h>
+#include <CCore/inc/dev/DevBit.h>
 
 #include <CCore/inc/Task.h>
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/net/EthDevice.h>
+#include <CCore/inc/PacketSet.h>
 #include <CCore/inc/InstanceLock.h>
  
 namespace CCore {
@@ -32,6 +34,8 @@ namespace Dev {
 
 class EthControl;
 
+struct EthDescData;
+
 class EthBuf;
 
 class EthDevice;
@@ -40,6 +44,7 @@ class EthDevice;
 
 enum EthPortMode : unsigned
  {
+  EthHalfDuplex = 0,
   EthFullDuplex = 1,
   EthGig        = 2
  };
@@ -119,22 +124,128 @@ class EthControl : InstanceLock<EthControl>
    
    void ackRx(void *desc);
    
-   void stopTx(); // TODO
+   void teardownTx();
    
-   void stopRx(); // TODO
+   void teardownRx();
+   
+   bool testTxTeardown();
+   
+   void ackTxTeardown();
+   
+   bool testRxTeardown();
+   
+   void ackRxTeardown();
+   
+   void stopTx();
+   
+   void stopRx();
+ };
+
+/* struct EthDescData */
+
+struct EthDescData
+ {
+  uint32 desc[4];
+  uint8 data[Net::MaxEthFrameLen];
+  
+  // methods
+  
+  void setData() { desc[1]=(uint32)(void *)data; }
+  
+  enum RxBits : uint32
+   {
+    RxTeardown = Bit(27),
+    RxEOQ      = Bit(28),
+    RxOwn      = Bit(29),
+    RxEOP      = Bit(30),
+    RxSOP      = Bit(31)  
+   };
+  
+  void prepareRx()
+   {
+    setData();
+    
+    desc[2]=Net::MaxEthFrameLen;
+   }
+  
+  void clearRx()
+   {
+    desc[3]=RxSOP|RxEOP|RxOwn;
+   }
+  
+  uint32 getRxStatus() const { return desc[3]; }
+  
+  ulen getRxLen() const { return desc[3]&Mask(11); }
+  
+  PtrLen<const uint8> getRxRange() const { return Range(data,getRxLen()); }
+  
+  enum TxBits : uint32
+   {
+    TxToPortEnable = Bit(20),
+    TxTeardown     = Bit(27),
+    TxEOQ          = Bit(28),
+    TxOwn          = Bit(29),
+    TxEOP          = Bit(30),
+    TxSOP          = Bit(31)  
+   };
+  
+  void prepareTx()
+   {
+    setData();
+   }
+  
+  void clearTx(uint32 len) // len<2^11
+   {
+    desc[2]=len;
+    desc[3]=TxSOP|TxEOP|TxOwn|TxToPortEnable|(1u<<16)|len;
+   }
+
+  uint32 getTxStatus() const { return desc[3]; }
+  
+  void setNext(EthDescData *ptr) { desc[0]=(uint32)ptr; }
+  
+  EthDescData * getNext() { return (EthDescData *)(desc[0]); }
  };
 
 /* class EthBuf */
 
 class EthBuf : NoCopy
  {
+   void *mem;
+   
+   EthDescData *rx_list=0;
+   EthDescData *rx_last=0;
+   
+   EthDescData *tx_list=0;
+   
+   EthDescData *tx_send_list=0;
+   EthDescData *tx_send_last=0;
+   
+  private: 
+   
+   void freeRx(EthDescData *ptr);
+   
+   void freeTx(EthDescData *ptr);
+   
   public:
   
-   EthBuf();
+   EthBuf(ulen rx_count,ulen tx_count);
    
    ~EthBuf();
    
    void start();
+   
+   EthDescData * getRxList() const { return rx_list; }
+   
+   void turnRx();
+   
+   EthDescData * getTxList() const { return tx_list; }
+   
+   bool turnTx();
+   
+   EthDescData * getTxSendList() const { return tx_send_list; }
+   
+   void completeTx();
    
    void stop();
  };
@@ -143,6 +254,8 @@ class EthBuf : NoCopy
 
 class EthDevice : public ObjBase , public Net::EthDevice , public Funchor  
  {
+   PacketSet<uint8> pset;
+ 
    EthBuf buf;
    
    Net::EthStatInfo stat;
@@ -151,7 +264,31 @@ class EthDevice : public ObjBase , public Net::EthDevice , public Funchor
    
    EthControl control;
    
+   Net::XPoint point;
+   Net::XPoint point_broadcast;
+   
+   enum PhyRead
+    {
+     PhyNone,
+     PhyStatus,
+     PhyExtraStatus
+    };
+   
+   PhyRead phy_read=PhyNone;
+   bool phy_link=false;
+   bool phy_full_duplex=true;
+   
    Atomic promisc_mode;
+   
+   enum TeardownFlag
+    {
+     TeardownRxComplete = 1,
+     TeardownTxComplete = 2
+    };
+   
+   unsigned teardown_flag=0;
+   
+   bool delay_rx=false;
    
    enum EventType
     {
@@ -165,6 +302,40 @@ class EthDevice : public ObjBase , public Net::EthDevice , public Funchor
     };
    
    MultiEvent<EventLim-1> mevent;
+   
+  private:
+   
+   void tick_int();
+   
+   void tx_int();
+   
+   void rx_int();
+   
+   Function<void (void)> function_tick_int() { return FunctionOf(this,&EthDevice::tick_int); }
+   
+   Function<void (void)> function_tx_int() { return FunctionOf(this,&EthDevice::tx_int); }
+   
+   Function<void (void)> function_rx_int() { return FunctionOf(this,&EthDevice::rx_int); }
+   
+   void processPhy();
+   
+   void processTick();
+   
+   void processTx();
+   
+   bool testRx(PtrLen<const uint8> data,Net::EthHeader &header);
+   
+   Packet<uint8,Net::EthRxExt> copyRx(PtrLen<const uint8> data,const Net::EthHeader &header);
+   
+   void processRx();
+   
+   void processPushTx();
+   
+   bool mustStop();
+   
+   void work();
+   
+  private: 
    
    Ticker ticker;
    
@@ -183,29 +354,9 @@ class EthDevice : public ObjBase , public Net::EthDevice , public Funchor
    
    TaskFlag task_flag=TaskStopped;
    
-  private:
-   
-   void tick_int();
-   
-   void eth_int();
-   
-   Function<void (void)> function_tick_int() { return FunctionOf(this,&EthDevice::tick_int); }
-   
-   Function<void (void)> function_eth_int() { return FunctionOf(this,&EthDevice::eth_int); }
-   
-   void processTick();
-   
-   void processTx();
-   
-   void processRx();
-   
-   void processPushTx();
-   
-   void work();
-   
   public:
   
-   EthDevice();
+   EthDevice(ulen rx_count=50,ulen tx_count=50);
    
    virtual ~EthDevice();
    

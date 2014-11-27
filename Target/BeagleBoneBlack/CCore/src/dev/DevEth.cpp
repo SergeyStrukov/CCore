@@ -19,8 +19,11 @@
 #include <CCore/inc/dev/AM3359.CONTROL.h>
 #include <CCore/inc/dev/AM3359.PRCM.h>
 
+#include <CCore/inc/dev/DevIntHandle.h>
+
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Abort.h>
+#include <CCore/inc/SpecialMemBase.h>
 
 #include <CCore/inc/Print.h>
 
@@ -118,9 +121,9 @@ void EthControl::connect()
 #if 0
   
   Printf(Con,"#;\n",bar.get_Conf_MDIO());          // Rx 0 PU
-  Printf(Con,"#;\n",bar.get_Conf_MDC());           // 0
+  Printf(Con,"#;\n",bar.get_Conf_MDC());           // 0 PU
   
-#endif  
+#endif
   
   bar.null_PadMux()
      .set_MuxMode(7)
@@ -698,7 +701,7 @@ EthControl::EthControl()
   connect();
   enable();
   
-  show();
+  //show();
   
   reset();
   
@@ -748,7 +751,7 @@ bool EthControl::MDIOReady()
   
   BarMDIO bar;
   
-  return bar.get_MDIOUserAccess0().maskbit(MDIOUserAccess_Go);
+  return bar.get_MDIOUserAccess0().maskbit(MDIOUserAccess_Go)==0;
  }
 
 void EthControl::startMDIOWrite(uint16 phy,uint16 reg,uint16 data)
@@ -855,6 +858,220 @@ void EthControl::ackRx(void *desc)
   dma.set_DMAEOIVector(1);
  }
 
+void EthControl::teardownTx()
+ {
+  using namespace AM3359::ETH;
+  
+  BarDMA bar;
+
+  bar.null_DMATxTeardown()
+     .set_Chan(0)
+     .setTo(bar);
+ }
+
+void EthControl::teardownRx()
+ {
+  using namespace AM3359::ETH;
+  
+  BarDMA bar;
+
+  bar.null_DMARxTeardown()
+     .set_Chan(0)
+     .setTo(bar);
+ }
+
+static const uint32 TeardownPtr = 0xFFFFFFFC ;
+
+bool EthControl::testTxTeardown()
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  return bar.get_CompleteTx(0)==TeardownPtr;
+ }
+
+void EthControl::ackTxTeardown()
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  bar.set_CompleteTx(0,TeardownPtr);
+  
+  BarDMA dma;
+  
+  dma.set_DMAEOIVector(2);
+ }
+
+bool EthControl::testRxTeardown()
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  return bar.get_CompleteRx(0)==TeardownPtr;
+ }
+
+void EthControl::ackRxTeardown()
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  bar.set_CompleteRx(0,TeardownPtr);
+  
+  BarDMA dma;
+  
+  dma.set_DMAEOIVector(1);
+ }
+
+void EthControl::stopTx()
+ {
+  using namespace AM3359::ETH;
+  
+  BarDMA bar;
+
+  bar.null_DMATxControl()
+     .setTo(bar);
+ }
+
+void EthControl::stopRx()
+ {
+  using namespace AM3359::ETH;
+  
+  BarDMA bar;
+
+  bar.null_DMARxControl()
+     .setTo(bar);
+ }
+
+/* class EthBuf */
+
+void EthBuf::freeRx(EthDescData *ptr)
+ {
+  ptr->setNext(rx_list);
+  
+  rx_list=ptr;
+  
+  if( !rx_last ) rx_last=ptr; 
+ }
+
+void EthBuf::freeTx(EthDescData *ptr)
+ {
+  ptr->setNext(tx_list);
+  
+  tx_list=ptr;
+ }
+
+EthBuf::EthBuf(ulen rx_count,ulen tx_count)
+ {
+  if( rx_count<2 || tx_count<2 )
+    {
+     Printf(Exception,"CCore::Dev::EthBuf::EthBuf(#;,#;) : bad count(s)",rx_count,tx_count);
+    }
+  
+  ulen mem_len=LenOf(LenAdd(rx_count,tx_count),sizeof (EthDescData));
+  
+  mem=TryMemAlloc_shared(mem_len);
+  
+  if( !mem ) 
+    {
+     Printf(Exception,"CCore::Dev::EthBuf::EthBuf(#;,#;) : no memory, len = #;",rx_count,tx_count,mem_len);
+    }
+
+  auto place=PlaceAt(mem);
+  
+  for(; rx_count ;rx_count--,place+=sizeof (EthDescData)) 
+    {
+     EthDescData *ptr=place;
+    
+     ptr->prepareRx();
+     
+     freeRx(ptr);
+    }
+  
+  for(; tx_count ;tx_count--,place+=sizeof (EthDescData)) 
+    {
+     EthDescData *ptr=place;
+   
+     ptr->prepareTx();
+    
+     freeTx(ptr);
+    }
+ }
+
+EthBuf::~EthBuf()
+ {
+  MemFree_shared(mem);
+ }
+
+void EthBuf::start()
+ {
+  for(EthDescData *ptr=rx_list; ptr ;ptr=ptr->getNext()) ptr->clearRx();
+   
+  for(EthDescData *ptr=tx_send_list; ptr ;ptr=ptr->getNext()) freeTx(ptr);
+   
+  tx_send_list=0;
+  tx_send_last=0;
+ }
+
+void EthBuf::turnRx()
+ {
+  EthDescData *ptr=rx_list;
+    
+  rx_list=ptr->getNext();
+  
+  ptr->clearRx();
+  
+  ptr->setNext(0);
+  
+  rx_last->setNext(ptr);
+  
+  rx_last=ptr;
+ }
+
+bool EthBuf::turnTx()
+ {
+  EthDescData *ptr=tx_list;
+  
+  tx_list=ptr->getNext();
+  
+  ptr->setNext(0);
+ 
+  if( tx_send_list )
+    {
+     tx_send_last->setNext(ptr);
+     
+     tx_send_last=ptr;
+    
+     return false;
+    }
+  else
+    {
+     tx_send_list=ptr;
+     tx_send_last=ptr;
+     
+     return true;
+    }
+ }
+
+void EthBuf::completeTx()
+ {
+  EthDescData *ptr=tx_send_list;
+  
+  tx_send_list=ptr->getNext();
+  
+  if( !tx_send_list ) tx_send_last=0;
+  
+  freeTx(ptr);
+ }
+
+void EthBuf::stop()
+ {
+  // do nothing
+ }
+
 /* class EthDevice */
 
 void EthDevice::tick_int()
@@ -862,9 +1079,121 @@ void EthDevice::tick_int()
   mevent.trigger_int(EventTick);
  }
 
-void EthDevice::eth_int()
+void EthDevice::tx_int()
  {
-  // TODO
+  DisableInt(Int_3PGSWTXINT0);
+  
+  mevent.trigger_int(EventTx);
+ }
+
+void EthDevice::rx_int()
+ {
+  DisableInt(Int_3PGSWRXINT0);
+  
+  mevent.trigger_int(EventRx);
+ }
+
+void EthDevice::processPhy()
+ {
+  const uint16 PhyAddress     =  0 ;
+  const uint16 StatusReg      =  1 ;
+  const uint16 ExtraStatusReg = 31 ;
+  
+  switch( phy_read )
+    {
+     case PhyNone :
+      {
+       if( control.MDIOReady() )
+         {
+          control.startMDIORead(PhyAddress,StatusReg);
+          
+          phy_read=PhyStatus;
+         }
+      }
+     break;
+     
+     case PhyStatus :
+      {
+       if( control.MDIOReady() )
+         {
+          auto data=control.MDIOReadData();
+          
+          if( data.ack )
+            {
+             if( data.data&Bit(2) )
+               {
+                if( !phy_link ) 
+                  {
+                   phy_link=true;
+                   
+                   stat.count(Net::EthLink_Up);
+                  
+                   proc->linkUp();
+                   
+                   processPushTx();
+                  }
+                
+                control.startMDIORead(PhyAddress,ExtraStatusReg);
+                
+                phy_read=PhyExtraStatus;
+               }
+             else
+               {
+                if( phy_link )
+                  {
+                   phy_link=false;
+                   
+                   stat.count(Net::EthLink_Down);
+                   
+                   proc->linkDown();
+                  }
+                
+                control.startMDIORead(PhyAddress,StatusReg);
+               }
+            }
+          else
+            {
+             control.startMDIORead(PhyAddress,StatusReg);
+            }
+         }
+      }
+     break;
+     
+     case PhyExtraStatus :
+      {
+       if( control.MDIOReady() )
+         {
+          auto data=control.MDIOReadData();
+          
+          if( data.ack )
+            {
+             if( data.data&Bit(4) )
+               {
+                if( !phy_full_duplex )
+                  {
+                   phy_full_duplex=true;
+                   
+                   control.setPort(EthFullDuplex);
+                  }
+               }
+             else
+               {
+                if( phy_full_duplex )
+                  {
+                   phy_full_duplex=false;
+                   
+                   control.setPort(EthHalfDuplex);
+                  }
+               }
+            }
+          
+          control.startMDIORead(PhyAddress,StatusReg);
+          
+          phy_read=PhyStatus;
+         }          
+      }
+     break; 
+    }
  }
 
 void EthDevice::processTick()
@@ -877,61 +1206,321 @@ void EthDevice::processTick()
   
   proc->tick();
   
-  // TODO
+  processPhy();
+  
+  if( delay_rx )
+    {
+     mevent.trigger(EventRx);
+    
+     delay_rx=false;
+    }
  }
 
 void EthDevice::processTx()
  {
-  // TODO
+  bool free=false;
+  
+  while( EthDescData *ptr=buf.getTxSendList() )
+    {
+     uint32 status=ptr->getTxStatus();
+     
+     if( status&EthDescData::TxOwn ) break;
+     
+     if( status&EthDescData::TxTeardown )
+       {
+        control.ackTxTeardown();
+        
+        teardown_flag|=TeardownTxComplete;
+        
+        return;
+       }
+     
+     control.ackTx(ptr);
+     
+     buf.completeTx();
+     
+     stat.count(Net::EthTx_Done);
+     
+     free=true;
+     
+     if( status&EthDescData::TxEOQ ) 
+       {
+        ptr=buf.getTxSendList();
+        
+        if( ptr )
+          {
+           control.setTx(ptr);
+          }
+        
+        break;
+       }
+    }
+  
+  if( control.testTxTeardown() )
+    {
+     control.ackTxTeardown();
+    
+     teardown_flag|=TeardownTxComplete;
+    
+     return;
+    }
+  
+  EnableInt(Int_3PGSWTXINT0);
+  
+  if( free ) mevent.trigger(EventPushTx);
+ }
+
+bool EthDevice::testRx(PtrLen<const uint8> data,Net::EthHeader &header)
+ {
+  if( data.len<Net::EthHeaderLen ) 
+    {
+     stat.count(Net::EthRx_BadPacketLen);
+     
+     return false;
+    }
+  
+  BufGetDev dev(data.ptr);
+  
+  dev(header);
+  
+  Net::XPoint dst_point=header.dst.get();
+  
+  if( dst_point==point_broadcast )
+    {
+     stat.count(Net::EthRx_Broadcast);
+     
+     return true;
+    }
+  
+  if( promisc_mode ) return true;
+  
+  return dst_point==point;
+ }
+
+Packet<uint8,Net::EthRxExt> EthDevice::copyRx(PtrLen<const uint8> data,const Net::EthHeader &header)
+ {
+  Packet<uint8> packet=pset.try_get();
+  
+  if( !packet ) return Nothing;
+  
+  Packet<uint8,Net::EthRxExt> packet2=packet.pushExt<Net::EthRxExt>(header.src,header.dst,header.type);
+  
+  packet2.pushCompleteFunction(DropPacketExt<uint8,Net::EthRxExt>);
+  
+  if( packet2.checkDataLen(data.len) )
+    {
+     packet2.setDataLen(data.len).copy(data.ptr);
+    
+     return packet2;
+    }
+  else
+    {
+     packet2.complete();
+    
+     return Nothing;
+    }
  }
 
 void EthDevice::processRx()
  {
-  // TODO
+  for(unsigned cnt=100; cnt ;cnt--)
+    {
+     EthDescData *ptr=buf.getRxList();
+     uint32 status=ptr->getRxStatus();
+     
+     if( status&EthDescData::RxOwn ) break;
+     
+     if( status&EthDescData::RxTeardown )
+       {
+        control.ackRxTeardown();
+        
+        teardown_flag|=TeardownRxComplete;
+        
+        return;
+       }
+     
+     auto data=ptr->getRxRange();
+     
+     Net::EthHeader header;
+     
+     if( testRx(data,header) )
+       {
+        data+=Net::EthHeaderLen;
+       
+        Packet<uint8,Net::EthRxExt> packet=copyRx(data,header);
+        
+        if( +packet )
+          {
+           control.ackRx(ptr);
+           
+           buf.turnRx();
+           
+           stat.count(Net::EthRx_Done);
+           
+           proc->inbound(packet);
+          }
+        else
+          {
+           delay_rx=true;
+           
+           return;
+          }
+       }
+     else
+       {
+        control.ackRx(ptr);
+       
+        buf.turnRx();
+        
+        stat.count(Net::EthRx_Drop);
+       }
+     
+     if( status&EthDescData::RxEOQ )
+       {
+        control.setRx(buf.getRxList());
+       }
+    }
+  
+  if( control.testRxTeardown() )
+    {
+     control.ackRxTeardown();
+    
+     teardown_flag|=TeardownRxComplete;
+    
+     return;
+    }
+  
+  EnableInt(Int_3PGSWRXINT0);
  }
 
 void EthDevice::processPushTx()
  {
-  // TODO
+  if( !phy_link ) return;
+  
+  proc->prepareOutbound();
+  
+  for(unsigned cnt=100; cnt ;cnt--)
+    {
+     EthDescData *ptr=buf.getTxList();
+     
+     if( !ptr ) break;
+     
+     Packet<uint8,Net::EthTxExt> packet=proc->outbound();
+     
+     if( !packet ) break;
+     
+     PacketFormat format=getTxFormat();
+     
+     if( packet.checkRange(format) )
+       {
+        Net::EthTxExt *ext=packet.getExt();
+        Net::EthHeader header(getAddress(),ext->dst,ext->type); 
+       
+        BufPutDev dev(packet.getData());
+        
+        dev(header);
+        
+        auto data=packet.getRange();
+        
+        ptr->clearTx((uint32)data.len);
+        
+        data.copyTo(ptr->data);
+        
+        packet.complete();
+        
+        if( buf.turnTx() )
+          {
+           control.setTx(ptr);
+          }
+       }
+     else
+       {
+        packet.complete();
+        
+        stat.count(Net::EthTx_BadPacketLen);
+       }
+    }
+ }
+
+bool EthDevice::mustStop()
+ {
+  if( teardown_flag==(TeardownRxComplete|TeardownTxComplete) )
+    {
+     CleanupIntHandler(Int_3PGSWRXINT0);
+     CleanupIntHandler(Int_3PGSWTXINT0);
+     
+     control.stopTx();
+    
+     control.stopRx();
+    
+     buf.stop();
+     
+     return true;
+    }
+  
+  return false;
  }
 
 void EthDevice::work()
  {
+  phy_read=PhyNone;
+  
+  teardown_flag=0;
+  
+  delay_rx=false;
+  
   buf.start();
+  
+  control.setRx(buf.getRxList());
+  
+  control.startRx();
+  
+  SetupIntHandler(Int_3PGSWRXINT0,function_rx_int(),0);
+  
+  control.startTx();
+  
+  SetupIntHandler(Int_3PGSWTXINT0,function_tx_int(),0);
   
   proc->start();
   
-  // TODO
-  
-  switch( mevent.wait() )
-    {
-     case EventTick : processTick(); break;
-     
-     case EventTx : processTx(); break;
-     
-     case EventRx : processRx(); break;
-     
-     case EventPushTx : processPushTx(); break;
-     
-     case EventStop : 
+  for(;;)
+    switch( mevent.wait() )
       {
-       proc->stop();
+       case EventTick : processTick(); break;
        
-       control.stopTx();
+       case EventTx : processTx(); if( mustStop() ) return; break;
        
-       control.stopRx();
+       case EventRx : processRx(); if( mustStop() ) return; break;
        
-       buf.stop();
+       case EventPushTx : processPushTx(); break;
+       
+       case EventStop : 
+        {
+         proc->stop();
+         
+         pset.wait(DefaultTimeout);
+         
+         pset.cancel_and_wait();
+         
+         control.teardownTx();
+         
+         control.teardownRx();
+        }
+       break;
       }
-     return;
-    }
  }
 
-EthDevice::EthDevice()
- : mevent("!Eth"),
+EthDevice::EthDevice(ulen rx_count,ulen tx_count)
+ : pset("!Eth.pset",1000),
+   buf(rx_count,tx_count),
+   mevent("!Eth"),
    ticker(function_tick_int()),
    mutex("!Eth")
  {
+  control.enablePort(EthFullDuplex);
+  
+  point=getAddress().get();
+  point_broadcast=Net::MACAddress::Broadcast().get();
  }
 
 EthDevice::~EthDevice()

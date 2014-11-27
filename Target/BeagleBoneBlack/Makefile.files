@@ -86,6 +86,7 @@ obj/DebugCon.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
 obj/DeferCall.o \
+obj/DevBit.o \
 obj/DevControlMutex.o \
 obj/DevEth.o \
 obj/DevHDMI.o \
@@ -416,6 +417,7 @@ obj/DebugCon.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
 obj/DeferCall.s \
+obj/DevBit.s \
 obj/DevControlMutex.s \
 obj/DevEth.s \
 obj/DevHDMI.s \
@@ -746,6 +748,7 @@ obj/DebugCon.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
 obj/DeferCall.dep \
+obj/DevBit.dep \
 obj/DevControlMutex.dep \
 obj/DevEth.dep \
 obj/DevHDMI.dep \
@@ -1262,6 +1265,9 @@ obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DeferCall.o : ../../CCore/src/DeferCall.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DevBit.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevBit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevControlMutex.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevControlMutex.cpp
@@ -2247,6 +2253,9 @@ obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.s : ../../CCore/src/DeferCall.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DevBit.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevBit.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DevControlMutex.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevControlMutex.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3229,6 +3238,9 @@ obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
 
 obj/DeferCall.dep : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
+
+obj/DevBit.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevBit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevBit.o $< -MF $@
 
 obj/DevControlMutex.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevControlMutex.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevControlMutex.o $< -MF $@

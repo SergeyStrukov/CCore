@@ -6351,10 +6351,69 @@ struct Type_DMARateControl
    }
  };
  
-/* type Type_DMATxIntStatus */ 
+/* struct Type_DMATxIntStatus */ 
 
-typedef uint32 Type_DMATxIntStatus;
+struct Type_DMATxIntStatus
+ {
+  typedef uint32 Type;
 
+  Type value;
+
+
+  explicit Type_DMATxIntStatus(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_DMATxIntStatus & setTo(Bar &bar) { bar.set_DMATxIntStatus(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_DMATxIntStatus & setTo(Bar &bar,uint32 ind) { bar.set_DMATxIntStatus(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_DMATxIntStatus & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_TxDone() const
+   {
+    return (value>>0)&0xFF;
+   }
+ 
+  Type_DMATxIntStatus & set_TxDone(Type field)
+   {
+    value=((field&0xFF)<<0)|(value&0xFFFFFF00);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"TxDone(#;)",get_TxDone());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"TxDone(#;)",get_TxDone());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* type Type_DMAInVector */ 
 
 typedef uint32 Type_DMAInVector;
@@ -11770,41 +11829,37 @@ struct DMABar
 
   Type_DMATxIntStatus get_DMATxIntStatusRaw() { return Type_DMATxIntStatus(rw.template get<uint32>(0x80)); }
  
-  void set_DMATxIntStatusRaw(Type_DMATxIntStatus value) { rw.set(0x80,value); }
+  void set_DMATxIntStatusRaw(Type_DMATxIntStatus value) { rw.set(0x80,value.value); }
  
-  void set_DMATxIntStatusRaw_null() { rw.set(0x80,Type_DMATxIntStatus(0)); }
- 
-  void set_DMATxIntStatusRaw_ones() { rw.set(0x80,Type_DMATxIntStatus(-1)); }
+  Setter<Type_DMATxIntStatus> to_DMATxIntStatusRaw() { return Setter<Type_DMATxIntStatus>(rw,0x80); }
  
   //--- DMATxIntStatus
 
   Type_DMATxIntStatus get_DMATxIntStatus() { return Type_DMATxIntStatus(rw.template get<uint32>(0x84)); }
  
-  void set_DMATxIntStatus(Type_DMATxIntStatus value) { rw.set(0x84,value); }
+  void set_DMATxIntStatus(Type_DMATxIntStatus value) { rw.set(0x84,value.value); }
  
-  void set_DMATxIntStatus_null() { rw.set(0x84,Type_DMATxIntStatus(0)); }
+  Setter<Type_DMATxIntStatus> to_DMATxIntStatus() { return Setter<Type_DMATxIntStatus>(rw,0x84); }
  
-  void set_DMATxIntStatus_ones() { rw.set(0x84,Type_DMATxIntStatus(-1)); }
+  static Type_DMATxIntStatus null_DMATxIntStatus() { return Type_DMATxIntStatus(0); }
+ 
+  static Type_DMATxIntStatus ones_DMATxIntStatus() { return Type_DMATxIntStatus(Type_DMATxIntStatus::Type(-1)); }
  
   //--- DMATxIntEnableSet
 
   Type_DMATxIntStatus get_DMATxIntEnableSet() { return Type_DMATxIntStatus(rw.template get<uint32>(0x88)); }
  
-  void set_DMATxIntEnableSet(Type_DMATxIntStatus value) { rw.set(0x88,value); }
+  void set_DMATxIntEnableSet(Type_DMATxIntStatus value) { rw.set(0x88,value.value); }
  
-  void set_DMATxIntEnableSet_null() { rw.set(0x88,Type_DMATxIntStatus(0)); }
- 
-  void set_DMATxIntEnableSet_ones() { rw.set(0x88,Type_DMATxIntStatus(-1)); }
+  Setter<Type_DMATxIntStatus> to_DMATxIntEnableSet() { return Setter<Type_DMATxIntStatus>(rw,0x88); }
  
   //--- DMATxIntEnableClear
 
   Type_DMATxIntStatus get_DMATxIntEnableClear() { return Type_DMATxIntStatus(rw.template get<uint32>(0x8C)); }
  
-  void set_DMATxIntEnableClear(Type_DMATxIntStatus value) { rw.set(0x8C,value); }
+  void set_DMATxIntEnableClear(Type_DMATxIntStatus value) { rw.set(0x8C,value.value); }
  
-  void set_DMATxIntEnableClear_null() { rw.set(0x8C,Type_DMATxIntStatus(0)); }
- 
-  void set_DMATxIntEnableClear_ones() { rw.set(0x8C,Type_DMATxIntStatus(-1)); }
+  Setter<Type_DMATxIntStatus> to_DMATxIntEnableClear() { return Setter<Type_DMATxIntStatus>(rw,0x8C); }
  
   //--- DMAInVector
 
@@ -11835,6 +11890,10 @@ struct DMABar
   void set_DMARxIntStatus(Type_DMARxIntStatus value) { rw.set(0xA4,value.value); }
  
   Setter<Type_DMARxIntStatus> to_DMARxIntStatus() { return Setter<Type_DMARxIntStatus>(rw,0xA4); }
+ 
+  static Type_DMARxIntStatus null_DMARxIntStatus() { return Type_DMARxIntStatus(0); }
+ 
+  static Type_DMARxIntStatus ones_DMARxIntStatus() { return Type_DMARxIntStatus(Type_DMARxIntStatus::Type(-1)); }
  
   //--- DMARxIntEnableSet
 
@@ -11867,6 +11926,10 @@ struct DMABar
   void set_DMAIntStatus(Type_DMAIntStatus value) { rw.set(0xB4,value.value); }
  
   Setter<Type_DMAIntStatus> to_DMAIntStatus() { return Setter<Type_DMAIntStatus>(rw,0xB4); }
+ 
+  static Type_DMAIntStatus null_DMAIntStatus() { return Type_DMAIntStatus(0); }
+ 
+  static Type_DMAIntStatus ones_DMAIntStatus() { return Type_DMAIntStatus(Type_DMAIntStatus::Type(-1)); }
  
   //--- DMAIntEnableSet
 
