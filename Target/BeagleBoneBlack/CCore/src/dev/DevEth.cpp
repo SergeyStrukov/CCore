@@ -25,7 +25,7 @@
 #include <CCore/inc/Abort.h>
 #include <CCore/inc/SpecialMemBase.h>
 
-#include <CCore/inc/Print.h>
+//#include <CCore/inc/Print.h>
 
 namespace CCore {
 namespace Dev {
@@ -271,7 +271,8 @@ void EthControl::prepare()
       .setTo(bar);
    
    bar.null_WRIntControl()
-      .setbit(WRIntControl_C0RxPace|WRIntControl_C0TxPace)
+      //.setbit(WRIntControl_C0RxPace|WRIntControl_C0TxPace)
+      .set_Prescale(1)  
       .setTo(bar);
    
    bar.set_WRC0RxThreshEnable(0);
@@ -848,7 +849,7 @@ void EthControl::ackTx(void *desc)
 void EthControl::ackRx(void *desc)
  {
   using namespace AM3359::ETH;
-
+  
   BarDesc bar;
   
   bar.set_CompleteRx(0,(uint32)desc);
@@ -1272,7 +1273,7 @@ void EthDevice::processTx()
 
 bool EthDevice::testRx(PtrLen<const uint8> data,Net::EthHeader &header)
  {
-  if( data.len<Net::EthHeaderLen ) 
+  if( data.len<Net::EthHeaderLen+4 ) 
     {
      stat.count(Net::EthRx_BadPacketLen);
      
@@ -1345,7 +1346,7 @@ void EthDevice::processRx()
      
      if( testRx(data,header) )
        {
-        data+=Net::EthHeaderLen;
+        data=data.inner(Net::EthHeaderLen,4);
        
         Packet<uint8,Net::EthRxExt> packet=copyRx(data,header);
         
@@ -1395,6 +1396,8 @@ void EthDevice::processRx()
 
 void EthDevice::processPushTx()
  {
+  const ulen MinEthLen = 60 ;
+  
   if( !phy_link ) return;
   
   proc->prepareOutbound();
@@ -1422,9 +1425,20 @@ void EthDevice::processPushTx()
         
         auto data=packet.getRange();
         
-        ptr->clearTx((uint32)data.len);
-        
-        data.copyTo(ptr->data);
+        if( data.len<MinEthLen )
+          {
+           ptr->clearTx(MinEthLen);
+         
+           data.copyTo(ptr->data);
+           
+           Range(ptr->data+data.len,MinEthLen-data.len).set_null();
+          }
+        else
+          {
+           ptr->clearTx((uint32)data.len);
+          
+           data.copyTo(ptr->data);
+          }
         
         packet.complete();
         

@@ -146,7 +146,7 @@ class EthControl : InstanceLock<EthControl>
 struct EthDescData
  {
   uint32 desc[4];
-  uint8 data[Net::MaxEthFrameLen];
+  uint8 data[Net::MaxEthFrameLen+4];
   
   // methods
   
@@ -164,12 +164,11 @@ struct EthDescData
   void prepareRx()
    {
     setData();
-    
-    desc[2]=Net::MaxEthFrameLen;
    }
   
   void clearRx()
    {
+    desc[2]=Net::MaxEthFrameLen;
     desc[3]=RxSOP|RxEOP|RxOwn;
    }
   

@@ -79,6 +79,16 @@ bar INTCBar : address
   
   NextActive = 48h
   
+  Raw0       = 080h as Mask
+  Mask0      = 084h as Mask
+  MaskedIRQ0 = 098h as Mask
+  MaskedFIQ0 = 09Ch as Mask
+  
+  Raw1       = 0A0h as Mask
+  Mask1      = 0A4h as Mask
+  MaskedIRQ1 = 0B8h as Mask
+  MaskedFIQ1 = 0BCh as Mask
+  
   SetMask0 = 08Ch as Mask 
   SetMask1 = 0ACh as Mask 
   SetMask2 = 0CCh as Mask 

@@ -768,6 +768,86 @@ struct INTCBar
  
   static Type_NextActive ones_NextActive() { return Type_NextActive(Type_NextActive::Type(-1)); }
  
+  //--- Raw0
+
+  Type_Mask get_Raw0() { return Type_Mask(rw.template get<uint32>(0x80)); }
+ 
+  void set_Raw0(Type_Mask value) { rw.set(0x80,value); }
+ 
+  void set_Raw0_null() { rw.set(0x80,Type_Mask(0)); }
+ 
+  void set_Raw0_ones() { rw.set(0x80,Type_Mask(-1)); }
+ 
+  //--- Mask0
+
+  Type_Mask get_Mask0() { return Type_Mask(rw.template get<uint32>(0x84)); }
+ 
+  void set_Mask0(Type_Mask value) { rw.set(0x84,value); }
+ 
+  void set_Mask0_null() { rw.set(0x84,Type_Mask(0)); }
+ 
+  void set_Mask0_ones() { rw.set(0x84,Type_Mask(-1)); }
+ 
+  //--- MaskedIRQ0
+
+  Type_Mask get_MaskedIRQ0() { return Type_Mask(rw.template get<uint32>(0x98)); }
+ 
+  void set_MaskedIRQ0(Type_Mask value) { rw.set(0x98,value); }
+ 
+  void set_MaskedIRQ0_null() { rw.set(0x98,Type_Mask(0)); }
+ 
+  void set_MaskedIRQ0_ones() { rw.set(0x98,Type_Mask(-1)); }
+ 
+  //--- MaskedFIQ0
+
+  Type_Mask get_MaskedFIQ0() { return Type_Mask(rw.template get<uint32>(0x9C)); }
+ 
+  void set_MaskedFIQ0(Type_Mask value) { rw.set(0x9C,value); }
+ 
+  void set_MaskedFIQ0_null() { rw.set(0x9C,Type_Mask(0)); }
+ 
+  void set_MaskedFIQ0_ones() { rw.set(0x9C,Type_Mask(-1)); }
+ 
+  //--- Raw1
+
+  Type_Mask get_Raw1() { return Type_Mask(rw.template get<uint32>(0xA0)); }
+ 
+  void set_Raw1(Type_Mask value) { rw.set(0xA0,value); }
+ 
+  void set_Raw1_null() { rw.set(0xA0,Type_Mask(0)); }
+ 
+  void set_Raw1_ones() { rw.set(0xA0,Type_Mask(-1)); }
+ 
+  //--- Mask1
+
+  Type_Mask get_Mask1() { return Type_Mask(rw.template get<uint32>(0xA4)); }
+ 
+  void set_Mask1(Type_Mask value) { rw.set(0xA4,value); }
+ 
+  void set_Mask1_null() { rw.set(0xA4,Type_Mask(0)); }
+ 
+  void set_Mask1_ones() { rw.set(0xA4,Type_Mask(-1)); }
+ 
+  //--- MaskedIRQ1
+
+  Type_Mask get_MaskedIRQ1() { return Type_Mask(rw.template get<uint32>(0xB8)); }
+ 
+  void set_MaskedIRQ1(Type_Mask value) { rw.set(0xB8,value); }
+ 
+  void set_MaskedIRQ1_null() { rw.set(0xB8,Type_Mask(0)); }
+ 
+  void set_MaskedIRQ1_ones() { rw.set(0xB8,Type_Mask(-1)); }
+ 
+  //--- MaskedFIQ1
+
+  Type_Mask get_MaskedFIQ1() { return Type_Mask(rw.template get<uint32>(0xBC)); }
+ 
+  void set_MaskedFIQ1(Type_Mask value) { rw.set(0xBC,value); }
+ 
+  void set_MaskedFIQ1_null() { rw.set(0xBC,Type_Mask(0)); }
+ 
+  void set_MaskedFIQ1_ones() { rw.set(0xBC,Type_Mask(-1)); }
+ 
   //--- SetMask0
 
   Type_Mask get_SetMask0() { return Type_Mask(rw.template get<uint32>(0x8C)); }

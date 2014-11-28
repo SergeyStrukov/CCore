@@ -27,6 +27,33 @@ namespace Private_3012 {
 
 /* test1() */
 
+uint32 ReadRxPtr()
+ {
+  using namespace AM3359::ETH;
+
+  BarDesc bar;
+  
+  return bar.get_HeadRx(0);
+ }
+
+uint32 ReadRxControl()
+ {
+  using namespace AM3359::ETH;
+  
+  BarDMA bar;
+
+  return bar.get_DMARxControl();
+ }
+
+uint32 ReadRxStatus()
+ {
+  using namespace AM3359::ETH;
+  
+  BarWR bar;
+
+  return bar.get_WRC0RxStatus();
+ }
+
 class Engine : NoCopy
  {
    Dev::EthControl dev;
@@ -51,24 +78,6 @@ class Engine : NoCopy
        }
      
      return data.data;
-    }
-   
-   uint32 readRxPtr()
-    {
-     using namespace AM3359::ETH;
-
-     BarDesc bar;
-     
-     return bar.get_HeadRx(0);
-    }
-   
-   uint32 readRxControl()
-    {
-     using namespace AM3359::ETH;
-     
-     BarDMA bar;
-
-     return bar.get_DMARxControl();
     }
    
   public:
@@ -137,15 +146,15 @@ class Engine : NoCopy
      
      dev.startRx();
      
-     uint32 prev_reg1=readRxPtr();
-     uint32 prev_reg2=readRxControl();
+     uint32 prev_reg1=ReadRxPtr();
+     uint32 prev_reg2=ReadRxControl();
 
      Printf(Con,"#.h; #.h;\n",prev_reg1,prev_reg2);
      
      for(;;)
        {
-        uint32 reg1=readRxPtr();
-        uint32 reg2=readRxControl();
+        uint32 reg1=ReadRxPtr();
+        uint32 reg2=ReadRxControl();
         
         if( reg1!=prev_reg1 || reg2!=prev_reg2 )
           {
@@ -171,7 +180,7 @@ void test1()
   
   //engine.test0();
   //engine.test1();
-  engine.test2();
+  //engine.test2();
  }
 
 void test2()
@@ -182,13 +191,16 @@ void test2()
   
   Net::NanoIPDevice ip("eth",Net::IPAddress(192,168,99,10),Net::IPAddress(255,255,255,0));
   
-  Dev::EthDevice::StartStop start_stop(eth,DefaultTaskPriority);
+  Dev::EthDevice::StartStop start_stop(eth,TaskPriority(5000));
   
   for(;;)
     {
-     Task::Sleep(3_sec);
-     
+     Task::Sleep(10_sec);
+
      ShowStat(eth,"Eth");
+     ShowStat(ip,"IP");
+     
+     //Printf(Con,"#.h;\n",ReadRxStatus());
     }
  }
 
