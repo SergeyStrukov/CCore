@@ -271,7 +271,7 @@ void EthControl::prepare()
       .setTo(bar);
    
    bar.null_WRIntControl()
-      //.setbit(WRIntControl_C0RxPace|WRIntControl_C0TxPace)
+      .setbit(WRIntControl_C0RxPace|WRIntControl_C0TxPace)
       .set_Prescale(1)  
       .setTo(bar);
    
@@ -411,7 +411,7 @@ void EthControl::prepare()
       .setTo(bar);
    
    bar.null_ALEControl()
-      .setbit(ALEControl_EnableALE|ALEControl_Bypass)  
+      .setbit(ALEControl_EnableALE|ALEControl_Bypass)    
       .setTo(bar);
    
    bar.null_ALEPortControl()
@@ -424,6 +424,36 @@ void EthControl::prepare()
       .setbit(ALEPortControl_NoLearn|ALEPortControl_NoSAUpdate)
       .set(bar.to_ALEPort1Control());
   } 
+
+#if 0  
+  
+  {
+   BarALE bar;
+   
+   bar.null_ALETableWord0()
+      .set_Port(0)
+      .setTo(bar);
+   
+   bar.null_ALETableWord1()
+      .set_EntryType(ALETableWord1_EntryType_Address)
+      .set_AddressByte0(address1.address[0])
+      .set_AddressByte1(address1.address[1])
+      .setTo(bar);
+   
+   bar.null_ALETableWord2()
+      .set_AddressByte2(address1.address[2])
+      .set_AddressByte3(address1.address[3])
+      .set_AddressByte4(address1.address[4])
+      .set_AddressByte5(address1.address[5])
+      .setTo(bar);
+   
+   bar.null_ALETableControl()
+      .set_Index(0)
+      .setbit(ALETableControl_Write)
+      .setTo(bar);
+  }
+  
+#endif  
   
   {
    BarDMA bar;

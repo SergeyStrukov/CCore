@@ -7892,12 +7892,12 @@ struct Type_ALETableControl
   bool testbit(Bits_ALETableControl bits) const { return (value&bits)==Type(bits); }
  
 
-  Type get_Pointer() const
+  Type get_Index() const
    {
     return (value>>0)&0x3FF;
    }
  
-  Type_ALETableControl & set_Pointer(Type field)
+  Type_ALETableControl & set_Index(Type field)
    {
     value=((field&0x3FF)<<0)|(value&0xFFFFFC00);
 
@@ -7928,7 +7928,7 @@ struct Type_ALETableControl
 
     if( first )
       {
-       Printf(out,"Pointer(#;)",get_Pointer());
+       Printf(out,"Index(#;)",get_Index());
 
        first=false;
       }
@@ -7936,17 +7936,463 @@ struct Type_ALETableControl
       {
        out.put('|');
 
-       Printf(out,"Pointer(#;)",get_Pointer());
+       Printf(out,"Index(#;)",get_Index());
       }
 
     if( first ) out.put('0');
    }
  };
  
-/* type Type_ALETableWord */ 
+/* struct Type_ALETableWord0 */ 
 
-typedef uint32 Type_ALETableWord;
+enum Bits_ALETableWord0 : uint32
+ {
+  ALETableWord0_Secure = 0x00000001,
+  ALETableWord0_Block  = 0x00000002,
+  ALETableWord0_DLR    = 0x00000020
+ };
+ 
+inline Bits_ALETableWord0 operator | (Bits_ALETableWord0 a,Bits_ALETableWord0 b)
+ { return Bits_ALETableWord0(uint32(a)|uint32(b)); }
+ 
+struct Type_ALETableWord0
+ {
+  typedef uint32 Type;
 
+  Type value;
+
+
+  explicit Type_ALETableWord0(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_ALETableWord0 & setTo(Bar &bar) { bar.set_ALETableWord0(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_ALETableWord0 & setTo(Bar &bar,uint32 ind) { bar.set_ALETableWord0(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_ALETableWord0 & set(T to) { to(*this); return *this; }
+ 
+
+  Type_ALETableWord0 & setbit(Bits_ALETableWord0 bits) { value|=Type(bits); return *this; }
+ 
+  Type_ALETableWord0 & setbitIf(bool cond,Bits_ALETableWord0 bits) { if( cond ) value|=Type(bits); return *this; }
+ 
+  Type_ALETableWord0 & clearbit(Bits_ALETableWord0 bits) { value&=~Type(bits); return *this; }
+ 
+  Type_ALETableWord0 & clearbitIf(bool cond,Bits_ALETableWord0 bits) { if( cond ) value&=~Type(bits); return *this; }
+ 
+  Type maskbit(Bits_ALETableWord0 bits) const { return value&bits; }
+ 
+  bool testbit(Bits_ALETableWord0 bits) const { return (value&bits)==Type(bits); }
+ 
+
+  Type get_Port() const
+   {
+    return (value>>2)&0x3;
+   }
+ 
+  Type_ALETableWord0 & set_Port(Type field)
+   {
+    value=((field&0x3)<<2)|(value&0xFFFFFFF3);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( value&ALETableWord0_Secure )
+      {
+       if( first )
+         {
+          Putobj(out,"Secure");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"Secure");
+         }
+      }
+
+    if( value&ALETableWord0_Block )
+      {
+       if( first )
+         {
+          Putobj(out,"Block");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"Block");
+         }
+      }
+
+    if( value&ALETableWord0_DLR )
+      {
+       if( first )
+         {
+          Putobj(out,"DLR");
+
+          first=false;
+         }
+       else
+         {
+          out.put('|');
+
+          Putobj(out,"DLR");
+         }
+      }
+
+    if( first )
+      {
+       Printf(out,"Port(#;)",get_Port());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"Port(#;)",get_Port());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_ALETableWord1 */ 
+
+enum Field_ALETableWord1_EntryType : uint32
+ {
+  ALETableWord1_EntryType_Free        = 0x00,
+  ALETableWord1_EntryType_Address     = 0x01,
+  ALETableWord1_EntryType_VLAN        = 0x02,
+  ALETableWord1_EntryType_AddressVLAN = 0x03
+ };
+ 
+struct PrintField_ALETableWord1_EntryType
+ {
+  Field_ALETableWord1_EntryType field;
+
+  explicit PrintField_ALETableWord1_EntryType(Field_ALETableWord1_EntryType field_) : field(field_) {}
+ 
+  template <class P>
+  void print(P &out) const
+   {
+    switch( field )
+      {
+       case 0x00 : Putobj(out,"Free"); break;
+       case 0x01 : Putobj(out,"Address"); break;
+       case 0x02 : Putobj(out,"VLAN"); break;
+       case 0x03 : Putobj(out,"AddressVLAN"); break;
+
+       default: Putobj(out,uint32(field));
+      }
+   }
+ };
+ 
+inline PrintField_ALETableWord1_EntryType GetTextDesc(Field_ALETableWord1_EntryType field)
+ {
+  return PrintField_ALETableWord1_EntryType(field);
+ }
+ 
+struct Type_ALETableWord1
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_ALETableWord1(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_ALETableWord1 & setTo(Bar &bar) { bar.set_ALETableWord1(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_ALETableWord1 & setTo(Bar &bar,uint32 ind) { bar.set_ALETableWord1(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_ALETableWord1 & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_AddressByte1() const
+   {
+    return (value>>0)&0xFF;
+   }
+ 
+  Type_ALETableWord1 & set_AddressByte1(Type field)
+   {
+    value=((field&0xFF)<<0)|(value&0xFFFFFF00);
+
+    return *this;
+   }
+ 
+
+  Type get_AddressByte0() const
+   {
+    return (value>>8)&0xFF;
+   }
+ 
+  Type_ALETableWord1 & set_AddressByte0(Type field)
+   {
+    value=((field&0xFF)<<8)|(value&0xFFFF00FF);
+
+    return *this;
+   }
+ 
+
+  Field_ALETableWord1_EntryType get_EntryType() const
+   {
+    return Field_ALETableWord1_EntryType((value>>28)&0x3);
+   }
+ 
+  Type_ALETableWord1 & set_EntryType(Field_ALETableWord1_EntryType field)
+   {
+    value=((Type(field)&0x3)<<28)|(value&0xCFFFFFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_SubType() const
+   {
+    return (value>>30)&0x3;
+   }
+ 
+  Type_ALETableWord1 & set_SubType(Type field)
+   {
+    value=((field&0x3)<<30)|(value&0x3FFFFFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"AddressByte1(#;)",get_AddressByte1());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"AddressByte1(#;)",get_AddressByte1());
+      }
+
+    if( first )
+      {
+       Printf(out,"AddressByte0(#;)",get_AddressByte0());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"AddressByte0(#;)",get_AddressByte0());
+      }
+
+    if( first )
+      {
+       Printf(out,"EntryType(#;)",get_EntryType());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"EntryType(#;)",get_EntryType());
+      }
+
+    if( first )
+      {
+       Printf(out,"SubType(#;)",get_SubType());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"SubType(#;)",get_SubType());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
+/* struct Type_ALETableWord2 */ 
+
+struct Type_ALETableWord2
+ {
+  typedef uint32 Type;
+
+  Type value;
+
+
+  explicit Type_ALETableWord2(Type value_=0) : value(value_) {}
+ 
+
+  operator Type() const { return value; }
+ 
+  void operator = (Type value_) { value=value_; }
+ 
+  template <class Bar>
+  Type_ALETableWord2 & setTo(Bar &bar) { bar.set_ALETableWord2(*this); return *this; }
+ 
+
+  template <class Bar>
+  Type_ALETableWord2 & setTo(Bar &bar,uint32 ind) { bar.set_ALETableWord2(ind,*this); return *this; }
+ 
+
+  template <class T>
+  Type_ALETableWord2 & set(T to) { to(*this); return *this; }
+ 
+
+  Type get_AddressByte5() const
+   {
+    return (value>>0)&0xFF;
+   }
+ 
+  Type_ALETableWord2 & set_AddressByte5(Type field)
+   {
+    value=((field&0xFF)<<0)|(value&0xFFFFFF00);
+
+    return *this;
+   }
+ 
+
+  Type get_AddressByte4() const
+   {
+    return (value>>8)&0xFF;
+   }
+ 
+  Type_ALETableWord2 & set_AddressByte4(Type field)
+   {
+    value=((field&0xFF)<<8)|(value&0xFFFF00FF);
+
+    return *this;
+   }
+ 
+
+  Type get_AddressByte3() const
+   {
+    return (value>>16)&0xFF;
+   }
+ 
+  Type_ALETableWord2 & set_AddressByte3(Type field)
+   {
+    value=((field&0xFF)<<16)|(value&0xFF00FFFF);
+
+    return *this;
+   }
+ 
+
+  Type get_AddressByte2() const
+   {
+    return (value>>24)&0xFF;
+   }
+ 
+  Type_ALETableWord2 & set_AddressByte2(Type field)
+   {
+    value=((field&0xFF)<<24)|(value&0xFFFFFF);
+
+    return *this;
+   }
+ 
+
+  template <class P>
+  void print(P &out) const
+   {
+    bool first=true;
+
+    if( first )
+      {
+       Printf(out,"AddressByte5(#;)",get_AddressByte5());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"AddressByte5(#;)",get_AddressByte5());
+      }
+
+    if( first )
+      {
+       Printf(out,"AddressByte4(#;)",get_AddressByte4());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"AddressByte4(#;)",get_AddressByte4());
+      }
+
+    if( first )
+      {
+       Printf(out,"AddressByte3(#;)",get_AddressByte3());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"AddressByte3(#;)",get_AddressByte3());
+      }
+
+    if( first )
+      {
+       Printf(out,"AddressByte2(#;)",get_AddressByte2());
+
+       first=false;
+      }
+    else
+      {
+       out.put('|');
+
+       Printf(out,"AddressByte2(#;)",get_AddressByte2());
+      }
+
+    if( first ) out.put('0');
+   }
+ };
+ 
 /* struct Type_ALEPortControl */ 
 
 enum Bits_ALEPortControl : uint32
@@ -12693,37 +13139,41 @@ struct ALEBar
  
   static Type_ALETableControl ones_ALETableControl() { return Type_ALETableControl(Type_ALETableControl::Type(-1)); }
  
-  //--- ALETableWord
+  //--- ALETableWord2
 
-  //--- ALETableW2
+  Type_ALETableWord2 get_ALETableWord2() { return Type_ALETableWord2(rw.template get<uint32>(0x34)); }
+ 
+  void set_ALETableWord2(Type_ALETableWord2 value) { rw.set(0x34,value.value); }
+ 
+  Setter<Type_ALETableWord2> to_ALETableWord2() { return Setter<Type_ALETableWord2>(rw,0x34); }
+ 
+  static Type_ALETableWord2 null_ALETableWord2() { return Type_ALETableWord2(0); }
+ 
+  static Type_ALETableWord2 ones_ALETableWord2() { return Type_ALETableWord2(Type_ALETableWord2::Type(-1)); }
+ 
+  //--- ALETableWord1
 
-  Type_ALETableWord get_ALETableW2() { return Type_ALETableWord(rw.template get<uint32>(0x34)); }
+  Type_ALETableWord1 get_ALETableWord1() { return Type_ALETableWord1(rw.template get<uint32>(0x38)); }
  
-  void set_ALETableW2(Type_ALETableWord value) { rw.set(0x34,value); }
+  void set_ALETableWord1(Type_ALETableWord1 value) { rw.set(0x38,value.value); }
  
-  void set_ALETableW2_null() { rw.set(0x34,Type_ALETableWord(0)); }
+  Setter<Type_ALETableWord1> to_ALETableWord1() { return Setter<Type_ALETableWord1>(rw,0x38); }
  
-  void set_ALETableW2_ones() { rw.set(0x34,Type_ALETableWord(-1)); }
+  static Type_ALETableWord1 null_ALETableWord1() { return Type_ALETableWord1(0); }
  
-  //--- ALETableW1
+  static Type_ALETableWord1 ones_ALETableWord1() { return Type_ALETableWord1(Type_ALETableWord1::Type(-1)); }
+ 
+  //--- ALETableWord0
 
-  Type_ALETableWord get_ALETableW1() { return Type_ALETableWord(rw.template get<uint32>(0x38)); }
+  Type_ALETableWord0 get_ALETableWord0() { return Type_ALETableWord0(rw.template get<uint32>(0x3C)); }
  
-  void set_ALETableW1(Type_ALETableWord value) { rw.set(0x38,value); }
+  void set_ALETableWord0(Type_ALETableWord0 value) { rw.set(0x3C,value.value); }
  
-  void set_ALETableW1_null() { rw.set(0x38,Type_ALETableWord(0)); }
+  Setter<Type_ALETableWord0> to_ALETableWord0() { return Setter<Type_ALETableWord0>(rw,0x3C); }
  
-  void set_ALETableW1_ones() { rw.set(0x38,Type_ALETableWord(-1)); }
+  static Type_ALETableWord0 null_ALETableWord0() { return Type_ALETableWord0(0); }
  
-  //--- ALETableW0
-
-  Type_ALETableWord get_ALETableW0() { return Type_ALETableWord(rw.template get<uint32>(0x3C)); }
- 
-  void set_ALETableW0(Type_ALETableWord value) { rw.set(0x3C,value); }
- 
-  void set_ALETableW0_null() { rw.set(0x3C,Type_ALETableWord(0)); }
- 
-  void set_ALETableW0_ones() { rw.set(0x3C,Type_ALETableWord(-1)); }
+  static Type_ALETableWord0 ones_ALETableWord0() { return Type_ALETableWord0(Type_ALETableWord0::Type(-1)); }
  
   //--- ALEPortControl
 

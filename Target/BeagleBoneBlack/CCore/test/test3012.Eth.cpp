@@ -195,12 +195,10 @@ void test2()
   
   for(;;)
     {
-     Task::Sleep(10_sec);
+     Task::Sleep(30_sec);
 
      ShowStat(eth,"Eth");
      ShowStat(ip,"IP");
-     
-     //Printf(Con,"#.h;\n",ReadRxStatus());
     }
  }
 

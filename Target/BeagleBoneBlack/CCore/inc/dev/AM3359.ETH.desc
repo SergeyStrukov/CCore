@@ -775,12 +775,42 @@ reg ALEUnknownVLAN : 32
 
 reg ALETableControl : 32
  {
-  Pointer : 0-9
-  Write   : 31
+  Index : 0-9
+  Write : 31
  }
 
-reg ALETableWord : 32 {}
+reg ALETableWord0 : 32 
+ {
+  Secure   : 0
+  Block    : 1
+  Port     : 2-3
+  DLR      : 5
+ }
 
+reg ALETableWord1 : 32 
+ {
+  AddressByte1 : 0-7
+  AddressByte0 : 8-15
+  
+  EntryType    : 28-29
+   {
+    Free        = 00b
+    Address     = 01b
+    VLAN        = 10b
+    AddressVLAN = 11b
+   }
+   
+  SubType      : 30-31
+ }
+ 
+reg ALETableWord2 : 32 
+ {
+  AddressByte5 : 0-7
+  AddressByte4 : 8-15
+  AddressByte3 : 16-23
+  AddressByte2 : 24-31
+ }
+ 
 reg ALEPortControl : 32
  {
   State : 0-1
@@ -807,13 +837,11 @@ bar ALEBar : address
   
   ALETableControl = 020h
   
-  ALETableWord = hidden
+  ALETableWord2   = 034h
+  ALETableWord1   = 038h
+  ALETableWord0   = 03Ch
   
-  ALETableW2 = 034h as ALETableWord
-  ALETableW1 = 038h as ALETableWord
-  ALETableW0 = 03Ch as ALETableWord
-  
-  ALEPortControl = hidden
+  ALEPortControl  = hidden
   
   ALEPort0Control = 040h as ALEPortControl
   ALEPort1Control = 044h as ALEPortControl
