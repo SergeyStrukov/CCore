@@ -39,8 +39,6 @@ int main(int argc,const char *argv[])
   Used(argc);
   Used(argv);
   
-  MemScope mem_scope;
-  
   //Testit<0>().run();
   //Testit<1>().run();
   //Testit<2>().run();
@@ -182,12 +180,10 @@ int main(int argc,const char *argv[])
   //Testit<3009>().run();
   //Testit<3010>().run();
   //Testit<3011>().run();
-  Testit<3012>().run();
+  //Testit<3012>().run();
   
   Printf(Con,"\nPeak memory usage #;\n\n",MemPeak());  
     
-  DetachPacketBufs();
-  
   return 0;
  }
 
@@ -197,11 +193,21 @@ int main(int argc,const char *argv[])
 #include <CCore/inc/video/VideoControl.h>
 #include <CCore/inc/video/VideoConsole.h>
 
+#include <CCore/inc/dev/DevEth.h>
+#include <CCore/inc/net/NanoIPDevice.h>
+#include <CCore/inc/net/PTPClientDevice.h>
+#include <CCore/inc/net/HFSClientDevice.h>
+#include <CCore/inc/net/HFSFileSystemDevice.h>
+#include <CCore/inc/net/PTPConDevice.h>
+#include <CCore/inc/RedirectPTPCon.h>
+
 #include <stdio.h>
 
 void before_main()
  {
   using namespace CCore;
+  
+  MemScope mem_scope;
   
   I2CDevice i2c(Dev::I2C_0);
   
@@ -220,6 +226,44 @@ void before_main()
   SingleMaster<Video::VideoConsole> vcon_master(Video::VideoConsole::GetHost(),"!VideoConsoleMaster",vcon);
   
 #endif  
+
+#if 1  
+  
+  Dev::EthDevice eth;
+  
+  ObjMaster eth_master(eth,"eth");
+  
+  Net::NanoIPDevice ip("eth",Net::IPAddress(192,168,99,10),Net::IPAddress(255,255,255,0));
+  
+  Dev::EthDevice::StartStop start_stop(eth,TaskPriority(5000));
+  
+  ObjMaster ip_master(ip,"ip");
+  
+  Net::NanoUDPEndpointDevice udp_ptp("ip",Net::PTPClientUDPort,true,Net::UDPoint(192,168,99,1,Net::PTPServerUDPort));
+  
+  ObjMaster udp_ptp_master(udp_ptp,"udp_ptp");
+  
+  Net::PTP::ClientDevice ptp("udp_ptp");
+  
+  ObjMaster ptp_master(ptp,"ptp");
+  
+  Net::HFS::ClientDevice hfs("ptp");
+  
+  ObjMaster hfs_master(hfs,"hfs");
+  
+  Net::HFS::FileSystemDevice host("hfs");
+  
+  ObjMaster host_master(host,"host");
+  
+  Net::PTPCon::ClientDevice ptpcon("ptp");
+  
+  ObjMaster ptpcon_master(ptpcon,"ptpcon");
+  
+  Net::PTPCon::Cfg cfg(Net::PTPCon::TriggerAll);
+  
+  RedirectPTPCon redirect("ptpcon","Beagle",cfg);
+  
+#endif  
   
   const char *argv[]={"main",0};
  
@@ -228,6 +272,8 @@ void before_main()
   fflush(stdout);
   
   Printf(Con,"main() return #;\n",ret);
+  
+  DetachPacketBufs();
  }
 
 

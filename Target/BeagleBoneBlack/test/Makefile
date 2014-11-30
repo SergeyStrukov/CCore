@@ -37,4 +37,4 @@ include $(CCORE_ROOT)/Target/Makefile.app
 #	BeagleBoot.exe r 192.168.1.10 $(TARGET) && cd root && PTPServer.exe c
 	
 run: $(TARGET)
-	ELFtoUboot.exe $(TARGET) D:/Tools/TFTPD64/bootfile
+	ELFtoUboot.exe $(TARGET) D:/Tools/TFTPD64/bootfile && cd root && PTPServer.exe c
