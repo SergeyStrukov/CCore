@@ -81,12 +81,55 @@ L4:
 L3:
      
      @ flush cache
-     
-     
+
+        mov     r1, #0
+L5:        
+        mov     r2, #0
+L4:        
+        mov     r3, r1, LSL #6
+        orr     r3, r3, r2, LSL #30
+        mcr     p15, 0, r3, c7, c10, 2
+        
+        add     r2, r2, #1
+        cmp     r2, #4
+        bcc     L4 
+        
+        add     r1, r1, #1
+        cmp     r1, #128
+        bcc     L5 
+        
+        mov     r1, #0
+L7:        
+        mov     r2, #0
+L6:        
+        mov     r3, r1, LSL #6
+        orr     r3, r3, r2, LSL #29
+        mcr     p15, 0, r3, c7, c10, 2
+        
+        add     r2, r2, #1
+        cmp     r2, #8
+        bcc     L6 
+        
+        add     r1, r1, #1
+        cmp     r1, #512
+        bcc     L7 
         
      @ disable MMU and cache
      
+        mrc     p15, 0, r1, c1, c0, 0
         
+        bic     r0, r1, #0x5
+        bic     r0, r1, #0x1800
+        
+        mcr     p15, 0, r1, c1, c0, 0
+        
+     @ invalidate instruction cache   
+        
+        mov      r1, #0
+        
+        mcr      p15, 0, r1, c7, c5, 0
+        
+        mcr      p15, 0, r1, c7, c10, 4
         
      @ boot
         
@@ -98,25 +141,33 @@ __std_boot_beg:
         
      @ copy sections
         
-L7:
+L102:
         ldr      r1, [r0],#+4
         ldr      r2, [r0],#+4
         
         cmp      r2, #0
-        beq      L5
+        beq      L100
         
-L6:
+L101:
         ldr      r3, [r0],#+4
         str      r3, [r1],#+4
         subs     r2, r2, #1
-        bne      L6
+        bne      L101
         
-        b        L7
+        b        L102
         
-L5:
+L100:
      @ setup stack
         
         SetReg   sp, stack_top
+        
+     @ invalidate instruction cache   
+        
+        mov      r0, #0
+        
+        mcr      p15, 0, r0, c7, c5, 0
+        
+        mcr      p15, 0, r0, c7, c10, 4
         
      @ goto entry point
         

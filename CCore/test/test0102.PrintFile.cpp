@@ -40,10 +40,22 @@ const char *const Testit<102>::Name="Test102 PrintFile";
 template<>
 bool Testit<102>::Main() 
  { 
-  PrintFile out("testPrintFile.txt");
-  
   TestPrint(Con);
-  TestPrint(out);
+  
+  TaskEventRecorder recorder(100_MByte);
+  
+  {
+   TickTask tick_task; 
+   TaskEventHostType::StartStop event_start_stop(TaskEventHost,&recorder);
+   
+   PrintFile out("testPrintFile.txt");
+   
+   TestPrint(out);
+  } 
+  
+  StreamFile dev("test102.bin");
+  
+  dev(recorder);
   
   return true;
  }

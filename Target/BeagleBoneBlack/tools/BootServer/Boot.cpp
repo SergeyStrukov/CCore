@@ -88,6 +88,16 @@ void Boot::buildBoot(PtrLen<const UnitType> tail)
         Printf(Exception,"CCore::Boot::buildBoot() : unaligned section #8.16i;",address);
        }
      
+     if( entry_point<MinAddress || entry_point>=LimAddress )
+       {
+        Printf(Exception,"CCore::Boot::buildBoot() : bad entry point #8.16i;",entry_point);
+       }
+     
+     if( entry_point%AlignAddress )
+       {
+        Printf(Exception,"CCore::Boot::buildBoot() : unaligned entry point #8.16i;",entry_point);
+       }
+     
      UnitType len_u=UnitType( (len+UnitLen-1)/UnitLen );
      
      if( !len_u ) continue;
@@ -101,9 +111,8 @@ void Boot::buildBoot(PtrLen<const UnitType> tail)
     }
     
   buf.erase();
-  buf.extend_default(len);
     
-  UnitType *out=buf.getPtr();
+  UnitType *out=buf.extend_default(len).ptr;
   
   for(auto r=Range(table); +r ;++r)
     {
@@ -119,7 +128,7 @@ void Boot::buildBoot(PtrLen<const UnitType> tail)
      
      const uint8 *data=r->getData().ptr;
      
-     memcpy(out,data,len);
+     memcpy(out,data,(ulen)len);
      
      out+=len_u;
     }
@@ -128,21 +137,6 @@ void Boot::buildBoot(PtrLen<const UnitType> tail)
   *(out++)=0;
   
   tail.copyTo(out);
- }
-
-void Boot::boot_run()
- {
-  buildBoot(Range(&__std_boot_beg,&__std_boot_end));
- }
- 
-void Boot::boot_flash()
- {
-  // TODO
- }
- 
-void Boot::boot_flashboot()
- {
-  // TODO
  }
 
 void Boot::signal_complete()
@@ -168,16 +162,30 @@ void Boot::show() const
   for(auto r=Range(table); +r ;++r)
     Printf(Con,"#8.16i; #8.16i;\n",r->getAddress(),r->getLen());
        
-  Printf(Con,"entry_point = #8.16i;\n",entry_point);  
+  Printf(Con,"\nentry_point = #8.16i;\n",entry_point);  
  }
  
 void Boot::prepareBoot()
  {
   switch( flags )
     {
-     case BootRun       : boot_run();       break;
-     case BootFlash     : boot_flash();     break;
-     case BootFlashBoot : boot_flashboot(); break;
+     case BootRun :
+      {
+       buildBoot(Range(&__std_boot_beg,&__std_boot_end));
+      }
+     break;
+     
+     case BootFlash :
+      {
+       // TODO
+      }
+     break;
+     
+     case BootFlashBoot :
+      {
+       // TODO
+      }
+     break;
      
      default:
       {

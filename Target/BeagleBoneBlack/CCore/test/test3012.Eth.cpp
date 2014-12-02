@@ -193,13 +193,10 @@ void test2()
   
   Dev::EthDevice::StartStop start_stop(eth,TaskPriority(5000));
   
-  for(;;)
-    {
-     Task::Sleep(30_sec);
+  Task::Sleep(30_sec);
 
-     ShowStat(eth,"Eth");
-     ShowStat(ip,"IP");
-    }
+  ShowStat(eth,"Eth");
+  ShowStat(ip,"IP");
  }
 
 } // namespace Private_3012
@@ -215,6 +212,7 @@ template<>
 bool Testit<3012>::Main() 
  {
   //test1();
+  test2();
   test2();
   
   return true;

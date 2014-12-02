@@ -67,12 +67,6 @@ class Boot : public Net::PTPBoot::BootInfo
      BootFlashBoot
     };
    
-   void boot_run();
-   
-   void boot_flash();
- 
-   void boot_flashboot();
-   
   private:
    
    virtual void signal_complete();
