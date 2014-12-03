@@ -181,6 +181,7 @@ int main(int argc,const char *argv[])
   //Testit<3010>().run();
   //Testit<3011>().run();
   //Testit<3012>().run();
+  //Testit<3013>().run();
   
   Printf(Con,"\nPeak memory usage #;\n\n",MemPeak());  
     
@@ -191,7 +192,7 @@ int main(int argc,const char *argv[])
 
 #include <CCore/inc/I2CDevice.h>
 #include <CCore/inc/video/VideoControl.h>
-#include <CCore/inc/video/VideoConsole.h>
+#include <CCore/inc/sys/SysConHost.h>
 
 #include <CCore/inc/dev/DevEth.h>
 #include <CCore/inc/net/NanoIPDevice.h>
@@ -209,6 +210,8 @@ void before_main()
   
   MemScope mem_scope;
   
+#if 1  
+   
   I2CDevice i2c(Dev::I2C_0);
   
   ObjMaster i2c_master(i2c,"i2c[0]");
@@ -217,17 +220,15 @@ void before_main()
   
   ObjMaster vctrl_master(vctrl,"video");
   
-#if 1  
-   
   Video::VideoConsole vcon("video");
   
   vcon.waitOpen();
   
-  SingleMaster<Video::VideoConsole> vcon_master(Video::VideoConsole::GetHost(),"!VideoConsoleMaster",vcon);
+  SingleMaster<Video::VideoConsole> vcon_master(Sys::GetConHost(),"!VideoConsoleMaster",vcon);
   
 #endif  
 
-#if 1  
+#if 0  
   
   Dev::EthDevice eth;
   

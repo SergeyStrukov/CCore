@@ -3,7 +3,7 @@
 //
 //  Project: CCore 1.08
 //
-//  Tag: Target/BeagleBoneBlack
+//  Tag: General
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -20,49 +20,22 @@ namespace Video {
 
 /* class VideoConsole */
 
-template <>
-void VideoConsole::open<Color16>(FrameBuf<Color16> buf)
- {
-  con16.init(buf);
-  
-  first=false;
- }
-
-template <>
-void VideoConsole::open<Color24>(FrameBuf<Color24> buf)
- {
-  con24.init(buf);
-  
-  first=false;
- }
-
-template <>
-void VideoConsole::open<Color32>(FrameBuf<Color32> buf)
- {
-  con32.init(buf);
-  
-  first=false;
- }
-
 void VideoConsole::open()
  {
   Mutex::Lock lock(mutex);
-  
-  color_mode=ColorMode_none;
+
+  con.clear();
   
   if( dev->updateVideoModeList(DefaultTimeout) && dev->setVideoMode(0) )
     {
-     color_mode=dev->getColorMode();
+     auto mode=dev->getColorMode();
      
-     switch( color_mode )
+     if( mode ) 
        {
-        case ColorMode16 : open(dev->getBuf16()); break; 
-        case ColorMode24 : open(dev->getBuf24()); break; 
-        case ColorMode32 : open(dev->getBuf32()); break; 
-       }
-     
-     if( color_mode!=ColorMode_none ) 
-       {
+        con.init(mode,InitFunc(dev));
+        
+        first=false;
+       
         dev->setTick(500_msec);
        
         sem.give();
@@ -74,27 +47,17 @@ void VideoConsole::close()
  {
   Mutex::Lock lock(mutex);
   
-  color_mode=ColorMode_none;
+  con.clear();
  }
 
 void VideoConsole::do_print(StrLen str)
  {
-  switch( color_mode )
-    {
-     case ColorMode16 : con16.print(str); break;
-     case ColorMode24 : con24.print(str); break;
-     case ColorMode32 : con32.print(str); break;
-    }
+  con.apply(PrintFunc(str));
  }
 
 void VideoConsole::do_tick()
  {
-  switch( color_mode )
-    {
-     case ColorMode16 : con16.toggleMarker(); break;
-     case ColorMode24 : con24.toggleMarker(); break;
-     case ColorMode32 : con32.toggleMarker(); break;
-    }
+  con.apply(ToggleMarkerFunc());
  }
 
 void VideoConsole::change(bool plug,bool power)

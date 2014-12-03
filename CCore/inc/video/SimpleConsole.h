@@ -104,8 +104,6 @@ class CharPanel : NoCopy
  
    CharPanel() {}
    
-   ~CharPanel() {}
-   
    // properties
    
    bool operator + () const { return dy; }
@@ -138,6 +136,8 @@ void CharPanel<Color>::init(FrameBuf<Color> out_)
   
   dx=out.dX()/DefaultFont::DX;
   dy=out.dY()/DefaultFont::DY;
+  
+  if( !dx ) dy=0;
   
   out.erase(back);
  }
@@ -198,8 +198,6 @@ class SimpleConsole : NoCopy
  
    SimpleConsole() {}
    
-   ~SimpleConsole() {}
-   
    // properties
    
    bool operator + () const { return panel; }
@@ -209,6 +207,16 @@ class SimpleConsole : NoCopy
    // methods
    
    void init(FrameBuf<Color> out);
+   
+   template <class Dev>
+   void init(Dev *dev)
+    {
+     FrameBuf<Color> out;
+     
+     dev->getBuf(out);
+     
+     init(out);
+    }
    
    void print(PtrLen<const char> str);
    

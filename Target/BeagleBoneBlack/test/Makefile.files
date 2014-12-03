@@ -136,6 +136,7 @@ OBJ_LIST = \
 ../test-obj/test3010.I2C.o \
 ../test-obj/test3011.LCD.o \
 ../test-obj/test3012.Eth.o \
+../test-obj/test3013.Video.o \
 ../test-obj/testArray.o \
 ../test-obj/testInt.o \
 ../test-obj/testIntAlgo.o \
@@ -287,6 +288,7 @@ ASM_LIST = \
 ../test-obj/test3010.I2C.s \
 ../test-obj/test3011.LCD.s \
 ../test-obj/test3012.Eth.s \
+../test-obj/test3013.Video.s \
 ../test-obj/testArray.s \
 ../test-obj/testInt.s \
 ../test-obj/testIntAlgo.s \
@@ -438,6 +440,7 @@ DEP_LIST = \
 ../test-obj/test3010.I2C.dep \
 ../test-obj/test3011.LCD.dep \
 ../test-obj/test3012.Eth.dep \
+../test-obj/test3013.Video.dep \
 ../test-obj/testArray.dep \
 ../test-obj/testInt.dep \
 ../test-obj/testIntAlgo.dep \
@@ -866,6 +869,9 @@ include $(RULES_FILE)
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/test3012.Eth.o : ../../../Target/BeagleBoneBlack/CCore/test/test3012.Eth.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../test-obj/test3013.Video.o : ../../../Target/BeagleBoneBlack/CCore/test/test3013.Video.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../test-obj/testArray.o : ../../../CCore/test/testArray.cpp
@@ -1314,6 +1320,9 @@ include $(RULES_FILE)
 ../test-obj/test3012.Eth.s : ../../../Target/BeagleBoneBlack/CCore/test/test3012.Eth.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../test-obj/test3013.Video.s : ../../../Target/BeagleBoneBlack/CCore/test/test3013.Video.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../test-obj/testArray.s : ../../../CCore/test/testArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1759,6 +1768,9 @@ include $(RULES_FILE)
 
 ../test-obj/test3012.Eth.dep : ../../../Target/BeagleBoneBlack/CCore/test/test3012.Eth.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3012.Eth.o $< -MF $@
+
+../test-obj/test3013.Video.dep : ../../../Target/BeagleBoneBlack/CCore/test/test3013.Video.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3013.Video.o $< -MF $@
 
 ../test-obj/testArray.dep : ../../../CCore/test/testArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testArray.o $< -MF $@

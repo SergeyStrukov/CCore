@@ -3,7 +3,7 @@
 //
 //  Project: CCore 1.08
 //
-//  Tag: Target/BeagleBoneBlack
+//  Tag: General
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -42,18 +42,37 @@ class VideoConsole : NoCopy , VideoDevice::Control
    
    Mutex mutex;
 
-   ColorMode color_mode = ColorMode_none ;
-   
-   SimpleConsole<Color16> con16;
-   SimpleConsole<Color24> con24;
-   SimpleConsole<Color32> con32;
+   MultiMode<SimpleConsole> con;
    
    Sem sem;
    
   private:
    
-   template <class Color>
-   void open(FrameBuf<Color> buf);
+   struct InitFunc
+    {
+     VideoDevice *dev;
+     
+     explicit InitFunc(VideoDevice *dev_) : dev(dev_) {}
+     
+     template <class T>
+     void operator () (T &con) { con.init(dev); }      
+    };
+   
+   struct PrintFunc
+    {
+     StrLen str;
+     
+     explicit PrintFunc(StrLen str_) : str(str_) {}
+     
+     template <class T>
+     void operator () (T &con) { con.print(str); }
+    };
+   
+   struct ToggleMarkerFunc
+    {
+     template <class T>
+     void operator () (T &con) { con.toggleMarker(); }
+    };
    
    void open();
    
@@ -80,8 +99,6 @@ class VideoConsole : NoCopy , VideoDevice::Control
    bool waitOpen(MSec timeout=DefaultTimeout);
    
    void print(StrLen str);
-   
-   static SingleHost<VideoConsole> & GetHost();
  };
 
 } // namespace Video

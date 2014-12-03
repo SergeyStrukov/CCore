@@ -17,15 +17,16 @@
 #define CCore_inc_video_VideoControl_h
 
 #include <CCore/inc/video/VideoDevice.h>
+#include <CCore/inc/video/EDID.h>
  
 #include <CCore/inc/ObjHost.h>
 #include <CCore/inc/AttachmentHost.h>
 #include <CCore/inc/Array.h>
 #include <CCore/inc/Task.h>
-#include <CCore/inc/video/EDID.h>
 
 #include <CCore/inc/dev/DevHDMI.h>
 #include <CCore/inc/dev/DevLCD.h>
+#include <CCore/inc/dev/DevBit.h>
 
 namespace CCore {
 namespace Video {
@@ -38,15 +39,17 @@ class VideoControl;
 
 class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
  {
-   static const uint32 GPIOBit = uint32(1)<<25 ;
+   static const auto GPIOBit = Dev::Bit(25) ;
+   
+   static Space VideoSpace;
    
    Dev::HDMI hdmi;
    Dev::LCD lcd;
   
    AttachmentHost<Control> host;
    
-   Space video_space;
    bool first = true ;
+   bool stop_on_exit = false ;
    
    FrameBuf<Color16> buf16;
    FrameBuf<Color24> buf24;
@@ -72,11 +75,13 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    MultiEvent<EventLim-1> mevent;
    Ticker ticker;
    
-   AntiSem asem;
+   Sem stop_sem;
    
   private:
    
    using Hook = AttachmentHost<Control>::Hook ;
+   
+   void finish_init(const EDIDTimingDesc &desc,ColorMode color_mode);
    
    void init_first(const EDIDTimingDesc &desc,ColorMode color_mode);
    
@@ -110,27 +115,29 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    
    virtual ~VideoControl();
    
+   void stopOnExit() { stop_on_exit=true; }
+   
    // VideoDevice
-   
-   virtual VideoDim getVideoDim();
-   
-   virtual ColorMode getColorMode();
-   
-   virtual VideoMode getVideoMode();
-   
-   virtual FrameBuf<Color16> getBuf16();
-   
-   virtual FrameBuf<Color24> getBuf24();
-   
-   virtual FrameBuf<Color32> getBuf32();
    
    virtual bool updateVideoModeList(MSec timeout);
    
-   virtual PtrLen<const VideoMode> getVideoModeList();
+   virtual PtrLen<const VideoMode> getVideoModeList() const;
    
    virtual bool setVideoMode(ulen index);
    
    virtual void setTick(MSec period);
+   
+   virtual VideoDim getVideoDim() const;
+   
+   virtual ColorMode getColorMode() const;
+   
+   virtual VideoMode getVideoMode() const;
+   
+   virtual FrameBuf<Color16> getBuf16() const;
+   
+   virtual FrameBuf<Color24> getBuf24() const;
+   
+   virtual FrameBuf<Color32> getBuf32() const;
    
    virtual void attach(Control *ctrl);
    

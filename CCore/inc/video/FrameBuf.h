@@ -35,23 +35,23 @@ template <class Color> class FrameBuf;
 
 /* enum ColorName */
 
-enum ColorName
+enum ColorName : uint32
  {
-  Black     = 0x000000 ,
-  Gray      = 0x808080 ,
-  Silver    = 0xC0C0C0 ,
-  White     = 0xFFFFFF ,
+  Black     = 0x000000,
+  Gray      = 0x808080,
+  Silver    = 0xC0C0C0,
+  White     = 0xFFFFFF,
   
-  Red       = 0xFF0000 ,
-  Green     = 0x00FF00 ,
-  Blue      = 0x0000FF ,
+  Red       = 0xFF0000,
+  Green     = 0x00FF00,
+  Blue      = 0x0000FF,
 
-  Cyan      = 0x00FFFF ,
-  Fuchsia   = 0xFF00FF ,
-  Yellow    = 0xFFFF00 ,
+  Cyan      = 0x00FFFF,
+  Fuchsia   = 0xFF00FF,
+  Yellow    = 0xFFFF00,
   
-  Teal      = 0x008080 ,
-  Purple    = 0x800080 , 
+  Teal      = 0x008080,
+  Purple    = 0x800080, 
   Olive     = 0x808000
  };
 

@@ -146,3 +146,4 @@
 ../../../Target/BeagleBoneBlack/CCore/test/test3010.I2C.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3011.LCD.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3012.Eth.cpp
+../../../Target/BeagleBoneBlack/CCore/test/test3013.Video.cpp

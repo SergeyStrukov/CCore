@@ -17,6 +17,8 @@
 #define CCore_inc_video_VideoDevice_h
 
 #include <CCore/inc/video/FrameBuf.h>
+
+#include <CCore/inc/FunctorType.h>
  
 namespace CCore {
 namespace Video {
@@ -34,11 +36,78 @@ enum ColorMode
 
 /* classes */
 
+template <template <class Color> class T> class MultiMode;
+
 struct VideoMode;
 
 struct VideoDim;
 
 struct VideoDevice;
+
+/* class MultiMode<T> */
+
+template <template <class Color> class T>
+class MultiMode
+ {
+   ColorMode mode = ColorMode_none ;
+   
+   union Union
+    {
+     T<Color16> obj16;
+     T<Color24> obj24;
+     T<Color32> obj32;
+     
+     Union() {}
+    };
+   
+   template <class S>
+   static void CreateDefault(S &obj) { new(PlaceAt(&obj)) S(); }
+   
+   Union u;
+   
+  public: 
+   
+   MultiMode() {}
+   
+   ~MultiMode() {}
+
+   ColorMode operator + () const { return mode; }
+   
+   bool operator ! () const { return !mode; }
+
+   template <class FuncInit>
+   void init(ColorMode mode_,FuncInit func_init)
+    {
+     mode=mode_;
+     
+     FunctorTypeOf<FuncInit> func(func_init);
+     
+     switch( mode_ )
+       {
+        case ColorMode16 : CreateDefault(u.obj16); func(u.obj16); break;
+        case ColorMode24 : CreateDefault(u.obj24); func(u.obj24); break;
+        case ColorMode32 : CreateDefault(u.obj32); func(u.obj32); break;
+       }
+    }
+   
+   void clear()
+    {
+     mode=ColorMode_none;
+    }
+   
+   template <class FuncInit>
+   void apply(FuncInit func_init)
+    {
+     FunctorTypeOf<FuncInit> func(func_init);
+     
+     switch( mode )
+       {
+        case ColorMode16 : func(u.obj16); break;
+        case ColorMode24 : func(u.obj24); break;
+        case ColorMode32 : func(u.obj32); break;
+       }
+    }
+ };
 
 /* struct VideoMode */
 
@@ -78,25 +147,35 @@ struct VideoDim
 
 struct VideoDevice
  {
-  virtual VideoDim getVideoDim()=0;
-  
-  virtual ColorMode getColorMode()=0;
-  
-  virtual VideoMode getVideoMode()=0;
-  
-  virtual FrameBuf<Color16> getBuf16()=0;
-  
-  virtual FrameBuf<Color24> getBuf24()=0;
-  
-  virtual FrameBuf<Color32> getBuf32()=0;
+  // not synchronized
   
   virtual bool updateVideoModeList(MSec timeout=DefaultTimeout)=0;
   
-  virtual PtrLen<const VideoMode> getVideoModeList()=0;
+  virtual PtrLen<const VideoMode> getVideoModeList() const =0;
   
   virtual bool setVideoMode(ulen index)=0;
   
   virtual void setTick(MSec period)=0;
+  
+  virtual VideoDim getVideoDim() const =0;
+  
+  virtual ColorMode getColorMode() const =0;
+  
+  virtual VideoMode getVideoMode() const =0;
+  
+  virtual FrameBuf<Color16> getBuf16() const =0;
+  
+  virtual FrameBuf<Color24> getBuf24() const =0;
+  
+  virtual FrameBuf<Color32> getBuf32() const =0;
+  
+  void getBuf(FrameBuf<Color16> &ret) const { ret=getBuf16(); }
+  
+  void getBuf(FrameBuf<Color24> &ret) const { ret=getBuf24(); }
+  
+  void getBuf(FrameBuf<Color32> &ret) const { ret=getBuf32(); }
+  
+  // synchronized
   
   struct Control
    {

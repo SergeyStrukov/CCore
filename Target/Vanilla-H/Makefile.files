@@ -291,6 +291,7 @@ obj/UIntMax.o \
 obj/UIntSat.o \
 obj/UIntSplit.o \
 obj/UtilFunc.o \
+obj/VideoConsole.o \
 obj/VideoDevice.o \
 obj/XPoint.o \
 
@@ -588,6 +589,7 @@ obj/UIntMax.s \
 obj/UIntSat.s \
 obj/UIntSplit.s \
 obj/UtilFunc.s \
+obj/VideoConsole.s \
 obj/VideoDevice.s \
 obj/XPoint.s \
 
@@ -885,6 +887,7 @@ obj/UIntMax.dep \
 obj/UIntSat.dep \
 obj/UIntSplit.dep \
 obj/UtilFunc.dep \
+obj/VideoConsole.dep \
 obj/VideoDevice.dep \
 obj/XPoint.dep \
 
@@ -1771,6 +1774,9 @@ obj/UIntSplit.o : ../../CCore/src/UIntSplit.cpp
 obj/UtilFunc.o : ../../CCore/src/gadget/UtilFunc.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/VideoConsole.o : ../../CCore/src/video/VideoConsole.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/VideoDevice.o : ../../CCore/src/video/VideoDevice.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2653,6 +2659,9 @@ obj/UIntSplit.s : ../../CCore/src/UIntSplit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/UtilFunc.s : ../../CCore/src/gadget/UtilFunc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/VideoConsole.s : ../../CCore/src/video/VideoConsole.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/VideoDevice.s : ../../CCore/src/video/VideoDevice.cpp
@@ -3538,6 +3547,9 @@ obj/UIntSplit.dep : ../../CCore/src/UIntSplit.cpp
 
 obj/UtilFunc.dep : ../../CCore/src/gadget/UtilFunc.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/UtilFunc.o $< -MF $@
+
+obj/VideoConsole.dep : ../../CCore/src/video/VideoConsole.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoConsole.o $< -MF $@
 
 obj/VideoDevice.dep : ../../CCore/src/video/VideoDevice.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoDevice.o $< -MF $@

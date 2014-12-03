@@ -14,12 +14,15 @@
 all:
 	make -C Boot
 	make -C BootServer
+	make -C ELFtoUboot
 
 clean:
 	make -C Boot        clean
 	make -C BootServer  clean
+	make -C ELFtoUboot  clean
 
 list:
 	make -C Boot        list
 	make -C BootServer  list
+	make -C ELFtoUboot  list
 

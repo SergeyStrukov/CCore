@@ -14,12 +14,10 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/sys/SysCon.h>
+#include <CCore/inc/sys/SysConHost.h>
 
 #include <CCore/inc/dev/DevPlanInit.h>
 
-#include <CCore/inc/video/VideoConsole.h>
-
-#include <CCore/inc/SingleHost.h>
 #include <CCore/inc/BlockFifo.h>
 
 #include <__std_init.h>
@@ -239,15 +237,14 @@ PlanInitNode * GetPlanInitNode_SysCon() { return &Object; }
 
 ConBase * ConBase::GetObject() { return Object->getBase(); }
 
-} // namespace Sys
+/* GetConHost() */
 
-/* class VideoConsole */
-
-SingleHost<Video::VideoConsole> & Video::VideoConsole::GetHost()
+SingleHost<Video::VideoConsole> & GetConHost()
  {
-  return Sys::Object->getHost(); 
+  return Object->getHost(); 
  }
 
+} // namespace Sys
 } // namespace CCore
  
 #if 1

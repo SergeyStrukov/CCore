@@ -302,6 +302,7 @@ obj/UIntSat.o \
 obj/UIntSplit.o \
 obj/UtilFunc.o \
 obj/VIA_Rhine_III.o \
+obj/VideoConsole.o \
 obj/VideoDevice.o \
 obj/XPoint.o \
 obj/__std_init.o \
@@ -616,6 +617,7 @@ obj/UIntSat.s \
 obj/UIntSplit.s \
 obj/UtilFunc.s \
 obj/VIA_Rhine_III.s \
+obj/VideoConsole.s \
 obj/VideoDevice.s \
 obj/XPoint.s \
 obj/__std_init.s \
@@ -930,6 +932,7 @@ obj/UIntSat.dep \
 obj/UIntSplit.dep \
 obj/UtilFunc.dep \
 obj/VIA_Rhine_III.dep \
+obj/VideoConsole.dep \
 obj/VideoDevice.dep \
 obj/XPoint.dep \
 obj/__std_init.dep \
@@ -1853,6 +1856,9 @@ obj/UtilFunc.o : ../../CCore/src/gadget/UtilFunc.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/VIA_Rhine_III.o : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/VideoConsole.o : ../../CCore/src/video/VideoConsole.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/VideoDevice.o : ../../CCore/src/video/VideoDevice.cpp
@@ -2790,6 +2796,9 @@ obj/UtilFunc.s : ../../CCore/src/gadget/UtilFunc.cpp
 obj/VIA_Rhine_III.s : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/VideoConsole.s : ../../CCore/src/video/VideoConsole.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/VideoDevice.s : ../../CCore/src/video/VideoDevice.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3724,6 +3733,9 @@ obj/UtilFunc.dep : ../../CCore/src/gadget/UtilFunc.cpp
 
 obj/VIA_Rhine_III.dep : ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VIA_Rhine_III.o $< -MF $@
+
+obj/VideoConsole.dep : ../../CCore/src/video/VideoConsole.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoConsole.o $< -MF $@
 
 obj/VideoDevice.dep : ../../CCore/src/video/VideoDevice.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoDevice.o $< -MF $@

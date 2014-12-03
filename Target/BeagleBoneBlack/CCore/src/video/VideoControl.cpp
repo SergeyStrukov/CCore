@@ -17,19 +17,48 @@
  
 #include <CCore/inc/sys/SysMemSpace.h>
 
-#include <CCore/inc/dev/DevHDMI.h>
-#include <CCore/inc/dev/DevLCD.h>
-
 #include <CCore/inc/dev/AM3359.GPIO.h>
 
 #include <CCore/inc/dev/DevIntHandle.h>
-
-#include <CCore/inc/Print.h>
 
 namespace CCore {
 namespace Video {
 
 /* class VideoControl */
+
+Space VideoControl::VideoSpace=Sys::AllocVideoSpace();
+
+void VideoControl::finish_init(const EDIDTimingDesc &desc,ColorMode color_mode)
+ {
+  switch( color_mode )
+    {
+     case ColorMode16 :
+      {
+       buf16=lcd.init_first16(desc,VideoSpace);
+       buf24=DefaultValue();
+       buf32=DefaultValue();
+      }
+     break;
+     
+     case ColorMode24 :
+      {
+       buf16=DefaultValue();
+       buf24=lcd.init_first24(desc,VideoSpace);
+       buf32=DefaultValue();
+      }
+     break;
+     
+     case ColorMode32 :
+      {
+       buf16=DefaultValue();
+       buf24=DefaultValue();
+       buf32=lcd.init_first32(desc,VideoSpace);
+      }
+     break; 
+    }
+  
+  hdmi.enableVIP();
+ }
 
 void VideoControl::init_first(const EDIDTimingDesc &desc,ColorMode color_mode)
  {
@@ -39,34 +68,7 @@ void VideoControl::init_first(const EDIDTimingDesc &desc,ColorMode color_mode)
    
   lcd.reset_first();
    
-  switch( color_mode )
-    {
-     case ColorMode16 :
-      {
-       buf16=lcd.init_first16(desc,video_space);
-       buf24=DefaultValue();
-       buf32=DefaultValue();
-      }
-     break;
-     
-     case ColorMode24 :
-      {
-       buf16=DefaultValue();
-       buf24=lcd.init_first24(desc,video_space);
-       buf32=DefaultValue();
-      }
-     break;
-     
-     case ColorMode32 :
-      {
-       buf16=DefaultValue();
-       buf24=DefaultValue();
-       buf32=lcd.init_first32(desc,video_space);
-      }
-     break; 
-    }
-  
-  hdmi.enableVIP();
+  finish_init(desc,color_mode);
  }
 
 void VideoControl::init(const EDIDTimingDesc &desc,ColorMode color_mode)
@@ -77,34 +79,7 @@ void VideoControl::init(const EDIDTimingDesc &desc,ColorMode color_mode)
    
   lcd.stop();
   
-  switch( color_mode )
-    {
-     case ColorMode16 :
-      {
-       buf16=lcd.init16(desc,video_space);
-       buf24=DefaultValue();
-       buf32=DefaultValue();
-      }
-     break;
-     
-     case ColorMode24 :
-      {
-       buf16=DefaultValue();
-       buf24=lcd.init24(desc,video_space);
-       buf32=DefaultValue();
-      }
-     break;
-     
-     case ColorMode32 :
-      {
-       buf16=DefaultValue();
-       buf24=DefaultValue();
-       buf32=lcd.init32(desc,video_space);
-      }
-     break; 
-    }
-  
-  hdmi.enableVIP();
+  finish_init(desc,color_mode);
  }
 
 void VideoControl::process(Dev::HDMI::IntInfo info)
@@ -278,15 +253,12 @@ bool VideoControl::append(const EDIDBlockDesc &desc)
 VideoControl::VideoControl(StrLen i2c_dev_name,TaskPriority priority,ulen stack_len)
  : hdmi(i2c_dev_name),
    host("VideoControl"),
-   video_space(Sys::AllocVideoSpace()),
    mevent("VideoControl"),
    ticker(mevent.function_trigger_int<Event_Tick>())
  {
   hdmi.init();
   
-  asem.inc();
-  
-  RunFuncTask( [=] () { work(); } ,asem.function_dec(),"VideoTask",priority,stack_len);
+  RunFuncTask( [=] () { work(); } ,stop_sem.function_give(),"VideoTask",priority,stack_len);
 
   setupInt();
  }
@@ -297,37 +269,14 @@ VideoControl::~VideoControl()
   
   mevent.trigger(Event_Stop);
   
-  asem.wait();
- }
-   
-VideoDim VideoControl::getVideoDim() 
- { 
-  return video_dim; 
- }
-
-ColorMode VideoControl::getColorMode()
- {
-  return mode.mode;
- }
-   
-VideoMode VideoControl::getVideoMode()
- {
-  return mode;
- }
-   
-FrameBuf<Color16> VideoControl::getBuf16()
- {
-  return buf16;
- }
-   
-FrameBuf<Color24> VideoControl::getBuf24()
- {
-  return buf24;
- }
-   
-FrameBuf<Color32> VideoControl::getBuf32()
- {
-  return buf32;
+  stop_sem.take();
+  
+  if( !first && stop_on_exit )
+    {
+     hdmi.disableVIP();
+    
+     lcd.stop();
+    }
  }
    
 bool VideoControl::updateVideoModeList(MSec timeout)
@@ -355,8 +304,8 @@ bool VideoControl::updateVideoModeList(MSec timeout)
      return false;
     }
  }
-   
-PtrLen<const VideoMode> VideoControl::getVideoModeList()
+
+PtrLen<const VideoMode> VideoControl::getVideoModeList() const
  {
   return Range_const(mode_list);
  }
@@ -391,6 +340,36 @@ bool VideoControl::setVideoMode(ulen index)
 void VideoControl::setTick(MSec period)
  {
   ticker.start(1_msec,period);
+ }
+
+VideoDim VideoControl::getVideoDim() const
+ { 
+  return video_dim; 
+ }
+
+ColorMode VideoControl::getColorMode() const
+ {
+  return mode.mode;
+ }
+   
+VideoMode VideoControl::getVideoMode() const
+ {
+  return mode;
+ }
+   
+FrameBuf<Color16> VideoControl::getBuf16() const
+ {
+  return buf16;
+ }
+   
+FrameBuf<Color24> VideoControl::getBuf24() const
+ {
+  return buf24;
+ }
+   
+FrameBuf<Color32> VideoControl::getBuf32() const
+ {
+  return buf32;
  }
 
 void VideoControl::attach(Control *ctrl)

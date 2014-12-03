@@ -244,6 +244,7 @@
 ../../CCore/src/video/EDID.cpp
 ../../CCore/src/video/FrameBuf.cpp
 ../../CCore/src/video/SimpleConsole.cpp
+../../CCore/src/video/VideoConsole.cpp
 ../../CCore/src/video/VideoDevice.cpp
 ../../XCore/CCore/src/Abort.cpp
 ../../XCore/CCore/src/driver/VIA_Rhine_III.cpp
@@ -324,5 +325,4 @@
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysPlanInit.cpp
 ../../Target/BeagleBoneBlack/CCore/src/sys/SysTime.cpp
 ../../Target/BeagleBoneBlack/CCore/src/task/TaskContext.cpp
-../../Target/BeagleBoneBlack/CCore/src/video/VideoConsole.cpp
 ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.cpp
