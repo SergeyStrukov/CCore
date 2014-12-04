@@ -23,7 +23,7 @@
 
 extern "C" {
 
-extern void __std_boot(unsigned *ptr,unsigned *lim);
+extern void __std_boot(const unsigned *ptr,const unsigned *lim);
 
 extern const unsigned __std_boot_beg;
 extern const unsigned __std_boot_end;
@@ -71,7 +71,17 @@ void Boot::Wait::wait()
 
 void Boot::buildBoot(PtrLen<const UnitType> tail)
  {
-  ulen len=LenAdd(tail.len,2);
+  ulen total=tail.len+2;
+  
+  if( entry_point<MinAddress || entry_point>=LimAddress )
+    {
+     Printf(Exception,"CCore::Boot::buildBoot() : bad entry point #8.16i;",entry_point);
+    }
+  
+  if( entry_point%AlignAddress )
+    {
+     Printf(Exception,"CCore::Boot::buildBoot() : unaligned entry point #8.16i;",entry_point);
+    }
   
   for(auto r=Range(table); +r ;++r)
     {
@@ -88,31 +98,21 @@ void Boot::buildBoot(PtrLen<const UnitType> tail)
         Printf(Exception,"CCore::Boot::buildBoot() : unaligned section #8.16i;",address);
        }
      
-     if( entry_point<MinAddress || entry_point>=LimAddress )
-       {
-        Printf(Exception,"CCore::Boot::buildBoot() : bad entry point #8.16i;",entry_point);
-       }
-     
-     if( entry_point%AlignAddress )
-       {
-        Printf(Exception,"CCore::Boot::buildBoot() : unaligned entry point #8.16i;",entry_point);
-       }
-     
      UnitType len_u=UnitType( (len+UnitLen-1)/UnitLen );
      
      if( !len_u ) continue;
      
-     len+=(2+len_u);
+     total+=(2+len_u);
      
-     if( len>(TopAddress-LimAddress)/UnitLen )  
+     if( total>(TopAddress-LimAddress)/UnitLen )  
        {
-        Printf(Exception,"CCore::Boot::buildBoot() : too large boot #;",len);
+        Printf(Exception,"CCore::Boot::buildBoot() : too large boot #;",total);
        }
     }
     
   buf.erase();
     
-  UnitType *out=buf.extend_default(len).ptr;
+  UnitType *out=buf.extend_default(total).ptr;
   
   for(auto r=Range(table); +r ;++r)
     {
@@ -200,7 +200,7 @@ void Boot::commitBoot() const
     {
      case BootRun :
       {
-       //__std_boot(buf.getPtr(),buf.getPtr()+buf.getLen());
+       __std_boot(buf.getPtr(),buf.getPtr()+buf.getLen());
       }
      break;
      

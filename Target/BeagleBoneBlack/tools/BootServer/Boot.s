@@ -83,25 +83,25 @@ L3:
      @ flush cache
 
         mov     r1, #0
-L5:        
+L6:        
         mov     r2, #0
-L4:        
+L5:        
         mov     r3, r1, LSL #6
         orr     r3, r3, r2, LSL #30
         mcr     p15, 0, r3, c7, c10, 2
         
         add     r2, r2, #1
         cmp     r2, #4
-        bcc     L4 
+        bcc     L5 
         
         add     r1, r1, #1
         cmp     r1, #128
-        bcc     L5 
+        bcc     L6 
         
         mov     r1, #0
-L7:        
+L8:        
         mov     r2, #0
-L6:        
+L7:        
         mov     r3, r1, LSL #6
         orr     r3, r3, r2, LSL #29
         orr     r3, r3, #2
@@ -109,11 +109,11 @@ L6:
         
         add     r2, r2, #1
         cmp     r2, #8
-        bcc     L6 
+        bcc     L7 
         
         add     r1, r1, #1
         cmp     r1, #512
-        bcc     L7 
+        bcc     L8 
         
      @ disable MMU and cache
      
@@ -175,9 +175,13 @@ L100:
         
         mcr      p15, 0, r0, c7, c5, 6    @ BTB
         
-        mcr      p15, 0, r0, c7, c10, 4   @ dsb
+        mcr      p15, 0, r0, c7, c10, 4
         
-        mcr      p15, 0, r0, c7, c5, 4    @ isb
+        mcr      p15, 0, r0, c7, c5, 4
+        
+        dsb
+        
+        isb
         
      @ goto entry point
         

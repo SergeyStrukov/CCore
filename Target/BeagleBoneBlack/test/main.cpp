@@ -139,7 +139,7 @@ int main(int argc,const char *argv[])
   //Testit<97>().run();
   
   //Testit<100>().run();
-  //Testit<101>().run();
+  Testit<101>().run();
   //Testit<102>().run();
   //Testit<103>().run();
   //Testit<104>().run();
@@ -210,7 +210,7 @@ void before_main()
   
   MemScope mem_scope;
   
-#if 1  
+#if 1
    
   I2CDevice i2c(Dev::I2C_0);
   
@@ -228,7 +228,7 @@ void before_main()
   
 #endif  
 
-#if 0  
+#if 0
   
   Dev::EthDevice eth;
   

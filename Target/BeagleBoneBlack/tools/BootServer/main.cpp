@@ -16,7 +16,7 @@
 
 #include <CCore/inc/I2CDevice.h>
 #include <CCore/inc/video/VideoControl.h>
-#include <CCore/inc/video/VideoConsole.h>
+#include <CCore/inc/sys/SysConHost.h>
 
 #include <CCore/inc/dev/DevEth.h>
 #include <CCore/inc/net/NanoIPDevice.h>
@@ -40,13 +40,15 @@ void GetBootInfo(Boot &boot,Net::IPAddress ip_address,Net::IPAddress net_mask)
 
   Video::VideoControl vctrl("i2c[0]");
   
+  vctrl.stopOnExit();
+  
   ObjMaster vctrl_master(vctrl,"video");
   
   Video::VideoConsole vcon("video");
   
   vcon.waitOpen(1_sec);
   
-  SingleMaster<Video::VideoConsole> vcon_master(Video::VideoConsole::GetHost(),"!VideoConsoleMaster",vcon);
+  SingleMaster<Video::VideoConsole> vcon_master(Sys::GetConHost(),"!VideoConsoleMaster",vcon);
   
   Printf(Con,"*** BeagleBoot #; #; ***\n\n",__DATE__,__TIME__);
   
