@@ -55,11 +55,13 @@ enum ColorName : uint32
   Olive     = 0x808000
  };
 
-inline uint8 RedOf(ColorName cname) { return uint8(cname>>16); }
+inline constexpr uint8 RedOf(ColorName cname) { return uint8(cname>>16); }
 
-inline uint8 GreenOf(ColorName cname) { return uint8(cname>>8); }
+inline constexpr uint8 GreenOf(ColorName cname) { return uint8(cname>>8); }
 
-inline uint8 BlueOf(ColorName cname) { return uint8(cname); }
+inline constexpr uint8 BlueOf(ColorName cname) { return uint8(cname); }
+
+inline constexpr ColorName RGBColor(uint8 r,uint8 g,uint8 b) { return ColorName((uint32(r)<<16)|(uint32(g)<<8)|b); }
 
 /* class Color16 */
 
@@ -159,6 +161,8 @@ class Color32
 template <class Color> 
 class FrameBuf
  {
+  protected:
+  
    using Raw = typename Color::Raw ;
   
    Raw *base = 0 ;
@@ -167,7 +171,7 @@ class FrameBuf
    ulen dline = 0 ;
    unsigned dy = 0 ;
    
-  private: 
+  protected: 
    
    Raw * place(unsigned x,unsigned y) { return base+(x*Color::RawCount+y*dline); }
    

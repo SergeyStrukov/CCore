@@ -26,7 +26,7 @@ static unsigned Build(uint8 lsb,uint16 msb) { return lsb|(msb<<8); }
 
 static unsigned Build(uint8 lsb,uint32 b1,uint32 b2,uint32 msb) { return lsb|(b1<<8)|(b2<<16)|(msb<<24); }
 
-static char CharInd(unsigned index) { return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[index-1]; } 
+static char CharInd(unsigned index) { return "ABCDEFGHIJKLMNOPQRSTUVWXYZ     "[index-1]; } 
 
 static ulen Cut(PtrLen<const char> text)
  {
@@ -103,17 +103,23 @@ EDIDBlockDesc::EDIDBlockDesc(const uint8 buf[18])
     {
      index=Desc_timing;
      
+     CreateAt(desc.timing);
+     
      desc.timing=EDIDTimingDesc(buf);
     }
   else if( buf[3]==0xFD )
     {
      index=Desc_limits;
      
+     CreateAt(desc.limits);
+     
      desc.limits=EDIDRangeLimitsDesc(buf);
     }
   else
     {
      index=Desc_ext;
+     
+     CreateAt(desc.ext);
      
      desc.ext=EDIDExtDesc(buf);
     }
@@ -147,9 +153,9 @@ EDIDBlock::EDIDBlock(const uint8 buf[EDIDLen])
   {
    uint16 vendor=Build(buf[9],buf[8]);
    
-   vendor_name[0]=CharInd( (vendor>>10)&31 );
-   vendor_name[1]=CharInd( (vendor>> 5)&31 );
-   vendor_name[2]=CharInd( (vendor    )&31 );
+   vendor_name[0]=CharInd( (vendor>>10)&31u );
+   vendor_name[1]=CharInd( (vendor>> 5)&31u );
+   vendor_name[2]=CharInd( (vendor    )&31u );
    
    product_id=Build(buf[10],buf[11]);
    serial_number=Build(buf[12],buf[13],buf[14],buf[15]);

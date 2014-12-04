@@ -224,6 +224,7 @@ struct EDIDBlockDesc
   enum DescIndex
    {
     Desc_none,
+    
     Desc_timing,
     Desc_limits,
     Desc_ext

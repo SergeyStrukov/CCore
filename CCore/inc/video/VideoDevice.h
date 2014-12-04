@@ -60,9 +60,6 @@ class MultiMode
      Union() {}
     };
    
-   template <class S>
-   static void CreateDefault(S &obj) { new(PlaceAt(&obj)) S(); }
-   
    Union u;
    
   public: 
@@ -84,9 +81,9 @@ class MultiMode
      
      switch( mode_ )
        {
-        case ColorMode16 : CreateDefault(u.obj16); func(u.obj16); break;
-        case ColorMode24 : CreateDefault(u.obj24); func(u.obj24); break;
-        case ColorMode32 : CreateDefault(u.obj32); func(u.obj32); break;
+        case ColorMode16 : CreateAt(u.obj16); func(u.obj16); break;
+        case ColorMode24 : CreateAt(u.obj24); func(u.obj24); break;
+        case ColorMode32 : CreateAt(u.obj32); func(u.obj32); break;
        }
     }
    

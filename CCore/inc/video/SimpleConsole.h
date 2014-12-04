@@ -118,15 +118,15 @@ class CharPanel : NoCopy
    
    void init(FrameBuf<Color> out);
    
-   void eraseLine(unsigned y);
+   void eraseLine(unsigned y);                       // y<dy
    
-   void eraseLineLine(unsigned y);
+   void eraseLineLine(unsigned y);                   // y<dy
    
-   void operator () (unsigned x,unsigned y,char ch);
+   void operator () (unsigned x,unsigned y,char ch); // x<dx && y<dy
    
-   void setMarker(unsigned x,unsigned y);
+   void setMarker(unsigned x,unsigned y);            // x<dx && y<dy
    
-   void clearMarker(unsigned x,unsigned y);
+   void clearMarker(unsigned x,unsigned y);          // x<dx && y<dy
  };
 
 template <class Color> 

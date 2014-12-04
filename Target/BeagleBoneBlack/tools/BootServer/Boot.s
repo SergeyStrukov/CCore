@@ -104,6 +104,7 @@ L7:
 L6:        
         mov     r3, r1, LSL #6
         orr     r3, r3, r2, LSL #29
+        orr     r3, r3, #2
         mcr     p15, 0, r3, c7, c10, 2
         
         add     r2, r2, #1
@@ -118,8 +119,8 @@ L6:
      
         mrc     p15, 0, r1, c1, c0, 0
         
-        bic     r0, r1, #0x5
-        bic     r0, r1, #0x1800
+        bic     r1, r1, #0x5
+        bic     r1, r1, #0x1800
         
         mcr     p15, 0, r1, c1, c0, 0
         
@@ -127,9 +128,13 @@ L6:
         
         mov      r1, #0
         
-        mcr      p15, 0, r1, c7, c5, 0
+        mcr      p15, 0, r1, c7, c5, 0    @ Cache
         
-        mcr      p15, 0, r1, c7, c10, 4
+        mcr      p15, 0, r1, c7, c5, 6    @ BTB
+        
+        mcr      p15, 0, r1, c7, c10, 4   @ dsb
+        
+        mcr      p15, 0, r1, c7, c5, 4    @ isb
         
      @ boot
         
@@ -157,6 +162,7 @@ L101:
         b        L102
         
 L100:
+
      @ setup stack
         
         SetReg   sp, stack_top
@@ -165,9 +171,13 @@ L100:
         
         mov      r0, #0
         
-        mcr      p15, 0, r0, c7, c5, 0
+        mcr      p15, 0, r0, c7, c5, 0    @ Cache
         
-        mcr      p15, 0, r0, c7, c10, 4
+        mcr      p15, 0, r0, c7, c5, 6    @ BTB
+        
+        mcr      p15, 0, r0, c7, c10, 4   @ dsb
+        
+        mcr      p15, 0, r0, c7, c5, 4    @ isb
         
      @ goto entry point
         

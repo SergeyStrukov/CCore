@@ -20,26 +20,36 @@ namespace Video {
 
 /* class VideoConsole */
 
-void VideoConsole::open()
+ColorMode VideoConsole::setDevice()
  {
-  Mutex::Lock lock(mutex);
-
-  con.clear();
+  if( dev->updateVideoModeList(DefaultTimeout) && dev->setVideoMode(0) ) return dev->getColorMode();
   
-  if( dev->updateVideoModeList(DefaultTimeout) && dev->setVideoMode(0) )
+  return ColorMode_none; 
+ }
+
+bool VideoConsole::open()
+ {
+  if( ColorMode mode=setDevice() )
     {
-     auto mode=dev->getColorMode();
-     
-     if( mode ) 
-       {
-        con.init(mode,InitFunc(dev));
+     {
+      Mutex::Lock lock(mutex);
+      
+      con.init(mode,InitFunc(dev));
+     } 
         
-        first=false;
+     dev->setTick(500_msec);
        
-        dev->setTick(500_msec);
-       
-        sem.give();
-       }
+     sem.give();
+     
+     return true;
+    }
+  else
+    {
+     Mutex::Lock lock(mutex);
+ 
+     con.clear();
+ 
+     return false;
     }
  }
 
@@ -68,7 +78,7 @@ void VideoConsole::change(bool plug,bool power)
        {
         if( first )
           {
-           open();
+           if( open() ) first=false;
           }
        }
     }

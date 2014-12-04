@@ -55,7 +55,7 @@ class VideoConsole : NoCopy , VideoDevice::Control
      explicit InitFunc(VideoDevice *dev_) : dev(dev_) {}
      
      template <class T>
-     void operator () (T &con) { con.init(dev); }      
+     void operator () (T &con) { con.init(dev); }
     };
    
    struct PrintFunc
@@ -74,7 +74,9 @@ class VideoConsole : NoCopy , VideoDevice::Control
      void operator () (T &con) { con.toggleMarker(); }
     };
    
-   void open();
+   ColorMode setDevice();
+   
+   bool open();
    
    void close();
    

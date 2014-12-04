@@ -85,6 +85,7 @@
 ../../CCore/src/Fifo.cpp
 ../../CCore/src/FileName.cpp
 ../../CCore/src/FunctorType.cpp
+../../CCore/src/gadget/CreateAt.cpp
 ../../CCore/src/gadget/DefaultTimeout.cpp
 ../../CCore/src/gadget/DefaultValue.cpp
 ../../CCore/src/gadget/ExceptionType.cpp
