@@ -1,0 +1,79 @@
+<!--
+/* page_CreateAt.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> CreateAt</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>CreateAt</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/CreateAt.h</b> <b>CCore/src/gadget/CreateAt.cpp</b></p>
+
+<p>
+<b>CreateAt()</b> creates an object at the given place. 
+This function is required to manipulate members of non-trivial unions.
+</p>
+
+<pre>
+
+template &lt;class T,class ... SS&gt;
+void <span class="Att">CreateAt</span>(T &amp;obj,SS &amp;&amp; ... ss)
+ {
+  new(PlaceAt(&amp;obj)) T( std::forward&lt;SS&gt;(ss)... );
+ }
+
+</pre>
+
+<p>
+For example,
+</p>
+
+<pre>
+
+union Union
+ {
+  A a;
+  B b; // A and B both have trivial destructors
+
+  Union() {}
+ };
+
+</pre>
+
+<p>
+To make an actual the member <b>a</b> of the union you can use the function <b>CreateAt()</b>.
+</p>
+
+<pre>
+
+Union u;
+
+CreateAt(u.a);
+
+</pre>
+
+</body>
+
+</html>
+

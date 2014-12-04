@@ -16,6 +16,7 @@
 #ifndef CCore_inc_Gadget_h
 #define CCore_inc_Gadget_h
 
+#include <CCore/inc/gadget/CreateAt.h>
 #include <CCore/inc/gadget/DefaultTimeout.h>
 #include <CCore/inc/gadget/DefaultValue.h>
 #include <CCore/inc/gadget/ExceptionType.h>
