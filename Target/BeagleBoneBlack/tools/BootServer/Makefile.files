@@ -1,51 +1,35 @@
 OBJ_LIST = \
-obj/Boot.o \
 obj/main.o \
 
 
 ASM_LIST = \
-obj/Boot.s \
 obj/main.s \
 
 
 DEP_LIST = \
-obj/Boot.dep \
 obj/main.dep \
 
 
 ASM_OBJ_LIST = \
-obj/Boot.s.o \
 
 
 include $(RULES_FILE)
 
-
-obj/Boot.o : ./Boot.cpp
-	$(CC) $(CCOPT) $< -o $@
 
 obj/main.o : ./main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 
 
-obj/Boot.s : ./Boot.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
 obj/main.s : ./main.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 
 
-obj/Boot.dep : ./Boot.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Boot.o $< -MF $@
-
 obj/main.dep : ./main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
 
 
-
-obj/Boot.s.o : ./Boot.s
-	$(AS) $(ASOPT) $< -o $@
 
 
 

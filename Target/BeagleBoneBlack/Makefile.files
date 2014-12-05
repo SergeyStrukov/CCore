@@ -22,6 +22,7 @@ obj/BaseRangeAlgo.o \
 obj/BinarySearch.o \
 obj/BlockCipher.o \
 obj/BlockFifo.o \
+obj/Boot.o \
 obj/Bridge.o \
 obj/CBase.o \
 obj/CDef.o \
@@ -354,6 +355,7 @@ obj/BaseRangeAlgo.s \
 obj/BinarySearch.s \
 obj/BlockCipher.s \
 obj/BlockFifo.s \
+obj/Boot.s \
 obj/Bridge.s \
 obj/CBase.s \
 obj/CDef.s \
@@ -686,6 +688,7 @@ obj/BaseRangeAlgo.dep \
 obj/BinarySearch.dep \
 obj/BlockCipher.dep \
 obj/BlockFifo.dep \
+obj/Boot.dep \
 obj/Bridge.dep \
 obj/CBase.dep \
 obj/CDef.dep \
@@ -997,6 +1000,7 @@ obj/time.dep \
 ASM_OBJ_LIST = \
 obj/AM3359.s.o \
 obj/AM3359.CP15CNT.s.o \
+obj/Boot.s.o \
 obj/DevInt.s.o \
 obj/DevPlanInit.s.o \
 obj/DevRW.s.o \
@@ -1076,6 +1080,9 @@ obj/BlockCipher.o : ../../CCore/src/crypton/BlockCipher.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/BlockFifo.o : ../../CCore/src/BlockFifo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Boot.o : ../../Target/BeagleBoneBlack/CCore/src/Boot.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Bridge.o : ../../CCore/src/net/Bridge.cpp
@@ -2067,6 +2074,9 @@ obj/BlockCipher.s : ../../CCore/src/crypton/BlockCipher.cpp
 obj/BlockFifo.s : ../../CCore/src/BlockFifo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Boot.s : ../../Target/BeagleBoneBlack/CCore/src/Boot.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Bridge.s : ../../CCore/src/net/Bridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3056,6 +3066,9 @@ obj/BlockCipher.dep : ../../CCore/src/crypton/BlockCipher.cpp
 obj/BlockFifo.dep : ../../CCore/src/BlockFifo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BlockFifo.o $< -MF $@
 
+obj/Boot.dep : ../../Target/BeagleBoneBlack/CCore/src/Boot.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Boot.o $< -MF $@
+
 obj/Bridge.dep : ../../CCore/src/net/Bridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Bridge.o $< -MF $@
 
@@ -3980,6 +3993,9 @@ obj/AM3359.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/AM3359.CP15CNT.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.s
+	$(AS) $(ASOPT) $< -o $@
+
+obj/Boot.s.o : ../../Target/BeagleBoneBlack/CCore/src/Boot.s
 	$(AS) $(ASOPT) $< -o $@
 
 obj/DevInt.s.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.s

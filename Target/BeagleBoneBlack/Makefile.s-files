@@ -1,5 +1,6 @@
 ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.s
 ../../Target/BeagleBoneBlack/CCore/src/base/Quick.s
+../../Target/BeagleBoneBlack/CCore/src/Boot.s
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.s
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.s
 ../../Target/BeagleBoneBlack/CCore/src/dev/DevInt.s

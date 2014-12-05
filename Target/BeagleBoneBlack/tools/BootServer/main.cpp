@@ -22,7 +22,7 @@
 #include <CCore/inc/net/NanoIPDevice.h>
 #include <CCore/inc/net/PTPServerDevice.h>
 
-#include "Boot.h"
+#include <CCore/inc/Boot.h>
 
 namespace App {
 
@@ -72,7 +72,7 @@ void GetBootInfo(Boot &boot,Net::IPAddress ip_address,Net::IPAddress net_mask)
   
   ObjMaster ptp_master(ptp,"ptp");
   
-  boot.get("ptp");
+  boot.get("ptp",1_msec);
   
   boot.show();
   

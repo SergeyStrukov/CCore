@@ -228,7 +228,7 @@ void before_main()
   
 #endif  
 
-#if 0
+#if 1
   
   Dev::EthDevice eth;
   

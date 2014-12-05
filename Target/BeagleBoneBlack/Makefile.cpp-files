@@ -295,6 +295,7 @@
 ../../XCore/CCore/src/TaskHeap.cpp
 ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
 ../../Target/BeagleBoneBlack/CCore/src/base/Quick.cpp
+../../Target/BeagleBoneBlack/CCore/src/Boot.cpp
 ../../Target/BeagleBoneBlack/CCore/src/debug/DebugCon.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.CP15CNT.cpp
 ../../Target/BeagleBoneBlack/CCore/src/dev/AM3359.cpp

@@ -13,8 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
  
-//#include <CCore/inc/Boot.h>
-#include "Boot.h"
+#include <CCore/inc/Boot.h>
 
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Exception.h>
