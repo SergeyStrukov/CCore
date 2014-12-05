@@ -1,0 +1,398 @@
+<!--
+/* page_HCoreTargets.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore Targets</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore Targets</h2>
+
+<p>
+<b>HCore</b> targets allow building applications, running under governing of some operating system, like
+Windows or Linux. Target itself is a collection of files, located at some directory in the
+CCORE_ROOT/Target directory. The name of the directory is the target name. <b>CCore</b> uses GNU-compatible
+make-based build system. To build an application for the particular target you specify the target name as
+<a href="page_CCoreGeneral.html">one of the build variable in a makefile</a>.
+There is a special target <b>Vanilla-H</b>. This target is a template for any host target. If you want to
+create a new <b>HCore</b> target, you may start from this "vanilla" target.
+</p>
+
+<p>
+Here is the file layout for required <b>HCore</b> target files. You may add additional 
+features to your target by adding extra source files.
+</p>
+
+<pre>
+
+<b>TARGET_ROOT</b>
+
+  Makefile
+  Makefile.tools
+
+  <b>CCore</b>
+    <b>inc</b>
+      <b>base</b>
+        PlatformBase.h
+        Quick.h
+      <b>sys</b>
+        <a href="page_HCore_SysAbort.html">SysAbort.h</a>
+        <a href="page_HCore_SysAtomic.html">SysAtomic.h</a>
+        SysCon.h
+        SysError.h
+        SysFile.h
+        SysFileSystem.h
+        SysMemPage.h
+        SysNet.h
+        SysPlanInit.h
+        SysProp.h
+        SysSem.h
+        SysTask.h
+        SysTime.h
+        SysTlsSlot.h
+        SysWait.h
+    <b>src</b>
+      <b>base</b>
+        PlatformBase.cpp
+        PlatformBase.s
+        Quick.cpp
+        Quick.s
+      <b>sys</b>
+        SysAbort.cpp
+        SysAtomic.cpp
+        SysAtomic.s
+        SysCon.cpp
+        SysError.cpp
+        SysFile.cpp
+        SysFileSystem.cpp
+        SysMemPage.cpp
+        SysNet.cpp
+        SysPlanInit.cpp
+        SysProp.cpp
+        SysSem.cpp
+        SysTask.cpp
+        SysTime.cpp
+        SysTlsSlot.cpp
+        SysWait.cpp
+      PlanInit_CCore.cpp
+    <b>test</b>
+      test3XXX.NNN.cpp
+  <b>obj</b>
+    empty
+  <b>test</b>
+    Makefile
+    main.cpp
+  <b>test-obj</b>
+    empty
+
+</pre>
+
+<h4>Makefile</h4>
+
+<p>
+<b>Makefile</b> is used to build the <b>CCore.a</b> library. It's standard and looks like
+</p>
+
+<pre>
+
+CCORE_ROOT = ../..
+
+CCORE_TARGET = <i>TARGET_NAME</i>
+
+SRC_PATH_LIST = $(CCORE_ROOT)/CCore/src \
+                $(CCORE_ROOT)/HCore/CCore/src \
+                $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore/src
+
+GEN_PATH_LIST =
+
+include $(CCORE_ROOT)/Target/Makefile.core
+
+</pre>
+
+<p>
+<b>Makefile.tools</b> defines toolset to build <b>CCore</b> target apllications. 
+It looks like (<b>WIN32</b> example)
+</p>
+
+<pre>
+
+CCOPT_EXTRA ?= 
+
+LDOPT_EXTRA ?=
+
+# tools
+
+CC_ = g++
+
+CC = @echo CC $< ; $(CC_)
+
+LD = @echo LD $@ ; $(CC_)
+
+AS_ = as
+
+AS = @echo AS $< ; $(AS_)
+
+AR_ = ar
+
+AR = @echo AR $@ ; $(AR_)
+
+RM_ = rm -f
+
+RM = @echo RM ; $(RM_)
+
+# options
+
+NOWARN = -Wno-non-virtual-dtor \
+         -Wno-switch \
+         -Wno-type-limits \
+         -Wno-enum-compare \
+         -Wno-missing-field-initializers \
+         -Wno-delete-non-virtual-dtor \
+
+
+CCINC = -I$(CCORE_ROOT)/Target/$(CCORE_TARGET) -I$(CCORE_ROOT) -I$(CCORE_ROOT)/HCore 
+
+CCOPT = -c -std=c++11 -fwrapv -O3 -Wall -Wextra $(NOWARN) $(CCINC) $(CCOPT_EXTRA)
+
+ASOPT =
+
+CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
+
+LDOPT = -Wl,-s $(LDOPT_EXTRA) $(CCORELIB) -lws2_32 -lgmp 
+
+</pre>
+
+<p>
+You define here the following variables:
+</p>
+
+<p>
+<b>CC</b> &mdash; C++ compiler.
+</p>
+
+<p>
+<b>LD</b> &mdash; linker.
+</p>
+
+<p>
+<b>AS</b> &mdash; assembler.
+</p>
+
+<p>
+<b>AR</b> &mdash; librarian.
+</p>
+
+<p>
+<b>RM</b> &mdash; file delete command.
+</p>
+
+<p>
+<b>CCOPT</b> &mdash; options for the C++ compiler. Amone other they must specify directories to search include files.
+The order of directories is: target include path, <b>CCore</b> include path, <b>HCore</b> include path.
+</p>
+
+<p>
+<b>ASOPT</b> &mdash; options for the assembler.
+</p>
+
+<p>
+<b>LDOPT</b> &mdash; options for the linker. Linker options must specify the <b>CCore.a</b> 
+library to be linked.
+</p>
+
+<p>
+To give a path from the <b>CCore</b> file tree, you should use the variable <b>CCORE_ROOT</b>.
+</p>
+
+<p>
+To compile a <b>.cpp</b> source file the following command is used:
+</p>
+
+<pre>
+$(CC) $(CCOPT) <i>source-file</i> -o <i>object-file</i>
+</pre>
+
+<p>
+To generate a dependecy file the following command is used:
+</p>
+
+<pre>
+$(CC) $(CCOPT) -MM -MT <i>object-file</i> <i>source-file</i> -MF <i>dep-file</i>
+</pre>
+
+<p>
+To compile an <b>.asm</b> source file the following command is used.
+</p>
+
+<pre>
+$(AS) $(ASOPT) <i>source-file</i> -o <i>object-file</i>
+</pre>
+
+<p>
+To link an application the following command is used:
+</p>
+
+<pre>
+$(LD) <i>object-file-list</i> $(LDOPT) -o <i>exe-file</i>
+</pre>
+
+<p>
+To build a library the following commands are used:
+</p>
+
+<pre>
+$(RM) <i>lib-file</i>
+$(AR) r <i>lib-file</i> <i>object-file-list</i>
+</pre>
+
+<h4>Test support</h4>
+
+<p>
+<b>CCore/test</b> is the directory for target-specific tests. The file names here must have the following form:
+<b>test3XXX.NNN.cpp</b>. <b>3XXX</b> is a decimal test number, starts from <b>3001</b>. <b>NNN</b>
+is some name of the test.
+</p>
+
+<p>
+<b>Makefile</b> from the <b>test</b> directory is used to build the target test application.
+It has the following standard form
+</p>
+
+<pre>
+
+CCORE_ROOT = ../../..
+
+CCORE_TARGET = <i>TARGET_NAME</i>
+
+SRC_PATH_LIST = . \
+                $(CCORE_ROOT)/CCore/test \
+                $(CCORE_ROOT)/HCore/CCore/test \
+                $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore/test
+
+OBJ_PATH = ../test-obj
+
+TARGET = main.exe
+
+include $(CCORE_ROOT)/Target/Makefile.app
+
+run: main.exe
+	./main.exe
+
+</pre>
+
+<p>
+<b>main.cpp</b> from the <b>test</b> directory is the main file of the target test application.
+It looks like
+</p>
+
+<pre>
+
+#include &lt;CCore/test/test.h&gt;
+
+#include &lt;CCore/inc/MemBase.h&gt;
+#include &lt;CCore/inc/PacketPool.h&gt;
+
+namespace App {
+
+/* Testit&lt;0&gt; */ 
+
+template&lt;&gt;
+const char *const Testit&lt;0&gt;::Name="Test0 empty";
+   
+template&lt;&gt;
+bool Testit&lt;0&gt;::Main() { return false; }
+ 
+} // namespace App
+ 
+/* main() */ 
+
+using namespace App;
+
+int main()
+ {
+  MemScope mem_scope;
+  
+  //Testit&lt;0&gt;().run();
+
+  ....
+
+  Printf(Con,"\nPeak memory usage #;\n\n",MemPeak());
+  
+  DetachPacketBufs();
+  
+  return 0;
+ }
+ 
+</pre>
+
+<p>
+To enable a particular test uncomment the correspondent line.
+</p>
+
+<h4>Extra features</h4>
+
+<p>
+There are three most desired extra features any well-designed target must provide: 
+the fast and quality random number generator,
+the fast integer arithmetic
+and the fast cryptography.
+The moden CPU and SoC often has a hardware support for these tasks.
+</p>
+
+<pre>
+
+<b>TARGET_ROOT</b>
+
+  <b>CCore</b>
+    <b>inc</b>
+      PlatformRandom.h
+      <b>math</b>
+        IntegerFastAlgo.h
+      <b>crypton</b>
+        PlatformAES.h
+        PlatformMD5.h
+        PlatformSHA.h
+    <b>src</b>
+      PlatformRandom.cpp
+      PlatformRandom.s
+      <b>math</b>
+        IntegerFastAlgo.cpp
+        IntegerFastAlgo.s
+      <b>crypton</b>
+        PlatformAES.cpp
+        PlatformAES.s
+        PlatformMD5.cpp
+        PlatformMD5.s
+        PlatformSHA.cpp
+        PlatformSHA.s
+
+</pre>
+
+<p>
+If the correspondent files are absent, the default implementation will be used.
+</p>
+
+</body>
+
+</html>
+

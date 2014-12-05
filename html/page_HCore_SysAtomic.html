@@ -1,0 +1,146 @@
+<!--
+/* page_HCore_SysAtomic.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysAtomic</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysAtomic</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysAtomic.h</b> <b>CCore/src/sys/SysAtomic.cpp</b> <b>CCore/src/sys/SysAtomic.s</b></p>
+
+<p>
+This must provide a target-dependent atomic operations implementation. This is done using the
+structure <b>Atomic</b>. Here is a typical structure implementation. Usually you have to give
+an atomic type and tree atomic functions: <b>Set()</b>, <b>Add()</b> and <b>TrySet()</b>.
+These functions are typically implemented using an assembler. Each of them applies a memory-fence
+operation to make sure any changes of any variable, made before the function call, becomes
+visible to any thread of execution.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysAtomic_h
+#define CCore_inc_sys_SysAtomic_h
+ 
+namespace CCore {
+namespace Sys {
+
+/* classes */ 
+
+struct Atomic;
+
+/* struct Atomic */ 
+
+struct <span class="Att">Atomic</span>
+ {
+  // public
+  
+  typedef unsigned <span class="Alert">Type</span>; // unsigned integral type
+
+  // private data
+  
+  volatile Type atomic;
+  
+  // private
+  
+  static Type <span class="Alert">Get</span>(const volatile Type *atomic) { return *atomic; }
+ 
+  static Type <span class="Alert">Set</span>(volatile Type *atomic,Type value) noexcept;
+
+  static Type <span class="Alert">Add</span>(volatile Type *atomic,Type value) noexcept;
+
+  static Type Sub(volatile Type *atomic,Type value) { return Add(atomic,-value); }
+ 
+  static Type Inc(volatile Type *atomic) { return Add(atomic,1); }
+ 
+  static Type Dec(volatile Type *atomic) { return Sub(atomic,1); }
+ 
+  static Type <span class="Alert">TrySet</span>(volatile Type *atomic,Type old_value,Type new_value) noexcept;
+  
+              // 
+              // if( *atomic==old_value ) *atomic=new_value;
+              //
+
+  // public
+  
+  typedef Type PrintProxyType;
+  
+  void set_null() { atomic=0; }
+  
+  operator Type() const { return Get(&atomic); }
+  
+  // return previous value, memory fence is used
+  
+  Type operator  = (Type value) { return Set(&atomic,value); }
+  
+  Type operator += (Type value) { return Add(&atomic,value); }
+  
+  Type operator -= (Type value) { return Sub(&atomic,value); }
+  
+  Type operator ++ (int) { return Inc(&atomic); }
+  
+  Type operator -- (int) { return Dec(&atomic); }
+  
+  Type trySet(Type old_value,Type new_value) { return TrySet(&atomic,old_value,new_value); }
+ };
+ 
+} // namespace Sys
+} // namespace CCore
+
+</pre>
+
+<p>
+In the following example,
+</p>
+
+<pre>
+
+int a=0;
+
+Sys::Atomic b={0};
+
+// thread 1
+
+a=1;
+
+b=1;
+
+// thread 2
+
+while( b==0 );
+
+int c=a;
+
+</pre>
+
+<p>
+<b>c</b> is guaranteed to be 1. The implementation is required not only a proper hardware support, 
+but also the prevention the compiler to overoptimize the atomic operations.
+</p>
+
+</body>
+
+</html>
+
