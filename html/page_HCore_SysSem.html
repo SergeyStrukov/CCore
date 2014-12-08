@@ -1,0 +1,209 @@
+<!--
+/* page_HCore_SysSem.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysSem</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysSem</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysSem.h</b> <b>CCore/src/sys/SysSem.cpp</b></p>
+
+<p>
+This is to provide an OS backed semaphore.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysSem_h
+#define CCore_inc_sys_SysSem_h
+ 
+#include &lt;CCore/inc/sys/SysError.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* classes */ 
+
+struct Sem;
+
+/* struct Sem */ 
+
+struct <span class="Att">Sem</span>
+ {
+  // private data
+  
+  ....
+
+  // public
+  
+  ErrorType init(ulen count=0) noexcept;
+  
+  void exit() noexcept;
+  
+  void give() noexcept;
+  
+  void give_many(ulen count) noexcept;
+  
+  bool try_take() noexcept;
+  
+  void take() noexcept;
+  
+  bool take(MSec timeout) noexcept;
+ };
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+To create a semaphore you create an instance of the structure <b>Sem</b> and initialize it.
+Then you use its methods to do semaphore operations.
+Finally, you uninitalize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+Semaphore methods, except <b>init()</b>, do not produce errors. They must be successful or 
+call abort. For example, it must abort on the counter overflow.
+</p>
+
+<p>
+<b>init()</b> initialize the semaphore with the given counter value. The error code is returned.
+</p>
+
+<p>
+<b>exit()</b> uninitialize the semaphore.
+</p>
+
+<p>
+<b>give()</b> "gives" the semaphore counter (i.e. increment it). It may release a thread, blocked
+on the semaphore. 
+</p>
+
+<p>
+<b>give_many()</b> "gives" the semaphore counter many times (i.e. increase it) by the given value.
+It may release multiple threads, blocked on the semaphore.
+</p>
+
+<p>
+<b>try_take()</b> tries to "take" the semaphore, i.e tries to decrement its counter. 
+If the counter is not null, it is decremented and the <b>true</b> is returned.
+Otherwise the <b>false</b> is returned.
+</p>
+
+<p>
+<b>take()</b> "takes" the semaphore (i.e. decrements its counter). 
+If the counter is null, the calling thread is blocked until the operation becomes possible.
+The thread may be blocked infinitely.
+</p>
+
+<p>
+<b>take(MSec timeout)</b> "takes" the semaphore (i.e. decrements its counter). But it blocks the 
+calling thread up to the given timeout. If the semaphore was taken the method returns <b>true</b>.
+Otherwise the method returns <b>false</b>. It means the semaphore was not taken and the method call
+is finished because the timeout is expired.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysSem_h
+#define CCore_inc_sys_SysSem_h
+ 
+#include &lt;CCore/inc/sys/SysError.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* classes */ 
+
+struct Sem;
+
+/* struct Sem */ 
+
+struct Sem
+ {
+  // private data
+  
+  typedef int Type;
+  
+  Type handle;
+  
+  // private
+  
+  struct CreateType
+   {
+    Type handle;
+    ErrorType error;
+   };
+   
+  static CreateType Create(ulen count) noexcept;
+  
+  static void Destroy(Type handle) noexcept;
+  
+  static void Give(Type handle) noexcept;
+  
+  static void GiveMany(Type handle,ulen count) noexcept;
+  
+  static bool TryTake(Type handle) noexcept;
+  
+  static void Take(Type handle) noexcept;
+  
+  static bool Take(Type handle,MSec timeout) noexcept;
+  
+  // public
+  
+  ErrorType init(ulen count=0)
+   {
+    CreateType result=Create(count);
+    
+    handle=result.handle;
+    
+    return result.error;
+   }
+  
+  void exit() { Destroy(handle); }
+  
+  void give() { Give(handle); }
+  
+  void give_many(ulen count) { GiveMany(handle,count); }
+  
+  bool try_take() { return TryTake(handle); }
+  
+  void take() { Take(handle); }
+  
+  bool take(MSec timeout) { return Take(handle,timeout); }
+ };
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+</body>
+
+</html>
+

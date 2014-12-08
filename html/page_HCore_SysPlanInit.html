@@ -1,0 +1,79 @@
+<!--
+/* page_HCore_SysPlanInit.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysPlanInit</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysPlanInit</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysPlanInit.h</b> <b>CCore/src/sys/SysPlanInit.cpp</b></p>
+
+<p>
+This is a target part of the <a href="page_PlanInit.html">plan initialization</a> sequence.
+The plan init node tag is <b>"Sys"</b>.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysPlanInit_h
+#define CCore_inc_sys_SysPlanInit_h
+ 
+#include &lt;CCore/inc/PlanInit.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* GetPlanInitNode_...() */ 
+
+PlanInitNode * <span class="Att">GetPlanInitNode_Sys</span>();
+
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+The following target features must be ready for use after the <b>Sys</b> point of initialization:
+<ol>
+ <li>SysAtomic,</li>
+ <li>SysError,</li>
+ <li>SysMemPage,</li>
+ <li>SysProp,</li>
+ <li>SysSem,</li>
+ <li>SysTlsSlot,</li>
+ <li>Sys::GetTaskId() from the SysTask.h .</li>
+</ol>
+</p>
+
+<p>
+See <a type="application/pdf" href="../txt/InitExit.pdf">this document</a> for the brief of the initialization requirements.
+</p>
+
+</body>
+
+</html>
+

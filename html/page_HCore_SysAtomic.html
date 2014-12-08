@@ -136,8 +136,36 @@ int c=a;
 </pre>
 
 <p>
-<b>c</b> is guaranteed to be 1. The implementation is required not only a proper hardware support, 
+<b>c</b> is guaranteed to be 1. The implementation requires not only a proper hardware support, 
 but also the prevention the compiler to overoptimize the atomic operations.
+</p>
+
+<p>
+You may derive functions <b>Sub()</b>, <b>Inc()</b>, <b>Dec()</b> from the <b>Add()</b> as shown above,
+or give an independent implementation.
+</p>
+
+<p>
+The function <b>Get()</b> usually can be implemented directly, as shown above, but you can
+provide another implementation, if necessary. 
+</p>
+
+<p>
+<b>Get()</b> reads the value of the atomic. No memory fence operation is applied (but atomicity is provided).
+</p>
+
+<p>
+<b>Set()</b> sets the new value to the atomic. The old value is returned. A memory fence is applied.
+</p>
+
+<p>
+<b>Add()</b> adds the value to the atomic. The old value is returned. A memory fence is applied.
+</p>
+
+<p>
+<b>TrySet()</b> performs the conditional set. If the value of the atomic equals the <b>old_value</b>,
+the <b>new_value</b> is set.
+The old value is returned. A memory fence is applied.
 </p>
 
 </body>

@@ -1,0 +1,113 @@
+<!--
+/* page_HCore_SysError.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysError</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysError</h2>
+         
+<p class="Files">Files <b>CCore/inc/sys/SysError.h</b> <b>CCore/src/sys/SysError.cpp</b></p>
+
+<p>
+It is assumed that underlaying operation system report errors using error codes. 
+These codes can be converted to text messages.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysError_h
+#define CCore_inc_sys_SysError_h
+ 
+#include &lt;CCore/inc/Gadget.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* enum ErrorType */ 
+
+enum <span class="Att">ErrorType</span> : int
+ {
+  NoError = 0
+ };
+ 
+/* classes */ 
+
+struct ErrorDesc;
+
+/* struct ErrorDesc */ 
+
+struct <span class="Att">ErrorDesc</span>
+ {
+  // public data
+ 
+  const char *str;
+  ulen len;
+  
+  // public
+
+  bool init(ErrorType error,PtrLen&lt;char&gt; buf) noexcept;
+  
+  const char * getPtr() const { return str; }
+  
+  ulen getLen() const { return len; }
+ };
+  
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+The enumerartion <b>ErrorType</b> represents error codes. 
+It may have a base integral type (usually <b>int</b>). 
+All target functions report errors using this enumeration.
+</p>
+
+<p>
+<b>NoError</b> is a "no-error" code and it must be equal zero.
+</p>
+
+<p>
+The structure <b>ErrorDesc</b> is used to convert a error code to the text message.
+</p>
+
+<p>
+The fields <b>str</b> and <b>len</b> points the text.
+</p>
+
+<p>
+<b>init()</b> is used to initialize the structure. The first argument is a error code.
+The second is a buffer to store the text message. It may or may not be used to copy a text representation
+of the error code. If the buffer is not used, then the text is a static text.
+If the buffer is not large enough, the message may be truncated or the function may fail.
+The return value is <b>true</b> in case of success.
+</p>
+
+</body>
+
+</html>
+

@@ -1,0 +1,127 @@
+<!--
+/* page_HCore_SysCon.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysCon</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysCon</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysCon.h</b> <b>CCore/src/sys/SysCon.cpp</b></p>
+
+<p>
+This is to support console input-output operations.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysCon_h
+#define CCore_inc_sys_SysCon_h
+ 
+#include &lt;CCore/inc/sys/SysError.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* functions */ 
+
+void <span class="Att">ConWrite</span>(StrLen str) noexcept;
+
+/* classes */ 
+
+struct ConRead;
+
+/* struct ConRead */ 
+
+struct <span class="Att">ConRead</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct IOResult
+   {
+    ulen len;
+    ErrorType error;
+   };
+  
+  // public
+  
+  ErrorType init() noexcept;
+  
+  ErrorType exit() noexcept;
+  
+  IOResult read(char *buf,ulen len) noexcept;
+  
+  IOResult read(char *buf,ulen len,MSec timeout) noexcept;
+ };
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+<b>ConWrite()</b> outputs the given string to the console. This function is a 0-priority function.
+I.e. if it is required some initialization, it must be done using the <b>CCORE_INITPRI_0</b> 
+<a href="page_PlanInit.html">priority qualifier</a>.
+</p>
+
+<p>
+The structure <b>ConRead</b> supports the console reading. To read characters from the console,
+you create an instance of this structure, initialize it and then use its methods to read 
+the input character stream. Finally, you uninitalize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+The reader implements "non-buffered read without echo". It means, if the console buffer is not empty,
+the read operations do not block. If the buffer is empty, they wait for input. No echo is printed.
+</p>
+
+<p>
+<b>init()</b> performs the initialization. The error code is returned.
+</p>
+
+<p>
+<b>exit()</b> performs the uninitialization. The error code is returned.
+</p>
+
+<p>
+<b>read()</b> tries to read the input stream into the provided buffer. The second variant uses
+the <b>timeout</b> for the operation. Both functions return the internal type <b>IOResult</b>.
+This structure has two fields: <b>len</b> and <b>error</b>. The <b>error</b> is the error code.
+If it is zero, then the <b>len</b> is the number of characters, copied to the buffer.
+This value is less or equal than the argument <b>len</b>.
+The first function may block infinitely. The second &mdash; up to the given timeout.
+The first function must either return a error or a character(s).
+The second may return neither error, nor character, if the user did not hit any key during the given 
+time period.
+</p>
+
+</body>
+
+</html>
+

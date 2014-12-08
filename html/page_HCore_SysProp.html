@@ -1,0 +1,71 @@
+<!--
+/* page_HCore_SysProp.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysProp</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysProp</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysProp.h</b> <b>CCore/src/sys/SysProp.cpp</b></p>
+
+<p>
+This is to provide some target properties.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysProp_h
+#define CCore_inc_sys_SysProp_h
+ 
+namespace CCore {
+namespace Sys {
+
+/* functions */ 
+
+unsigned <span class="Att">GetCpuCount</span>() noexcept;
+ 
+unsigned <span class="Att">GetSpinCount</span>() noexcept;
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+<b>GetCpuCount()</b> returns the number of CPU cores.
+</p>
+
+<p>
+<b>GetSpinCount()</b> returns the recommended "spin count". This value is used in the <b>Mutex</b>
+implementation for spinning. It must be null for the single-core processors. For multi-core it
+has the value of order <b>1000</b>. 
+</p>
+
+</body>
+
+</html>
+

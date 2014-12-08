@@ -1,0 +1,110 @@
+<!--
+/* page_HCore_SysMemPage.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysMemPage</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysMemPage</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysMemPage.h</b> <b>CCore/src/sys/SysMemPage.cpp</b></p>
+
+<p>
+This is primary memory allocation functions. These functions are backed by the OS and can be used
+to manage memory, accessible by the application.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysMemPage_h
+#define CCore_inc_sys_SysMemPage_h
+
+#include &lt;CCore/inc/Gadget.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* consts */ 
+
+const ulen <span class="Att">MemPageLen</span> = .... ;
+
+static_assert( (MemPageLen%MaxAlign)==0 ,"CCore::Sys::MemPageLen is not aligned");
+ 
+/* functions */ 
+
+void * <span class="Att">MemPageAlloc</span>(ulen num_pages) noexcept;
+ 
+void <span class="Att">MemPageFree</span>(void *mem,ulen num_pages) noexcept;
+
+bool <span class="Att">MemPageExtend</span>(void *mem,ulen num_pages,ulen plus_num_pages) noexcept;
+
+ulen <span class="Att">MemPageShrink</span>(void *mem,ulen num_pages,ulen minus_num_pages) noexcept; // return delta
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+<b>MemPageLen</b> is the length of the memory page. All primary memory allocation functions
+work with memory pages. <b>MemPageLen</b> must be an aligned value.
+</p>
+
+<p>
+<b>MemPageAlloc()</b> allocates to the application a continuous range of memory pages.
+The argument is the number of pages to be allocated. The return value is the address of the first page, 
+or null in case of error. If the <b>num_page</b> is null, the return value may or may not be null.
+Such usage is pointless and not recommended. Typically <b>MemPageAlloc()</b> is used to allocate
+large blocks of memory.
+</p>
+
+<p>
+<b>MemPageFree()</b> deallocates a previousely allocated range of memory pages. You must
+provide the address of the first page and the exact number of pages in the range.
+</p>
+
+<p>
+<b>MemPageExtend()</b> extends a previousely allocated memory page range by the given number of pages.
+You must provide the address of the first page and the exact number of pages in the range. The last
+argument is the number of extra pages.
+The return value is <b>true</b> in case of success.
+If the OS does not support such kind of operation this functin may simply return <b>false</b>.
+</p>
+
+<p>
+<b>MemPageShrink()</b> shrinks a previousely allocated memory page range by the given number of pages.
+You must provide the address of the first page and the exact number of pages in the range. The last
+argument is the number of pages to discard. The return value is the number of discarded from the range pages.
+It is less or equal than the <b>minus_num_pages</b> and than the <b>num_pages</b>. 
+If the return value is null, none of pages have been discarded. If the final number of pages equals zero,
+the range itself is still allocated and must be freed using the <b>MemPageFree()</b>.
+If the OS does not support such kind of operation this functin may simply return <b>0</b>.
+</p>
+
+</body>
+
+</html>
+
