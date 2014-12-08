@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/sys/SysError.h</b> <b>CCore/src/sys/SysError.cpp</b></p>
 
 <p>
-It is assumed that underlaying operation system report errors using error codes. 
+It is assumed that the OS reports errors using error codes. 
 These codes can be converted to text messages.
 </p>
 
@@ -82,7 +82,7 @@ struct <span class="Att">ErrorDesc</span>
 </pre>
 
 <p>
-The enumerartion <b>ErrorType</b> represents error codes. 
+The enumeration <b>ErrorType</b> represents error codes. 
 It may have a base integral type (usually <b>int</b>). 
 All target functions report errors using this enumeration.
 </p>
@@ -96,7 +96,7 @@ The structure <b>ErrorDesc</b> is used to convert a error code to the text messa
 </p>
 
 <p>
-The fields <b>str</b> and <b>len</b> points the text.
+The fields <b>str</b> and <b>len</b> defines the text string.
 </p>
 
 <p>

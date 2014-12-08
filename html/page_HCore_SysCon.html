@@ -31,7 +31,7 @@
 <p class="Files">Files <b>CCore/inc/sys/SysCon.h</b> <b>CCore/src/sys/SysCon.cpp</b></p>
 
 <p>
-This is to support console input-output operations.
+This supports console input-output operations.
 </p>
 
 <pre>
@@ -95,7 +95,7 @@ I.e. if it is required some initialization, it must be done using the <b>CCORE_I
 <p>
 The structure <b>ConRead</b> supports the console reading. To read characters from the console,
 you create an instance of this structure, initialize it and then use its methods to read 
-the input character stream. Finally, you uninitalize the instance. Copying of the instances is
+the input character stream. Finally, you uninitialize the instance. Copying of the instances is
 prohibited. The private content of the structure is target-dependent.
 The reader implements "non-buffered read without echo". It means, if the console buffer is not empty,
 the read operations do not block. If the buffer is empty, they wait for input. No echo is printed.
