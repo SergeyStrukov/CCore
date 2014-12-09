@@ -1,0 +1,65 @@
+<!--
+/* page_HCore_SysWait.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysWait</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysWait</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysWait.h</b> <b>CCore/src/sys/SysWait.cpp</b></p>
+
+<p>
+This is an enumeration, which is used to represent an async function result.
+It is used in <b>SysFile</b> and <b>SysNet</b> async system interfaces.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysWait_h
+#define CCore_inc_sys_SysWait_h
+ 
+namespace CCore {
+namespace Sys {
+
+/* enum WaitResult */
+
+enum <span class="Att">WaitResult</span>
+ {
+  Wait_error     = -1,
+  Wait_timeout   = -2,
+  Wait_interrupt = -3
+ };
+
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+</body>
+
+</html>
+

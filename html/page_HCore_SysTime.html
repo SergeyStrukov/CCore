@@ -1,0 +1,90 @@
+<!--
+/* page_HCore_SysTime.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysTime</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysTime</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysTime.h</b> <b>CCore/src/sys/SysTime.cpp</b></p>
+
+<p>
+This is OS backed time functions. <b>CCore</b> uses three time functions, which provides continuous
+times with different resolutions.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysTime_h
+#define CCore_inc_sys_SysTime_h
+ 
+#include &lt;CCore/inc/Gadget.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* types */ 
+
+typedef .... <span class="Att">MSecTimeType</span>;  // unsigned integral type
+
+typedef .... <span class="Att">SecTimeType</span>;   // unsigned integral type
+ 
+typedef .... <span class="Att">ClockTimeType</span>; // unsigned integral type
+ 
+/* functions */ 
+
+MSecTimeType <span class="Att">GetMSecTime()</span> noexcept;
+
+SecTimeType <span class="Att">GetSecTime()</span> noexcept;
+ 
+ClockTimeType <span class="Att">GetClockTime()</span> noexcept;
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+<b>GetMSecTime()</b> returns a millisecond time. The return value has the type <b>MSecTimeType</b>.
+It must be an unsigned integral type.
+</p>
+
+<p>
+<b>GetSecTime()</b> returns a second time. The return value has the type <b>SecTimeType</b>.
+It must be an unsigned integral type.
+</p>
+
+<p>
+<b>GetClockTime()</b> returns a "clock" time. It must be a fastest available time resolution on the target,
+with resolution at least 1 microsecond. The return value has the type <b>ClockTimeType</b>.
+It must be an unsigned integral type. Its recommended, that this type has 64 bits width.
+</p>
+
+</body>
+
+</html>
+

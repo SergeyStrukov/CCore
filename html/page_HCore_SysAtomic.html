@@ -31,12 +31,7 @@
 <p class="Files">Files <b>CCore/inc/sys/SysAtomic.h</b> <b>CCore/src/sys/SysAtomic.cpp</b> <b>CCore/src/sys/SysAtomic.s</b></p>
 
 <p>
-This must provide a target-dependent atomic operations implementation. This is done using the
-structure <b>Atomic</b>. Here is a typical structure implementation. Usually you have to give
-an atomic type and tree atomic functions: <b>Set()</b>, <b>Add()</b> and <b>TrySet()</b>.
-These functions are typically implemented using an assembler. Each of them applies a memory-fence
-operation to make sure any changes of any variable, made before the function call, becomes
-visible to any thread of execution.
+This is the target-dependent atomic operations implementation. It's done using the structure <b>Atomic</b>. 
 </p>
 
 <pre>
@@ -55,9 +50,147 @@ struct Atomic;
 
 struct <span class="Att">Atomic</span>
  {
+  // private
+
+  ....
+  
   // public
   
-  typedef unsigned <span class="Alert">Type</span>; // unsigned integral type
+  typedef .... <span class="Alert">Type</span>; // unsigned integral type
+
+  typedef Type PrintProxyType;
+  
+  void set_null();
+  
+  operator Type() const;
+  
+  // return previous value, memory fence is used
+  
+  Type operator  = (Type value);
+  
+  Type operator += (Type value);
+  
+  Type operator -= (Type value);
+  
+  Type operator ++ (int);
+  
+  Type operator -- (int);
+  
+  Type trySet(Type old_value,Type new_value);
+ };
+ 
+} // namespace Sys
+} // namespace CCore
+
+#endif
+
+</pre>
+
+<p>
+This structure has only one non-static data member of the type <b>Atomic::Type</b>. So you may do static
+initialization of a variable of this type:
+</p>
+
+<pre>
+
+static Sys::Atomic SomeAtomic = {0} ;
+
+</pre>
+
+<p>
+You may copy this structure, but it is not atomic and doing so is not recommended.
+</p>
+
+<p>
+<b>set_null()</b> sets the atomic value to the null, <span class="Alert">this is not an atomic operation!</span>
+Other operations are atomic.
+</p>
+
+<p>
+<b>operator Type()</b> reads the value of the atomic. This operation is a read operation and
+it does not apply any memory fence, only atomicity is guaranteed.
+Other operations are modifying operations, they returns the previous value of the atomic and
+apply a memory fence.
+</p>
+
+<p>
+<b>operator =</b> sets the new value to the atomic.
+</p>
+
+<p>
+<b>operator +=</b> increases the value of the atomic by the argument.
+</p>
+
+<p>
+<b>operator -=</b> decreases the value of the atomic by the argument.
+</p>
+
+<p>
+<b>postfix operator ++</b> increments the value of the atomic.
+</p>
+
+<p>
+<b>postfix operator --</b> decrements the value of the atomic.
+</p>
+
+<p>
+<b>trySet()</b> is a conditional set operation. It does the following:
+</p>
+
+<pre>
+
+auto ret=value;
+
+if( value==old_value ) value=new_value;
+
+return ret;
+
+</pre>
+
+<p>
+In the following example,
+</p>
+
+<pre>
+
+int a=0;
+
+Sys::Atomic b={0};
+
+// thread 1
+
+a=1;
+
+b=1;
+
+// thread 2
+
+while( b==0 );
+
+int c=a;
+
+</pre>
+
+<p>
+<b>c</b> is guaranteed to be 1. The implementation requires not only a proper hardware support, 
+but also the prevention the compiler to overoptimize the atomic operations.
+</p>
+
+<p>
+Here is a typical structure implementation. Usually you have to give
+an atomic type and tree atomic functions: <b>Set()</b>, <b>Add()</b> and <b>TrySet()</b>.
+These functions are typically implemented using an assembler. Each of them applies a memory-fence
+operation to make sure any changes of any variable, made before the function call, becomes
+visible to any thread of execution.
+</p>
+
+<pre>
+
+struct <span class="Att">Atomic</span>
+ {
+  // public
+  
+  typedef .... <span class="Alert">Type</span>; // unsigned integral type
 
   // private data
   
@@ -106,39 +239,7 @@ struct <span class="Att">Atomic</span>
   Type trySet(Type old_value,Type new_value) { return TrySet(&atomic,old_value,new_value); }
  };
  
-} // namespace Sys
-} // namespace CCore
-
 </pre>
-
-<p>
-In the following example,
-</p>
-
-<pre>
-
-int a=0;
-
-Sys::Atomic b={0};
-
-// thread 1
-
-a=1;
-
-b=1;
-
-// thread 2
-
-while( b==0 );
-
-int c=a;
-
-</pre>
-
-<p>
-<b>c</b> is guaranteed to be 1. The implementation requires not only a proper hardware support, 
-but also the prevention the compiler to overoptimize the atomic operations.
-</p>
 
 <p>
 You may derive functions <b>Sub()</b>, <b>Inc()</b>, <b>Dec()</b> from the <b>Add()</b> as shown above,
@@ -151,7 +252,7 @@ provide another implementation, if necessary.
 </p>
 
 <p>
-<b>Get()</b> reads the value of the atomic. No memory fence operation is applied (but atomicity is provided).
+<b>Get()</b> reads the value of the atomic. No memory fence operation is applied (but atomicity is guaranteed).
 </p>
 
 <p>
@@ -165,7 +266,7 @@ provide another implementation, if necessary.
 <p>
 <b>TrySet()</b> performs the conditional set. If the value of the atomic equals the <b>old_value</b>,
 the <b>new_value</b> is set.
-The old value is returned. A memory fence is applied.
+The previous value is returned. A memory fence is applied.
 </p>
 
 </body>

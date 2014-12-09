@@ -52,7 +52,7 @@ struct Sem;
 
 struct <span class="Att">Sem</span>
  {
-  // private data
+  // private
   
   ....
 
@@ -83,7 +83,7 @@ struct <span class="Att">Sem</span>
 <p>
 To create a semaphore you create an instance of the structure <b>Sem</b> and initialize it.
 Then you use its methods to do semaphore operations.
-Finally, you uninitalize the instance. Copying of the instances is
+Finally, you uninitialize the instance. Copying of the instances is
 prohibited. The private content of the structure is target-dependent.
 Semaphore methods, except <b>init()</b>, do not produce errors. They must be successful or 
 call abort. For example, it must abort on the counter overflow.
@@ -91,6 +91,7 @@ call abort. For example, it must abort on the counter overflow.
 
 <p>
 <b>init()</b> initialize the semaphore with the given counter value. The error code is returned.
+If the object is successfully initialized, it must be uninitialized by the method <b>exit()</b>.
 </p>
 
 <p>
@@ -98,17 +99,17 @@ call abort. For example, it must abort on the counter overflow.
 </p>
 
 <p>
-<b>give()</b> "gives" the semaphore counter (i.e. increment it). It may release a thread, blocked
+<b>give()</b> "gives" the semaphore counter (i.e. increments it). It may release a thread, blocked
 on the semaphore. 
 </p>
 
 <p>
-<b>give_many()</b> "gives" the semaphore counter many times (i.e. increase it) by the given value.
+<b>give_many()</b> "gives" the semaphore counter many times (i.e. increases it) by the given value.
 It may release multiple threads, blocked on the semaphore.
 </p>
 
 <p>
-<b>try_take()</b> tries to "take" the semaphore, i.e tries to decrement its counter. 
+<b>try_take()</b> tries to "take" the semaphore, i.e. tries to decrement its counter. 
 If the counter is not null, it is decremented and the <b>true</b> is returned.
 Otherwise the <b>false</b> is returned.
 </p>
@@ -126,21 +127,11 @@ Otherwise the method returns <b>false</b>. It means the semaphore was not taken 
 is finished because the timeout is expired.
 </p>
 
+<p>
+Internally, <b>Sem</b> may contain only some "handle" and use global methods to deal with it:
+</p>
+
 <pre>
-
-#ifndef CCore_inc_sys_SysSem_h
-#define CCore_inc_sys_SysSem_h
- 
-#include &lt;CCore/inc/sys/SysError.h&gt;
-
-namespace CCore {
-namespace Sys {
-
-/* classes */ 
-
-struct Sem;
-
-/* struct Sem */ 
 
 struct Sem
  {
@@ -195,11 +186,6 @@ struct Sem
   
   bool take(MSec timeout) { return Take(handle,timeout); }
  };
- 
-} // namespace Sys
-} // namespace CCore
- 
-#endif
 
 </pre>
 

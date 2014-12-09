@@ -53,8 +53,8 @@ features to your target by adding extra source files.
   <b>CCore</b>
     <b>inc</b>
       <b>base</b>
-        PlatformBase.h
-        Quick.h
+        <a href="page_AnyCore_PlatformBase.html">PlatformBase.h</a>
+        <a href="page_AnyCore_Quick.html">Quick.h</a>
       <b>sys</b>
         <a href="page_HCore_SysAbort.html">SysAbort.h</a>
         <a href="page_HCore_SysAtomic.html">SysAtomic.h</a>
@@ -67,10 +67,10 @@ features to your target by adding extra source files.
         <a href="page_HCore_SysPlanInit.html">SysPlanInit.h</a>
         <a href="page_HCore_SysProp.html">SysProp.h</a>
         <a href="page_HCore_SysSem.html">SysSem.h</a>
-        SysTask.h
-        SysTime.h
-        SysTlsSlot.h
-        SysWait.h
+        <a href="page_HCore_SysTask.html">SysTask.h</a>
+        <a href="page_HCore_SysTime.html">SysTime.h</a>
+        <a href="page_HCore_SysTlsSlot.html">SysTlsSlot.h</a>
+        <a href="page_HCore_SysWait.html">SysWait.h</a>
     <b>src</b>
       <b>base</b>
         PlatformBase.cpp
@@ -94,7 +94,7 @@ features to your target by adding extra source files.
         SysTime.cpp
         SysTlsSlot.cpp
         SysWait.cpp
-      PlanInit_CCore.cpp
+      <a href="page_HCore_PlanInit_CCore.html">PlanInit_CCore.cpp</a>
     <b>test</b>
       test3XXX.NNN.cpp
   <b>obj</b>
@@ -106,6 +106,16 @@ features to your target by adding extra source files.
     empty
 
 </pre>
+
+<p>
+Target code from the directory <b>sys</b> enclosed in the namespace <b>Sys</b> 
+(inside the namespace <b>CCore</b>.)
+</p>
+
+<p>
+Target code from the file <b>Quick.h</b> enclosed in the namespace <b>Quick</b> 
+(inside the namespace <b>CCore</b>.)
+</p>
 
 <h4>Makefile</h4>
 

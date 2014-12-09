@@ -1,0 +1,122 @@
+<!--
+/* page_HCore_SysTask.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysTask</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysTask</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysTask.h</b> <b>CCore/src/sys/SysTask.cpp</b></p>
+
+<p>
+This is OS thread functions. We often use the term task instead of thread.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysTask_h
+#define CCore_inc_sys_SysTask_h
+
+#include &lt;CCore/inc/sys/SysError.h&gt;
+ 
+namespace CCore {
+namespace Sys {
+
+/* types */ 
+
+typedef .... <span class="Att">TaskIdType</span>; // integral type &lt;= Atomic::Type
+
+/* functions */ 
+
+void <span class="Att">YieldTask</span>() noexcept;
+ 
+void <span class="Att">SleepTask</span>(MSec time) noexcept;
+ 
+TaskIdType <span class="Att">GetTaskId</span>() noexcept; // !=0
+
+/* classes */
+
+struct TaskEntry;
+
+/* struct TaskEntry */
+
+typedef void (*TaskEntryFunc)(TaskEntry *arg);
+
+struct <span class="Att">TaskEntry</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  void init(TaskEntryFunc entry) noexcept;
+  
+  ErrorType create() noexcept;
+ };
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+To run a task you create an instance of the structure <b>TaskEntry</b> and initialize it.
+The you can run a task using the method <b>create()</b>. The instance may be deleted once it's not
+in use (it may be used by the running task).
+Copying of the instances is prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>init()</b> initialize the instance. The argument is a task entry function.
+It is a pointer to the function. Once the task is started, this function is called in the task context
+with the argument &mdash; the pointer to the instance.
+</p>
+
+<p>
+<b>create()</b> runs the task. The error code is returned.
+</p>
+
+<p>
+<b>YieldTask()</b> gives control to another running task, if any. 
+</p>
+
+<p>
+<b>SleepTask()</b> sleeps the current task by the specified number of milliseconds.
+</p>
+
+<p>
+<b>GetTaskId()</b> returns the current task identity. It is represented by the type <b>TaskIdType</b>.
+This type must be an unsigned integral type, and it must not be wider than the 
+<a href="page_HCore_SysAtomic.html"><b>Atomic::Type</b></a>.
+Task identity uniquely identifies the task among running tasks. 
+</p>
+
+</body>
+
+</html>
+

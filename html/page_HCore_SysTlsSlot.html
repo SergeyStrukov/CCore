@@ -1,0 +1,157 @@
+<!--
+/* page_HCore_SysTlsSlot.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysTlsSlot</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysTlsSlot</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysTlsSlot.h</b> <b>CCore/src/sys/SysTlsSlot.cpp</b></p>
+
+<p>
+This is the OS backed thread local storage support.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysTlsSlot_h
+#define CCore_inc_sys_SysTlsSlot_h
+
+#include &lt;CCore/inc/sys/SysError.h&gt;
+ 
+namespace CCore {
+namespace Sys {
+
+/* classes */ 
+
+struct TlsSlot;
+
+/* struct TlsSlot */ 
+
+struct <span class="Att">TlsSlot</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  ErrorType init() noexcept;
+  
+  void exit() noexcept;
+  
+  void * get() noexcept;
+  
+  void set(void *value) noexcept;
+ };
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+To allocate a system TLS slot you create an instance of the structure <b>TlsSlot</b> and initialize it.
+Then you can use methods <b>set()</b> and <b>get()</b> to access a thread variable in this slot of the type <b>void *</b>.
+The initial value of this variable is null. Each thread of execution has its own independent copy of this variable.
+Finally, you uninitialize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+TLS methods, except <b>init()</b>, do not produce errors. They must be successful or 
+call abort.
+</p>
+
+<p>
+<b>init()</b> initialize the TLS slot. The error code is returned. If the object is successfully initialized,
+it must be uninitialized by the method <b>exit()</b>.
+</p>
+
+<p>
+<b>exit()</b> uninitialize the TLS slot.
+</p>
+
+<p>
+<b>get()</b> gets the value of the thread variable.
+</p>
+
+<p>
+<b>set()</b> sets the value of the thread variable.
+</p>
+
+<p>
+Internally, <b>TlsSlot</b> may contain only some "TLS index" and use global methods to deal with it:
+</p>
+
+<pre>
+
+struct TlsSlot
+ {
+  // private data
+  
+  typedef .... Type;
+ 
+  Type index;
+  
+  // private
+  
+  struct AllocType
+   {
+    Type index;
+    ErrorType error;
+   };
+   
+  static AllocType Alloc() noexcept;
+  
+  static void Free(Type index) noexcept;
+  
+  static void * Get(Type index) noexcept;
+  
+  static void Set(Type index,void *value) noexcept;
+  
+  // public
+  
+  ErrorType init()
+   {
+    AllocType result=Alloc();
+    
+    index=result.index;
+    
+    return result.error;
+   }
+  
+  void exit() { Free(index); }
+  
+  void * get() { return Get(index); }
+  
+  void set(void *value) { Set(index,value); }
+ };
+
+</pre>
+
+</body>
+
+</html>
+

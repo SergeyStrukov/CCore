@@ -1,0 +1,80 @@
+<!--
+/* page_HCore_PlanInit_CCore.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore PlanInit_CCore</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore PlanInit_CCore</h2>
+
+<p class="Files">Files <b>CCore/inc/PlanInit.h</b> <b>CCore/src/PlanInit_CCore.cpp</b></p>
+
+<p>
+This is the target <a href="page_PlanInit.html">plan initalization</a> node. The node tag is <b>"CCore"</b>.
+</p>
+
+<pre>
+
+#include &lt;CCore/inc/PlanInit.h&gt;
+
+#include &lt;CCore/inc/PacketPool.h&gt;
+#include &lt;CCore/inc/ObjHost.h&gt;
+#include &lt;CCore/inc/Job.h&gt;
+#include &lt;CCore/inc/PerTask.h&gt;
+
+namespace CCore {
+
+/* GetPlanInitNode_...() */ 
+
+namespace Private_PlanInit {
+
+struct Empty
+ {
+  static const char * GetTag() { return "CCore"; }
+ };
+ 
+PlanInitObject&lt;Empty,PlanInitReq&lt;GetPlanInitNode_PacketPool&gt;
+                    ,PlanInitReq&lt;GetPlanInitNode_ObjHost&gt;
+                    ,PlanInitReq&lt;GetPlanInitNode_JobHost&gt;
+                    ,PlanInitReq&lt;GetPlanInitNode_PerTask&gt;
+                    &gt; Object CCORE_INITPRI_1 ;
+
+} // namespace Private_PlanInit
+ 
+using namespace Private_PlanInit; 
+ 
+PlanInitNode * GetPlanInitNode_CCore() { return &amp;Object; }
+ 
+} // namespace CCore
+
+</pre>
+
+<p>
+In this example the required dependencies are included. A target may have additional ones.
+</p>
+
+</body>
+
+</html>
+

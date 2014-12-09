@@ -1,0 +1,178 @@
+<!--
+/* page_AnyCore_Quick.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> AnyCore Quick</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>AnyCore Quick</h2>
+
+<p class="Files">Files <b>CCore/inc/base/Quick.h</b> <b>CCore/src/base/Quick.cpp</b> <b>CCore/src/base/Quick.s</b></p>
+
+<pre>
+
+#ifndef CCore_inc_base_Quick_h
+#define CCore_inc_base_Quick_h
+
+#include &lt;CCore/inc/base/PlatformBase.h&gt;
+ 
+namespace CCore {
+namespace Quick {
+
+/* consts */
+
+const bool ScanLSBitIsFast = false ;
+const bool ScanMSBitIsFast = false ;
+
+/* types */ 
+
+typedef uint32 ScanUInt;
+
+/* functions */ 
+
+unsigned ScanLSBit(ScanUInt value) noexcept;
+
+unsigned ScanMSBit(ScanUInt value) noexcept;
+
+uint16 ByteSwap16(uint16 value) noexcept;
+ 
+uint32 ByteSwap32(uint32 value) noexcept;
+ 
+uint64 ByteSwap64(uint64 value) noexcept;
+
+/* classes */
+
+template &lt;unsigned UIntBits&gt; struct UIntMulSelect;
+
+template &lt;class UInt&gt; struct UIntMulFunc;
+
+/* struct UIntMulSelect&lt;unsigned UIntBits&gt; */
+
+template &lt;&gt;
+struct UIntMulSelect&lt;8&gt;
+ {
+  using ExtType = uint16 ;
+  
+  enum { IsDoubleType = true };
+ };
+
+template &lt;&gt;
+struct UIntMulSelect&lt;16&gt;
+ {
+  using ExtType = uint32 ;
+  
+  enum { IsDoubleType = true };
+ };
+
+template &lt;&gt;
+struct UIntMulSelect&lt;32&gt;
+ {
+  using ExtType = uint32 ;
+  
+  enum { IsDoubleType = false };
+ };
+
+template &lt;&gt;
+struct UIntMulSelect&lt;64&gt;
+ {
+  using ExtType = uint64 ;
+  
+  enum { IsDoubleType = false };
+ };
+
+/* struct UIntMulFunc&lt;uint32&gt; */
+
+template &lt;&gt; 
+struct UIntMulFunc&lt;uint32&gt;
+ {
+  using UInt = uint32 ;
+
+  struct Mul
+   {
+    UInt hi;
+    UInt lo;
+    
+    Mul(UInt a,UInt b);
+   };
+  
+  static UInt Div(UInt hi,UInt lo,UInt den); // hi&lt;den
+  
+  static UInt Mod(UInt hi,UInt lo,UInt den); // hi&lt;den
+  
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den); // hi&lt;den
+   };
+  
+  static UInt ModMul(UInt a,UInt b,UInt mod); // a,b &lt; mod
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod); // s,a,b &lt; mod
+ };
+
+/* struct UIntMulFunc&lt;uint64&gt; */
+
+template &lt;&gt; 
+struct UIntMulFunc&lt;uint64&gt;
+ {
+  using UInt = uint64 ;
+  
+  struct Mul
+   {
+    UInt hi;
+    UInt lo;
+    
+    Mul(UInt a,UInt b);
+   };
+  
+  static UInt Div(UInt hi,UInt lo,UInt den); // hi&lt;den
+  
+  static UInt Mod(UInt hi,UInt lo,UInt den); // hi&lt;den
+  
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den); // hi&lt;den
+   };
+  
+  static UInt ModMul(UInt a,UInt b,UInt mod); // a,b &lt; mod
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod); // s,a,b &lt; mod
+ };
+
+} // namespace Quick
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+</body>
+
+</html>
+
