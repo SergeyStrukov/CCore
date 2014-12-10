@@ -30,6 +30,11 @@
 
 <p class="Files">Files <b>CCore/inc/base/Quick.h</b> <b>CCore/src/base/Quick.cpp</b> <b>CCore/src/base/Quick.s</b></p>
 
+<p>
+This part contains some "quick" functions. These functions may use hardware capabilities
+to accelerate its operations. 
+</p>
+
 <pre>
 
 #ifndef CCore_inc_base_Quick_h
@@ -42,30 +47,30 @@ namespace Quick {
 
 /* consts */
 
-const bool ScanLSBitIsFast = false ;
-const bool ScanMSBitIsFast = false ;
+const bool <span class="Att">ScanLSBitIsFast</span> = false ;
+const bool <span class="Att">ScanMSBitIsFast</span> = false ;
 
 /* types */ 
 
-typedef uint32 ScanUInt;
+typedef .... <span class="Att">ScanUInt</span>; // unsigned integral type
 
 /* functions */ 
 
-unsigned ScanLSBit(ScanUInt value) noexcept;
+unsigned <span class="Att">ScanLSBit</span>(ScanUInt value) noexcept;
 
-unsigned ScanMSBit(ScanUInt value) noexcept;
+unsigned <span class="Att">ScanMSBit</span>(ScanUInt value) noexcept;
 
-uint16 ByteSwap16(uint16 value) noexcept;
+uint16 <span class="Att">ByteSwap16</span>(uint16 value) noexcept;
  
-uint32 ByteSwap32(uint32 value) noexcept;
+uint32 <span class="Att">ByteSwap32</span>(uint32 value) noexcept;
  
-uint64 ByteSwap64(uint64 value) noexcept;
+uint64 <span class="Att">ByteSwap64</span>(uint64 value) noexcept;
 
 /* classes */
 
-template &lt;unsigned UIntBits&gt; struct UIntMulSelect;
+template &lt;unsigned UIntBits&gt; struct <span class="Att">UIntMulSelect</span>;
 
-template &lt;class UInt&gt; struct UIntMulFunc;
+template &lt;class UInt&gt; struct <span class="Att">UIntMulFunc</span>;
 
 /* struct UIntMulSelect&lt;unsigned UIntBits&gt; */
 
@@ -171,6 +176,145 @@ struct UIntMulFunc&lt;uint64&gt;
 #endif
 
 </pre>
+
+<p>
+<b>ScanLSBit()</b> scans the argument for the less significant bit equals 1 and returns its number
+(bits are numbered from LSB to MSB).
+</p>
+
+<p>
+<b>ScanMSBit()</b> scans the argument for the most significant bit equals 1 and returns its number
+(bits are numbered from LSB to MSB).
+</p>
+
+<p>
+Both scan functions operates on the argument of the type <b>ScanUInt</b>, which must be
+an unsigned integral type. If the argument is null, the return value is not specified.
+Flags <b>ScanLSBitIsFast</b> and <b>ScanMSBitIsFast</b> are set, if the correspondent function
+has a fast implementation. The type <b>ScanUInt</b> should be a machine word size type, 
+the wider it is the better.
+</p>
+
+<p>
+<b>ByteSwap16()</b> swaps the bytes of the argument and returns the result. I.e. if the argument consists
+of the bytes (b<sub>0</sub>,b<sub>1</sub>), then the result is (b<sub>1</sub>,b<sub>0</sub>).
+</p>
+
+<p>
+<b>ByteSwap32()</b> swaps the bytes of the argument and returns the result. I.e. if the argument consists
+of the bytes (b<sub>0</sub>,b<sub>1</sub>,b<sub>2</sub>,b<sub>3</sub>), 
+then the result is (b<sub>3</sub>,b<sub>2</sub>,b<sub>1</sub>,b<sub>0</sub>).
+</p>
+
+<p>
+<b>ByteSwap64()</b> swaps the bytes of the argument and returns the result. I.e. if the argument consists
+of the bytes (b<sub>0</sub>,b<sub>1</sub>,b<sub>2</sub>,b<sub>3</sub>,b<sub>4</sub>,b<sub>5</sub>,b<sub>6</sub>,b<sub>7</sub>), 
+then the result is (b<sub>7</sub>,b<sub>6</sub>,b<sub>5</sub>,b<sub>4</sub>,b<sub>3</sub>,b<sub>2</sub>,b<sub>1</sub>,b<sub>0</sub>).
+</p>
+
+<h4>Integer multiplicative operations</h4>
+
+<p>
+The rest is to support integer multiplicative operations. This is done using the structure templates
+<b>UIntMulSelect</b> and <b>UIntMulFunc</b>. These structures are not defined itself, but its specializations
+must be given.
+</p>
+
+<p>
+<b>UIntMulSelect</b> must be specialized for the four following values: <b>8</b>, <b>16</b>, 
+<b>32</b>, <b>64</b> as following:
+</p>
+
+<pre>
+
+template &lt;&gt;
+struct UIntMulSelect&lt;N&gt;
+ {
+  using ExtType = .... ; // unsigned integral type
+  
+  enum { IsDoubleType = .... }; // true or false
+ };
+
+</pre>
+
+<p>
+<b>ExtType</b> is some unsigned integral type. Either this type has the bit width greater or equal
+than <b>2*N</b> and <b>IsDoubleType</b> is assigned to <b>true</b>, or <b>IsDoubleType</b> is <b>false</b>
+and <b>ExtType</b> is any unsigned integral type. In the first case extended multiplicative operations
+for the type <b>uintN</b> are implemented using the operations on the type <b>ExtType</b>.
+Otherwise the specialization <b>UIntMulFunc&lt;uintN&gt;</b> must be given.
+Such specialization must provide the following:
+</p>
+
+<pre>
+
+template &lt;&gt; 
+struct UIntMulFunc&lt;uintN&gt;
+ {
+  using UInt = uintN ;
+
+  struct Mul
+   {
+    UInt hi;
+    UInt lo;
+    
+    Mul(UInt a,UInt b);
+   };
+  
+  static UInt Div(UInt hi,UInt lo,UInt den); // hi&lt;den
+  
+  static UInt Mod(UInt hi,UInt lo,UInt den); // hi&lt;den
+  
+  struct DivMod
+   {
+    UInt div;
+    UInt mod;
+    
+    DivMod(UInt hi,UInt lo,UInt den); // hi&lt;den
+   };
+  
+  static UInt ModMul(UInt a,UInt b,UInt mod); // a,b &lt; mod
+
+  static UInt ModMac(UInt s,UInt a,UInt b,UInt mod); // s,a,b &lt; mod
+ };
+
+</pre>
+
+<p>
+<b>Mul()</b> performs the full multiplication of the arguments <b>a</b> and <b>b</b> 
+and returns the result in the pair <b>hi</b> and <b>lo</b>, where <b>hi</b> is the high part
+of the product and the <b>lo</b> is the lower part of the product.
+</p>
+
+<p>
+<b>Div()</b> performs the division of the double-size value, given by the arguments <b>hi</b> and 
+<b>lo</b>, by the third argument <b>den</b>. It is assumed, that <b>hi < den</b>, in such case
+the result is represented by the single-size value. Otherwise the behavior is unspecified (it
+may cause hardware trap). 
+</p>
+
+<p>
+<b>Mod()</b> calcualtes the remainder of the division of the double-size value, given by the arguments <b>hi</b> and 
+<b>lo</b>, by the third argument <b>den</b>. It is assumed, that <b>hi < den</b>. Otherwise the behavior is unspecified (it
+may cause hardware trap).
+</p>
+
+<p>
+<b>DivMod()</b> performs both operations <b>Div()</b> and <b>Mod()</b> and returns the result
+in the fields <b>div</b> and <b>mod</b>.
+</p>
+
+<p>
+<b>ModMul()</b> calculates the product of the <b>a</b> and <b>b</b> by the module <b>mod</b>.
+It is assumed, that <b>a</b> and <b>b < mod</b>, otherwise the behavior is unspecified (it
+may cause hardware trap). The result is less than <b>mod</b>.
+</p>
+
+<p>
+<b>ModMac()</b> calculates the expression <b>s+a*b</b> by the module <b>mod</b>.
+It is assumed, that <b>a</b>, <b>b</b> and <b>s < mod</b>, otherwise the behavior is unspecified (it
+may cause hardware trap). The result is less than <b>mod</b>.
+</p>
 
 </body>
 

@@ -1,0 +1,125 @@
+<!--
+/* page_HCore_SysFileSystem.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.08
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2014 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> HCore SysFileSystem</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>HCore SysFileSystem</h2>
+
+<p class="Files">Files <b>CCore/inc/sys/SysFileSystem.h</b> <b>CCore/src/sys/SysFileSystem.cpp</b></p>
+
+<p>
+This part provides OS backed file system operations. These operations comply with 
+the <a href="page_Files.html">general file operation set</a>.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysFileSystem_h
+#define CCore_inc_sys_SysFileSystem_h
+ 
+#include &lt;CCore/inc/GenFile.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* classes */ 
+
+struct FileSystem;
+
+/* struct FileSystem */ 
+
+struct <span class="Att">FileSystem</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct TypeResult
+   {
+    FileType type;
+    FileError error;
+   };
+  
+  struct PathOfResult
+   {
+    StrLen path;
+    FileError error;
+   };
+   
+  struct DirCursor 
+   {
+    // public
+   
+    char file_name[MaxPathLen]; // file name only
+    ulen len;
+    FileType type;
+    FileError error;
+    
+    void init(FileSystem *fs,StrLen dir_name) noexcept;
+  
+    void exit() noexcept;
+    
+    bool next() noexcept;
+   };
+ 
+  // public
+  
+  FileError init() noexcept;
+  
+  FileError exit() noexcept;
+  
+  TypeResult getFileType(StrLen path) noexcept;
+  
+  FileError createFile(StrLen file_name) noexcept;
+  
+  FileError deleteFile(StrLen file_name) noexcept;
+  
+  FileError createDir(StrLen dir_name) noexcept;
+  
+  FileError deleteDir(StrLen dir_name,bool recursive) noexcept;
+  
+  FileError rename(StrLen old_path,StrLen new_path,bool allow_overwrite) noexcept;
+  
+  FileError remove(StrLen path) noexcept;
+  
+  FileError exec(StrLen dir,StrLen program,StrLen arg) noexcept;
+  
+  PathOfResult pathOf(StrLen path,char buf[MaxPathLen+1]) noexcept;
+ };
+ 
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+</body>
+
+</html>
+
