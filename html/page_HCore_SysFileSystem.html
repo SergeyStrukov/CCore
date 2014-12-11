@@ -73,6 +73,10 @@ struct <span class="Att">FileSystem</span>
    
   struct DirCursor 
    {
+    // private
+
+    ....
+
     // public
    
     char file_name[MaxPathLen]; // file name only
@@ -118,6 +122,112 @@ struct <span class="Att">FileSystem</span>
 #endif
 
 </pre>
+
+<p>
+To perform a file system operation you create an instance of the structure <b>FileSystem</b>
+and initialize it. Then you use this structure methods to do desired operations. Finally, you 
+uninitialize the instance. 
+Copying of the instances is prohibited. The private content of the structure is target-dependent.
+It's very likely, that the structure has no data fields. In such case
+its methods can be declared static. But you should not use them as such.
+<span class="Alert">This structure uses types and constants from the <b>GenFile.h</b>, this includes error codes.</span>
+</p>
+
+<p>
+<b>init()</b> initalizes the instance. The error code is returned.
+If the object is successfully initialized, it must be uninitialized by the method <b>exit()</b>.
+</p>
+
+<p>
+<b>exit()</b> uninitialize the instance.
+</p>
+
+<p>
+<b>getFileType()</b> returns the file type. The argument specifies a file or directory.
+The return value is represented by the inner structure <b>TypeResult</b>. This structure has two fields:
+<b>type</b> and <b>error</b>. <b>type</b> is the object type, <b>error</b> is the error code. 
+</p>
+
+<p>
+<b>createFile()</b> creates the empty file with the given name. The error code is returned.
+</p>
+
+<p>
+<b>deleteFile()</b> deletes the file with the given name. The error code is returned.
+</p>
+
+<p>
+<b>createDir()</b> creates the empty directory with the given name. The error code is returned.
+</p>
+
+<p>
+<b>deleteDir()</b> deletes the directory with the given name. The error code is returned.
+The second argument is a recursion flag. If it is <b>false</b>, then directory must be empty.
+Otherwise the directory is deleted with all its content, including nested subdirectories.
+</p>
+
+<p>
+<b>rename()</b> renames or moves the file of directory. The error code is returned.
+The <b>allow_overwrite</b> flag allows overwriting the existing file. 
+</p>
+
+<p>
+<b>remove()</b> deletes ether the existing file or the existing empty directory. The error code is returned.
+</p>
+
+<p>
+<b>exec()</b> is not a file system operation. It is an extra operation. This methods starts a new process.
+<b>dir</b> is the working directory of the new process. <b>program</b> is the executable file name.
+<b>arg</b> is the command line.
+</p>
+
+<p>
+<b>pathOf()</b> is another extra operation. This method builds a normalized full path of the
+file or directory. The <b>buf</b> is a storage buffer for the result. The resulting string is zero-terminated.
+The return value is represented by the inner structure <b>PathOfResult</b>.
+This structure has two fields: <b>path</b> and <b>error</b>. The <b>path</b> is the resulting path,
+the <b>error</b> is the error code.
+</p>
+
+<p>
+<b>DirCursor</b> is the inner structure. 
+This structure can be used to iterate over the content of a directory.
+Copying of the instances is prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>file_name</b> is the buffer for the file name. The only file part is stored here.
+The name is not zero-terminated.
+</p>
+
+<p>
+<b>len</b> is the length of the file name.
+</p>
+
+<p>
+<b>type</b> is the file type.
+</p>
+
+<p>
+<b>error</b> contains the error code after method calls (except <b>exit()</b>).
+</p>
+
+<p>
+<b>init()</b> initializes the instance. The field <b>error</b> will contain the error code.
+If the object is successfully initialized, it must be uninitialized by the method <b>exit()</b>.
+The iterator is set to the position "before the first".
+</p>
+
+<p>
+<b>exit()</b> uninitializes the instance. No errors are returned.
+</p>
+
+<p>
+<b>next()</b> moves to the next file (or directory) in the directory. The return value is <b>true</b>, 
+if such file is found. The return value is <b>false</b> in case of error or if there is no more files.
+The field <b>error</b> will contain the error code.
+Fields <b>file_name</b>, <b>len</b> and <b>type</b> contain file information, if the file is found.
+</p>
 
 </body>
 

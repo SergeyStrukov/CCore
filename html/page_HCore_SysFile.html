@@ -30,6 +30,696 @@
 
 <p class="Files">Files <b>CCore/inc/sys/SysFile.h</b> <b>CCore/src/sys/SysFile.cpp</b></p>
 
+<p>
+This part contains OS backed file access tools.
+These tools comply with the <a href="page_Files.html">general file operation set</a>.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysFile_h
+#define CCore_inc_sys_SysFile_h
+
+#include &lt;CCore/inc/sys/SysWait.h&gt;
+ 
+#include &lt;CCore/inc/TimeScope.h&gt;
+#include &lt;CCore/inc/GenFile.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* classes */ 
+
+struct File;
+
+struct AltFile;
+
+struct AltAsyncFile;
+
+struct AsyncFileWait;
+
+/* struct File */ 
+
+struct <span class="Att">File</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct IOResult
+   {
+    ulen len;
+    FileError error;
+   };
+ 
+  struct PosResult
+   {
+    FilePosType pos;
+    FileError error;
+   };
+ 
+  // public
+  
+  FileError open(StrLen file_name,FileOpenFlags oflags) noexcept;
+ 
+  void close(FileMultiError &errout,bool preserve_file=false) noexcept;
+  
+  void close() noexcept; 
+   
+  IOResult write(const uint8 *buf,ulen len) noexcept;
+  
+  IOResult read(uint8 *buf,ulen len) noexcept;
+  
+  PosResult getLen() noexcept;
+  
+  PosResult getPos() noexcept;
+  
+  FileError setPos(FilePosType pos) noexcept;
+ };
+ 
+/* struct AltFile */ 
+
+struct <span class="Att">AltFile</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct Result
+   {
+    FilePosType file_len;
+    FileError error;
+   };
+ 
+  // public
+  
+  Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
+ 
+  void close(FileMultiError &errout,bool preserve_file=false) noexcept;
+  
+  void close() noexcept; 
+   
+  Result write(FilePosType off,const uint8 *buf,ulen len) noexcept; 
+  
+  FileError read(FilePosType off,uint8 *buf,ulen len) noexcept; 
+ };
+
+/* struct AltAsyncFile */
+
+struct <span class="Att">AltAsyncFile</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct AsyncState;
+  
+  typedef AsyncState * Async;
+  
+  struct Result
+   {
+    FilePosType file_len;
+    FileError error;
+   };
+  
+  struct RWResult
+   {
+    bool pending;
+    FileError error;
+   };
+ 
+  // public
+  
+  static const ulen MaxRWLen = 1_MByte ;
+  
+  Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
+  
+  void close(FileMultiError &errout,bool preserve_file=false) noexcept; 
+  
+  void close() noexcept; 
+  
+  FileError testRead(FilePosType off,ulen len) noexcept;
+  
+  Result setWrite(FilePosType off,ulen len) noexcept;
+  
+  RWResult startRead(Async async,FilePosType off,uint8 *buf,ulen len) noexcept;
+  
+  FileError completeRead(Async async,ulen len) noexcept;
+  
+  RWResult startWrite(Async async,FilePosType off,const uint8 *buf,ulen len) noexcept;
+  
+  FileError completeWrite(Async async,ulen len) noexcept;
+ };
+
+/* struct AsyncFileWait */
+
+struct <span class="Att">AsyncFileWait</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  static const ulen MaxAsyncs = 50 ;
+  
+  FileError init(ulen async_count) noexcept;
+  
+  void exit() noexcept;
+  
+  AltAsyncFile::Async getAsync(ulen index) noexcept;
+  
+  bool addWait(ulen index) noexcept;
+  
+  bool delWait(ulen index) noexcept;
+  
+  WaitResult wait(MSec timeout) noexcept;
+  
+  WaitResult wait(TimeScope time_scope) noexcept;
+  
+  void interrupt() noexcept; // async , semaphore
+ };
+
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<p>
+<span class="Alert">These structures uses types and constants from the <b>GenFile.h</b>, this includes error codes.</span>
+</p>
+
+<h4>Classical file access</h4>
+
+<p>
+The structure <b>File</b> implements the classical file access.
+</p>
+
+<pre>
+
+struct <span class="Att">File</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct IOResult
+   {
+    ulen len;
+    FileError error;
+   };
+ 
+  struct PosResult
+   {
+    FilePosType pos;
+    FileError error;
+   };
+ 
+  // public
+  
+  FileError open(StrLen file_name,FileOpenFlags oflags) noexcept;
+ 
+  void close(FileMultiError &errout,bool preserve_file=false) noexcept;
+  
+  void close() noexcept; 
+   
+  IOResult write(const uint8 *buf,ulen len) noexcept;
+  
+  IOResult read(uint8 *buf,ulen len) noexcept;
+  
+  PosResult getLen() noexcept;
+  
+  PosResult getPos() noexcept;
+  
+  FileError setPos(FilePosType pos) noexcept;
+ };
+
+</pre>
+
+<p>
+To work with a file you create an instance of this structure. Then you open the required file
+using the method <b>open()</b>. 
+Then you use its methods to do file operations.
+Finally, you uninitialize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>open()</b> initializes the instance and prepare it to perform file operations of the given file.
+The error code is returned. The first argument is the file name. The second is the open flags.
+The meaning of the flags is described in the <a href="page_Files.html">general file operation set</a>.
+If the object is successfully initialized, it must be uninitialized by the method <b>close()</b>.
+</p>
+
+<p>
+<b>close()</b> closes the file. The first variant uses the provided <b>FileMultiError</b> object
+to return operation error(s). If the flag <b>preserve_file</b> is <b>true</b>, the file is preserved,
+even if it was opened with the <b>Open_AutoDelete</b> flag.
+The second variant does not report any errors and does not preserve the file, opened with the <b>Open_AutoDelete</b> flag.
+</p>
+
+<p>
+<b>write()</b> writes the given byte range to the file at the current file position. The file
+position is updated. The return value has the inner type <b>IOResult</b>. This structure has
+two fields: <b>len</b> and <b>error</b>. The <b>len</b> is the number of bytes have been written and the 
+<b>error</b> is the error code. The <b>len</b> is less or equal than the argument <b>len</b>.
+The file may be extended by this operation. If the operation is successful, the resulting length
+should be equal the input length. Other behavior is not recommended.
+This operation is available only if the file has been opened with the flag <b>Open_Write</b>.
+</p>
+
+<p>
+<b>read()</b> reads the byte range from the file to the provided buffer from the current file position.
+The file position is updated. The return value has the inner type <b>IOResult</b>. This structure has
+two fields: <b>len</b> and <b>error</b>. The <b>len</b> is the number of bytes have been red and the 
+<b>error</b> is the error code. The <b>len</b> is less or equal than the argument <b>len</b>.
+If the operation is successful, the resulting length should be equal minimum of the input length
+and the number of bytes after the current file position to the end of file.
+Other behavior is not recommended.
+This operation is available only if the file has been opened with the flag <b>Open_Read</b>.
+</p>
+
+<p>
+<b>getLen()</b> returns the current length of the file. The return value is represented by the
+inner structure <b>PosResult</b>. This structure has two fields: <b>pos</b> and <b>error</b>.
+<b>pos</b> is the length of the file, <b>error</b> is the error code.
+This operation is available only if the file has been opened with the flag <b>Open_Pos</b>.
+</p>
+
+<p>
+<b>getPos()</b> returns the current position of the file. The return value is represented by the
+inner structure <b>PosResult</b>. This structure has two fields: <b>pos</b> and <b>error</b>.
+The <b>pos</b> is the file position, the <b>error</b> is the error code.
+This operation is available only if the file has been opened with the flag <b>Open_Pos</b>.
+</p>
+
+<p>
+<b>setPos()</b> sets the current position of the file. The error code is returned.
+If the position is after the end-of-file, the behavior is undefined. If you want to extend the file,
+it can be done by the method <b>write()</b>.
+This operation is available only if the file has been opened with the flag <b>Open_Pos</b>.
+</p>
+
+<h4>Alternative file access</h4>
+
+<p>
+The structure <b>AltFile</b> implements an alternative file access.
+</p>
+
+<pre>
+
+struct <span class="Att">AltFile</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct Result
+   {
+    FilePosType file_len;
+    FileError error;
+   };
+ 
+  // public
+  
+  Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
+ 
+  void close(FileMultiError &errout,bool preserve_file=false) noexcept;
+  
+  void close() noexcept; 
+   
+  Result write(FilePosType off,const uint8 *buf,ulen len) noexcept; 
+  
+  FileError read(FilePosType off,uint8 *buf,ulen len) noexcept; 
+ };
+
+</pre>
+
+<p>
+To work with a file you create an instance of this structure. Then you open the required file
+using the method <b>open()</b>. 
+Then you use its methods to do file operations.
+Finally, you uninitialize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>open()</b> initializes the instance and prepare it to perform file operations of the given file.
+The return value has the inner type <b>Result</b>. This structure has two fields: <b>file_len</b>
+and <b>error</b>. The <b>file_len</b> is the length of the file, the <b>error</b> is the error code.
+The first argument is the file name. The second is the open flags.
+This kind of file has no an internal file position.
+The meaning of the flags is described in the <a href="page_Files.html">general file operation set</a>.
+If the object is successfully initialized, it must be uninitialized by the method <b>close()</b>.
+</p>
+
+<p>
+<b>close()</b> closes the file. The first variant uses the provided <b>FileMultiError</b> object
+to return operation error(s). If the flag <b>preserve_file</b> is <b>true</b>, the file is preserved,
+even if it was opened with the <b>Open_AutoDelete</b> flag.
+The second variant does not report any errors and does not preserve the file, opened with the <b>Open_AutoDelete</b> flag.
+</p>
+
+<p>
+<b>write()</b> writes the given byte range to the file. The file position to write
+is given by the first argument. This operation may extend the file.
+The return value has the inner type <b>Result</b>. This structure has two fields: <b>file_len</b>
+and <b>error</b>. The <b>file_len</b> is the new length of the file, the <b>error</b> is the error code.
+This operation is available only if the file has been opened with the flag <b>Open_Write</b>.
+</p>
+
+<p>
+<b>read()</b> reads the byte range from the file to the provided buffer. The file position to read
+is given by the first argument. The error code is returned. The read range must not cross end-of-file.
+This operation is available only if the file has been opened with the flag <b>Open_Read</b>.
+</p>
+
+<h4>Async file access</h4>
+
+<p>
+The structure <b>AltFile</b> implements an alternative file access in an asynchronus manner.
+</p>
+
+<pre>
+
+struct <span class="Att">AltAsyncFile</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct AsyncState;
+  
+  typedef AsyncState * Async;
+  
+  struct Result
+   {
+    FilePosType file_len;
+    FileError error;
+   };
+  
+  struct RWResult
+   {
+    bool pending;
+    FileError error;
+   };
+ 
+  // public
+  
+  static const ulen MaxRWLen = .... ; // like 1_MByte 
+  
+  Result open(StrLen file_name,FileOpenFlags oflags) noexcept;
+  
+  void close(FileMultiError &errout,bool preserve_file=false) noexcept; 
+  
+  void close() noexcept; 
+  
+  FileError testRead(FilePosType off,ulen len) noexcept;
+  
+  Result setWrite(FilePosType off,ulen len) noexcept;
+  
+  RWResult startRead(Async async,FilePosType off,uint8 *buf,ulen len) noexcept;
+  
+  FileError completeRead(Async async,ulen len) noexcept;
+  
+  RWResult startWrite(Async async,FilePosType off,const uint8 *buf,ulen len) noexcept;
+  
+  FileError completeWrite(Async async,ulen len) noexcept;
+ };
+
+</pre>
+
+<p>
+To work with a file you create an instance of this structure. Then you open the required file
+using the method <b>open()</b>. 
+Then you use its methods to do file operations.
+Finally, you uninitialize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>open()</b> initializes the instance and prepare it to perform file operations of the given file.
+The return value has the inner type <b>Result</b>. This structure has two fields: <b>file_len</b>
+and <b>error</b>. The <b>file_len</b> is the length of the file, the <b>error</b> is the error code.
+The first argument is the file name. The second is the open flags.
+This kind of file has no an internal file position.
+The meaning of the flags is described in the <a href="page_Files.html">general file operation set</a>.
+If the object is successfully initialized, it must be uninitialized by the method <b>close()</b>.
+</p>
+
+<p>
+<b>close()</b> closes the file. The first variant uses the provided <b>FileMultiError</b> object
+to return operation error(s). If the flag <b>preserve_file</b> is <b>true</b>, the file is preserved,
+even if it was opened with the <b>Open_AutoDelete</b> flag.
+The second variant does not report any errors and does not preserve the file, opened with the <b>Open_AutoDelete</b> flag.
+All pending file read/write operations must be finished before the call of this method. 
+</p>
+
+<p>
+<b>testRead()</b> checks the read position. 
+If the read range does not fit into the file range it returns the error.
+The error code is returned.
+This operation is available only if the file has been opened with the flag <b>Open_Read</b>.
+</p>
+
+<p>
+<b>setWrite()</b> prepares the file write operation. It checks the write range for overflow
+and increases the internal file length field, if the file is to be extended.
+This method must be called before the <b>startWrite()</b>.
+This operation is available only if the file has been opened with the flag <b>Open_Write</b>.
+</p>
+
+<p>
+<b>startRead()</b> starts the read operation. The first argument is an async token. The type of this token
+is the inner type <b>Async</b> and usually it is the pointer to some structure (<b>AsyncState</b>).
+The return value has the inner type <b>RWResult</b>. It has two fields: <b>pending</b> and 
+<b>error</b>. The first field is <b>true</b>, if the operation is pending, otherwise
+it is finished. The second is the error code. If the operation is finished, no other steps are required.
+If the operation is pending, you must wait until the token is finished and then call the method
+<b>completeRead()</b>.
+This operation is available only if the file has been opened with the flag <b>Open_Read</b>.
+</p>
+
+<p>
+<b>completeRead()</b> complets the read operation. The first argument is the operation token, the second
+is the original argument <b>len</b> from the <b>startRead()</b> call. This method must be used only
+after the correspondent async token is reported finished. The error code is returned.
+This operation is available only if the file has been opened with the flag <b>Open_Read</b>.
+</p>
+
+<p>
+<b>startWrite()</b> starts the write operation. The first argument is an async token. The type of this token
+is the inner type <b>Async</b> and usually it is the pointer to some structure (<b>AsyncState</b>).
+The return value has the inner type <b>RWResult</b>. It has two fields: <b>pending</b> and 
+<b>error</b>. The first field is <b>true</b>, if the operation is pending, otherwise
+it is finished. The second is the error code. If the operation is finished, no other steps are required.
+If the operation is pending, you must wait until the token is finished and then call the method
+<b>completeWrite()</b>.
+This operation is available only if the file has been opened with the flag <b>Open_Write</b>.
+</p>
+
+<p>
+<b>completeWrite()</b> complets the write operation. The first argument is the operation token, the second
+is the original argument <b>len</b> from the <b>startWrite()</b> call. This method must be used only
+after the correspondent async token is reported finished. The error code is returned.
+This operation is available only if the file has been opened with the flag <b>Open_Write</b>.
+</p>
+
+<p>
+The length of any read or write operation must not exceed <b>MaxRWLen</b>, which should has the value
+like 1 MByte.
+</p>
+
+<p>
+Here is a pattern to do a read operation:
+</p>
+
+<pre>
+
+AltAsyncFile::Async async=&lt;acquire an unused async token&gt;;
+
+if( auto error=file.testRead(off,len) ) 
+  {
+   &lt;release async&gt;;
+
+   return error; 
+  }
+
+auto result=file.startRead(async,off,buf,len);
+
+if( result.error ) 
+  {
+   &lt;release async&gt;;
+
+   return result.error; 
+  }
+
+if( result.pending )
+  {
+   &lt;wait until async is finished&gt;;
+
+   auto error=file.completeRead(async,len);
+
+   &lt;release async&gt;;
+
+   return error;
+  }
+else
+  {
+   &lt;release async&gt;;
+
+   return FileError_Ok;
+  }
+
+</pre>
+
+<p>
+Here is a pattern to do a write operation:
+</p>
+
+<pre>
+
+AltAsyncFile::Async async=&lt;acquire an unused async token&gt;;
+
+auto op_result=file.startWrite(off,len);
+
+if( op_result.error ) 
+  {
+   &lt;release async&gt;;
+
+   return {op_result.error,0}; 
+  }
+
+auto result=file.startWrite(async,off,buf,len);
+
+if( result.error ) 
+  {
+   &lt;release async&gt;;
+
+   return {result.error,0}; 
+  }
+
+if( result.pending )
+  {
+   &lt;wait until async is finished&gt;;
+
+   auto error=file.completeWrite(async,len);
+
+   &lt;release async&gt;;
+
+   return {error,op_result.file_len};
+  }
+else
+  {
+   &lt;release async&gt;;
+
+   return {FileError_Ok,op_result.file_len};
+  }
+
+</pre>
+
+<p>
+To work with async tokens there is the structure <b>AsyncFileWait</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">AsyncFileWait</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  static const ulen MaxAsyncs = .... ; // like 50-100
+  
+  FileError init(ulen async_count) noexcept;
+  
+  void exit() noexcept;
+  
+  AltAsyncFile::Async getAsync(ulen index) noexcept;
+  
+  bool addWait(ulen index) noexcept;
+  
+  bool delWait(ulen index) noexcept;
+  
+  WaitResult wait(MSec timeout) noexcept;
+  
+  WaitResult wait(TimeScope time_scope) noexcept;
+  
+  void interrupt() noexcept; // async , semaphore
+ };
+
+</pre>
+
+<p>
+This structure is a pool of tokens.
+To work with tokens you create an instance of this structure and initialize it. 
+Then you use its methods to do async file operations.
+Finally, you uninitialize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>init()</b> initalizes the instance. The argument is the async pool size. This value must not
+exceed the inner constant <b>MaxAsync</b>. Otherwise the method returns a error.
+If the object is successfully initialized, it must be uninitialized by the method <b>exit()</b>.
+The pool contains <b>async_count</b> async tokens. They are indexed by the numbers from
+tne range <b>[0,async_count)</b>. Some of them comprise the "wait set". Initially the set is empty.
+</p>
+
+<p>
+<b>exit()</b> uninitalizes the instance.
+</p>
+
+<p>
+<b>getAsync()</b> returns the token with the given index.
+</p>
+
+<p>
+<b>addWait()</b> adds the token with the given index to the wait set. The return value is <b>true</b>,
+if the token was included in the set, and <b>false</b>, if the token is already in the set.
+</p>
+
+<p>
+<b>delWait()</b> removes the token with the given index from the wait set. The return value is <b>true</b>,
+if the token was excluded from the set, and <b>false</b>, if the token is already not in the set.
+</p>
+
+<p>
+<b>wait()</b> waits while one of the tokens from the wait set is finished, i.e. some async file operation
+is started with this token and it is finished. The return value has the type 
+<a href="page_HCore_SysWait.html"><b>WaitResult</b></a>. The value is the index of the token been finished, or
+one of the negative special values. Two variants of <b>wait()</b> accepts timeouts of different kinds:
+as a <b>MSec</b> or as a <b>TimeScope</b>.
+The special return values have the following meanings:
+<ol>
+ <li><b>Wait_error</b> &mdash; the function has failed for some reason,</li>
+ <li><b>Wait_timeout</b> &mdash; the wait is terminated by timeout,</li>
+ <li><b>Wait_interrupt</b> &mdash; the wait is terminated by the <b>interrupt().</b></li>
+</ol>
+</p>
+
+<p>
+<b>interrupt()</b> is a special method. This method can be used to interrupt the <b>wait()</b>.
+Unlike other methods, this one can be called in parallel to other method calls. This method
+has a "semaphore behavior", i.e. several calls provide several interrupts. 
+</p>
 
 </body>
 
