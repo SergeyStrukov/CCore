@@ -30,6 +30,438 @@
 
 <p class="Files">Files <b>CCore/inc/sys/SysNet.h</b> <b>CCore/src/sys/SysNet.cpp</b></p>
 
+<p>
+This part is the OS backed network support.
+</p>
+
+<pre>
+
+#ifndef CCore_inc_sys_SysNet_h
+#define CCore_inc_sys_SysNet_h
+ 
+#include &lt;CCore/inc/sys/SysWait.h&gt;
+#include &lt;CCore/inc/sys/SysError.h&gt;
+
+#include &lt;CCore/inc/TimeScope.h&gt;
+#include &lt;CCore/inc/net/UDPoint.h&gt;
+
+namespace CCore {
+namespace Sys {
+
+/* classes */
+
+struct UDPSocket;
+
+struct AsyncUDPSocket;
+
+struct AsyncUDPSocketWait;
+
+/* struct UDPSocket */
+
+struct <span class="Att">UDPSocket</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct InResult
+   {
+    Net::UDPoint src;
+    ulen len;
+    ErrorType error;
+   };
+  
+  // public
+  
+  ErrorType open(Net::UDPort udport) noexcept;
+  
+  ErrorType close() noexcept;
+  
+  ErrorType outbound(Net::UDPoint dst,PtrLen&lt;const uint8&gt; data) noexcept;
+  
+  WaitResult wait_in(MSec timeout) noexcept;
+  
+  WaitResult wait_in(TimeScope time_scope) noexcept;
+  
+  InResult inbound(PtrLen&lt;uint8&gt; buf) noexcept;
+ };
+
+/* struct AsyncUDPSocket */
+
+struct <span class="Att">AsyncUDPSocket</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct AsyncState;
+  
+  typedef AsyncState * Async;
+  
+  struct OutResult
+   {
+    bool pending;
+    ErrorType error;
+   };
+  
+  struct InResult
+   {
+    ErrorType error;
+    Net::UDPoint src;
+    ulen len;
+   };
+  
+  struct StartInResult
+   {
+    bool pending;
+    InResult result;
+   };
+  
+  // public
+  
+  ErrorType open(Net::UDPort udport) noexcept;
+  
+  ErrorType close() noexcept;
+  
+  OutResult startOutbound(Async async,Net::UDPoint dst,PtrLen&lt;const uint8&gt; data) noexcept;
+  
+  ErrorType completeOutbound(Async async) noexcept;
+  
+  StartInResult startInbound(Async async,PtrLen&lt;uint8&gt; buf) noexcept;
+  
+  InResult completeInbound(Async async) noexcept;
+ };
+
+/* struct AsyncUDPSocketWait */
+
+struct <span class="Att">AsyncUDPSocketWait</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  static const ulen MaxAsyncs = 50 ;
+  
+  ErrorType init(ulen async_count) noexcept;
+  
+  void exit() noexcept;
+  
+  AsyncUDPSocket::Async getAsync(ulen index) noexcept;
+  
+  bool addWait(ulen index) noexcept;
+  
+  bool delWait(ulen index) noexcept;
+  
+  WaitResult wait(MSec timeout) noexcept;
+  
+  WaitResult wait(TimeScope time_scope) noexcept;
+  
+  void interrupt() noexcept; // async , semaphore
+  
+  WaitResult waitAll(MSec timeout) noexcept;
+  
+  WaitResult waitAll(TimeScope time_scope) noexcept;
+ };
+
+} // namespace Sys
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<h4>UDPSocket</h4>
+
+<p>
+This structure supports work with UDP protocol.
+</p>
+
+<pre>
+
+struct <span class="Att">UDPSocket</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct InResult
+   {
+    Net::UDPoint src;
+    ulen len;
+    ErrorType error;
+   };
+  
+  // public
+  
+  ErrorType open(Net::UDPort udport) noexcept;
+  
+  ErrorType close() noexcept;
+  
+  ErrorType outbound(Net::UDPoint dst,PtrLen&lt;const uint8&gt; data) noexcept;
+  
+  WaitResult wait_in(MSec timeout) noexcept;
+  
+  WaitResult wait_in(TimeScope time_scope) noexcept;
+  
+  InResult inbound(PtrLen&lt;uint8&gt; buf) noexcept;
+ };
+
+</pre>
+
+<p>
+UDO protocol allows occupy a UDP port and receive UDP packets on that port, also you can send UDP packets
+to any host:port destination. To start working with a particular UDP port you create an instance
+of the structure <b>UDPSocket</b> and initialize it. Then you use methods of this structure to send and 
+receive UDP packets. 
+Finally, you uninitialize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>open()</b> initializes the instance and bind it to the given UDP port.
+The error code is returned.
+If the object is successfully initialized, it must be uninitialized by the method <b>close()</b>.
+</p>
+
+<p>
+<b>close()</b> uinitializes the instance.
+The error code is returned.
+</p>
+
+<p>
+<b>outbound()</b> sends a UDP packet to the given destination. Destination is a pair <b>IP address</b>:<b>UDP port</b>.
+</p>
+
+<p>
+<b>wait_in()</b> waits for inbound packets up to the given timeout. 
+The <a href="page_HCore_SysWait.html"><b>WaitResult</b></a> is returned. The value is 0, if a packet
+is available for reading, <b>Wait_timeout</b>, if timeout is expired and <b>Wait_error</b>, if some error
+happend.
+</p>
+
+<p>
+<b>indound()</b> reads the packet data from the first inbound packet in the inbound queue and remove the packet
+from the queue. If the provided data buffer is not large enough, a error is returned (and packet is lost).
+The return value has the inner type <b>InResult</b>. This structure has three fields: <b>src</b>,
+<b>len</b> and <b>error</b>. The <b>src</b> is the address of the packet originator. The <b>len</b> is the
+number of bytes, copied to the input buffer, this value is less or equal then the <b>buf.len</b>.
+The <b>error</b> is the error code. If the inbound queue is empty, the methods blocks. You should never call
+this method alone, but only after the call of the method <b>wait()</b> to avoid infinite block.
+</p>
+
+<h4>AsyncUDPSocket</h4>
+
+<p>
+This structure supports work with UDP protocol in an asynchronous manner similar to the 
+<a href="page_HCore_SysFile.html">async file operations</a>.
+</p>
+
+<pre>
+
+struct <span class="Att">AsyncUDPSocket</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  struct AsyncState;
+  
+  typedef AsyncState * Async;
+  
+  struct OutResult
+   {
+    bool pending;
+    ErrorType error;
+   };
+  
+  struct InResult
+   {
+    ErrorType error;
+    Net::UDPoint src;
+    ulen len;
+   };
+  
+  struct StartInResult
+   {
+    bool pending;
+    InResult result;
+   };
+  
+  // public
+  
+  ErrorType open(Net::UDPort udport) noexcept;
+  
+  ErrorType close() noexcept;
+  
+  OutResult startOutbound(Async async,Net::UDPoint dst,PtrLen&lt;const uint8&gt; data) noexcept;
+  
+  ErrorType completeOutbound(Async async) noexcept;
+  
+  StartInResult startInbound(Async async,PtrLen&lt;uint8&gt; buf) noexcept;
+  
+  InResult completeInbound(Async async) noexcept;
+ };
+
+</pre>
+
+<p>
+To start working with a particular UDP port you create an instance
+of the structure <b>UDPSocket</b> and initialize it. Then you use methods of this structure to send and 
+receive UDP packets. 
+Finally, you uninitialize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>open()</b> initializes the instance and bind it to the given UDP port.
+The error code is returned.
+If the object is successfully initialized, it must be uninitialized by the method <b>close()</b>.
+</p>
+
+<p>
+<b>close()</b> uinitializes the instance.
+The error code is returned. 
+<span class="Alert">This method aborts any pending operations</span>.
+</p>
+
+<p>
+<b>startOutbound()</b> starts the outbound operation. The first argument is the async token.
+This token has the inner type <b>Async</b>, which is usually a pointer to a structure.
+The data buffer is in use during the whole operation, so it must be held intact util the
+operartion is complete. The return value has the inner type <b>OutResult</b>. This structure has
+two fields: <b>pending</b> and <b>error</b>. The first field is <b>true</b>, if the operation is not finished yet.
+The second is a error code. If the operation is pending, you must wait until the token is finished and then 
+complete the operation using the method <b>completeOutbound()</b>.
+</p>
+
+<p>
+<b>completeOutbound()</b> completes the pending outbound operation. The error code is returned.
+</p>
+
+<p>
+<b>startInbound()</b> starts the inbound operation. The first argument is the async token.
+This token has the inner type <b>Async</b>, which is usually a pointer to a structure.
+The data buffer is in use during the whole operation, so it must be held intact util the
+operartion is complete. The return value has the inner type <b>StartInResult</b>. This structure has
+two fields: <b>pending</b> and <b>result</b>. The first field is <b>true</b>, if the operation is not finished yet.
+The second is an operarion result. If the operation is pending, you must wait until the token is finished and then 
+complete the operation using the method <b>completeInbound()</b>.
+</p>
+
+<p>
+<b>completeInbound()</b> completes the pending inbound operation. The operation result is returned.
+This value has the inner type <b>InResult</b>. This structure has three fields: <b>error</b>, <b>src</b>
+and <b>len</b>. The <b>error</b> is the error code. The <b>src</b> is the address of the packet
+originator. The <b>len</b> is the number of bytes, copied to the input buffer, this value is less or equal then the <b>buf.len</b>.
+</p>
+
+<p>
+To work with async tokens there is the structure <b>AsyncUDPSocketWait</b>.
+</p>
+
+<pre>
+
+struct <span class="Att">AsyncUDPSocketWait</span>
+ {
+  // private
+
+  ....
+
+  // public
+  
+  static const ulen MaxAsyncs = 50 ;
+  
+  ErrorType init(ulen async_count) noexcept;
+  
+  void exit() noexcept;
+  
+  AsyncUDPSocket::Async getAsync(ulen index) noexcept;
+  
+  bool addWait(ulen index) noexcept;
+  
+  bool delWait(ulen index) noexcept;
+  
+  WaitResult wait(MSec timeout) noexcept;
+  
+  WaitResult wait(TimeScope time_scope) noexcept;
+  
+  void interrupt() noexcept; // async , semaphore
+  
+  WaitResult waitAll(MSec timeout) noexcept;
+  
+  WaitResult waitAll(TimeScope time_scope) noexcept;
+ };
+
+</pre>
+
+<p>
+This structure is a pool of tokens.
+To work with tokens you create an instance of this structure and initialize it. 
+Then you use its methods to do async socket operations.
+Finally, you uninitialize the instance. Copying of the instances is
+prohibited. The private content of the structure is target-dependent.
+</p>
+
+<p>
+<b>init()</b> initalizes the instance. The argument is the async pool size. This value must not
+exceed the inner constant <b>MaxAsync</b>. Otherwise the method returns a error.
+If the object is successfully initialized, it must be uninitialized by the method <b>exit()</b>.
+The pool contains <b>async_count</b> async tokens. They are indexed by the numbers from
+tne range <b>[0,async_count)</b>. Some of them comprise the "wait set". Initially the set is empty.
+</p>
+
+<p>
+<b>exit()</b> uninitalizes the instance.
+</p>
+
+<p>
+<b>getAsync()</b> returns the token with the given index.
+</p>
+
+<p>
+<b>addWait()</b> adds the token with the given index to the wait set. The return value is <b>true</b>,
+if the token was included in the set, and <b>false</b>, if the token is already in the set.
+</p>
+
+<p>
+<b>delWait()</b> removes the token with the given index from the wait set. The return value is <b>true</b>,
+if the token was excluded from the set, and <b>false</b>, if the token is already not in the set.
+</p>
+
+<p>
+<b>wait()</b> waits while one of the tokens from the wait set is finished, i.e. some async socket operation
+is started with this token and it is finished. The return value has the type 
+<a href="page_HCore_SysWait.html"><b>WaitResult</b></a>. The value is the index of the token been finished, or
+one of the negative special values. Two variants of <b>wait()</b> accepts timeouts of different kinds:
+as a <b>MSec</b> or as a <b>TimeScope</b>.
+The special return values have the following meanings:
+<ol>
+ <li><b>Wait_error</b> &mdash; the function has failed for some reason,</li>
+ <li><b>Wait_timeout</b> &mdash; the wait is terminated by timeout,</li>
+ <li><b>Wait_interrupt</b> &mdash; the wait is terminated by the <b>interrupt().</b></li>
+</ol>
+</p>
+
+<p>
+<b>interrupt()</b> is a special method. This method can be used to interrupt the <b>wait()</b>.
+Unlike other methods, this one can be called in parallel to other method calls. This method
+has a "semaphore behavior", i.e. several calls provide several interrupts. 
+</p>
+
+<p>
+<b>waitAll()</b> waits while all tokens from the wait set are finished. The return value is 0,
+if it has happend. Otherwise &mdash; one of special values.
+</p>
 
 </body>
 

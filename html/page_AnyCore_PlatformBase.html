@@ -30,6 +30,322 @@
 
 <p class="Files">Files <b>CCore/inc/base/PlatformBase.h</b> <b>CCore/src/base/PlatformBase.cpp</b> <b>CCore/src/base/PlatformBase.s</b></p>
 
+<p>
+This part defines some basic types, constants and other entities, related with the target hardware and 
+software platform. 
+</p>
+
+<pre>
+
+#ifndef CCore_inc_base_PlatformBase_h
+#define CCore_inc_base_PlatformBase_h
+
+/* init priority */ 
+
+#define <span class="Att">CCORE_INITPRI_0</span> __attribute__((init_priority(101)))
+#define <span class="Att">CCORE_INITPRI_1</span> __attribute__((init_priority(102)))
+#define <span class="Att">CCORE_INITPRI_2</span> __attribute__((init_priority(103)))
+
+/* inlining disabler */ 
+
+#define <span class="Att">CCORE_NOINLINE</span> __attribute__((noinline))
+
+/* includes */ 
+
+#include &lt;cstddef&gt;
+#include &lt;type_traits&gt;
+#include &lt;initializer_list&gt;
+#include &lt;utility&gt;
+
+/* restrict */ 
+
+#define <span class="Att">restrict</span> __restrict
+
+/* namespace CCore */ 
+
+namespace CCore {
+
+/* consts */ 
+
+const bool <span class="Att">EnableNoExcept</span> = true ;
+
+const bool <span class="Att">IsLEPlatform</span>  = true ;
+
+const unsigned <span class="Att">MaxBitLen</span> = 64   ;
+
+const unsigned <span class="Att">MaxAlign</span>  = 16   ;
+
+/* types */ 
+
+typedef unsigned int        <span class="Att">ulen</span>   ;
+typedef unsigned int        <span class="Att">uptr</span>   ;
+ 
+typedef unsigned char       <span class="Att">uint8</span>  ;
+typedef unsigned short      <span class="Att">uint16</span> ;
+typedef unsigned int        <span class="Att">uint32</span> ;
+typedef unsigned long long  <span class="Att">uint64</span> ;
+
+typedef signed char         <span class="Att">sint8</span>  ;
+typedef signed short        <span class="Att">sint16</span> ;
+typedef signed int          <span class="Att">sint32</span> ;
+typedef signed long long    <span class="Att">sint64</span> ;
+
+/* consts */ 
+
+const ulen <span class="Att">DefaultPacketCount</span> = 50000 ;
+
+const unsigned <span class="Att">DefaultEventElementCount</span> = 10000 ;
+
+/* namespace Bits */ 
+
+namespace Bits {
+
+const unsigned <span class="Att">unsigned_char</span>      =  8 ;
+const unsigned <span class="Att">unsigned_short</span>     = 16 ;
+const unsigned <span class="Att">unsigned_int</span>       = 32 ;
+const unsigned <span class="Att">unsigned_long</span>      = 32 ;
+const unsigned <span class="Att">unsigned_long_long</span> = 64 ;
+
+} // namespace Bits
+
+/* namespace ExtraInt */
+
+namespace ExtraInt {
+
+/* classes */
+
+template &lt;class T&gt; struct Prop;
+
+/* struct Prop&lt;T&gt; */
+
+template &lt;class T&gt; 
+struct Prop 
+ {
+  enum 
+   {
+    IsSigned   = false,
+    IsUnsigned = false
+   };
+ };
+
+// 
+// template &lt;&gt; 
+// struct Prop&lt;???&gt; 
+//  {
+//   enum 
+//    {
+//     IsSigned   = true,
+//     IsUnsigned = false,
+//    };
+//   
+//   typedef ??? SType;
+//   typedef ??? UType;
+//   
+//   typedef ??? PromoteSType;
+//   typedef ??? PromoteUType;
+//  };
+// 
+// template &lt;&gt; 
+// struct Prop&lt;???&gt; 
+//  {
+//   enum 
+//    {
+//     IsSigned   = false,
+//     IsUnsigned = true,
+//       
+//     Bits = ???  
+//    };
+//   
+//   typedef ??? PromoteUType;
+//  };
+// 
+
+} // namespace ExtraInt
+
+/* namespace Meta */
+
+namespace Meta {
+
+/* classes */
+
+template &lt;class T&gt; struct HasNoDtor;
+
+template &lt;class T&gt; struct HasNoThrowDefault;
+
+template &lt;class T&gt; struct HasNoThrowCopy;
+
+template &lt;class UInt&gt; struct DoubleUInt;
+
+/* struct HasNoDtor&lt;T&gt; */
+
+template &lt;class T&gt; 
+struct HasNoDtor
+ {
+  enum RetType { Ret = std::has_trivial_destructor&lt;T&gt;::value }; 
+ };
+
+/* struct HasNoThrowDefault&lt;T&gt; */
+
+template &lt;class T&gt;
+struct HasNoThrowDefault
+ {
+  enum RetType { Ret = !std::is_default_constructible&lt;T&gt;::value || 
+                        std::is_nothrow_default_constructible&lt;T&gt;::value 
+               };
+ };
+
+/* struct HasNoThrowCopy&lt;T&gt; */
+
+template &lt;class T&gt;
+struct HasNoThrowCopy
+ {
+  enum RetType { Ret = !std::is_copy_constructible&lt;T&gt;::value ||
+                        std::is_nothrow_copy_constructible&lt;T&gt;::value 
+               };
+ };
+
+/* struct DoubleUInt&lt;UInt&gt; */
+
+template &lt;class UInt&gt; 
+struct DoubleUInt
+ {
+  typedef void Ret;
+ };
+ 
+template &lt;&gt; 
+struct DoubleUInt&lt;uint8&gt;
+ {
+  typedef uint16 Ret;
+ };
+ 
+template &lt;&gt; 
+struct DoubleUInt&lt;uint16&gt;
+ {
+  typedef uint32 Ret;
+ };
+ 
+template &lt;&gt; 
+struct DoubleUInt&lt;uint32&gt;
+ {
+  typedef uint64 Ret;
+ };
+
+} // namespace Meta
+
+/* Used() */ 
+
+template &lt;class T&gt; void Used(T &amp;) {}
+ 
+/* OptimizeBarrier() */
+ 
+void OptimizeBarrier(void *ptr,ulen len);
+
+} // namespace CCore
+ 
+#endif
+
+</pre>
+
+<h4>Defines and includes</h4>
+
+<pre>
+
+/* init priority */ 
+
+#define <span class="Att">CCORE_INITPRI_0</span> __attribute__((init_priority(101)))
+#define <span class="Att">CCORE_INITPRI_1</span> __attribute__((init_priority(102)))
+#define <span class="Att">CCORE_INITPRI_2</span> __attribute__((init_priority(103)))
+
+/* inlining disabler */ 
+
+#define <span class="Att">CCORE_NOINLINE</span> __attribute__((noinline))
+
+/* includes */ 
+
+#include &lt;cstddef&gt;
+#include &lt;type_traits&gt;
+#include &lt;initializer_list&gt;
+#include &lt;utility&gt;
+
+/* restrict */ 
+
+#define <span class="Att">restrict</span> __restrict
+
+</pre>
+
+<p>
+Macros <b>CCORE_INITPRI_0</b>, <b>CCORE_INITPRI_1</b> and <b>CCORE_INITPRI_2</b> are used to specify
+initialization priorities of global objects. For the <b>gcc</b> family of compilers they have values shown above.
+If the target use another compiler you must provide a proper substitution. This feature is not standard.
+Priority 0 is highest.
+</p>
+
+<p>
+<b>CCORE_NOINLINE</b> is used to disable function inlining. This macro may be leave empty.
+</p>
+
+<p>
+The set of standard include files, shown above, must be included, you may add any other desirable includes here.  
+</p>
+
+<p>
+<b>restrict</b> is a <i>restrict</i> keyword. This feature is stll missing in the C++ standard, but major
+compilers support it. You must provde a proper definition of this macro.
+</p>
+
+<h4>Basic types</h4>
+
+<pre>
+
+typedef unsigned int        <span class="Att">ulen</span>   ;
+typedef unsigned int        <span class="Att">uptr</span>   ;
+ 
+typedef unsigned char       <span class="Att">uint8</span>  ;
+typedef unsigned short      <span class="Att">uint16</span> ;
+typedef unsigned int        <span class="Att">uint32</span> ;
+typedef unsigned long long  <span class="Att">uint64</span> ;
+
+typedef signed char         <span class="Att">sint8</span>  ;
+typedef signed short        <span class="Att">sint16</span> ;
+typedef signed int          <span class="Att">sint32</span> ;
+typedef signed long long    <span class="Att">sint64</span> ;
+
+</pre>
+
+<h4>Basic constants</h4>
+
+<pre>
+
+/* consts */ 
+
+const bool <span class="Att">EnableNoExcept</span> = true ;
+
+const bool <span class="Att">IsLEPlatform</span>  = true ;
+
+const unsigned <span class="Att">MaxBitLen</span> = 64   ;
+
+const unsigned <span class="Att">MaxAlign</span>  = 16   ;
+
+/* consts */ 
+
+const ulen <span class="Att">DefaultPacketCount</span> = 50000 ;
+
+const unsigned <span class="Att">DefaultEventElementCount</span> = 10000 ;
+
+/* namespace Bits */ 
+
+namespace Bits {
+
+const unsigned <span class="Att">unsigned_char</span>      =  8 ;
+const unsigned <span class="Att">unsigned_short</span>     = 16 ;
+const unsigned <span class="Att">unsigned_int</span>       = 32 ;
+const unsigned <span class="Att">unsigned_long</span>      = 32 ;
+const unsigned <span class="Att">unsigned_long_long</span> = 64 ;
+
+} // namespace Bits
+
+
+</pre>
 
 </body>
 
