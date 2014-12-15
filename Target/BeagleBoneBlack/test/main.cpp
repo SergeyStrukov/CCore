@@ -245,6 +245,8 @@ void before_main()
   ObjMaster udp_ptp_master(udp_ptp,"udp_ptp");
   
   Net::PTP::ClientDevice ptp("udp_ptp");
+
+  ptp.support_guarded(10_sec);
   
   ObjMaster ptp_master(ptp,"ptp");
   
