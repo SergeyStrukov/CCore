@@ -29,7 +29,7 @@
 <h2>HCore Targets</h2>
 
 <p>
-<b>HCore</b> targets allow building applications, running under governing of some operating system, like
+<b>HCore</b> targets are required to build applications, running under governing of some operating system, like
 Windows or Linux. Target itself is a collection of files, located at some directory in the
 <b>CCORE_ROOT/Target</b> directory. The name of the directory is the target name. <b>CCore</b> uses GNU-compatible
 make-based build system. To build an application for the particular target you specify the target name as
@@ -53,7 +53,7 @@ features to your target by adding extra source files.
   <b>CCore</b>
     <b>inc</b>
       <b>base</b>
-        <a href="page_AnyCore_PlatformBase.html">PlatformBase.h</a> under construction
+        <a href="page_AnyCore_PlatformBase.html">PlatformBase.h</a>
         <a href="page_AnyCore_Quick.html">Quick.h</a>
       <b>sys</b>
         <a href="page_HCore_SysAbort.html">SysAbort.h</a>
@@ -63,7 +63,7 @@ features to your target by adding extra source files.
         <a href="page_HCore_SysFile.html">SysFile.h</a>
         <a href="page_HCore_SysFileSystem.html">SysFileSystem.h</a>
         <a href="page_HCore_SysMemPage.html">SysMemPage.h</a>
-        <a href="page_HCore_SysNet.html">SysNet.h</a> under construction
+        <a href="page_HCore_SysNet.html">SysNet.h</a>
         <a href="page_HCore_SysPlanInit.html">SysPlanInit.h</a>
         <a href="page_HCore_SysProp.html">SysProp.h</a>
         <a href="page_HCore_SysSem.html">SysSem.h</a>
@@ -140,7 +140,7 @@ include $(CCORE_ROOT)/Target/Makefile.core
 </pre>
 
 <p>
-<b>Makefile.tools</b> defines toolset to build <b>CCore</b> target apllications. 
+<b>Makefile.tools</b> defines toolset to build <b>CCore</b> target applications. 
 It looks like (<b>WIN32</b> example)
 </p>
 
@@ -217,7 +217,7 @@ You define here the following variables:
 </p>
 
 <p>
-<b>CCOPT</b> &mdash; options for the C++ compiler. Amone other they must specify directories to search include files.
+<b>CCOPT</b> &mdash; options for the C++ compiler. Among other they must specify directories to search include files.
 The order of directories is: target include path, <b>CCore</b> include path, <b>HCore</b> include path.
 </p>
 
@@ -243,7 +243,7 @@ $(CC) $(CCOPT) <i>source-file</i> -o <i>object-file</i>
 </pre>
 
 <p>
-To generate a dependecy file the following command is used:
+To generate a dependency file the following command is used:
 </p>
 
 <pre>
@@ -251,7 +251,7 @@ $(CC) $(CCOPT) -MM -MT <i>object-file</i> <i>source-file</i> -MF <i>dep-file</i>
 </pre>
 
 <p>
-To compile an <b>.asm</b> source file the following command is used.
+To compile an <b>.asm</b> source file the following command is used:
 </p>
 
 <pre>
@@ -366,7 +366,7 @@ There are three most desired extra features any well-designed target must provid
 the fast and quality random number generator,
 the fast integer arithmetic
 and the fast cryptography.
-The moden CPU and SoC often has a hardware support for these tasks.
+The modern CPU and SoC often has a hardware support for these tasks.
 </p>
 
 <pre>

@@ -134,7 +134,7 @@ its methods can be declared static. But you should not use them as such.
 </p>
 
 <p>
-<b>init()</b> initalizes the instance. The error code is returned.
+<b>init()</b> initializes the instance. The error code is returned.
 If the object is successfully initialized, it must be uninitialized by the method <b>exit()</b>.
 </p>
 
@@ -143,13 +143,13 @@ If the object is successfully initialized, it must be uninitialized by the metho
 </p>
 
 <p>
-<b>getFileType()</b> returns the file type. The argument specifies a file or directory.
+<b>getFileType()</b> returns the file type. The argument specifies a file or a directory.
 The return value is represented by the inner structure <b>TypeResult</b>. This structure has two fields:
-<b>type</b> and <b>error</b>. <b>type</b> is the object type, <b>error</b> is the error code. 
+<b>type</b> and <b>error</b>. The <b>type</b> is the object type, the <b>error</b> is the error code. 
 </p>
 
 <p>
-<b>createFile()</b> creates the empty file with the given name. The error code is returned.
+<b>createFile()</b> creates the new empty file with the given name. The error code is returned.
 </p>
 
 <p>
@@ -162,7 +162,7 @@ The return value is represented by the inner structure <b>TypeResult</b>. This s
 
 <p>
 <b>deleteDir()</b> deletes the directory with the given name. The error code is returned.
-The second argument is a recursion flag. If it is <b>false</b>, then directory must be empty.
+The second argument is a recursion flag. If it is <b>false</b>, then the directory must be empty.
 Otherwise the directory is deleted with all its content, including nested subdirectories.
 </p>
 
@@ -177,8 +177,8 @@ The <b>allow_overwrite</b> flag allows overwriting the existing file.
 
 <p>
 <b>exec()</b> is not a file system operation. It is an extra operation. This methods starts a new process.
-<b>dir</b> is the working directory of the new process. <b>program</b> is the executable file name.
-<b>arg</b> is the command line.
+The <b>dir</b> is the working directory of the new process, the <b>program</b> is the executable file name,
+the <b>arg</b> is the command line.
 </p>
 
 <p>
