@@ -275,7 +275,7 @@ prohibited. The private content of the structure is target-dependent.
 </p>
 
 <p>
-<b>open()</b> initializes the instance and prepare it to perform file operations of the given file.
+<b>open()</b> initializes the instance and prepares it to perform file operations with the given file.
 The error code is returned. The first argument is the file name. The second is the open flags.
 The meaning of the flags is described in the <a href="page_Files.html">general file operation set</a>.
 If the object is successfully initialized, it must be uninitialized by the method <b>close()</b>.
@@ -376,7 +376,7 @@ prohibited. The private content of the structure is target-dependent.
 </p>
 
 <p>
-<b>open()</b> initializes the instance and prepare it to perform file operations of the given file.
+<b>open()</b> initializes the instance and prepares it to perform file operations with the given file.
 The return value has the inner type <b>Result</b>. This structure has two fields: <b>file_len</b>
 and <b>error</b>. The <b>file_len</b> is the length of the file, the <b>error</b> is the error code.
 The first argument is the file name. The second is the open flags.
@@ -409,7 +409,7 @@ This operation is available only if the file has been opened with the flag <b>Op
 <h4>Async file access</h4>
 
 <p>
-The structure <b>AltFile</b> implements an alternative file access in an asynchronus manner.
+The structure <b>AltFile</b> implements an alternative file access in an asynchronous manner.
 </p>
 
 <pre>
@@ -472,7 +472,7 @@ prohibited. The private content of the structure is target-dependent.
 </p>
 
 <p>
-<b>open()</b> initializes the instance and prepare it to perform file operations of the given file.
+<b>open()</b> initializes the instance and prepares it to perform file operations with the given file.
 The return value has the inner type <b>Result</b>. This structure has two fields: <b>file_len</b>
 and <b>error</b>. The <b>file_len</b> is the length of the file, the <b>error</b> is the error code.
 The first argument is the file name. The second is the open flags.
@@ -515,7 +515,7 @@ This operation is available only if the file has been opened with the flag <b>Op
 </p>
 
 <p>
-<b>completeRead()</b> complets the read operation. The first argument is the operation token, the second
+<b>completeRead()</b> completes the read operation. The first argument is the operation token, the second
 is the original argument <b>len</b> from the <b>startRead()</b> call. This method must be used only
 after the correspondent async token is reported finished. The error code is returned.
 This operation is available only if the file has been opened with the flag <b>Open_Read</b>.
@@ -533,7 +533,7 @@ This operation is available only if the file has been opened with the flag <b>Op
 </p>
 
 <p>
-<b>completeWrite()</b> complets the write operation. The first argument is the operation token, the second
+<b>completeWrite()</b> completes the write operation. The first argument is the operation token, the second
 is the original argument <b>len</b> from the <b>startWrite()</b> call. This method must be used only
 after the correspondent async token is reported finished. The error code is returned.
 This operation is available only if the file has been opened with the flag <b>Open_Write</b>.
@@ -541,7 +541,7 @@ This operation is available only if the file has been opened with the flag <b>Op
 
 <p>
 The length of any read or write operation must not exceed <b>MaxRWLen</b>, which should has the value
-like 1 MByte.
+like 1 MByte. A buffer for a read or write operation must not be released until the operation is finished. 
 </p>
 
 <p>
@@ -676,15 +676,15 @@ prohibited. The private content of the structure is target-dependent.
 </p>
 
 <p>
-<b>init()</b> initalizes the instance. The argument is the async pool size. This value must not
-exceed the inner constant <b>MaxAsync</b>. Otherwise the method returns a error.
+<b>init()</b> initializes the instance. The argument is the async pool size. This value must not
+exceed the inner constant <b>MaxAsyncs</b>. Otherwise the method returns a error.
 If the object is successfully initialized, it must be uninitialized by the method <b>exit()</b>.
 The pool contains <b>async_count</b> async tokens. They are indexed by the numbers from
-tne range <b>[0,async_count)</b>. Some of them comprise the "wait set". Initially the set is empty.
+the range <b>[0,async_count)</b>. Some of them comprise the "wait set". Initially the set is empty.
 </p>
 
 <p>
-<b>exit()</b> uninitalizes the instance.
+<b>exit()</b> uninitializes the instance.
 </p>
 
 <p>
