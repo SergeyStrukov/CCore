@@ -179,7 +179,7 @@ struct <span class="Att">AsyncUDPSocketWait</span>
 <h4>UDPSocket</h4>
 
 <p>
-This structure supports work with UDP protocol.
+This structure supports work with UDP endpoints.
 </p>
 
 <pre>
@@ -217,7 +217,7 @@ struct <span class="Att">UDPSocket</span>
 </pre>
 
 <p>
-UDO protocol allows occupy a UDP port and receive UDP packets on that port, also you can send UDP packets
+Using UDP protocol you can occupy a UDP port and receive UDP packets on that port, also you can send UDP packets
 to any host:port destination. To start working with a particular UDP port you create an instance
 of the structure <b>UDPSocket</b> and initialize it. Then you use methods of this structure to send and 
 receive UDP packets. 
@@ -226,13 +226,13 @@ prohibited. The private content of the structure is target-dependent.
 </p>
 
 <p>
-<b>open()</b> initializes the instance and bind it to the given UDP port.
+<b>open()</b> initializes the instance and binds it to the given UDP port.
 The error code is returned.
 If the object is successfully initialized, it must be uninitialized by the method <b>close()</b>.
 </p>
 
 <p>
-<b>close()</b> uinitializes the instance.
+<b>close()</b> uninitializes the instance.
 The error code is returned.
 </p>
 
@@ -244,23 +244,23 @@ The error code is returned.
 <b>wait_in()</b> waits for inbound packets up to the given timeout. 
 The <a href="page_HCore_SysWait.html"><b>WaitResult</b></a> is returned. The value is 0, if a packet
 is available for reading, <b>Wait_timeout</b>, if timeout is expired and <b>Wait_error</b>, if some error
-happend.
+happened.
 </p>
 
 <p>
-<b>indound()</b> reads the packet data from the first inbound packet in the inbound queue and remove the packet
-from the queue. If the provided data buffer is not large enough, a error is returned (and packet is lost).
+<b>indound()</b> reads the packet data from the first inbound packet in the inbound queue and removes the packet
+from the queue. If the provided data buffer is not large enough, a error is returned (and the packet is lost).
 The return value has the inner type <b>InResult</b>. This structure has three fields: <b>src</b>,
 <b>len</b> and <b>error</b>. The <b>src</b> is the address of the packet originator. The <b>len</b> is the
 number of bytes, copied to the input buffer, this value is less or equal then the <b>buf.len</b>.
-The <b>error</b> is the error code. If the inbound queue is empty, the methods blocks. You should never call
+The <b>error</b> is the error code. If the inbound queue is empty, the method blocks. You should never call
 this method alone, but only after the call of the method <b>wait()</b> to avoid infinite block.
 </p>
 
 <h4>AsyncUDPSocket</h4>
 
 <p>
-This structure supports work with UDP protocol in an asynchronous manner similar to the 
+This structure supports work with UDP endpoints in an asynchronous manner similar to the 
 <a href="page_HCore_SysFile.html">async file operations</a>.
 </p>
 
@@ -323,22 +323,22 @@ prohibited. The private content of the structure is target-dependent.
 </p>
 
 <p>
-<b>open()</b> initializes the instance and bind it to the given UDP port.
+<b>open()</b> initializes the instance and binds it to the given UDP port.
 The error code is returned.
 If the object is successfully initialized, it must be uninitialized by the method <b>close()</b>.
 </p>
 
 <p>
-<b>close()</b> uinitializes the instance.
+<b>close()</b> uninitializes the instance.
 The error code is returned. 
 <span class="Alert">This method aborts any pending operations</span>.
 </p>
 
 <p>
-<b>startOutbound()</b> starts the outbound operation. The first argument is the async token.
+<b>startOutbound()</b> starts the outbound operation. The first argument is an async token.
 This token has the inner type <b>Async</b>, which is usually a pointer to a structure.
-The data buffer is in use during the whole operation, so it must be held intact util the
-operartion is complete. The return value has the inner type <b>OutResult</b>. This structure has
+The data buffer is in use during the whole operation, so it must be held intact until the
+operation is complete. The return value has the inner type <b>OutResult</b>. This structure has
 two fields: <b>pending</b> and <b>error</b>. The first field is <b>true</b>, if the operation is not finished yet.
 The second is a error code. If the operation is pending, you must wait until the token is finished and then 
 complete the operation using the method <b>completeOutbound()</b>.
@@ -349,12 +349,12 @@ complete the operation using the method <b>completeOutbound()</b>.
 </p>
 
 <p>
-<b>startInbound()</b> starts the inbound operation. The first argument is the async token.
+<b>startInbound()</b> starts the inbound operation. The first argument is an async token.
 This token has the inner type <b>Async</b>, which is usually a pointer to a structure.
-The data buffer is in use during the whole operation, so it must be held intact util the
-operartion is complete. The return value has the inner type <b>StartInResult</b>. This structure has
+The data buffer is in use during the whole operation, so it must be held intact until the
+operation is complete. The return value has the inner type <b>StartInResult</b>. This structure has
 two fields: <b>pending</b> and <b>result</b>. The first field is <b>true</b>, if the operation is not finished yet.
-The second is an operarion result. If the operation is pending, you must wait until the token is finished and then 
+The second is an operation result. If the operation is pending, you must wait until the token is finished and then 
 complete the operation using the method <b>completeInbound()</b>.
 </p>
 
@@ -413,11 +413,11 @@ prohibited. The private content of the structure is target-dependent.
 </p>
 
 <p>
-<b>init()</b> initalizes the instance. The argument is the async pool size. This value must not
+<b>init()</b> initializes the instance. The argument is the async pool size. This value must not
 exceed the inner constant <b>MaxAsync</b>. Otherwise the method returns a error.
 If the object is successfully initialized, it must be uninitialized by the method <b>exit()</b>.
 The pool contains <b>async_count</b> async tokens. They are indexed by the numbers from
-tne range <b>[0,async_count)</b>. Some of them comprise the "wait set". Initially the set is empty.
+the range <b>[0,async_count)</b>. Some of them comprise the "wait set". Initially the set is empty.
 </p>
 
 <p>
@@ -460,7 +460,7 @@ has a "semaphore behavior", i.e. several calls provide several interrupts.
 
 <p>
 <b>waitAll()</b> waits while all tokens from the wait set are finished. The return value is 0,
-if it has happend. Otherwise &mdash; one of special values.
+if it has happened. Otherwise &mdash; one of special values.
 </p>
 
 </body>

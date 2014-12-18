@@ -541,7 +541,9 @@ This operation is available only if the file has been opened with the flag <b>Op
 
 <p>
 The length of any read or write operation must not exceed <b>MaxRWLen</b>, which should has the value
-like 1 MByte. A buffer for a read or write operation must not be released until the operation is finished. 
+like 1 MByte. 
+The data buffer is in use during the whole read or write operation, so it must be held intact until the
+operation is complete.
 </p>
 
 <p>
