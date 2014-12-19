@@ -312,6 +312,31 @@ typedef signed long long    <span class="Att">sint64</span> ;
 
 </pre>
 
+<p>
+This set of type definitions must be provided. 
+</p>
+
+<p>
+<b>uintXXX</b> is an unsigned integral type with the <b>XXX</b> bit length.
+</p>
+
+<p>
+<b>sintXXX</b> is a 2'c signed integral types with the <b>XXX</b> bit length.
+Such types must be avaliable on the target platform. For the latest <b>gcc</b> family of compilers
+you should turn on the option <b>-fwrapv</b> to ensure the proper type behavior.
+</p>
+
+<p>
+<b>ulen</b> is the unsigned intergal type with the "address length" bit length. You
+can use the standard type <b>size_t</b> for it. This type must have the sufficient value range
+to represent any object range length. 
+</p>
+
+<p>
+<b>uptr</b> is the unsigned integral type. It must be large enough to represent any pointer value.
+I.e. two-cast <b>(T *)(uptr)ptr</b> must restore the original value of any pointer.
+</p>
+
 <h4>Basic constants</h4>
 
 <pre>
@@ -344,8 +369,236 @@ const unsigned <span class="Att">unsigned_long_long</span> = 64 ;
 
 } // namespace Bits
 
+</pre>
+
+<p>
+<b>EnableNoExcept</b> enables <b>noexcept</b> attribute on some functions. Set it to <b>true</b>,
+if the compiler implements this feature without excessive performance loss.
+</p>
+
+<p>
+<b>IsLEPlatform</b> is <b>true</b>, if the target is little-endian.
+</p>
+
+<p>
+<b>MaxBitLen</b> is the maximum bit length of the unsigned integral types.
+</p>
+
+<p>
+<b>MaxAlign</b> is the maximum of alignment of the target types.
+</p>
+
+<p>
+<b>DefaultPacketCount</b> is the number of packets in the 
+<a href="page_PacketPool.html">default packet pool by default</a>.
+</p>
+
+<p>
+<b>DefaultEventElementCount</b> this constant is used in the numbering of the event-generating 
+objects. It should have the value like 5000-10000.
+</p>
+
+<p>
+<b>Bits::unsigned_ttt</b> is the bit length of the correspondent unsigned integral type.
+</p>
+
+<h4>Extra integral types</h4>
+
+<pre>
+
+/* namespace ExtraInt */
+
+namespace ExtraInt {
+
+/* classes */
+
+template &lt;class T&gt; struct Prop;
+
+/* struct Prop&lt;T&gt; */
+
+template &lt;class T&gt; 
+struct Prop 
+ {
+  enum 
+   {
+    IsSigned   = false,
+    IsUnsigned = false
+   };
+ };
+
+// 
+// template &lt;&gt; 
+// struct Prop&lt;???&gt; 
+//  {
+//   enum 
+//    {
+//     IsSigned   = true,
+//     IsUnsigned = false,
+//    };
+//   
+//   typedef ??? SType;
+//   typedef ??? UType;
+//   
+//   typedef ??? PromoteSType;
+//   typedef ??? PromoteUType;
+//  };
+// 
+// template &lt;&gt; 
+// struct Prop&lt;???&gt; 
+//  {
+//   enum 
+//    {
+//     IsSigned   = false,
+//     IsUnsigned = true,
+//       
+//     Bits = ???  
+//    };
+//   
+//   typedef ??? PromoteUType;
+//  };
+// 
+
+} // namespace ExtraInt
 
 </pre>
+
+<p>
+The structure <b>ExtraInt::Prop</b> can be used to support extra integral types, i.e. types not
+from the standard list of the integral types, if such types are supported by the compiler.
+If you want to use any of such type with the <b>CCore</b>, you should provide its properties, 
+using a specialization of the structure <b>ExtraInt::Prop</b> as shown above.
+For a signed integral type the specialized structure defines both signed and unsigned types
+and desirable promote types. For an unsigned integral type the specialized structure defines
+bit length and desirable promote type.
+</p>
+
+<h4>Meta tools</h4>
+
+<pre>
+
+/* namespace Meta */
+
+namespace Meta {
+
+/* classes */
+
+template &lt;class T&gt; struct HasNoDtor;
+
+template &lt;class T&gt; struct HasNoThrowDefault;
+
+template &lt;class T&gt; struct HasNoThrowCopy;
+
+template &lt;class UInt&gt; struct DoubleUInt;
+
+/* struct HasNoDtor&lt;T&gt; */
+
+template &lt;class T&gt; 
+struct HasNoDtor
+ {
+  enum RetType { Ret = std::has_trivial_destructor&lt;T&gt;::value }; 
+ };
+
+/* struct HasNoThrowDefault&lt;T&gt; */
+
+template &lt;class T&gt;
+struct HasNoThrowDefault
+ {
+  enum RetType { Ret = !std::is_default_constructible&lt;T&gt;::value || 
+                        std::is_nothrow_default_constructible&lt;T&gt;::value 
+               };
+ };
+
+/* struct HasNoThrowCopy&lt;T&gt; */
+
+template &lt;class T&gt;
+struct HasNoThrowCopy
+ {
+  enum RetType { Ret = !std::is_copy_constructible&lt;T&gt;::value ||
+                        std::is_nothrow_copy_constructible&lt;T&gt;::value 
+               };
+ };
+
+/* struct DoubleUInt&lt;UInt&gt; */
+
+template &lt;class UInt&gt; 
+struct DoubleUInt
+ {
+  typedef void Ret;
+ };
+ 
+template &lt;&gt; 
+struct DoubleUInt&lt;uint8&gt;
+ {
+  typedef uint16 Ret;
+ };
+ 
+template &lt;&gt; 
+struct DoubleUInt&lt;uint16&gt;
+ {
+  typedef uint32 Ret;
+ };
+ 
+template &lt;&gt; 
+struct DoubleUInt&lt;uint32&gt;
+ {
+  typedef uint64 Ret;
+ };
+
+} // namespace Meta
+
+</pre>
+
+<p>
+This is a small collection of meta-tools.
+</p>
+
+<p>
+<b>HasNoDtor</b> is a meta-function. This meta-function returns <b>true</b>, if the type has 
+the trivial destructor. 
+The standard implementation is shown above.
+</p>
+
+<p>
+<b>HasNoThrowDefault</b> is a meta-function. This meta-function returns <b>true</b>, if the type
+has no default constructor or such constructor is no-throw.
+The standard implementation is shown above.
+</p>
+
+<p>
+<b>HasNoThrowCopy</b> is a meta-function. This meta-function returns <b>true</b>, if the type
+has no copy constructor or such constructor is no-throw.
+The standard implementation is shown above.
+</p>
+
+<p>
+<b>DoubleUInt</b> is a meta-function. It returns the double bit length type of the given
+unsigned integral type or the <b>void</b>, if such type does not exist.
+</p>
+
+<h4>Special functions</h4>
+
+<pre>
+
+/* Used() */ 
+
+template &lt;class T&gt; void Used(T &amp;) {}
+ 
+/* OptimizeBarrier() */
+ 
+void OptimizeBarrier(void *ptr,ulen len);
+
+</pre>
+
+<p>
+<b>Used()</b> this function is used to disable the "unused argument" (or local variable) warning.
+</p>
+
+<p>
+<b>OptimizeBarrier()</b> is used to suppress the compiler optimization. It should be implemented
+in such a way, that compiler could not be able to learn its semantic. For example, using assembler.
+This function does nothing. From the compiler perspective, however, this function does something
+unknown with the given memory range.
+</p>
 
 </body>
 
