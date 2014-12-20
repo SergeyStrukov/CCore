@@ -748,7 +748,7 @@ class ClientNegotiant : NoCopy
    template <class ... TT>
    void start(TT ... tt)
     {
-     CryptAlgoSelect algo_list[]={tt...};
+     CryptAlgoSelect algo_list[sizeof ... (TT)]={tt...};
      
      start(Range_const(algo_list));
     }
@@ -914,7 +914,7 @@ class ServerNegotiant : NoCopy
    template <class ... TT>
    void start(TT ... tt)
     {
-     CryptAlgoSelect algo_list[]={tt...};
+     CryptAlgoSelect algo_list[sizeof ... (TT)]={tt...};
      
      start(Range_const(algo_list));
     }
