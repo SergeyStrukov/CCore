@@ -15,11 +15,6 @@
 
 #include <CCore/test/test.h>
 
-#include <CCore/testip/testip.h>
-
-#include <CCore/inc/net/PTPConDevice.h>
-
-#include <CCore/inc/RedirectPTPCon.h>
 #include <CCore/inc/ReadCon.h>
 #include <CCore/inc/CmdInput.h>
 
@@ -111,18 +106,6 @@ const char *const Testit<3001>::Name="Test3001 RedirectPTPCon";
 template<>
 bool Testit<3001>::Main() 
  { 
-  IPEngine ip_engine;
-  
-  HostEngine host_engine(Net::UDPoint(192,168,1,1,Net::PTPServerUDPort));
-  
-  Net::PTPCon::ClientDevice ptp_con("ptp");
-  
-  ObjMaster ptp_con_master(ptp_con,"ptp_con");
-  
-  Net::PTPCon::Cfg cfg(Net::PTPCon::TriggerAll);
-  
-  RedirectPTPCon redirect("ptp_con","test3001",cfg);
-  
   for(int i=0; i<1000 ;i++)
     Printf(Con,"--- #4; -----------------------------\n",i);
   

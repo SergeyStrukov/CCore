@@ -147,7 +147,6 @@ OBJ_LIST = \
 ../test-obj/testPrint.o \
 ../test-obj/testRBTree.o \
 ../test-obj/testRun.o \
-../test-obj/testip.o \
 
 
 ASM_LIST = \
@@ -299,7 +298,6 @@ ASM_LIST = \
 ../test-obj/testPrint.s \
 ../test-obj/testRBTree.s \
 ../test-obj/testRun.s \
-../test-obj/testip.s \
 
 
 DEP_LIST = \
@@ -451,7 +449,6 @@ DEP_LIST = \
 ../test-obj/testPrint.dep \
 ../test-obj/testRBTree.dep \
 ../test-obj/testRun.dep \
-../test-obj/testip.dep \
 
 
 ASM_OBJ_LIST = \
@@ -904,9 +901,6 @@ include $(RULES_FILE)
 ../test-obj/testRun.o : ../../../CCore/test/testRun.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-../test-obj/testip.o : ../../../Target/BeagleBoneBlack/CCore/testip/testip.cpp
-	$(CC) $(CCOPT) $< -o $@
-
 
 
 ../test-obj/main.s : ./main.cpp
@@ -1351,9 +1345,6 @@ include $(RULES_FILE)
 	$(CC) -S $(CCOPT) $< -o $@
 
 ../test-obj/testRun.s : ../../../CCore/test/testRun.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../test-obj/testip.s : ../../../Target/BeagleBoneBlack/CCore/testip/testip.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 
@@ -1801,9 +1792,6 @@ include $(RULES_FILE)
 
 ../test-obj/testRun.dep : ../../../CCore/test/testRun.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testRun.o $< -MF $@
-
-../test-obj/testip.dep : ../../../Target/BeagleBoneBlack/CCore/testip/testip.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/testip.o $< -MF $@
 
 
 

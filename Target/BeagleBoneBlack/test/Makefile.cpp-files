@@ -133,7 +133,6 @@
 ../../../XCore/CCore/test/test2015.stdio.cpp
 ../../../XCore/CCore/test/test2016.TickCount.cpp
 ../../../XCore/CCore/test/testPrint.cpp
-../../../Target/BeagleBoneBlack/CCore/testip/testip.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3001.RedirectPTPCon.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3002.Light.cpp
 ../../../Target/BeagleBoneBlack/CCore/test/test3003.gcc.cpp

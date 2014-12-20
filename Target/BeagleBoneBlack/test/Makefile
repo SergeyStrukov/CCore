@@ -20,7 +20,6 @@ CCORE_TARGET = BeagleBoneBlack
 SRC_PATH_LIST = . \
                 $(CCORE_ROOT)/CCore/test \
                 $(CCORE_ROOT)/XCore/CCore/test \
-                $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore/testip \
                 $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore/test
 
 OBJ_PATH = ../test-obj
@@ -28,10 +27,6 @@ OBJ_PATH = ../test-obj
 TARGET = main.exe
 
 include $(CCORE_ROOT)/Target/Makefile.app
-
-
-#- temp ---------------
-
 
 run: $(TARGET)
 	BeagleBoot.exe r 192.168.99.10 $(TARGET) && cd root && PTPServer.exe c
