@@ -180,6 +180,17 @@ CCORE_TARGET = LIN64
 
 </pre>
 
+<p>
+To run on the <b>VirtualBox</b> hack the source code at the file <b>IntelCPUID.s</b> (<b>Target/LIN64/CCore/src/crypton</b>).
+Uncomment the following line to get the hardware AES support.
+</p>
+
+<pre>
+
+#        orl     $0x42000000, %ecx
+
+</pre>
+
 <a name="WIN64"><h2>WIN64</h2></a>
 
 <p>
