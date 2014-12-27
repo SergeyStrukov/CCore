@@ -7,20 +7,20 @@
 <SRC>/libstdc++-v3/config/io/basic_file_stdio.cc   <--- replace
 
 
-<SRC>/libstdc++-v3/libsupc++/eh_alloc.cc
+<SRC>/libstdc++-v3/libsupc++/eh_alloc.cc   <--- replace
 
   malloc <- malloc_int
   free <- free_int
 
   kill "emergency_buffer"
 
-<SRC>/libstdc++-v3/libsupc++/eh_globals.cc
+<SRC>/libstdc++-v3/libsupc++/eh_globals.cc   <--- replace
 
   // Single-threaded fallback buffer.
   static __cxa_eh_globals eh_globals __attribute__((section(".context_data"))) = {} ;
 
 
-<SRC>/libstdc++-v3/libsupc++/pure.cc
+<SRC>/libstdc++-v3/libsupc++/pure.cc   <--- replace
 
   #include <stdio.h>
 
