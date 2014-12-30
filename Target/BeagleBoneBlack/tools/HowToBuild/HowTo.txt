@@ -1,0 +1,29 @@
+/* HowTo.txt */ 
+
+ build the toolset for the BeagleBoneBlack.
+
+1) The toolset consists of the 2 major parts: binutils and gcc.
+
+2) Trey are installed at the following directory: /opt/BeagleBoneBlack.
+
+3) First you have to download binutils-2.24 and gcc-4.8.2 source packages. 
+Assume you placed them in the directory Downloads and unpack. You have two directories
+Downloads/binutils-2.24 and Downloads/gcc-4.8.2-cross. To build create the directories
+Downloads/Build, Downloads/Build/binutils-2.24 and Downloads/Build/gcc-4.8.2-cross
+
+4) Create the directory /opt/BeagleBoneBlack and copy the sysroot there.
+
+5) First, build the binutils. Patch the source as desribed in the binutils-2.24/HowTo.txt.
+You have to replace 2 files.
+Then go to the build directory (Downloads/Build/binutils-2.24). Copy there the file binutils-2.24/MakeCfg.
+Then configure the build by the command "make -f MakeCfg". Then do build by the command "make" and 
+install the product by the command "make install".
+
+6) Second, build the gcc. Patch the source as described in the gcc-4.8.2-cross/HowTo.txt.
+You have to replace 4 files and edit manually the configuration script.
+Then go to the build directory (Downloads/Build/gcc-4.8.2-cross). Copy there the file gcc-4.8.2-cross/MakeCfg.
+Then configure the build by the command "make -f MakeCfg". Then do build by the command "make" and 
+install the product by the command "make install". gcc have some requirements, so make sure your cygwin64 
+installation includes them.
+
+7) Finally, build the libraries in /opt/BeagleBoneBlack/sysroot. Go to this directory and use the command "make".
