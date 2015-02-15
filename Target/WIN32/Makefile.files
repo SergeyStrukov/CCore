@@ -213,6 +213,13 @@ obj/RBTreeLink.o \
 obj/RBTreeUpLink.o \
 obj/RadixHeap.o \
 obj/Random.o \
+obj/Rawin.o \
+obj/RawinBase.o \
+obj/RawinDraw.o \
+obj/RawinMsg.o \
+obj/RawinMsgBody.o \
+obj/RawinMsgProc.o \
+obj/RawinPanel.o \
 obj/ReadCon.o \
 obj/RefArray.o \
 obj/RefPtr.o \
@@ -246,6 +253,7 @@ obj/SortUnique.o \
 obj/Space.o \
 obj/StartStop.o \
 obj/Starter.o \
+obj/StaticInit.o \
 obj/StepEval.o \
 obj/StrKey.o \
 obj/StrParse.o \
@@ -518,6 +526,13 @@ obj/RBTreeLink.s \
 obj/RBTreeUpLink.s \
 obj/RadixHeap.s \
 obj/Random.s \
+obj/Rawin.s \
+obj/RawinBase.s \
+obj/RawinDraw.s \
+obj/RawinMsg.s \
+obj/RawinMsgBody.s \
+obj/RawinMsgProc.s \
+obj/RawinPanel.s \
 obj/ReadCon.s \
 obj/RefArray.s \
 obj/RefPtr.s \
@@ -551,6 +566,7 @@ obj/SortUnique.s \
 obj/Space.s \
 obj/StartStop.s \
 obj/Starter.s \
+obj/StaticInit.s \
 obj/StepEval.s \
 obj/StrKey.s \
 obj/StrParse.s \
@@ -823,6 +839,13 @@ obj/RBTreeLink.dep \
 obj/RBTreeUpLink.dep \
 obj/RadixHeap.dep \
 obj/Random.dep \
+obj/Rawin.dep \
+obj/RawinBase.dep \
+obj/RawinDraw.dep \
+obj/RawinMsg.dep \
+obj/RawinMsgBody.dep \
+obj/RawinMsgProc.dep \
+obj/RawinPanel.dep \
 obj/ReadCon.dep \
 obj/RefArray.dep \
 obj/RefPtr.dep \
@@ -856,6 +879,7 @@ obj/SortUnique.dep \
 obj/Space.dep \
 obj/StartStop.dep \
 obj/Starter.dep \
+obj/StaticInit.dep \
 obj/StepEval.dep \
 obj/StrKey.dep \
 obj/StrParse.dep \
@@ -1569,6 +1593,27 @@ obj/RadixHeap.o : ../../CCore/src/RadixHeap.cpp
 obj/Random.o : ../../CCore/src/Random.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Rawin.o : ../../Target/WIN32/CCore/src/rawin/Rawin.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RawinBase.o : ../../Target/WIN32/CCore/src/rawin/RawinBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RawinDraw.o : ../../Target/WIN32/CCore/src/rawin/RawinDraw.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RawinMsg.o : ../../Target/WIN32/CCore/src/rawin/RawinMsg.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RawinMsgBody.o : ../../Target/WIN32/CCore/src/rawin/RawinMsgBody.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RawinMsgProc.o : ../../Target/WIN32/CCore/src/rawin/RawinMsgProc.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RawinPanel.o : ../../Target/WIN32/CCore/src/rawin/RawinPanel.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/ReadCon.o : ../../HCore/CCore/src/ReadCon.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1666,6 +1711,9 @@ obj/StartStop.o : ../../CCore/src/StartStop.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Starter.o : ../../CCore/src/Starter.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/StaticInit.o : ../../Target/WIN32/CCore/src/rawin/StaticInit.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/StepEval.o : ../../CCore/src/StepEval.cpp
@@ -2477,6 +2525,27 @@ obj/RadixHeap.s : ../../CCore/src/RadixHeap.cpp
 obj/Random.s : ../../CCore/src/Random.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Rawin.s : ../../Target/WIN32/CCore/src/rawin/Rawin.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RawinBase.s : ../../Target/WIN32/CCore/src/rawin/RawinBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RawinDraw.s : ../../Target/WIN32/CCore/src/rawin/RawinDraw.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RawinMsg.s : ../../Target/WIN32/CCore/src/rawin/RawinMsg.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RawinMsgBody.s : ../../Target/WIN32/CCore/src/rawin/RawinMsgBody.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RawinMsgProc.s : ../../Target/WIN32/CCore/src/rawin/RawinMsgProc.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/RawinPanel.s : ../../Target/WIN32/CCore/src/rawin/RawinPanel.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ReadCon.s : ../../HCore/CCore/src/ReadCon.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2574,6 +2643,9 @@ obj/StartStop.s : ../../CCore/src/StartStop.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Starter.s : ../../CCore/src/Starter.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/StaticInit.s : ../../Target/WIN32/CCore/src/rawin/StaticInit.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/StepEval.s : ../../CCore/src/StepEval.cpp
@@ -3385,6 +3457,27 @@ obj/RadixHeap.dep : ../../CCore/src/RadixHeap.cpp
 obj/Random.dep : ../../CCore/src/Random.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Random.o $< -MF $@
 
+obj/Rawin.dep : ../../Target/WIN32/CCore/src/rawin/Rawin.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Rawin.o $< -MF $@
+
+obj/RawinBase.dep : ../../Target/WIN32/CCore/src/rawin/RawinBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RawinBase.o $< -MF $@
+
+obj/RawinDraw.dep : ../../Target/WIN32/CCore/src/rawin/RawinDraw.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RawinDraw.o $< -MF $@
+
+obj/RawinMsg.dep : ../../Target/WIN32/CCore/src/rawin/RawinMsg.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RawinMsg.o $< -MF $@
+
+obj/RawinMsgBody.dep : ../../Target/WIN32/CCore/src/rawin/RawinMsgBody.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RawinMsgBody.o $< -MF $@
+
+obj/RawinMsgProc.dep : ../../Target/WIN32/CCore/src/rawin/RawinMsgProc.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RawinMsgProc.o $< -MF $@
+
+obj/RawinPanel.dep : ../../Target/WIN32/CCore/src/rawin/RawinPanel.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RawinPanel.o $< -MF $@
+
 obj/ReadCon.dep : ../../HCore/CCore/src/ReadCon.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ReadCon.o $< -MF $@
 
@@ -3483,6 +3576,9 @@ obj/StartStop.dep : ../../CCore/src/StartStop.cpp
 
 obj/Starter.dep : ../../CCore/src/Starter.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Starter.o $< -MF $@
+
+obj/StaticInit.dep : ../../Target/WIN32/CCore/src/rawin/StaticInit.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StaticInit.o $< -MF $@
 
 obj/StepEval.dep : ../../CCore/src/StepEval.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StepEval.o $< -MF $@

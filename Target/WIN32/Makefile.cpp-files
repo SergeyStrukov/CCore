@@ -283,6 +283,14 @@
 ../../Target/WIN32/CCore/src/crypton/IntelRandom.cpp
 ../../Target/WIN32/CCore/src/math/IntegerFastAlgo.cpp
 ../../Target/WIN32/CCore/src/PlanInit_CCore.cpp
+../../Target/WIN32/CCore/src/rawin/Rawin.cpp
+../../Target/WIN32/CCore/src/rawin/RawinBase.cpp
+../../Target/WIN32/CCore/src/rawin/RawinDraw.cpp
+../../Target/WIN32/CCore/src/rawin/RawinMsg.cpp
+../../Target/WIN32/CCore/src/rawin/RawinMsgBody.cpp
+../../Target/WIN32/CCore/src/rawin/RawinMsgProc.cpp
+../../Target/WIN32/CCore/src/rawin/RawinPanel.cpp
+../../Target/WIN32/CCore/src/rawin/StaticInit.cpp
 ../../Target/WIN32/CCore/src/sys/SysAbort.cpp
 ../../Target/WIN32/CCore/src/sys/SysAtomic.cpp
 ../../Target/WIN32/CCore/src/sys/SysCon.cpp

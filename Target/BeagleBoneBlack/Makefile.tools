@@ -54,7 +54,7 @@ ASOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard
 
 CCORELIB = $(CCORE_ROOT)/Target/$(CCORE_TARGET)/CCore.a
 
-LDOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -fno-use-linker-plugin -mno-unaligned-access -Wl,-s $(LDOPT_EXTRA) $(CCORELIB)
+LDOPT = -march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard -fno-use-linker-plugin -mno-unaligned-access -Wl,-s $(CCORELIB) $(LDOPT_EXTRA) 
 
 
 

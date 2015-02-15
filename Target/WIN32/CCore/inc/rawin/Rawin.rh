@@ -1,0 +1,53 @@
+/* Rawin.rh */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.09
+//
+//  Tag: Target/WIN32
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+#ifndef CCore_inc_rawin_Rawin_rh
+#define CCore_inc_rawin_Rawin_rh
+
+#include <winuser.rh>
+
+/* application icons */ 
+
+#define IDI_APP                       10001
+#define IDI_SMALL_APP                 10002
+
+/* exception dialog box */ 
+
+#define IDD_EXCEPTION                 10001
+
+#define IDC_EXCEPTION_TEXT             1001
+
+#define IDC_EXCEPTION_CONTINUE         1002
+#define IDC_EXCEPTION_SILENTCONTINUE   1003
+#define IDC_EXCEPTION_EXIT             1004
+#define IDC_EXCEPTION_ABORT            1005
+
+#ifdef RC_INVOKED
+
+IDD_EXCEPTION     DIALOGEX  0,0,300,150
+CAPTION "Exception"
+STYLE   WS_POPUP|WS_BORDER|WS_CAPTION|DS_CENTER
+{
+ LTEXT      "", IDC_EXCEPTION_TEXT, 5,5,290,120, WS_BORDER
+
+ PUSHBUTTON "&Continue", IDC_EXCEPTION_CONTINUE      ,  42,130,50,15, WS_TABSTOP
+ PUSHBUTTON "&Silent"  , IDC_EXCEPTION_SILENTCONTINUE,  97,130,50,15, WS_TABSTOP
+ PUSHBUTTON "&Exit"    , IDC_EXCEPTION_EXIT          , 152,130,50,15, WS_TABSTOP
+ PUSHBUTTON "&Abort"   , IDC_EXCEPTION_ABORT         , 207,130,50,15, WS_TABSTOP
+}
+
+#endif
+
+#endif

@@ -1,9 +1,9 @@
-/* XXX.h */ 
+/* RawinMsg.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.09
 //
-//  Tag: General HCore XCore Target/
+//  Tag: Target/WIN32
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
@@ -12,15 +12,14 @@
 //  Copyright (c) 2015 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
-
-#ifndef CCore_inc_XXX_h
-#define CCore_inc_XXX_h
+ 
+#include <CCore/inc/rawin/RawinMsg.h>
  
 namespace CCore {
+namespace Rawin {
 
 
+} // namespace Rawin
 } // namespace CCore
- 
-#endif
  
 
