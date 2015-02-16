@@ -204,7 +204,7 @@ class MemPaint : NoCopy
    
    MemColor * getMem() const { return static_cast<MemColor *>(mem); }
    
-   bool fit(Point size_) const { return Fit(size_,size); }
+   bool fit(Point size_) const { return size_<=size; }
    
    void setSize(Point size=GetScreenSize());
    

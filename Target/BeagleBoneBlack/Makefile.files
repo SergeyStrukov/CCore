@@ -121,6 +121,7 @@ obj/Fifo.o \
 obj/FileName.o \
 obj/Forget.o \
 obj/FrameBuf.o \
+obj/FrameWindow.o \
 obj/FuncTask.o \
 obj/Function.o \
 obj/FunctorType.o \
@@ -208,6 +209,7 @@ obj/Place.o \
 obj/PlanInit.o \
 obj/PlanInit_CCore.o \
 obj/PlatformBase.o \
+obj/Point.o \
 obj/PosSub.o \
 obj/Print.o \
 obj/PrintAbort.o \
@@ -454,6 +456,7 @@ obj/Fifo.s \
 obj/FileName.s \
 obj/Forget.s \
 obj/FrameBuf.s \
+obj/FrameWindow.s \
 obj/FuncTask.s \
 obj/Function.s \
 obj/FunctorType.s \
@@ -541,6 +544,7 @@ obj/Place.s \
 obj/PlanInit.s \
 obj/PlanInit_CCore.s \
 obj/PlatformBase.s \
+obj/Point.s \
 obj/PosSub.s \
 obj/Print.s \
 obj/PrintAbort.s \
@@ -787,6 +791,7 @@ obj/Fifo.dep \
 obj/FileName.dep \
 obj/Forget.dep \
 obj/FrameBuf.dep \
+obj/FrameWindow.dep \
 obj/FuncTask.dep \
 obj/Function.dep \
 obj/FunctorType.dep \
@@ -874,6 +879,7 @@ obj/Place.dep \
 obj/PlanInit.dep \
 obj/PlanInit_CCore.dep \
 obj/PlatformBase.dep \
+obj/Point.dep \
 obj/PosSub.dep \
 obj/Print.dep \
 obj/PrintAbort.dep \
@@ -1379,6 +1385,9 @@ obj/Forget.o : ../../CCore/src/crypton/Forget.cpp
 obj/FrameBuf.o : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/FrameWindow.o : ../../CCore/src/video/FrameWindow.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/FuncTask.o : ../../CCore/src/task/FuncTask.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1638,6 +1647,9 @@ obj/PlanInit_CCore.o : ../../Target/BeagleBoneBlack/CCore/src/PlanInit_CCore.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PlatformBase.o : ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Point.o : ../../CCore/src/video/Point.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PosSub.o : ../../CCore/src/gadget/PosSub.cpp
@@ -2371,6 +2383,9 @@ obj/Forget.s : ../../CCore/src/crypton/Forget.cpp
 obj/FrameBuf.s : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FrameWindow.s : ../../CCore/src/video/FrameWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FuncTask.s : ../../CCore/src/task/FuncTask.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2630,6 +2645,9 @@ obj/PlanInit_CCore.s : ../../Target/BeagleBoneBlack/CCore/src/PlanInit_CCore.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/PlatformBase.s : ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Point.s : ../../CCore/src/video/Point.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/PosSub.s : ../../CCore/src/gadget/PosSub.cpp
@@ -3363,6 +3381,9 @@ obj/Forget.dep : ../../CCore/src/crypton/Forget.cpp
 obj/FrameBuf.dep : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameBuf.o $< -MF $@
 
+obj/FrameWindow.dep : ../../CCore/src/video/FrameWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameWindow.o $< -MF $@
+
 obj/FuncTask.dep : ../../CCore/src/task/FuncTask.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FuncTask.o $< -MF $@
 
@@ -3623,6 +3644,9 @@ obj/PlanInit_CCore.dep : ../../Target/BeagleBoneBlack/CCore/src/PlanInit_CCore.c
 
 obj/PlatformBase.dep : ../../Target/BeagleBoneBlack/CCore/src/base/PlatformBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PlatformBase.o $< -MF $@
+
+obj/Point.dep : ../../CCore/src/video/Point.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Point.o $< -MF $@
 
 obj/PosSub.dep : ../../CCore/src/gadget/PosSub.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PosSub.o $< -MF $@
