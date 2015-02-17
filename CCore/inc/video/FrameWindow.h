@@ -71,11 +71,13 @@ class WinControl : public MemBase_nocopy
    
    // create/destroy
    
-   virtual void create(Pane pane,Point max_size)=0; // screen
+   virtual void createMain(Point max_size)=0;
    
    virtual void createMain(Pane pane,Point max_size)=0; // screen
    
-   virtual void createMain(Point max_size)=0; // screen
+   virtual void create(Pane pane,Point max_size)=0; // screen
+   
+   virtual void create(WinControl *parent,Pane pane,Point max_size)=0; // screen
    
    virtual void destroy()=0;
    
@@ -112,25 +114,36 @@ class WinControl : public MemBase_nocopy
 
 class FrameWindow : public MemBase_nocopy
  {
-   WinControl *win;
-   
   protected:
    
-   WinControl * getWin() const { return win; }
+   class Ptr : NoCopy
+    {
+      WinControl *ptr;
+      
+     public:
+      
+      explicit Ptr(Desktop *desktop)
+       {
+        ptr=desktop->createControl();
+       }
+      
+      ~Ptr()
+       {
+        delete ptr;
+       }
+      
+      WinControl * getPtr() const { return ptr; }
+      
+      WinControl * operator -> () const { return ptr; }
+    };
+
+   Ptr win;
    
   public:
    
-   explicit FrameWindow(Desktop *desktop)
-    {
-     win=desktop->createControl();
-     
-     win->frame=this;
-    }
+   explicit FrameWindow(Desktop *desktop) : win(desktop) { win->frame=this; }
   
-   virtual ~FrameWindow()
-    {
-     delete win;
-    }
+   virtual ~FrameWindow() {}
   
    // base
    
@@ -286,7 +299,7 @@ class FrameWindow : public MemBase_nocopy
  
    virtual void setMouseShape()
     {
-     getWin()->setMouseShape(Mouse_Arrow);
+     win->setMouseShape(Mouse_Arrow);
     }
  };
 
