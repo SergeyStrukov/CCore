@@ -16,72 +16,122 @@
 #ifndef CCore_inc_video_FrameWindow_h
 #define CCore_inc_video_FrameWindow_h
 
+#include <CCore/inc/MemBase.h>
+
 #include <CCore/inc/video/Point.h>
+#include <CCore/inc/video/Keyboard.h>
+#include <CCore/inc/video/Mouse.h>
+#include <CCore/inc/video/Color.h>
  
 namespace CCore {
 namespace Video {
 
 /* classes */
 
-struct WinControl;
+struct Desktop;
+
+class WinControl;
 
 class FrameWindow;
 
-/* struct WinControl */
+/* struct Desktop */
 
-struct WinControl
+struct Desktop
  {
-  virtual bool isAlive()=0;
+  virtual WinControl * createControl()=0;
   
-  bool isDead() { return !isAlive(); }
+  virtual Point getScreenSize()=0;
   
-  virtual void show()=0;
+  static const unsigned DefaultLim = 100 ;
   
-  virtual void hide()=0;
+  virtual bool pump(unsigned lim=DefaultLim)=0;
   
-  virtual void update()=0;
+  virtual void wait()=0;
   
-  virtual void destroy()=0;
+  virtual void wait(MSec timeout)=0;
+ };
+
+/* class WinControl */
+
+class WinControl : public MemBase_nocopy
+ {
+  protected:
   
-  virtual void invalidate(Pane pane)=0;
-  
-  virtual void invalidate()=0;
-  
-  virtual void captureMouse()=0;
-  
-  virtual void releaseMouse()=0;
-  
-  virtual void setFocus()=0;
-  
-  virtual void move(Pane pane)=0; // screen
-  
-  virtual void moveTop()=0;
+   FrameWindow *frame = 0 ;
+   Point max_size = Null ;
+   bool is_alive = false ;
+   
+   friend class FrameWindow;
+   
+  public: 
+   
+   WinControl() {}
+   
+   virtual ~WinControl() {}
+   
+   // create/destroy
+   
+   virtual void create(Pane pane,Point max_size)=0; // screen
+   
+   virtual void createMain(Pane pane,Point max_size)=0; // screen
+   
+   virtual void createMain(Point max_size)=0; // screen
+   
+   virtual void destroy()=0;
+   
+   bool isAlive() const { return is_alive; }
+   
+   bool isDead() const { return !is_alive; }
+   
+   // operations
+   
+   virtual void show()=0;
+   
+   virtual void hide()=0;
+   
+   virtual void update()=0;
+   
+   virtual void invalidate(Pane pane)=0;
+   
+   virtual void invalidate()=0;
+   
+   virtual void captureMouse()=0;
+   
+   virtual void releaseMouse()=0;
+   
+   virtual void setFocus()=0;
+   
+   virtual void setMouseShape(MouseShape mshape)=0;
+   
+   virtual void move(Pane pane)=0; // screen
+   
+   virtual void moveTop()=0;
  };
 
 /* class FrameWindow */
 
-class FrameWindow : NoCopy
+class FrameWindow : public MemBase_nocopy
  {
    WinControl *win;
    
   protected:
    
-   WinControl * getWinControl() const { return win; }
+   WinControl * getWin() const { return win; }
    
   public:
    
-   explicit FrameWindow(WinControl *win_) : win(win_) {}
-  
-   ~FrameWindow() {}
-  
-   // codes
-   
-   enum CloseAction
+   explicit FrameWindow(Desktop *desktop)
     {
-     NoClose,
-     DoClose
-    };
-   
+     win=desktop->createControl();
+     
+     win->frame=this;
+    }
+  
+   virtual ~FrameWindow()
+    {
+     delete win;
+    }
+  
    // base
    
    virtual void alive()
@@ -101,8 +151,10 @@ class FrameWindow : NoCopy
      // do nothing
     }
    
-   virtual void draw()
+   virtual void draw(ColorPlane plane)
     {
+     Used(plane);
+     
      // do nothing
     }
    
@@ -111,42 +163,35 @@ class FrameWindow : NoCopy
      // do nothing
     }
  
-   virtual CloseAction close()
-    { 
-     return DoClose; 
-    }
+   // keyboard
    
-   // events
-   
-   virtual void key(unsigned vkey,bool ext)
+   virtual void key(VKey vkey,KeyMod kmod)
     {
      Used(vkey);
-     Used(ext);
+     Used(kmod);
      
      // do nothing
     }
    
-   virtual void key(unsigned vkey,unsigned repeat,bool ext)
+   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat)
     {
-     for(; repeat ;repeat--) key(vkey,ext);
-     
-     // do nothing
+     for(; repeat ;repeat--) key(vkey,kmod);
     }
    
-   virtual void key_alt(unsigned vkey,bool ext)
+   virtual void keyUp(VKey vkey,KeyMod kmod)
     {
      Used(vkey);
-     Used(ext);
+     Used(kmod);
      
      // do nothing
     }
    
-   virtual void key_alt(unsigned vkey,unsigned repeat,bool ext)
+   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
     {
-     for(; repeat ;repeat--) key_alt(vkey,ext);
-     
-     // do nothing
+     for(; repeat ;repeat--) keyUp(vkey,kmod);
     }
+   
+   // character
    
    virtual void putch(char ch)
     {
@@ -158,95 +203,90 @@ class FrameWindow : NoCopy
    virtual void putch(char ch,unsigned repeat)
     {
      for(; repeat ;repeat--) putch(ch);
-     
-     // do nothing
     }
    
-   virtual void putch_alt(char ch)
+   virtual void putchAlt(char ch)
     {
      Used(ch);
      
      // do nothing
     }
    
-   virtual void putch_alt(char ch,unsigned repeat)
+   virtual void putchAlt(char ch,unsigned repeat)
     {
-     for(; repeat ;repeat--) putch_alt(ch);
+     for(; repeat ;repeat--) putchAlt(ch);
+    }
+   
+   // mouse
+   
+   virtual void clickL(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
      
      // do nothing
     }
    
-   virtual void clickL(Point point,bool shift,bool ctrl)
+   virtual void upL(Point point,MouseKey mkey)
     {
      Used(point);
-     Used(shift);
-     Used(ctrl);
-     
-     // do nothing
-    }
-   
-   virtual void upL(Point point,bool shift,bool ctrl)
-    {
-     Used(point);
-     Used(shift);
-     Used(ctrl);
+     Used(mkey);
      
      // do nothing
     }
  
-   virtual void dclickL(Point point,bool shift,bool ctrl)
+   virtual void dclickL(Point point,MouseKey mkey)
     {
      Used(point);
-     Used(shift);
-     Used(ctrl);
+     Used(mkey);
      
      // do nothing
     }
    
-   virtual void clickR(Point point,bool shift,bool ctrl)
+   virtual void clickR(Point point,MouseKey mkey)
     {
      Used(point);
-     Used(shift);
-     Used(ctrl);
+     Used(mkey);
      
      // do nothing
     }
    
-   virtual void upR(Point point,bool shift,bool ctrl)
+   virtual void upR(Point point,MouseKey mkey)
     {
      Used(point);
-     Used(shift);
-     Used(ctrl);
+     Used(mkey);
      
      // do nothing
     }
    
-   virtual void dclickR(Point point,bool shift,bool ctrl)
+   virtual void dclickR(Point point,MouseKey mkey)
     {
      Used(point);
-     Used(shift);
-     Used(ctrl);
+     Used(mkey);
      
      // do nothing
     }
    
-   virtual void move(Point point,bool shift,bool ctrl)
+   virtual void move(Point point,MouseKey mkey)
     {
      Used(point);
-     Used(shift);
-     Used(ctrl);
+     Used(mkey);
      
      // do nothing
     }
    
-   virtual void wheel(Point point,bool shift,bool ctrl,int delta)
+   virtual void wheel(Point point,MouseKey mkey,int delta)
     {
      Used(point);
-     Used(shift);
-     Used(ctrl);
+     Used(mkey);
      Used(delta);
      
      // do nothing
+    }
+ 
+   virtual void setMouseShape()
+    {
+     getWin()->setMouseShape(Mouse_Arrow);
     }
  };
 
