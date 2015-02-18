@@ -1,0 +1,11 @@
+/* Changes-1-09.txt */
+
+--- New features -----
+
+video/FrameWindow.h
+video/Point.h
+video/Keyboard.h
+video/Mouse.h
+video/Color.h
+
+  support for the GUI interface programming.

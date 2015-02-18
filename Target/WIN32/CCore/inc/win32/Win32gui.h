@@ -899,6 +899,12 @@ const int HWND_NoTopMost = -2 ;
 const int HWND_Top       =  0 ;
 const int HWND_TopMost   = -1 ;
 
+/* KeyState... */
+
+const unsigned short KeyStateDown   = 0x8000 ; 
+
+const unsigned short KeyStateToggle = 0x0001 ;
+
 /*--------------------------------------------------------------------------------------*/ 
 /* structures                                                                           */ 
 /*--------------------------------------------------------------------------------------*/ 
@@ -1153,6 +1159,8 @@ bool_t WIN32_API TranslateMessage(const Msg *msg);
 MsgResult WIN32_API DispatchMessageA(const Msg *msg);
 
 void WIN32_API PostQuitMessage(int exit_code);
+
+unsigned short WIN32_API GetKeyState(unsigned vkey);
 
 bool_t WIN32_API TranslateAcceleratorA(HWindow hWnd,HAccelerator hAccel,Msg *msg);
 

@@ -166,6 +166,35 @@ class WindowsControl : public WinControl
 
   private: 
    
+   static VKey MapVKey(Win32::MsgWParam vkey)
+    {
+     switch( vkey )
+       {
+        // TODO
+      
+        default: return VKey_Null;
+       }
+    }
+   
+   static KeyMod GetKeyMod(bool ext)
+    {
+     KeyMod kmod=KeyMod(0);
+     
+     if( ext ) kmod|=Key_Ext;
+     
+     if( Win32::GetKeyState(Win32::VK_Shift)&Win32::KeyStateDown ) kmod|=Key_Shift;
+
+     if( Win32::GetKeyState(Win32::VK_Control)&Win32::KeyStateDown ) kmod|=Key_Ctrl;
+     
+     if( Win32::GetKeyState(Win32::VK_CapsLock)&Win32::KeyStateToggle ) kmod|=Key_CapsLock;
+     
+     if( Win32::GetKeyState(Win32::VK_NumLock)&Win32::KeyStateToggle ) kmod|=Key_NumLock;
+     
+     if( Win32::GetKeyState(Win32::VK_Scroll)&Win32::KeyStateToggle ) kmod|=Key_ScrollLock;
+     
+     return kmod;
+    }
+   
    Win32::MsgResult msgProc(Win32::HWindow hWnd_,Win32::MsgCode message,Win32::MsgWParam wParam,Win32::MsgLParam lParam)
     {
      switch( message )
@@ -221,17 +250,24 @@ class WindowsControl : public WinControl
          }
         break;
         
-        case Win32::WM_Destroy :
-         {
-          // TODO
-         }
-        break;
+#endif
         
         case Win32::WM_KeyDown :
          {
-          // TODO
+          unsigned repeat=lParam&0xFFFF;
+          bool ext=(lParam>>24)&1;
+          
+          VKey vkey=MapVKey(wParam);
+          KeyMod kmod=GetKeyMod(ext);
+          
+          if( repeat>1 )
+            frame->key(vkey,kmod,repeat);
+          else
+            frame->key(vkey,kmod);
          }
-        break;
+        return 0;
+        
+#if 0
         
         case Win32::WM_SysKeyDown :
          {

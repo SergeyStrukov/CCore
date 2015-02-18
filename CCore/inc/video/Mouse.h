@@ -34,6 +34,8 @@ enum MouseKey : unsigned
 
 inline MouseKey operator | (MouseKey a,MouseKey b) { return MouseKey(unsigned(a)|b); }
 
+inline MouseKey operator |= (MouseKey &a,MouseKey b) { return a=(a|b); }
+
 enum MouseShape : unsigned
  {
   Mouse_Null,
