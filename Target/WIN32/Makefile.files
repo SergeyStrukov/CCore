@@ -6,6 +6,7 @@ obj/Abort.o \
 obj/AbortMsgFunc.o \
 obj/AntiSem.o \
 obj/AnyPtr.o \
+obj/AppDesktopConfig.o \
 obj/ApplyToRange.o \
 obj/Array.o \
 obj/ArrayAlgo.o \
@@ -325,6 +326,7 @@ obj/Abort.s \
 obj/AbortMsgFunc.s \
 obj/AntiSem.s \
 obj/AnyPtr.s \
+obj/AppDesktopConfig.s \
 obj/ApplyToRange.s \
 obj/Array.s \
 obj/ArrayAlgo.s \
@@ -644,6 +646,7 @@ obj/Abort.dep \
 obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
 obj/AnyPtr.dep \
+obj/AppDesktopConfig.dep \
 obj/ApplyToRange.dep \
 obj/Array.dep \
 obj/ArrayAlgo.dep \
@@ -988,6 +991,9 @@ obj/AntiSem.o : ../../HCore/CCore/src/task/AntiSem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AnyPtr.o : ../../CCore/src/AnyPtr.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AppDesktopConfig.o : ../../Target/WIN32/CCore/src/video/AppDesktopConfig.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ApplyToRange.o : ../../CCore/src/algon/ApplyToRange.cpp
@@ -1940,6 +1946,9 @@ obj/AntiSem.s : ../../HCore/CCore/src/task/AntiSem.cpp
 obj/AnyPtr.s : ../../CCore/src/AnyPtr.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/AppDesktopConfig.s : ../../Target/WIN32/CCore/src/video/AppDesktopConfig.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ApplyToRange.s : ../../CCore/src/algon/ApplyToRange.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2889,6 +2898,9 @@ obj/AntiSem.dep : ../../HCore/CCore/src/task/AntiSem.cpp
 
 obj/AnyPtr.dep : ../../CCore/src/AnyPtr.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AnyPtr.o $< -MF $@
+
+obj/AppDesktopConfig.dep : ../../Target/WIN32/CCore/src/video/AppDesktopConfig.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AppDesktopConfig.o $< -MF $@
 
 obj/ApplyToRange.dep : ../../CCore/src/algon/ApplyToRange.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ApplyToRange.o $< -MF $@

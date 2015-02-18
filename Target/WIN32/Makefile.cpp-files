@@ -313,4 +313,5 @@
 ../../Target/WIN32/CCore/src/sys/SysTlsSlot.cpp
 ../../Target/WIN32/CCore/src/sys/SysWait.cpp
 ../../Target/WIN32/CCore/src/sys/SysWaitInternal.cpp
+../../Target/WIN32/CCore/src/video/AppDesktopConfig.cpp
 ../../Target/WIN32/CCore/src/video/Desktop.cpp

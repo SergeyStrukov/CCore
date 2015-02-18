@@ -87,6 +87,8 @@ class WinControl : public MemBase_nocopy
    
    // operations
    
+   virtual bool enableUserInput(bool en)=0; // return previous
+   
    virtual void show()=0;
    
    virtual void hide()=0;

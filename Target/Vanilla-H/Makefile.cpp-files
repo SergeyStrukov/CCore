@@ -242,9 +242,12 @@
 ../../CCore/src/TypeNumber.cpp
 ../../CCore/src/TypeSwitch.cpp
 ../../CCore/src/UIntSplit.cpp
+../../CCore/src/video/Color.cpp
 ../../CCore/src/video/EDID.cpp
 ../../CCore/src/video/FrameBuf.cpp
 ../../CCore/src/video/FrameWindow.cpp
+../../CCore/src/video/Keyboard.cpp
+../../CCore/src/video/Mouse.cpp
 ../../CCore/src/video/Point.cpp
 ../../CCore/src/video/SimpleConsole.cpp
 ../../CCore/src/video/VideoConsole.cpp

@@ -23,7 +23,17 @@ namespace Video {
 
 /* classes */
 
+struct DesktopConfig;
+
 class DefaultDesktopPtr;
+
+/* struct DesktopConfig */
+
+struct DesktopConfig
+ {
+  unsigned short idIcon;
+  unsigned short idIconSmall;
+ };
 
 /* class DefaultDesktopPtr */
 
@@ -37,6 +47,10 @@ class DefaultDesktopPtr : NoCopy
    
    Desktop * operator -> () const { return ptr; }
  };
+
+/* global AppDesktopConfig */
+
+extern DesktopConfig AppDesktopConfig;
 
 /* global DefaultDesktop */
 

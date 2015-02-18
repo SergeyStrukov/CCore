@@ -29,6 +29,7 @@ obj/CheckedData.o \
 obj/CmdInput.o \
 obj/Cmp.o \
 obj/Collector.o \
+obj/Color.o \
 obj/CommonIntAlgo.o \
 obj/CompactList.o \
 obj/CompactMap.o \
@@ -126,6 +127,7 @@ obj/IntelCPUID.o \
 obj/IntelRandom.o \
 obj/InterfaceHost.o \
 obj/Job.o \
+obj/Keyboard.o \
 obj/Len.o \
 obj/LineInput.o \
 obj/List.o \
@@ -142,6 +144,7 @@ obj/MemSpaceHeap.o \
 obj/MersenneTwister.o \
 obj/Meta.o \
 obj/ModEngine.o \
+obj/Mouse.o \
 obj/Move.o \
 obj/MultiEvent.o \
 obj/MultiSem.o \
@@ -337,6 +340,7 @@ obj/CheckedData.s \
 obj/CmdInput.s \
 obj/Cmp.s \
 obj/Collector.s \
+obj/Color.s \
 obj/CommonIntAlgo.s \
 obj/CompactList.s \
 obj/CompactMap.s \
@@ -434,6 +438,7 @@ obj/IntelCPUID.s \
 obj/IntelRandom.s \
 obj/InterfaceHost.s \
 obj/Job.s \
+obj/Keyboard.s \
 obj/Len.s \
 obj/LineInput.s \
 obj/List.s \
@@ -450,6 +455,7 @@ obj/MemSpaceHeap.s \
 obj/MersenneTwister.s \
 obj/Meta.s \
 obj/ModEngine.s \
+obj/Mouse.s \
 obj/Move.s \
 obj/MultiEvent.s \
 obj/MultiSem.s \
@@ -645,6 +651,7 @@ obj/CheckedData.dep \
 obj/CmdInput.dep \
 obj/Cmp.dep \
 obj/Collector.dep \
+obj/Color.dep \
 obj/CommonIntAlgo.dep \
 obj/CompactList.dep \
 obj/CompactMap.dep \
@@ -742,6 +749,7 @@ obj/IntelCPUID.dep \
 obj/IntelRandom.dep \
 obj/InterfaceHost.dep \
 obj/Job.dep \
+obj/Keyboard.dep \
 obj/Len.dep \
 obj/LineInput.dep \
 obj/List.dep \
@@ -758,6 +766,7 @@ obj/MemSpaceHeap.dep \
 obj/MersenneTwister.dep \
 obj/Meta.dep \
 obj/ModEngine.dep \
+obj/Mouse.dep \
 obj/Move.dep \
 obj/MultiEvent.dep \
 obj/MultiSem.dep \
@@ -1024,6 +1033,9 @@ obj/Cmp.o : ../../CCore/src/Cmp.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Collector.o : ../../CCore/src/array/Collector.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Color.o : ../../CCore/src/video/Color.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CommonIntAlgo.o : ../../CCore/src/algon/CommonIntAlgo.cpp
@@ -1317,6 +1329,9 @@ obj/InterfaceHost.o : ../../CCore/src/InterfaceHost.cpp
 obj/Job.o : ../../CCore/src/Job.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/Keyboard.o : ../../CCore/src/video/Keyboard.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Len.o : ../../CCore/src/gadget/Len.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1363,6 +1378,9 @@ obj/Meta.o : ../../CCore/src/gadget/Meta.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ModEngine.o : ../../CCore/src/math/ModEngine.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Mouse.o : ../../CCore/src/video/Mouse.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Move.o : ../../CCore/src/Move.cpp
@@ -1943,6 +1961,9 @@ obj/Cmp.s : ../../CCore/src/Cmp.cpp
 obj/Collector.s : ../../CCore/src/array/Collector.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Color.s : ../../CCore/src/video/Color.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/CommonIntAlgo.s : ../../CCore/src/algon/CommonIntAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2234,6 +2255,9 @@ obj/InterfaceHost.s : ../../CCore/src/InterfaceHost.cpp
 obj/Job.s : ../../CCore/src/Job.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Keyboard.s : ../../CCore/src/video/Keyboard.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Len.s : ../../CCore/src/gadget/Len.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2280,6 +2304,9 @@ obj/Meta.s : ../../CCore/src/gadget/Meta.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ModEngine.s : ../../CCore/src/math/ModEngine.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Mouse.s : ../../CCore/src/video/Mouse.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Move.s : ../../CCore/src/Move.cpp
@@ -2860,6 +2887,9 @@ obj/Cmp.dep : ../../CCore/src/Cmp.cpp
 obj/Collector.dep : ../../CCore/src/array/Collector.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Collector.o $< -MF $@
 
+obj/Color.dep : ../../CCore/src/video/Color.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Color.o $< -MF $@
+
 obj/CommonIntAlgo.dep : ../../CCore/src/algon/CommonIntAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CommonIntAlgo.o $< -MF $@
 
@@ -3151,6 +3181,9 @@ obj/InterfaceHost.dep : ../../CCore/src/InterfaceHost.cpp
 obj/Job.dep : ../../CCore/src/Job.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Job.o $< -MF $@
 
+obj/Keyboard.dep : ../../CCore/src/video/Keyboard.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Keyboard.o $< -MF $@
+
 obj/Len.dep : ../../CCore/src/gadget/Len.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Len.o $< -MF $@
 
@@ -3198,6 +3231,9 @@ obj/Meta.dep : ../../CCore/src/gadget/Meta.cpp
 
 obj/ModEngine.dep : ../../CCore/src/math/ModEngine.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ModEngine.o $< -MF $@
+
+obj/Mouse.dep : ../../CCore/src/video/Mouse.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Mouse.o $< -MF $@
 
 obj/Move.dep : ../../CCore/src/Move.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Move.o $< -MF $@
