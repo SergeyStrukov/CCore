@@ -89,6 +89,8 @@ class WinControl : public MemBase_nocopy
    
    virtual bool enableUserInput(bool en)=0; // return previous
    
+   virtual void display(unsigned cmd_display)=0;
+   
    virtual void show()=0;
    
    virtual void hide()=0;
@@ -98,6 +100,8 @@ class WinControl : public MemBase_nocopy
    virtual void invalidate(Pane pane)=0;
    
    virtual void invalidate()=0;
+   
+   virtual ColorPlane getDrawPlane()=0;
    
    virtual void captureMouse()=0;
    
@@ -159,16 +163,10 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
    
-   virtual void setSize(Point size)
+   virtual void setSize(Point size,bool buf_dirty)
     {
      Used(size);
-     
-     // do nothing
-    }
-   
-   virtual void draw(ColorPlane plane)
-    {
-     Used(plane);
+     Used(buf_dirty);
      
      // do nothing
     }
@@ -234,7 +232,7 @@ class FrameWindow : public MemBase_nocopy
    
    // mouse
    
-   virtual void clickL(Point point,MouseKey mkey)
+   virtual void clickLeft(Point point,MouseKey mkey)
     {
      Used(point);
      Used(mkey);
@@ -242,7 +240,7 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
    
-   virtual void upL(Point point,MouseKey mkey)
+   virtual void upLeft(Point point,MouseKey mkey)
     {
      Used(point);
      Used(mkey);
@@ -250,7 +248,7 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
  
-   virtual void dclickL(Point point,MouseKey mkey)
+   virtual void dclickLeft(Point point,MouseKey mkey)
     {
      Used(point);
      Used(mkey);
@@ -258,7 +256,7 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
    
-   virtual void clickR(Point point,MouseKey mkey)
+   virtual void clickRight(Point point,MouseKey mkey)
     {
      Used(point);
      Used(mkey);
@@ -266,7 +264,7 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
    
-   virtual void upR(Point point,MouseKey mkey)
+   virtual void upRight(Point point,MouseKey mkey)
     {
      Used(point);
      Used(mkey);
@@ -274,7 +272,7 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
    
-   virtual void dclickR(Point point,MouseKey mkey)
+   virtual void dclickRight(Point point,MouseKey mkey)
     {
      Used(point);
      Used(mkey);
@@ -299,8 +297,10 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
  
-   virtual void setMouseShape()
+   virtual void setMouseShape(Point point)
     {
+     Used(point);
+     
      win->setMouseShape(Mouse_Arrow);
     }
  };

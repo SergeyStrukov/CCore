@@ -27,6 +27,136 @@ namespace Video {
 
 namespace Private {
 
+/* SysGuard() */
+
+void SysGuardFailed(const char *format,Sys::ErrorType error=Sys::NonNullError())
+ {
+  Printf(Exception,format,PrintError(error));
+ }
+
+void SysGuard(const char *format,bool ok)
+ { 
+  if( !ok ) SysGuardFailed(format); 
+ }
+
+/* class WindowBuf */
+
+class WindowBuf : NoCopy
+ {
+   Win32::HGDevice hGD;
+   Win32::HGDObject old_bmp;
+   
+   Win32::HGDObject bmp;
+   void *mem = 0 ;
+   Point size;
+   
+  private: 
+  
+   void setSize(Point new_size,bool first_time)
+    {
+     const char *format="CCore::Video::Private::WindowBuf::setSize(...) : #;";
+    
+     if( new_size<=Null )
+       {
+        Printf(Exception,format,"bad size");
+       }
+ 
+     void *new_mem;
+     
+     Win32::BitmapInfo info;
+     
+     info.header.cb=sizeof (Win32::BitmapInfoHeader);
+     info.header.dx=new_size.x;
+     info.header.dy=-new_size.y;
+     info.header.planes=1;
+     info.header.bpp=32;
+     info.header.compression=Win32::Bitmap_RGB;
+     
+     info.header.image_size=0;
+     info.header.x_ppm=0;
+     info.header.y_ppm=0;
+     info.header.colors_used=1;
+     info.header.colors_important=0;
+     
+     info.colors[0].blue=0;
+     info.colors[0].green=0;
+     info.colors[0].red=0;
+     info.colors[0].alpha=0;
+     
+     Win32::HGDObject new_bmp=Win32::ToGDObject(Win32::CreateDIBSection(0,&info,Win32::DIB_RGBColors,&new_mem,0,0));
+    
+     SysGuard(format,new_bmp!=0);
+ 
+     if( first_time )
+       {
+        old_bmp=Win32::SelectObject(hGD,new_bmp);  
+       }  
+     else
+       {
+        Win32::SelectObject(hGD,new_bmp);  
+        
+        Win32::DeleteObject(bmp);
+       }
+     
+     bmp=new_bmp;
+     mem=new_mem; 
+     size=new_size;  
+    }
+   
+  public:
+  
+   WindowBuf()
+    {
+     const char *format="CCore::Video::Private::WindowBuf::WindowBuf(...) : #;";
+    
+     hGD=Win32::CreateCompatibleDC(0);
+    
+     SysGuard(format,hGD!=0);
+    }
+   
+   ~WindowBuf()
+    {
+     if( mem )
+       {
+        Win32::SelectObject(hGD,old_bmp);
+      
+        Win32::DeleteObject(bmp);
+       }
+     
+     Win32::DeleteDC(hGD);
+    }
+   
+   Point getSize() const { return size; }
+   
+   void * getMem() const { return mem; }
+   
+   ColorPlane getPlane() const { return ColorPlane(mem,size.x,size.y,size.x*4); }
+   
+   void setSize(Point new_size)
+    {
+     if( mem )
+       {
+        if( new_size!=size ) setSize(new_size,false);
+       }
+     else
+       {
+        setSize(new_size,true);
+       }
+    }
+   
+   void draw(Win32::HGDevice dstGD,Pane pane)
+    {
+     const char *format="CCore::Video::Private::WindowBuf::draw(...) : #;";
+     
+     if( !mem )
+       {
+        Printf(Exception,format,"no buf");
+       }
+     
+     SysGuard(format, Win32::BitBlt(dstGD,pane.x,pane.y,pane.dx,pane.dy,hGD,pane.x,pane.y,Win32::RasterOp_Copy) );
+    }
+ };
+
 /* class WindowsControl */
 
 class WindowsControl : public WinControl
@@ -34,6 +164,11 @@ class WindowsControl : public WinControl
    Win32::HWindow hWnd = 0 ;
    bool is_main = false ;
    bool correct_max_size = false ;
+   
+   Point origin;
+   
+   WindowBuf buf;
+   bool buf_dirty = true ;
    
   private: 
    
@@ -83,16 +218,6 @@ class WindowsControl : public WinControl
      GuardMaxSize(format,max_size);
      
      GuardPane(format,pane,max_size);
-    }
-   
-   static void SysGuardFailed(const char *format,Sys::ErrorType error=Sys::NonNullError())
-    {
-     Printf(Exception,format,PrintError(error));
-    }
-
-   static void SysGuard(const char *format,bool ok)
-    { 
-     if( !ok ) SysGuardFailed(format); 
     }
    
    static Win32::HCursor CursorTable[];
@@ -166,9 +291,9 @@ class WindowsControl : public WinControl
 
   private: 
    
-   static VKey MapVKey(Win32::MsgWParam vkey)
+   static VKey ToVKey(Win32::MsgWParam wParam)
     {
-     switch( vkey )
+     switch( wParam )
        {
         // TODO
       
@@ -178,22 +303,90 @@ class WindowsControl : public WinControl
    
    static KeyMod GetKeyMod(bool ext)
     {
-     KeyMod kmod=KeyMod(0);
+     KeyMod kmod=KeyMod_Null;
      
-     if( ext ) kmod|=Key_Ext;
+     if( ext ) kmod|=KeyMod_Ext;
      
-     if( Win32::GetKeyState(Win32::VK_Shift)&Win32::KeyStateDown ) kmod|=Key_Shift;
+     if( Win32::GetKeyState(Win32::VK_Shift)&Win32::KeyStateDown ) kmod|=KeyMod_Shift;
 
-     if( Win32::GetKeyState(Win32::VK_Control)&Win32::KeyStateDown ) kmod|=Key_Ctrl;
+     if( Win32::GetKeyState(Win32::VK_Control)&Win32::KeyStateDown ) kmod|=KeyMod_Ctrl;
      
-     if( Win32::GetKeyState(Win32::VK_CapsLock)&Win32::KeyStateToggle ) kmod|=Key_CapsLock;
+     if( Win32::GetKeyState(Win32::VK_CapsLock)&Win32::KeyStateToggle ) kmod|=KeyMod_CapsLock;
      
-     if( Win32::GetKeyState(Win32::VK_NumLock)&Win32::KeyStateToggle ) kmod|=Key_NumLock;
+     if( Win32::GetKeyState(Win32::VK_NumLock)&Win32::KeyStateToggle ) kmod|=KeyMod_NumLock;
      
-     if( Win32::GetKeyState(Win32::VK_Scroll)&Win32::KeyStateToggle ) kmod|=Key_ScrollLock;
+     if( Win32::GetKeyState(Win32::VK_Scroll)&Win32::KeyStateToggle ) kmod|=KeyMod_ScrollLock;
      
      return kmod;
     }
+   
+   static MouseKey ToMouseKey(Win32::MsgWParam wParam)
+    {
+     MouseKey mkey=MouseKey_Null;
+     
+     if( wParam&Win32::MouseKey_Left ) mkey|=MouseKey_Left;
+     
+     if( wParam&Win32::MouseKey_Right ) mkey|=MouseKey_Right;
+     
+     if( wParam&Win32::MouseKey_Shift ) mkey|=MouseKey_Shift;
+     
+     if( wParam&Win32::MouseKey_Control ) mkey|=MouseKey_Ctrl;
+     
+     if( Win32::GetKeyState(Win32::VK_Alt)&Win32::KeyStateDown ) mkey|=MouseKey_Alt;
+     
+     return mkey;
+    }
+   
+   static Point ToPoint(Win32::MsgLParam lParam)
+    {
+     return Point(Win32::SLoWord(lParam),Win32::SHiWord(lParam));
+    }
+   
+   static Point ToSize(Win32::MsgLParam lParam)
+    {
+     return Point(Win32::LoWord(lParam),Win32::HiWord(lParam));
+    }
+   
+   static Pane ToPane(Win32::Rectangle r)
+    {
+     return Pane(r.left,r.top,r.right-r.left,r.bottom-r.top);
+    }
+
+   class WindowPaint : NoCopy
+    {
+      Win32::HWindow hWnd;
+      Win32::PaintData pd;
+      Win32::HGDevice hGD;
+      
+     public:
+     
+      explicit WindowPaint(Win32::HWindow hWnd_)
+       {
+        const char *format="CCore::Video::Private::WindowsControl::WindowPaint::WindowPaint(...) : #;";
+       
+        if( hWnd_==0 )
+          {
+           Printf(Exception,format,"null hWnd");
+          }
+        
+        hWnd=hWnd_;
+        
+        hGD=Win32::BeginPaint(hWnd_,&pd); 
+        
+        SysGuard(format,hGD!=0);
+       }
+       
+      ~WindowPaint()
+       {
+        Win32::EndPaint(hWnd,&pd); // ignore errors 
+       }
+       
+      Win32::HGDevice getGD() const { return hGD; } 
+      
+      Pane getPane() const { return ToPane(pd.rect); }
+      
+      bool getEraseFlag() const { return pd.erase_flag; }
+    };
    
    Win32::MsgResult msgProc(Win32::HWindow hWnd_,Win32::MsgCode message,Win32::MsgWParam wParam,Win32::MsgLParam lParam)
     {
@@ -203,6 +396,7 @@ class WindowsControl : public WinControl
          {
           hWnd=hWnd_;
           is_alive=true;
+          origin=Null;
           
           if( is_main ) HMainWindow=hWnd_;
           
@@ -230,34 +424,47 @@ class WindowsControl : public WinControl
           return Win32::DefWindowProcA(hWnd_,message,wParam,lParam);
          }
         
-#if 0
-         
         case Win32::WM_Paint :
          {
-          // TODO
+          WindowPaint wp(hWnd);
+
+          if( !buf_dirty ) buf.draw(wp.getGD(),wp.getPane());
          }
-        break;
+        return 0;
         
         case Win32::WM_Move :
          {
-          // TODO
+          Point point=ToPoint(lParam);
+          
+          origin=point;
          }
-        break;
+        return 0;
         
         case Win32::WM_Size :
          {
-          // TODO
+          Point size=ToSize(lParam);
+          
+          if( correct_max_size && size>Null )
+            {
+             max_size=Sup(max_size,size);
+             
+             buf.setSize(max_size);
+             
+             buf_dirty=true;
+            
+             correct_max_size=false;
+            }
+          
+          frame->setSize(size,buf_dirty);
          }
-        break;
-        
-#endif
+        return 0;
         
         case Win32::WM_KeyDown :
          {
           unsigned repeat=lParam&0xFFFF;
           bool ext=(lParam>>24)&1;
           
-          VKey vkey=MapVKey(wParam);
+          VKey vkey=ToVKey(wParam);
           KeyMod kmod=GetKeyMod(ext);
           
           if( repeat>1 )
@@ -267,91 +474,175 @@ class WindowsControl : public WinControl
          }
         return 0;
         
-#if 0
-        
         case Win32::WM_SysKeyDown :
          {
-          // TODO
+          unsigned repeat=lParam&0xFFFF;
+          bool ext=(lParam>>24)&1;
+          bool alt=(lParam>>29)&1;
+          
+          VKey vkey=ToVKey(wParam);
+          KeyMod kmod=GetKeyMod(ext);
+          
+          if( alt ) kmod|=KeyMod_Alt;
+          
+          if( repeat>1 )
+            frame->key(vkey,kmod,repeat);
+          else
+            frame->key(vkey,kmod);
          }
-        break;
+        return 0;
         
         case Win32::WM_KeyUp :
          {
-          // TODO
+          unsigned repeat=lParam&0xFFFF;
+          bool ext=(lParam>>24)&1;
+          
+          VKey vkey=ToVKey(wParam);
+          KeyMod kmod=GetKeyMod(ext);
+          
+          if( repeat>1 )
+            frame->keyUp(vkey,kmod,repeat);
+          else
+            frame->keyUp(vkey,kmod);
          }
-        break;
+        return 0;
         
         case Win32::WM_SysKeyUp :
          {
-          // TODO
+          unsigned repeat=lParam&0xFFFF;
+          bool ext=(lParam>>24)&1;
+          bool alt=(lParam>>29)&1;
+          
+          VKey vkey=ToVKey(wParam);
+          KeyMod kmod=GetKeyMod(ext);
+          
+          if( alt ) kmod|=KeyMod_Alt;
+          
+          if( repeat>1 )
+            frame->keyUp(vkey,kmod,repeat);
+          else
+            frame->keyUp(vkey,kmod);
          }
-        break;
+        return 0;
         
         case Win32::WM_Char :
          {
-          // TODO
+          if( wParam<256 )
+            {
+             char ch=(char)wParam;
+             unsigned repeat=lParam&0xFFFF;
+             
+             if( repeat>1 )
+               frame->putch(ch,repeat);
+             else
+               frame->putch(ch);
+            }
          }
-        break;
+        return 0;
         
         case Win32::WM_SysChar :
          {
-          // TODO
+          if( wParam<256 )
+            {
+             char ch=(char)wParam;
+             unsigned repeat=lParam&0xFFFF;
+             
+             if( repeat>1 )
+               frame->putchAlt(ch,repeat);
+             else
+               frame->putchAlt(ch);
+            }
          }
-        break;
+        return 0;
         
         case Win32::WM_LButtonDown :
          {
-          // TODO
+          MouseKey mkey=ToMouseKey(wParam);
+          Point point=ToPoint(lParam);
+          
+          frame->clickLeft(point,mkey);
          }
-        break;
+        return 0;
         
         case Win32::WM_LButtonUp :
          {
-          // TODO
+          MouseKey mkey=ToMouseKey(wParam);
+          Point point=ToPoint(lParam);
+          
+          frame->upLeft(point,mkey);
          }
-        break;
+        return 0;
         
         case Win32::WM_LButtonDClick :
          {
-          // TODO
+          MouseKey mkey=ToMouseKey(wParam);
+          Point point=ToPoint(lParam);
+          
+          frame->dclickLeft(point,mkey);
          }
-        break;
+        return 0;
         
         case Win32::WM_RButtonDown :
          {
-          // TODO
+          MouseKey mkey=ToMouseKey(wParam);
+          Point point=ToPoint(lParam);
+          
+          frame->clickRight(point,mkey);
          }
-        break;
+        return 0;
         
         case Win32::WM_RButtonUp :
          {
-          // TODO
+          MouseKey mkey=ToMouseKey(wParam);
+          Point point=ToPoint(lParam);
+          
+          frame->upRight(point,mkey);
          }
-        break;
+        return 0;
         
         case Win32::WM_RButtonDClick :
          {
-          // TODO
+          MouseKey mkey=ToMouseKey(wParam);
+          Point point=ToPoint(lParam);
+          
+          frame->dclickRight(point,mkey);
          }
-        break;
+        return 0;
         
         case Win32::WM_MouseMove :
          {
-          // TODO
+          MouseKey mkey=ToMouseKey(wParam);
+          Point point=ToPoint(lParam);
+          
+          frame->move(point,mkey);
          }
-        break;
+        return 0;
         
         case Win32::WM_MouseWheel :
          {
-          // TODO
+          MouseKey mkey=ToMouseKey(Win32::LoWord(wParam));
+          int delta=Win32::SHiWord(wParam)/Win32::WheelDelta;
+          Point point=ToPoint(lParam);
+          
+          frame->wheel(point-origin,mkey,delta);
          }
-        break;
+        return 0;
+
+#if 0
+        
+        case Win32::WM_NcHitTest :
+         {
+          Point point=ToPoint(lParam);
+          
+          frame->setMouseShape(point-origin);
+         }
+        return Win32::HitCode_Client; 
         
         case Win32::WM_SetCursor :
          {
-          // TODO
+          // do nothing
          }
-        break;
+        return true;
         
 #endif        
         
@@ -415,6 +706,9 @@ class WindowsControl : public WinControl
      is_main=true;
      correct_max_size=true;
      max_size=max_size_;
+     buf_dirty=true;
+     
+     buf.setSize(max_size_);
      
      Win32::HWindow hWnd=Win32::CreateWindowExA(Win32::WindowStyleEx_OverlappedWindow,
                                                 Win32::MakeIntAtom(WindowClassObject.getAtom(format)),
@@ -441,6 +735,9 @@ class WindowsControl : public WinControl
      is_main=true;
      correct_max_size=false;
      max_size=max_size_;
+     buf_dirty=true;
+     
+     buf.setSize(max_size_);
      
      Win32::HWindow hWnd=Win32::CreateWindowExA(Win32::WindowStyleEx_OverlappedWindow,
                                                 Win32::MakeIntAtom(WindowClassObject.getAtom(format)),
@@ -462,6 +759,9 @@ class WindowsControl : public WinControl
      is_main=false;
      correct_max_size=false;
      max_size=max_size_;
+     buf_dirty=true;
+     
+     buf.setSize(max_size_);
      
      Win32::HWindow hWnd=Win32::CreateWindowExA(0,
                                                 Win32::MakeIntAtom(WindowClassObject.getAtom(format)),
@@ -483,6 +783,9 @@ class WindowsControl : public WinControl
      is_main=false;
      correct_max_size=false;
      max_size=max_size_;
+     buf_dirty=true;
+     
+     buf.setSize(max_size_);
      
      Win32::HWindow hParent;
      
@@ -538,6 +841,15 @@ class WindowsControl : public WinControl
      return !Win32::EnableWindow(hWnd,en);
     }
    
+   virtual void display(unsigned cmd_display)
+    {
+     const char *format="CCore::Video::Private::WindowsControl::display(...) : #;";
+     
+     guardAlive(format);
+     
+     Win32::ShowWindow(hWnd,cmd_display);
+    }
+   
    virtual void show()
     {
      const char *format="CCore::Video::Private::WindowsControl::show() : #;";
@@ -576,11 +888,22 @@ class WindowsControl : public WinControl
      rect.bottom=pane.y+pane.dy;
     
      Win32::InvalidateRect(hWnd,&rect,true); // ignore error
+     
+     buf_dirty=false;
     }
    
    virtual void invalidate()
     {
      Win32::InvalidateRect(hWnd,0,true); // ignore error
+     
+     buf_dirty=false;
+    }
+   
+   virtual ColorPlane getDrawPlane()
+    {
+     Win32::GdiFlush();
+     
+     return buf.getPlane();
     }
    
    virtual void captureMouse()

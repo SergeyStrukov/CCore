@@ -25,11 +25,14 @@ namespace Video {
 
 enum MouseKey : unsigned
  {
-  Mouse_Left  = 0x0001,
-  Mouse_Right = 0x0002,
+  MouseKey_Null  =      0,
+    
+  MouseKey_Left  = 0x0001,
+  MouseKey_Right = 0x0002,
  
-  Mouse_Shift = 0x0010,
-  Mouse_Ctrl  = 0x0020
+  MouseKey_Shift = 0x0010,
+  MouseKey_Ctrl  = 0x0020,
+  MouseKey_Alt   = 0x0040
  };
 
 inline MouseKey operator | (MouseKey a,MouseKey b) { return MouseKey(unsigned(a)|b); }

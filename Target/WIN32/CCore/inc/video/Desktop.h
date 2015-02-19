@@ -17,9 +17,13 @@
 #define CCore_inc_video_Desktop_h
 
 #include <CCore/inc/video/FrameWindow.h>
- 
+
 namespace CCore {
 namespace Video {
+
+/* types */
+
+using DesktopColor = RawColor32 ;
 
 /* classes */
 
@@ -44,6 +48,8 @@ class DefaultDesktopPtr : NoCopy
   public:
    
    explicit DefaultDesktopPtr(Desktop *ptr_) : ptr(ptr_) {}
+   
+   operator Desktop * () const { return ptr; }
    
    Desktop * operator -> () const { return ptr; }
  };

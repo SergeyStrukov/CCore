@@ -46,15 +46,17 @@ enum VKey : unsigned
 
 enum KeyMod : unsigned
  {
-  Key_Shift      = 0x0001,
-  Key_Ctrl       = 0x0002,
-  Key_Alt        = 0x0004,
+  KeyMod_Null       =      0,
+    
+  KeyMod_Shift      = 0x0001,
+  KeyMod_Ctrl       = 0x0002,
+  KeyMod_Alt        = 0x0004,
   
-  Key_CapsLock   = 0x0100,
-  Key_NumLock    = 0x0200,
-  Key_ScrollLock = 0x0400,
+  KeyMod_CapsLock   = 0x0100,
+  KeyMod_NumLock    = 0x0200,
+  KeyMod_ScrollLock = 0x0400,
   
-  Key_Ext        = 0x1000
+  KeyMod_Ext        = 0x1000
  };
 
 inline KeyMod operator | (KeyMod a,KeyMod b) { return KeyMod(unsigned(a)|b); }
