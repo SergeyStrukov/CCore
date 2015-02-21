@@ -25,6 +25,30 @@
 namespace CCore {
 namespace Video {
 
+/* functions */
+
+CmdDisplay MapCmdShow(unsigned cmd_show)
+ {
+  switch( cmd_show )
+    {
+     case Win32::CmdShow_Hide          : return CmdDisplay_Normal;
+     default:
+     case Win32::CmdShow_Normal        : return CmdDisplay_Normal;
+     case Win32::CmdShow_Minimized     : return CmdDisplay_Minimized;
+     case Win32::CmdShow_Maximized     : return CmdDisplay_Maximized;
+     case Win32::CmdShow_NoActivate    : return CmdDisplay_Normal;
+     case Win32::CmdShow_Show          : return CmdDisplay_Normal;
+     case Win32::CmdShow_Minimize      : return CmdDisplay_Minimized;
+     case Win32::CmdShow_MinNoActive   : return CmdDisplay_Minimized;
+     case Win32::CmdShow_NA            : return CmdDisplay_Normal;
+     case Win32::CmdShow_Restore       : return CmdDisplay_Restore;
+     case Win32::CmdShow_Default       : return CmdDisplay_Normal;
+     case Win32::CmdShow_ForceMinimize : return CmdDisplay_Minimized;
+    }
+ }
+
+/* namespace Private */
+
 namespace Private {
 
 /* SysGuard() */
@@ -459,6 +483,18 @@ class WindowsControl : public WinControl
          }
         return 0;
         
+        case Win32::WM_SetFocus :
+         {
+          frame->gainFocus();
+         }
+        return 0;
+        
+        case Win32::WM_KillFocus :
+         {
+          frame->looseFocus();
+         }
+        return 0; 
+        
         case Win32::WM_KeyDown :
          {
           unsigned repeat=lParam&0xFFFF;
@@ -832,6 +868,19 @@ class WindowsControl : public WinControl
    
    // operations
    
+   virtual void setMaxSize(Point max_size_)
+    {
+     const char *format="CCore::Video::Private::WindowsControl::setMaxSize(...) : #;";
+
+     GuardMaxSize(format,max_size_);
+     
+     max_size=max_size_;
+     
+     buf.setSize(max_size_);
+     
+     buf_dirty=true;
+    }
+   
    virtual bool enableUserInput(bool en)
     {
      const char *format="CCore::Video::Private::WindowsControl::enableUserInput(...) : #;";
@@ -841,13 +890,24 @@ class WindowsControl : public WinControl
      return !Win32::EnableWindow(hWnd,en);
     }
    
-   virtual void display(unsigned cmd_display)
+   virtual void display(CmdDisplay cmd_display)
     {
      const char *format="CCore::Video::Private::WindowsControl::display(...) : #;";
      
      guardAlive(format);
      
-     Win32::ShowWindow(hWnd,cmd_display);
+     unsigned cmd_show;
+     
+     switch( cmd_display )
+       {
+        default:
+        case CmdDisplay_Normal    : cmd_show=Win32::CmdShow_Normal; break;
+        case CmdDisplay_Minimized : cmd_show=Win32::CmdShow_Minimized; break;
+        case CmdDisplay_Maximized : cmd_show=Win32::CmdShow_Maximized; break;
+        case CmdDisplay_Restore   : cmd_show=Win32::CmdShow_Restore; break;
+       }
+     
+     Win32::ShowWindow(hWnd,cmd_show);
     }
    
    virtual void show()

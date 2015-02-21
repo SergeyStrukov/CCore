@@ -26,6 +26,16 @@
 namespace CCore {
 namespace Video {
 
+/* consts */
+
+enum CmdDisplay : unsigned
+ {
+  CmdDisplay_Normal,
+  CmdDisplay_Minimized,
+  CmdDisplay_Maximized,
+  CmdDisplay_Restore
+ };
+
 /* classes */
 
 struct Desktop;
@@ -85,11 +95,15 @@ class WinControl : public MemBase_nocopy
    
    bool isDead() const { return !is_alive; }
    
+   Point getMaxSize() const { return max_size; }
+   
    // operations
+   
+   virtual void setMaxSize(Point max_size)=0;
    
    virtual bool enableUserInput(bool en)=0; // return previous
    
-   virtual void display(unsigned cmd_display)=0;
+   virtual void display(CmdDisplay cmd_display)=0;
    
    virtual void show()=0;
    
@@ -171,12 +185,17 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
    
-   virtual void tick()
+   // keyboard
+   
+   virtual void gainFocus()
     {
      // do nothing
     }
- 
-   // keyboard
+   
+   virtual void looseFocus()
+    {
+     // do nothing
+    }
    
    virtual void key(VKey vkey,KeyMod kmod)
     {

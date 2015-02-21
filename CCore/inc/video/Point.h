@@ -160,6 +160,10 @@ inline Pane Inf(Pane a,Pane b)
   return Inf_nonempty(a,b);
  }
 
+inline Pane Extent(Point base,int dx,int dy) { return Pane(base.x,base.y,dx,dy); }
+
+inline Pane Extent(Point base,Point size) { return Pane(base.x,base.y,size.x,size.y); }
+
 } // namespace Video
 } // namespace CCore
  

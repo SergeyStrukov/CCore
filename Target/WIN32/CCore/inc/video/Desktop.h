@@ -25,6 +25,10 @@ namespace Video {
 
 using DesktopColor = RawColor32 ;
 
+/* functions */
+
+CmdDisplay MapCmdShow(unsigned cmd_show);
+
 /* classes */
 
 struct DesktopConfig;
