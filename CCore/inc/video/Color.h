@@ -37,6 +37,12 @@ const Clr MaxClr = 255 ;
 
 //enum ColorName;
 
+class RawColor16;
+
+class RawColor24;
+
+class RawColor24Inv;
+
 class RawColor32;
 
 class RawColor32Inv;
@@ -74,6 +80,97 @@ inline constexpr Clr GreenOf(ColorName cname) { return Clr(cname>>8); }
 inline constexpr Clr BlueOf(ColorName cname) { return Clr(cname); }
 
 inline constexpr ColorName RGBColor(Clr r,Clr g,Clr b) { return ColorName(b|(uint32(g)<<8)|(uint32(r)<<16)); }
+
+/* class RawColor16 */
+
+class RawColor16
+ {
+  public:
+  
+   using Raw = uint16 ;
+  
+   static const ulen RawCount = 1 ;
+  
+  private:
+  
+   Raw color[RawCount];
+  
+  private:
+  
+   static uint16 Pack565(uint16 r,uint16 g,uint16 b) { return (r<<11)|(g<<5)|b; }
+  
+  public:
+  
+   RawColor16(ColorName cname=Black) { set(cname); }
+   
+   // methods
+   
+   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   
+   void set(Clr r,Clr g,Clr b) { color[0]=Pack565(r>>3,g>>2,b>>3); }
+  
+   void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; }
+   
+   void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; }
+ };
+
+/* class RawColor24 */
+
+class RawColor24
+ {
+  public:
+  
+   using Raw = uint8 ;
+  
+   static const ulen RawCount = 3 ;
+  
+  private:
+  
+   Raw color[RawCount];
+  
+  public:
+  
+   RawColor24(ColorName cname=Black) { set(cname); }
+   
+   // methods
+   
+   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   
+   void set(Clr r,Clr g,Clr b) { color[0]=r; color[1]=g; color[2]=b; }
+  
+   void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; dst[1]=color[1]; dst[2]=color[2]; }
+   
+   void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; color[1]=src[1]; color[2]=src[2]; }
+ };
+
+/* class RawColor24Inv */
+
+class RawColor24Inv
+ {
+  public:
+  
+   using Raw = uint8 ;
+  
+   static const ulen RawCount = 3 ;
+  
+  private:
+  
+   Raw color[RawCount];
+  
+  public:
+  
+   RawColor24Inv(ColorName cname=Black) { set(cname); }
+   
+   // methods
+   
+   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   
+   void set(Clr r,Clr g,Clr b) { color[0]=b; color[1]=g; color[2]=r; }
+  
+   void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; dst[1]=color[1]; dst[2]=color[2]; }
+   
+   void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; color[1]=src[1]; color[2]=src[2]; }
+ };
 
 /* class RawColor32 */
 

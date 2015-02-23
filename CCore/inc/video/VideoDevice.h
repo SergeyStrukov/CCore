@@ -31,7 +31,9 @@ enum ColorMode
   
   ColorMode16,
   ColorMode24,
-  ColorMode32
+  ColorMode24Inv,
+  ColorMode32,
+  ColorMode32Inv
  };
 
 /* classes */
@@ -53,9 +55,11 @@ class MultiMode
    
    union Union
     {
-     T<Color16> obj16;
-     T<Color24> obj24;
-     T<Color32> obj32;
+     T<RawColor16>    obj16;
+     T<RawColor24>    obj24;
+     T<RawColor24Inv> obj24inv;
+     T<RawColor32>    obj32;
+     T<RawColor32Inv> obj32inv;
      
      Union() {}
     };
@@ -81,9 +85,11 @@ class MultiMode
      
      switch( mode_ )
        {
-        case ColorMode16 : CreateAt(u.obj16); func(u.obj16); break;
-        case ColorMode24 : CreateAt(u.obj24); func(u.obj24); break;
-        case ColorMode32 : CreateAt(u.obj32); func(u.obj32); break;
+        case ColorMode16    : CreateAt(u.obj16);    func(u.obj16);    break;
+        case ColorMode24    : CreateAt(u.obj24);    func(u.obj24);    break;
+        case ColorMode24Inv : CreateAt(u.obj24inv); func(u.obj24inv); break;
+        case ColorMode32    : CreateAt(u.obj32);    func(u.obj32);    break;
+        case ColorMode32Inv : CreateAt(u.obj32inv); func(u.obj32inv); break;
        }
     }
    
@@ -99,9 +105,11 @@ class MultiMode
      
      switch( mode )
        {
-        case ColorMode16 : func(u.obj16); break;
-        case ColorMode24 : func(u.obj24); break;
-        case ColorMode32 : func(u.obj32); break;
+        case ColorMode16    : func(u.obj16);    break;
+        case ColorMode24    : func(u.obj24);    break;
+        case ColorMode24Inv : func(u.obj24inv); break;
+        case ColorMode32    : func(u.obj32);    break;
+        case ColorMode32Inv : func(u.obj32inv); break;
        }
     }
  };
@@ -111,9 +119,9 @@ class MultiMode
 struct VideoMode
  {
   ColorMode mode;
-  unsigned dx;
-  unsigned dy;
-  unsigned freq; // Hz
+  int dx;
+  int dy;
+  int freq; // Hz
   
   VideoMode() : mode(ColorMode_none),dx(0),dy(0),freq(0) {}
   
@@ -134,8 +142,8 @@ struct VideoMode
 
 struct VideoDim
  {
-  unsigned hlen; // mm
-  unsigned vlen; // mm
+  int hlen; // mm
+  int vlen; // mm
   
   VideoDim() : hlen(0),vlen(0) {}
  };
@@ -160,17 +168,7 @@ struct VideoDevice
   
   virtual VideoMode getVideoMode() const =0;
   
-  virtual FrameBuf<Color16> getBuf16() const =0;
-  
-  virtual FrameBuf<Color24> getBuf24() const =0;
-  
-  virtual FrameBuf<Color32> getBuf32() const =0;
-  
-  void getBuf(FrameBuf<Color16> &ret) const { ret=getBuf16(); }
-  
-  void getBuf(FrameBuf<Color24> &ret) const { ret=getBuf24(); }
-  
-  void getBuf(FrameBuf<Color32> &ret) const { ret=getBuf32(); }
+  virtual ColorPlane getPlane() const =0;
   
   // synchronized
   

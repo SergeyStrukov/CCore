@@ -50,12 +50,12 @@ class VideoConsole : NoCopy , VideoDevice::Control
    
    struct InitFunc
     {
-     VideoDevice *dev;
+     ColorPlane plane;
      
-     explicit InitFunc(VideoDevice *dev_) : dev(dev_) {}
+     explicit InitFunc(const ColorPlane &plane_) : plane(plane_) {}
      
      template <class T>
-     void operator () (T &con) { con.init(dev); }
+     void operator () (T &con) { con.init(plane); }
     };
    
    struct PrintFunc

@@ -51,16 +51,12 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    bool first = true ;
    bool stop_on_exit = false ;
    
-   FrameBuf<Color16> buf16;
-   FrameBuf<Color24> buf24;
-   FrameBuf<Color32> buf32;
-   
+   VideoDim video_dim;
    VideoMode mode;
+   ColorPlane plane;
    
    DynArray<VideoMode> mode_list;
    DynArray<EDIDTimingDesc> desc_list;
-   
-   VideoDim video_dim;
    
    enum Events
     {
@@ -80,8 +76,6 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
   private:
    
    using Hook = AttachmentHost<Control>::Hook ;
-   
-   void finish_init(const EDIDTimingDesc &desc,ColorMode color_mode);
    
    void init_first(const EDIDTimingDesc &desc,ColorMode color_mode);
    
@@ -132,12 +126,8 @@ class VideoControl : public ObjBase , public VideoDevice , public Funchor_nocopy
    virtual ColorMode getColorMode() const;
    
    virtual VideoMode getVideoMode() const;
-   
-   virtual FrameBuf<Color16> getBuf16() const;
-   
-   virtual FrameBuf<Color24> getBuf24() const;
-   
-   virtual FrameBuf<Color32> getBuf32() const;
+
+   virtual ColorPlane getPlane() const;
    
    virtual void attach(Control *ctrl);
    

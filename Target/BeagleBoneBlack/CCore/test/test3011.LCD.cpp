@@ -55,11 +55,11 @@ class Test : NoCopy , Video::VideoDevice::Control
      
      switch( dev->getColorMode() )
        {
-        case Video::ColorMode16 : dev->getBuf16().test(); break;
+        case Video::ColorMode16 : Video::FrameBuf<Video::RawColor16>(dev->getPlane()).test(); break;
         
-        case Video::ColorMode24 : dev->getBuf24().test(); break;
+        case Video::ColorMode24 : Video::FrameBuf<Video::RawColor24>(dev->getPlane()).test(); break;
         
-        case Video::ColorMode32 : dev->getBuf32().test(); break;
+        case Video::ColorMode32Inv : Video::FrameBuf<Video::RawColor32Inv>(dev->getPlane()).test(); break;
        }
     }
    
@@ -119,8 +119,8 @@ const char *const Testit<3011>::Name="Test3011 LCD";
 template<>
 bool Testit<3011>::Main() 
  {
-  test1();
-  //test2();
+  //test1();
+  test2();
   //test3();
   
   return true;

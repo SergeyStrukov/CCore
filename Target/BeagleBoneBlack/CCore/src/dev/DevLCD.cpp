@@ -70,7 +70,7 @@ LCD::FrameBuf16::FrameBuf16(uint32 hlen,uint32 vlen,Space video_space)
   
   Range(base+1,15).set_null();
   
-  this->buf=Video::FrameBuf<Video::Color16>(base+16,hlen,vlen);
+  this->plane=Video::ColorPlane(base+16,hlen,vlen,hlen*2);
   this->base=base;
   this->lim=lim;
  }
@@ -92,7 +92,7 @@ LCD::FrameBuf24::FrameBuf24(uint32 hlen,uint32 vlen,Space video_space)
   
   Range(base+2,30).set_null();
 
-  this->buf=Video::FrameBuf<Video::Color24>(base+32,hlen,vlen);
+  this->plane=Video::ColorPlane(base+32,hlen,vlen,hlen*3);
   this->base=base;
   this->lim=lim;
  }
@@ -113,7 +113,7 @@ LCD::FrameBuf32::FrameBuf32(uint32 hlen,uint32 vlen,Space video_space)
   
   Range(base+1,7).set_null();
   
-  this->buf=Video::FrameBuf<Video::Color32>(base+8,hlen,vlen);
+  this->plane=Video::ColorPlane(base+8,hlen,vlen,hlen*4);
   this->base=base;
   this->lim=lim;
  }
@@ -369,7 +369,7 @@ void LCD::setClock(uint32 clock)
   } 
  }
 
-Video::FrameBuf<Video::Color16> LCD::init_first16(const Mode &mode,Space video_space)
+Video::ColorPlane LCD::init_first16(const Mode &mode,Space video_space)
  {
   FrameBuf16 frame(mode.hlen,mode.vlen,video_space);
   
@@ -377,10 +377,10 @@ Video::FrameBuf<Video::Color16> LCD::init_first16(const Mode &mode,Space video_s
   
   init(mode,frame.base,frame.lim,ColorFormat16);
   
-  return frame.buf;
+  return frame.plane;
  }
 
-Video::FrameBuf<Video::Color24> LCD::init_first24(const Mode &mode,Space video_space)
+Video::ColorPlane LCD::init_first24(const Mode &mode,Space video_space)
  {
   FrameBuf24 frame(mode.hlen,mode.vlen,video_space);
 
@@ -388,10 +388,10 @@ Video::FrameBuf<Video::Color24> LCD::init_first24(const Mode &mode,Space video_s
   
   init(mode,frame.base,frame.lim,ColorFormat24);
   
-  return frame.buf;
+  return frame.plane;
  }
 
-Video::FrameBuf<Video::Color32> LCD::init_first32(const Mode &mode,Space video_space)
+Video::ColorPlane LCD::init_first32(const Mode &mode,Space video_space)
  {
   FrameBuf32 frame(mode.hlen,mode.vlen,video_space);
   
@@ -399,7 +399,7 @@ Video::FrameBuf<Video::Color32> LCD::init_first32(const Mode &mode,Space video_s
   
   init(mode,frame.base,frame.lim,ColorFormat32);
   
-  return frame.buf;
+  return frame.plane;
  }
 
 void LCD::stop()
@@ -436,31 +436,31 @@ void LCD::stop()
      .setTo(bar);
  }
 
-Video::FrameBuf<Video::Color16> LCD::init16(const Mode &mode,Space video_space)
+Video::ColorPlane LCD::init16(const Mode &mode,Space video_space)
  {
   FrameBuf16 frame(mode.hlen,mode.vlen,video_space);
   
   init(mode,frame.base,frame.lim,ColorFormat16);
   
-  return frame.buf;
+  return frame.plane;
  }
 
-Video::FrameBuf<Video::Color24> LCD::init24(const Mode &mode,Space video_space)
+Video::ColorPlane LCD::init24(const Mode &mode,Space video_space)
  {
   FrameBuf24 frame(mode.hlen,mode.vlen,video_space);
   
   init(mode,frame.base,frame.lim,ColorFormat24);
   
-  return frame.buf;
+  return frame.plane;
  }
 
-Video::FrameBuf<Video::Color32> LCD::init32(const Mode &mode,Space video_space)
+Video::ColorPlane LCD::init32(const Mode &mode,Space video_space)
  {
   FrameBuf32 frame(mode.hlen,mode.vlen,video_space);
   
   init(mode,frame.base,frame.lim,ColorFormat32);
   
-  return frame.buf;
+  return frame.plane;
  }
 
 } // namespace Dev

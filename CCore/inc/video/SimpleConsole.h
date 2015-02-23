@@ -25,9 +25,9 @@ namespace Video {
 
 class DefaultFont;
 
-template <class Color> class CharPanel;
+template <class RawColor> class CharPanel;
 
-template <class Color> class SimpleConsole;
+template <class RawColor> class SimpleConsole;
 
 /* class DefaultFont */
 
@@ -41,8 +41,8 @@ class DefaultFont
    
   public:
   
-   static const unsigned DX = 10 ;
-   static const unsigned DY = 18 ;
+   static const int DX = 10 ;
+   static const int DY = 18 ;
 
    DefaultFont()
     {
@@ -61,9 +61,9 @@ class DefaultFont
   
    // properties
    
-   unsigned dX() const { return DX; }
+   int dX() const { return DX; }
   
-   unsigned dY() const { return DY; }
+   int dY() const { return DY; }
    
    class Pattern
     {
@@ -75,30 +75,30 @@ class DefaultFont
      
       // properties
      
-      unsigned dX() const { return DX; }
+      int dX() const { return DX; }
       
-      bool operator [] (unsigned x) const { return pixel[x]; }
+      bool operator [] (int x) const { return pixel[x]; }
     };
   
-   Pattern operator [] (unsigned y) const { return Pattern(pixel+(y*DX)); }
+   Pattern operator [] (int y) const { return Pattern(pixel+(y*DX)); }
  };
 
-/* class CharPanel<Color> */
+/* class CharPanel<RawColor> */
 
-template <class Color> 
+template <class RawColor> 
 class CharPanel : NoCopy
  {
-   FrameBuf<Color> out;
+   FrameBuf<RawColor> out;
    
    ColorName back = Black ;
    ColorName fore = Silver ;
    ColorName line = Gray ;
    ColorName marker = Green ;
    
-   unsigned dx = 0 ;
-   unsigned dy = 0 ;
+   int dx = 0 ;
+   int dy = 0 ;
    
-   Color backup[DefaultFont::DX*DefaultFont::DY];
+   RawColor backup[DefaultFont::DX*DefaultFont::DY];
    
   public:
  
@@ -110,27 +110,27 @@ class CharPanel : NoCopy
    
    bool operator ! () const { return !dy; }
    
-   unsigned dX() const { return dx; }
+   int dX() const { return dx; }
    
-   unsigned dY() const { return dy; }
+   int dY() const { return dy; }
    
    // methods
    
-   void init(FrameBuf<Color> out);
+   void init(FrameBuf<RawColor> out);
    
-   void eraseLine(unsigned y);                       // y<dy
+   void eraseLine(int y);
    
-   void eraseLineLine(unsigned y);                   // y<dy
+   void eraseLineLine(int y);
    
-   void operator () (unsigned x,unsigned y,char ch); // x<dx && y<dy
+   void operator () (Point p,char ch);
    
-   void setMarker(unsigned x,unsigned y);            // x<dx && y<dy
+   void setMarker(Point p);
    
-   void clearMarker(unsigned x,unsigned y);          // x<dx && y<dy
+   void clearMarker(Point p);
  };
 
-template <class Color> 
-void CharPanel<Color>::init(FrameBuf<Color> out_)
+template <class RawColor> 
+void CharPanel<RawColor>::init(FrameBuf<RawColor> out_)
  {
   out=out_;
   
@@ -142,49 +142,48 @@ void CharPanel<Color>::init(FrameBuf<Color> out_)
   out.erase(back);
  }
 
-template <class Color> 
-void CharPanel<Color>::eraseLine(unsigned y)
+template <class RawColor> 
+void CharPanel<RawColor>::eraseLine(int y)
  {
-  out.block(0,y*DefaultFont::DY,out.dX(),DefaultFont::DY,back);
+  out.block(Pane(0,y*DefaultFont::DY,out.dX(),DefaultFont::DY),back);
  }
 
-template <class Color> 
-void CharPanel<Color>::eraseLineLine(unsigned y)
+template <class RawColor> 
+void CharPanel<RawColor>::eraseLineLine(int y)
  {
-  out.block(0,y*DefaultFont::DY,out.dX(),DefaultFont::DY-1,back);
+  out.block(Pane(0,y*DefaultFont::DY,out.dX(),DefaultFont::DY-1),back);
   
-  out.block(0,y*DefaultFont::DY+DefaultFont::DY-1,out.dX(),1,line);
+  out.block(Pane(0,y*DefaultFont::DY+DefaultFont::DY-1,out.dX(),1),line);
  }
 
-template <class Color> 
-void CharPanel<Color>::operator () (unsigned x,unsigned y,char ch)
+template <class RawColor> 
+void CharPanel<RawColor>::operator () (Point p,char ch)
  {
-  out.glyph(x*DefaultFont::DX,y*DefaultFont::DY,DefaultFont(ch),back,fore);
+  out.glyph(Point(p.x*DefaultFont::DX,p.y*DefaultFont::DY),DefaultFont(ch),back,fore);
  }
 
-template <class Color> 
-void CharPanel<Color>::setMarker(unsigned x,unsigned y)
+template <class RawColor> 
+void CharPanel<RawColor>::setMarker(Point p)
  {
-  out.save(x*DefaultFont::DX,y*DefaultFont::DY,DefaultFont::DX,DefaultFont::DY,backup);
+  out.save(Pane(p.x*DefaultFont::DX,p.y*DefaultFont::DY,DefaultFont::DX,DefaultFont::DY),backup);
   
-  out.glyph(x*DefaultFont::DX,y*DefaultFont::DY,DefaultFont(),marker);
+  out.glyph(Point(p.x*DefaultFont::DX,p.y*DefaultFont::DY),DefaultFont(),marker);
  }
 
-template <class Color> 
-void CharPanel<Color>::clearMarker(unsigned x,unsigned y)
+template <class RawColor> 
+void CharPanel<RawColor>::clearMarker(Point p)
  {
-  out.load(x*DefaultFont::DX,y*DefaultFont::DY,DefaultFont::DX,DefaultFont::DY,backup);
+  out.load(Pane(p.x*DefaultFont::DX,p.y*DefaultFont::DY,DefaultFont::DX,DefaultFont::DY),backup);
  }
 
-/* class SimpleConsole<Color> */
+/* class SimpleConsole<RawColor> */
 
-template <class Color> 
+template <class RawColor> 
 class SimpleConsole : NoCopy
  {
-   CharPanel<Color> panel;
+   CharPanel<RawColor> panel;
    
-   unsigned x = 0 ;
-   unsigned y = 0 ;
+   Point pos;
    
    bool marker = false ;
  
@@ -206,91 +205,80 @@ class SimpleConsole : NoCopy
    
    // methods
    
-   void init(FrameBuf<Color> out);
-   
-   template <class Dev>
-   void init(Dev *dev)
-    {
-     FrameBuf<Color> out;
-     
-     dev->getBuf(out);
-     
-     init(out);
-    }
+   void init(FrameBuf<RawColor> out);
    
    void print(PtrLen<const char> str);
    
    void toggleMarker();
  };
 
-template <class Color> 
-void SimpleConsole<Color>::newLine()
+template <class RawColor> 
+void SimpleConsole<RawColor>::newLine()
  {
-  x=0;
+  pos.x=0;
   
-  if( ++y>=panel.dY() )
+  if( ++pos.y>=panel.dY() )
     {
-     y=0;
+     pos.y=0;
     }
   
-  if( y+1<panel.dY() )
+  if( pos.y+1<panel.dY() )
     {
-     panel.eraseLine(y);
+     panel.eraseLine(pos.y);
      
-     panel.eraseLineLine(y+1);
+     panel.eraseLineLine(pos.y+1);
     }
   else
     {
-     panel.eraseLine(y);
+     panel.eraseLine(pos.y);
      
      panel.eraseLineLine(0);
     }
  }
 
-template <class Color> 
-void SimpleConsole<Color>::printChar(char ch)
+template <class RawColor> 
+void SimpleConsole<RawColor>::printChar(char ch)
  {
   switch( ch )
     {
-     case '\r' : x=0; break;
+     case '\r' : pos.x=0; break;
      
      case '\n' : newLine(); break;
      
-     case '\b' : if( x>0 ) x--; break;
+     case '\b' : if( pos.x>0 ) pos.x--; break;
       
      default:
       {
-       panel(x,y,ch);
+       panel(pos,ch);
        
-       if( ++x>=panel.dX() ) newLine();
+       if( ++pos.x>=panel.dX() ) newLine();
       }
     }
  }
 
-template <class Color> 
-void SimpleConsole<Color>::init(FrameBuf<Color> out)
+template <class RawColor> 
+void SimpleConsole<RawColor>::init(FrameBuf<RawColor> out)
  {
-  x=0;
-  y=0;
+  pos=Null;
   marker=false;
   
   panel.init(out);
  }
 
-template <class Color> 
-void SimpleConsole<Color>::print(PtrLen<const char> str)
+template <class RawColor> 
+void SimpleConsole<RawColor>::print(PtrLen<const char> str)
  {
   if( !panel ) return;
   
-  if( marker ) panel.clearMarker(x,y);
+  if( marker ) panel.clearMarker(pos);
   
   for(char ch : str ) printChar(ch);
   
-  if( marker ) panel.setMarker(x,y);
+  if( marker ) panel.setMarker(pos);
  }
 
-template <class Color> 
-void SimpleConsole<Color>::toggleMarker()
+template <class RawColor> 
+void SimpleConsole<RawColor>::toggleMarker()
  {
   if( !panel ) return;
   
@@ -298,13 +286,13 @@ void SimpleConsole<Color>::toggleMarker()
     {
      marker=false;
      
-     panel.clearMarker(x,y);
+     panel.clearMarker(pos);
     }
   else
     {
      marker=true;
      
-     panel.setMarker(x,y);
+     panel.setMarker(pos);
     }
  }
 

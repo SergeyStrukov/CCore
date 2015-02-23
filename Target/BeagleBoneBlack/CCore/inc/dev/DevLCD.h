@@ -17,7 +17,7 @@
 #define CCore_inc_dev_DevLCD_h
 
 #include <CCore/inc/video/EDID.h>
-#include <CCore/inc/video/FrameBuf.h>
+#include <CCore/inc/video/Color.h>
 
 #include <CCore/inc/Task.h>
 #include <CCore/inc/InstanceLock.h>
@@ -56,7 +56,7 @@ class LCD : InstanceLock<LCD> , public Funchor
 
    struct FrameBuf16
     {
-     Video::FrameBuf<Video::Color16> buf;
+     Video::ColorPlane plane;
      void *base;
      void *lim;
      
@@ -65,7 +65,7 @@ class LCD : InstanceLock<LCD> , public Funchor
    
    struct FrameBuf24
     {
-     Video::FrameBuf<Video::Color24> buf;
+     Video::ColorPlane plane;
      void *base;
      void *lim;
      
@@ -74,7 +74,7 @@ class LCD : InstanceLock<LCD> , public Funchor
    
    struct FrameBuf32
     {
-     Video::FrameBuf<Video::Color32> buf;
+     Video::ColorPlane plane;
      void *base;
      void *lim;
      
@@ -118,19 +118,19 @@ class LCD : InstanceLock<LCD> , public Funchor
    
    void setClock(uint32 clock); // MHz
    
-   Video::FrameBuf<Video::Color16> init_first16(const Mode &mode,Space video_space);
+   Video::ColorPlane init_first16(const Mode &mode,Space video_space); // Video::RawColor16
    
-   Video::FrameBuf<Video::Color24> init_first24(const Mode &mode,Space video_space);
+   Video::ColorPlane init_first24(const Mode &mode,Space video_space); // Video::RawColor24
    
-   Video::FrameBuf<Video::Color32> init_first32(const Mode &mode,Space video_space);
+   Video::ColorPlane init_first32(const Mode &mode,Space video_space); // Video::RawColor32Inv
    
    void stop();
    
-   Video::FrameBuf<Video::Color16> init16(const Mode &mode,Space video_space);
+   Video::ColorPlane init16(const Mode &mode,Space video_space); // Video::RawColor16
    
-   Video::FrameBuf<Video::Color24> init24(const Mode &mode,Space video_space);
+   Video::ColorPlane init24(const Mode &mode,Space video_space); // Video::RawColor24
    
-   Video::FrameBuf<Video::Color32> init32(const Mode &mode,Space video_space);
+   Video::ColorPlane init32(const Mode &mode,Space video_space); // Video::RawColor32Inv
  };
 
 } // namespace Dev

@@ -34,7 +34,7 @@ bool VideoConsole::open()
      {
       Mutex::Lock lock(mutex);
       
-      con.init(mode,InitFunc(dev));
+      con.init(mode,InitFunc(dev->getPlane()));
      } 
         
      dev->setTick(500_msec);

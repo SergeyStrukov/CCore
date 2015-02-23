@@ -49,7 +49,7 @@ int main(int argc,const char *argv[])
   //Testit<7>().run();
   //Testit<8>().run();
   //Testit<9>().run();
-  //Testit<10>().run();
+  Testit<10>().run();
   //Testit<11>().run();
   //Testit<12>().run();
   //Testit<13>().run();
@@ -219,6 +219,10 @@ void before_main()
   Video::VideoControl vctrl("i2c[0]");
   
   ObjMaster vctrl_master(vctrl,"video");
+  
+#endif
+  
+#if 1  
   
   Video::VideoConsole vcon("video");
   

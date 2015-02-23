@@ -28,38 +28,6 @@ namespace Video {
 
 Space VideoControl::VideoSpace=Sys::AllocVideoSpace();
 
-void VideoControl::finish_init(const EDIDTimingDesc &desc,ColorMode color_mode)
- {
-  switch( color_mode )
-    {
-     case ColorMode16 :
-      {
-       buf16=lcd.init_first16(desc,VideoSpace);
-       buf24=DefaultValue();
-       buf32=DefaultValue();
-      }
-     break;
-     
-     case ColorMode24 :
-      {
-       buf16=DefaultValue();
-       buf24=lcd.init_first24(desc,VideoSpace);
-       buf32=DefaultValue();
-      }
-     break;
-     
-     case ColorMode32 :
-      {
-       buf16=DefaultValue();
-       buf24=DefaultValue();
-       buf32=lcd.init_first32(desc,VideoSpace);
-      }
-     break; 
-    }
-  
-  hdmi.enableVIP();
- }
-
 void VideoControl::init_first(const EDIDTimingDesc &desc,ColorMode color_mode)
  {
   hdmi.setMode(desc);
@@ -68,7 +36,28 @@ void VideoControl::init_first(const EDIDTimingDesc &desc,ColorMode color_mode)
    
   lcd.reset_first();
    
-  finish_init(desc,color_mode);
+  switch( color_mode )
+    {
+     case ColorMode16 :
+      {
+       plane=lcd.init_first16(desc,VideoSpace);
+      }
+     break;
+     
+     case ColorMode24 :
+      {
+       plane=lcd.init_first24(desc,VideoSpace);
+      }
+     break;
+     
+     case ColorMode32Inv :
+      {
+       plane=lcd.init_first32(desc,VideoSpace);
+      }
+     break; 
+    }
+  
+  hdmi.enableVIP();
  }
 
 void VideoControl::init(const EDIDTimingDesc &desc,ColorMode color_mode)
@@ -79,7 +68,28 @@ void VideoControl::init(const EDIDTimingDesc &desc,ColorMode color_mode)
    
   lcd.stop();
   
-  finish_init(desc,color_mode);
+  switch( color_mode )
+    {
+     case ColorMode16 :
+      {
+       plane=lcd.init16(desc,VideoSpace);
+      }
+     break;
+     
+     case ColorMode24 :
+      {
+       plane=lcd.init24(desc,VideoSpace);
+      }
+     break;
+     
+     case ColorMode32Inv :
+      {
+       plane=lcd.init32(desc,VideoSpace);
+      }
+     break; 
+    }
+  
+  hdmi.enableVIP();
  }
 
 void VideoControl::process(Dev::HDMI::IntInfo info)
@@ -231,7 +241,7 @@ bool VideoControl::append(EDIDTimingDesc desc)
      
      mode_list.append_copy(mode);
      
-     mode.mode=ColorMode32;
+     mode.mode=ColorMode32Inv;
      
      mode_list.append_copy(mode);
      
@@ -356,20 +366,10 @@ VideoMode VideoControl::getVideoMode() const
  {
   return mode;
  }
-   
-FrameBuf<Color16> VideoControl::getBuf16() const
+
+ColorPlane VideoControl::getPlane() const
  {
-  return buf16;
- }
-   
-FrameBuf<Color24> VideoControl::getBuf24() const
- {
-  return buf24;
- }
-   
-FrameBuf<Color32> VideoControl::getBuf32() const
- {
-  return buf32;
+  return plane;
  }
 
 void VideoControl::attach(Control *ctrl)
