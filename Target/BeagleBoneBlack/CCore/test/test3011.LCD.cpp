@@ -45,15 +45,20 @@ class Test : NoCopy , Video::VideoDevice::Control
    
    Video::VideoDevice *dev;
    
+   ulen index;
+   ulen count;
+   
   private: 
  
-   void run()
+   void update()
     {
-     dev->updateVideoModeList();
+     dev->setVideoMode(index);
      
-     dev->setVideoMode(0);
+     auto mode=dev->getColorMode();
      
-     switch( dev->getColorMode() )
+     Printf(Con,"update(#;)\n",mode);
+     
+     switch( mode )
        {
         case Video::ColorMode16 : Video::FrameBuf<Video::RawColor16>(dev->getPlane()).test(); break;
         
@@ -61,6 +66,29 @@ class Test : NoCopy , Video::VideoDevice::Control
         
         case Video::ColorMode32Inv : Video::FrameBuf<Video::RawColor32Inv>(dev->getPlane()).test(); break;
        }
+    }
+   
+   void run()
+    {
+     dev->updateVideoModeList();
+     
+     auto list=dev->getVideoModeList();
+     
+     Printf(Con,"run(#;)\n",list.len);
+     
+     for(ulen i=0; i<list.len ;i++) 
+       {
+        auto mode=list[i];
+        
+        Printf(Con,"  mode = #; dx = #; dy = #; freq = #;\n",mode.mode,mode.dx,mode.dy,mode.freq);
+       }
+     
+     index=0;
+     count=list.len;
+     
+     dev->setTick(5_sec);
+     
+     update();
     }
    
    // Video::VideoDevice::Control
@@ -72,6 +100,9 @@ class Test : NoCopy , Video::VideoDevice::Control
    
    virtual void tick()
     {
+     if( ++index>=count ) index=0;
+     
+     update();
     }
    
   public:
@@ -93,7 +124,7 @@ void test2()
  {
   Test test("video");
   
-  Task::Sleep(10_sec);
+  Task::Sleep(1000_sec);
  }
 
 /* test3() */
