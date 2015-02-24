@@ -74,7 +74,7 @@ class FrameBuf : protected ColorPlane
        }
      else
        { 
-        raw=place(pane.getBase());
+        raw=buf.place(pane.getBase());
         dx=pane.dx;
         dy=pane.dy;
         dline=buf.dline;
@@ -91,6 +91,8 @@ class FrameBuf : protected ColorPlane
    
    // methods
   
+   FrameBuf<RawColor> cut(Pane pane) { return FrameBuf<RawColor>(*this,pane); } 
+   
    void erase(RawColor color);
   
    void block(Pane pane,RawColor color);

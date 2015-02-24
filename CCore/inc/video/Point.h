@@ -50,7 +50,11 @@ struct Point
 inline Point operator + (Point a,Point b) { return Point(a.x+b.x,a.y+b.y); } // may overflow
  
 inline Point operator - (Point a,Point b) { return Point(a.x-b.x,a.y-b.y); } // may overflow
+
+inline Point operator += (Point &a,Point b) { return a=a+b; } // may overflow
  
+inline Point operator -= (Point &a,Point b) { return a=a-b; } // may overflow
+
 inline bool operator == (Point a,Point b) { return a.x==b.x && a.y==b.y ; }
  
 inline bool operator != (Point a,Point b) { return a.x!=b.x || a.y!=b.y ; }

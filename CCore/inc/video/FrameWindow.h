@@ -70,6 +70,7 @@ class WinControl : public MemBase_nocopy
    FrameWindow *frame = 0 ;
    Point max_size = Null ;
    bool is_alive = false ;
+   unsigned token = 0 ;
    
    friend class FrameWindow;
    
@@ -97,6 +98,8 @@ class WinControl : public MemBase_nocopy
    
    Point getMaxSize() const { return max_size; }
    
+   unsigned getToken() const { return token; }
+   
    // operations
    
    virtual void setMaxSize(Point max_size)=0;
@@ -111,9 +114,9 @@ class WinControl : public MemBase_nocopy
    
    virtual void update()=0;
    
-   virtual void invalidate(Pane pane)=0;
+   virtual void invalidate(Pane pane,unsigned token=0)=0;
    
-   virtual void invalidate()=0;
+   virtual void invalidate(unsigned token=0)=0;
    
    virtual ColorPlane getDrawPlane()=0;
    
@@ -124,6 +127,8 @@ class WinControl : public MemBase_nocopy
    virtual void setFocus()=0;
    
    virtual void setMouseShape(MouseShape mshape)=0;
+   
+   virtual Pane getPlacement()=0; // screen
    
    virtual void move(Pane pane)=0; // screen
    

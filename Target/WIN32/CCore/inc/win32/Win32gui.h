@@ -1190,6 +1190,8 @@ bool_t WIN32_API ReleaseCapture(void);
 
 HWindow WIN32_API SetFocus(HWindow hWnd);
 
+bool_t WIN32_API GetWindowRect(HWindow hWnd,Rectangle *rect);
+
 bool_t WIN32_API MoveWindow(HWindow hWnd,int x,int y,int dx,int dy,bool_t repaint);
 
 bool_t WIN32_API SetWindowPos(HWindow hWnd,HWindow hWndInsertAfter,int x,int y,int dx,int dy,unsigned pos_flags);

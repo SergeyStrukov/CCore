@@ -376,6 +376,20 @@ class WindowsControl : public WinControl
      return Pane(r.left,r.top,r.right-r.left,r.bottom-r.top);
     }
 
+   static int RandomLen(int len)
+    {
+     int percent=Win32::GetTickCount()%100u;
+     
+     return (len/2)+((len/4)*percent)/100;
+    }
+   
+   static int RandomPos(int len)
+    {
+     int percent=Win32::GetTickCount()%100u;
+
+     return (len*percent)/100;
+    }
+   
    class WindowPaint : NoCopy
     {
       Win32::HWindow hWnd;
@@ -450,6 +464,8 @@ class WindowsControl : public WinControl
         
         case Win32::WM_Paint :
          {
+          token=0;
+          
           WindowPaint wp(hWnd);
 
           if( !buf_dirty ) buf.draw(wp.getGD(),wp.getPane());
@@ -664,8 +680,6 @@ class WindowsControl : public WinControl
          }
         return 0;
 
-#if 0
-        
         case Win32::WM_NcHitTest :
          {
           Point point=ToPoint(lParam);
@@ -679,8 +693,6 @@ class WindowsControl : public WinControl
           // do nothing
          }
         return true;
-        
-#endif        
         
         default: return Win32::DefWindowProcA(hWnd_,message,wParam,lParam);
        }
@@ -728,33 +740,30 @@ class WindowsControl : public WinControl
    // WinControl
    // create/destroy
    
-   virtual void createMain(Point max_size_)
+   virtual void createMain(Point max_size)
     {
-     const char *format="CCore::Video::Private::WindowsControl::createMain(...) : #;";
+     Point screen;
      
-     guardCreate(format,max_size_);
+     screen.x=Win32::GetSystemMetrics(Win32::SysMetric_DXScreen);
+     screen.y=Win32::GetSystemMetrics(Win32::SysMetric_DYScreen);
      
-     if( HMainWindow!=0 )
-       {
-        Printf(Exception,format,"main window is already created");
-       }
+     Point size;
      
-     is_main=true;
-     correct_max_size=true;
-     max_size=max_size_;
-     buf_dirty=true;
+     size.x=RandomLen(screen.x);
+     size.y=RandomLen(screen.y);
      
-     buf.setSize(max_size_);
+     size=Inf(size,max_size);
      
-     Win32::HWindow hWnd=Win32::CreateWindowExA(Win32::WindowStyleEx_OverlappedWindow,
-                                                Win32::MakeIntAtom(WindowClassObject.getAtom(format)),
-                                                "",
-                                                Win32::WindowStyle_OverlappedWindow,
-                                                Win32::UserDefault,0,Win32::UserDefault,0,
-                                                0,0,0,
-                                                (void *)this);  
-                       
-     SysGuard(format,hWnd!=0);                  
+     Point base;
+     
+     screen-=size;
+     
+     base.x=RandomPos(screen.x);
+     base.y=RandomPos(screen.y);
+     
+     Pane pane=Extent(base,size);
+     
+     createMain(pane,max_size);
     }
    
    virtual void createMain(Pane pane,Point max_size_)
@@ -775,10 +784,10 @@ class WindowsControl : public WinControl
      
      buf.setSize(max_size_);
      
-     Win32::HWindow hWnd=Win32::CreateWindowExA(Win32::WindowStyleEx_OverlappedWindow,
+     Win32::HWindow hWnd=Win32::CreateWindowExA(0,
                                                 Win32::MakeIntAtom(WindowClassObject.getAtom(format)),
                                                 "",
-                                                Win32::WindowStyle_OverlappedWindow,
+                                                Win32::WindowStyle_Popup,
                                                 pane.x,pane.y,pane.dx,pane.dy,
                                                 0,0,0,
                                                 (void *)this);  
@@ -937,8 +946,10 @@ class WindowsControl : public WinControl
      SysGuard(format, Win32::UpdateWindow(hWnd) );
     }
    
-   virtual void invalidate(Pane pane)
+   virtual void invalidate(Pane pane,unsigned token_)
     {
+     token=token_;
+     
      Win32::Rectangle rect;
      
      rect.left=pane.x;
@@ -952,8 +963,10 @@ class WindowsControl : public WinControl
      buf_dirty=false;
     }
    
-   virtual void invalidate()
+   virtual void invalidate(unsigned token_)
     {
+     token=token_;
+     
      Win32::InvalidateRect(hWnd,0,true); // ignore error
      
      buf_dirty=false;
@@ -996,6 +1009,19 @@ class WindowsControl : public WinControl
    virtual void setMouseShape(MouseShape mshape)
     {
      Win32::SetCursor(GetCursor(mshape));
+    }
+   
+   virtual Pane getPlacement()
+    {
+     const char *format="CCore::Video::Private::WindowsControl::getPlacement() : #;";
+     
+     guardAlive(format);
+     
+     Win32::Rectangle rect;
+     
+     SysGuard(format, Win32::GetWindowRect(hWnd,&rect) );
+     
+     return ToPane(rect);
     }
    
    virtual void move(Pane pane)
