@@ -16,12 +16,18 @@
 #ifndef CCore_inc_video_Mouse_h
 #define CCore_inc_video_Mouse_h
 
-#include <CCore/inc/Gadget.h>
+#include <CCore/inc/PrintBits.h>
  
 namespace CCore {
 namespace Video {
 
-/* consts */
+/* classes */
+
+//enum MouseKey;
+
+//enum MouseShape;
+
+/* enum MouseKey */
 
 enum MouseKey : unsigned
  {
@@ -38,6 +44,31 @@ enum MouseKey : unsigned
 inline MouseKey operator | (MouseKey a,MouseKey b) { return MouseKey(unsigned(a)|b); }
 
 inline MouseKey operator |= (MouseKey &a,MouseKey b) { return a=(a|b); }
+
+class PrintMouseKey
+ {
+   MouseKey mkey;
+   
+  public: 
+   
+   explicit PrintMouseKey(MouseKey mkey_) : mkey(mkey_) {}
+   
+   template <class P>
+   void print(P &out) const
+    {
+     PrintBits<unsigned>(out,mkey)
+                        (MouseKey_Left , "Left")
+                        (MouseKey_Right,"Right")
+                        (MouseKey_Shift,"Shift")
+                        (MouseKey_Ctrl , "Ctrl")
+                        (MouseKey_Alt  ,  "Alt")
+                        .complete();
+    }
+ };
+
+inline PrintMouseKey GetTextDesc(MouseKey mkey) { return PrintMouseKey(mkey); }
+
+/* enum MouseShape */
 
 enum MouseShape : unsigned
  {

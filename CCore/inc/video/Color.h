@@ -53,24 +53,54 @@ struct ColorPlane;
 
 enum ColorName : uint32
  {
-  Black     = 0x000000,
-  Gray      = 0x808080,
-  Silver    = 0xC0C0C0,
-  White     = 0xFFFFFF,
+  Black       = 0x000000,
+  Gray        = 0x808080,
+  Silver      = 0xC0C0C0,
+  White       = 0xFFFFFF,
   
-  Red       = 0xFF0000,
-  Green     = 0x00FF00,
-  Blue      = 0x0000FF,
+  Red         = 0xFF0000,
+  Green       = 0x00FF00,
+  Blue        = 0x0000FF,
 
-  Cyan      = 0x00FFFF,
-  Fuchsia   = 0xFF00FF,
-  Yellow    = 0xFFFF00,
+  Cyan        = 0x00FFFF,
+  Fuchsia     = 0xFF00FF,
+  Yellow      = 0xFFFF00,
   
-  Teal      = 0x008080,
-  Purple    = 0x800080, 
-  Olive     = 0x808000
+  Teal        = 0x008080,
+  Purple      = 0x800080, 
+  Olive       = 0x808000,
   
-  // TODO
+  // extra
+  
+  Aqua        = 0x00FFFF,
+  Maroon      = 0x800000,
+  Navy        = 0x000080,
+  Orange      = 0xFFA500,
+  Crimson     = 0xDC143C,
+  DarkGray    = 0xA9A9A9,
+  DarkGreen   = 0x006400,
+  DarkOrange  = 0xFF8C00,
+  DarkOrchid  = 0x9932CC,
+  DarkRed     = 0x8B0000,
+  DarkViolet  = 0x9400D3,
+  DimGray     = 0x696969,
+  ForestGreen = 0x228B22,
+  GhostWhite  = 0xF8F8FF,
+  Gold        = 0xFFD700,
+  GoldenRod   = 0xDAA520,
+  Indigo      = 0x4B0082,
+  Ivory       = 0xFFFFF0,
+  Lavender    = 0xE6E6FA,
+  LightGray   = 0xD3D3D3,
+  MediumBlue  = 0x0000CD,
+  OrangeRed   = 0xFF4500,
+  Orchid      = 0xDA70D6,
+  SeaGreen    = 0x2E8B57,
+  SkyBlue     = 0x87CEEB,
+  Snow        = 0xFFFAFA,
+  SteelBlue   = 0x4682B4,
+  Violet      = 0xEE82EE,
+  Wheat       = 0xF5DEB3
  };
 
 inline constexpr Clr RedOf(ColorName cname) { return Clr(cname>>16); }

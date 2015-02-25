@@ -82,7 +82,11 @@ class FrameBuf : protected ColorPlane
     }
    
    // properties
+   
+   bool operator + () const { return dx>0 && dy>0 ; }
 
+   bool operator ! () const { return dx<=0 || dy<=0 ; }
+   
    int dX() const { return dx; }
    
    int dY() const { return dy; }

@@ -319,8 +319,122 @@ class WindowsControl : public WinControl
     {
      switch( wParam )
        {
-        // TODO
+        case Win32::VK_Escape    : return VKey_Esc;
+        case Win32::VK_F1        : return VKey_F1;
+        case Win32::VK_F2        : return VKey_F2;
+        case Win32::VK_F3        : return VKey_F3;
+        case Win32::VK_F4        : return VKey_F4;
+        case Win32::VK_F5        : return VKey_F5;
+        case Win32::VK_F6        : return VKey_F6;
+        case Win32::VK_F7        : return VKey_F7;
+        case Win32::VK_F8        : return VKey_F8;
+        case Win32::VK_F9        : return VKey_F9;
+        case Win32::VK_F10       : return VKey_F10;
+        case Win32::VK_F11       : return VKey_F11;
+        case Win32::VK_F12       : return VKey_F12;
+        
+        case Win32::VK_Tilda     : return VKey_Tilda;
+        
+        case '1'                 : return VKey_1;
+        case '2'                 : return VKey_2;
+        case '3'                 : return VKey_3;
+        case '4'                 : return VKey_4;
+        case '5'                 : return VKey_5;
+        case '6'                 : return VKey_6;
+        case '7'                 : return VKey_7;
+        case '8'                 : return VKey_8;
+        case '9'                 : return VKey_9;
+        case '0'                 : return VKey_0;
+        
+        case Win32::VK_Minus     : return VKey_Minus;
+        case Win32::VK_Plus      : return VKey_Equal;
+        case Win32::VK_BackSlash : return VKey_BackSlash;
+        case Win32::VK_Back      : return VKey_BackSpace;
+        case Win32::VK_Tab       : return VKey_Tab;
+        
+        case 'Q'                 : return VKey_q;
+        case 'W'                 : return VKey_w;
+        case 'E'                 : return VKey_e;
+        case 'R'                 : return VKey_r;
+        case 'T'                 : return VKey_t;
+        case 'Y'                 : return VKey_y;
+        case 'U'                 : return VKey_u;
+        case 'I'                 : return VKey_i;
+        case 'O'                 : return VKey_o;
+        case 'P'                 : return VKey_p;
+        
+        case Win32::VK_OBracket  : return VKey_OpenBracket;
+        case Win32::VK_CBracket  : return VKey_CloseBracket;
+        case Win32::VK_Return    : return VKey_Enter;
+        
+        case Win32::VK_CapsLock  : return VKey_CapsLock;
       
+        case 'A'                 : return VKey_a;
+        case 'S'                 : return VKey_s;
+        case 'D'                 : return VKey_d;
+        case 'F'                 : return VKey_f;
+        case 'G'                 : return VKey_g;
+        case 'H'                 : return VKey_h;
+        case 'J'                 : return VKey_j;
+        case 'K'                 : return VKey_k;
+        case 'L'                 : return VKey_l;
+        
+        case Win32::VK_Colon     : return VKey_Semicolon;
+        case Win32::VK_Quote     : return VKey_Quote;
+        
+        case Win32::VK_Shift     : return VKey_Shift;
+        
+        case 'Z'                 : return VKey_z;
+        case 'X'                 : return VKey_x;
+        case 'C'                 : return VKey_c;
+        case 'V'                 : return VKey_v;
+        case 'B'                 : return VKey_b;
+        case 'N'                 : return VKey_n;
+        case 'M'                 : return VKey_m;
+        
+        case Win32::VK_Comma     : return VKey_Comma;
+        case Win32::VK_Period    : return VKey_Period;
+        case Win32::VK_Slash     : return VKey_Slash;
+        
+        case Win32::VK_Control   : return VKey_Ctrl;
+        case Win32::VK_Alt       : return VKey_Alt;
+        
+        case Win32::VK_Space     : return VKey_Space;
+        
+        case Win32::VK_Scroll    : return VKey_ScrollLock;
+        case Win32::VK_Pause     : return VKey_Pause;
+        
+        case Win32::VK_Insert    : return VKey_Insert;
+        case Win32::VK_Home      : return VKey_Home;
+        case Win32::VK_PgUp      : return VKey_PageUp;
+        case Win32::VK_Delete    : return VKey_Delete;
+        case Win32::VK_End       : return VKey_End;
+        case Win32::VK_PgDown    : return VKey_PageDown;
+        
+        case Win32::VK_Up        : return VKey_Up;   
+        case Win32::VK_Left      : return VKey_Left;   
+        case Win32::VK_Down      : return VKey_Down;   
+        case Win32::VK_Right     : return VKey_Right;
+        
+        case Win32::VK_NumLock   : return VKey_NumLock;
+        case Win32::VK_Div       : return VKey_NumSlash;
+        case Win32::VK_Mul       : return VKey_NumAsterisk;
+        case Win32::VK_Sub       : return VKey_NumMinus;
+        case Win32::VK_Add       : return VKey_NumPlus;
+        
+        case Win32::VK_Numpad7   : return VKey_Num7;
+        case Win32::VK_Numpad8   : return VKey_Num8;
+        case Win32::VK_Numpad9   : return VKey_Num9;
+        case Win32::VK_Numpad4   : return VKey_Num4;
+        case Win32::VK_Numpad5   : return VKey_Num5;
+        case Win32::VK_Numpad6   : return VKey_Num6;
+        case Win32::VK_Numpad1   : return VKey_Num1;
+        case Win32::VK_Numpad2   : return VKey_Num2;
+        case Win32::VK_Numpad3   : return VKey_Num3;
+        
+        case Win32::VK_Numpad0   : return VKey_NumIns; 
+        case Win32::VK_Decimal   : return VKey_NumDel; 
+        
         default: return VKey_Null;
        }
     }

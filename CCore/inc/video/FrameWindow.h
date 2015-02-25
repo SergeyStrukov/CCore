@@ -26,7 +26,17 @@
 namespace CCore {
 namespace Video {
 
-/* consts */
+/* classes */
+
+//enum CmdDisplay;
+
+struct Desktop;
+
+class WinControl;
+
+class FrameWindow;
+
+/* enum CmdDisplay */
 
 enum CmdDisplay : unsigned
  {
@@ -36,13 +46,7 @@ enum CmdDisplay : unsigned
   CmdDisplay_Restore
  };
 
-/* classes */
-
-struct Desktop;
-
-class WinControl;
-
-class FrameWindow;
+const char * GetTextDesc(CmdDisplay cmd_display);
 
 /* struct Desktop */
 
