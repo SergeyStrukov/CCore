@@ -1,0 +1,7 @@
+/* main.rc */ 
+
+#include "main.rh"
+
+IDI_APP         ICON  "Test.ico"
+IDI_SMALL_APP   ICON  "Test.ico"
+

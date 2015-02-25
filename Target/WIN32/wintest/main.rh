@@ -1,0 +1,13 @@
+/* main.rh */ 
+
+#ifndef main_rh
+#define main_rh
+
+#define IDI_APP           6001
+#define IDI_SMALL_APP     6002
+
+#endif
+
+
+
+

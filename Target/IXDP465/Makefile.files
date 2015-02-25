@@ -86,6 +86,7 @@ obj/DHExp.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
 obj/DeferCall.o \
+obj/DesktopStub.o \
 obj/DevInt.o \
 obj/DevIntHandle.o \
 obj/DevPCIHost.o \
@@ -419,6 +420,7 @@ obj/DHExp.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
 obj/DeferCall.s \
+obj/DesktopStub.s \
 obj/DevInt.s \
 obj/DevIntHandle.s \
 obj/DevPCIHost.s \
@@ -752,6 +754,7 @@ obj/DHExp.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
 obj/DeferCall.dep \
+obj/DesktopStub.dep \
 obj/DevInt.dep \
 obj/DevIntHandle.dep \
 obj/DevPCIHost.dep \
@@ -1272,6 +1275,9 @@ obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DeferCall.o : ../../CCore/src/DeferCall.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DesktopStub.o : ../../CCore/src/video/DesktopStub.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevInt.o : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
@@ -2266,6 +2272,9 @@ obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
 obj/DeferCall.s : ../../CCore/src/DeferCall.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DesktopStub.s : ../../CCore/src/video/DesktopStub.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DevInt.s : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3257,6 +3266,9 @@ obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
 
 obj/DeferCall.dep : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
+
+obj/DesktopStub.dep : ../../CCore/src/video/DesktopStub.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DesktopStub.o $< -MF $@
 
 obj/DevInt.dep : ../../Target/IXDP465/CCore/src/dev/DevInt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevInt.o $< -MF $@
