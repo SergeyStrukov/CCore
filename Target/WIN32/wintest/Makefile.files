@@ -1,16 +1,22 @@
 OBJ_LIST = \
+../wintest-obj/Malevich.o \
 ../wintest-obj/main.o \
 ../wintest-obj/test1.o \
+../wintest-obj/test2.o \
 
 
 ASM_LIST = \
+../wintest-obj/Malevich.s \
 ../wintest-obj/main.s \
 ../wintest-obj/test1.s \
+../wintest-obj/test2.s \
 
 
 DEP_LIST = \
+../wintest-obj/Malevich.dep \
 ../wintest-obj/main.dep \
 ../wintest-obj/test1.dep \
+../wintest-obj/test2.dep \
 
 
 ASM_OBJ_LIST = \
@@ -19,13 +25,22 @@ ASM_OBJ_LIST = \
 include $(RULES_FILE)
 
 
+../wintest-obj/Malevich.o : ./Malevich.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 ../wintest-obj/main.o : ./main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../wintest-obj/test1.o : ./test1.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+../wintest-obj/test2.o : ./test2.cpp
+	$(CC) $(CCOPT) $< -o $@
 
+
+
+../wintest-obj/Malevich.s : ./Malevich.cpp
+	$(CC) -S $(CCOPT) $< -o $@
 
 ../wintest-obj/main.s : ./main.cpp
 	$(CC) -S $(CCOPT) $< -o $@
@@ -33,13 +48,22 @@ include $(RULES_FILE)
 ../wintest-obj/test1.s : ./test1.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../wintest-obj/test2.s : ./test2.cpp
+	$(CC) -S $(CCOPT) $< -o $@
 
+
+
+../wintest-obj/Malevich.dep : ./Malevich.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Malevich.o $< -MF $@
 
 ../wintest-obj/main.dep : ./main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
 
 ../wintest-obj/test1.dep : ./test1.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1.o $< -MF $@
+
+../wintest-obj/test2.dep : ./test2.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test2.o $< -MF $@
 
 
 

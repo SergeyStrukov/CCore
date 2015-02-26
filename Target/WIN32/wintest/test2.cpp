@@ -1,4 +1,4 @@
-/* test1.cpp */
+/* test2.cpp */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.09
@@ -18,7 +18,7 @@
 
 #include "Malevich.h"
 
-namespace App1 {
+namespace App2 {
 
 /* using */ 
 
@@ -28,7 +28,7 @@ using namespace App;
 
 class FileReport;
 
-class MainWindow;
+class TestWindow;
 
 /* class FileReport */
 
@@ -55,6 +55,17 @@ class FileReport : public ReportException
    ~FileReport() {}
  };
 
+/* class TestWindow */
+
+class TestWindow : public MalevichWindow
+ {
+  public:
+  
+   TestWindow() {}
+   
+   virtual ~TestWindow() {}
+ };
+
 /* testmain() */
 
 int testmain(CmdDisplay cmd_display)
@@ -63,9 +74,17 @@ int testmain(CmdDisplay cmd_display)
   
   try
     {
-     MalevichWindow main_win;
+     TestWindow main_win;
+     TestWindow win1;
+     TestWindow win2;
+     TestWindow win3;
      
      main_win.createMain(cmd_display);
+     
+     win1.create(Pane(100,100,300,200));
+     
+     win2.create(win1.getControl(),Pane(150,150,300,200));
+     win3.create(win1.getControl(),Pane(200,200,300,200));
      
      while( DefaultDesktop->pump() )
        {
@@ -80,7 +99,7 @@ int testmain(CmdDisplay cmd_display)
     }
  }
  
-} // namespace App1
+} // namespace App2
  
  
  

@@ -1194,8 +1194,6 @@ bool_t WIN32_API GetWindowRect(HWindow hWnd,Rectangle *rect);
 
 bool_t WIN32_API MoveWindow(HWindow hWnd,int x,int y,int dx,int dy,bool_t repaint);
 
-bool_t WIN32_API SetWindowPos(HWindow hWnd,HWindow hWndInsertAfter,int x,int y,int dx,int dy,unsigned pos_flags);
-
 HCursor WIN32_API SetCursor(HCursor hCursor);
 
 HBrush WIN32_API GetSysColorBrush(unsigned sys_color_index);

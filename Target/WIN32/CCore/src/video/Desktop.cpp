@@ -1148,15 +1148,6 @@ class WindowsControl : public WinControl
      
      SysGuard(format, Win32::MoveWindow(hWnd,pane.x,pane.y,pane.dx,pane.dy,true) ); 
     }
-   
-   virtual void moveTop()
-    {
-     const char *format="CCore::Video::Private::WindowsControl::moveTop(...) : #;";
-     
-     guardAlive(format);
-     
-     SysGuard(format, SetWindowPos(hWnd,(Win32::HWindow)Win32::HWND_TopMost,0,0,0,0,Win32::WindowPos_NoSize|Win32::WindowPos_NoMove) );
-    }
  };
 
 Win32::HCursor WindowsControl::CursorTable[]=

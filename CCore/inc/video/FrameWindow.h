@@ -135,8 +135,6 @@ class WinControl : public MemBase_nocopy
    virtual Pane getPlacement()=0; // screen
    
    virtual void move(Pane pane)=0; // screen
-   
-   virtual void moveTop()=0;
  };
 
 /* class FrameWindow */
