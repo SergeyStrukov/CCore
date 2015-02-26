@@ -1,4 +1,5 @@
 OBJ_LIST = \
+../wintest-obj/DownTimer.o \
 ../wintest-obj/Malevich.o \
 ../wintest-obj/main.o \
 ../wintest-obj/test1.o \
@@ -6,6 +7,7 @@ OBJ_LIST = \
 
 
 ASM_LIST = \
+../wintest-obj/DownTimer.s \
 ../wintest-obj/Malevich.s \
 ../wintest-obj/main.s \
 ../wintest-obj/test1.s \
@@ -13,6 +15,7 @@ ASM_LIST = \
 
 
 DEP_LIST = \
+../wintest-obj/DownTimer.dep \
 ../wintest-obj/Malevich.dep \
 ../wintest-obj/main.dep \
 ../wintest-obj/test1.dep \
@@ -24,6 +27,9 @@ ASM_OBJ_LIST = \
 
 include $(RULES_FILE)
 
+
+../wintest-obj/DownTimer.o : ./DownTimer.cpp
+	$(CC) $(CCOPT) $< -o $@
 
 ../wintest-obj/Malevich.o : ./Malevich.cpp
 	$(CC) $(CCOPT) $< -o $@
@@ -39,6 +45,9 @@ include $(RULES_FILE)
 
 
 
+../wintest-obj/DownTimer.s : ./DownTimer.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../wintest-obj/Malevich.s : ./Malevich.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -52,6 +61,9 @@ include $(RULES_FILE)
 	$(CC) -S $(CCOPT) $< -o $@
 
 
+
+../wintest-obj/DownTimer.dep : ./DownTimer.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DownTimer.o $< -MF $@
 
 ../wintest-obj/Malevich.dep : ./Malevich.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Malevich.o $< -MF $@

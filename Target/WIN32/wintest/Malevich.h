@@ -36,6 +36,8 @@ class MalevichWindow : public FrameWindow
  {
    static const int DragWidth = 20 ;
    static const int BtnWidth  = 16 ;
+   static const int MarkerOff = 10 ;
+   static const int MarkerLen = 20 ;
   
    Pane dragUpLeft;
    Pane dragLeft;
@@ -51,6 +53,7 @@ class MalevichWindow : public FrameWindow
    Pane btnClose;
    
    Pane client;
+   Pane marker; 
    
    bool has_focus = false ;
    bool max_button = true ;
@@ -71,6 +74,8 @@ class MalevichWindow : public FrameWindow
    
    DragType drag_type = Drag_None ;
    Point drag_from;
+   
+   bool marker_on = false ;
 
   private: 
    
@@ -101,6 +106,8 @@ class MalevichWindow : public FrameWindow
    void create(Pane pane);
    
    void create(WinControl *parent,Pane pane);
+   
+   void tick();
    
    virtual void gainFocus();
    

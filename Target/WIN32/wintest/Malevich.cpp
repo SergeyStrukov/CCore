@@ -82,6 +82,10 @@ void MalevichWindow::layout(Point size)
      btnMax=Null;
      btnClose=Null;
     }
+  
+  marker=Extent(client.getBase()+Point(MarkerOff,MarkerOff),Point(MarkerLen,MarkerLen));
+  
+  if( !client.contains(marker) ) marker=Null;
  }
 
 void MalevichWindow::draw(FrameBuf<DesktopColor> buf)
@@ -114,6 +118,8 @@ void MalevichWindow::draw(FrameBuf<DesktopColor> buf)
   buf.block(btnClose,Black);
   
   buf.cut(client).test();
+  
+  buf.block(marker,marker_on?Green:DarkGreen);
  }
 
 void MalevichWindow::redraw()
@@ -261,6 +267,16 @@ void MalevichWindow::create(WinControl *parent,Pane pane)
  {
   win->create(parent,pane,DefaultDesktop->getScreenSize());
   win->show();
+ }
+
+void MalevichWindow::tick()
+ {
+  if( win->isAlive() )
+    {
+     marker_on=!marker_on;
+    
+     redraw();
+    }
  }
 
 void MalevichWindow::gainFocus()

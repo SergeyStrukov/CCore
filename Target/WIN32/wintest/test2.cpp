@@ -15,8 +15,10 @@
 
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Print.h>
+#include <CCore/inc/Timer.h>
 
 #include "Malevich.h"
+#include "DownTimer.h"
 
 namespace App2 {
 
@@ -86,9 +88,19 @@ int testmain(CmdDisplay cmd_display)
      win2.create(win1.getControl(),Pane(150,150,300,200));
      win3.create(win1.getControl(),Pane(200,200,300,200));
      
+     DownTimer timer(500_msec);
+     
      while( DefaultDesktop->pump() )
        {
-        DefaultDesktop->wait(10_msec);
+        if( timer.poll() )
+          {
+           main_win.tick();
+           win1.tick();
+           win2.tick();
+           win3.tick();
+          }
+       
+        DefaultDesktop->wait(timer.remains());
        }
      
      return 0;
