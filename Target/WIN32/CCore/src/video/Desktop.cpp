@@ -20,6 +20,8 @@
 
 #include <CCore/inc/sys/SysError.h>
 
+#include <CCore/inc/task/TaskEvent.h>
+
 #include <CCore/inc/win32/Win32gui.h>
  
 namespace CCore {
@@ -62,6 +64,151 @@ void SysGuard(const char *format,bool ok)
  { 
   if( !ok ) SysGuardFailed(format); 
  }
+
+/* struct MsgEvent */
+
+struct MsgEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint32 code;
+  uint8 flag;
+  
+  enum FlagType
+   {
+    Entry,
+    Leave,
+    Stop
+   };
+  
+  static const uint32 TickCode = 1000 ;
+  
+  void init(EventTimeType time_,EventIdType id_,Win32::MsgCode code_,FlagType flag_)
+   {
+    time=time_;
+    id=id_;
+    
+    code=code_;
+    flag=flag_;
+   }
+
+  void init(EventTimeType time_,EventIdType id_,FlagType flag_)
+   {
+    time=time_;
+    id=id_;
+    
+    code=TickCode;
+    flag=flag_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->id); }
+  
+  static void * Offset_code(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->code); }
+  
+  static void * Offset_flag(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->flag); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+   {
+    auto id_Code=info.addEnum_uint32("WinMsgCode")
+                     .addValueName(Win32::WM_Create,"WM_Create")
+                     .addValueName(Win32::WM_Destroy,"WM_Destroy")
+                     .addValueName(Win32::WM_Move,"WM_Move")
+                     .addValueName(Win32::WM_Size,"WM_Size")
+                     .addValueName(Win32::WM_Activate,"WM_Activate")
+                     .addValueName(Win32::WM_SetFocus,"WM_SetFocus")
+                     .addValueName(Win32::WM_KillFocus,"WM_KillFocus")
+                     .addValueName(Win32::WM_Enable,"WM_Enable")
+                     .addValueName(Win32::WM_Paint,"WM_Paint")
+                     .addValueName(Win32::WM_Close,"WM_Close")
+                     .addValueName(Win32::WM_Quit,"WM_Quit")
+                     .addValueName(Win32::WM_QueryOpen,"WM_QueryOpen")
+                     .addValueName(Win32::WM_EraseBackground,"WM_EraseBackground")
+                     .addValueName(Win32::WM_EndSession,"WM_EndSession")
+                     .addValueName(Win32::WM_ShowWindow,"WM_ShowWindow")
+                     .addValueName(Win32::WM_ActivateApp,"WM_ActivateApp")
+                     .addValueName(Win32::WM_CancelMode,"WM_CancelMode")
+                     .addValueName(Win32::WM_SetCursor,"WM_SetCursor")
+                     .addValueName(Win32::WM_MouseActivate,"WM_MouseActivate")
+                     .addValueName(Win32::WM_GetMinMaxInfo,"WM_GetMinMaxInfo")
+                     .addValueName(Win32::WM_WindowPosChanging,"WM_WindowPosChanging")
+                     .addValueName(Win32::WM_WindowPosChanged,"WM_WindowPosChanged")
+                     .addValueName(Win32::WM_ContextMenu,"WM_ContextMenu")
+                     .addValueName(Win32::WM_NcCreate,"WM_NcCreate")
+                     .addValueName(Win32::WM_NcDestroy,"WM_NcDestroy")
+                     .addValueName(Win32::WM_NcHitTest,"WM_NcHitTest")
+                     .addValueName(Win32::WM_NcPaint,"WM_NcPaint")
+                     .addValueName(Win32::WM_NcActivate,"WM_NcActivate")
+                     .addValueName(Win32::WM_SyncPaint,"WM_SyncPaint")
+                     .addValueName(Win32::WM_NcMouseMove,"WM_NcMouseMove")
+                     .addValueName(Win32::WM_NcLButtonDown,"WM_NcLButtonDown")
+                     .addValueName(Win32::WM_NcLButtonUp,"WM_NcLButtonUp")
+                     .addValueName(Win32::WM_NcLButtonDClick,"WM_NcLButtonDClick")
+                     .addValueName(Win32::WM_NcRButtonDown,"WM_NcRButtonDown")
+                     .addValueName(Win32::WM_NcRButtonUp,"WM_NcRButtonUp")
+                     .addValueName(Win32::WM_NcRButtonDClick,"WM_NcRButtonDClick")
+                     .addValueName(Win32::WM_NcMButtonDown,"WM_NcMButtonDown")
+                     .addValueName(Win32::WM_NcMButtonUp,"WM_NcMButtonUp")
+                     .addValueName(Win32::WM_NcMButtonDClick,"WM_NcMButtonDClick")
+                     .addValueName(Win32::WM_KeyDown,"WM_KeyDown")
+                     .addValueName(Win32::WM_KeyUp,"WM_KeyUp")
+                     .addValueName(Win32::WM_Char,"WM_Char")
+                     .addValueName(Win32::WM_DeadChar,"WM_DeadChar")
+                     .addValueName(Win32::WM_SysKeyDown,"WM_SysKeyDown")
+                     .addValueName(Win32::WM_SysKeyUp,"WM_SysKeyUp")
+                     .addValueName(Win32::WM_SysChar,"WM_SysChar")
+                     .addValueName(Win32::WM_SysDeadChar,"WM_SysDeadChar")
+                     .addValueName(Win32::WM_InitDialog,"WM_InitDialog")
+                     .addValueName(Win32::WM_Command,"WM_Command")
+                     .addValueName(Win32::WM_SysCommand,"WM_SysCommand")
+                     .addValueName(Win32::WM_InitMenu,"WM_InitMenu")
+                     .addValueName(Win32::WM_InitMenuPopup,"WM_InitMenuPopup")
+                     .addValueName(Win32::WM_MenuSelect,"WM_MenuSelect")
+                     .addValueName(Win32::WM_EnterIdle,"WM_EnterIdle")
+                     .addValueName(Win32::WM_UninitMenuPopup,"WM_UninitMenuPopup")
+                     .addValueName(Win32::WM_MouseMove,"WM_MouseMove")
+                     .addValueName(Win32::WM_LButtonDown,"WM_LButtonDown")
+                     .addValueName(Win32::WM_LButtonUp,"WM_LButtonUp")
+                     .addValueName(Win32::WM_LButtonDClick,"WM_LButtonDClick")
+                     .addValueName(Win32::WM_RButtonDown,"WM_RButtonDown")
+                     .addValueName(Win32::WM_RButtonUp,"WM_RButtonUp")
+                     .addValueName(Win32::WM_RButtonDClick,"WM_RButtonDClick")
+                     .addValueName(Win32::WM_MButtonDown,"WM_MButtonDown")
+                     .addValueName(Win32::WM_MButtonUp,"WM_MButtonUp")
+                     .addValueName(Win32::WM_MButtonDClick,"WM_MButtonDClick")
+                     .addValueName(Win32::WM_MouseWheel,"WM_MouseWheel")
+                     .addValueName(Win32::WM_EnterMenuLoop,"WM_EnterMenuLoop")
+                     .addValueName(Win32::WM_ExitMenuLoop,"WM_ExitMenuLoop")
+                     .addValueName(Win32::WM_Sizing,"WM_Sizing")
+                     .addValueName(Win32::WM_CaptureChanged,"WM_CaptureChanged")
+                     .addValueName(Win32::WM_Moving,"WM_Moving")
+                     .addValueName(Win32::WM_EnterSizeMove,"WM_EnterSizeMove")
+                     .addValueName(Win32::WM_ExitSizeMove,"WM_ExitSizeMove")
+                     .addValueName(Win32::WM_NcMouseHover,"WM_NcMouseHover")
+                     .addValueName(Win32::WM_MouseHover,"WM_MouseHover")
+                     .addValueName(Win32::WM_NcMouseLeave,"WM_NcMouseLeave")
+                     .addValueName(Win32::WM_MouseLeave,"WM_MouseLeave")
+                     .addValueName(TickCode,"Tick")
+                     .getId();
+    
+    auto id_Flag=info.addEnum_uint8("WinMsgFlag")
+                     .addValueName(Entry,"Entry",EventMarker_Up)
+                     .addValueName(Leave,"Leave",EventMarker_Down)
+                     .addValueName(Stop,"Stop",EventMarker_Stop)
+                     .getId();
+    
+    auto id=info.addStruct("WinMsgEvent")
+                .addField_uint32("time",Offset_time)
+                .addField_uint16("id",Offset_id)
+                .addField_enum_uint32(id_Code,"code",Offset_code)
+                .addField_enum_uint8(id_Flag,"flag",Offset_flag)
+                .getId();
+    
+    desc.setStructId(info,id);
+   }
+ };
 
 /* class WindowBuf */
 
@@ -1208,10 +1355,20 @@ class WindowsDesktop : public Desktop
     {
      for(Win32::Msg msg; lim && Win32::PeekMessageA(&msg,0,0,0,Win32::PeekMessage_Remove) ;lim--) 
        {
-        if( msg.message==Win32::WM_Quit ) return false;
+        if( msg.message==Win32::WM_Quit ) 
+          {
+           TaskEventHost.add<MsgEvent>(msg.message,MsgEvent::Stop);
+          
+           return false;
+          }
        
         Win32::TranslateMessage(&msg);
+        
+        TaskEventHost.add<MsgEvent>(msg.message,MsgEvent::Entry);
+        
         Win32::DispatchMessageA(&msg);
+        
+        TaskEventHost.add<MsgEvent>(msg.message,MsgEvent::Leave);
        }
        
      return true;  
@@ -1235,6 +1392,18 @@ class WindowsDesktop : public Desktop
 } // namespace Private
 
 using namespace Private;
+
+/* functions */
+
+void TickEntryEvent()
+ {
+  TaskEventHost.add<MsgEvent>(MsgEvent::Entry);
+ }
+
+void TickLeaveEvent()
+ {
+  TaskEventHost.add<MsgEvent>(MsgEvent::Leave);
+ }
 
 /* global DefaultDesktop */
 

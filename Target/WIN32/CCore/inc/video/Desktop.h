@@ -29,6 +29,10 @@ using DesktopColor = RawColor32 ;
 
 CmdDisplay MapCmdShow(unsigned cmd_show);
 
+void TickEntryEvent();
+
+void TickLeaveEvent();
+
 /* classes */
 
 struct DesktopConfig;

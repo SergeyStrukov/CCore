@@ -494,11 +494,6 @@ void WinClassBase::move(Pane pane)
   SysCheck("CCore::Rawin::WinClassBase::move(...) : #;", Win32::MoveWindow(hWnd,pane.x,pane.y,pane.dx,pane.dy,true) ); 
  }
 
-void WinClassBase::moveTop()
- {
-  SysCheck("CCore::Rawin::WinClassBase::moveTop(...) : #;", SetWindowPos(hWnd,(Win32::HWindow)Win32::HWND_TopMost,0,0,0,0,Win32::WindowPos_NoSize|Win32::WindowPos_NoMove) );
- }
-
 void WinClassBase::createOverlapped(const char *title)
  {
   Win32::HWindow hWnd=Win32::CreateWindowExA(Win32::WindowStyleEx_OverlappedWindow,

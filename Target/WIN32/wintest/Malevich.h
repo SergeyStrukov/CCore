@@ -95,17 +95,19 @@ class MalevichWindow : public FrameWindow
    
   public:
   
-   MalevichWindow();
+   explicit MalevichWindow(Desktop *desktop);
    
    virtual ~MalevichWindow();
    
    WinControl * getControl() { return win.getPtr(); }
    
-   void createMain(CmdDisplay cmd_display);
+   void createMain(CmdDisplay cmd_display,Point max_size);
    
-   void create(Pane pane);
+   void create(Pane pane,Point max_size);
    
-   void create(WinControl *parent,Pane pane);
+   void create(WinControl *parent,Pane pane,Point max_size);
+   
+   void destroy() { win->destroy(); }
    
    void tick();
    

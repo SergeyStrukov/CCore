@@ -63,9 +63,10 @@ int testmain(CmdDisplay cmd_display)
   
   try
     {
-     MalevichWindow main_win;
+     Desktop *desktop=DefaultDesktop;
+     MalevichWindow main_win(desktop);
      
-     main_win.createMain(cmd_display);
+     main_win.createMain(cmd_display,desktop->getScreenSize());
      
      while( DefaultDesktop->pump() )
        {

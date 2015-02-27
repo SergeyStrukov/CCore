@@ -238,8 +238,8 @@ void MalevichWindow::endDrag(Point point)
   redraw();
  }
 
-MalevichWindow::MalevichWindow() 
- : FrameWindow(DefaultDesktop) 
+MalevichWindow::MalevichWindow(Desktop *desktop) 
+ : FrameWindow(desktop) 
  {
  }
 
@@ -247,25 +247,25 @@ MalevichWindow::~MalevichWindow()
  {
  }
 
-void MalevichWindow::createMain(CmdDisplay cmd_display)
+void MalevichWindow::createMain(CmdDisplay cmd_display,Point max_size)
  {
   max_button=( cmd_display!=CmdDisplay_Maximized );
   
-  win->createMain(DefaultDesktop->getScreenSize());
+  win->createMain(max_size);
   
   win->display(cmd_display);
   win->update();
  }
 
-void MalevichWindow::create(Pane pane)
+void MalevichWindow::create(Pane pane,Point max_size)
  {
-  win->create(pane,DefaultDesktop->getScreenSize());
+  win->create(pane,max_size);
   win->show();
  }
 
-void MalevichWindow::create(WinControl *parent,Pane pane)
+void MalevichWindow::create(WinControl *parent,Pane pane,Point max_size)
  {
-  win->create(parent,pane,DefaultDesktop->getScreenSize());
+  win->create(parent,pane,max_size);
   win->show();
  }
 

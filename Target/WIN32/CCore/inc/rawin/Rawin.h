@@ -350,8 +350,6 @@ class WinClassBase : NoCopy
    
    void move(Pane pane);
    
-   void moveTop();
-   
    // create
    
    void createOverlapped(const char *title);
