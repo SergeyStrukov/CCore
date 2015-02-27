@@ -15,12 +15,11 @@
 
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Print.h>
-#include <CCore/inc/Timer.h>
+#include <CCore/inc/TickTimer.h>
 
 #include <CCore/inc/task/TaskEvent.h>
 
 #include "Malevich.h"
-#include "DownTimer.h"
 
 namespace App2 {
 
@@ -160,7 +159,7 @@ class Application : NoCopy
      
      report.guard();
      
-     DownTimer timer(500_msec);
+     TickTimer timer(500_msec);
      
      while( pump() )
        {

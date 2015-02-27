@@ -1385,7 +1385,7 @@ class WindowsDesktop : public Desktop
     {
      if( TestMsg() ) return;
      
-     Win32::MsgWaitForMultipleObjects(0,0,false,+timeout,Win32::Wake_AllInput);
+     if( auto t=+timeout ) Win32::MsgWaitForMultipleObjects(0,0,false,t,Win32::Wake_AllInput);
     }
  };
 
