@@ -9,3 +9,7 @@ video/Mouse.h
 video/Color.h
 
   support for the GUI interface programming.
+
+TickTimer.h
+
+  helper class for periodic tick implementation. 
