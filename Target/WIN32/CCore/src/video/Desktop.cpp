@@ -210,6 +210,52 @@ struct MsgEvent
    }
  };
 
+/* struct TickEvent */
+
+struct TickEvent
+ {
+  EventTimeType time;
+  EventIdType id;
+  
+  uint8 flag;
+  
+  enum FlagType
+   {
+    Entry,
+    Leave
+   };
+  
+  void init(EventTimeType time_,EventIdType id_,FlagType flag_)
+   {
+    time=time_;
+    id=id_;
+    
+    flag=flag_;
+   }
+  
+  static void * Offset_time(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->time); }
+  
+  static void * Offset_id(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->id); }
+  
+  static void * Offset_flag(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->flag); }
+  
+  static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
+   {
+    auto id_Flag=info.addEnum_uint8("WinTickFlag")
+                     .addValueName(Entry,"Entry",EventMarker_Up)
+                     .addValueName(Leave,"Leave",EventMarker_Down)
+                     .getId();
+    
+    auto id=info.addStruct("WinTickEvent")
+                .addField_uint32("time",Offset_time)
+                .addField_uint16("id",Offset_id)
+                .addField_enum_uint8(id_Flag,"flag",Offset_flag)
+                .getId();
+    
+    desc.setStructId(info,id);
+   }
+ };
+
 /* class WindowBuf */
 
 class WindowBuf : NoCopy
@@ -973,6 +1019,8 @@ class WindowsControl : public WinControl
    
    static Win32::MsgResult WIN32_CALLTYPE WndProc(Win32::HWindow hWnd,Win32::MsgCode message,Win32::MsgWParam wParam,Win32::MsgLParam lParam)
     {
+     TaskEventHost.add<MsgEvent>(message,MsgEvent::Entry);
+     
      if( message==Win32::WM_NcCreate )
        {
         Win32::CreateData *ctx=(Win32::CreateData *)lParam;
@@ -980,16 +1028,24 @@ class WindowsControl : public WinControl
         Win32::SetWindowLongA(hWnd,0,(Win32::UPtrType)(ctx->arg));
        }
        
-     void *arg=(void *)Win32::GetWindowLongA(hWnd,0);  
+     void *arg=(void *)Win32::GetWindowLongA(hWnd,0);
+     
+     Win32::MsgResult ret;
      
      if( !arg ) 
        {
         // WM_GetMinMaxInfo comes before WM_NcCreate
        
-        return Win32::DefWindowProcA(hWnd,message,wParam,lParam);
+        ret=Win32::DefWindowProcA(hWnd,message,wParam,lParam);
+       }
+     else
+       {
+        ret=ObjWndProc(static_cast<WindowsControl *>(arg),hWnd,message,wParam,lParam);
        }
      
-     return ObjWndProc(static_cast<WindowsControl *>(arg),hWnd,message,wParam,lParam);
+     TaskEventHost.add<MsgEvent>(message,MsgEvent::Leave);
+
+     return ret;
     }
    
   public:
@@ -1363,12 +1419,7 @@ class WindowsDesktop : public Desktop
           }
        
         Win32::TranslateMessage(&msg);
-        
-        TaskEventHost.add<MsgEvent>(msg.message,MsgEvent::Entry);
-        
         Win32::DispatchMessageA(&msg);
-        
-        TaskEventHost.add<MsgEvent>(msg.message,MsgEvent::Leave);
        }
        
      return true;  
@@ -1397,12 +1448,12 @@ using namespace Private;
 
 void TickEntryEvent()
  {
-  TaskEventHost.add<MsgEvent>(MsgEvent::Entry);
+  TaskEventHost.add<TickEvent>(TickEvent::Entry);
  }
 
 void TickLeaveEvent()
  {
-  TaskEventHost.add<MsgEvent>(MsgEvent::Leave);
+  TaskEventHost.add<TickEvent>(TickEvent::Leave);
  }
 
 /* global DefaultDesktop */
