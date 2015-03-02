@@ -36,7 +36,7 @@ class DefaultDesktopPtr : NoCopy
  {
   private:
   
-   Desktop * getPtr();
+   Desktop * getPtr() const;
   
   public:
    

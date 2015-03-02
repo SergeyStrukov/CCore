@@ -10,6 +10,7 @@ obj/ApplyToRange.o \
 obj/Array.o \
 obj/ArrayAlgo.o \
 obj/ArrayBase.o \
+obj/AsyncBinaryFile.o \
 obj/AsyncFile.o \
 obj/AsyncFileDevice.o \
 obj/AsyncFileToMem.o \
@@ -18,6 +19,7 @@ obj/Atomic.o \
 obj/AtomicRefArray.o \
 obj/AttachmentHost.o \
 obj/BaseRangeAlgo.o \
+obj/BinaryFile.o \
 obj/BinarySearch.o \
 obj/BlockCipher.o \
 obj/BlockFifo.o \
@@ -323,6 +325,7 @@ obj/ApplyToRange.s \
 obj/Array.s \
 obj/ArrayAlgo.s \
 obj/ArrayBase.s \
+obj/AsyncBinaryFile.s \
 obj/AsyncFile.s \
 obj/AsyncFileDevice.s \
 obj/AsyncFileToMem.s \
@@ -331,6 +334,7 @@ obj/Atomic.s \
 obj/AtomicRefArray.s \
 obj/AttachmentHost.s \
 obj/BaseRangeAlgo.s \
+obj/BinaryFile.s \
 obj/BinarySearch.s \
 obj/BlockCipher.s \
 obj/BlockFifo.s \
@@ -636,6 +640,7 @@ obj/ApplyToRange.dep \
 obj/Array.dep \
 obj/ArrayAlgo.dep \
 obj/ArrayBase.dep \
+obj/AsyncBinaryFile.dep \
 obj/AsyncFile.dep \
 obj/AsyncFileDevice.dep \
 obj/AsyncFileToMem.dep \
@@ -644,6 +649,7 @@ obj/Atomic.dep \
 obj/AtomicRefArray.dep \
 obj/AttachmentHost.dep \
 obj/BaseRangeAlgo.dep \
+obj/BinaryFile.dep \
 obj/BinarySearch.dep \
 obj/BlockCipher.dep \
 obj/BlockFifo.dep \
@@ -984,6 +990,9 @@ obj/ArrayAlgo.o : ../../CCore/src/array/ArrayAlgo.cpp
 obj/ArrayBase.o : ../../CCore/src/array/ArrayBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/AsyncBinaryFile.o : ../../CCore/src/AsyncBinaryFile.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/AsyncFile.o : ../../CCore/src/AsyncFile.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1006,6 +1015,9 @@ obj/AttachmentHost.o : ../../CCore/src/AttachmentHost.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/BaseRangeAlgo.o : ../../CCore/src/algon/BaseRangeAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/BinaryFile.o : ../../HCore/CCore/src/BinaryFile.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/BinarySearch.o : ../../CCore/src/algon/BinarySearch.cpp
@@ -1916,6 +1928,9 @@ obj/ArrayAlgo.s : ../../CCore/src/array/ArrayAlgo.cpp
 obj/ArrayBase.s : ../../CCore/src/array/ArrayBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/AsyncBinaryFile.s : ../../CCore/src/AsyncBinaryFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/AsyncFile.s : ../../CCore/src/AsyncFile.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -1938,6 +1953,9 @@ obj/AttachmentHost.s : ../../CCore/src/AttachmentHost.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/BaseRangeAlgo.s : ../../CCore/src/algon/BaseRangeAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/BinaryFile.s : ../../HCore/CCore/src/BinaryFile.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/BinarySearch.s : ../../CCore/src/algon/BinarySearch.cpp
@@ -2848,6 +2866,9 @@ obj/ArrayAlgo.dep : ../../CCore/src/array/ArrayAlgo.cpp
 obj/ArrayBase.dep : ../../CCore/src/array/ArrayBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ArrayBase.o $< -MF $@
 
+obj/AsyncBinaryFile.dep : ../../CCore/src/AsyncBinaryFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AsyncBinaryFile.o $< -MF $@
+
 obj/AsyncFile.dep : ../../CCore/src/AsyncFile.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AsyncFile.o $< -MF $@
 
@@ -2871,6 +2892,9 @@ obj/AttachmentHost.dep : ../../CCore/src/AttachmentHost.cpp
 
 obj/BaseRangeAlgo.dep : ../../CCore/src/algon/BaseRangeAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BaseRangeAlgo.o $< -MF $@
+
+obj/BinaryFile.dep : ../../HCore/CCore/src/BinaryFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BinaryFile.o $< -MF $@
 
 obj/BinarySearch.dep : ../../CCore/src/algon/BinarySearch.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/BinarySearch.o $< -MF $@

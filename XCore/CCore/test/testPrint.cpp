@@ -16,7 +16,6 @@
 #include <CCore/test/testPrint.h>
 
 #include <CCore/inc/String.h>
-#include <CCore/inc/Exception.h>
 
 namespace App {
 
@@ -42,96 +41,26 @@ void PrintFile::open(StrLen file_name,FileOpenFlags oflags)
   PrintAsyncFile::open(Range(name),oflags);
  }
 
-/* class StreamFile */
+/* class BinaryFile */
 
- // constructors
-
-StreamFile::StreamFile()
+BinaryFile::BinaryFile()
  {
  }
    
-StreamFile::StreamFile(StrLen file_name,FileOpenFlags oflags) 
+BinaryFile::BinaryFile(StrLen file_name,FileOpenFlags oflags)
  {
   open(file_name,oflags);
  }
    
-StreamFile::~StreamFile() 
+BinaryFile::~BinaryFile()
  {
-  flush();
  }
    
- // methods
-   
-void StreamFile::open(StrLen file_name,FileOpenFlags oflags) 
+void BinaryFile::open(StrLen file_name,FileOpenFlags oflags)
  {
   String name=StringCat("host:",file_name);
   
-  FilePosType file_len=file.open(Range(name),oflags);  
-
-  file_pos=(oflags&Open_PosEnd)?file_len:0;
- }
-   
-void StreamFile::soft_close(FileMultiError &errout) 
- {
-  flush();
-  
-  file.soft_close(errout);
- }
-   
-void StreamFile::close() 
- {
-  flush();
-  
-  file.close();
- }
-   
- // put
-   
-void StreamFile::provide()
- {
-  flush();
-  
-  auto result=file.getWritePacket();
-  
-  packet=result.packet;
- 
-  out=result.buf;
-  buf_len=out.len;
- }
-
-void StreamFile::do_put(const uint8 *ptr,ulen len)
- {
-  auto src=Range(ptr,len); 
- 
-  while( +src )
-    {
-     if( !out ) provide();
-    
-     ulen delta=Min(src.len,out.len);
-    
-     (out+=delta).copy( (src+=delta).ptr );
-    }
- }
-   
-PtrLen<uint8> StreamFile::do_putRange(ulen) 
- { 
-  Printf(Exception,"StreamFile::do_putRange(...) : not supported");
-  
-  return Nothing;
- }
-   
-void StreamFile::flush() 
- {
-  if( +packet )
-    {
-     ulen len=buf_len-out.len;
-     
-     out=Nothing;
-    
-     file.write(file_pos,len,Replace_null(packet));
-  
-     file_pos+=len;
-    }
+  AsyncBinaryFile::open(Range(name),oflags);
  }
    
 } // namespace App

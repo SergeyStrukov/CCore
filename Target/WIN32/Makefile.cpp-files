@@ -16,6 +16,7 @@
 ../../CCore/src/array/SimpleArray.cpp
 ../../CCore/src/array/TempArray.cpp
 ../../CCore/src/Array.cpp
+../../CCore/src/AsyncBinaryFile.cpp
 ../../CCore/src/AsyncFile.cpp
 ../../CCore/src/AsyncFileToMem.cpp
 ../../CCore/src/AttachmentHost.cpp
@@ -256,6 +257,7 @@
 ../../CCore/src/video/VideoDevice.cpp
 ../../HCore/CCore/src/Abort.cpp
 ../../HCore/CCore/src/AsyncFileDevice.cpp
+../../HCore/CCore/src/BinaryFile.cpp
 ../../HCore/CCore/src/DirTreeRun.cpp
 ../../HCore/CCore/src/FileSystem.cpp
 ../../HCore/CCore/src/FileToMem.cpp

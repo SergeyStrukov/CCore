@@ -178,7 +178,7 @@ bool Testit<103>::Main()
   
   Putobj(out,recorder);
   
-  StreamFile dev("test103.bin");
+  BinaryFile dev("test103.bin");
   
   dev(recorder);
   

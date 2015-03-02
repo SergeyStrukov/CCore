@@ -18,6 +18,8 @@
 
 #include <CCore/inc/Print.h>
 
+#include <CCore/inc/AsyncBinaryFile.h>
+
 namespace App {
 
 /* using */ 
@@ -28,7 +30,7 @@ using namespace CCore;
 
 class PrintFile;
 
-class StreamFile;
+class BinaryFile;
 
 /* class PrintFile */
 
@@ -45,70 +47,19 @@ class PrintFile : public PrintAsyncFile
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
  };
 
-/* class StreamFile */
+/* class BinaryFile */
 
-class StreamFile : NoCopy , public PutDevBase<StreamFile>
+class BinaryFile : public AsyncBinaryFile 
  {
-   AsyncFile file;
-
-   Packet<uint8> packet;
-   FilePosType file_pos;
-   
-   PtrLen<uint8> out;
-   ulen buf_len;
- 
-  private:
- 
-   void provide();
-   
-  public: 
-   
-   // constructors
+  public:
   
-   StreamFile();
+   BinaryFile();
    
-   explicit StreamFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   explicit BinaryFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
    
-   ~StreamFile();
-   
-   // methods
-   
-   bool isOpened() const { return file.isOpened(); }
+   ~BinaryFile();
    
    void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
-   
-   void soft_close(FileMultiError &errout);
-   
-   void close();
-   
-   void preserveFile() { file.preserveFile(); }
-   
-   void setLargeWriteLen(ulen large_write_len) { file.setLargeWriteLen(large_write_len); }
-   
-   void wait() { file.wait(); }
-   
-   void wait_final() { file.wait_final(); }
-   
-   void wait(MSec timeout) { file.wait(timeout); }
-   
-   void cancel_and_wait() { file.cancel_and_wait(); }
-   
-   // put
-   
-   void do_put(uint8 value)
-    {
-     if( !out ) provide();
-   
-     *out=value;
-   
-     ++out;
-    }
-   
-   void do_put(const uint8 *ptr,ulen len);
-   
-   PtrLen<uint8> do_putRange(ulen len);
-   
-   void flush();
  };
 
 } // namespace App

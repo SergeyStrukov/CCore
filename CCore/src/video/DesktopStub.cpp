@@ -24,7 +24,7 @@ namespace Video {
 
 /* class DefaultDesktopPtr */
 
-Desktop * DefaultDesktopPtr::getPtr()
+Desktop * DefaultDesktopPtr::getPtr() const
  {
   Abort("Fatal error : no desktop");
   

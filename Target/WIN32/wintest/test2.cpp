@@ -16,6 +16,7 @@
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Print.h>
 #include <CCore/inc/TickTimer.h>
+#include <CCore/inc/BinaryFile.h>
 
 #include <CCore/inc/task/TaskEvent.h>
 
@@ -32,8 +33,6 @@ using namespace App;
 class FileReport;
 
 class Application;
-
-class StreamFile;
 
 /* class FileReport */
 
@@ -174,202 +173,6 @@ class Application : NoCopy
     }
  };
 
-/* class StreamFile */
-
-class StreamFile : NoCopy , public PutDevBase<StreamFile>
- {
-   static const ulen BufLen = 64_KByte ;
- 
-   RawFileToPrint file;
-   DynArray<uint8> buf;
-   FileError flush_error;
-   bool no_flush_exception;
-   
-   PtrLen<uint8> out;
-   bool has_data;   
-   
-  private:
-   
-   void provide();
-   
-  public: 
-   
-   // constructors
-  
-   StreamFile();
-   
-   explicit StreamFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
-   
-   ~StreamFile();
-   
-   // methods
-   
-   bool isOpened() const { return file.isOpened(); }
-   
-   void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
-   
-   void disableExceptions() 
-    { 
-     if( !no_flush_exception )
-       {
-        no_flush_exception=true; 
-        
-        flush_error=FileError_Ok;
-       }
-    }
-   
-   void soft_close(FileMultiError &errout);
-   
-   void close();
-   
-   void preserveFile() { file.preserveFile(); }
-   
-   // put
-   
-   void do_put(uint8 value)
-    {
-     if( !out ) provide();
-    
-     *out=value;
-    
-     ++out;
-    }
-   
-   void do_put(const uint8 *ptr,ulen len);
-   
-   PtrLen<uint8> do_putRange(ulen len);
-   
-   void flush();
- };
-
-StreamFile::StreamFile()
- : buf(BufLen),
-   no_flush_exception(false),
-   has_data(false)
- {
- }
-
-StreamFile::StreamFile(StrLen file_name,FileOpenFlags oflags)
- : buf(BufLen),
-   no_flush_exception(false),
-   has_data(false)
- {
-  open(file_name,oflags);
- }
-
-StreamFile::~StreamFile()
- {
-  if( isOpened() )
-    {
-     FileMultiError errout;
-  
-     soft_close(errout);
- 
-     if( +errout )
-       {
-        Printf(NoException,"StreamFile::~StreamFile() : #;",errout);
-       }
-    }
- }
-
-void StreamFile::open(StrLen file_name,FileOpenFlags oflags)
- {
-  if( FileError error=file.open(file_name,oflags) )
-    {
-     Printf(Exception,"StreamFile::open(#.q;,#;) : #;",file_name,oflags,error);
-    }
-    
-  no_flush_exception=false;  
- }
-
-void StreamFile::soft_close(FileMultiError &errout)
- {
-  if( isOpened() ) 
-    {
-     disableExceptions();
- 
-     flush();
-  
-     errout.add(flush_error);
-  
-     file.close(errout);
-    }
-  else 
-    {
-     errout.add(FileError_NoMethod);
-    }
- }
-
-void StreamFile::close()
- {
-  FileMultiError errout;
-  
-  soft_close(errout);
- 
-  if( +errout )
-    {
-     Printf(Exception,"StreamFile::close() : #;",errout);
-    }
- }
-
-void StreamFile::provide()
- {
-  if( !isOpened() ) 
-    {
-     Printf(Exception,"StreamFile::provide(...) : file is not opened");
-    }
-  
-  flush();
-  
-  out=Range(buf);
-  has_data=true;
- }
-
-void StreamFile::do_put(const uint8 *ptr,ulen len)
- {
-  auto src=Range(ptr,len); 
-  
-  while( +src )
-    {
-     if( !out ) provide();
-     
-     ulen delta=Min(src.len,out.len);
-     
-     (out+=delta).copy( (src+=delta).ptr );
-    }
- }
-
-PtrLen<uint8> StreamFile::do_putRange(ulen)
- {
-  Printf(Exception,"StreamFile::do_putRange(...) : not supported");
-  
-  return Nothing;
- }
-
-void StreamFile::flush()
- {
-  if( !has_data ) return;
-  
-  ulen len=buf.getLen()-out.len;
-  
-  out=Nothing;
-  has_data=false;
-  
-  if( !len ) return;
-  
-  if( FileError error=file.write(buf.getPtr(),len) )
-    {
-     if( no_flush_exception )
-       {
-        flush_error=error;
-       }
-     else
-       {  
-        Printf(Exception,"StreamFile::flush(...) : #;",error);
-       }
-    }
- }
-
 /* testmain() */
 
 int testmain(CmdDisplay cmd_display)
@@ -392,7 +195,7 @@ int testmain(CmdDisplay cmd_display)
      return 1;
     }
   
-  StreamFile dev("test2.bin");
+  BinaryFile dev("test2.bin");
   
   dev(recorder);
   

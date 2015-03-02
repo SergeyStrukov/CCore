@@ -10,6 +10,7 @@ obj/ApplyToRange.o \
 obj/Array.o \
 obj/ArrayAlgo.o \
 obj/ArrayBase.o \
+obj/AsyncBinaryFile.o \
 obj/AsyncFile.o \
 obj/AsyncFileToMem.o \
 obj/Atomic.o \
@@ -333,6 +334,7 @@ obj/ApplyToRange.s \
 obj/Array.s \
 obj/ArrayAlgo.s \
 obj/ArrayBase.s \
+obj/AsyncBinaryFile.s \
 obj/AsyncFile.s \
 obj/AsyncFileToMem.s \
 obj/Atomic.s \
@@ -656,6 +658,7 @@ obj/ApplyToRange.dep \
 obj/Array.dep \
 obj/ArrayAlgo.dep \
 obj/ArrayBase.dep \
+obj/AsyncBinaryFile.dep \
 obj/AsyncFile.dep \
 obj/AsyncFileToMem.dep \
 obj/Atomic.dep \
@@ -1004,6 +1007,9 @@ obj/ArrayAlgo.o : ../../CCore/src/array/ArrayAlgo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ArrayBase.o : ../../CCore/src/array/ArrayBase.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/AsyncBinaryFile.o : ../../CCore/src/AsyncBinaryFile.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AsyncFile.o : ../../CCore/src/AsyncFile.cpp
@@ -1968,6 +1974,9 @@ obj/ArrayAlgo.s : ../../CCore/src/array/ArrayAlgo.cpp
 obj/ArrayBase.s : ../../CCore/src/array/ArrayBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/AsyncBinaryFile.s : ../../CCore/src/AsyncBinaryFile.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/AsyncFile.s : ../../CCore/src/AsyncFile.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2929,6 +2938,9 @@ obj/ArrayAlgo.dep : ../../CCore/src/array/ArrayAlgo.cpp
 
 obj/ArrayBase.dep : ../../CCore/src/array/ArrayBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ArrayBase.o $< -MF $@
+
+obj/AsyncBinaryFile.dep : ../../CCore/src/AsyncBinaryFile.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AsyncBinaryFile.o $< -MF $@
 
 obj/AsyncFile.dep : ../../CCore/src/AsyncFile.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AsyncFile.o $< -MF $@

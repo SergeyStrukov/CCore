@@ -124,7 +124,7 @@ bool Testit<101>::Main()
   
   engine.showStat(); 
   
-  StreamFile dev("test101.bin");
+  BinaryFile dev("test101.bin");
   
   dev(recorder);
   

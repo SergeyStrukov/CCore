@@ -53,7 +53,7 @@ bool Testit<102>::Main()
    TestPrint(out);
   } 
   
-  StreamFile dev("test102.bin");
+  BinaryFile dev("test102.bin");
   
   dev(recorder);
   

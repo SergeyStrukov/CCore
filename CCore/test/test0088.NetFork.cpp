@@ -212,7 +212,7 @@ void Test(StrLen file_name)
   
   engine.showStat(); 
   
-  StreamFile dev(file_name);
+  BinaryFile dev(file_name);
   
   dev(recorder);
  }

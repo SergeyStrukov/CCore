@@ -16,6 +16,7 @@
 ../../CCore/src/array/SimpleArray.cpp
 ../../CCore/src/array/TempArray.cpp
 ../../CCore/src/Array.cpp
+../../CCore/src/AsyncBinaryFile.cpp
 ../../CCore/src/AsyncFile.cpp
 ../../CCore/src/AsyncFileToMem.cpp
 ../../CCore/src/AttachmentHost.cpp
