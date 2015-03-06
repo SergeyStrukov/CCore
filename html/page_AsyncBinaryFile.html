@@ -30,6 +30,108 @@
 
 <p class="Files">Files <b>CCore/inc/AsyncBinaryFile.h</b> <b>CCore/src/AsyncBinaryFile.cpp</b></p>
 
+<p>
+An <b>AsyncBinaryFile</b> object can be used as a <a href="page_SaveLoad.html#Devices">serialization output device</a>.
+It puts data bytes into the output file. 
+This class is similar to the <a href="page_PrintDevice.html#PrintAsyncFile">PrintAsyncFile</a> class, but provides binary output
+capabilities rather than textual. It contains inside the <a href="page_AsyncFileClients.html">AsyncFile</a> object.
+</p>
+
+<pre>
+
+class <span class="Att">AsyncBinaryFile</span> : NoCopy , public PutDevBase&lt;AsyncBinaryFile&gt;
+ {
+   AsyncFile file;
+
+   ....
+
+  public: 
+   
+   // constructors
+  
+   AsyncBinaryFile();
+   
+   explicit AsyncBinaryFile(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   
+   ~AsyncBinaryFile();
+   
+   // methods
+   
+   bool isOpened() const;
+   
+   void open(StrLen file_name,FileOpenFlags oflags=Open_ToWrite);
+   
+   void soft_close(FileMultiError &amp;errout);
+   
+   void close();
+   
+   void preserveFile() { file.preserveFile(); }
+   
+   void setLargeWriteLen(ulen large_write_len) { file.setLargeWriteLen(large_write_len); }
+   
+   void wait() { file.wait(); }
+   
+   void wait_final() { file.wait_final(); }
+   
+   void wait(MSec timeout) { file.wait(timeout); }
+   
+   void cancel_and_wait() { file.cancel_and_wait(); }
+   
+   // put
+   
+   void do_put(uint8 value);
+   
+   void do_put(const uint8 *ptr,ulen len);
+   
+   PtrLen&lt;uint8&gt; do_putRange(ulen len);
+   
+   void flush();
+ };
+
+</pre>
+
+<p>
+A file must be opened before any serialization operation. You can do it using the constructor or the method <b>open()</b>.
+<b>file_name</b> and <b>oflags</b> specifies the file to be opened and the open flags.
+</p>
+
+<p>
+Destructor completes operations, closes the file and reports errors if any.
+</p>
+
+<p>
+<b>isOpened()</b> returns <b>true</b>, if the file is opened.
+</p>
+
+<p>
+<b>open()</b> opens the given file.
+</p>
+
+<p>
+<b>soft_close()</b> flushes output and closes the file. Errors are reported to the given <b>FileMultiError</b>
+object.
+</p>
+
+<p>
+<b>close()</b> flushes output and closes the file. An exception is thrown in case of errors.
+</p>
+
+<p>
+<b>preserveFile()</b> preserves the file, opened with the <b>Open_AutoDelete</b> open flag.
+</p>
+
+<p>
+Other methods are direct calls of the correspondent <b>AsyncFile</b> methods. Usually they are
+not required.
+</p>
+
+<p>
+<b>do_putRange()</b> operation is not implemented and throw an exception.
+</p>
+
+<p>
+<b>flush()</b> flushes data from the buffer to the file.
+</p>
 
 </body>
 
