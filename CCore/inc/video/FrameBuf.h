@@ -95,7 +95,11 @@ class FrameBuf : protected ColorPlane
    
    // methods
   
-   FrameBuf<RawColor> cut(Pane pane) { return FrameBuf<RawColor>(*this,pane); } 
+   FrameBuf<RawColor> cut(Pane pane) { return FrameBuf<RawColor>(*this,pane); }
+   
+   RawColor pixel(Point p);
+   
+   void pixel(Point p,RawColor color);
    
    void erase(RawColor color);
   
@@ -154,6 +158,22 @@ void FrameBuf<RawColor>::HLine(Raw *ptr,Pattern pat,RawColor fore)
   for(int bx=0; bx<bdx ;bx++,ptr=NextX(ptr)) 
     if( pat[bx] ) 
       fore.copyTo(ptr); 
+ }
+
+template <class RawColor> 
+RawColor FrameBuf<RawColor>::pixel(Point p)
+ {
+  RawColor ret;
+  
+  ret.copyFrom(place(p));
+  
+  return ret;
+ }
+
+template <class RawColor> 
+void FrameBuf<RawColor>::pixel(Point p,RawColor color)
+ {
+  color.copyTo(place(p));
  }
 
 template <class RawColor> 

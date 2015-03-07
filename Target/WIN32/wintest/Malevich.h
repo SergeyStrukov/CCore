@@ -34,10 +34,11 @@ class MalevichWindow;
 
 class MalevichWindow : public FrameWindow
  {
-   static const int DragWidth = 20 ;
-   static const int BtnWidth  = 16 ;
-   static const int MarkerOff = 10 ;
-   static const int MarkerLen = 20 ;
+   static const int DragWidth   = 20 ;
+   static const int BtnWidth    = 16 ;
+   static const int MarkerOff   = 10 ;
+   static const int MarkerLen   = 20 ;
+   static const int MarkerDelta =  5 ;
   
    Pane dragUpLeft;
    Pane dragLeft;
@@ -53,7 +54,8 @@ class MalevichWindow : public FrameWindow
    Pane btnClose;
    
    Pane client;
-   Pane marker; 
+   Pane marker;
+   Pane hover_marker;
    
    bool has_focus = false ;
    bool max_button = true ;
@@ -76,6 +78,9 @@ class MalevichWindow : public FrameWindow
    Point drag_from;
    
    bool marker_on = false ;
+   
+   Point hover_point;
+   bool hover_on = false ;
 
   private: 
    
@@ -115,6 +120,8 @@ class MalevichWindow : public FrameWindow
    
    virtual void looseFocus();
    
+   virtual void alive();
+   
    virtual void setSize(Point size,bool buf_dirty);
    
    virtual void clickLeft(Point point,MouseKey mkey);
@@ -122,6 +129,10 @@ class MalevichWindow : public FrameWindow
    virtual void upLeft(Point point,MouseKey mkey);
  
    virtual void move(Point point,MouseKey mkey);
+   
+   virtual void hover(Point point,MouseKey mkey);
+   
+   virtual void leave();
    
    virtual void setMouseShape(Point point);
  };

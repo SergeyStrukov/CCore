@@ -86,6 +86,10 @@ void MalevichWindow::layout(Point size)
   marker=Extent(client.getBase()+Point(MarkerOff,MarkerOff),Point(MarkerLen,MarkerLen));
   
   if( !client.contains(marker) ) marker=Null;
+  
+  hover_marker=Extent(client.getBase()+Point(MarkerOff,MarkerOff+MarkerLen+MarkerDelta),Point(MarkerLen,MarkerLen));
+  
+  if( !client.contains(hover_marker) ) hover_marker=Null;
  }
 
 void MalevichWindow::draw(FrameBuf<DesktopColor> buf)
@@ -120,6 +124,19 @@ void MalevichWindow::draw(FrameBuf<DesktopColor> buf)
   buf.cut(client).test();
   
   buf.block(marker,marker_on?Green:DarkGreen);
+  
+  DesktopColor hover_color;
+  
+  if( hover_on && buf.getPane().contains(hover_point) )
+    {
+     hover_color=buf.pixel(hover_point);
+    }
+  else
+    {
+     hover_color=Black;
+    }
+  
+  buf.block(hover_marker,hover_color);
  }
 
 void MalevichWindow::redraw()
@@ -293,6 +310,12 @@ void MalevichWindow::looseFocus()
   redraw();
  }
 
+void MalevichWindow::alive()
+ {
+  win->trackMouseHover();
+  win->trackMouseLeave();
+ }
+
 void MalevichWindow::setSize(Point size,bool)
  {
   layout(size);
@@ -385,6 +408,22 @@ void MalevichWindow::move(Point point,MouseKey mkey)
      else
        endDrag(point);
     }
+ }
+
+void MalevichWindow::hover(Point point,MouseKey)
+ {
+  hover_point=point;
+ 
+  hover_on=true;
+  
+  redraw();
+ }
+
+void MalevichWindow::leave()
+ {
+  hover_on=false;
+  
+  redraw();
  }
 
 void MalevichWindow::setMouseShape(Point point)

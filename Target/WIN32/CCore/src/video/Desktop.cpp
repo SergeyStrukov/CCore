@@ -387,6 +387,10 @@ class WindowsControl : public WinControl
    WindowBuf buf;
    bool buf_dirty = true ;
    
+   unsigned track_flags = 0 ;
+   bool track_on = false ;
+   unsigned hover_time = 0 ;
+   
   private: 
    
    void guardAlive(const char *format)
@@ -733,6 +737,18 @@ class WindowsControl : public WinControl
       bool getEraseFlag() const { return pd.erase_flag; }
     };
    
+   void setTrack()
+    {
+     Win32::TrackMouseDesc desc;
+     
+     desc.cb=sizeof desc;
+     desc.flags=track_flags;
+     desc.hWnd=hWnd;
+     desc.hover_time=hover_time;
+    
+     Win32::TrackMouseEvent(&desc);
+    }
+   
    Win32::MsgResult msgProc(Win32::HWindow hWnd_,Win32::MsgCode message,Win32::MsgWParam wParam,Win32::MsgLParam lParam)
     {
      switch( message )
@@ -970,6 +986,16 @@ class WindowsControl : public WinControl
         
         case Win32::WM_MouseMove :
          {
+          if( track_flags ) 
+            {
+             if( !track_on )
+               {
+                setTrack();
+                
+                track_on=true;
+               } 
+            }
+          
           MouseKey mkey=ToMouseKey(wParam);
           Point point=ToPoint(lParam);
           
@@ -986,7 +1012,26 @@ class WindowsControl : public WinControl
           frame->wheel(point-origin,mkey,delta);
          }
         return 0;
+        
+        case Win32::WM_MouseHover :
+         {
+          MouseKey mkey=ToMouseKey(wParam);
+          Point point=ToPoint(lParam);
+          
+          track_on=false;
+          
+          frame->hover(point,mkey);
+         }
+        return 0; 
 
+        case Win32::WM_MouseLeave :
+         {
+          track_on=false;
+          
+          frame->leave();
+         }
+        return 0;
+        
         case Win32::WM_NcHitTest :
          {
           Point point=ToPoint(lParam);
@@ -1312,6 +1357,41 @@ class WindowsControl : public WinControl
      guardAlive(format);
      
      SysGuard(format, Win32::ReleaseCapture() );
+    }
+   
+   virtual void trackMouseHover()
+    {
+     BitSet(track_flags,Win32::MouseTrack_Hover);
+     
+     hover_time=Win32::HoverTimeDefault;
+     
+     setTrack();
+    }
+   
+   virtual void trackMouseHover(MSec time)
+    {
+     BitSet(track_flags,Win32::MouseTrack_Hover);
+     
+     hover_time=+time;
+     
+     setTrack();
+    }
+   
+   virtual void untrackMouseHover()
+    {
+     BitClear(track_flags,Win32::MouseTrack_Hover);
+    }
+   
+   virtual void trackMouseLeave()
+    {
+     BitSet(track_flags,Win32::MouseTrack_Leave);
+     
+     setTrack();
+    }
+   
+   virtual void untrackMouseLeave()
+    {
+     BitClear(track_flags,Win32::MouseTrack_Leave);
     }
    
    virtual void setFocus()

@@ -128,6 +128,16 @@ class WinControl : public MemBase_nocopy
    
    virtual void releaseMouse()=0;
    
+   virtual void trackMouseHover()=0;
+   
+   virtual void trackMouseHover(MSec time)=0;
+   
+   virtual void untrackMouseHover()=0;
+   
+   virtual void trackMouseLeave()=0;
+   
+   virtual void untrackMouseLeave()=0;
+   
    virtual void setFocus()=0;
    
    virtual void setMouseShape(MouseShape mshape)=0;
@@ -311,6 +321,19 @@ class FrameWindow : public MemBase_nocopy
      Used(point);
      Used(mkey);
      
+     // do nothing
+    }
+   
+   virtual void hover(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+   
+   virtual void leave()
+    {
      // do nothing
     }
    

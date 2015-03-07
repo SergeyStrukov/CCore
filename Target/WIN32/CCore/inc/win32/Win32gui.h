@@ -245,6 +245,14 @@ enum WindowPosFlags : unsigned
   WindowPos_AsyncWindowPos = 0x4000
  };
 
+/* enum MouseTrackFlags */
+
+enum MouseTrackFlags : unsigned
+ {
+  MouseTrack_Hover = 0x0001,
+  MouseTrack_Leave = 0x0002
+ };
+
 /* enum MsgFrom */
 
 enum MsgFrom : unsigned
@@ -905,6 +913,10 @@ const unsigned short KeyStateDown   = 0x8000 ;
 
 const unsigned short KeyStateToggle = 0x0001 ;
 
+/* HoverTimeDefault */
+
+const unsigned HoverTimeDefault = 0xFFFFFFFF ;
+
 /*--------------------------------------------------------------------------------------*/ 
 /* structures                                                                           */ 
 /*--------------------------------------------------------------------------------------*/ 
@@ -999,6 +1011,16 @@ struct WindowPos
   int dx;
   int dy;
   unsigned flags;
+ };
+
+/* struct TrackMouseDesc */
+
+struct TrackMouseDesc
+ {
+  ulen_t cb;
+  unsigned flags;
+  HWindow hWnd;
+  unsigned hover_time;
  };
 
 /* struct PaintData */
@@ -1195,6 +1217,8 @@ bool_t WIN32_API GetWindowRect(HWindow hWnd,Rectangle *rect);
 bool_t WIN32_API MoveWindow(HWindow hWnd,int x,int y,int dx,int dy,bool_t repaint);
 
 HCursor WIN32_API SetCursor(HCursor hCursor);
+
+bool_t WIN32_API TrackMouseEvent(TrackMouseDesc *track);
 
 HBrush WIN32_API GetSysColorBrush(unsigned sys_color_index);
 
