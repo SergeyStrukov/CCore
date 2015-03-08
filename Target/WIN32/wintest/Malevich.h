@@ -104,7 +104,7 @@ class MalevichWindow : public FrameWindow
    
    virtual ~MalevichWindow();
    
-   WinControl * getControl() { return win.getPtr(); }
+   WinControl * getControl() { return win; }
    
    void createMain(CmdDisplay cmd_display,Point max_size);
    

@@ -23,7 +23,7 @@
 #include <CCore/inc/task/TaskEvent.h>
 
 #include <CCore/inc/win32/Win32gui.h>
- 
+
 namespace CCore {
 namespace Video {
 
@@ -1099,6 +1099,19 @@ class WindowsControl : public WinControl
    
    virtual ~WindowsControl() {}
    
+   static void AbortMsgBox(StrLen text)
+    {
+     char temp[TextBufLen];
+     
+     Replace_min<ulen>(text.len,TextBufLen-1);
+     
+     text.copyTo(temp);
+     
+     temp[text.len]=0;
+     
+     Win32::MessageBoxA(HMainWindow,temp,"Abort",Win32::MessageBox_Ok|Win32::MessageBox_IconError);
+    }
+   
    // WinControl
    // create/destroy
    
@@ -1534,6 +1547,11 @@ void TickEntryEvent()
 void TickLeaveEvent()
  {
   TaskEventHost.add<TickEvent>(TickEvent::Leave);
+ }
+
+void AbortMsgBox(StrLen text)
+ {
+  WindowsControl::AbortMsgBox(text);
  }
 
 /* global DefaultDesktop */

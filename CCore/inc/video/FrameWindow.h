@@ -153,34 +153,13 @@ class FrameWindow : public MemBase_nocopy
  {
   protected:
    
-   class Ptr : NoCopy
-    {
-      WinControl *ptr;
-      
-     public:
-      
-      explicit Ptr(Desktop *desktop)
-       {
-        ptr=desktop->createControl();
-       }
-      
-      ~Ptr()
-       {
-        delete ptr;
-       }
-      
-      WinControl * getPtr() const { return ptr; }
-      
-      WinControl * operator -> () const { return ptr; }
-    };
-
-   Ptr win;
+   WinControl *const win;
    
   public:
    
-   explicit FrameWindow(Desktop *desktop) : win(desktop) { win->frame=this; }
+   explicit FrameWindow(Desktop *desktop) : win(desktop->createControl()) { win->frame=this; }
   
-   virtual ~FrameWindow() {}
+   virtual ~FrameWindow() { delete win; }
   
    // base
    

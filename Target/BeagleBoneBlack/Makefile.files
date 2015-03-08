@@ -8,6 +8,7 @@ obj/Abort.o \
 obj/AbortMsgFunc.o \
 obj/AntiSem.o \
 obj/AnyPtr.o \
+obj/ApplicationBase.o \
 obj/ApplyToRange.o \
 obj/Array.o \
 obj/ArrayAlgo.o \
@@ -349,6 +350,7 @@ obj/Abort.s \
 obj/AbortMsgFunc.s \
 obj/AntiSem.s \
 obj/AnyPtr.s \
+obj/ApplicationBase.s \
 obj/ApplyToRange.s \
 obj/Array.s \
 obj/ArrayAlgo.s \
@@ -690,6 +692,7 @@ obj/Abort.dep \
 obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
 obj/AnyPtr.dep \
+obj/ApplicationBase.dep \
 obj/ApplyToRange.dep \
 obj/Array.dep \
 obj/ArrayAlgo.dep \
@@ -1062,6 +1065,9 @@ obj/AntiSem.o : ../../XCore/CCore/src/task/AntiSem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/AnyPtr.o : ../../CCore/src/AnyPtr.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ApplicationBase.o : ../../CCore/src/video/ApplicationBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ApplyToRange.o : ../../CCore/src/algon/ApplyToRange.cpp
@@ -2080,6 +2086,9 @@ obj/AntiSem.s : ../../XCore/CCore/src/task/AntiSem.cpp
 obj/AnyPtr.s : ../../CCore/src/AnyPtr.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ApplicationBase.s : ../../CCore/src/video/ApplicationBase.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ApplyToRange.s : ../../CCore/src/algon/ApplyToRange.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3095,6 +3104,9 @@ obj/AntiSem.dep : ../../XCore/CCore/src/task/AntiSem.cpp
 
 obj/AnyPtr.dep : ../../CCore/src/AnyPtr.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AnyPtr.o $< -MF $@
+
+obj/ApplicationBase.dep : ../../CCore/src/video/ApplicationBase.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ApplicationBase.o $< -MF $@
 
 obj/ApplyToRange.dep : ../../CCore/src/algon/ApplyToRange.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ApplyToRange.o $< -MF $@

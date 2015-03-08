@@ -244,6 +244,7 @@
 ../../CCore/src/TypeNumber.cpp
 ../../CCore/src/TypeSwitch.cpp
 ../../CCore/src/UIntSplit.cpp
+../../CCore/src/video/ApplicationBase.cpp
 ../../CCore/src/video/Color.cpp
 ../../CCore/src/video/DesktopStub.cpp
 ../../CCore/src/video/EDID.cpp

@@ -15,8 +15,8 @@
 
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Print.h>
-#include <CCore/inc/TickTimer.h>
 #include <CCore/inc/BinaryFile.h>
+#include <CCore/inc/video/ApplicationBase.h>
 
 #include <CCore/inc/task/TaskEvent.h>
 
@@ -63,89 +63,35 @@ class FileReport : public ReportException
 
 /* class Application */
 
-class Application : NoCopy
+class Application : public ApplicationBase
  {
+   const CmdDisplay cmd_display;
+  
    FileReport report;
    
-   Desktop *desktop;
- 
    MalevichWindow main_win;
    MalevichWindow win1;
    MalevichWindow win2;
    MalevichWindow win3;
    
   private:
-   
-   bool pump()
+  
+   virtual void clearException()
     {
-     try
-       {
-        report.clear();
-           
-        if( desktop->pump() )
-          {
-           report.guard();
-             
-           return true;
-          }
-        else
-          {
-           return false;
-          } 
-       }
-     catch(CatchType) 
-       {
-        if( !report.show() )
-          {
-           main_win.destroy();
-          }
-           
-        return true;
-       } 
+     report.clear();
     }
    
-   void tick()
+   virtual void guardException()
     {
-     try
-       {
-        report.clear();
-        
-        TickEntryEvent();
-           
-        main_win.tick();
-        win1.tick();
-        win2.tick();
-        win3.tick();
-        
-        TickLeaveEvent();
-           
-        report.guard();
-       }
-     catch(CatchType) 
-       {
-        if( !report.show() )
-          {
-           main_win.destroy();
-          }
-       } 
+     report.guard();
     }
    
-  public: 
-   
-   explicit Application(Desktop *desktop_=DefaultDesktop)
-    : desktop(desktop_),
-      main_win(desktop_),
-      win1(desktop_),
-      win2(desktop_),
-      win3(desktop_)
+   virtual void showException()
     {
+     if( !report.show() ) main_win.destroy();
     }
    
-   ~Application()
-    {
-    }
-   
-   int run(CmdDisplay cmd_display)
+   virtual void prepare()
     {
      Point max_size=desktop->getScreenSize();
      
@@ -155,21 +101,34 @@ class Application : NoCopy
      
      win2.create(win1.getControl(),Pane(150,150,300,200),max_size);
      win3.create(win1.getControl(),Pane(200,200,300,200),max_size);
-     
-     report.guard();
-     
-     TickTimer timer(500_msec);
-     
-     while( pump() )
-       {
-        if( timer.poll() ) tick();
+    }
+   
+   virtual void do_tick()
+    {
+     TickEntryEvent();
         
-        desktop->wait(timer.remains());
-       }
+     main_win.tick();
+     win1.tick();
+     win2.tick();
+     win3.tick();
      
-     report.guard();
-     
-     return 0;
+     TickLeaveEvent();
+    }
+   
+  public: 
+   
+   explicit Application(CmdDisplay cmd_display_)
+    : ApplicationBase(500_msec),
+      cmd_display(cmd_display_),
+      main_win(desktop),
+      win1(desktop),
+      win2(desktop),
+      win3(desktop)
+    {
+    }
+   
+   ~Application()
+    {
     }
  };
 
@@ -186,9 +145,9 @@ int testmain(CmdDisplay cmd_display)
      TickTask tick_task;
      TaskEventHostType::StartStop start_stop(TaskEventHost,&recorder);
      
-     Application app;
+     Application app(cmd_display);
     
-     ret=app.run(cmd_display);
+     ret=app.run();
     }
   catch(CatchType)
     {

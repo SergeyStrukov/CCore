@@ -15,6 +15,8 @@
 
 #include <CCore/inc/video/Desktop.h>
 
+#include <CCore/inc/Abort.h>
+
 #include <CCore/inc/win32/Win32gui.h>
 
 #include "main.rh"
@@ -33,7 +35,7 @@ namespace App2 { int testmain(CmdDisplay cmd_display); }
 
 DesktopConfig AppDesktopConfig={IDI_APP,IDI_SMALL_APP};
 
-//const CCore::AbortMsgFuncType CCore::AbortMsgFunc=???;
+const CCore::AbortMsgFuncType CCore::AbortMsgFunc = AbortMsgBox ;
 
 extern "C" int WIN32_CALLTYPE WinMain(Win32::HModule,Win32::HModule,char *,unsigned cmd_show)
  {

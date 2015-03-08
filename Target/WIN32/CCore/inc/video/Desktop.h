@@ -33,6 +33,8 @@ void TickEntryEvent();
 
 void TickLeaveEvent();
 
+void AbortMsgBox(StrLen text);
+
 /* classes */
 
 struct DesktopConfig;
