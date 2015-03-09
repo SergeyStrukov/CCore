@@ -26,6 +26,7 @@ obj/BlockCipher.o \
 obj/BlockFifo.o \
 obj/Bridge.o \
 obj/CancelPacketList.o \
+obj/CapString.o \
 obj/CharProp.o \
 obj/CheckPlatformBase.o \
 obj/CheckedData.o \
@@ -342,6 +343,7 @@ obj/BlockCipher.s \
 obj/BlockFifo.s \
 obj/Bridge.s \
 obj/CancelPacketList.s \
+obj/CapString.s \
 obj/CharProp.s \
 obj/CheckPlatformBase.s \
 obj/CheckedData.s \
@@ -658,6 +660,7 @@ obj/BlockCipher.dep \
 obj/BlockFifo.dep \
 obj/Bridge.dep \
 obj/CancelPacketList.dep \
+obj/CapString.dep \
 obj/CharProp.dep \
 obj/CheckPlatformBase.dep \
 obj/CheckedData.dep \
@@ -1039,6 +1042,9 @@ obj/Bridge.o : ../../CCore/src/net/Bridge.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CancelPacketList.o : ../../CCore/src/CancelPacketList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CapString.o : ../../CCore/src/CapString.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CharProp.o : ../../CCore/src/CharProp.cpp
@@ -1982,6 +1988,9 @@ obj/Bridge.s : ../../CCore/src/net/Bridge.cpp
 obj/CancelPacketList.s : ../../CCore/src/CancelPacketList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/CapString.s : ../../CCore/src/CapString.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/CharProp.s : ../../CCore/src/CharProp.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2922,6 +2931,9 @@ obj/Bridge.dep : ../../CCore/src/net/Bridge.cpp
 
 obj/CancelPacketList.dep : ../../CCore/src/CancelPacketList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CancelPacketList.o $< -MF $@
+
+obj/CapString.dep : ../../CCore/src/CapString.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CapString.o $< -MF $@
 
 obj/CharProp.dep : ../../CCore/src/CharProp.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CharProp.o $< -MF $@

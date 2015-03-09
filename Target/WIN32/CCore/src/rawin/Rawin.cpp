@@ -16,6 +16,7 @@
 #include <CCore/inc/rawin/Rawin.h>
 
 #include <CCore/inc/PrintError.h>
+#include <CCore/inc/CapString.h>
 
 namespace CCore {
 namespace Rawin {
@@ -539,15 +540,9 @@ Win32::HWindow MainWindowProp::MainWindowHandle=0;
    
 void MainWindowProp::AbortMsgBox(StrLen text)
  {
-  char temp[TextBufLen];
+  CapString<> cap(text);
   
-  Replace_min<ulen>(text.len,TextBufLen-1);
-  
-  text.copyTo(temp);
-  
-  temp[text.len]=0;
-  
-  Win32::MessageBoxA(MainWindowHandle,temp,"Abort",Win32::MessageBox_Ok|Win32::MessageBox_IconError);
+  Win32::MessageBoxA(MainWindowHandle,cap,"Abort",Win32::MessageBox_Ok|Win32::MessageBox_IconError);
  }
  
 Win32::UPtrType MainWindowProp::RunModalDialog(ResId res_id,Win32::DialogProc dialog_proc,Win32::MsgLParam lParam)

@@ -17,6 +17,7 @@
 
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/PrintError.h>
+#include <CCore/inc/CapString.h>
 
 #include <CCore/inc/sys/SysError.h>
 
@@ -1101,15 +1102,9 @@ class WindowsControl : public WinControl
    
    static void AbortMsgBox(StrLen text)
     {
-     char temp[TextBufLen];
+     CapString<> cap(text);
      
-     Replace_min<ulen>(text.len,TextBufLen-1);
-     
-     text.copyTo(temp);
-     
-     temp[text.len]=0;
-     
-     Win32::MessageBoxA(HMainWindow,temp,"Abort",Win32::MessageBox_Ok|Win32::MessageBox_IconError);
+     Win32::MessageBoxA(HMainWindow,cap,"Abort",Win32::MessageBox_Ok|Win32::MessageBox_IconError);
     }
    
    // WinControl

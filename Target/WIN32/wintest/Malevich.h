@@ -28,69 +28,94 @@ using namespace CCore::Video;
 
 /* classes */
 
+struct MalevichShape;
+
 class MalevichWindow;
+
+/* struct MalevichShape */
+
+struct MalevichShape
+ {
+  static const int DragWidth   = 20 ;
+  static const int BtnWidth    = 16 ;
+  static const int MarkerOff   = 10 ;
+  static const int MarkerLen   = 20 ;
+  static const int MarkerDelta =  5 ;
+ 
+  Pane dragUpLeft;
+  Pane dragLeft;
+  Pane dragDownLeft;
+  Pane dragDown;
+  Pane dragDownRight;
+  Pane dragRight;
+  Pane dragUpRight;
+  Pane dragBar;
+  
+  Pane btnMin;
+  Pane btnMax;
+  Pane btnClose;
+  
+  Pane client;
+  Pane marker;
+  Pane hover_marker;
+  
+  bool has_focus = false ;
+  bool max_button = true ;
+  
+  enum DragType
+   {
+    Drag_None = 0,
+    
+    Drag_UpLeft,
+    Drag_Left,
+    Drag_DownLeft,
+    Drag_Down,
+    Drag_DownRight,
+    Drag_Right,
+    Drag_UpRight,
+    Drag_Bar
+   };
+  
+  enum HitType
+   {
+    Hit_None = 0,
+    
+    Hit_Min,
+    Hit_Max,
+    Hit_Close
+   };
+  
+  DragType drag_type = Drag_None ;
+  
+  bool marker_on = false ;
+  
+  Point hover_point;
+  bool hover_on = false ;
+  
+  MalevichShape() {}
+  
+  void layout(Point size);
+  
+  void draw(FrameBuf<DesktopColor> buf) const;
+  
+  DragType dragTest(Point point) const;
+  
+  HitType hitTest(Point point) const;
+ };
 
 /* class MalevichWindow */
 
 class MalevichWindow : public FrameWindow
  {
-   static const int DragWidth   = 20 ;
-   static const int BtnWidth    = 16 ;
-   static const int MarkerOff   = 10 ;
-   static const int MarkerLen   = 20 ;
-   static const int MarkerDelta =  5 ;
-  
-   Pane dragUpLeft;
-   Pane dragLeft;
-   Pane dragDownLeft;
-   Pane dragDown;
-   Pane dragDownRight;
-   Pane dragRight;
-   Pane dragUpRight;
-   Pane dragBar;
+   MalevichShape shape;
    
-   Pane btnMin;
-   Pane btnMax;
-   Pane btnClose;
-   
-   Pane client;
-   Pane marker;
-   Pane hover_marker;
-   
-   bool has_focus = false ;
-   bool max_button = true ;
-   
-   enum DragType
-    {
-     Drag_None,
-     
-     Drag_UpLeft,
-     Drag_Left,
-     Drag_DownLeft,
-     Drag_Down,
-     Drag_DownRight,
-     Drag_Right,
-     Drag_UpRight,
-     Drag_Bar
-    };
-   
-   DragType drag_type = Drag_None ;
    Point drag_from;
-   
-   bool marker_on = false ;
-   
-   Point hover_point;
-   bool hover_on = false ;
 
   private: 
    
-   void layout(Point size);
-  
-   void draw(FrameBuf<DesktopColor> buf);
-   
    void redraw();
 
-   void startDrag(Point point,DragType drag_type);
+   void startDrag(Point point,MalevichShape::DragType drag_type);
    
    void dragTo_(Point point);
    

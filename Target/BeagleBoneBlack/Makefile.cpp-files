@@ -23,6 +23,7 @@
 ../../CCore/src/base/CheckPlatformBase.cpp
 ../../CCore/src/BlockFifo.cpp
 ../../CCore/src/CancelPacketList.cpp
+../../CCore/src/CapString.cpp
 ../../CCore/src/CharProp.cpp
 ../../CCore/src/CmdInput.cpp
 ../../CCore/src/Cmp.cpp
