@@ -26,6 +26,78 @@ namespace App {
 using namespace CCore;
 using namespace CCore::Video;
 
+/* functions */
+
+template <class E>
+void DragPane(Pane &place,Point delta,E type)
+ {
+  switch( type )
+    {
+     case E::UpLeft :
+      {
+       place.x+=delta.x;
+       place.dx-=delta.x;
+       
+       place.y+=delta.y;
+       place.dy-=delta.y;
+      }
+     break;
+     
+     case E::Left :
+      {
+       place.x+=delta.x;
+       place.dx-=delta.x;
+      }
+     break;
+     
+     case E::DownLeft :
+      {
+       place.x+=delta.x;
+       place.dx-=delta.x;
+       
+       place.dy+=delta.y;
+      }
+     break;
+     
+     case E::Down :
+      {
+       place.dy+=delta.y;
+      }
+     break;
+     
+     case E::DownRight :
+      {
+       place.dx+=delta.x;
+       
+       place.dy+=delta.y;
+      }
+     break;
+     
+     case E::Right :
+      {
+       place.dx+=delta.x;
+      }
+     break;
+     
+     case E::UpRight :
+      {
+       place.dx+=delta.x;
+       
+       place.y+=delta.y;
+       place.dy-=delta.y;
+      }
+     break;
+     
+     case E::Bar :
+      {
+       place.x+=delta.x;
+       
+       place.y+=delta.y;
+      }
+     break;
+    }
+ }
+
 /* classes */
 
 struct MalevichShape;
@@ -62,30 +134,30 @@ struct MalevichShape
   bool has_focus = false ;
   bool max_button = true ;
   
-  enum DragType
+  enum class DragType
    {
-    Drag_None = 0,
+    None = 0,
     
-    Drag_UpLeft,
-    Drag_Left,
-    Drag_DownLeft,
-    Drag_Down,
-    Drag_DownRight,
-    Drag_Right,
-    Drag_UpRight,
-    Drag_Bar
+    UpLeft,
+    Left,
+    DownLeft,
+    Down,
+    DownRight,
+    Right,
+    UpRight,
+    Bar
    };
   
-  enum HitType
+  enum class HitType
    {
-    Hit_None = 0,
+    None = 0,
     
-    Hit_Min,
-    Hit_Max,
-    Hit_Close
+    Min,
+    Max,
+    Close
    };
   
-  DragType drag_type = Drag_None ;
+  DragType drag_type = DragType::None ;
   
   bool marker_on = false ;
   

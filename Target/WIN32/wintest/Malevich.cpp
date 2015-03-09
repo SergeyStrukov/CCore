@@ -94,7 +94,7 @@ void MalevichShape::layout(Point size)
 
 void MalevichShape::draw(FrameBuf<DesktopColor> buf) const
  {
-  if( drag_type )
+  if( drag_type!=DragType::None )
     {
      buf.block(dragUpLeft,Olive);
      buf.block(dragLeft,Olive);
@@ -141,34 +141,34 @@ void MalevichShape::draw(FrameBuf<DesktopColor> buf) const
 
 auto MalevichShape::dragTest(Point point) const -> DragType
  {
-  if( dragUpLeft.contains(point) ) return Drag_UpLeft;
+  if( dragUpLeft.contains(point) ) return DragType::UpLeft;
 
-  if( dragLeft.contains(point) ) return Drag_Left;
+  if( dragLeft.contains(point) ) return DragType::Left;
   
-  if( dragDownLeft.contains(point) ) return Drag_DownLeft;
+  if( dragDownLeft.contains(point) ) return DragType::DownLeft;
   
-  if( dragDown.contains(point) ) return Drag_Down;
+  if( dragDown.contains(point) ) return DragType::Down;
   
-  if( dragDownRight.contains(point) ) return Drag_DownRight;
+  if( dragDownRight.contains(point) ) return DragType::DownRight;
   
-  if( dragRight.contains(point) ) return Drag_Right;
+  if( dragRight.contains(point) ) return DragType::Right;
   
-  if( dragUpRight.contains(point) ) return Drag_UpRight;
+  if( dragUpRight.contains(point) ) return DragType::UpRight;
   
-  if( dragBar.contains(point) ) return Drag_Bar;
+  if( dragBar.contains(point) ) return DragType::Bar;
   
-  return Drag_None;
+  return DragType::None;
  }
 
 auto MalevichShape::hitTest(Point point) const -> HitType
  {
-  if( btnMin.contains(point) ) return Hit_Min;
+  if( btnMin.contains(point) ) return HitType::Min;
   
-  if( btnMax.contains(point) ) return Hit_Max;
+  if( btnMax.contains(point) ) return HitType::Max;
   
-  if( btnClose.contains(point) ) return Hit_Close;
+  if( btnClose.contains(point) ) return HitType::Close;
   
-  return Hit_None;
+  return HitType::None;
  }
 
 /* class MalevichWindow */
@@ -198,71 +198,7 @@ void MalevichWindow::dragTo_(Point point)
   Pane place=win->getPlacement();
   Point delta=Diff(drag_from,point+place.getBase());
   
-  switch( shape.drag_type )
-    {
-     case MalevichShape::Drag_UpLeft :
-      {
-       place.x+=delta.x;
-       place.dx-=delta.x;
-       
-       place.y+=delta.y;
-       place.dy-=delta.y;
-      }
-     break;
-     
-     case MalevichShape::Drag_Left :
-      {
-       place.x+=delta.x;
-       place.dx-=delta.x;
-      }
-     break;
-     
-     case MalevichShape::Drag_DownLeft :
-      {
-       place.x+=delta.x;
-       place.dx-=delta.x;
-       
-       place.dy+=delta.y;
-      }
-     break;
-     
-     case MalevichShape::Drag_Down :
-      {
-       place.dy+=delta.y;
-      }
-     break;
-     
-     case MalevichShape::Drag_DownRight :
-      {
-       place.dx+=delta.x;
-       
-       place.dy+=delta.y;
-      }
-     break;
-     
-     case MalevichShape::Drag_Right :
-      {
-       place.dx+=delta.x;
-      }
-     break;
-     
-     case MalevichShape::Drag_UpRight :
-      {
-       place.dx+=delta.x;
-       
-       place.y+=delta.y;
-       place.dy-=delta.y;
-      }
-     break;
-     
-     case MalevichShape::Drag_Bar :
-      {
-       place.x+=delta.x;
-       
-       place.y+=delta.y;
-      }
-     break;
-    }
+  DragPane(place,delta,shape.drag_type);
   
   Point new_size(place.dx,place.dy);
   
@@ -285,7 +221,7 @@ void MalevichWindow::endDrag(Point point)
   
   win->releaseMouse();
   
-  shape.drag_type=MalevichShape::Drag_None;
+  shape.drag_type=MalevichShape::DragType::None;
   
   redraw();
  }
@@ -360,19 +296,21 @@ void MalevichWindow::setSize(Point size,bool)
 
 void MalevichWindow::clickLeft(Point point,MouseKey)
  {
-  if( auto drag_type=shape.dragTest(point) )
+  auto drag_type=shape.dragTest(point);
+  
+  if( (bool)drag_type )
     {
-     if( drag_type==MalevichShape::Drag_Bar )
+     if( drag_type==MalevichShape::DragType::Bar )
        {
         switch( shape.hitTest(point) )
           {
-           case MalevichShape::Hit_Min :
+           case MalevichShape::HitType::Min :
             {
              win->display(CmdDisplay_Minimized);
             }
            break;
            
-           case MalevichShape::Hit_Max :
+           case MalevichShape::HitType::Max :
             {
              if( shape.max_button )
                {
@@ -391,7 +329,7 @@ void MalevichWindow::clickLeft(Point point,MouseKey)
             }
            break;
            
-           case MalevichShape::Hit_Close :
+           case MalevichShape::HitType::Close :
             {
              win->destroy();
             }
@@ -412,7 +350,7 @@ void MalevichWindow::clickLeft(Point point,MouseKey)
 
 void MalevichWindow::upLeft(Point point,MouseKey)
  {
-  if( shape.drag_type )
+  if( (bool)shape.drag_type )
     {
      endDrag(point);
     }
@@ -420,7 +358,7 @@ void MalevichWindow::upLeft(Point point,MouseKey)
 
 void MalevichWindow::move(Point point,MouseKey mkey)
  {
-  if( shape.drag_type )
+  if( (bool)shape.drag_type )
     {
      if( mkey&MouseKey_Left )
        dragTo(point);
@@ -449,37 +387,37 @@ void MalevichWindow::setMouseShape(Point point)
  {
   switch( shape.dragTest(point) )
     {
-     case MalevichShape::Drag_UpLeft    : win->setMouseShape(Mouse_SizeUpLeft); break;
+     case MalevichShape::DragType::UpLeft    : win->setMouseShape(Mouse_SizeUpLeft); break;
 
-     case MalevichShape::Drag_Left      : win->setMouseShape(Mouse_SizeLeftRight); break;
+     case MalevichShape::DragType::Left      : win->setMouseShape(Mouse_SizeLeftRight); break;
      
-     case MalevichShape::Drag_DownLeft  : win->setMouseShape(Mouse_SizeUpRight); break;
+     case MalevichShape::DragType::DownLeft  : win->setMouseShape(Mouse_SizeUpRight); break;
      
-     case MalevichShape::Drag_Down      : win->setMouseShape(Mouse_SizeUpDown); break;
+     case MalevichShape::DragType::Down      : win->setMouseShape(Mouse_SizeUpDown); break;
      
-     case MalevichShape::Drag_DownRight : win->setMouseShape(Mouse_SizeUpLeft); break;
+     case MalevichShape::DragType::DownRight : win->setMouseShape(Mouse_SizeUpLeft); break;
      
-     case MalevichShape::Drag_Right     : win->setMouseShape(Mouse_SizeLeftRight); break;
+     case MalevichShape::DragType::Right     : win->setMouseShape(Mouse_SizeLeftRight); break;
      
-     case MalevichShape::Drag_UpRight   : win->setMouseShape(Mouse_SizeUpRight); break;
+     case MalevichShape::DragType::UpRight   : win->setMouseShape(Mouse_SizeUpRight); break;
      
-     case MalevichShape::Drag_Bar :
+     case MalevichShape::DragType::Bar :
       {
        switch( shape.hitTest(point) )
          {
-          case MalevichShape::Hit_Min :
+          case MalevichShape::HitType::Min :
            {
             win->setMouseShape(Mouse_Hand);
            }
           break;
           
-          case MalevichShape::Hit_Max :
+          case MalevichShape::HitType::Max :
            {
             win->setMouseShape(Mouse_Hand);
            }
           break;
           
-          case MalevichShape::Hit_Close :
+          case MalevichShape::HitType::Close :
            {
             win->setMouseShape(Mouse_Stop);
            }
