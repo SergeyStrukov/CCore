@@ -1,0 +1,57 @@
+<!--
+/* page_CapString.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.09
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> CapString</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>CapString</h2>
+
+<p class="Files">Files <b>CCore/inc/CapString.h</b> <b>CCore/src/CapString.cpp</b></p>
+
+<p>
+<b>CapString</b> is a simple helper class. It copies the given string to the internal buffer, caps the string
+if neccessary and makes it zero-terminated. The template parameter is the cap length.
+</p>
+
+<pre>
+
+template &lt;ulen MaxLen=TextBufLen&gt;
+class <span class="Att">CapString</span> : NoCopy
+ {
+   char buf[MaxLen+1];
+   
+  public:
+   
+   explicit CapString(StrLen str);
+   
+   operator const char * () const { return buf; }
+ };
+
+</pre>
+
+</body>
+
+</html>
+

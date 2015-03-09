@@ -22,22 +22,22 @@ namespace CCore {
 
 /* classes */
 
-template <ulen Len=TextBufLen> class CapString;
+template <ulen MaxLen=TextBufLen> class CapString;
 
-/* class CapString<ulen Len> */
+/* class CapString<ulen MaxLen> */
 
-template <ulen Len> 
+template <ulen MaxLen> 
 class CapString : NoCopy
  {
-   static_assert( Len>1 ,"CCore::CapString<Len> : Len must be > 1");
+   static_assert( MaxLen>0 ,"CCore::CapString<MaxLen> : MaxLen must be > 0");
  
-   char buf[Len];
+   char buf[MaxLen+1];
    
   public:
    
    explicit CapString(StrLen str)
     {
-     Replace_min<ulen>(str.len,Len-1); // cap length
+     Replace_min(str.len,MaxLen); // cap length
     
      str.copyTo(buf);
     
