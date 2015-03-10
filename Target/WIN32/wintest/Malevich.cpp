@@ -21,14 +21,14 @@ namespace App {
 
 void MalevichShape::layout(Point size)
  {
-  if( size>Point(2*DragWidth,2*DragWidth) )
+  if( size>Point(2*cfg.drag_width,2*cfg.drag_width) )
     {
-     int x1=DragWidth;
-     int x2=size.x-DragWidth;
+     int x1=cfg.drag_width;
+     int x2=size.x-cfg.drag_width;
      int x3=size.x;
      
-     int y1=DragWidth;
-     int y2=size.y-DragWidth;
+     int y1=cfg.drag_width;
+     int y2=size.y-cfg.drag_width;
      int y3=size.y;
     
      dragUpLeft=Pane(Point(0,0),Point(x1,y1));
@@ -45,15 +45,15 @@ void MalevichShape::layout(Point size)
      
      client=Pane(Point(x1,y1),Point(x2,y2));
      
-     int yb=(DragWidth-BtnWidth)/2;
+     int yb=(cfg.drag_width-cfg.btn_width)/2;
      
-     if( size.x>=(3*BtnWidth+2*yb)+4*DragWidth )
+     if( size.x>=(3*cfg.btn_width+2*yb)+4*cfg.drag_width )
        {
-        int xb=(size.x-(3*BtnWidth+2*yb))/2; // >= 2*DragWidth 
+        int xb=(size.x-(3*cfg.btn_width+2*yb))/2; // >= 2*cfg.drag_width 
         
-        btnMin=Pane(xb,yb,BtnWidth,BtnWidth);
-        btnMax=Pane(xb+BtnWidth+yb,yb,BtnWidth,BtnWidth);
-        btnClose=Pane(xb+2*BtnWidth+2*yb,yb,BtnWidth,BtnWidth);
+        btnMin=Pane(xb,yb,cfg.btn_width,cfg.btn_width);
+        btnMax=Pane(xb+cfg.btn_width+yb,yb,cfg.btn_width,cfg.btn_width);
+        btnClose=Pane(xb+2*cfg.btn_width+2*yb,yb,cfg.btn_width,cfg.btn_width);
        }
      else
        {
@@ -83,11 +83,11 @@ void MalevichShape::layout(Point size)
      btnClose=Empty;
     }
   
-  marker=Extent(client.getBase()+Point(MarkerOff,MarkerOff),Point(MarkerLen,MarkerLen));
+  marker=Extent(client.getBase()+Point(cfg.marker_off,cfg.marker_off),Point(cfg.marker_len,cfg.marker_len));
   
   if( !client.contains(marker) ) marker=Empty;
   
-  hover_marker=Extent(client.getBase()+Point(MarkerOff,MarkerOff+MarkerLen+MarkerDelta),Point(MarkerLen,MarkerLen));
+  hover_marker=Extent(client.getBase()+Point(cfg.marker_off,cfg.marker_off+cfg.marker_len+cfg.marker_delta),Point(cfg.marker_len,cfg.marker_len));
   
   if( !client.contains(hover_marker) ) hover_marker=Empty;
  }
@@ -96,34 +96,34 @@ void MalevichShape::draw(FrameBuf<DesktopColor> buf) const
  {
   if( drag_type!=DragType::None )
     {
-     buf.block(dragUpLeft,Olive);
-     buf.block(dragLeft,Olive);
-     buf.block(dragDownLeft,Olive);
-     buf.block(dragDown,Olive);
-     buf.block(dragDownRight,Olive);
-     buf.block(dragRight,Olive);
-     buf.block(dragUpRight,Olive);
-     buf.block(dragBar,Olive);
+     buf.block(dragUpLeft,cfg.dragOn);
+     buf.block(dragLeft,cfg.dragOn);
+     buf.block(dragDownLeft,cfg.dragOn);
+     buf.block(dragDown,cfg.dragOn);
+     buf.block(dragDownRight,cfg.dragOn);
+     buf.block(dragRight,cfg.dragOn);
+     buf.block(dragUpRight,cfg.dragOn);
+     buf.block(dragBar,cfg.dragOn);
     }
   else
     {
-     buf.block(dragUpLeft,Silver);
-     buf.block(dragLeft,Gray);
-     buf.block(dragDownLeft,Silver);
-     buf.block(dragDown,Gray);
-     buf.block(dragDownRight,Silver);
-     buf.block(dragRight,Gray);
-     buf.block(dragUpRight,Silver);
-     buf.block(dragBar,has_focus?Blue:Gray);
+     buf.block(dragUpLeft,cfg.dragCorner);
+     buf.block(dragLeft,cfg.dragEdge);
+     buf.block(dragDownLeft,cfg.dragCorner);
+     buf.block(dragDown,cfg.dragEdge);
+     buf.block(dragDownRight,cfg.dragCorner);
+     buf.block(dragRight,cfg.dragEdge);
+     buf.block(dragUpRight,cfg.dragCorner);
+     buf.block(dragBar,has_focus?cfg.dragActive:cfg.dragPassive);
     }
   
-  buf.block(btnMin,Green);
-  buf.block(btnMax,max_button?Red:Yellow);
-  buf.block(btnClose,Black);
+  buf.block(btnMin,cfg.btnMin);
+  buf.block(btnMax,max_button?cfg.btnMax:cfg.btnRestore);
+  buf.block(btnClose,cfg.btnClose);
   
   buf.cut(client).test();
   
-  buf.block(marker,marker_on?Green:DarkGreen);
+  buf.block(marker,marker_on?cfg.markerOn:cfg.markerOff);
   
   DesktopColor hover_color;
   
@@ -133,7 +133,7 @@ void MalevichShape::draw(FrameBuf<DesktopColor> buf) const
     }
   else
     {
-     hover_color=Black;
+     hover_color=cfg.hoverOff;
     }
   
   buf.block(hover_marker,hover_color);

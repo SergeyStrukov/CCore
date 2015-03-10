@@ -108,11 +108,37 @@ class MalevichWindow;
 
 struct MalevichShape
  {
-  static const int DragWidth   = 20 ;
-  static const int BtnWidth    = 16 ;
-  static const int MarkerOff   = 10 ;
-  static const int MarkerLen   = 20 ;
-  static const int MarkerDelta =  5 ;
+  struct Config
+   {
+    int drag_width   = 20 ;
+    
+    int btn_width    = 16 ;
+    
+    int marker_off   = 10 ;
+    int marker_len   = 20 ;
+    int marker_delta =  5 ;
+    
+    ColorName dragOn      =     Olive ;
+    ColorName dragCorner  =    Silver ;
+    ColorName dragEdge    =      Gray ;
+    
+    ColorName dragActive  =      Blue ;
+    ColorName dragPassive =      Gray ;
+    
+    ColorName btnMin      =     Green ;
+    ColorName btnClose    =     Black ;
+    ColorName btnMax      =       Red ;
+    ColorName btnRestore  =    Yellow ;
+    
+    ColorName markerOn    =     Green ;
+    ColorName markerOff   = DarkGreen ;
+    
+    ColorName hoverOff    =     Black ;
+    
+    Config() {}
+   };
+  
+  Config cfg;
  
   Pane dragUpLeft;
   Pane dragLeft;
@@ -165,6 +191,8 @@ struct MalevichShape
   bool hover_on = false ;
   
   MalevichShape() {}
+  
+  explicit MalevichShape(const Config &cfg_) : cfg(cfg_) {}
   
   void layout(Point size);
   
