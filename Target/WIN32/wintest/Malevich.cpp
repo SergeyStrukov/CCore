@@ -202,10 +202,7 @@ void MalevichWindow::dragTo_(Point point)
   
   Point new_size(place.dx,place.dy);
   
-  if( new_size>Null && new_size<=win->getMaxSize() )
-    {
-     win->move(place);
-    }
+  if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
  }
 
 void MalevichWindow::dragTo(Point point)
@@ -292,6 +289,73 @@ void MalevichWindow::setSize(Point size,bool)
   shape.layout(size);
   
   redraw();
+ }
+
+void MalevichWindow::key(VKey vkey,KeyMod kmod)
+ {
+  if( kmod&KeyMod_Alt )
+    {
+     switch( vkey )
+       {
+        case VKey_Left :
+         {
+          Pane place=win->getPlacement();
+          Point delta(-1,0);
+          
+          DragPane(place,delta,(kmod&KeyMod_Shift)?MalevichShape::DragType::Right:MalevichShape::DragType::Bar);
+          
+          Point new_size(place.dx,place.dy);
+          
+          if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+         }
+        break;
+        
+        case VKey_Right :
+         {
+          Pane place=win->getPlacement();
+          Point delta(1,0);
+          
+          DragPane(place,delta,(kmod&KeyMod_Shift)?MalevichShape::DragType::Right:MalevichShape::DragType::Bar);
+          
+          Point new_size(place.dx,place.dy);
+          
+          if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+         }
+        break;
+        
+        case VKey_Up :
+         {
+          Pane place=win->getPlacement();
+          Point delta(0,-1);
+          
+          DragPane(place,delta,(kmod&KeyMod_Shift)?MalevichShape::DragType::Down:MalevichShape::DragType::Bar);
+          
+          Point new_size(place.dx,place.dy);
+          
+          if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+         }
+        break;
+        
+        case VKey_Down :
+         {
+          Pane place=win->getPlacement();
+          Point delta(0,1);
+          
+          DragPane(place,delta,(kmod&KeyMod_Shift)?MalevichShape::DragType::Down:MalevichShape::DragType::Bar);
+          
+          Point new_size(place.dx,place.dy);
+          
+          if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+         }
+        break;
+        
+        case VKey_F4 :
+         {
+          destroy();
+         }
+        break; 
+       }
+    }
  }
 
 void MalevichWindow::clickLeft(Point point,MouseKey)

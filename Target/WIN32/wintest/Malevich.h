@@ -95,6 +95,13 @@ void DragPane(Pane &place,Point delta,E type)
        place.y+=delta.y;
       }
      break;
+     
+     case E::Up :
+      {
+       place.y+=delta.y;
+       place.dy-=delta.y;
+      }
+     break; 
     }
  }
 
@@ -171,7 +178,8 @@ struct MalevichShape
     DownRight,
     Right,
     UpRight,
-    Bar
+    Bar,
+    Up
    };
   
   enum class HitType
@@ -248,6 +256,8 @@ class MalevichWindow : public FrameWindow
    virtual void alive();
    
    virtual void setSize(Point size,bool buf_dirty);
+   
+   virtual void key(VKey vkey,KeyMod kmod);
    
    virtual void clickLeft(Point point,MouseKey mkey);
    
