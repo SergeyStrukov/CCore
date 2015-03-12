@@ -31,6 +31,8 @@ namespace App1 { int testmain(CmdDisplay cmd_display); }
  
 namespace App2 { int testmain(CmdDisplay cmd_display); }
 
+namespace App3 { int testmain(CmdDisplay cmd_display); }
+
 /* WinMain() */ 
 
 DesktopConfig AppDesktopConfig={IDI_APP,IDI_SMALL_APP};
@@ -39,7 +41,7 @@ const CCore::AbortMsgFuncType CCore::AbortMsgFunc = AbortMsgBox ;
 
 extern "C" int WIN32_CALLTYPE WinMain(Win32::HModule,Win32::HModule,char *,unsigned cmd_show)
  {
-  return App2::testmain(MapCmdShow(cmd_show)); 
+  return App3::testmain(MapCmdShow(cmd_show)); 
  }
  
  

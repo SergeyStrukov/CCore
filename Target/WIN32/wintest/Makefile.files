@@ -1,4 +1,6 @@
 OBJ_LIST = \
+../wintest-obj/DragWindow.o \
+../wintest-obj/DrawArt.o \
 ../wintest-obj/Malevich.o \
 ../wintest-obj/main.o \
 ../wintest-obj/test1.o \
@@ -6,6 +8,8 @@ OBJ_LIST = \
 
 
 ASM_LIST = \
+../wintest-obj/DragWindow.s \
+../wintest-obj/DrawArt.s \
 ../wintest-obj/Malevich.s \
 ../wintest-obj/main.s \
 ../wintest-obj/test1.s \
@@ -13,6 +17,8 @@ ASM_LIST = \
 
 
 DEP_LIST = \
+../wintest-obj/DragWindow.dep \
+../wintest-obj/DrawArt.dep \
 ../wintest-obj/Malevich.dep \
 ../wintest-obj/main.dep \
 ../wintest-obj/test1.dep \
@@ -24,6 +30,12 @@ ASM_OBJ_LIST = \
 
 include $(RULES_FILE)
 
+
+../wintest-obj/DragWindow.o : ./DragWindow.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../wintest-obj/DrawArt.o : ./DrawArt.cpp
+	$(CC) $(CCOPT) $< -o $@
 
 ../wintest-obj/Malevich.o : ./Malevich.cpp
 	$(CC) $(CCOPT) $< -o $@
@@ -39,6 +51,12 @@ include $(RULES_FILE)
 
 
 
+../wintest-obj/DragWindow.s : ./DragWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../wintest-obj/DrawArt.s : ./DrawArt.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../wintest-obj/Malevich.s : ./Malevich.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -52,6 +70,12 @@ include $(RULES_FILE)
 	$(CC) -S $(CCOPT) $< -o $@
 
 
+
+../wintest-obj/DragWindow.dep : ./DragWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DragWindow.o $< -MF $@
+
+../wintest-obj/DrawArt.dep : ./DrawArt.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawArt.o $< -MF $@
 
 ../wintest-obj/Malevich.dep : ./Malevich.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Malevich.o $< -MF $@

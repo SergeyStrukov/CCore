@@ -1,3 +1,5 @@
+./DragWindow.cpp
+./DrawArt.cpp
 ./main.cpp
 ./Malevich.cpp
 ./test1.cpp
