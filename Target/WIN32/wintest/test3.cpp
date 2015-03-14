@@ -68,6 +68,8 @@ class Application : public ApplicationBase
   
    FileReport report;
    
+   DragClient client;
+   
    DragWindow main_win;
    
   private:
@@ -103,7 +105,7 @@ class Application : public ApplicationBase
    explicit Application(CmdDisplay cmd_display_)
     : ApplicationBase(50_msec),
       cmd_display(cmd_display_),
-      main_win(desktop)
+      main_win(desktop,client)
     {
     }
    

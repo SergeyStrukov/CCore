@@ -93,6 +93,8 @@ class FrameBuf : protected ColorPlane
    
    Pane getPane() const { return Pane(0,0,dx,dy); }
    
+   Point getSize() const { return Point(dx,dy); }
+   
    // methods
   
    FrameBuf<RawColor> cut(Pane pane) { return FrameBuf<RawColor>(*this,pane); }
