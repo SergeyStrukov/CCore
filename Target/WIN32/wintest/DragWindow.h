@@ -131,6 +131,12 @@ class DragWindow;
 
 class DragClient : NoCopy
  {
+  protected:
+  
+   DragWindow *win = 0 ;
+   
+   friend class DragWindow;
+  
   public:
   
    DragClient();
@@ -227,8 +233,6 @@ class DragWindow : public FrameWindow
 
   private: 
    
-   void redraw();
-   
    void replace(Pane place,Point delta,DragType drag_type);
    
    void replace(Point delta,DragType drag_type);
@@ -264,6 +268,8 @@ class DragWindow : public FrameWindow
    void minimized();
    
    void maximized();
+   
+   void redraw();
    
    // events
    

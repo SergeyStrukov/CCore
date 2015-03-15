@@ -170,24 +170,6 @@ auto DragWindow::Shape::hitTest(Point point) const -> HitType
 
 /* class DragWindow */
 
-void DragWindow::redraw()
- {
-  FrameBuf<DesktopColor> buf(win->getDrawPlane());
-  
-  if( !(size<=buf.getSize()) ) 
-    {
-     buf.erase(Black);
-    
-     return;
-    }
-  
-  shape.draw(buf);
-  
-  client.draw(buf.cut(shape.client),(bool)shape.drag_type);
-  
-  win->invalidate(1);
- }
-
 void DragWindow::replace(Pane place,Point delta,DragType drag_type)
  {
   DragPane(place,delta,drag_type);
@@ -247,6 +229,7 @@ DragWindow::DragWindow(Desktop *desktop,DragClient &client_)
  : FrameWindow(desktop),
    client(client_)
  {
+  client_.win=this;
  }
 
 DragWindow::DragWindow(Desktop *desktop,const Shape::Config &cfg,DragClient &client_)
@@ -254,6 +237,7 @@ DragWindow::DragWindow(Desktop *desktop,const Shape::Config &cfg,DragClient &cli
    shape(cfg),
    client(client_)
  {
+  client_.win=this;
  }
 
 DragWindow::~DragWindow()
@@ -303,6 +287,24 @@ void DragWindow::maximized()
     } 
   
   redraw();
+ }
+
+void DragWindow::redraw()
+ {
+  FrameBuf<DesktopColor> buf(win->getDrawPlane());
+  
+  if( !(size<=buf.getSize()) ) 
+    {
+     buf.erase(Black);
+    
+     return;
+    }
+  
+  shape.draw(buf);
+  
+  client.draw(buf.cut(shape.client),(bool)shape.drag_type);
+  
+  win->invalidate(1);
  }
 
 void DragWindow::gainFocus()
