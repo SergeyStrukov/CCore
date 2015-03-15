@@ -147,9 +147,164 @@ class DragClient : NoCopy
    
    virtual ~DragClient();
    
+   // drawing
+   
    virtual void layout(Point size);
    
    virtual void draw(FrameBuf<DesktopColor> buf,bool drag_active) const;
+   
+   // base
+   
+   virtual void alive()
+    {
+     // do nothing
+    }
+   
+   virtual void dead()
+    {
+     // do nothing
+    }
+   
+   // keyboard
+   
+   virtual void key(VKey vkey,KeyMod kmod)
+    {
+     Used(vkey);
+     Used(kmod);
+     
+     // do nothing
+    }
+   
+   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat)
+    {
+     for(; repeat ;repeat--) key(vkey,kmod);
+    }
+   
+   virtual void keyUp(VKey vkey,KeyMod kmod)
+    {
+     Used(vkey);
+     Used(kmod);
+     
+     // do nothing
+    }
+   
+   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
+    {
+     for(; repeat ;repeat--) keyUp(vkey,kmod);
+    }
+   
+   // character
+   
+   virtual void putch(char ch)
+    {
+     Used(ch);
+     
+     // do nothing
+    }
+   
+   virtual void putch(char ch,unsigned repeat)
+    {
+     for(; repeat ;repeat--) putch(ch);
+    }
+   
+   virtual void putchAlt(char ch)
+    {
+     Used(ch);
+     
+     // do nothing
+    }
+   
+   virtual void putchAlt(char ch,unsigned repeat)
+    {
+     for(; repeat ;repeat--) putchAlt(ch);
+    }
+   
+   // mouse
+   
+   virtual void clickLeft(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+   
+   virtual void upLeft(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+ 
+   virtual void dclickLeft(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+   
+   virtual void clickRight(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+   
+   virtual void upRight(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+   
+   virtual void dclickRight(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+   
+   virtual void move(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+   
+   virtual void hover(Point point,MouseKey mkey)
+    {
+     Used(point);
+     Used(mkey);
+     
+     // do nothing
+    }
+   
+   virtual void leave()
+    {
+     // do nothing
+    }
+   
+   virtual void wheel(Point point,MouseKey mkey,int delta)
+    {
+     Used(point);
+     Used(mkey);
+     Used(delta);
+     
+     // do nothing
+    }
+ 
+   virtual MouseShape getMouseShape(Point point)
+    {
+     Used(point);
+     
+     return Mouse_Arrow;
+    }
  };
 
 /* class DragWindow */
@@ -232,6 +387,9 @@ class DragWindow : public FrameWindow
    Point drag_from;
    
    Point size;
+   
+   bool client_enter = false ;
+   bool client_capture = false ;
 
   private: 
    
@@ -246,6 +404,10 @@ class DragWindow : public FrameWindow
    void dragTo(Point point);
    
    void endDrag(Point point);
+   
+   bool forwardKey(VKey vkey,KeyMod kmod,unsigned repeat=1);
+   
+   bool forwardKeyUp(VKey vkey,KeyMod kmod,unsigned repeat=1);
    
   public:
   
@@ -273,26 +435,64 @@ class DragWindow : public FrameWindow
    
    void redraw();
    
-   // events
+   void captureMouse();
+   
+   void releaseMouse();
+   
+   // base
+   
+   virtual void alive();
+   
+   virtual void dead();
+   
+   virtual void setSize(Point size,bool buf_dirty);
+   
+   // keyboard
    
    virtual void gainFocus();
    
    virtual void looseFocus();
    
-   virtual void alive();
-   
-   virtual void setSize(Point size,bool buf_dirty);
-   
    virtual void key(VKey vkey,KeyMod kmod);
+   
+   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat);
+   
+   virtual void keyUp(VKey vkey,KeyMod kmod);
+   
+   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat);
+   
+   // character
+   
+   virtual void putch(char ch);
+   
+   virtual void putch(char ch,unsigned repeat);
+   
+   virtual void putchAlt(char ch);
+   
+   virtual void putchAlt(char ch,unsigned repeat);
+   
+   // mouse
    
    virtual void clickLeft(Point point,MouseKey mkey);
    
    virtual void upLeft(Point point,MouseKey mkey);
  
+   virtual void dclickLeft(Point point,MouseKey mkey);
+   
+   virtual void clickRight(Point point,MouseKey mkey);
+   
+   virtual void upRight(Point point,MouseKey mkey);
+   
+   virtual void dclickRight(Point point,MouseKey mkey);
+   
    virtual void move(Point point,MouseKey mkey);
+   
+   virtual void hover(Point point,MouseKey mkey);
    
    virtual void leave();
    
+   virtual void wheel(Point point,MouseKey mkey,int delta);
+ 
    virtual void setMouseShape(Point point);
  };
 

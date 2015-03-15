@@ -218,11 +218,63 @@ void DragWindow::endDrag(Point point)
  {
   dragTo_(point);
   
-  win->releaseMouse();
+  if( !client_capture ) win->releaseMouse();
   
   shape.drag_type=DragType::None;
   
   redraw();
+ }
+
+bool DragWindow::forwardKey(VKey vkey,KeyMod kmod,unsigned repeat)
+ {
+  if( kmod&KeyMod_Alt )
+    {
+     switch( vkey )
+       {
+        case VKey_Left  : replace(Point(-(int)repeat,0),(kmod&KeyMod_Shift)?DragType::Right:DragType::Bar); return true;
+        
+        case VKey_Right : replace(Point((int)repeat,0),(kmod&KeyMod_Shift)?DragType::Right:DragType::Bar); return true;
+        
+        case VKey_Up    : replace(Point(0,-(int)repeat),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); return true;
+        
+        case VKey_Down  : replace(Point(0,(int)repeat),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); return true;
+        
+        case VKey_F2    : minimized(); return true;
+        
+        case VKey_F3    : maximized(); return true;
+        
+        case VKey_F4    : destroy(); return true;
+        
+        default: return false;
+       }
+    }
+  else
+    {
+     return false;
+    }
+ }
+
+bool DragWindow::forwardKeyUp(VKey vkey,KeyMod kmod,unsigned)
+ {
+  if( kmod&KeyMod_Alt )
+    {
+     switch( vkey )
+       {
+        case VKey_Left  : 
+        case VKey_Right : 
+        case VKey_Up    : 
+        case VKey_Down  : 
+        case VKey_F2    : 
+        case VKey_F3    : 
+        case VKey_F4    : return true;
+        
+        default: return false;
+       }
+    }
+  else
+    {
+     return false;
+    }
  }
 
 DragWindow::DragWindow(Desktop *desktop,DragClient &client_)
@@ -243,6 +295,8 @@ DragWindow::DragWindow(Desktop *desktop,const Shape::Config &cfg,DragClient &cli
 DragWindow::~DragWindow()
  {
  }
+
+ // methods
 
 void DragWindow::createMain(CmdDisplay cmd_display,Point max_size)
  {
@@ -307,24 +361,33 @@ void DragWindow::redraw()
   win->invalidate(1);
  }
 
-void DragWindow::gainFocus()
+void DragWindow::captureMouse()
  {
-  shape.has_focus=true;
+  client_capture=true;
   
-  redraw();
+  if( !(bool)shape.drag_type ) win->captureMouse();
  }
 
-void DragWindow::looseFocus()
+void DragWindow::releaseMouse()
  {
-  shape.has_focus=false;
+  client_capture=false;
   
-  redraw();
+  if( !(bool)shape.drag_type ) win->releaseMouse();
  }
+
+ // base
 
 void DragWindow::alive()
  {
   win->trackMouseHover();
   win->trackMouseLeave();
+  
+  client.alive();
+ }
+
+void DragWindow::dead()
+ {
+  client.dead();
  }
 
 void DragWindow::setSize(Point size_,bool)
@@ -340,34 +403,78 @@ void DragWindow::setSize(Point size_,bool)
   redraw();
  }
 
-void DragWindow::key(VKey vkey,KeyMod kmod)
+ // keyboard
+
+void DragWindow::gainFocus()
  {
-  if( kmod&KeyMod_Alt )
-    {
-     switch( vkey )
-       {
-        case VKey_Left  : replace(Point(-1,0),(kmod&KeyMod_Shift)?DragType::Right:DragType::Bar); break;
-        
-        case VKey_Right : replace(Point(1,0),(kmod&KeyMod_Shift)?DragType::Right:DragType::Bar); break;
-        
-        case VKey_Up    : replace(Point(0,-1),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); break;
-        
-        case VKey_Down  : replace(Point(0,1),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); break;
-        
-        case VKey_F2    : minimized(); break;
-        
-        case VKey_F3    : maximized(); break;
-        
-        case VKey_F4    : destroy(); break; 
-       }
-    }
+  shape.has_focus=true;
+  
+  redraw();
  }
 
-void DragWindow::clickLeft(Point point,MouseKey)
+void DragWindow::looseFocus()
+ {
+  shape.has_focus=false;
+  
+  redraw();
+ }
+
+void DragWindow::key(VKey vkey,KeyMod kmod)
+ {
+  if( !forwardKey(vkey,kmod) ) client.key(vkey,kmod);
+ }
+
+void DragWindow::key(VKey vkey,KeyMod kmod,unsigned repeat)
+ {
+  if( !forwardKey(vkey,kmod,repeat) ) client.key(vkey,kmod,repeat);
+ }
+
+void DragWindow::keyUp(VKey vkey,KeyMod kmod)
+ {
+  if( !forwardKeyUp(vkey,kmod) ) client.keyUp(vkey,kmod);
+ }
+
+void DragWindow::keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
+ {
+  if( !forwardKeyUp(vkey,kmod,repeat) ) client.keyUp(vkey,kmod,repeat);
+ }
+
+ // character
+
+void DragWindow::putch(char ch)
+ {
+  client.putch(ch);
+ }
+
+void DragWindow::putch(char ch,unsigned repeat)
+ {
+  client.putch(ch,repeat);
+ }
+
+void DragWindow::putchAlt(char ch)
+ {
+  client.putchAlt(ch);
+ }
+
+void DragWindow::putchAlt(char ch,unsigned repeat)
+ {
+  client.putchAlt(ch,repeat);
+ }
+
+ // mouse
+
+void DragWindow::clickLeft(Point point,MouseKey mkey)
  {
   switch( auto drag_type=shape.dragTest(point) )
     {
-     case DragType::None : break;
+     case DragType::None :
+      {
+       if( client_capture || shape.client.contains(point) )
+         {
+          client.clickLeft(point-shape.client.getBase(),mkey);
+         }
+      }
+     break;
    
      case DragType::Min   : minimized(); break;
      
@@ -379,11 +486,58 @@ void DragWindow::clickLeft(Point point,MouseKey)
     }
  }
 
-void DragWindow::upLeft(Point point,MouseKey)
+void DragWindow::upLeft(Point point,MouseKey mkey)
  {
   if( (bool)shape.drag_type )
     {
      endDrag(point);
+     
+     return;
+    }
+  
+  if( client_capture || shape.client.contains(point) )
+    {
+     client.upLeft(point-shape.client.getBase(),mkey);
+    }
+ }
+
+void DragWindow::dclickLeft(Point point,MouseKey mkey)
+ {
+  if( (bool)shape.drag_type ) return;
+  
+  if( client_capture || shape.client.contains(point) )
+    {
+     client.dclickLeft(point-shape.client.getBase(),mkey);
+    }
+ }
+
+void DragWindow::clickRight(Point point,MouseKey mkey)
+ {
+  if( (bool)shape.drag_type ) return;
+  
+  if( client_capture || shape.client.contains(point) )
+    {
+     client.clickRight(point-shape.client.getBase(),mkey);
+    }
+ }
+
+void DragWindow::upRight(Point point,MouseKey mkey)
+ {
+  if( (bool)shape.drag_type ) return;
+  
+  if( client_capture || shape.client.contains(point) )
+    {
+     client.upRight(point-shape.client.getBase(),mkey);
+    }
+ }
+
+void DragWindow::dclickRight(Point point,MouseKey mkey)
+ {
+  if( (bool)shape.drag_type ) return;
+  
+  if( client_capture || shape.client.contains(point) )
+    {
+     client.dclickRight(point-shape.client.getBase(),mkey);
     }
  }
 
@@ -395,6 +549,8 @@ void DragWindow::move(Point point,MouseKey mkey)
        dragTo(point);
      else
        endDrag(point);
+     
+     return;
     }
   
   auto drag_type=shape.dragTest(point);
@@ -407,6 +563,34 @@ void DragWindow::move(Point point,MouseKey mkey)
      
      redraw();
     }
+  
+  if( shape.client.contains(point) )
+    {
+     client_enter=true;
+     
+     client.move(point-shape.client.getBase(),mkey);
+    }
+  else
+    {
+     if( client_capture ) client.move(point-shape.client.getBase(),mkey);
+      
+     if( client_enter )
+       {
+        client_enter=false;
+        
+        client.leave();
+       }
+    }
+ }
+
+void DragWindow::hover(Point point,MouseKey mkey)
+ {
+  if( (bool)shape.drag_type ) return;
+  
+  if( client_capture || shape.client.contains(point) )
+    {
+     client.hover(point-shape.client.getBase(),mkey);
+    }
  }
 
 void DragWindow::leave()
@@ -416,6 +600,25 @@ void DragWindow::leave()
      shape.hilight=DragType::None;
      
      redraw();
+    }
+  
+  if( (bool)shape.drag_type ) return;
+  
+  if( client_enter )
+    {
+     client_enter=false;
+     
+     client.leave();
+    }
+ }
+
+void DragWindow::wheel(Point point,MouseKey mkey,int delta)
+ {
+  if( (bool)shape.drag_type ) return;
+  
+  if( client_capture || shape.client.contains(point) )
+    {
+     client.wheel(point-shape.client.getBase(),mkey,delta);
     }
  }
 
@@ -446,7 +649,7 @@ void DragWindow::setMouseShape(Point point)
       
      case DragType::Bar       : win->setMouseShape(Mouse_SizeAll); break;
      
-     default: win->setMouseShape(Mouse_Arrow);
+     default: win->setMouseShape(client.getMouseShape(point-shape.client.getBase()));
     }
  }
 
