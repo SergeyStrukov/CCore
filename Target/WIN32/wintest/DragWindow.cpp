@@ -115,23 +115,25 @@ void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
      buf.block(dragDownRight,cfg.dragOn);
      buf.block(dragRight,cfg.dragOn);
      buf.block(dragUpRight,cfg.dragOn);
+     
      buf.block(dragBar,cfg.dragOn);
     }
   else
     {
-     buf.block(dragUpLeft,cfg.dragCorner);
-     buf.block(dragLeft,cfg.dragEdge);
-     buf.block(dragDownLeft,cfg.dragCorner);
-     buf.block(dragDown,cfg.dragEdge);
-     buf.block(dragDownRight,cfg.dragCorner);
-     buf.block(dragRight,cfg.dragEdge);
-     buf.block(dragUpRight,cfg.dragCorner);
+     buf.block(dragUpLeft,(hilight==DragType::UpLeft)?cfg.hdragCorner:cfg.dragCorner);
+     buf.block(dragLeft,(hilight==DragType::Left)?cfg.hdragEdge:cfg.dragEdge);
+     buf.block(dragDownLeft,(hilight==DragType::DownLeft)?cfg.hdragCorner:cfg.dragCorner);
+     buf.block(dragDown,(hilight==DragType::Down)?cfg.hdragEdge:cfg.dragEdge);
+     buf.block(dragDownRight,(hilight==DragType::DownRight)?cfg.hdragCorner:cfg.dragCorner);
+     buf.block(dragRight,(hilight==DragType::Right)?cfg.hdragEdge:cfg.dragEdge);
+     buf.block(dragUpRight,(hilight==DragType::UpRight)?cfg.hdragCorner:cfg.dragCorner);
+     
      buf.block(dragBar,has_focus?cfg.dragActive:cfg.dragPassive);
     }
   
-  buf.block(btnMin,cfg.btnMin);
-  buf.block(btnMax,max_button?cfg.btnMax:cfg.btnRestore);
-  buf.block(btnClose,cfg.btnClose);
+  buf.block(btnMin,(hilight==DragType::Min)?cfg.hbtnMin:cfg.btnMin);
+  buf.block(btnMax,(hilight==DragType::Max)?(max_button?cfg.hbtnMax:cfg.hbtnRestore):(max_button?cfg.btnMax:cfg.btnRestore));
+  buf.block(btnClose,(hilight==DragType::Close)?cfg.hbtnClose:cfg.btnClose);
  }
 
 DragType DragWindow::Shape::dragTest(Point point) const
@@ -152,20 +154,18 @@ DragType DragWindow::Shape::dragTest(Point point) const
   
   if( dragUpRight.contains(point) ) return DragType::UpRight;
   
-  if( dragBar.contains(point) ) return DragType::Bar;
+  if( dragBar.contains(point) ) 
+    {
+     if( btnMin.contains(point) ) return DragType::Min;
+    
+     if( btnMax.contains(point) ) return DragType::Max;
+    
+     if( btnClose.contains(point) ) return DragType::Close;
+     
+     return DragType::Bar;
+    }
   
   return DragType::None;
- }
-
-auto DragWindow::Shape::hitTest(Point point) const -> HitType
- {
-  if( btnMin.contains(point) ) return HitType::Min;
-  
-  if( btnMax.contains(point) ) return HitType::Max;
-  
-  if( btnClose.contains(point) ) return HitType::Close;
-  
-  return HitType::None;
  }
 
 /* class DragWindow */
@@ -329,6 +329,8 @@ void DragWindow::alive()
 
 void DragWindow::setSize(Point size_,bool)
  {
+  if( size==size_ ) return;
+  
   size=size_;
   
   shape.layout(size_);
@@ -363,27 +365,17 @@ void DragWindow::key(VKey vkey,KeyMod kmod)
 
 void DragWindow::clickLeft(Point point,MouseKey)
  {
-  auto drag_type=shape.dragTest(point);
-  
-  if( (bool)drag_type )
+  switch( auto drag_type=shape.dragTest(point) )
     {
-     if( drag_type==DragType::Bar )
-       {
-        switch( shape.hitTest(point) )
-          {
-           case HitType::Min : minimized(); break;
-           
-           case HitType::Max : maximized(); break;
-           
-           case HitType::Close : destroy(); break;
-           
-           default: startDrag(point,drag_type);
-          }
-       }
-     else
-       {
-        startDrag(point,drag_type);
-       }
+     case DragType::None : break;
+   
+     case DragType::Min   : minimized(); break;
+     
+     case DragType::Max   : maximized(); break;
+     
+     case DragType::Close : destroy(); break;
+     
+     default: if( !(bool)shape.drag_type ) startDrag(point,drag_type);
     }
  }
 
@@ -403,6 +395,27 @@ void DragWindow::move(Point point,MouseKey mkey)
        dragTo(point);
      else
        endDrag(point);
+    }
+  
+  auto drag_type=shape.dragTest(point);
+  
+  if( drag_type==DragType::Bar ) drag_type=DragType::None;
+  
+  if( drag_type!=shape.hilight )
+    {
+     shape.hilight=drag_type;
+     
+     redraw();
+    }
+ }
+
+void DragWindow::leave()
+ {
+  if( (bool)shape.hilight )
+    {
+     shape.hilight=DragType::None;
+     
+     redraw();
     }
  }
 
@@ -426,37 +439,14 @@ void DragWindow::setMouseShape(Point point)
      
      case DragType::UpRight   : win->setMouseShape(Mouse_SizeUpRight); break;
      
-     case DragType::Bar :
-      {
-       switch( shape.hitTest(point) )
-         {
-          case HitType::Min :
-           {
-            win->setMouseShape(Mouse_Hand);
-           }
-          break;
-          
-          case HitType::Max :
-           {
-            win->setMouseShape(Mouse_Hand);
-           }
-          break;
-          
-          case HitType::Close :
-           {
-            win->setMouseShape(Mouse_Stop);
-           }
-          break;
-          
-          default:
-           {
-            win->setMouseShape(Mouse_SizeAll);
-           }
-         }
-      }
-     break;
+     case DragType::Min       : 
+     case DragType::Max       : win->setMouseShape(Mouse_Hand); break;
      
-     default: win->setMouseShape(Mouse_Arrow); break;
+     case DragType::Close     : win->setMouseShape(Mouse_Stop); break;
+      
+     case DragType::Bar       : win->setMouseShape(Mouse_SizeAll); break;
+     
+     default: win->setMouseShape(Mouse_Arrow);
     }
  }
 

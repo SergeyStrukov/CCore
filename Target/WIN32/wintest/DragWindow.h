@@ -39,7 +39,11 @@ enum class DragType
   Right,
   UpRight,
   
-  Bar
+  Bar,
+  
+  Min,
+  Max,
+  Close
  };
 
 /* functions */
@@ -154,15 +158,6 @@ class DragWindow : public FrameWindow
  {
   public:
   
-   enum class HitType
-    {
-     None = 0,
-     
-     Min,
-     Max,
-     Close
-    };
-  
    struct Shape
     {
      struct Config
@@ -177,10 +172,18 @@ class DragWindow : public FrameWindow
        ColorName dragActive  =      Blue ;
        ColorName dragPassive =      Gray ;
        
+       ColorName hdragCorner =     White ;
+       ColorName hdragEdge   =     White ;
+       
        ColorName btnMin      =     Green ;
        ColorName btnClose    =     Black ;
        ColorName btnMax      =       Red ;
        ColorName btnRestore  =    Yellow ;
+       
+       ColorName hbtnMin     =     White ;
+       ColorName hbtnClose   =     White ;
+       ColorName hbtnMax     =     White ;
+       ColorName hbtnRestore =     White ;
        
        Config() {}
       };
@@ -207,6 +210,7 @@ class DragWindow : public FrameWindow
      bool max_button = true ;
      
      DragType drag_type = DragType::None ;
+     DragType hilight = DragType::None ;
      
      Shape() {}
      
@@ -217,8 +221,6 @@ class DragWindow : public FrameWindow
      void draw(FrameBuf<DesktopColor> buf) const;
      
      DragType dragTest(Point point) const;
-     
-     HitType hitTest(Point point) const;
     };
   
   private: 
@@ -288,6 +290,8 @@ class DragWindow : public FrameWindow
    virtual void upLeft(Point point,MouseKey mkey);
  
    virtual void move(Point point,MouseKey mkey);
+   
+   virtual void leave();
    
    virtual void setMouseShape(Point point);
  };
