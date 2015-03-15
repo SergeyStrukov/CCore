@@ -19,8 +19,6 @@
 #include <CCore/inc/video/Desktop.h>
 #include <CCore/inc/video/FrameBuf.h>
 
-#include "DrawArt.h"
-
 namespace CCore {
 namespace Video {
 

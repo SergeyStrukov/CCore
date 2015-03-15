@@ -15,6 +15,8 @@
  
 #include "DragWindow.h"
  
+#include "DrawArt.h"
+
 namespace CCore {
 namespace Video {
 
