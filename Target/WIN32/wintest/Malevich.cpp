@@ -202,7 +202,7 @@ void MalevichWindow::dragTo_(Point point)
   
   Point new_size(place.dx,place.dy);
   
-  if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+  if( new_size>Point(0,0) && new_size<=win->getMaxSize() ) win->move(place);
  }
 
 void MalevichWindow::dragTo(Point point)
@@ -306,7 +306,7 @@ void MalevichWindow::key(VKey vkey,KeyMod kmod)
           
           Point new_size(place.dx,place.dy);
           
-          if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+          if( new_size>Point(0,0) && new_size<=win->getMaxSize() ) win->move(place);
          }
         break;
         
@@ -319,7 +319,7 @@ void MalevichWindow::key(VKey vkey,KeyMod kmod)
           
           Point new_size(place.dx,place.dy);
           
-          if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+          if( new_size>Point(0,0) && new_size<=win->getMaxSize() ) win->move(place);
          }
         break;
         
@@ -332,7 +332,7 @@ void MalevichWindow::key(VKey vkey,KeyMod kmod)
           
           Point new_size(place.dx,place.dy);
           
-          if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+          if( new_size>Point(0,0) && new_size<=win->getMaxSize() ) win->move(place);
          }
         break;
         
@@ -345,7 +345,7 @@ void MalevichWindow::key(VKey vkey,KeyMod kmod)
           
           Point new_size(place.dx,place.dy);
           
-          if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+          if( new_size>Point(0,0) && new_size<=win->getMaxSize() ) win->move(place);
          }
         break;
         

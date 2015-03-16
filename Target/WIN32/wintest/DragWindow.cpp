@@ -178,7 +178,7 @@ void DragWindow::replace(Pane place,Point delta,DragType drag_type)
   
   Point new_size(place.dx,place.dy);
   
-  if( new_size>Null && new_size<=win->getMaxSize() ) win->move(place);
+  if( new_size>Point(0,0) && new_size<=win->getMaxSize() ) win->move(place);
  }
 
 void DragWindow::replace(Point delta,DragType drag_type)
@@ -351,7 +351,7 @@ void DragWindow::redraw()
   
   if( !(size<=buf.getSize()) ) 
     {
-     buf.erase(Black);
+     CommonDrawArt(buf).erase(Black);
     
      return;
     }

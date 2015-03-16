@@ -23,22 +23,26 @@ namespace Video {
 
 /* classes */ 
 
-struct Point;
+template <int Den> struct DenPoint;
 
 struct Pane;
 
-/* struct Point */ 
+/* struct DenPoint<int Den> */ 
 
-struct Point
+template <int Den>
+struct DenPoint
  {
   int x;
   int y;
   
-  Point() : x(0),y(0) {}
+  DenPoint() : x(0),y(0) {}
   
-  Point(NothingType) : Point() {}
+  DenPoint(NothingType) : DenPoint() {}
   
-  Point(int x_,int y_) : x(x_),y(y_) {}
+  template <class Unused=int>
+  DenPoint(DenPoint<1> p,Meta::EnableIf< (Den>1) ,Unused> unused=0) : x(p.x*Den),y(p.y*Den) {}
+  
+  DenPoint(int x_,int y_) : x(x_),y(y_) {}
   
   template <class P>
   void print(P &out) const
@@ -47,29 +51,49 @@ struct Point
    }
  };
  
-inline Point operator + (Point a,Point b) { return Point(a.x+b.x,a.y+b.y); } // may overflow
+template <int Den>
+DenPoint<Den> operator + (DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(a.x+b.x,a.y+b.y); } // may overflow
  
-inline Point operator - (Point a,Point b) { return Point(a.x-b.x,a.y-b.y); } // may overflow
+template <int Den>
+DenPoint<Den> operator - (DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(a.x-b.x,a.y-b.y); } // may overflow
 
-inline Point operator += (Point &a,Point b) { return a=a+b; } // may overflow
+template <int Den>
+DenPoint<Den> operator += (DenPoint<Den> &a,DenPoint<Den> b) { return a=a+b; } // may overflow
  
-inline Point operator -= (Point &a,Point b) { return a=a-b; } // may overflow
+template <int Den>
+DenPoint<Den> operator -= (DenPoint<Den> &a,DenPoint<Den> b) { return a=a-b; } // may overflow
 
-inline bool operator == (Point a,Point b) { return a.x==b.x && a.y==b.y ; }
+template <int Den>
+bool operator == (DenPoint<Den> a,DenPoint<Den> b) { return a.x==b.x && a.y==b.y ; }
  
-inline bool operator != (Point a,Point b) { return a.x!=b.x || a.y!=b.y ; }
+template <int Den>
+bool operator != (DenPoint<Den> a,DenPoint<Den> b) { return a.x!=b.x || a.y!=b.y ; }
 
-inline bool operator < (Point a,Point b) { return a.x<b.x && a.y<b.y ; }
+template <int Den>
+bool operator < (DenPoint<Den> a,DenPoint<Den> b) { return a.x<b.x && a.y<b.y ; }
 
-inline bool operator > (Point a,Point b) { return a.x>b.x && a.y>b.y ; }
+template <int Den>
+bool operator > (DenPoint<Den> a,DenPoint<Den> b) { return a.x>b.x && a.y>b.y ; }
 
-inline bool operator <= (Point a,Point b) { return a.x<=b.x && a.y<=b.y ; }
+template <int Den>
+bool operator <= (DenPoint<Den> a,DenPoint<Den> b) { return a.x<=b.x && a.y<=b.y ; }
 
-inline bool operator >= (Point a,Point b) { return a.x>=b.x && a.y>=b.y ; }
+template <int Den>
+bool operator >= (DenPoint<Den> a,DenPoint<Den> b) { return a.x>=b.x && a.y>=b.y ; }
 
-inline Point Sup(Point a,Point b) { return Point(Max(a.x,b.x),Max(a.y,b.y)); }
+template <int Den>
+DenPoint<Den> Sup(DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(Max(a.x,b.x),Max(a.y,b.y)); }
  
-inline Point Inf(Point a,Point b) { return Point(Min(a.x,b.x),Min(a.y,b.y)); }
+template <int Den>
+DenPoint<Den> Inf(DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(Min(a.x,b.x),Min(a.y,b.y)); }
+
+/* type Point */
+
+using Point = DenPoint<1> ; 
+
+/* type MilliPoint */
+
+using MilliPoint = DenPoint<1024> ; 
 
 /* struct Pane */ 
 

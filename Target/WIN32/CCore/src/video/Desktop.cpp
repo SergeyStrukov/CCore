@@ -274,7 +274,7 @@ class WindowBuf : NoCopy
     {
      const char *format="CCore::Video::Private::WindowBuf::setSize(...) : #;";
     
-     if( new_size<=Null )
+     if( new_size<=Point(0,0) )
        {
         Printf(Exception,format,"bad size");
        }
@@ -808,7 +808,7 @@ class WindowsControl : public WinControl
          {
           Point size=ToSize(lParam);
           
-          if( correct_max_size && size>Null )
+          if( correct_max_size && size>Point(0,0) )
             {
              max_size=Sup(max_size,size);
              

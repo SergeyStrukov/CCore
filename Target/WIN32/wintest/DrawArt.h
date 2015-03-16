@@ -17,10 +17,41 @@
 #define CCore_inc_video_DrawArt_h
 
 #include <CCore/inc/video/FrameBuf.h>
+#include <CCore/inc/video/Desktop.h>
  
 namespace CCore {
 namespace Video {
 
+/* classes */
+
+class CommonDrawArt;
+
+/* class CommonDrawArt */
+
+class CommonDrawArt
+ {
+   FrameBuf<DesktopColor> buf;
+   
+  public:
+  
+   CommonDrawArt(FrameBuf<DesktopColor> buf_) : buf(buf_) {}
+   
+   // simple methods
+   
+   void pixel(Point p,DesktopColor color);
+   
+   void erase(DesktopColor color);
+  
+   void block(Pane pane,DesktopColor color);
+
+   // fill
+   
+   void fill(PtrLen<const MilliPoint> border,DesktopColor color);
+   
+   // stroke
+   
+   void stroke(PtrLen<const MilliPoint> border,DesktopColor color,int width_mpx);
+ };
 
 } // namespace Video
 } // namespace CCore

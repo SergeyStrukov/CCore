@@ -18,6 +18,22 @@
 namespace CCore {
 namespace Video {
 
+/* class CommonDrawArt */
+
+void CommonDrawArt::pixel(Point p,DesktopColor color)
+ {
+  if( buf.getPane().contains(p) ) buf.pixel(p,color);
+ }
+
+void CommonDrawArt::erase(DesktopColor color)
+ {
+  buf.erase(color);
+ }
+
+void CommonDrawArt::block(Pane pane,DesktopColor color)
+ {
+  buf.block(Inf(buf.getPane(),pane),color);
+ }
 
 } // namespace Video
 } // namespace CCore
