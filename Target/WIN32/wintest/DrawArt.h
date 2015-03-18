@@ -30,11 +30,24 @@ class CommonDrawArt;
 
 class CommonDrawArt
  {
-   FrameBuf<DesktopColor> buf;
+   class WorkBuf : public FrameBuf<DesktopColor>
+    {
+     public:
+     
+      explicit WorkBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
+      
+      void lineY(int abx,int ay,int by,DesktopColor color); // [a,b)
+      
+      void lineX(int aby,int ax,int bx,DesktopColor color); // [a,b)
+      
+      void line(Point a,Point b,DesktopColor color); // [a,b)
+    };
+  
+   WorkBuf buf;
    
   public:
   
-   CommonDrawArt(FrameBuf<DesktopColor> buf_) : buf(buf_) {}
+   CommonDrawArt(const FrameBuf<DesktopColor> &buf_) : buf(buf_) {}
    
    // simple methods
    
@@ -43,7 +56,11 @@ class CommonDrawArt
    void erase(DesktopColor color);
   
    void block(Pane pane,DesktopColor color);
+   
+   void path(PtrLen<const Point> dots,DesktopColor color);
 
+   void loop(PtrLen<const Point> dots,DesktopColor color);
+   
    // fill
    
    void fill(PtrLen<const MilliPoint> border,DesktopColor color);
