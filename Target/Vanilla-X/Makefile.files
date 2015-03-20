@@ -285,6 +285,7 @@ obj/TaskEvent.o \
 obj/TaskHeap.o \
 obj/TaskInternal.o \
 obj/TaskList.o \
+obj/TaskMemStack.o \
 obj/TaskMonitor.o \
 obj/TaskPriority.o \
 obj/TempArray.o \
@@ -611,6 +612,7 @@ obj/TaskEvent.s \
 obj/TaskHeap.s \
 obj/TaskInternal.s \
 obj/TaskList.s \
+obj/TaskMemStack.s \
 obj/TaskMonitor.s \
 obj/TaskPriority.s \
 obj/TempArray.s \
@@ -937,6 +939,7 @@ obj/TaskEvent.dep \
 obj/TaskHeap.dep \
 obj/TaskInternal.dep \
 obj/TaskList.dep \
+obj/TaskMemStack.dep \
 obj/TaskMonitor.dep \
 obj/TaskPriority.dep \
 obj/TempArray.dep \
@@ -1838,6 +1841,9 @@ obj/TaskInternal.o : ../../XCore/CCore/src/task/TaskInternal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TaskList.o : ../../XCore/CCore/src/task/TaskList.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskMemStack.o : ../../CCore/src/TaskMemStack.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TaskMonitor.o : ../../XCore/CCore/src/task/TaskMonitor.cpp
@@ -2811,6 +2817,9 @@ obj/TaskInternal.s : ../../XCore/CCore/src/task/TaskInternal.cpp
 obj/TaskList.s : ../../XCore/CCore/src/task/TaskList.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/TaskMemStack.s : ../../CCore/src/TaskMemStack.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/TaskMonitor.s : ../../XCore/CCore/src/task/TaskMonitor.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3781,6 +3790,9 @@ obj/TaskInternal.dep : ../../XCore/CCore/src/task/TaskInternal.cpp
 
 obj/TaskList.dep : ../../XCore/CCore/src/task/TaskList.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskList.o $< -MF $@
+
+obj/TaskMemStack.dep : ../../CCore/src/TaskMemStack.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskMemStack.o $< -MF $@
 
 obj/TaskMonitor.dep : ../../XCore/CCore/src/task/TaskMonitor.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskMonitor.o $< -MF $@

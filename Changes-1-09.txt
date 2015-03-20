@@ -2,14 +2,21 @@
 
 --- New features -----
 
-video/FrameWindow.h
 video/Point.h
 video/Keyboard.h
 video/Mouse.h
 video/Color.h
+video/FrameWindow.h
+video/FrameBuf.h
+video/Desktop.h
+video/ApplicationBase.h
 
   support for the GUI interface programming.
 
 TickTimer.h
 
   helper class for periodic tick implementation. 
+
+TaskMemStack.h
+
+  per-task memory stack for temporary work space.

@@ -226,6 +226,7 @@
 ../../CCore/src/task/Atomic.cpp
 ../../CCore/src/task/FuncTask.cpp
 ../../CCore/src/task/NoMutex.cpp
+../../CCore/src/TaskMemStack.cpp
 ../../CCore/src/TextLabel.cpp
 ../../CCore/src/TextTools.cpp
 ../../CCore/src/TickTimer.cpp

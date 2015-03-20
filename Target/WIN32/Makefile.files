@@ -296,6 +296,7 @@ obj/Task.o \
 obj/TaskCore.o \
 obj/TaskEvent.o \
 obj/TaskHeap.o \
+obj/TaskMemStack.o \
 obj/TempArray.o \
 obj/TextLabel.o \
 obj/TextTools.o \
@@ -622,6 +623,7 @@ obj/Task.s \
 obj/TaskCore.s \
 obj/TaskEvent.s \
 obj/TaskHeap.s \
+obj/TaskMemStack.s \
 obj/TempArray.s \
 obj/TextLabel.s \
 obj/TextTools.s \
@@ -948,6 +950,7 @@ obj/Task.dep \
 obj/TaskCore.dep \
 obj/TaskEvent.dep \
 obj/TaskHeap.dep \
+obj/TaskMemStack.dep \
 obj/TempArray.dep \
 obj/TextLabel.dep \
 obj/TextTools.dep \
@@ -1879,6 +1882,9 @@ obj/TaskEvent.o : ../../HCore/CCore/src/task/TaskEvent.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TaskHeap.o : ../../HCore/CCore/src/TaskHeap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/TaskMemStack.o : ../../CCore/src/TaskMemStack.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TempArray.o : ../../CCore/src/array/TempArray.cpp
@@ -2852,6 +2858,9 @@ obj/TaskEvent.s : ../../HCore/CCore/src/task/TaskEvent.cpp
 obj/TaskHeap.s : ../../HCore/CCore/src/TaskHeap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/TaskMemStack.s : ../../CCore/src/TaskMemStack.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/TempArray.s : ../../CCore/src/array/TempArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3822,6 +3831,9 @@ obj/TaskEvent.dep : ../../HCore/CCore/src/task/TaskEvent.cpp
 
 obj/TaskHeap.dep : ../../HCore/CCore/src/TaskHeap.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskHeap.o $< -MF $@
+
+obj/TaskMemStack.dep : ../../CCore/src/TaskMemStack.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TaskMemStack.o $< -MF $@
 
 obj/TempArray.dep : ../../CCore/src/array/TempArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TempArray.o $< -MF $@

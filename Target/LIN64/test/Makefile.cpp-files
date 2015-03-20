@@ -96,6 +96,7 @@
 ../../../CCore/test/test0095.InterfaceHost.cpp
 ../../../CCore/test/test0096.DynObject.cpp
 ../../../CCore/test/test0097.MD5.cpp
+../../../CCore/test/test0098.TaskMemStack.cpp
 ../../../CCore/test/test0100.Bridge.cpp
 ../../../CCore/test/test0101.PTP.cpp
 ../../../CCore/test/test0102.PrintFile.cpp
