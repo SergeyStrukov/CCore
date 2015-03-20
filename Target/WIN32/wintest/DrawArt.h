@@ -58,8 +58,24 @@ class CommonDrawArt
    void block(Pane pane,DesktopColor color);
    
    void path(PtrLen<const Point> dots,DesktopColor color);
+   
+   template <class ... TT>
+   void path(DesktopColor color,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     path(Range_const(temp),color);
+    }
 
    void loop(PtrLen<const Point> dots,DesktopColor color);
+   
+   template <class ... TT>
+   void loop(DesktopColor color,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     loop(Range_const(temp),color);
+    }
    
    // fill
    

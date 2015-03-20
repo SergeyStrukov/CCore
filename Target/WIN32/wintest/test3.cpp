@@ -19,6 +19,7 @@
 #include <CCore/inc/video/ApplicationBase.h>
 
 #include "DragWindow.h"
+#include "DrawArt.h"
 
 namespace App3 {
 
@@ -30,6 +31,8 @@ using namespace CCore::Video;
 /* classes */
 
 class FileReport;
+
+class Client; 
 
 class Application;
 
@@ -60,6 +63,94 @@ class FileReport : public ReportException
    bool show() { return true; }
  };
 
+/* class Client */
+
+class Client : public DragClient
+ {
+   Point a;
+   Point b;
+   Pane field;
+   Point size;
+   
+   bool select_a = true ;
+   
+  private: 
+  
+   void cross(CommonDrawArt &art,Point p) const
+    {
+     art.path(Gray,Point(p.x,0),Point(p.x,size.y-1));
+     art.path(Gray,Point(0,p.y),Point(size.x-1,p.y));
+    }
+   
+   void select(Point point)
+    {
+     if( select_a )
+       a=point;
+     else
+       b=point;
+     
+     win->redraw();
+    }
+   
+  public:
+  
+   Client()
+    {
+    }
+   
+   virtual ~Client()
+    {
+    }
+   
+   // drawing
+   
+   virtual void layout(Point size_)
+    {
+     size=size_;
+     
+     field=Pane(size.x/4,size.y/4,size.x/2,size.y/2);
+    }
+   
+   virtual void draw(FrameBuf<DesktopColor> buf,bool) const
+    {
+     CommonDrawArt art(buf);
+     
+     art.erase(Silver);
+     
+     art.block(field,White);
+     
+     if( select_a )
+       cross(art,a);
+     else
+       cross(art,b);
+     
+     CommonDrawArt(buf.cut(field)).path(Blue,a-field.getBase(),b-field.getBase());
+    }
+   
+   virtual void key(VKey vkey,KeyMod)
+    {
+     if( vkey==VKey_Tab )
+       {
+        select_a=!select_a;
+        
+        win->redraw();
+       }
+    }
+   
+   virtual void clickLeft(Point point,MouseKey)
+    {
+     select(point);
+    }
+
+   virtual void move(Point point,MouseKey mkey)
+    {
+     if( mkey&MouseKey_Left )
+       {
+        select(point);
+       }
+    }
+ };
+
 /* class Application */
 
 class Application : public ApplicationBase
@@ -68,7 +159,7 @@ class Application : public ApplicationBase
   
    FileReport report;
    
-   DragClient client;
+   Client client;
    
    DragWindow main_win;
    
