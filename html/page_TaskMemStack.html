@@ -30,6 +30,184 @@
 
 <p class="Files">Files <b>CCore/inc/TaskMemStack.h</b> <b>CCore/src/TaskMemStack.cpp</b></p>
 
+<p>
+<b>TaskMemStack</b> can be used to allocate a temporary work area in a stack-based manner.
+Each task has own task memory stack.
+</p>
+
+<h4>Allocation functions</h4>
+
+<pre>
+
+void * <span class="Att">TryTaskMemStackAlloc</span>(ulen len) noexcept; // len!=0
+
+void * <span class="Att">TaskMemStackAlloc</span>(ulen len); // len!=0
+
+void <span class="Att">TaskMemStackFree</span>(void *mem); // mem!=0
+
+</pre>
+
+<p>
+<b>TryTaskMemStackAlloc()</b> tries to allocate a memory from the task memory stack. The length of the memory 
+block is given by the non-null argument, the block is aligned. Null is returned in case of error. If a <b>TaskMemStack</b>
+object is not active for the current task a error is reported.
+</p>
+
+<p>
+<b>TaskMemStackAlloc()</b> does the same, but throws an exception in case of error.
+</p>
+
+<p>
+<b>TaskMemStackFree()</b> frees a previously allocated memory block, <b>mem</b> is not null. Memory blocks must be 
+freed in the strict reverse order as they was allocated. I.e. <b>mem</b> must be the address of the last memory block
+allocated.
+</p>
+
+<p>
+Before using these functions you must activate a <b>TaskMemStack</b> object.
+</p>
+
+<h4>Allocation guard</h4>
+
+<p>
+<b>TaskMemStackAllocGuard</b> is an allocation guard class for the task memory stack.
+</p>
+
+<pre>
+
+class <span class="Att">TaskMemStackAllocGuard</span> : NoCopy
+ {
+   void *mem;
+ 
+  public:
+  
+   explicit TaskMemStackAllocGuard(ulen count,ulen size_of); // count!=0, size_of!=0
+   
+   ~TaskMemStackAllocGuard();
+   
+   operator void * () const { return mem; }
+   
+   void * disarm() { return Replace_null(mem); }
+ };
+
+</pre>
+
+<p>
+Constructor allocates a task memory stack block for <b>count</b> items of the <b>size_of</b> length,
+both arguments must be non-null.
+</p>
+
+<p>
+Destructor deallocates the memory if the object is not disarmed.
+</p>
+
+<p>
+The address of the allocated memory block can be obtained by the casting operator.
+</p>
+
+<p>
+<b>disarm()</b> disarms the guard and returns the address of the allocated memory block. 
+</p>
+
+<h4>TaskMemStack</h4>
+
+<p>
+<b>TaskMemStack</b> object is responsible for allocation/deallocation operations.
+You don't need to use it directly. Instead, you create an object of this class in some task as an automatic variable.
+In scope of this object you may use task memory stack allocation/deallocation functions.
+</p>
+
+<pre>
+
+class <span class="Att">TaskMemStack</span> : NoCopy
+ {
+   ....
+
+  public:
+  
+   explicit TaskMemStack(ulen reserve=4_KByte);
+   
+   ~TaskMemStack();
+   
+   void * alloc(ulen len); // len!=0
+   
+   void free(void *mem); // mem!=0
+   
+   static TaskMemStack * GetObject();
+ };
+
+</pre>
+
+<p>
+The only argument of the constructor is the length of the first big block of memory. By default it is 4 KBytes.
+</p>
+
+<h4>StackArray</h4>
+
+<p>
+<b>StackArray</b> is similar to the <a href="page_Arrays.html#SimpleArray"><b>SimpleArray</b></a> class.
+The only difference: it takes the memory from the task memory stack. And this class is not swappable and movable.
+You should use this class to create automatic variables when you need a temporary work array of objects.
+</p>
+
+<pre>
+
+template &lt;class T,class Algo&gt; 
+class <span class="Att">StackArray</span> : NoCopy
+ {
+   T *ptr;
+   ulen len;
+ 
+  public:
+  
+   // constructors
+   
+   explicit StackArray(ulen len=0);
+   
+   ~StackArray();
+   
+   // range access
+   
+   T * getPtr() { return ptr; }
+   
+   const T * getPtr() const { return ptr; }
+   
+   const T * getPtr_const() const { return ptr; }
+   
+   ulen getLen() const { return len; }
+   
+   // index access
+   
+   T &amp; operator [] (ulen index);
+   
+   const T &amp; operator [] (ulen index) const;
+   
+   T &amp; at(ulen index);
+    
+   const T &amp; at(ulen index) const;
+   
+   // apply
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void apply(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void apply_const(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init);
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse(FuncInit func_init) const;
+   
+   template &lt;class FuncInit&gt;
+   void applyReverse_const(FuncInit func_init) const;
+ };
+
+</pre>
 
 </body>
 
