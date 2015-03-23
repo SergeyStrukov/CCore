@@ -22,18 +22,23 @@ namespace Video {
 
 /* class CommonDrawArt::WorkBuf */
 
+void CommonDrawArt::WorkBuf::Order(int &a,int &b)
+ {
+  if( a>b )
+    {
+     Swap(a,b);
+     
+     a++;
+     b++;
+    }
+ }
+
 void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,DesktopColor color)
  {
-  if( abx>=0 && abx<dx )
+  if( abx>=0 && abx<dx && dy>0 )
     {
-     if( ay>by )
-       {
-        Swap(ay,by);
-        
-        ay++;
-        by++;
-       }
-      
+     Order(ay,by);
+     
      if( by>0 && ay<dy )
        {
         if( ay<0 ) ay=0;
@@ -51,15 +56,9 @@ void CommonDrawArt::WorkBuf::lineX(int aby,int ax,int bx,DesktopColor color)
  {
   if( aby>=0 && aby<dy )
     {
-     if( ax>bx )
-       {
-        Swap(ax,bx);
-        
-        ax++;
-        bx++;
-       }
+     Order(ax,bx);
       
-     if( bx>0 && ax<dx )
+     if( bx>0 && ax<dx && dx>0 )
        {
         if( ax<0 ) ax=0;
         

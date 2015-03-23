@@ -417,8 +417,6 @@ class DragWindow : public FrameWindow
    
    // methods
    
-   WinControl * getControl() { return win; }
-   
    void createMain(CmdDisplay cmd_display,Point max_size);
    
    void create(Pane pane,Point max_size);

@@ -153,14 +153,20 @@ class FrameWindow : public MemBase_nocopy
  {
   protected:
    
+   Desktop *const desktop;
+   
    WinControl *const win;
    
   public:
    
-   explicit FrameWindow(Desktop *desktop) : win(desktop->createControl()) { win->frame=this; }
+   explicit FrameWindow(Desktop *desktop_) : desktop(desktop_),win(desktop_->createControl()) { win->frame=this; }
   
    virtual ~FrameWindow() { delete win; }
-  
+
+   Desktop * getDesktop() { return desktop; }
+   
+   WinControl * getControl() { return win; }
+   
    // base
    
    virtual void alive()

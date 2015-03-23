@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_Point_h
 #define CCore_inc_video_Point_h
  
-#include <CCore/inc/Gadget.h>
+#include <CCore/inc/video/IntOp.h>
 
 namespace CCore {
 namespace Video {
@@ -40,7 +40,7 @@ struct DenPoint
   DenPoint(NothingType) : DenPoint() {}
   
   template <class Unused=int>
-  DenPoint(DenPoint<1> p,Meta::EnableIf< (Den>1) ,Unused> unused=0) : x(p.x*Den),y(p.y*Den) {}
+  DenPoint(DenPoint<1> p,Meta::EnableIf< (Den>1) ,Unused> unused=0) : x(IntMul(p.x,Den)),y(IntMul(p.y,Den)) {}
   
   DenPoint(int x_,int y_) : x(x_),y(y_) {}
   
@@ -52,16 +52,16 @@ struct DenPoint
  };
  
 template <int Den>
-DenPoint<Den> operator + (DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(a.x+b.x,a.y+b.y); } // may overflow
+DenPoint<Den> operator + (DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(IntAdd(a.x,b.x),IntAdd(a.y,b.y)); }
  
 template <int Den>
-DenPoint<Den> operator - (DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(a.x-b.x,a.y-b.y); } // may overflow
+DenPoint<Den> operator - (DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(IntSub(a.x,b.x),IntSub(a.y,b.y)); }
 
 template <int Den>
-DenPoint<Den> operator += (DenPoint<Den> &a,DenPoint<Den> b) { return a=a+b; } // may overflow
+DenPoint<Den> operator += (DenPoint<Den> &a,DenPoint<Den> b) { return a=a+b; }
  
 template <int Den>
-DenPoint<Den> operator -= (DenPoint<Den> &a,DenPoint<Den> b) { return a=a-b; } // may overflow
+DenPoint<Den> operator -= (DenPoint<Den> &a,DenPoint<Den> b) { return a=a-b; }
 
 template <int Den>
 bool operator == (DenPoint<Den> a,DenPoint<Den> b) { return a.x==b.x && a.y==b.y ; }
@@ -108,14 +108,22 @@ struct Pane
   
   Pane(NothingType) : Pane() {}
   
-  Pane(int x_,int y_,int dx_,int dy_) : x(x_),y(y_),dx(dx_),dy(dy_) {}
+  Pane(int x_,int y_,int dx_,int dy_) 
+   : x(x_),y(y_),dx(dx_),dy(dy_) 
+   {
+    getLim();
+    
+    IntGuard( dx>=0 && dy>=0 );
+   }
 
-  Pane(Point base,Point lim) // base<=lim , may overflow
+  Pane(Point base,Point lim) // base<=lim
    {
     x=base.x;
     y=base.y;
-    dx=lim.x-base.x;
-    dy=lim.y-base.y;
+    dx=IntSub(lim.x,base.x);
+    dy=IntSub(lim.y,base.y);
+    
+    IntGuard( dx>=0 && dy>=0 );
    }
   
   bool operator + () const { return dx>0 && dy>0 ; }  
@@ -126,7 +134,7 @@ struct Pane
   
   Point getSize() const { return Point(dx,dy); }
   
-  Point getLim() const { return Point(x+dx,y+dy); } // may overflow
+  Point getLim() const { return Point(IntAdd(x,dx),IntAdd(y,dy)); }
   
   bool contains(Point point) const
    { 
@@ -152,7 +160,7 @@ struct Pane
    }
  };
 
-inline Pane Sup_nonempty(Pane a,Pane b) 
+inline Pane Sup_nonempty(Pane a,Pane b) // +a && +b
  {
   Point base=Inf(a.getBase(),b.getBase());
   Point lim=Sup(a.getLim(),b.getLim());
@@ -169,7 +177,7 @@ inline Pane Sup(Pane a,Pane b)
   return Sup_nonempty(a,b);
  }
 
-inline Pane Inf_nonempty(Pane a,Pane b) 
+inline Pane Inf_nonempty(Pane a,Pane b) // +a && +b
  {
   Point base=Sup(a.getBase(),b.getBase());
   Point lim=Inf(a.getLim(),b.getLim());

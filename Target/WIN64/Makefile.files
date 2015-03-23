@@ -121,6 +121,7 @@ obj/HeapEngine.o \
 obj/HeapSort.o \
 obj/Init.o \
 obj/InstanceLock.o \
+obj/IntOp.o \
 obj/IntPrint.o \
 obj/IntScan.o \
 obj/Integer.o \
@@ -439,6 +440,7 @@ obj/HeapEngine.s \
 obj/HeapSort.s \
 obj/Init.s \
 obj/InstanceLock.s \
+obj/IntOp.s \
 obj/IntPrint.s \
 obj/IntScan.s \
 obj/Integer.s \
@@ -757,6 +759,7 @@ obj/HeapEngine.dep \
 obj/HeapSort.dep \
 obj/Init.dep \
 obj/InstanceLock.dep \
+obj/IntOp.dep \
 obj/IntPrint.dep \
 obj/IntScan.dep \
 obj/Integer.dep \
@@ -1330,6 +1333,9 @@ obj/Init.o : ../../CCore/src/gadget/Init.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/InstanceLock.o : ../../CCore/src/InstanceLock.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/IntOp.o : ../../CCore/src/video/IntOp.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IntPrint.o : ../../CCore/src/printf/IntPrint.cpp
@@ -2279,6 +2285,9 @@ obj/Init.s : ../../CCore/src/gadget/Init.cpp
 obj/InstanceLock.s : ../../CCore/src/InstanceLock.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/IntOp.s : ../../CCore/src/video/IntOp.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/IntPrint.s : ../../CCore/src/printf/IntPrint.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3225,6 +3234,9 @@ obj/Init.dep : ../../CCore/src/gadget/Init.cpp
 
 obj/InstanceLock.dep : ../../CCore/src/InstanceLock.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/InstanceLock.o $< -MF $@
+
+obj/IntOp.dep : ../../CCore/src/video/IntOp.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntOp.o $< -MF $@
 
 obj/IntPrint.dep : ../../CCore/src/printf/IntPrint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IntPrint.o $< -MF $@

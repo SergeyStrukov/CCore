@@ -32,6 +32,8 @@ class CommonDrawArt
  {
    class WorkBuf : public FrameBuf<DesktopColor>
     {
+      static void Order(int &a,int &b);
+     
      public:
      
       explicit WorkBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
