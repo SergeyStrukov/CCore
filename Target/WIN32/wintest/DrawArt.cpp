@@ -22,14 +22,21 @@ namespace Video {
 
 /* class CommonDrawArt::WorkBuf */
 
-void CommonDrawArt::WorkBuf::Order(int &a,int &b)
+void CommonDrawArt::WorkBuf::Prepare(int &a,int &b,int d)
  {
-  if( a>b )
+  if( a<=b )
+    {
+     if( a<0 ) a=0;
+     
+     if( b>d ) b=d;
+    }
+  else
     {
      Swap(a,b);
      
-     a++;
-     b++;
+     if( a<0 ) a=0; else a++;
+     
+     if( b<d ) b++; else b=d;
     }
  }
 
@@ -37,16 +44,12 @@ void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,DesktopColor color)
  {
   if( abx>=0 && abx<dx && dy>0 )
     {
-     Order(ay,by);
-     
-     if( by>0 && ay<dy )
+     Prepare(ay,by,dy);
+
+     if( ay<by )
        {
-        if( ay<0 ) ay=0;
-        
-        if( by>dy ) by=dy;
-        
         auto raw=place(Point(abx,ay));
-        
+          
         for(; ay<by ;raw=nextY(raw),ay++) color.copyTo(raw);
        }
     }
@@ -54,16 +57,12 @@ void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,DesktopColor color)
 
 void CommonDrawArt::WorkBuf::lineX(int aby,int ax,int bx,DesktopColor color)
  {
-  if( aby>=0 && aby<dy )
+  if( aby>=0 && aby<dy && dx>0 )
     {
-     Order(ax,bx);
+     Prepare(ax,bx,dx);
       
-     if( bx>0 && ax<dx && dx>0 )
+     if( ax<bx )
        {
-        if( ax<0 ) ax=0;
-        
-        if( bx>dx ) bx=dx;
-        
         auto raw=place(Point(ax,aby));
         
         for(; ax<bx ;raw=NextX(raw),ax++) color.copyTo(raw);
@@ -75,18 +74,18 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
  {
   int ex;
   int ey;
-  int sx;
-  int sy;
+  unsigned sx;
+  unsigned sy;
   
   if( a.x<b.x )
     {
      ex=1;
-     sx=b.x-a.x;
+     sx=Shift(a.x,b.x);
     }
   else if( a.x>b.x )
     {
      ex=-1;
-     sx=a.x-b.x;
+     sx=Shift(b.x,a.x);
     }
   else
     {
@@ -96,12 +95,12 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
   if( a.y<b.y )
     {
      ey=1;
-     sy=b.y-a.y;
+     sy=Shift(a.y,b.y);
     }
   else if( a.y>b.y )
     {
      ey=-1;
-     sy=a.y-b.y;
+     sy=Shift(b.y,a.y);
     }
   else
     {
@@ -110,38 +109,26 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
   
   if( sx>sy )
     {
-     int delta=0;
-     int lim=sx/2;
+     LineDriver driver(sx,sy);
     
-     for(int count=sx; count>0 ;count--)
+     for(auto count=sx; count>0 ;count--)
        {
         if( getPane().contains(a) ) pixel(a,color);
         
-        if( (delta+=sy)>lim ) 
-          {
-           a.y+=ey;
-           
-           delta-=sx;
-          }
+        if( driver.step() ) a.y+=ey;
         
         a.x+=ex;
        }
     }
   else
     {
-     int delta=0;
-     int lim=sy/2;
+     LineDriver driver(sy,sx);
     
-     for(int count=sy; count>0 ;count--)
+     for(auto count=sy; count>0 ;count--)
        {
         if( getPane().contains(a) ) pixel(a,color);
         
-        if( (delta+=sx)>lim ) 
-          {
-           a.x+=ex;
-           
-           delta-=sy;
-          }
+        if( driver.step() ) a.x+=ex;
         
         a.y+=ey;
        }

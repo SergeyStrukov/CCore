@@ -24,7 +24,51 @@ namespace Video {
 
 /* classes */
 
+class LineDriver;
+
 class CommonDrawArt;
+
+/* class LineDriver */
+
+class LineDriver
+ {
+   const unsigned sx;
+   const unsigned sy;
+   
+   const unsigned lim;
+   const unsigned lim2;
+   
+   unsigned delta = 0 ;
+   bool flag = false ;
+   
+  public:
+  
+   LineDriver(unsigned sx_,unsigned sy_) : sx(sx_),sy(sy_),lim(sx_-sy_),lim2(sx_/2) {} // sx >= sy > 0
+   
+   bool step()
+    {
+     bool ret=false;
+     
+     if( delta<lim ) 
+       {
+        bool next_flag=( (delta+=sy)>lim2 );
+        
+        ret=( flag!=next_flag );
+        
+        flag=next_flag;
+       } 
+     else
+       {
+        bool next_flag=( (delta-=lim)>lim2 );
+        
+        ret=( flag==next_flag );
+        
+        flag=next_flag;
+       }
+     
+     return ret;
+    }
+ };
 
 /* class CommonDrawArt */
 
@@ -32,8 +76,10 @@ class CommonDrawArt
  {
    class WorkBuf : public FrameBuf<DesktopColor>
     {
-      static void Order(int &a,int &b);
+      static void Prepare(int &a,int &b,int d);
      
+      static unsigned Shift(int a,int b) { return (unsigned)b-(unsigned)a; }
+      
      public:
      
       explicit WorkBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
