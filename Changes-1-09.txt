@@ -20,3 +20,7 @@ TickTimer.h
 TaskMemStack.h
 
   per-task memory stack for temporary work space.
+
+gadget/Place.h
+
+  PtrDist() is added.

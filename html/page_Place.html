@@ -48,10 +48,6 @@ typedef unsigned char <span class="Att">byte</span>;
 
 <h3>Pointer move</h3>
 
-<p>
-<b>CastPtr()</b> converts a raw pointer to a byte pointer.
-</p>
-
 <pre>
 
 inline byte * <span class="Att">CastPtr</span>(void *ptr) { return static_cast&lt;byte *&gt;(ptr); }
@@ -61,7 +57,7 @@ inline const byte * <span class="Att">CastPtr</span>(const void *ptr) { return s
 </pre> 
 
 <p>
-<b>PtrAdd()</b> and <b>PtrSub()</b> moves a raw pointer up and down on the given number of bytes.
+<b>CastPtr()</b> converts a raw pointer to a byte pointer.
 </p>
 
 <pre>
@@ -75,6 +71,21 @@ inline void * <span class="Att">PtrSub</span>(void *ptr,ulen delta) { return Cas
 inline const void * <span class="Att">PtrSub</span>(const void *ptr,ulen delta) { return CastPtr(ptr)-delta; }
 
 </pre>
+
+<p>
+<b>PtrAdd()</b> and <b>PtrSub()</b> moves a raw pointer up and down on the given number of bytes.
+</p>
+
+<pre>
+
+inline ulen <span class="Att">PtrDist</span>(const void *from,const void *to) { return static_cast&lt;const char *&gt;(to)-static_cast&lt;const char *&gt;(from); }
+
+</pre>
+
+<p>
+<b>PtrDist()</b> calculates the distance from the one raw pointer to another. Both pointers must be in the same "memory segment"
+and <b>to</b> must be after <b>from</b>.
+</p>
 
 <h3>Place</h3>
 

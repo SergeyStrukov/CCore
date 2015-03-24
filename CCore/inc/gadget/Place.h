@@ -25,7 +25,7 @@ namespace CCore {
 
 typedef unsigned char byte;
 
-/* functions */ 
+/* raw pointer functions */ 
 
 inline byte * CastPtr(void *ptr) { return static_cast<byte *>(ptr); }
  
@@ -40,6 +40,8 @@ inline void * PtrSub(void *ptr,ulen delta) { return CastPtr(ptr)-delta; }
  
 inline const void * PtrSub(const void *ptr,ulen delta) { return CastPtr(ptr)-delta; }
  
+inline ulen PtrDist(const void *from,const void *to) { return static_cast<const char *>(to)-static_cast<const char *>(from); }
+
 /* classes */ 
 
 template <class Void> class Place;

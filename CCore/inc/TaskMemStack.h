@@ -90,8 +90,6 @@ class TaskMemStack : NoCopy
   
   private:
    
-   static ulen PtrDist(const void *from,const void *to) { return static_cast<const char *>(to)-static_cast<const char *>(from); }
-   
    bool provide(ulen delta);
    
    void popNode();
