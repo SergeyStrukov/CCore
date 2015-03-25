@@ -33,6 +33,8 @@ namespace App2 { int testmain(CmdDisplay cmd_display); }
 
 namespace App3 { int testmain(CmdDisplay cmd_display); }
 
+namespace App4 { int testmain(CmdDisplay cmd_display); }
+
 /* WinMain() */ 
 
 DesktopConfig AppDesktopConfig={IDI_APP,IDI_SMALL_APP};

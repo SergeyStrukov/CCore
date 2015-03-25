@@ -43,7 +43,19 @@ class FrameBuf : protected ColorPlane
    
    static Raw * NextX(Raw *ptr) { return ptr+RawColor::RawCount; }
    
+   static Raw * PrevX(Raw *ptr) { return ptr-RawColor::RawCount; }
+   
    Raw * nextY(Raw *ptr) { return static_cast<Raw *>(PtrAdd(ptr,dline)); }
+   
+   Raw * prevY(Raw *ptr) { return static_cast<Raw *>(PtrSub(ptr,dline)); }
+   
+   Raw * nextXnextY(Raw *ptr) { return NextX(nextY(ptr)); }
+   
+   Raw * nextXprevY(Raw *ptr) { return NextX(prevY(ptr)); }
+   
+   Raw * prevXnextY(Raw *ptr) { return PrevX(nextY(ptr)); }
+   
+   Raw * prevXprevY(Raw *ptr) { return PrevX(prevY(ptr)); }
    
    static void HLine(Raw *ptr,int len,RawColor color);
    

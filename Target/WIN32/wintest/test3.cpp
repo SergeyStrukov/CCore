@@ -76,10 +76,10 @@ class Client : public DragClient
    
   private: 
   
-   void cross(CommonDrawArt &art,Point p) const
+   void cross(CommonDrawArt &art,Point p,DesktopColor color) const
     {
-     art.path(Gray,Point(p.x,0),Point(p.x,size.y-1));
-     art.path(Gray,Point(0,p.y),Point(size.x-1,p.y));
+     art.path(color,Point(p.x,0),Point(p.x,size.y-1));
+     art.path(color,Point(0,p.y),Point(size.x-1,p.y));
     }
    
    void select(Point point)
@@ -120,11 +120,11 @@ class Client : public DragClient
      art.block(field,White);
      
      if( select_a )
-       cross(art,a);
+       cross(art,a,Blue);
      else
-       cross(art,b);
+       cross(art,b,Green);
      
-     CommonDrawArt(buf.cut(field)).path(Blue,a-field.getBase(),b-field.getBase());
+     CommonDrawArt(buf.cut(field)).path(Red,a-field.getBase(),b-field.getBase());
     }
    
    virtual void key(VKey vkey,KeyMod)

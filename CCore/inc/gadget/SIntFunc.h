@@ -52,6 +52,28 @@ struct SIntFunc
   static SInt PosAbs(UInt abs) { return SInt(abs); }
   
   static SInt NegAbs(UInt abs) { return SInt(UIntFunc<UInt>::Neg(abs)); }
+  
+  // dist/move
+  
+  static UInt Dist(SInt a,SInt b) // a <= b 
+   { 
+    return (UInt)b-(UInt)a; 
+   }
+
+  static SInt MovePos(SInt a,UInt delta) 
+   { 
+    return a+delta;
+   }
+  
+  static SInt MoveNeg(SInt a,UInt delta) 
+   { 
+    return a-delta;
+   }
+  
+  static SInt Move(SInt a,int e,UInt delta) 
+   {
+    return (e>0)?MovePos(a,delta):MoveNeg(a,delta);
+   }
  };
 
 } // namespace CCore

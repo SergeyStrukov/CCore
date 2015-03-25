@@ -18,7 +18,7 @@
 
 #include <CCore/inc/video/FrameBuf.h>
 #include <CCore/inc/video/Desktop.h>
- 
+
 namespace CCore {
 namespace Video {
 
@@ -35,23 +35,21 @@ class LineDriver
    const unsigned sx;
    const unsigned sy;
    
+   const unsigned ty;
    const unsigned lim;
-   const unsigned lim2;
    
    unsigned delta = 0 ;
    bool flag = false ;
-   
-  public:
   
-   LineDriver(unsigned sx_,unsigned sy_) : sx(sx_),sy(sy_),lim(sx_-sy_),lim2(sx_/2) {} // sx >= sy > 0
+  private:
    
-   bool step()
+   bool do_step(unsigned s,unsigned t) // t == sx-s
     {
      bool ret=false;
      
-     if( delta<lim ) 
+     if( delta<t ) 
        {
-        bool next_flag=( (delta+=sy)>lim2 );
+        bool next_flag=( (delta+=s)>lim );
         
         ret=( flag!=next_flag );
         
@@ -59,7 +57,7 @@ class LineDriver
        } 
      else
        {
-        bool next_flag=( (delta-=lim)>lim2 );
+        bool next_flag=( (delta-=t)>lim );
         
         ret=( flag==next_flag );
         
@@ -68,6 +66,36 @@ class LineDriver
      
      return ret;
     }
+
+   bool do_step(unsigned s) { return do_step(s,sx-s); }
+   
+  public:
+  
+   LineDriver(unsigned sx_,unsigned sy_) : sx(sx_),sy(sy_),ty(sx_-sy_),lim(sx_/2) {} // sx >= sy > 0
+   
+   bool step() { return do_step(sy,ty); }
+   
+   unsigned step(unsigned count);
+   
+   struct Result
+    {
+     unsigned off;
+     unsigned lim;
+     
+     bool operator + () const { return off<lim; }
+     
+     bool operator ! () const { return off>=lim; }
+    };
+   
+   static Result Inf(Result a,Result b) { return {Max(a.off,b.off),Min(a.lim,b.lim)}; }
+   
+   Result clip(int x,int y,int ex,int ey,int dx,int dy) const;
+
+   unsigned clipToX(unsigned y) const;
+   
+   Result clipToX(Result clip_y) const;
+   
+   static Result Clip(int x,int e,int d);
  };
 
 /* class CommonDrawArt */
@@ -77,9 +105,9 @@ class CommonDrawArt
    class WorkBuf : public FrameBuf<DesktopColor>
     {
       static void Prepare(int &a,int &b,int d);
-     
-      static unsigned Shift(int a,int b) { return (unsigned)b-(unsigned)a; }
       
+      static bool DistDir(int &e,unsigned &s,int a,int b);
+     
      public:
      
       explicit WorkBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}

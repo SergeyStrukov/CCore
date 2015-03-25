@@ -16,9 +16,99 @@
 #include "DrawArt.h"
 
 #include <CCore/inc/Swap.h>
+
+#include <CCore/inc/Exception.h>
  
 namespace CCore {
 namespace Video {
+
+/* class LineDriver */
+
+unsigned LineDriver::step(unsigned count)
+ {
+  if( sy==sx ) return count;
+  
+  UIntFunc<unsigned>::Mul mul(count,sy);
+  UIntFunc<unsigned>::DivMod divmod(mul.hi,mul.lo,sx);
+
+  return divmod.div+do_step(divmod.mod);
+ }
+
+auto LineDriver::clip(int x,int y,int ex,int ey,int dx,int dy) const -> Result
+ {
+  auto clip_x=Clip(x,ex,dx);
+  
+  Replace_min(clip_x.lim,sx);
+  
+  if( !clip_x ) return {0,0};
+  
+  auto clip_y=Clip(y,ey,dy);
+  
+  if( !clip_y ) return {0,0};
+  
+  return Inf(clip_x,clipToX(clip_y));
+ }
+
+unsigned LineDriver::clipToX(unsigned y) const
+ {
+  if( y>sy ) return sx;
+  
+  if( y==0 ) return 0;
+  
+  UIntFunc<unsigned>::Mul mul(sx,y);
+  
+  UIntFunc<unsigned>::Sub sub(mul.lo,lim);
+  
+  UIntFunc<unsigned>::DivMod divmod(mul.hi-sub.borrow,sub.result,sy);
+  
+  if( (sx&1u)!=0 && divmod.mod==0 )
+    {
+     return divmod.div;
+    }
+  else
+    {
+     return divmod.div+1;
+    }
+ }
+
+auto LineDriver::clipToX(Result clip_y) const -> Result
+ {
+  return {clipToX(clip_y.off),clipToX(clip_y.lim)};
+ }
+
+auto LineDriver::Clip(int x,int e,int d) -> Result
+ {
+  if( e>0 )
+    {
+     if( x<0 )
+       {
+        return {IntDist(x,0),IntDist(x,d)};
+       }
+     else if( x<d )
+       {
+        return {0,IntDist(x,d)};        
+       }
+     else
+       {
+        return {0,0};
+       }
+    }
+  else
+    {
+     if( x<0 )
+       {
+        return {0,0};
+       }
+     else if( x<d )
+       {
+        return {0,IntDist(-1,x)};
+       }
+     else
+       {
+        return {IntDist(d-1,x),IntDist(-1,x)};
+       }
+    }
+ }
 
 /* class CommonDrawArt::WorkBuf */
 
@@ -40,9 +130,30 @@ void CommonDrawArt::WorkBuf::Prepare(int &a,int &b,int d)
     }
  }
 
+bool CommonDrawArt::WorkBuf::DistDir(int &e,unsigned &s,int a,int b)
+ {
+  if( a<b )
+    {
+     e=1;
+     s=IntDist(a,b);
+     
+     return true;
+    }
+  
+  if( a>b )
+    {
+     e=-1;
+     s=IntDist(b,a);
+     
+     return true;
+    }
+  
+  return false;
+ }
+
 void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,DesktopColor color)
  {
-  if( abx>=0 && abx<dx && dy>0 )
+  if( abx>=0 && abx<dx )
     {
      Prepare(ay,by,dy);
 
@@ -57,7 +168,7 @@ void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,DesktopColor color)
 
 void CommonDrawArt::WorkBuf::lineX(int aby,int ax,int bx,DesktopColor color)
  {
-  if( aby>=0 && aby<dy && dx>0 )
+  if( aby>=0 && aby<dy )
     {
      Prepare(ax,bx,dx);
       
@@ -77,35 +188,17 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
   unsigned sx;
   unsigned sy;
   
-  if( a.x<b.x )
-    {
-     ex=1;
-     sx=Shift(a.x,b.x);
-    }
-  else if( a.x>b.x )
-    {
-     ex=-1;
-     sx=Shift(b.x,a.x);
-    }
-  else
+  if( !DistDir(ex,sx,a.x,b.x) )
     {
      return lineY(a.x,a.y,b.y,color);
     }
-  
-  if( a.y<b.y )
-    {
-     ey=1;
-     sy=Shift(a.y,b.y);
-    }
-  else if( a.y>b.y )
-    {
-     ey=-1;
-     sy=Shift(b.y,a.y);
-    }
-  else
+ 
+  if( !DistDir(ey,sy,a.y,b.y) )
     {
      return lineX(a.y,a.x,b.x,color);
     }
+
+#if 0
   
   if( sx>sy )
     {
@@ -133,6 +226,235 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
         a.y+=ey;
        }
     }
+  
+#else
+  
+  if( sx>sy )
+    {
+     LineDriver driver(sx,sy);
+     
+     auto clip=driver.clip(a.x,a.y,ex,ey,dx,dy);
+     
+     if( +clip )
+       {
+        unsigned off=clip.off;
+        unsigned count=clip.lim-clip.off;
+        
+        if( off ) 
+          {
+           a.y=IntMove(a.y,ey,driver.step(off));
+           a.x=IntMove(a.x,ex,off);
+          }
+        
+#if 0
+        
+        for(; count ;count--)
+          {
+           pixel(a,color);
+           
+           if( driver.step() ) a.y+=ey;
+           
+           a.x+=ex;
+          }
+        
+#else
+
+        if( ex>0 )
+          {
+           if( ey>0 )
+             {
+              for(auto raw=place(a);;)
+                {
+                 color.copyTo(raw);
+                  
+                 if( !--count ) break;
+                 
+                 if( driver.step() )
+                   {
+                    raw=nextXnextY(raw);
+                   }
+                 else
+                   {
+                    raw=NextX(raw);
+                   }
+                }
+             }
+           else
+             {
+              for(auto raw=place(a);;)
+                {
+                 color.copyTo(raw);
+                  
+                 if( !--count ) break;
+                 
+                 if( driver.step() )
+                   {
+                    raw=nextXprevY(raw);
+                   }
+                 else
+                   {
+                    raw=NextX(raw);
+                   }
+                }
+             }
+          }
+        else
+          {
+           if( ey>0 )
+             {
+              for(auto raw=place(a);;)
+                {
+                 color.copyTo(raw);
+                  
+                 if( !--count ) break;
+                 
+                 if( driver.step() )
+                   {
+                    raw=prevXnextY(raw);
+                   }
+                 else
+                   {
+                    raw=PrevX(raw);
+                   }
+                }
+             }
+           else
+             {
+              for(auto raw=place(a);;)
+                {
+                 color.copyTo(raw);
+                  
+                 if( !--count ) break;
+                 
+                 if( driver.step() )
+                   {
+                    raw=prevXprevY(raw);
+                   }
+                 else
+                   {
+                    raw=PrevX(raw);
+                   }
+                }
+             }
+          }
+        
+#endif        
+       }
+    }
+  else
+    {
+     LineDriver driver(sy,sx);
+    
+     auto clip=driver.clip(a.y,a.x,ey,ex,dy,dx);
+     
+     if( +clip )
+       {
+        unsigned off=clip.off;
+        unsigned count=clip.lim-clip.off;
+        
+        if( off ) 
+          {
+           a.x=IntMove(a.x,ex,driver.step(off));
+           a.y=IntMove(a.y,ey,off);
+          }
+        
+#if 0
+        
+        for(; count ;count--)
+          {
+           pixel(a,color);
+           
+           if( driver.step() ) a.x+=ex;
+           
+           a.y+=ey;
+          }
+        
+#else
+        
+        if( ey>0 )
+          {
+           if( ex>0 )
+             {
+              for(auto raw=place(a);;)
+                {
+                 color.copyTo(raw);
+                  
+                 if( !--count ) break;
+                 
+                 if( driver.step() )
+                   {
+                    raw=nextXnextY(raw);
+                   }
+                 else
+                   {
+                    raw=nextY(raw);
+                   }
+                }
+             }
+           else
+             {
+              for(auto raw=place(a);;)
+                {
+                 color.copyTo(raw);
+                  
+                 if( !--count ) break;
+                 
+                 if( driver.step() )
+                   {
+                    raw=prevXnextY(raw);
+                   }
+                 else
+                   {
+                    raw=nextY(raw);
+                   }
+                }
+             }
+          }
+        else
+          {
+           if( ex>0 )
+             {
+              for(auto raw=place(a);;)
+                {
+                 color.copyTo(raw);
+                  
+                 if( !--count ) break;
+                 
+                 if( driver.step() )
+                   {
+                    raw=nextXprevY(raw);
+                   }
+                 else
+                   {
+                    raw=prevY(raw);
+                   }
+                }
+             }
+           else
+             {
+              for(auto raw=place(a);;)
+                {
+                 color.copyTo(raw);
+                  
+                 if( !--count ) break;
+                 
+                 if( driver.step() )
+                   {
+                    raw=prevXprevY(raw);
+                   }
+                 else
+                   {
+                    raw=prevY(raw);
+                   }
+                }
+             }
+          }
+        
+#endif        
+       }
+    }
+  
+#endif  
  }
 
 /* class CommonDrawArt */

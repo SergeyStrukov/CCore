@@ -23,6 +23,18 @@ namespace Video {
 
 /* functions */
 
+inline unsigned IntDist(int a,int b) // a <= b
+ { 
+  return SIntFunc<int>::Dist(a,b); 
+ }
+
+inline int IntMove(int a,int e,unsigned delta)
+ {
+  return SIntFunc<int>::Move(a,e,delta);
+ }
+
+/* functions */
+
  //
  // Can be substituted to provide checked operations.
  //

@@ -42,17 +42,17 @@ struct <span class="Att">SIntFunc</span>
  {
   // types
   
-  typedef typename Meta::SIntToUInt&lt;SInt&gt;::UType UInt;
+  typedef typename Meta::SIntToUInt&lt;SInt&gt;::UType <span class="Att">UInt</span>;
 
   // consts
   
-  static const UInt MaxPositiveAbs = .... ;
+  static const UInt <span class="Att">MaxPositiveAbs</span> = .... ;
   
-  static const UInt MinNegativeAbs = .... ;
+  static const UInt <span class="Att">MinNegativeAbs</span> = .... ;
   
-  static const SInt MaxPositive = .... ;
+  static const SInt <span class="Att">MaxPositive</span> = .... ;
   
-  static const SInt MinNegative = .... ;
+  static const SInt <span class="Att">MinNegative</span> = .... ;
 
 </pre>
 
@@ -82,10 +82,9 @@ represented as <b>UInt</b> type.
 
   // abs
   
-  static SInt PosAbs(UInt abs);
+  static SInt <span class="Att">PosAbs</span>(UInt abs);
   
-  static SInt NegAbs(UInt abs);
- };
+  static SInt <span class="Att">NegAbs</span>(UInt abs);
 
 </pre>
 
@@ -95,6 +94,43 @@ represented as <b>UInt</b> type.
 
 <p>
 <b>NegAbs()</b> returns <b>-abs</b> as <b>SInt</b> value. It is assumed, that <b>abs<=MinNegativeAbs</b>.
+</p>
+
+<pre>
+  
+  // dist/move
+  
+  static UInt <span class="Att">Dist</span>(SInt a,SInt b); // a <= b 
+
+  static SInt <span class="Att">MovePos</span>(SInt a,UInt delta); 
+  
+  static SInt <span class="Att">MoveNeg</span>(SInt a,UInt delta); 
+  
+  static SInt <span class="Att">Move</span>(SInt a,int e,UInt delta); 
+ };
+
+</pre>
+
+<p>
+<b>Dist()</b> returns the distance from <b>a</b> to <b>b</b>, it is assumed, that <b>a <= b</b>. 
+The return value is represented by the <b>UInt</b>.
+</p>
+
+<p>
+<b>MovePos()</b> moves the argument <b>a</b> to the positive direction by the distance <b>delta</b>.
+It is assumed, that the upper <b>SInt</b> value bound is not crossed. I.e. if <b>a <= b</b>, then
+<b>MovePos(a,Dist(a,b)) == b</b>.
+</p>
+
+<p>
+<b>MoveNeg()</b> moves the argument <b>a</b> to the negative direction by the distance <b>delta</b>.
+It is assumed, that the lower <b>SInt</b> value bound is not crossed. I.e. if <b>a <= b</b>, then
+<b>MoveNeg(b,Dist(a,b)) == a</b>.
+</p>
+
+<p>
+<b>Move()</b> moves the argument <b>a</b> to the positive direction by the distance <b>delta</b> if <b>e > 0</b>,
+otherwise it moves <b>a</b> to the negative direction by the distance <b>delta</b>.
 </p>
 
 </body>
