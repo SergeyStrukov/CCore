@@ -24,3 +24,7 @@ TaskMemStack.h
 gadget/Place.h
 
   PtrDist() is added.
+
+gadget/SIntFunc.h
+
+  Dist(),MovePos(),MoveNeg(),Move() algorithms are added.
