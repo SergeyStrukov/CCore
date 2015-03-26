@@ -23,77 +23,100 @@ namespace Video {
 
 /* classes */ 
 
-template <int Den> struct DenPoint;
+template <class T,class Int> struct BasePoint;
+
+struct Point;
+
+struct MilliPoint;
 
 struct Pane;
 
-/* struct DenPoint<int Den> */ 
+/* struct BasePoint<T,Int> */
 
-template <int Den>
-struct DenPoint
+template <class T,class Int> 
+struct BasePoint
  {
-  int x;
-  int y;
+  Int x;
+  Int y;
   
-  DenPoint() : x(0),y(0) {}
+  // constructors
   
-  DenPoint(NothingType) : DenPoint() {}
+  BasePoint() : x(0),y(0) {}
   
-  template <class Unused=int>
-  DenPoint(DenPoint<1> p,Meta::EnableIf< (Den>1) ,Unused> unused=0) : x(IntMul(p.x,Den)),y(IntMul(p.y,Den)) {}
+  BasePoint(NothingType) : BasePoint() {}
   
-  DenPoint(int x_,int y_) : x(x_),y(y_) {}
+  BasePoint(Int x_,Int y_) : x(x_),y(y_) {}
+  
+  // unsafe operations
+  
+  friend T operator + (T a,T b) { return T(IntAdd(a.x,b.x),IntAdd(a.y,b.y)); }
+  
+  friend T operator - (T a,T b) { return T(IntSub(a.x,b.x),IntSub(a.y,b.y)); }
+  
+  friend T operator * (Int a,T p) { return T(IntMul(a,p.x),IntMul(a,p.y)); }
+  
+  friend T operator * (T p,Int a) { return T(IntMul(p.x,a),IntMul(p.y,a)); }
+  
+  friend T operator << (T p,unsigned s) { return T(IntLShift(p.x,s),IntLShift(p.y,s)); }
+  
+  friend T operator >> (T p,unsigned s) { return T(IntRShift(p.x,s),IntRShift(p.y,s)); }
+  
+  // derived operations
+  
+  friend T operator += (T &a,T b) { return a=a+b; }
+  
+  friend T operator -= (T &a,T b) { return a=a-b; }
+  
+  // safe operations
+  
+  friend bool operator == (T a,T b) { return a.x==b.x && a.y==b.y ; }
+  
+  friend bool operator != (T a,T b) { return a.x!=b.x || a.y!=b.y ; }
+  
+  friend bool operator < (T a,T b) { return a.x<b.x && a.y<b.y ; }
+  
+  friend bool operator <= (T a,T b) { return a.x<=b.x && a.y<=b.y ; }
+  
+  friend bool operator > (T a,T b) { return a.x>b.x && a.y>b.y ; }
+  
+  friend bool operator >= (T a,T b) { return a.x>=b.x && a.y>=b.y ; }
+  
+  friend T Sup(T a,T b) { return T(Max(a.x,b.x),Max(a.y,b.y)); }
+  
+  friend T Inf(T a,T b) { return T(Min(a.x,b.x),Min(a.y,b.y)); }
+  
+  // print object
   
   template <class P>
   void print(P &out) const
    {
     Printf(out,"(#;,#;)",x,y);
    }
+ 
+  // no-throw flags
+  
+  enum NoThrowFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true
+   };
  };
- 
-template <int Den>
-DenPoint<Den> operator + (DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(IntAdd(a.x,b.x),IntAdd(a.y,b.y)); }
- 
-template <int Den>
-DenPoint<Den> operator - (DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(IntSub(a.x,b.x),IntSub(a.y,b.y)); }
 
-template <int Den>
-DenPoint<Den> operator += (DenPoint<Den> &a,DenPoint<Den> b) { return a=a+b; }
- 
-template <int Den>
-DenPoint<Den> operator -= (DenPoint<Den> &a,DenPoint<Den> b) { return a=a-b; }
+/* struct Point */
 
-template <int Den>
-bool operator == (DenPoint<Den> a,DenPoint<Den> b) { return a.x==b.x && a.y==b.y ; }
- 
-template <int Den>
-bool operator != (DenPoint<Den> a,DenPoint<Den> b) { return a.x!=b.x || a.y!=b.y ; }
+struct Point : BasePoint<Point,int>
+ {
+  using BasePoint<Point,int>::BasePoint;
+ };
 
-template <int Den>
-bool operator < (DenPoint<Den> a,DenPoint<Den> b) { return a.x<b.x && a.y<b.y ; }
+/* struct MilliPoint */
 
-template <int Den>
-bool operator > (DenPoint<Den> a,DenPoint<Den> b) { return a.x>b.x && a.y>b.y ; }
-
-template <int Den>
-bool operator <= (DenPoint<Den> a,DenPoint<Den> b) { return a.x<=b.x && a.y<=b.y ; }
-
-template <int Den>
-bool operator >= (DenPoint<Den> a,DenPoint<Den> b) { return a.x>=b.x && a.y>=b.y ; }
-
-template <int Den>
-DenPoint<Den> Sup(DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(Max(a.x,b.x),Max(a.y,b.y)); }
- 
-template <int Den>
-DenPoint<Den> Inf(DenPoint<Den> a,DenPoint<Den> b) { return DenPoint<Den>(Min(a.x,b.x),Min(a.y,b.y)); }
-
-/* type Point */
-
-using Point = DenPoint<1> ; 
-
-/* type MilliPoint */
-
-using MilliPoint = DenPoint<1024> ; 
+struct MilliPoint : BasePoint<MilliPoint,int>
+ {
+  using BasePoint<MilliPoint,int>::BasePoint;
+  
+  MilliPoint(Point p) : BasePoint<MilliPoint,int>(p.x*1024,p.y*1024) {}
+ };
 
 /* struct Pane */ 
 
@@ -108,7 +131,7 @@ struct Pane
   
   Pane(NothingType) : Pane() {}
   
-  Pane(int x_,int y_,int dx_,int dy_) 
+  Pane(int x_,int y_,int dx_,int dy_)
    : x(x_),y(y_),dx(dx_),dy(dy_) 
    {
     getLim();

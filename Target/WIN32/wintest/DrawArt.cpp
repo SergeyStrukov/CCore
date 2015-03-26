@@ -16,9 +16,8 @@
 #include "DrawArt.h"
 
 #include <CCore/inc/Swap.h>
+#include <CCore/inc/TaskMemStack.h>
 
-#include <CCore/inc/Exception.h>
- 
 namespace CCore {
 namespace Video {
 
@@ -459,6 +458,69 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
 
 /* class CommonDrawArt */
 
+int CommonDrawArt::Spline(int a,int b,int c,int d)
+ {
+  return (b+c)+(b+c-a-d)/8;
+ }
+
+Point CommonDrawArt::Spline(Point a,Point b,Point c,Point d)
+ {
+  return Point(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
+ }
+
+unsigned CommonDrawArt::Diameter(int a,int b)
+ {
+  return (a<=b)?IntDist(a,b):IntDist(b,a);
+ }
+
+unsigned CommonDrawArt::Diameter(Point a,Point b)
+ {
+  return Max(Diameter(a.x,b.x),Diameter(a.y,b.y));
+ }
+
+unsigned CommonDrawArt::Diameter(PtrLen<const Point> dots)
+ {
+  unsigned ret=0;
+  
+  for(; dots.len>1 ;++dots) Replace_max(ret,Diameter(dots[0],dots[1]));
+   
+  return ret; 
+ }
+
+void CommonDrawArt::curvePath(PtrLen<const Point> dots,unsigned level,DesktopColor color)
+ {
+  if( level>=10u || Diameter(dots)<(10u<<level) || dots.len>100000u )
+    {
+     Point a=RShift(*dots,level);
+     
+     for(++dots; +dots ;++dots)
+       {
+        Point b=RShift(*dots,level);
+        
+        buf.line(a,b,color);
+        
+        a=b;
+       }
+     
+     pixel(a,color);
+    }
+  else
+    {
+     StackArray<Point> next(2*dots.len-1);
+    
+     for(ulen i=0; i<dots.len ;i++) next[2*i]=Double(dots[i]);
+    
+     next[1]=Spline(dots[0],dots[0],dots[1],dots[2]);
+    
+     next[2*dots.len-3]=Spline(dots[dots.len-3],dots[dots.len-2],dots[dots.len-1],dots[dots.len-1]);
+    
+     for(ulen i=1; i<dots.len-2 ;i++) 
+       next[2*i+1]=Spline(dots[i-1],dots[i],dots[i+1],dots[i+2]);
+     
+     curvePath(Range_const(next),level+1,color);
+    }
+ }
+
 void CommonDrawArt::pixel(Point p,DesktopColor color)
  {
   if( buf.getPane().contains(p) ) buf.pixel(p,color);
@@ -511,6 +573,36 @@ void CommonDrawArt::loop(PtrLen<const Point> dots,DesktopColor color)
      
      buf.line(a,o,color);
     }
+ }
+
+void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
+ {
+  if( dots.len>=3 )
+    {
+     curvePath(dots,0,color);
+    }
+  else
+    {
+     path(dots,color);
+    }
+ }
+
+void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
+ {
+  Used(dots);
+  Used(color);
+ }
+
+void CommonDrawArt::solid(PtrLen<const Point> dots,DesktopColor color)
+ {
+  Used(dots);
+  Used(color);
+ }
+
+void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color)
+ {
+  Used(dots);
+  Used(color);
  }
 
 } // namespace Video

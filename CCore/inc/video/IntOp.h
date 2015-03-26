@@ -47,6 +47,10 @@ inline int IntSub(int a,int b) { return a-b; } // may overflow
 
 inline int IntMul(int a,int b) { return a*b; } // may overflow
 
+inline int IntLShift(int a,unsigned s) { return a<<s; } // may overflow
+
+inline int IntRShift(int a,unsigned s) { return a>>s; }
+
 } // namespace Video
 } // namespace CCore
  

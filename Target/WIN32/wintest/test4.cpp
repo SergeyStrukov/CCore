@@ -54,9 +54,9 @@ class FileReport : public ReportException
    bool show() { return true; }
  };
 
-/* test() */
+/* test1() */
 
-void test(unsigned sx,unsigned sy)
+void test1(unsigned sx,unsigned sy)
  {
   LineDriver driver(sx,sy);
   
@@ -82,7 +82,9 @@ void test(unsigned sx,unsigned sy)
     }
  }
 
-void test(unsigned sx,unsigned sy,unsigned off,unsigned len)
+/* test2() */
+
+void test2(unsigned sx,unsigned sy,unsigned off,unsigned len)
  {
   LineDriver driver(sx,sy);
   
@@ -110,6 +112,31 @@ void test(unsigned sx,unsigned sy,unsigned off,unsigned len)
     }
  }
 
+/* test3() */
+
+void test3(unsigned sx,unsigned sy,unsigned y)
+ {
+  LineDriver driver(sx,sy);
+  LineDriver driver1(driver);
+  
+  unsigned x=driver.clipToX(y);
+  
+  if( driver.step(x)<y || x==0 )
+    {
+     Printf(Exception,"3 failed #; #; #;",sx,sy,y);
+    }
+  
+  if( driver1.step(x-1)>=y )
+    {
+     Printf(Exception,"4 failed #; #; #;",sx,sy,y);
+    }
+ }
+
+void test3(unsigned sx,unsigned sy)
+ {
+  for(unsigned y=1; y<=sy ;y++) test3(sx,sy,y);
+ }
+
 /* testmain() */
 
 int testmain(CmdDisplay)
@@ -125,9 +152,11 @@ int testmain(CmdDisplay)
         unsigned sy=random.select(1,1000);
         unsigned sx=sy+random.select(100000);
      
-        test(sx,sy);
+        test1(sx,sy);
         
-        test(sx,sy,random.select(1,1000),random.select(1,1000));
+        test2(sx,sy,random.select(1,1000),random.select(1,1000));
+        
+        test3(sx,sy);
        }
      
      return 0;

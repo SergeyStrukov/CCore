@@ -121,6 +121,28 @@ class CommonDrawArt
   
    WorkBuf buf;
    
+  private: 
+   
+   static Point Double(Point a) { return Point(2*a.x,2*a.y); }
+   
+   static Point LShift(Point a,unsigned level) { return Point(a.x<<level,a.y<<level); }
+   
+   static Point RShift(Point a,unsigned level) { return Point(a.x>>level,a.y>>level); }
+   
+   static int Spline(int a,int b,int c,int d);
+
+   static Point Spline(Point a,Point b,Point c,Point d);
+   
+   static unsigned Diameter(int a,int b);
+   
+   static unsigned Diameter(Point a,Point b);
+   
+   static unsigned Diameter(PtrLen<const Point> dots);
+   
+  private: 
+   
+   void curvePath(PtrLen<const Point> dots,unsigned level,DesktopColor color);
+   
   public:
   
    CommonDrawArt(const FrameBuf<DesktopColor> &buf_) : buf(buf_) {}
@@ -151,6 +173,46 @@ class CommonDrawArt
      Point temp[sizeof ... (TT)]={ tt... };
      
      loop(Range_const(temp),color);
+    }
+   
+   void curvePath(PtrLen<const Point> dots,DesktopColor color);
+   
+   template <class ... TT>
+   void curvePath(DesktopColor color,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     curvePath(Range_const(temp),color);
+    }
+   
+   void curveLoop(PtrLen<const Point> dots,DesktopColor color);
+   
+   template <class ... TT>
+   void curveLoop(DesktopColor color,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     curveLoop(Range_const(temp),color);
+    }
+   
+   void solid(PtrLen<const Point> dots,DesktopColor color);
+   
+   template <class ... TT>
+   void solid(DesktopColor color,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     solid(Range_const(temp),color);
+    }
+   
+   void curveSolid(PtrLen<const Point> dots,DesktopColor color);
+   
+   template <class ... TT>
+   void curveSolid(DesktopColor color,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     curveSolid(Range_const(temp),color);
     }
    
    // fill

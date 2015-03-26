@@ -431,6 +431,8 @@ class DragWindow : public FrameWindow
    
    void redraw();
    
+   unsigned getToken() { return win->getToken(); }
+   
    void captureMouse();
    
    void releaseMouse();
