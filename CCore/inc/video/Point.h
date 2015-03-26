@@ -115,7 +115,9 @@ struct MilliPoint : BasePoint<MilliPoint,int>
  {
   using BasePoint<MilliPoint,int>::BasePoint;
   
-  MilliPoint(Point p) : BasePoint<MilliPoint,int>(p.x*1024,p.y*1024) {}
+  MilliPoint() {}
+  
+  MilliPoint(Point p) : BasePoint<MilliPoint,int>(IntMul(p.x,1024),IntMul(p.y,1024)) {}
  };
 
 /* struct Pane */ 

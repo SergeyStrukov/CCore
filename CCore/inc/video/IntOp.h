@@ -41,15 +41,20 @@ inline int IntMove(int a,int e,unsigned delta)
 
 inline void IntGuard(bool /* cond */) { /* do nothing */ }
 
-inline int IntAdd(int a,int b) { return a+b; } // may overflow
+template <class SInt>
+inline SInt IntAdd(SInt a,SInt b) { return a+b; } // may overflow
 
-inline int IntSub(int a,int b) { return a-b; } // may overflow
+template <class SInt>
+inline SInt IntSub(SInt a,SInt b) { return a-b; } // may overflow
 
-inline int IntMul(int a,int b) { return a*b; } // may overflow
+template <class SInt>
+inline SInt IntMul(SInt a,SInt b) { return a*b; } // may overflow
 
-inline int IntLShift(int a,unsigned s) { return a<<s; } // may overflow
+template <class SInt>
+inline SInt IntLShift(SInt a,unsigned s) { return a<<s; } // may overflow , UB for some arguments
 
-inline int IntRShift(int a,unsigned s) { return a>>s; }
+template <class SInt>
+inline SInt IntRShift(SInt a,unsigned s) { return a>>s; } // USB for some arguments
 
 } // namespace Video
 } // namespace CCore

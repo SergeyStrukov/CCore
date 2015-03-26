@@ -127,6 +127,13 @@ class Client : public DragClient
      art.path(color,Point(0,p.y),Point(size.x-1,p.y));
     }
    
+   static const int KnobLen = 3 ;
+   
+   void knob(CommonDrawArt &art,Point p,DesktopColor color) const
+    {
+     art.block(Pane(p.x-KnobLen,p.y-KnobLen,2*KnobLen+1,2*KnobLen+1),color);
+    }
+   
    void select(Point point)
     {
      if( selected<dots.getLen() )
@@ -166,6 +173,8 @@ class Client : public DragClient
      art.erase(Silver);
      
      art.block(field,White);
+     
+     for(auto p : dots ) knob(art,p,Black);
      
      if( selected<dots.getLen() ) cross(art,dots[selected],Green);
      
@@ -376,7 +385,7 @@ int testmain(CmdDisplay cmd_display)
   try
     {
      TaskMemStack tms;
-    
+     
      Application app(cmd_display);
      
      ret=app.run();

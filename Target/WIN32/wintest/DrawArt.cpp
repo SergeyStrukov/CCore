@@ -458,27 +458,27 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
 
 /* class CommonDrawArt */
 
-int CommonDrawArt::Spline(int a,int b,int c,int d)
+sint64 CommonDrawArt::Spline(sint64 a,sint64 b,sint64 c,sint64 d)
  {
-  return (b+c)+(b+c-a-d)/8;
+  return (b+c)/2+(b+c-a-d)/16;
  }
 
-Point CommonDrawArt::Spline(Point a,Point b,Point c,Point d)
+LPoint CommonDrawArt::Spline(LPoint a,LPoint b,LPoint c,LPoint d)
  {
-  return Point(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
+  return LPoint(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
  }
 
-unsigned CommonDrawArt::Diameter(int a,int b)
+unsigned CommonDrawArt::Diameter(sint64 a,sint64 b)
  {
-  return (a<=b)?IntDist(a,b):IntDist(b,a);
+  return unsigned( ( (a<=b)?(b-a):(a-b) )>>Precision );
  }
 
-unsigned CommonDrawArt::Diameter(Point a,Point b)
+unsigned CommonDrawArt::Diameter(LPoint a,LPoint b)
  {
   return Max(Diameter(a.x,b.x),Diameter(a.y,b.y));
  }
 
-unsigned CommonDrawArt::Diameter(PtrLen<const Point> dots)
+unsigned CommonDrawArt::Diameter(PtrLen<const LPoint> dots)
  {
   unsigned ret=0;
   
@@ -487,15 +487,19 @@ unsigned CommonDrawArt::Diameter(PtrLen<const Point> dots)
   return ret; 
  }
 
-void CommonDrawArt::curvePath(PtrLen<const Point> dots,unsigned level,DesktopColor color)
+void CommonDrawArt::curvePath(PtrLen<const LPoint> dots,unsigned level,DesktopColor color)
  {
-  if( level>=10u || Diameter(dots)<(10u<<level) || dots.len>100000u )
+  if( level>=10u || dots.len>100000u || Diameter(dots)<2u )
     {
-     Point a=RShift(*dots,level);
+     {
+      //for(auto p : dots ) knob(RShift(p,Precision),Blue);
+     } 
+    
+     Point a=RShift(*dots,Precision);
      
      for(++dots; +dots ;++dots)
        {
-        Point b=RShift(*dots,level);
+        Point b=RShift(*dots,Precision);
         
         buf.line(a,b,color);
         
@@ -506,9 +510,9 @@ void CommonDrawArt::curvePath(PtrLen<const Point> dots,unsigned level,DesktopCol
     }
   else
     {
-     StackArray<Point> next(2*dots.len-1);
+     StackArray<LPoint> next(2*dots.len-1);
     
-     for(ulen i=0; i<dots.len ;i++) next[2*i]=Double(dots[i]);
+     for(ulen i=0; i<dots.len ;i++) next[2*i]=dots[i];
     
      next[1]=Spline(dots[0],dots[0],dots[1],dots[2]);
     
@@ -579,7 +583,11 @@ void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
  {
   if( dots.len>=3 )
     {
-     curvePath(dots,0,color);
+     StackArray<LPoint> ldots(dots.len);
+     
+     for(ulen i=0; i<dots.len ;i++) ldots[i]=LPoint(dots[i])<<Precision;
+     
+     curvePath(Range_const(ldots),0,color);
     }
   else
     {

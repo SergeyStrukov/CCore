@@ -24,9 +24,22 @@ namespace Video {
 
 /* classes */
 
+struct LPoint;
+
 class LineDriver;
 
 class CommonDrawArt;
+
+/* struct LPoint */
+
+struct LPoint : BasePoint<LPoint,sint64>
+ {
+  using BasePoint<LPoint,sint64>::BasePoint;
+  
+  LPoint() {}
+  
+  LPoint(Point p) : BasePoint<LPoint,sint64>(p.x,p.y) {}
+ };
 
 /* class LineDriver */
 
@@ -123,25 +136,32 @@ class CommonDrawArt
    
   private: 
    
-   static Point Double(Point a) { return Point(2*a.x,2*a.y); }
+   static const unsigned Precision = 16 ;
    
-   static Point LShift(Point a,unsigned level) { return Point(a.x<<level,a.y<<level); }
+   static int RShift(sint64 a,unsigned s) { return int( ( a+(1<<(s-1)) )>>s ); }
    
-   static Point RShift(Point a,unsigned level) { return Point(a.x>>level,a.y>>level); }
+   static Point RShift(LPoint a,unsigned s) { return Point(RShift(a.x,s),RShift(a.y,s)); }
    
-   static int Spline(int a,int b,int c,int d);
+   static sint64 Spline(sint64 a,sint64 b,sint64 c,sint64 d);
 
-   static Point Spline(Point a,Point b,Point c,Point d);
+   static LPoint Spline(LPoint a,LPoint b,LPoint c,LPoint d);
    
-   static unsigned Diameter(int a,int b);
+   static unsigned Diameter(sint64 a,sint64 b);
    
-   static unsigned Diameter(Point a,Point b);
+   static unsigned Diameter(LPoint a,LPoint b);
    
-   static unsigned Diameter(PtrLen<const Point> dots);
+   static unsigned Diameter(PtrLen<const LPoint> dots);
    
   private: 
    
-   void curvePath(PtrLen<const Point> dots,unsigned level,DesktopColor color);
+   static const int KnobLen = 2 ;
+   
+   void knob(Point p,DesktopColor color)
+    {
+     block(Pane(p.x-KnobLen,p.y-KnobLen,2*KnobLen+1,2*KnobLen+1),color);
+    }
+   
+   void curvePath(PtrLen<const LPoint> dots,unsigned level,DesktopColor color);
    
   public:
   
