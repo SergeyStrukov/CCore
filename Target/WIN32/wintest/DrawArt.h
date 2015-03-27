@@ -26,19 +26,162 @@ namespace Video {
 
 /* classes */
 
-template <class T> struct PtrDeltaLen;
+template <class T> struct PtrStepLen;
 
 struct LPoint;
 
 class LineDriver;
 
+class CurveDriver;
+
 class CommonDrawArt;
 
-/* struct PtrDeltaLen<T> */
+/* struct PtrStepLen<T> */
 
 template <class T> 
-struct PtrDeltaLen
+struct PtrStepLen
  {
+  T *ptr;
+  ulen step;
+  ulen len;
+  
+  // constructors
+  
+  PtrStepLen() : ptr(0),step(0),len(0) {}
+  
+  PtrStepLen(NothingType) : PtrStepLen() {}
+  
+  PtrStepLen(T *ptr_,ulen step_,ulen len_) : ptr(ptr_),step(step_),len(len_) {}
+  
+  // cursor
+  
+  ulen operator + () const { return len; }
+  
+  bool operator ! () const { return !len; }
+  
+  T & operator * () const { return *ptr; }
+  
+  T * operator -> () const { return ptr; }
+  
+  void operator ++ () { ptr+=step; len--; }
+  
+  void operator -- () { ptr-=step; len++; }
+  
+  PtrStepLen<T> operator += (ulen delta) // assume fit(delta)
+   {
+    PtrStepLen<T> ret(ptr,step,delta);
+   
+    ptr+=delta*step;
+    len-=delta;
+    
+    return ret;
+   }
+   
+  PtrStepLen<T> takeup(ulen delta)
+   {
+    Replace_min(delta,len);
+   
+    PtrStepLen<T> ret(ptr,step,delta);
+   
+    ptr+=delta*step;
+    len-=delta;
+    
+    return ret;
+   }
+  
+  T & take()
+   {
+    T &ret=*ptr;
+    
+    ptr+=step;
+    len--;
+    
+    return ret;
+   }
+  
+  // fit
+   
+  bool fit(ulen length) const { return length<=len; }
+  
+  bool fit(ulen off,ulen length) const { return off<=len && length<=(len-off) ; }
+  
+  // parts
+  
+  PtrStepLen<T> prefix(ulen length) const { return PtrStepLen<T>(ptr,step,length); }                          // assume fit(length)
+  
+  PtrStepLen<T> prefix(PtrLen<T> suffix) const { return PtrStepLen<T>(ptr,step,len-suffix.len); }
+  
+  PtrStepLen<T> suffix(ulen length) const { return PtrStepLen<T>(ptr+(len-length)*step,step,length); }        // assume fit(length)
+  
+  PtrStepLen<T> part(ulen off,ulen length) const { return PtrStepLen<T>(ptr+off*step,step,length); }          // assume fit(off,length)
+  
+  PtrStepLen<T> part(ulen off) const { return PtrStepLen<T>(ptr+off*step,step,len-off); }                     // assume fit(off)
+  
+  PtrStepLen<T> inner(ulen off,ulen endoff) const { return PtrStepLen<T>(ptr+off*step,step,len-off-endoff); } // assume fit(off,endoff)
+   
+  // index access
+  
+  T & operator [] (ulen index) const
+   {
+    return ptr[index*step];
+   }
+   
+  T & at(ulen index) const
+   {
+    GuardIndex(index,len);
+    
+    return ptr[index*step];
+   }
+  
+  T & back(ulen index) const // 1 is the last
+   {
+    return ptr[(len-index)*step];
+   }
+   
+#if 0
+  
+  // methods
+  
+  template <class S>
+  void copyTo(S dst[/* len */]) const { RangeCopy<S,T>(dst,ptr,len); }
+  
+  template <class S>
+  void copyFrom(const S src[/* len */]) const { RangeCopy<T,S>(ptr,src,len); }
+   
+  void copy(const T src[/* len */]) const { RangeCopy<T,T>(ptr,src,len); }
+   
+  void set(T src) const { RangeSet<T>(ptr,src,len); }
+  
+  void set_null() const { RangeSet_null<T>(ptr,len); }
+   
+  template <class S>
+  ulen match(const S src[/* len */]) const { return RangeMatch<T,S>(ptr,src,len); }
+   
+  template <class S>
+  bool equal(const S src[/* len */]) const { return match(src)==len; }
+  
+  template <class S>
+  bool equal(PtrLen<S> src) const { return len==src.len && equal(src.ptr) ; }
+  
+  template <class S>
+  bool hasPrefix(PtrLen<S> src) const { return len>=src.len && src.equal(ptr) ; }
+  
+  template <class S>
+  bool hasSuffix(PtrLen<S> src) const { return len>=src.len && src.equal(ptr+(len-src.len)) ; }
+  
+  // begin()/end() support
+  
+  bool operator != (PtrStepLen<T> end) const { return len!=end.len; }
+  
+  // no-throw flags
+  
+  enum NoThrowFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true
+   };
+  
+#endif  
  };
 
 /* struct LPoint */
@@ -122,6 +265,60 @@ class LineDriver
    static Result Clip(int x,int e,int d);
  };
 
+/* class CurveDriver */
+
+class CurveDriver : NoCopy
+ {
+  public:
+  
+   static const unsigned Precision = 16 ;
+   
+  private:
+   
+   static const unsigned MaxLevel = 10 ;
+   
+   static const unsigned MaxDiameter = 5 ;
+   
+   static const ulen Len = (1u<<MaxLevel) ;
+   
+   static LPoint LShift(Point p,unsigned s=Precision) { return LPoint(p)<<s; }
+   
+   static unsigned Diameter(sint64 a,sint64 b);
+   
+   static unsigned Diameter(LPoint a,LPoint b);
+   
+   static unsigned Diameter(PtrStepLen<const LPoint> dots);
+   
+   static sint64 Spline(sint64 a,sint64 b,sint64 c,sint64 d);
+ 
+   static LPoint Spline(LPoint a,LPoint b,LPoint c,LPoint d);
+   
+  private:
+   
+   LPoint buf[3*Len+1];
+   unsigned level;
+   
+   LPoint e;
+  
+  private:
+   
+   void spline();
+   
+   void spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r);
+   
+  public:
+  
+   void spline(Point a,Point b,Point c,Point d);
+   
+   void spline(Point a,Point b,Point c,Point d,Point e,Point f);
+   
+   void shift(Point f);
+   
+   void shift();
+   
+   PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
+ };
+
 /* class CommonDrawArt */
 
 class CommonDrawArt
@@ -149,48 +346,12 @@ class CommonDrawArt
    
    static int RShift(sint64 a,unsigned s) { return int( ( a+(1<<(s-1)) )>>s ); }
    
-   static Point RShift(LPoint a,unsigned s) { return Point(RShift(a.x,s),RShift(a.y,s)); }
-   
-   static const unsigned Precision = 16 ;
-   
-   static LPoint LShift(Point p,unsigned s) { return LPoint(p)<<s; }
-   
-   static unsigned Diameter(sint64 a,sint64 b);
-   
-   static unsigned Diameter(LPoint a,LPoint b);
-   
-   static unsigned Diameter(const LPoint *ptr,ulen count,ulen delta);
-   
-   static sint64 Spline(sint64 a,sint64 b,sint64 c,sint64 d);
-
-   static LPoint Spline(LPoint a,LPoint b,LPoint c,LPoint d);
+   static Point RShift(LPoint a,unsigned s=CurveDriver::Precision) { return Point(RShift(a.x,s),RShift(a.y,s)); }
    
   private: 
    
-   void path(const LPoint *ptr,ulen count,ulen delta,DesktopColor color);
-   
-   static const unsigned MaxLevel = 10 ;
-   
-   static const unsigned MaxDiameter = 5 ;
-   
-   struct SplineBuf : NoCopy
-    {
-     static const ulen Len = (1u<<MaxLevel) ; 
-     
-     LPoint buf[3*Len+1];
-     unsigned level;
-     
-     void spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r);
-     
-     const LPoint * getPtr() const { return buf+Len; }
-     
-     ulen getCount() const { return (1u<<level)+1; }
-     
-     ulen getDelta() const { return 1u<<(MaxLevel-level); }
-    };
+   void path(PtrStepLen<const LPoint> curve,DesktopColor color);
 
-   void curve(SplineBuf &buf,LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r,DesktopColor color);
-   
   public:
   
    CommonDrawArt(const FrameBuf<DesktopColor> &buf_) : buf(buf_) {}

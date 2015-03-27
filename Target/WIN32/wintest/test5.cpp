@@ -134,7 +134,7 @@ class Client : public DragClient
      DrawCurveSolid
     };
    
-   DrawType draw_type = DrawCurvePath ;
+   DrawType draw_type = DrawCurveLoop ;
    
    ulen selected = 0 ;
    

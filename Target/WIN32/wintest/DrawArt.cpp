@@ -108,6 +108,134 @@ auto LineDriver::Clip(int x,int e,int d) -> Result
     }
  }
 
+/* class CurveDriver */
+
+unsigned CurveDriver::Diameter(sint64 a,sint64 b)
+ {
+  return unsigned( ( (a<=b)?(b-a):(a-b) )>>Precision );
+ }
+
+unsigned CurveDriver::Diameter(LPoint a,LPoint b)
+ {
+  return Max(Diameter(a.x,b.x),Diameter(a.y,b.y));
+ }
+
+unsigned CurveDriver::Diameter(PtrStepLen<const LPoint> dots)
+ {
+  unsigned ret=0;
+  
+  for(; dots.len>1 ;++dots) Replace_max(ret,Diameter(dots[0],dots[1]));
+  
+  return ret; 
+ }
+
+sint64 CurveDriver::Spline(sint64 a,sint64 b,sint64 c,sint64 d)
+ {
+  return (b+c)/2+(b+c-a-d)/16;
+ }
+
+LPoint CurveDriver::Spline(LPoint a,LPoint b,LPoint c,LPoint d)
+ {
+  return LPoint(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
+ }
+
+void CurveDriver::spline()
+ {
+  level=1;
+  
+  ulen len1=Len/4;
+  ulen len2=3*len1;
+  ulen delta=2*len1;
+  
+  for(; level<MaxLevel ;level++,len1>>=1,len2>>=1,delta>>=1)
+    {
+     // check diameter
+    
+     if( Diameter(getCurve())<MaxDiameter ) break;
+    
+     // next level
+    
+     for(ulen ind=Len-len1,last=2*Len+len1; ind<=last ;ind+=delta)
+       buf[ind]=Spline(buf[ind-len2],buf[ind-len1],buf[ind+len1],buf[ind+len2]);
+    }
+ }
+
+void CurveDriver::spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r)
+ {
+  buf[0]=a;
+  buf[Len]=b;
+  buf[2*Len]=c;
+  buf[3*Len]=d;
+  
+  buf[Len/2]=p;
+  buf[Len/2+Len]=q;
+  buf[Len/2+2*Len]=r;
+  
+  spline();
+ }
+
+void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_)
+ {
+  LPoint a=LShift(a_),
+         b=a,
+         c=LShift(b_),
+         d=LShift(c_);
+  
+  e=LShift(d_);
+  
+  LPoint p=Spline(a,a,b,c),
+         q=Spline(a,b,c,d),
+         r=Spline(b,c,d,e);
+  
+  spline(a,b,c,d,p,q,r); 
+ }
+
+void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_,Point e_,Point f_)
+ {
+  LPoint a=LShift(b_),
+         b=LShift(c_),
+         c=LShift(d_),
+         d=LShift(e_);
+  
+  e=LShift(f_);
+  
+  LPoint p=Spline(LShift(a_),a,b,c),
+         q=Spline(a,b,c,d),
+         r=Spline(b,c,d,e);
+  
+  spline(a,b,c,d,p,q,r); 
+ }
+
+void CurveDriver::shift(Point f)
+ {
+  buf[0]=buf[Len];
+  buf[Len]=buf[2*Len];
+  buf[2*Len]=buf[3*Len];
+  buf[3*Len]=e;
+  
+  e=LShift(f);
+  
+  buf[Len/2]=buf[Len/2+Len];
+  buf[Len/2+Len]=buf[Len/2+2*Len];
+  buf[Len/2+2*Len]=Spline(buf[Len],buf[2*Len],buf[3*Len],e);
+  
+  spline();
+ }
+
+void CurveDriver::shift()
+ {
+  buf[0]=buf[Len];
+  buf[Len]=buf[2*Len];
+  buf[2*Len]=buf[3*Len];
+  buf[3*Len]=e;
+  
+  buf[Len/2]=buf[Len/2+Len];
+  buf[Len/2+Len]=buf[Len/2+2*Len];
+  buf[Len/2+2*Len]=Spline(buf[Len],buf[2*Len],buf[3*Len],e);
+  
+  spline();
+ }
+
 /* class CommonDrawArt::WorkBuf */
 
 void CommonDrawArt::WorkBuf::Prepare(int &a,int &b,int d)
@@ -457,36 +585,7 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
 
 /* class CommonDrawArt */
 
-unsigned CommonDrawArt::Diameter(sint64 a,sint64 b)
- {
-  return unsigned( ( (a<=b)?(b-a):(a-b) )>>Precision );
- }
-
-unsigned CommonDrawArt::Diameter(LPoint a,LPoint b)
- {
-  return Max(Diameter(a.x,b.x),Diameter(a.y,b.y));
- }
-
-unsigned CommonDrawArt::Diameter(const LPoint *ptr,ulen count,ulen delta)
- {
-  unsigned ret=0;
-  
-  for(; count>1 ;count--,ptr+=delta) Replace_max(ret,Diameter(ptr[0],ptr[delta]));
-  
-  return ret; 
- }
-
-sint64 CommonDrawArt::Spline(sint64 a,sint64 b,sint64 c,sint64 d)
- {
-  return (b+c)/2+(b+c-a-d)/16;
- }
-
-LPoint CommonDrawArt::Spline(LPoint a,LPoint b,LPoint c,LPoint d)
- {
-  return LPoint(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
- }
-
-void CommonDrawArt::path(const LPoint *ptr,ulen count,ulen delta,DesktopColor color)
+void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
  {
 #if 0
   
@@ -494,13 +593,13 @@ void CommonDrawArt::path(const LPoint *ptr,ulen count,ulen delta,DesktopColor co
   
 #endif  
   
-#if 1 
+#if 1
  
-  Point a=RShift(*ptr,Precision);
+  Point a=RShift(*curve);
   
-  for(count--,ptr+=delta; count ;count--,ptr+=delta)
+  for(++curve; +curve ;++curve)
     {
-     Point b=RShift(*ptr,Precision);
+     Point b=RShift(*curve);
      
      buf.line(a,b,color);
      
@@ -510,43 +609,6 @@ void CommonDrawArt::path(const LPoint *ptr,ulen count,ulen delta,DesktopColor co
   pixel(a,color);
   
 #endif  
- }
-
-void CommonDrawArt::SplineBuf::spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r)
- {
-  buf[0]=a;
-  buf[Len]=b;
-  buf[2*Len]=c;
-  buf[3*Len]=d;
-  
-  buf[Len/2]=p;
-  buf[Len/2+Len]=q;
-  buf[Len/2+2*Len]=r;
-  
-  level=1;
-  
-  ulen len1=Len/4;
-  ulen len2=3*len1;
-  ulen delta=2*len1;
-  
-  for(; level<MaxLevel ;level++,len1>>=1,len2>>=1,delta>>=1)
-    {
-     // check diameter
-    
-     if( Diameter(buf+Len,(1u<<level)+1,delta)<MaxDiameter ) break;
-    
-     // next level
-    
-     for(ulen ind=Len-len1,last=2*Len+len1; ind<=last ;ind+=delta)
-       buf[ind]=Spline(buf[ind-len2],buf[ind-len1],buf[ind+len1],buf[ind+len2]);
-    }
- }
-
-void CommonDrawArt::curve(SplineBuf &buf,LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r,DesktopColor color)
- {
-  buf.spline(a,b,c,d,p,q,r);
-  
-  path(buf.getPtr(),buf.getCount(),buf.getDelta(),color);
  }
 
 void CommonDrawArt::pixel(Point p,DesktopColor color)
@@ -607,54 +669,38 @@ void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
  {
   if( dots.len>=4 )
     {
-     StackObject<SplineBuf> buf;
-    
-     LPoint a=LShift(dots[0],Precision),
-            b=a,
-            c=LShift(dots[1],Precision),
-            d=LShift(dots[2],Precision),
-            e=LShift(dots[3],Precision);
+     StackObject<CurveDriver> driver;
      
-     LPoint p=Spline(a,a,b,c),
-            q=Spline(a,b,c,d),
-            r=Spline(b,c,d,e);
+     driver->spline(dots[0],dots[1],dots[2],dots[3]);
     
-     curve(*buf,a,b,c,d,p,q,r,color);
+     path(driver->getCurve(),color); 
      
      for(dots+=4; +dots ;++dots)
        {
-        a=b;
-        b=c;
-        c=d;
-        d=e;
-        e=LShift(dots[0],Precision);
+        driver->shift(dots[0]);
         
-        p=q;
-        q=r;
-        r=Spline(b,c,d,e);
-        
-        curve(*buf,a,b,c,d,p,q,r,color);
+        path(driver->getCurve(),color); 
        }
      
-     LPoint s=Spline(c,d,e,e);
+     driver->shift();
      
-     curve(*buf,b,c,d,e,q,r,s,color);
+     path(driver->getCurve(),color);
      
-     curve(*buf,c,d,e,e,r,s,Spline(d,e,e,e),color);
+     driver->shift();
+     
+     path(driver->getCurve(),color); 
     }
   else if( dots.len==3 )
     {
-     StackObject<SplineBuf> buf;
+     StackObject<CurveDriver> driver;
      
-     LPoint a=LShift(dots[0],Precision),
-            b=LShift(dots[1],Precision),
-            c=LShift(dots[2],Precision);
-            
-     LPoint q=Spline(a,a,b,c),
-            r=Spline(a,b,c,c);
+     driver->spline(dots[0],dots[1],dots[2],dots[2]);
+    
+     path(driver->getCurve(),color); 
      
-     curve(*buf,a,a,b,c,Spline(a,a,a,b),q,r,color);
-     curve(*buf,a,b,c,c,q,r,Spline(b,c,c,c),color);
+     driver->shift();
+     
+     path(driver->getCurve(),color); 
     }
   else
     {
@@ -664,8 +710,161 @@ void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
 
 void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
  {
-  Used(dots);
-  Used(color);
+  switch( dots.len )
+    {
+     case 0 :
+      {
+       // do nothing
+      }
+     break;
+     
+     case 1 :
+      {
+       pixel(dots[0],color);
+      }
+     break;
+     
+     case 2 :
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1];
+      
+       driver->spline(a,b,a,b,a,b);
+       
+       path(driver->getCurve(),color);
+       
+       driver->shift(a);
+      
+       path(driver->getCurve(),color);
+      }
+     break;
+     
+     case 3 :
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2];
+      
+       driver->spline(a,b,c,a,b,c);
+       
+       path(driver->getCurve(),color);
+       
+       driver->shift(a);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(b);
+      
+       path(driver->getCurve(),color);
+      }
+     break;
+     
+     case 4 :
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3];
+      
+       driver->spline(a,b,c,d,a,b);
+       
+       path(driver->getCurve(),color);
+       
+       driver->shift(c);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(d);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(a);
+      
+       path(driver->getCurve(),color);
+      }
+     break;
+     
+     case 5 :
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3],
+             e=dots[4];
+      
+       driver->spline(a,b,c,d,e,a);
+       
+       path(driver->getCurve(),color);
+       
+       driver->shift(b);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(c);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(d);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(e);
+      
+       path(driver->getCurve(),color);
+      }
+     break;
+     
+     default:
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3],
+             e=dots[4],
+             f=dots[5];
+      
+       driver->spline(a,b,c,d,e,f);
+       
+       path(driver->getCurve(),color);
+       
+       for(dots+=6; +dots ;++dots)
+         {
+          driver->shift(dots[0]);
+         
+          path(driver->getCurve(),color); 
+         }
+
+       driver->shift(a);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(b);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(c);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(d);
+      
+       path(driver->getCurve(),color);
+       
+       driver->shift(e);
+      
+       path(driver->getCurve(),color);
+      }
+    }
  }
 
 void CommonDrawArt::solid(PtrLen<const Point> dots,DesktopColor color)
