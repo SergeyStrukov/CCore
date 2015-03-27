@@ -81,7 +81,9 @@ class <span class="Att">TaskMemStackAllocGuard</span> : NoCopy
  
   public:
   
-   explicit TaskMemStackAllocGuard(ulen count,ulen size_of); // count!=0, size_of!=0
+   explicit TaskMemStackAllocGuard(ulen size_of); // size_of!=0
+
+   TaskMemStackAllocGuard(ulen count,ulen size_of); // count!=0, size_of!=0
    
    ~TaskMemStackAllocGuard();
    
@@ -93,7 +95,12 @@ class <span class="Att">TaskMemStackAllocGuard</span> : NoCopy
 </pre>
 
 <p>
-Constructor allocates a task memory stack block for <b>count</b> items of the <b>size_of</b> length,
+The first constructor allocates a task memory stack block of the <b>size_of</b> length,
+the argument must be non-null.
+</p>
+
+<p>
+The second constructor allocates a task memory stack block for <b>count</b> items of the <b>size_of</b> length,
 both arguments must be non-null.
 </p>
 
@@ -140,6 +147,51 @@ class <span class="Att">TaskMemStack</span> : NoCopy
 
 <p>
 The only argument of the constructor is the length of the first big block of memory. By default it is 4 KBytes.
+</p>
+
+<h4>StackObject</h4>
+
+<p>
+<b>StackObject</b> creates an object using the task memory stack. 
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+class <span class="Att">StackObject</span> : NoCopy
+ {
+   T *ptr;
+   
+  public:
+
+   // constructors
+   
+   template &lt;class ... SS&gt;
+   explicit StackObject(SS &amp;&amp; ... ss);
+   
+   ~StackObject();
+   
+   // object ptr
+   
+   T * getPtr() const { return ptr; }
+   
+   T &amp; operator * () const { return *ptr; }
+   
+   T * operator -> () const { return ptr; }
+ };
+
+</pre>
+
+<p>
+Constructor creates an object forwarding arguments to the object constructor.
+</p>
+
+<p>
+Destructor destroys the object.
+</p>
+
+<p>
+The class implements the reduced <b>Object Pointer Interface</b> to provide access to the object.
 </p>
 
 <h4>StackArray</h4>

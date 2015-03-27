@@ -19,16 +19,27 @@
 #include <CCore/inc/video/FrameBuf.h>
 #include <CCore/inc/video/Desktop.h>
 
+#include <CCore/inc/TaskMemStack.h>
+
 namespace CCore {
 namespace Video {
 
 /* classes */
+
+template <class T> struct PtrDeltaLen;
 
 struct LPoint;
 
 class LineDriver;
 
 class CommonDrawArt;
+
+/* struct PtrDeltaLen<T> */
+
+template <class T> 
+struct PtrDeltaLen
+ {
+ };
 
 /* struct LPoint */
 
@@ -136,32 +147,49 @@ class CommonDrawArt
    
   private: 
    
-   static const unsigned Precision = 16 ;
-   
    static int RShift(sint64 a,unsigned s) { return int( ( a+(1<<(s-1)) )>>s ); }
    
    static Point RShift(LPoint a,unsigned s) { return Point(RShift(a.x,s),RShift(a.y,s)); }
    
-   static sint64 Spline(sint64 a,sint64 b,sint64 c,sint64 d);
-
-   static LPoint Spline(LPoint a,LPoint b,LPoint c,LPoint d);
+   static const unsigned Precision = 16 ;
+   
+   static LPoint LShift(Point p,unsigned s) { return LPoint(p)<<s; }
    
    static unsigned Diameter(sint64 a,sint64 b);
    
    static unsigned Diameter(LPoint a,LPoint b);
    
-   static unsigned Diameter(PtrLen<const LPoint> dots);
+   static unsigned Diameter(const LPoint *ptr,ulen count,ulen delta);
+   
+   static sint64 Spline(sint64 a,sint64 b,sint64 c,sint64 d);
+
+   static LPoint Spline(LPoint a,LPoint b,LPoint c,LPoint d);
    
   private: 
    
-   static const int KnobLen = 2 ;
+   void path(const LPoint *ptr,ulen count,ulen delta,DesktopColor color);
    
-   void knob(Point p,DesktopColor color)
+   static const unsigned MaxLevel = 10 ;
+   
+   static const unsigned MaxDiameter = 5 ;
+   
+   struct SplineBuf : NoCopy
     {
-     block(Pane(p.x-KnobLen,p.y-KnobLen,2*KnobLen+1,2*KnobLen+1),color);
-    }
-   
-   void curvePath(PtrLen<const LPoint> dots,unsigned level,DesktopColor color);
+     static const ulen Len = (1u<<MaxLevel) ; 
+     
+     LPoint buf[3*Len+1];
+     unsigned level;
+     
+     void spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r);
+     
+     const LPoint * getPtr() const { return buf+Len; }
+     
+     ulen getCount() const { return (1u<<level)+1; }
+     
+     ulen getDelta() const { return 1u<<(MaxLevel-level); }
+    };
+
+   void curve(SplineBuf &buf,LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r,DesktopColor color);
    
   public:
   
@@ -174,6 +202,13 @@ class CommonDrawArt
    void erase(DesktopColor color);
   
    void block(Pane pane,DesktopColor color);
+   
+   void knob(Point p,int len,DesktopColor color)
+    {
+     int d=2*len+1;
+     
+     block(Pane(p.x-len,p.y-len,d,d),color);
+    }
    
    void path(PtrLen<const Point> dots,DesktopColor color);
    

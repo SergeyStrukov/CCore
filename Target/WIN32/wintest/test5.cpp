@@ -100,6 +100,25 @@ class FileReport : public ReportException
 
 class Client : public DragClient
  {
+  public: 
+  
+   struct Config
+    {
+     int knob_len = 3 ;
+    
+     ColorName back  = Silver ;
+     ColorName field =  White ;
+     ColorName knob  =  Black ;
+     ColorName cross =  Green ;
+     ColorName path  =    Red ;
+     
+     Config() {}
+    };
+  
+  private:
+  
+   Config cfg;
+
    DynArray<Point> dots;
    DynArray<Point> dots_based;
    Pane field;
@@ -115,7 +134,7 @@ class Client : public DragClient
      DrawCurveSolid
     };
    
-   DrawType draw_type = DrawPath ;
+   DrawType draw_type = DrawCurvePath ;
    
    ulen selected = 0 ;
    
@@ -125,13 +144,6 @@ class Client : public DragClient
     {
      art.path(color,Point(p.x,0),Point(p.x,size.y-1));
      art.path(color,Point(0,p.y),Point(size.x-1,p.y));
-    }
-   
-   static const int KnobLen = 3 ;
-   
-   void knob(CommonDrawArt &art,Point p,DesktopColor color) const
-    {
-     art.block(Pane(p.x-KnobLen,p.y-KnobLen,2*KnobLen+1,2*KnobLen+1),color);
     }
    
    void select(Point point)
@@ -147,7 +159,8 @@ class Client : public DragClient
    
   public:
   
-   Client()
+   explicit Client(Config cfg_={})
+    : cfg(cfg_)
     {
     }
    
@@ -170,24 +183,24 @@ class Client : public DragClient
     {
      CommonDrawArt art(buf);
      
-     art.erase(Silver);
+     art.erase(cfg.back);
      
-     art.block(field,White);
+     art.block(field,cfg.field);
      
-     for(auto p : dots ) knob(art,p,Black);
+     for(auto p : dots ) art.knob(p,cfg.knob_len,cfg.knob);
      
-     if( selected<dots.getLen() ) cross(art,dots[selected],Green);
+     if( selected<dots.getLen() ) cross(art,dots[selected],cfg.cross);
      
      CommonDrawArt field_art(buf.cut(field));
      
      switch( draw_type )
        {
-        case DrawPath       : field_art.path(Range_const(dots_based),Red); break;
-        case DrawLoop       : field_art.loop(Range_const(dots_based),Red); break;
-        case DrawCurvePath  : field_art.curvePath(Range_const(dots_based),Red); break;
-        case DrawCurveLoop  : field_art.curveLoop(Range_const(dots_based),Red); break;
-        case DrawSolid      : field_art.solid(Range_const(dots_based),Red); break;
-        case DrawCurveSolid : field_art.curveSolid(Range_const(dots_based),Red); break;
+        case DrawPath       : field_art.path(Range_const(dots_based),cfg.path); break;
+        case DrawLoop       : field_art.loop(Range_const(dots_based),cfg.path); break;
+        case DrawCurvePath  : field_art.curvePath(Range_const(dots_based),cfg.path); break;
+        case DrawCurveLoop  : field_art.curveLoop(Range_const(dots_based),cfg.path); break;
+        case DrawSolid      : field_art.solid(Range_const(dots_based),cfg.path); break;
+        case DrawCurveSolid : field_art.curveSolid(Range_const(dots_based),cfg.path); break;
        }
     }
    
@@ -384,7 +397,7 @@ int testmain(CmdDisplay cmd_display)
   
   try
     {
-     TaskMemStack tms;
+     TaskMemStack tms(64_KByte);
      
      Application app(cmd_display);
      

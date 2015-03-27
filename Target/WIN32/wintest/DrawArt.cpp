@@ -16,7 +16,6 @@
 #include "DrawArt.h"
 
 #include <CCore/inc/Swap.h>
-#include <CCore/inc/TaskMemStack.h>
 
 namespace CCore {
 namespace Video {
@@ -458,16 +457,6 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
 
 /* class CommonDrawArt */
 
-sint64 CommonDrawArt::Spline(sint64 a,sint64 b,sint64 c,sint64 d)
- {
-  return (b+c)/2+(b+c-a-d)/16;
- }
-
-LPoint CommonDrawArt::Spline(LPoint a,LPoint b,LPoint c,LPoint d)
- {
-  return LPoint(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
- }
-
 unsigned CommonDrawArt::Diameter(sint64 a,sint64 b)
  {
   return unsigned( ( (a<=b)?(b-a):(a-b) )>>Precision );
@@ -478,51 +467,86 @@ unsigned CommonDrawArt::Diameter(LPoint a,LPoint b)
   return Max(Diameter(a.x,b.x),Diameter(a.y,b.y));
  }
 
-unsigned CommonDrawArt::Diameter(PtrLen<const LPoint> dots)
+unsigned CommonDrawArt::Diameter(const LPoint *ptr,ulen count,ulen delta)
  {
   unsigned ret=0;
   
-  for(; dots.len>1 ;++dots) Replace_max(ret,Diameter(dots[0],dots[1]));
-   
+  for(; count>1 ;count--,ptr+=delta) Replace_max(ret,Diameter(ptr[0],ptr[delta]));
+  
   return ret; 
  }
 
-void CommonDrawArt::curvePath(PtrLen<const LPoint> dots,unsigned level,DesktopColor color)
+sint64 CommonDrawArt::Spline(sint64 a,sint64 b,sint64 c,sint64 d)
  {
-  if( level>=10u || dots.len>100000u || Diameter(dots)<2u )
+  return (b+c)/2+(b+c-a-d)/16;
+ }
+
+LPoint CommonDrawArt::Spline(LPoint a,LPoint b,LPoint c,LPoint d)
+ {
+  return LPoint(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
+ }
+
+void CommonDrawArt::path(const LPoint *ptr,ulen count,ulen delta,DesktopColor color)
+ {
+#if 0
+  
+  for(; count ;count--,ptr+=delta) pixel(RShift(*ptr,Precision),Blue);
+  
+#endif  
+  
+#if 1 
+ 
+  Point a=RShift(*ptr,Precision);
+  
+  for(count--,ptr+=delta; count ;count--,ptr+=delta)
     {
-     {
-      //for(auto p : dots ) knob(RShift(p,Precision),Blue);
-     } 
-    
-     Point a=RShift(*dots,Precision);
+     Point b=RShift(*ptr,Precision);
      
-     for(++dots; +dots ;++dots)
-       {
-        Point b=RShift(*dots,Precision);
-        
-        buf.line(a,b,color);
-        
-        a=b;
-       }
+     buf.line(a,b,color);
      
-     pixel(a,color);
+     a=b;
     }
-  else
+  
+  pixel(a,color);
+  
+#endif  
+ }
+
+void CommonDrawArt::SplineBuf::spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r)
+ {
+  buf[0]=a;
+  buf[Len]=b;
+  buf[2*Len]=c;
+  buf[3*Len]=d;
+  
+  buf[Len/2]=p;
+  buf[Len/2+Len]=q;
+  buf[Len/2+2*Len]=r;
+  
+  level=1;
+  
+  ulen len1=Len/4;
+  ulen len2=3*len1;
+  ulen delta=2*len1;
+  
+  for(; level<MaxLevel ;level++,len1>>=1,len2>>=1,delta>>=1)
     {
-     StackArray<LPoint> next(2*dots.len-1);
+     // check diameter
     
-     for(ulen i=0; i<dots.len ;i++) next[2*i]=dots[i];
+     if( Diameter(buf+Len,(1u<<level)+1,delta)<MaxDiameter ) break;
     
-     next[1]=Spline(dots[0],dots[0],dots[1],dots[2]);
+     // next level
     
-     next[2*dots.len-3]=Spline(dots[dots.len-3],dots[dots.len-2],dots[dots.len-1],dots[dots.len-1]);
-    
-     for(ulen i=1; i<dots.len-2 ;i++) 
-       next[2*i+1]=Spline(dots[i-1],dots[i],dots[i+1],dots[i+2]);
-     
-     curvePath(Range_const(next),level+1,color);
+     for(ulen ind=Len-len1,last=2*Len+len1; ind<=last ;ind+=delta)
+       buf[ind]=Spline(buf[ind-len2],buf[ind-len1],buf[ind+len1],buf[ind+len2]);
     }
+ }
+
+void CommonDrawArt::curve(SplineBuf &buf,LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r,DesktopColor color)
+ {
+  buf.spline(a,b,c,d,p,q,r);
+  
+  path(buf.getPtr(),buf.getCount(),buf.getDelta(),color);
  }
 
 void CommonDrawArt::pixel(Point p,DesktopColor color)
@@ -581,13 +605,56 @@ void CommonDrawArt::loop(PtrLen<const Point> dots,DesktopColor color)
 
 void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
  {
-  if( dots.len>=3 )
+  if( dots.len>=4 )
     {
-     StackArray<LPoint> ldots(dots.len);
+     StackObject<SplineBuf> buf;
+    
+     LPoint a=LShift(dots[0],Precision),
+            b=a,
+            c=LShift(dots[1],Precision),
+            d=LShift(dots[2],Precision),
+            e=LShift(dots[3],Precision);
      
-     for(ulen i=0; i<dots.len ;i++) ldots[i]=LPoint(dots[i])<<Precision;
+     LPoint p=Spline(a,a,b,c),
+            q=Spline(a,b,c,d),
+            r=Spline(b,c,d,e);
+    
+     curve(*buf,a,b,c,d,p,q,r,color);
      
-     curvePath(Range_const(ldots),0,color);
+     for(dots+=4; +dots ;++dots)
+       {
+        a=b;
+        b=c;
+        c=d;
+        d=e;
+        e=LShift(dots[0],Precision);
+        
+        p=q;
+        q=r;
+        r=Spline(b,c,d,e);
+        
+        curve(*buf,a,b,c,d,p,q,r,color);
+       }
+     
+     LPoint s=Spline(c,d,e,e);
+     
+     curve(*buf,b,c,d,e,q,r,s,color);
+     
+     curve(*buf,c,d,e,e,r,s,Spline(d,e,e,e),color);
+    }
+  else if( dots.len==3 )
+    {
+     StackObject<SplineBuf> buf;
+     
+     LPoint a=LShift(dots[0],Precision),
+            b=LShift(dots[1],Precision),
+            c=LShift(dots[2],Precision);
+            
+     LPoint q=Spline(a,a,b,c),
+            r=Spline(a,b,c,c);
+     
+     curve(*buf,a,a,b,c,Spline(a,a,a,b),q,r,color);
+     curve(*buf,a,b,c,c,q,r,Spline(b,c,c,c),color);
     }
   else
     {

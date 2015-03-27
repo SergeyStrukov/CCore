@@ -44,6 +44,8 @@ class TaskMemStack;
 
 class TaskMemStackAllocGuard;
 
+template <class T> class StackObject;
+
 template <class T,class Algo=ArrayAlgo<T> > class StackArray;
 
 /* class TaskMemStack */
@@ -115,7 +117,12 @@ class TaskMemStackAllocGuard : NoCopy
  
   public:
   
-   explicit TaskMemStackAllocGuard(ulen count,ulen size_of) // count!=0, size_of!=0
+   explicit TaskMemStackAllocGuard(ulen size_of) // size_of!=0
+    {
+     mem=TaskMemStackAlloc(size_of);
+    }
+   
+   TaskMemStackAllocGuard(ulen count,ulen size_of) // count!=0, size_of!=0
     {
      mem=TaskMemStackAlloc(LenOf(count,size_of));
     }
@@ -128,6 +135,43 @@ class TaskMemStackAllocGuard : NoCopy
    operator void * () const { return mem; }
    
    void * disarm() { return Replace_null(mem); }
+ };
+
+/* class StackObject<T> */
+
+template <class T> 
+class StackObject : NoCopy
+ {
+   T *ptr;
+   
+  public:
+
+   // constructors
+   
+   template <class ... SS>
+   explicit StackObject(SS && ... ss)
+    {
+     TaskMemStackAllocGuard mem(sizeof (T));
+     
+     ptr=new(PlaceAt(mem)) T( std::forward<SS>(ss)... );
+     
+     mem.disarm();
+    }
+   
+   ~StackObject()
+    {
+     ptr->~T();
+     
+     TaskMemStackFree(ptr);
+    }
+   
+   // object ptr
+   
+   T * getPtr() const { return ptr; }
+   
+   T & operator * () const { return *ptr; }
+   
+   T * operator -> () const { return ptr; }
  };
 
 /* class StackArray<T,Algo> */
