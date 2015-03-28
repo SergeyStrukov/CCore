@@ -30,6 +30,10 @@
 
 <p class="Files">Files <b>CCore/inc/gadget/PtrStepLen.h</b> <b>CCore/src/gadget/PtrStepLen.cpp</b></p>
 
+<p>
+<b>PtrStepLen</b> is similar to the <a href="page_PtrLen.html"><b>PtrLen</b></a>. It represents a range of objects.  
+</p>
+
 <pre>
 
 template &lt;class T&gt;
@@ -38,6 +42,17 @@ struct <span class="Att">PtrStepLen</span>
   T *ptr;
   ulen step;
   ulen len;
+
+</pre>
+
+<p>
+Three members are used to specify a range: <b>ptr</b>, <b>step</b> and <b>len</b>. <b>ptr</b> is the address
+of the first range element. <b>len</b> is the number of elements of the range. 
+<b>step</b> is the distance from any range element to the next. I.e. the range consists of the elements
+<b>{ ptr[0] , ptr[step] , ... , ptr[index*step] , ... , ptr[(len-1)*step] }</b>.
+</p>
+
+<pre>
   
   // constructors
   
@@ -46,55 +61,108 @@ struct <span class="Att">PtrStepLen</span>
   PtrStepLen(NothingType) : PtrStepLen() {}
   
   PtrStepLen(T *ptr_,ulen step_,ulen len_) : ptr(ptr_),step(step_),len(len_) {}
+
+</pre>
+
+<p>
+Three constructors are provided: two to create a null range and third to create a range with the given
+<b>ptr</b>, <b>step</b> and <b>len</b> values.
+All other methods have direct equivalents and the same behavior as methods of the <b>PtrLen</b>.
+</p>
   
+<p>
+Cursor methods:
+</p>
+
+<pre>
+
   // cursor
   
-  ulen operator + () const { return len; }
+  ulen operator + () const { return len; } // get length
+                                           // range is not empty
   
-  bool operator ! () const { return !len; }
+  bool operator ! () const { return !len; } // range is empty
   
-  T &amp; operator * () const { return *ptr; }
+  T &amp; operator * () const { return *ptr; } // first element
   
-  T * operator -> () const { return ptr; }
+  T * operator -> () const { return ptr; } // pointer to the first element
   
-  void operator ++ () { ptr+=step; len--; }
+  void operator ++ () { ptr+=step; len--; } // advance 
   
-  void operator -- () { ptr-=step; len++; }
+  void operator -- () { ptr-=step; len++; } // back
   
-  PtrStepLen&lt;T&gt; operator += (ulen delta); // assume fit(delta)
+  PtrStepLen&lt;T&gt; operator += (ulen delta); // assume delta<=len, advance on delta
    
-  PtrStepLen&lt;T&gt; takeup(ulen delta);
+  PtrStepLen&lt;T&gt; takeup(ulen delta); // advance up to delta elements
   
-  T &amp; take();
+  T &amp; take(); // assume len>0, take first element and advance
+
+</pre>
+
+<p>
+Methods <b>fit()</b> can be used to check the length of the range:
+</p>
+
+<pre>
   
   // fit
    
   bool fit(ulen length) const { return length<=len; }
   
   bool fit(ulen off,ulen length) const { return off<=len && length<=(len-off) ; }
+
+</pre>
+
+<p>
+The first checks is there at least the <b>length</b> elements.
+The second can be used to check if the subrange with the given <b>off(set)</b> from the begin and
+<b>length</b> can be selected.
+</p>
+
+<p>
+You can select a desired part of the range using parts methods:
+</p>
+
+<pre>
   
   // parts
   
-  PtrStepLen&lt;T&gt; prefix(ulen length) const;          // assume fit(length)
+  PtrStepLen&lt;T&gt; prefix(ulen length) const;          // assume fit(length), prefix of the given length
   
-  PtrStepLen&lt;T&gt; prefix(PtrStepLen&lt;T&gt; suffix) const;
+  PtrStepLen&lt;T&gt; prefix(PtrStepLen&lt;T&gt; suffix) const; // prefix, complementary to the given suffix
   
-  PtrStepLen&lt;T&gt; suffix(ulen length) const;          // assume fit(length)
+  PtrStepLen&lt;T&gt; suffix(ulen length) const;          // assume fit(length), suffix of the given length
   
-  PtrStepLen&lt;T&gt; part(ulen off,ulen length) const;   // assume fit(off,length)
+  PtrStepLen&lt;T&gt; part(ulen off,ulen length) const;   // assume fit(off,length), inner part with the given off(set) and length
   
-  PtrStepLen&lt;T&gt; part(ulen off) const;               // assume fit(off)
+  PtrStepLen&lt;T&gt; part(ulen off) const;               // assume fit(off), suffix with the given off(set)
   
-  PtrStepLen&lt;T&gt; inner(ulen off,ulen endoff) const;  // assume fit(off,endoff)
+  PtrStepLen&lt;T&gt; inner(ulen off,ulen endoff) const;  // assume fit(off,endoff), inner part with the given off(set) and offset from the end (endoff)
+
+</pre>
+
+<p>
+You can pick an element of the range based on its index:
+</p>
+
+<pre>
    
   // index access
   
   T &amp; operator [] (ulen index) const;
    
-  T &amp; at(ulen index) const;
+  T &amp; at(ulen index) const; // with the index guard
   
-  T &amp; back(ulen index) const; // 1 is the last
+  T &amp; back(ulen index) const; // reverse order, index 1 means the last element
+
+</pre>
   
+<p>
+The last method is required to support <b>range-based for</b> with the <b>PtrStepLen</b>:
+</p>
+
+<pre>
+
   // begin()/end() support
   
   bool operator != (PtrStepLen&lt;T&gt; end) const { return len!=end.len; }
