@@ -234,6 +234,7 @@ obj/PrintTitle.o \
 obj/Printf.o \
 obj/PtrLen.o \
 obj/PtrLenReverse.o \
+obj/PtrStepLen.o \
 obj/Quick.o \
 obj/QuickSort.o \
 obj/RBTreeBase.o \
@@ -579,6 +580,7 @@ obj/PrintTitle.s \
 obj/Printf.s \
 obj/PtrLen.s \
 obj/PtrLenReverse.s \
+obj/PtrStepLen.s \
 obj/Quick.s \
 obj/QuickSort.s \
 obj/RBTreeBase.s \
@@ -924,6 +926,7 @@ obj/PrintTitle.dep \
 obj/Printf.dep \
 obj/PtrLen.dep \
 obj/PtrLenReverse.dep \
+obj/PtrStepLen.dep \
 obj/Quick.dep \
 obj/QuickSort.dep \
 obj/RBTreeBase.dep \
@@ -1752,6 +1755,9 @@ obj/PtrLen.o : ../../CCore/src/gadget/PtrLen.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/PtrLenReverse.o : ../../CCore/src/gadget/PtrLenReverse.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/PtrStepLen.o : ../../CCore/src/gadget/PtrStepLen.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Quick.o : ../../Target/BeagleBoneBlack/CCore/src/base/Quick.cpp
@@ -2782,6 +2788,9 @@ obj/PtrLen.s : ../../CCore/src/gadget/PtrLen.cpp
 obj/PtrLenReverse.s : ../../CCore/src/gadget/PtrLenReverse.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/PtrStepLen.s : ../../CCore/src/gadget/PtrStepLen.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Quick.s : ../../Target/BeagleBoneBlack/CCore/src/base/Quick.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3809,6 +3818,9 @@ obj/PtrLen.dep : ../../CCore/src/gadget/PtrLen.cpp
 
 obj/PtrLenReverse.dep : ../../CCore/src/gadget/PtrLenReverse.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PtrLenReverse.o $< -MF $@
+
+obj/PtrStepLen.dep : ../../CCore/src/gadget/PtrStepLen.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/PtrStepLen.o $< -MF $@
 
 obj/Quick.dep : ../../Target/BeagleBoneBlack/CCore/src/base/Quick.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Quick.o $< -MF $@

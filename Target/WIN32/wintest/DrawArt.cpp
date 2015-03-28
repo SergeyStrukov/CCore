@@ -595,11 +595,11 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
   
 #if 1
  
-  Point a=RShift(*curve);
+  Point a=CurveDriver::RShift(*curve);
   
   for(++curve; +curve ;++curve)
     {
-     Point b=RShift(*curve);
+     Point b=CurveDriver::RShift(*curve);
      
      buf.line(a,b,color);
      

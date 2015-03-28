@@ -22,15 +22,6 @@
  
 namespace CCore {
 
-/* functions */ 
-
-void GuardIndexOutOfRange(ulen index,ulen len);
-
-inline void GuardIndex(ulen index,ulen len)
- {
-  if( index>=len ) GuardIndexOutOfRange(index,len);
- }
- 
 /* functions */  
 
 template <class T,class S>

@@ -70,6 +70,13 @@ inline ulen LenOf(ulen count,ulen size_of,ulen extra=0)
   return count*size_of+extra;
  }
  
+void GuardIndexOutOfRange(ulen index,ulen len);
+
+inline void GuardIndex(ulen index,ulen len)
+ {
+  if( index>=len ) GuardIndexOutOfRange(index,len);
+ }
+
 /* functions */ 
 
 inline constexpr bool NotAligned(ulen len,ulen A=MaxAlign) { return (len%A)!=0; }

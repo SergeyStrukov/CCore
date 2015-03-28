@@ -106,6 +106,7 @@
 ../../CCore/src/gadget/PosSub.cpp
 ../../CCore/src/gadget/PtrLen.cpp
 ../../CCore/src/gadget/PtrLenReverse.cpp
+../../CCore/src/gadget/PtrStepLen.cpp
 ../../CCore/src/gadget/Replace.cpp
 ../../CCore/src/gadget/SIntFunc.cpp
 ../../CCore/src/gadget/Space.cpp

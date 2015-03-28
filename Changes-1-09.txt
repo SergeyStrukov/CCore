@@ -28,3 +28,7 @@ gadget/Place.h
 gadget/SIntFunc.h
 
   Dist(),MovePos(),MoveNeg(),Move() algorithms are added.
+
+gadget/PtrStepLen.h
+
+  PtrStepLen is added.

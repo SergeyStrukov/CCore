@@ -36,6 +36,11 @@ void GuardLenOfOverflow(ulen count,ulen size_of,ulen extra)
   Printf(Exception,"CCore::LenOf(count=#;,size_of=#;,extra=#;) : overflow",count,size_of,extra);
  }
  
+void GuardIndexOutOfRange(ulen index,ulen len)
+ {
+  Printf(Exception,"CCore::GuardIndex(index=#;,len=#;) : out of range",index,len);
+ }
+ 
 } // namespace CCore
  
 

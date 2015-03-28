@@ -1,0 +1,116 @@
+<!--
+/* page_PtrStepLen.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.09
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> PtrStepLen</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>PtrStepLen</h2>
+
+<p class="Files">Files <b>CCore/inc/gadget/PtrStepLen.h</b> <b>CCore/src/gadget/PtrStepLen.cpp</b></p>
+
+<pre>
+
+template &lt;class T&gt;
+struct <span class="Att">PtrStepLen</span>
+ {
+  T *ptr;
+  ulen step;
+  ulen len;
+  
+  // constructors
+  
+  PtrStepLen() : ptr(0),step(0),len(0) {}
+  
+  PtrStepLen(NothingType) : PtrStepLen() {}
+  
+  PtrStepLen(T *ptr_,ulen step_,ulen len_) : ptr(ptr_),step(step_),len(len_) {}
+  
+  // cursor
+  
+  ulen operator + () const { return len; }
+  
+  bool operator ! () const { return !len; }
+  
+  T &amp; operator * () const { return *ptr; }
+  
+  T * operator -> () const { return ptr; }
+  
+  void operator ++ () { ptr+=step; len--; }
+  
+  void operator -- () { ptr-=step; len++; }
+  
+  PtrStepLen&lt;T&gt; operator += (ulen delta); // assume fit(delta)
+   
+  PtrStepLen&lt;T&gt; takeup(ulen delta);
+  
+  T &amp; take();
+  
+  // fit
+   
+  bool fit(ulen length) const { return length<=len; }
+  
+  bool fit(ulen off,ulen length) const { return off<=len && length<=(len-off) ; }
+  
+  // parts
+  
+  PtrStepLen&lt;T&gt; prefix(ulen length) const;          // assume fit(length)
+  
+  PtrStepLen&lt;T&gt; prefix(PtrStepLen&lt;T&gt; suffix) const;
+  
+  PtrStepLen&lt;T&gt; suffix(ulen length) const;          // assume fit(length)
+  
+  PtrStepLen&lt;T&gt; part(ulen off,ulen length) const;   // assume fit(off,length)
+  
+  PtrStepLen&lt;T&gt; part(ulen off) const;               // assume fit(off)
+  
+  PtrStepLen&lt;T&gt; inner(ulen off,ulen endoff) const;  // assume fit(off,endoff)
+   
+  // index access
+  
+  T &amp; operator [] (ulen index) const;
+   
+  T &amp; at(ulen index) const;
+  
+  T &amp; back(ulen index) const; // 1 is the last
+  
+  // begin()/end() support
+  
+  bool operator != (PtrStepLen&lt;T&gt; end) const { return len!=end.len; }
+ };
+
+/* begin()/end() */
+
+template &lt;class T&gt;
+PtrStepLen&lt;T&gt; begin(PtrStepLen&lt;T&gt; a) { return a; }
+ 
+template &lt;class T&gt;
+PtrStepLen&lt;T&gt; end(PtrStepLen&lt;T&gt;) { return Nothing; }
+
+</pre>
+
+</body>
+
+</html>
+
