@@ -110,21 +110,11 @@ auto LineDriver::Clip(int x,int e,int d) -> Result
 
 /* class CurveDriver */
 
-unsigned CurveDriver::Diameter(sint64 a,sint64 b)
+sint64 CurveDriver::Fineness(PtrStepLen<const LPoint> dots)
  {
-  return unsigned( ( (a<=b)?(b-a):(a-b) )>>Precision );
- }
-
-unsigned CurveDriver::Diameter(LPoint a,LPoint b)
- {
-  return Max(Diameter(a.x,b.x),Diameter(a.y,b.y));
- }
-
-unsigned CurveDriver::Diameter(PtrStepLen<const LPoint> dots)
- {
-  unsigned ret=0;
+  sint64 ret=0;
   
-  for(; dots.len>1 ;++dots) Replace_max(ret,Diameter(dots[0],dots[1]));
+  for(; dots.len>1 ;++dots) Replace_max(ret,PointDist(dots[0],dots[1]));
   
   return ret; 
  }
@@ -151,7 +141,7 @@ void CurveDriver::spline()
     {
      // check diameter
     
-     if( Diameter(getCurve())<MaxDiameter ) break;
+     if( Fineness(getCurve())<MaxFineness ) break;
     
      // next level
     
@@ -176,12 +166,12 @@ void CurveDriver::spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,L
 
 void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_)
  {
-  LPoint a=LShift(a_),
+  LPoint a=a_,
          b=a,
-         c=LShift(b_),
-         d=LShift(c_);
+         c=b_,
+         d=c_;
   
-  e=LShift(d_);
+  e=d_;
   
   LPoint p=Spline(a,a,b,c),
          q=Spline(a,b,c,d),
@@ -192,14 +182,14 @@ void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_)
 
 void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_,Point e_,Point f_)
  {
-  LPoint a=LShift(b_),
-         b=LShift(c_),
-         c=LShift(d_),
-         d=LShift(e_);
+  LPoint a=b_,
+         b=c_,
+         c=d_,
+         d=e_;
   
-  e=LShift(f_);
+  e=f_;
   
-  LPoint p=Spline(LShift(a_),a,b,c),
+  LPoint p=Spline(a_,a,b,c),
          q=Spline(a,b,c,d),
          r=Spline(b,c,d,e);
   
@@ -213,7 +203,7 @@ void CurveDriver::shift(Point f)
   buf[2*Len]=buf[3*Len];
   buf[3*Len]=e;
   
-  e=LShift(f);
+  e=f;
   
   buf[Len/2]=buf[Len/2+Len];
   buf[Len/2+Len]=buf[Len/2+2*Len];
@@ -587,19 +577,11 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
 
 void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
  {
-#if 0
-  
-  for(; count ;count--,ptr+=delta) pixel(RShift(*ptr,Precision),Blue);
-  
-#endif  
-  
-#if 1
- 
-  Point a=CurveDriver::RShift(*curve);
+  Point a=curve->toPoint();
   
   for(++curve; +curve ;++curve)
     {
-     Point b=CurveDriver::RShift(*curve);
+     Point b=curve->toPoint();
      
      buf.line(a,b,color);
      
@@ -607,8 +589,6 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
     }
   
   pixel(a,color);
-  
-#endif  
  }
 
 void CommonDrawArt::pixel(Point p,DesktopColor color)

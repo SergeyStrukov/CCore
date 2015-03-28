@@ -117,7 +117,9 @@ struct MilliPoint : BasePoint<MilliPoint,int>
   
   MilliPoint() {}
   
-  MilliPoint(Point p) : BasePoint<MilliPoint,int>(IntMul(p.x,1024),IntMul(p.y,1024)) {}
+  static const unsigned Precision = 10 ;
+  
+  MilliPoint(Point p) : BasePoint<MilliPoint,int>(IntLShift(p.x,Precision),IntLShift(p.y,Precision)) {}
  };
 
 /* struct Pane */ 

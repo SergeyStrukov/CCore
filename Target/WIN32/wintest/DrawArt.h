@@ -42,8 +42,24 @@ struct LPoint : BasePoint<LPoint,sint64>
   
   LPoint() {}
   
-  LPoint(Point p) : BasePoint<LPoint,sint64>(p.x,p.y) {}
+  static const unsigned Precision = 16 ;
+  
+  LPoint(Point p) : BasePoint<LPoint,sint64>(IntLShift((sint64)p.x,Precision),IntLShift((sint64)p.y,Precision)) {}
+  
+  static int RShift(sint64 a,unsigned s) { return (int)IntRShift(a+(1<<(s-1)),s); }
+  
+  Point toPoint(unsigned s=Precision) const { return Point(RShift(x,s),RShift(y,s)); }
+  
+  static sint64 PointDist(sint64 a,sint64 b)
+   {
+    return IntRShift((a<=b)?(b-a):(a-b),Precision);
+   }
  };
+
+inline sint64 PointDist(LPoint a,LPoint b)
+ {
+  return Max(LPoint::PointDist(a.x,b.x),LPoint::PointDist(a.y,b.y));
+ }
 
 /* class LineDriver */
 
@@ -119,23 +135,13 @@ class LineDriver
 
 class CurveDriver : NoCopy
  {
-   static const unsigned Precision = 16 ;
-   
    static const unsigned MaxLevel = 10 ;
    
-   static const unsigned MaxDiameter = 5 ;
+   static const unsigned MaxFineness = 5 ;
    
    static const ulen Len = (1u<<MaxLevel) ;
    
-   static LPoint LShift(Point p,unsigned s=Precision) { return LPoint(p)<<s; }
-   
-   static int RShift(sint64 a,unsigned s) { return int( ( a+(1<<(s-1)) )>>s ); }
-   
-   static unsigned Diameter(sint64 a,sint64 b);
-   
-   static unsigned Diameter(LPoint a,LPoint b);
-   
-   static unsigned Diameter(PtrStepLen<const LPoint> dots);
+   static sint64 Fineness(PtrStepLen<const LPoint> dots);
    
    static sint64 Spline(sint64 a,sint64 b,sint64 c,sint64 d);
  
@@ -167,8 +173,6 @@ class CurveDriver : NoCopy
    void shift();
    
    PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
-   
-   static Point RShift(LPoint a,unsigned s=Precision) { return Point(RShift(a.x,s),RShift(a.y,s)); }
  };
 
 /* class CommonDrawArt */
