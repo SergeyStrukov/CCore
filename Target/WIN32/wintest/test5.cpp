@@ -104,7 +104,8 @@ class Client : public DragClient
   
    struct Config
     {
-     int knob_len = 3 ;
+     int knob_len =  3 ;
+     int magnify  = 32 ;
     
      ColorName back  = Silver ;
      ColorName field =  White ;
@@ -134,9 +135,12 @@ class Client : public DragClient
      DrawCurveSolid
     };
    
-   DrawType draw_type = DrawCurveLoop ;
+   DrawType draw_type = DrawCurvePath ;
    
    ulen selected = 0 ;
+   
+   bool magnify = false ;
+   Point focus;
    
   private: 
   
@@ -181,26 +185,40 @@ class Client : public DragClient
    
    virtual void draw(FrameBuf<DesktopColor> buf,bool) const
     {
-     CommonDrawArt art(buf);
-     
-     art.erase(cfg.back);
-     
-     art.block(field,cfg.field);
-     
-     for(auto p : dots ) art.knob(p,cfg.knob_len,cfg.knob);
-     
-     if( selected<dots.getLen() ) cross(art,dots[selected],cfg.cross);
-     
-     CommonDrawArt field_art(buf.cut(field));
-     
-     switch( draw_type )
+     if( magnify )
        {
-        case DrawPath       : field_art.path(Range_const(dots_based),cfg.path); break;
-        case DrawLoop       : field_art.loop(Range_const(dots_based),cfg.path); break;
-        case DrawCurvePath  : field_art.curvePath(Range_const(dots_based),cfg.path); break;
-        case DrawCurveLoop  : field_art.curveLoop(Range_const(dots_based),cfg.path); break;
-        case DrawSolid      : field_art.solid(Range_const(dots_based),cfg.path); break;
-        case DrawCurveSolid : field_art.curveSolid(Range_const(dots_based),cfg.path); break;
+        CommonDrawArt art(buf);
+        
+        switch( draw_type )
+          {
+           case DrawCurvePath  : art.curvePath_micro(Range_const(dots),cfg.path,focus,cfg.magnify); break;
+           
+           default: art.grid(cfg.magnify); 
+          }
+       }
+     else
+       {
+        CommonDrawArt art(buf);
+        
+        art.erase(cfg.back);
+        
+        art.block(field,cfg.field);
+        
+        for(auto p : dots ) art.knob(p,cfg.knob_len,cfg.knob);
+        
+        if( selected<dots.getLen() ) cross(art,dots[selected],cfg.cross);
+        
+        CommonDrawArt field_art(buf.cut(field));
+        
+        switch( draw_type )
+          {
+           case DrawPath       : field_art.path(Range_const(dots_based),cfg.path); break;
+           case DrawLoop       : field_art.loop(Range_const(dots_based),cfg.path); break;
+           case DrawCurvePath  : field_art.curvePath(Range_const(dots_based),cfg.path); break;
+           case DrawCurveLoop  : field_art.curveLoop(Range_const(dots_based),cfg.path); break;
+           case DrawSolid      : field_art.solid(Range_const(dots_based),cfg.path); break;
+           case DrawCurveSolid : field_art.curveSolid(Range_const(dots_based),cfg.path); break;
+          }
        }
     }
    
@@ -323,14 +341,61 @@ class Client : public DragClient
         select(point);
        }
     }
+   
+   virtual void clickRight(Point point,MouseKey)
+    {
+     magnify=true;
+     focus=point;
+     
+     win->redraw();
+    }
+   
+   virtual void upRight(Point,MouseKey)
+    {
+     if( magnify )
+       {
+        magnify=false;
+       
+        win->redraw();
+       }
+    }
 
    virtual void move(Point point,MouseKey mkey)
     {
-     if( mkey&MouseKey_Left )
+     if( magnify )
        {
-        if( win->getToken() ) return;
+        focus=point;
         
-        select(point);
+        win->redraw();
+       }
+     else
+       {
+        if( mkey&MouseKey_Left )
+          {
+           if( win->getToken() ) return;
+           
+           select(point);
+          }
+       }
+    }
+ 
+   virtual void leave()
+    {
+     if( magnify )
+       {
+        magnify=false;
+     
+        win->redraw();
+       } 
+    }
+ 
+   virtual void wheel(Point,MouseKey,int delta)
+    {
+     if( magnify )
+       {
+        cfg.magnify=Cap(5,cfg.magnify+delta,100);
+       
+        win->redraw();
        }
     }
  };
@@ -394,6 +459,8 @@ class Application : public ApplicationBase
 int testmain(CmdDisplay cmd_display)
  {
   int ret;
+  
+  cmd_display=CmdDisplay_Maximized;
   
   try
     {

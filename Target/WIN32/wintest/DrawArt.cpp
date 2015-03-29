@@ -228,7 +228,7 @@ void CurveDriver::shift()
 
 /* class CommonDrawArt::WorkBuf */
 
-void CommonDrawArt::WorkBuf::Prepare(int &a,int &b,int d)
+void CommonDrawArt::Prepare(int &a,int &b,int d)
  {
   if( a<=b )
     {
@@ -246,7 +246,7 @@ void CommonDrawArt::WorkBuf::Prepare(int &a,int &b,int d)
     }
  }
 
-bool CommonDrawArt::WorkBuf::DistDir(int &e,unsigned &s,int a,int b)
+bool CommonDrawArt::DistDir(int &e,unsigned &s,int a,int b)
  {
   if( a<b )
     {
@@ -591,6 +591,162 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
   pixel(a,color);
  }
 
+void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+ {
+  Point A=curve->toPoint();
+  
+  int ext=magnify/2-1;
+  
+  for(++curve; +curve ;++curve)
+    {
+     Point B=curve->toPoint();
+     
+     {
+      Point a=A;
+      Point b=B;
+      int dx=buf.dX();
+      int dy=buf.dY();
+       
+      int ex;
+      int ey;
+      unsigned sx;
+      unsigned sy;
+      
+      if( !DistDir(ex,sx,a.x,b.x) )
+        {
+         int abx=a.x;
+         int ay=a.y;
+         int by=b.y;
+         
+         if( abx>=0 && abx<dx )
+           {
+            Prepare(ay,by,dy);
+ 
+            for(; ay<by ;ay++)
+              {
+               knob(Point(abx,ay)*magnify,ext,color);
+              } 
+           }
+        }
+      else if( !DistDir(ey,sy,a.y,b.y) )
+        {
+         int aby=a.y;
+         int ax=a.x;
+         int bx=b.x;
+         
+         if( aby>=0 && aby<dy )
+           {
+            Prepare(ax,bx,dx);
+             
+            for(; ax<bx ;ax++) 
+              {
+               knob(Point(ax,aby)*magnify,ext,color);
+              }
+           }
+        }
+      else if( sx>sy )
+        {
+         LineDriver driver(sx,sy);
+         
+         auto clip=driver.clip(a.x,a.y,ex,ey,dx,dy);
+         
+         if( +clip )
+           {
+            unsigned off=clip.off;
+            unsigned count=clip.lim-clip.off;
+            
+            if( off ) 
+              {
+               a.y=IntMove(a.y,ey,driver.step(off));
+               a.x=IntMove(a.x,ex,off);
+              }
+            
+            for(; count ;count--)
+              {
+               knob(a*magnify,ext,color);
+               
+               if( driver.step() ) a.y+=ey;
+               
+               a.x+=ex;
+              }
+           }
+        }
+      else
+        {
+         LineDriver driver(sy,sx);
+        
+         auto clip=driver.clip(a.y,a.x,ey,ex,dy,dx);
+         
+         if( +clip )
+           {
+            unsigned off=clip.off;
+            unsigned count=clip.lim-clip.off;
+            
+            if( off ) 
+              {
+               a.x=IntMove(a.x,ex,driver.step(off));
+               a.y=IntMove(a.y,ey,off);
+              }
+            
+            for(; count ;count--)
+              {
+               knob(a*magnify,ext,color);
+              
+               if( driver.step() ) a.x+=ex;
+               
+               a.y+=ey;
+              }
+           }
+        }
+     }
+     
+     A=B;
+    }
+ }
+
+void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+ {
+  Point a=((*curve)*magnify).toPoint();
+  
+  knob(a,5,color);
+  
+  for(++curve; +curve ;++curve)
+    {
+     Point b=((*curve)*magnify).toPoint();
+     
+     knob(b,3,color);
+     
+     a=b;
+    }
+  
+  knob(a,5,color);
+ }
+
+void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+ {
+  Point a=((*curve)*magnify).toPoint();
+  
+  for(++curve; +curve ;++curve)
+    {
+     Point b=((*curve)*magnify).toPoint();
+     
+     buf.line(a,b,color);
+     
+     a=b;
+    }
+  
+  pixel(a,color);
+ }
+
+void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+ {
+  path_micro1(curve,Silver,magnify);
+  path_micro2(curve,Black,magnify);
+  path_micro3(curve,color,magnify);
+ }
+
+ // simple
+
 void CommonDrawArt::pixel(Point p,DesktopColor color)
  {
   if( buf.getPane().contains(p) ) buf.pixel(p,color);
@@ -857,6 +1013,47 @@ void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color)
  {
   Used(dots);
   Used(color);
+ }
+
+ // special
+
+void CommonDrawArt::grid(int cell)
+ {
+  erase(White);
+
+  for(int x=cell/2; x<buf.dX() ;x+=cell) buf.lineY(x,0,buf.dY(),Blue);
+  
+  for(int y=cell/2; y<buf.dY() ;y+=cell) buf.lineX(y,0,buf.dX(),Blue);
+ }
+
+void CommonDrawArt::curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,int magnify)
+ {
+  if( dots.len<4 ) return;
+  
+  grid(magnify);
+  
+  focus.y-=buf.dY()/magnify;
+  
+  StackObject<CurveDriver> driver;
+  
+  driver->spline(dots[0]-focus,dots[1]-focus,dots[2]-focus,dots[3]-focus);
+ 
+  path_micro(driver->getCurve(),color,magnify); 
+  
+  for(dots+=4; +dots ;++dots)
+    {
+     driver->shift(dots[0]-focus);
+     
+     path_micro(driver->getCurve(),color,magnify);
+    }
+  
+  driver->shift();
+  
+  path_micro(driver->getCurve(),color,magnify);
+  
+  driver->shift();
+  
+  path_micro(driver->getCurve(),color,magnify);
  }
 
 } // namespace Video

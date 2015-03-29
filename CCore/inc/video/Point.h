@@ -67,6 +67,12 @@ struct BasePoint
   
   friend T operator -= (T &a,T b) { return a=a-b; }
   
+  friend T operator *= (T &p,Int a) { return p=p*a; }
+  
+  friend T operator <<= (T &p,unsigned s) { return p=p<<s; }
+  
+  friend T operator >>= (T &p,unsigned s) { return p=p>>s; }
+  
   // safe operations
   
   friend bool operator == (T a,T b) { return a.x==b.x && a.y==b.y ; }

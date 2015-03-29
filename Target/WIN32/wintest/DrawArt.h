@@ -179,12 +179,12 @@ class CurveDriver : NoCopy
 
 class CommonDrawArt
  {
+   static void Prepare(int &a,int &b,int d);
+  
+   static bool DistDir(int &e,unsigned &s,int a,int b);
+ 
    class WorkBuf : public FrameBuf<DesktopColor>
     {
-      static void Prepare(int &a,int &b,int d);
-      
-      static bool DistDir(int &e,unsigned &s,int a,int b);
-     
      public:
      
       explicit WorkBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
@@ -202,11 +202,19 @@ class CommonDrawArt
    
    void path(PtrStepLen<const LPoint> curve,DesktopColor color);
 
+   void path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
+   
+   void path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
+   
+   void path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
+   
+   void path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
+   
   public:
   
    CommonDrawArt(const FrameBuf<DesktopColor> &buf_) : buf(buf_) {}
    
-   // simple methods
+   // simple
    
    void pixel(Point p,DesktopColor color);
    
@@ -280,6 +288,12 @@ class CommonDrawArt
      
      curveSolid(Range_const(temp),color);
     }
+   
+   // special
+   
+   void grid(int cell);
+   
+   void curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,int magnify);
    
    // fill
    
