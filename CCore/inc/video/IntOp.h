@@ -33,6 +33,20 @@ inline int IntMove(int a,int e,unsigned delta)
   return SIntFunc<int>::Move(a,e,delta);
  }
 
+inline unsigned IntAbs(int a,int b) { return (a<=b)?IntDist(a,b):IntDist(b,a); }
+
+inline uint64 IntDist(sint64 a,sint64 b) // a <= b
+ { 
+  return SIntFunc<sint64>::Dist(a,b); 
+ }
+
+inline sint64 IntMove(sint64 a,int e,uint64 delta)
+ {
+  return SIntFunc<sint64>::Move(a,e,delta);
+ }
+
+inline uint64 IntAbs(sint64 a,sint64 b) { return (a<=b)?IntDist(a,b):IntDist(b,a); }
+
 /* functions */
 
  //

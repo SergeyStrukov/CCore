@@ -33,9 +33,18 @@ const Clr MedClr = 128 ;
 
 const Clr MaxClr = 255 ;
 
+/* functions */
+
+inline Clr Blend(Clr dst,Clr alpha,Clr src)
+ {
+  return Clr( (dst*uint16(256-alpha)+src*uint16(alpha))>>8 );
+ }
+
 /* classes */
 
 //enum ColorName;
+
+class Blender;
 
 class RawColor16;
 
@@ -111,6 +120,42 @@ inline constexpr Clr BlueOf(ColorName cname) { return Clr(cname); }
 
 inline constexpr ColorName RGBColor(Clr r,Clr g,Clr b) { return ColorName(b|(uint32(g)<<8)|(uint32(r)<<16)); }
 
+/* class Blender */
+
+class Blender
+ {
+   uint16 src_r;
+   uint16 src_g;
+   uint16 src_b;
+   Clr beta;
+   
+  public: 
+  
+   Blender(Clr alpha,ColorName cname)
+    {
+     src_r=RedOf(cname)*uint16(alpha);
+     src_g=GreenOf(cname)*uint16(alpha);
+     src_b=BlueOf(cname)*uint16(alpha);
+     
+     beta=256-alpha;
+    }
+   
+   Clr blendR(Clr r) const
+    {
+     return Clr( (r*uint16(beta)+src_r)>>8 );
+    }
+   
+   Clr blendG(Clr g) const
+    {
+     return Clr( (g*uint16(beta)+src_g)>>8 );
+    }
+   
+   Clr blendB(Clr b) const
+    {
+     return Clr( (b*uint16(beta)+src_b)>>8 );
+    }
+ };
+
 /* class RawColor16 */
 
 class RawColor16
@@ -142,6 +187,17 @@ class RawColor16
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; }
    
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; }
+   
+   static void BlendTo(Blender blender,Raw dst[RawCount])
+    {
+     Raw raw=dst[0];
+     
+     Clr r=Clr( (raw>>11)<<3 );
+     Clr g=Clr( (raw>>5)<<2 );
+     Clr b=Clr( raw<<3 );
+     
+     dst[0]=Pack565(blender.blendR(r),blender.blendG(g),blender.blendB(b));
+    }
  };
 
 /* class RawColor24 */
@@ -171,6 +227,13 @@ class RawColor24
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; dst[1]=color[1]; dst[2]=color[2]; }
    
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; color[1]=src[1]; color[2]=src[2]; }
+   
+   static void BlendTo(Blender blender,Raw dst[RawCount])
+    {
+     dst[0]=blender.blendR(dst[0]);
+     dst[1]=blender.blendG(dst[1]);
+     dst[2]=blender.blendB(dst[2]);
+    }
  };
 
 /* class RawColor24Inv */
@@ -200,6 +263,13 @@ class RawColor24Inv
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; dst[1]=color[1]; dst[2]=color[2]; }
    
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; color[1]=src[1]; color[2]=src[2]; }
+   
+   static void BlendTo(Blender blender,Raw dst[RawCount])
+    {
+     dst[0]=blender.blendB(dst[0]);
+     dst[1]=blender.blendG(dst[1]);
+     dst[2]=blender.blendR(dst[2]);
+    }
  };
 
 /* class RawColor32 */
@@ -231,6 +301,17 @@ class RawColor32
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; }
    
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; }
+   
+   static void BlendTo(Blender blender,Raw dst[RawCount])
+    {
+     Raw raw=dst[0];
+     
+     Clr r=Clr(raw>>16);
+     Clr g=Clr(raw>> 8);
+     Clr b=Clr(raw    );
+     
+     dst[0]=Pack888(blender.blendR(r),blender.blendG(g),blender.blendB(b));
+    }
  };
 
 /* class RawColor32Inv */
@@ -262,6 +343,17 @@ class RawColor32Inv
    void copyTo(Raw dst[RawCount]) const { dst[0]=color[0]; }
    
    void copyFrom(const Raw src[RawCount]) { color[0]=src[0]; }
+   
+   static void BlendTo(Blender blender,Raw dst[RawCount])
+    {
+     Raw raw=dst[0];
+     
+     Clr r=Clr(raw    );
+     Clr g=Clr(raw>> 8);
+     Clr b=Clr(raw>>16);
+     
+     dst[0]=Pack888(blender.blendR(r),blender.blendG(g),blender.blendB(b));
+    }
  };
 
 /* struct ColorPlane */

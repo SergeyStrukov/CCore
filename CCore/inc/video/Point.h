@@ -119,11 +119,11 @@ struct Point : BasePoint<Point,int>
 
 struct MilliPoint : BasePoint<MilliPoint,int>
  {
+  static const unsigned Precision = 10 ;
+ 
   using BasePoint<MilliPoint,int>::BasePoint;
   
   MilliPoint() {}
-  
-  static const unsigned Precision = 10 ;
   
   MilliPoint(Point p) : BasePoint<MilliPoint,int>(IntLShift(p.x,Precision),IntLShift(p.y,Precision)) {}
  };

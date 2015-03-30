@@ -21,173 +21,36 @@
 
 #include <CCore/inc/TaskMemStack.h>
 
+//#include <CCore/inc/video/LPoint.h>
+#include "LPoint.h"
+
 namespace CCore {
 namespace Video {
 
 /* classes */
 
-struct LPoint;
-
-class LineDriver;
-
-class CurveDriver;
-
 class CommonDrawArt;
-
-/* struct LPoint */
-
-struct LPoint : BasePoint<LPoint,sint64>
- {
-  using BasePoint<LPoint,sint64>::BasePoint;
-  
-  LPoint() {}
-  
-  static const unsigned Precision = 16 ;
-  
-  LPoint(Point p) : BasePoint<LPoint,sint64>(IntLShift((sint64)p.x,Precision),IntLShift((sint64)p.y,Precision)) {}
-  
-  static int RShift(sint64 a,unsigned s) { return (int)IntRShift(a+(1<<(s-1)),s); }
-  
-  Point toPoint(unsigned s=Precision) const { return Point(RShift(x,s),RShift(y,s)); }
-  
-  static sint64 PointDist(sint64 a,sint64 b)
-   {
-    return IntRShift((a<=b)?(b-a):(a-b),Precision);
-   }
- };
-
-inline sint64 PointDist(LPoint a,LPoint b)
- {
-  return Max(LPoint::PointDist(a.x,b.x),LPoint::PointDist(a.y,b.y));
- }
-
-/* class LineDriver */
-
-class LineDriver
- {
-   const unsigned sx;
-   const unsigned sy;
-   
-   const unsigned ty;
-   const unsigned lim;
-   
-   unsigned delta = 0 ;
-   bool flag = false ;
-  
-  private:
-   
-   bool do_step(unsigned s,unsigned t) // t == sx-s
-    {
-     bool ret=false;
-     
-     if( delta<t ) 
-       {
-        bool next_flag=( (delta+=s)>lim );
-        
-        ret=( flag!=next_flag );
-        
-        flag=next_flag;
-       } 
-     else
-       {
-        bool next_flag=( (delta-=t)>lim );
-        
-        ret=( flag==next_flag );
-        
-        flag=next_flag;
-       }
-     
-     return ret;
-    }
-
-   bool do_step(unsigned s) { return do_step(s,sx-s); }
-   
-  public:
-  
-   LineDriver(unsigned sx_,unsigned sy_) : sx(sx_),sy(sy_),ty(sx_-sy_),lim(sx_/2) {} // sx >= sy > 0
-   
-   bool step() { return do_step(sy,ty); }
-   
-   unsigned step(unsigned count);
-   
-   struct Result
-    {
-     unsigned off;
-     unsigned lim;
-     
-     bool operator + () const { return off<lim; }
-     
-     bool operator ! () const { return off>=lim; }
-    };
-   
-   static Result Inf(Result a,Result b) { return {Max(a.off,b.off),Min(a.lim,b.lim)}; }
-   
-   Result clip(int x,int y,int ex,int ey,int dx,int dy) const;
-
-   unsigned clipToX(unsigned y) const;
-   
-   Result clipToX(Result clip_y) const;
-   
-   static Result Clip(int x,int e,int d);
- };
-
-/* class CurveDriver */
-
-class CurveDriver : NoCopy
- {
-   static const unsigned MaxLevel = 10 ;
-   
-   static const unsigned MaxFineness = 5 ;
-   
-   static const ulen Len = (1u<<MaxLevel) ;
-   
-   static sint64 Fineness(PtrStepLen<const LPoint> dots);
-   
-   static sint64 Spline(sint64 a,sint64 b,sint64 c,sint64 d);
- 
-   static LPoint Spline(LPoint a,LPoint b,LPoint c,LPoint d);
-   
-  private:
-   
-   LPoint buf[3*Len+1];
-   unsigned level = 0 ;
-   
-   LPoint e;
-  
-  private:
-   
-   void spline();
-   
-   void spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r);
-   
-  public:
-   
-   CurveDriver() {}
-  
-   void spline(Point a,Point b,Point c,Point d);
-   
-   void spline(Point a,Point b,Point c,Point d,Point e,Point f);
-   
-   void shift(Point f);
-   
-   void shift();
-   
-   PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
- };
 
 /* class CommonDrawArt */
 
 class CommonDrawArt
  {
-   static void Prepare(int &a,int &b,int d);
-  
-   static bool DistDir(int &e,unsigned &s,int a,int b);
- 
    class WorkBuf : public FrameBuf<DesktopColor>
     {
+      static void Prepare(int &a,int &b,int d);
+    
      public:
      
       explicit WorkBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
+      
+      template <class Plot>
+      void lineY(int abx,int ay,int by,Plot plot); // [a,b)
+      
+      template <class Plot>
+      void lineX(int aby,int ax,int bx,Plot plot); // [a,b)
+      
+      template <class Plot>
+      void line(Point a,Point b,Plot plot); // [a,b)
       
       void lineY(int abx,int ay,int by,DesktopColor color); // [a,b)
       
@@ -200,8 +63,11 @@ class CommonDrawArt
    
   private: 
    
+   template <class Plot>
+   void path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot plot);
+   
    void path(PtrStepLen<const LPoint> curve,DesktopColor color);
-
+   
    void path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
    
    void path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
@@ -292,6 +158,8 @@ class CommonDrawArt
    // special
    
    void grid(int cell);
+   
+   void gridCell(Point p,DesktopColor color,int magnify);
    
    void curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,int magnify);
    

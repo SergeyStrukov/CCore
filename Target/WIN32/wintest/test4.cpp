@@ -19,6 +19,7 @@
 #include <CCore/inc/Random.h>
 
 #include "DrawArt.h"
+#include "DrawAlgo.h"
 
 namespace App4 {
 

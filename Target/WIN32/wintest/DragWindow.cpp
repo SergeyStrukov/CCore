@@ -13,8 +13,10 @@
 //
 //----------------------------------------------------------------------------------------
  
+//#include <CCore/inc/video/DragWindow.h>
 #include "DragWindow.h"
- 
+
+//#include <CCore/inc/video/DrawArt.h>
 #include "DrawArt.h"
 
 namespace CCore {
