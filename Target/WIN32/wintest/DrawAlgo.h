@@ -22,6 +22,43 @@
 namespace CCore {
 namespace Video {
 
+/* PointDist() */
+
+inline uint64 PointDist(LPoint a,LPoint b)
+ {
+  return Max(IntAbs(a.x,b.x),IntAbs(a.y,b.y))>>LPoint::Precision;
+ }
+
+/* PointNear() */
+
+inline bool PointNear(int a,int b) { return (a<b)?( b-a==1 ):( a-b<=1 ); }
+
+inline bool PointNear(Point a,Point b) { return PointNear(a.x,b.x) && PointNear(a.y,b.y) ; }
+
+/* DistDir() */
+
+template <class SInt,class UInt>
+bool DistDir(int &e,UInt &s,SInt a,SInt b)
+ {
+  if( a<b )
+    {
+     e=1;
+     s=IntDist(a,b);
+     
+     return true;
+    }
+  
+  if( a>b )
+    {
+     e=-1;
+     s=IntDist(b,a);
+     
+     return true;
+    }
+  
+  return false;
+ }
+
 /* classes */
 
 template <class UInt> class LineDriverBase;
@@ -158,9 +195,38 @@ class LineDriver64 : public LineDriverBase<uint64>
   
    LineDriver64(uint64 sx,uint64 sy) : LineDriverBase<uint64>(sx,sy) {} // sx >= sy > 0
    
-   static uint64 First(sint64 a,int e);
+   static uint64 First(sint64 a,int e)
+    {
+     int A=LPoint::RShift(a);
+     
+     if( e>0 )
+       {
+        return LPoint::LShift(A+1)-a;
+       }
+     else
+       {
+        return a-LPoint::LShift(A-1);
+       }
+    }
    
-   static unsigned Count(sint64 a,sint64 b);
+   static unsigned Count(sint64 a,sint64 b)
+    {
+     int A=LPoint::RShift(a);
+     int B=LPoint::RShift(b);
+     
+     if( A<B )
+       {
+        return IntDist(A,B)-1;
+       }
+     else if( A>B )
+       {
+        return IntDist(B,A)-1;
+       }
+     else
+       {
+        return 0;
+       }
+    }
  };
 
 /* class CurveDriver */
@@ -206,43 +272,6 @@ class CurveDriver : NoCopy
    
    PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
  };
-
-/* PointDist() */
-
-inline uint64 PointDist(LPoint a,LPoint b)
- {
-  return Max(IntAbs(a.x,b.x),IntAbs(a.y,b.y))>>LPoint::Precision;
- }
-
-/* Near() */
-
-inline bool PointNear(int a,int b) { return (a<b)?( b-a==1 ):( a-b<=1 ); }
-
-inline bool PointNear(Point a,Point b) { return PointNear(a.x,b.y) && PointNear(a.y,b.y) ; }
-
-/* DistDir() */
-
-template <class SInt,class UInt>
-bool DistDir(int &e,UInt &s,SInt a,SInt b)
- {
-  if( a<b )
-    {
-     e=1;
-     s=IntDist(a,b);
-     
-     return true;
-    }
-  
-  if( a>b )
-    {
-     e=-1;
-     s=IntDist(b,a);
-     
-     return true;
-    }
-  
-  return false;
- }
 
 /* Line(Point a,Point b,...) */
 
@@ -313,12 +342,17 @@ void Line(Point a,Point b,Color color,Plot plot) // [a,b)
 struct LineEnds
  {
   Point a;
+  Point a1;
+  Point b1;
   Point b;
+  bool non_empty;
  };
 
 template <class Color,class Plot>
 LineEnds Line(LPoint a,LPoint b,Color color,Plot plot) // (a,b)
  {
+  const unsigned Step = 1u<<LPoint::Precision ;
+  
   int ex;
   int ey;
   uint64 sx;
@@ -330,29 +364,27 @@ LineEnds Line(LPoint a,LPoint b,Color color,Plot plot) // (a,b)
        {
         Point A=a.toPoint(); 
        
-        return {A,A};
+        return {A,A,A,A,false};
        }
     
-     unsigned count=LineDriver64::Count(a.y,b.y);
-     
      Point B;
  
      {
       uint64 first=LineDriver64::First(a.y,ey);
       
-      if( first>=(1<<LPoint::Precision) )
+      if( first>=Step )
         {
-         uint64 delta_y=first-(1<<LPoint::Precision);
+         uint64 delta_y=first-Step;
          
-         if( ey>0 ) a.y+=delta_y; else a.y-=delta_y;
+         a.y=IntMove(a.y,ey,delta_y);
          
          B=a.toPoint();
         }
       else
         {
-         uint64 delta_y=(1<<LPoint::Precision)-first;
+         uint64 delta_y=Step-first;
          
-         if( ey>0 ) a.y-=delta_y; else a.y+=delta_y;
+         a.y=IntMove(a.y,-ey,delta_y);
          
          B=a.toPoint();
         }
@@ -360,196 +392,336 @@ LineEnds Line(LPoint a,LPoint b,Color color,Plot plot) // (a,b)
 
      Point A=B;
      
-     for(; count ;count--)
+     if( unsigned count=LineDriver64::Count(a.y,b.y) )
+       {
+        Point F;
+        
+        if( ey>0 )
+          {
+           A.y++;
+          
+           plot(A,color);
+           
+           F=A;
+          
+           for(count--; count ;count--)
+             {
+              A.y++;
+              
+              plot(A,color);
+             }
+          }
+        else
+          {
+           A.y--;
+          
+           plot(A,color);
+           
+           F=A;
+           
+           for(count--; count ;count--)
+             {
+              A.y--;
+              
+              plot(A,color);
+             }
+          }
+        
+        Point T=A;
+        
+        {
+         if( ey>0 ) A.y++; else A.y--;
+         
+         return {B,F,T,A,true};
+        }
+       }
+     else
        {
         if( ey>0 ) A.y++; else A.y--;
         
-        plot(A,color);
+        return {B,B,A,A,false};
        }
-     
-     {
-      if( ey>0 ) A.y++; else A.y--;
-      
-      return {B,A};
-     }
    }
  
   if( !DistDir(ey,sy,a.y,b.y) )
     {
-     unsigned count=LineDriver64::Count(a.x,b.x);
-     
      Point B;
  
      {
       uint64 first=LineDriver64::First(a.x,ex);
       
-      if( first>=(1<<LPoint::Precision) )
+      if( first>=Step )
         {
-         uint64 delta_x=first-(1<<LPoint::Precision);
+         uint64 delta_x=first-Step;
          
-         if( ex>0 ) a.x+=delta_x; else a.x-=delta_x;
+         a.x=IntMove(a.x,ex,delta_x);
          
          B=a.toPoint();
         }
       else
         {
-         uint64 delta_x=(1<<LPoint::Precision)-first;
+         uint64 delta_x=Step-first;
          
-         if( ex>0 ) a.x-=delta_x; else a.x+=delta_x;
+         a.x=IntMove(a.x,-ex,delta_x);
          
          B=a.toPoint();
         }
      }
-
+ 
      Point A=B;
      
-     for(; count ;count--)
+     if( unsigned count=LineDriver64::Count(a.x,b.x) )
+       {
+        Point F;
+        
+        if( ex>0 )
+          {
+           A.x++;
+          
+           plot(A,color);
+           
+           F=A;
+          
+           for(count--; count ;count--)
+             {
+              A.x++;
+              
+              plot(A,color);
+             }
+          }
+        else
+          {
+           A.x--;
+          
+           plot(A,color);
+           
+           F=A;
+           
+           for(count--; count ;count--)
+             {
+              A.x--;
+              
+              plot(A,color);
+             }
+          }
+        
+        Point T=A;
+        
+        {
+         if( ex>0 ) A.x++; else A.x--;
+         
+         return {B,F,T,A,true};
+        }
+       }
+     else
        {
         if( ex>0 ) A.x++; else A.x--;
-        
-        plot(A,color);
+       
+        return {B,B,A,A,false};
        }
-     
-     {
-      if( ex>0 ) A.x++; else A.x--;
-      
-      return {B,A};
-     }
     }
   
   if( sx>sy )
     {
-     unsigned count=LineDriver64::Count(a.x,b.x);
-     
      LineDriver64 driver(sx,sy);
      Point B;
 
      {
       uint64 first=LineDriver64::First(a.x,ex);
       
-      if( first>=(1<<LPoint::Precision) )
+      if( first>=Step )
         {
-         uint64 delta_x=first-(1<<LPoint::Precision);
+         uint64 delta_x=first-Step;
          uint64 delta_y=driver.step(delta_x);
          
-         if( ex>0 ) a.x+=delta_x; else a.x-=delta_x;
-         
-         if( ey>0 ) a.y+=delta_y; else a.y-=delta_y;
+         a.x=IntMove(a.x,ex,delta_x);
+         a.y=IntMove(a.y,ey,delta_y);
          
          B=a.toPoint();
         }
       else
         {
-         uint64 delta_x=(1<<LPoint::Precision)-first;
+         uint64 delta_x=Step-first;
          uint64 delta_y=driver.back(delta_x);
          
-         if( ex>0 ) a.x-=delta_x; else a.x+=delta_x;
-         
-         if( ey>0 ) a.y-=delta_y; else a.y+=delta_y;
+         a.x=IntMove(a.x,-ex,delta_x);
+         a.y=IntMove(a.y,-ey,delta_y);
          
          B=a.toPoint();
         }
      }
      
-     for(; count ;count--)
+     if( unsigned count=LineDriver64::Count(a.x,b.x) )
        {
-        uint64 delta_x=(1<<LPoint::Precision);
-        uint64 delta_y=driver.step(delta_x);
+        Point A;
         
-        if( ex>0 ) a.x+=delta_x; else a.x-=delta_x;
+        {
+         uint64 delta_x=Step;
+         uint64 delta_y=driver.step_pow2(LPoint::Precision);
+         
+         a.x=IntMove(a.x,ex,delta_x);
+         a.y=IntMove(a.y,ey,delta_y);
+         
+         A=a.toPoint();
+         
+         plot(A,color);
+        }
         
-        if( ey>0 ) a.y+=delta_y; else a.y-=delta_y;
+        Point F=A;
+        
+        for(count--; count ;count--)
+          {
+           uint64 delta_x=Step;
+           uint64 delta_y=driver.step_pow2(LPoint::Precision);
+           
+           a.x=IntMove(a.x,ex,delta_x);
+           a.y=IntMove(a.y,ey,delta_y);
+           
+           A=a.toPoint();
+           
+           plot(A,color);
+          }
+        
+        Point T=A;
+        
+        {
+         uint64 delta_x=Step;
+         uint64 delta_y=driver.step_pow2(LPoint::Precision);
+         
+         a.x=IntMove(a.x,ex,delta_x);
+         a.y=IntMove(a.y,ey,delta_y);
+         
+         A=a.toPoint();
+         
+         return {B,F,T,A,true};
+        }
+       }
+     else
+       {
+        uint64 delta_x=Step;
+        uint64 delta_y=driver.step_pow2(LPoint::Precision);
+        
+        a.x=IntMove(a.x,ex,delta_x);
+        a.y=IntMove(a.y,ey,delta_y);
         
         Point A=a.toPoint();
-        
-        plot(A,color);
+       
+        return {B,B,A,A,false};
        }
-     
-     {
-      uint64 delta_x=(1<<LPoint::Precision);
-      uint64 delta_y=driver.step(delta_x);
-      
-      if( ex>0 ) a.x+=delta_x; else a.x-=delta_x;
-      
-      if( ey>0 ) a.y+=delta_y; else a.y-=delta_y;
-      
-      Point A=a.toPoint();
-      
-      return {B,A};
-     }
     }
   else
     {
-     unsigned count=LineDriver64::Count(a.y,b.y);
-     
      LineDriver64 driver(sy,sx);
      Point B;
  
      {
       uint64 first=LineDriver64::First(a.y,ey);
       
-      if( first>=(1<<LPoint::Precision) )
+      if( first>=Step )
         {
-         uint64 delta_y=first-(1<<LPoint::Precision);
+         uint64 delta_y=first-Step;
          uint64 delta_x=driver.step(delta_y);
          
-         if( ey>0 ) a.y+=delta_y; else a.y-=delta_y;
-         
-         if( ex>0 ) a.x+=delta_x; else a.x-=delta_x;
+         a.y=IntMove(a.y,ey,delta_y);
+         a.x=IntMove(a.x,ex,delta_x);
          
          B=a.toPoint();
         }
       else
         {
-         uint64 delta_y=(1<<LPoint::Precision)-first;
+         uint64 delta_y=Step-first;
          uint64 delta_x=driver.back(delta_y);
          
-         if( ey>0 ) a.y-=delta_y; else a.y+=delta_y;
-         
-         if( ex>0 ) a.x-=delta_x; else a.x+=delta_x;
+         a.y=IntMove(a.y,-ey,delta_y);
+         a.x=IntMove(a.x,-ex,delta_x);
          
          B=a.toPoint();
         }
      }
      
-     for(; count ;count--)
+     if( unsigned count=LineDriver64::Count(a.y,b.y) )
        {
-        uint64 delta_y=(1<<LPoint::Precision);
-        uint64 delta_x=driver.step(delta_y);
+        Point A;
         
-        if( ey>0 ) a.y+=delta_y; else a.y-=delta_y;
+        {
+         uint64 delta_y=Step;
+         uint64 delta_x=driver.step_pow2(LPoint::Precision);
+         
+         a.y=IntMove(a.y,ey,delta_y);
+         a.x=IntMove(a.x,ex,delta_x);
+         
+         A=a.toPoint();
+         
+         plot(A,color);
+        }
         
-        if( ex>0 ) a.x+=delta_x; else a.x-=delta_x;
+        Point F=A;
+        
+        for(count--; count ;count--)
+          {
+           uint64 delta_y=Step;
+           uint64 delta_x=driver.step_pow2(LPoint::Precision);
+           
+           a.y=IntMove(a.y,ey,delta_y);
+           a.x=IntMove(a.x,ex,delta_x);
+           
+           A=a.toPoint();
+           
+           plot(A,color);
+          }
+        
+        Point T=A;
+        
+        {
+         uint64 delta_y=Step;
+         uint64 delta_x=driver.step_pow2(LPoint::Precision);
+         
+         a.y=IntMove(a.y,ey,delta_y);
+         a.x=IntMove(a.x,ex,delta_x);
+         
+         A=a.toPoint();
+         
+         return {B,F,T,A,true};
+        }
+       }
+     else
+       {
+        uint64 delta_y=Step;
+        uint64 delta_x=driver.step_pow2(LPoint::Precision);
+        
+        a.y=IntMove(a.y,ey,delta_y);
+        a.x=IntMove(a.x,ex,delta_x);
         
         Point A=a.toPoint();
         
-        plot(A,color);
+        return {B,B,A,A,false};
        }
-     
-     {
-      uint64 delta_y=(1<<LPoint::Precision);
-      uint64 delta_x=driver.step(delta_y);
-      
-      if( ey>0 ) a.y+=delta_y; else a.y-=delta_y;
-      
-      if( ex>0 ) a.x+=delta_x; else a.x-=delta_x;
-      
-      Point A=a.toPoint();
-      
-      return {B,A};
-     }
     }
  }
 
 /* Line(Point A,LPoint a,LPoint b,...) */
 
-template <class Color,class Plot>
-Point Line(Point A,LPoint a,LPoint b,Color color,Plot plot)
+struct LineEnd
  {
-  //Point B=a.toPoint();
-  
+  Point b;
+  Point b1;
+  bool non_empty;
+ };
+
+template <class Color,class Plot>
+LineEnd LineFirst(LPoint a,LPoint b,Color color,Plot plot)
+ {
   auto ends=Line(a,b,color,plot);
   
+  return {ends.b,ends.b1,ends.non_empty};
+ }
+
+template <class Color,class Plot>
+LineEnd LineNext(LineEnd prev,LPoint a,LPoint b,Color color,Plot plot)
+ {
+  auto ends=Line(a,b,color,plot);
+  
+  Point A=prev.b;
   Point C=ends.a;
   
   if( A==C )
@@ -558,17 +730,61 @@ Point Line(Point A,LPoint a,LPoint b,Color color,Plot plot)
     }
   else if( PointNear(A,C) )
     {
-     plot(A,color);
-     plot(C,color);
+     if( prev.non_empty && ends.non_empty )
+       {
+        Point B=a.toPoint();
+        Point A1=prev.b1;
+        Point C1=ends.a1;
+        
+        if( B==A )
+          {
+           if( PointNear(A1,C) )
+             {
+              plot(C,color);
+             }
+           else if( PointNear(A,C1) )
+             {
+              plot(A,color);
+             }
+           else
+             {
+              plot(A,color);
+              plot(C,color);
+             }
+          }
+        else
+          {
+           if( PointNear(A,C1) )
+             {
+              plot(A,color);
+             }
+           else if( PointNear(A1,C) )
+             {
+              plot(C,color);
+             }
+           else
+             {
+              plot(A,color);
+              plot(C,color);
+             }
+          }
+       }
+     else
+       {
+        plot(A,color);
+        plot(C,color);
+       } 
     }
   else
     {
-     Line(A,C,color,plot);
-     
+     Point B=a.toPoint();
+    
+     plot(A,color);
+     plot(B,color);
      plot(C,color);
     }
   
-  return ends.b;
+  return {ends.b,ends.b1,ends.non_empty};
  }
 
 } // namespace Video

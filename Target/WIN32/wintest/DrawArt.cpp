@@ -327,13 +327,13 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot 
   
   plot(a.toPoint(),color);
   
-  Point A=Line(a,b,color,plot).b;
+  auto end=LineFirst(a,b,color,plot);
   
   for(curve+=2; +curve ;++curve)
     {
      LPoint c=*curve;
      
-     A=Line(A,b,c,color,plot);
+     end=LineNext(end,b,c,color,plot);
      
      a=b;
      b=c;
@@ -349,7 +349,99 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
 
 void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
  {
-  path(curve,color, [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } );
+  auto plot = [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } ;
+
+  LPoint a=curve[0];
+  LPoint b=curve[1];
+  
+  plot(a.toPoint(),color);
+  
+  auto end=LineFirst(a,b,color,plot);
+  
+  for(curve+=2; +curve ;++curve)
+    {
+     LPoint c=*curve;
+     
+     {
+      auto ends=Line(b,c,color,plot);
+      
+      Point A=end.b;
+      Point B=b.toPoint();
+      Point C=ends.a;
+      
+      if( A==C )
+        {
+         plot(A,color);
+        }
+      else if( PointNear(A,C) )
+        {
+         if( end.non_empty && ends.non_empty )
+           {
+            Point A1=end.b1;
+            Point C1=ends.a1;
+            
+            if( B==A )
+              {
+               if( PointNear(A1,C) )
+                 {
+                  plot(C,color);
+                 }
+               else if( PointNear(A,C1) )
+                 {
+                  plot(A,color);
+                 }
+               else
+                 {
+                  plot(A,color);
+                  plot(C,color);
+                 }
+              }
+            else
+              {
+               if( PointNear(A,C1) )
+                 {
+                  plot(A,color);
+                 }
+               else if( PointNear(A1,C) )
+                 {
+                  plot(C,color);
+                 }
+               else
+                 {
+                  plot(A,color);
+                  plot(C,color);
+                 }
+              }
+           }
+         else
+           {
+            plot(A,color);
+            plot(C,color);
+           } 
+        }
+      else
+        {
+         plot(A,color);
+         plot(B,color);
+         plot(C,color);
+        }
+      
+      if( A!=C )
+        {
+         knob(A*magnify,(A==B)?4:3,Blue);
+         knob(C*magnify,(C==B)?4:3,Blue);
+         
+         knob(B*magnify,3,Orange);
+        }
+      
+      end={ends.b,ends.b1,ends.non_empty};
+     }
+     
+     a=b;
+     b=c;
+    }
+  
+  plot(b.toPoint(),color);
  }
 
 void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)

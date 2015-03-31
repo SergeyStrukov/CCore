@@ -97,41 +97,6 @@ auto LineDriver::Clip(int x,int e,int d) -> Result
     }
  }
 
-/* class LineDriver64 */
-
-uint64 LineDriver64::First(sint64 a,int e)
- {
-  int A=LPoint::RShift(a);
-  
-  if( e>0 )
-    {
-     return LPoint::LShift(A+1)-a;
-    }
-  else
-    {
-     return a-LPoint::LShift(A-1);
-    }
- }
-   
-unsigned LineDriver64::Count(sint64 a,sint64 b)
- {
-  int A=LPoint::RShift(a);
-  int B=LPoint::RShift(b);
-  
-  if( A<B )
-    {
-     return IntDist(A,B)-1;
-    }
-  else if( A>B )
-    {
-     return IntDist(B,A)-1;
-    }
-  else
-    {
-     return 0;
-    }
- }
-
 /* class CurveDriver */
 
 uint64 CurveDriver::Fineness(PtrStepLen<const LPoint> dots)
