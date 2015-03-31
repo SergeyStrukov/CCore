@@ -51,15 +51,15 @@ void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,Plot plot)
 
      if( ay<by )
        {
-        for(auto raw=place(Point(abx,ay));;)
+        for(auto ptr=place(Point(abx,ay));;)
           {
-           plot(raw);
+           plot(ptr);
            
            ay++;
            
            if( ay>=by ) break;
            
-           raw=nextY(raw);
+           ptr=nextY(ptr);
           }
        }
     }
@@ -74,15 +74,15 @@ void CommonDrawArt::WorkBuf::lineX(int aby,int ax,int bx,Plot plot)
       
      if( ax<bx )
        {
-        for(auto raw=place(Point(ax,aby));;)
+        for(auto ptr=place(Point(ax,aby));;)
           {
-           plot(raw);
+           plot(ptr);
            
            ax++;
            
            if( ax>=bx ) break;
            
-           raw=NextX(raw);
+           ptr=NextX(ptr);
           }
        }
     }
@@ -127,38 +127,30 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
           {
            if( ey>0 )
              {
-              for(auto raw=place(a);;)
+              for(auto ptr=place(a);;)
                 {
-                 plot(raw);
+                 plot(ptr);
                   
                  if( !--count ) break;
                  
                  if( driver.step() )
-                   {
-                    raw=nextXnextY(raw);
-                   }
+                   ptr=nextXnextY(ptr);
                  else
-                   {
-                    raw=NextX(raw);
-                   }
+                   ptr=NextX(ptr);
                 }
              }
            else
              {
-              for(auto raw=place(a);;)
+              for(auto ptr=place(a);;)
                 {
-                 plot(raw);
+                 plot(ptr);
                   
                  if( !--count ) break;
                  
                  if( driver.step() )
-                   {
-                    raw=nextXprevY(raw);
-                   }
+                   ptr=nextXprevY(ptr);
                  else
-                   {
-                    raw=NextX(raw);
-                   }
+                   ptr=NextX(ptr);
                 }
              }
           }
@@ -166,38 +158,30 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
           {
            if( ey>0 )
              {
-              for(auto raw=place(a);;)
+              for(auto ptr=place(a);;)
                 {
-                 plot(raw);
+                 plot(ptr);
                   
                  if( !--count ) break;
                  
                  if( driver.step() )
-                   {
-                    raw=prevXnextY(raw);
-                   }
+                   ptr=prevXnextY(ptr);
                  else
-                   {
-                    raw=PrevX(raw);
-                   }
+                   ptr=PrevX(ptr);
                 }
              }
            else
              {
-              for(auto raw=place(a);;)
+              for(auto ptr=place(a);;)
                 {
-                 plot(raw);
+                 plot(ptr);
                   
                  if( !--count ) break;
                  
                  if( driver.step() )
-                   {
-                    raw=prevXprevY(raw);
-                   }
+                   ptr=prevXprevY(ptr);
                  else
-                   {
-                    raw=PrevX(raw);
-                   }
+                   ptr=PrevX(ptr);
                 }
              }
           }
@@ -224,38 +208,30 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
           {
            if( ex>0 )
              {
-              for(auto raw=place(a);;)
+              for(auto ptr=place(a);;)
                 {
-                 plot(raw);
+                 plot(ptr);
                   
                  if( !--count ) break;
                  
                  if( driver.step() )
-                   {
-                    raw=nextXnextY(raw);
-                   }
+                   ptr=nextXnextY(ptr);
                  else
-                   {
-                    raw=nextY(raw);
-                   }
+                   ptr=nextY(ptr);
                 }
              }
            else
              {
-              for(auto raw=place(a);;)
+              for(auto ptr=place(a);;)
                 {
-                 plot(raw);
+                 plot(ptr);
                   
                  if( !--count ) break;
                  
                  if( driver.step() )
-                   {
-                    raw=prevXnextY(raw);
-                   }
+                   ptr=prevXnextY(ptr);
                  else
-                   {
-                    raw=nextY(raw);
-                   }
+                   ptr=nextY(ptr);
                 }
              }
           }
@@ -263,38 +239,30 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
           {
            if( ex>0 )
              {
-              for(auto raw=place(a);;)
+              for(auto ptr=place(a);;)
                 {
-                 plot(raw);
+                 plot(ptr);
                   
                  if( !--count ) break;
                  
                  if( driver.step() )
-                   {
-                    raw=nextXprevY(raw);
-                   }
+                   ptr=nextXprevY(ptr);
                  else
-                   {
-                    raw=prevY(raw);
-                   }
+                   ptr=prevY(ptr);
                 }
              }
            else
              {
-              for(auto raw=place(a);;)
+              for(auto ptr=place(a);;)
                 {
-                 plot(raw);
+                 plot(ptr);
                   
                  if( !--count ) break;
                  
                  if( driver.step() )
-                   {
-                    raw=prevXprevY(raw);
-                   }
+                   ptr=prevXprevY(ptr);
                  else
-                   {
-                    raw=prevY(raw);
-                   }
+                   ptr=prevY(ptr);
                 }
              }
           }
@@ -304,23 +272,23 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
 
 void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,DesktopColor color)
  {
-  lineY(abx,ay,by, [color] (Raw *raw) { color.copyTo(raw); } );
+  lineY(abx,ay,by, [color] (Raw *ptr) { color.copyTo(ptr); } );
  }
 
 void CommonDrawArt::WorkBuf::lineX(int aby,int ax,int bx,DesktopColor color)
  {
-  lineX(aby,ax,bx, [color] (Raw *raw) { color.copyTo(raw); } );
+  lineX(aby,ax,bx, [color] (Raw *ptr) { color.copyTo(ptr); } );
  }
 
 void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
  {
-  line(a,b, [color] (Raw *raw) { color.copyTo(raw); } );
+  line(a,b, [color] (Raw *ptr) { color.copyTo(ptr); } );
  }
 
 /* class CommonDrawArt */
 
 template <class Plot>
-void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot plot)
+void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot plot) // TODO
  {
   LPoint a=curve[0];
   LPoint b=curve[1];
@@ -381,12 +349,12 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot 
   plot(B,color);
  }
 
-void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
+void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color) // TODO
  {
   path(curve,color, [this] (Point p,DesktopColor color) { pixel(p,color); } );
  }
 
-void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify) // TODO
  {
   auto plot = [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } ;
 

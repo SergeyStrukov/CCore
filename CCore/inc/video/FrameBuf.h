@@ -37,9 +37,9 @@ class FrameBuf : protected ColorPlane
    
   protected: 
    
-   Raw * place(int y) { return static_cast<Raw *>(PtrAdd(raw,(ulen)y*(ulen)dline)); }
+   Raw * place(int y) { return static_cast<Raw *>(PtrAdd(raw,(ulen)y*(unsigned)dline)); }
    
-   Raw * place(Point p) { return place(p.y)+p.x*RawColor::RawCount; }
+   Raw * place(Point p) { return place(p.y)+(unsigned)p.x*RawColor::RawCount; }
    
    static Raw * NextX(Raw *ptr) { return ptr+RawColor::RawCount; }
    
@@ -203,10 +203,12 @@ void FrameBuf<RawColor>::block(Pane pane,RawColor color)
   
   Raw *ptr=place(pane.getBase());
   
-  for(; pane.dy>0 ;pane.dy--,ptr=nextY(ptr))
+  for(; pane.dy>1 ;pane.dy--,ptr=nextY(ptr))
     {
      HLine(ptr,pane.dx,color);
     }
+  
+  HLine(ptr,pane.dx,color);
  }
 
 template <class RawColor> 
@@ -216,10 +218,12 @@ void FrameBuf<RawColor>::save(Pane pane,RawColor buf[])
   
   Raw *ptr=place(pane.getBase());
   
-  for(; pane.dy>0 ;pane.dy--,ptr=nextY(ptr),buf+=pane.dx)
+  for(; pane.dy>1 ;pane.dy--,ptr=nextY(ptr),buf+=pane.dx)
     {
      Save(ptr,pane.dx,buf);
     }
+  
+  Save(ptr,pane.dx,buf);
  }
 
 template <class RawColor> 
@@ -229,10 +233,12 @@ void FrameBuf<RawColor>::load(Pane pane,const RawColor buf[])
    
   Raw *ptr=place(pane.getBase());
    
-  for(; pane.dy>0 ;pane.dy--,ptr=nextY(ptr),buf+=pane.dx)
+  for(; pane.dy>1 ;pane.dy--,ptr=nextY(ptr),buf+=pane.dx)
     {
      Load(ptr,pane.dx,buf);
     }
+  
+  Load(ptr,pane.dx,buf);
  }
 
 template <class RawColor> 
@@ -241,12 +247,17 @@ void FrameBuf<RawColor>::glyph(Point p,Glyph glyph,RawColor back,RawColor fore)
  {
   int bdy=glyph.dY();
   
-  Raw *ptr=place(p);
+  if( bdy<=0 ) return;
   
-  for(int by=0; by<bdy ;by++,ptr=nextY(ptr))
+  Raw *ptr=place(p);
+  int by=0;
+  
+  for(; by<bdy-1 ;by++,ptr=nextY(ptr))
     {
      HLine(ptr,glyph[by],back,fore);
     }
+  
+  HLine(ptr,glyph[by],back,fore);
  }
 
 template <class RawColor> 
@@ -255,12 +266,17 @@ void FrameBuf<RawColor>::glyph(Point p,Glyph glyph,RawColor fore)
  {
   int bdy=glyph.dY();
   
-  Raw *ptr=place(p);
+  if( bdy<=0 ) return;
   
-  for(int by=0; by<bdy ;by++,ptr=nextY(ptr))
+  Raw *ptr=place(p);
+  int by=0;
+  
+  for(; by<bdy-1 ;by++,ptr=nextY(ptr))
     {
      HLine(ptr,glyph[by],fore);
     }
+  
+  HLine(ptr,glyph[by],fore);
  }
 
 template <class RawColor> 

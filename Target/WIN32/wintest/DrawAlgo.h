@@ -348,7 +348,7 @@ struct LineEnds
  };
 
 template <class Color,class Plot>
-LineEnds Line(LPoint a,LPoint b,Color color,Plot plot) // (a,b)
+LineEnds Line(LPoint a,LPoint b,Color color,Plot plot) // (a,b) TODO
  {
   const unsigned Step = 1u<<LPoint::Precision ;
   
@@ -708,7 +708,7 @@ struct LineEnd
  };
 
 template <class Color,class Plot>
-LineEnd LineFirst(LPoint a,LPoint b,Color color,Plot plot)
+LineEnd LineFirst(LPoint a,LPoint b,Color color,Plot plot) // TODO
  {
   auto ends=Line(a,b,color,plot);
   
@@ -716,7 +716,7 @@ LineEnd LineFirst(LPoint a,LPoint b,Color color,Plot plot)
  }
 
 template <class Color,class Plot>
-LineEnd LineNext(LineEnd prev,LPoint a,LPoint b,Color color,Plot plot)
+LineEnd LineNext(LineEnd prev,LPoint a,LPoint b,Color color,Plot plot) // TODO
  {
   auto ends=Line(a,b,color,plot);
   
