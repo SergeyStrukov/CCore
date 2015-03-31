@@ -1,7 +1,6 @@
 ./DragWindow.cpp
 ./DrawAlgo.cpp
 ./DrawArt.cpp
-./LPoint.cpp
 ./main.cpp
 ./Malevich.cpp
 ./test1.cpp

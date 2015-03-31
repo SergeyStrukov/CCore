@@ -21,9 +21,6 @@
 
 #include <CCore/inc/TaskMemStack.h>
 
-//#include <CCore/inc/video/LPoint.h>
-#include "LPoint.h"
-
 namespace CCore {
 namespace Video {
 

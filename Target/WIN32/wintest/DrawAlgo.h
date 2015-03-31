@@ -16,8 +16,7 @@
 #ifndef CCore_inc_video_DrawAlgo_h
 #define CCore_inc_video_DrawAlgo_h
  
-//#include <CCore/inc/video/LPoint.h>
-#include "LPoint.h"
+#include <CCore/inc/video/Point.h>
 
 namespace CCore {
 namespace Video {
