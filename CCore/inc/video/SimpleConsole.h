@@ -41,8 +41,8 @@ class DefaultFont
    
   public:
   
-   static const int DX = 10 ;
-   static const int DY = 18 ;
+   static const Coord DX = 10 ;
+   static const Coord DY = 18 ;
 
    DefaultFont()
     {
@@ -54,16 +54,16 @@ class DefaultFont
      unsigned index=(unsigned char)ch;
      
      if( index>=32 && index<128 )
-       pixel=Table+(index-32)*DX*DY;
+       pixel=Table+(index-32)*Area(DX,DY);
      else
        pixel=NoCharTable;
     }
   
    // properties
    
-   int dX() const { return DX; }
+   Coord dX() const { return DX; }
   
-   int dY() const { return DY; }
+   Coord dY() const { return DY; }
    
    class Pattern
     {
@@ -75,12 +75,12 @@ class DefaultFont
      
       // properties
      
-      int dX() const { return DX; }
+      Coord dX() const { return DX; }
       
-      bool operator [] (int x) const { return pixel[x]; }
+      bool operator [] (Coord x) const { return pixel[x]; }
     };
   
-   Pattern operator [] (int y) const { return Pattern(pixel+(y*DX)); }
+   Pattern operator [] (Coord y) const { return Pattern(pixel+Area(y,DX)); }
  };
 
 /* class CharPanel<RawColor> */
@@ -95,8 +95,8 @@ class CharPanel : NoCopy
    ColorName line = Gray ;
    ColorName marker = Green ;
    
-   int dx = 0 ;
-   int dy = 0 ;
+   Coord dx = 0 ;
+   Coord dy = 0 ;
    
    RawColor backup[DefaultFont::DX*DefaultFont::DY];
    
@@ -110,17 +110,17 @@ class CharPanel : NoCopy
    
    bool operator ! () const { return !dy; }
    
-   int dX() const { return dx; }
+   Coord dX() const { return dx; }
    
-   int dY() const { return dy; }
+   Coord dY() const { return dy; }
    
    // methods
    
    void init(FrameBuf<RawColor> out);
    
-   void eraseLine(int y);
+   void eraseLine(Coord y);
    
-   void eraseLineLine(int y);
+   void eraseLineLine(Coord y);
    
    void operator () (Point p,char ch);
    
@@ -143,13 +143,13 @@ void CharPanel<RawColor>::init(FrameBuf<RawColor> out_)
  }
 
 template <class RawColor> 
-void CharPanel<RawColor>::eraseLine(int y)
+void CharPanel<RawColor>::eraseLine(Coord y)
  {
   out.block(Pane(0,y*DefaultFont::DY,out.dX(),DefaultFont::DY),back);
  }
 
 template <class RawColor> 
-void CharPanel<RawColor>::eraseLineLine(int y)
+void CharPanel<RawColor>::eraseLineLine(Coord y)
  {
   out.block(Pane(0,y*DefaultFont::DY,out.dX(),DefaultFont::DY-1),back);
   

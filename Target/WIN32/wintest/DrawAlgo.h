@@ -64,7 +64,7 @@ template <class UInt> class LineDriverBase;
 
 class LineDriver;
 
-class LineDriver64;
+class LineDriver32;
 
 class CurveDriver;
 
@@ -159,7 +159,7 @@ class LineDriverBase
 
 /* class LineDriver */
 
-class LineDriver : public LineDriverBase<unsigned>
+class LineDriver : public LineDriverBase<uint16>
  {
   public:
   
@@ -186,13 +186,13 @@ class LineDriver : public LineDriverBase<unsigned>
    static Result Clip(int x,int e,int d);
  };
 
-/* class LineDriver64 */
+/* class LineDriver32 */
 
-class LineDriver64 : public LineDriverBase<uint64>
+class LineDriver32 : public LineDriverBase<uint32>
  {
   public:
   
-   LineDriver64(uint64 sx,uint64 sy) : LineDriverBase<uint64>(sx,sy) {} // sx >= sy > 0
+   LineDriver32(uint64 sx,uint64 sy) : LineDriverBase<uint64>(sx,sy) {} // sx >= sy > 0
    
    static uint64 First(sint64 a,int e)
     {
@@ -504,7 +504,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
     
      if( !count ) return {Null,Null,false};
      
-     LineDriver64 driver(sx,sy);
+     LineDriver driver(sx,sy);
      Point E;
 
      {
@@ -581,7 +581,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      
      if( !count ) return {Null,Null,false};
      
-     LineDriver64 driver(sy,sx);
+     LineDriver driver(sy,sx);
      Point E;
  
      {

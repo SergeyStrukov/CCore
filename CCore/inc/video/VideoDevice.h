@@ -119,8 +119,8 @@ class MultiMode
 struct VideoMode
  {
   ColorMode mode;
-  int dx;
-  int dy;
+  Coord dx;
+  Coord dy;
   int freq; // Hz
   
   VideoMode() : mode(ColorMode_none),dx(0),dy(0),freq(0) {}

@@ -229,8 +229,8 @@ bool VideoControl::append(EDIDTimingDesc desc)
      
      VideoMode mode;
      
-     mode.dx=desc.hlen;
-     mode.dy=desc.vlen;
+     mode.dx=(Coord)desc.hlen;
+     mode.dy=(Coord)desc.vlen;
      mode.freq=desc.freq();
      
      mode.mode=ColorMode16;

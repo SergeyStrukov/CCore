@@ -22,6 +22,8 @@
 #include <CCore/inc/video/Keyboard.h>
 #include <CCore/inc/video/Mouse.h>
 #include <CCore/inc/video/Color.h>
+
+#include <CCore/inc/video/FrameBuf.h>
  
 namespace CCore {
 namespace Video {

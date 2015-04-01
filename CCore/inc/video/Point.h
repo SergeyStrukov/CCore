@@ -21,6 +21,20 @@
 namespace CCore {
 namespace Video {
 
+/* types */
+
+using Coord = sint16 ;
+
+using MCoord = sint32 ;
+
+using LCoord = sint32 ;
+
+using AreaType = unsigned ;
+
+/* functions */
+
+inline constexpr AreaType Area(Coord dx,Coord dy) { return (AreaType)dx*(AreaType)dy; }
+
 /* classes */ 
 
 template <class T,class Int> struct BasePoint;
@@ -112,63 +126,67 @@ struct BasePoint
 
 /* struct Point */
 
-struct Point : BasePoint<Point,int>
+struct Point : BasePoint<Point,Coord>
  {
-  using BasePoint<Point,int>::BasePoint;
+  using BasePoint<Point,Coord>::BasePoint;
  };
 
 /* struct MilliPoint */
 
-struct MilliPoint : BasePoint<MilliPoint,int>
+struct MilliPoint : BasePoint<MilliPoint,MCoord>
  {
   static const unsigned Precision = 10 ;
  
-  using BasePoint<MilliPoint,int>::BasePoint;
+  static MCoord LShift(Coord a) { return IntLShift((MCoord)a,Precision); }
+  
+  using BasePoint<MilliPoint,MCoord>::BasePoint;
   
   MilliPoint() {}
   
-  MilliPoint(Point p) : BasePoint<MilliPoint,int>(IntLShift(p.x,Precision),IntLShift(p.y,Precision)) {}
+  MilliPoint(Point p) : BasePoint<MilliPoint,MCoord>(LShift(p.x),LShift(p.y)) {}
  };
 
 /* struct LPoint */
 
-struct LPoint : BasePoint<LPoint,sint64>
+struct LPoint : BasePoint<LPoint,LCoord>
  {
-  static const unsigned Precision = 16 ;
+  static const unsigned Precision = 14 ;
  
-  static sint64 LShift(int a,unsigned s=Precision) { return IntLShift((sint64)a,s); }
+  static LCoord LShift(Coord a) { return IntLShift((LCoord)a,Precision); }
+  
+  static const LCoord RShiftBias = 1<<(Precision-1) ;
  
-  static int RShift(sint64 a,unsigned s=Precision) { return (int)IntRShift(a+(1<<(s-1)),s); }
+  static Coord RShift(LCoord a) { return (Coord)IntRShift<LCoord>(a+RShiftBias,Precision); }
   
   // constructors
   
-  using BasePoint<LPoint,sint64>::BasePoint;
+  using BasePoint<LPoint,LCoord>::BasePoint;
   
   LPoint() {}
   
-  LPoint(Point p) : BasePoint<LPoint,sint64>(LShift(p.x),LShift(p.y)) {}
+  LPoint(Point p) : BasePoint<LPoint,LCoord>(LShift(p.x),LShift(p.y)) {}
   
-  LPoint(MilliPoint p) : BasePoint<LPoint,sint64>(LShift(p.x,Precision-MilliPoint::Precision),LShift(p.y,Precision-MilliPoint::Precision)) {}
+  LPoint(MilliPoint p) : BasePoint<LPoint,LCoord>(IntLShift(p.x,Precision-MilliPoint::Precision),IntLShift(p.y,Precision-MilliPoint::Precision)) {}
   
   // methods
   
-  Point toPoint(unsigned s=Precision) const { return Point(RShift(x,s),RShift(y,s)); }
+  Point toPoint() const { return Point(RShift(x),RShift(y)); }
  };
 
 /* struct Pane */ 
 
 struct Pane
  {
-  int x;
-  int y;
-  int dx; // >=0 
-  int dy; // >=0
+  Coord x;
+  Coord y;
+  Coord dx; // >=0 
+  Coord dy; // >=0
   
   Pane() : x(0),y(0),dx(0),dy(0) {}
   
   Pane(NothingType) : Pane() {}
   
-  Pane(int x_,int y_,int dx_,int dy_)
+  Pane(Coord x_,Coord y_,Coord dx_,Coord dy_)
    : x(x_),y(y_),dx(dx_),dy(dy_) 
    {
     getLim();
@@ -195,6 +213,8 @@ struct Pane
   Point getSize() const { return Point(dx,dy); }
   
   Point getLim() const { return Point(IntAdd(x,dx),IntAdd(y,dy)); }
+  
+  AreaType getArea() const { return Area(dx,dy); }
   
   bool contains(Point point) const
    { 
@@ -256,7 +276,7 @@ inline Pane Inf(Pane a,Pane b)
   return Inf_nonempty(a,b);
  }
 
-inline Pane Extent(Point base,int dx,int dy) { return Pane(base.x,base.y,dx,dy); }
+inline Pane Extent(Point base,Coord dx,Coord dy) { return Pane(base.x,base.y,dx,dy); }
 
 inline Pane Extent(Point base,Point size) { return Pane(base.x,base.y,size.x,size.y); }
 

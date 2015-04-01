@@ -70,7 +70,7 @@ LCD::FrameBuf16::FrameBuf16(uint32 hlen,uint32 vlen,Space video_space)
   
   Range(base+1,15).set_null();
   
-  this->plane=Video::ColorPlane(base+16,hlen,vlen,hlen*2);
+  this->plane=Video::ColorPlane(base+16,(Video::Coord)hlen,(Video::Coord)vlen,Video::DLineType(hlen*2u));
   this->base=base;
   this->lim=lim;
  }
@@ -92,7 +92,7 @@ LCD::FrameBuf24::FrameBuf24(uint32 hlen,uint32 vlen,Space video_space)
   
   Range(base+2,30).set_null();
 
-  this->plane=Video::ColorPlane(base+32,hlen,vlen,hlen*3);
+  this->plane=Video::ColorPlane(base+32,(Video::Coord)hlen,(Video::Coord)vlen,Video::DLineType(hlen*3u));
   this->base=base;
   this->lim=lim;
  }
@@ -113,7 +113,7 @@ LCD::FrameBuf32::FrameBuf32(uint32 hlen,uint32 vlen,Space video_space)
   
   Range(base+1,7).set_null();
   
-  this->plane=Video::ColorPlane(base+8,hlen,vlen,hlen*4);
+  this->plane=Video::ColorPlane(base+8,(Video::Coord)hlen,(Video::Coord)vlen,Video::DLineType(hlen*4u));
   this->base=base;
   this->lim=lim;
  }

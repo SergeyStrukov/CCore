@@ -56,8 +56,6 @@ class RawColor32;
 
 class RawColor32Inv;
 
-struct ColorPlane;
-
 /* enum ColorName */
 
 enum ColorName : uint32
@@ -164,7 +162,7 @@ class RawColor16
   
    using Raw = uint16 ;
   
-   static const ulen RawCount = 1 ;
+   static const unsigned RawCount = 1 ;
   
   private:
   
@@ -208,7 +206,7 @@ class RawColor24
   
    using Raw = uint8 ;
   
-   static const ulen RawCount = 3 ;
+   static const unsigned RawCount = 3 ;
   
   private:
   
@@ -244,7 +242,7 @@ class RawColor24Inv
   
    using Raw = uint8 ;
   
-   static const ulen RawCount = 3 ;
+   static const unsigned RawCount = 3 ;
   
   private:
   
@@ -354,20 +352,6 @@ class RawColor32Inv
      
      dst[0]=Pack888(blender.blendR(r),blender.blendG(g),blender.blendB(b));
     }
- };
-
-/* struct ColorPlane */
-
-struct ColorPlane
- {
-  void *raw;
-  int dx;
-  int dy;
-  int dline; // in chars
-  
-  ColorPlane() : raw(0),dx(0),dy(0),dline(0) {}
-  
-  ColorPlane(void *raw_,int dx_,int dy_,int dline_) : raw(raw_),dx(dx_),dy(dy_),dline(dline_) {}
  };
 
 } // namespace Video

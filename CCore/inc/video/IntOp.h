@@ -23,29 +23,29 @@ namespace Video {
 
 /* functions */
 
-inline unsigned IntDist(int a,int b) // a <= b
+inline uint16 IntDist(sint16 a,sint16 b) // a <= b
  { 
-  return SIntFunc<int>::Dist(a,b); 
+  return SIntFunc<sint16>::Dist(a,b); 
  }
 
-inline int IntMove(int a,int e,unsigned delta)
+inline sint16 IntMove(sint16 a,int e,uint16 delta)
  {
-  return SIntFunc<int>::Move(a,e,delta);
+  return SIntFunc<sint16>::Move(a,e,delta);
  }
 
-inline unsigned IntAbs(int a,int b) { return (a<=b)?IntDist(a,b):IntDist(b,a); }
+inline uint16 IntAbs(sint16 a,sint16 b) { return (a<=b)?IntDist(a,b):IntDist(b,a); }
 
-inline uint64 IntDist(sint64 a,sint64 b) // a <= b
+inline uint32 IntDist(sint32 a,sint32 b) // a <= b
  { 
-  return SIntFunc<sint64>::Dist(a,b); 
+  return SIntFunc<sint32>::Dist(a,b); 
  }
 
-inline sint64 IntMove(sint64 a,int e,uint64 delta)
+inline sint32 IntMove(sint32 a,int e,uint32 delta)
  {
-  return SIntFunc<sint64>::Move(a,e,delta);
+  return SIntFunc<sint32>::Move(a,e,delta);
  }
 
-inline uint64 IntAbs(sint64 a,sint64 b) { return (a<=b)?IntDist(a,b):IntDist(b,a); }
+inline uint32 IntAbs(sint32 a,sint32 b) { return (a<=b)?IntDist(a,b):IntDist(b,a); }
 
 /* functions */
 
@@ -65,10 +65,10 @@ template <class SInt>
 inline SInt IntMul(SInt a,SInt b) { return a*b; } // may overflow
 
 template <class SInt>
-inline SInt IntLShift(SInt a,unsigned s) { return a<<s; } // may overflow , UB for some arguments
+inline SInt IntLShift(SInt a,unsigned s) { return a<<s; } // may overflow , UB for some arguments must be removed, operates as ASL
 
 template <class SInt>
-inline SInt IntRShift(SInt a,unsigned s) { return a>>s; } // USB for some arguments
+inline SInt IntRShift(SInt a,unsigned s) { return a>>s; } // US for some arguments must be removed, operates as ASR
 
 } // namespace Video
 } // namespace CCore

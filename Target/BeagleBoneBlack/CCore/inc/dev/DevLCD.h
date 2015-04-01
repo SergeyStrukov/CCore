@@ -18,6 +18,7 @@
 
 #include <CCore/inc/video/EDID.h>
 #include <CCore/inc/video/Color.h>
+#include <CCore/inc/video/FrameBuf.h>
 
 #include <CCore/inc/Task.h>
 #include <CCore/inc/InstanceLock.h>
