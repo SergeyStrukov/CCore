@@ -23,29 +23,20 @@ namespace Video {
 
 /* functions */
 
-inline uint16 IntDist(sint16 a,sint16 b) // a <= b
+template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+inline UInt IntDist(SInt a,SInt b) // a <= b
  { 
-  return SIntFunc<sint16>::Dist(a,b); 
+  return SIntFunc<SInt>::Dist(a,b); 
  }
 
-inline sint16 IntMove(sint16 a,int e,uint16 delta)
+template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+inline SInt IntMove(SInt a,int e,UInt delta)
  {
-  return SIntFunc<sint16>::Move(a,e,delta);
+  return SIntFunc<SInt>::Move(a,e,delta);
  }
 
-inline uint16 IntAbs(sint16 a,sint16 b) { return (a<=b)?IntDist(a,b):IntDist(b,a); }
-
-inline uint32 IntDist(sint32 a,sint32 b) // a <= b
- { 
-  return SIntFunc<sint32>::Dist(a,b); 
- }
-
-inline sint32 IntMove(sint32 a,int e,uint32 delta)
- {
-  return SIntFunc<sint32>::Move(a,e,delta);
- }
-
-inline uint32 IntAbs(sint32 a,sint32 b) { return (a<=b)?IntDist(a,b):IntDist(b,a); }
+template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+inline UInt IntAbs(SInt a,SInt b) { return (a<=b)?IntDist<SInt,UInt>(a,b):IntDist<SInt,UInt>(b,a); }
 
 /* functions */
 

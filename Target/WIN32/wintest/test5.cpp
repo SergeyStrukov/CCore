@@ -105,8 +105,8 @@ class Client : public DragClient
   
    struct Config
     {
-     int knob_len =  3 ;
-     int magnify  = 32 ;
+     Coord knob_len =  3 ;
+     Coord magnify  = 32 ;
     
      ColorName back  = Silver ;
      ColorName field =  White ;
@@ -208,11 +208,11 @@ class Client : public DragClient
        {
         CommonDrawArt art(buf);
         
+        art.grid(cfg.magnify);
+        
         switch( draw_type )
           {
            case DrawCurvePath  : art.curvePath_micro(Range_const(dots),cfg.path,focus,cfg.magnify); break;
-           
-           default: art.grid(cfg.magnify); 
           }
        }
      else
@@ -418,7 +418,7 @@ class Client : public DragClient
     {
      if( magnify )
        {
-        cfg.magnify=Cap(5,cfg.magnify+delta,100);
+        cfg.magnify=(Coord)Cap<int>(5,cfg.magnify+delta,100);
        
         win->redraw();
        }

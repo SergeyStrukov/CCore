@@ -25,9 +25,15 @@ namespace Video {
 
 using Coord = sint16 ;
 
+using uCoord = uint16 ;
+
 using MCoord = sint32 ;
 
+using uMCoord = uint32 ;
+
 using LCoord = sint32 ;
+
+using uLCoord = uint32 ;
 
 using AreaType = unsigned ;
 

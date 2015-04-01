@@ -315,8 +315,8 @@ class DragWindow : public FrameWindow
     {
      struct Config
       {
-       int drag_width   = 20 ;
-       int btn_width    = 16 ;
+       Coord drag_width   = 20 ;
+       Coord btn_width    = 16 ;
        
        ColorName dragOn      =     Olive ;
        ColorName dragCorner  =    Silver ;

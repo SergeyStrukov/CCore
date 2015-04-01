@@ -34,24 +34,24 @@ class CommonDrawArt
  {
    class WorkBuf : public FrameBuf<DesktopColor>
     {
-      static void Prepare(int &a,int &b,int d);
+      static void Prepare(Coord &a,Coord &b,Coord d);
     
      public:
      
       explicit WorkBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
       
       template <class Plot>
-      void lineY(int abx,int ay,int by,Plot plot); // [a,b)
+      void lineY(Coord abx,Coord ay,Coord by,Plot plot); // [a,b)
       
       template <class Plot>
-      void lineX(int aby,int ax,int bx,Plot plot); // [a,b)
+      void lineX(Coord aby,Coord ax,Coord bx,Plot plot); // [a,b)
       
       template <class Plot>
       void line(Point a,Point b,Plot plot); // [a,b)
       
-      void lineY(int abx,int ay,int by,DesktopColor color); // [a,b)
+      void lineY(Coord abx,Coord ay,Coord by,DesktopColor color); // [a,b)
       
-      void lineX(int aby,int ax,int bx,DesktopColor color); // [a,b)
+      void lineX(Coord aby,Coord ax,Coord bx,DesktopColor color); // [a,b)
       
       void line(Point a,Point b,DesktopColor color); // [a,b)
     };
@@ -65,13 +65,13 @@ class CommonDrawArt
    
    void path(PtrStepLen<const LPoint> curve,DesktopColor color);
    
-   void path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
+   void path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
    
-   void path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
+   void path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
    
-   void path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
+   void path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
    
-   void path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify);
+   void path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
    
   public:
   
@@ -85,9 +85,9 @@ class CommonDrawArt
   
    void block(Pane pane,DesktopColor color);
    
-   void knob(Point p,int len,DesktopColor color)
+   void knob(Point p,Coord len,DesktopColor color)
     {
-     int d=2*len+1;
+     Coord d=2*len+1;
      
      block(Pane(p.x-len,p.y-len,d,d),color);
     }
@@ -154,11 +154,11 @@ class CommonDrawArt
    
    // special
    
-   void grid(int cell);
+   void grid(Coord cell);
    
-   void gridCell(Point p,DesktopColor color,int magnify);
+   void gridCell(Point p,DesktopColor color,Coord magnify);
    
-   void curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,int magnify);
+   void curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,Coord magnify);
    
    // fill
    
@@ -166,7 +166,7 @@ class CommonDrawArt
    
    // stroke
    
-   void stroke(PtrLen<const MilliPoint> border,DesktopColor color,int width_mpx);
+   void stroke(PtrLen<const MilliPoint> border,DesktopColor color,Coord width_mpx);
  };
 
 } // namespace Video

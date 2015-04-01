@@ -23,14 +23,14 @@ namespace Video {
 
 /* PointDist() */
 
-inline uint64 PointDist(LPoint a,LPoint b)
+inline uLCoord PointDist(LPoint a,LPoint b)
  {
   return Max(IntAbs(a.x,b.x),IntAbs(a.y,b.y))>>LPoint::Precision;
  }
 
 /* PointNear() */
 
-inline bool PointNear(int a,int b) { return (a<b)?( b-a==1 ):( a-b<=1 ); }
+inline bool PointNear(Coord a,Coord b) { return (a<b)?( b-a==1 ):( a-b<=1 ); }
 
 inline bool PointNear(Point a,Point b) { return PointNear(a.x,b.x) && PointNear(a.y,b.y) ; }
 
@@ -64,7 +64,7 @@ template <class UInt> class LineDriverBase;
 
 class LineDriver;
 
-class LineDriver32;
+class LineDriverL;
 
 class CurveDriver;
 
@@ -159,16 +159,16 @@ class LineDriverBase
 
 /* class LineDriver */
 
-class LineDriver : public LineDriverBase<uint16>
+class LineDriver : public LineDriverBase<uCoord>
  {
   public:
   
-   LineDriver(unsigned sx,unsigned sy) : LineDriverBase<unsigned>(sx,sy) {} // sx >= sy > 0
+   LineDriver(uCoord sx,uCoord sy) : LineDriverBase<uCoord>(sx,sy) {} // sx >= sy > 0
    
    struct Result
     {
-     unsigned off;
-     unsigned lim;
+     uCoord off;
+     uCoord lim;
      
      bool operator + () const { return off<lim; }
      
@@ -177,26 +177,26 @@ class LineDriver : public LineDriverBase<uint16>
    
    static Result Inf(Result a,Result b) { return {Max(a.off,b.off),Min(a.lim,b.lim)}; }
    
-   Result clip(int x,int y,int ex,int ey,int dx,int dy) const;
+   Result clip(Coord x,Coord y,int ex,int ey,Coord dx,Coord dy) const;
 
-   unsigned clipToX(unsigned y) const;
+   uCoord clipToX(uCoord y) const;
    
    Result clipToX(Result clip_y) const;
    
-   static Result Clip(int x,int e,int d);
+   static Result Clip(Coord x,int e,Coord d);
  };
 
-/* class LineDriver32 */
+/* class LineDriverL */
 
-class LineDriver32 : public LineDriverBase<uint32>
+class LineDriverL : public LineDriverBase<uLCoord>
  {
   public:
   
-   LineDriver32(uint64 sx,uint64 sy) : LineDriverBase<uint64>(sx,sy) {} // sx >= sy > 0
+   LineDriverL(uLCoord sx,uLCoord sy) : LineDriverBase<uLCoord>(sx,sy) {} // sx >= sy > 0
    
-   static uint64 First(sint64 a,int e)
+   static uLCoord First(LCoord a,int e)
     {
-     int A=LPoint::RShift(a);
+     Coord A=LPoint::RShift(a);
      
      if( e>0 )
        {
@@ -208,10 +208,10 @@ class LineDriver32 : public LineDriverBase<uint32>
        }
     }
    
-   static unsigned Count(sint64 a,sint64 b)
+   static uCoord Count(LCoord a,LCoord b)
     {
-     int A=LPoint::RShift(a);
-     int B=LPoint::RShift(b);
+     Coord A=LPoint::RShift(a);
+     Coord B=LPoint::RShift(b);
      
      if( A<B )
        {
@@ -238,9 +238,9 @@ class CurveDriver : NoCopy
    
    static const ulen Len = (1u<<MaxLevel) ;
    
-   static uint64 Fineness(PtrStepLen<const LPoint> dots);
+   static uLCoord Fineness(PtrStepLen<const LPoint> dots);
    
-   static sint64 Spline(sint64 a,sint64 b,sint64 c,sint64 d);
+   static LCoord Spline(LCoord a,LCoord b,LCoord c,LCoord d);
  
    static LPoint Spline(LPoint a,LPoint b,LPoint c,LPoint d);
    
@@ -279,8 +279,8 @@ void Line(Point a,Point b,Color color,Plot plot) // [a,b)
  {
   int ex;
   int ey;
-  unsigned sx;
-  unsigned sy;
+  uCoord sx;
+  uCoord sy;
   
   if( !DistDir(ex,sx,a.x,b.x) )
     {
@@ -348,12 +348,12 @@ struct LineEnd
 template <class Func,class Color,class Plot>
 LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,first,color,plot) (a,b)
  {
-  const unsigned Step = 1u<<LPoint::Precision ;
+  const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
   
   int ex;
   int ey;
-  uint64 sx;
-  uint64 sy;
+  uLCoord sx;
+  uLCoord sy;
   
   if( !DistDir(ex,sx,a.x,b.x) )
     {
@@ -362,18 +362,18 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
         return {Null,Null,false};
        }
     
-     unsigned count=LineDriver64::Count(a.y,b.y);
+     auto count=LineDriverL::Count(a.y,b.y);
      
      if( !count ) return {Null,Null,false};
      
      Point E;
  
      {
-      uint64 first=LineDriver64::First(a.y,ey);
+      uLCoord first=LineDriverL::First(a.y,ey);
       
       if( first>=Step )
         {
-         uint64 delta_y=first-Step;
+         uLCoord delta_y=first-Step;
          
          a.y=IntMove(a.y,ey,delta_y);
          
@@ -381,7 +381,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
         }
       else
         {
-         uint64 delta_y=Step-first;
+         uLCoord delta_y=Step-first;
          
          a.y=IntMove(a.y,-ey,delta_y);
          
@@ -431,18 +431,18 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
  
   if( !DistDir(ey,sy,a.y,b.y) )
     {
-     unsigned count=LineDriver64::Count(a.x,b.x);
+     auto count=LineDriverL::Count(a.x,b.x);
      
      if( !count ) return {Null,Null,false};
     
      Point E;
  
      {
-      uint64 first=LineDriver64::First(a.x,ex);
+      uLCoord first=LineDriverL::First(a.x,ex);
       
       if( first>=Step )
         {
-         uint64 delta_x=first-Step;
+         uLCoord delta_x=first-Step;
          
          a.x=IntMove(a.x,ex,delta_x);
          
@@ -450,7 +450,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
         }
       else
         {
-         uint64 delta_x=Step-first;
+         uLCoord delta_x=Step-first;
          
          a.x=IntMove(a.x,-ex,delta_x);
          
@@ -500,20 +500,20 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
   
   if( sx>sy )
     {
-     unsigned count=LineDriver64::Count(a.x,b.x);
+     auto count=LineDriverL::Count(a.x,b.x);
     
      if( !count ) return {Null,Null,false};
      
-     LineDriver driver(sx,sy);
+     LineDriverL driver(sx,sy);
      Point E;
 
      {
-      uint64 first=LineDriver64::First(a.x,ex);
+      uLCoord first=LineDriverL::First(a.x,ex);
       
       if( first>=Step )
         {
-         uint64 delta_x=first-Step;
-         uint64 delta_y=driver.step(delta_x);
+         uLCoord delta_x=first-Step;
+         uLCoord delta_y=driver.step(delta_x);
          
          a.x=IntMove(a.x,ex,delta_x);
          a.y=IntMove(a.y,ey,delta_y);
@@ -522,8 +522,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
         }
       else
         {
-         uint64 delta_x=Step-first;
-         uint64 delta_y=driver.back(delta_x);
+         uLCoord delta_x=Step-first;
+         uLCoord delta_y=driver.back(delta_x);
          
          a.x=IntMove(a.x,-ex,delta_x);
          a.y=IntMove(a.y,-ey,delta_y);
@@ -535,8 +535,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      Point A;
      
      {
-      uint64 delta_x=Step;
-      uint64 delta_y=driver.step_pow2(LPoint::Precision);
+      uLCoord delta_x=Step;
+      uLCoord delta_y=driver.step_pow2(LPoint::Precision);
       
       a.x=IntMove(a.x,ex,delta_x);
       a.y=IntMove(a.y,ey,delta_y);
@@ -550,8 +550,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      
      for(count--; count ;count--)
        {
-        uint64 delta_x=Step;
-        uint64 delta_y=driver.step_pow2(LPoint::Precision);
+        uLCoord delta_x=Step;
+        uLCoord delta_y=driver.step_pow2(LPoint::Precision);
         
         a.x=IntMove(a.x,ex,delta_x);
         a.y=IntMove(a.y,ey,delta_y);
@@ -564,8 +564,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      Point L=A;
      
      {
-      uint64 delta_x=Step;
-      uint64 delta_y=driver.step_pow2(LPoint::Precision);
+      uLCoord delta_x=Step;
+      uLCoord delta_y=driver.step_pow2(LPoint::Precision);
       
       a.x=IntMove(a.x,ex,delta_x);
       a.y=IntMove(a.y,ey,delta_y);
@@ -577,20 +577,20 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
     }
   else
     {
-     unsigned count=LineDriver64::Count(a.y,b.y);
+     auto count=LineDriverL::Count(a.y,b.y);
      
      if( !count ) return {Null,Null,false};
      
-     LineDriver driver(sy,sx);
+     LineDriverL driver(sy,sx);
      Point E;
  
      {
-      uint64 first=LineDriver64::First(a.y,ey);
+      uLCoord first=LineDriverL::First(a.y,ey);
       
       if( first>=Step )
         {
-         uint64 delta_y=first-Step;
-         uint64 delta_x=driver.step(delta_y);
+         uLCoord delta_y=first-Step;
+         uLCoord delta_x=driver.step(delta_y);
          
          a.y=IntMove(a.y,ey,delta_y);
          a.x=IntMove(a.x,ex,delta_x);
@@ -599,8 +599,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
         }
       else
         {
-         uint64 delta_y=Step-first;
-         uint64 delta_x=driver.back(delta_y);
+         uLCoord delta_y=Step-first;
+         uLCoord delta_x=driver.back(delta_y);
          
          a.y=IntMove(a.y,-ey,delta_y);
          a.x=IntMove(a.x,-ex,delta_x);
@@ -612,8 +612,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      Point A;
      
      {
-      uint64 delta_y=Step;
-      uint64 delta_x=driver.step_pow2(LPoint::Precision);
+      uLCoord delta_y=Step;
+      uLCoord delta_x=driver.step_pow2(LPoint::Precision);
       
       a.y=IntMove(a.y,ey,delta_y);
       a.x=IntMove(a.x,ex,delta_x);
@@ -627,8 +627,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      
      for(count--; count ;count--)
        {
-        uint64 delta_y=Step;
-        uint64 delta_x=driver.step_pow2(LPoint::Precision);
+        uLCoord delta_y=Step;
+        uLCoord delta_x=driver.step_pow2(LPoint::Precision);
         
         a.y=IntMove(a.y,ey,delta_y);
         a.x=IntMove(a.x,ex,delta_x);
@@ -641,8 +641,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      Point L=A;
      
      {
-      uint64 delta_y=Step;
-      uint64 delta_x=driver.step_pow2(LPoint::Precision);
+      uLCoord delta_y=Step;
+      uLCoord delta_x=driver.step_pow2(LPoint::Precision);
       
       a.y=IntMove(a.y,ey,delta_y);
       a.x=IntMove(a.x,ex,delta_x);

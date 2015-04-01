@@ -47,13 +47,13 @@ void DragWindow::Shape::layout(Point size)
  {
   if( size>Point(2*cfg.drag_width,2*cfg.drag_width) )
     {
-     int x1=cfg.drag_width;
-     int x2=size.x-cfg.drag_width;
-     int x3=size.x;
+     Coord x1=cfg.drag_width;
+     Coord x2=size.x-cfg.drag_width;
+     Coord x3=size.x;
      
-     int y1=cfg.drag_width;
-     int y2=size.y-cfg.drag_width;
-     int y3=size.y;
+     Coord y1=cfg.drag_width;
+     Coord y2=size.y-cfg.drag_width;
+     Coord y3=size.y;
     
      dragUpLeft=Pane(Point(0,0),Point(x1,y1));
      dragLeft=Pane(Point(0,y1),Point(x1,y2));
@@ -69,11 +69,11 @@ void DragWindow::Shape::layout(Point size)
      
      client=Pane(Point(x1,y1),Point(x2,y2));
      
-     int yb=(cfg.drag_width-cfg.btn_width)/2;
+     Coord yb=(cfg.drag_width-cfg.btn_width)/2;
      
      if( size.x>=(3*cfg.btn_width+2*yb)+4*cfg.drag_width )
        {
-        int xb=(size.x-(3*cfg.btn_width+2*yb))/2; // >= 2*cfg.drag_width 
+        Coord xb=(size.x-(3*cfg.btn_width+2*yb))/2; // >= 2*cfg.drag_width 
         
         btnMin=Pane(xb,yb,cfg.btn_width,cfg.btn_width);
         btnMax=Pane(xb+cfg.btn_width+yb,yb,cfg.btn_width,cfg.btn_width);
@@ -94,7 +94,7 @@ void DragWindow::Shape::layout(Point size)
      
      dragDown=Empty;
      
-     dragDownRight=Pane(Point(0,0),size);
+     dragDownRight=Pane(Null,size);
      dragRight=Empty;
      dragUpRight=Empty;
      
@@ -180,9 +180,9 @@ void DragWindow::replace(Pane place,Point delta,DragType drag_type)
   
   Point new_size(place.dx,place.dy);
   
-  if( new_size>Point(0,0) && new_size<=win->getMaxSize() ) 
+  if( new_size>Null && new_size<=win->getMaxSize() ) 
     {
-     Pane screen=Extent(Point(0,0),desktop->getScreenSize());
+     Pane screen=Extent(Null,desktop->getScreenSize());
     
      if( +Inf(place,screen) ) win->move(place);
     }
@@ -240,13 +240,13 @@ bool DragWindow::forwardKey(VKey vkey,KeyMod kmod,unsigned repeat)
     {
      switch( vkey )
        {
-        case VKey_Left  : replace(Point(-(int)repeat,0),(kmod&KeyMod_Shift)?DragType::Right:DragType::Bar); return true;
+        case VKey_Left  : replace(Point(-(Coord)repeat,0),(kmod&KeyMod_Shift)?DragType::Right:DragType::Bar); return true;
         
-        case VKey_Right : replace(Point((int)repeat,0),(kmod&KeyMod_Shift)?DragType::Right:DragType::Bar); return true;
+        case VKey_Right : replace(Point((Coord)repeat,0),(kmod&KeyMod_Shift)?DragType::Right:DragType::Bar); return true;
         
-        case VKey_Up    : replace(Point(0,-(int)repeat),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); return true;
+        case VKey_Up    : replace(Point(0,-(Coord)repeat),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); return true;
         
-        case VKey_Down  : replace(Point(0,(int)repeat),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); return true;
+        case VKey_Down  : replace(Point(0,(Coord)repeat),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); return true;
         
         case VKey_F2    : minimized(); return true;
         

@@ -24,7 +24,7 @@ namespace Video {
 
 /* class CommonDrawArt::WorkBuf */
 
-void CommonDrawArt::WorkBuf::Prepare(int &a,int &b,int d)
+void CommonDrawArt::WorkBuf::Prepare(Coord &a,Coord &b,Coord d)
  {
   if( a<=b )
     {
@@ -43,7 +43,7 @@ void CommonDrawArt::WorkBuf::Prepare(int &a,int &b,int d)
  }
 
 template <class Plot>
-void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,Plot plot)
+void CommonDrawArt::WorkBuf::lineY(Coord abx,Coord ay,Coord by,Plot plot)
  {
   if( abx>=0 && abx<dx )
     {
@@ -66,7 +66,7 @@ void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,Plot plot)
  }
 
 template <class Plot>
-void CommonDrawArt::WorkBuf::lineX(int aby,int ax,int bx,Plot plot)
+void CommonDrawArt::WorkBuf::lineX(Coord aby,Coord ax,Coord bx,Plot plot)
  {
   if( aby>=0 && aby<dy )
     {
@@ -93,8 +93,8 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
  {
   int ex;
   int ey;
-  unsigned sx;
-  unsigned sy;
+  uCoord sx;
+  uCoord sy;
   
   if( !DistDir(ex,sx,a.x,b.x) )
     {
@@ -114,8 +114,8 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
      
      if( +clip )
        {
-        unsigned off=clip.off;
-        unsigned count=clip.lim-clip.off;
+        uCoord off=clip.off;
+        uCoord count=clip.lim-clip.off;
         
         if( off ) 
           {
@@ -195,8 +195,8 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
      
      if( +clip )
        {
-        unsigned off=clip.off;
-        unsigned count=clip.lim-clip.off;
+        uCoord off=clip.off;
+        uCoord count=clip.lim-clip.off;
         
         if( off ) 
           {
@@ -270,12 +270,12 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
     }
  }
 
-void CommonDrawArt::WorkBuf::lineY(int abx,int ay,int by,DesktopColor color)
+void CommonDrawArt::WorkBuf::lineY(Coord abx,Coord ay,Coord by,DesktopColor color)
  {
   lineY(abx,ay,by, [color] (Raw *ptr) { color.copyTo(ptr); } );
  }
 
-void CommonDrawArt::WorkBuf::lineX(int aby,int ax,int bx,DesktopColor color)
+void CommonDrawArt::WorkBuf::lineX(Coord aby,Coord ax,Coord bx,DesktopColor color)
  {
   lineX(aby,ax,bx, [color] (Raw *ptr) { color.copyTo(ptr); } );
  }
@@ -368,12 +368,12 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
   path(curve,color, [this] (Point p,DesktopColor color) { pixel(p,color); } );
  }
 
-void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
   path(curve,color, [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } );
  }
 
-void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
   Point a=((*curve)*magnify).toPoint();
   
@@ -391,7 +391,7 @@ void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor colo
   knob(a,5,color);
  }
 
-void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
   Point a=((*curve)*magnify).toPoint();
   
@@ -407,7 +407,7 @@ void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor colo
   pixel(a,color);
  }
 
-void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
+void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
   path_micro1(curve,Silver,magnify);
   path_micro2(curve,Black,magnify);
@@ -686,25 +686,23 @@ void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color)
 
  // special
 
-void CommonDrawArt::grid(int cell)
+void CommonDrawArt::grid(Coord cell)
  {
   erase(White);
 
-  for(int x=cell/2; x<buf.dX() ;x+=cell) buf.lineY(x,0,buf.dY(),DesktopColor(Blue));
+  for(Coord x=cell/2; x<buf.dX() ;x+=cell) buf.lineY(x,0,buf.dY(),DesktopColor(Blue));
   
-  for(int y=cell/2; y<buf.dY() ;y+=cell) buf.lineX(y,0,buf.dX(),DesktopColor(Blue));
+  for(Coord y=cell/2; y<buf.dY() ;y+=cell) buf.lineX(y,0,buf.dX(),DesktopColor(Blue));
  }
 
-void CommonDrawArt::gridCell(Point p,DesktopColor color,int magnify)
+void CommonDrawArt::gridCell(Point p,DesktopColor color,Coord magnify)
  {
   knob(p*magnify,magnify/2-1,color);
  }
 
-void CommonDrawArt::curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,int magnify)
+void CommonDrawArt::curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,Coord magnify)
  {
   if( dots.len<4 ) return;
-  
-  grid(magnify);
   
   focus.y-=buf.dY()/magnify;
   

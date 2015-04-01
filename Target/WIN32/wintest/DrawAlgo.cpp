@@ -21,7 +21,7 @@ namespace Video {
 
 /* class LineDriver */
 
-auto LineDriver::clip(int x,int y,int ex,int ey,int dx,int dy) const -> Result
+auto LineDriver::clip(Coord x,Coord y,int ex,int ey,Coord dx,Coord dy) const -> Result
  {
   auto clip_x=Clip(x,ex,dx);
   
@@ -36,17 +36,17 @@ auto LineDriver::clip(int x,int y,int ex,int ey,int dx,int dy) const -> Result
   return Inf(clip_x,clipToX(clip_y));
  }
 
-unsigned LineDriver::clipToX(unsigned y) const
+uCoord LineDriver::clipToX(uCoord y) const
  {
   if( y>sy ) return sx;
   
   if( y==0 ) return 0;
   
-  UIntFunc<unsigned>::Mul mul(sx,y);
+  UIntFunc<uCoord>::Mul mul(sx,y);
   
-  UIntFunc<unsigned>::Sub sub(mul.lo,lim);
+  UIntFunc<uCoord>::Sub sub(mul.lo,lim);
   
-  UIntFunc<unsigned>::DivMod divmod(mul.hi-sub.borrow,sub.result,sy);
+  UIntFunc<uCoord>::DivMod divmod(mul.hi-sub.borrow,sub.result,sy);
   
   if( (sx&1u)!=0 && divmod.mod==0 )
     {
@@ -63,13 +63,13 @@ auto LineDriver::clipToX(Result clip_y) const -> Result
   return {clipToX(clip_y.off),clipToX(clip_y.lim)};
  }
 
-auto LineDriver::Clip(int x,int e,int d) -> Result
+auto LineDriver::Clip(Coord x,int e,Coord d) -> Result
  {
   if( e>0 )
     {
      if( x<0 )
        {
-        return {IntDist(x,0),IntDist(x,d)};
+        return {IntDist<Coord>(x,0),IntDist(x,d)};
        }
      else if( x<d )
        {
@@ -88,27 +88,27 @@ auto LineDriver::Clip(int x,int e,int d) -> Result
        }
      else if( x<d )
        {
-        return {0,IntDist(-1,x)};
+        return {0,IntDist<Coord>(-1,x)};
        }
      else
        {
-        return {IntDist(d-1,x),IntDist(-1,x)};
+        return {IntDist<Coord>(d-1,x),IntDist<Coord>(-1,x)};
        }
     }
  }
 
 /* class CurveDriver */
 
-uint64 CurveDriver::Fineness(PtrStepLen<const LPoint> dots)
+uLCoord CurveDriver::Fineness(PtrStepLen<const LPoint> dots)
  {
-  uint64 ret=0;
+  uLCoord ret=0;
   
   for(; dots.len>1 ;++dots) Replace_max(ret,PointDist(dots[0],dots[1]));
   
   return ret; 
  }
 
-sint64 CurveDriver::Spline(sint64 a,sint64 b,sint64 c,sint64 d)
+LCoord CurveDriver::Spline(LCoord a,LCoord b,LCoord c,LCoord d)
  {
   return (b+c)/2+(b+c-a-d)/16;
  }
