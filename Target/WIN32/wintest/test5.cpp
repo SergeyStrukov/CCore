@@ -16,6 +16,7 @@
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Print.h>
 #include <CCore/inc/Array.h>
+#include <CCore/inc/Timer.h>
 #include <CCore/inc/TaskMemStack.h>
 
 #include <CCore/inc/video/ApplicationBase.h>
@@ -142,6 +143,8 @@ class Client : public DragClient
    bool magnify = false ;
    Point focus;
    
+   mutable PrintFile out;
+   
   private: 
   
    void cross(CommonDrawArt &art,Point p,DesktopColor color) const
@@ -161,10 +164,26 @@ class Client : public DragClient
        }
     }
    
+   static const char * GetTextDesc(DrawType draw_type)
+    {
+     switch( draw_type )
+       {
+        case DrawPath       : return "Path"; 
+        case DrawLoop       : return "Loop"; 
+        case DrawCurvePath  : return "CurvePath"; 
+        case DrawCurveLoop  : return "CurveLoop"; 
+        case DrawSolid      : return "Solid"; 
+        case DrawCurveSolid : return "CurveSolid";
+        
+        default: return "???";
+       }
+    }
+   
   public:
   
    explicit Client(Config cfg_={})
-    : cfg(cfg_)
+    : cfg(cfg_),
+      out("time.txt")
     {
     }
    
@@ -210,6 +229,8 @@ class Client : public DragClient
         
         CommonDrawArt field_art(buf.cut(field));
         
+        ClockTimer timer;
+        
         switch( draw_type )
           {
            case DrawPath       : field_art.path(Range_const(dots_based),cfg.path); break;
@@ -219,6 +240,10 @@ class Client : public DragClient
            case DrawSolid      : field_art.solid(Range_const(dots_based),cfg.path); break;
            case DrawCurveSolid : field_art.curveSolid(Range_const(dots_based),cfg.path); break;
           }
+        
+        auto time=timer.get();
+        
+        Printf(out,"#;[#;] #;\n",GetTextDesc(draw_type),dots.getLen(),time);
        }
     }
    

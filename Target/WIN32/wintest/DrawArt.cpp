@@ -288,77 +288,89 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
 /* class CommonDrawArt */
 
 template <class Plot>
-void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot plot) // TODO
+void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot plot)
  {
   LPoint a=curve[0];
   LPoint b=curve[1];
 
-  Point A=a.toPoint();
-  Point B=b.toPoint();
-  
-  plot(A,color);
-  
   curve+=2;
   
-  while( PointNear(A,B) )
+  auto end=LineFirst(a,b,color,plot);
+  
+  while( !end.ok )
     {
      if( !curve )
        {
-        plot(B,color);
+        plot(a.toPoint(),color);
+        plot(b.toPoint(),color);
        
         return;
        }
      
      b=*curve;
-     B=b.toPoint();
-     
      ++curve;
+     
+     end=LineFirst(a,b,color,plot);
     }
-  
-  auto end=LineFirst(a,b,color,plot);
   
   while( +curve ) 
     {
      a=b;
-     A=B;
-    
      b=*curve;
-     B=b.toPoint();
-     
      ++curve;
      
-     while( PointNear(A,B) )
+     auto next_end=LineNext(end,a,b,color,plot);
+     
+     while( !next_end.ok )
        {
         if( !curve )
           {
-           plot(A,color);
-           plot(B,color);
+           Point B=b.toPoint();
+           
+           if( B!=end.ext )
+             {
+              Point A=a.toPoint();
+            
+              if( PointNear(end.ext,B) )
+                {
+                 plot(end.ext,color);
+                }
+              else if( PointNear(end.last,A) )
+                {
+                 plot(A,color);
+                }
+              else
+                {
+                 plot(end.ext,color);
+                 plot(A,color);
+                }
+             }
           
+           plot(B,color);
+           
            return;
           }
         
         b=*curve;
-        B=b.toPoint();
-        
         ++curve;
+        
+        next_end=LineNext(end,a,b,color,plot);
        }
     
-     end=LineNext(end,a,b,color,plot);
+     end=next_end;
     }
   
-  plot(B,color);
+  plot(end.ext,color);
  }
 
-void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color) // TODO
+void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
  {
   path(curve,color, [this] (Point p,DesktopColor color) { pixel(p,color); } );
  }
 
-void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify) // TODO
+void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
  {
-  auto plot = [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } ;
-
-  path(curve,color,plot);
+  path(curve,color, [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } );
  }
 
 void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,int magnify)
