@@ -285,6 +285,21 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
   line(a,b, [color] (Raw *ptr) { color.copyTo(ptr); } );
  }
 
+void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,ColorName cname) // TODO
+ {
+  if( a.x==b.x )
+    {
+     return lineY(a.x,a.y,b.y,DesktopColor(cname));
+    }
+ 
+  if( a.y==b.y )
+    {
+     return lineX(a.y,a.x,b.x,DesktopColor(cname));
+    }
+  
+  LineSmooth(a,b,cname,SmoothPlot(*this));
+ }
+
 /* class CommonDrawArt */
 
 template <class Plot>
@@ -375,36 +390,42 @@ void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor colo
 
 void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
-  Point a=((*curve)*magnify).toPoint();
+  LPoint a=*curve;
   
-  knob(a,5,color);
+  gridKnob(a,5,color,magnify);
   
   for(++curve; +curve ;++curve)
     {
-     Point b=((*curve)*magnify).toPoint();
+     LPoint b=*curve;
      
-     knob(b,3,color);
+     gridKnob(b,3,color,magnify);
      
      a=b;
     }
   
-  knob(a,5,color);
+  gridKnob(a,5,color,magnify);
  }
 
 void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
-  Point a=((*curve)*magnify).toPoint();
+  LPoint lim=buf.getSize()/magnify;
+  
+  LPoint a=*curve;
   
   for(++curve; +curve ;++curve)
     {
-     Point b=((*curve)*magnify).toPoint();
-     
-     buf.line(a,b,color);
+     LPoint b=*curve;
+
+     if( a>=Null && a<lim && b>=Null && b<lim ) 
+       {
+        Point A=(a*magnify).toPoint();
+        Point B=(b*magnify).toPoint();
+       
+        buf.line(A,B,color);
+       }
      
      a=b;
     }
-  
-  pixel(a,color);
  }
 
 void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
@@ -672,13 +693,52 @@ void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
     }
  }
 
-void CommonDrawArt::solid(PtrLen<const Point> dots,DesktopColor color)
+void CommonDrawArt::path_smooth(PtrLen<const Point> dots,ColorName cname)
+ {
+  if( +dots )
+    {
+     Point a=*dots;
+     
+     for(++dots; +dots ;++dots)
+       {
+        Point b=*dots;
+        
+        buf.line_smooth(a,b,cname);
+        
+        a=b;
+       }
+     
+     pixel(a,cname);
+    }
+ }
+
+void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,ColorName cname)
+ {
+  if( +dots )
+    {
+     Point a=*dots;
+     Point o=a;
+     
+     for(++dots; +dots ;++dots)
+       {
+        Point b=*dots;
+        
+        buf.line_smooth(a,b,cname);
+        
+        a=b;
+       }
+     
+     buf.line_smooth(a,o,cname);
+    }
+ }
+
+void CommonDrawArt::solid(PtrLen<const Point> dots,DesktopColor color) // TODO
  {
   Used(dots);
   Used(color);
  }
 
-void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color)
+void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color) // TODO
  {
   Used(dots);
   Used(color);
@@ -697,7 +757,14 @@ void CommonDrawArt::grid(Coord cell)
 
 void CommonDrawArt::gridCell(Point p,DesktopColor color,Coord magnify)
  {
-  knob(p*magnify,magnify/2-1,color);
+  if( p>=Null && p<buf.getSize()/magnify ) 
+    knob(p*magnify,magnify/2-1,color);
+ }
+
+void CommonDrawArt::gridKnob(LPoint p,Coord len,DesktopColor color,Coord magnify)
+ {
+  if( p>=Null && p<buf.getSize()/magnify ) 
+    knob((p*magnify).toPoint(),len,color);
  }
 
 void CommonDrawArt::curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,Coord magnify)

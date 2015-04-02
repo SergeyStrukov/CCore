@@ -79,6 +79,8 @@ struct BasePoint
   
   friend T operator * (T p,Int a) { return T(IntMul(p.x,a),IntMul(p.y,a)); }
   
+  friend T operator / (T p,Int a) { return T(IntDiv(p.x,a),IntDiv(p.y,a)); }
+  
   friend T operator << (T p,unsigned s) { return T(IntLShift(p.x,s),IntLShift(p.y,s)); }
   
   friend T operator >> (T p,unsigned s) { return T(IntRShift(p.x,s),IntRShift(p.y,s)); }
@@ -90,6 +92,8 @@ struct BasePoint
   friend T operator -= (T &a,T b) { return a=a-b; }
   
   friend T operator *= (T &p,Int a) { return p=p*a; }
+  
+  friend T operator /= (T &p,Int a) { return p=p/a; }
   
   friend T operator <<= (T &p,unsigned s) { return p=p<<s; }
   

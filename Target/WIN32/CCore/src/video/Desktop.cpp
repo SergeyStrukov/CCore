@@ -274,7 +274,7 @@ class WindowBuf : NoCopy
     {
      const char *format="CCore::Video::Private::WindowBuf::setSize(...) : #;";
     
-     if( new_size<=Point(0,0) )
+     if( new_size<=Null )
        {
         Printf(Exception,format,"bad size");
        }
@@ -348,7 +348,7 @@ class WindowBuf : NoCopy
    
    void * getMem() const { return mem; }
    
-   ColorPlane getPlane() const { return ColorPlane(mem,size.x,size.y,size.x*4); }
+   ColorPlane getPlane() const { return ColorPlane(mem,size.x,size.y,size.x*4u); }
    
    void setSize(Point new_size)
     {
@@ -412,7 +412,7 @@ class WindowsControl : public WinControl
    
    static void GuardMaxSize(const char *format,Point max_size)
     {
-     if( max_size<=Point(0,0) )
+     if( max_size<=Null )
        {
         Printf(Exception,format,"bad max_size");
        }
@@ -675,31 +675,31 @@ class WindowsControl : public WinControl
    
    static Point ToPoint(Win32::MsgLParam lParam)
     {
-     return Point(Win32::SLoWord(lParam),Win32::SHiWord(lParam));
+     return Point((Coord)Win32::SLoWord(lParam),(Coord)Win32::SHiWord(lParam));
     }
    
    static Point ToSize(Win32::MsgLParam lParam)
     {
-     return Point(Win32::LoWord(lParam),Win32::HiWord(lParam));
+     return Point((Coord)Win32::LoWord(lParam),(Coord)Win32::HiWord(lParam));
     }
    
    static Pane ToPane(Win32::Rectangle r)
     {
-     return Pane(r.left,r.top,r.right-r.left,r.bottom-r.top);
+     return Pane((Coord)r.left,(Coord)r.top,(Coord)(r.right-r.left),(Coord)(r.bottom-r.top));
     }
 
-   static int RandomLen(int len)
+   static Coord RandomLen(Coord len)
     {
      int percent=Win32::GetTickCount()%100u;
      
-     return (len/2)+((len/4)*percent)/100;
+     return Coord( (len/2)+((len/4)*percent)/100 );
     }
    
-   static int RandomPos(int len)
+   static Coord RandomPos(Coord len)
     {
      int percent=Win32::GetTickCount()%100u;
 
-     return (len*percent)/100;
+     return Coord( (len*percent)/100 );
     }
    
    class WindowPaint : NoCopy
@@ -808,7 +808,7 @@ class WindowsControl : public WinControl
          {
           Point size=ToSize(lParam);
           
-          if( correct_max_size && size>Point(0,0) )
+          if( correct_max_size && size>Null )
             {
              max_size=Sup(max_size,size);
              
@@ -1114,8 +1114,8 @@ class WindowsControl : public WinControl
     {
      Point screen;
      
-     screen.x=Win32::GetSystemMetrics(Win32::SysMetric_DXScreen);
-     screen.y=Win32::GetSystemMetrics(Win32::SysMetric_DYScreen);
+     screen.x=(Coord)Win32::GetSystemMetrics(Win32::SysMetric_DXScreen);
+     screen.y=(Coord)Win32::GetSystemMetrics(Win32::SysMetric_DYScreen);
      
      Point size;
      
@@ -1492,7 +1492,7 @@ class WindowsDesktop : public Desktop
    
    virtual Point getScreenSize()
     {
-     return Point(Win32::GetSystemMetrics(Win32::SysMetric_DXScreen),Win32::GetSystemMetrics(Win32::SysMetric_DYScreen));
+     return Point((Coord)Win32::GetSystemMetrics(Win32::SysMetric_DXScreen),(Coord)Win32::GetSystemMetrics(Win32::SysMetric_DYScreen));
     }
    
    virtual bool pump(unsigned lim)

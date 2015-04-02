@@ -133,10 +133,12 @@ class Client : public DragClient
      DrawCurvePath,
      DrawCurveLoop,
      DrawSolid,
-     DrawCurveSolid
+     DrawCurveSolid,
+     DrawPathSmooth,
+     DrawLoopSmooth
     };
    
-   DrawType draw_type = DrawCurvePath ;
+   DrawType draw_type = DrawPathSmooth ;
    
    ulen selected = 0 ;
    
@@ -174,6 +176,8 @@ class Client : public DragClient
         case DrawCurveLoop  : return "CurveLoop"; 
         case DrawSolid      : return "Solid"; 
         case DrawCurveSolid : return "CurveSolid";
+        case DrawPathSmooth : return "PathSmooth";
+        case DrawLoopSmooth : return "LoopSmooth";
         
         default: return "???";
        }
@@ -239,6 +243,8 @@ class Client : public DragClient
            case DrawCurveLoop  : field_art.curveLoop(Range_const(dots_based),cfg.path); break;
            case DrawSolid      : field_art.solid(Range_const(dots_based),cfg.path); break;
            case DrawCurveSolid : field_art.curveSolid(Range_const(dots_based),cfg.path); break;
+           case DrawPathSmooth : field_art.path_smooth(Range_const(dots_based),cfg.path); break;
+           case DrawLoopSmooth : field_art.loop_smooth(Range_const(dots_based),cfg.path); break;
           }
         
         auto time=timer.get();
@@ -285,7 +291,7 @@ class Client : public DragClient
         
         case VKey_F5 :
          {
-          draw_type=DrawSolid;
+          draw_type=DrawPathSmooth;
           
           win->redraw();
          }
@@ -293,7 +299,7 @@ class Client : public DragClient
         
         case VKey_F6 :
          {
-          draw_type=DrawCurveSolid;
+          draw_type=DrawLoopSmooth;
           
           win->redraw();
          }

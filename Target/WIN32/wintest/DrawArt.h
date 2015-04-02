@@ -32,6 +32,31 @@ class CommonDrawArt;
 
 class CommonDrawArt
  {
+   class SmoothPlot : public FrameBuf<DesktopColor>
+    {
+     public:
+     
+      explicit SmoothPlot(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
+      
+      void operator () (Point p,DesktopColor color)
+       {
+        if( p>=Null && p<getSize() ) pixel(p,color);
+       }
+      
+      void operator () (Point p,ColorName cname,unsigned alpha) // 8-bit
+       {
+        if( !alpha ) return;
+        
+        if( p>=Null && p<getSize() ) 
+          {
+           if( alpha==256 )
+             pixel(p,cname);
+           else
+             DesktopColor::BlendTo(Blender(Clr(alpha),cname),place(p));
+          }
+       }
+    };
+  
    class WorkBuf : public FrameBuf<DesktopColor>
     {
       static void Prepare(Coord &a,Coord &b,Coord d);
@@ -54,6 +79,8 @@ class CommonDrawArt
       void lineX(Coord aby,Coord ax,Coord bx,DesktopColor color); // [a,b)
       
       void line(Point a,Point b,DesktopColor color); // [a,b)
+      
+      void line_smooth(Point a,Point b,ColorName cname); // [a,b)
     };
   
    WorkBuf buf;
@@ -132,6 +159,26 @@ class CommonDrawArt
      curveLoop(Range_const(temp),color);
     }
    
+   void path_smooth(PtrLen<const Point> dots,ColorName cname);
+
+   template <class ... TT>
+   void path_smooth(ColorName cname,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     path_smooth(Range_const(temp),cname);
+    }
+   
+   void loop_smooth(PtrLen<const Point> dots,ColorName cname);
+   
+   template <class ... TT>
+   void loop_smooth(ColorName cname,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     loop_smooth(Range_const(temp),cname);
+    }
+   
    void solid(PtrLen<const Point> dots,DesktopColor color);
    
    template <class ... TT>
@@ -157,6 +204,8 @@ class CommonDrawArt
    void grid(Coord cell);
    
    void gridCell(Point p,DesktopColor color,Coord magnify);
+   
+   void gridKnob(LPoint p,Coord len,DesktopColor color,Coord magnify);
    
    void curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,Coord magnify);
    

@@ -68,6 +68,8 @@ class LineDriverL;
 
 class CurveDriver;
 
+template <class UInt,unsigned AlphaBits=8> class SmoothLineDriver; 
+
 /* class LineDriverBase<UInt> */
 
 template <class UInt> 
@@ -270,6 +272,59 @@ class CurveDriver : NoCopy
    void shift();
    
    PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
+ };
+
+/* class SmoothLineDriver<UInt,unsigned AlphaBits> */
+
+template <class UInt,unsigned AlphaBits> 
+class SmoothLineDriver 
+ {
+   const UInt sx;
+   const UInt sy;
+  
+   const UInt ty;
+   
+   UInt delta = 0 ;
+   
+  private:
+   
+   unsigned alpha(UInt d) const // d in [0,sx] TODO
+    {
+     return 0;
+    }
+   
+   unsigned alpha_1(UInt d) const // d in [0,sx] TODO
+    {
+     return 0;
+    }
+   
+  public:
+  
+   SmoothLineDriver(UInt sx_,UInt sy_) : sx(sx_),sy(sy_),ty(sx_-sy_) {} // sx >= sy > 0
+   
+   bool step()
+    {
+     if( delta<ty ) 
+       {
+        delta+=sy;
+        
+        return false;
+       } 
+     else
+       {
+        delta-=ty;
+        
+        return true;
+       }
+    }
+   
+   unsigned alpha0() const { return alpha_1(delta); }
+   
+   unsigned alpha1() const { return alpha(delta); }
+   
+   unsigned alpha2() const { return alpha(sx-delta); }
+   
+   unsigned alpha3() const { return alpha_1(sx-delta); } 
  };
 
 /* Line(Point a,Point b,...) */
@@ -719,6 +774,67 @@ LineEnd LineNext(LineEnd end,LPoint a,LPoint b,Color color,Plot plot) // [a,b)
                       } ;
   
   return Line(func,a,b,color,plot);
+ }
+
+/* LineSmooth(Point a,Point b,...) */
+
+template <class Color,class Plot>
+void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b) TODO
+ {
+  int ex;
+  int ey;
+  uCoord sx;
+  uCoord sy;
+  
+  if( !DistDir(ex,sx,a.x,b.x) )
+    {
+     if( !DistDir(ey,sy,a.y,b.y) ) return;
+    
+     for(auto count=sy; count>0 ;count--)
+       {
+        plot(a,color);
+        
+        a.y+=ey;
+       }
+     
+     return;
+    }
+ 
+  if( !DistDir(ey,sy,a.y,b.y) )
+    {
+     for(auto count=sx; count>0 ;count--)
+       {
+        plot(a,color);
+        
+        a.x+=ex;
+       }
+    
+     return;
+    }
+
+  if( sx>sy )
+    {
+     SmoothLineDriver<uCoord> driver(sx,sy);
+    
+     plot(a-Point(0,ey),color,driver.alpha0());
+     plot(a,color);
+     plot(a+Point(0,ey),color,driver.alpha2());
+     
+     for(auto count=sx-1; count>0 ;count--)
+       {
+        if( driver.step() ) a.y+=ey;
+        
+        a.x+=ex;
+        
+        plot(a-Point(0,ey),color,driver.alpha0());
+        plot(a,color,driver.alpha1());
+        plot(a+Point(0,ey),color,driver.alpha2());
+        plot(a+Point(0,2*ey),color,driver.alpha3());
+       }
+    }
+  else
+    {
+    }
  }
 
 } // namespace Video

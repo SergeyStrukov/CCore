@@ -56,6 +56,9 @@ template <class SInt>
 inline SInt IntMul(SInt a,SInt b) { return a*b; } // may overflow
 
 template <class SInt>
+inline SInt IntDiv(SInt a,SInt b) { return a/b; } // may crush
+
+template <class SInt>
 inline SInt IntLShift(SInt a,unsigned s) { return a<<s; } // may overflow , UB for some arguments must be removed, operates as ASL
 
 template <class SInt>
