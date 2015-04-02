@@ -815,10 +815,11 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b) TODO
   if( sx>sy )
     {
      SmoothLineDriver<uCoord> driver(sx,sy);
+     
+     auto endalpha=driver.alpha2();
     
-     plot(a-Point(0,ey),color,driver.alpha0());
      plot(a,color);
-     plot(a+Point(0,ey),color,driver.alpha2());
+     plot(a+Point(0,ey),color,endalpha);
      
      for(auto count=sx-1; count>0 ;count--)
        {
@@ -831,6 +832,8 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b) TODO
         plot(a+Point(0,ey),color,driver.alpha2());
         plot(a+Point(0,2*ey),color,driver.alpha3());
        }
+     
+     plot(a-Point(0,ey),color,endalpha);
     }
   else
     {
