@@ -30,7 +30,7 @@ inline UInt IntDist(SInt a,SInt b) // a <= b
  }
 
 template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
-inline SInt IntMove(SInt a,int e,UInt delta)
+inline SInt IntMove(SInt a,SInt e,UInt delta)
  {
   return SIntFunc<SInt>::Move(a,e,delta);
  }

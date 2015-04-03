@@ -18,6 +18,8 @@
  
 #include <CCore/inc/video/Point.h>
 
+//#include <cmath>
+
 namespace CCore {
 namespace Video {
 
@@ -37,7 +39,7 @@ inline bool PointNear(Point a,Point b) { return PointNear(a.x,b.x) && PointNear(
 /* DistDir() */
 
 template <class SInt,class UInt>
-bool DistDir(int &e,UInt &s,SInt a,SInt b)
+bool DistDir(SInt &e,UInt &s,SInt a,SInt b)
  {
   if( a<b )
     {
@@ -286,21 +288,82 @@ class SmoothLineDriver
    
    UInt delta = 0 ;
    
-  private:
-   
-   unsigned alpha(UInt d) const // d in [0,sx] TODO
+   class AlphaFunc // TODO
     {
-     return 0;
-    }
+      double tau,a,b;
+     
+      double tau2,M,S;
+     
+    private:
+     
+     static double Sq(double x) { return x*x; }
+     
+     static unsigned Map(double f)
+      {
+       f=Cap<double>(0,f,1);
+       
+       return unsigned(f*(1u<<AlphaBits));
+      }
+     
+     public:
+     
+      AlphaFunc(UInt sx,UInt sy)
+       {
+        tau=double(sy)/sx;
+        
+        double c=Sq(tau)/2; //std::sqrt(1+Sq(tau))-1;
+        
+        c=Cap<double>(0,c,tau);
+        
+        b=(tau+c)/2;
+        a=(tau-c)/2;
+        
+        tau2=2*tau;
+        M=1-Sq(a)/tau;
+        S=1-tau/2+b;
+       }
+      
+      unsigned alpha0(UInt d,UInt sx,UInt sy) const // d in [0,sx]
+       {
+        Used(sy);
+        
+        double t=double(d)/sx;
+        
+        if( t<a )
+          {
+           return Map( M-Sq(t)/tau );
+          }
+        
+        if( t<b )
+          {
+           return Map( 1-Sq(t+a)/tau2 );
+          }
+        
+        if( t<1-a )
+          {
+           return Map( S-t );
+          }
+        
+        return Map( Sq(b+1-t)/tau2 );
+       }
+      
+      unsigned alpha1(UInt d,UInt sx,UInt sy) const // d in [0,sx]
+       {
+        Used(sy);
+        
+        double t=double(d)/sx;
+        
+        if( t>b ) return 0;
+        
+        return Map( Sq(b-t)/tau2 );
+       }
+    };
    
-   unsigned alpha_1(UInt d) const // d in [0,sx] TODO
-    {
-     return 0;
-    }
+   const AlphaFunc func; 
    
   public:
   
-   SmoothLineDriver(UInt sx_,UInt sy_) : sx(sx_),sy(sy_),ty(sx_-sy_) {} // sx >= sy > 0
+   SmoothLineDriver(UInt sx_,UInt sy_) : sx(sx_),sy(sy_),ty(sx_-sy_),func(sx_,sy_) {} // sx_ >= sy_ > 0
    
    bool step()
     {
@@ -318,13 +381,13 @@ class SmoothLineDriver
        }
     }
    
-   unsigned alpha0() const { return alpha_1(delta); }
+   unsigned alpha0() const { return func.alpha1(delta,sx,sy); }
    
-   unsigned alpha1() const { return alpha(delta); }
+   unsigned alpha1() const { return func.alpha0(delta,sx,sy); }
    
-   unsigned alpha2() const { return alpha(sx-delta); }
+   unsigned alpha2() const { return func.alpha0(sx-delta,sx,sy); }
    
-   unsigned alpha3() const { return alpha_1(sx-delta); } 
+   unsigned alpha3() const { return func.alpha1(sx-delta,sx,sy); } 
  };
 
 /* Line(Point a,Point b,...) */
@@ -332,8 +395,8 @@ class SmoothLineDriver
 template <class Color,class Plot>
 void Line(Point a,Point b,Color color,Plot plot) // [a,b)
  {
-  int ex;
-  int ey;
+  Coord ex;
+  Coord ey;
   uCoord sx;
   uCoord sy;
   
@@ -405,8 +468,8 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
  {
   const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
   
-  int ex;
-  int ey;
+  LCoord ex;
+  LCoord ey;
   uLCoord sx;
   uLCoord sy;
   
@@ -779,10 +842,10 @@ LineEnd LineNext(LineEnd end,LPoint a,LPoint b,Color color,Plot plot) // [a,b)
 /* LineSmooth(Point a,Point b,...) */
 
 template <class Color,class Plot>
-void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b) TODO
+void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
  {
-  int ex;
-  int ey;
+  Coord ex;
+  Coord ey;
   uCoord sx;
   uCoord sy;
   
@@ -833,10 +896,30 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b) TODO
         plot(a+Point(0,2*ey),color,driver.alpha3());
        }
      
-     plot(a-Point(0,ey),color,endalpha);
+     plot(b-Point(0,ey),color,endalpha);
     }
   else
     {
+     SmoothLineDriver<uCoord> driver(sy,sx);
+     
+     auto endalpha=driver.alpha2();
+    
+     plot(a,color);
+     plot(a+Point(ex,0),color,endalpha);
+     
+     for(auto count=sy-1; count>0 ;count--)
+       {
+        if( driver.step() ) a.x+=ex;
+        
+        a.y+=ey;
+        
+        plot(a-Point(ex,0),color,driver.alpha0());
+        plot(a,color,driver.alpha1());
+        plot(a+Point(ex,0),color,driver.alpha2());
+        plot(a+Point(2*ex,0),color,driver.alpha3());
+       }
+     
+     plot(b-Point(ex,0),color,endalpha);
     }
  }
 

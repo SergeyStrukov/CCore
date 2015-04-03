@@ -217,6 +217,8 @@ class Client : public DragClient
         switch( draw_type )
           {
            case DrawCurvePath  : art.curvePath_micro(Range_const(dots),cfg.path,focus,cfg.magnify); break;
+           
+           case DrawPathSmooth : art.path_smooth_micro(Range_const(dots),cfg.path,focus,cfg.magnify); break;
           }
        }
      else

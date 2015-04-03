@@ -91,8 +91,8 @@ void CommonDrawArt::WorkBuf::lineX(Coord aby,Coord ax,Coord bx,Plot plot)
 template <class Plot>
 void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
  {
-  int ex;
-  int ey;
+  Coord ex;
+  Coord ey;
   uCoord sx;
   uCoord sy;
   
@@ -285,7 +285,7 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
   line(a,b, [color] (Raw *ptr) { color.copyTo(ptr); } );
  }
 
-void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,ColorName cname) // TODO
+void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,ColorName cname)
  {
   if( a.x==b.x )
     {
@@ -433,6 +433,11 @@ void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color
   path_micro1(curve,Silver,magnify);
   path_micro2(curve,Black,magnify);
   path_micro3(curve,color,magnify);
+ }
+
+void CommonDrawArt::line_smooth_micro(Point a,Point b,ColorName cname,Coord magnify)
+ {
+  LineSmooth(a,b,cname, SmoothPlotMicro(*this,magnify) );
  }
 
  // simple
@@ -793,6 +798,27 @@ void CommonDrawArt::curvePath_micro(PtrLen<const Point> dots,DesktopColor color,
   driver->shift();
   
   path_micro(driver->getCurve(),color,magnify);
+ }
+
+void CommonDrawArt::path_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify)
+ {
+  focus.y-=buf.dY()/magnify;
+  
+  if( +dots )
+    {
+     Point a=*dots-focus;
+     
+     for(++dots; +dots ;++dots)
+       {
+        Point b=*dots-focus;
+        
+        line_smooth_micro(a,b,cname,magnify);
+        
+        a=b;
+       }
+     
+     gridCell(a,cname,magnify);
+    }
  }
 
 } // namespace Video

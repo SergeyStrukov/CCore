@@ -196,6 +196,10 @@ class RawColor16
      
      dst[0]=Pack565(blender.blendR(r),blender.blendG(g),blender.blendB(b));
     }
+   
+   void blend(Blender blender) { BlendTo(blender,color); }
+   
+   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
  };
 
 /* class RawColor24 */
@@ -232,6 +236,10 @@ class RawColor24
      dst[1]=blender.blendG(dst[1]);
      dst[2]=blender.blendB(dst[2]);
     }
+   
+   void blend(Blender blender) { BlendTo(blender,color); }
+   
+   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
  };
 
 /* class RawColor24Inv */
@@ -268,6 +276,10 @@ class RawColor24Inv
      dst[1]=blender.blendG(dst[1]);
      dst[2]=blender.blendR(dst[2]);
     }
+   
+   void blend(Blender blender) { BlendTo(blender,color); }
+   
+   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
  };
 
 /* class RawColor32 */
@@ -310,6 +322,10 @@ class RawColor32
      
      dst[0]=Pack888(blender.blendR(r),blender.blendG(g),blender.blendB(b));
     }
+ 
+   void blend(Blender blender) { BlendTo(blender,color); }
+   
+   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
  };
 
 /* class RawColor32Inv */
@@ -352,6 +368,10 @@ class RawColor32Inv
      
      dst[0]=Pack888(blender.blendR(r),blender.blendG(g),blender.blendB(b));
     }
+   
+   void blend(Blender blender) { BlendTo(blender,color); }
+   
+   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
  };
 
 } // namespace Video

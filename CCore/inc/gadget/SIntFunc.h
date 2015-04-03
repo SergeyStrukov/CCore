@@ -70,7 +70,7 @@ struct SIntFunc
     return a-delta;
    }
   
-  static SInt Move(SInt a,int e,UInt delta) 
+  static SInt Move(SInt a,SInt e,UInt delta) 
    {
     return (e>0)?MovePos(a,delta):MoveNeg(a,delta);
    }

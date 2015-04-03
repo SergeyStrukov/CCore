@@ -49,7 +49,7 @@ class CommonDrawArt
         
         if( p>=Null && p<getSize() ) 
           {
-           if( alpha==256 )
+           if( alpha>=256 )
              pixel(p,cname);
            else
              DesktopColor::BlendTo(Blender(Clr(alpha),cname),place(p));
@@ -99,6 +99,41 @@ class CommonDrawArt
    void path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
    
    void path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
+   
+   class SmoothPlotMicro
+    {
+      CommonDrawArt &art;
+      Coord magnify;
+      
+     public:
+      
+      explicit SmoothPlotMicro(CommonDrawArt &art_,Coord magnify_) : art(art_),magnify(magnify_) {}
+      
+      void operator () (Point p,DesktopColor color)
+       {
+        art.gridCell(p,color,magnify);
+       }
+      
+      void operator () (Point p,ColorName cname,unsigned alpha)
+       {
+        if( !alpha ) return;
+        
+        if( alpha>=256 )
+          {
+           art.gridCell(p,cname,magnify);
+          } 
+        else
+          {
+           DesktopColor color(White);
+          
+           color.blend(Clr(alpha),cname);
+             
+           art.gridCell(p,color,magnify);
+          }
+       }
+    };
+   
+   void line_smooth_micro(Point a,Point b,ColorName cname,Coord magnify);
    
   public:
   
@@ -208,6 +243,8 @@ class CommonDrawArt
    void gridKnob(LPoint p,Coord len,DesktopColor color,Coord magnify);
    
    void curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,Coord magnify);
+   
+   void path_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify);
    
    // fill
    
