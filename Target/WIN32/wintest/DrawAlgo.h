@@ -296,8 +296,6 @@ class SmoothLineDriver
      
     private:
      
-     static double Sq(double x) { return x*x; }
-     
      static unsigned Map(double f)
       {
        f=Cap<double>(0,f,1);

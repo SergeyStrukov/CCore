@@ -88,6 +88,17 @@ constexpr bool <span class="Att">Fit</span>(T a,T x,T b) { return a&lt;=x && x&l
 </pre>
 
 <p>
+<b>Sq()</b> calculates the square of the argument.
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+constexpr T <span class="Att">Sq</span>(T x) { return x*x; }
+
+</pre>
+
+<p>
 <b>Diff()</b> performs differentiation, i.e. subtracts a value from the previous one and records
 the new value.
 </p>

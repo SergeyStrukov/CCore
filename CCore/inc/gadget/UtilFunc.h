@@ -38,6 +38,9 @@ template <class T>
 constexpr bool Fit(T a,T x,T b) { return a<=x && x<=b; }
 
 template <class T>
+constexpr T Sq(T x) { return x*x; }
+
+template <class T>
 T Diff(T &t,T a) { T ret(a-t); t=a; return ret; }
  
 /* functions */

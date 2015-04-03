@@ -32,3 +32,7 @@ gadget/SIntFunc.h
 gadget/PtrStepLen.h
 
   PtrStepLen is added.
+
+gadget/UtilFunc.h
+
+  Sq() is added.
