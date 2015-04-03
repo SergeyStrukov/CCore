@@ -18,7 +18,7 @@
  
 #include <CCore/inc/video/Point.h>
 
-//#include <cmath>
+#include <cmath>
 
 namespace CCore {
 namespace Video {
@@ -311,7 +311,7 @@ class SmoothLineDriver
        {
         tau=double(sy)/sx;
         
-        double c=Sq(tau)/2; //std::sqrt(1+Sq(tau))-1;
+        double c=std::sqrt(1+Sq(tau))-1;
         
         c=Cap<double>(0,c,tau);
         
