@@ -131,11 +131,147 @@ class AlphaFunc
     }
  };
 
+/* class AlphaFunc2 */
+
+class AlphaFunc2
+ {
+   enum OneType
+    {
+     One = 1
+    };
+  
+   class Num // [0,2)
+    {
+      static const unsigned Precision = 15 ;
+      
+      static const uint16 One = uint16(1)<<Precision ;
+     
+      uint16 value;
+      
+     private: 
+     
+      Num(uint16 value_) : value(value_) {}
+      
+     public:
+      
+      Num() : value(0) {}
+      
+      Num(OneType) : value(One) {}
+      
+      Num(UInt a,UInt b) // a<=b , a/b TODO
+       {
+        value=(a<<Precision)/b;
+       }
+      
+      unsigned map() const { return value>>(Precision-AlphaBits); }
+      
+      bool below_1() const { return !(value&One); }
+      
+      Num div_2() const { return value>>1; }
+      
+      friend bool operator < (Num a,Num b) { return a.value<b.value; }
+      
+      friend bool operator > (Num a,Num b) { return a.value>b.value; } 
+      
+      friend bool operator <= (Num a,Num b) { return a.value<=b.value; }
+      
+      friend bool operator >= (Num a,Num b) { return a.value>=b.value; }
+      
+      friend Num operator + (Num a,Num b) { return a.value+b.value; }
+      
+      friend Num operator - (Num a,Num b) { return a.value-b.value; }
+      
+      friend Num operator * (Num a,Num b) { return uint16( (uint32(a.value)*b.value)>>Precision ); }
+    };
+  
+   static unsigned Map(Num a) { return a.map(); }
+   
+  private: 
+   
+   Num T,A,B;
+   
+   Num T2,M,S;
+  
+  public:
+  
+   AlphaFunc2(UInt sx,UInt sy)
+    {
+     T=Num(sy,sx);
+
+     double t=double(sy)/sx;
+     
+     double c=(std::sqrt(1+Sq(t))-1)/t;
+     
+     Num C(UInt(c*(1u<<15)),1u<<15); // TODO
+     
+     B=(One+C).div_2();
+     
+     A=(One-C).div_2();
+     
+     T2=T.div_2();
+     
+     M=One-Sq(A)*T;
+     
+     S=One+T2*C;
+    }
+   
+   unsigned alpha0(UInt d,UInt sx,UInt sy) const // d in [0,sx]
+    {
+     if( d<sy )
+       {
+        Num t(d,sy);
+        
+        if( t<=A ) return Map( M-T*Sq(t) );
+        
+        if( t<=B ) return Map( One-T2*Sq(t+A) );
+       }
+     
+     UInt e=sx-d;
+     
+     if( e<sy )
+       {
+        Num t(e,sy);
+        
+        if( t<=A ) return Map( T2*Sq(B+t) );
+       }
+     
+     Num t(d,sx);
+     
+     return Map( S-t );
+    }
+ 
+   unsigned alpha1(UInt d,UInt sx,UInt sy) const // d in [0,sx]
+    {
+     Used(sx);
+     
+     if( d>=sy ) return 0;
+     
+     Num t(d,sy);
+     
+     if( t>=B ) return 0;
+     
+     return Map( Sq(B-t)*T2 );
+    }
+ };
+
 /* test1() */
 
-void test1(unsigned sx,unsigned sy)
+inline unsigned Delta(unsigned a,unsigned b) { return (a<=b)?(b-a):(a-b); }
+
+unsigned test1(unsigned sx,unsigned sy)
  {
+  AlphaFunc func1(sx,sy);
+  AlphaFunc2 func2(sx,sy);
   
+  unsigned ret=0;
+  
+  for(UInt d=0; d<=sx ;d++)
+    {
+     Replace_max(ret,Delta(func1.alpha0(d,sx,sy),func2.alpha0(d,sx,sy)));
+     Replace_max(ret,Delta(func1.alpha1(d,sx,sy),func2.alpha1(d,sx,sy)));
+    }
+  
+  return ret;
  }
 
 /* testmain() */
@@ -148,13 +284,17 @@ int testmain(CmdDisplay)
     {
      Random random;
      
+     unsigned delta=0;
+     
      for(ulen count=10000; count ;count--)
        {
         unsigned sy=random.select(1,10000);
         unsigned sx=sy+random.select(10000);
      
-        test1(sx,sy);
+        Replace_max(delta,test1(sx,sy));
        }
+     
+     Printf(NoException,"delta = #;",delta);
      
      return 0;
     }
