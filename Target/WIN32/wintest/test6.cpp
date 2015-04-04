@@ -144,7 +144,7 @@ class AlphaFunc2
     {
       static const unsigned Precision = 15 ;
       
-      static const uint16 One = uint16(1)<<Precision ;
+      static const uint16 OneValue = uint16(1)<<Precision ;
      
       uint16 value;
       
@@ -152,20 +152,61 @@ class AlphaFunc2
      
       Num(uint16 value_) : value(value_) {}
       
+      template <class T>
+      static Meta::EnableIf<( T(-1)>Quick::ScanUInt(-1) ),unsigned> Bits(T c)
+       {
+        const unsigned s=Meta::UIntBits<Quick::ScanUInt>::Ret;
+        
+        unsigned ret=1;
+
+        for(;;)
+          {
+           Quick::ScanUInt u=(Quick::ScanUInt)c;
+          
+           if( u==c ) return Quick::ScanMSBit(u)+ret;
+           
+           c>>=s;
+           ret+=s;
+          }
+       }
+      
+      template <class T>
+      static Meta::EnableIf<( T(-1)<=Quick::ScanUInt(-1) ),unsigned> Bits(T c)
+       {
+        return Quick::ScanMSBit(c)+1;
+       }
+      
+      template <class T>
+      static Meta::EnableIf<( Meta::UIntBits<T>::Ret>16 ),void> Prepare(T &a,T &b)
+       {
+        if( UInt c=a>>16 )
+          {
+           unsigned s=Bits(c);
+             
+           a>>=s;
+           b>>=s;
+          }
+       }
+      
+      template <class T>
+      static Meta::EnableIf<( Meta::UIntBits<T>::Ret<=16 ),void> Prepare(T &,T &)
+       {
+       }
+      
      public:
       
       Num() : value(0) {}
       
-      Num(OneType) : value(One) {}
+      Num(OneType) : value(OneValue) {}
       
-      Num(UInt a,UInt b) // a<=b , a/b TODO
+      Num(UInt a,UInt b) // a<=b , a/b
        {
-        value=(a<<Precision)/b;
+        Prepare(a,b);
+        
+        value=uint16( (uint32(a)<<Precision)/b );
        }
       
       unsigned map() const { return value>>(Precision-AlphaBits); }
-      
-      bool below_1() const { return !(value&One); }
       
       Num div_2() const { return value>>1; }
       
@@ -182,6 +223,8 @@ class AlphaFunc2
       friend Num operator - (Num a,Num b) { return a.value-b.value; }
       
       friend Num operator * (Num a,Num b) { return uint16( (uint32(a.value)*b.value)>>Precision ); }
+      
+      friend Num operator / (Num a,Num b) { return uint16( (uint32(a.value)<<Precision)/b.value ); }
     };
   
    static unsigned Map(Num a) { return a.map(); }
@@ -197,18 +240,25 @@ class AlphaFunc2
    AlphaFunc2(UInt sx,UInt sy)
     {
      T=Num(sy,sx);
+     
+     T2=T.div_2();
 
-     double t=double(sy)/sx;
+     Num C=T2;
      
-     double c=(std::sqrt(1+Sq(t))-1)/t;
+     unsigned count=0;
      
-     Num C(UInt(c*(1u<<15)),1u<<15); // TODO
-     
-     B=(One+C).div_2();
+     for(; count<10u ;count++)
+       {
+        Num next=T2*((One+C*C)/(One+T*C));
+        
+        if( next>=C ) break;
+        
+        C=next;
+       }
      
      A=(One-C).div_2();
      
-     T2=T.div_2();
+     B=(One+C).div_2();
      
      M=One-Sq(A)*T;
      
@@ -223,7 +273,7 @@ class AlphaFunc2
         
         if( t<=A ) return Map( M-T*Sq(t) );
         
-        if( t<=B ) return Map( One-T2*Sq(t+A) );
+        if( t<=B ) return Map( One-T2*Sq(A+t) );
        }
      
      UInt e=sx-d;
@@ -240,10 +290,8 @@ class AlphaFunc2
      return Map( S-t );
     }
  
-   unsigned alpha1(UInt d,UInt sx,UInt sy) const // d in [0,sx]
+   unsigned alpha1(UInt d,UInt,UInt sy) const // d in [0,sx]
     {
-     Used(sx);
-     
      if( d>=sy ) return 0;
      
      Num t(d,sy);

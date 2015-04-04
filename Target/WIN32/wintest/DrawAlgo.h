@@ -18,8 +18,6 @@
  
 #include <CCore/inc/video/Point.h>
 
-#include <cmath>
-
 namespace CCore {
 namespace Video {
 
@@ -288,72 +286,172 @@ class SmoothLineDriver
    
    UInt delta = 0 ;
    
-   class AlphaFunc // TODO
+   class AlphaFunc
     {
-      double tau,a,b;
+      enum OneType
+       {
+        One = 1
+       };
      
-      double tau2,M,S;
+      class Num // [0,2)
+       {
+         static const unsigned Precision = 15 ;
+         
+         static const uint16 OneValue = uint16(1)<<Precision ;
+        
+         uint16 value;
+         
+        private: 
+        
+         Num(uint16 value_) : value(value_) {}
+         
+         template <class T>
+         static Meta::EnableIf<( T(-1)>Quick::ScanUInt(-1) ),unsigned> Bits(T c)
+          {
+           const unsigned s=Meta::UIntBits<Quick::ScanUInt>::Ret;
+           
+           unsigned ret=1;
+
+           for(;;)
+             {
+              Quick::ScanUInt u=(Quick::ScanUInt)c;
+             
+              if( u==c ) return Quick::ScanMSBit(u)+ret;
+              
+              c>>=s;
+              ret+=s;
+             }
+          }
+         
+         template <class T>
+         static Meta::EnableIf<( T(-1)<=Quick::ScanUInt(-1) ),unsigned> Bits(T c)
+          {
+           return Quick::ScanMSBit(c)+1;
+          }
+         
+         template <class T>
+         static Meta::EnableIf<( Meta::UIntBits<T>::Ret>16 ),void> Prepare(T &a,T &b)
+          {
+           if( UInt c=a>>16 )
+             {
+              unsigned s=Bits(c);
+                
+              a>>=s;
+              b>>=s;
+             }
+          }
+         
+         template <class T>
+         static Meta::EnableIf<( Meta::UIntBits<T>::Ret<=16 ),void> Prepare(T &,T &)
+          {
+          }
+         
+        public:
+         
+         Num() : value(0) {}
+         
+         Num(OneType) : value(OneValue) {}
+         
+         Num(UInt a,UInt b) // a<=b , a/b
+          {
+           Prepare(a,b);
+           
+           value=uint16( (uint32(a)<<Precision)/b );
+          }
+         
+         unsigned map() const { return value>>(Precision-AlphaBits); }
+         
+         Num div_2() const { return value>>1; }
+         
+         friend bool operator < (Num a,Num b) { return a.value<b.value; }
+         
+         friend bool operator > (Num a,Num b) { return a.value>b.value; } 
+         
+         friend bool operator <= (Num a,Num b) { return a.value<=b.value; }
+         
+         friend bool operator >= (Num a,Num b) { return a.value>=b.value; }
+         
+         friend Num operator + (Num a,Num b) { return a.value+b.value; }
+         
+         friend Num operator - (Num a,Num b) { return a.value-b.value; }
+         
+         friend Num operator * (Num a,Num b) { return uint16( (uint32(a.value)*b.value)>>Precision ); }
+         
+         friend Num operator / (Num a,Num b) { return uint16( (uint32(a.value)<<Precision)/b.value ); }
+       };
      
-    private:
-     
-     static unsigned Map(double f)
-      {
-       f=Cap<double>(0,f,1);
-       
-       return unsigned(f*(1u<<AlphaBits));
-      }
+      static unsigned Map(Num a) { return a.map(); }
+      
+     private: 
+      
+      Num T,A,B;
+      
+      Num T2,M,S;
      
      public:
      
       AlphaFunc(UInt sx,UInt sy)
        {
-        tau=double(sy)/sx;
+        T=Num(sy,sx);
         
-        double c=std::sqrt(1+Sq(tau))-1;
+        T2=T.div_2();
+
+        Num C=T2;
         
-        c=Cap<double>(0,c,tau);
+        unsigned count=0;
         
-        b=(tau+c)/2;
-        a=(tau-c)/2;
+        for(; count<10u ;count++)
+          {
+           Num next=T2*((One+C*C)/(One+T*C));
+           
+           if( next>=C ) break;
+           
+           C=next;
+          }
         
-        tau2=2*tau;
-        M=1-Sq(a)/tau;
-        S=1-tau/2+b;
+        A=(One-C).div_2();
+        
+        B=(One+C).div_2();
+        
+        M=One-Sq(A)*T;
+        
+        S=One+T2*C;
        }
       
       unsigned alpha0(UInt d,UInt sx,UInt sy) const // d in [0,sx]
        {
-        Used(sy);
-        
-        double t=double(d)/sx;
-        
-        if( t<a )
+        if( d<sy )
           {
-           return Map( M-Sq(t)/tau );
+           Num t(d,sy);
+           
+           if( t<=A ) return Map( M-T*Sq(t) );
+           
+           if( t<=B ) return Map( One-T2*Sq(A+t) );
           }
         
-        if( t<b )
+        UInt e=sx-d;
+        
+        if( e<sy )
           {
-           return Map( 1-Sq(t+a)/tau2 );
+           Num t(e,sy);
+           
+           if( t<=A ) return Map( T2*Sq(B+t) );
           }
         
-        if( t<1-a )
-          {
-           return Map( S-t );
-          }
+        Num t(d,sx);
         
-        return Map( Sq(b+1-t)/tau2 );
+        return Map( S-t );
        }
-      
-      unsigned alpha1(UInt d,UInt sx,UInt sy) const // d in [0,sx]
+    
+      unsigned alpha1(UInt d,UInt,UInt sy) const // d in [0,sx]
        {
-        Used(sy);
+        if( d>=sy ) return 0;
         
-        double t=double(d)/sx;
+        Num t(d,sy);
         
-        if( t>b ) return 0;
+        if( t>=B ) return 0;
         
-        return Map( Sq(b-t)/tau2 );
+        return Map( Sq(B-t)*T2 );
        }
     };
    

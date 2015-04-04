@@ -737,6 +737,18 @@ void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,ColorName cname)
     }
  }
 
+void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,ColorName cname) // TODO
+ {
+  Used(dots);
+  Used(cname);
+ }
+
+void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname) // TODO
+ {
+  Used(dots);
+  Used(cname);
+ }
+
 void CommonDrawArt::solid(PtrLen<const Point> dots,DesktopColor color) // TODO
  {
   Used(dots);

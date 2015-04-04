@@ -214,6 +214,26 @@ class CommonDrawArt
      loop_smooth(Range_const(temp),cname);
     }
    
+   void curvePath_smooth(PtrLen<const Point> dots,ColorName cname);
+   
+   template <class ... TT>
+   void curvePath_smooth(ColorName cname,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     curvePath_smooth(Range_const(temp),cname);
+    }
+   
+   void curveLoop_smooth(PtrLen<const Point> dots,ColorName cname);
+   
+   template <class ... TT>
+   void curveLoop_smooth(ColorName cname,TT ... tt)
+    {
+     Point temp[sizeof ... (TT)]={ tt... };
+     
+     curveLoop_smooth(Range_const(temp),cname);
+    }
+   
    void solid(PtrLen<const Point> dots,DesktopColor color);
    
    template <class ... TT>
