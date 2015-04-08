@@ -135,6 +135,13 @@ class CommonDrawArt
    
    void line_smooth_micro(Point a,Point b,ColorName cname,Coord magnify);
    
+   template <class Plot>
+   void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot);
+   
+   void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname);
+   
+   void path_smooth_micro(PtrStepLen<const LPoint> curve,ColorName cname,Coord magnify);
+   
   public:
   
    CommonDrawArt(const FrameBuf<DesktopColor> &buf_) : buf(buf_) {}
@@ -265,6 +272,8 @@ class CommonDrawArt
    void curvePath_micro(PtrLen<const Point> dots,DesktopColor color,Point focus,Coord magnify);
    
    void path_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify);
+   
+   void curvePath_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify);
    
    // fill
    

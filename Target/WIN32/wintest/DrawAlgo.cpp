@@ -21,7 +21,7 @@ namespace Video {
 
 /* class LineDriver */
 
-auto LineDriver::clip(Coord x,Coord y,int ex,int ey,Coord dx,Coord dy) const -> Result
+auto LineDriver::clip(Coord x,Coord y,Coord ex,Coord ey,Coord dx,Coord dy) const -> Result
  {
   auto clip_x=Clip(x,ex,dx);
   
@@ -63,7 +63,7 @@ auto LineDriver::clipToX(Result clip_y) const -> Result
   return {clipToX(clip_y.off),clipToX(clip_y.lim)};
  }
 
-auto LineDriver::Clip(Coord x,int e,Coord d) -> Result
+auto LineDriver::Clip(Coord x,Coord e,Coord d) -> Result
  {
   if( e>0 )
     {

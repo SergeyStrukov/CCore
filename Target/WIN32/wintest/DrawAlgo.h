@@ -179,13 +179,13 @@ class LineDriver : public LineDriverBase<uCoord>
    
    static Result Inf(Result a,Result b) { return {Max(a.off,b.off),Min(a.lim,b.lim)}; }
    
-   Result clip(Coord x,Coord y,int ex,int ey,Coord dx,Coord dy) const;
+   Result clip(Coord x,Coord y,Coord ex,Coord ey,Coord dx,Coord dy) const;
 
    uCoord clipToX(uCoord y) const;
    
    Result clipToX(Result clip_y) const;
    
-   static Result Clip(Coord x,int e,Coord d);
+   static Result Clip(Coord x,Coord e,Coord d);
  };
 
 /* class LineDriverL */
@@ -196,7 +196,7 @@ class LineDriverL : public LineDriverBase<uLCoord>
   
    LineDriverL(uLCoord sx,uLCoord sy) : LineDriverBase<uLCoord>(sx,sy) {} // sx >= sy > 0
    
-   static uLCoord First(LCoord a,int e)
+   static uLCoord First(LCoord a,LCoord e)
     {
      Coord A=LPoint::RShift(a);
      
@@ -279,13 +279,8 @@ class CurveDriver : NoCopy
 template <class UInt,unsigned AlphaBits> 
 class SmoothLineDriver 
  {
-   const UInt sx;
-   const UInt sy;
+  public:
   
-   const UInt ty;
-   
-   UInt delta = 0 ;
-   
    class AlphaFunc
     {
       enum OneType
@@ -311,7 +306,7 @@ class SmoothLineDriver
            const unsigned s=Meta::UIntBits<Quick::ScanUInt>::Ret;
            
            unsigned ret=1;
-
+ 
            for(;;)
              {
               Quick::ScanUInt u=(Quick::ScanUInt)c;
@@ -395,7 +390,7 @@ class SmoothLineDriver
         T=Num(sy,sx);
         
         T2=T.div_2();
-
+ 
         Num C=T2;
         
         unsigned count=0;
@@ -453,7 +448,34 @@ class SmoothLineDriver
         
         return Map( Sq(B-t)*T2 );
        }
+    
+      template <class SInt>
+      unsigned alpha(SInt d,unsigned precision) const // [-1/2,1/2] TODO
+       {
+        Used(d);
+        Used(precision);
+        
+        return 0;
+       }
+      
+      template <class SInt>
+      unsigned alpha1(SInt d,unsigned precision) const // [-1/2,1/2] TODO
+       {
+        Used(d);
+        Used(precision);
+        
+        return 0;
+       }
     };
+  
+  private:
+  
+   const UInt sx;
+   const UInt sy;
+  
+   const UInt ty;
+   
+   UInt delta = 0 ;
    
    const AlphaFunc func; 
    
@@ -868,7 +890,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
     }
  }
 
-/* Line(Point A,LPoint a,LPoint b,...) */
+/* LineFirst/LineNext(...,LPoint a,LPoint b,...) */
 
 template <class Color,class Plot>
 LineEnd LineFirst(LPoint a,LPoint b,Color color,Plot plot) // [a,b)
@@ -1016,6 +1038,88 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
        }
      
      plot(b-Point(ex,0),color,endalpha);
+    }
+ }
+
+/* LineSmooth(LPoint a,LPoint b,...) */
+
+template <class Color,class Plot>
+bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // TODO
+ {
+  const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
+  
+  LCoord ex;
+  LCoord ey;
+  uLCoord sx;
+  uLCoord sy;
+  
+  if( !DistDir(ex,sx,a.x,b.x) )
+    {
+     if( !DistDir(ey,sy,a.y,b.y) ) 
+       {
+        return false;
+       }
+    
+      
+     return true;
+    }
+ 
+  if( !DistDir(ey,sy,a.y,b.y) )
+    {
+      
+    
+     return true;
+    }
+  
+  if( sx>sy )
+    {
+     auto count=LineDriverL::Count(a.x,b.x);
+   
+     if( !count ) return false;
+    
+     LineDriverL driver(sx,sy);
+     SmoothLineDriver<uLCoord>::AlphaFunc func(sx,sy); 
+
+     {
+      uLCoord first=LineDriverL::First(a.x,ex);
+      
+      uLCoord delta_x=first;
+      uLCoord delta_y=driver.step_pow2(LPoint::Precision);
+      
+      a.x=IntMove(a.x,ex,delta_x);
+      a.y=IntMove(a.y,ey,delta_y);
+      
+      Point A=a.toPoint();
+      
+      LCoord delta=a.y-LPoint::LShift(A.y);
+      
+      plot(A-Point(0,ey),color,func.alpha1(delta,LPoint::Precision));
+      plot(A,color,func.alpha(delta,LPoint::Precision));
+      plot(A+Point(0,ey),color,func.alpha1(-delta,LPoint::Precision));
+     }
+    
+     for(count--; count ;count--)
+       {
+        uLCoord delta_x=Step;
+        uLCoord delta_y=driver.step_pow2(LPoint::Precision);
+        
+        a.x=IntMove(a.x,ex,delta_x);
+        a.y=IntMove(a.y,ey,delta_y);
+        
+        Point A=a.toPoint();
+        
+        LCoord delta=a.y-LPoint::LShift(A.y);
+        
+        plot(A-Point(0,ey),color,func.alpha1(delta,LPoint::Precision));
+        plot(A,color,func.alpha(delta,LPoint::Precision));
+        plot(A+Point(0,ey),color,func.alpha1(-delta,LPoint::Precision));
+       }
+     
+     return true;
+    }
+  else
+    {
+     return true;
     }
  }
 

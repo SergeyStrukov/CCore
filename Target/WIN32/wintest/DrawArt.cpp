@@ -440,6 +440,78 @@ void CommonDrawArt::line_smooth_micro(Point a,Point b,ColorName cname,Coord magn
   LineSmooth(a,b,cname, SmoothPlotMicro(*this,magnify) );
  }
 
+template <class Plot>
+void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot) // TODO
+ {
+  LPoint a=curve[0];
+  LPoint b=curve[1];
+
+  curve+=2;
+  
+  Point A=a.toPoint();
+  
+  plot(A,cname);
+  
+  bool ok=LineSmooth(a,b,cname,plot);
+  
+  while( !ok )
+    {
+     if( !curve )
+       {
+        Point B=b.toPoint();
+        
+        LineSmooth(A,B,cname,plot);
+        
+        plot(B,cname);
+       
+        return;
+       }
+     
+     b=*curve;
+     ++curve;
+     
+     ok=LineSmooth(a,b,cname,plot);
+    }
+  
+  while( +curve ) 
+    {
+     a=b;
+     b=*curve;
+     ++curve;
+     
+     bool ok=LineSmooth(a,b,cname,plot);
+     
+     while( !ok )
+       {
+        if( !curve ) // TODO
+          {
+           Point B=b.toPoint();
+          
+           plot(B,cname);
+          
+           return;
+          }
+        
+        b=*curve;
+        ++curve;
+        
+        ok=LineSmooth(a,b,cname,plot);
+       }
+    }
+  
+  plot(b.toPoint(),cname);
+ }
+
+void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname)
+ {
+  path_smooth(curve,cname, SmoothPlot(buf) );
+ }
+
+void CommonDrawArt::path_smooth_micro(PtrStepLen<const LPoint> curve,ColorName cname,Coord magnify)
+ {
+  path_smooth(curve,cname, SmoothPlotMicro(*this,magnify) );
+ }
+
  // simple
 
 void CommonDrawArt::pixel(Point p,DesktopColor color)
@@ -737,16 +809,206 @@ void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,ColorName cname)
     }
  }
 
-void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,ColorName cname) // TODO
+void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,ColorName cname)
  {
-  Used(dots);
-  Used(cname);
+  if( dots.len>=4 )
+    {
+     StackObject<CurveDriver> driver;
+     
+     driver->spline(dots[0],dots[1],dots[2],dots[3]);
+    
+     path_smooth(driver->getCurve(),cname); 
+     
+     for(dots+=4; +dots ;++dots)
+       {
+        driver->shift(dots[0]);
+        
+        path_smooth(driver->getCurve(),cname); 
+       }
+     
+     driver->shift();
+     
+     path_smooth(driver->getCurve(),cname);
+     
+     driver->shift();
+     
+     path_smooth(driver->getCurve(),cname); 
+    }
+  else if( dots.len==3 )
+    {
+     StackObject<CurveDriver> driver;
+     
+     driver->spline(dots[0],dots[1],dots[2],dots[2]);
+    
+     path_smooth(driver->getCurve(),cname); 
+     
+     driver->shift();
+     
+     path_smooth(driver->getCurve(),cname); 
+    }
+  else
+    {
+     path_smooth(dots,cname);
+    }
  }
 
-void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname) // TODO
+void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
  {
-  Used(dots);
-  Used(cname);
+  switch( dots.len )
+    {
+     case 0 :
+      {
+       // do nothing
+      }
+     break;
+     
+     case 1 :
+      {
+       pixel(dots[0],cname);
+      }
+     break;
+     
+     case 2 :
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1];
+      
+       driver->spline(a,b,a,b,a,b);
+       
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(a);
+      
+       path_smooth(driver->getCurve(),cname);
+      }
+     break;
+     
+     case 3 :
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2];
+      
+       driver->spline(a,b,c,a,b,c);
+       
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(a);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(b);
+      
+       path_smooth(driver->getCurve(),cname);
+      }
+     break;
+     
+     case 4 :
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3];
+      
+       driver->spline(a,b,c,d,a,b);
+       
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(c);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(d);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(a);
+      
+       path_smooth(driver->getCurve(),cname);
+      }
+     break;
+     
+     case 5 :
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3],
+             e=dots[4];
+      
+       driver->spline(a,b,c,d,e,a);
+       
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(b);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(c);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(d);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(e);
+      
+       path_smooth(driver->getCurve(),cname);
+      }
+     break;
+     
+     default:
+      {
+       StackObject<CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3],
+             e=dots[4],
+             f=dots[5];
+      
+       driver->spline(a,b,c,d,e,f);
+       
+       path_smooth(driver->getCurve(),cname);
+       
+       for(dots+=6; +dots ;++dots)
+         {
+          driver->shift(dots[0]);
+         
+          path_smooth(driver->getCurve(),cname); 
+         }
+
+       driver->shift(a);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(b);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(c);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(d);
+      
+       path_smooth(driver->getCurve(),cname);
+       
+       driver->shift(e);
+      
+       path_smooth(driver->getCurve(),cname);
+      }
+    }
  }
 
 void CommonDrawArt::solid(PtrLen<const Point> dots,DesktopColor color) // TODO
@@ -831,6 +1093,34 @@ void CommonDrawArt::path_smooth_micro(PtrLen<const Point> dots,ColorName cname,P
      
      gridCell(a,cname,magnify);
     }
+ }
+
+void CommonDrawArt::curvePath_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify)
+ {
+  if( dots.len<4 ) return;
+  
+  focus.y-=buf.dY()/magnify;
+  
+  StackObject<CurveDriver> driver;
+  
+  driver->spline(dots[0]-focus,dots[1]-focus,dots[2]-focus,dots[3]-focus);
+ 
+  path_smooth_micro(driver->getCurve(),cname,magnify); 
+  
+  for(dots+=4; +dots ;++dots)
+    {
+     driver->shift(dots[0]-focus);
+     
+     path_smooth_micro(driver->getCurve(),cname,magnify);
+    }
+  
+  driver->shift();
+  
+  path_smooth_micro(driver->getCurve(),cname,magnify);
+  
+  driver->shift();
+  
+  path_smooth_micro(driver->getCurve(),cname,magnify);
  }
 
 } // namespace Video
