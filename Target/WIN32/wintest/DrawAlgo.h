@@ -17,6 +17,7 @@
 #define CCore_inc_video_DrawAlgo_h
  
 #include <CCore/inc/video/Point.h>
+#include <CCore/inc/video/Color.h>
 
 namespace CCore {
 namespace Video {
@@ -1179,13 +1180,13 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
       
       Point A=a.toPoint();
       
-      LCoord delta=a.y-LPoint::LShift(A.y);
+      LCoord delta=ey*(a.y-LPoint::LShift(A.y));
       
-      //plot(A-Point(0,2*ey),color,AlphaPart(func.alpha2(delta,LPoint::Precision),part));
-      //plot(A-Point(0,ey),color,AlphaPart(func.alpha1(delta,LPoint::Precision),part));
+      plot(A-Point(0,2*ey),color,AlphaPart(func.alpha2(delta,LPoint::Precision),part));
+      plot(A-Point(0,ey),color,AlphaPart(func.alpha1(delta,LPoint::Precision),part));
       plot(A,color,AlphaPart(func.alpha0(delta,LPoint::Precision),part));
-      //plot(A+Point(0,ey),color,AlphaPart(func.alpha1(-delta,LPoint::Precision),part));
-      //plot(A+Point(0,2*ey),color,AlphaPart(func.alpha2(-delta,LPoint::Precision),part));
+      plot(A+Point(0,ey),color,AlphaPart(func.alpha1(-delta,LPoint::Precision),part));
+      plot(A+Point(0,2*ey),color,AlphaPart(func.alpha2(-delta,LPoint::Precision),part));
      }
     
      for(; count ;count--)
@@ -1198,13 +1199,15 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
         
         Point A=a.toPoint();
         
-        LCoord delta=a.y-LPoint::LShift(A.y);
+        LCoord delta=ey*(a.y-LPoint::LShift(A.y));
         
-        //plot(A-Point(0,2*ey),color,func.alpha2(delta,LPoint::Precision));
-        //plot(A-Point(0,ey),color,func.alpha1(delta,LPoint::Precision));
+        plot(A-Point(0,2*ey),color,func.alpha2(delta,LPoint::Precision));
+        plot(A-Point(0,ey),color,func.alpha1(delta,LPoint::Precision));
         plot(A,color,func.alpha0(delta,LPoint::Precision));
-        //plot(A+Point(0,ey),color,func.alpha1(-delta,LPoint::Precision));
-        //plot(A+Point(0,2*ey),color,func.alpha2(-delta,LPoint::Precision));
+        plot(A+Point(0,ey),color,func.alpha1(-delta,LPoint::Precision));
+        plot(A+Point(0,2*ey),color,func.alpha2(-delta,LPoint::Precision));
+        
+        plot.test(a,2,Blue);
        }
      
      {
@@ -1216,14 +1219,14 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
       
       Point A=a.toPoint();
       
-      LCoord delta=a.y-LPoint::LShift(A.y);
+      LCoord delta=ey*(a.y-LPoint::LShift(A.y));
       LCoord part=b.x-a.x+(LCoord(1)<<(LPoint::Precision-1));
       
-      //plot(A-Point(0,2*ey),color,AlphaPart(func.alpha2(delta,LPoint::Precision),part));
-      //plot(A-Point(0,ey),color,AlphaPart(func.alpha1(delta,LPoint::Precision),part));
+      plot(A-Point(0,2*ey),color,AlphaPart(func.alpha2(delta,LPoint::Precision),part));
+      plot(A-Point(0,ey),color,AlphaPart(func.alpha1(delta,LPoint::Precision),part));
       plot(A,color,AlphaPart(func.alpha0(delta,LPoint::Precision),part));
-      //plot(A+Point(0,ey),color,AlphaPart(func.alpha1(-delta,LPoint::Precision),part));
-      //plot(A+Point(0,2*ey),color,AlphaPart(func.alpha2(-delta,LPoint::Precision),part));
+      plot(A+Point(0,ey),color,AlphaPart(func.alpha1(-delta,LPoint::Precision),part));
+      plot(A+Point(0,2*ey),color,AlphaPart(func.alpha2(-delta,LPoint::Precision),part));
      }
      
      return true;

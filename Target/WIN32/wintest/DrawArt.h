@@ -38,6 +38,8 @@ class CommonDrawArt
      
       explicit SmoothPlot(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
       
+      void test(LPoint,Coord,DesktopColor) {}
+      
       void operator () (Point p,DesktopColor color)
        {
         if( p>=Null && p<getSize() ) pixel(p,color);
@@ -115,6 +117,11 @@ class CommonDrawArt
      public:
       
       explicit SmoothPlotMicro(CommonDrawArt &art_,Coord magnify_) : art(art_),magnify(magnify_) {}
+      
+      void test(LPoint p,Coord len,DesktopColor color)
+       {
+        art.gridKnob(p,len,color,magnify);
+       }
       
       void operator () (Point p,DesktopColor color)
        {

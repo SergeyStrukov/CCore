@@ -105,12 +105,12 @@ class Client : public DragClient
      DrawLoop,
      DrawCurvePath,
      DrawCurveLoop,
-     DrawSolid,
-     DrawCurveSolid,
      DrawPathSmooth,
      DrawLoopSmooth,
      DrawCurvePathSmooth,
-     DrawCurveLoopSmooth
+     DrawCurveLoopSmooth,
+     DrawSolid,
+     DrawCurveSolid
     };
    
    DrawType draw_type = DrawCurvePathSmooth ;
@@ -149,12 +149,12 @@ class Client : public DragClient
         case DrawLoop            : return "Loop"; 
         case DrawCurvePath       : return "CurvePath"; 
         case DrawCurveLoop       : return "CurveLoop"; 
-        case DrawSolid           : return "Solid"; 
-        case DrawCurveSolid      : return "CurveSolid";
         case DrawPathSmooth      : return "PathSmooth";
         case DrawLoopSmooth      : return "LoopSmooth";
         case DrawCurvePathSmooth : return "CurvePathSmooth";
         case DrawCurveLoopSmooth : return "CurveLoopSmooth";
+        case DrawSolid           : return "Solid"; 
+        case DrawCurveSolid      : return "CurveSolid";
         
         default: return "???";
        }
@@ -332,6 +332,17 @@ class Client : public DragClient
             }
          }
         break; 
+        
+        case VKey_End :
+         {
+          if( ulen len=dots.getLen() )
+            {
+             selected=len-1;
+            
+             win->redraw();
+            }
+         }
+        break;
         
         case VKey_Delete :
          {

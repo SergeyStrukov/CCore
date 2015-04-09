@@ -500,7 +500,9 @@ void CommonDrawArt::line_smooth_micro(Point a,Point b,ColorName cname,Coord magn
 
 void CommonDrawArt::path_smooth_micro(PtrStepLen<const LPoint> curve,ColorName cname,Coord magnify)
  {
-  path_smooth(curve,cname, SmoothPlotMicro(*this,magnify) );
+  path_smooth(curve,Silver, SmoothPlotMicro(*this,magnify) );
+  path_micro2(curve,Black,magnify);
+  path_micro3(curve,cname,magnify);
  }
 
  // simple
