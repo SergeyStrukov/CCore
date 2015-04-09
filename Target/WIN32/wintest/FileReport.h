@@ -1,4 +1,4 @@
-/* test1.cpp */
+/* FileReport.h */
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.09
@@ -13,22 +13,21 @@
 //
 //----------------------------------------------------------------------------------------
 
+#ifndef App_FileReport_h
+#define App_FileReport_h
+
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/Print.h>
 
-#include "Malevich.h"
+namespace App {
 
-namespace App1 {
+/* using */
 
-/* using */ 
-
-using namespace App;
+using namespace CCore;
 
 /* classes */
 
 class FileReport;
-
-class MainWindow;
 
 /* class FileReport */
 
@@ -53,37 +52,13 @@ class FileReport : public ReportException
    FileReport() : out("exception-log.txt") {}
    
    ~FileReport() {}
+   
+   bool show() { return true; }
  };
 
-/* testmain() */
+} // namespace App
 
-int testmain(CmdDisplay cmd_display)
- {
-  FileReport report;
-  
-  try
-    {
-     Desktop *desktop=DefaultDesktop;
-     MalevichWindow main_win(desktop);
-     
-     main_win.createMain(cmd_display,desktop->getScreenSize());
-     
-     while( DefaultDesktop->pump() )
-       {
-        DefaultDesktop->wait(10_msec);
-       }
-     
-     return 0;
-    }
-  catch(...)
-    {
-     return 1;
-    }
- }
- 
-} // namespace App1
- 
- 
- 
+#endif
+
 
 

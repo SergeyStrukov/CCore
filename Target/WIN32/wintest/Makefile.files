@@ -2,10 +2,8 @@ OBJ_LIST = \
 ../wintest-obj/DragWindow.o \
 ../wintest-obj/DrawAlgo.o \
 ../wintest-obj/DrawArt.o \
-../wintest-obj/Malevich.o \
+../wintest-obj/FileReport.o \
 ../wintest-obj/main.o \
-../wintest-obj/test1.o \
-../wintest-obj/test2.o \
 ../wintest-obj/test3.o \
 ../wintest-obj/test4.o \
 ../wintest-obj/test5.o \
@@ -16,10 +14,8 @@ ASM_LIST = \
 ../wintest-obj/DragWindow.s \
 ../wintest-obj/DrawAlgo.s \
 ../wintest-obj/DrawArt.s \
-../wintest-obj/Malevich.s \
+../wintest-obj/FileReport.s \
 ../wintest-obj/main.s \
-../wintest-obj/test1.s \
-../wintest-obj/test2.s \
 ../wintest-obj/test3.s \
 ../wintest-obj/test4.s \
 ../wintest-obj/test5.s \
@@ -30,10 +26,8 @@ DEP_LIST = \
 ../wintest-obj/DragWindow.dep \
 ../wintest-obj/DrawAlgo.dep \
 ../wintest-obj/DrawArt.dep \
-../wintest-obj/Malevich.dep \
+../wintest-obj/FileReport.dep \
 ../wintest-obj/main.dep \
-../wintest-obj/test1.dep \
-../wintest-obj/test2.dep \
 ../wintest-obj/test3.dep \
 ../wintest-obj/test4.dep \
 ../wintest-obj/test5.dep \
@@ -55,16 +49,10 @@ include $(RULES_FILE)
 ../wintest-obj/DrawArt.o : ./DrawArt.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-../wintest-obj/Malevich.o : ./Malevich.cpp
+../wintest-obj/FileReport.o : ./FileReport.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../wintest-obj/main.o : ./main.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-../wintest-obj/test1.o : ./test1.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-../wintest-obj/test2.o : ./test2.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../wintest-obj/test3.o : ./test3.cpp
@@ -90,16 +78,10 @@ include $(RULES_FILE)
 ../wintest-obj/DrawArt.s : ./DrawArt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-../wintest-obj/Malevich.s : ./Malevich.cpp
+../wintest-obj/FileReport.s : ./FileReport.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 ../wintest-obj/main.s : ./main.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../wintest-obj/test1.s : ./test1.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../wintest-obj/test2.s : ./test2.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 ../wintest-obj/test3.s : ./test3.cpp
@@ -125,17 +107,11 @@ include $(RULES_FILE)
 ../wintest-obj/DrawArt.dep : ./DrawArt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawArt.o $< -MF $@
 
-../wintest-obj/Malevich.dep : ./Malevich.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Malevich.o $< -MF $@
+../wintest-obj/FileReport.dep : ./FileReport.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileReport.o $< -MF $@
 
 ../wintest-obj/main.dep : ./main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
-
-../wintest-obj/test1.dep : ./test1.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1.o $< -MF $@
-
-../wintest-obj/test2.dep : ./test2.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test2.o $< -MF $@
 
 ../wintest-obj/test3.dep : ./test3.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3.o $< -MF $@

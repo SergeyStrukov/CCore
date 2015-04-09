@@ -13,12 +13,11 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/Print.h>
-#include <CCore/inc/Exception.h>
+#include <CCore/inc/video/Desktop.h>
 
 #include <CCore/inc/Random.h>
 
-#include <CCore/inc/video/Desktop.h>
+#include "FileReport.h"
 
 #include <cmath>
 
@@ -26,35 +25,8 @@ namespace App6 {
 
 /* using */ 
 
-using namespace CCore;
+using namespace App;
 using namespace CCore::Video;
-
-/* class FileReport */
-
-class FileReport : public ReportException
- {
-   PrintFile out;
-   
-  private: 
- 
-   virtual void print(StrLen str)
-    {
-     Putobj(out,str);
-    }
-   
-   virtual void end()
-    {
-     Printf(out,"\n\n#;\n\n",TextDivider());
-    }
-   
-  public:
-  
-   FileReport() : out("exception-log.txt") {}
-   
-   ~FileReport() { Printf(out,"Done\n"); }
-   
-   bool show() { return true; }
- };
 
 /* class AlphaFunc */
 

@@ -13,19 +13,18 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/Print.h>
-#include <CCore/inc/Exception.h>
+#include "DrawArt.h"
+#include "DrawAlgo.h"
 
 #include <CCore/inc/Random.h>
 
-#include "DrawArt.h"
-#include "DrawAlgo.h"
+#include "FileReport.h"
 
 namespace App4 {
 
 /* using */ 
 
-using namespace CCore;
+using namespace App;
 using namespace CCore::Video;
 
 /* class FileReport */

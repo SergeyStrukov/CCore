@@ -425,9 +425,9 @@ class DragWindow : public FrameWindow
    
    void destroy() { win->destroy(); }
    
-   void minimized();
+   void minimize();
    
-   void maximized();
+   void maximize();
    
    void redraw();
    

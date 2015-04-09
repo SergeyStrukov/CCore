@@ -27,10 +27,6 @@ using namespace CCore::Video;
 
 /* main functions */
 
-namespace App1 { int testmain(CmdDisplay cmd_display); }
- 
-namespace App2 { int testmain(CmdDisplay cmd_display); }
-
 namespace App3 { int testmain(CmdDisplay cmd_display); }
 
 namespace App4 { int testmain(CmdDisplay cmd_display); }

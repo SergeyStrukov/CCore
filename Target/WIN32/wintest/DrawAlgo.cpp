@@ -122,15 +122,15 @@ void CurveDriver::spline()
  {
   level=1;
   
-  ulen len1=Len/4;
-  ulen len2=3*len1;
-  ulen delta=2*len1;
+  unsigned len1=Len/4;
+  unsigned len2=3*len1;
+  unsigned delta=2*len1;
   
   for(; level<MaxLevel ;level++,len1>>=1,len2>>=1,delta>>=1)
     {
      if( Fineness(getCurve())<MaxFineness ) break;
     
-     for(ulen ind=Len-len1,last=2*Len+len1; ind<=last ;ind+=delta)
+     for(unsigned ind=Len-len1,last=2*Len+len1; ind<=last ;ind+=delta)
        buf[ind]=Spline(buf[ind-len2],buf[ind-len1],buf[ind+len1],buf[ind+len2]);
     }
  }

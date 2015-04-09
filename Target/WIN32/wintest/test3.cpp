@@ -13,55 +13,25 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include <CCore/inc/Exception.h>
-#include <CCore/inc/Print.h>
-
 #include <CCore/inc/video/ApplicationBase.h>
 
 #include "DragWindow.h"
 #include "DrawArt.h"
 
+#include "FileReport.h"
+
 namespace App3 {
 
 /* using */ 
 
-using namespace CCore;
+using namespace App;
 using namespace CCore::Video;
 
 /* classes */
 
-class FileReport;
-
 class Client; 
 
 class Application;
-
-/* class FileReport */
-
-class FileReport : public ReportException
- {
-   PrintFile out;
-   
-  private: 
- 
-   virtual void print(StrLen str)
-    {
-     Putobj(out,str);
-    }
-   
-   virtual void end()
-    {
-     Printf(out,"\n\n#;\n\n",TextDivider());
-    }
-   
-  public:
-  
-   FileReport() : out("exception-log.txt") {}
-   
-   ~FileReport() {}
-   
-   bool show() { return true; }
- };
 
 /* class Client */
 

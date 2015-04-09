@@ -58,6 +58,13 @@ bool DistDir(SInt &e,UInt &s,SInt a,SInt b)
   return false;
  }
 
+/* AlphaPart() */
+
+inline unsigned AlphaPart(unsigned alpha,uLCoord part)
+ {
+  return unsigned( (alpha*part)>>LPoint::Precision );
+ }
+
 /* classes */
 
 template <class UInt> class LineDriverBase;
@@ -67,6 +74,10 @@ class LineDriver;
 class LineDriverL;
 
 class CurveDriver;
+
+template <class UInt,unsigned AlphaBits=8> class LineAlphaFunc;
+
+template <class UInt,unsigned AlphaBits=8> class LineAlphaFunc2;
 
 template <class UInt,unsigned AlphaBits=8> class SmoothLineDriver; 
 
@@ -238,7 +249,7 @@ class CurveDriver : NoCopy
    
    static const unsigned MaxFineness = 5 ;
    
-   static const ulen Len = (1u<<MaxLevel) ;
+   static const unsigned Len = (1u<<MaxLevel) ;
    
    static uLCoord Fineness(PtrStepLen<const LPoint> dots);
    
@@ -274,200 +285,265 @@ class CurveDriver : NoCopy
    PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
  };
 
+/* class LineAlphaFunc<UInt,unsigned AlphaBits> */
+
+template <class UInt,unsigned AlphaBits> 
+class LineAlphaFunc
+ {
+  protected:
+  
+   enum OneType
+    {
+     One = 1
+    };
+  
+   class Num // [0,2)
+    {
+      static const unsigned Precision = 15 ;
+      
+      static const uint16 OneValue = uint16(1)<<Precision ;
+     
+      uint16 value;
+      
+     private: 
+     
+      Num(uint16 value_) : value(value_) {}
+      
+      template <class T>
+      static Meta::EnableIf<( T(-1)>Quick::ScanUInt(-1) ),unsigned> Bits(T c)
+       {
+        const unsigned s=Meta::UIntBits<Quick::ScanUInt>::Ret;
+        
+        unsigned ret=1;
+
+        for(;;)
+          {
+           Quick::ScanUInt u=(Quick::ScanUInt)c;
+          
+           if( u==c ) return Quick::ScanMSBit(u)+ret;
+           
+           c>>=s;
+           ret+=s;
+          }
+       }
+      
+      template <class T>
+      static Meta::EnableIf<( T(-1)<=Quick::ScanUInt(-1) ),unsigned> Bits(T c)
+       {
+        return Quick::ScanMSBit(c)+1;
+       }
+      
+      template <class T>
+      static Meta::EnableIf<( Meta::UIntBits<T>::Ret>16 ),void> Prepare(T &a,T &b)
+       {
+        if( UInt c=a>>16 )
+          {
+           unsigned s=Bits(c);
+             
+           a>>=s;
+           b>>=s;
+          }
+       }
+      
+      template <class T>
+      static Meta::EnableIf<( Meta::UIntBits<T>::Ret<=16 ),void> Prepare(T &,T &)
+       {
+       }
+      
+     public:
+      
+      Num() : value(0) {}
+      
+      Num(OneType) : value(OneValue) {}
+      
+      Num(UInt a,UInt b) // a<=b , a/b
+       {
+        Prepare(a,b);
+        
+        value=uint16( (uint32(a)<<Precision)/b );
+       }
+      
+      unsigned map() const { return value>>(Precision-AlphaBits); }
+      
+      Num div_2() const { return value>>1; }
+      
+      friend bool operator < (Num a,Num b) { return a.value<b.value; }
+      
+      friend bool operator > (Num a,Num b) { return a.value>b.value; } 
+      
+      friend bool operator <= (Num a,Num b) { return a.value<=b.value; }
+      
+      friend bool operator >= (Num a,Num b) { return a.value>=b.value; }
+      
+      friend Num operator + (Num a,Num b) { return a.value+b.value; }
+      
+      friend Num operator - (Num a,Num b) { return a.value-b.value; }
+      
+      friend Num operator * (Num a,Num b) { return uint16( (uint32(a.value)*b.value)>>Precision ); }
+      
+      friend Num operator / (Num a,Num b) { return uint16( (uint32(a.value)<<Precision)/b.value ); }
+      
+      template <class SInt>
+      static Num Make(SInt a,unsigned precision) // [0,2) 
+       { 
+        if( precision==Precision ) return uint16( a );
+        
+        if( precision<Precision ) return uint16( a )<<(Precision-precision);
+        
+        return uint16( a>>(precision-Precision) );
+       } 
+    };
+  
+   static unsigned Map(Num a) { return a.map(); }
+   
+  protected: 
+   
+   Num T,A,B;
+   
+   Num T2,M,S;
+  
+  public:
+  
+   LineAlphaFunc(UInt sx,UInt sy) // sx >= sy > 0
+    {
+     T=Num(sy,sx);
+     
+     T2=T.div_2();
+
+     Num C=T2;
+     
+     unsigned count=0;
+     
+     for(; count<10u ;count++)
+       {
+        Num next=T2*((One+C*C)/(One+T*C));
+        
+        if( next>=C ) break;
+        
+        C=next;
+       }
+     
+     A=(One-C).div_2();
+     
+     B=(One+C).div_2();
+     
+     M=One-Sq(A)*T;
+     
+     S=One+T2*C;
+    }
+   
+   unsigned alpha0(UInt d,UInt sx,UInt sy) const // d in [0,sx]
+    {
+     if( d<sy )
+       {
+        Num t(d,sy);
+        
+        if( t<=A ) return Map( M-T*Sq(t) );
+        
+        if( t<=B ) return Map( One-T2*Sq(A+t) );
+       }
+     
+     UInt e=sx-d;
+     
+     if( e<sy )
+       {
+        Num t(e,sy);
+        
+        if( t<=A ) return Map( T2*Sq(B+t) );
+       }
+     
+     Num t(d,sx);
+     
+     return Map( S-t );
+    }
+ 
+   unsigned alpha1(UInt d,UInt /* sx */,UInt sy) const // d in [0,sx]
+    {
+     if( d>=sy ) return 0;
+     
+     Num t(d,sy);
+     
+     if( t>=B ) return 0;
+     
+     return Map( T2*Sq(B-t) );
+    }
+ };
+
+/* class LineAlphaFunc2<UInt,unsigned AlphaBits> */
+
+template <class UInt,unsigned AlphaBits> 
+class LineAlphaFunc2 : LineAlphaFunc<UInt,AlphaBits>
+ {
+   using Num = typename LineAlphaFunc<UInt,AlphaBits>::Num ;
+   
+   using LineAlphaFunc<UInt,AlphaBits>::One;
+   
+   using LineAlphaFunc<UInt,AlphaBits>::T;
+   using LineAlphaFunc<UInt,AlphaBits>::A;
+   using LineAlphaFunc<UInt,AlphaBits>::B;
+   using LineAlphaFunc<UInt,AlphaBits>::T2;
+   using LineAlphaFunc<UInt,AlphaBits>::M;
+   using LineAlphaFunc<UInt,AlphaBits>::S;
+   
+   using LineAlphaFunc<UInt,AlphaBits>::Map;
+   
+   Num a,b;
+ 
+  public:
+ 
+   LineAlphaFunc2(UInt sx,UInt sy) // sx >= sy > 0
+    : LineAlphaFunc<UInt,AlphaBits>(sx,sy) 
+    {
+     a=T*A;
+     b=T*B;
+    }
+ 
+   template <class SInt>
+   unsigned alpha0(SInt d,unsigned precision) const // [-1/2,1/2]
+    {
+     if( d<0 ) d=-d;
+     
+     Num t=Num::Make(d,precision);
+     
+     if( t<a ) return Map( M-T*Sq(t/T) );
+     
+     if( t<b ) return Map( One-T2*Sq(A+t/T) );
+     
+     return Map( S-t );
+    }
+   
+   template <class SInt>
+   unsigned alpha1(SInt d,unsigned precision) const // [-1/2,1/2]
+    {
+     Num t=Num::Make(d+(SInt(1)<<precision),precision);
+     
+     if( t<b ) return Map( One-T2*Sq(A+t/T) );
+     
+     if( t+a<One ) return Map( S-t );
+     
+     if( t<One+b ) return Map( T2*Sq((One+b-t)/T) );
+     
+     return 0;
+    }
+   
+   template <class SInt>
+   unsigned alpha2(SInt d,unsigned precision) const // [-1/2,1/2]
+    {
+     if( d>=0 ) return 0;
+     
+     Num t=Num::Make(d+(SInt(2)<<precision),precision);
+     
+     if( t<One+b ) return Map( T2*Sq((One+b-t)/T) );
+     
+     return 0;
+    }
+ };
+
 /* class SmoothLineDriver<UInt,unsigned AlphaBits> */
 
 template <class UInt,unsigned AlphaBits> 
 class SmoothLineDriver 
  {
-  public:
-  
-   class AlphaFunc
-    {
-      enum OneType
-       {
-        One = 1
-       };
-     
-      class Num // [0,2)
-       {
-         static const unsigned Precision = 15 ;
-         
-         static const uint16 OneValue = uint16(1)<<Precision ;
-        
-         uint16 value;
-         
-        private: 
-        
-         Num(uint16 value_) : value(value_) {}
-         
-         template <class T>
-         static Meta::EnableIf<( T(-1)>Quick::ScanUInt(-1) ),unsigned> Bits(T c)
-          {
-           const unsigned s=Meta::UIntBits<Quick::ScanUInt>::Ret;
-           
-           unsigned ret=1;
- 
-           for(;;)
-             {
-              Quick::ScanUInt u=(Quick::ScanUInt)c;
-             
-              if( u==c ) return Quick::ScanMSBit(u)+ret;
-              
-              c>>=s;
-              ret+=s;
-             }
-          }
-         
-         template <class T>
-         static Meta::EnableIf<( T(-1)<=Quick::ScanUInt(-1) ),unsigned> Bits(T c)
-          {
-           return Quick::ScanMSBit(c)+1;
-          }
-         
-         template <class T>
-         static Meta::EnableIf<( Meta::UIntBits<T>::Ret>16 ),void> Prepare(T &a,T &b)
-          {
-           if( UInt c=a>>16 )
-             {
-              unsigned s=Bits(c);
-                
-              a>>=s;
-              b>>=s;
-             }
-          }
-         
-         template <class T>
-         static Meta::EnableIf<( Meta::UIntBits<T>::Ret<=16 ),void> Prepare(T &,T &)
-          {
-          }
-         
-        public:
-         
-         Num() : value(0) {}
-         
-         Num(OneType) : value(OneValue) {}
-         
-         Num(UInt a,UInt b) // a<=b , a/b
-          {
-           Prepare(a,b);
-           
-           value=uint16( (uint32(a)<<Precision)/b );
-          }
-         
-         unsigned map() const { return value>>(Precision-AlphaBits); }
-         
-         Num div_2() const { return value>>1; }
-         
-         friend bool operator < (Num a,Num b) { return a.value<b.value; }
-         
-         friend bool operator > (Num a,Num b) { return a.value>b.value; } 
-         
-         friend bool operator <= (Num a,Num b) { return a.value<=b.value; }
-         
-         friend bool operator >= (Num a,Num b) { return a.value>=b.value; }
-         
-         friend Num operator + (Num a,Num b) { return a.value+b.value; }
-         
-         friend Num operator - (Num a,Num b) { return a.value-b.value; }
-         
-         friend Num operator * (Num a,Num b) { return uint16( (uint32(a.value)*b.value)>>Precision ); }
-         
-         friend Num operator / (Num a,Num b) { return uint16( (uint32(a.value)<<Precision)/b.value ); }
-       };
-     
-      static unsigned Map(Num a) { return a.map(); }
-      
-     private: 
-      
-      Num T,A,B;
-      
-      Num T2,M,S;
-     
-     public:
-     
-      AlphaFunc(UInt sx,UInt sy)
-       {
-        T=Num(sy,sx);
-        
-        T2=T.div_2();
- 
-        Num C=T2;
-        
-        unsigned count=0;
-        
-        for(; count<10u ;count++)
-          {
-           Num next=T2*((One+C*C)/(One+T*C));
-           
-           if( next>=C ) break;
-           
-           C=next;
-          }
-        
-        A=(One-C).div_2();
-        
-        B=(One+C).div_2();
-        
-        M=One-Sq(A)*T;
-        
-        S=One+T2*C;
-       }
-      
-      unsigned alpha0(UInt d,UInt sx,UInt sy) const // d in [0,sx]
-       {
-        if( d<sy )
-          {
-           Num t(d,sy);
-           
-           if( t<=A ) return Map( M-T*Sq(t) );
-           
-           if( t<=B ) return Map( One-T2*Sq(A+t) );
-          }
-        
-        UInt e=sx-d;
-        
-        if( e<sy )
-          {
-           Num t(e,sy);
-           
-           if( t<=A ) return Map( T2*Sq(B+t) );
-          }
-        
-        Num t(d,sx);
-        
-        return Map( S-t );
-       }
-    
-      unsigned alpha1(UInt d,UInt,UInt sy) const // d in [0,sx]
-       {
-        if( d>=sy ) return 0;
-        
-        Num t(d,sy);
-        
-        if( t>=B ) return 0;
-        
-        return Map( Sq(B-t)*T2 );
-       }
-    
-      template <class SInt>
-      unsigned alpha(SInt d,unsigned precision) const // [-1/2,1/2] TODO
-       {
-        Used(d);
-        Used(precision);
-        
-        return 0;
-       }
-      
-      template <class SInt>
-      unsigned alpha1(SInt d,unsigned precision) const // [-1/2,1/2] TODO
-       {
-        Used(d);
-        Used(precision);
-        
-        return 0;
-       }
-    };
-  
   private:
   
    const UInt sx;
@@ -477,7 +553,7 @@ class SmoothLineDriver
    
    UInt delta = 0 ;
    
-   const AlphaFunc func; 
+   const LineAlphaFunc<UInt,AlphaBits> func; 
    
   public:
   
@@ -1044,7 +1120,7 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
 /* LineSmooth(LPoint a,LPoint b,...) */
 
 template <class Color,class Plot>
-bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // TODO
+bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
  {
   const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
   
@@ -1078,27 +1154,41 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // TODO
      if( !count ) return false;
     
      LineDriverL driver(sx,sy);
-     SmoothLineDriver<uLCoord>::AlphaFunc func(sx,sy); 
+     LineAlphaFunc2<uLCoord> func(sx,sy); 
 
      {
       uLCoord first=LineDriverL::First(a.x,ex);
+      LCoord part=first-Step/2;
       
-      uLCoord delta_x=first;
-      uLCoord delta_y=driver.step_pow2(LPoint::Precision);
-      
-      a.x=IntMove(a.x,ex,delta_x);
-      a.y=IntMove(a.y,ey,delta_y);
+      if( first>=Step )
+        {
+         uLCoord delta_x=first-Step;
+         uLCoord delta_y=driver.step(delta_x);
+         
+         a.x=IntMove(a.x,ex,delta_x);
+         a.y=IntMove(a.y,ey,delta_y);
+        }
+      else
+        {
+         uLCoord delta_x=Step-first;
+         uLCoord delta_y=driver.back(delta_x);
+        
+         a.x=IntMove(a.x,-ex,delta_x);
+         a.y=IntMove(a.y,-ey,delta_y);
+        }
       
       Point A=a.toPoint();
       
       LCoord delta=a.y-LPoint::LShift(A.y);
       
-      plot(A-Point(0,ey),color,func.alpha1(delta,LPoint::Precision));
-      plot(A,color,func.alpha(delta,LPoint::Precision));
-      plot(A+Point(0,ey),color,func.alpha1(-delta,LPoint::Precision));
+      //plot(A-Point(0,2*ey),color,AlphaPart(func.alpha2(delta,LPoint::Precision),part));
+      //plot(A-Point(0,ey),color,AlphaPart(func.alpha1(delta,LPoint::Precision),part));
+      plot(A,color,AlphaPart(func.alpha0(delta,LPoint::Precision),part));
+      //plot(A+Point(0,ey),color,AlphaPart(func.alpha1(-delta,LPoint::Precision),part));
+      //plot(A+Point(0,2*ey),color,AlphaPart(func.alpha2(-delta,LPoint::Precision),part));
      }
     
-     for(count--; count ;count--)
+     for(; count ;count--)
        {
         uLCoord delta_x=Step;
         uLCoord delta_y=driver.step_pow2(LPoint::Precision);
@@ -1110,10 +1200,31 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // TODO
         
         LCoord delta=a.y-LPoint::LShift(A.y);
         
-        plot(A-Point(0,ey),color,func.alpha1(delta,LPoint::Precision));
-        plot(A,color,func.alpha(delta,LPoint::Precision));
-        plot(A+Point(0,ey),color,func.alpha1(-delta,LPoint::Precision));
+        //plot(A-Point(0,2*ey),color,func.alpha2(delta,LPoint::Precision));
+        //plot(A-Point(0,ey),color,func.alpha1(delta,LPoint::Precision));
+        plot(A,color,func.alpha0(delta,LPoint::Precision));
+        //plot(A+Point(0,ey),color,func.alpha1(-delta,LPoint::Precision));
+        //plot(A+Point(0,2*ey),color,func.alpha2(-delta,LPoint::Precision));
        }
+     
+     {
+      uLCoord delta_x=Step;
+      uLCoord delta_y=driver.step_pow2(LPoint::Precision);
+      
+      a.x=IntMove(a.x,ex,delta_x);
+      a.y=IntMove(a.y,ey,delta_y);
+      
+      Point A=a.toPoint();
+      
+      LCoord delta=a.y-LPoint::LShift(A.y);
+      LCoord part=b.x-a.x+(LCoord(1)<<(LPoint::Precision-1));
+      
+      //plot(A-Point(0,2*ey),color,AlphaPart(func.alpha2(delta,LPoint::Precision),part));
+      //plot(A-Point(0,ey),color,AlphaPart(func.alpha1(delta,LPoint::Precision),part));
+      plot(A,color,AlphaPart(func.alpha0(delta,LPoint::Precision),part));
+      //plot(A+Point(0,ey),color,AlphaPart(func.alpha1(-delta,LPoint::Precision),part));
+      //plot(A+Point(0,2*ey),color,AlphaPart(func.alpha2(-delta,LPoint::Precision),part));
+     }
      
      return true;
     }

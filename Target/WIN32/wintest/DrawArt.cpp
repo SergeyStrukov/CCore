@@ -383,63 +383,6 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
   path(curve,color, [this] (Point p,DesktopColor color) { pixel(p,color); } );
  }
 
-void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
- {
-  path(curve,color, [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } );
- }
-
-void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
- {
-  LPoint a=*curve;
-  
-  gridKnob(a,5,color,magnify);
-  
-  for(++curve; +curve ;++curve)
-    {
-     LPoint b=*curve;
-     
-     gridKnob(b,3,color,magnify);
-     
-     a=b;
-    }
-  
-  gridKnob(a,5,color,magnify);
- }
-
-void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
- {
-  LPoint lim=buf.getSize()/magnify;
-  
-  LPoint a=*curve;
-  
-  for(++curve; +curve ;++curve)
-    {
-     LPoint b=*curve;
-
-     if( a>=Null && a<lim && b>=Null && b<lim ) 
-       {
-        Point A=(a*magnify).toPoint();
-        Point B=(b*magnify).toPoint();
-       
-        buf.line(A,B,color);
-       }
-     
-     a=b;
-    }
- }
-
-void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
- {
-  path_micro1(curve,Silver,magnify);
-  path_micro2(curve,Black,magnify);
-  path_micro3(curve,color,magnify);
- }
-
-void CommonDrawArt::line_smooth_micro(Point a,Point b,ColorName cname,Coord magnify)
- {
-  LineSmooth(a,b,cname, SmoothPlotMicro(*this,magnify) );
- }
-
 template <class Plot>
 void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot) // TODO
  {
@@ -507,6 +450,54 @@ void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname)
   path_smooth(curve,cname, SmoothPlot(buf) );
  }
 
+void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
+ {
+  path(curve,color, [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } );
+ }
+
+void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
+ {
+  gridKnob(*curve,5,color,magnify);
+  
+  for(++curve; curve.len>1 ;++curve) gridKnob(*curve,3,color,magnify);
+  
+  gridKnob(*curve,5,color,magnify);
+ }
+
+void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
+ {
+  LPoint lim=buf.getSize()/magnify;
+  
+  LPoint a=*curve;
+  
+  for(++curve; +curve ;++curve)
+    {
+     LPoint b=*curve;
+
+     if( a>=Null && a<lim && b>=Null && b<lim ) 
+       {
+        Point A=(a*magnify).toPoint();
+        Point B=(b*magnify).toPoint();
+       
+        buf.line(A,B,color);
+       }
+     
+     a=b;
+    }
+ }
+
+void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
+ {
+  path_micro1(curve,Silver,magnify);
+  path_micro2(curve,Black,magnify);
+  path_micro3(curve,color,magnify);
+ }
+
+void CommonDrawArt::line_smooth_micro(Point a,Point b,ColorName cname,Coord magnify)
+ {
+  LineSmooth(a,b,cname, SmoothPlotMicro(*this,magnify) );
+ }
+
 void CommonDrawArt::path_smooth_micro(PtrStepLen<const LPoint> curve,ColorName cname,Coord magnify)
  {
   path_smooth(curve,cname, SmoothPlotMicro(*this,magnify) );
@@ -528,6 +519,8 @@ void CommonDrawArt::block(Pane pane,DesktopColor color)
  {
   buf.block(Inf(buf.getPane(),pane),color);
  }
+
+ // path
 
 void CommonDrawArt::path(PtrLen<const Point> dots,DesktopColor color)
  {
@@ -770,6 +763,8 @@ void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
     }
  }
 
+ // path smooth
+
 void CommonDrawArt::path_smooth(PtrLen<const Point> dots,ColorName cname)
  {
   if( +dots )
@@ -1011,6 +1006,8 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
     }
  }
 
+ // solid
+
 void CommonDrawArt::solid(PtrLen<const Point> dots,DesktopColor color) // TODO
  {
   Used(dots);
@@ -1076,10 +1073,10 @@ void CommonDrawArt::curvePath_micro(PtrLen<const Point> dots,DesktopColor color,
 
 void CommonDrawArt::path_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify)
  {
-  focus.y-=buf.dY()/magnify;
-  
   if( +dots )
     {
+     focus.y-=buf.dY()/magnify;
+    
      Point a=*dots-focus;
      
      for(++dots; +dots ;++dots)

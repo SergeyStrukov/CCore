@@ -248,9 +248,9 @@ bool DragWindow::forwardKey(VKey vkey,KeyMod kmod,unsigned repeat)
         
         case VKey_Down  : replace(Point(0,(Coord)repeat),(kmod&KeyMod_Shift)?DragType::Down:DragType::Bar); return true;
         
-        case VKey_F2    : minimized(); return true;
+        case VKey_F2    : minimize(); return true;
         
-        case VKey_F3    : maximized(); return true;
+        case VKey_F3    : maximize(); return true;
         
         case VKey_F4    : destroy(); return true;
         
@@ -329,12 +329,12 @@ void DragWindow::create(WinControl *parent,Pane pane,Point max_size)
   win->show();
  }
 
-void DragWindow::minimized()
+void DragWindow::minimize()
  {
   win->display(CmdDisplay_Minimized);
  }
 
-void DragWindow::maximized()
+void DragWindow::maximize()
  {
   if( shape.max_button )
     {
@@ -485,9 +485,9 @@ void DragWindow::clickLeft(Point point,MouseKey mkey)
       }
      break;
    
-     case DragType::Min   : minimized(); break;
+     case DragType::Min   : minimize(); break;
      
-     case DragType::Max   : maximized(); break;
+     case DragType::Max   : maximize(); break;
      
      case DragType::Close : destroy(); break;
      

@@ -92,6 +92,13 @@ class CommonDrawArt
    
    void path(PtrStepLen<const LPoint> curve,DesktopColor color);
    
+   template <class Plot>
+   void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot);
+   
+   void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname);
+   
+  private: 
+   
    void path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
    
    void path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
@@ -135,11 +142,6 @@ class CommonDrawArt
    
    void line_smooth_micro(Point a,Point b,ColorName cname,Coord magnify);
    
-   template <class Plot>
-   void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot);
-   
-   void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname);
-   
    void path_smooth_micro(PtrStepLen<const LPoint> curve,ColorName cname,Coord magnify);
    
   public:
@@ -160,6 +162,8 @@ class CommonDrawArt
      
      block(Pane(p.x-len,p.y-len,d,d),color);
     }
+   
+   // path
    
    void path(PtrLen<const Point> dots,DesktopColor color);
    
@@ -201,6 +205,8 @@ class CommonDrawArt
      curveLoop(Range_const(temp),color);
     }
    
+   // path smooth
+   
    void path_smooth(PtrLen<const Point> dots,ColorName cname);
 
    template <class ... TT>
@@ -240,6 +246,8 @@ class CommonDrawArt
      
      curveLoop_smooth(Range_const(temp),cname);
     }
+   
+   // solid
    
    void solid(PtrLen<const Point> dots,DesktopColor color);
    
