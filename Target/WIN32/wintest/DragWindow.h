@@ -288,7 +288,7 @@ class DragClient : NoCopy
      // do nothing
     }
    
-   virtual void wheel(Point point,MouseKey mkey,int delta)
+   virtual void wheel(Point point,MouseKey mkey,Coord delta)
     {
      Used(point);
      Used(mkey);
@@ -489,7 +489,7 @@ class DragWindow : public FrameWindow
    
    virtual void leave();
    
-   virtual void wheel(Point point,MouseKey mkey,int delta);
+   virtual void wheel(Point point,MouseKey mkey,Coord delta);
  
    virtual void setMouseShape(Point point);
  };

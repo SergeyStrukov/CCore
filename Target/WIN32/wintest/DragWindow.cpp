@@ -621,7 +621,7 @@ void DragWindow::leave()
     }
  }
 
-void DragWindow::wheel(Point point,MouseKey mkey,int delta)
+void DragWindow::wheel(Point point,MouseKey mkey,Coord delta)
  {
   if( (bool)shape.drag_type ) return;
   

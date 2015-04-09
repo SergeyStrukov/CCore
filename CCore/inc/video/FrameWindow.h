@@ -324,7 +324,7 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
    
-   virtual void wheel(Point point,MouseKey mkey,int delta)
+   virtual void wheel(Point point,MouseKey mkey,Coord delta)
     {
      Used(point);
      Used(mkey);

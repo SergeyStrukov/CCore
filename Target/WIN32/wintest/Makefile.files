@@ -4,10 +4,10 @@ OBJ_LIST = \
 ../wintest-obj/DrawArt.o \
 ../wintest-obj/FileReport.o \
 ../wintest-obj/main.o \
+../wintest-obj/test1.o \
+../wintest-obj/test2.o \
 ../wintest-obj/test3.o \
 ../wintest-obj/test4.o \
-../wintest-obj/test5.o \
-../wintest-obj/test6.o \
 
 
 ASM_LIST = \
@@ -16,10 +16,10 @@ ASM_LIST = \
 ../wintest-obj/DrawArt.s \
 ../wintest-obj/FileReport.s \
 ../wintest-obj/main.s \
+../wintest-obj/test1.s \
+../wintest-obj/test2.s \
 ../wintest-obj/test3.s \
 ../wintest-obj/test4.s \
-../wintest-obj/test5.s \
-../wintest-obj/test6.s \
 
 
 DEP_LIST = \
@@ -28,10 +28,10 @@ DEP_LIST = \
 ../wintest-obj/DrawArt.dep \
 ../wintest-obj/FileReport.dep \
 ../wintest-obj/main.dep \
+../wintest-obj/test1.dep \
+../wintest-obj/test2.dep \
 ../wintest-obj/test3.dep \
 ../wintest-obj/test4.dep \
-../wintest-obj/test5.dep \
-../wintest-obj/test6.dep \
 
 
 ASM_OBJ_LIST = \
@@ -55,16 +55,16 @@ include $(RULES_FILE)
 ../wintest-obj/main.o : ./main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+../wintest-obj/test1.o : ./test1.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+../wintest-obj/test2.o : ./test2.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 ../wintest-obj/test3.o : ./test3.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 ../wintest-obj/test4.o : ./test4.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-../wintest-obj/test5.o : ./test5.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-../wintest-obj/test6.o : ./test6.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 
@@ -84,16 +84,16 @@ include $(RULES_FILE)
 ../wintest-obj/main.s : ./main.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+../wintest-obj/test1.s : ./test1.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../wintest-obj/test2.s : ./test2.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 ../wintest-obj/test3.s : ./test3.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 ../wintest-obj/test4.s : ./test4.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../wintest-obj/test5.s : ./test5.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-../wintest-obj/test6.s : ./test6.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 
@@ -113,17 +113,17 @@ include $(RULES_FILE)
 ../wintest-obj/main.dep : ./main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
 
+../wintest-obj/test1.dep : ./test1.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test1.o $< -MF $@
+
+../wintest-obj/test2.dep : ./test2.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test2.o $< -MF $@
+
 ../wintest-obj/test3.dep : ./test3.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test3.o $< -MF $@
 
 ../wintest-obj/test4.dep : ./test4.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test4.o $< -MF $@
-
-../wintest-obj/test5.dep : ./test5.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test5.o $< -MF $@
-
-../wintest-obj/test6.dep : ./test6.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test6.o $< -MF $@
 
 
 

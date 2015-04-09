@@ -1007,7 +1007,7 @@ class WindowsControl : public WinControl
         case Win32::WM_MouseWheel :
          {
           MouseKey mkey=ToMouseKey(Win32::LoWord(wParam));
-          int delta=Win32::SHiWord(wParam)/Win32::WheelDelta;
+          Coord delta=Win32::SHiWord(wParam)/Win32::WheelDelta;
           Point point=ToPoint(lParam);
           
           frame->wheel(point-origin,mkey,delta);

@@ -27,13 +27,13 @@ using namespace CCore::Video;
 
 /* main functions */
 
+namespace App1 { int testmain(CmdDisplay cmd_display); }
+
+namespace App2 { int testmain(CmdDisplay cmd_display); }
+
 namespace App3 { int testmain(CmdDisplay cmd_display); }
 
 namespace App4 { int testmain(CmdDisplay cmd_display); }
-
-namespace App5 { int testmain(CmdDisplay cmd_display); }
-
-namespace App6 { int testmain(CmdDisplay cmd_display); }
 
 /* WinMain() */ 
 
@@ -43,7 +43,7 @@ const CCore::AbortMsgFuncType CCore::AbortMsgFunc = AbortMsgBox ;
 
 extern "C" int WIN32_CALLTYPE WinMain(Win32::HModule,Win32::HModule,char *,unsigned cmd_show)
  {
-  return App5::testmain(MapCmdShow(cmd_show)); 
+  return App4::testmain(MapCmdShow(cmd_show)); 
  }
  
  

@@ -13,10 +13,16 @@
 //
 //----------------------------------------------------------------------------------------
 
-#include "DrawArt.h"
-#include "DrawAlgo.h"
+#include <CCore/inc/video/ApplicationBase.h>
 
-#include <CCore/inc/Random.h>
+//#include <CCore/inc/video/DragWindow.h>
+#include "DragWindow.h"
+//#include <CCore/inc/video/DrawArt.h>
+#include "DrawArt.h"
+
+#include <CCore/inc/Array.h>
+#include <CCore/inc/Timer.h>
+#include <CCore/inc/TaskMemStack.h>
 
 #include "FileReport.h"
 
@@ -27,146 +33,484 @@ namespace App4 {
 using namespace App;
 using namespace CCore::Video;
 
-/* class FileReport */
+/* functions */
 
-class FileReport : public ReportException
+template <class A>
+void Remove(A &obj,ulen ind)
  {
-   PrintFile out;
+  auto r=Range(obj).part(ind);
+  
+  for(; r.len>1 ;++r) r[0]=r[1];
+  
+  obj.shrink_one();
+ }
+
+template <class A,class T>
+void Insert(A &obj,ulen ind,T item)
+ {
+  if( obj.getLen() )
+    {
+     obj.append_default();
+
+     auto r=RangeReverse(Range(obj).part(ind+1));
+     
+     for(; r.len>1 ;++r) r[0]=r[1];
+     
+     r[0]=item;
+    }
+  else
+    {
+     obj.append_copy(item);
+    }
+ }
+
+/* classes */
+
+class Client; 
+
+class Application;
+
+/* class Client */
+
+class Client : public DragClient
+ {
+  public: 
+  
+   struct Config
+    {
+     Coord knob_len =  3 ;
+     Coord magnify  = 32 ;
+    
+     ColorName back  = Silver ;
+     ColorName field =  White ;
+     ColorName knob  =  Black ;
+     ColorName cross =  Green ;
+     ColorName path  =    Red ;
+     
+     Config() {}
+    };
+  
+  private:
+  
+   Config cfg;
+
+   DynArray<Point> dots;
+   DynArray<Point> dots_based;
+   Pane field;
+   Point size;
+   
+   enum DrawType
+    {
+     DrawPath,
+     DrawLoop,
+     DrawCurvePath,
+     DrawCurveLoop,
+     DrawSolid,
+     DrawCurveSolid,
+     DrawPathSmooth,
+     DrawLoopSmooth,
+     DrawCurvePathSmooth,
+     DrawCurveLoopSmooth
+    };
+   
+   DrawType draw_type = DrawCurvePathSmooth ;
+   
+   ulen selected = 0 ;
+   
+   bool magnify = false ;
+   Point focus;
+   
+   mutable PrintFile out;
    
   private: 
- 
-   virtual void print(StrLen str)
+  
+   void cross(CommonDrawArt &art,Point p,DesktopColor color) const
     {
-     Putobj(out,str);
+     art.path(color,Point(p.x,0),Point(p.x,size.y-1));
+     art.path(color,Point(0,p.y),Point(size.x-1,p.y));
     }
    
-   virtual void end()
+   void select(Point point)
     {
-     Printf(out,"\n\n#;\n\n",TextDivider());
+     if( selected<dots.getLen() )
+       {
+        dots[selected]=point;
+        dots_based[selected]=point-field.getBase();
+        
+        win->redraw();
+       }
+    }
+   
+   static const char * GetTextDesc(DrawType draw_type)
+    {
+     switch( draw_type )
+       {
+        case DrawPath            : return "Path"; 
+        case DrawLoop            : return "Loop"; 
+        case DrawCurvePath       : return "CurvePath"; 
+        case DrawCurveLoop       : return "CurveLoop"; 
+        case DrawSolid           : return "Solid"; 
+        case DrawCurveSolid      : return "CurveSolid";
+        case DrawPathSmooth      : return "PathSmooth";
+        case DrawLoopSmooth      : return "LoopSmooth";
+        case DrawCurvePathSmooth : return "CurvePathSmooth";
+        case DrawCurveLoopSmooth : return "CurveLoopSmooth";
+        
+        default: return "???";
+       }
     }
    
   public:
   
-   FileReport() : out("exception-log.txt") {}
-   
-   ~FileReport() { Printf(out,"Done\n"); }
-   
-   bool show() { return true; }
- };
-
-/* test1() */
-
-void test1(unsigned sx,unsigned sy)
- {
-  LineDriver driver(sx,sy);
-  
-  unsigned x=0;
-  unsigned y=0;
-  
-  for(unsigned count=sx; count ;count--)
+   explicit Client(Config cfg_={})
+    : cfg(cfg_),
+      out("time.txt")
     {
-     y+=driver.step();
-     x++;
+    }
+   
+   virtual ~Client()
+    {
+    }
+   
+   // drawing
+   
+   virtual void layout(Point size_)
+    {
+     size=size_;
      
-     UIntFunc<unsigned>::Mul mul(x,sy);
-     UIntFunc<unsigned>::DivMod divmod(mul.hi,mul.lo,sx);
+     field=Pane(size.x/4,size.y/4,size.x/2,size.y/2);
      
-     unsigned z=divmod.div;
-     
-     if( divmod.mod>sx/2 ) z++;
-     
-     if( y!=z ) 
+     for(ulen i=0,len=dots.getLen(); i<len ;i++) dots_based[i]=dots[i]-field.getBase();
+    }
+   
+   virtual void draw(FrameBuf<DesktopColor> buf,bool) const
+    {
+     if( magnify )
        {
-        Printf(Exception,"1 failed #; #;",sx,sy);
+        CommonDrawArt art(buf);
+        
+        art.grid(cfg.magnify);
+        
+        switch( draw_type )
+          {
+           case DrawCurvePath       : art.curvePath_micro(Range_const(dots),cfg.path,focus,cfg.magnify); break;
+           
+           case DrawPathSmooth      : art.path_smooth_micro(Range_const(dots),cfg.path,focus,cfg.magnify); break;
+           
+           case DrawCurvePathSmooth : art.curvePath_smooth_micro(Range_const(dots),cfg.path,focus,cfg.magnify); break;
+          }
+       }
+     else
+       {
+        CommonDrawArt art(buf);
+        
+        art.erase(cfg.back);
+        
+        art.block(field,cfg.field);
+        
+        for(auto p : dots ) art.knob(p,cfg.knob_len,cfg.knob);
+        
+        if( selected<dots.getLen() ) cross(art,dots[selected],cfg.cross);
+        
+        CommonDrawArt field_art(buf.cut(field));
+        
+        ClockTimer timer;
+        
+        switch( draw_type )
+          {
+           case DrawPath            : field_art.path(Range_const(dots_based),cfg.path); break;
+           case DrawLoop            : field_art.loop(Range_const(dots_based),cfg.path); break;
+           case DrawCurvePath       : field_art.curvePath(Range_const(dots_based),cfg.path); break;
+           case DrawCurveLoop       : field_art.curveLoop(Range_const(dots_based),cfg.path); break;
+           case DrawSolid           : field_art.solid(Range_const(dots_based),cfg.path); break;
+           case DrawCurveSolid      : field_art.curveSolid(Range_const(dots_based),cfg.path); break;
+           case DrawPathSmooth      : field_art.path_smooth(Range_const(dots_based),cfg.path); break;
+           case DrawLoopSmooth      : field_art.loop_smooth(Range_const(dots_based),cfg.path); break;
+           case DrawCurvePathSmooth : field_art.curvePath_smooth(Range_const(dots_based),cfg.path); break;
+           case DrawCurveLoopSmooth : field_art.curveLoop_smooth(Range_const(dots_based),cfg.path); break;
+          }
+        
+        auto time=timer.get();
+        
+        Printf(out,"#;[#;] #;\n",GetTextDesc(draw_type),dots.getLen(),time);
        }
     }
- }
+   
+   virtual void key(VKey vkey,KeyMod kmod)
+    {
+     switch( vkey )
+       {
+        case VKey_F1 :
+         {
+          draw_type=DrawPath;
+          
+          win->redraw();
+         }
+        break;
+        
+        case VKey_F2 :
+         {
+          draw_type=DrawLoop;
+          
+          win->redraw();
+         }
+        break; 
+        
+        case VKey_F3 :
+         {
+          draw_type=DrawCurvePath;
+          
+          win->redraw();
+         }
+        break; 
+        
+        case VKey_F4 :
+         {
+          draw_type=DrawCurveLoop;
+          
+          win->redraw();
+         }
+        break; 
+        
+        case VKey_F5 :
+         {
+          draw_type=DrawPathSmooth;
+          
+          win->redraw();
+         }
+        break; 
+        
+        case VKey_F6 :
+         {
+          draw_type=DrawLoopSmooth;
+          
+          win->redraw();
+         }
+        break;
+        
+        case VKey_F7 :
+         {
+          draw_type=DrawCurvePathSmooth;
+          
+          win->redraw();
+         }
+        break; 
+        
+        case VKey_F8 :
+         {
+          draw_type=DrawCurveLoopSmooth;
+          
+          win->redraw();
+         }
+        break; 
+        
+        case VKey_Tab :
+         {
+          if( ulen len=dots.getLen() )
+            {
+             if( kmod&KeyMod_Shift )
+               {
+                if( selected ) selected--; else selected=len-1;
+               }
+             else
+               {
+                if( ++selected >= len ) selected=0;
+               }
+            
+             win->redraw();
+            }
+         }
+        break;
+        
+        case VKey_Home :
+         {
+          if( dots.getLen() )
+            {
+             selected=0;
+            
+             win->redraw();
+            }
+         }
+        break; 
+        
+        case VKey_Delete :
+         {
+          ulen ind=selected;
+          ulen len=dots.getLen();
+          
+          if( ind<len )
+            {
+             Remove(dots,ind);
+             Remove(dots_based,ind);
+             
+             if( ind==len-1 && ind>0 ) selected=ind-1;
+            
+             win->redraw();
+            }
+         }
+        break; 
+       }
+    }
+   
+   virtual void clickLeft(Point point,MouseKey mkey)
+    {
+     if( mkey&MouseKey_Shift )
+       {
+        dots.reserve(1);
+        dots_based.reserve(1);
+       
+        Insert(dots,selected,point);
+        Insert(dots_based,selected,point-field.getBase());
+        
+        if( dots.getLen()>1 ) selected++;
+        
+        win->redraw();
+       }
+     else
+       {
+        select(point);
+       }
+    }
+   
+   virtual void clickRight(Point point,MouseKey)
+    {
+     magnify=true;
+     focus=point;
+     
+     win->redraw();
+    }
+   
+   virtual void upRight(Point,MouseKey)
+    {
+     if( magnify )
+       {
+        magnify=false;
+       
+        win->redraw();
+       }
+    }
 
-/* test2() */
+   virtual void move(Point point,MouseKey mkey)
+    {
+     if( magnify )
+       {
+        focus=point;
+        
+        win->redraw();
+       }
+     else
+       {
+        if( mkey&MouseKey_Left )
+          {
+           if( win->getToken() ) return;
+           
+           select(point);
+          }
+       }
+    }
+ 
+   virtual void leave()
+    {
+     if( magnify )
+       {
+        magnify=false;
+     
+        win->redraw();
+       } 
+    }
+ 
+   virtual void wheel(Point,MouseKey,Coord delta)
+    {
+     if( magnify )
+       {
+        cfg.magnify=(Coord)Cap<int>(5,cfg.magnify+delta,100);
+       
+        win->redraw();
+       }
+    }
+ };
 
-void test2(unsigned sx,unsigned sy,unsigned off,unsigned len)
+/* class Application */
+
+class Application : public ApplicationBase
  {
-  LineDriver driver(sx,sy);
+   const CmdDisplay cmd_display;
   
-  unsigned y=0;
+   FileReport report;
+   
+   Client client;
+   
+   DragWindow main_win;
+   
+  private:
   
-  for(unsigned count=off; count ;count--)
+   virtual void clearException()
     {
-     y+=driver.step();
+     report.clear();
     }
-  
-  unsigned y0=y;
-  
-  LineDriver driver1(driver);
-  
-  for(unsigned count=len; count ;count--)
+   
+   virtual void guardException()
     {
-     y+=driver.step();
+     report.guard();
     }
-  
-  unsigned y1=y;
-  
-  if( driver1.step(len)!=y1-y0 )
+   
+   virtual void showException()
     {
-     Printf(Exception,"2 failed #; #;",sx,sy);
+     if( !report.show() ) main_win.destroy();
     }
- }
-
-/* test3() */
-
-void test3(unsigned sx,unsigned sy,unsigned y)
- {
-  LineDriver driver(sx,sy);
-  LineDriver driver1(driver);
-  
-  unsigned x=driver.clipToX(y);
-  
-  if( driver.step(x)<y || x==0 )
+   
+   virtual void prepare()
     {
-     Printf(Exception,"3 failed #; #; #;",sx,sy,y);
+     Point max_size=desktop->getScreenSize();
+     
+     main_win.createMain(cmd_display,max_size);
     }
-  
-  if( driver1.step(x-1)>=y )
+   
+   virtual void do_tick()
     {
-     Printf(Exception,"4 failed #; #; #;",sx,sy,y);
     }
- }
-
-void test3(unsigned sx,unsigned sy)
- {
-  for(unsigned y=1; y<=sy ;y++) test3(sx,sy,y);
- }
+   
+  public: 
+   
+   explicit Application(CmdDisplay cmd_display_)
+    : ApplicationBase(50_msec),
+      cmd_display(cmd_display_),
+      main_win(desktop,client)
+    {
+    }
+   
+   ~Application()
+    {
+    }
+ };
 
 /* testmain() */
 
-int testmain(CmdDisplay)
+int testmain(CmdDisplay cmd_display)
  {
-  FileReport report;
+  int ret;
+  
+  cmd_display=CmdDisplay_Maximized;
   
   try
     {
-     Random random;
+     TaskMemStack tms(64_KByte);
      
-     for(ulen count=10000; count ;count--)
-       {
-        unsigned sy=random.select(1,1000);
-        unsigned sx=sy+random.select(100000);
+     Application app(cmd_display);
      
-        test1(sx,sy);
-        
-        test2(sx,sy,random.select(1,1000),random.select(1,1000));
-        
-        test3(sx,sy);
-       }
-     
-     return 0;
+     ret=app.run();
     }
   catch(CatchType)
     {
      return 1;
     }
+  
+  return ret;
  }
  
 } // namespace App4
  
+ 
+ 
+
 
