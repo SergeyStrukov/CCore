@@ -138,7 +138,7 @@ class CommonDrawArt
           } 
         else
           {
-           DesktopColor color(White);
+           DesktopColor color=art.probeCell(p,magnify);
           
            color.blend(Clr(alpha),cname);
              
@@ -281,6 +281,8 @@ class CommonDrawArt
    void grid(Coord cell);
    
    void gridCell(Point p,DesktopColor color,Coord magnify);
+   
+   DesktopColor probeCell(Point p,Coord magnify);
    
    void gridKnob(LPoint p,Coord len,DesktopColor color,Coord magnify);
    

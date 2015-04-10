@@ -1039,6 +1039,16 @@ void CommonDrawArt::gridCell(Point p,DesktopColor color,Coord magnify)
     knob(p*magnify,magnify/2-1,color);
  }
 
+DesktopColor CommonDrawArt::probeCell(Point p,Coord magnify)
+ {
+  if( p>=Null && p<buf.getSize()/magnify )
+    {
+     return buf.pixel(p*magnify+Point(6,6));
+    }
+  
+  return White;
+ }
+
 void CommonDrawArt::gridKnob(LPoint p,Coord len,DesktopColor color,Coord magnify)
  {
   if( p>=Null && p<buf.getSize()/magnify ) 
