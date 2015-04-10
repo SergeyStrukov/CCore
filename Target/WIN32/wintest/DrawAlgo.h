@@ -59,12 +59,10 @@ bool DistDir(SInt &e,UInt &s,SInt a,SInt b)
   return false;
  }
 
-/* AlphaPart() */
+/* Direct() */
 
-inline unsigned AlphaPart(unsigned alpha,uLCoord part)
- {
-  return unsigned( (alpha*part)>>LPoint::Precision );
- }
+template <class SInt>
+SInt Direct(SInt e,SInt a) { return (e>0)?a:(-a); }
 
 /* classes */
 
@@ -490,6 +488,53 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt,AlphaBits>
    
    Num a,b;
  
+  private: 
+   
+   unsigned alpha(Num t,Num p) const
+    {
+     Num c=p*T;
+    
+     if( t<a )
+       {
+        Num x;
+        
+        {
+         Num s=a-t;
+         
+         if( s<c ) 
+           x=(Sq(s)/c).div_2();
+         else
+           x=One+c.div_2()-s;
+        }
+       
+        Num s=b-t;
+       
+        if( s<c ) return Map( p*(One-(Sq(s)/c).div_2()-x) );
+      
+        return Map( p*(One-x) );
+       }
+     
+     if( t<b )
+       {
+        Num s=b-t;
+        
+        if( s<c ) return Map( p*(One-(Sq(s)/c).div_2()) );
+       
+        return Map( p );
+       }
+     
+     if( t<One+b )
+       {
+        Num s=One+b-t;
+        
+        if( s<c ) return Map( p*(Sq(s)/c).div_2() );
+        
+        return Map( p*(s-c.div_2()) );
+       }
+     
+     return 0;
+    }
+   
   public:
  
    LineAlphaFunc2(UInt sx,UInt sy) // sx >= sy > 0
@@ -537,6 +582,117 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt,AlphaBits>
      if( t<One+b ) return Map( T2*Sq((One+b-t)/T) );
      
      return 0;
+    }
+   
+   template <class SInt>
+   unsigned alpha0before(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+    {
+     if( d<0 )
+       {
+        Num t=Num::Make(-d,precision);
+        Num p=Num::Make(part,precision);
+      
+        return alpha(t+T*(One-p),p);
+       }
+     else
+       {
+        Num t=Num::Make(d,precision);
+        Num p=Num::Make(part,precision);
+       
+        return alpha(t,p);
+       }
+    }
+   
+   template <class SInt>
+   unsigned alpha1before(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+    {
+     if( d<0 )
+       {
+        Num t=Num::Make(-d,precision);
+        Num p=Num::Make(part,precision);
+      
+        return alpha(One-t,p);
+       }
+     else
+       {
+        Num t=Num::Make(d,precision);
+        Num p=Num::Make(part,precision);
+       
+        return alpha(One+t,p);
+       }
+    }
+   
+   template <class SInt>
+   unsigned alpha2before(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+    {
+     if( d<0 )
+       {
+        Num t=Num::Make(-d,precision);
+        Num p=Num::Make(part,precision);
+
+        t=One-t;
+        
+        if( t>=b ) return 0;
+      
+        return alpha(One+t,p);
+       }
+     else
+       {
+        return 0;
+       }
+    }
+   
+   template <class SInt>
+   unsigned alpha0after(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+    {
+     return alpha0before(-d,part,precision);
+    }
+   
+   template <class SInt>
+   unsigned alpha1after(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+    {
+     if( d<0 )
+       {
+        Num t=Num::Make(-d,precision);
+        Num p=Num::Make(part,precision);
+      
+        return alpha((One-t)+T*(One-p),p);
+       }
+     else
+       {
+        Num t=Num::Make(d,precision);
+        Num p=Num::Make(part,precision);
+        
+        t=T*(One-p)+t;
+        
+        if( t>=b ) return 0;
+       
+        return alpha(One+t,p);
+       }
+    }
+   
+   template <class SInt>
+   unsigned alpha2after(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+    {
+     if( d<0 )
+       {
+        Num t=Num::Make(-d,precision);
+        Num p=Num::Make(part,precision);
+
+        t=One-t;
+        
+        if( t>=b ) return 0;
+        
+        t=t+T*(One-p);
+        
+        if( t>=b ) return 0;
+        
+        return alpha(One+t,p);
+       }
+     else
+       {
+        return 0;
+       }
     }
  };
 
@@ -1124,6 +1280,7 @@ template <class Color,class Plot>
 bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
  {
   const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
+  const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
   
   LCoord ex;
   LCoord ey;
@@ -1159,7 +1316,7 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
 
      {
       uLCoord first=LineDriverL::First(a.x,ex);
-      LCoord part=first-Step/2;
+      LCoord part=(LCoord)first-Half;
       
       if( first>=Step )
         {
@@ -1180,13 +1337,15 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
       
       Point A=a.toPoint();
       
-      LCoord delta=ey*(a.y-LPoint::LShift(A.y));
+      LCoord delta=Direct(ey,a.y-LPoint::LShift(A.y));
       
-      plot(A-Point(0,2*ey),color,AlphaPart(func.alpha2(delta,LPoint::Precision),part));
-      plot(A-Point(0,ey),color,AlphaPart(func.alpha1(delta,LPoint::Precision),part));
-      plot(A,color,AlphaPart(func.alpha0(delta,LPoint::Precision),part));
-      plot(A+Point(0,ey),color,AlphaPart(func.alpha1(-delta,LPoint::Precision),part));
-      plot(A+Point(0,2*ey),color,AlphaPart(func.alpha2(-delta,LPoint::Precision),part));
+      plot(A-Point(0,2*ey),color,func.alpha2after(delta,part,LPoint::Precision));
+      plot(A-Point(0,ey),color,func.alpha1after(delta,part,LPoint::Precision));
+      plot(A,color,func.alpha0after(delta,part,LPoint::Precision));
+      plot(A+Point(0,ey),color,func.alpha1before(-delta,part,LPoint::Precision));
+      plot(A+Point(0,2*ey),color,func.alpha2before(-delta,part,LPoint::Precision));
+      
+      //plot.test(a,2,Blue);
      }
     
      for(; count ;count--)
@@ -1199,7 +1358,7 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
         
         Point A=a.toPoint();
         
-        LCoord delta=ey*(a.y-LPoint::LShift(A.y));
+        LCoord delta=Direct(ey,a.y-LPoint::LShift(A.y));
         
         plot(A-Point(0,2*ey),color,func.alpha2(delta,LPoint::Precision));
         plot(A-Point(0,ey),color,func.alpha1(delta,LPoint::Precision));
@@ -1207,7 +1366,7 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
         plot(A+Point(0,ey),color,func.alpha1(-delta,LPoint::Precision));
         plot(A+Point(0,2*ey),color,func.alpha2(-delta,LPoint::Precision));
         
-        plot.test(a,2,Blue);
+        //plot.test(a,2,Blue);
        }
      
      {
@@ -1219,14 +1378,16 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b] TODO
       
       Point A=a.toPoint();
       
-      LCoord delta=ey*(a.y-LPoint::LShift(A.y));
-      LCoord part=b.x-a.x+(LCoord(1)<<(LPoint::Precision-1));
+      LCoord delta=Direct(ey,a.y-LPoint::LShift(A.y));
+      LCoord part=Direct(ex,b.x-a.x)+Half;
       
-      plot(A-Point(0,2*ey),color,AlphaPart(func.alpha2(delta,LPoint::Precision),part));
-      plot(A-Point(0,ey),color,AlphaPart(func.alpha1(delta,LPoint::Precision),part));
-      plot(A,color,AlphaPart(func.alpha0(delta,LPoint::Precision),part));
-      plot(A+Point(0,ey),color,AlphaPart(func.alpha1(-delta,LPoint::Precision),part));
-      plot(A+Point(0,2*ey),color,AlphaPart(func.alpha2(-delta,LPoint::Precision),part));
+      plot(A-Point(0,2*ey),color,func.alpha2before(delta,part,LPoint::Precision));
+      plot(A-Point(0,ey),color,func.alpha1before(delta,part,LPoint::Precision));
+      plot(A,color,func.alpha0before(delta,part,LPoint::Precision));
+      plot(A+Point(0,ey),color,func.alpha1after(-delta,part,LPoint::Precision));
+      plot(A+Point(0,2*ey),color,func.alpha2after(-delta,part,LPoint::Precision));
+      
+      //plot.test(a,2,Blue);
      }
      
      return true;
