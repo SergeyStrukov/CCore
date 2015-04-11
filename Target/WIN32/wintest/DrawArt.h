@@ -45,13 +45,13 @@ class CommonDrawArt
         if( p>=Null && p<getSize() ) pixel(p,color);
        }
       
-      void operator () (Point p,ColorName cname,unsigned alpha) // 8-bit
+      void operator () (Point p,ColorName cname,unsigned alpha)
        {
         if( !alpha ) return;
         
         if( p>=Null && p<getSize() ) 
           {
-           if( alpha>=256 )
+           if( alpha>=(1u<<ClrBits) )
              pixel(p,cname);
            else
              DesktopColor::BlendTo(Blender(Clr(alpha),cname),place(p));
@@ -100,6 +100,15 @@ class CommonDrawArt
    void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname);
    
   private: 
+   
+   static const Coord ProbeDisp = 6 ;
+   static const Coord GridKnobBigLen = 5 ;
+   static const Coord GridKnobLen = 3 ;
+   
+   static const ColorName GridBack = White ;
+   static const ColorName GridLine = Blue ;
+   static const ColorName GridKnob = Black ;
+   static const ColorName GridBaseline = Blue ;
    
    void path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
    

@@ -384,7 +384,7 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
  }
 
 template <class Plot>
-void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot) // TODO
+void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot)
  {
   LPoint a=curve[0];
   LPoint b=curve[1];
@@ -426,7 +426,7 @@ void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,P
      
      while( !ok )
        {
-        if( !curve ) // TODO
+        if( !curve )
           {
            Point B=b.toPoint();
           
@@ -457,11 +457,11 @@ void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor colo
 
 void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
-  gridKnob(*curve,5,color,magnify);
+  gridKnob(*curve,GridKnobBigLen,color,magnify);
   
-  for(++curve; curve.len>1 ;++curve) gridKnob(*curve,3,color,magnify);
+  for(++curve; curve.len>1 ;++curve) gridKnob(*curve,GridKnobLen,color,magnify);
   
-  gridKnob(*curve,5,color,magnify);
+  gridKnob(*curve,GridKnobBigLen,color,magnify);
  }
 
 void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
@@ -488,9 +488,10 @@ void CommonDrawArt::path_micro3(PtrStepLen<const LPoint> curve,DesktopColor colo
 
 void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
-  path_micro1(curve,Silver,magnify);
-  path_micro2(curve,Black,magnify);
-  path_micro3(curve,color,magnify);
+  path_micro1(curve,color,magnify);
+  
+  path_micro2(curve,GridKnob,magnify);
+  path_micro3(curve,GridBaseline,magnify);
  }
 
 void CommonDrawArt::line_smooth_micro(Point a,Point b,ColorName cname,Coord magnify)
@@ -500,9 +501,10 @@ void CommonDrawArt::line_smooth_micro(Point a,Point b,ColorName cname,Coord magn
 
 void CommonDrawArt::path_smooth_micro(PtrStepLen<const LPoint> curve,ColorName cname,Coord magnify)
  {
-  path_smooth(curve,Silver, SmoothPlotMicro(*this,magnify) );
-  path_micro2(curve,Black,magnify);
-  path_micro3(curve,cname,magnify);
+  path_smooth(curve,cname, SmoothPlotMicro(*this,magnify) );
+  
+  path_micro2(curve,GridKnob,magnify);
+  path_micro3(curve,GridBaseline,magnify);
  }
 
  // simple
@@ -1026,11 +1028,11 @@ void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color) // T
 
 void CommonDrawArt::grid(Coord cell)
  {
-  erase(White);
+  erase(GridBack);
 
-  for(Coord x=cell/2; x<buf.dX() ;x+=cell) buf.lineY(x,0,buf.dY(),DesktopColor(Blue));
+  for(Coord x=cell/2; x<buf.dX() ;x+=cell) buf.lineY(x,0,buf.dY(),DesktopColor(GridLine));
   
-  for(Coord y=cell/2; y<buf.dY() ;y+=cell) buf.lineX(y,0,buf.dX(),DesktopColor(Blue));
+  for(Coord y=cell/2; y<buf.dY() ;y+=cell) buf.lineX(y,0,buf.dX(),DesktopColor(GridLine));
  }
 
 void CommonDrawArt::gridCell(Point p,DesktopColor color,Coord magnify)
@@ -1043,7 +1045,7 @@ DesktopColor CommonDrawArt::probeCell(Point p,Coord magnify)
  {
   if( p>=Null && p<buf.getSize()/magnify )
     {
-     return buf.pixel(p*magnify+Point(6,6));
+     return buf.pixel(p*magnify+Point(ProbeDisp,ProbeDisp));
     }
   
   return White;

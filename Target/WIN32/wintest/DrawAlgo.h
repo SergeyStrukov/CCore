@@ -122,7 +122,7 @@ class LineDriverBase
    
    bool do_step(UInt s,UInt t) // t == sx-s
     {
-     bool ret=false;
+     bool ret;
      
      if( delta<t ) 
        {

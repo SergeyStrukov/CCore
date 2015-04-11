@@ -27,6 +27,8 @@ using Clr = uint8 ;
 
 /* consts */
 
+const unsigned ClrBits = 8 ;
+
 const Clr MinClr =   0 ;
 
 const Clr MedClr = 128 ;
