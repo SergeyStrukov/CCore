@@ -92,11 +92,11 @@ class LineDriverL;
 
 class CurveDriver;
 
-template <class UInt,unsigned AlphaBits=8> class LineAlphaFunc;
+template <class UInt> class LineAlphaFunc;
 
-template <class UInt,unsigned AlphaBits=8> class LineAlphaFunc2;
+template <class UInt> class LineAlphaFunc2;
 
-template <class UInt,unsigned AlphaBits=8> class SmoothLineDriver; 
+template <class UInt> class SmoothLineDriver; 
 
 /* class LineDriverBase<UInt> */
 
@@ -226,22 +226,22 @@ class LineDriverL : public LineDriverBase<uLCoord>
    
    static uLCoord First(LCoord a,LCoord e)
     {
-     Coord A=LPoint::RShift(a);
+     LCoord A=LPoint::RShift_ext(a);
      
      if( e>0 )
        {
-        return LPoint::LShift(A+1)-a;
+        return LPoint::LShift_ext(A+1)-a;
        }
      else
        {
-        return a-LPoint::LShift(A-1);
+        return a-LPoint::LShift_ext(A-1);
        }
     }
    
-   static uCoord Count(LCoord a,LCoord b)
+   static uLCoord Count(LCoord a,LCoord b)
     {
-     Coord A=LPoint::RShift(a);
-     Coord B=LPoint::RShift(b);
+     LCoord A=LPoint::RShift_ext(a);
+     LCoord B=LPoint::RShift_ext(b);
      
      if( A<B )
        {
@@ -302,9 +302,9 @@ class CurveDriver : NoCopy
    PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
  };
 
-/* class LineAlphaFunc<UInt,unsigned AlphaBits> */
+/* class LineAlphaFunc<UInt> */
 
-template <class UInt,unsigned AlphaBits> 
+template <class UInt> 
 class LineAlphaFunc
  {
   protected:
@@ -380,7 +380,7 @@ class LineAlphaFunc
         value=uint16( (uint32(a)<<Precision)/b );
        }
       
-      unsigned map() const { return value>>(Precision-AlphaBits); }
+      unsigned map() const { return value>>(Precision-ClrBits); }
       
       Num div_2() const { return value>>1; }
       
@@ -486,23 +486,23 @@ class LineAlphaFunc
     }
  };
 
-/* class LineAlphaFunc2<UInt,unsigned AlphaBits> */
+/* class LineAlphaFunc2<UInt> */
 
-template <class UInt,unsigned AlphaBits> 
-class LineAlphaFunc2 : LineAlphaFunc<UInt,AlphaBits>
+template <class UInt> 
+class LineAlphaFunc2 : LineAlphaFunc<UInt>
  {
-   using Num = typename LineAlphaFunc<UInt,AlphaBits>::Num ;
+   using Num = typename LineAlphaFunc<UInt>::Num ;
    
-   using LineAlphaFunc<UInt,AlphaBits>::One;
+   using LineAlphaFunc<UInt>::One;
    
-   using LineAlphaFunc<UInt,AlphaBits>::T;
-   using LineAlphaFunc<UInt,AlphaBits>::A;
-   using LineAlphaFunc<UInt,AlphaBits>::B;
-   using LineAlphaFunc<UInt,AlphaBits>::T2;
-   using LineAlphaFunc<UInt,AlphaBits>::M;
-   using LineAlphaFunc<UInt,AlphaBits>::S;
+   using LineAlphaFunc<UInt>::T;
+   using LineAlphaFunc<UInt>::A;
+   using LineAlphaFunc<UInt>::B;
+   using LineAlphaFunc<UInt>::T2;
+   using LineAlphaFunc<UInt>::M;
+   using LineAlphaFunc<UInt>::S;
    
-   using LineAlphaFunc<UInt,AlphaBits>::Map;
+   using LineAlphaFunc<UInt>::Map;
    
    Num a,b;
  
@@ -556,7 +556,7 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt,AlphaBits>
   public:
  
    LineAlphaFunc2(UInt sx,UInt sy) // sx >= sy > 0
-    : LineAlphaFunc<UInt,AlphaBits>(sx,sy) 
+    : LineAlphaFunc<UInt>(sx,sy) 
     {
      a=T*A;
      b=T*B;
@@ -714,9 +714,9 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt,AlphaBits>
     }
  };
 
-/* class SmoothLineDriver<UInt,unsigned AlphaBits> */
+/* class SmoothLineDriver<UInt> */
 
-template <class UInt,unsigned AlphaBits> 
+template <class UInt> 
 class SmoothLineDriver 
  {
   private:
@@ -728,7 +728,7 @@ class SmoothLineDriver
    
    UInt delta = 0 ;
    
-   const LineAlphaFunc<UInt,AlphaBits> func; 
+   const LineAlphaFunc<UInt> func; 
    
   public:
   
@@ -836,309 +836,239 @@ template <class Func,class Color,class Plot>
 LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,first,color,plot) (a,b)
  {
   const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
-  
-  LCoord ex;
-  LCoord ey;
-  uLCoord sx;
-  uLCoord sy;
-  
-  if( !DistDir(ex,sx,a.x,b.x) )
-    {
-     if( !DistDir(ey,sy,a.y,b.y) ) 
-       {
-        return {Null,Null,false};
-       }
-    
-     auto count=LineDriverL::Count(a.y,b.y);
-     
-     if( !count ) return {Null,Null,false};
-     
-     Point E;
  
-     {
-      uLCoord first=LineDriverL::First(a.y,ey);
+  class Driver
+   {
+     LCoord ex;
+     LCoord ey;
+     uLCoord sx;
+     uLCoord sy;
+     
+    private: 
+     
+     LineEnd lineY(Func func,LPoint a,LPoint b,Color color,Plot plot)
+      {
+       auto count=LineDriverL::Count(a.y,b.y);
+       
+       if( !count ) return {Null,Null,false};
+       
+       Point E=a.toPoint();
+       Point A=E;
+       
+       A.y+=ey;
+       
+       func(E,A,color,plot);
       
-      if( first>=Step )
-        {
-         uLCoord delta_y=first-Step;
-         
-         a.y=IntMove(a.y,ey,delta_y);
-         
-         E=a.toPoint();
-        }
-      else
-        {
-         uLCoord delta_y=Step-first;
-         
-         a.y=IntMove(a.y,-ey,delta_y);
-         
-         E=a.toPoint();
-        }
-     }
+       plot(A,color);
+      
+       for(count--; count ;count--)
+         {
+          A.y+=ey;
+          
+          plot(A,color);
+         }
+       
+       Point L=A;
+       
+       A.y+=ey;
+        
+       return {L,A,true};
+      }
+     
+     LineEnd lineX(Func func,LPoint a,LPoint b,Color color,Plot plot)
+      {
+       auto count=LineDriverL::Count(a.x,b.x);
+       
+       if( !count ) return {Null,Null,false};
+      
+       Point E=a.toPoint();
+       Point A=E;
+       
+       A.x+=ex;
+       
+       func(E,A,color,plot);
+      
+       plot(A,color);
+       
+       for(count--; count ;count--)
+         {
+          A.x+=ex;
+          
+          plot(A,color);
+         }
+       
+       Point L=A;
 
-     Point A=E;
-     
-     if( ey>0 )
-       {
-        A.y++;
+       A.x+=ex;
         
-        func(E,A,color,plot);
-       
-        plot(A,color);
-       
-        for(count--; count ;count--)
-          {
-           A.y++;
-           
-           plot(A,color);
-          }
-       }
-     else
-       {
-        A.y--;
-       
-        func(E,A,color,plot);
-        
-        plot(A,color);
-        
-        for(count--; count ;count--)
-          {
-           A.y--;
-           
-           plot(A,color);
-          }
-       }
+       return {L,A,true};
+      }
      
-     Point L=A;
+     void stepX(LineDriverL &driver,LPoint &a,Point &A)
+      {
+       uLCoord delta_y=driver.step_pow2(LPoint::Precision);
+       
+       a.y=IntMove(a.y,ey,delta_y);
+       
+       A.x+=ex;
+       A.y=LPoint::RShift(a.y);
+      }
      
-     if( ey>0 ) A.y++; else A.y--;
+     LineEnd lineToX(Func func,LPoint a,LPoint b,Color color,Plot plot)
+      {
+       auto count=LineDriverL::Count(a.x,b.x);
       
-     return {L,A,true};
-    }
- 
-  if( !DistDir(ey,sy,a.y,b.y) )
-    {
-     auto count=LineDriverL::Count(a.x,b.x);
-     
-     if( !count ) return {Null,Null,false};
-    
-     Point E;
- 
-     {
-      uLCoord first=LineDriverL::First(a.x,ex);
-      
-      if( first>=Step )
-        {
-         uLCoord delta_x=first-Step;
-         
-         a.x=IntMove(a.x,ex,delta_x);
-         
-         E=a.toPoint();
-        }
-      else
-        {
-         uLCoord delta_x=Step-first;
-         
-         a.x=IntMove(a.x,-ex,delta_x);
-         
-         E=a.toPoint();
-        }
-     }
- 
-     Point A=E;
-     
-     if( ex>0 )
-       {
-        A.x++;
-        
-        func(E,A,color,plot);
+       if( !count ) return {Null,Null,false};
        
-        plot(A,color);
-        
-        for(count--; count ;count--)
-          {
-           A.x++;
-           
-           plot(A,color);
-          }
-       }
-     else
-       {
-        A.x--;
-       
-        func(E,A,color,plot);
-        
-        plot(A,color);
-        
-        for(count--; count ;count--)
-          {
-           A.x--;
-           
-           plot(A,color);
-          }
-       }
-     
-     Point L=A;
-     
-     if( ex>0 ) A.x++; else A.x--;
-      
-     return {L,A,true};
-    }
-  
-  if( sx>sy )
-    {
-     auto count=LineDriverL::Count(a.x,b.x);
-    
-     if( !count ) return {Null,Null,false};
-     
-     LineDriverL driver(sx,sy);
-     Point E;
+       LineDriverL driver(sx,sy);
 
-     {
-      uLCoord first=LineDriverL::First(a.x,ex);
-      
-      if( first>=Step )
-        {
-         uLCoord delta_x=first-Step;
-         uLCoord delta_y=driver.step(delta_x);
-         
-         a.x=IntMove(a.x,ex,delta_x);
-         a.y=IntMove(a.y,ey,delta_y);
-         
-         E=a.toPoint();
-        }
-      else
-        {
-         uLCoord delta_x=Step-first;
-         uLCoord delta_y=driver.back(delta_x);
-         
-         a.x=IntMove(a.x,-ex,delta_x);
-         a.y=IntMove(a.y,-ey,delta_y);
-         
-         E=a.toPoint();
-        }
-     }
-     
-     Point A;
-     
-     {
-      uLCoord delta_x=Step;
-      uLCoord delta_y=driver.step_pow2(LPoint::Precision);
-      
-      a.x=IntMove(a.x,ex,delta_x);
-      a.y=IntMove(a.y,ey,delta_y);
-      
-      A=a.toPoint();
-      
-      func(E,A,color,plot);
-      
-      plot(A,color);
-     }
-     
-     for(count--; count ;count--)
        {
-        uLCoord delta_x=Step;
-        uLCoord delta_y=driver.step_pow2(LPoint::Precision);
+        uLCoord first=LineDriverL::First(a.x,ex);
         
-        a.x=IntMove(a.x,ex,delta_x);
-        a.y=IntMove(a.y,ey,delta_y);
+        if( first>=Step )
+          {
+           uLCoord delta_x=first-Step;
+           uLCoord delta_y=driver.step(delta_x);
+           
+           a.x=IntMove(a.x,ex,delta_x);
+           a.y=IntMove(a.y,ey,delta_y);
+          }
+        else
+          {
+           uLCoord delta_x=Step-first;
+           uLCoord delta_y=driver.back(delta_x);
+           
+           a.x=IntMove(a.x,-ex,delta_x);
+           a.y=IntMove(a.y,-ey,delta_y);
+          }
+       }
+       
+       Point E=a.toPoint();
+       Point A=E;
+       
+       {
+        stepX(driver,a,A);
         
-        A=a.toPoint();
+        func(E,A,color,plot);
         
         plot(A,color);
        }
-     
-     Point L=A;
-     
-     {
-      uLCoord delta_x=Step;
-      uLCoord delta_y=driver.step_pow2(LPoint::Precision);
-      
-      a.x=IntMove(a.x,ex,delta_x);
-      a.y=IntMove(a.y,ey,delta_y);
-      
-      A=a.toPoint();
-      
-      return {L,A,true};
-     }
-    }
-  else
-    {
-     auto count=LineDriverL::Count(a.y,b.y);
-     
-     if( !count ) return {Null,Null,false};
-     
-     LineDriverL driver(sy,sx);
-     Point E;
- 
-     {
-      uLCoord first=LineDriverL::First(a.y,ey);
-      
-      if( first>=Step )
-        {
-         uLCoord delta_y=first-Step;
-         uLCoord delta_x=driver.step(delta_y);
-         
-         a.y=IntMove(a.y,ey,delta_y);
-         a.x=IntMove(a.x,ex,delta_x);
-         
-         E=a.toPoint();
-        }
-      else
-        {
-         uLCoord delta_y=Step-first;
-         uLCoord delta_x=driver.back(delta_y);
-         
-         a.y=IntMove(a.y,-ey,delta_y);
-         a.x=IntMove(a.x,-ex,delta_x);
-         
-         E=a.toPoint();
-        }
-     }
-     
-     Point A;
-     
-     {
-      uLCoord delta_y=Step;
-      uLCoord delta_x=driver.step_pow2(LPoint::Precision);
-      
-      a.y=IntMove(a.y,ey,delta_y);
-      a.x=IntMove(a.x,ex,delta_x);
-      
-      A=a.toPoint();
-      
-      func(E,A,color,plot);
-      
-      plot(A,color);
-     }
-     
-     for(count--; count ;count--)
+       
+       for(count--; count ;count--)
+         {
+          stepX(driver,a,A);
+          
+          plot(A,color);
+         }
+       
+       Point L=A;
+       
        {
-        uLCoord delta_y=Step;
-        uLCoord delta_x=driver.step_pow2(LPoint::Precision);
+        stepX(driver,a,A);
         
-        a.y=IntMove(a.y,ey,delta_y);
-        a.x=IntMove(a.x,ex,delta_x);
+        return {L,A,true};
+       }
+      }
+     
+     void stepY(LineDriverL &driver,LPoint &a,Point &A)
+      {
+       uLCoord delta_x=driver.step_pow2(LPoint::Precision);
+       
+       a.x=IntMove(a.x,ex,delta_x);
+       
+       A.y+=ey;
+       A.x=LPoint::RShift(a.x);
+      }
+     
+     LineEnd lineToY(Func func,LPoint a,LPoint b,Color color,Plot plot)
+      {
+       auto count=LineDriverL::Count(a.y,b.y);
+      
+       if( !count ) return {Null,Null,false};
+       
+       LineDriverL driver(sy,sx);
+
+       {
+        uLCoord first=LineDriverL::First(a.y,ey);
         
-        A=a.toPoint();
+        if( first>=Step )
+          {
+           uLCoord delta_y=first-Step;
+           uLCoord delta_x=driver.step(delta_y);
+           
+           a.y=IntMove(a.y,ey,delta_y);
+           a.x=IntMove(a.x,ex,delta_x);
+          }
+        else
+          {
+           uLCoord delta_y=Step-first;
+           uLCoord delta_x=driver.back(delta_y);
+           
+           a.y=IntMove(a.y,-ey,delta_y);
+           a.x=IntMove(a.x,-ex,delta_x);
+          }
+       }
+       
+       Point E=a.toPoint();
+       Point A=E;
+       
+       {
+        stepY(driver,a,A);
+        
+        func(E,A,color,plot);
         
         plot(A,color);
        }
+       
+       for(count--; count ;count--)
+         {
+          stepY(driver,a,A);
+          
+          plot(A,color);
+         }
+       
+       Point L=A;
+       
+       {
+        stepY(driver,a,A);
+        
+        return {L,A,true};
+       }
+      }
      
-     Point L=A;
-     
-     {
-      uLCoord delta_y=Step;
-      uLCoord delta_x=driver.step_pow2(LPoint::Precision);
-      
-      a.y=IntMove(a.y,ey,delta_y);
-      a.x=IntMove(a.x,ex,delta_x);
-      
-      A=a.toPoint();
-      
-      return {L,A,true};
-     }
-    }
+    public:
+    
+     LineEnd run(Func func,LPoint a,LPoint b,Color color,Plot plot)
+      {
+       if( !DistDir(ex,sx,a.x,b.x) )
+         {
+          if( !DistDir(ey,sy,a.y,b.y) ) 
+            {
+             return {Null,Null,false};
+            }
+          
+          return lineY(func,a,b,color,plot);
+         }
+       
+       if( !DistDir(ey,sy,a.y,b.y) )
+         {
+          return lineX(func,a,b,color,plot);
+         }
+       
+       if( sx>sy )
+         {
+          return lineToX(func,a,b,color,plot);
+         }
+       else
+         {
+          return lineToY(func,a,b,color,plot);
+         }
+      }
+   };
+  
+  Driver driver;
+  
+  return driver.run(func,a,b,color,plot);
  }
 
 /* LineFirst/LineNext(...,LPoint a,LPoint b,...) */
@@ -1259,9 +1189,9 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
         
         a.x+=ex;
         
-        plot(a-Point(0,ey),color,driver.alpha0());
-        plot(a,color,driver.alpha1());
-        plot(a+Point(0,ey),color,driver.alpha2());
+        plot(a-Point(0,ey)  ,color,driver.alpha0());
+        plot(a              ,color,driver.alpha1());
+        plot(a+Point(0,ey)  ,color,driver.alpha2());
         plot(a+Point(0,2*ey),color,driver.alpha3());
        }
      
@@ -1282,9 +1212,9 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
         
         a.y+=ey;
         
-        plot(a-Point(ex,0),color,driver.alpha0());
-        plot(a,color,driver.alpha1());
-        plot(a+Point(ex,0),color,driver.alpha2());
+        plot(a-Point(ex,0)  ,color,driver.alpha0());
+        plot(a              ,color,driver.alpha1());
+        plot(a+Point(ex,0)  ,color,driver.alpha2());
         plot(a+Point(2*ex,0),color,driver.alpha3());
        }
      

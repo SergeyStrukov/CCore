@@ -164,9 +164,13 @@ struct LPoint : BasePoint<LPoint,LCoord>
  
   static LCoord LShift(Coord a) { return IntLShift((LCoord)a,Precision); }
   
+  static LCoord LShift_ext(LCoord a) { return IntLShift(a,Precision); }
+  
   static const LCoord RShiftBias = 1<<(Precision-1) ;
  
   static Coord RShift(LCoord a) { return (Coord)IntRShift<LCoord>(a+RShiftBias,Precision); }
+  
+  static LCoord RShift_ext(LCoord a) { return IntRShift<LCoord>(a+RShiftBias,Precision); }
   
   // constructors
   

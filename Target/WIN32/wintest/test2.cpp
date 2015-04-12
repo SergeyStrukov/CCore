@@ -35,8 +35,6 @@ using namespace CCore::Video;
 
 using UInt = unsigned ;
 
-const unsigned AlphaBits = 8 ; 
-
 /* class AlphaFunc */
 
 class AlphaFunc
@@ -51,7 +49,7 @@ class AlphaFunc
    {
     f=Cap<double>(0,f,1);
     
-    return unsigned(f*(1u<<AlphaBits));
+    return unsigned(f*(1u<<ClrBits));
    }
   
   public:
@@ -115,7 +113,7 @@ inline unsigned Delta(unsigned a,unsigned b) { return (a<=b)?(b-a):(a-b); }
 unsigned test1(unsigned sx,unsigned sy)
  {
   AlphaFunc func1(sx,sy);
-  LineAlphaFunc<UInt,AlphaBits> func2(sx,sy);
+  LineAlphaFunc<UInt> func2(sx,sy);
   
   unsigned ret=0;
   
