@@ -238,6 +238,14 @@ class LineDriverL : public LineDriverBase<uLCoord>
         return 0;
        }
     }
+   
+   static uLCoord Count1(LCoord a,LCoord b)
+    {
+     LCoord A=LPoint::RShift_ext(a);
+     LCoord B=LPoint::RShift_ext(b);
+     
+     return IntAbs(A,B);
+    }
  };
 
 /* class CurveDriver */
@@ -1255,9 +1263,11 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
       {
        const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
        
-       auto count=LineDriverL::Count(a.y,b.y);
+       auto count=LineDriverL::Count1(a.y,b.y);
      
        if( !count ) return false;
+       
+       count--;
       
        Point A=a.toPoint();
        LCoord delta=Delta(1,a.x);
@@ -1316,9 +1326,11 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
       {
        const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
        
-       auto count=LineDriverL::Count(a.x,b.x);
+       auto count=LineDriverL::Count1(a.x,b.x);
      
        if( !count ) return false;
+       
+       count--;
       
        Point A=a.toPoint();
        LCoord delta=Delta(1,a.y);
@@ -1399,9 +1411,11 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
        const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
        const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
        
-       auto count=LineDriverL::Count(a.x,b.x);
+       auto count=LineDriverL::Count1(a.x,b.x);
      
        if( !count ) return false;
+       
+       count--;
       
        LineDriverL driver(sx,sy);
        LineAlphaFunc2<uLCoord> func(sx,sy); 
@@ -1488,9 +1502,11 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
        const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
        const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
        
-       auto count=LineDriverL::Count(a.y,b.y);
+       auto count=LineDriverL::Count1(a.y,b.y);
      
        if( !count ) return false;
+       
+       count--;
       
        LineDriverL driver(sy,sx);
        LineAlphaFunc2<uLCoord> func(sy,sx);
