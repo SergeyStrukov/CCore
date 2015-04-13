@@ -1602,6 +1602,80 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
   return driver.run(a,b,color,plot);
  }
 
+/* Circle() */
+
+template <class UInt>
+UInt Root(UInt S,UInt x)
+ {
+  for(;;)
+    {
+     x=(x+S/x)/2;
+     
+     UInt q=x*x;
+     
+     if( q<=S ) 
+       {
+        if( q+x<=S ) return x+1;
+       
+        return x;
+       }
+    }
+ }
+
+template <class Color,class Plot>
+void Circle(Point a,Coord radius,Color color,Plot plot)
+ {
+  if( radius<0 ) return;
+  
+  if( radius==0 )
+    {
+     plot(a,color);
+     
+     return;
+    }
+  
+  uLCoord S=Sq<uLCoord>(radius);
+  
+  Coord last_y=0;
+  
+  for(Coord x=0;;S-=2*x+1,x++)
+    {
+     Coord y=(Coord)Root<uLCoord>(S,radius);
+     
+     if( x>=y )
+       {
+        x--;
+        
+        y=last_y;
+        
+        for(x++,y--; x<=y ;x++,y--)
+          {
+           plot(a+Point(x,y),color);
+           plot(a+Point(y,x),color);
+           plot(a+Point(-x,y),color);
+           plot(a+Point(-y,x),color);
+           plot(a+Point(x,-y),color);
+           plot(a+Point(y,-x),color);
+           plot(a+Point(-x,-y),color);
+           plot(a+Point(-y,-x),color);
+          }
+       
+        break;
+       }
+     
+     plot(a+Point(x,y),color);
+     plot(a+Point(y,x),color);
+     plot(a+Point(-x,y),color);
+     plot(a+Point(-y,x),color);
+     plot(a+Point(x,-y),color);
+     plot(a+Point(y,-x),color);
+     plot(a+Point(-x,-y),color);
+     plot(a+Point(-y,-x),color);
+     
+     last_y=y;
+    }
+ }
+
 } // namespace Video
 } // namespace CCore
  

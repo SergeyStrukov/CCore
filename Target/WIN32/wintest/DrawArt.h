@@ -58,6 +58,12 @@ class CommonDrawArt
           }
        }
     };
+   
+   struct Segment
+    {
+     Coord a;
+     Coord b;
+    };
   
    class WorkBuf : public FrameBuf<DesktopColor>
     {
@@ -83,6 +89,11 @@ class CommonDrawArt
       void line(Point a,Point b,DesktopColor color); // [a,b)
       
       void line_smooth(Point a,Point b,ColorName cname); // [a,b)
+      
+      void segment(Segment seg,Coord y,DesktopColor color);
+      
+      template <class Solid>
+      void solid(Solid solid,DesktopColor color);
     };
   
    WorkBuf buf;
@@ -285,6 +296,12 @@ class CommonDrawArt
      curveSolid(Range_const(temp),color);
     }
    
+   // circle
+   
+   void ball(Point center,Coord radius,DesktopColor color);
+   
+   void circle(Point center,Coord radius,DesktopColor color);
+   
    // special
    
    void grid(Coord cell);
@@ -300,6 +317,8 @@ class CommonDrawArt
    void path_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify);
    
    void curvePath_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify);
+   
+   void circle_micro(Point center,Coord radius,DesktopColor color,Point focus,Coord magnify);
    
    // fill
    

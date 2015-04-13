@@ -300,6 +300,36 @@ void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,ColorName cname)
   LineSmooth(a,b,cname,SmoothPlot(*this));
  }
 
+void CommonDrawArt::WorkBuf::segment(Segment seg,Coord y,DesktopColor color)
+ {
+  if( seg.a<0 ) seg.a=0;
+  
+  if( seg.b>=dx ) seg.b=dx-1;
+  
+  if( seg.a>seg.b ) return;
+  
+  HLine(place(Point(seg.a,y)),Coord( seg.b-seg.a+1 ),color);
+ }
+
+template <class Solid>
+void CommonDrawArt::WorkBuf::solid(Solid solid,DesktopColor color)
+ {
+  if( !(*this) ) return;
+  
+  Coord bottom=solid.bottom();
+  Coord top=solid.top();
+  
+  if( bottom<0 ) bottom=0;
+  
+  if( top>=dy ) top=dy-1;
+  
+  if( bottom>top ) return;
+  
+  segment(solid.set(bottom),bottom,color);
+  
+  while( bottom<top ) segment(solid.up(),++bottom,color);
+ }
+
 /* class CommonDrawArt */
 
 template <class Plot>
@@ -1024,6 +1054,77 @@ void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color) // T
   Used(color);
  }
 
+ // circle
+
+void CommonDrawArt::ball(Point center,Coord radius,DesktopColor color) // TODO
+ {
+  if( radius<=0 ) return;
+  
+  class Solid
+   {
+     Point center;
+     Coord radius;
+     
+     Coord y = 0 ;
+     
+    private:
+     
+     static LCoord Root(LCoord S) // S > 0
+      {
+       LCoord x=S;
+       
+       for(unsigned cnt=100; cnt ;cnt--)
+         {
+          if( Sq(x)<S ) return x;
+          
+          LCoord next=LCoord( (x+S/x)/2 );
+          
+          if( next>=x ) return x-1;
+          
+          x=next;
+         }
+       
+       return x;
+      }
+     
+     Segment cur() const
+      {
+       auto x=Root(Sq<LCoord>(radius+1)-Sq<LCoord>(y));
+       
+       return {Coord(center.x-x),Coord(center.x+x)};
+      }
+     
+    public:
+    
+     Solid(Point center_,Coord radius_) : center(center_),radius(radius_) {}
+     
+     Coord bottom() const { return center.y-radius; }
+     
+     Coord top() const { return center.y+radius; }
+     
+     Segment set(Coord y_)
+      {
+       y=y_-center.y;
+       
+       return cur();
+      }
+     
+     Segment up()
+      {
+       y++;
+       
+       return cur();
+      }
+   };
+  
+  buf.solid(Solid(center,radius),color);
+ }
+
+void CommonDrawArt::circle(Point center,Coord radius,DesktopColor color)
+ {
+  Circle(center,radius,color, [this] (Point p,DesktopColor color) { pixel(p,color); } );
+ }
+
  // special
 
 void CommonDrawArt::grid(Coord cell)
@@ -1132,6 +1233,13 @@ void CommonDrawArt::curvePath_smooth_micro(PtrLen<const Point> dots,ColorName cn
   driver->shift();
   
   path_smooth_micro(driver->getCurve(),cname,magnify);
+ }
+
+void CommonDrawArt::circle_micro(Point center,Coord radius,DesktopColor color,Point focus,Coord magnify)
+ {
+  focus.y-=buf.dY()/magnify;
+  
+  Circle(center-focus,radius,color, [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } );
  }
 
 } // namespace Video
