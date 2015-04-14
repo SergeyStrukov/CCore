@@ -386,6 +386,8 @@ class LineAlphaFunc
       
       Num div_2() const { return value>>1; }
       
+      Num div_4() const { return value>>2; }
+      
       friend bool operator < (Num a,Num b) { return a.value<b.value; }
       
       friend bool operator > (Num a,Num b) { return a.value>b.value; } 
@@ -512,26 +514,26 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt>
    
    unsigned alpha(Num t,Num p) const
     {
+     Num m=(One-p)*T;
+     
+     if( t<m.div_2() ) t=m-t;
+    
      Num c=p*T;
     
      if( t<a )
        {
-        Num x;
+        Num s=a+c;
         
-        {
-         Num s=a-t;
+        if( s>b )
+          {
+           s=s-b;
          
-         if( s<c ) 
-           x=(Sq(s)/c).div_2();
-         else
-           x=One+c.div_2()-s;
-        }
-       
-        Num s=b-t;
-       
-        if( s<c ) return Map( p*(One-(Sq(s)/c).div_2()-x) );
-      
-        return Map( p*(One-x) );
+           t=t-m.div_2();
+             
+           if( t>s.div_2() ) t=s.div_2();
+            
+           return Map( p*(One-(Sq(s)/c).div_4()-Sq(t)/c) );
+          }
        }
      
      if( t<b )
