@@ -22,6 +22,27 @@
 namespace CCore {
 namespace Video {
 
+/* struct CircleSpline */
+
+CircleSpline::CircleSpline(Point center,Coord radius)
+ {
+  Coord x=Coord(radius/2);
+  Coord y=(Coord)SqRoot<uLCoord>(Sq<uLCoord>(radius)-Sq<uLCoord>(x),radius);
+ 
+  buf[0]=center+Point(0,radius);
+  buf[1]=center+Point(-x,y);
+  buf[2]=center+Point(-y,x);
+  buf[3]=center+Point(-radius,0);
+  buf[4]=center+Point(-y,-x);
+  buf[5]=center+Point(-x,-y);
+  buf[6]=center+Point(0,-radius);
+  buf[7]=center+Point(x,-y);
+  buf[8]=center+Point(y,-x);
+  buf[9]=center+Point(radius,0);
+  buf[10]=center+Point(y,x);
+  buf[11]=center+Point(x,y);
+ }
+
 /* class CommonDrawArt::WorkBuf */
 
 void CommonDrawArt::WorkBuf::Prepare(Coord &a,Coord &b,Coord d)
@@ -1056,73 +1077,35 @@ void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color) // T
 
  // circle
 
-void CommonDrawArt::ball(Point center,Coord radius,DesktopColor color) // TODO
+void CommonDrawArt::ball(Point center,Coord radius,DesktopColor color)
  {
-  if( radius<=0 ) return;
+  Ball(center,radius,color,HPlot(buf));  
+ }
+
+void CommonDrawArt::ballSpline(Point center,Coord radius,DesktopColor color)
+ {
+  CircleSpline spline(center,radius);
   
-  class Solid
-   {
-     Point center;
-     Coord radius;
-     
-     Coord y = 0 ;
-     
-    private:
-     
-     static LCoord Root(LCoord S) // S > 0
-      {
-       LCoord x=S;
-       
-       for(unsigned cnt=100; cnt ;cnt--)
-         {
-          if( Sq(x)<S ) return x;
-          
-          LCoord next=LCoord( (x+S/x)/2 );
-          
-          if( next>=x ) return x-1;
-          
-          x=next;
-         }
-       
-       return x;
-      }
-     
-     Segment cur() const
-      {
-       auto x=Root(Sq<LCoord>(radius+1)-Sq<LCoord>(y));
-       
-       return {Coord(center.x-x),Coord(center.x+x)};
-      }
-     
-    public:
-    
-     Solid(Point center_,Coord radius_) : center(center_),radius(radius_) {}
-     
-     Coord bottom() const { return center.y-radius; }
-     
-     Coord top() const { return center.y+radius; }
-     
-     Segment set(Coord y_)
-      {
-       y=y_-center.y;
-       
-       return cur();
-      }
-     
-     Segment up()
-      {
-       y++;
-       
-       return cur();
-      }
-   };
-  
-  buf.solid(Solid(center,radius),color);
+  curveSolid(spline.get(),color);
  }
 
 void CommonDrawArt::circle(Point center,Coord radius,DesktopColor color)
  {
   Circle(center,radius,color, [this] (Point p,DesktopColor color) { pixel(p,color); } );
+ }
+
+void CommonDrawArt::circleSpline(Point center,Coord radius,DesktopColor color)
+ {
+  CircleSpline spline(center,radius); 
+  
+  curveLoop(spline.get(),color);
+ }
+
+void CommonDrawArt::circleSpline_smooth(Point center,Coord radius,ColorName cname)
+ {
+  CircleSpline spline(center,radius); 
+  
+  curveLoop_smooth(spline.get(),cname);
  }
 
  // special

@@ -26,7 +26,22 @@ namespace Video {
 
 /* classes */
 
+struct Segment;
+
+struct CircleSpline;
+
 class CommonDrawArt;
+
+/* struct CircleSpline */
+
+struct CircleSpline
+ {
+  Point buf[12];
+  
+  CircleSpline(Point center,Coord radius);
+  
+  PtrLen<const Point> get() const { return Range(buf); }
+ };
 
 /* class CommonDrawArt */
 
@@ -59,12 +74,38 @@ class CommonDrawArt
        }
     };
    
-   struct Segment
+   class HPlot : public FrameBuf<DesktopColor>
     {
-     Coord a;
-     Coord b;
+     public:
+     
+      explicit HPlot(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
+      
+      void operator () (Point a,DesktopColor color)
+       {
+        if( getPane().contains(a) ) pixel(a,color);
+       }
+      
+      void operator () (Point a,uCoord len,DesktopColor color)
+       {
+        if( a.y<0 || a.y>=dy || a.x>=dx || dx<=0 ) return;
+
+        if( a.x<0 )
+          {
+           uCoord delta=IntDist(a.x,Coord(0));
+           
+           if( len<=delta ) return;
+            
+           len-=delta;
+           
+           a.x=0;
+          }
+        
+        Replace_min(len,IntDist(a.x,dx));
+        
+        for(Raw *ptr=place(a); len ;len--,ptr=NextX(ptr)) color.copyTo(ptr);
+       }
     };
-  
+   
    class WorkBuf : public FrameBuf<DesktopColor>
     {
       static void Prepare(Coord &a,Coord &b,Coord d);
@@ -300,7 +341,13 @@ class CommonDrawArt
    
    void ball(Point center,Coord radius,DesktopColor color);
    
+   void ballSpline(Point center,Coord radius,DesktopColor color);
+   
    void circle(Point center,Coord radius,DesktopColor color);
+   
+   void circleSpline(Point center,Coord radius,DesktopColor color);
+   
+   void circleSpline_smooth(Point center,Coord radius,ColorName cname);
    
    // special
    

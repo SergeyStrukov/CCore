@@ -66,6 +66,8 @@ SInt Direct(SInt e,SInt a) { return (e>0)?a:(-a); }
 
 /* classes */
 
+struct Segment;
+
 template <class UInt> class LineDriverBase;
 
 class LineDriver;
@@ -78,7 +80,17 @@ template <class UInt> class LineAlphaFunc;
 
 template <class UInt> class LineAlphaFunc2;
 
-template <class UInt> class SmoothLineDriver; 
+template <class UInt> class SmoothLineDriver;
+
+class SolidBall;
+
+/* struct Segment */
+
+struct Segment
+ {
+  Coord a;
+  Coord b;
+ };
 
 /* class LineDriverBase<UInt> */
 
@@ -1605,7 +1617,7 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
 /* Circle() */
 
 template <class UInt>
-UInt Root(UInt S,UInt x)
+UInt SqRoot(UInt S,UInt x)
  {
   for(;;)
     {
@@ -1634,21 +1646,28 @@ void Circle(Point a,Coord radius,Color color,Plot plot)
      return;
     }
   
-  uLCoord S=Sq<uLCoord>(radius);
+  {
+   Coord x=radius;
+   
+   plot(a+Point(x,0),color);
+   plot(a+Point(0,x),color);
+   plot(a+Point(-x,0),color);
+   plot(a+Point(0,-x),color);
+  }
   
-  Coord last_y=0;
+  uLCoord S=Sq<uLCoord>(radius)-1;
   
-  for(Coord x=0;;S-=2*x+1,x++)
+  Coord last_x=radius;
+  
+  for(Coord y=1;;S-=2*y+1,y++)
     {
-     Coord y=(Coord)Root<uLCoord>(S,radius);
+     Coord x=(Coord)SqRoot<uLCoord>(S,radius);
      
-     if( x>=y )
+     if( y>=x )
        {
-        x--;
+        x=last_x-1;
         
-        y=last_y;
-        
-        for(x++,y--; x<=y ;x++,y--)
+        for(; y<=x ;y++,x--)
           {
            plot(a+Point(x,y),color);
            plot(a+Point(y,x),color);
@@ -1672,7 +1691,64 @@ void Circle(Point a,Coord radius,Color color,Plot plot)
      plot(a+Point(-x,-y),color);
      plot(a+Point(-y,-x),color);
      
-     last_y=y;
+     last_x=x;
+    }
+ }
+
+template <class Color,class HPlot>
+void Ball(Point a,Coord radius,Color color,HPlot plot)
+ {
+  if( radius<0 ) return;
+  
+  if( radius==0 )
+    {
+     plot(a,color);
+     
+     return;
+    }
+  
+  {
+   Coord x=radius;
+   
+   plot(a+Point(-x,0),2*uCoord(x)+1,color);
+   
+   plot(a+Point(0,x),color);
+   plot(a+Point(0,-x),color);
+  }
+  
+  uLCoord S=Sq<uLCoord>(radius)-1;
+  
+  Coord last_x=radius;
+  
+  for(Coord y=1;;S-=2*y+1,y++)
+    {
+     Coord x=(Coord)SqRoot<uLCoord>(S,radius);
+     
+     if( y>=x )
+       {
+        x=last_x-1;
+        
+        for(; y<=last_x ;y++,x--)
+          {
+           plot(a+Point(-x,y),2*uCoord(x)+1,color);
+           plot(a+Point(-x,-y),2*uCoord(x)+1,color);
+          }
+       
+        break;
+       }
+     
+     plot(a+Point(-x,y),2*uCoord(x)+1,color);
+     plot(a+Point(-x,-y),2*uCoord(x)+1,color);
+     
+     if( x<last_x )
+       {
+        Coord last_y=y-1;
+        
+        plot(a+Point(-last_y,last_x),2*uCoord(last_y)+1,color);
+        plot(a+Point(-last_y,-last_x),2*uCoord(last_y)+1,color);
+       }
+     
+     last_x=x;
     }
  }
 

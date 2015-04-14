@@ -49,9 +49,11 @@ class Client : public DragClient
     {
      Coord magnify  = 32 ;
      
-     ColorName back  = Silver ;
-     ColorName field =  White ;
-     ColorName ball  =   Blue ;
+     ColorName back   = Silver ;
+     ColorName field  =  White ;
+     
+     ColorName ball   =   Blue ;
+     ColorName spline =    Red ;
      
      Config() {}
     };
@@ -68,6 +70,11 @@ class Client : public DragClient
    
    bool magnify = false ;
    Point focus;
+   
+   bool ball          =  true ;
+   bool circle        = false ;
+   bool spline        = false ;
+   bool spline_smooth = false ;
    
   public:
   
@@ -109,7 +116,65 @@ class Client : public DragClient
         
         field_art.erase(cfg.field);
         
-        field_art.circle(center-field.getBase(),radius,cfg.ball);
+        Point a=center-field.getBase();
+        
+        if( ball )
+          {
+           field_art.ball(a,radius,cfg.ball);
+          }
+        
+        if( circle )
+          {
+           field_art.circle(a,radius,cfg.ball);
+          }
+        
+        if( spline )
+          {
+           field_art.circleSpline(a,radius,cfg.spline);
+          }
+        
+        if( spline_smooth )
+          {
+           field_art.circleSpline_smooth(a,radius,cfg.spline);
+          }
+       }
+    }
+   
+   virtual void key(VKey vkey,KeyMod)
+    {
+     switch( vkey )
+       {
+        case VKey_F1 :
+         {
+          ball=!ball;
+          
+          win->redraw();
+         }
+        break;
+        
+        case VKey_F2 :
+         {
+          circle=!circle;
+          
+          win->redraw();
+         }
+        break;
+        
+        case VKey_F3 :
+         {
+          spline=!spline;
+          
+          win->redraw();
+         }
+        break;
+        
+        case VKey_F4 :
+         {
+          spline_smooth=!spline_smooth;
+          
+          win->redraw();
+         }
+        break;
        }
     }
    
