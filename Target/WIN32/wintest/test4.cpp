@@ -85,6 +85,7 @@ class Client : public DragClient
      ColorName knob  =  Black ;
      ColorName cross =  Green ;
      ColorName path  =    Red ;
+     ColorName solid =   Blue ;
      
      Config() {}
     };
@@ -108,13 +109,14 @@ class Client : public DragClient
      DrawLoopSmooth,
      DrawCurvePathSmooth,
      DrawCurveLoopSmooth,
+     
      DrawSolid,
      DrawCurveSolid
     };
    
    DrawType draw_type = DrawSolid ;
    
-   bool all_flag = true ;
+   SolidFlag solid_flag = SolidAll ;
    
    ulen selected = 0 ;
    
@@ -209,9 +211,12 @@ class Client : public DragClient
         
         art.block(field,cfg.field);
         
-        for(auto p : dots ) art.knob(p,cfg.knob_len,cfg.knob);
-        
-        if( selected<dots.getLen() ) cross(art,dots[selected],cfg.cross);
+        if( draw_type<DrawSolid )
+          {
+           for(auto p : dots ) art.knob(p,cfg.knob_len,cfg.knob);
+           
+           if( selected<dots.getLen() ) cross(art,dots[selected],cfg.cross);
+          }
         
         CommonDrawArt field_art(buf.cut(field));
         
@@ -227,13 +232,19 @@ class Client : public DragClient
            case DrawLoopSmooth      : field_art.loop_smooth(Range_const(dots_based),cfg.path); break;
            case DrawCurvePathSmooth : field_art.curvePath_smooth(Range_const(dots_based),cfg.path); break;
            case DrawCurveLoopSmooth : field_art.curveLoop_smooth(Range_const(dots_based),cfg.path); break;
-           case DrawSolid           : field_art.solid(Range_const(dots_based),all_flag,cfg.path); break;
-           case DrawCurveSolid      : field_art.curveSolid(Range_const(dots_based),all_flag,cfg.path); break;
+           
+           case DrawSolid           : field_art.solid(Range_const(dots_based),solid_flag,cfg.solid); break;
+           case DrawCurveSolid      : field_art.curveSolid(Range_const(dots_based),solid_flag,cfg.solid); break;
           }
         
         auto time=timer.get();
         
         Printf(out,"#;[#;] #;\n",GetTextDesc(draw_type),dots.getLen(),time);
+        
+        if( draw_type>=DrawSolid )
+          {
+           if( selected<dots.getLen() ) cross(art,dots[selected],cfg.cross);
+          }
        }
     }
    
@@ -323,7 +334,7 @@ class Client : public DragClient
         
         case VKey_F11 :
          {
-          all_flag=!all_flag;
+          solid_flag=(solid_flag?SolidOdd:SolidAll);
           
           win->redraw();
          }

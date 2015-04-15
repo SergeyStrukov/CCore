@@ -24,6 +24,14 @@
 namespace CCore {
 namespace Video {
 
+/* enum SolidFlag */
+
+enum SolidFlag
+ {
+  SolidOdd,
+  SolidAll
+ };
+
 /* classes */
 
 struct Segment;
@@ -311,24 +319,24 @@ class CommonDrawArt
    
    // solid
    
-   void solid(PtrLen<const Point> dots,bool all_flag,DesktopColor color);
+   void solid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color);
    
    template <class ... TT>
-   void solid(bool all_flag,DesktopColor color,TT ... tt)
+   void solid(SolidFlag flag,DesktopColor color,TT ... tt)
     {
      Point temp[sizeof ... (TT)]={ tt... };
      
-     solid(Range_const(temp),all_flag,color);
+     solid(Range_const(temp),flag,color);
     }
    
-   void curveSolid(PtrLen<const Point> dots,bool all_flag,DesktopColor color);
+   void curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color);
    
    template <class ... TT>
-   void curveSolid(bool all_flag,DesktopColor color,TT ... tt)
+   void curveSolid(SolidFlag flag,DesktopColor color,TT ... tt)
     {
      Point temp[sizeof ... (TT)]={ tt... };
      
-     curveSolid(Range_const(temp),all_flag,color);
+     curveSolid(Range_const(temp),flag,color);
     }
    
    // circle

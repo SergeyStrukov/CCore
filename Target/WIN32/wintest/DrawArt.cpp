@@ -1033,17 +1033,15 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
 
  // solid
 
-void CommonDrawArt::solid(PtrLen<const Point> dots,bool all_flag,DesktopColor color) // TODO
+void CommonDrawArt::solid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color)
  {
-  loop(dots,Blue);
-  
-  Solid(dots,all_flag,color,HPlot(buf));
+  Solid(dots,flag,color,HPlot(buf));
  }
 
-void CommonDrawArt::curveSolid(PtrLen<const Point> dots,bool all_flag,DesktopColor color) // TODO
+void CommonDrawArt::curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color) // TODO
  {
   Used(dots);
-  Used(all_flag);
+  Used(flag);
   Used(color);
  }
 
@@ -1058,7 +1056,7 @@ void CommonDrawArt::ballSpline(Point center,Coord radius,DesktopColor color)
  {
   CircleSpline spline(center,radius);
   
-  curveSolid(spline.get(),true,color);
+  curveSolid(spline.get(),SolidAll,color);
  }
 
 void CommonDrawArt::circle(Point center,Coord radius,DesktopColor color)
