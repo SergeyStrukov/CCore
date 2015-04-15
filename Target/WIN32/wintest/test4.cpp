@@ -112,7 +112,9 @@ class Client : public DragClient
      DrawCurveSolid
     };
    
-   DrawType draw_type = DrawCurvePathSmooth ;
+   DrawType draw_type = DrawSolid ;
+   
+   bool all_flag = true ;
    
    ulen selected = 0 ;
    
@@ -221,12 +223,12 @@ class Client : public DragClient
            case DrawLoop            : field_art.loop(Range_const(dots_based),cfg.path); break;
            case DrawCurvePath       : field_art.curvePath(Range_const(dots_based),cfg.path); break;
            case DrawCurveLoop       : field_art.curveLoop(Range_const(dots_based),cfg.path); break;
-           case DrawSolid           : field_art.solid(Range_const(dots_based),cfg.path); break;
-           case DrawCurveSolid      : field_art.curveSolid(Range_const(dots_based),cfg.path); break;
            case DrawPathSmooth      : field_art.path_smooth(Range_const(dots_based),cfg.path); break;
            case DrawLoopSmooth      : field_art.loop_smooth(Range_const(dots_based),cfg.path); break;
            case DrawCurvePathSmooth : field_art.curvePath_smooth(Range_const(dots_based),cfg.path); break;
            case DrawCurveLoopSmooth : field_art.curveLoop_smooth(Range_const(dots_based),cfg.path); break;
+           case DrawSolid           : field_art.solid(Range_const(dots_based),all_flag,cfg.path); break;
+           case DrawCurveSolid      : field_art.curveSolid(Range_const(dots_based),all_flag,cfg.path); break;
           }
         
         auto time=timer.get();
@@ -302,6 +304,30 @@ class Client : public DragClient
           win->redraw();
          }
         break; 
+        
+        case VKey_F9 :
+         {
+          draw_type=DrawSolid;
+          
+          win->redraw();
+         }
+        break;
+        
+        case VKey_F10 :
+         {
+          draw_type=DrawCurveSolid;
+          
+          win->redraw();
+         }
+        break;
+        
+        case VKey_F11 :
+         {
+          all_flag=!all_flag;
+          
+          win->redraw();
+         }
+        break;
         
         case VKey_Tab :
          {

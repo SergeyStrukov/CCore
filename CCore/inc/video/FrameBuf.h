@@ -77,7 +77,7 @@ class FrameBuf : protected ColorPlane
    
    Raw * prevXprevY(Raw *ptr) { return PrevX(prevY(ptr)); }
    
-  protected: 
+  private: 
    
    static void HLine(Raw *ptr,Coord len,RawColor color);
    

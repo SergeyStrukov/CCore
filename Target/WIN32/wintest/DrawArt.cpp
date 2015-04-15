@@ -321,36 +321,6 @@ void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,ColorName cname)
   LineSmooth(a,b,cname,SmoothPlot(*this));
  }
 
-void CommonDrawArt::WorkBuf::segment(Segment seg,Coord y,DesktopColor color)
- {
-  if( seg.a<0 ) seg.a=0;
-  
-  if( seg.b>=dx ) seg.b=dx-1;
-  
-  if( seg.a>seg.b ) return;
-  
-  HLine(place(Point(seg.a,y)),Coord( seg.b-seg.a+1 ),color);
- }
-
-template <class Solid>
-void CommonDrawArt::WorkBuf::solid(Solid solid,DesktopColor color)
- {
-  if( !(*this) ) return;
-  
-  Coord bottom=solid.bottom();
-  Coord top=solid.top();
-  
-  if( bottom<0 ) bottom=0;
-  
-  if( top>=dy ) top=dy-1;
-  
-  if( bottom>top ) return;
-  
-  segment(solid.set(bottom),bottom,color);
-  
-  while( bottom<top ) segment(solid.up(),++bottom,color);
- }
-
 /* class CommonDrawArt */
 
 template <class Plot>
@@ -1063,15 +1033,17 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
 
  // solid
 
-void CommonDrawArt::solid(PtrLen<const Point> dots,DesktopColor color) // TODO
+void CommonDrawArt::solid(PtrLen<const Point> dots,bool all_flag,DesktopColor color) // TODO
  {
-  Used(dots);
-  Used(color);
+  loop(dots,Blue);
+  
+  Solid(dots,all_flag,color,HPlot(buf));
  }
 
-void CommonDrawArt::curveSolid(PtrLen<const Point> dots,DesktopColor color) // TODO
+void CommonDrawArt::curveSolid(PtrLen<const Point> dots,bool all_flag,DesktopColor color) // TODO
  {
   Used(dots);
+  Used(all_flag);
   Used(color);
  }
 
@@ -1086,7 +1058,7 @@ void CommonDrawArt::ballSpline(Point center,Coord radius,DesktopColor color)
  {
   CircleSpline spline(center,radius);
   
-  curveSolid(spline.get(),color);
+  curveSolid(spline.get(),true,color);
  }
 
 void CommonDrawArt::circle(Point center,Coord radius,DesktopColor color)

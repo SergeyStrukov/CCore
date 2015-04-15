@@ -19,6 +19,10 @@
 #include <CCore/inc/video/Point.h>
 #include <CCore/inc/video/Color.h>
 
+#include <CCore/inc/Sort.h>
+
+#include <CCore/inc/TaskMemStack.h>
+
 namespace CCore {
 namespace Video {
 
@@ -82,7 +86,7 @@ template <class UInt> class LineAlphaFunc2;
 
 template <class UInt> class SmoothLineDriver;
 
-class SolidBall;
+class SolidSection;
 
 /* struct Segment */
 
@@ -1712,7 +1716,7 @@ void Ball(Point a,Coord radius,Color color,HPlot plot)
   {
    Coord x=radius;
    
-   plot(a+Point(-x,0),2*uCoord(x)+1,color);
+   plot(a.y,a.x-x,a.x+x,color);
    
    plot(a+Point(0,x),color);
    plot(a+Point(0,-x),color);
@@ -1732,26 +1736,246 @@ void Ball(Point a,Coord radius,Color color,HPlot plot)
         
         for(; y<=last_x ;y++,x--)
           {
-           plot(a+Point(-x,y),2*uCoord(x)+1,color);
-           plot(a+Point(-x,-y),2*uCoord(x)+1,color);
+           plot(a.y+y,a.x-x,a.x+x,color);
+           plot(a.y-y,a.x-x,a.x+x,color);
           }
        
         break;
        }
      
-     plot(a+Point(-x,y),2*uCoord(x)+1,color);
-     plot(a+Point(-x,-y),2*uCoord(x)+1,color);
+     plot(a.y+y,a.x-x,a.x+x,color);
+     plot(a.y-y,a.x-x,a.x+x,color);
      
      if( x<last_x )
        {
         Coord last_y=y-1;
         
-        plot(a+Point(-last_y,last_x),2*uCoord(last_y)+1,color);
-        plot(a+Point(-last_y,-last_x),2*uCoord(last_y)+1,color);
+        plot(a.y+last_x,a.x-last_y,a.x+last_y,color);
+        plot(a.y-last_x,a.x-last_y,a.x+last_y,color);
        }
      
      last_x=x;
     }
+ }
+
+/* class SolidSection */
+
+class SolidSection : NoCopy
+ {
+   struct Dot : NoThrowFlagsBase
+    {
+     Point dot;
+     ulen sect = 0 ;
+     
+     Dot() {}
+    };
+   
+   struct Sect : NoThrowFlagsBase
+    {
+     Coord y = 0 ;
+     ulen dot = 0 ;
+     
+     Sect() {}
+     
+     void set(Coord y_,ulen dot_) { y=y_; dot=dot_; }
+     
+     bool operator < (Sect obj) const { return y<obj.y; }
+     
+     bool operator != (Sect obj) const { return y!=obj.y; }
+    };
+   
+   PtrLen<const Point> dots;
+   
+   StackArray<Dot> path;
+   StackArray<Sect> sect;
+   
+   ulen sect_count = 0 ;
+   
+  public:
+ 
+   explicit SolidSection(PtrLen<const Point> dots);
+   
+   ~SolidSection();
+   
+   // LineSet
+   
+   using IndexType = int ;
+   
+   struct Line : NoThrowFlagsBase
+    {
+     Point a;
+     Point b;
+     IndexType delta_index = 0 ;
+     
+     Coord x = 0 ;
+     
+     Line() {}
+     
+     Line(Point a_,Point b_,IndexType delta_index_) : a(a_),b(b_),delta_index(delta_index_) {}
+     
+     bool operator < (const Line &obj) const { return x<obj.x; }
+     
+     void set(Coord y) // TODO
+      {
+       Coord ex;
+       Coord ey;
+       uCoord sx;
+       uCoord sy;
+       
+       if( !DistDir(ex,sx,a.x,b.x) )
+         {
+          x=a.x;
+         
+          return;
+         }
+       
+       if( !DistDir(ey,sy,a.y,b.y) ) return;
+       
+       uCoord delta=IntAbs(a.y,y);
+       
+       if( sx>sy )
+         {
+          LineDriver driver(sx,sy);
+
+          x=IntMove(a.x,ex,driver.clipToX(delta));
+         }
+       else
+         {
+          LineDriver driver(sy,sx);
+          
+          x=IntMove(a.x,ex,driver.step(delta));
+         }
+      }
+    };
+   
+   class LineSet : NoCopy
+    {
+      StackArray<PtrLen<Line> > sets;
+      StackArray<Line> buf;
+      
+     private:
+      
+      template <class Func>
+      static void ForLines(PtrLen<const Dot> dots,Func func);
+      
+      static ulen CountBufs(PtrLen<const Dot> dots,PtrLen<Line> *sets);
+      
+      static void Append(Line * &ptr,Line obj) { *(ptr++)=obj; }
+      
+     public:
+     
+      explicit LineSet(const SolidSection &data);
+      
+      ~LineSet();
+      
+      PtrLen<Line> operator [] (ulen ind) { return sets[ind]; }
+      
+      template <class Func>
+      void operator () (bool all_flag,ulen ind,Coord bottom,Coord top,Func func) // TODO
+       {
+        PtrLen<Line> lines=sets[ind];
+        
+        for(; bottom<top ;bottom++)
+          {
+           for(Line &line : lines ) line.set(bottom);
+           
+           Sort(lines);
+           
+           if( all_flag )
+             {
+              IndexType index=0;
+              Coord a=0;
+            
+              for(Line &line : lines ) 
+                {
+                 if( index==0 ) a=line.x;
+                
+                 index+=line.delta_index;
+                 
+                 if( index==0 ) func(bottom,a,line.x); 
+                }
+             }
+           else
+             {
+              Coord a=0;
+              bool flag=false;
+            
+              for(Line &line : lines ) 
+                {
+                 if( !flag ) a=line.x;
+                
+                 flag=!flag;
+                 
+                 if( !flag ) func(bottom,a,line.x); 
+                }
+             }
+          }
+       }
+    };
+   
+   Coord getTop() const { return sect[sect_count-1].y; }
+   
+   template <class Func>
+   void forSects(Func func) const
+    {
+     Coord bottom=sect[0].y;
+     
+     for(ulen i=1; i<sect_count ;i++)
+       {
+        Coord top=sect[i].y;
+        
+        func(i-1,bottom,top);
+        
+        bottom=top;
+       }
+    }
+ };
+
+/* Solid() */
+
+template <class Color,class HPlot>
+void Solid(PtrLen<const Point> dots,bool all_flag,Color color,HPlot plot) // TODO
+ {
+  if( dots.len==0 ) return;
+  
+  if( dots.len==1 )
+    {
+     plot(dots[0],color);
+     
+     return;
+    }
+  
+  SolidSection data(dots);
+  SolidSection::LineSet line_set(data);
+  
+  data.forSects( [&] (ulen ind,Coord bottom,Coord top) 
+                     {
+                      line_set(all_flag,ind,bottom,top, [&] (Coord y,Coord a,Coord b) { plot(y,a,b,color); } ); 
+                     } );
+  
+  // horizontal lines
+  
+  {
+   Coord top=data.getTop();
+   
+   Point a=*dots;
+   Point o=a;
+   
+   if( a.y==top ) plot(a,color);
+   
+   for(++dots; +dots ;++dots)
+     {
+      Point b=*dots;
+      
+      if( a.y==b.y ) plot(a.y,a.x,b.x,color);
+      
+      if( b.y==top ) plot(b,color);
+      
+      a=b;
+     }
+   
+   if( a.y==o.y ) plot(a.y,a.x,o.x,color);
+  }
  }
 
 } // namespace Video

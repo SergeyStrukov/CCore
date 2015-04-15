@@ -45,7 +45,7 @@ const CCore::AbortMsgFuncType CCore::AbortMsgFunc = AbortMsgBox ;
 
 extern "C" int WIN32_CALLTYPE WinMain(Win32::HModule,Win32::HModule,char *,unsigned cmd_show)
  {
-  return App5::testmain(MapCmdShow(cmd_show)); 
+  return App4::testmain(MapCmdShow(cmd_show)); 
  }
  
  

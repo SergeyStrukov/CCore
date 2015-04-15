@@ -16,6 +16,8 @@
 //#include <CCore/inc/video/DrawAlgo.h>
 #include "DrawAlgo.h"
  
+#include <CCore/inc/algon/SortUnique.h>
+
 namespace CCore {
 namespace Video {
 
@@ -209,6 +211,116 @@ void CurveDriver::shift()
   buf[Len/2+2*Len]=Spline(buf[Len],buf[2*Len],buf[3*Len],e);
   
   spline();
+ }
+
+/* class SolidSection */
+
+SolidSection::SolidSection(PtrLen<const Point> dots_)
+ : dots(dots_),
+   path(dots.len),
+   sect(dots.len)
+ {
+  for(ulen i=0; i<dots.len ;i++) 
+    {
+     Point d=dots[i];
+     
+     path[i].dot=d;
+     sect[i].set(d.y,i);
+    }
+  
+  Algon::SortThenApplyUniqueRange(Range(sect), [&] (PtrLen<Sect> r) 
+                                                   {
+                                                    ulen i=sect_count++;
+                                                    
+                                                    for(Sect s : r) path[s.dot].sect=i;
+   
+                                                    sect[i]=r[0];
+                                                    
+                                                   } );
+ }
+
+SolidSection::~SolidSection()
+ {
+ }
+
+template <class Func>
+void SolidSection::LineSet::ForLines(PtrLen<const Dot> dots,Func func)
+ {
+  Dot a=*dots;
+  Dot o=a;
+  
+  for(++dots; +dots ;++dots)
+    {
+     Dot b=*dots;
+     
+     func(a,b);
+     
+     a=b;
+    }
+  
+  func(a,o);
+ }
+
+ulen SolidSection::LineSet::CountBufs(PtrLen<const Dot> dots,PtrLen<Line> *sets)
+ {
+  ulen ret=0;
+  
+  ForLines(dots, [sets,&ret] (Dot a,Dot b) 
+                             {
+    
+                              if( a.sect<b.sect )
+                                {
+                                 for(ulen s=a.sect; s<b.sect ;s++) sets[s].len++;
+                                 
+                                 ret=LenAdd(ret,b.sect-a.sect);
+                                }
+                              else if( a.sect>b.sect )
+                                {
+                                 for(ulen s=b.sect; s<a.sect ;s++) sets[s].len++;
+                                 
+                                 ret=LenAdd(ret,a.sect-b.sect);
+                                }
+    
+                             } );
+  
+  return ret;
+ }
+
+SolidSection::LineSet::LineSet(const SolidSection &data)
+ : sets(data.sect_count-1),
+   buf( CountBufs(Range(data.path),sets.getPtr()) )
+ {
+  ulen len=sets.getLen();
+  
+  StackArray<Line *> temp(len);
+  
+  Line *ptr=buf.getPtr();
+  
+  for(ulen i=0; i<len ;i++)
+    {
+     temp[i]=ptr;
+     sets[i].ptr=ptr;
+     
+     ptr+=sets[i].len;
+    }
+  
+  ForLines(Range(data.path), [&] (Dot a,Dot b) 
+                          {
+                           
+                           if( a.sect<b.sect )
+                             {
+                              for(ulen s=a.sect; s<b.sect ;s++) Append(temp[s],{a.dot,b.dot,-1});
+                             }
+                           else if( a.sect>b.sect )
+                             {
+                              for(ulen s=b.sect; s<a.sect ;s++) Append(temp[s],{a.dot,b.dot,+1});
+                             }
+    
+                          } );
+ }
+
+SolidSection::LineSet::~LineSet()
+ {
  }
 
 } // namespace Video

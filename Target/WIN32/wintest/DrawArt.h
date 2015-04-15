@@ -85,24 +85,23 @@ class CommonDrawArt
         if( getPane().contains(a) ) pixel(a,color);
        }
       
-      void operator () (Point a,uCoord len,DesktopColor color)
+      void operator () (Coord y,Coord a,Coord b,DesktopColor color) // [a,b]
        {
-        if( a.y<0 || a.y>=dy || a.x>=dx || dx<=0 ) return;
+        if( y<0 || y>=dy ) return;
+        
+        if( a>b ) Swap(a,b);
+        
+        if( a<0 ) a=0;
 
-        if( a.x<0 )
-          {
-           uCoord delta=IntDist(a.x,Coord(0));
-           
-           if( len<=delta ) return;
-            
-           len-=delta;
-           
-           a.x=0;
-          }
+        if( b>=dx ) b=dx-1;
         
-        Replace_min(len,IntDist(a.x,dx));
+        if( a>b ) return;
         
-        for(Raw *ptr=place(a); len ;len--,ptr=NextX(ptr)) color.copyTo(ptr);
+        Raw *ptr=place(Point(a,y));
+        
+        for(; a<b ;a++,ptr=NextX(ptr)) color.copyTo(ptr);
+        
+        color.copyTo(ptr);
        }
     };
    
@@ -130,11 +129,6 @@ class CommonDrawArt
       void line(Point a,Point b,DesktopColor color); // [a,b)
       
       void line_smooth(Point a,Point b,ColorName cname); // [a,b)
-      
-      void segment(Segment seg,Coord y,DesktopColor color);
-      
-      template <class Solid>
-      void solid(Solid solid,DesktopColor color);
     };
   
    WorkBuf buf;
@@ -317,24 +311,24 @@ class CommonDrawArt
    
    // solid
    
-   void solid(PtrLen<const Point> dots,DesktopColor color);
+   void solid(PtrLen<const Point> dots,bool all_flag,DesktopColor color);
    
    template <class ... TT>
-   void solid(DesktopColor color,TT ... tt)
+   void solid(bool all_flag,DesktopColor color,TT ... tt)
     {
      Point temp[sizeof ... (TT)]={ tt... };
      
-     solid(Range_const(temp),color);
+     solid(Range_const(temp),all_flag,color);
     }
    
-   void curveSolid(PtrLen<const Point> dots,DesktopColor color);
+   void curveSolid(PtrLen<const Point> dots,bool all_flag,DesktopColor color);
    
    template <class ... TT>
-   void curveSolid(DesktopColor color,TT ... tt)
+   void curveSolid(bool all_flag,DesktopColor color,TT ... tt)
     {
      Point temp[sizeof ... (TT)]={ tt... };
      
-     curveSolid(Range_const(temp),color);
+     curveSolid(Range_const(temp),all_flag,color);
     }
    
    // circle
