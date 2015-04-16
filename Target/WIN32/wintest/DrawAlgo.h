@@ -75,7 +75,7 @@ template <class UInt> class LineDriverBase;
 
 class LineDriver;
 
-class LineDriverL;
+class LineDriver2;
 
 class CurveDriver;
 
@@ -84,6 +84,12 @@ template <class UInt> class LineAlphaFunc;
 template <class UInt> class LineAlphaFunc2;
 
 template <class UInt> class SmoothLineDriver;
+
+struct LineEnd;
+
+class LinePlotter;
+
+class LinePlotter2;
 
 class SolidSection;
 
@@ -205,13 +211,13 @@ class LineDriver : public LineDriverBase<uCoord>
    static Result Clip(Coord x,Coord e,Coord d);
  };
 
-/* class LineDriverL */
+/* class LineDriver2 */
 
-class LineDriverL : public LineDriverBase<uLCoord>
+class LineDriver2 : public LineDriverBase<uLCoord>
  {
   public:
   
-   LineDriverL(uLCoord sx,uLCoord sy) : LineDriverBase<uLCoord>(sx,sy) {} // sx >= sy > 0
+   LineDriver2(uLCoord sx,uLCoord sy) : LineDriverBase<uLCoord>(sx,sy) {} // sx >= sy > 0
    
    static uLCoord First(LCoord a,LCoord e)
     {
@@ -399,14 +405,13 @@ class LineAlphaFunc
       
       friend Num operator / (Num a,Num b) { return uint16( (uint32(a.value)<<Precision)/b.value ); }
       
-      template <class SInt>
-      static Num Make(SInt a,unsigned precision) // [0,2) 
+      static Num Make(LCoord a) // [0,2) 
        { 
-        if( precision==Precision ) return uint16( a );
+        if( LPoint::Precision==Precision ) return uint16( a );
         
-        if( precision<Precision ) return uint16( a )<<(Precision-precision);
+        if( LPoint::Precision<Precision ) return uint16( a )<<(Precision-LPoint::Precision);
         
-        return uint16( a>>(precision-Precision) );
+        return uint16( a>>(LPoint::Precision-Precision) );
        } 
     };
   
@@ -561,12 +566,11 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt>
      b=T*B;
     }
  
-   template <class SInt>
-   unsigned alpha0(SInt d,unsigned precision) const // [-1/2,1/2]
+   unsigned alpha0(LCoord d) const // [-1/2,1/2]
     {
      if( d<0 ) d=-d;
      
-     Num t=Num::Make(d,precision);
+     Num t=Num::Make(d);
      
      if( t<a ) return Map( M-T*Sq(t/T) );
      
@@ -575,10 +579,9 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt>
      return Map( S-t );
     }
    
-   template <class SInt>
-   unsigned alpha1(SInt d,unsigned precision) const // [-1/2,1/2]
+   unsigned alpha1(LCoord d) const // [-1/2,1/2]
     {
-     Num t=Num::Make(d+(SInt(1)<<precision),precision);
+     Num t=Num::Make(d+LPoint::LShift(1));
      
      if( t<b ) return Map( One-T2*Sq(A+t/T) );
      
@@ -589,63 +592,59 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt>
      return 0;
     }
    
-   template <class SInt>
-   unsigned alpha2(SInt d,unsigned precision) const // [-1/2,1/2]
+   unsigned alpha2(LCoord d) const // [-1/2,1/2]
     {
      if( d>=0 ) return 0;
      
-     Num t=Num::Make(d+(SInt(2)<<precision),precision);
+     Num t=Num::Make(d+LPoint::LShift(2));
      
      if( t<One+b ) return Map( T2*Sq((One+b-t)/T) );
      
      return 0;
     }
    
-   template <class SInt>
-   unsigned alpha0before(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+   unsigned alpha0before(LCoord d,LCoord part) const // [-1/2,1/2] , [0,1]
     {
      if( d<0 )
        {
-        Num t=Num::Make(-d,precision);
-        Num p=Num::Make(part,precision);
+        Num t=Num::Make(-d);
+        Num p=Num::Make(part);
       
         return alpha(t+T*(One-p),p);
        }
      else
        {
-        Num t=Num::Make(d,precision);
-        Num p=Num::Make(part,precision);
+        Num t=Num::Make(d);
+        Num p=Num::Make(part);
        
         return alpha(t,p);
        }
     }
    
-   template <class SInt>
-   unsigned alpha1before(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+   unsigned alpha1before(LCoord d,LCoord part) const // [-1/2,1/2] , [0,1]
     {
      if( d<0 )
        {
-        Num t=Num::Make(-d,precision);
-        Num p=Num::Make(part,precision);
+        Num t=Num::Make(-d);
+        Num p=Num::Make(part);
       
         return alpha(One-t,p);
        }
      else
        {
-        Num t=Num::Make(d,precision);
-        Num p=Num::Make(part,precision);
+        Num t=Num::Make(d);
+        Num p=Num::Make(part);
        
         return alpha(One+t,p);
        }
     }
    
-   template <class SInt>
-   unsigned alpha2before(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+   unsigned alpha2before(LCoord d,LCoord part) const // [-1/2,1/2] , [0,1]
     {
      if( d<0 )
        {
-        Num t=Num::Make(-d,precision);
-        Num p=Num::Make(part,precision);
+        Num t=Num::Make(-d);
+        Num p=Num::Make(part);
 
         t=One-t;
         
@@ -659,26 +658,24 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt>
        }
     }
    
-   template <class SInt>
-   unsigned alpha0after(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+   unsigned alpha0after(LCoord d,LCoord part) const // [-1/2,1/2] , [0,1]
     {
-     return alpha0before(-d,part,precision);
+     return alpha0before(-d,part);
     }
    
-   template <class SInt>
-   unsigned alpha1after(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+   unsigned alpha1after(LCoord d,LCoord part) const // [-1/2,1/2] , [0,1]
     {
      if( d<0 )
        {
-        Num t=Num::Make(-d,precision);
-        Num p=Num::Make(part,precision);
+        Num t=Num::Make(-d);
+        Num p=Num::Make(part);
       
         return alpha((One-t)+T*(One-p),p);
        }
      else
        {
-        Num t=Num::Make(d,precision);
-        Num p=Num::Make(part,precision);
+        Num t=Num::Make(d);
+        Num p=Num::Make(part);
         
         t=T*(One-p)+t;
         
@@ -688,13 +685,12 @@ class LineAlphaFunc2 : LineAlphaFunc<UInt>
        }
     }
    
-   template <class SInt>
-   unsigned alpha2after(SInt d,SInt part,unsigned precision) const // [-1/2,1/2] , [0,1]
+   unsigned alpha2after(LCoord d,LCoord part) const // [-1/2,1/2] , [0,1]
     {
      if( d<0 )
        {
-        Num t=Num::Make(-d,precision);
-        Num p=Num::Make(part,precision);
+        Num t=Num::Make(-d);
+        Num p=Num::Make(part);
 
         t=One-t;
         
@@ -822,7 +818,7 @@ void Line(Point a,Point b,Plot plot) // [a,b)
     }
  }
 
-/* Line(...,LPoint a,LPoint b,...) */
+/* struct LineEnd */
 
 struct LineEnd
  {
@@ -831,245 +827,252 @@ struct LineEnd
   bool ok;
  };
 
+/* class LinePlotter */
+
+class LinePlotter
+ {
+   static const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
+ 
+   LCoord ex;
+   LCoord ey;
+   uLCoord sx;
+   uLCoord sy;
+   
+  private: 
+   
+   template <class Func,class Plot>
+   LineEnd lineY(Func func,LPoint a,LPoint b,Plot plot)
+    {
+     auto count=LineDriver2::Count(a.y,b.y);
+     
+     if( !count ) return {Null,Null,false};
+     
+     Point E=a.toPoint();
+     Point A=E;
+     
+     A.y+=ey;
+     
+     func(E,A,plot);
+    
+     plot(A);
+    
+     for(count--; count ;count--)
+       {
+        A.y+=ey;
+        
+        plot(A);
+       }
+     
+     Point L=A;
+     
+     A.y+=ey;
+      
+     return {L,A,true};
+    }
+   
+   template <class Func,class Plot>
+   LineEnd lineX(Func func,LPoint a,LPoint b,Plot plot)
+    {
+     auto count=LineDriver2::Count(a.x,b.x);
+     
+     if( !count ) return {Null,Null,false};
+    
+     Point E=a.toPoint();
+     Point A=E;
+     
+     A.x+=ex;
+     
+     func(E,A,plot);
+    
+     plot(A);
+     
+     for(count--; count ;count--)
+       {
+        A.x+=ex;
+        
+        plot(A);
+       }
+     
+     Point L=A;
+
+     A.x+=ex;
+      
+     return {L,A,true};
+    }
+   
+   void stepX(LineDriver2 &driver,LPoint &a,Point &A)
+    {
+     uLCoord delta_y=driver.step_pow2(LPoint::Precision);
+     
+     a.y=IntMove(a.y,ey,delta_y);
+     
+     A.x+=ex;
+     A.y=LPoint::RShift(a.y);
+    }
+   
+   template <class Func,class Plot>
+   LineEnd lineToX(Func func,LPoint a,LPoint b,Plot plot)
+    {
+     auto count=LineDriver2::Count(a.x,b.x);
+    
+     if( !count ) return {Null,Null,false};
+     
+     LineDriver2 driver(sx,sy);
+
+     {
+      uLCoord first=LineDriver2::First(a.x,ex);
+      
+      if( first>=Step )
+        {
+         uLCoord delta_x=first-Step;
+         uLCoord delta_y=driver.step(delta_x);
+         
+         a.x=IntMove(a.x,ex,delta_x);
+         a.y=IntMove(a.y,ey,delta_y);
+        }
+      else
+        {
+         uLCoord delta_x=Step-first;
+         uLCoord delta_y=driver.back(delta_x);
+         
+         a.x=IntMove(a.x,-ex,delta_x);
+         a.y=IntMove(a.y,-ey,delta_y);
+        }
+     }
+     
+     Point E=a.toPoint();
+     Point A=E;
+     
+     {
+      stepX(driver,a,A);
+      
+      func(E,A,plot);
+      
+      plot(A);
+     }
+     
+     for(count--; count ;count--)
+       {
+        stepX(driver,a,A);
+        
+        plot(A);
+       }
+     
+     Point L=A;
+     
+     {
+      stepX(driver,a,A);
+      
+      return {L,A,true};
+     }
+    }
+   
+   void stepY(LineDriver2 &driver,LPoint &a,Point &A)
+    {
+     uLCoord delta_x=driver.step_pow2(LPoint::Precision);
+     
+     a.x=IntMove(a.x,ex,delta_x);
+     
+     A.y+=ey;
+     A.x=LPoint::RShift(a.x);
+    }
+   
+   template <class Func,class Plot>
+   LineEnd lineToY(Func func,LPoint a,LPoint b,Plot plot)
+    {
+     auto count=LineDriver2::Count(a.y,b.y);
+    
+     if( !count ) return {Null,Null,false};
+     
+     LineDriver2 driver(sy,sx);
+
+     {
+      uLCoord first=LineDriver2::First(a.y,ey);
+      
+      if( first>=Step )
+        {
+         uLCoord delta_y=first-Step;
+         uLCoord delta_x=driver.step(delta_y);
+         
+         a.y=IntMove(a.y,ey,delta_y);
+         a.x=IntMove(a.x,ex,delta_x);
+        }
+      else
+        {
+         uLCoord delta_y=Step-first;
+         uLCoord delta_x=driver.back(delta_y);
+         
+         a.y=IntMove(a.y,-ey,delta_y);
+         a.x=IntMove(a.x,-ex,delta_x);
+        }
+     }
+     
+     Point E=a.toPoint();
+     Point A=E;
+     
+     {
+      stepY(driver,a,A);
+      
+      func(E,A,plot);
+      
+      plot(A);
+     }
+     
+     for(count--; count ;count--)
+       {
+        stepY(driver,a,A);
+        
+        plot(A);
+       }
+     
+     Point L=A;
+     
+     {
+      stepY(driver,a,A);
+      
+      return {L,A,true};
+     }
+    }
+   
+  public:
+  
+   template <class Func,class Plot>
+   LineEnd run(Func func,LPoint a,LPoint b,Plot plot)
+    {
+     if( !DistDir(ex,sx,a.x,b.x) )
+       {
+        if( !DistDir(ey,sy,a.y,b.y) ) 
+          {
+           return {Null,Null,false};
+          }
+        
+        return lineY(func,a,b,plot);
+       }
+     
+     if( !DistDir(ey,sy,a.y,b.y) )
+       {
+        return lineX(func,a,b,plot);
+       }
+     
+     if( sx>sy )
+       {
+        return lineToX(func,a,b,plot);
+       }
+     else
+       {
+        return lineToY(func,a,b,plot);
+       }
+    }
+ };
+
+/* Line(...,LPoint a,LPoint b,...) */
+
 template <class Func,class Plot>
 LineEnd Line(Func func,LPoint a,LPoint b,Plot plot) // func(ext,first,plot) (a,b)
  {
-  class Driver
-   {
-     LCoord ex;
-     LCoord ey;
-     uLCoord sx;
-     uLCoord sy;
-     
-    private: 
-     
-     LineEnd lineY(Func func,LPoint a,LPoint b,Plot plot)
-      {
-       auto count=LineDriverL::Count(a.y,b.y);
-       
-       if( !count ) return {Null,Null,false};
-       
-       Point E=a.toPoint();
-       Point A=E;
-       
-       A.y+=ey;
-       
-       func(E,A,plot);
-      
-       plot(A);
-      
-       for(count--; count ;count--)
-         {
-          A.y+=ey;
-          
-          plot(A);
-         }
-       
-       Point L=A;
-       
-       A.y+=ey;
-        
-       return {L,A,true};
-      }
-     
-     LineEnd lineX(Func func,LPoint a,LPoint b,Plot plot)
-      {
-       auto count=LineDriverL::Count(a.x,b.x);
-       
-       if( !count ) return {Null,Null,false};
-      
-       Point E=a.toPoint();
-       Point A=E;
-       
-       A.x+=ex;
-       
-       func(E,A,plot);
-      
-       plot(A);
-       
-       for(count--; count ;count--)
-         {
-          A.x+=ex;
-          
-          plot(A);
-         }
-       
-       Point L=A;
-
-       A.x+=ex;
-        
-       return {L,A,true};
-      }
-     
-     void stepX(LineDriverL &driver,LPoint &a,Point &A)
-      {
-       uLCoord delta_y=driver.step_pow2(LPoint::Precision);
-       
-       a.y=IntMove(a.y,ey,delta_y);
-       
-       A.x+=ex;
-       A.y=LPoint::RShift(a.y);
-      }
-     
-     LineEnd lineToX(Func func,LPoint a,LPoint b,Plot plot)
-      {
-       const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
-      
-       auto count=LineDriverL::Count(a.x,b.x);
-      
-       if( !count ) return {Null,Null,false};
-       
-       LineDriverL driver(sx,sy);
-
-       {
-        uLCoord first=LineDriverL::First(a.x,ex);
-        
-        if( first>=Step )
-          {
-           uLCoord delta_x=first-Step;
-           uLCoord delta_y=driver.step(delta_x);
-           
-           a.x=IntMove(a.x,ex,delta_x);
-           a.y=IntMove(a.y,ey,delta_y);
-          }
-        else
-          {
-           uLCoord delta_x=Step-first;
-           uLCoord delta_y=driver.back(delta_x);
-           
-           a.x=IntMove(a.x,-ex,delta_x);
-           a.y=IntMove(a.y,-ey,delta_y);
-          }
-       }
-       
-       Point E=a.toPoint();
-       Point A=E;
-       
-       {
-        stepX(driver,a,A);
-        
-        func(E,A,plot);
-        
-        plot(A);
-       }
-       
-       for(count--; count ;count--)
-         {
-          stepX(driver,a,A);
-          
-          plot(A);
-         }
-       
-       Point L=A;
-       
-       {
-        stepX(driver,a,A);
-        
-        return {L,A,true};
-       }
-      }
-     
-     void stepY(LineDriverL &driver,LPoint &a,Point &A)
-      {
-       uLCoord delta_x=driver.step_pow2(LPoint::Precision);
-       
-       a.x=IntMove(a.x,ex,delta_x);
-       
-       A.y+=ey;
-       A.x=LPoint::RShift(a.x);
-      }
-     
-     LineEnd lineToY(Func func,LPoint a,LPoint b,Plot plot)
-      {
-       const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
-      
-       auto count=LineDriverL::Count(a.y,b.y);
-      
-       if( !count ) return {Null,Null,false};
-       
-       LineDriverL driver(sy,sx);
-
-       {
-        uLCoord first=LineDriverL::First(a.y,ey);
-        
-        if( first>=Step )
-          {
-           uLCoord delta_y=first-Step;
-           uLCoord delta_x=driver.step(delta_y);
-           
-           a.y=IntMove(a.y,ey,delta_y);
-           a.x=IntMove(a.x,ex,delta_x);
-          }
-        else
-          {
-           uLCoord delta_y=Step-first;
-           uLCoord delta_x=driver.back(delta_y);
-           
-           a.y=IntMove(a.y,-ey,delta_y);
-           a.x=IntMove(a.x,-ex,delta_x);
-          }
-       }
-       
-       Point E=a.toPoint();
-       Point A=E;
-       
-       {
-        stepY(driver,a,A);
-        
-        func(E,A,plot);
-        
-        plot(A);
-       }
-       
-       for(count--; count ;count--)
-         {
-          stepY(driver,a,A);
-          
-          plot(A);
-         }
-       
-       Point L=A;
-       
-       {
-        stepY(driver,a,A);
-        
-        return {L,A,true};
-       }
-      }
-     
-    public:
-    
-     LineEnd run(Func func,LPoint a,LPoint b,Plot plot)
-      {
-       if( !DistDir(ex,sx,a.x,b.x) )
-         {
-          if( !DistDir(ey,sy,a.y,b.y) ) 
-            {
-             return {Null,Null,false};
-            }
-          
-          return lineY(func,a,b,plot);
-         }
-       
-       if( !DistDir(ey,sy,a.y,b.y) )
-         {
-          return lineX(func,a,b,plot);
-         }
-       
-       if( sx>sy )
-         {
-          return lineToX(func,a,b,plot);
-         }
-       else
-         {
-          return lineToY(func,a,b,plot);
-         }
-      }
-   };
+  LinePlotter plotter;
   
-  Driver driver;
-  
-  return driver.run(func,a,b,plot);
+  return plotter.run(func,a,b,plot);
  }
 
 /* LineFirst/LineNext(...,LPoint a,LPoint b,...) */
@@ -1223,392 +1226,391 @@ void LineSmooth(Point a,Point b,Plot plot) // [a,b)
     }
  }
 
+/* class LinePlotter2 */
+
+class LinePlotter2
+ {
+   static const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
+   
+   static const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
+   
+   LCoord ex;
+   LCoord ey;
+   uLCoord sx;
+   uLCoord sy;
+   
+  private: 
+  
+   static LCoord Delta(LCoord e,LCoord x)
+    {
+     return Direct(e,x-LPoint::LShift_ext(LPoint::RShift_ext(x)));
+    }
+   
+   static LCoord PartBefore(LCoord e,LCoord x)
+    {
+     return Half+Delta(e,x);
+    }
+   
+   static LCoord PartAfter(LCoord e,LCoord x)
+    {
+     return Half-Delta(e,x);
+    }
+   
+   static unsigned AlphaDelta(LCoord delta)
+    {
+     const LCoord M = LCoord(1)<<LPoint::Precision ;
+     
+     return unsigned( (M-delta)>>(LPoint::Precision-ClrBits) );
+    }
+
+   static unsigned AlphaPart(unsigned alpha,LCoord part)
+    {
+     return unsigned( (alpha*uLCoord(part))>>LPoint::Precision );
+    }
+   
+   template <class Plot>
+   bool lineY(LPoint a,LPoint b,Plot plot)
+    {
+     auto count=LineDriver2::Count1(a.y,b.y);
+   
+     if( !count ) return false;
+     
+     count--;
+    
+     Point A=a.toPoint();
+     LCoord delta=Delta(1,a.x);
+     
+     unsigned alpha0;
+     unsigned alpha1;
+     unsigned alpha2;
+     
+     if( delta>=0 )
+       {
+        alpha0=0;
+        
+        alpha1=AlphaDelta(delta);
+        alpha2=(1u<<ClrBits)-alpha1;
+       }
+     else
+       {
+        alpha2=0;
+       
+        alpha1=AlphaDelta(-delta);
+        alpha0=(1u<<ClrBits)-alpha1;
+       }
+     
+     {
+      uLCoord first=LineDriver2::First(a.y,ey);
+      LCoord part=(LCoord)first-Half;
+
+      plot(A-Point(1,0),AlphaPart(alpha0,part));
+      plot(A           ,AlphaPart(alpha1,part));
+      plot(A+Point(1,0),AlphaPart(alpha2,part));
+     }
+    
+     for(; count ;count--)
+       {
+        A.y+=ey;
+        
+        plot(A-Point(1,0),alpha0);
+        plot(A           ,alpha1);
+        plot(A+Point(1,0),alpha2);
+       }
+     
+     {
+      A.y+=ey;
+      
+      LCoord part=PartBefore(ey,b.y);
+      
+      plot(A-Point(1,0),AlphaPart(alpha0,part));
+      plot(A           ,AlphaPart(alpha1,part));
+      plot(A+Point(1,0),AlphaPart(alpha2,part));
+     }
+     
+     return true;
+    }
+   
+   template <class Plot>
+   bool lineX(LPoint a,LPoint b,Plot plot)
+    {
+     auto count=LineDriver2::Count1(a.x,b.x);
+   
+     if( !count ) return false;
+     
+     count--;
+    
+     Point A=a.toPoint();
+     LCoord delta=Delta(1,a.y);
+     
+     unsigned alpha0;
+     unsigned alpha1;
+     unsigned alpha2;
+     
+     if( delta>=0 )
+       {
+        alpha0=0;
+        
+        alpha1=AlphaDelta(delta);
+        alpha2=(1u<<ClrBits)-alpha1;
+       }
+     else
+       {
+        alpha2=0;
+       
+        alpha1=AlphaDelta(-delta);
+        alpha0=(1u<<ClrBits)-alpha1;
+       }
+     
+     {
+      uLCoord first=LineDriver2::First(a.x,ex);
+      LCoord part=(LCoord)first-Half;
+
+      plot(A-Point(0,1),AlphaPart(alpha0,part));
+      plot(A           ,AlphaPart(alpha1,part));
+      plot(A+Point(0,1),AlphaPart(alpha2,part));
+     }
+    
+     for(; count ;count--)
+       {
+        A.x+=ex;
+        
+        plot(A-Point(0,1),alpha0);
+        plot(A           ,alpha1);
+        plot(A+Point(0,1),alpha2);
+       }
+     
+     {
+      A.x+=ex;
+      
+      LCoord part=PartBefore(ex,b.x);
+      
+      plot(A-Point(0,1),AlphaPart(alpha0,part));
+      plot(A           ,AlphaPart(alpha1,part));
+      plot(A+Point(0,1),AlphaPart(alpha2,part));
+     }
+    
+     return true;
+    }
+   
+   void stepX(LineDriver2 &driver,LPoint &a,Point &A)
+    {
+     uLCoord delta_y=driver.step_pow2(LPoint::Precision);
+     
+     a.y=IntMove(a.y,ey,delta_y);
+     
+     A.x+=ex;
+     A.y=LPoint::RShift(a.y);
+    }
+
+   template <class Plot>
+   void plotX(LineAlphaFunc2<uLCoord> &func,LPoint a,Point A,Plot plot)
+    {
+     LCoord delta=Delta(ey,a.y);
+     
+     plot(A-Point(0,2*ey),func.alpha2(delta));
+     plot(A-Point(0,ey)  ,func.alpha1(delta));
+     plot(A              ,func.alpha0(delta));
+     plot(A+Point(0,ey)  ,func.alpha1(-delta));
+     plot(A+Point(0,2*ey),func.alpha2(-delta));
+    }
+   
+   template <class Plot>
+   bool lineToX(LPoint a,LPoint b,Plot plot)
+    {
+     auto count=LineDriver2::Count1(a.x,b.x);
+   
+     if( !count ) return false;
+     
+     count--;
+    
+     LineDriver2 driver(sx,sy);
+     LineAlphaFunc2<uLCoord> func(sx,sy); 
+
+     Point A;
+     
+     {
+      uLCoord first=LineDriver2::First(a.x,ex);
+      LCoord part=(LCoord)first-Half;
+      
+      if( first>=Step )
+        {
+         uLCoord delta_x=first-Step;
+         uLCoord delta_y=driver.step(delta_x);
+         
+         a.x=IntMove(a.x,ex,delta_x);
+         a.y=IntMove(a.y,ey,delta_y);
+        }
+      else
+        {
+         uLCoord delta_x=Step-first;
+         uLCoord delta_y=driver.back(delta_x);
+        
+         a.x=IntMove(a.x,-ex,delta_x);
+         a.y=IntMove(a.y,-ey,delta_y);
+        }
+      
+      A=a.toPoint();
+      
+      LCoord delta=Delta(ey,a.y);
+      
+      plot(A-Point(0,2*ey),func.alpha2after(delta,part));
+      plot(A-Point(0,ey)  ,func.alpha1after(delta,part));
+      plot(A              ,func.alpha0after(delta,part));
+      plot(A+Point(0,ey)  ,func.alpha1before(-delta,part));
+      plot(A+Point(0,2*ey),func.alpha2before(-delta,part));
+     }
+    
+     for(; count ;count--)
+       {
+        stepX(driver,a,A);
+        plotX(func,a,A,plot);
+       }
+     
+     {
+      stepX(driver,a,A);
+      
+      LCoord delta=Delta(ey,a.y);
+      LCoord part=PartBefore(ex,b.x);
+      
+      plot(A-Point(0,2*ey),func.alpha2before(delta,part));
+      plot(A-Point(0,ey)  ,func.alpha1before(delta,part));
+      plot(A              ,func.alpha0before(delta,part));
+      plot(A+Point(0,ey)  ,func.alpha1after(-delta,part));
+      plot(A+Point(0,2*ey),func.alpha2after(-delta,part));
+     }
+     
+     return true;
+    }
+   
+   void stepY(LineDriver2 &driver,LPoint &a,Point &A)
+    {
+     uLCoord delta_x=driver.step_pow2(LPoint::Precision);
+     
+     a.x=IntMove(a.x,ex,delta_x);
+     
+     A.y+=ey;
+     A.x=LPoint::RShift(a.x);
+    }
+   
+   template <class Plot>
+   void plotY(LineAlphaFunc2<uLCoord> &func,LPoint a,Point A,Plot plot)
+    {
+     LCoord delta=Delta(ex,a.x);
+     
+     plot(A-Point(2*ex,0),func.alpha2(delta));
+     plot(A-Point(ex,0)  ,func.alpha1(delta));
+     plot(A              ,func.alpha0(delta));
+     plot(A+Point(ex,0)  ,func.alpha1(-delta));
+     plot(A+Point(2*ex,0),func.alpha2(-delta));
+    }
+   
+   template <class Plot>
+   bool lineToY(LPoint a,LPoint b,Plot plot)
+    {
+     auto count=LineDriver2::Count1(a.y,b.y);
+   
+     if( !count ) return false;
+     
+     count--;
+    
+     LineDriver2 driver(sy,sx);
+     LineAlphaFunc2<uLCoord> func(sy,sx);
+     
+     Point A;
+ 
+     {
+      uLCoord first=LineDriver2::First(a.y,ey);
+      LCoord part=(LCoord)first-Half;
+      
+      if( first>=Step )
+        {
+         uLCoord delta_y=first-Step;
+         uLCoord delta_x=driver.step(delta_y);
+         
+         a.y=IntMove(a.y,ey,delta_y);
+         a.x=IntMove(a.x,ex,delta_x);
+        }
+      else
+        {
+         uLCoord delta_y=Step-first;
+         uLCoord delta_x=driver.back(delta_y);
+        
+         a.y=IntMove(a.y,-ey,delta_y);
+         a.x=IntMove(a.x,-ex,delta_x);
+        }
+      
+      A=a.toPoint();
+      
+      LCoord delta=Delta(ex,a.x);
+      
+      plot(A-Point(2*ex,0),func.alpha2after(delta,part));
+      plot(A-Point(ex,0)  ,func.alpha1after(delta,part));
+      plot(A              ,func.alpha0after(delta,part));
+      plot(A+Point(ex,0)  ,func.alpha1before(-delta,part));
+      plot(A+Point(2*ex,0),func.alpha2before(-delta,part));
+     }
+    
+     for(; count ;count--)
+       {
+        stepY(driver,a,A);
+        plotY(func,a,A,plot);
+       }
+     
+     {
+      stepY(driver,a,A);
+      
+      LCoord delta=Delta(ex,a.x);
+      LCoord part=PartBefore(ey,b.y);
+      
+      plot(A-Point(2*ex,0),func.alpha2before(delta,part));
+      plot(A-Point(ex,0)  ,func.alpha1before(delta,part));
+      plot(A              ,func.alpha0before(delta,part));
+      plot(A+Point(ex,0)  ,func.alpha1after(-delta,part));
+      plot(A+Point(2*ex,0),func.alpha2after(-delta,part));
+     }
+    
+     return true;
+    }
+   
+  public:
+  
+   template <class Plot>
+   bool run(LPoint a,LPoint b,Plot plot)
+    {
+     if( !DistDir(ex,sx,a.x,b.x) )
+       {
+        if( !DistDir(ey,sy,a.y,b.y) ) 
+          {
+           return false;
+          }
+       
+        return lineY(a,b,plot); 
+       }
+     
+     if( !DistDir(ey,sy,a.y,b.y) )
+       {
+        return lineX(a,b,plot);
+       }
+     
+     if( sx>sy )
+       {
+        return lineToX(a,b,plot);
+       }
+     else
+       {
+        return lineToY(a,b,plot);
+       }
+    }
+ };
+
 /* LineSmooth(LPoint a,LPoint b,...) */
 
 template <class Plot>
 bool LineSmooth(LPoint a,LPoint b,Plot plot) // [a,b]
  {
-  class Driver
-   {
-     LCoord ex;
-     LCoord ey;
-     uLCoord sx;
-     uLCoord sy;
-     
-    private: 
-    
-     static LCoord Delta(LCoord e,LCoord x)
-      {
-       return Direct(e,x-LPoint::LShift_ext(LPoint::RShift_ext(x)));
-      }
-     
-     static LCoord PartBefore(LCoord e,LCoord x)
-      {
-       const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
-       
-       return Half+Delta(e,x);
-      }
-     
-     static LCoord PartAfter(LCoord e,LCoord x)
-      {
-       const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
-       
-       return Half-Delta(e,x);
-      }
-     
-     static unsigned AlphaDelta(LCoord delta)
-      {
-       const LCoord M = LCoord(1)<<LPoint::Precision ;
-       
-       return unsigned( (M-delta)>>(LPoint::Precision-ClrBits) );
-      }
-
-     static unsigned AlphaPart(unsigned alpha,LCoord part)
-      {
-       return unsigned( (alpha*uLCoord(part))>>LPoint::Precision );
-      }
-     
-     bool lineY(LPoint a,LPoint b,Plot plot)
-      {
-       const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
-       
-       auto count=LineDriverL::Count1(a.y,b.y);
-     
-       if( !count ) return false;
-       
-       count--;
-      
-       Point A=a.toPoint();
-       LCoord delta=Delta(1,a.x);
-       
-       unsigned alpha0;
-       unsigned alpha1;
-       unsigned alpha2;
-       
-       if( delta>=0 )
-         {
-          alpha0=0;
-          
-          alpha1=AlphaDelta(delta);
-          alpha2=(1u<<ClrBits)-alpha1;
-         }
-       else
-         {
-          alpha2=0;
-         
-          alpha1=AlphaDelta(-delta);
-          alpha0=(1u<<ClrBits)-alpha1;
-         }
-       
-       {
-        uLCoord first=LineDriverL::First(a.y,ey);
-        LCoord part=(LCoord)first-Half;
- 
-        plot(A-Point(1,0),AlphaPart(alpha0,part));
-        plot(A           ,AlphaPart(alpha1,part));
-        plot(A+Point(1,0),AlphaPart(alpha2,part));
-       }
-      
-       for(; count ;count--)
-         {
-          A.y+=ey;
-          
-          plot(A-Point(1,0),alpha0);
-          plot(A           ,alpha1);
-          plot(A+Point(1,0),alpha2);
-         }
-       
-       {
-        A.y+=ey;
-        
-        LCoord part=PartBefore(ey,b.y);
-        
-        plot(A-Point(1,0),AlphaPart(alpha0,part));
-        plot(A           ,AlphaPart(alpha1,part));
-        plot(A+Point(1,0),AlphaPart(alpha2,part));
-       }
-       
-       return true;
-      }
-     
-     bool lineX(LPoint a,LPoint b,Plot plot)
-      {
-       const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
-       
-       auto count=LineDriverL::Count1(a.x,b.x);
-     
-       if( !count ) return false;
-       
-       count--;
-      
-       Point A=a.toPoint();
-       LCoord delta=Delta(1,a.y);
-       
-       unsigned alpha0;
-       unsigned alpha1;
-       unsigned alpha2;
-       
-       if( delta>=0 )
-         {
-          alpha0=0;
-          
-          alpha1=AlphaDelta(delta);
-          alpha2=(1u<<ClrBits)-alpha1;
-         }
-       else
-         {
-          alpha2=0;
-         
-          alpha1=AlphaDelta(-delta);
-          alpha0=(1u<<ClrBits)-alpha1;
-         }
-       
-       {
-        uLCoord first=LineDriverL::First(a.x,ex);
-        LCoord part=(LCoord)first-Half;
-
-        plot(A-Point(0,1),AlphaPart(alpha0,part));
-        plot(A           ,AlphaPart(alpha1,part));
-        plot(A+Point(0,1),AlphaPart(alpha2,part));
-       }
-      
-       for(; count ;count--)
-         {
-          A.x+=ex;
-          
-          plot(A-Point(0,1),alpha0);
-          plot(A           ,alpha1);
-          plot(A+Point(0,1),alpha2);
-         }
-       
-       {
-        A.x+=ex;
-        
-        LCoord part=PartBefore(ex,b.x);
-        
-        plot(A-Point(0,1),AlphaPart(alpha0,part));
-        plot(A           ,AlphaPart(alpha1,part));
-        plot(A+Point(0,1),AlphaPart(alpha2,part));
-       }
-      
-       return true;
-      }
-     
-     void stepX(LineDriverL &driver,LPoint &a,Point &A)
-      {
-       uLCoord delta_y=driver.step_pow2(LPoint::Precision);
-       
-       a.y=IntMove(a.y,ey,delta_y);
-       
-       A.x+=ex;
-       A.y=LPoint::RShift(a.y);
-      }
-
-     void plotX(LineAlphaFunc2<uLCoord> &func,LPoint a,Point A,Plot plot)
-      {
-       LCoord delta=Delta(ey,a.y);
-       
-       plot(A-Point(0,2*ey),func.alpha2(delta,LPoint::Precision));
-       plot(A-Point(0,ey)  ,func.alpha1(delta,LPoint::Precision));
-       plot(A              ,func.alpha0(delta,LPoint::Precision));
-       plot(A+Point(0,ey)  ,func.alpha1(-delta,LPoint::Precision));
-       plot(A+Point(0,2*ey),func.alpha2(-delta,LPoint::Precision));
-      }
-     
-     bool lineToX(LPoint a,LPoint b,Plot plot)
-      {
-       const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
-       const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
-       
-       auto count=LineDriverL::Count1(a.x,b.x);
-     
-       if( !count ) return false;
-       
-       count--;
-      
-       LineDriverL driver(sx,sy);
-       LineAlphaFunc2<uLCoord> func(sx,sy); 
-
-       Point A;
-       
-       {
-        uLCoord first=LineDriverL::First(a.x,ex);
-        LCoord part=(LCoord)first-Half;
-        
-        if( first>=Step )
-          {
-           uLCoord delta_x=first-Step;
-           uLCoord delta_y=driver.step(delta_x);
-           
-           a.x=IntMove(a.x,ex,delta_x);
-           a.y=IntMove(a.y,ey,delta_y);
-          }
-        else
-          {
-           uLCoord delta_x=Step-first;
-           uLCoord delta_y=driver.back(delta_x);
-          
-           a.x=IntMove(a.x,-ex,delta_x);
-           a.y=IntMove(a.y,-ey,delta_y);
-          }
-        
-        A=a.toPoint();
-        
-        LCoord delta=Delta(ey,a.y);
-        
-        plot(A-Point(0,2*ey),func.alpha2after(delta,part,LPoint::Precision));
-        plot(A-Point(0,ey)  ,func.alpha1after(delta,part,LPoint::Precision));
-        plot(A              ,func.alpha0after(delta,part,LPoint::Precision));
-        plot(A+Point(0,ey)  ,func.alpha1before(-delta,part,LPoint::Precision));
-        plot(A+Point(0,2*ey),func.alpha2before(-delta,part,LPoint::Precision));
-       }
-      
-       for(; count ;count--)
-         {
-          stepX(driver,a,A);
-          plotX(func,a,A,plot);
-         }
-       
-       {
-        stepX(driver,a,A);
-        
-        LCoord delta=Delta(ey,a.y);
-        LCoord part=PartBefore(ex,b.x);
-        
-        plot(A-Point(0,2*ey),func.alpha2before(delta,part,LPoint::Precision));
-        plot(A-Point(0,ey)  ,func.alpha1before(delta,part,LPoint::Precision));
-        plot(A              ,func.alpha0before(delta,part,LPoint::Precision));
-        plot(A+Point(0,ey)  ,func.alpha1after(-delta,part,LPoint::Precision));
-        plot(A+Point(0,2*ey),func.alpha2after(-delta,part,LPoint::Precision));
-       }
-       
-       return true;
-      }
-     
-     void stepY(LineDriverL &driver,LPoint &a,Point &A)
-      {
-       uLCoord delta_x=driver.step_pow2(LPoint::Precision);
-       
-       a.x=IntMove(a.x,ex,delta_x);
-       
-       A.y+=ey;
-       A.x=LPoint::RShift(a.x);
-      }
-     
-     void plotY(LineAlphaFunc2<uLCoord> &func,LPoint a,Point A,Plot plot)
-      {
-       LCoord delta=Delta(ex,a.x);
-       
-       plot(A-Point(2*ex,0),func.alpha2(delta,LPoint::Precision));
-       plot(A-Point(ex,0)  ,func.alpha1(delta,LPoint::Precision));
-       plot(A              ,func.alpha0(delta,LPoint::Precision));
-       plot(A+Point(ex,0)  ,func.alpha1(-delta,LPoint::Precision));
-       plot(A+Point(2*ex,0),func.alpha2(-delta,LPoint::Precision));
-      }
-     
-     bool lineToY(LPoint a,LPoint b,Plot plot)
-      {
-       const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
-       const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
-       
-       auto count=LineDriverL::Count1(a.y,b.y);
-     
-       if( !count ) return false;
-       
-       count--;
-      
-       LineDriverL driver(sy,sx);
-       LineAlphaFunc2<uLCoord> func(sy,sx);
-       
-       Point A;
-   
-       {
-        uLCoord first=LineDriverL::First(a.y,ey);
-        LCoord part=(LCoord)first-Half;
-        
-        if( first>=Step )
-          {
-           uLCoord delta_y=first-Step;
-           uLCoord delta_x=driver.step(delta_y);
-           
-           a.y=IntMove(a.y,ey,delta_y);
-           a.x=IntMove(a.x,ex,delta_x);
-          }
-        else
-          {
-           uLCoord delta_y=Step-first;
-           uLCoord delta_x=driver.back(delta_y);
-          
-           a.y=IntMove(a.y,-ey,delta_y);
-           a.x=IntMove(a.x,-ex,delta_x);
-          }
-        
-        A=a.toPoint();
-        
-        LCoord delta=Delta(ex,a.x);
-        
-        plot(A-Point(2*ex,0),func.alpha2after(delta,part,LPoint::Precision));
-        plot(A-Point(ex,0)  ,func.alpha1after(delta,part,LPoint::Precision));
-        plot(A              ,func.alpha0after(delta,part,LPoint::Precision));
-        plot(A+Point(ex,0)  ,func.alpha1before(-delta,part,LPoint::Precision));
-        plot(A+Point(2*ex,0),func.alpha2before(-delta,part,LPoint::Precision));
-       }
-      
-       for(; count ;count--)
-         {
-          stepY(driver,a,A);
-          plotY(func,a,A,plot);
-         }
-       
-       {
-        stepY(driver,a,A);
-        
-        LCoord delta=Delta(ex,a.x);
-        LCoord part=PartBefore(ey,b.y);
-        
-        plot(A-Point(2*ex,0),func.alpha2before(delta,part,LPoint::Precision));
-        plot(A-Point(ex,0)  ,func.alpha1before(delta,part,LPoint::Precision));
-        plot(A              ,func.alpha0before(delta,part,LPoint::Precision));
-        plot(A+Point(ex,0)  ,func.alpha1after(-delta,part,LPoint::Precision));
-        plot(A+Point(2*ex,0),func.alpha2after(-delta,part,LPoint::Precision));
-       }
-      
-       return true;
-      }
-     
-    public:
-    
-     bool run(LPoint a,LPoint b,Plot plot)
-      {
-       if( !DistDir(ex,sx,a.x,b.x) )
-         {
-          if( !DistDir(ey,sy,a.y,b.y) ) 
-            {
-             return false;
-            }
-         
-          return lineY(a,b,plot); 
-         }
-       
-       if( !DistDir(ey,sy,a.y,b.y) )
-         {
-          return lineX(a,b,plot);
-         }
-       
-       if( sx>sy )
-         {
-          return lineToX(a,b,plot);
-         }
-       else
-         {
-          return lineToY(a,b,plot);
-         }
-      }
-   };
+  LinePlotter2 plotter;
   
-  Driver driver;
-  
-  return driver.run(a,b,plot);
+  return plotter.run(a,b,plot);
  }
 
 /* Circle() */
