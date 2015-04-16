@@ -26,8 +26,8 @@ namespace Video {
 
 CircleSpline::CircleSpline(Point center,Coord radius)
  {
-  Coord x=Coord(radius/2);
-  Coord y=(Coord)SqRoot<uLCoord>(Sq<uLCoord>(radius)-Sq<uLCoord>(x),radius);
+  Coord x=Coord( radius/2 );
+  Coord y=Coord( Algo::SqRoot<uLCoord>(Sq<uLCoord>(radius)-Sq<uLCoord>(x),radius) );
  
   buf[0]=center+Point(0,radius);
   buf[1]=center+Point(-x,y);
@@ -117,19 +117,19 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
   uCoord sx;
   uCoord sy;
   
-  if( !DistDir(ex,sx,a.x,b.x) )
+  if( !Algo::DistDir(ex,sx,a.x,b.x) )
     {
      return lineY(a.x,a.y,b.y,plot);
     }
  
-  if( !DistDir(ey,sy,a.y,b.y) )
+  if( !Algo::DistDir(ey,sy,a.y,b.y) )
     {
      return lineX(a.y,a.x,b.x,plot);
     }
 
   if( sx>sy )
     {
-     LineDriver driver(sx,sy);
+     Algo::LineDriver driver(sx,sy);
      
      auto clip=driver.clip(a.x,a.y,ex,ey,dx,dy);
      
@@ -210,7 +210,7 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,Plot plot)
     }
   else
     {
-     LineDriver driver(sy,sx);
+     Algo::LineDriver driver(sy,sx);
     
      auto clip=driver.clip(a.y,a.x,ey,ex,dy,dx);
      
@@ -318,27 +318,27 @@ void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,ColorName cname)
      return lineX(a.y,a.x,b.x,DesktopColor(cname));
     }
   
-  LineSmooth(a,b,cname,SmoothPlot(*this));
+  Algo::LineSmooth(a,b,SmoothPlot(*this,cname));
  }
 
 /* class CommonDrawArt */
 
 template <class Plot>
-void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot plot)
+void CommonDrawArt::path(PtrStepLen<const LPoint> curve,Plot plot)
  {
   LPoint a=curve[0];
   LPoint b=curve[1];
 
   curve+=2;
   
-  auto end=LineFirst(a,b,color,plot);
+  auto end=Algo::LineFirst(a,b,plot);
   
   while( !end.ok )
     {
      if( !curve )
        {
-        plot(a.toPoint(),color);
-        plot(b.toPoint(),color);
+        plot(a.toPoint());
+        plot(b.toPoint());
        
         return;
        }
@@ -346,7 +346,7 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot 
      b=*curve;
      ++curve;
      
-     end=LineFirst(a,b,color,plot);
+     end=Algo::LineFirst(a,b,plot);
     }
   
   while( +curve ) 
@@ -355,7 +355,7 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot 
      b=*curve;
      ++curve;
      
-     auto next_end=LineNext(end,a,b,color,plot);
+     auto next_end=Algo::LineNext(end,a,b,plot);
      
      while( !next_end.ok )
        {
@@ -367,22 +367,22 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot 
              {
               Point A=a.toPoint();
             
-              if( PointNear(end.ext,B) )
+              if( Algo::PointNear(end.ext,B) )
                 {
-                 plot(end.ext,color);
+                 plot(end.ext);
                 }
-              else if( PointNear(end.last,A) )
+              else if( Algo::PointNear(end.last,A) )
                 {
-                 plot(A,color);
+                 plot(A);
                 }
               else
                 {
-                 plot(end.ext,color);
-                 plot(A,color);
+                 plot(end.ext);
+                 plot(A);
                 }
              }
           
-           plot(B,color);
+           plot(B);
            
            return;
           }
@@ -390,22 +390,22 @@ void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot 
         b=*curve;
         ++curve;
         
-        next_end=LineNext(end,a,b,color,plot);
+        next_end=Algo::LineNext(end,a,b,plot);
        }
     
      end=next_end;
     }
   
-  plot(end.ext,color);
+  plot(end.ext);
  }
 
 void CommonDrawArt::path(PtrStepLen<const LPoint> curve,DesktopColor color)
  {
-  path(curve,color, [this] (Point p,DesktopColor color) { pixel(p,color); } );
+  path(curve,HPlot(buf,color));
  }
 
 template <class Plot>
-void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot)
+void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,Plot plot)
  {
   LPoint a=curve[0];
   LPoint b=curve[1];
@@ -414,9 +414,9 @@ void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,P
   
   Point A=a.toPoint();
   
-  plot(A,cname);
+  plot(A);
   
-  bool ok=LineSmooth(a,b,cname,plot);
+  bool ok=Algo::LineSmooth(a,b,plot);
   
   while( !ok )
     {
@@ -424,9 +424,9 @@ void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,P
        {
         Point B=b.toPoint();
         
-        LineSmooth(A,B,cname,plot);
+        Algo::LineSmooth(A,B,plot);
         
-        plot(B,cname);
+        plot(B);
        
         return;
        }
@@ -434,7 +434,7 @@ void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,P
      b=*curve;
      ++curve;
      
-     ok=LineSmooth(a,b,cname,plot);
+     ok=Algo::LineSmooth(a,b,plot);
     }
   
   while( +curve ) 
@@ -443,7 +443,7 @@ void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,P
      b=*curve;
      ++curve;
      
-     bool ok=LineSmooth(a,b,cname,plot);
+     bool ok=Algo::LineSmooth(a,b,plot);
      
      while( !ok )
        {
@@ -451,7 +451,7 @@ void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,P
           {
            Point B=b.toPoint();
           
-           plot(B,cname);
+           plot(B);
           
            return;
           }
@@ -459,21 +459,21 @@ void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,P
         b=*curve;
         ++curve;
         
-        ok=LineSmooth(a,b,cname,plot);
+        ok=Algo::LineSmooth(a,b,plot);
        }
     }
   
-  plot(b.toPoint(),cname);
+  plot(b.toPoint());
  }
 
 void CommonDrawArt::path_smooth(PtrStepLen<const LPoint> curve,ColorName cname)
  {
-  path_smooth(curve,cname, SmoothPlot(buf) );
+  path_smooth(curve,SmoothPlot(buf,cname));
  }
 
 void CommonDrawArt::path_micro1(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
  {
-  path(curve,color, [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } );
+  path(curve, [this,color,magnify] (Point p) { gridCell(p,color,magnify); } );
  }
 
 void CommonDrawArt::path_micro2(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify)
@@ -515,14 +515,60 @@ void CommonDrawArt::path_micro(PtrStepLen<const LPoint> curve,DesktopColor color
   path_micro3(curve,GridBaseline,magnify);
  }
 
+void CommonDrawArt::path_smooth_micro1(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify)
+ {
+  if( +dots )
+    {
+     Point a=*dots-focus;
+     
+     for(++dots; +dots ;++dots)
+       {
+        Point b=*dots-focus;
+        
+        line_smooth_micro(a,b,cname,magnify);
+        
+        a=b;
+       }
+     
+     gridCell(a,cname,magnify);
+    }
+ }
+
+void CommonDrawArt::path_smooth_micro2(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify)
+ {
+  for(; +dots ;++dots) gridKnob(*dots-focus,GridKnobBigLen,cname,magnify);
+ }
+
+void CommonDrawArt::path_smooth_micro3(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify)
+ {
+  Point lim=Point::Max()/magnify;
+  
+  Point a=*dots-focus;
+  
+  for(++dots; +dots ;++dots)
+    {
+     Point b=*dots-focus;
+
+     if( a>=-lim && a<lim && b>=-lim && b<lim ) 
+       {
+        Point A=a*magnify;
+        Point B=b*magnify;
+       
+        buf.line(A,B,(DesktopColor)cname);
+       }
+     
+     a=b;
+    }
+ }
+
 void CommonDrawArt::line_smooth_micro(Point a,Point b,ColorName cname,Coord magnify)
  {
-  LineSmooth(a,b,cname, SmoothPlotMicro(*this,magnify) );
+  Algo::LineSmooth(a,b,SmoothPlotMicro(*this,cname,magnify));
  }
 
 void CommonDrawArt::path_smooth_micro(PtrStepLen<const LPoint> curve,ColorName cname,Coord magnify)
  {
-  path_smooth(curve,cname, SmoothPlotMicro(*this,magnify) );
+  path_smooth(curve,SmoothPlotMicro(*this,cname,magnify));
   
   path_micro2(curve,GridKnob,magnify);
   path_micro3(curve,GridBaseline,magnify);
@@ -571,6 +617,14 @@ void CommonDrawArt::loop(PtrLen<const Point> dots,DesktopColor color)
   if( +dots )
     {
      Point a=*dots;
+     
+     if( dots.len==1 )
+       {
+        pixel(a,color);
+        
+        return;
+       }
+     
      Point o=a;
      
      for(++dots; +dots ;++dots)
@@ -590,7 +644,7 @@ void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
  {
   if( dots.len>=4 )
     {
-     StackObject<CurveDriver> driver;
+     StackObject<Algo::CurveDriver> driver;
      
      driver->spline(dots[0],dots[1],dots[2],dots[3]);
     
@@ -613,7 +667,7 @@ void CommonDrawArt::curvePath(PtrLen<const Point> dots,DesktopColor color)
     }
   else if( dots.len==3 )
     {
-     StackObject<CurveDriver> driver;
+     StackObject<Algo::CurveDriver> driver;
      
      driver->spline(dots[0],dots[1],dots[2],dots[2]);
     
@@ -647,7 +701,7 @@ void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
      
      case 2 :
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1];
@@ -664,7 +718,7 @@ void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
      
      case 3 :
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1],
@@ -686,7 +740,7 @@ void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
      
      case 4 :
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1],
@@ -713,7 +767,7 @@ void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
      
      case 5 :
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1],
@@ -745,7 +799,7 @@ void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
      
      default:
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1],
@@ -814,6 +868,14 @@ void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,ColorName cname)
   if( +dots )
     {
      Point a=*dots;
+     
+     if( dots.len==1 )
+       {
+        pixel(a,cname);
+        
+        return;
+       }
+     
      Point o=a;
      
      for(++dots; +dots ;++dots)
@@ -833,7 +895,7 @@ void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,ColorName cname)
  {
   if( dots.len>=4 )
     {
-     StackObject<CurveDriver> driver;
+     StackObject<Algo::CurveDriver> driver;
      
      driver->spline(dots[0],dots[1],dots[2],dots[3]);
     
@@ -856,7 +918,7 @@ void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,ColorName cname)
     }
   else if( dots.len==3 )
     {
-     StackObject<CurveDriver> driver;
+     StackObject<Algo::CurveDriver> driver;
      
      driver->spline(dots[0],dots[1],dots[2],dots[2]);
     
@@ -890,7 +952,7 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
      
      case 2 :
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1];
@@ -907,7 +969,7 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
      
      case 3 :
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1],
@@ -929,7 +991,7 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
      
      case 4 :
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1],
@@ -956,7 +1018,7 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
      
      case 5 :
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1],
@@ -988,7 +1050,7 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
      
      default:
       {
-       StackObject<CurveDriver> driver;
+       StackObject<Algo::CurveDriver> driver;
        
        Point a=dots[0],
              b=dots[1],
@@ -1035,7 +1097,7 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
 
 void CommonDrawArt::solid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color)
  {
-  Solid(dots,flag,color,HPlot(buf));
+  Algo::Solid(dots,flag,HPlot(buf,color));
  }
 
 void CommonDrawArt::curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color) // TODO
@@ -1049,7 +1111,7 @@ void CommonDrawArt::curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopCo
 
 void CommonDrawArt::ball(Point center,Coord radius,DesktopColor color)
  {
-  Ball(center,radius,color,HPlot(buf));  
+  Algo::Ball(center,radius,HPlot(buf,color));  
  }
 
 void CommonDrawArt::ballSpline(Point center,Coord radius,DesktopColor color)
@@ -1061,7 +1123,7 @@ void CommonDrawArt::ballSpline(Point center,Coord radius,DesktopColor color)
 
 void CommonDrawArt::circle(Point center,Coord radius,DesktopColor color)
  {
-  Circle(center,radius,color, [this] (Point p,DesktopColor color) { pixel(p,color); } );
+  Algo::Circle(center,radius,HPlot(buf,color));
  }
 
 void CommonDrawArt::circleSpline(Point center,Coord radius,DesktopColor color)
@@ -1117,7 +1179,7 @@ void CommonDrawArt::curvePath_micro(PtrLen<const Point> dots,DesktopColor color,
   
   focus.y-=buf.dY()/magnify;
   
-  StackObject<CurveDriver> driver;
+  StackObject<Algo::CurveDriver> driver;
   
   driver->spline(dots[0]-focus,dots[1]-focus,dots[2]-focus,dots[3]-focus);
  
@@ -1141,23 +1203,11 @@ void CommonDrawArt::curvePath_micro(PtrLen<const Point> dots,DesktopColor color,
 
 void CommonDrawArt::path_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify)
  {
-  if( +dots )
-    {
-     focus.y-=buf.dY()/magnify;
-    
-     Point a=*dots-focus;
-     
-     for(++dots; +dots ;++dots)
-       {
-        Point b=*dots-focus;
-        
-        line_smooth_micro(a,b,cname,magnify);
-        
-        a=b;
-       }
-     
-     gridCell(a,cname,magnify);
-    }
+  focus.y-=buf.dY()/magnify;
+ 
+  path_smooth_micro1(dots,cname,focus,magnify);
+  path_smooth_micro2(dots,GridKnob,focus,magnify);
+  path_smooth_micro3(dots,GridBaseline,focus,magnify);
  }
 
 void CommonDrawArt::curvePath_smooth_micro(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify)
@@ -1166,7 +1216,7 @@ void CommonDrawArt::curvePath_smooth_micro(PtrLen<const Point> dots,ColorName cn
   
   focus.y-=buf.dY()/magnify;
   
-  StackObject<CurveDriver> driver;
+  StackObject<Algo::CurveDriver> driver;
   
   driver->spline(dots[0]-focus,dots[1]-focus,dots[2]-focus,dots[3]-focus);
  
@@ -1192,7 +1242,7 @@ void CommonDrawArt::circle_micro(Point center,Coord radius,DesktopColor color,Po
  {
   focus.y-=buf.dY()/magnify;
   
-  Circle(center-focus,radius,color, [this,magnify] (Point p,DesktopColor color) { gridCell(p,color,magnify); } );
+  Algo::Circle(center-focus,radius, [this,color,magnify] (Point p) { gridCell(p,color,magnify); } );
  }
 
 } // namespace Video

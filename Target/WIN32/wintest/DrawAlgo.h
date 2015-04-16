@@ -25,6 +25,7 @@
 
 namespace CCore {
 namespace Video {
+namespace Algo {
 
 /* PointDist() */
 
@@ -70,8 +71,6 @@ SInt Direct(SInt e,SInt a) { return (e>0)?a:(-a); }
 
 /* classes */
 
-struct Segment;
-
 template <class UInt> class LineDriverBase;
 
 class LineDriver;
@@ -87,14 +86,6 @@ template <class UInt> class LineAlphaFunc2;
 template <class UInt> class SmoothLineDriver;
 
 class SolidSection;
-
-/* struct Segment */
-
-struct Segment
- {
-  Coord a;
-  Coord b;
- };
 
 /* class LineDriverBase<UInt> */
 
@@ -769,8 +760,8 @@ class SmoothLineDriver
 
 /* Line(Point a,Point b,...) */
 
-template <class Color,class Plot>
-void Line(Point a,Point b,Color color,Plot plot) // [a,b)
+template <class Plot>
+void Line(Point a,Point b,Plot plot) // [a,b)
  {
   Coord ex;
   Coord ey;
@@ -783,7 +774,7 @@ void Line(Point a,Point b,Color color,Plot plot) // [a,b)
     
      for(auto count=sy; count>0 ;count--)
        {
-        plot(a,color);
+        plot(a);
         
         a.y+=ey;
        }
@@ -795,7 +786,7 @@ void Line(Point a,Point b,Color color,Plot plot) // [a,b)
     {
      for(auto count=sx; count>0 ;count--)
        {
-        plot(a,color);
+        plot(a);
         
         a.x+=ex;
        }
@@ -809,7 +800,7 @@ void Line(Point a,Point b,Color color,Plot plot) // [a,b)
     
      for(auto count=sx; count>0 ;count--)
        {
-        plot(a,color);
+        plot(a);
         
         if( driver.step() ) a.y+=ey;
         
@@ -822,7 +813,7 @@ void Line(Point a,Point b,Color color,Plot plot) // [a,b)
     
      for(auto count=sy; count>0 ;count--)
        {
-        plot(a,color);
+        plot(a);
         
         if( driver.step() ) a.x+=ex;
         
@@ -840,8 +831,8 @@ struct LineEnd
   bool ok;
  };
 
-template <class Func,class Color,class Plot>
-LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,first,color,plot) (a,b)
+template <class Func,class Plot>
+LineEnd Line(Func func,LPoint a,LPoint b,Plot plot) // func(ext,first,plot) (a,b)
  {
   class Driver
    {
@@ -852,7 +843,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      
     private: 
      
-     LineEnd lineY(Func func,LPoint a,LPoint b,Color color,Plot plot)
+     LineEnd lineY(Func func,LPoint a,LPoint b,Plot plot)
       {
        auto count=LineDriverL::Count(a.y,b.y);
        
@@ -863,15 +854,15 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
        
        A.y+=ey;
        
-       func(E,A,color,plot);
+       func(E,A,plot);
       
-       plot(A,color);
+       plot(A);
       
        for(count--; count ;count--)
          {
           A.y+=ey;
           
-          plot(A,color);
+          plot(A);
          }
        
        Point L=A;
@@ -881,7 +872,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
        return {L,A,true};
       }
      
-     LineEnd lineX(Func func,LPoint a,LPoint b,Color color,Plot plot)
+     LineEnd lineX(Func func,LPoint a,LPoint b,Plot plot)
       {
        auto count=LineDriverL::Count(a.x,b.x);
        
@@ -892,15 +883,15 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
        
        A.x+=ex;
        
-       func(E,A,color,plot);
+       func(E,A,plot);
       
-       plot(A,color);
+       plot(A);
        
        for(count--; count ;count--)
          {
           A.x+=ex;
           
-          plot(A,color);
+          plot(A);
          }
        
        Point L=A;
@@ -920,7 +911,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
        A.y=LPoint::RShift(a.y);
       }
      
-     LineEnd lineToX(Func func,LPoint a,LPoint b,Color color,Plot plot)
+     LineEnd lineToX(Func func,LPoint a,LPoint b,Plot plot)
       {
        const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
       
@@ -957,16 +948,16 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
        {
         stepX(driver,a,A);
         
-        func(E,A,color,plot);
+        func(E,A,plot);
         
-        plot(A,color);
+        plot(A);
        }
        
        for(count--; count ;count--)
          {
           stepX(driver,a,A);
           
-          plot(A,color);
+          plot(A);
          }
        
        Point L=A;
@@ -988,7 +979,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
        A.x=LPoint::RShift(a.x);
       }
      
-     LineEnd lineToY(Func func,LPoint a,LPoint b,Color color,Plot plot)
+     LineEnd lineToY(Func func,LPoint a,LPoint b,Plot plot)
       {
        const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
       
@@ -1025,16 +1016,16 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
        {
         stepY(driver,a,A);
         
-        func(E,A,color,plot);
+        func(E,A,plot);
         
-        plot(A,color);
+        plot(A);
        }
        
        for(count--; count ;count--)
          {
           stepY(driver,a,A);
           
-          plot(A,color);
+          plot(A);
          }
        
        Point L=A;
@@ -1048,7 +1039,7 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
      
     public:
     
-     LineEnd run(Func func,LPoint a,LPoint b,Color color,Plot plot)
+     LineEnd run(Func func,LPoint a,LPoint b,Plot plot)
       {
        if( !DistDir(ex,sx,a.x,b.x) )
          {
@@ -1057,48 +1048,48 @@ LineEnd Line(Func func,LPoint a,LPoint b,Color color,Plot plot) // func(ext,firs
              return {Null,Null,false};
             }
           
-          return lineY(func,a,b,color,plot);
+          return lineY(func,a,b,plot);
          }
        
        if( !DistDir(ey,sy,a.y,b.y) )
          {
-          return lineX(func,a,b,color,plot);
+          return lineX(func,a,b,plot);
          }
        
        if( sx>sy )
          {
-          return lineToX(func,a,b,color,plot);
+          return lineToX(func,a,b,plot);
          }
        else
          {
-          return lineToY(func,a,b,color,plot);
+          return lineToY(func,a,b,plot);
          }
       }
    };
   
   Driver driver;
   
-  return driver.run(func,a,b,color,plot);
+  return driver.run(func,a,b,plot);
  }
 
 /* LineFirst/LineNext(...,LPoint a,LPoint b,...) */
 
-template <class Color,class Plot>
-LineEnd LineFirst(LPoint a,LPoint b,Color color,Plot plot) // [a,b)
+template <class Plot>
+LineEnd LineFirst(LPoint a,LPoint b,Plot plot) // [a,b)
  {
-  return Line( [] (Point E,Point,Color color,Plot plot) { plot(E,color); } ,a,b,color,plot);
+  return Line( [] (Point E,Point,Plot plot) { plot(E); } ,a,b,plot);
  }
 
-template <class Color,class Plot>
-LineEnd LineNext(LineEnd end,LPoint a,LPoint b,Color color,Plot plot) // [a,b)
+template <class Plot>
+LineEnd LineNext(LineEnd end,LPoint a,LPoint b,Plot plot) // [a,b)
  {
   Point A=a.toPoint();
   
-  auto func = [end,A] (Point E,Point F,Color color,Plot plot) 
+  auto func = [end,A] (Point E,Point F,Plot plot) 
                       {
                        if( end.ext==E )
                          {
-                          plot(E,color);
+                          plot(E);
                          }
                        else if( PointNear(end.ext,E) )
                          {
@@ -1106,52 +1097,52 @@ LineEnd LineNext(LineEnd end,LPoint a,LPoint b,Color color,Plot plot) // [a,b)
                             {
                              if( PointNear(end.last,E) )
                                {
-                                plot(E,color);
+                                plot(E);
                                }
                              else if( PointNear(end.ext,F) )
                                {
-                                plot(end.ext,color);
+                                plot(end.ext);
                                }
                              else
                                {
-                                plot(end.ext,color);
-                                plot(E,color);
+                                plot(end.ext);
+                                plot(E);
                                }
                             }
                           else
                             {
                              if( PointNear(end.ext,F) )
                                {
-                                plot(end.ext,color);
+                                plot(end.ext);
                                }
                              else if( PointNear(end.last,E) )
                                {
-                                plot(E,color);
+                                plot(E);
                                }
                              else
                                {
-                                plot(end.ext,color);
-                                plot(E,color);
+                                plot(end.ext);
+                                plot(E);
                                }
                             }
                          }
                        else
                          {
-                          if( !PointNear(A,end.last) ) plot(end.ext,color);
+                          if( !PointNear(A,end.last) ) plot(end.ext);
                           
-                          plot(A,color);
+                          plot(A);
                           
-                          if( !PointNear(A,F) ) plot(E,color);
+                          if( !PointNear(A,F) ) plot(E);
                          } 
                       } ;
   
-  return Line(func,a,b,color,plot);
+  return Line(func,a,b,plot);
  }
 
 /* LineSmooth(Point a,Point b,...) */
 
-template <class Color,class Plot>
-void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
+template <class Plot>
+void LineSmooth(Point a,Point b,Plot plot) // [a,b)
  {
   Coord ex;
   Coord ey;
@@ -1164,7 +1155,7 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
     
      for(auto count=sy; count>0 ;count--)
        {
-        plot(a,color);
+        plot(a);
         
         a.y+=ey;
        }
@@ -1176,7 +1167,7 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
     {
      for(auto count=sx; count>0 ;count--)
        {
-        plot(a,color);
+        plot(a);
         
         a.x+=ex;
        }
@@ -1190,8 +1181,8 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
      
      auto endalpha=driver.alpha2();
     
-     plot(a,color);
-     plot(a+Point(0,ey),color,endalpha);
+     plot(a);
+     plot(a+Point(0,ey),endalpha);
      
      for(auto count=sx-1; count>0 ;count--)
        {
@@ -1199,13 +1190,13 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
         
         a.x+=ex;
         
-        plot(a-Point(0,ey)  ,color,driver.alpha0());
-        plot(a              ,color,driver.alpha1());
-        plot(a+Point(0,ey)  ,color,driver.alpha2());
-        plot(a+Point(0,2*ey),color,driver.alpha3());
+        plot(a-Point(0,ey)  ,driver.alpha0());
+        plot(a              ,driver.alpha1());
+        plot(a+Point(0,ey)  ,driver.alpha2());
+        plot(a+Point(0,2*ey),driver.alpha3());
        }
      
-     plot(b-Point(0,ey),color,endalpha);
+     plot(b-Point(0,ey),endalpha);
     }
   else
     {
@@ -1213,8 +1204,8 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
      
      auto endalpha=driver.alpha2();
     
-     plot(a,color);
-     plot(a+Point(ex,0),color,endalpha);
+     plot(a);
+     plot(a+Point(ex,0),endalpha);
      
      for(auto count=sy-1; count>0 ;count--)
        {
@@ -1222,20 +1213,20 @@ void LineSmooth(Point a,Point b,Color color,Plot plot) // [a,b)
         
         a.y+=ey;
         
-        plot(a-Point(ex,0)  ,color,driver.alpha0());
-        plot(a              ,color,driver.alpha1());
-        plot(a+Point(ex,0)  ,color,driver.alpha2());
-        plot(a+Point(2*ex,0),color,driver.alpha3());
+        plot(a-Point(ex,0)  ,driver.alpha0());
+        plot(a              ,driver.alpha1());
+        plot(a+Point(ex,0)  ,driver.alpha2());
+        plot(a+Point(2*ex,0),driver.alpha3());
        }
      
-     plot(b-Point(ex,0),color,endalpha);
+     plot(b-Point(ex,0),endalpha);
     }
  }
 
 /* LineSmooth(LPoint a,LPoint b,...) */
 
-template <class Color,class Plot>
-bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
+template <class Plot>
+bool LineSmooth(LPoint a,LPoint b,Plot plot) // [a,b]
  {
   class Driver
    {
@@ -1277,7 +1268,7 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
        return unsigned( (alpha*uLCoord(part))>>LPoint::Precision );
       }
      
-     bool lineY(LPoint a,LPoint b,Color color,Plot plot)
+     bool lineY(LPoint a,LPoint b,Plot plot)
       {
        const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
        
@@ -1313,18 +1304,18 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
         uLCoord first=LineDriverL::First(a.y,ey);
         LCoord part=(LCoord)first-Half;
  
-        plot(A-Point(1,0),color,AlphaPart(alpha0,part));
-        plot(A           ,color,AlphaPart(alpha1,part));
-        plot(A+Point(1,0),color,AlphaPart(alpha2,part));
+        plot(A-Point(1,0),AlphaPart(alpha0,part));
+        plot(A           ,AlphaPart(alpha1,part));
+        plot(A+Point(1,0),AlphaPart(alpha2,part));
        }
       
        for(; count ;count--)
          {
           A.y+=ey;
           
-          plot(A-Point(1,0),color,alpha0);
-          plot(A           ,color,alpha1);
-          plot(A+Point(1,0),color,alpha2);
+          plot(A-Point(1,0),alpha0);
+          plot(A           ,alpha1);
+          plot(A+Point(1,0),alpha2);
          }
        
        {
@@ -1332,15 +1323,15 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
         
         LCoord part=PartBefore(ey,b.y);
         
-        plot(A-Point(1,0),color,AlphaPart(alpha0,part));
-        plot(A           ,color,AlphaPart(alpha1,part));
-        plot(A+Point(1,0),color,AlphaPart(alpha2,part));
+        plot(A-Point(1,0),AlphaPart(alpha0,part));
+        plot(A           ,AlphaPart(alpha1,part));
+        plot(A+Point(1,0),AlphaPart(alpha2,part));
        }
        
        return true;
       }
      
-     bool lineX(LPoint a,LPoint b,Color color,Plot plot)
+     bool lineX(LPoint a,LPoint b,Plot plot)
       {
        const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
        
@@ -1376,18 +1367,18 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
         uLCoord first=LineDriverL::First(a.x,ex);
         LCoord part=(LCoord)first-Half;
 
-        plot(A-Point(0,1),color,AlphaPart(alpha0,part));
-        plot(A           ,color,AlphaPart(alpha1,part));
-        plot(A+Point(0,1),color,AlphaPart(alpha2,part));
+        plot(A-Point(0,1),AlphaPart(alpha0,part));
+        plot(A           ,AlphaPart(alpha1,part));
+        plot(A+Point(0,1),AlphaPart(alpha2,part));
        }
       
        for(; count ;count--)
          {
           A.x+=ex;
           
-          plot(A-Point(0,1),color,alpha0);
-          plot(A           ,color,alpha1);
-          plot(A+Point(0,1),color,alpha2);
+          plot(A-Point(0,1),alpha0);
+          plot(A           ,alpha1);
+          plot(A+Point(0,1),alpha2);
          }
        
        {
@@ -1395,9 +1386,9 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
         
         LCoord part=PartBefore(ex,b.x);
         
-        plot(A-Point(0,1),color,AlphaPart(alpha0,part));
-        plot(A           ,color,AlphaPart(alpha1,part));
-        plot(A+Point(0,1),color,AlphaPart(alpha2,part));
+        plot(A-Point(0,1),AlphaPart(alpha0,part));
+        plot(A           ,AlphaPart(alpha1,part));
+        plot(A+Point(0,1),AlphaPart(alpha2,part));
        }
       
        return true;
@@ -1413,18 +1404,18 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
        A.y=LPoint::RShift(a.y);
       }
 
-     void plotX(LineAlphaFunc2<uLCoord> &func,LPoint a,Point A,Color color,Plot plot)
+     void plotX(LineAlphaFunc2<uLCoord> &func,LPoint a,Point A,Plot plot)
       {
        LCoord delta=Delta(ey,a.y);
        
-       plot(A-Point(0,2*ey),color,func.alpha2(delta,LPoint::Precision));
-       plot(A-Point(0,ey)  ,color,func.alpha1(delta,LPoint::Precision));
-       plot(A              ,color,func.alpha0(delta,LPoint::Precision));
-       plot(A+Point(0,ey)  ,color,func.alpha1(-delta,LPoint::Precision));
-       plot(A+Point(0,2*ey),color,func.alpha2(-delta,LPoint::Precision));
+       plot(A-Point(0,2*ey),func.alpha2(delta,LPoint::Precision));
+       plot(A-Point(0,ey)  ,func.alpha1(delta,LPoint::Precision));
+       plot(A              ,func.alpha0(delta,LPoint::Precision));
+       plot(A+Point(0,ey)  ,func.alpha1(-delta,LPoint::Precision));
+       plot(A+Point(0,2*ey),func.alpha2(-delta,LPoint::Precision));
       }
      
-     bool lineToX(LPoint a,LPoint b,Color color,Plot plot)
+     bool lineToX(LPoint a,LPoint b,Plot plot)
       {
        const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
        const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
@@ -1465,17 +1456,17 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
         
         LCoord delta=Delta(ey,a.y);
         
-        plot(A-Point(0,2*ey),color,func.alpha2after(delta,part,LPoint::Precision));
-        plot(A-Point(0,ey)  ,color,func.alpha1after(delta,part,LPoint::Precision));
-        plot(A              ,color,func.alpha0after(delta,part,LPoint::Precision));
-        plot(A+Point(0,ey)  ,color,func.alpha1before(-delta,part,LPoint::Precision));
-        plot(A+Point(0,2*ey),color,func.alpha2before(-delta,part,LPoint::Precision));
+        plot(A-Point(0,2*ey),func.alpha2after(delta,part,LPoint::Precision));
+        plot(A-Point(0,ey)  ,func.alpha1after(delta,part,LPoint::Precision));
+        plot(A              ,func.alpha0after(delta,part,LPoint::Precision));
+        plot(A+Point(0,ey)  ,func.alpha1before(-delta,part,LPoint::Precision));
+        plot(A+Point(0,2*ey),func.alpha2before(-delta,part,LPoint::Precision));
        }
       
        for(; count ;count--)
          {
           stepX(driver,a,A);
-          plotX(func,a,A,color,plot);
+          plotX(func,a,A,plot);
          }
        
        {
@@ -1484,11 +1475,11 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
         LCoord delta=Delta(ey,a.y);
         LCoord part=PartBefore(ex,b.x);
         
-        plot(A-Point(0,2*ey),color,func.alpha2before(delta,part,LPoint::Precision));
-        plot(A-Point(0,ey)  ,color,func.alpha1before(delta,part,LPoint::Precision));
-        plot(A              ,color,func.alpha0before(delta,part,LPoint::Precision));
-        plot(A+Point(0,ey)  ,color,func.alpha1after(-delta,part,LPoint::Precision));
-        plot(A+Point(0,2*ey),color,func.alpha2after(-delta,part,LPoint::Precision));
+        plot(A-Point(0,2*ey),func.alpha2before(delta,part,LPoint::Precision));
+        plot(A-Point(0,ey)  ,func.alpha1before(delta,part,LPoint::Precision));
+        plot(A              ,func.alpha0before(delta,part,LPoint::Precision));
+        plot(A+Point(0,ey)  ,func.alpha1after(-delta,part,LPoint::Precision));
+        plot(A+Point(0,2*ey),func.alpha2after(-delta,part,LPoint::Precision));
        }
        
        return true;
@@ -1504,18 +1495,18 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
        A.x=LPoint::RShift(a.x);
       }
      
-     void plotY(LineAlphaFunc2<uLCoord> &func,LPoint a,Point A,Color color,Plot plot)
+     void plotY(LineAlphaFunc2<uLCoord> &func,LPoint a,Point A,Plot plot)
       {
        LCoord delta=Delta(ex,a.x);
        
-       plot(A-Point(2*ex,0),color,func.alpha2(delta,LPoint::Precision));
-       plot(A-Point(ex,0)  ,color,func.alpha1(delta,LPoint::Precision));
-       plot(A              ,color,func.alpha0(delta,LPoint::Precision));
-       plot(A+Point(ex,0)  ,color,func.alpha1(-delta,LPoint::Precision));
-       plot(A+Point(2*ex,0),color,func.alpha2(-delta,LPoint::Precision));
+       plot(A-Point(2*ex,0),func.alpha2(delta,LPoint::Precision));
+       plot(A-Point(ex,0)  ,func.alpha1(delta,LPoint::Precision));
+       plot(A              ,func.alpha0(delta,LPoint::Precision));
+       plot(A+Point(ex,0)  ,func.alpha1(-delta,LPoint::Precision));
+       plot(A+Point(2*ex,0),func.alpha2(-delta,LPoint::Precision));
       }
      
-     bool lineToY(LPoint a,LPoint b,Color color,Plot plot)
+     bool lineToY(LPoint a,LPoint b,Plot plot)
       {
        const uLCoord Step = uLCoord(1)<<LPoint::Precision ;
        const LCoord Half = LCoord(1)<<(LPoint::Precision-1) ;
@@ -1556,17 +1547,17 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
         
         LCoord delta=Delta(ex,a.x);
         
-        plot(A-Point(2*ex,0),color,func.alpha2after(delta,part,LPoint::Precision));
-        plot(A-Point(ex,0)  ,color,func.alpha1after(delta,part,LPoint::Precision));
-        plot(A              ,color,func.alpha0after(delta,part,LPoint::Precision));
-        plot(A+Point(ex,0)  ,color,func.alpha1before(-delta,part,LPoint::Precision));
-        plot(A+Point(2*ex,0),color,func.alpha2before(-delta,part,LPoint::Precision));
+        plot(A-Point(2*ex,0),func.alpha2after(delta,part,LPoint::Precision));
+        plot(A-Point(ex,0)  ,func.alpha1after(delta,part,LPoint::Precision));
+        plot(A              ,func.alpha0after(delta,part,LPoint::Precision));
+        plot(A+Point(ex,0)  ,func.alpha1before(-delta,part,LPoint::Precision));
+        plot(A+Point(2*ex,0),func.alpha2before(-delta,part,LPoint::Precision));
        }
       
        for(; count ;count--)
          {
           stepY(driver,a,A);
-          plotY(func,a,A,color,plot);
+          plotY(func,a,A,plot);
          }
        
        {
@@ -1575,11 +1566,11 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
         LCoord delta=Delta(ex,a.x);
         LCoord part=PartBefore(ey,b.y);
         
-        plot(A-Point(2*ex,0),color,func.alpha2before(delta,part,LPoint::Precision));
-        plot(A-Point(ex,0)  ,color,func.alpha1before(delta,part,LPoint::Precision));
-        plot(A              ,color,func.alpha0before(delta,part,LPoint::Precision));
-        plot(A+Point(ex,0)  ,color,func.alpha1after(-delta,part,LPoint::Precision));
-        plot(A+Point(2*ex,0),color,func.alpha2after(-delta,part,LPoint::Precision));
+        plot(A-Point(2*ex,0),func.alpha2before(delta,part,LPoint::Precision));
+        plot(A-Point(ex,0)  ,func.alpha1before(delta,part,LPoint::Precision));
+        plot(A              ,func.alpha0before(delta,part,LPoint::Precision));
+        plot(A+Point(ex,0)  ,func.alpha1after(-delta,part,LPoint::Precision));
+        plot(A+Point(2*ex,0),func.alpha2after(-delta,part,LPoint::Precision));
        }
       
        return true;
@@ -1587,7 +1578,7 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
      
     public:
     
-     bool run(LPoint a,LPoint b,Color color,Plot plot)
+     bool run(LPoint a,LPoint b,Plot plot)
       {
        if( !DistDir(ex,sx,a.x,b.x) )
          {
@@ -1596,28 +1587,28 @@ bool LineSmooth(LPoint a,LPoint b,Color color,Plot plot) // [a,b]
              return false;
             }
          
-          return lineY(a,b,color,plot); 
+          return lineY(a,b,plot); 
          }
        
        if( !DistDir(ey,sy,a.y,b.y) )
          {
-          return lineX(a,b,color,plot);
+          return lineX(a,b,plot);
          }
        
        if( sx>sy )
          {
-          return lineToX(a,b,color,plot);
+          return lineToX(a,b,plot);
          }
        else
          {
-          return lineToY(a,b,color,plot);
+          return lineToY(a,b,plot);
          }
       }
    };
   
   Driver driver;
   
-  return driver.run(a,b,color,plot);
+  return driver.run(a,b,plot);
  }
 
 /* Circle() */
@@ -1640,14 +1631,14 @@ UInt SqRoot(UInt S,UInt x)
     }
  }
 
-template <class Color,class Plot>
-void Circle(Point a,Coord radius,Color color,Plot plot)
+template <class Plot>
+void Circle(Point a,Coord radius,Plot plot)
  {
   if( radius<0 ) return;
   
   if( radius==0 )
     {
-     plot(a,color);
+     plot(a);
      
      return;
     }
@@ -1655,10 +1646,10 @@ void Circle(Point a,Coord radius,Color color,Plot plot)
   {
    Coord x=radius;
    
-   plot(a+Point(x,0),color);
-   plot(a+Point(0,x),color);
-   plot(a+Point(-x,0),color);
-   plot(a+Point(0,-x),color);
+   plot(a+Point(x,0));
+   plot(a+Point(0,x));
+   plot(a+Point(-x,0));
+   plot(a+Point(0,-x));
   }
   
   uLCoord S=Sq<uLCoord>(radius)-1;
@@ -1675,40 +1666,40 @@ void Circle(Point a,Coord radius,Color color,Plot plot)
         
         for(; y<=x ;y++,x--)
           {
-           plot(a+Point(x,y),color);
-           plot(a+Point(y,x),color);
-           plot(a+Point(-x,y),color);
-           plot(a+Point(-y,x),color);
-           plot(a+Point(x,-y),color);
-           plot(a+Point(y,-x),color);
-           plot(a+Point(-x,-y),color);
-           plot(a+Point(-y,-x),color);
+           plot(a+Point(x,y));
+           plot(a+Point(y,x));
+           plot(a+Point(-x,y));
+           plot(a+Point(-y,x));
+           plot(a+Point(x,-y));
+           plot(a+Point(y,-x));
+           plot(a+Point(-x,-y));
+           plot(a+Point(-y,-x));
           }
        
         break;
        }
      
-     plot(a+Point(x,y),color);
-     plot(a+Point(y,x),color);
-     plot(a+Point(-x,y),color);
-     plot(a+Point(-y,x),color);
-     plot(a+Point(x,-y),color);
-     plot(a+Point(y,-x),color);
-     plot(a+Point(-x,-y),color);
-     plot(a+Point(-y,-x),color);
+     plot(a+Point(x,y));
+     plot(a+Point(y,x));
+     plot(a+Point(-x,y));
+     plot(a+Point(-y,x));
+     plot(a+Point(x,-y));
+     plot(a+Point(y,-x));
+     plot(a+Point(-x,-y));
+     plot(a+Point(-y,-x));
      
      last_x=x;
     }
  }
 
-template <class Color,class HPlot>
-void Ball(Point a,Coord radius,Color color,HPlot plot)
+template <class HPlot>
+void Ball(Point a,Coord radius,HPlot plot)
  {
   if( radius<0 ) return;
   
   if( radius==0 )
     {
-     plot(a,color);
+     plot(a);
      
      return;
     }
@@ -1716,10 +1707,10 @@ void Ball(Point a,Coord radius,Color color,HPlot plot)
   {
    Coord x=radius;
    
-   plot(a.y,a.x-x,a.x+x,color);
+   plot(a.y,a.x-x,a.x+x);
    
-   plot(a+Point(0,x),color);
-   plot(a+Point(0,-x),color);
+   plot(a+Point(0,x));
+   plot(a+Point(0,-x));
   }
   
   uLCoord S=Sq<uLCoord>(radius)-1;
@@ -1736,22 +1727,22 @@ void Ball(Point a,Coord radius,Color color,HPlot plot)
         
         for(; y<=last_x ;y++,x--)
           {
-           plot(a.y+y,a.x-x,a.x+x,color);
-           plot(a.y-y,a.x-x,a.x+x,color);
+           plot(a.y+y,a.x-x,a.x+x);
+           plot(a.y-y,a.x-x,a.x+x);
           }
        
         break;
        }
      
-     plot(a.y+y,a.x-x,a.x+x,color);
-     plot(a.y-y,a.x-x,a.x+x,color);
+     plot(a.y+y,a.x-x,a.x+x);
+     plot(a.y-y,a.x-x,a.x+x);
      
      if( x<last_x )
        {
         Coord last_y=y-1;
         
-        plot(a.y+last_x,a.x-last_y,a.x+last_y,color);
-        plot(a.y-last_x,a.x-last_y,a.x+last_y,color);
+        plot(a.y+last_x,a.x-last_y,a.x+last_y);
+        plot(a.y-last_x,a.x-last_y,a.x+last_y);
        }
      
      last_x=x;
@@ -1933,14 +1924,14 @@ class SolidSection : NoCopy
 
 /* Solid() */
 
-template <class Color,class HPlot>
-void Solid(PtrLen<const Point> dots,bool all_flag,Color color,HPlot plot) // TODO
+template <class HPlot>
+void Solid(PtrLen<const Point> dots,bool all_flag,HPlot plot) // TODO
  {
   if( dots.len==0 ) return;
   
   if( dots.len==1 )
     {
-     plot(dots[0],color);
+     plot(dots[0]);
      
      return;
     }
@@ -1950,7 +1941,7 @@ void Solid(PtrLen<const Point> dots,bool all_flag,Color color,HPlot plot) // TOD
   
   data.forSects( [&] (ulen ind,Coord bottom,Coord top) 
                      {
-                      line_set(all_flag,ind,bottom,top, [&] (Coord y,Coord a,Coord b) { plot(y,a,b,color); } ); 
+                      line_set(all_flag,ind,bottom,top, [&] (Coord y,Coord a,Coord b) { plot(y,a,b); } ); 
                      } );
   
   // horizontal lines
@@ -1961,23 +1952,24 @@ void Solid(PtrLen<const Point> dots,bool all_flag,Color color,HPlot plot) // TOD
    Point a=*dots;
    Point o=a;
    
-   if( a.y==top ) plot(a,color);
+   if( a.y==top ) plot(a);
    
    for(++dots; +dots ;++dots)
      {
       Point b=*dots;
       
-      if( a.y==b.y ) plot(a.y,a.x,b.x,color);
+      if( a.y==b.y ) plot(a.y,a.x,b.x);
       
-      if( b.y==top ) plot(b,color);
+      if( b.y==top ) plot(b);
       
       a=b;
      }
    
-   if( a.y==o.y ) plot(a.y,a.x,o.x,color);
+   if( a.y==o.y ) plot(a.y,a.x,o.x);
   }
  }
 
+} // namespace Algo
 } // namespace Video
 } // namespace CCore
  

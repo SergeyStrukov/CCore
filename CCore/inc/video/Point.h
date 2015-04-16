@@ -71,6 +71,8 @@ struct BasePoint
   
   // unsafe operations
   
+  friend T operator - (T a) { return Null-a; }
+  
   friend T operator + (T a,T b) { return T(IntAdd(a.x,b.x),IntAdd(a.y,b.y)); }
   
   friend T operator - (T a,T b) { return T(IntSub(a.x,b.x),IntSub(a.y,b.y)); }
@@ -139,6 +141,10 @@ struct BasePoint
 struct Point : BasePoint<Point,Coord>
  {
   using BasePoint<Point,Coord>::BasePoint;
+  
+  static Point Max() { return Point(32767,32767); }
+  
+  static Point Min() { return Point(-32768,-32768); }
  };
 
 /* struct MilliPoint */

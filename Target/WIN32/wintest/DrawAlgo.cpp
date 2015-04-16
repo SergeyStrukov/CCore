@@ -20,6 +20,7 @@
 
 namespace CCore {
 namespace Video {
+namespace Algo {
 
 /* class LineDriver */
 
@@ -323,6 +324,7 @@ SolidSection::LineSet::~LineSet()
  {
  }
 
+} // namespace Algo
 } // namespace Video
 } // namespace CCore
  

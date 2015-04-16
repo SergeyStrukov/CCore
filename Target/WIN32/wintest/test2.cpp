@@ -113,7 +113,7 @@ inline unsigned Delta(unsigned a,unsigned b) { return (a<=b)?(b-a):(a-b); }
 unsigned test1(unsigned sx,unsigned sy)
  {
   AlphaFunc func1(sx,sy);
-  LineAlphaFunc<UInt> func2(sx,sy);
+  Algo::LineAlphaFunc<UInt> func2(sx,sy);
   
   unsigned ret=0;
   

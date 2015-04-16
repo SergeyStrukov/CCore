@@ -34,8 +34,6 @@ enum SolidFlag
 
 /* classes */
 
-struct Segment;
-
 struct CircleSpline;
 
 class CommonDrawArt;
@@ -57,18 +55,20 @@ class CommonDrawArt
  {
    class SmoothPlot : public FrameBuf<DesktopColor>
     {
+      ColorName cname;
+      
      public:
      
-      explicit SmoothPlot(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
+      SmoothPlot(const FrameBuf<DesktopColor> &buf,ColorName cname_) : FrameBuf<DesktopColor>(buf),cname(cname_) {}
       
       void test(LPoint,Coord,DesktopColor) {}
       
-      void operator () (Point p,DesktopColor color)
+      void operator () (Point p)
        {
-        if( p>=Null && p<getSize() ) pixel(p,color);
+        if( p>=Null && p<getSize() ) pixel(p,cname);
        }
       
-      void operator () (Point p,ColorName cname,unsigned alpha)
+      void operator () (Point p,unsigned alpha)
        {
         if( !alpha ) return;
         
@@ -84,16 +84,18 @@ class CommonDrawArt
    
    class HPlot : public FrameBuf<DesktopColor>
     {
+      DesktopColor color;
+      
      public:
      
-      explicit HPlot(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
+      HPlot(const FrameBuf<DesktopColor> &buf,DesktopColor color_) : FrameBuf<DesktopColor>(buf),color(color_) {}
       
-      void operator () (Point a,DesktopColor color)
+      void operator () (Point a)
        {
         if( getPane().contains(a) ) pixel(a,color);
        }
       
-      void operator () (Coord y,Coord a,Coord b,DesktopColor color) // [a,b]
+      void operator () (Coord y,Coord a,Coord b) // [a,b] unordered
        {
         if( y<0 || y>=dy ) return;
         
@@ -144,12 +146,12 @@ class CommonDrawArt
   private: 
    
    template <class Plot>
-   void path(PtrStepLen<const LPoint> curve,DesktopColor color,Plot plot);
+   void path(PtrStepLen<const LPoint> curve,Plot plot);
    
    void path(PtrStepLen<const LPoint> curve,DesktopColor color);
    
    template <class Plot>
-   void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname,Plot plot);
+   void path_smooth(PtrStepLen<const LPoint> curve,Plot plot);
    
    void path_smooth(PtrStepLen<const LPoint> curve,ColorName cname);
    
@@ -172,26 +174,33 @@ class CommonDrawArt
    
    void path_micro(PtrStepLen<const LPoint> curve,DesktopColor color,Coord magnify);
    
+   void path_smooth_micro1(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify);
+   
+   void path_smooth_micro2(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify);
+   
+   void path_smooth_micro3(PtrLen<const Point> dots,ColorName cname,Point focus,Coord magnify);
+   
    class SmoothPlotMicro
     {
       CommonDrawArt &art;
+      ColorName cname;
       Coord magnify;
       
      public:
       
-      explicit SmoothPlotMicro(CommonDrawArt &art_,Coord magnify_) : art(art_),magnify(magnify_) {}
+      SmoothPlotMicro(CommonDrawArt &art_,ColorName cname_,Coord magnify_) : art(art_),cname(cname_),magnify(magnify_) {}
       
       void test(LPoint p,Coord len,DesktopColor color)
        {
         art.gridKnob(p,len,color,magnify);
        }
       
-      void operator () (Point p,DesktopColor color)
+      void operator () (Point p)
        {
-        art.gridCell(p,color,magnify);
+        art.gridCell(p,cname,magnify);
        }
       
-      void operator () (Point p,ColorName cname,unsigned alpha)
+      void operator () (Point p,unsigned alpha)
        {
         if( !alpha ) return;
         
@@ -228,7 +237,7 @@ class CommonDrawArt
    
    void knob(Point p,Coord len,DesktopColor color)
     {
-     Coord d=2*len+1;
+     Coord d=Coord( 2*len+1 );
      
      block(Pane(p.x-len,p.y-len,d,d),color);
     }

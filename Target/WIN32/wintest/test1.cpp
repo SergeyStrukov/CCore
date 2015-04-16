@@ -33,7 +33,7 @@ using namespace CCore::Video;
 
 void test1(unsigned sx,unsigned sy)
  {
-  LineDriverBase<unsigned> driver(sx,sy);
+  Algo::LineDriverBase<unsigned> driver(sx,sy);
   
   unsigned x=0;
   unsigned y=0;
@@ -61,7 +61,7 @@ void test1(unsigned sx,unsigned sy)
 
 void test2(unsigned sx,unsigned sy,unsigned off,unsigned len)
  {
-  LineDriverBase<unsigned> driver(sx,sy);
+  Algo::LineDriverBase<unsigned> driver(sx,sy);
   
   unsigned y=0;
   
@@ -72,7 +72,7 @@ void test2(unsigned sx,unsigned sy,unsigned off,unsigned len)
   
   unsigned y0=y;
   
-  LineDriverBase<unsigned> driver1(driver);
+  Algo::LineDriverBase<unsigned> driver1(driver);
   
   for(unsigned count=len; count ;count--)
     {
@@ -91,8 +91,8 @@ void test2(unsigned sx,unsigned sy,unsigned off,unsigned len)
 
 void test3(uCoord sx,uCoord sy,uCoord y)
  {
-  LineDriver driver(sx,sy);
-  LineDriver driver1(driver);
+  Algo::LineDriver driver(sx,sy);
+  Algo::LineDriver driver1(driver);
   
   uCoord x=driver.clipToX(y);
   
