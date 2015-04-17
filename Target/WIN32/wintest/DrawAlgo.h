@@ -1777,21 +1777,6 @@ class SolidSection : NoCopy
      bool operator != (Sect obj) const { return y!=obj.y; }
     };
    
-   PtrLen<const Point> dots;
-   
-   StackArray<Dot> path;
-   StackArray<Sect> sect;
-   
-   ulen sect_count = 0 ;
-   
-  public:
- 
-   explicit SolidSection(PtrLen<const Point> dots);
-   
-   ~SolidSection();
-   
-   // LineSet
-   
    using IndexType = int ;
    
    struct Line : NoThrowFlagsBase
@@ -1799,14 +1784,35 @@ class SolidSection : NoCopy
      Point a;
      Point b;
      IndexType delta_index = 0 ;
-     
-     Coord x = 0 ;
+     ulen bottom = 0 ;
+     ulen top = 0 ;
      
      Line() {}
      
-     Line(Point a_,Point b_,IndexType delta_index_) : a(a_),b(b_),delta_index(delta_index_) {}
+     Line(Dot a_,Dot b_)
+      : a(a_.dot),b(b_.dot) 
+      {
+       if( a_.sect<b_.sect )
+         {
+          delta_index=-1;
+          bottom=a_.sect;
+          top=b_.sect;
+         }
+       else if( a_.sect>b_.sect )
+         {
+          delta_index=1;
+          bottom=b_.sect;
+          top=a_.sect;
+         }
+       else
+         {
+          delta_index=0;
+          bottom=b_.sect;
+          top=a_.sect;
+         }
+      }
      
-     bool operator < (const Line &obj) const { return x<obj.x; }
+     Coord x = 0 ;
      
      void set(Coord y) // TODO
       {
@@ -1841,83 +1847,99 @@ class SolidSection : NoCopy
       }
     };
    
-   class LineSet : NoCopy
+   StackArray<Dot> path;
+   StackArray<Sect> sect;
+   StackArray<Line> lines;
+   
+   ulen sect_count = 0 ;
+   
+  private: 
+   
+   template <class HPlot>
+   void fill(Coord bottom,Coord top,PtrLen<Line> set,bool all_flag,HPlot plot) // TODO
     {
-      StackArray<PtrLen<Line> > sets;
-      StackArray<Line> buf;
-      
-     private:
-      
-      template <class Func>
-      static void ForLines(PtrLen<const Dot> dots,Func func);
-      
-      static ulen CountBufs(PtrLen<const Dot> dots,PtrLen<Line> *sets);
-      
-      static void Append(Line * &ptr,Line obj) { *(ptr++)=obj; }
-      
-     public:
-     
-      explicit LineSet(const SolidSection &data);
-      
-      ~LineSet();
-      
-      PtrLen<Line> operator [] (ulen ind) { return sets[ind]; }
-      
-      template <class Func>
-      void operator () (bool all_flag,ulen ind,Coord bottom,Coord top,Func func) // TODO
+     for(; bottom<top ;bottom++)
        {
-        PtrLen<Line> lines=sets[ind];
+        for(Line &line : set ) line.set(bottom);
         
-        for(; bottom<top ;bottom++)
+        IncrSort(set, [] (const Line &a,const Line &b) { return a.x<b.x; } );
+        
+        if( all_flag )
           {
-           for(Line &line : lines ) line.set(bottom);
-           
-           Sort(lines);
-           
-           if( all_flag )
+           Coord a=0;
+           IndexType index=0;
+         
+           for(Line &line : set ) 
              {
-              IndexType index=0;
-              Coord a=0;
-            
-              for(Line &line : lines ) 
-                {
-                 if( index==0 ) a=line.x;
-                
-                 index+=line.delta_index;
-                 
-                 if( index==0 ) func(bottom,a,line.x); 
-                }
-             }
-           else
-             {
-              Coord a=0;
-              bool flag=false;
-            
-              for(Line &line : lines ) 
-                {
-                 if( !flag ) a=line.x;
-                
-                 flag=!flag;
-                 
-                 if( !flag ) func(bottom,a,line.x); 
-                }
+              if( index==0 ) a=line.x;
+             
+              index+=line.delta_index;
+              
+              if( index==0 ) plot(bottom,a,line.x); 
              }
           }
-       }
-    };
+        else
+          {
+           Coord a=0;
+           bool flag=false;
+         
+           for(Line &line : set ) 
+             {
+              if( !flag ) a=line.x;
+             
+              flag=!flag;
+              
+              if( !flag ) plot(bottom,a,line.x); 
+             }
+          }
+      }
+    }
    
-   Coord getTop() const { return sect[sect_count-1].y; }
+  public:
+ 
+   explicit SolidSection(PtrLen<const Point> dots);
    
-   template <class Func>
-   void forSects(Func func) const
+   ~SolidSection();
+   
+   template <class HPlot>
+   void fill(bool all_flag,HPlot plot)
     {
+     ulen off=0;
+     ulen lim=0;
+     
      Coord bottom=sect[0].y;
      
-     for(ulen i=1; i<sect_count ;i++)
+     for(ulen s=1; s<sect_count ;s++)
        {
-        Coord top=sect[i].y;
+        Coord top=sect[s].y;
         
-        func(i-1,bottom,top);
+        for(; lim<lines.getLen() && lines[lim].bottom<s ;lim++);
+        
+        ulen ind=lim;
+        
+        while( ind>off )
+          {
+           if( lines[--ind].top<s )
+             {
+              ulen i=ind;
+              
+              while( i>off )
+                {
+                 if( lines[--i].top>=s )
+                   {
+                    lines[ind--]=lines[i];
+                   }
+                }
+              
+              ind++;
+             
+              break;
+             }
+          }
+        
+        off=ind;
+        
+        fill(bottom,top,Range(lines).part(off,lim-off),all_flag,plot);
         
         bottom=top;
        }
@@ -1939,6 +1961,11 @@ void Solid(PtrLen<const Point> dots,bool all_flag,HPlot plot) // TODO
     }
   
   SolidSection data(dots);
+  
+  data.fill(all_flag,plot);
+  
+#if 0
+  
   SolidSection::LineSet line_set(data);
   
   data.forSects( [&] (ulen ind,Coord bottom,Coord top) 
@@ -1969,6 +1996,8 @@ void Solid(PtrLen<const Point> dots,bool all_flag,HPlot plot) // TODO
    
    if( a.y==o.y ) plot(a.y,a.x,o.x);
   }
+  
+#endif  
  }
 
 } // namespace Algo
