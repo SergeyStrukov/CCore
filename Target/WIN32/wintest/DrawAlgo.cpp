@@ -219,6 +219,7 @@ void CurveDriver::shift()
 SolidSection::SolidSection(PtrLen<const Point> dots)
  : path(dots.len),
    sect(dots.len),
+   line_buf(dots.len),
    lines(dots.len)
  {
   for(ulen i=0; i<dots.len ;i++) 
@@ -241,11 +242,13 @@ SolidSection::SolidSection(PtrLen<const Point> dots)
 
   ulen i=0;
   
-  for(; i<dots.len-1 ;i++) lines[i]=Line(path[i],path[i+1]); 
+  for(; i<dots.len-1 ;i++) line_buf[i]=Line(path[i],path[i+1]); 
   
-  lines[i]=Line(path[i],path[0]);
+  line_buf[i]=Line(path[i],path[0]);
   
-  IncrSort(Range(lines), [] (const Line &a,const Line &b) { return a.bottom<b.bottom; } );
+  IncrSort(Range(line_buf), [] (const Line &a,const Line &b) { return a.bottom<b.bottom; } );
+  
+  for(ulen i=0; i<dots.len ;i++) lines[i]=&(line_buf[i]); 
  }
 
 SolidSection::~SolidSection()

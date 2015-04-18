@@ -102,11 +102,11 @@ class LineDriverBase
    
   protected: 
    
-   const UInt sx;
-   const UInt sy;
+   UInt sx;
+   UInt sy;
    
-   const UInt ty;
-   const UInt lim;
+   UInt ty;
+   UInt lim;
    
   private:
    
@@ -148,6 +148,58 @@ class LineDriverBase
    LineDriverBase(UInt sx_,UInt sy_) : sx(sx_),sy(sy_),ty(sx_-sy_),lim(sx_/2) {} // sx >= sy > 0
    
    bool step() { return do_step(sy,ty); }
+   
+   bool back() { return !do_step(ty,sy); }
+   
+   UInt stepUp()
+    {
+     UInt ret;
+     
+     if( delta<=lim )
+       {
+        ret=(lim-delta)/sy;
+       }
+     else
+       {
+        ret=(sx-(delta-lim))/sy;
+       }
+     
+     UInt s=ret*sy;
+     
+     if( s>=ty )
+       s-=ty;
+     else
+       s+=sy;
+     
+     do_step(s);
+     
+     return ret;
+    }
+   
+   UInt backDown()
+    {
+     UInt ret;
+     
+     if( delta>lim )
+       {
+        ret=(delta-lim-1)/sy;
+       }
+     else
+       {
+        ret=(sx-1-(lim-delta))/sy;
+       }
+     
+     UInt s=ret*sy;
+     
+     if( s>=ty )
+       s-=ty;
+     else
+       s+=sy;
+     
+     do_back(s);
+     
+     return ret;
+    }
    
    UInt step(UInt delta_x)
     {
@@ -1810,89 +1862,183 @@ class SolidSection : NoCopy
           bottom=b_.sect;
           top=a_.sect;
          }
-      }
-     
-     Coord x = 0 ;
-     
-     void set(Coord y) // TODO
-      {
-       Coord ex;
-       Coord ey;
-       uCoord sx;
-       uCoord sy;
        
-       if( !DistDir(ex,sx,a.x,b.x) )
+       DistDir(ex,sx,a.x,b.x);
+       DistDir(ey,sy,a.y,b.y);
+       
+       if( sx && sy ) 
          {
-          x=a.x;
-         
-          return;
-         }
-       
-       if( !DistDir(ey,sy,a.y,b.y) ) return;
-       
-       uCoord delta=IntAbs(a.y,y);
-       
-       if( sx>sy )
-         {
-          LineDriver driver(sx,sy);
-
-          x=IntMove(a.x,ex,driver.clipToX(delta));
+          if( sx>sy )
+            {
+             CreateAt(driver.obj,sx,sy);
+             
+             if( a.y<b.y )
+               {
+                if( ex>0 )
+                  {
+                   x0=a.x;
+                   
+                   x1=IntMovePos(x0,driver.obj.stepUp());
+                  }
+                else
+                  {
+                   x1=a.x;
+                   
+                   x0=IntMoveNeg(x1,driver.obj.stepUp());
+                  } 
+               }
+             else
+               {
+                if( ex<0 )
+                  {
+                   x0=b.x;
+                  
+                   x1=IntMovePos(x0,driver.obj.backDown());
+                  }
+                else
+                  {
+                   x1=b.x;
+                   
+                   x0=IntMoveNeg(x1,driver.obj.backDown());
+                  } 
+               }
+            }
+          else
+            {
+             CreateAt(driver.obj,sy,sx);
+             
+             if( a.y<b.y )
+               x1=x0=a.x;
+             else
+               x1=x0=b.x;
+            }
          }
        else
          {
-          LineDriver driver(sy,sx);
-          
-          x=IntMove(a.x,ex,driver.step(delta));
+          x1=x0=a.x;
+         }
+      }
+     
+     Coord ex = 0 ;
+     Coord ey = 0 ;
+     uCoord sx = 0 ;
+     uCoord sy = 0 ;
+     
+     union Driver
+      {
+       LineDriver obj;
+       
+       Driver() {}
+      };
+     
+     Driver driver;
+     
+     Coord x0 = 0 ;
+     Coord x1 = 0 ;
+     
+     void step()
+      {
+       if( sx>sy )
+         {
+          if( a.y<b.y )
+            {
+             if( ex>0 )
+               {
+                x0=x1+1;
+                
+                x1=IntMovePos(x0,driver.obj.stepUp());
+               }
+             else
+               {
+                x1=x0-1;
+               
+                x0=IntMoveNeg(x1,driver.obj.stepUp());
+               } 
+            }
+          else
+            {
+             if( ex<0 )
+               {
+                x0=x1+1;
+               
+                x1=IntMovePos(x0,driver.obj.backDown());
+               }
+             else
+               {
+                x1=x0-1;
+
+                x0=IntMoveNeg(x1,driver.obj.backDown());
+               } 
+            }
+         }
+       else if( sx )
+         {
+          if( a.y<b.y )
+            {
+             if( driver.obj.step() ) x0+=ex;
+            }
+          else
+            {
+             if( driver.obj.back() ) x0-=ex;
+            }
+         
+          x1=x0;
          }
       }
     };
    
    StackArray<Dot> path;
    StackArray<Sect> sect;
-   StackArray<Line> lines;
+   StackArray<Line> line_buf;
+   StackArray<Line *> lines;
    
    ulen sect_count = 0 ;
    
   private: 
    
+   static void Sort(PtrLen<Line *> set) // TODO
+    {
+     IncrSort(set, [] (const Line *a,const Line *b) { return a->x0<b->x0; } );
+    }
+   
    template <class HPlot>
-   void fill(Coord bottom,Coord top,PtrLen<Line> set,bool all_flag,HPlot plot) // TODO
+   void fill(Coord bottom,Coord top,PtrLen<Line *> set,bool all_flag,HPlot plot)
     {
      for(; bottom<top ;bottom++)
        {
-        for(Line &line : set ) line.set(bottom);
-        
-        IncrSort(set, [] (const Line &a,const Line &b) { return a.x<b.x; } );
+        Sort(set);
         
         if( all_flag )
           {
-           Coord a=0;
+           Coord x=0;
            IndexType index=0;
          
-           for(Line &line : set ) 
+           for(Line *line : set ) 
              {
-              if( index==0 ) a=line.x;
+              if( index==0 ) x=line->x0;
              
-              index+=line.delta_index;
+              index+=line->delta_index;
               
-              if( index==0 ) plot(bottom,a,line.x); 
+              if( index==0 ) plot(bottom,x,line->x1); 
              }
           }
         else
           {
-           Coord a=0;
+           Coord x=0;
            bool flag=false;
          
-           for(Line &line : set ) 
+           for(Line *line : set ) 
              {
-              if( !flag ) a=line.x;
+              if( !flag ) x=line->x0;
              
               flag=!flag;
               
-              if( !flag ) plot(bottom,a,line.x); 
+              if( !flag ) plot(bottom,x,line->x1); 
              }
           }
-      }
+        
+        for(Line *line : set ) line->step();
+       }
     }
    
   public:
@@ -1913,19 +2059,19 @@ class SolidSection : NoCopy
        {
         Coord top=sect[s].y;
         
-        for(; lim<lines.getLen() && lines[lim].bottom<s ;lim++);
+        for(; lim<lines.getLen() && lines[lim]->bottom<s ;lim++);
         
         ulen ind=lim;
         
         while( ind>off )
           {
-           if( lines[--ind].top<s )
+           if( lines[--ind]->top<s )
              {
               ulen i=ind;
               
               while( i>off )
                 {
-                 if( lines[--i].top>=s )
+                 if( lines[--i]->top>=s )
                    {
                     lines[ind--]=lines[i];
                    }
@@ -1943,13 +2089,27 @@ class SolidSection : NoCopy
         
         bottom=top;
        }
+
+     {
+      Coord top=sect[sect_count-1].y;
+      
+      for(Line &line : line_buf )
+        {
+         Point a=line.a;
+         Point b=line.b;
+         
+         if( a.y==b.y ) plot(a.y,a.x,b.x);
+         
+         if( b.y==top ) plot(b);
+        }
+     }
     }
  };
 
 /* Solid() */
 
 template <class HPlot>
-void Solid(PtrLen<const Point> dots,bool all_flag,HPlot plot) // TODO
+void Solid(PtrLen<const Point> dots,bool all_flag,HPlot plot)
  {
   if( dots.len==0 ) return;
   
@@ -1963,41 +2123,6 @@ void Solid(PtrLen<const Point> dots,bool all_flag,HPlot plot) // TODO
   SolidSection data(dots);
   
   data.fill(all_flag,plot);
-  
-#if 0
-  
-  SolidSection::LineSet line_set(data);
-  
-  data.forSects( [&] (ulen ind,Coord bottom,Coord top) 
-                     {
-                      line_set(all_flag,ind,bottom,top, [&] (Coord y,Coord a,Coord b) { plot(y,a,b); } ); 
-                     } );
-  
-  // horizontal lines
-  
-  {
-   Coord top=data.getTop();
-   
-   Point a=*dots;
-   Point o=a;
-   
-   if( a.y==top ) plot(a);
-   
-   for(++dots; +dots ;++dots)
-     {
-      Point b=*dots;
-      
-      if( a.y==b.y ) plot(a.y,a.x,b.x);
-      
-      if( b.y==top ) plot(b);
-      
-      a=b;
-     }
-   
-   if( a.y==o.y ) plot(a.y,a.x,o.x);
-  }
-  
-#endif  
  }
 
 } // namespace Algo

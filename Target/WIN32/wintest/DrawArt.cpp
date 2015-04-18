@@ -1095,9 +1095,11 @@ void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
 
  // solid
 
-void CommonDrawArt::solid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color)
+void CommonDrawArt::solid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color) // TODO
  {
   Algo::Solid(dots,flag,HPlot(buf,color));
+  
+  loop(dots,Red);
  }
 
 void CommonDrawArt::curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color) // TODO
