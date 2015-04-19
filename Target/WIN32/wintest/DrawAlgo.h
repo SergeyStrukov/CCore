@@ -91,6 +91,8 @@ class LinePlotter2;
 
 class SolidSection;
 
+class SolidBorderSection;
+
 /* class LineDriverBase<UInt> */
 
 template <class UInt> 
@@ -1979,6 +1981,110 @@ class SolidSection : NoCopy
     }
  };
 
+/* class SolidBorderSection */
+
+class SolidBorderSection : NoCopy
+ {
+   Coord bottom;
+   Coord top;
+   
+   using IndexType = int ;
+   
+   struct Line : NoThrowFlagsBase
+    {
+     Point bottom;
+     Point top;
+     IndexType delta_index = 0 ;
+     
+     Line() {}
+     
+     Line(Point a,Point b);
+    };
+  
+   StackArray<Line> line_buf;
+   StackArray<Line *> lines;
+   
+   ulen split;
+   
+  private: 
+  
+   static void Sort(PtrLen<Line *> set);
+   
+   template <class HPlot>
+   void fill(Coord y,PtrLen<Line *> set,bool all_flag,HPlot plot)
+    {
+     Sort(set);
+     
+     if( all_flag )
+       {
+        Coord x=0;
+        IndexType index=0;
+      
+        for(Line *line : set ) 
+          {
+           if( index==0 ) x=line->bottom.x;
+          
+           index+=line->delta_index;
+           
+           if( index==0 ) plot(y,x,line->bottom.x); 
+          }
+       }
+     else
+       {
+        Coord x=0;
+        bool flag=false;
+      
+        for(Line *line : set ) 
+          {
+           if( !flag ) x=line->bottom.x;
+          
+           flag=!flag;
+           
+           if( !flag ) plot(y,x,line->bottom.x); 
+          }
+       }
+    }
+   
+  public:
+  
+   explicit SolidBorderSection(PtrLen<const Point> dots);
+   
+   ~SolidBorderSection();
+   
+   template <class HPlot>
+   void fill(bool all_flag,HPlot plot)
+    {
+     ulen off=split;
+     ulen lim=split;
+     
+     for(Coord y=bottom; y<top ;y++)
+       {
+        off=lim;
+       
+        for(; lim<lines.getLen() && lines[lim]->bottom.y==y ;lim++);
+        
+        fill(y,Range(lines).part(off,lim-off),all_flag,plot);
+       }
+
+     {
+      for(const Line *line : Range(lines).part(off,lim-off) )
+        {
+         plot(line->top);
+        }
+     }
+     
+     {
+      for(const Line *line : Range(lines).prefix(split) )
+        {
+         Point a=line->bottom;
+         Point b=line->top;
+         
+         plot(a.y,a.x,b.x);
+        }
+     }
+    }
+ };
+
 /* Solid() */
 
 template <class HPlot>
@@ -2012,7 +2118,7 @@ void SolidBorder(PtrLen<const Point> dots,bool all_flag,HPlot plot)
      return;
     }
   
-  SolidSection data(dots);
+  SolidBorderSection data(dots);
   
   data.fill(all_flag,plot);
  }

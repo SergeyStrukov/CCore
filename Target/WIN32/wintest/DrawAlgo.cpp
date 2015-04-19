@@ -227,7 +227,7 @@ SolidSection::Line::Line(Dot a_,Dot b_)
     }
   else if( a_.sect>b_.sect )
     {
-     delta_index=1;
+     delta_index=+1;
      bottom=b_.sect;
      top=a_.sect;
     }
@@ -384,12 +384,107 @@ SolidSection::SolidSection(PtrLen<const Point> dots)
   
   line_buf[i]=Line(path[i],path[0]);
   
-  IncrSort(Range(line_buf), [] (const Line &a,const Line &b) { return a.bottom<b.bottom; } );
+  for(ulen i=0; i<dots.len ;i++) lines[i]=&(line_buf[i]);
   
-  for(ulen i=0; i<dots.len ;i++) lines[i]=&(line_buf[i]); 
+  IncrSort(Range(lines), [] (const Line *a,const Line *b) { return a->bottom<b->bottom; } );
  }
 
 SolidSection::~SolidSection()
+ {
+ }
+
+/* class SolidBorderSection */
+
+SolidBorderSection::Line::Line(Point a,Point b)
+ {
+  if( a.y<b.y )
+    {
+     delta_index=-1;
+     bottom=a;
+     top=b;
+    }
+  else if( a.y>b.y )
+    {
+     delta_index=+1;
+     bottom=b;
+     top=a;
+    }
+  else
+    {
+     delta_index=0;
+     bottom=b;
+     top=a;
+    }
+ }
+
+void SolidBorderSection::Sort(PtrLen<Line *> set)
+ {
+  IncrSort(set, [] (const Line *a,const Line *b) { return a->bottom.x<b->bottom.x; } );
+ }
+
+template <class T,class Pred>
+ulen Partition(PtrLen<T> r,Pred pred) // TODO
+ {
+  if( r.len==0 ) return 0;
+  
+  ulen i=0;
+  ulen j=r.len-1;
+  
+  while( i<j )
+    {
+     while( pred(r[i]) ) 
+       {
+        i++;
+        
+        if( i==j ) return pred(r[i])?(i+1):i;
+       }
+     
+     while( !pred(r[j]) ) 
+       {
+        j--;
+        
+        if( i==j ) return i;
+       }
+     
+     Swap(r[i],r[j]);
+     
+     i++;
+     j--;
+    }
+
+  if( j<i ) return i;
+  
+  return pred(r[i])?(i+1):i;
+ }
+
+SolidBorderSection::SolidBorderSection(PtrLen<const Point> dots)
+ : line_buf(dots.len),
+   lines(dots.len)
+ {
+  bottom=top=dots[0].y;
+  
+  for(ulen i=1; i<dots.len ;i++)
+    {
+     Coord y=dots[i].y;
+    
+     Replace_min(bottom,y);
+     Replace_max(top,y);
+    }
+  
+  ulen i=0;
+  
+  for(; i<dots.len-1 ;i++) line_buf[i]=Line(dots[i],dots[i+1]); 
+  
+  line_buf[i]=Line(dots[i],dots[0]);
+  
+  for(ulen i=0; i<dots.len ;i++) lines[i]=&(line_buf[i]);
+  
+  split=Partition(Range(lines), [] (const Line *a) { return a->delta_index==0; } );
+  
+  IncrSort(Range(lines).part(split), [] (const Line *a,const Line *b) { return a->bottom.y<b->bottom.y; } );
+ }
+
+SolidBorderSection::~SolidBorderSection()
  {
  }
 
