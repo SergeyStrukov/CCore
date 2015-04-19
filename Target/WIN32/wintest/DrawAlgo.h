@@ -19,8 +19,6 @@
 #include <CCore/inc/video/Point.h>
 #include <CCore/inc/video/Color.h>
 
-#include <CCore/inc/Sort.h>
-
 #include <CCore/inc/TaskMemStack.h>
 
 namespace CCore {
@@ -1985,6 +1983,25 @@ class SolidSection : NoCopy
 
 template <class HPlot>
 void Solid(PtrLen<const Point> dots,bool all_flag,HPlot plot)
+ {
+  if( dots.len==0 ) return;
+  
+  if( dots.len==1 )
+    {
+     plot(dots[0]);
+     
+     return;
+    }
+  
+  SolidSection data(dots);
+  
+  data.fill(all_flag,plot);
+ }
+
+/* SolidBorder() */
+
+template <class HPlot>
+void SolidBorder(PtrLen<const Point> dots,bool all_flag,HPlot plot)
  {
   if( dots.len==0 ) return;
   

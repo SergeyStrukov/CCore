@@ -114,7 +114,7 @@ class Client : public DragClient
      DrawCurveSolid
     };
    
-   DrawType draw_type = DrawSolid ;
+   DrawType draw_type = DrawCurveSolid ;
    
    SolidFlag solid_flag = SolidAll ;
    

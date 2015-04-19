@@ -19,6 +19,8 @@
 //#include <CCore/inc/video/DrawAlgo.h>
 #include "DrawAlgo.h"
 
+#include <CCore/inc/Array.h>
+
 namespace CCore {
 namespace Video {
 
@@ -1100,11 +1102,169 @@ void CommonDrawArt::solid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor c
   Algo::Solid(dots,flag,HPlot(buf,color));
  }
 
-void CommonDrawArt::curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color) // TODO
+void CommonDrawArt::curveSolid(PtrLen<const Point> dots,SolidFlag flag,DesktopColor color)
  {
-  Used(dots);
-  Used(flag);
-  Used(color);
+  Collector<Point> temp;
+  
+  auto plot = [&temp] (Point p) { temp.append_copy(p); } ;
+  
+  switch( dots.len )
+    {
+     case 0 :
+      {
+       // do nothing
+      }
+     return;
+     
+     case 1 :
+      {
+       pixel(dots[0],color);
+      }
+     return;
+     
+     case 2 :
+      {
+       StackObject<Algo::CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1];
+      
+       driver->spline(a,b,a,b,a,b);
+       
+       path(driver->getCurve(),plot);
+       
+       driver->shift(a);
+      
+       path(driver->getCurve(),plot);
+      }
+     break;
+     
+     case 3 :
+      {
+       StackObject<Algo::CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2];
+      
+       driver->spline(a,b,c,a,b,c);
+       
+       path(driver->getCurve(),plot);
+       
+       driver->shift(a);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(b);
+      
+       path(driver->getCurve(),plot);
+      }
+     break;
+     
+     case 4 :
+      {
+       StackObject<Algo::CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3];
+      
+       driver->spline(a,b,c,d,a,b);
+       
+       path(driver->getCurve(),plot);
+       
+       driver->shift(c);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(d);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(a);
+      
+       path(driver->getCurve(),plot);
+      }
+     break;
+     
+     case 5 :
+      {
+       StackObject<Algo::CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3],
+             e=dots[4];
+      
+       driver->spline(a,b,c,d,e,a);
+       
+       path(driver->getCurve(),plot);
+       
+       driver->shift(b);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(c);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(d);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(e);
+      
+       path(driver->getCurve(),plot);
+      }
+     break;
+     
+     default:
+      {
+       StackObject<Algo::CurveDriver> driver;
+       
+       Point a=dots[0],
+             b=dots[1],
+             c=dots[2],
+             d=dots[3],
+             e=dots[4],
+             f=dots[5];
+      
+       driver->spline(a,b,c,d,e,f);
+       
+       path(driver->getCurve(),plot);
+       
+       for(dots+=6; +dots ;++dots)
+         {
+          driver->shift(dots[0]);
+         
+          path(driver->getCurve(),plot); 
+         }
+
+       driver->shift(a);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(b);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(c);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(d);
+      
+       path(driver->getCurve(),plot);
+       
+       driver->shift(e);
+      
+       path(driver->getCurve(),plot);
+      }
+    }
+
+  Algo::SolidBorder(Range_const(temp.flat()),flag,HPlot(buf,color));
  }
 
  // circle
