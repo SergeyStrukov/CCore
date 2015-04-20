@@ -1,0 +1,64 @@
+<!--
+/* page_Partition.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.09
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> Partition</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>Partition</h2>
+
+<p class="Files">Files <b>CCore/inc/algon/Partition.h</b> <b>CCore/src/algon/Partition.cpp</b></p>
+
+<p>
+<b>Partition()</b> is a classical partition algorithm like <b>std::partition</b> with slightly different arguments.
+</p>
+
+<pre>
+
+template &lt;class Ran,class Pred&gt;
+Ran <span class="Att">Partition</span>(Ran ptr,ulen len,Pred pred); // reorder such that pred(Range(ptr,len)) is 1,1,...,0,0,...
+
+template &lt;class T,class Pred&gt;
+ulen <span class="Att">Partition</span>(PtrLen&lt;T&gt; r,Pred pred)
+ {
+  return Dist(r.ptr,Partition(r.ptr,r.len,pred));
+ }
+
+</pre>
+
+<p>
+The first variant takes the base pointer of a range and the range length as arguments. The third argument
+is a predicate. The algorithm reorders the range in such a way, that elements which make the predicate <b>true</b>
+goes first and others goes after. The return value is the base pointer of the subrange with the second kind elements.
+</p>
+
+<p>
+The second variant is applied to the usual object range, given as a <b>PtrLen&lt;T&gt;</b> object.
+The return value is the length of the first subrange.
+</p>
+
+</body>
+
+</html>
+

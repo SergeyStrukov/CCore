@@ -36,3 +36,7 @@ gadget/PtrStepLen.h
 gadget/UtilFunc.h
 
   Sq() is added.
+
+algon/Partition.h
+
+  Partition() is added.
