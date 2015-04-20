@@ -17,6 +17,7 @@
 #include "DrawAlgo.h"
  
 #include <CCore/inc/algon/SortUnique.h>
+#include <CCore/inc/algon/Partition.h>
 
 namespace CCore {
 namespace Video {
@@ -422,41 +423,6 @@ void SolidBorderSection::Sort(PtrLen<Line *> set)
   IncrSort(set, [] (const Line *a,const Line *b) { return a->bottom.x<b->bottom.x; } );
  }
 
-template <class T,class Pred>
-ulen Partition(PtrLen<T> r,Pred pred) // TODO
- {
-  if( r.len==0 ) return 0;
-  
-  ulen i=0;
-  ulen j=r.len-1;
-  
-  while( i<j )
-    {
-     while( pred(r[i]) ) 
-       {
-        i++;
-        
-        if( i==j ) return pred(r[i])?(i+1):i;
-       }
-     
-     while( !pred(r[j]) ) 
-       {
-        j--;
-        
-        if( i==j ) return i;
-       }
-     
-     Swap(r[i],r[j]);
-     
-     i++;
-     j--;
-    }
-
-  if( j<i ) return i;
-  
-  return pred(r[i])?(i+1):i;
- }
-
 SolidBorderSection::SolidBorderSection(PtrLen<const Point> dots)
  : line_buf(dots.len),
    lines(dots.len)
@@ -479,7 +445,7 @@ SolidBorderSection::SolidBorderSection(PtrLen<const Point> dots)
   
   for(ulen i=0; i<dots.len ;i++) lines[i]=&(line_buf[i]);
   
-  split=Partition(Range(lines), [] (const Line *a) { return a->delta_index==0; } );
+  split=Algon::Partition(Range(lines), [] (const Line *a) { return a->delta_index==0; } );
   
   IncrSort(Range(lines).part(split), [] (const Line *a,const Line *b) { return a->bottom.y<b->bottom.y; } );
  }

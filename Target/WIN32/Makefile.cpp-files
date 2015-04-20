@@ -5,6 +5,7 @@
 ../../CCore/src/algon/CommonIntAlgo.cpp
 ../../CCore/src/algon/EuclidRotate.cpp
 ../../CCore/src/algon/GCDConst.cpp
+../../CCore/src/algon/Partition.cpp
 ../../CCore/src/algon/SortUnique.cpp
 ../../CCore/src/AnyPtr.cpp
 ../../CCore/src/array/ArrayAlgo.cpp

@@ -380,11 +380,11 @@ class CommonDrawArt
    
    // fill
    
-   void fill(PtrLen<const MilliPoint> border,DesktopColor color);
+   void fill(PtrLen<const MilliPoint> border,DesktopColor color); // TODO
    
    // stroke
    
-   void stroke(PtrLen<const MilliPoint> border,DesktopColor color,Coord width_mpx);
+   void stroke(PtrLen<const MilliPoint> border,DesktopColor color,Coord width_mpx); // TODO
  };
 
 } // namespace Video

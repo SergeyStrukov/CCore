@@ -211,6 +211,7 @@ obj/PacketPool_PacketCount.o \
 obj/PacketPool_PacketMaxDataLen.o \
 obj/PacketSet.o \
 obj/ParaQuickSort.o \
+obj/Partition.o \
 obj/Path.o \
 obj/PerTask.o \
 obj/Place.o \
@@ -557,6 +558,7 @@ obj/PacketPool_PacketCount.s \
 obj/PacketPool_PacketMaxDataLen.s \
 obj/PacketSet.s \
 obj/ParaQuickSort.s \
+obj/Partition.s \
 obj/Path.s \
 obj/PerTask.s \
 obj/Place.s \
@@ -903,6 +905,7 @@ obj/PacketPool_PacketCount.dep \
 obj/PacketPool_PacketMaxDataLen.dep \
 obj/PacketSet.dep \
 obj/ParaQuickSort.dep \
+obj/Partition.dep \
 obj/Path.dep \
 obj/PerTask.dep \
 obj/Place.dep \
@@ -1686,6 +1689,9 @@ obj/PacketSet.o : ../../CCore/src/PacketSet.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ParaQuickSort.o : ../../CCore/src/sort/ParaQuickSort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Partition.o : ../../CCore/src/algon/Partition.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Path.o : ../../CCore/src/Path.cpp
@@ -2719,6 +2725,9 @@ obj/PacketSet.s : ../../CCore/src/PacketSet.cpp
 obj/ParaQuickSort.s : ../../CCore/src/sort/ParaQuickSort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Partition.s : ../../CCore/src/algon/Partition.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Path.s : ../../CCore/src/Path.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3749,6 +3758,9 @@ obj/PacketSet.dep : ../../CCore/src/PacketSet.cpp
 
 obj/ParaQuickSort.dep : ../../CCore/src/sort/ParaQuickSort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ParaQuickSort.o $< -MF $@
+
+obj/Partition.dep : ../../CCore/src/algon/Partition.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Partition.o $< -MF $@
 
 obj/Path.dep : ../../CCore/src/Path.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Path.o $< -MF $@
