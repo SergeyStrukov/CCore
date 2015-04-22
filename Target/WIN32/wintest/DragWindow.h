@@ -39,9 +39,17 @@ enum class DragType
   
   Bar,
   
+  Alert,
   Min,
   Max,
   Close
+ };
+
+enum class AlertType
+ {
+  No = 0,
+  Closed,
+  Opened
  };
 
 /* functions */
@@ -315,35 +323,46 @@ class DragWindow : public FrameWindow
     {
      struct Config
       {
-       Coord drag_width   = 20 ;
-       Coord btn_width    = 16 ;
+       Coord frame_dxy =  9 ;
+       Coord title_dy  = 28 ;
        
-       ColorName dragOn      =     Olive ;
-       ColorName dragCorner  =    Silver ;
-       ColorName dragEdge    =      Gray ;
+       Coord btn_dx    = 28 ;
+       Coord btn_dy    = 26 ;
        
-       ColorName dragActive  =      Blue ;
-       ColorName dragPassive =      Gray ;
+       Coord min_dy    =  3 ;
+       Coord alert_dx  =  2 ;
+
+       ColorName edge            =     Black ;
+       ColorName frame           =    Silver ;
+       ColorName accent          =      Gray ;
+       ColorName accentHilight   =     Green ;
+       ColorName accentDrag      =       Red ;
        
-       ColorName hdragCorner =     White ;
-       ColorName hdragEdge   =     White ;
+       ColorName active          =      Blue ;
+       ColorName inactive        =    Silver ;
        
-       ColorName btnMin      =     Green ;
-       ColorName btnClose    =     Black ;
-       ColorName btnMax      =       Red ;
-       ColorName btnRestore  =    Yellow ;
+       ColorName btnFace         = SteelBlue ;
+       ColorName btnFaceHilight  =     Green ;
+       ColorName btnFaceClose    =   DarkRed ;
+       ColorName btnEdge         =     Black ;
+       ColorName btnPict         =     White ;
+       ColorName btnStop         =       Red ;
        
-       ColorName hbtnMin     =     White ;
-       ColorName hbtnClose   =     White ;
-       ColorName hbtnMax     =     White ;
-       ColorName hbtnRestore =     White ;
+       ColorName titleUp         =      Gray ;
+       ColorName titleDown       =      Snow ;
+       
+       ColorName titleActiveUp   = RGBColor(0,0,MedClr) ;
+       ColorName titleActiveDown = RGBColor(MedClr,MedClr,MaxClr) ;
+       
+       ColorName alert           =       Red ;
+       ColorName noAlert         =    Silver ;
+       ColorName closeAlert      =      Blue ;
        
        Config() {}
       };
      
      Config cfg;
 
-     Pane dragUp;
      Pane dragUpLeft;
      Pane dragLeft;
      Pane dragDownLeft;
@@ -353,6 +372,8 @@ class DragWindow : public FrameWindow
      Pane dragUpRight;
      Pane dragBar;
      
+     Pane title;
+     Pane btnAlert;
      Pane btnMin;
      Pane btnMax;
      Pane btnClose;
@@ -364,12 +385,15 @@ class DragWindow : public FrameWindow
      
      DragType drag_type = DragType::None ;
      DragType hilight = DragType::None ;
+     AlertType alert_type = AlertType::No ;
      
      Shape() {}
      
      explicit Shape(const Config &cfg_) : cfg(cfg_) {}
      
      void layout(Point size);
+     
+     class DrawArt;
      
      void draw(FrameBuf<DesktopColor> buf) const;
      

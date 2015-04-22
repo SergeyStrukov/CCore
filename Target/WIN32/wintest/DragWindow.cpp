@@ -45,14 +45,14 @@ void DragClient::draw(FrameBuf<DesktopColor> buf,bool drag_active) const
 
 void DragWindow::Shape::layout(Point size)
  {
-  if( size>Point(2*cfg.drag_width,2*cfg.drag_width) )
+  if( size>Point(2*cfg.frame_dxy+4+5*cfg.btn_dx+cfg.btn_dx/4+cfg.title_dy,cfg.frame_dxy+cfg.title_dy) )
     {
-     Coord x1=cfg.drag_width;
-     Coord x2=size.x-cfg.drag_width;
+     Coord x1=cfg.frame_dxy;
+     Coord x2=size.x-cfg.frame_dxy;
      Coord x3=size.x;
      
-     Coord y1=cfg.drag_width;
-     Coord y2=size.y-cfg.drag_width;
+     Coord y1=cfg.frame_dxy;
+     Coord y2=size.y-cfg.frame_dxy;
      Coord y3=size.y;
     
      dragUpLeft=Pane(Point(0,0),Point(x1,y1));
@@ -65,26 +65,25 @@ void DragWindow::Shape::layout(Point size)
      dragRight=Pane(Point(x2,y1),Point(x3,y2));
      dragUpRight=Pane(Point(x2,0),Point(x3,y1));
      
-     dragBar=Pane(Point(x1,0),Point(x2,y1));
+     dragBar=Pane(Point(x1,0),Point(x2,cfg.title_dy));
      
-     client=Pane(Point(x1,y1),Point(x2,y2));
+     client=Pane(Point(x1,cfg.title_dy),Point(x2,y2));
      
-     Coord yb=(cfg.drag_width-cfg.btn_width)/2;
+     Coord yb=(cfg.title_dy-cfg.btn_dy)/2;
      
-     if( size.x>=(3*cfg.btn_width+2*yb)+4*cfg.drag_width )
-       {
-        Coord xb=(size.x-(3*cfg.btn_width+2*yb))/2; // >= 2*cfg.drag_width 
-        
-        btnMin=Pane(xb,yb,cfg.btn_width,cfg.btn_width);
-        btnMax=Pane(xb+cfg.btn_width+yb,yb,cfg.btn_width,cfg.btn_width);
-        btnClose=Pane(xb+2*cfg.btn_width+2*yb,yb,cfg.btn_width,cfg.btn_width);
-       }
-     else
-       {
-        btnMin=Empty;
-        btnMax=Empty;
-        btnClose=Empty;
-       }
+     Coord tx=dragBar.dx-5*cfg.btn_dx-cfg.btn_dx/4; 
+     
+     Coord xb0=dragBar.x+tx;
+     Coord xb1=xb0+cfg.btn_dx+cfg.btn_dx/4;
+     Coord xb2=xb1+cfg.btn_dx+cfg.btn_dx/4;
+     Coord xb3=xb2+cfg.btn_dx+cfg.btn_dx/2;
+     
+     btnAlert=Pane(xb0,yb,cfg.btn_dx,cfg.btn_dy);
+     btnMin=Pane(xb1,yb,cfg.btn_dx,cfg.btn_dy);
+     btnMax=Pane(xb2,yb,cfg.btn_dx,cfg.btn_dy);
+     btnClose=Pane(xb3,yb,cfg.btn_dx,cfg.btn_dy);
+     
+     title=Pane(dragBar.x+2,dragBar.y+2,tx-4,cfg.title_dy-4);
     }
   else
     {
@@ -102,48 +101,231 @@ void DragWindow::Shape::layout(Point size)
      
      client=Empty;
      
+     btnAlert=Empty;
      btnMin=Empty;
      btnMax=Empty;
      btnClose=Empty;
+     title=Empty;
     }
  }
 
+class DragWindow::Shape::DrawArt : public CommonDrawArt
+ {
+  public:
+  
+   explicit DrawArt(FrameBuf<DesktopColor> buf) : CommonDrawArt(buf) {}
+   
+   void box(Pane pane,DesktopColor edge,DesktopColor inner)
+    {
+     const Point temp[]={Point(pane.x,pane.y),
+                         Point(pane.x,pane.y+pane.dy-1),
+                         Point(pane.x+pane.dx-1,pane.y+pane.dy-1),
+                         Point(pane.x+pane.dx-1,pane.y)};
+     
+     solid(Range(temp),SolidAll,inner);
+     loop(Range(temp),edge);
+    }
+   
+   Pane btn(Pane pane,ColorName face,ColorName edge)
+    {
+     Coord px=pane.dx/4;
+     Coord py=pane.dy/8;
+     
+     Coord x0=pane.x+py;
+     Coord x1=pane.x+px;
+     Coord x2=pane.x+pane.dx-1-px;
+     Coord x3=pane.x+pane.dx-1-py;
+     
+     Coord y0=pane.y+py;
+     Coord y1=pane.y+px;
+     Coord y2=pane.y+pane.dy-1-px;
+     Coord y3=pane.y+pane.dy-1-py;
+     
+     const Point dots[]={Point(x1,y0),
+                         Point(x2,y0),
+                         Point(x3,y1),
+                         Point(x3,y2),
+                         Point(x2,y3),
+                         Point(x1,y3),
+                         Point(x0,y2),
+                         Point(x0,y1)};
+     
+     curveSolid(Range(dots),SolidAll,face);
+     
+     curveLoop_smooth(Range(dots),edge);
+     
+     Coord s=(px+py)/2;
+     
+     return Pane(pane.x+px,pane.y+s,pane.dx-2*px,pane.dy-2*s);
+    }
+   
+   Pane title(Pane pane,ColorName up,ColorName down)
+    {
+     Coord px1=pane.dy/4;
+     Coord px0=px1/3;
+     
+     curvePath_smooth(up,Point(pane.x+px1,pane.y+pane.dy-1),
+                         Point(pane.x+px0,pane.y+pane.dy-1-pane.dy/4),
+                         Point(pane.x    ,pane.y+(pane.dy-1)/2),
+                         Point(pane.x+px0,pane.y+pane.dy/4),
+                         Point(pane.x+px1,pane.y));
+     
+     path(up,Point(pane.x+px1,pane.y),Point(pane.x+pane.dx-1-px1,pane.y));
+     
+     curvePath_smooth(down,Point(pane.x+pane.dx-1-px1,pane.y+pane.dy-1),
+                           Point(pane.x+pane.dx-1-px0,pane.y+pane.dy-1-pane.dy/4),
+                           Point(pane.x+pane.dx-1    ,pane.y+(pane.dy-1)/2),
+                           Point(pane.x+pane.dx-1-px0,pane.y+pane.dy/4),
+                           Point(pane.x+pane.dx-1-px1,pane.y));
+     
+     path(down,Point(pane.x+px1,pane.y+pane.dy-1),Point(pane.x+pane.dx-1-px1,pane.y+pane.dy-1));
+     
+     return Pane(pane.x+px1,pane.y+1,pane.dx-2*px1,pane.dy-1);
+    }
+ };
+
 void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
  {
-  if( drag_type!=DragType::None )
+  DrawArt art(buf);
+  
+  if( +dragLeft )
     {
-     buf.block(dragUpLeft,cfg.dragOn);
-     buf.block(dragLeft,cfg.dragOn);
-     buf.block(dragDownLeft,cfg.dragOn);
-     buf.block(dragDown,cfg.dragOn);
-     buf.block(dragDownRight,cfg.dragOn);
-     buf.block(dragRight,cfg.dragOn);
-     buf.block(dragUpRight,cfg.dragOn);
+     Pane pane=dragLeft;
+    
+     art.box(pane,cfg.edge,cfg.frame);
      
-     buf.block(dragBar,cfg.dragOn);
-    }
-  else
-    {
-     buf.block(dragUpLeft,(hilight==DragType::UpLeft)?cfg.hdragCorner:cfg.dragCorner);
-     buf.block(dragLeft,(hilight==DragType::Left)?cfg.hdragEdge:cfg.dragEdge);
-     buf.block(dragDownLeft,(hilight==DragType::DownLeft)?cfg.hdragCorner:cfg.dragCorner);
-     buf.block(dragDown,(hilight==DragType::Down)?cfg.hdragEdge:cfg.dragEdge);
-     buf.block(dragDownRight,(hilight==DragType::DownRight)?cfg.hdragCorner:cfg.dragCorner);
-     buf.block(dragRight,(hilight==DragType::Right)?cfg.hdragEdge:cfg.dragEdge);
-     buf.block(dragUpRight,(hilight==DragType::UpRight)?cfg.hdragCorner:cfg.dragCorner);
+     Coord delta=cfg.frame_dxy/2;
      
-     buf.block(dragBar,has_focus?cfg.dragActive:cfg.dragPassive);
+     ColorName cname=(drag_type==DragType::Left)?cfg.accentDrag:( (hilight==DragType::Left)?cfg.accentHilight:cfg.accent );
+     
+     art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
     }
   
-  buf.block(btnMin,(hilight==DragType::Min)?cfg.hbtnMin:cfg.btnMin);
-  buf.block(btnMax,(hilight==DragType::Max)?(max_button?cfg.hbtnMax:cfg.hbtnRestore):(max_button?cfg.btnMax:cfg.btnRestore));
-  buf.block(btnClose,(hilight==DragType::Close)?cfg.hbtnClose:cfg.btnClose);
+  if( +dragRight )
+    {
+     Pane pane=dragRight;
+    
+     art.box(pane,cfg.edge,cfg.frame);
+     
+     Coord delta=cfg.frame_dxy/2;
+     
+     ColorName cname=(drag_type==DragType::Right)?cfg.accentDrag:( (hilight==DragType::Right)?cfg.accentHilight:cfg.accent );
+     
+     art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
+    }
+
+  if( +dragDown )
+    {
+     Pane pane=dragDown;
+   
+     art.box(pane,cfg.edge,cfg.frame);
+    
+     Coord delta=cfg.frame_dxy/2;
+    
+     ColorName cname=(drag_type==DragType::Down)?cfg.accentDrag:( (hilight==DragType::Down)?cfg.accentHilight:cfg.accent );
+    
+     art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+pane.dx-1-delta,pane.y+delta));
+    }
+  
+  if( +dragUpLeft )
+    {
+     Pane pane=dragUpLeft;
+  
+     art.box(pane,cfg.edge,cfg.frame);
+   
+     ColorName cname=(drag_type==DragType::UpLeft)?cfg.accentDrag:( (hilight==DragType::UpLeft)?cfg.accentHilight:cfg.accent );
+   
+     art.solid(SolidAll,cname,Point(pane.x+1,pane.y+1),Point(pane.x+pane.dx-2,pane.y+1),Point(pane.x+1,pane.y+pane.dy-2));
+    }
+  
+  if( +dragDownLeft )
+    {
+     Pane pane=dragDownLeft;
+  
+     art.box(pane,cfg.edge,cfg.frame);
+   
+     ColorName cname=(drag_type==DragType::DownLeft)?cfg.accentDrag:( (hilight==DragType::DownLeft)?cfg.accentHilight:cfg.accent );
+   
+     art.solid(SolidAll,cname,Point(pane.x+1,pane.y+1),Point(pane.x+pane.dx-2,pane.y+pane.dy-2),Point(pane.x+1,pane.y+pane.dy-2));
+    }
+  
+  if( +dragDownRight )
+    {
+     Pane pane=dragDownRight;
+  
+     art.box(pane,cfg.edge,cfg.frame);
+   
+     ColorName cname=(drag_type==DragType::DownRight)?cfg.accentDrag:( (hilight==DragType::DownRight)?cfg.accentHilight:cfg.accent );
+   
+     art.solid(SolidAll,cname,Point(pane.x+pane.dx-2,pane.y+1),Point(pane.x+1,pane.y+pane.dy-2),Point(pane.x+pane.dx-2,pane.y+pane.dy-2));
+    }
+  
+  if( +dragUpRight )
+    {
+     Pane pane=dragUpRight;
+  
+     art.box(pane,cfg.edge,cfg.frame);
+   
+     ColorName cname=(drag_type==DragType::UpRight)?cfg.accentDrag:( (hilight==DragType::UpRight)?cfg.accentHilight:cfg.accent );
+   
+     art.solid(SolidAll,cname,Point(pane.x+1,pane.y+1),Point(pane.x+pane.dx-2,pane.y+pane.dy-2),Point(pane.x+pane.dx-2,pane.y+1));
+    }
+  
+  if( +dragBar )
+    {
+     Pane pane=dragBar;
+ 
+     art.box(pane,cfg.edge,has_focus?cfg.active:cfg.inactive);
+    }
+  
+  if( +title )
+    {
+     art.title(title,has_focus?cfg.titleActiveUp:cfg.titleUp,has_focus?cfg.titleActiveDown:cfg.titleDown);
+    }
+  
+  if( +btnAlert )
+    {
+     Pane pane=art.btn(btnAlert,(hilight==DragType::Alert)?cfg.btnFaceHilight:cfg.btnFace,cfg.btnEdge);
+     
+     ColorName cname=(alert_type==AlertType::No)?cfg.noAlert:((alert_type==AlertType::Closed)?cfg.alert:cfg.closeAlert);
+     
+     Coord x=pane.x+pane.dx/2;
+     Coord y0=pane.y;
+     Coord y1=pane.y+pane.dy-cfg.alert_dx;
+     
+     art.ball(Point(x,y1),cfg.alert_dx,cname);
+     
+     art.curveSolid(SolidAll,cname,Point(x,y1),Point(x-cfg.alert_dx+1,y0+cfg.alert_dx),Point(x,y0),Point(x+cfg.alert_dx-1,y0+cfg.alert_dx));
+    }
+
+  if( +btnMin )
+    {
+     Pane pane=art.btn(btnMin,(hilight==DragType::Min)?cfg.btnFaceHilight:cfg.btnFace,cfg.btnEdge);
+     
+     art.block(Pane(pane.x,pane.y+pane.dy-2*cfg.min_dy,pane.dx,cfg.min_dy),cfg.btnPict);
+    }
+  
+  if( +btnMax )
+    {
+     Pane pane=art.btn(btnMax,(hilight==DragType::Max)?cfg.btnFaceHilight:cfg.btnFace,cfg.btnEdge);
+     
+     if( max_button )
+       art.block(Pane(pane.x,pane.y+cfg.min_dy,pane.dx,pane.dy-2*cfg.min_dy),cfg.btnPict);
+     else
+       art.block(Pane(pane.x+pane.dx/4,pane.y+pane.dy/4,pane.dx/2,pane.dy/2),cfg.btnPict);
+    }
+  
+  if( +btnClose )
+    {
+     Pane pane=art.btn(btnClose,(hilight==DragType::Close)?cfg.btnFaceClose:cfg.btnFace,cfg.btnEdge);
+     
+     art.path_smooth(cfg.btnStop,Point(pane.x,pane.y),Point(pane.x+pane.dx-1,pane.y+pane.dy-1));
+     art.path_smooth(cfg.btnStop,Point(pane.x,pane.y+pane.dy-1),Point(pane.x+pane.dx-1,pane.y));
+    }
  }
 
 DragType DragWindow::Shape::dragTest(Point point) const
  {
-  if( dragUp.contains(point) ) return DragType::Up;
-  
   if( dragUpLeft.contains(point) ) return DragType::UpLeft;
 
   if( dragLeft.contains(point) ) return DragType::Left;
@@ -160,6 +342,8 @@ DragType DragWindow::Shape::dragTest(Point point) const
   
   if( dragBar.contains(point) ) 
     {
+     if( btnAlert.contains(point) ) return DragType::Alert;
+      
      if( btnMin.contains(point) ) return DragType::Min;
     
      if( btnMax.contains(point) ) return DragType::Max;
