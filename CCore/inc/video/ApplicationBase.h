@@ -17,6 +17,8 @@
 #define CCore_inc_video_ApplicationBase_h
 
 #include <CCore/inc/video/Desktop.h>
+
+#include <CCore/inc/DeferCall.h>
  
 namespace CCore {
 namespace Video {
@@ -27,8 +29,10 @@ class ApplicationBase;
 
 /* class ApplicationBase */
 
-class ApplicationBase : NoCopy
+class ApplicationBase : public DeferCallQueue
  {
+   virtual void forward(TimeScope time_scope); 
+   
   protected:
    
    const MSec tick_period;
@@ -43,13 +47,9 @@ class ApplicationBase : NoCopy
    
    virtual void prepare()=0;
    
-   virtual void do_tick()=0;
-   
   private:
    
    bool pump();
-   
-   void tick();
    
   public: 
    

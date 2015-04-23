@@ -215,6 +215,8 @@ void DeferCallQueue::loop(MSec tick_period)
      else
        {
         forward(time_scope);
+        
+        if( stop_flag ) break;
        }
     }
  }

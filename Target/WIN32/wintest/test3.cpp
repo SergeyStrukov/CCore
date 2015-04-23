@@ -159,10 +159,6 @@ class Application : public ApplicationBase
      main_win.createMain(cmd_display,max_size);
     }
    
-   virtual void do_tick()
-    {
-    }
-   
   public: 
    
    explicit Application(CmdDisplay cmd_display_)

@@ -15,62 +15,46 @@
  
 #include <CCore/inc/video/ApplicationBase.h>
 
-#include <CCore/inc/TickTimer.h>
- 
 namespace CCore {
 namespace Video {
 
 /* class ApplicationBase */
 
-bool ApplicationBase::pump()
+void ApplicationBase::forward(TimeScope time_scope)
  {
+  auto timeout=time_scope.get();
+  
+  if( +timeout ) desktop->wait(timeout);
+  
   try
     {
-     clearException();
-        
      if( desktop->pump() )
        {
         guardException();
-          
-        return true;
        }
      else
        {
-        return false;
+        stop();
        } 
     }
   catch(CatchType) 
     {
      showException();
-        
-     return true;
-    } 
- }
-
-void ApplicationBase::tick()
- {
-  try
-    {
+     
      clearException();
-     
-     do_tick();
-     
-     guardException();
     }
-  catch(CatchType) 
-    {
-     showException();
-    } 
  }
 
 ApplicationBase::ApplicationBase(MSec tick_period_,Desktop *desktop_)
  : tick_period(tick_period_),
    desktop(desktop_) 
  {
+  activate();
  }
 
 ApplicationBase::~ApplicationBase()
  {
+  deactivate();
  }
 
 int ApplicationBase::run()
@@ -79,14 +63,7 @@ int ApplicationBase::run()
   
   guardException();
   
-  TickTimer timer(tick_period);
-  
-  while( pump() )
-    {
-     if( timer.poll() ) tick();
-     
-     desktop->wait(timer.remains());
-    }
+  loop(tick_period);
   
   guardException();
   
