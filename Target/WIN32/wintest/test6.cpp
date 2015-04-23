@@ -39,9 +39,26 @@ class Application;
 
 class Client : public DragClient
  {
+   DragWindow::Shape::Config &cfg;
+   
+   enum Param 
+    {
+     Frame,
+     Title,
+     
+     BtnDx,
+     BtnDy,
+     
+     MinDy,
+     AlertDx
+    };
+   
+   Param param = Frame ;
+   
   public:
   
-   Client()
+   explicit Client(DragWindow::Shape::Config &cfg_)
+    : cfg(cfg_)
     {
     }
    
@@ -60,7 +77,40 @@ class Client : public DragClient
     {
      CommonDrawArt art(buf);
      
-     art.erase(Silver);
+     art.erase(Green);
+    }
+   
+   virtual void key(VKey vkey,KeyMod)
+    {
+     switch( vkey )
+       {
+        case VKey_F1 : param=Frame; break;
+        case VKey_F2 : param=Title; break;
+        case VKey_F3 : param=BtnDx; break;
+        case VKey_F4 : param=BtnDy; break;
+        case VKey_F5 : param=MinDy; break;
+        case VKey_F6 : param=AlertDx; break;
+       }
+    }
+   
+   virtual void wheel(Point,MouseKey,Coord delta)
+    {
+     switch( param )
+      {
+       case Frame : cfg.frame_dxy=Cap<Coord>(3,cfg.frame_dxy+delta,100); break;
+       
+       case Title : cfg.title_dy=Cap<Coord>(10,cfg.title_dy+delta,100); break;
+       
+       case BtnDx : cfg.btn_dx=Cap<Coord>(10,cfg.btn_dx+delta,100); break;
+       
+       case BtnDy : cfg.btn_dy=Cap<Coord>(10,cfg.btn_dy+delta,100); break;
+       
+       case MinDy : cfg.min_dy=Cap<Coord>(1,cfg.min_dy+delta,100); break;
+       
+       case AlertDx : cfg.alert_dx=Cap<Coord>(1,cfg.alert_dx+delta,100); break;
+      }
+     
+     cfg.update.assert();
     }
  };
 
@@ -71,6 +121,8 @@ class Application : public ApplicationBase
    const CmdDisplay cmd_display;
   
    FileReport report;
+   
+   DragWindow::Shape::Config cfg;
    
    Client client;
    
@@ -105,7 +157,8 @@ class Application : public ApplicationBase
    explicit Application(CmdDisplay cmd_display_)
     : ApplicationBase(50_msec),
       cmd_display(cmd_display_),
-      main_win(desktop,client)
+      client(cfg),
+      main_win(desktop,cfg,client)
     {
     }
    

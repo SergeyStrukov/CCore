@@ -19,6 +19,9 @@
 #include <CCore/inc/video/Desktop.h>
 #include <CCore/inc/video/FrameBuf.h>
 
+#include <CCore/inc/DeferCall.h>
+#include <CCore/inc/Signal.h>
+
 namespace CCore {
 namespace Video {
 
@@ -359,9 +362,11 @@ class DragWindow : public FrameWindow
        ColorName closeAlert      =      Blue ;
        
        Config() {}
+       
+       Signal<> update;
       };
      
-     Config cfg;
+     Config &cfg;
 
      Pane dragUpLeft;
      Pane dragLeft;
@@ -387,9 +392,7 @@ class DragWindow : public FrameWindow
      DragType hilight = DragType::None ;
      AlertType alert_type = AlertType::No ;
      
-     Shape() {}
-     
-     explicit Shape(const Config &cfg_) : cfg(cfg_) {}
+     explicit Shape(Config &cfg_) : cfg(cfg_) {}
      
      void layout(Point size);
      
@@ -412,7 +415,7 @@ class DragWindow : public FrameWindow
    
    bool client_enter = false ;
    bool client_capture = false ;
-
+   
   private: 
    
    void replace(Pane place,Point delta,DragType drag_type);
@@ -433,11 +436,36 @@ class DragWindow : public FrameWindow
    
   public:
   
-   DragWindow(Desktop *desktop,DragClient &client);
-   
-   DragWindow(Desktop *desktop,const Shape::Config &cfg,DragClient &client);
+   DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client);
    
    virtual ~DragWindow();
+   
+   // DeferInput
+   
+   class Input : DeferInput<DragWindow>
+    {
+      friend class DragWindow;
+      
+      explicit Input(DragWindow *window) : DeferInput<DragWindow>(window) {}
+      
+      ~Input() {}
+      
+     public:
+
+      void redraw(bool do_layout=false) { try_post(&DragWindow::redraw,do_layout); }
+    };
+   
+   Input input;
+   
+  private:
+   
+   // Signal connectors
+   
+   void updateConfig() { input.redraw(true); }
+   
+   SignalConnector<DragWindow> connector_updateConfig;
+
+  public:
    
    // methods
    
@@ -453,7 +481,7 @@ class DragWindow : public FrameWindow
    
    void maximize();
    
-   void redraw();
+   void redraw(bool do_layout=false);
    
    unsigned getToken() { return win->getToken(); }
    

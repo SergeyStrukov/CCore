@@ -470,17 +470,12 @@ bool DragWindow::forwardKeyUp(VKey vkey,KeyMod kmod,unsigned)
     }
  }
 
-DragWindow::DragWindow(Desktop *desktop,DragClient &client_)
- : FrameWindow(desktop),
-   client(client_)
- {
-  client_.win=this;
- }
-
-DragWindow::DragWindow(Desktop *desktop,const Shape::Config &cfg,DragClient &client_)
+DragWindow::DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client_)
  : FrameWindow(desktop),
    shape(cfg),
-   client(client_)
+   client(client_),
+   input(this),
+   connector_updateConfig(this,&DragWindow::updateConfig,shape.cfg.update)
  {
   client_.win=this;
  }
@@ -536,8 +531,15 @@ void DragWindow::maximize()
   redraw();
  }
 
-void DragWindow::redraw()
+void DragWindow::redraw(bool do_layout)
  {
+  if( do_layout )
+    {
+     shape.layout(size);
+    
+     client.layout(shape.client.getSize());
+    }
+  
   FrameBuf<DesktopColor> buf(win->getDrawPlane());
   
   if( !(size<=buf.getSize()) ) 
