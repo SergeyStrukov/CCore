@@ -104,6 +104,8 @@ struct ForwardTuple<T>
  
   ForwardTuple(T &&t) : first( std::forward<T>(t) ) {}
   
+  ForwardTuple(const ForwardTuple<T> &obj) : first( std::forward<T>(obj.first) ) {}
+  
   template <class FuncInit>
   void call(FuncInit func_init)
    {
@@ -120,6 +122,8 @@ struct ForwardTuple<T,S,RR...>
   ForwardTuple<S,RR...> rest;
   
   ForwardTuple(T &&t,S &&s,RR && ... rr) : first( std::forward<T>(t) ),rest( std::forward<S>(s) , std::forward<RR>(rr)... ) {}
+  
+  ForwardTuple(const ForwardTuple<T,S,RR...> &obj) : first( std::forward<T>(obj.first) ),rest(obj.rest) {}
   
   template <class FuncInit>
   void call(FuncInit func_init)

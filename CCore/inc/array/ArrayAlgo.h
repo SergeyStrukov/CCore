@@ -697,7 +697,7 @@ struct ArrayAlgos<false,false,T,Flags> : ArrayAlgo_class<T,Flags> {};
 /* struct ArrayAlgo<T,Flags> */ 
  
 template <class T,class Flags> 
-struct ArrayAlgo : ArrayAlgos<Has_ArrayAlgoType<T>::Ret,std::is_pod<T>::value,T,Flags> {};
+struct ArrayAlgo : ArrayAlgos<Has_ArrayAlgoType<T>::Ret, std::is_pod<T>::value && std::is_assignable<T,T>::value ,T,Flags> {};
  
 } // namespace CCore
  
