@@ -105,6 +105,7 @@ obj/Fifo.o \
 obj/FileName.o \
 obj/FileSystem.o \
 obj/FileToMem.o \
+obj/Font.o \
 obj/Forget.o \
 obj/FrameBuf.o \
 obj/FrameWindow.o \
@@ -435,6 +436,7 @@ obj/Fifo.s \
 obj/FileName.s \
 obj/FileSystem.s \
 obj/FileToMem.s \
+obj/Font.s \
 obj/Forget.s \
 obj/FrameBuf.s \
 obj/FrameWindow.s \
@@ -765,6 +767,7 @@ obj/Fifo.dep \
 obj/FileName.dep \
 obj/FileSystem.dep \
 obj/FileToMem.dep \
+obj/Font.dep \
 obj/Forget.dep \
 obj/FrameBuf.dep \
 obj/FrameWindow.dep \
@@ -1318,6 +1321,9 @@ obj/FileSystem.o : ../../HCore/CCore/src/FileSystem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileToMem.o : ../../HCore/CCore/src/FileToMem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Font.o : ../../CCore/src/video/Font.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Forget.o : ../../CCore/src/crypton/Forget.cpp
@@ -2303,6 +2309,9 @@ obj/FileSystem.s : ../../HCore/CCore/src/FileSystem.cpp
 obj/FileToMem.s : ../../HCore/CCore/src/FileToMem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Font.s : ../../CCore/src/video/Font.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Forget.s : ../../CCore/src/crypton/Forget.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3285,6 +3294,9 @@ obj/FileSystem.dep : ../../HCore/CCore/src/FileSystem.cpp
 
 obj/FileToMem.dep : ../../HCore/CCore/src/FileToMem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileToMem.o $< -MF $@
+
+obj/Font.dep : ../../CCore/src/video/Font.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Font.o $< -MF $@
 
 obj/Forget.dep : ../../CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Forget.o $< -MF $@

@@ -109,6 +109,7 @@ obj/FastMul.o \
 obj/FastMutex.o \
 obj/Fifo.o \
 obj/FileName.o \
+obj/Font.o \
 obj/Forget.o \
 obj/FrameBuf.o \
 obj/FrameWindow.o \
@@ -439,6 +440,7 @@ obj/FastMul.s \
 obj/FastMutex.s \
 obj/Fifo.s \
 obj/FileName.s \
+obj/Font.s \
 obj/Forget.s \
 obj/FrameBuf.s \
 obj/FrameWindow.s \
@@ -769,6 +771,7 @@ obj/FastMul.dep \
 obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FileName.dep \
+obj/Font.dep \
 obj/Forget.dep \
 obj/FrameBuf.dep \
 obj/FrameWindow.dep \
@@ -1322,6 +1325,9 @@ obj/Fifo.o : ../../CCore/src/Fifo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileName.o : ../../CCore/src/FileName.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Font.o : ../../CCore/src/video/Font.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Forget.o : ../../CCore/src/crypton/Forget.cpp
@@ -2307,6 +2313,9 @@ obj/Fifo.s : ../../CCore/src/Fifo.cpp
 obj/FileName.s : ../../CCore/src/FileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Font.s : ../../CCore/src/video/Font.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Forget.s : ../../CCore/src/crypton/Forget.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3289,6 +3298,9 @@ obj/Fifo.dep : ../../CCore/src/Fifo.cpp
 
 obj/FileName.dep : ../../CCore/src/FileName.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@
+
+obj/Font.dep : ../../CCore/src/video/Font.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Font.o $< -MF $@
 
 obj/Forget.dep : ../../CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Forget.o $< -MF $@

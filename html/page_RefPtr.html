@@ -100,7 +100,7 @@ To determine the moment the object should be destroyed the reference counting is
 an embedded reference counter of some nature and a family of methods to manipulate the one. The template parameter <b>Algo</b> allows
 customization of these methods. By default, to increment the reference counter the method <b>incRef()</b> is called, to decrement
 &mdash; <b>decRef()</b> and to destroy the object &mdash; the method <b>destroy()</b>. <b>decRef()</b> returns <b>true</b>, if
-the reference counter became zero, i.g. it's time to destroy the object. To create <b>RefPtr</b> a non-null pointer 
+the reference counter became zero, i.e. it's time to destroy the object. To create <b>RefPtr</b> a non-null pointer 
 with reference counter 1 must be provided.
 </p>
 
