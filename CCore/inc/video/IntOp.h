@@ -48,7 +48,10 @@ inline SInt IntMove(SInt a,SInt e,UInt delta)
  }
 
 template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
-inline UInt IntAbs(SInt a,SInt b) { return (a<=b)?IntDist<SInt,UInt>(a,b):IntDist<SInt,UInt>(b,a); }
+inline UInt IntAbs(SInt a,SInt b)
+ { 
+  return (a<=b)?IntDist<SInt,UInt>(a,b):IntDist<SInt,UInt>(b,a); 
+ }
 
 /* functions */
 

@@ -37,8 +37,8 @@ template <class RawColor> class FrameBuf;
 struct ColorPlane
  {
   void *raw;
-  Coord dx;
-  Coord dy;
+  Coord dx; // >=0
+  Coord dy; // >=0
   DLineType dline; // in chars
   
   ColorPlane() : raw(0),dx(0),dy(0),dline(0) {}
@@ -59,7 +59,7 @@ class FrameBuf : protected ColorPlane
    
    Raw * place(Coord y) { return static_cast<Raw *>(PtrAdd(raw,(ulen)y*dline)); }
    
-   Raw * place(Point p) { return place(p.y)+(ulen)p.x*RawColor::RawCount; }
+   Raw * place(Point p) { return place(p.y)+(DLineType)p.x*RawColor::RawCount; }
    
    static Raw * NextX(Raw *ptr) { return ptr+RawColor::RawCount; }
    
@@ -131,7 +131,7 @@ class FrameBuf : protected ColorPlane
    
    AreaType getArea() const { return Area(dx,dy); }
    
-   // methods
+   // unsafe methods
   
    FrameBuf<RawColor> cut(Pane pane) const { return FrameBuf<RawColor>(*this,pane); }
    

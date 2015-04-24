@@ -37,6 +37,12 @@ using uLCoord = uint32 ;
 
 using AreaType = unsigned ;
 
+/* consts */
+
+const Coord MaxCoord = 32767 ;
+
+const Coord MinCoord = -32768 ;
+
 /* functions */
 
 inline constexpr AreaType Area(Coord dx,Coord dy) { return (AreaType)dx*(AreaType)dy; }
@@ -142,9 +148,9 @@ struct Point : BasePoint<Point,Coord>
  {
   using BasePoint<Point,Coord>::BasePoint;
   
-  static Point Max() { return Point(32767,32767); }
+  static Point Max() { return Point(MaxCoord,MaxCoord); }
   
-  static Point Min() { return Point(-32768,-32768); }
+  static Point Min() { return Point(MinCoord,MinCoord); }
  };
 
 /* struct MilliPoint */
@@ -154,6 +160,8 @@ struct MilliPoint : BasePoint<MilliPoint,MCoord>
   static const unsigned Precision = 10 ;
  
   static MCoord LShift(Coord a) { return IntLShift((MCoord)a,Precision); }
+  
+  // constructors
   
   using BasePoint<MilliPoint,MCoord>::BasePoint;
   
@@ -172,11 +180,13 @@ struct LPoint : BasePoint<LPoint,LCoord>
   
   static LCoord LShift_ext(LCoord a) { return IntLShift(a,Precision); }
   
-  static const LCoord RShiftBias = 1<<(Precision-1) ;
+  static const LCoord RShiftBias = LCoord(1)<<(Precision-1) ;
  
-  static Coord RShift(LCoord a) { return (Coord)IntRShift<LCoord>(a+RShiftBias,Precision); }
+  static Coord RShift(LCoord a) { return (Coord)IntRShift(IntAdd(a,RShiftBias),Precision); }
   
-  static LCoord RShift_ext(LCoord a) { return IntRShift<LCoord>(a+RShiftBias,Precision); }
+  static LCoord RShift_ext(LCoord a) { return IntRShift(IntAdd(a,RShiftBias),Precision); }
+  
+  static LCoord LShift_m(MCoord a) { return IntLShift((LCoord)a,Precision-MilliPoint::Precision); }
   
   // constructors
   
@@ -186,7 +196,7 @@ struct LPoint : BasePoint<LPoint,LCoord>
   
   LPoint(Point p) : BasePoint<LPoint,LCoord>(LShift(p.x),LShift(p.y)) {}
   
-  LPoint(MilliPoint p) : BasePoint<LPoint,LCoord>(IntLShift(p.x,Precision-MilliPoint::Precision),IntLShift(p.y,Precision-MilliPoint::Precision)) {}
+  LPoint(MilliPoint p) : BasePoint<LPoint,LCoord>(LShift_m(p.x),LShift_m(p.y)) {}
   
   // methods
   
