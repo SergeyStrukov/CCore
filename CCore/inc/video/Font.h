@@ -77,7 +77,7 @@ struct TextPlace
 
 struct AbstractFont
  {
-  virtual void text(FrameBuf<DesktopColor> buf,TextPlace place,StrLen str)=0;
+  virtual void text(FrameBuf<DesktopColor> buf,TextPlace place,StrLen str,DesktopColor color)=0;
  };
 
 /* class FontBase */

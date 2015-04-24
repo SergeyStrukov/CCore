@@ -180,7 +180,13 @@ class DragWindow::Shape::DrawArt : public CommonDrawArt
      
      path(down,Point(pane.x+px1,pane.y+pane.dy-1),Point(pane.x+pane.dx-1-px1,pane.y+pane.dy-1));
      
-     return Pane(pane.x+px1,pane.y+1,pane.dx-2*px1,pane.dy-1);
+     Coord dx=pane.dx-2*px1;
+     Coord dy=pane.dy-2;
+     
+     if( dx>0 && dy>0 )
+       return Pane(pane.x+px1,pane.y+1,dx,dy);
+     
+     return Empty;
     }
  };
 
@@ -280,7 +286,9 @@ void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
   
   if( +title )
     {
-     art.title(title,has_focus?cfg.titleActiveUp:cfg.titleUp,has_focus?cfg.titleActiveDown:cfg.titleDown);
+     Pane pane=art.title(title,has_focus?cfg.titleActiveUp:cfg.titleUp,has_focus?cfg.titleActiveDown:cfg.titleDown);
+     
+     cfg.title_font->text(buf.cut(pane),TextPlace(AlignX::Left,AlignY::Center),Range(title_string),cfg.title);
     }
   
   if( +btnAlert )
@@ -486,9 +494,10 @@ DragWindow::~DragWindow()
 
  // methods
 
-void DragWindow::createMain(CmdDisplay cmd_display,Point max_size)
+void DragWindow::createMain(CmdDisplay cmd_display,Point max_size,String title)
  {
   shape.max_button=( cmd_display!=CmdDisplay_Maximized );
+  shape.title_string=title;
   
   win->createMain(max_size);
   
@@ -496,14 +505,18 @@ void DragWindow::createMain(CmdDisplay cmd_display,Point max_size)
   win->update();
  }
 
-void DragWindow::create(Pane pane,Point max_size)
+void DragWindow::create(Pane pane,Point max_size,String title)
  {
+  shape.title_string=title;
+  
   win->create(pane,max_size);
   win->show();
  }
 
-void DragWindow::create(WinControl *parent,Pane pane,Point max_size)
+void DragWindow::create(WinControl *parent,Pane pane,Point max_size,String title)
  {
+  shape.title_string=title;
+  
   win->create(parent,pane,max_size);
   win->show();
  }

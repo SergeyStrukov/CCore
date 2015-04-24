@@ -18,7 +18,9 @@
 
 #include <CCore/inc/video/Desktop.h>
 #include <CCore/inc/video/FrameBuf.h>
+#include <CCore/inc/video/Font.h>
 
+#include <CCore/inc/String.h>
 #include <CCore/inc/DeferCall.h>
 #include <CCore/inc/Signal.h>
 
@@ -327,7 +329,7 @@ class DragWindow : public FrameWindow
      struct Config
       {
        Coord frame_dxy =  9 ;
-       Coord title_dy  = 28 ;
+       Coord title_dy  = 30 ;
        
        Coord btn_dx    = 28 ;
        Coord btn_dy    = 26 ;
@@ -341,7 +343,7 @@ class DragWindow : public FrameWindow
        ColorName accentHilight   =     Green ;
        ColorName accentDrag      =       Red ;
        
-       ColorName active          =      Blue ;
+       ColorName active          = RGBColor(MedClr,MedClr,MaxClr) ;
        ColorName inactive        =    Silver ;
        
        ColorName btnFace         = SteelBlue ;
@@ -355,11 +357,15 @@ class DragWindow : public FrameWindow
        ColorName titleDown       =      Snow ;
        
        ColorName titleActiveUp   = RGBColor(0,0,MedClr) ;
-       ColorName titleActiveDown = RGBColor(MedClr,MedClr,MaxClr) ;
+       ColorName titleActiveDown = RGBColor(200,200,MaxClr) ;
        
        ColorName alert           =       Red ;
        ColorName noAlert         =    Silver ;
        ColorName closeAlert      =      Blue ;
+       
+       ColorName title           =     Black ;
+       
+       Font title_font;
        
        Config() {}
        
@@ -391,6 +397,8 @@ class DragWindow : public FrameWindow
      DragType drag_type = DragType::None ;
      DragType hilight = DragType::None ;
      AlertType alert_type = AlertType::No ;
+     
+     String title_string;
      
      explicit Shape(Config &cfg_) : cfg(cfg_) {}
      
@@ -469,11 +477,11 @@ class DragWindow : public FrameWindow
    
    // methods
    
-   void createMain(CmdDisplay cmd_display,Point max_size);
+   void createMain(CmdDisplay cmd_display,Point max_size,String title);
    
-   void create(Pane pane,Point max_size);
+   void create(Pane pane,Point max_size,String title);
    
-   void create(WinControl *parent,Pane pane,Point max_size);
+   void create(WinControl *parent,Pane pane,Point max_size,String title);
    
    void destroy() { win->destroy(); }
    
@@ -488,6 +496,13 @@ class DragWindow : public FrameWindow
    void captureMouse();
    
    void releaseMouse();
+   
+   void setTitle(String title)
+    {
+     shape.title_string=title;
+     
+     redraw();
+    }
    
    // base
    

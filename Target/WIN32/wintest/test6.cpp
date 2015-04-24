@@ -149,7 +149,7 @@ class Application : public ApplicationBase
     {
      Point max_size=desktop->getScreenSize();
      
-     main_win.createMain(cmd_display,max_size);
+     main_win.createMain(cmd_display,max_size,String("test6"));
     }
    
   public: 

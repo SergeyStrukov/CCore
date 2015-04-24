@@ -43,6 +43,7 @@ class DefaultFont
   
    static const Coord DX = 10 ;
    static const Coord DY = 18 ;
+   static const Coord BY = 15 ;
 
    DefaultFont()
     {
