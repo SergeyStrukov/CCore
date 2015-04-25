@@ -144,7 +144,7 @@ class DragWindow;
 
 /* class DragClient */
 
-class DragClient : NoCopy
+class DragClient : NoCopy , public UserInput
  {
   protected:
   
@@ -176,139 +176,7 @@ class DragClient : NoCopy
      // do nothing
     }
    
-   // keyboard
-   
-   virtual void key(VKey vkey,KeyMod kmod)
-    {
-     Used(vkey);
-     Used(kmod);
-     
-     // do nothing
-    }
-   
-   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat)
-    {
-     for(; repeat ;repeat--) key(vkey,kmod);
-    }
-   
-   virtual void keyUp(VKey vkey,KeyMod kmod)
-    {
-     Used(vkey);
-     Used(kmod);
-     
-     // do nothing
-    }
-   
-   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
-    {
-     for(; repeat ;repeat--) keyUp(vkey,kmod);
-    }
-   
-   // character
-   
-   virtual void putch(char ch)
-    {
-     Used(ch);
-     
-     // do nothing
-    }
-   
-   virtual void putch(char ch,unsigned repeat)
-    {
-     for(; repeat ;repeat--) putch(ch);
-    }
-   
-   virtual void putchAlt(char ch)
-    {
-     Used(ch);
-     
-     // do nothing
-    }
-   
-   virtual void putchAlt(char ch,unsigned repeat)
-    {
-     for(; repeat ;repeat--) putchAlt(ch);
-    }
-   
    // mouse
-   
-   virtual void clickLeft(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void upLeft(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
- 
-   virtual void dclickLeft(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void clickRight(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void upRight(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void dclickRight(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void move(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void hover(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void leave()
-    {
-     // do nothing
-    }
-   
-   virtual void wheel(Point point,MouseKey mkey,Coord delta)
-    {
-     Used(point);
-     Used(mkey);
-     Used(delta);
-     
-     // do nothing
-    }
  
    virtual MouseShape getMouseShape(Point point)
     {
@@ -328,11 +196,11 @@ class DragWindow : public FrameWindow
     {
      struct Config
       {
-       Coord frame_dxy =  9 ;
-       Coord title_dy  = 30 ;
+       Coord frame_dxy = 11 ;
+       Coord title_dy  = 32 ;
        
-       Coord btn_dx    = 28 ;
-       Coord btn_dy    = 26 ;
+       Coord btn_dx    = 32 ;
+       Coord btn_dy    = 28 ;
        
        Coord min_dy    =  3 ;
        Coord alert_dx  =  2 ;
@@ -374,6 +242,8 @@ class DragWindow : public FrameWindow
      
      Config &cfg;
 
+     // layout
+     
      Pane dragUpLeft;
      Pane dragLeft;
      Pane dragDownLeft;
@@ -383,7 +253,7 @@ class DragWindow : public FrameWindow
      Pane dragUpRight;
      Pane dragBar;
      
-     Pane title;
+     Pane titleBar;
      Pane btnAlert;
      Pane btnMin;
      Pane btnMax;
@@ -391,14 +261,19 @@ class DragWindow : public FrameWindow
      
      Pane client;
      
+     // state
+     
      bool has_focus = false ;
      bool max_button = true ;
      
      DragType drag_type = DragType::None ;
      DragType hilight = DragType::None ;
+     DragType btn_type = DragType::None ;
      AlertType alert_type = AlertType::No ;
      
-     String title_string;
+     String title;
+     
+     // methods
      
      explicit Shape(Config &cfg_) : cfg(cfg_) {}
      
@@ -499,7 +374,7 @@ class DragWindow : public FrameWindow
    
    void setTitle(String title)
     {
-     shape.title_string=title;
+     shape.title=title;
      
      redraw();
     }

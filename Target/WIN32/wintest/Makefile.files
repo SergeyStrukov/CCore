@@ -10,6 +10,7 @@ OBJ_LIST = \
 ../wintest-obj/test4.o \
 ../wintest-obj/test5.o \
 ../wintest-obj/test6.o \
+../wintest-obj/test7.o \
 
 
 ASM_LIST = \
@@ -24,6 +25,7 @@ ASM_LIST = \
 ../wintest-obj/test4.s \
 ../wintest-obj/test5.s \
 ../wintest-obj/test6.s \
+../wintest-obj/test7.s \
 
 
 DEP_LIST = \
@@ -38,6 +40,7 @@ DEP_LIST = \
 ../wintest-obj/test4.dep \
 ../wintest-obj/test5.dep \
 ../wintest-obj/test6.dep \
+../wintest-obj/test7.dep \
 
 
 ASM_OBJ_LIST = \
@@ -79,6 +82,9 @@ include $(RULES_FILE)
 ../wintest-obj/test6.o : ./test6.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+../wintest-obj/test7.o : ./test7.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 
 
 ../wintest-obj/DragWindow.s : ./DragWindow.cpp
@@ -112,6 +118,9 @@ include $(RULES_FILE)
 	$(CC) -S $(CCOPT) $< -o $@
 
 ../wintest-obj/test6.s : ./test6.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+../wintest-obj/test7.s : ./test7.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 
@@ -148,6 +157,9 @@ include $(RULES_FILE)
 
 ../wintest-obj/test6.dep : ./test6.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test6.o $< -MF $@
+
+../wintest-obj/test7.dep : ./test7.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/test7.o $< -MF $@
 
 
 

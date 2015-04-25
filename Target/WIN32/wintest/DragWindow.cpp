@@ -45,45 +45,42 @@ void DragClient::draw(FrameBuf<DesktopColor> buf,bool drag_active) const
 
 void DragWindow::Shape::layout(Point size)
  {
-  if( size>Point(2*cfg.frame_dxy+4+5*cfg.btn_dx+cfg.btn_dx/4+cfg.title_dy,cfg.frame_dxy+cfg.title_dy) )
+  Coord dxy=cfg.frame_dxy;
+  Coord tdy=cfg.title_dy;
+  Coord bdx=cfg.btn_dx;
+  Coord bdy=cfg.btn_dy;
+  
+  if( size>Point(2*dxy+5*bdx+bdx/2+tdy,dxy+tdy) )
     {
-     Coord x1=cfg.frame_dxy;
-     Coord x2=size.x-cfg.frame_dxy;
-     Coord x3=size.x;
+     dragUpLeft=Pane(0,0,dxy,dxy);
+     dragLeft=Pane(0,dxy,dxy,size.y-2*dxy);
+     dragDownLeft=Pane(0,size.y-dxy,dxy,dxy);
      
-     Coord y1=cfg.frame_dxy;
-     Coord y2=size.y-cfg.frame_dxy;
-     Coord y3=size.y;
-    
-     dragUpLeft=Pane(Point(0,0),Point(x1,y1));
-     dragLeft=Pane(Point(0,y1),Point(x1,y2));
-     dragDownLeft=Pane(Point(0,y2),Point(x1,y3));
+     dragDown=Pane(dxy,dragDownLeft.y,size.x-2*dxy,dxy);
      
-     dragDown=Pane(Point(x1,y2),Point(x2,y3));
+     dragDownRight=Pane(size.x-dxy,dragDownLeft.y,dxy,dxy);
+     dragRight=Pane(dragDownRight.x,dxy,dxy,dragLeft.dy);
+     dragUpRight=Pane(dragDownRight.x,0,dxy,dxy);
      
-     dragDownRight=Pane(Point(x2,y2),Point(x3,y3));
-     dragRight=Pane(Point(x2,y1),Point(x3,y2));
-     dragUpRight=Pane(Point(x2,0),Point(x3,y1));
+     dragBar=Pane(dxy,0,dragDown.dx,tdy);
      
-     dragBar=Pane(Point(x1,0),Point(x2,cfg.title_dy));
+     client=Pane(dxy,tdy,dragDown.dx,size.y-dxy-tdy);
      
-     client=Pane(Point(x1,cfg.title_dy),Point(x2,y2));
+     Coord yb=(tdy-bdy)/2;
      
-     Coord yb=(cfg.title_dy-cfg.btn_dy)/2;
-     
-     Coord tx=dragBar.dx-5*cfg.btn_dx-cfg.btn_dx/4; 
+     Coord tx=dragBar.dx-5*bdx; 
      
      Coord xb0=dragBar.x+tx;
-     Coord xb1=xb0+cfg.btn_dx+cfg.btn_dx/4;
-     Coord xb2=xb1+cfg.btn_dx+cfg.btn_dx/4;
-     Coord xb3=xb2+cfg.btn_dx+cfg.btn_dx/2;
+     Coord xb1=xb0+bdx+bdx/8;
+     Coord xb2=xb1+bdx+bdx/8;
+     Coord xb3=xb2+bdx+bdx/2;
      
-     btnAlert=Pane(xb0,yb,cfg.btn_dx,cfg.btn_dy);
-     btnMin=Pane(xb1,yb,cfg.btn_dx,cfg.btn_dy);
-     btnMax=Pane(xb2,yb,cfg.btn_dx,cfg.btn_dy);
-     btnClose=Pane(xb3,yb,cfg.btn_dx,cfg.btn_dy);
+     btnAlert=Pane(xb0,yb,bdx,bdy);
+     btnMin=Pane(xb1,yb,bdx,bdy);
+     btnMax=Pane(xb2,yb,bdx,bdy);
+     btnClose=Pane(xb3,yb,bdx,bdy);
      
-     title=Pane(dragBar.x+2,dragBar.y+2,tx-4,cfg.title_dy-4);
+     titleBar=Pane(dragBar.x+bdx/4,2,tx-bdx/2,tdy-4);
     }
   else
     {
@@ -105,7 +102,7 @@ void DragWindow::Shape::layout(Point size)
      btnMin=Empty;
      btnMax=Empty;
      btnClose=Empty;
-     title=Empty;
+     titleBar=Empty;
     }
  }
 
@@ -284,11 +281,11 @@ void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
      art.box(pane,cfg.edge,has_focus?cfg.active:cfg.inactive);
     }
   
-  if( +title )
+  if( +titleBar )
     {
-     Pane pane=art.title(title,has_focus?cfg.titleActiveUp:cfg.titleUp,has_focus?cfg.titleActiveDown:cfg.titleDown);
+     Pane pane=art.title(titleBar,has_focus?cfg.titleActiveUp:cfg.titleUp,has_focus?cfg.titleActiveDown:cfg.titleDown);
      
-     cfg.title_font->text(buf.cut(pane),TextPlace(AlignX::Left,AlignY::Center),Range(title_string),cfg.title);
+     cfg.title_font->text(buf.cut(pane),TextPlace(AlignX::Left,AlignY::Center),Range(title),cfg.title);
     }
   
   if( +btnAlert )
@@ -497,7 +494,7 @@ DragWindow::~DragWindow()
 void DragWindow::createMain(CmdDisplay cmd_display,Point max_size,String title)
  {
   shape.max_button=( cmd_display!=CmdDisplay_Maximized );
-  shape.title_string=title;
+  shape.title=title;
   
   win->createMain(max_size);
   
@@ -507,7 +504,7 @@ void DragWindow::createMain(CmdDisplay cmd_display,Point max_size,String title)
 
 void DragWindow::create(Pane pane,Point max_size,String title)
  {
-  shape.title_string=title;
+  shape.title=title;
   
   win->create(pane,max_size);
   win->show();
@@ -515,7 +512,7 @@ void DragWindow::create(Pane pane,Point max_size,String title)
 
 void DragWindow::create(WinControl *parent,Pane pane,Point max_size,String title)
  {
-  shape.title_string=title;
+  shape.title=title;
   
   win->create(parent,pane,max_size);
   win->show();
@@ -555,18 +552,18 @@ void DragWindow::redraw(bool do_layout)
   
   FrameBuf<DesktopColor> buf(win->getDrawPlane());
   
-  if( !(size<=buf.getSize()) ) 
+  if( size<=buf.getSize() ) 
+    {
+     shape.draw(buf);
+    
+     client.draw(buf.cut(shape.client),(bool)shape.drag_type);
+    
+     win->invalidate(1);
+    }
+  else
     {
      CommonDrawArt(buf).erase(Black);
-    
-     return;
     }
-  
-  shape.draw(buf);
-  
-  client.draw(buf.cut(shape.client),(bool)shape.drag_type);
-  
-  win->invalidate(1);
  }
 
 void DragWindow::captureMouse()
@@ -850,6 +847,7 @@ void DragWindow::setMouseShape(Point point)
      
      case DragType::UpRight   : win->setMouseShape(Mouse_SizeUpRight); break;
      
+     case DragType::Alert     :
      case DragType::Min       : 
      case DragType::Max       : win->setMouseShape(Mouse_Hand); break;
      

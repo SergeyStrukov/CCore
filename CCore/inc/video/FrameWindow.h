@@ -36,6 +36,8 @@ struct Desktop;
 
 class WinControl;
 
+struct UserInput;
+
 class FrameWindow;
 
 /* enum CmdDisplay */
@@ -149,9 +151,148 @@ class WinControl : public MemBase_nocopy
    virtual void move(Pane pane)=0; // screen
  };
 
+/* struct UserInput */
+
+struct UserInput
+ {
+  // keyboard
+  
+  virtual void key(VKey vkey,KeyMod kmod)
+   {
+    Used(vkey);
+    Used(kmod);
+    
+    // do nothing
+   }
+  
+  virtual void key(VKey vkey,KeyMod kmod,unsigned repeat)
+   {
+    for(; repeat ;repeat--) key(vkey,kmod);
+   }
+  
+  virtual void keyUp(VKey vkey,KeyMod kmod)
+   {
+    Used(vkey);
+    Used(kmod);
+    
+    // do nothing
+   }
+  
+  virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
+   {
+    for(; repeat ;repeat--) keyUp(vkey,kmod);
+   }
+  
+  // character
+  
+  virtual void putch(char ch)
+   {
+    Used(ch);
+    
+    // do nothing
+   }
+  
+  virtual void putch(char ch,unsigned repeat)
+   {
+    for(; repeat ;repeat--) putch(ch);
+   }
+  
+  virtual void putchAlt(char ch)
+   {
+    Used(ch);
+    
+    // do nothing
+   }
+  
+  virtual void putchAlt(char ch,unsigned repeat)
+   {
+    for(; repeat ;repeat--) putchAlt(ch);
+   }
+  
+  // mouse
+  
+  virtual void clickLeft(Point point,MouseKey mkey)
+   {
+    Used(point);
+    Used(mkey);
+    
+    // do nothing
+   }
+  
+  virtual void upLeft(Point point,MouseKey mkey)
+   {
+    Used(point);
+    Used(mkey);
+    
+    // do nothing
+   }
+
+  virtual void dclickLeft(Point point,MouseKey mkey)
+   {
+    Used(point);
+    Used(mkey);
+    
+    // do nothing
+   }
+  
+  virtual void clickRight(Point point,MouseKey mkey)
+   {
+    Used(point);
+    Used(mkey);
+    
+    // do nothing
+   }
+  
+  virtual void upRight(Point point,MouseKey mkey)
+   {
+    Used(point);
+    Used(mkey);
+    
+    // do nothing
+   }
+  
+  virtual void dclickRight(Point point,MouseKey mkey)
+   {
+    Used(point);
+    Used(mkey);
+    
+    // do nothing
+   }
+  
+  virtual void move(Point point,MouseKey mkey)
+   {
+    Used(point);
+    Used(mkey);
+    
+    // do nothing
+   }
+  
+  virtual void hover(Point point,MouseKey mkey)
+   {
+    Used(point);
+    Used(mkey);
+    
+    // do nothing
+   }
+  
+  virtual void leave()
+   {
+    // do nothing
+   }
+  
+  virtual void wheel(Point point,MouseKey mkey,Coord delta)
+   {
+    Used(point);
+    Used(mkey);
+    Used(delta);
+    
+    // do nothing
+   }
+ };
+
 /* class FrameWindow */
 
-class FrameWindow : public MemBase_nocopy
+class FrameWindow : public MemBase_nocopy , public UserInput
  {
   protected:
    
@@ -201,137 +342,7 @@ class FrameWindow : public MemBase_nocopy
      // do nothing
     }
    
-   virtual void key(VKey vkey,KeyMod kmod)
-    {
-     Used(vkey);
-     Used(kmod);
-     
-     // do nothing
-    }
-   
-   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat)
-    {
-     for(; repeat ;repeat--) key(vkey,kmod);
-    }
-   
-   virtual void keyUp(VKey vkey,KeyMod kmod)
-    {
-     Used(vkey);
-     Used(kmod);
-     
-     // do nothing
-    }
-   
-   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
-    {
-     for(; repeat ;repeat--) keyUp(vkey,kmod);
-    }
-   
-   // character
-   
-   virtual void putch(char ch)
-    {
-     Used(ch);
-     
-     // do nothing
-    }
-   
-   virtual void putch(char ch,unsigned repeat)
-    {
-     for(; repeat ;repeat--) putch(ch);
-    }
-   
-   virtual void putchAlt(char ch)
-    {
-     Used(ch);
-     
-     // do nothing
-    }
-   
-   virtual void putchAlt(char ch,unsigned repeat)
-    {
-     for(; repeat ;repeat--) putchAlt(ch);
-    }
-   
    // mouse
-   
-   virtual void clickLeft(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void upLeft(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
- 
-   virtual void dclickLeft(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void clickRight(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void upRight(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void dclickRight(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void move(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void hover(Point point,MouseKey mkey)
-    {
-     Used(point);
-     Used(mkey);
-     
-     // do nothing
-    }
-   
-   virtual void leave()
-    {
-     // do nothing
-    }
-   
-   virtual void wheel(Point point,MouseKey mkey,Coord delta)
-    {
-     Used(point);
-     Used(mkey);
-     Used(delta);
-     
-     // do nothing
-    }
  
    virtual void setMouseShape(Point point)
     {
