@@ -200,7 +200,7 @@ class DragWindow : public FrameWindow
        Coord title_dy  = 32 ;
        
        Coord btn_dx    = 32 ;
-       Coord btn_dy    = 28 ;
+       Coord btn_dy    = 30 ;
        
        Coord min_dy    =  3 ;
        Coord alert_dx  =  2 ;
@@ -211,11 +211,12 @@ class DragWindow : public FrameWindow
        ColorName accentHilight   =     Green ;
        ColorName accentDrag      =       Red ;
        
-       ColorName active          = RGBColor(MedClr,MedClr,MaxClr) ;
+       ColorName active          = RGBColor(128,128,255) ;
        ColorName inactive        =    Silver ;
        
        ColorName btnFace         = SteelBlue ;
        ColorName btnFaceHilight  =     Green ;
+       ColorName btnFaceDown     =      Blue ;
        ColorName btnFaceClose    =   DarkRed ;
        ColorName btnEdge         =     Black ;
        ColorName btnPict         =     White ;
@@ -224,8 +225,8 @@ class DragWindow : public FrameWindow
        ColorName titleUp         =      Gray ;
        ColorName titleDown       =      Snow ;
        
-       ColorName titleActiveUp   = RGBColor(0,0,MedClr) ;
-       ColorName titleActiveDown = RGBColor(200,200,MaxClr) ;
+       ColorName titleActiveUp   = RGBColor(0,0,128) ;
+       ColorName titleActiveDown = RGBColor(200,200,128) ;
        
        ColorName alert           =       Red ;
        ColorName noAlert         =    Silver ;
