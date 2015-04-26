@@ -1,0 +1,7 @@
+/* Roadmap.txt */
+
+1) 1.09 -- the last of 1.xx series.
+
+2) 2.xx --  C++14 based, not backward compartible, GUI development support.
+
+3) 3.xx -- C++17 based (concepts), not backward compartible, expected to be the final series.

@@ -10,8 +10,9 @@ video/FrameWindow.h
 video/FrameBuf.h
 video/Desktop.h
 video/ApplicationBase.h
+...
 
-  support for the GUI interface programming.
+  support for the GUI interface programming (ongoing development).
 
 TickTimer.h
 
