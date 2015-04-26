@@ -754,6 +754,15 @@ class WindowsControl : public WinControl
     {
      switch( message )
        {
+        case Win32::WM_GetMinMaxInfo :
+         {
+          Win32::MinMaxInfo *info=(Win32::MinMaxInfo *)lParam;
+          
+          Replace_min<int>(info->max_size.x,max_size.x);
+          Replace_min<int>(info->max_size.y,max_size.y);
+         }
+        return 0;
+        
         case Win32::WM_NcCreate :
          {
           hWnd=hWnd_;
@@ -788,11 +797,11 @@ class WindowsControl : public WinControl
         
         case Win32::WM_Paint :
          {
-          token=0;
-          
           WindowPaint wp(hWnd);
 
           if( !buf_dirty ) buf.draw(wp.getGD(),wp.getPane());
+          
+          frame->paintDone(Replace_null(token));
          }
         return 0;
         
@@ -1318,7 +1327,7 @@ class WindowsControl : public WinControl
    
    virtual void invalidate(Pane pane,unsigned token_)
     {
-     token=token_;
+     token|=token_;
      
      Win32::Rectangle rect;
      
@@ -1335,7 +1344,7 @@ class WindowsControl : public WinControl
    
    virtual void invalidate(unsigned token_)
     {
-     token=token_;
+     token|=token_;
      
      Win32::InvalidateRect(hWnd,0,true); // ignore error
      
@@ -1437,7 +1446,9 @@ class WindowsControl : public WinControl
      
      GuardPane(format,pane,max_size);
      
-     SysGuard(format, Win32::MoveWindow(hWnd,pane.x,pane.y,pane.dx,pane.dy,true) ); 
+     //SysGuard(format, Win32::MoveWindow(hWnd,pane.x,pane.y,pane.dx,pane.dy,true) );
+     
+     SysGuard(format, Win32::SetWindowPos(hWnd,(Win32::HWindow)0,pane.x,pane.y,pane.dx,pane.dy,Win32::WindowPos_NoZOrder|Win32::WindowPos_NoCopyBits|Win32::WindowPos_NoRedraw|Win32::WindowPos_DeferErase) );
     }
  };
 

@@ -278,6 +278,19 @@ class DragWindow : public FrameWindow
      
      explicit Shape(Config &cfg_) : cfg(cfg_) {}
      
+     void reset(String title_,bool max_button_)
+      {
+       has_focus=false;
+       max_button=max_button_;
+       
+       drag_type=DragType::None;
+       hilight=DragType::None;
+       btn_type=DragType::None;
+       alert_type=AlertType::No;
+       
+       title=title_;
+      }
+     
      void layout(Point size);
      
      class DrawArt;
@@ -293,12 +306,15 @@ class DragWindow : public FrameWindow
    
    DragClient &client;
    
+   DragClient *alert_client;
+   
    Point drag_from;
    
    Point size;
    
    bool client_enter = false ;
    bool client_capture = false ;
+   bool delay_draw = false ;
    
   private: 
    
@@ -308,8 +324,6 @@ class DragWindow : public FrameWindow
 
    void startDrag(Point point,DragType drag_type);
    
-   void dragTo_(Point point);
-   
    void dragTo(Point point);
    
    void endDrag(Point point);
@@ -318,9 +332,16 @@ class DragWindow : public FrameWindow
    
    bool forwardKeyUp(VKey vkey,KeyMod kmod,unsigned repeat=1);
    
+   DragClient & getClient()
+    {
+     if( alert_client && shape.alert_type==AlertType::Opened ) return *alert_client;
+     
+     return client;
+    }
+   
   public:
   
-   DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client);
+   DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client,DragClient *alert_client=0);
    
    virtual ~DragWindow();
    
@@ -380,6 +401,16 @@ class DragWindow : public FrameWindow
      redraw();
     }
    
+   void alert()
+    {
+     if( !(bool)shape.alert_type )
+       {
+        shape.alert_type=AlertType::Closed;
+        
+        redraw();
+       }
+    }
+   
    // base
    
    virtual void alive();
@@ -387,6 +418,8 @@ class DragWindow : public FrameWindow
    virtual void dead();
    
    virtual void setSize(Point size,bool buf_dirty);
+   
+   virtual void paintDone(unsigned token);
    
    // keyboard
    

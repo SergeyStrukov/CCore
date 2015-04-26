@@ -330,6 +330,13 @@ class FrameWindow : public MemBase_nocopy , public UserInput
      // do nothing
     }
    
+   virtual void paintDone(unsigned token)
+    {
+     Used(token);
+     
+     // do nothing
+    }
+   
    // keyboard
    
    virtual void gainFocus()

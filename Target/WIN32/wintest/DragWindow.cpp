@@ -402,7 +402,12 @@ void DragWindow::replace(Pane place,Point delta,DragType drag_type)
     {
      Pane screen=Extent(Null,desktop->getScreenSize());
     
-     if( +Inf(place,screen) ) win->move(place);
+     if( +Inf(place,screen) ) 
+       {
+        win->move(place);
+        
+        win->invalidate(1);
+       }
     }
  }
 
@@ -426,7 +431,7 @@ void DragWindow::startDrag(Point point,DragType drag_type)
   redraw();
  }
 
-void DragWindow::dragTo_(Point point)
+void DragWindow::dragTo(Point point)
  {
   Pane place=win->getPlacement();
   Point delta=Diff(drag_from,point+place.getBase());
@@ -434,16 +439,9 @@ void DragWindow::dragTo_(Point point)
   replace(place,delta,shape.drag_type);
  }
 
-void DragWindow::dragTo(Point point)
- {
-  if( win->getToken() ) return;
-  
-  dragTo_(point);
- }
-
 void DragWindow::endDrag(Point point)
  {
-  dragTo_(point);
+  dragTo(point);
   
   if( !client_capture ) win->releaseMouse();
   
@@ -504,14 +502,17 @@ bool DragWindow::forwardKeyUp(VKey vkey,KeyMod kmod,unsigned)
     }
  }
 
-DragWindow::DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client_)
+DragWindow::DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client_,DragClient *alert_client_)
  : FrameWindow(desktop),
    shape(cfg),
    client(client_),
+   alert_client(alert_client_),
    input(this),
    connector_updateConfig(this,&DragWindow::updateConfig,shape.cfg.update)
  {
   client_.win=this;
+  
+  if( alert_client_ ) alert_client_->win=this;
  }
 
 DragWindow::~DragWindow()
@@ -522,8 +523,7 @@ DragWindow::~DragWindow()
 
 void DragWindow::createMain(CmdDisplay cmd_display,Point max_size,String title)
  {
-  shape.max_button=( cmd_display!=CmdDisplay_Maximized );
-  shape.title=title;
+  shape.reset(title, cmd_display!=CmdDisplay_Maximized );
   
   win->createMain(max_size);
   
@@ -533,7 +533,7 @@ void DragWindow::createMain(CmdDisplay cmd_display,Point max_size,String title)
 
 void DragWindow::create(Pane pane,Point max_size,String title)
  {
-  shape.title=title;
+  shape.reset(title,true);
   
   win->create(pane,max_size);
   win->show();
@@ -541,7 +541,7 @@ void DragWindow::create(Pane pane,Point max_size,String title)
 
 void DragWindow::create(WinControl *parent,Pane pane,Point max_size,String title)
  {
-  shape.title=title;
+  shape.reset(title,true);
   
   win->create(parent,pane,max_size);
   win->show();
@@ -576,7 +576,18 @@ void DragWindow::redraw(bool do_layout)
     {
      shape.layout(size);
     
-     client.layout(shape.client.getSize());
+     auto client_size=shape.client.getSize();
+     
+     client.layout(client_size);
+     
+     if( alert_client ) alert_client->layout(client_size); 
+    }
+  
+  if( win->getToken() ) 
+    {
+     delay_draw=true;
+     
+     return;
     }
   
   FrameBuf<DesktopColor> buf(win->getDrawPlane());
@@ -585,7 +596,7 @@ void DragWindow::redraw(bool do_layout)
     {
      shape.draw(buf);
     
-     client.draw(buf.cut(shape.client),(bool)shape.drag_type);
+     getClient().draw(buf.cut(shape.client),(bool)shape.drag_type);
     
      win->invalidate(1);
     }
@@ -617,11 +628,15 @@ void DragWindow::alive()
   win->trackMouseLeave();
   
   client.alive();
+  
+  if( alert_client ) alert_client->alive();
  }
 
 void DragWindow::dead()
  {
   client.dead();
+  
+  if( alert_client ) alert_client->dead();
  }
 
 void DragWindow::setSize(Point size_,bool)
@@ -632,9 +647,25 @@ void DragWindow::setSize(Point size_,bool)
   
   shape.layout(size_);
   
-  client.layout(shape.client.getSize());
+  auto client_size=shape.client.getSize();
+  
+  client.layout(client_size);
+  
+  if( alert_client ) alert_client->layout(client_size); 
   
   redraw();
+ }
+
+void DragWindow::paintDone(unsigned token)
+ {
+  Used(token);
+  
+  if( delay_draw )
+    {
+     delay_draw=false;
+     
+     redraw();
+    }
  }
 
  // keyboard
@@ -655,44 +686,44 @@ void DragWindow::looseFocus()
 
 void DragWindow::key(VKey vkey,KeyMod kmod)
  {
-  if( !forwardKey(vkey,kmod) ) client.key(vkey,kmod);
+  if( !forwardKey(vkey,kmod) ) getClient().key(vkey,kmod);
  }
 
 void DragWindow::key(VKey vkey,KeyMod kmod,unsigned repeat)
  {
-  if( !forwardKey(vkey,kmod,repeat) ) client.key(vkey,kmod,repeat);
+  if( !forwardKey(vkey,kmod,repeat) ) getClient().key(vkey,kmod,repeat);
  }
 
 void DragWindow::keyUp(VKey vkey,KeyMod kmod)
  {
-  if( !forwardKeyUp(vkey,kmod) ) client.keyUp(vkey,kmod);
+  if( !forwardKeyUp(vkey,kmod) ) getClient().keyUp(vkey,kmod);
  }
 
 void DragWindow::keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
  {
-  if( !forwardKeyUp(vkey,kmod,repeat) ) client.keyUp(vkey,kmod,repeat);
+  if( !forwardKeyUp(vkey,kmod,repeat) ) getClient().keyUp(vkey,kmod,repeat);
  }
 
  // character
 
 void DragWindow::putch(char ch)
  {
-  client.putch(ch);
+  getClient().putch(ch);
  }
 
 void DragWindow::putch(char ch,unsigned repeat)
  {
-  client.putch(ch,repeat);
+  getClient().putch(ch,repeat);
  }
 
 void DragWindow::putchAlt(char ch)
  {
-  client.putchAlt(ch);
+  getClient().putchAlt(ch);
  }
 
 void DragWindow::putchAlt(char ch,unsigned repeat)
  {
-  client.putchAlt(ch,repeat);
+  getClient().putchAlt(ch,repeat);
  }
 
  // mouse
@@ -705,16 +736,25 @@ void DragWindow::clickLeft(Point point,MouseKey mkey)
       {
        if( client_capture || shape.client.contains(point) )
          {
-          client.clickLeft(point-shape.client.getBase(),mkey);
+          getClient().clickLeft(point-shape.client.getBase(),mkey);
          }
       }
      break;
    
-     case DragType::Min   : minimize(); break;
+     case DragType::Alert : 
+      {
+       if( (bool)shape.alert_type )
+         {
+          shape.alert_type=(shape.alert_type==AlertType::Closed)?AlertType::Opened:AlertType::Closed;
+         
+          redraw();
+         }
+      }
+     break;
      
-     case DragType::Max   : maximize(); break;
-     
-     case DragType::Close : destroy(); break;
+     case DragType::Min   : 
+     case DragType::Max   : 
+     case DragType::Close : shape.btn_type=drag_type; redraw(); break;
      
      default: if( !(bool)shape.drag_type ) startDrag(point,drag_type);
     }
@@ -729,9 +769,28 @@ void DragWindow::upLeft(Point point,MouseKey mkey)
      return;
     }
   
+  if( (bool)shape.btn_type )
+    {
+     auto type=Replace(shape.btn_type,DragType::None);
+    
+     if( shape.dragTest(point)==type )
+       {
+        switch( type )
+          {
+           case DragType::Min   : minimize(); break;
+           
+           case DragType::Max   : maximize(); break;
+           
+           case DragType::Close : destroy(); break;
+          }
+       }
+     
+     redraw();
+    }
+  
   if( client_capture || shape.client.contains(point) )
     {
-     client.upLeft(point-shape.client.getBase(),mkey);
+     getClient().upLeft(point-shape.client.getBase(),mkey);
     }
  }
 
@@ -741,7 +800,7 @@ void DragWindow::dclickLeft(Point point,MouseKey mkey)
   
   if( client_capture || shape.client.contains(point) )
     {
-     client.dclickLeft(point-shape.client.getBase(),mkey);
+     getClient().dclickLeft(point-shape.client.getBase(),mkey);
     }
  }
 
@@ -751,7 +810,7 @@ void DragWindow::clickRight(Point point,MouseKey mkey)
   
   if( client_capture || shape.client.contains(point) )
     {
-     client.clickRight(point-shape.client.getBase(),mkey);
+     getClient().clickRight(point-shape.client.getBase(),mkey);
     }
  }
 
@@ -761,7 +820,7 @@ void DragWindow::upRight(Point point,MouseKey mkey)
   
   if( client_capture || shape.client.contains(point) )
     {
-     client.upRight(point-shape.client.getBase(),mkey);
+     getClient().upRight(point-shape.client.getBase(),mkey);
     }
  }
 
@@ -771,7 +830,7 @@ void DragWindow::dclickRight(Point point,MouseKey mkey)
   
   if( client_capture || shape.client.contains(point) )
     {
-     client.dclickRight(point-shape.client.getBase(),mkey);
+     getClient().dclickRight(point-shape.client.getBase(),mkey);
     }
  }
 
@@ -783,6 +842,27 @@ void DragWindow::move(Point point,MouseKey mkey)
        dragTo(point);
      else
        endDrag(point);
+     
+     return;
+    }
+  
+  if( (bool)shape.btn_type )
+    {
+     if( mkey&MouseKey_Left )
+       {
+        if( shape.dragTest(point)!=shape.btn_type )
+          {
+           shape.btn_type=DragType::None;
+          
+           redraw();
+          }
+       }
+     else
+       {
+        shape.btn_type=DragType::None;
+        
+        redraw();
+       }
      
      return;
     }
@@ -802,17 +882,17 @@ void DragWindow::move(Point point,MouseKey mkey)
     {
      client_enter=true;
      
-     client.move(point-shape.client.getBase(),mkey);
+     getClient().move(point-shape.client.getBase(),mkey);
     }
   else
     {
-     if( client_capture ) client.move(point-shape.client.getBase(),mkey);
+     if( client_capture ) getClient().move(point-shape.client.getBase(),mkey);
       
      if( client_enter )
        {
         client_enter=false;
         
-        client.leave();
+        getClient().leave();
        }
     }
  }
@@ -823,15 +903,16 @@ void DragWindow::hover(Point point,MouseKey mkey)
   
   if( client_capture || shape.client.contains(point) )
     {
-     client.hover(point-shape.client.getBase(),mkey);
+     getClient().hover(point-shape.client.getBase(),mkey);
     }
  }
 
 void DragWindow::leave()
  {
-  if( (bool)shape.hilight )
+  if( (bool)shape.hilight || (bool)shape.btn_type )
     {
      shape.hilight=DragType::None;
+     shape.btn_type=DragType::None;
      
      redraw();
     }
@@ -842,7 +923,7 @@ void DragWindow::leave()
     {
      client_enter=false;
      
-     client.leave();
+     getClient().leave();
     }
  }
 
@@ -852,7 +933,7 @@ void DragWindow::wheel(Point point,MouseKey mkey,Coord delta)
   
   if( client_capture || shape.client.contains(point) )
     {
-     client.wheel(point-shape.client.getBase(),mkey,delta);
+     getClient().wheel(point-shape.client.getBase(),mkey,delta);
     }
  }
 
@@ -884,7 +965,7 @@ void DragWindow::setMouseShape(Point point)
       
      case DragType::Bar       : win->setMouseShape(Mouse_SizeAll); break;
      
-     default: win->setMouseShape(client.getMouseShape(point-shape.client.getBase()));
+     default: win->setMouseShape(getClient().getMouseShape(point-shape.client.getBase()));
     }
  }
 

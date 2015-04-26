@@ -1216,6 +1216,8 @@ bool_t WIN32_API GetWindowRect(HWindow hWnd,Rectangle *rect);
 
 bool_t WIN32_API MoveWindow(HWindow hWnd,int x,int y,int dx,int dy,bool_t repaint);
 
+bool_t WIN32_API SetWindowPos(HWindow hWnd,HWindow ins_after,int x,int y,int dx,int dy,unsigned pos_flags);
+
 HCursor WIN32_API SetCursor(HCursor hCursor);
 
 bool_t WIN32_API TrackMouseEvent(TrackMouseDesc *track);
