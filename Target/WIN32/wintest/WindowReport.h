@@ -36,11 +36,43 @@ class WindowReport : public DragClient , public ReportException
   
    struct Config
     {
+     ColorName back = Black ;
+     ColorName text = Green ;
+     ColorName divider = Red ;
+     
+     Font text_font;
+     
+     Config() {}
+     
+     Signal<> update;
     };
    
-  private: 
+  private:
    
-   Config cfg;
+   static const ulen MaxMsgLen = 256 ;
+   static const ulen MaxMsgCount = 100 ;
+   
+   class Store : NoCopy
+    {
+    
+     public:
+    
+      Store();
+      
+      ~Store();
+      
+      PtrLen<char> startMsg();
+      
+      void endMsg(PtrLen<char> rest);
+      
+      void divide();
+    };
+   
+   Config &cfg;
+   
+   Store store;
+   PtrLen<char> buf;
+   bool msg = false ;
   
   private:
   

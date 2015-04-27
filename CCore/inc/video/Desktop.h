@@ -26,6 +26,10 @@ namespace Video {
 
 using DesktopColor = RawColor32 ;
 
+/* functions */
+
+void AbortMsgBox(StrLen) {}
+
 /* classes */
 
 class DefaultDesktopPtr;

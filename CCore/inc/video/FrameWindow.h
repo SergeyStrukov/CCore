@@ -310,6 +310,10 @@ class FrameWindow : public MemBase_nocopy , public UserInput
    
    WinControl * getControl() { return win; }
    
+   bool isAlive() const { return win->isAlive(); }
+   
+   bool isDead() const { return win->isDead(); }
+   
    // base
    
    virtual void alive()
