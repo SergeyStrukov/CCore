@@ -32,6 +32,16 @@ DragClient::~DragClient()
  {
  }
    
+void DragClient::redraw()
+ {
+  win->input.redrawClient();
+ }
+
+void DragClient::redraw(Pane pane)
+ {
+  win->input.redrawClient(pane);
+ }
+
 void DragClient::layout(Point)
  {
  }
@@ -39,6 +49,11 @@ void DragClient::layout(Point)
 void DragClient::draw(FrameBuf<DesktopColor> buf,bool drag_active) const
  {
   buf.erase(drag_active?Gray:Black);
+ }
+
+void DragClient::draw(FrameBuf<DesktopColor> buf,Pane,bool drag_active) const
+ {
+  draw(buf,drag_active);
  }
 
 /* class DragWindow::Shape */
@@ -207,10 +222,22 @@ class DragWindow::Shape::DrawArt : public CommonDrawArt
     }
  };
 
-void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
+void DragWindow::Shape::draw_UpLeft(DrawArt art) const
  {
-  DrawArt art(buf);
+  if( +dragUpLeft )
+    {
+     Pane pane=dragUpLeft;
   
+     art.box(pane,cfg.edge,cfg.frame);
+   
+     ColorName cname=(drag_type==DragType::UpLeft)?cfg.accentDrag:( (hilight==DragType::UpLeft)?cfg.accentHilight:cfg.accent );
+   
+     art.solid(SolidAll,cname,Point(pane.x+1,pane.y+1),Point(pane.x+pane.dx-2,pane.y+1),Point(pane.x+1,pane.y+pane.dy-2));
+    }
+ }
+
+void DragWindow::Shape::draw_Left(DrawArt art) const
+ {
   if( +dragLeft )
     {
      Pane pane=dragLeft;
@@ -223,20 +250,24 @@ void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
      
      art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
     }
-  
-  if( +dragRight )
-    {
-     Pane pane=dragRight;
-    
-     art.boxY(pane,cfg.edge,cfg.frame);
-     
-     Coord delta=cfg.frame_dxy/2;
-     
-     ColorName cname=(drag_type==DragType::Right)?cfg.accentDrag:( (hilight==DragType::Right)?cfg.accentHilight:cfg.accent );
-     
-     art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
-    }
+ }
 
+void DragWindow::Shape::draw_DownLeft(DrawArt art) const
+ {
+  if( +dragDownLeft )
+    {
+     Pane pane=dragDownLeft;
+  
+     art.box(pane,cfg.edge,cfg.frame);
+   
+     ColorName cname=(drag_type==DragType::DownLeft)?cfg.accentDrag:( (hilight==DragType::DownLeft)?cfg.accentHilight:cfg.accent );
+   
+     art.solid(SolidAll,cname,Point(pane.x+1,pane.y+1),Point(pane.x+pane.dx-2,pane.y+pane.dy-2),Point(pane.x+1,pane.y+pane.dy-2));
+    }
+ }
+
+void DragWindow::Shape::draw_Down(DrawArt art) const
+ {
   if( +dragDown )
     {
      Pane pane=dragDown;
@@ -249,29 +280,10 @@ void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
     
      art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+pane.dx-1-delta,pane.y+delta));
     }
-  
-  if( +dragUpLeft )
-    {
-     Pane pane=dragUpLeft;
-  
-     art.box(pane,cfg.edge,cfg.frame);
-   
-     ColorName cname=(drag_type==DragType::UpLeft)?cfg.accentDrag:( (hilight==DragType::UpLeft)?cfg.accentHilight:cfg.accent );
-   
-     art.solid(SolidAll,cname,Point(pane.x+1,pane.y+1),Point(pane.x+pane.dx-2,pane.y+1),Point(pane.x+1,pane.y+pane.dy-2));
-    }
-  
-  if( +dragDownLeft )
-    {
-     Pane pane=dragDownLeft;
-  
-     art.box(pane,cfg.edge,cfg.frame);
-   
-     ColorName cname=(drag_type==DragType::DownLeft)?cfg.accentDrag:( (hilight==DragType::DownLeft)?cfg.accentHilight:cfg.accent );
-   
-     art.solid(SolidAll,cname,Point(pane.x+1,pane.y+1),Point(pane.x+pane.dx-2,pane.y+pane.dy-2),Point(pane.x+1,pane.y+pane.dy-2));
-    }
-  
+ }
+
+void DragWindow::Shape::draw_DownRight(DrawArt art) const
+ {
   if( +dragDownRight )
     {
      Pane pane=dragDownRight;
@@ -282,7 +294,26 @@ void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
    
      art.solid(SolidAll,cname,Point(pane.x+pane.dx-2,pane.y+1),Point(pane.x+1,pane.y+pane.dy-2),Point(pane.x+pane.dx-2,pane.y+pane.dy-2));
     }
-  
+ }
+
+void DragWindow::Shape::draw_Right(DrawArt art) const
+ {
+  if( +dragRight )
+    {
+     Pane pane=dragRight;
+    
+     art.boxY(pane,cfg.edge,cfg.frame);
+     
+     Coord delta=cfg.frame_dxy/2;
+     
+     ColorName cname=(drag_type==DragType::Right)?cfg.accentDrag:( (hilight==DragType::Right)?cfg.accentHilight:cfg.accent );
+     
+     art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
+    }
+ }
+
+void DragWindow::Shape::draw_UpRight(DrawArt art) const
+ {
   if( +dragUpRight )
     {
      Pane pane=dragUpRight;
@@ -293,6 +324,80 @@ void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
    
      art.solid(SolidAll,cname,Point(pane.x+1,pane.y+1),Point(pane.x+pane.dx-2,pane.y+pane.dy-2),Point(pane.x+pane.dx-2,pane.y+1));
     }
+ }
+
+void DragWindow::Shape::draw_Alert(DrawArt art) const
+ {
+  if( +btnAlert )
+    {
+     Pane pane=art.btn(btnAlert, (hilight==DragType::Alert)?cfg.btnFaceHilight:cfg.btnFace ,cfg.btnEdge);
+     
+     ColorName cname=(alert_type==AlertType::No)?cfg.noAlert:( (alert_type==AlertType::Closed)?cfg.alert:cfg.closeAlert );
+        
+     cfg.title_font->text(art.cut(pane),TextPlace(AlignX::Center,AlignY::Center),StrLen("!"),cname);
+    }
+ }
+
+void DragWindow::Shape::draw_Min(DrawArt art) const
+ {
+  if( +btnMin )
+    {
+     ColorName cname=(btn_type==DragType::Min)?cfg.btnFaceDown:( (hilight==DragType::Min)?cfg.btnFaceHilight:cfg.btnFace );
+     
+     Pane pane=art.btn(btnMin,cname,cfg.btnEdge);
+     
+     if( pane.dx>0 && pane.dy>=cfg.min_dy )
+       {
+        art.block(Pane(pane.x,pane.y+pane.dy-cfg.min_dy,pane.dx,cfg.min_dy),cfg.btnPict);
+       }
+    }
+ }
+
+void DragWindow::Shape::draw_Max(DrawArt art) const
+ {
+  if( +btnMax )
+    {
+     ColorName cname=(btn_type==DragType::Max)?cfg.btnFaceDown:( (hilight==DragType::Max)?cfg.btnFaceHilight:cfg.btnFace );
+       
+     Pane pane=art.btn(btnMax,cname,cfg.btnEdge);
+
+     if( pane.dx>0 && pane.dy>=cfg.min_dy )
+       {
+        if( max_button )
+          art.block(pane,cfg.btnPict);
+        else
+          art.block(Pane(pane.x+pane.dx/4,pane.y+pane.dy/4,pane.dx/2,pane.dy/2),cfg.btnPict);
+       }
+    }
+ }
+
+void DragWindow::Shape::draw_Close(DrawArt art) const
+ {
+  if( +btnClose )
+    {
+     ColorName cname=(btn_type==DragType::Close)?cfg.btnFaceDown:( (hilight==DragType::Close)?cfg.btnFaceClose:cfg.btnFace );
+       
+     Pane pane=art.btn(btnClose,cname,cfg.btnEdge);
+     
+     if( +pane )
+       {
+        art.path_smooth(cfg.btnStop,Point(pane.x,pane.y),Point(pane.x+pane.dx-1,pane.y+pane.dy-1));
+        art.path_smooth(cfg.btnStop,Point(pane.x,pane.y+pane.dy-1),Point(pane.x+pane.dx-1,pane.y));
+       } 
+    }
+ }
+
+void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
+ {
+  DrawArt art(buf);
+  
+  draw_UpLeft(art);
+  draw_Left(art);
+  draw_DownLeft(art);
+  draw_Down(art);
+  draw_DownRight(art);
+  draw_Right(art);
+  draw_UpRight(art);
   
   if( +dragBar )
     {
@@ -308,53 +413,29 @@ void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf) const
      cfg.title_font->text(buf.cut(pane),TextPlace(AlignX::Left,AlignY::Center),Range(title),cfg.title);
     }
   
-  if( +btnAlert )
-    {
-     Pane pane=art.btn(btnAlert, (hilight==DragType::Alert)?cfg.btnFaceHilight:cfg.btnFace ,cfg.btnEdge);
-     
-     ColorName cname=(alert_type==AlertType::No)?cfg.noAlert:( (alert_type==AlertType::Closed)?cfg.alert:cfg.closeAlert );
-        
-     cfg.title_font->text(buf.cut(pane),TextPlace(AlignX::Center,AlignY::Center),StrLen("!"),cname);
-    }
+  draw_Alert(art);
+  draw_Min(art);
+  draw_Max(art);
+  draw_Close(art);
+ }
 
-  if( +btnMin )
-    {
-     ColorName cname=(btn_type==DragType::Min)?cfg.btnFaceDown:( (hilight==DragType::Min)?cfg.btnFaceHilight:cfg.btnFace );
-     
-     Pane pane=art.btn(btnMin,cname,cfg.btnEdge);
-     
-     if( pane.dx>0 && pane.dy>=cfg.min_dy )
-       {
-        art.block(Pane(pane.x,pane.y+pane.dy-cfg.min_dy,pane.dx,cfg.min_dy),cfg.btnPict);
-       }
-    }
+void DragWindow::Shape::draw(FrameBuf<DesktopColor> buf,DragType drag_type) const
+ {
+  DrawArt art(buf);
   
-  if( +btnMax )
+  switch( drag_type )
     {
-     ColorName cname=(btn_type==DragType::Max)?cfg.btnFaceDown:( (hilight==DragType::Max)?cfg.btnFaceHilight:cfg.btnFace );
-       
-     Pane pane=art.btn(btnMax,cname,cfg.btnEdge);
-
-     if( pane.dx>0 && pane.dy>=cfg.min_dy )
-       {
-        if( max_button )
-          art.block(pane,cfg.btnPict);
-        else
-          art.block(Pane(pane.x+pane.dx/4,pane.y+pane.dy/4,pane.dx/2,pane.dy/2),cfg.btnPict);
-       }
-    }
-  
-  if( +btnClose )
-    {
-     ColorName cname=(btn_type==DragType::Close)?cfg.btnFaceDown:( (hilight==DragType::Close)?cfg.btnFaceClose:cfg.btnFace );
-       
-     Pane pane=art.btn(btnClose,cname,cfg.btnEdge);
-     
-     if( +pane )
-       {
-        art.path_smooth(cfg.btnStop,Point(pane.x,pane.y),Point(pane.x+pane.dx-1,pane.y+pane.dy-1));
-        art.path_smooth(cfg.btnStop,Point(pane.x,pane.y+pane.dy-1),Point(pane.x+pane.dx-1,pane.y));
-       } 
+     case DragType::UpLeft    : draw_UpLeft(art); break; 
+     case DragType::Left      : draw_Left(art); break;
+     case DragType::DownLeft  : draw_DownLeft(art); break;
+     case DragType::Down      : draw_Down(art); break;
+     case DragType::DownRight : draw_DownRight(art); break; 
+     case DragType::Right     : draw_Right(art); break;
+     case DragType::UpRight   : draw_UpRight(art); break;
+     case DragType::Alert     : draw_Alert(art); break;
+     case DragType::Min       : draw_Min(art); break;
+     case DragType::Max       : draw_Max(art); break;
+     case DragType::Close     : draw_Close(art); break;
     }
  }
 
@@ -502,6 +583,56 @@ bool DragWindow::forwardKeyUp(VKey vkey,KeyMod kmod,unsigned)
     }
  }
 
+void DragWindow::redrawFrame()
+ {
+  if( win->isDead() ) return;
+  
+  if( win->getToken() ) 
+    {
+     delay_draw=true;
+     
+     return;
+    }
+  
+  FrameBuf<DesktopColor> buf(win->getDrawPlane());
+  
+  if( size<=buf.getSize() ) 
+    {
+     shape.draw(buf);
+    
+     win->invalidate(1);
+    }
+  else
+    {
+     CommonDrawArt(buf).erase(Black);
+    }
+ }
+
+void DragWindow::redrawFrame(DragType drag_type)
+ {
+  if( win->isDead() ) return;
+  
+  if( win->getToken() ) 
+    {
+     delay_draw=true;
+     
+     return;
+    }
+  
+  FrameBuf<DesktopColor> buf(win->getDrawPlane());
+  
+  if( size<=buf.getSize() ) 
+    {
+     shape.draw(buf,drag_type);
+    
+     win->invalidate(1);
+    }
+  else
+    {
+     CommonDrawArt(buf).erase(Black);
+    }
+ }
+
 DragWindow::DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client_,DragClient *alert_client_)
  : FrameWindow(desktop),
    shape(cfg),
@@ -608,6 +739,56 @@ void DragWindow::redraw(bool do_layout)
     }
  }
 
+void DragWindow::redrawClient()
+ {
+  if( win->isDead() ) return;
+  
+  if( win->getToken() ) 
+    {
+     delay_draw=true;
+     
+     return;
+    }
+  
+  FrameBuf<DesktopColor> buf(win->getDrawPlane());
+  
+  if( size<=buf.getSize() ) 
+    {
+     getClient().draw(buf.cut(shape.client),(bool)shape.drag_type);
+    
+     win->invalidate(shape.client,1);
+    }
+  else
+    {
+     CommonDrawArt(buf).erase(Black);
+    }
+ }
+
+void DragWindow::redrawClient(Pane pane)
+ {
+  if( win->isDead() ) return;
+  
+  if( win->getToken() ) 
+    {
+     delay_draw=true;
+     
+     return;
+    }
+  
+  FrameBuf<DesktopColor> buf(win->getDrawPlane());
+  
+  if( size<=buf.getSize() ) 
+    {
+     getClient().draw(buf.cut(shape.client),pane,(bool)shape.drag_type);
+    
+     win->invalidate(Inner(shape.client,pane),1);
+    }
+  else
+    {
+     CommonDrawArt(buf).erase(Black);
+    }
+ }
+
 void DragWindow::captureMouse()
  {
   client_capture=true;
@@ -641,13 +822,14 @@ void DragWindow::dead()
   if( alert_client ) alert_client->dead();
  }
 
-void DragWindow::setSize(Point size_,bool)
+void DragWindow::setSize(Point size_,bool buf_dirty)
  {
-  if( size==size_ ) return;
-  
-  size=size_;
-  
-  redraw(true);
+  if( size!=size_ || buf_dirty )
+    {
+     size=size_;
+    
+     redraw(true);
+    }
  }
 
 void DragWindow::paintDone(unsigned)
@@ -666,14 +848,14 @@ void DragWindow::gainFocus()
  {
   shape.has_focus=true;
   
-  redraw();
+  redrawFrame();
  }
 
 void DragWindow::looseFocus()
  {
   shape.has_focus=false;
   
-  redraw();
+  redrawFrame();
  }
 
 void DragWindow::key(VKey vkey,KeyMod kmod)
@@ -746,7 +928,7 @@ void DragWindow::clickLeft(Point point,MouseKey mkey)
      
      case DragType::Min   : 
      case DragType::Max   : 
-     case DragType::Close : shape.btn_type=drag_type; redraw(); break;
+     case DragType::Close : shape.btn_type=drag_type; redrawFrame(drag_type); break;
      
      default: if( !(bool)shape.drag_type ) startDrag(point,drag_type);
     }
@@ -777,7 +959,7 @@ void DragWindow::upLeft(Point point,MouseKey mkey)
           }
        }
      
-     redraw();
+     redrawFrame(type);
     }
   
   if( client_capture || shape.client.contains(point) )
@@ -844,16 +1026,16 @@ void DragWindow::move(Point point,MouseKey mkey)
        {
         if( shape.dragTest(point)!=shape.btn_type )
           {
-           shape.btn_type=DragType::None;
+           auto type=Replace(shape.btn_type,DragType::None);
           
-           redraw();
+           redrawFrame(type);
           }
        }
      else
        {
-        shape.btn_type=DragType::None;
+        auto type=Replace(shape.btn_type,DragType::None);
         
-        redraw();
+        redrawFrame(type);
        }
      
      return;
@@ -865,9 +1047,10 @@ void DragWindow::move(Point point,MouseKey mkey)
   
   if( drag_type!=shape.hilight )
     {
-     shape.hilight=drag_type;
+     auto type=Replace(shape.hilight,drag_type);
      
-     redraw();
+     redrawFrame(type);
+     redrawFrame(drag_type);
     }
   
   if( shape.client.contains(point) )
@@ -901,12 +1084,18 @@ void DragWindow::hover(Point point,MouseKey mkey)
 
 void DragWindow::leave()
  {
-  if( (bool)shape.hilight || (bool)shape.btn_type )
+  if( (bool)shape.hilight  )
     {
-     shape.hilight=DragType::None;
-     shape.btn_type=DragType::None;
+     auto type=Replace(shape.hilight,DragType::None);
      
-     redraw();
+     redrawFrame(type);
+    }
+  
+  if( (bool)shape.btn_type )
+    {
+     auto type=Replace(shape.btn_type,DragType::None);
+     
+     redrawFrame(type);
     }
   
   if( (bool)shape.drag_type ) return;

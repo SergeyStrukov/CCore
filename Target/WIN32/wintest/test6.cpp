@@ -173,8 +173,7 @@ class Application : public ApplicationBase
   public: 
    
    explicit Application(CmdDisplay cmd_display_)
-    : ApplicationBase(50_msec),
-      cmd_display(cmd_display_),
+    : cmd_display(cmd_display_),
       report(cfg.report_cfg),
       client(cfg.drag_cfg),
       main_win(desktop,cfg.drag_cfg,client,&report)

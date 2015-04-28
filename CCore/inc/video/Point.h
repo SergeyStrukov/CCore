@@ -310,6 +310,10 @@ inline Pane Extent(Point base,Coord dx,Coord dy) { return Pane(base.x,base.y,dx,
 
 inline Pane Extent(Point base,Point size) { return Pane(base.x,base.y,size.x,size.y); }
 
+inline Pane operator + (Pane pane,Point point) { return Extent(pane.getBase()+point,pane.getSize()); }
+
+inline Pane Inner(Pane pane,Pane subpane) { return Inf(subpane+pane.getBase(),pane); }
+
 } // namespace Video
 } // namespace CCore
  

@@ -185,7 +185,7 @@ void WindowReport::setLines()
      else
        off=0;
      
-     win->redraw();
+     redraw();
     }
  }
 
@@ -316,7 +316,7 @@ void WindowReport::key(VKey vkey,KeyMod,unsigned repeat)
          {
           if( off>repeat ) off-=repeat; else off=0;
           
-          win->redraw();
+          redraw();
          }
       }
      break;
@@ -329,13 +329,13 @@ void WindowReport::key(VKey vkey,KeyMod,unsigned repeat)
          {
           off+=repeat;
           
-          win->redraw();
+          redraw();
          }
        else if( off+1<lines )
          {
           off=lines-1;
          
-          win->redraw();
+          redraw();
          }
       }
      break; 
@@ -344,7 +344,7 @@ void WindowReport::key(VKey vkey,KeyMod,unsigned repeat)
       {
        off=0;
        
-       win->redraw();
+       redraw();
       }
      break; 
       
@@ -355,7 +355,7 @@ void WindowReport::key(VKey vkey,KeyMod,unsigned repeat)
        else
          off=0;
        
-       win->redraw();
+       redraw();
       }
      break; 
     }

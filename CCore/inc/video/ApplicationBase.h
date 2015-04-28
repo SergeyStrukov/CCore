@@ -53,7 +53,7 @@ class ApplicationBase : public DeferCallQueue
    
   public: 
    
-   explicit ApplicationBase(MSec tick_period,Desktop *desktop=DefaultDesktop);
+   explicit ApplicationBase(MSec tick_period=40_msec,Desktop *desktop=DefaultDesktop);
    
    ~ApplicationBase();
    

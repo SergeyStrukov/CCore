@@ -158,11 +158,19 @@ class DragClient : NoCopy , public UserInput
    
    virtual ~DragClient();
    
+   // methods
+   
+   void redraw();
+   
+   void redraw(Pane pane);
+   
    // drawing
    
    virtual void layout(Point size);
    
    virtual void draw(FrameBuf<DesktopColor> buf,bool drag_active) const;
+   
+   virtual void draw(FrameBuf<DesktopColor> buf,Pane pane,bool drag_active) const;
    
    // base
    
@@ -295,7 +303,31 @@ class DragWindow : public FrameWindow
      
      class DrawArt;
      
+     void draw_UpLeft(DrawArt art) const;
+     
+     void draw_Left(DrawArt art) const;
+     
+     void draw_DownLeft(DrawArt art) const;
+     
+     void draw_Down(DrawArt art) const;
+     
+     void draw_DownRight(DrawArt art) const;
+     
+     void draw_Right(DrawArt art) const;
+     
+     void draw_UpRight(DrawArt art) const;
+     
+     void draw_Alert(DrawArt art) const;
+     
+     void draw_Min(DrawArt art) const;
+     
+     void draw_Max(DrawArt art) const;
+     
+     void draw_Close(DrawArt art) const;
+     
      void draw(FrameBuf<DesktopColor> buf) const;
+     
+     void draw(FrameBuf<DesktopColor> buf,DragType drag_type) const;
      
      DragType dragTest(Point point) const;
     };
@@ -339,6 +371,10 @@ class DragWindow : public FrameWindow
      return client;
     }
    
+   void redrawFrame();
+   
+   void redrawFrame(DragType drag_type);
+   
   public:
   
    DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client,DragClient *alert_client=0);
@@ -358,6 +394,10 @@ class DragWindow : public FrameWindow
      public:
 
       void redraw(bool do_layout=false) { try_post(&DragWindow::redraw,do_layout); }
+      
+      void redrawClient() { try_post(&DragWindow::redrawClient); }
+      
+      void redrawClient(Pane pane) { try_post(&DragWindow::redrawClient,pane); }
     };
    
    Input input;
@@ -387,6 +427,10 @@ class DragWindow : public FrameWindow
    void maximize();
    
    void redraw(bool do_layout=false);
+   
+   void redrawClient();
+   
+   void redrawClient(Pane pane);
    
    unsigned getToken() { return win->getToken(); }
    

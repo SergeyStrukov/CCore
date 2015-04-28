@@ -227,6 +227,8 @@ class CommonDrawArt
   
    CommonDrawArt(const FrameBuf<DesktopColor> &buf_) : buf(buf_) {}
    
+   FrameBuf<DesktopColor> cut(Pane pane) const { return buf.cut(pane); }
+   
    // simple
    
    void pixel(Point p,DesktopColor color);
