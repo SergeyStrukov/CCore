@@ -398,16 +398,20 @@ class DragWindow : public FrameWindow
     {
      shape.title=title;
      
-     if( isAlive() ) redraw();
+     redraw();
     }
    
    void alert()
     {
-     if( !(bool)shape.alert_type )
+     if( shape.alert_type==AlertType::No )
        {
         shape.alert_type=AlertType::Closed;
         
-        if( isAlive() ) redraw();
+        redraw();
+       }
+     else if( shape.alert_type==AlertType::Opened )
+       {
+        redraw();
        }
     }
    

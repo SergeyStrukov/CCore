@@ -49,12 +49,43 @@ class WindowReport : public DragClient , public ReportException
    
   private:
    
-   static const ulen MaxMsgLen = 256 ;
+   static const ulen MaxMsgLen = Align(256) ;
    static const ulen MaxMsgCount = 100 ;
    
    class Store : NoCopy
     {
-    
+      struct Header
+       {
+        Header *next;
+        ulen len;
+        bool done;
+        bool divide; // after this message
+       };
+      
+      static const ulen Delta = Align(sizeof (Header)) ;
+      
+      static StrLen GetStr(Header *ptr) { return StrLen(PlaceAt(ptr)+Delta,ptr->len); }
+      
+      static PtrLen<char> GetBuf(Header *ptr) { return PtrLen<char>(PlaceAt(ptr)+Delta,ptr->len); }
+      
+      static void * GetNext(Header *ptr) { return PlaceAt(ptr)+Delta+Align(ptr->len); }
+      
+     private:
+      
+      void *mem;
+      void *lim;
+      
+      Header *head;
+      Header *tail;
+      
+     private:
+     
+      Header * try_alloc();
+      
+      Header * alloc();
+      
+      void free();
+      
      public:
     
       Store();
@@ -66,19 +97,40 @@ class WindowReport : public DragClient , public ReportException
       void endMsg(PtrLen<char> rest);
       
       void divide();
+      
+      template <class Func>
+      void apply(Func func) const // func(StrLen text,bool divide)
+       {
+        for(Header *ptr=head; ptr ;ptr=ptr->next) if( ptr->done ) func(GetStr(ptr),ptr->divide);
+       }
     };
-   
-   Config &cfg;
    
    Store store;
    PtrLen<char> buf;
    bool msg = false ;
+   
+  private: 
   
+   Config &cfg;
+   
+   bool non_empty = false ;
+   
+   ulen off = 0 ;
+   ulen lines = 0 ;
+   
+   ulen visible_lines = 0 ;
+   Coord text_by = 0 ;
+   Coord text_dy = 0 ;
+   
   private:
   
    virtual void print(StrLen str);
    
    virtual void end();
+   
+   static ulen Lines(StrLen text);
+   
+   void setLines();
    
   public:
   
@@ -89,6 +141,30 @@ class WindowReport : public DragClient , public ReportException
    void clear();
    
    bool show();
+   
+   // drawing
+   
+   virtual void layout(Point size);
+   
+   virtual void draw(FrameBuf<DesktopColor> buf,bool drag_active) const;
+   
+   // base
+   
+   virtual void alive();
+   
+   // keyboard
+   
+   virtual void key(VKey vkey,KeyMod kmod);
+   
+   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat);
+   
+  private:
+   
+   // Signal connectors
+   
+   void updateConfig() { win->redraw(true); }
+   
+   SignalConnector<WindowReport> connector_updateConfig;
  };
 
 } // namespace Video

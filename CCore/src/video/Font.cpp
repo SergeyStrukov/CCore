@@ -191,6 +191,18 @@ class DefFont : public FontBase
    
    // AbstractFont
    
+   virtual FontMetrics getMetrics()
+    {
+     FontMetrics ret;
+     
+     ret.dy=DefaultFont::DY;
+     ret.by=DefaultFont::BY;
+     ret.min_dx=DefaultFont::DX;
+     ret.max_dx=DefaultFont::DX;
+     
+     return ret;
+    }
+   
    virtual void text(FrameBuf<DesktopColor> buf,TextPlace place,StrLen str,DesktopColor color)
     {
      WorkBuf out(buf);

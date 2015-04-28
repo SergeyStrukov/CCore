@@ -583,6 +583,8 @@ void DragWindow::redraw(bool do_layout)
      if( alert_client ) alert_client->layout(client_size); 
     }
   
+  if( win->isDead() ) return;
+  
   if( win->getToken() ) 
     {
      delay_draw=true;
@@ -645,21 +647,11 @@ void DragWindow::setSize(Point size_,bool)
   
   size=size_;
   
-  shape.layout(size_);
-  
-  auto client_size=shape.client.getSize();
-  
-  client.layout(client_size);
-  
-  if( alert_client ) alert_client->layout(client_size); 
-  
-  redraw();
+  redraw(true);
  }
 
-void DragWindow::paintDone(unsigned token)
+void DragWindow::paintDone(unsigned)
  {
-  Used(token);
-  
   if( delay_draw )
     {
      delay_draw=false;

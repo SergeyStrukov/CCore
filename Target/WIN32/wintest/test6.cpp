@@ -17,6 +17,8 @@
 
 //#include <CCore/inc/video/DragWindow.h>
 #include "DragWindow.h"
+//#include <CCore/inc/video/WindowReport.h>
+#include "WindowReport.h"
 //#include <CCore/inc/video/DrawArt.h>
 #include "DrawArt.h"
 
@@ -55,6 +57,8 @@ class Client : public DragClient
    
    Param param = Frame ;
    
+   ulen index = 0 ;
+   
   public:
   
    explicit Client(DragWindow::Shape::Config &cfg_)
@@ -90,6 +94,14 @@ class Client : public DragClient
         case VKey_F4 : param=BtnDy; break;
         case VKey_F5 : param=MinDy; break;
         case VKey_F6 : param=AlertDx; break;
+        
+        case VKey_F10 : 
+         {
+          Printf(NoException,"extra");
+          
+          Printf(Exception,"test exception #;\nsecond line",index++);
+         }
+        break;
        }
     }
    
@@ -120,9 +132,15 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
   
-   FileReport report;
+   struct Config
+    {
+     DragWindow::Shape::Config drag_cfg;
+     WindowReport::Config report_cfg; 
+    };
+
+   Config cfg;
    
-   DragWindow::Shape::Config cfg;
+   WindowReport report;
    
    Client client;
    
@@ -157,8 +175,9 @@ class Application : public ApplicationBase
    explicit Application(CmdDisplay cmd_display_)
     : ApplicationBase(50_msec),
       cmd_display(cmd_display_),
-      client(cfg),
-      main_win(desktop,cfg,client)
+      report(cfg.report_cfg),
+      client(cfg.drag_cfg),
+      main_win(desktop,cfg.drag_cfg,client,&report)
     {
     }
    
