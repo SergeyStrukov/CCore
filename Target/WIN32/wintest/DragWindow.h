@@ -244,6 +244,9 @@ class DragWindow : public FrameWindow
        
        Font title_font;
        
+       unsigned blink_time       = 24 ;
+       unsigned blink_period     = 3 ;
+       
        Config() {}
        
        Signal<> update;
@@ -279,6 +282,7 @@ class DragWindow : public FrameWindow
      DragType hilight = DragType::None ;
      DragType btn_type = DragType::None ;
      AlertType alert_type = AlertType::No ;
+     bool alert_blink = false ;
      
      String title;
      
@@ -295,6 +299,7 @@ class DragWindow : public FrameWindow
        hilight=DragType::None;
        btn_type=DragType::None;
        alert_type=AlertType::No;
+       alert_blink=false;
        
        title=title_;
       }
@@ -348,6 +353,10 @@ class DragWindow : public FrameWindow
    bool client_capture = false ;
    bool delay_draw = false ;
    
+   unsigned tick_count = 0 ;
+   
+   DeferTick defer_tick;
+   
   private: 
    
    void replace(Pane place,Point delta,DragType drag_type);
@@ -374,6 +383,10 @@ class DragWindow : public FrameWindow
    void redrawFrame();
    
    void redrawFrame(DragType drag_type);
+   
+   void pushAlertBlink();
+   
+   void tick();
    
   public:
   
@@ -445,19 +458,7 @@ class DragWindow : public FrameWindow
      redraw();
     }
    
-   void alert()
-    {
-     if( shape.alert_type==AlertType::No )
-       {
-        shape.alert_type=AlertType::Closed;
-        
-        redraw();
-       }
-     else if( shape.alert_type==AlertType::Opened )
-       {
-        redraw();
-       }
-    }
+   void alert();
    
    // base
    

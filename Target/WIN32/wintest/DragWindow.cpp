@@ -332,9 +332,12 @@ void DragWindow::Shape::draw_Alert(DrawArt art) const
     {
      Pane pane=art.btn(btnAlert, (hilight==DragType::Alert)?cfg.btnFaceHilight:cfg.btnFace ,cfg.btnEdge);
      
-     ColorName cname=(alert_type==AlertType::No)?cfg.noAlert:( (alert_type==AlertType::Closed)?cfg.alert:cfg.closeAlert );
+     if( !alert_blink )
+       {
+        ColorName cname=(alert_type==AlertType::No)?cfg.noAlert:( (alert_type==AlertType::Closed)?cfg.alert:cfg.closeAlert );
         
-     cfg.title_font->text(art.cut(pane),TextPlace(AlignX::Center,AlignY::Center),StrLen("!"),cname);
+        cfg.title_font->text(art.cut(pane),TextPlace(AlignX::Center,AlignY::Center),StrLen("!"),cname);
+       } 
     }
  }
 
@@ -633,6 +636,43 @@ void DragWindow::redrawFrame(DragType drag_type)
     }
  }
 
+void DragWindow::pushAlertBlink()
+ {
+  if( !tick_count )
+    {
+     tick_count=shape.cfg.blink_time;
+     
+     defer_tick.start();
+    }
+  else
+    {
+     tick_count=shape.cfg.blink_time;
+    }
+ }
+
+void DragWindow::tick()
+ {
+  if( tick_count )
+    {
+     if( !(tick_count%shape.cfg.blink_period) )
+       {
+        shape.alert_blink=!shape.alert_blink;
+        
+        redrawFrame(DragType::Alert);
+       }
+     
+     tick_count--;
+    }
+  else
+    {
+     defer_tick.stop();
+     
+     shape.alert_blink=false;
+     
+     redrawFrame(DragType::Alert);
+    }
+ }
+
 DragWindow::DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client_,DragClient *alert_client_)
  : FrameWindow(desktop),
    shape(cfg),
@@ -644,6 +684,8 @@ DragWindow::DragWindow(Desktop *desktop,Shape::Config &cfg,DragClient &client_,D
   client_.win=this;
   
   if( alert_client_ ) alert_client_->win=this;
+  
+  defer_tick=input.create(&DragWindow::tick);
  }
 
 DragWindow::~DragWindow()
@@ -801,6 +843,34 @@ void DragWindow::releaseMouse()
   client_capture=false;
   
   if( !(bool)shape.drag_type ) win->releaseMouse();
+ }
+
+void DragWindow::alert()
+ {
+  switch( shape.alert_type )
+    {
+     case AlertType::No :
+      {
+       shape.alert_type=AlertType::Closed;
+       
+       redrawFrame(DragType::Alert);
+       
+       pushAlertBlink();
+      }
+     break;
+     
+     case AlertType::Closed :
+      {
+       pushAlertBlink();
+      }
+     break;
+     
+     case AlertType::Opened :
+      {
+       redrawClient();
+      }
+     break;
+    }
  }
 
  // base
