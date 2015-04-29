@@ -1116,6 +1116,14 @@ class WindowsControl : public WinControl
      Win32::MessageBoxA(HMainWindow,cap,"Abort",Win32::MessageBox_Ok|Win32::MessageBox_IconError);
     }
    
+   static void ErrorMsgBox(StrLen text,StrLen title)
+    {
+     CapString<> cap(text);
+     CapString<> cap_title(title);
+     
+     Win32::MessageBoxA(HMainWindow,cap,cap_title,Win32::MessageBox_Ok|Win32::MessageBox_IconError);
+    }
+   
    // WinControl
    // create/destroy
    
@@ -1558,6 +1566,11 @@ void TickLeaveEvent()
 void AbortMsgBox(StrLen text)
  {
   WindowsControl::AbortMsgBox(text);
+ }
+
+void ErrorMsgBox(StrLen text,StrLen title)
+ {
+  WindowsControl::ErrorMsgBox(text,title);
  }
 
 /* global DefaultDesktop */

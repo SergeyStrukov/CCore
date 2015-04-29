@@ -30,6 +30,8 @@ using DesktopColor = RawColor32 ;
 
 void AbortMsgBox(StrLen) {}
 
+void ErrorMsgBox(StrLen,StrLen) {}
+
 /* classes */
 
 class DefaultDesktopPtr;

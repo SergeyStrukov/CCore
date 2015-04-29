@@ -35,6 +35,8 @@ void TickLeaveEvent();
 
 void AbortMsgBox(StrLen text);
 
+void ErrorMsgBox(StrLen text,StrLen title);
+
 /* classes */
 
 struct DesktopConfig;
