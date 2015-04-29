@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_WindowReport_h
 #define CCore_inc_video_WindowReport_h
 
-//#include <CCore/inc/video/FrameWindow.h>
+//#include <CCore/inc/video/DragWindow.h>
 #include "DragWindow.h"
 
 #include <CCore/inc/Exception.h>
