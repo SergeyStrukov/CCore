@@ -135,7 +135,7 @@ void DeferCallQueue::deactivate()
    
 DeferCallQueue * DeferCallQueue::Get()
  {
-  DeferCallQueue * ret=static_cast<DeferCallQueue *>(Object.get());
+  DeferCallQueue *ret=static_cast<DeferCallQueue *>(Object.get());
   
   if( !ret )
     {
@@ -143,6 +143,11 @@ DeferCallQueue * DeferCallQueue::Get()
     }
     
   return ret;
+ }
+
+bool DeferCallQueue::IsActive()
+ {
+  return Object.get();
  }
 
 /* class DeferCallQueue */

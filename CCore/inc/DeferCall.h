@@ -196,13 +196,19 @@ class DeferCallQueue : NoCopy
    
    void stop() { stop_flag=true; }
    
+   void enable() { stop_flag=false; }
+   
    // per-thread queue
    
    static DeferCallQueue * Get();
    
+   static bool IsActive();
+   
    static void Loop(MSec tick_period=DefaultTickPeriod) { Get()->loop(tick_period); }
    
    static void Stop() { Get()->stop(); }
+   
+   static void Enable() { Get()->enable(); }
  };
 
 inline void * DeferCall::operator new(std::size_t len,DeferCallQueue *defer_queue)

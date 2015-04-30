@@ -47,13 +47,19 @@ class ApplicationBase : public DeferCallQueue
    
    virtual void prepare()=0;
    
+   virtual void beforeLoop()=0;
+   
+   virtual void afterLoop()=0;
+   
+   virtual void final()=0;
+   
   private:
    
    bool pump();
    
   public: 
    
-   explicit ApplicationBase(MSec tick_period=40_msec,Desktop *desktop=DefaultDesktop);
+   explicit ApplicationBase(MSec tick_period,Desktop *desktop);
    
    ~ApplicationBase();
    

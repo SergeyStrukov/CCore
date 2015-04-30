@@ -277,11 +277,26 @@ class Application : public ApplicationBase
      
      main_win.createMain(cmd_display,max_size,String("test5"));
     }
+
+   virtual void beforeLoop()
+    {
+     // do nothing
+    }
+   
+   virtual void afterLoop()
+    {
+     // do nothing
+    }
+   
+   virtual void final()
+    {
+     // do nothing
+    }
    
   public: 
    
    explicit Application(CmdDisplay cmd_display_)
-    : ApplicationBase(50_msec),
+    : ApplicationBase(DefaultTickPeriod,DefaultDesktop),
       cmd_display(cmd_display_),
       main_win(desktop,cfg,client)
     {

@@ -22,12 +22,12 @@ namespace Video {
 
 void ApplicationBase::forward(TimeScope time_scope)
  {
-  auto timeout=time_scope.get();
-  
-  if( +timeout ) desktop->wait(timeout);
-  
   try
     {
+     auto timeout=time_scope.get();
+    
+     if( +timeout ) desktop->wait(timeout);
+     
      if( desktop->pump() )
        {
         guardException();
@@ -59,13 +59,41 @@ ApplicationBase::~ApplicationBase()
 
 int ApplicationBase::run()
  {
-  prepare();
+  try
+    {
+     prepare();
+    
+     guardException();
+    }
+  catch(CatchType)
+    {
+     showException();
+     
+     clearException();
+    
+     return 1;
+    }
   
-  guardException();
+  beforeLoop();
   
   loop(tick_period);
   
-  guardException();
+  afterLoop();
+  
+  try
+    {
+     final();
+    
+     guardException();
+    }
+  catch(CatchType)
+    {
+     showException();
+     
+     clearException();
+    
+     return 1;
+    }
   
   return 0;
  }
