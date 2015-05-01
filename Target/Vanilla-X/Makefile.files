@@ -93,6 +93,7 @@ obj/DevInt.o \
 obj/DevPlanInit.o \
 obj/DevRW.o \
 obj/DevTick.o \
+obj/DrawBuf.o \
 obj/DynArray.o \
 obj/DynObject.o \
 obj/EDID.o \
@@ -424,6 +425,7 @@ obj/DevInt.s \
 obj/DevPlanInit.s \
 obj/DevRW.s \
 obj/DevTick.s \
+obj/DrawBuf.s \
 obj/DynArray.s \
 obj/DynObject.s \
 obj/EDID.s \
@@ -755,6 +757,7 @@ obj/DevInt.dep \
 obj/DevPlanInit.dep \
 obj/DevRW.dep \
 obj/DevTick.dep \
+obj/DrawBuf.dep \
 obj/DynArray.dep \
 obj/DynObject.dep \
 obj/EDID.dep \
@@ -1277,6 +1280,9 @@ obj/DevRW.o : ../../Target/Vanilla-X/CCore/src/dev/DevRW.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevTick.o : ../../Target/Vanilla-X/CCore/src/dev/DevTick.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DrawBuf.o : ../../CCore/src/video/DrawBuf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
@@ -2265,6 +2271,9 @@ obj/DevRW.s : ../../Target/Vanilla-X/CCore/src/dev/DevRW.cpp
 obj/DevTick.s : ../../Target/Vanilla-X/CCore/src/dev/DevTick.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DrawBuf.s : ../../CCore/src/video/DrawBuf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3250,6 +3259,9 @@ obj/DevRW.dep : ../../Target/Vanilla-X/CCore/src/dev/DevRW.cpp
 
 obj/DevTick.dep : ../../Target/Vanilla-X/CCore/src/dev/DevTick.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTick.o $< -MF $@
+
+obj/DrawBuf.dep : ../../CCore/src/video/DrawBuf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawBuf.o $< -MF $@
 
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@

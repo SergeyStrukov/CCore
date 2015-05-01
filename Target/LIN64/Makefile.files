@@ -85,6 +85,7 @@ obj/DefaultValue.o \
 obj/DeferCall.o \
 obj/DesktopStub.o \
 obj/DirTreeRun.o \
+obj/DrawBuf.o \
 obj/DynArray.o \
 obj/DynObject.o \
 obj/EDID.o \
@@ -406,6 +407,7 @@ obj/DefaultValue.s \
 obj/DeferCall.s \
 obj/DesktopStub.s \
 obj/DirTreeRun.s \
+obj/DrawBuf.s \
 obj/DynArray.s \
 obj/DynObject.s \
 obj/EDID.s \
@@ -727,6 +729,7 @@ obj/DefaultValue.dep \
 obj/DeferCall.dep \
 obj/DesktopStub.dep \
 obj/DirTreeRun.dep \
+obj/DrawBuf.dep \
 obj/DynArray.dep \
 obj/DynObject.dep \
 obj/EDID.dep \
@@ -1231,6 +1234,9 @@ obj/DesktopStub.o : ../../CCore/src/video/DesktopStub.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DirTreeRun.o : ../../HCore/CCore/src/DirTreeRun.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DrawBuf.o : ../../CCore/src/video/DrawBuf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
@@ -2189,6 +2195,9 @@ obj/DesktopStub.s : ../../CCore/src/video/DesktopStub.cpp
 obj/DirTreeRun.s : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DrawBuf.s : ../../CCore/src/video/DrawBuf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3144,6 +3153,9 @@ obj/DesktopStub.dep : ../../CCore/src/video/DesktopStub.cpp
 
 obj/DirTreeRun.dep : ../../HCore/CCore/src/DirTreeRun.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DirTreeRun.o $< -MF $@
+
+obj/DrawBuf.dep : ../../CCore/src/video/DrawBuf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawBuf.o $< -MF $@
 
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@

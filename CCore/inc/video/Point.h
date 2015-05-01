@@ -35,7 +35,7 @@ using LCoord = sint32 ;
 
 using uLCoord = uint32 ;
 
-using AreaType = unsigned ;
+using AreaType = uint32 ;
 
 /* consts */
 
@@ -306,11 +306,15 @@ inline Pane Inf(Pane a,Pane b)
   return Inf_nonempty(a,b);
  }
 
-inline Pane Extent(Point base,Coord dx,Coord dy) { return Pane(base.x,base.y,dx,dy); }
+inline Pane Extent(Coord x,Coord y,Coord dx,Coord dy) { if( dx>0 && dy>0 ) return Pane(x,y,dx,dy); return Empty; }
 
-inline Pane Extent(Point base,Point size) { return Pane(base.x,base.y,size.x,size.y); }
+inline Pane Extent(Point base,Coord dx,Coord dy) { return Extent(base.x,base.y,dx,dy); }
 
-inline Pane operator + (Pane pane,Point point) { return Extent(pane.getBase()+point,pane.getSize()); }
+inline Pane Extent(Point base,Point size) { return Extent(base.x,base.y,size.x,size.y); }
+
+inline Pane operator + (Pane pane,Point point) { return Pane(IntAdd(pane.x,point.x),IntAdd(pane.y,point.y),pane.dx,pane.dy); }
+
+inline Pane operator += (Pane &pane,Point point) { return pane=pane+point; }
 
 inline Pane Inner(Pane pane,Pane subpane) { return Inf(subpane+pane.getBase(),pane); }
 

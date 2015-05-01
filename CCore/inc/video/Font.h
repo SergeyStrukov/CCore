@@ -16,8 +16,7 @@
 #ifndef CCore_inc_video_Font_h
 #define CCore_inc_video_Font_h
 
-#include <CCore/inc/video/FrameBuf.h>
-#include <CCore/inc/video/Desktop.h>
+#include <CCore/inc/video/DrawBuf.h>
 
 #include <CCore/inc/RefPtr.h>
 #include <CCore/inc/MemBase.h>
@@ -50,6 +49,8 @@ enum class AlignY
 struct FontMetrics;
 
 struct TextPlace;
+
+struct TextSize;
 
 struct AbstractFont;
 
@@ -85,13 +86,26 @@ struct TextPlace
   TextPlace(Coord x_,Coord y_) : align_x(AlignX::Given),align_y(AlignY::Given),x(x_),y(y_) {}
  };
 
+/* struct TextSize */
+
+struct TextSize
+ {
+  Coord dx;
+  Coord dy;
+  Coord by;
+  Coord skew;
+  bool overflow;
+ };
+
 /* struct AbstractFont */
 
 struct AbstractFont
  {
   virtual FontMetrics getMetrics()=0;
   
-  virtual void text(FrameBuf<DesktopColor> buf,TextPlace place,StrLen str,DesktopColor color)=0;
+  virtual void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color)=0;
+  
+  virtual TextSize text(StrLen str)=0;
  };
 
 /* class FontBase */

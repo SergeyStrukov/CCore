@@ -251,6 +251,7 @@
 ../../CCore/src/video/ApplicationBase.cpp
 ../../CCore/src/video/Color.cpp
 ../../CCore/src/video/DesktopStub.cpp
+../../CCore/src/video/DrawBuf.cpp
 ../../CCore/src/video/EDID.cpp
 ../../CCore/src/video/Font.cpp
 ../../CCore/src/video/FrameBuf.cpp

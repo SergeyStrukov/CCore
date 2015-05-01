@@ -1,4 +1,4 @@
-/* IntOp.cpp */ 
+/* DrawBuf.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.09
@@ -13,18 +13,29 @@
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/video/IntOp.h>
-
-#include <CCore/inc/Exception.h>
+#include <CCore/inc/video/DrawBuf.h>
  
 namespace CCore {
 namespace Video {
 
-/* guard functions */
+/* class DrawBuf */
 
-void IntGuardAssert()
+DrawBuf DrawBuf::cut(Pane pane) const
  {
-  Printf(Exception,"CCore::Video::IntGuard(...) : integer operation fault");
+  pane=Inf(pane+origin,getPane());
+  
+  if( !pane ) return DrawBuf();
+  
+  return DrawBuf(FrameBuf<DesktopColor>::cut(pane),origin-pane.getBase());
+ }
+
+DrawBuf DrawBuf::cutRebase(Pane pane) const
+ {
+  DrawBuf ret=cut(pane);
+  
+  ret.origin+=pane.getBase();
+  
+  return ret;
  }
 
 } // namespace Video

@@ -26,11 +26,11 @@ class DefFont : public FontBase
  {
   private:
   
-   class WorkBuf : public FrameBuf<DesktopColor>
+   class WorkBuf : public DrawBuf
     {
      public:
     
-      explicit WorkBuf(FrameBuf<DesktopColor> buf) : FrameBuf<DesktopColor>(buf) {}
+      explicit WorkBuf(DrawBuf buf) : DrawBuf(buf) {}
       
       template <class Pattern>
       static void Line(Raw *ptr,Pattern pat,Coord len,DesktopColor color)
@@ -64,7 +64,7 @@ class DefFont : public FontBase
       
       void text(Coord x,Coord y,char ch,DesktopColor color)
        {
-        if( x>=dx || x<=-DefaultFont::DX ) return;
+        if( x<=-DefaultFont::DX ) return;
         
         DefaultFont glyph(ch);
         
@@ -119,7 +119,7 @@ class DefFont : public FontBase
           }
        }
     
-      void text(TextPlace place,StrLen str,DesktopColor color)
+      void text(Coord px,Coord py,TextPlace place,StrLen str,DesktopColor color)
        {
         if( !*this ) return;
         
@@ -129,9 +129,9 @@ class DefFont : public FontBase
           {
            case AlignY::Top : y=0; break;
             
-           case AlignY::Center : y=(dy-DefaultFont::DY)/2; break;
+           case AlignY::Center : y=(py-DefaultFont::DY)/2; break;
             
-           case AlignY::Bottom : y=dy-DefaultFont::DY; break;
+           case AlignY::Bottom : y=py-DefaultFont::DY; break;
             
            default: y=IntSub(place.y,DefaultFont::BY);
           }
@@ -144,17 +144,17 @@ class DefFont : public FontBase
            
            case AlignX::Right :
             {
-             ulen cap=ulen(dx/DefaultFont::DX)+1;
+             ulen cap=ulen(px/DefaultFont::DX)+1;
              
              if( str.len>cap ) str=str.suffix(cap);
              
-             x=Coord( dx-str.len*DefaultFont::DX );
+             x=Coord( px-str.len*DefaultFont::DX );
             }
            break;
            
            case AlignX::Center :
             {
-             ulen cap=ulen(dx/DefaultFont::DX)+1;
+             ulen cap=ulen(px/DefaultFont::DX)+1;
              
              if( str.len>cap ) 
                {
@@ -163,19 +163,22 @@ class DefFont : public FontBase
                 str=str.inner(delta,delta);
                }
              
-             x=Coord( dx-str.len*DefaultFont::DX )/2;
+             x=Coord( px-str.len*DefaultFont::DX )/2;
             }
            break;
            
            default: x=place.x;
           }
         
-        if( y>=dy || y<=-DefaultFont::DY ) return;
+        x=mapX(x);
+        y=mapY(y);
         
-        if( x>=dx ) return;
+        if( y>=dy || y<=-DefaultFont::DY ) return;
         
         for(char ch : str )
           {
+           if( x>=dx ) return;
+          
            text(x,y,ch,color);
           
            x+=DefaultFont::DX;
@@ -203,11 +206,24 @@ class DefFont : public FontBase
      return ret;
     }
    
-   virtual void text(FrameBuf<DesktopColor> buf,TextPlace place,StrLen str,DesktopColor color)
+   virtual void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color)
     {
-     WorkBuf out(buf);
+     WorkBuf out(buf.cutRebase(pane));
      
-     out.text(place,str,color);
+     out.text(pane.dx,pane.dy,place,str,color);
+    }
+   
+   virtual TextSize text(StrLen str)
+    {
+     TextSize ret;
+     
+     ret.dx=Coord( str.len*DefaultFont::DX );
+     ret.dy=DefaultFont::DY;
+     ret.by=DefaultFont::BY;
+     ret.skew=0;
+     ret.overflow=( str.len>ulen(MaxCoord/DefaultFont::DX) );
+     
+     return ret;
     }
  };
 

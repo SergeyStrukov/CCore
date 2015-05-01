@@ -99,6 +99,7 @@ obj/DevSerial.o \
 obj/DevSignal.o \
 obj/DevTick.o \
 obj/DevTimer.o \
+obj/DrawBuf.o \
 obj/DynArray.o \
 obj/DynObject.o \
 obj/EDID.o \
@@ -442,6 +443,7 @@ obj/DevSerial.s \
 obj/DevSignal.s \
 obj/DevTick.s \
 obj/DevTimer.s \
+obj/DrawBuf.s \
 obj/DynArray.s \
 obj/DynObject.s \
 obj/EDID.s \
@@ -785,6 +787,7 @@ obj/DevSerial.dep \
 obj/DevSignal.dep \
 obj/DevTick.dep \
 obj/DevTimer.dep \
+obj/DrawBuf.dep \
 obj/DynArray.dep \
 obj/DynObject.dep \
 obj/EDID.dep \
@@ -1341,6 +1344,9 @@ obj/DevTick.o : ../../Target/IXDP465/CCore/src/dev/DevTick.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DevTimer.o : ../../Target/IXDP465/CCore/src/dev/DevTimer.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DrawBuf.o : ../../CCore/src/video/DrawBuf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
@@ -2365,6 +2371,9 @@ obj/DevTick.s : ../../Target/IXDP465/CCore/src/dev/DevTick.cpp
 obj/DevTimer.s : ../../Target/IXDP465/CCore/src/dev/DevTimer.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DrawBuf.s : ../../CCore/src/video/DrawBuf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3386,6 +3395,9 @@ obj/DevTick.dep : ../../Target/IXDP465/CCore/src/dev/DevTick.cpp
 
 obj/DevTimer.dep : ../../Target/IXDP465/CCore/src/dev/DevTimer.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevTimer.o $< -MF $@
+
+obj/DrawBuf.dep : ../../CCore/src/video/DrawBuf.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawBuf.o $< -MF $@
 
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@

@@ -21,34 +21,40 @@
 namespace CCore {
 namespace Video {
 
+/* guard functions */
+
+void IntGuardAssert();
+
+inline void IntGuard(bool cond) { if( !cond ) IntGuardAssert(); }
+
 /* functions */
 
 template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
-inline UInt IntDist(SInt a,SInt b) // a <= b
+UInt IntDist(SInt a,SInt b) // a <= b
  { 
   return SIntFunc<SInt>::Dist(a,b); 
  }
 
 template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
-inline SInt IntMovePos(SInt a,UInt delta)
+SInt IntMovePos(SInt a,UInt delta)
  {
   return SIntFunc<SInt>::MovePos(a,delta);
  }
 
 template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
-inline SInt IntMoveNeg(SInt a,UInt delta)
+SInt IntMoveNeg(SInt a,UInt delta)
  {
   return SIntFunc<SInt>::MoveNeg(a,delta);
  }
 
 template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
-inline SInt IntMove(SInt a,SInt e,UInt delta)
+SInt IntMove(SInt a,SInt e,UInt delta)
  {
   return SIntFunc<SInt>::Move(a,e,delta);
  }
 
 template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
-inline UInt IntAbs(SInt a,SInt b)
+UInt IntAbs(SInt a,SInt b)
  { 
   return (a<=b)?IntDist<SInt,UInt>(a,b):IntDist<SInt,UInt>(b,a); 
  }
@@ -59,25 +65,35 @@ inline UInt IntAbs(SInt a,SInt b)
  // Can be substituted to provide checked operations.
  //
 
-inline void IntGuard(bool /* cond */) { /* do nothing */ }
+template <class SInt>
+SInt IntAdd(SInt a,SInt b) { return a+b; } // may overflow
 
 template <class SInt>
-inline SInt IntAdd(SInt a,SInt b) { return a+b; } // may overflow
+SInt IntSub(SInt a,SInt b) { return a-b; } // may overflow
 
 template <class SInt>
-inline SInt IntSub(SInt a,SInt b) { return a-b; } // may overflow
+SInt IntMul(SInt a,SInt b) { return a*b; } // may overflow
 
 template <class SInt>
-inline SInt IntMul(SInt a,SInt b) { return a*b; } // may overflow
+SInt IntDiv(SInt a,SInt b) { return a/b; } // may crush
 
 template <class SInt>
-inline SInt IntDiv(SInt a,SInt b) { return a/b; } // may crush
+SInt IntLShift(SInt a,unsigned s) { return a<<s; } // may overflow , UB for some arguments must be removed, operates as ASL
 
 template <class SInt>
-inline SInt IntLShift(SInt a,unsigned s) { return a<<s; } // may overflow , UB for some arguments must be removed, operates as ASL
+SInt IntRShift(SInt a,unsigned s) { return a>>s; } // US for some arguments must be removed, operates as ASR
 
-template <class SInt>
-inline SInt IntRShift(SInt a,unsigned s) { return a>>s; } // US for some arguments must be removed, operates as ASR
+/* sint16 functions */
+
+inline sint16 From32To16(sint32 x) { IntGuard( x>=-32768 && x<=32767 ); return (sint16)x; }
+
+inline sint16 IntAdd(sint16 a,sint16 b) { return From32To16(sint32(a)+sint32(b)); }
+
+inline sint16 IntSub(sint16 a,sint16 b) { return From32To16(sint32(a)-sint32(b)); }
+
+inline sint16 IntMul(sint16 a,sint16 b) { return From32To16(sint32(a)*sint32(b)); }
+
+inline sint16 IntDiv(sint16 a,sint16 b) { IntGuard( b!=0 ); return From32To16(sint32(a)/sint32(b)); }
 
 } // namespace Video
 } // namespace CCore
