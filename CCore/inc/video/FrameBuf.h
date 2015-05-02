@@ -57,25 +57,25 @@ class FrameBuf : protected ColorPlane
    
   protected: 
    
-   Raw * place(Coord y) { return static_cast<Raw *>(PtrAdd(raw,(ulen)y*dline)); }
+   Raw * place(Coord y) const { return static_cast<Raw *>(PtrAdd(raw,(ulen)y*dline)); }
    
-   Raw * place(Point p) { return place(p.y)+(DLineType)p.x*RawColor::RawCount; }
+   Raw * place(Point p) const { return place(p.y)+(DLineType)p.x*RawColor::RawCount; }
    
    static Raw * NextX(Raw *ptr) { return ptr+RawColor::RawCount; }
    
    static Raw * PrevX(Raw *ptr) { return ptr-RawColor::RawCount; }
    
-   Raw * nextY(Raw *ptr) { return static_cast<Raw *>(PtrAdd(ptr,dline)); }
+   Raw * nextY(Raw *ptr) const { return static_cast<Raw *>(PtrAdd(ptr,dline)); }
    
-   Raw * prevY(Raw *ptr) { return static_cast<Raw *>(PtrSub(ptr,dline)); }
+   Raw * prevY(Raw *ptr) const { return static_cast<Raw *>(PtrSub(ptr,dline)); }
    
-   Raw * nextXnextY(Raw *ptr) { return NextX(nextY(ptr)); }
+   Raw * nextXnextY(Raw *ptr) const { return NextX(nextY(ptr)); }
    
-   Raw * nextXprevY(Raw *ptr) { return NextX(prevY(ptr)); }
+   Raw * nextXprevY(Raw *ptr) const { return NextX(prevY(ptr)); }
    
-   Raw * prevXnextY(Raw *ptr) { return PrevX(nextY(ptr)); }
+   Raw * prevXnextY(Raw *ptr) const { return PrevX(nextY(ptr)); }
    
-   Raw * prevXprevY(Raw *ptr) { return PrevX(prevY(ptr)); }
+   Raw * prevXprevY(Raw *ptr) const { return PrevX(prevY(ptr)); }
    
   private: 
    
@@ -95,9 +95,9 @@ class FrameBuf : protected ColorPlane
   
    FrameBuf() {}
    
-   FrameBuf(ColorPlane plane) : ColorPlane(plane) {}
+   FrameBuf(const ColorPlane &plane) : ColorPlane(plane) {}
 
-   FrameBuf(FrameBuf<RawColor> buf,Pane pane)
+   FrameBuf(const FrameBuf<RawColor> &buf,Pane pane)
     {
      if( !pane )
        {
@@ -135,7 +135,7 @@ class FrameBuf : protected ColorPlane
   
    FrameBuf<RawColor> cut(Pane pane) const { return FrameBuf<RawColor>(*this,pane); }
    
-   RawColor pixel(Point p);
+   RawColor pixel(Point p) const;
    
    void pixel(Point p,RawColor color);
    
@@ -199,7 +199,7 @@ void FrameBuf<RawColor>::HLine(Raw *ptr,Pattern pat,RawColor fore)
  }
 
 template <class RawColor> 
-RawColor FrameBuf<RawColor>::pixel(Point p)
+RawColor FrameBuf<RawColor>::pixel(Point p) const
  {
   RawColor ret;
   

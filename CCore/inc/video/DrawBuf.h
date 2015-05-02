@@ -36,9 +36,9 @@ class DrawBuf : public FrameBuf<DesktopColor>
   
    DrawBuf() {}
    
-   DrawBuf(FrameBuf<DesktopColor> buf) : FrameBuf<DesktopColor>(buf) {}
+   DrawBuf(const FrameBuf<DesktopColor> &buf) : FrameBuf<DesktopColor>(buf) {}
    
-   DrawBuf(FrameBuf<DesktopColor> buf,Point origin_) : FrameBuf<DesktopColor>(buf),origin(origin_) {}
+   DrawBuf(const FrameBuf<DesktopColor> &buf,Point origin_) : FrameBuf<DesktopColor>(buf),origin(origin_) {}
    
    DrawBuf cut(Pane pane) const;
    
@@ -46,7 +46,9 @@ class DrawBuf : public FrameBuf<DesktopColor>
    
    // to FrameBuf coord
    
-   Point map(Point point) const { return point+origin; } 
+   Point map(Point point) const { return point+origin; }
+   
+   Pane map(Pane pane) const { return pane+origin; }
    
    Coord mapX(Coord x) const { return IntAdd(x,origin.x); }
    

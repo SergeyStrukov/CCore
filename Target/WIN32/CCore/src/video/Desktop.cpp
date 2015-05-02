@@ -1270,9 +1270,9 @@ class WindowsControl : public WinControl
 
      GuardMaxSize(format,max_size_);
      
-     max_size=max_size_;
-     
      buf.setSize(max_size_);
+     
+     max_size=max_size_;
      
      buf_dirty=true;
     }
