@@ -53,6 +53,19 @@ class DrawBuf : public FrameBuf<DesktopColor>
    Coord mapX(Coord x) const { return IntAdd(x,origin.x); }
    
    Coord mapY(Coord y) const { return IntAdd(y,origin.y); }
+   
+   class Mapper
+    {
+      Point origin;
+      
+     public:
+      
+      explicit Mapper(Point origin_) : origin(origin_) {}
+     
+      Point operator () (Point point) const { return point+origin; }
+    };
+   
+   Mapper getMapper() const { return Mapper(origin); }
  };
 
 } // namespace Video
