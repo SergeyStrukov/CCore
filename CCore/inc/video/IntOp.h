@@ -59,6 +59,12 @@ UInt IntAbs(SInt a,SInt b)
   return (a<=b)?IntDist<SInt,UInt>(a,b):IntDist<SInt,UInt>(b,a); 
  }
 
+template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+UInt IntAbs(SInt a)
+ { 
+  return IntAbs<SInt,UInt>(a,0); 
+ }
+
 /* functions */
 
  //

@@ -318,9 +318,51 @@ inline Pane operator += (Pane &pane,Point point) { return pane=pane+point; }
 
 inline Pane Inner(Pane pane,Pane subpane) { return Inf(subpane+pane.getBase(),pane); }
 
-inline Pane Shrink(Pane pane,Coord delta_x,Coord delta_y) { return Extent(pane.x+delta_x,pane.y+delta_y,pane.dx-2*delta_x,pane.dy-2*delta_y); }
+inline Pane Shrink(Pane pane,Point delta) { return Extent(pane.getBase()+delta,pane.getSize()-2*delta); }
 
-inline Pane Expand(Pane pane,Coord delta_x,Coord delta_y) { return Extent(pane.x-delta_x,pane.y-delta_y,pane.dx+2*delta_x,pane.dy+2*delta_y); }
+inline Pane Shrink(Pane pane,Coord delta_x,Coord delta_y) { return Shrink(pane,Point(delta_x,delta_y)); }
+
+inline Pane Expand(Pane pane,Coord delta_x,Coord delta_y) { return Shrink(pane,-Point(delta_x,delta_y)); }
+
+inline Pane SplitX(Coord delta,Pane &pane)
+ {
+  Pane ret=Pane(pane.x,pane.y,delta,pane.dy);
+  
+  pane=Pane(IntAdd(pane.x,delta),pane.y,IntSub(pane.dx,delta),pane.dy);
+  
+  return ret;
+ }
+
+inline Pane SplitX(Pane &pane,Coord delta)
+ {
+  Coord dx=IntSub(pane.dx,delta);
+  
+  Pane ret=Pane(IntAdd(pane.x,dx),pane.y,delta,pane.dy);
+  
+  pane=Pane(pane.x,pane.y,dx,pane.dy);
+  
+  return ret;
+ }
+
+inline Pane SplitY(Coord delta,Pane &pane)
+ {
+  Pane ret=Pane(pane.x,pane.y,pane.dx,delta);
+  
+  pane=Pane(pane.x,IntAdd(pane.y,delta),pane.dx,IntSub(pane.dy,delta));
+  
+  return ret;
+ }
+
+inline Pane SplitY(Pane &pane,Coord delta)
+ {
+  Coord dy=IntSub(pane.dy,delta);
+  
+  Pane ret=Pane(pane.x,IntAdd(pane.y,dy),pane.dx,delta);
+  
+  pane=Pane(pane.x,pane.y,pane.dx,dy);
+  
+  return ret;
+ }
 
 } // namespace Video
 } // namespace CCore
