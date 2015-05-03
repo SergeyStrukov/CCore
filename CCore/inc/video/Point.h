@@ -318,6 +318,10 @@ inline Pane operator += (Pane &pane,Point point) { return pane=pane+point; }
 
 inline Pane Inner(Pane pane,Pane subpane) { return Inf(subpane+pane.getBase(),pane); }
 
+inline Pane Shrink(Pane pane,Coord delta_x,Coord delta_y) { return Extent(pane.x+delta_x,pane.y+delta_y,pane.dx-2*delta_x,pane.dy-2*delta_y); }
+
+inline Pane Expand(Pane pane,Coord delta_x,Coord delta_y) { return Extent(pane.x-delta_x,pane.y-delta_y,pane.dx+2*delta_x,pane.dy+2*delta_y); }
+
 } // namespace Video
 } // namespace CCore
  
