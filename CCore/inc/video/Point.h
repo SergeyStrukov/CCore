@@ -77,7 +77,7 @@ struct BasePoint
   
   // unsafe operations
   
-  friend T operator - (T a) { return Null-a; }
+  friend T operator - (T a) { return T()-a; }
   
   friend T operator + (T a,T b) { return T(IntAdd(a.x,b.x),IntAdd(a.y,b.y)); }
   
@@ -315,6 +315,10 @@ inline Pane Extent(Point base,Point size) { return Extent(base.x,base.y,size.x,s
 inline Pane operator + (Pane pane,Point point) { return Pane(IntAdd(pane.x,point.x),IntAdd(pane.y,point.y),pane.dx,pane.dy); }
 
 inline Pane operator += (Pane &pane,Point point) { return pane=pane+point; }
+
+inline Pane operator - (Pane pane,Point point) { return Pane(IntSub(pane.x,point.x),IntSub(pane.y,point.y),pane.dx,pane.dy); }
+
+inline Pane operator -= (Pane &pane,Point point) { return pane=pane-point; }
 
 inline Pane Inner(Pane pane,Pane subpane) { return Inf(subpane+pane.getBase(),pane); }
 
