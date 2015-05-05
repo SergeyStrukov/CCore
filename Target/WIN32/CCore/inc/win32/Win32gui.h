@@ -880,6 +880,13 @@ enum WMCode : unsigned
   WM_Lim
  };
 
+/* enum SysParamAction */
+
+enum SysParamAction : unsigned
+ {
+  SPA_getWorkArea = 0x0030
+ };
+
 /* UserDefault */
 
 const int UserDefault = (int)0x80000000 ;
@@ -1362,6 +1369,11 @@ bool_t WIN32_API ExtTextOutA(HGDevice hGD,
                              const Rectangle *rect,
                              const char *str,int len,
                              const int *dcell);
+
+bool_t WIN32_API SystemParametersInfoA(unsigned action,
+                                       unsigned param,
+                                       void *data,
+                                       unsigned winini_flag);
 
 } // extern "C"
 

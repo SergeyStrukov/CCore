@@ -392,6 +392,9 @@ class WindowsControl : public WinControl
    bool track_on = false ;
    unsigned hover_time = 0 ;
    
+   Pane restore;
+   bool max_flag = false ;
+   
   private: 
    
    void guardAlive(const char *format)
@@ -700,6 +703,15 @@ class WindowsControl : public WinControl
      int percent=Win32::GetTickCount()%100u;
 
      return Coord( (len*percent)/100 );
+    }
+   
+   static Pane GetWorkPane()
+    {
+     Win32::Rectangle rect;
+     
+     SysGuard("CCore::Video::Private::WindowsControl::GetWorkPane() : #;", Win32::SystemParametersInfoA(Win32::SPA_getWorkArea,0,&rect,0) );
+     
+     return ToPane(rect);
     }
    
    class WindowPaint : NoCopy
@@ -1109,6 +1121,8 @@ class WindowsControl : public WinControl
    
    virtual ~WindowsControl() {}
    
+   // msg boxes
+   
    static void AbortMsgBox(StrLen text)
     {
      CapString<> cap(text);
@@ -1168,6 +1182,7 @@ class WindowsControl : public WinControl
      correct_max_size=false;
      max_size=max_size_;
      buf_dirty=true;
+     max_flag=false;
      
      buf.setSize(max_size_);
      
@@ -1192,6 +1207,7 @@ class WindowsControl : public WinControl
      correct_max_size=false;
      max_size=max_size_;
      buf_dirty=true;
+     max_flag=false;
      
      buf.setSize(max_size_);
      
@@ -1216,6 +1232,7 @@ class WindowsControl : public WinControl
      correct_max_size=false;
      max_size=max_size_;
      buf_dirty=true;
+     max_flag=false;
      
      buf.setSize(max_size_);
      
@@ -1292,18 +1309,58 @@ class WindowsControl : public WinControl
      
      guardAlive(format);
      
-     unsigned cmd_show;
+     switch( cmd_display )
+       {
+        default:
+        case CmdDisplay_Normal    : Win32::ShowWindow(hWnd,Win32::CmdShow_Normal); break;
+        
+        case CmdDisplay_Minimized : Win32::ShowWindow(hWnd,Win32::CmdShow_Minimized); break;
+        
+        case CmdDisplay_Maximized : 
+         {
+          if( !max_flag )
+            {
+             max_flag=true;
+            
+             restore=getPlacement();
+             
+             Pane pane=GetWorkPane();
+             
+             Replace_min(pane.dx,max_size.x);
+             Replace_min(pane.dy,max_size.y);
+            
+             do_move(pane);
+            }
+         }
+        break;
+        
+        case CmdDisplay_Restore :
+         {
+          if( max_flag )
+            {
+             max_flag=false;
+            
+             do_move(restore);
+            }
+         }
+        break;
+       }
+     
+#if 0
      
      switch( cmd_display )
        {
         default:
-        case CmdDisplay_Normal    : cmd_show=Win32::CmdShow_Normal; break;
-        case CmdDisplay_Minimized : cmd_show=Win32::CmdShow_Minimized; break;
-        case CmdDisplay_Maximized : cmd_show=Win32::CmdShow_Maximized; break;
-        case CmdDisplay_Restore   : cmd_show=Win32::CmdShow_Restore; break;
+        case CmdDisplay_Normal    : Win32::ShowWindow(hWnd,Win32::CmdShow_Normal); break;
+        
+        case CmdDisplay_Minimized : Win32::ShowWindow(hWnd,Win32::CmdShow_Minimized); break;
+        
+        case CmdDisplay_Maximized : Win32::ShowWindow(hWnd,Win32::CmdShow_Maximized); break;
+        
+        case CmdDisplay_Restore   : Win32::ShowWindow(hWnd,Win32::CmdShow_Restore); break;
        }
      
-     Win32::ShowWindow(hWnd,cmd_show);
+#endif     
     }
    
    virtual void show()
@@ -1446,9 +1503,9 @@ class WindowsControl : public WinControl
      return ToPane(rect);
     }
    
-   virtual void move(Pane pane)
+   void do_move(Pane pane)
     {
-     const char *format="CCore::Video::Private::WindowsControl::move(...) : #;";
+     const char *format="CCore::Video::Private::WindowsControl::do_move(...) : #;";
      
      guardAlive(format);
      
@@ -1457,6 +1514,13 @@ class WindowsControl : public WinControl
      //SysGuard(format, Win32::MoveWindow(hWnd,pane.x,pane.y,pane.dx,pane.dy,true) );
      
      SysGuard(format, Win32::SetWindowPos(hWnd,(Win32::HWindow)0,pane.x,pane.y,pane.dx,pane.dy,Win32::WindowPos_NoZOrder|Win32::WindowPos_NoCopyBits|Win32::WindowPos_NoRedraw|Win32::WindowPos_DeferErase) );
+    }
+   
+   virtual void move(Pane pane)
+    {
+     max_flag=false;
+     
+     do_move(pane);
     }
  };
 
