@@ -306,9 +306,9 @@ class FrameWindow : public MemBase_nocopy , public UserInput
   
    virtual ~FrameWindow() { delete win; }
 
-   Desktop * getDesktop() { return desktop; }
+   Desktop * getDesktop() const { return desktop; }
    
-   WinControl * getControl() { return win; }
+   WinControl * getControl() const { return win; }
    
    bool isAlive() const { return win->isAlive(); }
    
