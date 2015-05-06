@@ -38,24 +38,22 @@ class ApplicationBase : public DeferCallQueue
    const MSec tick_period;
    
    Desktop *const desktop;
+   
+  protected: 
   
-   virtual void clearException()=0;
+   virtual void clearException() noexcept(EnableNoExcept) =0;
    
    virtual void guardException()=0;
    
-   virtual void showException()=0;
+   virtual void showException() noexcept(EnableNoExcept) =0;
    
    virtual void prepare()=0;
    
-   virtual void beforeLoop()=0;
+   virtual void beforeLoop() noexcept(EnableNoExcept) =0;
    
-   virtual void afterLoop()=0;
+   virtual void afterLoop() noexcept(EnableNoExcept) =0;
    
    virtual void final()=0;
-   
-  private:
-   
-   bool pump();
    
   public: 
    

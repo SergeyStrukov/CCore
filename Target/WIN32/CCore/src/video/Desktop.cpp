@@ -854,6 +854,12 @@ class WindowsControl : public WinControl
          {
           frame->looseFocus();
          }
+        return 0;
+        
+        case Win32::WM_CaptureChanged :
+         {
+          frame->looseCapture();
+         }
         return 0; 
         
         case Win32::WM_KeyDown :
@@ -1322,7 +1328,7 @@ class WindowsControl : public WinControl
             {
              max_flag=true;
             
-             restore=getPlacement();
+             restore=getPlace();
              
              Pane pane=GetWorkPane();
              
@@ -1490,9 +1496,9 @@ class WindowsControl : public WinControl
      Win32::SetCursor(GetCursor(mshape));
     }
    
-   virtual Pane getPlacement()
+   virtual Pane getPlace()
     {
-     const char *format="CCore::Video::Private::WindowsControl::getPlacement() : #;";
+     const char *format="CCore::Video::Private::WindowsControl::getPlace() : #;";
      
      guardAlive(format);
      
@@ -1596,18 +1602,11 @@ class WindowsDesktop : public Desktop
      return true;  
     }
    
-   virtual void wait()
+   virtual void wait(TimeScope time_scope)
     {
      if( TestMsg() ) return;
      
-     Win32::WaitMessage();
-    }
-   
-   virtual void wait(MSec timeout)
-    {
-     if( TestMsg() ) return;
-     
-     if( auto t=+timeout ) Win32::MsgWaitForMultipleObjects(0,0,false,t,Win32::Wake_AllInput);
+     if( auto t=+time_scope.get() ) Win32::MsgWaitForMultipleObjects(0,0,false,t,Win32::Wake_AllInput);
     }
  };
 

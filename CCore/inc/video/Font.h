@@ -46,7 +46,7 @@ enum class AlignY
 
 /* classes */
 
-struct FontMetrics;
+struct FontSize;
 
 struct TextPlace;
 
@@ -58,14 +58,15 @@ class FontBase;
 
 class Font;
 
-/* struct FontMetrics */
+/* struct FontSize */
 
-struct FontMetrics // TODO
+struct FontSize
  {
-  Coord dy;
-  Coord by;
   Coord min_dx;
   Coord max_dx;
+  Coord dy;
+  Coord by;
+  Coord skew;
  };
 
 /* struct TextPlace */
@@ -101,11 +102,13 @@ struct TextSize
 
 struct AbstractFont
  {
-  virtual FontMetrics getMetrics()=0;
+  virtual FontSize getSize()=0;
   
   virtual void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color)=0;
   
   virtual TextSize text(StrLen str)=0;
+  
+  virtual ulen fit(StrLen str,Coord dx)=0;
  };
 
 /* class FontBase */

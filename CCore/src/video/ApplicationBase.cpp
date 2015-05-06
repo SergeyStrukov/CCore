@@ -24,9 +24,7 @@ void ApplicationBase::forward(TimeScope time_scope)
  {
   try
     {
-     auto timeout=time_scope.get();
-    
-     if( +timeout ) desktop->wait(timeout);
+     desktop->wait(time_scope);
      
      if( desktop->pump() )
        {

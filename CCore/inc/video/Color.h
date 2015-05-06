@@ -29,6 +29,8 @@ using Clr = uint8 ;
 
 const unsigned ClrBits = 8 ;
 
+const unsigned AlphaLim = 256 ;
+
 const Clr MinClr =   0 ;
 
 const Clr MedClr = 128 ;
@@ -40,6 +42,15 @@ const Clr MaxClr = 255 ;
 inline Clr Blend(Clr dst,Clr alpha,Clr src)
  {
   return Clr( (dst*uint16(256-alpha)+src*uint16(alpha))>>8 );
+ }
+
+inline uint16 BlendBeta(Clr alpha) { return uint16(256-alpha); }
+
+inline uint16 BlendSrc(Clr alpha,Clr src) { return src*uint16(alpha); }
+
+inline Clr PreparedBlend(Clr dst,uint16 beta,uint16 src)
+ {
+  return Clr( (dst*beta+src)>>8 );
  }
 
 /* classes */
@@ -124,36 +135,28 @@ inline constexpr ColorName RGBColor(Clr r,Clr g,Clr b) { return ColorName(b|(uin
 
 class Blender
  {
+   uint16 beta;
+   
    uint16 src_r;
    uint16 src_g;
    uint16 src_b;
-   Clr beta;
    
   public: 
   
    Blender(Clr alpha,ColorName cname)
     {
-     src_r=RedOf(cname)*uint16(alpha);
-     src_g=GreenOf(cname)*uint16(alpha);
-     src_b=BlueOf(cname)*uint16(alpha);
+     beta=BlendBeta(alpha);
      
-     beta=256-alpha;
+     src_r=BlendSrc(alpha,RedOf(cname));
+     src_g=BlendSrc(alpha,GreenOf(cname));
+     src_b=BlendSrc(alpha,BlueOf(cname));
     }
    
-   Clr blendR(Clr r) const
-    {
-     return Clr( (r*uint16(beta)+src_r)>>8 );
-    }
+   Clr blendR(Clr r) const { return PreparedBlend(r,beta,src_r); }
    
-   Clr blendG(Clr g) const
-    {
-     return Clr( (g*uint16(beta)+src_g)>>8 );
-    }
+   Clr blendG(Clr g) const { return PreparedBlend(g,beta,src_g); }
    
-   Clr blendB(Clr b) const
-    {
-     return Clr( (b*uint16(beta)+src_b)>>8 );
-    }
+   Clr blendB(Clr b) const { return PreparedBlend(b,beta,src_b); }
  };
 
 /* class RawColor16 */

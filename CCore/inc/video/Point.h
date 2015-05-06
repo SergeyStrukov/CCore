@@ -49,6 +49,8 @@ inline constexpr AreaType Area(Coord dx,Coord dy) { return (AreaType)dx*(AreaTyp
 
 /* classes */ 
 
+struct Coordinate;
+
 template <class T,class Int> struct BasePoint;
 
 struct Point;
@@ -58,6 +60,93 @@ struct MilliPoint;
 struct LPoint;
 
 struct Pane;
+
+/* struct Coordinate */
+
+struct Coordinate
+ {
+  Coord x;
+  
+  // constructors
+  
+  Coordinate() : x(0) {}
+  
+  Coordinate(NothingType) : Coordinate() {}
+  
+  Coordinate(Coord x_) : x(x_) {}
+  
+  // methods
+  
+  Coord operator + () const { return x; }
+  
+  static Coordinate Max() { return Coordinate(MaxCoord); }
+  
+  static Coordinate Min() { return Coordinate(MinCoord); }
+  
+  // unsafe operations
+  
+  friend Coordinate operator - (Coordinate a) { return Coordinate()-a; }
+  
+  friend Coordinate operator + (Coordinate a,Coordinate b) { return Coordinate(IntAdd(a.x,b.x)); }
+  
+  friend Coordinate operator - (Coordinate a,Coordinate b) { return Coordinate(IntSub(a.x,b.x)); }
+  
+  friend Coordinate operator * (Coordinate a,Coordinate b) { return Coordinate(IntMul(a.x,b.x)); }
+  
+  friend Coordinate operator / (Coordinate a,Coordinate b) { return Coordinate(IntDiv(a.x,b.x)); }
+  
+  friend Coordinate operator << (Coordinate a,unsigned s) { return Coordinate(IntLShift(a.x,s)); }
+  
+  friend Coordinate operator >> (Coordinate a,unsigned s) { return Coordinate(IntRShift(a.x,s)); }
+  
+  // derived operations
+  
+  friend Coordinate operator += (Coordinate &a,Coordinate b) { return a=a+b; }
+  
+  friend Coordinate operator -= (Coordinate &a,Coordinate b) { return a=a-b; }
+  
+  friend Coordinate operator *= (Coordinate &a,Coordinate b) { return a=a*b; }
+  
+  friend Coordinate operator /= (Coordinate &a,Coordinate b) { return a=a/b; }
+  
+  friend Coordinate operator <<= (Coordinate &a,unsigned s) { return a=a<<s; }
+  
+  friend Coordinate operator >>= (Coordinate &a,unsigned s) { return a=a>>s; }
+  
+  // safe operations
+  
+  friend bool operator == (Coordinate a,Coordinate b) { return a.x==b.x ; }
+  
+  friend bool operator != (Coordinate a,Coordinate b) { return a.x!=b.x ; }
+  
+  friend bool operator < (Coordinate a,Coordinate b) { return a.x<b.x ; }
+  
+  friend bool operator <= (Coordinate a,Coordinate b) { return a.x<=b.x ; }
+  
+  friend bool operator > (Coordinate a,Coordinate b) { return a.x>b.x ; }
+  
+  friend bool operator >= (Coordinate a,Coordinate b) { return a.x>=b.x ; }
+  
+  // print object
+  
+  template <class P>
+  void print(P &out) const
+   {
+    Putobj(out,x);
+   }
+ 
+  // no-throw flags
+  
+  enum NoThrowFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true
+   };
+ };
+
+inline Coordinate Sup(Coordinate a,Coordinate b) { return Coordinate(Max(a.x,b.x)); }
+
+inline Coordinate Inf(Coordinate a,Coordinate b) { return Coordinate(Min(a.x,b.x)); }
 
 /* struct BasePoint<T,Int> */
 
@@ -263,11 +352,21 @@ struct Pane
     return contains_nonempty(pane);
    }
   
+  // print object
+  
   template <class P>
   void print(P &out) const
    {
     Printf(out,"(#; +#;,#; +#;)",x,dx,y,dy);
    }
+  
+  // no-throw flags
+  
+  enum NoThrowFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true
+   };
  };
 
 inline Pane Sup_nonempty(Pane a,Pane b) // +a && +b

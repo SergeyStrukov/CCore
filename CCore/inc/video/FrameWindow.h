@@ -16,15 +16,15 @@
 #ifndef CCore_inc_video_FrameWindow_h
 #define CCore_inc_video_FrameWindow_h
 
-#include <CCore/inc/MemBase.h>
-
 #include <CCore/inc/video/Point.h>
+#include <CCore/inc/video/Color.h>
 #include <CCore/inc/video/Keyboard.h>
 #include <CCore/inc/video/Mouse.h>
-#include <CCore/inc/video/Color.h>
-
 #include <CCore/inc/video/FrameBuf.h>
  
+#include <CCore/inc/MemBase.h>
+#include <CCore/inc/TimeScope.h>
+
 namespace CCore {
 namespace Video {
 
@@ -64,9 +64,7 @@ struct Desktop
   
   virtual bool pump(unsigned lim=DefaultLim)=0;
   
-  virtual void wait()=0;
-  
-  virtual void wait(MSec timeout)=0;
+  virtual void wait(TimeScope time_scope)=0;
  };
 
 /* class WinControl */
@@ -88,6 +86,16 @@ class WinControl : public MemBase_nocopy
    
    virtual ~WinControl() {}
    
+   // props
+   
+   bool isAlive() const { return is_alive; }
+   
+   bool isDead() const { return !is_alive; }
+   
+   Point getMaxSize() const { return max_size; }
+   
+   unsigned getToken() const { return token; }
+   
    // create/destroy
    
    virtual void createMain(Point max_size)=0;
@@ -99,14 +107,6 @@ class WinControl : public MemBase_nocopy
    virtual void create(WinControl *parent,Pane pane,Point max_size)=0; // screen
    
    virtual void destroy()=0;
-   
-   bool isAlive() const { return is_alive; }
-   
-   bool isDead() const { return !is_alive; }
-   
-   Point getMaxSize() const { return max_size; }
-   
-   unsigned getToken() const { return token; }
    
    // operations
    
@@ -120,6 +120,8 @@ class WinControl : public MemBase_nocopy
    
    virtual void hide()=0;
    
+   // drawing
+   
    virtual void update()=0;
    
    virtual void invalidate(Pane pane,unsigned token=0)=0;
@@ -127,6 +129,12 @@ class WinControl : public MemBase_nocopy
    virtual void invalidate(unsigned token=0)=0;
    
    virtual ColorPlane getDrawPlane()=0;
+   
+   // keyboard
+   
+   virtual void setFocus()=0;
+   
+   // mouse
    
    virtual void captureMouse()=0;
    
@@ -142,11 +150,11 @@ class WinControl : public MemBase_nocopy
    
    virtual void untrackMouseLeave()=0;
    
-   virtual void setFocus()=0;
-   
    virtual void setMouseShape(MouseShape mshape)=0;
    
-   virtual Pane getPlacement()=0; // screen
+   // place
+   
+   virtual Pane getPlace()=0; // screen
    
    virtual void move(Pane pane)=0; // screen
  };
@@ -305,6 +313,8 @@ class FrameWindow : public MemBase_nocopy , public UserInput
    explicit FrameWindow(Desktop *desktop_) : desktop(desktop_),win(desktop_->createControl()) { win->frame=this; }
   
    virtual ~FrameWindow() { delete win; }
+   
+   // props
 
    Desktop * getDesktop() const { return desktop; }
    
@@ -355,6 +365,11 @@ class FrameWindow : public MemBase_nocopy , public UserInput
    
    // mouse
  
+   virtual void looseCapture()
+    {
+     // do nothing
+    }
+   
    virtual void setMouseShape(Point point)
     {
      Used(point);

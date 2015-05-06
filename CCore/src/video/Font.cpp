@@ -194,14 +194,15 @@ class DefFont : public FontBase
    
    // AbstractFont
    
-   virtual FontMetrics getMetrics()
+   virtual FontSize getSize()
     {
-     FontMetrics ret;
+     FontSize ret;
      
-     ret.dy=DefaultFont::DY;
-     ret.by=DefaultFont::BY;
      ret.min_dx=DefaultFont::DX;
      ret.max_dx=DefaultFont::DX;
+     ret.dy=DefaultFont::DY;
+     ret.by=DefaultFont::BY;
+     ret.skew=0;
      
      return ret;
     }
@@ -224,6 +225,13 @@ class DefFont : public FontBase
      ret.overflow=( str.len>ulen(MaxCoord/DefaultFont::DX) );
      
      return ret;
+    }
+
+   virtual ulen fit(StrLen str,Coord dx)
+    {
+     ulen max_len=dx/DefaultFont::DX;
+     
+     return Min(str.len,max_len);
     }
  };
 
