@@ -234,11 +234,11 @@ struct TickEvent
     flag=flag_;
    }
   
-  static void * Offset_time(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->time); }
+  static void * Offset_time(void *ptr) { return &(static_cast<TickEvent *>(ptr)->time); }
   
-  static void * Offset_id(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->id); }
+  static void * Offset_id(void *ptr) { return &(static_cast<TickEvent *>(ptr)->id); }
   
-  static void * Offset_flag(void *ptr) { return &(static_cast<MsgEvent *>(ptr)->flag); }
+  static void * Offset_flag(void *ptr) { return &(static_cast<TickEvent *>(ptr)->flag); }
   
   static void Register(EventMetaInfo &info,EventMetaInfo::EventDesc &desc)
    {
@@ -279,8 +279,6 @@ class WindowBuf : NoCopy
         Printf(Exception,format,"bad size");
        }
  
-     void *new_mem;
-     
      Win32::BitmapInfo info;
      
      info.header.cb=sizeof (Win32::BitmapInfoHeader);
@@ -300,6 +298,8 @@ class WindowBuf : NoCopy
      info.colors[0].green=0;
      info.colors[0].red=0;
      info.colors[0].alpha=0;
+     
+     void *new_mem;
      
      Win32::HGDObject new_bmp=Win32::ToGDObject(Win32::CreateDIBSection(0,&info,Win32::DIB_RGBColors,&new_mem,0,0));
     
@@ -381,7 +381,6 @@ class WindowsControl : public WinControl
  {
    Win32::HWindow hWnd = 0 ;
    bool is_main = false ;
-   bool correct_max_size = false ;
    
    Point origin;
    
@@ -740,7 +739,7 @@ class WindowsControl : public WinControl
        
       ~WindowPaint()
        {
-        Win32::EndPaint(hWnd,&pd); // ignore errors 
+        Win32::EndPaint(hWnd,&pd); 
        }
        
       Win32::HGDevice getGD() const { return hGD; } 
@@ -752,6 +751,8 @@ class WindowsControl : public WinControl
    
    void setTrack()
     {
+     const char *format="CCore::Video::Private_Desktop::WindowsControl::setTrack() : #;";
+     
      Win32::TrackMouseDesc desc;
      
      desc.cb=sizeof desc;
@@ -759,7 +760,7 @@ class WindowsControl : public WinControl
      desc.hWnd=hWnd;
      desc.hover_time=hover_time;
     
-     Win32::TrackMouseEvent(&desc);
+     SysGuard(format, Win32::TrackMouseEvent(&desc) );
     }
    
    Win32::MsgResult msgProc(Win32::HWindow hWnd_,Win32::MsgCode message,Win32::MsgWParam wParam,Win32::MsgLParam lParam)
@@ -779,7 +780,6 @@ class WindowsControl : public WinControl
          {
           hWnd=hWnd_;
           is_alive=true;
-          origin=Null;
           
           if( is_main ) HMainWindow=hWnd_;
           
@@ -819,28 +819,13 @@ class WindowsControl : public WinControl
         
         case Win32::WM_Move :
          {
-          Point point=ToPoint(lParam);
-          
-          origin=point;
+          origin=ToPoint(lParam);
          }
         return 0;
         
         case Win32::WM_Size :
          {
-          Point size=ToSize(lParam);
-          
-          if( correct_max_size && size>Null )
-            {
-             max_size=Sup(max_size,size);
-             
-             buf.setSize(max_size);
-             
-             buf_dirty=true;
-            
-             correct_max_size=false;
-            }
-          
-          frame->setSize(size,buf_dirty);
+          frame->setSize(ToSize(lParam),buf_dirty);
          }
         return 0;
         
@@ -1121,6 +1106,15 @@ class WindowsControl : public WinControl
      return ret;
     }
    
+   void reset()
+    {
+     origin=Null;
+     buf_dirty=true;
+     track_flags=0;
+     track_on=false;
+     max_flag=false;
+    }
+   
   public:
   
    WindowsControl() {}
@@ -1185,10 +1179,9 @@ class WindowsControl : public WinControl
        }
      
      is_main=true;
-     correct_max_size=false;
      max_size=max_size_;
-     buf_dirty=true;
-     max_flag=false;
+     
+     reset();
      
      buf.setSize(max_size_);
      
@@ -1210,10 +1203,9 @@ class WindowsControl : public WinControl
      guardCreate(format,pane,max_size_);
      
      is_main=false;
-     correct_max_size=false;
      max_size=max_size_;
-     buf_dirty=true;
-     max_flag=false;
+     
+     reset();
      
      buf.setSize(max_size_);
      
@@ -1235,10 +1227,9 @@ class WindowsControl : public WinControl
      guardCreate(format,pane,max_size_);
      
      is_main=false;
-     correct_max_size=false;
      max_size=max_size_;
-     buf_dirty=true;
-     max_flag=false;
+     
+     reset();
      
      buf.setSize(max_size_);
      
@@ -1318,9 +1309,13 @@ class WindowsControl : public WinControl
      switch( cmd_display )
        {
         default:
-        case CmdDisplay_Normal    : Win32::ShowWindow(hWnd,Win32::CmdShow_Normal); break;
+        case CmdDisplay_Normal : 
+          Win32::ShowWindow(hWnd,Win32::CmdShow_Normal); // error unavailable 
+        break;
         
-        case CmdDisplay_Minimized : Win32::ShowWindow(hWnd,Win32::CmdShow_Minimized); break;
+        case CmdDisplay_Minimized : 
+          Win32::ShowWindow(hWnd,Win32::CmdShow_Minimized); // error unavailable
+        break;
         
         case CmdDisplay_Maximized : 
          {
@@ -1351,22 +1346,6 @@ class WindowsControl : public WinControl
          }
         break;
        }
-     
-#if 0
-     
-     switch( cmd_display )
-       {
-        default:
-        case CmdDisplay_Normal    : Win32::ShowWindow(hWnd,Win32::CmdShow_Normal); break;
-        
-        case CmdDisplay_Minimized : Win32::ShowWindow(hWnd,Win32::CmdShow_Minimized); break;
-        
-        case CmdDisplay_Maximized : Win32::ShowWindow(hWnd,Win32::CmdShow_Maximized); break;
-        
-        case CmdDisplay_Restore   : Win32::ShowWindow(hWnd,Win32::CmdShow_Restore); break;
-       }
-     
-#endif     
     }
    
    virtual void show()
@@ -1375,7 +1354,7 @@ class WindowsControl : public WinControl
      
      guardAlive(format);
      
-     Win32::ShowWindow(hWnd,Win32::CmdShow_Show);
+     Win32::ShowWindow(hWnd,Win32::CmdShow_Show); // error unavailable
     }
    
    virtual void hide()
@@ -1384,8 +1363,10 @@ class WindowsControl : public WinControl
      
      guardAlive(format);
      
-     Win32::ShowWindow(hWnd,Win32::CmdShow_Hide);
+     Win32::ShowWindow(hWnd,Win32::CmdShow_Hide); // error unavailable
     }
+   
+   // drawing
    
    virtual void update()
     {
@@ -1424,10 +1405,21 @@ class WindowsControl : public WinControl
    
    virtual ColorPlane getDrawPlane()
     {
-     Win32::GdiFlush();
-     
      return buf.getPlane();
     }
+   
+   // keyboard
+   
+   virtual void setFocus()
+    {
+     const char *format="CCore::Video::Private_Desktop::WindowsControl::setFocus() : #;";
+     
+     guardAlive(format);
+     
+     Win32::SetFocus(hWnd); // error unavailable
+    }
+   
+   // mouse
    
    virtual void captureMouse()
     {
@@ -1435,7 +1427,7 @@ class WindowsControl : public WinControl
      
      guardAlive(format);
      
-     Win32::SetCapture(hWnd);
+     Win32::SetCapture(hWnd); // error unavailable
     }
    
    virtual void releaseMouse()
@@ -1482,19 +1474,12 @@ class WindowsControl : public WinControl
      BitClear(track_flags,Win32::MouseTrack_Leave);
     }
    
-   virtual void setFocus()
-    {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::setFocus() : #;";
-     
-     guardAlive(format);
-     
-     Win32::SetFocus(hWnd);
-    }
-   
    virtual void setMouseShape(MouseShape mshape)
     {
-     Win32::SetCursor(GetCursor(mshape));
+     Win32::SetCursor(GetCursor(mshape)); // error unavailable
     }
+   
+   // place
    
    virtual Pane getPlace()
     {
@@ -1517,9 +1502,9 @@ class WindowsControl : public WinControl
      
      GuardPane(format,pane,max_size);
      
-     //SysGuard(format, Win32::MoveWindow(hWnd,pane.x,pane.y,pane.dx,pane.dy,true) );
+     unsigned pos_flags=Win32::WindowPos_NoZOrder|Win32::WindowPos_NoCopyBits|Win32::WindowPos_NoRedraw|Win32::WindowPos_DeferErase;
      
-     SysGuard(format, Win32::SetWindowPos(hWnd,(Win32::HWindow)0,pane.x,pane.y,pane.dx,pane.dy,Win32::WindowPos_NoZOrder|Win32::WindowPos_NoCopyBits|Win32::WindowPos_NoRedraw|Win32::WindowPos_DeferErase) );
+     SysGuard(format, Win32::SetWindowPos(hWnd,(Win32::HWindow)0,pane.x,pane.y,pane.dx,pane.dy,pos_flags) );
     }
    
    virtual void move(Pane pane)
@@ -1604,9 +1589,12 @@ class WindowsDesktop : public Desktop
    
    virtual void wait(TimeScope time_scope)
     {
-     if( TestMsg() ) return;
-     
-     if( auto t=+time_scope.get() ) Win32::MsgWaitForMultipleObjects(0,0,false,t,Win32::Wake_AllInput);
+     if( auto t=+time_scope.get() ) 
+       {
+        if( TestMsg() ) return;
+        
+        Win32::MsgWaitForMultipleObjects(0,0,false,t,Win32::Wake_AllInput);
+       }
     }
  };
 
