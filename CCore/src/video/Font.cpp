@@ -127,11 +127,11 @@ class DefFont : public FontBase
         
         switch( place.align_y )
           {
-           case AlignY::Top : y=0; break;
+           case AlignY_Top : y=0; break;
             
-           case AlignY::Center : y=(py-DefaultFont::DY)/2; break;
+           case AlignY_Center : y=(py-DefaultFont::DY)/2; break;
             
-           case AlignY::Bottom : y=py-DefaultFont::DY; break;
+           case AlignY_Bottom : y=py-DefaultFont::DY; break;
             
            default: y=IntSub(place.y,DefaultFont::BY);
           }
@@ -140,9 +140,9 @@ class DefFont : public FontBase
         
         switch( place.align_x )
           {
-           case AlignX::Left : x=0; break;
+           case AlignX_Left : x=0; break;
            
-           case AlignX::Right :
+           case AlignX_Right :
             {
              ulen cap=ulen(px/DefaultFont::DX)+1;
              
@@ -152,7 +152,7 @@ class DefFont : public FontBase
             }
            break;
            
-           case AlignX::Center :
+           case AlignX_Center :
             {
              ulen cap=ulen(px/DefaultFont::DX)+1;
              

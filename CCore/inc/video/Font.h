@@ -28,20 +28,20 @@ namespace Video {
 
 /* consts */
 
-enum class AlignX
+enum AlignX
  {
-  Left,
-  Center,
-  Right,
-  Given
+  AlignX_Left,
+  AlignX_Center,
+  AlignX_Right,
+  AlignX_Given
  };
 
-enum class AlignY
+enum AlignY
  {
-  Top,
-  Center,
-  Bottom,
-  Given
+  AlignY_Top,
+  AlignY_Center,
+  AlignY_Bottom,
+  AlignY_Given
  };
 
 /* classes */
@@ -80,11 +80,11 @@ struct TextPlace
   
   TextPlace(AlignX align_x_,AlignY align_y_) : align_x(align_x_),align_y(align_y_) {}
   
-  TextPlace(AlignX align_x_,Coord y_) : align_x(align_x_),align_y(AlignY::Given),y(y_) {}
+  TextPlace(AlignX align_x_,Coord y_) : align_x(align_x_),align_y(AlignY_Given),y(y_) {}
   
-  TextPlace(Coord x_,AlignY align_y_) : align_x(AlignX::Given),align_y(align_y_),x(x_) {}
+  TextPlace(Coord x_,AlignY align_y_) : align_x(AlignX_Given),align_y(align_y_),x(x_) {}
   
-  TextPlace(Coord x_,Coord y_) : align_x(AlignX::Given),align_y(AlignY::Given),x(x_),y(y_) {}
+  TextPlace(Coord x_,Coord y_) : align_x(AlignX_Given),align_y(AlignY_Given),x(x_),y(y_) {}
  };
 
 /* struct TextSize */
