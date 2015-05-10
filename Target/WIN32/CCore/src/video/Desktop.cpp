@@ -1331,6 +1331,8 @@ class WindowsControl : public WinControl
              Replace_min(pane.dy,max_size.y);
             
              do_move(pane);
+             
+             Win32::InvalidateRect(hWnd,0,true); // ignore error
             }
          }
         break;
@@ -1342,6 +1344,8 @@ class WindowsControl : public WinControl
              max_flag=false;
             
              do_move(restore);
+             
+             Win32::InvalidateRect(hWnd,0,true); // ignore error
             }
          }
         break;
@@ -1379,6 +1383,8 @@ class WindowsControl : public WinControl
    
    virtual void invalidate(Pane pane,unsigned token_)
     {
+     if( !pane ) return;
+     
      token|=token_;
      
      Win32::Rectangle rect;
