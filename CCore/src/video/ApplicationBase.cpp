@@ -43,9 +43,9 @@ void ApplicationBase::forward(TimeScope time_scope)
     }
  }
 
-ApplicationBase::ApplicationBase(MSec tick_period_,Desktop *desktop_)
- : tick_period(tick_period_),
-   desktop(desktop_) 
+ApplicationBase::ApplicationBase(Desktop *desktop_,MSec tick_period)
+ : DeferCallQueue(tick_period),
+   desktop(desktop_)
  {
   activate();
  }
@@ -74,7 +74,7 @@ int ApplicationBase::run()
   
   beforeLoop();
   
-  loop(tick_period);
+  loop();
   
   afterLoop();
   

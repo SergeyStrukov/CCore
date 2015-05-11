@@ -112,6 +112,8 @@ class DeferCallQueue : NoCopy
    Algo::Cur tick_cur;
    bool stop_flag;
    
+   MSec tick_period;
+   
    DeferCallHeap heap;
    
   private:
@@ -134,9 +136,11 @@ class DeferCallQueue : NoCopy
    
    // constructors
    
+   static constexpr MSec DefaultTickPeriod = 40_msec ; // 25 Hz
+   
    static const ulen DefaultMemLen = 1_MByte ;
    
-   explicit DeferCallQueue(ulen mem_len=DefaultMemLen);
+   explicit DeferCallQueue(MSec tick_period=DefaultTickPeriod,ulen mem_len=DefaultMemLen);
    
    ~DeferCallQueue();
    
@@ -190,9 +194,7 @@ class DeferCallQueue : NoCopy
    
    // loop
    
-   static constexpr MSec DefaultTickPeriod = 40_msec ; // 25 Hz 
-   
-   void loop(MSec tick_period=DefaultTickPeriod);
+   void loop();
    
    void stop() { stop_flag=true; }
    
@@ -204,7 +206,7 @@ class DeferCallQueue : NoCopy
    
    static bool IsActive();
    
-   static void Loop(MSec tick_period=DefaultTickPeriod) { Get()->loop(tick_period); }
+   static void Loop() { Get()->loop(); }
    
    static void Stop() { Get()->stop(); }
    

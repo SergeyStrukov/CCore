@@ -35,8 +35,6 @@ class ApplicationBase : public DeferCallQueue
    
   protected:
    
-   const MSec tick_period;
-   
    Desktop *const desktop;
    
   protected: 
@@ -57,7 +55,7 @@ class ApplicationBase : public DeferCallQueue
    
   public: 
    
-   explicit ApplicationBase(MSec tick_period,Desktop *desktop);
+   explicit ApplicationBase(Desktop *desktop,MSec tick_period);
    
    ~ApplicationBase();
    

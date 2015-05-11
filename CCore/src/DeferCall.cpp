@@ -191,9 +191,10 @@ bool DeferCallQueue::tick() noexcept(EnableNoExcept)
   return false;
  }
 
-DeferCallQueue::DeferCallQueue(ulen mem_len) 
+DeferCallQueue::DeferCallQueue(MSec tick_period_,ulen mem_len) 
  : tick_cur(0),
    stop_flag(false),
+   tick_period(tick_period_),
    heap(mem_len)
  {
  }
@@ -203,7 +204,7 @@ DeferCallQueue::~DeferCallQueue()
   cleanup();
  }
 
-void DeferCallQueue::loop(MSec tick_period)
+void DeferCallQueue::loop()
  {
   if( stop_flag ) return;
   
