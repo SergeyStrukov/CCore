@@ -407,6 +407,8 @@ inline Pane Inf(Pane a,Pane b)
 
 inline Pane Extent(Coord x,Coord y,Coord dx,Coord dy) { if( dx>0 && dy>0 ) return Pane(x,y,dx,dy); return Empty; }
 
+inline Pane Extent(Coord x,Coord y,Point size) { return Extent(x,y,size.x,size.y); }
+
 inline Pane Extent(Point base,Coord dx,Coord dy) { return Extent(base.x,base.y,dx,dy); }
 
 inline Pane Extent(Point base,Point size) { return Extent(base.x,base.y,size.x,size.y); }

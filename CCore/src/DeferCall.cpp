@@ -214,15 +214,13 @@ void DeferCallQueue::loop()
     {
      if( pump() ) break;
      
+     forward(time_scope);
+     
+     if( stop_flag ) break;
+     
      if( time_scope.nextScope() )
        {
         if( tick() ) break;
-       }
-     else
-       {
-        forward(time_scope);
-        
-        if( stop_flag ) break;
        }
     }
  }

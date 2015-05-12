@@ -53,6 +53,8 @@ class ApplicationBase : public DeferCallQueue
    
    virtual void final()=0;
    
+   virtual void idle(TimeScope time_scope);
+   
   public: 
    
    explicit ApplicationBase(Desktop *desktop,MSec tick_period);

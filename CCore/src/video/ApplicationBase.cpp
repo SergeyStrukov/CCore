@@ -24,6 +24,8 @@ void ApplicationBase::forward(TimeScope time_scope)
  {
   try
     {
+     idle(time_scope);
+    
      desktop->wait(time_scope);
      
      if( desktop->pump() )
@@ -41,6 +43,10 @@ void ApplicationBase::forward(TimeScope time_scope)
      
      clearException();
     }
+ }
+
+void ApplicationBase::idle(TimeScope)
+ {
  }
 
 ApplicationBase::ApplicationBase(Desktop *desktop_,MSec tick_period)
