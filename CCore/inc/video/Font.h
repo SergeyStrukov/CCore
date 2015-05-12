@@ -104,6 +104,8 @@ struct AbstractFont
  {
   virtual FontSize getSize()=0;
   
+  virtual void text_update(DrawBuf buf,Pane pane,TextPlace &place,StrLen str,DesktopColor color)=0;
+  
   virtual void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color)=0;
   
   virtual TextSize text(StrLen str)=0;

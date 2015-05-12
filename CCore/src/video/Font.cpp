@@ -119,10 +119,8 @@ class DefFont : public FontBase
           }
        }
     
-      void text(Coord px,Coord py,TextPlace place,StrLen str,DesktopColor color)
+      static Point Prepare(Coord px,Coord py,TextPlace place,StrLen &str)
        {
-        if( !*this ) return;
-        
         Coord y;
         
         switch( place.align_y )
@@ -170,8 +168,13 @@ class DefFont : public FontBase
            default: x=place.x;
           }
         
-        x=mapX(x);
-        y=mapY(y);
+        return Point(x,y);
+       }
+      
+      void text(Point point,StrLen str,DesktopColor color)
+       {
+        Coord x=mapX(point.x);
+        Coord y=mapY(point.y);
         
         if( y>=dy || y<=-DefaultFont::DY ) return;
         
@@ -183,6 +186,26 @@ class DefFont : public FontBase
           
            x+=DefaultFont::DX;
           }
+       }
+      
+      void text(Coord px,Coord py,TextPlace place,StrLen str,DesktopColor color)
+       {
+        if( !*this ) return;
+        
+        Point point=Prepare(px,py,place,str);
+        
+        text(point,str,color);
+       }
+      
+      void text_update(Coord px,Coord py,TextPlace &place,StrLen str,DesktopColor color)
+       {
+        Point point=Prepare(px,py,place,str);
+        
+        if( +*this ) text(point,str,color);
+
+        point.x+=Coord( str.len*DefaultFont::DX );
+        
+        place=TextPlace(point.x,point.y+DefaultFont::BY);
        }
     };
   
@@ -205,6 +228,13 @@ class DefFont : public FontBase
      ret.skew=0;
      
      return ret;
+    }
+   
+   virtual void text_update(DrawBuf buf,Pane pane,TextPlace &place,StrLen str,DesktopColor color)
+    {
+     WorkBuf out(buf.cutRebase(pane));
+     
+     out.text_update(pane.dx,pane.dy,place,str,color);
     }
    
    virtual void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color)
