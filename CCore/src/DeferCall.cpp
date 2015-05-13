@@ -218,7 +218,7 @@ void DeferCallQueue::loop()
      
      if( stop_flag ) break;
      
-     if( time_scope.nextScope() )
+     if( time_scope.nextScope_skip() )
        {
         if( tick() ) break;
        }

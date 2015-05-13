@@ -334,7 +334,7 @@ void SingleBridge::objRun()
   for(;;)
     switch( msem.take(time_scope) )
       {
-       case Event_Timeout  : if( time_scope.nextScope() ) handle_tick(); break; 
+       case Event_Timeout  : if( time_scope.nextScope_skip() ) handle_tick(); break; 
        
        case Event_Stop     : return;
         

@@ -788,7 +788,7 @@ void AsyncUDPDevice<T>::objRun()
        
        case Sys::Wait_timeout :
         {
-         if( time_scope.nextScope() )
+         if( time_scope.nextScope_skip() )
            {
             if( proc ) proc->tick();  
         

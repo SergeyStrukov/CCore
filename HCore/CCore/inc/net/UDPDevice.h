@@ -81,7 +81,7 @@ class UDPInboundPackets : NoCopy
    
    TimeScope getScope() const { return time_scope; }
    
-   bool nextScope() { return time_scope.nextScope(); } 
+   bool nextScope() { return time_scope.nextScope_skip(); } 
  };
 
 /* class UDPSocket */
