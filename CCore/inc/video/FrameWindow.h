@@ -34,7 +34,7 @@ namespace Video {
 
 struct Desktop;
 
-class WinControl;
+class WindowHost;
 
 struct UserInput;
 
@@ -56,7 +56,7 @@ const char * GetTextDesc(CmdDisplay cmd_display);
 
 struct Desktop
  {
-  virtual WinControl * createControl()=0;
+  virtual WindowHost * createHost()=0;
   
   virtual Point getScreenSize()=0;
   
@@ -67,9 +67,9 @@ struct Desktop
   virtual void wait(TimeScope time_scope)=0;
  };
 
-/* class WinControl */
+/* class WindowHost */
 
-class WinControl : public MemBase_nocopy
+class WindowHost : public MemBase_nocopy
  {
   protected:
   
@@ -82,9 +82,9 @@ class WinControl : public MemBase_nocopy
    
   public: 
    
-   WinControl() {}
+   WindowHost() {}
    
-   virtual ~WinControl() {}
+   virtual ~WindowHost() {}
    
    // props
    
@@ -104,7 +104,7 @@ class WinControl : public MemBase_nocopy
    
    virtual void create(Pane pane,Point max_size)=0; // screen
    
-   virtual void create(WinControl *parent,Pane pane,Point max_size)=0; // screen
+   virtual void create(WindowHost *parent,Pane pane,Point max_size)=0; // screen
    
    virtual void destroy()=0;
    
@@ -306,23 +306,23 @@ class FrameWindow : public MemBase_nocopy , public UserInput
    
    Desktop *const desktop;
    
-   WinControl *const win;
+   WindowHost *const host;
    
   public:
    
-   explicit FrameWindow(Desktop *desktop_) : desktop(desktop_),win(desktop_->createControl()) { win->frame=this; }
+   explicit FrameWindow(Desktop *desktop_) : desktop(desktop_),host(desktop_->createHost()) { host->frame=this; }
   
-   virtual ~FrameWindow() { delete win; }
+   virtual ~FrameWindow() { delete host; }
    
    // props
 
    Desktop * getDesktop() const { return desktop; }
    
-   WinControl * getControl() const { return win; }
+   WindowHost * getHost() const { return host; }
    
-   bool isAlive() const { return win->isAlive(); }
+   bool isAlive() const { return host->isAlive(); }
    
-   bool isDead() const { return win->isDead(); }
+   bool isDead() const { return host->isDead(); }
    
    // base
    
@@ -374,7 +374,7 @@ class FrameWindow : public MemBase_nocopy , public UserInput
     {
      Used(point);
      
-     win->setMouseShape(Mouse_Arrow);
+     host->setMouseShape(Mouse_Arrow);
     }
  };
 

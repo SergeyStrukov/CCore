@@ -252,18 +252,21 @@ class DefFont : public FontBase
      ret.dy=DefaultFont::DY;
      ret.by=DefaultFont::BY;
      ret.skew=0;
+     ret.full_dx=ret.dx;
      ret.overflow=( str.len>ulen(MaxCoord/DefaultFont::DX) );
      
      return ret;
     }
 
-   virtual ulen fit(StrLen str,Coord dx)
+   virtual ulen fit(StrLen str,Coord full_dx)
     {
-     ulen max_len=dx/DefaultFont::DX;
+     ulen max_len=full_dx/DefaultFont::DX;
      
      return Min(str.len,max_len);
     }
  };
+
+DefFont Object CCORE_INITPRI_0 ; 
 
 } // namespace Private_Font
 
@@ -272,8 +275,9 @@ using namespace Private_Font;
 /* class Font */
 
 Font::Font()
- : ptr(new DefFont())
+ : ptr(&Object)
  {
+  ptr->incRef();
  }
 
 } // namespace Video

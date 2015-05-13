@@ -38,6 +38,7 @@ obj/CapString.o \
 obj/CharProp.o \
 obj/CheckPlatformBase.o \
 obj/CheckedData.o \
+obj/ClientWindow.o \
 obj/CmdInput.o \
 obj/Cmp.o \
 obj/Collector.o \
@@ -108,7 +109,11 @@ obj/DevRW.o \
 obj/DevTick.o \
 obj/DevTimer.o \
 obj/DevWaitForInterrupt.o \
+obj/DragWindow.o \
+obj/DrawAlgo.o \
+obj/DrawArt.o \
 obj/DrawBuf.o \
+obj/DrawTools.o \
 obj/DynArray.o \
 obj/DynObject.o \
 obj/EDID.o \
@@ -285,6 +290,7 @@ obj/StrParse.o \
 obj/StrPrint.o \
 obj/String.o \
 obj/StringScan.o \
+obj/SubWindow.o \
 obj/Swap.o \
 obj/SysAbort.o \
 obj/SysAsyncFile.o \
@@ -338,6 +344,7 @@ obj/VIA_Rhine_III.o \
 obj/VideoConsole.o \
 obj/VideoControl.o \
 obj/VideoDevice.o \
+obj/WindowReport.o \
 obj/XPoint.o \
 obj/__std_init.o \
 obj/assert.o \
@@ -387,6 +394,7 @@ obj/CapString.s \
 obj/CharProp.s \
 obj/CheckPlatformBase.s \
 obj/CheckedData.s \
+obj/ClientWindow.s \
 obj/CmdInput.s \
 obj/Cmp.s \
 obj/Collector.s \
@@ -457,7 +465,11 @@ obj/DevRW.s \
 obj/DevTick.s \
 obj/DevTimer.s \
 obj/DevWaitForInterrupt.s \
+obj/DragWindow.s \
+obj/DrawAlgo.s \
+obj/DrawArt.s \
 obj/DrawBuf.s \
+obj/DrawTools.s \
 obj/DynArray.s \
 obj/DynObject.s \
 obj/EDID.s \
@@ -634,6 +646,7 @@ obj/StrParse.s \
 obj/StrPrint.s \
 obj/String.s \
 obj/StringScan.s \
+obj/SubWindow.s \
 obj/Swap.s \
 obj/SysAbort.s \
 obj/SysAsyncFile.s \
@@ -687,6 +700,7 @@ obj/VIA_Rhine_III.s \
 obj/VideoConsole.s \
 obj/VideoControl.s \
 obj/VideoDevice.s \
+obj/WindowReport.s \
 obj/XPoint.s \
 obj/__std_init.s \
 obj/assert.s \
@@ -736,6 +750,7 @@ obj/CapString.dep \
 obj/CharProp.dep \
 obj/CheckPlatformBase.dep \
 obj/CheckedData.dep \
+obj/ClientWindow.dep \
 obj/CmdInput.dep \
 obj/Cmp.dep \
 obj/Collector.dep \
@@ -806,7 +821,11 @@ obj/DevRW.dep \
 obj/DevTick.dep \
 obj/DevTimer.dep \
 obj/DevWaitForInterrupt.dep \
+obj/DragWindow.dep \
+obj/DrawAlgo.dep \
+obj/DrawArt.dep \
 obj/DrawBuf.dep \
+obj/DrawTools.dep \
 obj/DynArray.dep \
 obj/DynObject.dep \
 obj/EDID.dep \
@@ -983,6 +1002,7 @@ obj/StrParse.dep \
 obj/StrPrint.dep \
 obj/String.dep \
 obj/StringScan.dep \
+obj/SubWindow.dep \
 obj/Swap.dep \
 obj/SysAbort.dep \
 obj/SysAsyncFile.dep \
@@ -1036,6 +1056,7 @@ obj/VIA_Rhine_III.dep \
 obj/VideoConsole.dep \
 obj/VideoControl.dep \
 obj/VideoDevice.dep \
+obj/WindowReport.dep \
 obj/XPoint.dep \
 obj/__std_init.dep \
 obj/assert.dep \
@@ -1176,6 +1197,9 @@ obj/CheckPlatformBase.o : ../../CCore/src/base/CheckPlatformBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CheckedData.o : ../../CCore/src/net/CheckedData.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ClientWindow.o : ../../CCore/src/video/ClientWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CmdInput.o : ../../CCore/src/CmdInput.cpp
@@ -1388,7 +1412,19 @@ obj/DevTimer.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 obj/DevWaitForInterrupt.o : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/DragWindow.o : ../../CCore/src/video/DragWindow.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DrawAlgo.o : ../../CCore/src/video/DrawAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DrawArt.o : ../../CCore/src/video/DrawArt.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/DrawBuf.o : ../../CCore/src/video/DrawBuf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/DrawTools.o : ../../CCore/src/video/DrawTools.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DynArray.o : ../../CCore/src/array/DynArray.cpp
@@ -1919,6 +1955,9 @@ obj/String.o : ../../CCore/src/String.cpp
 obj/StringScan.o : ../../CCore/src/scanf/StringScan.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/SubWindow.o : ../../CCore/src/video/SubWindow.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Swap.o : ../../CCore/src/Swap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2078,6 +2117,9 @@ obj/VideoControl.o : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.c
 obj/VideoDevice.o : ../../CCore/src/video/VideoDevice.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/WindowReport.o : ../../CCore/src/video/WindowReport.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/XPoint.o : ../../CCore/src/net/XPoint.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2216,6 +2258,9 @@ obj/CheckPlatformBase.s : ../../CCore/src/base/CheckPlatformBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/CheckedData.s : ../../CCore/src/net/CheckedData.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ClientWindow.s : ../../CCore/src/video/ClientWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/CmdInput.s : ../../CCore/src/CmdInput.cpp
@@ -2428,7 +2473,19 @@ obj/DevTimer.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 obj/DevWaitForInterrupt.s : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/DragWindow.s : ../../CCore/src/video/DragWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DrawAlgo.s : ../../CCore/src/video/DrawAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DrawArt.s : ../../CCore/src/video/DrawArt.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DrawBuf.s : ../../CCore/src/video/DrawBuf.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/DrawTools.s : ../../CCore/src/video/DrawTools.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DynArray.s : ../../CCore/src/array/DynArray.cpp
@@ -2959,6 +3016,9 @@ obj/String.s : ../../CCore/src/String.cpp
 obj/StringScan.s : ../../CCore/src/scanf/StringScan.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SubWindow.s : ../../CCore/src/video/SubWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Swap.s : ../../CCore/src/Swap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3118,6 +3178,9 @@ obj/VideoControl.s : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl.c
 obj/VideoDevice.s : ../../CCore/src/video/VideoDevice.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/WindowReport.s : ../../CCore/src/video/WindowReport.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/XPoint.s : ../../CCore/src/net/XPoint.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3257,6 +3320,9 @@ obj/CheckPlatformBase.dep : ../../CCore/src/base/CheckPlatformBase.cpp
 
 obj/CheckedData.dep : ../../CCore/src/net/CheckedData.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CheckedData.o $< -MF $@
+
+obj/ClientWindow.dep : ../../CCore/src/video/ClientWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ClientWindow.o $< -MF $@
 
 obj/CmdInput.dep : ../../CCore/src/CmdInput.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CmdInput.o $< -MF $@
@@ -3468,8 +3534,20 @@ obj/DevTimer.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevTimer.cpp
 obj/DevWaitForInterrupt.dep : ../../Target/BeagleBoneBlack/CCore/src/dev/DevWaitForInterrupt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DevWaitForInterrupt.o $< -MF $@
 
+obj/DragWindow.dep : ../../CCore/src/video/DragWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DragWindow.o $< -MF $@
+
+obj/DrawAlgo.dep : ../../CCore/src/video/DrawAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawAlgo.o $< -MF $@
+
+obj/DrawArt.dep : ../../CCore/src/video/DrawArt.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawArt.o $< -MF $@
+
 obj/DrawBuf.dep : ../../CCore/src/video/DrawBuf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawBuf.o $< -MF $@
+
+obj/DrawTools.dep : ../../CCore/src/video/DrawTools.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawTools.o $< -MF $@
 
 obj/DynArray.dep : ../../CCore/src/array/DynArray.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DynArray.o $< -MF $@
@@ -3999,6 +4077,9 @@ obj/String.dep : ../../CCore/src/String.cpp
 obj/StringScan.dep : ../../CCore/src/scanf/StringScan.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/StringScan.o $< -MF $@
 
+obj/SubWindow.dep : ../../CCore/src/video/SubWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SubWindow.o $< -MF $@
+
 obj/Swap.dep : ../../CCore/src/Swap.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Swap.o $< -MF $@
 
@@ -4157,6 +4238,9 @@ obj/VideoControl.dep : ../../Target/BeagleBoneBlack/CCore/src/video/VideoControl
 
 obj/VideoDevice.dep : ../../CCore/src/video/VideoDevice.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoDevice.o $< -MF $@
+
+obj/WindowReport.dep : ../../CCore/src/video/WindowReport.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/WindowReport.o $< -MF $@
 
 obj/XPoint.dep : ../../CCore/src/net/XPoint.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/XPoint.o $< -MF $@

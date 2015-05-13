@@ -95,6 +95,7 @@ struct TextSize
   Coord dy;
   Coord by;
   Coord skew;
+  Coord full_dx;
   bool overflow;
  };
 
@@ -110,7 +111,7 @@ struct AbstractFont
   
   virtual TextSize text(StrLen str)=0;
   
-  virtual ulen fit(StrLen str,Coord dx)=0;
+  virtual ulen fit(StrLen str,Coord full_dx)=0;
  };
 
 /* class FontBase */
@@ -138,11 +139,13 @@ class Font
  {
    RefPtr<FontBase> ptr;
    
-  public:
-   
-   Font(); // default font, may throw
+  protected:
    
    explicit Font(FontBase *font) : ptr(font) {}
+   
+  public:
+   
+   Font(); // default font
    
    ~Font() {}
    

@@ -375,9 +375,9 @@ class WindowBuf : NoCopy
     }
  };
 
-/* class WindowsControl */
+/* class WindowsHost */
 
-class WindowsControl : public WinControl
+class WindowsHost : public WindowHost
  {
    Win32::HWindow hWnd = 0 ;
    bool is_main = false ;
@@ -486,7 +486,7 @@ class WindowsControl : public WinControl
         wndcls.hIconSm=Win32::LoadIconA(hModule,Win32::MakeIntResource(AppDesktopConfig.idIconSmall));
         wndcls.menu_res=0;
         
-        wndcls.class_name="9613CA28BE7A78F0-2DD3FC07C7330F49-WindowsControl";
+        wndcls.class_name="9613CA28BE7A78F0-2DD3FC07C7330F49-WindowsHost";
         wndcls.wnd_proc=WndProc;
            
         atom=Win32::RegisterClassExA(&wndcls);
@@ -708,7 +708,7 @@ class WindowsControl : public WinControl
     {
      Win32::Rectangle rect;
      
-     SysGuard("CCore::Video::Private_Desktop::WindowsControl::GetWorkPane() : #;", Win32::SystemParametersInfoA(Win32::SPA_getWorkArea,0,&rect,0) );
+     SysGuard("CCore::Video::Private_Desktop::WindowsHost::GetWorkPane() : #;", Win32::SystemParametersInfoA(Win32::SPA_getWorkArea,0,&rect,0) );
      
      return ToPane(rect);
     }
@@ -723,7 +723,7 @@ class WindowsControl : public WinControl
      
       explicit WindowPaint(Win32::HWindow hWnd_)
        {
-        const char *format="CCore::Video::Private_Desktop::WindowsControl::WindowPaint::WindowPaint(...) : #;";
+        const char *format="CCore::Video::Private_Desktop::WindowsHost::WindowPaint::WindowPaint(...) : #;";
        
         if( hWnd_==0 )
           {
@@ -751,7 +751,7 @@ class WindowsControl : public WinControl
    
    void setTrack()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::setTrack() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::setTrack() : #;";
      
      Win32::TrackMouseDesc desc;
      
@@ -1063,7 +1063,7 @@ class WindowsControl : public WinControl
        }
     }
    
-   static Win32::MsgResult ObjWndProc(WindowsControl *obj,Win32::HWindow hWnd,Win32::MsgCode message,Win32::MsgWParam wParam,Win32::MsgLParam lParam)
+   static Win32::MsgResult ObjWndProc(WindowsHost *obj,Win32::HWindow hWnd,Win32::MsgCode message,Win32::MsgWParam wParam,Win32::MsgLParam lParam)
     {
      try
        {
@@ -1098,7 +1098,7 @@ class WindowsControl : public WinControl
        }
      else
        {
-        ret=ObjWndProc(static_cast<WindowsControl *>(arg),hWnd,message,wParam,lParam);
+        ret=ObjWndProc(static_cast<WindowsHost *>(arg),hWnd,message,wParam,lParam);
        }
      
      TaskEventHost.add<MsgEvent>(message,MsgEvent::Leave);
@@ -1117,9 +1117,9 @@ class WindowsControl : public WinControl
    
   public:
   
-   WindowsControl() {}
+   WindowsHost() {}
    
-   virtual ~WindowsControl() {}
+   virtual ~WindowsHost() {}
    
    // msg boxes
    
@@ -1169,7 +1169,7 @@ class WindowsControl : public WinControl
    
    virtual void createMain(Pane pane,Point max_size_)
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::createMain(...) : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::createMain(...) : #;";
      
      guardCreate(format,pane,max_size_);
      
@@ -1198,7 +1198,7 @@ class WindowsControl : public WinControl
    
    virtual void create(Pane pane,Point max_size_)
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::create(...) : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::create(...) : #;";
      
      guardCreate(format,pane,max_size_);
      
@@ -1220,9 +1220,9 @@ class WindowsControl : public WinControl
      SysGuard(format,hWnd!=0);                  
     }
    
-   virtual void create(WinControl *parent,Pane pane,Point max_size_)
+   virtual void create(WindowHost *parent,Pane pane,Point max_size_)
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::create(...) : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::create(...) : #;";
      
      guardCreate(format,pane,max_size_);
      
@@ -1237,7 +1237,7 @@ class WindowsControl : public WinControl
      
      if( parent )
        {
-        WindowsControl *ptr=dynamic_cast<WindowsControl *>(parent);
+        WindowsHost *ptr=dynamic_cast<WindowsHost *>(parent);
         
         if( !ptr )
           {
@@ -1269,7 +1269,7 @@ class WindowsControl : public WinControl
    
    virtual void destroy()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::destroy() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::destroy() : #;";
      
      guardAlive(format);
      
@@ -1280,7 +1280,7 @@ class WindowsControl : public WinControl
    
    virtual void setMaxSize(Point max_size_)
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::setMaxSize(...) : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::setMaxSize(...) : #;";
 
      GuardMaxSize(format,max_size_);
      
@@ -1293,7 +1293,7 @@ class WindowsControl : public WinControl
    
    virtual bool enableUserInput(bool en)
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::enableUserInput(...) : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::enableUserInput(...) : #;";
      
      guardAlive(format);
      
@@ -1302,7 +1302,7 @@ class WindowsControl : public WinControl
    
    virtual void display(CmdDisplay cmd_display)
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::display(...) : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::display(...) : #;";
      
      guardAlive(format);
      
@@ -1354,7 +1354,7 @@ class WindowsControl : public WinControl
    
    virtual void show()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::show() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::show() : #;";
      
      guardAlive(format);
      
@@ -1363,7 +1363,7 @@ class WindowsControl : public WinControl
    
    virtual void hide()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::hide() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::hide() : #;";
      
      guardAlive(format);
      
@@ -1374,7 +1374,7 @@ class WindowsControl : public WinControl
    
    virtual void update()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::update() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::update() : #;";
      
      guardAlive(format);
      
@@ -1418,7 +1418,7 @@ class WindowsControl : public WinControl
    
    virtual void setFocus()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::setFocus() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::setFocus() : #;";
      
      guardAlive(format);
      
@@ -1429,7 +1429,7 @@ class WindowsControl : public WinControl
    
    virtual void captureMouse()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::captureMouse() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::captureMouse() : #;";
      
      guardAlive(format);
      
@@ -1438,7 +1438,7 @@ class WindowsControl : public WinControl
    
    virtual void releaseMouse()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::releaseMouse() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::releaseMouse() : #;";
      
      guardAlive(format);
      
@@ -1489,7 +1489,7 @@ class WindowsControl : public WinControl
    
    virtual Pane getPlace()
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::getPlace() : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::getPlace() : #;";
      
      guardAlive(format);
      
@@ -1502,7 +1502,7 @@ class WindowsControl : public WinControl
    
    void do_move(Pane pane)
     {
-     const char *format="CCore::Video::Private_Desktop::WindowsControl::do_move(...) : #;";
+     const char *format="CCore::Video::Private_Desktop::WindowsHost::do_move(...) : #;";
      
      guardAlive(format);
      
@@ -1521,7 +1521,7 @@ class WindowsControl : public WinControl
     }
  };
 
-Win32::HCursor WindowsControl::CursorTable[]=
+Win32::HCursor WindowsHost::CursorTable[]=
  {
   0,
   Win32::LoadCursorA(0,Win32::MakeIntResource(Win32::SysCursor_Arrow)),
@@ -1540,9 +1540,9 @@ Win32::HCursor WindowsControl::CursorTable[]=
   Win32::LoadCursorA(0,Win32::MakeIntResource(Win32::SysCursor_AppStarting))
  };
 
-WindowsControl::WindowClass WindowsControl::WindowClassObject;
+WindowsHost::WindowClass WindowsHost::WindowClassObject;
 
-Win32::HWindow WindowsControl::HMainWindow=0;
+Win32::HWindow WindowsHost::HMainWindow=0;
 
 /* class WindowsDesktop */
 
@@ -1565,9 +1565,9 @@ class WindowsDesktop : public Desktop
    
    // Desktop
    
-   virtual WinControl * createControl()
+   virtual WindowHost * createHost()
     { 
-     return new WindowsControl(); 
+     return new WindowsHost(); 
     }
    
    virtual Point getScreenSize()
@@ -1622,12 +1622,12 @@ void TickLeaveEvent()
 
 void AbortMsgBox(StrLen text)
  {
-  WindowsControl::AbortMsgBox(text);
+  WindowsHost::AbortMsgBox(text);
  }
 
 void ErrorMsgBox(StrLen text,StrLen title)
  {
-  WindowsControl::ErrorMsgBox(text,title);
+  WindowsHost::ErrorMsgBox(text,title);
  }
 
 /* global DefaultDesktop */

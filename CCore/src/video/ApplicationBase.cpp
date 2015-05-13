@@ -45,8 +45,11 @@ void ApplicationBase::forward(TimeScope time_scope)
     }
  }
 
-void ApplicationBase::idle(TimeScope)
+void ApplicationBase::idle(TimeScope time_scope)
  {
+  Used(time_scope);
+  
+  // do nothing
  }
 
 ApplicationBase::ApplicationBase(Desktop *desktop_,MSec tick_period)

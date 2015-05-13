@@ -16,7 +16,7 @@
 #ifndef CCore_inc_video_ApplicationBase_h
 #define CCore_inc_video_ApplicationBase_h
 
-#include <CCore/inc/video/Desktop.h>
+#include <CCore/inc/video/FrameWindow.h>
 
 #include <CCore/inc/DeferCall.h>
  
