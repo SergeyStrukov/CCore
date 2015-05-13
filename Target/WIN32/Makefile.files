@@ -311,7 +311,6 @@ obj/TaskMemStack.o \
 obj/TempArray.o \
 obj/TextLabel.o \
 obj/TextTools.o \
-obj/TickTimer.o \
 obj/TimeScope.o \
 obj/Timer.o \
 obj/TlsSlot.o \
@@ -650,7 +649,6 @@ obj/TaskMemStack.s \
 obj/TempArray.s \
 obj/TextLabel.s \
 obj/TextTools.s \
-obj/TickTimer.s \
 obj/TimeScope.s \
 obj/Timer.s \
 obj/TlsSlot.s \
@@ -989,7 +987,6 @@ obj/TaskMemStack.dep \
 obj/TempArray.dep \
 obj/TextLabel.dep \
 obj/TextTools.dep \
-obj/TickTimer.dep \
 obj/TimeScope.dep \
 obj/Timer.dep \
 obj/TlsSlot.dep \
@@ -1963,9 +1960,6 @@ obj/TextLabel.o : ../../CCore/src/TextLabel.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TextTools.o : ../../CCore/src/TextTools.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/TickTimer.o : ../../CCore/src/TickTimer.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/TimeScope.o : ../../CCore/src/TimeScope.cpp
@@ -2975,9 +2969,6 @@ obj/TextLabel.s : ../../CCore/src/TextLabel.cpp
 obj/TextTools.s : ../../CCore/src/TextTools.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/TickTimer.s : ../../CCore/src/TickTimer.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
 obj/TimeScope.s : ../../CCore/src/TimeScope.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3984,9 +3975,6 @@ obj/TextLabel.dep : ../../CCore/src/TextLabel.cpp
 
 obj/TextTools.dep : ../../CCore/src/TextTools.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TextTools.o $< -MF $@
-
-obj/TickTimer.dep : ../../CCore/src/TickTimer.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TickTimer.o $< -MF $@
 
 obj/TimeScope.dep : ../../CCore/src/TimeScope.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TimeScope.o $< -MF $@

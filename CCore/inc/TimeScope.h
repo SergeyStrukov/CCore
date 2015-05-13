@@ -43,13 +43,30 @@ class TimeScope
      timeout=timeout_;
     }
     
-   bool nextScope() 
+   bool nextScope()
     { 
      auto t=timer.get();
     
      if( t >= +timeout )
        {
         timer.shift(+timeout); 
+        
+        return true;
+       } 
+       
+     return false;  
+    }
+   
+   bool nextScope_skip()
+    { 
+     auto t=timer.get();
+    
+     if( t >= +timeout )
+       {
+        if( t >= 2 * +timeout )
+          timer.reset();
+        else
+          timer.shift(+timeout); 
         
         return true;
        } 

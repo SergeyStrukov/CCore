@@ -231,7 +231,6 @@
 ../../CCore/src/TaskMemStack.cpp
 ../../CCore/src/TextLabel.cpp
 ../../CCore/src/TextTools.cpp
-../../CCore/src/TickTimer.cpp
 ../../CCore/src/Timer.cpp
 ../../CCore/src/TimeScope.cpp
 ../../CCore/src/TlsSlot.cpp

@@ -55,6 +55,8 @@ class <span class="Att">TimeScope</span>
     
    bool nextScope(); 
    
+   bool nextScope_skip(); 
+
    MSec get() const;
  };
 
@@ -116,7 +118,7 @@ an unpredictable value. That is why in <b>CCore</b> we provide timed functions w
 </p>
 
 <p>
-The remaining method is <b>nextScope()</b>. It does the following: if the timeout is expired, then <b>nextScope()</b> shifts
+The next method is <b>nextScope()</b>. It does the following: if the timeout is expired, then <b>nextScope()</b> shifts
 the time period to the following scope and returns <b>true</b>, otherwise it simply returns <b>false</b>.
 </p>
 
@@ -129,6 +131,33 @@ the time period to the following scope and returns <b>true</b>, otherwise it sim
      if( t >= +timeout )
        {
         timer.shift(+timeout); 
+        
+        return true;
+       } 
+       
+     return false;  
+    }
+
+</pre>
+
+<p>
+The last method is <b>nextScope_skip()</b>. It does almost the same as <b>nextScope()</b>.
+The difference is: if we are already past the next scope, the timer is reset and we start the new time scope
+from the current moment.
+</p>
+
+<pre>
+
+   bool nextScope_skip()
+    { 
+     auto t=timer.get();
+    
+     if( t >= +timeout )
+       {
+        if( t >= 2 * +timeout )
+          timer.reset();
+        else
+          timer.shift(+timeout); 
         
         return true;
        } 

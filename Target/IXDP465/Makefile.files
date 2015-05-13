@@ -314,7 +314,6 @@ obj/TempArray.o \
 obj/TextLabel.o \
 obj/TextTools.o \
 obj/Tick.o \
-obj/TickTimer.o \
 obj/Ticker.o \
 obj/TimeScope.o \
 obj/Timer.o \
@@ -665,7 +664,6 @@ obj/TempArray.s \
 obj/TextLabel.s \
 obj/TextTools.s \
 obj/Tick.s \
-obj/TickTimer.s \
 obj/Ticker.s \
 obj/TimeScope.s \
 obj/Timer.s \
@@ -1016,7 +1014,6 @@ obj/TempArray.dep \
 obj/TextLabel.dep \
 obj/TextTools.dep \
 obj/Tick.dep \
-obj/TickTimer.dep \
 obj/Ticker.dep \
 obj/TimeScope.dep \
 obj/Timer.dep \
@@ -2010,9 +2007,6 @@ obj/TextTools.o : ../../CCore/src/TextTools.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Tick.o : ../../XCore/CCore/src/task/Tick.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/TickTimer.o : ../../CCore/src/TickTimer.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Ticker.o : ../../XCore/CCore/src/task/Ticker.cpp
@@ -3058,9 +3052,6 @@ obj/TextTools.s : ../../CCore/src/TextTools.cpp
 obj/Tick.s : ../../XCore/CCore/src/task/Tick.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/TickTimer.s : ../../CCore/src/TickTimer.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
 obj/Ticker.s : ../../XCore/CCore/src/task/Ticker.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4103,9 +4094,6 @@ obj/TextTools.dep : ../../CCore/src/TextTools.cpp
 
 obj/Tick.dep : ../../XCore/CCore/src/task/Tick.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Tick.o $< -MF $@
-
-obj/TickTimer.dep : ../../CCore/src/TickTimer.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/TickTimer.o $< -MF $@
 
 obj/Ticker.dep : ../../XCore/CCore/src/task/Ticker.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Ticker.o $< -MF $@
