@@ -98,7 +98,7 @@ void WinList::draw(const DrawBuf &buf,Pane pane,bool drag_active) const
   for(auto cur=list.start_rev(); +cur ;++cur) cur->forward_draw(buf,pane,drag_active);
  }
 
- // SubWinControl
+ // SubWindowHost
 
 FrameWindow * WinList::getFrame()
  {

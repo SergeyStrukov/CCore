@@ -26,15 +26,15 @@ namespace Video {
 
 /* classes */
 
-struct SubWinControl;
+struct SubWindowHost;
 
 class SubWindow;
 
 class WinList;
 
-/* struct SubWinControl */
+/* struct SubWindowHost */
 
-struct SubWinControl
+struct SubWindowHost
  {
   virtual FrameWindow * getFrame()=0;
  
@@ -57,14 +57,14 @@ class SubWindow : public MemBase_nocopy , public UserInput
  
    Pane place; // relative parent window coords
   
-   SubWinControl &win;
+   SubWindowHost &host;
    
-   friend class SubWinControl;
+   friend class SubWindowHost;
    friend class WinList;
   
   public:
   
-   explicit SubWindow(SubWinControl &win_) : win(win_) {}
+   explicit SubWindow(SubWindowHost &host_) : host(host_) {}
    
    virtual ~SubWindow() {}
    
@@ -74,9 +74,9 @@ class SubWindow : public MemBase_nocopy , public UserInput
    
    Point getSize() const { return place.getSize(); }
    
-   FrameWindow * getFrame() const { return win.getFrame(); }
+   FrameWindow * getFrame() const { return host.getFrame(); }
    
-   Point getScreenOrigin() const { return win.getScreenOrigin()+place.getBase(); }
+   Point getScreenOrigin() const { return host.getScreenOrigin()+place.getBase(); }
    
    Point toScreen(Point point) const { return point+getScreenOrigin(); }
    
@@ -93,15 +93,15 @@ class SubWindow : public MemBase_nocopy , public UserInput
      layout();
     }
   
-   void redraw() { win.redraw(place); }
+   void redraw() { host.redraw(place); }
    
-   void redraw(Pane pane) { win.redraw(Inner(place,pane)); }
+   void redraw(Pane pane) { host.redraw(Inner(place,pane)); }
    
-   void setFocus() { win.setFocus(this); }
+   void setFocus() { host.setFocus(this); }
    
-   void captureMouse() { win.captureMouse(this); }
+   void captureMouse() { host.captureMouse(this); }
    
-   void releaseMouse() { win.releaseMouse(this); }
+   void releaseMouse() { host.releaseMouse(this); }
    
    // drawing
    
@@ -196,7 +196,7 @@ class SubWindow : public MemBase_nocopy , public UserInput
 
 /* class WinList */
 
-class WinList : NoCopy , public SubWinControl
+class WinList : NoCopy , public SubWindowHost
  {
    SubWindow &parent;
   
@@ -222,12 +222,6 @@ class WinList : NoCopy , public SubWinControl
    explicit WinList(SubWindow &parent_) : parent(parent_) {}
    
    // methods
-   
-   void reset()
-    {
-     capture=0;
-     enter=0;
-    }
    
    void insTop(SubWindow *sub_win);
    
@@ -255,7 +249,7 @@ class WinList : NoCopy , public SubWinControl
    
    void draw(const DrawBuf &buf,Pane pane,bool drag_active) const;
    
-   // SubWinControl
+   // SubWindowHost
    
    virtual FrameWindow * getFrame();
   

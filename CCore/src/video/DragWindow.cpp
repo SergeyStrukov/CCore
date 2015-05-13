@@ -1026,7 +1026,7 @@ void DragWindow::alert()
     }
  }
 
- // SubWinControl
+ // SubWindowHost
 
 FrameWindow * DragWindow::getFrame()
  {

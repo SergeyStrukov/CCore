@@ -155,8 +155,8 @@ void ExceptionWindow::setLines()
     }
  }
 
-ExceptionWindow::ExceptionWindow(SubWinControl &win,WindowReport &report_,Config &cfg_)
- : SubWindow(win),
+ExceptionWindow::ExceptionWindow(SubWindowHost &host,WindowReport &report_,Config &cfg_)
+ : SubWindow(host),
    report(report_),
    cfg(cfg_),
    connector_updateConfig(this,&ExceptionWindow::updateConfig,cfg.update),

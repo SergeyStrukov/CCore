@@ -66,7 +66,7 @@ class DragWindow;
 
 /* class DragWindow */
 
-class DragWindow : public FrameWindow , public SubWinControl
+class DragWindow : public FrameWindow , public SubWindowHost
  {
   public:
   
@@ -335,7 +335,7 @@ class DragWindow : public FrameWindow , public SubWinControl
    
    void alert();
    
-   // SubWinControl
+   // SubWindowHost
    
    virtual FrameWindow * getFrame();
   

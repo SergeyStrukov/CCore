@@ -141,7 +141,7 @@ class ExceptionWindow : public SubWindow
    
   public:
   
-   ExceptionWindow(SubWinControl &win,WindowReport &report,Config &cfg);
+   ExceptionWindow(SubWindowHost &host,WindowReport &report,Config &cfg);
    
    virtual ~ExceptionWindow();
    
