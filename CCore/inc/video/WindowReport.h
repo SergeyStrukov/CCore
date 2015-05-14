@@ -29,9 +29,11 @@ class ExceptionStore;
 
 class ExceptionWindow;
 
-struct WindowReportParam;
+template <class Shape> struct WindowReportParam;
 
-class WindowReport;
+class WindowReportBase;
+
+template <class Shape> class WindowReport;
 
 class ExceptionClient;
 
@@ -121,7 +123,7 @@ class ExceptionWindow : public SubWindow
    
   private:
    
-   WindowReport &report;
+   WindowReportBase &report;
    Config &cfg;
    
    ulen off = 0 ;
@@ -141,7 +143,7 @@ class ExceptionWindow : public SubWindow
    
   public:
   
-   ExceptionWindow(SubWindowHost &host,WindowReport &report,Config &cfg);
+   ExceptionWindow(SubWindowHost &host,WindowReportBase &report,Config &cfg);
    
    virtual ~ExceptionWindow();
    
@@ -177,22 +179,23 @@ class ExceptionWindow : public SubWindow
    SignalConnector<ExceptionWindow> connector_updateReport;
   };
 
-/* struct WindowReportParam */
+/* struct WindowReportParam<Shape> */
 
+template <class Shape>
 struct WindowReportParam
  {
   Desktop *desktop = DefaultDesktop ;
   MSec tick_period = DeferCallQueue::DefaultTickPeriod ;
   
-  DragWindow::Shape::Config drag_cfg;
+  typename Shape::Config drag_cfg;
   ExceptionWindow::Config cfg;
   
   WindowReportParam() {}
  };
 
-/* class WindowReport */
+/* class WindowReportBase */
 
-class WindowReport : public ExceptionStore , public ReportException 
+class WindowReportBase : public ExceptionStore , public ReportException 
  {
    PtrLen<char> buf;
    bool msg = false ;
@@ -200,9 +203,10 @@ class WindowReport : public ExceptionStore , public ReportException
    bool enable = true ;
    bool non_cleared = false ;
    
+  protected: 
+   
    Desktop *desktop;
    MSec tick_period;
-   DragWindow::Shape::Config &drag_cfg;
    ExceptionWindow::Config &cfg;
    
   private: 
@@ -215,17 +219,15 @@ class WindowReport : public ExceptionStore , public ReportException
   
    void boxShow();
    
-   void modalLoop();
+   virtual void modalLoop()=0;
    
    class TempQueue;
    
   public:
   
-   WindowReport(Desktop *desktop,MSec tick_period,DragWindow::Shape::Config &drag_cfg,ExceptionWindow::Config &cfg);
+   WindowReportBase(Desktop *desktop,MSec tick_period,ExceptionWindow::Config &cfg);
    
-   explicit WindowReport(WindowReportParam &param) : WindowReport(param.desktop,param.tick_period,param.drag_cfg,param.cfg) {}
-   
-   ~WindowReport();
+   ~WindowReportBase();
    
    void clear()
     {
@@ -241,21 +243,69 @@ class WindowReport : public ExceptionStore , public ReportException
    Signal<> update;
  };
 
+/* class WindowReport<Shape> */
+
+template <class Shape> 
+class WindowReport : public WindowReportBase
+ {
+   typename Shape::Config &drag_cfg;
+   
+  private: 
+   
+   virtual void modalLoop();
+   
+  public:
+  
+   explicit WindowReport(WindowReportParam<Shape> &param)
+    : WindowReportBase(param.desktop,param.tick_period,param.cfg),
+      drag_cfg(param.drag_cfg)
+    {
+    }
+ };
+
+template <class Shape> 
+void WindowReport<Shape>::modalLoop()
+ {
+  DragWindowOf<Shape> main_win(desktop,drag_cfg);
+  
+  ExceptionWindow sub_win(main_win,*this,cfg);
+  
+  ClientFromSubWindow client(sub_win); 
+  
+  main_win.bindClient(client);
+  
+  Point max_size=main_win.getDesktop()->getScreenSize();
+  
+  main_win.createMain(CmdDisplay_Normal,max_size,String("Fatal error"));
+  
+  DeferCallQueue::Enable();
+  
+  DeferCallQueue::Loop();
+ }
+
 /* class ExceptionClient */
 
 class ExceptionClient : public ClientWindow
  {
-   DragWindow &parent;
-  
-   WindowReport &report;
+   WindowReportBase &report;
    
    ExceptionWindow window;
    
    bool in_loop = false ;
    
+   Signal<> alert;
+   
   public:
   
-   ExceptionClient(DragWindow &parent,WindowReport &report,ExceptionWindow::Config &cfg);
+   template <class W>
+   ExceptionClient(W &parent,WindowReportBase &report_,ExceptionWindow::Config &cfg)
+    : report(report_),
+      window(parent,report_,cfg)
+    {
+     sub_win=&window;
+     
+     parent.connectAlert(alert);
+    }
    
    ~ExceptionClient();
    

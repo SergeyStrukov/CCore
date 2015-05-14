@@ -60,170 +60,173 @@ enum AlertType
 
 void DragPane(Pane &place,Point delta,DragType drag_type);
 
+/* guards */
+
+void GuardNoClient();
+
+void GuardNotDead();
+
 /* classes */
 
-class DragWindow;
+class DragShape;
 
-/* class DragWindow */
+template <class Shape> class DragWindowOf;
 
-class DragWindow : public FrameWindow , public SubWindowHost
+/* class DragShape */
+
+class DragShape
  {
   public:
-  
-   class Shape
-    {
-     public:
-    
-      struct Config
-       {
-        Coord frame_dxy = 11 ;
-        Coord title_dy  = 32 ;
-        
-        Coord btn_dx    = 32 ;
-        Coord btn_dy    = 30 ;
-        
-        Coord min_dy    =  3 ;
-        Coord alert_dx  =  2 ;
  
-        ColorName edge            =     Black ;
-        ColorName frame           =    Silver ;
-        ColorName accent          =      Gray ;
-        ColorName accentHilight   =     Green ;
-        ColorName accentDrag      =       Red ;
-        
-        ColorName active          = RGBColor(128,128,255) ;
-        ColorName inactive        =    Silver ;
-        
-        ColorName btnFace         = SteelBlue ;
-        ColorName btnFaceHilight  =     Green ;
-        ColorName btnFaceDown     =      Blue ;
-        ColorName btnFaceClose    =   DarkRed ;
-        ColorName btnEdge         =     Black ;
-        ColorName btnPict         =     White ;
-        ColorName btnStop         =       Red ;
-        
-        ColorName titleUp         =      Gray ;
-        ColorName titleDown       =      Snow ;
-        
-        ColorName titleActiveUp   = RGBColor(0,0,128) ;
-        ColorName titleActiveDown = RGBColor(200,200,128) ;
-        
-        ColorName alert           =       Red ;
-        ColorName noAlert         =    Silver ;
-        ColorName closeAlert      =    Orange ;
-        
-        ColorName title           =     Black ;
-        
-        Font title_font;
-        
-        unsigned blink_time       = 24 ;
-        unsigned blink_period     = 3 ;
-        
-        Config() {}
-        
-        Signal<> update;
-       };
-      
-      Config &cfg;
+   struct Config
+    {
+     Coord frame_dxy = 11 ;
+     Coord title_dy  = 32 ;
+     
+     Coord btn_dx    = 32 ;
+     Coord btn_dy    = 30 ;
+     
+     Coord min_dy    =  3 ;
+     Coord alert_dx  =  2 ;
 
-     private: 
+     ColorName edge            =     Black ;
+     ColorName frame           =    Silver ;
+     ColorName accent          =      Gray ;
+     ColorName accentHilight   =     Green ;
+     ColorName accentDrag      =       Red ;
      
-      // layout
+     ColorName active          = RGBColor(128,128,255) ;
+     ColorName inactive        =    Silver ;
      
-      Pane dragTopLeft;
-      Pane dragLeft;
-      Pane dragBottomLeft;
-      Pane dragBottom;
-      Pane dragBottomRight;
-      Pane dragRight;
-      Pane dragTopRight;
-      Pane dragBar;
-      
-      Pane titleBar;
-      Pane btnAlert;
-      Pane btnMin;
-      Pane btnMax;
-      Pane btnClose;
-      
-      Pane client;
-      
-     private: 
-      
-      class DrawArt;
-      
-      ColorName accentColor(DragType zone) const { return (drag_type==zone)?cfg.accentDrag:( (hilight==zone)?cfg.accentHilight:cfg.accent ); }
-      
-      ColorName btnColor(DragType zone) const { return (btn_type==zone)?cfg.btnFaceDown:( (hilight==zone)?cfg.btnFaceHilight:cfg.btnFace ); }
-      
-      void draw_TopLeft(DrawArt &art) const;
-      
-      void draw_Left(DrawArt &art) const;
-      
-      void draw_BottomLeft(DrawArt &art) const;
-      
-      void draw_Bottom(DrawArt &art) const;
-      
-      void draw_BottomRight(DrawArt &art) const;
-      
-      void draw_Right(DrawArt &art) const;
-      
-      void draw_TopRight(DrawArt &art) const;
-      
-      void draw_Alert(DrawArt &art) const;
-      
-      void draw_Min(DrawArt &art) const;
-      
-      void draw_Max(DrawArt &art) const;
-      
-      void draw_Close(DrawArt &art) const;
-      
-     public: 
+     ColorName btnFace         = SteelBlue ;
+     ColorName btnFaceHilight  =     Green ;
+     ColorName btnFaceDown     =      Blue ;
+     ColorName btnFaceClose    =   DarkRed ;
+     ColorName btnEdge         =     Black ;
+     ColorName btnPict         =     White ;
+     ColorName btnStop         =       Red ;
      
-      // state
-      
-      bool has_focus = false ;
-      bool max_button = true ;
-      
-      DragType drag_type = DragType_None ;
-      DragType hilight = DragType_None ;
-      DragType btn_type = DragType_None ;
-      AlertType alert_type = AlertType_No ;
-      bool alert_blink = false ;
-      
-      String title;
+     ColorName titleUp         =      Gray ;
+     ColorName titleDown       =      Snow ;
      
-      // methods
-      
-      explicit Shape(Config &cfg_) : cfg(cfg_) {}
-      
-      Pane getClient() const { return client; }
-      
-      void reset(String title_,bool max_button_)
-       {
-        has_focus=false;
-        max_button=max_button_;
-        
-        drag_type=DragType_None;
-        hilight=DragType_None;
-        btn_type=DragType_None;
-        alert_type=AlertType_No;
-        alert_blink=false;
-        
-        title=title_;
-       }
-      
-      void layout(Point size);
-      
-      void draw(DrawBuf buf) const;
-      
-      void draw(DrawBuf buf,DragType drag_type) const;
-      
-      Pane getPane(DragType drag_type) const;
-      
-      DragType dragTest(Point point) const;
+     ColorName titleActiveUp   = RGBColor(0,0,128) ;
+     ColorName titleActiveDown = RGBColor(200,200,128) ;
+     
+     ColorName alert           =       Red ;
+     ColorName noAlert         =    Silver ;
+     ColorName closeAlert      =    Orange ;
+     
+     ColorName title           =     Black ;
+     
+     Font title_font;
+     
+     unsigned blink_time       = 24 ;
+     unsigned blink_period     = 3 ;
+     
+     Config() {}
+     
+     Signal<> update;
     };
-  
+   
+   Config &cfg;
+
   private: 
+  
+   // layout
+  
+   Pane dragTopLeft;
+   Pane dragLeft;
+   Pane dragBottomLeft;
+   Pane dragBottom;
+   Pane dragBottomRight;
+   Pane dragRight;
+   Pane dragTopRight;
+   Pane dragBar;
+   
+   Pane titleBar;
+   Pane btnAlert;
+   Pane btnMin;
+   Pane btnMax;
+   Pane btnClose;
+   
+   Pane client;
+   
+  private: 
+   
+   class DrawArt;
+   
+   ColorName accentColor(DragType zone) const { return (drag_type==zone)?cfg.accentDrag:( (hilight==zone)?cfg.accentHilight:cfg.accent ); }
+   
+   ColorName btnColor(DragType zone) const { return (btn_type==zone)?cfg.btnFaceDown:( (hilight==zone)?cfg.btnFaceHilight:cfg.btnFace ); }
+   
+   void draw_TopLeft(DrawArt &art) const;
+   
+   void draw_Left(DrawArt &art) const;
+   
+   void draw_BottomLeft(DrawArt &art) const;
+   
+   void draw_Bottom(DrawArt &art) const;
+   
+   void draw_BottomRight(DrawArt &art) const;
+   
+   void draw_Right(DrawArt &art) const;
+   
+   void draw_TopRight(DrawArt &art) const;
+   
+   void draw_Alert(DrawArt &art) const;
+   
+   void draw_Min(DrawArt &art) const;
+   
+   void draw_Max(DrawArt &art) const;
+   
+   void draw_Close(DrawArt &art) const;
+   
+  public: 
+  
+   // state
+   
+   bool has_focus = false ;
+   bool max_button = true ;
+   
+   DragType drag_type = DragType_None ;
+   DragType hilight = DragType_None ;
+   DragType btn_type = DragType_None ;
+   AlertType alert_type = AlertType_No ;
+   bool alert_blink = false ;
+   
+   String title;
+  
+   // methods
+   
+   explicit DragShape(Config &cfg_) : cfg(cfg_) {}
+   
+   Pane getClient() const { return client; }
+   
+   void reset(const String &title,bool max_button);
+   
+   void layout(Point size);
+   
+   void draw(DrawBuf buf) const;
+   
+   void draw(DrawBuf buf,DragType drag_type) const;
+   
+   Pane getPane(DragType drag_type) const;
+   
+   DragType dragTest(Point point) const;
+ };
+
+/* class DragWindowOf<Shape> */
+
+template <class Shape> 
+class DragWindowOf : public FrameWindow , public SubWindowHost
+ {
+  public:
+
+   using ShapeType = Shape ;
+   
+   using ConfigType = typename Shape::Config ;
+  
+  private:
    
    Shape shape;
    
@@ -241,9 +244,15 @@ class DragWindow : public FrameWindow , public SubWindowHost
    
   private:
    
-   void guardClient();
+   void guardClient()
+    {
+     if( !client ) GuardNoClient();
+    }
    
-   void guardDead();
+   void guardDead()
+    {
+     if( isAlive() ) GuardNotDead();
+    }
    
    void reset()
     {
@@ -254,41 +263,271 @@ class DragWindow : public FrameWindow , public SubWindowHost
      tick_count=0;
     }
    
-   void replace(Pane place,Point delta,DragType drag_type);
+   void replace(Pane place,Point delta,DragType drag_type)
+    {
+     DragPane(place,delta,drag_type);
+     
+     Point new_size(place.dx,place.dy);
+     
+     if( new_size>Null && new_size<=host->getMaxSize() ) 
+       {
+        Pane screen=Extent(Null,desktop->getScreenSize());
+       
+        if( +Inf(place,screen) ) 
+          {
+           if( !shape.max_button )
+             {
+              shape.max_button=true;
+           
+              redrawFrame(DragType_Max);
+             } 
+           
+           host->move(place);
+           
+           host->invalidate(1);
+          }
+       }
+    }
    
-   void replace(Point delta,DragType drag_type);
+   void replace(Point delta,DragType drag_type)
+    {
+     Pane place=host->getPlace();
 
-   void startDrag(Point point,DragType drag_type);
+     replace(place,delta,drag_type);
+    }
+
+   void startDrag(Point point,DragType drag_type)
+    {
+     shape.drag_type=drag_type;
+     
+     if( !client_capture ) host->captureMouse();
+    
+     Pane place=host->getPlace();
+     
+     drag_from=point+place.getBase();
+     
+     redrawAll();
+    }
    
-   void dragTo(Point point);
+   void dragTo(Point point)
+    {
+     Pane place=host->getPlace();
+     Point delta=Diff(drag_from,point+place.getBase());
+     
+     replace(place,delta,shape.drag_type);
+    }
    
-   void endDrag();
+   void endDrag()
+    {
+     shape.drag_type=DragType_None;
+     
+     redrawAll();
+    }
    
-   void endDrag(Point point);
+   void endDrag(Point point)
+    {
+     dragTo(point);
+     
+     shape.drag_type=DragType_None;
+     
+     if( !client_capture ) host->releaseMouse();
+     
+     redrawAll();
+    }
    
-   bool forwardKey(VKey vkey,KeyMod kmod,unsigned repeat=1);
+   bool forwardKey(VKey vkey,KeyMod kmod,unsigned repeat=1)
+    {
+     if( kmod&KeyMod_Alt )
+       {
+        switch( vkey )
+          {
+           case VKey_Left  : replace(Point(-(Coord)repeat,0),(kmod&KeyMod_Shift)?DragType_Right:DragType_Bar); return true;
+           
+           case VKey_Right : replace(Point((Coord)repeat,0),(kmod&KeyMod_Shift)?DragType_Right:DragType_Bar); return true;
+           
+           case VKey_Up    : replace(Point(0,-(Coord)repeat),(kmod&KeyMod_Shift)?DragType_Bottom:DragType_Bar); return true;
+           
+           case VKey_Down  : replace(Point(0,(Coord)repeat),(kmod&KeyMod_Shift)?DragType_Bottom:DragType_Bar); return true;
+           
+           case VKey_F2    : minimize(); return true;
+           
+           case VKey_F3    : maximize(); return true;
+           
+           case VKey_F4    : destroy(); return true;
+           
+           case VKey_F12   : switchClients(); return true;
+           
+           default: return false;
+          }
+       }
+     else
+       {
+        return false;
+       }
+    }
    
-   bool forwardKeyUp(VKey vkey,KeyMod kmod,unsigned repeat=1);
+   bool forwardKeyUp(VKey vkey,KeyMod kmod,unsigned =1)
+    {
+     if( kmod&KeyMod_Alt )
+       {
+        switch( vkey )
+          {
+           case VKey_Left  : 
+           case VKey_Right : 
+           case VKey_Up    : 
+           case VKey_Down  : 
+           case VKey_F2    : 
+           case VKey_F3    : 
+           case VKey_F4    : 
+           case VKey_F12   : return true;
+           
+           default: return false;
+          }
+       }
+     else
+       {
+        return false;
+       }
+    }
    
-   ClientWindow & getClient();
+   ClientWindow & getClient()
+    {
+     if( alert_client && shape.alert_type==AlertType_Opened ) return *alert_client;
+     
+     guardClient();
+     
+     return *client;
+    }
    
-   SubWindow & getClientSub() { return getClient().getSubWindow(); }
+   SubWindow & getClientSub()
+    { 
+     return getClient().getSubWindow(); 
+    }
    
-   void redrawFrame();
+   void redrawFrame()
+    {
+     if( host->isDead() ) return;
+     
+     if( host->getToken() ) 
+       {
+        delay_draw=true;
+        
+        return;
+       }
+     
+     FrameBuf<DesktopColor> buf(host->getDrawPlane());
+     
+     if( size<=buf.getSize() ) 
+       {
+        shape.draw(buf);
+       
+        host->invalidate(1);
+       }
+     else
+       {
+        buf.erase(Black);
+        
+        host->invalidate(1);
+       }
+    }
    
-   void redrawFrame(DragType drag_type);
+   void redrawFrame(DragType drag_type)
+    {
+     Pane pane=shape.getPane(drag_type);
+     
+     if( !pane ) return;
+     
+     if( host->isDead() ) return;
+     
+     if( host->getToken() ) 
+       {
+        delay_draw=true;
+        
+        return;
+       }
+     
+     FrameBuf<DesktopColor> buf(host->getDrawPlane());
+     
+     if( size<=buf.getSize() ) 
+       {
+        shape.draw(buf,drag_type);
+       
+        host->invalidate(pane,1);
+       }
+     else
+       {
+        buf.erase(Black);
+        
+        host->invalidate(1);
+       }
+    }
    
-   void pushAlertBlink();
+   void pushAlertBlink()
+    {
+     if( !tick_count )
+       {
+        tick_count=shape.cfg.blink_time;
+        
+        defer_tick.start();
+       }
+     else
+       {
+        tick_count=shape.cfg.blink_time;
+       }
+    }
    
-   void tick();
+   void tick()
+    {
+     if( tick_count )
+       {
+        if( !(tick_count%shape.cfg.blink_period) )
+          {
+           shape.alert_blink=!shape.alert_blink;
+           
+           redrawFrame(DragType_Alert);
+          }
+        
+        tick_count--;
+       }
+     else
+       {
+        defer_tick.stop();
+        
+        shape.alert_blink=false;
+        
+        redrawFrame(DragType_Alert);
+       }
+    }
    
-   void switchClients();
+   void switchClients()
+    {
+     if( shape.alert_type && alert_client )
+       {
+        getClientSub().close();
+       
+        shape.alert_type=(shape.alert_type==AlertType_Closed)?AlertType_Opened:AlertType_Closed;
+        
+        getClientSub().open();
+       
+        redrawAll();
+       }
+    }
    
   public:
   
-   DragWindow(Desktop *desktop,Shape::Config &cfg);
+   DragWindowOf(Desktop *desktop,ConfigType &cfg)
+    : FrameWindow(desktop),
+      shape(cfg),
+      input(this),
+      connector_updateConfig(this,&DragWindowOf<Shape>::updateConfig,cfg.update),
+      connector_alert(this,&DragWindowOf<Shape>::alert)
+    {
+     defer_tick=input.create(&DragWindowOf<Shape>::tick);
+    }
    
-   virtual ~DragWindow();
+   virtual ~DragWindowOf()
+    {
+    }
    
    // methods
    
@@ -306,126 +545,594 @@ class DragWindow : public FrameWindow , public SubWindowHost
      alert_client=&alert_client_;
     }
    
-   void createMain(CmdDisplay cmd_display,Point max_size,String title);
+   void createMain(CmdDisplay cmd_display,Point max_size,const String &title)
+    {
+     guardClient();
+     
+     shape.reset(title, cmd_display!=CmdDisplay_Maximized );
+     
+     host->createMain(max_size);
+     
+     host->display(cmd_display);
+     host->update();
+    }
    
-   void create(Pane pane,Point max_size,String title);
+   void create(Pane pane,Point max_size,String title)
+    {
+     guardClient();
+     
+     shape.reset(title,true);
+     
+     host->create(pane,max_size);
+     host->show();
+    }
    
-   void create(WindowHost *parent,Pane pane,Point max_size,String title);
+   void create(WindowHost *parent,Pane pane,Point max_size,const String &title)
+    {
+     guardClient();
+     
+     shape.reset(title,true);
+     
+     host->create(parent,pane,max_size);
+     host->show();
+    }
    
-   void destroy();
+   void destroy()
+    { 
+     if( client && client->askDestroy() ) host->destroy(); 
+    }
    
-   void minimize();
+   void minimize()
+    {
+     host->display(CmdDisplay_Minimized);
+    }
    
-   void maximize();
+   void maximize()
+    {
+     if( shape.max_button )
+       {
+        shape.max_button=false;
+        
+        redrawFrame(DragType_Max);
+        
+        host->display(CmdDisplay_Maximized);
+       } 
+     else
+       {
+        shape.max_button=true;
+        
+        redrawFrame(DragType_Max);
+        
+        host->display(CmdDisplay_Restore);
+       } 
+    }
    
-   void redrawAll(bool do_layout=false);
+   void redrawAll(bool do_layout=false)
+    {
+     if( do_layout )
+       {
+        shape.layout(size);
+       
+        if( client ) client->getSubWindow().setPlace(shape.getClient());
+        
+        if( alert_client ) alert_client->getSubWindow().setPlace(shape.getClient());  
+       }
+     
+     if( host->isDead() ) return;
+     
+     if( host->getToken() ) 
+       {
+        delay_draw=true;
+        
+        return;
+       }
+     
+     FrameBuf<DesktopColor> buf(host->getDrawPlane());
+     
+     if( size<=buf.getSize() ) 
+       {
+        shape.draw(buf);
+       
+        getClientSub().forward_draw(buf,shape.drag_type);
+       
+        host->invalidate(1);
+       }
+     else
+       {
+        buf.erase(Black);
+        
+        host->invalidate(1);
+       }
+    }
    
-   void redrawClient();
+   void redrawClient()
+    {
+     if( host->isDead() ) return;
+     
+     if( host->getToken() ) 
+       {
+        delay_draw=true;
+        
+        return;
+       }
+     
+     FrameBuf<DesktopColor> buf(host->getDrawPlane());
+     
+     if( size<=buf.getSize() ) 
+       {
+        getClientSub().forward_draw(buf,shape.drag_type);
+       
+        host->invalidate(shape.getClient(),1);
+       }
+     else
+       {
+        buf.erase(Black);
+        
+        host->invalidate(1);
+       }
+    }
    
-   void redrawClient(Pane pane);
+   void redrawClient(Pane pane)
+    {
+     if( host->isDead() ) return;
+     
+     if( host->getToken() ) 
+       {
+        delay_draw=true;
+        
+        return;
+       }
+     
+     FrameBuf<DesktopColor> buf(host->getDrawPlane());
+     
+     if( size<=buf.getSize() ) 
+       {
+        getClientSub().forward_draw(buf,pane,shape.drag_type);
+       
+        host->invalidate(pane,1);
+       }
+     else
+       {
+        buf.erase(Black);
+        
+        host->invalidate(1);
+       }
+    }
    
    unsigned getToken() { return host->getToken(); }
    
-   void setTitle(String title)
+   void setTitle(const String &title)
     {
      shape.title=title;
      
      redrawFrame();
     }
    
-   void alert();
+   void connectAlert(Signal<> &signal) { connector_alert.connect(signal); }
    
    // SubWindowHost
    
-   virtual FrameWindow * getFrame();
+   virtual FrameWindow * getFrame()
+    {
+     return this;
+    }
   
-   virtual Point getScreenOrigin();
+   virtual Point getScreenOrigin()
+    {
+     Pane pane=host->getPlace();
+     
+     return pane.getBase();
+    }
   
-   virtual void redraw(Pane pane);
+   virtual void redraw(Pane pane)
+    {
+     input.redrawClient(pane);
+    }
   
-   virtual void setFocus(SubWindow *sub_win);
+   virtual void setFocus(SubWindow *)
+    {
+     if( shape.has_focus )
+       {
+        getClientSub().gainFocus();
+       }
+    }
   
-   virtual void captureMouse(SubWindow *sub_win);
+   virtual void captureMouse(SubWindow *)
+    {
+     if( !client_capture )
+       {
+        client_capture=true;
+       
+        if( !shape.drag_type ) host->captureMouse();
+       }
+    }
   
-   virtual void releaseMouse(SubWindow *sub_win);
+   virtual void releaseMouse(SubWindow *)
+    {
+     if( client_capture )
+       {
+        client_capture=false;
+       
+        if( !shape.drag_type ) host->releaseMouse();
+       }
+    }
    
    // base
    
-   virtual void alive();
+   virtual void alive()
+    {
+     reset();
+     
+     host->trackMouseHover();
+     host->trackMouseLeave();
+     
+     if( client ) client->alive();
+     
+     if( alert_client ) alert_client->alive();
+     
+     getClientSub().open();
+    }
    
-   virtual void dead();
+   virtual void dead()
+    {
+     getClientSub().close();
+     
+     if( client ) client->dead();
+     
+     if( alert_client ) alert_client->dead();
+    }
    
-   virtual void setSize(Point size,bool buf_dirty);
+   virtual void setSize(Point size_,bool buf_dirty)
+    {
+     if( size!=size_ || buf_dirty )
+       {
+        size=size_;
+       
+        redrawAll(true);
+       }
+    }
    
-   virtual void paintDone(unsigned token);
+   virtual void paintDone(unsigned)
+    {
+     if( delay_draw )
+       {
+        delay_draw=false;
+        
+        redrawAll();
+       }
+    }
    
    // keyboard
    
-   virtual void gainFocus();
+   virtual void gainFocus()
+    {
+     shape.has_focus=true;
+     
+     redrawFrame();
+     
+     getClientSub().gainFocus();
+    }
    
-   virtual void looseFocus();
+   virtual void looseFocus()
+    {
+     shape.has_focus=false;
+     
+     redrawFrame();
+     
+     getClientSub().looseFocus();
+    }
    
-   virtual void key(VKey vkey,KeyMod kmod);
+   virtual void key(VKey vkey,KeyMod kmod)
+    {
+     if( !forwardKey(vkey,kmod) ) getClientSub().key(vkey,kmod);
+    }
    
-   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat);
+   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat)
+    {
+     if( !forwardKey(vkey,kmod,repeat) ) getClientSub().key(vkey,kmod,repeat);
+    }
    
-   virtual void keyUp(VKey vkey,KeyMod kmod);
+   virtual void keyUp(VKey vkey,KeyMod kmod)
+    {
+     if( !forwardKeyUp(vkey,kmod) ) getClientSub().keyUp(vkey,kmod);
+    }
    
-   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat);
+   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
+    {
+     if( !forwardKeyUp(vkey,kmod,repeat) ) getClientSub().keyUp(vkey,kmod,repeat);
+    }
    
    // character
    
-   virtual void putch(char ch);
+   virtual void putch(char ch)
+    {
+     getClientSub().putch(ch);
+    }
    
-   virtual void putch(char ch,unsigned repeat);
+   virtual void putch(char ch,unsigned repeat)
+    {
+     getClientSub().putch(ch,repeat);
+    }
    
-   virtual void putchAlt(char ch);
+   virtual void putchAlt(char ch)
+    {
+     getClientSub().putchAlt(ch);
+    }
    
-   virtual void putchAlt(char ch,unsigned repeat);
+   virtual void putchAlt(char ch,unsigned repeat)
+    {
+     getClientSub().putchAlt(ch,repeat);
+    }
    
    // mouse
    
-   virtual void looseCapture();
+   virtual void looseCapture()
+    {
+     if( shape.drag_type ) endDrag();
+     
+     if( client_capture )
+       {
+        client_capture=false;
+        
+        getClientSub().looseCapture();
+       }
+    }
    
-   virtual void clickLeft(Point point,MouseKey mkey);
+   virtual void clickLeft(Point point,MouseKey mkey)
+    {
+     switch( auto drag_type=shape.dragTest(point) )
+       {
+        case DragType_None :
+         {
+          if( client_capture || shape.getClient().contains(point) )
+            {
+             getClientSub().forward_clickLeft(point,mkey);
+            }
+         }
+        break;
+      
+        case DragType_Alert : 
+        case DragType_Min   : 
+        case DragType_Max   : 
+        case DragType_Close : shape.btn_type=drag_type; redrawFrame(drag_type); break;
+        
+        default: if( !shape.drag_type ) startDrag(point,drag_type);
+       }
+    }
    
-   virtual void upLeft(Point point,MouseKey mkey);
+   virtual void upLeft(Point point,MouseKey mkey)
+    {
+     if( shape.drag_type )
+       {
+        endDrag(point);
+        
+        return;
+       }
+     
+     if( shape.btn_type )
+       {
+        auto type=Replace(shape.btn_type,DragType_None);
+        
+        redrawFrame(type);
+       
+        if( shape.dragTest(point)==type )
+          {
+           switch( type )
+             {
+              case DragType_Alert : switchClients(); return;
+              
+              case DragType_Min   : minimize(); return;
+              
+              case DragType_Max   : maximize(); return;
+              
+              case DragType_Close : destroy(); return;
+             }
+          }
+       }
+     
+     if( client_capture || shape.getClient().contains(point) )
+       {
+        getClientSub().forward_upLeft(point,mkey);
+       }
+    }
  
-   virtual void dclickLeft(Point point,MouseKey mkey);
+   virtual void dclickLeft(Point point,MouseKey mkey)
+    {
+     if( shape.drag_type ) return;
+     
+     if( client_capture || shape.getClient().contains(point) )
+       {
+        getClientSub().forward_dclickLeft(point,mkey);
+       }
+    }
    
-   virtual void clickRight(Point point,MouseKey mkey);
+   virtual void clickRight(Point point,MouseKey mkey)
+    {
+     if( shape.drag_type ) return;
+     
+     if( client_capture || shape.getClient().contains(point) )
+       {
+        getClientSub().forward_clickRight(point,mkey);
+       }
+    }
    
-   virtual void upRight(Point point,MouseKey mkey);
+   virtual void upRight(Point point,MouseKey mkey)
+    {
+     if( shape.drag_type ) return;
+     
+     if( client_capture || shape.getClient().contains(point) )
+       {
+        getClientSub().forward_upRight(point,mkey);
+       }
+    }
    
-   virtual void dclickRight(Point point,MouseKey mkey);
+   virtual void dclickRight(Point point,MouseKey mkey)
+    {
+     if( shape.drag_type ) return;
+     
+     if( client_capture || shape.getClient().contains(point) )
+       {
+        getClientSub().forward_dclickRight(point,mkey);
+       }
+    }
    
-   virtual void move(Point point,MouseKey mkey);
+   virtual void move(Point point,MouseKey mkey)
+    {
+     if( shape.drag_type )
+       {
+        if( mkey&MouseKey_Left )
+          dragTo(point);
+        else
+          endDrag(point);
+        
+        return;
+       }
+     
+     if( shape.btn_type )
+       {
+        if( mkey&MouseKey_Left )
+          {
+           if( shape.dragTest(point)!=shape.btn_type )
+             {
+              auto type=Replace(shape.btn_type,DragType_None);
+             
+              redrawFrame(type);
+             }
+          }
+        else
+          {
+           auto type=Replace(shape.btn_type,DragType_None);
+           
+           redrawFrame(type);
+          }
+        
+        return;
+       }
+     
+     auto drag_type=shape.dragTest(point);
+     
+     if( drag_type==DragType_Bar ) drag_type=DragType_None;
+     
+     if( drag_type!=shape.hilight )
+       {
+        auto type=Replace(shape.hilight,drag_type);
+        
+        redrawFrame(type);
+        redrawFrame(drag_type);
+       }
+     
+     if( shape.getClient().contains(point) )
+       {
+        client_enter=true;
+        
+        getClientSub().forward_move(point,mkey);
+       }
+     else
+       {
+        if( client_capture ) getClientSub().forward_move(point,mkey);
+         
+        if( client_enter )
+          {
+           client_enter=false;
+           
+           getClientSub().leave();
+          }
+       }
+    }
    
-   virtual void hover(Point point,MouseKey mkey);
+   virtual void hover(Point point,MouseKey mkey)
+    {
+     if( shape.drag_type ) return;
+     
+     if( client_capture || shape.getClient().contains(point) )
+       {
+        getClientSub().forward_hover(point,mkey);
+       }
+    }
    
-   virtual void leave();
+   virtual void leave()
+    {
+     if( shape.hilight  )
+       {
+        redrawFrame(Replace(shape.hilight,DragType_None));
+       }
+     
+     if( shape.btn_type )
+       {
+        redrawFrame(Replace(shape.btn_type,DragType_None));
+       }
+     
+     if( shape.drag_type ) return;
+     
+     if( client_enter )
+       {
+        client_enter=false;
+        
+        getClientSub().leave();
+       }
+    }
    
-   virtual void wheel(Point point,MouseKey mkey,Coord delta);
+   virtual void wheel(Point point,MouseKey mkey,Coord delta)
+    {
+     if( shape.drag_type ) return;
+     
+     if( client_capture || shape.getClient().contains(point) )
+       {
+        getClientSub().forward_wheel(point,mkey,delta);
+       }
+    }
  
-   virtual void setMouseShape(Point point);
+   virtual void setMouseShape(Point point)
+    {
+     switch( shape.dragTest(point) )
+       {
+        case DragType_Top         : host->setMouseShape(Mouse_SizeUpDown); break;
+         
+        case DragType_TopLeft     : host->setMouseShape(Mouse_SizeUpLeft); break;
+
+        case DragType_Left        : host->setMouseShape(Mouse_SizeLeftRight); break;
+        
+        case DragType_BottomLeft  : host->setMouseShape(Mouse_SizeUpRight); break;
+        
+        case DragType_Bottom      : host->setMouseShape(Mouse_SizeUpDown); break;
+        
+        case DragType_BottomRight : host->setMouseShape(Mouse_SizeUpLeft); break;
+        
+        case DragType_Right       : host->setMouseShape(Mouse_SizeLeftRight); break;
+        
+        case DragType_TopRight    : host->setMouseShape(Mouse_SizeUpRight); break;
+        
+        case DragType_Alert       :
+        case DragType_Min         : 
+        case DragType_Max         : host->setMouseShape(Mouse_Hand); break;
+        
+        case DragType_Close       : host->setMouseShape(Mouse_Stop); break;
+         
+        case DragType_Bar         : host->setMouseShape(Mouse_SizeAll); break;
+        
+        default: host->setMouseShape(getClientSub().forward_getMouseShape(point));
+       }
+    }
 
    // DeferInput
    
-   class Input : DeferInput<DragWindow>
+   class Input : DeferInput<DragWindowOf<Shape> >
     {
-      friend class DragWindow;
+      friend class DragWindowOf<Shape>;
       
-      explicit Input(DragWindow *window) : DeferInput<DragWindow>(window) {}
+      explicit Input(DragWindowOf<Shape> *window) : DeferInput<DragWindowOf<Shape> >(window) {}
       
       ~Input() {}
       
+      using DeferInput<DragWindowOf<Shape> >::try_post;
+      
      public:
 
-      void redrawAll(bool do_layout=false) { try_post(&DragWindow::redrawAll,do_layout); }
+      void redrawAll(bool do_layout=false) { try_post(&DragWindowOf<Shape>::redrawAll,do_layout); }
       
-      void redrawClient() { try_post(&DragWindow::redrawClient); }
+      void redrawClient() { try_post(&DragWindowOf<Shape>::redrawClient); }
       
-      void redrawClient(Pane pane) { try_post(&DragWindow::redrawClient,pane); }
+      void redrawClient(Pane pane) { try_post(&DragWindowOf<Shape>::redrawClient,pane); }
     };
    
    Input input;
@@ -434,10 +1141,46 @@ class DragWindow : public FrameWindow , public SubWindowHost
    
    DeferTick defer_tick;
    
-   void updateConfig();
+   void updateConfig()
+    { 
+     input.redrawAll(true); 
+    }
    
-   SignalConnector<DragWindow> connector_updateConfig;
+   void alert()
+    {
+     switch( shape.alert_type )
+       {
+        case AlertType_No :
+         {
+          shape.alert_type=AlertType_Closed;
+          
+          redrawFrame(DragType_Alert);
+          
+          pushAlertBlink();
+         }
+        break;
+        
+        case AlertType_Closed :
+         {
+          pushAlertBlink();
+         }
+        break;
+        
+        case AlertType_Opened :
+         {
+          redrawClient();
+         }
+        break;
+       }
+    }
+   
+   SignalConnector<DragWindowOf<Shape> > connector_updateConfig;
+   SignalConnector<DragWindowOf<Shape> > connector_alert;
  };
+
+/* type DragWindow */
+
+using DragWindow = DragWindowOf<DragShape> ;
 
 } // namespace Video
 } // namespace CCore

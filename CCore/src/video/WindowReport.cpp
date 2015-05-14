@@ -155,7 +155,7 @@ void ExceptionWindow::setLines()
     }
  }
 
-ExceptionWindow::ExceptionWindow(SubWindowHost &host,WindowReport &report_,Config &cfg_)
+ExceptionWindow::ExceptionWindow(SubWindowHost &host,WindowReportBase &report_,Config &cfg_)
  : SubWindow(host),
    report(report_),
    cfg(cfg_),
@@ -371,9 +371,9 @@ void ExceptionWindow::updateReport()
     }
  }
 
-/* class WindowReport */
+/* class WindowReportBase */
 
-void WindowReport::print(StrLen str)
+void WindowReportBase::print(StrLen str)
  {
   if( !enable ) return;
   
@@ -391,7 +391,7 @@ void WindowReport::print(StrLen str)
   buf+=str.len;
  }
 
-void WindowReport::end()
+void WindowReportBase::end()
  {
   if( !enable ) return;
   
@@ -407,7 +407,7 @@ void WindowReport::end()
     }
  }
 
-void WindowReport::boxShow()
+void WindowReportBase::boxShow()
  {
   char buf[TextBufLen];
   
@@ -450,26 +450,7 @@ void WindowReport::boxShow()
   ErrorMsgBox(out.close(),"Fatal error");
  }
 
-void WindowReport::modalLoop()
- {
-  DragWindow main_win(desktop,drag_cfg);
-  
-  ExceptionWindow sub_win(main_win,*this,cfg);
-  
-  ClientFromSubWindow client(sub_win); 
-  
-  main_win.bindClient(client);
-  
-  Point max_size=main_win.getDesktop()->getScreenSize();
-  
-  main_win.createMain(CmdDisplay_Normal,max_size,String("Fatal error"));
-  
-  DeferCallQueue::Enable();
-  
-  DeferCallQueue::Loop();
- }
-
-class WindowReport::TempQueue : DeferCallQueue
+class WindowReportBase::TempQueue : DeferCallQueue
  {
    Desktop *desktop;
  
@@ -504,15 +485,14 @@ class WindowReport::TempQueue : DeferCallQueue
     }
  };
 
-WindowReport::WindowReport(Desktop *desktop_,MSec tick_period_,DragWindow::Shape::Config &drag_cfg_,ExceptionWindow::Config &cfg_)
+WindowReportBase::WindowReportBase(Desktop *desktop_,MSec tick_period_,ExceptionWindow::Config &cfg_)
  : desktop(desktop_),
    tick_period(tick_period_),
-   drag_cfg(drag_cfg_),
    cfg(cfg_)
  {
  }
 
-WindowReport::~WindowReport()
+WindowReportBase::~WindowReportBase()
  {
   if( non_cleared )
     {
@@ -520,7 +500,7 @@ WindowReport::~WindowReport()
     }
  }
 
-void WindowReport::show()
+void WindowReportBase::show()
  {
   enable=false;
  
@@ -549,14 +529,6 @@ void WindowReport::show()
 
 /* class ExceptionClient */
 
-ExceptionClient::ExceptionClient(DragWindow &parent_,WindowReport &report_,ExceptionWindow::Config &cfg)
- : parent(parent_),
-   report(report_),
-   window(parent,report,cfg)
- {
-  sub_win=&window;
- }
-
 ExceptionClient::~ExceptionClient()
  {
  }
@@ -577,7 +549,7 @@ void ExceptionClient::show()
     {
      window.reposition();
     
-     parent.alert();
+     alert.assert();
     }
   else
     {
@@ -597,7 +569,7 @@ void ExceptionClient::afterLoop()
 
 void ExceptionClient::alive()
  {
-  if( report.nonEmpty() && in_loop ) parent.alert();
+  if( report.nonEmpty() && in_loop ) alert.assert();
  }
 
 } // namespace Video

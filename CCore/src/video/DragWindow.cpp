@@ -100,9 +100,21 @@ void DragPane(Pane &place,Point delta,DragType drag_type)
     }
  }
 
-/* class DragWindow::Shape */
+/* guards */
 
-class DragWindow::Shape::DrawArt : public CommonDrawArt
+void GuardNoClient()
+ {
+  Printf(Exception,"CCore::Video::DragWindow<...>::guardClient() : no client");
+ }
+
+void GuardNotDead()
+ {
+  Printf(Exception,"CCore::Video::DragWindow<...>::guardDead() : window is alive");
+ }
+
+/* class DragShape */
+
+class DragShape::DrawArt : public CommonDrawArt
  {
   public:
   
@@ -202,7 +214,7 @@ class DragWindow::Shape::DrawArt : public CommonDrawArt
     }
  };
 
-void DragWindow::Shape::draw_TopLeft(DrawArt &art) const
+void DragShape::draw_TopLeft(DrawArt &art) const
  {
   if( +dragTopLeft )
     {
@@ -218,7 +230,7 @@ void DragWindow::Shape::draw_TopLeft(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_Left(DrawArt &art) const
+void DragShape::draw_Left(DrawArt &art) const
  {
   if( +dragLeft )
     {
@@ -234,7 +246,7 @@ void DragWindow::Shape::draw_Left(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_BottomLeft(DrawArt &art) const
+void DragShape::draw_BottomLeft(DrawArt &art) const
  {
   if( +dragBottomLeft )
     {
@@ -250,7 +262,7 @@ void DragWindow::Shape::draw_BottomLeft(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_Bottom(DrawArt &art) const
+void DragShape::draw_Bottom(DrawArt &art) const
  {
   if( +dragBottom )
     {
@@ -266,7 +278,7 @@ void DragWindow::Shape::draw_Bottom(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_BottomRight(DrawArt &art) const
+void DragShape::draw_BottomRight(DrawArt &art) const
  {
   if( +dragBottomRight )
     {
@@ -282,7 +294,7 @@ void DragWindow::Shape::draw_BottomRight(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_Right(DrawArt &art) const
+void DragShape::draw_Right(DrawArt &art) const
  {
   if( +dragRight )
     {
@@ -298,7 +310,7 @@ void DragWindow::Shape::draw_Right(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_TopRight(DrawArt &art) const
+void DragShape::draw_TopRight(DrawArt &art) const
  {
   if( +dragTopRight )
     {
@@ -314,7 +326,7 @@ void DragWindow::Shape::draw_TopRight(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_Alert(DrawArt &art) const
+void DragShape::draw_Alert(DrawArt &art) const
  {
   if( +btnAlert )
     {
@@ -331,7 +343,7 @@ void DragWindow::Shape::draw_Alert(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_Min(DrawArt &art) const
+void DragShape::draw_Min(DrawArt &art) const
  {
   if( +btnMin )
     {
@@ -348,7 +360,7 @@ void DragWindow::Shape::draw_Min(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_Max(DrawArt &art) const
+void DragShape::draw_Max(DrawArt &art) const
  {
   if( +btnMax )
     {
@@ -366,7 +378,7 @@ void DragWindow::Shape::draw_Max(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::draw_Close(DrawArt &art) const
+void DragShape::draw_Close(DrawArt &art) const
  {
   if( +btnClose )
     {
@@ -384,7 +396,21 @@ void DragWindow::Shape::draw_Close(DrawArt &art) const
     }
  }
 
-void DragWindow::Shape::layout(Point size)
+void DragShape::reset(const String &title_,bool max_button_)
+ {
+  has_focus=false;
+  max_button=max_button_;
+  
+  drag_type=DragType_None;
+  hilight=DragType_None;
+  btn_type=DragType_None;
+  alert_type=AlertType_No;
+  alert_blink=false;
+  
+  title=title_;
+ }
+
+void DragShape::layout(Point size)
  {
   Coord dxy=cfg.frame_dxy;
   Coord tdy=cfg.title_dy;
@@ -449,7 +475,7 @@ void DragWindow::Shape::layout(Point size)
     }
  }
 
-void DragWindow::Shape::draw(DrawBuf buf) const
+void DragShape::draw(DrawBuf buf) const
  {
   try
     {
@@ -487,7 +513,7 @@ void DragWindow::Shape::draw(DrawBuf buf) const
     }
  }
 
-void DragWindow::Shape::draw(DrawBuf buf,DragType drag_type) const
+void DragShape::draw(DrawBuf buf,DragType drag_type) const
  {
   try
     {
@@ -513,7 +539,7 @@ void DragWindow::Shape::draw(DrawBuf buf,DragType drag_type) const
     }
  }
 
-Pane DragWindow::Shape::getPane(DragType drag_type) const
+Pane DragShape::getPane(DragType drag_type) const
  {
   switch( drag_type )
     {
@@ -534,7 +560,7 @@ Pane DragWindow::Shape::getPane(DragType drag_type) const
     }
  }
 
-DragType DragWindow::Shape::dragTest(Point point) const
+DragType DragShape::dragTest(Point point) const
  {
   if( dragTopLeft.contains(point) ) return DragType_TopLeft;
 
@@ -564,877 +590,6 @@ DragType DragWindow::Shape::dragTest(Point point) const
     }
   
   return DragType_None;
- }
-
-/* class DragWindow */
-
-void DragWindow::guardClient()
- {
-  if( !client )
-    {
-     Printf(Exception,"CCore::Video::DragWindow::guardClient() : no client");
-    }
- }
-
-void DragWindow::guardDead()
- {
-  if( isAlive() )
-    {
-     Printf(Exception,"CCore::Video::DragWindow::guardDead() : window is alive");
-    }
- }
-
-void DragWindow::replace(Pane place,Point delta,DragType drag_type)
- {
-  DragPane(place,delta,drag_type);
-  
-  Point new_size(place.dx,place.dy);
-  
-  if( new_size>Null && new_size<=host->getMaxSize() ) 
-    {
-     Pane screen=Extent(Null,desktop->getScreenSize());
-    
-     if( +Inf(place,screen) ) 
-       {
-        if( !shape.max_button )
-          {
-           shape.max_button=true;
-        
-           redrawFrame(DragType_Max);
-          } 
-        
-        host->move(place);
-        
-        host->invalidate(1);
-       }
-    }
- }
-
-void DragWindow::replace(Point delta,DragType drag_type)
- {
-  Pane place=host->getPlace();
-
-  replace(place,delta,drag_type);
- }
-
-void DragWindow::startDrag(Point point,DragType drag_type)
- {
-  shape.drag_type=drag_type;
-  
-  if( !client_capture ) host->captureMouse();
- 
-  Pane place=host->getPlace();
-  
-  drag_from=point+place.getBase();
-  
-  redrawAll();
- }
-
-void DragWindow::dragTo(Point point)
- {
-  Pane place=host->getPlace();
-  Point delta=Diff(drag_from,point+place.getBase());
-  
-  replace(place,delta,shape.drag_type);
- }
-
-void DragWindow::endDrag()
- {
-  shape.drag_type=DragType_None;
-  
-  redrawAll();
- }
-
-void DragWindow::endDrag(Point point)
- {
-  dragTo(point);
-  
-  shape.drag_type=DragType_None;
-  
-  if( !client_capture ) host->releaseMouse();
-  
-  redrawAll();
- }
-
-bool DragWindow::forwardKey(VKey vkey,KeyMod kmod,unsigned repeat)
- {
-  if( kmod&KeyMod_Alt )
-    {
-     switch( vkey )
-       {
-        case VKey_Left  : replace(Point(-(Coord)repeat,0),(kmod&KeyMod_Shift)?DragType_Right:DragType_Bar); return true;
-        
-        case VKey_Right : replace(Point((Coord)repeat,0),(kmod&KeyMod_Shift)?DragType_Right:DragType_Bar); return true;
-        
-        case VKey_Up    : replace(Point(0,-(Coord)repeat),(kmod&KeyMod_Shift)?DragType_Bottom:DragType_Bar); return true;
-        
-        case VKey_Down  : replace(Point(0,(Coord)repeat),(kmod&KeyMod_Shift)?DragType_Bottom:DragType_Bar); return true;
-        
-        case VKey_F2    : minimize(); return true;
-        
-        case VKey_F3    : maximize(); return true;
-        
-        case VKey_F4    : destroy(); return true;
-        
-        case VKey_F12   : switchClients(); return true;
-        
-        default: return false;
-       }
-    }
-  else
-    {
-     return false;
-    }
- }
-
-bool DragWindow::forwardKeyUp(VKey vkey,KeyMod kmod,unsigned)
- {
-  if( kmod&KeyMod_Alt )
-    {
-     switch( vkey )
-       {
-        case VKey_Left  : 
-        case VKey_Right : 
-        case VKey_Up    : 
-        case VKey_Down  : 
-        case VKey_F2    : 
-        case VKey_F3    : 
-        case VKey_F4    : 
-        case VKey_F12   : return true;
-        
-        default: return false;
-       }
-    }
-  else
-    {
-     return false;
-    }
- }
-
-ClientWindow & DragWindow::getClient()
- {
-  if( alert_client && shape.alert_type==AlertType_Opened ) return *alert_client;
-  
-  guardClient();
-  
-  return *client;
- }
-
-void DragWindow::redrawFrame()
- {
-  if( host->isDead() ) return;
-  
-  if( host->getToken() ) 
-    {
-     delay_draw=true;
-     
-     return;
-    }
-  
-  FrameBuf<DesktopColor> buf(host->getDrawPlane());
-  
-  if( size<=buf.getSize() ) 
-    {
-     shape.draw(buf);
-    
-     host->invalidate(1);
-    }
-  else
-    {
-     buf.erase(Black);
-     
-     host->invalidate(1);
-    }
- }
-
-void DragWindow::redrawFrame(DragType drag_type)
- {
-  Pane pane=shape.getPane(drag_type);
-  
-  if( !pane ) return;
-  
-  if( host->isDead() ) return;
-  
-  if( host->getToken() ) 
-    {
-     delay_draw=true;
-     
-     return;
-    }
-  
-  FrameBuf<DesktopColor> buf(host->getDrawPlane());
-  
-  if( size<=buf.getSize() ) 
-    {
-     shape.draw(buf,drag_type);
-    
-     host->invalidate(pane,1);
-    }
-  else
-    {
-     buf.erase(Black);
-     
-     host->invalidate(1);
-    }
- }
-
-void DragWindow::pushAlertBlink()
- {
-  if( !tick_count )
-    {
-     tick_count=shape.cfg.blink_time;
-     
-     defer_tick.start();
-    }
-  else
-    {
-     tick_count=shape.cfg.blink_time;
-    }
- }
-
-void DragWindow::tick()
- {
-  if( tick_count )
-    {
-     if( !(tick_count%shape.cfg.blink_period) )
-       {
-        shape.alert_blink=!shape.alert_blink;
-        
-        redrawFrame(DragType_Alert);
-       }
-     
-     tick_count--;
-    }
-  else
-    {
-     defer_tick.stop();
-     
-     shape.alert_blink=false;
-     
-     redrawFrame(DragType_Alert);
-    }
- }
-
-void DragWindow::switchClients()
- {
-  if( shape.alert_type && alert_client )
-    {
-     getClientSub().close();
-    
-     shape.alert_type=(shape.alert_type==AlertType_Closed)?AlertType_Opened:AlertType_Closed;
-     
-     getClientSub().open();
-    
-     redrawAll();
-    }
- }
-
-DragWindow::DragWindow(Desktop *desktop,Shape::Config &cfg)
- : FrameWindow(desktop),
-   shape(cfg),
-   input(this),
-   connector_updateConfig(this,&DragWindow::updateConfig,cfg.update)
- {
-  defer_tick=input.create(&DragWindow::tick);
- }
-
-DragWindow::~DragWindow()
- {
- }
-
- // methods
-
-void DragWindow::createMain(CmdDisplay cmd_display,Point max_size,String title)
- {
-  guardClient();
-  
-  shape.reset(title, cmd_display!=CmdDisplay_Maximized );
-  
-  host->createMain(max_size);
-  
-  host->display(cmd_display);
-  host->update();
- }
-
-void DragWindow::create(Pane pane,Point max_size,String title)
- {
-  guardClient();
-  
-  shape.reset(title,true);
-  
-  host->create(pane,max_size);
-  host->show();
- }
-
-void DragWindow::create(WindowHost *parent,Pane pane,Point max_size,String title)
- {
-  guardClient();
-  
-  shape.reset(title,true);
-  
-  host->create(parent,pane,max_size);
-  host->show();
- }
-
-void DragWindow::destroy()
- { 
-  if( client && client->askDestroy() ) host->destroy(); 
- }
-
-void DragWindow::minimize()
- {
-  host->display(CmdDisplay_Minimized);
- }
-
-void DragWindow::maximize()
- {
-  if( shape.max_button )
-    {
-     shape.max_button=false;
-     
-     redrawFrame(DragType_Max);
-     
-     host->display(CmdDisplay_Maximized);
-    } 
-  else
-    {
-     shape.max_button=true;
-     
-     redrawFrame(DragType_Max);
-     
-     host->display(CmdDisplay_Restore);
-    } 
- }
-
-void DragWindow::redrawAll(bool do_layout)
- {
-  if( do_layout )
-    {
-     shape.layout(size);
-    
-     if( client ) client->getSubWindow().setPlace(shape.getClient());
-     
-     if( alert_client ) alert_client->getSubWindow().setPlace(shape.getClient());  
-    }
-  
-  if( host->isDead() ) return;
-  
-  if( host->getToken() ) 
-    {
-     delay_draw=true;
-     
-     return;
-    }
-  
-  FrameBuf<DesktopColor> buf(host->getDrawPlane());
-  
-  if( size<=buf.getSize() ) 
-    {
-     shape.draw(buf);
-    
-     getClientSub().forward_draw(buf,shape.drag_type);
-    
-     host->invalidate(1);
-    }
-  else
-    {
-     buf.erase(Black);
-     
-     host->invalidate(1);
-    }
- }
-
-void DragWindow::redrawClient()
- {
-  if( host->isDead() ) return;
-  
-  if( host->getToken() ) 
-    {
-     delay_draw=true;
-     
-     return;
-    }
-  
-  FrameBuf<DesktopColor> buf(host->getDrawPlane());
-  
-  if( size<=buf.getSize() ) 
-    {
-     getClientSub().forward_draw(buf,shape.drag_type);
-    
-     host->invalidate(shape.getClient(),1);
-    }
-  else
-    {
-     buf.erase(Black);
-     
-     host->invalidate(1);
-    }
- }
-
-void DragWindow::redrawClient(Pane pane)
- {
-  if( host->isDead() ) return;
-  
-  if( host->getToken() ) 
-    {
-     delay_draw=true;
-     
-     return;
-    }
-  
-  FrameBuf<DesktopColor> buf(host->getDrawPlane());
-  
-  if( size<=buf.getSize() ) 
-    {
-     getClientSub().forward_draw(buf,pane,shape.drag_type);
-    
-     host->invalidate(pane,1);
-    }
-  else
-    {
-     buf.erase(Black);
-     
-     host->invalidate(1);
-    }
- }
-
-void DragWindow::alert()
- {
-  switch( shape.alert_type )
-    {
-     case AlertType_No :
-      {
-       shape.alert_type=AlertType_Closed;
-       
-       redrawFrame(DragType_Alert);
-       
-       pushAlertBlink();
-      }
-     break;
-     
-     case AlertType_Closed :
-      {
-       pushAlertBlink();
-      }
-     break;
-     
-     case AlertType_Opened :
-      {
-       redrawClient();
-      }
-     break;
-    }
- }
-
- // SubWindowHost
-
-FrameWindow * DragWindow::getFrame()
- {
-  return this;
- }
-
-Point DragWindow::getScreenOrigin()
- {
-  Pane pane=host->getPlace();
-  
-  return pane.getBase();
- }
-
-void DragWindow::redraw(Pane pane)
- {
-  input.redrawClient(pane);
- }
-
-void DragWindow::setFocus(SubWindow *)
- {
-  if( shape.has_focus )
-    {
-     getClientSub().gainFocus();
-    }
- }
-
-void DragWindow::captureMouse(SubWindow *)
- {
-  if( !client_capture )
-    {
-     client_capture=true;
-    
-     if( !shape.drag_type ) host->captureMouse();
-    }
- }
-
-void DragWindow::releaseMouse(SubWindow *)
- {
-  if( client_capture )
-    {
-     client_capture=false;
-    
-     if( !shape.drag_type ) host->releaseMouse();
-    }
- }
-
- // base
-
-void DragWindow::alive()
- {
-  reset();
-  
-  host->trackMouseHover();
-  host->trackMouseLeave();
-  
-  if( client ) client->alive();
-  
-  if( alert_client ) alert_client->alive();
-  
-  getClientSub().open();
- }
-
-void DragWindow::dead()
- {
-  getClientSub().close();
-  
-  if( client ) client->dead();
-  
-  if( alert_client ) alert_client->dead();
- }
-
-void DragWindow::setSize(Point size_,bool buf_dirty)
- {
-  if( size!=size_ || buf_dirty )
-    {
-     size=size_;
-    
-     redrawAll(true);
-    }
- }
-
-void DragWindow::paintDone(unsigned)
- {
-  if( delay_draw )
-    {
-     delay_draw=false;
-     
-     redrawAll();
-    }
- }
-
- // keyboard
-
-void DragWindow::gainFocus()
- {
-  shape.has_focus=true;
-  
-  redrawFrame();
-  
-  getClientSub().gainFocus();
- }
-
-void DragWindow::looseFocus()
- {
-  shape.has_focus=false;
-  
-  redrawFrame();
-  
-  getClientSub().looseFocus();
- }
-
-void DragWindow::key(VKey vkey,KeyMod kmod)
- {
-  if( !forwardKey(vkey,kmod) ) getClientSub().key(vkey,kmod);
- }
-
-void DragWindow::key(VKey vkey,KeyMod kmod,unsigned repeat)
- {
-  if( !forwardKey(vkey,kmod,repeat) ) getClientSub().key(vkey,kmod,repeat);
- }
-
-void DragWindow::keyUp(VKey vkey,KeyMod kmod)
- {
-  if( !forwardKeyUp(vkey,kmod) ) getClientSub().keyUp(vkey,kmod);
- }
-
-void DragWindow::keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
- {
-  if( !forwardKeyUp(vkey,kmod,repeat) ) getClientSub().keyUp(vkey,kmod,repeat);
- }
-
- // character
-
-void DragWindow::putch(char ch)
- {
-  getClientSub().putch(ch);
- }
-
-void DragWindow::putch(char ch,unsigned repeat)
- {
-  getClientSub().putch(ch,repeat);
- }
-
-void DragWindow::putchAlt(char ch)
- {
-  getClientSub().putchAlt(ch);
- }
-
-void DragWindow::putchAlt(char ch,unsigned repeat)
- {
-  getClientSub().putchAlt(ch,repeat);
- }
-
- // mouse
-
-void DragWindow::looseCapture()
- {
-  if( shape.drag_type ) endDrag();
-  
-  if( client_capture )
-    {
-     client_capture=false;
-     
-     getClientSub().looseCapture();
-    }
- }
-
-void DragWindow::clickLeft(Point point,MouseKey mkey)
- {
-  switch( auto drag_type=shape.dragTest(point) )
-    {
-     case DragType_None :
-      {
-       if( client_capture || shape.getClient().contains(point) )
-         {
-          getClientSub().forward_clickLeft(point,mkey);
-         }
-      }
-     break;
-   
-     case DragType_Alert : 
-     case DragType_Min   : 
-     case DragType_Max   : 
-     case DragType_Close : shape.btn_type=drag_type; redrawFrame(drag_type); break;
-     
-     default: if( !shape.drag_type ) startDrag(point,drag_type);
-    }
- }
-
-void DragWindow::upLeft(Point point,MouseKey mkey)
- {
-  if( shape.drag_type )
-    {
-     endDrag(point);
-     
-     return;
-    }
-  
-  if( shape.btn_type )
-    {
-     auto type=Replace(shape.btn_type,DragType_None);
-     
-     redrawFrame(type);
-    
-     if( shape.dragTest(point)==type )
-       {
-        switch( type )
-          {
-           case DragType_Alert : switchClients(); return;
-           
-           case DragType_Min   : minimize(); return;
-           
-           case DragType_Max   : maximize(); return;
-           
-           case DragType_Close : destroy(); return;
-          }
-       }
-    }
-  
-  if( client_capture || shape.getClient().contains(point) )
-    {
-     getClientSub().forward_upLeft(point,mkey);
-    }
- }
-
-void DragWindow::dclickLeft(Point point,MouseKey mkey)
- {
-  if( shape.drag_type ) return;
-  
-  if( client_capture || shape.getClient().contains(point) )
-    {
-     getClientSub().forward_dclickLeft(point,mkey);
-    }
- }
-
-void DragWindow::clickRight(Point point,MouseKey mkey)
- {
-  if( shape.drag_type ) return;
-  
-  if( client_capture || shape.getClient().contains(point) )
-    {
-     getClientSub().forward_clickRight(point,mkey);
-    }
- }
-
-void DragWindow::upRight(Point point,MouseKey mkey)
- {
-  if( shape.drag_type ) return;
-  
-  if( client_capture || shape.getClient().contains(point) )
-    {
-     getClientSub().forward_upRight(point,mkey);
-    }
- }
-
-void DragWindow::dclickRight(Point point,MouseKey mkey)
- {
-  if( shape.drag_type ) return;
-  
-  if( client_capture || shape.getClient().contains(point) )
-    {
-     getClientSub().forward_dclickRight(point,mkey);
-    }
- }
-
-void DragWindow::move(Point point,MouseKey mkey)
- {
-  if( shape.drag_type )
-    {
-     if( mkey&MouseKey_Left )
-       dragTo(point);
-     else
-       endDrag(point);
-     
-     return;
-    }
-  
-  if( shape.btn_type )
-    {
-     if( mkey&MouseKey_Left )
-       {
-        if( shape.dragTest(point)!=shape.btn_type )
-          {
-           auto type=Replace(shape.btn_type,DragType_None);
-          
-           redrawFrame(type);
-          }
-       }
-     else
-       {
-        auto type=Replace(shape.btn_type,DragType_None);
-        
-        redrawFrame(type);
-       }
-     
-     return;
-    }
-  
-  auto drag_type=shape.dragTest(point);
-  
-  if( drag_type==DragType_Bar ) drag_type=DragType_None;
-  
-  if( drag_type!=shape.hilight )
-    {
-     auto type=Replace(shape.hilight,drag_type);
-     
-     redrawFrame(type);
-     redrawFrame(drag_type);
-    }
-  
-  if( shape.getClient().contains(point) )
-    {
-     client_enter=true;
-     
-     getClientSub().forward_move(point,mkey);
-    }
-  else
-    {
-     if( client_capture ) getClientSub().forward_move(point,mkey);
-      
-     if( client_enter )
-       {
-        client_enter=false;
-        
-        getClientSub().leave();
-       }
-    }
- }
-
-void DragWindow::hover(Point point,MouseKey mkey)
- {
-  if( shape.drag_type ) return;
-  
-  if( client_capture || shape.getClient().contains(point) )
-    {
-     getClientSub().forward_hover(point,mkey);
-    }
- }
-
-void DragWindow::leave()
- {
-  if( shape.hilight  )
-    {
-     redrawFrame(Replace(shape.hilight,DragType_None));
-    }
-  
-  if( shape.btn_type )
-    {
-     redrawFrame(Replace(shape.btn_type,DragType_None));
-    }
-  
-  if( shape.drag_type ) return;
-  
-  if( client_enter )
-    {
-     client_enter=false;
-     
-     getClientSub().leave();
-    }
- }
-
-void DragWindow::wheel(Point point,MouseKey mkey,Coord delta)
- {
-  if( shape.drag_type ) return;
-  
-  if( client_capture || shape.getClient().contains(point) )
-    {
-     getClientSub().forward_wheel(point,mkey,delta);
-    }
- }
-
-void DragWindow::setMouseShape(Point point)
- {
-  switch( shape.dragTest(point) )
-    {
-     case DragType_Top         : host->setMouseShape(Mouse_SizeUpDown); break;
-      
-     case DragType_TopLeft     : host->setMouseShape(Mouse_SizeUpLeft); break;
-
-     case DragType_Left        : host->setMouseShape(Mouse_SizeLeftRight); break;
-     
-     case DragType_BottomLeft  : host->setMouseShape(Mouse_SizeUpRight); break;
-     
-     case DragType_Bottom      : host->setMouseShape(Mouse_SizeUpDown); break;
-     
-     case DragType_BottomRight : host->setMouseShape(Mouse_SizeUpLeft); break;
-     
-     case DragType_Right       : host->setMouseShape(Mouse_SizeLeftRight); break;
-     
-     case DragType_TopRight    : host->setMouseShape(Mouse_SizeUpRight); break;
-     
-     case DragType_Alert       :
-     case DragType_Min         : 
-     case DragType_Max         : host->setMouseShape(Mouse_Hand); break;
-     
-     case DragType_Close       : host->setMouseShape(Mouse_Stop); break;
-      
-     case DragType_Bar         : host->setMouseShape(Mouse_SizeAll); break;
-     
-     default: host->setMouseShape(getClientSub().forward_getMouseShape(point));
-    }
- }
-
- // signals
-
-void DragWindow::updateConfig()
- { 
-  input.redrawAll(true); 
  }
 
 } // namespace Video
