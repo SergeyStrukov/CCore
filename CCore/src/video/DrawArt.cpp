@@ -19,29 +19,6 @@
 namespace CCore {
 namespace Video {
 
-/* struct CircleSpline */
-
-CircleSpline::CircleSpline(Point center,Coord radius)
- {
-  IntGuard( radius>0 );
-  
-  Coord x=Coord( radius/2 );
-  Coord y=Coord( Algo::SqRoot<uLCoord>(Sq<uLCoord>(radius)-Sq<uLCoord>(x),radius) );
- 
-  buf[0]=center+Point(0,radius);
-  buf[1]=center+Point(-x,y);
-  buf[2]=center+Point(-y,x);
-  buf[3]=center+Point(-radius,0);
-  buf[4]=center+Point(-y,-x);
-  buf[5]=center+Point(-x,-y);
-  buf[6]=center+Point(0,-radius);
-  buf[7]=center+Point(x,-y);
-  buf[8]=center+Point(y,-x);
-  buf[9]=center+Point(radius,0);
-  buf[10]=center+Point(y,x);
-  buf[11]=center+Point(x,y);
- }
-
 /* class CommonDrawArt::WorkBuf */
 
 void CommonDrawArt::WorkBuf::Prepare(Coord &a,Coord &b,Coord d)

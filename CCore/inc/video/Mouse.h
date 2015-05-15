@@ -72,7 +72,8 @@ inline PrintMouseKey GetTextDesc(MouseKey mkey) { return PrintMouseKey(mkey); }
 
 enum MouseShape : unsigned
  {
-  Mouse_Null,
+  Mouse_Null = 0,
+    
   Mouse_Arrow,
   Mouse_IBeem,
   Mouse_Wait,

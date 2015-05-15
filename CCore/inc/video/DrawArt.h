@@ -26,50 +26,7 @@ namespace Video {
 
 /* classes */
 
-struct CircleSpline;
-
-struct PaneBorder;
-
 class CommonDrawArt;
-
-/* struct CircleSpline */
-
-struct CircleSpline
- {
-  Point buf[12];
-  
-  CircleSpline(Point center,Coord radius);
-  
-  PtrLen<const Point> get() const { return Range(buf); }
- };
-
-/* struct PaneBorder */
-
-struct PaneBorder
- {
-  Point buf[4];
-  
-  explicit PaneBorder(Pane pane)
-   {
-    Coord x=pane.x+pane.dx-1;
-    Coord y=pane.y+pane.dy-1;
-    
-    buf[0]=Point(pane.x,pane.y);
-    buf[1]=Point(pane.x,y);
-    buf[2]=Point(x,y);
-    buf[3]=Point(x,pane.y);
-   }
-  
-  Point topLeft() const { return buf[0]; }
-  
-  Point bottomLeft() const { return buf[1]; }
-  
-  Point bottomRight() const { return buf[2]; }
-  
-  Point topRight() const { return buf[3]; }
-  
-  PtrLen<const Point> get() const { return Range(buf); }
- };
 
 /* class CommonDrawArt */
 

@@ -320,6 +320,295 @@ class WinList : NoCopy , public SubWindowHost
    MouseShape getMouseShape(Point point,MouseShape def_shape=Mouse_Arrow);
  };
 
+/* class SomeWindow */
+
+#if 0
+
+class SomeWindow : public SubWindow
+ {
+   WinList list;
+  
+  public:
+   
+   explicit SomeWindow(SubWindowHost &host);
+   
+   virtual ~SomeWindow();
+   
+   // drawing
+   
+   virtual void layout();
+   
+   virtual void draw(DrawBuf buf,bool drag_active) const;
+   
+   virtual void draw(DrawBuf buf,Pane pane,bool drag_active) const;
+   
+   // base
+   
+   virtual void open();
+   
+   virtual void close();
+   
+   // keyboard
+   
+   virtual void gainFocus();
+   
+   virtual void looseFocus();
+   
+   virtual void key(VKey vkey,KeyMod kmod);
+   
+   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat);
+   
+   virtual void keyUp(VKey vkey,KeyMod kmod);
+   
+   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat);
+   
+   // character
+   
+   virtual void putch(char ch);
+   
+   virtual void putch(char ch,unsigned repeat);
+   
+   virtual void putchAlt(char ch);
+   
+   virtual void putchAlt(char ch,unsigned repeat);
+   
+   // mouse
+ 
+   virtual void looseCapture();
+ 
+   virtual void clickLeft(Point point,MouseKey mkey);
+   
+   virtual void upLeft(Point point,MouseKey mkey);
+
+   virtual void dclickLeft(Point point,MouseKey mkey);
+   
+   virtual void clickRight(Point point,MouseKey mkey);
+   
+   virtual void upRight(Point point,MouseKey mkey);
+   
+   virtual void dclickRight(Point point,MouseKey mkey);
+   
+   virtual void move(Point point,MouseKey mkey);
+   
+   virtual void hover(Point point,MouseKey mkey);
+   
+   virtual void leave();
+   
+   virtual void wheel(Point point,MouseKey mkey,Coord delta);
+
+   virtual MouseShape getMouseShape(Point point);
+ };
+
+SomeWindow::SomeWindow(SubWindowHost &host)
+ : SubWindow(host),
+   list(*this) 
+ {
+  // TODO
+ }
+
+SomeWindow::~SomeWindow()
+ {
+ }
+
+ // drawing
+
+void SomeWindow::layout()
+ {
+  // TODO
+ }
+
+void SomeWindow::draw(DrawBuf buf,bool drag_active) const
+ {
+  // TODO
+  
+  list.draw(buf,drag_active);
+ }
+
+void SomeWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
+ {
+  // TODO
+  
+  list.draw(buf,pane,drag_active);
+ }
+
+ // base
+
+void SomeWindow::open()
+ {
+  // TODO
+  
+  list.open();
+ }
+
+void SomeWindow::close()
+ {
+  // TODO
+  
+  list.close();
+ }
+
+ // keyboard
+
+void SomeWindow::gainFocus()
+ {
+  // TODO
+  
+  list.gainFocus();
+ }
+
+void SomeWindow::looseFocus()
+ {
+  // TODO
+  
+  list.looseFocus();
+ }
+
+void SomeWindow::key(VKey vkey,KeyMod kmod)
+ {
+  // TODO
+  
+  list.key(vkey,kmod);
+ }
+
+void SomeWindow::key(VKey vkey,KeyMod kmod,unsigned repeat)
+ {
+  // TODO
+  
+  list.key(vkey,kmod,repeat);
+ }
+
+void SomeWindow::keyUp(VKey vkey,KeyMod kmod)
+ {
+  // TODO
+  
+  list.keyUp(vkey,kmod);
+ }
+
+void SomeWindow::keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
+ {
+  // TODO
+  
+  list.keyUp(vkey,kmod,repeat);
+ }
+
+ // character
+
+void SomeWindow::putch(char ch)
+ {
+  // TODO
+  
+  list.putch(ch);
+ }
+
+void SomeWindow::putch(char ch,unsigned repeat)
+ {
+  // TODO
+  
+  list.putch(ch,repeat);
+ }
+
+void SomeWindow::putchAlt(char ch)
+ {
+  // TODO
+  
+  list.putchAlt(ch);
+ }
+
+void SomeWindow::putchAlt(char ch,unsigned repeat)
+ {
+  // TODO
+  
+  list.putchAlt(ch,repeat);
+ }
+
+ // mouse
+
+void SomeWindow::looseCapture()
+ {
+  // TODO
+  
+  list.looseCapture();
+ }
+
+void SomeWindow::clickLeft(Point point,MouseKey mkey)
+ {
+  // TODO
+  
+  list.clickLeft(point,mkey);
+ }
+
+void SomeWindow::upLeft(Point point,MouseKey mkey)
+ {
+  // TODO
+  
+  list.upLeft(point,mkey);
+ }
+
+void SomeWindow::dclickLeft(Point point,MouseKey mkey)
+ {
+  // TODO
+  
+  list.dclickLeft(point,mkey);
+ }
+
+void SomeWindow::clickRight(Point point,MouseKey mkey)
+ {
+  // TODO
+  
+  list.clickRight(point,mkey);
+ }
+
+void SomeWindow::upRight(Point point,MouseKey mkey)
+ {
+  // TODO
+  
+  list.upRight(point,mkey);
+ }
+
+void SomeWindow::dclickRight(Point point,MouseKey mkey)
+ {
+  // TODO
+  
+  list.dclickRight(point,mkey);
+ }
+
+void SomeWindow::move(Point point,MouseKey mkey)
+ {
+  // TODO
+  
+  list.move(point,mkey);
+ }
+
+void SomeWindow::hover(Point point,MouseKey mkey)
+ {
+  // TODO
+  
+  list.hover(point,mkey);
+ }
+
+void SomeWindow::leave()
+ {
+  // TODO
+  
+  list.leave();
+ }
+
+void SomeWindow::wheel(Point point,MouseKey mkey,Coord delta)
+ {
+  // TODO
+  
+  list.wheel(point,mkey,delta);
+ }
+
+MouseShape SomeWindow::getMouseShape(Point point)
+ {
+  // TODO
+  
+  return list.getMouseShape(point,Mouse_Arrow);
+ }
+
+#endif
+
 } // namespace Video
 } // namespace CCore
  
