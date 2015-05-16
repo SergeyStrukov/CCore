@@ -872,9 +872,27 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
    
    virtual void react(UserAction action)
     {
-     action.dispatch(*this, [this] (UserAction action) { getClientSub().forward_react(action); } );
+     action.dispatch(*this, [this] (UserAction action) { react_other(action); } );
     }
    
+   void react_other(UserAction action)
+    {
+     if( action.fromKeyboard() )
+       {
+        getClientSub().react(action);
+       }
+     else
+       {
+        if( shape.drag_type ) return;
+        
+        Point point=action.getPoint();
+       
+        if( client_capture || shape.getClient().contains(point) )
+          {
+           getClientSub().forward_react(action);
+          }
+       }
+    }
    
    void react_Key(VKey vkey,KeyMod kmod)
     {
@@ -895,7 +913,6 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
     {
      if( !forwardKeyUp(vkey,kmod,repeat) ) getClientSub().put_KeyUp(vkey,kmod,repeat);
     }
-   
    
    void react_LeftClick(Point point,MouseKey mkey)
     {
@@ -954,48 +971,6 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
         getClientSub().forward().put_LeftUp(point,mkey);
        }
     }
- 
-   void react_LeftDClick(Point point,MouseKey mkey)
-    {
-     if( shape.drag_type ) return;
-     
-     if( client_capture || shape.getClient().contains(point) )
-       {
-        getClientSub().forward().put_LeftDClick(point,mkey);
-       }
-    }
-   
-   
-   void react_RightClick(Point point,MouseKey mkey)
-    {
-     if( shape.drag_type ) return;
-     
-     if( client_capture || shape.getClient().contains(point) )
-       {
-        getClientSub().forward().put_RightClick(point,mkey);
-       }
-    }
-   
-   void react_RightUp(Point point,MouseKey mkey)
-    {
-     if( shape.drag_type ) return;
-     
-     if( client_capture || shape.getClient().contains(point) )
-       {
-        getClientSub().forward().put_RightUp(point,mkey);
-       }
-    }
-   
-   void react_RightDClick(Point point,MouseKey mkey)
-    {
-     if( shape.drag_type ) return;
-     
-     if( client_capture || shape.getClient().contains(point) )
-       {
-        getClientSub().forward().put_RightDClick(point,mkey);
-       }
-    }
-   
    
    void react_Move(Point point,MouseKey mkey)
     {
@@ -1061,16 +1036,6 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
        }
     }
    
-   void react_Hover(Point point,MouseKey mkey)
-    {
-     if( shape.drag_type ) return;
-     
-     if( client_capture || shape.getClient().contains(point) )
-       {
-        getClientSub().forward().put_Hover(point,mkey);
-       }
-    }
-   
    void react_Leave()
     {
      if( shape.hilight  )
@@ -1090,16 +1055,6 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
         client_enter=false;
         
         getClientSub().put_Leave();
-       }
-    }
-   
-   void react_Wheel(Point point,MouseKey mkey,Coord delta)
-    {
-     if( shape.drag_type ) return;
-     
-     if( client_capture || shape.getClient().contains(point) )
-       {
-        getClientSub().forward().put_Wheel(point,mkey,delta);
        }
     }
  
