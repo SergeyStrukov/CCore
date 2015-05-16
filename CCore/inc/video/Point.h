@@ -413,6 +413,8 @@ inline Pane Extent(Point base,Coord dx,Coord dy) { return Extent(base.x,base.y,d
 
 inline Pane Extent(Point base,Point size) { return Extent(base.x,base.y,size.x,size.y); }
 
+inline Pane Envelope(Point a,Point b) { return Pane(Inf(a,b),Sup(a,b)+Point(1,1)); }
+
 inline Pane operator + (Pane pane,Point point) { return Pane(IntAdd(pane.x,point.x),IntAdd(pane.y,point.y),pane.dx,pane.dy); }
 
 inline Pane operator += (Pane &pane,Point point) { return pane=pane+point; }

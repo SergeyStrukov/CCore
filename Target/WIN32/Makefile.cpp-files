@@ -266,6 +266,7 @@
 ../../CCore/src/video/Point.cpp
 ../../CCore/src/video/SimpleConsole.cpp
 ../../CCore/src/video/SubWindow.cpp
+../../CCore/src/video/UserAction.cpp
 ../../CCore/src/video/VideoConsole.cpp
 ../../CCore/src/video/VideoDevice.cpp
 ../../CCore/src/video/WindowReport.cpp
