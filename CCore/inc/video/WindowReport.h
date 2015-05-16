@@ -29,11 +29,11 @@ class ExceptionStore;
 
 class ExceptionWindow;
 
-template <class Shape> struct WindowReportParam;
+template <class Shape> struct WindowReportParamOf;
 
 class WindowReportBase;
 
-template <class Shape> class WindowReport;
+template <class Shape> class WindowReportOf;
 
 class ExceptionClient;
 
@@ -182,10 +182,10 @@ class ExceptionWindow : public SubWindow
    SignalConnector<ExceptionWindow> connector_updateReport;
   };
 
-/* struct WindowReportParam<Shape> */
+/* struct WindowReportParamOf<Shape> */
 
 template <class Shape>
-struct WindowReportParam
+struct WindowReportParamOf
  {
   Desktop *desktop = DefaultDesktop ;
   MSec tick_period = DeferCallQueue::DefaultTickPeriod ;
@@ -193,8 +193,12 @@ struct WindowReportParam
   typename Shape::Config drag_cfg;
   ExceptionWindow::Config cfg;
   
-  WindowReportParam() {}
+  WindowReportParamOf() {}
  };
+
+/* type WindowReportParam */
+
+using WindowReportParam = WindowReportParamOf<DragShape> ;
 
 /* class WindowReportBase */
 
@@ -246,10 +250,10 @@ class WindowReportBase : public ExceptionStore , public ReportException
    Signal<> update;
  };
 
-/* class WindowReport<Shape> */
+/* class WindowReportOf<Shape> */
 
 template <class Shape> 
-class WindowReport : public WindowReportBase
+class WindowReportOf : public WindowReportBase
  {
    typename Shape::Config &drag_cfg;
    
@@ -259,7 +263,7 @@ class WindowReport : public WindowReportBase
    
   public:
   
-   explicit WindowReport(WindowReportParam<Shape> &param)
+   explicit WindowReportOf(WindowReportParamOf<Shape> &param)
     : WindowReportBase(param.desktop,param.tick_period,param.cfg),
       drag_cfg(param.drag_cfg)
     {
@@ -267,7 +271,7 @@ class WindowReport : public WindowReportBase
  };
 
 template <class Shape> 
-void WindowReport<Shape>::modalLoop()
+void WindowReportOf<Shape>::modalLoop()
  {
   DragWindowOf<Shape> main_win(desktop,drag_cfg);
   
@@ -285,6 +289,10 @@ void WindowReport<Shape>::modalLoop()
   
   DeferCallQueue::Loop();
  }
+
+/* type WindowReport */
+
+using WindowReport = WindowReportOf<DragShape> ;
 
 /* class ExceptionClient */
 
