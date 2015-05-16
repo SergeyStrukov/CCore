@@ -15,8 +15,6 @@
 
 #include <CCore/test/test.h>
 
-#include <CCore/inc/video/UserAction.h>
-
 namespace App {
 
 namespace Private_0200 {
@@ -34,21 +32,6 @@ const char *const Testit<200>::Name="Test200 Blank";
 template<>
 bool Testit<200>::Main() 
  {
-  using namespace Video;
-  
-  UserAction action=UserAction::Create_RepeatKey(VKey_F1,KeyMod_Null,5);
-
-  struct SomeType
-   {
-    void key(VKey,KeyMod) { Printf(Con,"key()\n"); }
-    
-    //void key(VKey,KeyMod,unsigned) { Printf(Con,"key-repeat()\n"); }
-   };
-  
-  SomeType obj;
-  
-  action.dispatch(obj, [] (UserAction) { Printf(Con,"default\n"); } );
-  
   return true;
  }
  
