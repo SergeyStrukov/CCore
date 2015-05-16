@@ -856,9 +856,9 @@ class WindowsHost : public WindowHost
           KeyMod kmod=GetKeyMod(ext);
           
           if( repeat>1 )
-            frame->key(vkey,kmod,repeat);
+            frame->react(UserAction::Create_RepeatKey(vkey,kmod,repeat));
           else
-            frame->key(vkey,kmod);
+            frame->react(UserAction::Create_Key(vkey,kmod));
          }
         return 0;
         
@@ -874,9 +874,9 @@ class WindowsHost : public WindowHost
           if( alt ) kmod|=KeyMod_Alt;
           
           if( repeat>1 )
-            frame->key(vkey,kmod,repeat);
+            frame->react(UserAction::Create_RepeatKey(vkey,kmod,repeat));
           else
-            frame->key(vkey,kmod);
+            frame->react(UserAction::Create_Key(vkey,kmod));
          }
         return 0;
         
@@ -889,9 +889,9 @@ class WindowsHost : public WindowHost
           KeyMod kmod=GetKeyMod(ext);
           
           if( repeat>1 )
-            frame->keyUp(vkey,kmod,repeat);
+            frame->react(UserAction::Create_RepeatKeyUp(vkey,kmod,repeat));
           else
-            frame->keyUp(vkey,kmod);
+            frame->react(UserAction::Create_KeyUp(vkey,kmod));
          }
         return 0;
         
@@ -907,9 +907,9 @@ class WindowsHost : public WindowHost
           if( alt ) kmod|=KeyMod_Alt;
           
           if( repeat>1 )
-            frame->keyUp(vkey,kmod,repeat);
+            frame->react(UserAction::Create_RepeatKeyUp(vkey,kmod,repeat));
           else
-            frame->keyUp(vkey,kmod);
+            frame->react(UserAction::Create_KeyUp(vkey,kmod));
          }
         return 0;
         
@@ -921,9 +921,9 @@ class WindowsHost : public WindowHost
              unsigned repeat=lParam&0xFFFF;
              
              if( repeat>1 )
-               frame->putch(ch,repeat);
+               frame->react(UserAction::Create_RepeatChar(ch,repeat));
              else
-               frame->putch(ch);
+               frame->react(UserAction::Create_Char(ch));
             }
          }
         return 0;
@@ -936,9 +936,9 @@ class WindowsHost : public WindowHost
              unsigned repeat=lParam&0xFFFF;
              
              if( repeat>1 )
-               frame->putchAlt(ch,repeat);
+               frame->react(UserAction::Create_RepeatAltChar(ch,repeat));
              else
-               frame->putchAlt(ch);
+               frame->react(UserAction::Create_AltChar(ch));
             }
          }
         return 0;
@@ -948,7 +948,7 @@ class WindowsHost : public WindowHost
           MouseKey mkey=ToMouseKey(wParam);
           Point point=ToPoint(lParam);
           
-          frame->clickLeft(point,mkey);
+          frame->react(UserAction::Create_LeftClick(point,mkey));
          }
         return 0;
         
@@ -957,7 +957,7 @@ class WindowsHost : public WindowHost
           MouseKey mkey=ToMouseKey(wParam);
           Point point=ToPoint(lParam);
           
-          frame->upLeft(point,mkey);
+          frame->react(UserAction::Create_LeftUp(point,mkey));
          }
         return 0;
         
@@ -966,7 +966,7 @@ class WindowsHost : public WindowHost
           MouseKey mkey=ToMouseKey(wParam);
           Point point=ToPoint(lParam);
           
-          frame->dclickLeft(point,mkey);
+          frame->react(UserAction::Create_LeftDClick(point,mkey));
          }
         return 0;
         
@@ -975,7 +975,7 @@ class WindowsHost : public WindowHost
           MouseKey mkey=ToMouseKey(wParam);
           Point point=ToPoint(lParam);
           
-          frame->clickRight(point,mkey);
+          frame->react(UserAction::Create_RightClick(point,mkey));
          }
         return 0;
         
@@ -984,7 +984,7 @@ class WindowsHost : public WindowHost
           MouseKey mkey=ToMouseKey(wParam);
           Point point=ToPoint(lParam);
           
-          frame->upRight(point,mkey);
+          frame->react(UserAction::Create_RightUp(point,mkey));
          }
         return 0;
         
@@ -993,7 +993,7 @@ class WindowsHost : public WindowHost
           MouseKey mkey=ToMouseKey(wParam);
           Point point=ToPoint(lParam);
           
-          frame->dclickRight(point,mkey);
+          frame->react(UserAction::Create_RightDClick(point,mkey));
          }
         return 0;
         
@@ -1012,7 +1012,7 @@ class WindowsHost : public WindowHost
           MouseKey mkey=ToMouseKey(wParam);
           Point point=ToPoint(lParam);
           
-          frame->move(point,mkey);
+          frame->react(UserAction::Create_Move(point,mkey));
          }
         return 0;
         
@@ -1022,7 +1022,7 @@ class WindowsHost : public WindowHost
           Coord delta=Win32::SHiWord(wParam)/Win32::WheelDelta;
           Point point=ToPoint(lParam);
           
-          frame->wheel(point-origin,mkey,delta);
+          frame->react(UserAction::Create_Wheel(point,mkey,delta));
          }
         return 0;
         
@@ -1033,7 +1033,7 @@ class WindowsHost : public WindowHost
           
           track_on=false;
           
-          frame->hover(point,mkey);
+          frame->react(UserAction::Create_Hover(point,mkey));
          }
         return 0; 
 
@@ -1041,7 +1041,7 @@ class WindowsHost : public WindowHost
          {
           track_on=false;
           
-          frame->leave();
+          frame->react(UserAction::Create_Leave());
          }
         return 0;
         

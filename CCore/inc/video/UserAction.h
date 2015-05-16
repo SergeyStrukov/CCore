@@ -19,6 +19,7 @@
 #include <CCore/inc/video/Point.h>
 #include <CCore/inc/video/Keyboard.h>
 #include <CCore/inc/video/Mouse.h>
+
 #include <CCore/inc/CharProp.h>
  
 namespace CCore {
@@ -27,6 +28,8 @@ namespace Video {
 /* classes */
 
 class UserAction;
+
+struct UserInput;
 
 /* class UserAction */
 
@@ -253,11 +256,13 @@ class UserAction
    
    static UserAction Create_LeftDClick(Point point,MouseKey mkey) { return UserAction(LeftDClick,Body_Mouse(point,mkey)); }
    
+   
    static UserAction Create_RightClick(Point point,MouseKey mkey) { return UserAction(RightClick,Body_Mouse(point,mkey)); }
    
    static UserAction Create_RightUp(Point point,MouseKey mkey) { return UserAction(RightUp,Body_Mouse(point,mkey)); }
    
    static UserAction Create_RightDClick(Point point,MouseKey mkey) { return UserAction(RightDClick,Body_Mouse(point,mkey)); }
+   
    
    static UserAction Create_Move(Point point,MouseKey mkey) { return UserAction(Move,Body_Mouse(point,mkey)); }
    
@@ -268,6 +273,24 @@ class UserAction
    static UserAction Create_Wheel(Point point,MouseKey mkey,Coord delta) { return UserAction(Wheel,Body_Wheel(point,mkey,delta)); }
   
    // methods
+   
+   bool fromKeyboard() const { return type<LeftClick; }
+   
+   Point getPoint() const
+    {
+     if( type>=LeftClick && type<Leave )
+       {
+        return body.of_Mouse.point;
+       }
+     else if( type==Wheel )
+       {
+        return body.of_Wheel.point;
+       }
+     else
+       {
+        return Null;
+       }
+    }
    
    void rebase(Point origin)
     {
@@ -633,6 +656,8 @@ class UserAction
     }
  };
 
+/* struct SomeClass */
+
 #if 0
 
 struct SomeClass
@@ -753,6 +778,60 @@ struct SomeClass
  };
 
 #endif
+
+/* struct UserInput */
+
+struct UserInput
+ {
+  virtual void react(UserAction action)
+   {
+    Used(action);
+    
+    // do nothing
+   }
+  
+  // put_...(...)
+  
+  void put_Key(VKey vkey,KeyMod kmod) { react(UserAction::Create_Key(vkey,kmod)); }
+  
+  void put_Key(VKey vkey,KeyMod kmod,unsigned repeat) { react(UserAction::Create_RepeatKey(vkey,kmod,repeat)); }
+  
+  void put_KeyUp(VKey vkey,KeyMod kmod) { react(UserAction::Create_KeyUp(vkey,kmod)); }
+  
+  void put_KeyUp(VKey vkey,KeyMod kmod,unsigned repeat) { react(UserAction::Create_RepeatKeyUp(vkey,kmod,repeat)); }
+  
+  
+  void put_Char(char ch) { react(UserAction::Create_Char(ch)); }
+  
+  void put_Char(char ch,unsigned repeat) { react(UserAction::Create_RepeatChar(ch,repeat)); }
+  
+  void put_AltChar(char ch) { react(UserAction::Create_AltChar(ch)); }
+  
+  void put_AltChar(char ch,unsigned repeat) { react(UserAction::Create_RepeatAltChar(ch,repeat)); } 
+ 
+ 
+  void put_LeftClick(Point point,MouseKey mkey) { react(UserAction::Create_LeftClick(point,mkey)); }
+  
+  void put_LeftUp(Point point,MouseKey mkey) { react(UserAction::Create_LeftUp(point,mkey)); }
+  
+  void put_LeftDClick(Point point,MouseKey mkey) { react(UserAction::Create_LeftDClick(point,mkey)); }
+  
+  
+  void put_RightClick(Point point,MouseKey mkey) { react(UserAction::Create_RightClick(point,mkey)); }
+  
+  void put_RightUp(Point point,MouseKey mkey) { react(UserAction::Create_RightUp(point,mkey)); }
+  
+  void put_RightDClick(Point point,MouseKey mkey) { react(UserAction::Create_RightDClick(point,mkey)); }
+  
+  
+  void put_Move(Point point,MouseKey mkey) { react(UserAction::Create_Move(point,mkey)); }
+  
+  void put_Hover(Point point,MouseKey mkey) { react(UserAction::Create_Hover(point,mkey)); }
+  
+  void put_Leave() { react(UserAction::Create_Leave()); }
+  
+  void put_Wheel(Point point,MouseKey mkey,Coord delta) { react(UserAction::Create_Wheel(point,mkey,delta)); }
+ };
 
 } // namespace Video
 } // namespace CCore

@@ -822,48 +822,6 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      getClientSub().looseFocus();
     }
    
-   virtual void key(VKey vkey,KeyMod kmod)
-    {
-     if( !forwardKey(vkey,kmod) ) getClientSub().key(vkey,kmod);
-    }
-   
-   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat)
-    {
-     if( !forwardKey(vkey,kmod,repeat) ) getClientSub().key(vkey,kmod,repeat);
-    }
-   
-   virtual void keyUp(VKey vkey,KeyMod kmod)
-    {
-     if( !forwardKeyUp(vkey,kmod) ) getClientSub().keyUp(vkey,kmod);
-    }
-   
-   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
-    {
-     if( !forwardKeyUp(vkey,kmod,repeat) ) getClientSub().keyUp(vkey,kmod,repeat);
-    }
-   
-   // character
-   
-   virtual void putch(char ch)
-    {
-     getClientSub().putch(ch);
-    }
-   
-   virtual void putch(char ch,unsigned repeat)
-    {
-     getClientSub().putch(ch,repeat);
-    }
-   
-   virtual void putchAlt(char ch)
-    {
-     getClientSub().putchAlt(ch);
-    }
-   
-   virtual void putchAlt(char ch,unsigned repeat)
-    {
-     getClientSub().putchAlt(ch,repeat);
-    }
-   
    // mouse
    
    virtual void looseCapture()
@@ -878,7 +836,68 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
        }
     }
    
-   virtual void clickLeft(Point point,MouseKey mkey)
+   virtual void setMouseShape(Point point)
+    {
+     switch( shape.dragTest(point) )
+       {
+        case DragType_Top         : host->setMouseShape(Mouse_SizeUpDown); break;
+         
+        case DragType_TopLeft     : host->setMouseShape(Mouse_SizeUpLeft); break;
+
+        case DragType_Left        : host->setMouseShape(Mouse_SizeLeftRight); break;
+        
+        case DragType_BottomLeft  : host->setMouseShape(Mouse_SizeUpRight); break;
+        
+        case DragType_Bottom      : host->setMouseShape(Mouse_SizeUpDown); break;
+        
+        case DragType_BottomRight : host->setMouseShape(Mouse_SizeUpLeft); break;
+        
+        case DragType_Right       : host->setMouseShape(Mouse_SizeLeftRight); break;
+        
+        case DragType_TopRight    : host->setMouseShape(Mouse_SizeUpRight); break;
+        
+        case DragType_Alert       :
+        case DragType_Min         : 
+        case DragType_Max         : host->setMouseShape(Mouse_Hand); break;
+        
+        case DragType_Close       : host->setMouseShape(Mouse_Stop); break;
+         
+        case DragType_Bar         : host->setMouseShape(Mouse_SizeAll); break;
+        
+        default: host->setMouseShape(getClientSub().forward_getMouseShape(point));
+       }
+    }
+
+   // user input
+   
+   virtual void react(UserAction action)
+    {
+     action.dispatch(*this, [this] (UserAction action) { getClientSub().forward_react(action); } );
+    }
+   
+   
+   void react_Key(VKey vkey,KeyMod kmod)
+    {
+     if( !forwardKey(vkey,kmod) ) getClientSub().put_Key(vkey,kmod);
+    }
+   
+   void react_Key(VKey vkey,KeyMod kmod,unsigned repeat)
+    {
+     if( !forwardKey(vkey,kmod,repeat) ) getClientSub().put_Key(vkey,kmod,repeat);
+    }
+   
+   void react_KeyUp(VKey vkey,KeyMod kmod)
+    {
+     if( !forwardKeyUp(vkey,kmod) ) getClientSub().put_KeyUp(vkey,kmod);
+    }
+   
+   void react_KeyUp(VKey vkey,KeyMod kmod,unsigned repeat)
+    {
+     if( !forwardKeyUp(vkey,kmod,repeat) ) getClientSub().put_KeyUp(vkey,kmod,repeat);
+    }
+   
+   
+   void react_LeftClick(Point point,MouseKey mkey)
     {
      switch( auto drag_type=shape.dragTest(point) )
        {
@@ -886,7 +905,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
          {
           if( client_capture || shape.getClient().contains(point) )
             {
-             getClientSub().forward_clickLeft(point,mkey);
+             getClientSub().forward().put_LeftClick(point,mkey);
             }
          }
         break;
@@ -900,7 +919,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
        }
     }
    
-   virtual void upLeft(Point point,MouseKey mkey)
+   void react_LeftUp(Point point,MouseKey mkey)
     {
      if( shape.drag_type )
        {
@@ -932,51 +951,53 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      
      if( client_capture || shape.getClient().contains(point) )
        {
-        getClientSub().forward_upLeft(point,mkey);
+        getClientSub().forward().put_LeftUp(point,mkey);
        }
     }
  
-   virtual void dclickLeft(Point point,MouseKey mkey)
+   void react_LeftDClick(Point point,MouseKey mkey)
     {
      if( shape.drag_type ) return;
      
      if( client_capture || shape.getClient().contains(point) )
        {
-        getClientSub().forward_dclickLeft(point,mkey);
+        getClientSub().forward().put_LeftDClick(point,mkey);
        }
     }
    
-   virtual void clickRight(Point point,MouseKey mkey)
+   
+   void react_RightClick(Point point,MouseKey mkey)
     {
      if( shape.drag_type ) return;
      
      if( client_capture || shape.getClient().contains(point) )
        {
-        getClientSub().forward_clickRight(point,mkey);
+        getClientSub().forward().put_RightClick(point,mkey);
        }
     }
    
-   virtual void upRight(Point point,MouseKey mkey)
+   void react_RightUp(Point point,MouseKey mkey)
     {
      if( shape.drag_type ) return;
      
      if( client_capture || shape.getClient().contains(point) )
        {
-        getClientSub().forward_upRight(point,mkey);
+        getClientSub().forward().put_RightUp(point,mkey);
        }
     }
    
-   virtual void dclickRight(Point point,MouseKey mkey)
+   void react_RightDClick(Point point,MouseKey mkey)
     {
      if( shape.drag_type ) return;
      
      if( client_capture || shape.getClient().contains(point) )
        {
-        getClientSub().forward_dclickRight(point,mkey);
+        getClientSub().forward().put_RightDClick(point,mkey);
        }
     }
    
-   virtual void move(Point point,MouseKey mkey)
+   
+   void react_Move(Point point,MouseKey mkey)
     {
      if( shape.drag_type )
        {
@@ -1025,32 +1046,32 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
        {
         client_enter=true;
         
-        getClientSub().forward_move(point,mkey);
+        getClientSub().forward().put_Move(point,mkey);
        }
      else
        {
-        if( client_capture ) getClientSub().forward_move(point,mkey);
+        if( client_capture ) getClientSub().forward().put_Move(point,mkey);
          
         if( client_enter )
           {
            client_enter=false;
            
-           getClientSub().leave();
+           getClientSub().put_Leave();
           }
        }
     }
    
-   virtual void hover(Point point,MouseKey mkey)
+   void react_Hover(Point point,MouseKey mkey)
     {
      if( shape.drag_type ) return;
      
      if( client_capture || shape.getClient().contains(point) )
        {
-        getClientSub().forward_hover(point,mkey);
+        getClientSub().forward().put_Hover(point,mkey);
        }
     }
    
-   virtual void leave()
+   void react_Leave()
     {
      if( shape.hilight  )
        {
@@ -1068,52 +1089,20 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
        {
         client_enter=false;
         
-        getClientSub().leave();
+        getClientSub().put_Leave();
        }
     }
    
-   virtual void wheel(Point point,MouseKey mkey,Coord delta)
+   void react_Wheel(Point point,MouseKey mkey,Coord delta)
     {
      if( shape.drag_type ) return;
      
      if( client_capture || shape.getClient().contains(point) )
        {
-        getClientSub().forward_wheel(point,mkey,delta);
+        getClientSub().forward().put_Wheel(point,mkey,delta);
        }
     }
  
-   virtual void setMouseShape(Point point)
-    {
-     switch( shape.dragTest(point) )
-       {
-        case DragType_Top         : host->setMouseShape(Mouse_SizeUpDown); break;
-         
-        case DragType_TopLeft     : host->setMouseShape(Mouse_SizeUpLeft); break;
-
-        case DragType_Left        : host->setMouseShape(Mouse_SizeLeftRight); break;
-        
-        case DragType_BottomLeft  : host->setMouseShape(Mouse_SizeUpRight); break;
-        
-        case DragType_Bottom      : host->setMouseShape(Mouse_SizeUpDown); break;
-        
-        case DragType_BottomRight : host->setMouseShape(Mouse_SizeUpLeft); break;
-        
-        case DragType_Right       : host->setMouseShape(Mouse_SizeLeftRight); break;
-        
-        case DragType_TopRight    : host->setMouseShape(Mouse_SizeUpRight); break;
-        
-        case DragType_Alert       :
-        case DragType_Min         : 
-        case DragType_Max         : host->setMouseShape(Mouse_Hand); break;
-        
-        case DragType_Close       : host->setMouseShape(Mouse_Stop); break;
-         
-        case DragType_Bar         : host->setMouseShape(Mouse_SizeAll); break;
-        
-        default: host->setMouseShape(getClientSub().forward_getMouseShape(point));
-       }
-    }
-
    // DeferInput
    
    class Input : DeferInput<DragWindowOf<Shape> >

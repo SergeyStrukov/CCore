@@ -179,104 +179,6 @@ void WinList::looseFocus()
   if( focus ) focus->looseFocus();
  }
 
-bool WinList::key(VKey vkey,KeyMod kmod)
- {
-  if( focus )
-    {
-     focus->key(vkey,kmod);
-    
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::key(VKey vkey,KeyMod kmod,unsigned repeat)
- {
-  if( focus )
-    {
-     focus->key(vkey,kmod,repeat);
-    
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::keyUp(VKey vkey,KeyMod kmod)
- {
-  if( focus )
-    {
-     focus->keyUp(vkey,kmod);
-    
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
- {
-  if( focus )
-    {
-     focus->keyUp(vkey,kmod,repeat);
-    
-     return true;
-    }
-  
-  return false;
- }
-
- // character
-
-bool WinList::putch(char ch)
- {
-  if( focus ) 
-    {
-     focus->putch(ch);
-     
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::putch(char ch,unsigned repeat)
- {
-  if( focus ) 
-    {
-     focus->putch(ch,repeat);
-     
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::putchAlt(char ch)
- {
-  if( focus ) 
-    {
-     focus->putchAlt(ch);
-     
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::putchAlt(char ch,unsigned repeat)
- {
-  if( focus ) 
-    {
-     focus->putchAlt(ch,repeat);
-     
-     return true;
-    }
-  
-  return false;
- }
-
  // mouse
 
 void WinList::looseCapture()
@@ -284,146 +186,18 @@ void WinList::looseCapture()
   if( capture ) Replace_null(capture)->looseCapture();
  }
 
-bool WinList::clickLeft(Point point,MouseKey mkey)
- {
-  if( SubWindow *sub_win=pick(point) )
-    {
-     sub_win->forward_clickLeft(point,mkey);
-   
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::upLeft(Point point,MouseKey mkey)
- {
-  if( SubWindow *sub_win=pick(point) )
-    {
-     sub_win->forward_upLeft(point,mkey);
-   
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::dclickLeft(Point point,MouseKey mkey)
- {
-  if( SubWindow *sub_win=pick(point) )
-    {
-     sub_win->forward_dclickLeft(point,mkey);
-   
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::clickRight(Point point,MouseKey mkey)
- {
-  if( SubWindow *sub_win=pick(point) )
-    {
-     sub_win->forward_clickRight(point,mkey);
-   
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::upRight(Point point,MouseKey mkey)
- {
-  if( SubWindow *sub_win=pick(point) )
-    {
-     sub_win->forward_upRight(point,mkey);
-   
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::dclickRight(Point point,MouseKey mkey)
- {
-  if( SubWindow *sub_win=pick(point) )
-    {
-     sub_win->forward_dclickRight(point,mkey);
-   
-     return true;
-    }
-  
-  return false;
- }
-
-bool WinList::move(Point point,MouseKey mkey)
- {
-  if( SubWindow *sub_win=find(point) )
-    {
-     if( enter!=sub_win )
-       {
-        if( enter ) 
-          Replace(enter,sub_win)->leave();
-        else
-          enter=sub_win;
-       }
-    
-     if( capture )
-       capture->forward_move(point,mkey);
-     else
-       sub_win->forward_move(point,mkey);
-   
-     return true;
-    }
-  else
-    {
-     if( enter ) Replace_null(enter)->leave();
-     
-     if( capture )
-       {
-        capture->forward_move(point,mkey);
-        
-        return true;
-       } 
-     
-     return false;
-    }
- }
-
-bool WinList::hover(Point point,MouseKey mkey)
- {
-  if( SubWindow *sub_win=pick(point) )
-    {
-     sub_win->forward_hover(point,mkey);
-   
-     return true;
-    }
-  
-  return false;
- }
-
-void WinList::leave()
- {
-  if( enter ) Replace_null(enter)->leave();
- }
-
-bool WinList::wheel(Point point,MouseKey mkey,Coord delta)
- {
-  if( SubWindow *sub_win=pick(point) )
-    {
-     sub_win->forward_wheel(point,mkey,delta);
-   
-     return true;
-    }
-  
-  return false;
- }
-
 MouseShape WinList::getMouseShape(Point point,MouseShape def_shape)
  {
   if( SubWindow *sub_win=find(point) ) return sub_win->forward_getMouseShape(point);
   
   return def_shape;
+ }
+
+ // user input
+
+void WinList::react(UserAction action)
+ {
+  react(action, [] (UserAction) {} );
  }
 
 } // namespace Video

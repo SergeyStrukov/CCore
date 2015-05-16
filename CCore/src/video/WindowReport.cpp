@@ -293,12 +293,7 @@ void ExceptionWindow::close()
   opened=false;
  }
 
-void ExceptionWindow::key(VKey vkey,KeyMod kmod)
- {
-  key(vkey,kmod,1);
- }
-
-void ExceptionWindow::key(VKey vkey,KeyMod,unsigned repeat)
+void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
  {
   switch( vkey )
     {

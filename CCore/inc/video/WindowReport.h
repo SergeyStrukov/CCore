@@ -163,11 +163,14 @@ class ExceptionWindow : public SubWindow
    
    virtual void close();
    
-   // keyboard
+   // user input
    
-   virtual void key(VKey vkey,KeyMod kmod);
+   virtual void react(UserAction action)
+    {
+     action.dispatch(*this);
+    }
    
-   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat);
+   void react_Key(VKey vkey,KeyMod kmod,unsigned repeat);
    
   private:
    

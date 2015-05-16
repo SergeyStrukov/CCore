@@ -173,23 +173,29 @@ class SubWindow : public MemBase_nocopy , public UserInput
      if( +pane ) draw(buf.cutRebase(place),pane-place.getBase(),drag_active);
     }
  
-   void forward_clickLeft(Point point,MouseKey mkey) { clickLeft(point-place.getBase(),mkey); }
+   void forward_react(UserAction action)
+    {
+     action.rebase(place.getBase());
+     
+     react(action);
+    }
    
-   void forward_upLeft(Point point,MouseKey mkey) { upLeft(point-place.getBase(),mkey); }
+   struct Forwarder : UserInput
+    {
+     SubWindow *obj;
+     
+     explicit Forwarder(SubWindow *obj_) : obj(obj_) {}
+     
+     virtual void react(UserAction action)
+      {
+       obj->forward_react(action);
+      }
+    };
    
-   void forward_dclickLeft(Point point,MouseKey mkey) { dclickLeft(point-place.getBase(),mkey); }
-   
-   void forward_clickRight(Point point,MouseKey mkey) { clickRight(point-place.getBase(),mkey); }
-   
-   void forward_upRight(Point point,MouseKey mkey) { upRight(point-place.getBase(),mkey); }
-   
-   void forward_dclickRight(Point point,MouseKey mkey) { dclickRight(point-place.getBase(),mkey); }
-   
-   void forward_move(Point point,MouseKey mkey) { move(point-place.getBase(),mkey); }
-   
-   void forward_hover(Point point,MouseKey mkey) { hover(point-place.getBase(),mkey); }
-   
-   void forward_wheel(Point point,MouseKey mkey,Coord delta) { wheel(point-place.getBase(),mkey,delta); }
+   Forwarder forward()
+    {
+     return Forwarder(this);     
+    }
    
    MouseShape forward_getMouseShape(Point point) { return getMouseShape(point-place.getBase()); }
  };
@@ -275,50 +281,136 @@ class WinList : NoCopy , public SubWindowHost
    
    void looseFocus();
    
-   bool key(VKey vkey,KeyMod kmod);
-   
-   bool key(VKey vkey,KeyMod kmod,unsigned repeat);
-   
-   bool keyUp(VKey vkey,KeyMod kmod);
-   
-   bool keyUp(VKey vkey,KeyMod kmod,unsigned repeat);
-   
-   // character
-   
-   bool putch(char ch);
-   
-   bool putch(char ch,unsigned repeat);
-   
-   bool putchAlt(char ch);
-   
-   bool putchAlt(char ch,unsigned repeat);
-   
    // mouse
    
    void looseCapture();
    
-   bool clickLeft(Point point,MouseKey mkey);
-   
-   bool upLeft(Point point,MouseKey mkey);
-
-   bool dclickLeft(Point point,MouseKey mkey);
-   
-   bool clickRight(Point point,MouseKey mkey);
-   
-   bool upRight(Point point,MouseKey mkey);
-   
-   bool dclickRight(Point point,MouseKey mkey);
-   
-   bool move(Point point,MouseKey mkey);
-   
-   bool hover(Point point,MouseKey mkey);
-   
-   void leave();
-   
-   bool wheel(Point point,MouseKey mkey,Coord delta);
-   
    MouseShape getMouseShape(Point point,MouseShape def_shape=Mouse_Arrow);
+   
+   // user input
+   
+   template <class Func>
+   void react(UserAction action,Func func);
+   
+   template <class Func>
+   void react_Keyboard(UserAction action,Func func);
+   
+   template <class Func>
+   void react_Mouse(UserAction action,Func func);
+   
+   template <class Func>
+   void react_Move(Point point,MouseKey mkey,Func func);
+   
+   template <class Func>
+   void react_Leave(Func func);
+   
+   void react(UserAction action);
  };
+
+template <class Func>
+void WinList::react(UserAction action,Func func)
+ {
+  if( action.fromKeyboard() )
+    {
+     react_Keyboard(action,func);
+    }
+  else
+    {
+     struct React
+      {
+       WinList *list;
+       const Func &func;
+       
+       void react_Move(Point point,MouseKey mkey)
+        {
+         list->react_Move(point,mkey,func);
+        }
+       
+       void react_Leave()
+        {
+         list->react_Leave(func);
+        }
+       
+       React(WinList *list_,const Func &func_) : list(list_),func(func_) {}
+      };
+     
+     React obj(this,func);
+    
+     action.dispatch(obj, [this,&func] (UserAction action) { react_Mouse(action,func); } );
+    }
+ }
+
+template <class Func>
+void WinList::react_Keyboard(UserAction action,Func func)
+ {
+  if( focus )
+    {
+     focus->react(action);
+    }
+  else
+    {
+     func(action);
+    }
+ }
+
+template <class Func>
+void WinList::react_Mouse(UserAction action,Func func)
+ {
+  if( SubWindow *sub_win=pick(action.getPoint()) )
+    {
+     sub_win->forward_react(action);
+    }
+  else
+    {
+     func(action);
+    }
+ }
+
+template <class Func>
+void WinList::react_Move(Point point,MouseKey mkey,Func func)
+ {
+  if( SubWindow *sub_win=find(point) )
+    {
+     if( enter!=sub_win )
+       {
+        if( enter ) 
+          Replace(enter,sub_win)->react(UserAction::Create_Leave());
+        else
+          enter=sub_win;
+       }
+    
+     if( capture )
+       capture->forward_react(UserAction::Create_Move(point,mkey));
+     else
+       sub_win->forward_react(UserAction::Create_Move(point,mkey));
+    }
+  else
+    {
+     if( enter ) Replace_null(enter)->react(UserAction::Create_Leave());
+     
+     if( capture )
+       {
+        capture->forward_react(UserAction::Create_Move(point,mkey));
+       }
+     else
+       {
+        func(UserAction::Create_Move(point,mkey));
+       }
+    }
+ }
+
+template <class Func>
+void WinList::react_Leave(Func func)
+ {
+  if( enter ) 
+    {
+     Replace_null(enter)->react(UserAction::Create_Leave());
+    }
+  else
+    {
+     func(UserAction::Create_Leave());
+    }
+ }
 
 /* class SomeWindow */
 
@@ -354,49 +446,15 @@ class SomeWindow : public SubWindow
    
    virtual void looseFocus();
    
-   virtual void key(VKey vkey,KeyMod kmod);
-   
-   virtual void key(VKey vkey,KeyMod kmod,unsigned repeat);
-   
-   virtual void keyUp(VKey vkey,KeyMod kmod);
-   
-   virtual void keyUp(VKey vkey,KeyMod kmod,unsigned repeat);
-   
-   // character
-   
-   virtual void putch(char ch);
-   
-   virtual void putch(char ch,unsigned repeat);
-   
-   virtual void putchAlt(char ch);
-   
-   virtual void putchAlt(char ch,unsigned repeat);
-   
    // mouse
  
    virtual void looseCapture();
- 
-   virtual void clickLeft(Point point,MouseKey mkey);
-   
-   virtual void upLeft(Point point,MouseKey mkey);
-
-   virtual void dclickLeft(Point point,MouseKey mkey);
-   
-   virtual void clickRight(Point point,MouseKey mkey);
-   
-   virtual void upRight(Point point,MouseKey mkey);
-   
-   virtual void dclickRight(Point point,MouseKey mkey);
-   
-   virtual void move(Point point,MouseKey mkey);
-   
-   virtual void hover(Point point,MouseKey mkey);
-   
-   virtual void leave();
-   
-   virtual void wheel(Point point,MouseKey mkey,Coord delta);
 
    virtual MouseShape getMouseShape(Point point);
+   
+   // user input
+   
+   virtual void react(UserAction action);
  };
 
 SomeWindow::SomeWindow(SubWindowHost &host)
@@ -463,64 +521,6 @@ void SomeWindow::looseFocus()
   list.looseFocus();
  }
 
-void SomeWindow::key(VKey vkey,KeyMod kmod)
- {
-  // TODO
-  
-  list.key(vkey,kmod);
- }
-
-void SomeWindow::key(VKey vkey,KeyMod kmod,unsigned repeat)
- {
-  // TODO
-  
-  list.key(vkey,kmod,repeat);
- }
-
-void SomeWindow::keyUp(VKey vkey,KeyMod kmod)
- {
-  // TODO
-  
-  list.keyUp(vkey,kmod);
- }
-
-void SomeWindow::keyUp(VKey vkey,KeyMod kmod,unsigned repeat)
- {
-  // TODO
-  
-  list.keyUp(vkey,kmod,repeat);
- }
-
- // character
-
-void SomeWindow::putch(char ch)
- {
-  // TODO
-  
-  list.putch(ch);
- }
-
-void SomeWindow::putch(char ch,unsigned repeat)
- {
-  // TODO
-  
-  list.putch(ch,repeat);
- }
-
-void SomeWindow::putchAlt(char ch)
- {
-  // TODO
-  
-  list.putchAlt(ch);
- }
-
-void SomeWindow::putchAlt(char ch,unsigned repeat)
- {
-  // TODO
-  
-  list.putchAlt(ch,repeat);
- }
-
  // mouse
 
 void SomeWindow::looseCapture()
@@ -530,81 +530,22 @@ void SomeWindow::looseCapture()
   list.looseCapture();
  }
 
-void SomeWindow::clickLeft(Point point,MouseKey mkey)
- {
-  // TODO
-  
-  list.clickLeft(point,mkey);
- }
-
-void SomeWindow::upLeft(Point point,MouseKey mkey)
- {
-  // TODO
-  
-  list.upLeft(point,mkey);
- }
-
-void SomeWindow::dclickLeft(Point point,MouseKey mkey)
- {
-  // TODO
-  
-  list.dclickLeft(point,mkey);
- }
-
-void SomeWindow::clickRight(Point point,MouseKey mkey)
- {
-  // TODO
-  
-  list.clickRight(point,mkey);
- }
-
-void SomeWindow::upRight(Point point,MouseKey mkey)
- {
-  // TODO
-  
-  list.upRight(point,mkey);
- }
-
-void SomeWindow::dclickRight(Point point,MouseKey mkey)
- {
-  // TODO
-  
-  list.dclickRight(point,mkey);
- }
-
-void SomeWindow::move(Point point,MouseKey mkey)
- {
-  // TODO
-  
-  list.move(point,mkey);
- }
-
-void SomeWindow::hover(Point point,MouseKey mkey)
- {
-  // TODO
-  
-  list.hover(point,mkey);
- }
-
-void SomeWindow::leave()
- {
-  // TODO
-  
-  list.leave();
- }
-
-void SomeWindow::wheel(Point point,MouseKey mkey,Coord delta)
- {
-  // TODO
-  
-  list.wheel(point,mkey,delta);
- }
-
 MouseShape SomeWindow::getMouseShape(Point point)
  {
   // TODO
   
   return list.getMouseShape(point,Mouse_Arrow);
+ }
+
+ // user input
+
+void SomeWindow::react(UserAction action)
+ {
+  action.dispatch(*this, [this] (UserAction action) { list.react(action); } );
+  
+  /* OR */
+  
+  list.react(action, [this] (UserAction action) { action.dispatch(*this); } );
  }
 
 #endif
