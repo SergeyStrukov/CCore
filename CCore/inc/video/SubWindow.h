@@ -202,7 +202,7 @@ class SubWindow : public MemBase_nocopy , public UserInput
 
 /* class WinList */
 
-class WinList : NoCopy , public SubWindowHost
+class WinList : NoCopy , public SubWindowHost , public UserInput
  {
    SubWindow &parent;
   
@@ -304,7 +304,7 @@ class WinList : NoCopy , public SubWindowHost
    template <class Func>
    void react_Leave(Func func);
    
-   void react(UserAction action);
+   virtual void react(UserAction action);
  };
 
 template <class Func>
@@ -374,23 +374,23 @@ void WinList::react_Move(Point point,MouseKey mkey,Func func)
      if( enter!=sub_win )
        {
         if( enter ) 
-          Replace(enter,sub_win)->react(UserAction::Create_Leave());
+          Replace(enter,sub_win)->put_Leave();
         else
           enter=sub_win;
        }
     
      if( capture )
-       capture->forward_react(UserAction::Create_Move(point,mkey));
+       capture->forward().put_Move(point,mkey);
      else
-       sub_win->forward_react(UserAction::Create_Move(point,mkey));
+       sub_win->forward().put_Move(point,mkey);
     }
   else
     {
-     if( enter ) Replace_null(enter)->react(UserAction::Create_Leave());
+     if( enter ) Replace_null(enter)->put_Leave();
      
      if( capture )
        {
-        capture->forward_react(UserAction::Create_Move(point,mkey));
+        capture->forward().put_Move(point,mkey);
        }
      else
        {
@@ -404,7 +404,7 @@ void WinList::react_Leave(Func func)
  {
   if( enter ) 
     {
-     Replace_null(enter)->react(UserAction::Create_Leave());
+     Replace_null(enter)->put_Leave();
     }
   else
     {
