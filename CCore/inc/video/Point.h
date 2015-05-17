@@ -250,6 +250,10 @@ struct MilliPoint : BasePoint<MilliPoint,MCoord>
  
   static MCoord LShift(Coord a) { return IntLShift((MCoord)a,Precision); }
   
+  static const MCoord RShiftBias = MCoord(1)<<(Precision-1) ;
+ 
+  static Coord RShift(MCoord a) { return (Coord)IntRShift(IntAdd(a,RShiftBias),Precision); }
+  
   // constructors
   
   using BasePoint<MilliPoint,MCoord>::BasePoint;
@@ -257,6 +261,10 @@ struct MilliPoint : BasePoint<MilliPoint,MCoord>
   MilliPoint() {}
   
   MilliPoint(Point p) : BasePoint<MilliPoint,MCoord>(LShift(p.x),LShift(p.y)) {}
+  
+  // methods
+  
+  Point toPoint() const { return Point(RShift(x),RShift(y)); }
  };
 
 /* struct LPoint */
