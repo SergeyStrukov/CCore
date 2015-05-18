@@ -252,6 +252,7 @@ obj/ShortSort.o \
 obj/Signal.o \
 obj/SimpleArray.o \
 obj/SimpleConsole.o \
+obj/SimpleRotate.o \
 obj/SingleBridge.o \
 obj/SingleEchoDevice.o \
 obj/SingleHost.o \
@@ -575,6 +576,7 @@ obj/ShortSort.s \
 obj/Signal.s \
 obj/SimpleArray.s \
 obj/SimpleConsole.s \
+obj/SimpleRotate.s \
 obj/SingleBridge.s \
 obj/SingleEchoDevice.s \
 obj/SingleHost.s \
@@ -898,6 +900,7 @@ obj/ShortSort.dep \
 obj/Signal.dep \
 obj/SimpleArray.dep \
 obj/SimpleConsole.dep \
+obj/SimpleRotate.dep \
 obj/SingleBridge.dep \
 obj/SingleEchoDevice.dep \
 obj/SingleHost.dep \
@@ -1730,6 +1733,9 @@ obj/SimpleArray.o : ../../CCore/src/array/SimpleArray.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SimpleConsole.o : ../../CCore/src/video/SimpleConsole.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SimpleRotate.o : ../../CCore/src/algon/SimpleRotate.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/SingleBridge.o : ../../CCore/src/net/SingleBridge.cpp
@@ -2694,6 +2700,9 @@ obj/SimpleArray.s : ../../CCore/src/array/SimpleArray.cpp
 obj/SimpleConsole.s : ../../CCore/src/video/SimpleConsole.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SimpleRotate.s : ../../CCore/src/algon/SimpleRotate.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/SingleBridge.s : ../../CCore/src/net/SingleBridge.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3655,6 +3664,9 @@ obj/SimpleArray.dep : ../../CCore/src/array/SimpleArray.cpp
 
 obj/SimpleConsole.dep : ../../CCore/src/video/SimpleConsole.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SimpleConsole.o $< -MF $@
+
+obj/SimpleRotate.dep : ../../CCore/src/algon/SimpleRotate.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SimpleRotate.o $< -MF $@
 
 obj/SingleBridge.dep : ../../CCore/src/net/SingleBridge.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SingleBridge.o $< -MF $@

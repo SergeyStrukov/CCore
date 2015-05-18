@@ -1,0 +1,81 @@
+<!--
+/* page_SimpleRotate.html */
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.09
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+ <title>CCore -> SimpleRotate</title>
+
+ <link href="CCore.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<h2>SimpleRotate</h2>
+
+<p class="Files">Files <b>CCore/inc/algon/SimpleRotate.h</b> <b>CCore/src/algon/SimpleRotate.cpp</b></p>
+
+<p>
+Two simple range rotation algorithms are presented here.
+</p>
+
+<pre>
+
+template &lt;class R&gt;
+void <span class="Att">Algon::RangeRotateLeft</span>(R r) { SimpleRotateAlgo&lt;R&gt;::RotateLeft(r); }
+
+/* RangeRotateRight() */
+
+template &lt;class R&gt;
+void <span class="Att">Algon::RangeRotateRight</span>(R r) { SimpleRotateAlgo&lt;R&gt;::RotateRight(r); }
+
+/* struct SimpleRotateAlgo&lt;R,Algo&gt; */
+
+template &lt;class R,class Algo=Algon::BaseRangeAlgo&lt;R&gt; &gt;
+struct <span class="Att">Algon::SimpleRotateAlgo</span> : Algo
+ {
+  using Algo::GetLen;
+  using Algo::Reverse;
+  
+  static void RotateLeft(R r)
+   {
+    for(; GetLen(r)>1 ;++r) Swap(r[0],r[1]);
+   }
+  
+  static void RotateRight(R r)
+   {
+    RangeRotateLeft(Reverse(r));
+   }
+ }; 
+
+</pre>
+
+<p>
+<b>RangeRotateLeft()</b> and <b>RangeRotateRight()</b> permutate the elements of the given range.
+<b>RangeRotateLeft()</b> rotates them by the one element left, 
+<b>RangeRotateRight()</b> rotates them by the one element right.
+</p>
+
+<p>
+<b>SimpleRotateAlgo</b> is an <b>Algorithm Package</b> with the two rotation algorithms.
+</p>
+
+</body>
+
+</html>
+

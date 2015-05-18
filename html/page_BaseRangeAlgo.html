@@ -124,9 +124,15 @@ struct <span class="Att">Algon::BaseRangeAlgo&lt;PtrLen&lt;T&gt; &gt;</span>
    {
     for(T *p=b.ptr; +a ;++a,++p) Swap(*a,*p); 
    }
+
+  static PtrLenReverse&lt;T&gt; Reverse(PtrLen&lt;T&gt; r) { return RangeReverse(r); }
  };
 
 </pre>
+
+<p>
+The extra algorithm <b>Reverse()</b> makes the reversed range from the given argument.
+</p>
 
 <p>
 The following specialization for the standard <b>PtrLenReverse</b> range is provided:
@@ -155,9 +161,15 @@ struct <span class="Att">Algon::BaseRangeAlgo&lt;PtrLenReverse&lt;T&gt; &gt;</sp
    {
     for(T *p=b.ptr; +a ;++a,--p) Swap(*a,p[-1]); 
    }
+
+  static PtrLen&lt;T&gt; Reverse(PtrLenReverse&lt;T&gt; r) { return PtrLen&lt;T&gt;(r.ptr-r.len,r.len); }
  };
 
 </pre>
+
+<p>
+The extra algorithm <b>Reverse()</b> makes the reversed range from the given argument.
+</p>
 
 </body>
 

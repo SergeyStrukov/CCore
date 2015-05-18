@@ -71,6 +71,8 @@ struct BaseRangeAlgo<PtrLen<T> >
    {
     for(T *p=b.ptr; +a ;++a,++p) Swap(*a,*p); 
    }
+
+  static PtrLenReverse<T> Reverse(PtrLen<T> r) { return RangeReverse(r); }
  };
 
 template <class T>
@@ -94,6 +96,8 @@ struct BaseRangeAlgo<PtrLenReverse<T> >
    {
     for(T *p=b.ptr; +a ;++a,--p) Swap(*a,p[-1]); 
    }
+
+  static PtrLen<T> Reverse(PtrLenReverse<T> r) { return PtrLen<T>(r.ptr-r.len,r.len); }
  };
 
 } // namespace Algon

@@ -37,3 +37,11 @@ gadget/UtilFunc.h
 algon/Partition.h
 
   Partition() is added.
+
+algon/BaseRangeAlgo.h
+
+  The algorithm Reverse() is added.
+
+algon/SimpleRotate.h
+
+  The one element range rotation algorithms are added.
