@@ -377,6 +377,8 @@ struct Pane
    };
  };
 
+/* functions */
+
 inline Pane Sup_nonempty(Pane a,Pane b) // +a && +b
  {
   Point base=Inf(a.getBase(),b.getBase());
@@ -413,6 +415,7 @@ inline Pane Inf(Pane a,Pane b)
   return Inf_nonempty(a,b);
  }
 
+
 inline Pane Extent(Coord x,Coord y,Coord dx,Coord dy) { if( dx>0 && dy>0 ) return Pane(x,y,dx,dy); return Empty; }
 
 inline Pane Extent(Coord x,Coord y,Point size) { return Extent(x,y,size.x,size.y); }
@@ -421,7 +424,9 @@ inline Pane Extent(Point base,Coord dx,Coord dy) { return Extent(base.x,base.y,d
 
 inline Pane Extent(Point base,Point size) { return Extent(base.x,base.y,size.x,size.y); }
 
+
 inline Pane Envelope(Point a,Point b) { return Pane(Inf(a,b),Sup(a,b)+Point(1,1)); }
+
 
 inline Pane operator + (Pane pane,Point point) { return Pane(IntAdd(pane.x,point.x),IntAdd(pane.y,point.y),pane.dx,pane.dy); }
 
@@ -431,13 +436,18 @@ inline Pane operator - (Pane pane,Point point) { return Pane(IntSub(pane.x,point
 
 inline Pane operator -= (Pane &pane,Point point) { return pane=pane-point; }
 
+
 inline Pane Inner(Pane pane,Pane subpane) { return Inf(subpane+pane.getBase(),pane); }
+
 
 inline Pane Shrink(Pane pane,Point delta) { return Extent(pane.getBase()+delta,pane.getSize()-2*delta); }
 
 inline Pane Shrink(Pane pane,Coord delta_x,Coord delta_y) { return Shrink(pane,Point(delta_x,delta_y)); }
 
+inline Pane Expand(Pane pane,Point delta) { return Shrink(pane,-delta); }
+
 inline Pane Expand(Pane pane,Coord delta_x,Coord delta_y) { return Shrink(pane,-Point(delta_x,delta_y)); }
+
 
 inline Pane SplitX(Coord delta,Pane &pane)
  {
@@ -477,6 +487,35 @@ inline Pane SplitY(Pane &pane,Coord delta)
   pane=Pane(pane.x,pane.y,pane.dx,dy);
   
   return ret;
+ }
+
+
+inline Pane TrySplitX(Coord delta,Pane &pane)
+ {
+  if( delta<=pane.dx ) return SplitX(delta,pane);
+  
+  return Empty;
+ }
+
+inline Pane TrySplitX(Pane &pane,Coord delta)
+ {
+  if( delta<=pane.dx ) return SplitX(pane,delta);
+  
+  return Empty;
+ }
+
+inline Pane TrySplitY(Coord delta,Pane &pane)
+ {
+  if( delta<=pane.dy ) return SplitY(delta,pane);
+  
+  return Empty;
+ }
+
+inline Pane TrySplitY(Pane &pane,Coord delta)
+ {
+  if( delta<=pane.dy ) return SplitY(pane,delta);
+  
+  return Empty;
  }
 
 } // namespace Video
