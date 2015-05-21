@@ -151,7 +151,7 @@ void CurveDriver::spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,L
   spline();
  }
 
-void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_)
+void CurveDriver::spline(LPoint a_,LPoint b_,LPoint c_,LPoint d_)
  {
   LPoint a=a_,
          b=a,
@@ -167,7 +167,7 @@ void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_)
   spline(a,b,c,d,p,q,r); 
  }
 
-void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_,Point e_,Point f_)
+void CurveDriver::spline(LPoint a_,LPoint b_,LPoint c_,LPoint d_,LPoint e_,LPoint f_)
  {
   LPoint a=b_,
          b=c_,
@@ -183,7 +183,7 @@ void CurveDriver::spline(Point a_,Point b_,Point c_,Point d_,Point e_,Point f_)
   spline(a,b,c,d,p,q,r); 
  }
 
-void CurveDriver::shift(Point f)
+void CurveDriver::shift(LPoint f)
  {
   buf[0]=buf[Len];
   buf[Len]=buf[2*Len];

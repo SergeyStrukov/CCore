@@ -372,11 +372,11 @@ class CurveDriver : NoCopy
    
    CurveDriver() {}
   
-   void spline(Point a,Point b,Point c,Point d);
+   void spline(LPoint a,LPoint b,LPoint c,LPoint d);
    
-   void spline(Point a,Point b,Point c,Point d,Point e,Point f);
+   void spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint e,LPoint f);
    
-   void shift(Point f);
+   void shift(LPoint f);
    
    void shift();
    
