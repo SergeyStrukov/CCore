@@ -1,4 +1,4 @@
-/* DrawArt.cpp */ 
+/* CommonDrawArt.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.09
@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/video/DrawArt.h>
+#include <CCore/inc/video/CommonDrawArt.h>
 #include <CCore/inc/video/DrawAlgo.h>
 
 namespace CCore {

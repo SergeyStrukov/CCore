@@ -15,7 +15,7 @@
  
 #include <CCore/inc/video/DragWindow.h>
 
-#include <CCore/inc/video/DrawArt.h>
+#include <CCore/inc/video/CommonDrawArt.h>
 
 #include <CCore/inc/Exception.h>
 

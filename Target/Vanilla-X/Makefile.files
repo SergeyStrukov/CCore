@@ -40,6 +40,7 @@ obj/CmdInput.o \
 obj/Cmp.o \
 obj/Collector.o \
 obj/Color.o \
+obj/CommonDrawArt.o \
 obj/CommonIntAlgo.o \
 obj/CompactList.o \
 obj/CompactMap.o \
@@ -96,7 +97,6 @@ obj/DevRW.o \
 obj/DevTick.o \
 obj/DragWindow.o \
 obj/DrawAlgo.o \
-obj/DrawArt.o \
 obj/DrawBuf.o \
 obj/DrawTools.o \
 obj/DynArray.o \
@@ -380,6 +380,7 @@ obj/CmdInput.s \
 obj/Cmp.s \
 obj/Collector.s \
 obj/Color.s \
+obj/CommonDrawArt.s \
 obj/CommonIntAlgo.s \
 obj/CompactList.s \
 obj/CompactMap.s \
@@ -436,7 +437,6 @@ obj/DevRW.s \
 obj/DevTick.s \
 obj/DragWindow.s \
 obj/DrawAlgo.s \
-obj/DrawArt.s \
 obj/DrawBuf.s \
 obj/DrawTools.s \
 obj/DynArray.s \
@@ -720,6 +720,7 @@ obj/CmdInput.dep \
 obj/Cmp.dep \
 obj/Collector.dep \
 obj/Color.dep \
+obj/CommonDrawArt.dep \
 obj/CommonIntAlgo.dep \
 obj/CompactList.dep \
 obj/CompactMap.dep \
@@ -776,7 +777,6 @@ obj/DevRW.dep \
 obj/DevTick.dep \
 obj/DragWindow.dep \
 obj/DrawAlgo.dep \
-obj/DrawArt.dep \
 obj/DrawBuf.dep \
 obj/DrawTools.dep \
 obj/DynArray.dep \
@@ -1147,6 +1147,9 @@ obj/Collector.o : ../../CCore/src/array/Collector.cpp
 obj/Color.o : ../../CCore/src/video/Color.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/CommonDrawArt.o : ../../CCore/src/video/CommonDrawArt.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/CommonIntAlgo.o : ../../CCore/src/algon/CommonIntAlgo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1313,9 +1316,6 @@ obj/DragWindow.o : ../../CCore/src/video/DragWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DrawAlgo.o : ../../CCore/src/video/DrawAlgo.cpp
-	$(CC) $(CCOPT) $< -o $@
-
-obj/DrawArt.o : ../../CCore/src/video/DrawArt.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DrawBuf.o : ../../CCore/src/video/DrawBuf.cpp
@@ -2160,6 +2160,9 @@ obj/Collector.s : ../../CCore/src/array/Collector.cpp
 obj/Color.s : ../../CCore/src/video/Color.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/CommonDrawArt.s : ../../CCore/src/video/CommonDrawArt.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/CommonIntAlgo.s : ../../CCore/src/algon/CommonIntAlgo.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2326,9 +2329,6 @@ obj/DragWindow.s : ../../CCore/src/video/DragWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DrawAlgo.s : ../../CCore/src/video/DrawAlgo.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/DrawArt.s : ../../CCore/src/video/DrawArt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DrawBuf.s : ../../CCore/src/video/DrawBuf.cpp
@@ -3173,6 +3173,9 @@ obj/Collector.dep : ../../CCore/src/array/Collector.cpp
 obj/Color.dep : ../../CCore/src/video/Color.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Color.o $< -MF $@
 
+obj/CommonDrawArt.dep : ../../CCore/src/video/CommonDrawArt.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CommonDrawArt.o $< -MF $@
+
 obj/CommonIntAlgo.dep : ../../CCore/src/algon/CommonIntAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CommonIntAlgo.o $< -MF $@
 
@@ -3340,9 +3343,6 @@ obj/DragWindow.dep : ../../CCore/src/video/DragWindow.cpp
 
 obj/DrawAlgo.dep : ../../CCore/src/video/DrawAlgo.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawAlgo.o $< -MF $@
-
-obj/DrawArt.dep : ../../CCore/src/video/DrawArt.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawArt.o $< -MF $@
 
 obj/DrawBuf.dep : ../../CCore/src/video/DrawBuf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DrawBuf.o $< -MF $@

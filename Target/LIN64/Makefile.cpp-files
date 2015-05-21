@@ -251,10 +251,10 @@
 ../../CCore/src/video/ApplicationBase.cpp
 ../../CCore/src/video/ClientWindow.cpp
 ../../CCore/src/video/Color.cpp
+../../CCore/src/video/CommonDrawArt.cpp
 ../../CCore/src/video/DesktopStub.cpp
 ../../CCore/src/video/DragWindow.cpp
 ../../CCore/src/video/DrawAlgo.cpp
-../../CCore/src/video/DrawArt.cpp
 ../../CCore/src/video/DrawBuf.cpp
 ../../CCore/src/video/DrawTools.cpp
 ../../CCore/src/video/EDID.cpp

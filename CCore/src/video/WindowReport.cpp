@@ -14,7 +14,7 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/video/WindowReport.h>
-#include <CCore/inc/video/DrawArt.h>
+#include <CCore/inc/video/CommonDrawArt.h>
 
 #include <CCore/inc/MemBase.h>
 

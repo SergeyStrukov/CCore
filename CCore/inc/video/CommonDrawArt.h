@@ -1,4 +1,4 @@
-/* DrawArt.h */ 
+/* CommonDrawArt.h */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.09
@@ -13,8 +13,8 @@
 //
 //----------------------------------------------------------------------------------------
 
-#ifndef CCore_inc_video_DrawArt_h
-#define CCore_inc_video_DrawArt_h
+#ifndef CCore_inc_video_CommonDrawArt_h
+#define CCore_inc_video_CommonDrawArt_h
 
 #include <CCore/inc/video/DrawTools.h>
 #include <CCore/inc/video/DrawBuf.h>
