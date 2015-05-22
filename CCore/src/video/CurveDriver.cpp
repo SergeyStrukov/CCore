@@ -55,7 +55,7 @@ void CurveDriver::spline()
   
   for(; level<MaxLevel ;level++,len1>>=1,len2>>=1,delta>>=1)
     {
-     if( Fineness(getCurve())<MaxFineness ) break;
+     if( Fineness(getCurve())<max_fineness ) break;
     
      for(unsigned ind=Len-len1,last=2*Len+len1; ind<=last ;ind+=delta)
        buf[ind]=Spline(buf[ind-len2],buf[ind-len1],buf[ind+len1],buf[ind+len2]);

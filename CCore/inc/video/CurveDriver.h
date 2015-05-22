@@ -32,8 +32,6 @@ class CurveDriver : NoCopy
  {
    static const unsigned MaxLevel = 10 ;
    
-   static const unsigned MaxFineness = 5 ;
-   
    static const unsigned Len = (1u<<MaxLevel) ;
    
    static uLCoord Fineness(PtrStepLen<const LPoint> dots);
@@ -45,6 +43,8 @@ class CurveDriver : NoCopy
    static uLCoord PointDist(LPoint a,LPoint b);
 
   private:
+   
+   unsigned max_fineness;
    
    LPoint buf[3*Len+1];
    unsigned level = 0 ;
@@ -59,7 +59,7 @@ class CurveDriver : NoCopy
    
   public:
    
-   CurveDriver() {}
+   explicit CurveDriver(unsigned max_fineness_=5) : max_fineness(max_fineness_) {}
   
    void spline(LPoint a,LPoint b,LPoint c,LPoint d);
    
