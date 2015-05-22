@@ -1020,7 +1020,7 @@ class WindowsHost : public WindowHost
          {
           MouseKey mkey=ToMouseKey(Win32::LoWord(wParam));
           Coord delta=Win32::SHiWord(wParam)/Win32::WheelDelta;
-          Point point=ToPoint(lParam);
+          Point point=ToPoint(lParam)-origin;
           
           frame->react(UserAction::Create_Wheel(point,mkey,delta));
          }

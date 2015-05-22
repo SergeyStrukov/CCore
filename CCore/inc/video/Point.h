@@ -444,9 +444,13 @@ inline Pane Shrink(Pane pane,Point delta) { return Extent(pane.getBase()+delta,p
 
 inline Pane Shrink(Pane pane,Coord delta_x,Coord delta_y) { return Shrink(pane,Point(delta_x,delta_y)); }
 
+inline Pane Shrink(Pane pane,Coord delta) { return Shrink(pane,Point(delta,delta)); }
+
 inline Pane Expand(Pane pane,Point delta) { return Shrink(pane,-delta); }
 
 inline Pane Expand(Pane pane,Coord delta_x,Coord delta_y) { return Shrink(pane,-Point(delta_x,delta_y)); }
+
+inline Pane Expand(Pane pane,Coord delta) { return Shrink(pane,-Point(delta,delta)); }
 
 
 inline Pane SplitX(Coord delta,Pane &pane)
