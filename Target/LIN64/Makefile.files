@@ -44,6 +44,7 @@ obj/ContainerList.o \
 obj/Counters.o \
 obj/Crc.o \
 obj/CreateAt.o \
+obj/CurveDriver.o \
 obj/DDL2Char.o \
 obj/DDL2Engine.o \
 obj/DDL2ErrorMsg.o \
@@ -374,6 +375,7 @@ obj/ContainerList.s \
 obj/Counters.s \
 obj/Crc.s \
 obj/CreateAt.s \
+obj/CurveDriver.s \
 obj/DDL2Char.s \
 obj/DDL2Engine.s \
 obj/DDL2ErrorMsg.s \
@@ -704,6 +706,7 @@ obj/ContainerList.dep \
 obj/Counters.dep \
 obj/Crc.dep \
 obj/CreateAt.dep \
+obj/CurveDriver.dep \
 obj/DDL2Char.dep \
 obj/DDL2Engine.dep \
 obj/DDL2ErrorMsg.dep \
@@ -1135,6 +1138,9 @@ obj/Crc.o : ../../CCore/src/Crc.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CreateAt.o : ../../CCore/src/gadget/CreateAt.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/CurveDriver.o : ../../CCore/src/video/CurveDriver.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DDL2Char.o : ../../CCore/src/ddl2/DDL2Char.cpp
@@ -2120,6 +2126,9 @@ obj/Crc.s : ../../CCore/src/Crc.cpp
 obj/CreateAt.s : ../../CCore/src/gadget/CreateAt.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/CurveDriver.s : ../../CCore/src/video/CurveDriver.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/DDL2Char.s : ../../CCore/src/ddl2/DDL2Char.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3102,6 +3111,9 @@ obj/Crc.dep : ../../CCore/src/Crc.cpp
 
 obj/CreateAt.dep : ../../CCore/src/gadget/CreateAt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CreateAt.o $< -MF $@
+
+obj/CurveDriver.dep : ../../CCore/src/video/CurveDriver.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CurveDriver.o $< -MF $@
 
 obj/DDL2Char.dep : ../../CCore/src/ddl2/DDL2Char.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DDL2Char.o $< -MF $@

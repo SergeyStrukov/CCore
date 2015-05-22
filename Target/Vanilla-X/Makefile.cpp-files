@@ -252,6 +252,7 @@
 ../../CCore/src/video/ClientWindow.cpp
 ../../CCore/src/video/Color.cpp
 ../../CCore/src/video/CommonDrawArt.cpp
+../../CCore/src/video/CurveDriver.cpp
 ../../CCore/src/video/DesktopStub.cpp
 ../../CCore/src/video/DragWindow.cpp
 ../../CCore/src/video/DrawAlgo.cpp

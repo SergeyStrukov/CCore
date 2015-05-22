@@ -25,16 +25,11 @@
 
 #include <CCore/inc/algon/SortUnique.h>
 
+#include <CCore/inc/video/CurveDriver.h>
+
 namespace CCore {
 namespace Video {
 namespace Algo {
-
-/* PointDist() */
-
-inline uLCoord PointDist(LPoint a,LPoint b)
- {
-  return Max(IntAbs(a.x,b.x),IntAbs(a.y,b.y))>>LPoint::Precision;
- }
 
 /* PointNear() */
 
@@ -98,8 +93,6 @@ template <class UInt> class LineDriverBase;
 class LineDriver;
 
 class LineDriver2;
-
-class CurveDriver;
 
 template <class UInt> class LineAlphaFunc;
 
@@ -337,50 +330,6 @@ class LineDriver2 : public LineDriverBase<uLCoord>
      
      return IntAbs(A,B);
     }
- };
-
-/* class CurveDriver */
-
-class CurveDriver : NoCopy
- {
-   static const unsigned MaxLevel = 10 ;
-   
-   static const unsigned MaxFineness = 5 ;
-   
-   static const unsigned Len = (1u<<MaxLevel) ;
-   
-   static uLCoord Fineness(PtrStepLen<const LPoint> dots);
-   
-   static LCoord Spline(LCoord a,LCoord b,LCoord c,LCoord d);
- 
-   static LPoint Spline(LPoint a,LPoint b,LPoint c,LPoint d);
-   
-  private:
-   
-   LPoint buf[3*Len+1];
-   unsigned level = 0 ;
-   
-   LPoint e;
-  
-  private:
-   
-   void spline();
-   
-   void spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r);
-   
-  public:
-   
-   CurveDriver() {}
-  
-   void spline(LPoint a,LPoint b,LPoint c,LPoint d);
-   
-   void spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint e,LPoint f);
-   
-   void shift(LPoint f);
-   
-   void shift();
-   
-   PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
  };
 
 /* class LineAlphaFunc<UInt> */
