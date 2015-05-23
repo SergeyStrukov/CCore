@@ -131,6 +131,7 @@ obj/FastMul.o \
 obj/FastMutex.o \
 obj/Fifo.o \
 obj/FileName.o \
+obj/Fixed32_16.o \
 obj/Font.o \
 obj/Forget.o \
 obj/FrameBuf.o \
@@ -489,6 +490,7 @@ obj/FastMul.s \
 obj/FastMutex.s \
 obj/Fifo.s \
 obj/FileName.s \
+obj/Fixed32_16.s \
 obj/Font.s \
 obj/Forget.s \
 obj/FrameBuf.s \
@@ -847,6 +849,7 @@ obj/FastMul.dep \
 obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FileName.dep \
+obj/Fixed32_16.dep \
 obj/Font.dep \
 obj/Forget.dep \
 obj/FrameBuf.dep \
@@ -1482,6 +1485,9 @@ obj/Fifo.o : ../../CCore/src/Fifo.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileName.o : ../../CCore/src/FileName.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Fixed32_16.o : ../../CCore/src/video/Fixed32_16.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Font.o : ../../CCore/src/video/Font.cpp
@@ -2551,6 +2557,9 @@ obj/Fifo.s : ../../CCore/src/Fifo.cpp
 obj/FileName.s : ../../CCore/src/FileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Fixed32_16.s : ../../CCore/src/video/Fixed32_16.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Font.s : ../../CCore/src/video/Font.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3617,6 +3626,9 @@ obj/Fifo.dep : ../../CCore/src/Fifo.cpp
 
 obj/FileName.dep : ../../CCore/src/FileName.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@
+
+obj/Fixed32_16.dep : ../../CCore/src/video/Fixed32_16.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Fixed32_16.o $< -MF $@
 
 obj/Font.dep : ../../CCore/src/video/Font.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Font.o $< -MF $@
