@@ -33,22 +33,48 @@ struct Fixed32_16
   
   sint32 value;
   
+  // constructors
+  
   Fixed32_16() : value(0) {}
   
   explicit Fixed32_16(sint32 value_) : value(value_) {}
   
   Fixed32_16(sint32 value_,unsigned prec) : value( IntLShift(value_,Precision-prec) ) {} // prec<=Precision
   
+  // methods
+  
   Fixed32_16 pow(unsigned deg) const;
+  
+  // operators
+  
+  friend Fixed32_16 operator - (Fixed32_16 a)
+   {
+    return Fixed32_16(-a.value);
+   }
+  
+  friend Fixed32_16 operator + (Fixed32_16 a,Fixed32_16 b)
+   {
+    return Fixed32_16(a.value+b.value);
+   }
+  
+  friend Fixed32_16 operator - (Fixed32_16 a,Fixed32_16 b)
+   {
+    return Fixed32_16(a.value-b.value);
+   }
   
   friend Fixed32_16 operator * (Fixed32_16 a,Fixed32_16 b)
    {
-    return Fixed32_16( IntRShift((sint64(a.value)*b.value),32) );
+    return Fixed32_16( (sint32)IntRShift(sint64(a.value)*b.value,32) );
+   }
+  
+  friend Fixed32_16 operator / (Fixed32_16 a,Fixed32_16 b)
+   {
+    return Fixed32_16( sint32( IntLShift((sint64)a.value,16)/b.value ) );
    }
   
   friend sint32 operator * (Fixed32_16 a,sint32 b)
    {
-    return sint32( IntRShift(sint64(a.value)*b,16) );
+    return (sint32)IntRShift(sint64(a.value)*b,16);
    }
   
   friend MilliPoint operator * (Fixed32_16 a,MilliPoint point)
