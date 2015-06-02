@@ -2455,7 +2455,7 @@ class SolidSection : NoCopy
        {
         Sort(set);
         
-        if( flag )
+        if( flag==SolidAll )
           {
            Coord x=0;
            IndexType index=0;
@@ -2642,7 +2642,7 @@ class SolidBorderSection : NoCopy
     {
      Sort(set);
      
-     if( flag )
+     if( flag==SolidAll )
        {
         Coord x=0;
         IndexType index=0;
