@@ -21,6 +21,7 @@
 #define CCORE_INITPRI_0 __attribute__((init_priority(101)))
 #define CCORE_INITPRI_1 __attribute__((init_priority(102)))
 #define CCORE_INITPRI_2 __attribute__((init_priority(103)))
+#define CCORE_INITPRI_3 __attribute__((init_priority(104)))
 
 /* inlining disabler */ 
 

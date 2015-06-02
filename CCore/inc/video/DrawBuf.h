@@ -61,7 +61,8 @@ class DrawBuf : public FrameBuf<DesktopColor>
       
       explicit Mapper(Point origin_) : origin(origin_) {}
      
-      Point operator () (Point point) const { return point+origin; }
+      template <class T>
+      T operator () (T obj) const { return obj+origin; }
     };
    
    Mapper getMapper() const { return Mapper(origin); }

@@ -124,11 +124,13 @@ class <span class="Att">PlanInitObject</span>
 </pre>
 
 <p>
-<b>CCore</b> uses initialization priority attribute, implemented in the <b>gcc</b> family of C++ compilers.
-There are 3 levels of priority, reserved for <b>CCore</b> needs: <b>CCORE_INITPRI_0</b>, <b>CCORE_INITPRI_1</b>, 
-<b>CCORE_INITPRI_2</b>.
+<b>CCore</b> uses initialization priority attributes, implemented in the <b>gcc</b> family of C++ compilers.
+There are 4 levels of priority, reserved for <b>CCore</b> needs: <b>CCORE_INITPRI_0</b>, <b>CCORE_INITPRI_1</b>, 
+<b>CCORE_INITPRI_2</b> and <b>CCORE_INITPRI_3</b>.
 The first is used for most urgent objects. The second is reserved for <b>PlanInit</b> nodes. Finally, <b>PlanInit</b> 
 object initialization happens on the third level.
+The last level is reserved for the initialization of global objects after the main <b>CCore</b> library is up
+but before "normal" global objects are coming up.
 </p>
 
 </body>

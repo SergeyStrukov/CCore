@@ -266,7 +266,7 @@ class DefFont : public FontBase
     }
  };
 
-DefFont Object CCORE_INITPRI_0 ; 
+DefFont Object CCORE_INITPRI_3 ; 
 
 } // namespace Private_Font
 

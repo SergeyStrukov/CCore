@@ -45,6 +45,7 @@ software platform.
 #define <span class="Att">CCORE_INITPRI_0</span> __attribute__((init_priority(101)))
 #define <span class="Att">CCORE_INITPRI_1</span> __attribute__((init_priority(102)))
 #define <span class="Att">CCORE_INITPRI_2</span> __attribute__((init_priority(103)))
+#define <span class="Att">CCORE_INITPRI_3</span> __attribute__((init_priority(104)))
 
 /* inlining disabler */ 
 
@@ -255,6 +256,7 @@ void OptimizeBarrier(void *ptr,ulen len);
 #define <span class="Att">CCORE_INITPRI_0</span> __attribute__((init_priority(101)))
 #define <span class="Att">CCORE_INITPRI_1</span> __attribute__((init_priority(102)))
 #define <span class="Att">CCORE_INITPRI_2</span> __attribute__((init_priority(103)))
+#define <span class="Att">CCORE_INITPRI_3</span> __attribute__((init_priority(104)))
 
 /* inlining disabler */ 
 
@@ -274,7 +276,8 @@ void OptimizeBarrier(void *ptr,ulen len);
 </pre>
 
 <p>
-Macros <b>CCORE_INITPRI_0</b>, <b>CCORE_INITPRI_1</b> and <b>CCORE_INITPRI_2</b> are used to specify
+Macros <b>CCORE_INITPRI_0</b>, <b>CCORE_INITPRI_1</b>, <b>CCORE_INITPRI_2</b> and <b>CCORE_INITPRI_3</b> 
+are used to specify
 initialization priorities of global objects. For the <b>gcc</b> family of compilers they have values shown above.
 If the target use another compiler you must provide a proper substitution. This feature is not standard.
 Priority 0 is highest.
