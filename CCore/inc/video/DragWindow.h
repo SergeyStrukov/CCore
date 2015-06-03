@@ -206,9 +206,9 @@ class DragShape
    
    void layout(Point size);
    
-   void draw(DrawBuf buf) const;
+   void draw(const DrawBuf &buf) const;
    
-   void draw(DrawBuf buf,DragType drag_type) const;
+   void draw(const DrawBuf &buf,DragType drag_type) const;
    
    Pane getPane(DragType drag_type) const;
    

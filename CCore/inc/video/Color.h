@@ -131,6 +131,8 @@ inline constexpr Clr BlueOf(ColorName cname) { return Clr(cname); }
 
 inline constexpr ColorName RGBColor(Clr r,Clr g,Clr b) { return ColorName(b|(uint32(g)<<8)|(uint32(r)<<16)); }
 
+inline constexpr ColorName GrayColor(Clr rgb) { return RGBColor(rgb,rgb,rgb); }
+
 /* class Blender */
 
 class Blender

@@ -26,7 +26,7 @@ DrawBuf DrawBuf::cut(Pane pane) const
   
   if( !pane ) return DrawBuf();
   
-  return DrawBuf(FrameBuf<DesktopColor>::cut(pane),origin-pane.getBase());
+  return DrawBuf(cutFrame(pane),origin-pane.getBase());
  }
 
 DrawBuf DrawBuf::cutRebase(Pane pane) const

@@ -61,6 +61,8 @@ struct LPoint;
 
 struct Pane;
 
+class PointMap;
+
 /* struct Coordinate */
 
 struct Coordinate
@@ -521,6 +523,20 @@ inline Pane TrySplitY(Pane &pane,Coord delta)
   
   return Empty;
  }
+
+/* class PointMap */
+
+class PointMap
+ {
+   Point origin;
+   
+  public:
+   
+   explicit PointMap(Point origin_) : origin(origin_) {}
+  
+   template <class T>
+   T operator () (T obj) const { return obj+origin; }
+ };
 
 } // namespace Video
 } // namespace CCore

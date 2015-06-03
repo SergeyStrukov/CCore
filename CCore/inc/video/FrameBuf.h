@@ -57,9 +57,9 @@ class FrameBuf : protected ColorPlane
    
   protected: 
    
-   Raw * place(Coord y) const { return static_cast<Raw *>(PtrAdd(raw,(ulen)y*dline)); }
+   Raw * place(Coord y) const { return static_cast<Raw *>(PtrAdd(raw,ulen(y)*dline)); }
    
-   Raw * place(Point p) const { return place(p.y)+(DLineType)p.x*RawColor::RawCount; }
+   Raw * place(Point p) const { return place(p.y)+DLineType(p.x)*RawColor::RawCount; }
    
    static Raw * NextX(Raw *ptr) { return ptr+RawColor::RawCount; }
    
@@ -133,7 +133,7 @@ class FrameBuf : protected ColorPlane
    
    // unsafe methods
   
-   FrameBuf<RawColor> cut(Pane pane) const { return FrameBuf<RawColor>(*this,pane); }
+   FrameBuf<RawColor> cutFrame(Pane pane) const { return FrameBuf<RawColor>(*this,pane); }
    
    RawColor pixel(Point p) const;
    

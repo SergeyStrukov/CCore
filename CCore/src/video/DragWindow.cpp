@@ -475,7 +475,7 @@ void DragShape::layout(Point size)
     }
  }
 
-void DragShape::draw(DrawBuf buf) const
+void DragShape::draw(const DrawBuf &buf) const
  {
   try
     {
@@ -513,7 +513,7 @@ void DragShape::draw(DrawBuf buf) const
     }
  }
 
-void DragShape::draw(DrawBuf buf,DragType drag_type) const
+void DragShape::draw(const DrawBuf &buf,DragType drag_type) const
  {
   try
     {
