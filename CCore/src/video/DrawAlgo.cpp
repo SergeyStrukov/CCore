@@ -19,7 +19,7 @@
 
 namespace CCore {
 namespace Video {
-namespace Algo {
+namespace DrawAlgo {
 
 /* class LineDriver */
 
@@ -303,7 +303,7 @@ SolidBorderSection::~SolidBorderSection()
  {
  }
 
-} // namespace Algo
+} // namespace DrawAlgo
 } // namespace Video
 } // namespace CCore
  

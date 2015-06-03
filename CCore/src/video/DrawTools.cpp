@@ -26,7 +26,7 @@ CircleSpline::CircleSpline(Point center,Coord radius)
   IntGuard( radius>0 );
   
   Coord x=Coord( radius/2 );
-  Coord y=Coord( Algo::SqRoot<uLCoord>(Sq<uLCoord>(radius)-Sq<uLCoord>(x),radius) );
+  Coord y=Coord( DrawAlgo::SqRoot<uLCoord>(Sq<uLCoord>(radius)-Sq<uLCoord>(x),radius) );
  
   buf[0]=center+Point(0,radius);
   buf[1]=center+Point(-x,y);

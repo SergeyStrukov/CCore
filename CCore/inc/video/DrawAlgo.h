@@ -29,7 +29,7 @@
 
 namespace CCore {
 namespace Video {
-namespace Algo {
+namespace DrawAlgo {
 
 /* PointNear() */
 
@@ -2750,7 +2750,7 @@ void SolidBorder(PtrLen<const Point> dots,SolidFlag flag,HPlot plot)
   data.fill(flag,plot);
  }
 
-} // namespace Algo
+} // namespace DrawAlgo
 } // namespace Video
 } // namespace CCore
  

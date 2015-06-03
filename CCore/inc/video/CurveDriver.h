@@ -20,7 +20,7 @@
  
 namespace CCore {
 namespace Video {
-namespace Algo {
+namespace DrawAlgo {
 
 /* classes */
 
@@ -72,7 +72,7 @@ class CurveDriver : NoCopy
    PtrStepLen<const LPoint> getCurve() const { return {buf+Len,1u<<(MaxLevel-level),(1u<<level)+1}; }
  };
 
-} // namespace Algo
+} // namespace DrawAlgo
 } // namespace Video
 } // namespace CCore
  
