@@ -18,6 +18,31 @@
 namespace CCore {
 namespace Video {
 
+/* struct Ratio */
+
+Ratio Ratio::pow(unsigned deg) const
+ {
+  switch( deg )
+    {
+     case 0 : return Ratio(1,0);
+     
+     case 1 : return *this;
+     
+     default:
+      {
+       Ratio a=pow(deg>>1);
+       
+       if( deg&1 )
+         {
+          return a*a*(*this);
+         }
+       else
+         {
+          return a*a;
+         }
+      }
+    }
+ }
 
 } // namespace Video
 } // namespace CCore

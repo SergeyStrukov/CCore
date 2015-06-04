@@ -21,28 +21,28 @@ namespace DrawAlgo {
 
 /* class CurveDriver */
 
-uLCoord CurveDriver::Fineness(PtrStepLen<const LPoint> dots)
+uMCoord CurveDriver::PointDist(MPoint a,MPoint b)
  {
-  uLCoord ret=0;
+  return Max(IntAbs(a.x,b.x),IntAbs(a.y,b.y))>>MPoint::Precision;
+ }
+
+uMCoord CurveDriver::Fineness(PtrStepLen<const MPoint> dots)
+ {
+  uMCoord ret=0;
   
   for(; dots.len>1 ;++dots) Replace_max(ret,PointDist(dots[0],dots[1]));
   
   return ret; 
  }
 
-LCoord CurveDriver::Spline(LCoord a,LCoord b,LCoord c,LCoord d)
+MCoord CurveDriver::Spline(MCoord a,MCoord b,MCoord c,MCoord d)
  {
   return (b+c)/2+(b+c-a-d)/16;
  }
 
-LPoint CurveDriver::Spline(LPoint a,LPoint b,LPoint c,LPoint d)
+MPoint CurveDriver::Spline(MPoint a,MPoint b,MPoint c,MPoint d)
  {
-  return LPoint(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
- }
-
-uLCoord CurveDriver::PointDist(LPoint a,LPoint b)
- {
-  return Max(IntAbs(a.x,b.x),IntAbs(a.y,b.y))>>LPoint::Precision;
+  return MPoint(Spline(a.x,b.x,c.x,d.x),Spline(a.y,b.y,c.y,d.y));
  }
 
 void CurveDriver::spline()
@@ -53,16 +53,14 @@ void CurveDriver::spline()
   unsigned len2=3*len1;
   unsigned delta=2*len1;
   
-  for(; level<MaxLevel ;level++,len1>>=1,len2>>=1,delta>>=1)
+  for(; level<MaxLevel && Fineness(getCurve())>=max_fineness ;level++,len1>>=1,len2>>=1,delta>>=1)
     {
-     if( Fineness(getCurve())<max_fineness ) break;
-    
      for(unsigned ind=Len-len1,last=2*Len+len1; ind<=last ;ind+=delta)
        buf[ind]=Spline(buf[ind-len2],buf[ind-len1],buf[ind+len1],buf[ind+len2]);
     }
  }
 
-void CurveDriver::spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,LPoint r)
+void CurveDriver::spline(MPoint a,MPoint b,MPoint c,MPoint d,MPoint p,MPoint q,MPoint r)
  {
   buf[0]=a;
   buf[Len]=b;
@@ -76,39 +74,39 @@ void CurveDriver::spline(LPoint a,LPoint b,LPoint c,LPoint d,LPoint p,LPoint q,L
   spline();
  }
 
-void CurveDriver::spline(LPoint a_,LPoint b_,LPoint c_,LPoint d_)
+void CurveDriver::spline(MPoint a_,MPoint b_,MPoint c_,MPoint d_)
  {
-  LPoint a=a_,
+  MPoint a=a_,
          b=a,
          c=b_,
          d=c_;
   
   e=d_;
   
-  LPoint p=Spline(a,a,b,c),
+  MPoint p=Spline(a,a,b,c),
          q=Spline(a,b,c,d),
          r=Spline(b,c,d,e);
   
   spline(a,b,c,d,p,q,r); 
  }
 
-void CurveDriver::spline(LPoint a_,LPoint b_,LPoint c_,LPoint d_,LPoint e_,LPoint f_)
+void CurveDriver::spline(MPoint a_,MPoint b_,MPoint c_,MPoint d_,MPoint e_,MPoint f_)
  {
-  LPoint a=b_,
+  MPoint a=b_,
          b=c_,
          c=d_,
          d=e_;
   
   e=f_;
   
-  LPoint p=Spline(a_,a,b,c),
+  MPoint p=Spline(a_,a,b,c),
          q=Spline(a,b,c,d),
          r=Spline(b,c,d,e);
   
   spline(a,b,c,d,p,q,r); 
  }
 
-void CurveDriver::shift(LPoint f)
+void CurveDriver::shift(MPoint f)
  {
   buf[0]=buf[Len];
   buf[Len]=buf[2*Len];

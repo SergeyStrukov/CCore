@@ -31,9 +31,7 @@ using MCoord = sint32 ;
 
 using uMCoord = uint32 ;
 
-using LCoord = sint32 ;
-
-using uLCoord = uint32 ;
+using DCoord = sint64 ;
 
 using AreaType = uint32 ;
 
@@ -45,7 +43,7 @@ const Coord MinCoord = -32768 ;
 
 /* functions */
 
-inline constexpr AreaType Area(Coord dx,Coord dy) { return (AreaType)dx*(AreaType)dy; }
+inline constexpr AreaType Area(Coord dx,Coord dy) { return AreaType(dx)*AreaType(dy); }
 
 /* classes */ 
 
@@ -55,9 +53,9 @@ template <class T,class Int> struct BasePoint;
 
 struct Point;
 
-struct MilliPoint;
+struct MPoint;
 
-struct LPoint;
+struct Ratio;
 
 struct Pane;
 
@@ -244,62 +242,91 @@ struct Point : BasePoint<Point,Coord>
   static Point Min() { return Point(MinCoord,MinCoord); }
  };
 
-/* struct MilliPoint */
+/* struct MPoint */
 
-struct MilliPoint : BasePoint<MilliPoint,MCoord>
+struct MPoint : BasePoint<MPoint,MCoord>
  {
   static const unsigned Precision = 10 ;
  
   static MCoord LShift(Coord a) { return IntLShift((MCoord)a,Precision); }
   
+  static MCoord LShift_ext(MCoord a) { return IntLShift(a,Precision); }
+  
   static const MCoord RShiftBias = MCoord(1)<<(Precision-1) ;
  
-  static Coord RShift(MCoord a) { return (Coord)IntRShift(IntAdd(a,RShiftBias),Precision); }
+  static Coord RShift(MCoord a) { return From32To16( IntRShift(IntAdd(a,RShiftBias),Precision) ); }
+  
+  static MCoord RShift_ext(MCoord a) { return IntRShift(IntAdd(a,RShiftBias),Precision); }
   
   // constructors
   
-  using BasePoint<MilliPoint,MCoord>::BasePoint;
+  using BasePoint<MPoint,MCoord>::BasePoint;
   
-  MilliPoint() {}
+  MPoint() {}
   
-  MilliPoint(Point p) : BasePoint<MilliPoint,MCoord>(LShift(p.x),LShift(p.y)) {}
+  MPoint(Point p) : BasePoint<MPoint,MCoord>(LShift(p.x),LShift(p.y)) {}
   
   // methods
   
   Point toPoint() const { return Point(RShift(x),RShift(y)); }
  };
 
-/* struct LPoint */
+/* struct Ratio */
 
-struct LPoint : BasePoint<LPoint,LCoord>
+struct Ratio
  {
-  static const unsigned Precision = 14 ;
- 
-  static LCoord LShift(Coord a) { return IntLShift((LCoord)a,Precision); }
+  static const unsigned Precision = 16 ;
   
-  static LCoord LShift_ext(LCoord a) { return IntLShift(a,Precision); }
-  
-  static const LCoord RShiftBias = LCoord(1)<<(Precision-1) ;
- 
-  static Coord RShift(LCoord a) { return (Coord)IntRShift(IntAdd(a,RShiftBias),Precision); }
-  
-  static LCoord RShift_ext(LCoord a) { return IntRShift(IntAdd(a,RShiftBias),Precision); }
-  
-  static LCoord LShift_m(MCoord a) { return IntLShift((LCoord)a,Precision-MilliPoint::Precision); }
+  MCoord value;
   
   // constructors
   
-  using BasePoint<LPoint,LCoord>::BasePoint;
+  Ratio() : value(0) {}
   
-  LPoint() {}
+  explicit Ratio(MCoord value_) : value(value_) {}
   
-  LPoint(Point p) : BasePoint<LPoint,LCoord>(LShift(p.x),LShift(p.y)) {}
-  
-  LPoint(MilliPoint p) : BasePoint<LPoint,LCoord>(LShift_m(p.x),LShift_m(p.y)) {}
+  Ratio(MCoord value_,unsigned prec) : value( IntLShift(value_,Precision-prec) ) {} // prec <= Precision
   
   // methods
   
-  Point toPoint() const { return Point(RShift(x),RShift(y)); }
+  Ratio pow(unsigned deg) const;
+  
+  // operators
+  
+  friend Ratio operator - (Ratio a)
+   {
+    return Ratio(-a.value);
+   }
+  
+  friend Ratio operator + (Ratio a,Ratio b)
+   {
+    return Ratio(a.value+b.value);
+   }
+  
+  friend Ratio operator - (Ratio a,Ratio b)
+   {
+    return Ratio(a.value-b.value);
+   }
+  
+  friend Ratio operator * (Ratio a,Ratio b)
+   {
+    return Ratio( MCoord( IntRShift(DCoord(a.value)*b.value,Precision) ) );
+   }
+  
+  friend Ratio operator / (Ratio a,Ratio b)
+   {
+    return Ratio( MCoord( IntLShift(DCoord(a.value),Precision)/b.value ) );
+   }
+  
+  friend MCoord operator * (Ratio a,MCoord b)
+   {
+    return MCoord( IntRShift(DCoord(a.value)*b,Precision) );
+   }
+  
+  friend MPoint operator * (Ratio a,MPoint point)
+   {
+    return MPoint(a*point.x,a*point.y);
+   }
  };
 
 /* struct Pane */ 

@@ -259,7 +259,6 @@
 ../../CCore/src/video/DrawBuf.cpp
 ../../CCore/src/video/DrawTools.cpp
 ../../CCore/src/video/EDID.cpp
-../../CCore/src/video/Fixed32_16.cpp
 ../../CCore/src/video/Font.cpp
 ../../CCore/src/video/FrameBuf.cpp
 ../../CCore/src/video/FrameWindow.cpp
