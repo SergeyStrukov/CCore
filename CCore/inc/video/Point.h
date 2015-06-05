@@ -250,7 +250,7 @@ struct MPoint : BasePoint<MPoint,MCoord>
  {
   static const unsigned Precision = 10 ;
  
-  static MCoord LShift(Coord a) { return IntLShift((MCoord)a,Precision); }
+  static MCoord LShift(Coord a) { return IntLShift(MCoord(a),Precision); }
   
   static MCoord LShift_ext(MCoord a) { return IntLShift(a,Precision); }
   
@@ -259,6 +259,10 @@ struct MPoint : BasePoint<MPoint,MCoord>
   static Coord RShift(MCoord a) { return From32To16( IntRShift(IntAdd(a,RShiftBias),Precision) ); }
   
   static MCoord RShift_ext(MCoord a) { return IntRShift(IntAdd(a,RShiftBias),Precision); }
+  
+  static const MCoord RoundMask = IntLShift(MCoord(-1),Precision) ;
+  
+  static MCoord Round(MCoord a) { return IntMask(IntAdd(a,RShiftBias),RoundMask); }
   
   // constructors
   
@@ -271,6 +275,8 @@ struct MPoint : BasePoint<MPoint,MCoord>
   // methods
   
   Point toPoint() const { return Point(RShift(x),RShift(y)); }
+  
+  MPoint round() const { return MPoint(Round(x),Round(y)); }
  };
 
 /* struct Ratio */

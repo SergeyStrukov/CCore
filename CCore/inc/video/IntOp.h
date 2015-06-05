@@ -83,11 +83,18 @@ SInt IntMul(SInt a,SInt b) { return a*b; } // may overflow
 template <class SInt>
 SInt IntDiv(SInt a,SInt b) { return a/b; } // may crush
 
-template <class SInt>
-SInt IntLShift(SInt a,unsigned s) { return a<<s; } // may overflow , UB for some arguments must be removed, operates as ASL
+ //
+ // Can be substituted to provide proper semantic.
+ //
 
 template <class SInt>
-SInt IntRShift(SInt a,unsigned s) { return a>>s; } // US for some arguments must be removed, operates as ASR
+constexpr SInt IntLShift(SInt a,unsigned s) { return a<<s; } // may overflow , UB for some arguments must be removed, operates as ASL
+
+template <class SInt>
+constexpr SInt IntRShift(SInt a,unsigned s) { return a>>s; } // US for some arguments must be removed, operates as ASR
+
+template <class SInt>
+constexpr SInt IntMask(SInt a,SInt mask) { return a&mask; } 
 
 /* sint16 functions */
 
