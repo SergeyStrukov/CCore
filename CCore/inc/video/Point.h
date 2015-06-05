@@ -33,6 +33,8 @@ using uMCoord = uint32 ;
 
 using DCoord = sint64 ;
 
+using uDCoord = uint64 ;
+
 using AreaType = uint32 ;
 
 /* consts */
