@@ -254,15 +254,17 @@ struct MPoint : BasePoint<MPoint,MCoord>
   
   static MCoord LShift_ext(MCoord a) { return IntLShift(a,Precision); }
   
-  static const MCoord RShiftBias = MCoord(1)<<(Precision-1) ;
- 
-  static Coord RShift(MCoord a) { return From32To16( IntRShift(IntAdd(a,RShiftBias),Precision) ); }
+  static const MCoord One = IntLShift(MCoord(1),Precision) ;
   
-  static MCoord RShift_ext(MCoord a) { return IntRShift(IntAdd(a,RShiftBias),Precision); }
+  static const MCoord Half = IntLShift(MCoord(1),Precision-1) ;
+  
+  static Coord RShift(MCoord a) { return From32To16( IntRShift(IntAdd(a,Half),Precision) ); }
+  
+  static MCoord RShift_ext(MCoord a) { return IntRShift(IntAdd(a,Half),Precision); }
   
   static const MCoord RoundMask = IntLShift(MCoord(-1),Precision) ;
   
-  static MCoord Round(MCoord a) { return IntMask(IntAdd(a,RShiftBias),RoundMask); }
+  static MCoord Round(MCoord a) { return IntMask(IntAdd(a,Half),RoundMask); }
   
   // constructors
   
