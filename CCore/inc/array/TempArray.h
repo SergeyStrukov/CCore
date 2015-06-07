@@ -115,6 +115,29 @@ class TempArray : NoCopy
      recreate(len_);
     }
    
+   bool extend(ulen len_)
+    {
+     if( len_<=len ) return false;
+     
+     if( len_<=StackLen )
+       {
+        len=len_;
+       }
+     else
+       {
+        T *old_ptr=ptr;
+        ulen old_len=len;
+        
+        alloc(len_);
+        
+        Range(ptr,old_len).copy(old_ptr);
+        
+        if( old_ptr!=buf ) MemFree(old_ptr);
+       }
+     
+     return true;
+    }
+   
    // range access
    
    T * getPtr() { return ptr; }

@@ -45,3 +45,8 @@ algon/BaseRangeAlgo.h
 algon/SimpleRotate.h
 
   The one element range rotation algorithms are added.
+
+array/TempArray.h
+
+  The method extend() is added.
+
