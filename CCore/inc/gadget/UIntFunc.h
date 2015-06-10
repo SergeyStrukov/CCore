@@ -28,6 +28,10 @@ template <class UInt,class ExtUInt> struct UIntMulFunc_double;
 
 template <class UInt,class ExtUInt> struct UIntMulFunc_exact;
 
+template <class UInt> struct UIntBitFunc;
+
+template <class UInt> struct UIntBitFunc_quick;
+
 template <class UInt> struct UIntFunc;
 
 /* struct UIntMulFunc_double<UInt,ExtUInt> */
@@ -163,15 +167,116 @@ struct UIntMulFunc_exact
    }
  };
 
+/* struct UIntBitFunc<UInt> */
+
+template <class UInt> 
+struct UIntBitFunc
+ {
+  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::UIntBitFunc<UInt> : UInt must be an unsigned integral type");
+  
+  static const unsigned Bits = Meta::UIntBits<UInt>::Ret ;
+  
+  static const UInt MaxUnsigned = UInt(-1) ;
+  
+  static const UInt MSBit = MaxUnsigned^(MaxUnsigned>>1) ;
+  
+  static unsigned CountZeroMSB(UInt a)
+   {
+    if( !a ) return Bits;
+    
+    if( a&MSBit ) return 0;
+    
+    unsigned ret=0;
+    unsigned n=Bits;
+    
+    while( n>=2 )
+      {
+       unsigned m=n/2;
+       
+       UInt mask=UInt( UInt(-1)<<(Bits-m) );
+       
+       if( a&mask )
+         {
+          n=m;
+         }
+       else
+         {
+          ret+=m;
+          a<<=m;
+          n-=m;
+         }
+      }
+      
+    return ret;
+   }
+  
+  static unsigned CountZeroLSB(UInt a)
+   {
+    if( !a ) return Bits;
+    
+    if( a&UInt(1) ) return 0;
+    
+    unsigned ret=0;
+    unsigned n=Bits;
+    
+    while( n>=2 )
+      {
+       unsigned m=n/2;
+       
+       UInt mask=(UInt(1)<<m)-1;
+       
+       if( a&mask )
+         {
+          n=m;
+         }
+       else
+         {
+          ret+=m;
+          a>>=m;
+          n-=m;
+         }
+      }
+      
+    return ret;
+   }
+ };
+
+/* struct UIntBitFunc_quick<UInt> */
+
+template <class UInt> 
+struct UIntBitFunc_quick
+ {
+  static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::UIntBitFunc_quick<UInt> : UInt must be an unsigned integral type");
+  
+  static const unsigned Bits = Meta::UIntBits<UInt>::Ret ;
+  
+  static unsigned CountZeroMSB(UInt a)
+   {
+    if( !a ) return Bits;
+    
+    return Bits-1-Quick::ScanMSBit(a);
+   }
+  
+  static unsigned CountZeroLSB(UInt a)
+   {
+    if( !a ) return Bits;
+    
+    return Quick::ScanLSBit(a);
+   }
+ };
+
 /* struct UIntFunc<UInt> */ 
 
 template <class UInt> 
 struct UIntFunc : Meta::Select< Quick::UIntMulSelect<Meta::UIntBits<UInt>::Ret>::IsDoubleType ,UIntMulFunc_double<UInt,typename Quick::UIntMulSelect<Meta::UIntBits<UInt>::Ret>::ExtType>,
-                                                                                               UIntMulFunc_exact<UInt,typename Quick::UIntMulSelect<Meta::UIntBits<UInt>::Ret>::ExtType> >
+                                                                                               UIntMulFunc_exact<UInt,typename Quick::UIntMulSelect<Meta::UIntBits<UInt>::Ret>::ExtType> >,
+                  Meta::Select<( UInt(-1)<=Quick::ScanUInt(-1) ),UIntBitFunc_quick<UInt>,UIntBitFunc<UInt> >                                                                             
  {
   static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::UIntFunc<UInt> : UInt must be an unsigned integral type");
   
   // consts
+  
+  static const unsigned Bits = Meta::UIntBits<UInt>::Ret ;
   
   static const UInt MaxUnsigned = UInt(-1) ;
   

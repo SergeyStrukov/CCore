@@ -50,3 +50,10 @@ array/TempArray.h
 
   The method extend() is added.
 
+gadget/UIntFunc.h
+
+  CountZeroMSB() and CountZeroLSB() are added.
+
+gadget/UIntFunc.h
+
+  SqRoot() is added.
