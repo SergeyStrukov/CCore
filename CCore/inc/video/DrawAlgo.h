@@ -66,26 +66,6 @@ bool DistDir(SInt &e,UInt &s,SInt a,SInt b)
 template <class SInt>
 SInt Direct(SInt e,SInt a) { return (e>0)?a:(-a); }
 
-/* SqRoot() */
-
-template <class UInt>
-UInt SqRoot(UInt S,UInt x) // S > 0 , x > 0 , return round( SqRoot(S) )
- {
-  for(;;)
-    {
-     x=(x+S/x)/2;
-     
-     UInt q=Sq(x);
-     
-     if( q<=S ) 
-       {
-        if( q+x<S ) return x+1;
-       
-        return x;
-       }
-    }
- }
-
 /* classes */
 
 template <class UInt> class LineDriverBase;
@@ -2284,7 +2264,7 @@ void Circle(Point a,Coord radius,Plot plot)
   
   for(Coord y=1;;S-=2*y+1,y++)
     {
-     Coord x=(Coord)SqRoot<uMCoord>(S,radius);
+     Coord x=(Coord)UIntFunc<uMCoord>::SqRoot(S,radius);
      
      if( y>=x )
        {
@@ -2345,7 +2325,7 @@ void Ball(Point a,Coord radius,HPlot plot)
   
   for(Coord y=1;;S-=2*y+1,y++)
     {
-     Coord x=(Coord)SqRoot<uMCoord>(S,radius);
+     Coord x=(Coord)UIntFunc<uMCoord>::SqRoot(S,radius);
      
      if( y>=x )
        {

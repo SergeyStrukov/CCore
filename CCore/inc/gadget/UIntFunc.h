@@ -347,6 +347,53 @@ struct UIntFunc : Meta::Select< Quick::UIntMulSelect<Meta::UIntBits<UInt>::Ret>:
       borrow=(a==0);
      }
    };
+  
+  // square root
+  
+  static UInt SqRoot(UInt S,UInt x) // S,x > 0
+   {
+    {
+     UInt y=S/x;
+     
+     if( y<x )
+       {
+        x=y+(x-y)/2;
+       }
+     else
+       {
+        x=x+(y-x)/2;
+       }
+    }
+    
+    for(;;)
+      {
+       UInt y=S/x;
+       
+       if( y<x )
+         {
+          x=y+(x-y)/2;
+         }
+       else
+         {
+          if( y==x ) return x;
+          
+          if( y==x+1 && S==x*y ) return x;
+          
+          return x+1;
+         }
+      }
+   }
+  
+  static UInt SqRoot(UInt S)
+   {
+    if( !S ) return 0;
+    
+    unsigned bits=Bits-UIntFunc<UInt>::CountZeroMSB(S);
+    
+    UInt x=UInt(1)<<((bits+1)/2);
+    
+    return SqRoot(S,x);
+   }
  };
  
 /* functions */  

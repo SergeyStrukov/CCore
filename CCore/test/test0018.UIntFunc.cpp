@@ -15,6 +15,8 @@
 
 #include <CCore/test/test.h>
 
+#include <CCore/inc/Random.h>
+
 namespace App {
 
 namespace Private_0018 {
@@ -53,7 +55,96 @@ void test(const char *name)
   
   Printf(Con,"\n#;\n\n",TextDivider());
  }
- 
+
+/* testSqRoot() */
+
+template <class UInt>
+void testSqRoot()
+ {
+  Random random;
+  
+  ulen count1=0;
+  ulen count2=0;
+  ulen count3=0;
+  
+  for(ulen rep=1000000; rep ;rep--)
+    { 
+     UInt S=random.next_uint<UInt>();
+     
+     if( !S ) continue;
+     
+     UInt x=UIntFunc<UInt>::SqRoot(S);
+     
+     UInt y=S/x;
+     UInt z=S%x;
+     
+     if( y!=x )
+       {
+        if( y==x-1 )
+          {
+           if( z==0 ) Printf(Exception,"fail 1");
+           
+           count2++;
+          }
+        else if( y==x+1 )
+          {
+           if( z!=0 ) Printf(Exception,"fail 2");
+           
+           count3++;
+          }
+        else
+          {
+           Printf(Exception,"fail 3");
+          }
+       }
+     else
+       {
+        count1++;
+       }
+    }
+
+  for(ulen rep=1000000; rep ;rep--)
+    { 
+     UInt S=random.next_uint<UInt>();
+     UInt t=random.next_uint<UInt>();
+     
+     if( !S || !t ) continue;
+     
+     UInt x=UIntFunc<UInt>::SqRoot(S,t);
+     
+     UInt y=S/x;
+     UInt z=S%x;
+     
+     if( y!=x )
+       {
+        if( y==x-1 )
+          {
+           if( z==0 ) Printf(Exception,"fail 1");
+           
+           count2++;
+          }
+        else if( y==x+1 )
+          {
+           if( z!=0 ) Printf(Exception,"fail 2");
+           
+           count3++;
+          }
+        else
+          {
+           Printf(Exception,"fail 3");
+          }
+       }
+     else
+       {
+        count1++;
+       }
+    }
+  
+  Printf(Con,"#; #; #;\n",count1,count2,count3);
+  
+  Printf(Con,"SqRoot ok\n");
+ }
+
 } // namespace Private_0018
  
 using namespace Private_0018; 
@@ -69,6 +160,9 @@ bool Testit<18>::Main()
   test<unsigned short>("unsigned short");
   test<unsigned>("unsigned");
   test<unsigned long long>("unsigned long long");
+  
+  testSqRoot<unsigned>();
+  testSqRoot<uint32>();
  
   return true;
  }
