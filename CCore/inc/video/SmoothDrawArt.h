@@ -1372,6 +1372,64 @@ class DrawArt
      
      loop(Range_const(temp.flat()),width,field);
     }
+ 
+   // special
+   
+   void knob(MPoint p,MCoord len,ColorName cname);
+   
+   void ball(MPoint center,MCoord radius,ColorName cname);
+   
+   void circle(MPoint center,MCoord radius,MCoord width,ColorName cname);
+
+   template <class Field>
+   void knob(MPoint p,MCoord len,const Field &field)
+    {
+     MPoint temp[]=
+      {
+       p+MPoint(-len,-len),
+       p+MPoint(len,-len),
+       p+MPoint(len,len),
+       p+MPoint(-len,len)
+      };
+     
+     solid(Range_const(temp),SolidAll,field);
+    }
+   
+   template <class Field>
+   void ball(MPoint center,MCoord radius,const Field &field)
+    {
+     LineRound obj(center,radius);
+     
+     curveSolid(obj.get(),SolidAll,field);
+    }
+   
+   template <class Field>
+   void circle(MPoint center,MCoord radius,MCoord width,const Field &field)
+    {
+     LineRound obj(center,radius);
+     
+     curveLoop(obj.get(),width,field);
+    }
+ 
+   void pathOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname);
+   
+   void loopOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname);
+   
+   template <class ... TT>
+   void pathOf(MCoord width,ColorName cname,TT ... tt)
+    {
+     MPoint temp[sizeof ... (TT)]={ tt... };
+     
+     pathOf(Range_const(temp),width,cname);
+    }
+   
+   template <class ... TT>
+   void loopOf(MCoord width,ColorName cname,TT ... tt)
+    {
+     MPoint temp[sizeof ... (TT)]={ tt... };
+     
+     loopOf(Range_const(temp),width,cname);
+    }
  };
   
 } // namespace Smooth

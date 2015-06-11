@@ -281,6 +281,11 @@ struct MPoint : BasePoint<MPoint,MCoord>
   MPoint round() const { return MPoint(Round(x),Round(y)); }
  };
 
+inline MCoord Fraction(MCoord value,unsigned prec=0) // prec <= MPoint::Precision  
+ {
+  return IntLShift(value,MPoint::Precision-prec);
+ }
+
 /* struct Ratio */
 
 struct Ratio
