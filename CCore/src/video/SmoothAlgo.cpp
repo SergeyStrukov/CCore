@@ -153,26 +153,25 @@ MPoint LineArc::Sect(DCoord A,DCoord B,MPoint p)
   return Rational(a,b)*p;
  }
 
-MPoint LineArc::Intersect(MPoint a,MPoint b,MPoint c,MPoint d)
+void LineArc::intersect(MPoint a,MPoint b,MPoint c,MPoint d,MPoint base)
  {
+  DCoord A=Sigma(a,c,d);
+  DCoord B=Sigma(b,d,c);
   DCoord C=Sigma(c,a,b);
   DCoord D=Sigma(d,b,a);
   
-  if( ( C<0 && D>0 ) || ( C>0 && D<0 ) )
+  if( ( C<0 && D>0 ) || ( C>0 && D<0 ) || ( A<0 && B>0 ) || ( A>0 && B<0 ) )
     {
-     DCoord A=Sigma(a,c,d);
-     DCoord B=Sigma(b,d,c);
-     
-     if( ( A<0 && B>0 ) || ( A>0 && B<0 ) )
-       {
-        return (b+d)/2;
-       }
-     
-     return a+Sect(A,B,b-a);
+     p=base+a;
+     q=base+c;
+    
+     type=TwoPoint;
     }
   else
     {
-     return c+Sect(C,D,d-c);
+     p=base+c+Sect(C,D,d-c);
+     
+     type=OnePoint;
     }
  }
 
@@ -189,9 +188,7 @@ LineArc::LineArc(MPoint a,MPoint b,MPoint c,MCoord radius)
      MPoint C=Rotate(c)(0,-radius);
      MPoint D=C+c;
      
-     p=b+Intersect(A,B,C,D);
-     
-     short_flag=true;
+     intersect(A,B,C,D,b);
     }
   else
     {
@@ -202,7 +199,7 @@ LineArc::LineArc(MPoint a,MPoint b,MPoint c,MCoord radius)
      r=b+R;
      q=b+Bisect(P,R,radius);
      
-     short_flag=false;
+     type=Arc;
     }
  }
 

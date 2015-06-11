@@ -160,7 +160,15 @@ struct LineArc
   MPoint p;
   MPoint q;
   MPoint r;
-  bool short_flag;
+  
+  enum ArcType
+   {
+    OnePoint,
+    TwoPoint,
+    Arc
+   };
+  
+  ArcType type;
   
   static DCoord Sigma(MPoint a,MPoint b);
   
@@ -172,7 +180,7 @@ struct LineArc
   
   static MPoint Sect(DCoord A,DCoord B,MPoint p);
   
-  static MPoint Intersect(MPoint a,MPoint b,MPoint c,MPoint d);
+  void intersect(MPoint a,MPoint b,MPoint c,MPoint d,MPoint base);
   
   LineArc(MPoint a,MPoint b,MPoint c,MCoord radius);
  };
@@ -242,24 +250,37 @@ void AddLineArc(MPoint a,MPoint b,MPoint c,MCoord radius,FuncInit func_init)
   FunctorTypeOf<FuncInit> func(func_init);
   
   LineArc obj(a,b,c,radius);
-
-  if( obj.short_flag )
+  
+  switch( obj.type )
     {
-     func(obj.p);
-    }
-  else
-    {
-     func(obj.p);
-    
-     StackObject<ArcDriver> driver;
-    
-     driver->arc(obj.p,obj.q,b,radius,MaxCapFineness);
-    
-     PutWithoutFirst(driver->getArc(),func);
-    
-     driver->arc(obj.q,obj.r,b,radius,MaxCapFineness);
-    
-     PutWithoutFirst(driver->getArc(),func);
+     case LineArc::OnePoint :
+      {
+       func(obj.p);
+      }
+     break;
+     
+     case LineArc::TwoPoint :
+      {
+       func(obj.p);
+       func(obj.q);
+      }
+     break;
+     
+     case LineArc::Arc :
+      {
+       func(obj.p);
+      
+       StackObject<ArcDriver> driver;
+      
+       driver->arc(obj.p,obj.q,b,radius,MaxCapFineness);
+      
+       PutWithoutFirst(driver->getArc(),func);
+      
+       driver->arc(obj.q,obj.r,b,radius,MaxCapFineness);
+      
+       PutWithoutFirst(driver->getArc(),func);
+      }
+     break; 
     }
  }
 
