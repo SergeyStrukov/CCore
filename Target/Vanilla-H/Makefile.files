@@ -35,6 +35,7 @@ obj/CmdInput.o \
 obj/Cmp.o \
 obj/Collector.o \
 obj/Color.o \
+obj/ColorField.o \
 obj/CommonDrawArt.o \
 obj/CommonIntAlgo.o \
 obj/CompactList.o \
@@ -259,6 +260,8 @@ obj/SingleEchoDevice.o \
 obj/SingleHost.o \
 obj/SlowSem.o \
 obj/SmallPrimes.o \
+obj/SmoothAlgo.o \
+obj/SmoothDrawArt.o \
 obj/Sort.o \
 obj/SortUnique.o \
 obj/Space.o \
@@ -360,6 +363,7 @@ obj/CmdInput.s \
 obj/Cmp.s \
 obj/Collector.s \
 obj/Color.s \
+obj/ColorField.s \
 obj/CommonDrawArt.s \
 obj/CommonIntAlgo.s \
 obj/CompactList.s \
@@ -584,6 +588,8 @@ obj/SingleEchoDevice.s \
 obj/SingleHost.s \
 obj/SlowSem.s \
 obj/SmallPrimes.s \
+obj/SmoothAlgo.s \
+obj/SmoothDrawArt.s \
 obj/Sort.s \
 obj/SortUnique.s \
 obj/Space.s \
@@ -685,6 +691,7 @@ obj/CmdInput.dep \
 obj/Cmp.dep \
 obj/Collector.dep \
 obj/Color.dep \
+obj/ColorField.dep \
 obj/CommonDrawArt.dep \
 obj/CommonIntAlgo.dep \
 obj/CompactList.dep \
@@ -909,6 +916,8 @@ obj/SingleEchoDevice.dep \
 obj/SingleHost.dep \
 obj/SlowSem.dep \
 obj/SmallPrimes.dep \
+obj/SmoothAlgo.dep \
+obj/SmoothDrawArt.dep \
 obj/Sort.dep \
 obj/SortUnique.dep \
 obj/Space.dep \
@@ -1085,6 +1094,9 @@ obj/Collector.o : ../../CCore/src/array/Collector.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Color.o : ../../CCore/src/video/Color.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ColorField.o : ../../CCore/src/video/ColorField.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/CommonDrawArt.o : ../../CCore/src/video/CommonDrawArt.cpp
@@ -1759,6 +1771,12 @@ obj/SlowSem.o : ../../HCore/CCore/src/task/SlowSem.cpp
 obj/SmallPrimes.o : ../../CCore/src/math/SmallPrimes.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/SmoothAlgo.o : ../../CCore/src/video/SmoothAlgo.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/SmoothDrawArt.o : ../../CCore/src/video/SmoothDrawArt.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/Sort.o : ../../CCore/src/Sort.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -2053,6 +2071,9 @@ obj/Collector.s : ../../CCore/src/array/Collector.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/Color.s : ../../CCore/src/video/Color.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ColorField.s : ../../CCore/src/video/ColorField.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/CommonDrawArt.s : ../../CCore/src/video/CommonDrawArt.cpp
@@ -2727,6 +2748,12 @@ obj/SlowSem.s : ../../HCore/CCore/src/task/SlowSem.cpp
 obj/SmallPrimes.s : ../../CCore/src/math/SmallPrimes.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/SmoothAlgo.s : ../../CCore/src/video/SmoothAlgo.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/SmoothDrawArt.s : ../../CCore/src/video/SmoothDrawArt.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Sort.s : ../../CCore/src/Sort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3022,6 +3049,9 @@ obj/Collector.dep : ../../CCore/src/array/Collector.cpp
 
 obj/Color.dep : ../../CCore/src/video/Color.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Color.o $< -MF $@
+
+obj/ColorField.dep : ../../CCore/src/video/ColorField.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ColorField.o $< -MF $@
 
 obj/CommonDrawArt.dep : ../../CCore/src/video/CommonDrawArt.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/CommonDrawArt.o $< -MF $@
@@ -3694,6 +3724,12 @@ obj/SlowSem.dep : ../../HCore/CCore/src/task/SlowSem.cpp
 
 obj/SmallPrimes.dep : ../../CCore/src/math/SmallPrimes.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SmallPrimes.o $< -MF $@
+
+obj/SmoothAlgo.dep : ../../CCore/src/video/SmoothAlgo.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SmoothAlgo.o $< -MF $@
+
+obj/SmoothDrawArt.dep : ../../CCore/src/video/SmoothDrawArt.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SmoothDrawArt.o $< -MF $@
 
 obj/Sort.dep : ../../CCore/src/Sort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sort.o $< -MF $@

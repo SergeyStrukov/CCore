@@ -1,0 +1,1383 @@
+/* SmoothDrawArt.h */ 
+//----------------------------------------------------------------------------------------
+//
+//  Project: CCore 1.09
+//
+//  Tag: General
+//
+//  License: Boost Software License - Version 1.0 - August 17th, 2003 
+//
+//            see http://www.boost.org/LICENSE_1_0.txt or the local copy
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//----------------------------------------------------------------------------------------
+
+#ifndef CCore_inc_video_SmoothDrawArt_h
+#define CCore_inc_video_SmoothDrawArt_h
+
+#include <CCore/inc/video/DrawBuf.h>
+#include <CCore/inc/video/ColorField.h>
+
+#include <CCore/inc/video/CurveDriver.h>
+#include <CCore/inc/video/SmoothAlgo.h>
+
+namespace CCore {
+namespace Video {
+namespace Smooth {
+
+/* PrefixWith() */
+
+template <class R>
+R PrefixWith(R r,R suffix)
+ {
+  auto len=Algon::BaseRangeAlgo<R>::GetLen(r)-Algon::BaseRangeAlgo<R>::GetLen(suffix)+1;
+  
+  return Algon::BaseRangeAlgo<R>::GetPrefix(r,len);
+ }
+
+/* classes */
+
+//enum DotType;
+
+struct Dot;
+
+template <class R> class DotBreaker;
+
+template <class Field> class FieldPlot;
+
+template <class R,class Map> class NextLine;
+
+class PathDots;
+
+class LoopDots;
+
+class DrawArt;
+
+/* enum DotType */
+
+enum DotType
+ {
+  DotBreak,
+  
+  DotSimple
+ };
+
+const char * GetTextDesc(DotType type);
+
+/* struct Dot */
+
+struct Dot
+ {
+  MPoint point;
+  DotType type = DotSimple ;
+  
+  Dot() {}
+  
+  Dot(const MPoint &point_) : point(point_) {}
+  
+  Dot(const MPoint &point_,DotType type_) : point(point_),type(type_) {}
+  
+  // no-throw flags
+  
+  enum NoThrowFlagType
+   {
+    Default_no_throw = true,
+    Copy_no_throw = true
+   };
+ };
+
+/* class DotBreaker<R> */
+
+template <class R>
+class DotBreaker
+ {
+   R dots;
+   
+  public: 
+   
+   explicit DotBreaker(R dots_) : dots(dots_) {}
+   
+   R next()
+    {
+     R r=dots;
+     
+     if( !r ) return r;
+     
+     for(++r; +r ;++r)
+       if( r->type==DotBreak )
+         {
+          R ret=PrefixWith(dots,r);
+         
+          dots=r;
+          
+          return ret;
+         }
+     
+     return Replace_null(dots);
+    }
+ };
+
+/* CurvePath() */
+
+template <class R,class Map,class FuncInit>
+void CurvePath(R dots,Map map,FuncInit func_init) // map(...) -> MPoint , func(MPoint)
+ {
+  switch( Algon::BaseRangeAlgo<R>::GetLen(dots) )
+    {
+     case 0 :
+      {
+       // do nothing
+      }
+     break;
+     
+     case 1 :
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       
+       func(map(dots[0]));
+      }
+     break;
+     
+     case 2 :
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       
+       func(map(dots[0]));
+       func(map(dots[1]));
+      }
+     break;
+     
+     case 3 :
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+       
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       
+       func(a);
+       
+       driver->spline(a,b,c,c);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift();
+       
+       PutWithoutFirst(driver->getCurve(),func);
+      }
+     break;
+     
+     default:
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+       
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       auto d=map(dots[3]);
+       
+       func(a);
+       
+       driver->spline(a,b,c,d);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       for(dots+=4; +dots ;++dots)
+         {
+          driver->shift( map(dots[0]) );
+          
+          PutWithoutFirst(driver->getCurve(),func);
+         }
+       
+       driver->shift();
+       
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift();
+       
+       PutWithoutFirst(driver->getCurve(),func);
+      }
+    }
+ }
+
+/* CurveLoop() */
+
+template <class R,class Map,class FuncInit>
+void CurveLoop(R dots,Map map,FuncInit func_init) // map(...) -> MPoint , func(MPoint)
+ {
+  switch( Algon::BaseRangeAlgo<R>::GetLen(dots) )
+    {
+     case 0 :
+      {
+       // do nothing
+      }
+     break; 
+   
+     case 1 :
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       
+       func( map(dots[0]) );
+      }
+     break;
+     
+     case 2 :
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+       
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+      
+       driver->spline(a,b,a,b,a,b);
+       
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(a);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+      }
+     break;
+     
+     case 3 :
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+       
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+      
+       driver->spline(a,b,c,a,b,c);
+       
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(a);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(b);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+      }
+     break;
+     
+     case 4 :
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+       
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       auto d=map(dots[3]);
+      
+       driver->spline(a,b,c,d,a,b);
+       
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(c);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(d);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(a);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+      }
+     break;
+     
+     case 5 :
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+       
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       auto d=map(dots[3]);
+       auto e=map(dots[4]);
+      
+       driver->spline(a,b,c,d,e,a);
+       
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(b);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(c);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(d);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(e);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+      }
+     break;
+     
+     default: // >=6
+      {
+       FunctorTypeOf<FuncInit> func(func_init);
+       StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+      
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       auto d=map(dots[3]);
+       auto e=map(dots[4]);
+       auto f=map(dots[5]);
+       
+       driver->spline(a,b,c,d,e,f);
+       
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       for(dots+=6; +dots ;++dots)
+         {
+          driver->shift( map(dots[0]) );
+         
+          PutWithoutFirst(driver->getCurve(),func);
+         }
+
+       driver->shift(a);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(b);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(c);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(d);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+       
+       driver->shift(e);
+      
+       PutWithoutFirst(driver->getCurve(),func);
+      }
+    }
+ }
+
+/* CurveExtPath() */
+
+template <class R,class Map,class Func>
+void CurveExtPath(R dots,Map map,DrawAlgo::CurveDriver &driver,Func &func)
+ {
+  switch( Algon::BaseRangeAlgo<R>::GetLen(dots) )
+    {
+     case 0 :
+     case 1 : 
+      {
+       // do nothing
+      }
+     break; 
+ 
+     case 2 :
+      {
+       func( map(dots[1]) );
+      }
+     break;
+     
+     case 3 :
+      {
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       
+       driver.spline(a,b,c,c);
+       
+       PutWithoutFirst(driver.getCurve(),func); 
+       
+       driver.shift();
+       
+       PutWithoutFirst(driver.getCurve(),func); 
+      }
+     break;
+     
+     default: // >=4
+      {
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       auto d=map(dots[3]);
+       
+       driver.spline(a,b,c,d);
+       
+       PutWithoutFirst(driver.getCurve(),func);
+       
+       for(dots+=4; +dots ;++dots)
+         {
+          driver.shift( map(dots[0]) );
+          
+          PutWithoutFirst(driver.getCurve(),func); 
+         }
+       
+       driver.shift();
+       
+       PutWithoutFirst(driver.getCurve(),func); 
+       
+       driver.shift();
+       
+       PutWithoutFirst(driver.getCurve(),func); 
+      }
+    }
+ }
+
+template <class R,class Map,class Func>
+void CurveExtPath(R dots,R ext,Map map,DrawAlgo::CurveDriver &driver,Func &func)
+ {
+  switch( Algon::BaseRangeAlgo<R>::GetLen(dots) )
+    {
+     case 0 :
+      {
+       CurveExtPath(ext,map,driver,func);
+      }
+     break;
+     
+     case 1 :
+      {
+       auto a=map(dots[0]);
+       
+       switch( Algon::BaseRangeAlgo<R>::GetLen(ext) )
+         {
+          case 0 :
+           {
+            // do nothing
+           }
+          break;
+          
+          case 1 :
+           {
+            auto b=map(ext[0]);
+            
+            func(b);
+           }
+          break;
+          
+          case 2 :
+           {
+            auto b=map(ext[0]);
+            auto c=map(ext[1]);
+            
+            driver.spline(a,b,c,c);
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+           }
+          break;
+          
+          default: // >=3
+           {
+            auto b=map(ext[0]);
+            auto c=map(ext[1]);
+            auto d=map(ext[2]);
+            
+            driver.spline(a,b,c,d);
+            
+            PutWithoutFirst(driver.getCurve(),func);
+            
+            for(ext+=3; +ext ;++ext)
+              {
+               driver.shift( map(ext[0]) );
+               
+               PutWithoutFirst(driver.getCurve(),func); 
+              }
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+           }
+         }
+      }
+     break;
+     
+     case 2 :
+      {
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       
+       switch( Algon::BaseRangeAlgo<R>::GetLen(ext) )
+         {
+          case 0 :
+           {
+            func(b);
+           }
+          break;
+          
+          case 1 :
+           {
+            auto c=map(ext[0]);
+            
+            driver.spline(a,b,c,c);
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+           }
+          break;
+          
+          default: // >=2
+           {
+            auto c=map(ext[0]);
+            auto d=map(ext[1]);
+            
+            driver.spline(a,b,c,d);
+            
+            PutWithoutFirst(driver.getCurve(),func);
+            
+            for(ext+=2; +ext ;++ext)
+              {
+               driver.shift( map(ext[0]) );
+               
+               PutWithoutFirst(driver.getCurve(),func); 
+              }
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+           }
+         }
+      }
+     break;
+     
+     case 3 :
+      {
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       
+       switch( Algon::BaseRangeAlgo<R>::GetLen(ext) )
+         {
+          case 0 :
+           {
+            driver.spline(a,b,c,c);
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+           }
+          break;
+          
+          default: // >=1
+           {
+            auto d=map(ext[0]);
+            
+            driver.spline(a,b,c,d);
+            
+            PutWithoutFirst(driver.getCurve(),func);
+            
+            for(ext+=1; +ext ;++ext)
+              {
+               driver.shift( map(ext[0]) );
+               
+               PutWithoutFirst(driver.getCurve(),func); 
+              }
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+            
+            driver.shift();
+            
+            PutWithoutFirst(driver.getCurve(),func); 
+           }
+         }
+      }
+     break;
+     
+     default: // >=4
+      {
+       auto a=map(dots[0]);
+       auto b=map(dots[1]);
+       auto c=map(dots[2]);
+       auto d=map(dots[3]);
+       
+       driver.spline(a,b,c,d);
+       
+       PutWithoutFirst(driver.getCurve(),func);
+       
+       for(dots+=4; +dots ;++dots)
+         {
+          driver.shift( map(dots[0]) );
+          
+          PutWithoutFirst(driver.getCurve(),func); 
+         }
+       
+       for(; +ext ;++ext)
+         {
+          driver.shift( map(ext[0]) );
+          
+          PutWithoutFirst(driver.getCurve(),func); 
+         }
+       
+       driver.shift();
+       
+       PutWithoutFirst(driver.getCurve(),func); 
+       
+       driver.shift();
+       
+       PutWithoutFirst(driver.getCurve(),func); 
+      }
+    }
+ }
+
+/* CurvePath() */
+
+template <class R,class Map,class FuncInit>
+void CurveBreakPath(R dots,Map map,FuncInit func_init) // Dot , map(...) -> MPoint , func(MPoint)
+ {
+  if( !dots ) return;
+  
+  FunctorTypeOf<FuncInit> func(func_init);
+  
+  func( map(dots[0]) );
+  
+  StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+  
+  for(DotBreaker<R> breaker(dots);;)
+    {
+     R r=breaker.next();
+     
+     if( !r ) return;
+     
+     CurveExtPath(r,map,*driver,func);
+    }
+ }
+
+/* CurvePath() */
+
+template <class R,class Map,class FuncInit>
+void CurvePath(R dots,R ext,Map map,FuncInit func_init) // ext no break , func(MPoint) , put without first point
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+  StackObject<DrawAlgo::CurveDriver> driver(MaxFineness);
+  
+  DotBreaker<R> breaker(dots);
+  
+  R cur=breaker.next();
+  
+  for(;;)
+    {
+     R next=breaker.next();
+     
+     if( !next )
+       {
+        CurveExtPath(cur,ext,map,*driver,func);
+        
+        return;
+       }
+     
+     CurveExtPath(cur,map,*driver,func);
+     
+     cur=next;
+    }
+ }
+
+/* CurveBreakLoop() */
+
+template <class R,class Map,class FuncInit>
+void CurveBreakLoop(R dots,Map map,FuncInit func_init) // Dot , map(...) -> MPoint , func(MPoint)
+ {
+  if( !dots ) return;
+  
+  for(R r=dots; +r ;++r)
+    {
+     if( r->type==DotBreak )
+       {
+        CurvePath(r,PrefixWith(dots,r),map,func_init);
+       
+        return;
+       }
+    }
+  
+  CurveLoop(dots,map,func_init);
+ }
+
+/* class FieldPlot<Field> */
+
+template <class Field>
+class FieldPlot : DrawBuf
+ {
+   Field field;
+   
+  public: 
+   
+   FieldPlot(const DrawBuf &buf,const Field &field_) : DrawBuf(buf),field(field_) {}
+   
+   void operator () (MPoint point)
+    {
+     MPoint p=map(point);
+     MPoint biased=p+MPoint(MPoint::Half,MPoint::Half);
+     
+     if( biased>=Null && biased<getSize() )
+       {
+        ColorName cname=field(point);
+     
+        pixel(p.toPoint(),cname);
+       }
+    }
+   
+   void operator () (MPoint point,unsigned alpha)
+    {
+     if( !alpha ) return;
+     
+     if( alpha>=AlphaLim )
+       {
+        (*this)(point);
+        
+        return;
+       }
+     
+     MPoint p=map(point);
+     MPoint biased=p+MPoint(MPoint::Half,MPoint::Half);
+     
+     if( biased>=Null && biased<getSize() )
+       {
+        ColorName cname=field(point);
+     
+        DesktopColor::BlendTo(Blender(Clr(alpha),cname),place(p.toPoint()));
+       }
+    }
+ };
+
+/* class NextLine<R,Map> */
+
+template <class R,class Map>
+class NextLine
+ {
+   R dots;
+   Map map;
+   
+  public:
+   
+   MPoint a;
+   MPoint b;
+   MPoint c;
+   
+   NextLine(R dots_,Map map_) : dots(dots_),map(map_) {}
+   
+   bool first()
+    {
+     if( !dots ) return false;
+     
+     b=map(*dots);
+     
+     ++dots;
+     
+     while( +dots )
+       {
+        auto d=map(*dots);
+        
+        ++dots;
+        
+        if( d!=b )
+          {
+           c=d;
+           
+           return true;
+          }
+       }
+     
+     return false;
+    }
+   
+   bool next()
+    {
+     while( +dots )
+       {
+        auto d=map(*dots); 
+        
+        ++dots;
+        
+        if( d!=c )
+          {
+           a=b;
+           b=c;
+           c=d;
+          
+           return true;
+          }
+       }
+     
+     return false;
+    }
+   
+   bool next(MPoint d)
+    {
+     if( d!=c )
+       {
+        a=b;
+        b=c;
+        c=d;
+       
+        return true;
+       }
+     
+     return false;
+    }
+ };
+
+/* class PathDots */
+
+class PathDots : NoCopy
+ {
+   Collector<MPoint> buf;
+   
+  private:
+   
+   struct AddBuf
+    {
+     Collector<MPoint> &buf;
+     
+     explicit AddBuf(Collector<MPoint> &buf_) : buf(buf_) {}
+     
+     void operator () (MPoint point) { buf.append_copy(point); }
+    };
+   
+   void addRound(MPoint a,MCoord width)
+    {
+     AddLineRound(a,width,AddBuf(buf));
+    }
+   
+   void addCap(MPoint a,MPoint b,MCoord width)
+    {
+     AddLineCap(a,b,width,AddBuf(buf));
+    }
+   
+   void addArc(MPoint a,MPoint b,MPoint c,MCoord width)
+    {
+     AddLineArc(a,b,c,width,AddBuf(buf));
+    }
+   
+   template <class R,class Map>
+   bool addDirect(R dots,Map map,MCoord width)
+    {
+     NextLine<R,Map> line(dots,map);
+     
+     if( line.first() )
+       {
+        addCap(line.b,line.c,width);
+        
+        while( line.next() )
+          {
+           addArc(line.a,line.b,line.c,width);
+          }
+        
+        return true;
+       }
+     else
+       {
+        addRound(line.b,width);
+        
+        return false;
+       }
+    }
+   
+   template <class R,class Map>
+   void addBack(R dots,Map map,MCoord width)
+    {
+     NextLine<R,Map> line(dots,map);
+     
+     if( line.first() )
+       {
+        addCap(line.b,line.c,width);
+        
+        while( line.next() )
+          {
+           addArc(line.a,line.b,line.c,width);
+          }
+       }
+    }
+   
+  public:
+  
+   template <class R,class Map>
+   PathDots(R dots,Map map,MCoord width) // map(...) -> MPoint
+    {
+     if( !dots ) return;
+     
+     width/=2;
+     
+     if( addDirect(dots,map,width) )
+       {
+        addBack(Algon::BaseRangeAlgo<R>::Reverse(dots),map,width);
+       }
+    }
+   
+   template <class R>
+   PathDots(R dots,MCoord width) : PathDots(dots, [] (MPoint point) { return point; } ,width) {} // MPoint
+   
+   ~PathDots()
+    {
+    }
+   
+   PtrLen<const MPoint> complete() { return Range_const(buf.flat()); }
+ };
+
+/* class LoopDots */
+
+class LoopDots : NoCopy
+ {
+   Collector<MPoint> buf;
+   
+   bool back_cap = false ;
+   
+  private:
+   
+   struct AddBuf
+    {
+     Collector<MPoint> &buf;
+     
+     explicit AddBuf(Collector<MPoint> &buf_) : buf(buf_) {}
+     
+     void operator () (MPoint point) { buf.append_copy(point); }
+    };
+   
+   void addRound(MPoint a,MCoord width)
+    {
+     AddLineRound(a,width,AddBuf(buf));
+    }
+   
+   void addCap(MPoint a,MPoint b,MCoord width)
+    {
+     AddLineCap(a,b,width,AddBuf(buf));
+    }
+   
+   void addArc(MPoint a,MPoint b,MPoint c,MCoord width)
+    {
+     AddLineArc(a,b,c,width,AddBuf(buf));
+    }
+   
+   template <class R,class Map>
+   bool addDirect(R dots,Map map,MCoord width)
+    {
+     NextLine<R,Map> line(dots,map);
+     
+     if( line.first() )
+       {
+        MPoint o=line.b;
+       
+        addCap(line.b,line.c,width);
+        
+        while( line.next() )
+          {
+           addArc(line.a,line.b,line.c,width);
+          }
+        
+        if( line.next(o) )
+          {
+           addArc(line.a,line.b,line.c,width);
+           
+           addCap(line.c,line.b,width);
+           
+           addArc(line.c,line.b,line.a,width);
+          }
+        else
+          {
+           back_cap=true;
+          }
+        
+        return true;
+       }
+     else
+       {
+        addRound(line.b,width);
+        
+        return false;
+       }
+    }
+   
+   template <class R,class Map>
+   void addBack(R dots,Map map,MCoord width)
+    {
+     NextLine<R,Map> line(dots,map);
+     
+     if( line.first() )
+       {
+        if( back_cap ) addCap(line.b,line.c,width);
+        
+        while( line.next() )
+          {
+           addArc(line.a,line.b,line.c,width);
+          }
+       }
+    }
+   
+  public:
+  
+   template <class R,class Map>
+   LoopDots(R dots,Map map,MCoord width) // map(...) -> MPoint
+    {
+     if( !dots ) return;
+     
+     width/=2;
+     
+     if( addDirect(dots,map,width) )
+       {
+        addBack(Algon::BaseRangeAlgo<R>::Reverse(dots),map,width);
+       }
+    }
+   
+   template <class R>
+   LoopDots(R dots,MCoord width) : LoopDots(dots, [] (MPoint point) { return point; } ,width) {} // MPoint
+   
+   ~LoopDots()
+    {
+    }
+   
+   PtrLen<const MPoint> complete() { return Range_const(buf.flat()); }
+ };
+
+/* class DrawArt */
+
+class DrawArt
+ {
+   class WorkBuf : public DrawBuf
+    {
+     public:
+     
+      explicit WorkBuf(const DrawBuf &buf) : DrawBuf(buf) {}
+      
+      void pixel_safe(Point p,DesktopColor color) { if( p>=Null && p<getSize() ) pixel(p,color); }
+      
+      void block_safe(Pane pane,DesktopColor color) { block(Inf(pane,getPane()),color); }
+    };
+ 
+   WorkBuf buf;
+   
+  public:
+   
+   DrawArt(const DrawBuf &buf_) : buf(buf_) {}
+   
+   const DrawBuf & getBuf() const { return buf; }
+   
+   // simple
+   
+   void pixel(Point p,DesktopColor color);
+   
+   void erase(DesktopColor color);
+  
+   void block(Pane pane,DesktopColor color);
+   
+   // solid
+   
+   template <class R>
+   void solid(R dots,SolidFlag solid_flag,ColorName cname) // MPoint
+    {
+     solid(dots,solid_flag,ConstantField(cname));
+    }
+   
+   template <class R>
+   void curveSolid(R dots,SolidFlag solid_flag,ColorName cname) // MPoint
+    {
+     curveSolid(dots,solid_flag,ConstantField(cname));
+    }
+   
+   template <class R>
+   void curveBreakSolid(R dots,SolidFlag solid_flag,ColorName cname) // Dot
+    {
+     curveBreakSolid(dots,solid_flag,ConstantField(cname));
+    }
+   
+   template <class R,class Field>
+   void solid(R dots,SolidFlag solid_flag,const Field &field) // MPoint
+    {
+     SolidDriver driver(dots);
+     
+     driver(solid_flag,FieldPlot<Field>(buf,field));
+    }
+   
+   template <class R,class Field>
+   void curveSolid(R dots,SolidFlag solid_flag,const Field &field) // MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     solid(Range_const(temp.flat()),solid_flag,field);
+    }
+   
+   template <class R,class Field>
+   void curveBreakSolid(R dots,SolidFlag solid_flag,const Field &field) // Dot
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     solid(Range_const(temp.flat()),solid_flag,field);
+    }
+
+   
+   template <class R,class Map>
+   void solid(R dots,Map map,SolidFlag solid_flag,ColorName cname) // map(...) -> MPoint
+    {
+     solid(dots,map,solid_flag,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void curveSolid(R dots,Map map,SolidFlag solid_flag,ColorName cname) // map(...) -> MPoint
+    {
+     curveSolid(dots,map,solid_flag,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void curveBreakSolid(R dots,Map map,SolidFlag solid_flag,ColorName cname) // Dot dots, map(...) -> MPoint
+    {
+     curveBreakSolid(dots,map,solid_flag,ConstantField(cname));
+    }
+   
+   template <class R,class Map,class Field>
+   void solid(R dots,Map map,SolidFlag solid_flag,const Field &field) // map(...) -> MPoint
+    {
+     SolidDriver driver(dots,map);
+     
+     driver(solid_flag,FieldPlot<Field>(buf,field));
+    }
+   
+   template <class R,class Map,class Field>
+   void curveSolid(R dots,Map map,SolidFlag solid_flag,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     solid(Range_const(temp.flat()),solid_flag,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreakSolid(R dots,Map map,SolidFlag solid_flag,const Field &field) // Dot dots, map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     solid(Range_const(temp.flat()),solid_flag,field);
+    }
+   
+   // line
+   
+   template <class R>
+   void path(R dots,MCoord width,ColorName cname) // MPoint
+    {
+     path(dots,width,ConstantField(cname));
+    }
+   
+   template <class R>
+   void loop(R dots,MCoord width,ColorName cname) // MPoint
+    {
+     loop(dots,width,ConstantField(cname));
+    }
+   
+   template <class R,class Field>
+   void path(R dots,MCoord width,const Field &field) // MPoint
+    {
+     PathDots path(dots,width);
+     
+     solid(path.complete(),SolidAll,field);
+    }
+   
+   template <class R,class Field>
+   void loop(R dots,MCoord width,const Field &field) // MPoint
+    {
+     LoopDots loop(dots,width);
+     
+     solid(loop.complete(),SolidAll,field);
+    }
+   
+   
+   template <class R,class Map>
+   void path(R dots,Map map,MCoord width,ColorName cname) // map(...) -> MPoint
+    {
+     path(dots,map,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void loop(R dots,Map map,MCoord width,ColorName cname) // map(...) -> MPoint
+    {
+     loop(dots,map,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map,class Field>
+   void path(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     PathDots path(dots,map,width);
+     
+     solid(path.complete(),SolidAll,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void loop(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     LoopDots loop(dots,map,width);
+     
+     solid(loop.complete(),SolidAll,field);
+    }
+   
+   // curve
+
+   template <class R>
+   void curve(R dots,MCoord width,ColorName cname) // MPoint
+    {
+     curve(dots,width,ConstantField(cname));
+    }
+   
+   template <class R>
+   void curveBreak(R dots,MCoord width,ColorName cname) // Dot
+    {
+     curveBreak(dots,width,ConstantField(cname));
+    }
+   
+   template <class R>
+   void curveLoop(R dots,MCoord width,ColorName cname) // MPoint
+    {
+     curveLoop(dots,width,ConstantField(cname));
+    }
+   
+   template <class R>
+   void curveBreakLoop(R dots,MCoord width,ColorName cname) // Dot
+    {
+     curveBreakLoop(dots,width,ConstantField(cname));
+    }
+   
+   template <class R,class Field>
+   void curve(R dots,MCoord width,const Field &field) // MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurvePath(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Field>
+   void curveBreak(R dots,MCoord width,const Field &field) // Dot
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakPath(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Field>
+   void curveLoop(R dots,MCoord width,const Field &field) // MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Field>
+   void curveBreakLoop(R dots,MCoord width,const Field &field) // Dot
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop(Range_const(temp.flat()),width,field);
+    }
+   
+
+   template <class R,class Map>
+   void curve(R dots,Map map,MCoord width,ColorName cname) // map(...) -> MPoint
+    {
+     curve(dots,map,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void curveBreak(R dots,Map map,MCoord width,ColorName cname) // Dot , map(...) -> MPoint
+    {
+     curveBreak(dots,map,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void curveLoop(R dots,Map map,MCoord width,ColorName cname) // map(...) -> MPoint
+    {
+     curveLoop(dots,map,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void curveBreakLoop(R dots,Map map,MCoord width,ColorName cname) // Dot , map(...) -> MPoint
+    {
+     curveBreakLoop(dots,map,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map,class Field>
+   void curve(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurvePath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreak(R dots,Map map,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakPath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveLoop(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreakLoop(R dots,Map map,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop(Range_const(temp.flat()),width,field);
+    }
+ };
+  
+} // namespace Smooth
+} // namespace Video
+} // namespace CCore
+ 
+#endif
+ 
+

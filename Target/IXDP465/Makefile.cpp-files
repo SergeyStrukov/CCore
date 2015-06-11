@@ -251,6 +251,7 @@
 ../../CCore/src/video/ApplicationBase.cpp
 ../../CCore/src/video/ClientWindow.cpp
 ../../CCore/src/video/Color.cpp
+../../CCore/src/video/ColorField.cpp
 ../../CCore/src/video/CommonDrawArt.cpp
 ../../CCore/src/video/CurveDriver.cpp
 ../../CCore/src/video/DesktopStub.cpp
@@ -267,6 +268,8 @@
 ../../CCore/src/video/Mouse.cpp
 ../../CCore/src/video/Point.cpp
 ../../CCore/src/video/SimpleConsole.cpp
+../../CCore/src/video/SmoothAlgo.cpp
+../../CCore/src/video/SmoothDrawArt.cpp
 ../../CCore/src/video/SubWindow.cpp
 ../../CCore/src/video/UserAction.cpp
 ../../CCore/src/video/VideoConsole.cpp
