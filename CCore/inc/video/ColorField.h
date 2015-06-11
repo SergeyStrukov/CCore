@@ -24,7 +24,19 @@ namespace Video {
 
 /* classes */
 
+struct AlphaColorName;
+
 class ConstantField;
+
+class ConstantAlphaField;
+
+/* struct AlphaColorName */
+
+struct AlphaColorName
+ {
+  ColorName cname;
+  unsigned alpha;
+ };
 
 /* class ConstantField */
 
@@ -37,6 +49,19 @@ class ConstantField
    explicit ConstantField(ColorName cname_) : cname(cname_) {}
    
    ColorName operator () (MPoint) const { return cname; }
+ };
+
+/* class ConstantAlphaField */
+
+class ConstantAlphaField
+ {
+   AlphaColorName aname;
+   
+  public: 
+   
+   explicit ConstantAlphaField(ColorName cname,unsigned alpha) : aname{cname,alpha} {}
+   
+   AlphaColorName operator () (MPoint) const { return aname; }
  };
 
 } // namespace Video

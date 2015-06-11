@@ -44,6 +44,8 @@ struct Dot;
 
 template <class R> class DotBreaker;
 
+class FieldPlotBase;
+
 template <class Field> class FieldPlot;
 
 template <class R,class Map> class NextLine;
@@ -722,16 +724,56 @@ void CurveBreakLoop(R dots,Map map,FuncInit func_init) // Dot , map(...) -> MPoi
   CurveLoop(dots,map,func_init);
  }
 
+/* class FieldPlotBase */
+
+class FieldPlotBase : DrawBuf
+ {
+  public:
+ 
+   explicit FieldPlotBase(const DrawBuf &buf) : DrawBuf(buf) {}
+   
+   using DrawBuf::map;
+   using DrawBuf::getSize;
+   
+   void plot(Point p,ColorName cname)
+    {
+     pixel(p,cname);
+    }
+   
+   void plot(Point p,ColorName cname,unsigned alpha)
+    {
+     DesktopColor::BlendTo(Blender(Clr(alpha),cname),place(p));
+    }
+   
+   void plot_safe(Point p,ColorName cname,unsigned alpha)
+    {
+     if( alpha>=AlphaLim )
+       plot(p,cname);
+     else if( alpha )
+       plot(p,cname,alpha);
+    }
+   
+   void plot(Point p,AlphaColorName aname)
+    {
+     plot_safe(p,aname.cname,aname.alpha);
+    }
+   
+   void plot(Point p,AlphaColorName aname,unsigned alpha)
+    {
+     plot_safe(p,aname.cname,(Min(aname.alpha,AlphaLim)*alpha)>>ClrBits);
+    }
+ };
+
 /* class FieldPlot<Field> */
 
 template <class Field>
-class FieldPlot : DrawBuf
+class FieldPlot : FieldPlotBase
  {
    Field field;
    
   public: 
    
-   FieldPlot(const DrawBuf &buf,const Field &field_) : DrawBuf(buf),field(field_) {}
+   FieldPlot(const DrawBuf &buf,const Field &field_) : FieldPlotBase(buf),field(field_) {}
    
    void operator () (MPoint point)
     {
@@ -740,9 +782,7 @@ class FieldPlot : DrawBuf
      
      if( biased>=Null && biased<getSize() )
        {
-        ColorName cname=field(point);
-     
-        pixel(p.toPoint(),cname);
+        plot(p.toPoint(),field(point));
        }
     }
    
@@ -762,9 +802,7 @@ class FieldPlot : DrawBuf
      
      if( biased>=Null && biased<getSize() )
        {
-        ColorName cname=field(point);
-     
-        DesktopColor::BlendTo(Blender(Clr(alpha),cname),place(p.toPoint()));
+        plot(p.toPoint(),field(point),alpha);
        }
     }
  };
