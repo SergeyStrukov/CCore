@@ -329,4 +329,6 @@
 ../../Target/WIN64/CCore/src/sys/SysTlsSlot.cpp
 ../../Target/WIN64/CCore/src/sys/SysWait.cpp
 ../../Target/WIN64/CCore/src/sys/SysWaitInternal.cpp
+../../Target/WIN64/CCore/src/video/AppDesktopConfig.cpp
+../../Target/WIN64/CCore/src/video/Desktop.cpp
 ../../Target/WIN64/CCore/src/win64/Win64.cpp

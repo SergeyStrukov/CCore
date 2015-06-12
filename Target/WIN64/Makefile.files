@@ -6,6 +6,7 @@ obj/Abort.o \
 obj/AbortMsgFunc.o \
 obj/AntiSem.o \
 obj/AnyPtr.o \
+obj/AppDesktopConfig.o \
 obj/ApplicationBase.o \
 obj/ApplyToRange.o \
 obj/Array.o \
@@ -87,6 +88,7 @@ obj/DHExp.o \
 obj/DefaultTimeout.o \
 obj/DefaultValue.o \
 obj/DeferCall.o \
+obj/Desktop.o \
 obj/DesktopStub.o \
 obj/DirTreeRun.o \
 obj/DragWindow.o \
@@ -341,6 +343,7 @@ obj/Abort.s \
 obj/AbortMsgFunc.s \
 obj/AntiSem.s \
 obj/AnyPtr.s \
+obj/AppDesktopConfig.s \
 obj/ApplicationBase.s \
 obj/ApplyToRange.s \
 obj/Array.s \
@@ -422,6 +425,7 @@ obj/DHExp.s \
 obj/DefaultTimeout.s \
 obj/DefaultValue.s \
 obj/DeferCall.s \
+obj/Desktop.s \
 obj/DesktopStub.s \
 obj/DirTreeRun.s \
 obj/DragWindow.s \
@@ -676,6 +680,7 @@ obj/Abort.dep \
 obj/AbortMsgFunc.dep \
 obj/AntiSem.dep \
 obj/AnyPtr.dep \
+obj/AppDesktopConfig.dep \
 obj/ApplicationBase.dep \
 obj/ApplyToRange.dep \
 obj/Array.dep \
@@ -757,6 +762,7 @@ obj/DHExp.dep \
 obj/DefaultTimeout.dep \
 obj/DefaultValue.dep \
 obj/DeferCall.dep \
+obj/Desktop.dep \
 obj/DesktopStub.dep \
 obj/DirTreeRun.dep \
 obj/DragWindow.dep \
@@ -1038,6 +1044,9 @@ obj/AntiSem.o : ../../HCore/CCore/src/task/AntiSem.cpp
 obj/AnyPtr.o : ../../CCore/src/AnyPtr.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/AppDesktopConfig.o : ../../Target/WIN64/CCore/src/video/AppDesktopConfig.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/ApplicationBase.o : ../../CCore/src/video/ApplicationBase.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1279,6 +1288,9 @@ obj/DefaultValue.o : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DeferCall.o : ../../CCore/src/DeferCall.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Desktop.o : ../../Target/WIN64/CCore/src/video/Desktop.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/DesktopStub.o : ../../CCore/src/video/DesktopStub.cpp
@@ -2036,6 +2048,9 @@ obj/AntiSem.s : ../../HCore/CCore/src/task/AntiSem.cpp
 obj/AnyPtr.s : ../../CCore/src/AnyPtr.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/AppDesktopConfig.s : ../../Target/WIN64/CCore/src/video/AppDesktopConfig.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ApplicationBase.s : ../../CCore/src/video/ApplicationBase.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2277,6 +2292,9 @@ obj/DefaultValue.s : ../../CCore/src/gadget/DefaultValue.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DeferCall.s : ../../CCore/src/DeferCall.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/Desktop.s : ../../Target/WIN64/CCore/src/video/Desktop.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/DesktopStub.s : ../../CCore/src/video/DesktopStub.cpp
@@ -3034,6 +3052,9 @@ obj/AntiSem.dep : ../../HCore/CCore/src/task/AntiSem.cpp
 obj/AnyPtr.dep : ../../CCore/src/AnyPtr.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AnyPtr.o $< -MF $@
 
+obj/AppDesktopConfig.dep : ../../Target/WIN64/CCore/src/video/AppDesktopConfig.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/AppDesktopConfig.o $< -MF $@
+
 obj/ApplicationBase.dep : ../../CCore/src/video/ApplicationBase.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ApplicationBase.o $< -MF $@
 
@@ -3276,6 +3297,9 @@ obj/DefaultValue.dep : ../../CCore/src/gadget/DefaultValue.cpp
 
 obj/DeferCall.dep : ../../CCore/src/DeferCall.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DeferCall.o $< -MF $@
+
+obj/Desktop.dep : ../../Target/WIN64/CCore/src/video/Desktop.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Desktop.o $< -MF $@
 
 obj/DesktopStub.dep : ../../CCore/src/video/DesktopStub.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/DesktopStub.o $< -MF $@
