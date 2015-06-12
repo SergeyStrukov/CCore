@@ -28,9 +28,9 @@ using DesktopColor = RawColor32 ;
 
 /* functions */
 
-void AbortMsgBox(StrLen) {}
+inline void AbortMsgBox(StrLen) {}
 
-void ErrorMsgBox(StrLen,StrLen) {}
+inline void ErrorMsgBox(StrLen,StrLen) {}
 
 /* classes */
 
