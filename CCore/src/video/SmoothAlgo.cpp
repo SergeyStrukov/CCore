@@ -93,7 +93,7 @@ LineRound::LineRound(MPoint a,MCoord radius)
 
 DCoord LineArc::Sigma(MPoint a,MPoint b)
  {
-  return DCoord(a.x)*b.y-DCoord(a.y)*b.x;
+  return Prod(a.x,a.y,b.y,-b.x);
  }
 
 DCoord LineArc::Sigma(MPoint a,MPoint b,MPoint c)

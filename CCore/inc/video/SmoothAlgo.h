@@ -109,7 +109,7 @@ class Rotate
    
    MPoint operator () (MCoord x,MCoord y) const
     {
-     return MPoint( MCoord( (DCoord(a)*x+DCoord(-b)*y)/c ) , MCoord( (DCoord(b)*x+DCoord(a)*y)/c ) );
+     return MPoint(MCoord(Prod(a,-b,x,y)/c),MCoord(Prod(b,a,x,y)/c));
     }
    
    MPoint operator () (MPoint point) const

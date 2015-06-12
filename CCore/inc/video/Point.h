@@ -286,6 +286,14 @@ inline MCoord Fraction(MCoord value,unsigned prec=0) // prec <= MPoint::Precisio
   return IntLShift(value,MPoint::Precision-prec);
  }
 
+/* Prod() */
+
+inline DCoord Prod(MCoord a,MCoord b,MCoord x,MCoord y) { return DCoord(a)*x+DCoord(b)*y; }
+
+inline DCoord Prod(MCoord a,MCoord b,MPoint point) { return Prod(a,b,point.x,point.y); }
+
+inline DCoord Prod(MPoint a,MPoint b) { return Prod(a.x,a.y,b.x,b.y); }
+
 /* struct Ratio */
 
 struct Ratio
