@@ -262,7 +262,7 @@ struct MPoint : BasePoint<MPoint,MCoord>
   
   static MCoord RShift_ext(MCoord a) { return IntRShift(IntAdd(a,Half),Precision); }
   
-  static const MCoord RoundMask = IntLShift(MCoord(-1),Precision) ;
+  static const MCoord RoundMask = uMCoord(-1)<<Precision ;
   
   static MCoord Round(MCoord a) { return IntMask(IntAdd(a,Half),RoundMask); }
   

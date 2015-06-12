@@ -102,6 +102,10 @@ struct BitmapData;
 
 using HBitmap = BitmapData * ;
 
+/*--------------------------------------------------------------------------------------*/ 
+/* callbacks                                                                            */ 
+/*--------------------------------------------------------------------------------------*/
+
 using WindowProc = MsgResult (WIN32_CALLTYPE *)(HWindow,MsgCode,MsgWParam,MsgLParam) ;
 
 using DialogProc = UPtrType (WIN32_CALLTYPE *)(HWindow,MsgCode,MsgWParam,MsgLParam) ;
@@ -1057,6 +1061,8 @@ struct Msg
   Point point;
  };
 
+/* struct BitmapInfoHeader */
+
 struct BitmapInfoHeader
  {
   unsigned cb;
@@ -1072,6 +1078,8 @@ struct BitmapInfoHeader
   unsigned colors_important;
  };
 
+/* struct ARGBData */
+
 struct ARGBData
  {
   Intensity blue;
@@ -1080,11 +1088,15 @@ struct ARGBData
   Intensity alpha;
  };
 
+/* struct BitmapInfo */
+
 struct BitmapInfo
  {
   BitmapInfoHeader header;
   ARGBData colors[1];
  };
+
+/* struct LogFont */
 
 struct LogFont
  {
@@ -1104,6 +1116,8 @@ struct LogFont
   char typeface[32];
  };
 
+/* struct EnumLogFontEx */
+
 struct EnumLogFontEx
  {
   LogFont logfont;
@@ -1112,7 +1126,11 @@ struct EnumLogFontEx
   char script[32];
  };
 
+/* struct TextMetrics */
+
 struct TextMetrics;
+
+/* struct CharPlacement */
 
 struct CharPlacement
  {
