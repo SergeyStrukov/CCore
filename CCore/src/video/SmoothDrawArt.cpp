@@ -51,6 +51,11 @@ void DrawArt::block(Pane pane,DesktopColor color)
   buf.block_safe(buf.map(pane),color);
  }
 
+void DrawArt::block(Pane pane,ColorName cname,Clr alpha)
+ {
+  buf.block_safe(buf.map(pane),cname,alpha);
+ }
+
  // special
 
 void DrawArt::knob(MPoint p,MCoord len,ColorName cname)
@@ -76,6 +81,16 @@ void DrawArt::pathOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname)
 void DrawArt::loopOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname)
  {
   loop(dots,width,cname);
+ }
+
+void DrawArt::pathOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,ColorName cname)
+ {
+  path(dots,half_flag,width,cname);
+ }
+
+void DrawArt::loopOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,ColorName cname)
+ {
+  loop(dots,half_flag,width,cname);
  }
 
 } // namespace Smooth

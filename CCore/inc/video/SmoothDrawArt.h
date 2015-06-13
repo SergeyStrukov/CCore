@@ -54,6 +54,10 @@ class PathDots;
 
 class LoopDots;
 
+class HalfPathDots;
+
+class HalfLoopDots;
+
 class DrawArt;
 
 /* enum DotType */
@@ -987,8 +991,6 @@ class LoopDots : NoCopy
  {
    Collector<MPoint> buf;
    
-   bool back_cap = false ;
-   
   private:
    
    struct AddBuf
@@ -1041,7 +1043,7 @@ class LoopDots : NoCopy
           }
         else
           {
-           back_cap=true;
+           addCap(line.c,line.b,width);
           }
         
         return true;
@@ -1061,8 +1063,6 @@ class LoopDots : NoCopy
      
      if( line.first() )
        {
-        if( back_cap ) addCap(line.b,line.c,width);
-        
         while( line.next() )
           {
            addArc(line.a,line.b,line.c,width);
@@ -1095,6 +1095,228 @@ class LoopDots : NoCopy
    PtrLen<const MPoint> complete() { return Range_const(buf.flat()); }
  };
 
+/* class HalfPathDots */
+
+class HalfPathDots
+ {
+   Collector<MPoint> buf;
+   
+  private:
+   
+   struct AddBuf
+    {
+     Collector<MPoint> &buf;
+     
+     explicit AddBuf(Collector<MPoint> &buf_) : buf(buf_) {}
+     
+     void operator () (MPoint point) { buf.append_copy(point); }
+    };
+   
+   void addInCap(MPoint a,MPoint b,MCoord width)
+    {
+     AddLineInCap(a,b,width,AddBuf(buf));
+    }
+   
+   void addOutCap(MPoint a,MPoint b,MCoord width)
+    {
+     AddLineOutCap(a,b,width,AddBuf(buf));
+    }
+   
+   void addArc(MPoint a,MPoint b,MPoint c,MCoord width)
+    {
+     AddLineArc(a,b,c,width,AddBuf(buf));
+    }
+   
+   template <class R,class Map>
+   bool addDirect(R dots,Map map,MCoord width)
+    {
+     NextLine<R,Map> line(dots,map);
+     
+     if( line.first() )
+       {
+        addInCap(line.b,line.c,width);
+        
+        while( line.next() ) buf.append_copy(line.b);
+        
+        return true;
+       }
+     else
+       {
+        return false;
+       }
+    }
+   
+   template <class R,class Map>
+   void addBack(R dots,Map map,MCoord width)
+    {
+     NextLine<R,Map> line(dots,map);
+     
+     if( line.first() )
+       {
+        addOutCap(line.b,line.c,width);
+        
+        while( line.next() )
+          {
+           addArc(line.a,line.b,line.c,width);
+          }
+       }
+    }
+   
+  public:
+  
+   template <class R,class Map>
+   HalfPathDots(R dots,Map map,HalfFlag half_flag,MCoord width) // map(...) -> MPoint
+    {
+     if( !dots ) return;
+     
+     if( half_flag==HalfNeg )
+       {
+        if( addDirect(dots,map,width) )
+          {
+           addBack(Algon::BaseRangeAlgo<R>::Reverse(dots),map,width);
+          }
+       }
+     else
+       {
+        if( addDirect(Algon::BaseRangeAlgo<R>::Reverse(dots),map,width) )
+          {
+           addBack(dots,map,width);
+          }
+       }
+    }
+   
+   template <class R>
+   HalfPathDots(R dots,HalfFlag half_flag,MCoord width) : HalfPathDots(dots, [] (MPoint point) { return point; } ,half_flag,width) {} // MPoint
+   
+   ~HalfPathDots()
+    {
+    }
+   
+   PtrLen<const MPoint> complete() { return Range_const(buf.flat()); }
+ };
+
+/* class HalfLoopDots */
+
+class HalfLoopDots
+ {
+  Collector<MPoint> buf;
+  
+  MPoint last_a;
+  MPoint last_b;
+  MPoint last_c;
+  
+ private:
+  
+  struct AddBuf
+   {
+    Collector<MPoint> &buf;
+    
+    explicit AddBuf(Collector<MPoint> &buf_) : buf(buf_) {}
+    
+    void operator () (MPoint point) { buf.append_copy(point); }
+   };
+  
+  void addArc(MPoint a,MPoint b,MPoint c,MCoord width)
+   {
+    AddLineArc(a,b,c,width,AddBuf(buf));
+   }
+  
+  template <class R,class Map>
+  bool addDirect(R dots,Map map,MCoord width)
+   {
+    NextLine<R,Map> line(dots,map);
+    
+    if( line.first() )
+      {
+       MPoint o=line.b;
+       MPoint s=line.c;
+      
+       buf.append_copy(o);
+       
+       while( line.next() ) buf.append_copy(line.b);
+       
+       if( line.next(o) )
+         {
+          buf.append_copy(line.b);
+          
+          buf.append_copy(line.c);
+          
+          addArc(s,line.c,line.b,width);
+          
+          last_a=s;
+          last_b=line.c;
+          last_c=line.b;
+          
+          addArc(line.c,line.b,line.a,width);
+         }
+       else
+         {
+          buf.append_copy(line.c);
+         
+          addArc(s,line.c,line.b,width);
+         
+          last_a=s;
+          last_b=line.c;
+          last_c=line.b;
+         }
+       
+       return true;
+      }
+    else
+      {
+       return false;
+      }
+   }
+  
+  template <class R,class Map>
+  void addBack(R dots,Map map,MCoord width)
+   {
+    NextLine<R,Map> line(dots,map);
+    
+    if( line.first() )
+      {
+       while( line.next() )
+         {
+          addArc(line.a,line.b,line.c,width);
+         }
+       
+       addArc(last_a,last_b,last_c,width);
+      }
+   }
+  
+ public:
+ 
+  template <class R,class Map>
+  HalfLoopDots(R dots,Map map,HalfFlag half_flag,MCoord width) // map(...) -> MPoint
+   {
+    if( !dots ) return;
+    
+    if( half_flag==HalfNeg )
+      {
+       if( addDirect(dots,map,width) )
+         {
+          addBack(Algon::BaseRangeAlgo<R>::Reverse(dots),map,width);
+         }
+      }
+    else
+      {
+       if( addDirect(Algon::BaseRangeAlgo<R>::Reverse(dots),map,width) )
+         {
+          addBack(dots,map,width);
+         }
+      }
+   }
+  
+  template <class R>
+  HalfLoopDots(R dots,HalfFlag half_flag,MCoord width) : HalfLoopDots(dots, [] (MPoint point) { return point; } ,half_flag,width) {} // MPoint
+  
+  ~HalfLoopDots()
+   {
+   }
+  
+  PtrLen<const MPoint> complete() { return Range_const(buf.flat()); }
+ };
+
 /* class DrawArt */
 
 class DrawArt
@@ -1108,6 +1330,8 @@ class DrawArt
       void pixel_safe(Point p,DesktopColor color) { if( p>=Null && p<getSize() ) pixel(p,color); }
       
       void block_safe(Pane pane,DesktopColor color) { block(Inf(pane,getPane()),color); }
+      
+      void block_safe(Pane pane,ColorName cname,Clr alpha) { block(Inf(pane,getPane()),cname,alpha); }
     };
  
    WorkBuf buf;
@@ -1125,6 +1349,8 @@ class DrawArt
    void erase(DesktopColor color);
   
    void block(Pane pane,DesktopColor color);
+   
+   void block(Pane pane,ColorName cname,Clr alpha);
    
    // solid
    
@@ -1410,7 +1636,197 @@ class DrawArt
      
      loop(Range_const(temp.flat()),width,field);
     }
- 
+
+   // half line
+   
+   template <class R>
+   void path(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // MPoint
+    {
+     path(dots,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R>
+   void loop(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // MPoint
+    {
+     loop(dots,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R,class Field>
+   void path(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+    {
+     HalfPathDots path(dots,half_flag,width);
+     
+     solid(path.complete(),SolidAll,field);
+    }
+   
+   template <class R,class Field>
+   void loop(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+    {
+     HalfLoopDots loop(dots,half_flag,width);
+     
+     solid(loop.complete(),SolidAll,field);
+    }
+   
+   
+   template <class R,class Map>
+   void path(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // map(...) -> MPoint
+    {
+     path(dots,map,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void loop(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // map(...) -> MPoint
+    {
+     loop(dots,map,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map,class Field>
+   void path(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     HalfPathDots path(dots,map,half_flag,width);
+     
+     solid(path.complete(),SolidAll,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void loop(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     HalfLoopDots loop(dots,map,half_flag,width);
+     
+     solid(loop.complete(),SolidAll,field);
+    }
+   
+   // half curve
+
+   template <class R>
+   void curve(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // MPoint
+    {
+     curve(dots,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R>
+   void curveBreak(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // Dot
+    {
+     curveBreak(dots,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R>
+   void curveLoop(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // MPoint
+    {
+     curveLoop(dots,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R>
+   void curveBreakLoop(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // Dot
+    {
+     curveBreakLoop(dots,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R,class Field>
+   void curve(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurvePath(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Field>
+   void curveBreak(R dots,HalfFlag half_flag,MCoord width,const Field &field) // Dot
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakPath(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Field>
+   void curveLoop(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Field>
+   void curveBreakLoop(R dots,HalfFlag half_flag,MCoord width,const Field &field) // Dot
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+
+   template <class R,class Map>
+   void curve(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // map(...) -> MPoint
+    {
+     curve(dots,map,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void curveBreak(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // Dot , map(...) -> MPoint
+    {
+     curveBreak(dots,map,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void curveLoop(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // map(...) -> MPoint
+    {
+     curveLoop(dots,map,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map>
+   void curveBreakLoop(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // Dot , map(...) -> MPoint
+    {
+     curveBreakLoop(dots,map,half_flag,width,ConstantField(cname));
+    }
+   
+   template <class R,class Map,class Field>
+   void curve(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurvePath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreak(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakPath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveLoop(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreakLoop(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop(Range_const(temp.flat()),half_flag,width,field);
+    }
+
    // special
    
    void knob(MPoint p,MCoord len,ColorName cname);
@@ -1467,6 +1883,26 @@ class DrawArt
      MPoint temp[sizeof ... (TT)]={ tt... };
      
      loopOf(Range_const(temp),width,cname);
+    }
+   
+   void pathOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,ColorName cname);
+   
+   void loopOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,ColorName cname);
+   
+   template <class ... TT>
+   void pathOf(HalfFlag half_flag,MCoord width,ColorName cname,TT ... tt)
+    {
+     MPoint temp[sizeof ... (TT)]={ tt... };
+     
+     pathOf(Range_const(temp),half_flag,width,cname);
+    }
+   
+   template <class ... TT>
+   void loopOf(HalfFlag half_flag,MCoord width,ColorName cname,TT ... tt)
+    {
+     MPoint temp[sizeof ... (TT)]={ tt... };
+     
+     loopOf(Range_const(temp),half_flag,width,cname);
     }
  };
   

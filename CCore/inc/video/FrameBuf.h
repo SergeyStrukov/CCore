@@ -81,6 +81,8 @@ class FrameBuf : protected ColorPlane
    
    static void HLine(Raw *ptr,Coord len,RawColor color);
    
+   static void HLine(Raw *ptr,Coord len,Blender blender);
+   
    static void Save(Raw *ptr,Coord len,RawColor buf[/* len */]);
    
    static void Load(Raw *ptr,Coord len,const RawColor buf[/* len */]);
@@ -143,6 +145,8 @@ class FrameBuf : protected ColorPlane
   
    void block(Pane pane,RawColor color);
    
+   void block(Pane pane,ColorName cname,Clr alpha);
+   
    void save(Pane pane,RawColor buf[/* pane.getArea() */]);
   
    void load(Pane pane,const RawColor buf[/* pane.getArea() */]);
@@ -160,6 +164,12 @@ template <class RawColor>
 void FrameBuf<RawColor>::HLine(Raw *ptr,Coord len,RawColor color)
  {
   for(; len>0 ;len--,ptr=NextX(ptr)) color.copyTo(ptr);
+ }
+
+template <class RawColor> 
+void FrameBuf<RawColor>::HLine(Raw *ptr,Coord len,Blender blender)
+ {
+  for(; len>0 ;len--,ptr=NextX(ptr)) RawColor::BlendTo(blender,ptr);
  }
 
 template <class RawColor> 
@@ -233,6 +243,23 @@ void FrameBuf<RawColor>::block(Pane pane,RawColor color)
     }
   
   HLine(ptr,pane.dx,color);
+ }
+
+template <class RawColor> 
+void FrameBuf<RawColor>::block(Pane pane,ColorName cname,Clr alpha)
+ {
+  if( !pane ) return;
+  
+  Blender blender(alpha,cname);
+  
+  Raw *ptr=place(pane.getBase());
+  
+  for(; pane.dy>1 ;pane.dy--,ptr=nextY(ptr))
+    {
+     HLine(ptr,pane.dx,blender);
+    }
+  
+  HLine(ptr,pane.dx,blender);
  }
 
 template <class RawColor> 

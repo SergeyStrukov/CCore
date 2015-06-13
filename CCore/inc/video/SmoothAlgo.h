@@ -225,9 +225,11 @@ void AddLineCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
 
   Rotate rotate(b-a);
   
-  MPoint p=a+rotate(0,radius);
-  MPoint q=a+rotate(-radius,0);
-  MPoint r=a+rotate(0,-radius);
+  MPoint d=rotate(0,radius);
+  
+  MPoint p=a+d;
+  MPoint q=a+Rotate90(d);
+  MPoint r=a-d;
   
   func(p);
   
@@ -238,6 +240,66 @@ void AddLineCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
   PutWithoutFirst(driver->getArc(),func);
   
   driver->arc(q,r,a,radius,MaxCapFineness);
+  
+  PutWithoutFirst(driver->getArc(),func);
+ }
+
+/* AddLineInCap() */
+
+template <class FuncInit>
+void AddLineInCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+
+  Rotate rotate(b-a);
+  
+  MPoint d=rotate(0,radius);
+  MPoint d2=d/2;
+  
+  MPoint p=a+d;
+  MPoint c=a+d2;
+  MPoint q=c+Rotate90(d2);
+  MPoint r=a;
+  
+  func(p);
+  
+  StackObject<ArcDriver> driver;
+  
+  driver->arc(p,q,c,radius/2,MaxCapFineness);
+  
+  PutWithoutFirst(driver->getArc(),func);
+  
+  driver->arc(q,r,c,radius/2,MaxCapFineness);
+  
+  PutWithoutFirst(driver->getArc(),func);
+ }
+
+/* AddLineOutCap() */
+
+template <class FuncInit>
+void AddLineOutCap(MPoint a,MPoint b,MCoord radius,FuncInit func_init)
+ {
+  FunctorTypeOf<FuncInit> func(func_init);
+
+  Rotate rotate(b-a);
+  
+  MPoint d=rotate(0,-radius);
+  MPoint d2=d/2;
+  
+  MPoint p=a;
+  MPoint c=a+d2;
+  MPoint q=c-Rotate90(d2);
+  MPoint r=a+d;
+  
+  func(p);
+  
+  StackObject<ArcDriver> driver;
+  
+  driver->arc(p,q,c,radius/2,MaxCapFineness);
+  
+  PutWithoutFirst(driver->getArc(),func);
+  
+  driver->arc(q,r,c,radius/2,MaxCapFineness);
   
   PutWithoutFirst(driver->getArc(),func);
  }

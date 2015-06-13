@@ -29,6 +29,14 @@ enum SolidFlag
   SolidAll
  };
 
+/* enum HalfFlag */
+
+enum HalfFlag // clock-conterwise
+ {
+  HalfPos, 
+  HalfNeg,
+ };
+
 /* classes */
 
 struct CircleSpline;
