@@ -891,17 +891,9 @@ enum SysParamAction : unsigned
   SPA_getWorkArea = 0x0030
  };
 
-/* UserDefault */
-
-const int UserDefault = (int)0x80000000 ;
-
 /* InvalidColor */
 
 const Color32 InvalidColor = 0xFFFFFFFF ;
-
-/* GDIError */
-
-const unsigned GDIError = 0xFFFFFFFF ;
 
 /* WheelDelta */
 
@@ -1031,7 +1023,7 @@ struct TrackMouseDesc
   ushortlen_t cb;
   unsigned flags;
   HWindow hWnd;
-  unsigned hover_time;
+  timeout_t hover_time;
  };
 
 /* struct PaintData */
@@ -1149,13 +1141,13 @@ struct CharPlacement
 /* helper functions                                                                     */ 
 /*--------------------------------------------------------------------------------------*/
 
-inline unsigned short HiWord(unsigned val) { return (unsigned short)(val>>16); }
+inline unsigned short HiWord(unsigned long val) { return (unsigned short)(val>>16); }
 
-inline unsigned short LoWord(unsigned val) { return (unsigned short)(val    ); }
+inline unsigned short LoWord(unsigned long val) { return (unsigned short)(val    ); }
 
-inline short SHiWord(unsigned val) { return (short)HiWord(val); }
+inline short SHiWord(unsigned long val) { return (short)HiWord(val); }
 
-inline short SLoWord(unsigned val) { return (short)LoWord(val); }
+inline short SLoWord(unsigned long val) { return (short)LoWord(val); }
 
 inline const char * MakeIntResource(IntRes res) { return (const char *)(unsigned long)res; }
 
@@ -1195,7 +1187,7 @@ bool_t WIN64_API PeekMessageA(Msg *msg,
 
 bool_t WIN64_API WaitMessage(void);
 
-options_t WIN64_API MsgWaitForMultipleObjects(ulen_t hcount,
+options_t WIN64_API MsgWaitForMultipleObjects(ushortlen_t hcount,
                                               handle_t hlist[/* hcount */],
                                               bool_t wait_all,
                                               timeout_t timeout,
@@ -1328,9 +1320,9 @@ HFont WIN64_API CreateFontA(int dy,
                             const char *typeface);
 
 using FontEnumProc = int (*)(const EnumLogFontEx *logfont,
-                                            const TextMetrics *metrics,
-                                            unsigned font_type,
-                                            MsgLParam lParam) ;
+                             const TextMetrics *metrics,
+                             unsigned font_type,
+                             MsgLParam lParam) ;
 
 int WIN64_API EnumFontFamiliesExA(HGDevice hGD,
                                   LogFont *logfont,

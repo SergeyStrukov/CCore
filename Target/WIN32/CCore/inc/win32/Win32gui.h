@@ -1031,7 +1031,7 @@ struct TrackMouseDesc
   ulen_t cb;
   unsigned flags;
   HWindow hWnd;
-  unsigned hover_time;
+  timeout_t hover_time;
  };
 
 /* struct PaintData */
