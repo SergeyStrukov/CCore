@@ -391,6 +391,8 @@ struct Pane
   
   Point getSize() const { return Point(dx,dy); }
   
+  MPoint getMSize() const { return Point(dx-1,dy-1); }
+  
   Point getLim() const { return Point(IntAdd(x,dx),IntAdd(y,dy)); }
   
   AreaType getArea() const { return Area(dx,dy); }
