@@ -42,6 +42,8 @@ R PrefixWith(R r,R suffix)
 
 struct Dot;
 
+class DotShift;
+
 template <class R> class DotBreaker;
 
 class FieldPlotBase;
@@ -91,6 +93,21 @@ struct Dot
     Default_no_throw = true,
     Copy_no_throw = true
    };
+ };
+
+/* class DotShift */
+
+class DotShift
+ {
+   MPoint shift;
+   
+  public:
+   
+   explicit DotShift(MPoint shift_) : shift(shift_) {}
+   
+   MPoint operator () (Dot dot) const { return dot.point+shift; }
+   
+   MPoint operator () (MPoint point) const { return point+shift; }
  };
 
 /* class DotBreaker<R> */
