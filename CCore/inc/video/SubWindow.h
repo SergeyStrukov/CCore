@@ -213,6 +213,8 @@ class WinList : NoCopy , public SubWindowHost , public UserInput
    bool has_focus = false ;
    bool is_opened = false ;
    
+   bool enable_tab = false ;
+   
    using Algo = DLink<SubWindow>::LinearAlgo<&SubWindow::link> ;
    
    Algo::FirstLast list;
@@ -239,6 +241,7 @@ class WinList : NoCopy , public SubWindowHost , public UserInput
    
    void moveBottom(SubWindow *sub_win);
    
+   
    void insTop(SubWindow &sub_win) { insTop(&sub_win); }
    
    void insBottom(SubWindow &sub_win) { insBottom(&sub_win); }
@@ -248,6 +251,54 @@ class WinList : NoCopy , public SubWindowHost , public UserInput
    void moveTop(SubWindow &sub_win) { moveTop(&sub_win); }
    
    void moveBottom(SubWindow &sub_win) { moveBottom(&sub_win); }
+   
+   // multiple insert
+   
+   template <class ... TT>
+   void insTop(SubWindow *sub_win,TT * ... tt)
+    {
+     insTop(tt...);
+     
+     insTop(sub_win);
+    }
+   
+   template <class ... TT>
+   void insTop(SubWindow &sub_win,TT & ... tt)
+    {
+     insTop(tt...);
+     
+     insTop(sub_win);
+    }
+   
+   template <class ... TT>
+   void insBottom(SubWindow *sub_win,TT * ... tt)
+    {
+     insBottom(sub_win);
+     
+     insBottom(tt...);
+    }
+   
+   template <class ... TT>
+   void insBottom(SubWindow &sub_win,TT & ... tt)
+    {
+     insBottom(sub_win);
+     
+     insBottom(tt...);
+    }
+   
+   // focus
+   
+   SubWindow * getFocus() const { return has_focus?focus:0; }
+   
+   void focusTop();
+   
+   void focusBottom();
+   
+   void focusNext();
+   
+   void focusPrev();
+   
+   void enableTabFocus(bool enable_tab_=true) { enable_tab=enable_tab_; }
    
    // draw
    
@@ -345,7 +396,44 @@ void WinList::react_Keyboard(UserAction action,Func func)
  {
   if( focus )
     {
-     focus->react(action);
+     if( enable_tab )
+       {
+        struct React
+         {
+          WinList *list;
+          SubWindow *sub_win;
+          
+          React(WinList *list_,SubWindow *sub_win_) : list(list_),sub_win(sub_win_) {}
+          
+          void react_Key(VKey vkey,KeyMod kmod)
+           {
+            if( vkey==VKey_Tab )
+              {
+               if( kmod&KeyMod_Shift )
+                 {
+                  list->focusPrev();
+                 }
+               else
+                 {
+                  list->focusNext();
+                 }
+              }
+            else
+              {
+               sub_win->put_Key(vkey,kmod);
+              }
+           }
+         };
+        
+        React obj(this,focus);
+        SubWindow *sub_win=focus;
+       
+        action.dispatch(obj, [sub_win] (UserAction action) { sub_win->react(action); } );
+       }
+     else
+       {
+        focus->react(action);
+       }
     }
   else
     {

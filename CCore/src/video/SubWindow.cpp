@@ -86,6 +86,40 @@ void WinList::moveBottom(SubWindow *sub_win)
   list.ins_last(sub_win);
  }
 
+ // focus
+
+void WinList::focusTop()
+ {
+  if( SubWindow *sub_win=list.first ) sub_win->setFocus();
+ }
+
+void WinList::focusBottom()
+ {
+  if( SubWindow *sub_win=list.last ) sub_win->setFocus();
+ }
+
+void WinList::focusNext()
+ {
+  if( focus )
+    {
+     if( SubWindow *sub_win=Algo::Link(focus).next )
+       sub_win->setFocus();
+     else
+       focusTop();
+    }
+ }
+
+void WinList::focusPrev()
+ {
+  if( focus )
+    {
+     if( SubWindow *sub_win=Algo::Link(focus).prev )
+       sub_win->setFocus();
+     else
+       focusBottom();
+    }
+ }
+
  // draw
 
 void WinList::draw(const DrawBuf &buf,bool drag_active) const
