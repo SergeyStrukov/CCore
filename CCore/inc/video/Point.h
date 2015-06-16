@@ -478,6 +478,10 @@ inline Pane Extent(Point base,Coord dx,Coord dy) { return Extent(base.x,base.y,d
 
 inline Pane Extent(Point base,Point size) { return Extent(base.x,base.y,size.x,size.y); }
 
+inline Pane Extent(Point base,Coord dxy) { return Extent(base,dxy,dxy); }
+
+inline Pane Extent(Coord x,Coord y,Coord dxy) { return Extent(x,y,dxy,dxy); }
+
 
 inline Pane Envelope(Point a,Point b) { return Pane(Inf(a,b),Sup(a,b)+Point(1,1)); }
 
