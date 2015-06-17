@@ -54,6 +54,7 @@ struct SubWindowHost
 class SubWindow : public MemBase_nocopy , public UserInput
  {
    DLink<SubWindow> link;
+   WinList *list = 0 ;
  
    Pane place; // relative parent window coords
   
@@ -66,7 +67,7 @@ class SubWindow : public MemBase_nocopy , public UserInput
   
    explicit SubWindow(SubWindowHost &host_) : host(host_) {}
    
-   virtual ~SubWindow() {}
+   virtual ~SubWindow();
    
    // methods
    
@@ -228,6 +229,8 @@ class WinList : NoCopy , public SubWindowHost , public UserInput
   public: 
    
    explicit WinList(SubWindow &parent_) : parent(parent_) {}
+   
+   ~WinList();
    
    // methods
    

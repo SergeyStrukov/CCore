@@ -15,8 +15,17 @@
 
 #include <CCore/inc/video/SubWindow.h>
 
+#include <CCore/inc/Exception.h>
+
 namespace CCore {
 namespace Video {
+
+/* class SubWindow */
+
+SubWindow::~SubWindow()
+ {
+  if( list ) list->del(this);
+ }
 
 /* class WinList */
 
@@ -34,25 +43,51 @@ SubWindow * WinList::pick(Point point) const
   return find(point);
  }
 
+WinList::~WinList()
+ {
+  for(auto cur=list.start(); +cur ;++cur) cur->list=0;
+ }
+
  // methods
 
 void WinList::insTop(SubWindow *sub_win)
  {
+  if( sub_win->list )
+    {
+     Printf(Exception,"CCore::Video::WinList::insTop(...) : sub-window is already included in a list");
+    }
+  
   list.ins_first(sub_win);
+  
+  sub_win->list=this;
   
   if( is_opened ) sub_win->open();
  }
 
 void WinList::insBottom(SubWindow *sub_win)
  {
+  if( sub_win->list )
+    {
+     Printf(Exception,"CCore::Video::WinList::insBottom(...) : sub-window is already included in a list");
+    }
+  
   list.ins_last(sub_win);
+  
+  sub_win->list=this;
   
   if( is_opened ) sub_win->open();
  }
 
 void WinList::del(SubWindow *sub_win)
  {
+  if( sub_win->list!=this )
+    {
+     Printf(Exception,"CCore::Video::WinList::del(...) : sub-window from another list");
+    }
+  
   list.del(sub_win);
+  
+  sub_win->list=0;
   
   if( sub_win==focus ) 
     {
@@ -76,12 +111,22 @@ void WinList::del(SubWindow *sub_win)
 
 void WinList::moveTop(SubWindow *sub_win)
  {
+  if( sub_win->list!=this )
+    {
+     Printf(Exception,"CCore::Video::WinList::moveTop(...) : sub-window from another list");
+    }
+  
   list.del(sub_win);
   list.ins_first(sub_win);
  }
 
 void WinList::moveBottom(SubWindow *sub_win)
  {
+  if( sub_win->list!=this )
+    {
+     Printf(Exception,"CCore::Video::WinList::moveBottom(...) : sub-window from another list");
+    }
+  
   list.del(sub_win);
   list.ins_last(sub_win);
  }
