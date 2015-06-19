@@ -22,6 +22,22 @@
 namespace CCore {
 namespace Video {
 
+/* functions */
+
+inline Clr Linear(Clr a,Clr b,uint16 c,uint16 d)
+ {
+  if( a<b ) return Clr( a+(uint32(b-a)*c)/d );
+  
+  if( a==b ) return a;
+  
+  return Clr( a-(uint32(a-b)*c)/d );
+ }
+
+inline ColorName Linear(ColorName a,ColorName b,uint16 c,uint16 d)
+ {
+  return RGBColor(Linear(RedOf(a),RedOf(b),c,d),Linear(GreenOf(a),GreenOf(b),c,d),Linear(BlueOf(a),BlueOf(b),c,d));
+ }
+
 /* classes */
 
 struct AlphaColorName;
@@ -31,6 +47,8 @@ class ConstantField;
 class ConstantAlphaField;
 
 class TwoField;
+
+class RadioField;
 
 /* struct AlphaColorName */
 
@@ -88,55 +106,39 @@ class TwoField
      return Algo::Bits-Algo::CountZeroMSB(D);
     }
    
-   static Clr Lin(Clr a,Clr b,uint16 p,uint16 d)
-    {
-     if( a<b ) return Clr( a+(uint32(b-a)*p)/d );
-     
-     if( a==b ) return a;
-     
-     return Clr( a-(uint32(a-b)*p)/d );
-    }
+  public:
+  
+   TwoField(MPoint a,ColorName ca,MPoint b,ColorName cb); 
+  
+   ColorName operator () (MPoint point) const;
+ };
+
+/* class RadioField */
+
+class RadioField
+ {
+   MPoint center;
+   MCoord radius;
+   ColorName c;
+   ColorName a;
    
-   static ColorName Lin(ColorName ca,ColorName cb,uint16 p,uint16 d)
+   uint16 d;
+   unsigned shift;
+   
+  private: 
+   
+   static unsigned Bits(uMCoord r)
     {
-     return RGBColor(Lin(RedOf(ca),RedOf(cb),p,d),Lin(GreenOf(ca),GreenOf(cb),p,d),Lin(BlueOf(ca),BlueOf(cb),p,d));
+     using Algo = UIntFunc<uMCoord> ;
+    
+     return Algo::Bits-Algo::CountZeroMSB(r);
     }
    
   public:
   
-   TwoField(MPoint a_,ColorName ca_,MPoint b_,ColorName cb_) 
-    : a(a_),ca(ca_),b(b_),cb(cb_) 
-    { 
-     b-=a; 
-     
-     D=Prod(b,b);
-     
-     IntGuard( D>0 );
-     
-     unsigned n=Bits(D);
-     
-     if( n>16 )
-       {
-        shift=n-16;
-        d=uint16(D>>shift);
-       }
-     else
-       {
-        shift=0;
-        d=uint16(D);
-       }
-    }
-  
-   ColorName operator () (MPoint point) const
-    {
-     DCoord P=Prod(point-a,b);
-     
-     if( P<=0 ) return ca;
-     
-     if( P>=D ) return cb;
-     
-     return Lin(ca,cb,uint16(uDCoord(P)>>shift),d);
-    }
+   RadioField(MPoint center,MCoord radius,ColorName c,ColorName a);
+   
+   ColorName operator () (MPoint point) const;
  };
 
 } // namespace Video
