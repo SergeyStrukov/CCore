@@ -94,17 +94,7 @@ class TwoField
    ColorName cb;
    
    DCoord D;
-   uint16 d;
-   unsigned shift;
-   
-  private:
-   
-   static unsigned Bits(uDCoord D)
-    {
-     using Algo = UIntFunc<uDCoord> ;
-    
-     return Algo::Bits-Algo::CountZeroMSB(D);
-    }
+   DownBits<uint16> d;
    
   public:
   
@@ -122,17 +112,7 @@ class RadioField
    ColorName c;
    ColorName a;
    
-   uint16 d;
-   unsigned shift;
-   
-  private: 
-   
-   static unsigned Bits(uMCoord r)
-    {
-     using Algo = UIntFunc<uMCoord> ;
-    
-     return Algo::Bits-Algo::CountZeroMSB(r);
-    }
+   DownBits<uint16> d;
    
   public:
   

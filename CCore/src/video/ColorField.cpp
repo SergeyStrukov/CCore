@@ -34,18 +34,7 @@ TwoField::TwoField(MPoint a_,ColorName ca_,MPoint b_,ColorName cb_)
   
   IntGuard( D>0 );
   
-  unsigned n=Bits(D);
-  
-  if( n>16 )
-    {
-     shift=n-16;
-     d=uint16(D>>shift);
-    }
-  else
-    {
-     shift=0;
-     d=uint16(D);
-    }
+  d.init(uDCoord(D));
  }
 
 ColorName TwoField::operator () (MPoint point) const
@@ -56,7 +45,7 @@ ColorName TwoField::operator () (MPoint point) const
   
   if( P>=D ) return cb;
   
-  return Linear(ca,cb,uint16(uDCoord(P)>>shift),d);
+  return Linear(ca,cb,d(uDCoord(P)),d);
  }
 
 /* class RadioField */
@@ -67,20 +56,9 @@ RadioField::RadioField(MPoint center_,MCoord radius_,ColorName c_,ColorName a_)
    c(c_),
    a(a_) 
  {
-  uMCoord r=uMCoord(radius);
+  IntGuard( radius>0 );
   
-  unsigned n=Bits(r);
-  
-  if( n>16 )
-    {
-     shift=n-16;
-     d=uint16(r>>shift);
-    }
-  else
-    {
-     shift=0;
-     d=uint16(r);
-    }
+  d.init(uMCoord(radius));
  }
 
 ColorName RadioField::operator () (MPoint point) const
@@ -89,7 +67,7 @@ ColorName RadioField::operator () (MPoint point) const
   
   if( len>=radius ) return a;
   
-  return Linear(c,a,uint16( uMCoord(len)>>shift ),d);
+  return Linear(c,a,d(uMCoord(len)),d);
  }
 
 } // namespace Video

@@ -65,6 +65,14 @@ UInt IntAbs(SInt a)
   return IntAbs<SInt,UInt>(a,0); 
  }
 
+template <class UInt>
+unsigned ValueBits(UInt a)
+ {
+  using Algo = UIntFunc<UInt> ;
+ 
+  return Algo::Bits-Algo::CountZeroMSB(a);
+ }
+
 /* functions */
 
  //
@@ -107,6 +115,63 @@ inline sint16 IntSub(sint16 a,sint16 b) { return From32To16(sint32(a)-sint32(b))
 inline sint16 IntMul(sint16 a,sint16 b) { return From32To16(sint32(a)*sint32(b)); }
 
 inline sint16 IntDiv(sint16 a,sint16 b) { IntGuard( b!=0 ); return From32To16(sint32(a)/sint32(b)); }
+
+/* classes */
+
+template <class UInt> class DownBits;
+
+/* class DownBits<UInt> */
+
+template <class UInt>
+class DownBits
+ {
+   static_assert( Meta::IsUInt<UInt>::Ret ,"CCore::Video::DownBits<UInt> : UInt must be an unsigned integral type");
+   
+   static const unsigned MaxBits = Meta::UIntBits<UInt>::Ret ;
+  
+   UInt value;
+   unsigned shift;
+   
+  public: 
+   
+   DownBits()
+    {
+     value=0;
+     shift=0;
+    }
+   
+   template <class UInt1>
+   explicit DownBits(UInt1 b) { init(b); }
+   
+   operator UInt() const { return value; }
+   
+   template <class UInt1>
+   void init(UInt1 b)
+    {
+     static_assert( Meta::IsUInt<UInt1>::Ret ,"CCore::Video::DownBits<...>::init(UInt1) : UInt1 must be an unsigned integral type");
+     
+     unsigned bits=ValueBits(b);
+     
+     if( bits<=MaxBits )
+       {
+        shift=0;
+        value=UInt(b);
+       }
+     else
+       {
+        shift=bits-MaxBits;
+        value=UInt(b>>shift);
+       }
+    }
+   
+   template <class UInt1>
+   UInt operator () (UInt1 a) const
+    {
+     static_assert( Meta::IsUInt<UInt1>::Ret ,"CCore::Video::DownBits<...>::operator () (UInt1) : UInt1 must be an unsigned integral type");
+     
+     return UInt(a>>shift);
+    }
+ };
 
 } // namespace Video
 } // namespace CCore
