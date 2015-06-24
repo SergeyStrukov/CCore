@@ -43,6 +43,19 @@ constexpr T Sq(T x) { return x*x; }
 template <class T>
 T Diff(T &t,T a) { T ret(a-t); t=a; return ret; }
  
+template <class T>
+bool Change(T &obj,T val)
+ {
+  if( obj!=val )
+    {
+     obj=val;
+    
+     return true;
+    }
+  
+  return false;
+ }
+
 /* functions */
 
 template <class UInt,class S>

@@ -125,6 +125,28 @@ int d3=Diff(var,x3); // d3 &lt;- x3-x2 , var &lt;- x3
 </pre>
 
 <p>
+<b>Change()</b> assign a new value if it is different than the old value of the object.
+If this happens the return value is <b>true</b>, otherwise &mdash; <b>false</b>. 
+</p>
+
+<pre>
+
+template &lt;class T&gt;
+bool <span class="Att">Change</span>(T &amp;obj,T val)
+ {
+  if( obj!=val )
+    {
+     obj=val;
+    
+     return true;
+    }
+  
+  return false;
+ }
+
+</pre>
+
+<p>
 <b>Bit...()</b> &mdash; four bit manipulation functions: 
 </p>
 

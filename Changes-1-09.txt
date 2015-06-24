@@ -57,3 +57,8 @@ gadget/UIntFunc.h
 gadget/UIntFunc.h
 
   SqRoot() is added.
+
+gadget/UtilFunc.h
+
+  Change() is added.
+
