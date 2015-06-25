@@ -47,6 +47,21 @@ const Coord MinCoord = -32768 ;
 
 inline constexpr AreaType Area(Coord dx,Coord dy) { return AreaType(dx)*AreaType(dy); }
 
+template <class UInt>
+MCoord Position(UInt P,UInt Q,MCoord a,MCoord b)
+ {
+  if( P>=Q ) return b;
+  
+  DownBits<uMCoord> q(Q);
+  
+  uMCoord p=q(P);
+  
+  if( a<b )
+    return IntMovePos(a,uMCoord( (uDCoord(p)*IntDist(a,b))/q ));
+  else
+    return IntMoveNeg(a,uMCoord( (uDCoord(p)*IntDist(b,a))/q ));
+ }
+
 /* classes */ 
 
 struct Coordinate;
@@ -183,6 +198,24 @@ struct BasePoint
   friend T operator << (T p,unsigned s) { return T(IntLShift(p.x,s),IntLShift(p.y,s)); }
   
   friend T operator >> (T p,unsigned s) { return T(IntRShift(p.x,s),IntRShift(p.y,s)); }
+
+  
+  T addX(Int dx) const { return T(IntAdd(x,dx),y); }
+  
+  T addY(Int dy) const { return T(x,IntAdd(y,dy)); }
+  
+  T addXY(Int dxy) const { return T(IntAdd(x,dxy),IntAdd(y,dxy)); }
+  
+  T addXsubY(Int dxy) const { return T(IntAdd(x,dxy),IntSub(y,dxy)); }
+  
+  
+  T subX(Int dx) const { return T(IntSub(x,dx),y); }
+  
+  T subY(Int dy) const { return T(x,IntSub(y,dy)); }
+  
+  T subXY(Int dxy) const { return T(IntSub(x,dxy),IntSub(y,dxy)); }
+  
+  T subXaddY(Int dxy) const { return T(IntSub(x,dxy),IntAdd(y,dxy)); }
   
   // derived operations
   
@@ -215,6 +248,8 @@ struct BasePoint
   friend T Sup(T a,T b) { return T(Max(a.x,b.x),Max(a.y,b.y)); }
   
   friend T Inf(T a,T b) { return T(Min(a.x,b.x),Min(a.y,b.y)); }
+  
+  static T Diag(Int xy) { return T(xy,xy); }
   
   // print object
   
@@ -285,6 +320,8 @@ inline MCoord Fraction(MCoord value,unsigned prec=0) // prec <= MPoint::Precisio
  {
   return IntLShift(value,MPoint::Precision-prec);
  }
+
+inline Coord RoundUpLen(MCoord dx) { return IntRShift(dx+MPoint::One-1,MPoint::Precision); }
 
 /* Prod() */
 
@@ -390,8 +427,6 @@ struct Pane
   Point getBase() const { return Point(x,y); }
   
   Point getSize() const { return Point(dx,dy); }
-  
-  MPoint getMSize() const { return Point(dx-1,dy-1); }
   
   Point getLim() const { return Point(IntAdd(x,dx),IntAdd(y,dy)); }
   
