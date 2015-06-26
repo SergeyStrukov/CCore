@@ -1850,10 +1850,14 @@ class DrawArt
    
    void ball(MPoint center,MCoord radius,ColorName cname);
    
+   void ball(MPoint center,MCoord radius,TwoField field);
+   
+   void ball(MPoint center,MCoord radius,RadioField field);
+   
    void circle(MPoint center,MCoord radius,MCoord width,ColorName cname);
 
    template <class Field>
-   void knob(MPoint p,MCoord len,const Field &field)
+   void knobField(MPoint p,MCoord len,const Field &field)
     {
      MPoint temp[]=
       {
@@ -1867,7 +1871,7 @@ class DrawArt
     }
    
    template <class Field>
-   void ball(MPoint center,MCoord radius,const Field &field)
+   void ballField(MPoint center,MCoord radius,const Field &field)
     {
      LineRound obj(center,radius);
      
@@ -1875,7 +1879,7 @@ class DrawArt
     }
    
    template <class Field>
-   void circle(MPoint center,MCoord radius,MCoord width,const Field &field)
+   void circleField(MPoint center,MCoord radius,MCoord width,const Field &field)
     {
      LineRound obj(center,radius);
      

@@ -60,17 +60,27 @@ void DrawArt::block(Pane pane,ColorName cname,Clr alpha)
 
 void DrawArt::knob(MPoint p,MCoord len,ColorName cname)
  {
-  knob(p,len,ConstantField(cname));
+  knobField(p,len,ConstantField(cname));
  }
 
 void DrawArt::ball(MPoint center,MCoord radius,ColorName cname)
  {
-  ball(center,radius,ConstantField(cname));
+  ballField(center,radius,ConstantField(cname));
+ }
+
+void DrawArt::ball(MPoint center,MCoord radius,TwoField field)
+ {
+  ballField(center,radius,field);
+ }
+
+void DrawArt::ball(MPoint center,MCoord radius,RadioField field)
+ {
+  ballField(center,radius,field);
  }
 
 void DrawArt::circle(MPoint center,MCoord radius,MCoord width,ColorName cname)
  {
-  circle(center,radius,width,ConstantField(cname));
+  circleField(center,radius,width,ConstantField(cname));
  }
 
 void DrawArt::pathOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname)
