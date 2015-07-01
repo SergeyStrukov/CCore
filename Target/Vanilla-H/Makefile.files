@@ -251,6 +251,21 @@ obj/ScanProxy.o \
 obj/ScanTools.o \
 obj/Scanf.o \
 obj/Sem.o \
+obj/ShapeLib1.o \
+obj/ShapeLib10.o \
+obj/ShapeLib11.o \
+obj/ShapeLib12.o \
+obj/ShapeLib13.o \
+obj/ShapeLib14.o \
+obj/ShapeLib15.o \
+obj/ShapeLib2.o \
+obj/ShapeLib3.o \
+obj/ShapeLib4.o \
+obj/ShapeLib5.o \
+obj/ShapeLib6.o \
+obj/ShapeLib7.o \
+obj/ShapeLib8.o \
+obj/ShapeLib9.o \
 obj/ShortSort.o \
 obj/Signal.o \
 obj/SimpleArray.o \
@@ -323,6 +338,7 @@ obj/UserAction.o \
 obj/UtilFunc.o \
 obj/VideoConsole.o \
 obj/VideoDevice.o \
+obj/WindowLib.o \
 obj/WindowReport.o \
 obj/XPoint.o \
 
@@ -580,6 +596,21 @@ obj/ScanProxy.s \
 obj/ScanTools.s \
 obj/Scanf.s \
 obj/Sem.s \
+obj/ShapeLib1.s \
+obj/ShapeLib10.s \
+obj/ShapeLib11.s \
+obj/ShapeLib12.s \
+obj/ShapeLib13.s \
+obj/ShapeLib14.s \
+obj/ShapeLib15.s \
+obj/ShapeLib2.s \
+obj/ShapeLib3.s \
+obj/ShapeLib4.s \
+obj/ShapeLib5.s \
+obj/ShapeLib6.s \
+obj/ShapeLib7.s \
+obj/ShapeLib8.s \
+obj/ShapeLib9.s \
 obj/ShortSort.s \
 obj/Signal.s \
 obj/SimpleArray.s \
@@ -652,6 +683,7 @@ obj/UserAction.s \
 obj/UtilFunc.s \
 obj/VideoConsole.s \
 obj/VideoDevice.s \
+obj/WindowLib.s \
 obj/WindowReport.s \
 obj/XPoint.s \
 
@@ -909,6 +941,21 @@ obj/ScanProxy.dep \
 obj/ScanTools.dep \
 obj/Scanf.dep \
 obj/Sem.dep \
+obj/ShapeLib1.dep \
+obj/ShapeLib10.dep \
+obj/ShapeLib11.dep \
+obj/ShapeLib12.dep \
+obj/ShapeLib13.dep \
+obj/ShapeLib14.dep \
+obj/ShapeLib15.dep \
+obj/ShapeLib2.dep \
+obj/ShapeLib3.dep \
+obj/ShapeLib4.dep \
+obj/ShapeLib5.dep \
+obj/ShapeLib6.dep \
+obj/ShapeLib7.dep \
+obj/ShapeLib8.dep \
+obj/ShapeLib9.dep \
 obj/ShortSort.dep \
 obj/Signal.dep \
 obj/SimpleArray.dep \
@@ -981,6 +1028,7 @@ obj/UserAction.dep \
 obj/UtilFunc.dep \
 obj/VideoConsole.dep \
 obj/VideoDevice.dep \
+obj/WindowLib.dep \
 obj/WindowReport.dep \
 obj/XPoint.dep \
 
@@ -1747,6 +1795,51 @@ obj/Scanf.o : ../../CCore/src/Scanf.cpp
 obj/Sem.o : ../../HCore/CCore/src/task/Sem.cpp
 	$(CC) $(CCOPT) $< -o $@
 
+obj/ShapeLib1.o : ../../CCore/src/video/ShapeLib1.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib10.o : ../../CCore/src/video/ShapeLib10.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib11.o : ../../CCore/src/video/ShapeLib11.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib12.o : ../../CCore/src/video/ShapeLib12.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib13.o : ../../CCore/src/video/ShapeLib13.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib14.o : ../../CCore/src/video/ShapeLib14.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib15.o : ../../CCore/src/video/ShapeLib15.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib2.o : ../../CCore/src/video/ShapeLib2.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib3.o : ../../CCore/src/video/ShapeLib3.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib4.o : ../../CCore/src/video/ShapeLib4.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib5.o : ../../CCore/src/video/ShapeLib5.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib6.o : ../../CCore/src/video/ShapeLib6.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib7.o : ../../CCore/src/video/ShapeLib7.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib8.o : ../../CCore/src/video/ShapeLib8.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib9.o : ../../CCore/src/video/ShapeLib9.cpp
+	$(CC) $(CCOPT) $< -o $@
+
 obj/ShortSort.o : ../../CCore/src/sort/ShortSort.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -1961,6 +2054,9 @@ obj/VideoConsole.o : ../../CCore/src/video/VideoConsole.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/VideoDevice.o : ../../CCore/src/video/VideoDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/WindowLib.o : ../../CCore/src/video/WindowLib.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/WindowReport.o : ../../CCore/src/video/WindowReport.cpp
@@ -2727,6 +2823,51 @@ obj/Scanf.s : ../../CCore/src/Scanf.cpp
 obj/Sem.s : ../../HCore/CCore/src/task/Sem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ShapeLib1.s : ../../CCore/src/video/ShapeLib1.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib10.s : ../../CCore/src/video/ShapeLib10.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib11.s : ../../CCore/src/video/ShapeLib11.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib12.s : ../../CCore/src/video/ShapeLib12.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib13.s : ../../CCore/src/video/ShapeLib13.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib14.s : ../../CCore/src/video/ShapeLib14.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib15.s : ../../CCore/src/video/ShapeLib15.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib2.s : ../../CCore/src/video/ShapeLib2.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib3.s : ../../CCore/src/video/ShapeLib3.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib4.s : ../../CCore/src/video/ShapeLib4.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib5.s : ../../CCore/src/video/ShapeLib5.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib6.s : ../../CCore/src/video/ShapeLib6.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib7.s : ../../CCore/src/video/ShapeLib7.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib8.s : ../../CCore/src/video/ShapeLib8.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLib9.s : ../../CCore/src/video/ShapeLib9.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ShortSort.s : ../../CCore/src/sort/ShortSort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -2941,6 +3082,9 @@ obj/VideoConsole.s : ../../CCore/src/video/VideoConsole.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/VideoDevice.s : ../../CCore/src/video/VideoDevice.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/WindowLib.s : ../../CCore/src/video/WindowLib.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/WindowReport.s : ../../CCore/src/video/WindowReport.cpp
@@ -3707,6 +3851,51 @@ obj/Scanf.dep : ../../CCore/src/Scanf.cpp
 obj/Sem.dep : ../../HCore/CCore/src/task/Sem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sem.o $< -MF $@
 
+obj/ShapeLib1.dep : ../../CCore/src/video/ShapeLib1.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib1.o $< -MF $@
+
+obj/ShapeLib10.dep : ../../CCore/src/video/ShapeLib10.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib10.o $< -MF $@
+
+obj/ShapeLib11.dep : ../../CCore/src/video/ShapeLib11.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib11.o $< -MF $@
+
+obj/ShapeLib12.dep : ../../CCore/src/video/ShapeLib12.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib12.o $< -MF $@
+
+obj/ShapeLib13.dep : ../../CCore/src/video/ShapeLib13.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib13.o $< -MF $@
+
+obj/ShapeLib14.dep : ../../CCore/src/video/ShapeLib14.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib14.o $< -MF $@
+
+obj/ShapeLib15.dep : ../../CCore/src/video/ShapeLib15.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib15.o $< -MF $@
+
+obj/ShapeLib2.dep : ../../CCore/src/video/ShapeLib2.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib2.o $< -MF $@
+
+obj/ShapeLib3.dep : ../../CCore/src/video/ShapeLib3.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib3.o $< -MF $@
+
+obj/ShapeLib4.dep : ../../CCore/src/video/ShapeLib4.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib4.o $< -MF $@
+
+obj/ShapeLib5.dep : ../../CCore/src/video/ShapeLib5.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib5.o $< -MF $@
+
+obj/ShapeLib6.dep : ../../CCore/src/video/ShapeLib6.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib6.o $< -MF $@
+
+obj/ShapeLib7.dep : ../../CCore/src/video/ShapeLib7.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib7.o $< -MF $@
+
+obj/ShapeLib8.dep : ../../CCore/src/video/ShapeLib8.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib8.o $< -MF $@
+
+obj/ShapeLib9.dep : ../../CCore/src/video/ShapeLib9.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib9.o $< -MF $@
+
 obj/ShortSort.dep : ../../CCore/src/sort/ShortSort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShortSort.o $< -MF $@
 
@@ -3922,6 +4111,9 @@ obj/VideoConsole.dep : ../../CCore/src/video/VideoConsole.cpp
 
 obj/VideoDevice.dep : ../../CCore/src/video/VideoDevice.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/VideoDevice.o $< -MF $@
+
+obj/WindowLib.dep : ../../CCore/src/video/WindowLib.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/WindowLib.o $< -MF $@
 
 obj/WindowReport.dep : ../../CCore/src/video/WindowReport.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/WindowReport.o $< -MF $@
