@@ -18,6 +18,7 @@
 
 #include <CCore/inc/video/ClientWindow.h>
 #include <CCore/inc/video/Font.h>
+#include <CCore/inc/video/FrameGuards.h>
 
 #include <CCore/inc/String.h>
 #include <CCore/inc/DeferCall.h>
@@ -60,12 +61,6 @@ enum AlertType
 
 void DragPane(Pane &place,Point delta,DragType drag_type);
 
-/* guards */
-
-void GuardNoClient();
-
-void GuardNotDead();
-
 /* classes */
 
 class DragShape;
@@ -104,7 +99,7 @@ class DragShape
      ColorName btnFaceClose    =   DarkRed ;
      ColorName btnEdge         =     Black ;
      ColorName btnPict         =     White ;
-     ColorName btnStop         =       Red ;
+     ColorName btnClose        =       Red ;
      
      ColorName titleUp         =      Gray ;
      ColorName titleDown       =      Snow ;
@@ -239,6 +234,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
    bool client_enter = false ;
    bool client_capture = false ;
    bool delay_draw = false ;
+   bool enable_react = true ;
    
    unsigned tick_count = 0 ;
    
@@ -260,6 +256,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      client_enter=false;
      client_capture=false;
      delay_draw=false;
+     enable_react=true;
      tick_count=0;
     }
    
@@ -870,9 +867,13 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
 
    // user input
    
+   void disableReact() { enable_react=false; }
+   
+   void enableReact() { enable_react=true; }
+   
    virtual void react(UserAction action)
     {
-     action.dispatch(*this, [this] (UserAction action) { react_other(action); } );
+     if( enable_react ) action.dispatch(*this, [this] (UserAction action) { react_other(action); } );
     }
    
    void react_other(UserAction action)

@@ -17,8 +17,6 @@
 
 #include <CCore/inc/video/CommonDrawArt.h>
 
-#include <CCore/inc/Exception.h>
-
 namespace CCore {
 namespace Video {
 
@@ -98,18 +96,6 @@ void DragPane(Pane &place,Point delta,DragType drag_type)
       }
      break;
     }
- }
-
-/* guards */
-
-void GuardNoClient()
- {
-  Printf(Exception,"CCore::Video::DragWindow<...>::guardClient() : no client");
- }
-
-void GuardNotDead()
- {
-  Printf(Exception,"CCore::Video::DragWindow<...>::guardDead() : window is alive");
  }
 
 /* class DragShape */
@@ -390,8 +376,8 @@ void DragShape::draw_Close(DrawArt &art) const
        {
         PaneBorder border(pane);
        
-        art.path_smooth(cfg.btnStop,border.topLeft(),border.bottomRight());
-        art.path_smooth(cfg.btnStop,border.topRight(),border.bottomLeft());
+        art.path_smooth(cfg.btnClose,border.topLeft(),border.bottomRight());
+        art.path_smooth(cfg.btnClose,border.topRight(),border.bottomLeft());
        } 
     }
  }

@@ -117,6 +117,7 @@ obj/FileToMem.o \
 obj/Font.o \
 obj/Forget.o \
 obj/FrameBuf.o \
+obj/FrameGuards.o \
 obj/FrameWindow.o \
 obj/FuncTask.o \
 obj/Function.o \
@@ -471,6 +472,7 @@ obj/FileToMem.s \
 obj/Font.s \
 obj/Forget.s \
 obj/FrameBuf.s \
+obj/FrameGuards.s \
 obj/FrameWindow.s \
 obj/FuncTask.s \
 obj/Function.s \
@@ -825,6 +827,7 @@ obj/FileToMem.dep \
 obj/Font.dep \
 obj/Forget.dep \
 obj/FrameBuf.dep \
+obj/FrameGuards.dep \
 obj/FrameWindow.dep \
 obj/FuncTask.dep \
 obj/Function.dep \
@@ -1426,6 +1429,9 @@ obj/Forget.o : ../../CCore/src/crypton/Forget.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FrameBuf.o : ../../CCore/src/video/FrameBuf.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FrameGuards.o : ../../CCore/src/video/FrameGuards.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FrameWindow.o : ../../CCore/src/video/FrameWindow.cpp
@@ -2483,6 +2489,9 @@ obj/Forget.s : ../../CCore/src/crypton/Forget.cpp
 obj/FrameBuf.s : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FrameGuards.s : ../../CCore/src/video/FrameGuards.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/FrameWindow.s : ../../CCore/src/video/FrameWindow.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3537,6 +3546,9 @@ obj/Forget.dep : ../../CCore/src/crypton/Forget.cpp
 
 obj/FrameBuf.dep : ../../CCore/src/video/FrameBuf.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameBuf.o $< -MF $@
+
+obj/FrameGuards.dep : ../../CCore/src/video/FrameGuards.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameGuards.o $< -MF $@
 
 obj/FrameWindow.dep : ../../CCore/src/video/FrameWindow.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FrameWindow.o $< -MF $@
