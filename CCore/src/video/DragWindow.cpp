@@ -514,6 +514,7 @@ void DragShape::draw(const DrawBuf &buf,DragType drag_type) const
         case DragType_BottomRight : draw_BottomRight(art); break; 
         case DragType_Right       : draw_Right(art); break;
         case DragType_TopRight    : draw_TopRight(art); break;
+        
         case DragType_Alert       : draw_Alert(art); break;
         case DragType_Min         : draw_Min(art); break;
         case DragType_Max         : draw_Max(art); break;

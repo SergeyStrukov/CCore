@@ -931,9 +931,21 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
         case DragType_Alert : 
         case DragType_Min   : 
         case DragType_Max   : 
-        case DragType_Close : shape.btn_type=drag_type; redrawFrame(drag_type); break;
+        case DragType_Close : 
+         {
+          if( !shape.drag_type && !shape.btn_type )
+            {
+             shape.btn_type=drag_type; 
+             
+             redrawFrame(drag_type);
+            } 
+         } 
+        break;
         
-        default: if( !shape.drag_type ) startDrag(point,drag_type);
+        default: 
+         {
+          if( !shape.drag_type && !shape.btn_type ) startDrag(point,drag_type);
+         }
        }
     }
    
@@ -956,15 +968,17 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
           {
            switch( type )
              {
-              case DragType_Alert : switchClients(); return;
+              case DragType_Alert : switchClients(); break;
               
-              case DragType_Min   : minimize(); return;
+              case DragType_Min   : minimize(); break;
               
-              case DragType_Max   : maximize(); return;
+              case DragType_Max   : maximize(); break;
               
-              case DragType_Close : destroy(); return;
+              case DragType_Close : destroy(); break;
              }
           }
+        
+        return;
        }
      
      if( client_capture || shape.getClient().contains(point) )
@@ -991,16 +1005,12 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
           {
            if( shape.dragTest(point)!=shape.btn_type )
              {
-              auto type=Replace(shape.btn_type,DragType_None);
-             
-              redrawFrame(type);
+              redrawFrame(Replace(shape.btn_type,DragType_None));
              }
           }
         else
           {
-           auto type=Replace(shape.btn_type,DragType_None);
-           
-           redrawFrame(type);
+           redrawFrame(Replace(shape.btn_type,DragType_None));
           }
         
         return;
@@ -1048,8 +1058,6 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
        {
         redrawFrame(Replace(shape.btn_type,DragType_None));
        }
-     
-     if( shape.drag_type ) return;
      
      if( client_enter )
        {
