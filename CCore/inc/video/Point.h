@@ -410,16 +410,6 @@ struct Pane
     IntGuard( dx>=0 && dy>=0 );
    }
 
-  Pane(Point base,Point lim) // base<=lim
-   {
-    x=base.x;
-    y=base.y;
-    dx=IntSub(lim.x,base.x);
-    dy=IntSub(lim.y,base.y);
-    
-    IntGuard( dx>=0 && dy>=0 );
-   }
-  
   bool operator + () const { return dx>0 && dy>0 ; }  
   
   bool operator ! () const { return dx<=0 || dy<=0 ; }
@@ -468,12 +458,23 @@ struct Pane
 
 /* functions */
 
+inline Pane PaneBaseLim(Point base,Point lim) // base<=lim
+ {
+  Coord x=base.x;
+  Coord y=base.y;
+  Coord dx=IntSub(lim.x,base.x);
+  Coord dy=IntSub(lim.y,base.y);
+  
+  return Pane(x,y,dx,dy); 
+ }
+
+
 inline Pane Sup_nonempty(Pane a,Pane b) // +a && +b
  {
   Point base=Inf(a.getBase(),b.getBase());
   Point lim=Sup(a.getLim(),b.getLim());
   
-  return Pane(base,lim); 
+  return PaneBaseLim(base,lim); 
  }
 
 inline Pane Sup(Pane a,Pane b)
@@ -490,7 +491,7 @@ inline Pane Inf_nonempty(Pane a,Pane b) // +a && +b
   Point base=Sup(a.getBase(),b.getBase());
   Point lim=Inf(a.getLim(),b.getLim());
   
-  if( base<lim ) return Pane(base,lim);
+  if( base<lim ) return PaneBaseLim(base,lim);
   
   return Empty;
  }
@@ -518,7 +519,7 @@ inline Pane Extent(Point base,Coord dxy) { return Extent(base,dxy,dxy); }
 inline Pane Extent(Coord x,Coord y,Coord dxy) { return Extent(x,y,dxy,dxy); }
 
 
-inline Pane Envelope(Point a,Point b) { return Pane(Inf(a,b),Sup(a,b)+Point(1,1)); }
+inline Pane Envelope(Point a,Point b) { return PaneBaseLim(Inf(a,b),Sup(a,b)+Point(1,1)); }
 
 
 inline Pane operator + (Pane pane,Point point) { return Pane(IntAdd(pane.x,point.x),IntAdd(pane.y,point.y),pane.dx,pane.dy); }

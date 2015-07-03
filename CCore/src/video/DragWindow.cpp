@@ -445,7 +445,7 @@ void DragShape::layout(Point size)
      dragLeft=Empty;
      
      dragTopRight=Empty;
-     dragBottomRight=Pane(Null,size);
+     dragBottomRight=Extent(Null,size);
      dragRight=Empty;
      
      dragBar=Empty;
