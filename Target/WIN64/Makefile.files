@@ -242,6 +242,7 @@ obj/Random.o \
 obj/ReadCon.o \
 obj/RefArray.o \
 obj/RefPtr.o \
+obj/RefVal.o \
 obj/Replace.o \
 obj/ResSem.o \
 obj/Rot.o \
@@ -597,6 +598,7 @@ obj/Random.s \
 obj/ReadCon.s \
 obj/RefArray.s \
 obj/RefPtr.s \
+obj/RefVal.s \
 obj/Replace.s \
 obj/ResSem.s \
 obj/Rot.s \
@@ -952,6 +954,7 @@ obj/Random.dep \
 obj/ReadCon.dep \
 obj/RefArray.dep \
 obj/RefPtr.dep \
+obj/RefVal.dep \
 obj/Replace.dep \
 obj/ResSem.dep \
 obj/Rot.dep \
@@ -1804,6 +1807,9 @@ obj/RefArray.o : ../../CCore/src/array/RefArray.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/RefPtr.o : ../../CCore/src/RefPtr.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/RefVal.o : ../../CCore/src/video/RefVal.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Replace.o : ../../CCore/src/gadget/Replace.cpp
@@ -2864,6 +2870,9 @@ obj/RefArray.s : ../../CCore/src/array/RefArray.cpp
 obj/RefPtr.s : ../../CCore/src/RefPtr.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/RefVal.s : ../../CCore/src/video/RefVal.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Replace.s : ../../CCore/src/gadget/Replace.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3921,6 +3930,9 @@ obj/RefArray.dep : ../../CCore/src/array/RefArray.cpp
 
 obj/RefPtr.dep : ../../CCore/src/RefPtr.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RefPtr.o $< -MF $@
+
+obj/RefVal.dep : ../../CCore/src/video/RefVal.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/RefVal.o $< -MF $@
 
 obj/Replace.dep : ../../CCore/src/gadget/Replace.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Replace.o $< -MF $@

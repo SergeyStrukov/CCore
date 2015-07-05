@@ -49,15 +49,15 @@ void SwitchShape::draw(const DrawBuf &buf) const
   
   if( check )
     {
-     art.ball(center,radius,TwoField(a,cfg.top,a.addX(len),cfg.bottom));
+     art.ball(center,radius,TwoField(a,+cfg.top,a.addX(len),+cfg.bottom));
     
-     art.ball(center,radius/2,enable?cfg.on:cfg.bottom);
+     art.ball(center,radius/2,enable?+cfg.on:+cfg.bottom);
     }
   else
     {
-     art.ball(center,radius,TwoField(a,cfg.top,a.addY(len),cfg.bottom));
+     art.ball(center,radius,TwoField(a,+cfg.top,a.addY(len),+cfg.bottom));
      
-     art.ball(center,radius/2,enable?cfg.off:cfg.bottom);
+     art.ball(center,radius/2,enable?+cfg.off:+cfg.bottom);
     }
 
   // border
@@ -67,14 +67,14 @@ void SwitchShape::draw(const DrawBuf &buf) const
    
    if( focus )
      {
-      cname=cfg.focus;
+      cname=+cfg.focus;
      }
    else
      {
       if( enable )
-        cname=cfg.border;
+        cname=+cfg.border;
       else
-        cname=cfg.bottom;
+        cname=+cfg.bottom;
      }
    
    art.circle(center,radius-width/2,width,cname);
@@ -88,13 +88,13 @@ void SwitchShape::draw(const DrawBuf &buf) const
    if( enable )
      {
       if( mover )
-        cname=cfg.faceUp;
+        cname=+cfg.faceUp;
       else
-        cname=cfg.face;
+        cname=+cfg.face;
      } 
    else
      {
-      cname=cfg.bottom;
+      cname=+cfg.bottom;
      } 
    
    MCoord d1=len/20;

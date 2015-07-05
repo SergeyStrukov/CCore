@@ -25,20 +25,20 @@ namespace Video {
 
 Point TextContourShape::getMinSize() const
  {
-  TextSize ts=cfg.font->text(Range(title));
+  TextSize ts=cfg.font.get()->text(Range(title));
   
   IntGuard( !ts.overflow );
   
-  Coord dy=RoundUpLen(cfg.width);
+  Coord dy=RoundUpLen(+cfg.width);
   
   return 2*Point(ts.dy,dy)+Point(ts.full_dx,ts.dy);
  }
 
 Pane TextContourShape::getInner() const
  {
-  TextSize ts=cfg.font->text(Range(title));
+  TextSize ts=cfg.font.get()->text(Range(title));
   
-  Coord dxy=RoundUpLen(cfg.width);
+  Coord dxy=RoundUpLen(+cfg.width);
   
   if( 2*dxy>=pane.dx || ts.dy+dxy>=pane.dy ) return Empty;
   
@@ -53,7 +53,7 @@ void TextContourShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  TextSize ts=cfg.font->text(Range(title));
+  TextSize ts=cfg.font.get()->text(Range(title));
   
   Coord ty=Min(ts.dy,pane.dy);
   Coord tx=Min<Coord>(ty,pane.dx/2);
@@ -66,7 +66,7 @@ void TextContourShape::draw(const DrawBuf &buf) const
   else
     free=(len>ts.full_dx)?len-ts.full_dx:0;
   
-  MCoord width=cfg.width;
+  MCoord width=+cfg.width;
   
   MCoord x0=p.x;
   MCoord x1=x0+p.dx;
@@ -113,17 +113,17 @@ void TextContourShape::draw(const DrawBuf &buf) const
   
   FigureTopBorder fig_top(x0,x1,y0,y1,width);
   
-  fig_top.getLeftCut(t0).solid(art,cfg.top);
+  fig_top.getLeftCut(t0).solid(art,+cfg.top);
   
-  fig_top.getRightCut(t1).solid(art,cfg.top);
+  fig_top.getRightCut(t1).solid(art,+cfg.top);
   
   FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
   
-  fig_bottom.solid(art,cfg.bottom);
+  fig_bottom.solid(art,+cfg.bottom);
   
   // title
   
-  cfg.font->text(buf,Extent(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),Range(title),cfg.text);
+  cfg.font.get()->text(buf,Extent(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),Range(title),+cfg.text);
  }
 
 } // namespace Video

@@ -25,11 +25,11 @@ namespace Video {
 
 Point TextShape::getMinSize() const
  {
-  TextSize ts=cfg.font->text(Range(text));
+  TextSize ts=cfg.font.get()->text(Range(text));
   
   IntGuard( !ts.overflow );
   
-  MCoord width=cfg.width;
+  MCoord width=+cfg.width;
   
   MCoord ex=(Fraction(ts.dy)+2*width)/4;
   
@@ -55,9 +55,9 @@ void TextShape::draw(const DrawBuf &buf) const
   MCoord y0=p.y;
   MCoord y1=y0+p.dy;
   
-  MCoord width=cfg.width;
+  MCoord width=+cfg.width;
   
-  FontSize fs=cfg.font->getSize();
+  FontSize fs=cfg.font.get()->getSize();
   
   MCoord ex=(Fraction(fs.dy)+2*width)/4;
   
@@ -65,24 +65,24 @@ void TextShape::draw(const DrawBuf &buf) const
   
   // body
   
-  fig.curveSolid(art,cfg.back);
+  fig.curveSolid(art,+cfg.back);
   
   // border
   
   auto fig_top=fig.getTop();
   
-  fig_top.curvePath(art,HalfPos,width,cfg.top);
+  fig_top.curvePath(art,HalfPos,width,+cfg.top);
   
   auto fig_bottom=fig.getBottom();
   
-  fig_bottom.curvePath(art,HalfPos,width,cfg.bottom);
+  fig_bottom.curvePath(art,HalfPos,width,+cfg.bottom);
   
   // text
   
   Coord dx=RoundUpLen(ex);
   Coord dy=RoundUpLen(width);
   
-  cfg.font->text(buf,Shrink(pane,dx,dy),TextPlace(align_x,align_y),Range(text),enable?cfg.text:cfg.inactive);
+  cfg.font.get()->text(buf,Shrink(pane,dx,dy),TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
  }
 
 } // namespace Video

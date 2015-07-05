@@ -25,7 +25,7 @@ namespace Video {
 
 Point XDoubleLineShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(cfg.width);
+  Coord dxy=RoundUpLen(+cfg.width);
   
   return Point(dxy,2*dxy);
  }
@@ -38,7 +38,7 @@ void XDoubleLineShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  MCoord width=cfg.width;
+  MCoord width=+cfg.width;
   
   MCoord x0=p.x+width/2;
   MCoord x1=p.x+p.dx-width/2;
@@ -47,15 +47,15 @@ void XDoubleLineShape::draw(const DrawBuf &buf) const
   MCoord y0=y-width/2;
   MCoord y1=y+width/2;
   
-  art.pathOf(width,cfg.top,MPoint(x0,y0),MPoint(x1,y0));
-  art.pathOf(width,cfg.bottom,MPoint(x0,y1),MPoint(x1,y1));
+  art.pathOf(width,+cfg.top,MPoint(x0,y0),MPoint(x1,y0));
+  art.pathOf(width,+cfg.bottom,MPoint(x0,y1),MPoint(x1,y1));
  }
 
 /* class YDoubleLineShape */
 
 Point YDoubleLineShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(cfg.width);
+  Coord dxy=RoundUpLen(+cfg.width);
   
   return Point(2*dxy,dxy);
  }
@@ -68,7 +68,7 @@ void YDoubleLineShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  MCoord width=cfg.width;
+  MCoord width=+cfg.width;
   
   MCoord x=p.x+p.dx/2;
   MCoord x0=x-width/2;
@@ -77,8 +77,8 @@ void YDoubleLineShape::draw(const DrawBuf &buf) const
   MCoord y0=p.y+width/2;
   MCoord y1=p.y+p.dy-width/2;
   
-  art.pathOf(width,cfg.top,MPoint(x0,y0),MPoint(x0,y1));
-  art.pathOf(width,cfg.bottom,MPoint(x1,y0),MPoint(x1,y1));
+  art.pathOf(width,+cfg.top,MPoint(x0,y0),MPoint(x0,y1));
+  art.pathOf(width,+cfg.bottom,MPoint(x1,y0),MPoint(x1,y1));
  }
 
 } // namespace Video

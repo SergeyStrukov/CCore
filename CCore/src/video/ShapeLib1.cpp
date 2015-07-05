@@ -25,14 +25,16 @@ namespace Video {
 
 Point ButtonShape::getMinSize() const
  {
-  TextSize ts=cfg.font->text(Range(face));
+  TextSize ts=cfg.font.get()->text(Range(face));
   
   IntGuard( !ts.overflow );
   
-  MCoord ex=(Fraction(ts.dy)+2*cfg.width)/4;
+  MCoord width=+cfg.width;
+  
+  MCoord ex=(Fraction(ts.dy)+2*width)/4;
   
   Coord dx=RoundUpLen(ex);
-  Coord dy=RoundUpLen(cfg.width);
+  Coord dy=RoundUpLen(width);
   
   return 2*Point(dx,dy)+Point(ts.full_dx,ts.dy);
  }
@@ -47,15 +49,17 @@ void ButtonShape::draw(const DrawBuf &buf) const
   
   // figure
   
+  MCoord width=+cfg.width;
+  
   MCoord x0=p.x;
   MCoord x1=x0+p.dx;
   
   MCoord y0=p.y;
   MCoord y1=y0+p.dy;
   
-  FontSize fs=cfg.font->getSize();
+  FontSize fs=cfg.font.get()->getSize();
   
-  MCoord ex=(Fraction(fs.dy)+2*cfg.width)/4;
+  MCoord ex=(Fraction(fs.dy)+2*width)/4;
   
   FigureButton fig(x0,x1,y0,y1,ex);
   
@@ -63,25 +67,25 @@ void ButtonShape::draw(const DrawBuf &buf) const
   
   if( down )
     {
-     fig.curveSolid(art,cfg.bottom);
+     fig.curveSolid(art,+cfg.bottom);
     }
   else
     {
      ColorName cname;
      
      if( mover && enable )
-       cname=cfg.topUp;
+       cname=+cfg.topUp;
      else
-       cname=cfg.top;
+       cname=+cfg.top;
      
-     fig.curveSolid(art,TwoField({x0,y0},cname,{x0,y1},cfg.bottom));
+     fig.curveSolid(art,TwoField({x0,y0},cname,{x0,y1},+cfg.bottom));
     }
   
   // text
 
   {
    Coord dx=RoundUpLen(ex);
-   Coord dy=RoundUpLen(cfg.width);
+   Coord dy=RoundUpLen(width);
    
    Point shift=Null;
    
@@ -90,11 +94,11 @@ void ButtonShape::draw(const DrawBuf &buf) const
    ColorName cname;
 
    if( enable )
-     cname=cfg.text;
+     cname=+cfg.text;
    else
-     cname=cfg.bottom;
+     cname=+cfg.bottom;
    
-   cfg.font->text(buf,Shrink(pane,dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),cname);
+   cfg.font.get()->text(buf,Shrink(pane,dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),cname);
   }
   
   // border
@@ -104,17 +108,17 @@ void ButtonShape::draw(const DrawBuf &buf) const
    
    if( focus )
      {
-      cname=cfg.focus;
+      cname=+cfg.focus;
      } 
    else
      {
       if( enable )
-        cname=cfg.border;
+        cname=+cfg.border;
       else
-        cname=cfg.bottom;
+        cname=+cfg.bottom;
      }
    
-   fig.curveLoop(art,HalfPos,cfg.width,cname);
+   fig.curveLoop(art,HalfPos,width,cname);
   }
  }
 

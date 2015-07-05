@@ -46,7 +46,7 @@ void LightShape::draw(const DrawBuf &buf) const
   MCoord radius2=(4*radius)/5;
   MPoint center=a.addXY(radius);
 
-  art.ball(center,radius,TwoField(a.addXY(d),cfg.top,a.addXY(len-d),cfg.bottom));
+  art.ball(center,radius,TwoField(a.addXY(d),+cfg.top,a.addXY(len-d),+cfg.bottom));
   
   if( on )
     {
@@ -54,7 +54,7 @@ void LightShape::draw(const DrawBuf &buf) const
     }
   else
     {
-     art.ball(center,radius2,cfg.inactive);
+     art.ball(center,radius2,+cfg.inactive);
     }
  }
 

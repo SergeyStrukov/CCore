@@ -25,7 +25,7 @@ namespace Video {
 
 Point XSingleLineShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(cfg.width);
+  Coord dxy=RoundUpLen(+cfg.width);
   
   return Point::Diag(dxy);
  }
@@ -38,21 +38,21 @@ void XSingleLineShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  MCoord width=cfg.width;
+  MCoord width=+cfg.width;
   
   MCoord x0=p.x+width/2;
   MCoord x1=p.x+p.dx-width/2;
   
   MCoord y=p.y+p.dy/2;
   
-  art.pathOf(width,cfg.line,MPoint(x0,y),MPoint(x1,y));
+  art.pathOf(width,+cfg.line,MPoint(x0,y),MPoint(x1,y));
  }
 
 /* class YSingleLineShape */
 
 Point YSingleLineShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(cfg.width);
+  Coord dxy=RoundUpLen(+cfg.width);
   
   return Point::Diag(dxy);
  }
@@ -65,14 +65,14 @@ void YSingleLineShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  MCoord width=cfg.width;
+  MCoord width=+cfg.width;
   
   MCoord x=p.x+p.dx/2;
   
   MCoord y0=p.y+width/2;
   MCoord y1=p.y+p.dy-width/2;
   
-  art.pathOf(width,cfg.line,MPoint(x,y0),MPoint(x,y1));
+  art.pathOf(width,+cfg.line,MPoint(x,y0),MPoint(x,y1));
  }
 
 } // namespace Video

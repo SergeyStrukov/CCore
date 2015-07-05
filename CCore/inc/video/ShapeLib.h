@@ -19,6 +19,7 @@
 #include <CCore/inc/video/Point.h>
 #include <CCore/inc/video/Color.h>
 #include <CCore/inc/video/Font.h>
+#include <CCore/inc/video/RefVal.h>
 
 #include <CCore/inc/String.h>
  
@@ -75,17 +76,17 @@ class ButtonShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
     
-     ColorName border =    Blue ;
-     ColorName focus  =  Orange ;
+     RefVal<ColorName> border =    Blue ;
+     RefVal<ColorName> focus  =  Orange ;
      
-     ColorName bottom =    Gray ;
-     ColorName topUp  = SkyBlue ;
-     ColorName top    =  Silver ;
-     ColorName text   =   Black ;
+     RefVal<ColorName> bottom =    Gray ;
+     RefVal<ColorName> topUp  = SkyBlue ;
+     RefVal<ColorName> top    =  Silver ;
+     RefVal<ColorName> text   =   Black ;
      
-     Font font;
+     RefVal<Font> font;
     
      Config() {}
     };
@@ -126,15 +127,15 @@ class KnobShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
      
-     ColorName border =    Blue ;
-     ColorName focus  =  Orange ;
+     RefVal<ColorName> border =    Blue ;
+     RefVal<ColorName> focus  =  Orange ;
      
-     ColorName bottom =    Gray ;
-     ColorName topUp  = SkyBlue ;
-     ColorName top    =  Silver ;
-     ColorName face   =   Black ;
+     RefVal<ColorName> bottom =    Gray ;
+     RefVal<ColorName> topUp  = SkyBlue ;
+     RefVal<ColorName> top    =  Silver ;
+     RefVal<ColorName> face   =   Black ;
      
      Config() {}
     };
@@ -190,13 +191,13 @@ class CheckShape
   
    struct Config
     {
-     ColorName border   =              Blue ;
-     ColorName focus    =            Orange ;
+     RefVal<ColorName> border   =              Blue ;
+     RefVal<ColorName> focus    =            Orange ;
      
-     ColorName bottomUp =           SkyBlue ;
-     ColorName bottom   =            Silver ;
-     ColorName top      =              Gray ;
-     ColorName mark     = RGBColor(0,128,0) ;
+     RefVal<ColorName> bottomUp =           SkyBlue ;
+     RefVal<ColorName> bottom   =            Silver ;
+     RefVal<ColorName> top      =              Gray ;
+     RefVal<ColorName> mark     = RGBColor(0,128,0) ;
      
      Config() {}
     };
@@ -230,13 +231,13 @@ class RadioShape
   
    struct Config
     {
-     ColorName border   =    Blue ;
-     ColorName focus    =  Orange ;
+     RefVal<ColorName> border   =    Blue ;
+     RefVal<ColorName> focus    =  Orange ;
      
-     ColorName bottomUp = SkyBlue ;
-     ColorName bottom   =  Silver ;
-     ColorName top      =    Gray ;
-     ColorName mark     =   Black ;
+     RefVal<ColorName> bottomUp = SkyBlue ;
+     RefVal<ColorName> bottom   =  Silver ;
+     RefVal<ColorName> top      =    Gray ;
+     RefVal<ColorName> mark     =   Black ;
      
      Config() {}
     };
@@ -270,10 +271,10 @@ class LabelShape
   
    struct Config
     {
-     ColorName inactive =  Gray ;
-     ColorName text     = Black ;
+     RefVal<ColorName> inactive =  Gray ;
+     RefVal<ColorName> text     = Black ;
     
-     Font font;
+     RefVal<Font> font;
     
      Config() {}
     };
@@ -308,15 +309,15 @@ class TextShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
    
-     ColorName bottom   =   Snow ;
-     ColorName top      =   Gray ;
-     ColorName back     = Silver ;
-     ColorName text     =  Black ;
-     ColorName inactive =   Gray ;  
+     RefVal<ColorName> bottom   =   Snow ;
+     RefVal<ColorName> top      =   Gray ;
+     RefVal<ColorName> back     = Silver ;
+     RefVal<ColorName> text     =  Black ;
+     RefVal<ColorName> inactive =   Gray ;  
     
-     Font font;
+     RefVal<Font> font;
     
      Config() {}
     };
@@ -354,9 +355,9 @@ class SingleLineShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
    
-     ColorName line = Gray ;
+     RefVal<ColorName> line = Gray ;
     
      Config() {}
     };
@@ -411,10 +412,10 @@ class DoubleLineShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
    
-     ColorName top    = Gray ;
-     ColorName bottom = Snow ;
+     RefVal<ColorName> top    = Gray ;
+     RefVal<ColorName> bottom = Snow ;
     
      Config() {}
     };
@@ -469,10 +470,10 @@ class ContourShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
    
-     ColorName top    = Gray ;
-     ColorName bottom = Snow ;
+     RefVal<ColorName> top    = Gray ;
+     RefVal<ColorName> bottom = Snow ;
     
      Config() {}
     };
@@ -501,13 +502,13 @@ class TextContourShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
    
-     ColorName top    =  Gray ;
-     ColorName bottom =  Snow ;
-     ColorName text   = Black ;
+     RefVal<ColorName> top    =  Gray ;
+     RefVal<ColorName> bottom =  Snow ;
+     RefVal<ColorName> text   = Black ;
     
-     Font font;
+     RefVal<Font> font;
      
      Config() {}
     };
@@ -538,15 +539,15 @@ class SwitchShape
   
    struct Config
     {
-     ColorName border =   Blue ;
-     ColorName focus  = Orange ;
+     RefVal<ColorName> border =   Blue ;
+     RefVal<ColorName> focus  = Orange ;
      
-     ColorName top    = Silver ;
-     ColorName bottom =   Gray ;
-     ColorName faceUp =   Blue ;
-     ColorName face   =  Black ;
-     ColorName on     =  Green ;
-     ColorName off    =    Red ;
+     RefVal<ColorName> top    = Silver ;
+     RefVal<ColorName> bottom =   Gray ;
+     RefVal<ColorName> faceUp =   Blue ;
+     RefVal<ColorName> face   =  Black ;
+     RefVal<ColorName> on     =  Green ;
+     RefVal<ColorName> off    =    Red ;
      
      Config() {}
     };
@@ -580,9 +581,9 @@ class LightShape
   
    struct Config
     {
-     ColorName top      =   Gray ; 
-     ColorName bottom   =  Black ;
-     ColorName inactive = Silver ;
+     RefVal<ColorName> top      =   Gray ; 
+     RefVal<ColorName> bottom   =  Black ;
+     RefVal<ColorName> inactive = Silver ;
      
      Config() {}
     };
@@ -637,16 +638,16 @@ class ScrollShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
   
-     ColorName top    =   Snow ;
-     ColorName back   = Silver ;
-     ColorName bottom =   Gray ;
-     ColorName focus  = Orange ;
-     ColorName face   =  Black ;
-     ColorName faceUp =   Blue ;
+     RefVal<ColorName> top    =   Snow ;
+     RefVal<ColorName> back   = Silver ;
+     RefVal<ColorName> bottom =   Gray ;
+     RefVal<ColorName> focus  = Orange ;
+     RefVal<ColorName> face   =  Black ;
+     RefVal<ColorName> faceUp =   Blue ;
      
-     unsigned speedUpPeriod = 12 ;
+     RefVal<unsigned> speedUpPeriod = 12 ;
      
      Config() {}
     };
@@ -743,25 +744,25 @@ class ScrollShape
        {
         case ScrollType_Down :
          {
-          posDown(Accelerate(change_count,cfg.speedUpPeriod));
+          posDown(Accelerate(change_count,+cfg.speedUpPeriod));
          }
         break;
 
         case ScrollType_Up : 
          {
-          posUp(Accelerate(change_count,cfg.speedUpPeriod));
+          posUp(Accelerate(change_count,+cfg.speedUpPeriod));
          }
         break;
         
         case ScrollType_DownPage : 
          {
-          if( (change_count%cfg.speedUpPeriod)==0 ) posDownPage();
+          if( (change_count%+cfg.speedUpPeriod)==0 ) posDownPage();
          }
         break;
          
         case ScrollType_UpPage : 
          {
-          if( (change_count%cfg.speedUpPeriod)==0 ) posUpPage();
+          if( (change_count%+cfg.speedUpPeriod)==0 ) posUpPage();
          }
         break;
        }
@@ -830,18 +831,18 @@ class ProgressShape
   
    struct Config
     {
-     MCoord width = Fraction(6,2) ;
+     RefVal<MCoord> width = Fraction(6,2) ;
 
-     ColorName border = Black ;
+     RefVal<ColorName> border = Black ;
      
-     ColorName top    =  Snow ;
-     ColorName bottom =  Gray ;
+     RefVal<ColorName> top    =  Snow ;
+     RefVal<ColorName> bottom =  Gray ;
      
-     ColorName activeTop    = RGBColor(0,255,0) ;
-     ColorName activeBottom = RGBColor(0,100,0) ;
+     RefVal<ColorName> activeTop    = RGBColor(0,255,0) ;
+     RefVal<ColorName> activeBottom = RGBColor(0,100,0) ;
      
-     unsigned time = 3*25 ;
-     unsigned period = 3 ;
+     RefVal<unsigned> time = 3*25 ;
+     RefVal<unsigned> period = 3 ;
      
      Config() {}
     };
@@ -873,11 +874,11 @@ class ProgressShape
      Replace_min(pos,total);
     }
    
-   void resetTime() { time=cfg.time; }
+   void resetTime() { time=+cfg.time; }
    
    bool tick()
     {
-     if( ++count>=cfg.period )
+     if( ++count>=cfg.period.get() )
        {
         count=0;
         

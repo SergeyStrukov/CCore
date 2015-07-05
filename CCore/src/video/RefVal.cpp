@@ -1,4 +1,4 @@
-/* ShapeLib5.cpp */ 
+/* RefVal.cpp */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.09
@@ -13,29 +13,11 @@
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/video/ShapeLib.h>
-
-#include <CCore/inc/video/SmoothDrawArt.h>
-#include <CCore/inc/video/FigureLib.h>
+#include <CCore/inc/video/RefVal.h>
  
 namespace CCore {
 namespace Video {
 
-/* class LabelShape */
-
-Point LabelShape::getMinSize() const
- {
-  TextSize ts=cfg.font.get()->text(Range(text));
-  
-  IntGuard( !ts.overflow );
-  
-  return Point(ts.full_dx,ts.dy).addXY(1);
- }
-
-void LabelShape::draw(const DrawBuf &buf) const
- {
-  cfg.font.get()->text(buf,pane,TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
- }
 
 } // namespace Video
 } // namespace CCore

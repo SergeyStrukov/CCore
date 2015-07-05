@@ -1,4 +1,4 @@
-/* ShapeLib5.cpp */ 
+/* RefVal.h */ 
 //----------------------------------------------------------------------------------------
 //
 //  Project: CCore 1.09
@@ -12,32 +12,43 @@
 //  Copyright (c) 2015 Sergey Strukov. All rights reserved.
 //
 //----------------------------------------------------------------------------------------
- 
-#include <CCore/inc/video/ShapeLib.h>
 
-#include <CCore/inc/video/SmoothDrawArt.h>
-#include <CCore/inc/video/FigureLib.h>
+#ifndef CCore_inc_video_RefVal_h
+#define CCore_inc_video_RefVal_h
+
+#include <CCore/inc/Gadget.h>
  
 namespace CCore {
 namespace Video {
 
-/* class LabelShape */
+/* classes */
 
-Point LabelShape::getMinSize() const
- {
-  TextSize ts=cfg.font.get()->text(Range(text));
-  
-  IntGuard( !ts.overflow );
-  
-  return Point(ts.full_dx,ts.dy).addXY(1);
- }
+template <class T> class RefVal;
 
-void LabelShape::draw(const DrawBuf &buf) const
+/* class RefVal<T> */
+
+template <class T> 
+class RefVal
  {
-  cfg.font.get()->text(buf,pane,TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
- }
+   T *ptr;
+   T val;
+   
+  public:
+   
+   RefVal() : ptr(0),val() {}
+
+   RefVal(const T &val_) : ptr(0),val(val_) {}
+   
+   T operator + () const { return ptr?(*ptr):val; }
+   
+   const T & get() const { if( ptr ) return *ptr; return val; } 
+   
+   void bind(T &obj) { ptr=&obj; }
+ };
 
 } // namespace Video
 } // namespace CCore
+ 
+#endif
  
 

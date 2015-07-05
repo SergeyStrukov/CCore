@@ -25,7 +25,7 @@ namespace Video {
 
 Point KnobShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(4*cfg.width);
+  Coord dxy=RoundUpLen(4*cfg.width.get());
   
   return Point::Diag(dxy);
  }
@@ -52,23 +52,23 @@ void KnobShape::draw(const DrawBuf &buf) const
   
   if( down )
     {
-     art.ball(center,radius,cfg.bottom);
+     art.ball(center,radius,+cfg.bottom);
     }
   else
     {
      ColorName cname;
     
      if( mover && enable )
-       cname=cfg.topUp;
+       cname=+cfg.topUp;
      else
-       cname=cfg.top; 
+       cname=+cfg.top; 
      
-     art.ball(center,radius,TwoField(a,cname,a.addY(len),cfg.bottom));
+     art.ball(center,radius,TwoField(a,cname,a.addY(len),+cfg.bottom));
     }
   
   // face
   
-  ColorName cname=enable?cfg.face:cfg.bottom;
+  ColorName cname=enable?+cfg.face:+cfg.bottom;
   
   switch( face )
     {
@@ -249,18 +249,18 @@ void KnobShape::draw(const DrawBuf &buf) const
   
   {
    ColorName cname;
-   MCoord width=cfg.width;
+   MCoord width=+cfg.width;
    
    if( focus )
      {
-      cname=cfg.focus;
+      cname=+cfg.focus;
      }
    else
      {
       if( enable )
-        cname=cfg.border;
+        cname=+cfg.border;
       else
-        cname=cfg.bottom;
+        cname=+cfg.bottom;
      }
    
    art.circle(center,radius-width/2,width,cname);

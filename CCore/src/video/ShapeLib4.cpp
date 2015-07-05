@@ -52,11 +52,11 @@ void RadioShape::draw(const DrawBuf &buf) const
    ColorName cname;
    
    if( mover && enable )
-     cname=cfg.bottomUp;
+     cname=+cfg.bottomUp;
    else
-     cname=cfg.bottom;
+     cname=+cfg.bottom;
    
-   art.ball(center,radius,TwoField(a.addXY(d),cfg.top,a.addXY(len-d),cname));
+   art.ball(center,radius,TwoField(a.addXY(d),+cfg.top,a.addXY(len-d),cname));
   }
   
   // mark
@@ -66,9 +66,9 @@ void RadioShape::draw(const DrawBuf &buf) const
      ColorName cname;
      
      if( enable )
-       cname=cfg.mark;
+       cname=+cfg.mark;
      else
-       cname=cfg.top;
+       cname=+cfg.top;
      
      art.ball(center,radius/3,cname);
     }
@@ -80,14 +80,14 @@ void RadioShape::draw(const DrawBuf &buf) const
    
    if( focus )
      {
-      cname=cfg.focus;
+      cname=+cfg.focus;
      }
    else
      {
       if( enable )
-        cname=cfg.border;
+        cname=+cfg.border;
       else
-        cname=cfg.top;
+        cname=+cfg.top;
      }
    
    art.circle(center,radius-width/2,width,cname);

@@ -57,11 +57,11 @@ void CheckShape::draw(const DrawBuf &buf) const
    ColorName cname; 
     
    if( mover && enable )
-     cname=cfg.bottomUp;
+     cname=+cfg.bottomUp;
    else
-     cname=cfg.bottom;
+     cname=+cfg.bottom;
     
-   fig.solid(art,TwoField({x0+width,y0+width},cfg.top,{x1-width,y1-width},cname));
+   fig.solid(art,TwoField({x0+width,y0+width},+cfg.top,{x1-width,y1-width},cname));
   }
   
   // mark
@@ -77,9 +77,9 @@ void CheckShape::draw(const DrawBuf &buf) const
      ColorName cname;
     
      if( enable )
-       cname=cfg.mark;
+       cname=+cfg.mark;
      else
-       cname=cfg.top;
+       cname=+cfg.top;
      
      art.pathOf(width,cname,a,b,c);
     }
@@ -91,14 +91,14 @@ void CheckShape::draw(const DrawBuf &buf) const
    
    if( focus )
      {
-      cname=cfg.focus;
+      cname=+cfg.focus;
      }
    else
      {
       if( enable )
-        cname=cfg.border;
+        cname=+cfg.border;
       else
-        cname=cfg.top;
+        cname=+cfg.top;
      }
    
    fig.loop(art,HalfPos,width,cname);

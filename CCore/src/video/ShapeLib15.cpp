@@ -49,17 +49,17 @@ void ProgressShape::draw(const DrawBuf &buf) const
   {
    FigureBox fig(x0,x1,y0,y2);
    
-   fig.solid(art,TwoField({x0,y0},cfg.activeTop,{x0,y2},cfg.activeBottom));
+   fig.solid(art,TwoField({x0,y0},+cfg.activeTop,{x0,y2},+cfg.activeBottom));
   }
   {
    FigureBox fig(x1,x2,y0,y2);
    
-   fig.solid(art,TwoField({x0,y0},cfg.top,{x0,y2},cfg.bottom));
+   fig.solid(art,TwoField({x0,y0},+cfg.top,{x0,y2},+cfg.bottom));
   }
   {
    FigureBox fig(x0,x2,y0,y2);
    
-   fig.loop(art,HalfPos,cfg.width,cfg.border);
+   fig.loop(art,HalfPos,+cfg.width,+cfg.border);
   }
   {
    FigurePoints<3> fig;
@@ -68,7 +68,7 @@ void ProgressShape::draw(const DrawBuf &buf) const
    fig[1]={x1-p.dy+dx,y2};
    fig[2]={x1+dx,y1};
    
-   fig.solid(art,cfg.activeBottom);
+   fig.solid(art,+cfg.activeBottom);
   }
  }
 

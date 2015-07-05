@@ -25,14 +25,14 @@ namespace Video {
 
 Point ContourShape::getMinSize() const
  {
-  Coord dxy=RoundUpLen(cfg.width);
+  Coord dxy=RoundUpLen(+cfg.width);
   
   return Point::Diag(2*dxy);
  }
 
 Pane ContourShape::getInner() const
  {
-  Coord dxy=RoundUpLen(cfg.width);
+  Coord dxy=RoundUpLen(+cfg.width);
   
   return Shrink(pane,dxy);
  }
@@ -45,7 +45,7 @@ void ContourShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  MCoord width=cfg.width;
+  MCoord width=+cfg.width;
   
   MCoord x0=p.x;
   MCoord x1=x0+p.dx;
@@ -55,11 +55,11 @@ void ContourShape::draw(const DrawBuf &buf) const
   
   FigureTopBorder fig_top(x0,x1,y0,y1,width);
   
-  fig_top.solid(art,cfg.top);
+  fig_top.solid(art,+cfg.top);
   
   FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
   
-  fig_bottom.solid(art,cfg.bottom);
+  fig_bottom.solid(art,+cfg.bottom);
  }
 
 } // namespace Video
