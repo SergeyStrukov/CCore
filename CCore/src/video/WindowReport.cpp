@@ -155,7 +155,7 @@ void ExceptionWindow::setLines()
     }
  }
 
-ExceptionWindow::ExceptionWindow(SubWindowHost &host,WindowReportBase &report_,Config &cfg_)
+ExceptionWindow::ExceptionWindow(SubWindowHost &host,WindowReportBase &report_,const Config &cfg_)
  : SubWindow(host),
    report(report_),
    cfg(cfg_),
@@ -186,7 +186,7 @@ void ExceptionWindow::layout()
  {
   Point size=getSize();
   
-  FontSize font_size=cfg.text_font->getSize();
+  FontSize font_size=cfg.text_font.get()->getSize();
   
   text_by=font_size.by;
   text_dy=font_size.dy;
@@ -200,7 +200,7 @@ void ExceptionWindow::draw(DrawBuf buf,bool) const
     {
      CommonDrawArt art(buf);
      
-     art.erase(cfg.back);
+     art.erase(+cfg.back);
      
      Coord y=text_by;
      ulen ind=0;
@@ -220,7 +220,7 @@ void ExceptionWindow::draw(DrawBuf buf,bool) const
                           
                           StrLen line=out.close();
                           
-                          cfg.text_font->text_update(buf,buf.getPane(),place,line,cfg.text);
+                          cfg.text_font.get()->text_update(buf,buf.getPane(),place,line,+cfg.text);
                          }
        
                        for(;;)
@@ -235,7 +235,7 @@ void ExceptionWindow::draw(DrawBuf buf,bool) const
                             {
                              if( ind>=off+visible_lines ) return;
                             
-                             cfg.text_font->text(buf,buf.getPane(),place,line,cfg.text);
+                             cfg.text_font.get()->text(buf,buf.getPane(),place,line,+cfg.text);
                              
                              y+=text_dy;
                             }
@@ -259,14 +259,14 @@ void ExceptionWindow::draw(DrawBuf buf,bool) const
                             {
                              Coord div_y=(y-text_by)+text_dy/2;
                           
-                             art.path(cfg.divider,Point(0,div_y-1),Point(buf.dX()-1,div_y-1));
-                             art.path(cfg.divider,Point(0,div_y+1),Point(buf.dX()-1,div_y+1));
+                             art.path(+cfg.divider,Point(0,div_y-1),Point(buf.dX()-1,div_y-1));
+                             art.path(+cfg.divider,Point(0,div_y+1),Point(buf.dX()-1,div_y+1));
                             }
                           else
                             {
                              Coord div_y=(y-text_by)+text_dy/2;
                            
-                             art.path(cfg.divider,Point(0,div_y),Point(buf.dX()-1,div_y));
+                             art.path(+cfg.divider,Point(0,div_y),Point(buf.dX()-1,div_y));
                             }
                           
                           y+=text_dy;
@@ -480,7 +480,7 @@ class WindowReportBase::TempQueue : DeferCallQueue
     }
  };
 
-WindowReportBase::WindowReportBase(Desktop *desktop_,MSec tick_period_,ExceptionWindow::Config &cfg_)
+WindowReportBase::WindowReportBase(Desktop *desktop_,MSec tick_period_,const ExceptionWindow::Config &cfg_)
  : desktop(desktop_),
    tick_period(tick_period_),
    cfg(cfg_)

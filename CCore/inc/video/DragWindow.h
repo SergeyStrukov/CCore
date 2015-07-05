@@ -19,6 +19,7 @@
 #include <CCore/inc/video/ClientWindow.h>
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/FrameGuards.h>
+#include <CCore/inc/video/RefVal.h>
 
 #include <CCore/inc/String.h>
 #include <CCore/inc/DeferCall.h>
@@ -75,55 +76,55 @@ class DragShape
  
    struct Config
     {
-     Coord frame_dxy = 11 ;
-     Coord title_dy  = 32 ;
+     RefVal<Coord> frame_dxy = 11 ;
+     RefVal<Coord> title_dy  = 32 ;
      
-     Coord btn_dx    = 32 ;
-     Coord btn_dy    = 30 ;
+     RefVal<Coord> btn_dx    = 32 ;
+     RefVal<Coord> btn_dy    = 30 ;
      
-     Coord min_dy    =  3 ;
-     Coord alert_dx  =  2 ;
+     RefVal<Coord> min_dy    =  3 ;
+     RefVal<Coord> alert_dx  =  2 ;
 
-     ColorName edge            =     Black ;
-     ColorName frame           =    Silver ;
-     ColorName accent          =      Gray ;
-     ColorName accentHilight   =     Green ;
-     ColorName accentDrag      =       Red ;
+     RefVal<ColorName> edge            =     Black ;
+     RefVal<ColorName> frame           =    Silver ;
+     RefVal<ColorName> accent          =      Gray ;
+     RefVal<ColorName> accentHilight   =     Green ;
+     RefVal<ColorName> accentDrag      =       Red ;
      
-     ColorName active          = RGBColor(128,128,255) ;
-     ColorName inactive        =    Silver ;
+     RefVal<ColorName> active          = RGBColor(128,128,255) ;
+     RefVal<ColorName> inactive        =    Silver ;
      
-     ColorName btnFace         = SteelBlue ;
-     ColorName btnFaceHilight  =     Green ;
-     ColorName btnFaceDown     =      Blue ;
-     ColorName btnFaceClose    =   DarkRed ;
-     ColorName btnEdge         =     Black ;
-     ColorName btnPict         =     White ;
-     ColorName btnClose        =       Red ;
+     RefVal<ColorName> btnFace         = SteelBlue ;
+     RefVal<ColorName> btnFaceHilight  =     Green ;
+     RefVal<ColorName> btnFaceDown     =      Blue ;
+     RefVal<ColorName> btnFaceClose    =   DarkRed ;
+     RefVal<ColorName> btnEdge         =     Black ;
+     RefVal<ColorName> btnPict         =     White ;
+     RefVal<ColorName> btnClose        =       Red ;
      
-     ColorName titleUp         =      Gray ;
-     ColorName titleDown       =      Snow ;
+     RefVal<ColorName> titleUp         =      Gray ;
+     RefVal<ColorName> titleDown       =      Snow ;
      
-     ColorName titleActiveUp   = RGBColor(0,0,128) ;
-     ColorName titleActiveDown = RGBColor(200,200,128) ;
+     RefVal<ColorName> titleActiveUp   = RGBColor(0,0,128) ;
+     RefVal<ColorName> titleActiveDown = RGBColor(200,200,128) ;
      
-     ColorName alert           =       Red ;
-     ColorName noAlert         =    Silver ;
-     ColorName closeAlert      =    Orange ;
+     RefVal<ColorName> alert           =       Red ;
+     RefVal<ColorName> noAlert         =    Silver ;
+     RefVal<ColorName> closeAlert      =    Orange ;
      
-     ColorName title           =     Black ;
+     RefVal<ColorName> title           =     Black ;
      
-     Font title_font;
+     RefVal<Font> title_font;
      
-     unsigned blink_time       = 24 ;
-     unsigned blink_period     = 3 ;
+     RefVal<unsigned> blink_time       = 24 ;
+     RefVal<unsigned> blink_period     = 3 ;
      
      Config() {}
      
-     Signal<> update;
+     mutable Signal<> update;
     };
    
-   Config &cfg;
+   const Config &cfg;
 
   private: 
   
@@ -150,9 +151,9 @@ class DragShape
    
    class DrawArt;
    
-   ColorName accentColor(DragType zone) const { return (drag_type==zone)?cfg.accentDrag:( (hilight==zone)?cfg.accentHilight:cfg.accent ); }
+   ColorName accentColor(DragType zone) const { return (drag_type==zone)?+cfg.accentDrag:( (hilight==zone)?+cfg.accentHilight:+cfg.accent ); }
    
-   ColorName btnColor(DragType zone) const { return (btn_type==zone)?cfg.btnFaceDown:( (hilight==zone)?cfg.btnFaceHilight:cfg.btnFace ); }
+   ColorName btnColor(DragType zone) const { return (btn_type==zone)?+cfg.btnFaceDown:( (hilight==zone)?+cfg.btnFaceHilight:+cfg.btnFace ); }
    
    void draw_TopLeft(DrawArt &art) const;
    
@@ -193,7 +194,7 @@ class DragShape
   
    // methods
    
-   explicit DragShape(Config &cfg_) : cfg(cfg_) {}
+   explicit DragShape(const Config &cfg_) : cfg(cfg_) {}
    
    Pane getClient() const { return client; }
    
@@ -463,13 +464,13 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
     {
      if( !tick_count )
        {
-        tick_count=shape.cfg.blink_time;
+        tick_count=+shape.cfg.blink_time;
         
         defer_tick.start();
        }
      else
        {
-        tick_count=shape.cfg.blink_time;
+        tick_count=+shape.cfg.blink_time;
        }
     }
    
@@ -477,7 +478,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
     {
      if( tick_count )
        {
-        if( !(tick_count%shape.cfg.blink_period) )
+        if( !(tick_count%+shape.cfg.blink_period) )
           {
            shape.alert_blink=!shape.alert_blink;
            
@@ -512,7 +513,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
    
   public:
   
-   DragWindowOf(Desktop *desktop,ConfigType &cfg)
+   DragWindowOf(Desktop *desktop,const ConfigType &cfg)
     : FrameWindow(desktop),
       shape(cfg),
       input(this),

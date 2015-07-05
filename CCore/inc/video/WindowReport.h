@@ -110,21 +110,21 @@ class ExceptionWindow : public SubWindow
   
    struct Config
     {
-     ColorName back = Black ;
-     ColorName text = Green ;
-     ColorName divider = Red ;
+     RefVal<ColorName> back = Black ;
+     RefVal<ColorName> text = Green ;
+     RefVal<ColorName> divider = Red ;
      
-     Font text_font;
+     RefVal<Font> text_font;
      
      Config() {}
      
-     Signal<> update;
+     mutable Signal<> update;
     };
    
   private:
    
    WindowReportBase &report;
-   Config &cfg;
+   const Config &cfg;
    
    ulen off = 0 ;
    ulen lines = 0 ;
@@ -143,7 +143,7 @@ class ExceptionWindow : public SubWindow
    
   public:
   
-   ExceptionWindow(SubWindowHost &host,WindowReportBase &report,Config &cfg);
+   ExceptionWindow(SubWindowHost &host,WindowReportBase &report,const Config &cfg);
    
    virtual ~ExceptionWindow();
    
@@ -214,7 +214,7 @@ class WindowReportBase : public ExceptionStore , public ReportException
    
    Desktop *desktop;
    MSec tick_period;
-   ExceptionWindow::Config &cfg;
+   const ExceptionWindow::Config &cfg;
    
   private: 
   
@@ -232,7 +232,7 @@ class WindowReportBase : public ExceptionStore , public ReportException
    
   public:
   
-   WindowReportBase(Desktop *desktop,MSec tick_period,ExceptionWindow::Config &cfg);
+   WindowReportBase(Desktop *desktop,MSec tick_period,const ExceptionWindow::Config &cfg);
    
    ~WindowReportBase();
    
@@ -255,7 +255,7 @@ class WindowReportBase : public ExceptionStore , public ReportException
 template <class Shape> 
 class WindowReportOf : public WindowReportBase
  {
-   typename Shape::Config &drag_cfg;
+   const typename Shape::Config &drag_cfg;
    
   private: 
    
@@ -263,7 +263,7 @@ class WindowReportOf : public WindowReportBase
    
   public:
   
-   explicit WindowReportOf(WindowReportParamOf<Shape> &param)
+   explicit WindowReportOf(const WindowReportParamOf<Shape> &param)
     : WindowReportBase(param.desktop,param.tick_period,param.cfg),
       drag_cfg(param.drag_cfg)
     {
@@ -309,7 +309,7 @@ class ExceptionClient : public ClientWindow
   public:
   
    template <class W>
-   ExceptionClient(W &parent,WindowReportBase &report_,ExceptionWindow::Config &cfg)
+   ExceptionClient(W &parent,WindowReportBase &report_,const ExceptionWindow::Config &cfg)
     : report(report_),
       window(parent,report_,cfg)
     {

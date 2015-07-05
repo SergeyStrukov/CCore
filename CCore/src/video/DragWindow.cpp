@@ -206,7 +206,7 @@ void DragShape::draw_TopLeft(DrawArt &art) const
     {
      Pane pane=dragTopLeft;
   
-     art.box(pane,cfg.edge,cfg.frame);
+     art.box(pane,+cfg.edge,+cfg.frame);
    
      ColorName cname=accentColor(DragType_TopLeft);
      
@@ -222,11 +222,11 @@ void DragShape::draw_Left(DrawArt &art) const
     {
      Pane pane=dragLeft;
     
-     art.boxY(pane,cfg.edge,cfg.frame);
+     art.boxY(pane,+cfg.edge,+cfg.frame);
      
      ColorName cname=accentColor(DragType_Left);
      
-     Coord delta=cfg.frame_dxy/2;
+     Coord delta=+cfg.frame_dxy/2;
      
      art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
     }
@@ -238,7 +238,7 @@ void DragShape::draw_BottomLeft(DrawArt &art) const
     {
      Pane pane=dragBottomLeft;
   
-     art.box(pane,cfg.edge,cfg.frame);
+     art.box(pane,+cfg.edge,+cfg.frame);
    
      ColorName cname=accentColor(DragType_BottomLeft);
    
@@ -254,11 +254,11 @@ void DragShape::draw_Bottom(DrawArt &art) const
     {
      Pane pane=dragBottom;
    
-     art.boxX(pane,cfg.edge,cfg.frame);
+     art.boxX(pane,+cfg.edge,+cfg.frame);
     
      ColorName cname=accentColor(DragType_Bottom);
     
-     Coord delta=cfg.frame_dxy/2;
+     Coord delta=+cfg.frame_dxy/2;
     
      art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+pane.dx-1-delta,pane.y+delta));
     }
@@ -270,7 +270,7 @@ void DragShape::draw_BottomRight(DrawArt &art) const
     {
      Pane pane=dragBottomRight;
   
-     art.box(pane,cfg.edge,cfg.frame);
+     art.box(pane,+cfg.edge,+cfg.frame);
    
      ColorName cname=accentColor(DragType_BottomRight);
      
@@ -286,11 +286,11 @@ void DragShape::draw_Right(DrawArt &art) const
     {
      Pane pane=dragRight;
     
-     art.boxY(pane,cfg.edge,cfg.frame);
+     art.boxY(pane,+cfg.edge,+cfg.frame);
      
      ColorName cname=accentColor(DragType_Right);
      
-     Coord delta=cfg.frame_dxy/2;
+     Coord delta=+cfg.frame_dxy/2;
      
      art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
     }
@@ -302,7 +302,7 @@ void DragShape::draw_TopRight(DrawArt &art) const
     {
      Pane pane=dragTopRight;
   
-     art.box(pane,cfg.edge,cfg.frame);
+     art.box(pane,+cfg.edge,+cfg.frame);
    
      ColorName cname=accentColor(DragType_TopRight);
    
@@ -318,13 +318,13 @@ void DragShape::draw_Alert(DrawArt &art) const
     {
      ColorName cname=btnColor(DragType_Alert);
      
-     Pane pane=art.btn(btnAlert,cname,cfg.btnEdge);
+     Pane pane=art.btn(btnAlert,cname,+cfg.btnEdge);
      
      if( !alert_blink )
        {
-        ColorName cname=(alert_type==AlertType_No)?cfg.noAlert:( (alert_type==AlertType_Closed)?cfg.alert:cfg.closeAlert );
+        ColorName cname=(alert_type==AlertType_No)?+cfg.noAlert:( (alert_type==AlertType_Closed)?+cfg.alert:+cfg.closeAlert );
         
-        cfg.title_font->text(art.getBuf(),pane,TextPlace(AlignX_Center,AlignY_Center),StrLen("!",1),cname);
+        cfg.title_font.get()->text(art.getBuf(),pane,TextPlace(AlignX_Center,AlignY_Center),StrLen("!",1),cname);
        } 
     }
  }
@@ -335,13 +335,13 @@ void DragShape::draw_Min(DrawArt &art) const
     {
      ColorName cname=btnColor(DragType_Min);
      
-     Pane pane=art.btn(btnMin,cname,cfg.btnEdge);
+     Pane pane=art.btn(btnMin,cname,+cfg.btnEdge);
      
-     if( pane.dx>0 && pane.dy>=cfg.min_dy )
+     if( pane.dx>0 && pane.dy>=+cfg.min_dy )
        {
-        Pane fig=SplitY(pane,cfg.min_dy);
+        Pane fig=SplitY(pane,+cfg.min_dy);
        
-        art.block(fig,cfg.btnPict);
+        art.block(fig,+cfg.btnPict);
        }
     }
  }
@@ -352,14 +352,14 @@ void DragShape::draw_Max(DrawArt &art) const
     {
      ColorName cname=btnColor(DragType_Max);
        
-     Pane pane=art.btn(btnMax,cname,cfg.btnEdge);
+     Pane pane=art.btn(btnMax,cname,+cfg.btnEdge);
 
-     if( pane.dx>0 && pane.dy>=cfg.min_dy )
+     if( pane.dx>0 && pane.dy>=+cfg.min_dy )
        {
         if( max_button )
-          art.block(pane,cfg.btnPict);
+          art.block(pane,+cfg.btnPict);
         else
-          art.block(Shrink(pane,pane.dx/4,pane.dy/4),cfg.btnPict);
+          art.block(Shrink(pane,pane.dx/4,pane.dy/4),+cfg.btnPict);
        }
     }
  }
@@ -370,14 +370,14 @@ void DragShape::draw_Close(DrawArt &art) const
     {
      ColorName cname=btnColor(DragType_Close);
        
-     Pane pane=art.btn(btnClose,cname,cfg.btnEdge);
+     Pane pane=art.btn(btnClose,cname,+cfg.btnEdge);
      
      if( +pane )
        {
         PaneBorder border(pane);
        
-        art.path_smooth(cfg.btnClose,border.topLeft(),border.bottomRight());
-        art.path_smooth(cfg.btnClose,border.topRight(),border.bottomLeft());
+        art.path_smooth(+cfg.btnClose,border.topLeft(),border.bottomRight());
+        art.path_smooth(+cfg.btnClose,border.topRight(),border.bottomLeft());
        } 
     }
  }
@@ -398,10 +398,10 @@ void DragShape::reset(const String &title_,bool max_button_)
 
 void DragShape::layout(Point size)
  {
-  Coord dxy=cfg.frame_dxy;
-  Coord tdy=cfg.title_dy;
-  Coord bdx=cfg.btn_dx;
-  Coord bdy=cfg.btn_dy;
+  Coord dxy=+cfg.frame_dxy;
+  Coord tdy=+cfg.title_dy;
+  Coord bdx=+cfg.btn_dx;
+  Coord bdy=+cfg.btn_dy;
   
   if( size>Point(2*dxy+5*bdx+bdx/2+Max(dxy,tdy),dxy+Max<Coord>(2*dxy,tdy)) )
     {
@@ -479,14 +479,14 @@ void DragShape::draw(const DrawBuf &buf) const
        {
         Pane pane=dragBar;
     
-        art.boxX(pane,cfg.edge, has_focus?cfg.active:cfg.inactive );
+        art.boxX(pane,+cfg.edge, has_focus?+cfg.active:+cfg.inactive );
        }
      
      if( +titleBar )
        {
-        Pane pane=art.title(titleBar, has_focus?cfg.titleActiveUp:cfg.titleUp , has_focus?cfg.titleActiveDown:cfg.titleDown );
+        Pane pane=art.title(titleBar, has_focus?+cfg.titleActiveUp:+cfg.titleUp , has_focus?+cfg.titleActiveDown:+cfg.titleDown );
         
-        cfg.title_font->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),cfg.title);
+        cfg.title_font.get()->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
        }
      
      draw_Alert(art);
