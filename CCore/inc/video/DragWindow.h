@@ -555,7 +555,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      host->update();
     }
    
-   void create(Pane pane,Point max_size,String title)
+   void create(Pane pane,Point max_size,const String &title)
     {
      guardClient();
      
