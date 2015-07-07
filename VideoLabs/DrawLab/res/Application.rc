@@ -1,0 +1,18 @@
+/* Application.rc */ 
+/*----------------------------------------------------------------------------------------
+//
+//  Project: DrawLab 1.00
+//
+//  Tag: private
+//
+//  License: proprietary software, don't distribute!
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//--------------------------------------------------------------------------------------*/
+
+#include <inc/Application.rh>
+
+IDI_APP         ICON  "Application.ico"
+IDI_SMALL_APP   ICON  "Application.ico"
+

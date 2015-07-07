@@ -125,6 +125,7 @@ obj/FastMutex.o \
 obj/Fifo.o \
 obj/FigureLib.o \
 obj/FileName.o \
+obj/FixedWindow.o \
 obj/Flash.o \
 obj/Font.o \
 obj/Forget.o \
@@ -500,6 +501,7 @@ obj/FastMutex.s \
 obj/Fifo.s \
 obj/FigureLib.s \
 obj/FileName.s \
+obj/FixedWindow.s \
 obj/Flash.s \
 obj/Font.s \
 obj/Forget.s \
@@ -875,6 +877,7 @@ obj/FastMutex.dep \
 obj/Fifo.dep \
 obj/FigureLib.dep \
 obj/FileName.dep \
+obj/FixedWindow.dep \
 obj/Flash.dep \
 obj/Font.dep \
 obj/Forget.dep \
@@ -1515,6 +1518,9 @@ obj/FigureLib.o : ../../CCore/src/video/FigureLib.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/FileName.o : ../../CCore/src/FileName.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/FixedWindow.o : ../../CCore/src/video/FixedWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Flash.o : ../../Target/IXDP465/CCore/src/Flash.cpp
@@ -2635,6 +2641,9 @@ obj/FigureLib.s : ../../CCore/src/video/FigureLib.cpp
 obj/FileName.s : ../../CCore/src/FileName.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/FixedWindow.s : ../../CCore/src/video/FixedWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Flash.s : ../../Target/IXDP465/CCore/src/Flash.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3752,6 +3761,9 @@ obj/FigureLib.dep : ../../CCore/src/video/FigureLib.cpp
 
 obj/FileName.dep : ../../CCore/src/FileName.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FileName.o $< -MF $@
+
+obj/FixedWindow.dep : ../../CCore/src/video/FixedWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/FixedWindow.o $< -MF $@
 
 obj/Flash.dep : ../../Target/IXDP465/CCore/src/Flash.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Flash.o $< -MF $@

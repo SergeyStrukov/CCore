@@ -1,0 +1,24 @@
+/* Application.rh */ 
+/*----------------------------------------------------------------------------------------
+//
+//  Project: DrawLab 1.00
+//
+//  Tag: private
+//
+//  License: proprietary software, don't distribute!
+//
+//  Copyright (c) 2015 Sergey Strukov. All rights reserved.
+//
+//--------------------------------------------------------------------------------------*/
+
+#ifndef Application_rh
+#define Application_rh
+
+#define IDI_APP           6001
+#define IDI_SMALL_APP     6002
+
+#endif
+
+
+
+

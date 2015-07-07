@@ -1,0 +1,65 @@
+OBJ_LIST = \
+obj/Application.o \
+obj/ShapeLab.o \
+obj/main.o \
+
+
+ASM_LIST = \
+obj/Application.s \
+obj/ShapeLab.s \
+obj/main.s \
+
+
+DEP_LIST = \
+obj/Application.dep \
+obj/ShapeLab.dep \
+obj/main.dep \
+
+
+ASM_OBJ_LIST = \
+
+
+include $(RULES_FILE)
+
+
+obj/Application.o : ./src/Application.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLab.o : ./src/ShapeLab.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/main.o : ./src/main.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+
+
+obj/Application.s : ./src/Application.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/ShapeLab.s : ./src/ShapeLab.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+obj/main.s : ./src/main.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
+
+
+obj/Application.dep : ./src/Application.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Application.o $< -MF $@
+
+obj/ShapeLab.dep : ./src/ShapeLab.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLab.o $< -MF $@
+
+obj/main.dep : ./src/main.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@
+
+
+
+
+
+ifneq ($(MAKECMDGOALS),clean)
+
+include $(DEP_FILE)
+
+endif
+
