@@ -833,16 +833,17 @@ class ProgressShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<ColorName> border = Black ;
+     RefVal<ColorName> border =  Black ;
+     RefVal<ColorName> active = Silver ;
      
-     RefVal<ColorName> top    =  Snow ;
-     RefVal<ColorName> bottom =  Gray ;
+     RefVal<ColorName> top    =   Snow ;
+     RefVal<ColorName> bottom =   Gray ;
      
      RefVal<ColorName> activeTop    = RGBColor(0,255,0) ;
      RefVal<ColorName> activeBottom = RGBColor(0,100,0) ;
      
-     RefVal<unsigned> time = 3*25 ;
-     RefVal<unsigned> period = 3 ;
+     RefVal<unsigned> time   = 3*25 ;
+     RefVal<unsigned> period =    2 ;
      
      Config() {}
     };
@@ -854,9 +855,10 @@ class ProgressShape
 
    static const unsigned MaxActivePos = 100 ;
    
-   unsigned total      = 100 ;
-   unsigned pos        =   0 ;
-   unsigned active_pos =   0 ;
+   unsigned total      =   100 ;
+   unsigned pos        =     0 ;
+   unsigned active_pos =     0 ;
+   bool has_active     = false ;
    
    unsigned time  = 0 ;
    unsigned count = 0 ;
@@ -888,9 +890,27 @@ class ProgressShape
      return false;
     }
    
+   bool startActive()
+    {
+     if( !has_active )
+       {
+        has_active=true;
+        active_pos=0;
+        
+        return true;
+       }
+     
+     return false;
+    }
+     
    void nextActive()
     {
-     if( (active_pos+=MaxActivePos/5)>MaxActivePos ) active_pos=0;
+     if( (active_pos+=MaxActivePos/10)>MaxActivePos ) active_pos=0;
+    }
+
+   void stopActive() 
+    {  
+     has_active=false;
     }
    
    void draw(const DrawBuf &buf) const;

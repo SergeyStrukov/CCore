@@ -41,10 +41,18 @@ void ProgressShape::draw(const DrawBuf &buf) const
   
   MCoord y0=p.y;
   MCoord y2=p.y+p.dy;
-  MCoord y1=y0+(y2-y0)/2;
   
   MCoord x1=Position(pos,total,x0,x2);
-  MCoord dx=Position(active_pos,MaxActivePos,0,p.dy);
+  
+  MCoord dt=p.dy;
+  MCoord t0=Position(active_pos,MaxActivePos,x0,x2-dt);
+  MCoord t1=t0+dt;
+  
+  MCoord ds=p.dy/5;
+  MCoord s0=y0;
+  MCoord s1=s0+ds;
+  MCoord s3=y2;
+  MCoord s2=s3-ds;
   
   {
    FigureBox fig(x0,x1,y0,y2);
@@ -61,15 +69,19 @@ void ProgressShape::draw(const DrawBuf &buf) const
    
    fig.loop(art,HalfPos,+cfg.width,+cfg.border);
   }
-  {
-   FigurePoints<3> fig;
+  
+  if( has_active )
+    {
+     ColorName cname=+cfg.active;
+    
+     FigureBox fig1(t0,t1,s0,s1);
    
-   fig[0]={x1-p.dy+dx,y0};
-   fig[1]={x1-p.dy+dx,y2};
-   fig[2]={x1+dx,y1};
+     fig1.solid(art,cname);
    
-   fig.solid(art,+cfg.activeBottom);
-  }
+     FigureBox fig2(t0,t1,s2,s3);
+   
+     fig2.solid(art,cname);
+    }
  }
 
 } // namespace Video

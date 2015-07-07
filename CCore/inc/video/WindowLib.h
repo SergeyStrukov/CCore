@@ -1428,22 +1428,22 @@ class ProgressWindowOf : public SubWindow
     {
      if( shape.time )
        {
+        shape.time--;
+        
         if( shape.tick() )
           {
            shape.nextActive();
           
            redraw();
           }
-       
-        shape.time--;
        }
      else
        {
-        shape.active_pos=0;
+        defer_tick.stop();
+        
+        shape.stopActive();
         
         redraw();
-        
-        defer_tick.stop();
        }
     }
    
@@ -1474,6 +1474,7 @@ class ProgressWindowOf : public SubWindow
     {
      shape.total=total;
      shape.pos=0;
+     shape.stopActive();
      
      redraw();
     }
@@ -1492,6 +1493,8 @@ class ProgressWindowOf : public SubWindow
      shape.resetTime();
      
      defer_tick.start();
+     
+     if( shape.startActive() ) redraw();
     }
    
    // drawing
