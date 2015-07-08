@@ -405,7 +405,7 @@ void DragShape::layout(Point size)
   
   if( size>Point(2*dxy+5*bdx+bdx/2+Max(dxy,tdy),dxy+Max<Coord>(2*dxy,tdy)) )
     {
-     Pane pane(0,0,size.x,size.y);
+     Pane pane=Extent(Null,size);
      
      Pane left=SplitX(dxy,pane);
      Pane right=SplitX(pane,dxy);

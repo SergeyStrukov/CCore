@@ -29,7 +29,7 @@ class FixedShape::DrawArt : public Smooth::DrawArt
    explicit DrawArt(const DrawBuf &buf) : Smooth::DrawArt(buf) {}
  };
 
-void FixedShape::drawTitle(DrawArt &art) const
+void FixedShape::draw_Title(DrawArt &art) const
  {
   if( +titleBar )
     {
@@ -39,16 +39,21 @@ void FixedShape::drawTitle(DrawArt &art) const
      
      MCoord x0=p.x;
      MCoord x1=x0+p.dx;
+     
      MCoord y0=p.y;
      MCoord y1=y0+p.dy;
+     
      MCoord ex=p.dy/4;
+     
+     ColorName top=+cfg.top;
+     ColorName bottom=+cfg.bottom;
      
      FigureButton fig(x0,x1,y0,y1,ex);
      
      fig.curveSolid(art,has_focus?+cfg.active:+cfg.inactive);
      
-     fig.getTop().curvePath(art,HalfPos,width,+cfg.bottom);
-     fig.getBottom().curvePath(art,HalfPos,width,+cfg.top);
+     fig.getTop().curvePath(art,HalfPos,width,bottom);
+     fig.getBottom().curvePath(art,HalfPos,width,top);
      
      Pane pane=Shrink(titleBar,RoundUpLen(ex),RoundUpLen(width));
      
@@ -56,7 +61,7 @@ void FixedShape::drawTitle(DrawArt &art) const
     }
  }
 
-void FixedShape::drawClose(DrawArt &art) const
+void FixedShape::draw_Close(DrawArt &art) const
  {
   if( +btnClose )
     {
@@ -66,8 +71,10 @@ void FixedShape::drawClose(DrawArt &art) const
      
      MCoord x0=p.x;
      MCoord x1=x0+p.dx;
+     
      MCoord y0=p.y;
      MCoord y1=y0+p.dy;
+     
      MCoord ex=p.dy/8;
      
      FigureButton fig(x0,x1,y0,y1,ex);
@@ -77,58 +84,63 @@ void FixedShape::drawClose(DrawArt &art) const
      
      MCoord s0=x0+bx;
      MCoord s1=x1-bx;
+     
      MCoord t0=y0+bx;
      MCoord t1=y1-bx;
      
+     ColorName top=+cfg.top;
+     ColorName bottom=+cfg.bottom;
+     ColorName btn=+cfg.btnClose;
+     
      if( hit_type==HitFrame_Close )
        {
-        fig.curveSolid(art,+cfg.bottom);
-        
-        ColorName cname=+cfg.btnClose;
+        fig.curveSolid(art,bottom);
         
         s0+=width;
         s1+=width;
         t0+=width;
         t1+=width;
         
-        art.pathOf(w,cname,MPoint(s0,t0),MPoint(s1,t1));
-        art.pathOf(w,cname,MPoint(s0,t1),MPoint(s1,t0));
+        art.pathOf(w,btn,MPoint(s0,t0),MPoint(s1,t1));
+        art.pathOf(w,btn,MPoint(s0,t1),MPoint(s1,t0));
        }
      else
        {
         fig.curveSolid(art,(hilight==HitFrame_Close)?+cfg.btnHilight:+cfg.frame);
         
-        fig.getTop().curvePath(art,HalfPos,width,+cfg.top);
-        fig.getBottom().curvePath(art,HalfPos,width,+cfg.bottom);
+        fig.getTop().curvePath(art,HalfPos,width,top);
+        fig.getBottom().curvePath(art,HalfPos,width,bottom);
         
-        ColorName cname=+cfg.btnClose;
-        
-        art.pathOf(w,cname,MPoint(s0,t0),MPoint(s1,t1));
-        art.pathOf(w,cname,MPoint(s0,t1),MPoint(s1,t0));
+        art.pathOf(w,btn,MPoint(s0,t0),MPoint(s1,t1));
+        art.pathOf(w,btn,MPoint(s0,t1),MPoint(s1,t0));
        }
     }
  }
 
-void FixedShape::drawBorder(DrawArt &art) const
+void FixedShape::draw_Border(DrawArt &art) const
  {
   MCoord width=+cfg.width;
+  ColorName top=+cfg.top;
+  ColorName bottom=+cfg.bottom;
   
-  {
-   MPane outer(Extent(Null,size));
-   
-   MCoord x0=outer.x;
-   MCoord x1=x0+outer.dx;
-   MCoord y0=outer.y;
-   MCoord y1=y0+outer.dy;
-
-   FigureTopBorder fig_top(x0,x1,y0,y1,width);
-   
-   fig_top.solid(art,+cfg.top);
-   
-   FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
-   
-   fig_bottom.solid(art,+cfg.bottom);
-  }
+  if( size>Null )
+    {
+     MPane outer(Extent(Null,size));
+     
+     MCoord x0=outer.x;
+     MCoord x1=x0+outer.dx;
+     
+     MCoord y0=outer.y;
+     MCoord y1=y0+outer.dy;
+  
+     FigureTopBorder fig_top(x0,x1,y0,y1,width);
+     
+     fig_top.solid(art,top);
+     
+     FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
+     
+     fig_bottom.solid(art,bottom);
+    }
   
   if( +client )
     {
@@ -136,6 +148,7 @@ void FixedShape::drawBorder(DrawArt &art) const
     
      MCoord x0=inner.x;
      MCoord x1=x0+inner.dx;
+     
      MCoord y0=inner.y;
      MCoord y1=y0+inner.dy;
      
@@ -146,11 +159,11 @@ void FixedShape::drawBorder(DrawArt &art) const
      
      FigureTopBorder fig_top(x0,x1,y0,y1,width);
      
-     fig_top.solid(art,+cfg.bottom);
+     fig_top.solid(art,bottom);
      
      FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
      
-     fig_bottom.solid(art,+cfg.top);
+     fig_bottom.solid(art,top);
     }
  }
 
@@ -212,11 +225,11 @@ void FixedShape::draw(const DrawBuf &buf) const
      art.block(sub.left,cname);
      art.block(sub.right,cname);
      
-     drawTitle(art);
+     draw_Title(art);
      
-     drawClose(art);
+     draw_Close(art);
      
-     drawBorder(art);
+     draw_Border(art);
     }
   catch(CatchType)
     {
@@ -231,7 +244,7 @@ void FixedShape::draw(const DrawBuf &buf,HitFrameType hit_type) const
     
      switch( hit_type )
        {
-        case HitFrame_Close : drawClose(art); break;
+        case HitFrame_Close : draw_Close(art); break;
        }
     }
   catch(CatchType)

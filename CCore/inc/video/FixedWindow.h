@@ -97,11 +97,11 @@ class FixedShape
    
    class DrawArt;
    
-   void drawTitle(DrawArt &art) const;
+   void draw_Title(DrawArt &art) const;
    
-   void drawClose(DrawArt &art) const;
+   void draw_Close(DrawArt &art) const;
    
-   void drawBorder(DrawArt &art) const;
+   void draw_Border(DrawArt &art) const;
    
   public: 
   
