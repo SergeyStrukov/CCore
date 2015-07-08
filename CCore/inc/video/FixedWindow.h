@@ -53,26 +53,29 @@ class FixedShape
   
    struct Config
     {
-     RefVal<Coord> frame_dxy = 10 ;
+     RefVal<MCoord> width = Fraction(6,2) ;
+    
+     RefVal<Coord> frame_dxy = 12 ;
      RefVal<Coord> title_dy  = 32 ;
      
-     RefVal<Coord> btn_dx = 24 ;
-     RefVal<Coord> btn_dy = 24 ;
+     RefVal<Coord> btn_dx    = 26 ;
+     RefVal<Coord> btn_dy    = 26 ;
     
-     RefVal<MCoord> width = Fraction(6,2) ;
+     RefVal<ColorName> top            =      Snow ;
+     RefVal<ColorName> bottom         =      Gray ;
+     RefVal<ColorName> frame          =    Silver ;
+     RefVal<ColorName> frameHilight   = RGBColor(0xC0,0xFF,0xC0) ;
+     RefVal<ColorName> frameDrag      = RGBColor(0xFF,0xC0,0xC0) ;
      
-     RefVal<ColorName> top          =   Snow ;
-     RefVal<ColorName> bottom       =   Gray ;
-     RefVal<ColorName> frame        = Silver ;
-     RefVal<ColorName> frameHilight = RGBColor(0xC0,0xFF,0xC0) ;
-     RefVal<ColorName> frameDrag    = RGBColor(0xFF,0xC0,0xC0) ;
-     
-     RefVal<ColorName> active       = RGBColor(0x80,0x80,0xFF) ;
-     RefVal<ColorName> inactive     = Silver ;
-     RefVal<ColorName> title        =  Black ;
+     RefVal<ColorName> active         = RGBColor(0x80,0x80,0xFF) ;
+     RefVal<ColorName> inactive       =    Silver ;
+     RefVal<ColorName> title          =     Black ;
     
-     RefVal<ColorName> btnHilight   =  Green ; 
-     RefVal<ColorName> btnClose     =    Red ;
+     RefVal<ColorName> btnFaceTop     =    Silver ;
+     RefVal<ColorName> btnFace        = SteelBlue ;
+     RefVal<ColorName> btnFaceHilight =     Green ;
+     RefVal<ColorName> btnPictClose   =       Red ;
+     RefVal<ColorName> btnEdge        =      Blue ;
      
      RefVal<Font> title_font;
     

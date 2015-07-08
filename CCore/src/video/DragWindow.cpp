@@ -15,7 +15,7 @@
  
 #include <CCore/inc/video/DragWindow.h>
 
-#include <CCore/inc/video/CommonDrawArt.h>
+#include <CCore/inc/video/FigureLib.h>
 
 namespace CCore {
 namespace Video {
@@ -100,119 +100,51 @@ void DragPane(Pane &place,Point delta,DragType drag_type)
 
 /* class DragShape */
 
-class DragShape::DrawArt : public CommonDrawArt
+class DragShape::DrawArt : public Smooth::DrawArt
  {
   public:
   
-   explicit DrawArt(const DrawBuf &buf) : CommonDrawArt(buf) {}
-   
-   void box(Pane pane,DesktopColor edge,DesktopColor inner)
-    {
-     PaneBorder border(pane);
-     
-     block(pane,inner);
-     
-     loop(border.get(),edge);
-    }
-   
-   void boxX(Pane pane,DesktopColor edge,DesktopColor inner)
-    {
-     PaneBorder border(pane);
-     
-     block(pane,inner);
-     
-     path(edge,border.topLeft(),border.topRight());
-     path(edge,border.bottomLeft(),border.bottomRight());
-    }
-   
-   void boxY(Pane pane,DesktopColor edge,DesktopColor inner)
-    {
-     PaneBorder border(pane);
-     
-     block(pane,inner);
-     
-     path(edge,border.topLeft(),border.bottomLeft());
-     path(edge,border.topRight(),border.bottomRight());
-    }
-   
-   Pane btn(Pane pane,ColorName face,ColorName edge)
-    {
-     Coord px=pane.dx/4;
-     Coord py=pane.dy/8;
-     
-     Coord x0=pane.x+py;
-     Coord x1=pane.x+px;
-     Coord x2=pane.x+pane.dx-1-px;
-     Coord x3=pane.x+pane.dx-1-py;
-     
-     Coord y0=pane.y+py;
-     Coord y1=pane.y+px;
-     Coord y2=pane.y+pane.dy-1-px;
-     Coord y3=pane.y+pane.dy-1-py;
-     
-     const Point dots[]={Point(x1,y0),
-                         Point(x2,y0),
-                         Point(x3,y1),
-                         Point(x3,y2),
-                         Point(x2,y3),
-                         Point(x1,y3),
-                         Point(x0,y2),
-                         Point(x0,y1)};
-     
-     curveSolid(Range(dots),SolidAll,face);
-     
-     curveLoop_smooth(Range(dots),edge);
-     
-     return Shrink(pane,px,px);
-    }
-   
-   Pane title(Pane pane,ColorName up,ColorName down)
-    {
-     Coord px1=pane.dy/4;
-     Coord px0=px1/3;
-     
-     Coord y0=pane.y;
-     Coord y1=pane.y+pane.dy/4;
-     Coord y2=pane.y+(pane.dy-1)/2;
-     Coord y3=pane.y+pane.dy-1-pane.dy/4;
-     Coord y4=pane.y+pane.dy-1;
-     
-     Coord x0=pane.x;
-     Coord x1=pane.x+pane.dx-1;
-     
-     curvePath_smooth(up,Point(x0+px1,y4),
-                         Point(x0+px0,y3),
-                         Point(x0    ,y2),
-                         Point(x0+px0,y1),
-                         Point(x0+px1,y0));
-     
-     path(up,Point(x0+px1,y0),Point(x1-px1,y0));
-     
-     curvePath_smooth(down,Point(x1-px1,y4),
-                           Point(x1-px0,y3),
-                           Point(x1    ,y2),
-                           Point(x1-px0,y1),
-                           Point(x1-px1,y0));
-     
-     path(down,Point(x0+px1,y4),Point(x1-px1,y4));
-     
-     return Shrink(pane,2*px1,1);
-    }
+   DrawArt(const DrawBuf &buf) : Smooth::DrawArt(buf) {}
  };
+
+ColorName DragShape::dragColor(DragType zone) const
+ {
+  if( drag_type==zone ) return +cfg.dragActive;
+  
+  if( hilight==zone ) return +cfg.dragHilight;
+  
+  return +cfg.drag;
+ }
 
 void DragShape::draw_TopLeft(DrawArt &art) const
  {
   if( +dragTopLeft )
     {
-     Pane pane=dragTopLeft;
-  
-     art.box(pane,+cfg.edge,+cfg.frame);
-   
-     ColorName cname=accentColor(DragType_TopLeft);
+     art.block(dragTopLeft,+cfg.frame);
+ 
+     MPane p(dragTopLeft);
      
-     PaneBorder border(Shrink(pane,1,1));
-   
-     art.solid(SolidAll,cname,border.topLeft(),border.topRight(),border.bottomLeft());
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     x0+=width;
+     x1-=width;
+     
+     y0+=width;
+     y1-=width;
+     
+     FigurePoints<3> fig;
+     
+     fig[0]={x0,y0};
+     fig[1]={x0,y1};
+     fig[2]={x1,y0};
+     
+     fig.solid(art,dragColor(DragType_TopLeft));
     }
  }
 
@@ -220,15 +152,19 @@ void DragShape::draw_Left(DrawArt &art) const
  {
   if( +dragLeft )
     {
-     Pane pane=dragLeft;
-    
-     art.boxY(pane,+cfg.edge,+cfg.frame);
+     art.block(dragLeft,+cfg.frame);
      
-     ColorName cname=accentColor(DragType_Left);
+     MPane p(dragLeft);
      
-     Coord delta=+cfg.frame_dxy/2;
+     MCoord d=p.dx/2;
+     MCoord x0=p.x+d;
      
-     art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
+     MCoord y0=p.y+d;
+     MCoord y1=p.y+p.dy-d;
+     
+     MCoord w=p.dx/4;
+     
+     art.pathOf(w,dragColor(DragType_Left),MPoint(x0,y0),MPoint(x0,y1));
     }
  }
 
@@ -236,15 +172,31 @@ void DragShape::draw_BottomLeft(DrawArt &art) const
  {
   if( +dragBottomLeft )
     {
-     Pane pane=dragBottomLeft;
-  
-     art.box(pane,+cfg.edge,+cfg.frame);
-   
-     ColorName cname=accentColor(DragType_BottomLeft);
-   
-     PaneBorder border(Shrink(pane,1,1));
+     art.block(dragBottomLeft,+cfg.frame);
+ 
+     MPane p(dragBottomLeft);
      
-     art.solid(SolidAll,cname,border.topLeft(),border.bottomRight(),border.bottomLeft());
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     x0+=width;
+     x1-=width;
+     
+     y0+=width;
+     y1-=width;
+     
+     FigurePoints<3> fig;
+     
+     fig[0]={x0,y0};
+     fig[1]={x0,y1};
+     fig[2]={x1,y1};
+     
+     fig.solid(art,dragColor(DragType_BottomLeft));
     }
  }
 
@@ -252,15 +204,19 @@ void DragShape::draw_Bottom(DrawArt &art) const
  {
   if( +dragBottom )
     {
-     Pane pane=dragBottom;
-   
-     art.boxX(pane,+cfg.edge,+cfg.frame);
-    
-     ColorName cname=accentColor(DragType_Bottom);
-    
-     Coord delta=+cfg.frame_dxy/2;
-    
-     art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+pane.dx-1-delta,pane.y+delta));
+     art.block(dragBottom,+cfg.frame);
+     
+     MPane p(dragBottom);
+     
+     MCoord d=p.dy/2;
+     MCoord y0=p.y+d;
+     
+     MCoord x0=p.x+d;
+     MCoord x1=p.x+p.dx-d;
+     
+     MCoord w=p.dy/4;
+     
+     art.pathOf(w,dragColor(DragType_Bottom),MPoint(x0,y0),MPoint(x1,y0));
     }
  }
 
@@ -268,15 +224,31 @@ void DragShape::draw_BottomRight(DrawArt &art) const
  {
   if( +dragBottomRight )
     {
-     Pane pane=dragBottomRight;
-  
-     art.box(pane,+cfg.edge,+cfg.frame);
-   
-     ColorName cname=accentColor(DragType_BottomRight);
+     art.block(dragBottomRight,+cfg.frame);
+ 
+     MPane p(dragBottomRight);
      
-     PaneBorder border(Shrink(pane,1,1));
-   
-     art.solid(SolidAll,cname,border.topRight(),border.bottomLeft(),border.bottomRight());
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     x0+=width;
+     x1-=width;
+     
+     y0+=width;
+     y1-=width;
+     
+     FigurePoints<3> fig;
+     
+     fig[0]={x1,y0};
+     fig[1]={x0,y1};
+     fig[2]={x1,y1};
+     
+     fig.solid(art,dragColor(DragType_BottomRight));
     }
  }
 
@@ -284,15 +256,19 @@ void DragShape::draw_Right(DrawArt &art) const
  {
   if( +dragRight )
     {
-     Pane pane=dragRight;
-    
-     art.boxY(pane,+cfg.edge,+cfg.frame);
+     art.block(dragRight,+cfg.frame);
      
-     ColorName cname=accentColor(DragType_Right);
+     MPane p(dragRight);
      
-     Coord delta=+cfg.frame_dxy/2;
+     MCoord d=p.dx/2;
+     MCoord x0=p.x+d;
      
-     art.path(cname,Point(pane.x+delta,pane.y+delta),Point(pane.x+delta,pane.y+pane.dy-1-delta));
+     MCoord y0=p.y+d;
+     MCoord y1=p.y+p.dy-d;
+     
+     MCoord w=p.dx/4;
+     
+     art.pathOf(w,dragColor(DragType_Right),MPoint(x0,y0),MPoint(x0,y1));
     }
  }
 
@@ -300,15 +276,31 @@ void DragShape::draw_TopRight(DrawArt &art) const
  {
   if( +dragTopRight )
     {
-     Pane pane=dragTopRight;
-  
-     art.box(pane,+cfg.edge,+cfg.frame);
-   
-     ColorName cname=accentColor(DragType_TopRight);
-   
-     PaneBorder border(Shrink(pane,1,1));
+     art.block(dragTopRight,+cfg.frame);
+ 
+     MPane p(dragTopRight);
      
-     art.solid(SolidAll,cname,border.topLeft(),border.bottomRight(),border.topRight());
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     x0+=width;
+     x1-=width;
+     
+     y0+=width;
+     y1-=width;
+     
+     FigurePoints<3> fig;
+     
+     fig[0]={x0,y0};
+     fig[1]={x1,y0};
+     fig[2]={x1,y1};
+     
+     fig.solid(art,dragColor(DragType_TopRight));
     }
  }
 
@@ -316,16 +308,82 @@ void DragShape::draw_Alert(DrawArt &art) const
  {
   if( +btnAlert )
     {
-     ColorName cname=btnColor(DragType_Alert);
+     art.block(btnAlert,+cfg.frame);
      
-     Pane pane=art.btn(btnAlert,cname,+cfg.btnEdge);
+     MPane p(btnAlert);
+     
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     MCoord ex=p.dx/8;
+
+     FigureButton fig(x0,x1,y0,y1,ex);
+     
+     MCoord dx=p.dx/5;
+     
+     MCoord s0=x0+dx;
+     MCoord s1=x1-dx;
+     
+     MCoord dy=p.dy/5;
+     
+     MCoord t0=y0+dy;
+     MCoord t1=y1-dy;
+     
+     ColorName alert;
+     
+     if( alert_type==AlertType_No )
+       {
+        fig.curveLoop(art,HalfPos,+cfg.width,+cfg.btnEdge);
+        
+        alert=+cfg.btnPictNoAlert;
+       }
+     else
+       {
+        if( btn_type==DragType_Alert )
+          {
+           fig.curveSolid(art,+cfg.bottom);
+           
+           s0+=width;
+           s1+=width;
+           t0+=width;
+           t1+=width;
+          }
+        else
+          {
+           ColorName top=+cfg.btnFaceTop;
+           ColorName bottom=(hilight==DragType_Alert)?+cfg.btnFaceHilight:+cfg.btnFace;
+           
+           fig.curveSolid(art,TwoField({x0,y0},top,{x0,y1},bottom));
+           
+           fig.curveLoop(art,HalfPos,width,+cfg.btnEdge);
+          }
+       
+        alert=(alert_type==AlertType_Closed)?+cfg.btnPictAlert:+cfg.btnPictCloseAlert;
+       }
      
      if( !alert_blink )
        {
-        ColorName cname=(alert_type==AlertType_No)?+cfg.noAlert:( (alert_type==AlertType_Closed)?+cfg.alert:+cfg.closeAlert );
+        MCoord c=(t1-t0)/6;
+        MCoord d=4*c+(2*c)/3;
+        MCoord r=(3*c)/4;
+        MCoord s=s0+(s1-s0)/2;
         
-        cfg.title_font.get()->text(art.getBuf(),pane,TextPlace(AlignX_Center,AlignY_Center),StrLen("!",1),cname);
-       } 
+        FigureDots<4> fig;
+        
+        fig[0]={{s-c,t0+c}};
+        fig[1]={{s,t0}};
+        fig[2]={{s+c,t0+c}};
+        fig[3]={{s,t0+d},Smooth::DotBreak};
+        
+        fig.curveSolid(art,alert);
+        
+        art.ball({s,t0+d+r},r,alert);
+       }
     }
  }
 
@@ -333,16 +391,54 @@ void DragShape::draw_Min(DrawArt &art) const
  {
   if( +btnMin )
     {
-     ColorName cname=btnColor(DragType_Min);
+     art.block(btnMin,+cfg.frame);
      
-     Pane pane=art.btn(btnMin,cname,+cfg.btnEdge);
+     MPane p(btnMin);
      
-     if( pane.dx>0 && pane.dy>=+cfg.min_dy )
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     MCoord ex=p.dx/8;
+
+     FigureButton fig(x0,x1,y0,y1,ex);
+     
+     MCoord dx=p.dx/5;
+     
+     MCoord s0=x0+dx;
+     MCoord s1=x1-dx;
+     
+     MCoord dy=p.dy/5;
+     
+     MCoord t0=y0+dy;
+     MCoord t1=y1-dy;
+     
+     if( btn_type==DragType_Min )
        {
-        Pane fig=SplitY(pane,+cfg.min_dy);
-       
-        art.block(fig,+cfg.btnPict);
+        fig.curveSolid(art,+cfg.bottom);
+        
+        s0+=width;
+        s1+=width;
+        t0+=width;
+        t1+=width;
        }
+     else
+       {
+        ColorName top=+cfg.btnFaceTop;
+        ColorName bottom=(hilight==DragType_Min)?+cfg.btnFaceHilight:+cfg.btnFace;
+        
+        fig.curveSolid(art,TwoField({x0,y0},top,{x0,y1},bottom));
+        
+        fig.curveLoop(art,HalfPos,width,+cfg.btnEdge);
+       }
+     
+     FigureBox fig_pict(s0,s1,t1-(t1-t0)/4,t1);
+     
+     fig_pict.solid(art,+cfg.btnPict);
     }
  }
 
@@ -350,16 +446,64 @@ void DragShape::draw_Max(DrawArt &art) const
  {
   if( +btnMax )
     {
-     ColorName cname=btnColor(DragType_Max);
-       
-     Pane pane=art.btn(btnMax,cname,+cfg.btnEdge);
+     art.block(btnMax,+cfg.frame);
+     
+     MPane p(btnMax);
+     
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     MCoord ex=p.dx/8;
 
-     if( pane.dx>0 && pane.dy>=+cfg.min_dy )
+     FigureButton fig(x0,x1,y0,y1,ex);
+     
+     MCoord dx=p.dx/5;
+     
+     MCoord s0=x0+dx;
+     MCoord s1=x1-dx;
+     
+     MCoord dy=p.dy/5;
+     
+     MCoord t0=y0+dy;
+     MCoord t1=y1-dy;
+     
+     if( btn_type==DragType_Max )
        {
-        if( max_button )
-          art.block(pane,+cfg.btnPict);
-        else
-          art.block(Shrink(pane,pane.dx/4,pane.dy/4),+cfg.btnPict);
+        fig.curveSolid(art,+cfg.bottom);
+        
+        s0+=width;
+        s1+=width;
+        t0+=width;
+        t1+=width;
+       }
+     else
+       {
+        ColorName top=+cfg.btnFaceTop;
+        ColorName bottom=(hilight==DragType_Max)?+cfg.btnFaceHilight:+cfg.btnFace;
+        
+        fig.curveSolid(art,TwoField({x0,y0},top,{x0,y1},bottom));
+        
+        fig.curveLoop(art,HalfPos,width,+cfg.btnEdge);
+       }
+     
+     if( max_button )
+       {
+        FigureBox fig_pict(s0,s1,t0,t1);
+       
+        fig_pict.solid(art,+cfg.btnPict);
+       }
+     else
+       {
+        MCoord e=(t1-t0)/5;
+       
+        FigureBox fig_pict(s0,s1-(s1-s0)/3,t0+e,t1-e);
+      
+        fig_pict.solid(art,+cfg.btnPict);
        }
     }
  }
@@ -368,17 +512,141 @@ void DragShape::draw_Close(DrawArt &art) const
  {
   if( +btnClose )
     {
-     ColorName cname=btnColor(DragType_Close);
-       
-     Pane pane=art.btn(btnClose,cname,+cfg.btnEdge);
+     art.block(btnClose,+cfg.frame);
      
-     if( +pane )
+     MPane p(btnClose);
+     
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     MCoord ex=p.dx/8;
+
+     FigureButton fig(x0,x1,y0,y1,ex);
+     
+     MCoord dx=p.dx/5;
+     
+     MCoord s0=x0+dx;
+     MCoord s1=x1-dx;
+     
+     MCoord dy=p.dy/5;
+     
+     MCoord t0=y0+dy;
+     MCoord t1=y1-dy;
+     
+     if( btn_type==DragType_Close )
        {
-        PaneBorder border(pane);
-       
-        art.path_smooth(+cfg.btnClose,border.topLeft(),border.bottomRight());
-        art.path_smooth(+cfg.btnClose,border.topRight(),border.bottomLeft());
-       } 
+        fig.curveSolid(art,+cfg.bottom);
+        
+        s0+=width;
+        s1+=width;
+        t0+=width;
+        t1+=width;
+       }
+     else
+       {
+        ColorName top=+cfg.btnFaceTop;
+        ColorName bottom=(hilight==DragType_Close)?+cfg.btnFaceHilight:+cfg.btnFace;
+        
+        fig.curveSolid(art,TwoField({x0,y0},top,{x0,y1},bottom));
+        
+        fig.curveLoop(art,HalfPos,width,+cfg.btnEdge);
+       }
+
+     MCoord w=p.dx/8;
+     
+     ColorName pict=+cfg.btnPictClose;
+     
+     art.pathOf(w,pict,MPoint(s0,t0),MPoint(s1,t1));
+     art.pathOf(w,pict,MPoint(s0,t1),MPoint(s1,t0));
+    }
+ }
+
+void DragShape::draw_Bar(DrawArt &art) const
+ {
+  art.block(dragBar,+cfg.frame);
+  
+  if( +titleBar )
+    {
+     MPane p(titleBar);
+     
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
+     MCoord ex=p.dy/4;
+     
+     ColorName top=+cfg.top;
+     ColorName bottom=+cfg.bottom;
+     
+     FigureButton fig(x0,x1,y0,y1,ex);
+     
+     fig.curveSolid(art,has_focus?+cfg.active:+cfg.inactive);
+     
+     fig.getTop().curvePath(art,HalfPos,width,bottom);
+     fig.getBottom().curvePath(art,HalfPos,width,top);
+     
+     Pane pane=Shrink(titleBar,RoundUpLen(ex),RoundUpLen(width));
+     
+     cfg.title_font.get()->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
+    }
+ }
+
+void DragShape::draw_Border(DrawArt &art) const
+ {
+  MCoord width=+cfg.width;
+  ColorName top=+cfg.top;
+  ColorName bottom=+cfg.bottom;
+  
+  if( size>Null )
+    {
+     MPane outer(Extent(Null,size));
+     
+     MCoord x0=outer.x;
+     MCoord x1=x0+outer.dx;
+     
+     MCoord y0=outer.y;
+     MCoord y1=y0+outer.dy;
+  
+     FigureTopBorder fig_top(x0,x1,y0,y1,width);
+     
+     fig_top.solid(art,top);
+     
+     FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
+     
+     fig_bottom.solid(art,bottom);
+    }
+  
+  if( +client )
+    {
+     MPane inner(client);
+    
+     MCoord x0=inner.x;
+     MCoord x1=x0+inner.dx;
+     
+     MCoord y0=inner.y;
+     MCoord y1=y0+inner.dy;
+     
+     x0-=width;
+     x1+=width;
+     y0-=width;
+     y1+=width;
+     
+     FigureTopBorder fig_top(x0,x1,y0,y1,width);
+     
+     fig_top.solid(art,bottom);
+     
+     FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
+     
+     fig_bottom.solid(art,top);
     }
  }
 
@@ -396,8 +664,10 @@ void DragShape::reset(const String &title_,bool max_button_)
   title=title_;
  }
 
-void DragShape::layout(Point size)
+void DragShape::layout(Point size_)
  {
+  size=size_;
+  
   Coord dxy=+cfg.frame_dxy;
   Coord tdy=+cfg.title_dy;
   Coord bdx=+cfg.btn_dx;
@@ -436,7 +706,9 @@ void DragShape::layout(Point size)
      btnMax=Pane(xb2,yb,bdx,bdy);
      btnClose=Pane(xb3,yb,bdx,bdy);
      
-     titleBar=Pane(dragBar.x+bdx/4,2,tx-bdx/2,tdy-4);
+     Coord w=RoundUpLen(+cfg.width);
+     
+     titleBar=Pane(dragBar.x,w,tx-bdx/4,tdy-2*w);
     }
   else
     {
@@ -475,24 +747,14 @@ void DragShape::draw(const DrawBuf &buf) const
      draw_Right(art);
      draw_TopRight(art);
      
-     if( +dragBar )
-       {
-        Pane pane=dragBar;
-    
-        art.boxX(pane,+cfg.edge, has_focus?+cfg.active:+cfg.inactive );
-       }
-     
-     if( +titleBar )
-       {
-        Pane pane=art.title(titleBar, has_focus?+cfg.titleActiveUp:+cfg.titleUp , has_focus?+cfg.titleActiveDown:+cfg.titleDown );
-        
-        cfg.title_font.get()->text(buf,pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
-       }
+     draw_Bar(art);
      
      draw_Alert(art);
      draw_Min(art);
      draw_Max(art);
      draw_Close(art);
+     
+     draw_Border(art);
     }
   catch(CatchType)
     {
@@ -520,6 +782,8 @@ void DragShape::draw(const DrawBuf &buf,DragType drag_type) const
         case DragType_Max         : draw_Max(art); break;
         case DragType_Close       : draw_Close(art); break;
        }
+     
+     draw_Border(art);
     }
   catch(CatchType)
     {

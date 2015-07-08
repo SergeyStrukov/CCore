@@ -1,21 +1,18 @@
 OBJ_LIST = \
 obj/Application.o \
 obj/ShapeLab.o \
-obj/SmoothDrag.o \
 obj/main.o \
 
 
 ASM_LIST = \
 obj/Application.s \
 obj/ShapeLab.s \
-obj/SmoothDrag.s \
 obj/main.s \
 
 
 DEP_LIST = \
 obj/Application.dep \
 obj/ShapeLab.dep \
-obj/SmoothDrag.dep \
 obj/main.dep \
 
 
@@ -31,9 +28,6 @@ obj/Application.o : ./src/Application.cpp
 obj/ShapeLab.o : ./src/ShapeLab.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/SmoothDrag.o : ./src/SmoothDrag.cpp
-	$(CC) $(CCOPT) $< -o $@
-
 obj/main.o : ./src/main.cpp
 	$(CC) $(CCOPT) $< -o $@
 
@@ -43,9 +37,6 @@ obj/Application.s : ./src/Application.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/ShapeLab.s : ./src/ShapeLab.cpp
-	$(CC) -S $(CCOPT) $< -o $@
-
-obj/SmoothDrag.s : ./src/SmoothDrag.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/main.s : ./src/main.cpp
@@ -58,9 +49,6 @@ obj/Application.dep : ./src/Application.cpp
 
 obj/ShapeLab.dep : ./src/ShapeLab.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLab.o $< -MF $@
-
-obj/SmoothDrag.dep : ./src/SmoothDrag.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/SmoothDrag.o $< -MF $@
 
 obj/main.dep : ./src/main.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/main.o $< -MF $@

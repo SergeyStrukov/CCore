@@ -16,6 +16,8 @@
 #include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
 
+#include <CCore/inc/Exception.h>
+
 namespace App {
 
 /* class ShapeLab */
@@ -386,7 +388,23 @@ MouseShape ShapeLab2::getMouseShape(Point point)
 
 void ShapeLab2::react(UserAction action)
  {
-  wlist.react(action, [this] (UserAction action) { action.dispatch(*this); } );
+  action.dispatch(*this); 
+  
+  wlist.react(action);
+ }
+
+void ShapeLab2::react_Key(VKey vkey,KeyMod kmod)
+ {
+  Used(kmod);
+  
+  switch( vkey )
+    {
+     case VKey_F12 :
+      {
+       Printf(Exception,"F12 is pressed");
+      }
+     break; 
+    }
  }
 
 } // namespace App

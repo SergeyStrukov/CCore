@@ -75,6 +75,61 @@ void FixedShape::draw_Close(DrawArt &art) const
      MCoord y0=p.y;
      MCoord y1=y0+p.dy;
      
+     MCoord ex=p.dx/8;
+
+     FigureButton fig(x0,x1,y0,y1,ex);
+     
+     MCoord dx=p.dx/5;
+     
+     MCoord s0=x0+dx;
+     MCoord s1=x1-dx;
+     
+     MCoord dy=p.dy/5;
+     
+     MCoord t0=y0+dy;
+     MCoord t1=y1-dy;
+     
+     if( hit_type==HitFrame_Close )
+       {
+        fig.curveSolid(art,+cfg.bottom);
+        
+        s0+=width;
+        s1+=width;
+        t0+=width;
+        t1+=width;
+       }
+     else
+       {
+        ColorName top=+cfg.btnFaceTop;
+        ColorName bottom=(hilight==HitFrame_Close)?+cfg.btnFaceHilight:+cfg.btnFace;
+        
+        fig.curveSolid(art,TwoField({x0,y0},top,{x0,y1},bottom));
+        
+        fig.curveLoop(art,HalfPos,width,+cfg.btnEdge);
+       }
+
+     MCoord w=p.dx/8;
+     
+     ColorName pict=+cfg.btnPictClose;
+     
+     art.pathOf(w,pict,MPoint(s0,t0),MPoint(s1,t1));
+     art.pathOf(w,pict,MPoint(s0,t1),MPoint(s1,t0));
+    }
+  
+#if 0  
+  
+  if( +btnClose )
+    {
+     MPane p(btnClose);
+     
+     MCoord width=+cfg.width;
+     
+     MCoord x0=p.x;
+     MCoord x1=x0+p.dx;
+     
+     MCoord y0=p.y;
+     MCoord y1=y0+p.dy;
+     
      MCoord ex=p.dy/8;
      
      FigureButton fig(x0,x1,y0,y1,ex);
@@ -100,9 +155,6 @@ void FixedShape::draw_Close(DrawArt &art) const
         s1+=width;
         t0+=width;
         t1+=width;
-        
-        art.pathOf(w,btn,MPoint(s0,t0),MPoint(s1,t1));
-        art.pathOf(w,btn,MPoint(s0,t1),MPoint(s1,t0));
        }
      else
        {
@@ -111,10 +163,13 @@ void FixedShape::draw_Close(DrawArt &art) const
         fig.getTop().curvePath(art,HalfPos,width,top);
         fig.getBottom().curvePath(art,HalfPos,width,bottom);
         
-        art.pathOf(w,btn,MPoint(s0,t0),MPoint(s1,t1));
-        art.pathOf(w,btn,MPoint(s0,t1),MPoint(s1,t0));
        }
+     
+     art.pathOf(w,btn,MPoint(s0,t0),MPoint(s1,t1));
+     art.pathOf(w,btn,MPoint(s0,t1),MPoint(s1,t0));
     }
+  
+#endif  
  }
 
 void FixedShape::draw_Border(DrawArt &art) const

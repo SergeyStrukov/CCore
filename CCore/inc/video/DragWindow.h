@@ -73,50 +73,42 @@ template <class Shape> class DragWindowOf;
 class DragShape
  {
   public:
- 
+  
    struct Config
     {
-     RefVal<Coord> frame_dxy = 11 ;
+     RefVal<MCoord> width = Fraction(6,2) ;
+    
+     RefVal<Coord> frame_dxy = 12 ;
      RefVal<Coord> title_dy  = 32 ;
      
-     RefVal<Coord> btn_dx    = 32 ;
-     RefVal<Coord> btn_dy    = 30 ;
-     
-     RefVal<Coord> min_dy    =  3 ;
-     RefVal<Coord> alert_dx  =  2 ;
+     RefVal<Coord> btn_dx    = 26 ;
+     RefVal<Coord> btn_dy    = 26 ;
 
-     RefVal<ColorName> edge            =     Black ;
-     RefVal<ColorName> frame           =    Silver ;
-     RefVal<ColorName> accent          =      Gray ;
-     RefVal<ColorName> accentHilight   =     Green ;
-     RefVal<ColorName> accentDrag      =       Red ;
+     RefVal<ColorName> top               =      Snow ;
+     RefVal<ColorName> bottom            =      Gray ;
+     RefVal<ColorName> frame             =    Silver ;
      
-     RefVal<ColorName> active          = RGBColor(128,128,255) ;
-     RefVal<ColorName> inactive        =    Silver ;
+     RefVal<ColorName> drag              =    Silver ;
+     RefVal<ColorName> dragHilight       =     Green ;
+     RefVal<ColorName> dragActive        =       Red ;
      
-     RefVal<ColorName> btnFace         = SteelBlue ;
-     RefVal<ColorName> btnFaceHilight  =     Green ;
-     RefVal<ColorName> btnFaceDown     =      Blue ;
-     RefVal<ColorName> btnFaceClose    =   DarkRed ;
-     RefVal<ColorName> btnEdge         =     Black ;
-     RefVal<ColorName> btnPict         =     White ;
-     RefVal<ColorName> btnClose        =       Red ;
+     RefVal<ColorName> active            = RGBColor(128,128,255) ;
+     RefVal<ColorName> inactive          =    Silver ;
+     RefVal<ColorName> title             =     Black ;
      
-     RefVal<ColorName> titleUp         =      Gray ;
-     RefVal<ColorName> titleDown       =      Snow ;
-     
-     RefVal<ColorName> titleActiveUp   = RGBColor(0,0,128) ;
-     RefVal<ColorName> titleActiveDown = RGBColor(200,200,128) ;
-     
-     RefVal<ColorName> alert           =       Red ;
-     RefVal<ColorName> noAlert         =    Silver ;
-     RefVal<ColorName> closeAlert      =    Orange ;
-     
-     RefVal<ColorName> title           =     Black ;
+     RefVal<ColorName> btnFaceTop        =    Silver ;
+     RefVal<ColorName> btnFace           = SteelBlue ;
+     RefVal<ColorName> btnFaceHilight    =     Green ;
+     RefVal<ColorName> btnPict           =     White ;
+     RefVal<ColorName> btnPictClose      =       Red ;
+     RefVal<ColorName> btnPictAlert      =       Red ;
+     RefVal<ColorName> btnPictNoAlert    =      Gray ;
+     RefVal<ColorName> btnPictCloseAlert =    Orange ;
+     RefVal<ColorName> btnEdge           =      Blue ;
      
      RefVal<Font> title_font;
      
-     RefVal<unsigned> blink_time       = 24 ;
+     RefVal<unsigned> blink_time       = 3*25 ;
      RefVal<unsigned> blink_period     = 3 ;
      
      Config() {}
@@ -125,11 +117,11 @@ class DragShape
     };
    
    const Config &cfg;
-
-  private: 
   
-   // layout
+  private:
   
+   Point size;
+   
    Pane dragTopLeft;
    Pane dragLeft;
    Pane dragBottomLeft;
@@ -147,13 +139,11 @@ class DragShape
    
    Pane client;
    
-  private: 
+  private:
    
    class DrawArt;
    
-   ColorName accentColor(DragType zone) const { return (drag_type==zone)?+cfg.accentDrag:( (hilight==zone)?+cfg.accentHilight:+cfg.accent ); }
-   
-   ColorName btnColor(DragType zone) const { return (btn_type==zone)?+cfg.btnFaceDown:( (hilight==zone)?+cfg.btnFaceHilight:+cfg.btnFace ); }
+   ColorName dragColor(DragType zone) const;
    
    void draw_TopLeft(DrawArt &art) const;
    
@@ -177,8 +167,12 @@ class DragShape
    
    void draw_Close(DrawArt &art) const;
    
-  public: 
-  
+   void draw_Bar(DrawArt &art) const;
+   
+   void draw_Border(DrawArt &art) const;
+   
+  public:
+   
    // state
    
    bool has_focus = false ;

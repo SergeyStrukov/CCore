@@ -12,7 +12,6 @@
 //----------------------------------------------------------------------------------------
 
 #include <inc/ShapeLab.h>
-#include <inc/SmoothDrag.h>
 
 #include <CCore/inc/video/ApplicationBase.h>
 #include <CCore/inc/video/WindowReport.h>
@@ -44,7 +43,7 @@ class Client : public ClientWindow
 
 /* struct Param */
 
-struct Param : WindowReportParamOf<SmoothDragShape>
+struct Param : WindowReportParam
  {
   Param()
    {
@@ -57,7 +56,7 @@ class Application : public ApplicationBase
  {
    const CmdDisplay cmd_display;
    
-   DragWindowOf<SmoothDragShape> main_win;
+   DragWindow main_win;
    
    ExceptionClient exception_client;
    Client client;
@@ -128,7 +127,7 @@ int Main(CmdDisplay cmd_display)
      TaskMemStack tms(64_KByte);
      
      Param param;
-     WindowReportOf<SmoothDragShape> report(param);
+     WindowReport report(param);
     
      Application app(report,cmd_display,param);
     
