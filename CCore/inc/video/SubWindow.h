@@ -30,7 +30,7 @@ struct SubWindowHost;
 
 class SubWindow;
 
-class WinList;
+class WindowList;
 
 /* struct SubWindowHost */
 
@@ -54,14 +54,14 @@ struct SubWindowHost
 class SubWindow : public MemBase_nocopy , public UserInput
  {
    DLink<SubWindow> link;
-   WinList *list = 0 ;
+   WindowList *list = 0 ;
  
    Pane place; // relative parent window coords
   
    SubWindowHost &host;
    
    friend class SubWindowHost;
-   friend class WinList;
+   friend class WindowList;
   
   public:
   
@@ -201,9 +201,9 @@ class SubWindow : public MemBase_nocopy , public UserInput
    MouseShape forward_getMouseShape(Point point) { return getMouseShape(point-place.getBase()); }
  };
 
-/* class WinList */
+/* class WindowList */
 
-class WinList : NoCopy , public SubWindowHost , public UserInput
+class WindowList : NoCopy , public SubWindowHost , public UserInput
  {
    SubWindow &parent;
   
@@ -228,9 +228,9 @@ class WinList : NoCopy , public SubWindowHost , public UserInput
    
   public: 
    
-   explicit WinList(SubWindow &parent_) : parent(parent_) {}
+   explicit WindowList(SubWindow &parent_) : parent(parent_) {}
    
-   ~WinList();
+   ~WindowList();
    
    // methods
    
@@ -362,7 +362,7 @@ class WinList : NoCopy , public SubWindowHost , public UserInput
  };
 
 template <class Func>
-void WinList::react(UserAction action,Func func)
+void WindowList::react(UserAction action,Func func)
  {
   if( action.fromKeyboard() )
     {
@@ -372,7 +372,7 @@ void WinList::react(UserAction action,Func func)
     {
      struct React
       {
-       WinList *list;
+       WindowList *list;
        const Func &func;
        
        void react_Move(Point point,MouseKey mkey)
@@ -385,7 +385,7 @@ void WinList::react(UserAction action,Func func)
          list->react_Leave(func);
         }
        
-       React(WinList *list_,const Func &func_) : list(list_),func(func_) {}
+       React(WindowList *list_,const Func &func_) : list(list_),func(func_) {}
       };
      
      React obj(this,func);
@@ -395,7 +395,7 @@ void WinList::react(UserAction action,Func func)
  }
 
 template <class Func>
-void WinList::react_Keyboard(UserAction action,Func func)
+void WindowList::react_Keyboard(UserAction action,Func func)
  {
   if( focus )
     {
@@ -403,10 +403,10 @@ void WinList::react_Keyboard(UserAction action,Func func)
        {
         struct React
          {
-          WinList *list;
+          WindowList *list;
           SubWindow *sub_win;
           
-          React(WinList *list_,SubWindow *sub_win_) : list(list_),sub_win(sub_win_) {}
+          React(WindowList *list_,SubWindow *sub_win_) : list(list_),sub_win(sub_win_) {}
           
           void react_Key(VKey vkey,KeyMod kmod)
            {
@@ -445,7 +445,7 @@ void WinList::react_Keyboard(UserAction action,Func func)
  }
 
 template <class Func>
-void WinList::react_Mouse(UserAction action,Func func)
+void WindowList::react_Mouse(UserAction action,Func func)
  {
   if( SubWindow *sub_win=pick(action.getPoint()) )
     {
@@ -458,7 +458,7 @@ void WinList::react_Mouse(UserAction action,Func func)
  }
 
 template <class Func>
-void WinList::react_Move(Point point,MouseKey mkey,Func func)
+void WindowList::react_Move(Point point,MouseKey mkey,Func func)
  {
   if( SubWindow *sub_win=find(point) )
     {
@@ -491,7 +491,7 @@ void WinList::react_Move(Point point,MouseKey mkey,Func func)
  }
 
 template <class Func>
-void WinList::react_Leave(Func func)
+void WindowList::react_Leave(Func func)
  {
   if( enter ) 
     {
@@ -509,7 +509,7 @@ void WinList::react_Leave(Func func)
 
 class SomeWindow : public SubWindow
  {
-   WinList list;
+   WindowList list;
   
   public:
    

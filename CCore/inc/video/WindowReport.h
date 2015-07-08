@@ -130,6 +130,15 @@ class ExceptionWindow : public SubWindow
    
    WindowReportBase &report;
    
+   WindowList list;
+   
+   YScrollWindow yscroll;
+   XScrollWindow xscroll;
+   
+  private: 
+
+   Pane ptext;
+   
    ulen off = 0 ;
    ulen lines = 0 ;
    
@@ -144,6 +153,12 @@ class ExceptionWindow : public SubWindow
    static ulen Lines(StrLen text);
    
    void setLines();
+   
+   void setScrollPage();
+   
+   void setScrollPos();
+   
+   void drawText(DrawBuf buf) const;
    
   public:
   
@@ -169,10 +184,7 @@ class ExceptionWindow : public SubWindow
    
    // user input
    
-   virtual void react(UserAction action)
-    {
-     action.dispatch(*this);
-    }
+   virtual void react(UserAction action);
    
    void react_Key(VKey vkey,KeyMod kmod,unsigned repeat);
    
@@ -180,7 +192,10 @@ class ExceptionWindow : public SubWindow
    
    void updateReport();
    
+   void yposChanged(ulen pos);
+   
    SignalConnector<ExceptionWindow> connector_updateReport;
+   SignalConnector<ExceptionWindow,ulen> connector_yposChanged;
   };
 
 /* struct WindowReportParamOf<Shape> */

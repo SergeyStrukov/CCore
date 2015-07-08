@@ -61,8 +61,8 @@ class ShapeLab1 : public SubWindow
   
    Config cfg;
    
-   WinList wlist;
-   WinList dlist;
+   WindowList wlist;
+   WindowList dlist;
 
    SwitchWindow sw;
    
@@ -190,8 +190,8 @@ class ShapeLab2 : public SubWindow
   
    Config cfg;
    
-   WinList wlist;
-   WinList dlist;
+   WindowList wlist;
+   WindowList dlist;
    
    ProgressWindow progress;
    KnobWindow btn1;

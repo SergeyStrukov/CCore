@@ -366,22 +366,17 @@ void XScrollShape::draw(const DrawBuf &buf) const
   }
   
   {
-   MCoord a1=x2+width;
-   MCoord a2=x2+(x3-x2)/2;
-   MCoord a3=x3-width;
+   MCoord f=(x3-x2)/4;
+   
+   MCoord a0=x2+f;
+   MCoord a1=x2+(x3-x2)/2;
+   MCoord a2=x3-f;
    
    MCoord e=s.y/3;
    
    MCoord b0=y0+e;
    MCoord b1=y0+s.y/2;
    MCoord b2=y1-e;
-   
-   FigurePoints<4> fig;
-   
-   fig[0]={a1,b1};
-   fig[1]={a2,b0};
-   fig[2]={a3,b1};
-   fig[3]={a2,b2};
    
    ColorName cname;
    
@@ -396,8 +391,33 @@ void XScrollShape::draw(const DrawBuf &buf) const
      {
       cname=+cfg.bottom;
      }
+   
+   if( a2-a0>2*(b2-b0) )
+     {
+      MCoord c=(a2-a0)/2-(b2-b0);
+      
+      FigurePoints<6> fig;
+      
+      fig[0]={a0,b1};
+      fig[1]={a1-c,b0};
+      fig[2]={a1+c,b0};
+      fig[3]={a2,b1};
+      fig[4]={a1+c,b2};
+      fig[5]={a1-c,b2};
+      
+      fig.solid(art,cname);
+     }
+   else
+     {
+      FigurePoints<4> fig;
+      
+      fig[0]={a0,b1};
+      fig[1]={a1,b0};
+      fig[2]={a2,b1};
+      fig[3]={a1,b2};
 
-   fig.solid(art,cname);
+      fig.solid(art,cname);
+     }
   }
  }
 

@@ -153,14 +153,113 @@ void ExceptionWindow::setLines()
      else
        off=0;
     }
+  
+  setScrollPage();
+ }
+
+void ExceptionWindow::setScrollPage()
+ {
+  yscroll.setRange(lines+visible_lines-1,visible_lines,off);
+ }
+
+void ExceptionWindow::setScrollPos()
+ {
+  yscroll.setPos(off);
+ }
+
+void ExceptionWindow::drawText(DrawBuf buf) const
+ {
+  CommonDrawArt art(buf);
+  
+  Coord y=text_by;
+  ulen ind=0;
+  
+  report.apply( [&] (ulen index,StrLen text,bool divide) 
+                    {
+                     if( ind>=off+visible_lines ) return;
+                     
+                     TextPlace place(AlignX_Left,y);
+                     
+                     if( ind>=off )
+                       {
+                        char temp[TextBufLen];
+                        PrintBuf out(Range(temp));
+                        
+                        Printf(out,"#;) ",index);
+                        
+                        StrLen line=out.close();
+                        
+                        cfg.text_font.get()->text_update(buf,buf.getPane(),place,line,+cfg.text);
+                       }
+     
+                     for(;;)
+                       {
+                        StrLen cur=text;
+                        
+                        for(; +cur ;++cur) if( *cur=='\n' ) break;
+                        
+                        StrLen line=text.prefix(cur);
+                        
+                        if( ind>=off )
+                          {
+                           if( ind>=off+visible_lines ) return;
+                          
+                           cfg.text_font.get()->text(buf,buf.getPane(),place,line,+cfg.text);
+                           
+                           y+=text_dy;
+                          }
+                        
+                        ind++;
+                        
+                        if( !cur ) break;
+                        
+                        text=cur;
+                        
+                        ++text;
+                        
+                        place=TextPlace(AlignX_Left,y);
+                       }
+     
+                     if( ind>=off )
+                       {
+                        if( ind>=off+visible_lines ) return;
+                        
+                        if( divide )
+                          {
+                           Coord div_y=(y-text_by)+text_dy/2;
+                        
+                           art.path(+cfg.divider,Point(0,div_y-1),Point(buf.dX()-1,div_y-1));
+                           art.path(+cfg.divider,Point(0,div_y+1),Point(buf.dX()-1,div_y+1));
+                          }
+                        else
+                          {
+                           Coord div_y=(y-text_by)+text_dy/2;
+                         
+                           art.path(+cfg.divider,Point(0,div_y),Point(buf.dX()-1,div_y));
+                          }
+                        
+                        y+=text_dy;
+                       }
+                     
+                     ind++;
+                     
+                    } );
  }
 
 ExceptionWindow::ExceptionWindow(SubWindowHost &host,const Config &cfg_,WindowReportBase &report_)
  : SubWindow(host),
    cfg(cfg_),
    report(report_),
-   connector_updateReport(this,&ExceptionWindow::updateReport,report.update)
+   
+   list(*this),
+   yscroll(list,cfg.scroll_cfg.get()),
+   xscroll(list,cfg.scroll_cfg.get()),
+   
+   connector_updateReport(this,&ExceptionWindow::updateReport,report.update),
+   connector_yposChanged(this,&ExceptionWindow::yposChanged,yscroll.changed)
  {
+  list.insTop(yscroll,xscroll);
+  
   setLines();
  }
 
@@ -184,96 +283,45 @@ void ExceptionWindow::reposition()
 void ExceptionWindow::layout()
  {
   Point size=getSize();
+  Coord dxy=+cfg.scroll_dxy;
+  
+  if( size>Point::Diag(dxy) )
+    {
+     Pane yp=Pane(0,0,dxy,size.y-dxy);
+     Pane xp=Pane(dxy,size.y-dxy,size.x-dxy,dxy);
+     
+     if( yscroll.isGoodSize(yp.getSize()) ) yscroll.setPlace(yp); else yscroll.setPlace(Empty);
+     if( xscroll.isGoodSize(xp.getSize()) ) xscroll.setPlace(xp); else xscroll.setPlace(Empty);
+     
+     ptext=Pane(dxy,0,size.x-dxy,size.y-dxy);
+    }
+  else
+    {
+     yscroll.setPlace(Empty);
+     xscroll.setPlace(Empty);
+     
+     ptext=Extent(Null,size);
+    }
   
   FontSize font_size=cfg.text_font.get()->getSize();
   
   text_by=font_size.by;
   text_dy=font_size.dy;
   
-  visible_lines=size.y/font_size.dy;
+  visible_lines=ptext.dy/font_size.dy;
+  
+  setScrollPage();
  }
 
-void ExceptionWindow::draw(DrawBuf buf,bool) const
+void ExceptionWindow::draw(DrawBuf buf,bool drag_active) const
  {
   try
     {
-     CommonDrawArt art(buf);
+     buf.erase(+cfg.back);
      
-     art.erase(+cfg.back);
-     
-     Coord y=text_by;
-     ulen ind=0;
-     
-     report.apply( [&] (ulen index,StrLen text,bool divide) 
-                      {
-                       if( ind>=off+visible_lines ) return;
-                       
-                       TextPlace place(AlignX_Left,y);
-                       
-                       if( ind>=off )
-                         {
-                          char temp[TextBufLen];
-                          PrintBuf out(Range(temp));
-                          
-                          Printf(out,"#;) ",index);
-                          
-                          StrLen line=out.close();
-                          
-                          cfg.text_font.get()->text_update(buf,buf.getPane(),place,line,+cfg.text);
-                         }
-       
-                       for(;;)
-                         {
-                          StrLen cur=text;
-                          
-                          for(; +cur ;++cur) if( *cur=='\n' ) break;
-                          
-                          StrLen line=text.prefix(cur);
-                          
-                          if( ind>=off )
-                            {
-                             if( ind>=off+visible_lines ) return;
-                            
-                             cfg.text_font.get()->text(buf,buf.getPane(),place,line,+cfg.text);
-                             
-                             y+=text_dy;
-                            }
-                          
-                          ind++;
-                          
-                          if( !cur ) break;
-                          
-                          text=cur;
-                          
-                          ++text;
-                          
-                          place=TextPlace(AlignX_Left,y);
-                         }
-       
-                       if( ind>=off )
-                         {
-                          if( ind>=off+visible_lines ) return;
-                          
-                          if( divide )
-                            {
-                             Coord div_y=(y-text_by)+text_dy/2;
-                          
-                             art.path(+cfg.divider,Point(0,div_y-1),Point(buf.dX()-1,div_y-1));
-                             art.path(+cfg.divider,Point(0,div_y+1),Point(buf.dX()-1,div_y+1));
-                            }
-                          else
-                            {
-                             Coord div_y=(y-text_by)+text_dy/2;
-                           
-                             art.path(+cfg.divider,Point(0,div_y),Point(buf.dX()-1,div_y));
-                            }
-                          
-                          y+=text_dy;
-                         }
-                       
-                       ind++;
-                       
-                      } );
+     drawText(buf.cutRebase(ptext));
+    
+     list.draw(buf,drag_active);
     }
   catch(CatchType)
     {
@@ -292,6 +340,11 @@ void ExceptionWindow::close()
   opened=false;
  }
 
+void ExceptionWindow::react(UserAction action)
+ {
+  action.dispatch(*this, [this] (UserAction action) { list.react(action); } );
+ }
+   
 void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
  {
   switch( vkey )
@@ -303,6 +356,8 @@ void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
        if( off ) 
          {
           if( off>repeat ) off-=repeat; else off=0;
+          
+          setScrollPos();
           
           redraw();
          }
@@ -317,11 +372,15 @@ void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
          {
           off+=repeat;
           
+          setScrollPos();
+          
           redraw();
          }
        else if( off+1<lines )
          {
           off=lines-1;
+          
+          setScrollPos();
          
           redraw();
          }
@@ -331,6 +390,8 @@ void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
      case VKey_Home :
       {
        off=0;
+       
+       setScrollPos();
        
        redraw();
       }
@@ -342,6 +403,8 @@ void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
          off=lines-visible_lines;
        else
          off=0;
+       
+       setScrollPos();
        
        redraw();
       }
@@ -357,6 +420,13 @@ void ExceptionWindow::updateReport()
      
      redraw();
     }
+ }
+
+void ExceptionWindow::yposChanged(ulen pos)
+ {
+  off=pos;
+  
+  redraw();
  }
 
 /* class WindowReportBase */

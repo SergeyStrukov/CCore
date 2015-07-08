@@ -27,34 +27,34 @@ SubWindow::~SubWindow()
   if( list ) list->del(this);
  }
 
-/* class WinList */
+/* class WindowList */
 
-SubWindow * WinList::find(Point point) const
+SubWindow * WindowList::find(Point point) const
  {
   for(auto cur=list.start(); +cur ;++cur) if( cur->place.contains(point) ) return cur.ptr;
   
   return 0;
  }
 
-SubWindow * WinList::pick(Point point) const
+SubWindow * WindowList::pick(Point point) const
  {
   if( capture ) return capture; 
 
   return find(point);
  }
 
-WinList::~WinList()
+WindowList::~WindowList()
  {
   for(auto cur=list.start(); +cur ;++cur) cur->list=0;
  }
 
  // methods
 
-void WinList::insTop(SubWindow *sub_win)
+void WindowList::insTop(SubWindow *sub_win)
  {
   if( sub_win->list )
     {
-     Printf(Exception,"CCore::Video::WinList::insTop(...) : sub-window is already included in a list");
+     Printf(Exception,"CCore::Video::WindowList::insTop(...) : sub-window is already included in a list");
     }
   
   list.ins_first(sub_win);
@@ -64,11 +64,11 @@ void WinList::insTop(SubWindow *sub_win)
   if( is_opened ) sub_win->open();
  }
 
-void WinList::insBottom(SubWindow *sub_win)
+void WindowList::insBottom(SubWindow *sub_win)
  {
   if( sub_win->list )
     {
-     Printf(Exception,"CCore::Video::WinList::insBottom(...) : sub-window is already included in a list");
+     Printf(Exception,"CCore::Video::WindowList::insBottom(...) : sub-window is already included in a list");
     }
   
   list.ins_last(sub_win);
@@ -78,11 +78,11 @@ void WinList::insBottom(SubWindow *sub_win)
   if( is_opened ) sub_win->open();
  }
 
-void WinList::del(SubWindow *sub_win)
+void WindowList::del(SubWindow *sub_win)
  {
   if( sub_win->list!=this )
     {
-     Printf(Exception,"CCore::Video::WinList::del(...) : sub-window from another list");
+     Printf(Exception,"CCore::Video::WindowList::del(...) : sub-window from another list");
     }
   
   list.del(sub_win);
@@ -109,22 +109,22 @@ void WinList::del(SubWindow *sub_win)
   if( is_opened ) sub_win->close();
  }
 
-void WinList::moveTop(SubWindow *sub_win)
+void WindowList::moveTop(SubWindow *sub_win)
  {
   if( sub_win->list!=this )
     {
-     Printf(Exception,"CCore::Video::WinList::moveTop(...) : sub-window from another list");
+     Printf(Exception,"CCore::Video::WindowList::moveTop(...) : sub-window from another list");
     }
   
   list.del(sub_win);
   list.ins_first(sub_win);
  }
 
-void WinList::moveBottom(SubWindow *sub_win)
+void WindowList::moveBottom(SubWindow *sub_win)
  {
   if( sub_win->list!=this )
     {
-     Printf(Exception,"CCore::Video::WinList::moveBottom(...) : sub-window from another list");
+     Printf(Exception,"CCore::Video::WindowList::moveBottom(...) : sub-window from another list");
     }
   
   list.del(sub_win);
@@ -133,17 +133,17 @@ void WinList::moveBottom(SubWindow *sub_win)
 
  // focus
 
-void WinList::focusTop()
+void WindowList::focusTop()
  {
   if( SubWindow *sub_win=list.first ) sub_win->setFocus();
  }
 
-void WinList::focusBottom()
+void WindowList::focusBottom()
  {
   if( SubWindow *sub_win=list.last ) sub_win->setFocus();
  }
 
-void WinList::focusNext()
+void WindowList::focusNext()
  {
   if( focus )
     {
@@ -154,7 +154,7 @@ void WinList::focusNext()
     }
  }
 
-void WinList::focusPrev()
+void WindowList::focusPrev()
  {
   if( focus )
     {
@@ -167,34 +167,34 @@ void WinList::focusPrev()
 
  // draw
 
-void WinList::draw(const DrawBuf &buf,bool drag_active) const
+void WindowList::draw(const DrawBuf &buf,bool drag_active) const
  {
   for(auto cur=list.start_rev(); +cur ;++cur) cur->forward_draw(buf,drag_active);
  }
 
-void WinList::draw(const DrawBuf &buf,Pane pane,bool drag_active) const
+void WindowList::draw(const DrawBuf &buf,Pane pane,bool drag_active) const
  {
   for(auto cur=list.start_rev(); +cur ;++cur) cur->forward_draw(buf,pane,drag_active);
  }
 
  // SubWindowHost
 
-FrameWindow * WinList::getFrame()
+FrameWindow * WindowList::getFrame()
  {
   return parent.getFrame();
  }
 
-Point WinList::getScreenOrigin()
+Point WindowList::getScreenOrigin()
  {
   return parent.getScreenOrigin();
  }
 
-void WinList::redraw(Pane pane)
+void WindowList::redraw(Pane pane)
  {
   parent.redraw(pane);
  }
 
-void WinList::setFocus(SubWindow *sub_win)
+void WindowList::setFocus(SubWindow *sub_win)
  {
   if( focus!=sub_win )
     {
@@ -206,14 +206,14 @@ void WinList::setFocus(SubWindow *sub_win)
   parent.setFocus();
  }
 
-void WinList::captureMouse(SubWindow *sub_win)
+void WindowList::captureMouse(SubWindow *sub_win)
  {
   capture=sub_win;
   
   parent.captureMouse();
  }
 
-void WinList::releaseMouse(SubWindow *sub_win)
+void WindowList::releaseMouse(SubWindow *sub_win)
  {
   if( sub_win==capture )
     {
@@ -225,7 +225,7 @@ void WinList::releaseMouse(SubWindow *sub_win)
 
  // base
 
-void WinList::open()
+void WindowList::open()
  {
   capture=0;
   enter=0;
@@ -235,7 +235,7 @@ void WinList::open()
   for(auto cur=list.start(); +cur ;++cur) cur->open();
  }
 
-void WinList::close()
+void WindowList::close()
  {
   is_opened=false;
   
@@ -244,14 +244,14 @@ void WinList::close()
 
  // keyboard
 
-void WinList::gainFocus()
+void WindowList::gainFocus()
  {
   has_focus=true;
   
   if( focus ) focus->gainFocus();
  }
 
-void WinList::looseFocus()
+void WindowList::looseFocus()
  {
   has_focus=false;
   
@@ -260,12 +260,12 @@ void WinList::looseFocus()
 
  // mouse
 
-void WinList::looseCapture()
+void WindowList::looseCapture()
  {
   if( capture ) Replace_null(capture)->looseCapture();
  }
 
-MouseShape WinList::getMouseShape(Point point,MouseShape def_shape)
+MouseShape WindowList::getMouseShape(Point point,MouseShape def_shape)
  {
   if( SubWindow *sub_win=find(point) ) return sub_win->forward_getMouseShape(point);
   
@@ -274,7 +274,7 @@ MouseShape WinList::getMouseShape(Point point,MouseShape def_shape)
 
  // user input
 
-void WinList::react(UserAction action)
+void WindowList::react(UserAction action)
  {
   react(action, [] (UserAction) {} );
  }

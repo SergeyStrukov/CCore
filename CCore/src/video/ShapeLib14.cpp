@@ -302,20 +302,15 @@ void YScrollShape::draw(const DrawBuf &buf) const
   {
    MCoord e=s.x/3;
    
-   MCoord a1=x0+e;
-   MCoord a2=x0+s.x/2;
-   MCoord a3=x1-e;
+   MCoord a0=x0+e;
+   MCoord a1=x0+s.x/2;
+   MCoord a2=x1-e;
    
-   MCoord b0=y2+width;
+   MCoord f=(y3-y2)/4;
+   
+   MCoord b0=y2+f;
    MCoord b1=y2+(y3-y2)/2;
-   MCoord b2=y3-width;
-   
-   FigurePoints<4> fig;
-   
-   fig[0]={a1,b1};
-   fig[1]={a2,b0};
-   fig[2]={a3,b1};
-   fig[3]={a2,b2};
+   MCoord b2=y3-f;
    
    ColorName cname;
    
@@ -330,8 +325,33 @@ void YScrollShape::draw(const DrawBuf &buf) const
      {
       cname=+cfg.bottom;
      }
-
-   fig.solid(art,cname);
+   
+   if( b2-b0>2*(a2-a0) )
+     {
+      MCoord c=(b2-b0)/2-(a2-a0);
+     
+      FigurePoints<6> fig;
+      
+      fig[0]={a0,b1-c};
+      fig[1]={a1,b0};
+      fig[2]={a2,b1-c};
+      fig[3]={a2,b1+c};
+      fig[4]={a1,b2};
+      fig[5]={a0,b1+c};
+ 
+      fig.solid(art,cname);
+     }
+   else
+     {
+      FigurePoints<4> fig;
+      
+      fig[0]={a0,b1};
+      fig[1]={a1,b0};
+      fig[2]={a2,b1};
+      fig[3]={a1,b2};
+ 
+      fig.solid(art,cname);
+     }
   }
  }
 
