@@ -17,6 +17,7 @@
 #define CCore_inc_video_WindowReport_h
 
 #include <CCore/inc/video/DragWindow.h>
+#include <CCore/inc/video/WindowLib.h>
 
 #include <CCore/inc/Exception.h>
  
@@ -110,21 +111,24 @@ class ExceptionWindow : public SubWindow
   
    struct Config
     {
-     RefVal<ColorName> back = Black ;
-     RefVal<ColorName> text = Green ;
-     RefVal<ColorName> divider = Red ;
+     RefVal<Coord> scroll_dxy = 20 ;
+    
+     RefVal<ColorName> back    = Black ;
+     RefVal<ColorName> text    = Green ;
+     RefVal<ColorName> divider =   Red ;
      
      RefVal<Font> text_font;
      
-     Config() {}
+     RefVal<ScrollShape::Config> scroll_cfg; 
      
-     mutable Signal<> update;
+     Config() {}
     };
    
   private:
    
-   WindowReportBase &report;
    const Config &cfg;
+   
+   WindowReportBase &report;
    
    ulen off = 0 ;
    ulen lines = 0 ;
@@ -143,7 +147,7 @@ class ExceptionWindow : public SubWindow
    
   public:
   
-   ExceptionWindow(SubWindowHost &host,WindowReportBase &report,const Config &cfg);
+   ExceptionWindow(SubWindowHost &host,const Config &cfg,WindowReportBase &report);
    
    virtual ~ExceptionWindow();
    
@@ -174,11 +178,8 @@ class ExceptionWindow : public SubWindow
    
   private:
    
-   void updateConfig();
-   
    void updateReport();
    
-   SignalConnector<ExceptionWindow> connector_updateConfig;
    SignalConnector<ExceptionWindow> connector_updateReport;
   };
 
@@ -275,7 +276,7 @@ void WindowReportOf<Shape>::modalLoop()
  {
   DragWindowOf<Shape> main_win(desktop,drag_cfg);
   
-  ExceptionWindow sub_win(main_win,*this,cfg);
+  ExceptionWindow sub_win(main_win,cfg,*this);
   
   ClientFromSubWindow client(sub_win); 
   
@@ -283,7 +284,7 @@ void WindowReportOf<Shape>::modalLoop()
   
   Point max_size=main_win.getDesktop()->getScreenSize();
   
-  main_win.createMain(CmdDisplay_Normal,max_size,String("Fatal error"));
+  main_win.createMain(CmdDisplay_Normal,max_size,drag_cfg.fatal_error);
   
   DeferCallQueue::Enable();
   
@@ -309,9 +310,9 @@ class ExceptionClient : public ClientWindow
   public:
   
    template <class W>
-   ExceptionClient(W &parent,WindowReportBase &report_,const ExceptionWindow::Config &cfg)
+   ExceptionClient(W &parent,const ExceptionWindow::Config &cfg,WindowReportBase &report_)
     : report(report_),
-      window(parent,report_,cfg)
+      window(parent,cfg,report_)
     {
      sub_win=&window;
      

@@ -111,6 +111,8 @@ class DragShape
      RefVal<unsigned> blink_time       = 3*25 ;
      RefVal<unsigned> blink_period     = 3 ;
      
+     String fatal_error = String("Fatal error") ;
+     
      Config() {}
      
      mutable Signal<> update;

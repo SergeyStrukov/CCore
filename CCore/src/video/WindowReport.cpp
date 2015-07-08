@@ -155,11 +155,10 @@ void ExceptionWindow::setLines()
     }
  }
 
-ExceptionWindow::ExceptionWindow(SubWindowHost &host,WindowReportBase &report_,const Config &cfg_)
+ExceptionWindow::ExceptionWindow(SubWindowHost &host,const Config &cfg_,WindowReportBase &report_)
  : SubWindow(host),
-   report(report_),
    cfg(cfg_),
-   connector_updateConfig(this,&ExceptionWindow::updateConfig,cfg.update),
+   report(report_),
    connector_updateReport(this,&ExceptionWindow::updateReport,report.update)
  {
   setLines();
@@ -348,12 +347,6 @@ void ExceptionWindow::react_Key(VKey vkey,KeyMod,unsigned repeat)
       }
      break;
     }
- }
-
-void ExceptionWindow::updateConfig()
- {
-  layout();
-  redraw();
  }
 
 void ExceptionWindow::updateReport()

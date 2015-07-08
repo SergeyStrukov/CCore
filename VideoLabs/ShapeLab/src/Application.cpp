@@ -102,11 +102,11 @@ class Application : public ApplicationBase
    
   public: 
    
-   explicit Application(WindowReportBase &report,CmdDisplay cmd_display_,Param &param)
+   explicit Application(WindowReportBase &report,Param &param,CmdDisplay cmd_display_)
     : ApplicationBase(param.desktop,param.tick_period),
       cmd_display(cmd_display_),
       main_win(param.desktop,param.drag_cfg),
-      exception_client(main_win,report,param.cfg),
+      exception_client(main_win,param.cfg,report),
       client(main_win)
     {
      main_win.bindAlertClient(exception_client);
@@ -129,7 +129,7 @@ int Main(CmdDisplay cmd_display)
      Param param;
      WindowReport report(param);
     
-     Application app(report,cmd_display,param);
+     Application app(report,param,cmd_display);
     
      return app.run();
     }
