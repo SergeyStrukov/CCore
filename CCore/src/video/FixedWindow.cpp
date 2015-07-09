@@ -29,6 +29,96 @@ class FixedShape::DrawArt : public Smooth::DrawArt
    explicit DrawArt(const DrawBuf &buf) : Smooth::DrawArt(buf) {}
  };
 
+void FixedShape::draw_Frame(DrawArt &art) const
+ {
+  ColorName top=+cfg.frame;
+  ColorName bottom=+cfg.top;
+  
+  if( hilight==HitFrame_Move ) top=+cfg.frameHilight;
+  
+  if( hit_type==HitFrame_Move ) top=+cfg.frameDrag;
+  
+  if( !client )
+    {
+     art.block(Extent(Null,size),top);
+    
+     return;
+    }
+  
+  MPane outer(Extent(Null,size));
+  MPane inner(client);
+
+  // top
+  
+  {
+   MCoord x0=outer.x;
+   MCoord x1=outer.ex;
+   
+   MCoord y0=outer.y;
+   MCoord y1=inner.y;
+   
+   FigureBox fig(x0,x1,y0,y1);
+   
+   fig.solid(art,TwoField({x0,y0},top,{x0,y1},bottom));
+  }
+  
+  // bottom
+  
+  {
+   MCoord x0=outer.x;
+   MCoord x1=outer.ex;
+   
+   MCoord y0=inner.ey;
+   MCoord y1=outer.ey;
+   
+   FigureBox fig(x0,x1,y0,y1);
+   
+   fig.solid(art,TwoField({x0,y0},top,{x0,y1},bottom));
+  }
+  
+  // left
+  
+  {
+   MCoord x0=outer.x;
+   MCoord x1=inner.x;
+   
+   MCoord y0=outer.y;
+   MCoord y1=inner.y;
+   MCoord y2=inner.ey;
+   MCoord y3=outer.ey;
+   
+   FigurePoints<4> fig;
+   
+   fig[0]={x0,y0};
+   fig[1]={x1,y1};
+   fig[2]={x1,y2};
+   fig[3]={x0,y3};
+   
+   fig.solid(art,TwoField({x0,y0},top,{x1,y0},bottom));
+  } 
+
+  // right
+  
+  {
+   MCoord x0=inner.ex;
+   MCoord x1=outer.ex;
+   
+   MCoord y0=outer.y;
+   MCoord y1=inner.y;
+   MCoord y2=inner.ey;
+   MCoord y3=outer.ey;
+   
+   FigurePoints<4> fig;
+   
+   fig[0]={x0,y1};
+   fig[1]={x1,y0};
+   fig[2]={x1,y3};
+   fig[3]={x0,y2};
+   
+   fig.solid(art,TwoField({x0,y0},top,{x1,y0},bottom));
+  }
+ }
+
 void FixedShape::draw_Title(DrawArt &art) const
  {
   if( +titleBar )
@@ -37,23 +127,17 @@ void FixedShape::draw_Title(DrawArt &art) const
      
      MCoord width=+cfg.width;
      
-     MCoord x0=p.x;
-     MCoord x1=x0+p.dx;
-     
-     MCoord y0=p.y;
-     MCoord y1=y0+p.dy;
-     
      MCoord ex=p.dy/4;
      
      ColorName top=+cfg.top;
      ColorName bottom=+cfg.bottom;
      
-     FigureButton fig(x0,x1,y0,y1,ex);
+     FigureButton fig(p,ex);
      
      fig.curveSolid(art,has_focus?+cfg.active:+cfg.inactive);
      
-     fig.getTop().curvePath(art,HalfPos,width,bottom);
-     fig.getBottom().curvePath(art,HalfPos,width,top);
+     fig.getTop().curvePath(art,HalfPos,width,top);
+     fig.getBottom().curvePath(art,HalfPos,width,bottom);
      
      Pane pane=Shrink(titleBar,RoundUpLen(ex),RoundUpLen(width));
      
@@ -69,156 +153,38 @@ void FixedShape::draw_Close(DrawArt &art) const
      
      MCoord width=+cfg.width;
      
-     MCoord x0=p.x;
-     MCoord x1=x0+p.dx;
-     
-     MCoord y0=p.y;
-     MCoord y1=y0+p.dy;
-     
      MCoord ex=p.dx/8;
 
-     FigureButton fig(x0,x1,y0,y1,ex);
+     FigureButton fig(p,ex);
      
-     MCoord dx=p.dx/5;
+     MPane q=p.shrink(p.dx/5,p.dy/5);
      
-     MCoord s0=x0+dx;
-     MCoord s1=x1-dx;
-     
-     MCoord dy=p.dy/5;
-     
-     MCoord t0=y0+dy;
-     MCoord t1=y1-dy;
+     ColorName top=+cfg.top;
      
      if( hit_type==HitFrame_Close )
        {
-        fig.curveSolid(art,+cfg.bottom);
+        fig.curveSolid(art,top);
         
-        s0+=width;
-        s1+=width;
-        t0+=width;
-        t1+=width;
+        q+=MPoint::Diag(width);
        }
      else
        {
-        ColorName top=+cfg.btnFaceTop;
-        ColorName bottom=(hilight==HitFrame_Close)?+cfg.btnFaceHilight:+cfg.btnFace;
+        ColorName face=(hilight==HitFrame_Close)?+cfg.btnFaceHilight:+cfg.btnFace;
         
-        fig.curveSolid(art,TwoField({x0,y0},top,{x0,y1},bottom));
+        ColorName bottom=+cfg.bottom;
         
-        fig.curveLoop(art,HalfPos,width,+cfg.btnEdge);
+        fig.curveSolid(art,face);
+        
+        fig.getTop().curvePath(art,HalfPos,width,top);
+        fig.getBottom().curvePath(art,HalfPos,width,bottom);
        }
 
      MCoord w=p.dx/8;
      
      ColorName pict=+cfg.btnPictClose;
      
-     art.pathOf(w,pict,MPoint(s0,t0),MPoint(s1,t1));
-     art.pathOf(w,pict,MPoint(s0,t1),MPoint(s1,t0));
-    }
-  
-#if 0  
-  
-  if( +btnClose )
-    {
-     MPane p(btnClose);
-     
-     MCoord width=+cfg.width;
-     
-     MCoord x0=p.x;
-     MCoord x1=x0+p.dx;
-     
-     MCoord y0=p.y;
-     MCoord y1=y0+p.dy;
-     
-     MCoord ex=p.dy/8;
-     
-     FigureButton fig(x0,x1,y0,y1,ex);
-
-     MCoord w=p.dy/8;
-     MCoord bx=p.dy/4;
-     
-     MCoord s0=x0+bx;
-     MCoord s1=x1-bx;
-     
-     MCoord t0=y0+bx;
-     MCoord t1=y1-bx;
-     
-     ColorName top=+cfg.top;
-     ColorName bottom=+cfg.bottom;
-     ColorName btn=+cfg.btnClose;
-     
-     if( hit_type==HitFrame_Close )
-       {
-        fig.curveSolid(art,bottom);
-        
-        s0+=width;
-        s1+=width;
-        t0+=width;
-        t1+=width;
-       }
-     else
-       {
-        fig.curveSolid(art,(hilight==HitFrame_Close)?+cfg.btnHilight:+cfg.frame);
-        
-        fig.getTop().curvePath(art,HalfPos,width,top);
-        fig.getBottom().curvePath(art,HalfPos,width,bottom);
-        
-       }
-     
-     art.pathOf(w,btn,MPoint(s0,t0),MPoint(s1,t1));
-     art.pathOf(w,btn,MPoint(s0,t1),MPoint(s1,t0));
-    }
-  
-#endif  
- }
-
-void FixedShape::draw_Border(DrawArt &art) const
- {
-  MCoord width=+cfg.width;
-  ColorName top=+cfg.top;
-  ColorName bottom=+cfg.bottom;
-  
-  if( size>Null )
-    {
-     MPane outer(Extent(Null,size));
-     
-     MCoord x0=outer.x;
-     MCoord x1=x0+outer.dx;
-     
-     MCoord y0=outer.y;
-     MCoord y1=y0+outer.dy;
-  
-     FigureTopBorder fig_top(x0,x1,y0,y1,width);
-     
-     fig_top.solid(art,top);
-     
-     FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
-     
-     fig_bottom.solid(art,bottom);
-    }
-  
-  if( +client )
-    {
-     MPane inner(client);
-    
-     MCoord x0=inner.x;
-     MCoord x1=x0+inner.dx;
-     
-     MCoord y0=inner.y;
-     MCoord y1=y0+inner.dy;
-     
-     x0-=width;
-     x1+=width;
-     y0-=width;
-     y1+=width;
-     
-     FigureTopBorder fig_top(x0,x1,y0,y1,width);
-     
-     fig_top.solid(art,bottom);
-     
-     FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
-     
-     fig_bottom.solid(art,top);
+     art.pathOf(w,pict,q.getTopLeft(),q.getBottomRight());
+     art.pathOf(w,pict,q.getBottomLeft(),q.getTopRight());
     }
  }
 
@@ -267,24 +233,11 @@ void FixedShape::draw(const DrawBuf &buf) const
     {
      DrawArt art(buf);
      
-     PaneSub sub(Extent(Null,size),client);
-     
-     ColorName cname=+cfg.frame;
-     
-     if( hilight==HitFrame_Move ) cname=+cfg.frameHilight;
-     
-     if( hit_type==HitFrame_Move ) cname=+cfg.frameDrag;
-     
-     art.block(sub.top,cname);
-     art.block(sub.bottom,cname);
-     art.block(sub.left,cname);
-     art.block(sub.right,cname);
+     draw_Frame(art);
      
      draw_Title(art);
      
      draw_Close(art);
-     
-     draw_Border(art);
     }
   catch(CatchType)
     {

@@ -62,13 +62,34 @@ struct MPane
   MCoord dx;
   MCoord dy;
   
+  MCoord ex;
+  MCoord ey;
+  
+  // constructors
+  
   MPane(Pane pane)
    {
     x=MPoint::LShift(pane.x)-MPoint::Half;
     y=MPoint::LShift(pane.y)-MPoint::Half;
     dx=MPoint::LShift(pane.dx);
     dy=MPoint::LShift(pane.dy);
+    
+    ex=x+dx;
+    ey=y+dy;
    }
+  
+  MPane(MCoord x_,MCoord ex_,MCoord y_,MCoord ey_)
+   {
+    x=x_;
+    y=y_;
+    ex=ex_;
+    ey=ey_;
+    
+    dx=ex-x;
+    dy=ey-y;
+   }
+  
+  // methods
   
   bool operator + () const { return dx>0 && dy>0 ; }
   
@@ -90,7 +111,73 @@ struct MPane
   
   MPoint getSize() const { return MPoint(dx,dy); }
   
-  MPoint getLim() const { return MPoint(x+dx,y+dy); }
+  MPoint getLim() const { return MPoint(ex,ey); }
+  
+  MPoint getTopLeft() const { return MPoint(x,y); }
+  
+  MPoint getTopRight() const { return MPoint(ex,y); }
+  
+  MPoint getBottomLeft() const { return MPoint(x,ey); }
+  
+  MPoint getBottomRight() const { return MPoint(ex,ey); }
+  
+  // shift
+  
+  MPane operator + (MPoint p) const 
+   {
+    MPane ret(*this);
+    
+    ret.x+=p.x;
+    ret.y+=p.y;
+    
+    ret.ex+=p.x;
+    ret.ey+=p.y;
+    
+    return ret;
+   }
+  
+  MPane operator += (MPoint p)
+   {
+    x+=p.x;
+    y+=p.y;
+    
+    ex+=p.x;
+    ey+=p.y;
+    
+    return *this;
+   }
+  
+  // shrink
+  
+  MPane shrinkX(MCoord left,MCoord right) const
+   {
+    return MPane(x+left,ex-right,y,ey);
+   }
+  
+  MPane shrinkX(MCoord dx) const
+   {
+    return MPane(x+dx,ex-dx,y,ey);
+   }
+  
+  MPane shrinkY(MCoord top,MCoord bottom) const
+   {
+    return MPane(x,ex,y+top,ey-bottom);
+   }
+  
+  MPane shrinkY(MCoord dy) const
+   {
+    return MPane(x,ex,y+dy,ey-dy);
+   }
+ 
+  MPane shrink(MCoord dx,MCoord dy) const
+   {
+    return MPane(x+dx,ex-dx,y+dy,ey-dy);
+   }
+  
+  MPane shrink(MCoord dxy) const
+   {
+    return MPane(x+dxy,ex-dxy,y+dxy,ey-dxy);
+   }
  };
 
 /* struct FigureBase<T,Len> */
@@ -301,6 +388,8 @@ struct FigureDots : FigureBase<Smooth::Dot,Len> , DrawDots
 struct FigureBox : FigurePoints<4> 
  {
   FigureBox(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+  
+  explicit FigureBox(const MPane &p) : FigureBox(p.x,p.ex,p.y,p.ey) {}
  };
 
 /* struct FigureTopBorder */
@@ -308,6 +397,8 @@ struct FigureBox : FigurePoints<4>
 struct FigureTopBorder : FigurePoints<6>
  {
   FigureTopBorder(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord w);
+  
+  FigureTopBorder(const MPane &p,MCoord w) : FigureTopBorder(p.x,p.ex,p.y,p.ey,w) {}
   
   FigurePoints<6> getLeftCut(MCoord t) const;
   
@@ -319,6 +410,8 @@ struct FigureTopBorder : FigurePoints<6>
 struct FigureBottomBorder : FigurePoints<6>
  {
   FigureBottomBorder(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord w);
+  
+  FigureBottomBorder(const MPane &p,MCoord w) : FigureBottomBorder(p.x,p.ex,p.y,p.ey,w) {}
  };
 
 /* struct FigureButton */
@@ -326,6 +419,8 @@ struct FigureBottomBorder : FigurePoints<6>
 struct FigureButton : FigureDots<10>
  {
   FigureButton(MCoord x0,MCoord x1,MCoord y0,MCoord y1,MCoord ex);
+  
+  FigureButton(const MPane &p,MCoord ex) : FigureButton(p.x,p.ex,p.y,p.ey,ex) {}
   
   FigureDots<6> getTop() const;
   
@@ -344,6 +439,8 @@ struct FigureAsterisk : FigurePoints<30>
 struct FigureLeftArrow : FigureDots<4>
  {
   FigureLeftArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+  
+  explicit FigureLeftArrow(const MPane &p) : FigureLeftArrow(p.x,p.ex,p.y,p.ey) {}
  };
 
 /* struct FigureRightArrow */
@@ -351,6 +448,8 @@ struct FigureLeftArrow : FigureDots<4>
 struct FigureRightArrow : FigureDots<4>
  {
   FigureRightArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+  
+  explicit FigureRightArrow(const MPane &p) : FigureRightArrow(p.x,p.ex,p.y,p.ey) {}
  };
 
 /* struct FigureUpArrow */
@@ -358,6 +457,8 @@ struct FigureRightArrow : FigureDots<4>
 struct FigureUpArrow : FigureDots<4>
  {
   FigureUpArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+  
+  explicit FigureUpArrow(const MPane &p) : FigureUpArrow(p.x,p.ex,p.y,p.ey) {}
  };
 
 /* struct FigureDownArrow */
@@ -365,6 +466,8 @@ struct FigureUpArrow : FigureDots<4>
 struct FigureDownArrow : FigureDots<4>
  {
   FigureDownArrow(MCoord x0,MCoord x1,MCoord y0,MCoord y1);
+  
+  explicit FigureDownArrow(const MPane &p) : FigureDownArrow(p.x,p.ex,p.y,p.ey) {}
  };
 
 } // namespace Video

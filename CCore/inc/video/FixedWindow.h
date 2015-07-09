@@ -59,11 +59,12 @@ class FixedShape
      RefVal<Coord> title_dy  = 32 ;
      
      RefVal<Coord> btn_dx    = 26 ;
-     RefVal<Coord> btn_dy    = 26 ;
+     RefVal<Coord> btn_dy    = 24 ;
     
-     RefVal<ColorName> top            =      Snow ;
-     RefVal<ColorName> bottom         =      Gray ;
-     RefVal<ColorName> frame          =    Silver ;
+     RefVal<ColorName> top            =      Gray ;
+     RefVal<ColorName> bottom         =      Snow ;
+     
+     RefVal<ColorName> frame          =      Snow ;
      RefVal<ColorName> frameHilight   = RGBColor(0xC0,0xFF,0xC0) ;
      RefVal<ColorName> frameDrag      = RGBColor(0xFF,0xC0,0xC0) ;
      
@@ -71,11 +72,9 @@ class FixedShape
      RefVal<ColorName> inactive       =    Silver ;
      RefVal<ColorName> title          =     Black ;
     
-     RefVal<ColorName> btnFaceTop     =    Silver ;
      RefVal<ColorName> btnFace        = SteelBlue ;
      RefVal<ColorName> btnFaceHilight =     Green ;
      RefVal<ColorName> btnPictClose   =       Red ;
-     RefVal<ColorName> btnEdge        =      Blue ;
      
      RefVal<Font> title_font;
     
@@ -100,11 +99,11 @@ class FixedShape
    
    class DrawArt;
    
+   void draw_Frame(DrawArt &art) const;
+   
    void draw_Title(DrawArt &art) const;
    
    void draw_Close(DrawArt &art) const;
-   
-   void draw_Border(DrawArt &art) const;
    
   public: 
   
