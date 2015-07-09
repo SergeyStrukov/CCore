@@ -275,6 +275,7 @@ obj/ScanProxy.o \
 obj/ScanTools.o \
 obj/Scanf.o \
 obj/Sem.o \
+obj/Shade.o \
 obj/ShapeLib1.o \
 obj/ShapeLib10.o \
 obj/ShapeLib11.o \
@@ -656,6 +657,7 @@ obj/ScanProxy.s \
 obj/ScanTools.s \
 obj/Scanf.s \
 obj/Sem.s \
+obj/Shade.s \
 obj/ShapeLib1.s \
 obj/ShapeLib10.s \
 obj/ShapeLib11.s \
@@ -1037,6 +1039,7 @@ obj/ScanProxy.dep \
 obj/ScanTools.dep \
 obj/Scanf.dep \
 obj/Sem.dep \
+obj/Shade.dep \
 obj/ShapeLib1.dep \
 obj/ShapeLib10.dep \
 obj/ShapeLib11.dep \
@@ -1983,6 +1986,9 @@ obj/Scanf.o : ../../CCore/src/Scanf.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Sem.o : ../../XCore/CCore/src/task/Sem.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Shade.o : ../../CCore/src/video/Shade.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib1.o : ../../CCore/src/video/ShapeLib1.cpp
@@ -3121,6 +3127,9 @@ obj/Scanf.s : ../../CCore/src/Scanf.cpp
 obj/Sem.s : ../../XCore/CCore/src/task/Sem.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Shade.s : ../../CCore/src/video/Shade.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ShapeLib1.s : ../../CCore/src/video/ShapeLib1.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4256,6 +4265,9 @@ obj/Scanf.dep : ../../CCore/src/Scanf.cpp
 
 obj/Sem.dep : ../../XCore/CCore/src/task/Sem.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Sem.o $< -MF $@
+
+obj/Shade.dep : ../../CCore/src/video/Shade.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Shade.o $< -MF $@
 
 obj/ShapeLib1.dep : ../../CCore/src/video/ShapeLib1.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib1.o $< -MF $@

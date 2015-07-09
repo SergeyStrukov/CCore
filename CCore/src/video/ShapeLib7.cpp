@@ -41,7 +41,7 @@ void XSingleLineShape::draw(const DrawBuf &buf) const
   MCoord width=+cfg.width;
   
   MCoord x0=p.x+width/2;
-  MCoord x1=p.x+p.dx-width/2;
+  MCoord x1=p.ex-width/2;
   
   MCoord y=p.y+p.dy/2;
   
@@ -70,7 +70,7 @@ void YSingleLineShape::draw(const DrawBuf &buf) const
   MCoord x=p.x+p.dx/2;
   
   MCoord y0=p.y+width/2;
-  MCoord y1=p.y+p.dy-width/2;
+  MCoord y1=p.ey-width/2;
   
   art.pathOf(width,+cfg.line,MPoint(x,y0),MPoint(x,y1));
  }

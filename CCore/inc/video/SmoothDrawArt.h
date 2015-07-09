@@ -1365,6 +1365,8 @@ class DrawArt
    
    void erase(DesktopColor color);
   
+   void erase(ColorName cname,Clr alpha);
+   
    void block(Pane pane,DesktopColor color);
    
    void block(Pane pane,ColorName cname,Clr alpha);

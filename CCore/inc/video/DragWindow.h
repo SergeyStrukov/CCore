@@ -20,6 +20,7 @@
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/FrameGuards.h>
 #include <CCore/inc/video/RefVal.h>
+#include <CCore/inc/video/Shade.h>
 
 #include <CCore/inc/String.h>
 #include <CCore/inc/DeferCall.h>
@@ -103,6 +104,9 @@ class DragShape
      RefVal<ColorName> btnPictAlert      =       Red ;
      RefVal<ColorName> btnPictNoAlert    =      Gray ;
      RefVal<ColorName> btnPictCloseAlert =    Orange ;
+     
+     RefVal<ColorName> shade_color = Violet ;
+     RefVal<Clr>       shade_alpha =     64 ;
      
      RefVal<Font> title_font;
      
@@ -395,6 +399,11 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
     { 
      return getClient().getSubWindow(); 
     }
+
+   void shade(const FrameBuf<DesktopColor> &buf)
+    {
+     if( !enable_react ) Shade(buf,+shape.cfg.shade_color,+shape.cfg.shade_alpha);
+    }
    
    void redrawFrame()
     {
@@ -412,6 +421,8 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      if( size<=buf.getSize() ) 
        {
         shape.draw(buf);
+        
+        shade(buf);
        
         host->invalidate(1);
        }
@@ -444,6 +455,8 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
        {
         shape.draw(buf,drag_type);
        
+        shade(buf);
+        
         host->invalidate(pane,1);
        }
      else
@@ -626,6 +639,8 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
         shape.draw(buf);
        
         getClientSub().forward_draw(buf,shape.drag_type);
+        
+        shade(buf);
        
         host->invalidate(1);
        }
@@ -653,6 +668,8 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      if( size<=buf.getSize() ) 
        {
         getClientSub().forward_draw(buf,shape.drag_type);
+        
+        shade(buf);
        
         host->invalidate(shape.getClient(),1);
        }
@@ -680,6 +697,8 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
      if( size<=buf.getSize() ) 
        {
         getClientSub().forward_draw(buf,pane,shape.drag_type);
+        
+        shade(buf);
        
         host->invalidate(pane,1);
        }
@@ -862,9 +881,9 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
 
    // user input
    
-   void disableReact() { enable_react=false; }
+   virtual void disableReact() { enable_react=false; redrawAll(); }
    
-   void enableReact() { enable_react=true; }
+   virtual void enableReact() { enable_react=true; redrawAll(); }
    
    virtual void react(UserAction action)
     {

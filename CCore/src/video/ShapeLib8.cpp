@@ -41,7 +41,7 @@ void XDoubleLineShape::draw(const DrawBuf &buf) const
   MCoord width=+cfg.width;
   
   MCoord x0=p.x+width/2;
-  MCoord x1=p.x+p.dx-width/2;
+  MCoord x1=p.ex-width/2;
   
   MCoord y=p.y+p.dy/2;
   MCoord y0=y-width/2;
@@ -75,7 +75,7 @@ void YDoubleLineShape::draw(const DrawBuf &buf) const
   MCoord x1=x+width/2;
   
   MCoord y0=p.y+width/2;
-  MCoord y1=p.y+p.dy-width/2;
+  MCoord y1=p.ey-width/2;
   
   art.pathOf(width,+cfg.top,MPoint(x0,y0),MPoint(x0,y1));
   art.pathOf(width,+cfg.bottom,MPoint(x1,y0),MPoint(x1,y1));

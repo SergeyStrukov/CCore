@@ -69,10 +69,10 @@ void TextContourShape::draw(const DrawBuf &buf) const
   MCoord width=+cfg.width;
   
   MCoord x0=p.x;
-  MCoord x1=x0+p.dx;
+  MCoord x1=p.ex;
   
   MCoord y0=p.y+Fraction(ty)/2;
-  MCoord y1=p.y+p.dy;
+  MCoord y1=p.ey;
   
   MCoord t0;
   MCoord t1;

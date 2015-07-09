@@ -47,17 +47,11 @@ void ContourShape::draw(const DrawBuf &buf) const
   
   MCoord width=+cfg.width;
   
-  MCoord x0=p.x;
-  MCoord x1=x0+p.dx;
-  
-  MCoord y0=p.y;
-  MCoord y1=y0+p.dy;
-  
-  FigureTopBorder fig_top(x0,x1,y0,y1,width);
+  FigureTopBorder fig_top(p,width);
   
   fig_top.solid(art,+cfg.top);
   
-  FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
+  FigureBottomBorder fig_bottom(p,width);
   
   fig_bottom.solid(art,+cfg.bottom);
  }

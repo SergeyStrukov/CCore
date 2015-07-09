@@ -285,13 +285,21 @@ void ShapeLab2::btn2_pressed()
     
      dialog.create(getFrame()->getHost(),pane,String("Test dialog"));
      
-     btn2.disable();
+     //btn2.disable();
+     
+     disableFrameReact();
+     
+     //getFrame()->getHost()->enableUserInput(false);
     }
  }
 
 void ShapeLab2::dialog_destroyed()
  {
-  btn2.enable();
+  //btn2.enable();
+  
+  enableFrameReact();
+  
+  //getFrame()->getHost()->enableUserInput(true);
  }
 
 ShapeLab2::ShapeLab2(SubWindowHost &host)

@@ -52,16 +52,15 @@ void ButtonShape::draw(const DrawBuf &buf) const
   MCoord width=+cfg.width;
   
   MCoord x0=p.x;
-  MCoord x1=x0+p.dx;
   
   MCoord y0=p.y;
-  MCoord y1=y0+p.dy;
+  MCoord y1=p.ey;
   
   FontSize fs=cfg.font.get()->getSize();
   
   MCoord ex=(Fraction(fs.dy)+2*width)/4;
   
-  FigureButton fig(x0,x1,y0,y1,ex);
+  FigureButton fig(p,ex);
   
   // body
   

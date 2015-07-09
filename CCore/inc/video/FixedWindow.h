@@ -20,6 +20,7 @@
 #include <CCore/inc/video/Font.h>
 #include <CCore/inc/video/FrameGuards.h>
 #include <CCore/inc/video/RefVal.h>
+#include <CCore/inc/video/Shade.h>
 
 #include <CCore/inc/String.h>
 #include <CCore/inc/DeferCall.h>
@@ -75,6 +76,9 @@ class FixedShape
      RefVal<ColorName> btnFace        = SteelBlue ;
      RefVal<ColorName> btnFaceHilight =     Green ;
      RefVal<ColorName> btnPictClose   =       Red ;
+     
+     RefVal<ColorName> shade_color = Violet ;
+     RefVal<Clr> shade_alpha       =     64 ;
      
      RefVal<Font> title_font;
     
@@ -304,6 +308,11 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      return getClient().getSubWindow(); 
     }
    
+   void shade(const FrameBuf<DesktopColor> &buf)
+    {
+     if( !enable_react ) Shade(buf,+shape.cfg.shade_color,+shape.cfg.shade_alpha);
+    }
+   
    void redrawFrame()
     {
      if( host->isDead() ) return;
@@ -321,6 +330,8 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        {
         shape.draw(buf);
        
+        shade(buf);
+        
         host->invalidate(1);
        }
      else
@@ -352,6 +363,8 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        {
         shape.draw(buf,hit_type);
        
+        shade(buf);
+        
         host->invalidate(pane,1);
        }
      else
@@ -453,6 +466,8 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        
         getClientSub().forward_draw(buf,shape.hit_type==HitFrame_Move);
        
+        shade(buf);
+        
         host->invalidate(1);
        }
      else
@@ -480,6 +495,8 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        {
         getClientSub().forward_draw(buf,shape.hit_type==HitFrame_Move);
        
+        shade(buf);
+        
         host->invalidate(shape.getClient(),1);
        }
      else
@@ -507,6 +524,8 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        {
         getClientSub().forward_draw(buf,pane,shape.hit_type==HitFrame_Move);
        
+        shade(buf);
+        
         host->invalidate(pane,1);
        }
      else
@@ -662,9 +681,9 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
 
    // user input
    
-   void disableReact() { enable_react=false; }
+   virtual void disableReact() { enable_react=false; redrawAll(); }
    
-   void enableReact() { enable_react=true; }
+   virtual void enableReact() { enable_react=true; redrawAll(); }
    
    virtual void react(UserAction action)
     {

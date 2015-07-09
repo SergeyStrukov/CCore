@@ -41,15 +41,15 @@ void CheckShape::draw(const DrawBuf &buf) const
   // border
   
   MCoord x0=p.x;
-  MCoord x1=x0+p.dx;
+  MCoord x1=p.ex;
   
   MCoord y0=p.y;
-  MCoord y1=y0+p.dy;
+  MCoord y1=p.ey;
   
   MCoord len=p.dx;
   MCoord width=len/10;
   
-  FigureBox fig(x0,x1,y0,y1);
+  FigureBox fig(p);
   
   // body
 

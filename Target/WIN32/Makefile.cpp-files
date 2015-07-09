@@ -271,6 +271,7 @@
 ../../CCore/src/video/Mouse.cpp
 ../../CCore/src/video/Point.cpp
 ../../CCore/src/video/RefVal.cpp
+../../CCore/src/video/Shade.cpp
 ../../CCore/src/video/ShapeLib1.cpp
 ../../CCore/src/video/ShapeLib10.cpp
 ../../CCore/src/video/ShapeLib11.cpp

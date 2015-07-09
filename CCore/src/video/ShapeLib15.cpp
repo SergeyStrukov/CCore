@@ -37,10 +37,10 @@ void ProgressShape::draw(const DrawBuf &buf) const
   Smooth::DrawArt art(buf);
   
   MCoord x0=p.x;
-  MCoord x2=p.x+p.dx;
+  MCoord x2=p.ex;
   
   MCoord y0=p.y;
-  MCoord y2=p.y+p.dy;
+  MCoord y2=p.ey;
   
   MCoord x1=Position(pos,total,x0,x2);
   

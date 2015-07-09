@@ -46,6 +46,11 @@ void DrawArt::erase(DesktopColor color)
   buf.erase(color);
  }
 
+void DrawArt::erase(ColorName cname,Clr alpha)
+ {
+  buf.block_safe(buf.getPane(),cname,alpha);
+ }
+
 void DrawArt::block(Pane pane,DesktopColor color)
  {
   buf.block_safe(buf.map(pane),color);

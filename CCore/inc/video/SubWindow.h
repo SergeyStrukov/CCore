@@ -104,6 +104,10 @@ class SubWindow : public MemBase_nocopy , public UserInput
    
    void releaseMouse() { host.releaseMouse(this); }
    
+   void disableFrameReact() { getFrame()->disableReact(); }
+   
+   void enableFrameReact() { getFrame()->enableReact(); }
+   
    // drawing
    
    virtual void layout()

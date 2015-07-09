@@ -783,6 +783,16 @@ struct SomeClass
 
 struct UserInput
  {
+  virtual void disableReact() 
+   { 
+    // do nothing
+   }
+  
+  virtual void enableReact() 
+   { 
+    // do nothing
+   }
+  
   virtual void react(UserAction action)
    {
     Used(action);
