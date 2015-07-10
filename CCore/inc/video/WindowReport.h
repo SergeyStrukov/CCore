@@ -137,28 +137,30 @@ class ExceptionWindow : public SubWindow
    
   private: 
 
-   Pane ptext;
+   bool opened = false ;
    
-   ulen off = 0 ;
    ulen lines = 0 ;
    
-   ulen visible_lines = 0 ;
+   Pane ptext;
+   
    Coord text_by = 0 ;
    Coord text_dy = 0 ;
+   Coord text_dx = 0 ;
    
-   bool opened = false ;
+   ulen visible_lines = 0 ;
+   Coord visible_dx = 0 ;
    
   private:
   
    static ulen Lines(StrLen text);
    
+   static Coord VisibleDx(Font font,ulen index,StrLen text);
+   
    void setLines();
    
    void setScrollPage();
    
-   void setScrollPos();
-   
-   void drawText(DrawBuf buf) const;
+   void drawText(DrawBuf buf,Pane pane) const;
    
   public:
   
@@ -194,8 +196,11 @@ class ExceptionWindow : public SubWindow
    
    void yposChanged(ulen pos);
    
+   void xposChanged(ulen pos);
+   
    SignalConnector<ExceptionWindow> connector_updateReport;
    SignalConnector<ExceptionWindow,ulen> connector_yposChanged;
+   SignalConnector<ExceptionWindow,ulen> connector_xposChanged;
   };
 
 /* struct WindowReportParamOf<Shape> */

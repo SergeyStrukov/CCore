@@ -409,7 +409,7 @@ void ShapeLab2::react_Key(VKey vkey,KeyMod kmod)
     {
      case VKey_F12 :
       {
-       Printf(Exception,"F12 is pressed");
+       Printf(Exception,"F12 is pressed -------------------------------");
       }
      break; 
     }

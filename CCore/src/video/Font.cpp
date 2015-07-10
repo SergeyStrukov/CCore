@@ -244,16 +244,58 @@ class DefFont : public FontBase
      out.text(pane.dx,pane.dy,place,str,color);
     }
    
+   static const ulen MaxLen = ulen(MaxCoord/DefaultFont::DX) ;
+   
    virtual TextSize text(StrLen str)
     {
      TextSize ret;
      
-     ret.dx=Coord( str.len*DefaultFont::DX );
-     ret.dy=DefaultFont::DY;
-     ret.by=DefaultFont::BY;
-     ret.skew=0;
-     ret.full_dx=ret.dx;
-     ret.overflow=( str.len>ulen(MaxCoord/DefaultFont::DX) );
+     if( str.len>MaxLen )
+       {
+        ret.dx=MaxCoord;
+        ret.dy=DefaultFont::DY;
+        ret.by=DefaultFont::BY;
+        ret.skew=0;
+        ret.full_dx=ret.dx;
+        ret.overflow=true;
+       }
+     else
+       {
+        ret.dx=Coord( str.len*DefaultFont::DX );
+        ret.dy=DefaultFont::DY;
+        ret.by=DefaultFont::BY;
+        ret.skew=0;
+        ret.full_dx=ret.dx;
+        ret.overflow=false;
+       }
+     
+     return ret;
+    }
+   
+   virtual TextSize text(StrLen str1,StrLen str2)
+    {
+     TextSize ret;
+     
+     if( str1.len>MaxLen || str2.len>MaxLen-str1.len )
+       {
+        ret.dx=MaxCoord;
+        ret.dy=DefaultFont::DY;
+        ret.by=DefaultFont::BY;
+        ret.skew=0;
+        ret.full_dx=ret.dx;
+        ret.overflow=true;
+       }
+     else
+       {
+        ulen len=str1.len+str2.len;
+        
+        ret.dx=Coord( len*DefaultFont::DX );
+        ret.dy=DefaultFont::DY;
+        ret.by=DefaultFont::BY;
+        ret.skew=0;
+        ret.full_dx=ret.dx;
+        ret.overflow=false;
+       }
      
      return ret;
     }

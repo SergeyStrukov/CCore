@@ -111,6 +111,8 @@ struct AbstractFont
   
   virtual TextSize text(StrLen str)=0;
   
+  virtual TextSize text(StrLen str1,StrLen str2)=0;
+  
   virtual ulen fit(StrLen str,Coord full_dx)=0;
  };
 
