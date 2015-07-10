@@ -78,13 +78,13 @@ class ButtonShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
     
-     RefVal<ColorName> border =   Blue ;
-     RefVal<ColorName> focus  = Orange ;
+     RefVal<VColor> border =   Blue ;
+     RefVal<VColor> focus  = Orange ;
      
-     RefVal<ColorName> bottom =   Gray ;
-     RefVal<ColorName> topUp  =  Green ;
-     RefVal<ColorName> top    =   Snow ;
-     RefVal<ColorName> text   =  Black ;
+     RefVal<VColor> bottom =   Gray ;
+     RefVal<VColor> topUp  =  Green ;
+     RefVal<VColor> top    =   Snow ;
+     RefVal<VColor> text   =  Black ;
      
      RefVal<Font> font;
     
@@ -129,13 +129,13 @@ class KnobShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
      
-     RefVal<ColorName> border =   Blue ;
-     RefVal<ColorName> focus  = Orange ;
+     RefVal<VColor> border =   Blue ;
+     RefVal<VColor> focus  = Orange ;
      
-     RefVal<ColorName> bottom =   Gray ;
-     RefVal<ColorName> topUp  =  Green ;
-     RefVal<ColorName> top    =   Snow ;
-     RefVal<ColorName> face   =  Black ;
+     RefVal<VColor> bottom =   Gray ;
+     RefVal<VColor> topUp  =  Green ;
+     RefVal<VColor> top    =   Snow ;
+     RefVal<VColor> face   =  Black ;
      
      Config() {}
     };
@@ -191,13 +191,13 @@ class CheckShape
   
    struct Config
     {
-     RefVal<ColorName> border   =   Blue ;
-     RefVal<ColorName> focus    = Orange ;
+     RefVal<VColor> border   =   Blue ;
+     RefVal<VColor> focus    = Orange ;
      
-     RefVal<ColorName> bottomUp =  Green ;
-     RefVal<ColorName> bottom   =   Snow ;
-     RefVal<ColorName> top      =   Gray ;
-     RefVal<ColorName> mark     =  Black ;
+     RefVal<VColor> bottomUp =  Green ;
+     RefVal<VColor> bottom   =   Snow ;
+     RefVal<VColor> top      =   Gray ;
+     RefVal<VColor> mark     =  Black ;
      
      Config() {}
     };
@@ -231,13 +231,13 @@ class RadioShape
   
    struct Config
     {
-     RefVal<ColorName> border   =   Blue ;
-     RefVal<ColorName> focus    = Orange ;
+     RefVal<VColor> border   =   Blue ;
+     RefVal<VColor> focus    = Orange ;
      
-     RefVal<ColorName> bottomUp =  Green ;
-     RefVal<ColorName> bottom   =   Snow ;
-     RefVal<ColorName> top      =   Gray ;
-     RefVal<ColorName> mark     =  Black ;
+     RefVal<VColor> bottomUp =  Green ;
+     RefVal<VColor> bottom   =   Snow ;
+     RefVal<VColor> top      =   Gray ;
+     RefVal<VColor> mark     =  Black ;
      
      Config() {}
     };
@@ -271,8 +271,8 @@ class LabelShape
   
    struct Config
     {
-     RefVal<ColorName> inactive =  Gray ;
-     RefVal<ColorName> text     = Black ;
+     RefVal<VColor> inactive =  Gray ;
+     RefVal<VColor> text     = Black ;
     
      RefVal<Font> font;
     
@@ -311,11 +311,11 @@ class TextShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
    
-     RefVal<ColorName> bottom   =   Snow ;
-     RefVal<ColorName> top      =   Gray ;
-     RefVal<ColorName> back     = Silver ;
-     RefVal<ColorName> text     =  Black ;
-     RefVal<ColorName> inactive =   Gray ;  
+     RefVal<VColor> bottom   =   Snow ;
+     RefVal<VColor> top      =   Gray ;
+     RefVal<VColor> back     = Silver ;
+     RefVal<VColor> text     =  Black ;
+     RefVal<VColor> inactive =   Gray ;  
     
      RefVal<Font> font;
     
@@ -357,7 +357,7 @@ class SingleLineShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
    
-     RefVal<ColorName> line = Gray ;
+     RefVal<VColor> line = Gray ;
     
      Config() {}
     };
@@ -414,8 +414,8 @@ class DoubleLineShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
    
-     RefVal<ColorName> top    = Gray ;
-     RefVal<ColorName> bottom = Snow ;
+     RefVal<VColor> top    = Gray ;
+     RefVal<VColor> bottom = Snow ;
     
      Config() {}
     };
@@ -472,8 +472,8 @@ class ContourShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
    
-     RefVal<ColorName> top    = Gray ;
-     RefVal<ColorName> bottom = Snow ;
+     RefVal<VColor> top    = Gray ;
+     RefVal<VColor> bottom = Snow ;
     
      Config() {}
     };
@@ -504,9 +504,9 @@ class TextContourShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
    
-     RefVal<ColorName> top    =  Gray ;
-     RefVal<ColorName> bottom =  Snow ;
-     RefVal<ColorName> text   = Black ;
+     RefVal<VColor> top    =  Gray ;
+     RefVal<VColor> bottom =  Snow ;
+     RefVal<VColor> text   = Black ;
     
      RefVal<Font> font;
      
@@ -539,15 +539,15 @@ class SwitchShape
   
    struct Config
     {
-     RefVal<ColorName> border =   Blue ;
-     RefVal<ColorName> focus  = Orange ;
+     RefVal<VColor> border =   Blue ;
+     RefVal<VColor> focus  = Orange ;
      
-     RefVal<ColorName> top    =   Snow ;
-     RefVal<ColorName> bottom =   Gray ;
-     RefVal<ColorName> faceUp =   Blue ;
-     RefVal<ColorName> face   =  Black ;
-     RefVal<ColorName> on     =  Green ;
-     RefVal<ColorName> off    =    Red ;
+     RefVal<VColor> top    =   Snow ;
+     RefVal<VColor> bottom =   Gray ;
+     RefVal<VColor> faceUp =   Blue ;
+     RefVal<VColor> face   =  Black ;
+     RefVal<VColor> on     =  Green ;
+     RefVal<VColor> off    =    Red ;
      
      Config() {}
     };
@@ -581,15 +581,15 @@ class LightShape
   
    struct Config
     {
-     RefVal<ColorName> top      =   Gray ; 
-     RefVal<ColorName> bottom   =  Black ;
-     RefVal<ColorName> inactive = Silver ;
+     RefVal<VColor> top      =   Gray ; 
+     RefVal<VColor> bottom   =  Black ;
+     RefVal<VColor> inactive = Silver ;
      
      Config() {}
     };
    
    const Config &cfg;
-   ColorName face = Green ;
+   VColor face = Green ;
    Pane pane;
    
    // state
@@ -640,12 +640,12 @@ class ScrollShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
   
-     RefVal<ColorName> top    =   Snow ;
-     RefVal<ColorName> back   = Silver ;
-     RefVal<ColorName> bottom =   Gray ;
-     RefVal<ColorName> focus  = Orange ;
-     RefVal<ColorName> face   =  Black ;
-     RefVal<ColorName> faceUp =   Blue ;
+     RefVal<VColor> top    =   Snow ;
+     RefVal<VColor> back   = Silver ;
+     RefVal<VColor> bottom =   Gray ;
+     RefVal<VColor> focus  = Orange ;
+     RefVal<VColor> face   =  Black ;
+     RefVal<VColor> faceUp =   Blue ;
      
      RefVal<unsigned> speedUpPeriod = 12 ;
      
@@ -833,14 +833,14 @@ class ProgressShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<ColorName> border       =     Black ;
-     RefVal<ColorName> active       =    Silver ;
+     RefVal<VColor> border       =     Black ;
+     RefVal<VColor> active       =    Silver ;
      
-     RefVal<ColorName> top          =      Snow ;
-     RefVal<ColorName> bottom       =      Gray ;
+     RefVal<VColor> top          =      Snow ;
+     RefVal<VColor> bottom       =      Gray ;
      
-     RefVal<ColorName> activeTop    =     Green ;
-     RefVal<ColorName> activeBottom = DarkGreen ;
+     RefVal<VColor> activeTop    =     Green ;
+     RefVal<VColor> activeBottom = DarkGreen ;
      
      RefVal<unsigned> time   = 3*25 ;
      RefVal<unsigned> period =    2 ;

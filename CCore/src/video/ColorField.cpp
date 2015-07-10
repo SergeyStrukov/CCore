@@ -22,11 +22,11 @@ namespace Video {
 
 /* class TwoField */
 
-TwoField::TwoField(MPoint a_,ColorName ca_,MPoint b_,ColorName cb_) 
+TwoField::TwoField(MPoint a_,VColor vca_,MPoint b_,VColor vcb_) 
  : a(a_),
-   ca(ca_),
+   vca(vca_),
    b(b_),
-   cb(cb_) 
+   vcb(vcb_) 
  { 
   b-=a; 
   
@@ -37,37 +37,37 @@ TwoField::TwoField(MPoint a_,ColorName ca_,MPoint b_,ColorName cb_)
   d.init(uDCoord(D));
  }
 
-ColorName TwoField::operator () (MPoint point) const
+VColor TwoField::operator () (MPoint point) const
  {
   DCoord P=Prod(point-a,b);
   
-  if( P<=0 ) return ca;
+  if( P<=0 ) return vca;
   
-  if( P>=D ) return cb;
+  if( P>=D ) return vcb;
   
-  return Linear(ca,cb,d(uDCoord(P)),d);
+  return Linear(vca,vcb,d(uDCoord(P)),d);
  }
 
 /* class RadioField */
 
-RadioField::RadioField(MPoint center_,MCoord radius_,ColorName c_,ColorName a_)
+RadioField::RadioField(MPoint center_,MCoord radius_,VColor vc_,VColor va_)
  : center(center_),
    radius(radius_),
-   c(c_),
-   a(a_) 
+   vc(vc_),
+   va(va_) 
  {
   IntGuard( radius>0 );
   
   d.init(uMCoord(radius));
  }
 
-ColorName RadioField::operator () (MPoint point) const
+VColor RadioField::operator () (MPoint point) const
  {
   DCoord len=Smooth::Length(center-point);
   
-  if( len>=radius ) return a;
+  if( len>=radius ) return va;
   
-  return Linear(c,a,d(uMCoord(len)),d);
+  return Linear(vc,va,d(uMCoord(len)),d);
  }
 
 } // namespace Video

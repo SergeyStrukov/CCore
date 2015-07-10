@@ -282,19 +282,19 @@ void CommonDrawArt::WorkBuf::line(Point a,Point b,DesktopColor color)
   line(a,b, [color] (Raw *ptr) { color.copyTo(ptr); } );
  }
 
-void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,ColorName cname)
+void CommonDrawArt::WorkBuf::line_smooth(Point a,Point b,VColor vc)
  {
   if( a.x==b.x )
     {
-     return lineY(a.x,a.y,b.y,DesktopColor(cname));
+     return lineY(a.x,a.y,b.y,DesktopColor(vc));
     }
  
   if( a.y==b.y )
     {
-     return lineX(a.y,a.x,b.x,DesktopColor(cname));
+     return lineX(a.y,a.x,b.x,DesktopColor(vc));
     }
   
-  DrawAlgo::LineSmooth(a,b,SPlot(*this,cname));
+  DrawAlgo::LineSmooth(a,b,SPlot(*this,vc));
  }
 
 /* class CommonDrawArt */
@@ -384,7 +384,7 @@ void CommonDrawArt::curveLoop(PtrLen<const Point> dots,DesktopColor color)
 
  // path smooth
 
-void CommonDrawArt::path_smooth(PtrLen<const Point> dots,ColorName cname)
+void CommonDrawArt::path_smooth(PtrLen<const Point> dots,VColor vc)
  {
   if( +dots )
     {
@@ -394,16 +394,16 @@ void CommonDrawArt::path_smooth(PtrLen<const Point> dots,ColorName cname)
        {
         Point b=buf.map(*dots);
         
-        buf.line_smooth(a,b,cname);
+        buf.line_smooth(a,b,vc);
         
         a=b;
        }
      
-     buf.pixel_safe(a,cname);
+     buf.pixel_safe(a,vc);
     }
  }
 
-void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,ColorName cname)
+void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,VColor vc)
  {
   if( +dots )
     {
@@ -411,7 +411,7 @@ void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,ColorName cname)
      
      if( dots.len==1 )
        {
-        buf.pixel_safe(a,cname);
+        buf.pixel_safe(a,vc);
         
         return;
        }
@@ -422,30 +422,30 @@ void CommonDrawArt::loop_smooth(PtrLen<const Point> dots,ColorName cname)
        {
         Point b=buf.map(*dots);
         
-        buf.line_smooth(a,b,cname);
+        buf.line_smooth(a,b,vc);
         
         a=b;
        }
      
-     buf.line_smooth(a,o,cname);
+     buf.line_smooth(a,o,vc);
     }
  }
 
-void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,ColorName cname)
+void CommonDrawArt::curvePath_smooth(PtrLen<const Point> dots,VColor vc)
  {
   if( dots.len>=3 )
     {
-     DrawAlgo::CurvePathSmooth(dots,buf.getMapper(),SPlot(buf,cname));
+     DrawAlgo::CurvePathSmooth(dots,buf.getMapper(),SPlot(buf,vc));
     }
   else
     {
-     path_smooth(dots,cname);
+     path_smooth(dots,vc);
     }
  }
 
-void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,ColorName cname)
+void CommonDrawArt::curveLoop_smooth(PtrLen<const Point> dots,VColor vc)
  {
-  DrawAlgo::CurveLoopSmooth(dots,buf.getMapper(),SPlot(buf,cname));
+  DrawAlgo::CurveLoopSmooth(dots,buf.getMapper(),SPlot(buf,vc));
  }
 
  // solid
@@ -488,11 +488,11 @@ void CommonDrawArt::circleSpline(Point center,Coord radius,DesktopColor color)
   curveLoop(spline.get(),color);
  }
 
-void CommonDrawArt::circleSpline_smooth(Point center,Coord radius,ColorName cname)
+void CommonDrawArt::circleSpline_smooth(Point center,Coord radius,VColor vc)
  {
   CircleSpline spline(center,radius); 
   
-  curveLoop_smooth(spline.get(),cname);
+  curveLoop_smooth(spline.get(),vc);
  }
 
 } // namespace Video

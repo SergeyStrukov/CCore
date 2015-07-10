@@ -54,7 +54,7 @@ void CheckShape::draw(const DrawBuf &buf) const
   // body
 
   {
-   ColorName cname; 
+   VColor cname; 
     
    if( mover && enable )
      cname=+cfg.bottomUp;
@@ -74,7 +74,7 @@ void CheckShape::draw(const DrawBuf &buf) const
      MPoint b(x0+(len+d)/3,y1-d);
      MPoint c(x1-d,y0+d);
      
-     ColorName cname;
+     VColor cname;
     
      if( enable )
        cname=+cfg.mark;
@@ -87,7 +87,7 @@ void CheckShape::draw(const DrawBuf &buf) const
   // border
   
   {
-   ColorName cname;
+   VColor cname;
    
    if( focus )
      {

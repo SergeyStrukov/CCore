@@ -63,7 +63,7 @@ void SwitchShape::draw(const DrawBuf &buf) const
   // border
   
   {
-   ColorName cname;
+   VColor cname;
    
    if( focus )
      {
@@ -83,7 +83,7 @@ void SwitchShape::draw(const DrawBuf &buf) const
   // face
   
   {
-   ColorName cname;
+   VColor cname;
    
    if( enable )
      {

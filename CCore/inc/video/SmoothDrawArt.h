@@ -756,32 +756,32 @@ class FieldPlotBase : DrawBuf
    using DrawBuf::map;
    using DrawBuf::getSize;
    
-   void plot(Point p,ColorName cname)
+   void plot(Point p,VColor vc)
     {
-     pixel(p,cname);
+     pixel(p,vc);
     }
    
-   void plot(Point p,ColorName cname,unsigned alpha)
+   void plot(Point p,VColor vc,unsigned alpha)
     {
-     DesktopColor::BlendTo(Blender(Clr(alpha),cname),place(p));
+     DesktopColor::BlendTo(Blender(Clr(alpha),vc),place(p));
     }
    
-   void plot_safe(Point p,ColorName cname,unsigned alpha)
+   void plot_safe(Point p,VColor vc,unsigned alpha)
     {
      if( alpha>=AlphaLim )
-       plot(p,cname);
+       plot(p,vc);
      else if( alpha )
-       plot(p,cname,alpha);
+       plot(p,vc,alpha);
     }
    
    void plot(Point p,AlphaColorName aname)
     {
-     plot_safe(p,aname.cname,aname.alpha);
+     plot_safe(p,aname.vc,aname.alpha);
     }
    
    void plot(Point p,AlphaColorName aname,unsigned alpha)
     {
-     plot_safe(p,aname.cname,(Min(aname.alpha,AlphaLim)*alpha)>>ClrBits);
+     plot_safe(p,aname.vc,(Min(aname.alpha,AlphaLim)*alpha)>>ClrBits);
     }
  };
 
@@ -1348,7 +1348,7 @@ class DrawArt
       
       void block_safe(Pane pane,DesktopColor color) { block(Inf(pane,getPane()),color); }
       
-      void block_safe(Pane pane,ColorName cname,Clr alpha) { block(Inf(pane,getPane()),cname,alpha); }
+      void block_safe(Pane pane,VColor vc,Clr alpha) { block(Inf(pane,getPane()),vc,alpha); }
     };
  
    WorkBuf buf;
@@ -1365,30 +1365,30 @@ class DrawArt
    
    void erase(DesktopColor color);
   
-   void erase(ColorName cname,Clr alpha);
+   void erase(VColor vc,Clr alpha);
    
    void block(Pane pane,DesktopColor color);
    
-   void block(Pane pane,ColorName cname,Clr alpha);
+   void block(Pane pane,VColor vc,Clr alpha);
    
    // solid
    
    template <class R>
-   void solid(R dots,SolidFlag solid_flag,ColorName cname) // MPoint
+   void solid(R dots,SolidFlag solid_flag,VColor vc) // MPoint
     {
-     solid(dots,solid_flag,ConstantField(cname));
+     solid(dots,solid_flag,ConstantField(vc));
     }
    
    template <class R>
-   void curveSolid(R dots,SolidFlag solid_flag,ColorName cname) // MPoint
+   void curveSolid(R dots,SolidFlag solid_flag,VColor vc) // MPoint
     {
-     curveSolid(dots,solid_flag,ConstantField(cname));
+     curveSolid(dots,solid_flag,ConstantField(vc));
     }
    
    template <class R>
-   void curveBreakSolid(R dots,SolidFlag solid_flag,ColorName cname) // Dot
+   void curveBreakSolid(R dots,SolidFlag solid_flag,VColor vc) // Dot
     {
-     curveBreakSolid(dots,solid_flag,ConstantField(cname));
+     curveBreakSolid(dots,solid_flag,ConstantField(vc));
     }
    
    template <class R,class Field>
@@ -1421,21 +1421,21 @@ class DrawArt
 
    
    template <class R,class Map>
-   void solid(R dots,Map map,SolidFlag solid_flag,ColorName cname) // map(...) -> MPoint
+   void solid(R dots,Map map,SolidFlag solid_flag,VColor vc) // map(...) -> MPoint
     {
-     solid(dots,map,solid_flag,ConstantField(cname));
+     solid(dots,map,solid_flag,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveSolid(R dots,Map map,SolidFlag solid_flag,ColorName cname) // map(...) -> MPoint
+   void curveSolid(R dots,Map map,SolidFlag solid_flag,VColor vc) // map(...) -> MPoint
     {
-     curveSolid(dots,map,solid_flag,ConstantField(cname));
+     curveSolid(dots,map,solid_flag,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveBreakSolid(R dots,Map map,SolidFlag solid_flag,ColorName cname) // Dot dots, map(...) -> MPoint
+   void curveBreakSolid(R dots,Map map,SolidFlag solid_flag,VColor vc) // Dot dots, map(...) -> MPoint
     {
-     curveBreakSolid(dots,map,solid_flag,ConstantField(cname));
+     curveBreakSolid(dots,map,solid_flag,ConstantField(vc));
     }
    
    template <class R,class Map,class Field>
@@ -1469,15 +1469,15 @@ class DrawArt
    // line
    
    template <class R>
-   void path(R dots,MCoord width,ColorName cname) // MPoint
+   void path(R dots,MCoord width,VColor vc) // MPoint
     {
-     path(dots,width,ConstantField(cname));
+     path(dots,width,ConstantField(vc));
     }
    
    template <class R>
-   void loop(R dots,MCoord width,ColorName cname) // MPoint
+   void loop(R dots,MCoord width,VColor vc) // MPoint
     {
-     loop(dots,width,ConstantField(cname));
+     loop(dots,width,ConstantField(vc));
     }
    
    template <class R,class Field>
@@ -1498,15 +1498,15 @@ class DrawArt
    
    
    template <class R,class Map>
-   void path(R dots,Map map,MCoord width,ColorName cname) // map(...) -> MPoint
+   void path(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
     {
-     path(dots,map,width,ConstantField(cname));
+     path(dots,map,width,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void loop(R dots,Map map,MCoord width,ColorName cname) // map(...) -> MPoint
+   void loop(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
     {
-     loop(dots,map,width,ConstantField(cname));
+     loop(dots,map,width,ConstantField(vc));
     }
    
    template <class R,class Map,class Field>
@@ -1528,27 +1528,27 @@ class DrawArt
    // curve
 
    template <class R>
-   void curve(R dots,MCoord width,ColorName cname) // MPoint
+   void curve(R dots,MCoord width,VColor vc) // MPoint
     {
-     curve(dots,width,ConstantField(cname));
+     curve(dots,width,ConstantField(vc));
     }
    
    template <class R>
-   void curveBreak(R dots,MCoord width,ColorName cname) // Dot
+   void curveBreak(R dots,MCoord width,VColor vc) // Dot
     {
-     curveBreak(dots,width,ConstantField(cname));
+     curveBreak(dots,width,ConstantField(vc));
     }
    
    template <class R>
-   void curveLoop(R dots,MCoord width,ColorName cname) // MPoint
+   void curveLoop(R dots,MCoord width,VColor vc) // MPoint
     {
-     curveLoop(dots,width,ConstantField(cname));
+     curveLoop(dots,width,ConstantField(vc));
     }
    
    template <class R>
-   void curveBreakLoop(R dots,MCoord width,ColorName cname) // Dot
+   void curveBreakLoop(R dots,MCoord width,VColor vc) // Dot
     {
-     curveBreakLoop(dots,width,ConstantField(cname));
+     curveBreakLoop(dots,width,ConstantField(vc));
     }
    
    template <class R,class Field>
@@ -1593,27 +1593,27 @@ class DrawArt
    
 
    template <class R,class Map>
-   void curve(R dots,Map map,MCoord width,ColorName cname) // map(...) -> MPoint
+   void curve(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
     {
-     curve(dots,map,width,ConstantField(cname));
+     curve(dots,map,width,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveBreak(R dots,Map map,MCoord width,ColorName cname) // Dot , map(...) -> MPoint
+   void curveBreak(R dots,Map map,MCoord width,VColor vc) // Dot , map(...) -> MPoint
     {
-     curveBreak(dots,map,width,ConstantField(cname));
+     curveBreak(dots,map,width,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveLoop(R dots,Map map,MCoord width,ColorName cname) // map(...) -> MPoint
+   void curveLoop(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
     {
-     curveLoop(dots,map,width,ConstantField(cname));
+     curveLoop(dots,map,width,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveBreakLoop(R dots,Map map,MCoord width,ColorName cname) // Dot , map(...) -> MPoint
+   void curveBreakLoop(R dots,Map map,MCoord width,VColor vc) // Dot , map(...) -> MPoint
     {
-     curveBreakLoop(dots,map,width,ConstantField(cname));
+     curveBreakLoop(dots,map,width,ConstantField(vc));
     }
    
    template <class R,class Map,class Field>
@@ -1659,15 +1659,15 @@ class DrawArt
    // half line
    
    template <class R>
-   void path(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // MPoint
+   void path(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
     {
-     path(dots,half_flag,width,ConstantField(cname));
+     path(dots,half_flag,width,ConstantField(vc));
     }
    
    template <class R>
-   void loop(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // MPoint
+   void loop(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
     {
-     loop(dots,half_flag,width,ConstantField(cname));
+     loop(dots,half_flag,width,ConstantField(vc));
     }
    
    template <class R,class Field>
@@ -1688,15 +1688,15 @@ class DrawArt
    
    
    template <class R,class Map>
-   void path(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // map(...) -> MPoint
+   void path(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
     {
-     path(dots,map,half_flag,width,ConstantField(cname));
+     path(dots,map,half_flag,width,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void loop(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // map(...) -> MPoint
+   void loop(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
     {
-     loop(dots,map,half_flag,width,ConstantField(cname));
+     loop(dots,map,half_flag,width,ConstantField(vc));
     }
    
    template <class R,class Map,class Field>
@@ -1718,27 +1718,27 @@ class DrawArt
    // half curve
 
    template <class R>
-   void curve(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // MPoint
+   void curve(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
     {
-     curve(dots,half_flag,width,ConstantField(cname));
+     curve(dots,half_flag,width,ConstantField(vc));
     }
    
    template <class R>
-   void curveBreak(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // Dot
+   void curveBreak(R dots,HalfFlag half_flag,MCoord width,VColor vc) // Dot
     {
-     curveBreak(dots,half_flag,width,ConstantField(cname));
+     curveBreak(dots,half_flag,width,ConstantField(vc));
     }
    
    template <class R>
-   void curveLoop(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // MPoint
+   void curveLoop(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
     {
-     curveLoop(dots,half_flag,width,ConstantField(cname));
+     curveLoop(dots,half_flag,width,ConstantField(vc));
     }
    
    template <class R>
-   void curveBreakLoop(R dots,HalfFlag half_flag,MCoord width,ColorName cname) // Dot
+   void curveBreakLoop(R dots,HalfFlag half_flag,MCoord width,VColor vc) // Dot
     {
-     curveBreakLoop(dots,half_flag,width,ConstantField(cname));
+     curveBreakLoop(dots,half_flag,width,ConstantField(vc));
     }
    
    template <class R,class Field>
@@ -1783,27 +1783,27 @@ class DrawArt
    
 
    template <class R,class Map>
-   void curve(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // map(...) -> MPoint
+   void curve(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
     {
-     curve(dots,map,half_flag,width,ConstantField(cname));
+     curve(dots,map,half_flag,width,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveBreak(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // Dot , map(...) -> MPoint
+   void curveBreak(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // Dot , map(...) -> MPoint
     {
-     curveBreak(dots,map,half_flag,width,ConstantField(cname));
+     curveBreak(dots,map,half_flag,width,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveLoop(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // map(...) -> MPoint
+   void curveLoop(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
     {
-     curveLoop(dots,map,half_flag,width,ConstantField(cname));
+     curveLoop(dots,map,half_flag,width,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveBreakLoop(R dots,Map map,HalfFlag half_flag,MCoord width,ColorName cname) // Dot , map(...) -> MPoint
+   void curveBreakLoop(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // Dot , map(...) -> MPoint
     {
-     curveBreakLoop(dots,map,half_flag,width,ConstantField(cname));
+     curveBreakLoop(dots,map,half_flag,width,ConstantField(vc));
     }
    
    template <class R,class Map,class Field>
@@ -1848,15 +1848,15 @@ class DrawArt
 
    // special
    
-   void knob(MPoint p,MCoord len,ColorName cname);
+   void knob(MPoint p,MCoord len,VColor vc);
    
-   void ball(MPoint center,MCoord radius,ColorName cname);
+   void ball(MPoint center,MCoord radius,VColor vc);
    
    void ball(MPoint center,MCoord radius,TwoField field);
    
    void ball(MPoint center,MCoord radius,RadioField field);
    
-   void circle(MPoint center,MCoord radius,MCoord width,ColorName cname);
+   void circle(MPoint center,MCoord radius,MCoord width,VColor vc);
 
    template <class Field>
    void knobField(MPoint p,MCoord len,const Field &field)
@@ -1888,44 +1888,44 @@ class DrawArt
      curveLoop(obj.get(),width,field);
     }
  
-   void pathOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname);
+   void pathOf(PtrLen<const MPoint> dots,MCoord width,VColor vc);
    
-   void loopOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname);
+   void loopOf(PtrLen<const MPoint> dots,MCoord width,VColor vc);
    
    template <class ... TT>
-   void pathOf(MCoord width,ColorName cname,TT ... tt)
+   void pathOf(MCoord width,VColor vc,TT ... tt)
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
      
-     pathOf(Range_const(temp),width,cname);
+     pathOf(Range_const(temp),width,vc);
     }
    
    template <class ... TT>
-   void loopOf(MCoord width,ColorName cname,TT ... tt)
+   void loopOf(MCoord width,VColor vc,TT ... tt)
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
      
-     loopOf(Range_const(temp),width,cname);
+     loopOf(Range_const(temp),width,vc);
     }
    
-   void pathOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,ColorName cname);
+   void pathOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
    
-   void loopOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,ColorName cname);
+   void loopOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
    
    template <class ... TT>
-   void pathOf(HalfFlag half_flag,MCoord width,ColorName cname,TT ... tt)
+   void pathOf(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt)
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
      
-     pathOf(Range_const(temp),half_flag,width,cname);
+     pathOf(Range_const(temp),half_flag,width,vc);
     }
    
    template <class ... TT>
-   void loopOf(HalfFlag half_flag,MCoord width,ColorName cname,TT ... tt)
+   void loopOf(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt)
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
      
-     loopOf(Range_const(temp),half_flag,width,cname);
+     loopOf(Range_const(temp),half_flag,width,vc);
     }
  };
   

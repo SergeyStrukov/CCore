@@ -31,8 +31,8 @@ class FixedShape::DrawArt : public Smooth::DrawArt
 
 void FixedShape::draw_Frame(DrawArt &art) const
  {
-  ColorName top=+cfg.frame;
-  ColorName bottom=+cfg.top;
+  VColor top=+cfg.frame;
+  VColor bottom=+cfg.top;
   
   if( hilight==HitFrame_Move ) top=+cfg.frameHilight;
   
@@ -129,8 +129,8 @@ void FixedShape::draw_Title(DrawArt &art) const
      
      MCoord ex=p.dy/4;
      
-     ColorName top=+cfg.top;
-     ColorName bottom=+cfg.bottom;
+     VColor top=+cfg.top;
+     VColor bottom=+cfg.bottom;
      
      FigureButton fig(p,ex);
      
@@ -159,7 +159,7 @@ void FixedShape::draw_Close(DrawArt &art) const
      
      MPane q=p.shrink(p.dx/5,p.dy/5);
      
-     ColorName top=+cfg.top;
+     VColor top=+cfg.top;
      
      if( hit_type==HitFrame_Close )
        {
@@ -169,9 +169,9 @@ void FixedShape::draw_Close(DrawArt &art) const
        }
      else
        {
-        ColorName face=(hilight==HitFrame_Close)?+cfg.btnFaceHilight:+cfg.btnFace;
+        VColor face=(hilight==HitFrame_Close)?+cfg.btnFaceHilight:+cfg.btnFace;
         
-        ColorName bottom=+cfg.bottom;
+        VColor bottom=+cfg.bottom;
         
         fig.curveSolid(art,face);
         
@@ -181,7 +181,7 @@ void FixedShape::draw_Close(DrawArt &art) const
 
      MCoord w=p.dx/8;
      
-     ColorName pict=+cfg.btnPictClose;
+     VColor pict=+cfg.btnPictClose;
      
      art.pathOf(w,pict,q.getTopLeft(),q.getBottomRight());
      art.pathOf(w,pict,q.getBottomLeft(),q.getTopRight());

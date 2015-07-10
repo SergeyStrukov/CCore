@@ -864,9 +864,9 @@ class LightWindowOf : public SubWindow
    
    bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
    
-   ColorName getFace() const { return shape.face; }
+   VColor getFace() const { return shape.face; }
    
-   void setFace(ColorName face)
+   void setFace(VColor face)
     { 
      if( Change(shape.face,face) ) redraw();
     }

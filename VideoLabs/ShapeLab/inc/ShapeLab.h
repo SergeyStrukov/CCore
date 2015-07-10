@@ -40,7 +40,7 @@ class ShapeLab1 : public SubWindow
      MCoord width = Fraction(5,2) ;
      MCoord len = Fraction(100) ;
      
-     ColorName back = Wheat ;
+     VColor back = Wheat ;
      
      SwitchShape::Config switch_cfg;
      RadioShape::Config radio_cfg;
@@ -175,7 +175,7 @@ class ShapeLab2 : public SubWindow
  {
    struct Config
     {
-     ColorName back = Wheat ;
+     VColor back = Wheat ;
      
      ProgressShape::Config progress_cfg;
      KnobShape::Config knob_cfg;

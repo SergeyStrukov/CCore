@@ -49,7 +49,7 @@ void RadioShape::draw(const DrawBuf &buf) const
   // body
   
   {
-   ColorName cname;
+   VColor cname;
    
    if( mover && enable )
      cname=+cfg.bottomUp;
@@ -63,7 +63,7 @@ void RadioShape::draw(const DrawBuf &buf) const
   
   if( check )
     {
-     ColorName cname;
+     VColor cname;
      
      if( enable )
        cname=+cfg.mark;
@@ -76,7 +76,7 @@ void RadioShape::draw(const DrawBuf &buf) const
   // border
   
   {
-   ColorName cname;
+   VColor cname;
    
    if( focus )
      {

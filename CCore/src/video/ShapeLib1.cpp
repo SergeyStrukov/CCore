@@ -62,7 +62,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
   
   FigureButton fig(p,ex);
   
-  ColorName bottom=+cfg.bottom;
+  VColor bottom=+cfg.bottom;
   
   // body
   
@@ -72,7 +72,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
     }
   else
     {
-     ColorName cname;
+     VColor cname;
      
      if( mover && enable )
        cname=+cfg.topUp;
@@ -92,7 +92,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
    
    if( down ) shift=Point::Diag( (dy+1)/2 );
    
-   ColorName cname;
+   VColor cname;
 
    if( enable )
      cname=+cfg.text;
@@ -105,7 +105,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
   // border
   
   {
-   ColorName cname;
+   VColor cname;
    
    if( focus )
      {

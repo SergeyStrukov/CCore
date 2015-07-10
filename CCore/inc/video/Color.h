@@ -55,7 +55,7 @@ inline Clr PreparedBlend(Clr dst,uint16 beta,uint16 src)
 
 /* classes */
 
-//enum ColorName;
+//enum VColor;
 
 class Blender;
 
@@ -69,9 +69,9 @@ class RawColor32;
 
 class RawColor32Inv;
 
-/* enum ColorName */
+/* enum VColor */
 
-enum ColorName : uint32
+enum VColor : uint32
  {
   Black       = 0x000000,
   Gray        = 0x808080,
@@ -123,15 +123,15 @@ enum ColorName : uint32
   Wheat       = 0xF5DEB3
  };
 
-inline constexpr Clr RedOf(ColorName cname) { return Clr(cname>>16); }
+inline constexpr Clr RedOf(VColor vc) { return Clr(vc>>16); }
 
-inline constexpr Clr GreenOf(ColorName cname) { return Clr(cname>>8); }
+inline constexpr Clr GreenOf(VColor vc) { return Clr(vc>>8); }
 
-inline constexpr Clr BlueOf(ColorName cname) { return Clr(cname); }
+inline constexpr Clr BlueOf(VColor vc) { return Clr(vc); }
 
-inline constexpr ColorName RGBColor(Clr r,Clr g,Clr b) { return ColorName(b|(uint32(g)<<8)|(uint32(r)<<16)); }
+inline constexpr VColor RGBColor(Clr r,Clr g,Clr b) { return VColor(b|(uint32(g)<<8)|(uint32(r)<<16)); }
 
-inline constexpr ColorName GrayColor(Clr rgb) { return RGBColor(rgb,rgb,rgb); }
+inline constexpr VColor GrayColor(Clr rgb) { return RGBColor(rgb,rgb,rgb); }
 
 /* class Blender */
 
@@ -145,13 +145,13 @@ class Blender
    
   public: 
   
-   Blender(Clr alpha,ColorName cname)
+   Blender(Clr alpha,VColor vc)
     {
      beta=BlendBeta(alpha);
      
-     src_r=BlendSrc(alpha,RedOf(cname));
-     src_g=BlendSrc(alpha,GreenOf(cname));
-     src_b=BlendSrc(alpha,BlueOf(cname));
+     src_r=BlendSrc(alpha,RedOf(vc));
+     src_g=BlendSrc(alpha,GreenOf(vc));
+     src_b=BlendSrc(alpha,BlueOf(vc));
     }
    
    Clr blendR(Clr r) const { return PreparedBlend(r,beta,src_r); }
@@ -181,11 +181,11 @@ class RawColor16
   
   public:
   
-   RawColor16(ColorName cname=Black) { set(cname); }
+   RawColor16(VColor vc=Black) { set(vc); }
    
    // methods
    
-   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   void set(VColor vc) { set(RedOf(vc),GreenOf(vc),BlueOf(vc)); }
    
    void set(Clr r,Clr g,Clr b) { color[0]=Pack565(r>>3,g>>2,b>>3); }
   
@@ -206,7 +206,7 @@ class RawColor16
    
    void blend(Blender blender) { BlendTo(blender,color); }
    
-   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
+   void blend(Clr alpha,VColor vc) { blend({alpha,vc}); }
  };
 
 /* class RawColor24 */
@@ -225,11 +225,11 @@ class RawColor24
   
   public:
   
-   RawColor24(ColorName cname=Black) { set(cname); }
+   RawColor24(VColor vc=Black) { set(vc); }
    
    // methods
    
-   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   void set(VColor vc) { set(RedOf(vc),GreenOf(vc),BlueOf(vc)); }
    
    void set(Clr r,Clr g,Clr b) { color[0]=r; color[1]=g; color[2]=b; }
   
@@ -246,7 +246,7 @@ class RawColor24
    
    void blend(Blender blender) { BlendTo(blender,color); }
    
-   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
+   void blend(Clr alpha,VColor vc) { blend({alpha,vc}); }
  };
 
 /* class RawColor24Inv */
@@ -265,11 +265,11 @@ class RawColor24Inv
   
   public:
   
-   RawColor24Inv(ColorName cname=Black) { set(cname); }
+   RawColor24Inv(VColor vc=Black) { set(vc); }
    
    // methods
    
-   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   void set(VColor vc) { set(RedOf(vc),GreenOf(vc),BlueOf(vc)); }
    
    void set(Clr r,Clr g,Clr b) { color[0]=b; color[1]=g; color[2]=r; }
   
@@ -286,7 +286,7 @@ class RawColor24Inv
    
    void blend(Blender blender) { BlendTo(blender,color); }
    
-   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
+   void blend(Clr alpha,VColor vc) { blend({alpha,vc}); }
  };
 
 /* class RawColor32 */
@@ -307,11 +307,11 @@ class RawColor32
   
   public:
   
-   RawColor32(ColorName cname=Black) { set(cname); }
+   RawColor32(VColor vc=Black) { set(vc); }
    
    // methods
    
-   void set(ColorName cname) { color[0]=cname; }
+   void set(VColor vc) { color[0]=vc; }
    
    void set(Clr r,Clr g,Clr b) { color[0]=Pack888(r,g,b); }
   
@@ -332,7 +332,7 @@ class RawColor32
  
    void blend(Blender blender) { BlendTo(blender,color); }
    
-   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
+   void blend(Clr alpha,VColor vc) { blend({alpha,vc}); }
  };
 
 /* class RawColor32Inv */
@@ -353,11 +353,11 @@ class RawColor32Inv
   
   public:
   
-   RawColor32Inv(ColorName cname=Black) { set(cname); }
+   RawColor32Inv(VColor vc=Black) { set(vc); }
    
    // methods
    
-   void set(ColorName cname) { set(RedOf(cname),GreenOf(cname),BlueOf(cname)); }
+   void set(VColor vc) { set(RedOf(vc),GreenOf(vc),BlueOf(vc)); }
    
    void set(Clr r,Clr g,Clr b) { color[0]=Pack888(r,g,b); }
   
@@ -378,7 +378,7 @@ class RawColor32Inv
    
    void blend(Blender blender) { BlendTo(blender,color); }
    
-   void blend(Clr alpha,ColorName cname) { blend({alpha,cname}); }
+   void blend(Clr alpha,VColor vc) { blend({alpha,vc}); }
  };
 
 } // namespace Video

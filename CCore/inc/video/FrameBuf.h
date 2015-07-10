@@ -145,7 +145,7 @@ class FrameBuf : protected ColorPlane
   
    void block(Pane pane,RawColor color);
    
-   void block(Pane pane,ColorName cname,Clr alpha);
+   void block(Pane pane,VColor vc,Clr alpha);
    
    void save(Pane pane,RawColor buf[/* pane.getArea() */]);
   
@@ -246,11 +246,11 @@ void FrameBuf<RawColor>::block(Pane pane,RawColor color)
  }
 
 template <class RawColor> 
-void FrameBuf<RawColor>::block(Pane pane,ColorName cname,Clr alpha)
+void FrameBuf<RawColor>::block(Pane pane,VColor vc,Clr alpha)
  {
   if( !pane ) return;
   
-  Blender blender(alpha,cname);
+  Blender blender(alpha,vc);
   
   Raw *ptr=place(pane.getBase());
   

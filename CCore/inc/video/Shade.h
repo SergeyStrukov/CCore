@@ -23,7 +23,7 @@ namespace Video {
 
 /* functions */
 
-void Shade(const DrawBuf &buf,ColorName color,Clr alpha);
+void Shade(const DrawBuf &buf,VColor vc,Clr alpha);
 
 } // namespace Video 
 } // namespace CCore

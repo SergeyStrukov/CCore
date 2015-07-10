@@ -113,9 +113,9 @@ class ExceptionWindow : public SubWindow
     {
      RefVal<Coord> scroll_dxy = 20 ;
     
-     RefVal<ColorName> back    = Black ;
-     RefVal<ColorName> text    = Green ;
-     RefVal<ColorName> divider =   Red ;
+     RefVal<VColor> back    = Black ;
+     RefVal<VColor> text    = Green ;
+     RefVal<VColor> divider =   Red ;
      
      RefVal<Font> text_font;
      

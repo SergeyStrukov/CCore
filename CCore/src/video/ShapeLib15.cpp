@@ -72,7 +72,7 @@ void ProgressShape::draw(const DrawBuf &buf) const
   
   if( has_active )
     {
-     ColorName cname=+cfg.active;
+     VColor cname=+cfg.active;
     
      FigureBox fig1(t0,t1,s0,s1);
    

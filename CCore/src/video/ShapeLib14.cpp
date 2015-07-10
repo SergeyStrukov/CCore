@@ -145,7 +145,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
      
      FigureUpArrow fig(x0+d,x1-d,y0+d,y1-d);
      
-     ColorName cname;
+     VColor cname;
      
      if( enable_ )
        {
@@ -188,7 +188,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
     
      FigureDownArrow fig(x0+d,x1-d,y4+d,y5-d);
      
-     ColorName cname;
+     VColor cname;
      
      if( enable_ )
        {
@@ -231,7 +231,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
      
      FigureBox fig(x0+e,x1-e,y1,y2);
      
-     ColorName cname;
+     VColor cname;
      
      if( enable_ )
        {
@@ -274,7 +274,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
      
      FigureBox fig(x0+e,x1-e,y3,y4);
      
-     ColorName cname;
+     VColor cname;
      
      if( enable_ )
        {
@@ -312,7 +312,7 @@ void YScrollShape::draw(const DrawBuf &buf) const
    MCoord b1=y2+(y3-y2)/2;
    MCoord b2=y3-f;
    
-   ColorName cname;
+   VColor cname;
    
    if( enable_ )
      {

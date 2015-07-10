@@ -85,27 +85,27 @@ class DragShape
      RefVal<Coord> btn_dx    = 26 ;
      RefVal<Coord> btn_dy    = 24 ;
 
-     RefVal<ColorName> top               =      Gray ;
-     RefVal<ColorName> bottom            =      Snow ;
-     RefVal<ColorName> frame             =      Snow ;
+     RefVal<VColor> top               =      Gray ;
+     RefVal<VColor> bottom            =      Snow ;
+     RefVal<VColor> frame             =      Snow ;
      
-     RefVal<ColorName> drag              =    Silver ;
-     RefVal<ColorName> dragHilight       =     Green ;
-     RefVal<ColorName> dragActive        =       Red ;
+     RefVal<VColor> drag              =    Silver ;
+     RefVal<VColor> dragHilight       =     Green ;
+     RefVal<VColor> dragActive        =       Red ;
      
-     RefVal<ColorName> active            = RGBColor(128,128,255) ;
-     RefVal<ColorName> inactive          =    Silver ;
-     RefVal<ColorName> title             =     Black ;
+     RefVal<VColor> active            = RGBColor(128,128,255) ;
+     RefVal<VColor> inactive          =    Silver ;
+     RefVal<VColor> title             =     Black ;
      
-     RefVal<ColorName> btnFace           = SteelBlue ;
-     RefVal<ColorName> btnFaceHilight    =     Green ;
-     RefVal<ColorName> btnPict           =     White ;
-     RefVal<ColorName> btnPictClose      =       Red ;
-     RefVal<ColorName> btnPictAlert      =       Red ;
-     RefVal<ColorName> btnPictNoAlert    =      Gray ;
-     RefVal<ColorName> btnPictCloseAlert =    Orange ;
+     RefVal<VColor> btnFace           = SteelBlue ;
+     RefVal<VColor> btnFaceHilight    =     Green ;
+     RefVal<VColor> btnPict           =     White ;
+     RefVal<VColor> btnPictClose      =       Red ;
+     RefVal<VColor> btnPictAlert      =       Red ;
+     RefVal<VColor> btnPictNoAlert    =      Gray ;
+     RefVal<VColor> btnPictCloseAlert =    Orange ;
      
-     RefVal<ColorName> shade_color = Violet ;
+     RefVal<VColor> shade_color = Violet ;
      RefVal<Clr>       shade_alpha =     64 ;
      
      RefVal<Font> title_font;
@@ -147,7 +147,7 @@ class DragShape
    
    class DrawArt;
    
-   ColorName dragColor(DragType zone) const;
+   VColor dragColor(DragType zone) const;
    
    void draw_Frame(DrawArt &art) const;
    

@@ -46,9 +46,9 @@ void DrawArt::erase(DesktopColor color)
   buf.erase(color);
  }
 
-void DrawArt::erase(ColorName cname,Clr alpha)
+void DrawArt::erase(VColor vc,Clr alpha)
  {
-  buf.block_safe(buf.getPane(),cname,alpha);
+  buf.block_safe(buf.getPane(),vc,alpha);
  }
 
 void DrawArt::block(Pane pane,DesktopColor color)
@@ -56,21 +56,21 @@ void DrawArt::block(Pane pane,DesktopColor color)
   buf.block_safe(buf.map(pane),color);
  }
 
-void DrawArt::block(Pane pane,ColorName cname,Clr alpha)
+void DrawArt::block(Pane pane,VColor vc,Clr alpha)
  {
-  buf.block_safe(buf.map(pane),cname,alpha);
+  buf.block_safe(buf.map(pane),vc,alpha);
  }
 
  // special
 
-void DrawArt::knob(MPoint p,MCoord len,ColorName cname)
+void DrawArt::knob(MPoint p,MCoord len,VColor vc)
  {
-  knobField(p,len,ConstantField(cname));
+  knobField(p,len,ConstantField(vc));
  }
 
-void DrawArt::ball(MPoint center,MCoord radius,ColorName cname)
+void DrawArt::ball(MPoint center,MCoord radius,VColor vc)
  {
-  ballField(center,radius,ConstantField(cname));
+  ballField(center,radius,ConstantField(vc));
  }
 
 void DrawArt::ball(MPoint center,MCoord radius,TwoField field)
@@ -83,29 +83,29 @@ void DrawArt::ball(MPoint center,MCoord radius,RadioField field)
   ballField(center,radius,field);
  }
 
-void DrawArt::circle(MPoint center,MCoord radius,MCoord width,ColorName cname)
+void DrawArt::circle(MPoint center,MCoord radius,MCoord width,VColor vc)
  {
-  circleField(center,radius,width,ConstantField(cname));
+  circleField(center,radius,width,ConstantField(vc));
  }
 
-void DrawArt::pathOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname)
+void DrawArt::pathOf(PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
-  path(dots,width,cname);
+  path(dots,width,vc);
  }
 
-void DrawArt::loopOf(PtrLen<const MPoint> dots,MCoord width,ColorName cname)
+void DrawArt::loopOf(PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
-  loop(dots,width,cname);
+  loop(dots,width,vc);
  }
 
-void DrawArt::pathOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,ColorName cname)
+void DrawArt::pathOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  path(dots,half_flag,width,cname);
+  path(dots,half_flag,width,vc);
  }
 
-void DrawArt::loopOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,ColorName cname)
+void DrawArt::loopOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  loop(dots,half_flag,width,cname);
+  loop(dots,half_flag,width,vc);
  }
 
 } // namespace Smooth

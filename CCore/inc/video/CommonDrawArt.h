@@ -34,15 +34,15 @@ class CommonDrawArt
  {
    class SPlot : public FrameBuf<DesktopColor>
     {
-      ColorName cname;
+      VColor vc;
       
      public:
      
-      SPlot(const FrameBuf<DesktopColor> &buf,ColorName cname_) : FrameBuf<DesktopColor>(buf),cname(cname_) {}
+      SPlot(const FrameBuf<DesktopColor> &buf,VColor vc_) : FrameBuf<DesktopColor>(buf),vc(vc_) {}
       
       void operator () (Point p)
        {
-        if( p>=Null && p<getSize() ) pixel(p,cname);
+        if( p>=Null && p<getSize() ) pixel(p,vc);
        }
       
       void operator () (Point p,unsigned alpha)
@@ -52,9 +52,9 @@ class CommonDrawArt
         if( p>=Null && p<getSize() ) 
           {
            if( alpha>=AlphaLim )
-             pixel(p,cname);
+             pixel(p,vc);
            else
-             DesktopColor::BlendTo(Blender(Clr(alpha),cname),place(p));
+             DesktopColor::BlendTo(Blender(Clr(alpha),vc),place(p));
           }
        }
     };
@@ -119,7 +119,7 @@ class CommonDrawArt
       
       void line(Point a,Point b,DesktopColor color); // [a,b)
       
-      void line_smooth(Point a,Point b,ColorName cname); // [a,b)
+      void line_smooth(Point a,Point b,VColor vc); // [a,b)
     };
   
    WorkBuf buf;
@@ -191,44 +191,44 @@ class CommonDrawArt
    
    // path smooth
    
-   void path_smooth(PtrLen<const Point> dots,ColorName cname);
+   void path_smooth(PtrLen<const Point> dots,VColor vc);
 
    template <class ... TT>
-   void path_smooth(ColorName cname,TT ... tt)
+   void path_smooth(VColor vc,TT ... tt)
     {
      Point temp[sizeof ... (TT)]={ tt... };
      
-     path_smooth(Range_const(temp),cname);
+     path_smooth(Range_const(temp),vc);
     }
    
-   void loop_smooth(PtrLen<const Point> dots,ColorName cname);
+   void loop_smooth(PtrLen<const Point> dots,VColor vc);
    
    template <class ... TT>
-   void loop_smooth(ColorName cname,TT ... tt)
+   void loop_smooth(VColor vc,TT ... tt)
     {
      Point temp[sizeof ... (TT)]={ tt... };
      
-     loop_smooth(Range_const(temp),cname);
+     loop_smooth(Range_const(temp),vc);
     }
    
-   void curvePath_smooth(PtrLen<const Point> dots,ColorName cname);
+   void curvePath_smooth(PtrLen<const Point> dots,VColor vc);
    
    template <class ... TT>
-   void curvePath_smooth(ColorName cname,TT ... tt)
+   void curvePath_smooth(VColor vc,TT ... tt)
     {
      Point temp[sizeof ... (TT)]={ tt... };
      
-     curvePath_smooth(Range_const(temp),cname);
+     curvePath_smooth(Range_const(temp),vc);
     }
    
-   void curveLoop_smooth(PtrLen<const Point> dots,ColorName cname);
+   void curveLoop_smooth(PtrLen<const Point> dots,VColor vc);
    
    template <class ... TT>
-   void curveLoop_smooth(ColorName cname,TT ... tt)
+   void curveLoop_smooth(VColor vc,TT ... tt)
     {
      Point temp[sizeof ... (TT)]={ tt... };
      
-     curveLoop_smooth(Range_const(temp),cname);
+     curveLoop_smooth(Range_const(temp),vc);
     }
    
    // solid
@@ -263,7 +263,7 @@ class CommonDrawArt
    
    void circleSpline(Point center,Coord radius,DesktopColor color);
    
-   void circleSpline_smooth(Point center,Coord radius,ColorName cname);
+   void circleSpline_smooth(Point center,Coord radius,VColor vc);
  };
 
 } // namespace Video

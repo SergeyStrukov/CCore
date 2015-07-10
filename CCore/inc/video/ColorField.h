@@ -33,7 +33,7 @@ inline Clr Linear(Clr a,Clr b,uint16 c,uint16 d)
   return Clr( a-(uint32(a-b)*c)/d );
  }
 
-inline ColorName Linear(ColorName a,ColorName b,uint16 c,uint16 d)
+inline VColor Linear(VColor a,VColor b,uint16 c,uint16 d)
  {
   return RGBColor(Linear(RedOf(a),RedOf(b),c,d),Linear(GreenOf(a),GreenOf(b),c,d),Linear(BlueOf(a),BlueOf(b),c,d));
  }
@@ -54,7 +54,7 @@ class RadioField;
 
 struct AlphaColorName
  {
-  ColorName cname;
+  VColor vc;
   unsigned alpha;
  };
 
@@ -62,13 +62,13 @@ struct AlphaColorName
 
 class ConstantField
  {
-   ColorName cname;
+   VColor vc;
    
   public: 
    
-   explicit ConstantField(ColorName cname_) : cname(cname_) {}
+   explicit ConstantField(VColor vc_) : vc(vc_) {}
    
-   ColorName operator () (MPoint) const { return cname; }
+   VColor operator () (MPoint) const { return vc; }
  };
 
 /* class ConstantAlphaField */
@@ -79,7 +79,7 @@ class ConstantAlphaField
    
   public: 
    
-   explicit ConstantAlphaField(ColorName cname,unsigned alpha) : aname{cname,alpha} {}
+   explicit ConstantAlphaField(VColor vc,unsigned alpha) : aname{vc,alpha} {}
    
    AlphaColorName operator () (MPoint) const { return aname; }
  };
@@ -89,18 +89,18 @@ class ConstantAlphaField
 class TwoField
  {
    MPoint a;
-   ColorName ca;
+   VColor vca;
    MPoint b;
-   ColorName cb;
+   VColor vcb;
    
    DCoord D;
    DownBits<uint16> d;
    
   public:
   
-   TwoField(MPoint a,ColorName ca,MPoint b,ColorName cb); 
+   TwoField(MPoint a,VColor vca,MPoint b,VColor vcb); 
   
-   ColorName operator () (MPoint point) const;
+   VColor operator () (MPoint point) const;
  };
 
 /* class RadioField */
@@ -109,16 +109,16 @@ class RadioField
  {
    MPoint center;
    MCoord radius;
-   ColorName c;
-   ColorName a;
+   VColor vc;
+   VColor va;
    
    DownBits<uint16> d;
    
   public:
   
-   RadioField(MPoint center,MCoord radius,ColorName c,ColorName a);
+   RadioField(MPoint center,MCoord radius,VColor vc,VColor va);
    
-   ColorName operator () (MPoint point) const;
+   VColor operator () (MPoint point) const;
  };
 
 } // namespace Video

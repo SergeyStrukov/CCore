@@ -62,22 +62,22 @@ class FixedShape
      RefVal<Coord> btn_dx    = 26 ;
      RefVal<Coord> btn_dy    = 24 ;
     
-     RefVal<ColorName> top            =      Gray ;
-     RefVal<ColorName> bottom         =      Snow ;
+     RefVal<VColor> top            =      Gray ;
+     RefVal<VColor> bottom         =      Snow ;
      
-     RefVal<ColorName> frame          =      Snow ;
-     RefVal<ColorName> frameHilight   = RGBColor(0xC0,0xFF,0xC0) ;
-     RefVal<ColorName> frameDrag      = RGBColor(0xFF,0xC0,0xC0) ;
+     RefVal<VColor> frame          =      Snow ;
+     RefVal<VColor> frameHilight   = RGBColor(0xC0,0xFF,0xC0) ;
+     RefVal<VColor> frameDrag      = RGBColor(0xFF,0xC0,0xC0) ;
      
-     RefVal<ColorName> active         = RGBColor(0x80,0x80,0xFF) ;
-     RefVal<ColorName> inactive       =    Silver ;
-     RefVal<ColorName> title          =     Black ;
+     RefVal<VColor> active         = RGBColor(0x80,0x80,0xFF) ;
+     RefVal<VColor> inactive       =    Silver ;
+     RefVal<VColor> title          =     Black ;
     
-     RefVal<ColorName> btnFace        = SteelBlue ;
-     RefVal<ColorName> btnFaceHilight =     Green ;
-     RefVal<ColorName> btnPictClose   =       Red ;
+     RefVal<VColor> btnFace        = SteelBlue ;
+     RefVal<VColor> btnFaceHilight =     Green ;
+     RefVal<VColor> btnPictClose   =       Red ;
      
-     RefVal<ColorName> shade_color = Violet ;
+     RefVal<VColor> shade_color = Violet ;
      RefVal<Clr> shade_alpha       =     64 ;
      
      RefVal<Font> title_font;

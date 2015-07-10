@@ -56,7 +56,7 @@ void KnobShape::draw(const DrawBuf &buf) const
     }
   else
     {
-     ColorName cname;
+     VColor cname;
     
      if( mover && enable )
        cname=+cfg.topUp;
@@ -68,7 +68,7 @@ void KnobShape::draw(const DrawBuf &buf) const
   
   // face
   
-  ColorName cname=enable?+cfg.face:+cfg.bottom;
+  VColor cname=enable?+cfg.face:+cfg.bottom;
   
   switch( face )
     {
@@ -248,7 +248,7 @@ void KnobShape::draw(const DrawBuf &buf) const
   // border
   
   {
-   ColorName cname;
+   VColor cname;
    MCoord width=+cfg.width;
    
    if( focus )

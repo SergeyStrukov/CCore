@@ -22,11 +22,11 @@ namespace Video {
 
 /* functions */
 
-void Shade(const DrawBuf &buf,ColorName color,Clr alpha)
+void Shade(const DrawBuf &buf,VColor vc,Clr alpha)
  {
   Smooth::DrawArt art(buf);
   
-  art.erase(color,alpha);
+  art.erase(vc,alpha);
  }
 
 } // namespace Video 

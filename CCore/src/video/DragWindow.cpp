@@ -107,7 +107,7 @@ class DragShape::DrawArt : public Smooth::DrawArt
    DrawArt(const DrawBuf &buf) : Smooth::DrawArt(buf) {}
  };
 
-ColorName DragShape::dragColor(DragType zone) const
+VColor DragShape::dragColor(DragType zone) const
  {
   if( drag_type==zone ) return +cfg.dragActive;
   
@@ -118,8 +118,8 @@ ColorName DragShape::dragColor(DragType zone) const
 
 void DragShape::draw_Frame(DrawArt &art) const
  {
-  ColorName top=+cfg.frame;
-  ColorName bottom=+cfg.top;
+  VColor top=+cfg.frame;
+  VColor bottom=+cfg.top;
   
   if( !client )
     {
@@ -346,8 +346,8 @@ void DragShape::draw_Bar(DrawArt &art) const
      
      MCoord ex=p.dy/4;
      
-     ColorName top=+cfg.top;
-     ColorName bottom=+cfg.bottom;
+     VColor top=+cfg.top;
+     VColor bottom=+cfg.bottom;
      
      FigureButton fig(p,ex);
      
@@ -376,9 +376,9 @@ void DragShape::draw_Alert(DrawArt &art) const
      
      MPane q=p.shrink(p.dx/5,p.dy/5);
      
-     ColorName top=+cfg.top;
+     VColor top=+cfg.top;
      
-     ColorName alert;
+     VColor alert;
      
      if( alert_type==AlertType_No )
        {
@@ -396,9 +396,9 @@ void DragShape::draw_Alert(DrawArt &art) const
           }
         else
           {
-           ColorName face=(hilight==DragType_Alert)?+cfg.btnFaceHilight:+cfg.btnFace;
+           VColor face=(hilight==DragType_Alert)?+cfg.btnFaceHilight:+cfg.btnFace;
            
-           ColorName bottom=+cfg.bottom;
+           VColor bottom=+cfg.bottom;
            
            fig.curveSolid(art,face);
            
@@ -444,7 +444,7 @@ void DragShape::draw_Min(DrawArt &art) const
      
      MPane q=p.shrink(p.dx/5,p.dy/5);
      
-     ColorName top=+cfg.top;
+     VColor top=+cfg.top;
      
      if( btn_type==DragType_Min )
        {
@@ -454,9 +454,9 @@ void DragShape::draw_Min(DrawArt &art) const
        }
      else
        {
-        ColorName face=(hilight==DragType_Min)?+cfg.btnFaceHilight:+cfg.btnFace;
+        VColor face=(hilight==DragType_Min)?+cfg.btnFaceHilight:+cfg.btnFace;
         
-        ColorName bottom=+cfg.bottom;
+        VColor bottom=+cfg.bottom;
         
         fig.curveSolid(art,face);
         
@@ -484,7 +484,7 @@ void DragShape::draw_Max(DrawArt &art) const
      
      MPane q=p.shrink(p.dx/5,p.dy/5);
      
-     ColorName top=+cfg.top;
+     VColor top=+cfg.top;
      
      if( btn_type==DragType_Max )
        {
@@ -494,9 +494,9 @@ void DragShape::draw_Max(DrawArt &art) const
        }
      else
        {
-        ColorName face=(hilight==DragType_Max)?+cfg.btnFaceHilight:+cfg.btnFace;
+        VColor face=(hilight==DragType_Max)?+cfg.btnFaceHilight:+cfg.btnFace;
         
-        ColorName bottom=+cfg.bottom;
+        VColor bottom=+cfg.bottom;
         
         fig.curveSolid(art,face);
         
@@ -535,7 +535,7 @@ void DragShape::draw_Close(DrawArt &art) const
      
      MPane q=p.shrink(p.dx/5,p.dy/5);
      
-     ColorName top=+cfg.top;
+     VColor top=+cfg.top;
      
      if( btn_type==DragType_Close )
        {
@@ -545,9 +545,9 @@ void DragShape::draw_Close(DrawArt &art) const
        }
      else
        {
-        ColorName face=(hilight==DragType_Close)?+cfg.btnFaceHilight:+cfg.btnFace;
+        VColor face=(hilight==DragType_Close)?+cfg.btnFaceHilight:+cfg.btnFace;
         
-        ColorName bottom=+cfg.bottom;
+        VColor bottom=+cfg.bottom;
         
         fig.curveSolid(art,face);
         
@@ -557,7 +557,7 @@ void DragShape::draw_Close(DrawArt &art) const
 
      MCoord w=p.dx/8;
      
-     ColorName pict=+cfg.btnPictClose;
+     VColor pict=+cfg.btnPictClose;
      
      art.pathOf(w,pict,q.getTopLeft(),q.getBottomRight());
      art.pathOf(w,pict,q.getTopRight(),q.getBottomLeft());

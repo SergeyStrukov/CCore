@@ -211,7 +211,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
      
      FigureLeftArrow fig(x0+d,x1-d,y0+d,y1-d);
      
-     ColorName cname;
+     VColor cname;
      
      if( enable_ )
        {
@@ -254,7 +254,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
     
      FigureRightArrow fig(x4+d,x5-d,y0+d,y1-d);
      
-     ColorName cname;
+     VColor cname;
      
      if( enable_ )
        {
@@ -297,7 +297,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
      
      FigureBox fig(x1,x2,y0+e,y1-e);
      
-     ColorName cname;
+     VColor cname;
      
      if( enable_ )
        {
@@ -340,7 +340,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
      
      FigureBox fig(x3,x4,y0+e,y1-e);
      
-     ColorName cname;
+     VColor cname;
      
      if( enable_ )
        {
@@ -378,7 +378,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
    MCoord b1=y0+s.y/2;
    MCoord b2=y1-e;
    
-   ColorName cname;
+   VColor cname;
    
    if( enable_ )
      {
