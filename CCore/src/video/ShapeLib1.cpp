@@ -62,11 +62,13 @@ void ButtonShape::draw(const DrawBuf &buf) const
   
   FigureButton fig(p,ex);
   
+  ColorName bottom=+cfg.bottom;
+  
   // body
   
   if( down )
     {
-     fig.curveSolid(art,+cfg.bottom);
+     fig.curveSolid(art,bottom);
     }
   else
     {
@@ -77,7 +79,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
      else
        cname=+cfg.top;
      
-     fig.curveSolid(art,TwoField({x0,y0},cname,{x0,y1},+cfg.bottom));
+     fig.curveSolid(art,TwoField({x0,y0},cname,{x0,y1},bottom));
     }
   
   // text
@@ -95,9 +97,9 @@ void ButtonShape::draw(const DrawBuf &buf) const
    if( enable )
      cname=+cfg.text;
    else
-     cname=+cfg.bottom;
+     cname=bottom;
    
-   cfg.font.get()->text(buf,Shrink(pane,dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),cname);
+   cfg.font.get()->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),cname);
   }
   
   // border
@@ -114,7 +116,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
       if( enable )
         cname=+cfg.border;
       else
-        cname=+cfg.bottom;
+        cname=bottom;
      }
    
    fig.curveLoop(art,HalfPos,width,cname);

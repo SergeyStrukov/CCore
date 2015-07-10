@@ -24,7 +24,7 @@ namespace Video {
 
 void GuardNoClient()
  {
-  Printf(Exception,"CCore::Video::GuardNoClient() : no client");
+  Printf(Exception,"CCore::Video::GuardNoClient() : no client is attached");
  }
 
 void GuardNotDead()

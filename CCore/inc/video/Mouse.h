@@ -57,11 +57,11 @@ class PrintMouseKey
    void print(P &out) const
     {
      PrintBits<unsigned>(out,mkey)
-                        (MouseKey_Left , "Left")
+                        (MouseKey_Left ,"Left" )
                         (MouseKey_Right,"Right")
                         (MouseKey_Shift,"Shift")
-                        (MouseKey_Ctrl , "Ctrl")
-                        (MouseKey_Alt  ,  "Alt")
+                        (MouseKey_Ctrl ,"Ctrl" )
+                        (MouseKey_Alt  , "Alt" )
                         .complete();
     }
  };

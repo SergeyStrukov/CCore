@@ -119,7 +119,7 @@ class ButtonWindowOf : public SubWindow
    
    virtual void layout()
     {
-     shape.pane=Extent(Null,getSize());
+     shape.pane=Pane(Null,getSize());
     }
    
    virtual void draw(DrawBuf buf,bool) const
@@ -359,7 +359,7 @@ class CheckWindowOf : public SubWindow
    
    virtual void layout()
     {
-     shape.pane=Extent(Null,getSize());
+     shape.pane=Pane(Null,getSize());
     }
    
    virtual void draw(DrawBuf buf,bool) const
@@ -609,7 +609,7 @@ class RadioWindowOf : public SubWindow , public RadioItem
    
    virtual void layout()
     {
-     shape.pane=Extent(Null,getSize());
+     shape.pane=Pane(Null,getSize());
     }
    
    virtual void draw(DrawBuf buf,bool) const
@@ -760,7 +760,7 @@ class TextWindowOf : public SubWindow
    
    virtual void layout()
     {
-     shape.pane=Extent(Null,getSize());
+     shape.pane=Pane(Null,getSize());
     }
    
    virtual void draw(DrawBuf buf,bool) const
@@ -807,7 +807,7 @@ class DecorWindowOf : public SubWindow
    
    virtual void layout()
     {
-     shape.pane=Extent(Null,getSize());
+     shape.pane=Pane(Null,getSize());
     }
    
    virtual void draw(DrawBuf buf,bool) const
@@ -886,7 +886,7 @@ class LightWindowOf : public SubWindow
    
    virtual void layout()
     {
-     shape.pane=Extent(Null,getSize());
+     shape.pane=Pane(Null,getSize());
     }
    
    virtual void draw(DrawBuf buf,bool) const
@@ -1100,7 +1100,7 @@ class ScrollWindowOf : public SubWindow
    
    virtual void layout()
     {
-     shape.pane=Extent(Null,getSize());
+     shape.pane=Pane(Null,getSize());
     }
    
    virtual void draw(DrawBuf buf,bool) const
@@ -1501,7 +1501,7 @@ class ProgressWindowOf : public SubWindow
    
    virtual void layout()
     {
-     shape.pane=Extent(Null,getSize());
+     shape.pane=Pane(Null,getSize());
     }
    
    virtual void draw(DrawBuf buf,bool) const

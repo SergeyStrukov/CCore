@@ -34,7 +34,7 @@ Pane ContourShape::getInner() const
  {
   Coord dxy=RoundUpLen(+cfg.width);
   
-  return Shrink(pane,dxy);
+  return pane.shrink(dxy);
  }
 
 void ContourShape::draw(const DrawBuf &buf) const

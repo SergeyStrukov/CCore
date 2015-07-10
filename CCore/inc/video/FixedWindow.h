@@ -193,7 +193,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
      
      if( new_size>Null && new_size<=host->getMaxSize() ) 
        {
-        Pane screen=Extent(Null,desktop->getScreenSize());
+        Pane screen=Pane(Null,desktop->getScreenSize());
        
         if( +Inf(place,screen) ) 
           {

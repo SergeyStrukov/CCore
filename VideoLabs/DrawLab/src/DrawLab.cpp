@@ -109,7 +109,7 @@ void DrawLab::zoom_based(MPoint base,Coord delta)
  {
   if( !delta ) return;
  
-  Pane clip=Extent(Null,normal.getSize());
+  Pane clip=Pane(Null,normal.getSize());
   
   ulen len=dots.getLen();
   
@@ -846,7 +846,7 @@ DrawLab::~DrawLab()
    
 void DrawLab::layout()
  {
-  Pane total=Extent(Null,getSize());
+  Pane total=Pane(Null,getSize());
   
   FontSize font_size=cfg.font->getSize();
   
@@ -863,7 +863,7 @@ void DrawLab::layout()
      return setEmpty();
     }
   
-  info=Shrink(SplitY(delta,total),cfg.space_dxy);
+  info=SplitY(delta,total).shrink(cfg.space_dxy);
   
   if( total.dy<cfg.space_dxy ) return setEmpty();
   
@@ -930,9 +930,9 @@ void DrawLab::layout()
   width_plus=TrySplitX(info_dy,width_value);
   width_minus=TrySplitX(width_value,info_dy);
   
-  width_plus=Shrink(width_plus,cfg.textspace_dxy/2);
-  width_value=Shrink(width_value,cfg.textspace_dxy/2);
-  width_minus=Shrink(width_minus,cfg.textspace_dxy/2);
+  width_plus=width_plus.shrink(cfg.textspace_dxy/2);
+  width_value=width_value.shrink(cfg.textspace_dxy/2);
+  width_minus=width_minus.shrink(cfg.textspace_dxy/2);
  }
    
 void DrawLab::draw(DrawBuf buf,bool) const
@@ -980,25 +980,25 @@ void DrawLab::draw(DrawBuf buf,bool) const
    
    art.block(pane,cfg.select);
    
-   cfg.font->text(buf,Shrink(select_Path,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Path",cfg.menu);
-   cfg.font->text(buf,Shrink(select_Loop,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Loop",cfg.menu);
-   cfg.font->text(buf,Shrink(select_Curve,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Curve",cfg.menu);
-   cfg.font->text(buf,Shrink(select_CurveLoop,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"CurveLoop",cfg.menu);
+   cfg.font->text(buf,select_Path.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Path",cfg.menu);
+   cfg.font->text(buf,select_Loop.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Loop",cfg.menu);
+   cfg.font->text(buf,select_Curve.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Curve",cfg.menu);
+   cfg.font->text(buf,select_CurveLoop.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"CurveLoop",cfg.menu);
    
-   cfg.font->text(buf,Shrink(select_SolidOdd,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Solid Odd",cfg.menu);
-   cfg.font->text(buf,Shrink(select_SolidAll,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Solid All",cfg.menu);
-   cfg.font->text(buf,Shrink(select_CurveSolidOdd,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"CurveSolid Odd",cfg.menu);
-   cfg.font->text(buf,Shrink(select_CurveSolidAll,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"CurveSolid All",cfg.menu);
+   cfg.font->text(buf,select_SolidOdd.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Solid Odd",cfg.menu);
+   cfg.font->text(buf,select_SolidAll.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Solid All",cfg.menu);
+   cfg.font->text(buf,select_CurveSolidOdd.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"CurveSolid Odd",cfg.menu);
+   cfg.font->text(buf,select_CurveSolidAll.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"CurveSolid All",cfg.menu);
    
-   cfg.font->text(buf,Shrink(select_LinePath,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Line Path",cfg.menu);
-   cfg.font->text(buf,Shrink(select_LineLoop,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Line Loop",cfg.menu);
-   cfg.font->text(buf,Shrink(select_LineCurve,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Line Curve",cfg.menu);
-   cfg.font->text(buf,Shrink(select_LineCurveLoop,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Line CurveLoop",cfg.menu);
+   cfg.font->text(buf,select_LinePath.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Line Path",cfg.menu);
+   cfg.font->text(buf,select_LineLoop.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Line Loop",cfg.menu);
+   cfg.font->text(buf,select_LineCurve.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Line Curve",cfg.menu);
+   cfg.font->text(buf,select_LineCurveLoop.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Line CurveLoop",cfg.menu);
    
-   cfg.font->text(buf,Shrink(select_HalfLinePath,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Half Line Path",cfg.menu);
-   cfg.font->text(buf,Shrink(select_HalfLineLoop,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Half Line Loop",cfg.menu);
-   cfg.font->text(buf,Shrink(select_HalfLineCurve,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Half Line Curve",cfg.menu);
-   cfg.font->text(buf,Shrink(select_HalfLineCurveLoop,cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Half Line CurveLoop",cfg.menu);
+   cfg.font->text(buf,select_HalfLinePath.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Half Line Path",cfg.menu);
+   cfg.font->text(buf,select_HalfLineLoop.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Half Line Loop",cfg.menu);
+   cfg.font->text(buf,select_HalfLineCurve.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Half Line Curve",cfg.menu);
+   cfg.font->text(buf,select_HalfLineCurveLoop.shrink(cfg.textspace_dxy,cfg.textspace_dxy),TextPlace(AlignX_Left,AlignY_Center),"Half Line CurveLoop",cfg.menu);
    
    art.block(width,cfg.width1);
    
@@ -1019,7 +1019,7 @@ void DrawLab::draw(DrawBuf buf,bool) const
   
   // info
   {
-   Pane pane=Shrink(info,cfg.textspace_dxy,cfg.textspace_dxy);
+   Pane pane=info.shrink(cfg.textspace_dxy,cfg.textspace_dxy);
    
    char temp[TextBufLen];
    PrintBuf out(Range(temp));

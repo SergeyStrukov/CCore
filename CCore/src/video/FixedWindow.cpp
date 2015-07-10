@@ -40,12 +40,12 @@ void FixedShape::draw_Frame(DrawArt &art) const
   
   if( !client )
     {
-     art.block(Extent(Null,size),top);
+     art.block(Pane(Null,size),top);
     
      return;
     }
   
-  MPane outer(Extent(Null,size));
+  MPane outer(Pane(Null,size));
   MPane inner(client);
 
   // top
@@ -139,7 +139,7 @@ void FixedShape::draw_Title(DrawArt &art) const
      fig.getTop().curvePath(art,HalfPos,width,top);
      fig.getBottom().curvePath(art,HalfPos,width,bottom);
      
-     Pane pane=Shrink(titleBar,RoundUpLen(ex),RoundUpLen(width));
+     Pane pane=titleBar.shrink(RoundUpLen(ex),RoundUpLen(width));
      
      cfg.title_font.get()->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
     }
@@ -216,14 +216,14 @@ void FixedShape::layout(Point size_)
      
      btnClose=Pane(size.x-dxy-bdx-bdx/2,(tdy-bdy)/2,bdx,bdy);
      
-     titleBar=Extent(dxy,width,size.x-2*dxy-2*bdx,tdy-2*width);
+     titleBar=Pane(dxy,width,size.x-2*dxy-2*bdx,tdy-2*width);
     }
   else
     {
      client=Empty;
      titleBar=Empty;
      
-     btnClose=Extent(Null,bdx,bdy);
+     btnClose=Pane(Null,bdx,bdy);
     }
  }
 

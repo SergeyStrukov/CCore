@@ -76,7 +76,7 @@ void TextShape::draw(const DrawBuf &buf) const
   Coord dx=RoundUpLen(ex);
   Coord dy=RoundUpLen(width);
   
-  cfg.font.get()->text(buf,Shrink(pane,dx,dy),TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
+  cfg.font.get()->text(buf,pane.shrink(dx,dy),TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
  }
 
 } // namespace Video

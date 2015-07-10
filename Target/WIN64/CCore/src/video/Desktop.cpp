@@ -1162,7 +1162,7 @@ class WindowsHost : public WindowHost
      base.x=RandomPos(screen.x);
      base.y=RandomPos(screen.y);
      
-     Pane pane=Extent(base,size);
+     Pane pane=Pane(base,size);
      
      createMain(pane,max_size);
     }

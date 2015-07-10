@@ -35,7 +35,7 @@ struct SIntFunc
 
   // types
   
-  typedef typename Meta::SIntToUInt<SInt>::UType UInt;
+  using UInt = typename Meta::SIntToUInt<SInt>::UType ;
 
   // consts
   
@@ -55,22 +55,22 @@ struct SIntFunc
   
   // dist/move
   
-  static UInt Dist(SInt a,SInt b) // a <= b 
+  static UInt Dist(SInt a,SInt b) // a <= b
    { 
     return (UInt)b-(UInt)a; 
    }
 
-  static SInt MovePos(SInt a,UInt delta) 
+  static SInt MovePos(SInt a,UInt delta)
    { 
     return a+delta;
    }
   
-  static SInt MoveNeg(SInt a,UInt delta) 
+  static SInt MoveNeg(SInt a,UInt delta)
    { 
     return a-delta;
    }
   
-  static SInt Move(SInt a,SInt e,UInt delta) 
+  static SInt Move(SInt a,SInt e,UInt delta)
    {
     return (e>0)?MovePos(a,delta):MoveNeg(a,delta);
    }

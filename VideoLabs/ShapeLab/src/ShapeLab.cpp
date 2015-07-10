@@ -147,26 +147,26 @@ ShapeLab1::~ShapeLab1()
 
 void ShapeLab1::layout()
  {
-  sw.setPlace(Extent(20,20,30));
+  sw.setPlace(Pane(20,20,30));
   
-  radio1.setPlace(Extent(60,20,16));
-  radio2.setPlace(Extent(60,40,16));
-  radio3.setPlace(Extent(60,60,16));
+  radio1.setPlace(Pane(60,20,16));
+  radio2.setPlace(Pane(60,40,16));
+  radio3.setPlace(Pane(60,60,16));
   
   label1.setPlace(Pane(90,20-2,100,20));
   label2.setPlace(Pane(90,40-2,100,20));
   label3.setPlace(Pane(90,60-2,100,20));
   
-  light.setPlace(Extent(200,20,30));
+  light.setPlace(Pane(200,20,30));
   
   contour.setPlace(Pane(300,20,200,200));
   text_contour.setPlace(Pane(520,20,200,200));
   
   btn.setPlace(Pane(20,220,150,30));
   text.setPlace(Pane(20,260,300,30));
-  kbtn.setPlace(Extent(20,300,100));
+  kbtn.setPlace(Pane(20,300,100));
   
-  check.setPlace(Extent(20,450,16));
+  check.setPlace(Pane(20,450,16));
   xscroll.setPlace(Pane(20,480,500,20));
   yscroll.setPlace(Pane(750,20,20,500));
 
@@ -340,8 +340,8 @@ void ShapeLab2::layout()
  {
   progress.setPlace(Pane(20,20,500,20));
   
-  btn1.setPlace(Extent(20,50,40));
-  btn2.setPlace(Extent(20,100,140,32));
+  btn1.setPlace(Pane(20,50,40));
+  btn2.setPlace(Pane(20,100,140,32));
  }
 
 void ShapeLab2::draw(DrawBuf buf,bool drag_active) const

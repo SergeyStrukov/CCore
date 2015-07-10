@@ -123,7 +123,7 @@ void TextContourShape::draw(const DrawBuf &buf) const
   
   // title
   
-  cfg.font.get()->text(buf,Extent(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),Range(title),+cfg.text);
+  cfg.font.get()->text(buf,Pane(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),Range(title),+cfg.text);
  }
 
 } // namespace Video

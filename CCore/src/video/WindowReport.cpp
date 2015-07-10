@@ -359,14 +359,14 @@ void ExceptionWindow::layout()
      
      Coord offx=dxy+text_dx;
      
-     ptext=Extent(offx,0,size.x-offx,size.y-dxy);
+     ptext=Pane(offx,0,size.x-offx,size.y-dxy);
     }
   else
     {
      yscroll.setPlace(Empty);
      xscroll.setPlace(Empty);
      
-     ptext=Extent(Null,size);
+     ptext=Pane(Null,size);
     }
   
   visible_lines=ptext.dy/text_dy;

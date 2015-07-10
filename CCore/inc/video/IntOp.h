@@ -29,37 +29,37 @@ inline void IntGuard(bool cond) { if( !cond ) IntGuardAssert(); }
 
 /* functions */
 
-template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+template <class SInt,class UInt=typename SIntFunc<SInt>::UInt>
 UInt IntDist(SInt a,SInt b) // a <= b
  { 
   return SIntFunc<SInt>::Dist(a,b); 
  }
 
-template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+template <class SInt,class UInt=typename SIntFunc<SInt>::UInt>
 SInt IntMovePos(SInt a,UInt delta)
  {
   return SIntFunc<SInt>::MovePos(a,delta);
  }
 
-template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+template <class SInt,class UInt=typename SIntFunc<SInt>::UInt>
 SInt IntMoveNeg(SInt a,UInt delta)
  {
   return SIntFunc<SInt>::MoveNeg(a,delta);
  }
 
-template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+template <class SInt,class UInt=typename SIntFunc<SInt>::UInt>
 SInt IntMove(SInt a,SInt e,UInt delta)
  {
   return SIntFunc<SInt>::Move(a,e,delta);
  }
 
-template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+template <class SInt,class UInt=typename SIntFunc<SInt>::UInt>
 UInt IntAbs(SInt a,SInt b)
  { 
   return (a<=b)?IntDist<SInt,UInt>(a,b):IntDist<SInt,UInt>(b,a); 
  }
 
-template <class SInt,class UInt=typename Meta::SIntToUInt<SInt>::UType>
+template <class SInt,class UInt=typename SIntFunc<SInt>::UInt>
 UInt IntAbs(SInt a)
  { 
   return IntAbs<SInt,UInt>(a,0); 
@@ -89,10 +89,10 @@ template <class SInt>
 SInt IntMul(SInt a,SInt b) { return a*b; } // may overflow
 
 template <class SInt>
-SInt IntDiv(SInt a,SInt b) { return a/b; } // may crush
+SInt IntDiv(SInt a,SInt b) { return a/b; } // may crash
 
  //
- // Can be substituted to provide proper semantic.
+ // Can be substituted to provide the proper semantic.
  //
 
 template <class SInt>

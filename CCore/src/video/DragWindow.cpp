@@ -123,12 +123,12 @@ void DragShape::draw_Frame(DrawArt &art) const
   
   if( !client )
     {
-     art.block(Extent(Null,size),top);
+     art.block(Pane(Null,size),top);
     
      return;
     }
   
-  MPane outer(Extent(Null,size));
+  MPane outer(Pane(Null,size));
   MPane inner(client);
 
   // top
@@ -356,7 +356,7 @@ void DragShape::draw_Bar(DrawArt &art) const
      fig.getTop().curvePath(art,HalfPos,width,top);
      fig.getBottom().curvePath(art,HalfPos,width,bottom);
      
-     Pane pane=Shrink(titleBar,RoundUpLen(ex),RoundUpLen(width));
+     Pane pane=titleBar.shrink(RoundUpLen(ex),RoundUpLen(width));
      
      cfg.title_font.get()->text(art.getBuf(),pane,TextPlace(AlignX_Left,AlignY_Center),Range(title),+cfg.title);
     }
@@ -589,7 +589,7 @@ void DragShape::layout(Point size_)
   
   if( size>Point(2*dxy+5*bdx+bdx/2+Max(dxy,tdy),dxy+Max<Coord>(2*dxy,tdy)) )
     {
-     Pane pane=Extent(Null,size);
+     Pane pane=Pane(Null,size);
      
      Pane left=SplitX(dxy,pane);
      Pane right=SplitX(pane,dxy);
@@ -631,7 +631,7 @@ void DragShape::layout(Point size_)
      dragLeft=Empty;
      
      dragTopRight=Empty;
-     dragBottomRight=Extent(Null,size);
+     dragBottomRight=Pane(Null,size);
      dragRight=Empty;
      
      dragBar=Empty;

@@ -78,13 +78,13 @@ class ButtonShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
     
-     RefVal<ColorName> border =    Blue ;
-     RefVal<ColorName> focus  =  Orange ;
+     RefVal<ColorName> border =   Blue ;
+     RefVal<ColorName> focus  = Orange ;
      
-     RefVal<ColorName> bottom =    Gray ;
-     RefVal<ColorName> topUp  = SkyBlue ;
-     RefVal<ColorName> top    =  Silver ;
-     RefVal<ColorName> text   =   Black ;
+     RefVal<ColorName> bottom =   Gray ;
+     RefVal<ColorName> topUp  =  Green ;
+     RefVal<ColorName> top    =   Snow ;
+     RefVal<ColorName> text   =  Black ;
      
      RefVal<Font> font;
     
@@ -129,13 +129,13 @@ class KnobShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
      
-     RefVal<ColorName> border =    Blue ;
-     RefVal<ColorName> focus  =  Orange ;
+     RefVal<ColorName> border =   Blue ;
+     RefVal<ColorName> focus  = Orange ;
      
-     RefVal<ColorName> bottom =    Gray ;
-     RefVal<ColorName> topUp  = SkyBlue ;
-     RefVal<ColorName> top    =  Silver ;
-     RefVal<ColorName> face   =   Black ;
+     RefVal<ColorName> bottom =   Gray ;
+     RefVal<ColorName> topUp  =  Green ;
+     RefVal<ColorName> top    =   Snow ;
+     RefVal<ColorName> face   =  Black ;
      
      Config() {}
     };
@@ -191,13 +191,13 @@ class CheckShape
   
    struct Config
     {
-     RefVal<ColorName> border   =              Blue ;
-     RefVal<ColorName> focus    =            Orange ;
+     RefVal<ColorName> border   =   Blue ;
+     RefVal<ColorName> focus    = Orange ;
      
-     RefVal<ColorName> bottomUp =           SkyBlue ;
-     RefVal<ColorName> bottom   =            Silver ;
-     RefVal<ColorName> top      =              Gray ;
-     RefVal<ColorName> mark     = RGBColor(0,128,0) ;
+     RefVal<ColorName> bottomUp =  Green ;
+     RefVal<ColorName> bottom   =   Snow ;
+     RefVal<ColorName> top      =   Gray ;
+     RefVal<ColorName> mark     =  Black ;
      
      Config() {}
     };
@@ -231,13 +231,13 @@ class RadioShape
   
    struct Config
     {
-     RefVal<ColorName> border   =    Blue ;
-     RefVal<ColorName> focus    =  Orange ;
+     RefVal<ColorName> border   =   Blue ;
+     RefVal<ColorName> focus    = Orange ;
      
-     RefVal<ColorName> bottomUp = SkyBlue ;
-     RefVal<ColorName> bottom   =  Silver ;
-     RefVal<ColorName> top      =    Gray ;
-     RefVal<ColorName> mark     =   Black ;
+     RefVal<ColorName> bottomUp =  Green ;
+     RefVal<ColorName> bottom   =   Snow ;
+     RefVal<ColorName> top      =   Gray ;
+     RefVal<ColorName> mark     =  Black ;
      
      Config() {}
     };
@@ -542,7 +542,7 @@ class SwitchShape
      RefVal<ColorName> border =   Blue ;
      RefVal<ColorName> focus  = Orange ;
      
-     RefVal<ColorName> top    = Silver ;
+     RefVal<ColorName> top    =   Snow ;
      RefVal<ColorName> bottom =   Gray ;
      RefVal<ColorName> faceUp =   Blue ;
      RefVal<ColorName> face   =  Black ;

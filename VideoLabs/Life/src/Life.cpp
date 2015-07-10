@@ -150,7 +150,7 @@ void Life::layout()
   
   Coord dy=font_size.dy+2*cfg.outer_dxy;
   
-  status=Extent(cfg.outer_dxy,0,size.x-cfg.outer_dxy,dy);
+  status=Pane(cfg.outer_dxy,0,size.x-cfg.outer_dxy,dy);
   
   arena=Pane(cfg.outer_dxy,dy,cfg.cx*dxy+cfg.space_dxy,cfg.cy*dxy+cfg.space_dxy);
  }
@@ -177,7 +177,7 @@ void Life::draw(DrawBuf buf,bool) const
      {
       art.block(arena,cfg.back);
      
-      PaneBorder border(Expand(arena,1,1));
+      PaneBorder border(arena.expand(1));
      
       art.path(cfg.border_up,border.bottomLeft(),border.topLeft(),border.topRight());
       art.path(cfg.border_down,border.bottomLeft(),border.bottomRight(),border.topRight());
