@@ -14,7 +14,6 @@
 //----------------------------------------------------------------------------------------
 
 #include <CCore/inc/video/DrawTools.h>
-#include <CCore/inc/video/DrawAlgo.h>
 
 namespace CCore {
 namespace Video {

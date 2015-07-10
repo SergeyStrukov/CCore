@@ -17,7 +17,6 @@
 #define CCore_inc_video_FrameWindow_h
 
 #include <CCore/inc/video/UserAction.h>
-#include <CCore/inc/video/Color.h>
 #include <CCore/inc/video/FrameBuf.h>
  
 #include <CCore/inc/MemBase.h>

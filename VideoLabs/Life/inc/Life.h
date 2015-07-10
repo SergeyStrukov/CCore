@@ -41,13 +41,13 @@ class Life : public SubWindow
      
      Coord outer_dxy =   5 ;
 
-     ColorName outer       =     Wheat ;
-     ColorName text        = DarkGreen ; 
+     VColor outer       =     Wheat ;
+     VColor text        = DarkGreen ; 
      
-     ColorName back        =    Silver ;
-     ColorName cell        =      Blue ;
-     ColorName border_up   =     White ;
-     ColorName border_down =      Gray ;
+     VColor back        =    Silver ;
+     VColor cell        =      Blue ;
+     VColor border_up   =     White ;
+     VColor border_down =      Gray ;
      
      Font font;
      

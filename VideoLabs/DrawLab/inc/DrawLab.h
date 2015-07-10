@@ -50,26 +50,26 @@ class DrawLab : public SubWindow
      
      Coord dot_len       = 2 ;
      
-     ColorName back      = Wheat ;
-     ColorName work      = Silver ;
+     VColor back      = Wheat ;
+     VColor work      = Silver ;
      
-     ColorName part      = RGBColor(200,200,255) ;
+     VColor part      = RGBColor(200,200,255) ;
      
-     ColorName grid      = Blue ;
-     ColorName grid2     = Black ;
+     VColor grid      = Blue ;
+     VColor grid2     = Black ;
      
-     ColorName path      = Red ;
-     ColorName mark      = RGBColor(128,0,0) ;
-     ColorName pick      = Orange ;
-     ColorName near      = Blue ;
+     VColor path      = Red ;
+     VColor mark      = RGBColor(128,0,0) ;
+     VColor pick      = Orange ;
+     VColor near      = Blue ;
      
-     ColorName text      = Blue ;
+     VColor text      = Blue ;
      
-     ColorName menu      = Black ;
-     ColorName select    = RGBColor(180,180,255) ;
+     VColor menu      = Black ;
+     VColor select    = RGBColor(180,180,255) ;
      
-     ColorName width1    = GrayColor(160);
-     ColorName width2    = GrayColor(170);
+     VColor width1    = GrayColor(160);
+     VColor width2    = GrayColor(170);
      
      Font font;
      

@@ -558,14 +558,14 @@ class DrawLab::ZoomPath
    Smooth::DrawArt art;
    ZoomMap map;
    MCoord width;
-   ColorName cname;
+   VColor cname;
   
    Point prev;
    bool first = true ;
   
   public:
   
-   ZoomPath(const DrawBuf &buf,unsigned deg,MCoord width_,ColorName cname_) : art(buf),map(deg),width(width_),cname(cname_) {}
+   ZoomPath(const DrawBuf &buf,unsigned deg,MCoord width_,VColor cname_) : art(buf),map(deg),width(width_),cname(cname_) {}
    
    void operator () (MPoint point)
     {
@@ -589,18 +589,18 @@ class DrawLab::ZoomLoop
    const DrawBuf &buf;
    ZoomMap map;
    MCoord width;
-   ColorName cname;
+   VColor cname;
    
   public:
   
-   ZoomLoop(const DrawBuf &buf_,unsigned deg,MCoord width_,ColorName cname_) : buf(buf_),map(deg),width(width_),cname(cname_) {}
+   ZoomLoop(const DrawBuf &buf_,unsigned deg,MCoord width_,VColor cname_) : buf(buf_),map(deg),width(width_),cname(cname_) {}
    
    class FunctorType : NoCopy
     {
       Smooth::DrawArt art;
       ZoomMap map;
       MCoord width;
-      ColorName cname;
+      VColor cname;
 
       Point start;
       Point prev;
@@ -642,11 +642,11 @@ class DrawLab::ZoomDot
    Smooth::DrawArt art;
    ZoomMap map;
    Coord len;
-   ColorName cname;
+   VColor cname;
    
   public:
    
-   ZoomDot(const DrawBuf &buf,unsigned deg,Coord len_,ColorName cname_) : art(buf),map(deg),len(len_),cname(cname_) {}
+   ZoomDot(const DrawBuf &buf,unsigned deg,Coord len_,VColor cname_) : art(buf),map(deg),len(len_),cname(cname_) {}
    
    void operator () (MPoint point)
     {

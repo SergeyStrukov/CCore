@@ -91,10 +91,10 @@ class CharPanel : NoCopy
  {
    FrameBuf<RawColor> out;
    
-   VColor back = Black ;
-   VColor fore = Silver ;
-   VColor line = Gray ;
-   VColor marker = Green ;
+   VColor back   =  Black ;
+   VColor fore   = Silver ;
+   VColor line   =   Gray ;
+   VColor marker =  Green ;
    
    Coord dx = 0 ;
    Coord dy = 0 ;
