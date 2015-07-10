@@ -176,13 +176,13 @@ class PrintKeyMod
    void print(P &out) const
     {
      PrintBits<unsigned>(out,kmod)
-                        (KeyMod_Shift     ,     "Shift")
-                        (KeyMod_Ctrl      ,      "Ctrl")
-                        (KeyMod_Alt       ,       "Alt")
-                        (KeyMod_CapsLock  ,  "CapsLock")
-                        (KeyMod_NumLock   ,   "NumLock")
+                        (KeyMod_Shift     ,"Shift"     )
+                        (KeyMod_Ctrl      ,"Ctrl"      )
+                        (KeyMod_Alt       ,"Alt"       )
+                        (KeyMod_CapsLock  ,"CapsLock"  )
+                        (KeyMod_NumLock   ,"NumLock"   )
                         (KeyMod_ScrollLock,"ScrollLock")
-                        (KeyMod_Ext       ,       "Ext")
+                        (KeyMod_Ext       ,"Ext"       )
                         .complete();
     }
  };

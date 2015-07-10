@@ -833,14 +833,14 @@ class ProgressShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
 
-     RefVal<ColorName> border =  Black ;
-     RefVal<ColorName> active = Silver ;
+     RefVal<ColorName> border       =     Black ;
+     RefVal<ColorName> active       =    Silver ;
      
-     RefVal<ColorName> top    =   Snow ;
-     RefVal<ColorName> bottom =   Gray ;
+     RefVal<ColorName> top          =      Snow ;
+     RefVal<ColorName> bottom       =      Gray ;
      
-     RefVal<ColorName> activeTop    = RGBColor(0,255,0) ;
-     RefVal<ColorName> activeBottom = RGBColor(0,100,0) ;
+     RefVal<ColorName> activeTop    =     Green ;
+     RefVal<ColorName> activeBottom = DarkGreen ;
      
      RefVal<unsigned> time   = 3*25 ;
      RefVal<unsigned> period =    2 ;
