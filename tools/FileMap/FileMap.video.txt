@@ -153,7 +153,7 @@
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/ApplicationBase.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/ClientWindow.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/Color.h" 2
-"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/ColorField.h" 0
+"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/ColorField.h" 1
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/CommonDrawArt.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/CurveDriver.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/Desktop.h" 2
@@ -162,7 +162,7 @@
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/DrawBuf.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/DrawTools.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/EDID.h" 2
-"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/FigureLib.h" 0
+"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/FigureLib.h" 1
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/FixedWindow.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/Font.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/FrameBuf.h" 2
@@ -176,8 +176,8 @@
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/Shade.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/ShapeLib.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SimpleConsole.h" 2
-"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SmoothAlgo.h" 0
-"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SmoothDrawArt.h" 0
+"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SmoothAlgo.h" 1
+"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SmoothDrawArt.h" 1
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SubWindow.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/UserAction.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/VideoConsole.h" 2
