@@ -165,6 +165,11 @@ void WindowList::focusPrev()
     }
  }
 
+void WindowList::focusOn(Point point)
+ {
+  if( SubWindow *sub_win=find(point) ) sub_win->setFocus();
+ }
+
  // draw
 
 void WindowList::draw(const DrawBuf &buf,bool drag_active) const
@@ -196,6 +201,11 @@ void WindowList::redraw(Pane pane)
 
 void WindowList::setFocus(SubWindow *sub_win)
  {
+  if( sub_win->list!=this )
+    {
+     Printf(Exception,"CCore::Video::WindowList::setFocus(...) : sub-window from another list");
+    }
+  
   if( focus!=sub_win )
     {
      if( focus && has_focus ) focus->looseFocus();
@@ -208,6 +218,11 @@ void WindowList::setFocus(SubWindow *sub_win)
 
 void WindowList::captureMouse(SubWindow *sub_win)
  {
+  if( sub_win->list!=this )
+    {
+     Printf(Exception,"CCore::Video::WindowList::captureMouse(...) : sub-window from another list");
+    }
+  
   capture=sub_win;
   
   parent.captureMouse();
@@ -215,6 +230,11 @@ void WindowList::captureMouse(SubWindow *sub_win)
 
 void WindowList::releaseMouse(SubWindow *sub_win)
  {
+  if( sub_win->list!=this )
+    {
+     Printf(Exception,"CCore::Video::WindowList::releaseMouse(...) : sub-window from another list");
+    }
+  
   if( sub_win==capture )
     {
      capture=0;

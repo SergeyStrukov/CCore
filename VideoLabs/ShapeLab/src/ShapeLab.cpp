@@ -132,6 +132,7 @@ ShapeLab1::ShapeLab1(SubWindowHost &host)
   group.add(radio1,radio2,radio3);
   
   wlist.enableTabFocus();
+  wlist.enableClickFocus();
   
   dlist.insTop(label1,label2,label3,light,contour,text_contour,text);
 
@@ -365,7 +366,7 @@ void ShapeLab2::open()
 
 void ShapeLab2::close()
  {
-  wlist.looseFocus();
+  wlist.close();
  }
 
  // keyboard

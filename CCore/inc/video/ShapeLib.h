@@ -804,9 +804,9 @@ class YScrollShape : public ScrollShape
  {
   public:
   
-   static const VKey DownKey = VKey_Down ;
+   static const VKey DownKey = VKey_Up ;
   
-   static const VKey UpKey = VKey_Up ;
+   static const VKey UpKey = VKey_Down ;
    
    // methods
    

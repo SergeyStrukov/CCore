@@ -40,7 +40,7 @@ struct SubWindowHost
  
   virtual Point getScreenOrigin()=0;
  
-  virtual void redraw(Pane pane)=0;
+  virtual void redraw(Pane pane)=0; // relative host window coords
  
   virtual void setFocus(SubWindow *sub_win)=0;
  
@@ -79,13 +79,11 @@ class SubWindow : public MemBase_nocopy , public UserInput
    
    Point getScreenOrigin() const { return host.getScreenOrigin()+place.getBase(); }
    
-   Point toScreen(Point point) const { return point+getScreenOrigin(); }
+   template <class T>
+   T toScreen(T obj) const { return obj+getScreenOrigin(); }
    
-   Point fromScreen(Point point) const { return point-getScreenOrigin(); }
-   
-   Pane toScreen(Pane pane) const { return pane+getScreenOrigin(); }
-   
-   Pane fromScreen(Pane pane) const { return pane-getScreenOrigin(); }
+   template <class T>
+   T fromScreen(T obj) const { return obj-getScreenOrigin(); }
    
    void setPlace(Pane place_)
     { 
@@ -112,6 +110,7 @@ class SubWindow : public MemBase_nocopy , public UserInput
    
    virtual void layout()
     {
+     // do nothing
     }
    
    virtual void draw(DrawBuf buf,bool drag_active) const
@@ -219,6 +218,7 @@ class WindowList : NoCopy , public SubWindowHost , public UserInput
    bool is_opened = false ;
    
    bool enable_tab = false ;
+   bool enable_click = false ;
    
    using Algo = DLink<SubWindow>::LinearAlgo<&SubWindow::link> ;
    
@@ -305,7 +305,11 @@ class WindowList : NoCopy , public SubWindowHost , public UserInput
    
    void focusPrev();
    
+   void focusOn(Point point);
+   
    void enableTabFocus(bool enable_tab_=true) { enable_tab=enable_tab_; }
+   
+   void enableClickFocus(bool enable_click_=true) { enable_click=enable_click_; }
    
    // draw
    
@@ -451,6 +455,40 @@ void WindowList::react_Keyboard(UserAction action,Func func)
 template <class Func>
 void WindowList::react_Mouse(UserAction action,Func func)
  {
+  if( enable_click )
+    {
+     struct React
+      {
+       WindowList *list;
+       
+       explicit React(WindowList *list_) : list(list_) {}
+       
+       void react_LeftClick(Point point,MouseKey)
+        {
+         list->focusOn(point);
+        }
+       
+       void react_LeftDClick(Point point,MouseKey)
+        {
+         list->focusOn(point);
+        }
+       
+       void react_RightClick(Point point,MouseKey)
+        {
+         list->focusOn(point);
+        }
+       
+       void react_RightDClick(Point point,MouseKey)
+        {
+         list->focusOn(point);
+        }
+      };
+    
+     React obj(this);
+    
+     action.dispatch(obj);
+    }
+  
   if( SubWindow *sub_win=pick(action.getPoint()) )
     {
      sub_win->forward_react(action);

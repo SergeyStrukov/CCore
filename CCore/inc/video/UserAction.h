@@ -174,13 +174,6 @@ class UserAction
      Body_Wheel      of_Wheel;
      
      Body() {}
-     
-     // print object
-     
-     template <class P>
-     void print(P &out) const
-      {
-      }
     };
    
    Body body;
@@ -783,12 +776,12 @@ struct SomeClass
 
 struct UserInput
  {
-  virtual void disableReact() 
+  virtual void disableReact()
    { 
     // do nothing
    }
   
-  virtual void enableReact() 
+  virtual void enableReact()
    { 
     // do nothing
    }

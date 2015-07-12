@@ -1228,7 +1228,7 @@ class ScrollWindowOf : public SubWindow
          }
         break; 
       
-        case VKey_PageDown :
+        case VKey_PageUp :
          {
           if( shape.enable && !shape.down )
             {
@@ -1242,7 +1242,7 @@ class ScrollWindowOf : public SubWindow
          }
         break; 
         
-        case VKey_PageUp :
+        case VKey_PageDown :
          {
           if( shape.enable && !shape.down )
             {
@@ -1294,7 +1294,7 @@ class ScrollWindowOf : public SubWindow
          }
         break;
         
-        case VKey_PageDown :
+        case VKey_PageUp :
          {
           if( shape.down && !shape.mouse && shape.press_type==ScrollType_DownPage )
             {
@@ -1307,7 +1307,7 @@ class ScrollWindowOf : public SubWindow
          }
         break;
         
-        case VKey_PageUp :
+        case VKey_PageDown :
          {
           if( shape.down && !shape.mouse && shape.press_type==ScrollType_UpPage )
             {

@@ -21,7 +21,7 @@
 namespace CCore {
 namespace Video {
 
-/* guards */
+/* functions */
 
 void GuardNoClient();
 

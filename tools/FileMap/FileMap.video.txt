@@ -161,7 +161,7 @@
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/DrawAlgo.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/DrawBuf.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/DrawTools.h" 2
-"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/EDID.h" 0
+"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/EDID.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/FigureLib.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/FixedWindow.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/Font.h" 0
@@ -178,8 +178,8 @@
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SimpleConsole.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SmoothAlgo.h" 0
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SmoothDrawArt.h" 0
-"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SubWindow.h" 1
-"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/UserAction.h" 1
+"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/SubWindow.h" 2
+"D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/UserAction.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/VideoConsole.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/VideoDevice.h" 2
 "D:/active/home/C++/CCore-Root-1-09/CCore/inc/video/WindowLib.h" 0
