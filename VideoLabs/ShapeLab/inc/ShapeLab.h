@@ -29,7 +29,7 @@ class ShapeLab2;
 
 /* type ShapeLab */
 
-using ShapeLab = ShapeLab1 ;
+using ShapeLab = ShapeLab2 ;
 
 /* class ShapeLab1 */
 
