@@ -1,0 +1,23 @@
+---------------------
+
+make
+gcc
+binutils
+m4
+flex
+bison
+
+---------------------
+
+diffutils
+texinfo
+texi2html
+
+---------------------
+
+gmp
+mpfr
+mpc
+isl (gcc-compat)
+
+---------------------
