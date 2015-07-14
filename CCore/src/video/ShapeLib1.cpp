@@ -72,14 +72,14 @@ void ButtonShape::draw(const DrawBuf &buf) const
     }
   else
     {
-     VColor cname;
+     VColor top;
      
      if( mover && enable )
-       cname=+cfg.topUp;
+       top=+cfg.topUp;
      else
-       cname=+cfg.top;
+       top=+cfg.top;
      
-     fig.curveSolid(art,TwoField({x0,y0},cname,{x0,y1},bottom));
+     fig.curveSolid(art,TwoField({x0,y0},top,{x0,y1},bottom));
     }
   
   // text
@@ -92,34 +92,29 @@ void ButtonShape::draw(const DrawBuf &buf) const
    
    if( down ) shift=Point::Diag( (dy+1)/2 );
    
-   VColor cname;
+   VColor text=enable?+cfg.text:bottom;
 
-   if( enable )
-     cname=+cfg.text;
-   else
-     cname=bottom;
-   
-   cfg.font.get()->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),cname);
+   cfg.font.get()->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),text);
   }
   
   // border
   
   {
-   VColor cname;
+   VColor border;
    
    if( focus )
      {
-      cname=+cfg.focus;
+      border=+cfg.focus;
      } 
    else
      {
       if( enable )
-        cname=+cfg.border;
+        border=+cfg.border;
       else
-        cname=bottom;
+        border=bottom;
      }
    
-   fig.curveLoop(art,HalfPos,width,cname);
+   fig.curveLoop(art,HalfPos,width,border);
   }
  }
 

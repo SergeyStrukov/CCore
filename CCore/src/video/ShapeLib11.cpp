@@ -44,57 +44,60 @@ void SwitchShape::draw(const DrawBuf &buf) const
   MCoord radius=len/2;
   MPoint center=a.addXY(radius);
   MCoord width=len/16;
+  
+  VColor top=+cfg.top;
+  VColor bottom=+cfg.bottom;
 
   // body
   
   if( check )
     {
-     art.ball(center,radius,TwoField(a,+cfg.top,a.addX(len),+cfg.bottom));
+     art.ball(center,radius,TwoField(a,top,a.addX(len),bottom));
     
-     art.ball(center,radius/2,enable?+cfg.on:+cfg.bottom);
+     art.ball(center,radius/2,enable?+cfg.on:bottom);
     }
   else
     {
-     art.ball(center,radius,TwoField(a,+cfg.top,a.addY(len),+cfg.bottom));
+     art.ball(center,radius,TwoField(a,top,a.addY(len),bottom));
      
-     art.ball(center,radius/2,enable?+cfg.off:+cfg.bottom);
+     art.ball(center,radius/2,enable?+cfg.off:bottom);
     }
 
   // border
   
   {
-   VColor cname;
+   VColor border;
    
    if( focus )
      {
-      cname=+cfg.focus;
+      border=+cfg.focus;
      }
    else
      {
       if( enable )
-        cname=+cfg.border;
+        border=+cfg.border;
       else
-        cname=+cfg.bottom;
+        border=bottom;
      }
    
-   art.circle(center,radius-width/2,width,cname);
+   art.circle(center,radius-width/2,width,border);
   }
   
   // face
   
   {
-   VColor cname;
+   VColor face;
    
    if( enable )
      {
       if( mover )
-        cname=+cfg.faceUp;
+        face=+cfg.faceUp;
       else
-        cname=+cfg.face;
+        face=+cfg.face;
      } 
    else
      {
-      cname=+cfg.bottom;
+      face=bottom;
      } 
    
    MCoord d1=len/20;
@@ -123,7 +126,7 @@ void SwitchShape::draw(const DrawBuf &buf) const
    
    fig.transform(Smooth::DotShift(a));
    
-   fig.solid(art,cname);
+   fig.solid(art,face);
   }
  }
 

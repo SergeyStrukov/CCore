@@ -48,56 +48,58 @@ void KnobShape::draw(const DrawBuf &buf) const
   MCoord radius=len/2;
   MPoint center=a.addXY(radius);
   
+  VColor bottom=+cfg.bottom;
+  
   // body
   
   if( down )
     {
-     art.ball(center,radius,+cfg.bottom);
+     art.ball(center,radius,bottom);
     }
   else
     {
-     VColor cname;
+     VColor top;
     
      if( mover && enable )
-       cname=+cfg.topUp;
+       top=+cfg.topUp;
      else
-       cname=+cfg.top; 
+       top=+cfg.top; 
      
-     art.ball(center,radius,TwoField(a,cname,a.addY(len),+cfg.bottom));
+     art.ball(center,radius,TwoField(a,top,a.addY(len),bottom));
     }
   
   // face
   
-  VColor cname=enable?+cfg.face:+cfg.bottom;
+  VColor fc=enable?+cfg.face:bottom;
   
   switch( face )
     {
      case FacePlus :
       {
        MCoord a=radius/2;
-       MCoord w=(2*a)/3;
+       MCoord w=radius/3;
        
-       art.pathOf(w,cname,center.subX(a),center.addX(a));
-       art.pathOf(w,cname,center.subY(a),center.addY(a));
+       art.pathOf(w,fc,center.subX(a),center.addX(a));
+       art.pathOf(w,fc,center.subY(a),center.addY(a));
       }
      break;
      
      case FaceMinus :
       {
        MCoord a=radius/2;
-       MCoord w=(2*a)/3;
+       MCoord w=radius/3;
        
-       art.pathOf(w,cname,center.subX(a),center.addX(a));
+       art.pathOf(w,fc,center.subX(a),center.addX(a));
       }
      break;
      
      case FaceCross :
       {
        MCoord a=radius/2;
-       MCoord w=(2*a)/3;
+       MCoord w=radius/3;
        
-       art.pathOf(w,cname,center.subXY(a),center.addXY(a));
-       art.pathOf(w,cname,center.addXsubY(a),center.subXaddY(a));
+       art.pathOf(w,fc,center.subXY(a),center.addXY(a));
+       art.pathOf(w,fc,center.addXsubY(a),center.subXaddY(a));
       }
      break;
      
@@ -105,16 +107,16 @@ void KnobShape::draw(const DrawBuf &buf) const
       {
        FigureAsterisk fig(center,Ratio(652,10)*radius);
 
-       fig.curveSolid(art,cname);
+       fig.curveSolid(art,fc);
       }
      break;
      
      case FaceExclamation :
       {
-       MCoord a=(2*radius)/3;
+       MCoord a=Ratio(683,10)*radius;
        MCoord c=radius/5;
        MCoord b=a-2*c;
-       MCoord r=(3*c)/4;
+       MCoord r=Ratio(3,2)*c;
        
        FigureDots<4> fig;
        
@@ -125,20 +127,20 @@ void KnobShape::draw(const DrawBuf &buf) const
        
        fig.transform(Smooth::DotShift(center));
        
-       fig.curveSolid(art,cname);
+       fig.curveSolid(art,fc);
        
-       art.ball(center.addY(b+r),r,cname);
+       art.ball(center.addY(b+r),r,fc);
       }
      break;
      
      case FaceQuestion :
       {
-       MCoord a=(2*radius)/3;
+       MCoord a=Ratio(683,10)*radius;
        MCoord c=radius/5;
        MCoord b=a-2*c;
-       MCoord r=(3*c)/4;
+       MCoord r=Ratio(3,2)*c;
        
-       art.ball(center.addY(b+r),r,cname);
+       art.ball(center.addY(b+r),r,fc);
       }
      break;
      
@@ -151,7 +153,7 @@ void KnobShape::draw(const DrawBuf &buf) const
        
        fig.transform(Smooth::DotShift(center));
        
-       fig.curveSolid(art,cname);
+       fig.curveSolid(art,fc);
       }
      break;
      
@@ -164,7 +166,7 @@ void KnobShape::draw(const DrawBuf &buf) const
        
        fig.transform(Smooth::DotShift(center));
        
-       fig.curveSolid(art,cname);
+       fig.curveSolid(art,fc);
       }
      break;
      
@@ -177,7 +179,7 @@ void KnobShape::draw(const DrawBuf &buf) const
        
        fig.transform(Smooth::DotShift(center));
        
-       fig.curveSolid(art,cname);
+       fig.curveSolid(art,fc);
       }
      break;
      
@@ -190,7 +192,7 @@ void KnobShape::draw(const DrawBuf &buf) const
        
        fig.transform(Smooth::DotShift(center));
        
-       fig.curveSolid(art,cname);
+       fig.curveSolid(art,fc);
       }
      break;
      
@@ -202,7 +204,7 @@ void KnobShape::draw(const DrawBuf &buf) const
        
        fig.transform(Smooth::DotShift(center));
        
-       fig.solid(art,cname);
+       fig.solid(art,fc);
       }
      break;
      
@@ -217,11 +219,11 @@ void KnobShape::draw(const DrawBuf &buf) const
        
        fig1.transform(Smooth::DotShift(center.subX(d1)));
        
-       fig1.curveSolid(art,cname);
+       fig1.curveSolid(art,fc);
        
        fig2.transform(Smooth::DotShift(center.addX(d2)));
        
-       fig2.curveSolid(art,cname);
+       fig2.curveSolid(art,fc);
       }
      break;
      
@@ -236,11 +238,11 @@ void KnobShape::draw(const DrawBuf &buf) const
        
        fig1.transform(Smooth::DotShift(center.addX(d1)));
        
-       fig1.curveSolid(art,cname);
+       fig1.curveSolid(art,fc);
        
        fig2.transform(Smooth::DotShift(center.subX(d2)));
        
-       fig2.curveSolid(art,cname);
+       fig2.curveSolid(art,fc);
       }
      break; 
     }
@@ -248,22 +250,22 @@ void KnobShape::draw(const DrawBuf &buf) const
   // border
   
   {
-   VColor cname;
+   VColor border;
    MCoord width=+cfg.width;
    
    if( focus )
      {
-      cname=+cfg.focus;
+      border=+cfg.focus;
      }
    else
      {
       if( enable )
-        cname=+cfg.border;
+        border=+cfg.border;
       else
-        cname=+cfg.bottom;
+        border=bottom;
      }
    
-   art.circle(center,radius-width/2,width,cname);
+   art.circle(center,radius-width/2,width,border);
   }
  }
 

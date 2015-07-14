@@ -185,47 +185,54 @@ void XScrollShape::draw(const DrawBuf &buf) const
   MCoord width=+cfg.width;
   MCoord d=Max<MCoord>(s.y/6,width);
   
+  VColor top=+cfg.top;
+  VColor bottom=+cfg.bottom;
+  VColor face=+cfg.face;
+  VColor faceUp=+cfg.faceUp;
+  VColor topf=focus?+cfg.focus:top;
+  VColor eface=enable_?face:bottom;
+  
   // down
   
   if( down==ScrollType_Down )
     {
      FigureBox fig_box(x0,x1,y0,y1);
      
-     fig_box.solid(art,+cfg.bottom);
+     fig_box.solid(art,bottom);
       
      FigureLeftArrow fig(x0+d,x1-d,y0+d,y1-d);
      
      fig.transform(Smooth::DotShift(MPoint::Diag(width)));
 
-     fig.curveSolid(art,enable_?+cfg.face:+cfg.bottom);
+     fig.curveSolid(art,eface);
     }
   else
     {
      FigureTopBorder fig_top(x0,x1,y0,y1,width);
        
-     fig_top.solid(art,focus?+cfg.focus:+cfg.top);
+     fig_top.solid(art,topf);
      
      FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
      
-     fig_bottom.solid(art,+cfg.bottom);
+     fig_bottom.solid(art,bottom);
      
      FigureLeftArrow fig(x0+d,x1-d,y0+d,y1-d);
      
-     VColor cname;
+     VColor fc;
      
      if( enable_ )
        {
         if( mover==ScrollType_Down )
-          cname=+cfg.faceUp;
+          fc=faceUp;
         else
-          cname=+cfg.face;
+          fc=face;
        }
      else
        {
-        cname=+cfg.bottom;
+        fc=bottom;
        }
 
-     fig.curveSolid(art,cname);
+     fig.curveSolid(art,fc);
     }
 
   // up
@@ -234,41 +241,41 @@ void XScrollShape::draw(const DrawBuf &buf) const
     {
      FigureBox fig_box(x4,x5,y0,y1);
    
-     fig_box.solid(art,+cfg.bottom);
+     fig_box.solid(art,bottom);
      
      FigureRightArrow fig(x4+d,x5-d,y0+d,y1-d);
     
      fig.transform(Smooth::DotShift(MPoint::Diag(width)));
 
-     fig.curveSolid(art,enable_?+cfg.face:+cfg.bottom);
+     fig.curveSolid(art,eface);
     }
   else
     {
      FigureTopBorder fig_top(x4,x5,y0,y1,width);
       
-     fig_top.solid(art,focus?+cfg.focus:+cfg.top);
+     fig_top.solid(art,topf);
     
      FigureBottomBorder fig_bottom(x4,x5,y0,y1,width);
       
-     fig_bottom.solid(art,+cfg.bottom);
+     fig_bottom.solid(art,bottom);
     
      FigureRightArrow fig(x4+d,x5-d,y0+d,y1-d);
      
-     VColor cname;
+     VColor fc;
      
      if( enable_ )
        {
         if( mover==ScrollType_Up )
-          cname=+cfg.faceUp;
+          fc=faceUp;
         else
-          cname=+cfg.face;
+          fc=face;
        }
      else
        {
-        cname=+cfg.bottom;
+        fc=bottom;
        }
      
-     fig.curveSolid(art,cname);
+     fig.curveSolid(art,fc);
     }
   
   // down page
@@ -276,42 +283,42 @@ void XScrollShape::draw(const DrawBuf &buf) const
   {
    FigureBox fig_top(x1,x2,y0,y0+width);
    
-   fig_top.solid(art,focus?+cfg.focus:+cfg.top);
+   fig_top.solid(art,topf);
    
    FigureBox fig_bottom(x1,x2,y1-width,y1);
    
-   fig_bottom.solid(art,+cfg.bottom);
+   fig_bottom.solid(art,bottom);
   }
   
   if( down==ScrollType_DownPage )
     {
-     MCoord e=(5*s.y)/12;
+     MCoord e=Ratio(427,10)*s.y;
     
      FigureBox fig(x1,x2,y0+e,y1-e);
      
-     fig.solid(art,+cfg.face);
+     fig.solid(art,face);
     }
   else
     {
-     MCoord e=(3*s.y)/8;
+     MCoord e=Ratio(3,3)*s.y;
      
      FigureBox fig(x1,x2,y0+e,y1-e);
      
-     VColor cname;
+     VColor fc;
      
      if( enable_ )
        {
         if( mover==ScrollType_DownPage )
-          cname=+cfg.faceUp;
+          fc=faceUp;
         else
-          cname=+cfg.face;
+          fc=face;
        }
      else
        {
-        cname=+cfg.bottom;
+        fc=bottom;
        }
 
-     fig.solid(art,cname);
+     fig.solid(art,fc);
     }
   
   // up page
@@ -319,42 +326,42 @@ void XScrollShape::draw(const DrawBuf &buf) const
   {
    FigureBox fig_top(x3,x4,y0,y0+width);
    
-   fig_top.solid(art,focus?+cfg.focus:+cfg.top);
+   fig_top.solid(art,topf);
    
    FigureBox fig_bottom(x3,x4,y1-width,y1);
    
-   fig_bottom.solid(art,+cfg.bottom);
+   fig_bottom.solid(art,bottom);
   }
   
   if( down==ScrollType_UpPage )
     {
-     MCoord e=(5*s.y)/12;
+     MCoord e=Ratio(427,10)*s.y;
    
      FigureBox fig(x3,x4,y0+e,y1-e);
      
-     fig.solid(art,+cfg.face);
+     fig.solid(art,face);
     }
   else
     {
-     MCoord e=(3*s.y)/8;
+     MCoord e=Ratio(3,3)*s.y;
      
      FigureBox fig(x3,x4,y0+e,y1-e);
      
-     VColor cname;
+     VColor fc;
      
      if( enable_ )
        {
         if( mover==ScrollType_UpPage )
-          cname=+cfg.faceUp;
+          fc=faceUp;
         else
-          cname=+cfg.face;
+          fc=face;
        }
      else
        {
-        cname=+cfg.bottom;
+        fc=bottom;
        }
 
-     fig.solid(art,cname);
+     fig.solid(art,fc);
     }
   
   // drag
@@ -362,7 +369,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
   {
    FigureBox fig(x2,x3,y0,y1);
    
-   fig.solid(art,TwoField({x0,y0},+cfg.top,{x0,y1},+cfg.bottom));
+   fig.solid(art,TwoField({x0,y0},top,{x0,y1},bottom));
   }
   
   {
@@ -378,18 +385,18 @@ void XScrollShape::draw(const DrawBuf &buf) const
    MCoord b1=y0+s.y/2;
    MCoord b2=y1-e;
    
-   VColor cname;
+   VColor fc;
    
    if( enable_ )
      {
       if( mover==ScrollType_Drag )
-        cname=+cfg.faceUp;
+        fc=faceUp;
       else
-        cname=+cfg.face;
+        fc=face;
      }
    else
      {
-      cname=+cfg.bottom;
+      fc=bottom;
      }
    
    if( a2-a0>2*(b2-b0) )
@@ -405,7 +412,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
       fig[4]={a1+c,b2};
       fig[5]={a1-c,b2};
       
-      fig.solid(art,cname);
+      fig.solid(art,fc);
      }
    else
      {
@@ -416,7 +423,7 @@ void XScrollShape::draw(const DrawBuf &buf) const
       fig[2]={a2,b1};
       fig[3]={a1,b2};
 
-      fig.solid(art,cname);
+      fig.solid(art,fc);
      }
   }
  }

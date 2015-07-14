@@ -43,7 +43,7 @@ void LightShape::draw(const DrawBuf &buf) const
   MCoord len=p.dx;
   MCoord radius=len/2;
   MCoord d=Ratio(424,10)*radius;
-  MCoord radius2=(4*radius)/5;
+  MCoord radius2=Ratio(819,10)*radius;
   MPoint center=a.addXY(radius);
 
   art.ball(center,radius,TwoField(a.addXY(d),+cfg.top,a.addXY(len-d),+cfg.bottom));

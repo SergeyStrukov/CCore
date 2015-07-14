@@ -105,15 +105,15 @@ class DragShape
      RefVal<VColor> btnPictNoAlert    =      Gray ;
      RefVal<VColor> btnPictCloseAlert =    Orange ;
      
-     RefVal<VColor> shade_color = Violet ;
-     RefVal<Clr>       shade_alpha =     64 ;
+     RefVal<VColor> shade_color       =    Violet ;
+     RefVal<Clr>    shade_alpha       =        64 ;
      
      RefVal<Font> title_font;
      
-     RefVal<unsigned> blink_time       = 3*25 ;
-     RefVal<unsigned> blink_period     = 3 ;
+     RefVal<unsigned> blink_time   = 3*25 ;
+     RefVal<unsigned> blink_period =    3 ;
      
-     String fatal_error = String("Fatal error") ;
+     RefVal<String> fatal_error = String("Fatal error") ;
      
      Config() {}
      

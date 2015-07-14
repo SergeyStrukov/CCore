@@ -111,11 +111,13 @@ void TextContourShape::draw(const DrawBuf &buf) const
   
   // border
   
+  VColor top=+cfg.top;
+  
   FigureTopBorder fig_top(x0,x1,y0,y1,width);
   
-  fig_top.getLeftCut(t0).solid(art,+cfg.top);
+  fig_top.getLeftCut(t0).solid(art,top);
   
-  fig_top.getRightCut(t1).solid(art,+cfg.top);
+  fig_top.getRightCut(t1).solid(art,top);
   
   FigureBottomBorder fig_bottom(x0,x1,y0,y1,width);
   

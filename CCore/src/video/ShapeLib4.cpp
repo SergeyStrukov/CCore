@@ -46,51 +46,53 @@ void RadioShape::draw(const DrawBuf &buf) const
   MPoint center=a.addXY(radius);
   MCoord d=Ratio(424,10)*radius;
   
+  VColor top=+cfg.top;
+  
   // body
   
   {
-   VColor cname;
+   VColor bottom;
    
    if( mover && enable )
-     cname=+cfg.bottomUp;
+     bottom=+cfg.bottomUp;
    else
-     cname=+cfg.bottom;
+     bottom=+cfg.bottom;
    
-   art.ball(center,radius,TwoField(a.addXY(d),+cfg.top,a.addXY(len-d),cname));
+   art.ball(center,radius,TwoField(a.addXY(d),top,a.addXY(len-d),bottom));
   }
   
   // mark
   
   if( check )
     {
-     VColor cname;
+     VColor mark;
      
      if( enable )
-       cname=+cfg.mark;
+       mark=+cfg.mark;
      else
-       cname=+cfg.top;
+       mark=top;
      
-     art.ball(center,radius/3,cname);
+     art.ball(center,radius/3,mark);
     }
   
   // border
   
   {
-   VColor cname;
+   VColor border;
    
    if( focus )
      {
-      cname=+cfg.focus;
+      border=+cfg.focus;
      }
    else
      {
       if( enable )
-        cname=+cfg.border;
+        border=+cfg.border;
       else
-        cname=+cfg.top;
+        border=top;
      }
    
-   art.circle(center,radius-width/2,width,cname);
+   art.circle(center,radius-width/2,width,border);
   }
  }
 

@@ -504,11 +504,13 @@ void DragShape::draw_Max(DrawArt &art) const
         fig.getBottom().curvePath(art,HalfPos,width,bottom);
        }
      
+     VColor pict=+cfg.btnPict;
+     
      if( max_button )
        {
         FigureBox fig_pict(q);
        
-        fig_pict.solid(art,+cfg.btnPict);
+        fig_pict.solid(art,pict);
        }
      else
        {
@@ -516,7 +518,7 @@ void DragShape::draw_Max(DrawArt &art) const
        
         FigureBox fig_pict(q.x,q.ex-q.dx/3,q.y+e,q.ey-e);
       
-        fig_pict.solid(art,+cfg.btnPict);
+        fig_pict.solid(art,pict);
        }
     }
  }

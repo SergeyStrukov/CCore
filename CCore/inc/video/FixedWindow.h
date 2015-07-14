@@ -77,8 +77,8 @@ class FixedShape
      RefVal<VColor> btnFaceHilight =     Green ;
      RefVal<VColor> btnPictClose   =       Red ;
      
-     RefVal<VColor> shade_color = Violet ;
-     RefVal<Clr> shade_alpha       =     64 ;
+     RefVal<VColor> shade_color    =    Violet ;
+     RefVal<Clr>    shade_alpha    =        64 ;
      
      RefVal<Font> title_font;
     
