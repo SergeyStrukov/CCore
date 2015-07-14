@@ -40,7 +40,7 @@ inline VColor Linear(VColor a,VColor b,uint16 c,uint16 d)
 
 /* classes */
 
-struct AlphaColorName;
+struct AlphaColor;
 
 class ConstantField;
 
@@ -50,9 +50,9 @@ class TwoField;
 
 class RadioField;
 
-/* struct AlphaColorName */
+/* struct AlphaColor */
 
-struct AlphaColorName
+struct AlphaColor
  {
   VColor vc;
   unsigned alpha;
@@ -75,13 +75,13 @@ class ConstantField
 
 class ConstantAlphaField
  {
-   AlphaColorName aname;
+   AlphaColor ac;
    
   public: 
    
-   explicit ConstantAlphaField(VColor vc,unsigned alpha) : aname{vc,alpha} {}
+   explicit ConstantAlphaField(VColor vc,unsigned alpha) : ac{vc,alpha} {}
    
-   AlphaColorName operator () (MPoint) const { return aname; }
+   AlphaColor operator () (MPoint) const { return ac; }
  };
 
 /* class TwoField */
@@ -89,16 +89,16 @@ class ConstantAlphaField
 class TwoField
  {
    MPoint a;
-   VColor vca;
+   VColor va;
    MPoint b;
-   VColor vcb;
+   VColor vb;
    
    DCoord D;
    DownBits<uint16> d;
    
   public:
   
-   TwoField(MPoint a,VColor vca,MPoint b,VColor vcb); 
+   TwoField(MPoint a,VColor va,MPoint b,VColor vb); 
   
    VColor operator () (MPoint point) const;
  };

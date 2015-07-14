@@ -20,29 +20,29 @@ namespace Video {
 
 /* struct DrawPoints */
 
-void DrawPoints::Path(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor cname)
+void DrawPoints::Path(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
-  art.path(dots,width,cname);
+  art.path(dots,width,vc);
  }
 
-void DrawPoints::Loop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor cname)
+void DrawPoints::Loop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
-  art.loop(dots,width,cname);
+  art.loop(dots,width,vc);
  }
 
-void DrawPoints::Path(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor cname)
+void DrawPoints::Path(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  art.path(dots,half_flag,width,cname);
+  art.path(dots,half_flag,width,vc);
  }
 
-void DrawPoints::Loop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor cname)
+void DrawPoints::Loop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  art.loop(dots,half_flag,width,cname);
+  art.loop(dots,half_flag,width,vc);
  }
 
-void DrawPoints::Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor cname)
+void DrawPoints::Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
  {
-  art.solid(dots,solid_flag,cname);
+  art.solid(dots,solid_flag,vc);
  }
 
 void DrawPoints::Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,TwoField field)
@@ -55,29 +55,29 @@ void DrawPoints::Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag 
   art.solid(dots,solid_flag,field);
  }
 
-void DrawPoints::CurvePath(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor cname)
+void DrawPoints::CurvePath(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
-  art.curve(dots,width,cname);
+  art.curve(dots,width,vc);
  }
 
-void DrawPoints::CurveLoop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor cname)
+void DrawPoints::CurveLoop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
-  art.curveLoop(dots,width,cname);
+  art.curveLoop(dots,width,vc);
  }
 
-void DrawPoints::CurvePath(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor cname)
+void DrawPoints::CurvePath(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  art.curve(dots,half_flag,width,cname);
+  art.curve(dots,half_flag,width,vc);
  }
 
-void DrawPoints::CurveLoop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor cname)
+void DrawPoints::CurveLoop(Smooth::DrawArt &art,PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  art.curveLoop(dots,half_flag,width,cname);
+  art.curveLoop(dots,half_flag,width,vc);
  }
 
-void DrawPoints::CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor cname)
+void DrawPoints::CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
  {
-  art.curveSolid(dots,solid_flag,cname);
+  art.curveSolid(dots,solid_flag,vc);
  }
 
 void DrawPoints::CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,TwoField field)
@@ -92,29 +92,29 @@ void DrawPoints::CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,Solid
 
 /* struct DrawDots */
 
-void DrawDots::CurvePath(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,MCoord width,VColor cname)
+void DrawDots::CurvePath(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,MCoord width,VColor vc)
  {
-  art.curveBreak(dots,width,cname);
+  art.curveBreak(dots,width,vc);
  }
 
-void DrawDots::CurveLoop(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,MCoord width,VColor cname)
+void DrawDots::CurveLoop(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,MCoord width,VColor vc)
  {
-  art.curveBreakLoop(dots,width,cname);
+  art.curveBreakLoop(dots,width,vc);
  }
 
-void DrawDots::CurvePath(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,HalfFlag half_flag,MCoord width,VColor cname)
+void DrawDots::CurvePath(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  art.curveBreak(dots,half_flag,width,cname);
+  art.curveBreak(dots,half_flag,width,vc);
  }
 
-void DrawDots::CurveLoop(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,HalfFlag half_flag,MCoord width,VColor cname)
+void DrawDots::CurveLoop(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  art.curveBreakLoop(dots,half_flag,width,cname);
+  art.curveBreakLoop(dots,half_flag,width,vc);
  }
 
-void DrawDots::CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,VColor cname)
+void DrawDots::CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,VColor vc)
  {
-  art.curveBreakSolid(dots,solid_flag,cname);
+  art.curveBreakSolid(dots,solid_flag,vc);
  }
 
 void DrawDots::CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,TwoField field)

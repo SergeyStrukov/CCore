@@ -774,14 +774,14 @@ class FieldPlotBase : DrawBuf
        plot(p,vc,alpha);
     }
    
-   void plot(Point p,AlphaColorName aname)
+   void plot(Point p,AlphaColor ac)
     {
-     plot_safe(p,aname.vc,aname.alpha);
+     plot_safe(p,ac.vc,ac.alpha);
     }
    
-   void plot(Point p,AlphaColorName aname,unsigned alpha)
+   void plot(Point p,AlphaColor ac,unsigned alpha)
     {
-     plot_safe(p,aname.vc,(Min(aname.alpha,AlphaLim)*alpha)>>ClrBits);
+     plot_safe(p,ac.vc,(Min(ac.alpha,AlphaLim)*alpha)>>ClrBits);
     }
  };
 

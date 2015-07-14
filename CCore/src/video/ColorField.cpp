@@ -22,11 +22,11 @@ namespace Video {
 
 /* class TwoField */
 
-TwoField::TwoField(MPoint a_,VColor vca_,MPoint b_,VColor vcb_) 
+TwoField::TwoField(MPoint a_,VColor va_,MPoint b_,VColor vb_) 
  : a(a_),
-   vca(vca_),
+   va(va_),
    b(b_),
-   vcb(vcb_) 
+   vb(vb_) 
  { 
   b-=a; 
   
@@ -41,11 +41,11 @@ VColor TwoField::operator () (MPoint point) const
  {
   DCoord P=Prod(point-a,b);
   
-  if( P<=0 ) return vca;
+  if( P<=0 ) return va;
   
-  if( P>=D ) return vcb;
+  if( P>=D ) return vb;
   
-  return Linear(vca,vcb,d(uDCoord(P)),d);
+  return Linear(va,vb,d(uDCoord(P)),d);
  }
 
 /* class RadioField */
