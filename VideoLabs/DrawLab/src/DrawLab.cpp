@@ -312,7 +312,7 @@ void DrawLab::drawMark(Smooth::DrawArt &art,Point point,Smooth::DotType dot_type
 
 void DrawLab::drawPickMark(Smooth::DrawArt &art,Point point) const
  {
-  art.ballField(point,Fraction(cfg.pick_len),ConstantAlphaField(cfg.pick,MedClr));
+  art.ball_gen(point,Fraction(cfg.pick_len),ConstantAlphaField(cfg.pick,MedClr));
  }
 
 void DrawLab::drawNearMark(Smooth::DrawArt &art,Point point) const
@@ -339,14 +339,14 @@ void DrawLab::drawPath(Smooth::DrawArt art,Map map,bool do_loop) const
        {
         Point b=map(*r);
         
-        art.pathOf(cfg.width,cfg.path,a,b);
+        art.path(cfg.width,cfg.path,a,b);
         
         a=b;
        }
      
      if( do_loop )
        {
-        art.pathOf(cfg.width,cfg.path,a,o);
+        art.path(cfg.width,cfg.path,a,o);
        }
     }
   
@@ -394,7 +394,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.curveBreak(Range(dots),cfg.width,cfg.path);
+       art.curvePath(Range(dots),cfg.width,cfg.path);
        
        drawMarks(buf);
       }
@@ -404,7 +404,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.curveBreakLoop(Range(dots),cfg.width,cfg.path);
+       art.curveLoop(Range(dots),cfg.width,cfg.path);
        
        drawMarks(buf);
       }
@@ -414,7 +414,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.solid(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,SolidOdd,cfg.path);
+       art.solid_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,SolidOdd,cfg.path);
        
        drawMarks(buf);
       }
@@ -424,7 +424,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.solid(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,SolidAll,cfg.path);
+       art.solid_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,SolidAll,cfg.path);
        
        drawMarks(buf);
       }
@@ -434,7 +434,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.curveBreakSolid(Range_const(dots),SolidOdd,cfg.path);
+       art.curveSolid(Range_const(dots),SolidOdd,cfg.path);
        
        drawMarks(buf);
       }
@@ -444,7 +444,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.curveBreakSolid(Range_const(dots),SolidAll,cfg.path);
+       art.curveSolid(Range_const(dots),SolidAll,cfg.path);
        
        drawMarks(buf);
       }
@@ -454,7 +454,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.path(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,line_width,cfg.path);
+       art.path_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,line_width,cfg.path);
        
        drawMarks(buf);
       }
@@ -464,7 +464,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.loop(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,line_width,cfg.path);
+       art.loop_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,line_width,cfg.path);
        
        drawMarks(buf);
       }
@@ -474,7 +474,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.curveBreak(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,line_width,cfg.path);
+       art.curveBreakPath_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,line_width,cfg.path);
        
        drawMarks(buf);
       }
@@ -484,7 +484,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.curveBreakLoop(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,line_width,cfg.path);
+       art.curveBreakLoop_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,line_width,cfg.path);
        
        drawMarks(buf);
       }
@@ -494,7 +494,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.path(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,half_flag,line_width,cfg.path);
+       art.path_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,half_flag,line_width,cfg.path);
        
        drawMarks(buf);
       }
@@ -504,7 +504,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.loop(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,half_flag,line_width,cfg.path);
+       art.loop_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,half_flag,line_width,cfg.path);
        
        drawMarks(buf);
       }
@@ -514,7 +514,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.curveBreak(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,half_flag,line_width,cfg.path);
+       art.curveBreakPath_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,half_flag,line_width,cfg.path);
        
        drawMarks(buf);
       }
@@ -524,7 +524,7 @@ void DrawLab::drawNormal(DrawBuf buf) const
       {
        Smooth::DrawArt art(buf);
        
-       art.curveBreakLoop(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,half_flag,line_width,cfg.path);
+       art.curveBreakLoop_gen(Range_const(dots), [] (Smooth::Dot dot) { return dot.point; } ,half_flag,line_width,cfg.path);
        
        drawMarks(buf);
       }
@@ -577,7 +577,7 @@ class DrawLab::ZoomPath
        }
      else
        {
-        art.pathOf(width,cname,prev,p);
+        art.path(width,cname,prev,p);
        }
      
      prev=p;
@@ -614,7 +614,7 @@ class DrawLab::ZoomLoop
        {
         if( !first )
           {
-           art.pathOf(width,cname,prev,start);
+           art.path(width,cname,prev,start);
           }
        }
       
@@ -629,7 +629,7 @@ class DrawLab::ZoomLoop
           }
         else
           {
-           art.pathOf(width,cname,prev,p);
+           art.path(width,cname,prev,p);
           }
         
         prev=p;
@@ -670,9 +670,9 @@ void DrawLab::drawZoom(DrawBuf buf) const
   
   // grid
   {
-   for(Coord x=0,i=0; x<zoom.dx ;x+=cfg.zoom_mul,i++) art.pathOf(cfg.grid_width,(i%16)?cfg.grid:cfg.grid2,Point(x,0),Point(x,zoom.dy-1));
+   for(Coord x=0,i=0; x<zoom.dx ;x+=cfg.zoom_mul,i++) art.path(cfg.grid_width,(i%16)?cfg.grid:cfg.grid2,Point(x,0),Point(x,zoom.dy-1));
    
-   for(Coord y=0,i=0; y<zoom.dy ;y+=cfg.zoom_mul,i++) art.pathOf(cfg.grid_width,(i%16)?cfg.grid:cfg.grid2,Point(0,y),Point(zoom.dx-1,y));
+   for(Coord y=0,i=0; y<zoom.dy ;y+=cfg.zoom_mul,i++) art.path(cfg.grid_width,(i%16)?cfg.grid:cfg.grid2,Point(0,y),Point(zoom.dx-1,y));
   }
   
   switch( draw_type )
