@@ -83,7 +83,7 @@ void CheckShape::draw(const DrawBuf &buf) const
      else
        mark=top;
      
-     art.pathOf(width,mark,a,b,c);
+     art.path(width,mark,a,b,c);
     }
   
   // border

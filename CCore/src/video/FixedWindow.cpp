@@ -183,8 +183,8 @@ void FixedShape::draw_Close(DrawArt &art) const
      
      VColor pict=+cfg.btnPictClose;
      
-     art.pathOf(w,pict,q.getTopLeft(),q.getBottomRight());
-     art.pathOf(w,pict,q.getBottomLeft(),q.getTopRight());
+     art.path(w,pict,q.getTopLeft(),q.getBottomRight());
+     art.path(w,pict,q.getBottomLeft(),q.getTopRight());
     }
  }
 

@@ -183,7 +183,7 @@ void ShapeLab1::draw(DrawBuf buf,bool drag_active) const
   {
    MCoord len=cfg.len;
     
-   art.pathOf(cfg.width,Black,size_base+MPoint(len,0),size_base,size_base+MPoint(0,len));
+   art.path(cfg.width,Black,size_base+MPoint(len,0),size_base,size_base+MPoint(0,len));
   }
   
   dlist.draw(buf,drag_active);

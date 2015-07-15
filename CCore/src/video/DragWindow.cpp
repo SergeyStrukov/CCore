@@ -236,7 +236,7 @@ void DragShape::draw_Left(DrawArt &art) const
      
      MCoord w=p.dx/4;
      
-     art.pathOf(w,dragColor(DragType_Left),MPoint(x0,y0),MPoint(x0,y1));
+     art.path(w,dragColor(DragType_Left),MPoint(x0,y0),MPoint(x0,y1));
     }
  }
 
@@ -274,7 +274,7 @@ void DragShape::draw_Bottom(DrawArt &art) const
      
      MCoord w=p.dy/4;
      
-     art.pathOf(w,dragColor(DragType_Bottom),MPoint(x0,y0),MPoint(x1,y0));
+     art.path(w,dragColor(DragType_Bottom),MPoint(x0,y0),MPoint(x1,y0));
     }
  }
 
@@ -312,7 +312,7 @@ void DragShape::draw_Right(DrawArt &art) const
      
      MCoord w=p.dx/4;
      
-     art.pathOf(w,dragColor(DragType_Right),MPoint(x0,y0),MPoint(x0,y1));
+     art.path(w,dragColor(DragType_Right),MPoint(x0,y0),MPoint(x0,y1));
     }
  }
 
@@ -561,8 +561,8 @@ void DragShape::draw_Close(DrawArt &art) const
      
      VColor pict=+cfg.btnPictClose;
      
-     art.pathOf(w,pict,q.getTopLeft(),q.getBottomRight());
-     art.pathOf(w,pict,q.getTopRight(),q.getBottomLeft());
+     art.path(w,pict,q.getTopLeft(),q.getBottomRight());
+     art.path(w,pict,q.getTopRight(),q.getBottomLeft());
     }
  }
 

@@ -79,8 +79,8 @@ void KnobShape::draw(const DrawBuf &buf) const
        MCoord a=radius/2;
        MCoord w=radius/3;
        
-       art.pathOf(w,fc,center.subX(a),center.addX(a));
-       art.pathOf(w,fc,center.subY(a),center.addY(a));
+       art.path(w,fc,center.subX(a),center.addX(a));
+       art.path(w,fc,center.subY(a),center.addY(a));
       }
      break;
      
@@ -89,7 +89,7 @@ void KnobShape::draw(const DrawBuf &buf) const
        MCoord a=radius/2;
        MCoord w=radius/3;
        
-       art.pathOf(w,fc,center.subX(a),center.addX(a));
+       art.path(w,fc,center.subX(a),center.addX(a));
       }
      break;
      
@@ -98,8 +98,8 @@ void KnobShape::draw(const DrawBuf &buf) const
        MCoord a=radius/2;
        MCoord w=radius/3;
        
-       art.pathOf(w,fc,center.subXY(a),center.addXY(a));
-       art.pathOf(w,fc,center.addXsubY(a),center.subXaddY(a));
+       art.path(w,fc,center.subXY(a),center.addXY(a));
+       art.path(w,fc,center.addXsubY(a),center.subXaddY(a));
       }
      break;
      

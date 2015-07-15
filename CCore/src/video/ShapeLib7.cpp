@@ -45,7 +45,7 @@ void XSingleLineShape::draw(const DrawBuf &buf) const
   
   MCoord y=p.y+p.dy/2;
   
-  art.pathOf(width,+cfg.line,MPoint(x0,y),MPoint(x1,y));
+  art.path(width,+cfg.line,MPoint(x0,y),MPoint(x1,y));
  }
 
 /* class YSingleLineShape */
@@ -72,7 +72,7 @@ void YSingleLineShape::draw(const DrawBuf &buf) const
   MCoord y0=p.y+width/2;
   MCoord y1=p.ey-width/2;
   
-  art.pathOf(width,+cfg.line,MPoint(x,y0),MPoint(x,y1));
+  art.path(width,+cfg.line,MPoint(x,y0),MPoint(x,y1));
  }
 
 } // namespace Video

@@ -63,49 +63,146 @@ void DrawArt::block(Pane pane,VColor vc,Clr alpha)
 
  // special
 
-void DrawArt::knob(MPoint p,MCoord len,VColor vc)
+void DrawArt::knob(MPoint center,MCoord len,VColor vc)
  {
-  knobField(p,len,ConstantField(vc));
+  knob_gen(center,len,ConstantField(vc));
  }
 
 void DrawArt::ball(MPoint center,MCoord radius,VColor vc)
  {
-  ballField(center,radius,ConstantField(vc));
+  ball_gen(center,radius,ConstantField(vc));
  }
 
-void DrawArt::ball(MPoint center,MCoord radius,TwoField field)
+void DrawArt::ball(MPoint center,MCoord radius,const TwoField &field)
  {
-  ballField(center,radius,field);
+  ball_gen(center,radius,field);
  }
 
-void DrawArt::ball(MPoint center,MCoord radius,RadioField field)
+void DrawArt::ball(MPoint center,MCoord radius,const RadioField &field)
  {
-  ballField(center,radius,field);
+  ball_gen(center,radius,field);
  }
 
 void DrawArt::circle(MPoint center,MCoord radius,MCoord width,VColor vc)
  {
-  circleField(center,radius,width,ConstantField(vc));
+  circle_gen(center,radius,width,ConstantField(vc));
  }
 
-void DrawArt::pathOf(PtrLen<const MPoint> dots,MCoord width,VColor vc)
+ // special line
+
+void DrawArt::path(PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
-  path(dots,width,vc);
+  path_gen(dots,width,vc);
  }
 
-void DrawArt::loopOf(PtrLen<const MPoint> dots,MCoord width,VColor vc)
+void DrawArt::loop(PtrLen<const MPoint> dots,MCoord width,VColor vc)
  {
-  loop(dots,width,vc);
+  loop_gen(dots,width,vc);
  }
 
-void DrawArt::pathOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
+ // special half line
+
+void DrawArt::path(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  path(dots,half_flag,width,vc);
+  path_gen(dots,half_flag,width,vc);
  }
 
-void DrawArt::loopOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
+void DrawArt::loop(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
  {
-  loop(dots,half_flag,width,vc);
+  loop_gen(dots,half_flag,width,vc);
+ }
+
+ // special curve
+
+void DrawArt::curvePath(PtrLen<const MPoint> dots,MCoord width,VColor vc)
+ {
+  curvePath_gen(dots,width,vc);
+ }
+
+void DrawArt::curveLoop(PtrLen<const MPoint> dots,MCoord width,VColor vc)
+ {
+  curveLoop_gen(dots,width,vc);
+ }
+
+void DrawArt::curvePath(PtrLen<const Dot> dots,MCoord width,VColor vc)
+ {
+  curveBreakPath_gen(dots,width,vc);
+ }
+
+void DrawArt::curveLoop(PtrLen<const Dot> dots,MCoord width,VColor vc)
+ {
+  curveBreakLoop_gen(dots,width,vc);
+ }
+
+ // special half curve
+
+void DrawArt::curvePath(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
+ {
+  curvePath_gen(dots,half_flag,width,vc);
+ }
+
+void DrawArt::curveLoop(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc)
+ {
+  curveLoop_gen(dots,half_flag,width,vc);
+ }
+
+void DrawArt::curvePath(PtrLen<const Dot> dots,HalfFlag half_flag,MCoord width,VColor vc)
+ {
+  curveBreakPath_gen(dots,half_flag,width,vc);
+ }
+
+void DrawArt::curveLoop(PtrLen<const Dot> dots,HalfFlag half_flag,MCoord width,VColor vc)
+ {
+  curveBreakLoop_gen(dots,half_flag,width,vc);
+ }
+
+ // special solid
+
+void DrawArt::solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
+ {
+  solid_gen(dots,solid_flag,vc);
+ }
+
+void DrawArt::solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field)
+ {
+  solid_gen(dots,solid_flag,field);
+ }
+
+void DrawArt::solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field)
+ {
+  solid_gen(dots,solid_flag,field);
+ }
+
+ // special curve solid
+
+void DrawArt::curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc)
+ {
+  curveSolid_gen(dots,solid_flag,vc);
+ }
+
+void DrawArt::curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field)
+ {
+  curveSolid_gen(dots,solid_flag,field);
+ }
+
+void DrawArt::curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field)
+ {
+  curveSolid_gen(dots,solid_flag,field);
+ }
+
+void DrawArt::curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,VColor vc)
+ {
+  curveBreakSolid_gen(dots,solid_flag,vc);
+ }
+
+void DrawArt::curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const TwoField &field)
+ {
+  curveBreakSolid_gen(dots,solid_flag,field);
+ }
+
+void DrawArt::curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const RadioField &field)
+ {
+  curveBreakSolid_gen(dots,solid_flag,field);
  }
 
 } // namespace Smooth

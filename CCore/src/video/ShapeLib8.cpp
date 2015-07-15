@@ -47,8 +47,8 @@ void XDoubleLineShape::draw(const DrawBuf &buf) const
   MCoord y0=y-width/2;
   MCoord y1=y+width/2;
   
-  art.pathOf(width,+cfg.top,MPoint(x0,y0),MPoint(x1,y0));
-  art.pathOf(width,+cfg.bottom,MPoint(x0,y1),MPoint(x1,y1));
+  art.path(width,+cfg.top,MPoint(x0,y0),MPoint(x1,y0));
+  art.path(width,+cfg.bottom,MPoint(x0,y1),MPoint(x1,y1));
  }
 
 /* class YDoubleLineShape */
@@ -77,8 +77,8 @@ void YDoubleLineShape::draw(const DrawBuf &buf) const
   MCoord y0=p.y+width/2;
   MCoord y1=p.ey-width/2;
   
-  art.pathOf(width,+cfg.top,MPoint(x0,y0),MPoint(x0,y1));
-  art.pathOf(width,+cfg.bottom,MPoint(x1,y0),MPoint(x1,y1));
+  art.path(width,+cfg.top,MPoint(x0,y0),MPoint(x0,y1));
+  art.path(width,+cfg.bottom,MPoint(x1,y0),MPoint(x1,y1));
  }
 
 } // namespace Video

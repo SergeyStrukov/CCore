@@ -1371,562 +1371,611 @@ class DrawArt
    
    void block(Pane pane,VColor vc,Clr alpha);
    
-   // solid
+   // generic line
    
    template <class R>
-   void solid(R dots,SolidFlag solid_flag,VColor vc) // MPoint
+   void path_gen(R dots,MCoord width,VColor vc) // MPoint
     {
-     solid(dots,solid_flag,ConstantField(vc));
+     path_gen(dots,width,ConstantField(vc));
     }
    
    template <class R>
-   void curveSolid(R dots,SolidFlag solid_flag,VColor vc) // MPoint
+   void loop_gen(R dots,MCoord width,VColor vc) // MPoint
     {
-     curveSolid(dots,solid_flag,ConstantField(vc));
-    }
-   
-   template <class R>
-   void curveBreakSolid(R dots,SolidFlag solid_flag,VColor vc) // Dot
-    {
-     curveBreakSolid(dots,solid_flag,ConstantField(vc));
+     loop_gen(dots,width,ConstantField(vc));
     }
    
    template <class R,class Field>
-   void solid(R dots,SolidFlag solid_flag,const Field &field) // MPoint
+   void path_gen(R dots,MCoord width,const Field &field) // MPoint
     {
-     SolidDriver driver(dots);
+     PathDots path(dots,width);
      
-     driver(solid_flag,FieldPlot<Field>(buf,field));
+     solid_gen(path.complete(),SolidAll,field);
     }
    
    template <class R,class Field>
-   void curveSolid(R dots,SolidFlag solid_flag,const Field &field) // MPoint
+   void loop_gen(R dots,MCoord width,const Field &field) // MPoint
+    {
+     LoopDots loop(dots,width);
+     
+     solid_gen(loop.complete(),SolidAll,field);
+    }
+   
+   
+   template <class R,class Map>
+   void path_gen(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+    {
+     path_gen(dots,map,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map>
+   void loop_gen(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+    {
+     loop_gen(dots,map,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map,class Field>
+   void path_gen(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     PathDots path(dots,map,width);
+     
+     solid_gen(path.complete(),SolidAll,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void loop_gen(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     LoopDots loop(dots,map,width);
+     
+     solid_gen(loop.complete(),SolidAll,field);
+    }
+   
+   // half line
+   
+   template <class R>
+   void path_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
+    {
+     path_gen(dots,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R>
+   void loop_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
+    {
+     loop_gen(dots,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R,class Field>
+   void path_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+    {
+     HalfPathDots path(dots,half_flag,width);
+     
+     solid_gen(path.complete(),SolidAll,field);
+    }
+   
+   template <class R,class Field>
+   void loop_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+    {
+     HalfLoopDots loop(dots,half_flag,width);
+     
+     solid_gen(loop.complete(),SolidAll,field);
+    }
+   
+   
+   template <class R,class Map>
+   void path_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
+    {
+     path_gen(dots,map,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map>
+   void loop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
+    {
+     loop_gen(dots,map,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map,class Field>
+   void path_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     HalfPathDots path(dots,map,half_flag,width);
+     
+     solid_gen(path.complete(),SolidAll,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void loop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     HalfLoopDots loop(dots,map,half_flag,width);
+     
+     solid_gen(loop.complete(),SolidAll,field);
+    }
+   
+   // generic curve
+
+   template <class R>
+   void curvePath_gen(R dots,MCoord width,VColor vc) // MPoint
+    {
+     curvePath_gen(dots,width,ConstantField(vc));
+    }
+   
+   template <class R>
+   void curveBreakPath_gen(R dots,MCoord width,VColor vc) // Dot
+    {
+     curveBreakPath_gen(dots,width,ConstantField(vc));
+    }
+   
+   template <class R>
+   void curveLoop_gen(R dots,MCoord width,VColor vc) // MPoint
+    {
+     curveLoop_gen(dots,width,ConstantField(vc));
+    }
+   
+   template <class R>
+   void curveBreakLoop_gen(R dots,MCoord width,VColor vc) // Dot
+    {
+     curveBreakLoop_gen(dots,width,ConstantField(vc));
+    }
+   
+   template <class R,class Field>
+   void curvePath_gen(R dots,MCoord width,const Field &field) // MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurvePath(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path_gen(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Field>
+   void curveBreakPath_gen(R dots,MCoord width,const Field &field) // Dot
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakPath(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path_gen(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Field>
+   void curveLoop_gen(R dots,MCoord width,const Field &field) // MPoint
     {
      Collector<MPoint> temp;
      
      CurveLoop(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
      
-     solid(Range_const(temp.flat()),solid_flag,field);
+     loop_gen(Range_const(temp.flat()),width,field);
     }
    
    template <class R,class Field>
-   void curveBreakSolid(R dots,SolidFlag solid_flag,const Field &field) // Dot
+   void curveBreakLoop_gen(R dots,MCoord width,const Field &field) // Dot
     {
      Collector<MPoint> temp;
      
      CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
      
-     solid(Range_const(temp.flat()),solid_flag,field);
+     loop_gen(Range_const(temp.flat()),width,field);
+    }
+   
+
+   template <class R,class Map>
+   void curvePath_gen(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+    {
+     curvePath_gen(dots,map,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map>
+   void curveBreakPath_gen(R dots,Map map,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+    {
+     curveBreakPath_gen(dots,map,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map>
+   void curveLoop_gen(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+    {
+     curveLoop_gen(dots,map,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map>
+   void curveBreakLoop_gen(R dots,Map map,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+    {
+     curveBreakLoop_gen(dots,map,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map,class Field>
+   void curvePath_gen(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurvePath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path_gen(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreakPath_gen(R dots,Map map,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakPath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path_gen(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveLoop_gen(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop_gen(Range_const(temp.flat()),width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreakLoop_gen(R dots,Map map,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop_gen(Range_const(temp.flat()),width,field);
+    }
+
+   // generic half curve
+   
+   template <class R>
+   void curvePath_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
+    {
+     curvePath_gen(dots,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R>
+   void curveBreakPath_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // Dot
+    {
+     curveBreakPath_gen(dots,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R>
+   void curveLoop_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
+    {
+     curveLoop_gen(dots,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R>
+   void curveBreakLoop_gen(R dots,HalfFlag half_flag,MCoord width,VColor vc) // Dot
+    {
+     curveBreakLoop_gen(dots,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R,class Field>
+   void curvePath_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurvePath(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path_gen(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Field>
+   void curveBreakPath_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // Dot
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakPath(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path_gen(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Field>
+   void curveLoop_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop_gen(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Field>
+   void curveBreakLoop_gen(R dots,HalfFlag half_flag,MCoord width,const Field &field) // Dot
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop_gen(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+
+   template <class R,class Map>
+   void curvePath_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
+    {
+     curvePath_gen(dots,map,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map>
+   void curveBreakPath_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+    {
+     curveBreakPath_gen(dots,map,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map>
+   void curveLoop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
+    {
+     curveLoop_gen(dots,map,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map>
+   void curveBreakLoop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+    {
+     curveBreakLoop_gen(dots,map,half_flag,width,ConstantField(vc));
+    }
+   
+   template <class R,class Map,class Field>
+   void curvePath_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurvePath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path_gen(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreakPath_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakPath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     path_gen(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveLoop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop_gen(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   template <class R,class Map,class Field>
+   void curveBreakLoop_gen(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+    {
+     Collector<MPoint> temp;
+     
+     CurveBreakLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
+     
+     loop_gen(Range_const(temp.flat()),half_flag,width,field);
+    }
+   
+   // generic solid
+   
+   template <class R>
+   void solid_gen(R dots,SolidFlag solid_flag,VColor vc) // MPoint
+    {
+     solid_gen(dots,solid_flag,ConstantField(vc));
+    }
+   
+   template <class R,class Field>
+   void solid_gen(R dots,SolidFlag solid_flag,const Field &field) // MPoint
+    {
+     SolidDriver driver(dots);
+     
+     driver(solid_flag,FieldPlot<Field>(buf,field));
     }
 
    
    template <class R,class Map>
-   void solid(R dots,Map map,SolidFlag solid_flag,VColor vc) // map(...) -> MPoint
+   void solid_gen(R dots,Map map,SolidFlag solid_flag,VColor vc) // map(...) -> MPoint
     {
-     solid(dots,map,solid_flag,ConstantField(vc));
-    }
-   
-   template <class R,class Map>
-   void curveSolid(R dots,Map map,SolidFlag solid_flag,VColor vc) // map(...) -> MPoint
-    {
-     curveSolid(dots,map,solid_flag,ConstantField(vc));
-    }
-   
-   template <class R,class Map>
-   void curveBreakSolid(R dots,Map map,SolidFlag solid_flag,VColor vc) // Dot dots, map(...) -> MPoint
-    {
-     curveBreakSolid(dots,map,solid_flag,ConstantField(vc));
+     solid_gen(dots,map,solid_flag,ConstantField(vc));
     }
    
    template <class R,class Map,class Field>
-   void solid(R dots,Map map,SolidFlag solid_flag,const Field &field) // map(...) -> MPoint
+   void solid_gen(R dots,Map map,SolidFlag solid_flag,const Field &field) // map(...) -> MPoint
     {
      SolidDriver driver(dots,map);
      
      driver(solid_flag,FieldPlot<Field>(buf,field));
     }
    
-   template <class R,class Map,class Field>
-   void curveSolid(R dots,Map map,SolidFlag solid_flag,const Field &field) // map(...) -> MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurveLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     solid(Range_const(temp.flat()),solid_flag,field);
-    }
-   
-   template <class R,class Map,class Field>
-   void curveBreakSolid(R dots,Map map,SolidFlag solid_flag,const Field &field) // Dot dots, map(...) -> MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurveBreakLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     solid(Range_const(temp.flat()),solid_flag,field);
-    }
-   
-   // line
+   // generic curve solid
    
    template <class R>
-   void path(R dots,MCoord width,VColor vc) // MPoint
+   void curveSolid_gen(R dots,SolidFlag solid_flag,VColor vc) // MPoint
     {
-     path(dots,width,ConstantField(vc));
+     curveSolid_gen(dots,solid_flag,ConstantField(vc));
     }
    
    template <class R>
-   void loop(R dots,MCoord width,VColor vc) // MPoint
+   void curveBreakSolid_gen(R dots,SolidFlag solid_flag,VColor vc) // Dot
     {
-     loop(dots,width,ConstantField(vc));
+     curveBreakSolid_gen(dots,solid_flag,ConstantField(vc));
     }
    
    template <class R,class Field>
-   void path(R dots,MCoord width,const Field &field) // MPoint
-    {
-     PathDots path(dots,width);
-     
-     solid(path.complete(),SolidAll,field);
-    }
-   
-   template <class R,class Field>
-   void loop(R dots,MCoord width,const Field &field) // MPoint
-    {
-     LoopDots loop(dots,width);
-     
-     solid(loop.complete(),SolidAll,field);
-    }
-   
-   
-   template <class R,class Map>
-   void path(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
-    {
-     path(dots,map,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map>
-   void loop(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
-    {
-     loop(dots,map,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map,class Field>
-   void path(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
-    {
-     PathDots path(dots,map,width);
-     
-     solid(path.complete(),SolidAll,field);
-    }
-   
-   template <class R,class Map,class Field>
-   void loop(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
-    {
-     LoopDots loop(dots,map,width);
-     
-     solid(loop.complete(),SolidAll,field);
-    }
-   
-   // curve
-
-   template <class R>
-   void curve(R dots,MCoord width,VColor vc) // MPoint
-    {
-     curve(dots,width,ConstantField(vc));
-    }
-   
-   template <class R>
-   void curveBreak(R dots,MCoord width,VColor vc) // Dot
-    {
-     curveBreak(dots,width,ConstantField(vc));
-    }
-   
-   template <class R>
-   void curveLoop(R dots,MCoord width,VColor vc) // MPoint
-    {
-     curveLoop(dots,width,ConstantField(vc));
-    }
-   
-   template <class R>
-   void curveBreakLoop(R dots,MCoord width,VColor vc) // Dot
-    {
-     curveBreakLoop(dots,width,ConstantField(vc));
-    }
-   
-   template <class R,class Field>
-   void curve(R dots,MCoord width,const Field &field) // MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurvePath(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     path(Range_const(temp.flat()),width,field);
-    }
-   
-   template <class R,class Field>
-   void curveBreak(R dots,MCoord width,const Field &field) // Dot
-    {
-     Collector<MPoint> temp;
-     
-     CurveBreakPath(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     path(Range_const(temp.flat()),width,field);
-    }
-   
-   template <class R,class Field>
-   void curveLoop(R dots,MCoord width,const Field &field) // MPoint
+   void curveSolid_gen(R dots,SolidFlag solid_flag,const Field &field) // MPoint
     {
      Collector<MPoint> temp;
      
      CurveLoop(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
      
-     loop(Range_const(temp.flat()),width,field);
+     solid_gen(Range_const(temp.flat()),solid_flag,field);
     }
    
    template <class R,class Field>
-   void curveBreakLoop(R dots,MCoord width,const Field &field) // Dot
+   void curveBreakSolid_gen(R dots,SolidFlag solid_flag,const Field &field) // Dot
     {
      Collector<MPoint> temp;
      
      CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
      
-     loop(Range_const(temp.flat()),width,field);
+     solid_gen(Range_const(temp.flat()),solid_flag,field);
     }
    
-
-   template <class R,class Map>
-   void curve(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
-    {
-     curve(dots,map,width,ConstantField(vc));
-    }
    
    template <class R,class Map>
-   void curveBreak(R dots,Map map,MCoord width,VColor vc) // Dot , map(...) -> MPoint
+   void curveSolid_gen(R dots,Map map,SolidFlag solid_flag,VColor vc) // map(...) -> MPoint
     {
-     curveBreak(dots,map,width,ConstantField(vc));
+     curveSolid_gen(dots,map,solid_flag,ConstantField(vc));
     }
    
    template <class R,class Map>
-   void curveLoop(R dots,Map map,MCoord width,VColor vc) // map(...) -> MPoint
+   void curveBreakSolid_gen(R dots,Map map,SolidFlag solid_flag,VColor vc) // Dot dots, map(...) -> MPoint
     {
-     curveLoop(dots,map,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map>
-   void curveBreakLoop(R dots,Map map,MCoord width,VColor vc) // Dot , map(...) -> MPoint
-    {
-     curveBreakLoop(dots,map,width,ConstantField(vc));
+     curveBreakSolid_gen(dots,map,solid_flag,ConstantField(vc));
     }
    
    template <class R,class Map,class Field>
-   void curve(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurvePath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     path(Range_const(temp.flat()),width,field);
-    }
-   
-   template <class R,class Map,class Field>
-   void curveBreak(R dots,Map map,MCoord width,const Field &field) // Dot , map(...) -> MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurveBreakPath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     path(Range_const(temp.flat()),width,field);
-    }
-   
-   template <class R,class Map,class Field>
-   void curveLoop(R dots,Map map,MCoord width,const Field &field) // map(...) -> MPoint
+   void curveSolid_gen(R dots,Map map,SolidFlag solid_flag,const Field &field) // map(...) -> MPoint
     {
      Collector<MPoint> temp;
      
      CurveLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
      
-     loop(Range_const(temp.flat()),width,field);
+     solid_gen(Range_const(temp.flat()),solid_flag,field);
     }
    
    template <class R,class Map,class Field>
-   void curveBreakLoop(R dots,Map map,MCoord width,const Field &field) // Dot , map(...) -> MPoint
+   void curveBreakSolid_gen(R dots,Map map,SolidFlag solid_flag,const Field &field) // Dot dots, map(...) -> MPoint
     {
      Collector<MPoint> temp;
      
      CurveBreakLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
      
-     loop(Range_const(temp.flat()),width,field);
-    }
-
-   // half line
-   
-   template <class R>
-   void path(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
-    {
-     path(dots,half_flag,width,ConstantField(vc));
+     solid_gen(Range_const(temp.flat()),solid_flag,field);
     }
    
-   template <class R>
-   void loop(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
-    {
-     loop(dots,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R,class Field>
-   void path(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
-    {
-     HalfPathDots path(dots,half_flag,width);
-     
-     solid(path.complete(),SolidAll,field);
-    }
-   
-   template <class R,class Field>
-   void loop(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
-    {
-     HalfLoopDots loop(dots,half_flag,width);
-     
-     solid(loop.complete(),SolidAll,field);
-    }
-   
-   
-   template <class R,class Map>
-   void path(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
-    {
-     path(dots,map,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map>
-   void loop(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
-    {
-     loop(dots,map,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map,class Field>
-   void path(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
-    {
-     HalfPathDots path(dots,map,half_flag,width);
-     
-     solid(path.complete(),SolidAll,field);
-    }
-   
-   template <class R,class Map,class Field>
-   void loop(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
-    {
-     HalfLoopDots loop(dots,map,half_flag,width);
-     
-     solid(loop.complete(),SolidAll,field);
-    }
-   
-   // half curve
-
-   template <class R>
-   void curve(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
-    {
-     curve(dots,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R>
-   void curveBreak(R dots,HalfFlag half_flag,MCoord width,VColor vc) // Dot
-    {
-     curveBreak(dots,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R>
-   void curveLoop(R dots,HalfFlag half_flag,MCoord width,VColor vc) // MPoint
-    {
-     curveLoop(dots,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R>
-   void curveBreakLoop(R dots,HalfFlag half_flag,MCoord width,VColor vc) // Dot
-    {
-     curveBreakLoop(dots,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R,class Field>
-   void curve(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurvePath(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     path(Range_const(temp.flat()),half_flag,width,field);
-    }
-   
-   template <class R,class Field>
-   void curveBreak(R dots,HalfFlag half_flag,MCoord width,const Field &field) // Dot
-    {
-     Collector<MPoint> temp;
-     
-     CurveBreakPath(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     path(Range_const(temp.flat()),half_flag,width,field);
-    }
-   
-   template <class R,class Field>
-   void curveLoop(R dots,HalfFlag half_flag,MCoord width,const Field &field) // MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurveLoop(dots, [] (MPoint point) { return point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     loop(Range_const(temp.flat()),half_flag,width,field);
-    }
-   
-   template <class R,class Field>
-   void curveBreakLoop(R dots,HalfFlag half_flag,MCoord width,const Field &field) // Dot
-    {
-     Collector<MPoint> temp;
-     
-     CurveBreakLoop(dots, [] (Dot dot) { return dot.point; } , [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     loop(Range_const(temp.flat()),half_flag,width,field);
-    }
-   
-
-   template <class R,class Map>
-   void curve(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
-    {
-     curve(dots,map,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map>
-   void curveBreak(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // Dot , map(...) -> MPoint
-    {
-     curveBreak(dots,map,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map>
-   void curveLoop(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // map(...) -> MPoint
-    {
-     curveLoop(dots,map,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map>
-   void curveBreakLoop(R dots,Map map,HalfFlag half_flag,MCoord width,VColor vc) // Dot , map(...) -> MPoint
-    {
-     curveBreakLoop(dots,map,half_flag,width,ConstantField(vc));
-    }
-   
-   template <class R,class Map,class Field>
-   void curve(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurvePath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     path(Range_const(temp.flat()),half_flag,width,field);
-    }
-   
-   template <class R,class Map,class Field>
-   void curveBreak(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // Dot , map(...) -> MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurveBreakPath(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     path(Range_const(temp.flat()),half_flag,width,field);
-    }
-   
-   template <class R,class Map,class Field>
-   void curveLoop(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // map(...) -> MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurveLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     loop(Range_const(temp.flat()),half_flag,width,field);
-    }
-   
-   template <class R,class Map,class Field>
-   void curveBreakLoop(R dots,Map map,HalfFlag half_flag,MCoord width,const Field &field) // Dot , map(...) -> MPoint
-    {
-     Collector<MPoint> temp;
-     
-     CurveBreakLoop(dots,map, [&temp] (MPoint point) { temp.append_copy(point); } );
-     
-     loop(Range_const(temp.flat()),half_flag,width,field);
-    }
-
    // special
    
-   void knob(MPoint p,MCoord len,VColor vc);
+   void knob(MPoint center,MCoord len,VColor vc);
    
    void ball(MPoint center,MCoord radius,VColor vc);
    
-   void ball(MPoint center,MCoord radius,TwoField field);
+   void ball(MPoint center,MCoord radius,const TwoField &field);
    
-   void ball(MPoint center,MCoord radius,RadioField field);
+   void ball(MPoint center,MCoord radius,const RadioField &field);
    
    void circle(MPoint center,MCoord radius,MCoord width,VColor vc);
 
    template <class Field>
-   void knobField(MPoint p,MCoord len,const Field &field)
+   void knob_gen(MPoint center,MCoord len,const Field &field)
     {
      MPoint temp[]=
       {
-       p+MPoint(-len,-len),
-       p+MPoint(len,-len),
-       p+MPoint(len,len),
-       p+MPoint(-len,len)
+       center+MPoint(-len,-len),
+       center+MPoint(len,-len),
+       center+MPoint(len,len),
+       center+MPoint(-len,len)
       };
      
-     solid(Range_const(temp),SolidAll,field);
+     solid_gen(Range_const(temp),SolidAll,field);
     }
    
    template <class Field>
-   void ballField(MPoint center,MCoord radius,const Field &field)
+   void ball_gen(MPoint center,MCoord radius,const Field &field)
     {
      LineRound obj(center,radius);
      
-     curveSolid(obj.get(),SolidAll,field);
+     curveSolid_gen(obj.get(),SolidAll,field);
     }
    
    template <class Field>
-   void circleField(MPoint center,MCoord radius,MCoord width,const Field &field)
+   void circle_gen(MPoint center,MCoord radius,MCoord width,const Field &field)
     {
      LineRound obj(center,radius);
      
-     curveLoop(obj.get(),width,field);
-    }
- 
-   void pathOf(PtrLen<const MPoint> dots,MCoord width,VColor vc);
-   
-   void loopOf(PtrLen<const MPoint> dots,MCoord width,VColor vc);
-   
-   template <class ... TT>
-   void pathOf(MCoord width,VColor vc,TT ... tt)
-    {
-     MPoint temp[sizeof ... (TT)]={ tt... };
-     
-     pathOf(Range_const(temp),width,vc);
+     curveLoop_gen(obj.get(),width,field);
     }
    
    template <class ... TT>
-   void loopOf(MCoord width,VColor vc,TT ... tt)
+   void path(MCoord width,VColor vc,TT ... tt)
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
      
-     loopOf(Range_const(temp),width,vc);
-    }
-   
-   void pathOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
-   
-   void loopOf(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
-   
-   template <class ... TT>
-   void pathOf(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt)
-    {
-     MPoint temp[sizeof ... (TT)]={ tt... };
-     
-     pathOf(Range_const(temp),half_flag,width,vc);
+     path(Range_const(temp),width,vc);
     }
    
    template <class ... TT>
-   void loopOf(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt)
+   void loop(MCoord width,VColor vc,TT ... tt)
     {
      MPoint temp[sizeof ... (TT)]={ tt... };
      
-     loopOf(Range_const(temp),half_flag,width,vc);
+     loop(Range_const(temp),width,vc);
     }
+   
+   template <class ... TT>
+   void path(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt)
+    {
+     MPoint temp[sizeof ... (TT)]={ tt... };
+     
+     path(Range_const(temp),half_flag,width,vc);
+    }
+   
+   template <class ... TT>
+   void loop(HalfFlag half_flag,MCoord width,VColor vc,TT ... tt)
+    {
+     MPoint temp[sizeof ... (TT)]={ tt... };
+     
+     loop(Range_const(temp),half_flag,width,vc);
+    }
+
+   // special line
+   
+   void path(PtrLen<const MPoint> dots,MCoord width,VColor vc);
+   
+   void loop(PtrLen<const MPoint> dots,MCoord width,VColor vc);
+   
+   // special half line
+   
+   void path(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
+   
+   void loop(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
+   
+   // special curve
+   
+   void curvePath(PtrLen<const MPoint> dots,MCoord width,VColor vc);
+   
+   void curveLoop(PtrLen<const MPoint> dots,MCoord width,VColor vc);
+   
+   void curvePath(PtrLen<const Dot> dots,MCoord width,VColor vc);
+   
+   void curveLoop(PtrLen<const Dot> dots,MCoord width,VColor vc);
+   
+   // special half curve
+   
+   void curvePath(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
+   
+   void curveLoop(PtrLen<const MPoint> dots,HalfFlag half_flag,MCoord width,VColor vc);
+   
+   void curvePath(PtrLen<const Dot> dots,HalfFlag half_flag,MCoord width,VColor vc);
+   
+   void curveLoop(PtrLen<const Dot> dots,HalfFlag half_flag,MCoord width,VColor vc);
+   
+   // special solid
+   
+   void solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
+   
+   void solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field);
+   
+   void solid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
+   
+   // special curve solid
+   
+   void curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
+   
+   void curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field);
+   
+   void curveSolid(PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
+   
+   void curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,VColor vc);
+   
+   void curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const TwoField &field);
+   
+   void curveSolid(PtrLen<const Dot> dots,SolidFlag solid_flag,const RadioField &field);
  };
   
 } // namespace Smooth

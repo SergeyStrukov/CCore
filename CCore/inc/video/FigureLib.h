@@ -212,9 +212,9 @@ struct DrawPoints
 
   static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
   
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,TwoField field);
+  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field);
   
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,RadioField field);
+  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
   
   
   static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,VColor vc)
@@ -222,12 +222,12 @@ struct DrawPoints
     Solid(art,dots,SolidAll,vc);
    }
   
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,TwoField field)
+  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,const TwoField &field)
    {
     Solid(art,dots,SolidAll,field);
    }
   
-  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,RadioField field)
+  static void Solid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,const RadioField &field)
    {
     Solid(art,dots,SolidAll,field);
    }
@@ -245,9 +245,9 @@ struct DrawPoints
   
   static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,VColor vc);
   
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,TwoField field);
+  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const TwoField &field);
   
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,RadioField field);
+  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,SolidFlag solid_flag,const RadioField &field);
   
   
   static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,VColor vc)
@@ -255,12 +255,12 @@ struct DrawPoints
     CurveSolid(art,dots,SolidAll,vc);
    }
   
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,TwoField field)
+  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,const TwoField &field)
    {
     CurveSolid(art,dots,SolidAll,field);
    }
   
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,RadioField field)
+  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const MPoint> dots,const RadioField &field)
    {
     CurveSolid(art,dots,SolidAll,field);
    }
@@ -332,9 +332,9 @@ struct DrawDots
   
   static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,VColor vc);
   
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,TwoField field);
+  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,const TwoField &field);
   
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,RadioField field);
+  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,SolidFlag solid_flag,const RadioField &field);
   
   
   static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,VColor vc)
@@ -342,12 +342,12 @@ struct DrawDots
     CurveSolid(art,dots,SolidAll,vc);
    }
   
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,TwoField field)
+  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,const TwoField &field)
    {
     CurveSolid(art,dots,SolidAll,field);
    }
   
-  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,RadioField field)
+  static void CurveSolid(Smooth::DrawArt &art,PtrLen<const Smooth::Dot> dots,const RadioField &field)
    {
     CurveSolid(art,dots,SolidAll,field);
    }
