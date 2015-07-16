@@ -120,9 +120,7 @@ unsigned LineArc::SBits(DCoord a)
   
   if( a<0 ) u=~u;
   
-  using Algo = UIntFunc<uDCoord> ;
-  
-  return Algo::Bits-Algo::CountZeroMSB(u)+1;
+  return ValueBits(u)+1;
  }
 
 MPoint LineArc::Sect(DCoord A,DCoord B,MPoint p)
