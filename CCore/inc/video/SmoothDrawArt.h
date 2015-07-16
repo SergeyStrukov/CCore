@@ -153,14 +153,13 @@ class DotBreaker
 
 /* class FieldPlotBase */
 
-class FieldPlotBase : DrawBuf
+class FieldPlotBase : public DrawBuf
  {
   public:
  
    explicit FieldPlotBase(const DrawBuf &buf) : DrawBuf(buf) {}
-   
-   using DrawBuf::map;
-   using DrawBuf::getSize;
+
+   // VColor
    
    void plot(Point p,VColor vc)
     {
@@ -171,6 +170,8 @@ class FieldPlotBase : DrawBuf
     {
      DesktopColor::BlendTo(Blender(Clr(alpha),vc),place(p));
     }
+   
+   // AlphaColor
    
    void plot_safe(Point p,VColor vc,unsigned alpha)
     {
@@ -197,19 +198,25 @@ template <class Field>
 class FieldPlot : FieldPlotBase
  {
    Field field;
+   MPoint size;
+   
+  private: 
+   
+   static Coord Shift(MCoord a) { return (Coord)IntRShift(a,MPoint::Precision); }
+   
+   static Point ToPoint(MPoint p) { return Point(Shift(p.x),Shift(p.y)); }
    
   public: 
    
-   FieldPlot(const DrawBuf &buf,const Field &field_) : FieldPlotBase(buf),field(field_) {}
+   FieldPlot(const DrawBuf &buf,const Field &field_) : FieldPlotBase(buf),field(field_) { size=getSize(); }
    
    void operator () (MPoint point)
     {
-     MPoint p=map(point);
-     MPoint biased=p+MPoint(MPoint::Half,MPoint::Half);
+     MPoint biased=map(point)+MPoint(MPoint::Half,MPoint::Half);
      
-     if( biased>=Null && biased<getSize() )
+     if( biased>=Null && biased<size )
        {
-        plot(p.toPoint(),field(point));
+        plot(ToPoint(biased),field(point));
        }
     }
    
@@ -220,16 +227,15 @@ class FieldPlot : FieldPlotBase
      if( alpha>=AlphaLim )
        {
         (*this)(point);
-        
-        return;
        }
-     
-     MPoint p=map(point);
-     MPoint biased=p+MPoint(MPoint::Half,MPoint::Half);
-     
-     if( biased>=Null && biased<getSize() )
+     else
        {
-        plot(p.toPoint(),field(point),alpha);
+        MPoint biased=map(point)+MPoint(MPoint::Half,MPoint::Half);
+        
+        if( biased>=Null && biased<size )
+          {
+           plot(ToPoint(biased),field(point),alpha);
+          }
        }
     }
  };
