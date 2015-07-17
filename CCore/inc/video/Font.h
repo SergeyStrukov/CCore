@@ -20,6 +20,7 @@
 
 #include <CCore/inc/RefPtr.h>
 #include <CCore/inc/MemBase.h>
+#include <CCore/inc/FunctorType.h>
 
 #include <CCore/inc/task/Atomic.h>
  
@@ -48,9 +49,15 @@ enum AlignY
 
 struct FontSize;
 
+struct TextSize;
+
 struct TextPlace;
 
-struct TextSize;
+struct AbstractSparseString;
+
+class SingleString;
+
+class DoubleString;
 
 struct AbstractFont;
 
@@ -67,6 +74,18 @@ struct FontSize
   Coord dy;
   Coord by;
   Coord skew;
+ };
+
+/* struct TextSize */
+
+struct TextSize
+ {
+  Coord dx;
+  Coord dy;
+  Coord by;
+  Coord skew;
+  Coord full_dx;
+  bool overflow;
  };
 
 /* struct TextPlace */
@@ -87,33 +106,165 @@ struct TextPlace
   TextPlace(Coord x_,Coord y_) : align_x(AlignX_Given),align_y(AlignY_Given),x(x_),y(y_) {}
  };
 
-/* struct TextSize */
+/* struct AbstractSparseString */
 
-struct TextSize
+struct AbstractSparseString
  {
-  Coord dx;
-  Coord dy;
-  Coord by;
-  Coord skew;
-  Coord full_dx;
-  bool overflow;
+  // abstract
+  
+  virtual void restart()=0;
+  
+  virtual PtrLen<const char> next()=0; // string is consumed
+  
+  virtual void cutSuffix(ulen len)=0;
+  
+  virtual bool cutCenter(ulen len)=0;
+  
+  // helper
+  
+  template <class FuncInit>
+  void apply(FuncInit func_init) // string is consumed
+   {
+    restart();
+    
+    FunctorTypeOf<FuncInit> func(func_init);
+    
+    for(;;)
+      {
+       PtrLen<const char> r=next();
+       
+       if( !r ) break;
+       
+       func(r);
+      }
+   }
+  
+  template <class FuncInit>
+  void applyWhile(FuncInit func_init) // string is consumed
+   {
+    restart();
+    
+    FunctorTypeOf<FuncInit> func(func_init);
+    
+    for(;;)
+      {
+       PtrLen<const char> r=next();
+       
+       if( !r ) break;
+       
+       if( !func(r) ) break;
+      }
+   }
+  
+  ULenSat countLen(); // string is consumed
+ };
+
+/* class SingleString */
+
+class SingleString : public AbstractSparseString
+ {
+   StrLen str;
+   bool first = true ;
+   
+  public:
+  
+   explicit SingleString(StrLen str_) : str(str_) {}
+   
+   ~SingleString() {}
+   
+   // AbstractSparseString
+   
+   virtual void restart();
+   
+   virtual PtrLen<const char> next();
+
+   virtual void cutSuffix(ulen len);
+   
+   virtual bool cutCenter(ulen len);
+ };
+
+/* class DoubleString */
+
+class DoubleString : public AbstractSparseString
+ {
+   StrLen str1;
+   StrLen str2;
+   unsigned ind = 1 ;
+   
+  public: 
+   
+   DoubleString(StrLen str1_,StrLen str2_);
+   
+   ~DoubleString() {}
+   
+   // AbstractSparseString
+   
+   virtual void restart();
+   
+   virtual PtrLen<const char> next();
+
+   virtual void cutSuffix(ulen len);
+   
+   virtual bool cutCenter(ulen len);
  };
 
 /* struct AbstractFont */
 
 struct AbstractFont
  {
+  // abstract 
+  
   virtual FontSize getSize()=0;
   
-  virtual void text_update(DrawBuf buf,Pane pane,TextPlace &place,StrLen str,DesktopColor color)=0;
+  virtual TextSize text(AbstractSparseString &str)=0;
   
-  virtual void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color)=0;
+  virtual ulen fit(AbstractSparseString &str,Coord full_dx)=0;
   
-  virtual TextSize text(StrLen str)=0;
+  virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,DesktopColor color)=0;
   
-  virtual TextSize text(StrLen str1,StrLen str2)=0;
+  // helpers
   
-  virtual ulen fit(StrLen str,Coord full_dx)=0;
+  TextSize text(StrLen str) 
+   { 
+    SingleString obj(str); 
+    
+    return text(obj); 
+   }
+  
+  ulen fit(StrLen str,Coord full_dx) 
+   { 
+    SingleString obj(str); 
+    
+    return fit(obj,full_dx); 
+   }
+  
+  void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color) 
+   { 
+    SingleString obj(str); 
+    
+    text(buf,pane,place,obj,color); 
+   }
+  
+  TextSize text(StrLen str1,StrLen str2) 
+   { 
+    DoubleString obj(str1,str2); 
+    
+    return text(obj); 
+   }
+  
+  ulen fit(StrLen str1,StrLen str2,Coord full_dx) 
+   { 
+    DoubleString obj(str1,str2); 
+    
+    return fit(obj,full_dx); 
+   }
+  
+  void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str1,StrLen str2,DesktopColor color) 
+   { 
+    DoubleString obj(str1,str2); 
+    
+    text(buf,pane,place,obj,color); 
+   }
  };
 
 /* class FontBase */

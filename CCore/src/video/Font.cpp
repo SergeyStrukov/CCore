@@ -62,7 +62,7 @@ class DefFont : public FontBase
           }
        }
       
-      void text(Coord x,Coord y,char ch,DesktopColor color)
+      void text(Coord x,Coord y,char ch,DesktopColor color) //  x < dx , y < dy , y > -DefaultFont::DY
        {
         if( x<=-DefaultFont::DX ) return;
         
@@ -119,7 +119,7 @@ class DefFont : public FontBase
           }
        }
     
-      static Point Prepare(Coord px,Coord py,TextPlace place,StrLen &str)
+      static Point Prepare(Coord px,Coord py,TextPlace place,AbstractSparseString &str)
        {
         Coord y;
         
@@ -142,26 +142,39 @@ class DefFont : public FontBase
            
            case AlignX_Right :
             {
+             ULenSat len=str.countLen();
+             
              ulen cap=ulen(px/DefaultFont::DX)+1;
              
-             if( str.len>cap ) str=str.suffix(cap);
-             
-             x=Coord( px-str.len*DefaultFont::DX );
+             if( len<=cap )
+               {
+                x=Coord( px-len.value*DefaultFont::DX );
+               }
+             else
+               {
+                str.cutSuffix(cap);
+                
+                x=Coord( px-cap*DefaultFont::DX );
+               }
             }
            break;
            
            case AlignX_Center :
             {
+             ULenSat len=str.countLen();
+             
              ulen cap=ulen(px/DefaultFont::DX)+1;
              
-             if( str.len>cap ) 
+             if( len<=cap )
                {
-                ulen delta=(str.len-cap)/2;
-               
-                str=str.inner(delta,delta);
+                x=Coord( px-len.value*DefaultFont::DX )/2;
                }
-             
-             x=Coord( px-str.len*DefaultFont::DX )/2;
+             else
+               {
+                ulen new_len=cap+str.cutCenter(cap);
+                
+                x=Coord( px-new_len*DefaultFont::DX )/2;
+               }
             }
            break;
            
@@ -171,41 +184,36 @@ class DefFont : public FontBase
         return Point(x,y);
        }
       
-      void text(Point point,StrLen str,DesktopColor color)
+      void text(Point point,AbstractSparseString &str,DesktopColor color)
        {
         Coord x=mapX(point.x);
         Coord y=mapY(point.y);
         
         if( y>=dy || y<=-DefaultFont::DY ) return;
         
-        for(char ch : str )
-          {
-           if( x>=dx ) return;
-          
-           text(x,y,ch,color);
-          
-           x+=DefaultFont::DX;
-          }
+        str.applyWhile( [&] (PtrLen<const char> str) 
+                            {
+                             for(char ch : str )
+                               {
+                                if( x>=dx ) return false;
+                              
+                                text(x,y,ch,color);
+                              
+                                x+=DefaultFont::DX;
+                               }
+                             
+                             return true;
+               
+                            } );
        }
       
-      void text(Coord px,Coord py,TextPlace place,StrLen str,DesktopColor color)
+      void text(Coord px,Coord py,TextPlace place,AbstractSparseString &str,DesktopColor color)
        {
         if( !*this ) return;
         
         Point point=Prepare(px,py,place,str);
         
         text(point,str,color);
-       }
-      
-      void text_update(Coord px,Coord py,TextPlace &place,StrLen str,DesktopColor color)
-       {
-        Point point=Prepare(px,py,place,str);
-        
-        if( +*this ) text(point,str,color);
-
-        point.x+=Coord( str.len*DefaultFont::DX );
-        
-        place=TextPlace(point.x,point.y+DefaultFont::BY);
        }
     };
   
@@ -230,81 +238,52 @@ class DefFont : public FontBase
      return ret;
     }
    
-   virtual void text_update(DrawBuf buf,Pane pane,TextPlace &place,StrLen str,DesktopColor color)
+   static const ulen MaxLen = ulen(MaxCoord/DefaultFont::DX) ;
+
+   virtual TextSize text(AbstractSparseString &str)
     {
-     WorkBuf out(buf.cutRebase(pane));
+     ULenSat len=str.countLen();
      
-     out.text_update(pane.dx,pane.dy,place,str,color);
+     TextSize ret;
+     
+     if( len<=MaxLen )
+       {
+        ret.dx=Coord( len.value*DefaultFont::DX );
+        ret.dy=DefaultFont::DY;
+        ret.by=DefaultFont::BY;
+        ret.skew=0;
+        ret.full_dx=ret.dx;
+        ret.overflow=false;
+       }
+     else
+       {
+        ret.dx=MaxCoord;
+        ret.dy=DefaultFont::DY;
+        ret.by=DefaultFont::BY;
+        ret.skew=0;
+        ret.full_dx=ret.dx;
+        ret.overflow=true;
+       }
+     
+     return ret;
     }
    
-   virtual void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color)
+   virtual ulen fit(AbstractSparseString &str,Coord full_dx)
+    {
+     ULenSat len=str.countLen();
+     
+     ulen max_len=full_dx/DefaultFont::DX;
+     
+     if( len<=max_len ) return len.value;
+     
+     return max_len;
+    }
+   
+   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,DesktopColor color)
     {
      WorkBuf out(buf.cutRebase(pane));
      
      out.text(pane.dx,pane.dy,place,str,color);
-    }
-   
-   static const ulen MaxLen = ulen(MaxCoord/DefaultFont::DX) ;
-   
-   virtual TextSize text(StrLen str)
-    {
-     TextSize ret;
-     
-     if( str.len>MaxLen )
-       {
-        ret.dx=MaxCoord;
-        ret.dy=DefaultFont::DY;
-        ret.by=DefaultFont::BY;
-        ret.skew=0;
-        ret.full_dx=ret.dx;
-        ret.overflow=true;
-       }
-     else
-       {
-        ret.dx=Coord( str.len*DefaultFont::DX );
-        ret.dy=DefaultFont::DY;
-        ret.by=DefaultFont::BY;
-        ret.skew=0;
-        ret.full_dx=ret.dx;
-        ret.overflow=false;
-       }
-     
-     return ret;
-    }
-   
-   virtual TextSize text(StrLen str1,StrLen str2)
-    {
-     TextSize ret;
-     
-     if( str1.len>MaxLen || str2.len>MaxLen-str1.len )
-       {
-        ret.dx=MaxCoord;
-        ret.dy=DefaultFont::DY;
-        ret.by=DefaultFont::BY;
-        ret.skew=0;
-        ret.full_dx=ret.dx;
-        ret.overflow=true;
-       }
-     else
-       {
-        ulen len=str1.len+str2.len;
-        
-        ret.dx=Coord( len*DefaultFont::DX );
-        ret.dy=DefaultFont::DY;
-        ret.by=DefaultFont::BY;
-        ret.skew=0;
-        ret.full_dx=ret.dx;
-        ret.overflow=false;
-       }
-     
-     return ret;
-    }
-
-   virtual ulen fit(StrLen str,Coord full_dx)
-    {
-     ulen max_len=full_dx/DefaultFont::DX;
-     
-     return Min(str.len,max_len);
     }
  };
 
@@ -313,6 +292,144 @@ DefFont Object CCORE_INITPRI_3 ;
 } // namespace Private_Font
 
 using namespace Private_Font;
+
+/* struct AbstractSparseString */
+
+ULenSat AbstractSparseString::countLen()
+ {
+  ULenSat ret;
+
+  apply( [&ret] (PtrLen<const char> str) { ret+=str.len; } );
+  
+  return ret;
+ }
+
+/* class SingleString */
+
+void SingleString::restart()
+ {
+  first=true;
+ }
+
+PtrLen<const char> SingleString::next()
+ {
+  if( first ) 
+    {
+     first=false;
+    
+     return str;
+    }
+  
+  return Empty;
+ }
+
+void SingleString::cutSuffix(ulen len)
+ {
+  GuardLen(len,str.len);
+  
+  str=str.suffix(len);
+ }
+
+bool SingleString::cutCenter(ulen len)
+ {
+  GuardLen(len,str.len);
+  
+  ulen extra=str.len-len;
+  ulen delta=extra/2;
+  
+  str=str.inner(delta,delta);
+  
+  return extra&1u;
+ }
+
+/* class DoubleString */
+
+DoubleString::DoubleString(StrLen str1_,StrLen str2_) 
+ : str1(str1_),
+   str2(str2_) 
+ {
+  if( !str1 )
+    {
+     str1=str2;
+     str2={};
+    }
+ }
+
+void DoubleString::restart()
+ {
+  ind=1;
+ }
+
+PtrLen<const char> DoubleString::next()
+ {
+  switch( ind )
+    {
+     case 1 : ind++; return str1;
+     case 2 : ind++; return str2;
+   
+     default: return Empty;
+    }
+ }
+
+void DoubleString::cutSuffix(ulen len)
+ {
+  if( len>str2.len )
+    {
+     len-=str2.len;
+     
+     GuardLen(len,str1.len);
+    
+     str1=str1.suffix(len);
+    }
+  else
+    {
+     str1=str2.suffix(len);
+     str2={};
+    }
+ }
+
+bool DoubleString::cutCenter(ulen len)
+ {
+  if( str1.len>str2.len )
+    {
+     ulen d=str1.len-str2.len;
+     
+     if( d>=len )
+       {
+        auto s=str1.suffix(d);
+        
+        ulen extra=d-len;
+        ulen delta=extra/2;
+        
+        str1=s.inner(delta,delta);
+        str2={};
+        
+        return extra&1u;
+       }
+     else
+       {
+        ulen s=len-d;
+        
+        if( s&1u )
+          {
+          }
+        else
+          {
+           ulen len2=s/2;
+           ulen len1=len-len2;
+           
+           str1=str1.suffix(len1);
+           str2=str2.prefix(len2);
+           
+           return false;
+          }
+       }
+    }
+  else
+    {
+    
+    }
+ }
 
 /* class Font */
 

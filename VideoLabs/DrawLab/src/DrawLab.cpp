@@ -14,6 +14,7 @@
 #include <inc/DrawLab.h>
 
 #include <CCore/inc/algon/SimpleRotate.h>
+#include <CCore/inc/algon/ApplyToRange.h>
 
 namespace App {
 
@@ -693,10 +694,13 @@ void DrawLab::drawZoom(DrawBuf buf) const
      
      case DrawCurve :
       {
-       Point base=part.getBase();
+       Smooth::CurveBreakPath obj(Range(dots), Smooth::DotShift(-part.getBase()) );
        
-       Smooth::CurveBreakPath(Range(dots), [base] (Smooth::Dot dot) { return dot.point-base; } ,ZoomPath(buf,cfg.zoom_deg,cfg.width,cfg.path));
-       Smooth::CurveBreakPath(Range(dots), [base] (Smooth::Dot dot) { return dot.point-base; } ,ZoomDot(buf,cfg.zoom_deg,cfg.dot_len,cfg.mark));
+       auto r=obj.complete();
+       
+       Algon::ApplyToRange(r,ZoomPath(buf,cfg.zoom_deg,cfg.width,cfg.path));
+       
+       Algon::ApplyToRange(r,ZoomDot(buf,cfg.zoom_deg,cfg.dot_len,cfg.mark));
       }
      break;
      
@@ -704,10 +708,12 @@ void DrawLab::drawZoom(DrawBuf buf) const
      case DrawCurveSolidOdd :
      case DrawCurveSolidAll :
       {
-       Point base=part.getBase();
+       Smooth::CurveBreakLoop obj(Range(dots), Smooth::DotShift(-part.getBase()) );
        
-       Smooth::CurveBreakLoop(Range(dots), [base] (Smooth::Dot dot) { return dot.point-base; } ,ZoomLoop(buf,cfg.zoom_deg,cfg.width,cfg.path));
-       Smooth::CurveBreakLoop(Range(dots), [base] (Smooth::Dot dot) { return dot.point-base; } ,ZoomDot(buf,cfg.zoom_deg,cfg.dot_len,cfg.mark));
+       auto r=obj.complete();
+       
+       Algon::ApplyToRange(r,ZoomLoop(buf,cfg.zoom_deg,cfg.width,cfg.path));
+       Algon::ApplyToRange(r,ZoomDot(buf,cfg.zoom_deg,cfg.dot_len,cfg.mark));
       }
      break;
      
@@ -739,11 +745,9 @@ void DrawLab::drawZoom(DrawBuf buf) const
      
      case DrawLineCurve :
       {
-       Collector<MPoint> temp;
+       Smooth::CurveBreakPath obj(Range(dots));
        
-       Smooth::CurveBreakPath(Range(dots), [] (Smooth::Dot dot) { return dot.point; }, [&temp] (MPoint point) { temp.append_copy(point); } );
-       
-       Smooth::PathDots path(Range_const(temp.flat()), [] (MPoint point) { return point; } ,line_width);
+       Smooth::PathDots path(obj.complete(), [] (MPoint point) { return point; } ,line_width);
        
        auto r=path.complete();
 
@@ -756,11 +760,9 @@ void DrawLab::drawZoom(DrawBuf buf) const
      
      case DrawLineCurveLoop :
       {
-       Collector<MPoint> temp;
+       Smooth::CurveBreakLoop obj(Range(dots));
        
-       Smooth::CurveBreakLoop(Range(dots), [] (Smooth::Dot dot) { return dot.point; }, [&temp] (MPoint point) { temp.append_copy(point); } );
-       
-       Smooth::LoopDots loop(Range_const(temp.flat()), [] (MPoint point) { return point; } ,line_width);
+       Smooth::LoopDots loop(obj.complete(), [] (MPoint point) { return point; } ,line_width);
        
        auto r=loop.complete();
 
@@ -799,11 +801,9 @@ void DrawLab::drawZoom(DrawBuf buf) const
      
      case DrawHalfLineCurve :
       {
-       Collector<MPoint> temp;
+       Smooth::CurveBreakPath obj(Range(dots));
        
-       Smooth::CurveBreakPath(Range(dots), [] (Smooth::Dot dot) { return dot.point; }, [&temp] (MPoint point) { temp.append_copy(point); } );
-       
-       Smooth::HalfPathDots path(Range_const(temp.flat()), [] (MPoint point) { return point; } ,half_flag,line_width);
+       Smooth::HalfPathDots path(obj.complete(), [] (MPoint point) { return point; } ,half_flag,line_width);
        
        auto r=path.complete();
 
@@ -816,11 +816,9 @@ void DrawLab::drawZoom(DrawBuf buf) const
      
      case DrawHalfLineCurveLoop :
       {
-       Collector<MPoint> temp;
+       Smooth::CurveBreakLoop obj(Range(dots));
        
-       Smooth::CurveBreakLoop(Range(dots), [] (Smooth::Dot dot) { return dot.point; }, [&temp] (MPoint point) { temp.append_copy(point); } );
-       
-       Smooth::HalfLoopDots loop(Range_const(temp.flat()), [] (MPoint point) { return point; } ,half_flag,line_width);
+       Smooth::HalfLoopDots loop(obj.complete(), [] (MPoint point) { return point; } ,half_flag,line_width);
        
        auto r=loop.complete();
 

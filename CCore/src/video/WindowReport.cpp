@@ -234,21 +234,7 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
                     {
                      if( ind>=off+visible_lines ) return;
                      
-                     TextPlace place(AlignX_Left,y);
-                     
-                     if( ind>=off )
-                       {
-                        char temp[TextBufLen];
-                        PrintBuf out(Range(temp));
-                        
-                        Printf(out,"#;) ",index);
-                        
-                        StrLen line=out.close();
-                        
-                        font->text_update(buf,pane,place,line,+cfg.text);
-                       }
-     
-                     for(;;)
+                     for(bool first=true;;first=false)
                        {
                         StrLen cur=text;
                         
@@ -259,9 +245,23 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
                         if( ind>=off )
                           {
                            if( ind>=off+visible_lines ) return;
-                          
-                           font->text(buf,pane,place,line,+cfg.text);
                            
+                           if( first )
+                             {
+                              char temp[TextBufLen];
+                              PrintBuf out(Range(temp));
+                             
+                              Printf(out,"#;) ",index);
+                             
+                              StrLen line1=out.close();
+                             
+                              font->text(buf,pane,TextPlace(AlignX_Left,y),line1,line,+cfg.text);
+                             }
+                           else
+                             {
+                              font->text(buf,pane,TextPlace(AlignX_Left,y),line,+cfg.text);
+                             }
+                          
                            y+=text_dy;
                           }
                         
@@ -272,8 +272,6 @@ void ExceptionWindow::drawText(DrawBuf buf,Pane pane) const
                         text=cur;
                         
                         ++text;
-                        
-                        place=TextPlace(AlignX_Left,y);
                        }
      
                      if( ind>=off )
