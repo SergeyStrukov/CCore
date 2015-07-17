@@ -412,11 +412,22 @@ bool DoubleString::cutCenter(ulen len)
         
         if( s&1u )
           {
+           ulen len2=s/2+1;
+           ulen len1=len+1-len2;
+           
+           GuardLen(len2,str2.len);
+           
+           str1=str1.suffix(len1);
+           str2=str2.prefix(len2);
+           
+           return true;
           }
         else
           {
            ulen len2=s/2;
            ulen len1=len-len2;
+           
+           GuardLen(len2,str2.len);
            
            str1=str1.suffix(len1);
            str2=str2.prefix(len2);
@@ -427,7 +438,49 @@ bool DoubleString::cutCenter(ulen len)
     }
   else
     {
+     ulen d=str2.len-str1.len;
     
+     if( d>=len )
+       {
+        auto s=str2.prefix(d);
+        
+        ulen extra=d-len;
+        ulen delta=extra/2;
+        
+        str1=s.inner(delta,delta);
+        str2={};
+        
+        return extra&1u;
+       }
+     else
+       {
+        ulen s=len-d;
+        
+        if( s&1u )
+          {
+           ulen len1=s/2+1;
+           ulen len2=len+1-len1;
+           
+           GuardLen(len1,str1.len);
+           
+           str1=str1.suffix(len1);
+           str2=str2.prefix(len2);
+           
+           return true;
+          }
+        else
+          {
+           ulen len1=s/2;
+           ulen len2=len-len1;
+           
+           GuardLen(len1,str1.len);
+           
+           str1=str1.suffix(len1);
+           str2=str2.prefix(len2);
+           
+           return false;
+          }
+       }
     }
  }
 
