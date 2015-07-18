@@ -224,42 +224,42 @@ struct AbstractFont
   
   // helpers
   
-  TextSize text(StrLen str) 
+  TextSize text(StrLen str)
    { 
     SingleString obj(str); 
     
     return text(obj); 
    }
   
-  ulen fit(StrLen str,Coord full_dx) 
+  ulen fit(StrLen str,Coord full_dx)
    { 
     SingleString obj(str); 
     
     return fit(obj,full_dx); 
    }
   
-  void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color) 
+  void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str,DesktopColor color)
    { 
     SingleString obj(str); 
     
     text(buf,pane,place,obj,color); 
    }
   
-  TextSize text(StrLen str1,StrLen str2) 
+  TextSize text(StrLen str1,StrLen str2)
    { 
     DoubleString obj(str1,str2); 
     
     return text(obj); 
    }
   
-  ulen fit(StrLen str1,StrLen str2,Coord full_dx) 
+  ulen fit(StrLen str1,StrLen str2,Coord full_dx)
    { 
     DoubleString obj(str1,str2); 
     
     return fit(obj,full_dx); 
    }
   
-  void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str1,StrLen str2,DesktopColor color) 
+  void text(DrawBuf buf,Pane pane,TextPlace place,StrLen str1,StrLen str2,DesktopColor color)
    { 
     DoubleString obj(str1,str2); 
     
