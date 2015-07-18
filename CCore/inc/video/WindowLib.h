@@ -281,7 +281,7 @@ class ButtonWindowOf : public SubWindow
    // signals
    
    Signal<> pressed;
-   Signal<bool> tabbed;
+   Signal<bool> tabbed; // shift
  };
 
 /* type ButtonWindow */
@@ -451,8 +451,8 @@ class CheckWindowOf : public SubWindow
    
    // signals
    
-   Signal<bool> changed;
-   Signal<bool> tabbed;
+   Signal<bool> changed; // check
+   Signal<bool> tabbed;  // shift
  };
 
 /* type CheckWindow */
@@ -530,7 +530,7 @@ class RadioGroup : NoCopy
 
    // signals
    
-   Signal<int,int> changed;
+   Signal<int,int> changed; // new_id, prev_id
  };
 
 /* class RadioWindowOf<Shape> */
@@ -701,7 +701,7 @@ class RadioWindowOf : public SubWindow , public RadioItem
    
    // signals
    
-   Signal<bool> tabbed;
+   Signal<bool> tabbed; // shift
  };
 
 /* type RadioWindow */
@@ -1390,8 +1390,8 @@ class ScrollWindowOf : public SubWindow
    
    // signals
    
-   Signal<ulen> changed;
-   Signal<bool> tabbed;
+   Signal<ulen> changed; // pos
+   Signal<bool> tabbed;  // shift
  };
 
 /* type XScrollWindow */

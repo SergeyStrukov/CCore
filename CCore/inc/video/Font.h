@@ -94,7 +94,8 @@ struct TextPlace
  {
   AlignX align_x;
   AlignY align_y;
-  Coord x = 0 ;
+  
+  Coord x = 0 ; // relative pane
   Coord y = 0 ;
   
   TextPlace(AlignX align_x_,AlignY align_y_) : align_x(align_x_),align_y(align_y_) {}

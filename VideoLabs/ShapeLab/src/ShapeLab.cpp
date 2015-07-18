@@ -250,9 +250,78 @@ void ShapeLab1::react_Move(Point point,MouseKey mkey)
 
 /* class TestDialog */
 
-TestDialog::TestDialog(SubWindowHost &host)
- : SubWindow(host)
+void TestDialog::align_x_changed(int new_id,int)
  {
+  align_x=AlignX(new_id);
+  
+  redraw();
+ }
+
+void TestDialog::align_y_changed(int new_id,int)
+ {
+  align_y=AlignY(new_id);
+  
+  redraw();
+ }
+
+void TestDialog::setTextLim(Point point)
+ {
+  tlim=point;
+  
+  redraw();
+ }
+
+void TestDialog::setTextGiven(Point point)
+ {
+  tgiven=point-tbase;
+  
+  redraw();
+ }
+
+TestDialog::TestDialog(SubWindowHost &host)
+ : SubWindow(host),
+   wlist(*this),
+   dlist(*this),
+   
+   contour_x(dlist,cfg.contour_cfg,String("Align X")),
+   contour_y(dlist,cfg.contour_cfg,String("Align Y")),
+
+   radio_x_Left(wlist,AlignX_Left,cfg.radio_cfg),
+   radio_x_Center(wlist,AlignX_Center,cfg.radio_cfg),
+   radio_x_Right(wlist,AlignX_Right,cfg.radio_cfg),
+   radio_x_Given(wlist,AlignX_Given,cfg.radio_cfg),
+   
+   label_x_Left(dlist,cfg.label_cfg,String("Left"),AlignX_Left),
+   label_x_Center(dlist,cfg.label_cfg,String("Center"),AlignX_Left),
+   label_x_Right(dlist,cfg.label_cfg,String("Right"),AlignX_Left),
+   label_x_Given(dlist,cfg.label_cfg,String("Given"),AlignX_Left),
+   
+   radio_y_Top(wlist,AlignY_Top,cfg.radio_cfg),
+   radio_y_Center(wlist,AlignY_Center,cfg.radio_cfg),
+   radio_y_Bottom(wlist,AlignY_Bottom,cfg.radio_cfg),
+   radio_y_Given(wlist,AlignY_Given,cfg.radio_cfg),
+   
+   label_y_Top(dlist,cfg.label_cfg,String("Top"),AlignX_Left),
+   label_y_Center(dlist,cfg.label_cfg,String("Center"),AlignX_Left),
+   label_y_Bottom(dlist,cfg.label_cfg,String("Bottom"),AlignX_Left),
+   label_y_Given(dlist,cfg.label_cfg,String("Given"),AlignX_Left),
+   
+   connector_align_x(this,&TestDialog::align_x_changed,group_x.changed),
+   connector_align_y(this,&TestDialog::align_y_changed,group_y.changed)
+ {
+  wlist.insTop(radio_x_Left,radio_x_Center,radio_x_Right,radio_x_Given,radio_y_Top,radio_y_Center,radio_y_Bottom,radio_y_Given);
+  
+  group_x.add(radio_x_Left,radio_x_Center,radio_x_Right,radio_x_Given);
+  group_y.add(radio_y_Top,radio_y_Center,radio_y_Bottom,radio_y_Given);
+  
+  wlist.enableTabFocus();
+  wlist.enableClickFocus();
+  
+  dlist.insTop(contour_x,contour_y,label_x_Left,label_x_Center,label_x_Right,label_x_Given,label_y_Top,label_y_Center,label_y_Bottom,label_y_Given);
+  
+  tbase={50,180};
+  tlim={300,210};
+  tgiven={30,20};
  }
    
 TestDialog::~TestDialog()
@@ -261,12 +330,131 @@ TestDialog::~TestDialog()
    
 void TestDialog::layout()
  {
-  // do nothing
+  contour_x.setPlace(Pane(10,10,130,135));
+  
+  radio_x_Left.setPlace(Pane(20,35,20));
+  radio_x_Center.setPlace(Pane(20,60,20));
+  radio_x_Right.setPlace(Pane(20,85,20));
+  radio_x_Given.setPlace(Pane(20,110,20));
+  
+  label_x_Left.setPlace(Pane(45,35,100,20));
+  label_x_Center.setPlace(Pane(45,60,100,20));
+  label_x_Right.setPlace(Pane(45,85,100,20));
+  label_x_Given.setPlace(Pane(45,110,100,20));
+  
+  Coord d=140;
+  
+  contour_y.setPlace(Pane(10+d,10,130,135));
+  
+  radio_y_Top.setPlace(Pane(20+d,35,20));
+  radio_y_Center.setPlace(Pane(20+d,60,20));
+  radio_y_Bottom.setPlace(Pane(20+d,85,20));
+  radio_y_Given.setPlace(Pane(20+d,110,20));
+  
+  label_y_Top.setPlace(Pane(45+d,35,100,20));
+  label_y_Center.setPlace(Pane(45+d,60,100,20));
+  label_y_Bottom.setPlace(Pane(45+d,85,100,20));
+  label_y_Given.setPlace(Pane(45+d,110,100,20));
  }
 
-void TestDialog::draw(DrawBuf buf,bool) const
+void TestDialog::draw(DrawBuf buf,bool drag_active) const
  {
-  buf.erase(Black);
+  Smooth::DrawArt art(buf);
+  
+  art.erase(cfg.back);
+  
+  Pane pane=PaneBaseLim(tbase,tlim);
+  
+  MPane p(pane);
+  
+  art.loop(HalfNeg,Fraction(2),Red,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
+  art.loop(HalfPos,Fraction(2),Black,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
+  
+  Font font;
+  
+  TextPlace place(align_x,align_y);
+  
+  place.x=tgiven.x;
+  place.y=tgiven.y;
+  
+  font->text(buf,pane,place,"This"," is a text line",Blue);
+  
+  // draw lists
+  
+  dlist.draw(buf,drag_active);
+  wlist.draw(buf,drag_active);
+ }
+
+ // base
+
+void TestDialog::open()
+ {
+  wlist.open();
+  dlist.open();
+  
+  wlist.focusTop();
+ }
+
+void TestDialog::close()
+ {
+  wlist.close();
+  dlist.close();
+ }
+
+ // keyboard
+
+void TestDialog::gainFocus()
+ {
+  wlist.gainFocus();
+  dlist.gainFocus();
+ }
+
+void TestDialog::looseFocus()
+ {
+  wlist.looseFocus();
+  dlist.looseFocus();
+ }
+
+ // mouse
+
+void TestDialog::looseCapture()
+ {
+  wlist.looseCapture();
+  dlist.looseCapture();
+ }
+
+MouseShape TestDialog::getMouseShape(Point point)
+ {
+  return wlist.getMouseShape(point);
+ }
+
+ // user input
+
+void TestDialog::react(UserAction action)
+ {
+  wlist.react(action, [this] (UserAction action) { action.dispatch(*this); } );
+ }
+
+void TestDialog::react_LeftClick(Point point,MouseKey)
+ {
+  setTextLim(point);
+ }
+
+void TestDialog::react_RightClick(Point point,MouseKey)
+ {
+  setTextGiven(point);
+ }
+
+void TestDialog::react_Move(Point point,MouseKey mkey)
+ {
+  if( mkey&MouseKey_Left )
+    {
+     setTextLim(point);
+    }
+  else if( mkey&MouseKey_Right )
+    {
+     setTextGiven(point);
+    }
  }
 
 /* class ShapeLab2 */

@@ -29,7 +29,7 @@ class ShapeLab2;
 
 /* type ShapeLab */
 
-using ShapeLab = ShapeLab1 ;
+using ShapeLab = ShapeLab2 ;
 
 /* class ShapeLab1 */
 
@@ -156,6 +156,70 @@ class ShapeLab1 : public SubWindow
 
 class TestDialog : public SubWindow
  {
+   struct Config
+    {
+     VColor back = Silver ;
+     
+     TextContourShape::Config contour_cfg;
+     RadioShape::Config radio_cfg;
+     LabelShape::Config label_cfg;
+     
+     Config()
+      {
+      }
+    };
+
+   Config cfg;
+   
+   WindowList wlist;
+   WindowList dlist;
+   
+   TextContourWindow contour_x;
+   TextContourWindow contour_y;
+   
+   RadioGroup group_x;
+   RadioGroup group_y;
+   
+   RadioWindow radio_x_Left;
+   RadioWindow radio_x_Center;
+   RadioWindow radio_x_Right;
+   RadioWindow radio_x_Given;
+   
+   LabelWindow label_x_Left;
+   LabelWindow label_x_Center;
+   LabelWindow label_x_Right;
+   LabelWindow label_x_Given;
+   
+   RadioWindow radio_y_Top;
+   RadioWindow radio_y_Center;
+   RadioWindow radio_y_Bottom;
+   RadioWindow radio_y_Given;
+   
+   LabelWindow label_y_Top;
+   LabelWindow label_y_Center;
+   LabelWindow label_y_Bottom;
+   LabelWindow label_y_Given;
+   
+   Point tbase;
+   Point tlim;
+   Point tgiven;
+   
+   AlignX align_x = AlignX_Left ;
+   AlignY align_y = AlignY_Top ;
+   
+   SignalConnector<TestDialog,int,int> connector_align_x;
+   SignalConnector<TestDialog,int,int> connector_align_y;
+   
+  private:
+   
+   void align_x_changed(int new_id,int prev_id);
+   
+   void align_y_changed(int new_id,int prev_id);
+   
+   void setTextLim(Point point);
+   
+   void setTextGiven(Point point);
+   
   public:
   
    explicit TestDialog(SubWindowHost &host);
@@ -167,6 +231,34 @@ class TestDialog : public SubWindow
    virtual void layout();
    
    virtual void draw(DrawBuf buf,bool drag_active) const;
+
+   // base
+   
+   virtual void open();
+   
+   virtual void close();
+   
+   // keyboard
+   
+   void gainFocus();
+   
+   void looseFocus();
+   
+   // mouse
+ 
+   virtual void looseCapture();
+ 
+   virtual MouseShape getMouseShape(Point point);
+   
+   // user input
+   
+   virtual void react(UserAction action);
+ 
+   void react_LeftClick(Point point,MouseKey mkey);
+   
+   void react_RightClick(Point point,MouseKey mkey);
+   
+   void react_Move(Point point,MouseKey mkey);
  };
 
 /* class ShapeLab2 */
