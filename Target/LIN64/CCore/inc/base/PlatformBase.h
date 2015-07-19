@@ -158,7 +158,7 @@ template <class UInt> struct DoubleUInt;
 template <class T> 
 struct HasNoDtor
  {
-  enum RetType { Ret = std::has_trivial_destructor<T>::value }; 
+  enum RetType { Ret = std::is_trivially_destructible<T>::value }; 
  };
 
 /* struct HasNoThrowDefault<T> */
