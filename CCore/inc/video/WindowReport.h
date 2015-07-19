@@ -247,9 +247,15 @@ class WindowReportBase : public ExceptionStore , public ReportException
   
    void boxShow();
    
+   virtual String getTitle()=0;
+   
    virtual void modalLoop()=0;
    
    class TempQueue;
+   
+  protected: 
+   
+   void lastShow(); // must be called in a destructor of a derived class
    
   public:
   
@@ -280,6 +286,8 @@ class WindowReportOf : public WindowReportBase
    
   private: 
    
+   virtual String getTitle();
+   
    virtual void modalLoop();
    
   public:
@@ -289,7 +297,18 @@ class WindowReportOf : public WindowReportBase
       drag_cfg(param.drag_cfg)
     {
     }
+ 
+   ~WindowReportOf()
+    {
+     lastShow();
+    }
  };
+
+template <class Shape> 
+String WindowReportOf<Shape>::getTitle()
+ {
+  return drag_cfg.fatal_error.get();
+ }
 
 template <class Shape> 
 void WindowReportOf<Shape>::modalLoop()
@@ -304,7 +323,7 @@ void WindowReportOf<Shape>::modalLoop()
   
   Point max_size=main_win.getDesktop()->getScreenSize();
   
-  main_win.createMain(CmdDisplay_Normal,max_size,drag_cfg.fatal_error.get());
+  main_win.createMain(CmdDisplay_Normal,max_size,getTitle());
   
   DeferCallQueue::Enable();
   

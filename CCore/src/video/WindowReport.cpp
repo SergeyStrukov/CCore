@@ -577,7 +577,7 @@ void WindowReportBase::boxShow()
               } );
   }
   
-  ErrorMsgBox(out.close(),"Fatal error");
+  ErrorMsgBox(out.close(),Range(getTitle()));
  }
 
 class WindowReportBase::TempQueue : DeferCallQueue
@@ -615,6 +615,14 @@ class WindowReportBase::TempQueue : DeferCallQueue
     }
  };
 
+void WindowReportBase::lastShow()
+ {
+  if( non_cleared )
+    {
+     show();
+    }
+ }
+
 WindowReportBase::WindowReportBase(Desktop *desktop_,MSec tick_period_,const ExceptionWindow::Config &cfg_)
  : desktop(desktop_),
    tick_period(tick_period_),
@@ -624,10 +632,6 @@ WindowReportBase::WindowReportBase(Desktop *desktop_,MSec tick_period_,const Exc
 
 WindowReportBase::~WindowReportBase()
  {
-  if( non_cleared )
-    {
-     show();
-    }
  }
 
 void WindowReportBase::show()
