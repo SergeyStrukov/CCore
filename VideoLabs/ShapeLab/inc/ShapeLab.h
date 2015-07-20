@@ -17,6 +17,7 @@
 #include <inc/Application.h>
 
 #include <CCore/inc/video/WindowLib.h>
+#include <CCore/inc/video/WindowLib2.h>
 #include <CCore/inc/video/FixedWindow.h>
 
 namespace App {
@@ -272,6 +273,10 @@ class ShapeLab2 : public SubWindow
      ProgressShape::Config progress_cfg;
      KnobShape::Config knob_cfg;
      ButtonShape::Config btn_cfg;
+   
+     ContourShape::Config contour_cfg;
+     
+     InfoShape::Config info_cfg;
      
      FixedShape::Config dialog_cfg;
      
@@ -288,6 +293,12 @@ class ShapeLab2 : public SubWindow
    ProgressWindow progress;
    KnobWindow btn1;
    ButtonWindow btn2;
+   
+   InfoFromString info;
+   
+   ContourWindow infoframe;
+   
+   InfoWindow infow;
    
    // test dialog
    

@@ -84,7 +84,7 @@ struct TextSize
   Coord dy;
   Coord by;
   Coord skew;
-  Coord full_dx;
+  Coord full_dx; // MaxCoord if overflow
   bool overflow;
  };
 

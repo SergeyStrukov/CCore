@@ -491,6 +491,8 @@ void ShapeLab2::dialog_destroyed()
   //getFrame()->getHost()->enableUserInput(true);
  }
 
+static const char * TestStr="This is a test string\rthe second line of the test\nthe third line\r\nand the last line.";
+
 ShapeLab2::ShapeLab2(SubWindowHost &host)
  : SubWindow(host),
    
@@ -501,6 +503,11 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    btn1(wlist,cfg.knob_cfg,KnobShape::FacePlus),
    btn2(wlist,cfg.btn_cfg,String("Test dialog")),
    
+   info(TestStr),
+   
+   infoframe(dlist,cfg.contour_cfg),
+   infow(wlist,cfg.info_cfg,info),
+   
    dialog(host.getFrame()->getDesktop(),cfg.dialog_cfg),
    test(dialog),
    dialog_client(test),
@@ -509,8 +516,8 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    connector_btn2_pressed(this,&ShapeLab2::btn2_pressed,btn2.pressed),
    connector_dialog_destroyed(this,&ShapeLab2::dialog_destroyed,dialog.destroyed)
  {
-  wlist.insTop(btn1,btn2);
-  dlist.insTop(progress);
+  wlist.insTop(btn1,btn2,infow);
+  dlist.insTop(progress,infoframe);
   
   wlist.enableTabFocus();
   
@@ -531,6 +538,10 @@ void ShapeLab2::layout()
   
   btn1.setPlace(Pane(20,50,40));
   btn2.setPlace(Pane(20,100,140,32));
+  
+  infoframe.setPlace(Pane(10,200,200,70));
+  
+  infow.setPlace(infoframe.getInner());
  }
 
 void ShapeLab2::draw(DrawBuf buf,bool drag_active) const

@@ -156,12 +156,9 @@ Coord ExceptionWindow::VisibleDx(Font font,ulen index,StrLen text)
    
    StrLen line1=out.close();
    
-   TextSize tsize=font->text(line1,line);
+   TextSize ts=font->text(line1,line);
    
-   if( tsize.overflow ) 
-     ret=MaxCoord;
-   else
-     ret=tsize.full_dx;
+   ret=ts.full_dx;
    
    if( !cur ) return ret;
    
@@ -178,11 +175,9 @@ Coord ExceptionWindow::VisibleDx(Font font,ulen index,StrLen text)
      
      StrLen line=text.prefix(cur);
      
-     TextSize tsize=font->text(line);
+     TextSize ts=font->text(line);
      
-     if( tsize.overflow ) tsize.full_dx=MaxCoord;
-
-     Replace_max(ret,tsize.full_dx);
+     Replace_max(ret,ts.full_dx);
      
      if( !cur ) return ret;
      
