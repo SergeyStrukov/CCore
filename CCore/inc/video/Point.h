@@ -387,6 +387,16 @@ struct Ratio
    {
     return MPoint(a*point.x,a*point.y);
    }
+  
+  friend Coord operator * (Ratio a,Coord b)
+   {
+    return Coord( IntRShift(DCoord(a.value)*b,Precision) );
+   }
+  
+  friend Point operator * (Ratio a,Point point)
+   {
+    return Point(a*point.x,a*point.y);
+   }
  };
 
 inline Ratio Rational(MCoord a,MCoord b) { return Ratio(a,0)/Ratio(b,0); }

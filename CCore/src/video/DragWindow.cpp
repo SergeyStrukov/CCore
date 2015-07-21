@@ -566,6 +566,29 @@ void DragShape::draw_Close(DrawArt &art) const
     }
  }
 
+Point DragShape::getDeltaSize() const
+ {
+  Coord dxy=+cfg.frame_dxy;
+  Coord tdy=+cfg.title_dy;
+
+  return Point(2*dxy,tdy+dxy);
+ }
+
+Coord DragShape::getMinDx(StrLen title) const
+ {
+  Coord width=RoundUpLen(+cfg.width);
+  Coord tdy=+cfg.title_dy;
+  
+  MCoord ex=Fraction(tdy-2*width)/4;
+  
+  Coord dxy=+cfg.frame_dxy;
+  Coord bdx=+cfg.btn_dx;
+  
+  TextSize ts=cfg.title_font.get()->text(title);
+  
+  return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+5*bdx+bdx/4);
+ }
+
 void DragShape::reset(const String &title_,bool max_button_)
  {
   has_focus=false;

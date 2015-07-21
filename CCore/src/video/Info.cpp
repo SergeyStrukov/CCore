@@ -18,6 +18,37 @@
 namespace CCore {
 namespace Video {
 
+namespace Private_Info {
+
+class DefInfo : public InfoBase
+ {
+  public:
+  
+   DefInfo() {}
+   
+   virtual ~DefInfo() {}
+   
+   // AbstractInfo
+   
+   virtual ulen getLineCount() const { return 0; }
+   
+   virtual StrLen getLine(ulen) const { return {}; }
+ };
+
+DefInfo Object CCORE_INITPRI_3 ; 
+
+} // namespace Private_Info
+
+using namespace Private_Info;
+
+/* class Info */
+
+Info::Info()
+ : ptr(&Object)
+ {
+  ptr->incRef();
+ }
+
 /* class InfoFromString */
 
 StrLen InfoFromString::Impl::CutLine(StrLen &str)

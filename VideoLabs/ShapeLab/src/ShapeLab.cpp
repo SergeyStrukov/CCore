@@ -468,6 +468,16 @@ void ShapeLab2::btn1_pressed()
 
 void ShapeLab2::btn2_pressed()
  {
+  //const char *str="This is a test information.\nThe second line.\nThe end of information.";
+  
+  const char *str="Some error";
+  
+  msg_window.setInfo(InfoFromString(str));
+  
+  msg_window.create(String("Test message"));
+  
+#if 0
+  
   if( dialog.isDead() )
     {
      Pane pane(50,50,1000,800);
@@ -480,6 +490,8 @@ void ShapeLab2::btn2_pressed()
      
      //getFrame()->getHost()->enableUserInput(false);
     }
+  
+#endif  
  }
 
 void ShapeLab2::dialog_destroyed()
@@ -511,6 +523,8 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    dialog(host.getFrame()->getDesktop(),cfg.dialog_cfg),
    test(dialog),
    dialog_client(test),
+   
+   msg_window(host.getFrame()->getDesktop(),cfg.msg_cfg),
    
    connector_btn1_pressed(this,&ShapeLab2::btn1_pressed,btn1.pressed),
    connector_btn2_pressed(this,&ShapeLab2::btn2_pressed,btn2.pressed),

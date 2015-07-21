@@ -20,6 +20,8 @@
 #include <CCore/inc/video/WindowLib2.h>
 #include <CCore/inc/video/FixedWindow.h>
 
+#include <CCore/inc/video/MessageWindow.h>
+
 namespace App {
 
 /* classes */
@@ -280,6 +282,8 @@ class ShapeLab2 : public SubWindow
      
      FixedShape::Config dialog_cfg;
      
+     MessageWindow::Config msg_cfg;
+     
      Config()
       {
       }
@@ -305,6 +309,12 @@ class ShapeLab2 : public SubWindow
    FixedWindow dialog;
    TestDialog test;
    ClientFromSubWindow dialog_client;
+   
+   // message
+   
+   MessageWindow msg_window;
+   
+   // connectors
    
    SignalConnector<ShapeLab2> connector_btn1_pressed;
    SignalConnector<ShapeLab2> connector_btn2_pressed;

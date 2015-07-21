@@ -73,6 +73,8 @@ class Info
   
   public:
   
+   Info();
+   
    ~Info() {}
   
    AbstractInfo * operator -> () const { return ptr.getPtr(); }

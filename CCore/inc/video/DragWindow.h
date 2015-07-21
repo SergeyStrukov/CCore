@@ -194,6 +194,10 @@ class DragShape
    
    explicit DragShape(const Config &cfg_) : cfg(cfg_) {}
    
+   Point getDeltaSize() const;
+   
+   Coord getMinDx(StrLen title) const;
+   
    Pane getClient() const { return client; }
    
    void reset(const String &title,bool max_button);
@@ -535,6 +539,15 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
     }
    
    // methods
+   
+   Point getDeltaSize() const { return shape.getDeltaSize(); }
+   
+   Point getMinSize(StrLen title,Point size) const
+    {
+     size+=shape.getDeltaSize();
+     
+     return Point(Max(size.x,shape.getMinDx(title)),size.y);
+    }
    
    void bindClient(ClientWindow &client_)
     { 

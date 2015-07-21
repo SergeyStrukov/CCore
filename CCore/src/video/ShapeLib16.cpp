@@ -41,12 +41,12 @@ Point InfoShape::getMinSize() const
      dy=IntAdd(dy,ts.dy);
     }
   
-  return 2*Point::Diag(+cfg.border_dxy)+Point(dx,dy);
+  return 2*Point::Diag(+cfg.space_dxy)+Point(dx,dy);
  }
 
 void InfoShape::setMax()
  {
-  Pane inner=pane.shrink(+cfg.border_dxy);
+  Pane inner=pane.shrink(+cfg.space_dxy);
   
   if( +inner )
     {
@@ -97,7 +97,7 @@ void InfoShape::draw(const DrawBuf &buf) const
   
   VColor text=+cfg.text;
   
-  Coord dxy=+cfg.border_dxy;
+  Coord dxy=+cfg.space_dxy;
   
   // decor
   

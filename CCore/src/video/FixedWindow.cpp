@@ -188,6 +188,29 @@ void FixedShape::draw_Close(DrawArt &art) const
     }
  }
 
+Point FixedShape::getDeltaSize() const
+ {
+  Coord dxy=+cfg.frame_dxy;
+  Coord tdy=+cfg.title_dy;
+  
+  return Point(2*dxy,dxy+tdy);
+ }
+
+Coord FixedShape::getMinDx(StrLen title) const
+ {
+  Coord width=RoundUpLen(+cfg.width);
+  Coord tdy=+cfg.title_dy;
+  
+  MCoord ex=Fraction(tdy-2*width)/4;
+  
+  Coord dxy=+cfg.frame_dxy;
+  Coord bdx=+cfg.btn_dx;
+  
+  TextSize ts=cfg.title_font.get()->text(title);
+  
+  return IntAdd(ts.full_dx,2*RoundUpLen(ex)+2*dxy+2*bdx);
+ }
+
 void FixedShape::reset(const String &title_)
  {
   has_focus=false;

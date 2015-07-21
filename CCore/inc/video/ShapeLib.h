@@ -930,7 +930,7 @@ class InfoShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
      
-     RefVal<Coord> border_dxy = 5 ;
+     RefVal<Coord> space_dxy = 5 ;
      
      RefVal<VColor> text  =  Black ;
      RefVal<VColor> focus = Orange ;
@@ -964,6 +964,8 @@ class InfoShape
    Coord xoff_base = 0 ;
    
    // methods
+   
+   explicit InfoShape(const Config &cfg_) : cfg(cfg_) {}
    
    InfoShape(const Config &cfg_,const Info &info_) : cfg(cfg_),info(info_) {}
    
