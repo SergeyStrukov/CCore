@@ -147,6 +147,7 @@ obj/HeapEngine.o \
 obj/HeapSort.o \
 obj/IXP465.o \
 obj/IXP465.CP15.o \
+obj/Info.o \
 obj/Init.o \
 obj/InstanceLock.o \
 obj/IntOp.o \
@@ -525,6 +526,7 @@ obj/HeapEngine.s \
 obj/HeapSort.s \
 obj/IXP465.s \
 obj/IXP465.CP15.s \
+obj/Info.s \
 obj/Init.s \
 obj/InstanceLock.s \
 obj/IntOp.s \
@@ -903,6 +905,7 @@ obj/HeapEngine.dep \
 obj/HeapSort.dep \
 obj/IXP465.dep \
 obj/IXP465.CP15.dep \
+obj/Info.dep \
 obj/Init.dep \
 obj/InstanceLock.dep \
 obj/IntOp.dep \
@@ -1590,6 +1593,9 @@ obj/IXP465.o : ../../Target/IXDP465/CCore/src/dev/IXP465.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/IXP465.CP15.o : ../../Target/IXDP465/CCore/src/dev/IXP465.CP15.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Info.o : ../../CCore/src/video/Info.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Init.o : ../../CCore/src/gadget/Init.cpp
@@ -2719,6 +2725,9 @@ obj/IXP465.s : ../../Target/IXDP465/CCore/src/dev/IXP465.cpp
 obj/IXP465.CP15.s : ../../Target/IXDP465/CCore/src/dev/IXP465.CP15.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Info.s : ../../CCore/src/video/Info.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Init.s : ../../CCore/src/gadget/Init.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3845,6 +3854,9 @@ obj/IXP465.dep : ../../Target/IXDP465/CCore/src/dev/IXP465.cpp
 
 obj/IXP465.CP15.dep : ../../Target/IXDP465/CCore/src/dev/IXP465.CP15.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/IXP465.CP15.o $< -MF $@
+
+obj/Info.dep : ../../CCore/src/video/Info.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Info.o $< -MF $@
 
 obj/Init.dep : ../../CCore/src/gadget/Init.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Init.o $< -MF $@

@@ -131,6 +131,7 @@ obj/Handle.o \
 obj/HashFunction.o \
 obj/HeapEngine.o \
 obj/HeapSort.o \
+obj/Info.o \
 obj/Init.o \
 obj/InstanceLock.o \
 obj/IntOp.o \
@@ -481,6 +482,7 @@ obj/Handle.s \
 obj/HashFunction.s \
 obj/HeapEngine.s \
 obj/HeapSort.s \
+obj/Info.s \
 obj/Init.s \
 obj/InstanceLock.s \
 obj/IntOp.s \
@@ -831,6 +833,7 @@ obj/Handle.dep \
 obj/HashFunction.dep \
 obj/HeapEngine.dep \
 obj/HeapSort.dep \
+obj/Info.dep \
 obj/Init.dep \
 obj/InstanceLock.dep \
 obj/IntOp.dep \
@@ -1448,6 +1451,9 @@ obj/HeapEngine.o : ../../CCore/src/HeapEngine.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/HeapSort.o : ../../CCore/src/sort/HeapSort.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Info.o : ../../CCore/src/video/Info.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Init.o : ../../CCore/src/gadget/Init.cpp
@@ -2493,6 +2499,9 @@ obj/HeapEngine.s : ../../CCore/src/HeapEngine.cpp
 obj/HeapSort.s : ../../CCore/src/sort/HeapSort.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Info.s : ../../CCore/src/video/Info.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Init.s : ../../CCore/src/gadget/Init.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3535,6 +3544,9 @@ obj/HeapEngine.dep : ../../CCore/src/HeapEngine.cpp
 
 obj/HeapSort.dep : ../../CCore/src/sort/HeapSort.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/HeapSort.o $< -MF $@
+
+obj/Info.dep : ../../CCore/src/video/Info.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Info.o $< -MF $@
 
 obj/Init.dep : ../../CCore/src/gadget/Init.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Init.o $< -MF $@

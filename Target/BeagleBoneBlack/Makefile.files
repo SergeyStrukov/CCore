@@ -153,6 +153,7 @@ obj/HashFunction.o \
 obj/HeapEngine.o \
 obj/HeapSort.o \
 obj/I2CDevice.o \
+obj/Info.o \
 obj/Init.o \
 obj/InstanceLock.o \
 obj/IntOp.o \
@@ -536,6 +537,7 @@ obj/HashFunction.s \
 obj/HeapEngine.s \
 obj/HeapSort.s \
 obj/I2CDevice.s \
+obj/Info.s \
 obj/Init.s \
 obj/InstanceLock.s \
 obj/IntOp.s \
@@ -919,6 +921,7 @@ obj/HashFunction.dep \
 obj/HeapEngine.dep \
 obj/HeapSort.dep \
 obj/I2CDevice.dep \
+obj/Info.dep \
 obj/Init.dep \
 obj/InstanceLock.dep \
 obj/IntOp.dep \
@@ -1623,6 +1626,9 @@ obj/HeapSort.o : ../../CCore/src/sort/HeapSort.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/I2CDevice.o : ../../Target/BeagleBoneBlack/CCore/src/I2CDevice.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/Info.o : ../../CCore/src/video/Info.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Init.o : ../../CCore/src/gadget/Init.cpp
@@ -2767,6 +2773,9 @@ obj/HeapSort.s : ../../CCore/src/sort/HeapSort.cpp
 obj/I2CDevice.s : ../../Target/BeagleBoneBlack/CCore/src/I2CDevice.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/Info.s : ../../CCore/src/video/Info.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Init.s : ../../CCore/src/gadget/Init.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3908,6 +3917,9 @@ obj/HeapSort.dep : ../../CCore/src/sort/HeapSort.cpp
 
 obj/I2CDevice.dep : ../../Target/BeagleBoneBlack/CCore/src/I2CDevice.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/I2CDevice.o $< -MF $@
+
+obj/Info.dep : ../../CCore/src/video/Info.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Info.o $< -MF $@
 
 obj/Init.dep : ../../CCore/src/gadget/Init.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Init.o $< -MF $@

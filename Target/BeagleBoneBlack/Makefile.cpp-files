@@ -266,6 +266,7 @@
 ../../CCore/src/video/FrameBuf.cpp
 ../../CCore/src/video/FrameGuards.cpp
 ../../CCore/src/video/FrameWindow.cpp
+../../CCore/src/video/Info.cpp
 ../../CCore/src/video/IntOp.cpp
 ../../CCore/src/video/Keyboard.cpp
 ../../CCore/src/video/Mouse.cpp
