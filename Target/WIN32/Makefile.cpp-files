@@ -279,6 +279,7 @@
 ../../CCore/src/video/ShapeLib13.cpp
 ../../CCore/src/video/ShapeLib14.cpp
 ../../CCore/src/video/ShapeLib15.cpp
+../../CCore/src/video/ShapeLib16.cpp
 ../../CCore/src/video/ShapeLib2.cpp
 ../../CCore/src/video/ShapeLib3.cpp
 ../../CCore/src/video/ShapeLib4.cpp

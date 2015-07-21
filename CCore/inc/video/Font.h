@@ -74,6 +74,10 @@ struct FontSize
   Coord dy;
   Coord by;
   Coord skew;
+  
+  bool isMonospace() const { return min_dx==max_dx; }
+  
+  Coord medDx() const { return min_dx+(max_dx-min_dx)/2; }
  };
 
 /* struct TextSize */

@@ -268,6 +268,7 @@ obj/ShapeLib12.o \
 obj/ShapeLib13.o \
 obj/ShapeLib14.o \
 obj/ShapeLib15.o \
+obj/ShapeLib16.o \
 obj/ShapeLib2.o \
 obj/ShapeLib3.o \
 obj/ShapeLib4.o \
@@ -626,6 +627,7 @@ obj/ShapeLib12.s \
 obj/ShapeLib13.s \
 obj/ShapeLib14.s \
 obj/ShapeLib15.s \
+obj/ShapeLib16.s \
 obj/ShapeLib2.s \
 obj/ShapeLib3.s \
 obj/ShapeLib4.s \
@@ -984,6 +986,7 @@ obj/ShapeLib12.dep \
 obj/ShapeLib13.dep \
 obj/ShapeLib14.dep \
 obj/ShapeLib15.dep \
+obj/ShapeLib16.dep \
 obj/ShapeLib2.dep \
 obj/ShapeLib3.dep \
 obj/ShapeLib4.dep \
@@ -1891,6 +1894,9 @@ obj/ShapeLib14.o : ../../CCore/src/video/ShapeLib14.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib15.o : ../../CCore/src/video/ShapeLib15.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/ShapeLib16.o : ../../CCore/src/video/ShapeLib16.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/ShapeLib2.o : ../../CCore/src/video/ShapeLib2.cpp
@@ -2960,6 +2966,9 @@ obj/ShapeLib14.s : ../../CCore/src/video/ShapeLib14.cpp
 obj/ShapeLib15.s : ../../CCore/src/video/ShapeLib15.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/ShapeLib16.s : ../../CCore/src/video/ShapeLib16.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/ShapeLib2.s : ../../CCore/src/video/ShapeLib2.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4026,6 +4035,9 @@ obj/ShapeLib14.dep : ../../CCore/src/video/ShapeLib14.cpp
 
 obj/ShapeLib15.dep : ../../CCore/src/video/ShapeLib15.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib15.o $< -MF $@
+
+obj/ShapeLib16.dep : ../../CCore/src/video/ShapeLib16.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib16.o $< -MF $@
 
 obj/ShapeLib2.dep : ../../CCore/src/video/ShapeLib2.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib2.o $< -MF $@

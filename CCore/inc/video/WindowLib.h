@@ -47,6 +47,8 @@ template <class Shape> class ScrollWindowOf;
 
 template <class Shape> class ProgressWindowOf;
 
+template <class Shape> class InfoWindowOf;
+
 /* class ButtonWindowOf<Shape> */
 
 template <class Shape>
@@ -1513,6 +1515,256 @@ class ProgressWindowOf : public SubWindow
 /* type ProgressWindow */
 
 using ProgressWindow = ProgressWindowOf<ProgressShape> ;
+
+/* class InfoWindowOf<Shape> */
+
+template <class Shape>
+class InfoWindowOf : public SubWindow
+ {
+   Shape shape;
+   
+  private: 
+   
+   void setXOff(Coord xoff)
+    {
+     if( xoff<0 )
+       xoff=0;
+     else if( xoff>shape.xoffMax )
+       xoff=shape.xoffMax;
+     
+     if( xoff!=shape.xoff )
+       {
+        shape.xoff=xoff;
+      
+        redraw();
+       }
+    }
+   
+   void setYOff(ulen yoff)
+    {
+     if( yoff>shape.yoffMax ) yoff=shape.yoffMax;
+     
+     if( yoff!=shape.yoff )
+       {
+        shape.yoff=yoff;
+        
+        redraw();
+       }
+    }
+   
+   void addYOff(ulen delta)
+    {
+     if( shape.yoff<shape.yoffMax )
+       {
+        ulen cap=shape.yoffMax-shape.yoff;
+       
+        setYOff(shape.yoff+Min(delta,cap));
+       }
+    }
+   
+   void subYOff(ulen delta)
+    {
+     ulen yoff=shape.yoff;
+     
+     if( yoff>delta ) 
+       yoff-=delta;
+     else
+       yoff=0;
+     
+     setYOff(yoff);
+    }
+   
+   void drag(Point point)
+    {
+     Coord delta=IntSub(point.x,shape.drag_base.x);
+     
+     setXOff( IntSub(shape.xoff_base,delta) );
+    }
+   
+  public:
+
+   template <class ... TT>
+   InfoWindowOf(SubWindowHost &host,TT && ... tt)
+    : SubWindow(host),
+      shape( std::forward<TT>(tt)... )
+    {
+    }
+   
+   virtual ~InfoWindowOf()
+    {
+    }
+
+   // methods
+   
+   Point getMinSize() const { return shape.getMinSize(); }
+   
+   bool isGoodSize(Point size) const { return shape.isGoodSize(size); }
+   
+   void setInfo(const Info &info)
+    {
+     shape.info=info;
+     shape.yoff=0;
+     shape.xoff=0;
+     
+     redraw();
+    }
+   
+   // drawing
+   
+   virtual void layout()
+    {
+     shape.pane=Pane(Null,getSize());
+     
+     shape.setMax();
+    }
+   
+   virtual void draw(DrawBuf buf,bool) const
+    {
+     shape.draw(buf);
+    }
+
+   // base
+   
+   virtual void open()
+    {
+     shape.has_focus=false;
+     shape.drag=false;
+    }
+   
+   // keyboard
+   
+   virtual void gainFocus()
+    {
+     shape.has_focus=true;
+     
+     redraw();
+    }
+   
+   virtual void looseFocus()
+    {
+     shape.has_focus=false;
+     
+     redraw();
+    }
+   
+   // mouse
+ 
+   virtual void looseCapture()
+    {
+     shape.drag=false;
+    }
+ 
+   virtual MouseShape getMouseShape(Point)
+    {
+     if( shape.xoffMax>0 || shape.yoffMax>0 ) return Mouse_SizeAll;
+     
+     return Mouse_Arrow;
+    }
+   
+   // user input
+   
+   virtual void react(UserAction action)
+    {
+     action.dispatch(*this);
+    }
+   
+   void react_Key(VKey vkey,KeyMod,unsigned repeat)
+    {
+     switch( vkey )
+       {
+        case VKey_Left :
+         {
+          Coord delta_x=Coord(repeat)*shape.dxoff;
+          
+          setXOff( IntSub(shape.xoff,delta_x) );
+         }
+        break;
+        
+        case VKey_Right :
+         {
+          Coord delta_x=Coord(repeat)*shape.dxoff;
+          
+          setXOff( IntAdd(shape.xoff,delta_x) );
+         }
+        break;
+        
+        case VKey_Up :
+         {
+          subYOff(repeat);
+         }
+        break;
+        
+        case VKey_Down :
+         {
+          addYOff(repeat);
+         }
+        break; 
+       }
+    }
+   
+   void react_LeftClick(Point point,MouseKey)
+    {
+     if( !shape.drag )
+       {
+        shape.drag=true;
+        
+        shape.drag_base=point;
+        shape.xoff_base=shape.xoff;
+        
+        captureMouse();
+       }
+    }
+   
+   void react_LeftUp(Point point,MouseKey)
+    {
+     if( shape.drag )
+       {
+        shape.drag=false;
+       
+        releaseMouse();
+        
+        drag(point);
+       }
+    }
+   
+   void react_LeftDClick(Point point,MouseKey mkey)
+    {
+     react_LeftClick(point,mkey);
+    }
+   
+   void react_Move(Point point,MouseKey mkey)
+    {
+     if( shape.drag ) 
+       {
+        if( mkey&MouseKey_Left )
+          {
+           drag(point);
+          } 
+        else
+          {
+           shape.drag=false;
+          
+           releaseMouse();
+          }
+       }
+    }
+
+   void react_Wheel(Point,MouseKey,Coord delta)
+    {
+     if( delta>0 )
+       {
+        addYOff(ulen(delta));
+       }
+     else
+       {
+        subYOff(ulen(-delta));
+       }
+    }
+ };
+
+/* type InfoWindow */
+
+using InfoWindow = InfoWindowOf<InfoShape> ;
 
 } // namespace Video
 } // namespace CCore

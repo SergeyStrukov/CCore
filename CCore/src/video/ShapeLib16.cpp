@@ -13,7 +13,7 @@
 //
 //----------------------------------------------------------------------------------------
  
-#include <CCore/inc/video/ShapeLib2.h>
+#include <CCore/inc/video/ShapeLib.h>
  
 #include <CCore/inc/video/SmoothDrawArt.h>
 #include <CCore/inc/video/FigureLib.h>
@@ -107,9 +107,7 @@ Point InfoShape::getMinSize() const
 
 void InfoShape::setMax()
  {
-  Coord dxy=+cfg.border_dxy;
-  
-  Pane inner=pane.shrink(dxy);
+  Pane inner=pane.shrink(+cfg.border_dxy);
   
   if( +inner )
     {
@@ -141,11 +139,14 @@ void InfoShape::setMax()
        yoffMax=count-h;
      else
        yoffMax=0;
+     
+     dxoff=fs.medDx();
     }
   else
     {
      xoffMax=0;
      yoffMax=0;
+     dxoff=0;
     }
  }
 
@@ -155,36 +156,103 @@ void InfoShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  if( has_focus )
-    {
-     MPane p(pane);
-    
-     art.loop(HalfPos,+cfg.width,+cfg.focus,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
-    }
-  
-  ulen count=info->getLineCount();
-  ulen index=yoff;
-  
-  Font font=cfg.text_font.get();
   VColor text=+cfg.text;
   
-  FontSize fs=font->getSize();
   Coord dxy=+cfg.border_dxy;
   
-  Pane inner=pane.shrink(dxy);
+  // decor
   
-  if( !inner ) return;
+  {
+   MPane p(pane);
+   MCoord len=Fraction(dxy);
   
-  DrawBuf tbuf=buf.cutRebase(inner);
+   if( has_focus )
+     {
+      art.loop(HalfPos,+cfg.width,+cfg.focus,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
+     }
+   
+   if( xoff>0 ) // Left
+     {
+      MCoord x=p.x;
+      MCoord y=p.y+p.dy/2;
+     
+      FigurePoints<3> fig;
+      
+      fig[0]={x,y};
+      fig[1]={x+len,y-len};
+      fig[2]={x+len,y+len};
+      
+      fig.solid(art,text);
+     }
+   
+   if( xoff<xoffMax ) // Right
+     {
+      MCoord x=p.ex;
+      MCoord y=p.y+p.dy/2;
+      
+      FigurePoints<3> fig;
+      
+      fig[0]={x,y};
+      fig[1]={x-len,y-len};
+      fig[2]={x-len,y+len};
+      
+      fig.solid(art,text);
+     }
+   
+   if( yoff>0 ) // Top
+     {
+      MCoord x=p.x+p.dx/2;
+      MCoord y=p.y;
+     
+      FigurePoints<3> fig;
+      
+      fig[0]={x,y};
+      fig[1]={x-len,y+len};
+      fig[2]={x+len,y+len};
+      
+      fig.solid(art,text);
+     }
+   
+   if( yoff<yoffMax ) // Bottom
+     {
+      MCoord x=p.x+p.dx/2;
+      MCoord y=p.ey;
+    
+      FigurePoints<3> fig;
+      
+      fig[0]={x,y};
+      fig[1]={x-len,y-len};
+      fig[2]={x+len,y-len};
+      
+      fig.solid(art,text);
+     }
+  }
   
-  Pane tpane(-xoff,0,IntAdd(xoff,inner.dx),inner.dy);
+  // text
+  
+  {
+   Pane inner=pane.shrink(dxy);
+   
+   if( !inner ) return;
+   
+   ulen count=info->getLineCount();
+   ulen index=yoff;
+   
+   Font font=cfg.text_font.get();
+   
+   FontSize fs=font->getSize();
+   
+   DrawBuf tbuf=buf.cutRebase(inner);
+   
+   Pane tpane(-xoff,0,IntAdd(xoff,inner.dx),inner.dy);
 
-  Coord y=fs.by;
-  
-  for(; index<count && y<inner.dy ;index++,y+=fs.dy)
-    {
-     font->text(tbuf,tpane,TextPlace(AlignX_Left,y),info->getLine(index),text);
-    }
+   Coord y=fs.by;
+   
+   for(; index<count && y<inner.dy ;index++,y+=fs.dy)
+     {
+      font->text(tbuf,tpane,TextPlace(AlignX_Left,y),info->getLine(index),text);
+     }
+  }
  }
 
 } // namespace Video
