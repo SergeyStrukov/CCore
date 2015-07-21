@@ -63,7 +63,7 @@ void ShapeLab1::btn_pressed()
   if( face<KnobShape::FaceLeftLeft )
     face=KnobShape::FaceType(face+1);
   else
-    face=KnobShape::FacePlus;
+    face=KnobShape::FaceOk;
   
   kbtn.setFace(face);
  }
@@ -116,7 +116,7 @@ ShapeLab1::ShapeLab1(SubWindowHost &host)
    
    btn(wlist,cfg.btn_cfg,String("Next face")),
    text(dlist,cfg.text_cfg,String("Text"),AlignX_Left),
-   kbtn(wlist,cfg.knob_cfg,KnobShape::FaceExclamation),
+   kbtn(wlist,cfg.knob_cfg,KnobShape::FaceOk),
    check(wlist,cfg.check_cfg,true),
    xscroll(wlist,cfg.scroll_cfg),
    yscroll(wlist,cfg.scroll_cfg),

@@ -154,6 +154,7 @@ class KnobShape
    
    enum FaceType
     {
+     FaceOk,
      FacePlus,
      FaceMinus,
      FaceCross,

@@ -74,6 +74,19 @@ void KnobShape::draw(const DrawBuf &buf) const
   
   switch( face )
     {
+     case FaceOk :
+      {
+       MCoord a=radius/2;
+       MCoord w=radius/3;
+       
+       MPoint A=center+MPoint(-a,0);
+       MPoint B=center+MPoint(-a/3,a);
+       MPoint C=center+MPoint(a,-a);
+       
+       art.path(w,fc,A,B,C);
+      }
+     break; 
+   
      case FacePlus :
       {
        MCoord a=radius/2;
