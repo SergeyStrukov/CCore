@@ -293,7 +293,7 @@ struct MPoint : BasePoint<MPoint,MCoord>
   
   static const MCoord Half = IntLShift(MCoord(1),Precision-1) ;
   
-  static Coord RShift(MCoord a) { return From32To16( IntRShift(IntAdd(a,Half),Precision) ); }
+  static Coord RShift(MCoord a) { return To16( IntRShift(IntAdd(a,Half),Precision) ); }
   
   static MCoord RShift_ext(MCoord a) { return IntRShift(IntAdd(a,Half),Precision); }
   
@@ -390,7 +390,7 @@ struct Ratio
   
   friend Coord operator * (Ratio a,Coord b)
    {
-    return Coord( IntRShift(DCoord(a.value)*b,Precision) );
+    return To16( IntRShift(DCoord(a.value)*b,Precision) );
    }
   
   friend Point operator * (Ratio a,Point point)

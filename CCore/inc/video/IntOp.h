@@ -106,15 +106,16 @@ constexpr SInt IntMask(SInt a,SInt mask) { return a&mask; }
 
 /* sint16 functions */
 
-inline sint16 From32To16(sint32 x) { IntGuard( x>=-32768 && x<=32767 ); return (sint16)x; }
+template <class SInt>
+Meta::EnableIf<Meta::IsSInt<SInt>::Ret,sint16> To16(SInt x) { IntGuard( x>=-32768 && x<=32767 ); return (sint16)x; }
 
-inline sint16 IntAdd(sint16 a,sint16 b) { return From32To16(sint32(a)+sint32(b)); }
+inline sint16 IntAdd(sint16 a,sint16 b) { return To16(sint32(a)+sint32(b)); }
 
-inline sint16 IntSub(sint16 a,sint16 b) { return From32To16(sint32(a)-sint32(b)); }
+inline sint16 IntSub(sint16 a,sint16 b) { return To16(sint32(a)-sint32(b)); }
 
-inline sint16 IntMul(sint16 a,sint16 b) { return From32To16(sint32(a)*sint32(b)); }
+inline sint16 IntMul(sint16 a,sint16 b) { return To16(sint32(a)*sint32(b)); }
 
-inline sint16 IntDiv(sint16 a,sint16 b) { IntGuard( b!=0 ); return From32To16(sint32(a)/sint32(b)); }
+inline sint16 IntDiv(sint16 a,sint16 b) { IntGuard( b!=0 ); return To16(sint32(a)/sint32(b)); }
 
 /* classes */
 

@@ -259,6 +259,8 @@ class WindowList : NoCopy , public SubWindowHost , public UserInput
    
    void moveBottom(SubWindow &sub_win) { moveBottom(&sub_win); }
    
+   void delAll();
+   
    // multiple insert
    
    template <class ... TT>

@@ -131,6 +131,28 @@ void WindowList::moveBottom(SubWindow *sub_win)
   list.ins_last(sub_win);
  }
 
+void WindowList::delAll()
+ {
+  for(auto cur=list.start(); +cur ;++cur) cur->list=0;
+  
+  if( is_opened )
+    {
+     for(auto cur=list.start(); +cur ;++cur) cur->close();
+    }
+  
+  list.init();
+  
+  focus=0;
+  enter=0;
+  
+  if( capture )
+    {
+     capture=0;
+   
+     parent.releaseMouse();
+    }
+ }
+
  // focus
 
 void WindowList::focusTop()

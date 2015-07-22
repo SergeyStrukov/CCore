@@ -468,9 +468,9 @@ void ShapeLab2::btn1_pressed()
 
 void ShapeLab2::btn2_pressed()
  {
-  //const char *str="This is a test information.\nThe second line.\nThe end of information.";
+  const char *str="This is a test information.\nThe second line.\nThe end of information.";
   
-  const char *str="Some error";
+  //const char *str="Some error";
   
   msg_window.setInfo(InfoFromString(str));
   
@@ -503,6 +503,11 @@ void ShapeLab2::dialog_destroyed()
   //getFrame()->getHost()->enableUserInput(true);
  }
 
+void ShapeLab2::msg_destroyed()
+ {
+  text.printf("button #;",msg_window.getButtonId());
+ }
+
 static const char * TestStr="This is a test string\rthe second line of the test\nthe third line\r\nand the last line.";
 
 ShapeLab2::ShapeLab2(SubWindowHost &host)
@@ -520,6 +525,8 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    infoframe(dlist,cfg.contour_cfg),
    infow(wlist,cfg.info_cfg,info),
    
+   text(dlist,cfg.text_cfg,AlignX_Left),
+   
    dialog(host.getFrame()->getDesktop(),cfg.dialog_cfg),
    test(dialog),
    dialog_client(test),
@@ -528,16 +535,25 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    
    connector_btn1_pressed(this,&ShapeLab2::btn1_pressed,btn1.pressed),
    connector_btn2_pressed(this,&ShapeLab2::btn2_pressed,btn2.pressed),
-   connector_dialog_destroyed(this,&ShapeLab2::dialog_destroyed,dialog.destroyed)
+   connector_dialog_destroyed(this,&ShapeLab2::dialog_destroyed,dialog.destroyed),
+   connector_msg_destroyed(this,&ShapeLab2::msg_destroyed,msg_window.destroyed)
  {
   wlist.insTop(btn1,btn2,infow);
-  dlist.insTop(progress,infoframe);
+  dlist.insTop(progress,infoframe,text);
   
   wlist.enableTabFocus();
   
   progress.setTotal(100);
   
   dialog.bindClient(dialog_client);
+  
+#if 0  
+  
+  msg_window.add(String("Yes"),Button_Yes)
+            .add(String("No"),Button_No)
+            .add(String("Cancel"),Button_Cancel);
+  
+#endif  
  }
 
 ShapeLab2::~ShapeLab2()
@@ -556,6 +572,8 @@ void ShapeLab2::layout()
   infoframe.setPlace(Pane(10,200,200,70));
   
   infow.setPlace(infoframe.getInner());
+  
+  text.setPlace(Pane(10,300,200,30));
  }
 
 void ShapeLab2::draw(DrawBuf buf,bool drag_active) const

@@ -18,9 +18,23 @@
 
 #include <CCore/inc/video/FixedWindow.h>
 #include <CCore/inc/video/WindowLib.h>
+
+#include <CCore/inc/OwnPtr.h>
+#include <CCore/inc/Array.h>
  
 namespace CCore {
 namespace Video {
+
+/* consts */
+
+enum ButtonId : int
+ {
+  Button_Cancel = -1 ,
+  Button_Ok     =  0 ,
+  
+  Button_Yes    =  1 ,
+  Button_No     =  2 
+ };
 
 /* classes */
 
@@ -38,17 +52,41 @@ class MessageSubWindow : public SubWindow
     {
      RefVal<Coord> knob_dxy  = 30 ;
      RefVal<Coord> space_dxy = 10 ;
+     
+     RefVal<Point> btnSpace = Point(20,10) ;
     
      RefVal<VColor> back = Silver ;
 
      RefVal<InfoShape::Config> info_ctor;
      RefVal<KnobShape::Config> knob_ctor;
+     RefVal<ButtonShape::Config> btn_ctor;
      
      Config()
       {
       }
     };
+   
+  private: 
   
+   class Btn : public ButtonWindow
+    {
+      int btn_id;
+      
+      MessageSubWindow *sub_win;
+      
+      SignalConnector<Btn> connector_pressed;
+
+     private: 
+      
+      void pressed_id();     
+      
+     public:
+    
+      Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const String &name,int btn_id,MessageSubWindow *sub_win);
+      
+      virtual ~Btn();
+    };
+   
   private:
   
    const Config &cfg;
@@ -58,6 +96,10 @@ class MessageSubWindow : public SubWindow
    InfoWindow showInfo;
    
    KnobWindow knobOk;
+   
+   DynArray<OwnPtr<Btn> > btn_list;
+   
+   ulen btn_count = 0 ;
    
    SignalConnector<MessageSubWindow> connector_knobOk_pressed;
    
@@ -75,7 +117,9 @@ class MessageSubWindow : public SubWindow
    
    Point getMinSize() const;
    
-   void setInfo(const Info &info);
+   MessageSubWindow & setInfo(const Info &info);
+   
+   MessageSubWindow & add(const String &name,int btn_id);
    
    // drawing
    
@@ -109,7 +153,7 @@ class MessageSubWindow : public SubWindow
    
    // signals
    
-   Signal<> finish;
+   Signal<int> finish; // btn_id
  };
 
 /* class MessageWindow */
@@ -138,11 +182,13 @@ class MessageWindow : public FixedWindow
    
    ClientFromSubWindow client;
    
-   SignalConnector<MessageWindow> connector_finish;
+   int btn_id = Button_Cancel ; 
+   
+   SignalConnector<MessageWindow,int> connector_finish;
    
   private: 
    
-   void finish();
+   void finish(int btn_id);
    
   public:
   
@@ -152,8 +198,18 @@ class MessageWindow : public FixedWindow
    
    // methods
    
-   void setInfo(const Info &info) { sub_win.setInfo(info); }
+   MessageWindow & setInfo(const Info &info) { sub_win.setInfo(info); return *this; }
 
+   MessageWindow & add(const String &name,int btn_id) { sub_win.add(name,btn_id); return *this; }
+   
+   int getButtonId() const { return btn_id; } // available after the signal "destroyed" 
+   
+   // base
+   
+   virtual void alive();
+   
+   // create
+   
    Pane getPane(StrLen title) const;
    
    using FixedWindow::createMain;

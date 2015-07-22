@@ -284,6 +284,8 @@ class ShapeLab2 : public SubWindow
      
      MessageWindow::Config msg_cfg;
      
+     TextShape::Config text_cfg;
+     
      Config()
       {
       }
@@ -304,6 +306,8 @@ class ShapeLab2 : public SubWindow
    
    InfoWindow infow;
    
+   TextWindow text;
+   
    // test dialog
    
    FixedWindow dialog;
@@ -320,6 +324,7 @@ class ShapeLab2 : public SubWindow
    SignalConnector<ShapeLab2> connector_btn2_pressed;
    
    SignalConnector<ShapeLab2> connector_dialog_destroyed;
+   SignalConnector<ShapeLab2> connector_msg_destroyed;
    
   private:
    
@@ -328,6 +333,8 @@ class ShapeLab2 : public SubWindow
    void btn2_pressed();
    
    void dialog_destroyed();
+   
+   void msg_destroyed();
    
   public:
  

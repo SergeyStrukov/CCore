@@ -49,7 +49,7 @@ MCoord DrawLab::toMilli(Coord x) const
 
 Coord DrawLab::fromMilli(MCoord x) const
  {
-  return From32To16( IntRShift<MCoord>(x+MPoint::Half,MPoint::Precision-cfg.zoom_deg) );
+  return To16( IntRShift<MCoord>(x+MPoint::Half,MPoint::Precision-cfg.zoom_deg) );
  }
 
 MPoint DrawLab::toMilli(Point point) const

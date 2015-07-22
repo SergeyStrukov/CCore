@@ -18,9 +18,26 @@
 namespace CCore {
 namespace Video {
 
+void MessageSubWindow::Btn::pressed_id()
+ {
+  sub_win->finish.assert(btn_id);
+ }
+
+MessageSubWindow::Btn::Btn(SubWindowHost &host,const ButtonShape::Config &cfg,const String &name,int btn_id_,MessageSubWindow *sub_win_)
+ : ButtonWindow(host,cfg,name),
+   btn_id(btn_id_),
+   sub_win(sub_win_),
+   connector_pressed(this,&MessageSubWindow::Btn::pressed_id,pressed)
+ {
+ }
+
+MessageSubWindow::Btn::~Btn()
+ {
+ }
+
 void MessageSubWindow::knobOk_pressed()
  {
-  finish.assert();
+  finish.assert(Button_Ok);
  }
 
 MessageSubWindow::MessageSubWindow(SubWindowHost &host,const Config &cfg_)
@@ -33,8 +50,6 @@ MessageSubWindow::MessageSubWindow(SubWindowHost &host,const Config &cfg_)
    
    connector_knobOk_pressed(this,&MessageSubWindow::knobOk_pressed,knobOk.pressed)
  {
-  list.insTop(knobOk,showInfo);
-  
   list.enableTabFocus();
   list.enableClickFocus();
  }
@@ -47,19 +62,50 @@ MessageSubWindow::~MessageSubWindow()
 
 Point MessageSubWindow::getMinSize() const
  {
-  Point size=showInfo.getMinSize();
-  
   Coord space_dxy=+cfg.space_dxy;
-  Coord knob_dxy=+cfg.knob_dxy;
   
-  Coord delta=knob_dxy+2*space_dxy;
+  Point size=showInfo.getMinSize()+2*Point::Diag(space_dxy);
   
-  return Point(Max(knob_dxy,size.x),size.y+delta);
+  if( ulen count=btn_list.getLen() )
+    {
+     Point btnSpace=+cfg.btnSpace;
+    
+     Point s;
+   
+     for(ulen ind=0; ind<count ;ind++) s=Sup(s,btn_list[ind]->getMinSize());
+    
+     s+=btnSpace;
+     
+     Coord delta=s.y+2*space_dxy;
+     
+     Coord total=Coord(count)*s.x+Coord(count+1)*space_dxy;
+     
+     return Point(Max(total,size.x),size.y+delta);
+    }
+  else
+    {
+     Coord knob_dxy=+cfg.knob_dxy;
+     
+     Coord delta=knob_dxy+2*space_dxy;
+     
+     return Point(Max(knob_dxy,size.x),size.y+delta);
+    }
  }
 
-void MessageSubWindow::setInfo(const Info &info)
+MessageSubWindow & MessageSubWindow::setInfo(const Info &info)
  {
   showInfo.setInfo(info);
+  
+  return *this;
+ }
+
+MessageSubWindow & MessageSubWindow::add(const String &name,int btn_id)
+ {
+  OwnPtr<Btn> obj(new Btn(list,cfg.btn_ctor.get(),name,btn_id,this));
+  
+  btn_list.append_swap(obj);
+  
+  return *this;
  }
 
  // drawing
@@ -69,13 +115,42 @@ void MessageSubWindow::layout()
   Point size=getSize();
   
   Coord space_dxy=+cfg.space_dxy;
-  Coord knob_dxy=+cfg.knob_dxy;
   
-  Coord delta=knob_dxy+2*space_dxy;
-  
-  showInfo.setPlace(Pane(0,0,size.x,size.y-delta));
-  
-  knobOk.setPlace(Pane((size.x-knob_dxy)/2,size.y-knob_dxy-space_dxy,knob_dxy));
+  if( ulen count=btn_count )
+    {
+     Point btnSpace=+cfg.btnSpace;
+     
+     Point s;
+    
+     for(ulen ind=0; ind<count ;ind++) s=Sup(s,btn_list[ind]->getMinSize());
+     
+     s+=btnSpace;
+     
+     Coord delta=s.y+2*space_dxy;
+     
+     showInfo.setPlace(Pane(0,0,size.x,size.y-delta).shrink(space_dxy));
+      
+     Coord total=Coord(count)*s.x+Coord(count-1)*space_dxy;
+     
+     Point o((size.x-total)/2,size.y-s.y-space_dxy);
+     Coord delta_x=s.x+space_dxy;
+    
+     for(ulen ind=0; ind<count ;ind++)
+       {
+        btn_list[ind]->setPlace(Pane(o,s));
+        
+        o.x+=delta_x;
+       }
+    }
+  else
+    {
+     Coord knob_dxy=+cfg.knob_dxy;
+     Coord delta=knob_dxy+2*space_dxy;
+    
+     showInfo.setPlace(Pane(0,0,size.x,size.y-delta).shrink(space_dxy));
+    
+     knobOk.setPlace(Pane((size.x-knob_dxy)/2,size.y-knob_dxy-space_dxy,knob_dxy));
+    }
  }
 
 void MessageSubWindow::draw(DrawBuf buf,bool drag_active) const
@@ -96,6 +171,21 @@ void MessageSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
 
 void MessageSubWindow::open()
  {
+  list.delAll();
+  
+  btn_count=btn_list.getLen();
+  
+  if( btn_count )
+    {
+     btn_list.apply( [this] (OwnPtr<Btn> &obj) { list.insBottom(obj.getPtr()); } );
+     
+     list.insBottom(showInfo);
+    }
+  else
+    {
+     list.insTop(knobOk,showInfo);
+    }
+  
   list.open();
   
   list.focusTop();
@@ -139,8 +229,10 @@ void MessageSubWindow::react(UserAction action)
 
 /* class MessageWindow */
 
-void MessageWindow::finish()
+void MessageWindow::finish(int btn_id_)
  {
+  btn_id=btn_id_;
+  
   destroy();
  }
    
@@ -157,6 +249,13 @@ MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg_)
    
 MessageWindow::~MessageWindow()
  {
+ }
+
+void MessageWindow::alive()
+ {
+  FixedWindow::alive();
+  
+  btn_id=Button_Cancel;
  }
 
 Pane MessageWindow::getPane(StrLen title) const
