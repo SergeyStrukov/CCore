@@ -301,8 +301,8 @@ ExceptionWindow::ExceptionWindow(SubWindowHost &host,const Config &cfg_,WindowRe
    report(report_),
    
    list(*this),
-   yscroll(list,cfg.scroll_cfg.get()),
-   xscroll(list,cfg.scroll_cfg.get()),
+   yscroll(list,cfg.scroll_ctor.get()),
+   xscroll(list,cfg.scroll_ctor.get()),
    
    connector_updateReport(this,&ExceptionWindow::updateReport,report.update),
    connector_yposChanged(this,&ExceptionWindow::yposChanged,yscroll.changed),

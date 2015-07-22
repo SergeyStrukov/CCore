@@ -28,8 +28,8 @@ MessageSubWindow::MessageSubWindow(SubWindowHost &host,const Config &cfg_)
    cfg(cfg_),
    list(*this),
    
-   showInfo(list,cfg.info_cfg.get()),
-   knobOk(list,cfg.knob_cfg.get(),KnobShape::FaceOk),
+   showInfo(list,cfg.info_ctor.get()),
+   knobOk(list,cfg.knob_ctor.get(),KnobShape::FaceOk),
    
    connector_knobOk_pressed(this,&MessageSubWindow::knobOk_pressed,knobOk.pressed)
  {
@@ -144,10 +144,10 @@ void MessageWindow::finish()
   destroy();
  }
    
-MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg)
- : FixedWindow(desktop,cfg.frame_cfg.get()),
-   pos_ratio(cfg.pos_ratio),
-   sub_win(*this,cfg.msg_cfg.get()),
+MessageWindow::MessageWindow(Desktop *desktop,const Config &cfg_)
+ : FixedWindow(desktop,cfg_.frame_ctor.get()),
+   cfg(cfg_),
+   sub_win(*this,cfg.msg_ctor.get()),
    client(sub_win),
    
    connector_finish(this,&MessageWindow::finish,sub_win.finish)
@@ -167,7 +167,7 @@ Pane MessageWindow::getPane(StrLen title) const
   
   size=Inf(size,s-s/4);
   
-  return Pane((s.x-size.x)/2,+pos_ratio*(s.y-size.y),size);
+  return Pane((s.x-size.x)/2,+cfg.pos_ratio*(s.y-size.y),size);
  }
 
 } // namespace Video

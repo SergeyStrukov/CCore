@@ -41,8 +41,8 @@ class MessageSubWindow : public SubWindow
     
      RefVal<VColor> back = Silver ;
 
-     RefVal<InfoShape::Config> info_cfg;
-     RefVal<KnobShape::Config> knob_cfg;
+     RefVal<InfoShape::Config> info_ctor;
+     RefVal<KnobShape::Config> knob_ctor;
      
      Config()
       {
@@ -120,10 +120,10 @@ class MessageWindow : public FixedWindow
   
    struct Config
     {
-     RefVal<ConfigType> frame_cfg;
-     RefVal<MessageSubWindow::Config> msg_cfg;
-     
      RefVal<Ratio> pos_ratio = Rational(5,12) ;
+     
+     RefVal<ConfigType> frame_ctor;
+     RefVal<MessageSubWindow::Config> msg_ctor;
     
      Config()
       {
@@ -132,7 +132,7 @@ class MessageWindow : public FixedWindow
   
   private:
   
-   RefVal<Ratio> pos_ratio;
+   const Config &cfg;
    
    MessageSubWindow sub_win;
    

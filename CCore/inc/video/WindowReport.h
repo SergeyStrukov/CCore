@@ -119,7 +119,7 @@ class ExceptionWindow : public SubWindow
      
      RefVal<Font> text_font;
      
-     RefVal<ScrollShape::Config> scroll_cfg; 
+     RefVal<ScrollShape::Config> scroll_ctor; 
      
      Config() {}
     };

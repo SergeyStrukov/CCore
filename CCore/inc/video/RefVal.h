@@ -41,7 +41,9 @@ class RefVal
    
    T operator + () const { return ptr?(*ptr):val; }
    
-   const T & get() const { if( ptr ) return *ptr; return val; } 
+   const T & get() const { if( ptr ) return *ptr; return val; }
+   
+   T & takeVal() { return val; }
    
    void bind(T &obj) { ptr=&obj; }
  };
