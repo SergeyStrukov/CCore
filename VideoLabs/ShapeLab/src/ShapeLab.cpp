@@ -468,13 +468,16 @@ void ShapeLab2::btn1_pressed()
 
 void ShapeLab2::btn2_pressed()
  {
-  const char *str="This is a test information.\nThe second line.\nThe end of information.";
-  
-  //const char *str="Some error";
-  
-  msg_window.setInfo(InfoFromString(str));
-  
-  msg_window.create(String("Test message"));
+  if( msg_window.isDead() )
+    {
+     const char *str="This is a test information.\nThe second line.\nThe end of information.";
+     
+     msg_window.setInfo(InfoFromString(str));
+     
+     msg_window.create(String("Test message"));
+     
+     disableFrameReact();
+    }
   
 #if 0
   
@@ -505,6 +508,8 @@ void ShapeLab2::dialog_destroyed()
 
 void ShapeLab2::msg_destroyed()
  {
+  enableFrameReact();
+  
   text.printf("button #;",msg_window.getButtonId());
  }
 
@@ -547,7 +552,7 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
   
   dialog.bindClient(dialog_client);
   
-#if 0  
+#if 1
   
   msg_window.add(String("Yes"),Button_Yes)
             .add(String("No"),Button_No)

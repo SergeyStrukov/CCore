@@ -60,6 +60,7 @@ class MessageSubWindow : public SubWindow
      RefVal<InfoShape::Config> info_ctor;
      RefVal<KnobShape::Config> knob_ctor;
      RefVal<ButtonShape::Config> btn_ctor;
+     RefVal<DoubleLineShape::Config> dline_ctor;
      
      Config()
       {
@@ -92,10 +93,15 @@ class MessageSubWindow : public SubWindow
    const Config &cfg;
    
    WindowList list;
+   WindowList dlist;
    
    InfoWindow showInfo;
    
+   XDoubleLineWindow dline;
+   
    KnobWindow knobOk;
+   
+   const ButtonShape::Config &btn_cfg;
    
    DynArray<OwnPtr<Btn> > btn_list;
    

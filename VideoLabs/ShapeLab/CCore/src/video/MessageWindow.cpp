@@ -44,12 +44,18 @@ MessageSubWindow::MessageSubWindow(SubWindowHost &host,const Config &cfg_)
  : SubWindow(host),
    cfg(cfg_),
    list(*this),
+   dlist(*this),
    
    showInfo(list,cfg.info_ctor.get()),
+   dline(dlist,cfg.dline_ctor.get()),
    knobOk(list,cfg.knob_ctor.get(),KnobShape::FaceOk),
+   
+   btn_cfg(cfg.btn_ctor.get()),
    
    connector_knobOk_pressed(this,&MessageSubWindow::knobOk_pressed,knobOk.pressed)
  {
+  dlist.insTop(dline);
+  
   list.enableTabFocus();
   list.enableClickFocus();
  }
@@ -101,7 +107,7 @@ MessageSubWindow & MessageSubWindow::setInfo(const Info &info)
 
 MessageSubWindow & MessageSubWindow::add(const String &name,int btn_id)
  {
-  OwnPtr<Btn> obj(new Btn(list,cfg.btn_ctor.get(),name,btn_id,this));
+  OwnPtr<Btn> obj(new Btn(list,btn_cfg,name,btn_id,this));
   
   btn_list.append_swap(obj);
   
@@ -129,6 +135,8 @@ void MessageSubWindow::layout()
      Coord delta=s.y+2*space_dxy;
      
      showInfo.setPlace(Pane(0,0,size.x,size.y-delta).shrink(space_dxy));
+     
+     dline.setPlace(Pane(0,size.y-delta-space_dxy,size.x,2*space_dxy));
       
      Coord total=Coord(count)*s.x+Coord(count-1)*space_dxy;
      
@@ -149,6 +157,8 @@ void MessageSubWindow::layout()
     
      showInfo.setPlace(Pane(0,0,size.x,size.y-delta).shrink(space_dxy));
     
+     dline.setPlace(Pane(0,size.y-delta-space_dxy,size.x,2*space_dxy));
+     
      knobOk.setPlace(Pane((size.x-knob_dxy)/2,size.y-knob_dxy-space_dxy,knob_dxy));
     }
  }
@@ -157,6 +167,7 @@ void MessageSubWindow::draw(DrawBuf buf,bool drag_active) const
  {
   buf.erase(+cfg.back);
   
+  dlist.draw(buf,drag_active);
   list.draw(buf,drag_active);
  }
 
@@ -164,6 +175,7 @@ void MessageSubWindow::draw(DrawBuf buf,Pane pane,bool drag_active) const
  {
   buf.block(pane,+cfg.back);
   
+  dlist.draw(buf,pane,drag_active);
   list.draw(buf,pane,drag_active);
  }
 
@@ -189,11 +201,14 @@ void MessageSubWindow::open()
   list.open();
   
   list.focusTop();
+  
+  dlist.open();
  }
 
 void MessageSubWindow::close()
  {
   list.close();
+  dlist.close();
  }
 
  // keyboard
