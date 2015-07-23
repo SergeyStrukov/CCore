@@ -24,10 +24,18 @@ asm: $(ASM_LIST)
 clean:
 	$(RM) $(TARGET) $(OBJ_PATH)/*
 
-$(TARGET) : $(OBJ_LIST) $(ASM_OBJ_LIST)
+$(OBJ_PATH)/empty :
+	@echo MKDIR ; mkdir -p $(OBJ_PATH)
+	@echo MK empty ; echo 'empty file' > $(OBJ_PATH)/empty
+
+$(OBJ_LIST) $(ASM_OBJ_LIST) : | $(OBJ_PATH)/empty
+
+$(TARGET) : $(OBJ_PATH)/empty $(OBJ_LIST) $(ASM_OBJ_LIST)
 	$(RM) $(TARGET)
 	$(AR) r $(TARGET) $(OBJ_LIST) $(ASM_OBJ_LIST)
 
-$(DEP_FILE) : $(DEP_LIST)
+$(DEP_LIST) : $(OBJ_PATH)/empty
+
+$(DEP_FILE) : $(OBJ_PATH)/empty $(DEP_LIST)
 	@echo CAT ; cat $(DEP_LIST) > $(DEP_FILE)
 
