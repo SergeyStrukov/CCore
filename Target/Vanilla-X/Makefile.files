@@ -162,6 +162,7 @@ obj/MemBase.o \
 obj/MemBase_general.o \
 obj/MemSpaceHeap.o \
 obj/MersenneTwister.o \
+obj/MessageWindow.o \
 obj/Meta.o \
 obj/ModEngine.o \
 obj/Mouse.o \
@@ -529,6 +530,7 @@ obj/MemBase.s \
 obj/MemBase_general.s \
 obj/MemSpaceHeap.s \
 obj/MersenneTwister.s \
+obj/MessageWindow.s \
 obj/Meta.s \
 obj/ModEngine.s \
 obj/Mouse.s \
@@ -896,6 +898,7 @@ obj/MemBase.dep \
 obj/MemBase_general.dep \
 obj/MemSpaceHeap.dep \
 obj/MersenneTwister.dep \
+obj/MessageWindow.dep \
 obj/Meta.dep \
 obj/ModEngine.dep \
 obj/Mouse.dep \
@@ -1592,6 +1595,9 @@ obj/MemSpaceHeap.o : ../../CCore/src/MemSpaceHeap.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MersenneTwister.o : ../../CCore/src/MersenneTwister.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MessageWindow.o : ../../CCore/src/video/MessageWindow.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/Meta.o : ../../CCore/src/gadget/Meta.cpp
@@ -2688,6 +2694,9 @@ obj/MemSpaceHeap.s : ../../CCore/src/MemSpaceHeap.cpp
 obj/MersenneTwister.s : ../../CCore/src/MersenneTwister.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/MessageWindow.s : ../../CCore/src/video/MessageWindow.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/Meta.s : ../../CCore/src/gadget/Meta.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -3781,6 +3790,9 @@ obj/MemSpaceHeap.dep : ../../CCore/src/MemSpaceHeap.cpp
 
 obj/MersenneTwister.dep : ../../CCore/src/MersenneTwister.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MersenneTwister.o $< -MF $@
+
+obj/MessageWindow.dep : ../../CCore/src/video/MessageWindow.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MessageWindow.o $< -MF $@
 
 obj/Meta.dep : ../../CCore/src/gadget/Meta.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Meta.o $< -MF $@

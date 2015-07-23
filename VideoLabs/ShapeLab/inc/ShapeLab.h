@@ -286,6 +286,8 @@ class ShapeLab2 : public SubWindow
      
      TextShape::Config text_cfg;
      
+     LineEditShape::Config edit_cfg;
+     
      Config()
       {
       }
@@ -307,6 +309,8 @@ class ShapeLab2 : public SubWindow
    InfoWindow infow;
    
    TextWindow text;
+   
+   LineEditWindow edit;
    
    // test dialog
    

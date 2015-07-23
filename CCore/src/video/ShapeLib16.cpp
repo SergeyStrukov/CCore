@@ -103,11 +103,13 @@ void InfoShape::draw(const DrawBuf &buf) const
   
   {
    MPane p(pane);
-   MCoord len=Fraction(dxy);
+   
+   MCoord width=+cfg.width;
+   MCoord len=Fraction(dxy)-width;
   
-   if( has_focus )
+   if( focus )
      {
-      art.loop(HalfPos,+cfg.width,+cfg.focus,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
+      art.loop(HalfPos,width,+cfg.focus,p.getTopLeft(),p.getBottomLeft(),p.getBottomRight(),p.getTopRight());
      }
    
    if( xoff>0 ) // Left

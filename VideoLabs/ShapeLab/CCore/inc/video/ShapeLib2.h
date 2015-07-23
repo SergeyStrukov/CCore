@@ -28,6 +28,84 @@ namespace Video {
 
 /* classes */
 
+class LineEditShape;
+
+/* class LineEditShape */
+
+class LineEditShape
+ {
+  public:
+  
+   struct Config
+    {
+     RefVal<MCoord> width = Fraction(6,2) ;
+     
+     RefVal<Coord> ex = 3 ;
+     RefVal<Coord> cursor_dx = 3 ;
+   
+     RefVal<VColor> back     = Silver ;
+     RefVal<VColor> bottom   =   Snow ;
+     RefVal<VColor> top      =   Gray ;
+     RefVal<VColor> focus    = Orange ;
+     
+     RefVal<VColor> text     =  Black ;
+     RefVal<VColor> inactive =   Gray ;
+     
+     RefVal<VColor> cursor   =   Blue ;
+    
+     RefVal<Font> font;
+   
+     RefVal<unsigned> period = 10 ;
+     
+     Config() {}
+    };
+   
+   const Config &cfg;
+   PtrLen<char> text_buf;
+   Pane pane;
+
+   // state
+   
+   bool enable =  true ;
+   bool focus  = false ;
+   ulen len    =     0 ;
+   ulen pos    =     0 ;
+   Coord xoff  =     0 ;
+   bool cursor = false ;
+   
+   Coord xoffMax = 0 ;
+   Coord dxoff   = 0 ;
+   
+   bool drag = false ;
+   Point drag_base;
+   Coord xoff_base = 0 ;
+   
+   unsigned count = 0 ;
+   
+   // methods
+
+   LineEditShape(PtrLen<char> text_buf_,const Config &cfg_) : cfg(cfg_),text_buf(text_buf_) {}
+   
+   Point getMinSize() const;
+   
+   void setMax();
+   
+   bool isGoodSize(Point size) const { return size>=getMinSize(); }
+   
+   bool tick()
+    {
+     if( ++count>=cfg.period.get() )
+       {
+        count=0;
+        
+        return true; 
+       }
+     
+     return false;
+    }
+   
+   void draw(const DrawBuf &buf) const;
+ };
 
 } // namespace Video
 } // namespace CCore

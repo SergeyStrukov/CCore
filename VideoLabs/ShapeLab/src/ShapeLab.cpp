@@ -532,6 +532,8 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    
    text(dlist,cfg.text_cfg,AlignX_Left),
    
+   edit(wlist,cfg.edit_cfg),
+   
    dialog(host.getFrame()->getDesktop(),cfg.dialog_cfg),
    test(dialog),
    dialog_client(test),
@@ -543,14 +545,17 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    connector_dialog_destroyed(this,&ShapeLab2::dialog_destroyed,dialog.destroyed),
    connector_msg_destroyed(this,&ShapeLab2::msg_destroyed,msg_window.destroyed)
  {
-  wlist.insTop(btn1,btn2,infow);
+  wlist.insTop(btn1,btn2,infow,edit);
   dlist.insTop(progress,infoframe,text);
   
   wlist.enableTabFocus();
+  wlist.enableClickFocus();
   
   progress.setTotal(100);
   
   dialog.bindClient(dialog_client);
+  
+  edit.printf("#;","This is a line editor text");
   
 #if 1
   
@@ -579,6 +584,8 @@ void ShapeLab2::layout()
   infow.setPlace(infoframe.getInner());
   
   text.setPlace(Pane(10,300,200,30));
+  
+  edit.setPlace(Pane(10,350,200,30));
  }
 
 void ShapeLab2::draw(DrawBuf buf,bool drag_active) const

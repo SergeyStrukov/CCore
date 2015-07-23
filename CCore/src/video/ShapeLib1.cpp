@@ -47,6 +47,8 @@ void ButtonShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
+  Font font=cfg.font.get();
+  
   // figure
   
   MCoord width=+cfg.width;
@@ -56,7 +58,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
   MCoord y0=p.y;
   MCoord y1=p.ey;
   
-  FontSize fs=cfg.font.get()->getSize();
+  FontSize fs=font->getSize();
   
   MCoord ex=(Fraction(fs.dy)+2*width)/4;
   
@@ -94,7 +96,7 @@ void ButtonShape::draw(const DrawBuf &buf) const
    
    VColor text=enable?+cfg.text:bottom;
 
-   cfg.font.get()->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),text);
+   font->text(buf,pane.shrink(dx,dy)+shift,TextPlace(AlignX_Center,AlignY_Center),Range(face),text);
   }
   
   // border

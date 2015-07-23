@@ -269,6 +269,7 @@
 ../../CCore/src/video/Info.cpp
 ../../CCore/src/video/IntOp.cpp
 ../../CCore/src/video/Keyboard.cpp
+../../CCore/src/video/MessageWindow.cpp
 ../../CCore/src/video/Mouse.cpp
 ../../CCore/src/video/Point.cpp
 ../../CCore/src/video/RefVal.cpp

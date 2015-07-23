@@ -912,7 +912,7 @@ class ProgressShape
      if( (active_pos+=MaxActivePos/10)>MaxActivePos ) active_pos=0;
     }
 
-   void stopActive() 
+   void stopActive()
     {  
      has_active=false;
     }
@@ -930,7 +930,7 @@ class InfoShape
     {
      RefVal<MCoord> width = Fraction(6,2) ;
      
-     RefVal<Coord> space_dxy = 5 ;
+     RefVal<Coord> space_dxy = 7 ;
      
      RefVal<VColor> text  =  Black ;
      RefVal<VColor> focus = Orange ;
@@ -950,7 +950,7 @@ class InfoShape
    
    // state
 
-   bool has_focus = false ;
+   bool focus = false ;
    
    ulen yoff  = 0 ;
    Coord xoff = 0 ;

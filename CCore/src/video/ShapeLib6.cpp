@@ -47,11 +47,13 @@ void TextShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  // border
+  Font font=cfg.font.get();
+  
+  // figure
   
   MCoord width=+cfg.width;
   
-  FontSize fs=cfg.font.get()->getSize();
+  FontSize fs=font->getSize();
   
   MCoord ex=(Fraction(fs.dy)+2*width)/4;
   
@@ -76,7 +78,7 @@ void TextShape::draw(const DrawBuf &buf) const
   Coord dx=RoundUpLen(ex);
   Coord dy=RoundUpLen(width);
   
-  cfg.font.get()->text(buf,pane.shrink(dx,dy),TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
+  font->text(buf,pane.shrink(dx,dy),TextPlace(align_x,align_y),Range(text),enable?+cfg.text:+cfg.inactive);
  }
 
 } // namespace Video

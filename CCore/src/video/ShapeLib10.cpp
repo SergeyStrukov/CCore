@@ -53,7 +53,9 @@ void TextContourShape::draw(const DrawBuf &buf) const
   
   Smooth::DrawArt art(buf);
   
-  TextSize ts=cfg.font.get()->text(Range(title));
+  Font font=cfg.font.get();
+  
+  TextSize ts=font->text(Range(title));
   
   Coord ty=Min(ts.dy,pane.dy);
   Coord tx=Min<Coord>(ty,pane.dx/2);
@@ -125,7 +127,7 @@ void TextContourShape::draw(const DrawBuf &buf) const
   
   // title
   
-  cfg.font.get()->text(buf,Pane(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),Range(title),+cfg.text);
+  font->text(buf,Pane(pane.x+tx,pane.y,len,ty),TextPlace(align_x,AlignY_Center),Range(title),+cfg.text);
  }
 
 } // namespace Video

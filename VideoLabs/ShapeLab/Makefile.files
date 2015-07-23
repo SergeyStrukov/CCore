@@ -1,23 +1,23 @@
 OBJ_LIST = \
 obj/Application.o \
-obj/MessageWindow.o \
 obj/ShapeLab.o \
+obj/ShapeLib17.o \
 obj/WindowLib2.o \
 obj/main.o \
 
 
 ASM_LIST = \
 obj/Application.s \
-obj/MessageWindow.s \
 obj/ShapeLab.s \
+obj/ShapeLib17.s \
 obj/WindowLib2.s \
 obj/main.s \
 
 
 DEP_LIST = \
 obj/Application.dep \
-obj/MessageWindow.dep \
 obj/ShapeLab.dep \
+obj/ShapeLib17.dep \
 obj/WindowLib2.dep \
 obj/main.dep \
 
@@ -31,10 +31,10 @@ include $(RULES_FILE)
 obj/Application.o : ./src/Application.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/MessageWindow.o : ./CCore/src/video/MessageWindow.cpp
+obj/ShapeLab.o : ./src/ShapeLab.cpp
 	$(CC) $(CCOPT) $< -o $@
 
-obj/ShapeLab.o : ./src/ShapeLab.cpp
+obj/ShapeLib17.o : ./CCore/src/video/ShapeLib17.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/WindowLib2.o : ./CCore/src/video/WindowLib2.cpp
@@ -48,10 +48,10 @@ obj/main.o : ./src/main.cpp
 obj/Application.s : ./src/Application.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/MessageWindow.s : ./CCore/src/video/MessageWindow.cpp
+obj/ShapeLab.s : ./src/ShapeLab.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
-obj/ShapeLab.s : ./src/ShapeLab.cpp
+obj/ShapeLib17.s : ./CCore/src/video/ShapeLib17.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
 obj/WindowLib2.s : ./CCore/src/video/WindowLib2.cpp
@@ -65,11 +65,11 @@ obj/main.s : ./src/main.cpp
 obj/Application.dep : ./src/Application.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/Application.o $< -MF $@
 
-obj/MessageWindow.dep : ./CCore/src/video/MessageWindow.cpp
-	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MessageWindow.o $< -MF $@
-
 obj/ShapeLab.dep : ./src/ShapeLab.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLab.o $< -MF $@
+
+obj/ShapeLib17.dep : ./CCore/src/video/ShapeLib17.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/ShapeLib17.o $< -MF $@
 
 obj/WindowLib2.dep : ./CCore/src/video/WindowLib2.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/WindowLib2.o $< -MF $@

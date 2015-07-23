@@ -908,16 +908,7 @@ class ScrollWindowOf : public SubWindow
  {
    Shape shape;
    
-   class Input : public DeferInput<ScrollWindowOf<Shape> >
-    {
-     public:
-    
-      explicit Input(ScrollWindowOf<Shape> *window) : DeferInput<ScrollWindowOf<Shape> >(window) {}
-      
-      ~Input() {}
-    };
-   
-   Input input;
+   DeferInput<ScrollWindowOf<Shape> > input;
    
    DeferTick defer_tick;
    
@@ -1411,16 +1402,7 @@ class ProgressWindowOf : public SubWindow
  {
    Shape shape;
   
-   class Input : public DeferInput<ProgressWindowOf<Shape> >
-    {
-     public:
-    
-      explicit Input(ProgressWindowOf<Shape> *window) : DeferInput<ProgressWindowOf<Shape> >(window) {}
-      
-      ~Input() {}
-    };
-   
-   Input input;
+   DeferInput<ProgressWindowOf<Shape> > input;
    
    DeferTick defer_tick;
    
@@ -1627,7 +1609,7 @@ class InfoWindowOf : public SubWindow
    
    virtual void open()
     {
-     shape.has_focus=false;
+     shape.focus=false;
      shape.drag=false;
     }
    
@@ -1635,14 +1617,14 @@ class InfoWindowOf : public SubWindow
    
    virtual void gainFocus()
     {
-     shape.has_focus=true;
+     shape.focus=true;
      
      redraw();
     }
    
    virtual void looseFocus()
     {
-     shape.has_focus=false;
+     shape.focus=false;
      
      redraw();
     }
@@ -1656,7 +1638,7 @@ class InfoWindowOf : public SubWindow
  
    virtual MouseShape getMouseShape(Point)
     {
-     if( shape.xoffMax>0 || shape.yoffMax>0 ) return Mouse_SizeAll;
+     if( shape.xoffMax>0 ) return Mouse_SizeLeftRight;
      
      return Mouse_Arrow;
     }
