@@ -21,6 +21,8 @@
 
 #include <CCore/inc/Signal.h>
 #include <CCore/inc/DeferCall.h>
+
+#include <CCore/inc/CharProp.h>
  
 namespace CCore {
 namespace Video {
@@ -64,6 +66,19 @@ class LineEditWindowOf : public SubWindow
      Coord delta=IntSub(point.x,shape.drag_base.x);
      
      setXOff( IntSub(shape.xoff_base,delta) );
+    }
+   
+   void del()
+    {
+     for(auto r=Range(text_buf+shape.pos,shape.len-shape.pos); r.len>1 ;++r) r[0]=r[1];
+     
+     shape.len--;
+     
+     shape.setMax();
+     
+     Replace_min(shape.xoff,shape.xoffMax);
+     
+     redraw();
     }
    
    void tick()
@@ -236,11 +251,15 @@ class LineEditWindowOf : public SubWindow
        {
         case VKey_Left :
          {
-          if( kmod&KeyMod_Shift )
+          if( kmod&KeyMod_Ctrl )
             {
              Coord delta_x=Coord(repeat)*shape.dxoff;
             
              setXOff( IntSub(shape.xoff,delta_x) );
+            }
+          else if( kmod&KeyMod_Shift )
+            {
+             // TODO selection
             }
           else if( shape.enable )
             {
@@ -257,11 +276,15 @@ class LineEditWindowOf : public SubWindow
         
         case VKey_Right :
          {
-          if( kmod&KeyMod_Shift )
+          if( kmod&KeyMod_Ctrl )
             {
              Coord delta_x=Coord(repeat)*shape.dxoff;
             
              setXOff( IntAdd(shape.xoff,delta_x) );
+            }
+          else if( kmod&KeyMod_Shift )
+            {
+             // TODO selection
             }
           else if( shape.enable )
             {
@@ -275,6 +298,73 @@ class LineEditWindowOf : public SubWindow
             }
          }
         break;
+        
+        case VKey_Home :
+         {
+          if( shape.enable )
+            {
+             shape.cursor=true;
+             shape.pos=0;
+             shape.xoff=0;
+             
+             redraw();
+            }
+         }
+        break;
+        
+        case VKey_End :
+         {
+          if( shape.enable )
+            {
+             shape.cursor=true;
+             shape.pos=shape.len;
+             shape.xoff=shape.xoffMax;
+             
+             redraw();
+            }
+         }
+        break;
+        
+        case VKey_Delete :
+         {
+          if( shape.enable && shape.pos<shape.len )
+            {
+             del();
+            }
+         }
+        break;
+        
+        case VKey_BackSpace :
+         {
+          if( shape.enable && shape.pos )
+            {
+             shape.cursor=true;
+             shape.pos--;
+             
+             del();
+            }
+         }
+        break; 
+       }
+    }
+   
+   void react_Char(char ch)
+    {
+     if( shape.enable && CharIsPrintable(ch) && shape.len<TextBufLen )
+       {
+        shape.len++;
+        
+        auto r=RangeReverse(text_buf+shape.pos,shape.len-shape.pos);
+        
+        for(; r.len>1 ;++r) r[0]=r[1];
+        
+        r[0]=ch;
+        
+        shape.pos++;
+        
+        shape.setMax();
+        
+        redraw();
        }
     }
    
