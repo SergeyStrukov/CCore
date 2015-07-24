@@ -68,10 +68,12 @@ class LineEditShape
    
    bool enable =  true ;
    bool focus  = false ;
+   bool cursor = false ;
    ulen len    =     0 ;
    ulen pos    =     0 ;
+   ulen select_off = 0 ;
+   ulen select_len = 0 ;
    Coord xoff  =     0 ;
-   bool cursor = false ;
    
    Coord xoffMax = 0 ;
    Coord dxoff   = 0 ;
@@ -103,6 +105,8 @@ class LineEditShape
      
      return false;
     }
+   
+   void showCursor();
    
    void draw(const DrawBuf &buf) const;
  };

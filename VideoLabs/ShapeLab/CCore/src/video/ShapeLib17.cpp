@@ -34,7 +34,7 @@ Point LineEditShape::getMinSize() const
   MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
   
   Coord dx=RoundUpLen(ex);
-  Coord dy=RoundUpLen(width);
+  Coord dy=RoundUpLen(width)+(+cfg.cursor_dx);
   
   TextSize ts=font->text("Sample");
   
@@ -62,7 +62,7 @@ void LineEditShape::setMax()
   
   IntGuard( !ts.overflow );
   
-  Coord tx=IntAdd(ts.full_dx,+cfg.cursor_dx);
+  Coord tx=IntAdd(ts.full_dx,2*(+cfg.cursor_dx));
   
   tx=IntAdd(tx,fs.max_dx); 
   
@@ -74,6 +74,48 @@ void LineEditShape::setMax()
     xoffMax=0;
   
   dxoff=fs.medDx();  
+ }
+
+void LineEditShape::showCursor()
+ {
+  MCoord width=+cfg.width;
+  
+  Font font=cfg.font.get();
+  
+  FontSize fs=font->getSize();
+  
+  MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
+  
+  Coord dx=RoundUpLen(ex);
+  Coord inner_dx=pane.dx-2*dx;
+  
+  if( inner_dx<=0 ) return;
+  
+  TextSize ts=font->text(text_buf.prefix(pos));
+  
+  Coord cursor_dx=+cfg.cursor_dx;
+  Coord x=IntAbs(ts.skew)+cursor_dx+ts.dx-xoff;
+  
+  inner_dx-=2*cursor_dx;
+  
+  if( x<cursor_dx )
+    {
+     x=cursor_dx-x;
+     
+     if( xoff>x )
+       xoff-=x;
+     else
+       xoff=0;
+    }
+  else if( x>=inner_dx )
+    {
+     x=x-inner_dx;
+     
+     if( xoff<xoffMax-x )
+       xoff+=x;
+     else
+       xoff=xoffMax;
+    }
  }
 
 void LineEditShape::draw(const DrawBuf &buf) const
@@ -161,6 +203,8 @@ void LineEditShape::draw(const DrawBuf &buf) const
    
    Pane inner=pane.shrink(dx,dy);
    
+   if( !inner ) return;
+   
    DrawBuf tbuf=buf.cutRebase(inner);
    
    Pane tpane(-xoff,0,IntAdd(xoff,inner.dx),inner.dy);
@@ -169,7 +213,7 @@ void LineEditShape::draw(const DrawBuf &buf) const
    
    Coord cursor_dx=+cfg.cursor_dx;
    
-   Coord x1=IntAbs(ts.skew);
+   Coord x1=IntAbs(ts.skew)+cursor_dx;
    Coord x2=x1+ts.dx;
    Coord x3=x2+cursor_dx;
    
@@ -177,11 +221,47 @@ void LineEditShape::draw(const DrawBuf &buf) const
    
    font->text(tbuf,tpane,TextPlace(x3,AlignY_Center),text_buf.part(pos,len-pos),text);
    
-   if( enable && cursor )
+   if( enable )
      {
+      MCoord w=Fraction(cursor_dx);
+      MCoord h=Fraction(ts.dy);
+      MCoord skew=Fraction(ts.skew);
+      
+      MCoord y0=(Fraction(inner.dy)-h)/2;
+      MCoord y1=y0+h;
+      
+      MCoord b0=Fraction(x2-xoff)-Rational(h-Fraction(ts.by),h)*skew;
+      MCoord b1=b0+w;
+      
+      MCoord a0=b0+skew;
+      MCoord a1=a0+w;
+     
       Smooth::DrawArt art(tbuf);
       
-      art.block(Pane(x2-xoff,0,cursor_dx,inner.dy),+cfg.cursor);
+      FigurePoints<12> fig;
+      
+      fig[0]={a1,y0};
+      fig[1]={a1+w,y0};
+      fig[2]={a1+w,y0-w};
+      fig[3]={a0-w,y0-w};
+      fig[4]={a0-w,y0};
+      fig[5]={a0,y0};
+      
+      fig[6]={b0,y1};
+      fig[7]={b0-w,y1};
+      fig[8]={b0-w,y1+w};
+      fig[9]={b1+w,y1+w};
+      fig[10]={b1+w,y1};
+      fig[11]={b1,y1};
+     
+      if( focus && cursor )
+        {
+         fig.solid(art,+cfg.cursor);
+        }
+      else
+        {
+         fig.loop(art,HalfPos,w/3,+cfg.cursor);
+        }
      }
   }
  }

@@ -513,6 +513,17 @@ void ShapeLab2::msg_destroyed()
   text.printf("button #;",msg_window.getButtonId());
  }
 
+void ShapeLab2::edit_entered()
+ {
+  edit.disable();
+  check.uncheck();
+ }
+
+void ShapeLab2::check_changed(bool check)
+ {
+  edit.enable(check);
+ }
+
 static const char * TestStr="This is a test string\rthe second line of the test\nthe third line\r\nand the last line.";
 
 ShapeLab2::ShapeLab2(SubWindowHost &host)
@@ -534,6 +545,8 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    
    edit(wlist,cfg.edit_cfg),
    
+   check(wlist,cfg.check_cfg,true),
+   
    dialog(host.getFrame()->getDesktop(),cfg.dialog_cfg),
    test(dialog),
    dialog_client(test),
@@ -543,9 +556,11 @@ ShapeLab2::ShapeLab2(SubWindowHost &host)
    connector_btn1_pressed(this,&ShapeLab2::btn1_pressed,btn1.pressed),
    connector_btn2_pressed(this,&ShapeLab2::btn2_pressed,btn2.pressed),
    connector_dialog_destroyed(this,&ShapeLab2::dialog_destroyed,dialog.destroyed),
-   connector_msg_destroyed(this,&ShapeLab2::msg_destroyed,msg_window.destroyed)
+   connector_msg_destroyed(this,&ShapeLab2::msg_destroyed,msg_window.destroyed),
+   connector_edit_entered(this,&ShapeLab2::edit_entered,edit.entered),
+   connector_check_changed(this,&ShapeLab2::check_changed,check.changed)
  {
-  wlist.insTop(btn1,btn2,infow,edit);
+  wlist.insTop(btn1,btn2,infow,edit,check);
   dlist.insTop(progress,infoframe,text);
   
   wlist.enableTabFocus();
@@ -585,7 +600,9 @@ void ShapeLab2::layout()
   
   text.setPlace(Pane(10,300,200,30));
   
-  edit.setPlace(Pane(10,350,200,30));
+  edit.setPlace(Pane(10,350,250,40));
+  
+  check.setPlace(Pane(280,360,20));
  }
 
 void ShapeLab2::draw(DrawBuf buf,bool drag_active) const

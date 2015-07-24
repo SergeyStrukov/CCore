@@ -288,6 +288,8 @@ class ShapeLab2 : public SubWindow
      
      LineEditShape::Config edit_cfg;
      
+     CheckShape::Config check_cfg;
+     
      Config()
       {
       }
@@ -312,6 +314,8 @@ class ShapeLab2 : public SubWindow
    
    LineEditWindow edit;
    
+   CheckWindow check;
+   
    // test dialog
    
    FixedWindow dialog;
@@ -330,6 +334,9 @@ class ShapeLab2 : public SubWindow
    SignalConnector<ShapeLab2> connector_dialog_destroyed;
    SignalConnector<ShapeLab2> connector_msg_destroyed;
    
+   SignalConnector<ShapeLab2> connector_edit_entered;
+   SignalConnector<ShapeLab2,bool> connector_check_changed;
+   
   private:
    
    void btn1_pressed();
@@ -339,6 +346,10 @@ class ShapeLab2 : public SubWindow
    void dialog_destroyed();
    
    void msg_destroyed();
+   
+   void edit_entered();
+   
+   void check_changed(bool check);
    
   public:
  

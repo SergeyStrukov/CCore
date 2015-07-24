@@ -78,6 +78,8 @@ class LineEditWindowOf : public SubWindow
      
      Replace_min(shape.xoff,shape.xoffMax);
      
+     shape.showCursor();
+     
      redraw();
     }
    
@@ -89,6 +91,18 @@ class LineEditWindowOf : public SubWindow
        
         redraw();
        }
+    }
+   
+   void cut()
+    {
+    }
+   
+   void copy()
+    {
+    }
+   
+   void past()
+    {
     }
    
   public:
@@ -154,9 +168,14 @@ class LineEditWindowOf : public SubWindow
    
    void setTextLen(ulen len)
     {
+     shape.cursor=false;
+     shape.drag=false;
+     
      shape.len=Min(len,TextBufLen);
-     shape.pos=0;
      shape.xoff=0;
+     shape.pos=0;
+     shape.select_off=0;
+     shape.select_len=0;
      
      shape.setMax();
      
@@ -196,6 +215,11 @@ class LineEditWindowOf : public SubWindow
      shape.focus=false;
      shape.cursor=false;
      shape.drag=false;
+     
+     shape.xoff=0;
+     shape.pos=0;
+     shape.select_off=0;
+     shape.select_len=0;
     }
    
    // keyboard
@@ -257,16 +281,24 @@ class LineEditWindowOf : public SubWindow
             
              setXOff( IntSub(shape.xoff,delta_x) );
             }
-          else if( kmod&KeyMod_Shift )
-            {
-             // TODO selection
-            }
           else if( shape.enable )
             {
              if( shape.pos )
                {
+                if( kmod&KeyMod_Shift )   
+                  {
+                   // TODO selection
+                  }
+                else 
+                  {
+                   shape.select_off=0;
+                   shape.select_len=0;
+                  }
+                
                 shape.cursor=true;
                 shape.pos--;
+                
+                shape.showCursor();
                 
                 redraw();
                }
@@ -282,16 +314,24 @@ class LineEditWindowOf : public SubWindow
             
              setXOff( IntAdd(shape.xoff,delta_x) );
             }
-          else if( kmod&KeyMod_Shift )
-            {
-             // TODO selection
-            }
           else if( shape.enable )
             {
              if( shape.pos<shape.len )
                {
+                if( kmod&KeyMod_Shift )
+                  {
+                   // TODO selection
+                  }
+                else
+                  {
+                   shape.select_off=0;
+                   shape.select_len=0;
+                  }
+                
                 shape.cursor=true;
                 shape.pos++;
+                
+                shape.showCursor();
                 
                 redraw();
                }
@@ -303,11 +343,24 @@ class LineEditWindowOf : public SubWindow
          {
           if( shape.enable )
             {
-             shape.cursor=true;
-             shape.pos=0;
-             shape.xoff=0;
-             
-             redraw();
+             if( shape.pos )
+               {
+                if( kmod&KeyMod_Shift )
+                  {
+                   // TODO selection
+                  }
+                else
+                  {
+                   shape.select_off=0;
+                   shape.select_len=0;
+                  }
+                
+                shape.cursor=true;
+                shape.pos=0;
+                shape.xoff=0;
+                
+                redraw();
+               }
             }
          }
         break;
@@ -316,33 +369,110 @@ class LineEditWindowOf : public SubWindow
          {
           if( shape.enable )
             {
-             shape.cursor=true;
-             shape.pos=shape.len;
-             shape.xoff=shape.xoffMax;
-             
-             redraw();
+             if( shape.pos<shape.len )
+               {
+                if( kmod&KeyMod_Shift )
+                  {
+                   // TODO selection
+                  }
+                else
+                  {
+                   shape.select_off=0;
+                   shape.select_len=0;
+                  }
+               
+                shape.cursor=true;
+                shape.pos=shape.len;
+                shape.xoff=shape.xoffMax;
+                
+                redraw();
+               }
             }
          }
         break;
         
+        case VKey_c :
+         {
+          if( shape.enable && kmod&KeyMod_Ctrl )
+            {
+             copy();
+            }
+         }
+        break; 
+        
+        case VKey_v :
+         {
+          if( shape.enable && kmod&KeyMod_Ctrl )
+            {
+             past();
+            }
+         }
+        break; 
+        
+        case VKey_Insert :
+         {
+          if( shape.enable )
+            {
+             if( kmod&KeyMod_Ctrl )
+               {
+                copy();
+               }
+             else if( kmod&KeyMod_Shift )
+               {
+                past(); 
+               }
+            }
+         }
+        break; 
+        
         case VKey_Delete :
          {
-          if( shape.enable && shape.pos<shape.len )
+          if( shape.enable )
             {
-             del();
+             if( shape.select_len )
+               {
+                // TODO selection
+               }
+             else
+               {
+                if( kmod&KeyMod_Shift )
+                  {
+                   cut();
+                  }
+                else
+                  {
+                   if( shape.pos<shape.len ) del();
+                  }
+               }            
             }
          }
         break;
         
         case VKey_BackSpace :
          {
-          if( shape.enable && shape.pos )
+          if( shape.enable )
             {
-             shape.cursor=true;
-             shape.pos--;
-             
-             del();
+            if( shape.select_len )
+              {
+               // TODO selection
+              }
+            else
+              {
+               if( shape.pos )
+                 {
+                  shape.cursor=true;
+                  shape.pos--;
+                  
+                  del();
+                 }
+              }
             }
+         }
+        break;
+        
+        case VKey_Enter :
+         {
+          entered.assert();
          }
         break; 
        }
@@ -350,21 +480,33 @@ class LineEditWindowOf : public SubWindow
    
    void react_Char(char ch)
     {
-     if( shape.enable && CharIsPrintable(ch) && shape.len<TextBufLen )
+     if( shape.enable && CharIsPrintable(ch) )
        {
-        shape.len++;
-        
-        auto r=RangeReverse(text_buf+shape.pos,shape.len-shape.pos);
-        
-        for(; r.len>1 ;++r) r[0]=r[1];
-        
-        r[0]=ch;
-        
-        shape.pos++;
-        
-        shape.setMax();
-        
-        redraw();
+        if( shape.select_len )
+          {
+           // TODO selection
+          }
+        else
+          {
+           if( shape.len<TextBufLen )
+             {
+              shape.len++;
+              
+              auto r=RangeReverse(text_buf+shape.pos,shape.len-shape.pos);
+              
+              for(; r.len>1 ;++r) r[0]=r[1];
+              
+              r[0]=ch;
+              
+              shape.pos++;
+              
+              shape.setMax();
+              
+              shape.showCursor();
+              
+              redraw();
+             }
+          }
        }
     }
    
@@ -414,6 +556,10 @@ class LineEditWindowOf : public SubWindow
           }
        }
     }
+ 
+   // signals
+   
+   Signal<> entered;
  };
 
 /* type LineEditWindow */
