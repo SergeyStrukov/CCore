@@ -23,12 +23,12 @@ asm: $(ASM_LIST)
 
 clean:
 	$(RM) $(TARGET) $(OBJ_PATH)/*
-	touch -m --date="1980-1-1" $(GEN_LIST) temp
+	$(TOUCH) -m --date="1980-1-1" $(GEN_LIST) temp
 	$(RM) temp
 
 $(OBJ_PATH)/empty :
-	@echo MKDIR ; mkdir -p $(OBJ_PATH)
-	@echo MK empty ; echo 'empty file' > $(OBJ_PATH)/empty
+	@$(ECHO) MKDIR ; $(MKDIR) -p $(OBJ_PATH)
+	@$(ECHO) "MK empty" ; $(ECHO) "empty file" > $(OBJ_PATH)/empty
 
 $(OBJ_LIST) $(ASM_OBJ_LIST) : | $(OBJ_PATH)/empty
 
@@ -39,7 +39,7 @@ $(TARGET) : $(OBJ_PATH)/empty $(OBJ_LIST) $(ASM_OBJ_LIST)
 $(DEP_LIST) : | $(OBJ_PATH)/empty
 
 $(DEP_FILE) : $(OBJ_PATH)/empty $(DEP_LIST)
-	@echo CAT ; cat $(DEP_LIST) > $(DEP_FILE)
+	@$(ECHO) CAT ; $(CAT) $(DEP_LIST) > $(DEP_FILE)
 
 %.gen.h : %.desc
-	Regen.exe $< $@
+	$(HOME)/bin/Regen.exe $< $@

@@ -19,15 +19,15 @@ TARGET = CCore.a
 
 RULES_FILE = $(CCORE_ROOT)/Target/Makefile.core.rules
 
-GEN_LIST = $(shell find $(GEN_PATH_LIST) -name "*.gen.h")
+GEN_LIST = $(shell $(FIND) $(GEN_PATH_LIST) -name "*.gen.h")
 
 include $(CCORE_ROOT)/Target/$(CCORE_TARGET)/Makefile.tools
 
 all: $(TARGET)
 
 Makefile.files:
-	/bin/find $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
-	/bin/find $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
+	$(FIND) $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
+	$(FIND) $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
 	$(HOME)/bin/MakeList.exe $(OBJ_PATH) Makefile.cpp-files Makefile.s-files
 
 ifneq ($(MAKECMDGOALS),list)
@@ -37,8 +37,8 @@ include Makefile.files
 endif
 
 list:
-	/bin/find $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
-	/bin/find $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
+	$(FIND) $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
+	$(FIND) $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
 	$(HOME)/bin/MakeList.exe $(OBJ_PATH) Makefile.cpp-files Makefile.s-files
 
 

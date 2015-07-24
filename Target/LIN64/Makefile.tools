@@ -19,23 +19,33 @@ LDOPT_EXTRA ?=
 
 # tools
 
+ECHO = echo
+
+FIND = find
+
+MKDIR = mkdir
+
+CAT = cat
+
+TOUCH = touch
+
 CC_ = g++
 
-CC = @echo CC $< ; $(CC_)
+CC = @$(ECHO) CC $< ; $(CC_)
 
-LD = @echo LD $@ ; $(CC_)
+LD = @$(ECHO) LD $@ ; $(CC_)
 
 AS_ = as
 
-AS = @echo AS $< ; $(AS_)
+AS = @$(ECHO) AS $< ; $(AS_)
 
 AR_ = ar
 
-AR = @echo AR $@ ; $(AR_)
+AR = @$(ECHO) AR $@ ; $(AR_)
 
 RM_ = rm -f
 
-RM = @echo RM ; $(RM_)
+RM = @$(ECHO) RM ; $(RM_)
 
 # options
 

@@ -26,8 +26,8 @@ include $(CCORE_ROOT)/Target/$(CCORE_TARGET)/Makefile.tools
 all: $(TARGET)
 
 Makefile.files:
-	/bin/find $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
-	/bin/find $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
+	$(FIND) $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
+	$(FIND) $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
 	$(HOME)/bin/MakeList.exe $(OBJ_PATH) Makefile.cpp-files Makefile.s-files
 
 ifneq ($(MAKECMDGOALS),list)
@@ -37,8 +37,8 @@ include Makefile.files
 endif
 
 list:
-	/bin/find $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
-	/bin/find $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
+	$(FIND) $(SRC_PATH_LIST) -name "*.cpp" > Makefile.cpp-files
+	$(FIND) $(SRC_PATH_LIST) -name "*.s" > Makefile.s-files
 	$(HOME)/bin/MakeList.exe $(OBJ_PATH) Makefile.cpp-files Makefile.s-files
 
 

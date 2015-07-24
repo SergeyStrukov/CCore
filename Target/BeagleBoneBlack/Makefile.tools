@@ -19,23 +19,33 @@ LDOPT_EXTRA ?=
 
 # tools
 
+ECHO = /usr/bin/echo
+
+FIND = /bin/find
+
+MKDIR = /bin/mkdir
+
+CAT = /usr/bin/cat
+
+TOUCH = /usr/bin/touch
+
 CC_ = /opt/BeagleBoneBlack/bin/arm-g++.exe
 
-CC = @echo CC $< ; $(CC_)
+CC = @$(ECHO) CC $< ; $(CC_)
 
-LD = @echo LD $@ ; $(CC_)
+LD = @$(ECHO) LD $@ ; $(CC_)
 
 AS_ = /opt/BeagleBoneBlack/bin/arm-as.exe
 
-AS = @echo AS $< ; $(AS_)
+AS = @$(ECHO) AS $< ; $(AS_)
 
 AR_ = /opt/BeagleBoneBlack/bin/arm-ar.exe
 
-AR = @echo AR $@ ; $(AR_)
+AR = @$(ECHO) AR $@ ; $(AR_)
 
 RM_ = rm -f
 
-RM = @echo RM ; $(RM_)
+RM = @$(ECHO) RM ; $(RM_)
 
 # options
 
