@@ -93,16 +93,34 @@ class LineEditWindowOf : public SubWindow
        }
     }
    
-   void cut() // TODO
+   void delSelection() // TODO
     {
+    }
+   
+   void cut()
+    {
+     copy();
+     
+     delSelection();
     }
    
    void copy() // TODO
     {
+     if( shape.select_len )
+       {
+        auto r=Range(text_buf+shape.select_off,shape.select_len);
+        
+        Used(r);
+        
+        // copy to clipboard 
+       }
     }
    
    void past() // TODO
     {
+     if( shape.select_len ) delSelection();
+     
+     // past from clipboard at cursor position
     }
    
   public:
@@ -516,15 +534,18 @@ class LineEditWindowOf : public SubWindow
             {
              if( shape.select_len )
                {
-                // TODO selection
-               }
-             else
-               {
-                if( kmod&KeyMod_Shift )
+                if( kmod&KeyMod_Shift ) 
                   {
                    cut();
                   }
                 else
+                  {
+                   delSelection();
+                  }
+               }
+             else
+               {
+                if( !(kmod&KeyMod_Shift) )  
                   {
                    if( shape.pos<shape.len ) del();
                   }
@@ -537,20 +558,20 @@ class LineEditWindowOf : public SubWindow
          {
           if( shape.enable )
             {
-            if( shape.select_len )
-              {
-               // TODO selection
-              }
-            else
-              {
-               if( shape.pos )
-                 {
-                  shape.cursor=true;
-                  shape.pos--;
-                  
-                  del();
-                 }
-              }
+             if( shape.select_len )
+               {
+                delSelection();
+               }
+             else
+               {
+                if( shape.pos )
+                  {
+                   shape.cursor=true;
+                   shape.pos--;
+                   
+                   del();
+                  }
+               }
             }
          }
         break;
