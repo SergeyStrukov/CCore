@@ -50,6 +50,7 @@ class LineEditShape
      
      RefVal<VColor> text     =  Black ;
      RefVal<VColor> inactive =   Gray ;
+     RefVal<VColor> select   = Yellow ;
      
      RefVal<VColor> cursor   =   Blue ;
     

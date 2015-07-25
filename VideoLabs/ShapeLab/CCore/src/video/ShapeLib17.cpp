@@ -62,11 +62,9 @@ void LineEditShape::setMax()
   
   IntGuard( !ts.overflow );
   
-  Coord tx=IntAdd(ts.full_dx,2*(+cfg.cursor_dx));
+  Coord extra=2*(+cfg.cursor_dx)+IntAbs(ts.skew)+fs.max_dx;
   
-  tx=IntAdd(tx,fs.max_dx); 
-  
-  tx=IntAdd(tx,IntAbs(ts.skew));
+  Coord tx=IntAdd(ts.full_dx,extra);
   
   if( tx>inner.dx )
     xoffMax=tx-inner.dx;
@@ -217,20 +215,67 @@ void LineEditShape::draw(const DrawBuf &buf) const
    Coord x2=x1+ts.dx;
    Coord x3=x2+cursor_dx;
    
-   font->text(tbuf,tpane,TextPlace(x1,AlignY_Center),text_buf.prefix(pos),text);
+   Coord ytop=(inner.dy-ts.dy)/2;
+   Coord ybase=ytop+ts.by;
    
-   font->text(tbuf,tpane,TextPlace(x3,AlignY_Center),text_buf.part(pos,len-pos),text);
+   MCoord w=Fraction(cursor_dx);
+   MCoord h=Fraction(ts.dy);
+   MCoord skew=Fraction(ts.skew);
+   
+   MCoord y0=Fraction(ytop);
+   
+   MCoord skew1=Rational(h-Fraction(ts.by),h)*skew;
+   
+   if( enable && select_len )
+     {
+      Coord xs0;
+     
+      if( select_off<pos )
+        {
+         xs0=x1+font->text(text_buf.prefix(pos),select_off).dx;
+        }
+      else
+        {
+         xs0=x3+font->text(text_buf.part(pos,len-pos),select_off-pos).dx;
+        }
+      
+      ulen lim=select_off+select_len;
+      
+      Coord xs1;
+      
+      if( lim<=pos )
+        {
+         xs1=x1+font->text(text_buf.prefix(pos),lim).dx;
+        }
+      else
+        {
+         xs1=x3+font->text(text_buf.part(pos,len-pos),lim-pos).dx;
+        }
+      
+      Smooth::DrawArt art(tbuf);
+      
+      FigurePoints<4> fig;
+
+      MCoord a=Fraction(xs0-xoff)-skew1;
+      MCoord b=Fraction(xs1-xoff)-skew1;
+      
+      fig[0]={a+skew,y0-w};
+      fig[1]={a,y0+h+w};
+      fig[2]={b,y0+h+w};
+      fig[3]={b+skew,y0-w};
+      
+      fig.solid(art,+cfg.select);
+     }
+   
+   font->text(tbuf,tpane,TextPlace(x1,ybase),text_buf.prefix(pos),text);
+   
+   font->text(tbuf,tpane,TextPlace(x3,ybase),text_buf.part(pos,len-pos),text);
    
    if( enable )
      {
-      MCoord w=Fraction(cursor_dx);
-      MCoord h=Fraction(ts.dy);
-      MCoord skew=Fraction(ts.skew);
-      
-      MCoord y0=(Fraction(inner.dy)-h)/2;
       MCoord y1=y0+h;
       
-      MCoord b0=Fraction(x2-xoff)-Rational(h-Fraction(ts.by),h)*skew;
+      MCoord b0=Fraction(x2-xoff)-skew1;
       MCoord b1=b0+w;
       
       MCoord a0=b0+skew;

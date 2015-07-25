@@ -268,6 +268,32 @@ class DefFont : public FontBase
      return ret;
     }
    
+   virtual TextSize text(AbstractSparseString &,ulen pos)
+    {
+     TextSize ret;
+     
+     if( pos<=MaxLen )
+       {
+        ret.dx=Coord( pos*DefaultFont::DX );
+        ret.dy=DefaultFont::DY;
+        ret.by=DefaultFont::BY;
+        ret.skew=0;
+        ret.full_dx=ret.dx;
+        ret.overflow=false;
+       }
+     else
+       {
+        ret.dx=MaxCoord;
+        ret.dy=DefaultFont::DY;
+        ret.by=DefaultFont::BY;
+        ret.skew=0;
+        ret.full_dx=ret.dx;
+        ret.overflow=true;
+       }
+     
+     return ret;
+    }
+   
    virtual ulen fit(AbstractSparseString &str,Coord full_dx)
     {
      ULenSat len=str.countLen();

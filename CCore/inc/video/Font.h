@@ -223,6 +223,8 @@ struct AbstractFont
   
   virtual TextSize text(AbstractSparseString &str)=0;
   
+  virtual TextSize text(AbstractSparseString &str,ulen pos)=0;
+  
   virtual ulen fit(AbstractSparseString &str,Coord full_dx)=0;
   
   virtual void text(DrawBuf buf,Pane pane,TextPlace place,AbstractSparseString &str,DesktopColor color)=0;
@@ -234,6 +236,13 @@ struct AbstractFont
     SingleString obj(str); 
     
     return text(obj); 
+   }
+  
+  TextSize text(StrLen str,ulen pos)
+   { 
+    SingleString obj(str); 
+    
+    return text(obj,pos); 
    }
   
   ulen fit(StrLen str,Coord full_dx)
@@ -255,6 +264,13 @@ struct AbstractFont
     DoubleString obj(str1,str2); 
     
     return text(obj); 
+   }
+  
+  TextSize text(StrLen str1,StrLen str2,ulen pos)
+   { 
+    DoubleString obj(str1,str2); 
+    
+    return text(obj,pos); 
    }
   
   ulen fit(StrLen str1,StrLen str2,Coord full_dx)

@@ -93,15 +93,15 @@ class LineEditWindowOf : public SubWindow
        }
     }
    
-   void cut()
+   void cut() // TODO
     {
     }
    
-   void copy()
+   void copy() // TODO
     {
     }
    
-   void past()
+   void past() // TODO
     {
     }
    
@@ -287,7 +287,28 @@ class LineEditWindowOf : public SubWindow
                {
                 if( kmod&KeyMod_Shift )   
                   {
-                   // TODO selection
+                   if( shape.select_len )
+                     {
+                      if( shape.pos==shape.select_off )
+                        {
+                         shape.select_off--;
+                         shape.select_len++;
+                        }
+                      else if( shape.pos==shape.select_off+shape.select_len )
+                        {
+                         shape.select_len--;
+                        }
+                      else
+                        {
+                         shape.select_off=0;
+                         shape.select_len=0;
+                        }
+                     }
+                   else
+                     {
+                      shape.select_off=shape.pos-1;
+                      shape.select_len=1;
+                     }
                   }
                 else 
                   {
@@ -320,7 +341,28 @@ class LineEditWindowOf : public SubWindow
                {
                 if( kmod&KeyMod_Shift )
                   {
-                   // TODO selection
+                   if( shape.select_len )
+                     {
+                      if( shape.pos==shape.select_off )
+                        {
+                         shape.select_off++;
+                         shape.select_len--;
+                        }
+                      else if( shape.pos==shape.select_off+shape.select_len )
+                        {
+                         shape.select_len++;
+                        }
+                      else
+                        {
+                         shape.select_off=0;
+                         shape.select_len=0;
+                        }
+                     }
+                   else
+                     {
+                      shape.select_off=shape.pos;
+                      shape.select_len=1;
+                     }
                   }
                 else
                   {
@@ -347,7 +389,29 @@ class LineEditWindowOf : public SubWindow
                {
                 if( kmod&KeyMod_Shift )
                   {
-                   // TODO selection
+                   if( shape.select_len )
+                     {
+                      if( shape.pos==shape.select_off )
+                        {
+                         shape.select_off-=shape.pos;
+                         shape.select_len+=shape.pos;
+                        }
+                      else if( shape.pos==shape.select_off+shape.select_len )
+                        {
+                         shape.select_len=shape.select_off;
+                         shape.select_off=0;
+                        }
+                      else
+                        {
+                         shape.select_off=0;
+                         shape.select_len=0;
+                        }
+                     }
+                   else
+                     {
+                      shape.select_off=0;
+                      shape.select_len=shape.pos;
+                     }
                   }
                 else
                   {
@@ -373,7 +437,28 @@ class LineEditWindowOf : public SubWindow
                {
                 if( kmod&KeyMod_Shift )
                   {
-                   // TODO selection
+                   if( shape.select_len )
+                     {
+                      if( shape.pos==shape.select_off )
+                        {
+                         shape.select_off=shape.select_off+shape.select_len;
+                         shape.select_len=shape.len-shape.select_off;
+                        }
+                      else if( shape.pos==shape.select_off+shape.select_len )
+                        {
+                         shape.select_len+=shape.len-shape.pos;
+                        }
+                      else
+                        {
+                         shape.select_off=0;
+                         shape.select_len=0;
+                        }
+                     }
+                   else
+                     {
+                      shape.select_off=shape.pos;
+                      shape.select_len=shape.len-shape.pos;
+                     }
                   }
                 else
                   {
