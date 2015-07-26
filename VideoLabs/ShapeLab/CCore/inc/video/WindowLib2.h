@@ -23,9 +23,16 @@
 #include <CCore/inc/DeferCall.h>
 
 #include <CCore/inc/CharProp.h>
+#include <CCore/inc/algon/EuclidRotate.h>
  
 namespace CCore {
 namespace Video {
+
+/* function */
+
+void TextToClipboard(StrLen text);
+
+ulen TextFromClipboard(PtrLen<char> buf);
 
 /* classes */
 
@@ -93,8 +100,33 @@ class LineEditWindowOf : public SubWindow
        }
     }
    
-   void delSelection() // TODO
+   void delSelection_()
     {
+     ulen off=shape.select_off+shape.select_len;
+     ulen len=shape.len-off;
+     
+     auto src=Range(text_buf+off,len);
+     auto dst=text_buf+shape.select_off;
+     
+     for(; +src ;++src,++dst) *dst=*src;
+     
+     shape.len-=shape.select_len;
+     shape.pos=shape.select_off;
+     shape.select_off=0;
+     shape.select_len=0;
+     
+     shape.setMax();
+     
+     shape.cursor=true;
+     
+     shape.showCursor();
+    }
+   
+   void delSelection()
+    {
+     delSelection_();
+     
+     redraw();
     }
    
    void cut()
@@ -104,23 +136,30 @@ class LineEditWindowOf : public SubWindow
      delSelection();
     }
    
-   void copy() // TODO
+   void copy()
     {
-     if( shape.select_len )
-       {
-        auto r=Range(text_buf+shape.select_off,shape.select_len);
-        
-        Used(r);
-        
-        // copy to clipboard 
-       }
+     TextToClipboard(Range(text_buf+shape.select_off,shape.select_len));
     }
    
-   void past() // TODO
+   void past()
     {
-     if( shape.select_len ) delSelection();
+     if( shape.select_len ) delSelection_();
      
-     // past from clipboard at cursor position
+     ulen len=TextFromClipboard(Range(text_buf+shape.len,TextBufLen-shape.len));
+     
+     shape.len+=len;
+     
+     Algon::EuclidRotate_suffix(Range(text_buf+shape.pos,shape.len-shape.pos),len);
+     
+     shape.pos+=len;
+     
+     shape.setMax();
+     
+     shape.cursor=true;
+     
+     shape.showCursor();
+     
+     redraw();
     }
    
   public:
@@ -498,7 +537,7 @@ class LineEditWindowOf : public SubWindow
          {
           if( shape.enable && kmod&KeyMod_Ctrl )
             {
-             copy();
+             if( shape.select_len ) copy();
             }
          }
         break; 
@@ -518,7 +557,7 @@ class LineEditWindowOf : public SubWindow
             {
              if( kmod&KeyMod_Ctrl )
                {
-                copy();
+                if( shape.select_len ) copy();
                }
              else if( kmod&KeyMod_Shift )
                {

@@ -18,6 +18,25 @@
 namespace CCore {
 namespace Video {
 
+/* function */
+
+static String Clipboard;
+
+void TextToClipboard(StrLen text)
+ {
+  Clipboard=String(text);
+ }
+
+ulen TextFromClipboard(PtrLen<char> buf)
+ {
+  auto r=Range(Clipboard);
+  
+  Replace_min(r.len,buf.len);
+  
+  r.copyTo(buf.ptr);
+  
+  return r.len;
+ }
 
 } // namespace Video
 } // namespace CCore
