@@ -353,3 +353,4 @@
 ../../Target/LIN64/CCore/src/sys/SysTime.cpp
 ../../Target/LIN64/CCore/src/sys/SysTlsSlot.cpp
 ../../Target/LIN64/CCore/src/sys/SysWait.cpp
+../../Target/LIN64/CCore/src/video/Desktop.cpp
