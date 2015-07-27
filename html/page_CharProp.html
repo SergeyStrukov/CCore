@@ -285,6 +285,25 @@ inline const char * <span class="Att">GetCLetterChars</span>() { return "ABCDEFG
 <b>GetCLetterChars()</b> &mdash; C-letters, including underscore.
 </p>
 
+<h4>Line parsing</h4>
+
+<p>
+The following function can be used to split the given text into lines:
+</p>
+
+<pre>
+
+StrLen <span class="Att">CutLine</span>(StrLen &text);
+
+</pre>
+
+<p>
+The function performs a text search for the line-end dividers: <b>"\r", "\n", "\r\n"</b>.
+If a divider is found, the part before the divider is returned and <b>text</b> is changed to the part
+after the divider.
+Otherwise, the entire <b>text</b> is returned and <b>text</b> is changed to the null value. 
+</p>
+
 </body>
 
 </html>

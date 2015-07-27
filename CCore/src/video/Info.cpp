@@ -14,6 +14,8 @@
 //----------------------------------------------------------------------------------------
  
 #include <CCore/inc/video/Info.h>
+
+#include <CCore/inc/CharProp.h>
  
 namespace CCore {
 namespace Video {
@@ -50,29 +52,6 @@ Info::Info()
  }
 
 /* class InfoFromString */
-
-StrLen InfoFromString::Impl::CutLine(StrLen &str)
- {
-  for(StrLen next=str; +next ;++next)
-    {
-     char ch=*next;
-     
-     if( ch=='\r' || ch=='\n' )
-       {
-        StrLen ret=str.prefix(next);
-        
-        ++next;
-        
-        if( ch=='\r' && +next && *next=='\n' ) ++next;
-        
-        str=next;
-        
-        return ret;
-       }
-    }
-  
-  return Replace_null(str);
- }
 
 InfoFromString::Impl::Impl(StrLen str)
  : buf(DoReserve,100)

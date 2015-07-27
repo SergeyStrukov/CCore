@@ -18,6 +18,7 @@
 #include <CCore/inc/Exception.h>
 #include <CCore/inc/PrintError.h>
 #include <CCore/inc/CapString.h>
+#include <CCore/inc/CharProp.h>
 
 #include <CCore/inc/sys/SysError.h>
 
@@ -372,6 +373,171 @@ class WindowBuf : NoCopy
        }
      
      SysGuard(format, Win32::BitBlt(dstGD,pane.x,pane.y,pane.dx,pane.dy,hGD,pane.x,pane.y,Win32::RasterOp_Copy) );
+    }
+ };
+
+/* class Clipboard */
+
+class Clipboard : NoCopy
+ {
+  public:
+  
+   explicit Clipboard(Win32::HWindow hWnd)
+    {
+     const char *format="CCore::Video::Private_Desktop::Clipboard::Clipboard(...) : #;";
+     
+     SysGuard(format, Win32::OpenClipboard(hWnd) );
+    }
+   
+   ~Clipboard()
+    {
+     Win32::CloseClipboard();
+    }
+ };
+
+/* class PutToClipboard */
+
+class PutToClipboard : NoCopy
+ {
+   Win32::handle_t h_mem;
+   void *mem;
+   
+  public:
+  
+   explicit PutToClipboard(ulen len)
+    {
+     const char *format="CCore::Video::Private_Desktop::PutToClipboard::PutToClipboard(...) : #;";
+    
+     SysGuard(format, Win32::EmptyClipboard() );
+     
+     h_mem=Win32::GlobalAlloc(Win32::GMemMovable,len);
+     
+     SysGuard(format,h_mem!=0);
+     
+     mem=Win32::GlobalLock(h_mem);
+    }
+   
+   ~PutToClipboard()
+    {
+     if( h_mem )
+       {
+        Win32::GlobalUnlock(h_mem);
+        
+        Win32::GlobalFree(h_mem);
+       }
+    }
+   
+   void * getMem() const { return mem; }
+   
+   void commit(unsigned cbd_format)
+    {
+     const char *format="CCore::Video::Private_Desktop::PutToClipboard::commit(...) : #;";
+     
+     if( h_mem )
+       {
+        Win32::GlobalUnlock(h_mem);
+        
+        mem=0;
+        
+        if( !Win32::SetClipboardData(cbd_format,h_mem) )
+          {
+           Sys::ErrorType error=Sys::NonNullError();
+           
+           mem=Win32::GlobalLock(h_mem);
+           
+           SysGuardFailed(format,error);
+          }
+        
+        h_mem=0;
+       }
+    }
+ };
+
+/* class GetFromClipboard */
+
+class GetFromClipboard : NoCopy
+ {
+   Win32::handle_t h_mem;
+   void *mem;
+   ulen len;
+   
+  public: 
+   
+   explicit GetFromClipboard(unsigned cbd_format)
+    {
+     const char *format="CCore::Video::Private_Desktop::GetFromClipboard::GetFromClipboard(...) : #;";
+    
+     h_mem=Win32::GetClipboardData(cbd_format);
+     
+     SysGuard(format,h_mem!=0);
+     
+     mem=Win32::GlobalLock(h_mem);
+     len=Win32::GlobalSize(h_mem);
+    }
+   
+   ~GetFromClipboard()
+    {
+     Win32::GlobalUnlock(h_mem);
+    }
+   
+   void * getMem() const { return mem; }
+   
+   ulen getLen() const { return len; }
+ };
+
+/* class TextToClipboard */
+
+class TextToClipboard : NoCopy
+ {
+   StrLen text;
+   
+  public:
+  
+   explicit TextToClipboard(StrLen text_) : text(text_) {}
+   
+   ulen getLen() const
+    {
+     ULenSat len=1u;
+     
+     StrLen temp=text;
+     
+     while( +temp )
+       {
+        StrLen line=CutLine(temp);
+        
+        len+=line.len;
+        len+=2u;
+       }
+     
+     if( !len )
+       {
+        Printf(Exception,"CCore::Video::Private_Desktop::TextToClipboard::getLen() : overflow");
+       }
+     
+     return len.value;
+    }
+   
+   void fill(void *mem) const
+    {
+     char *dst=static_cast<char *>(mem);
+     
+     StrLen temp=text;
+     
+     while( +temp )
+       {
+        StrLen line=CutLine(temp);
+        
+        line.copyTo(dst);
+        
+        dst+=line.len;
+        
+        dst[0]='\r';
+        dst[1]='\n';
+        
+        dst+=2;
+       }
+     
+     dst[0]=0;
     }
  };
 
@@ -1518,6 +1684,50 @@ class WindowsHost : public WindowHost
      max_flag=false;
      
      do_move(pane);
+    }
+ 
+   // clipboard
+   
+   virtual void textToClipboard(StrLen text)
+    {
+     TextToClipboard obj(text);
+     
+     Clipboard cbd(hWnd);
+     
+     ulen len=obj.getLen();
+     
+     PutToClipboard put(len);
+     
+     obj.fill(put.getMem());
+     
+     put.commit(Win32::ClipboardFormat_Text);
+    }
+   
+   virtual ulen textFromClipboard(PtrLen<char> buf) // TODO line end conversion
+    {
+     Clipboard cbd(hWnd);
+     GetFromClipboard get(Win32::ClipboardFormat_Text);
+     
+     const char *ptr=static_cast<const char *>(get.getMem());
+     ulen len=get.getLen();
+     
+     auto text=Range(ptr,len);
+     
+     for(auto r=text; +r ;++r)
+       {
+        if( !*r )
+          {
+           text=text.prefix(r);
+          
+           break;
+          }
+       }
+     
+     Replace_min(text.len,buf.len);
+     
+     text.copyTo(buf.ptr);
+     
+     return text.len;
     }
  };
 

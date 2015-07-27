@@ -152,6 +152,12 @@ class WindowHost : public MemBase_nocopy
    virtual Pane getPlace()=0; // screen
    
    virtual void move(Pane pane)=0; // screen
+   
+   // clipboard
+   
+   virtual void textToClipboard(StrLen text)=0;
+   
+   virtual ulen textFromClipboard(PtrLen<char> buf)=0;
  };
 
 /* class FrameWindow */

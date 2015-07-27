@@ -88,10 +88,6 @@ class InfoFromString : public Info
     {
       DynArray<String> buf;
       
-     private:
-      
-      static StrLen CutLine(StrLen &str); 
-      
      public:
      
       explicit Impl(StrLen str);

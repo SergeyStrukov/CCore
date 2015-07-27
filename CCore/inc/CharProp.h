@@ -20,6 +20,10 @@
  
 namespace CCore {
 
+/* CutLine() */
+
+StrLen CutLine(StrLen &text);
+
 /* classes */ 
 
 class ASCIICode;

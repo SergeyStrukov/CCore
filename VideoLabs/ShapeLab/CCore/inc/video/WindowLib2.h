@@ -28,12 +28,6 @@
 namespace CCore {
 namespace Video {
 
-/* function */
-
-void TextToClipboard(StrLen text);
-
-ulen TextFromClipboard(PtrLen<char> buf);
-
 /* classes */
 
 template <class Shape,ulen TextBufLen=1024> class LineEditWindowOf;
@@ -138,14 +132,14 @@ class LineEditWindowOf : public SubWindow
    
    void copy()
     {
-     TextToClipboard(Range(text_buf+shape.select_off,shape.select_len));
+     getFrame()->getHost()->textToClipboard(Range(text_buf+shape.select_off,shape.select_len));
     }
    
    void past()
     {
      if( shape.select_len ) delSelection_();
      
-     ulen len=TextFromClipboard(Range(text_buf+shape.len,TextBufLen-shape.len));
+     ulen len=getFrame()->getHost()->textFromClipboard(Range(text_buf+shape.len,TextBufLen-shape.len));
      
      shape.len+=len;
      
