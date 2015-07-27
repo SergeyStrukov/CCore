@@ -114,6 +114,13 @@ using DialogProc = UPtrType (*)(HWindow,MsgCode,MsgWParam,MsgLParam) ;
 /* constants                                                                            */ 
 /*--------------------------------------------------------------------------------------*/
 
+/* enum ClipboardFormat */
+
+enum ClipboardFormat : unsigned // incomplete
+ {
+  ClipboardFormat_Text = 1
+ };
+
 /* enum MouseKey */
 
 enum MouseKey : unsigned
@@ -1384,6 +1391,16 @@ bool_t WIN64_API SystemParametersInfoA(unsigned action,
                                        unsigned param,
                                        void *data,
                                        unsigned winini_flag);
+
+bool_t WIN64_API OpenClipboard(HWindow hWnd);
+
+bool_t WIN64_API CloseClipboard(void);
+
+bool_t WIN64_API EmptyClipboard(void);
+
+handle_t WIN64_API SetClipboardData(unsigned format,handle_t h_mem);
+
+handle_t /* h_mem */ WIN64_API GetClipboardData(unsigned format);
 
 } // extern "C"
 

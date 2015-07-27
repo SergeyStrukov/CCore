@@ -256,6 +256,30 @@ bool_t WIN64_API VirtualFree(void_ptr address,
 bool_t WIN64_API CloseHandle(handle_t h_any);
 
 /*--------------------------------------------------------------------------------------*/ 
+/* Global memory constants                                                              */ 
+/*--------------------------------------------------------------------------------------*/
+
+enum GMemFlags
+ {
+  GMemMovable  = 0x0002,
+  GMemZeroInit = 0x0040
+ };
+
+/*--------------------------------------------------------------------------------------*/ 
+/* Global memory functions                                                              */ 
+/*--------------------------------------------------------------------------------------*/
+
+handle_t WIN64_API GlobalAlloc(flags_t flags,ulen_t len);
+
+handle_t WIN64_API GlobalFree(handle_t h_mem);
+
+ulen_t WIN64_API GlobalSize(handle_t h_mem);
+
+void_ptr WIN64_API GlobalLock(handle_t h_mem);
+
+bool_t WIN64_API GlobalUnlock(handle_t h_mem);
+
+/*--------------------------------------------------------------------------------------*/ 
 /* Wait constants                                                                       */ 
 /*--------------------------------------------------------------------------------------*/ 
 
