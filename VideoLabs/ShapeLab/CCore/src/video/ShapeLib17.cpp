@@ -118,6 +118,49 @@ void LineEditShape::showCursor()
 
 ulen LineEditShape::getPosition(Point point) const
  {
+  Font font=cfg.font.get();
+  
+  MCoord width=+cfg.width;
+  
+  FontSize fs=font->getSize();
+  
+  MCoord ex=(Fraction(fs.dy)+2*width)/4+Fraction(+cfg.ex);
+  
+  Coord dx=RoundUpLen(ex);
+  Coord dy=RoundUpLen(width);
+  
+  Pane inner=pane.shrink(dx,dy);
+  
+  if( !inner ) return 0;
+  
+  point-=inner.getBase();
+  
+  point+=Point(xoff,0);
+  
+  TextSize ts=font->text(text_buf.prefix(pos));
+  
+  Coord cursor_dx=+cfg.cursor_dx;
+  
+  Coord x1=IntAbs(ts.skew)+cursor_dx;
+  Coord x2=x1+ts.dx;
+  Coord x3=x2+cursor_dx;
+  
+  Coord ytop=(inner.dy-ts.dy)/2;
+  Coord ybase=ytop+ts.by;
+  
+  ulen pos1=font->position(text_buf.prefix(pos),point-Point(x1,ybase));
+  
+  if( pos1==0 ) return 0;
+  
+  if( pos1<=pos ) return pos1-1;
+  
+  ulen pos2=font->position(text_buf.part(pos,len-pos),point-Point(x3,ybase));
+
+  if( pos2==0 ) return pos;
+  
+  if( pos2<=len-pos ) return pos2-1+pos;
+  
+  return len;
  }
 
 void LineEditShape::draw(const DrawBuf &buf) const

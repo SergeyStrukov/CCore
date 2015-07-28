@@ -223,6 +223,8 @@ struct AbstractFont
   
   virtual TextSize text(AbstractSparseString &str)=0;
   
+  virtual ulen position(AbstractSparseString &str,Point point)=0;
+  
   virtual TextSize text(AbstractSparseString &str,ulen pos)=0;
   
   virtual ulen fit(AbstractSparseString &str,Coord full_dx)=0;
@@ -236,6 +238,13 @@ struct AbstractFont
     SingleString obj(str); 
     
     return text(obj); 
+   }
+  
+  ulen position(StrLen str,Point point)
+   {
+    SingleString obj(str);
+    
+    return position(obj,point);
    }
   
   TextSize text(StrLen str,ulen pos)
@@ -264,6 +273,13 @@ struct AbstractFont
     DoubleString obj(str1,str2); 
     
     return text(obj); 
+   }
+  
+  ulen position(StrLen str1,StrLen str2,Point point)
+   {
+    DoubleString obj(str1,str2);
+    
+    return position(obj,point);
    }
   
   TextSize text(StrLen str1,StrLen str2,ulen pos)

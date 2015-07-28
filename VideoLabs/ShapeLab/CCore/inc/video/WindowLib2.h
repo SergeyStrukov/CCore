@@ -156,7 +156,7 @@ class LineEditWindowOf : public SubWindow
      redraw();
     }
    
-   void posCursor(Point point) // TODO
+   void posCursor(Point point)
     {
      ulen new_pos=shape.getPosition(point);
      
@@ -172,6 +172,8 @@ class LineEditWindowOf : public SubWindow
         shape.select_off=0;
         shape.select_len=0;
        }
+     
+     redraw();
     }
    
    void posCursorEnd()

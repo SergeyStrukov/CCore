@@ -823,6 +823,25 @@ class WindowsHost : public WindowHost
      return kmod;
     }
    
+   static KeyMod GetKeyMod()
+    {
+     KeyMod kmod=KeyMod_Null;
+     
+     if( Win64::GetKeyState(Win64::VK_Shift)&Win64::KeyStateDown ) kmod|=KeyMod_Shift;
+
+     if( Win64::GetKeyState(Win64::VK_Control)&Win64::KeyStateDown ) kmod|=KeyMod_Ctrl;
+     
+     if( Win64::GetKeyState(Win64::VK_Alt)&Win64::KeyStateDown ) kmod|=KeyMod_Alt;
+     
+     if( Win64::GetKeyState(Win64::VK_CapsLock)&Win64::KeyStateToggle ) kmod|=KeyMod_CapsLock;
+     
+     if( Win64::GetKeyState(Win64::VK_NumLock)&Win64::KeyStateToggle ) kmod|=KeyMod_NumLock;
+     
+     if( Win64::GetKeyState(Win64::VK_Scroll)&Win64::KeyStateToggle ) kmod|=KeyMod_ScrollLock;
+     
+     return kmod;
+    }
+   
    static MouseKey ToMouseKey(Win64::MsgWParam wParam)
     {
      MouseKey mkey=MouseKey_Null;
@@ -928,6 +947,21 @@ class WindowsHost : public WindowHost
      SysGuard(format, Win64::TrackMouseEvent(&desc) );
     }
    
+   void mouseShape(VKey vkey,KeyMod kmod)
+    {
+     if( vkey==VKey_Shift || vkey==VKey_Ctrl || vkey==VKey_Alt )
+       {
+        Win64::Point point_;
+       
+        if( Win64::GetCursorPos(&point_) )
+          {
+           Point point(point_.x,point_.y);
+         
+           frame->setMouseShape(point-origin,kmod);
+          }
+       }
+    }
+   
    Win64::MsgResult msgProc(Win64::HWindow hWnd_,Win64::MsgCode message,Win64::MsgWParam wParam,Win64::MsgLParam lParam)
     {
      switch( message )
@@ -1020,6 +1054,8 @@ class WindowsHost : public WindowHost
           VKey vkey=ToVKey(wParam);
           KeyMod kmod=GetKeyMod(ext);
           
+          mouseShape(vkey,kmod);
+          
           if( repeat>1 )
             frame->react(UserAction::Create_RepeatKey(vkey,kmod,repeat));
           else
@@ -1038,6 +1074,8 @@ class WindowsHost : public WindowHost
           
           if( alt ) kmod|=KeyMod_Alt;
           
+          mouseShape(vkey,kmod);
+          
           if( repeat>1 )
             frame->react(UserAction::Create_RepeatKey(vkey,kmod,repeat));
           else
@@ -1052,6 +1090,8 @@ class WindowsHost : public WindowHost
           
           VKey vkey=ToVKey(wParam);
           KeyMod kmod=GetKeyMod(ext);
+          
+          mouseShape(vkey,kmod);
           
           if( repeat>1 )
             frame->react(UserAction::Create_RepeatKeyUp(vkey,kmod,repeat));
@@ -1070,6 +1110,8 @@ class WindowsHost : public WindowHost
           KeyMod kmod=GetKeyMod(ext);
           
           if( alt ) kmod|=KeyMod_Alt;
+          
+          mouseShape(vkey,kmod);
           
           if( repeat>1 )
             frame->react(UserAction::Create_RepeatKeyUp(vkey,kmod,repeat));
@@ -1214,7 +1256,7 @@ class WindowsHost : public WindowHost
          {
           Point point=ToPoint(lParam);
           
-          frame->setMouseShape(point-origin,GetKeyMod(false));
+          frame->setMouseShape(point-origin,GetKeyMod());
          }
         return Win64::HitCode_Client; 
         

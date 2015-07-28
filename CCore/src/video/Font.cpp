@@ -268,6 +268,13 @@ class DefFont : public FontBase
      return ret;
     }
    
+   virtual ulen position(AbstractSparseString &,Point point)
+    {
+     if( point.x<0 ) return 0;
+     
+     return 1+ulen(point.x/DefaultFont::DX);
+    }
+   
    virtual TextSize text(AbstractSparseString &,ulen pos)
     {
      TextSize ret;
