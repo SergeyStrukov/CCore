@@ -144,7 +144,7 @@ class ShapeLab1 : public SubWindow
  
    virtual void looseCapture();
  
-   virtual MouseShape getMouseShape(Point point);
+   virtual MouseShape getMouseShape(Point point,KeyMod kmod);
    
    // user input
    
@@ -251,7 +251,7 @@ class TestDialog : public SubWindow
  
    virtual void looseCapture();
  
-   virtual MouseShape getMouseShape(Point point);
+   virtual MouseShape getMouseShape(Point point,KeyMod kmod);
    
    // user input
    
@@ -379,7 +379,7 @@ class ShapeLab2 : public SubWindow
  
    virtual void looseCapture();
  
-   virtual MouseShape getMouseShape(Point point);
+   virtual MouseShape getMouseShape(Point point,KeyMod kmod);
    
    // user input
    

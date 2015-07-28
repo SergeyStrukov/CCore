@@ -116,6 +116,10 @@ void LineEditShape::showCursor()
     }
  }
 
+ulen LineEditShape::getPosition(Point point) const
+ {
+ }
+
 void LineEditShape::draw(const DrawBuf &buf) const
  {
   MPane p(pane);

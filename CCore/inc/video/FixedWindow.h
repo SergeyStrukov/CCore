@@ -680,7 +680,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
        }
     }
    
-   virtual void setMouseShape(Point point)
+   virtual void setMouseShape(Point point,KeyMod kmod)
     {
      switch( shape.hitTest(point) )
        {
@@ -688,7 +688,7 @@ class FixedWindowOf : public FrameWindow , public SubWindowHost
          
         case HitFrame_Close : host->setMouseShape(Mouse_Stop); break;
         
-        default: host->setMouseShape(getClientSub().forward_getMouseShape(point));
+        default: host->setMouseShape(getClientSub().forward_getMouseShape(point,kmod));
        }
     }
 

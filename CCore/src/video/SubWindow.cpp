@@ -307,9 +307,9 @@ void WindowList::looseCapture()
   if( capture ) Replace_null(capture)->looseCapture();
  }
 
-MouseShape WindowList::getMouseShape(Point point,MouseShape def_shape)
+MouseShape WindowList::getMouseShape(Point point,KeyMod kmod,MouseShape def_shape)
  {
-  if( SubWindow *sub_win=find(point) ) return sub_win->forward_getMouseShape(point);
+  if( SubWindow *sub_win=find(point) ) return sub_win->forward_getMouseShape(point,kmod);
   
   return def_shape;
  }

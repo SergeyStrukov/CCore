@@ -172,7 +172,7 @@ class ButtonWindowOf : public SubWindow
        }
     }
  
-   virtual MouseShape getMouseShape(Point)
+   virtual MouseShape getMouseShape(Point,KeyMod)
     {
      if( shape.enable ) return Mouse_Hand;
      
@@ -391,7 +391,7 @@ class CheckWindowOf : public SubWindow
    
    // mouse
  
-   virtual MouseShape getMouseShape(Point)
+   virtual MouseShape getMouseShape(Point,KeyMod)
     {
      if( shape.enable ) return Mouse_Hand;
      
@@ -641,7 +641,7 @@ class RadioWindowOf : public SubWindow , public RadioItem
    
    // mouse
  
-   virtual MouseShape getMouseShape(Point)
+   virtual MouseShape getMouseShape(Point,KeyMod)
     {
      if( shape.enable ) return Mouse_Hand;
      
@@ -1149,7 +1149,7 @@ class ScrollWindowOf : public SubWindow
        }
     }
  
-   virtual MouseShape getMouseShape(Point)
+   virtual MouseShape getMouseShape(Point,KeyMod)
     {
      if( shape.enable && shape.page<shape.total ) return Mouse_Hand;
      
@@ -1636,7 +1636,7 @@ class InfoWindowOf : public SubWindow
      shape.drag=false;
     }
  
-   virtual MouseShape getMouseShape(Point)
+   virtual MouseShape getMouseShape(Point,KeyMod)
     {
      if( shape.xoffMax>0 ) return Mouse_SizeLeftRight;
      

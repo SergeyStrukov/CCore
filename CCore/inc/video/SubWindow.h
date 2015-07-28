@@ -156,9 +156,10 @@ class SubWindow : public MemBase_nocopy , public UserInput
      // do nothing
     }
  
-   virtual MouseShape getMouseShape(Point point)
+   virtual MouseShape getMouseShape(Point point,KeyMod kmod)
     {
      Used(point);
+     Used(kmod);
      
      return Mouse_Arrow;
     }
@@ -201,7 +202,7 @@ class SubWindow : public MemBase_nocopy , public UserInput
      return Forwarder(this);     
     }
    
-   MouseShape forward_getMouseShape(Point point) { return getMouseShape(point-place.getBase()); }
+   MouseShape forward_getMouseShape(Point point,KeyMod kmod) { return getMouseShape(point-place.getBase(),kmod); }
  };
 
 /* class WindowList */
@@ -349,7 +350,7 @@ class WindowList : NoCopy , public SubWindowHost , public UserInput
    
    void looseCapture();
    
-   MouseShape getMouseShape(Point point,MouseShape def_shape=Mouse_Arrow);
+   MouseShape getMouseShape(Point point,KeyMod kmod,MouseShape def_shape=Mouse_Arrow);
    
    // user input
    
@@ -585,7 +586,7 @@ class SomeWindow : public SubWindow
  
    virtual void looseCapture();
 
-   virtual MouseShape getMouseShape(Point point);
+   virtual MouseShape getMouseShape(Point point,KeyMod kmod);
    
    // user input
    
@@ -665,11 +666,11 @@ void SomeWindow::looseCapture()
   list.looseCapture();
  }
 
-MouseShape SomeWindow::getMouseShape(Point point)
+MouseShape SomeWindow::getMouseShape(Point point,KeyMod kmod)
  {
   // TODO
   
-  return list.getMouseShape(point,Mouse_Arrow);
+  return list.getMouseShape(point,kmod,Mouse_Arrow);
  }
 
  // user input

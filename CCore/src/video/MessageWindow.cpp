@@ -230,9 +230,9 @@ void MessageSubWindow::looseCapture()
   list.looseCapture();
  }
 
-MouseShape MessageSubWindow::getMouseShape(Point point)
+MouseShape MessageSubWindow::getMouseShape(Point point,KeyMod kmod)
  {
-  return list.getMouseShape(point,Mouse_Arrow);
+  return list.getMouseShape(point,kmod,Mouse_Arrow);
  }
 
  // user input

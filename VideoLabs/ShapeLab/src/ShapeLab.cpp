@@ -223,9 +223,9 @@ void ShapeLab1::looseCapture()
   wlist.looseCapture();
  }
 
-MouseShape ShapeLab1::getMouseShape(Point point)
+MouseShape ShapeLab1::getMouseShape(Point point,KeyMod kmod)
  {
-  return wlist.getMouseShape(point);
+  return wlist.getMouseShape(point,kmod);
  }
 
  // user input
@@ -423,9 +423,9 @@ void TestDialog::looseCapture()
   dlist.looseCapture();
  }
 
-MouseShape TestDialog::getMouseShape(Point point)
+MouseShape TestDialog::getMouseShape(Point point,KeyMod kmod)
  {
-  return wlist.getMouseShape(point);
+  return wlist.getMouseShape(point,kmod);
  }
 
  // user input
@@ -648,9 +648,9 @@ void ShapeLab2::looseCapture()
   wlist.looseCapture();
  }
 
-MouseShape ShapeLab2::getMouseShape(Point point)
+MouseShape ShapeLab2::getMouseShape(Point point,KeyMod kmod)
  {
-  return wlist.getMouseShape(point);
+  return wlist.getMouseShape(point,kmod);
  }
 
  // user input

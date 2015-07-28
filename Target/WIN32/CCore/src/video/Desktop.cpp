@@ -1215,7 +1215,7 @@ class WindowsHost : public WindowHost
          {
           Point point=ToPoint(lParam);
           
-          frame->setMouseShape(point-origin);
+          frame->setMouseShape(point-origin,GetKeyMod(false));
          }
         return Win32::HitCode_Client; 
         
@@ -1703,7 +1703,7 @@ class WindowsHost : public WindowHost
      put.commit(Win32::ClipboardFormat_Text);
     }
    
-   virtual ulen textFromClipboard(PtrLen<char> buf) // TODO line end conversion
+   virtual ulen textFromClipboard(PtrLen<char> buf)
     {
      Clipboard cbd(hWnd);
      GetFromClipboard get(Win32::ClipboardFormat_Text);

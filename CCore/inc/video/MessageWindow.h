@@ -151,7 +151,7 @@ class MessageSubWindow : public SubWindow
  
    virtual void looseCapture();
 
-   virtual MouseShape getMouseShape(Point point);
+   virtual MouseShape getMouseShape(Point point,KeyMod kmod);
    
    // user input
    

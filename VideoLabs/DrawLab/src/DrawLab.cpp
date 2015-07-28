@@ -1050,7 +1050,7 @@ void DrawLab::looseCapture()
   move_zoom=false;
  }
  
-MouseShape DrawLab::getMouseShape(Point point)
+MouseShape DrawLab::getMouseShape(Point point,KeyMod)
  {
   if( zoom.contains(point) && normal.contains(point) ) return Mouse_Cross;
   

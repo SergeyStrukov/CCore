@@ -860,7 +860,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
        }
     }
    
-   virtual void setMouseShape(Point point)
+   virtual void setMouseShape(Point point,KeyMod kmod)
     {
      switch( shape.dragTest(point) )
        {
@@ -888,7 +888,7 @@ class DragWindowOf : public FrameWindow , public SubWindowHost
          
         case DragType_Bar         : host->setMouseShape(Mouse_SizeAll); break;
         
-        default: host->setMouseShape(getClientSub().forward_getMouseShape(point));
+        default: host->setMouseShape(getClientSub().forward_getMouseShape(point,kmod));
        }
     }
 

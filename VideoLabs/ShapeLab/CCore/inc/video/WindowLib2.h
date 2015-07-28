@@ -156,6 +156,29 @@ class LineEditWindowOf : public SubWindow
      redraw();
     }
    
+   void posCursor(Point point) // TODO
+    {
+     ulen new_pos=shape.getPosition(point);
+     
+     if( shape.mouse_pos )
+       {
+        shape.pos=new_pos;
+       }
+     else
+       {
+        shape.mouse_pos=true;
+        
+        shape.pos=new_pos;
+        shape.select_off=0;
+        shape.select_len=0;
+       }
+    }
+   
+   void posCursorEnd()
+    {
+     shape.mouse_pos=false;
+    }
+   
   public:
   
    template <class ... TT>
@@ -266,6 +289,7 @@ class LineEditWindowOf : public SubWindow
      shape.focus=false;
      shape.cursor=false;
      shape.drag=false;
+     shape.mouse_pos=false;
      
      shape.xoff=0;
      shape.pos=0;
@@ -306,9 +330,9 @@ class LineEditWindowOf : public SubWindow
      shape.drag=false;
     }
  
-   virtual MouseShape getMouseShape(Point)
+   virtual MouseShape getMouseShape(Point,KeyMod kmod)
     {
-     if( shape.xoffMax>0 ) return Mouse_SizeLeftRight;
+     if( shape.xoffMax>0 && kmod&KeyMod_Ctrl ) return Mouse_SizeLeftRight;
      
      return Mouse_Arrow;
     }
@@ -649,16 +673,23 @@ class LineEditWindowOf : public SubWindow
        }
     }
    
-   void react_LeftClick(Point point,MouseKey)
+   void react_LeftClick(Point point,MouseKey mkey)
     {
-     if( !shape.drag )
+     if( mkey&MouseKey_Ctrl )
        {
-        shape.drag=true;
-        
-        shape.drag_base=point;
-        shape.xoff_base=shape.xoff;
-        
-        captureMouse();
+        if( !shape.drag )
+          {
+           shape.drag=true;
+           
+           shape.drag_base=point;
+           shape.xoff_base=shape.xoff;
+           
+           captureMouse();
+          }
+       }
+     else
+       {
+        posCursor(point);
        }
     }
    
@@ -671,6 +702,12 @@ class LineEditWindowOf : public SubWindow
         releaseMouse();
         
         drag(point);
+       }
+     else
+       {
+        posCursor(point);
+        
+        posCursorEnd();
        }
     }
    
@@ -694,6 +731,15 @@ class LineEditWindowOf : public SubWindow
            releaseMouse();
           }
        }
+     else if( mkey&MouseKey_Left )
+       {
+        posCursor(point);
+       }
+    }
+   
+   void react_Leave()
+    {
+     posCursorEnd();
     }
  
    // signals

@@ -232,9 +232,10 @@ class FrameWindow : public MemBase_nocopy , public UserInput
      // do nothing
     }
    
-   virtual void setMouseShape(Point point)
+   virtual void setMouseShape(Point point,KeyMod kmod)
     {
      Used(point);
+     Used(kmod);
      
      host->setMouseShape(Mouse_Arrow);
     }

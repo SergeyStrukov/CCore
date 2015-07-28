@@ -82,6 +82,7 @@ class LineEditShape
    bool drag = false ;
    Point drag_base;
    Coord xoff_base = 0 ;
+   bool mouse_pos = false ;
    
    unsigned count = 0 ;
    
@@ -108,6 +109,8 @@ class LineEditShape
     }
    
    void showCursor();
+   
+   ulen getPosition(Point point) const;
    
    void draw(const DrawBuf &buf) const;
  };
