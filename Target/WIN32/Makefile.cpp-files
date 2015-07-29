@@ -213,6 +213,7 @@
 ../../CCore/src/Signal.cpp
 ../../CCore/src/SingleHost.cpp
 ../../CCore/src/sort/HeapSort.cpp
+../../CCore/src/sort/MergeSort.cpp
 ../../CCore/src/sort/ParaQuickSort.cpp
 ../../CCore/src/sort/QuickSort.cpp
 ../../CCore/src/sort/ShortSort.cpp

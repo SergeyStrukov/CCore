@@ -20,6 +20,7 @@
 #include <CCore/inc/sort/HeapSort.h>
 #include <CCore/inc/sort/QuickSort.h>
 #include <CCore/inc/sort/ParaQuickSort.h>
+#include <CCore/inc/sort/MergeSort.h>
  
 namespace CCore {
 

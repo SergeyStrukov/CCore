@@ -190,6 +190,8 @@ const char *const Testit<33>::Name="Test33 Sort";
 template<>
 bool Testit<33>::Main() 
  { 
+#if 0
+  
   {
    int buf[10];
 
@@ -247,7 +249,15 @@ bool Testit<33>::Main()
   
    for(ulen len=0; engine.run(len) ;len+=DeltaLen(len));
   } 
- 
+
+#endif  
+  
+  {
+   IndexEngine<MergeSort> engine;
+  
+   for(ulen len=0; engine.run(len) ;len+=DeltaLen(len));
+  }
+  
   return true;
  }
  

@@ -336,7 +336,7 @@ const char *const Testit<34>::Name="Test34 Sort speed";
 template<>
 bool Testit<34>::Main() 
  {
-#if 1  
+#if 0
   
   Printf(Con,"#;\n\n",Title("ParaQuickSort"));
  
@@ -413,12 +413,22 @@ bool Testit<34>::Main()
   
 #endif
   
-#if 1  
+#if 1
  
   Printf(Con,"\n#;\n\n",Title("QuickSort string"));
  
   {
    Engine2<QuickSort> engine;
+  
+   engine.run(100);
+   engine.run(1000);
+   engine.run(10000);
+  }
+  
+  Printf(Con,"\n#;\n\n",Title("MergeSort string"));
+ 
+  {
+   Engine2<MergeSort> engine;
   
    engine.run(100);
    engine.run(1000);
@@ -437,12 +447,22 @@ bool Testit<34>::Main()
   
 #endif
   
-#if 1  
+#if 1
   
   Printf(Con,"\n#;\n\n",Title("QuickSort count"));
  
   {
    Engine3<QuickSort> engine;
+  
+   engine.run(100);
+   engine.run(1000);
+   engine.run(10000);
+  }
+  
+  Printf(Con,"\n#;\n\n",Title("MergeSort count"));
+ 
+  {
+   Engine3<MergeSort> engine;
   
    engine.run(100);
    engine.run(1000);

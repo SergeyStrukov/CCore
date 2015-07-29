@@ -177,6 +177,7 @@ obj/MemAllocGuard.o \
 obj/MemBase.o \
 obj/MemBase_general.o \
 obj/MemSpaceHeap.o \
+obj/MergeSort.o \
 obj/MersenneTwister.o \
 obj/MessageWindow.o \
 obj/Meta.o \
@@ -563,6 +564,7 @@ obj/MemAllocGuard.s \
 obj/MemBase.s \
 obj/MemBase_general.s \
 obj/MemSpaceHeap.s \
+obj/MergeSort.s \
 obj/MersenneTwister.s \
 obj/MessageWindow.s \
 obj/Meta.s \
@@ -949,6 +951,7 @@ obj/MemAllocGuard.dep \
 obj/MemBase.dep \
 obj/MemBase_general.dep \
 obj/MemSpaceHeap.dep \
+obj/MergeSort.dep \
 obj/MersenneTwister.dep \
 obj/MessageWindow.dep \
 obj/Meta.dep \
@@ -1704,6 +1707,9 @@ obj/MemBase_general.o : ../../CCore/src/MemBase_general.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MemSpaceHeap.o : ../../CCore/src/MemSpaceHeap.cpp
+	$(CC) $(CCOPT) $< -o $@
+
+obj/MergeSort.o : ../../CCore/src/sort/MergeSort.cpp
 	$(CC) $(CCOPT) $< -o $@
 
 obj/MersenneTwister.o : ../../CCore/src/MersenneTwister.cpp
@@ -2857,6 +2863,9 @@ obj/MemBase_general.s : ../../CCore/src/MemBase_general.cpp
 obj/MemSpaceHeap.s : ../../CCore/src/MemSpaceHeap.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
+obj/MergeSort.s : ../../CCore/src/sort/MergeSort.cpp
+	$(CC) -S $(CCOPT) $< -o $@
+
 obj/MersenneTwister.s : ../../CCore/src/MersenneTwister.cpp
 	$(CC) -S $(CCOPT) $< -o $@
 
@@ -4007,6 +4016,9 @@ obj/MemBase_general.dep : ../../CCore/src/MemBase_general.cpp
 
 obj/MemSpaceHeap.dep : ../../CCore/src/MemSpaceHeap.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MemSpaceHeap.o $< -MF $@
+
+obj/MergeSort.dep : ../../CCore/src/sort/MergeSort.cpp
+	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MergeSort.o $< -MF $@
 
 obj/MersenneTwister.dep : ../../CCore/src/MersenneTwister.cpp
 	$(CC) $(CCOPT) -MM -MT $(OBJ_PATH)/MersenneTwister.o $< -MF $@
