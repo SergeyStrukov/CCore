@@ -1,9 +1,9 @@
 /* WindowLib2.h */ 
 //----------------------------------------------------------------------------------------
 //
-//  Project: CCore 1.09
+//  Project: ShapeLab 1.00
 //
-//  Tag: General
+//  Tag: VideoLabs
 //
 //  License: Boost Software License - Version 1.0 - August 17th, 2003 
 //
