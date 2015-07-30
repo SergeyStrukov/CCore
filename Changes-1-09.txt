@@ -62,3 +62,6 @@ gadget/UtilFunc.h
 
   Change() is added.
 
+sort/MergeSort.h
+
+  Merge sort implementation is added.
