@@ -41,7 +41,7 @@ by a stupid realization. That is why we use in <b>CCore</b> our own sort algorit
 <p>
 Sorting is a permutating a given range of objects to arrange them in the ascending order relative the given
 linear order relation. Any permutation can be done by a series of transpositions of elements. So <b>CCore</b> 
-implements sorting on the swap-based basis. I.g. a sorting process includes the performing two operations:
+implements sorting on the swap-based basis. I.e. a sorting process includes the performing two operations:
 comparison of elements and swapping them. That is a difference from other implementations, 
 where objects are copied, not swapped. As was mentioned before, swap is <b>efficient</b>, but copying 
 is expensive, not safe and not always possible. The second feature of our sorts is they takes a less 
@@ -54,7 +54,7 @@ We use the term <b>ran</b> for a random access iterator. Usually it is just an o
 </p>
 
 <p>
-There are four sort <b>Algorithm Package</b>s: <b>ShortSort</b>, <b>HeapSort</b>, <b>QuickSort</b>
+There are following <b>Algorithm Package</b>s: <b>ShortSort</b>, <b>HeapSort</b>, <b>QuickSort</b>, <b>MergeSort</b>,
 and <b>ParaQuickSort</b>.
 </p>
 
@@ -245,6 +245,42 @@ struct <span class="Att">QuickSort</span>
 
 </pre>
 
+<h4>MergeSort</h4>
+
+<p>
+<b>MergeSort</b> implements the merge sort algorithm. It uses less comparison operations than the quick sort
+in common case, but more swap operations. So in general <b>QuickSort</b> is faster. However, in some cases
+when the comparison is an expensive, <b>MergeSort</b> is preferred.
+</p>
+
+<p>
+<b>MergeSort</b> uses a temporary index buffer of the length of twice, than the original range length.
+It allocates this buffer in the stack, if it is short enough, or in the heap otherwise. If the allocation 
+has failed, the quick sort is performed.
+You may use the methods <b>MedSort</b> to sort with a stack buffer. These methods perform sort and
+return <b>true</b>, if the length is acceptable. Otherwise, they return <b>false</b>.
+</p>
+
+<pre>
+
+template &lt;class Ran,class Ctx=SortCtx&lt;Ran&gt; &gt;
+struct <span class="Att">MergeSort</span>
+ {
+  template &lt;class Len&gt;
+  static bool MedSort(Ran a,Len len,Ctx ctx);
+  
+  template &lt;class Len&gt;
+  static bool MedSort(Ran a,Len len) { return MedSort(a,len,Ctx()); }
+
+  template &lt;class Len&gt;
+  static void Sort(Ran a,Len len,Ctx ctx);
+  
+  template &lt;class Len&gt;
+  static void Sort(Ran a,Len len) { Sort(a,len,Ctx()); }
+ };
+
+</pre>
+
 <h4>ParaQuickSort</h4>
 
 <p>
@@ -329,7 +365,7 @@ void <span class="Att">Sort</span>(PtrLenReverse&lt;T&gt; range);
 </pre>
 
 <p>
-The order of sorting is a native reverse range order. I.g. after the <b>Sort()</b> the following is true:
+The order of sorting is a native reverse range order. I.e. after the <b>Sort()</b> the following is true:
 <b>range[0] < range[1] < range[2] < ...</b>.
 </p>
 
