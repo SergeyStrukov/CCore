@@ -55,7 +55,7 @@ is a kind of prototype for all real computers. The developing of a good software
 a good mathematical thinking. It is especially important in the modern multi-threaded or event-driven software,
 where it is not feasible to trace all execution scenarios. In a single-threaded program you can follow a program
 execution step-by-step, but once you have several threads of execution, the number of possible execution states 
-becomes uncomprehensible (combinatorial explosion). You must use logical statements and the logical deduction
+becomes incomprehensible (combinatorial explosion). You must use logical statements and the logical deduction
 to understand how such programs are working.
 </p>
 
@@ -95,6 +95,20 @@ Make a reliable software from a reliable software components!
 </p>
 
 <h4>Premature generalization is a root of all evil</h4>
+
+<p>
+In the soft history there were several examples, how a premature generalization led to a bad software.
+The first example is the UNIX paradigm: everything is a file. And that is totally wrongful.
+Socket is not a file. Keyboard and mouse are not a file. UNIX paradigm simplifies the system interface, but
+makes hard or impossible to work correctly with non-files in nature objects. Recall socket option functions, 
+for example. This is an excellent illustration how an inadequate control interface forces to implement
+handmade serialization/deserialization through opaque control bottleneck.
+</p>
+
+<p>
+Another good example is the STL approach to work with containers and algorithms. The natural way to work 
+with data in a tree is the usage of recursive algorithms and that does not fit to the concept of iterators.
+</p>
 
 <h4>Ugly airplane does not flight</h4>
 
