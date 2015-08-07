@@ -19,7 +19,7 @@ namespace CCore {
 
 /* global TaskEventHost */
 
-TaskEventHostType TaskEventHost CCORE_INITPRI_0 ;
+TaskEventHostType TaskEventHost CCORE_INITPRI_1 ;
 
 /* struct TaskNumber */
 
