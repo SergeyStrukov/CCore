@@ -97,7 +97,7 @@ struct ScanSwitch
 template <class T> 
 struct ScanOptAdapters<2,T>
  {
-  typedef typename ScanProxy<T>::OptType OptType;
+  typedef typename ScanProxy<T>::OptType ScanOptType;
  }; 
  
 template <class T> 
